@@ -18,7 +18,7 @@ use cadus_core::selector::{
 };
 use cadus_core::xp::{CourseCounts, course_counts};
 use cadus_store::state::{EventRow, load_events, project_current};
-use serde_json::{Value, json};
+use serde_json::{Map, Value, json};
 
 use super::EXPORT_MEDIA_TYPE;
 use super::store::{Ready, Reply, begin, json_of, reply_read, store, unknown_course};
@@ -105,6 +105,19 @@ fn is_placed(topic: &TopicState) -> bool {
     matches!(topic.status, TopicStatus::Placed | TopicStatus::Learning)
 }
 
+/// The ungraded-attempt count of each topic that has one (D-F2).
+///
+/// A topic with no ungraded attempt is absent, so the map holds only what the
+/// learner and the operator need to see.
+fn ungraded_attempts(model: &LearnerModel) -> Map<String, Value> {
+    model
+        .topics
+        .iter()
+        .filter(|(_, state)| state.ungraded_attempts > 0)
+        .map(|(tid, state)| (tid.clone(), json!(state.ungraded_attempts)))
+        .collect()
+}
+
 // --------------------------------------------------------------------------- //
 // GET /api/status
 // --------------------------------------------------------------------------- //
@@ -165,6 +178,8 @@ pub async fn status(req: Ready) -> Reply {
         // the practiced topics alone. These three numbers say what stands
         // behind it.
         "mastery": mastery_view(&model, graph, cfg, t_us, course),
+        "ungraded_attempts": ungraded_attempts(&model),
+        "ungraded": model.ungraded.len(),
     });
     reply_read(tx, body).await
 }

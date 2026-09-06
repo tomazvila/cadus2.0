@@ -52,7 +52,9 @@ async fn a_regraded_event_forces_the_full_replay_branch() {
         .await
         .map(|row| (row.through_seq, row.projector_version))
         .unwrap();
-        assert_eq!(saved, (2, 3));
+        // The fold stamps the version it folds with (D-F2: 3 became 4).
+        let stamp = i32::try_from(cadus_core::projector::PROJECTOR_VERSION).unwrap();
+        assert_eq!(saved, (2, stamp));
 
         // One ordinary event after the cursor: the fold goes incremental.
         let mut tx = open_locked(&scene.handle, user).await;
@@ -198,7 +200,7 @@ fn lesson_failure(topic: &str, kp: &str) -> Event {
     Event::LessonResult(LessonResult {
         ts: Timestamp::from_micros(BASE_US),
         session: Some("s_2026-01-01a".to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: Slug::new(topic).unwrap(),
         passed: false,
         failed_at_kp: Some(Slug::new(kp).unwrap()),

@@ -174,7 +174,7 @@ async fn the_export_round_trips_through_the_event_reader() {
             Event::SessionStart(SessionStart {
                 ts: Timestamp::from_micros(BASE_US),
                 session: Some(SESSION.to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
             }),
             enrolled_c1(),
         ];
@@ -189,7 +189,7 @@ async fn the_export_round_trips_through_the_event_reader() {
             &Event::SessionStart(SessionStart {
                 ts: Timestamp::from_micros(BASE_US),
                 session: Some("s_2026-01-01z".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
             }),
         )
         .await;

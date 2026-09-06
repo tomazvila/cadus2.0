@@ -61,6 +61,7 @@ const SOLUTION = 'Divide both parts by 2.';
 /** A miss. `next: null` keeps the feedback panel on screen: no auto-advance can steal it. */
 const missed = (over: Partial<AnswerResponse> = {}): AnswerResponse => ({
   attempt_id: 'a-1',
+  outcome: 'incorrect',
   correct: false,
   work_quality: 'passable',
   error_tags: ['notation'],

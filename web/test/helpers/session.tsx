@@ -71,20 +71,45 @@ export const planOf = (...tasks: PlanTask[]): SessionPlanResponse => ({
   frontier_blocked_until: null,
 });
 
-export const graded = (over: Partial<AnswerResponse> = {}): AnswerResponse => ({
-  attempt_id: 'a-1',
-  correct: true,
-  work_quality: 'perfect',
-  error_tags: [],
-  secs: 20,
-  task_status: 'continue',
-  remediation: [],
-  next: P(2),
-  diagnosis: { status: 'not_offered' },
-  solution: 'Divide both parts by 2.',
-  xp: 10,
-  ...over,
-});
+export const graded = (over: Partial<AnswerResponse> = {}): AnswerResponse => {
+  const merged: AnswerResponse = {
+    attempt_id: 'a-1',
+    outcome: 'correct',
+    correct: true,
+    work_quality: 'perfect',
+    error_tags: [],
+    secs: 20,
+    task_status: 'continue',
+    remediation: [],
+    next: P(2),
+    diagnosis: { status: 'not_offered' },
+    solution: 'Divide both parts by 2.',
+    xp: 10,
+    ...over,
+  };
+  // A caller that overrides `correct` alone means the decided outcome it spells, the
+  // way the service spells it (D-F2). A caller that names `outcome` keeps it.
+  if (over.outcome === undefined) {
+    merged.outcome = merged.correct ? 'correct' : 'incorrect';
+  }
+  return merged;
+};
+
+/** A reply the checker could not decide: the third outcome and its reason (D-F2). */
+export const ungraded = (over: Partial<AnswerResponse> = {}): AnswerResponse => {
+  const base = graded({
+    outcome: 'ungraded',
+    work_quality: 'nearly_passable',
+    reason: 'the answer left the grammar',
+    ...over,
+  });
+  // The service claims no correctness on an ungraded attempt, and it reveals nothing.
+  delete base.correct;
+  delete base.solution;
+  delete base.re_solve;
+  delete base.xp;
+  return base;
+};
 
 /** The H3 first branch. `expected` is deliberately unlike any hint text below. */
 export const REWORK: ReworkResponse = {

@@ -106,7 +106,7 @@ pub fn fixture_log() -> Vec<(Option<String>, Event)> {
             Event::SessionStart(SessionStart {
                 ts: Timestamp::from_micros(BASE_US + (day as i64) * DAY_US),
                 session: Some(session.clone()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
             }),
         ));
         let last = day + 1 == SESSIONS;
@@ -127,7 +127,7 @@ pub fn fixture_log() -> Vec<(Option<String>, Event)> {
                         BASE_US + (day as i64) * DAY_US + (EVENTS_PER_SESSION as i64) * 60_000_000,
                     ),
                     session: Some(session),
-                    v: SchemaVersion,
+                    v: SchemaVersion::current(),
                     xp_earned: 0.0,
                     minutes: 60.0,
                 }),
@@ -271,7 +271,7 @@ fn task_served_event(day: usize) -> Event {
     Event::TaskServed(TaskServed {
         ts: Timestamp::from_micros(BASE_US + (day as i64) * DAY_US),
         session: Some(session_id(day)),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         task_id: task_id(day),
         task_type: TaskType::Review,
         topic: Some(Slug::new(TOPIC).expect("the topic slug")),

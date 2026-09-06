@@ -129,20 +129,9 @@ pub async fn seed_due_review(db: &TestDb, user: Uuid, through_seq: i64) {
         topics,
         ..LearnerModel::default()
     };
-    sqlx::query!(
-        r#"
-        INSERT INTO learner_models
-            (user_id, model, through_seq, projector_version, config_hash)
-        VALUES ($1, $2, $3, 3, $4)
-        "#,
-        user,
-        serde_json::to_value(&model).unwrap(),
-        through_seq,
-        Config::default().config_hash().unwrap()
-    )
-    .execute(&db.admin)
-    .await
-    .unwrap();
+    // One writer of a cached model in the test helpers, so the seeded row always
+    // carries the version this build folds with (D-F2).
+    seed_cached_model(db, user, &model, through_seq).await;
 }
 
 /// The `enrolled` event of course `c1`, one microsecond into the session.
@@ -150,7 +139,7 @@ pub fn enrolled_c1() -> Event {
     Event::Enrolled(cadus_core::event::Enrolled {
         ts: Timestamp::from_micros(BASE_US + 1),
         session: Some(SESSION.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         course: cadus_core::event::Slug::new("c1").unwrap(),
         reason: None,
         return_to: None,

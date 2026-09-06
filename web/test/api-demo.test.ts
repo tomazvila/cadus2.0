@@ -16,8 +16,9 @@ describe('the demo client', () => {
       .filter((r) => r.via !== 'none')
       .map((r) => r.client)
       .filter((member): member is keyof ApiClient => member !== null);
-    // 33 until the three `/api/diag/*` placement rows landed.
-    expect(named.length).toBe(36);
+    // 33 until the three `/api/diag/*` placement rows landed, 36 until the two
+    // `/api/admin/ungraded*` recovery rows landed (D-F2).
+    expect(named.length).toBe(38);
     for (const member of named) {
       expect(typeof demo[member], `the demo lacks ${member}`).toBe('function');
     }

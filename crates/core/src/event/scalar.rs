@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::numeric;
 
-use super::{EventError, SCHEMA_VERSION};
+use super::{EventError, SCHEMA_VERSION, SCHEMA_VERSION_V1};
 
 /// `Deserialize` a checked scalar: read the raw wire value, then apply the
 /// checked constructor, whose error becomes the serde error.
@@ -25,45 +25,54 @@ macro_rules! checked_deserialize {
     };
 }
 
-/// The `v` key of the envelope. It reads and writes the value `1` and nothing else.
+/// The `v` key of the envelope. It reads `1` and `2`, and it writes back the value
+/// it read.
 ///
-/// 1.0 reads `v`, then applies `SHIMS[v]` while `v` is below `SCHEMA_VERSION`. The
-/// table is empty and `SCHEMA_VERSION` is `1`, so every other version raises there
-/// and is an error value here.
+/// 1.0 reads `v`, then applies `SHIMS[v]` while `v` is below `SCHEMA_VERSION`. 2.0
+/// holds one shim: a v1 `attempt` row reads as v2 through [`crate::event::Attempt::normalize`].
+/// Every other version is an error value.
 ///
-/// The type has one value and no `Default`: an envelope with no `v` key takes
-/// [`SchemaVersion::current`] through its `serde(default)`.
+/// The value the reader saw stays on the type, so a v1 row that this build reads and
+/// writes back keeps its bytes. An original row is never rewritten (C2). An envelope
+/// with no `v` key takes [`SchemaVersion::current`] through its `serde(default)`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct SchemaVersion;
+pub struct SchemaVersion(i64);
 
 impl SchemaVersion {
-    /// The one version this build reads and writes.
+    /// The version this build writes on a fresh event.
     #[must_use]
     pub const fn current() -> Self {
-        Self
+        Self(SCHEMA_VERSION)
+    }
+
+    /// The first version. A row at this version needs the shim.
+    #[must_use]
+    pub const fn first() -> Self {
+        Self(SCHEMA_VERSION_V1)
     }
 
     /// The numeric value on the wire.
     #[must_use]
     pub const fn get(self) -> i64 {
-        SCHEMA_VERSION
+        self.0
     }
 }
 
 impl Serialize for SchemaVersion {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serializer.serialize_i64(SCHEMA_VERSION)
+        serializer.serialize_i64(self.0)
     }
 }
 
 impl<'de> Deserialize<'de> for SchemaVersion {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = i64::deserialize(deserializer)?;
-        if value == SCHEMA_VERSION {
-            Ok(Self)
+        if value == SCHEMA_VERSION || value == SCHEMA_VERSION_V1 {
+            Ok(Self(value))
         } else {
             Err(de::Error::custom(format!(
-                "unsupported event schema version v{value}; this build reads v{SCHEMA_VERSION} only"
+                "unsupported event schema version v{value}; this build reads \
+                 v{SCHEMA_VERSION_V1} and v{SCHEMA_VERSION} only"
             )))
         }
     }
@@ -309,7 +318,7 @@ mod tests {
         assert!(PositiveSecs::new(0).is_err() && PositiveSecs::new(1).is_ok());
         assert!(Weight::new(1.5).is_err());
         assert_eq!(Weight::new(0.5).expect("in range").get(), 0.5);
-        assert_eq!(SchemaVersion::current(), SchemaVersion);
-        assert_eq!(SchemaVersion.get(), SCHEMA_VERSION);
+        assert_eq!(SchemaVersion::current().get(), SCHEMA_VERSION);
+        assert_eq!(SchemaVersion::first().get(), SCHEMA_VERSION_V1);
     }
 }

@@ -153,6 +153,14 @@ export interface HintResponse {
   reference_lesson?: { topic: string; name: string };
 }
 
+/**
+ * The three outcomes of one attempt (D-F2).
+ *
+ * `ungraded` is the third one: the checker had no deterministic verdict, so the attempt
+ * moved nothing and the reply names a `reason` instead of a `correct`.
+ */
+export type AttemptOutcome = 'correct' | 'incorrect' | 'ungraded';
+
 type WorkQuality =
   | 'perfect'
   | 'nearly_perfect'
@@ -248,8 +256,22 @@ export interface DiagnosisJob {
  */
 export interface AnswerResponse {
   attempt_id: string;
-  /** Mathematical correctness only. Partial credit lives in `work_quality`. */
-  correct: boolean;
+  /**
+   * The graded outcome (D-F2). `ungraded` means the checker reached no verdict.
+   *
+   * An ungraded attempt is NOT a miss: nothing about the learner moved, no solution is
+   * revealed, and no diagnosis fires.
+   */
+  outcome: AttemptOutcome;
+  /**
+   * Mathematical correctness only. Partial credit lives in `work_quality`.
+   *
+   * ABSENT on an `ungraded` reply: the service claims no correctness there, and a
+   * `false` would read as a miss.
+   */
+  correct?: boolean;
+  /** Why the attempt has no verdict. Present on an `ungraded` reply only. */
+  reason?: string;
   work_quality: WorkQuality;
   /** Rendered verbatim, never re-interpreted (trap T3). */
   error_tags: string[];
@@ -300,6 +322,11 @@ export interface QuizReceiptResponse {
 }
 
 export type TaskAnswerResponse = AnswerResponse | ReworkResponse | QuizReceiptResponse;
+
+/** Narrow a grade reply to the third outcome (D-F2). */
+export function isUngraded(reply: AnswerResponse): boolean {
+  return reply.outcome === 'ungraded';
+}
 
 /** Narrow a grade reply to the H3 rework branch. */
 export function isRework(reply: TaskAnswerResponse): reply is ReworkResponse {

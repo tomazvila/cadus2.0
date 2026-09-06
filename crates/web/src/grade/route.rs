@@ -14,24 +14,26 @@ fn expected_time(graph: &Curriculum, served: &ServedProblem) -> Option<i64> {
         .map(|topic| topic.expected_time_secs)
 }
 
-/// The answer kind the checker decides, or the refusal of one it never decides.
+/// The answer kind of the served problem.
 ///
-/// T6, spec section 7: the `undecidable` decision of the counter is taken
-/// here. This service asks no model for a verdict, so the kind ends here.
-fn graded_kind(state: &AppState, served: &ServedProblem) -> Result<AnswerKind, ApiError> {
-    let Some(kind) = answer_kind(served) else {
-        return Err(broken_state("the served problem names no answer kind"));
-    };
-    if matches!(kind, AnswerKind::Numeric | AnswerKind::Expression) {
-        return Ok(kind);
+/// EVERY kind reaches the grade path now (D-F1, D-F2). The route no longer
+/// refuses a kind with `409`: a kind the checker does not decide gives the
+/// UNGRADED outcome, and the learner reads a reason and takes the next task.
+fn served_kind(served: &ServedProblem) -> Result<AnswerKind, ApiError> {
+    answer_kind(served).ok_or_else(|| broken_state("the served problem names no answer kind"))
+}
+
+/// Grade one submission by kind (A3, D-F1).
+///
+/// A `proof` never reaches the checker: no checker decides one, so the route
+/// spends no work on it and names the reason instead (V2). Every other kind goes
+/// to the deterministic checker, which names its own refusal reason when it has
+/// no verdict.
+fn grade_by_kind(kind: AnswerKind, expected: &str, answer: &str) -> Grade {
+    if kind == AnswerKind::Proof {
+        return ungraded_grade(PROOF_UNGRADED);
     }
-    state.metrics.count_grade(metrics::GRADE_UNDECIDABLE);
-    Err(ApiError::new(
-        StatusCode::CONFLICT,
-        UNDECIDABLE_KIND,
-        "This answer kind has no deterministic verdict, and this service never asks a model \
-         for one.",
-    ))
+    deterministic_grade(expected, answer, kind)
 }
 
 /// A solve time as the seconds the session clock adds up.
@@ -90,8 +92,8 @@ pub async fn answer(
         now.micros(),
         expected_time(graph, &served),
     );
-    let kind = graded_kind(&state, &served)?;
-    let grade = deterministic_grade(&served.expected.answer, &submitted.answer, kind);
+    let kind = served_kind(&served)?;
+    let grade = grade_by_kind(kind, &served.expected.answer, &submitted.answer);
     // T6, spec section 7: one count per grade DECISION, taken with no model call.
     state.metrics.count_grade(metrics::grade_result(&grade));
     let mut error_tags = grade.error_tags.clone();
@@ -154,6 +156,7 @@ pub async fn answer(
             answer: &submitted.answer,
             work: submitted.work.as_deref(),
             correct: grade.correct,
+            ungraded: grade.outcome.is_ungraded(),
         },
         write: true,
     };
@@ -263,23 +266,25 @@ async fn already_recorded(
         write: false,
         miss: Miss {
             correct: standing.correct,
+            ungraded: standing.outcome.is_ungraded(),
             ..about.miss
         },
         ..about
     };
     let replayed = diagnosis::decide(state, &mut tx, user_id, scratch, &replay).await?;
-    let body = json!({
-        "attempt_id": standing.attempt_id,
-        "correct": standing.correct,
-        "work_quality": standing.work_quality,
-        "error_tags": standing.error_tags,
-        "secs": standing.secs.get(),
-        "task_status": STATUS_ALREADY_RECORDED,
-        "remediation": Vec::<Value>::new(),
-        "next": Value::Null,
-        "diagnosis": replayed,
-    });
-    tx.rollback().await.map(|()| Json(body)).map_err(db_failed)
+    let mut body = outcome_fields(standing);
+    body.insert("attempt_id".to_string(), json!(standing.attempt_id));
+    body.insert("work_quality".to_string(), json!(standing.work_quality));
+    body.insert("error_tags".to_string(), json!(standing.error_tags));
+    body.insert("secs".to_string(), json!(standing.secs.get()));
+    body.insert("task_status".to_string(), json!(STATUS_ALREADY_RECORDED));
+    body.insert("remediation".to_string(), json!(Vec::<Value>::new()));
+    body.insert("next".to_string(), Value::Null);
+    body.insert("diagnosis".to_string(), replayed);
+    tx.rollback()
+        .await
+        .map(|()| Json(Value::Object(body)))
+        .map_err(db_failed)
 }
 
 /// Step 7: the lesson advance, the close events it appends, and the fold.

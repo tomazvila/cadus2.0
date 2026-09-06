@@ -35,9 +35,11 @@ import type {
   ApproveResponse,
   ContentFilter,
   OperatorFlagsResponse,
+  RegradeResponse,
   RejectResponse,
   ReviewDocument,
   ReviewListResponse,
+  UngradedListResponse,
 } from './types-review';
 
 // ---------------------------------------------------------------------------
@@ -114,6 +116,10 @@ export interface ApiClient {
   approveContent(digest: string): Promise<ApproveResponse>;
   /** The reason is required by the service and by the screen (REVIEW-reason). */
   rejectContent(digest: string, reason: string): Promise<RejectResponse>;
+
+  // The recovery path of the third outcome (D-F2). Admin only, like the four above.
+  listUngraded(): Promise<UngradedListResponse>;
+  regradeUngraded(attemptId: string, outcome: 'correct' | 'incorrect'): Promise<RegradeResponse>;
 }
 
 // ---------------------------------------------------------------------------
@@ -201,6 +207,10 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'GET', path: '/api/admin/content/{digest}', auth: 'S', via: 'method', client: 'getContent' },
   { method: 'POST', path: '/api/admin/content/{digest}/approve', auth: 'S', via: 'method', client: 'approveContent' },
   { method: 'POST', path: '/api/admin/content/{digest}/reject', auth: 'S', via: 'method', client: 'rejectContent' },
+
+  // f4-outcome: the recovery path of the third outcome (D-F2). Admin only.
+  { method: 'GET', path: '/api/admin/ungraded', auth: 'S', via: 'method', client: 'listUngraded' },
+  { method: 'POST', path: '/api/admin/ungraded/{attempt_id}/regrade', auth: 'S', via: 'method', client: 'regradeUngraded' },
 ];
 
 /**

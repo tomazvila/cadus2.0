@@ -35,6 +35,8 @@ const DASHBOARD_STATUS: StatusResponse = {
   frontier: 4,
   due_reviews: 2,
   nearly_due: 1,
+  ungraded_attempts: {},
+  ungraded: 0,
 };
 
 describe('the advance', () => {

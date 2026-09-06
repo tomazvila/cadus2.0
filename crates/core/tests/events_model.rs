@@ -14,7 +14,7 @@ use cadus_core::config::Config;
 use cadus_core::event::{Event, Slug, Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::projector::{ProjectionInput, ProjectorError, blob_digest, project};
-use common::events::tree;
+use common::events::{oracle_stamp, tree};
 
 /// The 1.0 fold of `stream_1.jsonl`, as a canonical model blob with no newline.
 const MODEL_1: &str = include_str!("fixtures/events/model_1.json");
@@ -72,9 +72,9 @@ fn fold(stream: &str) -> Result<LearnerModel, ProjectorError> {
     project(&events, &input)
 }
 
-/// The blob digest of a folded stream.
+/// The blob digest of a folded stream, restamped for the 1.0 comparison.
 fn fold_digest(stream: &str) -> String {
-    blob_digest(&fold(stream).expect("the fold succeeds")).unwrap()
+    blob_digest(&oracle_stamp(fold(stream).expect("the fold succeeds"))).unwrap()
 }
 
 /// The error a folded stream reports.

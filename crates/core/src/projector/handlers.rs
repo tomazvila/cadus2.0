@@ -8,7 +8,9 @@ use crate::event::{
     RemediationTriggered, ReviewResult, Slug, TaskServed, Timestamp, TopicStatus, WorkQuality,
 };
 use crate::fire::{difficulty, initial_ability, interval_for, py_min, speed_for};
-use crate::learner::{LAST_PROBLEMS_WINDOW, TopicState, problem_text_hash};
+use crate::learner::{
+    LAST_PROBLEMS_WINDOW, TopicState, UNGRADED_WINDOW, UngradedAttempt, problem_text_hash,
+};
 use crate::selector::REMEDIATION_CONFIRM_FAILED;
 
 use super::{
@@ -46,10 +48,20 @@ impl Projector<'_> {
     /// `attempt` (`projector.py:213-224`): the dedup window, then the peel-back.
     ///
     /// The projector NEVER reads `work_quality` here, nor `error_tags`, `secs`,
-    /// `assisted`, `work`, `answer_kind`, or `kp`. It reads the problem text and
-    /// `correct` and nothing else. FIRe fires from the task results, not from an
-    /// attempt.
+    /// `assisted`, `work`, `answer_kind`, or `kp`. It reads the problem text,
+    /// `correct`, and `outcome`, and nothing else. FIRe fires from the task results,
+    /// not from an attempt.
+    ///
+    /// An UNGRADED attempt (D-F2) moves no learner state: it peels back no
+    /// conditional credit, it starts no knowledge-point step, and it earns no XP. It
+    /// counts on the topic and it enters the recovery list, and that is all. The
+    /// dedup window still takes the problem text, because the learner saw the problem
+    /// and the anti-repeat guard (A5) must not serve it again.
     pub(super) fn on_attempt(&mut self, event: &Attempt, apply_fire: bool) {
+        let ungraded = event.outcome.is_ungraded();
+        if ungraded {
+            self.record_ungraded(event);
+        }
         if !apply_fire {
             return;
         }
@@ -63,10 +75,31 @@ impl Projector<'_> {
             .len()
             .saturating_sub(LAST_PROBLEMS_WINDOW);
         state.last_problems.drain(..overflow);
+        if ungraded {
+            state.ungraded_attempts = state.ungraded_attempts.saturating_add(1);
+        }
         self.topics.insert(topic.to_owned(), state);
-        if !event.correct {
+        if !ungraded && !event.correct {
             self.peel_back_conditional(topic);
         }
+    }
+
+    /// Append one ungraded attempt to the recovery list, newest last (D-F2).
+    ///
+    /// The list holds the last [`UNGRADED_WINDOW`] entries. It is a LIGHT index, so
+    /// the fold rebuilds it from the whole stream on a resume too. The admin route
+    /// reads it and a `regraded` event closes an entry.
+    fn record_ungraded(&mut self, event: &Attempt) {
+        let Some(reason) = event.outcome.reason() else {
+            return;
+        };
+        self.ungraded.push(UngradedAttempt {
+            attempt_id: event.attempt_id.clone(),
+            topic: event.topic.as_str().to_owned(),
+            reason: reason.to_owned(),
+        });
+        let overflow = self.ungraded.len().saturating_sub(UNGRADED_WINDOW);
+        self.ungraded.drain(..overflow);
     }
 
     /// `lesson_result` (`projector.py:226-242`).

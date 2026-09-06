@@ -4,10 +4,12 @@
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Catalog, Course, Curriculum, RawCurriculum, RawUnit, Topic, Unit};
 use cadus_core::event::{
-    AnswerKind, Attempt, AttemptProblem, Event, Regraded, RegradedAttempt, ReviewResult,
-    SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskType, Timestamp, WorkQuality,
+    AnswerKind, Attempt, AttemptOutcome, AttemptProblem, Event, Regraded, RegradedAttempt,
+    ReviewResult, SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskType, Timestamp,
+    WorkQuality,
 };
 use cadus_core::projector::ProjectionInput;
+use serde_json::json;
 
 /// The Unix microsecond instant of 2026-01-01T00:00:00Z.
 pub const BASE_US: i64 = 1_767_225_600_000_000;
@@ -93,7 +95,7 @@ pub fn start(session: &str) -> Event {
     Event::SessionStart(SessionStart {
         ts: Timestamp::from_micros(BASE_US),
         session: Some(session.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
     })
 }
 
@@ -102,7 +104,7 @@ pub fn end(session: &str) -> Event {
     Event::SessionEnd(SessionEnd {
         ts: Timestamp::from_micros(BASE_US),
         session: Some(session.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         xp_earned: 0.0,
         minutes: 0.0,
     })
@@ -121,29 +123,25 @@ pub fn attempt_row(
     text: String,
     answer: String,
 ) -> Event {
-    Event::Attempt(Attempt {
-        ts,
-        session: Some(session.to_string()),
-        v: SchemaVersion,
-        attempt_id: attempt_id.to_string(),
-        task_id: task_id.to_string(),
-        topic: Slug::new(topic).expect("the topic slug"),
-        kp: None,
-        task_type: TaskType::Review,
-        problem: AttemptProblem {
-            text,
-            expected: answer.clone(),
-        },
-        given_answer: answer,
-        work: None,
-        answer_kind: Some(AnswerKind::Numeric),
-        correct: true,
-        secs: Secs::new(12).expect("twelve seconds"),
-        error_tags: Vec::new(),
-        work_quality: WorkQuality::NearlyPerfect,
-        grader_note: Some("deterministic".to_string()),
-        assisted: false,
-    })
+    // The wire form is the literal, so this helper never spells a field name the
+    // reader does not read back (the `crates/core` test idiom).
+    let body = json!({
+        "type": "attempt",
+        "ts": ts.to_wire_string().expect("the instant writes"),
+        "session": session,
+        "attempt_id": attempt_id,
+        "task_id": task_id,
+        "topic": topic,
+        "task_type": "review",
+        "problem": {"text": text, "expected": answer},
+        "given_answer": answer,
+        "answer_kind": "numeric",
+        "correct": true,
+        "secs": 12,
+        "work_quality": "nearly_perfect",
+        "grader_note": "deterministic",
+    });
+    Event::from_json(&body.to_string()).expect("the attempt reads")
 }
 
 /// One graded attempt on `addition`.
@@ -164,11 +162,12 @@ pub fn regraded(attempt_id: &str) -> Event {
     Event::Regraded(Regraded {
         ts: Timestamp::from_micros(BASE_US),
         session: Some(SESSION.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         task_id: "s_2026-01-01a-review-addition".to_string(),
         topic: Slug::new("addition").unwrap(),
         attempts: vec![RegradedAttempt {
             attempt_id: attempt_id.to_string(),
+            outcome: None,
             work_quality: WorkQuality::Poor,
             error_tags: vec!["arithmetic-slip".to_string()],
             grader_note: Some("operator repair".to_string()),
@@ -184,7 +183,7 @@ pub fn review(ts: Timestamp, xp: f64) -> Event {
     Event::ReviewResult(ReviewResult {
         ts,
         session: Some(SESSION.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: Slug::new("addition").unwrap(),
         passed: true,
         weighted_score: 1.0,
@@ -192,5 +191,6 @@ pub fn review(ts: Timestamp, xp: f64) -> Event {
         quality_tier: WorkQuality::Perfect,
         assisted: false,
         task_id: Some("s_2026-01-01a-review-addition".to_string()),
+        inconclusive: false,
     })
 }

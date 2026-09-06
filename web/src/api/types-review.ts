@@ -131,3 +131,29 @@ export interface RejectResponse {
   status: string;
 }
 
+/** One ungraded attempt of the recovery list (D-F2). */
+export interface UngradedAttempt {
+  attempt_id: string;
+  topic: string;
+  /** Why the checker reached no verdict, in the service's own words. */
+  reason: string;
+}
+
+/** `GET /api/admin/ungraded`. The list is oldest first. */
+export interface UngradedListResponse {
+  items: UngradedAttempt[];
+  /** The count of entries the recovery list keeps. */
+  limit: number;
+}
+
+/** `POST /api/admin/ungraded/{attempt_id}/regrade`. */
+export interface RegradeResponse {
+  attempt_id: string;
+  /** The verdict the human reached. */
+  outcome: 'correct' | 'incorrect';
+  /** The correction forced the whole-log replay (D-O6). */
+  replayed: boolean;
+  /** The count of ungraded attempts still waiting. */
+  ungraded: number;
+}
+

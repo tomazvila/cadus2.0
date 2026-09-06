@@ -43,7 +43,7 @@ use crate::config::Config;
 use crate::curriculum::Curriculum;
 use crate::event::{Event, Slug};
 use crate::fire::{clamp, py_max, py_min};
-use crate::learner::TopicState;
+use crate::learner::{TopicState, UngradedAttempt};
 use crate::numeric::{OutOfRangeError, TimeError, resolve_timezone};
 
 mod entry;
@@ -62,8 +62,9 @@ pub use regrade::apply_regrades;
 /// The projection-logic version stamped into the model (`projector.py:89`).
 ///
 /// A stale cache is detected with it: 1 to 2 for the methodology fixes, 2 to 3 for
-/// [`apply_regrades`]. ANY change to the fold bumps this number.
-pub const PROJECTOR_VERSION: i64 = 3;
+/// [`apply_regrades`], 3 to 4 for the third attempt outcome (D-F2). ANY change to the
+/// fold bumps this number, and a bump replays every model in full (D-O6).
+pub const PROJECTOR_VERSION: i64 = 4;
 
 /// The neutral prior a placed topic's diagnostic answers fold onto (`projector.py:98`).
 pub const ABILITY_SEED_PRIOR: f64 = 0.5;
@@ -150,6 +151,7 @@ pub struct Projector<'a> {
     remediation: Vec<(i64, String, Vec<Slug>)>,
     last_practice: BTreeMap<String, i64>,
     diag_answers: BTreeMap<String, Vec<(bool, f64)>>,
+    ungraded: Vec<UngradedAttempt>,
     last_ts: Option<i64>,
 
     /// The task ids of the OPEN confirmation items (D-F6). A `task_served` with
@@ -187,6 +189,7 @@ impl<'a> Projector<'a> {
             remediation: Vec::new(),
             last_practice: BTreeMap::new(),
             diag_answers: BTreeMap::new(),
+            ungraded: Vec::new(),
             last_ts: None,
             confirm_tasks: BTreeSet::new(),
             confirm_topics: BTreeSet::new(),
@@ -239,9 +242,10 @@ impl<'a> Projector<'a> {
     /// its light indices without running FIRe again.
     ///
     /// A `regraded` event never arrives here: [`apply_regrades`] consumes it ahead of
-    /// the fold and hands the corrected events over instead. `session_start`,
-    /// `session_end`, `anki_card_created`, `config_changed`, and
-    /// `curriculum_changed` carry no derived state, so they are no-ops.
+    /// the fold and hands the corrected events over instead. `task_served`,
+    /// `session_start`, `session_end`, `anki_card_created`, `config_changed`,
+    /// `curriculum_changed`, and `retention_probe` carry no derived state, so they
+    /// are no-ops. Unit f19 gives `retention_probe` a handler.
     ///
     /// `task_served` is a no-op too, EXCEPT for the D-F6 confirmation marker: a
     /// served confirmation opens the item that the topic's review result closes.
@@ -275,7 +279,8 @@ impl<'a> Projector<'a> {
             | Event::Regraded(_)
             | Event::AnkiCardCreated(_)
             | Event::ConfigChanged(_)
-            | Event::CurriculumChanged(_) => {}
+            | Event::CurriculumChanged(_)
+            | Event::RetentionProbe(_) => {}
         }
         self.applied += 1;
     }

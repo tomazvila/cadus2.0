@@ -92,9 +92,9 @@ pub const MODEL_LATENCY_METRIC: &str = "cadus_model_call_latency_seconds";
 /// - `blank`: nothing was submitted.
 /// - `incorrect`: a deterministic miss. An answer outside the grammar is one of
 ///   these (spec section 5.1), not a third thing.
-/// - `undecidable`: the answer kind carries no deterministic verdict, so the
-///   route answers `409 undecidable_kind` and this service asks no model.
-pub const GRADE_RESULTS: [&str; 5] = ["correct", "notation", "blank", "incorrect", "undecidable"];
+/// - `ungraded`: the checker had no deterministic verdict, so the attempt carries
+///   the third outcome (D-F2). This service asks no model for one.
+pub const GRADE_RESULTS: [&str; 5] = ["correct", "notation", "blank", "incorrect", "ungraded"];
 
 /// The `result` label of a correct answer.
 pub const GRADE_CORRECT: &str = "correct";
@@ -108,8 +108,8 @@ pub const GRADE_BLANK: &str = "blank";
 /// The `result` label of a deterministic miss.
 pub const GRADE_INCORRECT: &str = "incorrect";
 
-/// The `result` label of an answer kind with no deterministic verdict.
-pub const GRADE_UNDECIDABLE: &str = "undecidable";
+/// The `result` label of an attempt with no deterministic verdict (D-F2).
+pub const GRADE_UNGRADED: &str = "ungraded";
 
 /// The `result` label of a diagnosis served from pre-authored content.
 ///
@@ -322,14 +322,15 @@ impl Registry {
 }
 /// The `result` label of one deterministic grade (spec section 7).
 ///
-/// The three server-produced tags decide it: a blank submission carries
-/// [`TAG_BLANK_ANSWER`] and a correct answer in a named form carries
-/// [`TAG_NOTATION`]. An answer outside the grammar is a MISS with no tag (spec
-/// section 5.1), so it counts as [`GRADE_INCORRECT`], which is what it is.
-/// [`GRADE_UNDECIDABLE`] belongs to the answer KIND, not to the answer: the
-/// route counts it where it refuses the kind.
+/// The outcome and the three server-produced tags decide it. An UNGRADED outcome
+/// wins first (D-F2): the checker had no verdict, so the count is neither a pass
+/// nor a miss. A blank submission carries [`TAG_BLANK_ANSWER`] and a correct
+/// answer in a named form carries [`TAG_NOTATION`].
 #[must_use]
 pub fn grade_result(grade: &Grade) -> &'static str {
+    if grade.outcome.is_ungraded() {
+        return GRADE_UNGRADED;
+    }
     if grade.error_tags.iter().any(|tag| tag == TAG_BLANK_ANSWER) {
         return GRADE_BLANK;
     }

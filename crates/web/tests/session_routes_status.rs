@@ -225,7 +225,7 @@ async fn modules_lists_the_enrolled_course_modules() {
             &Event::Enrolled(cadus_core::event::Enrolled {
                 ts: Timestamp::from_micros(BASE_US),
                 session: None,
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 course: cadus_core::event::Slug::new("c2").unwrap(),
                 reason: None,
                 return_to: None,

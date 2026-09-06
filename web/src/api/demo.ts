@@ -195,6 +195,9 @@ export function createDemoApi(): ApiClient {
         due_reviews: 2,
         nearly_due: 1,
         mastery: { practiced: 9, inferred: 6, total: 50, to_confirm: ['whole-numbers'] },
+        // The demo grades every answer, so nothing waits for a human (D-F2).
+        ungraded_attempts: {},
+        ungraded: 0,
       }),
 
     getGraph: (scope) =>
@@ -318,6 +321,7 @@ export function createDemoApi(): ApiClient {
       const done = cursor >= DEMO_PROBLEMS.length;
       const reply_: TaskAnswerResponse = {
         attempt_id: attempt,
+        outcome: correct ? 'correct' : 'incorrect',
         correct,
         work_quality: correct ? 'perfect' : 'nearly_passable',
         error_tags: [],
@@ -350,8 +354,8 @@ export function createDemoApi(): ApiClient {
     downloadExport: async () =>
       refuse(403, 'forbidden', 'The demo keeps no event log to export.'),
 
-    // The review surface (C6). The demo account is NOT an admin, so all five admin routes
-    // — the operator flags above and these four — answer the same `403 forbidden` the
+    // The review surface (C6). The demo account is NOT an admin, so every admin route
+    // — the operator flags above and these six — answers the same `403 forbidden` the
     // service answers a signed-in learner. That is what makes `?demo=1` an honest
     // rehearsal of the non-admin path the two admin screens have to render (REVIEW-admin),
     // and it is why the demo defines no fixture queue: a demo that showed a review queue
@@ -360,5 +364,8 @@ export function createDemoApi(): ApiClient {
     getContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
     approveContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
     rejectContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    // The recovery path of the third outcome is admin-only too (D-F2).
+    listUngraded: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    regradeUngraded: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
   };
 }

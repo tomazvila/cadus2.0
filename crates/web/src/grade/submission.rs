@@ -178,7 +178,7 @@ pub(super) fn build_attempt(
     let attempt = Attempt {
         ts: now,
         session: session.map(str::to_string),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         attempt_id: format!("{}-{index}", task.task_id),
         task_id: task.task_id.clone(),
         topic,
@@ -192,6 +192,13 @@ pub(super) fn build_attempt(
         work: submitted.work.clone().filter(|text| !text.is_empty()),
         answer_kind: Some(event_kind(graded.kind)),
         correct: graded.grade.correct,
+        outcome: graded.grade.outcome.clone(),
+        item_digest: Some(problem_text_hash(&served.text)),
+        item_source: None,
+        exposure: None,
+        timing_reliable: None,
+        skills: served.kp.iter().map(ToOwned::to_owned).collect(),
+        independent_after_feedback: false,
         secs,
         error_tags: graded.error_tags.to_vec(),
         work_quality: graded.grade.work_quality,
@@ -293,6 +300,7 @@ mod tests {
     fn an_attempt_the_event_grammar_refuses_is_state_unavailable() {
         let grade = Grade {
             correct: false,
+            outcome: AttemptOutcome::of_correct(false),
             work_quality: WorkQuality::NearlyPassable,
             error_tags: Vec::new(),
         };

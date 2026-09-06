@@ -297,6 +297,7 @@ impl Projector<'_> {
             quiz,
             velocity,
             pending_remediation: self.pending_remediation(),
+            ungraded: self.ungraded.clone(),
             config_hash: Some(config_hash),
             projector_version: Some(PROJECTOR_VERSION),
             through_seq: None,
@@ -323,7 +324,7 @@ mod tests {
         Event::QuizResult(QuizResult {
             ts: Timestamp::from_micros(ts_us),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             quiz_id: "z".to_owned(),
             score: 1.0,
             per_topic: Vec::new(),
@@ -336,7 +337,7 @@ mod tests {
         Event::ReviewResult(ReviewResult {
             ts: Timestamp::from_micros(ts_us),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             topic: Slug::new("q").expect("a slug"),
             passed: true,
             weighted_score: 1.0,
@@ -344,6 +345,7 @@ mod tests {
             quality_tier: WorkQuality::Perfect,
             assisted: false,
             task_id: None,
+            inconclusive: false,
         })
     }
 
@@ -376,7 +378,7 @@ mod tests {
             &Event::SessionStart(SessionStart {
                 ts: Timestamp::from_micros(i64::MAX),
                 session: None,
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
             }),
             true,
         );

@@ -15,7 +15,9 @@ use cadus_core::event::Event;
 use cadus_core::learner::LearnerModel;
 use cadus_core::projector::{blob_digest, canonical_blob, project};
 
-use super::events::{first_difference, fixture, input, oracle_blob, repo_root, stream};
+use super::events::{
+    first_difference, fixture, input, oracle_blob, oracle_stamp, repo_root, stream,
+};
 
 /// The daily XP goal the oracle folds with.
 pub const GOAL: i64 = 40;
@@ -171,7 +173,7 @@ pub fn row(number: usize) -> &'static StreamDigests {
 /// The full replay of `events` in `tz`, with the default config.
 pub fn fold_in(events: &[Event], tz: Option<&str>) -> LearnerModel {
     let input = input().with_timezone(tz).with_goal(GOAL);
-    project(events, &input).expect("the fold succeeds")
+    oracle_stamp(project(events, &input).expect("the fold succeeds"))
 }
 
 /// The event index after which the Rust fold and the 1.0 fold disagree, found by

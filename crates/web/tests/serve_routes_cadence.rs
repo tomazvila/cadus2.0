@@ -106,7 +106,7 @@ async fn a_served_drill_is_recorded_and_the_next_session_offers_no_drill() {
             &Event::SessionEnd(SessionEnd {
                 ts: Timestamp::from_micros(BASE_US),
                 session: Some(SESSION.to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 xp_earned: 0.0,
                 minutes: 0.0,
             }),
@@ -119,7 +119,7 @@ async fn a_served_drill_is_recorded_and_the_next_session_offers_no_drill() {
             &Event::SessionStart(SessionStart {
                 ts: Timestamp::from_micros(BASE_US),
                 session: Some(SESSION_2.to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
             }),
             BASE_US,
         )

@@ -154,7 +154,7 @@ async fn seed(db: &TestDb) -> Run {
         &Event::SessionStart(SessionStart {
             ts: Timestamp::from_micros(BASE_US),
             session: Some(SESSION.to_string()),
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
         }),
         None,
     )

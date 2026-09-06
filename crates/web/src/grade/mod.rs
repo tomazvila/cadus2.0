@@ -12,6 +12,16 @@
 //! row U8 of section 11. Rulings D-M5-2, D-M5-3, D-M5-4 and D-M5-7 of
 //! `docs/plans/M5.md` are binding.
 //!
+//! # The three outcomes (D-F2)
+//!
+//! [`deterministic_grade`] gives one of three outcomes. `correct` and `incorrect`
+//! are the two decided ones, and `correct: bool` still spells them. The third is
+//! UNGRADED: the checker had no verdict, so the reply names the reason, claims no
+//! correctness, reveals no solution, and hands back the NEXT task. The fold
+//! ignores an ungraded attempt, the lesson does not advance on one, and the A4
+//! diagnosis never fires for one (D-F4). EVERY answer kind reaches this path; a
+//! `proof` takes [`PROOF_UNGRADED`] with no checker call.
+//!
 //! # The steps, in one transaction
 //!
 //! The advisory lock, the state read, the validate, the timing, the check, the
@@ -87,9 +97,10 @@ use cadus_core::answer::check::{Outcome, check};
 use cadus_core::config::Config;
 use cadus_core::curriculum::{AnswerKind, Curriculum};
 use cadus_core::event::{
-    Attempt, AttemptProblem, Event, LessonResult, RemediationTriggered, SchemaVersion, Secs, Slug,
-    TaskType, Timestamp, WorkQuality,
+    Attempt, AttemptOutcome, AttemptProblem, Event, LessonResult, RemediationTriggered,
+    SchemaVersion, Secs, Slug, TaskType, Timestamp, WorkQuality,
 };
+use cadus_core::learner::problem_text_hash;
 use cadus_core::projector::{kp_failed, kp_passed};
 use cadus_core::selector::{
     REMEDIATION_LESSON_FAIL, REMEDIATION_REPEAT_FAIL, Task, remediation_for_repeat_fail,
@@ -125,18 +136,18 @@ use reply::*;
 pub use route::answer;
 use submission::*;
 use verdict::round2;
-pub use verdict::{deterministic_grade, measure_secs, reference_assisted};
+pub use verdict::{deterministic_grade, measure_secs, reference_assisted, ungraded_grade};
 
 /// The code of an answer or a work field over its cap (`api.py:1292-1293`).
 pub const ANSWER_TOO_LARGE: &str = "answer_too_large";
 
-/// The code of an answer whose kind the checker never decides.
+/// The reason a `proof` answer carries no deterministic verdict (V2, D-F1).
 ///
-/// Spec section 5.1: a `multi-step` or a `proof` answer gets NO synchronous
-/// verdict. V2 keeps both kinds out of the serving pool, so this refusal guards
-/// a state the M5 routes cannot reach. It exists so that no path can fabricate a
-/// `correct` the checker did not decide (C4), and it enqueues nothing.
-pub const UNDECIDABLE_KIND: &str = "undecidable_kind";
+/// No checker decides a proof, so the grade path spends no work on one: it names
+/// this reason and records the UNGRADED outcome. The route no longer refuses the
+/// kind with a `409`, because a refusal left the learner with no outcome at all
+/// (audit 3a).
+pub const PROOF_UNGRADED: &str = "no deterministic verdict for a proof";
 
 /// The task is open and the learner owes it more problems.
 pub const STATUS_CONTINUE: &str = "continue";
@@ -205,7 +216,12 @@ pub(crate) fn route_input<'a>(
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Grade {
     /// Whether the answer is the authored answer (C4).
+    ///
+    /// It equals `outcome == AttemptOutcome::Correct`.
     pub correct: bool,
+    /// The graded outcome (D-F2). An answer with no deterministic verdict is
+    /// `Ungraded`, and an ungraded attempt is NOT a miss.
+    pub outcome: AttemptOutcome,
     /// The work-quality tier (D-M5-2).
     pub work_quality: WorkQuality,
     /// The error tags the SERVER observed (D-M5-4). The diagnosis of unit U9
