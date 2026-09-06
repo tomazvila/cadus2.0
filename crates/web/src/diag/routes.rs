@@ -239,7 +239,7 @@ fn answer_event(
         problem: Some(AttemptProblem {
             text: served.text.clone(),
             expected: served.expected.answer.clone(),
-            answer_contract: served.expected.answer_contract,
+            answer_contract: served.expected.answer_contract.clone().map(Box::new),
         }),
         secs: Secs::new(marked.secs).unwrap_or_default(),
         weight: Weight::new(marked.weight).unwrap_or_default(),
