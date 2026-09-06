@@ -1,7 +1,10 @@
 //! Per-item acceptance rules (D-F1, C4, D6).
 
 mod evaluate;
+mod form;
+mod list;
 mod structured;
+mod union;
 
 use serde::{Deserialize, Serialize};
 
@@ -9,6 +12,7 @@ use super::{Canon, MAX_ANSWER_CHARS, Quantity, Undecidable, canonical_form};
 use structured::{label_value, multipart_values, tolerance_value, validate_shape};
 
 pub use evaluate::check_contract;
+pub use form::NumericForm;
 
 /// A reviewed item's answer policy. Absence retains the historical policy.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -33,6 +37,15 @@ pub enum AnswerContract {
     Coordinates { arity: u8 },
     /// An unordered set; order and repeated members have no effect.
     Set,
+    /// An authored numeric notation requirement.
+    RequiredForm { form: NumericForm },
+    /// A bounded homogeneous list; unordered lists retain repeated members.
+    List {
+        ordered: bool,
+        member: Box<AnswerContract>,
+    },
+    /// An exact union of rational intervals over one named unknown.
+    InequalityUnion,
     /// A closed choice vocabulary, with explicit aliases per option.
     Label { options: Vec<Vec<String>> },
     /// Named parts, each with its own deterministic policy.
@@ -68,6 +81,14 @@ enum ContractDoc {
         arity: u8,
     },
     Set {},
+    RequiredForm {
+        form: NumericForm,
+    },
+    List {
+        ordered: bool,
+        member: Box<AnswerContract>,
+    },
+    InequalityUnion {},
     Label {
         options: Vec<Vec<String>>,
     },
@@ -100,6 +121,9 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::QuotientRemainder { divisor } => Self::QuotientRemainder { divisor },
             ContractDoc::Coordinates { arity } => Self::Coordinates { arity },
             ContractDoc::Set {} => Self::Set,
+            ContractDoc::RequiredForm { form } => Self::RequiredForm { form },
+            ContractDoc::List { ordered, member } => Self::List { ordered, member },
+            ContractDoc::InequalityUnion {} => Self::InequalityUnion,
             ContractDoc::Label { options } => Self::Label { options },
             ContractDoc::Multipart { parts } => Self::Multipart { parts },
             ContractDoc::None {} => Self::None,
@@ -129,6 +153,7 @@ impl AnswerContract {
                     "the contract unit does not match its quantity",
                 )),
             },
+            Self::List { ordered, member } => list::validate(*ordered, member),
             Self::Label { options } => structured::validate_labels(options),
             Self::Multipart { parts } => structured::validate_parts(parts),
             _ => Ok(()),
@@ -147,6 +172,11 @@ impl AnswerContract {
                 Undecidable::new("the authored answer is outside the choice vocabulary")
             }),
             Self::Multipart { parts } => multipart_values(parts, expected),
+            Self::List { ordered, member } => list::expected(*ordered, member, expected),
+            Self::InequalityUnion => union::read(expected),
+            Self::RequiredForm { form } if !form::accepts(*form, expected) => Err(
+                Undecidable::new("the authored answer does not match its required numeric form"),
+            ),
             _ => {
                 let value = canonical_form(expected)?;
                 if validate_shape(self, &value) {

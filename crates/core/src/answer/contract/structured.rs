@@ -23,7 +23,9 @@ pub(super) fn tolerance_value(text: &str) -> Result<BigRational, Undecidable> {
 pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
     match contract {
         AnswerContract::Approx { .. } => number(value),
-        AnswerContract::Tolerance { .. } => matches!(value, Canon::Rational(_)),
+        AnswerContract::Tolerance { .. } | AnswerContract::RequiredForm { .. } => {
+            matches!(value, Canon::Rational(_))
+        }
         AnswerContract::Unit { quantity, .. } => {
             matches!(value, Canon::Quantity { quantity: actual, .. } if actual == quantity)
         }

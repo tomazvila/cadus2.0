@@ -33,11 +33,11 @@ The Foundations loader now finds 1,393 grammar-decidable exemplar answers out of
 
 The original 3,492-answer oracle corpus stays at 3,257 parsed and 235 refused. Its historical fixtures require no change.
 
-`foundations-contract-candidates.jsonl` is a review snapshot of all 1,695 exemplars at this milestone. It records the problem, answer, identity, existing policy, candidate policy, and review reason. Every row has `automatic_approval: false`. Of the 1,587 items without an explicit policy:
+`foundations-contract-candidates.jsonl` is a review snapshot of all 1,695 exemplars at this milestone. It records the problem, answer, identity, existing policy, candidate policy, and review reason. Every row has `automatic_approval: false`. After the continuation in `answer-contract-forms-2026-09-06.md`, 216 items have explicit policies. Of the 1,479 items without an explicit policy:
 
 | Review category | Items |
 |---|---:|
-| Exactness and required form | 1,211 |
+| Exactness and required form | 1,103 |
 | Vocabulary or grammar | 294 |
 | Authored precision | 33 |
 | Unit policy | 33 |
@@ -53,8 +53,8 @@ The exporter leaves approximation prompts for explicit precision review. Its key
 - Formatting, the source line limit, duplicate detection, unused public-item checks, and function complexity checks passed. The full coverage/release gate is separate.
 
 ## Remaining scope
-- Review and annotate the remaining 1,587 Foundations exemplar policies. Inferred candidates require a content decision.
-- Add required-form policies, general list contracts, and nonfinite inequality unions where content requires them.
+- Review and annotate the remaining 1,479 Foundations exemplar policies. Inferred candidates require a content decision.
+- The continuation adds numeric required forms, flat list contracts, and rational inequality unions. Algebraic required forms and broader interval bounds remain.
 - Add template expression support for arbitrary choice and multipart text; the current symbolic template compiler still rejects these forms.
 - Add per-step API/UI feedback for multipart/integrated tasks. This milestone returns one aggregate verdict.
 - Unit conversions produce a mathematically correct result; this milestone adds no converted-unit notation message.

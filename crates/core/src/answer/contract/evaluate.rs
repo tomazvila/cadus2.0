@@ -29,13 +29,24 @@ fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract)
             return decided(label_value(options, learner).as_ref() == Some(expected));
         }
         AnswerContract::Multipart { parts } => return multipart(parts, text, learner),
+        AnswerContract::List { ordered, member } => {
+            return super::list::grade(*ordered, member, text, learner);
+        }
+        AnswerContract::InequalityUnion => {
+            return match super::union::read(learner) {
+                Ok(value) => decided(&value == expected),
+                Err(reason) => Outcome::Undecidable(reason),
+            };
+        }
+
         _ => {}
     }
+    let required_form = !matches!(contract, AnswerContract::RequiredForm { form } if !super::form::accepts(*form, learner));
     let learner = match canonical_form(learner) {
         Ok(value) => value,
         Err(reason) => return Outcome::Undecidable(reason),
     };
-    if !validate_shape(contract, &learner) {
+    if !required_form || !validate_shape(contract, &learner) {
         return decided(false);
     }
     match contract {

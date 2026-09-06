@@ -89,7 +89,7 @@ fn all_foundations_exemplars_have_an_explicit_review_record() {
         rows.iter()
             .filter(|row| !row["existing_contract"].is_null())
             .count(),
-        108
+        216
     );
     assert!(
         rows.iter()
