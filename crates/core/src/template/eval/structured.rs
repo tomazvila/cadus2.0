@@ -52,12 +52,54 @@ pub(super) fn label_answer(
                 "composite"
             }
         }
+        ("linearclass", [Ast::Tuple(left), Ast::Tuple(right)])
+            if left.len() == 2 && right.len() == 2 =>
+        {
+            linear_class(&left[0], &left[1], &right[0], &right[1], bindings)?
+        }
         _ => return answer(ast, bindings),
     };
     contracted(text.to_owned(), contract)
 }
 
+fn linear_class(
+    left_coefficient: &Ast,
+    left_constant: &Ast,
+    right_coefficient: &Ast,
+    right_constant: &Ast,
+    bindings: &Bindings,
+) -> Result<&'static str, EvalError> {
+    let left_coefficient = bounded_integer(left_coefficient, bindings, "linearclass")?;
+    let left_constant = bounded_integer(left_constant, bindings, "linearclass")?;
+    let right_coefficient = bounded_integer(right_coefficient, bindings, "linearclass")?;
+    let right_constant = bounded_integer(right_constant, bindings, "linearclass")?;
+    Ok(if left_coefficient != right_coefficient {
+        "one solution"
+    } else if left_constant == right_constant {
+        "all real numbers"
+    } else {
+        "no solution"
+    })
+}
+
 const MAX_LABEL_INTEGER: u32 = 1_000_000;
+
+fn bounded_integer(ast: &Ast, bindings: &Bindings, func: &'static str) -> Result<i64, EvalError> {
+    let value = answer(ast, bindings)?;
+    let Canon::Rational(value) = value.canon else {
+        return Err(EvalError::NotWhole { func });
+    };
+    value
+        .to_integer()
+        .to_i64()
+        .filter(|integer| {
+            value.is_integer() && integer.unsigned_abs() <= u64::from(MAX_LABEL_INTEGER)
+        })
+        .ok_or_else(|| EvalError::Domain {
+            func,
+            value: value.to_string(),
+        })
+}
 
 fn bounded_whole(ast: &Ast, bindings: &Bindings, func: &'static str) -> Result<u32, EvalError> {
     let value = answer(ast, bindings)?;

@@ -57,10 +57,9 @@ pub use write::write;
 /// The evaluation-only functions and the argument count each one takes.
 ///
 /// `abs` and `sqrt` are in the M2 grammar already. The others are not, and
-/// [`parse_with_functions`] admits them for this one purpose. Every one of them
-/// is erased before the answer string exists. `signcase(x, [a, b, c])` selects
-/// the negative, zero, or positive branch without admitting general predicates.
-pub const EVAL_FUNCTIONS: [(&str, usize); 23] = [
+/// [`parse_with_functions`] admits them for this one purpose and erases them
+/// before the answer string exists.
+pub const EVAL_FUNCTIONS: [(&str, usize); 24] = [
     ("abs", 1),
     ("sqrt", 1),
     ("gcd", 2),
@@ -79,6 +78,7 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 23] = [
     ("quotientremainder", 2),
     ("divisibilitylabel", 2),
     ("equalitylabel", 2),
+    ("linearclass", 2),
     ("primeclass", 1),
     ("factorlist", 1),
     ("firstmultiples", 2),
@@ -87,7 +87,7 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 23] = [
 ];
 
 /// The function names [`parse_with_functions`] admits beyond the M2 grammar.
-pub const EXTRA_FUNCTIONS: [&str; 22] = [
+pub const EXTRA_FUNCTIONS: [&str; 23] = [
     "gcd",
     "lcm",
     "floor",
@@ -105,6 +105,7 @@ pub const EXTRA_FUNCTIONS: [&str; 22] = [
     "quotientremainder",
     "divisibilitylabel",
     "equalitylabel",
+    "linearclass",
     "primeclass",
     "factorlist",
     "firstmultiples",

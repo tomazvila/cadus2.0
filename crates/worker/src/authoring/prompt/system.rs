@@ -33,7 +33,7 @@ rest. Never write a decimal approximation of an exact value.
 
 STRUCTURED ANSWERS: when the exemplars do not share one reviewed answer contract, include the \
 deterministic 'answer_contract' the pending template needs. For a closed label, use a text choice \
-parameter as answer_expr, equalitylabel(left, right) for exact equality, divisibilitylabel(number, divisor) for yes/no divisibility, or \
+parameter as answer_expr, equalitylabel(left, right) for exact equality, divisibilitylabel(number, divisor) for yes/no divisibility, linearclass((a,b),(c,d)) for the solution-count class of ax+b=cx+d, or \
 primeclass(number) for prime/composite/neither. For a quotient-and-remainder contract, write \
 quotientremainder(quotient, remainder). To preserve an unevaluated exact power, use \
 powerform(coefficient, [base, exponent]). For an ordered exact list, use factorlist(number), \

@@ -171,7 +171,7 @@ fn template_schema() -> Value {
                     "The answer as an exact expression over the parameter names. The SERVER \
     computes every instance's answer from it, so it is exact over the whole domain. For a label \
     contract, use one text-valued choice parameter, equalitylabel(left, right), divisibilitylabel(number, divisor), \
-    or primeclass(number). For a quotient-and-remainder contract, use \
+    linearclass((a, b), (c, d)) for the solution-count class of ax+b=cx+d, or primeclass(number). For a quotient-and-remainder contract, use \
     quotientremainder(quotient, remainder). To preserve an unevaluated exact power, use \
     powerform(coefficient, [base, exponent]). For an ordered exact-list contract, use \
     factorlist(number), firstmultiples(number, count), primefactors(number), or \
