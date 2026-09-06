@@ -30,6 +30,14 @@ topics:
           - problem: 'State the degree of $5x^2 - 2x^4 + 1$.'
             answer: "4"
             solution_sketch: 'The highest power present is $x^4$.'
+          - problem: 'State the degree and leading coefficient of $6x^5 - 3x^2 + x$.'
+            answer: "degree = 5; leading_coefficient = 6"
+            answer_contract: {kind: multipart, parts: [{name: degree, contract: {kind: exact}}, {name: leading_coefficient, contract: {kind: exact}}]}
+            solution_sketch: 'The highest power present is $x^5$, with coefficient $6$.'
+          - problem: 'State the degree and leading coefficient of $-2x^4 + 7x^3 - 1$.'
+            answer: "degree = 4; leading_coefficient = -2"
+            answer_contract: {kind: multipart, parts: [{name: degree, contract: {kind: exact}}, {name: leading_coefficient, contract: {kind: exact}}]}
+            solution_sketch: 'The highest power present is $x^4$, with coefficient $-2$.'
         constraints: "degree <= 5; integer coefficients"
       - id: kp2
         name: Classify by number of terms
@@ -43,6 +51,14 @@ topics:
             answer: "trinomial"
             answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
             solution_sketch: 'Three terms separated by addition make a trinomial.'
+          - problem: 'Classify $7x^4$ as a monomial, binomial, or trinomial.'
+            answer: "monomial"
+            answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
+            solution_sketch: 'A single term with no addition or subtraction is a monomial.'
+          - problem: 'Classify $x^2 - 5x + 6$ as a monomial, binomial, or trinomial.'
+            answer: "trinomial"
+            answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
+            solution_sketch: 'Three terms separated by addition or subtraction make a trinomial.'
         constraints: "one to three terms"
       - id: kp3
         name: Write polynomials in standard form
@@ -50,9 +66,16 @@ topics:
         exemplars:
           - problem: 'Write $3 - x^2 + 5x$ in standard form.'
             answer: "-x^2 + 5x + 3"
+            solution_sketch: 'Descending order is $-x^2 + 5x + 3$; no like terms to combine.'
           - problem: 'Simplify and write in standard form: $2x + x^3 + 4x - 1$.'
             answer: "x^3 + 6x - 1"
             solution_sketch: 'Combine $2x + 4x$; order by descending degree.'
+          - problem: 'Write $4x^2 - 7 + x^2 + 3x$ in standard form.'
+            answer: "5x^2 + 3x - 7"
+            solution_sketch: 'Combine $4x^2 + x^2 = 5x^2$; order by descending degree.'
+          - problem: 'Simplify and write in standard form: $5 - x^3 + 2x - 3x^3$.'
+            answer: "-4x^3 + 2x + 5"
+            solution_sketch: 'Combine $-x^3 - 3x^3 = -4x^3$; order by descending degree.'
         constraints: "descending powers; combine like terms first"
     diagnostic_exemplar:
       problem: 'State the degree and leading coefficient of $7 + 2x - 5x^3$.'
@@ -94,6 +117,12 @@ topics:
           - problem: 'Evaluate $2x^3 - x$ at $x = 3$.'
             answer: "51"
             solution_sketch: '$54 - 3 = 51$.'
+          - problem: 'Evaluate $x^2 - 5x + 4$ at $x = 3$.'
+            answer: "-2"
+            solution_sketch: '$9 - 15 + 4 = -2$.'
+          - problem: 'Evaluate $3x^2 + x - 1$ at $x = 4$.'
+            answer: "51"
+            solution_sketch: '$48 + 4 - 1 = 51$.'
         constraints: "degree <= 3; small positive inputs"
       - id: kp2
         name: Evaluate at negative inputs
@@ -105,6 +134,12 @@ topics:
           - problem: 'Evaluate $-x^2 + 5$ at $x = -3$.'
             answer: "-4"
             solution_sketch: '$-(9) + 5 = -4$.'
+          - problem: 'Evaluate $x^2 + 3x - 5$ at $x = -4$.'
+            answer: "-1"
+            solution_sketch: '$(-4)^2 = 16$; $16 - 12 - 5 = -1$.'
+          - problem: 'Evaluate $-2x^2 + 3$ at $x = -2$.'
+            answer: "-5"
+            solution_sketch: '$-2(4) + 3 = -5$.'
         constraints: "watch (-a)^2 vs -a^2"
       - id: kp3
         name: Evaluate formula-style polynomials
@@ -115,6 +150,13 @@ topics:
             solution_sketch: '$-5 + 20 = 15$.'
           - problem: 'For $P = n^2 + 3n$, find $P$ at $n = 5$.'
             answer: "40"
+            solution_sketch: '$25 + 15 = 40$.'
+          - problem: 'The area of a square garden in square metres is $A = s^2$. Find $A$ at $s = 6$.'
+            answer: "6"
+            solution_sketch: '$6^2 = 36$.'
+          - problem: 'For $C = 2n^2 - n$, find $C$ at $n = 4$.'
+            answer: "28"
+            solution_sketch: '$2(16) - 4 = 28$.'
         constraints: "single substitution; clean integer outputs"
     diagnostic_exemplar:
       problem: 'Evaluate $x^2 - 2x + 3$ at $x = -1$.'
@@ -342,6 +384,13 @@ topics:
             solution_sketch: '$6x^2 + 15x - 4x - 10$.'
           - problem: 'Expand $(2x - 3)(2x - 1)$.'
             answer: "4x^2 - 8x + 3"
+            solution_sketch: '$4x^2 - 2x - 6x + 3 = 4x^2 - 8x + 3$.'
+          - problem: 'Expand $(3x + 4)(2x - 1)$.'
+            answer: "6x^2 + 5x - 4"
+            solution_sketch: '$6x^2 - 3x + 8x - 4 = 6x^2 + 5x - 4$.'
+          - problem: 'Expand $(2x - 5)(3x + 2)$.'
+            answer: "6x^2 - 11x - 10"
+            solution_sketch: '$6x^2 + 4x - 15x - 10 = 6x^2 - 11x - 10$.'
         constraints: "small coefficients; all four sign patterns"
     diagnostic_exemplar:
       problem: 'Expand $(2x + 3)(3x - 4)$.'
@@ -380,6 +429,13 @@ topics:
             solution_sketch: '$x(x^2 - 3x + 1) + 2(x^2 - 3x + 1)$, then combine.'
           - problem: 'Expand $(2x - 1)(x^2 + x - 3)$.'
             answer: "2x^3 + x^2 - 7x + 3"
+            solution_sketch: '$2x(x^2 + x - 3) - 1(x^2 + x - 3)$, then combine.'
+          - problem: 'Expand $(x - 3)(x^2 + 2x + 4)$.'
+            answer: "x^3 - x^2 - 2x - 12"
+            solution_sketch: '$x(x^2 + 2x + 4) - 3(x^2 + 2x + 4)$, then combine.'
+          - problem: 'Expand $(x + 4)(x^2 - x + 2)$.'
+            answer: "x^3 + 3x^2 - 2x + 8"
+            solution_sketch: '$x(x^2 - x + 2) + 4(x^2 - x + 2)$, then combine.'
         constraints: "six products, then combine like terms"
       - id: kp2
         name: Products of three factors
@@ -391,6 +447,12 @@ topics:
           - problem: 'Expand $x(x - 2)(x + 5)$.'
             answer: "x^3 + 3x^2 - 10x"
             solution_sketch: '$(x-2)(x+5) = x^2 + 3x - 10$; distribute $x$.'
+          - problem: 'Expand $(x + 2)(x - 3)(x + 1)$.'
+            answer: "x^3 - 7x - 6"
+            solution_sketch: '$(x+2)(x-3) = x^2 - x - 6$; multiply by $(x+1)$.'
+          - problem: 'Expand $x(x + 3)(x - 4)$.'
+            answer: "x^3 - x^2 - 12x"
+            solution_sketch: '$(x+3)(x-4) = x^2 - x - 12$; distribute $x$.'
         constraints: "multiply two factors first, then the third"
       - id: kp3
         name: Larger products with many like terms
@@ -401,6 +463,13 @@ topics:
             solution_sketch: 'Nine products; the $x^2$ terms cancel: $3 - 2 - 1 = 0$.'
           - problem: 'Expand $(x^2 + x + 1)(x^2 - x + 1)$.'
             answer: "x^4 + x^2 + 1"
+            solution_sketch: 'Nine products; the odd-degree terms cancel.'
+          - problem: 'Expand $(x^2 - x + 2)(x^2 + x - 1)$.'
+            answer: "x^4 + 3x - 2"
+            solution_sketch: 'Nine products; combine the like powers carefully.'
+          - problem: 'Expand $(x^2 + 3x - 2)(x^2 - 2x + 1)$.'
+            answer: "x^4 + x^3 - 7x^2 + 7x - 2"
+            solution_sketch: 'Nine products; combine the like powers carefully.'
         constraints: "trinomial times trinomial; watch cancellation"
     diagnostic_exemplar:
       problem: 'Expand $(x + 3)(x^2 - 2x + 4)$.'
@@ -671,6 +740,12 @@ topics:
           - problem: 'Use synthetic division to divide $x^3 - 6x^2 + 11x - 6$ by $x - 1$.'
             answer: "x^2 - 5x + 6"
             solution_sketch: '$c = 1$; $1, -5, 6, 0$.'
+          - problem: 'Use synthetic division to divide $x^2 - x - 6$ by $x - 3$.'
+            answer: "x + 2"
+            solution_sketch: '$c = 3$; row $1, -1, -6$ gives $1, 2, 0$.'
+          - problem: 'Use synthetic division to divide $x^3 - 3x^2 - 4x + 12$ by $x - 2$.'
+            answer: "x^2 - x - 6"
+            solution_sketch: '$c = 2$; row $1, -3, -4, 12$ gives $1, -1, -6, 0$.'
         constraints: "linear divisor with leading coefficient 1; remainder 0"
       - id: kp2
         name: Read off the remainder
@@ -682,6 +757,12 @@ topics:
           - problem: 'Use synthetic division to divide $2x^3 - 3x + 1$ by $x - 2$. Give quotient and remainder.'
             answer: "2x^2 + 4x + 5 remainder 11"
             solution_sketch: 'Insert $0$ for the missing $x^2$: $2, 4, 5, 11$.'
+          - problem: 'Use synthetic division to divide $x^2 + x + 4$ by $x - 1$. Give quotient and remainder.'
+            answer: "x + 2 remainder 6"
+            solution_sketch: '$c = 1$; row $1, 1, 4$ gives $1, 2, 6$.'
+          - problem: 'Use synthetic division to divide $2x^3 - x + 5$ by $x - 1$. Give quotient and remainder.'
+            answer: "2x^2 + 2x + 1 remainder 6"
+            solution_sketch: 'Insert $0$ for the missing $x^2$: $2, 2, 1, 6$.'
         constraints: "include 0 placeholders for missing powers"
       - id: kp3
         name: The remainder theorem
@@ -693,6 +774,12 @@ topics:
           - problem: 'Without dividing, find the remainder when $x^3 - 2x^2 + x - 5$ is divided by $x - 2$.'
             answer: "-3"
             solution_sketch: '$p(2) = 8 - 8 + 2 - 5 = -3$.'
+          - problem: 'Without dividing, find the remainder when $x^2 + 3x - 1$ is divided by $x - 2$.'
+            answer: "9"
+            solution_sketch: '$p(2) = 4 + 6 - 1 = 9$.'
+          - problem: 'Without dividing, find the remainder when $x^3 + x^2 - 5$ is divided by $x - 1$.'
+            answer: "-3"
+            solution_sketch: '$p(1) = 1 + 1 - 5 = -3$.'
         constraints: "remainder on division by x - c equals p(c)"
     diagnostic_exemplar:
       problem: 'Use synthetic division to divide $x^3 - 4x + 6$ by $x + 2$. Give quotient and remainder.'
@@ -1812,6 +1899,13 @@ topics:
             solution_sketch: '$3^2 - 4(1)(2) = 9 - 8 = 1$.'
           - problem: 'Find the discriminant of $2x^2 - 4x + 5$.'
             answer: "-24"
+            solution_sketch: '$(-4)^2 - 4(2)(5) = 16 - 40 = -24$.'
+          - problem: 'Find the discriminant of $x^2 - 6x + 5$.'
+            answer: "16"
+            solution_sketch: '$(-6)^2 - 4(1)(5) = 36 - 20 = 16$.'
+          - problem: 'Find the discriminant of $3x^2 + 5x + 1$.'
+            answer: "13"
+            solution_sketch: '$5^2 - 4(3)(1) = 25 - 12 = 13$.'
         constraints: 'integer a, b, c with coefficients at most 6 in size; answer is the signed value of b^2 - 4ac'
       - id: kp2
         name: Determine the number and nature of real roots
@@ -1826,6 +1920,9 @@ topics:
           - problem: 'How many real solutions does $x^2 - 5x + 2 = 0$ have?'
             answer: "2"
             solution_sketch: 'disc $= 25 - 8 = 17 > 0$: two distinct real roots.'
+          - problem: 'How many real solutions does $2x^2 - 3x + 5 = 0$ have?'
+            answer: "0"
+            solution_sketch: 'disc $= 9 - 40 = -31 < 0$: no real roots.'
         constraints: 'answer is the count 0, 1, or 2; cover all three cases across problems'
     diagnostic_exemplar:
       problem: 'How many real solutions does $2x^2 + 3x + 4 = 0$ have? Use the discriminant.'
@@ -1859,9 +1956,20 @@ topics:
         exemplars:
           - problem: 'Give the vertex of $y = (x - 3)^2 + 4$.'
             answer: "(3, 4)"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Vertex form gives $h = 3$, $k = 4$ directly.'
           - problem: 'Give the vertex of $y = (x + 2)^2 - 5$.'
             answer: "(-2, -5)"
+            answer_contract: {kind: exact}
             solution_sketch: '$x + 2 = x - (-2)$, so $h = -2$.'
+          - problem: 'Give the vertex of $y = (x - 5)^2 - 2$.'
+            answer: "(5, -2)"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Vertex form gives $h = 5$, $k = -2$.'
+          - problem: 'Give the vertex of $y = (x + 6)^2 + 1$.'
+            answer: "(-6, 1)"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x + 6 = x - (-6)$, so $h = -6$.'
         constraints: "y = a(x - h)^2 + k; watch the sign of h"
       - id: kp2
         name: Opening direction and max/min value
@@ -1874,6 +1982,15 @@ topics:
           - problem: 'Does $y = (x + 4)^2 - 1$ open upward or downward, and what is its maximum or minimum value?'
             answer: "direction = upward; extreme_value = -1"
             answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: extreme_value, contract: {kind: exact}}]}
+            solution_sketch: '$a = 1 > 0$; the vertex $y$-value is the min.'
+          - problem: 'Does $y = 3(x - 2)^2 - 4$ open upward or downward, and what is its maximum or minimum value?'
+            answer: "direction = upward; extreme_value = -4"
+            answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: extreme_value, contract: {kind: exact}}]}
+            solution_sketch: '$a = 3 > 0$; the vertex $y$-value is the min.'
+          - problem: 'Does $y = -(x + 5)^2 + 2$ open upward or downward, and what is its maximum or minimum value?'
+            answer: "direction = downward; extreme_value = 2"
+            answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: extreme_value, contract: {kind: exact}}]}
+            solution_sketch: '$a = -1 < 0$; the vertex $y$-value is the max.'
         constraints: "sign of a decides direction; k is the extreme value"
       - id: kp3
         visuals: [{"kind":"curve","x_min":"-4","x_max":"6","y_min":"-6","y_max":"6","x_tick":"1","y_tick":"1","curve":{"family":"polynomial","coefficients":["-3","-2","1"]},"key_points":[{"x":"1","y":"-4","label":"vertex"},{"x":"-1","y":"0"},{"x":"3","y":"0"},{"x":"0","y":"-3"}],"asymptotes":[],"caption":"Reference example: y = x² - 2x - 3 has vertex (1,-4), axis of symmetry x = 1, and intercepts (-1,0), (3,0), (0,-3)."}]
@@ -1886,7 +2003,16 @@ topics:
             solution_sketch: 'Axis through the vertex; $(0-2)^2 - 1 = 3$.'
           - problem: 'For $y = -(x + 1)^2 + 4$, find $y$ at $x = 1$.'
             answer: "0"
+            answer_contract: {kind: exact}
             solution_sketch: '$-(2)^2 + 4 = 0$.'
+          - problem: 'For $y = (x - 1)^2 + 2$, give the axis of symmetry and the $y$-value at $x = 3$.'
+            answer: "x = 1; y = 6"
+            answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
+            solution_sketch: 'Axis through the vertex; $(3-1)^2 + 2 = 6$.'
+          - problem: 'For $y = -(x - 2)^2 + 5$, find $y$ at $x = 4$.'
+            answer: "1"
+            answer_contract: {kind: exact}
+            solution_sketch: '$-(2)^2 + 5 = 1$.'
         constraints: "evaluate one or two points besides the vertex"
     diagnostic_exemplar:
       problem: 'Does $y = -3(x + 2)^2 + 5$ open upward or downward, and what is its maximum or minimum value?'
