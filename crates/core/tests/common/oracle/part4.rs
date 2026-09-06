@@ -263,6 +263,7 @@ pub fn holds_a_denominator_or_a_radical(ast: &Ast) -> bool {
         Ast::Pow(base, exponent) => *exponent < 0 || holds_a_denominator_or_a_radical(base),
         // A rational exponent is a root (D-F3).
         Ast::RationalPow { .. } => true,
+        Ast::Quantity { value, .. } => holds_a_denominator_or_a_radical(value),
         Ast::Integer(_) | Ast::Decimal { .. } | Ast::Var(_) | Ast::Const(_) => false,
         Ast::Neg(inner) => holds_a_denominator_or_a_radical(inner),
         Ast::Add(items) | Ast::Mul(items) | Ast::Func(_, items) => {
@@ -304,7 +305,9 @@ pub fn holds_a_mixed_number(ast: &Ast) -> bool {
     match ast {
         Ast::Mixed { .. } => true,
         Ast::Neg(inner) | Ast::Sqrt(inner) | Ast::Pow(inner, _) => holds_a_mixed_number(inner),
-        Ast::RationalPow { base, .. } => holds_a_mixed_number(base),
+        Ast::RationalPow { base: inner, .. } | Ast::Quantity { value: inner, .. } => {
+            holds_a_mixed_number(inner)
+        }
         Ast::Add(items)
         | Ast::Mul(items)
         | Ast::Func(_, items)

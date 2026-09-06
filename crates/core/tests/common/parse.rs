@@ -132,12 +132,14 @@ pub fn value(text: &str) -> Canon {
 ///   `expression_symbolic` rows (`x^(1/2)`, `(5/2)x^(3/2)`) and one
 ///   `expression_numeric` row (`3 + 3*2^(1/3)`), so the two buckets hold 646
 ///   and 229. The quotient-and-remainder production reads all 16
-///   `quotient_remainder` rows (`9 R2`, `x + 2 remainder 3`).
+///   `quotient_remainder` rows (`9 R2`, `x + 2 remainder 3`). The
+///   value-with-unit production refuses `cos 70°`, a unit inside an
+///   expression, so `expression_numeric` holds 228 and 5.
 pub const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("comma_list", 28, 15),
     ("decimal", 128, 0),
     ("equation", 1, 0),
-    ("expression_numeric", 229, 4),
+    ("expression_numeric", 228, 5),
     ("expression_symbolic", 646, 40),
     ("fraction", 350, 2),
     ("integer", 1622, 0),

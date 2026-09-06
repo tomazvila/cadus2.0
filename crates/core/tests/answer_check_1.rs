@@ -56,7 +56,6 @@ fn spec_6_1_unicode_maths_is_parseable() {
         ("2π", "2*pi", N, true),
         ("x²+1", "x**2+1", E, true),
         ("½", "1/2", N, true),
-        ("30°", "30", N, true),
         ("15*sqrt(3)", "15√3", E, true),
         ("pi/6", "π/6", N, true),
         ("15√3", "15*sqrt(2)", E, false),
@@ -64,6 +63,11 @@ fn spec_6_1_unicode_maths_is_parseable() {
         ("x²+1", "x**3+1", E, false),
         ("√2", "2", N, false),
     ]);
+    // `30°` against `30` was correct here while the lexer deleted the degree
+    // sign. The value-with-unit production of D-F3 (unit f2-grammar) reads
+    // `30°` as a quantity, so the bare number gets no verdict until the
+    // contract of D-F1 decides it; `answer_unit.rs` pins the production.
+    assert_undecidable("30°", "30", N, "a unit is missing");
 }
 
 #[test]

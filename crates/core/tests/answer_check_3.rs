@@ -398,11 +398,12 @@ fn every_answer_the_grammar_accepts_also_canonicalizes() {
     }
     // FIXM2a pinned 265 answers as outside the grammar. The rational-exponent
     // production of D-F3 (unit f2-grammar) reads 15 of them and the
-    // quotient-and-remainder production reads 16 (`recovered_2_0.jsonl`), so
-    // 3,492 - 234 = 3,258 answers parse. Every one of them canonicalizes.
+    // quotient-and-remainder production reads 16 (`recovered_2_0.jsonl`), and
+    // the value-with-unit production refuses `cos 70°`, so 3,492 - 235 = 3,257
+    // answers parse. Every one of them canonicalizes.
     assert_eq!(
         canonical,
-        3_258,
+        3_257,
         "the first refusals are {:?}",
         refused.iter().take(5).collect::<Vec<_>>()
     );

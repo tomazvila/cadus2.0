@@ -117,6 +117,7 @@ use num_traits::Zero;
 
 use super::Undecidable;
 use super::ast::Ast;
+use super::unit::Quantity;
 
 /// The largest count of terms one canonical sum holds.
 const MAX_TERMS: usize = 512;
@@ -264,6 +265,17 @@ pub enum Canon {
         hi: Option<Box<Canon>>,
         /// True when the upper end belongs to the range. False when `hi` is `None`.
         hi_closed: bool,
+    },
+    /// A number with a unit, scaled into the base unit of its kind (D-F3).
+    ///
+    /// `1 m` and `100 cm` are one value: both are 100 of the base unit of
+    /// [`Quantity::Length`]. Two kinds are two answers. `check` owns the rule
+    /// that a unit on one side alone gives no verdict.
+    Quantity {
+        /// The kind the unit measures.
+        quantity: Quantity,
+        /// The value in the base unit. A rational or a radical.
+        value: Box<Canon>,
     },
     /// A value with the label of the unknown it answers for.
     ///

@@ -61,9 +61,9 @@ fn holds_an_evaluation_only_name(node: &Ast) -> bool {
             hi: right,
             ..
         } => holds_an_evaluation_only_name(left) || holds_an_evaluation_only_name(right),
-        Ast::Ineq { bound: inner, .. } | Ast::Assign { value: inner, .. } => {
-            holds_an_evaluation_only_name(inner)
-        }
+        Ast::Ineq { bound: inner, .. }
+        | Ast::Assign { value: inner, .. }
+        | Ast::Quantity { value: inner, .. } => holds_an_evaluation_only_name(inner),
         Ast::Integer(_)
         | Ast::Decimal { .. }
         | Ast::Fraction { .. }
@@ -105,7 +105,9 @@ enum Prec {
 /// name, a function call, a root, a collection — is atomic.
 fn level(node: &Ast) -> Prec {
     match node {
-        Ast::Ineq { .. } | Ast::Assign { .. } | Ast::Chain { .. } => Prec::Lowest,
+        Ast::Ineq { .. } | Ast::Assign { .. } | Ast::Chain { .. } | Ast::Quantity { .. } => {
+            Prec::Lowest
+        }
         Ast::Add(_) | Ast::Neg(_) | Ast::Mixed { .. } => Prec::Sum,
         Ast::Integer(value) if value.is_negative() => Prec::Sum,
         // A decimal writes as its rational node, so it takes that node's level.
@@ -170,6 +172,11 @@ fn write_bare(node: &Ast, out: &mut String) {
         } => write_interval(lo, hi, *lo_closed, *hi_closed, out),
         Ast::Ineq { var, op, bound } => write_inequality(var, *op, bound, out),
         Ast::Assign { var, value } => write_assignment(var, value, out),
+        Ast::Quantity { value, unit } => {
+            write_at(value, Prec::Lowest, out);
+            out.push(' ');
+            out.push_str(unit);
+        }
         Ast::Chain {
             lo,
             lo_closed,

@@ -291,3 +291,13 @@ pub fn token_soup(rng: &mut Rng, vocabulary: &[String]) -> String {
     }
     out
 }
+
+/// Print a tuple, a set, or a list between its delimiters.
+pub fn print_wrapped(ast: &Ast, items: &[Ast]) -> String {
+    let (open, close) = match ast {
+        Ast::Tuple(_) => ('(', ')'),
+        Ast::Set(_) => ('{', '}'),
+        _ => ('[', ']'),
+    };
+    format!("{open}{}{close}", print_list(items))
+}

@@ -40,7 +40,9 @@ pub fn collect_radical_atoms(canon: &Canon, out: &mut BTreeSet<String>) {
                 collect_radical_atoms(end, out);
             }
         }
-        Canon::Assign { value, .. } => collect_radical_atoms(value, out),
+        Canon::Assign { value, .. } | Canon::Quantity { value, .. } => {
+            collect_radical_atoms(value, out);
+        }
     }
 }
 
@@ -336,7 +338,9 @@ pub fn collect_variable_names(canon: &Canon, out: &mut BTreeSet<String>) {
                 collect_variable_names(end, out);
             }
         }
-        Canon::Assign { value, .. } => collect_variable_names(value, out),
+        Canon::Assign { value, .. } | Canon::Quantity { value, .. } => {
+            collect_variable_names(value, out);
+        }
     }
 }
 

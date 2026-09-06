@@ -49,7 +49,15 @@ fn the_string_steps_of_the_v4_table_give_the_literal_source() {
         ast("x²+1"),
         Ast::Add(vec![Ast::Pow(Box::new(var("x")), 2), int(1)])
     );
-    assert_eq!(ast("30°"), int(30));
+    // `30°` is a quantity since the value-with-unit production of D-F3 (unit
+    // f2-grammar); the lexer deleted the degree sign before.
+    assert_eq!(
+        ast("30°"),
+        Ast::Quantity {
+            value: Box::new(int(30)),
+            unit: "°",
+        }
+    );
     assert_eq!(ast("½"), frac(1, 2));
     assert_eq!(
         ast("1 + 2x."),

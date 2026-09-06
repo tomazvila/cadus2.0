@@ -7,6 +7,7 @@ use num_traits::{One, Signed, Zero};
 use super::sum::{atom_value, extract_square, from_sum, term};
 use super::{Atom, Canon, MAX_SCALE, Monomial, Undecidable, Work};
 use crate::answer::ast::{Ast, Const, IneqOp};
+use crate::answer::unit::lookup;
 
 impl Work {
     /// Canonicalize one node by its kind.
@@ -38,6 +39,7 @@ impl Work {
             Ast::Func(name, arguments) => self.applied(name, arguments),
             Ast::Tuple(items) | Ast::List(items) | Ast::Set(items) => self.collection(ast, items),
             Ast::Assign { var, value } => self.labeled(var, value),
+            Ast::Quantity { value, unit } => self.quantity(value, unit),
             Ast::Interval {
                 lo,
                 hi,
@@ -132,6 +134,26 @@ impl Work {
             Ast::Tuple(_) => Canon::Tuple(values),
             Ast::List(_) => Canon::List(values),
             _ => Canon::Set(values.into_iter().collect()),
+        })
+    }
+
+    /// Read a number with a unit into the base unit of its kind (D-F3).
+    ///
+    /// The value must be a number: a rational or a radical. A unit outside the
+    /// table never reaches this function from the parser, and a hand-built tree
+    /// that carries one is refused.
+    fn quantity(&mut self, value: &Ast, unit: &str) -> Result<Canon, Undecidable> {
+        let value = self.node(value)?;
+        if !matches!(value, Canon::Rational(_) | Canon::Radical(_)) {
+            return Err(Undecidable::new("a quantity whose value is not a number"));
+        }
+        let Some(unit) = lookup(unit) else {
+            return Err(Undecidable::new("a unit outside the table"));
+        };
+        let scaled = self.multiply(&value, &Canon::Rational(unit.factor()))?;
+        Ok(Canon::Quantity {
+            quantity: unit.quantity,
+            value: Box::new(scaled),
         })
     }
 

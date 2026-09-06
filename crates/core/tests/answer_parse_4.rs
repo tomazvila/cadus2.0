@@ -142,10 +142,12 @@ fn deep_nesting_is_refused_and_never_overflows_the_stack() {
 }
 
 #[test]
-fn the_corpus_splits_into_3258_parsed_and_234_undecidable_answers() {
+fn the_corpus_splits_into_3257_parsed_and_235_undecidable_answers() {
     // The 1.0 residue was 265. The rational-exponent production of D-F3 (unit
     // f2-grammar) reads 15 of those rows and the quotient-and-remainder
-    // production reads 16, which `recovered_2_0.jsonl` names.
+    // production reads 16, which `recovered_2_0.jsonl` names. The
+    // value-with-unit production refuses one row, `cos 70°`: 1.0 read it as
+    // the cosine of 70 radians, and a unit inside an expression has no reading.
     let rows = corpus();
     assert_eq!(rows.len(), 3_492, "corpus size");
     let mut parsed = 0_usize;
@@ -157,8 +159,8 @@ fn the_corpus_splits_into_3258_parsed_and_234_undecidable_answers() {
             refused += 1;
         }
     }
-    assert_eq!(parsed, 3_258, "answers inside the grammar");
-    assert_eq!(refused, 234, "answers outside the grammar");
+    assert_eq!(parsed, 3_257, "answers inside the grammar");
+    assert_eq!(refused, 235, "answers outside the grammar");
 }
 
 #[test]
@@ -193,7 +195,7 @@ fn the_undecidable_answers_are_exactly_the_committed_fixture() {
         missing.is_empty() && extra.is_empty(),
         "the residue moved: missing {missing:?}, extra {extra:?}"
     );
-    assert_eq!(committed.len(), 234);
+    assert_eq!(committed.len(), 235);
 }
 
 #[test]
@@ -211,7 +213,16 @@ fn the_recovered_answers_keep_their_identity_and_parse() {
         residue.is_disjoint(&keys),
         "a recovered row is still refused"
     );
-    assert_eq!(residue.len() + keys.len(), 265, "the 1.0 residue");
+    // One row joined the residue: the value-with-unit production refuses
+    // `cos 70°`, a unit inside an expression (`answer_unit.rs`).
+    let joined: Key = (
+        "complementary-angle-trig".to_string(),
+        "kp1".to_string(),
+        0,
+        "cos 70°".to_string(),
+    );
+    assert!(residue.contains(&joined), "`cos 70°` is refused");
+    assert_eq!(residue.len() + keys.len(), 265 + 1, "the 1.0 residue");
     let mut per_production: std::collections::BTreeMap<&str, usize> = Default::default();
     for row in &recovered {
         assert!(

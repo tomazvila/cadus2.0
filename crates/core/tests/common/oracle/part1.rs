@@ -75,10 +75,12 @@ pub struct Row {
 /// answer kind.
 ///
 /// An answer that a 2.0 production recovered from the 1.0 residue
-/// (`recovered_2_0.jsonl`) stays out of the set. 1.0 reads `9 R2` as `18*R` and
-/// refuses `x^(1/2)`, so no 1.0 verdict on such a pair is comparable, and the
-/// committed verdict file holds none. The productions pin their own verdicts in
-/// their own test files (unit f2-grammar, D-F3).
+/// (`recovered_2_0.jsonl`) stays out of the set, and so does an answer that
+/// reads as a quantity. 1.0 reads `9 R2` as `18*R`, refuses `x^(1/2)`, reads
+/// `5 m/s` as `5*m/s`, and deletes the degree sign of `30°`, so no 1.0 verdict
+/// on such a pair is comparable, and the committed verdict file holds none.
+/// The productions pin their own verdicts in their own test files (unit
+/// f2-grammar, D-F3).
 pub fn in_grammar_rows() -> Vec<Row> {
     let path = fixture("corpus_1_0.jsonl");
     let text =
@@ -107,6 +109,9 @@ pub fn in_grammar_rows() -> Vec<Row> {
         let Ok(ast) = parse(&source) else {
             continue;
         };
+        if matches!(ast, Ast::Quantity { .. }) {
+            continue;
+        }
         let printed = print_ast(&ast, PREC_LOWEST);
         let canon = canonical_form(&parsed.answer).ok();
         rows.push(Row {
@@ -200,6 +205,7 @@ pub fn print_ast(ast: &Ast, parent: u8) -> String {
             format!("{var} {} {}", op.symbol(), print_ast(bound, PREC_LOWEST))
         }
         Ast::Assign { var, value } => format!("{var} = {}", print_ast(value, PREC_LOWEST)),
+        Ast::Quantity { value, unit } => format!("{} {unit}", print_ast(value, PREC_LOWEST)),
         Ast::Chain {
             lo,
             lo_closed,
@@ -297,16 +303,6 @@ fn print_chain(lo: &Ast, lo_closed: bool, var: &str, hi_closed: bool, hi: &Ast) 
 /// Wrap `text` in a bracket pair when the position asks for one.
 pub fn bracket_if(text: String, wrap: bool) -> String {
     if wrap { format!("({text})") } else { text }
-}
-
-/// Print a tuple, a set, or a list between its delimiters.
-fn print_wrapped(ast: &Ast, items: &[Ast]) -> String {
-    let (open, close) = match ast {
-        Ast::Tuple(_) => ('(', ')'),
-        Ast::Set(_) => ('{', '}'),
-        _ => ('[', ']'),
-    };
-    format!("{open}{}{close}", print_list(items))
 }
 
 /// Print a comma-separated argument list.

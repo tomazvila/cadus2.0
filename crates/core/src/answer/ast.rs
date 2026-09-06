@@ -160,6 +160,16 @@ pub enum Ast {
         /// The bound.
         bound: Box<Ast>,
     },
+    /// A number with a unit of the Foundations table, written `5 cm` (D-F3).
+    ///
+    /// The unit is the table spelling. The canonicalizer scales the value into
+    /// the base unit of its kind, so `1 m` and `100 cm` are one value.
+    Quantity {
+        /// The value, as the answer writes it.
+        value: Box<Ast>,
+        /// The unit spelling of [`crate::answer::unit`].
+        unit: &'static str,
+    },
     /// A value with its label, written `x = 5` (review findings #2, #10, #16).
     ///
     /// The label is the name the answer gives its value. It never reaches the

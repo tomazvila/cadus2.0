@@ -231,15 +231,9 @@ pub fn evaluate(ast: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
         Ast::Mul(items) => fold(items, bindings, Fold::Mul),
         Ast::Div(left, right) => divide(left, right, bindings),
         Ast::Pow(base, exponent) => raise(base, *exponent, bindings),
-        Ast::RationalPow {
-            base,
-            numerator,
-            denominator,
-        } => Ok(Ast::RationalPow {
-            base: Box::new(evaluate(base, bindings)?),
-            numerator: *numerator,
-            denominator: *denominator,
-        }),
+        Ast::RationalPow { base: inner, .. } | Ast::Quantity { value: inner, .. } => {
+            Ok(rebuilt(ast, evaluate(inner, bindings)?))
+        }
         Ast::Func(name, args) => call(name, args, bindings),
         Ast::Tuple(items) | Ast::Set(items) | Ast::List(items) => collection(ast, items, bindings),
         Ast::Interval {
@@ -257,6 +251,28 @@ pub fn evaluate(ast: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
             hi_closed,
             hi,
         } => chain(lo, *lo_closed, var, *hi_closed, hi, bindings),
+    }
+}
+
+/// Rebuild a rational power or a quantity around its evaluated child.
+fn rebuilt(ast: &Ast, child: Ast) -> Ast {
+    match ast {
+        Ast::RationalPow {
+            numerator,
+            denominator,
+            ..
+        } => Ast::RationalPow {
+            base: Box::new(child),
+            numerator: *numerator,
+            denominator: *denominator,
+        },
+        Ast::Quantity { unit, .. } => Ast::Quantity {
+            value: Box::new(child),
+            unit,
+        },
+        // The caller passes one of the two nodes above; every other node keeps
+        // its evaluated child as the value.
+        _ => child,
     }
 }
 

@@ -143,6 +143,7 @@ impl Parser<'_> {
                     }
                     Ok(Ast::Set(items))
                 }
+                Tok::Unit(_) => Err(Undecidable::new("a unit inside an expression")),
                 _ => Err(Undecidable::new("a symbol where a value belongs")),
             }
         })

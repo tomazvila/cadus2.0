@@ -28,6 +28,7 @@ mod atom;
 mod build;
 mod exponent;
 mod term;
+mod unit;
 
 use build::{is_variable_name, make_quotient, simple_inequality};
 
@@ -252,9 +253,12 @@ impl Parser<'_> {
         result
     }
 
-    /// Parse the whole answer: a label, a quotient with a remainder, a relation,
-    /// a bare tuple, or one value.
+    /// Parse the whole answer: a quantity, a label, a quotient with a remainder,
+    /// a relation, a bare tuple, or one value.
     fn parse_answer(&mut self) -> Result<Ast, Undecidable> {
+        if let Some(quantity) = self.read_quantity() {
+            return Ok(quantity);
+        }
         if let Some(var) = self.read_value_label() {
             let value = self.parse_answer()?;
             return Ok(Ast::Assign {
