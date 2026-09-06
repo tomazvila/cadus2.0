@@ -389,13 +389,22 @@ topics:
         name: "Recognize proportionality from tables and graphs"
         key_prerequisites: [coordinate-plane]
         exemplars:
-          - problem: 'A proportional graph passes through the origin and $(1, 4)$. Find $y$ when $x = 9$.'
-            answer: "36"
-            solution_sketch: '$k = 4$, so $y = 4(9) = 36$.'
-          - problem: 'Is the table $(1, 3)$, $(2, 6)$, $(3, 10)$ proportional?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$\frac{3}{1} = \frac{6}{2} = 3$ but $\frac{10}{3} \ne 3$.'
+          - problem: "A table has positive inputs: $(2,8)$ and $(5,20)$. Give ratios=(first,second) for the output/input ratios, then proportional=yes or no."
+            answer: "ratios = (4, 4); proportional = yes"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "ratios", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "proportional", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Dividing output by its paired input gives r=4 and s=4. A proportional relationship requires these ratios to agree for every nonzero input."
+          - problem: "A straight graph includes the origin and the two indicated points: $(2,5)$ and $(6,15)$. Give ratios=(first,second) for the output/input ratios, then proportional=yes or no."
+            answer: "ratios = (5/2, 5/2); proportional = yes"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "ratios", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "proportional", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Dividing output by its paired input gives r=5/2 and s=5/2. A proportional relationship requires these ratios to agree for every nonzero input."
+          - problem: "A table has a nonzero starting offset; inspect its two rows: $(1,5)$ and $(4,11)$. Give ratios=(first,second) for the output/input ratios, then proportional=yes or no."
+            answer: "ratios = (5, 11/4); proportional = no"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "ratios", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "proportional", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Dividing output by its paired input gives r=5 and s=11/4. A proportional relationship requires these ratios to agree for every nonzero input."
+          - problem: "A table crosses from negative to positive inputs: $(-2,3)$ and $(6,-8)$. Give ratios=(first,second) for the output/input ratios, then proportional=yes or no."
+            answer: "ratios = (-3/2, -4/3); proportional = no"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "ratios", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "proportional", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Dividing output by its paired input gives r=-3/2 and s=-4/3. A proportional relationship requires these ratios to agree for every nonzero input."
         constraints: "proportional graphs are straight lines through the origin; tables have constant y/x"
       - id: kp3
         name: "Solve for either variable"
@@ -491,13 +500,22 @@ topics:
         name: "Compare unit rates across representations"
         key_prerequisites: [proportional-relationships]
         exemplars:
-          - problem: 'Line A passes through $(1, 5)$; line B passes through $(2, 8)$. Which has the larger unit rate?'
-            answer: "line A"
-            solution_sketch: '$k_A = 5$, $k_B = 4$.'
-          - problem: 'A proportional graph passes through $(2, 9)$. Does it grow faster than $y = 4x$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Its $k = 4.5 > 4$.'
+          - problem: "Compare two proportional graphs. A passes through $(2,11)$; B passes through $(3,12)$. Both include the origin. Give rates=(A,B), and faster=yes if A has the greater signed rate, otherwise no."
+            answer: "rates = (11/2, 4); faster = yes"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rates", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "faster", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "The output/input ratios give a=11/2 and b=4. Compare these signed rates; equal rates produce no greater rate, and negative rates retain their ordering."
+          - problem: "A proportional graph and a table are represented by their nonzero points. A passes through $(4,7)$; B passes through $(5,15)$. Both include the origin. Give rates=(A,B), and faster=yes if A has the greater signed rate, otherwise no."
+            answer: "rates = (7/4, 3); faster = no"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rates", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "faster", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "The output/input ratios give a=7/4 and b=3. Compare these signed rates; equal rates produce no greater rate, and negative rates retain their ordering."
+          - problem: "The proportional lines coincide; check their unit rates. A passes through $(3,9)$; B passes through $(7,21)$. Both include the origin. Give rates=(A,B), and faster=yes if A has the greater signed rate, otherwise no."
+            answer: "rates = (3, 3); faster = no"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rates", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "faster", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "The output/input ratios give a=3 and b=3. Compare these signed rates; equal rates produce no greater rate, and negative rates retain their ordering."
+          - problem: "Both proportional lines decrease as x increases. A passes through $(2,-3)$; B passes through $(4,-10)$. Both include the origin. Give rates=(A,B), and faster=yes if A has the greater signed rate, otherwise no."
+            answer: "rates = (-3/2, -5/2); faster = yes"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rates", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "faster", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "The output/input ratios give a=-3/2 and b=-5/2. Compare these signed rates; equal rates produce no greater rate, and negative rates retain their ordering."
         constraints: "compare k values; one comparison per problem"
     diagnostic_exemplar:
       problem: 'A proportional relationship is graphed through $(6, 15)$. Find $k$ and write the equation.'
@@ -733,12 +751,22 @@ topics:
         name: "Equations y = c and x = c"
         key_prerequisites: [coordinate-plane]
         exemplars:
-          - problem: 'The horizontal line through $(4, -5)$ has equation $y = c$. Find $c$.'
-            answer: "-5"
-            solution_sketch: 'A horizontal line fixes $y$ at the point''s $y$-coordinate.'
-          - problem: 'The vertical line through $(2, 7)$ has equation $x = c$. Find $c$.'
-            answer: "2"
-            solution_sketch: 'A vertical line fixes $x$ at the point''s $x$-coordinate.'
+          - problem: "Find the equations through these points: horizontal through $(3,-5)$, vertical through $(2,7)$. Give h in $y=h$ and v in $x=v$."
+            answer: "h = -5; v = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "h", "contract": {"kind": "exact"}}, {"name": "v", "contract": {"kind": "exact"}}]}
+            solution_sketch: "The horizontal line keeps the first point y-coordinate -5. The vertical line keeps the second point x-coordinate 2. These fixed coordinates determine the two equations."
+          - problem: "The two axis-parallel lines meet in quadrant II: horizontal through $(-4,6)$, vertical through $(-4,6)$. Give h in $y=h$ and v in $x=v$."
+            answer: "h = 6; v = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "h", "contract": {"kind": "exact"}}, {"name": "v", "contract": {"kind": "exact"}}]}
+            solution_sketch: "The horizontal line keeps the first point y-coordinate 6. The vertical line keeps the second point x-coordinate -4. These fixed coordinates determine the two equations."
+          - problem: "One line is the x-axis and the other is left of the origin: horizontal through $(7,0)$, vertical through $(-3,4)$. Give h in $y=h$ and v in $x=v$."
+            answer: "h = 0; v = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "h", "contract": {"kind": "exact"}}, {"name": "v", "contract": {"kind": "exact"}}]}
+            solution_sketch: "The horizontal line keeps the first point y-coordinate 0. The vertical line keeps the second point x-coordinate -3. These fixed coordinates determine the two equations."
+          - problem: "Use fractional coordinates to locate the lines: horizontal through $(1,3/2)$, vertical through $(-5/2,2)$. Give h in $y=h$ and v in $x=v$."
+            answer: "h = 3/2; v = -5/2"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "h", "contract": {"kind": "exact"}}, {"name": "v", "contract": {"kind": "exact"}}]}
+            solution_sketch: "The horizontal line keeps the first point y-coordinate 3/2. The vertical line keeps the second point x-coordinate -5/2. These fixed coordinates determine the two equations."
         constraints: "horizontal fixes y; vertical fixes x"
     diagnostic_exemplar:
       problem: 'Find the slope of the line through $(5, 2)$ and $(5, 9)$.'
@@ -887,11 +915,22 @@ topics:
         name: "Interpret the sign of a rate"
         key_prerequisites: [slope]
         exemplars:
-          - problem: 'A bank balance changes at $-15$ euros per week. Is the balance increasing or decreasing?'
-            answer: "decreasing"
-            solution_sketch: 'A negative rate means the balance falls — here by €15 each week.'
-          - problem: 'The slope of a temperature-vs-time graph is $0$ overnight. What does that mean?'
-            answer: "the temperature stayed constant"
+          - problem: "A water tank drains steadily. The (time,amount) readings are $(1,42)$ and $(4,21)$. Give the signed rate per time unit, then increasing=yes/no."
+            answer: "rate = -7; increasing = no"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rate", "contract": {"kind": "exact"}}, {"name": "increasing", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Divide the change in amount by the positive elapsed time to get rate=-7. Positive rate means increase, negative rate means decrease, and zero means neither direction."
+          - problem: "A temperature sensor records cooling. The (time,amount) readings are $(2,-3)$ and $(7,-14)$. Give the signed rate per time unit, then increasing=yes/no."
+            answer: "rate = -11/5; increasing = no"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rate", "contract": {"kind": "exact"}}, {"name": "increasing", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Divide the change in amount by the positive elapsed time to get rate=-11/5. Positive rate means increase, negative rate means decrease, and zero means neither direction."
+          - problem: "A savings balance grows steadily. The (time,amount) readings are $(0,15)$ and $(6,45)$. Give the signed rate per time unit, then increasing=yes/no."
+            answer: "rate = 5; increasing = yes"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rate", "contract": {"kind": "exact"}}, {"name": "increasing", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Divide the change in amount by the positive elapsed time to get rate=5. Positive rate means increase, negative rate means decrease, and zero means neither direction."
+          - problem: "A temperature rises while remaining below zero. The (time,amount) readings are $(3,-8)$ and $(7,-1)$. Give the signed rate per time unit, then increasing=yes/no."
+            answer: "rate = 7/4; increasing = yes"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rate", "contract": {"kind": "exact"}}, {"name": "increasing", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Divide the change in amount by the positive elapsed time to get rate=7/4. Positive rate means increase, negative rate means decrease, and zero means neither direction."
         constraints: "sign carries the direction of change"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
@@ -1426,10 +1465,22 @@ topics:
         name: "Graph horizontal and vertical lines"
         key_prerequisites: [horizontal-vertical-slopes]
         exemplars:
-          - problem: 'Describe the graph of $x = 4$.'
-            answer: "a vertical line through (4, 0)"
-          - problem: 'Describe the graph of $y = -2$.'
-            answer: "a horizontal line through (0, -2)"
+          - problem: "Graph the vertical line $x=4$ and horizontal line $y=-2$; give their intersection. Answer x=...; y=...."
+            answer: "x = 4; y = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "x", "contract": {"kind": "exact"}}, {"name": "y", "contract": {"kind": "exact"}}]}
+            solution_sketch: "The vertical line fixes x at 4, while the horizontal line fixes y at -2. Their intersection satisfies both fixed-coordinate conditions, so plot that ordered pair."
+          - problem: "The lines $y=6$ and $x=-3$ cross. Give the coordinates x and y of their meeting point. Answer x=...; y=...."
+            answer: "x = -3; y = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "x", "contract": {"kind": "exact"}}, {"name": "y", "contract": {"kind": "exact"}}]}
+            solution_sketch: "The vertical line fixes x at -3, while the horizontal line fixes y at 6. Their intersection satisfies both fixed-coordinate conditions, so plot that ordered pair."
+          - problem: "Sketch the coordinate axes $x=0$ and $y=0$. Give their intersection. Answer x=...; y=...."
+            answer: "x = 0; y = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "x", "contract": {"kind": "exact"}}, {"name": "y", "contract": {"kind": "exact"}}]}
+            solution_sketch: "The vertical line fixes x at 0, while the horizontal line fixes y at 0. Their intersection satisfies both fixed-coordinate conditions, so plot that ordered pair."
+          - problem: "Locate where the vertical line $x=-3/2$ meets the horizontal line $y=5/2$. Answer x=...; y=...."
+            answer: "x = -3/2; y = 5/2"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "x", "contract": {"kind": "exact"}}, {"name": "y", "contract": {"kind": "exact"}}]}
+            solution_sketch: "The vertical line fixes x at -3/2, while the horizontal line fixes y at 5/2. Their intersection satisfies both fixed-coordinate conditions, so plot that ordered pair."
         constraints: "x = c vertical; y = c horizontal"
     diagnostic_exemplar:
       problem: 'To graph $3x + 2y = 12$ by intercepts, which two points do you plot?'
