@@ -217,7 +217,7 @@ export interface StatusResponse {
  * floor topics that carry no direct answer. `to_confirm` lists the inferred topics the
  * next session confirms, which is at most `mastery.max_per_session` of them.
  */
-export interface MasteryCounts {
+interface MasteryCounts {
   practiced: number;
   inferred: number;
   total: number;

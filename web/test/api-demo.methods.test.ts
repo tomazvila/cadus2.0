@@ -213,22 +213,22 @@ describe('the demo payloads, literally', () => {
   it('answers the status of the frozen contract', async () => {
     vi.useFakeTimers();
     expect(await settle(createDemoApi().getStatus())).toEqual({
-      course: { id: 'foundations', name: 'Foundations' },
-      placed: true,
-      courses: COURSES,
-      test_prep: null,
-      xp: XP,
-      velocity: { xp_per_day_28d: 21.5, topics_per_week_28d: 2.25, course_progress: 0.18, eta: '2026-11-04' },
-      quiz: { last_at: '2026-08-24', xp_since: 120, retake_pending: false },
-      pending_remediation: [],
-      quiz_due: false,
-      drill_due: false,
-      frontier: 4,
-      due_reviews: 2,
-      nearly_due: 1,
-      mastery: { practiced: 9, inferred: 6, total: 50, to_confirm: ['whole-numbers'] },
-      ungraded_attempts: {},
       ungraded: 0,
+      ungraded_attempts: {},
+      mastery: { to_confirm: ['whole-numbers'], total: 50, inferred: 6, practiced: 9 },
+      nearly_due: 1,
+      due_reviews: 2,
+      frontier: 4,
+      drill_due: false,
+      quiz_due: false,
+      pending_remediation: [],
+      quiz: { retake_pending: false, xp_since: 120, last_at: '2026-08-24' },
+      velocity: { eta: '2026-11-04', course_progress: 0.18, topics_per_week_28d: 2.25, xp_per_day_28d: 21.5 },
+      xp: XP,
+      test_prep: null,
+      courses: COURSES,
+      placed: true,
+      course: { name: 'Foundations', id: 'foundations' },
     });
   });
 

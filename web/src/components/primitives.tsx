@@ -110,7 +110,7 @@ export function Ring({ fraction, label = '', sub = '' }: { fraction: number; lab
 export const tickPath = 'M20 6L9 17l-5-5';
 export const crossPath = 'M18 6L6 18M6 6l12 12';
 /** The mark of an attempt nobody graded (D-F2). It is a question, never a cross. */
-export const questionPath = 'M9 9a3 3 0 1 1 3 3v2';
+const questionPath = 'M9 9a3 3 0 1 1 3 3v2';
 
 export function Tick() {
   return (

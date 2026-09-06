@@ -1,12 +1,8 @@
 /** The 2.0 browser journey: instruction -> application -> delayed assessment -> report. */
-import { chromium } from 'playwright';
-import { Run, checkMathRendered, checkNotBlank, finishWalk } from './checks.mjs';
+import { checkMathRendered, checkNotBlank, finishWalk, startWalk } from './checks.mjs';
 
 const BASE = process.env.BASE ?? 'http://127.0.0.1:4173';
-const SHOTS = process.env.SHOTS ?? './shots';
-const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1400, height: 950 } });
-const run = new Run(page, { shots: SHOTS, prefix: 'journey-' });
+const { browser, page, run } = await startWalk('journey-');
 
 async function fillApplication({ work, final }) {
   await page.getByLabel('Divide total person-minutes by one worker\'s minutes.').check();

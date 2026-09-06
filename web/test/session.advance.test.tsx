@@ -16,28 +16,16 @@ import {
   LESSON, REVIEW, TEACHING, P, answerInput, clickNext, closed, graded, mount, planOf,
   press, progressCount, stubApi, submitAnswer, submitThenWait, workInput, typeAnswer,
 } from './helpers/session';
+import { status as dashboardStatus } from './helpers/dashboard';
 import type {
   ApiClient, BlockedTask, ServedProblem, SessionStartResponse, StatusResponse,
 } from '@/api/types';
 
 /** The dashboard's own fixture, for the one test that starts a session from that screen. */
-const DASHBOARD_STATUS: StatusResponse = {
-  course: { id: 'foundations', name: 'Foundations' },
-  placed: true,
+const DASHBOARD_STATUS: StatusResponse = dashboardStatus({
   courses: [{ id: 'foundations', name: 'Foundations', current: true }],
-  test_prep: null,
-  xp: { total: 340, today: 12, goal: 40, streak_days: 3 },
   velocity: { xp_per_day_28d: 21.5, topics_per_week_28d: 2.25, course_progress: 0.18, eta: null },
-  quiz: { last_at: null, xp_since: 0, retake_pending: false },
-  pending_remediation: [],
-  quiz_due: false,
-  drill_due: false,
-  frontier: 4,
-  due_reviews: 2,
-  nearly_due: 1,
-  ungraded_attempts: {},
-  ungraded: 0,
-};
+});
 
 describe('the advance', () => {
   it('auto-advance fires only on correct-with-next', async () => {

@@ -13,7 +13,7 @@
  */
 
 /** One quantity or constraint the scenario states. */
-export interface IntegratedGiven {
+interface IntegratedGiven {
   label: string;
   value: string;
   /** An assumption that changes feasibility, when the author states one. */
@@ -21,7 +21,7 @@ export interface IntegratedGiven {
 }
 
 /** One question of the task, without its answer. */
-export interface IntegratedAsk {
+interface IntegratedAsk {
   prompt: string;
   /** The unit the learner writes beside the number. */
   unit: string | null;
@@ -30,13 +30,13 @@ export interface IntegratedAsk {
 }
 
 /** One intermediate step, without its answer. */
-export interface IntegratedStepView {
+interface IntegratedStepView {
   id: string;
   ask: IntegratedAsk;
 }
 
 /** The method choice, without the flag that says which method works. */
-export interface IntegratedMethodView {
+interface IntegratedMethodView {
   prompt: string;
   options: { id: string; label: string }[];
 }
@@ -70,7 +70,7 @@ export interface IntegratedHintResponse {
 }
 
 /** One answered field of a submission. */
-export interface IntegratedFieldAnswer {
+interface IntegratedFieldAnswer {
   id: string;
   answer: string;
   hints_used: number;

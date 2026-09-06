@@ -132,7 +132,7 @@ export interface RejectResponse {
 }
 
 /** One ungraded attempt of the recovery list (D-F2). */
-export interface UngradedAttempt {
+interface UngradedAttempt {
   attempt_id: string;
   topic: string;
   /** Why the checker reached no verdict, in the service's own words. */
@@ -168,7 +168,7 @@ export interface RegradeResponse {
  * A rate is never read without them: `correct` counts every graded right answer,
  * and `independent` counts only the graded, unassisted, first-exposure ones.
  */
-export interface RetentionProvenance {
+interface RetentionProvenance {
   independent: number;
   independent_correct: number;
   correct: number;
@@ -192,7 +192,7 @@ export interface RetentionRow {
 }
 
 /** The versioned policy the numbers came from (D-F12). */
-export interface RetentionPolicy {
+interface RetentionPolicy {
   version: number;
   label: string;
   calibrated: boolean;
