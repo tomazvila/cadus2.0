@@ -33,6 +33,12 @@ pub struct ReviewFilter<'a> {
     pub kind: Option<&'a str>,
     /// The serving key `"<topic>/<kp>"`.
     pub kp_id: Option<&'a str>,
+    /// How many rows the read skips before the first row it returns.
+    ///
+    /// The read answers at most [`LIST_LIMIT`] rows, so a caller walks a longer
+    /// queue with `offset = page * LIST_LIMIT`. The order is one order for every
+    /// page, so page `n + 1` starts on the row page `n` stopped before.
+    pub offset: i64,
 }
 
 /// One row of the review queue (spec section 3.2, `GET /api/admin/content`).
@@ -99,7 +105,8 @@ impl StoredRow {
 ///
 /// The order is `created_at` descending with the digest as the tie break, so
 /// two rows written in one statement give one stable page. `digest` is the
-/// primary key, so a read by digest returns at most one row.
+/// primary key, so a read by digest returns at most one row, and the offset of
+/// `filter` then skips that row.
 async fn stored_rows<'e, E>(
     executor: E,
     filter: &ReviewFilter<'_>,
@@ -126,7 +133,7 @@ where
           AND ($3::text IS NULL OR c.kp_id = $3)
           AND ($7::text IS NULL OR c.digest = $7)
         ORDER BY c.created_at DESC, c.digest
-        LIMIT $6
+        LIMIT $6 OFFSET $8
         "#,
         filter.status,
         filter.kind,
@@ -135,19 +142,22 @@ where
         STATUS_APPROVED,
         limit,
         digest,
+        filter.offset,
     )
     .fetch_all(executor)
     .await?)
 }
 
-/// The review queue, newest first (C6).
+/// One page of the review queue, newest first (C6).
 ///
 /// The read takes any executor: `content_store` holds curriculum content, it is
 /// outside row-level security, and `cadus_app` holds SELECT on it. The two
 /// WRITE paths take [`Admin`], and they are the only ones that need it.
 ///
 /// The order is `created_at` descending with the digest as the tie break, so two
-/// rows written in one statement give one stable page.
+/// rows written in one statement give one stable page. The page is
+/// [`LIST_LIMIT`] rows from `filter.offset`, and one order for every page makes
+/// the walk whole: page `n + 1` starts on the row page `n` stopped before.
 ///
 /// # Errors
 ///

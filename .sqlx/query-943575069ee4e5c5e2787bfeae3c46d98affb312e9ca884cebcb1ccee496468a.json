@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT c.digest AS \"digest!\", c.kp_id AS \"kp_id!\", c.kind AS \"kind!\",\n               c.status AS \"status!\", c.authoring_attempts AS \"authoring_attempts!\",\n               c.authoring_cost_usd::text AS \"cost_usd?\",\n               c.created_at AS \"created_at!\", c.body AS \"body!\",\n               c.review_reason, c.approved_at,\n               (SELECT count(*) FROM content_store a\n                 WHERE a.kp_id = c.kp_id AND a.kind = $2 AND a.status = $3)\n                 AS \"approved_templates!\"\n        FROM content_store c\n        WHERE c.digest = $1\n        ",
+  "query": "\n        SELECT c.digest AS \"digest!\", c.kp_id AS \"kp_id!\", c.kind AS \"kind!\",\n               c.status AS \"status!\", c.authoring_attempts AS \"authoring_attempts!\",\n               c.authoring_cost_usd::text AS \"cost_usd?\",\n               c.created_at AS \"created_at!\", c.body AS \"body!\",\n               c.review_reason, c.approved_at,\n               (SELECT count(*) FROM content_store a\n                 WHERE a.kp_id = c.kp_id AND a.kind = $4 AND a.status = $5)\n                 AS \"approved_templates!\"\n        FROM content_store c\n        WHERE ($1::text IS NULL OR c.status = $1)\n          AND ($2::text IS NULL OR c.kind = $2)\n          AND ($3::text IS NULL OR c.kp_id = $3)\n          AND ($7::text IS NULL OR c.digest = $7)\n        ORDER BY c.created_at DESC, c.digest\n        LIMIT $6 OFFSET $8\n        ",
   "describe": {
     "columns": [
       {
@@ -119,7 +119,12 @@
       "Left": [
         "Text",
         "Text",
-        "Text"
+        "Text",
+        "Text",
+        "Text",
+        "Int8",
+        "Text",
+        "Int8"
       ]
     },
     "nullable": [
@@ -136,5 +141,5 @@
       null
     ]
   },
-  "hash": "2b21c4f70886cb3c5feab8bfc6760b0d9f80c70f3370880ea5fe9c69af02ed6f"
+  "hash": "943575069ee4e5c5e2787bfeae3c46d98affb312e9ca884cebcb1ccee496468a"
 }
