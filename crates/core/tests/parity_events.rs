@@ -165,10 +165,12 @@ fn the_seeded_family_reaches_every_event_type() {
         );
         seen.extend(per_stream);
     }
-    // The 1.0 generator wrote the 16 types of 1.0. `retention_probe` is new in 2.0
-    // (D-F11) and no committed 1.0 stream carries one.
+    // The 1.0 generator wrote the 16 types of 1.0. `retention_probe` (D-F11)
+    // and `drill_result` are new in 2.0, so no committed 1.0 stream can carry
+    // either. Their wire forms are pinned by `events.rs` and the focused
+    // projector suites; this test measures the historical fixture family.
     for name in Event::TYPE_NAMES {
-        if name == "retention_probe" {
+        if ["retention_probe", "drill_result"].contains(&name) {
             assert!(!seen.contains(name));
             continue;
         }
