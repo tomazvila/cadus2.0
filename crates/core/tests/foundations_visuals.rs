@@ -13,16 +13,21 @@ struct Entry {
     visuals: Vec<VisualSpec>,
 }
 
-#[test]
-fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
+fn entries() -> Vec<Entry> {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let entries: Vec<Entry> = serde_json::from_str(
+    serde_json::from_str(
         &std::fs::read_to_string(
             root.join("docs/content-visuals/foundations-reference-manifest.json"),
         )
         .unwrap(),
     )
-    .unwrap();
+    .unwrap()
+}
+
+#[test]
+fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let entries = entries();
     let (curriculum, findings) = load_curriculum(&root.join("curriculum")).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let report = ReadinessIndex::build(&curriculum).resolve(&EmptyContent);
@@ -81,14 +86,7 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
 
 #[test]
 fn every_reference_segment_satisfies_its_stated_equation() {
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let entries: Vec<Entry> = serde_json::from_str(
-        &std::fs::read_to_string(
-            root.join("docs/content-visuals/foundations-reference-manifest.json"),
-        )
-        .unwrap(),
-    )
-    .unwrap();
+    let entries = entries();
     let mut checked = 0;
     for entry in entries {
         for visual in entry.visuals {

@@ -64,6 +64,15 @@ fn response(id: &str, answer: &str) -> FieldResponse {
     }
 }
 
+fn complete_submission(final_answer: &str, reasoning: Option<&str>) -> Submission {
+    Submission {
+        method: None,
+        steps: vec![response("fuel-rate", "15"), response("cost-share", "21.60")],
+        final_answer: response("final", final_answer),
+        reasoning: reasoning.map(str::to_owned),
+    }
+}
+
 #[test]
 fn the_authored_contract_of_every_field_is_read() {
     let item = item();
@@ -81,15 +90,7 @@ fn the_authored_contract_of_every_field_is_read() {
 #[test]
 fn a_whole_correct_submission_credits_every_skill_once() {
     let item = item();
-    let result = grade(
-        &item,
-        &Submission {
-            method: None,
-            steps: vec![response("fuel-rate", "15"), response("cost-share", "21.60")],
-            final_answer: response("final", "0.120"),
-            reasoning: Some("  ".into()),
-        },
-    );
+    let result = grade(&item, &complete_submission("0.120", Some("  ")));
     assert!(result.solved);
     assert!(!result.assisted);
     assert!(!result.ungraded);
@@ -129,12 +130,7 @@ fn a_wrong_final_answer_keeps_the_credit_of_the_correct_steps() {
     let item = item();
     let result = grade(
         &item,
-        &Submission {
-            method: None,
-            steps: vec![response("fuel-rate", "15"), response("cost-share", "21.60")],
-            final_answer: response("final", "1.2"),
-            reasoning: Some("I divided the distance by the cost.".into()),
-        },
+        &complete_submission("1.2", Some("I divided the distance by the cost.")),
     );
     assert!(!result.solved);
     assert!(!result.final_grade.correct);

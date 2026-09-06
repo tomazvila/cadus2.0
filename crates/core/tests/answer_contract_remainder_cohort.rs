@@ -14,19 +14,7 @@ fn every_reviewed_integer_division_policy_matches_its_authored_operands() {
     let mut count = 0;
     for line in manifest.lines() {
         let row: Value = serde_json::from_str(line).unwrap();
-        let entry = raw
-            .topics()
-            .find(|entry| entry.topic.id.as_str() == row["topic_id"].as_str().unwrap())
-            .unwrap();
-        let kp = entry
-            .topic
-            .knowledge_points
-            .iter()
-            .find(|kp| kp.id.as_str() == row["kp_id"].as_str().unwrap())
-            .unwrap();
-        let item = &kp.exemplars[usize::try_from(row["exemplar_index"].as_u64().unwrap()).unwrap()];
-        assert_eq!(item.problem, row["problem"].as_str().unwrap());
-        assert_eq!(item.answer, row["answer"].as_str().unwrap());
+        let item = common::fixtures::reviewed_exemplar(&raw, &row);
         let divisor = row["divisor"].as_u64().unwrap();
         let dividend = row["dividend"].as_u64().unwrap();
         let quotient = row["quotient"].as_u64().unwrap();
