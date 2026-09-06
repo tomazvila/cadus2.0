@@ -123,6 +123,69 @@ class KpKey:
 
 
 @dataclass(frozen=True)
+class ExemplarPatch:
+    """Exact learner-facing replacements for one indexed exemplar."""
+
+    problem: str | None = None
+    answer: str | None = None
+    solution_sketch: str | None = None
+    answer_contract: str | None = None
+
+
+def patch_exemplars(
+    path: Path, patches: dict[ExemplarKey, ExemplarPatch], *, write: bool
+) -> tuple[str, list[ExemplarKey]]:
+    """Replace selected fields of exact indexed exemplars without reformatting YAML."""
+    lines = path.read_text().splitlines(keepends=True)
+    remaining = dict(patches)
+    applied = []
+    for key, (start, end) in sorted(
+        _exemplar_blocks(lines).items(), key=lambda entry: entry[1][0], reverse=True
+    ):
+        patch = remaining.pop(key, None)
+        if patch is None:
+            continue
+        fields = {
+            "problem": patch.problem,
+            "answer": patch.answer,
+            "solution_sketch": patch.solution_sketch,
+            "answer_contract": patch.answer_contract,
+        }
+        begin = start - 1
+        block = lines[begin:end]
+        seen = set()
+        for offset, line in enumerate(block):
+            field = line.strip().split(":", 1)[0].removeprefix("- ")
+            value = fields.get(field)
+            if value is None:
+                continue
+            seen.add(field)
+            if field == "problem":
+                block[offset] = f"          - problem: {_quoted(value)}\n"
+            elif field == "answer":
+                if '"' in value:
+                    raise Rejection(f"replacement answer holds a literal quote: {value!r}")
+                block[offset] = f'            answer: "{value}"\n'
+            elif field == "solution_sketch":
+                block[offset] = f"            solution_sketch: {_quoted(value)}\n"
+            else:
+                block[offset] = f"            answer_contract: {value}\n"
+        missing = {name for name, value in fields.items() if value is not None} - seen
+        if missing:
+            raise Rejection(f"{key} has no field(s) to replace: {sorted(missing)}")
+        lines[begin:end] = block
+        applied.append(key)
+    if remaining:
+        keys = sorted(remaining, key=lambda key: (key.topic_id, key.kp_id, key.exemplar_index))
+        raise Rejection(f"never found in {path}: {keys}")
+    applied.reverse()
+    text = "".join(lines)
+    if write:
+        path.write_text(text)
+    return text, applied
+
+
+@dataclass(frozen=True)
 class NewExemplar:
     """One exemplar block to append; `with_contract` copies the sibling convention.
 
