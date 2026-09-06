@@ -17,7 +17,7 @@ import {
   press, progressCount, stubApi, submitAnswer, submitThenWait, workInput, typeAnswer,
 } from './helpers/session';
 import type {
-  ApiClient, ServedProblem, SessionStartResponse, StatusResponse,
+  ApiClient, BlockedTask, ServedProblem, SessionStartResponse, StatusResponse,
 } from '@/api/types';
 
 /** The dashboard's own fixture, for the one test that starts a session from that screen. */
@@ -175,9 +175,10 @@ describe('NO-2BILL: one write per mount', () => {
   });
 
   it('AUDIT-j: an empty plan with blocked topics says the content is not written', async () => {
-    const plan = { ...planOf(), blocked: [
-      { task_type: 'lesson' as const, topic: 'fractions', kp: 'kp1', blockers: ['teachable'] },
-    ] };
+    const blocked: BlockedTask[] = [
+      { task_type: 'lesson', topic: 'fractions', kp: 'kp1', blockers: ['teachable'] },
+    ];
+    const plan = { ...planOf(), blocked };
     await mount({ plan, api: stubApi({}) });
     expect(screen.getByText('1 topic(s) wait on content that is not written yet.')).toBeTruthy();
   });

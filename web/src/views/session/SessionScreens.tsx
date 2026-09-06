@@ -10,7 +10,7 @@ import { fmtClock, num, signed } from '@/lib/format';
 import type { PlanTask, ServedProblem, SessionEndResponse, SessionPlanResponse } from '@/api/types';
 
 /** The one sentence a lesson with no approved teach page says (audit finding j). */
-export const NO_INSTRUCTION_MESSAGE = 'No instruction yet for this lesson';
+const NO_INSTRUCTION_MESSAGE = 'No instruction yet for this lesson';
 
 export interface SummaryProps {
   summary: SessionEndResponse | null;

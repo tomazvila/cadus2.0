@@ -74,6 +74,22 @@ fn set_of(graph: &Curriculum, content: &MapContent) -> ReadinessSet {
     ReadinessIndex::build(graph).resolve(content)
 }
 
+/// The tree, the empty learner, and a store that approves no teach page for
+/// `rich`.
+fn untaught() -> (Curriculum, BTreeMap<String, TopicState>, MapContent) {
+    let mut content = stocked();
+    content.insert("rich/kp1", KIND_TEACH, 0);
+    (tree(), BTreeMap::new(), content)
+}
+
+/// The topic ids of the served tasks of a plan, in serve order.
+fn served_topics(plan: &SessionPlan) -> Vec<&str> {
+    plan.tasks
+        .iter()
+        .filter_map(|task| task.topic.as_deref())
+        .collect()
+}
+
 /// Compose over `graph` and `states` with the gate, at `T`.
 fn compose(
     graph: &Curriculum,
@@ -91,18 +107,11 @@ fn compose(
 
 #[test]
 fn a_lesson_with_no_teach_page_leaves_the_plan_and_names_its_blockers() {
-    let graph = tree();
-    let states: BTreeMap<String, TopicState> = BTreeMap::new();
-    let mut content = stocked();
-    content.insert("rich/kp1", KIND_TEACH, 0);
+    let (graph, states, content) = untaught();
     let set = set_of(&graph, &content);
     let plan = compose(&graph, &states, Some(&set), &cfg());
 
-    let topics: Vec<&str> = plan
-        .tasks
-        .iter()
-        .filter_map(|task| task.topic.as_deref())
-        .collect();
+    let topics = served_topics(&plan);
     assert!(topics.is_empty(), "no lesson serves: {topics:?}");
     let blocked: Vec<(&str, Vec<Blocker>)> = plan
         .blocked
@@ -130,12 +139,7 @@ fn the_plan_takes_the_next_ready_lesson() {
     let states: BTreeMap<String, TopicState> = BTreeMap::new();
     let set = set_of(&graph, &stocked());
     let plan = compose(&graph, &states, Some(&set), &cfg());
-    let topics: Vec<&str> = plan
-        .tasks
-        .iter()
-        .filter_map(|task| task.topic.as_deref())
-        .collect();
-    assert_eq!(topics, ["rich"]);
+    assert_eq!(served_topics(&plan), ["rich"]);
     assert_eq!(plan.blocked.len(), 1);
     assert_eq!(plan.blocked[0].topic, "thin");
 }
@@ -176,10 +180,7 @@ fn a_review_needs_practicable_only() {
 
 #[test]
 fn the_rule_is_off_with_no_gate_and_off_when_the_config_says_so() {
-    let graph = tree();
-    let states: BTreeMap<String, TopicState> = BTreeMap::new();
-    let mut content = stocked();
-    content.insert("rich/kp1", KIND_TEACH, 0);
+    let (graph, states, content) = untaught();
     let set = set_of(&graph, &content);
 
     // No gate: the plan is the plan of every earlier unit.
