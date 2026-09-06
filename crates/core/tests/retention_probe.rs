@@ -232,8 +232,10 @@ fn the_probe_never_repeats_an_item_the_learner_saw() {
             ..TopicState::default()
         },
     );
-    let mut retention = RetentionState::default();
-    retention.digests = vec!["probed-1".to_owned()];
+    let retention = RetentionState {
+        digests: vec!["probed-1".to_owned()],
+        ..RetentionState::default()
+    };
     let seen = cadus_core::retention::seen_digests(&topics, &retention, TOPIC);
     let candidates = [
         "seen-1".to_owned(),
