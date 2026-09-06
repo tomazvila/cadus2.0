@@ -65,13 +65,11 @@ fn structured_contract(
             expected,
             super::notation::recognizes_ratio(learner),
         ),
-        AnswerContract::AscendingChain => {
-            parsed_or_recognized(
-                super::notation::ascending_chain(learner),
-                expected,
-                super::notation::recognizes_chain(learner),
-            )
-        }
+        AnswerContract::AscendingChain => parsed_or_recognized(
+            super::notation::ascending_chain(learner),
+            expected,
+            super::notation::recognizes_chain(learner),
+        ),
         AnswerContract::PolynomialRelation => parsed(super::relation::read(learner), expected),
         _ => return None,
     };
