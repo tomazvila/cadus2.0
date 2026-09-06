@@ -225,6 +225,8 @@ export interface DiagStartResponse {
  * future payload grew a field (DIAG-nosol).
  */
 export interface DiagAnswerResponse {
+  outcome?: 'correct' | 'incorrect' | 'ungraded';
+  reason?: string;
   correct?: boolean;
   next_probe?: DiagProbe | { done: true } | null;
 }

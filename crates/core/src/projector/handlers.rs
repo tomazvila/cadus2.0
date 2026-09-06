@@ -242,6 +242,13 @@ impl Projector<'_> {
     /// `diagnostic_answer` (`projector.py:289-299`). A light index: tallied on every
     /// replay, so an incrementally applied placement sees the answers before it.
     pub(super) fn on_diagnostic_answer(&mut self, event: &DiagnosticAnswer) {
+        if event
+            .outcome
+            .as_ref()
+            .is_some_and(|outcome| outcome.is_ungraded())
+        {
+            return;
+        }
         self.diag_answers
             .entry(event.topic.as_str().to_owned())
             .or_default()

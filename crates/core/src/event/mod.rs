@@ -180,10 +180,19 @@ impl Event {
     ///
     /// [`Event::from_json`] calls it, and so does every other reader that builds an
     /// event through serde — the store decodes the `jsonb` payload straight into this
-    /// type. The step is idempotent, and it touches `attempt` only.
+    /// type. The step is idempotent for attempts and diagnostic answers.
     pub fn normalize(&mut self) {
-        if let Self::Attempt(body) = self {
-            body.normalize();
+        match self {
+            Self::Attempt(body) => body.normalize(),
+            Self::DiagnosticAnswer(body) => {
+                if let Some(outcome) = &body.outcome {
+                    body.correct = *outcome == AttemptOutcome::Correct;
+                    if outcome.is_ungraded() {
+                        body.weight = Weight::default();
+                    }
+                }
+            }
+            _ => {}
         }
     }
 

@@ -67,9 +67,17 @@ fn topic_record<'a>(graph: &'a Curriculum, topic: &str) -> Option<&'a Topic> {
     graph.idx_of(topic).and_then(|idx| graph.topic(idx))
 }
 
-/// The answer kind of one topic, or `None` when the arena does not hold it.
-fn topic_kind(graph: &Curriculum, topic: &str) -> Option<AnswerKind> {
-    topic_record(graph, topic).map(|record| record.answer_kind)
+/// An explicit supported contract makes a multi-step final answer markable.
+fn markable(record: &Topic) -> bool {
+    if record.answer_kind == AnswerKind::Proof {
+        return false;
+    }
+    record.diagnostic_exemplar.as_ref().is_some_and(|item| {
+        item.answer_contract.as_ref().map_or_else(
+            || deterministic(record.answer_kind),
+            |contract| contract.validate_expected(&item.answer).is_ok(),
+        )
+    })
 }
 
 /// The `409 no_diagnostic` of a call with no diagnostic in progress.

@@ -7,15 +7,16 @@ use cadus_core::curriculum::{AnswerKind, Course, Curriculum, Slug};
 use cadus_core::diagnostic::{self, DiagState, PlacementResult};
 use cadus_core::event::Slug as EventSlug;
 use cadus_core::event::{
-    DiagnosticAnswer, DiagnosticPlaced, Event, SchemaVersion, Secs, Timestamp, Weight,
+    AttemptOutcome, AttemptProblem, DiagnosticAnswer, DiagnosticPlaced, Event, SchemaVersion, Secs,
+    Timestamp, Weight,
 };
 use cadus_core::selector::{course_scope, frontier, known_set};
 use cadus_store::state::{Projection, clear_diag_state, project_current};
 use serde_json::{Value, json};
 
 use super::{
-    DIAG_TASK_ID, deal_probe, deterministic, load_diagnostic, no_diagnostic, save_diagnostic,
-    topic_kind, topic_record,
+    DIAG_TASK_ID, deal_probe, deterministic, load_diagnostic, markable, no_diagnostic,
+    save_diagnostic, topic_record,
 };
 use crate::error::ApiError;
 use crate::grade::{grade_item, measure_secs};
@@ -69,7 +70,7 @@ fn markable_diagnostic(content: &Content, course: &str) -> DiagState {
     let graph = &content.curriculum;
     let mut diag = diagnostic::init_session(graph, &content.cfg, Some(course));
     diag.probe_set
-        .retain(|topic| topic_kind(graph, topic).is_some_and(deterministic));
+        .retain(|topic| topic_record(graph, topic).is_some_and(markable));
     diag
 }
 
@@ -168,13 +169,18 @@ fn probe_topic<'a>(
         return Err(no_diagnostic());
     }
     let record = topic_record(graph, topic)
-        .filter(|record| deterministic(record.answer_kind))
+        .filter(|record| {
+            deterministic(record.answer_kind)
+                || (record.answer_kind != AnswerKind::Proof
+                    && served.expected.answer_contract.is_some())
+        })
         .ok_or_else(no_diagnostic)?;
     Ok((&record.id, record.answer_kind))
 }
 
 /// The verdict of one probe and its weight.
 struct Marked {
+    outcome: AttemptOutcome,
     correct: bool,
     secs: i64,
     weight: f64,
@@ -192,12 +198,17 @@ fn mark_probe(
     let expected_time = topic_record(graph, topic).map(|record| record.expected_time_secs);
     let (secs, _) = measure_secs(served.started_at, now_micros, expected_time);
     let grade = grade_item(&served.expected, submitted, kind);
-    let weight = diagnostic::answer_weight(
-        grade.correct,
-        expected_time.unwrap_or_default() as f64,
-        secs as f64,
-    );
+    let weight = if grade.outcome.is_ungraded() {
+        0.0
+    } else {
+        diagnostic::answer_weight(
+            grade.correct,
+            expected_time.unwrap_or_default() as f64,
+            secs as f64,
+        )
+    };
     Marked {
+        outcome: grade.outcome,
         correct: grade.correct,
         secs,
         weight,
@@ -213,6 +224,8 @@ fn answer_event(
     session: Option<String>,
     topic: EventSlug,
     marked: &Marked,
+    served: &ServedProblem,
+    submitted: &str,
 ) -> Event {
     Event::DiagnosticAnswer(DiagnosticAnswer {
         ts: now,
@@ -220,6 +233,14 @@ fn answer_event(
         v: SchemaVersion::current(),
         topic,
         correct: marked.correct,
+        outcome: marked.outcome.is_ungraded().then(|| marked.outcome.clone()),
+        problem_id: Some(served.problem_id.clone()),
+        submitted: Some(submitted.to_owned()),
+        problem: Some(AttemptProblem {
+            text: served.text.clone(),
+            expected: served.expected.answer.clone(),
+            answer_contract: served.expected.answer_contract,
+        }),
         secs: Secs::new(marked.secs).unwrap_or_default(),
         weight: Weight::new(marked.weight).unwrap_or_default(),
     })
@@ -248,27 +269,43 @@ pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
         &submitted,
         req.now.micros(),
     );
-    diagnostic::apply_answer(
-        &mut diag,
-        graph,
-        topic.as_str(),
-        marked.correct,
-        marked.weight,
-        &req.content.cfg,
-    );
+    if marked.outcome.is_ungraded() {
+        // The probe was asked, but it contributes no placement evidence.
+        diag.answered.push(topic.as_str().to_owned());
+    } else {
+        diagnostic::apply_answer(
+            &mut diag,
+            graph,
+            topic.as_str(),
+            marked.correct,
+            marked.weight,
+            &req.content.cfg,
+        );
+    }
 
     let projection = req
         .store(project_current(&mut tx, req.user_id, &req.input()))
         .await?;
     let session = projection.view.current_session.clone();
-    let event = answer_event(req.now, session, event_slug(topic), &marked);
+    let event = answer_event(
+        req.now,
+        session,
+        event_slug(topic),
+        &marked,
+        &served,
+        &submitted,
+    );
     req.append(&mut tx, &event).await?;
 
     let next = deal_probe(&diag, &req.content, &mut scratch, req.now);
     save_diagnostic(&req.state, &mut tx, req.user_id, &diag, &scratch).await?;
 
     let next_probe = next.unwrap_or_else(|| json!({ "done": true }));
-    let body = json!({ "correct": marked.correct, "next_probe": next_probe });
+    let body = if marked.outcome.is_ungraded() {
+        json!({"outcome": "ungraded", "reason": "This answer could not be marked. It does not affect your placement.", "next_probe": next_probe})
+    } else {
+        json!({ "correct": marked.correct, "next_probe": next_probe })
+    };
     reply_committed(tx, body).await
 }
 
