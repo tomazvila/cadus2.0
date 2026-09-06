@@ -30,6 +30,7 @@
 //! #14). [`verdict`] stands between them: it is a read, and it takes [`Db`],
 //! because the authoring job runs it on its own write path.
 
+mod index;
 mod review;
 
 use serde_json::Value as Json;
@@ -37,6 +38,7 @@ use sqlx::PgExecutor;
 use sqlx::types::chrono::{DateTime, Utc};
 use uuid::Uuid;
 
+pub use index::approved_index;
 pub use review::{
     BANK_TARGET, LIST_LIMIT, RegateRow, ReviewFilter, ReviewItem, StoredDoc, document, regate_rows,
     review_list,

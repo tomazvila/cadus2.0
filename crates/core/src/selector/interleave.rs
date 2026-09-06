@@ -7,8 +7,9 @@ use crate::config::Config;
 use crate::curriculum::Curriculum;
 use crate::numeric::round_dp;
 
+use super::plan::Constraints;
 use super::review::count_as_float;
-use super::task::{Constraints, Task};
+use super::task::Task;
 
 /// One slot of the interleaved sequence.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

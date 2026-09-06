@@ -14,9 +14,10 @@ use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
 use super::interleave::SlotKind;
 use super::multistep::remediation_tasks;
+use super::plan::SessionPlan;
 use super::quiz::quiz_is_due;
 use super::review::in_retry_delay;
-use super::task::{SessionPlan, Task, schedule_drills};
+use super::task::{Task, schedule_drills};
 use super::topic_set::TopicSet;
 
 /// The inputs [`task_still_valid`] tests a queued task against.

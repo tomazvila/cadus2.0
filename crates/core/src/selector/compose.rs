@@ -11,16 +11,17 @@ use crate::learner::TopicState;
 
 use super::compress::compress_with;
 use super::context::SessionContext;
+use super::eligible::{gate_of, hold_lessons, hold_quiz, hold_topics};
 use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
 use super::interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
 use super::multistep::{multistep_components, multistep_is_due, multistep_task, remediation_tasks};
+use super::plan::{BlockedTask, SessionPlan};
 use super::quiz::{QuizSampler, quiz_composer, quiz_is_due};
 use super::reserve::reserve_open_plan;
 use super::review::{due_reviews, nearly_due, order_lessons_with};
 use super::task::{
-    SessionPlan, Task, drill_task, knockout_count, lesson_task, quiz_task, review_task,
-    schedule_drills,
+    Task, drill_task, knockout_count, lesson_task, quiz_task, review_task, schedule_drills,
 };
 use super::topic_set::ReachCache;
 use super::{MULTISTEP_ENABLED, MULTISTEP_MIN_COMPONENTS};
@@ -236,6 +237,16 @@ pub fn compose_session(
     let mut lessons_ordered = reviews.lessons.clone();
     lessons_ordered.retain(|tid| !remediation_topics.contains(tid));
 
+    // The readiness rule of D-F5. A lesson the content cannot teach, practice
+    // and assess leaves the serve list here, and the composer takes the next
+    // ready task (audit finding j).
+    let gate = gate_of(cfg, ctx.readiness);
+    let mut blocked: Vec<BlockedTask> = Vec::new();
+    if let Some(gate) = gate {
+        blocked.extend(hold_lessons(gate, graph, states, &mut lessons_ordered));
+        blocked.extend(hold_topics(gate, TaskType::Review, &mut review_topics));
+    }
+
     // The multi-step integration task absorbs several due reviews.
     let multistep = multistep_plan(states, graph, ctx, &reviews.due, &mut review_topics);
 
@@ -261,13 +272,20 @@ pub fn compose_session(
         ctx.active_study_days,
     );
     if quiz_due {
-        let plan = quiz_composer(states, graph, cfg, t_us, sampler, ctx.learned_at);
+        let mut plan = quiz_composer(states, graph, cfg, t_us, sampler, ctx.learned_at);
+        if let Some(gate) = gate {
+            blocked.extend(hold_quiz(gate, &mut plan));
+        }
         if !plan.questions.is_empty() {
             tasks.push(quiz_task(&plan, ctx.quiz_high_score_streak));
         }
     }
 
-    for tid in schedule_drills(states, graph, t_us, ctx.last_drill_at) {
+    let mut drills = schedule_drills(states, graph, t_us, ctx.last_drill_at);
+    if let Some(gate) = gate {
+        blocked.extend(hold_topics(gate, TaskType::Drill, &mut drills));
+    }
+    for tid in drills {
         tasks.push(drill_task(&tid, cfg));
     }
 
@@ -276,7 +294,9 @@ pub fn compose_session(
     }
     assign_ids(&mut tasks, ctx.session_id);
 
-    front.plan(ctx.session_id, tasks, quiz_due, course_complete, &seq, cfg)
+    let mut plan = front.plan(ctx.session_id, tasks, quiz_due, course_complete, &seq, cfg);
+    plan.blocked = blocked;
+    plan
 }
 
 #[cfg(test)]
