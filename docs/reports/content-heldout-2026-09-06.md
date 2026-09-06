@@ -125,17 +125,40 @@ committed generator and curriculum). By reason:
 - **3 KPs**: an authored answer is not a plain number, a fraction or a
   decimal (for example, a spelled-out scientific-notation answer).
 
-## Untouched by this lane: `solutions`, `practicable`, `assessable`
+## `solutions`: closed for every pure-numeric compute KP
 
 The readiness audit's `solutions` blocker (a non-held-out decidable exemplar
-with no `solution_sketch`) and its `practicable`/`assessable` blockers (fewer
-than three practice items, or no item held out for assessment) are CURRICULUM
-facts (`crates/core/src/readiness/facts.rs`), not `content_store` documents —
-fixing them means adding a `solution_sketch` and, for many KPs, a fourth
-pedagogically-distinct decidable exemplar to `curriculum/foundations/*.yaml`
-itself. This lane's evaluator and `same_shape_new_operands` are exactly the
-tool such a patch would need (verified arithmetic, no served-answer
-collision), but authoring that patch, updating every curriculum-hash-pinned
-test fixture it touches, and re-auditing readiness end to end is a second,
-separately-sized change that this lane did not reach. It is the natural next
-step for whichever lane picks this file up next.
+with no `solution_sketch`) is a CURRICULUM fact
+(`crates/core/src/readiness/facts.rs`), not a `content_store` document.
+`scripts/authoring/apply_foundations_solution_sketches.py --write` added a
+`solution_sketch` to every exemplar of every pure-numeric compute knowledge
+point that lacked one: 105 lines across `arithmetic-core` (57),
+`fractions-decimals` (25), `integers-negatives` (19) and `exponents-radicals`
+(4) — no exemplar was added, removed, reordered, or had its `answer` or
+`answer_contract` touched, and each sketch names only that exemplar's own
+already-served problem and answer (never a different exemplar's). The
+generator is `foundations_drafts.solution_sketch_for`, built on the same
+verified evaluator as the teach/hint drafts; the line-level editor
+(`foundations_curriculum_patch.py`) follows the same scan-and-insert
+convention as the existing `foundations_visuals.py` and refuses (writing
+nothing) if a target already carries an authored sketch or is not found.
+
+Validated three ways: `cargo run --bin lint_curriculum` reports 0 findings on
+the patched tree; the Python regression test asserts the regenerated fixture
+has zero remaining `missing_solution_sketches` across all 92 qualifying
+knowledge points; and
+`crates/core/tests/foundations_heldout_solutions.rs` loads the REAL
+curriculum through the REAL `ReadinessIndex` (production code, not this
+lane's own classifier) and asserts `facts.solutions` now holds for all 92.
+
+## Untouched by this lane: `practicable` and `assessable`
+
+`practicable` (at least three practice items) and `assessable` (one item held
+out) need a FOURTH pedagogically-distinct decidable exemplar on most of these
+knowledge points (most currently author exactly two or three) —
+`same_shape_new_operands` is exactly the tool such a patch would need, but
+inserting a new exemplar block (versus this lane's additive-only
+`solution_sketch` line) is a larger structural edit, and updating whatever
+curriculum-hash-pinned fixtures it touches and re-auditing readiness end to
+end is a separately-sized change this lane did not reach. It is the natural
+next step for whichever lane picks this file up next.

@@ -117,5 +117,56 @@ class DraftShapeTest(unittest.TestCase):
                 self.assertFalse(any(ch.isdigit() for ch in rung))
 
 
+class SolutionSketchTest(unittest.TestCase):
+    def test_generates_a_sketch_naming_the_exemplars_own_numbers(self):
+        sketch = fd.solution_sketch_for("-7 + 4", "-3")
+        self.assertIn("$-7 + 4 = -3$.", sketch)
+
+    def test_missing_solution_sketches_skips_an_already_authored_one(self):
+        # `apply_foundations_solution_sketches.py --write` has already run
+        # against the committed fixture, so single-digit-addition/kp1's
+        # exemplar 0 (authored with no sketch originally) is now filled, and
+        # asking again reports nothing left missing for this KP.
+        _, kp = find_kp("single-digit-addition", "kp1")
+        self.assertEqual(fd.missing_solution_sketches(kp), {})
+
+    def test_missing_solution_sketches_is_none_for_a_non_numeric_kp(self):
+        _, kp = find_kp("fraction-basics", "kp1")
+        self.assertIsNone(fd.missing_solution_sketches(kp))
+
+    def test_every_pure_numeric_exemplars_own_sketch_is_arithmetically_correct(self):
+        """`solution_sketch_for` stays correct for every qualifying exemplar,
+        independent of whether the curriculum already carries a sketch."""
+        checked = 0
+        for topic in load_topics():
+            for kp in topic["knowledge_points"]:
+                matches = fd.pure_numeric_exemplars(kp)
+                if not matches:
+                    continue
+                for exemplar, match in zip(kp["exemplars"], matches):
+                    expr = match.group(2)
+                    answer_text = exemplar["answer"]
+                    sketch = fd.solution_sketch_for(expr, answer_text)
+                    self.assertIn(f"${expr} = {answer_text}$.", sketch)
+                    self.assertEqual(fc.evaluate(expr), fc.parse_answer_text(answer_text))
+                    checked += 1
+        self.assertGreater(checked, 50)
+
+    def test_the_curriculum_patch_left_no_pure_numeric_kp_missing_a_sketch(self):
+        """Regression: `apply_foundations_solution_sketches.py --write` already ran.
+
+        The committed `testdata/foundations_topics.json` is regenerated from
+        the curriculum AFTER that patch, so this must hold with zero
+        exceptions, or the patch missed a knowledge point.
+        """
+        unresolved = []
+        for topic in load_topics():
+            for kp in topic["knowledge_points"]:
+                missing = fd.missing_solution_sketches(kp)
+                if missing:
+                    unresolved.append((topic["id"], kp["id"], missing))
+        self.assertEqual(unresolved, [])
+
+
 if __name__ == "__main__":
     unittest.main()

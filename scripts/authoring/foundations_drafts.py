@@ -225,13 +225,13 @@ def _served_values(kp: dict) -> frozenset[Fraction]:
     return frozenset(values)
 
 
-def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
-    """The [`Candidate`] of one knowledge point, or `None` if it is out of scope.
+def pure_numeric_exemplars(kp: dict) -> Optional[list[re.Match]]:
+    """Every exemplar's `(verb, expr)` match, or `None` if any exemplar disqualifies the KP.
 
-    Every exemplar must be a `Compute $expr$.`-shaped pure-numeric problem
-    with a parseable authored answer; the new expression is built from the
-    LAST such exemplar (the one closest to the knowledge point's ceiling of
-    difficulty), reusing its own family and constraints.
+    A KP qualifies only when EVERY exemplar is a `Compute $expr$.`-shaped
+    pure-numeric problem with a parseable authored answer — the same
+    all-or-nothing rule [`classify_kp`] and the solution-sketch generator
+    both need, kept in one place.
     """
     matches = []
     for exemplar in kp["exemplars"]:
@@ -243,6 +243,18 @@ def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
         except (ValueError, ZeroDivisionError):
             return None
         matches.append(match)
+    return matches or None
+
+
+def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
+    """The [`Candidate`] of one knowledge point, or `None` if it is out of scope.
+
+    Every exemplar must be a `Compute $expr$.`-shaped pure-numeric problem
+    with a parseable authored answer; the new expression is built from the
+    LAST such exemplar (the one closest to the knowledge point's ceiling of
+    difficulty), reusing its own family and constraints.
+    """
+    matches = pure_numeric_exemplars(kp)
     if not matches:
         return None
     verb, base_expr = matches[-1].group(1), matches[-1].group(2)
@@ -286,6 +298,37 @@ def teach_draft(candidate: Candidate) -> dict:
             },
         },
     }
+
+
+def solution_sketch_for(expr: str, answer_text: str) -> str:
+    """A short, honest solution sketch for one AUTHORED (already-served) exemplar.
+
+    Unlike the teach page, a solution sketch belongs to the exemplar itself:
+    the exemplar's own `answer` field already serves this exact value, so
+    restating it here names nothing the learner has not already been told.
+    """
+    _, steps = TEACH[classify_family(expr)]
+    return f"{steps[-1]} ${expr} = {answer_text}$."
+
+
+def missing_solution_sketches(kp: dict) -> Optional[dict[int, str]]:
+    """`{exemplar_index: sketch}` for every exemplar of `kp` that lacks one.
+
+    Returns `None` when the knowledge point holds an exemplar outside the
+    pure-numeric family (its exemplars are not all decidable by this
+    module's evaluator, so this module writes no sketch for any of them).
+    An empty dict means every exemplar already carries an authored sketch.
+    """
+    matches = pure_numeric_exemplars(kp)
+    if matches is None:
+        return None
+    out = {}
+    for index, (exemplar, match) in enumerate(zip(kp["exemplars"], matches)):
+        sketch = exemplar.get("solution_sketch")
+        if sketch and sketch.strip():
+            continue
+        out[index] = solution_sketch_for(match.group(2), exemplar["answer"])
+    return out
 
 
 def hint_draft(candidate: Candidate) -> dict:
