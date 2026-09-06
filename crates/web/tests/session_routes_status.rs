@@ -338,3 +338,18 @@ async fn status_reads_a_placed_topic_as_placed() {
     })
     .await;
 }
+
+/// A learner with no open session has no session window to read: the
+/// dashboard answers from the model alone.
+#[tokio::test]
+async fn status_without_a_session_reads_no_session_window() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "no-session@example.com").await;
+        let app = app(&db);
+
+        let value = get_json(&app, user, "/api/status").await;
+        assert_eq!(value["placed"], false);
+        assert_eq!(value["drill_due"], false);
+    })
+    .await;
+}

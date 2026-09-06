@@ -170,14 +170,23 @@ mod tests {
     ///
     /// `PgPool::close` waits for every checked-out connection, so a database
     /// that answers nothing makes the plain call run without end (finding #6).
-    /// The never-resolving future below stands for that case. The outer timeout
-    /// of 5 s fails the test when the bound is gone.
+    /// The long sleep below stands for that case. The outer timeout of 5 s
+    /// fails the test when the bound is gone. A close that ends at once goes
+    /// through the same instantiation first, so one record holds both arms.
     #[tokio::test]
     async fn close_within_returns_at_the_deadline() {
+        super::close_within(
+            Duration::from_millis(200),
+            tokio::time::sleep(Duration::ZERO),
+        )
+        .await;
         let start = Instant::now();
         let outcome = tokio::time::timeout(
             Duration::from_secs(5),
-            super::close_within(Duration::from_millis(200), std::future::pending::<()>()),
+            super::close_within(
+                Duration::from_millis(200),
+                tokio::time::sleep(Duration::from_secs(3600)),
+            ),
         )
         .await;
         let elapsed = start.elapsed();
