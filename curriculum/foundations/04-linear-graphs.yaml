@@ -498,12 +498,22 @@ topics:
         name: "Slope between two graphed lattice points"
         key_prerequisites: [coordinate-plane]
         exemplars:
-          - problem: 'A graphed line passes through $(0, 1)$ and $(2, 5)$. Count the rise and run to find the slope.'
-            answer: "2"
-            solution_sketch: 'Rise $4$, run $2$: slope $2$.'
-          - problem: 'A graphed line passes through $(0, 3)$ and $(1, 1)$. What is the slope?'
-            answer: "-2"
-            solution_sketch: 'Rise $-2$, run $1$.'
+          - problem: "Count grid squares from $(1,1)$ to $(3,4)$ on a line. What is its slope?"
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Counting gives $2$ squares right and $3$ up; slope is $3/2$."
+          - problem: "Starting at a marked point on a grid, follow the line $3$ squares right and $3$ squares down. Find its slope."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The signed rise is $-3$ and the run is $3$, so slope is $-3/3=-1$."
+          - problem: "A grid segment joins $(0,-1)$ to $(4,1)$. A learner counts $4$ up and $2$ right. Correct the slope."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The segment actually goes $4$ squares right and $2$ up, so slope is $2/4=1/2$."
+          - problem: "A lattice line passes through $(2,3)$ and $(2,0)$. Is its slope zero or undefined?"
+            answer: "undefined"
+            answer_contract: {"kind": "label", "options": [["zero"], ["undefined"]]}
+            solution_sketch: "Counting from one point to the other gives no horizontal movement and a nonzero vertical movement; division by zero is undefined."
         constraints: "lattice points close together; counting, not the formula"
     diagnostic_exemplar:
       problem: 'A graphed line passes through $(0, 4)$ and $(3, -2)$. What is the slope?'
@@ -536,35 +546,66 @@ topics:
         name: "Apply the slope formula"
         key_prerequisites: [integer-addition-subtraction]
         exemplars:
-          - problem: 'Find the slope of the line through $(1, 2)$ and $(4, 8)$.'
+          - problem: "Use the slope formula for the points $(1,2)$ and $(3,8)$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$m=(8-(2))/(3-(1))=(6)/(2)=3$."
+          - problem: "A table gives $x:-2,1$ and $y:1,7$. Use coordinate differences to find the slope."
             answer: "2"
-            solution_sketch: '$\frac{8 - 2}{4 - 1} = \frac{6}{3} = 2$.'
-          - problem: 'Find the slope of the line through $(0, 0)$ and $(5, 10)$.'
-            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$m=(7-(1))/(1-(-2))=(6)/(3)=2$."
+          - problem: "The displacement from one point on a line to another is $\\langle4,4\\rangle$. Use the coordinate differences to find the slope."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The displacement gives $\\Delta x=4$ and $\\Delta y=4$, so $m=\\Delta y/\\Delta x=4/4=1$."
+          - problem: "A learner mixes point order in the slope numerator and denominator for $(2,-1)$ and $(5,11)$. Find the correct slope."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$m=(11-(-1))/(5-(2))=(12)/(3)=4$."
         constraints: "positive integer slopes"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
         name: "Points with negative coordinates"
         key_prerequisites: [integer-addition-subtraction]
         exemplars:
-          - problem: 'Find the slope of the line through $(-2, -3)$ and $(1, 3)$.'
+          - problem: "Use the slope formula for the points $(-3,-5)$ and $(1,3)$."
             answer: "2"
-            solution_sketch: '$\frac{3 - (-3)}{1 - (-2)} = \frac{6}{3} = 2$.'
-          - problem: 'Find the slope of the line through $(-1, 4)$ and $(2, -5)$.'
-            answer: "-3"
-            solution_sketch: '$\frac{-5 - 4}{2 - (-1)} = \frac{-9}{3} = -3$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$m=(3-(-5))/(1-(-3))=(8)/(4)=2$."
+          - problem: "A table gives $x:-4,-1$ and $y:2,-4$. Use coordinate differences to find the slope."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$m=(-4-(2))/(-1-(-4))=(-6)/(3)=-2$."
+          - problem: "A line starts at $A=(-2,-3)$; its displacement to a second point is $\\langle4,4\\rangle$. Find the slope."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The second point is $(2,1)$ and the coordinate changes are $\\Delta x=4$, $\\Delta y=4$. Thus $m=1$."
+          - problem: "A learner mixes point order in the slope numerator and denominator for $(-5,-7)$ and $(-2,2)$. Find the correct slope."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$m=(2-(-7))/(-2-(-5))=(9)/(3)=3$."
         constraints: "watch subtraction of negatives; integer slopes"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
         name: "Either order works"
         key_prerequisites: [integer-addition-subtraction]
         exemplars:
-          - problem: 'Compute the slope through $(3, 7)$ and $(5, 11)$ subtracting in both orders. What do you get?'
-            answer: "2 both ways"
-            solution_sketch: '$\frac{11 - 7}{5 - 3} = 2$ and $\frac{7 - 11}{3 - 5} = 2$.'
-          - problem: 'Find the slope of the line through $(6, 1)$ and $(2, 9)$.'
+          - problem: "Use the slope formula for the points $(1,3)$ and $(4,9)$. Compute in both point orders."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$m=(9-(3))/(4-(1))=(6)/(3)=2$. Reversing both orders gives $(3-(9))/(1-(4))=(-6)/(-3)$, the same ratio because both signs reverse."
+          - problem: "A table gives $x:-2,2$ and $y:5,-3$. Use coordinate differences to find the slope. Compute in both point orders."
             answer: "-2"
-            solution_sketch: '$\frac{9 - 1}{2 - 6} = \frac{8}{-4} = -2$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$m=(-3-(5))/(2-(-2))=(-8)/(4)=-2$. Reversing both orders gives $(5-(-3))/(-2-(2))=(8)/(-4)$, the same ratio because both signs reverse."
+          - problem: "Two correct orderings for one line give slope quotients $3/6$ and $(-3)/(-6)$. Give their common value."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reversing point order negates both coordinate differences. Both quotients reduce to $1/2$."
+          - problem: "A learner mixes point order in the slope numerator and denominator for $(-3,-4)$ and $(1,8)$. Find the correct slope. Compute in both point orders."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$m=(8-(-4))/(1-(-3))=(12)/(4)=3$. Reversing both orders gives $(-4-(8))/(-3-(1))=(-12)/(-4)$, the same ratio because both signs reverse."
         constraints: "consistent order in numerator and denominator"
     diagnostic_exemplar:
       problem: 'Find the slope of the line through $(-3, 5)$ and $(1, -3)$.'
@@ -1012,12 +1053,22 @@ topics:
         name: "Both intercepts from standard form"
         key_prerequisites: [two-step-equations]
         exemplars:
-          - problem: 'Find the x-intercept and the y-intercept of $3x + 4y = 12$. Give them as two points, x-intercept first.'
-            answer: "(4, 0), (0, 3)"
-            solution_sketch: '$y = 0 \to x = 4$; $x = 0 \to y = 3$.'
-          - problem: 'Find the x-intercept and the y-intercept of $5x - 2y = 10$. Give them as two points, x-intercept first.'
-            answer: "(2, 0), (0, -5)"
-            solution_sketch: '$y = 0 \to 5x = 10 \to x = 2$; $x = 0 \to -2y = 10 \to y = -5$.'
+          - problem: "Find both intercepts of $2x+3y=12$. Give $(x_0,0,0,y_0)$, listing x-intercept then y-intercept."
+            answer: "(6,0,0,4)"
+            answer_contract: {"kind": "coordinates", "arity": 4}
+            solution_sketch: "Set $y=0$: $2x=12$, giving $x=6$. Set $x=0$: $3y=12$, giving $y=4$."
+          - problem: "A boundary has equation $4x-2y=8$. Give its intercept coordinates as $(x_0,0,0,y_0)$."
+            answer: "(2,0,0,-4)"
+            answer_contract: {"kind": "coordinates", "arity": 4}
+            solution_sketch: "At $y=0$, $4x=8$ gives $2$; at $x=0$, $-2y=8$ gives $-4$."
+          - problem: "A learner sets both variables to zero at once for $3x+6y=18$. Find the two intercepts separately as $(x_0,0,0,y_0)$."
+            answer: "(6,0,0,3)"
+            answer_contract: {"kind": "coordinates", "arity": 4}
+            solution_sketch: "Set one variable to zero at a time: $3x=18$ gives $x=6$ and $6y=18$ gives $y=3$."
+          - problem: "The budget line $4x+5y=20$ meets each axis. Give its intercepts as $(x_0,0,0,y_0)$."
+            answer: "(5,0,0,4)"
+            answer_contract: {"kind": "coordinates", "arity": 4}
+            solution_sketch: "Setting $y=0$ gives $4x=20$, so $x=5$. Setting $x=0$ gives $5y=20$, so $y=4$."
         constraints: "coefficients divide the constant evenly"
     diagnostic_exemplar:
       problem: 'Find the x-intercept and the y-intercept of $3x - 2y = 12$. Give them as two points, x-intercept first.'
