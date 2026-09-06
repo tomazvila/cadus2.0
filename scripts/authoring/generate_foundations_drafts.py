@@ -96,6 +96,13 @@ def main() -> int:
     teach_by_unit, hints_by_unit, residuals = generate(topics, set(args.skip_unit))
 
     out_dir = Path(args.out)
+    skip_units = set(args.skip_unit)
+    for stale in sorted(out_dir.iterdir()) if out_dir.is_dir() else []:
+        if stale.is_dir() and stale.name not in skip_units and stale.name not in teach_by_unit:
+            print(f"removing {stale}: it no longer classifies any knowledge point")
+            for child in stale.iterdir():
+                child.unlink()
+            stale.rmdir()
     for unit in sorted(teach_by_unit):
         write_unit(out_dir, unit, teach_by_unit[unit], hints_by_unit[unit])
 

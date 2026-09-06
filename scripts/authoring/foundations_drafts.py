@@ -11,6 +11,7 @@ per detected operator family, so it can never contain a served answer token.
 """
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass
 from fractions import Fraction
@@ -226,19 +227,29 @@ def _served_values(kp: dict) -> frozenset[Fraction]:
 
 
 _IMPROPER_MIXED = re.compile(r"(\d+)\\frac\{(\d+)\}\{(\d+)\}")
+_BARE_FRACTION = re.compile(r"(?<!\d)\\frac\{(\d+)\}\{(\d+)\}")
+#: A whole-number factor of exactly one beside `\times` or `\div`: `\times 1`,
+#: `1 \times`, `\div 1` — multiplying or dividing by one trivializes the step.
+_TRIVIAL_FACTOR = re.compile(r"\\(?:times|div)\s+1(?!\d)|(?<!\d)1\s+\\(?:times|div)")
 
 
-def _within_kp_family(served: frozenset[Fraction]) -> Callable[[str, Fraction], bool]:
+def _within_kp_family(served: frozenset[Fraction], family: str) -> Callable[[str, Fraction], bool]:
     """A same-shape candidate check bounding a new draw to the KP's own authored band.
 
-    Three rules a random operand redraw cannot see on its own: the result
-    stays within the range this knowledge point's OWN exemplars already
-    span (never an easier or a harder item than the author already picked);
-    the result stays an exact integer when every authored exemplar of this
+    Rules a random operand redraw cannot see on its own: the result stays
+    within the range this knowledge point's OWN exemplars already span
+    (never an easier or a harder item than the author already picked); the
+    result stays an exact integer when every authored exemplar of this
     knowledge point already is one (a "divides evenly" or "whole number"
-    knowledge point never gains a fractional held-out item); and a mixed
+    knowledge point never gains a fractional held-out item); a mixed
     number's own fractional part stays proper (numerator below denominator),
-    so a redraw never turns `2\\frac{1}{2}` into a malformed `2\\frac{4}{4}`.
+    so a redraw never turns `2\\frac{1}{2}` into a malformed `2\\frac{4}{4}`;
+    no plain fraction operand equals exactly one (`\\frac{3}{3}`), which
+    trivializes whatever it multiplies or divides; and, for the
+    `fraction_reduce` family alone, the drawn fraction is not ALREADY in
+    lowest terms — a "simplify this fraction" exercise needs something left
+    to simplify; and no whole-number factor of exactly one sits beside a
+    `\\times` or a `\\div` (multiplying or dividing by one is a no-op step).
     """
     lo, hi = min(served), max(served)
     integer_required = all(value.denominator == 1 for value in served)
@@ -250,6 +261,15 @@ def _within_kp_family(served: frozenset[Fraction]) -> Callable[[str, Fraction], 
             return False
         for whole, num, den in _IMPROPER_MIXED.findall(candidate):
             if int(num) >= int(den):
+                return False
+        for num, den in _BARE_FRACTION.findall(candidate):
+            if num == den:
+                return False
+        if _TRIVIAL_FACTOR.search(candidate):
+            return False
+        if family == "fraction_reduce":
+            plain = _BARE_FRACTION.search(candidate)
+            if plain and math.gcd(int(plain.group(1)), int(plain.group(2))) == 1:
                 return False
         return True
 
@@ -290,6 +310,21 @@ def pure_numeric_exemplars(kp: dict) -> Optional[list[re.Match]]:
     return matches or None
 
 
+#: A family this module declines to redraw operands for at all.
+#:
+#: An exponent's base and its exponent are NOT interchangeable operands: an
+#: audit caught a "Squares of 1 through 15" knowledge point (a fixed
+#: exponent of 2, base varies) receive a generated `6^3` — a cube, not a
+#: square — and a rational-exponent knowledge point receive a degenerate
+#: `7^{5/5}` (an exponent of exactly 1, which exercises no root at all).
+#: [`same_shape_new_operands`] treats every bare integer as an
+#: interchangeable operand and has no notion of "this one is the fixed
+#: exponent" or "this one must not reduce to a trivial power"; until a
+#: family-aware generator can see that distinction, the exponent family is
+#: out of scope for BOTH the teach candidate and the held-out exemplar.
+EXCLUDED_FROM_GENERATION = frozenset({"exponent"})
+
+
 def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
     """The [`Candidate`] of one knowledge point, or `None` if it is out of scope.
 
@@ -302,6 +337,9 @@ def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
     if not matches:
         return None
     verb, base_expr = matches[-1].group(1), matches[-1].group(2)
+    family = classify_family(base_expr)
+    if family in EXCLUDED_FROM_GENERATION:
+        return None
     served = _served_values(kp)
     try:
         candidate_expr, value = fc.same_shape_new_operands(
@@ -309,7 +347,7 @@ def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
             rng,
             forbid_zero_result=True,
             forbid_values=served,
-            extra_ok=_within_kp_family(served),
+            extra_ok=_within_kp_family(served, family),
             operand_ceiling=_operand_ceiling(matches),
         )
     except fc.NotArithmetic:
@@ -323,7 +361,7 @@ def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
         base_expr=base_expr,
         candidate_expr=candidate_expr,
         answer=value,
-        family=classify_family(base_expr),
+        family=family,
     )
 
 
@@ -335,7 +373,8 @@ def teach_draft(candidate: Candidate) -> dict:
     # scans the whole last step for any token this knowledge point serves, and
     # an expression restated here would often carry an unrelated exemplar's
     # small operand or answer as an incidental digit.
-    final = f"The result is ${fc.render_answer(candidate.answer)}$."
+    prefer_decimal = candidate.family.startswith("decimal")
+    final = f"The result is ${fc.render_answer(candidate.answer, prefer_decimal=prefer_decimal)}$."
     return {
         "kp_id": candidate.kp_key,
         "kind": "teach",
@@ -409,14 +448,18 @@ def generate_held_out_exemplars(
     matches = pure_numeric_exemplars(kp)
     if matches is None:
         return None
+    verb, base_expr = matches[-1].group(1), matches[-1].group(2)
+    family = classify_family(base_expr)
+    if family in EXCLUDED_FROM_GENERATION:
+        return None
     needed = target - len(kp["exemplars"])
     if needed <= 0:
         return []
-    verb, base_expr = matches[-1].group(1), matches[-1].group(2)
     with_contract = kp["exemplars"][-1].get("answer_contract") is not None
     original_served = _served_values(kp)
-    bounds_check = _within_kp_family(original_served)
+    bounds_check = _within_kp_family(original_served, family)
     ceiling = _operand_ceiling(matches)
+    prefer_decimal = family.startswith("decimal")
     served = set(original_served)
     rng = Random(f"{topic['id']}/{kp['id']}/held-out")
     plans = []
@@ -433,7 +476,7 @@ def generate_held_out_exemplars(
         except fc.NotArithmetic:
             return None
         served.add(value)
-        answer = fc.render_answer(value)
+        answer = fc.render_answer(value, prefer_decimal=prefer_decimal)
         plans.append(
             NewExemplarPlan(
                 problem=f"{verb} ${expr}$.",

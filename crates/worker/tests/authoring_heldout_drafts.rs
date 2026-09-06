@@ -19,10 +19,14 @@ use cadus_worker::authoring::prompt::Kind;
 use serde_json::Value;
 
 /// Unit id to its curriculum file, the units this generator has drafted.
+///
+/// `exponents-radicals` is deliberately absent: every one of its candidate
+/// knowledge points is the `exponent` family, which
+/// `foundations_drafts.EXCLUDED_FROM_GENERATION` declines (a fixed exponent
+/// and a rational exponent are not interchangeable operands with the base).
 const UNITS: &[(&str, &str)] = &[
     ("fractions-decimals", "01-fractions-decimals.yaml"),
     ("integers-negatives", "02-integers-negatives.yaml"),
-    ("exponents-radicals", "06-exponents-radicals.yaml"),
     ("rational-trig", "09-rational-trig.yaml"),
 ];
 

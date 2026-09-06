@@ -1,5 +1,6 @@
 """Tests of `foundations_drafts`."""
 import json
+import math
 import random
 import unittest
 from pathlib import Path
@@ -41,6 +42,42 @@ class ClassifyFamilyTest(unittest.TestCase):
         }
         for expr, expected in cases.items():
             self.assertEqual(fd.classify_family(expr), expected, expr)
+
+
+class WithinKpFamilyTest(unittest.TestCase):
+    def test_rejects_a_bare_fraction_operand_equal_to_one(self):
+        check = fd._within_kp_family(frozenset({fc.Fraction(2)}), "integer_add_sub")
+        self.assertFalse(check(r"3 \times \frac{2}{2}", fc.Fraction(2)))
+
+    def test_rejects_a_trivial_times_or_div_one_factor(self):
+        check = fd._within_kp_family(frozenset({fc.Fraction(4)}), "fraction_mul_div")
+        self.assertFalse(check(r"4\frac{1}{4} \times 1", fc.Fraction(4)))
+        self.assertFalse(check(r"1 \times \frac{4}{1}", fc.Fraction(4)))
+        self.assertFalse(check(r"4 \div 1", fc.Fraction(4)))
+
+    def test_fraction_reduce_rejects_an_already_reduced_draw(self):
+        check = fd._within_kp_family(frozenset({fc.Fraction(2, 3)}), "fraction_reduce")
+        self.assertFalse(check(r"\frac{7}{17}", fc.Fraction(7, 17)))
+        self.assertTrue(check(r"\frac{4}{6}", fc.Fraction(2, 3)))
+
+    def test_no_generated_candidate_across_the_curriculum_is_degenerate(self):
+        """No fraction operand anywhere a generated candidate uses equals
+        exactly one, and no `fraction_reduce` candidate is already reduced."""
+        checked = 0
+        for topic in load_topics():
+            for kp in topic["knowledge_points"]:
+                rng = random.Random(f"{topic['id']}/{kp['id']}")
+                candidate = fd.classify_kp(topic, kp, rng)
+                if candidate is None:
+                    continue
+                checked += 1
+                for num, den in fd._BARE_FRACTION.findall(candidate.candidate_expr):
+                    self.assertNotEqual(num, den, candidate.kp_key)
+                if candidate.family == "fraction_reduce":
+                    match = fd._BARE_FRACTION.search(candidate.candidate_expr)
+                    self.assertIsNotNone(match)
+                    self.assertGreater(math.gcd(int(match.group(1)), int(match.group(2))), 1)
+        self.assertGreater(checked, 20)
 
 
 class ClassifyKpTest(unittest.TestCase):
@@ -95,6 +132,24 @@ class ClassifyKpTest(unittest.TestCase):
                 if all(value.denominator == 1 for value in served):
                     self.assertEqual(candidate.answer.denominator, 1, kp["id"])
         self.assertGreater(checked, 20)
+
+
+class DecimalFamilyRenderingTest(unittest.TestCase):
+    def test_every_decimal_family_candidate_renders_as_a_decimal_when_terminating(self):
+        checked = 0
+        for topic in load_topics():
+            for kp in topic["knowledge_points"]:
+                rng = random.Random(f"{topic['id']}/{kp['id']}")
+                candidate = fd.classify_kp(topic, kp, rng)
+                if candidate is None or not candidate.family.startswith("decimal"):
+                    continue
+                draft = fd.teach_draft(candidate)
+                final_step = draft["arguments"]["worked_example"]["steps"][-1]
+                if fc._terminating_decimal(candidate.answer) is not None:
+                    self.assertIn(".", final_step, candidate.kp_key)
+                    self.assertNotIn("/", final_step, candidate.kp_key)
+                checked += 1
+        self.assertGreater(checked, 3)
 
 
 class DraftShapeTest(unittest.TestCase):

@@ -166,8 +166,46 @@ def evaluate(expr: str) -> Fraction:
     return _eval_node(tree)
 
 
-def render_answer(value: Fraction) -> str:
-    """The canonical answer text of an exact value: an integer or `a/b`."""
+def _terminating_decimal(value: Fraction) -> Optional[str]:
+    """The exact fixed-point decimal text of `value`, or `None` if it never terminates.
+
+    A denominator with a prime factor other than 2 or 5 never reaches a
+    terminating decimal (e.g. `1/3`), so this returns `None` there — never a
+    rounded guess.
+    """
+    sign = "-" if value < 0 else ""
+    magnitude = abs(value)
+    denominator = magnitude.denominator
+    factor_counts = []
+    for factor in (2, 5):
+        count = 0
+        while denominator % factor == 0:
+            denominator //= factor
+            count += 1
+        factor_counts.append(count)
+    if denominator != 1:
+        return None
+    places = max(factor_counts)
+    scaled = magnitude * (10**places)
+    digits = str(scaled.numerator).rjust(places + 1, "0")
+    if places == 0:
+        return f"{sign}{digits}"
+    return f"{sign}{digits[:-places]}.{digits[-places:]}"
+
+
+def render_answer(value: Fraction, *, prefer_decimal: bool = False) -> str:
+    """The canonical answer text of an exact value: a decimal, an integer, or `a/b`.
+
+    `prefer_decimal` renders a terminating value as a fixed-point decimal
+    (e.g. `2.65`, matching the authored style of a knowledge point whose own
+    problem already carries a decimal point) instead of `a/b` — an
+    already-authored decimal exercise never wants its own generated answer
+    to surface as an unreduced improper fraction.
+    """
+    if prefer_decimal:
+        decimal = _terminating_decimal(value)
+        if decimal is not None:
+            return decimal
     if value.denominator == 1:
         return str(value.numerator)
     return f"{value.numerator}/{value.denominator}"

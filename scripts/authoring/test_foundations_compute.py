@@ -116,6 +116,14 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(fc.render_answer(Fraction(6)), "6")
         self.assertEqual(fc.render_answer(Fraction(-7, 2)), "-7/2")
 
+    def test_render_answer_prefer_decimal(self):
+        self.assertEqual(fc.render_answer(Fraction("2.65"), prefer_decimal=True), "2.65")
+        self.assertEqual(fc.render_answer(Fraction(7, 20), prefer_decimal=True), "0.35")
+        self.assertEqual(fc.render_answer(Fraction(-3, 8), prefer_decimal=True), "-0.375")
+        self.assertEqual(fc.render_answer(Fraction(6), prefer_decimal=True), "6")
+        # a non-terminating value still falls back to a/b even when preferred
+        self.assertEqual(fc.render_answer(Fraction(1, 3), prefer_decimal=True), "1/3")
+
     def test_rejects_non_arithmetic(self):
         with self.assertRaises(fc.NotArithmetic):
             fc.evaluate("x + 2")
