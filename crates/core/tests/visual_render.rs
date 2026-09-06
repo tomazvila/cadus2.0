@@ -268,13 +268,7 @@ fn a_shaded_half_plane_draws_a_filled_region_and_a_solid_or_dashed_boundary() {
 #[test]
 fn a_shaded_half_plane_that_sits_on_the_boundary_or_repeats_a_point_renders_no_bytes() {
     let mut degenerate = CoordinateFigure::square(5);
-    degenerate.shaded_half_planes = vec![ShadedHalfPlane {
-        through_a: LabeledPoint::new(0_i64, 0_i64),
-        through_b: LabeledPoint::new(2_i64, 2_i64),
-        solid: true,
-        shade_toward: LabeledPoint::new(1_i64, 1_i64),
-        label: None,
-    }];
+    degenerate.shaded_half_planes = vec![ShadedHalfPlane::new((0, 0), (2, 2), true, (1, 1))];
     assert!(matches!(
         render(
             &VisualSpec::Coordinate(degenerate),
@@ -322,20 +316,13 @@ fn a_curve_draws_a_broken_polyline_around_its_asymptote_and_its_key_points() {
 
 #[test]
 fn a_curve_with_a_key_point_off_the_curve_renders_no_bytes() {
-    let figure = CurveFigure {
-        x_min: Scalar::from("-5"),
-        x_max: Scalar::from("5"),
-        y_min: Scalar::from("-5"),
-        y_max: Scalar::from("5"),
-        x_tick: Scalar::from("1"),
-        y_tick: Scalar::from("1"),
-        curve: CurveKind::Polynomial {
+    let mut figure = CurveFigure::square(
+        5,
+        CurveKind::Polynomial {
             coefficients: vec![Scalar::from("0"), Scalar::from("0"), Scalar::from("1")],
         },
-        key_points: vec![LabeledPoint::new(2_i64, 5_i64)],
-        asymptotes: vec![],
-        caption: None,
-    };
+    );
+    figure.key_points = vec![LabeledPoint::new(2_i64, 5_i64)];
     assert!(matches!(
         render(&VisualSpec::Curve(figure), &RenderOptions::default()),
         Err(VisualError::KeyPointOffCurve { .. })

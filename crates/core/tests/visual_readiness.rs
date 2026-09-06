@@ -9,29 +9,19 @@
 
 mod common;
 
-use cadus_core::curriculum::{Curriculum, Exemplar, KnowledgePoint, Topic};
+use cadus_core::curriculum::{Curriculum, KnowledgePoint, Topic};
 use cadus_core::readiness::{Blocker, EmptyContent, ReadinessIndex};
 use cadus_core::visual::{FractionFigure, NumberLineFigure, VisualSpec};
 
-use common::{graph, knowledge_point, plain_topic};
-
-/// One decidable exemplar with a solution sketch.
-fn exemplar(problem: &str, answer: &str) -> Exemplar {
-    Exemplar {
-        problem: problem.to_owned(),
-        answer_contract: None,
-        answer: answer.to_owned(),
-        solution_sketch: Some("Add the parts.".to_owned()),
-    }
-}
+use common::{graph, knowledge_point, plain_topic, solved_exemplar};
 
 /// One knowledge point with three decidable exemplars and the given visuals.
 fn kp_with_visuals(id: &str, visuals: Vec<VisualSpec>) -> KnowledgePoint {
     let mut kp = knowledge_point(id, &[]);
     kp.exemplars = vec![
-        exemplar("1 + 1", "2"),
-        exemplar("2 + 2", "4"),
-        exemplar("3 + 3", "6"),
+        solved_exemplar("1 + 1", "2"),
+        solved_exemplar("2 + 2", "4"),
+        solved_exemplar("3 + 3", "6"),
     ];
     kp.visuals = visuals;
     kp

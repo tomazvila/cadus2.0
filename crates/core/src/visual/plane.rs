@@ -61,6 +61,12 @@ impl LabeledPoint {
     }
 }
 
+impl From<(i64, i64)> for LabeledPoint {
+    fn from((x, y): (i64, i64)) -> Self {
+        Self::new(x, y)
+    }
+}
+
 /// One straight segment of the plane.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -107,6 +113,23 @@ const fn solid() -> bool {
 }
 
 impl ShadedHalfPlane {
+    /// An unlabeled boundary and one point on its shaded side.
+    #[must_use]
+    pub fn new(
+        through_a: impl Into<LabeledPoint>,
+        through_b: impl Into<LabeledPoint>,
+        solid: bool,
+        shade_toward: impl Into<LabeledPoint>,
+    ) -> Self {
+        Self {
+            through_a: through_a.into(),
+            through_b: through_b.into(),
+            solid,
+            shade_toward: shade_toward.into(),
+            label: None,
+        }
+    }
+
     /// Twice the signed area of the triangle `through_a`, `through_b`, `point`.
     ///
     /// The sign says which side of the boundary line `point` sits on; zero says
@@ -153,13 +176,14 @@ impl CoordinateFigure {
     /// A square plane from `-half` to `half` on both axes, with a tick of one.
     #[must_use]
     pub fn square(half: i64) -> Self {
+        let (x_min, x_max, y_min, y_max, x_tick, y_tick) = super::square_axes(half);
         Self {
-            x_min: Scalar::from_i64(-half),
-            x_max: Scalar::from_i64(half),
-            y_min: Scalar::from_i64(-half),
-            y_max: Scalar::from_i64(half),
-            x_tick: Scalar::from_i64(1),
-            y_tick: Scalar::from_i64(1),
+            x_min,
+            x_max,
+            y_min,
+            y_max,
+            x_tick,
+            y_tick,
             points: Vec::new(),
             segments: Vec::new(),
             shaded_half_planes: Vec::new(),
@@ -382,13 +406,7 @@ mod tests {
         ));
 
         let mut on_line = CoordinateFigure::square(5);
-        on_line.shaded_half_planes = vec![ShadedHalfPlane {
-            through_a: LabeledPoint::new(0_i64, 0_i64),
-            through_b: LabeledPoint::new(2_i64, 2_i64),
-            solid: true,
-            shade_toward: LabeledPoint::new(1_i64, 1_i64),
-            label: None,
-        }];
+        on_line.shaded_half_planes = vec![ShadedHalfPlane::new((0, 0), (2, 2), true, (1, 1))];
         let error = on_line.validate().unwrap_err();
         assert!(matches!(error, VisualError::Degenerate { .. }));
         assert!(error.to_string().contains("(1, 1)"));

@@ -129,14 +129,8 @@ fn a_thirty_sixty_special_triangle_marks_both_acute_angles() {
 
 #[test]
 fn a_sas_area_special_triangle_refuses_an_angle_with_no_exact_sine() {
-    let bad = SpecialTriangleFigure {
-        figure: SpecialTriangleShape::SasArea {
-            side_a: Scalar::from("4"),
-            side_b: Scalar::from("5"),
-            included_angle_degrees: Scalar::from("40"),
-        },
-        caption: None,
-    };
+    let bad =
+        SpecialTriangleFigure::sas_area(Scalar::from("4"), Scalar::from("5"), Scalar::from("40"));
     assert!(matches!(
         render(&VisualSpec::SpecialTriangle(bad), &RenderOptions::default()),
         Err(VisualError::Degenerate { .. })

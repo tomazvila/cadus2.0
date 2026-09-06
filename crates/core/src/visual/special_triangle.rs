@@ -106,6 +106,19 @@ fn positive(what: &'static str, value: &Scalar) -> Result<BigRational, VisualErr
 }
 
 impl SpecialTriangleFigure {
+    /// An unlabeled two-sides-and-included-angle area figure.
+    #[must_use]
+    pub fn sas_area(side_a: Scalar, side_b: Scalar, included_angle_degrees: Scalar) -> Self {
+        Self {
+            figure: SpecialTriangleShape::SasArea {
+                side_a,
+                side_b,
+                included_angle_degrees,
+            },
+            caption: None,
+        }
+    }
+
     /// Whether the figure's inputs carry mathematical meaning.
     pub fn validate(&self) -> Result<(), VisualError> {
         match &self.figure {
@@ -277,14 +290,11 @@ mod tests {
                 .contains("area is 21/2 square units.")
         );
 
-        let unknown = SpecialTriangleFigure {
-            figure: SpecialTriangleShape::SasArea {
-                side_a: Scalar::from("4"),
-                side_b: Scalar::from("5"),
-                included_angle_degrees: Scalar::from("40"),
-            },
-            caption: None,
-        };
+        let unknown = SpecialTriangleFigure::sas_area(
+            Scalar::from("4"),
+            Scalar::from("5"),
+            Scalar::from("40"),
+        );
         assert!(matches!(
             unknown.validate(),
             Err(VisualError::Degenerate { .. })

@@ -292,6 +292,18 @@ fn plane_ticks(figure: &impl PlaneAxes) -> Result<(i64, i64), VisualError> {
     ))
 }
 
+/// Symmetric coordinate bounds with a unit tick on each axis.
+fn square_axes(half: i64) -> (Scalar, Scalar, Scalar, Scalar, Scalar, Scalar) {
+    (
+        Scalar::from_i64(-half),
+        Scalar::from_i64(half),
+        Scalar::from_i64(-half),
+        Scalar::from_i64(half),
+        Scalar::from_i64(1),
+        Scalar::from_i64(1),
+    )
+}
+
 /// Whether one value sits inside the closed range, and the error if it does not.
 fn inside(what: &str, min: &Scalar, max: &Scalar, value: &Scalar) -> Result<(), VisualError> {
     let (low, high, at) = (min.value()?, max.value()?, value.value()?);

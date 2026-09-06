@@ -145,22 +145,15 @@ fn a_logarithm_checks_exact_powers_of_its_base() {
 
 #[test]
 fn a_reciprocal_refuses_a_key_point_at_its_own_asymptote() {
-    let figure = CurveFigure {
-        x_min: Scalar::from("-5"),
-        x_max: Scalar::from("5"),
-        y_min: Scalar::from("-5"),
-        y_max: Scalar::from("5"),
-        x_tick: Scalar::from("1"),
-        y_tick: Scalar::from("1"),
-        curve: CurveKind::Reciprocal {
+    let mut figure = CurveFigure::square(
+        5,
+        CurveKind::Reciprocal {
             a: Scalar::from("2"),
             h: Scalar::from("0"),
             k: Scalar::from("0"),
         },
-        key_points: vec![LabeledPoint::new(0_i64, 0_i64)],
-        asymptotes: vec![],
-        caption: None,
-    };
+    );
+    figure.key_points = vec![LabeledPoint::new(0_i64, 0_i64)];
     assert!(matches!(
         figure.validate(),
         Err(VisualError::KeyPointOffCurve { .. })
@@ -240,24 +233,17 @@ fn degenerate_parameters_are_refused_before_any_key_point_check() {
 
 #[test]
 fn an_asymptote_outside_the_drawn_range_is_refused() {
-    let mut figure = CurveFigure {
-        x_min: Scalar::from("-5"),
-        x_max: Scalar::from("5"),
-        y_min: Scalar::from("-5"),
-        y_max: Scalar::from("5"),
-        x_tick: Scalar::from("1"),
-        y_tick: Scalar::from("1"),
-        curve: CurveKind::Reciprocal {
+    let mut figure = CurveFigure::square(
+        5,
+        CurveKind::Reciprocal {
             a: Scalar::from("1"),
             h: Scalar::from("0"),
             k: Scalar::from("0"),
         },
-        key_points: vec![],
-        asymptotes: vec![Asymptote::Horizontal {
-            at: Scalar::from("50"),
-        }],
-        caption: None,
-    };
+    );
+    figure.asymptotes = vec![Asymptote::Horizontal {
+        at: Scalar::from("50"),
+    }];
     assert!(matches!(
         figure.validate(),
         Err(VisualError::OutOfRange { .. })

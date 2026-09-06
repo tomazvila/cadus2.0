@@ -155,6 +155,24 @@ pub struct CurveFigure {
 }
 
 impl CurveFigure {
+    /// A square viewport with unit ticks and no annotations.
+    #[must_use]
+    pub fn square(half: i64, curve: CurveKind) -> Self {
+        let (x_min, x_max, y_min, y_max, x_tick, y_tick) = super::square_axes(half);
+        Self {
+            x_min,
+            x_max,
+            y_min,
+            y_max,
+            x_tick,
+            y_tick,
+            curve,
+            key_points: Vec::new(),
+            asymptotes: Vec::new(),
+            caption: None,
+        }
+    }
+
     /// The tick counts of the two axes.
     pub fn ticks(&self) -> Result<(i64, i64), VisualError> {
         plane_ticks(self)

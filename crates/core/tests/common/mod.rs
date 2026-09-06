@@ -112,6 +112,17 @@ pub fn knowledge_point(id: &str, key_prerequisites: &[&str]) -> KnowledgePoint {
     }
 }
 
+/// One decidable exemplar with the standard arithmetic solution sketch.
+#[must_use]
+pub fn solved_exemplar(problem: &str, answer: &str) -> cadus_core::curriculum::Exemplar {
+    cadus_core::curriculum::Exemplar {
+        problem: problem.to_owned(),
+        answer_contract: None,
+        answer: answer.to_owned(),
+        solution_sketch: Some("Add the parts.".to_owned()),
+    }
+}
+
 /// The 1.0 `_graph` builder (`tests/test_fire.py:86-89`): one unit `u` of module
 /// `M` in course `c`.
 #[must_use]

@@ -5,26 +5,17 @@
 //! item counts as decidable, and what evidence an assumed-mastery topic needs.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+mod common;
 
 use cadus_core::curriculum::{
-    AnswerKind, Catalog, Course, Curriculum, Exemplar, KnowledgePoint, PrereqEdge, RawCurriculum,
-    RawUnit, Slug, Topic, Unit,
+    Catalog, Course, Curriculum, Exemplar, KnowledgePoint, PrereqEdge, RawCurriculum, RawUnit,
+    Slug, Topic, Unit,
 };
 use cadus_core::readiness::{DiagnosticState, PrereqCoverage, ReadinessIndex};
 
 /// One slug.
 fn slug(id: &str) -> Slug {
     Slug::new(id).unwrap()
-}
-
-/// One exemplar with a decidable answer and a sketch.
-fn exemplar(problem: &str, answer: &str) -> Exemplar {
-    Exemplar {
-        problem: problem.to_owned(),
-        answer_contract: None,
-        answer: answer.to_owned(),
-        solution_sketch: Some("Add the parts.".to_owned()),
-    }
 }
 
 /// One knowledge point with `count` decidable exemplars.
@@ -34,7 +25,7 @@ fn kp(id: &str, count: usize) -> KnowledgePoint {
         name: id.to_owned(),
         key_prerequisites: Vec::new(),
         exemplars: (0..count)
-            .map(|at| exemplar(&format!("{id} item {at}"), &at.to_string()))
+            .map(|at| common::solved_exemplar(&format!("{id} item {at}"), &at.to_string()))
             .collect(),
         constraints: None,
         visuals: Vec::new(),
@@ -49,27 +40,18 @@ fn topic(
     kps: Vec<KnowledgePoint>,
     diagnostic: Option<Exemplar>,
 ) -> Topic {
-    Topic {
-        id: slug(id),
-        name: id.to_owned(),
-        core: true,
-        difficulty: 0.3,
-        drill: false,
-        answer_kind: AnswerKind::Numeric,
-        expected_time_secs: 30,
-        prerequisites: prereqs
-            .iter()
-            .map(|prereq| PrereqEdge {
-                id: slug(prereq),
-                weight: 1.0,
-                key: false,
-            })
-            .collect(),
-        encompassings_extra: Vec::new(),
-        knowledge_points: kps,
-        diagnostic_exemplar: diagnostic,
-        anki_seeds: Vec::new(),
-    }
+    let mut topic = common::plain_topic(id, &[]);
+    topic.prerequisites = prereqs
+        .iter()
+        .map(|prereq| PrereqEdge {
+            id: slug(prereq),
+            weight: 1.0,
+            key: false,
+        })
+        .collect();
+    topic.knowledge_points = kps;
+    topic.diagnostic_exemplar = diagnostic;
+    topic
 }
 
 /// One course of `topics`, with `floor` seeded as mastered.
@@ -113,14 +95,14 @@ fn fixture(floor: &[&str]) -> Curriculum {
                 "base",
                 &[],
                 vec![kp("count", 4)],
-                Some(exemplar("What is 2 + 2?", "4")),
+                Some(common::solved_exemplar("What is 2 + 2?", "4")),
             ),
             topic("thin", &[], vec![kp("halve", 2)], None),
             topic(
                 "top",
                 &["base", "thin", "ghost"],
                 vec![kp("apply", 4)],
-                Some(exemplar("Simplify.", "as far as it goes")),
+                Some(common::solved_exemplar("Simplify.", "as far as it goes")),
             ),
         ],
         floor,
