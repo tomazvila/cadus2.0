@@ -27,4 +27,5 @@ pub mod readiness;
 pub mod retention;
 pub mod selector;
 pub mod template;
+pub mod visual;
 pub mod xp;
