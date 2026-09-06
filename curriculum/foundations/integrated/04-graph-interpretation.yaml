@@ -1,0 +1,84 @@
+# Integrated task (D-F10): graph interpretation.
+# The learner reads a rate off two plotted points, names what the intercept
+# means, and then uses the model to answer a question the plot does not show.
+id: integrated-tank-readings
+title: Read the tank plot
+course: foundations
+topic: interpreting-linear-models
+component_topics:
+  - interpreting-linear-models
+  - slope-as-rate-of-change
+domain: graph_interpretation
+scenario: >
+  A plot shows the water left in a tank against the minutes the pump has run.
+  The plotted points lie on one straight line: (0 min, 480 L), (10 min, 420 L)
+  and (25 min, 330 L). The pump runs at a steady rate while the tank holds more
+  than 150 L.
+given:
+  - label: First plotted point
+    value: (0 min, 480 L)
+  - label: Second plotted point
+    value: (10 min, 420 L)
+  - label: Third plotted point
+    value: (25 min, 330 L)
+    note: >
+      The line holds only above 150 L. Below 150 L the pump slows, so a reading
+      taken there does not lie on this line.
+method:
+  prompt: Which method gives the rate of the pump from the plot?
+  options:
+    - id: slope-of-two-points
+      label: Divide the change in liters by the change in minutes for two plotted points.
+      correct: true
+      why: A rate of change is the slope of the line the points lie on.
+    - id: highest-reading
+      label: Read the highest plotted point.
+      correct: false
+      why: That is the starting volume, not a rate.
+    - id: add-the-readings
+      label: Add the three readings and divide by three.
+      correct: false
+      why: The average of the readings is a volume, not a rate.
+steps:
+  - id: pump-rate
+    ask:
+      prompt: What is the rate of change of the water, in liters per minute?
+      answer: "-6"
+      unit: L/min
+      hints:
+        - Take any two plotted points.
+        - Divide the change in liters by the change in minutes, and keep the sign.
+    skills:
+      - slope-as-rate-of-change/kp1
+  - id: start-volume
+    ask:
+      prompt: How many liters does the tank hold when the pump starts?
+      answer: "480"
+      unit: L
+      hints:
+        - The pump starts at 0 minutes.
+        - The value at 0 minutes is where the line meets the volume axis.
+    skills:
+      - interpreting-linear-models/kp2
+  - id: volume-at-forty
+    ask:
+      prompt: How many liters are left after 40 minutes?
+      answer: "240"
+      unit: L
+      hints:
+        - The line gives volume = 480 minus the rate times the minutes.
+    skills:
+      - interpreting-linear-models/kp3
+final:
+  ask:
+    prompt: After how many minutes does the tank reach 150 L?
+    answer: "55"
+    unit: min
+    hints:
+      - The line holds down to 150 L.
+      - Solve 480 - 6t = 150 for t.
+  interpretation: >
+    The tank reaches 150 L after 55 minutes. The line stops there: the pump
+    slows below 150 L, so this model cannot answer when the tank is empty.
+  skills:
+    - interpreting-linear-models/kp1

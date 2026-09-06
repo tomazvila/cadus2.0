@@ -1,0 +1,86 @@
+# Integrated task (D-F10): geometry with units and cost.
+# An area in square meters meets a tile size in centimeters, so the units must
+# agree before the count means anything. The waste allowance then rounds up.
+id: integrated-workshop-floor
+title: Tile the workshop floor
+course: foundations
+topic: money-geometry-problems
+component_topics:
+  - money-geometry-problems
+  - dimensional-analysis
+domain: geometry
+scenario: >
+  A workshop floor is a rectangle 6.4 m long and 4.5 m wide. The tiles are
+  squares of 40 cm by 40 cm and cost 3.20 EUR each. The fitter adds 8 percent
+  more tiles for cuts and breakage, and the shop sells whole tiles only.
+given:
+  - label: Floor length
+    value: 6.4 m
+  - label: Floor width
+    value: 4.5 m
+  - label: Tile size
+    value: 40 cm by 40 cm
+  - label: Tile price
+    value: 3.20 EUR
+  - label: Allowance for cuts
+    value: 8 percent
+    note: >
+      The allowance holds for a plain floor. A floor with a diagonal pattern
+      needs about 15 percent, which raises the count and the cost.
+method:
+  prompt: Which method gives the number of tiles?
+  options:
+    - id: area-over-tile-area
+      label: Divide the floor area by the area of one tile, in the same unit.
+      correct: true
+      why: Equal square tiles cover the floor, so the ratio of the areas is the count.
+    - id: perimeter-over-tile-side
+      label: Divide the perimeter of the floor by the side of one tile.
+      correct: false
+      why: That counts the tiles along the wall, not the tiles on the floor.
+    - id: area-over-tile-side
+      label: Divide the floor area in square meters by 40.
+      correct: false
+      why: The units do not agree, because square meters do not divide by centimeters.
+steps:
+  - id: floor-area
+    ask:
+      prompt: What is the area of the floor, in square meters?
+      answer: "28.8"
+      unit: m^2
+      hints:
+        - The floor is a rectangle.
+    skills:
+      - money-geometry-problems/kp2
+  - id: tile-area
+    ask:
+      prompt: What is the area of one tile, in square meters?
+      answer: "0.16"
+      unit: m^2
+      hints:
+        - 100 cm make 1 m, so 10000 cm^2 make 1 m^2.
+        - Convert the side to meters first, then square it.
+    skills:
+      - dimensional-analysis/kp3
+  - id: tiles-to-buy
+    ask:
+      prompt: How many whole tiles does the fitter buy, with the 8 percent allowance?
+      answer: "195"
+      unit: tiles
+      hints:
+        - Divide the floor area by the tile area for the plain count.
+        - Raise the count by 8 percent, then go up to the next whole tile.
+    skills:
+      - money-geometry-problems/kp2
+final:
+  ask:
+    prompt: What do the tiles cost, in EUR?
+    answer: "624"
+    unit: EUR
+    hints:
+      - Multiply the number of tiles bought by the price of one tile.
+  interpretation: >
+    The tiles cost 624 EUR. The plain floor needs 180 tiles and the allowance
+    adds 15 tiles, so 48 EUR of the total pays for cuts and breakage.
+  skills:
+    - money-geometry-problems/kp1

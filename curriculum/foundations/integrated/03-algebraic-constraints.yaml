@@ -1,0 +1,84 @@
+# Integrated task (D-F10): algebraic constraints.
+# A fixed cost and a per-session cost build one inequality. The boundary is not
+# a whole number, so the final answer needs the round that the context demands.
+id: integrated-tutoring-budget
+title: Fit the tutoring plan in the budget
+course: foundations
+topic: inequality-word-problems
+component_topics:
+  - inequality-word-problems
+  - two-step-inequalities
+domain: algebraic_constraints
+scenario: >
+  A study group rents a room for 120 EUR for the term and pays a tutor 18 EUR
+  for every session. The group holds at most 500 EUR for the term. The group
+  wants the largest number of sessions the budget allows.
+given:
+  - label: Room fee for the term
+    value: 120 EUR
+  - label: Cost of one session
+    value: 18 EUR
+  - label: Budget for the term
+    value: at most 500 EUR
+    note: >
+      The room fee is paid once. If the room is paid monthly at 40 EUR for three
+      months, the fixed cost stays 120 EUR and the answer does not change.
+method:
+  prompt: Which method gives the largest number of sessions?
+  options:
+    - id: solve-then-round-down
+      label: Write 120 + 18n <= 500, solve for n, then take the whole number below the boundary.
+      correct: true
+      why: The cost must stay under the budget, so a part session cannot be bought.
+    - id: budget-over-session
+      label: Divide 500 by 18.
+      correct: false
+      why: That spends the room fee on sessions.
+    - id: solve-then-round-up
+      label: Write 120 + 18n <= 500, solve, then take the whole number above the boundary.
+      correct: false
+      why: The whole number above the boundary costs more than the budget holds.
+steps:
+  - id: cost-of-twenty
+    ask:
+      prompt: What is the total cost of 20 sessions, in EUR?
+      answer: "480"
+      unit: EUR
+      hints:
+        - The room fee is paid once, whatever the number of sessions.
+        - Add the room fee to 20 session costs.
+    skills:
+      - inequality-word-problems/kp1
+  - id: session-budget
+    ask:
+      prompt: How many EUR of the budget are left for sessions?
+      answer: "380"
+      unit: EUR
+      hints:
+        - The room fee comes out of the budget first.
+    skills:
+      - two-step-inequalities/kp1
+  - id: boundary
+    ask:
+      prompt: What is the boundary value of n in 120 + 18n <= 500, to 2 decimals?
+      answer: "21.11"
+      contract:
+        kind: approx
+        decimals: 2
+      hints:
+        - Divide the session budget by the cost of one session.
+    skills:
+      - two-step-inequalities/kp1
+final:
+  ask:
+    prompt: What is the largest whole number of sessions the budget allows?
+    answer: "21"
+    unit: sessions
+    hints:
+      - A part session cannot be bought.
+      - Take the whole number below the boundary and check its cost.
+  interpretation: >
+    21 sessions cost 498 EUR and stay inside the budget. 22 sessions cost 516
+    EUR, which is 16 EUR above it, so the boundary rounds down and not up.
+  skills:
+    - inequality-word-problems/kp3

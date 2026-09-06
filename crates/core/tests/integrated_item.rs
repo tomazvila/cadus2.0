@@ -43,7 +43,7 @@ steps:
       hints:
         - Every patient needs the same time.
         - Multiply the count of patients by the minutes of one patient.
-    skills: [unit-rate]
+    skills: [unit-rates/kp1]
   - id: minutes-per-nurse
     ask:
       prompt: How many minutes does one nurse work in the window?
@@ -51,7 +51,7 @@ steps:
       unit: min
       hints:
         - The window is stated in hours.
-    skills: [unit-conversion]
+    skills: [metric-unit-conversion/kp1]
 final:
   ask:
     prompt: What is the smallest number of nurses that clears the booking?
@@ -62,7 +62,7 @@ final:
   interpretation: >
     6 nurses clear 1440 person-minutes in the window. 5 nurses leave 240
     person-minutes of work, so the clinic overruns the window.
-  skills: [unit-rate]
+  skills: [unit-rates/kp1]
 "#;
 
 fn item() -> IntegratedItem {
@@ -96,7 +96,10 @@ fn the_view_holds_no_answer_and_no_method_flag() {
     assert_eq!(view.steps.len(), 2);
     assert_eq!(view.steps[0].ask.hints_available, 2);
     assert_eq!(view.method.expect("a method choice").options.len(), 2);
-    assert_eq!(view.skills, ["unit-rate", "unit-conversion"]);
+    assert_eq!(
+        view.skills,
+        ["unit-rates/kp1", "metric-unit-conversion/kp1"]
+    );
 }
 
 #[test]

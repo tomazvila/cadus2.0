@@ -28,7 +28,7 @@ steps:
       unit: km/L
       hints:
         - A rate divides one quantity by another.
-    skills: [unit-rate]
+    skills: [unit-rates/kp1]
   - id: cost-share
     ask:
       prompt: The fuel costs 1.80 per liter. What is the cost of the run?
@@ -38,7 +38,7 @@ steps:
         decimals: 2
       hints:
         - Multiply the liters by the price of one liter.
-    skills: [decimal-arithmetic]
+    skills: [decimal-operations/kp1]
 final:
   ask:
     prompt: What is the fuel cost of one kilometer, to 3 decimals?
@@ -49,7 +49,7 @@ final:
     hints:
       - Divide the cost of the run by the distance.
   interpretation: The run costs 0.120 per kilometer, so a 50 km detour costs 6.00.
-  skills: [unit-rate]
+  skills: [unit-rates/kp1]
 "#;
 
 fn item() -> IntegratedItem {
@@ -95,7 +95,10 @@ fn a_whole_correct_submission_credits_every_skill_once() {
     assert!(!result.ungraded);
     assert_eq!(result.correct_steps, 2);
     assert_eq!(result.total_steps, 2);
-    assert_eq!(result.skills_credited, ["unit-rate", "decimal-arithmetic"]);
+    assert_eq!(
+        result.skills_credited,
+        ["unit-rates/kp1", "decimal-operations/kp1"]
+    );
     assert!(result.method.is_none());
     assert!(!result.reasoning_recorded, "blank prose is not a note");
     assert!(result.interpretation.contains("0.120 per kilometer"));
@@ -118,7 +121,7 @@ fn an_alternate_authored_form_of_a_step_is_accepted() {
     assert!(!result.steps[1].correct);
     assert_eq!(result.correct_steps, 1);
     // An unanswered step credits nothing, and its skill is not credited.
-    assert_eq!(result.skills_credited, ["unit-rate"]);
+    assert_eq!(result.skills_credited, ["unit-rates/kp1"]);
 }
 
 #[test]
@@ -141,7 +144,7 @@ fn a_wrong_final_answer_keeps_the_credit_of_the_correct_steps() {
     assert!(
         result
             .skills_credited
-            .contains(&"decimal-arithmetic".into())
+            .contains(&"decimal-operations/kp1".into())
     );
 }
 
@@ -183,7 +186,7 @@ fn an_answer_the_checker_cannot_read_is_ungraded_and_credits_nothing() {
     assert!(result.ungraded);
     assert_eq!(
         result.skills_credited,
-        ["unit-rate"],
+        ["unit-rates/kp1"],
         "only the final field"
     );
 }

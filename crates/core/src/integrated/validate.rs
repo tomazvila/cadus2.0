@@ -6,6 +6,7 @@
 //! with the human review path.
 
 use crate::curriculum::{Curriculum, Finding, Slug};
+use crate::pool::split_kp_key;
 
 use super::model::{Field, IntegratedItem, MethodChoice};
 
@@ -230,14 +231,20 @@ pub fn check_against(item: &IntegratedItem, graph: &Curriculum) -> Vec<Finding> 
     findings
 }
 
-/// True when some topic of the arena holds the knowledge point `kp`.
-fn holds_kp(graph: &Curriculum, kp: &str) -> bool {
-    graph.topics().iter().any(|topic| {
-        topic
-            .knowledge_points
-            .iter()
-            .any(|point| point.id.as_str() == kp)
-    })
+/// True when the arena holds the serving key `key`.
+///
+/// A knowledge point id (`kp1`) repeats across topics, so a skill of an
+/// integrated item names the serving key of the pool, `"<topic>/<kp>"`
+/// ([`split_kp_key`]). That is the same key the attempt attribution of D-F9
+/// records, so the two never disagree.
+fn holds_kp(graph: &Curriculum, key: &str) -> bool {
+    let Some((topic, kp)) = split_kp_key(key) else {
+        return false;
+    };
+    graph
+        .idx_of(topic)
+        .and_then(|idx| graph.kp_idx_of(idx, kp))
+        .is_some()
 }
 
 /// A finding that drops the item from the served set.

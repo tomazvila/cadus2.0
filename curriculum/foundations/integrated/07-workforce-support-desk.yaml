@@ -1,0 +1,98 @@
+# Integrated task (D-F10): workforce and capacity, with a feasibility check.
+# The average staffing answer holds for a flat arrival rate. A percent of the
+# tickets arrives in a peak, and the same staffing then fails.
+id: integrated-support-desk-peak
+title: Staff the support desk
+course: foundations
+topic: unit-rates
+component_topics:
+  - unit-rates
+  - percent-of-a-number
+domain: workforce_capacity
+scenario: >
+  A support desk answers 210 tickets between 09:00 and 17:00 and closes for one
+  hour at lunch. One agent answers 12 tickets in an hour. 60 percent of the
+  tickets arrive in a 2 hour peak, and a ticket must be answered on the day it
+  arrives.
+given:
+  - label: Desk hours
+    value: 09:00 to 17:00
+  - label: Lunch closure
+    value: 1 h
+  - label: Tickets in a day
+    value: "210"
+  - label: Rate of one agent
+    value: 12 tickets per hour
+  - label: Share in the peak
+    value: 60 percent of the tickets in 2 h
+    note: >
+      The peak share is the assumption that decides feasibility. With a flat
+      arrival rate all day, the average staffing answers the whole day.
+method:
+  prompt: Which method decides whether the day staffing covers the peak?
+  options:
+    - id: peak-work-against-peak-capacity
+      label: Compare the tickets of the peak against what the staffed agents answer in those 2 hours.
+      correct: true
+      why: Capacity and work must be compared over the same window.
+    - id: day-average-only
+      label: Compare the day total against the capacity of the whole day.
+      correct: false
+      why: A day average hides the peak, so it cannot decide feasibility inside it.
+    - id: tickets-over-agents
+      label: Divide the tickets by the number of agents.
+      correct: false
+      why: That answers tickets for one agent and names no time window.
+steps:
+  - id: open-hours
+    ask:
+      prompt: How many hours is the desk open for tickets?
+      answer: "7"
+      unit: h
+      hints:
+        - 09:00 to 17:00 is a span of 8 hours.
+        - The desk answers no ticket during the lunch closure.
+    skills:
+      - unit-rates/kp1
+  - id: agent-capacity
+    ask:
+      prompt: How many tickets can one agent answer in the open hours?
+      answer: "84"
+      unit: tickets
+      hints:
+        - The agent answers 12 tickets in every open hour.
+    skills:
+      - unit-rates/kp3
+  - id: agents-for-the-day
+    ask:
+      prompt: What is the smallest number of agents that answers the day total?
+      answer: "3"
+      unit: agents
+      hints:
+        - Compare the day total against the capacity of one agent.
+        - A part agent cannot be staffed, so go up to the whole number.
+    skills:
+      - unit-rates/kp1
+  - id: peak-tickets
+    ask:
+      prompt: How many tickets arrive in the 2 hour peak?
+      answer: "126"
+      unit: tickets
+      hints:
+        - The peak holds 60 percent of the day total.
+    skills:
+      - percent-of-a-number/kp1
+final:
+  ask:
+    prompt: With those agents on duty, how many peak tickets stay unanswered inside the peak?
+    answer: "54"
+    unit: tickets
+    hints:
+      - Each agent answers 12 tickets in an hour, and the peak is 2 hours long.
+      - Take the peak capacity of the staffed agents from the peak tickets.
+  interpretation: >
+    3 agents answer 72 tickets in the 2 hour peak, so 54 peak tickets wait for
+    the hours after it. The day total is feasible with 3 agents and the peak is
+    not, so the desk either adds agents for the peak or accepts the delay.
+  skills:
+    - unit-rates/kp3
