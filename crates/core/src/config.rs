@@ -15,6 +15,7 @@ use thiserror::Error;
 
 use crate::learner::short_sha256;
 use crate::projector::PassRule;
+use crate::retention::policy::{PolicyVersion, RetentionConfig};
 
 /// A configuration value the core refuses.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
@@ -439,6 +440,17 @@ pub struct Config {
     /// The mastery-claim constants (D-F6). It stays OUT of the hash preimage.
     #[serde(default, skip_serializing)]
     pub mastery: MasteryConfig,
+    /// The delayed-retention constants (D-F11). It stays OUT of the hash preimage.
+    #[serde(default, skip_serializing)]
+    pub retention: RetentionConfig,
+    /// The version stamp of the 2.0 policy set (D-F12).
+    ///
+    /// It stays OUT of the hash preimage for the reason `readiness` states: the
+    /// 1.0 digest detects drift of the 1.0 SCHEDULER CONSTANTS, and a stored
+    /// projection must survive a 2.0 policy bump. [`Config::policy_digest`] is
+    /// the digest of the 2.0 policies.
+    #[serde(default, skip_serializing)]
+    pub policy_version: PolicyVersion,
 }
 
 impl Default for Config {
@@ -457,6 +469,8 @@ impl Default for Config {
             error_tags: default_error_tags(),
             timezone: None,
             mastery: MasteryConfig::default(),
+            retention: RetentionConfig::default(),
+            policy_version: PolicyVersion::default(),
         }
     }
 }
@@ -486,5 +500,105 @@ impl Config {
     /// Returns the `serde_json` error when the config does not serialize.
     pub fn config_hash(&self) -> Result<String, serde_json::Error> {
         self.hash_preimage().map(|preimage| short_sha256(&preimage))
+    }
+
+    /// The preimage of the 2.0 policy digest (D-F12).
+    ///
+    /// It names every VERSIONED number the 1.0 hash preimage leaves out, plus the
+    /// two 1.0 numbers D-F12 versions: the review interval table and the ability
+    /// weight. The text is compact JSON in a fixed key order.
+    #[must_use]
+    pub fn policy_preimage(&self) -> String {
+        let delays: Vec<String> = self
+            .retention
+            .delays()
+            .iter()
+            .map(u32::to_string)
+            .collect();
+        let intervals: Vec<String> = self
+            .fire
+            .interval_table
+            .iter()
+            .map(|days| format!("{days:?}"))
+            .collect();
+        format!(
+            "{{\"version\":{},\"kp_pass\":\"{}\",\"intervals\":[{}],\"ewma_alpha\":{:?},\
+             \"due_threshold\":{:?},\"probe_delays\":[{}],\"probes_per_session\":{},\
+             \"readiness\":{},\"confirm_inferred\":{}}}",
+            self.policy_version.version,
+            self.lesson.kp_pass(),
+            intervals.join(","),
+            self.ability.ewma_alpha,
+            self.fire.due_threshold,
+            delays.join(","),
+            self.retention.max_per_session,
+            self.readiness.enforce,
+            self.mastery.confirm_inferred,
+        )
+    }
+
+    /// The drift digest of the 2.0 policy set: the first 16 hex characters of the
+    /// SHA-256 of [`Config::policy_preimage`] (D-F12).
+    ///
+    /// A report prints it beside the policy version, so a reader always knows which
+    /// numbers produced a retention row.
+    #[must_use]
+    pub fn policy_digest(&self) -> String {
+        short_sha256(&self.policy_preimage())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_1_0_config_hash_survives_the_2_0_policy_fields() {
+        let cfg = Config::default();
+        assert_eq!(cfg.config_hash().expect("a hash"), "797575e985c12149");
+        assert!(!cfg.hash_preimage().expect("a preimage").contains("policy"));
+        assert!(
+            !cfg.hash_preimage()
+                .expect("a preimage")
+                .contains("probe_delays_days")
+        );
+    }
+
+    #[test]
+    fn a_probe_delay_change_moves_the_policy_digest_and_not_the_config_hash() {
+        let base = Config::default();
+        let mut changed = Config::default();
+        changed.retention.probe_delays_days = vec![7, 30];
+        assert_eq!(
+            base.config_hash().expect("a hash"),
+            changed.config_hash().expect("a hash")
+        );
+        assert_ne!(base.policy_digest(), changed.policy_digest());
+    }
+
+    #[test]
+    fn the_policy_version_bump_moves_the_policy_digest() {
+        let base = Config::default();
+        let mut changed = Config::default();
+        changed.policy_version.version += 1;
+        assert_ne!(base.policy_digest(), changed.policy_digest());
+    }
+
+    #[test]
+    fn the_policy_preimage_names_every_versioned_number() {
+        let preimage = Config::default().policy_preimage();
+        for key in [
+            "version",
+            "kp_pass",
+            "intervals",
+            "ewma_alpha",
+            "due_threshold",
+            "probe_delays",
+            "probes_per_session",
+            "readiness",
+            "confirm_inferred",
+        ] {
+            assert!(preimage.contains(key), "`{key}` is missing from {preimage}");
+        }
     }
 }

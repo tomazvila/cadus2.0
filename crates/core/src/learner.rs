@@ -20,6 +20,7 @@ use sha1::{Digest as _, Sha1};
 use sha2::Sha256;
 
 use crate::event::{EventError, KpProgress, Slug, Timestamp, TopicStatus};
+use crate::retention::state::RetentionState;
 
 /// The number of hex characters of the SHA-1 digest that [`problem_text_hash`] keeps.
 const PROBLEM_TEXT_HASH_LEN: usize = 12;
@@ -268,6 +269,13 @@ pub struct LearnerModel {
     /// 1.0 shape.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub ungraded: Vec<UngradedAttempt>,
+    /// What the delayed retention probes answered (D-F11). NEW IN 2.0.
+    ///
+    /// The fold builds it from `retention_probe` events and from nothing else, and
+    /// the writer skips an empty state, so every model of a log without a probe
+    /// keeps its 1.0 shape and its parity bytes.
+    #[serde(default, skip_serializing_if = "RetentionState::is_empty")]
+    pub retention: RetentionState,
     /// The `config_hash` the model was built with. It detects config drift.
     #[serde(default)]
     pub config_hash: Option<String>,

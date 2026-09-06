@@ -44,6 +44,7 @@ use crate::curriculum::Curriculum;
 use crate::event::{Event, Slug};
 use crate::fire::{clamp, py_max, py_min};
 use crate::learner::{TopicState, UngradedAttempt};
+use crate::retention::state::RetentionState;
 use crate::numeric::{OutOfRangeError, TimeError, resolve_timezone};
 
 mod entry;
@@ -152,6 +153,9 @@ pub struct Projector<'a> {
     last_practice: BTreeMap<String, i64>,
     diag_answers: BTreeMap<String, Vec<(bool, f64)>>,
     ungraded: Vec<UngradedAttempt>,
+    /// What the delayed probes answered (D-F11). It folds `retention_probe` and
+    /// nothing else, so it is empty for every log written before 2.0.
+    retention: RetentionState,
     last_ts: Option<i64>,
 
     /// The task ids of the OPEN confirmation items (D-F6). A `task_served` with
@@ -190,6 +194,7 @@ impl<'a> Projector<'a> {
             last_practice: BTreeMap::new(),
             diag_answers: BTreeMap::new(),
             ungraded: Vec::new(),
+            retention: RetentionState::default(),
             last_ts: None,
             confirm_tasks: BTreeSet::new(),
             confirm_topics: BTreeSet::new(),
@@ -244,8 +249,13 @@ impl<'a> Projector<'a> {
     /// A `regraded` event never arrives here: [`apply_regrades`] consumes it ahead of
     /// the fold and hands the corrected events over instead. `task_served`,
     /// `session_start`, `session_end`, `anki_card_created`, `config_changed`,
-    /// `curriculum_changed`, and `retention_probe` carry no derived state, so they
-    /// are no-ops. Unit f19 gives `retention_probe` a handler.
+    /// and `curriculum_changed` carry no derived state, so they are no-ops.
+    ///
+    /// `retention_probe` DOES carry derived state (D-F11): it tallies into
+    /// [`crate::retention::RetentionState`]. The event type is new in the 2.0
+    /// schema and no committed 1.0 log holds one, so every cached model of an
+    /// earlier log still equals a full replay and [`PROJECTOR_VERSION`] stands.
+    /// The `task_served` confirmation marker of D-F6 makes the same argument.
     ///
     /// `task_served` is a no-op too, EXCEPT for the D-F6 confirmation marker: a
     /// served confirmation opens the item that the topic's review result closes.
@@ -279,8 +289,8 @@ impl<'a> Projector<'a> {
             | Event::Regraded(_)
             | Event::AnkiCardCreated(_)
             | Event::ConfigChanged(_)
-            | Event::CurriculumChanged(_)
-            | Event::RetentionProbe(_) => {}
+            | Event::CurriculumChanged(_) => {}
+            Event::RetentionProbe(body) => self.retention.apply(body, &self.cfg.retention),
         }
         self.applied += 1;
     }

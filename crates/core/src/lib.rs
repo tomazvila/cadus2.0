@@ -24,6 +24,7 @@ pub mod numeric;
 pub mod pool;
 pub mod projector;
 pub mod readiness;
+pub mod retention;
 pub mod selector;
 pub mod template;
 pub mod xp;

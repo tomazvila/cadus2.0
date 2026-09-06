@@ -298,6 +298,7 @@ impl Projector<'_> {
             velocity,
             pending_remediation: self.pending_remediation(),
             ungraded: self.ungraded.clone(),
+            retention: self.retention.clone(),
             config_hash: Some(config_hash),
             projector_version: Some(PROJECTOR_VERSION),
             through_seq: None,
