@@ -324,8 +324,16 @@ mod tests {
         assert_eq!(migrated.database_url, base.database_url);
     }
 
-    /// The count is 0 before the first run, 12 after it, an error when the
-    /// pool is closed, and an error when the role cannot read the ledger.
+    /// The count is 12 after every migration, an error when the role cannot
+    /// read the ledger, an error when the pool is closed, and 0 on a database
+    /// that holds no ledger.
+    ///
+    /// The throwaway database of `TestDb` makes all four states itself. The
+    /// last step drops the ledger table, which puts that database in the state
+    /// of a database before its first run. A read of the maintenance database
+    /// of the cluster took the fourth state from the cluster instead, and a
+    /// maintenance database with a ledger of 0 rows gave the same count
+    /// through the other path (u12).
     #[tokio::test]
     async fn the_applied_count_reads_the_migration_ledger() {
         TestDb::with(|db| async move {
@@ -338,23 +346,13 @@ mod tests {
             assert!(applied_count(&app).await.is_err());
             app.close().await;
             assert!(applied_count(&app).await.is_err());
+            sqlx::query("DROP TABLE public._sqlx_migrations")
+                .execute(&db.admin)
+                .await
+                .unwrap();
+            assert_eq!(applied_count(&db.admin).await.unwrap(), 0);
         })
         .await;
-        let cfg = DbConfig::new(TestDb::superuser_dsn_for("postgres"));
-        let mut conn = sqlx::postgres::PgPoolOptions::new()
-            .max_connections(1)
-            .connect(&cfg.database_url)
-            .await
-            .unwrap();
-        // The maintenance database holds no ledger.
-        assert_eq!(applied_count(&conn).await.unwrap(), 0);
-        conn.close().await;
-        conn = sqlx::postgres::PgPoolOptions::new()
-            .max_connections(1)
-            .connect(&cfg.database_url)
-            .await
-            .unwrap();
-        conn.close().await;
     }
 
     /// A connect that fails is the error of the first step of `apply`.
