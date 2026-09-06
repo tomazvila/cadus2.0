@@ -340,10 +340,10 @@ fn an_unverifiable_answer_kind_can_have_no_template() {
 fn the_reserved_and_non_answer_name_sets_are_the_1_0_literals() {
     // `problem_templates.py:533-548` (`_ALLOWED_NAMES`, 45 names), plus the three
     // 2.0 spellings `e`, `min`, and `max`, plus the bounded structured-template
-    // functions. Written out, in sorted order.
+    // functions. Written out in registry order, preserving the historical entries.
     assert_eq!(
         RESERVED_NAMES.to_vec(),
-        "Abs And E Eq False Float Ge Gt ITE Integer Le Lt Max Min Ne Not Or Piecewise Rational S True abs binomial cancel ceiling cos e exp expand factor factorial false floor gcd lcm ln log max min multipart nsimplify pi sign signcase simplify sin sqrt tan together true"
+        "Abs And E Eq False Float Ge Gt ITE Integer Le Lt Max Min Ne Not Or Piecewise Rational S True abs atandeg binomial cancel divisibilitylabel equalitylabel linearclass ceiling cos e exp expequation expand excludepoint rayunion boundaryincluded raydirection negativeabs factor factorial factorlist false firstmultiples floor gcd lcm lowerbound ln log logequation max min multipart nsimplify pi primeclass primefactors powerform quotientremainder repeatedfactors sign signcase simplify sin sqrt tan together true upperbound"
             .split(' ')
             .collect::<Vec<&str>>()
     );

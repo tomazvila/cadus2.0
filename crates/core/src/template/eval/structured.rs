@@ -19,6 +19,12 @@ pub(super) fn label_answer(
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
     };
+    if matches!(
+        name.as_str(),
+        "boundaryincluded" | "raydirection" | "negativeabs"
+    ) {
+        return super::inequalities::label_answer(name, args, bindings, contract);
+    }
     if name == "signcase" {
         return label_sign_case(args, bindings, contract);
     }

@@ -38,6 +38,7 @@ mod equation;
 mod exact;
 mod finite_graph;
 mod functions;
+mod inequalities;
 mod inverse;
 mod structured;
 mod triangle_law;
@@ -330,7 +331,7 @@ pub fn answer_for_contract(
             reduced_ratio_answer(ast, bindings, contract)
         }
         Some(contract @ AnswerContract::InequalityUnion) => {
-            inequality_union_answer(ast, bindings, contract)
+            inequalities::union_answer(ast, bindings, contract)
         }
         Some(contract @ AnswerContract::QuotientRemainder { .. }) => {
             quotient_remainder_answer(ast, bindings, contract)
@@ -353,30 +354,6 @@ fn quotient_remainder_answer(
     let quotient = answer(&args[0], bindings)?.text;
     let remainder = answer(&args[1], bindings)?.text;
     contracted(format!("{quotient} R{remainder}"), contract)
-}
-
-fn inequality_union_answer(
-    ast: &Ast,
-    bindings: &Bindings,
-    contract: &AnswerContract,
-) -> Result<Answer, EvalError> {
-    let Ast::Func(name, args) = ast else {
-        return answer(ast, bindings);
-    };
-    if args.len() != 2 || !matches!(name.as_str(), "excludepoint" | "lowerbound" | "upperbound") {
-        return answer(ast, bindings);
-    }
-    let Some(variable) = text_binding(&args[0], bindings) else {
-        return answer(ast, bindings);
-    };
-    let bound = answer(&args[1], bindings)?.text;
-    let text = match name.as_str() {
-        "excludepoint" => format!("{variable} < {bound} or {variable} > {bound}"),
-        "lowerbound" => format!("{variable} >= {bound}"),
-        "upperbound" => format!("{variable} <= {bound}"),
-        _ => unreachable!(),
-    };
-    contracted(text, contract)
 }
 
 fn reduced_ratio_answer(
@@ -411,6 +388,10 @@ fn multipart_answer(
 ) -> Result<Answer, EvalError> {
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
+    };
+    let args = match args.as_slice() {
+        [Ast::Tuple(items)] if parts.len() != 1 => items.as_slice(),
+        items => items,
     };
     if name != "multipart" || args.len() != parts.len() {
         return answer(ast, bindings);
