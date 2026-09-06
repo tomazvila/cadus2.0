@@ -37,13 +37,22 @@ topics:
         name: "Identify like terms"
         key_prerequisites: [order-of-operations]
         exemplars:
-          - problem: 'In $5x + 3y - 2x + 7$, one other term is a like term of $5x$. Which term is it?'
+          - problem: "In $5x + 3y - 2x + 7$, one other term is a like term of $5x$. Which term is it?"
             answer: "-2x"
-            solution_sketch: 'Like terms have the same variable part; $5x$ and $-2x$ both have $x$.'
-          - problem: 'Are $4a^2$ and $4a$ like terms? Answer yes or no.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Like terms have the same variable part; $5x$ and $-2x$ both have $x$."
+          - problem: "Are $4a^2$ and $4a$ like terms? Answer yes or no."
             answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The variable parts $a^2$ and $a$ differ.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "The variable parts $a^2$ and $a$ differ."
+          - problem: "In $2xy + 5x + 3xy - 1$, collect the terms whose variable part is $xy$. Give their sum."
+            answer: "5xy"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matching terms are $2xy$ and $3xy$; adding their coefficients gives $(2+3)xy=5xy$."
+          - problem: "A term must be like $-4x^2$. Choose $7x$, $7x^2$, or $7y^2$."
+            answer: "7x^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The variable and its exponent must both match: the required variable part is $x^2$."
         constraints: "at most two variables; exponents <= 2"
     diagnostic_exemplar:
       problem: 'In $6a - 4b + 2 - 9a$, which term is a like term of $6a$?'
@@ -161,12 +170,22 @@ topics:
         name: "Negative inputs with order of operations"
         key_prerequisites: [integer-addition-subtraction, integer-multiplication-division]
         exemplars:
-          - problem: 'Evaluate $x^2 - 3x$ when $x = -2$.'
+          - problem: "Evaluate $x^2 - 3x$ when $x = -2$."
             answer: "10"
-            solution_sketch: '$(-2)^2 - 3(-2) = 4 + 6 = 10$.'
-          - problem: 'Evaluate $\frac{a - b}{2}$ when $a = -3$ and $b = 9$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$(-2)^2 - 3(-2) = 4 + 6 = 10$."
+          - problem: "Evaluate $\\frac{a - b}{2}$ when $a = -3$ and $b = 9$."
             answer: "-6"
-            solution_sketch: '$\frac{-3 - 9}{2} = -\frac{12}{2} = -6$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$\\frac{-3 - 9}{2} = -\\frac{12}{2} = -6$."
+          - problem: "For $x=-4$, evaluate $(-x)^2$."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Negating the input gives $-(-4)=4$; then $4^2=16$."
+          - problem: "For $a=-3$, evaluate $-a^2$."
+            answer: "-9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The exponent applies to $a$ before the leading minus: $-((-3)^2)=-9$."
         constraints: "inputs in -9..9; watch sign of squared negatives"
       - id: kp3
         name: "Multi-term expressions with negatives and exponents"
@@ -638,12 +657,22 @@ topics:
         name: "Pick the solution from candidates"
         key_prerequisites: [substituting-values]
         exemplars:
-          - problem: 'Which of $x = 2$, $x = 3$, $x = 4$ solves $5x - 6 = 9$?'
+          - problem: "Which of $x = 2$, $x = 3$, $x = 4$ solves $5x - 6 = 9$?"
             answer: "3"
-            solution_sketch: '$5(3) - 6 = 9$.'
-          - problem: 'Which of $y = -1$, $y = 0$, $y = 1$ solves $4y + 3 = -1$?'
-            answer: "-1"
-            solution_sketch: '$4(-1) + 3 = -1$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$5(3) - 6 = 9$."
+          - problem: "Test $x=-2$, $x=0$, and $x=2$ in $x^2+x=6$. Which candidate works?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The left sides are respectively $2$, $0$, and $6$, from squaring each candidate and adding it. Only $x=2$ gives $6$."
+          - problem: "A machine maps $x$ to $3(x-1)$. Which input $1$, $2$, or $4$ produces $9$?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The three outputs are $0$, $3$, and $9$; only input $4$ works."
+          - problem: "Which of $-6$, $-3$, or $6$ solves $x/3=-2$?"
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Dividing the candidates by $3$ gives $-2$, $-1$, and $2$. The first matches the right side."
         constraints: "three candidates; exactly one works"
     diagnostic_exemplar:
       problem: 'Which of $x = -2$, $x = 1$, $x = 3$ solves $4x - 5 = -1$?'
@@ -1298,12 +1327,22 @@ topics:
         name: "Fractions combined with distribution"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: 'Solve $\frac{2}{3}(x - 6) = 4$.'
+          - problem: "Solve $\\frac{2}{3}(x - 6) = 4$."
             answer: "12"
-            solution_sketch: '$x - 6 = 6$; $x = 12$.'
-          - problem: 'Solve $\frac{1}{2}x + \frac{1}{3}x = 10$.'
-            answer: "12"
-            solution_sketch: 'LCD $6$: $3x + 2x = 60$; $5x = 60$; $x = 12$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Distributing produces variable term $2x/3$ and constant $-4$. Move that constant to the other side: $2x/3=8$, hence $x=12$. Check: the inner difference is $6$, and two thirds of it is $4$."
+          - problem: "Solve $(x+4)/2+(x-2)/3=8$ and check."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $6$: $3(x+4)+2(x-2)=48$. Expand to $5x+8=48$, giving $x=8$. Check: the two quotients are $6$ and $2$, whose sum is $8$."
+          - problem: "Solve $3(x-2)/4=(x+6)/2$ and check."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $4$: $3x-6=2x+12$, hence $x=18$. Check: $3(18-2)/4=12$ and $(18+6)/2=12$."
+          - problem: "Correct the distribution in $(x-3)/2-(x+1)/4=1$, then solve and check."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $4$: $2(x-3)-(x+1)=4$. Expand: $x-7=4$, so $x=11$. Check: the first quotient is $4$, the second $3$, and their difference is $1$."
         constraints: "integer solutions; check by substituting back"
     diagnostic_exemplar:
       problem: 'Solve $\frac{2}{3}(x - 3) = \frac{x}{2}$.'
@@ -1757,14 +1796,22 @@ topics:
         name: "Money and cost setups"
         key_prerequisites: [translating-sentences-to-equations]
         exemplars:
-          - problem: 'Tickets cost €8 each and you spent €56. How many tickets did you buy?'
+          - problem: "Tickets cost €8 each and you spent €56. How many tickets did you buy?"
             answer: "7"
-            answer_contract: {kind: exact}
-            solution_sketch: '$8x = 56$; $x = 7$.'
-          - problem: 'A taxi charges a €3 base fare plus €2 per kilometre. The fare was €17. How many kilometres was the ride?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$8x = 56$; $x = 7$."
+          - problem: "A taxi charges a €3 base fare plus €2 per kilometre. The fare was €17. How many kilometres was the ride?"
             answer: "7"
-            answer_contract: {kind: exact}
-            solution_sketch: '$2k + 3 = 17$; $2k = 14$; $k = 7$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2k + 3 = 17$; $2k = 14$; $k = 7$."
+          - problem: "You have €50 and buy notebooks at €6 each, leaving €8. How many notebooks did you buy?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The spent amount is $50-8=42$ euros; $6n=42$ gives $n=7$."
+          - problem: "Notebooks cost €5 each. After a €4 coupon, the total is €26. How many notebooks were bought?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coupon gives $5n-4=26$. Add $4$ to get $5n=30$, then divide by $5$: $n=6$."
         constraints: "unit price times quantity, possibly plus a fixed fee; whole-number answers"
       - id: kp2
         visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":"A"},{"x":"7","y":"0","label":"B"},{"x":"7","y":"4","label":"C"},{"x":"0","y":"4","label":"D"}],"right_angles":[0,1,2,3]},"caption":"Reference example: A reference rectangle has width 7 and height 4. Coordinates give the side lengths; this diagram is an independent example."}]
