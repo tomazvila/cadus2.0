@@ -156,6 +156,7 @@ fn check_one_instance(
         instance.answer_contract.as_ref(),
         Some(crate::answer::AnswerContract::Label { .. })
             | Some(crate::answer::AnswerContract::Multipart { .. })
+            | Some(crate::answer::AnswerContract::QuotientRemainder { .. })
     );
     if !structured {
         let poisoned: Vec<String> = tokens
@@ -185,7 +186,7 @@ fn check_one_instance(
             ),
         ));
     }
-    if spec.answer_kind == AnswerKind::Numeric {
+    if spec.answer_kind == AnswerKind::Numeric && !structured {
         let leftover: Vec<String> = tokens
             .into_iter()
             .filter(|token| !RESERVED_NAMES.contains(&token.as_str()))

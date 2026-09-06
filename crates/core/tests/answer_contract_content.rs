@@ -299,3 +299,118 @@ fn inequality_union_templates_write_only_bounded_validated_relations() {
             .is_err()
     );
 }
+
+#[test]
+fn bounded_number_theory_writers_compute_closed_labels() {
+    for (expression, value, expected, options) in [
+        (
+            "divisibilitylabel(a,6)",
+            18,
+            "yes",
+            vec![vec!["yes"], vec!["no"]],
+        ),
+        (
+            "divisibilitylabel(a,6)",
+            19,
+            "no",
+            vec![vec!["yes"], vec!["no"]],
+        ),
+        (
+            "primeclass(a)",
+            0,
+            "neither",
+            vec![vec!["prime"], vec!["composite"], vec!["neither"]],
+        ),
+        (
+            "primeclass(a)",
+            2,
+            "prime",
+            vec![vec!["prime"], vec!["composite"], vec!["neither"]],
+        ),
+        (
+            "primeclass(a)",
+            21,
+            "composite",
+            vec![vec!["prime"], vec!["composite"], vec!["neither"]],
+        ),
+    ] {
+        let body = serde_json::json!({
+            "v":1,"topic_id":"number-theory","answer_kind":"expression",
+            "answer_contract":{"kind":"label","options":options},
+            "statement":"Classify {a}.",
+            "params":{"a":{"kind":"choice","values":[value]}},
+            "constraints":[],"answer_expr":expression,
+            "solution_sketch":"Apply the definition.","hints":["Check the definition."],
+            "distractors":[],"samples":[{"params":{"a":value},"expected":expected}]
+        });
+        let doc = from_body(&body.to_string()).unwrap();
+        let item = Compiled::new(&doc)
+            .unwrap()
+            .instantiate(doc.samples[0].bindings())
+            .unwrap();
+        assert_eq!(item.answer, expected);
+    }
+}
+
+#[test]
+fn quotient_remainder_writer_passes_the_numeric_gate_under_its_contract() {
+    let body = serde_json::json!({
+        "v":1,"topic_id":"division","answer_kind":"numeric",
+        "answer_contract":{"kind":"quotient_remainder","divisor":5},
+        "statement":"Compute ${a} \\div 5$. Give quotient and remainder.",
+        "params":{"a":{"kind":"int","low":21,"high":32}},
+        "constraints":[],
+        "answer_expr":"quotientremainder(floor(a/5),a-5*floor(a/5))",
+        "solution_sketch":"Find the greatest multiple of $5$ below ${a}$.",
+        "hints":["Use divisor times quotient plus remainder."],"distractors":[],
+        "samples":[
+            {"params":{"a":21},"expected":"4 R1"},
+            {"params":{"a":32},"expected":"6 R2"}
+        ]
+    });
+    let doc = from_body(&body.to_string()).unwrap();
+    let items = exemplars(&["9 R2", "6 R2"]);
+    let spec = GateSpec {
+        answer_kind: AnswerKind::Numeric,
+        exemplars: &items,
+    };
+    gate(&doc, &spec).unwrap();
+}
+
+#[test]
+fn structured_writers_refuse_invalid_domains_and_contract_outputs() {
+    for (contract, expression) in [
+        (
+            serde_json::json!({"kind":"quotient_remainder","divisor":5}),
+            "quotientremainder(4,5)",
+        ),
+        (
+            serde_json::json!({"kind":"label","options":[["yes"],["no"]]}),
+            "divisibilitylabel(a,0)",
+        ),
+        (
+            serde_json::json!({"kind":"label","options":[["prime"],["composite"],["neither"]]}),
+            "primeclass(1000001)",
+        ),
+        (
+            serde_json::json!({"kind":"label","options":[["yes"],["no"]]}),
+            "primeclass(a)",
+        ),
+    ] {
+        let body = serde_json::json!({
+            "v":1,"topic_id":"negative-control","answer_kind":"numeric",
+            "answer_contract":contract,"statement":"Check {a}.",
+            "params":{"a":{"kind":"choice","values":[2]}},"constraints":[],
+            "answer_expr":expression,"solution_sketch":"Apply the definition.",
+            "hints":["Check the allowed domain."],"distractors":[],
+            "samples":[{"params":{"a":2},"expected":"yes"}]
+        });
+        let doc = from_body(&body.to_string()).unwrap();
+        assert!(
+            Compiled::new(&doc)
+                .unwrap()
+                .instantiate(doc.samples[0].bindings())
+                .is_err()
+        );
+    }
+}

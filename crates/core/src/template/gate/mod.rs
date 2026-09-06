@@ -135,7 +135,7 @@ pub const TEMPLATABLE_KINDS: [AnswerKind; 2] = [AnswerKind::Numeric, AnswerKind:
 ///
 /// The 1.0 list is kept whole, so a name the 1.0 gate refused stays refused, and
 /// the 2.0 names `e`, `min`, and `max` are added to it.
-pub const RESERVED_NAMES: [&str; 53] = [
+pub const RESERVED_NAMES: [&str; 56] = [
     "Abs",
     "And",
     "E",
@@ -160,6 +160,7 @@ pub const RESERVED_NAMES: [&str; 53] = [
     "abs",
     "binomial",
     "cancel",
+    "divisibilitylabel",
     "ceiling",
     "cos",
     "e",
@@ -180,6 +181,8 @@ pub const RESERVED_NAMES: [&str; 53] = [
     "multipart",
     "nsimplify",
     "pi",
+    "primeclass",
+    "quotientremainder",
     "sign",
     "signcase",
     "simplify",
