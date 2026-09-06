@@ -92,6 +92,15 @@ class ManifestTest(unittest.TestCase):
         with self.assertRaises(importer.DraftError):
             importer.load_document(write_manifest(self.directory, good_rows(), files=["../etc/passwd"]))
 
+    def test_missing_only_is_passed_explicitly_and_preserves_default(self):
+        args = SimpleNamespace(worker="worker", budget_usd="5", request_reserve_usd="0.50",
+                               concurrency=4, dry_run=False, missing_only=True)
+        command = importer.worker_command(args, "teach", ["t/kp1"])
+        self.assertIn("--missing-only", command)
+        self.assertEqual(command[-2:], ["--kp", "t/kp1"])
+        args.missing_only = False
+        self.assertNotIn("--missing-only", importer.worker_command(args, "teach", ["t/kp1"]))
+
     def test_report_lines_are_summed(self):
         stdout = ("teach: stored 3 skipped 1 declined 2 calls 9 alerts 0\n"
                   "declined a/kp1 teach after 5 attempts: reason\n"

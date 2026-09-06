@@ -119,6 +119,8 @@ def worker_command(args, kind, keys):
                "--concurrency", str(args.concurrency)]
     if args.dry_run:
         command.append("--dry-run")
+    if getattr(args, "missing_only", False):
+        command.append("--missing-only")
     for key in keys:
         command.extend(["--kp", key])
     return command
@@ -173,6 +175,7 @@ def main():
     parser.add_argument("--budget-usd", default="5")
     parser.add_argument("--request-reserve-usd", default="0.50")
     parser.add_argument("--concurrency", type=int, default=4)
+    parser.add_argument("--missing-only", action="store_true", help="skip every pair with pending or approved content")
     parser.add_argument("--dry-run", action="store_true", help="print the worker plan and write nothing")
     args = parser.parse_args()
     if not Path(args.worker).is_file():

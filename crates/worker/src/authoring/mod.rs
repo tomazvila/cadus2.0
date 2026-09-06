@@ -15,6 +15,7 @@
 
 pub mod budget;
 pub mod cli;
+pub mod completion;
 pub mod cost;
 pub mod execution;
 pub mod job;
