@@ -298,11 +298,22 @@ topics:
         name: "Find k from a table"
         key_prerequisites: [ratios-proportions]
         exemplars:
-          - problem: 'The table $(2, 5)$, $(4, 10)$, $(6, 15)$ is proportional. What is $k$?'
-            answer: "2.5"
-            solution_sketch: 'Any row gives $k$: $\frac{5}{2} = 2.5$.'
-          - problem: 'The table $(3, 12)$, $(5, 20)$ is proportional. What is $k$?'
+          - problem: "A proportional table has rows $(x,y)=(2,5),(4,10),(6,15)$. Find the common multiplier $k$."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Each output divided by its input gives the same ratio: $5/2$, $10/4$, and $15/6$ all reduce to $5/2$."
+          - problem: "A table lists inputs $3,5$ above outputs $12,20$, respectively. Determine $k$ in $y=kx$."
             answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The paired entries give $12/3$ and $20/5$. Both quotients are $4$, so the same multiplier fits both columns."
+          - problem: "A proportional table includes $(0,0),(4,1),(12,3)$. Determine its constant without dividing by zero."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The origin supplies no ratio. Use a nonzero input: $1/4$ agrees with the other usable ratio $3/12$."
+          - problem: "For table rows $(2,3),(6,9)$, a learner reports $k=2/3$. Correct the multiplier from input $x$ to output $y$."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use output over input: $3/2$ and $9/6$ agree. The learner reversed both ratios."
         constraints: "every row gives the same y/x ratio"
       - id: kp3
         name: "k as a unit rate"
@@ -356,12 +367,22 @@ topics:
         name: "Write and use the equation y = kx"
         key_prerequisites: [constant-of-proportionality]
         exemplars:
-          - problem: '$y$ is proportional to $x$ with $k = 2.5$. Find $y$ when $x = 6$.'
+          - problem: "Use the proportional equation $y=(5/2)x$ to find $y$ at $x=6$."
             answer: "15"
-            solution_sketch: '$y = 2.5(6) = 15$.'
-          - problem: 'A proportional relationship passes through $(3, 21)$. Its equation is $y = kx$. Find $k$.'
-            answer: "7"
-            solution_sketch: '$k = \frac{21}{3} = 7$, so the equation is $y = 7x$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rule multiplies each input by $5/2$, giving $(5/2)6=15$."
+          - problem: "A proportional rule sends $3$ to $21$. Write its multiplier mentally, then find the output for $8$."
+            answer: "56"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First solve $21=3k$ to get $k=7$. The same rule gives $y=7(8)=56$."
+          - problem: "The equation $d=4t$ models distance in kilometres after $t$ hours. Give the numerical distance after half an hour."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Insert $t=1/2$: $d=4(1/2)=2$ kilometres."
+          - problem: "For $y=3x$, a learner adds $3$ to input $5$. Correct the output using the proportional equation."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coefficient is a multiplier: $y=3(5)=15$; adding would use a different rule."
         constraints: "equation form y = kx"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-6","label":"A"},{"x":"2","y":"6","label":"B"}],"segments":[{"from":{"x":"-2","y":"-6","label":null},"to":{"x":"2","y":"6","label":null}}],"caption":"Reference example: The reference proportional line has equation y = 3x The drawn segment joins the two reference points."}]
@@ -448,11 +469,22 @@ topics:
         name: "Read k from a graph"
         key_prerequisites: [proportional-relationships]
         exemplars:
-          - problem: 'A proportional graph passes through $(5, 20)$. What is $k$?'
+          - problem: "On a straight graph through the origin, a marked point is $5$ horizontal units and $20$ vertical units from the origin. Read $k$ for $y=kx$."
             answer: "4"
-            solution_sketch: '$k = \frac{20}{5} = 4$.'
-          - problem: 'A proportional graph passes through $(4, 3)$. What is $k$?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The marked point is $(5,20)$, so $5k=20$ and $k=4$."
+          - problem: "The $x$-axis uses $2$ units per square and the $y$-axis $3$ units per square. A proportional line passes through a mark $2$ squares right and $1$ square up. Find $k$."
             answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Convert grid counts to coordinates: $x=2(2)=4$ and $y=3(1)=3$. Thus $k=3/4$."
+          - problem: "A proportional graph has axes input $x$ and output $y$. A marked point projects to $x=6$ and $y=9$. Determine the line's multiplier."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The projections give $(6,9)$. Dividing the vertical coordinate by the horizontal gives $9/6=3/2$."
+          - problem: "A learner reads $k=3$ from a proportional graph's point $(12,4)$ by reversing the axes. Give the corrected constant."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In $y=kx$, the vertical coordinate is the output: $4=12k$, so $k=1/3$."
         constraints: "k = y/x from any graphed point; fractional k allowed"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-6","label":"A"},{"x":"2","y":"6","label":"B"}],"segments":[{"from":{"x":"-2","y":"-6","label":null},"to":{"x":"2","y":"6","label":null}}],"caption":"Reference example: The reference proportional line has equation y = 3x The drawn segment joins the two reference points."}]
@@ -520,11 +552,22 @@ topics:
         name: "Sign of the slope from direction"
         key_prerequisites: [coordinate-plane]
         exemplars:
-          - problem: 'A line falls from left to right. Is its slope positive or negative?'
-            answer: "negative"
-          - problem: 'A line drops $4$ units for every $2$ units it runs to the right. What is the slope?'
+          - problem: "A graph falls $4$ units as you move $2$ units right. Give its signed slope."
             answer: "-2"
-            solution_sketch: 'Rise is $-4$ over run $2$: $-2$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Falling gives vertical change $-4$; rightward run is $2$, so the slope is $-4/2=-2$."
+          - problem: "The right end of a graph segment is $6$ units lower than its left end and $8$ units farther right. Find the signed slope."
+            answer: "-3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Moving left to right changes height by $-6$ over a positive run of $8$, giving $-6/8=-3/4$."
+          - problem: "Trace a descending line $5$ squares right and $3$ squares down on a unit grid. What signed rise per unit of run does the graph show?"
+            answer: "-3/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Downward motion makes the rise $-3$. Divide by the rightward run $5$ to keep the falling direction in the sign."
+          - problem: "A learner assigns positive slope to a line descending $9$ units over a rightward run of $3$. Correct the signed slope."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The magnitude is the quotient $9/3$; the descent makes the signed slope $-3$."
         constraints: "downward left-to-right means negative rise"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
@@ -733,19 +776,19 @@ topics:
         exemplars:
           - problem: "Find the slope through $(1,5)$ and $(5,2)$."
             answer: "-3/4"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
             solution_sketch: "The vertical change is $2-5=-3$ and the horizontal change is $5-1=4$, giving $-3/4$."
           - problem: "A line falls $6$ units for a rightward run of $9$ units. Give its slope as a reduced fraction."
             answer: "-2/3"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
             solution_sketch: "Falling makes the rise negative: $-6/9$ reduces by $3$ to $-2/3$."
           - problem: "A linear table contains the rows $(x,y)=(-2,-3)$ and $(4,0)$. Find the slope."
             answer: "1/2"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
             solution_sketch: "Subtract consistently: the output increases by $3$ while the input increases by $6$, so the slope is $3/6=1/2$."
           - problem: "A slope calculation gives $(7-1)/(-5-(-1))$. Reduce the result and keep its sign."
             answer: "-3/2"
-            answer_contract: {"kind": "exact"}
+            answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
             solution_sketch: "The numerator is $6$ and denominator is $-4$. Reducing $6/(-4)$ gives $-3/2$."
         constraints: "reduce the fraction; keep sign"
       - id: kp2
@@ -775,13 +818,22 @@ topics:
         name: "Collinearity and comparing steepness"
         key_prerequisites: [slope-from-two-points]
         exemplars:
-          - problem: 'Are $(0, 1)$, $(2, 5)$, and $(5, 11)$ collinear?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Slopes $\frac{4}{2} = 2$ and $\frac{6}{3} = 2$ match.'
-          - problem: 'Which line is steeper: through $(0, 0)$ and $(2, 7)$, or through $(0, 0)$ and $(3, 9)$? Give the steeper line''s slope.'
-            answer: "7/2"
-            solution_sketch: 'Slopes $\frac{7}{2} = 3.5$ vs $3$; the line through $(2, 7)$ is steeper.'
+          - problem: "Find $c$ so that $(0,1),(2,5),(5,c)$ are collinear."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The first two points rise $4$ units over a run of $2$, giving slope $2$. From $x=2$ to $x=5$, rise must be $2(3)=6$, giving $c=5+6=11$."
+          - problem: "The points $(-2,7),(1,1),(4,h)$ must lie on one line. Determine $h$."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Equal horizontal gaps of $3$ require equal vertical changes. The first change is $1-7=-6$, so the next height is $1-6=-5$."
+          - problem: "Find the missing horizontal coordinate $u$ so that $(1,2),(3,8),(u,14)$ lie on one straight line."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The first rise $6$ over run $2$ gives slope $3$. Another rise of $6$ needs another run of $2$, making $u=3+2=5$."
+          - problem: "A learner places $(6,8)$ on the line through $(-2,-1)$ and $(2,1)$. Correct only its height so the three points are collinear."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The known slope is $2/4=1/2$. Moving $4$ right from $(2,1)$ raises the line by $2$, so the corrected height is $3$."
         constraints: "compare or chain two slope computations"
     diagnostic_exemplar:
       problem: 'The line through $(1, 2)$ and $(4, y)$ has slope $-2$. Find $y$.'
@@ -1185,10 +1237,22 @@ topics:
         name: "Slope as rise/run in the equation"
         key_prerequisites: [slope]
         exemplars:
-          - problem: 'State the slope and y-intercept of $y = 5$.'
-            answer: "slope 0, y-intercept 5"
-          - problem: 'For $y = \frac{2}{3}x - 1$, give the rise and run of the slope.'
-            answer: "rise 2, run 3"
+          - problem: "For $y=(2/3)x-1$, give the smallest integer rise and positive integer run as $(r,s)$."
+            answer: "(2,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The coefficient of $x$ is already reduced. Moving $3$ right requires moving $2$ up."
+          - problem: "The equation $y=-(4/6)x+5$ describes a line. Reduce its slope to a signed rise and smallest positive integer run; enter $(r,s)$."
+            answer: "(-2,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Reduce $-4/6$ by $2$ to $-2/3$. With a positive run of $3$, the rise is $-2$, indicating descent."
+          - problem: "In $y=x/4+2$, the numerator of the slope is implicit. Report the simplest integer rise/run pair $(r,s)$ with $s>0$."
+            answer: "(1,4)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The coefficient of $x$ is $1/4$, so the line rises one unit for each four-unit rightward run."
+          - problem: "For $y=-(3/2)x-1$, a learner reports rise $3$, run $-2$. Give the simplest pair $(r,s)$ describing a rightward move, so $s>0$."
+            answer: "(-3,2)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Reverse both directions to make the run positive. Moving $2$ right then gives a signed rise of $-3$."
         constraints: "fractional slopes as rise over run"
     diagnostic_exemplar:
       problem: 'What is the slope of $y = 6 - \frac{3}{4}x$?'
@@ -1340,10 +1404,22 @@ topics:
         name: "Graph using intercepts"
         key_prerequisites: [x-y-intercepts]
         exemplars:
-          - problem: 'To graph $2x + 3y = 6$ by intercepts, which two points do you plot?'
-            answer: "(3, 0) and (0, 2)"
-          - problem: 'To graph $x - y = 4$ by intercepts, which two points do you plot?'
-            answer: "(4, 0) and (0, -4)"
+          - problem: "To draw $2x+3y=6$ using intercepts, find the horizontal-axis point first and vertical-axis point second. Enter $(x_1,y_1,x_2,y_2)$."
+            answer: "(3,0,0,2)"
+            answer_contract: {"kind": "coordinates", "arity": 4}
+            solution_sketch: "At $y=0$, $2x=6$ gives $(3,0)$. At $x=0$, $3y=6$ gives $(0,2)$. Plot and join those two points."
+          - problem: "For a graph of $x-y=4$, give the two axis crossings as $(x_1,y_1,x_2,y_2)$, horizontal-axis crossing first."
+            answer: "(4,0,0,-4)"
+            answer_contract: {"kind": "coordinates", "arity": 4}
+            solution_sketch: "Setting $y=0$ gives $x=4$; setting $x=0$ gives $y=-4$. Join $(4,0)$ and $(0,-4)$."
+          - problem: "Choose the intercept points for graphing $-3x+2y=12$. Report $(x_1,y_1,x_2,y_2)$ with the point on the horizontal axis first."
+            answer: "(-4,0,0,6)"
+            answer_contract: {"kind": "coordinates", "arity": 4}
+            solution_sketch: "The horizontal crossing solves $-3x=12$ and is $(-4,0)$. The vertical crossing solves $2y=12$ and is $(0,6)$."
+          - problem: "A student plotted $(2,0)$ and $(0,3)$ for $3x+2y=12$. Correct both intercepts and enter $(x_1,y_1,x_2,y_2)$, horizontal-axis point first."
+            answer: "(4,0,0,6)"
+            answer_contract: {"kind": "coordinates", "arity": 4}
+            solution_sketch: "Divide $12$ by the coefficient of the coordinate that remains nonzero: $x=12/3=4$ and $y=12/2=6$. Join the corrected points."
         constraints: "standard-form equations with integer intercepts"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-4","y":"2","label":"A"},{"x":"4","y":"2","label":"B"}],"segments":[{"from":{"x":"-4","y":"2","label":null},"to":{"x":"4","y":"2","label":null}}],"caption":"Reference example: The reference horizontal line has equation y = 2 The drawn segment joins the two reference points."},{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"2","y":"-4","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"2","y":"-4","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference vertical line has equation x = 2 The drawn segment joins the two reference points."}]
@@ -1389,10 +1465,22 @@ topics:
         name: "Write point-slope form"
         key_prerequisites: [slope]
         exemplars:
-          - problem: 'Write the point-slope equation of the line with slope $3$ through $(2, 5)$.'
-            answer: "y - 5 = 3(x - 2)"
-          - problem: 'Write the point-slope equation of the line with slope $-1$ through $(-4, 2)$.'
-            answer: "y - 2 = -1(x + 4)"
+          - problem: "For slope $3$ through $(2,5)$, complete $y+A=M(x+B)$. Enter $(A,M,B)$, including signs."
+            answer: "(-5,3,-2)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Subtract the point's coordinates: $y-5=3(x-2)$, so the added offsets are $-5$ and $-2$."
+          - problem: "A line has slope $-1$ and contains $(-4,2)$. Fill $y+A=M(x+B)$ by giving $(A,M,B)$."
+            answer: "(-2,-1,4)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Using the point gives $y-2=-1(x-(-4))=-1(x+4)$."
+          - problem: "A line rises $1$ unit per $2$ right and contains $(3,-6)$. Use that point in $y+A=M(x+B)$; report $(A,M,B)$."
+            answer: "(6,1/2,-3)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "The slope is $1/2$. Subtracting the vertical coordinate $-6$ produces $y+6$, while the horizontal offset is $x-3$."
+          - problem: "A student used $y-4=-2(x-1)$ for slope $-2$ through $(-1,-4)$. Correct the offsets in $y+A=M(x+B)$ and give $(A,M,B)$."
+            answer: "(4,-2,1)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Subtracting negative point coordinates gives $y+4=-2(x+1)$; the slope remains $-2$."
         constraints: "y - y1 = m(x - x1); keep signs"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
@@ -1470,36 +1558,66 @@ topics:
         name: "Convert to standard form"
         key_prerequisites: [point-slope-form, multi-step-equations]
         exemplars:
-          - problem: 'Write $y = 2x + 3$ in standard form with integer coefficients.'
-            answer: "2x - y = -3"
-            solution_sketch: 'Move $2x$ left: $-2x + y = 3$, or $2x - y = -3$.'
-          - problem: 'Write $y - 1 = \frac{1}{2}(x - 4)$ in standard form with integer coefficients.'
-            answer: "x - 2y = 2"
-            solution_sketch: '$y = \frac{1}{2}x - 1$; multiply by $2$: $2y = x - 2$, so $x - 2y = 2$.'
+          - problem: "Convert $y=2x+3$ to $Ax+By=C$. Give integer $(A,B,C)$ with $A>0$ and no common factor."
+            answer: "(2,-1,-3)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Move $y$ left and the constant right: $2x-y=-3$. The coefficients already have greatest common divisor $1$."
+          - problem: "Rewrite $y-1=(1/2)(x-4)$ as $Ax+By=C$. Return primitive integer $(A,B,C)$ with positive $A$."
+            answer: "(1,-2,2)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Multiply by $2$: $2y-2=x-4$. Collect terms to get $x-2y=2$."
+          - problem: "Clear fractions in $y=-(3/4)x+2$ to get $Ax+By=C$. Enter integer $(A,B,C)$ with positive $A$ and greatest common divisor $1$."
+            answer: "(3,4,8)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Multiplication by $4$ gives $4y=-3x+8$. Move the $x$ term left to obtain $3x+4y=8$."
+          - problem: "For $y+3=2(x-1)$, a student writes $2x-y=1$. Correct the primitive standard-form record $(A,B,C)$, keeping $A>0$."
+            answer: "(2,-1,5)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Expand to $y+3=2x-2$, hence $y=2x-5$ and $2x-y=5$."
         constraints: "standard form Ax + By = C with integer A, B, C"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
         name: "Standard form to slope-intercept"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: 'Write $3x + 2y = 12$ in slope-intercept form.'
-            answer: "y = -3/2 x + 6"
-            solution_sketch: '$2y = -3x + 12$; $y = -\frac{3}{2} x + 6$.'
-          - problem: 'Find the slope of $4x - 5y = 20$.'
-            answer: "4/5"
-            solution_sketch: '$-5y = -4x + 20$; $y = \frac{4}{5}x - 4$.'
+          - problem: "Convert $3x+2y=12$ to slope-intercept form. Enter the coefficients as $(m,b)$ for $y=mx+b$."
+            answer: "(-3/2,6)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Isolate $2y=12-3x$, then divide each term by $2$ to get slope $-3/2$ and intercept $6$."
+          - problem: "For $4x-5y=20$, isolate $y$ to identify the complete slope-intercept rule. Enter the coefficients as $(m,b)$ for $y=mx+b$."
+            answer: "(4/5,-4)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Rearrange to $-5y=20-4x$ and divide by $-5$, giving slope $4/5$ and intercept $-4$."
+          - problem: "Rewrite $-2x+3y=9$ in the form $y=mx+b$. Enter the coefficients as $(m,b)$ for $y=mx+b$."
+            answer: "(2/3,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Add $2x$ to get $3y=2x+9$; division by $3$ gives the two coefficients."
+          - problem: "A student converted $6x+2y=-8$ into $y=-3x+4$. Correct the slope-intercept rule. Enter the coefficients as $(m,b)$ for $y=mx+b$."
+            answer: "(-3,-4)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "After subtracting $6x$, divide $2y=-6x-8$ by $2$. The constant is $-4$."
         constraints: "isolate y; fractional slopes allowed"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
         name: "Line through two points, in standard form"
         key_prerequisites: [point-slope-form]
         exemplars:
-          - problem: 'Write the line through $(1, 2)$ and $(3, 8)$ in standard form.'
-            answer: "3x - y = 1"
-            solution_sketch: '$m = 3$; $y = 3x - 1$; move terms: $3x - y = 1$.'
-          - problem: 'Write the line through $(2, 5)$ and $(4, 6)$ in standard form.'
-            answer: "x - 2y = -8"
-            solution_sketch: '$m = \frac{1}{2}$; $y = \frac{1}{2}x + 4$; times $2$: $2y = x + 8$.'
+          - problem: "Find the line through $(1,2)$ and $(3,8)$ in $Ax+By=C$. Give primitive integer $(A,B,C)$ with $A>0$."
+            answer: "(3,-1,1)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Slope is $6/2=3$, so $y-2=3(x-1)$. Rearranging gives $3x-y=1$."
+          - problem: "The table rows $(2,5)$ and $(4,6)$ belong to one line. Give its primitive standard-form coefficients $(A,B,C)$ with positive $A$."
+            answer: "(1,-2,-8)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "The rise is $1$ over run $2$. Clear the fraction in $y-5=(1/2)(x-2)$ to obtain $x-2y=-8$."
+          - problem: "A line joins $(-2,5)$ and $(1,-1)$. Write $Ax+By=C$ using integer coefficients with no common factor and $A>0$; enter $(A,B,C)$."
+            answer: "(2,1,1)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "The slope is $-6/3=-2$. From $y+1=-2(x-1)$, collect terms to obtain $2x+y=1$."
+          - problem: "The line through $(-3,-2)$ and $(3,2)$ was recorded as $4x-6y=0$. Reduce its standard-form coefficients to primitive integer $(A,B,C)$ with $A>0$."
+            answer: "(2,-3,0)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "The slope is $4/6=2/3$ and the line passes through the origin. Divide the proposed coefficients by $2$ to get $2x-3y=0$."
         constraints: "clear fractions to get integer coefficients"
     diagnostic_exemplar:
       problem: 'Write the line through $(2, 1)$ and $(4, 7)$ in standard form $Ax + By = C$.'
@@ -1656,12 +1774,22 @@ topics:
         name: "Work from standard form"
         key_prerequisites: [point-slope-standard-form]
         exemplars:
-          - problem: 'Write the line through the origin perpendicular to $2x + 3y = 6$.'
-            answer: "y = 3/2 x"
-            solution_sketch: 'Given slope $-\frac{2}{3}$; perpendicular slope $\frac{3}{2}$; $b = 0$.'
-          - problem: 'Are $2x + 3y = 6$ and $3x - 2y = 4$ parallel, perpendicular, or neither?'
-            answer: "perpendicular"
-            solution_sketch: 'Slopes $-\frac{2}{3}$ and $\frac{3}{2}$; product is $-1$.'
+          - problem: "Find a line through the origin perpendicular to $2x+3y=6$. Enter the coefficients as $(m,b)$ for $y=mx+b$."
+            answer: "(3/2,0)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The reference slope is $-2/3$, so a perpendicular has slope $3/2$. Through the origin means intercept $0$."
+          - problem: "A line perpendicular to $3x-2y=4$ must pass through $(3,1)$. Give its slope-intercept rule. Enter the coefficients as $(m,b)$ for $y=mx+b$."
+            answer: "(-2/3,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The reference has slope $3/2$, so use $-2/3$. Then $1=(-2/3)3+b$ gives $b=3$."
+          - problem: "Find the slope-intercept rule parallel to $4x+2y=8$ through $(-1,5)$. Enter the coefficients as $(m,b)$ for $y=mx+b$."
+            answer: "(-2,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The reference equation gives slope $-2$. Keeping it and inserting $(-1,5)$ gives $5=2+b$."
+          - problem: "A student takes slope $-5$ for a perpendicular to $x+5y=10$ through $(1,2)$. Correct the complete slope-intercept rule. Enter the coefficients as $(m,b)$ for $y=mx+b$."
+            answer: "(5,-3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The reference slope is $-1/5$, whose negative reciprocal is $5$. The point gives $2=5+b$, so $b=-3$."
         constraints: "convert to find the slope first"
     diagnostic_exemplar:
       problem: 'Write the equation of the line perpendicular to $2x + 3y = 6$ through $(4, 1)$.'
@@ -1806,12 +1934,22 @@ topics:
         name: "Build a model from two data points"
         key_prerequisites: [slope-intercept-form]
         exemplars:
-          - problem: 'A burning candle is $20$ cm tall after $2$ hours and $14$ cm tall after $5$ hours. Write its height model $h = mt + b$.'
-            answer: "h = -2t + 24"
-            solution_sketch: '$m = \frac{14 - 20}{5 - 2} = -2$; $b = 20 - (-2)(2) = 24$.'
-          - problem: 'A gym membership costs €95 total after $3$ months and €215 after $7$ months. Write the cost model.'
-            answer: "y = 30m + 5"
-            solution_sketch: '$m = \frac{215 - 95}{7 - 3} = 30$; $b = 95 - 30(3) = 5$.'
+          - problem: "A candle is $20$ cm tall after $2$ hours and $14$ cm after $5$ hours. For height $h=mt+b$, enter $(m,b)$ with $m$ in cm/hour and $b$ in cm."
+            answer: "(-2,24)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The height falls $6$ cm over $3$ hours, so $m=-2$. The first measurement gives $20=-2(2)+b$, hence $b=24$."
+          - problem: "A gym charges a fixed joining fee plus a monthly rate. Total cost is EUR $95$ for $3$ months and EUR $215$ for $7$ months. In $C=mt+b$, return $(m,b)$ in EUR/month and EUR."
+            answer: "(30,5)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Four extra months cost $215-95=120$, giving $m=30$. Remove three monthly payments from $95$ to get the fee $5$."
+          - problem: "A tank fills at a constant rate. It contains $17$ litres after $2$ minutes and $32$ litres after $5$ minutes. For $V=mt+b$, report $(m,b)$ in litres/minute and litres."
+            answer: "(5,7)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Volume increases by $15$ litres over $3$ minutes. The rate is $5$ and the initial volume is $17-5(2)=7$."
+          - problem: "A taxi's fare is a fixed fee plus cost per kilometre. Trips of $4$ km and $9$ km cost EUR $14$ and EUR $29$. Recover $(m,b)$ in $C=md+b$, in EUR/km and EUR."
+            answer: "(3,2)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The extra $5$ km costs $15$, so the rate is $3$. Subtract $3(4)$ from $14$ to obtain the fixed fee $2$."
         constraints: "treat the data as two points; integer slope and intercept"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]

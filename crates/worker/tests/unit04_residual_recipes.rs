@@ -3,7 +3,7 @@
 use std::{collections::BTreeSet, path::PathBuf};
 
 use cadus_core::{
-    answer::{AnswerContract, Outcome, check_contract},
+    answer::{AnswerContract, NumericForm, Outcome, check_contract},
     curriculum::load_curriculum,
     template::{Compiled, TemplateDoc, answer_for_contract, walk_satisfying},
 };
@@ -57,7 +57,7 @@ fn pending_recipes_pass_production_and_export_exhaustive_instances() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let drafts = drafts();
-    assert_eq!(drafts.len(), 10);
+    assert_eq!(drafts.len(), 23);
     let mut keys = BTreeSet::new();
     let mut all_problems: BTreeSet<String> = curriculum
         .topics()
@@ -113,10 +113,32 @@ fn pending_recipes_pass_production_and_export_exhaustive_instances() {
 #[test]
 fn output_contracts_refuse_wrong_shape_and_wrong_mathematics() {
     for (contract, expected, wrong) in [
+        (
+            AnswerContract::RequiredForm {
+                form: NumericForm::ReducedFraction,
+            },
+            "1/2",
+            "2/4",
+        ),
+        (
+            AnswerContract::RequiredForm {
+                form: NumericForm::ReducedFraction,
+            },
+            "1/2",
+            "0.5",
+        ),
         (AnswerContract::Coordinates { arity: 2 }, "(3,5)", "(5,3)"),
         (AnswerContract::Coordinates { arity: 2 }, "(3,5)", "3"),
-        (AnswerContract::PolynomialRelation, "y=2*x+3", "y=3*x+2"),
-        (AnswerContract::PolynomialRelation, "y=2*x+3", "2*x+3"),
+        (
+            AnswerContract::Coordinates { arity: 3 },
+            "(-5,3,-2)",
+            "(-5,-2,3)",
+        ),
+        (
+            AnswerContract::Coordinates { arity: 4 },
+            "(3,0,0,2)",
+            "(0,2,3,0)",
+        ),
     ] {
         assert!(
             !matches!(check_contract(expected, wrong, contract), Outcome::Decided(v) if v.correct)

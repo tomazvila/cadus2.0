@@ -10,6 +10,7 @@ import re
 import sys
 import unittest
 from fractions import Fraction as Q
+from math import gcd, prod
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -23,13 +24,11 @@ def read(path):
     return json.loads(path.read_text())
 
 
-def arithmetic(text, x=Q(0)):
+def arithmetic(text):
     """Tiny independent rational evaluator for explicit linear answers only."""
     def walk(node):
         if isinstance(node, ast.Constant) and type(node.value) is int:
             return Q(node.value)
-        if isinstance(node, ast.Name) and node.id == "x":
-            return x
         if isinstance(node, ast.Tuple):
             return tuple(walk(item) for item in node.elts)
         if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.USub, ast.UAdd)):
@@ -48,24 +47,61 @@ def arithmetic(text, x=Q(0)):
     return walk(ast.parse(text.strip(), mode="eval").body)
 
 
+def line_invariant(value, premise):
+    if not isinstance(value, tuple) or len(value) != 2:
+        return False
+    m, c = value
+    if any(m*Q(x)+c != Q(y) for x,y in premise["points"]):
+        return False
+    if "abc" in premise:
+        a,b,d = premise["abc"]
+        if any(a*x+b*(m*x+c) != d for x in [-3,0,4]):
+            return False
+    if premise["type"] == "perpendicular":
+        dx, dy = premise["reference"]
+        return dx+m*dy == 0
+    if "direction" in premise:
+        dx, dy = premise["direction"]
+        return m*dx == dy
+    return True
+
+
 def invariant(answer, premise):
-    """Check an answer against displacements, pairs, or line incidence/directions."""
+    """Check defining geometry directly, independently of the recipe formula."""
     kind = premise["type"]
-    if kind in {"line", "perpendicular"}:
-        value = arithmetic(answer)
-        if not isinstance(value, tuple) or len(value) != 2:
-            return False
-        m, c = value
-        if any(m*Q(x)+c != Q(y) for x,y in premise["points"]):
-            return False
-        if kind == "perpendicular":
-            dx, dy = premise["reference"]
-            return dx+m*dy == 0  # Dot product of direction vectors (1,m) and (dx,dy).
-        if "direction" in premise:
-            dx, dy = premise["direction"]
-            return m*dx == dy
-        return True
     value = arithmetic(answer)
+    if kind in {"line", "perpendicular", "model"}:
+        return line_invariant(value, premise)
+    if kind == "rise_run":
+        rise, run = value
+        return (run > 0 and rise.denominator == run.denominator == 1
+                and gcd(abs(int(rise)), int(run)) == 1 and rise == Q(premise["slope"])*run)
+    if kind == "standard":
+        a,b,c = value
+        if a <= 0 or b == 0 or any(v.denominator != 1 for v in value):
+            return False
+        if gcd(*(abs(int(v)) for v in value)) != 1:
+            return False
+        return line_invariant((-a/b,c/b), premise)
+    if kind == "point_form":
+        offset_y, m, offset_x = value
+        x,y = premise["point"]
+        return offset_y+y == 0 and offset_x+x == 0 and m == Q(premise["slope"])
+    if kind == "intercepts":
+        x1,y1,x2,y2 = value
+        a,b,c = premise["abc"]
+        return y1 == x2 == 0 and a*x1+b*y1 == c and a*x2+b*y2 == c
+    if kind == "table_ratio":
+        return any(x != 0 for x,y in premise["rows"]) and all(value*x == y for x,y in premise["rows"])
+    if kind == "collinear":
+        points = [[value if c is None else Q(c) for c in p] for p in premise["points"]]
+        (x1,y1),(x2,y2),(x3,y3) = points
+        return (x2-x1)*(y3-y1) == (x3-x1)*(y2-y1)
+    if kind == "product":
+        return value == prod(Q(f) for f in premise["factors"])
+    if kind == "proportional_predict":
+        x,y = premise["pair"]
+        return value*x == Q(y)*Q(premise["input"])
     if kind == "position":
         return value == tuple(sum(Q(move[i]) for move in premise["moves"]) for i in [0,1])
     if kind == "ratio":
@@ -78,16 +114,22 @@ def invariant(answer, premise):
     raise ValueError(kind)
 
 
+def mathematical_family(answer, premise):
+    value = arithmetic(answer)
+    if premise["type"] == "point_form":
+        a,m,b = value
+        return m, m*b-a
+    if premise["type"] == "standard":
+        a,b,c = value
+        return -a/b, c/b
+    return value
+
+
 def signature(answer):
-    if answer.startswith("y="):
-        c = arithmetic(answer[2:])
-        return (arithmetic(answer[2:], Q(1))-c, c)
     return arithmetic(answer)
 
 
 def corrupt(answer):
-    if answer.startswith("y="):
-        return answer+"+1"
     value = arithmetic(answer)
     if isinstance(value, tuple):
         return "("+",".join(str(v+1) for v in value)+")"
@@ -118,7 +160,7 @@ class Unit04ResidualReview(unittest.TestCase):
         cls.facts = {r["kp_key"]: r for r in facts["kps"]}
 
     def test_exact_scope_pending_status_and_complete_domains(self):
-        self.assertEqual(len(self.drafts), 10)
+        self.assertEqual(len(self.drafts), 23)
         self.assertEqual(self.drafts.keys(), self.premises.keys())
         self.assertEqual(self.drafts.keys(), self.instances.keys())
         pending = pending_templates(ROOT/"docs/content-foundations")
@@ -154,14 +196,16 @@ class Unit04ResidualReview(unittest.TestCase):
             distinct(instances)
             cases = {tuple(sorted((k,str(v)) for k,v in c["params"].items())): c["premise"]
                      for c in self.premises[key]["cases"]}
-            seen = set()
+            seen, families = set(), set()
             for item in instances:
                 params = tuple(sorted(item["params"].items()))
                 seen.add(params)
+                families.add(mathematical_family(item["answer"], cases[params]))
                 self.assertTrue(invariant(item["answer"], cases[params]), (key,item))
                 self.assertFalse(invariant(corrupt(item["answer"]), cases[params]), key)
                 self.assertNotIn(item["answer"], item["problem"], (key,"answer exposed"))
             self.assertEqual(seen, cases.keys())
+            self.assertEqual(len(families), len(cases), (key,"same mathematical family"))
 
     def test_no_cross_kp_problem_answer_collisions(self):
         # Check authored material across all Foundations, plus new rendered tasks.
@@ -170,16 +214,22 @@ class Unit04ResidualReview(unittest.TestCase):
         rows += [(key,e["problem"],e["answer"]) for key,items in self.instances.items() for e in items]
         seen = {}
         for key, problem, answer in rows:
-            normalized = re.sub(r"\s+", " ", problem.casefold()).strip(" .")
+            normalized = family(problem)
             previous = seen.setdefault(normalized, key)
             if previous != key and (key in self.drafts or previous in self.drafts):
                 self.fail(f"cross-KP collision: {previous} / {key}: {problem}")
         recipe_families = {}
-        for key,draft in self.drafts.items():
-            template = draft["arguments"]["statement"]
-            fingerprint = family(re.sub(r"\{[a-z]+\}", "1", template))
-            self.assertNotIn(fingerprint, recipe_families, key)
-            recipe_families[fingerprint] = key
+        for key, evidence in pending_templates(ROOT/"docs/content-foundations").items():
+            for row in evidence:
+                document = row["document"]
+                args = document.get("arguments") or document.get("body") or {}
+                template = args.get("statement", "")
+                if not template:
+                    continue
+                fingerprint = family(re.sub(r"\{[a-z_]+\}", "1", template))
+                previous = recipe_families.setdefault(fingerprint, key)
+                if previous != key and (key in self.drafts or previous in self.drafts):
+                    self.fail(f"cross-KP template family: {previous} / {key}")
 
     def test_semantic_negative_controls_reject_collapsed_or_inert_families(self):
         instances = self.instances["constant-of-proportionality/kp1"]
@@ -201,6 +251,19 @@ class Unit04ResidualReview(unittest.TestCase):
         self.assertFalse(invariant("(-4,11)", premise))
         self.assertFalse(invariant("(-1/4,3)", premise))
         self.assertFalse(invariant("(5,3)", {"type": "position", "moves": [[3,5]]}))
+
+    def test_primitive_coefficients_and_table_consistency_negative_controls(self):
+        premise = {"type":"standard", "points":[[1,2],[3,8]]}
+        self.assertTrue(invariant("(3,-1,1)", premise))
+        for wrong in ["(6,-2,2)", "(-3,1,-1)", "(3,-1,-1)", "(3/2,-1/2,1/2)"]:
+            self.assertFalse(invariant(wrong, premise))
+        table = {"type":"table_ratio", "rows":[[2,5],[4,10]]}
+        self.assertTrue(invariant("5/2", table))
+        table["rows"][1][1] = 11
+        self.assertFalse(invariant("5/2", table))
+        points = {"type":"collinear", "points":[[1,2],[3,8],[None,14]]}
+        self.assertTrue(invariant("5", points))
+        self.assertFalse(invariant("6", points))
 
 
 if __name__ == "__main__":

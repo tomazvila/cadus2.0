@@ -5,7 +5,8 @@ import re
 from fractions import Fraction as Q
 from pathlib import Path
 
-from unit04_residual_data import AUTHORED, line
+from unit04_residual_data import AUTHORED, line, standard
+from math import gcd
 
 ROOT = Path(__file__).resolve().parents[2]
 DEST = ROOT / "docs/content-foundations/unit04-residual"
@@ -55,8 +56,100 @@ RECIPES = [
      "The slopes of perpendicular nonvertical lines multiply to negative one."),
 ]
 
+RECIPES.extend([
+    ("proportional-relationships/kp1", [7,11,13,17], [2,3,5], "a*b",
+     "The proportional equation is $y=({a})x$. Use the equation to find $y$ at $x={b}$.",
+     "The coefficient ${a}$ multiplies the input ${b}$, so the output is the product ${a}\\cdot{b}$.",
+     "Replace the input variable with the given value before multiplying."),
+    ("graphing-proportional-relationships/kp2", [5,7,11,13], [2,3,4], "a/b",
+     "A straight graph through the origin has a marked point whose projections onto the input and output axes read $x={b}$ and $y={a}$. Find $k$ in $y=kx$.",
+     "The projections identify the point $({b},{a})$. A proportional graph satisfies ${a}=k({b})$, so divide the vertical coordinate by the horizontal coordinate.",
+     "Read horizontal input first and vertical output second."),
+    ("slope-from-a-graph/kp2", [2,3,4], [5,7,11,13], "-a/b",
+     "A descending graph drops ${a}$ vertical units over a rightward run of ${b}$ units. Find its signed slope.",
+     "Left-to-right descent makes the vertical change $-{a}$. The run stays positive, so divide $-{a}$ by ${b}$.",
+     "First decide the sign of the vertical change as you move right."),
+    ("point-slope-form/kp1", [-4,-1,3,6], [-5,2,7], "(-b,-2,-a)",
+     "Use slope $-2$ and point $({a},{b})$ to complete $y+A=M(x+B)$. Enter $(A,M,B)$, including signs.",
+     "Point-slope form subtracts the given coordinates: $y-({b})=-2(x-({a}))$. Thus the added offsets are the negatives of ${b}$ and ${a}$.",
+     "Subtract each point coordinate from its corresponding variable."),
+    ("point-slope-standard-form/kp1", [1,2,3,4], [-5,1,6],
+     "(a/gcd(a,2),-2/gcd(a,2),(-3*a-2*b)/gcd(a,2))",
+     "Convert $y-({b})=({a}/2)(x+3)$ to $Ax+By=C$. Give integer $(A,B,C)$ with $A>0$ and no common factor.",
+     "Multiply by $2$, expand, and collect terms to get ${a}x-2y=-3({a})-2({b})$. Divide all coefficients by the greatest common divisor of ${a}$ and $2$.",
+     "Clear the denominator before collecting variable terms on one side."),
+    ("point-slope-standard-form/kp2", [1,2,3,4], [-7,1,5], "(a/3,-b/3)",
+     "Isolate $y$ in ${a}x-3y={b}$. Enter $(m,b)$ for the resulting $y=mx+b$.",
+     "Subtract ${a}x$ to obtain $-3y={b}-{a}x$. Division by $-3$ gives slope ${a}/3$ and constant $-{b}/3$.",
+     "Apply the same division to every term after isolating the vertical-variable term."),
+    ("point-slope-standard-form/kp3", [-4,-1,2,5], [7,9,11],
+     "((b-a)/gcd(b-a,2),-2/gcd(b-a,2),(b-3*a)/gcd(b-a,2))",
+     "Find the line through $(1,{a})$ and $(3,{b})$ in $Ax+By=C$. Enter integer $(A,B,C)$ with positive $A$ and no common factor.",
+     "The direction has run $2$ and rise ${b}-({a})$. Clear the denominator in point-slope form to obtain $({b}-({a}))x-2y={b}-3({a})$, then divide all coefficients by their common factor.",
+     "Find a direction from the two points, clear the slope denominator, and reduce the coefficients."),
+    ("parallel-perpendicular-lines/kp3", [-4,-2,2,4], [-5,1,6], "(3/a,b-6/a)",
+     "Find the line perpendicular to ${a}x+3y=7$ through $(2,{b})$. Enter its slope-intercept coefficients $(m,b)$ in $y=mx+b$.",
+     "The reference slope is $-{a}/3$, so its perpendicular has slope $3/({a})$. The point gives intercept ${b}-2(3/({a}))$.",
+     "Isolate the vertical variable in the reference equation before taking the negative reciprocal."),
+    ("linear-word-problems/kp2", [50,56,62,68], [74,80,86], "((b-a)/3,(5*a-2*b)/3)",
+     "A club charges a joining fee plus a constant monthly rate. Total cost is EUR ${a}$ for $2$ months and EUR ${b}$ for $5$ months. For $C=mt+b$, enter $(m,b)$ in EUR/month and EUR.",
+     "The extra $3$ months cost ${b}-({a})$, so divide that difference by $3$ for the monthly rate. Subtract two monthly payments from ${a}$ to recover the joining fee.",
+     "Use the difference between the totals to separate the monthly rate from the fixed fee."),
+    ("graphing-linear-equations/kp2", [2,4,6], [12,24,36,48], "(b/a,0,0,b/3)",
+     "Graph ${a}x+3y={b}$ using intercepts. Enter the horizontal-axis point followed by the vertical-axis point as $(x_1,y_1,x_2,y_2)$.",
+     "Set $y=0$ to solve ${a}x={b}$ for the horizontal intercept. Set $x=0$ to solve $3y={b}$ for the vertical intercept. Plot these two points and join them.",
+     "Each axis crossing has one coordinate equal to zero."),
+])
+
+
+RECIPES.extend([
+    ("constant-of-proportionality/kp2", [7,11,13,17], [2,3,5], "a/b",
+     "A table has input row $x$: ${b}$, $2({b})$, $3({b})$ and corresponding output row $y$: ${a}$, $2({a})$, $3({a})$. Entries written as products denote their numerical values. Find the common constant in $y=kx$.",
+     "Compare output/input in each column: ${a}/{b}$, $2({a})/(2({b}))$, and $3({a})/(3({b}))$. Cancelling the common factor in each ratio confirms one multiplier for all rows.",
+     "Pair each output with the input in the same column before comparing ratios."),
+    ("slope/kp3", [-4,-1,2,5], [7,9,11], "2*b-a",
+     "Find $h$ so that $(1,{a})$, $(3,{b})$, and $(5,h)$ are collinear.",
+     "Both horizontal gaps are $2$, so the vertical changes must match: $h-({b})={b}-({a})$. Add ${b}$ to recover the final height.",
+     "Collinear points have the same slope between consecutive pairs."),
+])
+
+
+RECIPES.append(
+    ("reading-slope-intercept-equations/kp3", [-6,-2,2,6], [4,8,16],
+     "(a/gcd(a,b),b/gcd(a,b))",
+     "For $y=({a}/{b})x+5$, report the signed integer rise and smallest positive integer run as $(r,s)$.",
+     "The slope is the coefficient ${a}/{b}$. Divide its numerator and denominator by their greatest common divisor; keep the denominator positive so the move is rightward.",
+     "Reduce the slope fraction before reading its numerator as rise and denominator as run.")
+)
+
 
 def premise(key, a, b):
+    if key == "reading-slope-intercept-equations/kp3":
+        return {"type":"rise_run", "slope":str(Q(a,b))}
+    if key == "constant-of-proportionality/kp2":
+        return {"type":"table_ratio", "rows":[[b,a],[2*b,2*a],[3*b,3*a]]}
+    if key == "slope/kp3":
+        return {"type":"collinear", "points":[[1,a],[3,b],[5,None]]}
+    if key == "proportional-relationships/kp1":
+        return {"type":"product", "factors":[a,b]}
+    if key == "graphing-proportional-relationships/kp2":
+        return {"type":"ratio", "input":b, "output":a}
+    if key == "slope-from-a-graph/kp2":
+        return {"type":"ratio", "input":b, "output":-a}
+    if key == "point-slope-form/kp1":
+        return {"type":"point_form", "point":[a,b], "slope":-2}
+    if key == "point-slope-standard-form/kp1":
+        return standard([[-3,b]], [2,a])
+    if key == "point-slope-standard-form/kp2":
+        return dict(line([]), abc=[a,-3,b])
+    if key == "point-slope-standard-form/kp3":
+        return standard([[1,a],[3,b]])
+    if key == "parallel-perpendicular-lines/kp3":
+        return {"type":"perpendicular", "points":[[2,b]], "reference":[3,-a]}
+    if key == "linear-word-problems/kp2":
+        return {"type":"model", "points":[[2,a],[5,b]]}
+    if key == "graphing-linear-equations/kp2":
+        return {"type":"intercepts", "abc":[a,3,b]}
     if key == "plotting-points/kp1":
         return {"type": "position", "moves": [[2,1],[a,0],[0,b]]}
     if key in {"constant-of-proportionality/kp1", "slope-from-a-graph/kp1", "slope/kp1"}:
@@ -75,6 +168,34 @@ def premise(key, a, b):
 
 
 def expected(key, a, b):
+    if key == "reading-slope-intercept-equations/kp3":
+        return f"({Q(a,b).numerator},{Q(a,b).denominator})"
+    if key == "constant-of-proportionality/kp2":
+        return str(Q(a,b))
+    if key == "slope/kp3":
+        return str(2*b-a)
+    if key == "proportional-relationships/kp1":
+        return str(a*b)
+    if key == "graphing-proportional-relationships/kp2":
+        return str(Q(a,b))
+    if key == "slope-from-a-graph/kp2":
+        return str(Q(-a,b))
+    if key == "point-slope-form/kp1":
+        return f"({-b},-2,{-a})"
+    if key == "point-slope-standard-form/kp1":
+        d = gcd(a,2)
+        return f"({a//d},{-2//d},{(-3*a-2*b)//d})"
+    if key == "point-slope-standard-form/kp2":
+        return f"({Q(a,3)},{Q(-b,3)})"
+    if key == "point-slope-standard-form/kp3":
+        d = gcd(b-a,2)
+        return f"({(b-a)//d},{-2//d},{(b-3*a)//d})"
+    if key == "parallel-perpendicular-lines/kp3":
+        return f"({Q(3,a)},{b-Q(6,a)})"
+    if key == "linear-word-problems/kp2":
+        return f"({Q(b-a,3)},{Q(5*a-2*b,3)})"
+    if key == "graphing-linear-equations/kp2":
+        return f"({Q(b,a)},0,0,{Q(b,3)})"
     if key == "plotting-points/kp1":
         return f"({a+2},{b+1})"
     if key in {"constant-of-proportionality/kp1", "slope-from-a-graph/kp1", "slope/kp1"}:
@@ -104,7 +225,7 @@ def build():
             samples.append(dict(params=bindings, expected=answer))
             cases.append(dict(params=bindings, premise=premise(key,a,b)))
         contract, authored = AUTHORED[key]
-        if authored[0]["premise"]["type"] in {"line", "perpendicular"}:
+        if authored[0]["premise"]["type"] in {"line", "perpendicular"} and "Enter" not in statement:
             statement += " Enter $(m,b)$ for $y=mx+b$."
         arguments = dict(answer_contract=contract, answer_expr=expr, statement=statement,
                          solution_sketch=sketch, hints=[hint], constraints=[], distractors=[],
