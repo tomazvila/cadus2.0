@@ -87,18 +87,18 @@ fn one_instance_of_every_type_round_trips_byte_for_byte() {
         .map(Event::type_name)
         .collect();
     // The fixture came from the 1.0 models, so it covers the 16 types of 1.0.
-    // `retention_probe` is new in 2.0 (D-F11) and 1.0 never wrote one.
+    // `retention_probe` and `drill_result` are new in 2.0.
     let expected: BTreeSet<&str> = Event::TYPE_NAMES
         .into_iter()
-        .filter(|name| *name != RETENTION_PROBE)
+        .filter(|name| ![RETENTION_PROBE, "drill_result"].contains(name))
         .collect();
     assert_eq!(seen, expected, "the fixture must cover all 16 1.0 types");
     assert!(Event::TYPE_NAMES.contains(&RETENTION_PROBE));
 }
 
 #[test]
-fn the_union_declares_the_sixteen_1_0_types_and_the_2_0_probe() {
-    // Spec section 2: the 16 types of the 1.0 event union, plus `retention_probe`.
+fn the_union_declares_legacy_and_additive_2_0_types() {
+    // Spec section 2: the 16 types of the 1.0 event union, plus the retention probe and drill completion.
     assert_eq!(
         Event::TYPE_NAMES,
         [
@@ -119,10 +119,11 @@ fn the_union_declares_the_sixteen_1_0_types_and_the_2_0_probe() {
             "config_changed",
             "curriculum_changed",
             RETENTION_PROBE,
+            "drill_result",
         ]
     );
     let unique: BTreeSet<&str> = Event::TYPE_NAMES.into_iter().collect();
-    assert_eq!(unique.len(), 17);
+    assert_eq!(unique.len(), 18);
 }
 
 // --------------------------------------------------------------------------- //
