@@ -340,8 +340,23 @@ pub fn answer_for_contract(
             unit_answer(ast, bindings, contract, unit)
         }
         Some(AnswerContract::Multipart { parts }) => multipart_answer(ast, bindings, parts),
+        Some(contract @ AnswerContract::ReducedRatio) => {
+            reduced_ratio_answer(ast, bindings, contract)
+        }
         _ => answer(ast, bindings),
     }
+}
+
+fn reduced_ratio_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: &AnswerContract,
+) -> Result<Answer, EvalError> {
+    let value = answer(ast, bindings)?;
+    let Canon::Rational(ratio) = &value.canon else {
+        return contracted(value.text, contract);
+    };
+    contracted(format!("{}:{}", ratio.numer(), ratio.denom()), contract)
 }
 
 fn unit_answer(

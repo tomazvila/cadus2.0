@@ -124,6 +124,31 @@ fn a_multipart_template_computes_named_numeric_and_label_parts() {
 }
 
 #[test]
+fn a_reduced_ratio_template_writes_the_exact_ratio_notation() {
+    let body = serde_json::json!({
+        "v": 1, "topic_id": "ratios", "answer_kind": "numeric",
+        "answer_contract": {"kind":"reduced_ratio"},
+        "statement": "Reduce {a}:40.",
+        "params": {"a":{"kind":"choice","values":[2,4,6,8,10,12,14,16,18,20,24,30]}},
+        "constraints": [], "answer_expr": "a/40",
+        "solution_sketch": "Divide both parts by their greatest common factor.",
+        "hints": ["Reduce both parts."], "distractors": [],
+        "samples": [
+            {"params":{"a":2},"expected":"1:20"},
+            {"params":{"a":30},"expected":"3:4"}
+        ]
+    });
+    let doc = from_body(&body.to_string()).unwrap();
+    let compiled = Compiled::new(&doc).unwrap();
+    let answers: Vec<_> = doc
+        .samples
+        .iter()
+        .map(|sample| compiled.instantiate(sample.bindings()).unwrap().answer)
+        .collect();
+    assert_eq!(answers, ["1:20", "3:4"]);
+}
+
+#[test]
 fn a_sign_case_template_covers_all_three_discriminant_outcomes() {
     let body = serde_json::json!({
         "v": 1, "topic_id": "discriminant", "answer_kind": "numeric",
@@ -172,7 +197,7 @@ fn a_unit_template_evaluates_its_numeric_expression_before_the_suffix() {
 }
 
 #[test]
-fn the_nineteen_inventory_topics_have_explicit_usable_exact_items() {
+fn the_twenty_four_inventory_topics_have_explicit_usable_exact_items() {
     let (raw, findings) = load_raw_curriculum(&curriculum_root()).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let mut topics = 0;
@@ -201,8 +226,8 @@ fn the_nineteen_inventory_topics_have_explicit_usable_exact_items() {
             items += 1;
         }
     }
-    assert_eq!(topics, 19);
-    assert_eq!(items, 108);
+    assert_eq!(topics, 24);
+    assert_eq!(items, 194);
     assert!(lint_curriculum(&curriculum_root()).is_empty());
 }
 
