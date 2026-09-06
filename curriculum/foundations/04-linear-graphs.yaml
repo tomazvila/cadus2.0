@@ -31,10 +31,22 @@ topics:
         name: "Points with negative coordinates"
         key_prerequisites: [number-line-integers]
         exemplars:
-          - problem: 'Give the coordinates of the point $4$ units left and $3$ units up from the origin.'
-            answer: "(-4, 3)"
-          - problem: 'To plot $(5, -2)$, you move $5$ right and then how far in which direction?'
-            answer: "2 down"
+          - problem: "Move $4$ left and $3$ up from the origin. Give the ordered pair."
+            answer: "(-4,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Left makes the horizontal coordinate negative, while up makes the vertical coordinate positive."
+          - problem: "A point lies where $x=6$ meets $y=-2$. Give its ordered pair."
+            answer: "(6,-2)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The intersection must have horizontal coordinate $6$ and vertical coordinate $-2$."
+          - problem: "A learner moves $5$ down and $7$ left. Give the point reached from the origin."
+            answer: "(-7,-5)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Record horizontal movement first: left $7$ gives $x=-7$; down $5$ gives $y=-5$."
+          - problem: "A marker at $(0,0)$ moves $2$ right, $6$ left, and $8$ down. Give its final coordinates."
+            answer: "(-4,-8)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The horizontal displacement is $2-6=-4$ and the vertical displacement is $-8$."
         constraints: "integer coordinates between -10 and 10; left/down are negative"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"4","y":"2","label":"A"},{"x":"-4","y":"2","label":"B"},{"x":"-4","y":"-2","label":"C"},{"x":"4","y":"-2","label":"D"}],"segments":[],"caption":"Reference example: Four independent reference points illustrate the signs of coordinates around the origin."}]
@@ -95,23 +107,44 @@ topics:
         name: "Sign patterns and reflections"
         key_prerequisites: [plotting-points]
         exemplars:
-          - problem: 'A point has a negative x-coordinate and a negative y-coordinate. Which quadrant is it in?'
-            answer: "III"
-          - problem: 'Reflect $(3, -2)$ across the x-axis. Give the new coordinates.'
-            answer: "(3, 2)"
-            solution_sketch: 'Reflecting across the x-axis flips the sign of the y-coordinate.'
+          - problem: "Reflect $(3,-5)$ across the $x$-axis. Give the image."
+            answer: "(3,5)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Reflection in the horizontal axis preserves $x$ and changes the sign of $y$."
+          - problem: "Reflect $(-4,2)$ across the $y$-axis. Give the image."
+            answer: "(4,2)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Reflection in the vertical axis negates the horizontal coordinate and preserves the vertical coordinate."
+          - problem: "A point $6$ right and $3$ up is mirrored across the vertical axis. Give the image coordinates."
+            answer: "(-6,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The mirror moves the point the same horizontal distance to the left, while its height remains $3$."
+          - problem: "A learner reflects $(-2,-7)$ across the $x$-axis by changing both signs. Give the correct image."
+            answer: "(-2,7)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Only the distance above or below the horizontal axis reverses; the leftward coordinate remains $-2$."
         constraints: "reflections across one axis only; integer coordinates"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"1","y":"-4","label":"A"},{"x":"1","y":"2","label":"B"}],"segments":[{"from":{"x":"1","y":"-4","label":null},"to":{"x":"1","y":"2","label":null}}],"caption":"Reference example: Reference points A and B share x = 1; their vertical separation is 6 The drawn segment joins the two reference points."}]
         name: "Distance along a gridline"
         key_prerequisites: [integer-addition-subtraction]
         exemplars:
-          - problem: 'How far apart are $(2, 5)$ and $(2, -1)$?'
+          - problem: "Find the distance between $(-3,2)$ and $(5,2)$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The points share $y=2$; their horizontal separation is $5-(-3)=8$."
+          - problem: "A lift moves from grid height $-4$ to grid height $3$, keeping $x=2$. How far does it move?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The vertical displacement is $3-(-4)=7$; its magnitude is the distance."
+          - problem: "A horizontal segment at height $6$ has endpoints with $x$-coordinates $8$ and $2$. Find its length."
             answer: "6"
-            solution_sketch: 'Same x, so distance is $|5 - (-1)| = 6$.'
-          - problem: 'How far apart are $(-4, 3)$ and $(1, 3)$?'
-            answer: "5"
-            solution_sketch: 'Same y, so distance is $|-4 - 1| = 5$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Distance is nonnegative: the right endpoint minus the left endpoint is $8-2=6$."
+          - problem: "A learner reports distance $-9$ from $(1,5)$ to $(1,-4)$. Give the correct distance."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The signed change is $-4-5=-9$; its magnitude $9$ is the length."
         constraints: "points share an x- or y-coordinate; distance is a positive integer"
     diagnostic_exemplar:
       problem: 'Reflect the point $(-3, 4)$ across the x-axis. In which quadrant does the image lie?'
@@ -253,12 +286,22 @@ topics:
         name: "k as a unit rate"
         key_prerequisites: [dividing-fractions]
         exemplars:
-          - problem: '$3$ kilograms of apples cost €7.50. What is the price per kilogram, in euros?'
-            answer: "2.50"
-            solution_sketch: '$7.50 \div 3 = 2.50$.'
-          - problem: 'A car travels $120$ kilometres in $3$ hours at constant speed. What is its unit rate, in km per hour?'
-            answer: "40"
-            solution_sketch: '$120 \div 3 = 40$.'
+          - problem: "Five kilograms cost €20. Find the cost per kilogram in euros."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divide the cost by mass: $20/5=4$ euros per kilogram."
+          - problem: "A cyclist travels $42$ km in $3$ hours at a constant rate. Find kilometres per hour."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The unit rate is distance divided by time: $42/3=14$ km per hour."
+          - problem: "A printer produces $84$ pages in $7$ minutes. Find pages per minute."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divide output by elapsed time: $84/7=12$ pages per minute."
+          - problem: "A recipe uses $9$ cups of flour for $6$ batches. Find cups per batch."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The flour for one batch is $9/6=3/2$ cups."
         constraints: "one quantity per one unit of the other; clean division"
     diagnostic_exemplar:
       problem: '$4$ kilograms of cheese cost €30. What is the price per kilogram, in euros?'
@@ -315,12 +358,22 @@ topics:
         name: "Solve for either variable"
         key_prerequisites: [constant-of-proportionality]
         exemplars:
-          - problem: '$y$ is proportional to $x$, and $y = 20$ when $x = 4$. Find $x$ when $y = 45$.'
-            answer: "9"
-            solution_sketch: '$k = 5$; $45 = 5x$ gives $x = 9$.'
-          - problem: 'Earnings follow $y = 6x$ euros for $x$ hours. How many hours to earn €90?'
+          - problem: "In $y=kx$, the pair $(4,10)$ is known. Find $y$ when $x=6$."
             answer: "15"
-            solution_sketch: '$90 = 6x$; $x = 15$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First $k=10/4=5/2$; then $y=(5/2)6=15$."
+          - problem: "A proportional table contains $(3,12)$. Find $x$ when $y=18$."
+            answer: "9/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The constant is $12/3=4$; solve $18=4x$, giving $x=9/2$."
+          - problem: "Eight metres of fabric cost €20. At the same rate, how many metres cost €35?"
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The cost per metre is $20/8=5/2$. Thus $(5/2)x=35$, giving $x=14$ metres."
+          - problem: "A pump fills $15$ L in $6$ minutes at a proportional rate. How many litres does it fill in $9$ minutes?"
+            answer: "45/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rate is $15/6=5/2$ L/min; multiply by $9$ to get $45/2$ L."
         constraints: "find k first, then solve; integer or half-integer answers"
     diagnostic_exemplar:
       problem: '$y$ is proportional to $x$, and $y = 18$ when $x = 4$. Find $x$ when $y = 63$.'
@@ -351,10 +404,22 @@ topics:
         name: "Graph y = kx from two points"
         key_prerequisites: [proportional-relationships, coordinate-plane]
         exemplars:
-          - problem: 'To graph $y = 3x$, give the points at $x = 0$ and $x = 2$.'
-            answer: "(0, 0) and (2, 6)"
-          - problem: 'Every proportional graph passes through which point?'
-            answer: "the origin (0, 0)"
+          - problem: "To graph $y=2x$, plot the origin and the point with $x=3$. Give that second point."
+            answer: "(3,6)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The origin satisfies the equation; at $x=3$, $y=2(3)=6$, so the second lattice point is $(3,6)$."
+          - problem: "Graph $y=x/2$ using the origin and a point with $y=3$. Give the second point."
+            answer: "(6,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Solve $3=x/2$, giving $x=6$. Join $(0,0)$ to $(6,3)$."
+          - problem: "A proportional graph passes through the origin with rate $-3$. Give its lattice point one unit right of the origin."
+            answer: "(1,-3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "A run of $1$ at rate $-3$ gives rise $-3$, hence $(1,-3)$ beside the origin."
+          - problem: "A learner plots the origin and $(2,6)$ for $y=4x$. Keep $x=2$ and correct the second point."
+            answer: "(2,8)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "At $x=2$, the equation requires $y=4(2)=8$; the origin and $(2,8)$ define the graph."
         constraints: "always include the origin plus one more lattice point"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-6","label":"A"},{"x":"2","y":"6","label":"B"}],"segments":[{"from":{"x":"-2","y":"-6","label":null},"to":{"x":"2","y":"6","label":null}}],"caption":"Reference example: The reference proportional line has equation y = 3x The drawn segment joins the two reference points."}]
@@ -604,12 +669,22 @@ topics:
         name: "Find an unknown coordinate from the slope"
         key_prerequisites: [slope-from-two-points]
         exemplars:
-          - problem: 'The line through $(2, 3)$ and $(5, y)$ has slope $2$. Find $y$.'
-            answer: "9"
-            solution_sketch: '$\frac{y - 3}{3} = 2$, so $y - 3 = 6$ and $y = 9$.'
-          - problem: 'The line through $(x, 1)$ and $(4, 7)$ has slope $3$. Find $x$.'
-            answer: "2"
-            solution_sketch: '$\frac{6}{4 - x} = 3$, so $4 - x = 2$ and $x = 2$.'
+          - problem: "The slope through $(1,2)$ and $(4,y)$ is $2$. Find $y$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$(y-2)/(4-1)=2$ gives $y-2=6$, so $y=8$."
+          - problem: "A line of slope $-3$ passes through $(2,5)$ and $(x,-4)$. Find $x$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$(-4-5)/(x-2)=-3$ gives $-9=-3(x-2)$, hence $x-2=3$ and $x=5$."
+          - problem: "A table on a line has $x:0,6$ and $y:1,?$. Its slope is $1/2$. Find the missing output."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The output rise is $(1/2)6=3$; add to the initial output: $1+3=4$."
+          - problem: "A learner puts $(3,4)$ on a slope-$2$ line through $(1,1)$. Keeping $x=3$, correct its $y$-coordinate."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The run from $x=1$ is $2$, requiring rise $2(2)=4$. Starting at $y=1$ gives $y=5$."
         constraints: "one unknown coordinate; integer answers"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
@@ -654,12 +729,22 @@ topics:
         name: "Compute a rate from two data points"
         key_prerequisites: [slope]
         exemplars:
-          - problem: 'At $1$ pm a tank holds $40$ L; at $4$ pm it holds $25$ L. Find the rate of change, in litres per hour.'
-            answer: "-5"
-            solution_sketch: '$\frac{25 - 40}{4 - 1} = -5$ L per hour.'
-          - problem: 'A plant grows from $6$ cm on day $2$ to $18$ cm on day $6$. Find the growth rate, in cm per day.'
-            answer: "3"
-            solution_sketch: '$\frac{18 - 6}{6 - 2} = 3$ cm per day.'
+          - problem: "Distance increases from $10$ km at $1$ hour to $34$ km at $3$ hours. Give the rate in km/h."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The change is $34-10=24$ km over $3-1=2$ h; $24/2=12$ km/h."
+          - problem: "A tank falls from $80$ L at minute $2$ to $50$ L at minute $5$. Give the signed rate in L/min."
+            answer: "-10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The volume change is $50-80=-30$ L over $5-2=3$ min, giving $-10$ L/min."
+          - problem: "A table records seconds $4,7$ and distance metres $18,30$. Give the rate in m/s."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divide the distance change $30-18=12$ m by elapsed time $7-4=3$ s, giving $4$ m/s."
+          - problem: "A learner divides €26 by $4$ kg for purchases of $1$ kg costing €8 and $4$ kg costing €26. Find the increase in cost per added kg."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use changes: $(26-8)/(4-1)=18/3=6$ euros per added kg."
         constraints: "state units; integer rates"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"5","label":"A"},{"x":"2","y":"-1","label":"B"}],"segments":[{"from":{"x":"-2","y":"5","label":null},"to":{"x":"2","y":"-1","label":null}}],"caption":"Reference example: The reference line has equation y = -(3/2)x + 2 The drawn segment joins the two reference points."}]
@@ -677,12 +762,22 @@ topics:
         name: "Rate of change from a table"
         key_prerequisites: [slope]
         exemplars:
-          - problem: 'A table shows $(2 \text{ h}, 90 \text{ km})$ and $(5 \text{ h}, 225 \text{ km})$. Find the speed, in km per hour.'
-            answer: "45"
-            solution_sketch: '$\frac{225 - 90}{5 - 2} = 45$ km/h.'
-          - problem: 'A cost table shows $3$ shirts cost €27 and $7$ shirts cost €63. Find the cost per shirt, in euros.'
-            answer: "9"
-            solution_sketch: '$\frac{63 - 27}{7 - 3} = 9$ euros per shirt.'
+          - problem: "A table has time $2,5$ and output $7,19$. Find its rate of change."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The output changes by $19-7=12$ over $5-2=3$, so the rate is $4$."
+          - problem: "A tank table lists minutes $1,4$ and litres $90,60$. Find the signed rate in L/min."
+            answer: "-10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The change is $60-90=-30$ L over $4-1=3$ min; the rate is $-10$ L/min."
+          - problem: "A table has input $-2,2$ and output $3,11$. Find the rate."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The input change is $2-(-2)=4$ and the output change is $8$, giving $8/4=2$."
+          - problem: "A learner divides the outputs of a table with rows $(3,10),(7,30)$. Correct the rate of change."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rate uses differences: $(30-10)/(7-3)=20/4=5$."
         constraints: "two table rows; clean division"
     diagnostic_exemplar:
       problem: 'A candle is $30$ cm tall at $t = 0$ and $18$ cm tall at $t = 4$ hours. Find the rate of change of its height, in cm per hour.'
@@ -727,21 +822,43 @@ topics:
         name: "Find y given x"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: 'For $y = 2x + 3$, find $y$ when $x = 4$.'
+          - problem: "For $y=3x-2$, find $y$ when $x=4$."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$y=3(4)-2=12-2=10$."
+          - problem: "Complete the row with $x=-2$ for $2x+y=5$ by finding $y$."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2(-2)+y=5$ gives $-4+y=5$, hence $y=9$."
+          - problem: "A charge is $y=5+2x$ euros. Find the charge for $x=3$ units."
             answer: "11"
-          - problem: 'For $3x + y = 10$, find $y$ when $x = 2$.'
-            answer: "4"
-            solution_sketch: '$6 + y = 10$; $y = 4$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$y=5+2(3)=5+6=11$ euros."
+          - problem: "A learner uses $y=2$ for $x=1$ in $4x-2y=8$. Correct $y$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute $x=1$: $4-2y=8$, so $-2y=4$ and $y=-2$."
         constraints: "integer inputs and outputs"
       - id: kp3
         name: "Find x given y"
         key_prerequisites: [two-step-equations]
         exemplars:
-          - problem: 'For $y = 2x - 5$, find $x$ when $y = 9$.'
-            answer: "7"
-            solution_sketch: '$9 = 2x - 5$; $2x = 14$; $x = 7$.'
-          - problem: 'For $x + 2y = 12$, find $x$ when $y = 3$.'
-            answer: "6"
+          - problem: "For $y=3x+2$, find $x$ when $y=17$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$17=3x+2$ gives $3x=15$, hence $x=5$."
+          - problem: "Complete the input in a row with $y=-1$ for $2x-y=7$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2x-(-1)=7$ becomes $2x+1=7$, so $x=3$."
+          - problem: "A charge is $y=4x+3$ euros. How many units $x$ produce a €23 charge?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set $23=4x+3$. Removing the fixed fee gives $4x=20$, hence $x=5$."
+          - problem: "A learner puts $x=4$ when $y=1$ in $y=9-2x$. Verify and give the correct input."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$1=9-2x$ gives $-8=-2x$; division by $-2$ confirms $x=4$."
         constraints: "requires solving a one- or two-step equation"
     diagnostic_exemplar:
       problem: 'For $y = 3x - 4$, find $x$ when $y = 11$.'
@@ -772,10 +889,22 @@ topics:
         name: "Build a table of solutions"
         key_prerequisites: [solutions-of-two-variable-equations]
         exemplars:
-          - problem: 'Make a table for $y = 2x + 1$ at $x = 0$, $1$, $2$.'
-            answer: "(0, 1), (1, 3), (2, 5)"
-          - problem: 'Make a table for $y = -x + 4$ at $x = 0$, $2$, $4$.'
-            answer: "(0, 4), (2, 2), (4, 0)"
+          - problem: "For $y=2x+1$, give the outputs at $x=-1,0,1$ in that order as a triple."
+            answer: "(-1,1,3)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "$2(-1)+1=-1$, the output at zero is the constant $1$, and $2(1)+1=3$."
+          - problem: "Complete the output row for $y=5-x$ at inputs $0,2,4$. Give a triple in input order."
+            answer: "(5,3,1)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "$5-0=5$, $5-2=3$, and $5-4=1$."
+          - problem: "A fare is $y=3x+2$ euros. Give fares for trips of $1,2,3$ km as an ordered triple."
+            answer: "(5,8,11)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "$3(1)+2=5$, $3(2)+2=8$, and $3(3)+2=11$ euros."
+          - problem: "A learner gives outputs $(0,2,4)$ for $y=2x-1$ at $x=0,1,2$. Correct the entire output row."
+            answer: "(-1,1,3)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "The learner omitted the constant. Subtract $1$ from each proposed output to obtain $-1,1,3$."
         constraints: "3 evenly spaced x-values; integer outputs"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
@@ -794,11 +923,22 @@ topics:
         name: "Extend the pattern"
         key_prerequisites: [solutions-of-two-variable-equations]
         exemplars:
-          - problem: 'A line''s table shows $(0, 5)$, $(1, 8)$, $(2, 11)$. Find $y$ at $x = 5$.'
-            answer: "20"
-            solution_sketch: 'Step $+3$ per unit: $5 + 3(5) = 20$.'
-          - problem: 'The table $(1, 2)$, $(2, 6)$, $(3, 10)$ is linear. By how much does $y$ increase per unit of $x$?'
-            answer: "4"
+          - problem: "A linear table has $x:0,1,2,3$ and $y:3,7,11,?$. Find the missing output."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Each unit input step adds $4$ to the output; the next output is $11+4=15$."
+          - problem: "A linear table gives $(2,9),(4,5),(6,1)$. Find the output at $x=8$."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The output drops by $4$ for each input step of $2$; one more step gives $1-4=-3$."
+          - problem: "A counter is read every $3$ minutes: $8,13,18$. What is the next reading if the pattern is linear?"
+            answer: "23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Consecutive readings differ by $5$ over equal time steps, so the next is $18+5=23$."
+          - problem: "A linear table gives outputs $?,6,10$ at inputs $-1,0,1$. Find the first output."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Moving forward one input step adds $4$, so move backward from $6$ by subtracting $4$: $6-4=2$."
         constraints: "use the constant difference, not the equation"
     diagnostic_exemplar:
       problem: "A line's table shows $(0, 3)$, $(1, 7)$, $(2, 11)$. Find $y$ at $x = 6$."
@@ -830,20 +970,43 @@ topics:
         name: "y-intercept: set x = 0"
         key_prerequisites: [solutions-of-two-variable-equations]
         exemplars:
-          - problem: 'Find the y-intercept of $y = 3x - 6$.'
-            answer: "(0, -6)"
-          - problem: 'Find the y-intercept of $2x + y = 8$.'
-            answer: "(0, 8)"
+          - problem: "Find the y-intercept of $y=2x+5$ as a point."
+            answer: "(0,5)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Set $x=0$; the variable term vanishes, leaving the constant height $5$."
+          - problem: "A table on a line has rows $(1,4),(2,7)$. Extend it to find the y-intercept as a point."
+            answer: "(0,1)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "A unit step adds $3$; moving back from $x=1$ gives $y=4-3=1$ at $x=0$."
+          - problem: "For $3x+2y=8$, find the point where the line meets the vertical axis."
+            answer: "(0,4)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "On the vertical axis $x=0$, so $2y=8$ and $y=4$."
+          - problem: "A learner calls $(6,0)$ the y-intercept of $y=6-x$. Correct the point."
+            answer: "(0,6)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The y-intercept requires $x=0$; then $y=6-0=6$."
         constraints: "give the intercept as a point"
       - id: kp2
         name: "x-intercept: set y = 0"
         key_prerequisites: [two-step-equations]
         exemplars:
-          - problem: 'Find the x-intercept of $y = 3x - 6$.'
-            answer: "(2, 0)"
-            solution_sketch: '$0 = 3x - 6$; $x = 2$.'
-          - problem: 'Find the x-intercept of $2x + y = 8$.'
-            answer: "(4, 0)"
+          - problem: "Find the x-intercept of $y=2x-6$ as a point."
+            answer: "(3,0)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Set $y=0$: $2x-6=0$, hence $x=3$."
+          - problem: "For $3x+2y=12$, give the point where the line meets the horizontal axis."
+            answer: "(4,0)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "On the horizontal axis $y=0$; $3x=12$ gives $x=4$."
+          - problem: "A linear table gives $(1,4),(2,2)$. Extend it to find the x-intercept as a point."
+            answer: "(3,0)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Each step right lowers the output by $2$, so one more step reaches zero at $x=3$."
+          - problem: "A learner swaps coordinates when finding the x-intercept of $y=x+5$. Correct the intercept point."
+            answer: "(-5,0)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Set $y=0$ and solve $x+5=0$, giving $x=-5$."
         constraints: "integer intercepts"
       - id: kp3
         name: "Both intercepts from standard form"
@@ -894,11 +1057,22 @@ topics:
         name: "Rearranged and implicit forms"
         key_prerequisites: [slope]
         exemplars:
-          - problem: 'What is the slope of $y = 4 - 2x$?'
-            answer: "-2"
-            solution_sketch: 'Rewrite as $y = -2x + 4$.'
-          - problem: 'State the slope and y-intercept of $y = x$.'
-            answer: "slope 1, y-intercept 0"
+          - problem: "Read $(m,b)$ from $y=5-2x$."
+            answer: "(-2,5)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Reordering the right side as $-2x+5$ exposes coefficient $-2$ and constant $5$."
+          - problem: "Give $(m,b)$ for $y=x+4$."
+            answer: "(1,4)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "An unwritten coefficient before $x$ is $1$; the constant is $4$."
+          - problem: "A line has equation $y=-x$. Give $(m,b)$."
+            answer: "(-1,0)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Write the right side as $-1x+0$ to read the missing coefficient and constant."
+          - problem: "A learner says $y=6$ has slope $6$. Give the correct $(m,b)$."
+            answer: "(0,6)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The equation is $y=0x+6$; the output stays constant as the input changes."
         constraints: "terms may appear in either order; missing coefficients are 1 or 0"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-4","y":"2","label":"A"},{"x":"4","y":"2","label":"B"}],"segments":[{"from":{"x":"-4","y":"2","label":null},"to":{"x":"4","y":"2","label":null}}],"caption":"Reference example: The reference horizontal line has equation y = 2 The drawn segment joins the two reference points."}]
@@ -1013,11 +1187,22 @@ topics:
         name: "Graph from slope and y-intercept"
         key_prerequisites: [slope-intercept-form]
         exemplars:
-          - problem: 'For $y = 2x - 3$, give the y-intercept and one more point found with the slope.'
-            answer: "(0, -3) and (1, -1)"
-            solution_sketch: 'Start at $(0, -3)$; rise $2$, run $1$ to $(1, -1)$.'
-          - problem: 'For $y = -x + 4$, give the y-intercept and the next point using the slope.'
-            answer: "(0, 4) and (1, 3)"
+          - problem: "Graph $y=2x+3$ starting at $(0,3)$. Give the point reached by a run of $1$."
+            answer: "(1,5)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Slope $2$ means rise $2$ for run $1$; from $(0,3)$ this reaches $(1,5)$."
+          - problem: "For $y=-x/2+4$, start at the y-intercept and move $2$ right. Give the new point."
+            answer: "(2,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Start at $(0,4)$; slope $-1/2$ requires a fall of $1$ over run $2$, reaching $(2,3)$."
+          - problem: "A cost graph is $y=3x+2$. Plot its initial charge and then move to $x=2$. Give the second point."
+            answer: "(2,8)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The intercept is $(0,2)$; run $2$ gives rise $3(2)=6$, so the second height is $8$."
+          - problem: "A learner starts $y=-2x-1$ at $(0,1)$. Correct the starting point and give the point one unit right of it."
+            answer: "(1,-3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The correct intercept is $(0,-1)$. With run $1$ and rise $-2$, the next point is $(1,-3)$."
         constraints: "plot (0, b), then use rise/run"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
@@ -1083,10 +1268,22 @@ topics:
         name: "Read the slope and point from the form"
         key_prerequisites: [slope]
         exemplars:
-          - problem: 'For $y + 3 = 5(x - 1)$, state the slope and the point used.'
-            answer: "slope 5, point (1, -3)"
-          - problem: 'For $y - 2 = -4(x + 6)$, state the point used.'
-            answer: "(-6, 2)"
+          - problem: "Read slope and the displayed point from $y-3=2(x-4)$. Give $(m,x_1,y_1)$."
+            answer: "(2,4,3)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Match $y-y_1=m(x-x_1)$: the coefficient is $2$, and the subtracted coordinates are $4$ and $3$."
+          - problem: "Read $(m,x_1,y_1)$ from $y+2=-3(x-1)$."
+            answer: "(-3,1,-2)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Write $y+2$ as $y-(-2)$; the coefficient is $-3$, and the point is $(1,-2)$."
+          - problem: "A line is given as $y-5=(x+4)/2$. Give its slope and displayed point as $(m,x_1,y_1)$."
+            answer: "(1/2,-4,5)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "The right side is $(1/2)(x-(-4))$; matching the form gives slope $1/2$ and point $(-4,5)$."
+          - problem: "A learner reads the point $(3,2)$ from $y+2=4(x+3)$. Correct the full triple $(m,x_1,y_1)$."
+            answer: "(4,-3,-2)"
+            answer_contract: {"kind": "coordinates", "arity": 3}
+            solution_sketch: "Both plus signs correspond to subtracting negative coordinates, so the point is $(-3,-2)$ and the slope remains $4$."
         constraints: "watch the sign flips: y + 3 means y1 = -3"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
@@ -1218,12 +1415,22 @@ topics:
         name: "Perpendicular: negative reciprocals"
         key_prerequisites: [slope]
         exemplars:
-          - problem: 'What is the slope of any line perpendicular to $y = 3x + 2$?'
+          - problem: "Find the slope perpendicular to $m=3$."
             answer: "-1/3"
-            solution_sketch: 'Negative reciprocal of $3$.'
-          - problem: 'What is the slope of any line perpendicular to $y = -\frac{2}{5}x + 1$?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The perpendicular slope must multiply by $3$ to give $-1$; it is $-1/3$."
+          - problem: "A line falls $2$ units over $5$ units right. Find the slope of a perpendicular line."
             answer: "5/2"
-            solution_sketch: 'Negative reciprocal of $-\frac{2}{5}$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The given slope is $-2/5$; its negative reciprocal is $5/2$, whose product with $-2/5$ is $-1$."
+          - problem: "A line through $(1,2),(3,8)$ is perpendicular to another. Find the other slope."
+            answer: "-1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The given slope is $(8-2)/(3-1)=3$; flip and negate to get $-1/3$."
+          - problem: "A learner only negates slope $4/3$ to get a perpendicular slope. Give the correct result."
+            answer: "-3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both reciprocal and sign change are required: $-(3/4)=-3/4$, giving product $-1$."
         constraints: "flip and negate; product of the slopes is -1"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}},{"from":{"x":"-3","y":"3","label":null},"to":{"x":"3","y":"-1","label":null}}],"caption":"Reference example: Reference lines y = (3/2)x + 1 and y = -(2/3)x + 1 have slope product -1 and intersect at (0,1). Only the displayed segments are drawn."}]
@@ -1379,12 +1586,22 @@ topics:
         name: "Evaluate a model and interpret the result"
         key_prerequisites: [slope-intercept-form]
         exemplars:
-          - problem: 'A tank holds $50$ L and drains $5$ L per minute. How much water remains after $4$ minutes?'
-            answer: "30 L"
-            answer_contract: {"kind":"unit","quantity":"volume","unit":"L"}
-            solution_sketch: '$y = -5(4) + 50 = 30$.'
-          - problem: 'A population follows $P = 8t + 100$ (people after $t$ years). Find $P$ at $t = 5$.'
-            answer: "140"
+          - problem: "A fare is $C=3d+4$ euros. Find the fare in euros for $d=5$ km."
+            answer: "19"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$C=3(5)+4=15+4=19$, meaning a five-kilometre trip costs €19."
+          - problem: "A tank contains $V=60-4t$ litres after $t$ minutes. Find its volume in litres after $8$ minutes."
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$V=60-4(8)=60-32=28$, so $28$ L remain."
+          - problem: "A temperature model is $T=2h-3$ degrees Celsius. Find the temperature in degrees Celsius at hour $h=4$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$T=2(4)-3=8-3=5$, the temperature at hour four."
+          - problem: "A learner says $S=10+5w$ means €30 saved at week $w=3$. Find the actual amount in euros."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The model gives $10+5(3)=25$: €10 initially plus €15 saved across three weeks."
         constraints: "evaluate at a given input; interpret with units"
     diagnostic_exemplar:
       problem: 'A phone plan costs $y = 0.10x + 20$ euros for $x$ minutes. What do the $0.10$ and the $20$ represent?'
@@ -1450,12 +1667,22 @@ topics:
         name: "Solve for the input in a linear model"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: 'You start with €20 and save €8 per week. After how many weeks will you have €76?'
+          - problem: "A taxi fare is $C=2d+5$ euros. Find the distance in kilometres when the fare is €19."
             answer: "7"
-            solution_sketch: '$8x + 20 = 76$; $8x = 56$; $x = 7$.'
-          - problem: 'A plant is $4$ cm tall and grows $3$ cm per week. After how many weeks is it $25$ cm?'
-            answer: "7"
-            solution_sketch: '$3x + 4 = 25$; $x = 7$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set $19=2d+5$, subtract $5$, and divide by $2$: $d=7$ km."
+          - problem: "A tank has $V=80-5t$ litres. After how many minutes will $30$ L remain?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$30=80-5t$ gives $-50=-5t$, so $t=10$ minutes."
+          - problem: "Savings follow $S=7w+5$ euros. At which week will savings equal €40?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set $40=7w+5$; then $7w=35$ and $w=5$."
+          - problem: "A learner divides the target $20$ by $3$ for height $H=3t+2$. Find the time when height reaches $20$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First remove the initial height: $20-2=3t$. Then $t=18/3=6$."
         constraints: "set the model equal to the target and solve"
     diagnostic_exemplar:
       problem: 'A candle is $24$ cm tall after $1$ hour of burning and $12$ cm tall after $5$ hours. After how many hours of burning is it $6$ cm tall?'

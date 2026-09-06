@@ -641,23 +641,43 @@ topics:
         name: "Minimum (at least) problems"
         key_prerequisites: [linear-inequalities]
         exemplars:
-          - problem: 'Your first three marks are $6$, $8$, and $7$ on the $0$–$10$ scale. What must you score on the fourth to average at least $7.5$?'
-            answer: "at least 9"
-            solution_sketch: '$\frac{21 + x}{4} \ge 7.5$; $21 + x \ge 30$; $x \ge 9$.'
-          - problem: 'You have €60 and save €20 per week. After how many weeks will you have more than €200?'
-            answer: "more than 7 weeks (so at least 8 full weeks)"
-            solution_sketch: '$60 + 20w > 200$; $w > 7$.'
+          - problem: "You have €20 and save €5 per week. Give the minimum weeks needed to reach at least €50."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$20+5w\\geq50$ gives $5w\\geq30$, so $w\\geq6$ and the minimum is $6$."
+          - problem: "Two scores are $70$ and $80$. What minimum third score makes the average at least $80$?"
+            answer: "90"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$(70+80+s)/3\\geq80$ gives $150+s\\geq240$, hence $s\\geq90$."
+          - problem: "A tank needs at least $45$ L and already contains $9$ L. It fills at $6$ L/min. Find the minimum whole minutes."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$9+6t\\geq45$ gives $6t\\geq36$, hence $t\\geq6$."
+          - problem: "A learner subtracts a savings target incorrectly. Starting at €12, saving €4 daily, what minimum whole days reaches €32?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The required increase is $32-12=20$ euros. Solve $4d\\geq20$ to get $d\\geq5$."
         constraints: "at-least targets; averages or savings"
       - id: kp3
         name: "Round the boundary sensibly"
         key_prerequisites: [writing-inequalities-from-statements]
         exemplars:
-          - problem: 'Rides cost €4 each plus €6 entry, and you have €28. How many rides can you go on?'
-            answer: "5"
-            solution_sketch: '$4r + 6 \le 28$; $r \le 5.5$; round down to $5$ whole rides.'
-          - problem: 'A van seats at most $12$ people and $5$ seats are taken. How many more people can board?'
-            answer: "7"
-            solution_sketch: '$5 + n \le 12$; $n \le 7$.'
+          - problem: "You have €20; tickets cost €3. What is the maximum whole ticket count?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3n\\leq20$ gives $n\\leq20/3=6+2/3$. Round down to $6$; seven tickets cost €21."
+          - problem: "A €5 fee plus €4 per ride must fit within €30. Find the maximum whole rides."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$5+4n\\leq30$ gives $n\\leq25/4=6.25$. Six rides cost €29 and seven cost €33."
+          - problem: "A shelf supports at most $25$ kg. Its existing load is $4$ kg; each new box is $6$ kg. Find the maximum whole boxes."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$4+6n\\leq25$ gives $n\\leq21/6=3.5$. Round down to $3$ to stay within the cap."
+          - problem: "A learner rounds $50/8=6.25$ up to $7$ when buying €8 items with €50. Give the maximum affordable count."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The bound is $8n\\leq50$. Six items cost €48; seven cost €56 and exceed the cap."
         constraints: "whole-number contexts; round down for at-most caps"
     diagnostic_exemplar:
       problem: 'Rides cost €5 each plus a €7 entry fee, and you have €30. How many rides can you go on?'
@@ -954,22 +974,44 @@ topics:
         name: "Solution as the intersection point"
         key_prerequisites: [graphing-linear-equations]
         exemplars:
-          - problem: 'Where do the lines $y = x + 1$ and $y = -x + 5$ intersect?'
-            answer: "(2, 3)"
-            solution_sketch: '$x + 1 = -x + 5$; $2x = 4$; $x = 2$; $y = 3$.'
-          - problem: 'Where do the lines $y = 2x$ and $y = x + 3$ intersect?'
-            answer: "(3, 6)"
+          - problem: "Two graphs $y=x+1$ and $y=5-x$ meet. Find their intersection."
+            answer: "(2,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "At an intersection the heights agree: $x+1=5-x$, so $2x=4$, $x=2$, and $y=3$."
+          - problem: "A graph table gives line A through $(0,2),(2,4)$ and line B through $(0,6),(2,4)$. Give their common plotted point."
+            answer: "(2,4)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Both tables contain $(2,4)$; their different slopes show the two lines cross at that shared point."
+          - problem: "A cost graph $y=2x+4$ meets a revenue graph $y=4x$. Give the break-even point."
+            answer: "(2,8)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Set equal heights: $2x+4=4x$ gives $x=2$, and either rule gives $y=8$."
+          - problem: "A learner swaps coordinates for the intersection of $y=3$ and $y=x-1$. Give the correct point."
+            answer: "(4,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The first line fixes height $3$. Insert into the second: $3=x-1$, hence $x=4$."
         constraints: "the intersection point is the solution"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"1","y":"3","label":"I"}],"segments":[{"from":{"x":"-2","y":"0","label":null},"to":{"x":"4","y":"6","label":null}},{"from":{"x":"-2","y":"6","label":null},"to":{"x":"4","y":"0","label":null}}],"caption":"Reference example: The reference lines y = x + 2 and y = -x + 4 intersect at I = (1,3). Only the displayed segments are drawn."}]
         name: "Graph and intersect mixed forms"
         key_prerequisites: [graphing-linear-equations]
         exemplars:
-          - problem: 'Graph $x + y = 4$ and $y = x + 2$. Where do they intersect?'
-            answer: "(1, 3)"
-            solution_sketch: '$x + (x + 2) = 4$; $x = 1$; $y = 3$.'
-          - problem: 'Where do the lines $y = 3$ and $x = 2$ intersect?'
-            answer: "(2, 3)"
+          - problem: "Find the intersection of $2x+y=7$ and $y=x+1$."
+            answer: "(2,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Substitute the slope-intercept rule: $2x+x+1=7$, giving $x=2$ and $y=3$."
+          - problem: "Find the intersection of vertical $x=-2$ and horizontal $y=4$."
+            answer: "(-2,4)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The two fixed coordinates combine into $(-2,4)$, lying on both lines."
+          - problem: "A budget line $x+2y=10$ crosses the horizontal demand line $y=3$. Give the intersection."
+            answer: "(4,3)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Substitute the fixed height: $x+6=10$, so $x=4$ and $y=3$."
+          - problem: "A learner treats $x=3$ as horizontal when intersecting it with $y=-x+5$. Give the correct intersection."
+            answer: "(3,2)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "The first line fixes $x=3$; substitution in the second gives $y=-3+5=2$."
         constraints: "standard form, slope-intercept, and horizontal/vertical lines"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"1","y":"3","label":"I"}],"segments":[{"from":{"x":"-2","y":"0","label":null},"to":{"x":"4","y":"6","label":null}},{"from":{"x":"-2","y":"6","label":null},"to":{"x":"4","y":"0","label":null}}],"caption":"Reference example: The reference lines y = x + 2 and y = -x + 4 intersect at I = (1,3). Only the displayed segments are drawn."}]
@@ -1587,35 +1629,65 @@ topics:
         name: "Set up two equations from a sum/difference"
         key_prerequisites: [systems-elimination]
         exemplars:
-          - problem: 'The sum of two numbers is $20$ and their difference is $6$. Find the numbers.'
-            answer: "13 and 7"
-            solution_sketch: '$x + y = 20$, $x - y = 6$; add: $x = 13$, $y = 7$.'
-          - problem: 'Two numbers sum to $15$, and one is twice the other. Find them.'
-            answer: "10 and 5"
-            solution_sketch: '$x + y = 15$, $x = 2y$; $y = 5$, $x = 10$.'
+          - problem: "Two numbers have sum $17$ and difference $5$. Define larger $x$, smaller $y$; find $(x,y)$."
+            answer: "(11,6)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$x+y=17$ and $x-y=5$. Add to obtain $2x=22$, so $x=11$, $y=6$."
+          - problem: "Two classes have $48$ students combined. Class X has $6$ more than class Y. Define their sizes $x,y$ and find $(x,y)$."
+            answer: "(27,21)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$x+y=48$, $x-y=6$. Adding gives $2x=54$, hence $x=27$, $y=21$."
+          - problem: "A table records total mass $25$ kg and heavier-minus-lighter mass $3$ kg. Define masses $x,y$ and find (heavier, lighter)."
+            answer: "(14,11)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$x+y=25$, $x-y=3$; addition gives $2x=28$, so $x=14$, $y=11$."
+          - problem: "A learner swaps sum and difference for two lengths totaling $30$ cm with difference $8$ cm. Define longer $x$, shorter $y$ and find $(x,y)$."
+            answer: "(19,11)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$x+y=30$ and $x-y=8$, so $2x=38$; $x=19$ and $y=11$."
         constraints: "define two variables; one relationship per sentence"
       - id: kp2
         visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":"A"},{"x":"7","y":"0","label":"B"},{"x":"7","y":"4","label":"C"},{"x":"0","y":"4","label":"D"}],"right_angles":[0,1,2,3]},"caption":"Reference example: A reference rectangle has width 7 and height 4. Coordinates give the side lengths; this diagram is an independent example."}]
         name: "Geometry and age setups"
         key_prerequisites: [systems-substitution]
         exemplars:
-          - problem: 'A rectangle''s length is $3$ more than twice its width, and its perimeter is $36$. Find the dimensions.'
-            answer: "width 5, length 13"
-            solution_sketch: '$l = 2w + 3$, $2l + 2w = 36$; $6w + 6 = 36$; $w = 5$, $l = 13$.'
-          - problem: 'Two angles are supplementary and one is $30^\circ$ more than the other. Find both.'
-            answer: "105 and 75 degrees"
-            solution_sketch: '$x + y = 180$, $x = y + 30$; $y = 75$, $x = 105$.'
+          - problem: "A rectangle has perimeter $34$ cm and length $3$ cm more than width. Find (length, width) in cm."
+            answer: "(10,7)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$2l+2w=34$ gives $l+w=17$; also $l-w=3$. Adding gives $l=10$, then $w=7$."
+          - problem: "Two supplementary angles differ by $40$ degrees. Find (larger, smaller) in degrees."
+            answer: "(110,70)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$a+b=180$ and $a-b=40$. Add to get $2a=220$, so $a=110$, $b=70$."
+          - problem: "Two ages sum to $38$ years; one person is $12$ years older. Find (older, younger)."
+            answer: "(25,13)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$a+b=38$, $a-b=12$. Add: $2a=50$; then $a=25$, $b=13$."
+          - problem: "A learner treats complementary angles as totaling $180$. They differ by $10$ degrees. Find the correct (larger, smaller) angles."
+            answer: "(50,40)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Complementary angles total $90$: $a+b=90$, $a-b=10$. Thus $2a=100$, giving $a=50$, $b=40$."
         constraints: "perimeter, supplementary/complementary angles, or ages"
       - id: kp3
         name: "Multi-relationship setups"
         key_prerequisites: [systems-elimination]
         exemplars:
-          - problem: 'The sum of two numbers is $25$; twice the larger minus the smaller is $20$. Find the numbers.'
-            answer: "15 and 10"
-            solution_sketch: '$x + y = 25$, $2x - y = 20$; add: $3x = 45$; $x = 15$, $y = 10$.'
-          - problem: 'Sam is $4$ years older than Tia and their ages sum to $30$. How old is each?'
-            answer: "Sam 17, Tia 13"
-            solution_sketch: '$s = t + 4$, $s + t = 30$; $2t + 4 = 30$; $t = 13$, $s = 17$.'
+          - problem: "Two numbers sum to $23$; the first is twice the second plus $2$. Find (first, second)."
+            answer: "(16,7)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$x+y=23$ and $x=2y+2$ give $3y+2=23$, so $y=7$, $x=16$."
+          - problem: "A group has $35$ adults and children combined; there are $3$ more than three times as many children as adults. Find (adults, children)."
+            answer: "(8,27)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$a+c=35$, $c=3a+3$. Then $4a+3=35$, so $a=8$, $c=27$."
+          - problem: "Two tanks total $50$ L; tank A holds $5$ L less than four times tank B. Find (A, B) volumes."
+            answer: "(39,11)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$a+b=50$, $a=4b-5$. Thus $5b-5=50$, giving $b=11$, $a=39$."
+          - problem: "A learner multiplies the whole total by $2$ when one length is $2$ cm more than twice another and their sum is $20$ cm. Find (longer, shorter)."
+            answer: "(14,6)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "$l+s=20$, $l=2s+2$. Substituting yields $3s+2=20$, so $s=6$, $l=14$."
         constraints: "one scaled relationship plus one sum; integer answers"
     diagnostic_exemplar:
       problem: 'The sum of two numbers is $28$; twice the larger minus the smaller is $23$. Find the numbers.'
