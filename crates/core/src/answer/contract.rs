@@ -192,7 +192,7 @@ impl AnswerContract {
             Self::AscendingChain => notation::ascending_chain(expected),
             Self::PolynomialRelation => relation::read(expected),
             Self::RequiredForm { form } if !form::accepts(*form, expected) => Err(
-                Undecidable::new("the authored answer does not match its required numeric form"),
+                Undecidable::new("the authored answer does not match its required form"),
             ),
             _ => {
                 let value = canonical_form(expected)?;

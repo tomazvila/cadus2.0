@@ -6,7 +6,7 @@ use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{Signed, Zero};
 
-use super::{AnswerContract, AnswerPart, Canon, Undecidable, canonical_form};
+use super::{AnswerContract, AnswerPart, Canon, NumericForm, Undecidable, canonical_form};
 
 pub(super) fn tolerance_value(text: &str) -> Result<BigRational, Undecidable> {
     if text.len() <= 80
@@ -23,9 +23,11 @@ pub(super) fn tolerance_value(text: &str) -> Result<BigRational, Undecidable> {
 pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
     match contract {
         AnswerContract::Approx { .. } => number(value),
-        AnswerContract::Tolerance { .. } | AnswerContract::RequiredForm { .. } => {
-            matches!(value, Canon::Rational(_))
-        }
+        AnswerContract::Tolerance { .. } => number(value),
+        AnswerContract::RequiredForm { form } => match form {
+            NumericForm::FactoredLinear => matches!(value, Canon::Poly(_)),
+            _ => matches!(value, Canon::Rational(_)),
+        },
         AnswerContract::Unit { quantity, .. } => {
             matches!(value, Canon::Quantity { quantity: actual, .. } if actual == quantity)
         }
