@@ -108,6 +108,19 @@ fn the_audit_names_the_topics_the_placement_cannot_ask_about() {
 }
 
 #[test]
+fn every_foundations_diagnostic_is_grammar_decidable() {
+    let curriculum = real_curriculum();
+    let index = ReadinessIndex::build(&curriculum);
+    let coverage = PrereqCoverage::build(&curriculum, &index);
+    let counts = coverage.counts("foundations");
+
+    assert_eq!(counts.topics, 285);
+    assert_eq!(counts.diagnostic_decidable, 285);
+    assert_eq!(counts.diagnostic_undecidable, 0);
+    assert_eq!(counts.diagnostic_missing, 0);
+}
+
+#[test]
 fn every_assumed_mastery_topic_of_the_real_curriculum_carries_its_evidence_row() {
     let curriculum = real_curriculum();
     let index = ReadinessIndex::build(&curriculum);

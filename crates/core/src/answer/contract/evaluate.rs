@@ -38,6 +38,24 @@ fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract)
                 Err(reason) => Outcome::Undecidable(reason),
             };
         }
+        AnswerContract::ReducedRatio => {
+            return match super::notation::reduced_ratio(learner) {
+                Ok(value) => decided(&value == expected),
+                Err(reason) => Outcome::Undecidable(reason),
+            };
+        }
+        AnswerContract::AscendingChain => {
+            return match super::notation::ascending_chain(learner) {
+                Ok(value) => decided(&value == expected),
+                Err(reason) => Outcome::Undecidable(reason),
+            };
+        }
+        AnswerContract::PolynomialRelation => {
+            return match super::relation::read(learner) {
+                Ok(value) => decided(&value == expected),
+                Err(reason) => Outcome::Undecidable(reason),
+            };
+        }
 
         _ => {}
     }

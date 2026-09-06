@@ -15,6 +15,11 @@ Every policy is an `answer_contract` object. Unknown fields fail validation.
 | `set` | none | Unordered set; duplicates collapse. |
 | `label` | `options: [["yes", "true"], ["no", "false"]]` | One closed choice vocabulary. Each group holds explicit aliases for one option. |
 | `multipart` | `parts: [{name: "x", contract: {kind: "exact"}}, ...]` | One policy per named part. Names bind values; field order has no effect. |
+| `list` | `ordered: bool, member: {...}` | A bounded homogeneous list; unordered lists retain repeated members. |
+| `inequality_union` | none | An exact union of rational intervals or explicit interval-union notation. |
+| `reduced_ratio` | none | Two positive coprime integers separated by one colon. |
+| `ascending_chain` | none | Two to 16 strictly increasing rational values joined by `<`. |
+| `polynomial_relation` | none | One exact polynomial equality or inequality, normalized by a valid nonzero scalar. |
 | `none` | none | Ungraded. |
 
 An approximate contract specifies exactly one of `decimals` and `tolerance`. Tolerances support rational targets. Radical targets use authored decimal precision. All arithmetic is exact; no numeric samples prove equivalence.
@@ -27,6 +32,8 @@ Multipart text has the form `x = 2; estimate = 0.33; feasible = yes`. Each autho
 Finite alternatives such as `x = 7 or x = -7` produce one exact solution set. Order and duplicate alternatives have no effect. A changed unknown, omitted root, or extra root fails. A branch with another unknown, an inequality union, a malformed relation, or a division by zero remains outside this production. The production has a 16-alternative cap and retains the existing parser and canonicalization bounds.
 
 Assignment labels also admit the closed quantity names `area`, `perimeter`, `volume`, `length`, `width`, `height`, `radius`, `diameter`, `slope`, and `intercept`.
+
+The diagnostic continuation adds three bounded forms. A reduced ratio requires positive coprime integer terms. An ascending chain requires strict rational order. A polynomial relation parses exactly one comparison, requires polynomial expressions on both sides, and compares the zero-side polynomials after exact scalar normalization. A negative factor reverses an inequality. Tautologies, multiple comparisons, non-polynomial functions, and unbounded prose remain undecidable. The inequality-union contract also reads up to 16 explicit intervals joined by `∪`, including open infinite endpoints.
 
 ## Content evidence
 The Foundations loader now finds 1,393 grammar-decidable exemplar answers out of 1,695. The distribution of distinct decidable exemplars per knowledge point is `{0: 115, 1: 53, 2: 583, 3: 58}`. The prior distribution was `{0: 138, 1: 52, 2: 561, 3: 58}`. This is answer evidence, not whole-course readiness.

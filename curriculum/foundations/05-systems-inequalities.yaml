@@ -58,6 +58,7 @@ topics:
         constraints: "contrast strict vs inclusive at the boundary"
     diagnostic_exemplar:
       problem: 'Is $x = -2$ a solution of $3x + 1 \ge -5$?'
+      answer_contract: {kind: label, options: [[yes], [no]]}
       answer: "yes"
       solution_sketch: '$3(-2) + 1 = -5$, and $-5 \ge -5$ is true.'
     anki_seeds:
@@ -336,6 +337,7 @@ topics:
         constraints: "single constraint; state units where natural"
     diagnostic_exemplar:
       problem: 'Write an inequality: "three less than a number $n$ is more than $10$".'
+      answer_contract: {kind: polynomial_relation}
       answer: "n - 3 > 10"
       solution_sketch: '"Three less than $n$" is $n - 3$, and "more than" is a strict $>$.'
     anki_seeds:
@@ -393,6 +395,7 @@ topics:
         constraints: "solve each piece separately; keep the union"
     diagnostic_exemplar:
       problem: 'Solve $x + 2 < 1$ or $x - 4 \ge 1$.'
+      answer_contract: {kind: inequality_union}
       answer: 'x < -1 or x >= 5'
       solution_sketch: 'Solve each piece: $x < -1$; $x \ge 5$; keep the union.'
     anki_seeds:
@@ -523,6 +526,7 @@ topics:
         constraints: "two-piece unions from 'or' inequalities; at most two solving steps per piece; convert both ways"
     diagnostic_exemplar:
       problem: 'Solve $3x + 2 < -4$ or $x - 2 \ge 1$ and give the answer in interval notation.'
+      answer_contract: {kind: inequality_union}
       answer: '(-∞, -2) ∪ [3, ∞)'
       solution_sketch: '$3x < -6 \to x < -2$ (round bracket); $x \ge 3$ (square bracket); take the union.'
     anki_seeds:
@@ -642,6 +646,7 @@ topics:
         constraints: "negative right-hand side only"
     diagnostic_exemplar:
       problem: 'Solve $|x| > 3$.'
+      answer_contract: {kind: inequality_union}
       answer: "x < -3 or x > 3"
       solution_sketch: 'Greater-than splits into an "or": the points more than $3$ from zero lie on either side.'
     anki_seeds:
@@ -768,7 +773,8 @@ topics:
         constraints: "the origin is the easiest test point unless it is on the line"
     diagnostic_exemplar:
       problem: 'For $y > x - 1$, state whether the boundary is dashed or solid and whether $(0, 0)$ is a solution.'
-      answer: "dashed; yes, (0, 0) is a solution"
+      answer_contract: {kind: multipart, parts: [{name: boundary, contract: {kind: label, options: [[dashed], [solid]]}}, {name: point, contract: {kind: label, options: [[yes], [no]]}}]}
+      answer: "boundary = dashed; point = yes"
       solution_sketch: '$>$ gives a dashed line; $0 > -1$ is true.'
     anki_seeds:
       - front: "Boundary line style for a linear inequality: solid vs dashed?"
@@ -1211,6 +1217,7 @@ topics:
         constraints: "mix all three cases across generated problems"
     diagnostic_exemplar:
       problem: 'How many solutions does the system $4x - 2y = 6$, $2x - y = 3$ have?'
+      answer_contract: {kind: label, options: [['no solutions', 'none'], ['one solution', 'one'], ['infinitely many', 'infinite']]}
       answer: 'infinitely many'
       solution_sketch: 'Doubling the second equation gives the first: the two equations describe the same line.'
     anki_seeds:
@@ -1269,6 +1276,7 @@ topics:
         constraints: "candidate points off the boundary lines"
     diagnostic_exemplar:
       problem: 'Is $(2, 3)$ a solution of the system $y > x$ and $y \le 2x$?'
+      answer_contract: {kind: label, options: [[yes], [no]]}
       answer: "yes"
       solution_sketch: '$3 > 2$ and $3 \le 4$ both hold.'
     anki_seeds:
@@ -1388,7 +1396,8 @@ topics:
         constraints: "blend price between the two ingredient prices; halves allowed"
     diagnostic_exemplar:
       problem: 'How many liters each of $10\%$ and $30\%$ solution make $8$ L of $25\%$ solution?'
-      answer: "2 L of 10% and 6 L of 30%"
+      answer_contract: {kind: multipart, parts: [{name: 10_percent, contract: {kind: unit, quantity: volume, unit: L}}, {name: 30_percent, contract: {kind: unit, quantity: volume, unit: L}}]}
+      answer: "10_percent = 2 L; 30_percent = 6 L"
       solution_sketch: '$x + y = 8$, $0.1x + 0.3y = 2$; $0.1x + 0.3(8 - x) = 2$; $0.2x = 0.4$; $x = 2$.'
     anki_seeds:
       - front: "Mixture system: amount equation x + y = total; the second equation totals the ___."
@@ -1448,7 +1457,8 @@ topics:
         constraints: "meeting problems: combined speed = total distance / time"
     diagnostic_exemplar:
       problem: 'A rower goes $18$ km downstream in $2$ h and returns in $3$ h. Find the rowing speed and the current speed.'
-      answer: 'rowing speed 7.5 km/h, current 1.5 km/h'
+      answer_contract: {kind: multipart, parts: [{name: rowing, contract: {kind: unit, quantity: speed, unit: km/h}}, {name: current, contract: {kind: unit, quantity: speed, unit: km/h}}]}
+      answer: 'rowing = 7.5 km/h; current = 1.5 km/h'
       solution_sketch: 'Downstream $\frac{18}{2} = 9 = b + c$; upstream $\frac{18}{3} = 6 = b - c$; so $b = 7.5$ and $c = 1.5$.'
     anki_seeds:
       - front: "With a current or wind: downstream/tailwind speed = ___; upstream/headwind speed = ___."
@@ -1513,6 +1523,7 @@ topics:
         constraints: "one scaled relationship plus one sum; integer answers"
     diagnostic_exemplar:
       problem: 'The sum of two numbers is $28$; twice the larger minus the smaller is $23$. Find the numbers.'
+      answer_contract: {kind: list, ordered: false, member: {kind: exact}}
       answer: '17 and 11'
       solution_sketch: '$x + y = 28$ and $2x - y = 23$; adding gives $3x = 51$, so $x = 17$ and $y = 11$.'
     anki_seeds:

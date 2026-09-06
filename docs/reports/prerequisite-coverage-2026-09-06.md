@@ -8,7 +8,7 @@ The counts come from `cadus_core::readiness::PrereqCoverage`. The audit grants n
 
 | course | topics | practicable | diagnostic decidable | undecidable | missing | prerequisite edges | dangling | to unpracticable | assumed mastery | assumed with no full evidence |
 |---|---|---|---|---|---|---|---|---|---|---|
-| foundations | 285 | 0 | 236 | 49 | 0 | 815 | 0 | 815 | 285 | 285 |
+| foundations | 285 | 0 | 285 | 0 | 0 | 815 | 0 | 815 | 285 | 285 |
 | proofs | 92 | 0 | 3 | 89 | 0 | 268 | 0 | 268 | 0 | 0 |
 | geometry | 87 | 0 | 67 | 20 | 0 | 210 | 0 | 210 | 0 | 0 |
 | probability-statistics | 82 | 0 | 62 | 20 | 0 | 186 | 0 | 186 | 0 | 0 |
@@ -28,40 +28,15 @@ The counts come from `cadus_core::readiness::PrereqCoverage`. The audit grants n
 
 ### Diagnostic coverage
 
-Decidable 236, undecidable 49, missing 0. A topic with no decidable item never enters the probe set, so the placement infers its state and never measures it.
+Decidable 285, undecidable 0, missing 0. A topic with no decidable item never enters the probe set, so the placement infers its state and never measures it.
 
 **Topics with no diagnostic item: 0.**
 
 None.
 
-**Topics whose diagnostic answer the grammar refuses: 49.**
+**Topics whose diagnostic answer the grammar refuses: 0.**
 
-- `divisibility-rules`
-- `understanding-ratios`
-- `ratio-tables-equivalent-ratios`
-- `unit-rates`
-- `comparing-integers`
-- `equations-special-cases`
-- `basic-absolute-value-equations`
-- `absolute-value-equations`
-- `consecutive-integer-problems`
-- `coordinate-plane`
-- `interpreting-graphs-qualitatively`
-- `graphing-proportional-relationships`
-- `horizontal-vertical-slopes`
-- `graphing-linear-equations`
-- `point-slope-standard-form`
-- `slopes-of-parallel-perpendicular-lines`
-- `interpreting-linear-models`
-- `solutions-of-inequalities`
-- `writing-inequalities-from-statements`
-- `and-or-inequalities`
-- `interval-notation`
-- `basic-absolute-value-inequalities`
-- `graphing-linear-inequalities`
-- `systems-special-cases`
-- `systems-of-linear-inequalities`
-- … and 24 more.
+None.
 
 ### Prerequisite edges that lead nowhere
 
@@ -123,7 +98,7 @@ A course seeds 285 topics of this course as mastered, through `mastery_floor` or
 | `expressions-with-parentheses` | abstract-algebra, calculus-1, calculus-2, category-theory, differential-equations, discrete-mathematics, geometry, linear-algebra, multivariable-calculus, precalculus, probability-statistics | decidable | yes | no |
 | `order-of-operations` | abstract-algebra, calculus-1, calculus-2, category-theory, differential-equations, discrete-mathematics, geometry, linear-algebra, multivariable-calculus, precalculus, probability-statistics, proofs | decidable | yes | no |
 | `factors-and-multiples` | abstract-algebra, calculus-1, calculus-2, category-theory, differential-equations, discrete-mathematics, geometry, linear-algebra, multivariable-calculus, precalculus, probability-statistics | decidable | yes | no |
-| `divisibility-rules` | abstract-algebra, calculus-1, calculus-2, category-theory, differential-equations, discrete-mathematics, geometry, linear-algebra, multivariable-calculus, precalculus, probability-statistics | undecidable | no | no |
+| `divisibility-rules` | abstract-algebra, calculus-1, calculus-2, category-theory, differential-equations, discrete-mathematics, geometry, linear-algebra, multivariable-calculus, precalculus, probability-statistics | decidable | yes | no |
 | `prime-composite-numbers` | abstract-algebra, calculus-1, calculus-2, category-theory, differential-equations, discrete-mathematics, geometry, linear-algebra, multivariable-calculus, precalculus, probability-statistics | decidable | yes | no |
 
 … and 260 more seeded topics.

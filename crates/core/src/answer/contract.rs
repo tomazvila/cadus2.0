@@ -3,6 +3,8 @@
 mod evaluate;
 mod form;
 mod list;
+mod notation;
+mod relation;
 mod structured;
 mod union;
 
@@ -46,6 +48,12 @@ pub enum AnswerContract {
     },
     /// An exact union of rational intervals over one named unknown.
     InequalityUnion,
+    /// A ratio of two positive integers written in lowest terms as `a:b`.
+    ReducedRatio,
+    /// A strictly ascending list of exact numbers joined by `<`.
+    AscendingChain,
+    /// A polynomial equality or inequality, compared after exact normalization.
+    PolynomialRelation,
     /// A closed choice vocabulary, with explicit aliases per option.
     Label { options: Vec<Vec<String>> },
     /// Named parts, each with its own deterministic policy.
@@ -89,6 +97,9 @@ enum ContractDoc {
         member: Box<AnswerContract>,
     },
     InequalityUnion {},
+    ReducedRatio {},
+    AscendingChain {},
+    PolynomialRelation {},
     Label {
         options: Vec<Vec<String>>,
     },
@@ -124,6 +135,9 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::RequiredForm { form } => Self::RequiredForm { form },
             ContractDoc::List { ordered, member } => Self::List { ordered, member },
             ContractDoc::InequalityUnion {} => Self::InequalityUnion,
+            ContractDoc::ReducedRatio {} => Self::ReducedRatio,
+            ContractDoc::AscendingChain {} => Self::AscendingChain,
+            ContractDoc::PolynomialRelation {} => Self::PolynomialRelation,
             ContractDoc::Label { options } => Self::Label { options },
             ContractDoc::Multipart { parts } => Self::Multipart { parts },
             ContractDoc::None {} => Self::None,
@@ -174,6 +188,9 @@ impl AnswerContract {
             Self::Multipart { parts } => multipart_values(parts, expected),
             Self::List { ordered, member } => list::expected(*ordered, member, expected),
             Self::InequalityUnion => union::read(expected),
+            Self::ReducedRatio => notation::reduced_ratio(expected),
+            Self::AscendingChain => notation::ascending_chain(expected),
+            Self::PolynomialRelation => relation::read(expected),
             Self::RequiredForm { form } if !form::accepts(*form, expected) => Err(
                 Undecidable::new("the authored answer does not match its required numeric form"),
             ),
