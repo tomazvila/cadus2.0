@@ -48,8 +48,9 @@ fn probe_line(
 
 /// The stream every test folds: an enrollment and then the probe lines.
 fn stream(probes: &[String]) -> Vec<Event> {
-    let mut lines =
-        vec![r#"{"type":"enrolled","ts":"2026-01-01T00:00:00Z","course":"foundations"}"#.to_owned()];
+    let mut lines = vec![
+        r#"{"type":"enrolled","ts":"2026-01-01T00:00:00Z","course":"foundations"}"#.to_owned(),
+    ];
     lines.extend_from_slice(probes);
     lines.iter().map(|line| event(line)).collect()
 }
@@ -59,7 +60,15 @@ fn the_fold_tallies_a_probe_with_its_provenance() {
     let events = stream(&[
         probe_line("2026-01-08", "s1", "kp1", 7, r#""correct""#, false, "first"),
         probe_line("2026-01-09", "s2", "kp2", 7, r#""correct""#, true, "first"),
-        probe_line("2026-02-01", "s3", "kp1", 30, r#""incorrect""#, false, "first"),
+        probe_line(
+            "2026-02-01",
+            "s3",
+            "kp1",
+            30,
+            r#""incorrect""#,
+            false,
+            "first",
+        ),
     ]);
     let model = project(&events, &input()).expect("the fold succeeds");
     let seven = &model.retention.by_delay[&7];
@@ -119,7 +128,15 @@ fn a_log_with_no_probe_keeps_the_1_0_wire_shape() {
 fn a_resume_over_a_probe_equals_the_full_replay() {
     let events = stream(&[
         probe_line("2026-01-08", "s1", "kp1", 7, r#""correct""#, false, "first"),
-        probe_line("2026-02-01", "s2", "kp1", 30, r#""correct""#, false, "repeat"),
+        probe_line(
+            "2026-02-01",
+            "s2",
+            "kp1",
+            30,
+            r#""correct""#,
+            false,
+            "repeat",
+        ),
     ]);
     let whole = project(&events, &input()).expect("the fold succeeds");
     let (prior, new) = events.split_at(2);

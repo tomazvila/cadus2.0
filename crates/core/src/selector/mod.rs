@@ -57,12 +57,12 @@ pub use gap_fill::{
 pub use interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
 pub use multistep::{multistep_components, multistep_is_due, remediation_tasks};
 pub use plan::{BlockedTask, Constraints, SessionPlan};
-pub use retention::retention_probe;
 pub use quiz::{
     QuizPlan, QuizQuestion, QuizSampler, SeededSampler, quiz_budget, quiz_composer,
     quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, utc_date,
 };
 pub use reserve::{ValidityContext, reserve_open_plan, task_still_valid};
+pub use retention::retention_probe;
 pub use review::{
     due_reviews, importance, in_retry_delay, nearly_due, order_lessons, retry_available_at,
     review_mix,

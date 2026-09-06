@@ -294,7 +294,10 @@ pub(crate) mod tests {
         assert_eq!(tally.mean_independent_secs(), Some(12.0));
         assert!(!state.is_empty());
         assert!(state.is_done("t1", "kp1", 7));
-        assert!(!state.is_done("t2", "kp1", 7), "another topic keeps its own kp1");
+        assert!(
+            !state.is_done("t2", "kp1", 7),
+            "another topic keeps its own kp1"
+        );
     }
 
     #[test]
