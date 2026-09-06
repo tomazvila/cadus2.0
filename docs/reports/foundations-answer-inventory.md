@@ -554,3 +554,11 @@ Four notes on the enum.
   decidable items today. 146 hold none. The readiness report of f7 must open on
   that number, and f8-content-foundations must author against it.
 
+
+## Update after unit f2 (2026-09-06)
+
+The grammar productions of unit f2 (rational exponents, quotient and remainder, value
+with unit) move the per-knowledge-point distribution of distinct decidable exemplars
+from `{0: 146, 1: 58, 2: 548, 3: 57}` to `{0: 138, 1: 52, 2: 561, 3: 58}`. The
+`answer_inventory` test pins the new numbers. The `label` (147) and `disjunction` (57)
+productions stay open.
