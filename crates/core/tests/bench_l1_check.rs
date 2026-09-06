@@ -32,20 +32,15 @@ const CORPUS_ANSWERS: usize = 3_492;
 /// (see [`respell`]). A pair of this count runs the parser and the exact
 /// canonicalizer on BOTH sides, so this literal is the count of measured calls
 /// that reach the arithmetic the 5 ms segment pays for. It is the counter that
-/// proves the string rung did not answer the run: 2,985 of the 3,492 calls take
+/// proves the string rung did not answer the run: 2,994 of the 3,492 calls take
 /// the parse-and-canonicalize path, where the self-check of M4 review 1
 /// finding 20 took it zero times.
 ///
-/// The other 507 pairs split in two groups, and both of them still run the
-/// parser:
-///
-/// - 265 authored answers sit outside the decidable grammar (`7 L/min`,
-///   `18 degrees Celsius`, `x <= -1`), so the expected side alone refuses (V2);
-/// - 242 authored answers are collections (`(6, 4)`, `[-3, 3]`,
-///   `3/8, 1/2, 5/8`). The grammar reads the collection and then refuses the
-///   arithmetic of the re-spelling with "arithmetic on a collection", so the
-///   canonicalizer runs on the learner side and stops inside it.
-const CANONICALIZED_PAIRS: usize = 2_985;
+/// The other 498 pairs still run the parser but do not produce canonical forms
+/// on both sides. The expanded grammar moved nine pairs into the exact
+/// canonical path; their answer contract still refuses a decided verdict, so
+/// the verdict totals below remain 2,985 correct and 507 undecidable.
+const CANONICALIZED_PAIRS: usize = 2_994;
 
 /// The count of re-spelled pairs the checker decides correct.
 const RESPELLED_CORRECT: usize = 2_985;
