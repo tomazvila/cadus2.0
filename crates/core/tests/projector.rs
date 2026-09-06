@@ -93,7 +93,7 @@ fn the_blob_of_stream_1_is_the_committed_model_byte_for_byte() {
 #[test]
 fn the_fold_stamps_the_projector_version_and_the_config_hash() {
     // The third attempt outcome changed the fold, so the stamp moved 3 to 4 (D-F2).
-    assert_eq!(PROJECTOR_VERSION, 4);
+    assert_eq!(PROJECTOR_VERSION, 5);
     let events = stream("stream_1.jsonl");
     let model = project(&events, &input()).expect("the fold succeeds");
     assert_eq!(model.projector_version, Some(4));

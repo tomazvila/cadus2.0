@@ -119,7 +119,7 @@ fn a_log_with_no_probe_keeps_the_1_0_wire_shape() {
         "the writer skips an empty state: {json}"
     );
     assert_eq!(
-        PROJECTOR_VERSION, 4,
+        PROJECTOR_VERSION, 5,
         "the handler reads only an event type no 1.0 log carries, so the stamp stands"
     );
 }
