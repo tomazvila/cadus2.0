@@ -266,6 +266,7 @@ mod tests {
             assisted: false,
             task_id: task_id.map(std::borrow::ToOwned::to_owned),
             inconclusive,
+            confirmation_skills: Vec::new(),
         })
     }
 
@@ -279,7 +280,12 @@ mod tests {
         );
         let delays: Vec<u32> = report.rows.iter().map(|row| row.delay_days).collect();
         assert_eq!(delays, vec![7, 30, 90]);
-        assert!(report.rows.iter().all(|row| row.retained_accuracy.is_none()));
+        assert!(
+            report
+                .rows
+                .iter()
+                .all(|row| row.retained_accuracy.is_none())
+        );
         assert!(report.rows.iter().all(|row| !row.sufficient));
         assert_eq!(report.policy.label(), "v1 (uncalibrated)");
     }
@@ -289,7 +295,13 @@ mod tests {
         let cfg = RetentionConfig::default();
         let mut state = RetentionState::default();
         state.apply(
-            &probe("k1", 7, AttemptOutcome::Correct, false, Some(Exposure::First)),
+            &probe(
+                "k1",
+                7,
+                AttemptOutcome::Correct,
+                false,
+                Some(Exposure::First),
+            ),
             &cfg,
         );
         let report = RetentionReport::build(
@@ -309,7 +321,13 @@ mod tests {
         let cfg = RetentionConfig::default();
         let mut state = RetentionState::default();
         state.apply(
-            &probe("k1", 7, AttemptOutcome::Correct, false, Some(Exposure::First)),
+            &probe(
+                "k1",
+                7,
+                AttemptOutcome::Correct,
+                false,
+                Some(Exposure::First),
+            ),
             &cfg,
         );
         state.apply(

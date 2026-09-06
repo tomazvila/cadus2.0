@@ -44,8 +44,8 @@ use crate::curriculum::Curriculum;
 use crate::event::{Event, Slug};
 use crate::fire::{clamp, py_max, py_min};
 use crate::learner::{TopicState, UngradedAttempt};
-use crate::retention::state::RetentionState;
 use crate::numeric::{OutOfRangeError, TimeError, resolve_timezone};
+use crate::retention::state::RetentionState;
 
 mod entry;
 mod handlers;
@@ -65,7 +65,7 @@ pub use regrade::apply_regrades;
 /// A stale cache is detected with it: 1 to 2 for the methodology fixes, 2 to 3 for
 /// [`apply_regrades`], 3 to 4 for the third attempt outcome (D-F2). ANY change to the
 /// fold bumps this number, and a bump replays every model in full (D-O6).
-pub const PROJECTOR_VERSION: i64 = 4;
+pub const PROJECTOR_VERSION: i64 = 5;
 
 /// The neutral prior a placed topic's diagnostic answers fold onto (`projector.py:98`).
 pub const ABILITY_SEED_PRIOR: f64 = 0.5;

@@ -509,12 +509,7 @@ impl Config {
     /// weight. The text is compact JSON in a fixed key order.
     #[must_use]
     pub fn policy_preimage(&self) -> String {
-        let delays: Vec<String> = self
-            .retention
-            .delays()
-            .iter()
-            .map(u32::to_string)
-            .collect();
+        let delays: Vec<String> = self.retention.delays().iter().map(u32::to_string).collect();
         let intervals: Vec<String> = self
             .fire
             .interval_table

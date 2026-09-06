@@ -150,7 +150,6 @@ pub fn unseen_item<'a>(candidates: &'a [String], seen: &BTreeSet<&str>) -> Optio
         .find(|digest| !seen.contains(digest))
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

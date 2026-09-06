@@ -200,12 +200,16 @@ impl RetentionState {
             total.correct = total.correct.saturating_add(tally.correct);
             total.assisted = total.assisted.saturating_add(tally.assisted);
             total.repeated = total.repeated.saturating_add(tally.repeated);
-            total.unknown_exposure = total.unknown_exposure.saturating_add(tally.unknown_exposure);
+            total.unknown_exposure = total
+                .unknown_exposure
+                .saturating_add(tally.unknown_exposure);
             total.independent = total.independent.saturating_add(tally.independent);
             total.independent_correct = total
                 .independent_correct
                 .saturating_add(tally.independent_correct);
-            total.independent_secs = total.independent_secs.saturating_add(tally.independent_secs);
+            total.independent_secs = total
+                .independent_secs
+                .saturating_add(tally.independent_secs);
         }
         total
     }
@@ -258,7 +262,13 @@ pub(crate) mod tests {
         let cfg = RetentionConfig::default();
         let mut state = RetentionState::default();
         state.apply(
-            &probe("kp1", 7, AttemptOutcome::Correct, false, Some(Exposure::First)),
+            &probe(
+                "kp1",
+                7,
+                AttemptOutcome::Correct,
+                false,
+                Some(Exposure::First),
+            ),
             &cfg,
         );
         let tally = &state.by_delay[&7];
@@ -278,7 +288,13 @@ pub(crate) mod tests {
         let cfg = RetentionConfig::default();
         let mut state = RetentionState::default();
         state.apply(
-            &probe("kp1", 7, AttemptOutcome::Correct, true, Some(Exposure::First)),
+            &probe(
+                "kp1",
+                7,
+                AttemptOutcome::Correct,
+                true,
+                Some(Exposure::First),
+            ),
             &cfg,
         );
         let tally = &state.by_delay[&7];
@@ -331,7 +347,13 @@ pub(crate) mod tests {
             &cfg,
         );
         state.apply(
-            &probe("kp2", 7, AttemptOutcome::Correct, false, Some(Exposure::First)),
+            &probe(
+                "kp2",
+                7,
+                AttemptOutcome::Correct,
+                false,
+                Some(Exposure::First),
+            ),
             &cfg,
         );
         let tally = &state.by_delay[&7];
@@ -388,7 +410,13 @@ pub(crate) mod tests {
         let cfg = RetentionConfig::default();
         let mut state = RetentionState::default();
         state.apply(
-            &probe("kp1", 7, AttemptOutcome::Correct, false, Some(Exposure::First)),
+            &probe(
+                "kp1",
+                7,
+                AttemptOutcome::Correct,
+                false,
+                Some(Exposure::First),
+            ),
             &cfg,
         );
         state.apply(

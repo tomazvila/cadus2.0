@@ -31,4 +31,4 @@ pub use policy::{
 };
 pub use report::{IntegratedPerformance, PlacementError, RetentionReport, RetentionRow};
 pub use schedule::{ProbePlan, due_probe, seen_digests, unseen_item};
-pub use state::{DIGEST_WINDOW, SESSION_WINDOW, RetentionState, RetentionTally};
+pub use state::{DIGEST_WINDOW, RetentionState, RetentionTally, SESSION_WINDOW};
