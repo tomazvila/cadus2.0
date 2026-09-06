@@ -1244,12 +1244,22 @@ topics:
         name: "Recognize no-solution equations"
         key_prerequisites: [variables-both-sides]
         exemplars:
-          - problem: 'Solve $3x + 5 = 3x - 2$.'
-            answer: "no solution"
-            solution_sketch: 'Subtracting $3x$ leaves $5 = -2$, which is false.'
-          - problem: 'Solve $2(x + 4) = 2x + 5$.'
-            answer: "no solution"
-            solution_sketch: '$2x + 8 = 2x + 5$ gives $8 = 5$, false.'
+          - problem: "How many real solutions does $3x + 5 = 3x - 2$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtracting $3x$ leaves $5 = -2$, which is false."
+          - problem: "How many real solutions does $2(x + 4) = 2x + 5$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2x + 8 = 2x + 5$ gives $8 = 5$, false."
+          - problem: "How many real solutions does $5x-2x+4=3x+9$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Combining on the left gives $3x+4$. Removing $3x$ from both sides would require $4=9$, a false comparison."
+          - problem: "How many real solutions does $x/2+3=(x+8)/2$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $2$: $x+6=x+8$. Removing $x$ would require $6=8$, which is false."
         constraints: "variable terms cancel leaving a false statement"
       - id: kp2
         name: "Recognize identities"
@@ -1625,19 +1635,19 @@ topics:
         exemplars:
           - problem: "Solve $|x|=7$. Give a set of solutions."
             answer: "{-7,7}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Absolute value measures distance from zero. The two points at distance $7$ are $-7$ and $7$."
           - problem: "Which real positions are exactly $4$ units from zero on a number line? Give a set."
             answer: "{-4,4}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "There is one position on each side of zero: moving left $4$ gives $-4$ and moving right $4$ gives $4$."
           - problem: "A learner gives only $x=9$ for $|x|=9$. Give the complete solution set."
             answer: "{-9,9}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Both a number and its negative have the same absolute value; $|-9|=9$ as well, so both signs are needed."
           - problem: "The graphs $y=|x|$ and $y=5$ intersect at which $x$-coordinates? Give a set."
             answer: "{-5,5}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Intersections occur where $|x|=5$. The two points are equally far from zero, so $x=-5$ or $x=5$."
         constraints: "right side positive; two solutions"
       - id: kp2
@@ -1646,19 +1656,19 @@ topics:
         exemplars:
           - problem: "Solve $|x - 3| = 5$."
             answer: "{-2,8}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "$x-3=5$ gives $x=8$; $x-3=-5$ gives $x=-2$."
           - problem: "The graphs $y=|x+4|$ and $y=2$ intersect at which $x$-coordinates? Give a set."
             answer: "{-6,-2}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "At an intersection, $x+4=2$ or $x+4=-2$. These give $x=-2$ and $x=-6$."
           - problem: "Find the real positions $6$ units from $2$. Give their set."
             answer: "{-4,8}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "The distance equation is $|x-2|=6$. Solve $x-2=6$ and $x-2=-6$, giving $8$ and $-4$."
           - problem: "A learner finds only $x=3$ for $|x+2|=5$. Give the complete solution set."
             answer: "{-7,3}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "The omitted branch is $x+2=-5$, giving $x=-7$; the positive branch gives $x=3$."
         constraints: "split into two one-step equations; integer solutions"
     diagnostic_exemplar:
@@ -1693,19 +1703,19 @@ topics:
         exemplars:
           - problem: "Solve $|2x + 1| = 9$."
             answer: "{-5,4}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "$2x + 1 = 9 \\to x = 4$; $2x + 1 = -9 \\to x = -5$."
           - problem: "The graph $y=|3x-6|$ meets the horizontal line $y=12$ at which $x$-coordinates? Give a set."
             answer: "{-2,6}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Intersections satisfy $3x-6=12$ or $3x-6=-12$. Solving gives $x=6$ or $x=-2$."
           - problem: "A sensor reports the magnitude $|4x-8|$ as $12$. Find all possible $x$ as a set."
             answer: "{-1,5}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Set $4x-8=12$ or $4x-8=-12$. The equations give $4x=20$ or $4x=-4$, hence $5$ or $-1$."
           - problem: "Correct the incomplete solution $x=2$ to $|5x+5|=15$. Give the full set."
             answer: "{-4,2}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "The positive branch gives $5x+5=15$, hence $x=2$. The negative branch gives $5x+5=-15$, hence $x=-4$."
         constraints: "split into two linear equations; integer solutions"
       - id: kp2
@@ -1714,31 +1724,41 @@ topics:
         exemplars:
           - problem: "Solve $|x + 2| - 3 = 4$."
             answer: "{-9,5}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Add $3$: $|x+2|=7$. The branches $x+2=7$ and $x+2=-7$ give $5$ and $-9$."
           - problem: "Solve $2|x| = 10$."
             answer: "{-5,5}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Divide by $2$: $|x|=5$. The distance condition gives $x=-5$ or $x=5$."
           - problem: "Solve $3|2x-1|+4=13$. Give the solution set."
             answer: "{-1,2}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Subtract $4$ and divide by $3$: $|2x-1|=3$. Solve $2x-1=3$ or $2x-1=-3$, giving $2$ and $-1$."
           - problem: "A learner splits $10-2|x+3|=2$ before isolating. Solve correctly as a set."
             answer: "{-7,1}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Subtract $10$ and divide by $-2$: $|x+3|=4$. Its two branches give $x=1$ or $x=-7$."
         constraints: "isolate |..| before splitting into cases"
       - id: kp3
         name: "Recognize no-solution cases"
         key_prerequisites: [basic-absolute-value-equations]
         exemplars:
-          - problem: 'Solve $|x - 5| = -3$.'
-            answer: "no solution"
-            solution_sketch: 'An absolute value is never negative.'
-          - problem: 'Solve $|2x| + 7 = 3$.'
-            answer: "no solution"
-            solution_sketch: 'Isolating gives $|2x| = -4$, impossible.'
+          - problem: "How many real solutions does $|x - 5| = -3$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An absolute value is never negative."
+          - problem: "How many real solutions does $|2x| + 7 = 3$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolating gives $|2x| = -4$, impossible."
+          - problem: "How many real solutions does $2|x+1|+5=1$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $5$ and divide by $2$: $|x+1|=-2$. A magnitude is nonnegative, so no real input works."
+          - problem: "A learner proposes $x=0$ for $7-|3x-2|=10$. How many real solutions actually exist?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $7$ and negate: $|3x-2|=-3$. The required negative magnitude is impossible."
         constraints: "isolated absolute value equals a negative number"
     diagnostic_exemplar:
       problem: 'Solve $|3x - 1| - 2 = 6$.'
@@ -1844,19 +1864,19 @@ topics:
         exemplars:
           - problem: "Two consecutive integers sum to $27$. Find them."
             answer: "{13,14}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "$x + (x + 1) = 27$; $2x + 1 = 27$; $x = 13$."
           - problem: "The sum of three consecutive integers is $42$. Find them."
             answer: "{13,14,15}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "$3x + 3 = 42$; $x = 13$."
           - problem: "Two consecutive even integers sum to $46$. Find them."
             answer: "{22,24}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "$x + (x + 2) = 46$; $2x = 44$; $x = 22$."
           - problem: "Three consecutive odd integers total $33$. Give their set."
             answer: "{9,11,13}"
-            answer_contract: {"kind": "set"}
+            answer_contract: {"kind": "exact"}
             solution_sketch: "Write the integers as $x,x+2,x+4$. Their sum gives $3x+6=33$, hence $x=9$; the other two are $11$ and $13$."
         constraints: "represent related quantities in terms of one variable"
     diagnostic_exemplar:
