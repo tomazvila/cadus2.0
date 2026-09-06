@@ -77,8 +77,8 @@ rm -f "$routes_saved"
 # optimized build rewrites a literal base into `exp2`, which is a different number
 # in the last bit. The digests must hold in both profiles, so a rewrite that the
 # debug run cannot see fails the gate here.
-echo "== cargo test --release -p cadus-core --test parity_events --test projector"
-cargo test --release -p cadus-core --test parity_events --test projector
+echo "== cargo test --release -p cadus-core --test parity_events* --test projector*"
+cargo test --release -p cadus-core --test parity_events --test parity_events_selector --test parity_events_streams --test projector --test projector_boundary --test projector_regrade --test projector_seed
 
 # The budget benchmarks (L1, L2) run AFTER the test suite and never beside it:
 # parallel suites contend on this box and on a two-core runner, and a contended

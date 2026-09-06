@@ -8,7 +8,7 @@
 #   B  crates/store/tests/bench_serve_roundtrip.rs  -- Postgres, when the test
 #   B  crates/store/tests/bench_grade_transaction.rs   DSN is set
 #
-# It also runs the M2 L2 budget tests (crates/core/tests/answer_check.rs) with
+# It also runs the M2 L2 budget tests (crates/core/tests/answer_check_{1,2,3,4}.rs) with
 # CADUS_RELEASE_BENCH=1. Those tests hold a 5 ms per-check budget and a 1 s
 # corpus budget in a release build, and a budget ten times wider without the
 # variable. Before M4 review 1 (finding 20) no script set it, so the release
@@ -17,7 +17,7 @@
 # Both run in the RELEASE profile, because the budget numbers of
 # docs/reference/l1-budget.md are release numbers. A debug run measures the
 # unoptimized exact arithmetic and holds a budget ten times wider (the same rule
-# crates/core/tests/answer_check.rs carries for L2).
+# crates/core/tests/answer_check_{1,2,3,4}.rs carry for L2).
 #
 # The benchmarks run AFTER `cargo test` and never beside it. Spec section 10.5:
 # parallel suites contend on this box and on a two-core runner, and a contended
@@ -53,8 +53,8 @@ echo "benchmark artifacts go to $CADUS_BENCH_DIR"
 
 # One test thread. Benchmark A counts the allocations of its own thread and
 # times a loop; a second test beside it competes for the same core.
-echo "== benchmark A: cargo test --release -p cadus-core --test bench_l1"
-cargo test --release -p cadus-core --test bench_l1 -- --test-threads=1 --nocapture
+echo "== benchmark A: cargo test --release -p cadus-core --test bench_l1 --test bench_l1_arena --test bench_l1_check --test bench_l1_fixture"
+cargo test --release -p cadus-core --test bench_l1 --test bench_l1_arena --test bench_l1_check --test bench_l1_fixture -- --test-threads=1 --nocapture
 
 # Benchmark A, the grade half of the request tier: the D5 hash, `answer::check`
 # and the D-M5-2 work quality tier, through `cadus_web::grade::deterministic_grade`
@@ -66,8 +66,8 @@ cargo test --release -p cadus-web --test bench_grade_cpu -- --test-threads=1 --n
 # --workspace` runs the same file in the debug profile against the ten-times
 # budget, beside every other suite; this step runs it alone, optimized, against
 # the 5 ms number docs/reference/l1-budget.md cites.
-echo "== L2 budgets: CADUS_RELEASE_BENCH=1 cargo test --release -p cadus-core --test answer_check"
-CADUS_RELEASE_BENCH=1 cargo test --release -p cadus-core --test answer_check -- --test-threads=1
+echo "== L2 budgets: CADUS_RELEASE_BENCH=1 cargo test --release -p cadus-core --test answer_check_1 ... --test answer_check_4"
+CADUS_RELEASE_BENCH=1 cargo test --release -p cadus-core --test answer_check_1 --test answer_check_2 --test answer_check_3 --test answer_check_4 -- --test-threads=1
 
 # Benchmark B needs a throwaway Postgres. The gate always sets the DSN, so the
 # gate always runs B. A laptop run without a cluster still gets A.
