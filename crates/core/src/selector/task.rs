@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 
 use crate::config::Config;
 use crate::curriculum::Curriculum;
-use crate::event::{KpProgress, TaskType, Timestamp};
+use crate::event::{KpProgress, TaskType};
 use crate::learner::TopicState;
 
 use super::DIFFICULTY_TARGET;
@@ -85,38 +85,6 @@ impl Default for Task {
             confirm: false,
         }
     }
-}
-
-/// The session constraints reported with a plan (`_constraints`, `selector.py:1499-1519`).
-#[derive(Debug, Clone, Default, PartialEq)]
-pub struct Constraints {
-    /// Whether the lesson share reaches `selector.lesson_ratio_min`.
-    pub lesson_ratio_ok: bool,
-    /// The lesson share of the interleaved sequence, rounded to 4 places.
-    pub lesson_ratio: f64,
-    /// Whether no review run exceeds `selector.max_reviews_per_lesson`.
-    pub throttle_ok: bool,
-    /// The number of reviews in the sequence.
-    pub reviews: i64,
-    /// The number of lessons in the sequence.
-    pub lessons: i64,
-}
-
-/// The composed session (`SessionPlan`, `model.py:675-683`).
-#[derive(Debug, Clone, Default, PartialEq)]
-pub struct SessionPlan {
-    /// The session id the task ids are keyed on.
-    pub session: String,
-    /// The tasks, in serve order.
-    pub tasks: Vec<Task>,
-    /// Whether a quiz is due.
-    pub quiz_due: bool,
-    /// The throttle and ratio report.
-    pub constraints: Constraints,
-    /// Whether the learner practiced every topic of the course scope (D-F6).
-    pub course_complete: bool,
-    /// When the first retry-delayed frontier lesson reopens.
-    pub frontier_blocked_until: Option<Timestamp>,
 }
 
 /// The knowledge point a lesson resumes at (`_start_kp`, `selector.py:910-916`).

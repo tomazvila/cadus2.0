@@ -353,6 +353,25 @@ impl Default for MasteryConfig {
     }
 }
 
+/// The readiness gate of D-F5.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReadinessConfig {
+    /// Whether the selector serves a lesson only when its knowledge point is
+    /// teachable, practicable and assessable, and a review or a quiz only when
+    /// its topic is practicable.
+    ///
+    /// The default is `true`. A parity test that composes over a tree with no
+    /// authored content sets it to `false`.
+    pub enforce: bool,
+}
+
+impl Default for ReadinessConfig {
+    fn default() -> Self {
+        Self { enforce: true }
+    }
+}
+
 /// The error tags a grader may assign, in 1.0 order.
 ///
 /// `blank_answer` is SERVER-assigned and never model-assigned: the server stamps it
@@ -400,6 +419,18 @@ pub struct Config {
     pub xp: XpConfig,
     /// The speed-drill constants.
     pub drill: DrillConfig,
+    /// The readiness gate of D-F5.
+    ///
+    /// The field is NOT serialized, so it stays out of the
+    /// [`Config::hash_preimage`] and the drift digest keeps the 1.0 value
+    /// (trap T16). The reason is the contract of that digest: it detects drift
+    /// of the 1.0 SCHEDULER CONSTANTS, and every stored `learner_models` row
+    /// and every parity fixture carries `797575e985c12149` for the defaults.
+    /// The readiness gate is a serve-eligibility policy of 2.0 and no
+    /// scheduling constant, so a change to it must not invalidate a projection.
+    /// D-F12 adds `policy_version`, which is where a 2.0 policy is versioned.
+    #[serde(default, skip_serializing)]
+    pub readiness: ReadinessConfig,
     /// The error tags a grader may assign.
     pub error_tags: Vec<String>,
     /// The IANA time zone of the day boundary. `None` means the profile's zone, and
@@ -422,6 +453,7 @@ impl Default for Config {
             diag: DiagConfig::default(),
             xp: XpConfig::default(),
             drill: DrillConfig::default(),
+            readiness: ReadinessConfig::default(),
             error_tags: default_error_tags(),
             timezone: None,
             mastery: MasteryConfig::default(),

@@ -141,10 +141,15 @@ pub async fn claimed_rows(db: &TestDb, user: Uuid) -> i64 {
 }
 
 /// The parsed body of one `GET` route as `user`.
-async fn get_ok(app: &Router, user: Uuid, uri: &str) -> Value {
+pub async fn get_ok(app: &Router, user: Uuid, uri: &str) -> Value {
     let (status, body) = call(app, Method::GET, uri, Some(user), None).await;
     assert_eq!(status, StatusCode::OK, "{body}");
     parse(&body)
+}
+
+/// The parsed body of `GET /api/session/plan`.
+pub async fn plan_body(app: &Router, user: Uuid) -> Value {
+    get_ok(app, user, "/api/session/plan").await
 }
 
 /// The task ids `GET /api/session/plan` lists, in order.

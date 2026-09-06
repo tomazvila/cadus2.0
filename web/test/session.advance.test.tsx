@@ -17,7 +17,7 @@ import {
   press, progressCount, stubApi, submitAnswer, submitThenWait, workInput, typeAnswer,
 } from './helpers/session';
 import type {
-  ApiClient, ServedProblem, SessionStartResponse, StatusResponse,
+  ApiClient, BlockedTask, ServedProblem, SessionStartResponse, StatusResponse,
 } from '@/api/types';
 
 /** The dashboard's own fixture, for the one test that starts a session from that screen. */
@@ -158,13 +158,29 @@ describe('NO-2BILL: one write per mount', () => {
     expect(taskTeach).not.toHaveBeenCalled();
   });
 
-  it('a failed teach falls through to practice instead of stranding the lesson', async () => {
+  it('AUDIT-j: a failed teach shows the no-instruction card and serves NO practice', async () => {
     const taskTeach = vi.fn<ApiClient['taskTeach']>(async () => { throw new Error('the teach route is down'); });
     const taskServe = vi.fn<ApiClient['taskServe']>(async () => P(1));
-    await mount({ plan: planOf(LESSON), api: stubApi({ taskTeach, taskServe }) });
+    await mount({ plan: planOf(LESSON, REVIEW), api: stubApi({ taskTeach, taskServe }) });
 
+    await waitFor(() => expect(screen.getByText('No instruction yet for this lesson')).toBeTruthy());
+    // The whole point of the card: the learner never practises an untaught skill.
+    expect(taskServe).not.toHaveBeenCalled();
+    expect(screen.queryByLabelText('Answer')).toBeNull();
+
+    // One control leads on, and it takes the NEXT task.
+    await press('Skip to the next task');
     await waitFor(() => expect(taskServe).toHaveBeenCalledTimes(1));
-    expect(answerInput()).toBeTruthy();
+    expect(taskServe.mock.calls[0]).toEqual(['t-review']);
+  });
+
+  it('AUDIT-j: an empty plan with blocked topics says the content is not written', async () => {
+    const blocked: BlockedTask[] = [
+      { task_type: 'lesson', topic: 'fractions', kp: 'kp1', blockers: ['teachable'] },
+    ];
+    const plan = { ...planOf(), blocked };
+    await mount({ plan, api: stubApi({}) });
+    expect(screen.getByText('1 topic(s) wait on content that is not written yet.')).toBeTruthy();
   });
 });
 

@@ -56,7 +56,7 @@ pub fn graph() -> Curriculum {
 pub fn app_with(db: &TestDb, hub: &Arc<DiagnosisHub>) -> Router {
     create_app(
         AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
-            .with_content(Arc::new(Content::new(graph())))
+            .with_content(Arc::new(super::open_content(graph())))
             .with_diagnosis(Arc::clone(hub)),
     )
 }

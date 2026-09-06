@@ -57,6 +57,7 @@ function serveQuiz(api: ApiClient, problem: Partial<ServedProblem> = {}): void {
       lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 0, lessons: 0,
     },
     course_complete: false,
+    blocked: [],
     frontier_blocked_until: null,
   });
   // The serve value is 120 seconds, and it is NOT the quiz clock.

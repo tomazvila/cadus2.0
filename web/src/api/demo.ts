@@ -267,6 +267,7 @@ export function createDemoApi(): ApiClient {
           lessons: 1,
         },
         course_complete: false,
+        blocked: [],
         frontier_blocked_until: null,
       }),
 

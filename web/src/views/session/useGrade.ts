@@ -37,7 +37,8 @@ import type { Gate } from '@/hooks/usePhase';
 import type { AnswerResponse, ApiClient, PlanTask, ReworkResponse, ServedProblem } from '@/api/types';
 import type { SessionPlan } from './useSessionPlan';
 
-export type SessionPhase = 'loading' | 'teaching' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
+export type SessionPhase =
+  | 'loading' | 'teaching' | 'no-instruction' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
 
 export interface GradeDeps {
   api: ApiClient;

@@ -67,7 +67,9 @@ import type {
 import { useSessionPlan } from './useSessionPlan';
 import { useGrade, type SessionPhase } from './useGrade';
 import { clockStart, isDrill, useSessionClock } from './useSessionClock';
-import { EmptyPlan, ProblemHeader, SessionSummary, emptyPlanMessage } from './SessionScreens';
+import {
+  EmptyPlan, NoInstruction, ProblemHeader, SessionSummary, emptyPlanMessage,
+} from './SessionScreens';
 import { Teach } from './Teach';
 import { Feedback, Rework } from './Feedback';
 import { Diagnosis } from './Diagnosis';
@@ -213,9 +215,10 @@ export function Session({
         setTeaching(instruction);
         gate.enter('teaching');
       }).then((instruction) => {
-        // Teach failed and was toasted with a Retry. Practice is still servable, so fall
-        // through rather than strand the task on a spinner.
-        if (!instruction && life.alive()) serveThenShow();
+        // AUDIT FINDING (j). A failed teach NEVER falls through to practice. The service
+        // has no worked example for this knowledge point, so practising it hands the
+        // learner a skill nobody taught. The card says so and offers the next task.
+        if (!instruction && life.alive()) gate.enter('no-instruction');
       });
       return;
     }
@@ -226,6 +229,13 @@ export function Session({
   /** The learner read the worked example. One press serves; a second in the same tick stops. */
   const practise = (): void => {
     if (gate.tryEnter('teaching', 'loading')) serveThenShow();
+  };
+
+  /** Leave a lesson the service cannot teach. One press advances; a second stops. */
+  const skipTask = (): void => {
+    if (!gate.tryEnter('no-instruction', 'loading')) return;
+    setTeaching(null);
+    advanceTask();
   };
 
   // ---- the plan ------------------------------------------------------------
@@ -369,6 +379,16 @@ export function Session({
         onDiagnostic={onDiagnostic}
         onExit={onExit}
       />
+    );
+  }
+
+  // AUDIT FINDING (j): the lesson has no approved teach page. No practice is served
+  // from here; the one control leads to the next task.
+  if (phase === 'no-instruction' && session.task) {
+    return (
+      <section className="view-session">
+        <NoInstruction task={session.task} onSkip={skipTask} onExit={onExit} />
+      </section>
     );
   }
 

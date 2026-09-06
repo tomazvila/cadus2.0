@@ -9,8 +9,9 @@ use crate::event::Timestamp;
 use crate::learner::TopicState;
 
 use super::interleave::{SlotKind, constraints_of};
+use super::plan::SessionPlan;
 use super::review::{in_retry_delay, retry_available_at};
-use super::task::{SessionPlan, Task};
+use super::task::Task;
 use super::topic_set::{TopicSet, course_scope, frontier, known_set};
 
 /// The frontier of the course scope, split by the lesson-fail retry delay.
@@ -91,6 +92,9 @@ impl Frontier {
             constraints: constraints_of(seq, !self.available.is_empty(), cfg),
             course_complete,
             frontier_blocked_until: self.blocked_until.map(Timestamp::from_micros),
+            // The composer fills the readiness list; the frontier knows nothing
+            // about the content store.
+            blocked: Vec::new(),
         }
     }
 }

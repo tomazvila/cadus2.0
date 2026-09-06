@@ -14,9 +14,10 @@ use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
 use super::interleave::SlotKind;
 use super::multistep::remediation_tasks;
+use super::plan::SessionPlan;
 use super::quiz::quiz_is_due;
 use super::review::in_retry_delay;
-use super::task::{SessionPlan, Task};
+use super::task::Task;
 use super::topic_set::TopicSet;
 use super::trigger::schedule_drills;
 

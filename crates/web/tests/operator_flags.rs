@@ -445,3 +445,47 @@ async fn a_store_fault_is_500_on_the_flags() {
         .await;
     }
 }
+
+/// The view carries the D-F5 readiness counts per course. The fixture course
+/// holds one topic and one knowledge point, and a fresh store approves nothing,
+/// so the count is one blocked knowledge point with five blockers.
+#[tokio::test]
+async fn the_view_carries_the_readiness_counts_per_course() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        seed_account(&db, "u12-admin@example.test", SESSION_TOKEN_ONE.1, true).await;
+
+        let body = read_flags(&app).await;
+        let readiness = &body["readiness"];
+        assert_eq!(
+            readiness["blockers"],
+            json!([
+                "teachable",
+                "practicable",
+                "assessable",
+                "hints",
+                "solutions",
+                "prerequisites",
+                "visual"
+            ])
+        );
+        let courses = readiness["courses"].as_array().unwrap();
+        assert_eq!(courses.len(), 1, "{body}");
+        assert_eq!(courses[0]["course_id"], "c1");
+        assert_eq!(courses[0]["topics"], 1);
+        assert_eq!(courses[0]["knowledge_points"], 1);
+        assert_eq!(courses[0]["ready"], 0);
+        assert_eq!(courses[0]["blocked"], 1);
+        assert_eq!(
+            courses[0]["blockers"],
+            json!({
+                "teachable": 1,
+                "practicable": 1,
+                "assessable": 1,
+                "hints": 1,
+                "solutions": 1
+            })
+        );
+    })
+    .await;
+}

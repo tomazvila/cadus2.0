@@ -38,6 +38,7 @@ use axum::http::request::Parts;
 use cadus_core::config::Config;
 use cadus_core::curriculum::Curriculum;
 use cadus_core::pool::{PoolAnswer, Ring, TaskMemory};
+use cadus_core::readiness::ReadinessIndex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value as Json;
 use sqlx::types::Uuid;
@@ -78,15 +79,31 @@ pub struct Content {
     pub curriculum: Curriculum,
     /// The scheduler constants (M3).
     pub cfg: Config,
+    /// The curriculum half of the readiness audit (D-F5).
+    ///
+    /// The build reads every authored exemplar answer once, so it stands here
+    /// beside the arena and no request pays for it. A request adds the approved
+    /// documents of `content_store` with
+    /// [`ReadinessIndex::resolve`](cadus_core::readiness::ReadinessIndex::resolve),
+    /// which is map lookups only.
+    pub readiness: ReadinessIndex,
 }
 
 impl Content {
     /// Pair a loaded curriculum with the default scheduler config.
     #[must_use]
     pub fn new(curriculum: Curriculum) -> Self {
+        Self::with_config(curriculum, Config::default())
+    }
+
+    /// Pair a loaded curriculum with the scheduler config the caller names.
+    #[must_use]
+    pub fn with_config(curriculum: Curriculum, cfg: Config) -> Self {
+        let readiness = ReadinessIndex::build(&curriculum);
         Self {
             curriculum,
-            cfg: Config::default(),
+            cfg,
+            readiness,
         }
     }
 }

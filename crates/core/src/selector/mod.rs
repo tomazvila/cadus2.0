@@ -30,10 +30,12 @@ mod compose;
 mod compress;
 mod confirm;
 mod context;
+mod eligible;
 mod frontier;
 mod gap_fill;
 mod interleave;
 mod multistep;
+mod plan;
 mod quiz;
 mod reserve;
 mod review;
@@ -53,6 +55,7 @@ pub use gap_fill::{
 };
 pub use interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
 pub use multistep::{multistep_components, multistep_is_due, remediation_tasks};
+pub use plan::{BlockedTask, Constraints, SessionPlan};
 pub use quiz::{
     QuizPlan, QuizQuestion, QuizSampler, SeededSampler, quiz_budget, quiz_composer,
     quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, utc_date,
@@ -62,7 +65,7 @@ pub use review::{
     due_reviews, importance, in_retry_delay, nearly_due, order_lessons, retry_available_at,
     review_mix,
 };
-pub use task::{Constraints, SessionPlan, Task, start_kp};
+pub use task::{Task, start_kp};
 pub use topic_set::{TopicSet, course_scope, frontier, known_set, practiced_set};
 pub use trigger::{remediation_for_quiz_miss, remediation_for_repeat_fail, schedule_drills};
 

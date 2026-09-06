@@ -10,6 +10,8 @@ use axum::http::StatusCode;
 use axum::http::request::Parts;
 use cadus_core::event::{Enrolled, Event, SchemaVersion, Slug, TaskType, Timestamp};
 use cadus_core::projector::ProjectionInput;
+use cadus_core::readiness::ReadinessSet;
+use cadus_store::content::approved_index;
 use cadus_store::state::{
     EventRow, Projection, SessionView, append_event, load_events_after, load_web_state,
     lock_web_state, project_and_save, project_current, save_web_state,
@@ -231,6 +233,12 @@ impl Ready {
         write_state(&self.state.db, tx, self.user_id, scratch).await
     }
 
+    /// The readiness of every knowledge point of this process (D-F5). See
+    /// [`readiness_of`].
+    pub(crate) async fn readiness(&self, tx: &mut Tx) -> Result<ReadinessSet, ApiError> {
+        readiness_of(&self.state, &self.content, tx).await
+    }
+
     /// Read the window of the open session and repair the drill cadence. See
     /// [`view_for_open_session`].
     pub(crate) async fn view_for_open_session(
@@ -241,6 +249,21 @@ impl Ready {
     ) -> Result<Vec<EventRow>, ApiError> {
         view_for_open_session(&self.state, tx, self.user_id, view, session).await
     }
+}
+
+/// The readiness of every knowledge point, in the caller's transaction (D-F5).
+///
+/// The curriculum half stands in [`Content`] from boot. This adds the store
+/// half: ONE grouped read of the approved rows of `content_store`, then map
+/// lookups. The read runs inside the caller's transaction, so the plan a route
+/// composes and the state it validates against see one content store.
+pub(crate) async fn readiness_of(
+    state: &AppState,
+    content: &Content,
+    tx: &mut Tx,
+) -> Result<ReadinessSet, ApiError> {
+    let index = store(state, approved_index(&mut **tx)).await?;
+    Ok(content.readiness.resolve(&index))
 }
 
 /// Open the tenant transaction and take the tenant's advisory lock.

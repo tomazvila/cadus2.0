@@ -97,11 +97,7 @@ pub fn graph() -> Curriculum {
 /// The router of a test, with the fixture curriculum loaded.
 pub fn app(db: &TestDb) -> Router {
     create_app(
-        AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS)).with_content(Arc::new(
-            Content {
-                curriculum: graph(),
-                cfg: Config::default(),
-            },
-        )),
+        AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
+            .with_content(Arc::new(super::open_content(graph()))),
     )
 }

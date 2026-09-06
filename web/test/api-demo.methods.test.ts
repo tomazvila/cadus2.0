@@ -272,6 +272,7 @@ describe('the demo payloads, literally', () => {
       quiz_due: false,
       constraints: { lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 2, lessons: 1 },
       course_complete: false,
+      blocked: [],
       frontier_blocked_until: null,
     });
     expect((await settle(demo.sessionEnd())).session).toBe('demo-session');
