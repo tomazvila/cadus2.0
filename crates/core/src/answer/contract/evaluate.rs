@@ -59,10 +59,7 @@ fn structured_contract(
         AnswerContract::List { ordered, member } => {
             super::list::grade(*ordered, member, text, learner)
         }
-        AnswerContract::InequalityUnion => match super::union::read(learner) {
-            Ok(value) => decided(super::union::equivalent(expected, &value)),
-            Err(reason) => Outcome::Undecidable(reason),
-        },
+        AnswerContract::InequalityUnion => parsed(super::union::read(learner), expected),
         AnswerContract::ReducedRatio => parsed_or_recognized(
             super::notation::reduced_ratio(learner),
             expected,

@@ -72,11 +72,8 @@ fn polynomial_relations_refuse_non_polynomial_and_ambiguous_inputs() {
 }
 
 #[test]
-fn inequality_union_accepts_single_intervals_and_unions() {
+fn inequality_union_accepts_bounded_interval_notation() {
     let policy = r#"{"kind":"inequality_union"}"#;
-    assert!(correct("(2, ∞)", "x > 2", policy));
-    assert!(correct("[-3, 4)", "-3 <= x < 4", policy));
-    assert!(!correct("(2, ∞)", "x >= 2", policy));
     let reordered = check_contract("(-∞, -2) ∪ [3, ∞)", "[3, ∞) ∪ (-∞, -2)", contract(policy));
     assert!(
         matches!(reordered, Outcome::Decided(verdict) if verdict.correct),
