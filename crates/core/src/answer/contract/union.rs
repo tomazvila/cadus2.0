@@ -48,38 +48,12 @@ pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
             ranges.push(range);
         }
     }
-    ranges.sort_by(|left, right| {
-        left.lo
-            .cmp(&right.lo)
-            .then_with(|| right.lo_closed.cmp(&left.lo_closed))
-    });
-    let mut merged: Vec<Range> = Vec::new();
-    for range in ranges {
-        if let Some(last) = merged.last_mut()
-            && touches(last, &range)
-        {
-            extend(last, &range);
-        } else {
-            merged.push(range);
-        }
-    }
     let Some(var) = variable else {
         return Err(refused());
     };
     Ok(Canon::Assign {
         var,
-        value: Box::new(Canon::List(
-            merged
-                .into_iter()
-                .map(|range| Canon::Interval {
-                    var: None,
-                    lo: boxed(range.lo),
-                    hi: boxed(range.hi),
-                    lo_closed: range.lo_closed,
-                    hi_closed: range.hi_closed,
-                })
-                .collect(),
-        )),
+        value: Box::new(Canon::List(canonical_ranges(merge(ranges)))),
     })
 }
 
@@ -92,6 +66,10 @@ fn interval_notation(text: &str) -> Result<Canon, Undecidable> {
     for branch in branches {
         ranges.push(interval(branch)?);
     }
+    Ok(Canon::List(canonical_ranges(merge(ranges))))
+}
+
+fn merge(mut ranges: Vec<Range>) -> Vec<Range> {
     ranges.sort_by(|left, right| {
         left.lo
             .cmp(&right.lo)
@@ -107,18 +85,20 @@ fn interval_notation(text: &str) -> Result<Canon, Undecidable> {
             merged.push(range);
         }
     }
-    Ok(Canon::List(
-        merged
-            .into_iter()
-            .map(|range| Canon::Interval {
-                var: None,
-                lo: boxed(range.lo),
-                hi: boxed(range.hi),
-                lo_closed: range.lo_closed,
-                hi_closed: range.hi_closed,
-            })
-            .collect(),
-    ))
+    merged
+}
+
+fn canonical_ranges(ranges: Vec<Range>) -> Vec<Canon> {
+    ranges
+        .into_iter()
+        .map(|range| Canon::Interval {
+            var: None,
+            lo: boxed(range.lo),
+            hi: boxed(range.hi),
+            lo_closed: range.lo_closed,
+            hi_closed: range.hi_closed,
+        })
+        .collect()
 }
 
 fn interval(text: &str) -> Result<Range, Undecidable> {

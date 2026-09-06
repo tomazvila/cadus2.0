@@ -24,42 +24,8 @@ fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract)
     if learner.trim().is_empty() {
         return decided(false);
     }
-    match contract {
-        AnswerContract::Label { options } => {
-            return decided(label_value(options, learner).as_ref() == Some(expected));
-        }
-        AnswerContract::Multipart { parts } => return multipart(parts, text, learner),
-        AnswerContract::List { ordered, member } => {
-            return super::list::grade(*ordered, member, text, learner);
-        }
-        AnswerContract::InequalityUnion => {
-            return match super::union::read(learner) {
-                Ok(value) => decided(&value == expected),
-                Err(reason) => Outcome::Undecidable(reason),
-            };
-        }
-        AnswerContract::ReducedRatio => {
-            return match super::notation::reduced_ratio(learner) {
-                Ok(value) => decided(&value == expected),
-                Err(_) if super::notation::recognizes_ratio(learner) => decided(false),
-                Err(reason) => Outcome::Undecidable(reason),
-            };
-        }
-        AnswerContract::AscendingChain => {
-            return match super::notation::ascending_chain(learner) {
-                Ok(value) => decided(&value == expected),
-                Err(_) if super::notation::recognizes_chain(learner) => decided(false),
-                Err(reason) => Outcome::Undecidable(reason),
-            };
-        }
-        AnswerContract::PolynomialRelation => {
-            return match super::relation::read(learner) {
-                Ok(value) => decided(&value == expected),
-                Err(reason) => Outcome::Undecidable(reason),
-            };
-        }
-
-        _ => {}
+    if let Some(outcome) = structured_contract(expected, text, learner, contract) {
+        return outcome;
     }
     let required_form = !matches!(contract, AnswerContract::RequiredForm { form } if !super::form::accepts(*form, learner));
     let learner = match canonical_form(learner) {
@@ -75,6 +41,59 @@ fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract)
             absolute_tolerance(expected, &learner, tolerance)
         }
         _ => decided(same_answer(expected, &learner)),
+    }
+}
+
+/// Grade contracts whose learner text has a dedicated parser.
+fn structured_contract(
+    expected: &Canon,
+    text: &str,
+    learner: &str,
+    contract: &AnswerContract,
+) -> Option<Outcome> {
+    let outcome = match contract {
+        AnswerContract::Label { options } => {
+            decided(label_value(options, learner).as_ref() == Some(expected))
+        }
+        AnswerContract::Multipart { parts } => multipart(parts, text, learner),
+        AnswerContract::List { ordered, member } => {
+            super::list::grade(*ordered, member, text, learner)
+        }
+        AnswerContract::InequalityUnion => parsed(super::union::read(learner), expected),
+        AnswerContract::ReducedRatio => parsed_or_recognized(
+            super::notation::reduced_ratio(learner),
+            expected,
+            super::notation::recognizes_ratio(learner),
+        ),
+        AnswerContract::AscendingChain => {
+            parsed_or_recognized(
+                super::notation::ascending_chain(learner),
+                expected,
+                super::notation::recognizes_chain(learner),
+            )
+        }
+        AnswerContract::PolynomialRelation => parsed(super::relation::read(learner), expected),
+        _ => return None,
+    };
+    Some(outcome)
+}
+
+fn parsed(value: Result<Canon, Undecidable>, expected: &Canon) -> Outcome {
+    match value {
+        Ok(value) => decided(&value == expected),
+        Err(reason) => Outcome::Undecidable(reason),
+    }
+}
+
+fn parsed_or_recognized(
+    value: Result<Canon, Undecidable>,
+    expected: &Canon,
+    recognized: bool,
+) -> Outcome {
+    match value {
+        Ok(value) => decided(&value == expected),
+        Err(_) if recognized => decided(false),
+        Err(reason) => Outcome::Undecidable(reason),
     }
 }
 

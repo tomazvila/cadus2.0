@@ -6,7 +6,7 @@ use super::super::{
     MARGIN, RenderOptions, dot_at, inner_height, inner_width, line_at, num_text, point_label, px,
     text_at,
 };
-use crate::visual::{CoordinateFigure, VisualError};
+use crate::visual::{CoordinateFigure, LabeledPoint, Segment, ShadedHalfPlane, VisualError};
 
 const LABELED_TICKS: i64 = 21;
 
@@ -37,7 +37,25 @@ pub(in crate::visual::render) fn coordinate_body(
         height,
         &at,
     );
-    for region in &figure.shaded_half_planes {
+    draw_regions(
+        &mut out,
+        &figure.shaded_half_planes,
+        (x_min, x_max, y_min, y_max),
+        &at,
+    )?;
+    draw_segments(&mut out, &figure.segments, &at)?;
+    draw_points(&mut out, &figure.points, &at)?;
+    Ok(out)
+}
+
+fn draw_regions(
+    out: &mut String,
+    regions: &[ShadedHalfPlane],
+    bounds: (f64, f64, f64, f64),
+    at: &impl Fn(f64, f64) -> (f64, f64),
+) -> Result<(), VisualError> {
+    let (x_min, x_max, y_min, y_max) = bounds;
+    for region in regions {
         let a = region.through_a.to_pair()?;
         let b = region.through_b.to_pair()?;
         let toward = region.shade_toward.to_pair()?;
@@ -67,8 +85,8 @@ pub(in crate::visual::render) fn coordinate_body(
         } else {
             "cadus-visual-boundary-dashed"
         };
-        let (bx0, by0, bx1, by1) = extend_to_frame(a, b, (x_min, x_max, y_min, y_max));
-        line_at(&mut out, at(bx0, by0), at(bx1, by1), boundary_class);
+        let (bx0, by0, bx1, by1) = extend_to_frame(a, b, bounds);
+        line_at(out, at(bx0, by0), at(bx1, by1), boundary_class);
         if let Some(label) = region
             .label
             .as_deref()
@@ -76,15 +94,23 @@ pub(in crate::visual::render) fn coordinate_body(
             .filter(|t| !t.is_empty())
         {
             let mid = at(bx0.midpoint(bx1), by0.midpoint(by1));
-            text_at(&mut out, mid.0, mid.1 - 8.0, "middle", label);
+            text_at(out, mid.0, mid.1 - 8.0, "middle", label);
         }
     }
-    for segment in &figure.segments {
+    Ok(())
+}
+
+fn draw_segments(
+    out: &mut String,
+    segments: &[Segment],
+    at: &impl Fn(f64, f64) -> (f64, f64),
+) -> Result<(), VisualError> {
+    for segment in segments {
         let from = segment.from.to_pair()?;
         let to = segment.to.to_pair()?;
         let start = at(from.0, from.1);
         let end = at(to.0, to.1);
-        line_at(&mut out, start, end, "cadus-visual-segment");
+        line_at(out, start, end, "cadus-visual-segment");
         if let Some(label) = segment
             .label
             .as_deref()
@@ -92,7 +118,7 @@ pub(in crate::visual::render) fn coordinate_body(
             .filter(|t| !t.is_empty())
         {
             text_at(
-                &mut out,
+                out,
                 start.0.midpoint(end.0),
                 start.1.midpoint(end.1) - 8.0,
                 "middle",
@@ -100,16 +126,24 @@ pub(in crate::visual::render) fn coordinate_body(
             );
         }
     }
-    for point in &figure.points {
+    Ok(())
+}
+
+fn draw_points(
+    out: &mut String,
+    points: &[LabeledPoint],
+    at: &impl Fn(f64, f64) -> (f64, f64),
+) -> Result<(), VisualError> {
+    for point in points {
         let pair = point.to_pair()?;
         let spot = at(pair.0, pair.1);
-        dot_at(&mut out, spot, 4.0, "cadus-visual-point");
+        dot_at(out, spot, 4.0, "cadus-visual-point");
         let label = point_label(point);
         if !label.is_empty() {
-            text_at(&mut out, spot.0 + 8.0, spot.1 - 8.0, "start", label);
+            text_at(out, spot.0 + 8.0, spot.1 - 8.0, "start", label);
         }
     }
-    Ok(out)
+    Ok(())
 }
 
 /// The grid lines, tick labels, and axes shared by a coordinate plane and a

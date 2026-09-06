@@ -35,6 +35,10 @@ fn cubes(count: i64) -> Vec<Scalar> {
 }
 
 fn recipe(key: &str) -> Option<Recipe> {
+    arithmetic_recipe(key).or_else(|| radical_recipe(key))
+}
+
+fn arithmetic_recipe(key: &str) -> Option<Recipe> {
     let item = match key {
         "mixed-numbers/kp1" => Recipe {
             statement: r"Compute ${a}\frac{{1}}{{2}} + 2\frac{{1}}{{4}}$.",
@@ -107,6 +111,13 @@ fn recipe(key: &str) -> Option<Recipe> {
             answer_expr: "-a + a",
             values: integers((1..=13).filter(|value| *value != 6)),
         },
+        _ => return None,
+    };
+    Some(item)
+}
+
+fn radical_recipe(key: &str) -> Option<Recipe> {
+    let item = match key {
         "perfect-square-roots/kp2" => Recipe {
             statement: r"Compute $\sqrt{{({a})}}$.",
             answer_expr: "sqrt(a)",

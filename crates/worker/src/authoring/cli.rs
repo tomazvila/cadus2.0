@@ -185,59 +185,89 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
         )));
     }
 
+    parse_author(args)
+}
+
+fn parse_author<'a>(mut args: impl Iterator<Item = &'a str>) -> Result<Command, CliError> {
     let mut parsed = AuthorArgs::default();
     while let Some(argument) = args.next() {
-        match argument {
-            "--dry-run" => parsed.dry_run = true,
-            "--missing-only" => parsed.missing_only = true,
-            "--kp-file" => parsed.kp_file = Some(value_of(argument, args.next())?),
-            "--stale" => parsed.stale = true,
-            "--portable-schema" => parsed.portable_schema = true,
-            "--decline-dir" => parsed.decline_dir = Some(value_of(argument, args.next())?),
-            "--budget-usd" | "--request-reserve-usd" => {
-                let value = value_of(argument, args.next())?;
-                let money = crate::authoring::budget::usd_micros(&value).map_err(CliError)?;
-                if argument == "--budget-usd" {
-                    parsed.budget_micros = Some(money);
-                } else {
-                    parsed.request_reserve_micros = Some(money);
-                }
-            }
-            "--concurrency" => {
-                let value = value_of(argument, args.next())?;
-                parsed.concurrency = value
-                    .parse()
-                    .ok()
-                    .filter(|n| (1..=64).contains(n))
-                    .ok_or_else(|| CliError("author concurrency must be in 1..=64".to_owned()))?;
-            }
-            "--help" | "-h" => return Ok(Command::Help),
-            "--kp" => parsed.kps.push(value_of("--kp", args.next())?),
-            "--course" => parsed.course = Some(value_of(argument, args.next())?),
-            "--template-passes" => {
-                parsed.template_passes = value_of(argument, args.next())?
-                    .parse()
-                    .ok()
-                    .filter(|n| (1..=3).contains(n))
-                    .ok_or_else(|| CliError("template passes must be in 1..=3".to_owned()))?;
-            }
-            "--kind" => {
-                let raw = value_of("--kind", args.next())?;
-                let kind = Kind::from_wire(&raw).ok_or_else(|| {
-                    CliError(format!(
-                        "unknown kind `{raw}` — the kinds are template, teach, hint_ladder, diagnosis"
-                    ))
-                })?;
-                parsed.kinds.push(kind);
-            }
-            other => {
-                return Err(CliError(format!(
-                    "unknown option `{other}` — run `cadus-worker --help`"
-                )));
-            }
+        if apply_author_argument(&mut parsed, argument, &mut args)? {
+            return Ok(Command::Help);
         }
     }
     Ok(Command::Author(parsed))
+}
+
+/// Apply one author option. The caller supplies the following token; flag options
+/// ignore it, while valued options validate it through [`value_of`].
+fn apply_author_argument<'a>(
+    parsed: &mut AuthorArgs,
+    argument: &str,
+    args: &mut impl Iterator<Item = &'a str>,
+) -> Result<bool, CliError> {
+    if apply_author_flag(parsed, argument) {
+        return Ok(false);
+    }
+    match argument {
+        "--kp-file" => parsed.kp_file = Some(value_of(argument, args.next())?),
+        "--decline-dir" => parsed.decline_dir = Some(value_of(argument, args.next())?),
+        "--budget-usd" | "--request-reserve-usd" => parse_money(parsed, argument, args.next())?,
+        "--concurrency" => parsed.concurrency = bounded_number(argument, args.next(), 64)?,
+        "--help" | "-h" => return Ok(true),
+        "--kp" => parsed.kps.push(value_of(argument, args.next())?),
+        "--course" => parsed.course = Some(value_of(argument, args.next())?),
+        "--template-passes" => parsed.template_passes = bounded_number(argument, args.next(), 3)?,
+        "--kind" => parsed.kinds.push(parse_kind(args.next())?),
+        other => {
+            return Err(CliError(format!(
+                "unknown option `{other}` — run `cadus-worker --help`"
+            )));
+        }
+    }
+    Ok(false)
+}
+
+fn apply_author_flag(parsed: &mut AuthorArgs, argument: &str) -> bool {
+    match argument {
+        "--dry-run" => parsed.dry_run = true,
+        "--missing-only" => parsed.missing_only = true,
+        "--stale" => parsed.stale = true,
+        "--portable-schema" => parsed.portable_schema = true,
+        _ => return false,
+    }
+    true
+}
+
+fn parse_money(
+    parsed: &mut AuthorArgs,
+    argument: &str,
+    next: Option<&str>,
+) -> Result<(), CliError> {
+    let value = value_of(argument, next)?;
+    let money = crate::authoring::budget::usd_micros(&value).map_err(CliError)?;
+    if argument == "--budget-usd" {
+        parsed.budget_micros = Some(money);
+    } else {
+        parsed.request_reserve_micros = Some(money);
+    }
+    Ok(())
+}
+
+fn bounded_number(option: &str, value: Option<&str>, max: usize) -> Result<usize, CliError> {
+    value_of(option, value)?
+        .parse()
+        .ok()
+        .filter(|number| (1..=max).contains(number))
+        .ok_or_else(|| CliError(format!("{} must be in 1..={max}", &option[2..])))
+}
+
+fn parse_kind(value: Option<&str>) -> Result<Kind, CliError> {
+    let raw = value_of("--kind", value)?;
+    Kind::from_wire(&raw).ok_or_else(|| {
+        CliError(format!(
+            "unknown kind `{raw}` — the kinds are template, teach, hint_ladder, diagnosis"
+        ))
+    })
 }
 
 /// Read the options of the `readiness` subcommand.

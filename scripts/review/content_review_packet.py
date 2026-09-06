@@ -108,32 +108,42 @@ def source_index(source_root):
     if source_root is None or not source_root.exists():
         return index
     for manifest in sorted(source_root.rglob("manifest.json")):
-        try:
-            document = load_json(manifest)
-        except Refused:
-            continue
-        if not isinstance(document, dict) or not isinstance(document.get("files"), list):
-            continue
-        for filename in document["files"]:
-            if not isinstance(filename, str) or Path(filename).is_absolute() or ".." in Path(filename).parts:
-                continue
-            path = manifest.parent / filename
-            try:
-                rows = load_json(path)
-            except Refused:
-                continue
-            if not isinstance(rows, list):
-                continue
-            for number, row in enumerate(rows):
-                if not isinstance(row, dict) or not {"kp_id", "kind", "arguments"} <= set(row):
-                    continue
-                key = (row["kp_id"], row["kind"], canonical(row["arguments"]))
-                index.setdefault(key, []).append({
-                    "manifest": str(manifest.relative_to(source_root.parent.parent)),
-                    "file": str(path.relative_to(source_root.parent.parent)),
-                    "row": number,
-                })
+        index_manifest(index, source_root, manifest)
     return index
+
+
+def index_manifest(index, source_root, manifest):
+    """Add every valid draft file of one manifest to a source index."""
+    try:
+        document = load_json(manifest)
+    except Refused:
+        return
+    if not isinstance(document, dict) or not isinstance(document.get("files"), list):
+        return
+    for filename in document["files"]:
+        index_source_file(index, source_root, manifest, filename)
+
+
+def index_source_file(index, source_root, manifest, filename):
+    """Add the valid draft rows of one manifest member to a source index."""
+    if not isinstance(filename, str) or Path(filename).is_absolute() or ".." in Path(filename).parts:
+        return
+    path = manifest.parent / filename
+    try:
+        rows = load_json(path)
+    except Refused:
+        return
+    if not isinstance(rows, list):
+        return
+    for number, row in enumerate(rows):
+        if not isinstance(row, dict) or not {"kp_id", "kind", "arguments"} <= set(row):
+            continue
+        key = (row["kp_id"], row["kind"], canonical(row["arguments"]))
+        index.setdefault(key, []).append({
+            "manifest": str(manifest.relative_to(source_root.parent.parent)),
+            "file": str(path.relative_to(source_root.parent.parent)),
+            "row": number,
+        })
 
 
 def fingerprint(document):
@@ -214,22 +224,28 @@ def validate_decisions(document, packet, indexed):
         raise Refused("no explicit decisions were provided")
     seen, result = set(), []
     for number, row in enumerate(rows):
-        if not isinstance(row, dict) or not isinstance(row.get("digest"), str):
-            raise Refused(f"decision {number}: digest is required")
-        digest, decision = row["digest"], row.get("decision")
-        if digest in seen or digest not in indexed:
-            raise Refused(f"decision {number}: digest is duplicate or outside the packet")
-        if decision not in DECISIONS:
-            raise Refused(f"decision {number}: decision must be approve or reject")
-        allowed = {"digest", "decision"} if decision == "approve" else {"digest", "decision", "reason"}
-        if set(row) != allowed:
-            raise Refused(f"decision {number}: unexpected or missing fields")
-        reason = row.get("reason")
-        if decision == "reject" and (not isinstance(reason, str) or not reason.strip()):
-            raise Refused(f"decision {number}: rejection reason is required")
+        digest, decision, reason = validated_decision(row, number, indexed, seen)
         seen.add(digest)
         result.append((indexed[digest], decision, reason))
     return result
+
+
+def validated_decision(row, number, indexed, seen):
+    """Validate one digest-bound human decision and return its normalized fields."""
+    if not isinstance(row, dict) or not isinstance(row.get("digest"), str):
+        raise Refused(f"decision {number}: digest is required")
+    digest, decision = row["digest"], row.get("decision")
+    if digest in seen or digest not in indexed:
+        raise Refused(f"decision {number}: digest is duplicate or outside the packet")
+    if decision not in DECISIONS:
+        raise Refused(f"decision {number}: decision must be approve or reject")
+    allowed = {"digest", "decision"} if decision == "approve" else {"digest", "decision", "reason"}
+    if set(row) != allowed:
+        raise Refused(f"decision {number}: unexpected or missing fields")
+    reason = row.get("reason")
+    if decision == "reject" and (not isinstance(reason, str) or not reason.strip()):
+        raise Refused(f"decision {number}: rejection reason is required")
+    return digest, decision, reason
 
 
 def apply_decisions(api, packet_path, decision_path, commit):

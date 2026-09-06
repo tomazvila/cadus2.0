@@ -161,6 +161,36 @@ macro_rules! for_each_event {
     };
 }
 
+/// Map every event variant to its stable wire discriminator. Keeping the match in
+/// one macro lets accessors remain one-decision functions as the event family grows.
+macro_rules! event_type_name {
+    ($event:expr) => {
+        match $event {
+            Event::SessionStart(_) => "session_start",
+            Event::SessionEnd(_) => "session_end",
+            Event::Enrolled(_) => "enrolled",
+            Event::TaskServed(_) => "task_served",
+            Event::Attempt(_) => "attempt",
+            Event::LessonResult(_) => "lesson_result",
+            Event::ReviewResult(_) => "review_result",
+            Event::QuizResult(_) => "quiz_result",
+            Event::RemediationTriggered(_) => "remediation_triggered",
+            Event::DiagnosticAnswer(_) => "diagnostic_answer",
+            Event::DiagnosticPlaced(_) => "diagnostic_placed",
+            Event::ProfileReset(_) => "profile_reset",
+            Event::Regraded(_) => "regraded",
+            Event::AnkiCardCreated(_) => "anki_card_created",
+            Event::ConfigChanged(_) => "config_changed",
+            Event::CurriculumChanged(_) => "curriculum_changed",
+            Event::RetentionProbe(_) => "retention_probe",
+            Event::IntegratedServed(_) => "integrated_served",
+            Event::IntegratedAttempt(_) => "integrated_attempt",
+            Event::IntegratedHintRevealed(_) => "integrated_hint_revealed",
+            Event::DrillResult(_) => "drill_result",
+        }
+    };
+}
+
 impl Event {
     /// The 18 `type` values, in the order this module declares them.
     pub const TYPE_NAMES: [&'static str; 18] = [
@@ -236,29 +266,7 @@ impl Event {
     /// The `type` value of this event.
     #[must_use]
     pub const fn type_name(&self) -> &'static str {
-        match self {
-            Self::SessionStart(_) => "session_start",
-            Self::SessionEnd(_) => "session_end",
-            Self::Enrolled(_) => "enrolled",
-            Self::TaskServed(_) => "task_served",
-            Self::Attempt(_) => "attempt",
-            Self::LessonResult(_) => "lesson_result",
-            Self::ReviewResult(_) => "review_result",
-            Self::QuizResult(_) => "quiz_result",
-            Self::RemediationTriggered(_) => "remediation_triggered",
-            Self::DiagnosticAnswer(_) => "diagnostic_answer",
-            Self::DiagnosticPlaced(_) => "diagnostic_placed",
-            Self::ProfileReset(_) => "profile_reset",
-            Self::Regraded(_) => "regraded",
-            Self::AnkiCardCreated(_) => "anki_card_created",
-            Self::ConfigChanged(_) => "config_changed",
-            Self::CurriculumChanged(_) => "curriculum_changed",
-            Self::RetentionProbe(_) => "retention_probe",
-            Self::IntegratedServed(_) => "integrated_served",
-            Self::IntegratedAttempt(_) => "integrated_attempt",
-            Self::IntegratedHintRevealed(_) => "integrated_hint_revealed",
-            Self::DrillResult(_) => "drill_result",
-        }
+        event_type_name!(self)
     }
 
     /// The `ts` of this event.

@@ -119,37 +119,52 @@ def _eval_node(node: ast.AST) -> Fraction:
     if isinstance(node, ast.Constant) and isinstance(node.value, int) and not isinstance(node.value, bool):
         return Fraction(node.value)
     if isinstance(node, ast.BinOp):
-        if isinstance(node.op, ast.Pow):
-            base = _eval_node(node.left)
-            exponent = _eval_node(node.right)
-            if exponent.denominator != 1:
-                return _exact_rational_power(base, exponent)
-            return base ** exponent.numerator
-        handler = _BINOPS.get(type(node.op))
-        if handler is None:
-            raise NotArithmetic(f"unsupported operator: {ast.dump(node.op)}")
-        return handler(_eval_node(node.left), _eval_node(node.right))
+        return _eval_binary(node)
     if isinstance(node, ast.UnaryOp):
-        value = _eval_node(node.operand)
-        if isinstance(node.op, ast.USub):
-            return -value
-        if isinstance(node.op, ast.UAdd):
-            return value
-        raise NotArithmetic(f"unsupported unary operator: {ast.dump(node.op)}")
+        return _eval_unary(node)
     if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-        name = node.func.id
-        if node.keywords:
-            raise NotArithmetic("keyword arguments are not arithmetic")
-        args = node.args
-        if name == "D" and len(args) == 1 and isinstance(args[0], ast.Constant) and isinstance(args[0].value, str):
-            return Fraction(args[0].value)
-        if name == "AB" and len(args) == 1:
-            return abs(_eval_node(args[0]))
-        if name == "MX" and len(args) == 3:
-            whole, num, den = (_eval_node(a) for a in args)
-            return whole + num / den
-        raise NotArithmetic(f"unsupported call: {name}")
+        return _eval_call(node)
     raise NotArithmetic(f"unsupported syntax: {ast.dump(node)}")
+
+
+def _eval_binary(node: ast.BinOp) -> Fraction:
+    """Evaluate one whitelisted binary operation."""
+    if isinstance(node.op, ast.Pow):
+        base = _eval_node(node.left)
+        exponent = _eval_node(node.right)
+        if exponent.denominator != 1:
+            return _exact_rational_power(base, exponent)
+        return base ** exponent.numerator
+    handler = _BINOPS.get(type(node.op))
+    if handler is None:
+        raise NotArithmetic(f"unsupported operator: {ast.dump(node.op)}")
+    return handler(_eval_node(node.left), _eval_node(node.right))
+
+
+def _eval_unary(node: ast.UnaryOp) -> Fraction:
+    """Evaluate a unary plus or minus."""
+    value = _eval_node(node.operand)
+    if isinstance(node.op, ast.USub):
+        return -value
+    if isinstance(node.op, ast.UAdd):
+        return value
+    raise NotArithmetic(f"unsupported unary operator: {ast.dump(node.op)}")
+
+
+def _eval_call(node: ast.Call) -> Fraction:
+    """Evaluate one whitelisted exact-arithmetic helper call."""
+    name = node.func.id
+    if node.keywords:
+        raise NotArithmetic("keyword arguments are not arithmetic")
+    args = node.args
+    if name == "D" and len(args) == 1 and isinstance(args[0], ast.Constant) and isinstance(args[0].value, str):
+        return Fraction(args[0].value)
+    if name == "AB" and len(args) == 1:
+        return abs(_eval_node(args[0]))
+    if name == "MX" and len(args) == 3:
+        whole, num, den = (_eval_node(arg) for arg in args)
+        return whole + num / den
+    raise NotArithmetic(f"unsupported call: {name}")
 
 
 def evaluate(expr: str) -> Fraction:
@@ -280,34 +295,53 @@ def same_shape_new_operands(
     if not operands:
         raise NotArithmetic("no bare integer operand to vary")
     for _ in range(attempts):
-        pieces = []
-        cursor = 0
-        for operand in operands:
-            pieces.append(expr[cursor : operand.start])
-            magnitude = max(2, abs(operand.value) * 3)
-            if operand_ceiling is not None:
-                magnitude = min(magnitude, max(2, operand_ceiling))
-            draw = rng.randint(1, magnitude)
-            if operand.value < 0:
-                draw = -draw
-            pieces.append(str(draw))
-            cursor = operand.end
-        pieces.append(expr[cursor:])
-        candidate = "".join(pieces)
+        candidate = _redraw(expr, operands, rng, operand_ceiling)
         if candidate == expr:
             continue
         try:
             value = evaluate(candidate)
         except (NotArithmetic, ZeroDivisionError):
             continue
-        if forbid_zero_result and value == 0:
-            continue
-        if value in forbid_values:
-            continue
-        if extra_ok is not None and not extra_ok(candidate, value):
+        if not _candidate_allowed(candidate, value, forbid_zero_result, forbid_values, extra_ok):
             continue
         return candidate, value
     raise NotArithmetic(f"no fresh operand set found for {expr!r} after {attempts} draws")
+
+
+def _redraw(
+    expr: str,
+    operands: list[Operand],
+    rng: random.Random,
+    operand_ceiling: Optional[int],
+) -> str:
+    """Redraw every operand once while preserving its sign and textual shape."""
+    pieces = []
+    cursor = 0
+    for operand in operands:
+        pieces.append(expr[cursor : operand.start])
+        magnitude = max(2, abs(operand.value) * 3)
+        if operand_ceiling is not None:
+            magnitude = min(magnitude, max(2, operand_ceiling))
+        draw = rng.randint(1, magnitude)
+        pieces.append(str(-draw if operand.value < 0 else draw))
+        cursor = operand.end
+    pieces.append(expr[cursor:])
+    return "".join(pieces)
+
+
+def _candidate_allowed(
+    candidate: str,
+    value: Fraction,
+    forbid_zero_result: bool,
+    forbid_values: frozenset[Fraction],
+    extra_ok: Optional[Callable[[str, Fraction], bool]],
+) -> bool:
+    """Whether one parsed redraw satisfies every caller-supplied bound."""
+    if forbid_zero_result and value == 0:
+        return False
+    if value in forbid_values:
+        return False
+    return extra_ok is None or extra_ok(candidate, value)
 
 
 def parse_answer_text(text: str) -> Fraction:

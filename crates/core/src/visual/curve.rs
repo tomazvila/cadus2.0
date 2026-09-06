@@ -11,17 +11,19 @@
 //! cannot confirm exactly counts as wrong, never as unchecked.
 
 use num_rational::BigRational;
-use num_traits::{One, Signed, Zero};
 use serde::{Deserialize, Serialize};
 
 use super::{LabeledPoint, Scalar, VisualError, inside, tick_count};
 
+mod evaluate;
 mod helpers;
 
-use helpers::{
-    TrigFamily, checked_pow, exact_integer, integer_log, nonzero, polynomial_text,
-    positive_and_not_one, trig_exact, trig_f64,
+use evaluate::{
+    exponential_exact, exponential_f64, logarithm_exact, logarithm_f64, natural_exact, natural_f64,
+    polynomial_exact, polynomial_f64, reciprocal_exact, reciprocal_f64, validate_polynomial,
+    validate_scaled, validate_trig,
 };
+use helpers::{TrigFamily, nonzero, polynomial_text, positive_and_not_one, trig_exact, trig_f64};
 
 /// The largest exponent magnitude an exact check computes.
 ///
@@ -231,44 +233,20 @@ impl CurveKind {
     /// independent of any key point.
     fn validate_parameters(&self) -> Result<(), VisualError> {
         match self {
-            Self::Polynomial { coefficients } => {
-                if coefficients.is_empty() {
-                    return Err(VisualError::Degenerate {
-                        reason: "a polynomial curve has no coefficients".to_owned(),
-                    });
-                }
-                for c in coefficients {
-                    c.value()?;
-                }
-                Ok(())
-            }
+            Self::Polynomial { coefficients } => validate_polynomial(coefficients),
             Self::Exponential { a, b, h, k } => {
-                let (av, bv) = (a.value()?, b.value()?);
-                h.value()?;
-                k.value()?;
-                nonzero("the exponential scale a", &av)?;
-                positive_and_not_one("the exponential base b", &bv)
+                validate_scaled(a, h, k, "the exponential scale a")?;
+                positive_and_not_one("the exponential base b", &b.value()?)
             }
             Self::NaturalExponential { a, rate, h, k } => {
-                let (av, ratev) = (a.value()?, rate.value()?);
-                h.value()?;
-                k.value()?;
-                nonzero("the natural exponential scale a", &av)?;
-                nonzero("the natural exponential rate", &ratev)
+                validate_scaled(a, h, k, "the natural exponential scale a")?;
+                nonzero("the natural exponential rate", &rate.value()?)
             }
             Self::Logarithm { a, base, h, k } => {
-                let (av, basev) = (a.value()?, base.value()?);
-                h.value()?;
-                k.value()?;
-                nonzero("the logarithm scale a", &av)?;
-                positive_and_not_one("the logarithm base", &basev)
+                validate_scaled(a, h, k, "the logarithm scale a")?;
+                positive_and_not_one("the logarithm base", &base.value()?)
             }
-            Self::Reciprocal { a, h, k } => {
-                let av = a.value()?;
-                h.value()?;
-                k.value()?;
-                nonzero("the reciprocal scale a", &av)
-            }
+            Self::Reciprocal { a, h, k } => validate_scaled(a, h, k, "the reciprocal scale a"),
             Self::Sine {
                 amplitude,
                 period,
@@ -280,18 +258,7 @@ impl CurveKind {
                 period,
                 phase,
                 midline,
-            } => {
-                let (amp, per) = (amplitude.value()?, period.value()?);
-                phase.value()?;
-                midline.value()?;
-                nonzero("the amplitude", &amp)?;
-                if !per.is_positive() {
-                    return Err(VisualError::Degenerate {
-                        reason: "the period is not positive".to_owned(),
-                    });
-                }
-                Ok(())
-            }
+            } => validate_trig(amplitude, period, phase, midline),
         }
     }
 
@@ -300,55 +267,11 @@ impl CurveKind {
     /// not an exact power of the base, a reciprocal at its asymptote).
     fn exact_value_at(&self, x: &BigRational) -> Option<BigRational> {
         match self {
-            Self::Polynomial { coefficients } => {
-                let mut total = BigRational::zero();
-                let mut power = BigRational::one();
-                for c in coefficients {
-                    total += c.value().ok()? * &power;
-                    power *= x.clone();
-                }
-                Some(total)
-            }
-            Self::Exponential { a, b, h, k } => {
-                let (av, bv, hv, kv) = (
-                    a.value().ok()?,
-                    b.value().ok()?,
-                    h.value().ok()?,
-                    k.value().ok()?,
-                );
-                let exponent = x - hv;
-                let n = exact_integer(&exponent)?;
-                Some(av * checked_pow(&bv, n)? + kv)
-            }
-            Self::NaturalExponential { a, rate, h, k } => {
-                let (av, ratev, hv, kv) = (
-                    a.value().ok()?,
-                    rate.value().ok()?,
-                    h.value().ok()?,
-                    k.value().ok()?,
-                );
-                let exponent = ratev * (x - hv);
-                exponent.is_zero().then(|| av + kv)
-            }
-            Self::Logarithm { a, base, h, k } => {
-                let (av, basev, hv, kv) = (
-                    a.value().ok()?,
-                    base.value().ok()?,
-                    h.value().ok()?,
-                    k.value().ok()?,
-                );
-                let argument = x - hv;
-                let n = integer_log(&basev, &argument)?;
-                Some(av * BigRational::from_integer(n.into()) + kv)
-            }
-            Self::Reciprocal { a, h, k } => {
-                let (av, hv, kv) = (a.value().ok()?, h.value().ok()?, k.value().ok()?);
-                let denominator = x - hv;
-                if denominator.is_zero() {
-                    return None;
-                }
-                Some(av / denominator + kv)
-            }
+            Self::Polynomial { coefficients } => polynomial_exact(coefficients, x),
+            Self::Exponential { a, b, h, k } => exponential_exact(a, b, h, k, x),
+            Self::NaturalExponential { a, rate, h, k } => natural_exact(a, rate, h, k, x),
+            Self::Logarithm { a, base, h, k } => logarithm_exact(a, base, h, k, x),
+            Self::Reciprocal { a, h, k } => reciprocal_exact(a, h, k, x),
             Self::Sine {
                 amplitude,
                 period,
@@ -402,54 +325,11 @@ impl CurveKind {
     /// drawn curve there instead of drawing a false continuation.
     pub(super) fn eval_f64(&self, x: f64) -> Option<f64> {
         match self {
-            Self::Polynomial { coefficients } => {
-                let mut total = 0.0;
-                let mut power = 1.0;
-                for c in coefficients {
-                    total += c.to_f64().ok()? * power;
-                    power *= x;
-                }
-                Some(total)
-            }
-            Self::Exponential { a, b, h, k } => {
-                let (av, bv, hv, kv) = (
-                    a.to_f64().ok()?,
-                    b.to_f64().ok()?,
-                    h.to_f64().ok()?,
-                    k.to_f64().ok()?,
-                );
-                Some(av * bv.powf(x - hv) + kv)
-            }
-            Self::NaturalExponential { a, rate, h, k } => {
-                let (av, ratev, hv, kv) = (
-                    a.to_f64().ok()?,
-                    rate.to_f64().ok()?,
-                    h.to_f64().ok()?,
-                    k.to_f64().ok()?,
-                );
-                Some(av * (ratev * (x - hv)).exp() + kv)
-            }
-            Self::Logarithm { a, base, h, k } => {
-                let (av, basev, hv, kv) = (
-                    a.to_f64().ok()?,
-                    base.to_f64().ok()?,
-                    h.to_f64().ok()?,
-                    k.to_f64().ok()?,
-                );
-                let argument = x - hv;
-                if argument <= 0.0 {
-                    return None;
-                }
-                Some(av * argument.log(basev) + kv)
-            }
-            Self::Reciprocal { a, h, k } => {
-                let (av, hv, kv) = (a.to_f64().ok()?, h.to_f64().ok()?, k.to_f64().ok()?);
-                let denominator = x - hv;
-                if denominator.abs() < 1e-9 {
-                    return None;
-                }
-                Some(av / denominator + kv)
-            }
+            Self::Polynomial { coefficients } => polynomial_f64(coefficients, x),
+            Self::Exponential { a, b, h, k } => exponential_f64(a, b, h, k, x),
+            Self::NaturalExponential { a, rate, h, k } => natural_f64(a, rate, h, k, x),
+            Self::Logarithm { a, base, h, k } => logarithm_f64(a, base, h, k, x),
+            Self::Reciprocal { a, h, k } => reciprocal_f64(a, h, k, x),
             Self::Sine {
                 amplitude,
                 period,
