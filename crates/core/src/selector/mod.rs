@@ -39,7 +39,7 @@ mod review;
 mod task;
 mod topic_set;
 
-pub use crate::xp::is_mastered;
+pub use crate::xp::{is_inferred, is_known, is_practiced};
 
 pub use compose::compose_session;
 pub use compress::{Compression, compress};
@@ -63,7 +63,7 @@ pub use task::{
     Constraints, SessionPlan, Task, remediation_for_quiz_miss, remediation_for_repeat_fail,
     schedule_drills, start_kp,
 };
-pub use topic_set::{TopicSet, course_scope, frontier, mastered_set};
+pub use topic_set::{TopicSet, course_scope, frontier, known_set, practiced_set};
 
 /// One day, in microseconds.
 const DAY_US: i64 = 86_400_000_000;

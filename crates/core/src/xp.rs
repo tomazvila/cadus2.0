@@ -67,16 +67,54 @@ pub const VELOCITY_WINDOW_DAYS: i64 = 28;
 /// (`xp.py:60`).
 pub const DEFAULT_XP_PER_TOPIC: f64 = 12.0;
 
-/// The statuses that count as mastered for course progress (`selector.py:150`).
+/// The topic the learner practiced: the learner passed its lesson or its
+/// confirmation item (D-F6).
 ///
-/// Implicit credit alone never masters a topic; the status gate is the rule. The
-/// selector of U4 reads the same predicate.
+/// `Learning` is the only status a passed lesson or a passed confirmation
+/// writes, so it is the only practiced status. Course completion and the
+/// course-progress percentage read this predicate, because a claim of progress
+/// stands on practice, not on inference.
 #[must_use]
-pub fn is_mastered(state: &TopicState) -> bool {
+pub const fn is_practiced(state: &TopicState) -> bool {
+    matches!(state.status, TopicStatus::Learning)
+}
+
+/// The topic the scheduler treats as known: practiced, placed, or on the course
+/// floor (D-F6).
+///
+/// Selection reads this predicate — the frontier, the review set, the drill
+/// schedule, and the remediation task kind — because the course gives placement
+/// credit and floor credit the same scheduling weight 1.0 gave them
+/// (`selector.py:150`).
+#[must_use]
+pub const fn is_known(state: &TopicState) -> bool {
     matches!(
         state.status,
         TopicStatus::Learning | TopicStatus::Placed | TopicStatus::Floor
     )
+}
+
+/// The topic the course infers: known, and never practiced (D-F6).
+///
+/// A `Placed` topic came from the diagnostic and a `Floor` topic came from the
+/// course mastery floor. Neither status carries a direct answer on the topic, so
+/// [`crate::selector::confirmations`] owes each one confirmation item.
+#[must_use]
+pub const fn is_inferred(state: &TopicState) -> bool {
+    is_known(state) && !is_practiced(state)
+}
+
+/// The 1.0 mastery predicate. Use [`is_known`] or [`is_practiced`] instead.
+///
+/// It stands for one release as an alias of [`is_known`], and no caller reads it
+/// (D-F6, audit finding l).
+#[must_use]
+#[deprecated(
+    since = "2.0.0",
+    note = "D-F6 split it: call `is_known` for selection, or `is_practiced` for progress"
+)]
+pub const fn is_mastered(state: &TopicState) -> bool {
+    is_known(state)
 }
 
 /// The pre-multiplier base XP of one task (`xp.py:68-86`).
@@ -315,7 +353,38 @@ pub fn topics_per_week(
     Ok(seen.len() as f64 / weeks)
 }
 
-/// The mastered and total topic counts of a course (`xp.py:229-238`).
+/// The practiced, inferred and total topic counts of a course (D-F6).
+///
+/// The three numbers the dashboard shows. `practiced` counts the topics the
+/// learner passed, `inferred` counts the placed and floor topics that carry no
+/// direct answer, and `total` counts the course.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct CourseCounts {
+    /// The topics the learner practiced.
+    pub practiced: i64,
+    /// The known topics the course inferred and never confirmed.
+    pub inferred: i64,
+    /// The topics of the course.
+    pub total: i64,
+}
+
+impl CourseCounts {
+    /// The count the progress percentage divides by the total.
+    ///
+    /// D-F6 counts the practiced topics alone. With
+    /// `mastery.confirm_inferred` off the count returns to the 1.0 rule, which
+    /// adds the inferred topics.
+    #[must_use]
+    pub const fn done(&self, cfg: &Config) -> i64 {
+        if cfg.mastery.confirm_inferred {
+            self.practiced
+        } else {
+            self.practiced + self.inferred
+        }
+    }
+}
+
+/// The per-status topic counts of a course (`xp.py:229-238`, D-F6).
 ///
 /// A topic absent from `states` counts as a default, untouched state.
 #[must_use]
@@ -323,24 +392,29 @@ pub fn course_counts(
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
     course_id: &str,
-) -> (i64, i64) {
+) -> CourseCounts {
     let course = graph.topics_in_course(course_id);
-    let total = i64::try_from(course.len()).unwrap_or(i64::MAX);
     let default = TopicState::default();
-    let mut done: i64 = 0;
+    let mut counts = CourseCounts {
+        total: i64::try_from(course.len()).unwrap_or(i64::MAX),
+        ..CourseCounts::default()
+    };
     for &idx in course {
-        let id = graph.id_of(idx);
-        if is_mastered(states.get(id).unwrap_or(&default)) {
-            done += 1;
+        let state = states.get(graph.id_of(idx)).unwrap_or(&default);
+        if is_practiced(state) {
+            counts.practiced += 1;
+        } else if is_inferred(state) {
+            counts.inferred += 1;
         }
     }
-    (done, total)
+    counts
 }
 
-/// The fraction of the course that is mastered (`xp.py:241-247`).
+/// The fraction of the course the learner practiced (`xp.py:241-247`, D-F6).
 ///
-/// It advances only when a NEW topic becomes mastered — a lesson completion or a
-/// diagnostic placement — never on a review or a quiz. An empty course is `0.0`.
+/// It advances only when a NEW topic becomes practiced — a passed lesson or a
+/// passed confirmation item — never on a review or a quiz, and never on a
+/// placement alone. An empty course is `0.0`.
 #[must_use]
 #[expect(
     clippy::cast_precision_loss,
@@ -350,12 +424,13 @@ pub fn course_progress(
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
     course_id: &str,
+    cfg: &Config,
 ) -> f64 {
-    let (done, total) = course_counts(states, graph, course_id);
-    if total == 0 {
+    let counts = course_counts(states, graph, course_id);
+    if counts.total == 0 {
         return 0.0;
     }
-    done as f64 / total as f64
+    counts.done(cfg) as f64 / counts.total as f64
 }
 
 /// The projected completion date of a course (`xp.py:250-274`).
@@ -383,9 +458,11 @@ pub fn estimate_eta(
     total_xp: f64,
     xp_per_day_recent: f64,
     today: NaiveDate,
+    cfg: &Config,
 ) -> Option<NaiveDate> {
-    let (done, total) = course_counts(states, graph, course_id);
-    let remaining = total - done;
+    let counts = course_counts(states, graph, course_id);
+    let done = counts.done(cfg);
+    let remaining = counts.total - done;
     if remaining <= 0 {
         return Some(today);
     }
@@ -408,7 +485,8 @@ pub fn estimate_eta(
 /// The inputs of [`compute_velocity_state`].
 ///
 /// The 1.0 signature is one call with nine keyword arguments
-/// (`xp.py:277-314`); this struct carries the same nine.
+/// (`xp.py:277-314`); this struct carries the same nine, plus the config the
+/// D-F6 progress rule reads.
 #[derive(Debug, Clone, Copy)]
 pub struct VelocityInput<'a> {
     /// The topic states of the learner.
@@ -429,6 +507,8 @@ pub struct VelocityInput<'a> {
     pub zone: Tz,
     /// The length of the trailing window, in local days.
     pub window_days: i64,
+    /// The scheduler config. `mastery.confirm_inferred` picks the progress rule.
+    pub cfg: &'a Config,
 }
 
 /// Assemble the derived [`VelocityState`] of the learner model (`xp.py:277-314`).
@@ -443,7 +523,7 @@ pub fn compute_velocity_state(input: &VelocityInput<'_>) -> Result<VelocityState
     let today = local_day_in(input.t_us, input.zone)?;
     let rate = xp_per_day(input.xp_entries, input.t_us, input.zone, input.window_days)?;
     let progress = match input.course_id {
-        Some(course_id) => course_progress(input.states, input.graph, course_id),
+        Some(course_id) => course_progress(input.states, input.graph, course_id, input.cfg),
         None => 0.0,
     };
     let eta = match input.course_id {
@@ -454,6 +534,7 @@ pub fn compute_velocity_state(input: &VelocityInput<'_>) -> Result<VelocityState
             input.total_xp,
             rate,
             today,
+            input.cfg,
         ),
         None => None,
     };

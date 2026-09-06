@@ -244,6 +244,35 @@ impl Default for DrillConfig {
     }
 }
 
+/// The mastery-claim constants (D-F6). NEW IN 2.0.
+///
+/// The field is absent from the 1.0 `config.yaml`, so [`Config::hash_preimage`]
+/// skips it and the drift digest of trap T16 keeps its 1.0 value. The fold
+/// never reads this section: it gates the SELECTOR and the progress display
+/// only, and a replay of the same log always gives the same model.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MasteryConfig {
+    /// Whether the course owes each inferred topic one confirmation item.
+    ///
+    /// `true` is the D-F6 rule: course completion and the course-progress
+    /// percentage count practiced topics, and the selector serves confirmation
+    /// items. `false` restores the 1.0 rule, and the 1.0 parity fixtures run
+    /// with it.
+    pub confirm_inferred: bool,
+    /// The largest number of confirmation items one session serves.
+    pub max_per_session: usize,
+}
+
+impl Default for MasteryConfig {
+    fn default() -> Self {
+        Self {
+            confirm_inferred: true,
+            max_per_session: 2,
+        }
+    }
+}
+
 /// The error tags a grader may assign, in 1.0 order.
 ///
 /// `blank_answer` is SERVER-assigned and never model-assigned: the server stamps it
@@ -296,6 +325,9 @@ pub struct Config {
     /// The IANA time zone of the day boundary. `None` means the profile's zone, and
     /// a profile with no zone means UTC (trap T9).
     pub timezone: Option<String>,
+    /// The mastery-claim constants (D-F6). It stays OUT of the hash preimage.
+    #[serde(default, skip_serializing)]
+    pub mastery: MasteryConfig,
 }
 
 impl Default for Config {
@@ -312,6 +344,7 @@ impl Default for Config {
             drill: DrillConfig::default(),
             error_tags: default_error_tags(),
             timezone: None,
+            mastery: MasteryConfig::default(),
         }
     }
 }

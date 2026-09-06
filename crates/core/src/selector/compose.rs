@@ -219,7 +219,7 @@ pub fn compose_session(
     let mut cache = ReachCache::new(graph);
     let front = Frontier::new(states, graph, cfg, t_us, ctx.course_id, ctx.gap_fill_chain);
     let course_complete = ctx.gap_fill_chain.is_none()
-        && is_course_complete(states, graph, ctx.course_id, Some(&front.mastered));
+        && is_course_complete(states, graph, cfg, ctx.course_id, Some(&front.known));
 
     // Priority 1: the remediation queue. It is computed first so the review and
     // lesson lists can dedupe against it.

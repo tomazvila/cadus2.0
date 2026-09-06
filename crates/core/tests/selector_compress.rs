@@ -16,7 +16,7 @@ use cadus_core::config::Config;
 use cadus_core::curriculum::Curriculum;
 use cadus_core::learner::TopicState;
 use cadus_core::selector::{
-    compress, due_reviews, frontier, in_retry_delay, mastered_set, nearly_due,
+    compress, due_reviews, frontier, in_retry_delay, known_set, nearly_due,
 };
 use common::T_US;
 use common::selector::{Rng, cfg, pool_of, random_states, real_curriculum};
@@ -60,7 +60,7 @@ fn naive_compress(
     if due_set.is_empty() {
         return (Vec::new(), BTreeMap::new());
     }
-    let mastered = mastered_set(states, graph);
+    let mastered = known_set(states, graph);
     let mut free: BTreeSet<String> = frontier(graph, &mastered)
         .sorted_ids(graph)
         .into_iter()

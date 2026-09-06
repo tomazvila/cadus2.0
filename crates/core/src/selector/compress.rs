@@ -8,7 +8,7 @@ use crate::curriculum::Curriculum;
 use crate::learner::TopicState;
 
 use super::review::{in_retry_delay, nearly_due};
-use super::topic_set::{ReachCache, frontier, mastered_set};
+use super::topic_set::{ReachCache, frontier, known_set};
 
 /// The result of [`compress`] (`Compression`, `selector.py:478-497`).
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -218,7 +218,7 @@ fn free_candidates(
     let default = TopicState::default();
     let mut free: BTreeSet<String> = match frontier_candidates {
         Some(given) => given.clone(),
-        None => frontier(graph, &mastered_set(states, graph))
+        None => frontier(graph, &known_set(states, graph))
             .sorted_ids(graph)
             .into_iter()
             .filter(|id| !in_retry_delay(states.get(*id).unwrap_or(&default), cfg, t_us))

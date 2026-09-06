@@ -6,7 +6,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::event::TaskType;
 use crate::fire::{ReviewState, review_state};
 use crate::learner::TopicState;
-use crate::xp::is_mastered;
+use crate::xp::is_known;
 use crate::{config::Config, curriculum::Curriculum};
 
 use super::context::SessionContext;
@@ -132,7 +132,7 @@ impl Validity<'_> {
         let default = TopicState::default();
         let state = self.states.get(topic_id).unwrap_or(&default);
         self.ctx.frontier_topics.contains_id(self.graph, topic_id)
-            && !is_mastered(state)
+            && !is_known(state)
             && !in_retry_delay(state, self.cfg, self.t_us)
     }
 }
@@ -153,7 +153,8 @@ pub fn reserve_open_plan(
     ctx: &SessionContext<'_>,
 ) -> SessionPlan {
     let front = Frontier::new(states, graph, cfg, t_us, ctx.course_id, None);
-    let course_complete = is_course_complete(states, graph, ctx.course_id, Some(&front.mastered));
+    let course_complete =
+        is_course_complete(states, graph, cfg, ctx.course_id, Some(&front.known));
 
     let pending_targets: BTreeSet<String> = ctx
         .pending_remediation

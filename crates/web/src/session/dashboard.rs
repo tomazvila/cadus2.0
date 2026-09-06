@@ -13,7 +13,7 @@ use cadus_core::curriculum::{Curriculum, TopicIdx};
 use cadus_core::event::TopicStatus;
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::selector::{
-    course_scope, due_reviews, frontier, is_mastered, mastered_set, nearly_due, quiz_is_due,
+    course_scope, due_reviews, frontier, is_known, known_set, nearly_due, quiz_is_due,
     schedule_drills,
 };
 use cadus_store::state::{EventRow, load_events, project_current};
@@ -61,7 +61,7 @@ pub(super) fn due_counts(
 ) -> (usize, usize, usize) {
     let states = &model.topics;
     let scope = course_scope(graph, course);
-    let mastered = mastered_set(states, graph);
+    let mastered = known_set(states, graph);
     let open_frontier = frontier(graph, &mastered).intersect(&scope);
     let no_test_prep: BTreeSet<String> = BTreeSet::new();
     let due = due_reviews(states, graph, cfg, t_us, &no_test_prep);
@@ -198,7 +198,7 @@ fn graph_view<'a>(
             view.modules.push(module);
         }
         let topic_state = model.topics.get(id).unwrap_or(&default);
-        if is_mastered(topic_state) {
+        if is_known(topic_state) {
             view.mastered += 1;
         }
         view.nodes.push(json!({

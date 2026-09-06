@@ -7,7 +7,7 @@ use crate::config::Config;
 use crate::curriculum::Curriculum;
 use crate::event::TaskType;
 use crate::learner::{PendingRemediation, TopicState};
-use crate::xp::is_mastered;
+use crate::xp::is_known;
 
 use super::review::review_mix;
 use super::task::{Task, start_kp};
@@ -123,7 +123,7 @@ pub fn remediation_tasks(
             seen.insert(id.to_owned());
             let state = states.get(id).unwrap_or(&default);
             let kind = &item.kind;
-            let task = if is_mastered(state) {
+            let task = if is_known(state) {
                 Task {
                     task_type: TaskType::Review,
                     topic: Some(id.to_owned()),

@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use crate::curriculum::{Curriculum, TopicIdx};
 use crate::learner::TopicState;
-use crate::xp::is_mastered;
+use crate::xp::{is_known, is_practiced};
 
 /// A set of curriculum topics, held as one bit per arena index (D1).
 ///
@@ -140,15 +140,33 @@ pub(super) fn every_index(graph: &Curriculum) -> impl Iterator<Item = TopicIdx> 
     (0..graph.topic_count()).filter_map(|index| u32::try_from(index).ok().map(TopicIdx::from_u32))
 }
 
-/// The topics currently mastered for frontier purposes
+/// The topics the scheduler treats as known, for frontier purposes
 /// (`mastered_set`, `selector.py:157-160`).
 ///
-/// A topic absent from `states` is untouched, so it is not mastered.
+/// D-F6 renamed the 1.0 `mastered_set`: the set holds every placed and every
+/// floor topic beside the practiced ones, so "mastered" overstated it.
+///
+/// A topic absent from `states` is untouched, so it is not known.
 #[must_use]
-pub fn mastered_set(states: &BTreeMap<String, TopicState>, graph: &Curriculum) -> TopicSet {
+pub fn known_set(states: &BTreeMap<String, TopicState>, graph: &Curriculum) -> TopicSet {
     let mut out = TopicSet::empty(graph);
     for (id, state) in states {
-        if is_mastered(state) {
+        if is_known(state) {
+            out.insert_id(graph, id);
+        }
+    }
+    out
+}
+
+/// The topics the learner practiced (D-F6).
+///
+/// Course completion reads this set, so an inferred topic never completes a
+/// course on its own. A topic absent from `states` is untouched.
+#[must_use]
+pub fn practiced_set(states: &BTreeMap<String, TopicState>, graph: &Curriculum) -> TopicSet {
+    let mut out = TopicSet::empty(graph);
+    for (id, state) in states {
+        if is_practiced(state) {
             out.insert_id(graph, id);
         }
     }
@@ -245,7 +263,7 @@ mod tests {
         assert_eq!(scope.intersect(&set).sorted_ids(&tree), ["a"]);
         assert_eq!(course_scope(&tree, None).sorted_ids(&tree).len(), 2);
         let states = [("a".to_owned(), learned(0.5))].into_iter().collect();
-        let mastered = mastered_set(&states, &tree);
+        let mastered = known_set(&states, &tree);
         assert_eq!(frontier(&tree, &mastered).sorted_ids(&tree), ["b"]);
         let mut cache = ReachCache::new(&tree);
         assert_eq!(cache.weight("b", "a"), 0.9);

@@ -8,7 +8,7 @@ use crate::curriculum::Curriculum;
 use crate::event::{EventError, KpProgress, Slug, TaskType, Timestamp};
 use crate::learner::{PendingRemediation, TopicState};
 use crate::numeric::round_half_even_i64_saturating;
-use crate::xp::is_mastered;
+use crate::xp::is_known;
 
 use super::quiz::{QuizPlan, i64_as_float, quiz_difficulty_target};
 use super::review::review_mix;
@@ -293,7 +293,7 @@ pub fn schedule_drills(
         let Some(state) = states.get(id) else {
             continue;
         };
-        if !is_mastered(state) || state.ability >= DRILL_MASTERY_ABILITY {
+        if !is_known(state) || state.ability >= DRILL_MASTERY_ABILITY {
             continue;
         }
         if let Some(last) = last_drill_at.and_then(|map| map.get(id).copied())

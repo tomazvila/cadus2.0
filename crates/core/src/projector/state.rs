@@ -250,6 +250,7 @@ impl Projector<'_> {
             t_us: t_ref,
             zone: self.zone,
             window_days: VELOCITY_WINDOW_DAYS,
+            cfg: self.cfg,
         };
         compute_velocity_state(&input).map_err(ProjectorError::Time)
     }

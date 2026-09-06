@@ -45,7 +45,7 @@ pub async fn session_plan(req: Ready) -> Reply {
         .iter()
         .map(|task| trim_task(task, graph, &scratch))
         .collect();
-    let complete = is_course_complete(&model.topics, graph, course, None);
+    let complete = is_course_complete(&model.topics, graph, &req.content.cfg, course, None);
 
     let body = json!({
         "session": plan.session,
