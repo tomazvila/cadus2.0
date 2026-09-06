@@ -1053,14 +1053,22 @@ topics:
         name: "Substitute an isolated expression"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: 'Solve the system $y = 2x$, $x + y = 9$.'
+          - problem: "Solve by substitution: $y=2x$ and $x+y=18$. Give $(x,y)$."
+            answer: "(6, 12)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Replace $y$ by $2x$: $3x=18$. Then double $x$ to recover $y$. Check: $(12)=2(6)$ and $(6)+(12)=18$."
+          - problem: "Solve by substitution: $y=x+3$ and $2x+y=12$. Give $(x,y)$."
             answer: "(3, 6)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x + 2x = 9$; $x = 3$; $y = 6$.'
-          - problem: 'Solve the system $y = x + 1$, $2x + y = 7$.'
-            answer: "(2, 3)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$2x + x + 1 = 7$; $3x = 6$; $x = 2$; $y = 3$.'
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Substitute into the second equation: $3x+3=12$, so $x=3$ and $y=x+3$. Check: $(6)=(3)+3$ and $2(3)+(6)=12$."
+          - problem: "Solve by substitution: $x=2y-1$ and $x+3y=14$. Give $(x,y)$."
+            answer: "(5, 3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Use the isolated $x$: $2y-1+3y=14$, hence $5y=15$. Recover $x$ from $2y-1$. Check: $(5)=2(3)-1$ and $(5)+3(3)=14$."
+          - problem: "Solve by substitution: $y=9-2x$ and $3x-y=11$. Give $(x,y)$."
+            answer: "(4, 1)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Substitution gives $3x-(9-2x)=11$. Collect terms to get $5x=20$; then find $y$ from $9-2x$. Check: $(1)=9-2(4)$ and $3(4)-(1)=11$."
         constraints: "one equation already solved for a variable; integer solutions"
       - id: kp2
         name: "Equal-values method"
@@ -1087,14 +1095,22 @@ topics:
         name: "Back-substitute and check"
         key_prerequisites: [checking-systems-solutions]
         exemplars:
-          - problem: 'Solve the system $y = x - 2$, $x + 2y = 11$ and check your answer.'
+          - problem: "Solve, back-substitute, and check both equations: $y=x-3$ and $x+2y=15$. Give $(x,y)$."
+            answer: "(7, 4)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Substitution gives $x+2(x-3)=15$, hence $3x=21$. Recover $y=x-3$. Check: $(4)=(7)-3$ and $(7)+2(4)=15$."
+          - problem: "Solve, back-substitute, and check both equations: $x=3y$ and $2x-y=20$. Give $(x,y)$."
+            answer: "(12, 4)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Substitute $3y$ for $x$: $6y-y=20$, so $y=4$. Recover $x=3y$. Check: $(12)=3(4)$ and $2(12)-(4)=20$."
+          - problem: "Solve, back-substitute, and check both equations: $y=8-x$ and $2x-3y=1$. Give $(x,y)$."
             answer: "(5, 3)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x + 2(x - 2) = 11$; $3x = 15$; $x = 5$; $y = 3$; check $5 + 6 = 11$.'
-          - problem: 'Solve the system $y = 4x$, $x + y = 15$.'
-            answer: "(3, 12)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$5x = 15$; $x = 3$; $y = 12$.'
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Use $2x-3(8-x)=1$: $5x=25$. Recover $y=8-x$. Check: $(3)=8-(5)$ and $2(5)-3(3)=1$."
+          - problem: "Solve, back-substitute, and check both equations: $x=2y+5$ and $3x+y=8$. Give $(x,y)$."
+            answer: "(3, -1)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Use $3(2y+5)+y=8$: $7y=-7$. Recover $x=2y+5$. Check: $(3)=2(-1)+5$ and $3(3)+(-1)=8$."
         constraints: "verify the pair in the equation not used for back-substitution"
     diagnostic_exemplar:
       problem: 'Solve the system $y = 3x$ and $x + y = 12$.'
@@ -1126,40 +1142,64 @@ topics:
         name: "Isolate a variable, then substitute"
         key_prerequisites: [substitution-with-isolated-variable]
         exemplars:
-          - problem: 'Solve the system $2x + y = 5$, $3x - y = 5$.'
-            answer: "(2, 1)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$y = 5 - 2x$; $3x - (5 - 2x) = 5$; $5x = 10$; $x = 2$; $y = 1$.'
-          - problem: 'Solve the system $x + 2y = 11$, $x = y + 2$.'
-            answer: "(5, 3)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$(y + 2) + 2y = 11$; $3y = 9$; $y = 3$; $x = 5$.'
+          - problem: "Solve by substitution: $x+2y=16$ and $3x+y=18$. Give $(x,y)$."
+            answer: "(4, 6)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Isolate $x=16-2y$. Then $3(16-2y)+y=18$ gives $5y=30$; recover $x$. Check: $(4)+2(6)=16$ and $3(4)+(6)=18$."
+          - problem: "Solve by substitution: $2x-y=1$ and $x+3y=11$. Give $(x,y)$."
+            answer: "(2, 3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Isolate $y=2x-1$. Then $x+3(2x-1)=11$ gives $7x=14$; recover $y$. Check: $2(2)-(3)=1$ and $(2)+3(3)=11$."
+          - problem: "Solve by substitution: $3x+y=2$ and $x-2y=10$. Give $(x,y)$."
+            answer: "(2, -4)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Isolate $y=2-3x$. Then $x-2(2-3x)=10$ gives $7x=14$; recover $y$. Check: $3(2)+(-4)=2$ and $(2)-2(-4)=10$."
+          - problem: "Solve by substitution: $x-3y=9$ and $2x+5y=7$. Give $(x,y)$."
+            answer: "(6, -1)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Isolate $x=9+3y$. Then $2(9+3y)+5y=7$ gives $11y=-11$; recover $x$. Check: $(6)-3(-1)=9$ and $2(6)+5(-1)=7$."
         constraints: "solve for the variable with coefficient 1; integer solutions"
       - id: kp2
         name: "Substitution with distribution"
         key_prerequisites: [distributive-property]
         exemplars:
-          - problem: 'Solve the system $x = 2y + 1$, $3x - 4y = 7$.'
-            answer: "(5, 2)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$3(2y + 1) - 4y = 7$; $2y + 3 = 7$; $y = 2$; $x = 5$.'
-          - problem: 'Solve the system $y = 2x - 3$, $4x - 3y = 5$.'
-            answer: "(2, 1)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$4x - 3(2x - 3) = 5$; $-2x + 9 = 5$; $x = 2$; $y = 1$.'
+          - problem: "Solve by substitution: $x=2y+3$ and $3x-4y=19$. Give $(x,y)$."
+            answer: "(13, 5)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Distribute after substitution: $3(2y+3)-4y=19$ becomes $2y+9=19$. Solve for $y$, then recover $x$. Check: $(13)=2(5)+3$ and $3(13)-4(5)=19$."
+          - problem: "Solve by substitution: $y=3x-2$ and $5x-2y=0$. Give $(x,y)$."
+            answer: "(4, 10)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Substitute and distribute the negative: $5x-2(3x-2)=0$, hence $-x+4=0$. Recover $y$. Check: $(10)=3(4)-2$ and $5(4)-2(10)=0$."
+          - problem: "Solve by substitution: $x=7-2y$ and $4x+3y=13$. Give $(x,y)$."
+            answer: "(1, 3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Expand $4(7-2y)+3y=13$ to $28-5y=13$. Recover $x$ after finding $y$. Check: $(1)=7-2(3)$ and $4(1)+3(3)=13$."
+          - problem: "Solve by substitution: $y=-2(x-1)$ and $3x+2y=9$. Give $(x,y)$."
+            answer: "(-5, 12)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Substitute the grouped expression: $3x-4(x-1)=9$ gives $-x+4=9$. Evaluate $-2(x-1)$ for $y$. Check: $(12)=-2((-5)-1)$ and $3(-5)+2(12)=9$."
         constraints: "distribute a coefficient over the substituted expression"
       - id: kp3
         name: "Careful sign handling"
         key_prerequisites: [substitution-with-isolated-variable]
         exemplars:
-          - problem: 'Solve the system $x + y = 10$, $x - y = 4$.'
-            answer: "(7, 3)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x = 10 - y$; $(10 - y) - y = 4$; $y = 3$; $x = 7$.'
-          - problem: 'Solve the system $x - 2y = 1$, $2x + y = 12$.'
-            answer: "(5, 2)"
-            answer_contract: {kind: exact}
-            solution_sketch: '$x = 1 + 2y$; $2(1 + 2y) + y = 12$; $5y = 10$; $y = 2$; $x = 5$.'
+          - problem: "Solve by substitution: $x+y=3$ and $2x-y=12$. Give $(x,y)$."
+            answer: "(5, -2)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Use $y=3-x$: $2x-(3-x)=12$, so $3x=15$. The minus before the parentheses changes both signs. Check: $(5)+(-2)=3$ and $2(5)-(-2)=12$."
+          - problem: "Solve by substitution: $x-2y=-8$ and $3x+y=-3$. Give $(x,y)$."
+            answer: "(-2, 3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Use $x=2y-8$: $3(2y-8)+y=-3$, hence $7y=21$. Recover $x$ including its negative sign. Check: $(-2)-2(3)=-8$ and $3(-2)+(3)=-3$."
+          - problem: "Solve by substitution: $2x+y=-4$ and $x-3y=5$. Give $(x,y)$."
+            answer: "(-1, -2)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Use $y=-4-2x$: $x-3(-4-2x)=5$, so $7x=-7$. Recover $y$. Check: $2(-1)+(-2)=-4$ and $(-1)-3(-2)=5$."
+          - problem: "Solve by substitution: $x+y=-7$ and $-2x+y=2$. Give $(x,y)$."
+            answer: "(-3, -4)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Use $x=-7-y$: $-2(-7-y)+y=2$, so $3y=-12$. Recover $x$. Check: $(-3)+(-4)=-7$ and $-2(-3)+(-4)=2$."
         constraints: "subtraction of substituted expressions; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve the system by substitution: $x + 3y = 13$ and $2x - y = 5$.'
@@ -1191,40 +1231,64 @@ topics:
         name: "Add when coefficients are opposites"
         key_prerequisites: [integer-addition-subtraction]
         exemplars:
-          - problem: 'Solve the system $x + y = 7$, $x - y = 3$.'
-            answer: "(5, 2)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Add: $2x = 10$; $x = 5$; $y = 2$.'
-          - problem: 'Solve the system $2x + y = 8$, $3x - y = 7$.'
-            answer: "(3, 2)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Add: $5x = 15$; $x = 3$; $y = 2$.'
+          - problem: "Solve by elimination: $2x+y=17$ and $3x-y=13$. Give $(x,y)$."
+            answer: "(6, 5)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Add the equations to cancel $y$: $5x=30$. Subtract $2x$ from $17$ to recover $y$. Check: $2(6)+(5)=17$ and $3(6)-(5)=13$."
+          - problem: "Solve by elimination: $x+3y=13$ and $-x+2y=2$. Give $(x,y)$."
+            answer: "(4, 3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Add to cancel $x$: $5y=15$. Use $x=13-3y$. Check: $(4)+3(3)=13$ and $-(4)+2(3)=2$."
+          - problem: "Solve by elimination: $3x-2y=16$ and $x+2y=0$. Give $(x,y)$."
+            answer: "(4, -2)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Add to cancel $y$: $4x=16$. Use $2y=-x$. Check: $3(4)-2(-2)=16$ and $(4)+2(-2)=0$."
+          - problem: "Solve by elimination: $-2x-y=1$ and $2x+4y=8$. Give $(x,y)$."
+            answer: "(-2, 3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Add to cancel $x$: $3y=9$. Use $-2x=1+y$. Check: $-2(-2)-(3)=1$ and $2(-2)+4(3)=8$."
         constraints: "coefficients already opposite; integer solutions"
       - id: kp2
         name: "Subtract when coefficients are equal"
         key_prerequisites: [integer-addition-subtraction]
         exemplars:
-          - problem: 'Solve the system $x + 2y = 7$, $x + y = 4$.'
-            answer: "(1, 3)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Subtract: $y = 3$; then $x = 1$.'
-          - problem: 'Solve the system $3x + y = 11$, $x + y = 5$.'
-            answer: "(3, 2)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Subtract: $2x = 6$; $x = 3$; $y = 2$.'
+          - problem: "Solve by elimination: $x+3y=19$ and $x+y=9$. Give $(x,y)$."
+            answer: "(4, 5)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Subtract the second equation from the first: $2y=10$. Use $x=9-y$. Check: $(4)+3(5)=19$ and $(4)+(5)=9$."
+          - problem: "Solve by elimination: $4x+y=15$ and $x+y=6$. Give $(x,y)$."
+            answer: "(3, 3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Subtract to cancel $y$: $3x=9$. Use $y=6-x$. Check: $4(3)+(3)=15$ and $(3)+(3)=6$."
+          - problem: "Solve by elimination: $2x-3y=17$ and $2x+y=5$. Give $(x,y)$."
+            answer: "(4, -3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Subtract the second from the first: $-4y=12$. Use $2x=5-y$. Check: $2(4)-3(-3)=17$ and $2(4)+(-3)=5$."
+          - problem: "Solve by elimination: $-x+2y=4$ and $3x+2y=12$. Give $(x,y)$."
+            answer: "(2, 3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Subtract the first from the second: $4x=8$. Use $2y=4+x$. Check: $-(2)+2(3)=4$ and $3(2)+2(3)=12$."
         constraints: "matching coefficients; subtract carefully"
       - id: kp3
         name: "Back-substitute and verify"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: 'Solve the system $2x + y = 10$, $x - y = 2$ and check.'
-            answer: "(4, 2)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Add: $3x = 12$; $x = 4$; $y = 2$; check $8 + 2 = 10$ and $4 - 2 = 2$.'
-          - problem: 'Solve the system $x + y = 6$, $x - y = 8$.'
+          - problem: "Solve by elimination: $2x+y=13$ and $x-y=8$. Give $(x,y)$."
             answer: "(7, -1)"
-            answer_contract: {kind: exact}
-            solution_sketch: 'Add: $2x = 14$; $x = 7$; $y = -1$.'
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Add to get $3x=21$. Back-substitute with $y=x-8$ and verify each original equation. Check: $2(7)+(-1)=13$ and $(7)-(-1)=8$."
+          - problem: "Solve by elimination: $x+2y=-1$ and $-x+3y=16$. Give $(x,y)$."
+            answer: "(-7, 3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Add to get $5y=15$. Back-substitute with $x=-1-2y$ and verify both equations. Check: $(-7)+2(3)=-1$ and $-(-7)+3(3)=16$."
+          - problem: "Solve by elimination: $3x-2y=4$ and $x+2y=-12$. Give $(x,y)$."
+            answer: "(-2, -5)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Add to get $4x=-8$. Back-substitute with $2y=-12-x$ and check both equations. Check: $3(-2)-2(-5)=4$ and $(-2)+2(-5)=-12$."
+          - problem: "Solve by elimination: $-2x+y=-11$ and $2x+2y=2$. Give $(x,y)$."
+            answer: "(4, -3)"
+            answer_contract: {kind: coordinates, arity: 2}
+            solution_sketch: "Add to get $3y=-9$. Back-substitute with $2x=2-2y$ and verify both equations. Check: $-2(4)+(-3)=-11$ and $2(4)+2(-3)=2$."
         constraints: "solutions may include negatives; verify in both equations"
     diagnostic_exemplar:
       problem: 'Solve by elimination: $3x + y = 5$ and $x + y = 7$.'
