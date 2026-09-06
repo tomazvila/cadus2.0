@@ -245,5 +245,7 @@ mod cov_tests {
             refuse_entropy_after(None);
             assert!(result.is_err(), "draw {draws} did not refuse");
         }
+        let fresh = Handshake::fresh("google", "/next").expect("the kernel gives entropy");
+        assert_eq!(fresh.next_url, "/next");
     }
 }

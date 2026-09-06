@@ -336,6 +336,17 @@ mod tests {
         assert_eq!(config.enabled_names(), vec![GOOGLE]);
     }
 
+    /// A client id with no secret, and a secret with no id, are no provider.
+    #[test]
+    fn half_a_credential_pair_is_no_provider() {
+        let id_only =
+            OAuthConfig::from_env(|name| (name == GOOGLE_ID_VAR).then(|| "id".to_string()));
+        assert!(id_only.google.is_none());
+        let secret_only =
+            OAuthConfig::from_env(|name| (name == GOOGLE_SECRET_VAR).then(|| "secret".to_string()));
+        assert!(secret_only.google.is_none());
+    }
+
     /// The stub transport answers every request with its error, and the error
     /// names the request URL.
     #[tokio::test]

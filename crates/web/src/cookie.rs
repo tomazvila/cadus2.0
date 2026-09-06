@@ -221,6 +221,58 @@ mod tests {
         );
     }
 
+    /// The host-prefix error names the cookie and the knob.
+    #[test]
+    fn the_host_prefix_error_names_the_cookie_and_the_knob() {
+        let text = CookiePostureError::HostPrefixWithoutSecure {
+            name: "__Host-cadus_session",
+        }
+        .to_string();
+        assert!(text.contains("__Host-cadus_session cookie needs Secure"));
+        assert!(text.contains(INSECURE_COOKIE_VAR));
+    }
+
+    /// The knob reads absent, empty, `0`, and `1`, and refuses any other value.
+    #[test]
+    fn the_knob_reads_its_four_values_and_refuses_the_rest() {
+        use std::ffi::OsString;
+
+        let cases: [(Option<&str>, Result<CookiePosture, CookiePostureError>); 5] = [
+            (None, Ok(CookiePosture::SECURE)),
+            (Some(""), Ok(CookiePosture::SECURE)),
+            (Some(" 0 "), Ok(CookiePosture::SECURE)),
+            (Some("1"), Ok(CookiePosture::INSECURE)),
+            (
+                Some("yes"),
+                Err(CookiePostureError::BadFlag {
+                    value: Some("yes".to_string()),
+                }),
+            ),
+        ];
+        for (raw, expected) in cases {
+            let read = CookiePosture::from_env(raw.map(OsString::from));
+            assert_eq!(read, expected, "{raw:?}");
+        }
+    }
+
+    /// The bearer reader refuses a short value, another scheme, and an empty
+    /// token, and reads the token behind the scheme.
+    #[test]
+    fn the_bearer_reader_refuses_the_three_bad_shapes_and_reads_the_token() {
+        use axum::http::{HeaderMap, HeaderValue};
+
+        for (value, expected) in [
+            ("Bear", None),
+            ("Basic abcdefgh", None),
+            ("Bearer    ", None),
+            ("bearer  tok-1 ", Some("tok-1")),
+        ] {
+            let mut headers = HeaderMap::new();
+            headers.insert("authorization", HeaderValue::from_static(value));
+            assert_eq!(read_bearer_token(&headers), expected, "{value:?}");
+        }
+    }
+
     /// The one knob expands into the correlated posture pair.
     #[test]
     fn the_flag_expands_into_the_posture_pair() {

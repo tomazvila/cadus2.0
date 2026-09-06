@@ -422,3 +422,30 @@ pub async fn fail_reads_after(db: &TestDb, table: &str, needle: &str, passes: i6
     )
     .await;
 }
+
+/// Make the account lookup by address find no row on its first call and fail
+/// on every call after it. The first miss sends a sign-up into the insert,
+/// which then reports the address taken; the read-back after that fails.
+pub async fn fail_user_by_email_after_a_miss(db: &TestDb) {
+    run(
+        db,
+        "CREATE OR REPLACE FUNCTION test_fault_row() RETURNS boolean \
+         LANGUAGE plpgsql STABLE AS $$ BEGIN \
+         RAISE EXCEPTION 'injected fault: row'; END $$"
+            .to_string(),
+    )
+    .await;
+    run(
+        db,
+        "CREATE SEQUENCE IF NOT EXISTS test_hide_calls".to_string(),
+    )
+    .await;
+    replace_user_lookup(
+        db,
+        "auth_user_by_email",
+        "p_email citext",
+        "u.email = p_email AND CASE WHEN nextval('test_hide_calls') > 1 THEN test_fault_row() \
+         ELSE false END",
+    )
+    .await;
+}

@@ -108,7 +108,7 @@ async fn run() -> Result<(), Fatal> {
     // Install the stop signals before the connect. The handlers exist from this
     // point, so a SIGTERM during the connect gives exit code 0 instead of a kill
     // by signal (finding #39).
-    let mut shutdown = Shutdown::install()?;
+    let mut shutdown = Shutdown::install().map_err(Fatal::startup)?;
     let Some(db) = connect_guarded(&settings.cfg, &mut shutdown).await? else {
         return Ok(());
     };
@@ -201,12 +201,18 @@ fn spawn_listener(hub: &Arc<DiagnosisHub>, db: &Db) -> JoinHandle<()> {
     let hub = Arc::clone(hub);
     let db = db.clone();
     tokio::spawn(async move {
-        if let Err(err) = hub.listen(&db).await {
-            tracing::error!(
-                error = %err,
-                "cadus-web: the diagnosis listener stopped; clients fall back to polling"
-            );
-        }
+        // The listener returns only when its connection ends, so its answer is
+        // always the reason it stopped.
+        let reason = hub
+            .listen(&db)
+            .await
+            .err()
+            .map(|err| err.to_string())
+            .unwrap_or_default();
+        tracing::error!(
+            error = %reason,
+            "cadus-web: the diagnosis listener stopped; clients fall back to polling"
+        );
     })
 }
 

@@ -185,14 +185,16 @@ async fn a_state_write_that_fails_is_500_on_the_serve() {
     .await;
 }
 
-/// Without a curriculum the hint and the teach are `503 curriculum_unavailable`.
+/// Without a curriculum the serve, the hint, and the teach are
+/// `503 curriculum_unavailable`.
 #[tokio::test]
-async fn the_hint_and_the_teach_without_content_are_503() {
+async fn the_serve_the_hint_and_the_teach_without_content_are_503() {
     TestDb::with(|db| async move {
         let app = app_without_content(&db);
         let user = learner(&db, "no-content-hint@example.com").await;
 
         for reply in [
+            serve_task(&app, user, LESSON).await,
             hint_task(&app, user, LESSON, "p1").await,
             teach_task(&app, user, LESSON).await,
         ] {

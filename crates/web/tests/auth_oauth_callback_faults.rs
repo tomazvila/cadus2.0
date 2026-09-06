@@ -115,3 +115,16 @@ async fn an_address_lookup_that_fails_is_500_on_the_callback() {
     })
     .await;
 }
+
+/// The address of a first federated sign-in is taken between the read and the
+/// insert, and the read-back then fails: the callback is `500`.
+#[tokio::test]
+async fn a_sign_up_race_whose_read_back_fails_is_500_on_the_callback() {
+    TestDb::with(|db| async move {
+        db.seed_user("learner@example.com").await;
+        let app = google_app(&db, Arc::new(google_verified()));
+        fail_user_by_email_after_a_miss(&db).await;
+        assert_callback_internal(&app).await;
+    })
+    .await;
+}

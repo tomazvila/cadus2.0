@@ -337,6 +337,17 @@ mod tests {
     /// An absent admin DSN is no admin path; an empty one and a not-Unicode one
     /// are start errors.
     #[test]
+    fn the_admin_dsn_reads_the_present_value() {
+        assert_eq!(
+            admin_dsn_from(Ok("postgresql://admin@db/cadus".to_string()))
+                .ok()
+                .unwrap()
+                .as_deref(),
+            Some("postgresql://admin@db/cadus")
+        );
+    }
+
+    #[test]
     fn the_admin_dsn_reads_the_three_no_database_branches() {
         assert!(
             admin_dsn_from(Err(std::env::VarError::NotPresent))

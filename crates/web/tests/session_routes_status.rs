@@ -247,14 +247,15 @@ async fn modules_lists_the_enrolled_course_modules() {
 // The dashboard of a learner with no session, and the review that is nearly due
 // --------------------------------------------------------------------------- //
 
-/// A learner with no open session and a model whose one topic is untouched is
-/// not placed, and the dashboard reads no session window.
+/// A model whose one topic is untouched is not placed: the placement check
+/// reads its false arm on a cached model.
 #[tokio::test]
-async fn status_without_a_session_reads_an_untouched_model_as_not_placed() {
+async fn status_reads_an_untouched_model_as_not_placed() {
     TestDb::with(|db| async move {
         let user = common::seed_learner(&db, "untouched@example.com").await;
         let app = app(&db);
-        seed_one_topic(&db, user, "addition", TopicState::default(), 0).await;
+        seed_open_session(&db, user).await;
+        seed_one_topic(&db, user, "addition", TopicState::default(), 1).await;
 
         let value = get_json(&app, user, "/api/status").await;
         assert_eq!(value["placed"], false);

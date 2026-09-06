@@ -4,8 +4,6 @@
 use std::future::Future;
 use std::time::Duration;
 
-use super::Fatal;
-
 /// The least time the pool close gets after the drain.
 ///
 /// A drain that spends the whole budget leaves nothing for the close. This
@@ -62,14 +60,17 @@ pub(super) struct Shutdown {
 impl Shutdown {
     /// Register the handlers for `SIGTERM` and `SIGINT`.
     #[cfg(unix)]
-    pub fn install() -> Result<Self, Fatal> {
+    ///
+    /// # Errors
+    ///
+    /// Returns the error of the operating system when a handler does not
+    /// register; the caller turns it into a start error.
+    pub fn install() -> std::io::Result<Self> {
         use tokio::signal::unix::{SignalKind, signal};
 
-        let handlers = signal(SignalKind::terminate()).and_then(|terminate| {
+        let (terminate, interrupt) = signal(SignalKind::terminate()).and_then(|terminate| {
             signal(SignalKind::interrupt()).map(|interrupt| (terminate, interrupt))
-        });
-        let (terminate, interrupt) =
-            handlers.map_err(|err| Fatal::Startup(format!("the signal handlers failed: {err}")))?;
+        })?;
         Ok(Self {
             terminate,
             interrupt,
@@ -78,7 +79,7 @@ impl Shutdown {
 
     /// A platform without unix signals has nothing to register here.
     #[cfg(not(unix))]
-    pub fn install() -> Result<Self, Fatal> {
+    pub fn install() -> std::io::Result<Self> {
         Ok(Self {})
     }
 
