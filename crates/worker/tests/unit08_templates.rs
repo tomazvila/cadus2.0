@@ -47,20 +47,20 @@ fn spec(key: &str) -> AuthoringSpec {
 #[test]
 fn all_pending_templates_exhaust_the_real_gate_and_avoid_authored_and_sibling_problems() {
     let rows = drafts();
-    assert_eq!(rows.len(), 68);
+    assert_eq!(rows.len(), 76);
     let output = root().join("target/unit08/regression");
     std::fs::create_dir_all(&output).unwrap();
     let input = output.join("drafts.json");
     std::fs::write(&input, serde_json::to_string(&rows).unwrap()).unwrap();
     let report = verify::run(&input, &output);
-    assert_eq!(report["passed"], 68, "{report}");
+    assert_eq!(report["passed"], 76, "{report}");
     let mut instances = 0;
     for row in report["rows"].as_array().unwrap() {
         assert_eq!(row["evidence"]["exhaustive"], true);
         assert_eq!(row["evidence"]["distinct_instances"], 12);
         instances += row["evidence"]["instances_checked"].as_u64().unwrap();
     }
-    assert_eq!(instances, 816);
+    assert_eq!(instances, 912);
 }
 
 #[test]
@@ -86,4 +86,29 @@ fn wrong_samples_small_spaces_and_wrong_contracts_are_rejected() {
         item.answer_contract = Some(cadus_core::answer::AnswerContract::ReducedRatio);
     }
     assert!(verify_kind(Kind::Template, &label_spec, &row["arguments"], &[]).is_err());
+}
+
+#[test]
+fn label_templates_reject_wrong_samples_and_hidden_answer_bindings() {
+    let row = drafts()
+        .into_iter()
+        .find(|r| r["kp_id"] == "exponential-functions/kp1")
+        .unwrap();
+    let spec = spec("exponential-functions/kp1");
+    let mut wrong = row["arguments"].clone();
+    wrong["samples"][0]["expected"] = json!("decay");
+    assert_eq!(
+        verify_kind(Kind::Template, &spec, &wrong, &[])
+            .unwrap_err()
+            .code,
+        "sample-agreement"
+    );
+    let mut hidden = row["arguments"].clone();
+    hidden["statement"] = json!("Does $f(x)=3\\cdot({a})^x$ model growth or decay?");
+    assert_eq!(
+        verify_kind(Kind::Template, &spec, &hidden, &[])
+            .unwrap_err()
+            .code,
+        "hidden-parameter"
+    );
 }
