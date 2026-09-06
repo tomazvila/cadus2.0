@@ -76,6 +76,8 @@ def main():
     repairs.update(structured_replacements())
     from residual_cubes import replacements as cube_replacements
     repairs.update(cube_replacements())
+    from residual_parameters import replacements as parameter_replacements
+    repairs.update(parameter_replacements())
     ROWS[:] = [repairs.get(row["kp_id"], row) for row in ROWS]
     keys = [row["kp_id"] for row in ROWS]
     assert len(set(keys)) == len(keys)

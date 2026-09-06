@@ -83,12 +83,12 @@ fn negative_controls_preserve_the_rejected_legacy_samples() {
 }
 
 #[test]
-fn unsupported_three_part_multipart_remains_blocked() {
-    let blockers = rows("docs/reports/unit07-schema-blockers.json");
-    let row = blockers
+fn coefficient_tuple_preserves_all_three_formula_coefficients() {
+    let pending = rows("docs/content-foundations/unit07/templates.json");
+    let row = pending
         .iter()
         .find(|row| row["kp_id"] == "applying-the-quadratic-formula/kp1")
         .unwrap();
-    assert_eq!(row["code"], "grammar");
-    assert!(row["message"].as_str().unwrap().contains("wrong count"));
+    assert_eq!(row["arguments"]["answer_expr"], "(a,-b,c)");
+    assert!(row["arguments"]["samples"].as_array().unwrap().len() >= 12);
 }

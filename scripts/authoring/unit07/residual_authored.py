@@ -81,6 +81,7 @@ def fields(node):
 
 
 def apply():
+    from parameter_authored import updates as parameter_updates
     source = PATH.read_text()
     tree = fields(yaml.compose(source))
     changes = []
@@ -93,6 +94,8 @@ def apply():
                 updates = dict(EDITS.get((key, index), {}))
                 if key in SKETCHES:
                     updates["solution_sketch"] = SKETCHES[key][index]
+                existing = {name: node.value for name, node in fields(exemplar).items()}
+                updates.update(parameter_updates(key, index, existing))
                 for name, value in updates.items():
                     node = fields(exemplar)[name]
                     changes.append((node.start_mark.index, node.end_mark.index, json.dumps(value)))

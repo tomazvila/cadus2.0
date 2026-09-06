@@ -5,14 +5,41 @@ from pathlib import Path
 import sympy as s
 
 from check_math import expr
-from check_residual_math import REPAIRED, validate
+from check_residual_math import REPAIRED
+from check_parameter_math import coefficient_polynomial
+from check_residual_structured import named
 
 ROOT = Path(__file__).resolve().parents[3]
 FACTORING = ("factoring-", "difference-of-squares/", "perfect-square-trinomials/",
              "sum-difference-of-cubes/", "quadratics-in-form/", "choosing-factoring-strategy/")
 
 
+def parameter_signature(key, item):
+    if key.startswith("writing-quadratics-from-roots/") or key == "applying-the-quadratic-formula/kp1":
+        if not item["answer"].startswith("("):
+            return None
+        poly = coefficient_polynomial(item["answer"])
+        task = "root-equation" if key.startswith("writing-") else key
+        return (task, s.srepr(s.expand(poly)))
+    if key.startswith("converting-to-vertex-form/"):
+        if "vertex_parameters" in item["answer"]:
+            a, h, k = named(item["answer"])["vertex_parameters"]
+        elif key.endswith("kp1"):
+            h, k = expr(item["answer"])
+            a = 1
+        else:
+            a, h, k = expr(item["answer"])
+        return ("vertex-conversion", s.srepr(s.expand(a*(s.Symbol("x")-h)**2+k)))
+    if key == "completing-the-square/kp1":
+        values = named(item["answer"])
+        return (key, str(2*values["shift"]))
+    return None
+
+
 def signature(key, item):
+    parameter = parameter_signature(key, item)
+    if parameter:
+        return parameter
     if key.startswith(FACTORING):
         try:
             value = expr(item["answer"])

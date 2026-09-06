@@ -8,6 +8,7 @@ import sympy as s
 
 from check_math import equal, expr
 import check_residual_structured as structured
+import check_parameter_math as parameters
 
 ROOT = Path(__file__).resolve().parents[3]
 X = s.Symbol("x")
@@ -20,7 +21,7 @@ REPAIRED = {
     "sum-difference-of-cubes/kp3",
 }
 
-REPAIRED |= structured.KEYS
+REPAIRED |= structured.KEYS | parameters.KEYS
 
 
 def factors(tree):
@@ -32,6 +33,8 @@ def factors(tree):
 
 
 def validate(key, item):
+    if key in parameters.KEYS:
+        return (parameters.validate(key, item), item["answer"])
     if key in structured.KEYS:
         family = structured.validate(key, item)
         return (family, item["answer"])
@@ -70,7 +73,9 @@ def negative_controls(rows):
         if row["kp_id"] not in REPAIRED:
             continue
         bad = copy.deepcopy(row["instances"][0])
-        if row["kp_id"] in structured.KEYS:
+        if row["kp_id"] in parameters.KEYS:
+            bad = parameters.negative(bad)
+        elif row["kp_id"] in structured.KEYS:
             bad = structured.negative(bad)
         elif row["kp_id"] == "quadratic-formula/kp3":
             bad["answer"] = "0"
