@@ -72,9 +72,14 @@ class Unit06CorrectionTest(unittest.TestCase):
             elif row["kp_id"] == "perfect-square-roots/kp2":
                 self.assertTrue(all(a <= 144 and math.isqrt(a)**2 == a for a in values))
             elif row["kp_id"] == "cube-roots/kp1":
-                self.assertEqual(values, [n**3 for n in range(1, 11)])
+                self.assertEqual(values, [n**3 for n in range(1, 13)])
             elif row["kp_id"].startswith("scientific-notation"):
                 self.assertTrue(all(1 <= Fraction(a) < 10 for a in values))
+
+    def test_square_root_comparisons_exercise_both_orderings(self):
+        row = next(r for r in generate() if r["kp_id"] == "estimating-square-roots/kp3")
+        answers = {sample["expected"] for sample in row["arguments"]["samples"]}
+        self.assertEqual(answers, {"1", "2"})
 
     def test_other_units_evidence_records_are_byte_identical(self):
         keys = {r["kp_id"] for r in load("candidates.json")}

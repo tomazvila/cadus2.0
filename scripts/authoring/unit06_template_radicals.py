@@ -19,12 +19,12 @@ def simplification(r):
     r("simplifying-radicals/kp3", "Use prime factorization to simplify $\\sqrt{{{a}}}$.", "sqrt(a/6)*sqrt(6)",
       "Factor ${a}=6c^2$. Pair the prime factors in $c^2$; one copy from each pair exits. The unpaired factors $2$ and $3$ remain as $c\\sqrt6$.",
       lambda a: f"{isqrt(a//6)}*sqrt(6)", [6*a*a for a in range(4,16)])
-    r("simplifying-radicals-variables/kp1", "Simplify $\\sqrt{{x^{{2\\cdot{a}}}}}$ for $x\\ge0$.", "x**a",
-      "Pair the $2\\cdot{a}$ factors of $x$; {a} copies exit, giving $x^{{{a}}}$. Nonnegativity removes the absolute value.",
-      lambda a: f"x^{a}")
-    r("simplifying-radicals-variables/kp2", "Simplify $\\sqrt{{x^{{2\\cdot{a}+1}}}}$ for $x\\ge0$.", "x**a*sqrt(x)",
-      "Write the radicand as $(x^{{{a}}})^2x$. Extract the nonnegative square factor, leaving $x^{{{a}}}\\sqrt x$.",
-      lambda a: f"x^{a}*sqrt(x)")
+    r("simplifying-radicals-variables/kp1", "Simplify $\\sqrt{{{a}^2x^4}}$ for $x\\ge0$.", "a*x**2",
+      "The positive coefficient ${a}$ exits the radical and the four factors of $x$ pair into $x^2$.",
+      lambda a: f"{a}*x^2")
+    r("simplifying-radicals-variables/kp2", "Simplify $\\sqrt{{{a}^2x^5}}$ for $x\\ge0$.", "a*x**2*sqrt(x)",
+      "Write the radicand as $({a}x^2)^2x$. Extract the nonnegative square factor, leaving ${a}x^2\\sqrt x$.",
+      lambda a: f"{a}*x^2*sqrt(x)")
     r("simplifying-radicals-variables/kp3", "Simplify $\\sqrt{{{a}x^6y^4}}$ for nonnegative $x,y$.", "sqrt(a)*x**3*y**2",
       "The coefficient ${a}$ is a square. The even powers contribute $x^3$ and $y^2$, so the result is $\\sqrt{{{a}}}x^3y^2$.",
       lambda a: f"{isqrt(a)}*x^3*y^2", [a*a for a in range(2,14)])

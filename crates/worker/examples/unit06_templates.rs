@@ -48,9 +48,9 @@ fn main() {
             .find(|s| format!("{}/{}", s.topic_id, s.kp_id) == key)
             .unwrap();
         match verify_kind(Kind::Template, spec, &row["arguments"], &[]) {
-            Ok(_) if key == "estimating-square-roots/kp3" => {
+            Ok(_) if key == "estimating-square-roots/kp3" && !comparison_outcomes_vary(&row) => {
                 blockers.push(json!({"kp_id":key,"code":"semantic-family",
-                    "message":"all generated comparisons force 15 as the larger value; the family does not exercise both possible orderings",
+                    "message":"generated comparisons do not exercise both possible orderings",
                     "answer_kind":spec.answer_kind.as_str(),"shared_contract":spec.template_contract()}));
             }
             Ok(body) => {
@@ -72,6 +72,19 @@ fn main() {
         blockers.len(),
         siblings.len()
     );
+}
+
+fn comparison_outcomes_vary(row: &Value) -> bool {
+    row["arguments"]["samples"]
+        .as_array()
+        .is_some_and(|samples| {
+            samples
+                .iter()
+                .filter_map(|sample| sample["expected"].as_str())
+                .collect::<BTreeSet<_>>()
+                .len()
+                > 1
+        })
 }
 
 fn check(
@@ -155,4 +168,20 @@ fn authored_hashes(
 
 fn write(path: &Path, value: &Value) {
     fs::write(path, serde_json::to_string_pretty(value).unwrap() + "\n").unwrap();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::comparison_outcomes_vary;
+    use serde_json::json;
+
+    #[test]
+    fn comparison_family_requires_both_outcomes() {
+        assert!(!comparison_outcomes_vary(&json!({"arguments":{"samples":[
+            {"expected":"2"}, {"expected":"2"}
+        ]}})));
+        assert!(comparison_outcomes_vary(&json!({"arguments":{"samples":[
+            {"expected":"1"}, {"expected":"2"}
+        ]}})));
+    }
 }

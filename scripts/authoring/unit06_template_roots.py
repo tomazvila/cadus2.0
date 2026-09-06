@@ -60,11 +60,11 @@ def roots(r):
     r("square-roots/kp3", "Multiply $\\sqrt{{{a}}}$ by $\\sqrt9$.", "3*sqrt(a)",
       "The second root is three. The product rule gives $\\sqrt{{9\\cdot{a}}}=3\\sqrt{{{a}}}$.",
       lambda a: str(3*isqrt(a)), squares)
-    # The ten positive cubes up to 1000 expose a real domain-cardinality blocker.
+    # Twelve positive cubes give the production template a useful replay space.
     r("cube-roots/kp1", "Evaluate the real cube root $\\sqrt[3]{{{a}}}$.", "a**(1/3)",
       "Find the real factor $c$ whose threefold product is ${a}$. Its cube equals the radicand, so $c=\\sqrt[3]{{{a}}}$.",
-      lambda a: str(next(n for n in range(-10,11) if n**3 == a)),
-      [n**3 for n in range(1,11)])
+      lambda a: str(next(n for n in range(-12,13) if n**3 == a)),
+      [n**3 for n in range(1,13)])
     r("cube-roots/kp2", "Find the real solution of $t^3=-{a}$.", "-(a**(1/3))",
       "First take the positive cube root of ${a}$. Negating it makes the product of three equal factors negative: $t=-\\sqrt[3]{{{a}}}$.",
       lambda a: str(-next(n for n in range(1,20) if n**3 == a)), [a**3 for a in range(1,13)])
@@ -81,6 +81,7 @@ def estimates(r):
     r("estimating-square-roots/kp2", "Round the positive square root of ${a}$ to the nearest integer.",
       "sqrt(a-1)", "Here $m=\\sqrt{{{a}-1}}\\ge2$. The squared midpoint is $m^2+m+1/4>{a}=m^2+1$, so the root lies below $m+1/2$ and rounds to $m$.",
       lambda a: str(isqrt(a)+(4*a>(2*isqrt(a)+1)**2)), numbers)
-    r("estimating-square-roots/kp3", "Which is larger, $\\sqrt{{{a}}}$ or $15$? Give the larger value.", "15",
-      "Both are nonnegative, so compare squares: ${a}<225=15^2$. Therefore $15$ is larger.",
-      lambda a: "15", numbers)
+    comparisons = [120, 121, 122, 123, 140, 143, 145, 150, 160, 170, 180, 195]
+    r("estimating-square-roots/kp3", "Which is larger, $\\sqrt{{{a}}}$ or $12$? Enter $1$ for the square root or $2$ for $12$.", "signcase(a-144,[2,2,1])",
+      "Both values are nonnegative, so compare ${a}$ with $12^2=144$. Select the square-root label exactly when ${a}>144$.",
+      lambda a: "1" if a > 144 else "2", comparisons)
