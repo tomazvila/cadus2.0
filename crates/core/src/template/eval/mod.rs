@@ -313,7 +313,7 @@ pub fn answer_for_contract(
     if let Ast::Func(name, args) = ast {
         match name.as_str() {
             "powerform" => return structured::power_form(ast, bindings, contract),
-            "logequation" | "expequation" => {
+            "logequation" | "expequation" | "relationform" => {
                 return equation::write(name, args, bindings, contract);
             }
             "atandeg" => return inverse::degrees(args, bindings, contract),

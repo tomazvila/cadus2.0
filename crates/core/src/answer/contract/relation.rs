@@ -66,6 +66,12 @@ pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
     ]))
 }
 
+pub(super) fn setup_sides(text: &str) -> Result<(String, String), Undecidable> {
+    let source = normalize(text).source;
+    let (left, _, right) = split(&source)?;
+    Ok((left.to_owned(), right.to_owned()))
+}
+
 fn as_poly(value: Canon) -> Result<Poly, Undecidable> {
     match value {
         Canon::Poly(polynomial) => Ok(polynomial),

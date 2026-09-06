@@ -4,7 +4,7 @@
 ///
 /// `abs` and `sqrt` are in the answer grammar already. The rest are admitted
 /// only for template evaluation and are erased before the answer is stored.
-pub const EVAL_FUNCTIONS: [(&str, usize); 34] = [
+pub const EVAL_FUNCTIONS: [(&str, usize); 35] = [
     ("abs", 1),
     ("sqrt", 1),
     ("gcd", 2),
@@ -23,6 +23,7 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 34] = [
     ("atandeg", 1),
     ("logequation", 2),
     ("expequation", 2),
+    ("relationform", 2),
     ("excludepoint", 2),
     ("rayunion", 2),
     ("boundaryincluded", 1),
@@ -42,7 +43,7 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 34] = [
 ];
 
 /// The function names admitted beyond the ordinary answer grammar.
-pub const EXTRA_FUNCTIONS: [&str; 33] = [
+pub const EXTRA_FUNCTIONS: [&str; 34] = [
     "gcd",
     "lcm",
     "floor",
@@ -60,6 +61,7 @@ pub const EXTRA_FUNCTIONS: [&str; 33] = [
     "atandeg",
     "logequation",
     "expequation",
+    "relationform",
     "excludepoint",
     "rayunion",
     "boundaryincluded",

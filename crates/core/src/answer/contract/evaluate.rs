@@ -74,6 +74,7 @@ fn structured_contract(
             super::notation::recognizes_chain(learner),
         ),
         AnswerContract::PolynomialRelation => parsed(super::relation::read(learner), expected),
+        AnswerContract::RelationSetup => parsed(super::setup::read(learner), expected),
         _ => return None,
     };
     Some(outcome)

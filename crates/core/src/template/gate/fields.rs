@@ -223,12 +223,17 @@ pub(super) fn check_answer_names(
     ast: &Ast,
     spec: &GateSpec,
 ) -> Result<(), Rejection> {
+    let setup_relation = matches!(
+        doc.answer_contract,
+        Some(crate::answer::AnswerContract::RelationSetup)
+    );
     let unknown: Vec<String> = ast_names(ast)
         .into_iter()
         .filter(|name| !doc.params.contains_key(name))
         .filter(|name| !RESERVED_NAMES.contains(&name.as_str()))
         .filter(|name| {
-            spec.answer_kind != AnswerKind::Expression || !FREE_SYMBOLS.contains(&name.as_str())
+            (spec.answer_kind != AnswerKind::Expression && !setup_relation)
+                || !FREE_SYMBOLS.contains(&name.as_str())
         })
         .collect();
     if !unknown.is_empty() {

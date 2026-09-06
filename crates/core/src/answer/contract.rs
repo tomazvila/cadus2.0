@@ -5,6 +5,7 @@ mod form;
 mod list;
 mod notation;
 mod relation;
+mod setup;
 mod structured;
 mod union;
 
@@ -54,6 +55,8 @@ pub enum AnswerContract {
     AscendingChain,
     /// A polynomial equality or inequality, compared after exact normalization.
     PolynomialRelation,
+    /// An equality or inequality that preserves the authored unsolved operation structure.
+    RelationSetup,
     /// A closed choice vocabulary, with explicit aliases per option.
     Label { options: Vec<Vec<String>> },
     /// Named parts, each with its own deterministic policy.
@@ -100,6 +103,7 @@ enum ContractDoc {
     ReducedRatio {},
     AscendingChain {},
     PolynomialRelation {},
+    RelationSetup {},
     Label {
         options: Vec<Vec<String>>,
     },
@@ -138,6 +142,7 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::ReducedRatio {} => Self::ReducedRatio,
             ContractDoc::AscendingChain {} => Self::AscendingChain,
             ContractDoc::PolynomialRelation {} => Self::PolynomialRelation,
+            ContractDoc::RelationSetup {} => Self::RelationSetup,
             ContractDoc::Label { options } => Self::Label { options },
             ContractDoc::Multipart { parts } => Self::Multipart { parts },
             ContractDoc::None {} => Self::None,
@@ -191,6 +196,7 @@ impl AnswerContract {
             Self::ReducedRatio => notation::reduced_ratio(expected),
             Self::AscendingChain => notation::ascending_chain(expected),
             Self::PolynomialRelation => relation::read(expected),
+            Self::RelationSetup => setup::read(expected),
             Self::RequiredForm { form } if !form::accepts(*form, expected) => Err(
                 Undecidable::new("the authored answer does not match its required form"),
             ),
