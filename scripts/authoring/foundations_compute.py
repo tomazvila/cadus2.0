@@ -9,10 +9,8 @@ recursive evaluator that accepts only the node kinds this module writes
 itself. No draft this module helps build ever asks a model for an answer;
 every value here is exact `fractions.Fraction` arithmetic.
 
-The module never invents an expression outside a KP's own family: every new
-operand it proposes reuses the shape of an authored exemplar and only varies
-the numbers, so the generated content stays inside the knowledge point's
-`constraints` line by construction (`same_shape_new_operands`).
+It does not interpret a knowledge point's free-text constraints; callers must
+enforce any semantic rule beyond that arithmetic shape.
 """
 from __future__ import annotations
 
@@ -24,12 +22,13 @@ from fractions import Fraction
 from typing import Callable, Optional
 
 PROBLEM_RE = re.compile(r"^(Compute|Calculate|Evaluate|Simplify) \$(.+)\$\.$")
-_LETTER_OK = re.compile(r"\\(frac|dfrac|times|div|cdot|left|right)\b")
+_LETTER_OK = re.compile(r"\\(frac|dfrac|times|div|cdot|left|right|sqrt)\b")
 _DECIMAL = re.compile(r"(?<![\w.])\d+\.\d+(?![\w.])")
 _MIXED = re.compile(r"(\d+)\\frac\{(\d+)\}\{(\d+)\}")
 _FRAC = re.compile(r"\\d?frac\{([^{}]+)\}\{([^{}]+)\}")
 _BAR = re.compile(r"\|([^|]*)\|")
 _CARET_BRACED = re.compile(r"\^\{([^{}]+)\}")
+_SQRT_HEAD = re.compile(r"\\sqrt(?:\[(\d+)\])?\{")
 
 
 class NotArithmetic(ValueError):
@@ -48,19 +47,43 @@ def is_pure_numeric(expr: str) -> bool:
 
 def _insert_implicit_mult(text: str) -> str:
     """`)(`, `)A`, digit-`(` and digit-`A` each name a product with no operator."""
-    return re.sub(r"(?<=[0-9)])\s*(?=[(A])", "*", text)
+    return re.sub(r"(?<=[0-9)])\s*(?=[(AR])", "*", text)
+
+
+def _rewrite_sqrt(text: str) -> str:
+    """Rewrite each LaTeX radical as `RT((radicand), degree)`."""
+    while True:
+        match = _SQRT_HEAD.search(text)
+        if not match:
+            return text
+        degree = match.group(1) or "2"
+        open_pos = match.end() - 1
+        depth = 0
+        close_pos = None
+        for index in range(open_pos, len(text)):
+            if text[index] == "{":
+                depth += 1
+            elif text[index] == "}":
+                depth -= 1
+                if depth == 0:
+                    close_pos = index
+                    break
+        if close_pos is None:
+            raise NotArithmetic(f"{text!r}: an unmatched brace under a radical")
+        inner = text[open_pos + 1 : close_pos]
+        text = f"{text[:match.start()]}RT(({inner}),{degree}){text[close_pos + 1:]}"
 
 
 def to_python_expr(expr: str) -> str:
     """Rewrite one authored LaTeX arithmetic expression into a Python expression.
 
     The result names only integer and string literals, `+ - * / **`, bare
-    parentheses, and three call names this module's evaluator alone reads:
-    `D` (an exact decimal literal), `MX` (a mixed number) and `AB` (absolute
-    value). Nothing else survives the rewrite, so [`evaluate`] can walk the
-    parsed tree without ever running arbitrary code.
+    parentheses, and four call names this module's evaluator alone reads:
+    `D` (an exact decimal literal), `MX` (a mixed number), `AB` (absolute
+    value) and `RT` (a radical). Nothing else survives the rewrite.
     """
     text = expr.replace(r"\left", "").replace(r"\right", "")
+    text = _rewrite_sqrt(text)
     text = text.replace("{,}", "")
     text = _MIXED.sub(r"MX(\1,\2,\3)", text)
     # Run twice: a mixed-number replacement can leave a `\frac` inside the
@@ -97,6 +120,20 @@ def _exact_integer_root(value: int, degree: int) -> int:
     raise NotArithmetic(f"{value} has no exact integer {degree}th root")
 
 
+def _exact_root(value: Fraction, degree: int) -> Fraction:
+    """Return an exact real rational root, or reject a non-real/inexact one."""
+    if degree < 1:
+        raise NotArithmetic(f"a root of degree {degree} is not a radical")
+    if value < 0:
+        if degree % 2 == 0:
+            raise NotArithmetic(f"no real {degree}th root of a negative value")
+        return -_exact_root(-value, degree)
+    return Fraction(
+        _exact_integer_root(value.numerator, degree),
+        _exact_integer_root(value.denominator, degree),
+    )
+
+
 def _exact_rational_power(base: Fraction, exponent: Fraction) -> Fraction:
     """`base ** exponent` for a rational exponent, only when the result is exact.
 
@@ -113,7 +150,65 @@ def _exact_rational_power(base: Fraction, exponent: Fraction) -> Fraction:
     return 1 / rooted if exponent < 0 else rooted
 
 
-def _eval_node(node: ast.AST) -> Fraction:
+@dataclass(frozen=True)
+class _Surd:
+    """An unreduced real radical carried until multiplication or division."""
+
+    coefficient: Fraction
+    radicand: Fraction
+    degree: int
+
+
+def _make_surd(coefficient: Fraction, radicand: Fraction, degree: int) -> Fraction | _Surd:
+    """Return an exact root or an unreduced real radical."""
+    if degree < 1:
+        raise NotArithmetic(f"a root of degree {degree} is not a radical")
+    if radicand < 0 and degree % 2 == 0:
+        raise NotArithmetic(f"no real {degree}th root of a negative value")
+    try:
+        return coefficient * _exact_root(radicand, degree)
+    except NotArithmetic:
+        return _Surd(coefficient, radicand, degree)
+
+
+def _combine(
+    op: type, left: Fraction | _Surd, right: Fraction | _Surd
+) -> Fraction | _Surd:
+    """Combine exact rationals and compatible real radicals."""
+    if isinstance(left, Fraction) and isinstance(right, Fraction):
+        return _BINOPS[op](left, right)
+    if op not in (ast.Mult, ast.Div):
+        raise NotArithmetic("an unreduced radical only combines by multiplication or division")
+    if isinstance(left, _Surd) and isinstance(right, _Surd):
+        if left.degree != right.degree:
+            raise NotArithmetic("radicals of two different degrees do not combine")
+        coefficient = (
+            left.coefficient * right.coefficient
+            if op is ast.Mult
+            else left.coefficient / right.coefficient
+        )
+        radicand = (
+            left.radicand * right.radicand
+            if op is ast.Mult
+            else left.radicand / right.radicand
+        )
+        return _make_surd(coefficient, radicand, left.degree)
+    if isinstance(right, _Surd):
+        if op is ast.Div:
+            raise NotArithmetic("a rational divided by an unreduced radical is not decidable here")
+        return _make_surd(right.coefficient * left, right.radicand, right.degree)
+    scale = right if op is ast.Mult else 1 / right
+    return _make_surd(left.coefficient * scale, left.radicand, left.degree)
+
+
+def _require_fraction(value: Fraction | _Surd, where: str) -> Fraction:
+    """Return an exact rational or reject an unresolved radical."""
+    if not isinstance(value, Fraction):
+        raise NotArithmetic(f"an unreduced radical is not decidable here: {where}")
+    return value
+
+
+def _eval_node(node: ast.AST) -> Fraction | _Surd:
     if isinstance(node, ast.Expression):
         return _eval_node(node.body)
     if isinstance(node, ast.Constant) and isinstance(node.value, int) and not isinstance(node.value, bool):
@@ -127,31 +222,33 @@ def _eval_node(node: ast.AST) -> Fraction:
     raise NotArithmetic(f"unsupported syntax: {ast.dump(node)}")
 
 
-def _eval_binary(node: ast.BinOp) -> Fraction:
+def _eval_binary(node: ast.BinOp) -> Fraction | _Surd:
     """Evaluate one whitelisted binary operation."""
     if isinstance(node.op, ast.Pow):
-        base = _eval_node(node.left)
-        exponent = _eval_node(node.right)
+        base = _require_fraction(_eval_node(node.left), "a power's base")
+        exponent = _require_fraction(_eval_node(node.right), "a power's exponent")
         if exponent.denominator != 1:
             return _exact_rational_power(base, exponent)
         return base ** exponent.numerator
-    handler = _BINOPS.get(type(node.op))
-    if handler is None:
+    op_type = type(node.op)
+    if op_type not in _BINOPS:
         raise NotArithmetic(f"unsupported operator: {ast.dump(node.op)}")
-    return handler(_eval_node(node.left), _eval_node(node.right))
+    return _combine(op_type, _eval_node(node.left), _eval_node(node.right))
 
 
-def _eval_unary(node: ast.UnaryOp) -> Fraction:
+def _eval_unary(node: ast.UnaryOp) -> Fraction | _Surd:
     """Evaluate a unary plus or minus."""
     value = _eval_node(node.operand)
     if isinstance(node.op, ast.USub):
-        return -value
+        if isinstance(value, Fraction):
+            return -value
+        return _Surd(-value.coefficient, value.radicand, value.degree)
     if isinstance(node.op, ast.UAdd):
         return value
     raise NotArithmetic(f"unsupported unary operator: {ast.dump(node.op)}")
 
 
-def _eval_call(node: ast.Call) -> Fraction:
+def _eval_call(node: ast.Call) -> Fraction | _Surd:
     """Evaluate one whitelisted exact-arithmetic helper call."""
     name = node.func.id
     if node.keywords:
@@ -160,10 +257,22 @@ def _eval_call(node: ast.Call) -> Fraction:
     if name == "D" and len(args) == 1 and isinstance(args[0], ast.Constant) and isinstance(args[0].value, str):
         return Fraction(args[0].value)
     if name == "AB" and len(args) == 1:
-        return abs(_eval_node(args[0]))
+        return abs(_require_fraction(_eval_node(args[0]), "an absolute value"))
     if name == "MX" and len(args) == 3:
-        whole, num, den = (_eval_node(arg) for arg in args)
+        whole, num, den = (
+            _require_fraction(_eval_node(arg), "a mixed number") for arg in args
+        )
         return whole + num / den
+    if name == "RT" and len(args) == 2:
+        degree_node = args[1]
+        if not (
+            isinstance(degree_node, ast.Constant)
+            and isinstance(degree_node.value, int)
+            and not isinstance(degree_node.value, bool)
+        ):
+            raise NotArithmetic("a radical's degree must be a literal integer")
+        radicand = _require_fraction(_eval_node(args[0]), "a radical's radicand")
+        return _make_surd(Fraction(1), radicand, degree_node.value)
     raise NotArithmetic(f"unsupported call: {name}")
 
 
@@ -178,7 +287,7 @@ def evaluate(expr: str) -> Fraction:
         tree = ast.parse(python_expr, mode="eval")
     except SyntaxError as error:
         raise NotArithmetic(f"{expr!r} -> {python_expr!r}: {error}") from error
-    return _eval_node(tree)
+    return _require_fraction(_eval_node(tree), f"the value of {expr!r}")
 
 
 def _terminating_decimal(value: Fraction) -> Optional[str]:
