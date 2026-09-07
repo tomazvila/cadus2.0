@@ -228,7 +228,9 @@ with the hash.
    `content_store.kind` has no `visual` kind (P2.5).
 6. No held-out assessment family exists on any knowledge point (P2.4, 752 blocked
    on `assessable`); 49 Foundations diagnostic answers are refused by the grammar
-   (P2.6); 1,381 exemplars carry no explicit policy (`foundations-contract-candidates.jsonl`).
+   (P2.6); the current curriculum has 1,445 exemplars without an explicit policy.
+   `foundations-contract-candidates.jsonl` is the immutable 1,695-row review snapshot,
+   in which 1,381 exemplars lacked an explicit policy at that milestone.
 7. Units with no owner: f21 recovery flows (P5.3), f22 browser checks (P5.4), f23
    ops and rollback (P5.5), a v1-miss recovery scan (A3.8), a statement-level
    inspection of the 78 `multi-step` topics (P4.4).

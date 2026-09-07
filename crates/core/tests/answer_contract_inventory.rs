@@ -4,6 +4,8 @@
 
 mod common;
 
+use std::collections::BTreeSet;
+
 use cadus_core::answer::{AnswerContract, Ast, Canon, canonical_form, normalize, parse};
 use cadus_core::curriculum::load_raw_curriculum;
 use serde_json::{Value, json};
@@ -61,10 +63,39 @@ fn candidate(problem: &str, answer: &str) -> (Option<AnswerContract>, &'static s
     )
 }
 
+fn identity(row: &Value) -> (&str, &str, u64) {
+    (
+        row["topic_id"].as_str().unwrap(),
+        row["kp_id"].as_str().unwrap(),
+        row["exemplar_index"].as_u64().unwrap(),
+    )
+}
+
 #[test]
-fn all_foundations_exemplars_have_an_explicit_review_record() {
+fn current_inventory_covers_every_exemplar_and_preserves_the_review_snapshot() {
     let (raw, findings) = load_raw_curriculum(&common::paths::curriculum_root()).unwrap();
     assert!(findings.is_empty());
+    let historical: Vec<Value> =
+        include_str!("../../../docs/reports/foundations-contract-candidates.jsonl")
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+    assert_eq!(historical.len(), 1695);
+    assert_eq!(
+        historical
+            .iter()
+            .filter(|row| !row["existing_contract"].is_null())
+            .count(),
+        322
+    );
+    assert!(
+        historical
+            .iter()
+            .all(|row| row["automatic_approval"] == false)
+    );
+    let historical_keys: BTreeSet<_> = historical.iter().map(identity).collect();
+    assert_eq!(historical_keys.len(), historical.len());
+
     let mut rows: Vec<Value> = Vec::new();
     for entry in raw
         .topics()
@@ -84,13 +115,17 @@ fn all_foundations_exemplars_have_an_explicit_review_record() {
             }
         }
     }
-    assert_eq!(rows.len(), 1695);
+    assert_eq!(rows.len(), 3247);
     assert_eq!(
         rows.iter()
             .filter(|row| !row["existing_contract"].is_null())
             .count(),
-        322
+        1802
     );
+    assert!(rows.iter().all(|row| row["automatic_approval"] == false));
+    let current_keys: BTreeSet<_> = rows.iter().map(identity).collect();
+    assert_eq!(current_keys.len(), rows.len());
+    assert!(historical_keys.is_subset(&current_keys));
     assert!(
         rows.iter()
             .any(|row| row["review_reason"] == "review_authored_precision")
