@@ -237,10 +237,11 @@ with the hash.
 9. Owner decision still open from §6: whether the parity fixtures keep the 1.0 rules
    behind `readiness.enforce` and `mastery.confirm_inferred` or move to 2.0 digests.
 
-## 8. Integrated closure audit (verified through `96332af4`, 2026-09-07)
-This revision is 176 commits after `699fa89`. The reconciled checklist has 60
-`done`, 6 `open`, and zero `pending integration` rows on the evidence
-available before the final combined content-store/readiness and full-gate receipts.
+## 8. Integrated closure audit (verified through `c647a67c`, 2026-09-07)
+This revision is 182 commits after `699fa89`. The reconciled checklist has 62
+`done`, 4 `open`, and zero `pending integration` rows. The isolated post-zero
+content and readiness receipts are final for `c647a67c`; release-bundle,
+restored-snapshot and repository-gate receipts remain release boundaries.
 
 ### 8.1 Definitively closed since section 7
 - Integrated behavior: `d750e83` persists server-owned hint progression,
@@ -254,6 +255,10 @@ available before the final combined content-store/readiness and full-gate receip
 - Diagnostics: `8d3a671` makes all 285 Foundations topic diagnostics decidable;
   zero are missing or grammar-refused, and zero prerequisite IDs dangle. P2.6
   remains open until the final remediation/readiness receipt is attached.
+- Contract closure: `1d355b69` adds explicit policies to the final 30
+  multi-step exemplars across 8 KPs. Its end-to-end readiness test reconstructs
+  every affected served instance, grades its expected answer through the captured
+  policy, and requires the full Foundations contract-failure set to be empty.
 - Visuals: `67c10ed` closes all visual-readiness blockers. All 153 KPs that
   require a visual have reviewed curriculum visuals, 164 figures validate and
   render deterministically with accessible equivalents, and the
@@ -283,9 +288,41 @@ available before the final combined content-store/readiness and full-gate receip
   replays the unchanged production Teach gate, checks exemplar/template-instance
   collisions, and enforces pending-only side effects: 0 API calls, approvals,
   database connections and imports.
-- Those results establish complete production-template and checked-in Teach
-  coverage. Final combined import, held-out, hint-ladder, diagnosis and readiness
-  counts remain `[ROOT: attach authoritative exact-head post-zero receipts]`.
+- `c647a67c` aligns `parallel-perpendicular-lines/kp1` with the authored
+  polynomial-relation contract: the template now asks for and generates the
+  complete slope-intercept equation, the evaluator validates that relation through
+  `answer_for_contract`, and the template gate admits its symbolic free variable.
+  The selected-template input, manifest and bound Teach review were refreshed
+  together.
+- Independent integrated semantic review passed all 30 repaired exemplars across
+  8 KPs, the exact parallel-relation template semantics and the evaluator/gate's
+  fail-closed scope. Focused verification passed template36 2/2 over 432
+  exhaustive instances, readiness regression 1/1 and whole-course Teach 1/1 over
+  all 735 additions. Review receipt SHA-256 is
+  `140d08a373b8ed1731709cda5c04fc7ec438f20ce6f16228b8c7383588928efe`.
+- The exact `c647a67c` post-zero run imports 809 pending templates, 809 pending
+  Teach pages and 809 pending hint ladders into an isolated database: 2,427 total,
+  0 approved, 0 rejected and $0 model cost. The production gate accepted 885
+  candidates across all 809 KPs and selected 809 valid template drafts with
+  multiplicity 734×1, 74×2 and 1×3. Its fail-closed aggregate tests passed 3/3.
+- Database-backed readiness inspects 809 contracts with 0 grade failures, missing
+  problems, empty statements or refusals. All 809 are practicable, assessable and
+  complete for solutions, prerequisites and visuals. Ready remains 0 and blocked
+  remains 809 solely because Teach and hint content awaits human approval.
+- Receipt hashes: pipeline script
+  `0c39bb13d22f36f06c32438bfad6b674956c676519a0076efe7e5eb5f13fae13`;
+  execution log
+  `76172d94efb667de875f452cb69777dba6874be9bba15c6bd883d22eff621b07`;
+  inventory
+  `1d5b1633008fe18833cff9dbbc6f567fc9df30f909d317d0005cdbe8207ac199`;
+  selected templates
+  `cc9ed51165e8c950a61294f30da274a47d73844a5daf08105a5de90a068d2a6d`;
+  completion manifest
+  `98fdf9757ea381ba28081742390ad66222250e927596c0e2dc06899f3372e3f3`;
+  readiness JSON
+  `bfaff1d999c5e956cac48cbe63433b603e60f434ba4c768ef03e12e20f78b9eb`;
+  readiness Markdown
+  `dcd37c6d2707202777c36f298c88509476710ea28c81e489f339a35e137799aa`.
 - Generated/imported documents remain `pending` in isolated databases. A human
   must approve every digest intended for serving; no automated step in this work
   grants approval.
@@ -308,28 +345,45 @@ available before the final combined content-store/readiness and full-gate receip
   replay tests, this closes A3.8 for the observed production history. Uncertainty
   omitted by v1 is intrinsically unrecoverable, but this snapshot contains no
   affected miss.
+- `0a2f229b`, `bc8ee93a` and `42061aea` add the exact homelab release path.
+  `foundations_release_bundle.py` refuses count, KP-set, overlap, lifecycle,
+  release-head or hash drift and binds the ordered 809 template + 809 Teach + 809
+  hint-ladder bundle (2,427 unique pending documents). `homelab_release.sh`
+  verifies that bundle, the exact-head encrypted recovery receipt, clean checkout,
+  unchanged migrations, live Compose topology and image pairing before any
+  production mutation. Deploy, pending import and rollback require `--execute`;
+  rollback stops edge, web and worker before restoring the recorded prior images.
 
 ### 8.4 Open checklist rows and release boundaries
-The open IDs are `(h)`, P2.3, P2.4, P2.6, P5.5 and A2.2.
-- `(h)`, P2.3 and A2.2 have complete checked-in Teach coverage but still require
-  the combined post-zero import receipt and human approval.
-- P2.4 awaits the final held-out receipt; P2.6 awaits the final
-  database-backed remediation/readiness receipt. Their status remains open until
-  those exact results are attached.
-- P5.5 now has encrypted production-backup restore and restored-production replay
-  evidence. It still requires the consolidated final gate, explicit deployment
-  authorization, deploy smoke and rollback execution.
+The open IDs are `(h)`, P2.3, P5.5 and A2.2.
+- `(h)`, P2.3 and A2.2 have complete production-gated pending content but still
+  require authorized production import and a human decision for every serving
+  digest.
+- The exact post-zero and readiness receipts close P2.4 and P2.6 at the
+  authored-content boundary.
+- P5.5 has encrypted production-backup restore, restored-production replay and
+  fail-closed release tooling. It still requires exact-head recovery and final-gate
+  receipts, explicit deployment/import authorization, deploy smoke, human review
+  and rollback execution.
 
 ### 8.5 Final verification placeholders
-- Final integration identity: `[ROOT: commit, tree status and timestamp]`.
-- Authoritative post-zero receipt: `[ROOT: command and exit status; combined
-  content-store template, teach, hint-ladder and held-out counts; pending, approved,
-  rejected and model-cost totals; artifact and manifest SHA-256 digests;
-  deterministic replay digests]`. The source-side Teach count is already fixed at
-  809 total (74 existing plus 735 accepted pending additions).
-- Final database-backed readiness receipt: `[ROOT: command and exit status;
-  ready/blocked counts and exact blocker distribution; JSON and Markdown SHA-256
-  digests]`.
+- Final integration: `[ROOT: commit=<sha>; clean=<yes/no>; timestamp=<ISO-8601>]`.
+- Post-zero pipeline on `c647a67c`: exit 0; template 809; Teach 809;
+  hint-ladder 809; total pending 2,427; approved 0; rejected 0; model cost $0.
+  Pipeline-script SHA-256 is `0c39bb13d22f36f06c32438bfad6b674956c676519a0076efe7e5eb5f13fae13`;
+  log SHA-256 is `76172d94efb667de875f452cb69777dba6874be9bba15c6bd883d22eff621b07`;
+  inventory SHA-256 is `1d5b1633008fe18833cff9dbbc6f567fc9df30f909d317d0005cdbe8207ac199`.
+- Release bundle: `[ROOT: command=<exact>; exit=<n>; documents=<n>;
+  bundle_sha256=<sha>; verify_exit=<n>]`.
+- Exact-head restored-production replay: `[ROOT: command=<exact>; exit=<n>;
+  receipt_sha256=<sha>; production_fingerprint=<value>;
+  restored_before=<value>; restored_after=<value>; disposable_removed=<yes/no>]`.
+- Database-backed readiness on `c647a67c`: exit 0; ready 0; blocked 809;
+  blockers `{teachable: 809, hints: 809}` with all other blocker counts 0;
+  contract failures 0. JSON SHA-256 is
+  `bfaff1d999c5e956cac48cbe63433b603e60f434ba4c768ef03e12e20f78b9eb`;
+  Markdown SHA-256 is
+  `dcd37c6d2707202777c36f298c88509476710ea28c81e489f339a35e137799aa`.
 - Run the two repository gates sequentially from the exact final integration commit
   so they share compiled artifacts and never contend:
   ```sh
@@ -337,7 +391,8 @@ The open IDs are `(h)`, P2.3, P2.4, P2.6, P5.5 and A2.2.
   CARGO_BUILD_JOBS=1 CADUS_TEST_DATABASE_URL=postgresql://test:test@127.0.0.1:55434/cadus2_gate scripts/gate.sh >target/final-gate.log 2>&1
   sha256sum target/final-quality.log target/final-gate.log
   ```
-  Final results: `[ROOT: exit statuses, final lines, elapsed times and log SHA-256
-  digests]`.
+  Final results: `[ROOT: quality_exit=<n>; quality_final=<line>;
+  quality_elapsed=<duration>; quality_log_sha256=<sha>; gate_exit=<n>;
+  gate_final=<line>; gate_elapsed=<duration>; gate_log_sha256=<sha>]`.
 - Human content approval, deployment, rollback execution and real-data calibration
   remain unperformed.
