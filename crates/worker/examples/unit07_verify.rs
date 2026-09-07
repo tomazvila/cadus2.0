@@ -4,7 +4,7 @@ use std::path::Path;
 
 use cadus_core::curriculum::{Curriculum, lint_curriculum, load_curriculum};
 use cadus_core::learner::problem_text_hash;
-use cadus_core::template::{Compiled, TemplateDoc, render, walk_satisfying};
+use cadus_core::template::{Bindings, Compiled, TemplateDoc, render, walk_satisfying};
 use cadus_worker::authoring::cli::select;
 use cadus_worker::authoring::job::verify_kind;
 use cadus_worker::authoring::prompt::{AuthoringSpec, Kind};
@@ -63,37 +63,9 @@ fn inspect_instances(body: &str, known: &BTreeSet<String>) -> Result<Vec<Value>,
     let mut seen = BTreeSet::new();
     let mut rows = Vec::new();
     for bindings in walk.tuples {
-        let item = compiled
-            .instantiate(bindings.clone())
-            .map_err(|e| e.to_string())?;
-        if known.contains(&item.instance_hash) || !seen.insert(item.instance_hash.clone()) {
-            return Err(format!("authored/sibling collision: {}", item.text));
-        }
-        let sketch = render(
-            doc.solution_sketch.as_deref().ok_or("missing sketch")?,
-            &bindings,
-        )
-        .map_err(|e| e.to_string())?;
-        let hints = doc
-            .hints
-            .iter()
-            .map(|h| render(h, &bindings))
-            .collect::<Result<Vec<_>, _>>()
-            .map_err(|e| e.to_string())?;
-        for text in [&item.text, &item.answer, &sketch]
-            .into_iter()
-            .chain(hints.iter())
-        {
-            balanced(text)?;
-        }
-        let params: std::collections::BTreeMap<_, _> = bindings
-            .iter()
-            .map(|(k, v)| (k, v.canonical_string()))
-            .collect();
-        rows.push(
-            json!({"params":params,"problem":item.text,"answer":item.answer,
-            "solution_sketch":sketch,"hints":hints,"hash":item.instance_hash}),
-        );
+        rows.push(inspect_instance(
+            &doc, &compiled, bindings, known, &mut seen,
+        )?);
     }
     if rows.len() < 12 {
         return Err(format!(
@@ -102,6 +74,46 @@ fn inspect_instances(body: &str, known: &BTreeSet<String>) -> Result<Vec<Value>,
         ));
     }
     Ok(rows)
+}
+
+fn inspect_instance(
+    doc: &TemplateDoc,
+    compiled: &Compiled,
+    bindings: Bindings,
+    known: &BTreeSet<String>,
+    seen: &mut BTreeSet<String>,
+) -> Result<Value, String> {
+    let item = compiled
+        .instantiate(bindings.clone())
+        .map_err(|e| e.to_string())?;
+    if known.contains(&item.instance_hash) || !seen.insert(item.instance_hash.clone()) {
+        return Err(format!("authored/sibling collision: {}", item.text));
+    }
+    let sketch = render(
+        doc.solution_sketch.as_deref().ok_or("missing sketch")?,
+        &bindings,
+    )
+    .map_err(|e| e.to_string())?;
+    let hints = doc
+        .hints
+        .iter()
+        .map(|hint| render(hint, &bindings))
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| e.to_string())?;
+    for text in [&item.text, &item.answer, &sketch]
+        .into_iter()
+        .chain(hints.iter())
+    {
+        balanced(text)?;
+    }
+    let params: std::collections::BTreeMap<_, _> = bindings
+        .iter()
+        .map(|(key, value)| (key, value.canonical_string()))
+        .collect();
+    Ok(
+        json!({"params":params,"problem":item.text,"answer":item.answer,
+        "solution_sketch":sketch,"hints":hints,"hash":item.instance_hash}),
+    )
 }
 
 fn review(row: &Value, spec: &AuthoringSpec, known: &BTreeSet<String>) -> Value {

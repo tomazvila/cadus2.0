@@ -169,14 +169,14 @@ fn recipe_objects<'a>(value: &'a Value, rows: &mut Vec<&'a Value>) {
     }
 }
 
-#[test]
-fn repaired_statements_do_not_collide_with_other_catalog_templates_or_exemplars() {
-    let (curriculum, _) = load_curriculum(&root().join("curriculum")).unwrap();
+fn repaired_statements(
+    curriculum: &Curriculum,
+) -> (BTreeMap<String, String>, BTreeMap<String, String>) {
     let mut repaired = BTreeMap::new();
     let mut identities = BTreeMap::new();
     for row in rows() {
         let key = row["kp_id"].as_str().unwrap().to_owned();
-        let doc = document(&row, &curriculum).unwrap();
+        let doc = document(&row, curriculum).unwrap();
         let identity = serde_json::to_string(&doc).unwrap();
         identities.insert(key.clone(), identity.clone());
         for item in template_instances(&identity) {
@@ -188,6 +188,10 @@ fn repaired_statements_do_not_collide_with_other_catalog_templates_or_exemplars(
         }
     }
     assert_eq!(repaired.len(), 236);
+    (repaired, identities)
+}
+
+fn assert_no_authored_collisions(curriculum: &Curriculum, repaired: &BTreeMap<String, String>) {
     for topic in curriculum.topics() {
         if let Some(diagnostic) = &topic.diagnostic_exemplar {
             assert!(
@@ -207,6 +211,13 @@ fn repaired_statements_do_not_collide_with_other_catalog_templates_or_exemplars(
             }
         }
     }
+}
+
+fn catalog_collision_coverage(
+    curriculum: &Curriculum,
+    repaired: &BTreeMap<String, String>,
+    identities: &BTreeMap<String, String>,
+) -> (usize, usize) {
     let mut files = Vec::new();
     json_files(&root().join("docs"), &mut files);
     let mut seen = BTreeSet::new();
@@ -216,7 +227,7 @@ fn repaired_statements_do_not_collide_with_other_catalog_templates_or_exemplars(
         let mut candidates = Vec::new();
         recipe_objects(&value, &mut candidates);
         for row in candidates {
-            let Some(doc) = document(row, &curriculum) else {
+            let Some(doc) = document(row, curriculum) else {
                 continue;
             };
             let key = row["kp_id"].as_str().unwrap();
@@ -239,11 +250,20 @@ fn repaired_statements_do_not_collide_with_other_catalog_templates_or_exemplars(
             }
         }
     }
+    (seen.len(), checked)
+}
+
+#[test]
+fn repaired_statements_do_not_collide_with_other_catalog_templates_or_exemplars() {
+    let (curriculum, _) = load_curriculum(&root().join("curriculum")).unwrap();
+    let (repaired, identities) = repaired_statements(&curriculum);
+    assert_no_authored_collisions(&curriculum, &repaired);
+    let (seen, checked) = catalog_collision_coverage(&curriculum, &repaired, &identities);
     println!(
         "template19 collision coverage: {} other distinct recipes, {checked} instances, 236 repaired instances",
-        seen.len()
+        seen
     );
-    assert!(seen.len() >= 700, "catalog coverage: {}", seen.len());
+    assert!(seen >= 700, "catalog coverage: {seen}");
     assert!(checked >= 8400, "catalog instance coverage: {checked}");
 }
 

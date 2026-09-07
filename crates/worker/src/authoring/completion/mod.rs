@@ -52,6 +52,89 @@ fn keep(
     }
 }
 
+fn add_teaching_candidates(
+    out: &mut Proposals,
+    spec: &AuthoringSpec,
+    served: &[ServedInstance],
+    exemplar_index: usize,
+    variants: &[(i64, expression::Calculation)],
+    mut teaching: bool,
+) -> bool {
+    // Reserve candidate positions beyond the practice bank for teaching and assessment.
+    for (_, calculation) in variants.iter().skip(12).take(4) {
+        let problem = format!("Compute ${}$.", calculation.expression);
+        if spec
+            .exemplars
+            .iter()
+            .any(|item| item.problem.trim() == problem.trim())
+            || served
+                .iter()
+                .any(|item| item.problem.trim() == problem.trim())
+        {
+            continue;
+        }
+        if teaching {
+            out.assessment.push(json!({"problem":problem,"answer":calculation.answer,"source_exemplar":exemplar_index,"review_status":"candidate only; hold-out designation and family independence unverified"}));
+        } else {
+            let arguments = json!({"concept":method::rule(spec),"worked_example":{"problem":problem,"steps":[method::rule(spec),format!("Evaluate the given operations in ${}$ exactly.",calculation.expression),calculation.answer]}});
+            teaching = keep(out, spec, Kind::Teach, arguments, served);
+        }
+    }
+    teaching
+}
+
+fn add_practice_candidate(
+    out: &mut Proposals,
+    spec: &AuthoringSpec,
+    served: &[ServedInstance],
+    source: &expression::Calculation,
+    parameter_span: std::ops::Range<usize>,
+    variants: &[(i64, expression::Calculation)],
+    practice: bool,
+) -> bool {
+    if practice || variants.len() < 12 {
+        return practice;
+    }
+    let Some(parameter) = ['a', 'b', 'c', 'f', 'g', 'h', 'm', 'p', 'q', 's']
+        .into_iter()
+        .find(|letter| !source.expression.contains(*letter))
+    else {
+        return practice;
+    };
+    let candidates: Vec<_> = variants
+        .iter()
+        .filter(|(_, calculation)| {
+            let problem = format!("Compute ${}$.", calculation.expression);
+            spec.exemplars
+                .iter()
+                .all(|exemplar| exemplar.problem.trim() != problem.trim())
+        })
+        .take(12)
+        .collect();
+    if candidates.len() < 12 {
+        return practice;
+    }
+    let formula = format!(
+        "{}{parameter}{}",
+        &source.expression[..parameter_span.start],
+        &source.expression[parameter_span.end..]
+    );
+    let statement = format!(
+        "Compute ${}{{{parameter}}}{}$.",
+        expression::escape(&source.expression[..parameter_span.start]),
+        expression::escape(&source.expression[parameter_span.end..])
+    );
+    let values: Vec<i64> = candidates.iter().map(|(value, _)| *value).collect();
+    let samples: Vec<Value> = candidates
+        .iter()
+        .map(|(value, calculation)| {
+            json!({"params":{parameter.to_string():value},"expected":calculation.answer})
+        })
+        .collect();
+    let arguments = json!({"statement":statement,"params":{parameter.to_string():{"kind":"choice","values":values}},"constraints":[],"answer_expr":formula,"solution_sketch":method::rule(spec),"hints":[method::rule(spec)],"distractors":[],"samples":samples});
+    keep(out, spec, Kind::Template, arguments, served)
+}
+
 /// Derive closed exact arithmetic candidates and topic-specific hint scaffolds.
 /// Explicit policies validate authored source answers; unsupported models remain refused.
 #[must_use]
@@ -79,61 +162,16 @@ pub fn generate(spec: &AuthoringSpec, served: &[ServedInstance]) -> Proposals {
         let Some((start, end, variants)) = expression::variants(&source) else {
             continue;
         };
-        // Reserve candidate positions beyond the practice bank for teaching and assessment.
-        for (_, calculation) in variants.iter().skip(12).take(4) {
-            let problem = format!("Compute ${}$.", calculation.expression);
-            if spec
-                .exemplars
-                .iter()
-                .any(|item| item.problem.trim() == problem.trim())
-                || served
-                    .iter()
-                    .any(|item| item.problem.trim() == problem.trim())
-            {
-                continue;
-            }
-            if !teaching {
-                let arguments = json!({"concept":method::rule(spec),"worked_example":{"problem":problem,"steps":[method::rule(spec),format!("Evaluate the given operations in ${}$ exactly.",calculation.expression),calculation.answer]}});
-                teaching = keep(&mut out, spec, Kind::Teach, arguments, served);
-            } else {
-                out.assessment.push(json!({"problem":problem,"answer":calculation.answer,"source_exemplar":index,"review_status":"candidate only; hold-out designation and family independence unverified"}));
-            }
-        }
-        if !practice && variants.len() >= 12 {
-            let Some(parameter) = ['a', 'b', 'c', 'f', 'g', 'h', 'm', 'p', 'q', 's']
-                .into_iter()
-                .find(|letter| !source.expression.contains(*letter))
-            else {
-                continue;
-            };
-            let candidates: Vec<_> = variants
-                .iter()
-                .filter(|(_, calculation)| {
-                    let problem = format!("Compute ${}$.", calculation.expression);
-                    spec.exemplars
-                        .iter()
-                        .all(|exemplar| exemplar.problem.trim() != problem.trim())
-                })
-                .take(12)
-                .collect();
-            if candidates.len() < 12 {
-                continue;
-            }
-            let formula = format!(
-                "{}{parameter}{}",
-                &source.expression[..start],
-                &source.expression[end..]
-            );
-            let statement = format!(
-                "Compute ${}{{{parameter}}}{}$.",
-                expression::escape(&source.expression[..start]),
-                expression::escape(&source.expression[end..])
-            );
-            let values: Vec<i64> = candidates.iter().map(|(value, _)| *value).collect();
-            let samples: Vec<Value> = candidates.iter().map(|(value,calc)|json!({"params":{parameter.to_string():value},"expected":calc.answer})).collect();
-            let arguments = json!({"statement":statement,"params":{parameter.to_string():{"kind":"choice","values":values}},"constraints":[],"answer_expr":formula,"solution_sketch":method::rule(spec),"hints":[method::rule(spec)],"distractors":[],"samples":samples});
-            practice = keep(&mut out, spec, Kind::Template, arguments, served);
-        }
+        teaching = add_teaching_candidates(&mut out, spec, served, index, &variants, teaching);
+        practice = add_practice_candidate(
+            &mut out,
+            spec,
+            served,
+            &source,
+            start..end,
+            &variants,
+            practice,
+        );
     }
     if !practice && let Some(arguments) = templates::special(spec) {
         keep(&mut out, spec, Kind::Template, arguments, served);

@@ -383,6 +383,31 @@ fn give_away(answer: &str) -> String {
     format!(r#"{{"hints": [{rung}]}}"#)
 }
 
+/// Gate every exemplar whose problem already contains its answer.
+///
+/// The result distinguishes a nonempty cohort from one where every exemplar
+/// is blind under the historical exemption.
+fn gate_shown_answers(key: &str, exemplars: &[cadus_core::curriculum::Exemplar]) -> Option<bool> {
+    let shown: Vec<_> = exemplars
+        .iter()
+        .filter(|exemplar| stands_alone(&exemplar.problem, &exemplar.answer))
+        .collect();
+    if shown.is_empty() {
+        return None;
+    }
+    let all_shown = shown.len() == exemplars.len();
+    for exemplar in shown {
+        match gate_hint_ladder(&give_away(&exemplar.answer), &spec(exemplars)) {
+            Ok(_) => panic!(
+                "{key} accepted a rung that states the answer {:?}",
+                exemplar.answer
+            ),
+            Err(rejection) => assert_eq!(rejection.code, "hint-answer", "{key}"),
+        }
+    }
+    Some(all_shown)
+}
+
 /// Finding F25. Before this fix the gate skipped an exemplar outright whenever
 /// the exemplar's own problem carried its answer, so for those knowledge points a
 /// rung that stated the answer verbatim passed the gate, was stored `pending`,
@@ -401,32 +426,18 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     let mut foundations_blind = 0_usize;
     for topic in curriculum.topics() {
         for kp in &topic.topic.knowledge_points {
-            let shown: Vec<&cadus_core::curriculum::Exemplar> = kp
-                .exemplars
-                .iter()
-                .filter(|exemplar| stands_alone(&exemplar.problem, &exemplar.answer))
-                .collect();
-            if shown.is_empty() {
+            let key = format!("{}/{}", topic.topic.id, kp.id);
+            let Some(all_shown) = gate_shown_answers(&key, &kp.exemplars) else {
                 continue;
-            }
+            };
             exempted += 1;
             if topic.course_dir == "foundations" {
                 foundations_exempted += 1;
             }
-            if shown.len() == kp.exemplars.len() {
+            if all_shown {
                 blind += 1;
                 if topic.course_dir == "foundations" {
                     foundations_blind += 1;
-                }
-            }
-            let key = format!("{}/{}", topic.topic.id, kp.id);
-            for exemplar in shown {
-                match gate_hint_ladder(&give_away(&exemplar.answer), &spec(&kp.exemplars)) {
-                    Ok(_) => panic!(
-                        "{key} accepted a rung that states the answer {:?}",
-                        exemplar.answer
-                    ),
-                    Err(rejection) => assert_eq!(rejection.code, "hint-answer", "{key}"),
                 }
             }
         }

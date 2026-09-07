@@ -28,48 +28,71 @@ pub(super) fn label_answer(
     if name == "signcase" {
         return label_sign_case(args, bindings, contract);
     }
-    let text = match (name.as_str(), args.as_slice()) {
+    let Some(text) = named_label(name, args, bindings)? else {
+        return answer(ast, bindings);
+    };
+    contracted(text.to_owned(), contract)
+}
+
+fn named_label(
+    name: &str,
+    args: &[Ast],
+    bindings: &Bindings,
+) -> Result<Option<&'static str>, EvalError> {
+    let text = match (name, args) {
         ("trianglelaw", args) => super::triangle_law::choose(args, bindings)?,
-        ("equalitylabel", [left, right]) => {
-            if answer(left, bindings)?.canon == answer(right, bindings)?.canon {
-                "yes"
-            } else {
-                "no"
-            }
-        }
-        ("divisibilitylabel", [number, divisor]) => {
-            let number = bounded_whole(number, bindings, "divisibilitylabel")?;
-            let divisor = bounded_whole(divisor, bindings, "divisibilitylabel")?;
-            if divisor == 0 {
-                return Err(EvalError::Domain {
-                    func: "divisibilitylabel",
-                    value: divisor.to_string(),
-                });
-            }
-            if number.is_multiple_of(divisor) {
-                "yes"
-            } else {
-                "no"
-            }
-        }
-        ("primeclass", [number]) => {
-            let number = bounded_whole(number, bindings, "primeclass")?;
-            if number < 2 {
-                "neither"
-            } else if is_prime(number) {
-                "prime"
-            } else {
-                "composite"
-            }
-        }
+        ("equalitylabel", [left, right]) => equality_label(left, right, bindings)?,
+        ("divisibilitylabel", [number, divisor]) => divisibility_label(number, divisor, bindings)?,
+        ("primeclass", [number]) => prime_label(number, bindings)?,
         ("linearclass", [Ast::Tuple(left), Ast::Tuple(right)])
             if left.len() == 2 && right.len() == 2 =>
         {
             linear_class(&left[0], &left[1], &right[0], &right[1], bindings)?
         }
-        _ => return answer(ast, bindings),
+        _ => return Ok(None),
     };
-    contracted(text.to_owned(), contract)
+    Ok(Some(text))
+}
+
+fn equality_label(left: &Ast, right: &Ast, bindings: &Bindings) -> Result<&'static str, EvalError> {
+    Ok(
+        if answer(left, bindings)?.canon == answer(right, bindings)?.canon {
+            "yes"
+        } else {
+            "no"
+        },
+    )
+}
+
+fn divisibility_label(
+    number: &Ast,
+    divisor: &Ast,
+    bindings: &Bindings,
+) -> Result<&'static str, EvalError> {
+    let number = bounded_whole(number, bindings, "divisibilitylabel")?;
+    let divisor = bounded_whole(divisor, bindings, "divisibilitylabel")?;
+    if divisor == 0 {
+        return Err(EvalError::Domain {
+            func: "divisibilitylabel",
+            value: divisor.to_string(),
+        });
+    }
+    Ok(if number.is_multiple_of(divisor) {
+        "yes"
+    } else {
+        "no"
+    })
+}
+
+fn prime_label(number: &Ast, bindings: &Bindings) -> Result<&'static str, EvalError> {
+    let number = bounded_whole(number, bindings, "primeclass")?;
+    Ok(if number < 2 {
+        "neither"
+    } else if is_prime(number) {
+        "prime"
+    } else {
+        "composite"
+    })
 }
 
 /// Select a closed label using the existing three-branch signcase grammar.
