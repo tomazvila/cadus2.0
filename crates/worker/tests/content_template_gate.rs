@@ -2,6 +2,8 @@
 
 #![allow(clippy::unwrap_used)]
 
+mod common;
+
 use std::io::Write;
 use std::path::Path;
 use std::process::{Command, Stdio};
@@ -11,15 +13,7 @@ use serde_json::{Value, json};
 fn recipe() -> Value {
     json!({
         "kp_id": "perfect-squares/kp1", "kind": "template",
-        "arguments": {
-            "statement": "Compute ${a}^{{2}}$.",
-            "params": {"a": {"kind": "int", "low": 1, "high": 12}},
-            "constraints": [], "answer_expr": "a**2",
-            "solution_sketch": "${a} \\times {a}$ gives the answer.",
-            "hints": ["What does squaring a number mean?"], "distractors": [],
-            "samples": [{"params": {"a": 1}, "expected": "1"},
-                        {"params": {"a": 12}, "expected": "144"}]
-        }
+        "arguments": common::good_arguments()
     })
 }
 

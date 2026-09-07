@@ -21,6 +21,7 @@ pub mod fault;
 pub mod pool;
 pub mod process;
 pub mod queue;
+pub mod reviewed_templates;
 pub mod symbolic;
 pub mod teach;
 pub mod template_batch;

@@ -2,15 +2,8 @@
 #![allow(clippy::unwrap_used, clippy::panic)]
 use std::{collections::BTreeMap, fs, path::PathBuf};
 
-use cadus_core::{
-    curriculum::load_curriculum,
-    template::{Compiled, from_body, walk_satisfying},
-};
-use cadus_worker::authoring::{
-    cli::select,
-    job::{document_digest, verify_kind},
-    prompt::Kind,
-};
+use cadus_core::{curriculum, template};
+use cadus_worker::authoring::{cli, job, prompt};
 use serde_json::{Value, json};
 
 fn root() -> PathBuf {
@@ -40,7 +33,7 @@ fn read(file: &str) -> Vec<Value> {
 
 #[test]
 fn every_owned_candidate_reproduces_its_current_production_verdict() {
-    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
+    let (curriculum, findings) = curriculum::load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
     let pending: BTreeMap<String, Value> = read("pending-review.json")
         .into_iter()
@@ -53,8 +46,10 @@ fn every_owned_candidate_reproduces_its_current_production_verdict() {
     assert_eq!((pending.len(), blockers.len()), (53, 25));
     for row in read("candidates.json") {
         let key = row["kp_id"].as_str().unwrap();
-        let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-        match verify_kind(Kind::Template, &spec, &row["arguments"], &[]) {
+        let spec = cli::select(&curriculum, &[key.to_owned()])
+            .unwrap()
+            .remove(0);
+        match job::verify_kind(prompt::Kind::Template, &spec, &row["arguments"], &[]) {
             Ok(_) if key == "estimating-square-roots/kp3" => {
                 assert_eq!(blockers[key]["code"], "semantic-family");
                 assert!(!pending.contains_key(key));
@@ -68,7 +63,7 @@ fn every_owned_candidate_reproduces_its_current_production_verdict() {
                 assert_eq!(evidence["status"], "pending");
                 assert_eq!(
                     evidence["digest"],
-                    document_digest(key, Kind::Template, &body)
+                    job::document_digest(key, prompt::Kind::Template, &body)
                 );
                 assert!(!blockers.contains_key(key));
             }
@@ -85,9 +80,9 @@ fn every_owned_candidate_reproduces_its_current_production_verdict() {
 fn every_instance_rejects_an_off_by_one_answer_and_matches_its_recorded_derivation() {
     let mut count = 0;
     for row in read("pending-review.json") {
-        let doc = from_body(&row["body"].to_string()).unwrap();
-        let compiled = Compiled::new(&doc).unwrap();
-        let walked = walk_satisfying(&doc.params, &doc.constraints).unwrap();
+        let doc = template::from_body(&row["body"].to_string()).unwrap();
+        let compiled = template::Compiled::new(&doc).unwrap();
+        let walked = template::walk_satisfying(&doc.params, &doc.constraints).unwrap();
         assert!(walked.exhaustive);
         assert_eq!(walked.tuples.len(), 12);
         for (tuple, recorded) in walked

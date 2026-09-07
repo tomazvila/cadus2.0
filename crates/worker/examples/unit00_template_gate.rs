@@ -15,7 +15,7 @@ use cadus_worker::authoring::{
 };
 use serde_json::{Value, json};
 
-fn normalize(text: &str) -> String {
+pub fn normalize(text: &str) -> String {
     text.to_lowercase()
         .replace("evaluate", "compute")
         .replace("\\times", "*")
@@ -29,7 +29,7 @@ fn normalize(text: &str) -> String {
         .to_owned()
 }
 
-fn operands(text: &str) -> Vec<String> {
+pub fn operands(text: &str) -> Vec<String> {
     let text = text.replace("{,}", "");
     let mut numbers: Vec<_> = text
         .split(|c: char| !c.is_ascii_digit())

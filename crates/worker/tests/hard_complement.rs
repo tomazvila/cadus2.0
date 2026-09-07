@@ -1,54 +1,23 @@
 //! Pending-only evidence for the six isolated U08/U09 complementary KPs.
 #![allow(clippy::unwrap_used)]
-#[path = "../examples/unit01/verify.rs"]
-mod verify;
-use cadus_core::curriculum::load_curriculum;
-use cadus_worker::authoring::{
-    cli::{AuthorArgs, select_for},
-    job::verify_kind,
-    prompt::{AuthoringSpec, Kind},
+mod common;
+use cadus_worker::authoring::{job::verify_kind, prompt::Kind};
+use common::{
+    repo_root as root,
+    reviewed_templates::{assert_report, file_rows, run_rows, spec},
 };
 use serde_json::{Value, json};
-use std::path::{Path, PathBuf};
-
-fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
-}
 
 fn drafts() -> Vec<Value> {
-    serde_json::from_str(
-        &std::fs::read_to_string(
-            root().join("docs/content-foundations/hard-complement/templates.json"),
-        )
-        .unwrap(),
-    )
-    .unwrap()
-}
-
-fn spec(key: &str) -> AuthoringSpec {
-    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
-    assert!(findings.is_empty());
-    select_for(
-        &curriculum,
-        &AuthorArgs {
-            kps: vec![key.to_owned()],
-            ..AuthorArgs::default()
-        },
-    )
-    .unwrap()
-    .remove(0)
+    file_rows("docs/content-foundations/hard-complement/templates.json")
 }
 
 #[test]
 fn production_gate_is_exhaustive_and_collision_free() {
-    let path = root().join("docs/content-foundations/hard-complement/templates.json");
-    let report = verify::run(&path, &root().join("target/hard-complement/regression"));
+    let rows = drafts();
+    let report = run_rows(&rows, "target/hard-complement/regression");
     assert_eq!(report["passed"], report["checked"], "{report}");
-    assert_eq!(report["passed"], drafts().len());
-    for row in report["rows"].as_array().unwrap() {
-        assert_eq!(row["evidence"]["exhaustive"], true);
-        assert!(row["evidence"]["distinct_instances"].as_u64().unwrap() >= 12);
-    }
+    assert_report(&report, rows.len(), None);
 }
 
 #[test]

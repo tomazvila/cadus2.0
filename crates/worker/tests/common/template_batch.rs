@@ -5,7 +5,7 @@ use std::collections::BTreeSet;
 use super::{json_rows, repo_root};
 use cadus_core::{
     answer::{Outcome, check_contract},
-    curriculum::load_curriculum,
+    curriculum::{Curriculum, load_curriculum},
     template::{Compiled, from_body, walk_satisfying},
 };
 use cadus_worker::authoring::{cli::select, job::verify_kind, prompt::Kind};
@@ -22,6 +22,13 @@ pub fn read_rows(paths: &[&str]) -> Vec<Value> {
     json_rows(paths, None)
 }
 
+pub fn verified_body(curriculum: &Curriculum, row: &Value) -> String {
+    let key = row["kp_id"].as_str().unwrap();
+    let spec = select(curriculum, &[key.to_owned()]).unwrap().remove(0);
+    verify_kind(Kind::Template, &spec, &row["arguments"], &[])
+        .unwrap_or_else(|error| panic!("{key}: {error:?}"))
+}
+
 pub fn assert_exhaustive_batch(
     rows: Vec<Value>,
     expected_rows: usize,
@@ -36,9 +43,7 @@ pub fn assert_exhaustive_batch(
     for row in rows {
         assert_eq!(row["status"], "pending");
         let key = row["kp_id"].as_str().unwrap();
-        let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-        let body = verify_kind(Kind::Template, &spec, &row["arguments"], &[])
-            .unwrap_or_else(|error| panic!("{key}: {error:?}"));
+        let body = verified_body(&curriculum, &row);
         let doc = from_body(&body).unwrap();
         let compiled = Compiled::new(&doc).unwrap();
         let walk = walk_satisfying(&doc.params, &doc.constraints).unwrap();

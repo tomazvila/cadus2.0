@@ -3,13 +3,13 @@
 
 mod common;
 
-use cadus_core::answer::AnswerContract;
-use cadus_core::curriculum::AnswerKind;
-use cadus_core::pool::kp_key;
+use cadus_core::{answer::AnswerContract, curriculum::AnswerKind, pool::kp_key};
 use cadus_store::test_support::TestDb;
-use cadus_worker::authoring::job::{Outcome, preflight, verify_kind};
-use cadus_worker::authoring::prompt::Kind;
-use common::{FakeModel, author, content_rows, good_arguments, named_reply, squares_spec};
+use cadus_worker::authoring::{
+    job::{Outcome, preflight, verify_kind},
+    prompt::Kind,
+};
+use common::{FakeModel, author_expect, content_rows, good_arguments, named_reply, squares_spec};
 use serde_json::json;
 
 #[test]
@@ -125,14 +125,17 @@ async fn pending_contracts_reach_the_real_worker_with_unshared_exemplar_policies
             arguments["answer_contract"] = json!({"kind":"exact"});
             let fake =
                 FakeModel::start(vec![named_reply(Kind::Template.tool_name(), &arguments)]).await;
-            let result = author(&db, &fake, Kind::Template, &spec).await;
-            assert_eq!(result.outcome, Outcome::Stored, "{result:?}");
-            assert_eq!(result.attempts, 1);
+            author_expect(&db, &fake, Kind::Template, &spec, Outcome::Stored, 1).await;
             assert_eq!(fake.call_count(), 1);
             let rows = content_rows(&db.admin, &kp_key(&spec.topic_id, &spec.kp_id)).await;
-            assert_eq!(rows.len(), 1);
-            assert_eq!(rows[0].status, "pending");
-            assert_eq!(rows[0].body["answer_contract"], json!({"kind":"exact"}));
+            assert_eq!(
+                (
+                    rows.len(),
+                    rows[0].status.as_str(),
+                    &rows[0].body["answer_contract"]
+                ),
+                (1, "pending", &json!({"kind":"exact"}))
+            );
         }
     })
     .await;

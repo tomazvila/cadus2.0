@@ -43,18 +43,22 @@ fn main() {
     let mut siblings = BTreeSet::new();
     for row in rows {
         let key = row["kp_id"].as_str().unwrap();
-        let spec = specs
-            .iter()
-            .find(|s| format!("{}/{}", s.topic_id, s.kp_id) == key)
-            .unwrap();
-        match verify_kind(Kind::Template, spec, &row["arguments"], &[]) {
+        let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
+        match verify_kind(Kind::Template, &spec, &row["arguments"], &[]) {
             Ok(_) if key == "estimating-square-roots/kp3" && !comparison_outcomes_vary(&row) => {
                 blockers.push(json!({"kp_id":key,"code":"semantic-family",
                     "message":"generated comparisons do not exercise both possible orderings",
                     "answer_kind":spec.answer_kind.as_str(),"shared_contract":spec.template_contract()}));
             }
             Ok(body) => {
-                let evidence = check(key, spec, &row["arguments"], &body, &authored, &mut siblings);
+                let evidence = check(
+                    key,
+                    &spec,
+                    &row["arguments"],
+                    &body,
+                    &authored,
+                    &mut siblings,
+                );
                 review.push(evidence);
                 drafts.push(row);
             }

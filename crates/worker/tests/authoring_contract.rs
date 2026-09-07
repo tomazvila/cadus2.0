@@ -11,7 +11,7 @@ use cadus_store::test_support::TestDb;
 use cadus_worker::authoring::job::Outcome;
 use cadus_worker::authoring::job::verify;
 use cadus_worker::authoring::prompt::Kind;
-use common::{FakeModel, author, content_rows, good_arguments, named_reply, squares_spec};
+use common::{FakeModel, author_expect, content_rows, good_arguments, named_reply, squares_spec};
 use serde_json::json;
 
 #[tokio::test]
@@ -27,9 +27,7 @@ async fn an_exact_multi_step_template_passes_authoring_and_stays_pending() {
         let arguments = good_arguments();
         let fake =
             FakeModel::start(vec![named_reply(Kind::Template.tool_name(), &arguments)]).await;
-        let result = author(&db, &fake, Kind::Template, &spec).await;
-        assert_eq!(result.outcome, Outcome::Stored, "{result:?}");
-        assert_eq!(result.attempts, 1);
+        author_expect(&db, &fake, Kind::Template, &spec, Outcome::Stored, 1).await;
         let rows = content_rows(&db.admin, &kp_key(&spec.topic_id, &spec.kp_id)).await;
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].status, "pending");

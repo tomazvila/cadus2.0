@@ -13,6 +13,11 @@ use serde_json::Value;
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
+#[allow(dead_code)]
+#[path = "../examples/unit00_template_gate.rs"]
+mod template_gate;
+use template_gate::{normalize as normalized, operands};
+
 fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
@@ -22,31 +27,6 @@ fn rows(name: &str) -> Vec<Value> {
         .join("docs/content-foundations/unit00-templates")
         .join(name);
     serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap()
-}
-
-fn normalized(text: &str) -> String {
-    text.to_lowercase()
-        .replace("evaluate", "compute")
-        .replace("\\times", "*")
-        .replace("\\div", "/")
-        .replace("{,}", "")
-        .replace(['{', '}', '$'], "")
-        .chars()
-        .filter(|c| !c.is_whitespace())
-        .collect::<String>()
-        .trim_end_matches('.')
-        .to_owned()
-}
-
-fn operands(text: &str) -> Vec<String> {
-    let text = text.replace("{,}", "");
-    let mut numbers: Vec<_> = text
-        .split(|c: char| !c.is_ascii_digit())
-        .filter(|part| !part.is_empty())
-        .map(str::to_owned)
-        .collect();
-    numbers.sort();
-    numbers
 }
 
 #[test]

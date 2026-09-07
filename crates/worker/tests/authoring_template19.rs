@@ -6,10 +6,10 @@ mod common;
 use std::collections::BTreeSet;
 use std::path::Path;
 
-use cadus_core::curriculum::load_curriculum;
+use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_store::test_support::TestDb;
 use cadus_worker::authoring::cli::select;
-use cadus_worker::authoring::job::{Outcome, author_one};
+use cadus_worker::authoring::job::{AuthoringJob, Outcome, Report, author_one};
 use cadus_worker::authoring::prompt::Kind;
 use common::{FakeModel, content_rows, handle, reply};
 use serde_json::{Value, json};
@@ -58,6 +58,19 @@ fn free_reply(arguments: &Value) -> (u16, String) {
     )
 }
 
+async fn import_row(
+    db: &TestDb,
+    curriculum: &Curriculum,
+    job: &AuthoringJob,
+    row: &Value,
+) -> Report {
+    let key = row["kp_id"].as_str().unwrap();
+    let spec = select(curriculum, &[key.to_owned()]).unwrap().remove(0);
+    author_one(&handle(db), job, Kind::Template, &spec)
+        .await
+        .unwrap()
+}
+
 #[tokio::test]
 async fn all_nineteen_import_at_zero_cost_as_pending_and_missing_only_skips_them() {
     TestDb::with(|db| async move {
@@ -74,10 +87,7 @@ async fn all_nineteen_import_at_zero_cost_as_pending_and_missing_only_skips_them
         let job = fake.job_with_attempts(1).with_missing_only(true);
         for row in &rows {
             let key = row["kp_id"].as_str().unwrap();
-            let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-            let result = author_one(&handle(&db), &job, Kind::Template, &spec)
-                .await
-                .unwrap();
+            let result = import_row(&db, &curriculum, &job, row).await;
             assert_eq!(result.outcome, Outcome::Stored, "{key}: {result:?}");
             assert_eq!(result.attempts, 1, "{key}");
             assert!(result.decline.is_none(), "{key}");
@@ -134,10 +144,7 @@ async fn no_recipe_can_import_without_its_required_typed_contract() {
         let job = fake.job_with_attempts(1);
         for row in &rows {
             let key = row["kp_id"].as_str().unwrap();
-            let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-            let result = author_one(&handle(&db), &job, Kind::Template, &spec)
-                .await
-                .unwrap();
+            let result = import_row(&db, &curriculum, &job, row).await;
             assert_eq!(result.outcome, Outcome::Declined, "{key}: {result:?}");
             assert_eq!(result.attempts, 1, "{key}");
             assert!(content_rows(&db.admin, key).await.is_empty(), "{key}");
