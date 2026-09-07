@@ -138,3 +138,41 @@ fn every_reference_segment_satisfies_its_stated_equation() {
     }
     assert!(checked > 60);
 }
+
+#[test]
+fn linear_inequality_reference_shades_the_satisfying_side() {
+    let entry = entries()
+        .into_iter()
+        .find(|entry| entry.kp_id == "graphing-linear-inequalities/kp3")
+        .unwrap();
+    let VisualSpec::Coordinate(figure) = &entry.visuals[0] else {
+        panic!("graphing-linear-inequalities/kp3 must use a coordinate figure");
+    };
+    let half_plane = &figure.shaded_half_planes[0];
+
+    let parse = |value: &str| value.parse::<i64>().unwrap();
+    for point in [&half_plane.through_a, &half_plane.through_b] {
+        let x = parse(point.x.as_str());
+        let y = parse(point.y.as_str());
+        assert_eq!(y, x - 1, "boundary point must satisfy y = x - 1");
+    }
+    let shade_x = parse(half_plane.shade_toward.x.as_str());
+    let shade_y = parse(half_plane.shade_toward.y.as_str());
+    let satisfies = |x: i64, y: i64| {
+        let boundary_y = x.checked_sub(1).unwrap();
+        y <= boundary_y
+    };
+    assert!(
+        satisfies(shade_x, shade_y),
+        "shade point must satisfy y ≤ x - 1"
+    );
+    assert!(!satisfies(0, 0), "the origin must fail y ≤ x - 1");
+    assert!(half_plane.solid, "the inclusive boundary must be solid");
+    assert_eq!(half_plane.label.as_deref(), Some("y ≤ x - 1"));
+    assert_eq!(
+        figure.caption.as_deref(),
+        Some(
+            "Reference example: the origin fails y ≤ x - 1. Shade the side containing (0,-2), which satisfies the inequality."
+        )
+    );
+}
