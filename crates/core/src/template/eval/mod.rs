@@ -328,6 +328,10 @@ pub fn answer_for_contract(
         Some(contract @ AnswerContract::Unit { unit, .. }) => {
             unit_answer(ast, bindings, contract, unit)
         }
+        Some(contract @ AnswerContract::PolynomialRelation) => {
+            let value = answer(ast, bindings)?;
+            contracted(value.text, contract)
+        }
         Some(AnswerContract::Multipart { parts }) => multipart_answer(ast, bindings, parts),
         Some(contract @ AnswerContract::List { .. }) => list_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::ReducedRatio) => {

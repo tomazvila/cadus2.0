@@ -102,7 +102,15 @@ pub(super) fn check_params(
                 ),
             ));
         }
-        if spec.answer_kind == AnswerKind::Expression && FREE_SYMBOLS.contains(&name.as_str()) {
+        let symbolic_answer = spec.answer_kind == AnswerKind::Expression
+            || matches!(
+                doc.answer_contract,
+                Some(
+                    crate::answer::AnswerContract::PolynomialRelation
+                        | crate::answer::AnswerContract::RelationSetup
+                )
+            );
+        if symbolic_answer && FREE_SYMBOLS.contains(&name.as_str()) {
             return Err(Rejection::new(
                 "unknown-collision",
                 format!(
