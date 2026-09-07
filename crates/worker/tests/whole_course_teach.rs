@@ -98,9 +98,15 @@ fn normalized(text: &str) -> String {
         .replace("\\div", "/")
 }
 
+fn part_paths(prefix: &str) -> BTreeSet<String> {
+    (1..=30)
+        .map(|part| format!("{prefix}/part-{part:02}.json"))
+        .collect()
+}
+
 type Sources = BTreeMap<String, (String, Vec<cadus_core::instruction::ServedInstance>)>;
 
-fn artifacts(directory: &Path) -> (BTreeMap<String, Value>, BTreeMap<String, Value>) {
+fn manifests(directory: &Path) -> (Value, Value) {
     let manifest = read(directory.join("manifest.json"));
     let import = read(directory.join("import-manifest.json"));
     assert_eq!(manifest["status"], "pending-human-review");
@@ -123,14 +129,49 @@ fn artifacts(directory: &Path) -> (BTreeMap<String, Value>, BTreeMap<String, Val
     assert_eq!(import["knowledge_points"], 735);
     assert_eq!(import["api_calls"], 0);
     assert_eq!(import["approved_by_this_tool"], 0);
-    for file in manifest["files"].as_array().expect("evidence files") {
+    (manifest, import)
+}
+
+fn verify_inventory(directory: &Path, manifest: &Value, import: &Value) {
+    let files = manifest["files"].as_array().expect("evidence files");
+    let paths: BTreeSet<_> = files
+        .iter()
+        .map(|file| file["path"].as_str().unwrap().to_owned())
+        .collect();
+    let mut expected = part_paths("drafts");
+    expected.extend(part_paths("reviews"));
+    expected.extend([
+        "inputs/coverage.json".into(),
+        "inputs/templates.json".into(),
+    ]);
+    assert_eq!(paths, expected);
+    let import_paths: BTreeSet<_> = import["files"]
+        .as_array()
+        .expect("import files")
+        .iter()
+        .map(|file| file.as_str().expect("import path").to_owned())
+        .collect();
+    assert_eq!(import_paths, part_paths("drafts"));
+    for file in files {
         let path = file["path"].as_str().expect("evidence path");
+        let value = read(directory.join(path));
+        let row_count = value
+            .as_array()
+            .or_else(|| value["rows"].as_array())
+            .expect("evidence rows")
+            .len();
+        assert_eq!(row_count, file["rows"], "{path}");
         assert_eq!(
             sha(directory.join(path)),
             file["sha256"].as_str().unwrap(),
             "{path}"
         );
     }
+}
+
+fn artifacts(directory: &Path) -> (BTreeMap<String, Value>, BTreeMap<String, Value>) {
+    let (manifest, import) = manifests(directory);
+    verify_inventory(directory, &manifest, &import);
     let draft_paths = import["files"]
         .as_array()
         .expect("import files")
@@ -200,6 +241,59 @@ fn source_evidence(
     (sources, occupied)
 }
 
+fn verify_review(kp: &str, review: &Value) {
+    assert_eq!(review["kp_id"], kp);
+    assert_eq!(review["human_approval"], "pending", "{kp}");
+    assert_eq!(
+        review["verification"],
+        serde_json::json!({
+            "collision": "clear", "human_approval": "pending", "production_gate": "accepted"
+        }),
+        "{kp}"
+    );
+    for forbidden in ["status", "approved", "approved_by", "automatic_approval"] {
+        assert!(
+            review.get(forbidden).is_none(),
+            "{kp}: forbidden {forbidden}"
+        );
+    }
+    assert!(
+        !review.to_string().contains("/home/deploy/.cache/"),
+        "{kp}: machine-local path"
+    );
+    let acceptance = review["independent_acceptance"]
+        .as_object()
+        .expect("acceptance object");
+    assert!(!acceptance.is_empty(), "{kp}: empty independent acceptance");
+    if !review["independent_acceptance"]["decision"].is_null() {
+        assert_eq!(
+            review["independent_acceptance"]["decision"], "accept",
+            "{kp}"
+        );
+    } else {
+        for field in ["independent_reason", "source_row_sha256"] {
+            assert!(
+                meaningful(&review["independent_acceptance"][field]),
+                "{kp}: no {field}"
+            );
+        }
+    }
+    for field in [
+        "novelty_proof",
+        "exact_answer_derivation",
+        "constraint_checks",
+        "semantic_rationale",
+    ] {
+        assert!(meaningful(&review[field]), "{kp}: empty {field}");
+    }
+    if !review["author_source_reference"].is_null() {
+        assert!(
+            meaningful(&review["author_source_reference"]),
+            "{kp}: empty author source"
+        );
+    }
+}
+
 fn verify_pages(
     drafts: &BTreeMap<String, Value>,
     reviews: &BTreeMap<String, Value>,
@@ -212,35 +306,7 @@ fn verify_pages(
         assert_eq!(draft["kind"], "teach", "{kp}");
         assert_eq!(draft.as_object().unwrap().len(), 3, "{kp}");
         let review = &reviews[kp];
-        assert_eq!(review["kp_id"], *kp);
-        assert_eq!(review["human_approval"], "pending", "{kp}");
-        let acceptance = review["independent_acceptance"]
-            .as_object()
-            .expect("acceptance object");
-        assert!(!acceptance.is_empty(), "{kp}: empty independent acceptance");
-        if !review["independent_acceptance"]["decision"].is_null() {
-            assert_eq!(
-                review["independent_acceptance"]["decision"], "accept",
-                "{kp}"
-            );
-        } else {
-            assert!(
-                meaningful(&review["independent_acceptance"]["independent_reason"]),
-                "{kp}: no independent reason"
-            );
-            assert!(
-                meaningful(&review["independent_acceptance"]["source_row_sha256"]),
-                "{kp}: no accepted source hash"
-            );
-        }
-        for field in [
-            "novelty_proof",
-            "exact_answer_derivation",
-            "constraint_checks",
-            "semantic_rationale",
-        ] {
-            assert!(meaningful(&review[field]), "{kp}: empty {field}");
-        }
+        verify_review(kp, review);
         let (source_digest, served) = &sources[kp];
         assert_eq!(
             review["canonical_source_template_digest"], *source_digest,
