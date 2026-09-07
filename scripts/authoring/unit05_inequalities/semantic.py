@@ -1,7 +1,12 @@
 """Independent rational reconstruction of inequality prompts, without answer_expr."""
 import ast
 from fractions import Fraction as Q
+from pathlib import Path
 import re
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from exact_arithmetic import binary
 
 OPS = {'<': lambda a,b:a<b, '<=':lambda a,b:a<=b,
        '>':lambda a,b:a>b, '>=':lambda a,b:a>=b}
@@ -26,10 +31,7 @@ def value(node, x):
         if isinstance(node.op, ast.UAdd): return a
     if isinstance(node, ast.BinOp):
         a,b = value(node.left,x),value(node.right,x)
-        if isinstance(node.op, ast.Add): return a+b
-        if isinstance(node.op, ast.Sub): return a-b
-        if isinstance(node.op, ast.Mult): return a*b
-        if isinstance(node.op, ast.Div): return a/b
+        return binary(node.op,a,b)
     raise ValueError(ast.dump(node))
 
 

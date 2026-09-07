@@ -21,18 +21,12 @@ Default is a dry run: reports what it would change and writes nothing. Pass
 """
 from __future__ import annotations
 
-import argparse
-import sys
-from pathlib import Path
-
 from foundations_curriculum_patch import (
     ExemplarKey,
     KpKey,
     NewExemplar,
-    Rejection,
-    apply_solution_sketches,
-    insert_exemplars,
 )
+from foundations_recipe_cli import run_recipe_cli
 
 UNIT_FILE = "curriculum/foundations/00-arithmetic-core.yaml"
 
@@ -147,29 +141,15 @@ RECIPES: dict[KpKey, list[NewExemplar]] = {
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--curriculum", default=UNIT_FILE)
-    parser.add_argument("--write", action="store_true")
-    args = parser.parse_args()
-
-    path = Path(args.curriculum)
-    try:
-        _, sketched = apply_solution_sketches(path, MISSING_SKETCHES, write=args.write)
-    except Rejection as error:
-        print(f"REFUSED (solution sketches): {error}", file=sys.stderr)
-        return 1
-    verb = "written" if args.write else "planned"
-    print(f"{len(sketched)} missing solution_sketch line(s) {verb}")
-
-    try:
-        _, applied = insert_exemplars(path, RECIPES, write=args.write)
-    except Rejection as error:
-        print(f"REFUSED (new exemplars): {error}", file=sys.stderr)
-        return 1
-
-    count = sum(len(RECIPES[key]) for key in applied)
-    print(f"{len(applied)} knowledge point(s), {count} new exemplar(s) {verb}")
-    return 0
+    return run_recipe_cli(
+        UNIT_FILE,MISSING_SKETCHES,RECIPES,
+        lambda _sketched,applied,count,verb:
+            f"{applied} knowledge point(s), {count} new exemplar(s) {verb}",
+        sketch_summary=lambda count,verb:f"{count} missing solution_sketch line(s) {verb}",
+        sketch_refusal="REFUSED (solution sketches)",
+        recipe_refusal="REFUSED (new exemplars)",
+        description=__doc__,
+    )
 
 
 if __name__ == "__main__":

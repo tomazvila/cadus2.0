@@ -13,14 +13,22 @@ recipe has been reviewed.
 """
 from __future__ import annotations
 
-import math
 import re
 from dataclasses import dataclass
 from fractions import Fraction
 from random import Random
-from typing import Callable, Optional
+from typing import Optional
 
 import foundations_compute as fc
+import foundations_family as family_rules
+
+# Preserve the long-standing private test seam while keeping the implementation
+# in the shared family-rules module.
+_IMPROPER_MIXED = family_rules._IMPROPER_MIXED
+_BARE_FRACTION = family_rules._BARE_FRACTION
+_TRIVIAL_FACTOR = family_rules._TRIVIAL_FACTOR
+_within_kp_family = family_rules.within_kp_family
+_operand_ceiling = family_rules.operand_ceiling
 
 FAMILIES = (
     "absolute_value",
@@ -228,70 +236,6 @@ def _served_values(kp: dict) -> frozenset[Fraction]:
     return frozenset(values)
 
 
-_IMPROPER_MIXED = re.compile(r"(\d+)\\frac\{(\d+)\}\{(\d+)\}")
-_BARE_FRACTION = re.compile(r"(?<!\d)\\frac\{(\d+)\}\{(\d+)\}")
-#: A whole-number factor of exactly one beside `\times` or `\div`: `\times 1`,
-#: `1 \times`, `\div 1` — multiplying or dividing by one trivializes the step.
-_TRIVIAL_FACTOR = re.compile(r"\\(?:times|div)\s+1(?!\d)|(?<!\d)1\s+\\(?:times|div)")
-
-
-def _valid_fraction_operands(candidate: str) -> bool:
-    """Reject malformed mixed numbers, fractions equal to one, and trivial factors."""
-    if any(int(num) >= int(den) for _, num, den in _IMPROPER_MIXED.findall(candidate)):
-        return False
-    if any(num == den for num, den in _BARE_FRACTION.findall(candidate)):
-        return False
-    return not _TRIVIAL_FACTOR.search(candidate)
-
-
-def _fraction_needs_reduction(candidate: str) -> bool:
-    plain = _BARE_FRACTION.search(candidate)
-    return not plain or math.gcd(int(plain.group(1)), int(plain.group(2))) != 1
-
-
-def _within_kp_family(served: frozenset[Fraction], family: str) -> Callable[[str, Fraction], bool]:
-    """A same-shape candidate check bounding a new draw to the KP's own authored band.
-
-    Rules a random operand redraw cannot see on its own: the result stays
-    within the range this knowledge point's OWN exemplars already span
-    (never an easier or a harder item than the author already picked); the
-    result stays an exact integer when every authored exemplar of this
-    knowledge point already is one (a "divides evenly" or "whole number"
-    knowledge point never gains a fractional held-out item); a mixed
-    number's own fractional part stays proper (numerator below denominator),
-    so a redraw never turns `2\\frac{1}{2}` into a malformed `2\\frac{4}{4}`;
-    no plain fraction operand equals exactly one (`\\frac{3}{3}`), which
-    trivializes whatever it multiplies or divides; and, for the
-    `fraction_reduce` family alone, the drawn fraction is not ALREADY in
-    lowest terms — a "simplify this fraction" exercise needs something left
-    to simplify; and no whole-number factor of exactly one sits beside a
-    `\\times` or a `\\div` (multiplying or dividing by one is a no-op step).
-    """
-    lo, hi = min(served), max(served)
-    integer_required = all(value.denominator == 1 for value in served)
-
-    def check(candidate: str, value: Fraction) -> bool:
-        in_range = lo <= value <= hi
-        correct_kind = not integer_required or value.denominator == 1
-        reducible = family != "fraction_reduce" or _fraction_needs_reduction(candidate)
-        return in_range and correct_kind and _valid_fraction_operands(candidate) and reducible
-
-    return check
-
-
-def _operand_ceiling(matches: list[re.Match]) -> int:
-    """The largest bare-integer operand size ANY of the KP's own exemplars uses.
-
-    A generated operand never exceeds this, so a fraction's denominator (or
-    any other operand) never drifts past what the knowledge point's own
-    author already authored somewhere in it.
-    """
-    sizes = [
-        abs(operand.value) for match in matches for operand in fc.integer_operands(match.group(2))
-    ]
-    return max(sizes, default=2)
-
-
 def pure_numeric_exemplars(kp: dict) -> Optional[list[re.Match]]:
     """Every exemplar's `(verb, expr)` match, or `None` if any exemplar disqualifies the KP.
 
@@ -350,8 +294,8 @@ def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
             rng,
             forbid_zero_result=True,
             forbid_values=served,
-            extra_ok=_within_kp_family(served, family),
-            operand_ceiling=_operand_ceiling(matches),
+            extra_ok=family_rules.within_kp_family(served, family),
+            operand_ceiling=family_rules.operand_ceiling(matches),
         )
     except fc.NotArithmetic:
         return None

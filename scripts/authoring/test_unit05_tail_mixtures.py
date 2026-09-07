@@ -2,9 +2,7 @@
 from collections import Counter
 from fractions import Fraction as Q
 from itertools import product
-import json
 import math
-from pathlib import Path
 import re
 import sys
 import unittest
@@ -12,6 +10,8 @@ import unittest
 from test_unit05_residual import scalar, signature
 from test_unit05_residual_second import canonical_rows, model as prior_model, solved
 from unit05_tail_common import DEST, ROOT
+from unit05_test_support import (assert_pending_audit, collect_recipe_outputs,
+                                 extend_pending_signatures, load_facts_recipes)
 sys.path.insert(0, str(ROOT/'scripts/review'))
 from foundations_content_audit import build_report, pending_templates
 
@@ -62,17 +62,11 @@ def verify(key, problem, answer, sketch=None):
 class Mixtures(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.facts = json.loads(Path(FACTS).read_text())
-        cls.kps = {r['kp_key']: r for r in cls.facts['kps']}
-        cls.recipes = json.loads((DEST/'mixtures.json').read_text())
+        cls.facts,cls.kps,cls.recipes=load_facts_recipes(FACTS,[DEST/'mixtures.json'])
 
     def test_authored_and_audit(self):
         report = build_report(self.facts, pending_templates(ROOT/'docs/content-foundations'))
-        for row in report['kps']:
-            if row['kp_key'] in KEYS:
-                # Static source facts leave production gating explicitly unverified.
-                self.assertEqual([issue['code'] for issue in row['issues']],
-                                 ['pending_template_production_gate_declined'])
+        assert_pending_audit(self,report,KEYS)
         for key in KEYS:
             exemplars = self.kps[key]['exemplars']
             self.assertEqual(len(exemplars),4)
@@ -88,17 +82,8 @@ class Mixtures(unittest.TestCase):
             self.assertEqual(recipe['status'],'pending')
             self.assertEqual(args['constraints'],[])
             self.assertNotIn('space_size',args)
-            domains = {k:v['values'] for k,v in args['params'].items()}
+            domains,outputs=collect_recipe_outputs(self,key,args,verify,seen)
             tuples = set(product(*domains.values()))
-            outputs = {}
-            for sample in args['samples']:
-                params = tuple(sample['params'][k] for k in domains)
-                self.assertNotIn(params,outputs)
-                problem = args['statement'].format(**sample['params'])
-                sig,answer = verify(key,problem,sample['expected'])
-                self.assertNotIn(sig,seen,(key,seen.get(sig),problem))
-                seen[sig] = key
-                outputs[params] = answer
             self.assertEqual(set(outputs),tuples)
             self.assertEqual(len(outputs),12)
             counts = Counter(outputs.values())
@@ -127,20 +112,8 @@ class Mixtures(unittest.TestCase):
 
     def add_pending_signatures(self, seen):
         """Extend the boundary with every readable non-mixture pending task."""
-        count = 0
-        for key,rows in pending_templates(ROOT/'docs/content-foundations').items():
-            if key in KEYS:
-                continue
-            for row in rows:
-                args = row['document'].get('arguments',{})
-                for sample in args.get('samples',[]):
-                    problem = args['statement'].format(**sample['params'])
-                    sig = self.read_signature(key,problem,sample['expected'])
-                    if sig is not None:
-                        self.assertNotIn(seen.get(sig),KEYS)
-                        seen[sig] = key
-                        count += 1
-        self.assertGreaterEqual(count,96)
+        pending=pending_templates(ROOT/'docs/content-foundations')
+        extend_pending_signatures(self,seen,pending,KEYS,self.read_signature)
 
     def read_signature(self,key,problem,answer):
         if key in KEYS:

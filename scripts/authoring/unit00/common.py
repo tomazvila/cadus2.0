@@ -4,6 +4,11 @@ import math
 import re
 import ast
 from fractions import Fraction
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from exact_arithmetic import binary
 
 
 def lit(value):
@@ -61,12 +66,9 @@ def constant(node):
         return ','.join(str(constant(n)) for n in node.elts)
     if isinstance(node,ast.BinOp):
         a,b=constant(node.left),constant(node.right)
-        if isinstance(node.op,ast.Add): return a+b
-        if isinstance(node.op,ast.Sub): return a-b
-        if isinstance(node.op,ast.Mult): return a*b
-        if isinstance(node.op,ast.Div): return a/b
         if isinstance(node.op,ast.Pow) and b.denominator==1 and 0<=b<=1000:
             return a**int(b)
+        return binary(node.op,a,b)
     raise ValueError('outside closed arithmetic')
 
 

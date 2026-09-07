@@ -9,6 +9,7 @@ import sys
 import unittest
 
 from test_unit05_residual import linear, scalar, signature, verify as verify_system
+from unit05_test_support import assert_pairwise_active, load_facts_recipes
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'scripts/review'))
@@ -121,9 +122,8 @@ def verify(key, problem, answer, sketch=None):
 class SecondCheckpointTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.facts = json.loads(Path(FACTS).read_text())
-        cls.kps = {r['kp_key']: r for r in cls.facts['kps']}
-        cls.recipes = json.loads((ROOT/'docs/content-foundations/unit05-residual/templates-second.json').read_text())
+        path=ROOT/'docs/content-foundations/unit05-residual/templates-second.json'
+        cls.facts,cls.kps,cls.recipes=load_facts_recipes(FACTS,[path])
 
     def test_scope_and_authored_semantics(self):
         self.assertEqual({r['kp_id'] for r in self.recipes}, KEYS)
@@ -158,13 +158,7 @@ class SecondCheckpointTests(unittest.TestCase):
                 seen[sig] = key
                 outputs[params] = value
             self.assertEqual(len(set(outputs.values())), 12, key)
-            for a, b in tuples:
-                for other in domains['a']:
-                    if other != a:
-                        self.assertNotEqual(outputs[a, b], outputs[other, b])
-                for other in domains['b']:
-                    if other != b:
-                        self.assertNotEqual(outputs[a, b], outputs[a, other])
+            assert_pairwise_active(self,tuples,domains,outputs)
         self.check_other_pending_systems(seen)
 
     def check_other_pending_systems(self, seen):

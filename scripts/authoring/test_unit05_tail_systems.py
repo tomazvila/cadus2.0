@@ -1,15 +1,15 @@
 """Semantic reconstruction and exhaustive source-only acceptance of the ten-KP tail."""
 from collections import Counter
 from itertools import product
-import json
 import math
-from pathlib import Path
 import sys
 import unittest
 
 from unit05_tail_common import DEST, ROOT
 from unit05_tail_oracle import (external_signature, parse, perturbed_problem,
                                verify, wrong_answers)
+from unit05_test_support import (assert_pending_audit, collect_recipe_outputs,
+                                 extend_pending_signatures, load_facts_recipes)
 sys.path.insert(0,str(ROOT/'scripts/review'))
 from foundations_content_audit import build_report, family, pending_templates
 
@@ -21,18 +21,13 @@ KEYS = {f'{t}/kp{i}' for t in ('checking-systems-solutions','systems-special-cas
 class SystemsTail(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.facts = json.loads(Path(FACTS).read_text())
-        cls.kps = {r['kp_key']:r for r in cls.facts['kps']}
-        cls.recipes = [r for batch in BATCHES for r in json.loads((DEST/f'{batch}.json').read_text())]
+        paths=[DEST/f'{batch}.json' for batch in BATCHES]
+        cls.facts,cls.kps,cls.recipes=load_facts_recipes(FACTS,paths)
 
     def test_scope_audit_and_distinct_authored_semantics(self):
         self.assertEqual({r['kp_id'] for r in self.recipes},KEYS)
         report = build_report(self.facts,pending_templates(ROOT/'docs/content-foundations'))
-        for row in report['kps']:
-            if row['kp_key'] in KEYS:
-                # Static source facts leave production gating explicitly unverified.
-                self.assertEqual([issue['code'] for issue in row['issues']],
-                                 ['pending_template_production_gate_declined'],row['kp_key'])
+        assert_pending_audit(self,report,KEYS,key_message=True)
         for key in KEYS:
             rows = self.kps[key]['exemplars']
             self.assertEqual(len(rows),4)
@@ -50,16 +45,7 @@ class SystemsTail(unittest.TestCase):
             key,args = recipe['kp_id'],recipe['arguments']
             self.assertEqual(recipe['status'],'pending')
             self.assertNotIn('space_size',args)
-            domains = {k:v['values'] for k,v in args['params'].items()}
-            outputs = {}
-            for sample in args['samples']:
-                params = tuple(sample['params'][k] for k in domains)
-                self.assertNotIn(params,outputs)
-                problem = args['statement'].format(**sample['params'])
-                sig,output = verify(key,problem,sample['expected'])
-                self.assertTrue(sig not in seen,(key,seen.get(sig),problem))
-                seen[sig] = key
-                outputs[params] = output
+            domains,outputs=collect_recipe_outputs(self,key,args,verify,seen)
             self.assertEqual(set(outputs),self.expected_tuples(key,domains))
             self.assertGreaterEqual(len(outputs),12)
             total += len(outputs)
@@ -111,20 +97,9 @@ class SystemsTail(unittest.TestCase):
 
     def add_pending_signatures(self, seen):
         """Extend the boundary with every readable non-tail pending task."""
-        count = 0
-        for key,rows in pending_templates(ROOT/'docs/content-foundations').items():
-            if key in KEYS:
-                continue
-            for row in rows:
-                args = row['document'].get('arguments',{})
-                for sample in args.get('samples',[]):
-                    problem = args['statement'].format(**sample['params'])
-                    sig = self.optional_signature(problem)
-                    if sig is not None:
-                        self.assertNotIn(seen.get(sig),KEYS)
-                        seen[sig] = key
-                        count += 1
-        self.assertGreaterEqual(count,96)
+        pending=pending_templates(ROOT/'docs/content-foundations')
+        reader=lambda _key,problem,_answer:self.optional_signature(problem)
+        extend_pending_signatures(self,seen,pending,KEYS,reader)
 
     def optional_signature(self,problem):
         try:

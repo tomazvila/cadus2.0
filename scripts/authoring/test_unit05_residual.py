@@ -9,6 +9,9 @@ import re
 import sys
 import unittest
 
+from exact_arithmetic import binary
+from unit05_test_support import assert_pairwise_active
+
 ROOT = Path(__file__).resolve().parents[2]
 KEYS = {
     'substitution-with-isolated-variable/kp1',
@@ -38,14 +41,7 @@ def node_value(node, values):
             return value
     if isinstance(node, ast.BinOp):
         a, b = node_value(node.left, values), node_value(node.right, values)
-        if isinstance(node.op, ast.Add):
-            return a + b
-        if isinstance(node.op, ast.Sub):
-            return a - b
-        if isinstance(node.op, ast.Mult):
-            return a * b
-        if isinstance(node.op, ast.Div):
-            return a / b
+        return binary(node.op,a,b)
     raise ValueError(f'Unsupported arithmetic: {ast.dump(node)}')
 
 
@@ -136,13 +132,7 @@ class Unit05SemanticTests(unittest.TestCase):
                 self.assertNotIn(sig, seen, (row['kp_id'], seen.get(sig), problem))
                 seen[sig] = row['kp_id']
             self.assertEqual(len(set(outputs.values())), 12)
-            for a, b in wanted:
-                for other in domains['a']:
-                    if other != a:
-                        self.assertNotEqual(outputs[a, b], outputs[other, b])
-                for other in domains['b']:
-                    if other != b:
-                        self.assertNotEqual(outputs[a, b], outputs[a, other])
+            assert_pairwise_active(self,wanted,domains,outputs)
 
     def authored_signatures(self):
         seen = {}

@@ -4,8 +4,8 @@ from pathlib import Path
 
 import sympy as s
 
-from check_math import equal, expr
-from check_parameter_math import coefficient_polynomial, negative
+from check_math import equal
+from check_parameter_math import coefficient_polynomial, negative, vertex_components
 from check_residual_structured import named
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -41,19 +41,13 @@ def check(key, index, item):
     if key == "applying-the-quadratic-formula/kp1":
         equal(coefficient_polynomial(item["answer"]), POLYS[key][index])
         return
-    if key.endswith("kp3"):
-        got = named(item["answer"])
-        a, h, k = got["vertex_parameters"]
+    a,h,k,got=vertex_components(key,item)
+    if got is not None:
         if "minimum" in got:
             assert a > 0
             equal(got["minimum"], k)
         else:
             equal(got["vertex"], (h, k))
-    elif key.endswith("kp1"):
-        h, k = expr(item["answer"])
-        a = 1
-    else:
-        a, h, k = expr(item["answer"])
     equal(a*(X-h)**2+k, POLYS[key][index])
 
 

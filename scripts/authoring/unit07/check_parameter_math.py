@@ -34,18 +34,24 @@ def root_equation(key, item, math):
     return ("root-equation", s.srepr(s.expand(poly)))
 
 
+def vertex_components(key,item):
+    if key.endswith("kp3"):
+        got=named(item["answer"])
+        a,h,k=got["vertex_parameters"]
+        return a,h,k,got
+    if key.endswith("kp1"):
+        h,k=expr(item["answer"])
+        return s.Integer(1),h,k,None
+    a,h,k=expr(item["answer"])
+    return a,h,k,None
+
+
 def vertex_form(key, item, math):
     poly = expr(math[0].split("=", 1)[1])
-    if key.endswith("kp3"):
-        got = named(item["answer"])
-        a, h, k = got["vertex_parameters"]
+    a,h,k,got=vertex_components(key,item)
+    if got is not None:
         assert a > 0
         equal(got["minimum"], k)
-    elif key.endswith("kp1"):
-        h, k = expr(item["answer"])
-        a = 1
-    else:
-        a, h, k = expr(item["answer"])
     equal(a*(X-h)**2+k, poly)
     equal(s.diff(poly, X).subs(X, h), 0)
     equal(poly.subs(X, h), k)

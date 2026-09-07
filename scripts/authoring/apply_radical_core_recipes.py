@@ -10,18 +10,12 @@ Default is a dry run. Pass ``--write`` to update the unit YAML in place.
 """
 from __future__ import annotations
 
-import argparse
-import sys
-from pathlib import Path
-
 from foundations_curriculum_patch import (
     ExemplarKey,
     KpKey,
     NewExemplar,
-    Rejection,
-    apply_solution_sketches,
-    insert_exemplars,
 )
+from foundations_recipe_cli import run_recipe_cli
 
 UNIT_FILE = "curriculum/foundations/06-exponents-radicals.yaml"
 
@@ -106,21 +100,12 @@ RECIPES: dict[KpKey, list[NewExemplar]] = {
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--curriculum", default=UNIT_FILE)
-    parser.add_argument("--write", action="store_true")
-    args = parser.parse_args()
-    path = Path(args.curriculum)
-    try:
-        _, sketched = apply_solution_sketches(path, MISSING_SKETCHES, write=args.write)
-        _, applied = insert_exemplars(path, RECIPES, write=args.write)
-    except Rejection as error:
-        print(f"REFUSED: {error}", file=sys.stderr)
-        return 1
-    verb = "written" if args.write else "planned"
-    count = sum(len(RECIPES[key]) for key in applied)
-    print(f"{len(sketched)} sketches and {count} exemplars across {len(applied)} KPs {verb}")
-    return 0
+    return run_recipe_cli(
+        UNIT_FILE,MISSING_SKETCHES,RECIPES,
+        lambda sketched,applied,count,verb:
+            f"{sketched} sketches and {count} exemplars across {applied} KPs {verb}",
+        description=__doc__,
+    )
 
 
 if __name__ == "__main__":

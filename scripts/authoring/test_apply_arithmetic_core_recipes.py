@@ -3,27 +3,18 @@ its own authored constraint and checking every new exemplar against it by
 an INDEPENDENT recompute from the parsed problem text — never by trusting
 this module's own arithmetic, which would be circular.
 """
-import json
 import re
 import unittest
 from pathlib import Path
 
 import apply_arithmetic_core_recipes as recipes
 from foundations_curriculum_patch import KpKey
+from foundations_testdata import find_kp
 
 TESTDATA = Path(__file__).parent / "testdata" / "foundations_topics.json"
 
 _DIV_RE = re.compile(r"^Compute \$(?P<a>\d+) \\div (?P<b>\d+)\$")
 _MUL_RE = re.compile(r"^Compute \$(?P<a>\d+) \\times (?P<b>\d+)\$\.$")
-
-
-def find_kp(topic_id: str, kp_id: str) -> dict:
-    for topic in json.loads(TESTDATA.read_text()):
-        if topic["id"] == topic_id:
-            for kp in topic["knowledge_points"]:
-                if kp["id"] == kp_id:
-                    return kp
-    raise KeyError((topic_id, kp_id))
 
 
 def served_division_pairs(kp: dict) -> set[tuple[int, int]]:
@@ -76,7 +67,7 @@ class QuotientRemainderSemanticTest(unittest.TestCase):
                 # script's own `--write` run, so "already served" is judged
                 # against the KP's original exemplars only, not its current
                 # (possibly already-raised) count.
-                kp = find_kp(topic_id, kp_id)
+                kp = find_kp(TESTDATA,topic_id,kp_id)
                 kp = {**kp, "exemplars": kp["exemplars"][:original_count]}
                 served = served_division_pairs(kp)
                 plans = recipes.RECIPES[KpKey(topic_id, kp_id)]
@@ -98,7 +89,7 @@ class QuotientRemainderSemanticTest(unittest.TestCase):
 
 class PowersOfTenSemanticTest(unittest.TestCase):
     def test_kp1_one_factor_is_a_power_of_ten_the_other_is_one_or_two_digits(self):
-        kp = find_kp("multiplying-by-powers-of-ten", "kp1")
+        kp = find_kp(TESTDATA,"multiplying-by-powers-of-ten", "kp1")
         kp = {**kp, "exemplars": kp["exemplars"][:3]}
         served = served_multiplication_pairs(kp)
         plans = recipes.RECIPES[KpKey("multiplying-by-powers-of-ten", "kp1")]
@@ -118,7 +109,7 @@ class PowersOfTenSemanticTest(unittest.TestCase):
         self.assertIn(f"= {factor * power}$", plans[0].solution_sketch)
 
     def test_kp2_both_factors_end_in_zero_and_the_stripped_fact_is_correct(self):
-        kp = find_kp("multiplying-by-powers-of-ten", "kp2")
+        kp = find_kp(TESTDATA,"multiplying-by-powers-of-ten", "kp2")
         kp = {**kp, "exemplars": kp["exemplars"][:3]}
         served = served_multiplication_pairs(kp)
         plans = recipes.RECIPES[KpKey("multiplying-by-powers-of-ten", "kp2")]
@@ -139,7 +130,7 @@ class PracticeSketchSemanticTest(unittest.TestCase):
     def test_every_explicit_missing_sketch_matches_the_applied_curriculum(self):
         self.assertEqual(len(recipes.MISSING_SKETCHES), 8)
         for key, sketch in recipes.MISSING_SKETCHES.items():
-            exemplar = find_kp(key.topic_id, key.kp_id)["exemplars"][key.exemplar_index]
+            exemplar = find_kp(TESTDATA,key.topic_id,key.kp_id)["exemplars"][key.exemplar_index]
             with self.subTest(key=key):
                 self.assertEqual(exemplar["solution_sketch"], sketch)
 
@@ -147,7 +138,7 @@ class PracticeSketchSemanticTest(unittest.TestCase):
         for key, sketch in recipes.MISSING_SKETCHES.items():
             if key.topic_id != "multiplying-by-powers-of-ten":
                 continue
-            exemplar = find_kp(key.topic_id, key.kp_id)["exemplars"][key.exemplar_index]
+            exemplar = find_kp(TESTDATA,key.topic_id,key.kp_id)["exemplars"][key.exemplar_index]
             match = _MUL_RE.match(exemplar["problem"])
             self.assertIsNotNone(match, exemplar["problem"])
             a, b = int(match["a"]), int(match["b"])
@@ -161,7 +152,7 @@ class PracticeSketchSemanticTest(unittest.TestCase):
 class RejectionTest(unittest.TestCase):
     def test_every_recipe_key_names_a_real_knowledge_point(self):
         for topic_id, kp_id in [(k.topic_id, k.kp_id) for k in recipes.RECIPES]:
-            find_kp(topic_id, kp_id)  # raises KeyError if the KP is not real
+            find_kp(TESTDATA,topic_id,kp_id)  # raises KeyError if the KP is not real
 
     def test_no_recipe_introduces_a_duplicate_answer_within_its_own_batch(self):
         for key, plans in recipes.RECIPES.items():

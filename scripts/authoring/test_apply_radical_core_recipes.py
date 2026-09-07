@@ -1,5 +1,4 @@
 """Independent semantic checks for the five explicit radical recipes."""
-import json
 import math
 import re
 import unittest
@@ -9,18 +8,10 @@ from pathlib import Path
 import apply_radical_core_recipes as recipes
 import foundations_compute as compute
 from foundations_curriculum_patch import KpKey
+from foundations_testdata import find_kp
 
 TESTDATA = Path(__file__).parent / "testdata" / "foundations_topics.json"
 ROOT_RE = re.compile(r"^Compute \$(?P<prefix>\d*)\\sqrt(?:\[(?P<degree>\d+)\])?\{(?P<body>.+)\}\$\.$")
-
-
-def find_kp(topic_id: str, kp_id: str) -> dict:
-    for topic in json.loads(TESTDATA.read_text()):
-        if topic["id"] == topic_id:
-            for kp in topic["knowledge_points"]:
-                if kp["id"] == kp_id:
-                    return kp
-    raise KeyError((topic_id, kp_id))
 
 
 class RadicalRecipeSemanticTest(unittest.TestCase):
@@ -58,7 +49,7 @@ class RadicalRecipeSemanticTest(unittest.TestCase):
         for key, plans in recipes.RECIPES.items():
             answers = [int(plan.answer) for plan in plans]
             self.assertEqual(len(answers), len(set(answers)), key)
-            kp = find_kp(key.topic_id, key.kp_id)
+            kp = find_kp(TESTDATA,key.topic_id,key.kp_id)
             self.assertEqual(len(kp["exemplars"]), 4, key)
             self.assertTrue(all(item.get("solution_sketch") for item in kp["exemplars"]), key)
         self.assertTrue(all(0 < int(plan.answer) <= 12 for plan in recipes.RECIPES[KpKey("perfect-square-roots", "kp2")]))

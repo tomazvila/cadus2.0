@@ -6,6 +6,8 @@ import ast
 from fractions import Fraction as Q
 import re
 
+from exact_arithmetic import binary
+
 
 def scalar(source, variables=None):
     source = source.replace(' ', '')
@@ -26,14 +28,7 @@ def evaluate(node, variables):
             return value
     if isinstance(node,ast.BinOp):
         a,b=evaluate(node.left,variables),evaluate(node.right,variables)
-        if isinstance(node.op,ast.Add):
-            return a+b
-        if isinstance(node.op,ast.Sub):
-            return a-b
-        if isinstance(node.op,ast.Mult):
-            return a*b
-        if isinstance(node.op,ast.Div):
-            return a/b
+        return binary(node.op,a,b)
     raise ValueError(f'Unsupported scalar: {ast.dump(node)}')
 
 
