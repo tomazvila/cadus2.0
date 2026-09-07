@@ -153,6 +153,10 @@ def verify(args):
         raise Refused("bundle release commit differs from the checkout head")
     if receipt.get("counts") != EXPECTED or receipt.get("canonical_kps") != 809:
         raise Refused("bundle count contract differs from 809/809/809")
+    if (receipt.get("status") != "pending-human-review"
+            or receipt.get("human_approval") != "pending"
+            or receipt.get("side_effects") != {"production_writes": 0, "approvals": 0}):
+        raise Refused("bundle lifecycle boundary changed")
     files = receipt.get("import_order")
     if not isinstance(files, list) or [item.get("path") for item in files] != list(ORDER):
         raise Refused("bundle import order changed")
@@ -169,6 +173,11 @@ def verify(args):
     pairs = {(row["kp_id"], row["kind"]) for row in rows}
     if len(rows) != 2427 or len(pairs) != 2427:
         raise Refused("bundle must contain 2,427 unique pending documents")
+    counts = {kind: sum(row["kind"] == kind for row in rows) for kind in EXPECTED}
+    keysets = {kind: {row["kp_id"] for row in rows if row["kind"] == kind}
+               for kind in EXPECTED}
+    if counts != EXPECTED or len(set(map(frozenset, keysets.values()))) != 1:
+        raise Refused("bundle rows differ from the 809/809/809 canonical contract")
     print(f"FOUNDATIONS RELEASE BUNDLE VERIFIED: {receipt['bundle_sha256']}")
 
 
@@ -190,7 +199,9 @@ def verify_recovery(args):
     archive_path = Path(archive.get("path", ""))
     if not archive_path.is_file() or digest_bytes(archive_path.read_bytes()) != archive["sha256"]:
         raise Refused("encrypted backup is missing or differs from its receipt")
-    if receipt.get("outbound_model_keys") != "empty" or len(set(fingerprints)) != 1:
+    if (receipt.get("outbound_model_keys") != "empty"
+            or any(not isinstance(value, str) or not value for value in fingerprints)
+            or len(set(fingerprints)) != 1):
         raise Refused("recovery replay was not isolated or byte-identical")
     print(f"ENCRYPTED BACKUP AND RESTORE VERIFIED: {args.receipt.resolve()}")
 

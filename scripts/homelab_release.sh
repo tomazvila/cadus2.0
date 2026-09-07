@@ -66,7 +66,7 @@ verify_topology() {
             echo "release: homelab compose has no $service" >&2; exit 2;
         }
     done
-    git -C "$release_root" diff --quiet && git -C "$release_root" diff --cached --quiet || {
+    [ -z "$(git -C "$release_root" status --porcelain)" ] || {
         echo "release: release checkout is dirty" >&2; exit 2;
     }
     git -C "$release_root" diff --exit-code "$rollback_commit" -- migrations >/dev/null
@@ -199,8 +199,16 @@ import_pending() {
             --manifest "$bundle/$member" --worker "$scratch/cadus-worker" \
             --curriculum "$release_root/curriculum" --missing-only --concurrency 4
     done
-    compose exec -T cadus2-db psql -U postgres -d cadus -Atqc \
-        "SELECT kind || '|' || status || '|' || count(*) FROM content_store GROUP BY kind,status ORDER BY kind,status"
+    local inventory expected
+    inventory="$(compose exec -T cadus2-db psql -U postgres -d cadus -Atqc \
+        "SELECT kind || '|' || status || '|' || count(*) FROM content_store GROUP BY kind,status ORDER BY kind,status")"
+    expected=$'hint_ladder|pending|809\nteach|pending|809\ntemplate|pending|809'
+    [ "$inventory" = "$expected" ] || {
+        echo "release: pending inventory differs from the exact bundle" >&2
+        printf '%s\n' "$inventory" >&2
+        exit 1
+    }
+    printf '%s\n' "$inventory"
     echo "PENDING IMPORT OK release=$commit bundle=$bundle; human approval remains required"
 }
 
@@ -230,7 +238,7 @@ rollback_release() {
     old_edge="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["edge_image_id"])' "$rollback_file")"
     docker image inspect "$old_app" >/dev/null
     docker image inspect "$old_edge" >/dev/null
-    compose stop cadus2-edge
+    compose stop cadus2-edge cadus2-web cadus2-worker
     docker tag "$old_app" cadus2:latest
     docker tag "$old_edge" cadus2-edge:latest
     compose up -d --no-deps --force-recreate cadus2-web cadus2-worker cadus2-edge

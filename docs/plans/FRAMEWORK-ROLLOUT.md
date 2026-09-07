@@ -44,6 +44,7 @@ The rehearsal uses only the `cadus2-testdb` test container. It validates archive
 The live database initially has no content rows, so a review queue cannot exist before the candidate and pending bundle reach production. Pending rows do not serve. After explicit deployment authorization, retain a log and run:
 ```sh
 receipt_dir="$final_root/release-receipts"
+set -o pipefail
 scripts/homelab_release.sh deploy \
   --bundle "$bundle" \
   --recovery-receipt "$recovery_receipt" \
@@ -54,6 +55,7 @@ The helper records the current live app and edge image IDs as rollback truth, bu
 ## Import pending content
 This is a production database write distinct from deployment. After explicit authorization for the import, run:
 ```sh
+set -o pipefail
 scripts/homelab_release.sh import-pending \
   --bundle "$bundle" \
   --recovery-receipt "$recovery_receipt" \
@@ -72,7 +74,7 @@ python3 scripts/review/content_review_packet.py export \
   --cookie-file ~/.cache/cadus-review-cookie \
   --output ~/.cache/cadus-foundations-review.json
 ```
-3. Review every selected digest. Add only explicit `approve` or reasoned `reject` decisions to `~/.cache/cadus-foundations-review.decisions.json`. The `/review` screen is the interactive renderer.
+3. Review every selected digest. Add only explicit `approve` or reasoned `reject` decisions to `~/.cache/cadus-foundations-review.decisions.json`. The `/review` screen is the interactive renderer. Apply templates as their own first batch, then export a fresh packet before deciding Teach pages and hint ladders; each template approval re-gates its pending instruction content.
 4. Recheck the exact live bodies without writing:
 ```sh
 python3 scripts/review/content_review_packet.py apply \
@@ -101,7 +103,7 @@ Because the release adds no migration, rollback changes images and preserves the
 ```sh
 scripts/homelab_release.sh rollback --receipt-dir "$receipt_dir" --execute
 ```
-The helper reads the exact pre-deploy image IDs from `rollback-images.json`, stops learner traffic at the Compose-derived edge container, restores those images, recreates web, worker, and edge, and reruns stability and probe checks. Restore the database backup only for database corruption. Record the first failing request, release and rollback commits, event sequence, projector version, and review-queue counts.
+The helper reads the exact pre-deploy image IDs from `rollback-images.json`, stops the edge, web API, and worker so the outer homelab proxy cannot pass learner writes during rollback, restores those images, recreates all three services, and reruns stability and probe checks. Restore the database backup only for database corruption. Record the first failing request, release and rollback commits, event sequence, projector version, and review-queue counts.
 ## Release decision record
 Record these items in the handover before calling the release complete:
 - exact release commit and final bundle digest;
