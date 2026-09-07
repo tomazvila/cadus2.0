@@ -386,9 +386,10 @@ fn give_away(answer: &str) -> String {
 /// Finding F25. Before this fix the gate skipped an exemplar outright whenever
 /// the exemplar's own problem carried its answer, so for those knowledge points a
 /// rung that stated the answer verbatim passed the gate, was stored `pending`,
-/// and served through the L5 hint route. The count of shipped knowledge points
-/// that took the exemption is pinned here, and every one of them now refuses a
-/// give-away rung.
+/// and served through the L5 hint route. Every currently matching exemplar must
+/// refuse a give-away rung. The final census is only a review tripwire: authored
+/// tuple and structured answers can legitimately stop appearing verbatim in
+/// their problems, but a census change must still run this complete live sweep.
 #[test]
 fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     let (curriculum, _) = cadus_core::curriculum::load_raw_curriculum(&curriculum_root())
@@ -396,6 +397,8 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
 
     let mut exempted = 0_usize;
     let mut blind = 0_usize;
+    let mut foundations_exempted = 0_usize;
+    let mut foundations_blind = 0_usize;
     for topic in curriculum.topics() {
         for kp in &topic.topic.knowledge_points {
             let shown: Vec<&cadus_core::curriculum::Exemplar> = kp
@@ -407,8 +410,14 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
                 continue;
             }
             exempted += 1;
+            if topic.course_dir == "foundations" {
+                foundations_exempted += 1;
+            }
             if shown.len() == kp.exemplars.len() {
                 blind += 1;
+                if topic.course_dir == "foundations" {
+                    foundations_blind += 1;
+                }
             }
             let key = format!("{}/{}", topic.topic.id, kp.id);
             for exemplar in shown {
@@ -423,10 +432,13 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
         }
     }
 
-    // `exempted` counts the knowledge points that held at least one exempted
-    // exemplar. `blind` counts the ones whose exemplars were ALL exempted: a
-    // ladder that stated every answer of those passed the whole gate.
-    assert_eq!((exempted, blind), (307, 62));
+    // `exempted` counts knowledge points with at least one formerly exempted
+    // exemplar. `blind` counts knowledge points whose exemplars were all
+    // formerly exempted. The first census covers every shipped course; the
+    // second makes the Foundations-only scope explicit. The loop above is the
+    // fail-closed invariant for every member of both cohorts.
+    assert_eq!((exempted, blind), (363, 60));
+    assert_eq!((foundations_exempted, foundations_blind), (157, 30));
 }
 
 /// A sample that does not instantiate and a draw that does not evaluate
