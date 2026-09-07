@@ -2,9 +2,26 @@
 #![allow(clippy::unwrap_used)]
 mod common;
 
+use std::collections::BTreeMap;
+
 use cadus_core::answer::{AnswerContract, Outcome, check_contract};
-use cadus_core::curriculum::load_raw_curriculum;
+use cadus_core::curriculum::Exemplar;
+use cadus_core::curriculum::load::{RawCurriculum, load_raw_curriculum};
 use serde_json::Value;
+
+fn current_exemplar_by_reviewed_identity<'a>(raw: &'a RawCurriculum, row: &Value) -> &'a Exemplar {
+    let entry = raw
+        .topics()
+        .find(|entry| entry.topic.id.as_str() == row["topic_id"].as_str().unwrap())
+        .unwrap();
+    let kp = entry
+        .topic
+        .knowledge_points
+        .iter()
+        .find(|kp| kp.id.as_str() == row["kp_id"].as_str().unwrap())
+        .unwrap();
+    &kp.exemplars[usize::try_from(row["exemplar_index"].as_u64().unwrap()).unwrap()]
+}
 
 #[test]
 fn every_reviewed_integer_division_policy_matches_its_authored_operands() {
@@ -14,7 +31,6 @@ fn every_reviewed_integer_division_policy_matches_its_authored_operands() {
     let mut count = 0;
     for line in manifest.lines() {
         let row: Value = serde_json::from_str(line).unwrap();
-        let item = common::fixtures::reviewed_exemplar(&raw, &row);
         let divisor = row["divisor"].as_u64().unwrap();
         let dividend = row["dividend"].as_u64().unwrap();
         let quotient = row["quotient"].as_u64().unwrap();
@@ -24,6 +40,13 @@ fn every_reviewed_integer_division_policy_matches_its_authored_operands() {
         let policy = AnswerContract::QuotientRemainder {
             divisor: Some(divisor),
         };
+
+        // The manifest is immutable review evidence. Resolve its stable identity,
+        // then validate the current exemplar separately so editorial wording may evolve.
+        assert_eq!(row["answer_contract"]["kind"], "quotient_remainder");
+        assert_eq!(row["answer_contract"]["divisor"], divisor);
+        let item = current_exemplar_by_reviewed_identity(&raw, &row);
+        assert_eq!(item.answer, row["answer"].as_str().unwrap());
         assert_eq!(item.answer_contract.as_ref(), Some(&policy));
         assert!(matches!(
             check_contract(&item.answer, &item.answer, policy.clone()),
@@ -49,7 +72,7 @@ fn every_reviewed_integer_division_policy_matches_its_authored_operands() {
 #[test]
 fn polynomial_remainders_are_not_given_an_integer_divisor_contract() {
     let (raw, _) = load_raw_curriculum(&common::paths::curriculum_root()).unwrap();
-    let mut count = 0;
+    let mut by_topic = BTreeMap::new();
     for entry in raw.topics().filter(|entry| {
         matches!(
             entry.topic.id.as_str(),
@@ -60,10 +83,13 @@ fn polynomial_remainders_are_not_given_an_integer_divisor_contract() {
             for item in &kp.exemplars {
                 if item.answer.contains("remainder") {
                     assert!(item.answer_contract.is_none());
-                    count += 1;
+                    *by_topic.entry(entry.topic.id.as_str()).or_insert(0) += 1;
                 }
             }
         }
     }
-    assert_eq!(count, 4);
+    assert_eq!(
+        by_topic,
+        BTreeMap::from([("polynomial-division", 4), ("synthetic-division", 4)])
+    );
 }
