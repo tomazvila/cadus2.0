@@ -8,7 +8,9 @@ use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
-use cadus_core::curriculum::{Exemplar, KnowledgePoint, Topic, lint_curriculum, load_curriculum};
+use cadus_core::curriculum::{
+    Exemplar, KnowledgePoint, Topic, curriculum_hash, lint_curriculum, load_curriculum,
+};
 use serde_json::{Value, json};
 
 fn exemplar_row(exemplar: &Exemplar) -> Value {
@@ -62,7 +64,9 @@ fn facts(root: &Path) -> Result<Value, String> {
     if rows.is_empty() {
         return Err("Foundations contains no knowledge points".to_owned());
     }
-    Ok(json!({"course": "foundations", "kps": rows, "schema_version": 1}))
+    Ok(
+        json!({"course": "foundations", "curriculum_hash": curriculum_hash(&curriculum), "kps": rows, "schema_version": 1}),
+    )
 }
 
 fn run() -> Result<(), String> {

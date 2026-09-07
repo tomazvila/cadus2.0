@@ -29,6 +29,8 @@ fn set_of(members: &[i64]) -> Canon {
 // ---------------------------------------------------------------------------
 #[test]
 fn a_brace_pair_reads_into_a_set_in_the_written_order() {
+    assert_eq!(ast("{}"), Ast::Set(vec![]));
+    assert_eq!(ast("{ }"), Ast::Set(vec![]));
     assert_eq!(ast("{1, 2, 3}"), Ast::Set(vec![int(1), int(2), int(3)]));
     assert_eq!(ast("{3, 1, 2}"), Ast::Set(vec![int(3), int(1), int(2)]));
     assert_eq!(ast("{1,2}"), Ast::Set(vec![int(1), int(2)]));
@@ -53,7 +55,6 @@ fn a_brace_pair_reads_into_a_set_in_the_written_order() {
 
 #[test]
 fn a_set_that_is_not_a_set_of_values_is_refused() {
-    assert_eq!(refusal("{}"), "an empty set");
     assert_eq!(refusal("{1, 2"), "a set with no closing brace");
     assert_eq!(refusal("{1, }"), "a symbol where a value belongs");
     assert_eq!(refusal("{, 1}"), "a symbol where a value belongs");
@@ -73,6 +74,9 @@ fn a_set_that_is_not_a_set_of_values_is_refused() {
 // ---------------------------------------------------------------------------
 #[test]
 fn a_set_is_unordered_and_its_repeated_members_collapse() {
+    assert_eq!(form("{}"), set_of(&[]));
+    assert_ne!(form("{}"), form("{0}"));
+    assert_ne!(form("{}"), form("{{}}"));
     assert_eq!(form("{1, 2}"), set_of(&[1, 2]));
     assert_eq!(form("{1, 2}"), form("{2, 1}"));
     assert_eq!(form("{3, 1, 2}"), form("{1, 2, 3}"));

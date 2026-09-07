@@ -138,9 +138,6 @@ impl Parser<'_> {
                 Tok::LBrace => {
                     parser.bump();
                     let items = parser.parse_items(&Tok::RBrace, "a set with no closing brace")?;
-                    if items.is_empty() {
-                        return Err(Undecidable::new("an empty set"));
-                    }
                     Ok(Ast::Set(items))
                 }
                 Tok::Unit(_) => Err(Undecidable::new("a unit inside an expression")),

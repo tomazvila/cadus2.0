@@ -12,6 +12,7 @@ use cadus_core::template::{
 };
 use serde_json::Value;
 
+use super::preflight;
 use crate::authoring::prompt::{AuthoringSpec, Kind};
 use crate::authoring::repair;
 use crate::diagnosis::MODEL_ERROR_TAGS;
@@ -92,12 +93,7 @@ fn unwritable(err: serde_json::Error) -> Rejection {
 fn assemble_kept(kind: Kind, spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
     let mut body = assemble_value(spec, arguments)?;
     if kind == Kind::Template {
-        let contract = spec
-            .template_contract()
-            .map(serde_json::to_value)
-            .transpose()
-            .map_err(unwritable)?
-            .or_else(|| arguments.get("answer_contract").cloned());
+        let contract = template_contract(spec, arguments)?;
         if let Some(contract) = contract {
             body["answer_contract"] = contract;
         }
@@ -105,6 +101,37 @@ fn assemble_kept(kind: Kind, spec: &AuthoringSpec, arguments: &Value) -> Result<
     let dropped = keep_known_tags(&mut body, &authoring_vocabulary());
     report_dropped(spec, kind, &dropped);
     Ok(body.to_string())
+}
+
+/// Retain reviewed exactness while allowing an explicit set-shape refinement.
+fn template_contract(spec: &AuthoringSpec, arguments: &Value) -> Result<Option<Value>, Rejection> {
+    let supplied = arguments.get("answer_contract");
+    let Some(reviewed) = spec.template_contract() else {
+        return Ok(supplied.cloned());
+    };
+    if let Some(supplied) = supplied {
+        let parsed = serde_json::from_value::<cadus_core::answer::AnswerContract>(supplied.clone())
+            .map_err(|error| Rejection {
+                code: "answer-contract",
+                message: format!("the supplied answer contract is malformed: {error}"),
+            })?;
+        // A set restricts Exact to a collection-shaped response with the same
+        // canonical equality. It cannot introduce approximate tolerance or
+        // weaken a reviewed structural contract.
+        if reviewed == cadus_core::answer::AnswerContract::Exact
+            && parsed == cadus_core::answer::AnswerContract::Set
+        {
+            return Ok(Some(supplied.clone()));
+        }
+        if parsed != reviewed {
+            return Err(Rejection {
+                code: "answer-contract",
+                message: "the supplied answer contract conflicts with the reviewed exemplar policy"
+                    .to_owned(),
+            });
+        }
+    }
+    serde_json::to_value(reviewed).map(Some).map_err(unwritable)
 }
 
 /// Assemble, gate, and fill in the satisfying count.
@@ -284,6 +311,7 @@ pub fn verify_kind(
     arguments: &Value,
     instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
+    preflight(kind, spec)?;
     // Trap T1, on EVERY kind and before EVERY gate. A model that writes one
     // backslash emits valid JSON whose decoded value is `$<TAB>imes$`; no gate
     // reads a control character, so the mangled text reached `content_store` on

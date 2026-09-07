@@ -3,8 +3,33 @@
     "kp_id": "understanding-ratios/kp3",
     "kind": "template",
     "arguments": {
-      "statement": "Scale the ratio ${a}:7$ by ${b}$. Give its new first part.",
-      "answer_expr": "a*b",
+      "statement": "Complete the equivalent ratio ${a}:7=\\square:{b}$. Give missing = the first part. Also decide whether ${a}:7$ and $6:{b}$ are equivalent; give equivalent = yes or no.",
+      "answer_expr": "multipart(a*b/7,equalitylabel(a*b,42))",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "missing",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "equivalent",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            }
+          }
+        ]
+      },
       "params": {
         "a": {
           "kind": "choice",
@@ -17,108 +42,106 @@
         "b": {
           "kind": "choice",
           "values": [
-            2,
-            3,
-            4,
-            5
+            14,
+            21,
+            28,
+            35
           ]
         }
       },
       "constraints": [],
-      "solution_sketch": "Multiplying both parts by ${b}$ gives $({a}\\times{b}):(7\\times{b})$.",
-      "hints": [
-        "Use the same multiplier on both parts."
-      ],
-      "distractors": [],
       "samples": [
         {
           "params": {
             "a": 2,
-            "b": 2
+            "b": 14
           },
-          "expected": "4"
+          "expected": "missing = 4; equivalent = no"
         },
         {
           "params": {
             "a": 2,
-            "b": 3
+            "b": 21
           },
-          "expected": "6"
+          "expected": "missing = 6; equivalent = yes"
         },
         {
           "params": {
             "a": 2,
-            "b": 4
+            "b": 28
           },
-          "expected": "8"
+          "expected": "missing = 8; equivalent = no"
         },
         {
           "params": {
             "a": 2,
-            "b": 5
+            "b": 35
           },
-          "expected": "10"
+          "expected": "missing = 10; equivalent = no"
         },
         {
           "params": {
             "a": 3,
-            "b": 2
+            "b": 14
           },
-          "expected": "6"
+          "expected": "missing = 6; equivalent = yes"
         },
         {
           "params": {
             "a": 3,
-            "b": 3
+            "b": 21
           },
-          "expected": "9"
+          "expected": "missing = 9; equivalent = no"
         },
         {
           "params": {
             "a": 3,
-            "b": 4
+            "b": 28
           },
-          "expected": "12"
+          "expected": "missing = 12; equivalent = no"
         },
         {
           "params": {
             "a": 3,
-            "b": 5
+            "b": 35
           },
-          "expected": "15"
+          "expected": "missing = 15; equivalent = no"
         },
         {
           "params": {
             "a": 4,
-            "b": 2
+            "b": 14
           },
-          "expected": "8"
+          "expected": "missing = 8; equivalent = no"
         },
         {
           "params": {
             "a": 4,
-            "b": 3
+            "b": 21
           },
-          "expected": "12"
+          "expected": "missing = 12; equivalent = no"
         },
         {
           "params": {
             "a": 4,
-            "b": 4
+            "b": 28
           },
-          "expected": "16"
+          "expected": "missing = 16; equivalent = no"
         },
         {
           "params": {
             "a": 4,
-            "b": 5
+            "b": 35
           },
-          "expected": "20"
+          "expected": "missing = 20; equivalent = no"
         }
       ],
-      "answer_contract": {
-        "kind": "exact"
-      }
+      "solution_sketch": "The second part scales by ${b}/7$, so the missing first part is ${a}({b}/7)$. For the separate equivalence judgment, compare cross products ${a}({b})$ and $7(6)$; they agree exactly when the ratios are equivalent.",
+      "hints": [
+        "Find the multiplier from the known second parts.",
+        "Apply the same multiplier to the first part; check equivalence using equal cross products."
+      ],
+      "distractors": []
     }
   }
 ]

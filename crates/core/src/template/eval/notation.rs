@@ -1,5 +1,5 @@
 //! Convert bounded, parsed ray premises between inequality and interval notation.
-use super::{Answer, EvalError, contracted, text_binding};
+use super::{Answer, EvalError, answer, contracted, text_binding};
 use crate::{
     answer::{AnswerContract, Canon, ast::Ast},
     template::domain::Bindings,
@@ -83,4 +83,44 @@ fn refused() -> EvalError {
     EvalError::NotNumber {
         func: "convertnotation requires one or two proper rational rays in x",
     }
+}
+
+pub(super) fn ascending_chain(
+    args: &[Ast],
+    bindings: &Bindings,
+    contract: Option<&AnswerContract>,
+) -> Result<Answer, EvalError> {
+    let Some(contract @ AnswerContract::AscendingChain) = contract else {
+        return Err(EvalError::NotNumber {
+            func: "ascendingchain requires ascending_chain contract",
+        });
+    };
+    let [Ast::List(items)] = args else {
+        return Err(EvalError::NotNumber {
+            func: "ascendingchain requires a list",
+        });
+    };
+    if !(2..=16).contains(&items.len()) {
+        return Err(EvalError::NotNumber {
+            func: "ascendingchain requires two to sixteen numbers",
+        });
+    }
+    let mut values = items
+        .iter()
+        .map(|item| match answer(item, bindings)?.canon {
+            Canon::Rational(number) => Ok(number),
+            _ => Err(EvalError::NotNumber {
+                func: "ascendingchain",
+            }),
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    values.sort();
+    contracted(
+        values
+            .iter()
+            .map(ToString::to_string)
+            .collect::<Vec<_>>()
+            .join(" < "),
+        contract,
+    )
 }

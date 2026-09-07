@@ -2,38 +2,17 @@
 
 use cadus_core::instruction::ServedInstance;
 use cadus_core::pool::kp_key;
-use cadus_core::template::TEMPLATABLE_KINDS;
 use cadus_model_client::{Attempt, Call};
 use cadus_store::Db;
 
 use super::{
-    AuthoringJob, BatchReport, Decline, Outcome, Report, bank_target, served_instances,
+    AuthoringJob, BatchReport, Decline, Outcome, Report, bank_target, preflight, served_instances,
     slots_taken, stale_slots, store_pending, verify_kind,
 };
 use crate::WorkerError;
 use crate::authoring::cost;
 use crate::authoring::prompt::{self, AuthoringSpec, Kind};
 use crate::model_log::{self, CallRecord, PURPOSE_AUTHORING};
-
-/// The reason a knowledge point no gate can accept declines with, or `None`
-/// when the gate of `kind` reads no answer kind (T3, finding F19).
-///
-/// Contract-bearing multi-step templates use their deterministic item policy.
-/// Other unsupported template and diagnosis kinds decline before spending a
-/// model call. Teach pages and hint ladders can still support those topics.
-fn undecidable(kind: Kind, spec: &AuthoringSpec) -> Option<String> {
-    let gated = matches!(kind, Kind::Template | Kind::Diagnosis);
-    let contracted_template = kind == Kind::Template
-        && spec.answer_kind == cadus_core::curriculum::AnswerKind::MultiStep
-        && spec.template_contract().is_some();
-    if gated && !TEMPLATABLE_KINDS.contains(&spec.answer_kind) && !contracted_template {
-        return Some(format!(
-            "answer kind {} is not symbolically decidable",
-            spec.answer_kind
-        ));
-    }
-    None
-}
 
 /// Make one model call, and put its bill in the ledger BEFORE anything else
 /// reads the reply (T6).
@@ -219,7 +198,8 @@ pub async fn author_one(
     }
 
     // Step 2: a knowledge point the gate can never accept costs nothing.
-    if let Some(reason) = undecidable(kind, spec) {
+    if let Err(rejection) = preflight(kind, spec) {
+        let reason = rejection.message;
         tracing::warn!(kp = %kp_id, reason, "authoring: the knowledge point declines with no call");
         let decline = Decline {
             kp_id: kp_id.clone(),
@@ -392,39 +372,8 @@ pub async fn run_batch(
 
 #[cfg(test)]
 mod tests {
-    use super::{BatchReport, Decline, Outcome, Report, count, undecidable};
-    use crate::authoring::prompt::{AuthoringSpec, Kind};
-    use cadus_core::curriculum::AnswerKind;
-
-    /// A spec of this answer kind.
-    fn spec(answer_kind: AnswerKind) -> AuthoringSpec {
-        AuthoringSpec {
-            kp_id: "squares".to_owned(),
-            kp_name: "Perfect squares".to_owned(),
-            topic_id: "perfect-squares".to_owned(),
-            topic_name: "Perfect squares".to_owned(),
-            answer_kind,
-            difficulty_target: None,
-            constraints: None,
-            exemplars: Vec::new(),
-        }
-    }
-
-    /// The zero-call guard reads the answer kind on the two gated kinds only
-    /// (T3, finding F19).
-    #[test]
-    fn only_the_gated_kinds_decline_an_undecidable_answer_kind() {
-        let proof = spec(AnswerKind::Proof);
-        let reason = Some("answer kind proof is not symbolically decidable".to_owned());
-        assert_eq!(undecidable(Kind::Template, &proof), reason);
-        assert_eq!(undecidable(Kind::Diagnosis, &proof), reason);
-        assert_eq!(undecidable(Kind::Teach, &proof), None);
-        assert_eq!(undecidable(Kind::HintLadder, &proof), None);
-        assert_eq!(
-            undecidable(Kind::Template, &spec(AnswerKind::Numeric)),
-            None
-        );
-    }
+    use super::{BatchReport, Decline, Outcome, Report, count};
+    use crate::authoring::prompt::Kind;
 
     /// Every outcome lands in one column of the batch, and a decline record
     /// reaches the list.

@@ -5,9 +5,11 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import foundations_content_audit as audit
+from template_gate_audit import ROOT, curriculum_source_hash, gate_source_hash
 
 
 class FoundationsContentAuditTest(unittest.TestCase):
@@ -15,9 +17,16 @@ class FoundationsContentAuditTest(unittest.TestCase):
     def setUpClass(cls):
         cls.here = Path(__file__).resolve().parent
         cls.facts = json.loads((cls.here / "testdata/content_audit_facts.json").read_text())
+        cls.facts["curriculum_hash"] = "synthetic-test-curriculum"
         cls.documents = cls.here / "testdata/content_audit_documents"
         cls.templates = audit.pending_templates(cls.documents)
-        cls.report = audit.build_report(cls.facts, cls.templates)
+        # Synthetic grammar facts isolate Python reporting from the Rust adapter.
+        cls.gates = {"schema_version": 1, "curriculum_hash": cls.facts["curriculum_hash"],
+                     "gate_source_hash": gate_source_hash(),
+                     "curriculum_source_hash": curriculum_source_hash(ROOT / "curriculum"),
+                     "recipes": [{"document": row["document"], "accepted": True, "reason": None}
+                                 for rows in cls.templates.values() for row in rows]}
+        cls.report = audit.build_report(cls.facts, cls.templates, cls.gates)
         cls.rows = {row["kp_key"]: row for row in cls.report["kps"]}
 
     def codes(self, key):
@@ -85,6 +94,110 @@ class FoundationsContentAuditTest(unittest.TestCase):
             (root / "broken.json").write_text("{")
             with self.assertRaisesRegex(audit.Refused, "cannot read"):
                 audit.pending_templates(root)
+
+    def clean_inputs(self):
+        facts = {**self.facts, "kps": [self.facts["kps"][0]]}
+        self.assertEqual(facts["kps"][0]["kp_key"], "clean/kp1")
+        return facts, {"clean/kp1": self.templates["clean/kp1"]}
+
+    def test_missing_production_evidence_cannot_make_a_clean_kp_green(self):
+        facts, templates = self.clean_inputs()
+        report = audit.build_report(facts, templates)
+        self.assertFalse(report["ok"])
+        self.assertEqual(report["kps"][0]["issues"][0]["code"],
+                         "pending_template_production_gate_declined")
+
+    def test_an_empty_recipe_bucket_does_not_count_as_pending_content(self):
+        facts, _ = self.clean_inputs()
+        report = audit.build_report(facts, {"clean/kp1": []}, self.gates)
+        self.assertFalse(report["ok"])
+        self.assertEqual(report["kps"][0]["issues"][0]["code"],
+                         "absent_pending_template_recipe")
+
+    def test_only_complete_stored_bodies_are_sent_to_the_gate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "drafts.json").write_text(json.dumps([
+                {"kp_id": "metadata/kp1", "kind": "template", "status": "pending"},
+                {"kp_id": "incomplete/kp1", "kind": "template", "status": "pending",
+                 "body": {"v": 1, "space_size": 12, "answer_expr": "a", "params": {}}},
+                {"kp_id": "body/kp1", "kind": "template", "status": "pending",
+                 "body": {"v": 1, "topic_id": "body", "answer_kind": "numeric",
+                          "space_size": 12, "statement": "Compute {a}.",
+                          "answer_expr": "a", "params": {"a": {"kind": "int", "low": 1, "high": 2}},
+                          "solution_sketch": "The value is {a}.", "hints": ["Read the value."],
+                          "samples": [{"params": {"a": 1}, "expected": "1"}]}},
+            ]))
+            templates = audit.pending_templates(root)
+        self.assertNotIn("metadata/kp1", templates)
+        self.assertNotIn("incomplete/kp1", templates)
+        self.assertEqual(templates["body/kp1"][0]["document"]["arguments"], {
+            "statement": "Compute {a}.", "answer_expr": "a",
+            "params": {"a": {"kind": "int", "low": 1, "high": 2}},
+            "constraints": [], "solution_sketch": "The value is {a}.",
+            "hints": ["Read the value."], "distractors": [],
+            "samples": [{"params": {"a": 1}, "expected": "1"}],
+        })
+
+    def test_actual_worker_preflight_reason_is_reported_without_a_model_or_db(self):
+        facts, templates = self.clean_inputs()
+        declined = json.loads(json.dumps(self.gates))
+        declined["recipes"][0].update(accepted=False,
+            reason="answer-kind: answer kind multi-step is not symbolically decidable")
+        with patch("subprocess.run", side_effect=AssertionError("unit test started a process")):
+            report = audit.build_report(facts, templates, declined)
+        self.assertFalse(report["ok"])
+        self.assertIn("not symbolically decidable",
+                      report["kps"][0]["issues"][0]["evidence"][0]["reason"])
+
+    def test_recipe_mutation_invalidates_cached_gate_acceptance(self):
+        facts, templates = self.clean_inputs()
+        changed = json.loads(json.dumps(templates))
+        changed["clean/kp1"][0]["document"]["arguments"]["answer_contract"] = {"kind": "none"}
+        self.assertFalse(audit.build_report(facts, changed, self.gates)["ok"])
+
+    def test_wrong_curriculum_or_malformed_gate_facts_fail_closed(self):
+        for mutate in (
+            lambda value: value.update(curriculum_hash="stale"),
+            lambda value: value.update(gate_source_hash="stale"),
+            lambda value: value.update(curriculum_source_hash="stale"),
+            lambda value: value["recipes"][0].update(accepted="true"),
+            lambda value: value["recipes"].append(value["recipes"][0]),
+            lambda value: value["recipes"][0].update(accepted=False, reason=None),
+        ):
+            value = json.loads(json.dumps(self.gates))
+            mutate(value)
+            with self.assertRaises(audit.Refused):
+                audit.build_report(self.facts, self.templates, value)
+
+    def test_one_accepted_recipe_does_not_hide_an_unverified_sibling(self):
+        facts, templates = self.clean_inputs()
+        changed = json.loads(json.dumps(templates))
+        sibling = json.loads(json.dumps(changed["clean/kp1"][0]))
+        sibling["document"]["arguments"]["answer_expr"] = "999"
+        changed["clean/kp1"].append(sibling)
+        self.assertFalse(audit.build_report(facts, changed, self.gates)["ok"])
+
+    def test_gate_or_curriculum_changes_invalidate_both_cached_fact_files(self):
+        for name in ("gate_source_hash", "curriculum_source_hash"):
+            with patch(f"template_gate_audit.{name}", return_value="modified-current-source"):
+                with self.assertRaises(audit.Refused):
+                    audit.build_report(self.facts, self.templates, self.gates)
+
+    def test_python_cli_with_cached_facts_never_starts_a_process(self):
+        facts, templates = self.clean_inputs()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "facts.json").write_text(json.dumps(facts))
+            (root / "gates.json").write_text(json.dumps(self.gates))
+            content = root / "content"
+            content.mkdir()
+            (content / "drafts.json").write_text(json.dumps([templates["clean/kp1"][0]["document"]]))
+            with patch("subprocess.run", side_effect=AssertionError("unit test started a process")):
+                code = audit.main(["--facts", str(root / "facts.json"),
+                                   "--template-gate-facts", str(root / "gates.json"),
+                                   "--content-root", str(content), "--output", str(root / "report.json")])
+            self.assertEqual(code, 0)
 
 
     def test_incomplete_template_arguments_do_not_satisfy_pending_evidence(self):

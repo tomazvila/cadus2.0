@@ -11,6 +11,8 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from template_gate_audit import GateFactsError, declined_templates, gate_results, load_gate_facts
+
 CODES = (
     "fewer_than_four_exemplars",
     "missing_solution_sketch",
@@ -19,6 +21,7 @@ CODES = (
     "duplicate_problem_answer_family",
     "absent_pending_template_recipe",
     "generic_or_tautological_sketch",
+    "pending_template_production_gate_declined",
 )
 NUMBER = re.compile(r"(?<![A-Za-z])[-+]?\d+(?:\.\d+)?(?:/\d+)?")
 SPACE = re.compile(r"\s+")
@@ -104,10 +107,19 @@ def pending_templates(root: Path) -> dict[str, list[dict]]:
                 or not _importer_shaped_template(row)
             ):
                 continue
-            fingerprint = json.dumps(row, sort_keys=True, separators=(",", ":"))
+            # Stored review exports include server-owned identity/count fields.
+            # Feed their authored payload through the same importer/worker path.
+            arguments = row.get("arguments") or row.get("body")
+            if isinstance(arguments, dict):
+                arguments = {name: value for name, value in arguments.items()
+                             if name not in {"v", "topic_id", "answer_kind", "space_size"}}
+                arguments.setdefault("constraints", [])
+                arguments.setdefault("distractors", [])
+            document = {"kp_id": key, "kind": "template", "arguments": arguments}
+            fingerprint = json.dumps(document, sort_keys=True, separators=(",", ":"))
             if fingerprint not in seen[key]:
                 seen[key].add(fingerprint)
-                found[key].append({"document": row, "source": str(path)})
+                found[key].append({"document": document, "source": str(path)})
     return dict(found)
 
 
@@ -232,7 +244,7 @@ def _generic_sketches(exemplars: list[dict], templates: list[dict]) -> list[dict
     return found
 
 
-def audit_kp(row: dict, templates: dict[str, list[dict]]) -> dict:
+def audit_kp(row: dict, templates: dict[str, list[dict]], gates: dict) -> dict:
     exemplars = row["exemplars"]
     issues = []
     if len(exemplars) < 4:
@@ -243,17 +255,23 @@ def audit_kp(row: dict, templates: dict[str, list[dict]]) -> dict:
         (CODES[3], _singleton_labels(exemplars)),
         (CODES[4], _duplicate_families(exemplars)),
         (CODES[6], _generic_sketches(exemplars, templates.get(row["kp_key"], []))),
+        (CODES[7], declined_templates(templates.get(row["kp_key"], []), gates)),
     ):
         if evidence:
             issues.append(_issue(code, evidence=evidence))
-    if row["kp_key"] not in templates:
+    if not templates.get(row["kp_key"]):
         issues.append(_issue(CODES[5]))
     return {"kp_key": row["kp_key"], "issues": issues}
 
 
-def build_report(facts, templates: dict[str, list[dict]]) -> dict:
+def build_report(facts, templates: dict[str, list[dict]], template_gate_facts=None,
+                 curriculum=Path(__file__).resolve().parents[2] / "curriculum") -> dict:
     rows = validate_facts(facts)
-    audited = [audit_kp(row, templates) for row in rows]
+    try:
+        gates = gate_results(facts, template_gate_facts, curriculum)
+    except GateFactsError as error:
+        raise Refused(str(error)) from error
+    audited = [audit_kp(row, templates, gates) for row in rows]
     known = {row["kp_key"] for row in rows}
     orphans = sorted(set(templates) - known)
     counts = {code: 0 for code in CODES}
@@ -299,6 +317,8 @@ def parse_args(argv=None):
     parser.add_argument("--curriculum", type=Path, default=Path("curriculum"))
     parser.add_argument("--content-root", type=Path, default=Path("docs/content-foundations"))
     parser.add_argument("--facts", type=Path, help="precomputed facts, for deterministic tests")
+    parser.add_argument("--template-gate-facts", type=Path,
+                        help="precomputed worker gate facts bound to the curriculum and recipes")
     parser.add_argument("--output", type=Path, help="write JSON here; stdout when omitted")
     return parser.parse_args(argv)
 
@@ -306,8 +326,11 @@ def parse_args(argv=None):
 def main(argv=None) -> int:
     args = parse_args(argv)
     try:
-        report = build_report(load_facts(args.facts, args.curriculum), pending_templates(args.content_root))
-    except Refused as error:
+        facts = load_facts(args.facts, args.curriculum)
+        templates = pending_templates(args.content_root)
+        gates = load_gate_facts(args.template_gate_facts, args.curriculum, templates)
+        report = build_report(facts, templates, gates, args.curriculum)
+    except (Refused, GateFactsError) as error:
         print(f"Foundations content audit refused: {error}", file=sys.stderr)
         return 2
     text = json.dumps(report, indent=2, sort_keys=True) + "\n"

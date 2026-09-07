@@ -3,8 +3,39 @@
     "kp_id": "ratio-tables-equivalent-ratios/kp3",
     "kind": "template",
     "arguments": {
-      "statement": "Mix A uses ${a}$ scoops per two cups. Mix B uses ${b}$ scoops per three cups. Give the larger scoop count after both are scaled to six cups.",
-      "answer_expr": "max(3*a,2*b)",
+      "statement": "Mix A uses ${a}$ scoops per two cups. Mix B uses ${b}$ scoops per three cups. Scale both to six cups. Give a_scoops and b_scoops, then stronger = {u} or {v} for the mix with more scoops at that common volume.",
+      "answer_expr": "multipart(3*a,2*b,signcase(3*a-2*b,[v,u,u]))",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "a_scoops",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "b_scoops",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "stronger",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "A"
+                ],
+                [
+                  "B"
+                ]
+              ]
+            }
+          }
+        ]
+      },
       "params": {
         "a": {
           "kind": "choice",
@@ -22,103 +53,137 @@
             5,
             7
           ]
+        },
+        "u": {
+          "kind": "choice",
+          "values": [
+            "A"
+          ]
+        },
+        "v": {
+          "kind": "choice",
+          "values": [
+            "B"
+          ]
         }
       },
       "constraints": [],
-      "solution_sketch": "Scale A by three and B by two. Compare $3\\times{a}$ and $2\\times{b}$ scoops over the same six cups.",
-      "hints": [
-        "Use a common second part before comparing ratios."
-      ],
-      "distractors": [],
       "samples": [
         {
           "params": {
             "a": 2,
-            "b": 2
+            "b": 2,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "6"
+          "expected": "a_scoops = 6; b_scoops = 4; stronger = A"
         },
         {
           "params": {
             "a": 2,
-            "b": 4
+            "b": 4,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "8"
+          "expected": "a_scoops = 6; b_scoops = 8; stronger = B"
         },
         {
           "params": {
             "a": 2,
-            "b": 5
+            "b": 5,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "10"
+          "expected": "a_scoops = 6; b_scoops = 10; stronger = B"
         },
         {
           "params": {
             "a": 2,
-            "b": 7
+            "b": 7,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "14"
+          "expected": "a_scoops = 6; b_scoops = 14; stronger = B"
         },
         {
           "params": {
             "a": 3,
-            "b": 2
+            "b": 2,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "9"
+          "expected": "a_scoops = 9; b_scoops = 4; stronger = A"
         },
         {
           "params": {
             "a": 3,
-            "b": 4
+            "b": 4,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "9"
+          "expected": "a_scoops = 9; b_scoops = 8; stronger = A"
         },
         {
           "params": {
             "a": 3,
-            "b": 5
+            "b": 5,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "10"
+          "expected": "a_scoops = 9; b_scoops = 10; stronger = B"
         },
         {
           "params": {
             "a": 3,
-            "b": 7
+            "b": 7,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "14"
+          "expected": "a_scoops = 9; b_scoops = 14; stronger = B"
         },
         {
           "params": {
             "a": 4,
-            "b": 2
+            "b": 2,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "12"
+          "expected": "a_scoops = 12; b_scoops = 4; stronger = A"
         },
         {
           "params": {
             "a": 4,
-            "b": 4
+            "b": 4,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "12"
+          "expected": "a_scoops = 12; b_scoops = 8; stronger = A"
         },
         {
           "params": {
             "a": 4,
-            "b": 5
+            "b": 5,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "12"
+          "expected": "a_scoops = 12; b_scoops = 10; stronger = A"
         },
         {
           "params": {
             "a": 4,
-            "b": 7
+            "b": 7,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "14"
+          "expected": "a_scoops = 12; b_scoops = 14; stronger = B"
         }
       ],
-      "answer_contract": {
-        "kind": "exact"
-      }
+      "solution_sketch": "Six cups is three times two cups and twice three cups. The scaled counts are $3({a})$ for A and $2({b})$ for B. Compare these counts at the equal volume; the larger count identifies the stronger mix.",
+      "hints": [
+        "Use a common second part before comparing.",
+        "Scale each first part by the factor used on its second part."
+      ],
+      "distractors": []
     }
   }
 ]

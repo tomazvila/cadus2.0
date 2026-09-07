@@ -3,110 +3,187 @@
     "kp_id": "unit-rates/kp2",
     "kind": "template",
     "arguments": {
-      "statement": "Four notebooks cost \u20ac{a}. Give the price per notebook in cents.",
-      "answer_expr": "25*a",
+      "statement": "Pack A has four notebooks for ${a}$ euros. Pack B has five notebooks for ${b}$ euros. Give a_cents and b_cents, the prices per notebook in cents, and cheaper = {u} or {v}.",
+      "answer_expr": "multipart(25*a,20*b,signcase(25*a-20*b,[u,u,v]))",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "a_cents",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "b_cents",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "cheaper",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "A"
+                ],
+                [
+                  "B"
+                ]
+              ]
+            }
+          }
+        ]
+      },
       "params": {
         "a": {
           "kind": "choice",
           "values": [
             6,
             7,
+            9
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            6,
             8,
-            9,
-            10,
             11,
-            12,
-            13,
-            14,
-            15,
-            16,
-            17
+            13
+          ]
+        },
+        "u": {
+          "kind": "choice",
+          "values": [
+            "A"
+          ]
+        },
+        "v": {
+          "kind": "choice",
+          "values": [
+            "B"
           ]
         }
       },
       "constraints": [],
-      "solution_sketch": "The cost is $100\\times{a}$ cents for four notebooks. Each costs $(100\\times{a})/4$ cents.",
-      "hints": [
-        "Use one currency unit, then divide by the item count."
-      ],
-      "distractors": [],
       "samples": [
         {
           "params": {
-            "a": 6
+            "a": 6,
+            "b": 6,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "150"
+          "expected": "a_cents = 150; b_cents = 120; cheaper = B"
         },
         {
           "params": {
-            "a": 7
+            "a": 6,
+            "b": 8,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "175"
+          "expected": "a_cents = 150; b_cents = 160; cheaper = A"
         },
         {
           "params": {
-            "a": 8
+            "a": 6,
+            "b": 11,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "200"
+          "expected": "a_cents = 150; b_cents = 220; cheaper = A"
         },
         {
           "params": {
-            "a": 9
+            "a": 6,
+            "b": 13,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "225"
+          "expected": "a_cents = 150; b_cents = 260; cheaper = A"
         },
         {
           "params": {
-            "a": 10
+            "a": 7,
+            "b": 6,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "250"
+          "expected": "a_cents = 175; b_cents = 120; cheaper = B"
         },
         {
           "params": {
-            "a": 11
+            "a": 7,
+            "b": 8,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "275"
+          "expected": "a_cents = 175; b_cents = 160; cheaper = B"
         },
         {
           "params": {
-            "a": 12
+            "a": 7,
+            "b": 11,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "300"
+          "expected": "a_cents = 175; b_cents = 220; cheaper = A"
         },
         {
           "params": {
-            "a": 13
+            "a": 7,
+            "b": 13,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "325"
+          "expected": "a_cents = 175; b_cents = 260; cheaper = A"
         },
         {
           "params": {
-            "a": 14
+            "a": 9,
+            "b": 6,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "350"
+          "expected": "a_cents = 225; b_cents = 120; cheaper = B"
         },
         {
           "params": {
-            "a": 15
+            "a": 9,
+            "b": 8,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "375"
+          "expected": "a_cents = 225; b_cents = 160; cheaper = B"
         },
         {
           "params": {
-            "a": 16
+            "a": 9,
+            "b": 11,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "400"
+          "expected": "a_cents = 225; b_cents = 220; cheaper = B"
         },
         {
           "params": {
-            "a": 17
+            "a": 9,
+            "b": 13,
+            "u": "A",
+            "v": "B"
           },
-          "expected": "425"
+          "expected": "a_cents = 225; b_cents = 260; cheaper = A"
         }
       ],
-      "answer_contract": {
-        "kind": "exact"
-      }
+      "solution_sketch": "Convert euros to cents and divide by the pack count: A costs $100({a})/4=25({a})$ cents each; B costs $100({b})/5=20({b})$ cents each. Choose the smaller unit price.",
+      "hints": [
+        "Compare prices for one notebook.",
+        "Convert both pack prices to cents before dividing by their notebook counts."
+      ],
+      "distractors": []
     }
   }
 ]

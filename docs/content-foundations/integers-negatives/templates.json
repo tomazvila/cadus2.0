@@ -298,59 +298,181 @@
     "kind": "template",
     "status": "pending",
     "arguments": {
-      "topic_id": "comparing-integers",
-      "answer_kind": "multi-step",
+      "statement": "Judge ${a} < {b}$ as {t} or {f}, then arrange ${b}$, $0$, and ${a}$ from least to greatest with < signs. Answer judgment = ...; chain = ... .",
+      "answer_expr": "multipart(signcase(a-b,[t,f,f]),ascendingchain([a,b,0]))",
       "answer_contract": {
-        "kind": "label",
-        "options": [
-          [
-            "true",
-            "yes"
-          ],
-          [
-            "false",
-            "no"
-          ]
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "judgment",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "true"
+                ],
+                [
+                  "false"
+                ]
+              ]
+            }
+          },
+          {
+            "name": "chain",
+            "contract": {
+              "kind": "ascending_chain"
+            }
+          }
         ]
       },
-      "statement": "Choose {v} or false for the statement ${a} < 0$.",
       "params": {
         "a": {
-          "kind": "int",
-          "low": -12,
-          "high": -1
-        },
-        "v": {
           "kind": "choice",
           "values": [
-            "true",
-            "yes"
+            -11,
+            -8,
+            -5,
+            2
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            -9,
+            -3,
+            4
+          ]
+        },
+        "t": {
+          "kind": "choice",
+          "values": [
+            "true"
+          ]
+        },
+        "f": {
+          "kind": "choice",
+          "values": [
+            "false"
           ]
         }
       },
       "constraints": [],
-      "answer_expr": "v",
-      "solution_sketch": "Every available value of {a} is negative, so the comparison {a} < 0 is true.",
-      "hints": [
-        "Locate {a} relative to zero.",
-        "Every negative integer is less than zero."
-      ],
       "samples": [
         {
           "params": {
-            "a": -12,
-            "v": "true"
+            "a": -11,
+            "b": -9,
+            "t": "true",
+            "f": "false"
           },
-          "expected": "true"
+          "expected": "judgment = true; chain = -11 < -9 < 0"
         },
         {
           "params": {
-            "a": -1,
-            "v": "yes"
+            "a": -11,
+            "b": -3,
+            "t": "true",
+            "f": "false"
           },
-          "expected": "yes"
+          "expected": "judgment = true; chain = -11 < -3 < 0"
+        },
+        {
+          "params": {
+            "a": -11,
+            "b": 4,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = true; chain = -11 < 0 < 4"
+        },
+        {
+          "params": {
+            "a": -8,
+            "b": -9,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = false; chain = -9 < -8 < 0"
+        },
+        {
+          "params": {
+            "a": -8,
+            "b": -3,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = true; chain = -8 < -3 < 0"
+        },
+        {
+          "params": {
+            "a": -8,
+            "b": 4,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = true; chain = -8 < 0 < 4"
+        },
+        {
+          "params": {
+            "a": -5,
+            "b": -9,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = false; chain = -9 < -5 < 0"
+        },
+        {
+          "params": {
+            "a": -5,
+            "b": -3,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = true; chain = -5 < -3 < 0"
+        },
+        {
+          "params": {
+            "a": -5,
+            "b": 4,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = true; chain = -5 < 0 < 4"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": -9,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = false; chain = -9 < 0 < 2"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": -3,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = false; chain = -3 < 0 < 2"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 4,
+            "t": "true",
+            "f": "false"
+          },
+          "expected": "judgment = true; chain = 0 < 2 < 4"
         }
-      ]
+      ],
+      "solution_sketch": "Compare the locations of ${a}$ and ${b}$ on the number line for the judgment. Sort ${b}$, $0$, and ${a}$ by their signed values and connect consecutive values with <; every negative value precedes zero.",
+      "hints": [
+        "A number farther left is smaller.",
+        "Compare signed values, then use one < sign between each pair in order."
+      ],
+      "distractors": []
     }
   },
   {

@@ -100,6 +100,7 @@
 
 mod parallel;
 mod pass;
+mod preflight;
 mod settings;
 mod store;
 mod verify;
@@ -111,6 +112,7 @@ use crate::authoring::prompt::{DIGEST_CHARS, Kind};
 
 pub use parallel::run_parallel;
 pub use pass::{author_one, run_batch};
+pub use preflight::preflight;
 pub use store::{
     StaleRow, Stored, render_stale, served_instances, slots_taken, stale_rows, stale_slots,
     store_pending,

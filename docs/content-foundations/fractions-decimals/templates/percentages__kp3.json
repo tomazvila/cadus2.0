@@ -3,110 +3,137 @@
     "kp_id": "percentages/kp3",
     "kind": "template",
     "arguments": {
-      "statement": "A class has ${a}$ students; half attend a workshop. Find the attending count.",
-      "answer_expr": "a/2",
+      "statement": "A quiz has ${a}$ questions and requires ${b}%$ correct. Separately, a team wins ${b}$ of $200$ games. Give required = the number of correct quiz answers, and percent = the team win percentage as a bare percent number.",
+      "answer_expr": "multipart(a*b/100,b/2)",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "required",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "percent",
+            "contract": {
+              "kind": "exact"
+            }
+          }
+        ]
+      },
       "params": {
         "a": {
           "kind": "choice",
           "values": [
-            22,
-            24,
-            26,
-            28,
-            30,
-            32,
-            34,
-            36,
-            38,
+            20,
             40,
-            42,
-            44
+            60
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            25,
+            50,
+            75,
+            100
           ]
         }
       },
       "constraints": [],
-      "solution_sketch": "The whole is ${a}$ and the selected share is one half, so the count is ${a}/2$.",
-      "hints": [
-        "Identify the given whole and the requested part."
-      ],
-      "distractors": [],
       "samples": [
         {
           "params": {
-            "a": 22
+            "a": 20,
+            "b": 25
           },
-          "expected": "11"
+          "expected": "required = 5; percent = 25/2"
         },
         {
           "params": {
-            "a": 24
+            "a": 20,
+            "b": 50
           },
-          "expected": "12"
+          "expected": "required = 10; percent = 25"
         },
         {
           "params": {
-            "a": 26
+            "a": 20,
+            "b": 75
           },
-          "expected": "13"
+          "expected": "required = 15; percent = 75/2"
         },
         {
           "params": {
-            "a": 28
+            "a": 20,
+            "b": 100
           },
-          "expected": "14"
+          "expected": "required = 20; percent = 50"
         },
         {
           "params": {
-            "a": 30
+            "a": 40,
+            "b": 25
           },
-          "expected": "15"
+          "expected": "required = 10; percent = 25/2"
         },
         {
           "params": {
-            "a": 32
+            "a": 40,
+            "b": 50
           },
-          "expected": "16"
+          "expected": "required = 20; percent = 25"
         },
         {
           "params": {
-            "a": 34
+            "a": 40,
+            "b": 75
           },
-          "expected": "17"
+          "expected": "required = 30; percent = 75/2"
         },
         {
           "params": {
-            "a": 36
+            "a": 40,
+            "b": 100
           },
-          "expected": "18"
+          "expected": "required = 40; percent = 50"
         },
         {
           "params": {
-            "a": 38
+            "a": 60,
+            "b": 25
           },
-          "expected": "19"
+          "expected": "required = 15; percent = 25/2"
         },
         {
           "params": {
-            "a": 40
+            "a": 60,
+            "b": 50
           },
-          "expected": "20"
+          "expected": "required = 30; percent = 25"
         },
         {
           "params": {
-            "a": 42
+            "a": 60,
+            "b": 75
           },
-          "expected": "21"
+          "expected": "required = 45; percent = 75/2"
         },
         {
           "params": {
-            "a": 44
+            "a": 60,
+            "b": 100
           },
-          "expected": "22"
+          "expected": "required = 60; percent = 50"
         }
       ],
-      "answer_contract": {
-        "kind": "exact"
-      }
+      "solution_sketch": "For the required part, multiply the whole by the percent fraction: ${a}({b}/100)$. For the percent, divide wins by games and multiply by $100$: $({b}/200)100$. These use different part, whole, and percent roles.",
+      "hints": [
+        "Identify which quantity is missing in each task.",
+        "Find a part by multiplying; find a percent by dividing part by whole, then multiplying by 100."
+      ],
+      "distractors": []
     }
   }
 ]

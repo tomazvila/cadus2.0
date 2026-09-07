@@ -24,9 +24,7 @@ async fn an_exact_multi_step_template_passes_authoring_and_stays_pending() {
         }
         let prompt = cadus_worker::authoring::prompt::render_exemplars(&spec.exemplars);
         assert!(prompt.contains(r#"Answer contract: {"kind":"exact"}"#));
-        let mut arguments = good_arguments();
-        // A model cannot replace the policy the reviewed curriculum owns.
-        arguments["answer_contract"] = json!({"kind": "approx", "decimals": 0});
+        let arguments = good_arguments();
         let fake =
             FakeModel::start(vec![named_reply(Kind::Template.tool_name(), &arguments)]).await;
         let result = author(&db, &fake, Kind::Template, &spec).await;

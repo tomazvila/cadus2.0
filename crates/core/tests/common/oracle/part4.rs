@@ -297,7 +297,7 @@ pub fn the_two_checkers_read_the_answer_alike(row: &Row) -> bool {
     if holds_a_mixed_number(&row.ast) {
         return false;
     }
-    !(names_a_bare_word(&one_zero_source(&row.answer), "x") && !holds_the_variable_x(&row.answer))
+    !names_a_bare_word(&one_zero_source(&row.answer), "x") || holds_the_variable_x(&row.answer)
 }
 
 /// Whether the answer tree holds a mixed number at any depth.

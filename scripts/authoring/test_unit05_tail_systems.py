@@ -30,7 +30,9 @@ class SystemsTail(unittest.TestCase):
         report = build_report(self.facts,pending_templates(ROOT/'docs/content-foundations'))
         for row in report['kps']:
             if row['kp_key'] in KEYS:
-                self.assertEqual(row['issues'],[],row['kp_key'])
+                # Static source facts leave production gating explicitly unverified.
+                self.assertEqual([issue['code'] for issue in row['issues']],
+                                 ['pending_template_production_gate_declined'],row['kp_key'])
         for key in KEYS:
             rows = self.kps[key]['exemplars']
             self.assertEqual(len(rows),4)

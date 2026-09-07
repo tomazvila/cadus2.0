@@ -319,6 +319,7 @@ pub fn answer_for_contract(
                 return equation::write(name, args, bindings, contract);
             }
             "atandeg" => return inverse::degrees(args, bindings, contract),
+            "ascendingchain" => return notation::ascending_chain(args, bindings, contract),
             _ => {}
         }
     }
