@@ -1,82 +1,113 @@
 # Framework 2.0 rollout and rollback
-This runbook is the operational gate for the framework branch. It does not authorize a production deployment. Run it only after the curriculum review queue has a human decision and the framework checklist records the accepted content scope.
-
+This runbook is the operational gate for the framework branch. It does not authorize production deployment, content import, or content decisions. Those actions require the owner's explicit authorization. A human reviewer decides every digest.
 ## Release facts
-- Framework 2.0 changes no migration relative to the pre-framework commit `2ff3c1f`; the latest migration remains `0012`.
-- The event log remains the source of truth. `learner_models` is a rebuildable projection cache.
-- The framework fold uses `PROJECTOR_VERSION = 7`. A cache with an older version is rebuilt from its user's event stream on the next state write.
-- Pending content never serves. A reviewer must approve each serving document through `/review`.
-
-## Preflight
-1. Record the release commit and the rollback commit:
-   ```sh
-   release_commit="$(git rev-parse HEAD)"
-   rollback_commit="2ff3c1f"
-   printf 'release=%s\nrollback=%s\n' "$release_commit" "$rollback_commit"
-   ```
-2. Confirm that the release adds no migration and that the tree is clean:
-   ```sh
-   git diff --exit-code "$rollback_commit" -- migrations
-   git status --short
-   ```
-3. Run the merge gate against an isolated migrated database:
-   ```sh
-   CADUS_TEST_DATABASE_URL=postgresql://…/cadus2_gate scripts/gate.sh
-   ```
-   Continue only after the final line is `GATE OK`.
-4. Export and retain the content review queue. Record every approved digest and verify that pending and rejected documents cannot serve.
-5. Take a database backup using the deployment's normal encrypted backup procedure. Record its location and restoration check before deployment.
-
+- Production is Compose project `homelab`, rooted at `/home/deploy/homelab`. Its Cadus services are `cadus2-db`, `cadus2-migrate`, `cadus2-web`, `cadus2-worker`, and `cadus2-edge`.
+- `scripts/deploy.sh` operates the standalone repository stack. Production uses `scripts/homelab_release.sh`, which derives live container IDs and their shared network from the Compose project before acting.
+- Framework 2.0 changes no migration relative to `2ff3c1f`; the latest migration remains `0012`.
+- The event log remains the source of truth. `learner_models` is a rebuildable projection cache at `PROJECTOR_VERSION = 7`.
+- Pending content never serves. The candidate can deploy and accept pending rows safely. The release remains incomplete until human review and the post-decision readiness audit pass.
+## Build the exact content bundle
+Create one self-contained import bundle after the exact release head passes its content pipeline:
+```sh
+release_commit="$(git rev-parse HEAD)"
+final_root="/home/deploy/.cache/cadus2_orchestration/final-${release_commit:0:12}"
+bundle="$final_root/foundations-release"
+python3 scripts/review/foundations_release_bundle.py build \
+  --release-root "$PWD" \
+  --release-commit "$release_commit" \
+  --templates /home/deploy/.cache/cadus2_orchestration/postzero/templates.json \
+  --teach docs/content-foundations/whole-course-teach/import-manifest.json \
+  --instruction /home/deploy/.cache/cadus2_orchestration/postzero/complete-1/manifest.json \
+  --output "$bundle"
+```
+The builder refuses overlap, drift from 809 templates, 809 Teach pages, and 809 hint ladders, or a mismatch among their canonical knowledge-point sets. `bundle.json` binds the release commit, ordered files, inputs, counts, and hashes. The three import files contain 2,427 unique pending documents.
+## Preflight without production writes
+The order is bundle, verified backup and recovery rehearsal, deployment, pending import, human per-digest review, then readiness and smoke.
+1. Record the merge gate, Rust quality, web quality, and restored-snapshot replay receipts for this exact commit.
+2. Take an encrypted production backup and restore it into a disposable database. The receipt must bind this exact commit, confirm no plaintext dump, prove byte-identical event fingerprints before and after replay, and confirm disposable-database removal.
+3. Run the topology, bundle, and recovery-receipt preflight:
+```sh
+recovery_receipt="$final_root/restored-production-replay/receipt.json"
+scripts/homelab_release.sh preflight \
+  --bundle "$bundle" \
+  --recovery-receipt "$recovery_receipt"
+```
+It confirms the five production services, checks the clean tree and unchanged migrations, derives the live edge mount, compares its Caddyfile with the candidate, and changes no production state.
+4. Record read-only production baselines for event count, error rate, p95 state-read latency, projector failures, readiness blockers, and content-serving failures.
 ## Disposable recovery rehearsal
-Run the local rehearsal before the restored production snapshot check:
+Run the local mechanism rehearsal before the restored production snapshot check:
 ```sh
 CARGO_BUILD_JOBS=1 scripts/check_recovery.sh
 ```
-The script accepts only the active `cadus2-testdb` container on `127.0.0.1:55434`. It creates three `cadus2_recovery_*` databases and removes them when it stops. The rehearsal does these checks:
-1. Apply all migrations and seed five snapshot samples: empty, ordinary, review, integrated, and 258-event history.
-2. Write and read a custom-format PostgreSQL archive.
-3. Stop a projector process with `SIGKILL` after its version-7 write and before commit.
-4. Confirm that PostgreSQL rolled back the write and kept all event bytes.
-5. Retry all samples, persist projector version 7, and confirm that the second read resumes with identical model JSON.
-6. Confirm that migrations match `2ff3c1f` and restore the retained pre-replay archive into a new rollback database.
-
-This rehearsal proves the local mechanisms. The restored production snapshot check remains necessary for production event shapes, production volume, encrypted backup storage, and retained deployment images.
-
-## Projection replay check
-The version mismatch rebuild is the production replay mechanism. Exercise it on a restored production snapshot before deployment:
-1. Start the candidate against the restored snapshot with outbound model calls disabled.
-2. Select accounts that cover an empty history, an ordinary practice history, a review history, an integrated-task history, and the largest event stream.
-3. Read each account through the normal authenticated state or serve endpoint. The read must finish successfully and persist `learner_models.projector_version = 7` through the account's event head.
-4. Read the same accounts again. The resulting model JSON, cursor, and framework report values must match the first read byte for byte.
-5. Confirm that the event count and maximum sequence for every sampled account are unchanged. Projection replay must append or rewrite no event.
-
-The committed fixture proof is the release-profile projector suite in `scripts/gate.sh`. The restored-snapshot check establishes that production event shapes and volumes are also accepted.
-
-## Deploy
-1. Keep the rollback checkout or image available.
-2. Run the sole supported upgrade path:
-   ```sh
-   scripts/deploy.sh
-   ```
-3. Verify `/api/health` and `/api/ready`, container stability, and the deployed commit.
-4. With a non-admin test learner, complete one ordinary lesson, one review, and one integrated task. Confirm reload and duplicate submission preserve the receipt and award completion once.
-5. With an admin test account, verify the review queue counts and approve nothing as part of the smoke test.
-6. Compare error rate, p95 state-read latency, projector failures, readiness blockers, and content-serving failures with the pre-deploy baseline.
-
+The rehearsal uses only the `cadus2-testdb` test container. It validates archive/restore, a killed projection transaction, byte-identical replay, unchanged events, migration identity, and rollback-database restoration. The restored production snapshot receipt remains mandatory because it covers production event shapes and volume.
+## Deploy the pending-safe candidate
+The live database initially has no content rows, so a review queue cannot exist before the candidate and pending bundle reach production. Pending rows do not serve. After explicit deployment authorization, retain a log and run:
+```sh
+receipt_dir="$final_root/release-receipts"
+scripts/homelab_release.sh deploy \
+  --bundle "$bundle" \
+  --recovery-receipt "$recovery_receipt" \
+  --receipt-dir "$receipt_dir" \
+  --execute | tee "$final_root/deploy.log"
+```
+The helper records the current live app and edge image IDs as rollback truth, builds immutable release tags, waits for `cadus2-db`, runs `cadus2-migrate`, and only then recreates `cadus2-web`, `cadus2-worker`, and `cadus2-edge` together. It verifies stable restart counts, public `/api/health`, and internal `/api/ready`. A build or migration failure leaves the old application containers running.
+## Import pending content
+This is a production database write distinct from deployment. After explicit authorization for the import, run:
+```sh
+scripts/homelab_release.sh import-pending \
+  --bundle "$bundle" \
+  --recovery-receipt "$recovery_receipt" \
+  --execute | tee "$final_root/content-import.log"
+```
+The helper extracts the worker from the immutable release image, validates the bundle again, dry-runs all three ordered files, then imports through the normal production gates with zero model cost and `--missing-only`. It never approves content. A retry skips rows already pending or approved.
+## Human review and approval
+1. Sign in as an admin at `https://cadus.<domain>/review`. Save the exact admin Cookie header value in a mode-600 scratch file:
+```sh
+install -m 600 /dev/null ~/.cache/cadus-review-cookie
+```
+2. Export the live pending queue and its full bodies, gates, and rendered instances:
+```sh
+python3 scripts/review/content_review_packet.py export \
+  --base-url "https://cadus.<domain>" \
+  --cookie-file ~/.cache/cadus-review-cookie \
+  --output ~/.cache/cadus-foundations-review.json
+```
+3. Review every selected digest. Add only explicit `approve` or reasoned `reject` decisions to `~/.cache/cadus-foundations-review.decisions.json`. The `/review` screen is the interactive renderer.
+4. Recheck the exact live bodies without writing:
+```sh
+python3 scripts/review/content_review_packet.py apply \
+  --base-url "https://cadus.<domain>" \
+  --cookie-file ~/.cache/cadus-review-cookie \
+  --packet ~/.cache/cadus-foundations-review.json \
+  --decisions ~/.cache/cadus-foundations-review.decisions.json \
+  --receipt ~/.cache/cadus-foundations-review.dry-run.json
+```
+5. The human reviewer applies that exact decision file by adding `--commit` and using a new receipt path. Re-export after every committed batch because approving a template can re-gate related pending instruction content. Preserve all packet hashes and receipts.
+## Readiness and smoke
+After all decisions, capture the serving-readiness report:
+```sh
+scripts/homelab_release.sh readiness \
+  --bundle "$bundle" \
+  --recovery-receipt "$recovery_receipt" \
+  --receipt-dir "$receipt_dir"
+```
+The release requires 809 ready knowledge points, zero blocked knowledge points, and zero contract failures. Then:
+1. With a non-admin test learner, complete one ordinary lesson, one review, and one integrated task.
+2. Reload and submit each receipt twice; completion must be awarded once and the stored receipt must remain stable.
+3. With an admin test account, verify the review-queue counts. Make no approval during the smoke.
+4. Compare live operational metrics with the recorded pre-deploy baseline.
 ## Roll back
-Because this release adds no migration, the code and images can return to `2ff3c1f` without a schema reversal. Events produced by framework 2.0 are schema-versioned and preserve their original bytes; the 1.0 binary may not understand every 2.0 interaction, so stop framework traffic before starting the old services.
-1. Stop new learner traffic at the edge while leaving the database running.
-2. Check out the recorded rollback commit or select its retained images.
-3. Run `scripts/deploy.sh` from that checkout. Do not run `docker compose up -d` directly.
-4. Verify `/api/health`, `/api/ready`, container stability, login, and an existing learner state read.
-5. Keep the append-only event log. Restore the database backup only for database corruption; a normal application rollback must not discard learner events.
-6. Record the first failing request, release and rollback commits, event sequence, projector version, and review-queue counts for the incident review.
-
+Because the release adds no migration, rollback changes images and preserves the database and event log. After explicit rollback authorization:
+```sh
+scripts/homelab_release.sh rollback --receipt-dir "$receipt_dir" --execute
+```
+The helper reads the exact pre-deploy image IDs from `rollback-images.json`, stops learner traffic at the Compose-derived edge container, restores those images, recreates web, worker, and edge, and reruns stability and probe checks. Restore the database backup only for database corruption. Record the first failing request, release and rollback commits, event sequence, projector version, and review-queue counts.
 ## Release decision record
 Record these items in the handover before calling the release complete:
-- merge-gate result and log digest;
-- restored-snapshot replay sample and largest sampled event count;
-- human content-review decision and approved digests;
-- readiness report produced after that decision;
-- browser walk result for ordinary, review, and integrated flows;
+- exact release commit and final bundle digest;
+- merge-gate, quality, restored-snapshot replay, and encrypted backup/restore receipts;
+- deploy log and exact pre-deploy/current image IDs;
+- human content packet, decisions, approved/rejected digests, and apply receipts;
+- post-decision readiness report;
+- ordinary, review, and integrated browser smoke result;
 - deployment or rollback commit, timestamp, and operator.
