@@ -51,6 +51,26 @@ def coordinate_tuples(math):
     return found
 
 
+def coordinate_expressions(math):
+    """Return coordinate-pair expressions, including pairs containing ``t``."""
+    found=[]
+    for start,ch in enumerate(math):
+        if ch!='(':
+            continue
+        depth=0
+        for end in range(start,len(math)):
+            depth+=(math[end]=='(')-(math[end]==')')
+            if depth==0:
+                try:
+                    node=ast.parse(math[start:end+1],mode='eval').body
+                    if isinstance(node,ast.Tuple) and len(node.elts)==2:
+                        found.append(tuple(ast.unparse(n) for n in node.elts))
+                except SyntaxError:
+                    pass
+                break
+    return found
+
+
 def points(problem):
     return [point for math in re.findall(r'\$([^$]+)\$',problem)
             for point in coordinate_tuples(math)]
@@ -59,6 +79,40 @@ def points(problem):
 def equations(problem):
     return [x for x in re.findall(r'\$([^$]+)\$',problem)
             if re.match(r'^[xy]=',x)]
+
+
+def coordinate_expression_pairs(problem):
+    return [point for math in re.findall(r'\$([^$]+)\$',problem)
+            for point in coordinate_expressions(math)]
+
+
+def all_equations(problem):
+    return [x for x in re.findall(r'\$([^$]+)\$',problem)
+            if '=' in x and any(variable in x for variable in 'xy')]
+
+
+def solve_equal(left,right,variable='t'):
+    """Solve two affine scalar expressions for one variable."""
+    left0,right0=scalar(left,{variable:0}),scalar(right,{variable:0})
+    left1,right1=scalar(left,{variable:1}),scalar(right,{variable:1})
+    left_rate,right_rate=left1-left0,right1-right0
+    assert scalar(left,{variable:2})==left0+2*left_rate
+    assert scalar(right,{variable:2})==right0+2*right_rate
+    assert left_rate!=right_rate
+    return (right0-left0)/(left_rate-right_rate)
+
+
+def quadrant_code(point):
+    x,y=point
+    if x==0 and y==0:
+        return Q(7)
+    if y==0:
+        return Q(5)
+    if x==0:
+        return Q(6)
+    if x>0:
+        return Q(1 if y>0 else 4)
+    return Q(2 if y>0 else 3)
 
 
 def slope(p,q):
@@ -85,7 +139,20 @@ def reconstruct(key, problem):
         a=ps[0][1]/ps[0][0]
         b=ps[1][1]/ps[1][0] if len(ps)==2 else coefficient(equations(problem)[0])
         return dict(rates=(a,b),faster=a>b)
-    if topic=='horizontal-vertical-slopes':
+    if key=='coordinate-plane/kp1':
+        assert len(ps)==2
+        return dict(A=quadrant_code(ps[0]),B=quadrant_code(ps[1]))
+    if key in ('horizontal-vertical-slopes/kp1','horizontal-vertical-slopes/kp2'):
+        pairs=coordinate_expression_pairs(problem)
+        coordinate=1 if key.endswith('/kp1') else 0
+        expressions=[pair[coordinate] for pair in pairs]
+        axis='y' if coordinate==1 else 'x'
+        axis_equations=[eq for eq in all_equations(problem) if eq.startswith(f'{axis}=')]
+        if axis_equations:
+            expressions.append(axis_equations[0].split('=',1)[1])
+        assert len(expressions)==2
+        return dict(value=solve_equal(*expressions))
+    if key=='horizontal-vertical-slopes/kp3':
         assert len(ps)==2
         return dict(h=ps[0][1],v=ps[1][0])
     if topic=='slope-as-rate-of-change':
@@ -96,6 +163,24 @@ def reconstruct(key, problem):
         eqs={eq[0]:scalar(eq.split('=')[1]) for eq in equations(problem)}
         assert set(eqs)=={'x','y'}
         return dict(x=eqs['x'],y=eqs['y'])
+    if key=='solutions-of-two-variable-equations/kp1':
+        assert len(ps)==1
+        eqs=all_equations(problem)
+        assert len(eqs)==1
+        left,right=eqs[0].split('=',1)
+        variables={'x':ps[0][0],'y':ps[0][1]}
+        values=(scalar(left,variables),scalar(right,variables))
+        return dict(values=values,valid=values[0]==values[1])
+    if key=='graphing-from-a-table/kp2':
+        assert len(ps)==2 and ps[0][0]!=ps[1][0]
+        intercept=ps[0][1]-ps[0][0]*slope(*ps)
+        return dict(value=(Q(0),intercept))
+    if key=='slopes-of-parallel-perpendicular-lines/kp3':
+        eqs=equations(problem)
+        assert len(eqs)==2
+        rates=tuple(coefficient(eq) for eq in eqs)
+        relation=Q(1 if rates[0]==rates[1] else 2 if rates[0]*rates[1]==-1 else 3)
+        return dict(rates=rates,relation=relation)
     raise ValueError(f'No independent reconstruction for {key}')
 
 
@@ -109,7 +194,7 @@ def answer_value(value):
 
 def parsed_answer(answer):
     if '=' not in answer:
-        return {'value':scalar(answer)}
+        return {'value':answer_value(answer)}
     fields={}
     for part in answer.split(';'):
         name,value=(s.strip() for s in part.split('='))
@@ -134,7 +219,7 @@ def verify(key, problem, answer, sketch=None):
 def signature(key,problem):
     result=reconstruct(key,problem)
     topic=key.split('/')[0]
-    if topic in ('horizontal-vertical-slopes','graphing-linear-equations'):
+    if key=='horizontal-vertical-slopes/kp3' or topic=='graphing-linear-equations':
         coords=(result['v'],result['h']) if 'h' in result else (result['x'],result['y'])
         return ('axis-lines',coords)
-    return (topic,tuple(result.items()))
+    return (key,tuple(result.items()))

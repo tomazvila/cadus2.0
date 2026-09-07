@@ -107,6 +107,12 @@ class ClassifyKpTest(unittest.TestCase):
         rng = random.Random("seed")
         self.assertIsNone(fd.classify_kp(topic, kp, rng))
 
+    def test_radical_quotient_is_not_taught_as_bare_fraction_reduction(self):
+        topic, kp = find_kp("dividing-radicals", "kp3")
+        rng = random.Random(f"{topic['id']}/{kp['id']}")
+        self.assertEqual(fd.classify_family(r"\frac{10\sqrt{27}}{5\sqrt{3}}"), "fraction_reduce")
+        self.assertIsNone(fd.classify_kp(topic, kp, rng))
+
     def test_classify_is_deterministic(self):
         topic, kp = find_kp("adding-integers", "kp1")
         first = fd.classify_kp(topic, kp, random.Random(f"{topic['id']}/{kp['id']}"))

@@ -285,7 +285,13 @@ def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
         return None
     verb, base_expr = matches[-1].group(1), matches[-1].group(2)
     family = classify_family(base_expr)
-    if family in EXCLUDED_FROM_GENERATION:
+    # A radical quotient also contains ``\frac`` and can therefore reach the
+    # coarse ``fraction_reduce`` family.  The corresponding teaching text is
+    # valid only for a literal integer numerator/denominator fraction.  Decline
+    # the broader shape until it has its own reviewed, family-aware generator.
+    if family in EXCLUDED_FROM_GENERATION or (
+        family == "fraction_reduce" and not _BARE_FRACTION.search(base_expr)
+    ):
         return None
     served = _served_values(kp)
     try:

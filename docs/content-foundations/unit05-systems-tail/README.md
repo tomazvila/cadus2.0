@@ -46,6 +46,20 @@ The available Nix compiler is Rust 1.92; the repository declares 1.94. The recor
 
 Result: `UNIT05 SOURCE ACCEPTANCE OK: 13 closed; 190 pending; 80 course residuals. No content approved.`
 
+`check_unit05_tail.py` reproduces the historical source-acceptance checkpoint, including its exact baseline source-scope assertions. For a current-head semantic recheck, generate facts from the same checkout and pass that file explicitly to each tracked semantic entrypoint:
+
+```sh
+mkdir -p target/unit05-current
+CARGO_BUILD_JOBS=1 cargo run --quiet -p cadus-core --bin content_audit_facts -- curriculum > target/unit05-current/facts.json
+python3 scripts/authoring/test_unit05_residual.py target/unit05-current/facts.json -v
+python3 scripts/authoring/test_unit05_residual_second.py target/unit05-current/facts.json -v
+python3 scripts/authoring/test_unit05_tail_mixtures.py target/unit05-current/facts.json -v
+python3 scripts/authoring/test_unit05_tail_systems.py target/unit05-current/facts.json -v
+sha256sum target/unit05-current/facts.json
+```
+
+Checked-in `authored-facts.json`, baseline audit files, and checkpoint facts are historical evidence. They are not inputs to this current-head recheck.
+
 - 23 Python tests pass: 8 new semantic/materiality tests, 6 prior Unit05 regression tests, and 9 audit tests. New tests independently reconstruct all 52 exemplars and 190 pending instances, check normalized collisions against parseable curriculum/prior pending systems, exhaust domains, perturb mathematical inputs and answers, and check entropy and active axes.
 - 6 Rust tests pass: the production authoring gate and current answer evaluator cover the 190 new instances plus 204 prior Unit05 instances. Well-formed perturbed answers grade incorrect; malformed answers, false samples, and constant/cancelling expressions are rejected.
 - Whole-workspace `cargo fmt --all --check`, focused worker Clippy with `-D warnings`, `git diff --check`, unchanged-outside-target-exemplar-blocks verification, and code limits pass. Largest added code file: 224 lines; largest function: 54 lines.

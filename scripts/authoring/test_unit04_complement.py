@@ -12,6 +12,22 @@ import unittest
 from unit04_complement_common import ROOT, OUT, fields
 from unit04_complement_semantics import parsed_answer, reconstruct, signature, verify
 
+HISTORICAL_KEYS={
+    'graphing-linear-equations/kp3',
+    'graphing-proportional-relationships/kp3',
+    'horizontal-vertical-slopes/kp3',
+    'proportional-relationships/kp2',
+    'slope-as-rate-of-change/kp2',
+}
+CURRENT_ADDITIONS={
+    'coordinate-plane/kp1',
+    'horizontal-vertical-slopes/kp1',
+    'horizontal-vertical-slopes/kp2',
+    'solutions-of-two-variable-equations/kp1',
+    'graphing-from-a-table/kp2',
+    'slopes-of-parallel-perpendicular-lines/kp3',
+}
+
 
 class ComplementTests(unittest.TestCase):
     @classmethod
@@ -24,8 +40,13 @@ class ComplementTests(unittest.TestCase):
 
     def test_scope_four_material_exemplars_and_production_decidability(self):
         scope=json.loads((OUT/'scope.json').read_text())
-        self.assertLessEqual(self.keys,set(scope['keys']))
-        self.assertEqual({scope['initial_status'][k] for k in self.keys},{'absent_pending'})
+        # scope.json is the immutable evidence for the first five-family repair.
+        # Six families were completed later; pin that current ownership here
+        # without rewriting the historical baseline or its initial statuses.
+        self.assertEqual(set(scope['keys']),HISTORICAL_KEYS)
+        self.assertEqual(set(scope['initial_status']),HISTORICAL_KEYS)
+        self.assertEqual(set(scope['initial_status'].values()),{'absent_pending'})
+        self.assertEqual(self.keys,HISTORICAL_KEYS|CURRENT_ADDITIONS)
         for key in self.keys:
             rows=self.by_key[key]['exemplars']
             self.assertEqual(len(rows),4,key)
@@ -94,7 +115,7 @@ class ComplementTests(unittest.TestCase):
                 for field,value in actual.items():
                     wrong=dict(actual)
                     wrong[field]=not value if isinstance(value,bool) else (value[0]+1,value[1]) if isinstance(value,tuple) else value+1
-                    bad=str(wrong['value']) if 'value' in wrong else fields(**wrong)
+                    bad=fields(**wrong)
                     with self.assertRaises(AssertionError):
                         verify(key,ex['problem'],bad)
                 with self.assertRaises(AssertionError):
