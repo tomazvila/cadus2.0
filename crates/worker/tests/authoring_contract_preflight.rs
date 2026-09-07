@@ -150,9 +150,7 @@ async fn a_wrong_contract_reaches_the_gate_and_never_stores_a_row() {
         arguments["answer_contract"] = json!({"kind":"coordinates","arity":2});
         let fake =
             FakeModel::start(vec![named_reply(Kind::Template.tool_name(), &arguments); 5]).await;
-        let result = author(&db, &fake, Kind::Template, &spec).await;
-        assert_eq!(result.outcome, Outcome::Declined);
-        assert_eq!(result.attempts, 5);
+        let result = author_expect(&db, &fake, Kind::Template, &spec, Outcome::Declined, 5).await;
         assert_eq!(fake.call_count(), 5);
         assert!(result.decline.unwrap().reasons.iter().all(|reason| {
             !reason.contains("answer kind multi-step is not symbolically decidable")
