@@ -3,14 +3,13 @@
 //! The start sequence is:
 //!
 //! 1. Start the tracing subscriber. `RUST_LOG` selects the level.
-//! 2. Read `DATABASE_URL`, `BIND_ADDR` (default `0.0.0.0:8080`),
+//! 2. Install stop signals before configuration and curriculum loading.
+//! 3. Read `DATABASE_URL`, `BIND_ADDR` (default `0.0.0.0:8080`),
 //!    `SHUTDOWN_DEADLINE_SECS` (default 10), `CADUS_WEB_INSECURE_COOKIE`
 //!    (default 0), and `PUBLIC_ORIGIN` (default: rebuild from
 //!    `X-Forwarded-Proto` and `Host`).
-//! 3. Run the cookie-posture guard. A `__Host-` cookie without `Secure` stops
+//! 4. Run the cookie-posture guard. A `__Host-` cookie without `Secure` stops
 //!    the process with exit code 2.
-//! 4. Install the stop signals. The handlers exist before the pool opens, so a
-//!    signal during the connect gives a clean stop.
 //! 5. Open the connection pool.
 //! 6. Run the C3 boot guard. A role that bypasses row-level security stops the
 //!    process with exit code 3.
@@ -105,16 +104,11 @@ fn init_tracing() {
 
 /// The start sequence of the module note, then the serve, then the stop.
 async fn run() -> Result<(), Fatal> {
-    // Read the settings, then install the stop signals before the connect. The
-    // handlers exist from this point, so a SIGTERM during the connect gives exit
-    // code 0 instead of a kill by signal (finding #39). The two steps share one
-    // refusal: a setting that does not read stops the start the same way a
-    // handler that does not register would.
-    let (settings, mut shutdown) = Settings::read().and_then(|settings| {
-        Shutdown::install(PROCESS)
-            .map_err(Fatal::startup)
-            .map(|shutdown| (settings, shutdown))
-    })?;
+    // Curriculum loading and certificate fingerprints can take time. Register
+    // signals first so a stop during that synchronous work is delivered to the
+    // guarded connect and exits cleanly when loading finishes.
+    let mut shutdown = Shutdown::install(PROCESS).map_err(Fatal::startup)?;
+    let settings = Settings::read()?;
     let Some(db) = connect_guarded(&settings.cfg, &mut shutdown).await? else {
         return Ok(());
     };

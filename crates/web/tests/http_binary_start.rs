@@ -19,10 +19,11 @@ mod common;
 use common::*;
 
 use std::ffi::OsStr;
+use std::io::ErrorKind;
 use std::net::TcpListener;
 use std::os::unix::ffi::OsStrExt;
 use std::thread::sleep;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use cadus_store::test_support::TestDb;
 
@@ -161,13 +162,31 @@ async fn binary_exits_2_when_the_database_refuses_the_connection() {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_exits_zero_on_sigterm_during_the_connect() {
     let silent = TcpListener::bind("127.0.0.1:0").expect("bind the silent socket");
+    silent
+        .set_nonblocking(true)
+        .expect("make the silent socket nonblocking");
     let port = silent.local_addr().expect("the silent address").port();
-    let child = spawn_web(
+    let mut child = spawn_web(
         web_command()
             .env("DATABASE_URL", format!("postgresql://x@127.0.0.1:{port}/x"))
             .env("BIND_ADDR", "127.0.0.1:0"),
     );
-    sleep(Duration::from_millis(1500));
+    let deadline = Instant::now() + Duration::from_secs(10);
+    let held_connection = loop {
+        match silent.accept() {
+            Ok((connection, _peer)) => break connection,
+            Err(error) if error.kind() == ErrorKind::WouldBlock => {
+                if let Some(status) = child.as_mut().try_wait().expect("poll cadus-web") {
+                    panic!("cadus-web exited before the database connect: {status:?}");
+                }
+                if Instant::now() >= deadline {
+                    panic!("cadus-web did not start the database connect within 10 s");
+                }
+                sleep(Duration::from_millis(50));
+            }
+            Err(error) => panic!("accept the database connection: {error}"),
+        }
+    };
     send_sigterm(child.as_ref());
 
     let (code, stderr) = exit_of(child, Duration::from_secs(10), "stop during connect");
@@ -177,6 +196,7 @@ async fn binary_exits_zero_on_sigterm_during_the_connect() {
         stderr.contains("the stop signal came before the database connect"),
         "stderr does not name the early stop: {stderr}"
     );
+    drop(held_connection);
     drop(silent);
 }
 
