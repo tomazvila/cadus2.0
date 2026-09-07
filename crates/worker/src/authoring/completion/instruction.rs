@@ -66,7 +66,7 @@ mod tests {
     #[test]
     fn catalog_is_exact_unique_and_gated() {
         let keys: BTreeSet<_> = hints().iter().map(|row| row.key.as_str()).collect();
-        assert_eq!(keys.len(), 18);
+        assert_eq!(keys.len(), 20);
         assert_eq!(keys.len(), hints().len());
         for spec in specs() {
             let mut out = Proposals::default();
