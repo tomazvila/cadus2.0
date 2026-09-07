@@ -2,12 +2,13 @@
 #![allow(clippy::unwrap_used)]
 mod common;
 
+use cadus_core::answer::AnswerContract;
 use cadus_core::curriculum::{canonical_dump, sha256_hex};
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[test]
-fn all_78_topics_and_542_statements_match_the_reviewed_classification() {
+fn historical_classification_and_all_987_live_statements_have_a_closed_boundary() {
     let dump: Value = serde_json::from_str(&canonical_dump(common::events::tree())).unwrap();
     let mut current = Vec::new();
     for topic in dump["topics"].as_array().unwrap() {
@@ -16,16 +17,16 @@ fn all_78_topics_and_542_statements_match_the_reviewed_classification() {
         }
         for kp in topic["knowledge_points"].as_array().unwrap() {
             for (index, item) in kp["exemplars"].as_array().unwrap().iter().enumerate() {
-                current.push(json!({"topic_id":topic["id"],"kp_id":kp["id"],"exemplar_index":index,"problem":item["problem"],"answer":item["answer"]}));
+                current.push(json!({"topic_id":topic["id"],"kp_id":kp["id"],"exemplar_index":index,"problem":item["problem"],"answer":item["answer"],"answer_contract":item["answer_contract"]}));
             }
         }
         let item = &topic["diagnostic_exemplar"];
         if !item.is_null() {
-            current.push(json!({"topic_id":topic["id"],"kp_id":"diagnostic","exemplar_index":0,"problem":item["problem"],"answer":item["answer"]}));
+            current.push(json!({"topic_id":topic["id"],"kp_id":"diagnostic","exemplar_index":0,"problem":item["problem"],"answer":item["answer"],"answer_contract":item["answer_contract"]}));
         }
     }
     current.sort_by_key(key);
-    assert_eq!(current.len(), 542);
+    assert_eq!(current.len(), 987);
     assert_eq!(
         current
             .iter()
@@ -43,8 +44,43 @@ fn all_78_topics_and_542_statements_match_the_reviewed_classification() {
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
-        "432d59e238c00ffe8d83bac6e3e0e9277689c55f21818249577c96d6476ab00d"
+        "47a9f77a52d11f53e1af0d40ee69a5e8732a6681e96f69845e44c6757412bf81"
     );
+    let current_keys: BTreeSet<_> = current.iter().map(key).collect();
+    assert_eq!(current_keys.len(), current.len());
+    let mut contracts = BTreeMap::new();
+    for row in &current {
+        let Some(contract) = row["answer_contract"].as_object() else {
+            *contracts.entry("uncontracted".to_owned()).or_insert(0) += 1;
+            continue;
+        };
+        let kind = contract["kind"].as_str().unwrap().to_owned();
+        *contracts.entry(kind).or_insert(0) += 1;
+        let contract: AnswerContract =
+            serde_json::from_value(row["answer_contract"].clone()).unwrap();
+        contract
+            .validate_expected(row["answer"].as_str().unwrap())
+            .unwrap();
+    }
+    assert_eq!(
+        contracts,
+        BTreeMap::from([
+            ("approx".to_owned(), 2),
+            ("ascending_chain".to_owned(), 3),
+            ("coordinates".to_owned(), 180),
+            ("exact".to_owned(), 528),
+            ("inequality_union".to_owned(), 35),
+            ("label".to_owned(), 86),
+            ("list".to_owned(), 13),
+            ("multipart".to_owned(), 61),
+            ("polynomial_relation".to_owned(), 8),
+            ("reduced_ratio".to_owned(), 9),
+            ("relation_setup".to_owned(), 6),
+            ("uncontracted".to_owned(), 48),
+            ("unit".to_owned(), 8),
+        ])
+    );
+
     let text = include_str!("../../../docs/reports/legacy-multistep-statements.jsonl");
     assert_eq!(
         sha256_hex(text.as_bytes()),
@@ -72,7 +108,40 @@ fn all_78_topics_and_542_statements_match_the_reviewed_classification() {
         );
         reviewed.push(row);
     }
-    assert_eq!(reviewed, current);
+    reviewed.sort_by_key(key);
+    assert_eq!(reviewed.len(), 542);
+    assert_eq!(
+        sha256_hex(serde_json::to_string(&reviewed).unwrap().as_bytes()),
+        "432d59e238c00ffe8d83bac6e3e0e9277689c55f21818249577c96d6476ab00d"
+    );
+    let reviewed_keys: BTreeSet<_> = reviewed.iter().map(key).collect();
+    assert_eq!(reviewed_keys.len(), reviewed.len());
+    assert!(reviewed_keys.is_subset(&current_keys));
+    assert_eq!(current_keys.difference(&reviewed_keys).count(), 445);
+    assert!(
+        current
+            .iter()
+            .filter(|row| !reviewed_keys.contains(&key(row)))
+            .all(|row| !row["answer_contract"].is_null())
+    );
+    assert_eq!(
+        current
+            .iter()
+            .filter(|row| row["answer_contract"].is_null())
+            .filter(|row| reviewed_keys.contains(&key(row)))
+            .count(),
+        48
+    );
+    assert_eq!(
+        reviewed
+            .iter()
+            .filter(|row| {
+                let live = current.iter().find(|live| key(live) == key(row)).unwrap();
+                live["problem"] == row["problem"] && live["answer"] == row["answer"]
+            })
+            .count(),
+        229
+    );
     assert_eq!(
         counts,
         BTreeMap::from([
