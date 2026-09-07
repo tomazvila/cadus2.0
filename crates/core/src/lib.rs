@@ -13,6 +13,8 @@
 
 pub mod answer;
 pub mod config;
+#[doc(hidden)]
+pub mod content_audit_facts;
 pub mod curriculum;
 pub mod diagnostic;
 pub mod event;

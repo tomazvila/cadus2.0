@@ -2,14 +2,11 @@
 //! `07-polynomials-quadratics.yaml`: P2.4 requires 4 decidable exemplars, a
 //! held-out assessment item, and a full practice-set of solution sketches.
 #![allow(clippy::unwrap_used)]
+
+mod common;
 use std::path::Path;
 
 use cadus_core::curriculum::load_curriculum;
-use cadus_core::readiness::ReadinessIndex;
-
-fn root() -> std::path::PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
-}
 
 fn kp_keys() -> Vec<String> {
     let fixture = Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -24,35 +21,12 @@ fn the_fixture_names_every_knowledge_point_of_the_unit() {
 
 #[test]
 fn every_polynomials_quadratics_kp_is_practicable_assessable_and_has_solutions() {
-    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
-    assert!(findings.is_empty(), "{findings:?}");
-    let index = ReadinessIndex::build(&curriculum);
-    let mut failures = Vec::new();
-    for key in kp_keys() {
-        let Some(facts) = index.get(&key) else {
-            failures.push(format!("{key}: missing from the curriculum"));
-            continue;
-        };
-        if facts.decidable.len() < 4
-            || facts.held_out.is_none()
-            || facts.practice_exemplars() < 3
-            || !facts.solutions
-        {
-            failures.push(format!(
-                "{key}: decidable={}, held_out={:?}, practice={}, solutions={}",
-                facts.decidable.len(),
-                facts.held_out,
-                facts.practice_exemplars(),
-                facts.solutions
-            ));
-        }
-    }
-    assert!(failures.is_empty(), "{}", failures.join("\n"));
+    common::readiness::assert_kps_ready(kp_keys());
 }
 
 #[test]
 fn no_two_exemplars_of_one_knowledge_point_repeat_a_problem_statement() {
-    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
+    let (curriculum, findings) = load_curriculum(&common::paths::curriculum_root()).unwrap();
     assert!(findings.is_empty());
     let topic_ids: std::collections::BTreeSet<String> = kp_keys()
         .into_iter()

@@ -10,14 +10,9 @@
 //! ending in zero); this test proves only that the curriculum-level
 //! consequence (practicable, assessable, solutions) follows.
 #![allow(clippy::unwrap_used)]
+
+mod common;
 use std::path::Path;
-
-use cadus_core::curriculum::load_curriculum;
-use cadus_core::readiness::ReadinessIndex;
-
-fn root() -> std::path::PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
-}
 
 fn fixture_keys() -> Vec<String> {
     let text = std::fs::read_to_string(
@@ -30,35 +25,7 @@ fn fixture_keys() -> Vec<String> {
 
 #[test]
 fn every_recipe_kp_is_practicable_assessable_and_has_solutions() {
-    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
-    assert!(findings.is_empty());
-    let index = ReadinessIndex::build(&curriculum);
     let keys = fixture_keys();
     assert_eq!(keys.len(), 6);
-    let mut failures = Vec::new();
-    for key in &keys {
-        let Some(facts) = index.get(key) else {
-            failures.push(format!("{key}: not found in the real curriculum"));
-            continue;
-        };
-        if facts.decidable.len() < 4 {
-            failures.push(format!(
-                "{key}: only {} decidable exemplars, expected at least 4",
-                facts.decidable.len()
-            ));
-        }
-        if facts.held_out.is_none() {
-            failures.push(format!("{key}: no exemplar is held out"));
-        }
-        if facts.practice_exemplars() < 3 {
-            failures.push(format!(
-                "{key}: only {} practice exemplars, expected at least 3",
-                facts.practice_exemplars()
-            ));
-        }
-        if !facts.solutions {
-            failures.push(format!("{key}: solutions blocker still set"));
-        }
-    }
-    assert!(failures.is_empty(), "{}", failures.join("\n"));
+    common::readiness::assert_kps_ready(&keys);
 }

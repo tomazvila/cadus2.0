@@ -11,6 +11,22 @@ use common::gate::{body_with, doc_of, exemplars};
 use common::paths::curriculum_root;
 use common::scratch::ScratchTree;
 
+fn assert_contract_accepts_own_answer(answer: &str, contract: AnswerContract) {
+    assert!(matches!(
+        check_contract(answer, answer, contract),
+        Outcome::Decided(verdict) if verdict.correct
+    ));
+}
+
+fn first_sample_answer(body: serde_json::Value) -> String {
+    let doc = from_body(&body.to_string()).unwrap();
+    Compiled::new(&doc)
+        .unwrap()
+        .instantiate(doc.samples[0].bindings())
+        .unwrap()
+        .answer
+}
+
 #[test]
 fn a_multi_step_template_uses_its_reviewed_contract() {
     let body = body_with(&[
@@ -69,14 +85,7 @@ fn a_label_template_computes_a_text_choice_under_its_contract() {
         .draw(&mut rng_from_seed(3))
         .unwrap();
     assert!(matches!(instance.answer.as_str(), "yes" | "no"));
-    assert!(matches!(
-        check_contract(
-            &instance.answer,
-            &instance.answer,
-            instance.answer_contract.unwrap()
-        ),
-        Outcome::Decided(verdict) if verdict.correct
-    ));
+    assert_contract_accepts_own_answer(&instance.answer, instance.answer_contract.unwrap());
 }
 
 #[test]
@@ -113,14 +122,7 @@ fn a_multipart_template_computes_named_numeric_and_label_parts() {
         .unwrap();
     assert!(instance.answer.starts_with("direction = "));
     assert!(instance.answer.contains("; extreme_value = "));
-    assert!(matches!(
-        check_contract(
-            &instance.answer,
-            &instance.answer,
-            instance.answer_contract.unwrap()
-        ),
-        Outcome::Decided(verdict) if verdict.correct
-    ));
+    assert_contract_accepts_own_answer(&instance.answer, instance.answer_contract.unwrap());
 }
 
 #[test]
@@ -271,12 +273,7 @@ fn inequality_union_templates_write_only_bounded_validated_relations() {
             "solution_sketch":"Apply the stated boundary.","hints":["Find the boundary."],
             "distractors":[],"samples":[{"params":{"x":"x","c":3},"expected":expected}]
         });
-        let doc = from_body(&body.to_string()).unwrap();
-        let item = Compiled::new(&doc)
-            .unwrap()
-            .instantiate(doc.samples[0].bindings())
-            .unwrap();
-        assert_eq!(item.answer, expected);
+        assert_eq!(first_sample_answer(body), expected);
     }
 
     let unsafe_body = serde_json::json!({
@@ -355,12 +352,7 @@ fn bounded_number_theory_writers_compute_closed_labels() {
             "solution_sketch":"Apply the definition.","hints":["Check the definition."],
             "distractors":[],"samples":[{"params":{"a":value},"expected":expected}]
         });
-        let doc = from_body(&body.to_string()).unwrap();
-        let item = Compiled::new(&doc)
-            .unwrap()
-            .instantiate(doc.samples[0].bindings())
-            .unwrap();
-        assert_eq!(item.answer, expected);
+        assert_eq!(first_sample_answer(body), expected);
     }
 }
 

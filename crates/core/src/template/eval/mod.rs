@@ -352,6 +352,7 @@ fn quotient_remainder_answer(
     bindings: &Bindings,
     contract: &AnswerContract,
 ) -> Result<Answer, EvalError> {
+    debug_assert!(matches!(contract, AnswerContract::QuotientRemainder { .. }));
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
     };
