@@ -8,6 +8,12 @@
 
 mod common;
 
+use std::collections::BTreeSet;
+use std::path::PathBuf;
+
+use cadus_core::answer::{Outcome, check_contract};
+use cadus_core::curriculum::{AnswerKind, load_curriculum};
+use cadus_core::pool::{ExemplarSource, ProblemSource, kp_key};
 use cadus_core::readiness::Blocker;
 use cadus_store::test_support::TestDb;
 use cadus_worker::authoring::cli::{Command, HELP, ReadinessArgs, parse};
@@ -161,6 +167,71 @@ async fn the_course_option_scopes_the_report() {
         assert!(ghost.contracts.is_empty());
         let text = render_readiness_markdown(&ghost, "2026-09-06");
         assert!(text.starts_with("# Readiness report — ghost\n"));
+    })
+    .await;
+}
+
+/// The remaining Foundations multi-step exemplars carry reviewed per-item
+/// policies through the serve source and deterministic grade contract. With
+/// those policies present, the production readiness audit has no contract
+/// failure in the course.
+#[tokio::test]
+async fn foundations_multi_step_exemplars_are_contract_bound_end_to_end() {
+    TestDb::with(|db| async move {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+        let (curriculum, findings) = load_curriculum(&root).unwrap();
+        assert!(findings.is_empty(), "{findings:#?}");
+        let expected: BTreeSet<String> = [
+            "compound-inequalities/kp1",
+            "consecutive-integer-problems/kp1",
+            "linear-word-problems/kp1",
+            "parallel-perpendicular-lines/kp1",
+            "radical-equations-basic/kp1",
+            "radical-equations-basic/kp2",
+            "radical-equations-basic/kp3",
+            "translating-sentences-to-equations/kp1",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        let mut found = BTreeSet::new();
+
+        for topic_idx in curriculum.topics_in_course("foundations") {
+            let topic = curriculum.topic(*topic_idx).unwrap();
+            for kp in &topic.knowledge_points {
+                let key = kp_key(topic.id.as_str(), kp.id.as_str());
+                if !expected.contains(&key) {
+                    continue;
+                }
+                assert_eq!(topic.answer_kind, AnswerKind::MultiStep, "{key}");
+                let source = ExemplarSource::new(&key, &kp.exemplars);
+                let batch = source.fill(&key, source.len(), 0).unwrap();
+                assert_eq!(batch.instances().len(), kp.exemplars.len(), "{key}");
+                assert!(batch.refusals().is_empty(), "{key}");
+                for instance in batch.instances() {
+                    let contract = instance.answer_contract.clone().expect(&key);
+                    assert!(
+                        matches!(
+                            check_contract(&instance.answer, &instance.answer, contract),
+                            Outcome::Decided(verdict) if verdict.correct
+                        ),
+                        "{key}: {:?}",
+                        instance.answer
+                    );
+                }
+                found.insert(key);
+            }
+        }
+        assert_eq!(found, expected);
+
+        let run = readiness_run(&handle(&db), &curriculum, Some("foundations"))
+            .await
+            .unwrap();
+        assert!(
+            run.contract_failures().is_empty(),
+            "{:#?}",
+            run.contract_failures()
+        );
     })
     .await;
 }
