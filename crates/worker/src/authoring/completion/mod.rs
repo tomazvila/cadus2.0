@@ -1,6 +1,7 @@
 //! Zero-model proposal generation. Production gates validate drafts; humans approve them.
 mod evidence;
 mod expression;
+mod instruction;
 mod method;
 mod templates;
 
@@ -56,13 +57,16 @@ fn keep(
 #[must_use]
 pub fn generate(spec: &AuthoringSpec, served: &[ServedInstance]) -> Proposals {
     let mut out = Proposals::default();
-    keep(
-        &mut out,
-        spec,
-        Kind::HintLadder,
-        method::hints(spec),
-        served,
-    );
+    instruction::add_reviewed_hint(&mut out, spec, served);
+    if !out.drafts.iter().any(|row| row["kind"] == "hint_ladder") {
+        keep(
+            &mut out,
+            spec,
+            Kind::HintLadder,
+            method::hints(spec),
+            served,
+        );
+    }
     let mut teaching = false;
     let mut practice = false;
     for (index, exemplar) in spec.exemplars.iter().enumerate() {
