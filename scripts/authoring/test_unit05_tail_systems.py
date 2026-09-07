@@ -106,6 +106,11 @@ class SystemsTail(unittest.TestCase):
                 if key in KEYS or seen.get(sig) in KEYS:
                     self.assertTrue(sig not in seen,(key,seen.get(sig),row['problem']))
                 seen[sig] = key
+        self.add_pending_signatures(seen)
+        return seen
+
+    def add_pending_signatures(self, seen):
+        """Extend the boundary with every readable non-tail pending task."""
         count = 0
         for key,rows in pending_templates(ROOT/'docs/content-foundations').items():
             if key in KEYS:
@@ -120,7 +125,6 @@ class SystemsTail(unittest.TestCase):
                         seen[sig] = key
                         count += 1
         self.assertGreaterEqual(count,96)
-        return seen
 
     def optional_signature(self,problem):
         try:

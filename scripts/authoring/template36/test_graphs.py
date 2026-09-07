@@ -15,6 +15,26 @@ def instances(rows):
             yield row["kp_id"], args["statement"].format(**sample["params"]), sample["expected"]
 
 
+def wrong_answers(answer):
+    """Yield one-field perturbations for every supported answer shape."""
+    if ";" in answer:
+        parts = answer.split(";")
+        for index, part in enumerate(parts):
+            name, value = part.split("=")
+            value = value.strip()
+            wrong = "no" if value == "yes" else "yes" if value == "no" else str(int(value) + 1)
+            altered = parts.copy()
+            altered[index] = name + "=" + wrong
+            yield ";".join(altered)
+        return
+    if answer.startswith("("):
+        x, y = map(int, answer.strip("()").split(","))
+        candidates = (f"({x+1},{y})", f"({x},{y+1})", f"({y},{x})")
+        yield from (candidate for candidate in candidates if candidate != answer)
+        return
+    yield str(int(answer) + 1)
+
+
 class GraphRecipeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -53,25 +73,9 @@ class GraphRecipeTests(unittest.TestCase):
 
     def test_wrong_numeric_values_coordinates_and_boolean_fields_refuse(self):
         for key, statement, answer in instances(self.rows):
-            if ";" in answer:
-                parts = answer.split(";")
-                for index, part in enumerate(parts):
-                    name, value = part.split("=")
-                    value = value.strip()
-                    wrong = "no" if value == "yes" else "yes" if value == "no" else str(int(value)+1)
-                    altered = parts.copy()
-                    altered[index] = name+"="+wrong
-                    with self.assertRaises(AssertionError):
-                        verify(key, statement, ";".join(altered))
-            elif answer.startswith("("):
-                x, y = map(int, answer.strip("()").split(","))
-                for wrong in (f"({x+1},{y})", f"({x},{y+1})", f"({y},{x})"):
-                    if wrong != answer:
-                        with self.assertRaises(AssertionError):
-                            verify(key, statement, wrong)
-            else:
+            for wrong in wrong_answers(answer):
                 with self.assertRaises(AssertionError):
-                    verify(key, statement, str(int(answer)+1))
+                    verify(key, statement, wrong)
 
     def test_qualitative_branches_and_context_constraints(self):
         by_key = {r["kp_id"]: r for r in self.rows}

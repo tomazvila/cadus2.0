@@ -29,27 +29,47 @@ def simple_ray(text):
     return (match[1], match[2], int(match[3])) if match else None
 
 
+def endpoint_signature(text, lower):
+    if "circle" not in lower or not ("open" in lower or "closed" in lower):
+        return None
+    ray = simple_ray(text)
+    if ray:
+        return "endpoint-style", ray[1:]
+    endpoint = re.search(r"(?:circle|point) at\s*\$?(-?\d+)", text)
+    direction = re.search(r"\b(left|right)\b", lower)
+    if endpoint and direction:
+        return "read-ray", int(endpoint[1]), "closed" in lower, direction[1]
+    return None
+
+
+def boundary_signature(lower, math):
+    if "boundary" not in lower or not ("solid" in lower or "dashed" in lower):
+        return None
+    inequality = next((item for item in math if re.match(r"y[<>=]", item)), None)
+    return ("boundary-style", inequality) if inequality else None
+
+
+def truth_signature(text, lower):
+    if "true or false" not in lower and "true/false" not in lower:
+        return None
+    match = re.search(r"(-?\d+)\s*(<=|>=|<|>)\s*(-?\d+)", text)
+    if match:
+        return "integer-truth", int(match[1]), match[2], int(match[3])
+    return None
+
+
 def signature(problem):
     """Return a key-independent task signature, or a precise nonmatching-family reason."""
     text = normalize(problem)
     lower = text.lower()
     math = math_parts(text)
-    if "circle" in lower and ("open" in lower or "closed" in lower):
-        ray = simple_ray(text)
-        if ray:
-            return ("endpoint-style", ray[1:]), None
-        endpoint = re.search(r"(?:circle|point) at\s*\$?(-?\d+)", text)
-        direction = re.search(r"\b(left|right)\b", lower)
-        if endpoint and direction:
-            return ("read-ray", int(endpoint[1]), "closed" in lower, direction[1]), None
-    if "boundary" in lower and ("solid" in lower or "dashed" in lower):
-        inequality = next((m for m in math if re.match(r"y[<>=]", m)), None)
-        if inequality:
-            return ("boundary-style", inequality), None
-    if "true or false" in lower or "true/false" in lower:
-        match = re.search(r"(-?\d+)\s*(<=|>=|<|>)\s*(-?\d+)", text)
-        if match:
-            return ("integer-truth", int(match[1]), match[2], int(match[3])), None
+    for candidate in (
+        endpoint_signature(text, lower),
+        boundary_signature(lower, math),
+        truth_signature(text, lower),
+    ):
+        if candidate:
+            return candidate, None
     result = substitution_signature(text, lower, math)
     if result:
         return result, None

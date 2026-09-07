@@ -22,30 +22,30 @@ def numbers(text):
     return [Q(n) for n in re.findall(r'(?<![\w])\d+(?:/\d+)?', text)]
 
 
-def model(key, problem):
-    """Translate quantities in the actual prompt into two independent equations."""
-    if key.startswith('systems-elimination/'):
-        equations = [s for s in re.findall(r'\$([^$]+)\$', problem) if '=' in s]
-        assert len(equations) == 2
-        return [linear(eq) for eq in equations], 'integer'
-    n = numbers(problem)
+def money_model(key, problem, values):
+    """Translate the three money-system task forms."""
     if key in {'systems-money-problems/kp1', 'systems-money-problems/kp3'}:
-        p, q, count, value = n
+        p, q, count, value = values
         assert 'respectively' in problem and 'total value' in problem
         return [(1, 1, count), (p, q, value)], 'count'
     if key == 'systems-money-problems/kp2':
-        a, b, c, d, e, f = n
+        a, b, c, d, e, f = values
         assert 'fixed unit prices' in problem and 'unit prices (first, second)' in problem
         return [(a, b, c), (d, e, f)], 'price'
+    raise AssertionError(key)
+
+
+def rate_model(key, problem, values):
+    """Translate the three rate-system task forms."""
     if key == 'systems-rate-problems/kp1':
-        v, w = n
+        v, w = values
         if 'flight log' in problem:
             v, w = w, v
         if 'metres/min' in problem:
             v, w = v*60/1000, w*60/1000
         return [(1, 1, v), (1, -1, w)], 'current'
     if key == 'systems-rate-problems/kp2':
-        d, t, e, u = n
+        d, t, e, u = values
         if 'upstream leg' in problem:
             d, t, e, u = e, u, d, t
         if 'minutes' in problem:
@@ -54,16 +54,30 @@ def model(key, problem):
         assert d % t == e % u == 0, 'Distance/time must divide evenly'
         return [(1, 1, d/t), (1, -1, e/u)], 'current'
     if key == 'systems-rate-problems/kp3':
-        d, t, delta = n[:3]
+        d, t, delta = values[:3]
         assert 'toward each other' in problem
         if 'minutes' in problem:
             t /= 60
         if 'covers' in problem:
-            assert n[3] == t
+            assert values[3] == t
             delta /= t
         if 'times the slower' in problem:
             return [(1, 1, d/t), (1, -delta, 0)], 'travel'
         return [(1, 1, d/t), (1, -1, delta)], 'travel'
+    raise AssertionError(key)
+
+
+def model(key, problem):
+    """Translate quantities in the actual prompt into two independent equations."""
+    if key.startswith('systems-elimination/'):
+        equations = [s for s in re.findall(r'\$([^$]+)\$', problem) if '=' in s]
+        assert len(equations) == 2
+        return [linear(eq) for eq in equations], 'integer'
+    values = numbers(problem)
+    if key.startswith('systems-money-problems/'):
+        return money_model(key, problem, values)
+    if key.startswith('systems-rate-problems/'):
+        return rate_model(key, problem, values)
     raise AssertionError(key)
 
 

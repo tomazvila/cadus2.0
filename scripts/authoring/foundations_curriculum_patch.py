@@ -132,6 +132,36 @@ class ExemplarPatch:
     answer_contract: str | None = None
 
 
+def _replacement_line(field: str, value: str) -> str:
+    """Render one replacement using the field's existing YAML convention."""
+    if field == "problem":
+        return f"          - problem: {_quoted(value)}\n"
+    if field == "answer":
+        if '"' in value:
+            raise Rejection(f"replacement answer holds a literal quote: {value!r}")
+        return f'            answer: "{value}"\n'
+    if field == "solution_sketch":
+        return f"            solution_sketch: {_quoted(value)}\n"
+    return f"            answer_contract: {value}\n"
+
+
+def _patch_block(
+    key: ExemplarKey, block: list[str], fields: dict[str, str | None]
+) -> list[str]:
+    """Replace requested fields in one already-located exemplar block."""
+    seen = set()
+    for offset, line in enumerate(block):
+        field = line.strip().split(":", 1)[0].removeprefix("- ")
+        value = fields.get(field)
+        if value is not None:
+            seen.add(field)
+            block[offset] = _replacement_line(field, value)
+    missing = {name for name, value in fields.items() if value is not None} - seen
+    if missing:
+        raise Rejection(f"{key} has no field(s) to replace: {sorted(missing)}")
+    return block
+
+
 def patch_exemplars(
     path: Path, patches: dict[ExemplarKey, ExemplarPatch], *, write: bool
 ) -> tuple[str, list[ExemplarKey]]:
@@ -152,28 +182,7 @@ def patch_exemplars(
             "answer_contract": patch.answer_contract,
         }
         begin = start - 1
-        block = lines[begin:end]
-        seen = set()
-        for offset, line in enumerate(block):
-            field = line.strip().split(":", 1)[0].removeprefix("- ")
-            value = fields.get(field)
-            if value is None:
-                continue
-            seen.add(field)
-            if field == "problem":
-                block[offset] = f"          - problem: {_quoted(value)}\n"
-            elif field == "answer":
-                if '"' in value:
-                    raise Rejection(f"replacement answer holds a literal quote: {value!r}")
-                block[offset] = f'            answer: "{value}"\n'
-            elif field == "solution_sketch":
-                block[offset] = f"            solution_sketch: {_quoted(value)}\n"
-            else:
-                block[offset] = f"            answer_contract: {value}\n"
-        missing = {name for name, value in fields.items() if value is not None} - seen
-        if missing:
-            raise Rejection(f"{key} has no field(s) to replace: {sorted(missing)}")
-        lines[begin:end] = block
+        lines[begin:end] = _patch_block(key, lines[begin:end], fields)
         applied.append(key)
     if remaining:
         keys = sorted(remaining, key=lambda key: (key.topic_id, key.kp_id, key.exemplar_index))

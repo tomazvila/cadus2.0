@@ -235,6 +235,20 @@ _BARE_FRACTION = re.compile(r"(?<!\d)\\frac\{(\d+)\}\{(\d+)\}")
 _TRIVIAL_FACTOR = re.compile(r"\\(?:times|div)\s+1(?!\d)|(?<!\d)1\s+\\(?:times|div)")
 
 
+def _valid_fraction_operands(candidate: str) -> bool:
+    """Reject malformed mixed numbers, fractions equal to one, and trivial factors."""
+    if any(int(num) >= int(den) for _, num, den in _IMPROPER_MIXED.findall(candidate)):
+        return False
+    if any(num == den for num, den in _BARE_FRACTION.findall(candidate)):
+        return False
+    return not _TRIVIAL_FACTOR.search(candidate)
+
+
+def _fraction_needs_reduction(candidate: str) -> bool:
+    plain = _BARE_FRACTION.search(candidate)
+    return not plain or math.gcd(int(plain.group(1)), int(plain.group(2))) != 1
+
+
 def _within_kp_family(served: frozenset[Fraction], family: str) -> Callable[[str, Fraction], bool]:
     """A same-shape candidate check bounding a new draw to the KP's own authored band.
 
@@ -257,23 +271,10 @@ def _within_kp_family(served: frozenset[Fraction], family: str) -> Callable[[str
     integer_required = all(value.denominator == 1 for value in served)
 
     def check(candidate: str, value: Fraction) -> bool:
-        if not lo <= value <= hi:
-            return False
-        if integer_required and value.denominator != 1:
-            return False
-        for whole, num, den in _IMPROPER_MIXED.findall(candidate):
-            if int(num) >= int(den):
-                return False
-        for num, den in _BARE_FRACTION.findall(candidate):
-            if num == den:
-                return False
-        if _TRIVIAL_FACTOR.search(candidate):
-            return False
-        if family == "fraction_reduce":
-            plain = _BARE_FRACTION.search(candidate)
-            if plain and math.gcd(int(plain.group(1)), int(plain.group(2))) == 1:
-                return False
-        return True
+        in_range = lo <= value <= hi
+        correct_kind = not integer_required or value.denominator == 1
+        reducible = family != "fraction_reduce" or _fraction_needs_reduction(candidate)
+        return in_range and correct_kind and _valid_fraction_operands(candidate) and reducible
 
     return check
 

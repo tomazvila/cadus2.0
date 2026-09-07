@@ -122,6 +122,11 @@ class Mixtures(unittest.TestCase):
                 if key in KEYS or seen.get(sig) in KEYS:
                     self.assertNotIn(sig,seen,(key,seen.get(sig)))
                 seen[sig] = key
+        self.add_pending_signatures(seen)
+        return seen
+
+    def add_pending_signatures(self, seen):
+        """Extend the boundary with every readable non-mixture pending task."""
         count = 0
         for key,rows in pending_templates(ROOT/'docs/content-foundations').items():
             if key in KEYS:
@@ -136,7 +141,6 @@ class Mixtures(unittest.TestCase):
                         seen[sig] = key
                         count += 1
         self.assertGreaterEqual(count,96)
-        return seen
 
     def read_signature(self,key,problem,answer):
         if key in KEYS:

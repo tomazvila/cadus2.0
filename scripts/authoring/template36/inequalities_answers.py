@@ -15,25 +15,41 @@ def ray(bound, comparison):
     return f"(-∞, {bound}{bracket}"
 
 
+def graph_answer(key, topic, text, values):
+    """Reconstruct number-line and coordinate-plane graph answers."""
+    if key.endswith("/kp1"):
+        comparison = re.search(r"[xy] (<=|>=|<|>)", text)[1]
+        styles = (
+            ("closed", "open")
+            if topic == "graphing-inequalities-number-line"
+            else ("solid", "dashed")
+        )
+        return styles[0] if "=" in comparison else styles[1]
+    if topic == "graphing-linear-inequalities":
+        horizontal, vertical, slope, offset = values
+        return "yes" if vertical <= slope * horizontal + offset else "no"
+    return f"x <= {values[0]}"
+
+
+def system_answer(values):
+    """Solve the two displayed slope-intercept equations."""
+    first_slope, first_intercept, second_slope, second_intercept = values
+    xcoord = Fraction(second_intercept - first_intercept, first_slope - second_slope)
+    ycoord = first_slope * xcoord + first_intercept
+    assert ycoord == second_slope * xcoord + second_intercept
+    return f"({xcoord}, {ycoord})"
+
+
 def reconstruct(key, text):
     topic = key.split("/")[0]
     values = numbers(text)
-    if key.endswith("/kp1") and topic in (
-            "graphing-inequalities-number-line", "graphing-linear-inequalities"):
-        comparison = re.search(r"[xy] (<=|>=|<|>)", text)[1]
-        return (("closed" if "=" in comparison else "open")
-                if topic == "graphing-inequalities-number-line"
-                else ("solid" if "=" in comparison else "dashed"))
+    if topic in ("graphing-inequalities-number-line", "graphing-linear-inequalities"):
+        return graph_answer(key, topic, text, values)
     if topic == "solutions-of-inequalities":
         return "true" if values[0] < values[1] else "false"
     if topic == "checking-a-solution":
         candidate, coefficient, offset, result = values
         return "yes" if coefficient * candidate + offset == result else "no"
-    if topic == "graphing-linear-inequalities":
-        horizontal, vertical, slope, offset = values
-        return "yes" if vertical <= slope * horizontal + offset else "no"
-    if topic == "graphing-inequalities-number-line":
-        return f"x <= {values[0]}"
     if topic == "writing-inequalities-from-statements":
         return f"x >= {values[0]}" if key.endswith("kp1") else f"{values[0]} h"
     if topic == "compound-inequalities":
@@ -44,11 +60,7 @@ def reconstruct(key, text):
     if topic == "interval-notation":
         return reconstruct_intervals(key, text, values)
     if topic == "substitution-with-isolated-variable":
-        first_slope, first_intercept, second_slope, second_intercept = values
-        xcoord = Fraction(second_intercept - first_intercept, first_slope - second_slope)
-        ycoord = first_slope * xcoord + first_intercept
-        assert ycoord == second_slope * xcoord + second_intercept
-        return f"({xcoord}, {ycoord})"
+        return system_answer(values)
     raise ValueError(f"unrecognized template key: {key}")
 
 

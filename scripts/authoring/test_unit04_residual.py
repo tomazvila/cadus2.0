@@ -24,27 +24,36 @@ def read(path):
     return json.loads(path.read_text())
 
 
+def _apply_operator(operator, left, right, text):
+    if isinstance(operator, ast.Add):
+        return left + right
+    if isinstance(operator, ast.Sub):
+        return left - right
+    if isinstance(operator, ast.Mult):
+        return left * right
+    if isinstance(operator, ast.Div):
+        return left / right
+    raise ValueError(f"unsupported arithmetic: {text}")
+
+
+def _walk_arithmetic(node, text):
+    if isinstance(node, ast.Constant) and type(node.value) is int:
+        return Q(node.value)
+    if isinstance(node, ast.Tuple):
+        return tuple(_walk_arithmetic(item, text) for item in node.elts)
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.USub, ast.UAdd)):
+        value = _walk_arithmetic(node.operand, text)
+        return -value if isinstance(node.op, ast.USub) else value
+    if isinstance(node, ast.BinOp):
+        left = _walk_arithmetic(node.left, text)
+        right = _walk_arithmetic(node.right, text)
+        return _apply_operator(node.op, left, right, text)
+    raise ValueError(f"unsupported arithmetic: {text}")
+
+
 def arithmetic(text):
     """Tiny independent rational evaluator for explicit linear answers only."""
-    def walk(node):
-        if isinstance(node, ast.Constant) and type(node.value) is int:
-            return Q(node.value)
-        if isinstance(node, ast.Tuple):
-            return tuple(walk(item) for item in node.elts)
-        if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.USub, ast.UAdd)):
-            return -walk(node.operand) if isinstance(node.op, ast.USub) else walk(node.operand)
-        if isinstance(node, ast.BinOp):
-            a, b = walk(node.left), walk(node.right)
-            if isinstance(node.op, ast.Add):
-                return a+b
-            if isinstance(node.op, ast.Sub):
-                return a-b
-            if isinstance(node.op, ast.Mult):
-                return a*b
-            if isinstance(node.op, ast.Div):
-                return a/b
-        raise ValueError(f"unsupported arithmetic: {text}")
-    return walk(ast.parse(text.strip(), mode="eval").body)
+    return _walk_arithmetic(ast.parse(text.strip(), mode="eval").body, text)
 
 
 def line_invariant(value, premise):
@@ -66,10 +75,8 @@ def line_invariant(value, premise):
     return True
 
 
-def invariant(answer, premise):
-    """Check defining geometry directly, independently of the recipe formula."""
-    kind = premise["type"]
-    value = arithmetic(answer)
+def geometry_invariant(kind, value, premise):
+    """Check the line and coordinate-shaped premise families."""
     if kind in {"line", "perpendicular", "model"}:
         return line_invariant(value, premise)
     if kind == "rise_run":
@@ -91,6 +98,11 @@ def invariant(answer, premise):
         x1,y1,x2,y2 = value
         a,b,c = premise["abc"]
         return y1 == x2 == 0 and a*x1+b*y1 == c and a*x2+b*y2 == c
+    raise ValueError(kind)
+
+
+def scalar_invariant(kind, value, premise):
+    """Check scalar, table, and displacement premise families."""
     if kind == "table_ratio":
         return any(x != 0 for x,y in premise["rows"]) and all(value*x == y for x,y in premise["rows"])
     if kind == "collinear":
@@ -112,6 +124,16 @@ def invariant(answer, premise):
     if kind == "coefficients":
         return value == (Q(premise["m"]), Q(premise["b"]))
     raise ValueError(kind)
+
+
+def invariant(answer, premise):
+    """Check defining geometry directly, independently of the recipe formula."""
+    kind = premise["type"]
+    value = arithmetic(answer)
+    geometry = {"line", "perpendicular", "model", "rise_run", "standard", "point_form", "intercepts"}
+    return geometry_invariant(kind, value, premise) if kind in geometry else scalar_invariant(
+        kind, value, premise
+    )
 
 
 def mathematical_family(answer, premise):
