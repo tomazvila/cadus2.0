@@ -4,7 +4,10 @@ mod common;
 use cadus_worker::authoring::{job::verify_kind, prompt::Kind};
 use common::{
     repo_root as root,
-    reviewed_templates::{assert_report, file_rows, run_rows, spec},
+    reviewed_templates::{
+        assert_report_with_authored_collisions, assert_template19_replacements, file_rows,
+        run_rows, spec,
+    },
 };
 use serde_json::{Value, json};
 
@@ -13,11 +16,32 @@ fn drafts() -> Vec<Value> {
 }
 
 #[test]
-fn production_gate_is_exhaustive_and_collision_free() {
+fn archived_rows_have_exact_canonical_replacements_and_current_gate_verdicts() {
     let rows = drafts();
     let report = run_rows(&rows, "target/hard-complement/regression");
-    assert_eq!(report["passed"], report["checked"], "{report}");
-    assert_report(&report, rows.len(), None);
+    assert_eq!(
+        rows.iter()
+            .map(|row| row["arguments"]["samples"].as_array().unwrap().len())
+            .sum::<usize>(),
+        138
+    );
+    assert_report_with_authored_collisions(
+        &report,
+        rows.len(),
+        None,
+        &["law-of-sines-cosines/kp1"],
+    );
+    assert_eq!(
+        report["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|row| row["passed"] == true)
+            .map(|row| row["evidence"]["instances_checked"].as_u64().unwrap())
+            .sum::<u64>(),
+        122
+    );
+    assert_template19_replacements(&rows, &["law-of-sines-cosines/kp1"]);
 }
 
 #[test]

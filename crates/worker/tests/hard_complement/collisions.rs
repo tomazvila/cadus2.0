@@ -77,7 +77,10 @@ fn collect(value: &Value, rows: &mut Vec<Value>) {
             }
         }
         Value::Object(fields) => {
-            if value["kind"] == "template" && value["kp_id"].is_string() {
+            let body = value.get("arguments").or_else(|| value.get("body"));
+            let renderable =
+                body.is_some_and(|body| body["problem"].is_string() || body["samples"].is_array());
+            if value["kind"] == "template" && value["kp_id"].is_string() && renderable {
                 rows.push(value.clone());
             }
             for value in fields.values() {

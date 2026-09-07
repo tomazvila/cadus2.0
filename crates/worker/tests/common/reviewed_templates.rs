@@ -7,6 +7,7 @@ use cadus_worker::authoring::{
     prompt::{AuthoringSpec, Kind},
 };
 use serde_json::{Value, json};
+use std::collections::BTreeSet;
 
 use super::{json_rows, repo_root};
 
@@ -54,9 +55,37 @@ pub fn run_rows(rows: &[Value], output_relative: &str) -> Value {
 }
 
 pub fn assert_report(report: &Value, expected_rows: usize, expected_instances: Option<u64>) {
-    assert_eq!(report["passed"], expected_rows, "{report}");
+    assert_report_with_authored_collisions(report, expected_rows, expected_instances, &[]);
+}
+
+pub fn assert_report_with_authored_collisions(
+    report: &Value,
+    expected_rows: usize,
+    expected_instances: Option<u64>,
+    colliding: &[&str],
+) {
+    assert_eq!(report["checked"], expected_rows, "{report}");
+    assert_eq!(
+        report["passed"],
+        expected_rows - colliding.len(),
+        "{report}"
+    );
+    let colliding: BTreeSet<_> = colliding.iter().copied().collect();
+    let mut rejected = BTreeSet::new();
     let mut instances = 0;
     for row in report["rows"].as_array().unwrap() {
+        let key = row["kp_id"].as_str().unwrap();
+        if !row["passed"].as_bool().unwrap() {
+            rejected.insert(key);
+            assert!(
+                row["rejection"]
+                    .as_str()
+                    .unwrap()
+                    .starts_with("authored/sibling collision:"),
+                "{key}: {row}"
+            );
+            continue;
+        }
         assert_eq!(row["evidence"]["exhaustive"], true);
         if expected_instances.is_some() {
             assert_eq!(row["evidence"]["distinct_instances"], 12);
@@ -67,6 +96,27 @@ pub fn assert_report(report: &Value, expected_rows: usize, expected_instances: O
     }
     if let Some(expected) = expected_instances {
         assert_eq!(instances, expected);
+    }
+    assert_eq!(rejected, colliding);
+}
+
+pub fn assert_template19_replacements(rows: &[Value], replaced: &[&str]) {
+    let canonical = file_rows("docs/content-foundations/template19-production-gate/drafts.json");
+    let canonical_keys: BTreeSet<_> = canonical
+        .iter()
+        .map(|row| row["kp_id"].as_str().unwrap())
+        .collect();
+    assert_eq!(canonical_keys.len(), canonical.len());
+    for key in replaced {
+        let mut archived = rows
+            .iter()
+            .find(|row| row["kp_id"] == *key)
+            .unwrap()
+            .clone();
+        archived.as_object_mut().unwrap().remove("status");
+        let replacement = canonical.iter().find(|row| row["kp_id"] == *key).unwrap();
+        assert_eq!(replacement["kind"], "template", "{key}");
+        assert_eq!(replacement, &archived, "{key}");
     }
 }
 
