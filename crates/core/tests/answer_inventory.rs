@@ -5,9 +5,9 @@
 //! answer grammar (`cadus_core::answer::canonical_form`) on every authored
 //! answer. Each answer gets one SHAPE and one GRAMMAR verdict.
 //!
-//! The counts below are the counts of the ground audit
-//! `docs/reviews/FRAMEWORK-audit-2026-09-06.md`, finding (i): 809 knowledge
-//! points and 1,695 exemplars.
+//! The historical tables retain the ground audit at
+//! `docs/reports/foundations-answer-inventory.md`. The live tables cover the
+//! expanded checked-in curriculum and fail when its inventory changes.
 //!
 //! # The dump
 //!
@@ -41,17 +41,17 @@ use common::paths::tree;
 use common::shape::SHAPES;
 
 /// The Foundations knowledge-point count of audit finding (i).
-const KNOWLEDGE_POINTS: usize = 809;
+const HISTORICAL_KNOWLEDGE_POINTS: usize = 809;
 
 /// The Foundations exemplar count of audit finding (i).
-const EXEMPLARS: usize = 1_695;
+const HISTORICAL_EXEMPLARS: usize = 1_695;
 
 /// The Foundations exemplars with no solution sketch, audit finding (i).
-const WITHOUT_SKETCH: usize = 679;
+const HISTORICAL_WITHOUT_SKETCH: usize = 679;
 
 /// The count of rows per shape. The table is the shape column of the report
 /// `docs/reports/foundations-answer-inventory.md`.
-const SHAPE_COUNTS: [(&str, usize); 16] = [
+const HISTORICAL_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("coordinates", 52),
     ("decimal", 47),
     ("equation_or_inequality", 220),
@@ -70,29 +70,96 @@ const SHAPE_COUNTS: [(&str, usize); 16] = [
     ("value_with_unit", 50),
 ];
 
-/// The count of knowledge points per number of distinct decidable exemplars.
-/// After finite solution disjunctions: 23 knowledge points leave zero
-/// decidable exemplars. The count of points with three exemplars stays 58.
-const DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 115), (1, 53), (2, 583), (3, 58)];
+/// Historical post-contract distribution of distinct decidable exemplars.
+const HISTORICAL_DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 115), (1, 53), (2, 583), (3, 58)];
+
+const LIVE_KNOWLEDGE_POINTS: usize = 809;
+const LIVE_EXEMPLARS: usize = 3_247;
+const LIVE_WITHOUT_SKETCH: usize = 0;
+const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
+    ("coordinates", 276),
+    ("decimal", 93),
+    ("equation_or_inequality", 414),
+    ("expression", 591),
+    ("fraction", 233),
+    ("integer", 1_169),
+    ("interval", 20),
+    ("mixed_number", 13),
+    ("ordered_list", 35),
+    ("other", 8),
+    ("prose", 187),
+    ("quotient_remainder", 24),
+    ("radical", 108),
+    ("rational_exponent", 6),
+    ("set", 28),
+    ("value_with_unit", 42),
+];
+const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 6] =
+    [(0, 76), (1, 3), (2, 17), (3, 7), (4, 699), (5, 7)];
+const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
+    ("decided", 2_889),
+    (
+        "undecidable(a chained inequality needs one variable in the middle)",
+        2,
+    ),
+    ("undecidable(a character outside the grammar)", 131),
+    (
+        "undecidable(a disjunction requires finite scalar solutions)",
+        19,
+    ),
+    (
+        "undecidable(a name that is not a function or variable)",
+        188,
+    ),
+    ("undecidable(a symbol where a value belongs)", 4),
+    ("undecidable(an inequality with no bare variable)", 4),
+    ("undecidable(trailing text after the answer)", 10),
+];
 
 #[test]
-fn the_foundations_inventory_carries_the_audited_counts() {
+fn the_historical_audit_tables_remain_complete_snapshot_evidence() {
+    let report = include_str!("../../../docs/reports/foundations-answer-inventory.md");
+    assert!(report.contains(&format!(
+        "| Foundations knowledge points | {HISTORICAL_KNOWLEDGE_POINTS} |"
+    )));
+    assert!(report.contains("| Foundations exemplars | 1,695 |"));
+    assert!(report.contains(&format!(
+        "| Exemplars with no solution sketch | {HISTORICAL_WITHOUT_SKETCH} |"
+    )));
+    assert_eq!(
+        HISTORICAL_SHAPE_COUNTS
+            .iter()
+            .map(|(_, count)| count)
+            .sum::<usize>(),
+        HISTORICAL_EXEMPLARS
+    );
+    assert_eq!(
+        HISTORICAL_DISTINCT_DECIDABLE
+            .iter()
+            .map(|(_, count)| count)
+            .sum::<usize>(),
+        HISTORICAL_KNOWLEDGE_POINTS
+    );
+}
+
+#[test]
+fn the_live_foundations_inventory_carries_the_current_counts() {
     let curriculum = tree();
     let points = knowledge_points(&curriculum, COURSE);
     let inventory = rows(&curriculum, COURSE);
     assert_eq!(
         points.len(),
-        KNOWLEDGE_POINTS,
+        LIVE_KNOWLEDGE_POINTS,
         "Foundations knowledge points"
     );
-    assert_eq!(inventory.len(), EXEMPLARS, "Foundations exemplars");
+    assert_eq!(inventory.len(), LIVE_EXEMPLARS, "Foundations exemplars");
     let sketched = inventory
         .iter()
         .filter(|row| row.has_solution_sketch)
         .count();
     assert_eq!(
         inventory.len() - sketched,
-        WITHOUT_SKETCH,
+        LIVE_WITHOUT_SKETCH,
         "exemplars with no solution sketch"
     );
     assert!(
@@ -106,20 +173,20 @@ fn every_answer_carries_one_shape_and_one_verdict() {
     let curriculum = tree();
     let inventory = rows(&curriculum, COURSE);
     let counts = shape_counts(&inventory);
-    let table: BTreeMap<&str, usize> = SHAPE_COUNTS.into_iter().collect();
+    let table: BTreeMap<&str, usize> = LIVE_SHAPE_COUNTS.into_iter().collect();
     for (shape, want) in table {
         let found = counts.get(shape).copied().unwrap_or(0);
         assert_eq!(found, want, "{shape}: row count");
     }
     for shape in counts.keys() {
         assert!(
-            SHAPE_COUNTS.iter().any(|(known, _)| known == shape),
+            LIVE_SHAPE_COUNTS.iter().any(|(known, _)| known == shape),
             "{shape} is a shape the count table does not list"
         );
     }
     for shape in SHAPES {
         assert!(
-            SHAPE_COUNTS
+            LIVE_SHAPE_COUNTS
                 .iter()
                 .any(|(known, _)| *known == shape.as_str()),
             "{} is a shape the count table forgets",
@@ -127,7 +194,13 @@ fn every_answer_carries_one_shape_and_one_verdict() {
         );
     }
     let total: usize = counts.values().sum();
-    assert_eq!(total, EXEMPLARS, "every exemplar carries one shape");
+    assert_eq!(total, LIVE_EXEMPLARS, "every exemplar carries one shape");
+    let verdicts = verdict_counts(&inventory);
+    let expected_verdicts: BTreeMap<String, usize> = LIVE_VERDICT_COUNTS
+        .into_iter()
+        .map(|(verdict, count)| (verdict.to_owned(), count))
+        .collect();
+    assert_eq!(verdicts, expected_verdicts, "answer grammar verdicts");
     print_report(&inventory);
 }
 
@@ -135,13 +208,16 @@ fn every_answer_carries_one_shape_and_one_verdict() {
 fn every_knowledge_point_has_three_distinct_decidable_exemplars_or_fewer() {
     let curriculum = tree();
     let counts = distinct_decidable_counts(&curriculum, COURSE);
-    let want: BTreeMap<usize, usize> = DISTINCT_DECIDABLE.into_iter().collect();
+    let want: BTreeMap<usize, usize> = LIVE_DISTINCT_DECIDABLE.into_iter().collect();
     assert_eq!(
         counts, want,
         "distinct decidable exemplars per knowledge point"
     );
     let total: usize = counts.values().sum();
-    assert_eq!(total, KNOWLEDGE_POINTS, "every knowledge point is counted");
+    assert_eq!(
+        total, LIVE_KNOWLEDGE_POINTS,
+        "every knowledge point is counted"
+    );
 }
 
 #[test]
