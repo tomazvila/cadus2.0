@@ -74,9 +74,10 @@ verify_topology() {
     edge_id="$(container_id cadus2-edge)"
     [ -n "$edge_id" ] || { echo "release: cadus2-edge is not running" >&2; exit 2; }
     mount_source="$(docker inspect -f '{{range .Mounts}}{{if eq .Destination "/etc/caddy"}}{{.Source}}{{end}}{{end}}' "$edge_id")"
-    [ -n "$mount_source" ] && cmp -s "$release_root/deploy/Caddyfile" "$mount_source/Caddyfile" || {
-        echo "release: live homelab Caddy mount differs from the candidate" >&2; exit 2;
-    }
+    if [ -z "$mount_source" ] || ! cmp -s "$release_root/deploy/Caddyfile" "$mount_source/Caddyfile"; then
+        echo "release: live homelab Caddy mount differs from the candidate" >&2
+        exit 2
+    fi
     web_image="$(docker inspect -f '{{.Image}}' "$(container_id cadus2-web)")"
     worker_image="$(docker inspect -f '{{.Image}}' "$(container_id cadus2-worker)")"
     [ "$web_image" = "$worker_image" ] || {
@@ -125,6 +126,7 @@ verify_runtime() {
         sleep 2
     done
     [ "$stable" -ge 2 ] || { echo "release: Cadus containers are not stable" >&2; return 1; }
+    # shellcheck source=/dev/null
     . "$homelab_root/.env"
     curl -fsS "https://cadus.${DOMAIN}/api/health" >/dev/null
     db_id="$(container_id cadus2-db)"; web_id="$(container_id cadus2-web)"
@@ -182,6 +184,7 @@ import_pending() {
     docker rm "$container" >/dev/null
     container=""
     chmod +x "$scratch/cadus-worker"
+    # shellcheck source=/dev/null
     . "$homelab_root/.env"
     [ -n "${CADUS2_ADMIN_PASSWORD:-}" ] || { echo "release: CADUS2_ADMIN_PASSWORD is empty" >&2; exit 2; }
     db_id="$(container_id cadus2-db)"
