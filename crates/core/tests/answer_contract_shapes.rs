@@ -80,6 +80,15 @@ fn tolerances_are_inclusive_absolute_exact_rational_bounds() {
     check(&policy, "1000", "1001", false);
     check(&policy, "-1", "-1.01", true);
     assert!(policy.validate_expected("sqrt(2)").is_err());
+    assert!(matches!(
+        check_contract("sqrt(2)", "sqrt(2)", policy.clone()),
+        Outcome::Undecidable(_)
+    ));
+    check(&policy, "1", "sqrt(2)", false);
+
+    let rounded = AnswerContract::Approx { decimals: 2 };
+    assert!(rounded.validate_expected("sqrt(2)").is_ok());
+    check(&rounded, "sqrt(2)", "1.41", true);
     assert_eq!(
         serde_json::from_str::<AnswerContract>(&serde_json::to_string(&policy).unwrap()).unwrap(),
         policy
