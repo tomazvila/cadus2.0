@@ -98,9 +98,9 @@ fn normalized(text: &str) -> String {
         .replace("\\div", "/")
 }
 
-#[test]
-fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
-    let directory = directory();
+type Sources = BTreeMap<String, (String, Vec<cadus_core::instruction::ServedInstance>)>;
+
+fn artifacts(directory: &Path) -> (BTreeMap<String, Value>, BTreeMap<String, Value>) {
     let manifest = read(directory.join("manifest.json"));
     let import = read(directory.join("import-manifest.json"));
     assert_eq!(manifest["status"], "pending-human-review");
@@ -123,7 +123,6 @@ fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
     assert_eq!(import["knowledge_points"], 735);
     assert_eq!(import["api_calls"], 0);
     assert_eq!(import["approved_by_this_tool"], 0);
-
     for file in manifest["files"].as_array().expect("evidence files") {
         let path = file["path"].as_str().expect("evidence path");
         assert_eq!(
@@ -137,7 +136,6 @@ fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
         .expect("import files")
         .iter()
         .map(|file| directory.join(file.as_str().expect("import path")));
-    let drafts = rows(draft_paths);
     let review_paths = manifest["files"]
         .as_array()
         .unwrap()
@@ -148,6 +146,7 @@ fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
                 .filter(|path| path.starts_with("reviews/"))
         })
         .map(|path| directory.join(path));
+    let drafts = rows(draft_paths);
     let reviews = rows(review_paths);
     assert_eq!(drafts.len(), 735);
     assert_eq!(reviews.len(), 735);
@@ -159,13 +158,10 @@ fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
         canonical_sha(&Value::Array(reviews.clone())),
         manifest["canonical_arrays"]["reviews_sha256"]
     );
+    (keyed(&drafts, "draft"), keyed(&reviews, "review"))
+}
 
-    let drafts = keyed(&drafts, "draft");
-    let reviews = keyed(&reviews, "review");
-    assert_eq!(
-        drafts.keys().collect::<BTreeSet<_>>(),
-        reviews.keys().collect()
-    );
+fn missing_ids(directory: &Path) -> BTreeSet<String> {
     let coverage = read(directory.join("inputs/coverage.json"));
     let missing: BTreeSet<_> = coverage["rows"]
         .as_array()
@@ -175,16 +171,19 @@ fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
         .map(|row| row["kp_id"].as_str().expect("coverage KP").to_owned())
         .collect();
     assert_eq!(missing.len(), 735);
-    assert_eq!(drafts.keys().cloned().collect::<BTreeSet<_>>(), missing);
-    let specs = specs();
-    assert_eq!(specs.len(), 809);
+    missing
+}
+
+fn source_evidence(
+    directory: &Path,
+    specs: &BTreeMap<String, AuthoringSpec>,
+) -> (Sources, BTreeSet<String>) {
     let templates = read(directory.join("inputs/templates.json"));
     let templates = keyed(templates.as_array().expect("templates"), "template");
     assert_eq!(templates.len(), 809);
-
     let mut sources = BTreeMap::new();
     let mut occupied = BTreeSet::new();
-    for (kp, spec) in &specs {
+    for (kp, spec) in specs {
         occupied.extend(spec.exemplars.iter().map(|row| normalized(&row.problem)));
         let template = &templates[kp];
         assert_eq!(template["kind"], "template", "{kp}");
@@ -198,9 +197,18 @@ fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
             (document_digest(kp, Kind::Template, &body), served),
         );
     }
+    (sources, occupied)
+}
 
+fn verify_pages(
+    drafts: &BTreeMap<String, Value>,
+    reviews: &BTreeMap<String, Value>,
+    specs: &BTreeMap<String, AuthoringSpec>,
+    sources: &Sources,
+    occupied: &BTreeSet<String>,
+) {
     let mut teach_problems = BTreeSet::new();
-    for (kp, draft) in &drafts {
+    for (kp, draft) in drafts {
         assert_eq!(draft["kind"], "teach", "{kp}");
         assert_eq!(draft.as_object().unwrap().len(), 3, "{kp}");
         let review = &reviews[kp];
@@ -256,4 +264,22 @@ fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
             "{kp}: duplicate Teach problem"
         );
     }
+}
+
+#[test]
+fn all_735_pending_teach_pages_are_source_bound_and_production_gated() {
+    let directory = directory();
+    let (drafts, reviews) = artifacts(&directory);
+    assert_eq!(
+        drafts.keys().collect::<BTreeSet<_>>(),
+        reviews.keys().collect()
+    );
+    assert_eq!(
+        drafts.keys().cloned().collect::<BTreeSet<_>>(),
+        missing_ids(&directory)
+    );
+    let specs = specs();
+    assert_eq!(specs.len(), 809);
+    let (sources, occupied) = source_evidence(&directory, &specs);
+    verify_pages(&drafts, &reviews, &specs, &sources, &occupied);
 }
