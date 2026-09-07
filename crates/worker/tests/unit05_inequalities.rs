@@ -1,88 +1,17 @@
-//! Exhaustive production-worker verification of the pending Unit05 checkpoint.
+//! Exhaustive production-worker verification of the Unit05 inequality checkpoint.
 #![allow(clippy::unwrap_used, clippy::panic)]
-use std::{collections::BTreeSet, fs, path::Path};
+mod common;
 
-use cadus_core::{
-    answer::{Outcome, check_contract},
-    curriculum::load_curriculum,
-    template::{Compiled, from_body, walk_satisfying},
-};
-use cadus_worker::authoring::{cli::select, job::verify_kind, prompt::Kind};
-use serde_json::{Value, json};
+use common::template_batch::AnswerPolicy;
 
-fn rows() -> Vec<Value> {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    serde_json::from_str(
-        &fs::read_to_string(
-            root.join("docs/content-foundations/unit05-inequalities/templates.json"),
-        )
-        .unwrap(),
-    )
-    .unwrap()
-}
+const PATHS: &[&str] = &["docs/content-foundations/unit05-inequalities/templates.json"];
 
-#[test]
-fn all_pending_instances_pass_the_real_worker_and_match_exhaustive_samples() {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let (curriculum, findings) = load_curriculum(&root.join("curriculum")).unwrap();
-    assert!(findings.is_empty());
-    let mut problems = BTreeSet::new();
-    assert_eq!(rows().len(), 19);
-    for row in rows() {
-        assert_eq!(row["status"], "pending");
-        let key = row["kp_id"].as_str().unwrap();
-        let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-        let body = verify_kind(Kind::Template, &spec, &row["arguments"], &[])
-            .unwrap_or_else(|e| panic!("{key}: {e:?}"));
-        let doc = from_body(&body).unwrap();
-        let compiled = Compiled::new(&doc).unwrap();
-        let walk = walk_satisfying(&doc.params, &doc.constraints).unwrap();
-        assert_eq!(walk.tuples.len(), 12, "{key}");
-        assert!(walk.exhaustive);
-        assert_eq!(doc.samples.len(), 12);
-        let mut answers = BTreeSet::new();
-        for binding in walk.tuples {
-            let sample = doc
-                .samples
-                .iter()
-                .find(|s| s.bindings() == binding)
-                .unwrap();
-            let instance = compiled.instantiate(binding).unwrap();
-            let result = check_contract(
-                &sample.expected.text(),
-                &instance.answer,
-                doc.answer_contract.clone().unwrap(),
-            );
-            assert!(matches!(result, Outcome::Decided(r) if r.correct));
-            assert!(problems.insert(instance.text));
-            answers.insert(instance.answer);
-        }
-        if row["arguments"]["answer_contract"]["kind"] == "label" {
-            assert_eq!(answers, BTreeSet::from(["yes".to_owned(), "no".to_owned()]));
-        } else {
-            assert_eq!(answers.len(), 12, "{key}: collapsed exact answers");
-        }
-    }
-    assert_eq!(problems.len(), 228);
-}
-
-#[test]
-fn worker_rejects_constant_cancellation_and_false_samples() {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let (curriculum, _) = load_curriculum(&root.join("curriculum")).unwrap();
-    for row in rows() {
-        let key = row["kp_id"].as_str().unwrap();
-        let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-        for expr in ["0", "a-a", "b-b", "-999"] {
-            let mut args = row["arguments"].clone();
-            args["answer_expr"] = json!(expr);
-            assert!(
-                verify_kind(Kind::Template, &spec, &args, &[]).is_err(),
-                "{key}: {expr}"
-            );
-        }
-        let mut args = row["arguments"].clone();
-        args["samples"][0]["expected"] = json!("x <= 999");
-        assert!(verify_kind(Kind::Template, &spec, &args, &[]).is_err());
-    }
-}
+crate::template_batch_tests!(
+    PATHS,
+    19,
+    228,
+    |_| 12,
+    AnswerPolicy::LabelOrUnique,
+    &["0", "a-a", "b-b", "-999"],
+    "x <= 999"
+);
