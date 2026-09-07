@@ -101,6 +101,7 @@ async fn all_nineteen_import_at_zero_cost_as_pending_and_missing_only_skips_them
                 stored[0].body["answer_contract"], row["arguments"]["answer_contract"],
                 "{key}: typed policy changed while crossing the worker"
             );
+            let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
             let again = author_one(&handle(&db), &job, Kind::Template, &spec)
                 .await
                 .unwrap();
