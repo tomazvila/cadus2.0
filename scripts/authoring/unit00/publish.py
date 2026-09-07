@@ -13,11 +13,7 @@ def compact_rows(path,rows):
                                   for r in rows)+'\n]\n')
 
 
-def publish(root,candidates,gate):
-    drafts=read(candidates)
-    stored=read(gate/'stored.json')
-    evidence=read(gate/'evidence.json')
-    assert not read(gate/'rejected.json'), 'resolve gate rejections before publishing'
+def validate_gate(drafts,stored,evidence):
     assert len(drafts)==len(stored)==len(evidence)
     for draft,row,proof in zip(drafts,stored,evidence):
         assert draft['kp_id']==row['kp_id']==proof['kp_id']
@@ -25,12 +21,9 @@ def publish(root,candidates,gate):
         assert row['digest']==proof['digest']
         assert proof['exhaustive'] and proof['distinct_valid_instances']>=12
         assert proof['authored_or_sibling_collisions']==0
-    folder=root/'docs/content-foundations/unit00-templates'
-    folder.mkdir(exist_ok=True)
-    for name,rows in [('drafts.json',drafts),('stored-review.json',stored),('gate-evidence.json',evidence)]:
-        compact_rows(folder/name,rows)
-    old_keys={'subtraction-facts/kp2','multiplication-tables/kp1',
-              'whole-number-exponents/kp2','expressions-with-parentheses/kp2'}
+
+
+def retire_old_drafts(root,old_keys):
     retired=[]
     for name in ('drafts.json','stored-review.json'):
         path=root/'docs/content-foundations/zero-api-completion'/name
@@ -41,6 +34,22 @@ def publish(root,candidates,gate):
             retired=[{'kp_key':r['kp_id'],'previous_digest':r['digest']} for r in removed]
         keep=[r for r in old if r not in removed]
         path.write_text(json.dumps(keep,ensure_ascii=False,indent=2)+'\n')
+    return retired
+
+
+def publish(root,candidates,gate):
+    drafts=read(candidates)
+    stored=read(gate/'stored.json')
+    evidence=read(gate/'evidence.json')
+    assert not read(gate/'rejected.json'), 'resolve gate rejections before publishing'
+    validate_gate(drafts,stored,evidence)
+    folder=root/'docs/content-foundations/unit00-templates'
+    folder.mkdir(exist_ok=True)
+    for name,rows in [('drafts.json',drafts),('stored-review.json',stored),('gate-evidence.json',evidence)]:
+        compact_rows(folder/name,rows)
+    old_keys={'subtraction-facts/kp2','multiplication-tables/kp1',
+              'whole-number-exponents/kp2','expressions-with-parentheses/kp2'}
+    retired=retire_old_drafts(root,old_keys)
     if retired:
         compact_rows(root/'docs/reports/unit00-retired-pending-digests.json',retired)
 

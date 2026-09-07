@@ -32,6 +32,38 @@ def factors(tree):
     return [tree] if tree.has(X) else []
 
 
+def validate_gcf(item,source,answer):
+    assert answer.is_Mul and s.prod(f for f in answer.args if f.is_number) < 0, item
+    assert answer.is_Mul and len(factors(answer)) > 1, item
+    terms = s.Poly(source, X).terms()
+    content = s.igcd(*[coefficient for _, coefficient in terms])
+    degree = min(power[0] for power, _ in terms)
+    quotient = s.cancel(source / (-content * X**degree))
+    assert s.Poly(quotient, X).LC() > 0
+    assert any(s.expand(factor) == quotient for factor in factors(answer)), item
+
+
+def validate_factor_shape(key,item,answer):
+    if key == "perfect-square-trinomials/kp3":
+        assert answer.is_Pow and answer.exp == 2, item
+        assert s.Poly(answer.base, X).degree() == 1, item
+        return
+    pieces = factors(answer)
+    assert len(pieces) >= 2, item
+    for factor in pieces:
+        _, decomposed = s.factor_list(factor, X)
+        assert len(decomposed) == 1 and decomposed[0][1] == 1, item
+
+
+def validate_factoring(key,item,source,answer):
+    equal(s.expand(answer), source)
+    if key == "factoring-gcf/kp2":
+        validate_gcf(item,source,answer)
+    else:
+        validate_factor_shape(key,item,answer)
+    return (s.srepr(s.expand(source)), s.srepr(s.expand(answer)))
+
+
 def validate(key, item):
     if key in parameters.KEYS:
         return (parameters.validate(key, item), item["answer"])
@@ -45,26 +77,7 @@ def validate(key, item):
         roots = s.solve(source, X)
         equal(answer, sum(root.is_real is True for root in roots))
         return (s.srepr(s.Poly(source, X).monic().as_expr()), str(answer))
-    equal(s.expand(answer), source)
-    if key == "factoring-gcf/kp2":
-        assert answer.is_Mul and s.prod(f for f in answer.args if f.is_number) < 0, item
-        assert answer.is_Mul and len(factors(answer)) > 1, item
-        terms = s.Poly(source, X).terms()
-        content = s.igcd(*[coefficient for _, coefficient in terms])
-        degree = min(power[0] for power, _ in terms)
-        quotient = s.cancel(source / (-content * X**degree))
-        assert s.Poly(quotient, X).LC() > 0
-        assert any(s.expand(f) == quotient for f in factors(answer)), item
-    elif key == "perfect-square-trinomials/kp3":
-        assert answer.is_Pow and answer.exp == 2, item
-        assert s.Poly(answer.base, X).degree() == 1, item
-    else:
-        pieces = factors(answer)
-        assert len(pieces) >= 2, item
-        for factor in pieces:
-            _, decomposed = s.factor_list(factor, X)
-            assert len(decomposed) == 1 and decomposed[0][1] == 1, item
-    return (s.srepr(s.expand(source)), s.srepr(s.expand(answer)))
+    return validate_factoring(key,item,source,answer)
 
 
 def negative_controls(rows):

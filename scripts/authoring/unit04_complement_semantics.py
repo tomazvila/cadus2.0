@@ -37,24 +37,28 @@ def evaluate(node, variables):
     raise ValueError(f'Unsupported scalar: {ast.dump(node)}')
 
 
-def points(problem):
+def coordinate_tuples(math):
     found=[]
-    for math in re.findall(r'\$([^$]+)\$',problem):
-        for start,ch in enumerate(math):
-            if ch!='(':
-                continue
-            depth=0
-            for end in range(start,len(math)):
-                depth+=(math[end]=='(')-(math[end]==')')
-                if depth==0:
-                    try:
-                        node=ast.parse(math[start:end+1],mode='eval').body
-                        if isinstance(node,ast.Tuple) and len(node.elts)==2:
-                            found.append(tuple(evaluate(n,{}) for n in node.elts))
-                    except (ValueError,SyntaxError,KeyError):
-                        pass
-                    break
+    for start,ch in enumerate(math):
+        if ch!='(':
+            continue
+        depth=0
+        for end in range(start,len(math)):
+            depth+=(math[end]=='(')-(math[end]==')')
+            if depth==0:
+                try:
+                    node=ast.parse(math[start:end+1],mode='eval').body
+                    if isinstance(node,ast.Tuple) and len(node.elts)==2:
+                        found.append(tuple(evaluate(n,{}) for n in node.elts))
+                except (ValueError,SyntaxError,KeyError):
+                    pass
+                break
     return found
+
+
+def points(problem):
+    return [point for math in re.findall(r'\$([^$]+)\$',problem)
+            for point in coordinate_tuples(math)]
 
 
 def equations(problem):

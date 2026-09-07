@@ -141,9 +141,7 @@ def build(args):
     print(f"FOUNDATIONS RELEASE BUNDLE OK: {output} {receipt['bundle_sha256']}")
 
 
-def verify(args):
-    directory, root = args.bundle.resolve(), args.release_root.resolve()
-    receipt = read_json(directory / "bundle.json")
+def validate_receipt(receipt,root):
     if not isinstance(receipt, dict) or receipt.get("version") != 1:
         raise Refused("unsupported or missing bundle receipt")
     core = {key: value for key, value in receipt.items() if key != "bundle_sha256"}
@@ -157,9 +155,9 @@ def verify(args):
             or receipt.get("human_approval") != "pending"
             or receipt.get("side_effects") != {"production_writes": 0, "approvals": 0}):
         raise Refused("bundle lifecycle boundary changed")
-    files = receipt.get("import_order")
-    if not isinstance(files, list) or [item.get("path") for item in files] != list(ORDER):
-        raise Refused("bundle import order changed")
+
+
+def read_bundle_rows(directory,files):
     rows = []
     for item in files:
         path = directory / item["path"]
@@ -169,6 +167,10 @@ def verify(args):
         if not isinstance(part, list) or len(part) != item.get("rows"):
             raise Refused(f"bundle member count changed: {path}")
         rows.extend(part)
+    return rows
+
+
+def validate_bundle_contract(rows):
     validate_rows(rows, "bundle", set(EXPECTED))
     pairs = {(row["kp_id"], row["kind"]) for row in rows}
     if len(rows) != 2427 or len(pairs) != 2427:
@@ -178,6 +180,16 @@ def verify(args):
                for kind in EXPECTED}
     if counts != EXPECTED or len(set(map(frozenset, keysets.values()))) != 1:
         raise Refused("bundle rows differ from the 809/809/809 canonical contract")
+
+
+def verify(args):
+    directory, root = args.bundle.resolve(), args.release_root.resolve()
+    receipt = read_json(directory / "bundle.json")
+    validate_receipt(receipt,root)
+    files = receipt.get("import_order")
+    if not isinstance(files, list) or [item.get("path") for item in files] != list(ORDER):
+        raise Refused("bundle import order changed")
+    validate_bundle_contract(read_bundle_rows(directory,files))
     print(f"FOUNDATIONS RELEASE BUNDLE VERIFIED: {receipt['bundle_sha256']}")
 
 

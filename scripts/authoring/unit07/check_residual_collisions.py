@@ -68,9 +68,7 @@ def signature(key, item):
     return None
 
 
-def main():
-    facts = json.loads((ROOT / "target/unit07/facts.json").read_text())
-    rows = json.loads((ROOT / "docs/reports/unit07-template-evidence.json").read_text())
+def existing_signatures(facts,rows):
     existing = {}
     for kp in facts["kps"]:
         for item in kp["exemplars"]:
@@ -84,6 +82,10 @@ def main():
             sig = signature(row["kp_id"], item)
             if sig:
                 existing.setdefault(sig, []).append(row["kp_id"])
+    return existing
+
+
+def check_repaired(rows,existing):
     checked = 0
     for row in rows:
         if row["kp_id"] not in REPAIRED:
@@ -94,6 +96,13 @@ def main():
                 assert sig not in existing, (row["kp_id"], item["problem"], existing.get(sig))
                 existing[sig] = [row["kp_id"]]
                 checked += 1
+    return checked
+
+
+def main():
+    facts = json.loads((ROOT / "target/unit07/facts.json").read_text())
+    rows = json.loads((ROOT / "docs/reports/unit07-template-evidence.json").read_text())
+    checked = check_repaired(rows,existing_signatures(facts,rows))
     print(f"Semantic algebra collision checks: {checked} repaired instances, no collisions")
 
 

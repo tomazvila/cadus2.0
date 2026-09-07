@@ -30,8 +30,7 @@ def borrowing(a,b):
     return count
 
 
-def arithmetic_rules():
-    return {
+ARITHMETIC_RULES = {
         "single-digit-addition/kp1":lambda a,b:0<=a<=9 and 0<=b<=9 and a+b<=10,
         "single-digit-addition/kp2":lambda a,b:0<=a<=9 and 0<=b<=9 and 11<=a+b<=18,
         "subtraction-facts/kp1":lambda a,b:0<=b<=a<=10,
@@ -49,7 +48,11 @@ def arithmetic_rules():
         "multi-digit-addition-subtraction/kp1":lambda a,b:1000<=a<=9999 and 1000<=b<=9999 and carries(a,b)>=2,
         "multi-digit-addition-subtraction/kp2":lambda a:0<=a<=999 and borrowing(2003,a)>=2,
         "multi-digit-addition-subtraction/kp3":lambda a:0<=a<=9999,
-    }
+}
+
+
+def arithmetic_rules():
+    return ARITHMETIC_RULES.copy()
 
 
 def place_operation_rules():

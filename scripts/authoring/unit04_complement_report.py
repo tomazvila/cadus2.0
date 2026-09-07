@@ -22,6 +22,30 @@ def summary(report, keys=None):
                                      for c in report['per_code_affected_kps']}}
 
 
+def python_function_sizes(path,source):
+    functions=[]
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef)):
+            size=node.end_lineno-node.lineno+1
+            assert size<=70,(path,node.name,size)
+            functions.append(size)
+    return functions
+
+
+def rust_function_sizes(source):
+    # Rustfmt places top-level closing braces at column zero.
+    functions=[]
+    start=None
+    for i,line in enumerate(source.splitlines()):
+        if line.startswith('fn '):
+            start=i
+        if line=='}' and start is not None:
+            functions.append(i-start+1)
+            start=None
+    assert max(functions)<=70
+    return functions
+
+
 def limits():
     result=[]
     files=list((ROOT/'scripts/authoring').glob('*unit04_complement*.py'))
@@ -29,26 +53,26 @@ def limits():
     for path in files:
         source=path.read_text()
         assert len(source.splitlines())<500,path
-        functions=[]
-        if path.suffix=='.py':
-            for node in ast.walk(ast.parse(source)):
-                if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef)):
-                    size=node.end_lineno-node.lineno+1
-                    assert size<=70,(path,node.name,size)
-                    functions.append(size)
-        else:
-            # Rustfmt places top-level closing braces at column zero.
-            start=None
-            for i,line in enumerate(source.splitlines()):
-                if line.startswith('fn '):
-                    start=i
-                if line=='}' and start is not None:
-                    functions.append(i-start+1)
-                    start=None
-            assert max(functions)<=70
+        functions=(python_function_sizes(path,source) if path.suffix=='.py'
+                   else rust_function_sizes(source))
         result.append({'file':str(path.relative_to(ROOT)),'lines':len(source.splitlines()),
                        'max_function_lines':max(functions,default=0)})
     return result
+
+
+def unit_keys():
+    topics={line.strip().split(': ')[-1]
+            for line in (ROOT/'curriculum/foundations/04-linear-graphs.yaml').read_text().splitlines()
+            if line.startswith('  - id: ')}
+    return {r['kp_key'] for r in read(ROOT/'.tooling/before-facts.json')['kps']
+            if r['kp_key'].split('/')[0] in topics}
+
+
+def assert_audit_delta(before,after,keys):
+    assert all(not r['issues'] for r in after['kps'] if r['kp_key'] in keys)
+    untouched_before={r['kp_key']:r for r in before['kps'] if r['kp_key'] not in keys}
+    untouched_after={r['kp_key']:r for r in after['kps'] if r['kp_key'] not in keys}
+    assert untouched_before==untouched_after
 
 
 def main():
@@ -60,13 +84,8 @@ def main():
     after=build_report(facts,pending_templates(ROOT/'docs/content-foundations'))
     recipes=read(OUT/'templates.json')
     keys={r['kp_id'] for r in recipes}
-    unit={r['kp_key'] for r in read(ROOT/'.tooling/before-facts.json')['kps']
-          if any(r['kp_key'].split('/')[0]==line.strip().split(': ')[-1]
-                 for line in (ROOT/'curriculum/foundations/04-linear-graphs.yaml').read_text().splitlines()
-                 if line.startswith('  - id: '))}
-    assert all(not r['issues'] for r in after['kps'] if r['kp_key'] in keys)
-    assert {r['kp_key']:r for r in before['kps'] if r['kp_key'] not in keys}=={
-        r['kp_key']:r for r in after['kps'] if r['kp_key'] not in keys}
+    unit=unit_keys()
+    assert_audit_delta(before,after,keys)
     gate=read(ROOT/'.tooling/gate.json')
     assert {r['kp_key'] for r in gate}==keys
     report={'baseline':'d0be8747 (current integration)','stage':args.stage,

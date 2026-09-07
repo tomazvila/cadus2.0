@@ -90,6 +90,23 @@ def recipe_sketch(key):
     }[key]
 
 
+def exemplar_block(rows):
+    block=''
+    for row in rows:
+        for n,(field,val) in enumerate(row.items()):
+            prefix='          - ' if n==0 else '            '
+            block+=prefix+field+': '+json.dumps(val,ensure_ascii=False)+'\n'
+    return block
+
+
+def exemplar_end(lines,start):
+    end=start
+    while end<len(lines) and (not lines[end].strip()
+                              or len(lines[end])-len(lines[end].lstrip())>8):
+        end+=1
+    return end
+
+
 def patch(exemplars):
     text = YAML.read_text()
     topic = kp = None
@@ -100,14 +117,7 @@ def patch(exemplars):
         if m:=re.match(r'      - id: (kp\d+)',line): kp=m[1]
         key=f'{topic}/{kp}'
         if line.strip()!='exemplars:' or key not in exemplars: continue
-        j=i+1
-        while j<len(lines) and (not lines[j].strip() or len(lines[j])-len(lines[j].lstrip())>8): j+=1
-        block=''
-        for row in exemplars[key]:
-            for n,(field,val) in enumerate(row.items()):
-                prefix='          - ' if n==0 else '            '
-                block+=prefix+field+': '+json.dumps(val,ensure_ascii=False)+'\n'
-        changes.append((i+1,j,block))
+        changes.append((i+1,exemplar_end(lines,i+1),exemplar_block(exemplars[key])))
     assert len(changes)==len(exemplars)
     for i,j,block in reversed(changes): lines[i:j]=[block]
     text=''.join(lines)

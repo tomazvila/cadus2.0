@@ -40,10 +40,7 @@ def verification_packet():
         log_sha256={n:digest(WORK/(n+'.log')) for n in names})
 
 
-def main():
-    recipes = ROOT/'docs/content-foundations/unit07-complement/templates.json'
-    keys = {r['kp_id'] for r in read(recipes)}
-    assert len(keys)==5
+def audit_delta(keys):
     before_facts, after_facts = (read(WORK/name) for name in ['baseline-facts.json','facts.json'])
     before = {r['kp_key']:r for r in before_facts['kps']}
     after = {r['kp_key']:r for r in after_facts['kps']}
@@ -62,6 +59,10 @@ def main():
         assert baseline_rows[key]==[{'code':'absent_pending_template_recipe'}]
         assert current_rows[key]==[]
     assert all(baseline_rows[k]==current_rows[k] for k in before.keys()-keys)
+    return before,baseline,current,baseline_rows,current_rows
+
+
+def semantic_evidence(keys):
     evidence = read(WORK/'production-evidence.json')
     semantic_packet = read(WORK/'semantic-evidence.json')
     for path,sha in semantic_packet['inputs_sha256'].items():
@@ -70,7 +71,13 @@ def main():
     assert {r['kp_id']:r['instances'] for r in semantics}=={r['kp_id']:len(r['instances']) for r in evidence}
     assert {r['kp_id'] for r in evidence}==keys
     assert all(r['status']=='pending' and len(r['instances'])>=12 for r in evidence)
-    result = dict(baseline='69e4f650 (isolated snapshot 090a524)',
+    return evidence,semantics
+
+
+def result_packet(recipes,keys,audit,semantic):
+    before,baseline,current,baseline_rows,current_rows=audit
+    evidence,semantics=semantic
+    return dict(baseline='69e4f650 (isolated snapshot 090a524)',
         scope=sorted(keys), closures=len(keys), authored_exemplars=20,
         pending_instances=sum(len(r['instances']) for r in evidence),
         baseline_issue_kps=baseline['issue_kps'],final_issue_kps=current['issue_kps'],
@@ -82,6 +89,15 @@ def main():
         sha256={str(p.relative_to(ROOT)):digest(p) for p in [recipes,
             ROOT/'curriculum/foundations/07-polynomials-quadratics.yaml',
             WORK/'baseline-facts.json',WORK/'facts.json',WORK/'production-evidence.json']})
+
+
+def main():
+    recipes = ROOT/'docs/content-foundations/unit07-complement/templates.json'
+    keys = {r['kp_id'] for r in read(recipes)}
+    assert len(keys)==5
+    semantic=semantic_evidence(keys)
+    result=result_packet(recipes,keys,audit_delta(keys),semantic)
+    evidence=semantic[0]
     OUT.mkdir(parents=True,exist_ok=True)
     for name,data in [('audit.json',result),('production-evidence.json',evidence)]:
         (OUT/name).write_text(json.dumps(data,indent=2,sort_keys=True)+'\n')

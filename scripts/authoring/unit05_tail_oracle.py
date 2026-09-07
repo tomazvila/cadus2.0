@@ -107,49 +107,71 @@ def region_checks(relations,answer):
     return expected
 
 
+def special_case_result(key,relations,rows,answer):
+    assert all(op == '=' for _,op in relations)
+    kind = classify(rows)
+    names = {'infinite','none'} if key.endswith('kp1') else {'one','infinite'}
+    assert kind in names or (kind == 'none' and len(names) == 2)
+    supplied = fields(answer)
+    assert set(supplied) == names
+    assert supplied == {n:'yes' if n == kind else 'no' for n in names}
+    return ('equations',canonical_rows(rows)),kind
+
+
+def region_result(relations,answer):
+    return ('region',region_checks(relations,answer))
+
+
+def selection_result(key,relations,points,answer):
+    valid = [p for p in points if all(holds(r,p) for r in relations)]
+    assert len(valid) == 1
+    assert point(answer) == valid[0]
+    if key.startswith('systems-of-linear-inequalities/'):
+        assert all(residual(r,p) for r,_ in relations for p in points)
+    signature = ('selection',canonical_relations(relations),tuple(sorted(points)))
+    return signature,point(answer)
+
+
+def check_result(key,relations,rows,points,answer):
+    supplied = fields(answer)
+    assert set(supplied) == {'residuals','solution'}
+    expected = [residual(r,points[0]) for r in rows]
+    assert point(supplied['residuals']) == tuple(expected)
+    valid = all(holds(r,points[0]) for r in relations)
+    assert supplied['solution'] == ('yes' if valid else 'no')
+    if key == 'checking-systems-solutions/kp2':
+        assert sum(value == 0 for value in expected) == 1
+    signature = ('check',canonical_relations(relations),points[0])
+    return signature,(*expected,valid)
+
+
+def check_sketch(sketch,output):
+    if sketch is None:
+        return
+    assert len(sketch) >= 90 and 'must be corrected' not in sketch
+    if 'first left-minus-right difference is' in sketch:
+        pattern=r'first left-minus-right difference is ([^;]+); the second is ([^.]+)'
+        matches = re.search(pattern,sketch)
+        assert matches
+        assert tuple(Q(value) for value in matches.groups()) == output[:2]
+
+
 def verify(key,problem,answer,sketch=None):
     relations,points = parse(problem)
     rows = [r for r,_ in relations]
     if key.startswith('systems-special-cases/'):
-        assert all(op == '=' for _,op in relations) and not points
-        kind = classify(rows)
-        names = {'infinite','none'} if key.endswith('kp1') else {'one','infinite'}
-        assert kind in names or (kind == 'none' and len(names) == 2)
-        supplied = fields(answer)
-        assert set(supplied) == names
-        assert supplied == {n:'yes' if n == kind else 'no' for n in names}
-        signature = ('equations',canonical_rows(rows))
-        output = kind
+        assert not points
+        signature,output = special_case_result(key,relations,rows,answer)
     elif key == 'systems-of-linear-inequalities/kp2':
         assert not points
-        signature = ('region',region_checks(relations,answer))
+        signature = region_result(relations,answer)
         output = signature
     elif len(points) == 2:
-        valid = [p for p in points if all(holds(r,p) for r in relations)]
-        assert len(valid) == 1
-        assert point(answer) == valid[0]
-        if key.startswith('systems-of-linear-inequalities/'):
-            assert all(residual(r,p) for r,_ in relations for p in points)
-        signature = ('selection',canonical_relations(relations),tuple(sorted(points)))
-        output = point(answer)
+        signature,output = selection_result(key,relations,points,answer)
     else:
         assert len(points) == 1
-        supplied = fields(answer)
-        assert set(supplied) == {'residuals','solution'}
-        expected = [residual(r,points[0]) for r in rows]
-        assert point(supplied['residuals']) == tuple(expected)
-        valid = all(holds(r,points[0]) for r in relations)
-        assert supplied['solution'] == ('yes' if valid else 'no')
-        if key == 'checking-systems-solutions/kp2':
-            assert sum(v == 0 for v in expected) == 1
-        signature = ('check',canonical_relations(relations),points[0])
-        output = (*expected,valid)
-    if sketch is not None:
-        assert len(sketch) >= 90 and 'must be corrected' not in sketch
-        if 'first left-minus-right difference is' in sketch:
-            matches = re.search(r'first left-minus-right difference is ([^;]+); the second is ([^.]+)',sketch)
-            assert matches
-            assert tuple(Q(s) for s in matches.groups()) == output[:2]
+        signature,output = check_result(key,relations,rows,points,answer)
+    check_sketch(sketch,output)
     return signature,output
 
 

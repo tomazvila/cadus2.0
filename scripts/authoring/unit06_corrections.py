@@ -75,6 +75,19 @@ SKETCHES = {
 }
 
 
+def replacement_line(key,line):
+    if key in REPLACEMENTS:
+        fields = zip(("problem", "answer", "solution_sketch"), REPLACEMENTS[key])
+        for field, value in fields:
+            prefix = "          - " if field == "problem" else "            "
+            if line.startswith(prefix + field + ":"):
+                return prefix + field + ": " + json.dumps(value, ensure_ascii=False) + "\n",True
+    elif key in SKETCHES and line.startswith("            solution_sketch:"):
+        value = "            solution_sketch: " + json.dumps(SKETCHES[key]) + "\n"
+        return value,True
+    return line,False
+
+
 def patch(text):
     """Replace only designated exemplar fields, preserving existing contracts."""
     topic = kp = None
@@ -89,15 +102,8 @@ def patch(text):
         if line.startswith("          - problem:"):
             index += 1
         key = (f"{topic}/{kp}", index)
-        if key in REPLACEMENTS:
-            fields = zip(("problem", "answer", "solution_sketch"), REPLACEMENTS[key])
-            for field, value in fields:
-                prefix = "          - " if field == "problem" else "            "
-                if line.startswith(prefix + field + ":"):
-                    line = prefix + field + ": " + json.dumps(value, ensure_ascii=False) + "\n"
-                    seen.add(key)
-        elif key in SKETCHES and line.startswith("            solution_sketch:"):
-            line = "            solution_sketch: " + json.dumps(SKETCHES[key]) + "\n"
+        line,changed = replacement_line(key,line)
+        if changed:
             seen.add(key)
         output.append(line)
     assert seen == REPLACEMENTS.keys() | SKETCHES.keys(), seen

@@ -7,8 +7,8 @@ import re
 import sys
 import unittest
 
-from build import OUT, YAML, generate
-from semantic import math, reconstruct
+from build import OUT, YAML, generate, is_set
+from semantic import OPS, math, reconstruct, relation, scalar
 from semantic_labels import checks
 from test_semantic import family, truth_materiality
 import semantic_sets
@@ -23,6 +23,30 @@ def check_visual(visual):
     assert Q(p['y'])<Q(p['x'])-1
     assert plane['solid'] and plane['label']=='y ≤ x - 1'
     assert 'origin fails' in visual['caption']
+
+
+def check_displayed_equation(test,args,problem,equation):
+    if not re.search(r'<=|>=|<|>',equation):
+        return
+    if args['answer_contract']['kind']=='label':
+        if 'x' in equation:
+            test.assertEqual(relation(equation),relation(math(problem)[0]))
+            return
+        left,op,right=re.split(r'(<=|>=|<|>)',equation)
+        actual=(scalar(left),op,scalar(right),OPS[op](scalar(left),scalar(right)))
+        test.assertIn(actual,checks(problem))
+    elif is_set(problem):
+        test.assertEqual(semantic_sets.bounds('$'+equation+'$'),semantic_sets.bounds(problem))
+    else:
+        source=math(problem)[-1] if 'maximum whole' in problem else math(problem)[0]
+        test.assertEqual(relation(equation),relation(source))
+
+
+def check_displayed_sample(test,args,sample):
+    problem=args['statement'].format(**sample['params'])
+    sketch=args['solution_sketch'].format(**sample['params'])
+    for equation in math(sketch):
+        check_displayed_equation(test,args,problem,equation)
 
 
 class ReviewTests(unittest.TestCase):
@@ -86,27 +110,10 @@ class ReviewTests(unittest.TestCase):
             semantic_sets.verify(source,good,'The boundary calculation gives $-3 <= x <= 4$.')
 
     def test_every_displayed_recipe_transformation(self):
-        from semantic import relation
-        from build import is_set
         for row in generate()[1]:
             args=row['arguments']
             for sample in args['samples']:
-                p=args['statement'].format(**sample['params'])
-                sketch=args['solution_sketch'].format(**sample['params'])
-                for equation in math(sketch):
-                    if not re.search(r'<=|>=|<|>',equation): continue
-                    if args['answer_contract']['kind']=='label':
-                        if 'x' in equation:
-                            self.assertEqual(relation(equation),relation(math(p)[0]))
-                        else:
-                            from semantic import scalar, OPS
-                            left,op,right=re.split(r'(<=|>=|<|>)',equation)
-                            actual=(scalar(left),op,scalar(right),OPS[op](scalar(left),scalar(right)))
-                            self.assertIn(actual,checks(p))
-                    elif is_set(p):
-                        self.assertEqual(semantic_sets.bounds('$'+equation+'$'),semantic_sets.bounds(p))
-                    else:
-                        self.assertEqual(relation(equation),relation(math(p)[-1] if 'maximum whole' in p else math(p)[0]))
+                check_displayed_sample(self,args,sample)
 
 
 if __name__=='__main__':
