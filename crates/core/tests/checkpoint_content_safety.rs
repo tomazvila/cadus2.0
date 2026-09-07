@@ -3,7 +3,7 @@
 
 use std::path::Path;
 
-use cadus_core::answer::AnswerContract;
+use cadus_core::answer::{AnswerContract, Outcome, check_contract};
 use cadus_core::curriculum::{KnowledgePoint, Unit};
 
 fn unit() -> Unit {
@@ -28,9 +28,20 @@ fn standard_form_request_remains_in_the_authored_answer() {
     let unit = unit();
     let exemplar = &kp(&unit, "applying-the-quadratic-formula", "kp1").exemplars[1];
     assert!(
-        exemplar.answer.contains("x^2 - 4x + 3 = 0"),
-        "the graded answer must preserve the prompt's standard-form request"
+        exemplar.problem.contains("standard form")
+            && exemplar.problem.contains("coefficient tuple (A,B,C)"),
+        "the prompt must bind standard form to its graded coefficient tuple"
     );
+    assert_eq!(exemplar.answer, "(1, -4, 3)");
+    assert_eq!(exemplar.answer_contract, Some(AnswerContract::Exact));
+    assert!(matches!(
+        check_contract(
+            &exemplar.answer,
+            "(2, -8, 6)",
+            AnswerContract::Exact
+        ),
+        Outcome::Decided(verdict) if !verdict.correct
+    ));
 }
 
 #[test]
