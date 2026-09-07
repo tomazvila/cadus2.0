@@ -1,8 +1,11 @@
 //! The power-form writer keeps structure and fails closed at the contract boundary.
 #![allow(clippy::unwrap_used)]
-use cadus_core::answer::{AnswerContract, canonical_form};
-use cadus_core::template::{answer_for_contract, parse_answer_expr};
 use std::collections::BTreeMap;
+
+use cadus_core::{
+    answer::{AnswerContract, canonical_form},
+    template::{answer_for_contract, parse_answer_expr},
+};
 
 #[test]
 fn writes_exact_unevaluated_powers_with_computed_parts() {

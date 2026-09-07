@@ -11,6 +11,12 @@ fn root() -> std::path::PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
+fn clean_curriculum() -> cadus_core::curriculum::Curriculum {
+    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
+    assert!(findings.is_empty());
+    curriculum
+}
+
 /// An even-index root of a negative number is not a real number, so the
 /// grammar must never let it collapse to a signed real value: this is the
 /// domain fact `cube-roots/kp2` relies on being false for square roots and
@@ -130,8 +136,7 @@ const SIMPLIFY_RADICAL_TOPICS: &[&str] = &[
 /// intended is a real authoring bug this test independently catches.
 #[test]
 fn every_simplified_radical_answer_has_a_squarefree_radicand() {
-    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
-    assert!(findings.is_empty());
+    let curriculum = clean_curriculum();
     let mut checked = 0usize;
     let mut failures = Vec::new();
     for topic in curriculum.topics() {
@@ -166,8 +171,7 @@ fn every_simplified_radical_answer_has_a_squarefree_radicand() {
 /// `scientific-notation-conversion/kp1`'s own constraints line states.
 #[test]
 fn every_scientific_notation_answer_keeps_its_coefficient_normalized() {
-    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
-    assert!(findings.is_empty());
+    let curriculum = clean_curriculum();
     let mut checked = 0usize;
     let mut failures = Vec::new();
     for topic in curriculum.topics() {
@@ -198,8 +202,7 @@ fn every_scientific_notation_answer_keeps_its_coefficient_normalized() {
 /// unsolvable over the reals, not an arbitrary label.
 #[test]
 fn no_solution_radical_equations_name_a_negative_right_hand_side() {
-    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
-    assert!(findings.is_empty());
+    let curriculum = clean_curriculum();
     let mut checked = 0usize;
     for topic in curriculum.topics() {
         if topic.id.as_str() != "radical-equations-basic" {

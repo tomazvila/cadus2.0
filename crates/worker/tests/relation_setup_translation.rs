@@ -118,14 +118,7 @@ fn current_gate_rejects_unknowns_malformed_shapes_and_contract_bypass() {
 }
 
 fn reconstruct(sentence: &str) -> String {
-    let pieces: Vec<_> = sentence.split('$').collect();
-    let values: Vec<_> = pieces.iter().skip(1).step_by(2).copied().collect();
-    let shape = pieces
-        .iter()
-        .step_by(2)
-        .copied()
-        .collect::<Vec<_>>()
-        .join("{}");
+    let (shape, values) = cadus_testkit::translation::sentence_parts(sentence);
     match (shape.as_str(), values.as_slice()) {
         (
             "Write an equation: {} times a number {} plus {} is {}. Preserve the setup; do not solve.",

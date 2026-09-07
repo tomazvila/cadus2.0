@@ -10,22 +10,22 @@ use std::path::Path;
 use cadus_core::curriculum::load_curriculum;
 use cadus_core::readiness::ReadinessIndex;
 
-#[test]
-fn every_functions_exponentials_kp_is_practicable_assessable_and_has_solutions() {
+fn recipe_keys() -> Vec<String> {
     let fixture = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/fixtures/functions_exponentials_recipes_kps.json");
-    let keys: Vec<String> =
-        serde_json::from_str(&std::fs::read_to_string(fixture).unwrap()).unwrap();
+    serde_json::from_str(&std::fs::read_to_string(fixture).unwrap()).unwrap()
+}
+
+#[test]
+fn every_functions_exponentials_kp_is_practicable_assessable_and_has_solutions() {
+    let keys = recipe_keys();
     assert_eq!(keys.len(), 92, "one entry per knowledge point of the unit");
     common::readiness::assert_kps_ready(&keys);
 }
 
 #[test]
 fn every_functions_exponentials_topic_is_covered_by_the_fixture() {
-    let fixture = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/fixtures/functions_exponentials_recipes_kps.json");
-    let keys: Vec<String> =
-        serde_json::from_str(&std::fs::read_to_string(fixture).unwrap()).unwrap();
+    let keys = recipe_keys();
     let (curriculum, _) = load_curriculum(&common::paths::curriculum_root()).unwrap();
     let index = ReadinessIndex::build(&curriculum);
     let unit: serde_json::Value = serde_norway::from_str(
