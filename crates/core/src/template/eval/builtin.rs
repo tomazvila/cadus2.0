@@ -130,6 +130,9 @@ fn builtin(name: &str) -> Option<Builtin> {
 
 /// Evaluate one function call, erasing it when its arguments are exact.
 pub(super) fn call(name: &str, args: &[Ast], bindings: &Bindings) -> Result<Ast, EvalError> {
+    if name == "symbol" {
+        return super::symbol::variable(args, bindings);
+    }
     if name == "compounding" {
         return super::compounding::factor(args, bindings);
     }

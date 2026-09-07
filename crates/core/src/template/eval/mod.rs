@@ -40,7 +40,9 @@ mod finite_graph;
 mod functions;
 mod inequalities;
 mod inverse;
+mod notation;
 mod structured;
+mod symbol;
 mod triangle_law;
 mod write;
 

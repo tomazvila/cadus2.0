@@ -21,7 +21,7 @@ pub(super) fn label_answer(
     };
     if matches!(
         name.as_str(),
-        "boundaryincluded" | "raydirection" | "negativeabs"
+        "boundaryincluded" | "boundarycircle" | "boundarystyle" | "raydirection" | "negativeabs"
     ) {
         return super::inequalities::label_answer(name, args, bindings, contract);
     }
