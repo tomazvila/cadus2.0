@@ -237,68 +237,107 @@ with the hash.
 9. Owner decision still open from §6: whether the parity fixtures keep the 1.0 rules
    behind `readiness.enforce` and `mastery.confirm_inferred` or move to 2.0 digests.
 
-## 8. Integrated closure audit (snapshot `8d3a671`, 2026-09-06)
-This snapshot is 79 commits after `699fa89`. The reconciled checklist has 57 `done`,
-9 `open`, and zero `pending integration` rows. Counts that can change under the final
-content and visual merges are explicit placeholders in the checklist; root replaces
-them only with a post-merge audit result.
+## 8. Integrated closure audit (verified through `96332af4`, 2026-09-07)
+This revision is 176 commits after `699fa89`. The reconciled checklist has 60
+`done`, 6 `open`, and zero `pending integration` rows on the evidence
+available before the final combined content-store/readiness and full-gate receipts.
 
 ### 8.1 Definitively closed since section 7
-- Integrated evidence: `d750e83` persists server-owned hint progression, immutable
-  retry receipts and durable completion; `dd5ca39` projects only explicitly credited,
-  decided-correct fields; `ee6dcac` excludes component fallback from integrated
-  performance. This closes (g), (o), P4.1, A4.2 and A4.3.
-- Progression and timing: `fe02eac` preserves a terminal lesson failure through fresh
-  practice; `8c02109` makes drill completion a distinct replayable task close;
-  `7d99be4` persists reliable ordinary and integrated timing evidence. This closes
-  P3.1, P3.2, P3.3 and P3.6. The thresholds remain uncalibrated.
-- Integrated journey: `4523fc5` adds a database-backed instruction → independent
-  integrated application → delayed, distinct unseen integrated assessment journey.
-  Restart, replay and conflicting retry retain the selected assessment and receipt.
-  This closes A4.1 at the automated acceptance level.
-- Local recovery: `da304cf` rehearses backup/restore, SIGKILL before commit,
-  transaction rollback, v6-to-v7 replay, idempotent resume and rollback-archive
-  restore over five disposable histories. This closes P5.3 locally; P5.4 owns browser
-  agreement and P5.5 owns production recovery evidence.
-- Diagnostics: `8d3a671` makes all 285 Foundations diagnostic answers decidable;
-  zero are missing or grammar-refused. P2.6 remains open because its remediation
-  requirement depends on whole-course practicable content.
+- Integrated behavior: `d750e83` persists server-owned hint progression,
+  immutable retry receipts and durable completion; `dd5ca39` projects only
+  explicitly credited, decided-correct fields; `ee6dcac` excludes component
+  fallback from integrated performance.
+- Progression and timing: `fe02eac` preserves terminal lesson failure through
+  fresh practice; `8c02109` makes drill completion a distinct replayable close;
+  `7d99be4` persists reliable ordinary and integrated timing evidence. The
+  thresholds remain uncalibrated.
+- Diagnostics: `8d3a671` makes all 285 Foundations topic diagnostics decidable;
+  zero are missing or grammar-refused, and zero prerequisite IDs dangle. P2.6
+  remains open until the final remediation/readiness receipt is attached.
+- Visuals: `67c10ed` closes all visual-readiness blockers. All 153 KPs that
+  require a visual have reviewed curriculum visuals, 164 figures validate and
+  render deterministically with accessible equivalents, and the
+  `money-geometry-problems/kp1` heuristic false-positive is removed. This closes
+  P2.5.
 
-### 8.2 Content and visual state at this snapshot
-- `3a3ecd3` gives 35 KPs a fourth decidable, held-out exemplar and regenerates their
-  deterministic teach/hint drafts. `46a7c31` raises deterministic pending-template
-  coverage to 110 of 809 KPs; 699 remain without a pending or approved template.
-- `819f7c3` gives reviewed, deterministic, accessible curriculum visuals to 149 of
-  the 154 visual-required KPs. Five remain: one readiness-heuristic false-positive and
-  four exact `e`/`ln` curve cases.
-- Generated/imported documents remain `pending` in isolated databases. No code or
-  agent action may convert them to approved content; a human must review each digest.
-  Production content state was not inspected in this snapshot.
-- The checked-in readiness report predates the final integrated curriculum/content
-  state. Authoritative counts are established only by the final database-backed
-  readiness rerun after all content and visual merges.
+### 8.2 Content evidence at this checkpoint
+- The authoritative Foundations content audit reports zero
+  `fewer_than_four_exemplars`, `missing_solution_sketch`,
+  `undecidable_authored_answer`, `singleton_label_contract`,
+  `duplicate_problem_answer_family`, `absent_pending_template_recipe`,
+  `generic_or_tautological_sketch` and
+  `pending_template_production_gate_declined` KPs, plus zero orphan template keys, on
+  `20648c5a`.
+- The non-importable-recipe repair covers exactly 36 KPs. Its production worker
+  gate accepts all 36 recipes and all 432 exhaustive instances; exact collision
+  screening finds zero matches across 157,678 authored and pending problem
+  instances. `20648c5a` adds the final 19 production-gated KPs. The reconciled
+  inventory is 809 of 809: 754 previously gated, the repaired 36 and the final
+  19.
+- `86cbd2a2`, `d3536588` and `96332af4` add and harden exactly 735 Teach
+  documents for the KPs that lacked one. The checked-in manifest records 735
+  accepted pending rows, 0 rejected and 0 residual against 809 canonical KPs;
+  together with the 74 existing Teach documents, checked-in Teach coverage is
+  809 of 809. `crates/worker/tests/whole_course_teach.rs` binds every draft and
+  independent review to the canonical coverage and selected-template inputs,
+  replays the unchanged production Teach gate, checks exemplar/template-instance
+  collisions, and enforces pending-only side effects: 0 API calls, approvals,
+  database connections and imports.
+- Those results establish complete production-template and checked-in Teach
+  coverage. Final combined import, held-out, hint-ladder, diagnosis and readiness
+  counts remain `[ROOT: attach authoritative exact-head post-zero receipts]`.
+- Generated/imported documents remain `pending` in isolated databases. A human
+  must approve every digest intended for serving; no automated step in this work
+  grants approval.
 
-### 8.3 Open checklist rows and boundaries
-The open IDs are `(h)`, P2.3, P2.4, P2.5, P2.6, P5.4, P5.5, A2.2 and A3.8.
-- `(h)`, P2.3 and A2.2 require complete usable content and human approval. Pending
-  drafts prove authoring/import behavior, not serving readiness.
-- P2.4 needs wider template and held-out coverage. P2.5 has the five exact visual
-  residuals above. P2.6 needs practicable remediation coverage after P2.4.
-- A3.8 is an evidence boundary: explicit v1/v2 uncertainty survives replay, and the
-  read-only scanner builds a conservative review queue, but uncertainty absent from
-  historical v1 events cannot be reconstructed. No production miss scan ran.
-- P5.4 needs the browser/rendered-math walk. P5.5 has a runbook and local rehearsal,
-  but still needs the final integrated gate, encrypted production-backup restore,
-  restored-production replay, deploy smoke and rollback evidence.
+### 8.3 Browser, web quality and production preflight
+- `f0e7b4b` runs the seven-step 2.0 journey and the full acceptance runner in
+  Playwright 1.62.1 with real Chromium. The run had no console, page, request or
+  HTTP failures and observed KaTeX MathML plus its aria-hidden visual HTML layer.
+  This closes P5.4; the deterministic API fixture does not claim deployment.
+- `717a591` raises the web quality gate to 100% coverage across all 68 source
+  files. Types, lint, 976 tests and `scripts/quality.sh --web` pass.
+- Production preflight `d1f37d5` and replay probe `b0f1750` inspected
+  production read-only, streamed an encrypted backup into a disposable restore,
+  and matched the production/restored fingerprint
+  `36|36|8442802e0407e6d1d9d00d074e44d0b5`. The first normal state read advanced
+  the sole account from projector v3 to v7 through sequence 36; the second read
+  produced byte-identical model and report JSON and changed no event.
+- The complete production history scan found 6 v1 attempts, no incorrect attempt,
+  no explicit uncertain outcome and no recovery candidate. Together with the
+  replay tests, this closes A3.8 for the observed production history. Uncertainty
+  omitted by v1 is intrinsically unrecoverable, but this snapshot contains no
+  affected miss.
 
-### 8.4 Verification record
-- Focused lane evidence is recorded in the reports named by the checklist. The local
-  recovery rehearsal ended `RECOVERY OK`; the integrated journey, timing, projection,
-  held-out, template and diagnostic suites passed on their owning commits.
-- A prior integrated run completed the full benchmark suite (`BENCHMARKS OK`), SQLx
-  prepare check, migration check and operations check. Curriculum changes after those
-  runs moved canonical and benchmark pins, so they are historical checkpoints.
-- Final integrated command, result and log digest: `[ROOT: attach after the final
-  content/visual merge]`.
-- Browser, human approval, production snapshot/replay, deployment, rollback execution
-  and real-data calibration remain unverified.
+### 8.4 Open checklist rows and release boundaries
+The open IDs are `(h)`, P2.3, P2.4, P2.6, P5.5 and A2.2.
+- `(h)`, P2.3 and A2.2 have complete checked-in Teach coverage but still require
+  the combined post-zero import receipt and human approval.
+- P2.4 awaits the final held-out receipt; P2.6 awaits the final
+  database-backed remediation/readiness receipt. Their status remains open until
+  those exact results are attached.
+- P5.5 now has encrypted production-backup restore and restored-production replay
+  evidence. It still requires the consolidated final gate, explicit deployment
+  authorization, deploy smoke and rollback execution.
+
+### 8.5 Final verification placeholders
+- Final integration identity: `[ROOT: commit, tree status and timestamp]`.
+- Authoritative post-zero receipt: `[ROOT: command and exit status; combined
+  content-store template, teach, hint-ladder and held-out counts; pending, approved,
+  rejected and model-cost totals; artifact and manifest SHA-256 digests;
+  deterministic replay digests]`. The source-side Teach count is already fixed at
+  809 total (74 existing plus 735 accepted pending additions).
+- Final database-backed readiness receipt: `[ROOT: command and exit status;
+  ready/blocked counts and exact blocker distribution; JSON and Markdown SHA-256
+  digests]`.
+- Run the two repository gates sequentially from the exact final integration commit
+  so they share compiled artifacts and never contend:
+  ```sh
+  CARGO_BUILD_JOBS=1 CADUS_TEST_DATABASE_URL=postgresql://test:test@127.0.0.1:55434/cadus2_gate scripts/quality.sh >target/final-quality.log 2>&1
+  CARGO_BUILD_JOBS=1 CADUS_TEST_DATABASE_URL=postgresql://test:test@127.0.0.1:55434/cadus2_gate scripts/gate.sh >target/final-gate.log 2>&1
+  sha256sum target/final-quality.log target/final-gate.log
+  ```
+  Final results: `[ROOT: exit statuses, final lines, elapsed times and log SHA-256
+  digests]`.
+- Human content approval, deployment, rollback execution and real-data calibration
+  remain unperformed.
