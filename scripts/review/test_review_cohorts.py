@@ -40,4 +40,21 @@ class CohortsTest(unittest.TestCase):
             with self.assertRaises(cohorts.Refused): cohorts.write(source, units, output)
             self.assertEqual(marker.read_text(),"keep")
 
+    def test_extras_do_not_hide_missing_mapping(self):
+        with self.assertRaises(cohorts.Refused):
+            cohorts.split(packet([item("topic/kp1", "teach", "d")]), {"other/kp": "unit"})
+
+    def test_path_traversal_refuses_before_output_creation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source, units, output = root / "packet.json", root / "units.json", root / "out"
+            source.write_text(json.dumps(packet([item("topic/kp1", "teach", "d")])))
+            units.write_text(json.dumps({"topic/kp1": "../escape"}))
+            with self.assertRaises(cohorts.Refused):
+                cohorts.write(source, units, output)
+            self.assertFalse(output.exists())
+
+    def test_empty_packet_is_refused(self):
+        with self.assertRaises(cohorts.Refused):
+            cohorts.split(packet([]), {})
 if __name__ == "__main__": unittest.main()
