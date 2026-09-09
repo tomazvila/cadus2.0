@@ -16,7 +16,7 @@ class ApplyFixture(unittest.TestCase):
         rows = [row for row in self.rows.values() if ("kp=" not in suffix or ("kp=" + row["kp_id"]) in suffix)]
         return {"items": [copy.deepcopy(row) for row in rows], "limit": 200}
     def document(self, digest): return copy.deepcopy(self.rows[digest])
-    def decide(self, digest, *_): self.writes.append(digest); self.rows[digest]["status"] = "approved"; return {"digest": digest, "status": "approved"}
+    def decide(self, digest, *_): self.writes.append(digest); self.rows[digest]["status"] = "approved"; return {"digest": digest, "status": "approved", "rejected_documents": []}
     def execute(self, drift=False):
         contexts = ai.context(self.packet, self, self.root / "curriculum"); core = {"ai_review_version": 1, "packet_sha256": self.packet["packet_sha256"], "items": contexts}; review = core | {"context_sha256": p.sha256(core), "reviewer": {"identity":"i","model":"m","policy_version":"v"}, "decisions": [{"digest": digest, "decision":"approve", "reason":"reviewed", "checks": {name:{"status":"pass","evidence":"independent check"} for name in ai.CHECKS}} for digest in self.rows]}; review_path = self.root / "review.json"; review_path.write_text(json.dumps(review)); original = p.Api; p.Api = lambda *_: self
         if drift:

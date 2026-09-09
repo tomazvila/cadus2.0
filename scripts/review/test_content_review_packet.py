@@ -35,7 +35,7 @@ class FakeApi:
         self.writes.append((digest, decision, reason))
         status = "approved" if decision == "approve" else "rejected"
         self.documents[digest]["status"] = status
-        return {"digest": digest, "status": status}
+        return {"digest": digest, "status": status, "rejected_documents": []}
 
 
 class ChangingApi(FakeApi):
