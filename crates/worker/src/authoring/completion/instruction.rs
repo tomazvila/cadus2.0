@@ -31,6 +31,7 @@ fn hints() -> &'static [HintRecipe] {
             include_str!("instruction_hints_fractions_02.json"),
             include_str!("instruction_hints_fractions_03.json"),
             include_str!("instruction_hints_fractions_04.json"),
+            include_str!("instruction_hints_expressions_02.json"),
             include_str!("instruction_hints_integers_01.json"),
             include_str!("instruction_hints_integers_02.json"),
             include_str!("instruction_hints_expressions_01.json"),
@@ -88,7 +89,7 @@ mod tests {
     #[test]
     fn catalog_is_exact_unique_and_gated() {
         let keys: BTreeSet<_> = hints().iter().map(|row| row.key.as_str()).collect();
-        assert_eq!(keys.len(), 282);
+        assert_eq!(keys.len(), 305);
         assert_eq!(keys.len(), hints().len());
         for spec in specs() {
             let mut out = Proposals::default();
