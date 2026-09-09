@@ -10,6 +10,7 @@ Apply is a dry run unless ``--commit`` is present.
 import argparse
 import hashlib
 import json
+import os
 import sys
 import urllib.error
 import urllib.parse
@@ -55,6 +56,10 @@ def load_json(path):
 
 class Api:
     def __init__(self, base_url, cookie):
+        parsed = urllib.parse.urlsplit(base_url)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.username or parsed.password or parsed.fragment:
+            raise Refused("base URL must be an http(s) origin without credentials or fragment")
+        self.origin = f"{parsed.scheme}://{parsed.netloc}"
         self.base = base_url.rstrip("/") + "/api/admin/content"
         self.cookie = cookie.strip()
         if not self.cookie:
@@ -62,6 +67,8 @@ class Api:
 
     def request(self, method, suffix="", body=None):
         headers = {"Accept": "application/json", "Cookie": self.cookie}
+        if method in {"POST", "PUT", "PATCH", "DELETE"}:
+            headers["Origin"] = self.origin
         data = None
         if body is not None:
             headers["Content-Type"] = "application/json"
@@ -231,7 +238,7 @@ def validate_decisions(document, packet, indexed):
 
 
 def validated_decision(row, number, indexed, seen):
-    """Validate one digest-bound human decision and return its normalized fields."""
+    """Validate one digest-bound explicit decision and return its normalized fields."""
     if not isinstance(row, dict) or not isinstance(row.get("digest"), str):
         raise Refused(f"decision {number}: digest is required")
     digest, decision = row["digest"], row.get("decision")
@@ -248,7 +255,48 @@ def validated_decision(row, number, indexed, seen):
     return digest, decision, reason
 
 
-def apply_decisions(api, packet_path, decision_path, commit):
+def write_receipt(path, receipt):
+    """Persist each confirmed write so a later failure has an audit trail."""
+    if path is not None:
+        temporary = path.with_name(path.name + ".tmp")
+        temporary.write_text(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+        os.replace(temporary, path)
+
+
+def apply_one_decision(api, item, decision, reason, receipt, receipt_path, before_write):
+    if before_write is not None:
+        try:
+            before_write(item)
+        except Exception as error:
+            receipt["pre_write_refusal"] = {"digest": item["digest"], "error": str(error)}
+            write_receipt(receipt_path, receipt)
+            raise
+    live = api.document(item["digest"])
+    if live.get("status") != "pending" or fingerprint(live) != item.get("fingerprint_sha256"):
+        raise Refused(f"{item['digest']}: live document changed before its write")
+    receipt["in_flight"] = {"digest": item["digest"], "decision": decision}
+    write_receipt(receipt_path, receipt)
+    try:
+        answer = api.decide(item["digest"], decision, reason)
+    except Exception as error:
+        receipt["uncertain"] = receipt.pop("in_flight") | {"error": str(error)}
+        write_receipt(receipt_path, receipt)
+        raise
+    if decision == "approve" and item["kind"] == "template" and answer.get("rejected_documents") is None:
+        receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "template re-gate outcome unavailable"}
+        write_receipt(receipt_path, receipt)
+        raise Refused(f"{item['digest']}: template re-gate outcome unavailable")
+    if answer.get("digest") != item["digest"] or answer.get("status") != (
+            "approved" if decision == "approve" else "rejected"):
+        receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "malformed decision response"}
+        write_receipt(receipt_path, receipt)
+        raise Refused(f"{item['digest']}: decision response did not confirm the requested write")
+    return answer
+
+
+def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, before_write=None, metadata=None):
+    if receipt_path is not None and receipt_path.exists():
+        raise Refused("receipt path already exists")
     packet, decisions = load_json(packet_path), load_json(decision_path)
     indexed = validate_packet(packet)
     selected = validate_decisions(decisions, packet, indexed)
@@ -259,17 +307,23 @@ def apply_decisions(api, packet_path, decision_path, commit):
             raise Refused(f"{item['digest']}: live document differs from the reviewed pending document")
         checked.append((item, decision, reason))
     if not commit:
-        return {"committed": False, "packet_sha256": packet["packet_sha256"],
+        receipt = {"committed": False, "complete": True, **(metadata or {}), "packet_sha256": packet["packet_sha256"],
                 "selected": [{"digest": item["digest"], "decision": decision}
                              for item, decision, _reason in checked]}
-    receipts = []
+        write_receipt(receipt_path, receipt)
+        return receipt
+    receipt = {"committed": False, "complete": False, **(metadata or {}),
+               "packet_sha256": packet["packet_sha256"], "receipts": []}
     for item, decision, reason in checked:
-        answer = api.decide(item["digest"], decision, reason)
-        if answer.get("digest") != item["digest"] or answer.get("status") != (
-                "approved" if decision == "approve" else "rejected"):
-            raise Refused(f"{item['digest']}: decision response did not confirm the requested write")
-        receipts.append(answer)
-    return {"committed": True, "packet_sha256": packet["packet_sha256"], "receipts": receipts}
+        write_receipt(receipt_path, receipt)
+        answer = apply_one_decision(api, item, decision, reason, receipt, receipt_path, before_write)
+        receipt["receipts"].append(answer)
+        receipt.pop("in_flight", None)
+        receipt["committed"] = True
+        write_receipt(receipt_path, receipt)
+    receipt["complete"] = True
+    write_receipt(receipt_path, receipt)
+    return receipt
 
 
 def parser():
@@ -302,8 +356,7 @@ def main(argv=None):
             count, decisions, digest = export_packet(api, args.output, args.source_root, args.workers)
             print(f"exported {count} pending documents; packet sha256:{digest}; decisions {decisions}")
         else:
-            receipt = apply_decisions(api, args.packet, args.decisions, args.commit)
-            args.receipt.write_text(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+            receipt = apply_decisions(api, args.packet, args.decisions, args.commit, args.receipt)
             print(f"checked {len(receipt.get('selected', receipt.get('receipts', [])))} explicit decisions; committed={receipt['committed']}")
     except (Refused, OSError) as error:
         print(f"content review refused: {error}", file=sys.stderr)
