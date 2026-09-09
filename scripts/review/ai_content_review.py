@@ -119,6 +119,12 @@ def apply(args):
     actual = context(source, api, args.curriculum_root)
     if actual != batch["items"]: raise packet.Refused("AI review evidence is stale against live curriculum or serving set")
     decisions = review_rows(batch, {row["digest"]: row for row in actual})
+    by_digest = packet.validate_packet(source)
+    for digest, verdict, _reason in decisions:
+        if verdict == "approve" and by_digest[digest]["kind"] == "template":
+            gate = api.document(digest).get("gate")
+            if not isinstance(gate, dict) or gate.get("gated") is not True or gate.get("rejected") or type(gate.get("instances_checked")) is not int or gate["instances_checked"] < 1:
+                raise packet.Refused(f"{digest}: template gate does not support approval")
     out = {"decision_version": 1, "packet_sha256": source["packet_sha256"], "decisions": []}
     for digest, verdict, reason in decisions:
         if verdict != "quarantine": out["decisions"].append({"digest": digest, "decision": verdict} if verdict == "approve" else {"digest": digest, "decision": verdict, "reason": reason})
