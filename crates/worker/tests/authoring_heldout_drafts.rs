@@ -13,7 +13,8 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use cadus_core::curriculum::load_curriculum;
-use cadus_worker::authoring::{completion::generate, prompt::AuthoringSpec};
+use cadus_core::instruction::template_instances;
+use cadus_worker::authoring::{cli::select, completion::generate, job::verify_kind, prompt::Kind};
 use serde_json::Value;
 
 /// Unit id to its curriculum file, the units this generator has drafted.
@@ -188,5 +189,32 @@ fn transferred_teach_fixture_has_one_imported_canonical_row_per_key() {
             1,
             "{key} in {source}"
         );
+    }
+}
+
+#[test]
+fn transferred_hints_are_generated() {
+    let keys: BTreeMap<String, String> =
+        serde_json::from_str(include_str!("fixtures/heldout_transferred_teach.json")).unwrap();
+    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
+    assert!(findings.is_empty());
+    for key in keys.keys() {
+        let specs = select(&curriculum, std::slice::from_ref(key)).unwrap();
+        let spec = &specs[0];
+        let template = UNITS
+            .iter()
+            .flat_map(|(unit, _)| rows(unit))
+            .find(|row| row["kp_id"] == *key && row["kind"] == "template")
+            .unwrap();
+        let body = verify_kind(Kind::Template, spec, &template["arguments"], &[]).unwrap();
+        let served = template_instances(&body);
+        let proposals = generate(spec, &served);
+        let hints: Vec<_> = proposals
+            .drafts
+            .iter()
+            .filter(|draft| draft["kind"] == "hint_ladder")
+            .collect();
+        assert_eq!(hints.len(), 1, "{key}: {}", proposals.refusals.join("; "));
+        verify_kind(Kind::HintLadder, spec, &hints[0]["arguments"], &served).unwrap();
     }
 }
