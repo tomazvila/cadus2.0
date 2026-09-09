@@ -3,117 +3,169 @@
     "kp_id": "comparing-ordering-fractions/kp3",
     "kind": "template",
     "arguments": {
-      "statement": "A bar is ${a}/{b}$ full. Give the fraction of a whole by which its fill exceeds one half.",
-      "answer_expr": "a/b-1/2",
+      "answer_expr": "max(a/d,1/2)",
+      "statement": "Which is greater: ${{{a}}}/{{{d}}}$ or $1/2$? Give the greater value.",
       "params": {
         "a": {
           "kind": "choice",
           "values": [
+            2,
+            3,
+            4,
+            5,
+            6,
             7,
             8,
-            9
+            9,
+            10,
+            11
           ]
         },
-        "b": {
+        "d": {
           "kind": "choice",
           "values": [
             10,
-            11,
-            12,
-            13
+            12
           ]
         }
       },
-      "constraints": [],
-      "solution_sketch": "One half is ${b}/(2\\times{b})$; the excess is $(2\\times{a}-{b})/(2\\times{b})$.",
       "hints": [
-        "Compare the filled fraction with the half-full benchmark."
+        "Rewrite one half with denominator 12.",
+        "Subtract the benchmark fraction and reduce the difference."
+      ],
+      "solution_sketch": "Compare twice the numerator with the denominator: if 2a is larger, a/d is larger than one half; otherwise one half is larger.",
+      "constraints": [
+        {
+          "op": "lt",
+          "left": "a",
+          "right": "d"
+        },
+        {
+          "op": "ne",
+          "left": {
+            "mul": [
+              {
+                "lit": 2
+              },
+              "a"
+            ]
+          },
+          "right": "d"
+        }
       ],
       "distractors": [],
       "samples": [
         {
           "params": {
-            "a": 7,
-            "b": 10
+            "a": 2,
+            "d": 10
           },
-          "expected": "1/5"
+          "expected": "1/2"
+        },
+        {
+          "params": {
+            "a": 2,
+            "d": 12
+          },
+          "expected": "1/2"
+        },
+        {
+          "params": {
+            "a": 3,
+            "d": 10
+          },
+          "expected": "1/2"
+        },
+        {
+          "params": {
+            "a": 3,
+            "d": 12
+          },
+          "expected": "1/2"
+        },
+        {
+          "params": {
+            "a": 4,
+            "d": 10
+          },
+          "expected": "1/2"
+        },
+        {
+          "params": {
+            "a": 4,
+            "d": 12
+          },
+          "expected": "1/2"
+        },
+        {
+          "params": {
+            "a": 5,
+            "d": 12
+          },
+          "expected": "1/2"
+        },
+        {
+          "params": {
+            "a": 6,
+            "d": 10
+          },
+          "expected": "3/5"
         },
         {
           "params": {
             "a": 7,
-            "b": 11
+            "d": 10
           },
-          "expected": "3/22"
+          "expected": "7/10"
         },
         {
           "params": {
             "a": 7,
-            "b": 12
+            "d": 12
           },
-          "expected": "1/12"
-        },
-        {
-          "params": {
-            "a": 7,
-            "b": 13
-          },
-          "expected": "1/26"
+          "expected": "7/12"
         },
         {
           "params": {
             "a": 8,
-            "b": 10
+            "d": 10
           },
-          "expected": "3/10"
+          "expected": "4/5"
         },
         {
           "params": {
             "a": 8,
-            "b": 11
+            "d": 12
           },
-          "expected": "5/22"
-        },
-        {
-          "params": {
-            "a": 8,
-            "b": 12
-          },
-          "expected": "1/6"
-        },
-        {
-          "params": {
-            "a": 8,
-            "b": 13
-          },
-          "expected": "3/26"
+          "expected": "2/3"
         },
         {
           "params": {
             "a": 9,
-            "b": 10
+            "d": 10
           },
-          "expected": "2/5"
+          "expected": "9/10"
         },
         {
           "params": {
             "a": 9,
-            "b": 11
+            "d": 12
           },
-          "expected": "7/22"
+          "expected": "3/4"
         },
         {
           "params": {
-            "a": 9,
-            "b": 12
+            "a": 10,
+            "d": 12
           },
-          "expected": "1/4"
+          "expected": "5/6"
         },
         {
           "params": {
-            "a": 9,
-            "b": 13
+            "a": 11,
+            "d": 12
           },
-          "expected": "5/26"
+          "expected": "11/12"
         }
       ]
     }
