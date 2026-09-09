@@ -1,5 +1,4 @@
 //! The gate of a teach page (L4, spec section 7 row R6).
-
 use crate::answer::{canonical_form, same_answer};
 use crate::template::gate::{Rejection, contains_token, py_str};
 
@@ -78,7 +77,7 @@ learner has not attempted yet (Hard Rule 1)",
             });
         }
     }
-    check_served_problem_identity(&problem, spec)?;
+    check_teach_disclosures(&problem, &written, spec)?;
     Ok(TeachPage {
         concept,
         worked_example: WorkedExample {
@@ -101,81 +100,65 @@ step is one line of the solution a learner reads"
     }
 }
 
-/// Refuse a served problem identity and additional answers from other problems.
-/// For a direct calculation, derive its own result with the deterministic checker.
-/// Equal results from different problems are ordinary arithmetic coincidences.
-/// Unsupported word problems retain the conservative answer check.
-#[allow(dead_code)]
-fn check_no_other_answer(
-    problem: &str,
-    last: &str,
-    spec: &InstructionSpec<'_>,
-) -> Result<(), Rejection> {
-    let own_answer = compute_answer(problem);
-    let own_calculation = own_answer
-        .as_ref()
-        .is_some_and(|answer| final_calculation(last, answer));
-    for (served_problem, answer) in spec.served() {
-        if served_problem.trim() == problem.trim() {
-            return Err(Rejection {
-                code: "teach-worked-example",
-                message: "the worked example repeats a served problem; use different operands before the learner attempts it".to_owned(),
-            });
-        }
-        if answer.is_empty() {
-            continue;
-        }
-        let coincides = own_answer
-            .as_ref()
-            .zip(canonical_form(answer).ok().as_ref())
-            .is_some_and(|(own, served)| same_answer(own, served));
-        if !coincides && !own_calculation && contains_token(last, answer) {
-            return Err(Rejection {
-                code: "teach-answer",
-                message: format!(
-                    "the last step of 'worked_example.steps' reads {}, which names {}, the answer \
-of {} — this knowledge point serves that problem too, and the page works {}, so the step hands the \
-learner an answer before the attempt (Hard Rule 1)",
-                    py_str(last),
-                    py_str(answer),
-                    py_str(served_problem),
-                    py_str(problem)
-                ),
-            });
-        }
-    }
-    Ok(())
+fn normalized_problem(value: &str) -> String {
+    value
+        .replace("\\div", "/")
+        .replace("\\times", "*")
+        .replace("\\cdot", "*")
+        .chars()
+        .filter(|ch| !ch.is_whitespace() && !matches!(ch, '$' | '{' | '}' | '\\' | '(' | ')' | '.'))
+        .map(|ch| match ch as u32 {
+            0x00F7 => '/',
+            0x00D7 | 0x00B7 => '*',
+            _ => ch,
+        })
+        .flat_map(char::to_lowercase)
+        .collect()
 }
 
-/// Derive the result of a direct calculation without a language-model guess.
-fn compute_answer(problem: &str) -> Option<crate::answer::Canon> {
-    let expression = ["Compute ", "Calculate ", "Evaluate ", "Simplify "]
+fn direct_expression(problem: &str) -> Option<String> {
+    ["Compute ", "Calculate ", "Evaluate ", "Simplify "]
         .into_iter()
-        .find_map(|prefix| problem.trim().strip_prefix(prefix))?;
-    canonical_form(expression.trim().trim_end_matches('.').trim()).ok()
+        .find_map(|prefix| problem.trim().strip_prefix(prefix))
+        .map(normalized_problem)
+        .filter(|expression| expression.len() > 2)
 }
 
-/// A bare result or a verified final equation contains only the worked calculation.
-fn final_calculation(last: &str, answer: &crate::answer::Canon) -> bool {
-    let text = last.trim().trim_end_matches('.').trim().trim_matches('$');
-    let (left, right) = text.split_once('=').unwrap_or((text, text));
-    [left, right].into_iter().all(|part| {
-        canonical_form(part.trim())
-            .ok()
-            .is_some_and(|value| same_answer(answer, &value))
-    })
+fn same_problem(left: &str, right: &str) -> bool {
+    normalized_problem(left) == normalized_problem(right)
+        || direct_expression(left)
+            .zip(direct_expression(right))
+            .is_some_and(|(left, right)| left == right)
 }
 
-fn check_served_problem_identity(
+fn check_teach_disclosures(
     problem: &str,
+    steps: &[String],
     spec: &InstructionSpec<'_>,
 ) -> Result<(), Rejection> {
-    for (served_problem, _) in spec.served() {
-        if served_problem.trim() == problem.trim() {
+    let last = steps.last().map_or("", String::as_str);
+    let normalized_last = normalized_problem(last);
+    for (served_problem, answer) in spec.served() {
+        if same_problem(served_problem, problem) {
             return Err(Rejection {
                 code: "teach-worked-example",
                 message: "the worked example repeats a served problem; use different operands before the learner attempts it".to_owned(),
             });
+        }
+        if let Some(expression) = direct_expression(served_problem) {
+            if normalized_last.contains(&expression)
+                && !answer.is_empty()
+                && contains_token(last, answer)
+            {
+                return Err(Rejection {
+                    code: "teach-answer",
+                    message: format!(
+                        "the final step solves served problem {} and names its answer {} (Hard Rule 1)",
+                        py_str(served_problem),
+                        py_str(answer)
+                    ),
+                });
+            }
         }
     }
     Ok(())
