@@ -1,10 +1,12 @@
 [
   {
-    "kp_id": "rounding-decimals/kp3",
-    "kind": "template",
     "arguments": {
-      "statement": "A checkout total is \u20ac{a}. Round the total to the nearest cent.",
       "answer_expr": "floor(100*a+1/2)/100",
+      "constraints": [],
+      "distractors": [],
+      "hints": [
+        "The thousandths digit decides whether to add one cent."
+      ],
       "params": {
         "a": {
           "kind": "choice",
@@ -24,86 +26,87 @@
           ]
         }
       },
-      "constraints": [],
-      "solution_sketch": "Round the cents count $100\\times{a}$ to a whole number using $\\lfloor100\\times{a}+0.5\\rfloor$. Convert back to euros; any carry moves through the nines.",
-      "hints": [
-        "The thousandths digit decides whether to add one cent."
-      ],
-      "distractors": [],
       "samples": [
         {
+          "expected": "2.0",
           "params": {
             "a": "1.995"
-          },
-          "expected": "2.0"
+          }
         },
         {
+          "expected": "3.0",
           "params": {
             "a": "2.996"
-          },
-          "expected": "3.0"
+          }
         },
         {
+          "expected": "4.0",
           "params": {
             "a": "3.997"
-          },
-          "expected": "4.0"
+          }
         },
         {
+          "expected": "5.0",
           "params": {
             "a": "4.998"
-          },
-          "expected": "5.0"
+          }
         },
         {
+          "expected": "6.0",
           "params": {
             "a": "5.999"
-          },
-          "expected": "6.0"
+          }
         },
         {
+          "expected": "7.0",
           "params": {
             "a": "6.995"
-          },
-          "expected": "7.0"
+          }
         },
         {
+          "expected": "8.0",
           "params": {
             "a": "7.996"
-          },
-          "expected": "8.0"
+          }
         },
         {
+          "expected": "9.0",
           "params": {
             "a": "8.997"
-          },
-          "expected": "9.0"
+          }
         },
         {
+          "expected": "10.0",
           "params": {
             "a": "9.998"
-          },
-          "expected": "10.0"
+          }
         },
         {
+          "expected": "11.0",
           "params": {
             "a": "10.999"
-          },
-          "expected": "11.0"
+          }
         },
         {
+          "expected": "12.0",
           "params": {
             "a": "11.995"
-          },
-          "expected": "12.0"
+          }
         },
         {
+          "expected": "13.0",
           "params": {
             "a": "12.996"
-          },
-          "expected": "13.0"
+          }
         }
-      ]
-    }
+      ],
+      "solution_sketch": "Keep the hundredths place of €${a}$ and inspect the thousandths digit. Because it is 5 or more, add one cent and carry through any 9s to the left.",
+      "statement": "A checkout total is €{a}. Round the total to the nearest cent.",
+      "answer_contract": {
+        "kind": "exact"
+      }
+    },
+    "kind": "template",
+    "kp_id": "rounding-decimals/kp3"
   }
 ]

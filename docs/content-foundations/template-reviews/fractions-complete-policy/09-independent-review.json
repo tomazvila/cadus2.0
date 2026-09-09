@@ -1,0 +1,2181 @@
+{
+  "schema_version": 1,
+  "reviewer": {
+    "identity": "orchestrator-independent-review",
+    "model": "GPT-6 Astra",
+    "review_kind": "Full 90-family current fraction-template review"
+  },
+  "source_manifest": "manifest.json",
+  "template_source_sha256": "a7489632e504bbdf9aeca9e731ff310ff5be750eb17e66e53dbf97d2378283be",
+  "coverage": {
+    "families": 90,
+    "bindings_independently_recomputed": 1096,
+    "samples_match": 1096,
+    "curriculum_exemplar_problems_read": 360,
+    "current_curriculum_raw_equals_packet_source_head": true,
+    "template_numeric_scope_failures": 3
+  },
+  "decisions": {
+    "revise": 43,
+    "scope_accept": 46,
+    "needs_scope_resolution": 1
+  },
+  "contracts": {
+    "absent": 79,
+    "families_with_actual_inequivalent_one_decimal_legacy_counterexamples": 37,
+    "counterexample_bindings": 361,
+    "note": "Absent policy alone does not prove an actual wrong verdict for current integer-only domains. Counterexamples are distinguished from preventative policy binding."
+  },
+  "findings_by_category": {
+    "legacy_learner_selected_rounding": 37,
+    "required_lowest_terms": 11,
+    "stale_embedded_hint": 2,
+    "unbound_solution_symbols": 1,
+    "instructional_explanation": 7,
+    "numeric_domain_and_instructional_level": 1,
+    "numeric_domain": 2,
+    "required_improper_fraction": 1,
+    "mixed_number_output_scope": 2,
+    "decimal_or_money_answer_presentation": 11,
+    "instructional_level": 1,
+    "unintroduced_notation": 3,
+    "incomplete_target_skill": 1,
+    "benchmark_scope_ambiguity": 1,
+    "required_ratio_form": 2
+  },
+  "verification": {
+    "grounded": "Read all 90 current typed KP objectives, constraints, 360 exemplar problems, and complete selected-template bodies/domains/sketches/hints. Every current raw curriculum file equals the authoring packet source commit, so its prerequisite metadata is unchanged.",
+    "tested": "Independent Python recomputation matched all 1,096 complete finite-domain samples. Checked exact parameter/sample coverage and frozen artifact hashes. Used existing compiled content_audit_facts to load current curriculum.",
+    "inferred": "Legacy wrong-answer counterexamples follow inspected propagation/checker code and an existing regression test; the benchmark scope concern is explicitly uncertain.",
+    "not_verified": "No new Rust builds/tests, no new mechanical template/instruction gate run for these 90, no API writes or live approvals, and no full semantic reread of all 360 curriculum solution sketches in this pass."
+  },
+  "items": [
+    {
+      "key": "fraction-basics/kp1",
+      "template_arguments_sha256": "15cc58b92f27b4f3464bb784ee6b2023751f124e6da6494af22db4abb7899636",
+      "curriculum_objective": "A fraction as part of a whole",
+      "curriculum_constraints": "denominators 2-12",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "marked count / equal part count",
+      "domain_and_scope_evidence": "Marked counts1..3 < total parts 4..7; denominators within2..12.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 7,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 4
+              },
+              "exact_answer": "1/4",
+              "legacy_accepted_rounded_decimal": "0.2"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-basics/kp2",
+      "template_arguments_sha256": "b935eba43f28e9149b10710fe4c0d5e74c7f298f48316773d58fe7ba44bf314b",
+      "curriculum_objective": "Fractions of a set",
+      "curriculum_constraints": "whole numbers up to 30; do not require simplifying",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "triangle count / total shapes",
+      "domain_and_scope_evidence": "Totals14..19 <=30; unreduced answers intentionally permitted.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 13
+              },
+              "exact_answer": "1/14",
+              "legacy_accepted_rounded_decimal": "0.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-basics/kp3",
+      "template_arguments_sha256": "9febc2846206107bc1d6df946c30b825de529b6fa855bc2f7e669338848f7228",
+      "curriculum_objective": "Comparing simple fractions and the whole",
+      "curriculum_constraints": "unit fractions or the whole; denominators 2-10",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "smaller denominator gives larger unit fraction",
+      "domain_and_scope_evidence": "Unit fractions denominators2..4 and6..9 within2..10.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 8,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 3,
+                "b": 6
+              },
+              "exact_answer": "1/3",
+              "legacy_accepted_rounded_decimal": "0.3"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fractions-on-number-line/kp1",
+      "template_arguments_sha256": "eeffe011d02a993e7e01c007e089e7c10e96a2bf3f99baad5f6ce7d773295dab",
+      "curriculum_objective": "Reading fractions between 0 and 1",
+      "curriculum_constraints": "denominators 2-10, fractions between 0 and 1",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "one minus count of equal steps",
+      "domain_and_scope_evidence": "b5..8 and a1..3 give coordinates strictlybetween 0 and 1.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 8,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 6
+              },
+              "exact_answer": "5/6",
+              "legacy_accepted_rounded_decimal": "0.8"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fractions-on-number-line/kp2",
+      "template_arguments_sha256": "060593d267f5767932f538eb5ff48ba2d65f50518939dbe76bcd54f6d97fbde0",
+      "curriculum_objective": "Locating fractions greater than one",
+      "curriculum_constraints": "improper fractions with denominators 2-6",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "complete groups of three fractional steps",
+      "domain_and_scope_evidence": "Denominator3 within2..6; a4..20 excludes multiples3 so each point is strictlybetween consecutive integers.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fractions-on-number-line/kp3",
+      "template_arguments_sha256": "b75fd6f37d1e07b4443773417ec9b5d2cbd0f57be48bb0d2167ebce4fe8a7284",
+      "curriculum_objective": "Whole numbers as fractions",
+      "curriculum_constraints": "denominators 2-10",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "whole count times fractional steps per whole",
+      "domain_and_scope_evidence": "Wholecoordinates2..4 and denominators4,6,7,8 within2..10.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "equivalent-fractions/kp1",
+      "template_arguments_sha256": "c56edf23b1e5fc4c07fd75830442dee2d2bf1ca1002e9ba2550ece14fed62f19",
+      "curriculum_objective": "Scaling up",
+      "curriculum_constraints": "target denominator is a small multiple of the original",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "same scaling factor applied to numerator",
+      "domain_and_scope_evidence": "Scale factors2,3,4 are small whole multiples of original denominator 7.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "equivalent-fractions/kp2",
+      "template_arguments_sha256": "b860a21ada95858914ba967c87ee94edfac805b5e3539ecfae159967f8fd717a",
+      "curriculum_objective": "Simplifying to lowest terms",
+      "curriculum_constraints": "numerator and denominator up to 30",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "GCF-reduced ratio to 24",
+      "domain_and_scope_evidence": "All a2..18 <=30, denominator24 <=30, every fraction reducible.",
+      "findings": [
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 11,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 2
+              },
+              "exact_answer": "1/12",
+              "legacy_accepted_rounded_decimal": "0.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "equivalent-fractions/kp3",
+      "template_arguments_sha256": "3e7080cdc35119ec166b1f9a8aa85943fbd1f50fad4642b07c4c2fc20fdced04",
+      "curriculum_objective": "Larger GCFs and comparing",
+      "curriculum_constraints": "values up to 60",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "common denominator makes larger numerator greater; reduce selected value",
+      "domain_and_scope_evidence": "Numerators12..30 and15..27 anddenominator36 <=60; selected result always reducible.",
+      "findings": [
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 11,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 12,
+                "b": 15
+              },
+              "exact_answer": "5/12",
+              "legacy_accepted_rounded_decimal": "0.4"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "comparing-ordering-fractions/kp1",
+      "template_arguments_sha256": "8d2b0ba7a8c4798c2161e0e18f52101c4e93c504f8562e333b7a1a2fe866b8b7",
+      "curriculum_objective": "Same denominator or same numerator",
+      "curriculum_constraints": "denominators up to 12",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "common denominator, smaller numerator",
+      "domain_and_scope_evidence": "Denominator11 <=12; compare same-denominator coordinates.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 5
+              },
+              "exact_answer": "1/11",
+              "legacy_accepted_rounded_decimal": "0.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "comparing-ordering-fractions/kp2",
+      "template_arguments_sha256": "0ab13d592f98471ca56efb91dba903e348df2f961de6faac961698e34e9b1079",
+      "curriculum_objective": "Comparing with common denominators",
+      "curriculum_constraints": "unlike denominators up to 12",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "compare exact fifths and sevenths",
+      "domain_and_scope_evidence": "Unlike denominators5,7 <=12; exact comparisons never tie on the declared set.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 8,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 2
+              },
+              "exact_answer": "2/7",
+              "legacy_accepted_rounded_decimal": "0.3"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "comparing-ordering-fractions/kp3",
+      "template_arguments_sha256": "32de7b9120aa30708b4c39e8fcaaf4857e7efb469f8e8aa84b596c8dd2c7cdae",
+      "curriculum_objective": "Ordering and benchmark comparisons",
+      "curriculum_constraints": "3 fractions or a benchmark of 1/2 or 1",
+      "decision": "revise",
+      "finite_domain_count": 16,
+      "arithmetic": "compare exact fraction to half benchmark",
+      "domain_and_scope_evidence": "Denominators10,12; benchmark1/2; filters ensure proper fraction and exclude equality.",
+      "findings": [
+        {
+          "category": "stale_embedded_hint",
+          "decision": "revise",
+          "evidence": "The domain includes denominators10 and12 and asks which value is greater. Hints hardcode denominator12 and tell learners to subtract and reduce a difference.",
+          "required_change": "Use the actual denominator or compare twice the numerator with the denominator; finish by selecting the greater original value."
+        },
+        {
+          "category": "unbound_solution_symbols",
+          "decision": "revise",
+          "evidence": "The concrete rendered task does not define variables a,d, but the solution says '2a' and 'a/d' as literal text rather than rendered parameter holes.",
+          "required_change": "Use named quantities or correctly rendered numeric substitutions in the solution."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 5,
+            "full_bindings": 16,
+            "counterexample": {
+              "params": {
+                "a": 7,
+                "d": 12
+              },
+              "exact_answer": "7/12",
+              "legacy_accepted_rounded_decimal": "0.6"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "adding-subtracting-like-fractions/kp1",
+      "template_arguments_sha256": "46fecb27a082803440a9d6b9c08dca7486bfb36e60076bab43fec0be80a47e16",
+      "curriculum_objective": "Adding with like denominators",
+      "curriculum_constraints": "same denominator up to 12; sum less than 1, no simplifying needed",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "add like elevenths",
+      "domain_and_scope_evidence": "Denominator11 <=12; numerator sums5..10 <11 and coprime11.",
+      "findings": [
+        {
+          "category": "stale_embedded_hint",
+          "decision": "revise",
+          "evidence": "The repaired statement and expression use denominator11, but both embedded hints still use12.",
+          "required_change": "Retain denominator11 and compare/add the actual numerator counts."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 4
+              },
+              "exact_answer": "5/11",
+              "legacy_accepted_rounded_decimal": "0.5"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "adding-subtracting-like-fractions/kp2",
+      "template_arguments_sha256": "1773d28604aab26dc5f3c248d0b20b34c327417d3e51a76a5a90daeea88bfa91",
+      "curriculum_objective": "Subtracting with like denominators",
+      "curriculum_constraints": "same denominator up to 12; simplify the result",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "subtract one eighth, reduce",
+      "domain_and_scope_evidence": "Denominator8 <=12; a numerator bound is NOT stated, so b13..19 is not itself a bound violation. Some inputs are improper; raw results at odd b need reduction.",
+      "findings": [
+        {
+          "category": "instructional_explanation",
+          "decision": "revise",
+          "evidence": "The sole hint and solution sketch repeat generic fraction-equivalence boilerplate. Neither explains this addition/subtraction/multiplication operation nor works the displayed instance.",
+          "required_change": "Author an operation-specific rendered solution and useful embedded hint. For unlike sums show equivalent fractions at a common denominator; for products show numerator/denominator multiplication and the KP-specific simplification or cross-cancellation."
+        },
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 11,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "b": 6
+              },
+              "exact_answer": "5/8",
+              "legacy_accepted_rounded_decimal": "0.6"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "adding-subtracting-like-fractions/kp3",
+      "template_arguments_sha256": "cf6752600905601ada6164eeb586a6ce8d7a49f1db8dec52d896521562a28cf3",
+      "curriculum_objective": "Sums past one and simplifying",
+      "curriculum_constraints": "same denominator; results may exceed 1, give lowest terms",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "add like sixths, reduce",
+      "domain_and_scope_evidence": "Same denominator6; sums11/6..25/6 exceed1; every answer non-integral, some reducible.",
+      "findings": [
+        {
+          "category": "instructional_explanation",
+          "decision": "revise",
+          "evidence": "The sole hint and solution sketch repeat generic fraction-equivalence boilerplate. Neither explains this addition/subtraction/multiplication operation nor works the displayed instance.",
+          "required_change": "Author an operation-specific rendered solution and useful embedded hint. For unlike sums show equivalent fractions at a common denominator; for products show numerator/denominator multiplication and the KP-specific simplification or cross-cancellation."
+        },
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 10,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "b": 6
+              },
+              "exact_answer": "11/6",
+              "legacy_accepted_rounded_decimal": "1.8"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "adding-subtracting-fractions/kp1",
+      "template_arguments_sha256": "0dc7412c8a56d31594d2254b03ba6deea30cf3924f9ea340f647459862eb8a43",
+      "curriculum_objective": "One denominator divides the other",
+      "curriculum_constraints": "one denominator a multiple of the other, up to 12",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "convert halves to eighths",
+      "domain_and_scope_evidence": "Denominator2 divides8; both<=12. No numerator bound is stated.",
+      "findings": [
+        {
+          "category": "instructional_explanation",
+          "decision": "revise",
+          "evidence": "The sole hint and solution sketch repeat generic fraction-equivalence boilerplate. Neither explains this addition/subtraction/multiplication operation nor works the displayed instance.",
+          "required_change": "Author an operation-specific rendered solution and useful embedded hint. For unlike sums show equivalent fractions at a common denominator; for products show numerator/denominator multiplication and the KP-specific simplification or cross-cancellation."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "b": 2
+              },
+              "exact_answer": "11/8",
+              "legacy_accepted_rounded_decimal": "1.4"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "adding-subtracting-fractions/kp2",
+      "template_arguments_sha256": "3432f61e3a92549d3c011d6f3455bfd71222cef2c3cc1d0c8d5fb80e2fa1b53d",
+      "curriculum_objective": "Unlike denominators via the LCM",
+      "curriculum_constraints": "denominators up to 12, unlike",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "convert fourths and sixths to twelfths",
+      "domain_and_scope_evidence": "Unlike denominators4,6 <=12; common denominator12. No numerator bound is stated.",
+      "findings": [
+        {
+          "category": "instructional_explanation",
+          "decision": "revise",
+          "evidence": "The sole hint and solution sketch repeat generic fraction-equivalence boilerplate. Neither explains this addition/subtraction/multiplication operation nor works the displayed instance.",
+          "required_change": "Author an operation-specific rendered solution and useful embedded hint. For unlike sums show equivalent fractions at a common denominator; for products show numerator/denominator multiplication and the KP-specific simplification or cross-cancellation."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "b": 2
+              },
+              "exact_answer": "2/3",
+              "legacy_accepted_rounded_decimal": "0.7"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "adding-subtracting-fractions/kp3",
+      "template_arguments_sha256": "a6dc310db2232bbef4d457ba62234edc8ecd78bf4f0cc8fb247638c684f10534",
+      "curriculum_objective": "Sums greater than one and three fractions",
+      "curriculum_constraints": "denominators up to 12; results may exceed 1",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "sum three fractions in twelfths",
+      "domain_and_scope_evidence": "Exactly three addends with denominators2,3,4 <=12. Not every sum exceeds1, which is permitted by 'may exceed1'.",
+      "findings": [
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 1,
+                "c": 1
+              },
+              "exact_answer": "13/12",
+              "legacy_accepted_rounded_decimal": "1.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-of-a-number/kp1",
+      "template_arguments_sha256": "1cceedce0ee22c96ad5e53dc8d497835248d894626c5f725e79c4f1973997f9d",
+      "curriculum_objective": "Unit fraction of a number",
+      "curriculum_constraints": "denominator divides the whole number evenly",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "split whole into two shares",
+      "domain_and_scope_evidence": "Every whole a14..36 is even; denominator2 divides evenly.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-of-a-number/kp2",
+      "template_arguments_sha256": "23ae5fbc85184d182ea76908991756c9936d192217990c5e7be4e58c78f14033",
+      "curriculum_objective": "General fraction of a number",
+      "curriculum_constraints": "denominator divides the whole number; numerator 2-9",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "find quarter and count three",
+      "domain_and_scope_evidence": "Whole a24..68 divisibleby4; selected numerator3 is within2..9. The60 bound belongs to kp3, not this KP.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-of-a-number/kp3",
+      "template_arguments_sha256": "375825e5a4928fd2c8a0aeff343bfee114625300080284b4bfbb74de39ddcc9e",
+      "curriculum_objective": "Fraction of a quantity in context",
+      "curriculum_constraints": "whole-number answers; quantities up to 60",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "occupied half of seat count",
+      "domain_and_scope_evidence": "Whole a26..48 <=60; occupiedhalf is whole-number count. Direction is forward from known whole.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "multiplying-fractions/kp1",
+      "template_arguments_sha256": "3b779ee9db0b011c54c833895fd68f5a22aa57bc1d5a9c92853ec7e46572d321",
+      "curriculum_objective": "Multiply numerators and denominators",
+      "curriculum_constraints": "numerators and denominators up to 9; result already in lowest terms",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "numerator product 4b and denominator product15",
+      "domain_and_scope_evidence": "Numeric/lowest-terms violations detailed separately:9of12bindings invalid.",
+      "findings": [
+        {
+          "category": "instructional_explanation",
+          "decision": "revise",
+          "evidence": "The sole hint and solution sketch repeat generic fraction-equivalence boilerplate. Neither explains this addition/subtraction/multiplication operation nor works the displayed instance.",
+          "required_change": "Author an operation-specific rendered solution and useful embedded hint. For unlike sums show equivalent fractions at a common denominator; for products show numerator/denominator multiplication and the KP-specific simplification or cross-cancellation."
+        },
+        {
+          "category": "numeric_domain_and_instructional_level",
+          "decision": "revise",
+          "evidence": {
+            "bound": "all numerator and denominator values <=9",
+            "out_of_bound_b": [
+              10,
+              11,
+              12,
+              13,
+              14
+            ],
+            "raw_product_must_already_be_reduced": "gcd(4b,15)=1",
+            "reducible_b": [
+              3,
+              5,
+              6,
+              9,
+              10,
+              12
+            ],
+            "combined_invalid_b": [
+              3,
+              5,
+              6,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ],
+            "invalid_bindings": 9,
+            "total_bindings": 12
+          },
+          "required_change": "Replace the domain/family so every operand component is <=9 and the direct numerator-product/denominator-product is coprime. At least12 distinct valid problems; varying more operand components is necessary rather than keeping only the3 valid b values."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 8,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "b": 4
+              },
+              "exact_answer": "16/15",
+              "legacy_accepted_rounded_decimal": "1.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "multiplying-fractions/kp2",
+      "template_arguments_sha256": "7275df739d217748f6ebf61abee99f439c0a07f43f7fc4c3b5e5756e22f91a67",
+      "curriculum_objective": "Simplifying the result",
+      "curriculum_constraints": "result reducible; values up to 12",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "numerator product3b/12 reduces to b/4",
+      "domain_and_scope_evidence": "Values>12 in5of12bindings; raw product3b/12 is always reducible.",
+      "findings": [
+        {
+          "category": "instructional_explanation",
+          "decision": "revise",
+          "evidence": "The sole hint and solution sketch repeat generic fraction-equivalence boilerplate. Neither explains this addition/subtraction/multiplication operation nor works the displayed instance.",
+          "required_change": "Author an operation-specific rendered solution and useful embedded hint. For unlike sums show equivalent fractions at a common denominator; for products show numerator/denominator multiplication and the KP-specific simplification or cross-cancellation."
+        },
+        {
+          "category": "numeric_domain",
+          "decision": "revise",
+          "evidence": {
+            "constraint": "values up to12",
+            "invalid_b": [
+              13,
+              14,
+              15,
+              17,
+              18
+            ],
+            "invalid_bindings": 5,
+            "total_bindings": 12
+          },
+          "required_change": "Keep all operand numerators/denominators <=12. Vary other valid factors to retain at least 12 distinct problems. kp2 requires reducible raw products; kp3 must teach cancellation before multiplication."
+        },
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 8,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "b": 3
+              },
+              "exact_answer": "3/4",
+              "legacy_accepted_rounded_decimal": "0.8"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "multiplying-fractions/kp3",
+      "template_arguments_sha256": "6e8438df16758a452d3d52d2c58582967b625554a6d0faa972b5e6f4a2f63f08",
+      "curriculum_objective": "Cross-cancelling and whole-number factors",
+      "curriculum_constraints": "cancel common factors before multiplying; values up to 12",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "9b/60 reduces to 3b/20",
+      "domain_and_scope_evidence": "Values>12 in5of12bindings; cross-cancellation9with6 is available for every binding.",
+      "findings": [
+        {
+          "category": "instructional_explanation",
+          "decision": "revise",
+          "evidence": "The sole hint and solution sketch repeat generic fraction-equivalence boilerplate. Neither explains this addition/subtraction/multiplication operation nor works the displayed instance.",
+          "required_change": "Author an operation-specific rendered solution and useful embedded hint. For unlike sums show equivalent fractions at a common denominator; for products show numerator/denominator multiplication and the KP-specific simplification or cross-cancellation."
+        },
+        {
+          "category": "numeric_domain",
+          "decision": "revise",
+          "evidence": {
+            "constraint": "values up to12",
+            "invalid_b": [
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "invalid_bindings": 5,
+            "total_bindings": 12
+          },
+          "required_change": "Keep all operand numerators/denominators <=12. Vary other valid factors to retain at least 12 distinct problems. kp2 requires reducible raw products; kp3 must teach cancellation before multiplication."
+        },
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 6,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "b": 7
+              },
+              "exact_answer": "21/20",
+              "legacy_accepted_rounded_decimal": "1.0"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "dividing-fractions/kp1",
+      "template_arguments_sha256": "66feede7cd67f711800d5dc15fe5a8f8aa62e912585af3db8ad9f92bc0301960",
+      "curriculum_objective": "Reciprocals",
+      "curriculum_constraints": "simple fractions and whole numbers",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "inverse makes product one",
+      "domain_and_scope_evidence": "Positive nonzero simple fractions a2..4 over b5..8.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 5,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 3,
+                "b": 5
+              },
+              "exact_answer": "5/3",
+              "legacy_accepted_rounded_decimal": "1.7"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "dividing-fractions/kp2",
+      "template_arguments_sha256": "475fb20e84b97eec2dea7b81c231a27e97b951325b2cde22b6ac05c1d5c0d7fe",
+      "curriculum_objective": "Divide by multiplying by the reciprocal",
+      "curriculum_constraints": "denominators up to 12",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "litres / measure litres",
+      "domain_and_scope_evidence": "Denominators3,5 <=12; divisor b/5 neverzero.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 1
+              },
+              "exact_answer": "5/3",
+              "legacy_accepted_rounded_decimal": "1.7"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "dividing-fractions/kp3",
+      "template_arguments_sha256": "99eb87525ff7528624e4ea734bc38915f3be55ced2edea4cac1846d3017316f2",
+      "curriculum_objective": "Dividing with whole numbers",
+      "curriculum_constraints": "one operand is a whole number",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "fractional litres divided among whole cup count",
+      "domain_and_scope_evidence": "Exactly one whole operand b2..5; fraction a/7 proper and nonzero.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 2
+              },
+              "exact_answer": "1/14",
+              "legacy_accepted_rounded_decimal": "0.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "improper-fractions-mixed-numbers/kp1",
+      "template_arguments_sha256": "c4cba0ad8993f6296551d2f0aa7944ab4ec58631978431ea1e30a486cb49e02b",
+      "curriculum_objective": "Improper fraction to mixed number",
+      "curriculum_constraints": "single-digit whole parts; denominators up to 8",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "quotient/remainder decomposition in fifths",
+      "domain_and_scope_evidence": "Denominator5 <=8; whole parts 1..3 single-digit; nonzero proper remainders1..4.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "improper-fractions-mixed-numbers/kp2",
+      "template_arguments_sha256": "7856d65f0384cf0f87dacc4c2c3658ad0781903f3f2cadb4bc107741db62cd59",
+      "curriculum_objective": "Mixed number to improper fraction",
+      "curriculum_constraints": "whole parts 1-9; denominators up to 8",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "whole fifth count plus fractional fifth count",
+      "domain_and_scope_evidence": "Wholeparts2..4 within1..9; denominator5 <=8; fractional part 1..4 proper.",
+      "findings": [
+        {
+          "category": "required_improper_fraction",
+          "decision": "revise",
+          "evidence": "The task explicitly requests an improper fraction, but an absent contract permits equivalent decimal or mixed-value input.",
+          "required_change": "Use a fraction-form contract matching the requested representation; the current fifths all reduce to non-integral improper fractions, so reduced_fraction is suitable."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "improper-fractions-mixed-numbers/kp3",
+      "template_arguments_sha256": "49552625945dd1f036916d21f2f174682a0c9ea521ecd93210086260afbc43c4",
+      "curriculum_objective": "Comparing and locating mixed numbers",
+      "curriculum_constraints": "denominators up to 8",
+      "decision": "scope_accept",
+      "finite_domain_count": 24,
+      "arithmetic": "compare exact mixed coordinates",
+      "domain_and_scope_evidence": "All mixed-number denominators 5 <=8; whole/fraction comparison considers both; no equal pairs.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "mixed-numbers/kp1",
+      "template_arguments_sha256": "779ad9833e87ae81d41c7a68e59ae1778aeb7445da43b87fb8f26cc960b728fd",
+      "curriculum_objective": "Add mixed numbers",
+      "curriculum_constraints": "denominators up to 6",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "whole sum plus common-denominator fraction sum",
+      "domain_and_scope_evidence": "Operand denominators3,5 <=6; addition may require regrouping.",
+      "findings": [
+        {
+          "category": "mixed_number_output_scope",
+          "decision": "recommended_pedagogy",
+          "evidence": "All four curriculum exemplars compute or request a mixed-number result, while the selected task asks only for an exact quantity and accepts canonical improper fractions.",
+          "required_change": "Prefer a complete mixed-number response (whole and reduced proper fraction parts) so the result reflects the authored progression; the current statement itself does not explicitly demand mixed notation."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 2,
+                "b": 1
+              },
+              "exact_answer": "53/15",
+              "legacy_accepted_rounded_decimal": "3.5"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "mixed-numbers/kp2",
+      "template_arguments_sha256": "b8277a94b8ef07a10ed3c04d195e888ac4b630c8e129eb6d3d206a414a5a14f4",
+      "curriculum_objective": "Subtract mixed numbers, with regrouping",
+      "curriculum_constraints": "fraction part of the subtrahend may exceed the minuend's",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "regroup one whole into six sixths before subtraction",
+      "domain_and_scope_evidence": "Subtrahend fractional part  b/6 with b2..5 exceeds1/6; one-whole regrouping always valid; positive result.",
+      "findings": [
+        {
+          "category": "mixed_number_output_scope",
+          "decision": "recommended_pedagogy",
+          "evidence": "All four curriculum exemplars compute or request a mixed-number result, while the selected task asks only for an exact quantity and accepts canonical improper fractions.",
+          "required_change": "Prefer a complete mixed-number response (whole and reduced proper fraction parts) so the result reflects the authored progression; the current statement itself does not explicitly demand mixed notation."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 9,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 3,
+                "b": 2
+              },
+              "exact_answer": "11/6",
+              "legacy_accepted_rounded_decimal": "1.8"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "mixed-numbers/kp3",
+      "template_arguments_sha256": "cb627389277fe0b9c25dbf169db0867085eab1fe4c9111df7d0b426c4fb5353c",
+      "curriculum_objective": "Multiply mixed numbers",
+      "curriculum_constraints": "convert to improper fractions first",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "convert mixed side to halves, multiply by thirds",
+      "domain_and_scope_evidence": "Mixed operand converted to improper fraction then multiplied; otheroperand need not itself be mixed, consistent with exemplars.",
+      "findings": [
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 8,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 2,
+                "b": 1
+              },
+              "exact_answer": "5/6",
+              "legacy_accepted_rounded_decimal": "0.8"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "dividing-mixed-numbers/kp1",
+      "template_arguments_sha256": "492879143c2e4a1ecd81c01a8fabc2c19448ef6c0154229aad0dd6b00a9762ce",
+      "curriculum_objective": "Mixed number divided by a fraction",
+      "curriculum_constraints": "denominators up to 6",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "count half litres",
+      "domain_and_scope_evidence": "Both fraction denominators2 <=6; half-litre count is whole. No whole-part upper bound in this KP.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "dividing-mixed-numbers/kp2",
+      "template_arguments_sha256": "3987d1502ef0dd6e0cc7ad7becab0a91fbf56be00f0ca2e8f759574f5efcb06d",
+      "curriculum_objective": "Mixed number divided by a mixed number",
+      "curriculum_constraints": "denominators up to 6; give the answer in lowest terms",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "convert both mixed lengths and invert divisor",
+      "domain_and_scope_evidence": "Mixed-operand denominators 2,5 <=6; divisor positive; reduced result non-integral.",
+      "findings": [
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 10,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 2,
+                "b": 1
+              },
+              "exact_answer": "25/12",
+              "legacy_accepted_rounded_decimal": "2.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "dividing-mixed-numbers/kp3",
+      "template_arguments_sha256": "ea4dd1b6d2c2e4771d52b58e47c3adf63c43e7ac009983bfec591552365fc1ed",
+      "curriculum_objective": "Division in context",
+      "curriculum_constraints": "whole-number answers in context",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "half-litre jar count",
+      "domain_and_scope_evidence": "Half-litre jars produce whole-number answers2a+1.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-word-problems/kp1",
+      "template_arguments_sha256": "63ab8b133b94da5734d4d7a8df61ae5afcdb4d4efd101693571ed5ac9509b9f4",
+      "curriculum_objective": "Adding and subtracting in context",
+      "curriculum_constraints": "denominators up to 12; exact fraction answers",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "common fortieth distances",
+      "domain_and_scope_evidence": "Input denominators5,8 <=12; exact fractional sum.",
+      "findings": [
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 9,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1,
+                "b": 1
+              },
+              "exact_answer": "13/40",
+              "legacy_accepted_rounded_decimal": "0.3"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-word-problems/kp2",
+      "template_arguments_sha256": "4cececeacfbf5c92b4b6a64bb1215adbdd066ba7655a7e91961324a8cd0a49d5",
+      "curriculum_objective": "Fraction-of-a-quantity in context",
+      "curriculum_constraints": "two steps; whole-number answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "three remaining quarter shares",
+      "domain_and_scope_evidence": "Quarter used then remainder; whole a28..72 divisibleby4; two-step whole-number answers. No60 bound stated.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-word-problems/kp3",
+      "template_arguments_sha256": "d8aca79112b8e88b788ac96ea7fd7634347364111298ce614336bae21d683d2a",
+      "curriculum_objective": "Division and multi-step problems",
+      "curriculum_constraints": "division by a fraction; whole-number answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "two half-metre frames per metre",
+      "domain_and_scope_evidence": "Divisor 1/2 fraction; exact whole frame counts 2a.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-place-value/kp1",
+      "template_arguments_sha256": "e443e280f2227e967a5524daba5c97432401861ccc7c280ff0947a09d991a0ef",
+      "curriculum_objective": "Tenths and hundredths",
+      "curriculum_constraints": "numbers with 1-2 decimal places",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "tenths digit contribution",
+      "domain_and_scope_evidence": "Displayed2.ab has exactly2 decimal places, a1..3 valid tenths digit.",
+      "findings": [
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-place-value/kp2",
+      "template_arguments_sha256": "85ea4629b3c743c97001becbfd8b937165ebcdc6b415eea349d1f4c0d16de85e",
+      "curriculum_objective": "Decimals as fractions over 10 and 100",
+      "curriculum_constraints": "denominators 10 or 100; no simplifying required",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "hundredths count from displayed tenths/hundredths",
+      "domain_and_scope_evidence": "Displayed0.ab over100; numeratorrequest uniquely determines complete hundredths fraction since denominator specified.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-place-value/kp3",
+      "template_arguments_sha256": "c9965e1f3c950e6b357b55e27eb3571cb8e0799a2880fb8cd43f355ce3097c65",
+      "curriculum_objective": "Thousandths",
+      "curriculum_constraints": "numbers with 3 decimal places",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "thousandths digit contribution",
+      "domain_and_scope_evidence": "Displayed6.a0b has exactly3 decimal places; b1,3,5,7 valid thousandths digits.",
+      "findings": [
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 2,
+                "b": 1
+              },
+              "exact_answer": "1/1000",
+              "legacy_accepted_rounded_decimal": "0.0"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "comparing-ordering-decimals/kp1",
+      "template_arguments_sha256": "e7ee53f78dd2fce8f04abdfc1a4980b0f14d5221defb7a663f411ec022fffe7c",
+      "curriculum_objective": "Comparing two decimals",
+      "curriculum_constraints": "1-2 decimal places; traps where more digits does not mean larger",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "compare padded tenths and hundredths",
+      "domain_and_scope_evidence": "One-place0.a andtwo-place0.b9; both winners occur across12bindings, so digit-count trap represented.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "comparing-ordering-decimals/kp2",
+      "template_arguments_sha256": "5408324c2528b4ecf84b0b1a283b1eb7eab20619efe0d9661f38655e78a2d38c",
+      "curriculum_objective": "Trailing zeros",
+      "curriculum_constraints": "pairs differing only by trailing zeros",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "trailing zero leaves equal values and zero difference",
+      "domain_and_scope_evidence": "Values differ only by  trailing zero and are equal; task-level subtraction concern separate.",
+      "findings": [
+        {
+          "category": "instructional_level",
+          "decision": "revise",
+          "evidence": "The authored curriculum compares values differing only by trailing zeros; the template instead asks a numerical difference and every answer is0. Decimal subtraction is a later topic.",
+          "required_change": "Ask directly whether the represented values are equal, with an explicit label/relation contract. Preserve the trailing-zero-only scope; avoid adding unrelated arithmetic just to vary answers."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "comparing-ordering-decimals/kp3",
+      "template_arguments_sha256": "61b2ff3f92e1f5ca51f507b741ee6ae83d156c5e6a1f987dee8bd80be6ead73e",
+      "curriculum_objective": "Ordering lists of decimals",
+      "curriculum_constraints": "3 decimals with different numbers of places",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "sort exact values represented by one/two/three decimal places",
+      "domain_and_scope_evidence": "Exactlythree distinct decimals with1,2,3places; full sorted output required.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "rounding-decimals/kp1",
+      "template_arguments_sha256": "7712c8d67427eaab673f5c7458615ae4b028dcbd937fdec40cb8b2c017a5c291",
+      "curriculum_objective": "Round to the nearest whole number",
+      "curriculum_constraints": "1-2 decimal places",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "nearest integer via exact positive half-up boundary",
+      "domain_and_scope_evidence": "All inputs2 decimal places within1..2; positive half-up rounding expression correct.",
+      "findings": [
+        {
+          "category": "unintroduced_notation",
+          "decision": "revise",
+          "evidence": "The solution explains elementary rounding with floor brackets and a floor-function algorithm. The KP and prerequisites teach decimal place value/rounding, not floor notation.",
+          "required_change": "Explain the requested place, the next digit, and any carry in ordinary place-value steps. Preserve exact half-up behavior of these authored tasks."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "rounding-decimals/kp2",
+      "template_arguments_sha256": "c52d7636d3272e0ba6696d227234c1fc1645736c725573f87cdf1a8db05655ef",
+      "curriculum_objective": "Round to the nearest tenth or hundredth",
+      "curriculum_constraints": "2-3 decimal places",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "nearest tenth via exact scaled half-up boundary",
+      "domain_and_scope_evidence": "All inputs2 decimal places within2..3; requested target tenth; exact rounded values computed.",
+      "findings": [
+        {
+          "category": "unintroduced_notation",
+          "decision": "revise",
+          "evidence": "The solution explains elementary rounding with floor brackets and a floor-function algorithm. The KP and prerequisites teach decimal place value/rounding, not floor notation.",
+          "required_change": "Explain the requested place, the next digit, and any carry in ordinary place-value steps. Preserve exact half-up behavior of these authored tasks."
+        },
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "rounding-decimals/kp3",
+      "template_arguments_sha256": "85f57c2334dc9f023e0f5dc6044a4210919a7dcc749d0065fb3fb44611558ea1",
+      "curriculum_objective": "Money and carrying the round",
+      "curriculum_constraints": "include cases where rounding carries across places",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "nearest cent via exact scaled half-up boundary",
+      "domain_and_scope_evidence": "Inputs end in .995..999, every rounding to the cent carries through nines to next whole.",
+      "findings": [
+        {
+          "category": "unintroduced_notation",
+          "decision": "revise",
+          "evidence": "The solution explains elementary rounding with floor brackets and a floor-function algorithm. The KP and prerequisites teach decimal place value/rounding, not floor notation.",
+          "required_change": "Explain the requested place, the next digit, and any carry in ordinary place-value steps. Preserve exact half-up behavior of these authored tasks."
+        },
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-multiplication-powers-of-ten/kp1",
+      "template_arguments_sha256": "240022370748e4ba34327bc4a429de27e99780e0bedcd0490968add3a6ba1102",
+      "curriculum_objective": "Multiply by 10 and 100",
+      "curriculum_constraints": "1-2 decimal places",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "one hundred identical tile masses",
+      "domain_and_scope_evidence": "Each factor a has2 decimal places; multipliedby100.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-multiplication-powers-of-ten/kp2",
+      "template_arguments_sha256": "1d6d60a7e31870f2b4d53938510f4a0d892372041a14f76b3bccd066fdfc554b",
+      "curriculum_objective": "Divide by 10 and 100",
+      "curriculum_constraints": "results have at most 3 decimal places",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "one hundred equal volume shares",
+      "domain_and_scope_evidence": "Wholevalues31..42 dividedby100 produce <=2 places, within3-place bound.",
+      "findings": [
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 11,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 31
+              },
+              "exact_answer": "31/100",
+              "legacy_accepted_rounded_decimal": "0.3"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-multiplication-powers-of-ten/kp3",
+      "template_arguments_sha256": "c712f8b13b26f52b0f5cd02479385c3903478e4a2842a284310086c1637f473d",
+      "curriculum_objective": "Thousands and combined moves",
+      "curriculum_constraints": "shifts of 3 places, may need padding zeros",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "one thousand metres per kilometre",
+      "domain_and_scope_evidence": "Values0.013..0.025 multipliedby1000, a3-place shift. Paddingzero cases optional('mayneed').",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-addition-subtraction/kp1",
+      "template_arguments_sha256": "d088bbf02acf6cf3707e17169bd54379cf98593836c10589ad9b529be2c81126",
+      "curriculum_objective": "Adding decimals",
+      "curriculum_constraints": "1-2 decimal places; align the decimal points",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "add exact hundredths of kilometre",
+      "domain_and_scope_evidence": "One-place a plus2-place2.65; alignmenttargetpresent.",
+      "findings": [
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": "1.1"
+              },
+              "exact_answer": "15/4",
+              "legacy_accepted_rounded_decimal": "3.8"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-addition-subtraction/kp2",
+      "template_arguments_sha256": "b5bdc811bded28d4d435a5e740175045a737fce4983ee8c588eac68d8d02e6bd",
+      "curriculum_objective": "Subtracting decimals",
+      "curriculum_constraints": "operands may have different numbers of decimal places",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "subtract exact hundredths of litre",
+      "domain_and_scope_evidence": "One-place a minus2-place1.75; positive result, regrouping needed for somebindings.",
+      "findings": [
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": "4.1"
+              },
+              "exact_answer": "47/20",
+              "legacy_accepted_rounded_decimal": "2.4"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-addition-subtraction/kp3",
+      "template_arguments_sha256": "a27aa78fb3246c52c96cd85e16dbcc92c92a2ba4cbb4a8d44f21de564d74d444",
+      "curriculum_objective": "Money computations",
+      "curriculum_constraints": "euro amounts to the cent",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "add exact euro cents",
+      "domain_and_scope_evidence": "Euro inputs given to cents; exact sum has2 decimal places.",
+      "findings": [
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": "3.10"
+              },
+              "exact_answer": "119/20",
+              "legacy_accepted_rounded_decimal": "6.0"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-operations/kp1",
+      "template_arguments_sha256": "873c000102631442a05b33e017d7b22ff049f12d7ce9727ed08ecc3b1abbbabb",
+      "curriculum_objective": "Multiply decimals",
+      "curriculum_constraints": "at most 1 decimal place per factor",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "area product of exact decimal side lengths",
+      "domain_and_scope_evidence": "Both factors haveat most 1 decimal place; product hasat most 2.",
+      "findings": [
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 10,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": "0.2"
+              },
+              "exact_answer": "3/25",
+              "legacy_accepted_rounded_decimal": "0.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-operations/kp2",
+      "template_arguments_sha256": "409430774cd78dc0668c4dd06cf596c10ab03466e18a88176400cbbac616d157",
+      "curriculum_objective": "Divide by a whole number",
+      "curriculum_constraints": "1-digit divisor; quotients terminate within 2 decimal places",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "four equal volume shares",
+      "domain_and_scope_evidence": "One-digit divisor 4; a increments0.2 soquotients terminate within2 places.",
+      "findings": [
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 7,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": "1.4"
+              },
+              "exact_answer": "7/20",
+              "legacy_accepted_rounded_decimal": "0.4"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "decimal-operations/kp3",
+      "template_arguments_sha256": "25c9401fbabea299f0cc3b77e75f9a1c71d68cf2d879af0aed31d54801e06bf9",
+      "curriculum_objective": "Divide by a decimal",
+      "curriculum_constraints": "shift both numbers until the divisor is whole",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "five 0.2-litre measures per litre",
+      "domain_and_scope_evidence": "Decimal divisor 0.2 becomes whole 2 whenboth operands scaled by 10.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-decimal-conversion/kp1",
+      "template_arguments_sha256": "566dbdd4fa26991941ca3615d28d062b1c997f0d194cb1c65d557c9be38e96c6",
+      "curriculum_objective": "Fraction to decimal",
+      "curriculum_constraints": "terminating decimals; denominators 2, 4, 5, 8, 10",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "full exact numerator/denominator quotient",
+      "domain_and_scope_evidence": "Denominators2,4,5,8 allowed; full terminating quotient required bydecimal contract.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-decimal-conversion/kp2",
+      "template_arguments_sha256": "989c1c83ab961a6f5541154bb824b2117fd3a3bbdd0c74a0e4e3a36f6b8d130c",
+      "curriculum_objective": "Decimal to fraction",
+      "curriculum_constraints": "1-2 decimal places",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "same exact decimal rational expressed as reduced fraction",
+      "domain_and_scope_evidence": "Every input has2 decimal places; all reducible over100.",
+      "findings": [
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": "0.12"
+              },
+              "exact_answer": "3/25",
+              "legacy_accepted_rounded_decimal": "0.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "fraction-decimal-conversion/kp3",
+      "template_arguments_sha256": "290a349790803f09445278d9b35dc24193c14b7b9ed6bd2c6d95231b8c2b8610",
+      "curriculum_objective": "Longer divisions and repeating decimals",
+      "curriculum_constraints": "may include a simple repeating decimal",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "a/99 has two-digit repeating numerator block when a is not multiple11",
+      "domain_and_scope_evidence": "a/99 withnon-multiple of 11  a yields primitive 2-digit cycle; repeatingdecimals explicitlyallowed.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-conversions/kp1",
+      "template_arguments_sha256": "8d558d553ecec217fefb8f9e1678c0ff34b6d52bbce96d25aa66651f1fee9828",
+      "curriculum_objective": "Percent and decimal",
+      "curriculum_constraints": "whole-number percents",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "hundredths digit of whole percent divided by100, per actual incomplete task",
+      "domain_and_scope_evidence": "Wholepercent31..42 satisfiesnumericbound but onlylast digit requested; target-skill failure separate.",
+      "findings": [
+        {
+          "category": "incomplete_target_skill",
+          "decision": "revise",
+          "evidence": "The task asks for only the hundredths digit after conversion:31% and41% both accept1. Returning that digit does not demonstrate conversion of the complete percent to a decimal.",
+          "required_change": "Request the complete decimal and use required_form decimal. Recompute every sample and revise the solution to show division by100."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-conversions/kp2",
+      "template_arguments_sha256": "bf9d64b3f895c79f1b7d0f17d96641c8bd75c35c12a0d742e0ceb11b6494f6b9",
+      "curriculum_objective": "Percent and fraction",
+      "curriculum_constraints": "percents that simplify to small fractions",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "percent counts per hundred, reduce",
+      "domain_and_scope_evidence": "Percents5..90 produce small reduced fractions, denominators2..20.",
+      "findings": [
+        {
+          "category": "required_lowest_terms",
+          "decision": "revise",
+          "evidence": "The curriculum and/or statement requires a reduced fraction, but answer_contract is absent. Value-equivalent unreduced fractions are accepted by the legacy checker.",
+          "required_change": "Use required_form reduced_fraction and explicitly request lowest terms. These current domains produce non-integral outputs; if a replacement permits integral outputs, choose a contract/answer representation that handles those intentionally."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 4,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 5
+              },
+              "exact_answer": "1/20",
+              "legacy_accepted_rounded_decimal": "0.0"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-conversions/kp3",
+      "template_arguments_sha256": "121da785b6938319718299587252a8afa68d3aed7ab7eca32197dfb38c1742df",
+      "curriculum_objective": "Benchmarks and percents beyond 100",
+      "curriculum_constraints": "benchmark fractions (halves, quarters, fifths, tenths); percents up to 200",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "whole scale factor multiplied by hundred",
+      "domain_and_scope_evidence": "Scale values  correspondto tenths/quarters/halves/fifths; output percents 10..200.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-of-a-number/kp1",
+      "template_arguments_sha256": "0a0bc0e7a45b83740e62220f5d61b8c030e7cf23f4ba1fa1b55b5025e43c5b2a",
+      "curriculum_objective": "Percent of a number via decimals",
+      "curriculum_constraints": "results are whole numbers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "thirty percent of item count",
+      "domain_and_scope_evidence": "30 percent of multiples of 10 gives whole counts.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-of-a-number/kp2",
+      "template_arguments_sha256": "de380ce307df6b9d7c11bd30202ef5e2290d464eb4104d8d19636a04b8d9b30d",
+      "curriculum_objective": "Mental benchmarks",
+      "curriculum_constraints": "10%, 25%, 50% of clean numbers, done mentally",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "ten percent service amount",
+      "domain_and_scope_evidence": "10 percent ofclean multiples of 10; mentalplace-value method.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-of-a-number/kp3",
+      "template_arguments_sha256": "a2076db9ee8703c6ffd2e3d366fb0563eb3a3d3300ada0e18abe966297090efb",
+      "curriculum_objective": "Larger and smaller percents",
+      "curriculum_constraints": "percents from 1% to 200%; whole-number answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "original plus half for150percent",
+      "domain_and_scope_evidence": "150 percent within 1..200; whole inputs22..44 even give whole  output.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percentages/kp1",
+      "template_arguments_sha256": "138b3e609abf1aeac3cb24458b70c94add94a182ed6defad2519f3e5d0239dd7",
+      "curriculum_objective": "Finding what percent one number is of another",
+      "curriculum_constraints": "part/whole gives a benchmark percent",
+      "decision": "needs_scope_resolution",
+      "finite_domain_count": 12,
+      "arithmetic": "completed share out of50 converted to100",
+      "domain_and_scope_evidence": "20..42percent computed exactly; benchmarkinterpretation needsresolution as noted.",
+      "findings": [
+        {
+          "category": "benchmark_scope_ambiguity",
+          "decision": "needs_scope_resolution",
+          "evidence": {
+            "constraint": "part/whole gives a benchmark percent",
+            "actual_percent_values": [
+              20,
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36,
+              38,
+              40,
+              42
+            ],
+            "source_examples": [
+              25,
+              75,
+              35,
+              15
+            ],
+            "assessment": "Many produced values are outside the usual clean benchmark percentages. Curriculum does not enumerate the full allowed benchmark set, so this is a semantic scope concern, not a claimed numeric-bound theorem."
+          },
+          "required_change": "Use a clearly benchmark-aligned family (e.g. percentages explicitly represented in the curriculum and familiar multiples of5/10) or document an independently justified benchmark interpretation. Preserve at least 12 distinct tasks."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percentages/kp2",
+      "template_arguments_sha256": "d4fd50ba8f7c0078b662e6a6ac46c210f13e8e3edc14b655dc736ee47ad5b71a",
+      "curriculum_objective": "One-step percents in context",
+      "curriculum_constraints": "single-step; whole-number answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "ten percent rebate",
+      "domain_and_scope_evidence": "Single percent part computation, wholeeuroanswers.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percentages/kp3",
+      "template_arguments_sha256": "4a57dcc833ee65849a94d6ce3841d2f19575be64d59cb0e20c7cda94736e4575",
+      "curriculum_objective": "Choosing the right computation",
+      "curriculum_constraints": "mix of find-the-part and find-the-percent forms",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "quiz required part and independently wins/200 aspercent",
+      "domain_and_scope_evidence": "Both required computations represented; quiz counts whole; win percent may be a half-integer but no whole-numberconstraint on this KP.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-finding-the-whole/kp1",
+      "template_arguments_sha256": "a76f595858fbf59121ad894167442b831a0d88a985aaac4080612651ccf4aac9",
+      "curriculum_objective": "Find the whole given the part and percent",
+      "curriculum_constraints": "benchmark percents; whole-number answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "quarter payment scaled to whole",
+      "domain_and_scope_evidence": "25percentquarter benchmark; outputswhole.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-finding-the-whole/kp2",
+      "template_arguments_sha256": "ae337f93ab3388265ee856995a3d2dae29727301d734da021b72c21f8389551e",
+      "curriculum_objective": "Harder percents",
+      "curriculum_constraints": "percents that are not simple benchmarks",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "part divided by35percent",
+      "domain_and_scope_evidence": "35 percent is not a trivial half/quarter; a multiples7 producewhole price.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-finding-the-whole/kp3",
+      "template_arguments_sha256": "dc0e1c453a0bdab31ecbb955b62c0fc482ee4ee7b9aa482126f7f1d67c223087",
+      "curriculum_objective": "Finding the whole in context",
+      "curriculum_constraints": "one unknown whole; whole-number answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "one fifth deposit scaled to fullprice",
+      "domain_and_scope_evidence": "One unknown whole from20 percent deposit; whole price.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "understanding-ratios/kp1",
+      "template_arguments_sha256": "5a673853c70c5c1afd0fe254930a27557ffa65046c02e72a63c44d24c3d41664",
+      "curriculum_objective": "Writing ratios",
+      "curriculum_constraints": "part:part and part:whole forms; parts up to 20",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "red/blue counts represented as colon ratio",
+      "domain_and_scope_evidence": "Counts 1..13 and7 <=20; a excludes7 so gcd(a,7)=1.",
+      "findings": [
+        {
+          "category": "required_ratio_form",
+          "decision": "revise",
+          "evidence": "The statement requests simplest colon notation but answer_contract is absent and answer_expr evaluates to a rational fraction; colon-form samples do not themselves bind serving or grading notation.",
+          "required_change": "Use the existing reduced_ratio contract with its corresponding answer rendering; preserve the specified category order and reduced integer parts."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 12,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 1
+              },
+              "exact_answer": "1/7",
+              "legacy_accepted_rounded_decimal": "0.1"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "understanding-ratios/kp2",
+      "template_arguments_sha256": "d739168c73cdc69f56d6d8d8a828fd94cc3bc318d1c179a9cf791d16cfde1315",
+      "curriculum_objective": "Simplifying ratios",
+      "curriculum_constraints": "parts up to 40",
+      "decision": "revise",
+      "finite_domain_count": 12,
+      "arithmetic": "reduce ratio parts by common factor",
+      "domain_and_scope_evidence": "Bothparts a <=20 and40 <=40; every ratio reducible.",
+      "findings": [
+        {
+          "category": "required_ratio_form",
+          "decision": "revise",
+          "evidence": "The statement requests simplest colon notation but answer_contract is absent and answer_expr evaluates to a rational fraction; colon-form samples do not themselves bind serving or grading notation.",
+          "required_change": "Use the existing reduced_ratio contract with its corresponding answer rendering; preserve the specified category order and reduced integer parts."
+        },
+        {
+          "category": "legacy_learner_selected_rounding",
+          "decision": "revise",
+          "evidence": {
+            "affected_bindings": 7,
+            "full_bindings": 12,
+            "counterexample": {
+              "params": {
+                "a": 2
+              },
+              "exact_answer": "1/20",
+              "legacy_accepted_rounded_decimal": "0.0"
+            },
+            "proof_basis": "TemplateDoc absent policy propagates None to Instance/PoolAnswer. Legacy check accepts exact half-even rounding at learner-selected decimal precision; existing answer_contract.rs test explicitly proves 1/3 ->0.3. Counterexamples here are independently derived using exact rationals, not executed as new Rust tests."
+          },
+          "required_change": "Bind an explicit exact or stronger required-form contract. Preserve fixed rounding tasks by evaluating their intended rounded result and then checking that result exactly."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "understanding-ratios/kp3",
+      "template_arguments_sha256": "3448bbeecfa98603555ca0831486f78d4051bfb4572ae09e1b405fc3ac6a720f",
+      "curriculum_objective": "Equivalent ratios",
+      "curriculum_constraints": "scale factors 2-5",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "scale original first part to common second part, compare to6",
+      "domain_and_scope_evidence": "Second term 14,21,28,35 dividedby7 givesscale factors 2..5; equivalenceyes/no both present.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "ratio-tables-equivalent-ratios/kp1",
+      "template_arguments_sha256": "317233a64a9401faefab9d55bd9d048ceef0891004f438825c7f1e487a55acb1",
+      "curriculum_objective": "Completing a ratio table",
+      "curriculum_constraints": "whole-number scale factors",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "same whole multiplier on input/output",
+      "domain_and_scope_evidence": "Input b 4,6,8,10 /2 giveswholefactor2..5.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "ratio-tables-equivalent-ratios/kp2",
+      "template_arguments_sha256": "f0e1c36d50a989728aae71b159c38e00b04d63a38f1d2f402aedf7256e145852",
+      "curriculum_objective": "Scaling ratios up and down",
+      "curriculum_constraints": "scale factors 2-8; whole-number answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "whole scale factor in drawing relation",
+      "domain_and_scope_evidence": "Scale factors  b2..5 within2..8; whole metres.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "ratio-tables-equivalent-ratios/kp3",
+      "template_arguments_sha256": "cf4010d83935408255af04038b0e54529e58e816b949e331d00129a89de19bbf",
+      "curriculum_objective": "Comparing ratios",
+      "curriculum_constraints": "compare after rewriting with a common part",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "compare scoops at common sixcupvolume; no ties",
+      "domain_and_scope_evidence": "Both mixes explicitly scaled to 6 cups; ties excluded by actual choices; both stronger labels occur.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "unit-rates/kp1",
+      "template_arguments_sha256": "edc8d8d4a269c6fa0587c8c04a3b4ec93c54f90a420f5b97867c98d5c337ea98",
+      "curriculum_objective": "Computing a unit rate",
+      "curriculum_constraints": "divide to a whole-number rate",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "litres divided by elapsed minutes",
+      "domain_and_scope_evidence": "Even litres 42..64 over 2 minutes give whole  rates.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "unit-rates/kp2",
+      "template_arguments_sha256": "d121da3c602f151e29e191630720db4345f5e0fbe8401e0ef04075321c4d9911",
+      "curriculum_objective": "Unit prices and better buys",
+      "curriculum_constraints": "money per unit; 2-decimal answers or cents",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "convert prices to cents, divide pack counts, compare",
+      "domain_and_scope_evidence": "Exactintegercents forboth packs; no ties; both cheaper labels occur.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "unit-rates/kp3",
+      "template_arguments_sha256": "b7f82433418961444aadecd4de11e887b8df296dffe652a0369dc744a69f2c81",
+      "curriculum_objective": "Using a rate to scale up",
+      "curriculum_constraints": "rate times whole-number quantity",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "seven equal perminute page groups",
+      "domain_and_scope_evidence": "Whole 7 minutes times the per-minute rate.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "ratios-proportions/kp1",
+      "template_arguments_sha256": "170a7331405e7279e43a22c7207799f3f963689e7fa9eb3545e7e29477ac87b2",
+      "curriculum_objective": "Solving a proportion",
+      "curriculum_constraints": "one unknown; whole-number solution",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "denominator factor21/7 applies numerator",
+      "domain_and_scope_evidence": "One unknown numerator; factor 3 giveswhole-number .",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "ratios-proportions/kp2",
+      "template_arguments_sha256": "09738785acbb550b9e38984cd92e0a501a9ae8bea3aaf45bfc7b66518b4021fc",
+      "curriculum_objective": "Proportion word problems",
+      "curriculum_constraints": "whole-number rates and answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "one box rate then threeboxes",
+      "domain_and_scope_evidence": "Wholeparts35..90 divisibleby5 give whole  rate, then 3 boxes, whole.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "ratios-proportions/kp3",
+      "template_arguments_sha256": "03a880facb0cee7a08b0dd213cbe2cd1a5329ecda2f2217c7514916c524cca11",
+      "curriculum_objective": "Scale and indirect measurement",
+      "curriculum_constraints": "same-units proportions; whole-number answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "multiply model centimetres by30sameunits",
+      "domain_and_scope_evidence": "Corresponding lengths both cm, scale 30, whole answers.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-applications/kp1",
+      "template_arguments_sha256": "fd69bcd46401b2886afad8445844fb94488e46b8e8c5036d60f0d6deb016ce4c",
+      "curriculum_objective": "Percent increase and decrease",
+      "curriculum_constraints": "single percent change; whole-euro answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "80percent retained after20percentdiscount",
+      "domain_and_scope_evidence": "20 percent discount leaves80 percent; multiples of 5 give whole  euros.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-applications/kp2",
+      "template_arguments_sha256": "378730e2ebfcda164f3a13f05ab5a0a35faf241cdfac9f5478dacabb59234db6",
+      "curriculum_objective": "Reversing a percent change",
+      "curriculum_constraints": "divide by (1 +/- p/100); whole-euro answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "divide final by120percent",
+      "domain_and_scope_evidence": "Reverse the 120 percent multiplier; final multiples of 6 give whole  euros.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "percent-applications/kp3",
+      "template_arguments_sha256": "1689f614689a3c40de2d0ce0bfdbac5141f0d55a8718b41a445753c5c7e4d68a",
+      "curriculum_objective": "Multi-step percent problems",
+      "curriculum_constraints": "two-step; answers to the cent or whole number",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "successive factors90percent and120percent",
+      "domain_and_scope_evidence": "Two sequential percents use the changed base; final27a/25 terminatestoat most 2 places.",
+      "findings": [
+        {
+          "category": "decimal_or_money_answer_presentation",
+          "decision": "recommended_pedagogy",
+          "evidence": "The teaching task concerns decimal place value, decimal arithmetic, rounding, or money; absent contracts let production answer rendering canonicalize to rational fractions (e.g.119/20 euros) or bare integers for cent amounts. Sample spelling does not control Compiled::instantiate.",
+          "required_change": "Use decimal-required exact-value rendering where the lesson asks for decimal output; for money make euro/cent presentation explicit. Keep integer counts as integers where appropriate. A fixed two-place display for cents is a separate presentation refinement."
+        }
+      ],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "simple-interest/kp1",
+      "template_arguments_sha256": "15f9398bebc32ec45c0c71a408f9825d1edd050e112f52046e738e6c8ed12e6f",
+      "curriculum_objective": "Interest for one year",
+      "curriculum_constraints": "one year; whole-euro answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "one-year5percent interest",
+      "domain_and_scope_evidence": "Exactly 1 year at5percent; principal multiples of 20 give whole  euros.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "simple-interest/kp2",
+      "template_arguments_sha256": "e9e2d7cf15e9d06ede09632dab10fe2694729c845da3aa181196d680ecf150a9",
+      "curriculum_objective": "The formula I = Prt",
+      "curriculum_constraints": "whole-number years; whole-euro answers",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "three unchanged yearly5percent interest amounts",
+      "domain_and_scope_evidence": "Whole3years atsimple annual 5percent; whole euros.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    },
+    {
+      "key": "simple-interest/kp3",
+      "template_arguments_sha256": "4fc23ebd3545827a71011f93f3d5df87da4ca7d7201d841a8f6d586b8a3d9eee",
+      "curriculum_objective": "Totals and finding the rate",
+      "curriculum_constraints": "balance = principal + interest; clean rates",
+      "decision": "scope_accept",
+      "finite_domain_count": 12,
+      "arithmetic": "total balance and annual interest/principal percent",
+      "domain_and_scope_evidence": "Whole principals 200,400 and years 2,3; interests24,48,72 give clean  integer annual percents 2..18; balance includes interest.",
+      "findings": [],
+      "approval": "Independent offline template scope/math review only; fresh gates and live-context decisions remain required."
+    }
+  ]
+}
