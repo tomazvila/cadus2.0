@@ -82,7 +82,7 @@ fn every_drafted_knowledge_point_sits_inside_its_declared_unit() {
             seen.keys().map(|(key, _)| key.as_str()).collect();
         for kp in kps {
             for kind in ["teach", "hint_ladder"] {
-                if kind == "teach" && canonical_teach_source(kp).is_some() {
+                if canonical_teach_source(kp).is_some() {
                     continue;
                 }
                 assert!(
@@ -145,31 +145,32 @@ fn transferred_teach_fixture_has_one_imported_canonical_row_per_key() {
     )
     .unwrap();
     let files = imports["files"].as_array().unwrap();
-    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
-    assert!(findings.is_empty());
-    let local_missing: std::collections::BTreeSet<String> = UNITS
-        .iter()
-        .flat_map(|(unit, _)| {
-            let mut kinds: BTreeMap<String, std::collections::BTreeSet<String>> = BTreeMap::new();
-            for row in rows(unit) {
+    for kind in ["teach", "hint_ladder"] {
+        let local_missing: std::collections::BTreeSet<String> = UNITS
+            .iter()
+            .flat_map(|(unit, _)| {
+                let mut kinds: BTreeMap<String, std::collections::BTreeSet<String>> =
+                    BTreeMap::new();
+                for row in rows(unit) {
+                    kinds
+                        .entry(row["kp_id"].as_str().unwrap().to_owned())
+                        .or_default()
+                        .insert(row["kind"].as_str().unwrap().to_owned());
+                }
                 kinds
-                    .entry(row["kp_id"].as_str().unwrap().to_owned())
-                    .or_default()
-                    .insert(row["kind"].as_str().unwrap().to_owned());
-            }
-            kinds
-                .into_iter()
-                .filter_map(|(key, kinds)| {
-                    (kinds.contains("template") && !kinds.contains("teach")).then_some(key)
-                })
-                .collect::<Vec<_>>()
-        })
-        .collect();
-    assert_eq!(
-        local_missing,
-        sources.keys().cloned().collect(),
-        "fixture must name every and only transferred local Teach key"
-    );
+                    .into_iter()
+                    .filter_map(|(key, kinds)| {
+                        (kinds.contains("template") && !kinds.contains(kind)).then_some(key)
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        assert_eq!(
+            local_missing,
+            sources.keys().cloned().collect(),
+            "fixture must name every and only transferred local {kind} key"
+        );
+    }
     for (key, source) in sources {
         assert!(
             files
@@ -215,6 +216,8 @@ fn transferred_hints_are_generated() {
             .filter(|draft| draft["kind"] == "hint_ladder")
             .collect();
         assert_eq!(hints.len(), 1, "{key}: {}", proposals.refusals.join("; "));
+        assert_eq!(hints[0]["kp_id"], *key);
+        assert!(hints[0].get("approved_by").is_none());
         verify_kind(Kind::HintLadder, spec, &hints[0]["arguments"], &served).unwrap();
     }
 }
