@@ -13,6 +13,8 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use cadus_core::curriculum::load_curriculum;
+use cadus_core::instruction::template_instances;
+use cadus_worker::authoring::{cli::select, completion::generate, job::verify_kind, prompt::Kind};
 use serde_json::Value;
 
 /// Unit id to its curriculum file, the units this generator has drafted.
@@ -27,6 +29,13 @@ const UNITS: &[(&str, &str)] = &[
     ("rational-trig", "09-rational-trig.yaml"),
 ];
 
+fn canonical_teach_source(key: &str) -> Option<String> {
+    serde_json::from_str::<BTreeMap<String, String>>(include_str!(
+        "fixtures/heldout_transferred_teach.json"
+    ))
+    .unwrap()
+    .remove(key)
+}
 /// The largest line count one tracked draft file keeps.
 const MAX_LINES: usize = 2000;
 
@@ -73,6 +82,9 @@ fn every_drafted_knowledge_point_sits_inside_its_declared_unit() {
             seen.keys().map(|(key, _)| key.as_str()).collect();
         for kp in kps {
             for kind in ["teach", "hint_ladder"] {
+                if canonical_teach_source(kp).is_some() {
+                    continue;
+                }
                 assert!(
                     seen.contains_key(&(kp.to_owned(), kind.to_owned())),
                     "{kp} is missing its {kind} in {unit}"
@@ -117,5 +129,95 @@ fn every_heldout_hint_ladder_holds_three_question_rungs_with_no_numeral() {
                 );
             }
         }
+    }
+}
+
+#[test]
+fn transferred_teach_fixture_has_one_imported_canonical_row_per_key() {
+    let sources: BTreeMap<String, String> =
+        serde_json::from_str(include_str!("fixtures/heldout_transferred_teach.json")).unwrap();
+    assert_eq!(sources.len(), 69);
+    let imports: Value = serde_json::from_str(
+        &std::fs::read_to_string(
+            root().join("docs/content-foundations/whole-course-teach/import-manifest.json"),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let files = imports["files"].as_array().unwrap();
+    for kind in ["teach", "hint_ladder"] {
+        let local_missing: std::collections::BTreeSet<String> = UNITS
+            .iter()
+            .flat_map(|(unit, _)| {
+                let mut kinds: BTreeMap<String, std::collections::BTreeSet<String>> =
+                    BTreeMap::new();
+                for row in rows(unit) {
+                    kinds
+                        .entry(row["kp_id"].as_str().unwrap().to_owned())
+                        .or_default()
+                        .insert(row["kind"].as_str().unwrap().to_owned());
+                }
+                kinds
+                    .into_iter()
+                    .filter_map(|(key, kinds)| {
+                        (kinds.contains("template") && !kinds.contains(kind)).then_some(key)
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        assert_eq!(
+            local_missing,
+            sources.keys().cloned().collect(),
+            "fixture must name every and only transferred local {kind} key"
+        );
+    }
+    for (key, source) in sources {
+        assert!(
+            files
+                .iter()
+                .any(|file| file.as_str() == source.strip_prefix("whole-course-teach/")),
+            "{source} is not imported"
+        );
+        let rows: Vec<Value> = serde_json::from_str(
+            &std::fs::read_to_string(root().join("docs/content-foundations").join(&source))
+                .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            rows.iter()
+                .filter(|row| row["kp_id"] == key && row["kind"] == "teach")
+                .count(),
+            1,
+            "{key} in {source}"
+        );
+    }
+}
+
+#[test]
+fn transferred_hints_are_generated() {
+    let keys: BTreeMap<String, String> =
+        serde_json::from_str(include_str!("fixtures/heldout_transferred_teach.json")).unwrap();
+    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
+    assert!(findings.is_empty());
+    for key in keys.keys() {
+        let specs = select(&curriculum, std::slice::from_ref(key)).unwrap();
+        let spec = &specs[0];
+        let template = UNITS
+            .iter()
+            .flat_map(|(unit, _)| rows(unit))
+            .find(|row| row["kp_id"] == *key && row["kind"] == "template")
+            .unwrap();
+        let body = verify_kind(Kind::Template, spec, &template["arguments"], &[]).unwrap();
+        let served = template_instances(&body);
+        let proposals = generate(spec, &served);
+        let hints: Vec<_> = proposals
+            .drafts
+            .iter()
+            .filter(|draft| draft["kind"] == "hint_ladder")
+            .collect();
+        assert_eq!(hints.len(), 1, "{key}: {}", proposals.refusals.join("; "));
+        assert_eq!(hints[0]["kp_id"], *key);
+        assert!(hints[0].get("approved_by").is_none());
+        verify_kind(Kind::HintLadder, spec, &hints[0]["arguments"], &served).unwrap();
     }
 }
