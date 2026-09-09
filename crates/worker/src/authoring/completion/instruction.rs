@@ -18,11 +18,14 @@ struct HintRecipe {
 fn hints() -> &'static [HintRecipe] {
     static HINTS: OnceLock<Vec<HintRecipe>> = OnceLock::new();
     HINTS.get_or_init(|| {
-        let mut catalog: Vec<HintRecipe> = serde_json::from_str(include_str!("instruction_hints.json"))
-            .expect("the reviewed instruction-hint catalog is valid");
+        let mut catalog: Vec<HintRecipe> =
+            serde_json::from_str(include_str!("instruction_hints.json"))
+                .expect("the reviewed instruction-hint catalog is valid");
         for shard in [include_str!("instruction_hints_repairs.json")] {
-            catalog.extend(serde_json::from_str::<Vec<HintRecipe>>(shard)
-                .expect("the reviewed instruction-hint shard is valid"));
+            catalog.extend(
+                serde_json::from_str::<Vec<HintRecipe>>(shard)
+                    .expect("the reviewed instruction-hint shard is valid"),
+            );
         }
         catalog
     })
