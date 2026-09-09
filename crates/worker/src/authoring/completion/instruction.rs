@@ -21,7 +21,10 @@ fn hints() -> &'static [HintRecipe] {
         let mut catalog: Vec<HintRecipe> =
             serde_json::from_str(include_str!("instruction_hints.json"))
                 .expect("the reviewed instruction-hint catalog is valid");
-        for shard in [include_str!("instruction_hints_repairs.json")] {
+        for shard in [
+            include_str!("instruction_hints_repairs.json"),
+            include_str!("instruction_hints_arithmetic_01.json"),
+        ] {
             catalog.extend(
                 serde_json::from_str::<Vec<HintRecipe>>(shard)
                     .expect("the reviewed instruction-hint shard is valid"),
@@ -74,7 +77,7 @@ mod tests {
     #[test]
     fn catalog_is_exact_unique_and_gated() {
         let keys: BTreeSet<_> = hints().iter().map(|row| row.key.as_str()).collect();
-        assert_eq!(keys.len(), 28);
+        assert_eq!(keys.len(), 49);
         assert_eq!(keys.len(), hints().len());
         for spec in specs() {
             let mut out = Proposals::default();
