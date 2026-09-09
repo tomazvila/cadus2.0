@@ -46,6 +46,10 @@ if [ "$check_only" = 1 ]; then record "finish status=0 mode=check"; exit 0; fi
 command -v setsid >/dev/null 2>&1 || { record "finish status=2 reason=setsid-missing"; exit 2; }
 export CARGO_INCREMENTAL=0
 export CARGO_TARGET_DIR="$target_dir"
+export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-2}"
+export CARGO_PROFILE_DEV_DEBUG="${CARGO_PROFILE_DEV_DEBUG:-0}"
+export CARGO_PROFILE_TEST_DEBUG="${CARGO_PROFILE_TEST_DEBUG:-0}"
+record "profile jobs=$CARGO_BUILD_JOBS incremental=$CARGO_INCREMENTAL dev_debug=$CARGO_PROFILE_DEV_DEBUG test_debug=$CARGO_PROFILE_TEST_DEBUG"
 setsid "$@" &
 child=$!
 stopped=0

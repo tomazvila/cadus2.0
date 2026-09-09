@@ -20,4 +20,6 @@ expect_fail "$guard" --target-dir "$scratch/cap" --reserve-gib 0 --target-cap-gi
 kill -0 "$sentinel"
 wait "$sentinel" || true
 grep -q 'finish status=1 reason=limit-during-command' "$scratch/cap/build-guard/"*.log
+env -u CARGO_BUILD_JOBS -u CARGO_PROFILE_DEV_DEBUG -u CARGO_PROFILE_TEST_DEBUG     "$guard" --target-dir "$scratch/profile-default" --reserve-gib 0 --target-cap-gib 1 --poll-seconds 1 --     bash -c '[ "$CARGO_BUILD_JOBS" = 2 ] && [ "$CARGO_INCREMENTAL" = 0 ] && [ "$CARGO_PROFILE_DEV_DEBUG" = 0 ] && [ "$CARGO_PROFILE_TEST_DEBUG" = 0 ]' >/dev/null
+env CARGO_BUILD_JOBS=1 CARGO_PROFILE_DEV_DEBUG=1 CARGO_PROFILE_TEST_DEBUG=2     "$guard" --target-dir "$scratch/profile-explicit" --reserve-gib 0 --target-cap-gib 1 --poll-seconds 1 --     bash -c '[ "$CARGO_BUILD_JOBS" = 1 ] && [ "$CARGO_INCREMENTAL" = 0 ] && [ "$CARGO_PROFILE_DEV_DEBUG" = 1 ] && [ "$CARGO_PROFILE_TEST_DEBUG" = 2 ]' >/dev/null
 echo "build guard tests passed"
