@@ -17,6 +17,7 @@
 #   scripts/quality.sh                 every check, Rust and web
 #   scripts/quality.sh --rust          the Rust checks only
 #   scripts/quality.sh --web           the web checks only
+#   scripts/quality.sh --no-coverage   every non-coverage check
 #
 # The Rust coverage check needs CADUS_TEST_DATABASE_URL, the same value
 # that scripts/gate.sh uses. Reports land under target/quality/.
@@ -43,10 +44,12 @@ out="$repo_root/target/quality"
 mkdir -p "$out"
 run_rust=1
 run_web=1
+skip_coverage=0
 for arg in "$@"; do
     case "$arg" in
         --rust) run_web=0 ;;
         --web) run_rust=0 ;;
+        --no-coverage) skip_coverage=1 ;;
         *) echo "unknown option: $arg"; exit 2 ;;
     esac
 done
@@ -84,7 +87,9 @@ if [ "$run_rust" = 1 ]; then
     check rust-unused-deps cargo machete
     check rust-clippy cargo clippy --all-targets --workspace -- -D warnings
     check rust-clones web/node_modules/.bin/jscpd --config .jscpd.json crates scripts
-    if [ -z "${CADUS_TEST_DATABASE_URL:-}" ]; then
+    if [ "$skip_coverage" = 1 ]; then
+        echo "SKIP rust-coverage: waived by --no-coverage"
+    elif [ -z "${CADUS_TEST_DATABASE_URL:-}" ]; then
         echo "FAIL rust-coverage: set CADUS_TEST_DATABASE_URL"
         failed=1
     else
@@ -99,7 +104,11 @@ if [ "$run_web" = 1 ]; then
     check web-halstead bash -c 'node scripts/halstead.mjs $(git ls-files . | grep -E "\.(ts|tsx)$" | grep -v "\.d\.ts$")'
     check web-dead npx knip --no-progress
     check web-clones ../web/node_modules/.bin/jscpd --config ../.jscpd.json src test scripts e2e
-    check web-coverage bash -c "npx vitest run --coverage --coverage.provider=v8 --coverage.reporter=json --coverage.reportsDirectory='$out/webcov' --coverage.include='src/**' >/dev/null 2>&1; node scripts/web-coverage.mjs '$out/webcov/coverage-final.json'"
+    if [ "$skip_coverage" = 1 ]; then
+        echo "SKIP web-coverage: waived by --no-coverage"
+    else
+        check web-coverage bash -c "npx vitest run --coverage --coverage.provider=v8 --coverage.reporter=json --coverage.reportsDirectory='$out/webcov' --coverage.include='src/**' >/dev/null 2>&1; node scripts/web-coverage.mjs '$out/webcov/coverage-final.json'"
+    fi
     cd "$repo_root" || exit 2
 fi
 
