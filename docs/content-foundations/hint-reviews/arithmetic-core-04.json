@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "review_type": "independent_authorship_review_not_live_digest_approval",
+  "authored_file_sha256": "a175a33e12c8e01c14247fe72cf716eaa233a691abed61b262ec2cd33ceeb0f5",
+  "reviewers": [
+    "/root/orchestrator",
+    "/root"
+  ],
+  "rows": [
+    {
+      "key": "greatest-common-factor/kp1",
+      "decision": "accept",
+      "hints": [
+        "What factors can divide each number with no remainder?",
+        "List or identify factor pairs for both numbers and mark the factors they share.",
+        "Choose the greatest shared factor, checking special cases such as a shared factor of one."
+      ],
+      "reason": "Listing exact factor pairs for both inputs, intersecting their factor sets and selecting the largest shared value is a complete GCF procedure. It is valid for every admitted pair up to30."
+    },
+    {
+      "key": "greatest-common-factor/kp2",
+      "decision": "accept",
+      "hints": [
+        "What factors can divide each number with no remainder?",
+        "List or identify factor pairs for both numbers and mark the factors they share.",
+        "Choose the greatest shared factor, checking special cases such as a shared factor of one."
+      ],
+      "reason": "The same factor-pair/intersection/maximum procedure remains correct for the larger pairs up to60. The steps concretely specify the method rather than merely naming GCF."
+    },
+    {
+      "key": "greatest-common-factor/kp3",
+      "decision": "accept",
+      "hints": [
+        "What factors can divide each number with no remainder?",
+        "List or identify factor pairs for both numbers and mark the factors they share.",
+        "Choose the greatest shared factor, checking special cases such as a shared factor of one."
+      ],
+      "reason": "The factor-list method correctly handles both required special cases: the only shared positive divisor can be one, or the smaller number can itself be the largest shared divisor. The hint explicitly includes the shared-one case and does not assert that other factors must exist."
+    },
+    {
+      "key": "least-common-multiple/kp1",
+      "decision": "accept",
+      "hints": [
+        "What is the first positive multiple in each list, and how can you continue by adding that same input each time?",
+        "Which positive value is the first one that appears in both lists?",
+        "How can dividing that value by each original input check that it is a common multiple and the least one found?"
+      ],
+      "reason": "The repaired ladder explicitly begins with the first positive multiple, continues by adding the input and selects/checks the earliest shared positive value. The zero ambiguity is resolved."
+    },
+    {
+      "key": "least-common-multiple/kp2",
+      "decision": "accept",
+      "hints": [
+        "Does the smaller input divide the larger evenly? If it does, the larger input is their least common multiple.",
+        "If neither input divides the other, do they share no factor greater than one? For that case, their least common multiple is their product.",
+        "Which of those two cases applies, and does the resulting positive value divide evenly by both original inputs?"
+      ],
+      "reason": "Dividing-input case gives larger input; relatively-prime case gives product; divisibility checks verify both."
+    },
+    {
+      "key": "least-common-multiple/kp3",
+      "decision": "accept",
+      "hints": [
+        "What positive multiples can you list for all three inputs until a shared value appears?",
+        "Which shared value is least, and how can you verify it divides evenly by every original number?",
+        "If you reduce pairwise, did you first take the least common multiple of the first two before taking the least common multiple with the third?"
+      ],
+      "reason": "Positive lists, least shared value, division checks and LEAST-at-both-stages pairwise reduction are all now explicit. The method is valid for every selected triple."
+    },
+    {
+      "key": "gcf-lcm/kp1",
+      "decision": "accept",
+      "hints": [
+        "What prime factors, including repeated copies, appear in each of the two numbers?",
+        "Which primes occur in both factorizations, and what smaller exponent or occurrence count belongs to each shared prime?",
+        "What product of those retained shared prime powers divides both original numbers?"
+      ],
+      "reason": "The repaired ladder obtains complete prime factorizations, keeps shared primes at the smaller exponent and multiplies/checks the retained product. This directly teaches the required GCF method."
+    },
+    {
+      "key": "gcf-lcm/kp2",
+      "decision": "accept",
+      "hints": [
+        "What prime factors and exponents appear in either number's factorization?",
+        "For each prime that appears, which greatest exponent must be included so both numbers divide the result?",
+        "How can multiplying those chosen prime powers and checking divisibility by both inputs verify the LCM?"
+      ],
+      "reason": "The repaired ladder takes the union of primes and each greatest exponent, then multiplies and checks input divisibility. This directly teaches the required LCM method."
+    },
+    {
+      "key": "gcf-lcm/kp3",
+      "decision": "accept",
+      "hints": [
+        "Does the situation ask for the largest exact equal size or for the next shared occurrence of repeating events?",
+        "An exact equal size must divide each quantity, so use the GCF; a shared occurrence must be divisible by each interval, so use the LCM. Which condition fits?",
+        "After using that method, does the result satisfy the original grouping or timing conditions in the units requested?"
+      ],
+      "reason": "Largest exact equal size uses a common divisor; first shared repetition uses a common multiple."
+    },
+    {
+      "key": "rounding-estimation/kp1",
+      "decision": "accept",
+      "hints": [
+        "What place value does the prompt specify for rounding each addend or subtrahend?",
+        "What rounded operands result, while keeping the original addition or subtraction operation?",
+        "How can you label the computed result as an estimate rather than an exact total or difference?"
+      ],
+      "reason": "The repaired ladder reads the specified rounding place, rounds operands while preserving the original operation and labels the result as an estimate. It fits both sum and difference examples."
+    },
+    {
+      "key": "rounding-estimation/kp2",
+      "decision": "accept",
+      "hints": [
+        "Does the prompt specify a rounding place for the original operands, or supply a compatible pair to use?",
+        "If it supplies a compatible pair, use those values unchanged; otherwise, round the original operands to the stated place. What simpler multiplication or division results?",
+        "After carrying out that operation, is the estimate's size reasonable for the original quantities?"
+      ],
+      "reason": "Supplied compatible values and explicitly requested rounding are distinguished before applying the original operation."
+    },
+    {
+      "key": "rounding-estimation/kp3",
+      "decision": "accept",
+      "hints": [
+        "Does the question ask which offered total is closer, or how rounding changed a calculation?",
+        "For offered totals, locate their midpoint: on which side does the unrounded quantity lie after correcting an easy nearby calculation?",
+        "For a rounded product, correct one factor at a time by multiplying its signed change by the other factor's current value. What does the sum of those corrections show about the original result?"
+      ],
+      "reason": "Midpoint is compared to the target quantity; sequential product corrections use the current other factor, preserving the cross term."
+    }
+  ],
+  "prior_review_sha256": "1f0af42261280190f27c387dd36170fbbd593a746fa1b65127cb4b6e440e4b8b",
+  "scope": "Instruction methods only; selected-template findings and current-body serving approvals remain separate."
+}
