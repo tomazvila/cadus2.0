@@ -254,7 +254,7 @@ def write_receipt(path, receipt):
         path.write_text(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
 
 
-def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None):
+def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, before_write=None):
     packet, decisions = load_json(packet_path), load_json(decision_path)
     indexed = validate_packet(packet)
     selected = validate_decisions(decisions, packet, indexed)
@@ -265,20 +265,32 @@ def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None):
             raise Refused(f"{item['digest']}: live document differs from the reviewed pending document")
         checked.append((item, decision, reason))
     if not commit:
-        return {"committed": False, "packet_sha256": packet["packet_sha256"],
+        receipt = {"committed": False, "complete": True, "packet_sha256": packet["packet_sha256"],
                 "selected": [{"digest": item["digest"], "decision": decision}
                              for item, decision, _reason in checked]}
+        write_receipt(receipt_path, receipt)
+        return receipt
     receipt = {"committed": False, "complete": False,
                "packet_sha256": packet["packet_sha256"], "receipts": []}
     for item, decision, reason in checked:
+        if before_write is not None:
+            before_write(item)
         live = api.document(item["digest"])
         if live.get("status") != "pending" or fingerprint(live) != item.get("fingerprint_sha256"):
             raise Refused(f"{item['digest']}: live document changed before its write")
-        answer = api.decide(item["digest"], decision, reason)
+        receipt["in_flight"] = {"digest": item["digest"], "decision": decision}
+        write_receipt(receipt_path, receipt)
+        try:
+            answer = api.decide(item["digest"], decision, reason)
+        except Exception as error:
+            receipt["uncertain"] = receipt.pop("in_flight") | {"error": str(error)}
+            write_receipt(receipt_path, receipt)
+            raise
         if answer.get("digest") != item["digest"] or answer.get("status") != (
                 "approved" if decision == "approve" else "rejected"):
             raise Refused(f"{item['digest']}: decision response did not confirm the requested write")
         receipt["receipts"].append(answer)
+        receipt.pop("in_flight", None)
         receipt["committed"] = True
         write_receipt(receipt_path, receipt)
     receipt["complete"] = True
