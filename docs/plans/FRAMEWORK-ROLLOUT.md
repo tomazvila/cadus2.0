@@ -1,11 +1,11 @@
 # Framework 2.0 rollout and rollback
-This runbook is the operational gate for the framework branch. It does not authorize production deployment, content import, or content decisions. Those actions require the owner's explicit authorization. A human reviewer decides every digest.
+This runbook is the operational gate for the framework branch. It does not authorize production deployment, content import, or content decisions. Those actions require the owner's explicit authorization. An identified AI reviewer records per-digest evidence and an explicit decision; a human override is optional.
 ## Release facts
 - Production is Compose project `homelab`, rooted at `/home/deploy/homelab`. Its Cadus services are `cadus2-db`, `cadus2-migrate`, `cadus2-web`, `cadus2-worker`, and `cadus2-edge`.
 - `scripts/deploy.sh` operates the standalone repository stack. Production uses `scripts/homelab_release.sh`, which derives live container IDs and their shared network from the Compose project before acting.
 - Framework 2.0 changes no migration relative to `2ff3c1f`; the latest migration remains `0012`.
 - The event log remains the source of truth. `learner_models` is a rebuildable projection cache at `PROJECTOR_VERSION = 7`.
-- Pending content never serves. The candidate can deploy and accept pending rows safely. The release remains incomplete until human review and the post-decision readiness audit pass.
+- Pending content never serves. The candidate can deploy and accept pending rows safely. The release remains incomplete until AI evidence review and the post-decision readiness audit pass.
 ## Build the exact content bundle
 Create one self-contained import bundle after the exact release head passes its content pipeline:
 ```sh
@@ -22,7 +22,7 @@ python3 scripts/review/foundations_release_bundle.py build \
 ```
 The builder refuses overlap, drift from 809 templates, 809 Teach pages, and 809 hint ladders, or a mismatch among their canonical knowledge-point sets. `bundle.json` binds the release commit, ordered files, inputs, counts, and hashes. The three import files contain 2,427 unique pending documents.
 ## Preflight without production writes
-The order is bundle, verified backup and recovery rehearsal, deployment, pending import, human per-digest review, then readiness and smoke.
+The order is bundle, verified backup and recovery rehearsal, deployment, pending import, AI per-digest evidence review, then readiness and smoke.
 1. Record the merge gate, Rust quality, web quality, and restored-snapshot replay receipts for this exact commit.
 2. Take an encrypted production backup and restore it into a disposable database. The receipt must bind this exact commit, confirm no plaintext dump, prove byte-identical event fingerprints before and after replay, and confirm disposable-database removal.
 3. Run the topology, bundle, and recovery-receipt preflight:
@@ -62,7 +62,7 @@ scripts/homelab_release.sh import-pending \
   --execute | tee "$final_root/content-import.log"
 ```
 The helper extracts the worker from the immutable release image, validates the bundle again, dry-runs all three ordered files, then imports through the normal production gates with zero model cost and `--missing-only`. It never approves content. A retry skips rows already pending or approved.
-## Human review and approval
+## AI evidence review and approval
 1. Sign in as an admin at `https://cadus.<domain>/review`. Save the exact admin Cookie header value in a mode-600 scratch file:
 ```sh
 install -m 600 /dev/null ~/.cache/cadus-review-cookie
@@ -84,7 +84,7 @@ python3 scripts/review/content_review_packet.py apply \
   --decisions ~/.cache/cadus-foundations-review.decisions.json \
   --receipt ~/.cache/cadus-foundations-review.dry-run.json
 ```
-5. The human reviewer applies that exact decision file by adding `--commit` and using a new receipt path. Re-export after every committed batch because approving a template can re-gate related pending instruction content. Preserve all packet hashes and receipts.
+5. The AI review operator applies that exact decision file by adding `--commit` and using a new receipt path. Re-export after every committed batch because approving a template can re-gate related pending instruction content. Preserve all packet hashes and receipts.
 ## Readiness and smoke
 After all decisions, capture the serving-readiness report:
 ```sh
@@ -109,7 +109,7 @@ Record these items in the handover before calling the release complete:
 - exact release commit and final bundle digest;
 - merge-gate, quality, restored-snapshot replay, and encrypted backup/restore receipts;
 - deploy log and exact pre-deploy/current image IDs;
-- human content packet, decisions, approved/rejected digests, and apply receipts;
+- AI evidence packet, decisions, approved/rejected digests, and apply receipts;
 - post-decision readiness report;
 - ordinary, review, and integrated browser smoke result;
 - deployment or rollback commit, timestamp, and operator.
