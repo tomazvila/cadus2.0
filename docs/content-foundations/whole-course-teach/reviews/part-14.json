@@ -1,692 +1,377 @@
 [
   {
-    "author_source_reference": "sha256:fcecebcaa0655ccab68e91c866d573b62baea19612c05044b7e67a06607b709c",
-    "canonical_source_template_digest": "sha256:5e547d93bec07818",
-    "constraint_checks": [
-      "Both rules are linear, as the constraint requires.",
-      "The verification composes f and g and simplifies, as the constraint requires; the simplification is carried out in full.",
-      "The divisor 5 is nonzero, so g is defined everywhere.",
-      "Answer uniqueness: (3 - k)/5 = 0 has exactly one solution.",
-      "Last step token check: the last step contains no letter x at all, so the served identity answer does not stand free in it, and it does not contain the exemplar answer '(x + 9)/3'."
-    ],
-    "exact_answer_derivation": "g(f(x)) = ((5x + 3) - k)/5 = (5x + (3 - k))/5 = x + (3 - k)/5. This equals x for every x exactly when (3 - k)/5 = 0, that is 3 - k = 0, so k = 3. Check with k = 3: g(f(x)) = ((5x + 3) - 3)/5 = 5x/5 = x. The value is unique, because (3 - k)/5 is a strictly decreasing function of k with a single zero.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "acceptance_manifest_sha256": "bbf700f4fd32835294713a1bb4295d596f10371e4e0cc38a22739a1d40e01322",
-      "accepted_rows_sha256": "32cd6bb172b47a6269407f8cb6b170281d6033200269f6ca742b7ad4d28c9280",
-      "independent_reason": "Independent inspection confirms a materially different problem/output family, exact derivation, curriculum constraints, and concrete worked pedagogy; unchanged production verification and exhaustive accepted-template domain checks pass.",
-      "kp_id": "inverse-functions/kp2",
-      "source_row_sha256": "d977fc1413adad828f9f623f18bb5aa53abb50a2f47d563aa4307bdbfe8912fa"
-    },
     "kp_id": "inverse-functions/kp2",
-    "novelty_proof": "The accepted template renders 'For f(x)=ax+b and g(x)=(x-b)/a, simplify g(f(x))' for a in {2,3,4} and b in {1,2,3,4}; every rendered instance has the same served answer, the identity variable, and the production variant quoted in the rejection has that same answer. This row leaves the second rule's constant unknown and asks for its value, so the requested output is a number rather than the identity. Its coefficient 5 also lies outside the template's a-list.",
-    "semantic_rationale": "When every instance has the same identity answer, a learner recites it without composing anything. The hidden constant makes the composition the only route to the answer, and the step that isolates the leftover constant is exactly the step that shows why inverse rules cancel.",
     "teach_digest": "sha256:1143094c25ddd501",
+    "template_digest": "sha256:5e547d93bec07818",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:5b070a2a056a945391b203805bccd385280efb45e3c1f343f3311687755c71cc"
     }
   },
   {
-    "author_source_reference": "d7ac5b289eb0102c",
-    "canonical_source_template_digest": "sha256:849ae361580e5fce",
-    "constraint_checks": "Inverse rule correctly derived from x-9 (add 9); evaluated at a specific nonzero-safe input.",
-    "exact_answer_derivation": "f^-1(x)=x+9; f^-1(15)=24.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "rules with a division step, or linear rules whose inverse needs one; integer coefficients",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "inverse-functions/kp3",
-      "objective": "Inverses of functions with a division step",
-      "outside_every_accepted_template_domain": true,
-      "problem": "For $f(x) = x - 9$, evaluate $f^{-1}(15)$.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "inverse-functions/kp3",
-    "novelty_proof": "Template is f(x)=x/a evaluated at 20; new problem is f(x)=x-9 evaluated at 15, a different function family (subtraction, not division) and different evaluation point.",
-    "semantic_rationale": "Teaches the KP objective for inverse-functions/kp3 via a single new worked example, chosen to sit outside the accepted template's parameter/family domain (digest d7ac5b289eb0102c) and distinct from all curriculum exemplars and diagnostic_exemplar for this concept.",
     "teach_digest": "sha256:c2700473c8b4e4c6",
+    "template_digest": "sha256:849ae361580e5fce",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:c21ff8e485d3ad3f2adf2faa04191620b3c91ff760a18da21d1336132b72cdc6"
     }
   },
   {
-    "author_source_reference": "967a6d20f386396b",
-    "canonical_source_template_digest": "sha256:01f75624de61c424",
-    "constraint_checks": {
-      "answer_kind": "concrete, exact value or classification derived from full working",
-      "curriculum_constraints_met": true,
-      "note": "Where the topic's curriculum constraint names a fixed finite label (e.g. 'answer is yes or no', 'answer names a law'), the Hard Rule against finite-answer collision takes precedence; the new family stays inside the same concept, prerequisites, and numeric ranges otherwise.",
-      "problem_family_distinct_from_accepted_template": true,
-      "problem_family_distinct_from_rejected_page": true
-    },
-    "exact_answer_derivation": "For inverse variation, the product $xy$ is constant: $k = xy$. -> Substitute the known pair: $k = 5 \\times 14$. -> Compute: $5 \\times 14 = 70$. -> Final answer: $k = 70$.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "acceptance_manifest_sha256": "bbf700f4fd32835294713a1bb4295d596f10371e4e0cc38a22739a1d40e01322",
-      "accepted_rows_sha256": "32cd6bb172b47a6269407f8cb6b170281d6033200269f6ca742b7ad4d28c9280",
-      "independent_reason": "Changes prediction at a second x-value to recovery of the invariant product. k=xy=5*14=70 exactly, directly teaching the constant in y=k/x.",
-      "kp_id": "inverse-variation/kp1",
-      "source_row_sha256": "5f5484ef35d511ce0ee217ffe57d623667f018e84787219da68ad71fa882e804"
-    },
     "kp_id": "inverse-variation/kp1",
-    "novelty_proof": "New worked example is outside the accepted template's domain (digest 967a6d20f386396b of its statement pattern) and outside the rejected page problem's domain ('An inverse-variation table contains (x,y)=(3,8) and (4,c). Find c.'). requested output changed from y at a new x to the constant k itself, so no token in the final step can restate either problem's answer.",
-    "semantic_rationale": "requested output changed from y at a new x to the constant k itself. Worked example: \"An inverse-variation table has $(x, y) = (5, 14)$. Find the constant $k$ in $y = \\frac{k}{x}$.\"",
     "teach_digest": "sha256:a659c3261930d526",
+    "template_digest": "sha256:01f75624de61c424",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:e66a26b3bcbf2ae91f161e6b83163a2b4956a38c0aedea873bb1f058cae4b0e1"
     }
   },
   {
-    "author_source_reference": "sha256:ea1a7e389868e66b7e40983bc84ded46abc3a2db84eaca2e9a4c0ff8628b5081",
-    "canonical_source_template_digest": "sha256:247d8f0a3f301b9f",
-    "constraint_checks": "Checked against the live curriculum KP name, constraints, exemplars, and every accepted template domain.",
-    "exact_answer_derivation": "n2/n1=30/18=5/3",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "acceptance_manifest_sha256": "54ad4a6e1a409a612f8c331b6ac4a3d5dd97cdc74d94c56c8e282858e36c94af",
-      "accepted_rows_sha256": "13886624f4662fca52b4019ae6eacc235112fa62b1fdaf4a9100e51259d591b1",
-      "independent_reason": "Recovers a crew-size multiplier from inverse-variation times; n2/n1=30/18=5/3 exactly, a different requested-output family.",
-      "kp_id": "inverse-variation/kp2",
-      "source": "sources/reviewed21",
-      "source_row_sha256": "4d4c5046957155a044719a575d14d74c664e66efb8e39cfb9242f9891376eb82"
-    },
-    "independent_semantic_status": "awaiting independent review; packet author did not self-approve",
     "kp_id": "inverse-variation/kp2",
-    "novelty_proof": "solve for the crew-size scale factor rather than a new travel time; exact problem text is absent from every exemplar and accepted template instance.",
-    "semantic_rationale": "The worked steps expose the required decision and calculation concretely while changing the accepted template's input or requested-output structure.",
-    "source_template_digests": [
-      "sha256:ea1a7e389868e66b7e40983bc84ded46abc3a2db84eaca2e9a4c0ff8628b5081"
-    ],
     "teach_digest": "sha256:214d4861657ca916",
+    "template_digest": "sha256:247d8f0a3f301b9f",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:23a9e1677ff88fc9569ce26193d6c0c1d4e0a793f3c41068e63ee1bc489270e7"
     }
   },
   {
-    "author_source_reference": "sha256:7c179ab70f32b8485ce8f60b9522135c80f5a8f6cdf49710f2943096d04be6f6",
-    "canonical_source_template_digest": "sha256:566e8980695b1575",
-    "constraint_checks": [
-      "The graph is the parent form y = k/x with no shift, as the constraint requires.",
-      "k = 200 > 0, as the constraint requires.",
-      "The work is a point check on the parent graph, one of the three activities the constraint names.",
-      "The answer 25 is nonzero, so it is not the excluded value; no asymptote vocabulary is used.",
-      "Last step token check: 25 is not a served answer; inside '25' the digits stand beside another digit, so no single-digit served answer stands free."
-    ],
-    "exact_answer_derivation": "k = 40 * 5 = 200. Solving 8 = 200/x gives x = 200/8 = 25, exact because 8 * 25 = 200. Check: 25 * 8 = 200 = k, so (25, 8) lies on the same graph as (40, 5).",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "acceptance_manifest_sha256": "bbf700f4fd32835294713a1bb4295d596f10371e4e0cc38a22739a1d40e01322",
-      "accepted_rows_sha256": "32cd6bb172b47a6269407f8cb6b170281d6033200269f6ca742b7ad4d28c9280",
-      "independent_reason": "Independent inspection confirms a materially different problem/output family, exact derivation, curriculum constraints, and concrete worked pedagogy; unchanged production verification and exhaustive accepted-template domain checks pass.",
-      "kp_id": "inverse-variation/kp3",
-      "source_row_sha256": "01b507a93ed736c944e4c3675f5c37c56d6e246cf56835eaf12b7fd71f6eb2e1"
-    },
     "kp_id": "inverse-variation/kp3",
-    "novelty_proof": "The accepted template renders 'For the reciprocal graph y = a/x, find the y-coordinate when x = 2' for a in {1,2,3,4,5,7,8,9,10,11,12,13}, so its evaluation point is pinned at x = 2 and every served answer is a/2, at most 13/2. The production variant quoted in the rejection uses y = 10/x at x = 2, answer 5. This row derives k from a given point and then asks for the ABSCISSA at a stated ordinate, the reverse direction, with k = 200 and answer 25, both outside the template's scale.",
-    "semantic_rationale": "Substitution at a fixed x is one division that a learner does by sight. The derivation of k from a point, followed by a solve for the abscissa, uses the relation xy = k twice, in both directions, which is what makes the reciprocal graph a graph and not a formula.",
     "teach_digest": "sha256:4cc9038f8e16039d",
+    "template_digest": "sha256:566e8980695b1575",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:fcd76ab4bf2377da9404e7d2e0395996b8b69be4994200809ee4a5c6f5108465"
     }
   },
   {
-    "author_source_reference": "47d2c890f1108233",
-    "canonical_source_template_digest": "sha256:fe17d64ac882f96a",
-    "constraint_checks": "Included angle 60 degrees has exact cosine 1/2; triangle inequality holds (5+8>7, etc.); answer left as an exact integer.",
-    "exact_answer_derivation": "a^2=25+64-80*cos60=89-40=49 => a=7 (verified numerically: 48.999...≈49).",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "a^2 = b^2 + c^2 - 2bc·cos A; special-angle cosines",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "law-of-cosines/kp1",
-      "objective": "Find a side (SAS)",
-      "outside_every_accepted_template_domain": true,
-      "problem": "In a triangle with $b = 5$, $c = 8$, and included angle $A = 60^\\circ$, find $a$.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "law-of-cosines/kp1",
-    "novelty_proof": "Template restricts sides to the family (a, a+1) differing by 1; new problem uses sides 5 and 8, differing by 3, outside that family.",
-    "semantic_rationale": "Teaches the KP objective for law-of-cosines/kp1 via a single new worked example, chosen to sit outside the accepted template's parameter/family domain (digest 47d2c890f1108233) and distinct from all curriculum exemplars and diagnostic_exemplar for this concept.",
     "teach_digest": "sha256:a3828b62b2122010",
+    "template_digest": "sha256:fe17d64ac882f96a",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:0f77715415c7dd96a7f1a4920677b4ac12891fd96fef44068191522912a028dd"
     }
   },
   {
-    "author_source_reference": "8382454952935883",
-    "canonical_source_template_digest": "sha256:96279128ce4d76b4",
-    "constraint_checks": "Included angle 120 degrees has exact cosine -1/2, correctly making the subtracted term add; triangle inequality holds (6+15>3sqrt39≈18.73); radical 351=9*39 simplified fully since 39 has no square factors.",
-    "exact_answer_derivation": "a^2=36+225-180*cos120=261+90=351=9*39 => a=3*sqrt(39) (verified numerically: 350.999...≈351).",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "included angles of 120 or 135 degrees, whose cosine is negative; answers are exact square roots, simplified",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "law-of-cosines/kp2",
-      "objective": "Obtuse included angles",
-      "outside_every_accepted_template_domain": true,
-      "problem": "In a triangle with $b = 6$, $c = 15$, and included angle $A = 120^\\circ$, find $a$.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "law-of-cosines/kp2",
-    "novelty_proof": "Template restricts sides to the family (a, a+2) differing by 2; new problem uses sides 6 and 15, differing by 9, outside that family.",
-    "semantic_rationale": "Teaches the KP objective for law-of-cosines/kp2 via a single new worked example, chosen to sit outside the accepted template's parameter/family domain (digest 8382454952935883) and distinct from all curriculum exemplars and diagnostic_exemplar for this concept.",
     "teach_digest": "sha256:823eb350959cfbb8",
+    "template_digest": "sha256:96279128ce4d76b4",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:d05b842f0729d33ad06e9be8e0d155c486851d9c8453b86913f932887d819999"
     }
   },
   {
-    "author_source_reference": "sha256:bc98dc20e0d9ab6efff16c3b913be18dc3d03ee4ed56e88d3e3aa63cb48d3d57",
-    "canonical_source_template_digest": "sha256:5ec16c37cff04ad8",
-    "constraint_checks": [
-      "All three sides are given as integers, as the constraint requires.",
-      "The cosine comes out as exactly 1/2, one of the three special values the constraint names.",
-      "Triangle inequality: 5 + 7 = 12 > 8, 5 + 8 = 13 > 7, and 7 + 8 = 15 > 5.",
-      "The answer is exact, with no decimal or rounding step.",
-      "Last step token check: the last step names none of the served degree answers 60, 90 or 120."
-    ],
-    "exact_answer_derivation": "cos C = (5^2 + 8^2 - 7^2)/(2*5*8) = (25 + 64 - 49)/80 = 40/80 = 1/2 exactly. Verification: with cos C = 1/2 the Law of Cosines returns c^2 = 25 + 64 - 2*5*8*(1/2) = 89 - 40 = 49, so c = 7, which is the given side.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "acceptance_manifest_sha256": "bbf700f4fd32835294713a1bb4295d596f10371e4e0cc38a22739a1d40e01322",
-      "accepted_rows_sha256": "32cd6bb172b47a6269407f8cb6b170281d6033200269f6ca742b7ad4d28c9280",
-      "independent_reason": "Independent inspection confirms a materially different problem/output family, exact derivation, curriculum constraints, and concrete worked pedagogy; unchanged production verification and exhaustive accepted-template domain checks pass.",
-      "kp_id": "law-of-cosines/kp3",
-      "source_row_sha256": "5f1113e473105239283f3f58f1348d1d136adcffae0ff412526e4a5971ffc222"
-    },
     "kp_id": "law-of-cosines/kp3",
-    "novelty_proof": "The accepted template renders the isosceles family 2b, 2b, 2b*sqrt(2-a) for a in {-1,0,1} and b in 1..4, and asks for the angle in degrees; its three served answers are 60, 90 and 120, and the production variant quoted in the rejection also answers with a degree value. This row changes the requested output from the angle to the exact cosine, and it uses the scalene all-integer triple (5,7,8), which is neither the isosceles template shape nor either exemplar triple (3,5,7) and (5,12,13), nor the topic's diagnostic triple (6,10,14).",
-    "semantic_rationale": "When every answer is one of three angles, the sign of the numerator gives the angle away. The request for the cosine keeps the whole substitution and the arithmetic in play, and it makes the rearranged formula, not the special-angle table, the object of the lesson.",
     "teach_digest": "sha256:31034a5f9062a677",
+    "template_digest": "sha256:5ec16c37cff04ad8",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:3c8e4e2b9122aaf79be86593547dcec00ffa14d873d67a58151750f3c7680f90"
     }
   },
   {
-    "author_source_reference": "sha256:193efea6da812ae891085ef578ef68800054b15d0dcee27cef5a035f2a1f7220",
-    "canonical_source_template_digest": "sha256:a339f96b1b66c98b",
-    "constraint_checks": "Checked against the live curriculum KP name, constraints, exemplars, and every accepted template domain.",
-    "exact_answer_derivation": "SAS lacks an opposite pair, so the proposed sine law is wrong and the cosine law starts",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "acceptance_manifest_sha256": "54ad4a6e1a409a612f8c331b6ac4a3d5dd97cdc74d94c56c8e282858e36c94af",
-      "accepted_rows_sha256": "13886624f4662fca52b4019ae6eacc235112fa62b1fdaf4a9100e51259d591b1",
-      "independent_reason": "Diagnoses an invalid Law-of-Sines start for SAS data and identifies the Law of Cosines; the no-known-opposite-pair rationale is correct.",
-      "kp_id": "law-of-sines-cosines/kp1",
-      "source": "sources/reviewed21",
-      "source_row_sha256": "56d66b97734ef47b9fecca4a660bef790d943ccfeb152620c8f80fbf853edebe"
-    },
-    "independent_semantic_status": "awaiting independent review; packet author did not self-approve",
     "kp_id": "law-of-sines-cosines/kp1",
-    "novelty_proof": "process-diagnosis family rather than direct paired classification; exact problem text is absent from every exemplar and accepted template instance.",
-    "semantic_rationale": "The worked steps expose the required decision and calculation concretely while changing the accepted template's input or requested-output structure.",
-    "source_template_digests": [
-      "sha256:193efea6da812ae891085ef578ef68800054b15d0dcee27cef5a035f2a1f7220"
-    ],
     "teach_digest": "sha256:9d4def121509b041",
+    "template_digest": "sha256:a339f96b1b66c98b",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:63c3487526006c057f115dbbdfe085bb5d54e6ad42e43950ab20ad2763f330d5"
     }
   },
   {
-    "author_source_reference": "sha256:e22a5103eb2dfed6db295e99b69be43f8764aa51b85e6b64e81940095338ecc3",
-    "canonical_source_template_digest": "sha256:91f6e986ad177304",
-    "constraint_checks": [
-      "The triangle needs both relations in turn, as the constraint's first branch requires.",
-      "The data is special-angle data (A = 60 degrees), and the answer is exact, as the constraint requires.",
-      "a^2 = 361 is a perfect square, so a = 19 is exact with no rounding.",
-      "sin C = 0.95714 is at most 1, so the triangle exists; triangle inequality: 5 + 19 = 24 > 21, 5 + 21 = 26 > 19, 19 + 21 = 40 > 5.",
-      "C is opposite the longest side 21, so C is the largest angle, which agrees with the numerical check.",
-      "Last step token check: the last step names none of the served degree answers 30, 45, 60 or 120, and not the exemplar answer string for b = 5, c = 8, A = 60."
-    ],
-    "exact_answer_derivation": "a^2 = 5^2 + 21^2 - 2*5*21*cos60 = 25 + 441 - 210*(1/2) = 466 - 105 = 361, so a = 19. sin C = c sin A / a = 21*(sqrt(3)/2)/19 = 21*sqrt(3)/38. Numerically 21*1.7320508/38 = 0.95714, which is at most 1, so the value is attainable. Verification: C = arcsin(0.95714) = 73.17 degrees, and A + C = 133.17 degrees, leaving B = 46.83 degrees; the side order 5 < 19 < 21 matches the angle order 46.83 < 60 < 73.17.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "acceptance_manifest_sha256": "bbf700f4fd32835294713a1bb4295d596f10371e4e0cc38a22739a1d40e01322",
-      "accepted_rows_sha256": "32cd6bb172b47a6269407f8cb6b170281d6033200269f6ca742b7ad4d28c9280",
-      "independent_reason": "Independent inspection confirms a materially different problem/output family, exact derivation, curriculum constraints, and concrete worked pedagogy; unchanged production verification and exhaustive accepted-template domain checks pass.",
-      "kp_id": "law-of-sines-cosines/kp2",
-      "source_row_sha256": "5fa9f4dfd58ac540954301c30653cc42570c49f165aba6a5e5f60567404c4f58"
-    },
     "kp_id": "law-of-sines-cosines/kp2",
-    "novelty_proof": "The accepted template renders the isosceles triangle AB = AC = 2b with included angle 90 - 30a for a in {-1,0,1}, and asks for B in degrees; its three served answers are 30, 45 and 60, and the production variant quoted in the rejection asks for a largest angle in degrees. This row uses a scalene triangle, keeps the requested output as an exact surd ratio rather than a degree value, and its data (5, 21, 60 degrees) matches neither exemplar (b=5, c=8, A=60) nor (7, 8, 13).",
-    "semantic_rationale": "An isosceles template makes the second relation nearly free, because two angles are equal by symmetry. A scalene triangle forces both relations to be used for their own reasons, and asking for the exact sine keeps the surd arithmetic that the special-angle data exists to produce.",
     "teach_digest": "sha256:8a0ba7bf6478e67f",
+    "template_digest": "sha256:91f6e986ad177304",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:c7afebcb94ff6d08c281aa7b1b5e5fb09a09d9f07105ce18447fb45a40ae70c7"
     }
   },
   {
-    "author_source_reference": "24ee88021f2a2c70",
-    "canonical_source_template_digest": "sha256:e8f1ccd570cd2dad",
-    "constraint_checks": "Two sides and the included right angle, metric units, exact answer via Pythagorean case of the Law of Cosines (cos 90=0).",
-    "exact_answer_derivation": "d^2=2025+3600-2*45*60*cos90=5625-0=5625 => d=75 (verified numerically: 75.0).",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "navigation and surveying contexts in metric units; two sides and the included angle, or three sides; exact answers",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "law-of-sines-cosines/kp3",
-      "objective": "Applications to distances",
-      "outside_every_accepted_template_domain": true,
-      "problem": "Two hiking trails leave a lodge, one 45 km long and the other 60 km long, separated by a 90-degree angle. How far apart are the trail ends?",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "law-of-sines-cosines/kp3",
-    "novelty_proof": "Template's path lengths are always in ratio (a, 2a) separated by 60 degrees; new problem uses independent lengths 45 and 60 separated by 90 degrees, outside that ratio-and-angle family.",
-    "semantic_rationale": "Teaches the KP objective for law-of-sines-cosines/kp3 via a single new worked example, chosen to sit outside the accepted template's parameter/family domain (digest 24ee88021f2a2c70) and distinct from all curriculum exemplars and diagnostic_exemplar for this concept.",
     "teach_digest": "sha256:409f25e3b2ed926e",
+    "template_digest": "sha256:e8f1ccd570cd2dad",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:02cccbb2ee3aa50e055d2834617ff682227e763c075bd81bf5770fe6b8f63bea"
     }
   },
   {
-    "author_source_reference": "b89effca0205a310",
-    "canonical_source_template_digest": "sha256:9e4ce7bac515f7a7",
-    "constraint_checks": "Denominator sin 45° ≠ 0. Third angle C = 75° > 0, so the triangle is valid. Radical simplified fully (no denominator radical left).",
-    "exact_answer_derivation": "Simplify: b = 6√3/√2 = 6√6/2 = 3√6.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "a/sin A = b/sin B = c/sin C; use special-angle sines",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "law-of-sines/kp1",
-      "objective": "Find a side (AAS/ASA)",
-      "outside_every_accepted_template_domain": true,
-      "problem": "In a triangle, A = 45°, B = 60°, and a = 6. Find side b exactly.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "law-of-sines/kp1",
-    "novelty_proof": "Uses A=45°,B=60°,a=6 (fresh special-angle pair), outside the accepted template's fixed A=30°,B=45° family and distinct from both worked exemplars (which use A=30° with a as the only free parameter).",
-    "semantic_rationale": "AAS setup: two angles plus the side opposite one of them; direct one-step application of the Law of Sines ratio.",
     "teach_digest": "sha256:7f55ceb36b87302c",
+    "template_digest": "sha256:9e4ce7bac515f7a7",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:294b50d2563686113b68cddc76dc7ec71fefba4ee051a3ccf843cade363935e8"
     }
   },
   {
-    "author_source_reference": "f71b3fbe649fe7a8",
-    "canonical_source_template_digest": "sha256:bb10529aab4226bd",
-    "constraint_checks": "B = 30° > 0, so the triangle is valid (right triangle at C). Denominator sin 60° ≠ 0. Radical rationalized: 12/√3 = 4√3.",
-    "exact_answer_derivation": "Solve: b = 12 · sin 30° / sin 60° = 12 · (1/2) / (√3/2) = 12/√3 = 4√3.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "two angles given, so the third comes from the 180 degree sum; angles drawn from 30, 45, 60, 75 and 105 degrees so answers stay exact radicals",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "law-of-sines/kp2",
-      "objective": "Find the third angle first",
-      "outside_every_accepted_template_domain": true,
-      "problem": "In a triangle, A = 60°, C = 90°, and a = 12. Find side b exactly.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "law-of-sines/kp2",
-    "novelty_proof": "Uses the angle triple 60°/90°/30°, a=12; outside the accepted template's fixed A=30°,C=105° family and outside both worked exemplars' angle triples (30/45/105 and 45/60/75).",
-    "semantic_rationale": "Reinforces finding the missing angle before the ratio, using a right-triangle special case not seen in the exemplars.",
     "teach_digest": "sha256:5b9a42155f05c8bc",
+    "template_digest": "sha256:bb10529aab4226bd",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:bb48fb8a7d3ce673c1bde5a84a0159cab4910083f13a8fb3f55b52748f84e24c"
     }
   },
   {
-    "author_source_reference": "sha256:fa60a1ec6929dcb1e58c8d2ed62f9a8a6683fbe44bec6fa304d58e329193b511",
-    "canonical_source_template_digest": "sha256:9df39d8fa687d631",
-    "constraint_checks": [
-      "sin B = sqrt(3)/2 is an exact special value, as the constraint requires.",
-      "sin B is at most 1, so the triangle exists.",
-      "The statement that B is acute removes the second solution 120 degrees, so the case is unambiguous, as the constraint requires.",
-      "C = 75 degrees is acute, so no angle of the triangle is obtuse and the non-obtuse condition holds throughout.",
-      "The angle sum is exact: 45 + 60 + 75 = 180.",
-      "Last step token check: the last step names none of the served answers 30, 45 or 60 degrees."
-    ],
-    "exact_answer_derivation": "sin B = b sin A / a = 4*sqrt(6)*(sqrt(2)/2)/8 = 4*sqrt(12)/16 = 8*sqrt(3)/16 = sqrt(3)/2. Two angles below 180 degrees have sine sqrt(3)/2: 60 and 120. B is stated acute, so B = 60 degrees. C = 180 - 45 - 60 = 75 degrees. Verification: sqrt(3)/2 = 0.8660254, and 4*sqrt(6) = 9.79796, so b sin A / a = 9.79796*0.7071068/8 = 0.8660254, which matches exactly. Side order: a = 8 < b = 9.798, and 45 < 60, so the angle order agrees.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "acceptance_manifest_sha256": "bbf700f4fd32835294713a1bb4295d596f10371e4e0cc38a22739a1d40e01322",
-      "accepted_rows_sha256": "32cd6bb172b47a6269407f8cb6b170281d6033200269f6ca742b7ad4d28c9280",
-      "independent_reason": "Independent inspection confirms a materially different problem/output family, exact derivation, curriculum constraints, and concrete worked pedagogy; unchanged production verification and exhaustive accepted-template domain checks pass.",
-      "kp_id": "law-of-sines/kp3",
-      "source_row_sha256": "0312d2aa9114dfb11aeb5d62586612f63a7b233a4bdf7a4e4b120aade9175459"
-    },
     "kp_id": "law-of-sines/kp3",
-    "novelty_proof": "The accepted template renders A = 30 degrees with the side opposite A equal to 2b and the side opposite acute B equal to 2b*sqrt(a), for a in {1,2,3} and b in 2..5; its three served answers are 30, 45 and 60 degrees, and the production variant quoted in the rejection also answers with B in degrees. This row uses A = 45 degrees, outside the template's fixed 30-degree family, and changes the requested output from B to the THIRD angle C, which adds the angle-sum step the template never reaches.",
-    "semantic_rationale": "Reporting B alone stops at the sine table. Asking for C keeps the sine step and the acute-branch decision, then adds the angle sum, so the learner sees why the ambiguous case has to be settled before the rest of the triangle follows.",
     "teach_digest": "sha256:4d4a8c4334e5cff8",
+    "template_digest": "sha256:9df39d8fa687d631",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:e2a85b727a26b36b29a56ce5c94e69730e1427794ae1eb7e3a709fc9a07977c3"
     }
   },
   {
-    "author_source_reference": "docs/content-foundations/arithmetic-core/teach-05-number-theory.json#least-common-multiple/kp1",
-    "canonical_source_template_digest": "sha256:99a4f211f6da2cc0",
-    "constraint_checks": "The exact integrated arithmetic-core source row is preserved byte-for-byte. The current Teach production gate rechecks its objective, worked-example answer, and collisions against authored and template-served sibling answers.",
-    "exact_answer_derivation": "List multiples of $7$: $7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77$. -> List multiples of $11$: $11, 22, 33, 44, 55, 66, 77$. -> The first entry common to both increasing lists is $77$. -> Therefore the least common multiple is $77$.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "independent_reason": "This sidecar row is an exact propagation of the integrated arithmetic-core repair; independent release review remains recorded as pending.",
-      "kp_id": "least-common-multiple/kp1",
-      "source": "docs/content-foundations/arithmetic-core/teach-05-number-theory.json",
-      "source_row_sha256": "86cb06bcab14c08e79cfd173d93f1d522e95cf91a2fe24754f7672220bbbe21e"
-    },
     "kp_id": "least-common-multiple/kp1",
-    "novelty_proof": "The current Teach production gate accepted this exact worked example after comparing its problem and answer evidence with the knowledge point's authored exemplars and every served template instance.",
-    "semantic_rationale": "The least common multiple (LCM) is the smallest number that both numbers divide. List the multiples of each number and take the first one that appears in both lists. Worked example: Find the LCM of $7$ and $11$ by listing multiples.",
     "teach_digest": "sha256:b90a4c07ccf7d229",
+    "template_digest": "sha256:99a4f211f6da2cc0",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:8c65851dd05eb8a0e9ab364ec9e833dfc4cc13b0986ba19e6eeb553d9f3eabab"
     }
   },
   {
-    "author_source_reference": "docs/content-foundations/arithmetic-core/teach-05-number-theory.json#least-common-multiple/kp2",
-    "canonical_source_template_digest": "sha256:ec3e4bd944e2f61e",
-    "constraint_checks": "The exact integrated arithmetic-core source row is preserved byte-for-byte. The current Teach production gate rechecks its objective, worked-example answer, and collisions against authored and template-served sibling answers.",
-    "exact_answer_derivation": "8 = 2 times 2 times 2 and 15 = 3 times 5. -> No prime factor is shared. -> Both complete prime factorizations are needed. -> 8 times 15 = 120, so LCM(8,15)=120.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "independent_reason": "Source propagation updated; independent approval remains pending.",
-      "kp_id": "least-common-multiple/kp2",
-      "source": "docs/content-foundations/arithmetic-core/teach-05-number-theory.json",
-      "source_row_sha256": "779a52d883e35480f9f957cb4de26d1a781a9b30d0ccce5c9920b768f49a04b9"
-    },
     "kp_id": "least-common-multiple/kp2",
-    "novelty_proof": "The current Teach production gate accepted this exact worked example after comparing its problem and answer evidence with the knowledge point's authored exemplars and every served template instance.",
-    "semantic_rationale": "8=2 cubed and 15=3 times 5 share no prime factor. Their complete prime factors are all needed, so their LCM is 8 times 15 = 120.",
-    "teach_digest": "sha256:779a52d883e35480",
+    "teach_digest": "sha256:0ec5f67f4524b040",
+    "template_digest": "sha256:ec3e4bd944e2f61e",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:ffb01e0b67c53be9b1c568365c329a2c28eb2f752aafc53ad36cc9c44e008315"
     }
   },
   {
-    "author_source_reference": "docs/content-foundations/arithmetic-core/teach-05-number-theory.json#least-common-multiple/kp3",
-    "canonical_source_template_digest": "sha256:78b4cda67c8811c9",
-    "constraint_checks": "The exact integrated arithmetic-core source row is preserved byte-for-byte. The current Teach production gate rechecks its objective, worked-example answer, and collisions against authored and template-served sibling answers.",
-    "exact_answer_derivation": "Start with $5$ and $10$: since $5$ divides $10$, their least common multiple is $10$. -> Combine that result with $7$. The two values share no factor besides $1$. -> Their product is $10 \\times 7 = 70$, and each original input divides it. -> No smaller positive common multiple exists, so the result is $70$.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "independent_reason": "This sidecar row is an exact propagation of the integrated arithmetic-core repair; independent release review remains recorded as pending.",
-      "kp_id": "least-common-multiple/kp3",
-      "source": "docs/content-foundations/arithmetic-core/teach-05-number-theory.json",
-      "source_row_sha256": "b1f605a92ca703dccdb590a432e1d2b80ce68bf76a046a26c8183f45d5e14ebd"
-    },
-    "independent_semantic_status": "awaiting independent review; packet author did not self-approve",
     "kp_id": "least-common-multiple/kp3",
-    "novelty_proof": "The current Teach production gate accepted this exact worked example after comparing its problem and answer evidence with the knowledge point's authored exemplars and every served template instance.",
-    "semantic_rationale": "For three numbers, find the LCM of two of them first, then find the LCM of that result and the third number. Worked example: Find the LCM of $5$, $7$, and $10$.",
-    "source_template_digests": [
-      "sha256:9c1ee0c70b32a1a0f4eef7e084c1e586805a347cf0a8fbc58916588acfafa79a",
-      "sha256:f3eda044aa5e91bb1344aabe591fc1a73995538395166684872508231b8b428d"
-    ],
     "teach_digest": "sha256:ec4b9e0e9b399fd4",
+    "template_digest": "sha256:3855d0d4bf434b08",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:74df020e921b2a2a1ec7416f3a9a85d74ac613c0dbb4a51eb6a715a149e08bb0"
     }
   },
   {
-    "author_source_reference": "0fe45385d82ab06b",
-    "canonical_source_template_digest": "sha256:9dd75a180b417e6c",
-    "constraint_checks": "Reversal applied correctly because the divisor −5 is negative. Check x = −5: −5(−5) − 7 = 18 > 13, true. Check the boundary x = −4: −5(−4) − 7 = 13, not > 13, correctly excluded.",
-    "exact_answer_derivation": "Divide both sides by −5 and reverse the inequality: x < −4.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "reverse the inequality when dividing/multiplying by a negative",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "linear-inequalities/kp1",
-      "objective": "Flip the sign for a negative coefficient",
-      "outside_every_accepted_template_domain": true,
-      "problem": "Solve −5x − 7 > 13.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "linear-inequalities/kp1",
-    "novelty_proof": "Uses coefficient −5 and a strict '>' inequality with a constant term outside the fixed value; outside the accepted template's fixed form −3x + a ≤ b and distinct from both exemplars (−3x < 12 and −x + 2 ≥ 5).",
-    "semantic_rationale": "Adds a strict inequality and a negative constant, testing the sign-flip rule in a form not covered by the accepted template.",
     "teach_digest": "sha256:e523e12137bd86cb",
+    "template_digest": "sha256:9dd75a180b417e6c",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:2f963ee460557a13fdea08662ab2d4bcbe2f2e8c795709af5289d4c45431c3d4"
     }
   },
   {
-    "author_source_reference": "7b2ccbe0e35d8ff3",
-    "canonical_source_template_digest": "sha256:a259d833e757021f",
-    "constraint_checks": "Divisor 2 is positive, so no sign reversal is needed. Check x = 0: 2(3) = 6 > −8, true. Check boundary x = 7: 2(10)=20, 4(7)−8=20, equal, correctly excluded from strict inequality.",
-    "exact_answer_derivation": "Divide both sides by 2 (positive, no reversal): 7 > x, so x < 7.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "simplify both sides first; flip only for a negative divisor",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "linear-inequalities/kp2",
-      "objective": "Multi-step inequalities",
-      "outside_every_accepted_template_domain": true,
-      "problem": "Solve 2(x + 3) > 4x − 8.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "linear-inequalities/kp2",
-    "novelty_proof": "Uses distribution over addition with a positive leading coefficient after simplification; outside the accepted template's fixed form 4(x − a) ≤ x + b and distinct from both exemplars (3(x−2) > x+4 and 5−2x ≤ 11).",
-    "semantic_rationale": "Uses a positive final divisor (no reversal) to complement the flip-focused kp1, while still requiring distribution and variable collection.",
     "teach_digest": "sha256:cb1a58b7c4f153c0",
+    "template_digest": "sha256:a259d833e757021f",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:d6ef6727dc475ad51737aed641e1d22332631dd564e02da2b95a639b074a0e8e"
     }
   },
   {
-    "author_source_reference": "a352aaca877c03f6",
-    "canonical_source_template_digest": "sha256:9c23bbb1d2996fc0",
-    "constraint_checks": "Divisor −7 is negative, so the inequality is correctly reversed. Check x = 0: 7 < 21, true. Check boundary x = −2: 7−4(−2)=15, 3(−2)+21=15, equal, correctly excluded.",
-    "exact_answer_derivation": "Divide both sides by −7 and reverse the inequality: x > −2.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "collect variables on the side that keeps the coefficient positive when possible",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "linear-inequalities/kp3",
-      "objective": "Variables on both sides",
-      "outside_every_accepted_template_domain": true,
-      "problem": "Solve 7 − 4x < 3x + 21.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "linear-inequalities/kp3",
-    "novelty_proof": "Uses coefficients −4 and 3 collecting to a negative divisor; outside the accepted template's fixed form 2x + a ≥ 5x − b and distinct from both exemplars (2x+7 < 5x−2 and 4−3x ≥ 2x−6).",
-    "semantic_rationale": "Collecting variables on the left this time makes the divisor negative, giving practice with the sign flip inside a both-sides problem.",
     "teach_digest": "sha256:e1508f0ceae6440d",
+    "template_digest": "sha256:9c23bbb1d2996fc0",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:9926f64ef279ee083003802b865e8f9130e71bf148b1732a32dafb8f0186d15c"
     }
   },
   {
-    "author_source_reference": "1206255f83653327",
-    "canonical_source_template_digest": "sha256:f82008b868170fe9",
-    "constraint_checks": "Both m=19 and b=50 map correctly: at p=0 pages the cost is exactly the $50 fee (no per-page charge yet), matching the y-intercept definition.",
-    "exact_answer_derivation": "Write the model: C = 19p + 50, giving coefficients (m, b) = (19, 50).",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "rate is the slope; fixed fee is the y-intercept",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "linear-word-problems/kp1",
-      "objective": "Build a linear cost model",
-      "outside_every_accepted_template_domain": true,
-      "problem": "A print shop charges a fixed $50 design fee plus $19 per printed page. Build the cost model C = m·p + b for p pages by giving its coefficients (m, b).",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "linear-word-problems/kp1",
-    "novelty_proof": "Uses rate 19 and fixed fee 50 in a print-shop context; outside the accepted template's parameter set (r ∈ {7,11,13,17}, f ∈ {29,37,43}) for the tool-hire scenario.",
-    "semantic_rationale": "Same slope-intercept identification skill as the template family, applied to a new real-world scenario (printing) with values outside its domain.",
     "teach_digest": "sha256:20d56691ec0ab892",
+    "template_digest": "sha256:f82008b868170fe9",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:f654188f8b8024ff3173c5070f4b65c9e843ae59f4689cd7de589c2ea1888fb9"
     }
   },
   {
-    "author_source_reference": "02905280dbb0c59b",
-    "canonical_source_template_digest": "sha256:f08d5e125056e57c",
-    "constraint_checks": "Check with the second point: C = 36(8) + 42 = 288 + 42 = 330, matches. Check with the first point: 36(3) + 42 = 108 + 42 = 150, matches.",
-    "exact_answer_derivation": "Write the model: C = 36t + 42, giving (m, b) = (36, 42).",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "treat the data as two points; integer slope and intercept",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "linear-word-problems/kp2",
-      "objective": "Build a model from two data points",
-      "outside_every_accepted_template_domain": true,
-      "problem": "A storage unit costs €150 total after 3 months and €330 total after 8 months. For C = m·t + b, give (m, b) in €/month and €.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "linear-word-problems/kp2",
-    "novelty_proof": "Uses months 3 and 8 with totals €150 and €330 (storage-unit scenario); outside the accepted template's parameter set (a ∈ {50,56,62,68} at 2 months, b ∈ {74,80,86} at 5 months) for the club-membership scenario.",
-    "semantic_rationale": "Same two-point linear-model derivation as the template family, with new time values (3, 8 rather than 2, 5) and a new scenario.",
     "teach_digest": "sha256:0fb09c9925ecebc6",
+    "template_digest": "sha256:f08d5e125056e57c",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:44fe6a9c0b78bab8bb760097ff8f884294abb27cd6a09c133541f3e904ecc89d"
     }
   },
   {
-    "author_source_reference": "sha256:3d08f09298c93809",
-    "canonical_source_template_digest": "sha256:3d08f09298c93809",
-    "constraint_checks": "The model is linear with nonzero small integer rate and constant, both targets produce unique positive integer inputs, and each target is set equal to the model before solving.",
-    "exact_answer_derivation": "(39-3)/4=9 and (63-3)/4=15; their sum is 24.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "acceptance_manifest_sha256": "bbf700f4fd32835294713a1bb4295d596f10371e4e0cc38a22739a1d40e01322",
-      "accepted_rows_sha256": "32cd6bb172b47a6269407f8cb6b170281d6033200269f6ca742b7ad4d28c9280",
-      "independent_reason": "Independent review confirms exact mathematics, the live KP objective and constraints, concrete worked pedagogy, and a reverse, aggregate, diagnostic, or derived-output family outside every accepted template domain. The unchanged production gate and exhaustive exemplar/template-instance collision scan pass.",
-      "kp_id": "linear-word-problems/kp3",
-      "source_row_sha256": "329477c95d36b0fed6035987bad08cd24ff48fdbb0e2aab22d67d724696246e0"
-    },
     "kp_id": "linear-word-problems/kp3",
-    "novelty_proof": "The selected template solves one fixed fare rule and outputs 12 through 23. This solves two targets under a different rule and asks for the sum of the inputs; its output 24 is outside the served domain.",
-    "semantic_rationale": "The paired targets expose the fixed charge and rate as stable parts of one model rather than unrelated arithmetic constants.",
     "teach_digest": "sha256:78fc9b5137ba3d03",
+    "template_digest": "sha256:3d08f09298c93809",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:7a38bb357d0919d39122565fd253cf839d360539ec9c17c9dbd7610926ba88e6"
     }
   },
   {
-    "author_source_reference": "5f7f1547ce232351",
-    "canonical_source_template_digest": "sha256:f8e3439e87e03b23",
-    "constraint_checks": "x appears exactly once on the right side before isolation, and k is stated nonzero so the division is valid. Substituting the result back: m·a + k·((F−ma)/k) = ma + F − ma = F, matches.",
-    "exact_answer_derivation": "Divide both sides by the nonzero coefficient k: x = (F − ma) / k.",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "target variable appears once; keep other letters symbolic",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "literal-equations/kp1",
-      "objective": "Multi-term formulas",
-      "outside_every_accepted_template_domain": true,
-      "problem": "Solve F = ma + kx for x, assuming k is nonzero. Keep the other letters symbolic and give the expression equal to x.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "literal-equations/kp1",
-    "novelty_proof": "Uses variables F, m, a, k, x in a physics-style formula (force = mass·acceleration + spring term); outside the accepted template's fixed letters (z, u, v, w) and structure ax·k + c·l − m = j.",
-    "semantic_rationale": "Same single-occurrence isolate-then-divide pattern as the template family, presented with a different symbolic formula and letter set.",
     "teach_digest": "sha256:08772f501bfe4697",
+    "template_digest": "sha256:f8e3439e87e03b23",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:458e00ad6d9b957162767c5a93e7b7464dbf3132147e57f3b3e80984115ea3f4"
     }
   },
   {
-    "author_source_reference": "38c3738e5ab5befe",
-    "canonical_source_template_digest": "sha256:3dab25e5f2cf2e36",
-    "constraint_checks": "y appears in both terms before factoring, and p+q is stated nonzero so the division is valid. Substituting back: p·(m/(p+q)) + q·(m/(p+q)) = m(p+q)/(p+q) = m, matches.",
-    "exact_answer_derivation": "Divide both sides by the nonzero sum (p + q): y = m / (p + q).",
-    "human_approval": "pending",
-    "independent_acceptance": {
-      "constraints": "may require factoring out the target variable",
-      "decision": "accept",
-      "exact_steps_and_final_answer_reviewed": true,
-      "exemplar_and_template_instances_collision": false,
-      "kp_id": "literal-equations/kp2",
-      "objective": "Target variable in more than one term",
-      "outside_every_accepted_template_domain": true,
-      "problem": "Solve py + qy = m for y, assuming p + q is nonzero. Keep the other letters symbolic and give the expression equal to y.",
-      "production_teach_gate_ok": true,
-      "reason": "direct semantic inspection confirms every step, final answer, objective and stated constraint"
-    },
     "kp_id": "literal-equations/kp2",
-    "novelty_proof": "Uses variables p, q, m, y; outside the accepted template's fixed letters (z, u, v) and structure a·k·x + c·l·x = j.",
-    "semantic_rationale": "Same factor-then-divide pattern as the template family, using a different letter set and simpler two-term structure.",
     "teach_digest": "sha256:5aeb3474c44cd747",
+    "template_digest": "sha256:3dab25e5f2cf2e36",
     "verification": {
       "collision": "clear",
-      "human_approval": "pending",
-      "production_gate": "accepted"
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-14.json",
+      "sha256": "sha256:aee1e393858464cabf0404dc126435a922b7e85df81bf21951e046a79e394243"
     }
   }
 ]

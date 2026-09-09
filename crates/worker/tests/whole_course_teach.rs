@@ -109,8 +109,14 @@ type Sources = BTreeMap<String, (String, Vec<cadus_core::instruction::ServedInst
 fn manifests(directory: &Path) -> (Value, Value) {
     let manifest = read(directory.join("manifest.json"));
     let import = read(directory.join("import-manifest.json"));
-    assert_eq!(manifest["status"], "pending-human-review");
-    assert_eq!(manifest["human_approval"], "pending");
+    assert_eq!(manifest["status"], "pending-ai-review");
+    assert_eq!(manifest["schema_version"], 2);
+    assert!(
+        manifest["historical_archive"]["sha256"]
+            .as_str()
+            .unwrap()
+            .starts_with("sha256:")
+    );
     assert_eq!(
         manifest["side_effects"],
         serde_json::json!({
@@ -124,7 +130,8 @@ fn manifests(directory: &Path) -> (Value, Value) {
             "missing_teach": 735, "rejected": 0, "residual": 0
         })
     );
-    assert_eq!(import["status"], "pending-human-review");
+    assert_eq!(import["status"], "pending-ai-review");
+    assert_eq!(import["schema_version"], 2);
     assert_eq!(import["kinds"], serde_json::json!(["teach"]));
     assert_eq!(import["knowledge_points"], 735);
     assert_eq!(import["api_calls"], 0);
@@ -243,57 +250,40 @@ fn source_evidence(
 
 fn verify_review(kp: &str, review: &Value) {
     assert_eq!(review["kp_id"], kp);
-    assert_eq!(review["human_approval"], "pending", "{kp}");
+    assert_eq!(review["ai_review"], "pending", "{kp}");
+    assert_eq!(review["verification"]["collision"], "clear", "{kp}");
     assert_eq!(
-        review["verification"],
-        serde_json::json!({
-            "collision": "clear", "human_approval": "pending", "production_gate": "accepted"
-        }),
+        review["verification"]["production_gate"], "accepted",
         "{kp}"
     );
-    for forbidden in ["status", "approved", "approved_by", "automatic_approval"] {
+    assert_eq!(
+        review["verification"]["context_coverage"], "sampled_template_instances",
+        "{kp}"
+    );
+    assert!(
+        review["historical_review"]["path"]
+            .as_str()
+            .unwrap()
+            .starts_with("historical-archive/reviews/")
+    );
+    assert!(
+        review["historical_review"]["sha256"]
+            .as_str()
+            .unwrap()
+            .starts_with("sha256:")
+    );
+    for forbidden in [
+        "human_approval",
+        "independent_acceptance",
+        "semantic_rationale",
+        "approved",
+    ] {
         assert!(
             review.get(forbidden).is_none(),
-            "{kp}: forbidden {forbidden}"
-        );
-    }
-    assert!(
-        !review.to_string().contains("/home/deploy/.cache/"),
-        "{kp}: machine-local path"
-    );
-    let acceptance = review["independent_acceptance"]
-        .as_object()
-        .expect("acceptance object");
-    assert!(!acceptance.is_empty(), "{kp}: empty independent acceptance");
-    if !review["independent_acceptance"]["decision"].is_null() {
-        assert_eq!(
-            review["independent_acceptance"]["decision"], "accept",
-            "{kp}"
-        );
-    } else {
-        for field in ["independent_reason", "source_row_sha256"] {
-            assert!(
-                meaningful(&review["independent_acceptance"][field]),
-                "{kp}: no {field}"
-            );
-        }
-    }
-    for field in [
-        "novelty_proof",
-        "exact_answer_derivation",
-        "constraint_checks",
-        "semantic_rationale",
-    ] {
-        assert!(meaningful(&review[field]), "{kp}: empty {field}");
-    }
-    if !review["author_source_reference"].is_null() {
-        assert!(
-            meaningful(&review["author_source_reference"]),
-            "{kp}: empty author source"
+            "{kp}: historical semantic claim leaked"
         );
     }
 }
-
 fn verify_pages(
     drafts: &BTreeMap<String, Value>,
     reviews: &BTreeMap<String, Value>,
@@ -308,10 +298,7 @@ fn verify_pages(
         let review = &reviews[kp];
         verify_review(kp, review);
         let (source_digest, served) = &sources[kp];
-        assert_eq!(
-            review["canonical_source_template_digest"], *source_digest,
-            "{kp}"
-        );
+        assert_eq!(review["template_digest"], *source_digest, "{kp}");
         let body = verify_kind(Kind::Teach, &specs[kp], &draft["arguments"], served)
             .unwrap_or_else(|error| panic!("{kp}: {error}"));
         assert_eq!(

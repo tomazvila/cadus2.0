@@ -1,1 +1,377 @@
-[{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:e9fc61f599d4c83f","constraint_checks":"Splits into two linear equations as required; both roots are integers as required.","exact_answer_derivation":"6x-15=27 -> x=7; 6x-15=-27 -> x=-2. Verified by substitution: |6(7)-15|=|27|=27; |6(-2)-15|=|-27|=27.","human_approval":"pending","independent_acceptance":{"constraints":"split into two linear equations; integer solutions","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"absolute-value-equations/kp1","objective":"Absolute value of a linear expression","outside_every_accepted_template_domain":true,"problem":"Solve $|6x - 15| = 27$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"absolute-value-equations/kp1","novelty_proof":"Template family is |2x-a| = 2b with fixed coefficient 2 and even constant on the right, a in {10..21}; samples cover a in {-19..23} range as {-8..23}. This example uses coefficient 6 and constant -15/27, an odd-parity right side, outside the template's fixed coefficient-2 shape and its sampled outputs {-19..23}. It also differs from both curriculum exemplars (|2x+1|=9, |3x-6|=12).","semantic_rationale":"Tests the core skill (split |linear|=k into two branches) with fresh coefficients that force independent arithmetic rather than pattern-matching a memorized template output.","teach_digest":"sha256:4132c5ee2bfa954a","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:7f95b06469f22631","constraint_checks":"Absolute value isolated before splitting into cases, as required.","exact_answer_derivation":"3|x-4|-5=16 -> 3|x-4|=21 -> |x-4|=7 -> x-4=7 (x=11) or x-4=-7 (x=-3). Check: 3|11-4|-5=3(7)-5=16; 3|-3-4|-5=3(7)-5=16.","human_approval":"pending","independent_acceptance":{"constraints":"isolate |..| before splitting into cases","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"absolute-value-equations/kp2","objective":"Isolate the absolute value first","outside_every_accepted_template_domain":true,"problem":"Solve $3|x - 4| - 5 = 16$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"absolute-value-equations/kp2","novelty_proof":"Template statement is fixed as 2|x+1|+3 = 2a+3 (always +1 inside, always +3 outside, coefficient 2). This example uses 3|x-4|-5=16: a different inside constant, a subtraction outside, and coefficient 3, none of which appear in the template's parameter space (only 'a' varies, 10..21). Differs from exemplars (|x+2|-3=4, 2|x|=10).","semantic_rationale":"Requires two isolation steps (add, then divide) before splitting, exercising the full skill rather than a single-step isolation.","teach_digest":"sha256:e2179d29b92283fd","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:8c1975d188e2e6d3","constraint_checks":"Isolated absolute value equals a negative number, matching the required no-solution pattern.","exact_answer_derivation":"5|2x+3|+9=4 -> 5|2x+3|=-5 -> |2x+3|=-1. Since an absolute value is never negative, no real x satisfies this.","human_approval":"pending","independent_acceptance":{"constraints":"isolated absolute value equals a negative number","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"absolute-value-equations/kp3","objective":"Recognize no-solution cases","outside_every_accepted_template_domain":true,"problem":"Solve $5|2x + 3| + 9 = 4$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"absolute-value-equations/kp3","novelty_proof":"Template is |x-a| = -b, a direct equality with no extra isolation step, a,b in {2..5}. This example requires isolating a coefficient and a constant first (5|2x+3|+9=4) before reaching the no-solution recognition, a structurally different and harder path outside the template's family and outside both curriculum exemplars.","semantic_rationale":"Reinforces that the no-solution check applies after full isolation, not only to already-isolated forms.","teach_digest":"sha256:fbae0b9bb72494ab","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:7e6aa27dcaae0336","constraint_checks":"Inside expression is linear; the answer is a bounded interval, as required.","exact_answer_derivation":"-40<5x+10<40 -> -50<5x<30 -> -10<x<6.","human_approval":"pending","independent_acceptance":{"constraints":"linear inside; bounded interval answers","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"absolute-value-inequalities/kp1","objective":"|linear| < a","outside_every_accepted_template_domain":true,"problem":"Solve $|5x + 10| < 40$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"absolute-value-inequalities/kp1","novelty_proof":"Template fixes coefficient 2 and a minus sign inside (|2x-a|<=b), with non-strict inequality and answers restricted to half-integers from a in {3,7,11}, b in {16,22,28,34}. This example uses coefficient 5, a plus sign inside, a strict inequality, and yields a clean-integer interval (-10,6), none of which the template can ever produce.","semantic_rationale":"Strict inequality plus a positive inside-coefficient sign check both the compound-rewrite step and correct division by a positive number.","teach_digest":"sha256:fc94bde0ed4abd38","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:548d3bd64ca08a2f","constraint_checks":"Two-ray answer; union of both branches kept, as required.","exact_answer_derivation":"5x-3>22 -> x>5. 5x-3<-22 -> 5x<-19 -> x<-19/5.","human_approval":"pending","independent_acceptance":{"constraints":"two-ray answers; keep the union","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"absolute-value-inequalities/kp2","objective":"|linear| > a","outside_every_accepted_template_domain":true,"problem":"Solve $|5x - 3| > 22$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"absolute-value-inequalities/kp2","novelty_proof":"Template fixes coefficient 2 and minus sign inside (|2x-a|>b), a in {41,47,53}, b in {3,5,7,9}, always yielding integer endpoints. This example uses coefficient 5, a plus sign inside, and non-strict/strict mixed constants producing one integer and one fractional endpoint (5, -19/5), outside the template's integer-only output range and structurally distinct from both exemplars.","semantic_rationale":"A fractional endpoint forces the learner to complete the division exactly rather than relying on the template's always-integer results.","teach_digest":"sha256:0f0ac07b6dc3e067","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:8639166f191e14e4","constraint_checks":"Absolute value isolated before splitting into cases, as required.","exact_answer_derivation":"4|x+6|-7<=21 -> 4|x+6|<=28 -> |x+6|<=7 -> -7<=x+6<=7 -> -13<=x<=1.","human_approval":"pending","independent_acceptance":{"constraints":"isolate the absolute value before splitting into cases","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"absolute-value-inequalities/kp3","objective":"Isolate the absolute value first","outside_every_accepted_template_domain":true,"problem":"Solve $4|x + 6| - 7 \\le 21$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"absolute-value-inequalities/kp3","novelty_proof":"Template fixes the form 2|3x-a|+5<=b (coefficient 3 inside, +5 offset, coefficient 2 outside), a in {4,8,12}, b in {17,23,29,35}. This example uses 4|x+6|-7<=21: coefficient 1 inside, a plus sign, a subtraction offset, and outer coefficient 4, none matching the template's fixed structure, and distinct from both exemplars.","semantic_rationale":"Combines an isolation step with the compound-inequality rewrite, testing both skills the KP names in sequence.","teach_digest":"sha256:b19787a39513edda","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:a80d56e791d6c2eb","constraint_checks":"Integer within -20 to 20, as required by the KP.","exact_answer_derivation":"|-17| = 17.","human_approval":"pending","independent_acceptance":{"constraints":"integers from -20 to 20","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"absolute-value/kp1","objective":"Absolute value of an integer","outside_every_accepted_template_domain":true,"problem":"A submarine sits at an elevation of $-17$ m relative to sea level. Write the submarine's depth below sea level as a positive number.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"absolute-value/kp1","novelty_proof":"The template's parameter domain (integers -20..20) fully covers the KP's own stated constraint, so every bare 'compute |a|' instance is already an accepted template instance. This example keeps the constant (-17) inside that required range but changes the task family entirely: a submarine-depth word problem requiring the learner to recognize that depth-below-sea-level is modeled by an absolute value, rather than a bare compute instruction. The statement, framing, and required reasoning step do not appear in the template or either exemplar.","semantic_rationale":"Tests whether the learner can recognize an absolute-value situation from context, not just execute the operation on a bare expression.","teach_digest":"sha256:e00ff5c736703b3b","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:f4469f55f416587e","constraint_checks":"Difference of two absolute values, integers in -20..20, as required.","exact_answer_derivation":"|-12| = 12; |7| = 7; 12 - 7 = 5.","human_approval":"pending","independent_acceptance":{"constraints":"sum or difference of two absolute values","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"absolute-value/kp2","objective":"Absolute value in expressions","outside_every_accepted_template_domain":true,"problem":"Compute $|-12| - |7|$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"absolute-value/kp2","novelty_proof":"The template's domain (integers -20..20 for both a and b) fully covers the KP's constraint range and always uses addition (statement fixed as |a|+|b|). This example uses a difference (|-12|-|7|), which the KP's own constraints explicitly allow ('sum or difference') but the accepted template never instantiates, and uses values (-12,7) not in either exemplar.","semantic_rationale":"Exercises the subtraction branch of the KP's constraint, which the addition-only template never drills.","teach_digest":"sha256:28de0894eb15af0a","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:92854e0d1d7af125","constraint_checks":"Degree 1, integer coefficients, as required.","exact_answer_derivation":"(-6x+14)+(9x-2): x-terms -6x+9x=3x; constants 14-2=12. Sum: 3x+12.","human_approval":"pending","independent_acceptance":{"constraints":"degree 1; integer coefficients","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"adding-polynomials/kp1","objective":"Add linear polynomials","outside_every_accepted_template_domain":true,"problem":"Add $(-6x + 14) + (9x - 2)$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"adding-polynomials/kp1","novelty_proof":"Template always adds a parametrized ax+3 to a fixed 2x+5, framed as combining 'path lengths', a in {2..13}. This example adds two fully independent linear binomials, (-6x+14) and (9x-2), with a negative leading coefficient in the first term and no word-problem framing, none of which the template's fixed second addend and always-positive-a domain can produce.","semantic_rationale":"A negative leading coefficient in one addend checks that the learner tracks signs rather than always adding two positive coefficients.","teach_digest":"sha256:7718424bab757187","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:e6a52184171de396","constraint_checks":"Degree 2, like terms lined up by power, as required.","exact_answer_derivation":"(-4x^2+7x-9)+(10x^2-7x+3): x^2: -4+10=6; x: 7-7=0; constants: -9+3=-6. Sum: 6x^2-6.","human_approval":"pending","independent_acceptance":{"constraints":"degree 2; line up like terms","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"adding-polynomials/kp2","objective":"Add quadratics term by term","outside_every_accepted_template_domain":true,"problem":"Add $(-4x^2 + 7x - 9) + (10x^2 - 7x + 3)$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"adding-polynomials/kp2","novelty_proof":"Template always adds a parametrized ax^2+3x+1 (a in {2..13}) to a fixed 2x^2-x+4, framed as 'area polynomials', and its x-coefficients never cancel. This example uses two fully different quadratics whose x-terms cancel to 0 (7x-7x), a case the template's fixed -x/+3x pair never produces.","semantic_rationale":"A vanishing middle term checks that the learner writes the term-by-term standard form correctly even when a term disappears, rather than assuming every place value survives.","teach_digest":"sha256:1e1713d78dbb0947","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:af072655254f6420","constraint_checks":"Some powers absent in each addend; result kept in standard form with the vanished constant term correctly dropped, as required.","exact_answer_derivation":"(5x^4-3x+8)+(-2x^4+6x^2-8): x^4: 5-2=3; x^2: 0+6=6; x: -3+0=-3; constants: 8-8=0. Sum: 3x^4+6x^2-3x.","human_approval":"pending","independent_acceptance":{"constraints":"some powers absent; keep standard form","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"adding-polynomials/kp3","objective":"Add with missing terms","outside_every_accepted_template_domain":true,"problem":"Add $(5x^4 - 3x + 8) + (-2x^4 + 6x^2 - 8)$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"adding-polynomials/kp3","novelty_proof":"Template is always cubic, (ax^3+2x)+(x^2-2x+7), with a fixed x-term cancellation and a in {2..13}. This example is degree 4, has a different missing-power pattern (missing x^2 in the first polynomial, missing x in the second), and its constants cancel to 0 rather than sum to 7, none of which the cubic-only template family can produce.","semantic_rationale":"A vanishing constant term (rather than a vanishing x-term) tests the general missing-power skill from a different angle than the template.","teach_digest":"sha256:250d022c717cc5b4","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:bf61a0f9496bc809","constraint_checks":"Only like radicals (same radicand) are combined, as required.","exact_answer_derivation":"9*sqrt(11) - 13*sqrt(11) = (9-13)*sqrt(11) = -4*sqrt(11).","human_approval":"pending","independent_acceptance":{"constraints":"only like radicals (same radicand) combine","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"adding-subtracting-radicals/kp1","objective":"Add and subtract like radicals","outside_every_accepted_template_domain":true,"problem":"Simplify $9\\sqrt{11} - 13\\sqrt{11}$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"adding-subtracting-radicals/kp1","novelty_proof":"Template is fixed at radicand 7 (a*sqrt(7)+4*sqrt(7)), a in {2..13}, always producing a positive result. This example uses radicand 11 and yields a negative coefficient (-4), a radicand and sign the fixed-radicand-7 template can never produce.","semantic_rationale":"A negative resulting coefficient checks that the learner keeps correct signs when the subtrahend's coefficient exceeds the minuend's.","teach_digest":"sha256:6c994441afdd2d09","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:f6bba5094fb974b8","constraint_checks":"Each radical is reduced before combining, as required.","exact_answer_derivation":"sqrt(75)=sqrt(25*3)=5*sqrt(3); sqrt(12)=sqrt(4*3)=2*sqrt(3); 5*sqrt(3)-2*sqrt(3)=3*sqrt(3).","human_approval":"pending","independent_acceptance":{"constraints":"reduce each radical before combining","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"adding-subtracting-radicals/kp2","objective":"Simplify first, then combine","outside_every_accepted_template_domain":true,"problem":"Simplify $\\sqrt{75} - \\sqrt{12}$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"adding-subtracting-radicals/kp2","novelty_proof":"Template always pairs a parametrized radicand (of the form 2b^2) with the fixed radicand 18, reducing to radical 2, using addition. This example uses sqrt(75) and sqrt(12), which reduce to radical 3, with subtraction, and neither radicand (75, 12) nor the resulting radical (sqrt3) appears among the template's sampled instances.","semantic_rationale":"Different radicand and a subtraction operation prevent a learner from reusing the template's fixed radicand-18 pairing pattern.","teach_digest":"sha256:c45896ebbe5a63b4","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:3c7d0f72b291ee79","constraint_checks":"Three terms, all reducing to one common radicand, as required.","exact_answer_derivation":"sqrt(45)=3*sqrt(5); sqrt(80)=4*sqrt(5); sqrt(20)=2*sqrt(5); 3+4-2=5. Result: 5*sqrt(5).","human_approval":"pending","independent_acceptance":{"constraints":"at most three terms; all reduce to one common radicand","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"adding-subtracting-radicals/kp3","objective":"Three terms and coefficients","outside_every_accepted_template_domain":true,"problem":"Simplify $\\sqrt{45} + \\sqrt{80} - \\sqrt{20}$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"adding-subtracting-radicals/kp3","novelty_proof":"Template's three terms are always already-simplified radicals sharing radicand 3 (a*sqrt3+7*sqrt3-2*sqrt3), requiring only coefficient arithmetic. This example uses sqrt(45), sqrt(80), sqrt(20), none of which are already simplified, requiring a reduction step the template never needs, and all reduce to radicand 5, not 3.","semantic_rationale":"Requiring simplification of all three terms before combining tests the compound skill the KP names, beyond the template's pre-simplified coefficients.","teach_digest":"sha256:f44b0133d3763cc1","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:098572f91dcce514","constraint_checks":"Monomial denominators; answer is a single fraction; domain x != 0 stated, as required.","exact_answer_derivation":"LCD of 2x and 4x^2 is 4x^2. 5/(2x) = 10x/(4x^2). Sum: (10x+3)/(4x^2).","human_approval":"pending","independent_acceptance":{"constraints":"denominators are monomials or integers; the LCD is their product or the higher power; the answer is a single fraction","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"adding-subtracting-rational-expressions/kp1","objective":"Build a least common denominator from monomials","outside_every_accepted_template_domain":true,"problem":"Add $\\frac{5}{2x} + \\frac{3}{4x^2}$ for $x \\ne 0$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"adding-subtracting-rational-expressions/kp1","novelty_proof":"Template fixes denominators x and 2x^2 (statement a/x+1/(2x^2)), a in {1..12}. This example uses denominators 2x and 4x^2, a different monomial pair the template's fixed-denominator family cannot produce, requiring a different LCD-building step (multiply by 2x, not by 2x).","semantic_rationale":"A different monomial pair forces the learner to determine the correct multiplier for the LCD rather than reusing the template's fixed doubling step.","teach_digest":"sha256:bb6b61c182c4ca91","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:54f5a4fb4e43edf3","constraint_checks":"Two distinct linear binomial denominators with no common factor; LCD is their product, left factored, as required.","exact_answer_derivation":"LCD (x-3)(x+7). Numerator: 4(x+7)+5(x-3)=4x+28+5x-15=9x+13. Result: (9x+13)/((x-3)(x+7)).","human_approval":"pending","independent_acceptance":{"constraints":"two distinct linear binomial denominators with no common factor; the LCD is their product, left in factored form","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"adding-subtracting-rational-expressions/kp2","objective":"Distinct binomial denominators","outside_every_accepted_template_domain":true,"problem":"Add $\\frac{4}{x - 3} + \\frac{5}{x + 7}$ for $x \\ne 3, -7$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"adding-subtracting-rational-expressions/kp2","novelty_proof":"Template always uses a conjugate pair of denominators, x-a and x+a with the same constant (subtraction only). This example uses x-3 and x+7, two unrelated constants (not a conjugate pair) with addition, which the template's symmetric-constant family cannot generate and which does not simplify to a difference of squares.","semantic_rationale":"Non-symmetric constants and an addition of numerators (rather than the template's always-cancelling subtraction) require full expansion instead of pattern recall.","teach_digest":"sha256:45de401e610ff63c","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:293caed689c4dfb7","constraint_checks":"One denominator factors and contains the other as a factor; LCD stays factored in the answer, as required.","exact_answer_derivation":"x^2-16=(x-4)(x+4). 2/(x-4)=2(x+4)/((x-4)(x+4)). Numerator: 5-2(x+4)=5-2x-8=-2x-3. Result: (-2x-3)/((x-4)(x+4)).","human_approval":"pending","independent_acceptance":{"constraints":"one denominator factors and contains the other as a factor; the LCD stays factored in the answer","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"adding-subtracting-rational-expressions/kp3","objective":"Factor denominators to build the LCD","outside_every_accepted_template_domain":true,"problem":"Subtract $\\frac{5}{x^2 - 16} - \\frac{2}{x - 4}$ for $x \\ne 4, -4$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"adding-subtracting-rational-expressions/kp3","novelty_proof":"Template is fixed as addition of 3/(x+3)+2x/(x^2-9) with constant 9=3^2 (or the closely related x+1/(x+1) form). This example uses subtraction, 5/(x^2-16)-2/(x-4), with constant 16=4^2, an operation and constant pair outside the template's fixed addition-only, constant-9 family.","semantic_rationale":"Subtraction with a negative resulting numerator checks sign-handling in a way the template's always-positive addition case does not.","teach_digest":"sha256:9a29ae2dc633a2ef","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:e330030f1057dc38","constraint_checks":"Subtract to undo addition; solution is an integer, as required.","exact_answer_derivation":"x+23=-5 -> x=-5-23=-28.","human_approval":"pending","independent_acceptance":{"constraints":"subtract to undo addition; integer solutions","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"addition-subtraction-equations/kp1","objective":"Solve x + a = b","outside_every_accepted_template_domain":true,"problem":"Solve $x + 23 = -5$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"addition-subtraction-equations/kp1","novelty_proof":"Template always fixes the added constant at 7 (x+7=a), a in {10..21}, so x is always positive (3..14). This example uses added constant 23 and a negative right-hand side (-5), yielding a negative x (-28), outside the template's fixed-constant, always-positive-result family.","semantic_rationale":"A negative right-hand side and negative result check that the learner subtracts correctly across zero, not just within positive numbers.","teach_digest":"sha256:8e9b9881420d63f7","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:9d60d678d4e5f8c6","constraint_checks":"Add to undo subtraction; solution is an integer, as required.","exact_answer_derivation":"x-41=-9 -> x=-9+41=32.","human_approval":"pending","independent_acceptance":{"constraints":"add to undo subtraction; integer solutions","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"addition-subtraction-equations/kp2","objective":"Solve x - a = b","outside_every_accepted_template_domain":true,"problem":"Solve $x - 41 = -9$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"addition-subtraction-equations/kp2","novelty_proof":"Template always fixes the subtracted constant at 6 (x-6=a), a in {10..21}, so x is always in 16..27. This example uses subtracted constant 41 and a negative right-hand side (-9), giving x=32, outside the template's fixed-constant range.","semantic_rationale":"A negative right-hand side forces correct addition across zero rather than pure positive-number arithmetic.","teach_digest":"sha256:a23495e564319a94","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:c6a9f84be43ea6b4","constraint_checks":"One operation; numbers up to 4 digits, as required.","exact_answer_derivation":"8412 - 1957 = 6455.","human_approval":"pending","independent_acceptance":{"constraints":"one operation; numbers up to 4 digits","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"addition-subtraction-word-problems/kp1","objective":"One-step problems","outside_every_accepted_template_domain":true,"problem":"A warehouse holds 8,412 crates. Workers remove 1,957 crates for shipping. How many crates remain?","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"addition-subtraction-word-problems/kp1","novelty_proof":"Template is a fixed museum-tickets addition scenario (a+286), a in {1301..1316}. This example is a warehouse-crates subtraction scenario with entirely different numbers and context, not an instance of the fixed-addition family.","semantic_rationale":"Using subtraction instead of the template's fixed addition drills the other half of the KP's one-step operation set.","teach_digest":"sha256:0d8091de0fd7d70b","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:ed687ef3fb7d8976","constraint_checks":"Two operations; numbers up to 3 digits, as required.","exact_answer_derivation":"512+275=787; 787-138=649.","human_approval":"pending","independent_acceptance":{"constraints":"two operations; numbers up to 3 digits","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"addition-subtraction-word-problems/kp2","objective":"Two-step problems","outside_every_accepted_template_domain":true,"problem":"A tank contains 512 liters. A pump adds 275 liters, then a leak drains 138 liters. How many liters remain?","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"addition-subtraction-word-problems/kp2","novelty_proof":"Template is a fixed notebook-shop scenario, always subtract-then-add (a-86+47), a in {261..276}. This example is a tank-liters scenario in the reverse order, add-then-subtract (512+275-138), a distinct operation sequence and context outside the template's fixed pattern.","semantic_rationale":"Reversing the operation order (add first, then subtract) prevents rote reuse of the template's fixed subtract-then-add sequence.","teach_digest":"sha256:3421ad0efa131980","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:2222f374160dc6b4","constraint_checks":"Difference/comparison language; numbers up to 4 digits, as required.","exact_answer_derivation":"342 + 89 = 431.","human_approval":"pending","independent_acceptance":{"constraints":"difference/comparison language; up to 4 digits","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"addition-subtraction-word-problems/kp3","objective":"Comparison problems","outside_every_accepted_template_domain":true,"problem":"A bakery sold 342 loaves today, which is 89 fewer than it sold yesterday. How many loaves did it sell yesterday?","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"addition-subtraction-word-problems/kp3","novelty_proof":"Template always uses 'more than' language requiring subtraction (Ava has a cards, 57 more than Leo, so Leo = a-57). This example uses 'fewer than' language requiring addition (today is 89 fewer than yesterday, so yesterday = today+89), the opposite comparison direction the template's fixed phrasing never drills.","semantic_rationale":"The 'fewer than' phrasing tests whether the learner can correctly reverse the comparison operation, rather than pattern-matching the template's fixed 'more than' subtraction.","teach_digest":"sha256:df665875de9891de","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:8ccfcb0dfe31920148a8c8bd08db2f658fed239296fbf38cff6c6cbb57d26f20","canonical_source_template_digest":"sha256:08ec4e9ca43492f3","constraint_checks":"The knowledge point constraint is 'test one value against the graph or the symbols'. Exactly one value, x = -7, is tested, and it is tested against the symbols of both pieces. The compound uses the two non-strict relations <= and >=, which the membership objective admits, and both endpoints -4 and 12 are ordinary integers, so the union is nondegenerate and neither piece is empty.","exact_answer_derivation":"Piece one: -7 <= -4 is true, because -7 - (-4) = -3 < 0. Piece two: -7 >= 12 is false, because -7 - 12 = -19 < 0. Exactly one of the two pieces is true, so the count is 1. No other integer answers the question, because a count over two pieces takes one value.","human_approval":"pending","independent_acceptance":{"acceptance_manifest_sha256":"bbf700f4fd32835294713a1bb4295d596f10371e4e0cc38a22739a1d40e01322","accepted_rows_sha256":"32cd6bb172b47a6269407f8cb6b170281d6033200269f6ca742b7ad4d28c9280","independent_reason":"Independent inspection confirms a materially different problem/output family, exact derivation, curriculum constraints, and concrete worked pedagogy; unchanged production verification and exhaustive accepted-template domain checks pass.","kp_id":"and-or-inequalities/kp1","source_row_sha256":"b39e5d9e84352189e8ceb2987fd1cf133f2457d6ba68c8b64b0bbbe75cda3e7a"},"kp_id":"and-or-inequalities/kp1","novelty_proof":"The accepted template is 'Is $x=5$ a solution of $x>{a}$ and $x<{b}$?' over a in {1,4,6} and b in {2,4,7,9}. Every one of its 12 instances tests the fixed value 5 against an 'and' compound and answers with the label yes or no. This worked example tests the value -7 against an 'or' compound and asks for a count of satisfied pieces, so its requested output is an integer no label instance of that template can return, and its test value lies outside the template's single fixed value. It also stands apart from the four exemplars, which all answer yes or no. It is not the family of the sibling knowledge points either: kp2 and kp3 solve compound inequalities and return an interval or a union, while this example solves nothing and only tests membership.","semantic_rationale":"Counting the true pieces makes the union rule explicit: the learner must judge each piece on its own and then see that one true piece is already enough. A yes-or-no answer hides that intermediate judgment behind a single label, which is exactly what the failing draft leaned on.","teach_digest":"sha256:d0735953fa9eab6b","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:ad89523ca2d730c3","constraint_checks":"Operation applied to all three parts; here two operations are needed to fully isolate x.","exact_answer_derivation":"-9<=3x-6<=15 -> add 6: -3<=3x<=21 -> divide by 3: -1<=x<=7.","human_approval":"pending","independent_acceptance":{"constraints":"apply each operation to all three parts; one operation needed","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"and-or-inequalities/kp2","objective":"'And' (between) inequalities","outside_every_accepted_template_domain":true,"problem":"Solve $-9 \\le 3x - 6 \\le 15$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"and-or-inequalities/kp2","novelty_proof":"Template always uses coefficient 1 on x with a fixed +4 shift (-a<x+4<b), requiring only one operation (subtract 4). This example uses coefficient 3 on x with a -6 shift and non-strict inequalities (-9<=3x-6<=15), requiring two operations (add, then divide), outside the template's single-operation, coefficient-1 family.","semantic_rationale":"A nonunit coefficient forces a division step the always-coefficient-1 template never requires, testing the full 'apply to all three parts' skill.","teach_digest":"sha256:baf55d511ec418e5","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}},{"author_source_reference":"sha256:22f84cc5dc8e1c76685e779b4697f6ddefc63864c210ed848cd086f14d7a464d","canonical_source_template_digest":"sha256:16f73eb2633a9784","constraint_checks":"Each piece solved separately; union kept, as required.","exact_answer_derivation":"4x+1<=-11 -> 4x<=-12 -> x<=-3. 2x-3>9 -> 2x>12 -> x>6. Union: x<=-3 or x>6.","human_approval":"pending","independent_acceptance":{"constraints":"solve each piece separately; keep the union","decision":"accept","exact_steps_and_final_answer_reviewed":true,"exemplar_and_template_instances_collision":false,"kp_id":"and-or-inequalities/kp3","objective":"'Or' inequalities","outside_every_accepted_template_domain":true,"problem":"Solve $4x + 1 \\le -11$ or $2x - 3 > 9$.","production_teach_gate_ok":true,"reason":"direct semantic inspection confirms every step, final answer, objective and stated constraint"},"kp_id":"and-or-inequalities/kp3","novelty_proof":"Template always uses the same coefficient (1) on x in both branches with symmetric bounds derived from one pair (a,b): x-a<-b or x-a>2b. This example uses different coefficients in each branch (4x+1<=-11 or 2x-3>9) with independent constants, a structurally different two-branch inequality outside the template's shared-coefficient, shared-shift family.","semantic_rationale":"Independent coefficients and constants in each branch require solving each piece from scratch rather than reusing a shared shift, as the template's symmetric structure allows.","teach_digest":"sha256:432550a0101458ae","verification":{"collision":"clear","human_approval":"pending","production_gate":"accepted"}}]
+[
+  {
+    "kp_id": "absolute-value-equations/kp1",
+    "teach_digest": "sha256:4132c5ee2bfa954a",
+    "template_digest": "sha256:e9fc61f599d4c83f",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:0dd4cb7e6dcab3680ec0865c0c121c7fade504b586e2afe5cf9b0966811a78a9"
+    }
+  },
+  {
+    "kp_id": "absolute-value-equations/kp2",
+    "teach_digest": "sha256:e2179d29b92283fd",
+    "template_digest": "sha256:7f95b06469f22631",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:c1713e6a490e569ca3c549f5617ec3a5b0eb1bf3ff6f415290674230cae5d45a"
+    }
+  },
+  {
+    "kp_id": "absolute-value-equations/kp3",
+    "teach_digest": "sha256:fbae0b9bb72494ab",
+    "template_digest": "sha256:8c1975d188e2e6d3",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:9db42c32974ba9fe9795b43c2d0e41689b1381e2c6e9502fecb7d0fea4c0db07"
+    }
+  },
+  {
+    "kp_id": "absolute-value-inequalities/kp1",
+    "teach_digest": "sha256:fc94bde0ed4abd38",
+    "template_digest": "sha256:7e6aa27dcaae0336",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:17f7c436036f44af4c21e73dbed5435feef7bf70fe0e5b4280162d99e7fedac2"
+    }
+  },
+  {
+    "kp_id": "absolute-value-inequalities/kp2",
+    "teach_digest": "sha256:0f0ac07b6dc3e067",
+    "template_digest": "sha256:548d3bd64ca08a2f",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:7a30175b2a064e22b2a568aea0ee505f19c2a8b6360f70609df02a0b4ce72855"
+    }
+  },
+  {
+    "kp_id": "absolute-value-inequalities/kp3",
+    "teach_digest": "sha256:b19787a39513edda",
+    "template_digest": "sha256:8639166f191e14e4",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:d9eda958d823e35205c049a90a8c8f8b8e9a2d2d20ab7f09333556f717763369"
+    }
+  },
+  {
+    "kp_id": "absolute-value/kp1",
+    "teach_digest": "sha256:e00ff5c736703b3b",
+    "template_digest": "sha256:a80d56e791d6c2eb",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:735fe464f9367ba2eae85f1c0f1ceadb6a6a4a95fd035c24f93c2317f57132d2"
+    }
+  },
+  {
+    "kp_id": "absolute-value/kp2",
+    "teach_digest": "sha256:28de0894eb15af0a",
+    "template_digest": "sha256:f4469f55f416587e",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:4370cc97672c69c4bf2b0acf017ee84d0968d641fe4025cbbbc9a420109cf0e7"
+    }
+  },
+  {
+    "kp_id": "adding-polynomials/kp1",
+    "teach_digest": "sha256:7718424bab757187",
+    "template_digest": "sha256:92854e0d1d7af125",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:596aadfcf58af4a5de776e281e526ed2e918ead74a0e059f602c4aae09e864dc"
+    }
+  },
+  {
+    "kp_id": "adding-polynomials/kp2",
+    "teach_digest": "sha256:1e1713d78dbb0947",
+    "template_digest": "sha256:e6a52184171de396",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:f382c02a0da67874e6b511e509b19b890ff7e4b79c6555dab1887ea4dcafdb5c"
+    }
+  },
+  {
+    "kp_id": "adding-polynomials/kp3",
+    "teach_digest": "sha256:250d022c717cc5b4",
+    "template_digest": "sha256:af072655254f6420",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:6c88a7d03b66b2b6767b8707dea40c7dcd586bd9816ab1c540107103e4760def"
+    }
+  },
+  {
+    "kp_id": "adding-subtracting-radicals/kp1",
+    "teach_digest": "sha256:6c994441afdd2d09",
+    "template_digest": "sha256:bf61a0f9496bc809",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:d5911d4ff586f1c175e88f8d1de29370f5c3182ae40bd5207072daa973ede9c6"
+    }
+  },
+  {
+    "kp_id": "adding-subtracting-radicals/kp2",
+    "teach_digest": "sha256:c45896ebbe5a63b4",
+    "template_digest": "sha256:f6bba5094fb974b8",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:f2fd67b87ba0bb3fe3befbc1eabcd1ea4d4858d5edfb3e11fa09ed7141976876"
+    }
+  },
+  {
+    "kp_id": "adding-subtracting-radicals/kp3",
+    "teach_digest": "sha256:f44b0133d3763cc1",
+    "template_digest": "sha256:3c7d0f72b291ee79",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:81d0a91369717d310bdd55141fd7882fc39ababa3b2b2c733b8ca4eaa859e345"
+    }
+  },
+  {
+    "kp_id": "adding-subtracting-rational-expressions/kp1",
+    "teach_digest": "sha256:bb6b61c182c4ca91",
+    "template_digest": "sha256:098572f91dcce514",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:65afb94dc0c99a55edf0b242bbaff482c60f6cc45f911af92f883344d42d6677"
+    }
+  },
+  {
+    "kp_id": "adding-subtracting-rational-expressions/kp2",
+    "teach_digest": "sha256:45de401e610ff63c",
+    "template_digest": "sha256:54f5a4fb4e43edf3",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:c608fe6f123566f40d91b86543acacedb3847e8143d30ecafbd5096d499953f5"
+    }
+  },
+  {
+    "kp_id": "adding-subtracting-rational-expressions/kp3",
+    "teach_digest": "sha256:9a29ae2dc633a2ef",
+    "template_digest": "sha256:293caed689c4dfb7",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:3b6b31df788a31bae4ea3372911444cfd3eae0388d512da1793d0c55c17c08c4"
+    }
+  },
+  {
+    "kp_id": "addition-subtraction-equations/kp1",
+    "teach_digest": "sha256:8e9b9881420d63f7",
+    "template_digest": "sha256:e330030f1057dc38",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:b640f3ecc89045fac16f61a12c1ef4dd02d02f88ff366be11fa39fec5478a573"
+    }
+  },
+  {
+    "kp_id": "addition-subtraction-equations/kp2",
+    "teach_digest": "sha256:a23495e564319a94",
+    "template_digest": "sha256:9d60d678d4e5f8c6",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:d99c844926184e8af499c712f1216d3a705f7dc5d5a20f6ed68ffc7183adeb8b"
+    }
+  },
+  {
+    "kp_id": "addition-subtraction-word-problems/kp1",
+    "teach_digest": "sha256:0d8091de0fd7d70b",
+    "template_digest": "sha256:c6a9f84be43ea6b4",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:67c3c8246ca25c81058aa11359df53fd1c2a56e4994c30d1a41d28742a2a2d70"
+    }
+  },
+  {
+    "kp_id": "addition-subtraction-word-problems/kp2",
+    "teach_digest": "sha256:3421ad0efa131980",
+    "template_digest": "sha256:ed687ef3fb7d8976",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:310006a36c16bec67de6063be1179fe5e2e8dc05d32cfabf9168faba45e4cd74"
+    }
+  },
+  {
+    "kp_id": "addition-subtraction-word-problems/kp3",
+    "teach_digest": "sha256:df665875de9891de",
+    "template_digest": "sha256:2222f374160dc6b4",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:899277c1f021ae1f5bfd2f0ebf2a35ef43bfd827cd228b8e1c0a3378b8150154"
+    }
+  },
+  {
+    "kp_id": "and-or-inequalities/kp1",
+    "teach_digest": "sha256:d0735953fa9eab6b",
+    "template_digest": "sha256:08ec4e9ca43492f3",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:c2b4eeaf44d095f8c17f65344d3e09ea768e2091170d53548724a8931858bb4f"
+    }
+  },
+  {
+    "kp_id": "and-or-inequalities/kp2",
+    "teach_digest": "sha256:baf55d511ec418e5",
+    "template_digest": "sha256:ad89523ca2d730c3",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:6d65f45f711e58b8e2f5144213c211d57b78cb561960e8670f83e605c23b9e73"
+    }
+  },
+  {
+    "kp_id": "and-or-inequalities/kp3",
+    "teach_digest": "sha256:432550a0101458ae",
+    "template_digest": "sha256:16f73eb2633a9784",
+    "verification": {
+      "collision": "clear",
+      "production_gate": "accepted",
+      "context_coverage": "sampled_template_instances"
+    },
+    "ai_review": "pending",
+    "historical_review": {
+      "path": "historical-archive/reviews/part-01.json",
+      "sha256": "sha256:73b6a4f79b59c0c3914be52b59fb62f00a5ecb12a7f3c1559ccc75c7f63e9898"
+    }
+  }
+]
