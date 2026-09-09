@@ -128,7 +128,9 @@ def apply(args):
     out = {"decision_version": 1, "packet_sha256": source["packet_sha256"], "decisions": []}
     for digest, verdict, reason in decisions:
         if verdict != "quarantine": out["decisions"].append({"digest": digest, "decision": verdict} if verdict == "approve" else {"digest": digest, "decision": verdict, "reason": reason})
-    if not out["decisions"]: raise packet.Refused("all rows quarantined; no approval path is invoked")
+    if not out["decisions"]:
+        packet.write_receipt(args.receipt, {"committed": False, "complete": True, "packet_sha256": source["packet_sha256"], "ai_reviewer": batch["reviewer"], "review_sha256": hashlib.sha256(args.review.read_bytes()).hexdigest(), "quarantined": [d for d, _v, _r in decisions]})
+        return
     args.decisions.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n")
     def before_write(current):
         one = {"packet_version": source["packet_version"], "scope": source["scope"], "items": [current]}
