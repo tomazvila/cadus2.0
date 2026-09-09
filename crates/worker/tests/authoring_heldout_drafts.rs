@@ -13,6 +13,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use cadus_core::curriculum::load_curriculum;
+use cadus_worker::authoring::{completion::generate, prompt::AuthoringSpec};
 use serde_json::Value;
 
 /// Unit id to its curriculum file, the units this generator has drafted.
@@ -143,6 +144,8 @@ fn transferred_teach_fixture_has_one_imported_canonical_row_per_key() {
     )
     .unwrap();
     let files = imports["files"].as_array().unwrap();
+    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
+    assert!(findings.is_empty());
     let local_missing: std::collections::BTreeSet<String> = UNITS
         .iter()
         .flat_map(|(unit, _)| {
