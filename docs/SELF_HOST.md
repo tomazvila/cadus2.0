@@ -586,7 +586,7 @@ Read the columns like this:
   for a full one.
 
 **One pass authors at most one document per pair.** A template bank of three
-therefore fills over three passes, and a human reviews what each pass stored
+therefore fills over three passes, and an independent AI reviewer checks each pass
 before the next pass runs (C6). The last line states the bill: one model call per
 document when the gate accepts the first reply, and five calls when every attempt
 is refused.

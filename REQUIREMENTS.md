@@ -28,9 +28,12 @@ Requirement IDs are stable. Cite them in reviews and commits.
   verdict is rejected — correctness outranks every budget in this document.
 - **C5 — Curriculum as data.** Topics, knowledge points, exemplars, and constraints
   live in reviewed, linted files under git. Content changes go through git review.
-- **C6 — Human review gate for authored content.** LLM-authored content (templates,
-  problem banks, teach pages, hint ladders) is stored unapproved and is never served
-  until a human approves it. Approval binds to a content digest.
+- **C6 — Evidence-backed AI review for authored content.** LLM-authored content
+  (templates, problem banks, teach pages, hint ladders) is stored pending. An
+  independent AI reviewer checks mathematical correctness, objective alignment,
+  explanation quality, and answer leakage before approval. Decisions bind to the
+  exact content digest, curriculum, and selected serving context. Unresolved
+  content remains pending for AI repair and re-review; human review is optional.
 
 ## 2. New in 2.0 — the two budgets
 

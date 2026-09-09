@@ -1,4 +1,4 @@
-//! Zero-model proposal generation. Production gates validate drafts; humans approve them.
+//! Zero-model proposal generation. Production gates validate drafts; independent AI review authorizes serving.
 mod evidence;
 mod expression;
 mod instruction;
@@ -158,7 +158,7 @@ pub fn generate(spec: &AuthoringSpec, served: &[ServedInstance]) -> Proposals {
         };
         out.solutions.push(json!({"exemplar_index":index,"problem":exemplar.problem,"answer":exemplar.answer,"answer_contract":exemplar.answer_contract,
             "solution_sketch":format!("{} The exact calculation is ${} = {}$.", method::rule(spec), source.expression, exemplar.answer),
-            "verification":"closed rational expression equals the authored answer under its typed policy; instructional detail requires human review"}));
+            "verification":"closed rational expression equals the authored answer under its typed policy; instructional detail requires independent AI review"}));
         let Some((start, end, variants)) = expression::variants(&source) else {
             continue;
         };

@@ -1,4 +1,4 @@
-//! Conservative instructional scaffolds; human review determines pedagogical completeness.
+//! Conservative instructional scaffolds; independent AI review determines pedagogical completeness.
 use crate::authoring::prompt::AuthoringSpec;
 
 pub(super) fn rule(spec: &AuthoringSpec) -> &'static str {
