@@ -5,7 +5,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use cadus_core::instruction::template_instances;
+use cadus_core::{curriculum::load_curriculum, instruction::template_instances};
 use cadus_worker::authoring::{
     cli::{AuthorArgs, select_for},
     job::{document_digest, verify_kind},
@@ -37,8 +37,12 @@ fn sha(path: impl AsRef<Path>) -> String {
     format!("{:x}", Sha256::digest(std::fs::read(path).unwrap()))
 }
 
+/// V2 array fingerprints use recursively sorted object keys and compact JSON.
+/// The Python refresher uses this same explicit canonical contract.
 fn canonical_sha(value: &Value) -> String {
-    format!("{:x}", Sha256::digest(serde_json::to_vec(value).unwrap()))
+    let mut sorted = value.clone();
+    sorted.sort_all_objects();
+    format!("{:x}", Sha256::digest(serde_json::to_vec(&sorted).unwrap()))
 }
 
 /// The v2 migration binds each historical row with JSON whose object keys are

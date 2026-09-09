@@ -95,6 +95,63 @@ def evidence_rows(evidence):
     return source_paths, technical, bindings
 
 
+
+def archive_rows(sidecar, manifest, reviews, bindings):
+    archive = manifest.get("historical_archive")
+    if not isinstance(archive, dict) or archive.get("path") != "historical-archive/index.json":
+        raise Refused("missing historical archive binding")
+    index_path = sidecar / archive["path"]
+    if archive.get("sha256") != sha256_bytes(index_path.read_bytes()):
+        raise Refused("historical archive index changed")
+    index = read_json(index_path)
+    if index.get("status") != "historical-as-encountered":
+        raise Refused("historical archive status")
+    expected = {"import-manifest.v1.json", "manifest.v1.json", *part_paths("reviews")}
+    files = index.get("files")
+    if not isinstance(files, list) or {row.get("path") for row in files if isinstance(row, dict)} != expected:
+        raise Refused("historical archive inventory")
+    if len(files) != len(expected):
+        raise Refused("duplicate historical archive path")
+    for row in files:
+        path = row["path"]
+        if row.get("sha256") != sha256_bytes((sidecar / "historical-archive" / path).read_bytes()):
+            raise Refused(f"historical archive file changed: {path}")
+    historical = {}
+    review_files = index.get("reviews")
+    if not isinstance(review_files, list) or {row.get("path") for row in review_files if isinstance(row, dict)} != set(part_paths("reviews")):
+        raise Refused("historical review inventory")
+    for entry in review_files:
+        relative = entry["path"]
+        path = sidecar / "historical-archive" / relative
+        if entry.get("sha256") != sha256_bytes(path.read_bytes()):
+            raise Refused(f"historical review changed: {relative}")
+        for row in read_json(path):
+            key = row.get("kp_id")
+            digest = sha256_bytes(json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode())
+            if not isinstance(key, str) or key in historical:
+                raise Refused("invalid or duplicate historical KP")
+            historical[key] = (f"historical-archive/{relative}", digest)
+    if set(historical) != set(bindings) or any(bindings[key] != value[1] for key, value in historical.items()):
+        raise Refused("historical row bindings changed")
+    for row in reviews:
+        reference = row.get("historical_review") if isinstance(row, dict) else None
+        expected_path, expected_sha = historical.get(row.get("kp_id"), (None, None))
+        if reference != {"path": expected_path, "sha256": expected_sha}:
+            raise Refused("current historical reference changed")
+
+
+def inventory(sidecar):
+    paths = ["inputs/coverage.json", "inputs/templates.json", *part_paths("drafts"), *part_paths("reviews")]
+    result = []
+    for relative in paths:
+        value = read_json(sidecar / relative)
+        rows = value if isinstance(value, list) else value.get("rows")
+        if not isinstance(rows, list):
+            raise Refused(f"inventory rows: {relative}")
+        result.append({"path": relative, "rows": len(rows), "sha256": hashlib.sha256((sidecar / relative).read_bytes()).hexdigest()})
+    return result
+
+
 def validate(root, evidence):
     sidecar = root / "docs/content-foundations/whole-course-teach"
     if not sidecar.is_dir() or not (sidecar / "historical-archive/index.json").is_file():
@@ -122,6 +179,7 @@ def validate(root, evidence):
     manifest = read_json(sidecar / "manifest.json")
     if manifest.get("schema_version") != 2 or manifest.get("status") != "pending-ai-review":
         raise Refused("current manifest lifecycle differs")
+    archive_rows(sidecar, manifest, reviews, bindings)
     return sidecar, manifest, technical, bindings
 
 
@@ -159,15 +217,19 @@ def update(root, evidence_path):
         updates[relative] = [refreshed_review(row, technical[row["kp_id"]], bindings[row["kp_id"]]) for row in old_rows]
         all_reviews.extend(updates[relative])
     refreshed_manifest = dict(manifest)
+    evidence_raw = json.dumps(evidence, ensure_ascii=False, indent=2).encode() + b"\n"
+    # Build all content outputs before touching the sidecar, then hash the exact staged bytes.
+    staged = {relative: json.dumps(rows, ensure_ascii=False, indent=2).encode() + b"\n" for relative, rows in updates.items()}
+    staged["technical-evidence-v2.json"] = evidence_raw
     files = []
-    for item in manifest.get("files", []):
-        item = dict(item)
-        if item.get("path") in updates:
-            raw = json.dumps(updates[item["path"]], ensure_ascii=False, indent=2).encode() + b"\n"
-            item["rows"], item["sha256"] = len(updates[item["path"]]), hashlib.sha256(raw).hexdigest()
+    for item in inventory(sidecar):
+        relative = item["path"]
+        if relative in staged:
+            value = json.loads(staged[relative])
+            item["rows"] = len(value)
+            item["sha256"] = hashlib.sha256(staged[relative]).hexdigest()
         files.append(item)
     refreshed_manifest["files"] = files
-    evidence_raw = json.dumps(evidence, ensure_ascii=False, indent=2).encode() + b"\n"
     refreshed_manifest["technical_evidence"] = {"path": "technical-evidence-v2.json", "sha256": sha256_bytes(evidence_raw)}
     drafts = [row for relative in part_paths("drafts") for row in read_json(sidecar / relative)]
     arrays = dict(manifest.get("canonical_arrays", {}))

@@ -8,7 +8,7 @@ use std::{
 use cadus_core::curriculum::{curriculum_hash, load_curriculum};
 use serde_json::Value;
 
-use super::{canonical_historical_row_sha, directory, part_paths, read, root, sha};
+use super::{canonical_historical_row_sha, directory, keyed, part_paths, read, root, rows, sha};
 
 fn assert_archive_file_hash(path: &Path, expected: &Value) {
     assert_eq!(
