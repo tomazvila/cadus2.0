@@ -41,6 +41,7 @@ mod functions;
 mod inequalities;
 mod inverse;
 mod notation;
+mod numeric_form;
 mod structured;
 mod symbol;
 mod triangle_law;
@@ -324,6 +325,11 @@ pub fn answer_for_contract(
         }
     }
     match contract {
+        Some(
+            contract @ AnswerContract::RequiredForm {
+                form: crate::answer::NumericForm::Decimal,
+            },
+        ) => numeric_form::decimal_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::Label { .. }) => label_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::Unit { unit, .. }) => {
             unit_answer(ast, bindings, contract, unit)
