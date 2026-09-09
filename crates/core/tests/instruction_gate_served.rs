@@ -99,10 +99,7 @@ fn a_last_step_that_names_another_served_answer_is_rejected() {
     assert_eq!(rejection.code, "teach-answer");
     assert_eq!(
         rejection.message,
-        "the last step of 'worked_example.steps' reads 'The product is 225, the same way $9^2$ is \
-81.', which names '81', the answer of 'Compute $9^2$.' — this knowledge point serves that problem \
-too, and the page works 'Compute $15^2$.', so the step hands the learner an answer before the \
-attempt (Hard Rule 1)"
+        "the final step solves served problem 'Compute $9^2$.' and names its answer '81' (Hard Rule 1)"
     );
 }
 

@@ -15,7 +15,7 @@ fn unrelated_equal_result_is_accepted() {
 fn normalized_math_wrapper_identity_is_refused() {
     let examples = [];
     let served = [("Compute $54 / 6$.", "9")];
-    let body = r#"{"concept":"Division finds a missing factor.","worked_example":{"problem":"Compute $ 54 \\div {6} $.","steps":["$54 \\div 6 = 9$."]}}"#;
+    let body = r#"{"concept":"Division finds a missing factor.","worked_example":{"problem":"Compute $ 54 \\div 6 $.","steps":["$54 \\div 6 = 9$."]}}"#;
     assert_eq!(
         gate_teach(body, &spec_with_instances(&examples, &served))
             .unwrap_err()
@@ -80,4 +80,23 @@ fn expression_boundary_does_not_match_a_larger_expression() {
     let served = [("Compute $2+3$.", "5")];
     let body = r#"{"concept":"Addition combines quantities.","worked_example":{"problem":"Compute $12+3-10$.","steps":["$12+3-10 = 5$."]}}"#;
     gate_teach(body, &spec_with_instances(&examples, &served)).unwrap();
+}
+
+#[test]
+fn incomplete_math_delimiters_cannot_panic_the_gate() {
+    let examples = [];
+    let served = [("Compute $2+3$.", "5")];
+    for problem in ["$", "\\(", "\\[", "$$"] {
+        let body = serde_json::json!({
+            "concept": "A malformed math fragment needs review.",
+            "worked_example": {"problem": problem, "steps": ["Inspect the fragment."]}
+        })
+        .to_string();
+        assert!(
+            std::panic::catch_unwind(|| {
+                gate_teach(&body, &spec_with_instances(&examples, &served))
+            })
+            .is_ok()
+        );
+    }
 }
