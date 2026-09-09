@@ -1,5 +1,4 @@
 //! The gate of a teach page (L4, spec section 7 row R6).
-use crate::answer::{canonical_form, same_answer};
 use crate::template::gate::{Rejection, contains_token, py_str};
 
 use super::body::{object, only_known, text};
@@ -101,18 +100,23 @@ step is one line of the solution a learner reads"
 }
 
 fn normalized_problem(value: &str) -> String {
-    value
+    let mut text = value.trim();
+    for (open, close) in [("$", "$"), ("\\(", "\\)"), ("\\[", "\\]")] {
+        if text.starts_with(open) && text.ends_with(close) {
+            text = &text[open.len()..text.len() - close.len()];
+        }
+    }
+    text.trim_end_matches(['.', '!', '?'])
         .replace("\\div", "/")
         .replace("\\times", "*")
         .replace("\\cdot", "*")
         .chars()
-        .filter(|ch| !ch.is_whitespace() && !matches!(ch, '$' | '{' | '}' | '\\' | '(' | ')' | '.'))
+        .filter(|ch| !ch.is_whitespace())
         .map(|ch| match ch as u32 {
             0x00F7 => '/',
             0x00D7 | 0x00B7 => '*',
             _ => ch,
         })
-        .flat_map(char::to_lowercase)
         .collect()
 }
 
