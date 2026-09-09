@@ -295,6 +295,10 @@ def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, 
             receipt["uncertain"] = receipt.pop("in_flight") | {"error": str(error)}
             write_receipt(receipt_path, receipt)
             raise
+        if decision == "approve" and item["kind"] == "template" and answer.get("rejected_documents") is None:
+            receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "template re-gate outcome unavailable"}
+            write_receipt(receipt_path, receipt)
+            raise Refused(f"{item['digest']}: template re-gate outcome unavailable")
         if answer.get("digest") != item["digest"] or answer.get("status") != (
                 "approved" if decision == "approve" else "rejected"):
             receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "malformed decision response"}
