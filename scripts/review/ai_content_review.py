@@ -57,6 +57,8 @@ def context(packet_doc, api, curriculum):
     kinds = {item["kind"] for item in indexed.values()}
     if "template" in kinds and len(kinds) != 1:
         raise packet.Refused("template reviews must be a separate batch")
+    if "template" in kinds and len({item["kp_id"] for item in indexed.values()}) != len(indexed):
+        raise packet.Refused("only one template per knowledge point is allowed per batch")
     if kinds - {"template", "teach", "hint_ladder", "diagnosis"}:
         raise packet.Refused("unsupported content kind")
     if "template" not in kinds:
@@ -122,8 +124,11 @@ def apply(args):
         if verdict != "quarantine": out["decisions"].append({"digest": digest, "decision": verdict} if verdict == "approve" else {"digest": digest, "decision": verdict, "reason": reason})
     if not out["decisions"]: raise packet.Refused("all rows quarantined; no approval path is invoked")
     args.decisions.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n")
-    def before_write(_item):
-        if context(source, api, args.curriculum_root) != batch["items"]:
+    def before_write(current):
+        one = {"packet_version": source["packet_version"], "scope": source["scope"], "items": [current]}
+        one["packet_sha256"] = packet.sha256(one)
+        expected = next(row for row in batch["items"] if row["digest"] == current["digest"])
+        if context(one, api, args.curriculum_root) != [expected]:
             raise packet.Refused("AI review context changed before write")
     receipt = packet.apply_decisions(api, args.packet, args.decisions, args.commit, args.receipt, before_write)
     receipt["ai_reviewer"] = batch["reviewer"]; receipt["quarantined"] = [d for d, v, _ in decisions if v == "quarantine"]
