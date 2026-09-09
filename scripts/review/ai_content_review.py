@@ -136,7 +136,8 @@ def apply(args):
         expected = next(row for row in batch["items"] if row["digest"] == current["digest"])
         if context(one, api, args.curriculum_root) != [expected]:
             raise packet.Refused("AI review context changed before write")
-    receipt = packet.apply_decisions(api, args.packet, args.decisions, args.commit, args.receipt, before_write)
+    metadata = {"ai_reviewer": batch["reviewer"], "review_sha256": hashlib.sha256(args.review.read_bytes()).hexdigest()}
+    receipt = packet.apply_decisions(api, args.packet, args.decisions, args.commit, args.receipt, before_write, metadata)
     receipt["ai_reviewer"] = batch["reviewer"]; receipt["quarantined"] = [d for d, v, _ in decisions if v == "quarantine"]
     packet.write_receipt(args.receipt, receipt)
 

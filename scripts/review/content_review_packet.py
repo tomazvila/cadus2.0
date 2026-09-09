@@ -10,6 +10,7 @@ Apply is a dry run unless ``--commit`` is present.
 import argparse
 import hashlib
 import json
+import os
 import sys
 import urllib.error
 import urllib.parse
@@ -251,10 +252,12 @@ def validated_decision(row, number, indexed, seen):
 def write_receipt(path, receipt):
     """Persist each confirmed write so a later failure has an audit trail."""
     if path is not None:
-        path.write_text(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+        temporary = path.with_name(path.name + ".tmp")
+        temporary.write_text(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+        os.replace(temporary, path)
 
 
-def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, before_write=None):
+def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, before_write=None, metadata=None):
     packet, decisions = load_json(packet_path), load_json(decision_path)
     indexed = validate_packet(packet)
     selected = validate_decisions(decisions, packet, indexed)
@@ -270,11 +273,17 @@ def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, 
                              for item, decision, _reason in checked]}
         write_receipt(receipt_path, receipt)
         return receipt
-    receipt = {"committed": False, "complete": False,
+    receipt = {"committed": False, "complete": False, **(metadata or {}),
                "packet_sha256": packet["packet_sha256"], "receipts": []}
     for item, decision, reason in checked:
+        write_receipt(receipt_path, receipt)
         if before_write is not None:
-            before_write(item)
+            try:
+                before_write(item)
+            except Exception as error:
+                receipt["pre_write_refusal"] = {"digest": item["digest"], "error": str(error)}
+                write_receipt(receipt_path, receipt)
+                raise
         live = api.document(item["digest"])
         if live.get("status") != "pending" or fingerprint(live) != item.get("fingerprint_sha256"):
             raise Refused(f"{item['digest']}: live document changed before its write")
@@ -288,6 +297,8 @@ def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, 
             raise
         if answer.get("digest") != item["digest"] or answer.get("status") != (
                 "approved" if decision == "approve" else "rejected"):
+            receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "malformed decision response"}
+            write_receipt(receipt_path, receipt)
             raise Refused(f"{item['digest']}: decision response did not confirm the requested write")
         receipt["receipts"].append(answer)
         receipt.pop("in_flight", None)
