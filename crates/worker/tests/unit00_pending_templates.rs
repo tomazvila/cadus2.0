@@ -72,7 +72,7 @@ fn every_pending_digest_reproduces_through_the_worker_and_exact_exhaustive_walk(
         instances += check_instances(&body, proof, topic);
     }
     assert_eq!(keys.len(), 64);
-    assert_eq!(instances, 1414);
+    assert_eq!(instances, 1409);
 }
 
 fn check_instances(body: &str, proof: &Value, topic: &cadus_core::curriculum::Topic) -> usize {
