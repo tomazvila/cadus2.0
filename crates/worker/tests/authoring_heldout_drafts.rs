@@ -27,6 +27,15 @@ const UNITS: &[(&str, &str)] = &[
     ("rational-trig", "09-rational-trig.yaml"),
 ];
 
+const CANONICAL_TEACH: &[(&str, &str)] = &[(
+    "comparing-ordering-decimals/kp1",
+    "whole-course-teach/drafts/part-03.json",
+)];
+fn canonical_teach_source(key: &str) -> Option<&'static str> {
+    CANONICAL_TEACH
+        .iter()
+        .find_map(|(candidate, source)| (*candidate == key).then_some(*source))
+}
 /// The largest line count one tracked draft file keeps.
 const MAX_LINES: usize = 2000;
 
@@ -73,6 +82,9 @@ fn every_drafted_knowledge_point_sits_inside_its_declared_unit() {
             seen.keys().map(|(key, _)| key.as_str()).collect();
         for kp in kps {
             for kind in ["teach", "hint_ladder"] {
+                if kind == "teach" && canonical_teach_source(kp).is_some() {
+                    continue;
+                }
                 assert!(
                     seen.contains_key(&(kp.to_owned(), kind.to_owned())),
                     "{kp} is missing its {kind} in {unit}"
@@ -117,5 +129,23 @@ fn every_heldout_hint_ladder_holds_three_question_rungs_with_no_numeral() {
                 );
             }
         }
+    }
+}
+
+#[test]
+fn canonical_teach_exceptions_have_one_bound_source_row() {
+    for (key, source) in CANONICAL_TEACH {
+        let body =
+            std::fs::read_to_string(root().join("docs/content-foundations").join(source)).unwrap();
+        let rows: Vec<Value> = serde_json::from_str(&body).unwrap();
+        let matches: Vec<&Value> = rows
+            .iter()
+            .filter(|row| row["kp_id"] == *key && row["kind"] == "teach")
+            .collect();
+        assert_eq!(
+            matches.len(),
+            1,
+            "{key} must have one canonical teach row in {source}"
+        );
     }
 }
