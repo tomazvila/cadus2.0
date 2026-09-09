@@ -119,6 +119,14 @@ fn normalized_problem(value: &str) -> String {
         })
         .collect()
 }
+fn contains_expression(text: &str, expression: &str) -> bool {
+    text.match_indices(expression).any(|(index, _)| {
+        let before = text[..index].chars().next_back();
+        let after = text[index + expression.len()..].chars().next();
+        !before.is_some_and(|ch| ch.is_ascii_alphanumeric())
+            && !after.is_some_and(|ch| ch.is_ascii_alphanumeric())
+    })
+}
 
 fn direct_expression(problem: &str) -> Option<String> {
     ["Compute ", "Calculate ", "Evaluate ", "Simplify "]
@@ -150,7 +158,7 @@ fn check_teach_disclosures(
             });
         }
         if let Some(expression) = direct_expression(served_problem) {
-            if normalized_last.contains(&expression)
+            if contains_expression(&normalized_last, &expression)
                 && !answer.is_empty()
                 && contains_token(last, answer)
             {
