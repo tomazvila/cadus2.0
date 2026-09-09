@@ -17,8 +17,8 @@ class ApplyFixture(unittest.TestCase):
         return {"items": [copy.deepcopy(row) for row in rows], "limit": 200}
     def document(self, digest): return copy.deepcopy(self.rows[digest])
     def decide(self, digest, *_): self.writes.append(digest); self.rows[digest]["status"] = "approved"; return {"digest": digest, "status": "approved", "rejected_documents": []}
-    def execute(self, drift=False):
-        contexts = ai.context(self.packet, self, self.root / "curriculum"); core = {"ai_review_version": 1, "packet_sha256": self.packet["packet_sha256"], "items": contexts}; review = core | {"context_sha256": p.sha256(core), "reviewer": {"identity":"i","model":"m","policy_version":"v"}, "decisions": [{"digest": digest, "decision":"approve", "reason":"reviewed", "checks": {name:{"status":"pass","evidence":"independent check"} for name in ai.CHECKS}} for digest in [item["digest"] for item in self.packet["items"]]]}; review_path = self.root / "review.json"; review_path.write_text(json.dumps(review)); original = p.Api; p.Api = lambda *_: self
+    def execute(self, drift=False, verdict="approve", commit=True):
+        contexts = ai.context(self.packet, self, self.root / "curriculum"); core = {"ai_review_version": 1, "packet_sha256": self.packet["packet_sha256"], "items": contexts}; review = core | {"context_sha256": p.sha256(core), "reviewer": {"identity":"i","model":"m","policy_version":"v"}, "decisions": [{"digest": digest, "decision":verdict, "reason":"reviewed", "checks": {name:{"status":"pass","evidence":"independent check"} for name in ai.CHECKS}} for digest in [item["digest"] for item in self.packet["items"]]]}; review_path = self.root / "review.json"; review_path.write_text(json.dumps(review)); original = p.Api; p.Api = lambda *_: self
         if drift:
             original_decide = self.decide
             def change(digest, *args):
@@ -26,7 +26,7 @@ class ApplyFixture(unittest.TestCase):
                 if digest == "a": (self.root / "curriculum/a").write_text("v2")
                 return answer
             self.decide = change
-        args = type("Args", (), {"packet":self.packet_path,"review":review_path,"base_url":"x","cookie_file":self.cookie,"curriculum_root":self.root / "curriculum","decisions":self.root / "decisions.json","receipt":self.root / "receipt.json","commit":True})()
+        args = type("Args", (), {"packet":self.packet_path,"review":review_path,"base_url":"x","cookie_file":self.cookie,"curriculum_root":self.root / "curriculum","decisions":self.root / "decisions.json","receipt":self.root / "receipt.json","commit":commit})()
         try: ai.apply(args)
         finally: p.Api = original
         return args
@@ -50,5 +50,24 @@ class ApplyFixture(unittest.TestCase):
     def test_curriculum_drift_blocks_second_and_keeps_first_receipt(self):
         with self.assertRaises(p.Refused): args = self.execute(True)
         self.assertEqual(["a"], self.writes)
+
+    def test_quarantine_only_writes_a_provenance_receipt(self):
+        args = self.execute(verdict="quarantine")
+        receipt = json.loads(args.receipt.read_text())
+        self.assertEqual([], self.writes)
+        self.assertEqual("reviewed", receipt["quarantined"][0]["reason"])
+        self.assertEqual("i", receipt["ai_reviewer"]["identity"])
+        self.assertIn("review_sha256", receipt)
+    def test_quarantine_refuses_existing_receipt(self):
+        (self.root / "receipt.json").write_text("prior")
+        with self.assertRaises(p.Refused): self.execute(verdict="quarantine")
+        self.assertEqual("prior", (self.root / "receipt.json").read_text())
+        self.assertEqual([], self.writes)
+    def test_dry_run_keeps_ai_provenance(self):
+        args = self.execute(commit=False)
+        receipt = json.loads(args.receipt.read_text())
+        self.assertEqual([], self.writes)
+        self.assertEqual("i", receipt["ai_reviewer"]["identity"])
+        self.assertIn("review_sha256", receipt)
 
 if __name__ == "__main__": unittest.main()
