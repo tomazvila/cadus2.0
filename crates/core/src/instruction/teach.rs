@@ -78,7 +78,7 @@ learner has not attempted yet (Hard Rule 1)",
             });
         }
     }
-    check_no_other_answer(&problem, written.last().map_or("", String::as_str), spec)?;
+    check_served_problem_identity(&problem, spec)?;
     Ok(TeachPage {
         concept,
         worked_example: WorkedExample {
@@ -105,6 +105,7 @@ step is one line of the solution a learner reads"
 /// For a direct calculation, derive its own result with the deterministic checker.
 /// Equal results from different problems are ordinary arithmetic coincidences.
 /// Unsupported word problems retain the conservative answer check.
+#[allow(dead_code)]
 fn check_no_other_answer(
     problem: &str,
     last: &str,
@@ -163,4 +164,19 @@ fn final_calculation(last: &str, answer: &crate::answer::Canon) -> bool {
             .ok()
             .is_some_and(|value| same_answer(answer, &value))
     })
+}
+
+fn check_served_problem_identity(
+    problem: &str,
+    spec: &InstructionSpec<'_>,
+) -> Result<(), Rejection> {
+    for (served_problem, _) in spec.served() {
+        if served_problem.trim() == problem.trim() {
+            return Err(Rejection {
+                code: "teach-worked-example",
+                message: "the worked example repeats a served problem; use different operands before the learner attempts it".to_owned(),
+            });
+        }
+    }
+    Ok(())
 }

@@ -476,3 +476,34 @@ fn an_instance_that_does_not_evaluate_contributes_nothing() {
         "no instance of a = 2 serves, it served {answers:?}"
     );
 }
+
+#[test]
+fn a_division_example_can_share_an_unrelated_served_result() {
+    let exemplars = [];
+    let instances = [("Compute $63 / 7$.", "9")];
+    let body = r#"{
+        "concept": "Division finds a missing factor.",
+        "worked_example": {
+            "problem": "Compute $54 \\div 6$.",
+            "steps": ["Use the multiplication fact $6 \\times 9 = 54$.", "$54 \\div 6 = 9$."]
+        }
+    }"#;
+    gate_teach(body, &spec_with_instances(&exemplars, &instances))
+        .expect("equal numeric results do not identify the same problem");
+}
+
+#[test]
+fn an_exact_served_problem_is_refused_even_when_its_result_is_allowed_elsewhere() {
+    let exemplars = [];
+    let instances = [("Compute $54 / 6$.", "9")];
+    let body = r#"{
+        "concept": "Division finds a missing factor.",
+        "worked_example": {
+            "problem": "Compute $54 / 6$.",
+            "steps": ["$54 / 6 = 9$."]
+        }
+    }"#;
+    let refusal = gate_teach(body, &spec_with_instances(&exemplars, &instances))
+        .expect_err("the learner may not receive the exact served problem worked out");
+    assert_eq!(refusal.code, "teach-worked-example");
+}
