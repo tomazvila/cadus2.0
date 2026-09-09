@@ -18,8 +18,13 @@ struct HintRecipe {
 fn hints() -> &'static [HintRecipe] {
     static HINTS: OnceLock<Vec<HintRecipe>> = OnceLock::new();
     HINTS.get_or_init(|| {
-        serde_json::from_str(include_str!("instruction_hints.json"))
-            .expect("the reviewed instruction-hint catalog is valid")
+        let mut catalog: Vec<HintRecipe> = serde_json::from_str(include_str!("instruction_hints.json"))
+            .expect("the reviewed instruction-hint catalog is valid");
+        for shard in [include_str!("instruction_hints_unit10.json")] {
+            catalog.extend(serde_json::from_str::<Vec<HintRecipe>>(shard)
+                .expect("the reviewed instruction-hint shard is valid"));
+        }
+        catalog
     })
 }
 
@@ -66,7 +71,7 @@ mod tests {
     #[test]
     fn catalog_is_exact_unique_and_gated() {
         let keys: BTreeSet<_> = hints().iter().map(|row| row.key.as_str()).collect();
-        assert_eq!(keys.len(), 20);
+        assert_eq!(keys.len(), 28);
         assert_eq!(keys.len(), hints().len());
         for spec in specs() {
             let mut out = Proposals::default();
