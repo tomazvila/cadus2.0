@@ -56,14 +56,14 @@ fn rows(unit: &str) -> Vec<Value> {
 fn every_drafted_knowledge_point_sits_inside_its_declared_unit() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
-    for (unit, file) in UNITS {
-        let text =
-            std::fs::read_to_string(root().join("curriculum/foundations").join(file)).unwrap();
+    for (unit, _) in UNITS {
         let unit_topics: Vec<&str> = curriculum
             .topics()
             .iter()
+            .filter(|topic| {
+                curriculum.unit_of(curriculum.idx_of(topic.id.as_str()).unwrap()) == *unit
+            })
             .map(|topic| topic.id.as_str())
-            .filter(|id| text.contains(&format!("  - id: {id}\n")))
             .collect();
         let rows = rows(unit);
         assert!(!rows.is_empty(), "{unit} drafted nothing");
