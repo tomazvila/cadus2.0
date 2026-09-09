@@ -84,28 +84,48 @@ def prepare(args):
     args.output.write_text(json.dumps(core | {"context_sha256": packet.sha256(core)}, indent=2, sort_keys=True) + "\n")
 
 
-def review_rows(batch, expected):
-    if batch.get("ai_review_version") != VERSION or not isinstance(batch.get("reviewer"), dict):
+def validate_reviewer(batch):
+    reviewer = batch.get("reviewer")
+    if batch.get("ai_review_version") != VERSION or not isinstance(reviewer, dict):
         raise packet.Refused("AI reviewer identity, model, and policy version are required")
-    reviewer = batch["reviewer"]
     if set(reviewer) != {"identity", "model", "policy_version"} or not all(isinstance(value, str) and value for value in reviewer.values()):
         raise packet.Refused("AI reviewer identity, model, and policy version are required")
+    return reviewer
+
+
+def validate_checks(digest, checks):
+    if not isinstance(checks, dict) or set(checks) != CHECKS:
+        raise packet.Refused(f"{digest}: missing decision, reason, or substantive checks")
+    statuses = []
+    for name in CHECKS:
+        check = checks[name]
+        if not isinstance(check, dict) or set(check) != {"status", "evidence"} or check["status"] not in {"pass", "fail", "unsupported"} or not isinstance(check["evidence"], str) or not check["evidence"].strip():
+            raise packet.Refused(f"{digest}: {name} evidence is invalid")
+        statuses.append(check["status"])
+    return statuses
+
+
+def validate_ai_row(row, expected, seen):
+    digest = row.get("digest") if isinstance(row, dict) else None
+    if digest in seen or digest not in expected:
+        raise packet.Refused("duplicate or unsupported AI evidence")
+    verdict, reason = row.get("decision"), row.get("reason")
+    if verdict not in DECISIONS or not isinstance(reason, str) or not reason.strip():
+        raise packet.Refused(f"{digest}: missing decision, reason, or substantive checks")
+    statuses = validate_checks(digest, row.get("checks"))
+    if verdict == "approve" and set(statuses) != {"pass"}:
+        raise packet.Refused(f"{digest}: approval has unresolved evidence")
+    return digest, verdict, reason
+
+
+def review_rows(batch, expected):
+    validate_reviewer(batch)
     rows = batch.get("decisions")
     if not isinstance(rows, list) or len(rows) != len(expected): raise packet.Refused("one AI decision per packet item is required")
     result, seen = [], set()
     for row in rows:
-        digest = row.get("digest") if isinstance(row, dict) else None
-        if digest in seen or digest not in expected: raise packet.Refused("duplicate or unsupported AI evidence")
-        seen.add(digest); verdict, reason, checks = row.get("decision"), row.get("reason"), row.get("checks")
-        if verdict not in DECISIONS or not isinstance(reason, str) or not reason.strip() or not isinstance(checks, dict) or set(checks) != CHECKS:
-            raise packet.Refused(f"{digest}: missing decision, reason, or substantive checks")
-        statuses = []
-        for name in CHECKS:
-            check = checks[name]
-            if not isinstance(check, dict) or set(check) != {"status", "evidence"} or check["status"] not in {"pass", "fail", "unsupported"} or not isinstance(check["evidence"], str) or not check["evidence"].strip():
-                raise packet.Refused(f"{digest}: {name} evidence is invalid")
-            statuses.append(check["status"])
-        if verdict == "approve" and set(statuses) != {"pass"}: raise packet.Refused(f"{digest}: approval has unresolved evidence")
+        digest, verdict, reason = validate_ai_row(row, expected, seen)
+        seen.add(digest)
         result.append((digest, verdict, reason))
     return result
 
