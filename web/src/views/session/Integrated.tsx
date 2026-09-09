@@ -242,6 +242,7 @@ export function Integrated({ api, taskId, problem, onGraded, onContinue, onUnaut
           wrong.
         </label>
         <textarea
+          className="work-input"
           id="integrated-reasoning"
           value={reasoning}
           disabled={busy || grade !== null}
