@@ -155,7 +155,7 @@ const MAX_DEPTH: usize = 128;
 ///
 /// The denominator of the exact rational is `10^scale`, so the scale must stay
 /// inside [`MAX_BITS`].
-const MAX_SCALE: u32 = 1_000;
+pub(crate) const MAX_SCALE: u32 = 1_000;
 
 /// The largest trial divisor the radical factoring tries.
 ///
