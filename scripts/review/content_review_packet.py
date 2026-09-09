@@ -238,7 +238,7 @@ def validate_decisions(document, packet, indexed):
 
 
 def validated_decision(row, number, indexed, seen):
-    """Validate one digest-bound human decision and return its normalized fields."""
+    """Validate one digest-bound explicit decision and return its normalized fields."""
     if not isinstance(row, dict) or not isinstance(row.get("digest"), str):
         raise Refused(f"decision {number}: digest is required")
     digest, decision = row["digest"], row.get("decision")
@@ -263,6 +263,37 @@ def write_receipt(path, receipt):
         os.replace(temporary, path)
 
 
+def apply_one_decision(api, item, decision, reason, receipt, receipt_path, before_write):
+    if before_write is not None:
+        try:
+            before_write(item)
+        except Exception as error:
+            receipt["pre_write_refusal"] = {"digest": item["digest"], "error": str(error)}
+            write_receipt(receipt_path, receipt)
+            raise
+    live = api.document(item["digest"])
+    if live.get("status") != "pending" or fingerprint(live) != item.get("fingerprint_sha256"):
+        raise Refused(f"{item['digest']}: live document changed before its write")
+    receipt["in_flight"] = {"digest": item["digest"], "decision": decision}
+    write_receipt(receipt_path, receipt)
+    try:
+        answer = api.decide(item["digest"], decision, reason)
+    except Exception as error:
+        receipt["uncertain"] = receipt.pop("in_flight") | {"error": str(error)}
+        write_receipt(receipt_path, receipt)
+        raise
+    if decision == "approve" and item["kind"] == "template" and answer.get("rejected_documents") is None:
+        receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "template re-gate outcome unavailable"}
+        write_receipt(receipt_path, receipt)
+        raise Refused(f"{item['digest']}: template re-gate outcome unavailable")
+    if answer.get("digest") != item["digest"] or answer.get("status") != (
+            "approved" if decision == "approve" else "rejected"):
+        receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "malformed decision response"}
+        write_receipt(receipt_path, receipt)
+        raise Refused(f"{item['digest']}: decision response did not confirm the requested write")
+    return answer
+
+
 def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, before_write=None, metadata=None):
     if receipt_path is not None and receipt_path.exists():
         raise Refused("receipt path already exists")
@@ -285,33 +316,7 @@ def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, 
                "packet_sha256": packet["packet_sha256"], "receipts": []}
     for item, decision, reason in checked:
         write_receipt(receipt_path, receipt)
-        if before_write is not None:
-            try:
-                before_write(item)
-            except Exception as error:
-                receipt["pre_write_refusal"] = {"digest": item["digest"], "error": str(error)}
-                write_receipt(receipt_path, receipt)
-                raise
-        live = api.document(item["digest"])
-        if live.get("status") != "pending" or fingerprint(live) != item.get("fingerprint_sha256"):
-            raise Refused(f"{item['digest']}: live document changed before its write")
-        receipt["in_flight"] = {"digest": item["digest"], "decision": decision}
-        write_receipt(receipt_path, receipt)
-        try:
-            answer = api.decide(item["digest"], decision, reason)
-        except Exception as error:
-            receipt["uncertain"] = receipt.pop("in_flight") | {"error": str(error)}
-            write_receipt(receipt_path, receipt)
-            raise
-        if decision == "approve" and item["kind"] == "template" and answer.get("rejected_documents") is None:
-            receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "template re-gate outcome unavailable"}
-            write_receipt(receipt_path, receipt)
-            raise Refused(f"{item['digest']}: template re-gate outcome unavailable")
-        if answer.get("digest") != item["digest"] or answer.get("status") != (
-                "approved" if decision == "approve" else "rejected"):
-            receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "malformed decision response"}
-            write_receipt(receipt_path, receipt)
-            raise Refused(f"{item['digest']}: decision response did not confirm the requested write")
+        answer = apply_one_decision(api, item, decision, reason, receipt, receipt_path, before_write)
         receipt["receipts"].append(answer)
         receipt.pop("in_flight", None)
         receipt["committed"] = True
