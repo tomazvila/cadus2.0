@@ -128,59 +128,99 @@ def coefficient(equation):
     return rate
 
 
+def proportional_values(key, problem, ps):
+    assert len(ps)==2
+    r,s=(y/x for x,y in ps)
+    return dict(ratios=(r,s),proportional=r==s)
+
+
+def graph_proportional_values(key, problem, ps):
+    a=ps[0][1]/ps[0][0]
+    b=ps[1][1]/ps[1][0] if len(ps)==2 else coefficient(equations(problem)[0])
+    return dict(rates=(a,b),faster=a>b)
+
+
+def quadrant_values(key, problem, ps):
+    assert len(ps)==2
+    return dict(A=quadrant_code(ps[0]),B=quadrant_code(ps[1]))
+
+
+def axis_expression_values(key, problem, ps):
+    pairs=coordinate_expression_pairs(problem)
+    coordinate=1 if key.endswith('/kp1') else 0
+    expressions=[pair[coordinate] for pair in pairs]
+    axis='y' if coordinate==1 else 'x'
+    axis_equations=[eq for eq in all_equations(problem) if eq.startswith(f'{axis}=')]
+    if axis_equations:
+        expressions.append(axis_equations[0].split('=',1)[1])
+    assert len(expressions)==2
+    return dict(value=solve_equal(*expressions))
+
+
+def axis_coordinate_values(key, problem, ps):
+    assert len(ps)==2
+    return dict(h=ps[0][1],v=ps[1][0])
+
+
+def slope_values(key, problem, ps):
+    assert len(ps)==2 and ps[1][0]>ps[0][0]
+    rate=slope(*ps)
+    return dict(rate=rate,increasing=rate>0)
+
+
+def linear_axis_values(key, problem, ps):
+    eqs={eq[0]:scalar(eq.split('=')[1]) for eq in equations(problem)}
+    assert set(eqs)=={'x','y'}
+    return dict(x=eqs['x'],y=eqs['y'])
+
+
+def solution_values(key, problem, ps):
+    assert len(ps)==1
+    eqs=all_equations(problem)
+    assert len(eqs)==1
+    left,right=eqs[0].split('=',1)
+    variables={'x':ps[0][0],'y':ps[0][1]}
+    values=(scalar(left,variables),scalar(right,variables))
+    return dict(values=values,valid=values[0]==values[1])
+
+
+def intercept_values(key, problem, ps):
+    assert len(ps)==2 and ps[0][0]!=ps[1][0]
+    intercept=ps[0][1]-ps[0][0]*slope(*ps)
+    return dict(value=(Q(0),intercept))
+
+
+def line_relation_values(key, problem, ps):
+    eqs=equations(problem)
+    assert len(eqs)==2
+    rates=tuple(coefficient(eq) for eq in eqs)
+    relation=Q(1 if rates[0]==rates[1] else 2 if rates[0]*rates[1]==-1 else 3)
+    return dict(rates=rates,relation=relation)
+
+
 def reconstruct(key, problem):
     topic=key.split('/')[0]
     ps=points(problem)
     if topic=='proportional-relationships':
-        assert len(ps)==2
-        r,s=(y/x for x,y in ps)
-        return dict(ratios=(r,s),proportional=r==s)
+        return proportional_values(key, problem, ps)
     if topic=='graphing-proportional-relationships':
-        a=ps[0][1]/ps[0][0]
-        b=ps[1][1]/ps[1][0] if len(ps)==2 else coefficient(equations(problem)[0])
-        return dict(rates=(a,b),faster=a>b)
+        return graph_proportional_values(key, problem, ps)
     if key=='coordinate-plane/kp1':
-        assert len(ps)==2
-        return dict(A=quadrant_code(ps[0]),B=quadrant_code(ps[1]))
+        return quadrant_values(key, problem, ps)
     if key in ('horizontal-vertical-slopes/kp1','horizontal-vertical-slopes/kp2'):
-        pairs=coordinate_expression_pairs(problem)
-        coordinate=1 if key.endswith('/kp1') else 0
-        expressions=[pair[coordinate] for pair in pairs]
-        axis='y' if coordinate==1 else 'x'
-        axis_equations=[eq for eq in all_equations(problem) if eq.startswith(f'{axis}=')]
-        if axis_equations:
-            expressions.append(axis_equations[0].split('=',1)[1])
-        assert len(expressions)==2
-        return dict(value=solve_equal(*expressions))
+        return axis_expression_values(key, problem, ps)
     if key=='horizontal-vertical-slopes/kp3':
-        assert len(ps)==2
-        return dict(h=ps[0][1],v=ps[1][0])
+        return axis_coordinate_values(key, problem, ps)
     if topic=='slope-as-rate-of-change':
-        assert len(ps)==2 and ps[1][0]>ps[0][0]
-        rate=slope(*ps)
-        return dict(rate=rate,increasing=rate>0)
+        return slope_values(key, problem, ps)
     if topic=='graphing-linear-equations':
-        eqs={eq[0]:scalar(eq.split('=')[1]) for eq in equations(problem)}
-        assert set(eqs)=={'x','y'}
-        return dict(x=eqs['x'],y=eqs['y'])
+        return linear_axis_values(key, problem, ps)
     if key=='solutions-of-two-variable-equations/kp1':
-        assert len(ps)==1
-        eqs=all_equations(problem)
-        assert len(eqs)==1
-        left,right=eqs[0].split('=',1)
-        variables={'x':ps[0][0],'y':ps[0][1]}
-        values=(scalar(left,variables),scalar(right,variables))
-        return dict(values=values,valid=values[0]==values[1])
+        return solution_values(key, problem, ps)
     if key=='graphing-from-a-table/kp2':
-        assert len(ps)==2 and ps[0][0]!=ps[1][0]
-        intercept=ps[0][1]-ps[0][0]*slope(*ps)
-        return dict(value=(Q(0),intercept))
+        return intercept_values(key, problem, ps)
     if key=='slopes-of-parallel-perpendicular-lines/kp3':
-        eqs=equations(problem)
-        assert len(eqs)==2
-        rates=tuple(coefficient(eq) for eq in eqs)
-        relation=Q(1 if rates[0]==rates[1] else 2 if rates[0]*rates[1]==-1 else 3)
-        return dict(rates=rates,relation=relation)
+        return line_relation_values(key, problem, ps)
     raise ValueError(f'No independent reconstruction for {key}')
 
 
