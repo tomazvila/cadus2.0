@@ -41,3 +41,14 @@ class IntegrityTest(fixture.ApplyFixture):
         self.assertFalse(receipt["complete"])
         self.assertEqual(receipt["ai_reviewer"]["identity"], "i")
         self.assertEqual(receipt["review_sha256"], hashlib.sha256((self.root / "review.json").read_bytes()).hexdigest())
+
+    def test_instruction_without_approved_template_refused(self):
+        self.rows = {"a": fixture.make_doc("a", "k")}
+        self.rows["a"]["kind"] = "teach"
+        item = self.rows["a"] | {"fingerprint_sha256": packet.fingerprint(self.rows["a"])}
+        core = {"packet_version": 1, "scope": "all_pending_content", "items": [item]}
+        self.packet = core | {"packet_sha256": packet.sha256(core)}
+        self.packet_path.write_text(json.dumps(self.packet))
+        with self.assertRaises(packet.Refused):
+            self.execute()
+        self.assertEqual([], self.writes)
