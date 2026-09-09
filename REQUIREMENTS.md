@@ -75,7 +75,7 @@ human, and served from local storage.
 - **A2 — Offline authoring pipeline.** A batch job (not a request handler) asks the
   model for templates, verifies each one mechanically (sample coverage at domain
   edges and mixed corners, constraint satisfaction, answer-expression agreement with
-  hand-worked samples), then queues it for human review (C6). Rejected templates get
+  hand-worked samples), then queues it for AI evidence review (C6). Rejected templates get
   precise, actionable retry feedback — the 1.0 lesson: the biggest yield lever is the
   quality of the rejection message.
 - **A3 — Deterministic grading is the only synchronous grader.** Answer kinds are
