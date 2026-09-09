@@ -4,7 +4,7 @@ use std::{collections::BTreeMap, io::Read, path::Path, process::ExitCode};
 use cadus_core::{
     curriculum::{Curriculum, curriculum_hash, load_curriculum},
     instruction::ServedInstance,
-    template::{Compiled, all_hold, enumerate, from_body},
+    template::{Compiled, DomainError, all_hold, enumerate, from_body},
 };
 use cadus_worker::authoring::{job::verify_kind, prompt::Kind, selection::select};
 use serde::Deserialize;
@@ -45,7 +45,7 @@ fn instances(curriculum: &Curriculum, row: &Row) -> Result<Vec<ServedInstance>, 
     let body = checked_body(curriculum, row, &[])?;
     let document = from_body(&body).map_err(|e| e.to_string())?;
     let compiled = Compiled::new(&document).map_err(|e| e.to_string())?;
-    let tuples = enumerate(&document.params, 100_000).map_err(|e| e.to_string())?;
+    let tuples = enumerate(&document.params, 100_000).map_err(enumeration_error)?;
     let mut instances = Vec::new();
     for bindings in tuples {
         if !all_hold(&document.constraints, &bindings).map_err(|e| e.to_string())? {
@@ -61,6 +61,15 @@ fn instances(curriculum: &Curriculum, row: &Row) -> Result<Vec<ServedInstance>, 
         return Err("full finite template context has no admissible instances".into());
     }
     Ok(instances)
+}
+
+fn enumeration_error(error: DomainError) -> String {
+    match error {
+        DomainError::TooLarge { name, count } if count > 100_000 => format!(
+            "offline exhaustive context for {name:?} has {count} bindings, which exceeds the limit (100000)"
+        ),
+        other => other.to_string(),
+    }
 }
 
 fn audit(curriculum: &Curriculum, input: Input) -> Result<Value, String> {
@@ -189,6 +198,26 @@ mod tests {
         let result = audit(&curriculum, serde_json::from_value(input).unwrap()).unwrap();
         assert_eq!(result["documents"][0]["practice_instances"], 8100);
         assert_eq!(result["documents"][0]["exhaustive"], true);
+    }
+
+    #[test]
+    fn offline_context_reports_its_100000_binding_limit_before_allocating_tuples() {
+        let (curriculum, mut input) = fixture();
+        let args = &mut input["templates"][0]["arguments"];
+        args["params"] = json!({"a":{"kind":"int","low":1,"high":101},"b":{"kind":"int","low":1,"high":1000}});
+        args["constraints"] = json!([]);
+        args["statement"] = json!("Compute $ {a} + {b} $.");
+        args["answer_expr"] = json!("a+b");
+        args["samples"] = json!([
+            {"params":{"a":1,"b":1},"expected":"2"},
+            {"params":{"a":1,"b":1000},"expected":"1001"},
+            {"params":{"a":101,"b":1},"expected":"102"},
+            {"params":{"a":101,"b":1000},"expected":"1101"}
+        ]);
+        let error = audit(&curriculum, serde_json::from_value(input).unwrap()).unwrap_err();
+        assert!(error.contains("101000 bindings"));
+        assert!(error.contains("limit (100000)"));
+        assert!(!error.contains("MAX_DOMAIN_SIZE (10000)"));
     }
 
     #[test]
