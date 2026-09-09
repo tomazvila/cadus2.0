@@ -47,7 +47,7 @@ pub fn draft_rejection(
         .map(|rejection| (key, kind.as_str().to_owned(), rejection.message))
 }
 
-/// Run the generic local-draft importer through the real worker binary.
+/// Run the release missing-only import mode through the real worker binary.
 pub async fn import_local_drafts(manifest: &Path, dsn: &str) -> std::process::Output {
     let script = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../scripts/authoring/import_local_drafts.py");
@@ -55,6 +55,7 @@ pub async fn import_local_drafts(manifest: &Path, dsn: &str) -> std::process::Ou
         .arg(script)
         .arg("--manifest")
         .arg(manifest)
+        .arg("--missing-only")
         .arg("--worker")
         .arg(env!("CARGO_BIN_EXE_cadus-worker"))
         .env("DATABASE_URL", dsn)

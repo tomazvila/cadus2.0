@@ -6,11 +6,11 @@ use std::path::{Path, PathBuf};
 
 use cadus_store::test_support::TestDb;
 
-/// Unit id to the number of knowledge points its manifest names (so drafts = 2x).
+/// Unit manifest to its exact draft-row count, including practice templates.
 const UNITS: &[(&str, i64)] = &[
-    ("fractions-decimals", 20),
-    ("integers-negatives", 14),
-    ("rational-trig", 1),
+    ("fractions-decimals", 119),
+    ("integers-negatives", 28),
+    ("rational-trig", 2),
 ];
 
 fn manifest(unit: &str) -> PathBuf {
@@ -24,9 +24,9 @@ fn manifest(unit: &str) -> PathBuf {
 async fn every_unit_imports_pending_only_at_zero_cost_and_a_second_pass_skips() {
     TestDb::with(|db| async move {
         let dsn = common::superuser_dsn(&db.name);
-        let total_drafts: i64 = UNITS.iter().map(|(_, kps)| kps * 2).sum();
+        let total_drafts: i64 = UNITS.iter().map(|(_, drafts)| drafts).sum();
         for pass in 0..2 {
-            for (unit, kps) in UNITS {
+            for (unit, drafts) in UNITS {
                 let output = common::authoring::import_local_drafts(&manifest(unit), &dsn).await;
                 let stdout = String::from_utf8_lossy(&output.stdout);
                 assert!(
@@ -38,7 +38,6 @@ async fn every_unit_imports_pending_only_at_zero_cost_and_a_second_pass_skips() 
                     stdout.contains("model cost reported 0 micro-USD"),
                     "{unit}: {stdout}"
                 );
-                let drafts = kps * 2;
                 let summary = if pass == 0 {
                     format!("local drafts: stored {drafts} skipped 0 declined 0 calls {drafts}")
                 } else {
