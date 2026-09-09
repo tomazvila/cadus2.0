@@ -128,8 +128,8 @@ def build(args):
             target = temp / name
             target.write_text(json.dumps(rows, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
             files.append({"path": name, "rows": len(rows), "sha256": digest_bytes(target.read_bytes())})
-        core = {"version": 1, "release_commit": head, "course": "foundations",
-                "status": "pending-human-review", "human_approval": "pending",
+        core = {"version": 2, "release_commit": head, "course": "foundations",
+                "status": "pending-ai-review", "ai_approval": "pending",
                 "import_order": files, "counts": counts, "canonical_kps": 809,
                 "sources": sources, "side_effects": {"production_writes": 0, "approvals": 0}}
         receipt = core | {"bundle_sha256": digest_json(core)}
@@ -142,7 +142,7 @@ def build(args):
 
 
 def validate_receipt(receipt,root):
-    if not isinstance(receipt, dict) or receipt.get("version") != 1:
+    if not isinstance(receipt, dict) or receipt.get("version") not in (1, 2):
         raise Refused("unsupported or missing bundle receipt")
     core = {key: value for key, value in receipt.items() if key != "bundle_sha256"}
     if receipt.get("bundle_sha256") != digest_json(core):
@@ -151,8 +151,9 @@ def validate_receipt(receipt,root):
         raise Refused("bundle release commit differs from the checkout head")
     if receipt.get("counts") != EXPECTED or receipt.get("canonical_kps") != 809:
         raise Refused("bundle count contract differs from 809/809/809")
-    if (receipt.get("status") != "pending-human-review"
-            or receipt.get("human_approval") != "pending"
+    status, approval = ("pending-human-review", "human_approval") if receipt["version"] == 1 else ("pending-ai-review", "ai_approval")
+    if (receipt.get("status") != status
+            or receipt.get(approval) != "pending"
             or receipt.get("side_effects") != {"production_writes": 0, "approvals": 0}):
         raise Refused("bundle lifecycle boundary changed")
 

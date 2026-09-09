@@ -44,6 +44,43 @@ class ReleaseBundleTest(unittest.TestCase):
         self.assertEqual(counts, bundle.EXPECTED)
         self.assertEqual(sum(map(len, groups)), 2427)
 
+    def test_curated_teach_composition_has_no_generated_teach(self):
+        templates, teach, instruction = self.valid()
+        teach += [row for row in instruction if row["kind"] == "teach"]
+        hints = [row for row in instruction if row["kind"] == "hint_ladder"]
+        groups, _sources, counts = bundle.prepare(
+            self.write("templates.json", templates), self.write("teach.json", teach),
+            self.write("hints.json", hints))
+        self.assertEqual([809, 809, 809], list(map(len, groups)))
+        self.assertEqual(counts, bundle.EXPECTED)
+
+    def test_new_bundle_is_pending_ai_review_and_legacy_stays_verifiable(self):
+        templates, teach, instruction = self.valid()
+        args = type("Args", (), {"release_root": self.root, "release_commit": "head",
+            "templates": self.write("templates.json", templates),
+            "teach": self.write("teach.json", teach),
+            "instruction": self.write("hints.json", instruction),
+            "output": self.root / "bundle"})
+        original = bundle.git_head
+        bundle.git_head = lambda _root: "head"
+        try:
+            bundle.build(args)
+            receipt = bundle.read_json(args.output / "bundle.json")
+            self.assertEqual(2, receipt["version"])
+            self.assertEqual("pending-ai-review", receipt["status"])
+            self.assertNotIn("human_approval", receipt)
+            bundle.validate_receipt(receipt, self.root)
+            receipt.update(version=1, status="pending-human-review", human_approval="pending")
+            receipt.pop("ai_approval")
+            receipt["bundle_sha256"] = bundle.digest_json({k: v for k, v in receipt.items() if k != "bundle_sha256"})
+            bundle.validate_receipt(receipt, self.root)
+            receipt["human_approval"] = "approved"
+            receipt["bundle_sha256"] = bundle.digest_json({k: v for k, v in receipt.items() if k != "bundle_sha256"})
+            with self.assertRaisesRegex(bundle.Refused, "lifecycle"):
+                bundle.validate_receipt(receipt, self.root)
+        finally:
+            bundle.git_head = original
+
     def test_overlap_is_refused(self):
         templates, teach, instruction = self.valid()
         instruction[0] = row(0, "teach")
