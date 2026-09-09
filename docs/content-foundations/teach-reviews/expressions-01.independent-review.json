@@ -1,0 +1,1545 @@
+{
+  "schema_version": 1,
+  "review_type": "independent semantic review of Teach concepts and worked examples",
+  "reviewer": "Codex independent content reviewer",
+  "reviewed_at": "2026-09-10",
+  "scope": "All 24 exact proposal bodies reviewed against canonical objectives, constraints, prerequisites, and all 96 exemplars. No proposal or live-content approval.",
+  "reviewed_file": "teach-authored/expressions-01-root-reviewed-proposals.json",
+  "reviewed_file_sha256": "5739130191cd477a7f1b5b1696daf30e2cb74b4ac4f8419064c1307a2d13e10a",
+  "canonical_curriculum_file": "curriculum.json",
+  "canonical_curriculum_file_sha256": "15c1127772390f11047b5142ab2921b831f6f6e58644bd8f0f816e5e7011e2de",
+  "records": [
+    {
+      "key": "parts-of-an-expression/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Terms, coefficients, and constants",
+      "canonical_constraints": "two to four terms; integer coefficients from -9 to 9",
+      "canonical_key_prerequisites": [
+        "order-of-operations"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "order-of-operations",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "3",
+          "problem": "How many terms does $4x + 7 - 2y$ have?",
+          "solution_sketch": "Terms are separated by $+$ and $-$: $4x$, $7$, $-2y$."
+        },
+        {
+          "answer": "-5",
+          "problem": "What is the coefficient of $y$ in $3x - 5y + 2$?",
+          "solution_sketch": "The term is $-5y$; the sign belongs to the coefficient."
+        },
+        {
+          "answer": "-8",
+          "problem": "What is the constant term of $2x^2 + 3x - 8$?",
+          "solution_sketch": "The constant term has no variable factor: $-8$."
+        },
+        {
+          "answer": "3",
+          "problem": "How many terms does $5x - 3y + 8$ have?",
+          "solution_sketch": "Terms are separated by $+$ and $-$: $5x$, $-3y$, $8$."
+        }
+      ],
+      "worked_problem": "For $6x^2-4x+y-8$, give the number of terms, the coefficient of $x$, and the constant term.",
+      "semantic_reasoning": "Defines outer-level terms, signed coefficients including implicit ±1, and constants; the four-term example respects coefficient bounds.",
+      "independent_arithmetic_evidence": "Terms: 6x^2,-4x,y,-8; count 4, x coefficient -4, constant -8.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "parts-of-an-expression/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Identify like terms",
+      "canonical_constraints": "at most two variables; exponents <= 2",
+      "canonical_key_prerequisites": [
+        "order-of-operations"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "order-of-operations",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "-2x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "In $5x + 3y - 2x + 7$, one other term is a like term of $5x$. Which term is it?",
+          "solution_sketch": "Like terms have the same variable part; $5x$ and $-2x$ both have $x$."
+        },
+        {
+          "answer": "no",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "Are $4a^2$ and $4a$ like terms? Answer yes or no.",
+          "solution_sketch": "The variable parts $a^2$ and $a$ differ."
+        },
+        {
+          "answer": "5xy",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "In $2xy + 5x + 3xy - 1$, collect the terms whose variable part is $xy$. Give their sum.",
+          "solution_sketch": "The matching terms are $2xy$ and $3xy$; adding their coefficients gives $(2+3)xy=5xy$."
+        },
+        {
+          "answer": "7x^2",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A term must be like $-4x^2$. Choose $7x$, $7x^2$, or $7y^2$.",
+          "solution_sketch": "The variable and its exponent must both match: the required variable part is $x^2$."
+        }
+      ],
+      "worked_problem": "In $7a^2-3a+4a^2-9$, which other term is like $7a^2$?",
+      "semantic_reasoning": "Requires the complete variable-and-exponent part to match and separates constants, covering up to two variables and powers through two.",
+      "independent_arithmetic_evidence": "4a^2 has the same variable part a^2 as 7a^2; -3a and -9 do not.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "substituting-values/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Substitute one value into a linear expression",
+      "canonical_constraints": "one variable; positive integer inputs; coefficients <= 9",
+      "canonical_key_prerequisites": [
+        "order-of-operations"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "order-of-operations",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "multiplication-tables",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "17",
+          "problem": "Evaluate $3x + 5$ when $x = 4$.",
+          "solution_sketch": "$3(4) + 5 = 12 + 5 = 17$."
+        },
+        {
+          "answer": "13",
+          "problem": "Evaluate $2a - 7$ when $a = 10$.",
+          "solution_sketch": "$2(10) - 7 = 13$."
+        },
+        {
+          "answer": "4",
+          "problem": "Evaluate $10 - 2m$ when $m = 3$.",
+          "solution_sketch": "$10 - 2(3) = 4$."
+        },
+        {
+          "answer": "19",
+          "problem": "Evaluate $4x - 5$ when $x = 6$.",
+          "solution_sketch": "$4(6) - 5 = 19$."
+        }
+      ],
+      "worked_problem": "Evaluate $9x-5$ when $x=4$.",
+      "semantic_reasoning": "Explains single numerical substitution, implicit coefficient multiplication, and operation order without changing the task into a comparison.",
+      "independent_arithmetic_evidence": "9(4)-5=36-5=31.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "substituting-values/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Two variables with whole-number inputs",
+      "canonical_constraints": "two variables; positive integer inputs <= 10",
+      "canonical_key_prerequisites": [
+        "order-of-operations",
+        "multiplication-tables"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "order-of-operations",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "multiplication-tables",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "30",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $2ab$ when $a = 5$ and $b = 3$.",
+          "solution_sketch": "$2 \\times 5 \\times 3 = 30$."
+        },
+        {
+          "answer": "14",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $x + 3y$ when $x = 2$ and $y = 4$.",
+          "solution_sketch": "$2+3(4)=2+12=14$."
+        },
+        {
+          "answer": "22",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A rectangle has width $a=4$ and length $b=7$. Evaluate $2(a+b)$.",
+          "solution_sketch": "Add inside the parentheses first: $2(4+7)=2(11)=22$."
+        },
+        {
+          "answer": "2",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "For $p=9$ and $q=3$, find the value of $(p-q)/q$.",
+          "solution_sketch": "The numerator is $9-3=6$; dividing by $q$ gives $6/3=2$."
+        }
+      ],
+      "worked_problem": "Evaluate $7m-5n$ when $m=6$ and $n=4$.",
+      "semantic_reasoning": "Keeps two assignments distinct, replaces every occurrence, and follows grouping and operation order.",
+      "independent_arithmetic_evidence": "7(6)-5(4)=42-20=22.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "evaluating-expressions/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Expressions with exponents",
+      "canonical_constraints": "exponents <= 2; positive inputs",
+      "canonical_key_prerequisites": [
+        "substituting-values",
+        "integer-exponents-intro"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "substituting-values",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "integer-multiplication-division",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-exponents-intro",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "13",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $x^2 + y$ when $x = 3$ and $y = 4$.",
+          "solution_sketch": "$3^2 + 4 = 9 + 4 = 13$."
+        },
+        {
+          "answer": "18",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $2a^2$ when $a = 3$.",
+          "solution_sketch": "Exponent first: $2 \\times 9 = 18$."
+        },
+        {
+          "answer": "49",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $(a+b)^2$ for $a=2$ and $b=5$.",
+          "solution_sketch": "The grouped base is $2+5=7$; its square is $7^2=49$."
+        },
+        {
+          "answer": "12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A square has side $s=6$. Evaluate $s^2-4s$, the numerical difference between its area and perimeter.",
+          "solution_sketch": "The area value is $6^2=36$ and the perimeter value is $4(6)=24$; $36-24=12$."
+        }
+      ],
+      "worked_problem": "Evaluate $3x^2+2$ when $x=4$.",
+      "semantic_reasoning": "Correctly scopes an exponent to its immediate grouped base and evaluates grouping, powers, products, then sums for positive inputs.",
+      "independent_arithmetic_evidence": "3(4)^2+2=3*16+2=50.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "evaluating-expressions/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Negative inputs with order of operations",
+      "canonical_constraints": "inputs in -9..9; watch sign of squared negatives",
+      "canonical_key_prerequisites": [
+        "integer-addition-subtraction",
+        "integer-multiplication-division"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "substituting-values",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "integer-multiplication-division",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-exponents-intro",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "10",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $x^2 - 3x$ when $x = -2$.",
+          "solution_sketch": "$(-2)^2 - 3(-2) = 4 + 6 = 10$."
+        },
+        {
+          "answer": "-6",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $\\frac{a - b}{2}$ when $a = -3$ and $b = 9$.",
+          "solution_sketch": "$\\frac{-3 - 9}{2} = -\\frac{12}{2} = -6$."
+        },
+        {
+          "answer": "16",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "For $x=-4$, evaluate $(-x)^2$.",
+          "solution_sketch": "Negating the input gives $-(-4)=4$; then $4^2=16$."
+        },
+        {
+          "answer": "-9",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "For $a=-3$, evaluate $-a^2$.",
+          "solution_sketch": "The exponent applies to $a$ before the leading minus: $-((-3)^2)=-9$."
+        }
+      ],
+      "worked_problem": "Evaluate $x^2-2x$ when $x=-3$.",
+      "semantic_reasoning": "Parenthesizes negative substitutions and explicitly distinguishes squaring a negative base from applying an outside minus.",
+      "independent_arithmetic_evidence": "(-3)^2-2(-3)=9-(-6)=15.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "evaluating-expressions/kp3",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Multi-term expressions with negatives and exponents",
+      "canonical_constraints": "three terms; inputs in -9..9; distinguish -x^2 from (-x)^2",
+      "canonical_key_prerequisites": [
+        "substituting-values",
+        "integer-exponents-intro"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "substituting-values",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "integer-multiplication-division",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-exponents-intro",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "-4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $-x^2+5x+2$ for $x=-1$.",
+          "solution_sketch": "$-(-1)^2+5(-1)+2=-1-5+2=-4$."
+        },
+        {
+          "answer": "22",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $2x^2-x+1$ for $x=-3$.",
+          "solution_sketch": "$2(-3)^2-(-3)+1=18+3+1=22$."
+        },
+        {
+          "answer": "-3",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner evaluated $(-x)^2+2x-3$ at $x=-2$ as $-11$. Find the correct value.",
+          "solution_sketch": "The grouped base is $-(-2)=2$, so its square is $4$. The three terms give $4-4-3=-3$."
+        },
+        {
+          "answer": "1",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "For $a=-2$ and $b=3$, evaluate $a^2-ab-b^2$.",
+          "solution_sketch": "$(-2)^2-(-2)(3)-3^2=4+6-9=1$."
+        }
+      ],
+      "worked_problem": "Evaluate $-x^2+3x-5$ when $x=-4$.",
+      "semantic_reasoning": "Explicitly distinguishes -x^2 from (-x)^2 and combines all three signed terms after powers and products.",
+      "independent_arithmetic_evidence": "-(-4)^2+3(-4)-5=-16-12-5=-33.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "translating-phrases-to-expressions/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Sum and difference phrases",
+      "canonical_constraints": "one operation; single variable",
+      "canonical_key_prerequisites": [
+        "parts-of-an-expression"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "n + 7",
+          "problem": "Write an expression: $7$ more than a number $n$.",
+          "solution_sketch": "\"$7$ more than\" adds: $n + 7$."
+        },
+        {
+          "answer": "x - 4",
+          "problem": "Write an expression: the difference of a number $x$ and $4$.",
+          "solution_sketch": "The difference subtracts in the stated order: $x - 4$."
+        },
+        {
+          "answer": "m + 9",
+          "problem": "Write an expression: $9$ more than a number $m$.",
+          "solution_sketch": "\"$9$ more than\" adds: $m + 9$."
+        },
+        {
+          "answer": "y - 6",
+          "problem": "Write an expression: the difference of a number $y$ and $6$.",
+          "solution_sketch": "The difference subtracts in the stated order: $y - 6$."
+        }
+      ],
+      "worked_problem": "Write an expression: the sum of a number $p$ and $15$.",
+      "semantic_reasoning": "Covers both sum and difference wording, including order for “less than,” and preserves the named variable.",
+      "independent_arithmetic_evidence": "For p=2, p+15=17, matching the phrase; the expression is p+15.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "translating-phrases-to-expressions/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Product and quotient phrases",
+      "canonical_constraints": "one operation; single variable",
+      "canonical_key_prerequisites": [
+        "parts-of-an-expression"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "6w",
+          "problem": "Write an expression: the product of $6$ and $w$.",
+          "solution_sketch": "Product means multiply: $6w$."
+        },
+        {
+          "answer": "y/5",
+          "problem": "Write an expression: the quotient of $y$ and $5$.",
+          "solution_sketch": "Quotient means divide: $y/5$."
+        },
+        {
+          "answer": "8v",
+          "problem": "Write an expression: the product of $8$ and $v$.",
+          "solution_sketch": "Product means multiply: $8v$."
+        },
+        {
+          "answer": "z/9",
+          "problem": "Write an expression: the quotient of $z$ and $9$.",
+          "solution_sketch": "Quotient means divide: $z/9$."
+        }
+      ],
+      "worked_problem": "Write an expression: the product of $9$ and $m$.",
+      "semantic_reasoning": "Covers both product and quotient phrases, preserves quotient order, and states the nonzero-divisor boundary.",
+      "independent_arithmetic_evidence": "For m=2, 9m=9*2=18; the expression is 9m.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "translating-phrases-to-expressions/kp3",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Two-operation phrases",
+      "canonical_constraints": "two operations; watch order-reversing phrases (less than, fewer than)",
+      "canonical_key_prerequisites": [
+        "parts-of-an-expression"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "2n - 3",
+          "problem": "Write an expression: $3$ less than twice a number $n$.",
+          "solution_sketch": "\"$3$ less than\" reverses the order: start with $2n$, subtract $3$."
+        },
+        {
+          "answer": "4t + 5",
+          "problem": "Write an expression: $5$ more than the product of $4$ and $t$.",
+          "solution_sketch": "The product $4t$ comes first, then add $5$."
+        },
+        {
+          "answer": "3m - 5",
+          "problem": "Write an expression: $5$ less than three times a number $m$.",
+          "solution_sketch": "\"$5$ less than\" reverses the order: start with $3m$, subtract $5$."
+        },
+        {
+          "answer": "6w + 7",
+          "problem": "Write an expression: $7$ more than the product of $6$ and $w$.",
+          "solution_sketch": "The product $6w$ comes first, then add $7$."
+        }
+      ],
+      "worked_problem": "Write an expression for eleven less than five times a number $k$.",
+      "semantic_reasoning": "Builds the inner multiple first and correctly reverses the spoken order for “less than” or “fewer than.”",
+      "independent_arithmetic_evidence": "Five times k is 5k; eleven less is 5k-11.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "writing-expressions-from-patterns/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Expression from a table of values",
+      "canonical_constraints": "linear patterns with positive integer step; check against the first entry",
+      "canonical_key_prerequisites": [
+        "evaluating-expressions"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "translating-phrases-to-expressions",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": true,
+          "weight": 0.5
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "3n + 2",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A table follows a linear rule and pairs $n = 1, 2, 3$ with $5, 8, 11$. Write the rule for the value at any position $n$.",
+          "solution_sketch": "Values climb by $3$ each step, so $3n + c$; at $n = 1$, $3 + c = 5$ gives $c = 2$."
+        },
+        {
+          "answer": "3n+1",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A table follows a linear rule and has $(n,v)=(2,7),(4,13),(6,19)$. Write $v$ as an expression in $n$.",
+          "solution_sketch": "A change of $2$ positions adds $6$, so each position adds $3$. At the first entry, $7-3(2)=1$; the rule is $3n+1$."
+        },
+        {
+          "answer": "5n+4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A table starts with $(n,v)=(0,4)$ and each increase of $1$ in $n$ adds $5$ to $v$. Write the rule for $v$.",
+          "solution_sketch": "Each step contributes $5n$ from position zero, whose value is $4$. At position zero, the variable contribution vanishes, leaving the required first value $4$."
+        },
+        {
+          "answer": "2n+7",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A table follows a linear rule, lists $n:1,2,3$ and $v:9,11,13$, and a learner proposes $2n+9$. Correct the rule for every position.",
+          "solution_sketch": "The step is $2$, but position $1$ already includes one step. The constant is $9-2=7$, so the first value is $2(1)+7=9$."
+        }
+      ],
+      "worked_problem": "A table follows a linear rule, pairing $n=1,2,3$ with $9,13,17$. Write its value as an expression in $n$.",
+      "semantic_reasoning": "Limits the method to a stated linear pattern, finds rate by Δoutput/Δposition, derives the constant, and checks every supplied pair.",
+      "independent_arithmetic_evidence": "Differences are 4; b=9-4(1)=5; 4(2)+5=13 and 4(3)+5=17.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "writing-expressions-from-patterns/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Expression from a real-world rule",
+      "canonical_constraints": "start value plus constant rate; single variable",
+      "canonical_key_prerequisites": [
+        "translating-phrases-to-expressions"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "translating-phrases-to-expressions",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": true,
+          "weight": 0.5
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "8m + 20",
+          "problem": "A gym charges €20 to join plus €8 per month. Write an expression for the total cost after $m$ months.",
+          "solution_sketch": "Fixed €20 plus €8 per month: $8m + 20$."
+        },
+        {
+          "answer": "2n + 1",
+          "problem": "A toothpick pattern uses $3$ toothpicks for $1$ triangle, $5$ for $2$, $7$ for $3$, adding $2$ per triangle. Write an expression for the toothpicks in $n$ triangles.",
+          "solution_sketch": "Step $2$ per square; $2(1) + 1 = 3$ checks."
+        },
+        {
+          "answer": "3h + 5",
+          "problem": "A parking garage charges €5 to enter plus €3 per hour. Write an expression for the total cost after $h$ hours.",
+          "solution_sketch": "The rate $3$ per hour is the coefficient; the flat $5$ is added once."
+        },
+        {
+          "answer": "3n + 1",
+          "problem": "A fence post pattern uses $4$ posts for $1$ section, $7$ for $2$, $10$ for $3$, adding $3$ per section. Write an expression for the posts in $n$ sections.",
+          "solution_sketch": "Step $3$ per section; $3(1) + 1 = 4$ checks."
+        }
+      ],
+      "worked_problem": "A taxi charges a flat fee of EUR $3$ plus EUR $2$ per kilometre. Write the total cost in euros after $k$ kilometres.",
+      "semantic_reasoning": "Separates the once-only starting value from the constant per-unit rate and explains the first-position offset case.",
+      "independent_arithmetic_evidence": "Flat 3 plus 2 per kilometre gives 2k+3.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "evaluating-formulas/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Geometry formulas",
+      "canonical_constraints": "whole-number inputs; area/perimeter formulas",
+      "canonical_key_prerequisites": [
+        "evaluating-expressions"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "evaluating-expressions",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "multiplying-fractions",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "40",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $A = lw$ to find the area when $l = 8$ and $w = 5$.",
+          "solution_sketch": "$A=lw=8(5)=40$."
+        },
+        {
+          "answer": "20",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $P = 2l + 2w$ to find the perimeter when $l = 7$ and $w = 3$.",
+          "solution_sketch": "$2(7) + 2(3) = 14 + 6 = 20$."
+        },
+        {
+          "answer": "35",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $A = \\frac{1}{2}bh$ to find the area when $b = 10$ and $h = 7$.",
+          "solution_sketch": "$A=bh/2=10(7)/2=35$."
+        },
+        {
+          "answer": "28",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $A=(a+b)h/2$ for a trapezoid with parallel sides $a=5$, $b=9$ and height $h=4$.",
+          "solution_sketch": "Average the parallel sides: $(5+9)/2=7$. Multiplying by the height gives $7(4)=28$."
+        }
+      ],
+      "worked_problem": "Use $A=bh/2$ to find a triangle’s area when $b=12$ cm and $h=9$ cm.",
+      "semantic_reasoning": "Maps measurements to formula variables, evaluates correctly, and distinguishes square units for area from length units for perimeter.",
+      "independent_arithmetic_evidence": "A=12*9/2=108/2=54 cm^2.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "evaluating-formulas/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Rate and science formulas",
+      "canonical_constraints": "inputs chosen so fraction coefficients produce whole numbers",
+      "canonical_key_prerequisites": [
+        "evaluating-expressions"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "evaluating-expressions",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "multiplying-fractions",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "165",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $d = rt$ to find the distance when $r = 55$ and $t = 3$.",
+          "solution_sketch": "$d=rt=55(3)=165$."
+        },
+        {
+          "answer": "48",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $E = \\frac{1}{2}mv^2$ to find the kinetic energy in joules when $m = 6$ and $v = 4$.",
+          "solution_sketch": "$\\frac{1}{2}(6) = 3$; $3 \\times 4^2 = 3 \\times 16 = 48$."
+        },
+        {
+          "answer": "18",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $d=at^2/2$ with $a=4$ and $t=3$ to find distance from rest.",
+          "solution_sketch": "Square the time first: $3^2=9$. Then $d=4(9)/2=18$."
+        },
+        {
+          "answer": "50",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $F=9C/5+32$ with $C=10$ to calculate the temperature in degrees Fahrenheit.",
+          "solution_sketch": "The scaled temperature is $9(10)/5=18$; adding the offset gives $18+32=50$."
+        }
+      ],
+      "worked_problem": "Use $d=rt$ to find distance when $r=42$ kilometres per hour and $t=5$ hours.",
+      "semantic_reasoning": "Preserves fractional coefficients, follows powers and operations, and tracks rate-time units.",
+      "independent_arithmetic_evidence": "d=42 km/h*5 h=210 km.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "combining-like-terms/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Combine like terms with positive coefficients",
+      "canonical_constraints": "single variable; positive coefficients <= 9",
+      "canonical_key_prerequisites": [
+        "parts-of-an-expression"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "integer-addition-subtraction",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": false,
+          "weight": 0.0
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "8x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $3x + 5x$.",
+          "solution_sketch": "$3x+5x=(3+5)x=8x$."
+        },
+        {
+          "answer": "13a",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $7a+2a+4a$.",
+          "solution_sketch": "$7a+2a+4a=(7+2+4)a=13a$."
+        },
+        {
+          "answer": "9x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A triangle has side lengths $2x$, $3x$, and $4x$. Express its perimeter as one term.",
+          "solution_sketch": "The perimeter is $2x+3x+4x=(2+3+4)x=9x$."
+        },
+        {
+          "answer": "10y",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner claims $4y+6y=10y^2$. Correct the simplified expression.",
+          "solution_sketch": "Like terms keep their common variable part: $(4+6)y=10y$, with no change to the exponent."
+        }
+      ],
+      "worked_problem": "Simplify $6c + 3c$.",
+      "semantic_reasoning": "Adds positive coefficients while leaving the common variable part and exponent unchanged.",
+      "independent_arithmetic_evidence": "6c+3c=(6+3)c=9c.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "combining-like-terms/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": false,
+      "canonical_objective": "Negative coefficients and subtraction",
+      "canonical_constraints": "results may be negative; single variable",
+      "canonical_key_prerequisites": [
+        "integer-addition-subtraction"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "integer-addition-subtraction",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": false,
+          "weight": 0.0
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "5y",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $8y - 3y$.",
+          "solution_sketch": "$8y-3y=(8-3)y=5y$."
+        },
+        {
+          "answer": "-6x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $-3x-5x+2x$.",
+          "solution_sketch": "The signed coefficients sum to $-3-5+2=-6$."
+        },
+        {
+          "answer": "-6x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A balance changes by $-7x$, then $+2x$, then $-x$. Write the net change as one term.",
+          "solution_sketch": "Add the three signed changes: $(-7+2-1)x=-6x$."
+        },
+        {
+          "answer": "-6x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner claims $2x-8x=6x$. Correct the simplified expression.",
+          "solution_sketch": "Subtracting the coefficients gives $2-8=-6$, so the remaining term is $-6x$."
+        }
+      ],
+      "worked_problem": "Simplify $5w - 9w + 2w$.",
+      "semantic_reasoning": "Correctly combines signed coefficients and allows a negative result.",
+      "independent_arithmetic_evidence": "5-9+2=-2, so 5w-9w+2w=-2w.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "combining-like-terms/kp3",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Multiple variable types and constants",
+      "canonical_constraints": "two variable types plus constants; keep unlike terms separate",
+      "canonical_key_prerequisites": [
+        "integer-addition-subtraction",
+        "parts-of-an-expression"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "integer-addition-subtraction",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": false,
+          "weight": 0.0
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "8x+y-3",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $3x+2y+4+5x-y-7$.",
+          "solution_sketch": "Group by variable part: $(3+5)x+(2-1)y+(4-7)=8x+y-3$."
+        },
+        {
+          "answer": "6x+4y+3",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Combine the three charges $2x+3y+1$, $x-y+4$, and $3x+2y-2$.",
+          "solution_sketch": "The coefficients of $x$ sum to $2+1+3=6$, those of $y$ to $3-1+2=4$, and constants to $1+4-2=3$."
+        },
+        {
+          "answer": "6x^2-4x+4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $5x^2+3x-2+x^2-7x+6$.",
+          "solution_sketch": "The $x^2$, $x$, and constant groups give $(5+1)x^2+(3-7)x+(-2+6)=6x^2-4x+4$."
+        },
+        {
+          "answer": "-2x+3y+2",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner combined $4x-2y+3-6x+5y-1$ into $x+2$. Correct the expression.",
+          "solution_sketch": "Different variable parts stay separate. The three sums are $(4-6)x$, $(-2+5)y$, and $3-1$."
+        }
+      ],
+      "worked_problem": "Simplify $9m + 3 + 2n - 6m + 4n - 8$.",
+      "semantic_reasoning": "Groups two variable types and constants separately, retaining unlike terms and signed coefficients.",
+      "independent_arithmetic_evidence": "(9-6)m=3m; (2+4)n=6n; 3-8=-5, yielding 3m+6n-5.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "distributive-property/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Distribute a positive factor over a sum",
+      "canonical_constraints": "positive factor; two-term binomial",
+      "canonical_key_prerequisites": [
+        "integer-multiplication-division"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "integer-multiplication-division",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "3x + 12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $3(x + 4)$.",
+          "solution_sketch": "$3(x+4)=3x+3(4)=3x+12$."
+        },
+        {
+          "answer": "8x+12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A rectangle has height $4$ and width $2x+3$. Expand its area expression.",
+          "solution_sketch": "Multiply the height by both parts of the width: $4(2x+3)=4(2x)+4(3)=8x+12$."
+        },
+        {
+          "answer": "5x+10",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner writes $5(x+2)=5x+2$. Expand the left side correctly.",
+          "solution_sketch": "The outer factor multiplies both summands: $5x+5(2)=5x+10$."
+        },
+        {
+          "answer": "2x+12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $(x+6)2$.",
+          "solution_sketch": "Commutativity gives $2(x+6)$; distributing gives $2x+2(6)=2x+12$."
+        }
+      ],
+      "worked_problem": "Expand $7(x+11)$.",
+      "semantic_reasoning": "Multiplies a positive outside factor into both binomial terms and covers a factor written on either side.",
+      "independent_arithmetic_evidence": "7(x+11)=7x+77.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "distributive-property/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Negative multipliers and subtraction",
+      "canonical_constraints": "negative factor or leading minus; watch both signs",
+      "canonical_key_prerequisites": [
+        "integer-multiplication-division"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "integer-multiplication-division",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "-2x + 10",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $-2(x - 5)$.",
+          "solution_sketch": "$-2 \\cdot x = -2x$; $-2 \\cdot (-5) = +10$."
+        },
+        {
+          "answer": "-3y - 7",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $-(3y + 7)$.",
+          "solution_sketch": "$-(3y+7)=(-1)(3y)+(-1)(7)=-3y-7$."
+        },
+        {
+          "answer": "-6x-15",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $-3(2x+5)$.",
+          "solution_sketch": "Both products are negative: $(-3)(2x)+(-3)(5)=-6x-15$."
+        },
+        {
+          "answer": "x-4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Correct the sign error in $-(4-x)=-4-x$ by expanding the left side.",
+          "solution_sketch": "Multiplying $-x$ by $-1$ gives $+x$: $(-1)(4)+(-1)(-x)=-4+x$."
+        }
+      ],
+      "worked_problem": "Expand $-6(x-10)$.",
+      "semantic_reasoning": "Treats a leading minus as -1 and applies a signed negative multiplier to every inside term.",
+      "independent_arithmetic_evidence": "-6(x-10)=-6x+60 because (-6)(-10)=60.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "distributive-property/kp3",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Distribute then combine like terms",
+      "canonical_constraints": "combine after distributing; single variable",
+      "canonical_key_prerequisites": [
+        "combining-like-terms"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "integer-multiplication-division",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "6x + 6",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand and simplify $2(x + 3) + 4x$.",
+          "solution_sketch": "$2x + 6 + 4x = 6x + 6$."
+        },
+        {
+          "answer": "2a - 7",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand and simplify $3(a - 2) - (a + 1)$.",
+          "solution_sketch": "$3a - 6 - a - 1 = 2a - 7$."
+        },
+        {
+          "answer": "x+11",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Subtract the expression $2(x-5)$ from $3x+1$, then simplify.",
+          "solution_sketch": "$(3x+1)-2(x-5)=3x+1-2x+10=x+11$."
+        },
+        {
+          "answer": "6x+8",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A rectangle has length $2x+1$ and width $x+3$. Expand and simplify $2(2x+1)+2(x+3)$.",
+          "solution_sketch": "The two products give $4x+2+2x+6$; collecting like terms gives $6x+8$."
+        }
+      ],
+      "worked_problem": "Expand and simplify $5(x+4)+3x$.",
+      "semantic_reasoning": "Distributes each signed factor before grouping the remaining like terms and constants.",
+      "independent_arithmetic_evidence": "5(x+4)+3x=5x+20+3x=8x+20.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "factoring-linear-expressions/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Factor out the GCF",
+      "canonical_constraints": "two terms; GCF between 2 and 9; verify by expanding",
+      "canonical_key_prerequisites": [
+        "distributive-property",
+        "gcf-lcm"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "distributive-property",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "gcf-lcm",
+          "key": true,
+          "weight": 0.5
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "3(2x+3)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "Factor $6x+9$ by its GCF and check by expanding.",
+          "solution_sketch": "The integer GCF is $3$; divide both terms by it to get $2x$ and $3$. Expansion multiplies back to $6x+9$."
+        },
+        {
+          "answer": "4(2x+3)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "A rectangle has area $8x+12$ and integer height equal to the GCF of the two coefficients. Factor its area and check.",
+          "solution_sketch": "The GCF of $8$ and $12$ is $4$, giving width $2x+3$. Multiplying height by width returns $8x+12$."
+        },
+        {
+          "answer": "5(2x+3)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "A learner factors $10x+15$ using $2$. Factor using the greatest common factor and verify.",
+          "solution_sketch": "The coefficients share greatest integer factor $5$, and the quotients are $2x$ and $3$. The products $5(2x)$ and $5(3)$ return the original terms."
+        },
+        {
+          "answer": "7(2x-3)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "Factor the difference $14x-21$ by its GCF and expand to check.",
+          "solution_sketch": "The GCF is $7$. Dividing gives $2x-3$, and distribution gives $14x-21$, including the negative constant."
+        }
+      ],
+      "worked_problem": "Factor $21x + 35$ completely.",
+      "semantic_reasoning": "Extracts the greatest common integer factor within 2..9 and verifies both terms by expansion.",
+      "independent_arithmetic_evidence": "gcd(21,35)=7; 21x+35=7(3x+5), which expands back exactly.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "factoring-linear-expressions/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Factor with negatives and two variables",
+      "canonical_constraints": "GCF may be negative; expand to check both signs",
+      "canonical_key_prerequisites": [
+        "distributive-property",
+        "gcf-lcm"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "distributive-property",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "gcf-lcm",
+          "key": true,
+          "weight": 0.5
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "-4(x+2)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "Factor $-4x-8$ by extracting $-4$, then check.",
+          "solution_sketch": "The quotients are $x$ and $2$. Expanding multiplies each by $-4$, restoring $-4x-8$."
+        },
+        {
+          "answer": "6(2x+3y)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "Factor $12x+18y$ by the GCF and check both terms.",
+          "solution_sketch": "The integer GCF is $6$; division yields $2x$ and $3y$. The products recover $12x$ and $18y$."
+        },
+        {
+          "answer": "-3(2x-3y)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "A signed balance is $-6x+9y$. Factor out $-3$ and check the signs.",
+          "solution_sketch": "The quotients are $2x$ and $-3y$. A negative times a negative restores the positive term $9y$."
+        },
+        {
+          "answer": "-4(2x+3y)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "A learner writes $-8x-12y=-4(2x-3y)$. Correct the factorization and expand to check.",
+          "solution_sketch": "Both original terms are negative; dividing each by $-4$ gives positive quotients $2x$ and $3y$. Distribution therefore restores both negative terms."
+        }
+      ],
+      "worked_problem": "Factor $-15m - 25n$ completely.",
+      "semantic_reasoning": "Handles two variables and a requested negative GCF, divides each signed term correctly, and checks both resulting signs.",
+      "independent_arithmetic_evidence": "-15m-25n=-5(3m+5n); expansion restores -15m and -25n.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "equivalent-expressions/kp1",
+      "decision": "accept",
+      "proposal_changed_by_root": true,
+      "canonical_objective": "Decide equivalence by simplifying",
+      "canonical_constraints": "one expression simplifies (or fails to) into the other; single variable",
+      "canonical_key_prerequisites": [
+        "distributive-property",
+        "combining-like-terms"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "distributive-property",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "substituting-values",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "yes",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "Are $2(x + 3)$ and $2x + 6$ equivalent? Answer yes or no.",
+          "solution_sketch": "Expanding $2(x + 3)$ gives exactly $2x + 6$."
+        },
+        {
+          "answer": "no",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "Are $3x + 4x$ and $7x^2$ equivalent? Answer yes or no.",
+          "solution_sketch": "$3x + 4x = 7x$, not $7x^2$."
+        },
+        {
+          "answer": "yes",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "Is $5x-2(x-3)$ equivalent to $3x+6$? Answer yes or no.",
+          "solution_sketch": "$5x-2x+6=3x+6$, so the expressions have identical coefficients."
+        },
+        {
+          "answer": "no",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "A square has perimeter $4x$. A learner proposes $x^2$ as an equivalent expression for every $x$. Is the claim valid? Answer yes or no.",
+          "solution_sketch": "At $x=2$, the perimeter is $4(2)=8$ while the proposed expression is $2^2=4$. One counterexample disproves equivalence."
+        }
+      ],
+      "worked_problem": "Are $4(x-3)+5$ and $4x-7$ equivalent for every $x$? Answer yes or no.",
+      "semantic_reasoning": "Defines equivalence for every allowed input, proves matching simplified forms, and distinguishes that from disproof by one counterexample.",
+      "independent_arithmetic_evidence": "4(x-3)+5=4x-12+5=4x-7, so the exact answer is yes.",
+      "defects": [],
+      "required_change": null
+    },
+    {
+      "key": "equivalent-expressions/kp2",
+      "decision": "accept",
+      "proposal_changed_by_root": false,
+      "canonical_objective": "Simplify to a standard equivalent form",
+      "canonical_constraints": "distribute and combine; integer coefficients",
+      "canonical_key_prerequisites": [
+        "distributive-property",
+        "combining-like-terms"
+      ],
+      "canonical_topic_prerequisites": [
+        {
+          "id": "distributive-property",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "substituting-values",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "8x - 1",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Write $4(2x - 1) + 3$ in the form $ax + b$.",
+          "solution_sketch": "$8x - 4 + 3 = 8x - 1$."
+        },
+        {
+          "answer": "2x + 13",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Write $5(x + 2) - 3(x - 1)$ in the form $ax + b$.",
+          "solution_sketch": "$5x + 10 - 3x + 3 = 2x + 13$."
+        },
+        {
+          "answer": "6x+4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A rectangle has sides $x+3$ and $2x-1$. Express its perimeter in the form $ax+b$.",
+          "solution_sketch": "Expand $2(x+3)+2(2x-1)=2x+6+4x-2$, then combine to get $6x+4$."
+        },
+        {
+          "answer": "4x-6",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Correct the expansion and collection in $3(x-2)+x=3x-2$. Give the form $ax+b$.",
+          "solution_sketch": "Distributing gives $3x-6+x$. The $x$ coefficients add to $4$, while the constant remains $-6$."
+        }
+      ],
+      "worked_problem": "Write $6(2x - 3) - 4(x + 1)$ in the form $ax + b$.",
+      "semantic_reasoning": "Distributes both products and combines variable and constant terms into the requested ax+b standard form.",
+      "independent_arithmetic_evidence": "6(2x-3)-4(x+1)=12x-18-4x-4=8x-22.",
+      "defects": [],
+      "required_change": null
+    }
+  ],
+  "summary": {
+    "total": 24,
+    "accept": 24,
+    "revise": 0,
+    "root_refined_rows_independently_reviewed": 22,
+    "unchanged_rows_independently_reviewed": 2,
+    "curriculum_exemplars_reviewed": 96,
+    "worked_examples_independently_recomputed": 24,
+    "scope_or_later_prerequisite_defects": 0,
+    "batch_decision": "semantic_review_accepted",
+    "serving_approval": "not_granted"
+  },
+  "limitations": "Semantic review only. Production gates were outside this review; no proposal files or live content were modified."
+}
