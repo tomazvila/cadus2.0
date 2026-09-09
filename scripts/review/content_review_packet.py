@@ -276,7 +276,7 @@ def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, 
             raise Refused(f"{item['digest']}: live document differs from the reviewed pending document")
         checked.append((item, decision, reason))
     if not commit:
-        receipt = {"committed": False, "complete": True, "packet_sha256": packet["packet_sha256"],
+        receipt = {"committed": False, "complete": True, **(metadata or {}), "packet_sha256": packet["packet_sha256"],
                 "selected": [{"digest": item["digest"], "decision": decision}
                              for item, decision, _reason in checked]}
         write_receipt(receipt_path, receipt)

@@ -111,6 +111,8 @@ def review_rows(batch, expected):
 
 
 def apply(args):
+    if args.receipt.exists():
+        raise packet.Refused("receipt path already exists")
     source, batch = packet.load_json(args.packet), packet.load_json(args.review)
     if batch.get("packet_sha256") != source.get("packet_sha256"): raise packet.Refused("review names a different packet")
     core = {key: batch[key] for key in ("ai_review_version", "packet_sha256", "items") if key in batch}
@@ -129,7 +131,7 @@ def apply(args):
     for digest, verdict, reason in decisions:
         if verdict != "quarantine": out["decisions"].append({"digest": digest, "decision": verdict} if verdict == "approve" else {"digest": digest, "decision": verdict, "reason": reason})
     if not out["decisions"]:
-        packet.write_receipt(args.receipt, {"committed": False, "complete": True, "packet_sha256": source["packet_sha256"], "ai_reviewer": batch["reviewer"], "review_sha256": hashlib.sha256(args.review.read_bytes()).hexdigest(), "quarantined": [d for d, _v, _r in decisions]})
+        packet.write_receipt(args.receipt, {"committed": False, "complete": True, "packet_sha256": source["packet_sha256"], "ai_reviewer": batch["reviewer"], "review_sha256": hashlib.sha256(args.review.read_bytes()).hexdigest(), "quarantined": [{"digest": d, "reason": r} for d, _v, r in decisions]})
         return
     args.decisions.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n")
     def before_write(current):
