@@ -34,13 +34,44 @@ fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
+fn curriculum_input_hashes(directory: &Path) -> BTreeMap<String, String> {
+    fn visit(root: &Path, current: &Path, hashes: &mut BTreeMap<String, String>) {
+        let mut entries: Vec<_> = fs::read_dir(current)
+            .expect("curriculum directory")
+            .map(|entry| entry.expect("curriculum entry"))
+            .collect();
+        entries.sort_by_key(|entry| entry.file_name());
+        for entry in entries {
+            let path = entry.path();
+            if path.is_dir() {
+                visit(root, &path, hashes);
+            } else if matches!(
+                path.extension().and_then(|item| item.to_str()),
+                Some("yaml" | "yml")
+            ) {
+                let relative = path.strip_prefix(root).expect("curriculum relative path");
+                hashes.insert(
+                    relative.display().to_string(),
+                    hash(&fs::read(path).expect("curriculum bytes")),
+                );
+            }
+        }
+    }
+
+    let mut hashes = BTreeMap::new();
+    visit(&root(), directory, &mut hashes);
+    assert!(!hashes.is_empty(), "curriculum YAML inputs");
+    hashes
+}
+
 fn main() {
     let output = std::env::args_os()
         .nth(1)
         .expect("usage: refresh_whole_course_teach_technical <output>");
     let root = root();
     let directory = root.join("docs/content-foundations/whole-course-teach");
-    let (curriculum, findings) = load_curriculum(&root.join("curriculum")).expect("curriculum");
+    let curriculum_directory = root.join("curriculum");
+    let (curriculum, findings) = load_curriculum(&curriculum_directory).expect("curriculum");
     assert!(findings.is_empty(), "curriculum findings: {findings:?}");
     let specs: BTreeMap<String, AuthoringSpec> = select_for(
         &curriculum,
@@ -124,7 +155,7 @@ fn main() {
     .expect("head")
     .trim()
     .to_owned();
-    let value = json!({"schema_version":2,"status":"pending-ai-review","source_head":head,"curriculum_hash":curriculum_hash(&curriculum),"raw_input_sha256":input_hashes,"historical_row_sha256":historical_row_sha256,"rows":rows});
+    let value = json!({"schema_version":2,"status":"pending-ai-review","source_head":head,"curriculum_hash":curriculum_hash(&curriculum),"raw_input_sha256":input_hashes,"curriculum_raw_input_sha256":curriculum_input_hashes(&curriculum_directory),"historical_row_sha256":historical_row_sha256,"rows":rows});
     let bytes = serde_json::to_vec_pretty(&value).expect("serialize");
     assert_eq!(
         serde_json::from_slice::<Value>(&bytes).expect("round-trip"),
