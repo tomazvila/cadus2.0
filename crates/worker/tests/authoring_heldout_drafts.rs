@@ -27,14 +27,12 @@ const UNITS: &[(&str, &str)] = &[
     ("rational-trig", "09-rational-trig.yaml"),
 ];
 
-const CANONICAL_TEACH: &[(&str, &str)] = &[(
-    "comparing-ordering-decimals/kp1",
-    "whole-course-teach/drafts/part-03.json",
-)];
-fn canonical_teach_source(key: &str) -> Option<&'static str> {
-    CANONICAL_TEACH
-        .iter()
-        .find_map(|(candidate, source)| (*candidate == key).then_some(*source))
+fn canonical_teach_source(key: &str) -> Option<String> {
+    serde_json::from_str::<BTreeMap<String, String>>(include_str!(
+        "fixtures/heldout_transferred_teach.json"
+    ))
+    .unwrap()
+    .remove(key)
 }
 /// The largest line count one tracked draft file keeps.
 const MAX_LINES: usize = 2000;
@@ -133,19 +131,35 @@ fn every_heldout_hint_ladder_holds_three_question_rungs_with_no_numeral() {
 }
 
 #[test]
-fn canonical_teach_exceptions_have_one_bound_source_row() {
-    for (key, source) in CANONICAL_TEACH {
-        let body =
-            std::fs::read_to_string(root().join("docs/content-foundations").join(source)).unwrap();
-        let rows: Vec<Value> = serde_json::from_str(&body).unwrap();
-        let matches: Vec<&Value> = rows
-            .iter()
-            .filter(|row| row["kp_id"] == *key && row["kind"] == "teach")
-            .collect();
+#[test]
+fn transferred_teach_fixture_has_one_imported_canonical_row_per_key() {
+    let sources: BTreeMap<String, String> =
+        serde_json::from_str(include_str!("fixtures/heldout_transferred_teach.json")).unwrap();
+    assert_eq!(sources.len(), 69);
+    let imports: Value = serde_json::from_str(
+        &std::fs::read_to_string(
+            root().join("docs/content-foundations/whole-course-teach/import-manifest.json"),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let files = imports["files"].as_array().unwrap();
+    for (key, source) in sources {
+        assert!(
+            files.iter().any(|file| file.as_str() == Some(&source)),
+            "{source} is not imported"
+        );
+        let rows: Vec<Value> = serde_json::from_str(
+            &std::fs::read_to_string(root().join("docs/content-foundations").join(&source))
+                .unwrap(),
+        )
+        .unwrap();
         assert_eq!(
-            matches.len(),
+            rows.iter()
+                .filter(|row| row["kp_id"] == key && row["kind"] == "teach")
+                .count(),
             1,
-            "{key} must have one canonical teach row in {source}"
+            "{key} in {source}"
         );
     }
 }
