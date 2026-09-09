@@ -3,119 +3,143 @@
     "kp_id": "comparing-ordering-decimals/kp3",
     "kind": "template",
     "arguments": {
-      "statement": "A number line has points $0.{a}$, $0.{b}9$, and $0.{a}02$. Give the smallest coordinate.",
-      "answer_expr": "min(a/10,min((10*b+9)/100,(100*a+2)/1000))",
+      "answer_expr": "multipart(min(a/10,min((10*b+9)/100,(100*a+2)/1000)),a/10+(10*b+9)/100+(100*a+2)/1000-(min(a/10,min((10*b+9)/100,(100*a+2)/1000)))-(max(a/10,max((10*b+9)/100,(100*a+2)/1000))),max(a/10,max((10*b+9)/100,(100*a+2)/1000)))",
       "params": {
         "a": {
           "kind": "choice",
           "values": [
-            6,
-            7,
-            8
+            2,
+            3,
+            4
           ]
         },
         "b": {
           "kind": "choice",
           "values": [
-            1,
             2,
             3,
-            4
+            4,
+            5
           ]
         }
       },
-      "constraints": [],
-      "solution_sketch": "In thousandths compare $100\\times{a}$, $100\\times{b}+90$, and $100\\times{a}+2$. The least count gives the leftmost point.",
+      "statement": "Order $0.{a}$, $0.{b}9$, and $0.{a}02$ from least to greatest. Give the three coordinates as least, middle, and greatest.",
       "hints": [
-        "Pad with trailing zeros so every position uses the same units."
+        "Pad every decimal to thousandths.",
+        "Compare from tenths to hundredths to thousandths."
       ],
-      "distractors": [],
+      "solution_sketch": "Pad all three decimals to thousandths. Compare from left to right at the first differing place, then record all three coordinates in increasing order.",
       "samples": [
         {
           "params": {
-            "a": 6,
-            "b": 1
-          },
-          "expected": "19/100"
-        },
-        {
-          "params": {
-            "a": 6,
+            "a": 2,
             "b": 2
           },
-          "expected": "29/100"
+          "expected": "least = 1/5; middle = 101/500; greatest = 29/100"
         },
         {
           "params": {
-            "a": 6,
+            "a": 2,
             "b": 3
           },
-          "expected": "39/100"
+          "expected": "least = 1/5; middle = 101/500; greatest = 39/100"
         },
         {
           "params": {
-            "a": 6,
+            "a": 2,
             "b": 4
           },
-          "expected": "49/100"
+          "expected": "least = 1/5; middle = 101/500; greatest = 49/100"
         },
         {
           "params": {
-            "a": 7,
-            "b": 1
+            "a": 2,
+            "b": 5
           },
-          "expected": "19/100"
+          "expected": "least = 1/5; middle = 101/500; greatest = 59/100"
         },
         {
           "params": {
-            "a": 7,
+            "a": 3,
             "b": 2
           },
-          "expected": "29/100"
+          "expected": "least = 29/100; middle = 3/10; greatest = 151/500"
         },
         {
           "params": {
-            "a": 7,
+            "a": 3,
             "b": 3
           },
-          "expected": "39/100"
+          "expected": "least = 3/10; middle = 151/500; greatest = 39/100"
         },
         {
           "params": {
-            "a": 7,
+            "a": 3,
             "b": 4
           },
-          "expected": "49/100"
+          "expected": "least = 3/10; middle = 151/500; greatest = 49/100"
         },
         {
           "params": {
-            "a": 8,
-            "b": 1
+            "a": 3,
+            "b": 5
           },
-          "expected": "19/100"
+          "expected": "least = 3/10; middle = 151/500; greatest = 59/100"
         },
         {
           "params": {
-            "a": 8,
+            "a": 4,
             "b": 2
           },
-          "expected": "29/100"
+          "expected": "least = 29/100; middle = 2/5; greatest = 201/500"
         },
         {
           "params": {
-            "a": 8,
+            "a": 4,
             "b": 3
           },
-          "expected": "39/100"
+          "expected": "least = 39/100; middle = 2/5; greatest = 201/500"
         },
         {
           "params": {
-            "a": 8,
+            "a": 4,
             "b": 4
           },
-          "expected": "49/100"
+          "expected": "least = 2/5; middle = 201/500; greatest = 49/100"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 5
+          },
+          "expected": "least = 2/5; middle = 201/500; greatest = 59/100"
         }
-      ]
+      ],
+      "constraints": [],
+      "distractors": [],
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "least",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "middle",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "greatest",
+            "contract": {
+              "kind": "exact"
+            }
+          }
+        ]
+      }
     }
   }
 ]

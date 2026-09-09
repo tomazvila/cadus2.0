@@ -3,8 +3,7 @@
     "kp_id": "improper-fractions-mixed-numbers/kp1",
     "kind": "template",
     "arguments": {
-      "statement": "Convert ${a}/5$ to a mixed number. Give its whole-number part.",
-      "answer_expr": "floor(a/5)",
+      "answer_expr": "multipart(floor(a/5),a/5-floor(a/5))",
       "params": {
         "a": {
           "kind": "choice",
@@ -24,86 +23,107 @@
           ]
         }
       },
-      "constraints": [],
-      "solution_sketch": "Divide ${a}$ by $5$: the integer quotient counts wholes, and the remainder gives fifths of the next whole.",
+      "statement": "Convert ${{{a}}}/{{5}}$ to a mixed number. Give whole = its whole-number part; fraction = its remaining proper fraction in lowest terms.",
       "hints": [
-        "Find how many full groups of denominator-sized pieces fit."
+        "Divide the numerator by 5.",
+        "Use the quotient as wholes and the remainder over 5."
       ],
-      "distractors": [],
+      "solution_sketch": "Divide the numerator by 5. The quotient gives whole units; the remainder over 5 gives the fractional part. Check that five times the quotient plus the remainder recovers the numerator.",
       "samples": [
         {
           "params": {
             "a": 6
           },
-          "expected": "1"
+          "expected": "whole = 1; fraction = 1/5"
         },
         {
           "params": {
             "a": 7
           },
-          "expected": "1"
+          "expected": "whole = 1; fraction = 2/5"
         },
         {
           "params": {
             "a": 8
           },
-          "expected": "1"
+          "expected": "whole = 1; fraction = 3/5"
         },
         {
           "params": {
             "a": 9
           },
-          "expected": "1"
+          "expected": "whole = 1; fraction = 4/5"
         },
         {
           "params": {
             "a": 11
           },
-          "expected": "2"
+          "expected": "whole = 2; fraction = 1/5"
         },
         {
           "params": {
             "a": 12
           },
-          "expected": "2"
+          "expected": "whole = 2; fraction = 2/5"
         },
         {
           "params": {
             "a": 13
           },
-          "expected": "2"
+          "expected": "whole = 2; fraction = 3/5"
         },
         {
           "params": {
             "a": 14
           },
-          "expected": "2"
+          "expected": "whole = 2; fraction = 4/5"
         },
         {
           "params": {
             "a": 16
           },
-          "expected": "3"
+          "expected": "whole = 3; fraction = 1/5"
         },
         {
           "params": {
             "a": 17
           },
-          "expected": "3"
+          "expected": "whole = 3; fraction = 2/5"
         },
         {
           "params": {
             "a": 18
           },
-          "expected": "3"
+          "expected": "whole = 3; fraction = 3/5"
         },
         {
           "params": {
             "a": 19
           },
-          "expected": "3"
+          "expected": "whole = 3; fraction = 4/5"
         }
-      ]
+      ],
+      "constraints": [],
+      "distractors": [],
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "whole",
+            "contract": {
+              "kind": "required_form",
+              "form": "integer"
+            }
+          },
+          {
+            "name": "fraction",
+            "contract": {
+              "kind": "required_form",
+              "form": "reduced_fraction"
+            }
+          }
+        ]
+      }
     }
   }
 ]

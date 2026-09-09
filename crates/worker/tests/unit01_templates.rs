@@ -17,7 +17,7 @@ fn all_reviewed_templates_retain_their_domains_and_current_gate_verdicts() {
         rows.iter()
             .map(|row| row["arguments"]["samples"].as_array().unwrap().len())
             .sum::<usize>(),
-        948
+        964
     );
     let report = run_rows(&rows, "target/unit01/regression");
     const REPLACED: &[&str] = &[
@@ -26,7 +26,37 @@ fn all_reviewed_templates_retain_their_domains_and_current_gate_verdicts() {
         "understanding-ratios/kp3",
         "unit-rates/kp2",
     ];
-    assert_report_with_authored_collisions(&report, rows.len(), Some(900), REPLACED);
+    assert_report_with_authored_collisions(&report, rows.len(), None, REPLACED);
+    let expected: std::collections::BTreeMap<_, _> = rows
+        .iter()
+        .map(|row| {
+            (
+                row["kp_id"].as_str().unwrap(),
+                row["arguments"]["samples"].as_array().unwrap().len() as u64,
+            )
+        })
+        .collect();
+    let checked: u64 = report["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|row| row["passed"].as_bool().unwrap())
+        .map(|row| {
+            let key = row["kp_id"].as_str().unwrap();
+            let count = row["evidence"]["instances_checked"].as_u64().unwrap();
+            assert_eq!(
+                count, expected[key],
+                "{key}: pinned exhaustive sample count"
+            );
+            assert_eq!(
+                row["evidence"]["distinct_instances"].as_u64().unwrap(),
+                count,
+                "{key}: distinct exhaustive instances"
+            );
+            count
+        })
+        .sum();
+    assert_eq!(checked, 916);
     assert_template19_replacements(&rows, REPLACED);
 }
 

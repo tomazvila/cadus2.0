@@ -5,6 +5,7 @@ from pathlib import Path
 import unit01_templates_fractions as fractions
 import unit01_templates_decimals as decimals
 import unit01_templates_percent_ratio as percent_ratio
+from unit01_templates_reviewed_repairs import REPAIRS
 
 # These current-head recipes already pass review and remain in the shared
 # zero-API completion packet.  Unit01 only fills absent or audit-failing keys.
@@ -23,6 +24,7 @@ RETAINED = {
 
 def drafts():
     all_rows = list(fractions.recipes()) + list(decimals.recipes()) + list(percent_ratio.recipes())
+    all_rows = [REPAIRS.get(row['kp_id'], row) for row in all_rows]
     assert len(all_rows) == len({r['kp_id'] for r in all_rows}) == 90
     rows = [row for row in all_rows if row['kp_id'] not in RETAINED]
     assert len(rows) == len({r['kp_id'] for r in rows}) == 79

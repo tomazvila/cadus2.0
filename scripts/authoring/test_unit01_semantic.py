@@ -73,7 +73,7 @@ class Unit01SemanticTests(unittest.TestCase):
             'percent-of-a-number/kp3': lambda a: (a*F(3,2)).denominator == 1,
             'understanding-ratios/kp1': lambda a: a <= 20,
             'understanding-ratios/kp2': lambda a: a <= 40,
-            'understanding-ratios/kp3': lambda a,b: 2 <= b <= 5,
+            'understanding-ratios/kp3': lambda a,b: a in (2,3,4) and b in (14,21,28,35),
             'ratio-tables-equivalent-ratios/kp1': lambda a,b: (b/2).denominator == 1,
             'ratio-tables-equivalent-ratios/kp2': lambda a,b: 2 <= b <= 8,
             'ratios-proportions/kp2': lambda a: (a/5).denominator == 1,

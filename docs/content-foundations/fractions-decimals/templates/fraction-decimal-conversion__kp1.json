@@ -3,8 +3,13 @@
     "kp_id": "fraction-decimal-conversion/kp1",
     "kind": "template",
     "arguments": {
-      "statement": "Convert ${a}/{b}$ to a decimal. Give the digit in the hundredths place.",
-      "answer_expr": "floor(100*a/b)-10*floor(10*a/b)",
+      "answer_expr": "a/b",
+      "answer_contract": {
+        "kind": "required_form",
+        "form": "decimal"
+      },
+      "constraints": [],
+      "distractors": [],
       "params": {
         "a": {
           "kind": "choice",
@@ -24,97 +29,97 @@
           ]
         }
       },
-      "constraints": [],
-      "solution_sketch": "Scale the fraction to denominator $1000$: $({a}\\times(1000/{b}))/1000$. Read the second digit after the decimal point.",
-      "hints": [
-        "Choose a power of ten divisible by the fraction denominator."
-      ],
-      "distractors": [],
       "samples": [
         {
           "params": {
             "a": 1,
             "b": 2
           },
-          "expected": "0"
+          "expected": "0.5"
         },
         {
           "params": {
             "a": 1,
             "b": 4
           },
-          "expected": "5"
+          "expected": "0.25"
         },
         {
           "params": {
             "a": 1,
             "b": 5
           },
-          "expected": "0"
+          "expected": "0.2"
         },
         {
           "params": {
             "a": 1,
             "b": 8
           },
-          "expected": "2"
+          "expected": "0.125"
         },
         {
           "params": {
             "a": 3,
             "b": 2
           },
-          "expected": "0"
+          "expected": "1.5"
         },
         {
           "params": {
             "a": 3,
             "b": 4
           },
-          "expected": "5"
+          "expected": "0.75"
         },
         {
           "params": {
             "a": 3,
             "b": 5
           },
-          "expected": "0"
+          "expected": "0.6"
         },
         {
           "params": {
             "a": 3,
             "b": 8
           },
-          "expected": "7"
+          "expected": "0.375"
         },
         {
           "params": {
             "a": 7,
             "b": 2
           },
-          "expected": "0"
+          "expected": "3.5"
         },
         {
           "params": {
             "a": 7,
             "b": 4
           },
-          "expected": "5"
+          "expected": "1.75"
         },
         {
           "params": {
             "a": 7,
             "b": 5
           },
-          "expected": "0"
+          "expected": "1.4"
         },
         {
           "params": {
             "a": 7,
             "b": 8
           },
-          "expected": "7"
+          "expected": "0.875"
         }
+      ],
+      "solution_sketch": "Divide the numerator by the denominator. Write a decimal point after the whole-number part, bring down zeros, and continue until the remainder is zero.",
+      "statement": "Write the fraction ${{{a}}}/{{{b}}}$ as a terminating decimal.",
+      "hints": [
+        "Set up numerator divided by denominator.",
+        "After any whole-number quotient, place the decimal point and bring down zeros. Continue until the remainder is zero; include all the quotient digits."
       ]
     }
   }
