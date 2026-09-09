@@ -258,6 +258,8 @@ def write_receipt(path, receipt):
 
 
 def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, before_write=None, metadata=None):
+    if receipt_path is not None and receipt_path.exists():
+        raise Refused("receipt path already exists")
     packet, decisions = load_json(packet_path), load_json(decision_path)
     indexed = validate_packet(packet)
     selected = validate_decisions(decisions, packet, indexed)
