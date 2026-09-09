@@ -100,15 +100,14 @@ step is one line of the solution a learner reads"
 }
 
 fn normalized_problem(value: &str) -> String {
-    let mut text = value.trim().trim_end_matches(['.', '!', '?']).trim();
+    let mut text = value.trim().trim_end_matches(['.', '?']).trim();
     for (open, close) in [("$", "$"), ("\\(", "\\)"), ("\\[", "\\]")] {
         if text.len() >= open.len() + close.len() && text.starts_with(open) && text.ends_with(close)
         {
             text = &text[open.len()..text.len() - close.len()];
         }
     }
-    text.trim_end_matches(['.', '!', '?'])
-        .replace("\\div", "/")
+    text.replace("\\div", "/")
         .replace("\\times", "*")
         .replace("\\cdot", "*")
         .chars()

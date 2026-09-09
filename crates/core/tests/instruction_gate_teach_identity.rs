@@ -100,3 +100,11 @@ fn incomplete_math_delimiters_cannot_panic_the_gate() {
         );
     }
 }
+
+#[test]
+fn factorial_is_preserved_inside_math_wrappers() {
+    let examples = [];
+    let served = [("Compute $5!$.", "120")];
+    let body = r#"{"concept":"Read the numeral.","worked_example":{"problem":"Compute $5$.","steps":["The value is 5."]}}"#;
+    gate_teach(body, &spec_with_instances(&examples, &served)).unwrap();
+}
