@@ -130,26 +130,45 @@ def review_rows(batch, expected):
     return result
 
 
-def apply(args):
-    if args.receipt.exists():
-        raise packet.Refused("receipt path already exists")
+def validated_apply_inputs(args):
     source, batch = packet.load_json(args.packet), packet.load_json(args.review)
     if batch.get("packet_sha256") != source.get("packet_sha256"): raise packet.Refused("review names a different packet")
     core = {key: batch[key] for key in ("ai_review_version", "packet_sha256", "items") if key in batch}
     if batch.get("context_sha256") != packet.sha256(core): raise packet.Refused("AI review context fingerprint mismatch")
+    return source, batch
+
+
+def reviewed_decisions(args, source, batch):
     api = packet.Api(args.base_url, args.cookie_file.read_text())
     actual = context(source, api, args.curriculum_root)
     if actual != batch["items"]: raise packet.Refused("AI review evidence is stale against live curriculum or serving set")
     decisions = review_rows(batch, {row["digest"]: row for row in actual})
+    return api, actual, decisions
+
+
+def validate_template_gates(api, source, decisions):
     by_digest = packet.validate_packet(source)
     for digest, verdict, _reason in decisions:
         if verdict == "approve" and by_digest[digest]["kind"] == "template":
             gate = api.document(digest).get("gate")
             if not isinstance(gate, dict) or gate.get("gated") is not True or gate.get("rejected") or type(gate.get("instances_checked")) is not int or gate["instances_checked"] < 1:
                 raise packet.Refused(f"{digest}: template gate does not support approval")
+ 
+
+def decision_file(source, decisions):
     out = {"decision_version": 1, "packet_sha256": source["packet_sha256"], "decisions": []}
     for digest, verdict, reason in decisions:
         if verdict != "quarantine": out["decisions"].append({"digest": digest, "decision": verdict} if verdict == "approve" else {"digest": digest, "decision": verdict, "reason": reason})
+    return out
+
+
+def apply(args):
+    if args.receipt.exists():
+        raise packet.Refused("receipt path already exists")
+    source, batch = validated_apply_inputs(args)
+    api, _actual, decisions = reviewed_decisions(args, source, batch)
+    validate_template_gates(api, source, decisions)
+    out = decision_file(source, decisions)
     if not out["decisions"]:
         packet.write_receipt(args.receipt, {"committed": False, "complete": True, "packet_sha256": source["packet_sha256"], "ai_reviewer": batch["reviewer"], "review_sha256": hashlib.sha256(args.review.read_bytes()).hexdigest(), "quarantined": [{"digest": d, "reason": r} for d, _v, r in decisions]})
         return
