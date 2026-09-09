@@ -144,9 +144,34 @@ fn transferred_teach_fixture_has_one_imported_canonical_row_per_key() {
     )
     .unwrap();
     let files = imports["files"].as_array().unwrap();
+    let local_missing: std::collections::BTreeSet<String> = UNITS
+        .iter()
+        .flat_map(|(unit, _)| {
+            let mut kinds: BTreeMap<String, std::collections::BTreeSet<String>> = BTreeMap::new();
+            for row in rows(unit) {
+                kinds
+                    .entry(row["kp_id"].as_str().unwrap().to_owned())
+                    .or_default()
+                    .insert(row["kind"].as_str().unwrap().to_owned());
+            }
+            kinds
+                .into_iter()
+                .filter_map(|(key, kinds)| {
+                    (kinds.contains("template") && !kinds.contains("teach")).then_some(key)
+                })
+                .collect::<Vec<_>>()
+        })
+        .collect();
+    assert_eq!(
+        local_missing,
+        sources.keys().cloned().collect(),
+        "fixture must name every and only transferred local Teach key"
+    );
     for (key, source) in sources {
         assert!(
-            files.iter().any(|file| file.as_str() == Some(&source)),
+            files
+                .iter()
+                .any(|file| file.as_str() == source.strip_prefix("whole-course-teach/")),
             "{source} is not imported"
         );
         let rows: Vec<Value> = serde_json::from_str(
