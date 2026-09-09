@@ -53,7 +53,7 @@ label part, a supported label expression. For a unit contract, keep answer_expr 
 attaches the contract's unit. For an inequality-union contract, use excludepoint(variable, bound), \
 lowerbound(variable, bound), or upperbound(variable, bound), where variable is a one-value text \
 choice. For a bounded sign split, use signcase(selector, [negative, zero, positive]). The server \
-validates every computed answer against the contract before storing the document, and the row still requires human review.
+validates every computed answer against the contract before storing the document, and the row remains pending until independent AI review approves its mathematics, objective alignment, explanations, and hints.
 
 'samples' is how you prove it, and the server checks WHERE you prove it. Work each instance out \
 BY HAND, binding every parameter, and state the answer you get. The server evaluates answer_expr \

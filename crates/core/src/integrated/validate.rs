@@ -3,7 +3,7 @@
 //! The rules run at load time, in the same spirit as the curriculum checker: a
 //! fatal finding drops the item from the served set, an advisory finding is
 //! reported and keeps the item. Nothing here approves content: approval stays
-//! with the human review path.
+//! with the content review path.
 
 use crate::curriculum::{Curriculum, Finding, Slug};
 use crate::pool::split_kp_key;

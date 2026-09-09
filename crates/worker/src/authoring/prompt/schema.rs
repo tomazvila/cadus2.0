@@ -138,7 +138,7 @@ fn template_schema() -> Value {
                 "type": "object",
                 "description":
                     "A deterministic answer policy when the exemplars do not already share one. \
-    The server validates it and the document remains pending for human review. Use kind label with \
+    The server validates it and the document remains pending for independent AI review. Use kind label with \
     explicit options for a closed choice, or kind multipart with ordered named parts for a flat \
     structured answer. A reviewed shared exemplar policy overrides this field.",
             },

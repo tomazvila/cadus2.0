@@ -144,7 +144,7 @@ async fn an_error_tag_outside_the_vocabulary_never_reaches_the_stored_row() {
         assert_eq!(report.digest.as_deref(), Some(STORED_DIGEST));
         assert_eq!(fake.call_count(), 1);
 
-        // A human reviews the one row before it serves. The column holds
+        // An independent AI reviewer approves the row before it serves. The column holds
         // jsonb, which keeps neither key order nor whitespace, so the row is
         // read as a value and [`STORED_DIGEST`] pins the bytes.
         let row = assert_one_row(&db.admin, KP_KEY, "diagnosis", STORED_DIGEST, "pending", 1).await;

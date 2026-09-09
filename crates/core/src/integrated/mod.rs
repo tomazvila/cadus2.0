@@ -26,7 +26,7 @@
 //! It calls no model, opens no socket, and reads no clock. It never marks a
 //! learner's prose right or wrong: a reasoning note rides along with the
 //! submission, is stored, and is shown back, and no rule reads it. It approves
-//! no content: an authored file becomes servable only through the human review
+//! no content: an authored file becomes servable only through the content review
 //! path, and validation here refuses a broken item, it does not accept one.
 //!
 //! # Secrecy

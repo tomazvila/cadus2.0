@@ -364,7 +364,7 @@ fn write_bundle(
         .filter_map(|row| row["kp_id"].as_str())
         .collect::<std::collections::BTreeSet<_>>()
         .len();
-    let manifest = json!({"v":1,"course":"foundations","model":"operator-draft-v1","knowledge_points":selected,"kinds":["template","teach","hint_ladder","diagnosis"],"files":["drafts.json"],"review":"review.json","coverage":"coverage.json","status":"pending-human-review"});
+    let manifest = json!({"v":1,"course":"foundations","model":"operator-draft-v1","knowledge_points":selected,"kinds":["template","teach","hint_ladder","diagnosis"],"files":["drafts.json"],"review":"review.json","coverage":"coverage.json","status":"pending-ai-review"});
     std::fs::write(
         output.join("manifest.json"),
         serde_json::to_string_pretty(&manifest)?,
