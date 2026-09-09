@@ -4,7 +4,7 @@ use std::{collections::BTreeMap, io::Read, path::Path, process::ExitCode};
 use cadus_core::{
     curriculum::{Curriculum, curriculum_hash, load_curriculum},
     instruction::ServedInstance,
-    template::{Compiled, from_body, walk_satisfying},
+    template::{Compiled, all_hold, enumerate, from_body},
 };
 use cadus_worker::authoring::{job::verify_kind, prompt::Kind, selection::select};
 use serde::Deserialize;
@@ -45,21 +45,22 @@ fn instances(curriculum: &Curriculum, row: &Row) -> Result<Vec<ServedInstance>, 
     let body = checked_body(curriculum, row, &[])?;
     let document = from_body(&body).map_err(|e| e.to_string())?;
     let compiled = Compiled::new(&document).map_err(|e| e.to_string())?;
-    let walk =
-        walk_satisfying(&document.params, &document.constraints).map_err(|e| e.to_string())?;
-    if !walk.exhaustive || walk.tuples.is_empty() {
-        return Err("full finite template context could not be enumerated".into());
+    let tuples = enumerate(&document.params, 100_000).map_err(|e| e.to_string())?;
+    let mut instances = Vec::new();
+    for bindings in tuples {
+        if !all_hold(&document.constraints, &bindings).map_err(|e| e.to_string())? {
+            continue;
+        }
+        let item = compiled.instantiate(bindings).map_err(|e| e.to_string())?;
+        instances.push(ServedInstance {
+            problem: item.text,
+            answer: item.answer,
+        });
     }
-    walk.tuples
-        .into_iter()
-        .map(|bindings| {
-            let item = compiled.instantiate(bindings).map_err(|e| e.to_string())?;
-            Ok(ServedInstance {
-                problem: item.text,
-                answer: item.answer,
-            })
-        })
-        .collect()
+    if instances.is_empty() {
+        return Err("full finite template context has no admissible instances".into());
+    }
+    Ok(instances)
 }
 
 fn audit(curriculum: &Curriculum, input: Input) -> Result<Value, String> {
@@ -168,6 +169,26 @@ mod tests {
         input["documents"][0]["arguments"]["hints"][2] = json!("The answer is 51.");
         let result = audit(&curriculum, serde_json::from_value(input).unwrap()).unwrap();
         assert_eq!(result["documents"][0]["accepted"], false);
+    }
+
+    #[test]
+    fn offline_context_enumerates_beyond_the_interactive_sampling_limit() {
+        let (curriculum, mut input) = fixture();
+        let args = &mut input["templates"][0]["arguments"];
+        args["params"] =
+            json!({"a":{"kind":"int","low":10,"high":99},"b":{"kind":"int","low":10,"high":99}});
+        args["constraints"] = json!([]);
+        args["statement"] = json!("Compute $ {a} + {b} $.");
+        args["answer_expr"] = json!("a+b");
+        args["samples"] = json!([
+            {"params":{"a":10,"b":10},"expected":"20"},
+            {"params":{"a":10,"b":99},"expected":"109"},
+            {"params":{"a":99,"b":10},"expected":"109"},
+            {"params":{"a":99,"b":99},"expected":"198"}
+        ]);
+        let result = audit(&curriculum, serde_json::from_value(input).unwrap()).unwrap();
+        assert_eq!(result["documents"][0]["practice_instances"], 8100);
+        assert_eq!(result["documents"][0]["exhaustive"], true);
     }
 
     #[test]
