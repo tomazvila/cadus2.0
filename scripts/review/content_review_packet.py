@@ -56,6 +56,10 @@ def load_json(path):
 
 class Api:
     def __init__(self, base_url, cookie):
+        parsed = urllib.parse.urlsplit(base_url)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.username or parsed.password or parsed.fragment:
+            raise Refused("base URL must be an http(s) origin without credentials or fragment")
+        self.origin = f"{parsed.scheme}://{parsed.netloc}"
         self.base = base_url.rstrip("/") + "/api/admin/content"
         self.cookie = cookie.strip()
         if not self.cookie:
@@ -63,6 +67,8 @@ class Api:
 
     def request(self, method, suffix="", body=None):
         headers = {"Accept": "application/json", "Cookie": self.cookie}
+        if method in {"POST", "PUT", "PATCH", "DELETE"}:
+            headers["Origin"] = self.origin
         data = None
         if body is not None:
             headers["Content-Type"] = "application/json"
