@@ -137,7 +137,7 @@
     "kp_id": "adding-integers/kp1",
     "kind": "template",
     "digest": "sha256:5383052f6c072ada",
-    "status": "pending",
+    "status": "superseded",
     "body": {
       "v": 1,
       "hints": [
@@ -242,7 +242,122 @@
       "answer_expr": "-a + (-5)",
       "answer_kind": "numeric",
       "solution_sketch": "Both terms are negative, so their sizes add and the sum stays negative: {a} and $5$ combine under one negative sign."
-    }
+    },
+    "superseded_by": "docs/content-foundations/template-repair-provenance.json"
+  },
+  {
+    "kp_id": "adding-integers/kp1",
+    "kind": "template",
+    "digest": "sha256:c77dd5f888048e16",
+    "status": "pending",
+    "body": {
+      "v": 1,
+      "topic_id": "adding-integers",
+      "answer_kind": "numeric",
+      "statement": "Compute -{a} + (-1).",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        }
+      },
+      "constraints": [],
+      "answer_expr": "-a + (-1)",
+      "solution_sketch": "Both terms are negative. Add their absolute values, {a}+1, and keep the negative sign.",
+      "hints": [
+        "Both addends are negative, so add their absolute values and keep the negative sign."
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": 1
+          },
+          "expected": "-2"
+        },
+        {
+          "params": {
+            "a": 2
+          },
+          "expected": "-3"
+        },
+        {
+          "params": {
+            "a": 3
+          },
+          "expected": "-4"
+        },
+        {
+          "params": {
+            "a": 4
+          },
+          "expected": "-5"
+        },
+        {
+          "params": {
+            "a": 5
+          },
+          "expected": "-6"
+        },
+        {
+          "params": {
+            "a": 6
+          },
+          "expected": "-7"
+        },
+        {
+          "params": {
+            "a": 7
+          },
+          "expected": "-8"
+        },
+        {
+          "params": {
+            "a": 8
+          },
+          "expected": "-9"
+        },
+        {
+          "params": {
+            "a": 9
+          },
+          "expected": "-10"
+        },
+        {
+          "params": {
+            "a": 10
+          },
+          "expected": "-11"
+        },
+        {
+          "params": {
+            "a": 11
+          },
+          "expected": "-12"
+        },
+        {
+          "params": {
+            "a": 12
+          },
+          "expected": "-13"
+        }
+      ],
+      "space_size": 12
+    },
+    "replaces_digest": "sha256:5383052f6c072ada",
+    "provenance": "gate-accepted repair; see docs/content-foundations/template-repair-provenance.json"
   },
   {
     "kp_id": "adding-integers/kp2",
@@ -1940,7 +2055,7 @@
     "status": "pending",
     "body": {
       "hints": [
-        "For use the formula a^3 ± 3a^2b + 3ab^2 ± b^3, what information is given and what must you find?",
+        "For use the formula a^3 \u00b1 3a^2b + 3ab^2 \u00b1 b^3, what information is given and what must you find?",
         "Evaluate grouped expressions first, then powers, then multiplication and division, and finally addition and subtraction. Keep exact fractions until a rounding instruction requires a decimal.",
         "Check the proposed result against the original conditions and any requested units or answer format."
       ]
@@ -4643,7 +4758,7 @@
     "kp_id": "exponent-notation/kp1",
     "kind": "template",
     "digest": "sha256:7f0b24527cc00046",
-    "status": "pending",
+    "status": "superseded",
     "body": {
       "v": 1,
       "hints": [
@@ -4748,7 +4863,193 @@
       "answer_expr": "a^3",
       "answer_kind": "numeric",
       "solution_sketch": "Identify the base and exponent and apply the rule for the stated operation. Check the domain restrictions before simplifying or undoing a power."
-    }
+    },
+    "superseded_by": "docs/content-foundations/template-repair-provenance.json"
+  },
+  {
+    "kp_id": "exponent-notation/kp1",
+    "kind": "template",
+    "digest": "sha256:064c831f5106ede3",
+    "status": "pending",
+    "body": {
+      "v": 1,
+      "topic_id": "exponent-notation",
+      "answer_kind": "numeric",
+      "statement": "Compute ${a}^{b}$.",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            2,
+            3,
+            4
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "op": "ne",
+          "left": {
+            "add": [
+              {
+                "mul": [
+                  {
+                    "lit": 10
+                  },
+                  "a"
+                ]
+              },
+              "b"
+            ]
+          },
+          "right": {
+            "lit": 23
+          }
+        },
+        {
+          "op": "ne",
+          "left": {
+            "add": [
+              {
+                "mul": [
+                  {
+                    "lit": 10
+                  },
+                  "a"
+                ]
+              },
+              "b"
+            ]
+          },
+          "right": {
+            "lit": 43
+          }
+        },
+        {
+          "op": "ne",
+          "left": {
+            "add": [
+              {
+                "mul": [
+                  {
+                    "lit": 10
+                  },
+                  "a"
+                ]
+              },
+              "b"
+            ]
+          },
+          "right": {
+            "lit": 54
+          }
+        }
+      ],
+      "answer_expr": "a^2*(b-3)*(b-4)/2-a^3*(b-2)*(b-4)+a^4*(b-2)*(b-3)/2",
+      "solution_sketch": "Write {a} as a factor {b} times, then multiply those equal factors.",
+      "hints": [
+        "The exponent tells how many equal factors of the base to multiply."
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": 2,
+            "b": 2
+          },
+          "expected": "4"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 4
+          },
+          "expected": "16"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 2
+          },
+          "expected": "9"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 3
+          },
+          "expected": "27"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 4
+          },
+          "expected": "81"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 2
+          },
+          "expected": "16"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 4
+          },
+          "expected": "256"
+        },
+        {
+          "params": {
+            "a": 5,
+            "b": 2
+          },
+          "expected": "25"
+        },
+        {
+          "params": {
+            "a": 5,
+            "b": 3
+          },
+          "expected": "125"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 2
+          },
+          "expected": "36"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 3
+          },
+          "expected": "216"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 4
+          },
+          "expected": "1296"
+        }
+      ],
+      "space_size": 12
+    },
+    "replaces_digest": "sha256:7f0b24527cc00046",
+    "provenance": "gate-accepted repair; see docs/content-foundations/template-repair-provenance.json"
   },
   {
     "kp_id": "exponent-notation/kp2",
@@ -10045,7 +10346,7 @@
     "status": "pending",
     "body": {
       "hints": [
-        "For recognize the pattern a^2 ± 2ab + b^2, what information is given and what must you find?",
+        "For recognize the pattern a^2 \u00b1 2ab + b^2, what information is given and what must you find?",
         "Evaluate grouped expressions first, then powers, then multiplication and division, and finally addition and subtraction. Keep exact fractions until a rounding instruction requires a decimal.",
         "Check the proposed result against the original conditions and any requested units or answer format."
       ]
@@ -14100,7 +14401,7 @@
     "status": "pending",
     "body": {
       "hints": [
-        "For negative angles and angles beyond 2π, what information is given and what must you find?",
+        "For negative angles and angles beyond 2\u03c0, what information is given and what must you find?",
         "Identify the given sides and angles and the quantity requested. Choose the relation that connects those quantities, and keep angle units and side labels consistent.",
         "Check the proposed result against the original conditions and any requested units or answer format."
       ]

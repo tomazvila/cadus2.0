@@ -561,11 +561,26 @@
   {
     "kp_id": "adding-integers/kp3",
     "kind": "template",
-    "status": "pending",
     "arguments": {
-      "topic_id": "adding-integers",
-      "answer_kind": "numeric",
-      "statement": "A number {a} and its opposite are added, then {b} is added to the sum. What is the total?",
+      "answer_expr": "-a + b + 1",
+      "constraints": [
+        {
+          "op": "eq",
+          "left": {
+            "sub": [
+              "a",
+              {
+                "lit": 1
+              }
+            ]
+          },
+          "right": "b"
+        }
+      ],
+      "distractors": [],
+      "hints": [
+        "Use the constraint to see that the two positive addends total {a}, then pair that total with -{a}."
+      ],
       "params": {
         "a": {
           "kind": "int",
@@ -575,32 +590,97 @@
         "b": {
           "kind": "int",
           "low": 0,
-          "high": 12
+          "high": 11
         }
       },
-      "constraints": [],
-      "answer_expr": "b",
-      "solution_sketch": "{a} and -{a} are opposites that sum to $0$, leaving just {b}.",
-      "hints": [
-        "Opposites always sum to $0$ first.",
-        "Only {b} survives the addition."
-      ],
       "samples": [
         {
           "params": {
             "a": 1,
-            "b": 12
+            "b": 0
           },
-          "expected": 12
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 1
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 2
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 3
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 5,
+            "b": 4
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 5
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 7,
+            "b": 6
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 8,
+            "b": 7
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 9,
+            "b": 8
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 10,
+            "b": 9
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 11,
+            "b": 10
+          },
+          "expected": "0"
         },
         {
           "params": {
             "a": 12,
-            "b": 0
+            "b": 11
           },
-          "expected": 0
+          "expected": "0"
         }
-      ]
+      ],
+      "solution_sketch": "The constraint gives {b}={a}-1, so {b}+1={a}; this is the opposite of -{a}, so the sum is zero.",
+      "statement": "Compute $-{a}+{b}+1$."
     }
   },
   {
