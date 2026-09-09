@@ -24,6 +24,8 @@ def split(packet, units, maximum=MAX_KPS):
     if set(units) < {item["kp_id"] for item in indexed.values()}:
         raise Refused("units map omits a packet knowledge point")
     groups = {}
+    if any(sum(item["kind"] == "template" and item["kp_id"] == key for item in indexed.values()) > 1 for key in units):
+        raise Refused("multiple templates for one knowledge point")
     for item in indexed.values():
         lane = "templates" if item["kind"] == "template" else "instruction"
         groups.setdefault((units[item["kp_id"]], lane), []).append(item)
