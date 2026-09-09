@@ -22,6 +22,14 @@ use sha2::{Digest, Sha256};
 fn hash(bytes: &[u8]) -> String {
     format!("sha256:{:x}", Sha256::digest(bytes))
 }
+
+/// Stable binding for an archived JSON row: recursively sort object keys,
+/// compact-serialize, then hash. The archive bytes themselves remain verbatim.
+fn historical_row_hash(value: &Value) -> String {
+    let mut sorted = value.clone();
+    sorted.sort_all_objects();
+    hash(&serde_json::to_vec(&sorted).expect("historical row serialization"))
+}
 fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
@@ -58,6 +66,24 @@ fn main() {
     }
     let mut input_hashes = BTreeMap::new();
     input_hashes.insert("inputs/templates.json".to_owned(), hash(&template_bytes));
+    let mut historical_row_sha256 = BTreeMap::new();
+    for part in 1..=30 {
+        let path = directory.join(format!("historical-archive/reviews/part-{part:02}.json"));
+        for row in serde_json::from_slice::<Value>(&fs::read(&path).expect("historical bytes"))
+            .expect("historical json")
+            .as_array()
+            .expect("historical rows")
+        {
+            let kp = row["kp_id"].as_str().expect("historical kp").to_owned();
+            assert!(
+                historical_row_sha256
+                    .insert(kp.clone(), historical_row_hash(row))
+                    .is_none(),
+                "duplicate historical KP {kp}"
+            );
+        }
+    }
+    assert_eq!(historical_row_sha256.len(), 735);
     let mut rows = Vec::new();
     for part in 1..=30 {
         let path = directory.join(format!("drafts/part-{part:02}.json"));
@@ -98,7 +124,7 @@ fn main() {
     .expect("head")
     .trim()
     .to_owned();
-    let value = json!({"schema_version":2,"status":"pending-ai-review","source_head":head,"curriculum_hash":curriculum_hash(&curriculum),"raw_input_sha256":input_hashes,"rows":rows});
+    let value = json!({"schema_version":2,"status":"pending-ai-review","source_head":head,"curriculum_hash":curriculum_hash(&curriculum),"raw_input_sha256":input_hashes,"historical_row_sha256":historical_row_sha256,"rows":rows});
     let bytes = serde_json::to_vec_pretty(&value).expect("serialize");
     assert_eq!(
         serde_json::from_slice::<Value>(&bytes).expect("round-trip"),
