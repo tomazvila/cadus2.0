@@ -475,7 +475,23 @@
     "kp_id": "prime-composite-numbers/kp1",
     "kind": "template",
     "arguments": {
-      "statement": "Classify ${a}$ as prime or composite.",
+      "answer_contract": {
+        "kind": "label",
+        "options": [
+          [
+            "prime"
+          ],
+          [
+            "composite"
+          ]
+        ]
+      },
+      "answer_expr": "primeclass(a)",
+      "constraints": [],
+      "distractors": [],
+      "hints": [
+        "How far do you need to test possible factors?"
+      ],
       "params": {
         "a": {
           "kind": "choice",
@@ -495,98 +511,82 @@
           ]
         }
       },
-      "constraints": [],
-      "answer_expr": "primeclass(a)",
-      "answer_contract": {
-        "kind": "label",
-        "options": [
-          [
-            "prime"
-          ],
-          [
-            "composite"
-          ]
-        ]
-      },
-      "solution_sketch": "Test possible prime divisors through the square root of ${a}$. A divisor proves it composite; otherwise it is prime.",
-      "hints": [
-        "How far do you need to test possible factors?"
-      ],
-      "distractors": [],
       "samples": [
         {
+          "expected": "prime",
           "params": {
             "a": 11
-          },
-          "expected": "prime"
+          }
         },
         {
+          "expected": "composite",
           "params": {
             "a": 12
-          },
-          "expected": "composite"
+          }
         },
         {
+          "expected": "prime",
           "params": {
             "a": 13
-          },
-          "expected": "prime"
+          }
         },
         {
+          "expected": "composite",
           "params": {
             "a": 15
-          },
-          "expected": "composite"
+          }
         },
         {
+          "expected": "prime",
           "params": {
             "a": 17
-          },
-          "expected": "prime"
+          }
         },
         {
+          "expected": "composite",
           "params": {
             "a": 18
-          },
-          "expected": "composite"
+          }
         },
         {
+          "expected": "prime",
           "params": {
             "a": 19
-          },
-          "expected": "prime"
+          }
         },
         {
+          "expected": "composite",
           "params": {
             "a": 21
-          },
-          "expected": "composite"
+          }
         },
         {
+          "expected": "prime",
           "params": {
             "a": 23
-          },
-          "expected": "prime"
+          }
         },
         {
+          "expected": "composite",
           "params": {
             "a": 25
-          },
-          "expected": "composite"
+          }
         },
         {
+          "expected": "prime",
           "params": {
             "a": 29
-          },
-          "expected": "prime"
+          }
         },
         {
+          "expected": "composite",
           "params": {
             "a": 33
-          },
-          "expected": "composite"
+          }
         }
-      ]
+      ],
+      "solution_sketch": "Look for a factor pair with both members greater than one. Test possible whole-number divisors from two upward, recording exact partners; stop once the trial divisor exceeds its partner. Such a pair makes the number composite. If no such pair exists, its only positive factors are one and itself, so it is prime.",
+      "statement": "Classify ${a}$ as prime or composite."
     }
   },
   {
