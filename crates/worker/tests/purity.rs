@@ -70,6 +70,8 @@ fn worker_direct_normal_dependencies_are_the_declared_list() {
             // compile error, not a review note.
             "cadus-model-client",
             "cadus-store",
+            // Typed recipe catalogs deserialize local data without network access.
+            "serde",
             // M5 U10 added `serde_json`. The diagnosis payload, the tool schema
             // and the result document are JSON documents. It is a data-format
             // crate: no socket, no model.
