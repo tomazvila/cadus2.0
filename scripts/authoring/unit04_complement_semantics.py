@@ -32,43 +32,37 @@ def evaluate(node, variables):
     raise ValueError(f'Unsupported scalar: {ast.dump(node)}')
 
 
-def coordinate_tuples(math):
-    found=[]
-    for start,ch in enumerate(math):
-        if ch!='(':
+def coordinate_nodes(math):
+    """Yield each syntactically valid two-coordinate tuple in the statement."""
+    for start, ch in enumerate(math):
+        if ch != '(':
             continue
-        depth=0
-        for end in range(start,len(math)):
-            depth+=(math[end]=='(')-(math[end]==')')
-            if depth==0:
+        depth = 0
+        for end in range(start, len(math)):
+            depth += (math[end] == '(') - (math[end] == ')')
+            if depth == 0:
                 try:
-                    node=ast.parse(math[start:end+1],mode='eval').body
-                    if isinstance(node,ast.Tuple) and len(node.elts)==2:
-                        found.append(tuple(evaluate(n,{}) for n in node.elts))
-                except (ValueError,SyntaxError,KeyError):
+                    node = ast.parse(math[start:end+1], mode='eval').body
+                    if isinstance(node, ast.Tuple) and len(node.elts) == 2:
+                        yield node.elts
+                except SyntaxError:
                     pass
                 break
+
+
+def coordinate_tuples(math):
+    found = []
+    for nodes in coordinate_nodes(math):
+        try:
+            found.append(tuple(evaluate(node, {}) for node in nodes))
+        except (ValueError, KeyError):
+            pass
     return found
 
 
 def coordinate_expressions(math):
     """Return coordinate-pair expressions, including pairs containing ``t``."""
-    found=[]
-    for start,ch in enumerate(math):
-        if ch!='(':
-            continue
-        depth=0
-        for end in range(start,len(math)):
-            depth+=(math[end]=='(')-(math[end]==')')
-            if depth==0:
-                try:
-                    node=ast.parse(math[start:end+1],mode='eval').body
-                    if isinstance(node,ast.Tuple) and len(node.elts)==2:
-                        found.append(tuple(ast.unparse(n) for n in node.elts))
-                except SyntaxError:
-                    pass
-                break
-    return found
+    return [tuple(ast.unparse(node) for node in nodes) for nodes in coordinate_nodes(math)]
 
 
 def points(problem):
