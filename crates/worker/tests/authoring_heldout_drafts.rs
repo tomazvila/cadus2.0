@@ -131,7 +131,6 @@ fn every_heldout_hint_ladder_holds_three_question_rungs_with_no_numeral() {
 }
 
 #[test]
-#[test]
 fn transferred_teach_fixture_has_one_imported_canonical_row_per_key() {
     let sources: BTreeMap<String, String> =
         serde_json::from_str(include_str!("fixtures/heldout_transferred_teach.json")).unwrap();
