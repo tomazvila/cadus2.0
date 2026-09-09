@@ -36,6 +36,9 @@ fn hints() -> &'static [HintRecipe] {
             include_str!("instruction_hints_integers_02.json"),
             include_str!("instruction_hints_expressions_01.json"),
             include_str!("instruction_hints_expressions_03.json"),
+            include_str!("instruction_hints_linear_graphs_01.json"),
+            include_str!("instruction_hints_linear_graphs_02.json"),
+            include_str!("instruction_hints_linear_graphs_03.json"),
         ] {
             catalog.extend(
                 serde_json::from_str::<Vec<HintRecipe>>(shard)
@@ -89,7 +92,7 @@ mod tests {
     #[test]
     fn catalog_is_exact_unique_and_gated() {
         let keys: BTreeSet<_> = hints().iter().map(|row| row.key.as_str()).collect();
-        assert_eq!(keys.len(), 305);
+        assert_eq!(keys.len(), 372);
         assert_eq!(keys.len(), hints().len());
         for spec in specs() {
             let mut out = Proposals::default();

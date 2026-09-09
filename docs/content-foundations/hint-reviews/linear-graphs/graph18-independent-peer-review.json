@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "reviewer": {
+    "identity": "orchestrator-independent-peer",
+    "model": "GPT-6 Astra"
+  },
+  "scope": "Independent semantic peer review of the18 root-authored graph hint deltas; read72 full canonical exemplar problems/sketches and complete current selected-template bodies/domains. Root's other51 decisions remain separately attributable.",
+  "root_record_sha256": "f8d9436e161eeb4007fe74e5194bf5c1e3afebfb1d9b3bc61e5b94184c9b17c9",
+  "context_snapshot": "hint-authored/graph18-peer-context.json",
+  "context_snapshot_sha256": "772c8a080fa4ba028db4b8738be067cb207fb5321ed3335acd0dd0b87895f41d",
+  "summary": {
+    "accept": 16,
+    "revise": 2,
+    "new_proposals": 2
+  },
+  "source_checks": [
+    {
+      "candidate": "hint-authored/04-linear-graphs-01.root-candidate-v3.json",
+      "gate": "content-gate-linear-graphs-01-v3.output.json",
+      "documents": 24,
+      "all_accepted_exhaustive": true,
+      "practice_instances": 308,
+      "execution_attribution": "root executed; peer verified receipt contents and hash"
+    },
+    {
+      "candidate": "hint-authored/04-linear-graphs-02.root-candidate-v4.json",
+      "gate": "content-gate-linear-graphs-02-v4.output.json",
+      "documents": 24,
+      "all_accepted_exhaustive": true,
+      "practice_instances": 288,
+      "execution_attribution": "root executed; peer verified receipt contents and hash"
+    },
+    {
+      "candidate": "hint-authored/04-linear-graphs-03.root-candidate-v4.json",
+      "gate": "content-gate-linear-graphs-03-v4.output.json",
+      "documents": 21,
+      "all_accepted_exhaustive": true,
+      "practice_instances": 252,
+      "execution_attribution": "root executed; peer verified receipt contents and hash"
+    }
+  ],
+  "records": [
+    {
+      "key": "plotting-points/kp1",
+      "candidate_sha256": "5a357d677dfc7f31bcc1feb8e159efcbe3a7cc933986e623283129bfae6a9b73",
+      "curriculum_kp_sha256": "99811c35e6479556c2c7e00421f41228bb2d1ee015fa203883413dacfbd96877",
+      "current_template_sha256": "8de209a4b0c724314eb6638569e7958e774fb93256691f5f4ebffca5eee71bae",
+      "decision": "accept",
+      "evidence": "Handles a non-origin start, direct coordinates, and multiple right/up moves; horizontal and vertical changes kept separate and ordered correctly.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "plotting-points/kp2",
+      "candidate_sha256": "a60031b41a1953acebcb1b3c124d05b0b2bcc666eef4567c2c83b6a867978d90",
+      "curriculum_kp_sha256": "e2eb5c27ad77b9c2ba546542f3179af594beaeea3ba81cabc6bbd2e431a5ec8c",
+      "current_template_sha256": "e29a280b91b8798f38c5e8cc4988db91a6ac94ec0c6429d782d1d70e94146a1e",
+      "decision": "accept",
+      "evidence": "Signed starting coordinates plus net changes work for left/down and mixed-direction paths. Direct x/y input remains correctly ordered.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "plotting-points/kp3",
+      "candidate_sha256": "4e48f491490ee67bb1c9ac21655bc9c6a09b7b3189bb536d9a82ef720689a90f",
+      "curriculum_kp_sha256": "bf73efbbc22af25001f66ec4385dd9e38d0b0be129843278f23250772951187f",
+      "current_template_sha256": "22bfd8c01c0955d2dd7295c27508050e7757610bd9f830b5101970ca30f8c328",
+      "decision": "accept",
+      "evidence": "Correct zero placement on either axis, including negative signed positions. No later-KP numeric bound imported; current +/-31 points are allowed by this KP.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "coordinate-plane/kp1",
+      "candidate_sha256": "ba5ca771cd690a6023810a6ed77787a6cfaf38806b90c130a55f9f6b2082dfed",
+      "curriculum_kp_sha256": "4e37d691f4662b2d897e45a18b6a65413224015e0e2432a5407f326c9ea656c4",
+      "current_template_sha256": "1807a5449d00cb3d9dce5207726e685560e06e1156433d65fc1c2bb5ce03a02d",
+      "decision": "accept",
+      "evidence": "Checks zero coordinates before counterclockwise quadrant numbering; maps axis/origin and nonzero sign regions to the requested labels in point order.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "coordinate-plane/kp2",
+      "candidate_sha256": "232993dfba978280e772691d87baa3a2ade2eb4cb849a85d88b89ba97964d578",
+      "curriculum_kp_sha256": "a01d5a3063617c451a11732df10a6ad2525e1b6da89b7f147a06838b9d7c18ba",
+      "current_template_sha256": "80b004cb0876e098ac3d8ec2c0cc7e1405dfb9bc9bc538db6a4202f72ddf6c25",
+      "decision": "revise",
+      "evidence": "The sign-change rule is correct for both mirrors. Last rung incorrectly assumes the point lies off the mirror; axis points have zero distance and remain fixed.",
+      "serving_approval": "pending separate live-context review",
+      "finding": {
+        "rung_index": 2,
+        "replacement": "Check that the image is the same distance from the mirror: a point off the axis changes sides, while a point on the axis stays in place. Keep horizontal-first coordinate order.",
+        "verification_cases": [
+          "Reflect (0,3) in the y-axis: it stays (0,3).",
+          "Reflect (-2,0) in the x-axis: it stays (-2,0).",
+          "Reflect (-2,-7) in the x-axis: the image is (-2,7)."
+        ]
+      },
+      "proposed_hints": [
+        "Which axis acts as the mirror: horizontal x or vertical y?",
+        "Across the horizontal axis, keep x and reverse the sign of y. Across the vertical axis, keep y and reverse the sign of x.",
+        "Check that the image is the same distance from the mirror: a point off the axis changes sides, while a point on the axis stays in place. Keep horizontal-first coordinate order."
+      ],
+      "proposal_authorship": "orchestrator; requires independent root acceptance before integration"
+    },
+    {
+      "key": "interpreting-graphs-qualitatively/kp1",
+      "candidate_sha256": "d5df2face6869fdcbc89854e9b11cba5ac448daea3363b0e7cc8a91c7b2d61a6",
+      "curriculum_kp_sha256": "854cd77b2322e7dcad4deba772c67be054e5b7fb43102c79727bedddf9b9390b",
+      "current_template_sha256": "0dca9908cbd2aea5c839536cf06f5aac8361bdc80118921364636bf501b9b2a5",
+      "decision": "accept",
+      "evidence": "Distinguishes rising/falling/flat values and reads axis quantity before interpreting flat distance versus flat nonzero speed. Does not assume a flat speed graph means rest.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "interpreting-graphs-qualitatively/kp2",
+      "candidate_sha256": "0704472ead100489d215d65a3d95dac7f6e018acb632271e74711ad8fa9296b1",
+      "curriculum_kp_sha256": "10882280923c3231d24f98a068ac18f202025d0d934378b6b49f659e3a566ce1",
+      "current_template_sha256": "9715b49f7d2ff3bafbd56d580b5ac39250c04a9f7e741c3cd04770446a83fa59",
+      "decision": "accept",
+      "evidence": "Pairs horizontal/vertical quantities with units; highest height and zero-profit crossing handled separately. Direct point interpretation is kept distinct from inferring a constant motion rate.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "constant-of-proportionality/kp2",
+      "candidate_sha256": "4d89f3cbee37c7f3b6b77c71b015716f202b1f3a49c738014070ce22ba101569",
+      "curriculum_kp_sha256": "d90680189cc4f8aeb2d3abab5df15454113d2e879fe784d6afc89b9ec26e082d",
+      "current_template_sha256": "dceda28f4c3499a6a851dd03f30543aeee40461803642b73d5de7fe11e44e509",
+      "decision": "accept",
+      "evidence": "Output/input orientation correct for rows or columns; skips the0/0 origin pair while checking its consistency. Remaining nonzero pairs determine a common multiplier.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "graphing-proportional-relationships/kp1",
+      "candidate_sha256": "5af4f3c4a15a8d5901999e9f4e8d388115af178fb68d88c9893eb82affdaead7",
+      "curriculum_kp_sha256": "65ac52087e81007dff761b8abd704225439095626d594b194aa649940c13489c",
+      "current_template_sha256": "1282781f3c445bb0d1f9362e1514c2b503a3bf1c96d73255c7616d3a34d9d574",
+      "decision": "accept",
+      "evidence": "Forward and inverse known-coordinate branches use y=kx with nonzero-k guard for division; checks origin and completed lattice point.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "graphing-proportional-relationships/kp3",
+      "candidate_sha256": "0a58e1bb7ef68a7df0c60b0e7a3bc3cfef84e184db1503e4ac4a8dbda40d7426",
+      "curriculum_kp_sha256": "055e249fe8dbac46bc39f8e6c6491bab72a7e541a1c26a7545758c4006380216",
+      "current_template_sha256": "a49450e01101063a25a79c39dc2e5718f4aaddcbe1e613e10f7091a706d6b942",
+      "decision": "accept",
+      "evidence": "Compares signed unit rates across equation/table/graph forms with matching units. Source negative-rate and equal-rate cases correctly distinguished from absolute steepness.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "slope-from-two-points/kp2",
+      "candidate_sha256": "01973cde3689e9fd6dfd318848e4e11a10dd85a6e37fd520ac368d2484898ed5",
+      "curriculum_kp_sha256": "621ae69b5930c330015408b42abdff0c0c78f87b5bae8eafcb9876b952f58c1f",
+      "current_template_sha256": "450b35afc671c793567d712858a8b726646bae71323833b0ff247f3345f67500",
+      "decision": "revise",
+      "evidence": "Consistent ordered differences and subtraction of negatives correct, but canonical start-plus-displacement case needs an explicit way to recover the missing second point.",
+      "serving_approval": "pending separate live-context review",
+      "finding": {
+        "rung_index": 0,
+        "replacement": "Identify the two points, keeping each x paired with its own y. If a starting point and a displacement are given, add each signed displacement component to the corresponding starting coordinate to find the second point.",
+        "verification_cases": [
+          "Start(-2,-3) plus displacement(4,4) gives second point(2,1), with rise4/run4=1.",
+          "Points(-3,-5),(1,3) give rise8/run4=2.",
+          "Reversing both differences gives(-8)/(-4)=2."
+        ]
+      },
+      "proposed_hints": [
+        "Identify the two points, keeping each x paired with its own y. If a starting point and a displacement are given, add each signed displacement component to the corresponding starting coordinate to find the second point.",
+        "Compute second y minus first y and second x minus first x. Put negative coordinates in parentheses; subtracting a negative adds its opposite.",
+        "Divide the vertical change by the horizontal change. Check that reversing both subtraction orders preserves the ratio."
+      ],
+      "proposal_authorship": "orchestrator; requires independent root acceptance before integration"
+    },
+    {
+      "key": "slope/kp1",
+      "candidate_sha256": "57071836172f488a655d01408670e80c9f8ca0d95b0b418373ed090777f40df9",
+      "curriculum_kp_sha256": "2fc1537fee6b1961be3fcd3da1ac92126972680b9197fb46c8c9c1cbb13f5a3f",
+      "current_template_sha256": "828a2ae6ad3d89bd72d3051ccfbc75200e7c00c77778b4ae2e42b2bd5c419bc2",
+      "decision": "accept",
+      "evidence": "Preserves numerator and denominator signs, then writes the reduced result with positive denominator. Leftward runs and falling lines both covered.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "slope/kp3",
+      "candidate_sha256": "93dfa93b2678db054f3569646b89fcab8c7c6a16586d7eca5860c708bd9d59de",
+      "curriculum_kp_sha256": "4eeba7e0a498d48e737a753b9d61a40df6c0ea0114bc2043bca29cd853a27dc6",
+      "current_template_sha256": "74580b10ebdd70196d7a83583dbdefc3ba7cbfb2aa32b466a2860094475afc0b",
+      "decision": "accept",
+      "evidence": "Relates a missing x or y to the same slope; separate steepness comparison uses magnitudes. Recomputes slopes after recovery and handles ties.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "slope-as-rate-of-change/kp2",
+      "candidate_sha256": "442b7919010c8f1e98ba399bdcb4603a10acdac1606c00e551e85f24c21b5e5f",
+      "curriculum_kp_sha256": "9dd578927012f8d4905c797e82f29c4343ad7d0cd4fb70ebde121eff1f9e982a",
+      "current_template_sha256": "d95dd3e7c27ebf4fffa3c38fd08dd508563d482206fd665df3b289c93d3a1cc9",
+      "decision": "accept",
+      "evidence": "Orders observations by increasing input, preserves signed output change, and distinguishes negative readings from a decreasing rate. Below-zero warming example is handled.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "graphing-from-a-table/kp2",
+      "candidate_sha256": "5f6c39802b779c420bf65c5d39f841d2af948486feab6233fb930b96b7587948",
+      "curriculum_kp_sha256": "cffb3fe9861c6b3442f8f4c3ae8ccc5018c979d26a17e4236735f164e88d2838",
+      "current_template_sha256": "45c9e5450aa4e626a4e129453ac34c91ea66a62284177f5019d330afec18f9b2",
+      "decision": "accept",
+      "evidence": "Extends a line forward or backward to x=0, including an already-known y-axis row and fractional descending rates. Final coordinate order correct.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "point-slope-standard-form/kp1",
+      "candidate_sha256": "7cf6874e5591da426382820001e8aa3fa9221012e9a9ecf9a773a275d0ce5852",
+      "curriculum_kp_sha256": "351feae832bbedc7b68bae1da69b091644244b089ad840089cf6016133b6656b",
+      "current_template_sha256": "5687acf472487e71c7769427185aef83a81bbac485dab0303a4baef303a59f7e",
+      "decision": "accept",
+      "evidence": "Distributes to every parenthesized term, clears all denominators on both sides, collects standard form, and normalizes sign and common GCF. Matches all current nonzero-A examples.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "slopes-of-parallel-perpendicular-lines/kp3",
+      "candidate_sha256": "16d6ae20e36553592b1cfcfbc4026fc148c3b606f44b32898d619c1f798b773c",
+      "curriculum_kp_sha256": "6272231612d9e0d9253a8bdf7c25e1f405b0c8ab2d35066667eb64de196a6c56",
+      "current_template_sha256": "ceecf152f210908de7cc759858a7ba7dec1ab6109fdad294db302246b8912315",
+      "decision": "accept",
+      "evidence": "Reads zero slope for a horizontal equation, distinguishes equal slopes/different intercepts from negative-reciprocal product, and preserves neither and requested order.",
+      "serving_approval": "pending separate live-context review"
+    },
+    {
+      "key": "parallel-perpendicular-lines/kp3",
+      "candidate_sha256": "d66547f16a26f4be97ba96d4abf8492b0b6940404fae5545a7d714c5cb1d5dcd",
+      "curriculum_kp_sha256": "29c6fd9516e2deabbd2dd4489fa37f4a5255b19437f2005a82df9375737f1771",
+      "current_template_sha256": "62b729ebae391d86bccc56aa9a9c8669e95b1fc15f5c97a942f3bb36f404c397",
+      "decision": "accept",
+      "evidence": "Converts reference standard form first, then branches between parallel and perpendicular before fitting the required point. Source parallel example and both signs covered.",
+      "serving_approval": "pending separate live-context review"
+    }
+  ],
+  "verification": {
+    "grounded": "Exact candidate, source curriculum and current-template hashes matched all18 parent records; all72 exemplar methods inspected.",
+    "tested": "Verified root gate files by hash and all69 exhaustive accepted document records. No new mechanical gate execution in this peer pass.",
+    "inferred": "Axis-fixed reflection extension follows unrestricted integer-coordinate constraint; displacement branch is an explicit canonical exemplar.",
+    "not_verified": "These are hint authorship decisions, not blanket template certification or live approval. Two proposed lines need root's independent check and fresh gates."
+  }
+}
