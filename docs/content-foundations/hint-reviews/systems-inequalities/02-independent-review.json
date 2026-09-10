@@ -1,0 +1,751 @@
+{
+  "schema_version": 1,
+  "reviewer": {
+    "agent": "/root/orchestrator",
+    "model": "gpt-6-astra",
+    "role": "independent semantic reviewer"
+  },
+  "reviewed_at_utc": "2026-09-09T23:08:59.875986+00:00",
+  "scope": "All24 cohort02 KP bodies: full objectives, constraints,96 exemplar problems/answers/sketches, actual topic/key prerequisites, current selected template complete finite domains, embedded hints/solutions, and three-rung authored hints.",
+  "authored_sha256": "be180e811fbda7b8edd021cea74d7e4b13d9cbf541e7764d45d658700a98b206",
+  "context_snapshot": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/systems02-current-review-context.json",
+  "context_snapshot_sha256": "6ee58daffafcffa4466861a116daf9a1f7d19f7e02ff575f10ca098767969e04",
+  "math_artifact": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/05-systems-inequalities-02.math-checks.json",
+  "math_sha256": "4b08f128f5f61c9edba1857fe0d199dc8cdb4a2497d8346d430f68748aaf09c9",
+  "summary": {
+    "kps": 24,
+    "hints_accept": 11,
+    "hints_revise": 13,
+    "templates_revise": 10,
+    "independent_valid_bindings": 302,
+    "independent_math_mismatches": 0
+  },
+  "records": [
+    {
+      "key": "interval-notation/kp1",
+      "authored_row_sha256": "2d569fb73ebc12f94b4692ab0358e0628277068226d7aaefec1457e273de3174",
+      "curriculum_kp_sha256": "79b6a7a2ba0f2f78a37dfc0e68ef758364f4277ddb8bddb9258b708bd58c8f08",
+      "topic_prerequisites_sha256": "c520206c82690fa4bbb44f86241450576f7bad12d27af96c7ab79f34952ea5fc",
+      "selected_template_sha256": "0dae656b36a049453f7368afbcce96e847820d494868cdf2f7c6a2bbe174d792",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read: bounded endpoints, sign inclusion and order. Testing an indicated endpoint is conditional when one is asked.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "interval-notation/kp1",
+            "basic-absolute-value-inequalities/kp1",
+            "graphing-linear-inequalities/kp3"
+          ],
+          "finding": "Embedded hint isolate-variable/coefficient boilerplate is off target for direct conversion, distance splitting, or origin substitution."
+        }
+      ],
+      "independent_math": {
+        "key": "interval-notation/kp1",
+        "template_sha256": "0dae656b36a049453f7368afbcce96e847820d494868cdf2f7c6a2bbe174d792",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Bounded intervals and endpoint membership",
+        "constraints": "bounded intervals only; convert inequality -> interval and test one endpoint; integer endpoints",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "interval-notation/kp2",
+      "authored_row_sha256": "ad6910a5f1a57560d77e9f89113b6c5db33587f33b421dba392221382a84aec0",
+      "curriculum_kp_sha256": "ff1f6cb9192768dcd9f2900813597c0b3f7a62011f557d3ccade1205d7df950f",
+      "topic_prerequisites_sha256": "c520206c82690fa4bbb44f86241450576f7bad12d27af96c7ab79f34952ea5fc",
+      "selected_template_sha256": "9c708700693fdf4c73e02b19c43600c95a07beaea11bccf693cd7b850943682c",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: supports unbounded interval construction but final rung forces an inequality; must branch according to the requested conversion direction and carry finite endpoint inclusion.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "interval-notation/kp2",
+            "interval-notation/kp3"
+          ],
+          "finding": "All24 conversion problems permit copying the input unchanged because inequality_union deliberately compares interval and inequality forms by the same range set.",
+          "code_evidence": [
+            "crates/core/src/answer/contract/union.rs:read",
+            "crates/core/src/answer/contract/union.rs:equivalent",
+            "crates/core/src/answer/contract/evaluate.rs:structured_contract"
+          ],
+          "required_change": "Narrow required output-notation policy for conversion tasks; keep ordinary solving representation flexibility separate."
+        }
+      ],
+      "independent_math": {
+        "key": "interval-notation/kp2",
+        "template_sha256": "9c708700693fdf4c73e02b19c43600c95a07beaea11bccf693cd7b850943682c",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Unbounded intervals with infinity",
+        "constraints": "single rays both directions; infinity always gets a round bracket; convert both ways",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "interval-notation/kp3",
+      "authored_row_sha256": "b0ec3aa47b7620758296f29ae4d1baf26ef5b5523e314543b729db73427267e8",
+      "curriculum_kp_sha256": "76cb671c934f753a97544c360477d8023cb5c83317f8ae1f9242bee6e13a0112",
+      "topic_prerequisites_sha256": "c520206c82690fa4bbb44f86241450576f7bad12d27af96c7ab79f34952ea5fc",
+      "selected_template_sha256": "c5cb2aae2767652a01708575362ef326bc76a36c99b89e312dd43d6be2756ed6",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: only inequality-to-interval conversion; canonical inverse conversion needs comparisons joined by OR. Preserve endpoint strictness in both directions.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "interval-notation/kp2",
+            "interval-notation/kp3"
+          ],
+          "finding": "All24 conversion problems permit copying the input unchanged because inequality_union deliberately compares interval and inequality forms by the same range set.",
+          "code_evidence": [
+            "crates/core/src/answer/contract/union.rs:read",
+            "crates/core/src/answer/contract/union.rs:equivalent",
+            "crates/core/src/answer/contract/evaluate.rs:structured_contract"
+          ],
+          "required_change": "Narrow required output-notation policy for conversion tasks; keep ordinary solving representation flexibility separate."
+        }
+      ],
+      "independent_math": {
+        "key": "interval-notation/kp3",
+        "template_sha256": "c5cb2aae2767652a01708575362ef326bc76a36c99b89e312dd43d6be2756ed6",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Unions for 'or' solutions",
+        "constraints": "two-piece unions from 'or' inequalities; at most two solving steps per piece; convert both ways",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "inequality-word-problems/kp1",
+      "authored_row_sha256": "99cf08a102f5aed36b1af37fb7f3eb542163075715ffc69f909a8c2239017569",
+      "curriculum_kp_sha256": "3efa60c7e4ee009de68cdbd1f1a78b5a7101440fb7a65e13e9af44f5fa9e80a4",
+      "topic_prerequisites_sha256": "61f257a3ed08d6a1f3c4b23c10334674601a8556c0f063dde6522fd34962ea9f",
+      "selected_template_sha256": "e20b2ce37bc9d2ab4c2945e9fd859ea7c496f3bfe9913d81a48234ba9ab152b7",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: hardcodes packs and delivery. Use the actual purchasable item and any fixed one-time cost; retain integer at-most cap and at-or-below boundary.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "inequality-word-problems/kp1"
+          ],
+          "finding": "Solution says greatest whole count below this boundary, but every current boundary is an admissible integer under <=.",
+          "required_change": "Say at or below the boundary."
+        }
+      ],
+      "independent_math": {
+        "key": "inequality-word-problems/kp1",
+        "template_sha256": "e20b2ce37bc9d2ab4c2945e9fd859ea7c496f3bfe9913d81a48234ba9ab152b7",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Budget (at most) problems",
+        "constraints": "cost model with a cap; integer boundary",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "inequality-word-problems/kp2",
+      "authored_row_sha256": "91380ea4c911ff29c0dfe0f240de6e193b482d678757bf2242d4e533c9b4f425",
+      "curriculum_kp_sha256": "f7bb1285e48e39cafdefb4ba7603ded39c0586a2b1a53bac6cd0c01cff16c7b1",
+      "topic_prerequisites_sha256": "61f257a3ed08d6a1f3c4b23c10334674601a8556c0f063dde6522fd34962ea9f",
+      "selected_template_sha256": "3a869e644d706c1c9d860cc723bc713e43f21a2ad44127546368190669f3f2eb",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: savings/days-only recipe misses an average-score target and other accumulated quantities/time units. Model the named total or average, then solve the lower bound and respect the requested discreteness.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "inequality-word-problems/kp2",
+        "template_sha256": "3a869e644d706c1c9d860cc723bc713e43f21a2ad44127546368190669f3f2eb",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Minimum (at least) problems",
+        "constraints": "at-least targets; averages or savings",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "inequality-word-problems/kp3",
+      "authored_row_sha256": "ee1f7101e4f6a2143bf77fba9a6fe66db00db702d1d22bfaffd47b091a95c957",
+      "curriculum_kp_sha256": "a400bc1c1cdf809e530d19cf843bcbee0f36de9b80ccaf53bc9a17d3d00b6ad6",
+      "topic_prerequisites_sha256": "61f257a3ed08d6a1f3c4b23c10334674601a8556c0f063dde6522fd34962ea9f",
+      "selected_template_sha256": "0f92f3d996942f8a3e6abcfac6c6fb89cf151fb7d27c91831631821dc614ee41",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: ticket-price budget only; missing existing shelf load/fixed fee subtraction before division. Model remaining allowed quantity after the fixed part, then round down whole-item capacity.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "inequality-word-problems/kp3",
+        "template_sha256": "0f92f3d996942f8a3e6abcfac6c6fb89cf151fb7d27c91831631821dc614ee41",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Round the boundary sensibly",
+        "constraints": "whole-number contexts; round down for at-most caps",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "basic-absolute-value-inequalities/kp1",
+      "authored_row_sha256": "1d4bfb5a6a971f6dd8826642f086b388198dae403d829b12a8f0e4cb0e5484ca",
+      "curriculum_kp_sha256": "b14c59ffc72ef3f24376109c3027deb84e1468539f45c06c115cbfa1152b1c76",
+      "topic_prerequisites_sha256": "ba820994e090fc86e58d6b9fbfcf81fb2d1e1c60206ee8fe4667dc63bc00f274",
+      "selected_template_sha256": "12888b24e15ccefb820c9d1952214bebc4adbebf3c5cc1cec0c3f955a904cca4",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read: absolute value distance from zero, inside region, and endpoint marks chosen by original symbol. Optional clarification that inclusive bounds include both endpoints.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "interval-notation/kp1",
+            "basic-absolute-value-inequalities/kp1",
+            "graphing-linear-inequalities/kp3"
+          ],
+          "finding": "Embedded hint isolate-variable/coefficient boilerplate is off target for direct conversion, distance splitting, or origin substitution."
+        }
+      ],
+      "independent_math": {
+        "key": "basic-absolute-value-inequalities/kp1",
+        "template_sha256": "12888b24e15ccefb820c9d1952214bebc4adbebf3c5cc1cec0c3f955a904cca4",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "|x| < a becomes an 'and' inequality",
+        "constraints": "less-than gives a bounded interval",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "basic-absolute-value-inequalities/kp2",
+      "authored_row_sha256": "fa32e1b698059af2af2f6c55a0d7249ec305eade4166e02c06d10f6ffc03354a",
+      "curriculum_kp_sha256": "215adb2fd3b570fc269529105512bde90d29e417f7aacea07fbfb35bce31c2e8",
+      "topic_prerequisites_sha256": "ba820994e090fc86e58d6b9fbfcf81fb2d1e1c60206ee8fe4667dc63bc00f274",
+      "selected_template_sha256": "6fd43c4eb40e788ce963b93799965a5feabd91dbb8e10b629660420aa8af8885",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: larger-than wording and no inclusion step miss >= cases. Distinguish strict/inclusive outside rays and reversed textual comparison order.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "basic-absolute-value-inequalities/kp2",
+        "template_sha256": "6fd43c4eb40e788ce963b93799965a5feabd91dbb8e10b629660420aa8af8885",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "|x| > a becomes an 'or' inequality",
+        "constraints": "greater-than gives two rays",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "basic-absolute-value-inequalities/kp3",
+      "authored_row_sha256": "24810c3b5302a66bf05e94b3517a266dc65ed9c28d1ed956e691e09e35a31e17",
+      "curriculum_kp_sha256": "09f5a6c04bae0306b6693de594215a3f2f1a2838b57331b081f5f006e2b25bc6",
+      "topic_prerequisites_sha256": "ba820994e090fc86e58d6b9fbfcf81fb2d1e1c60206ee8fe4667dc63bc00f274",
+      "selected_template_sha256": "a5a0085be1ef76b8a87007d207c19c790ae92357ac927f4c1821f118fb1465fa",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Critical revise: 'equality allowance changes the conclusion for a negative bound' is false. At negative bounds both< and<= give none; both> and>= give all reals.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "basic-absolute-value-inequalities/kp3",
+        "template_sha256": "a5a0085be1ef76b8a87007d207c19c790ae92357ac927f4c1821f118fb1465fa",
+        "raw_bindings": 16,
+        "valid_bindings": 16,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Degenerate cases",
+        "constraints": "negative right-hand side only",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "absolute-value-inequalities/kp1",
+      "authored_row_sha256": "3b90c047caafd373f8dff011f73cef1497397b92a896eeb6e40a6aea159e1d43",
+      "curriculum_kp_sha256": "9454aff4bb6afbf73f18ec90ce0a30f828c827f150166b9a83ea4a6b62139fe1",
+      "topic_prerequisites_sha256": "dcc5bd9ac54686c3f96af93d1dc9e79e78c5b198c2019d0ad64867a2a78af8a6",
+      "selected_template_sha256": "ba86cddb18b5b5b503915ac4fc89c89a593cd32484a5b6af2118c12111c55db6",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: division by a negative inside coefficient requires both signs to reverse and endpoint order to be restored; explicit canonical4-x case.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "absolute-value-inequalities/kp1",
+        "template_sha256": "ba86cddb18b5b5b503915ac4fc89c89a593cd32484a5b6af2118c12111c55db6",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "|linear| < a",
+        "constraints": "linear inside; bounded interval answers",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "absolute-value-inequalities/kp2",
+      "authored_row_sha256": "e4307960f6352a18803dc5c8d3412b9b9e3a032d175a8797d17fca90327cbdab",
+      "curriculum_kp_sha256": "8823dcdc25b7f3876ab91f4f9f89a9caa7a2a4ea5353037fdc583049dc3dc511",
+      "topic_prerequisites_sha256": "dcc5bd9ac54686c3f96af93d1dc9e79e78c5b198c2019d0ad64867a2a78af8a6",
+      "selected_template_sha256": "4a7aad3bb32511f9f7f40f7899169b26e37ada24ada0a52c43ad6ac5bfcfcf35",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: specify preserving >= endpoint inclusion and reversing comparisons only under negative multiplication/division, then retain the union.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "absolute-value-inequalities/kp2",
+        "template_sha256": "4a7aad3bb32511f9f7f40f7899169b26e37ada24ada0a52c43ad6ac5bfcfcf35",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "|linear| > a",
+        "constraints": "two-ray answers; keep the union",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "absolute-value-inequalities/kp3",
+      "authored_row_sha256": "71d5d63bfe18750e251bb1d09c3a15e0e7477f0f7b95d45a8cd56de5286e2321",
+      "curriculum_kp_sha256": "e83fa442b19d6698ba882bf486c7ecf018d853bf83e49bf1058287f7dca7220a",
+      "topic_prerequisites_sha256": "dcc5bd9ac54686c3f96af93d1dc9e79e78c5b198c2019d0ad64867a2a78af8a6",
+      "selected_template_sha256": "8895fea8453d951bb5f4fab5712cc69643e3cff2f81bd9a9b05dcef64fd66279",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: assumes inclusive bounded result; canonical strict cases need parentheses. Full constraint is isolate absolute value first, so branch bounded/outside according to the isolated sign and check nonpositive thresholds where relevant.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "absolute-value-inequalities/kp3",
+        "template_sha256": "8895fea8453d951bb5f4fab5712cc69643e3cff2f81bd9a9b05dcef64fd66279",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Isolate the absolute value first",
+        "constraints": "isolate the absolute value before splitting into cases",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "graphing-linear-inequalities/kp1",
+      "authored_row_sha256": "b145cfe001e5d2826ab4f45f7a2158fac3786234acba55021016b417aa976da1",
+      "curriculum_kp_sha256": "3cf400c229d6ddd2345cb4272a2db6ff5689ab7af9efd3d11647d9d3e7749f80",
+      "topic_prerequisites_sha256": "62a76cda59517cab8a9f19316bca84c911f1bd1e3ec28c49829481a919858d60",
+      "selected_template_sha256": "cbaf05fbb20da45a6aab61f2b39902516fcfa8ca8ffa2d5688bc61062eab818c",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read: equality version forms boundary and inclusion determines solid/dashed.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "graphing-linear-inequalities/kp1",
+        "template_sha256": "cbaf05fbb20da45a6aab61f2b39902516fcfa8ca8ffa2d5688bc61062eab818c",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Boundary line: solid or dashed",
+        "constraints": "solid for <= or >=; dashed for < or >",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "graphing-linear-inequalities/kp2",
+      "authored_row_sha256": "d4497ff47ccd4cd3241d23e3c3e582e436f983e5911422fa0875be5e677368c3",
+      "curriculum_kp_sha256": "1bf87ff78c1b3a6664760ef17b3dc8bf10d6adfcaacfc335f52c6d5751e7c2ef",
+      "topic_prerequisites_sha256": "62a76cda59517cab8a9f19316bca84c911f1bd1e3ec28c49829481a919858d60",
+      "selected_template_sha256": "fe752f0b0bfba1428ea59d6d63075f04af43bc6726a85b943ecc469387868240",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read for canonical/current membership tasks: substitute both coordinates and evaluate comparison. A point on boundary is valid for membership, but not as an off-boundary shading-side test.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "graphing-linear-inequalities/kp2",
+        "template_sha256": "fe752f0b0bfba1428ea59d6d63075f04af43bc6726a85b943ecc469387868240",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Test a point to choose the shaded side",
+        "constraints": "substitute a test point; true -> shade that side",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "graphing-linear-inequalities/kp3",
+      "authored_row_sha256": "9ebbc271036930e564203b48c28ce0c31ff050be2b09b3d21e3b117477abb523",
+      "curriculum_kp_sha256": "9056991d96d50fcd80ea20b86d76bb5e2590725512fe4da8bbbc2a573e5f59f7",
+      "topic_prerequisites_sha256": "62a76cda59517cab8a9f19316bca84c911f1bd1e3ec28c49829481a919858d60",
+      "selected_template_sha256": "03fa176ad90dad05fc3152763f154d0e62889396243ae04491ca07524af82f5e",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read for all canonical/current origin-membership questions. Optional full graphing extension: if origin lies on boundary, use another off-line point to choose a half-plane, while origin membership itself follows strictness.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "interval-notation/kp1",
+            "basic-absolute-value-inequalities/kp1",
+            "graphing-linear-inequalities/kp3"
+          ],
+          "finding": "Embedded hint isolate-variable/coefficient boilerplate is off target for direct conversion, distance splitting, or origin substitution."
+        }
+      ],
+      "independent_math": {
+        "key": "graphing-linear-inequalities/kp3",
+        "template_sha256": "03fa176ad90dad05fc3152763f154d0e62889396243ae04491ca07524af82f5e",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Shade using the origin test",
+        "constraints": "the origin is the easiest test point unless it is on the line",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "checking-systems-solutions/kp1",
+      "authored_row_sha256": "94e55f1efd8f8a86447ed641b11e6f06d969fb602bb286089c0e3bc97494f647",
+      "curriculum_kp_sha256": "c5bdb8f90b2efb97c96ece016ad01a361615fb54980e1a5dc9aa931055b716b1",
+      "topic_prerequisites_sha256": "ab0340b1deb0ba0db34b4a067f03407f8cebff3a49df63e0eee026109e71b789",
+      "selected_template_sha256": "69f6bb4533bc8981a24b56925d6e560b73137670b352c8c22162637c80a1cfa4",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read: ordered left-minus-right residuals in both equations, both zero required.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "checking-systems-solutions/kp1",
+            "checking-systems-solutions/kp2",
+            "checking-systems-solutions/kp3",
+            "graphing-systems/kp3"
+          ],
+          "finding": "Embedded hint translate each relationship is unrelated to the required candidate/residual check."
+        }
+      ],
+      "independent_math": {
+        "key": "checking-systems-solutions/kp1",
+        "template_sha256": "69f6bb4533bc8981a24b56925d6e560b73137670b352c8c22162637c80a1cfa4",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Verify a pair in both equations",
+        "constraints": "check the point in BOTH equations",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "checking-systems-solutions/kp2",
+      "authored_row_sha256": "15f1a48a05043593d9f24830a5e3a64fb45d657daaeb4098cfe1423f39f01f8e",
+      "curriculum_kp_sha256": "e5d05f1df835500005b07fe6011ffb03ee37a39d89dc3963cec69aa073ac4639",
+      "topic_prerequisites_sha256": "ab0340b1deb0ba0db34b4a067f03407f8cebff3a49df63e0eee026109e71b789",
+      "selected_template_sha256": "bea37dedb5a4ae6cc614fea16779f84584e0c12f8129d476738bb3b105e5f961",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read: exactly one residual nonzero under the KP constraint; reports both before rejecting.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "checking-systems-solutions/kp1",
+            "checking-systems-solutions/kp2",
+            "checking-systems-solutions/kp3",
+            "graphing-systems/kp3"
+          ],
+          "finding": "Embedded hint translate each relationship is unrelated to the required candidate/residual check."
+        }
+      ],
+      "independent_math": {
+        "key": "checking-systems-solutions/kp2",
+        "template_sha256": "bea37dedb5a4ae6cc614fea16779f84584e0c12f8129d476738bb3b105e5f961",
+        "raw_bindings": 437,
+        "valid_bindings": 22,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Reject a pair that fails one equation",
+        "constraints": "one equation passes, the other fails",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "checking-systems-solutions/kp3",
+      "authored_row_sha256": "580eac3088aa0d9835a6291a566f2b471dfdc23ebcbdfb7f4e2984bbd06809de",
+      "curriculum_kp_sha256": "0587ef100683c2de9f88bae1ad876bd945f23d1324e334624520e9d71188e26a",
+      "topic_prerequisites_sha256": "ab0340b1deb0ba0db34b4a067f03407f8cebff3a49df63e0eee026109e71b789",
+      "selected_template_sha256": "705fc96fab12fd6f6ac777f10fdd4c1a2006169aa43ad5b67f4dc0f1adbff4d3",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read: each candidate checked against both equations; rejects failures without solving entire system.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "checking-systems-solutions/kp3"
+          ],
+          "finding": "Solution solves by subtracting equations (elimination), while this KP/prerequisites require checking two candidates by substitution.",
+          "required_change": "Substitute each candidate in both equations and select the one satisfying both. Preserve current exactly-one-candidate filters."
+        },
+        {
+          "keys": [
+            "checking-systems-solutions/kp1",
+            "checking-systems-solutions/kp2",
+            "checking-systems-solutions/kp3",
+            "graphing-systems/kp3"
+          ],
+          "finding": "Embedded hint translate each relationship is unrelated to the required candidate/residual check."
+        }
+      ],
+      "independent_math": {
+        "key": "checking-systems-solutions/kp3",
+        "template_sha256": "705fc96fab12fd6f6ac777f10fdd4c1a2006169aa43ad5b67f4dc0f1adbff4d3",
+        "raw_bindings": 48,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Pick the solution from candidates",
+        "constraints": "two candidates; exactly one works",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "graphing-systems/kp1",
+      "authored_row_sha256": "c0aa6b3e97c528cce04519d99afe3a1699d4ef83737fa880ba81a0af67052bbc",
+      "curriculum_kp_sha256": "db0b3e5039e0ec15185fa7e4e8570dbcdb5d034184b1b5704bee94d8211d165d",
+      "topic_prerequisites_sha256": "d0460100876a351484566541c68b793e984eaeb3b342da6432a7f0ba7025dbc6",
+      "selected_template_sha256": "067e43ad86e92d3beb347f441d334fb21457b876a139b2344e7aa4164c2765f1",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: assumes explicit expressions for y. A canonical input supplies two plotted-line tables with an already-common point; start by identifying a shared graph/table point, then use equal-height equations when needed.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "graphing-systems/kp1",
+        "template_sha256": "067e43ad86e92d3beb347f441d334fb21457b876a139b2344e7aa4164c2765f1",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Solution as the intersection point",
+        "constraints": "the intersection point is the solution",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "graphing-systems/kp2",
+      "authored_row_sha256": "c57e567cce28a4dd6afe42ebc4ed11ba4087f6b081f954fd0edfed8d30545ffd",
+      "curriculum_kp_sha256": "eab7b3578dcc4c636d68f0c06dec9ecf2f7153564f091c30f4525b915f9115bb",
+      "topic_prerequisites_sha256": "d0460100876a351484566541c68b793e984eaeb3b342da6432a7f0ba7025dbc6",
+      "selected_template_sha256": "30d53fb3c4f4ccaba3f436a0a9fdf807c829aff78231133897d8c1792c191e67",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: assumes vertical line always exists. Handle standard/slope-intercept, horizontal fixed-y and vertical fixed-x forms.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "graphing-systems/kp2",
+        "template_sha256": "30d53fb3c4f4ccaba3f436a0a9fdf807c829aff78231133897d8c1792c191e67",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Graph and intersect mixed forms",
+        "constraints": "standard form, slope-intercept, and horizontal/vertical lines",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "graphing-systems/kp3",
+      "authored_row_sha256": "5787d3048cb0d49a148445dea583d63065e929d9d63221588819db33874386d6",
+      "curriculum_kp_sha256": "01f1cd772d424bde3054f81468826d24635b90d0177919ad7359d455fc21feed",
+      "topic_prerequisites_sha256": "d0460100876a351484566541c68b793e984eaeb3b342da6432a7f0ba7025dbc6",
+      "selected_template_sha256": "4842c2d24db8f0dd3de84dafc8b2c6d19a72bcd8c3cbd32451ba3e8e58c859c0",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read: exact residual checks distinguish a rough graphical estimate from a verified intersection.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "checking-systems-solutions/kp1",
+            "checking-systems-solutions/kp2",
+            "checking-systems-solutions/kp3",
+            "graphing-systems/kp3"
+          ],
+          "finding": "Embedded hint translate each relationship is unrelated to the required candidate/residual check."
+        }
+      ],
+      "independent_math": {
+        "key": "graphing-systems/kp3",
+        "template_sha256": "4842c2d24db8f0dd3de84dafc8b2c6d19a72bcd8c3cbd32451ba3e8e58c859c0",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Confirm a graphical estimate algebraically",
+        "constraints": "an estimate must be checked in both equations",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "substitution-with-isolated-variable/kp1",
+      "authored_row_sha256": "e5f59e4e801dcf5ba4e332dc2bc6748d2a7812c421a2792b0d2bde8ff0fda200",
+      "curriculum_kp_sha256": "1fc097f7a1df7f7d271c46e9ec243b6b5197c8dad337830b6241d0de3343cad3",
+      "topic_prerequisites_sha256": "f6a1f93a7f840d50f6166602a8575a6b480d2a1a3204d30c750c5490045e98e0",
+      "selected_template_sha256": "a6eac3fab759ba717b6464e4a2787fdfdd8f91c3a9d56cb9af1bc9c0e1fba6da",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read: general isolated-variable substitution, one-variable solve, recovery and both-equation check.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "substitution-with-isolated-variable/kp1",
+        "template_sha256": "a6eac3fab759ba717b6464e4a2787fdfdd8f91c3a9d56cb9af1bc9c0e1fba6da",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Substitute an isolated expression",
+        "constraints": "one equation already solved for a variable; integer solutions",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "substitution-with-isolated-variable/kp2",
+      "authored_row_sha256": "6752662c8093c72afc64c91b423db1b7a2652b8225f7df0ede854250068f7893",
+      "curriculum_kp_sha256": "9621c3b5fcfd1c14a8b2cb9a68d2347537ce722b83ce03009572748656dd5b5d",
+      "topic_prerequisites_sha256": "f6a1f93a7f840d50f6166602a8575a6b480d2a1a3204d30c750c5490045e98e0",
+      "selected_template_sha256": "039c979b32ee6856a859fb3ad84ea1b43c94683723df87c7b1051aa6d07b4473",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Accept semantic read: both equations explicitly solved for y per constraint, so equal-values method is correctly scoped.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "substitution-with-isolated-variable/kp2",
+        "template_sha256": "039c979b32ee6856a859fb3ad84ea1b43c94683723df87c7b1051aa6d07b4473",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Equal-values method",
+        "constraints": "both equations solved for y; set them equal",
+        "full_exemplar_count": 4
+      }
+    },
+    {
+      "key": "substitution-with-isolated-variable/kp3",
+      "authored_row_sha256": "ecc892bf7993528ff86c08a2d78aa411634567908cb37921a39fbc7618bcc8f0",
+      "curriculum_kp_sha256": "611894f1827113c0579ed0b065544b621d9ce3355492d2988c1c0e0f3090c90a",
+      "topic_prerequisites_sha256": "f6a1f93a7f840d50f6166602a8575a6b480d2a1a3204d30c750c5490045e98e0",
+      "selected_template_sha256": "d8884ef3787e3dfc8226ae019b215a3e304aef7a50c508403ff4a688114f7861",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Revise: isolated-y only; canonical isolated-x examples must substitute for x, solve y, recover x and verify the unused equation.",
+      "template_decision": "accept_math_and_scope",
+      "template_findings": [],
+      "independent_math": {
+        "key": "substitution-with-isolated-variable/kp3",
+        "template_sha256": "d8884ef3787e3dfc8226ae019b215a3e304aef7a50c508403ff4a688114f7861",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "sample_domain_complete": true,
+        "all_independent_results_match": true,
+        "semantic_filters_match_declared_constraints": true
+      },
+      "reviewed_context": {
+        "objective": "Back-substitute and check",
+        "constraints": "verify the pair in the equation not used for back-substitution",
+        "full_exemplar_count": 4
+      }
+    }
+  ],
+  "curriculum_pedagogy_findings": [
+    {
+      "keys": [
+        "basic-absolute-value-inequalities/kp1",
+        "absolute-value-inequalities/kp1"
+      ],
+      "finding": "Several solution sketches expand meaningless subtract0/divide1 steps rather than explaining magnitude as distance or the relevant inverse operation; answers inspected here are mathematically correct."
+    }
+  ],
+  "verification": {
+    "grounded": "Exact authored and context SHA; each frozen template still equals current selected document. Full semantic context read per KP.",
+    "tested": "All302 admitted tuples independently recomputed; sample sets exactly equal valid domains. Constraint AST domain matches independent exactly-one-equation/candidate predicates.",
+    "inferred_from_code": "Copy-input acceptance for interval-notation/kp2 andkp3 follows inequality_union parser/equivalence path; production regression demonstration has not been run by this review. Ordinary solve-task representation flexibility is a separate concern.",
+    "not_verified": "No new exhaustive instruction gate or live API writes; authoring acceptance requires repairs and re-review for13 rows. No course-wide or Teach acceptance asserted."
+  },
+  "serving_approval": "none"
+}
