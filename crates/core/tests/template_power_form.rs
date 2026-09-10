@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 
 use cadus_core::{
-    answer::{AnswerContract, canonical_form},
+    answer::{AnswerContract, Outcome, canonical_form, check_contract},
     template::{answer_for_contract, parse_answer_expr},
 };
 
@@ -22,6 +22,42 @@ fn writes_exact_unevaluated_powers_with_computed_parts() {
         .unwrap();
         assert!(result.text.contains('^'));
         assert_eq!(result.canon, canonical_form(expected).unwrap());
+        if source.starts_with("powerform(850") {
+            assert_eq!(result.text, "(850)*(201/200)^(72)");
+        }
+    }
+}
+
+#[test]
+fn writes_one_power_for_the_required_policy() {
+    for (source, expected) in [
+        ("powerform(1,[2,3+4])", "(2)^(7)"),
+        ("powerform(1,[1/2,3])", "(1/2)^(3)"),
+        ("powerform(1,[-2,3])", "(-2)^(3)"),
+    ] {
+        let policy = AnswerContract::RequiredSinglePower;
+        let result = answer_for_contract(
+            &parse_answer_expr(source).unwrap(),
+            &BTreeMap::new(),
+            Some(&policy),
+        )
+        .unwrap();
+        assert_eq!(result.text, expected);
+        assert!(matches!(
+            check_contract(expected, &result.text, policy),
+            Outcome::Decided(verdict) if verdict.correct
+        ));
+    }
+    for source in ["powerform(2,[3,4])", "powerform(0,[3,4])"] {
+        assert!(
+            answer_for_contract(
+                &parse_answer_expr(source).unwrap(),
+                &BTreeMap::new(),
+                Some(&AnswerContract::RequiredSinglePower),
+            )
+            .is_err(),
+            "{source}"
+        );
     }
 }
 

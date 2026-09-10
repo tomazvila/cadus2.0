@@ -1,6 +1,7 @@
 //! Bounded writers for structured closed-label answers.
 
-use num_traits::{Signed, ToPrimitive, Zero};
+use num_rational::BigRational;
+use num_traits::{One, Signed, ToPrimitive, Zero};
 
 use crate::answer::ast::Ast;
 use crate::answer::{AnswerContract, Canon};
@@ -296,11 +297,12 @@ pub(super) fn power_form(
     bindings: &Bindings,
     contract: Option<&AnswerContract>,
 ) -> Result<Answer, EvalError> {
-    if contract != Some(&AnswerContract::Exact) {
+    let Some(contract @ (AnswerContract::Exact | AnswerContract::RequiredSinglePower)) = contract
+    else {
         return Err(EvalError::NotNumber {
-            func: "powerform requires exact contract",
+            func: "powerform requires an exact power contract",
         });
-    }
+    };
     let Ast::Func(_, args) = ast else {
         unreachable!();
     };
@@ -329,10 +331,20 @@ pub(super) fn power_form(
         .ok_or(EvalError::NotWhole {
             func: "powerform bounded exponent",
         })?;
-    contracted(
-        format!("({})*({})^({power})", coefficient.text, base.text),
-        &AnswerContract::Exact,
-    )
+    let text = match contract {
+        AnswerContract::Exact => format!("({})*({})^({power})", coefficient.text, base.text),
+        AnswerContract::RequiredSinglePower => {
+            if coefficient.canon != Canon::Rational(BigRational::one()) {
+                return Err(EvalError::Domain {
+                    func: "powerform coefficient",
+                    value: coefficient.text,
+                });
+            }
+            format!("({})^({power})", base.text)
+        }
+        _ => unreachable!(),
+    };
+    contracted(text, contract)
 }
 
 fn numeric(ast: &Ast, bindings: &Bindings) -> Result<Answer, EvalError> {

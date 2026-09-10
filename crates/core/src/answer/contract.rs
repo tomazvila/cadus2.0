@@ -4,6 +4,7 @@ mod evaluate;
 mod form;
 mod list;
 mod notation;
+mod power;
 mod relation;
 mod setup;
 mod structured;
@@ -51,6 +52,8 @@ pub enum AnswerContract {
     InequalityUnion,
     /// An exact inequality union written in the same notation as the authored answer.
     RequiredInequalityNotation,
+    /// An exact numeric value written as one power of the authored literal base.
+    RequiredSinglePower,
     /// A ratio of two positive integers written in lowest terms as `a:b`.
     ReducedRatio,
     /// A strictly ascending list of exact numbers joined by `<`.
@@ -103,6 +106,7 @@ enum ContractDoc {
     },
     InequalityUnion {},
     RequiredInequalityNotation {},
+    RequiredSinglePower {},
     ReducedRatio {},
     AscendingChain {},
     PolynomialRelation {},
@@ -143,6 +147,7 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::List { ordered, member } => Self::List { ordered, member },
             ContractDoc::InequalityUnion {} => Self::InequalityUnion,
             ContractDoc::RequiredInequalityNotation {} => Self::RequiredInequalityNotation,
+            ContractDoc::RequiredSinglePower {} => Self::RequiredSinglePower,
             ContractDoc::ReducedRatio {} => Self::ReducedRatio,
             ContractDoc::AscendingChain {} => Self::AscendingChain,
             ContractDoc::PolynomialRelation {} => Self::PolynomialRelation,
@@ -197,6 +202,7 @@ impl AnswerContract {
             Self::Multipart { parts } => multipart_values(parts, expected),
             Self::List { ordered, member } => list::expected(*ordered, member, expected),
             Self::InequalityUnion | Self::RequiredInequalityNotation => union::read(expected),
+            Self::RequiredSinglePower => power::expected(expected),
             Self::ReducedRatio => notation::reduced_ratio(expected),
             Self::AscendingChain => notation::ascending_chain(expected),
             Self::PolynomialRelation => relation::read(expected),

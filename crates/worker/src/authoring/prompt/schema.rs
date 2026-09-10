@@ -191,7 +191,8 @@ fn template_schema() -> Value {
     upperbound(variable, bound), with a one-value text choice for variable. For a bidirectional \
     interval/inequality conversion, use convertnotation(source) with a \
     required_inequality_notation contract; the computed expected answer fixes the required \
-    output notation for that instance. Use \
+    output notation for that instance. For one unevaluated numeric power, use \
+    powerform(1,[base,exponent]) with a required_single_power contract. Use \
     signcase(selector, [negative, zero, positive]) for a bounded sign split.",
             },
             "solution_sketch": {

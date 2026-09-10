@@ -75,6 +75,10 @@ fn structured_contract(
                 (Err(reason), _) | (_, Err(reason)) => Outcome::Undecidable(reason),
             }
         }
+        AnswerContract::RequiredSinglePower => match super::power::equivalent(text, learner) {
+            Ok(correct) => decided(correct),
+            Err(reason) => Outcome::Undecidable(reason),
+        },
         AnswerContract::ReducedRatio => parsed_or_recognized(
             super::notation::reduced_ratio(learner),
             expected,

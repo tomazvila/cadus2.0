@@ -38,6 +38,59 @@ fn numeric_forms_preserve_value_and_required_representation() {
     decide(&decimal, "0.5", "0.49", false);
 }
 
+#[test]
+fn required_single_power_preserves_one_literal_base_and_exponent() {
+    let policy = AnswerContract::RequiredSinglePower;
+    assert_eq!(
+        serde_json::to_string(&policy).unwrap(),
+        r#"{"kind":"required_single_power"}"#
+    );
+    assert!(
+        serde_json::from_str::<AnswerContract>(r#"{"kind":"required_single_power","base":"2"}"#)
+            .is_err()
+    );
+    for (expected, learner) in [
+        ("2^7", "2^7"),
+        ("2^7", "2^{7}"),
+        ("2^7", "(2) ^ (7)"),
+        ("(1/2)^3", r"(\frac{1}{2})^{3}"),
+        ("7^1", "7^1"),
+        ("7^0", "7^0"),
+        ("0^3", "0^3"),
+        ("1^8", "1^8"),
+        ("(-2)^3", "(-2)^3"),
+        ("2^(-3)", "2^{-3}"),
+    ] {
+        decide(&policy, expected, learner, true);
+    }
+    for (expected, learner) in [
+        ("2^7", "128"),
+        ("2^7", "2^3 * 2^4"),
+        ("2^7", "1 * 2^7"),
+        ("2^7", "(2^1)^7"),
+        ("2^7", "(1+1)^7"),
+        ("2^7", "(4/2)^7"),
+        ("2^6", "(2^2)^3"),
+        ("2^6", "4^3"),
+        ("2^7", "3^7"),
+        ("2^7", "2^6"),
+        ("7^1", "7"),
+        ("7^0", "1"),
+        ("(-2)^3", "-2^3"),
+    ] {
+        decide(&policy, expected, learner, false);
+    }
+    for invalid in ["128", "(2^1)^7", "(1+1)^7", "(4/2)^7"] {
+        assert!(policy.validate_expected(invalid).is_err(), "{invalid}");
+    }
+    for (expected, learner) in [("2^7", "2^"), ("0^0", "0^0"), ("0^(-1)", "0^(-1)")] {
+        assert!(matches!(
+            check_contract(expected, learner, policy.clone()),
+            Outcome::Undecidable(_)
+        ));
+    }
+}
+
 fn list(ordered: bool, member: AnswerContract) -> AnswerContract {
     AnswerContract::List {
         ordered,
@@ -96,6 +149,11 @@ fn malformed_lists_and_unsupported_member_policies_are_refused() {
     assert!(list(true, AnswerContract::None).validate().is_err());
     assert!(
         list(false, AnswerContract::RequiredInequalityNotation)
+            .validate()
+            .is_err()
+    );
+    assert!(
+        list(false, AnswerContract::RequiredSinglePower)
             .validate()
             .is_err()
     );
