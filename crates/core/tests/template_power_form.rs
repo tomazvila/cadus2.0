@@ -70,7 +70,6 @@ fn refuses_wrong_contract_arity_non_numeric_and_unsafe_exponents() {
         "powerform(1,[2,1001])",
         "powerform(1,[2,-1001])",
         "powerform(1,[0,-1])",
-        "powerform(1,[x,3])",
         "powerform(sqrt(2),[2,3])",
         "powerform(1,[999999999999999999999,1000])",
     ] {

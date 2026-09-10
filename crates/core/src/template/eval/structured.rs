@@ -5,7 +5,7 @@ use num_traits::{One, Signed, ToPrimitive, Zero};
 
 use crate::answer::ast::Ast;
 use crate::answer::{AnswerContract, Canon};
-use crate::template::{MAX_EXPONENT, domain::Bindings};
+use crate::template::{MAX_EXPONENT, domain::Bindings, gate::FREE_SYMBOLS};
 
 use super::{Answer, EvalError, answer, contracted, text_binding};
 
@@ -319,7 +319,21 @@ pub(super) fn power_form(
         });
     };
     let coefficient = numeric(coefficient, bindings)?;
-    let base = numeric(base, bindings)?;
+    let symbolic_base = match base {
+        Ast::Var(name)
+            if contract == &AnswerContract::Exact
+                && FREE_SYMBOLS.contains(&name.as_str())
+                && !bindings.contains_key(name) =>
+        {
+            Some(name.as_str())
+        }
+        _ => None,
+    };
+    let numeric_base = if symbolic_base.is_none() {
+        Some(numeric(base, bindings)?)
+    } else {
+        None
+    };
     let exponent = numeric(exponent, bindings)?;
     let Canon::Rational(number) = &exponent.canon else {
         unreachable!()
@@ -331,8 +345,12 @@ pub(super) fn power_form(
         .ok_or(EvalError::NotWhole {
             func: "powerform bounded exponent",
         })?;
+    let base_text = symbolic_base
+        .map(str::to_owned)
+        .or_else(|| numeric_base.map(|base| base.text))
+        .ok_or(EvalError::NotNumber { func: "powerform" })?;
     let text = match contract {
-        AnswerContract::Exact => format!("({})*({})^({power})", coefficient.text, base.text),
+        AnswerContract::Exact => format!("({})*({base_text})^({power})", coefficient.text),
         AnswerContract::RequiredSinglePower => {
             if coefficient.canon != Canon::Rational(BigRational::one()) {
                 return Err(EvalError::Domain {
@@ -340,7 +358,7 @@ pub(super) fn power_form(
                     value: coefficient.text,
                 });
             }
-            format!("({})^({power})", base.text)
+            format!("({base_text})^({power})")
         }
         _ => unreachable!(),
     };
