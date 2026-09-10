@@ -139,6 +139,9 @@ pub(super) fn call(name: &str, args: &[Ast], bindings: &Bindings) -> Result<Ast,
     if name == "quarterextremum" {
         return super::finite_graph::extremum(args, bindings);
     }
+    if name == "quartervalue" {
+        return super::quarter_value::value(args, bindings);
+    }
     if name == "signcase" {
         return sign_case(args, bindings);
     }

@@ -188,7 +188,12 @@ fn labels_require_the_declared_vocabulary_and_work_inside_multipart() {
 
 #[test]
 fn helper_names_are_reserved_and_never_enter_the_learner_answer_grammar() {
-    for name in ["compounding", "quarterextremum", "trianglelaw"] {
+    for name in [
+        "compounding",
+        "quarterextremum",
+        "quartervalue",
+        "trianglelaw",
+    ] {
         assert!(cadus_core::template::RESERVED_NAMES.contains(&name));
         assert!(canonical_form(&format!("{name}(1)")).is_err());
     }

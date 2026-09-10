@@ -45,7 +45,9 @@ approximate contract, use atandeg(ratio). For an exact repeated-compounding fact
 $(1+1/n)^n$, use compounding(count) with a whole count \
 from 1 through 64. For a parent sine/cosine coordinate answer, use \
 quarterextremum(curve, [lo, hi, direction]); curve 0 is sine and 1 cosine, endpoints are whole \
-quarter turns with 0 <= lo < hi <= 4, and direction is highest or lowest. For an ordered \
+quarter turns with 0 <= lo < hi <= 4, and direction is highest or lowest. For an exact quadrantal \
+sine or cosine value, use quartervalue(family, quarter), where family is a text choice of sin or cos \
+and quarter is a whole index from 0 through 3. For an ordered \
 exact list, use factorlist(number), \
 firstmultiples(number, count), primefactors(number), or repeatedfactors(number, count). For a flat multipart answer, write multipart(part1, part2), with arguments \
 in the same order as the contract's named parts; an argument is a mathematical expression or, for a \

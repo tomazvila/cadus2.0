@@ -181,7 +181,9 @@ fn template_schema() -> Value {
     inverse-tangent angle in degrees. Use compounding(count) for the exact factor (1+1/n)^n \
     with a whole count from 1 through 64. \
     quarterextremum(curve, [lo, hi, direction]) returns the leftmost parent sine/cosine extremum \
-    as coordinates for whole quarter turns 0 <= lo < hi <= 4. For an ordered exact-list contract, use \
+    as coordinates for whole quarter turns 0 <= lo < hi <= 4. \
+    quartervalue(family, quarter) returns the exact sine or cosine value when family is a text \
+    choice of sin or cos and quarter is a whole index from 0 through 3. For an ordered exact-list contract, use \
     factorlist(number), firstmultiples(number, count), primefactors(number), or \
     repeatedfactors(number, count). For a multipart contract, use \
     multipart(part1, part2) with arguments in contract part order; each argument is a mathematical \

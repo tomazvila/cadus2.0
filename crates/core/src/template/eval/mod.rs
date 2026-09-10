@@ -42,6 +42,7 @@ mod inequalities;
 mod inverse;
 mod notation;
 mod numeric_form;
+mod quarter_value;
 mod scientific;
 mod structured;
 mod symbol;
