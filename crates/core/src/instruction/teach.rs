@@ -157,20 +157,19 @@ fn check_teach_disclosures(
                 message: "the worked example repeats a served problem; use different operands before the learner attempts it".to_owned(),
             });
         }
-        if let Some(expression) = direct_expression(served_problem) {
-            if contains_expression(&normalized_last, &expression)
-                && !answer.is_empty()
-                && contains_token(last, answer)
-            {
-                return Err(Rejection {
-                    code: "teach-answer",
-                    message: format!(
-                        "the final step solves served problem {} and names its answer {} (Hard Rule 1)",
-                        py_str(served_problem),
-                        py_str(answer)
-                    ),
-                });
-            }
+        if let Some(expression) = direct_expression(served_problem)
+            && contains_expression(&normalized_last, &expression)
+            && !answer.is_empty()
+            && contains_token(last, answer)
+        {
+            return Err(Rejection {
+                code: "teach-answer",
+                message: format!(
+                    "the final step solves served problem {} and names its answer {} (Hard Rule 1)",
+                    py_str(served_problem),
+                    py_str(answer)
+                ),
+            });
         }
     }
     Ok(())

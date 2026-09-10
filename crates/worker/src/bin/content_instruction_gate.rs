@@ -204,7 +204,8 @@ mod tests {
     fn offline_context_reports_its_100000_binding_limit_before_allocating_tuples() {
         let (curriculum, mut input) = fixture();
         let args = &mut input["templates"][0]["arguments"];
-        args["params"] = json!({"a":{"kind":"int","low":1,"high":101},"b":{"kind":"int","low":1,"high":1000}});
+        args["params"] =
+            json!({"a":{"kind":"int","low":1,"high":101},"b":{"kind":"int","low":1,"high":1000}});
         args["constraints"] = json!([]);
         args["statement"] = json!("Compute $ {a} + {b} $.");
         args["answer_expr"] = json!("a+b");
