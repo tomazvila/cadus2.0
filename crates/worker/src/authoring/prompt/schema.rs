@@ -188,7 +188,10 @@ fn template_schema() -> Value {
     expression or, for a label part, a supported label expression. For a unit contract, keep \
     this expression numeric; the server attaches the declared unit. For an inequality-union \
     contract, use excludepoint(variable, bound), lowerbound(variable, bound), or \
-    upperbound(variable, bound), with a one-value text choice for variable. Use \
+    upperbound(variable, bound), with a one-value text choice for variable. For a bidirectional \
+    interval/inequality conversion, use convertnotation(source) with a \
+    required_inequality_notation contract; the computed expected answer fixes the required \
+    output notation for that instance. Use \
     signcase(selector, [negative, zero, positive]) for a bounded sign split.",
             },
             "solution_sketch": {

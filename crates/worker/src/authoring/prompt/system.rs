@@ -52,7 +52,9 @@ in the same order as the contract's named parts; an argument is a mathematical e
 label part, a supported label expression. For a unit contract, keep answer_expr numeric; the server \
 attaches the contract's unit. For an inequality-union contract, use excludepoint(variable, bound), \
 lowerbound(variable, bound), or upperbound(variable, bound), where variable is a one-value text \
-choice. For a bounded sign split, use signcase(selector, [negative, zero, positive]). The server \
+choice. For a bidirectional interval/inequality conversion, use convertnotation(source) with a \
+required_inequality_notation contract; the computed expected answer fixes the required output \
+notation for that instance. For a bounded sign split, use signcase(selector, [negative, zero, positive]). The server \
 validates every computed answer against the contract before storing the document, and the row remains pending until independent AI review approves its mathematics, objective alignment, explanations, and hints.
 
 'samples' is how you prove it, and the server checks WHERE you prove it. Work each instance out \

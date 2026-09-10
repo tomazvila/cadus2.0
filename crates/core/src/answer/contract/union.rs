@@ -12,13 +12,24 @@ struct Range {
     hi_closed: bool,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum Notation {
+    Interval,
+    Inequality,
+}
+
 pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
-    let normalized = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    read_with_notation(text).map(|(value, _)| value)
+}
+
+pub(super) fn read_with_notation(text: &str) -> Result<(Canon, Notation), Undecidable> {
+    let source = notation_source(text);
+    let normalized = source.split_whitespace().collect::<Vec<_>>().join(" ");
     let single_interval = normalized.contains(',')
         && matches!(normalized.chars().next(), Some('(' | '['))
         && matches!(normalized.chars().last(), Some(')' | ']'));
     if normalized.contains('∪') || single_interval {
-        return interval_notation(&normalized);
+        return interval_notation(&normalized).map(|value| (value, Notation::Interval));
     }
     let branches: Vec<_> = normalized.split(" or ").collect();
     if branches.len() > 16 {
@@ -54,10 +65,55 @@ pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
     let Some(var) = variable else {
         return Err(refused());
     };
-    Ok(Canon::Assign {
-        var,
-        value: Box::new(Canon::List(canonical_ranges(merge(ranges)))),
-    })
+    Ok((
+        Canon::Assign {
+            var,
+            value: Box::new(Canon::List(canonical_ranges(merge(ranges)))),
+        },
+        Notation::Inequality,
+    ))
+}
+
+/// Read only the LaTeX control words that are tokens of this contract's grammar.
+///
+/// The general answer lexer already treats `\left` and `\right` as structural
+/// tokens instead of rewriting arbitrary substrings. Inequality unions have a
+/// separate parser because infinity and union are not finite expression nodes,
+/// so their structural controls are handled with the same exact-token rule here.
+fn notation_source(text: &str) -> String {
+    const CONTROLS: [(&str, &str); 9] = [
+        (r"\infty", "∞"),
+        (r"\right", ""),
+        (r"\left", ""),
+        (r"\cup", "∪"),
+        (r"\lor", " or "),
+        (r"\leq", "<="),
+        (r"\geq", ">="),
+        (r"\le", "<="),
+        (r"\ge", ">="),
+    ];
+    let mut rest = text;
+    let mut out = String::with_capacity(text.len());
+    while !rest.is_empty() {
+        if let Some((token, replacement)) = CONTROLS.iter().find(|(token, _)| {
+            rest.strip_prefix(token).is_some_and(|after| {
+                after
+                    .chars()
+                    .next()
+                    .is_none_or(|next| !next.is_ascii_alphabetic())
+            })
+        }) {
+            out.push_str(replacement);
+            rest = &rest[token.len()..];
+            continue;
+        }
+        let Some(next) = rest.chars().next() else {
+            break;
+        };
+        out.push(next);
+        rest = &rest[next.len_utf8()..];
+    }
+    out
 }
 
 fn interval_notation(text: &str) -> Result<Canon, Undecidable> {
@@ -67,7 +123,11 @@ fn interval_notation(text: &str) -> Result<Canon, Undecidable> {
     }
     let mut ranges = Vec::with_capacity(branches.len());
     for branch in branches {
-        ranges.push(interval(branch)?);
+        let range = interval(branch)?;
+        if !nonempty(&range) {
+            return Err(refused());
+        }
+        ranges.push(range);
     }
     Ok(Canon::List(canonical_ranges(merge(ranges))))
 }

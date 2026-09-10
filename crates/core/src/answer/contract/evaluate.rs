@@ -63,6 +63,18 @@ fn structured_contract(
             Ok(value) => decided(super::union::equivalent(expected, &value)),
             Err(reason) => Outcome::Undecidable(reason),
         },
+        AnswerContract::RequiredInequalityNotation => {
+            match (
+                super::union::read_with_notation(text),
+                super::union::read_with_notation(learner),
+            ) {
+                (Ok((_, expected_notation)), Ok((value, learner_notation))) => decided(
+                    expected_notation == learner_notation
+                        && super::union::equivalent(expected, &value),
+                ),
+                (Err(reason), _) | (_, Err(reason)) => Outcome::Undecidable(reason),
+            }
+        }
         AnswerContract::ReducedRatio => parsed_or_recognized(
             super::notation::reduced_ratio(learner),
             expected,

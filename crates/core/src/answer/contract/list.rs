@@ -18,6 +18,7 @@ pub(super) fn validate(ordered: bool, member: &AnswerContract) -> Result<(), Und
             AnswerContract::Approx { .. }
                 | AnswerContract::Tolerance { .. }
                 | AnswerContract::RequiredForm { .. }
+                | AnswerContract::RequiredInequalityNotation
         )
     {
         return Err(Undecidable::new(

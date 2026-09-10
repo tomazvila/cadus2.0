@@ -343,9 +343,10 @@ pub fn answer_for_contract(
         Some(contract @ AnswerContract::ReducedRatio) => {
             reduced_ratio_answer(ast, bindings, contract)
         }
-        Some(contract @ AnswerContract::InequalityUnion) => {
-            inequalities::union_answer(ast, bindings, contract)
-        }
+        Some(
+            contract @ (AnswerContract::InequalityUnion
+            | AnswerContract::RequiredInequalityNotation),
+        ) => inequalities::union_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::QuotientRemainder { .. }) => {
             quotient_remainder_answer(ast, bindings, contract)
         }

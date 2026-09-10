@@ -10,7 +10,10 @@ pub(super) fn union_answer(
     bindings: &Bindings,
     contract: &AnswerContract,
 ) -> Result<Answer, EvalError> {
-    debug_assert_eq!(contract, &AnswerContract::InequalityUnion);
+    debug_assert!(matches!(
+        contract,
+        AnswerContract::InequalityUnion | AnswerContract::RequiredInequalityNotation
+    ));
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
     };

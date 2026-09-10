@@ -49,6 +49,8 @@ pub enum AnswerContract {
     },
     /// An exact union of rational intervals over one named unknown.
     InequalityUnion,
+    /// An exact inequality union written in the same notation as the authored answer.
+    RequiredInequalityNotation,
     /// A ratio of two positive integers written in lowest terms as `a:b`.
     ReducedRatio,
     /// A strictly ascending list of exact numbers joined by `<`.
@@ -100,6 +102,7 @@ enum ContractDoc {
         member: Box<AnswerContract>,
     },
     InequalityUnion {},
+    RequiredInequalityNotation {},
     ReducedRatio {},
     AscendingChain {},
     PolynomialRelation {},
@@ -139,6 +142,7 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::RequiredForm { form } => Self::RequiredForm { form },
             ContractDoc::List { ordered, member } => Self::List { ordered, member },
             ContractDoc::InequalityUnion {} => Self::InequalityUnion,
+            ContractDoc::RequiredInequalityNotation {} => Self::RequiredInequalityNotation,
             ContractDoc::ReducedRatio {} => Self::ReducedRatio,
             ContractDoc::AscendingChain {} => Self::AscendingChain,
             ContractDoc::PolynomialRelation {} => Self::PolynomialRelation,
@@ -192,7 +196,7 @@ impl AnswerContract {
             }),
             Self::Multipart { parts } => multipart_values(parts, expected),
             Self::List { ordered, member } => list::expected(*ordered, member, expected),
-            Self::InequalityUnion => union::read(expected),
+            Self::InequalityUnion | Self::RequiredInequalityNotation => union::read(expected),
             Self::ReducedRatio => notation::reduced_ratio(expected),
             Self::AscendingChain => notation::ascending_chain(expected),
             Self::PolynomialRelation => relation::read(expected),

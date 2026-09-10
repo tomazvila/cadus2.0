@@ -75,6 +75,33 @@ fn unions_convert_both_ways_preserving_every_endpoint_combination() {
 }
 
 #[test]
+fn conversion_writer_supports_required_output_notation() {
+    for (source, expected) in [
+        ("x < -23", "(-∞, -23)"),
+        ("(-∞, -29)", "x < -29"),
+        ("x < -19 or x > 13", "(-∞, -19) ∪ (13, ∞)"),
+        ("(-∞, -17] ∪ (11, ∞)", "x <= -17 or x > 11"),
+        (r"x\le -19", "(-∞, -19]"),
+        (
+            r"\left(-\infty,-2\right)\cup\left[3,\infty\right)",
+            "x < -2 or x >= 3",
+        ),
+    ] {
+        let contract = AnswerContract::RequiredInequalityNotation;
+        let actual = output("convertnotation(s)", source, contract.clone()).unwrap();
+        assert_eq!(actual, expected);
+        assert!(matches!(
+            check_contract(expected, &actual, contract.clone()),
+            Outcome::Decided(verdict) if verdict.correct
+        ));
+        assert!(matches!(
+            check_contract(expected, source, contract),
+            Outcome::Decided(verdict) if !verdict.correct
+        ));
+    }
+}
+
+#[test]
 fn malformed_shapes_domains_and_contracts_are_refused() {
     for source in [
         "",

@@ -95,6 +95,11 @@ fn malformed_lists_and_unsupported_member_policies_are_refused() {
     );
     assert!(list(true, AnswerContract::None).validate().is_err());
     assert!(
+        list(false, AnswerContract::RequiredInequalityNotation)
+            .validate()
+            .is_err()
+    );
+    assert!(
         list(true, list(true, AnswerContract::Exact))
             .validate()
             .is_err()
@@ -127,6 +132,60 @@ fn inequality_unions_normalize_overlap_and_preserve_holes() {
 }
 
 #[test]
+fn required_inequality_notation_matches_the_authored_output_form() {
+    let policy = AnswerContract::RequiredInequalityNotation;
+    assert_eq!(
+        serde_json::to_string(&policy).unwrap(),
+        r#"{"kind":"required_inequality_notation"}"#
+    );
+    assert!(
+        serde_json::from_str::<AnswerContract>(
+            r#"{"kind":"required_inequality_notation","form":"interval"}"#
+        )
+        .is_err()
+    );
+    for (expected, learner) in [
+        ("(-∞, -2) ∪ [3, ∞)", "[3, ∞) ∪ (-∞, -2)"),
+        ("x < -2 or x >= 3", "3 <= x or -2 > x"),
+        ("(-∞, 4]", "(-∞, 4]"),
+        ("x > 4", "4 < x"),
+        ("(-∞, 4]", r"\left(-\infty,4\right]"),
+        (
+            "(-∞, -2) ∪ [3, ∞)",
+            r"\left(-\infty,-2\right)\cup\left[3,\infty\right)",
+        ),
+        ("x <= 4", r"x\le 4"),
+        ("x < -2 or x >= 3", r"x<-2\lor x\ge3"),
+    ] {
+        decide(&policy, expected, learner, true);
+    }
+    for (expected, learner) in [
+        ("(-∞, -23)", "x < -23"),
+        ("x < -29", "(-∞, -29)"),
+        ("(-∞, -19) ∪ (13, ∞)", "x < -19 or x > 13"),
+        ("x <= -17 or x > 11", "(-∞, -17] ∪ (11, ∞)"),
+        ("(-∞, 4]", r"x\le 4"),
+        ("x <= 4", r"\left(-\infty,4\right]"),
+        ("(-∞, -2) ∪ [3, ∞)", "(-∞, -3) ∪ [3, ∞)"),
+        ("(-∞, -2) ∪ [3, ∞)", "(-∞, -2] ∪ [3, ∞)"),
+        ("(-∞, -2) ∪ [3, ∞)", "(-∞, -2)"),
+        ("x < -2 or x >= 3", "y < -2 or y >= 3"),
+    ] {
+        decide(&policy, expected, learner, false);
+    }
+    assert!(policy.validate_expected("x < 2").is_ok());
+    assert!(policy.validate_expected("(-∞, 2)").is_ok());
+    assert!(matches!(
+        check_contract("(-∞, 2)", "(-∞, 2", policy.clone()),
+        Outcome::Undecidable(_)
+    ));
+    assert!(matches!(
+        check_contract("[1, 4]", "[1, 4] ∪ [3, 2]", policy),
+        Outcome::Undecidable(_)
+    ));
+}
+
+#[test]
 fn inequality_unions_refuse_nonnumeric_and_mixed_unknown_boundaries() {
     let policy = AnswerContract::InequalityUnion;
     for text in [
@@ -136,6 +195,10 @@ fn inequality_unions_refuse_nonnumeric_and_mixed_unknown_boundaries() {
         "x=2 or x=3",
         "x < y",
         "x < 1/0",
+        r"\leftover(-∞, 2)",
+        r"x\less 2",
+        "[3, 2]",
+        "(3, 3)",
     ] {
         assert!(policy.validate_expected(text).is_err(), "{text}");
     }
@@ -146,6 +209,7 @@ fn inequality_unions_refuse_nonnumeric_and_mixed_unknown_boundaries() {
     );
     for policy in [
         policy,
+        AnswerContract::RequiredInequalityNotation,
         list(true, AnswerContract::Exact),
         AnswerContract::RequiredForm {
             form: NumericForm::ReducedFraction,
