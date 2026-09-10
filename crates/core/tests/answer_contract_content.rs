@@ -229,8 +229,43 @@ fn the_sixty_multi_step_topics_have_explicit_usable_exact_items() {
         }
     }
     assert_eq!(topics, 60);
-    assert_eq!(items, 527);
+    // Four contextual fraction items now require reduced-fraction notation.
+    assert_eq!(items, 523);
     assert!(lint_curriculum(&curriculum_root()).is_empty());
+}
+
+#[test]
+fn contextual_fraction_items_require_the_explicit_lowest_terms_form() {
+    let (raw, findings) = load_raw_curriculum(&curriculum_root()).unwrap();
+    assert!(findings.is_empty(), "{findings:?}");
+    let topic = raw
+        .topics()
+        .find(|entry| entry.topic.id.as_str() == "fraction-word-problems")
+        .unwrap();
+    let kp = topic
+        .topic
+        .knowledge_points
+        .iter()
+        .find(|kp| kp.id.as_str() == "kp1")
+        .unwrap();
+    let policy = AnswerContract::RequiredForm {
+        form: cadus_core::answer::NumericForm::ReducedFraction,
+    };
+    let unreduced = ["34/24", "2/12", "26/24", "26/48"];
+    assert_eq!(kp.exemplars.len(), unreduced.len());
+    for (item, wrong_form) in kp.exemplars.iter().zip(unreduced) {
+        assert_eq!(item.answer_contract, Some(policy.clone()));
+        assert!(item.problem.contains("lowest terms"));
+        assert_contract_accepts_own_answer(&item.answer, policy.clone());
+        assert!(matches!(
+            check_contract(&item.answer, wrong_form, AnswerContract::Exact),
+            Outcome::Decided(verdict) if verdict.correct
+        ));
+        assert!(matches!(
+            check_contract(&item.answer, wrong_form, policy.clone()),
+            Outcome::Decided(verdict) if !verdict.correct
+        ));
+    }
 }
 
 #[test]
