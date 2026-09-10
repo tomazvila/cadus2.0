@@ -44,7 +44,7 @@ fn historical_classification_and_all_987_live_statements_have_a_closed_boundary(
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
-        "3c72df37a9972a130c797cecb943dea6ae2606ca763d2294646d742c4a3ac087"
+        "f489b8ccb0d8d1819336b712ed8a2efa65aac899493d3847976f721dfae01163"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -69,14 +69,15 @@ fn historical_classification_and_all_987_live_statements_have_a_closed_boundary(
             ("ascending_chain".to_owned(), 3),
             ("coordinates".to_owned(), 180),
             ("exact".to_owned(), 524),
-            ("inequality_union".to_owned(), 35),
+            ("inequality_union".to_owned(), 27),
             ("label".to_owned(), 86),
             ("list".to_owned(), 13),
             ("multipart".to_owned(), 61),
             ("polynomial_relation".to_owned(), 8),
             ("reduced_ratio".to_owned(), 9),
-            ("required_form".to_owned(), 4),
             ("relation_setup".to_owned(), 6),
+            ("required_form".to_owned(), 4),
+            ("required_inequality_notation".to_owned(), 8),
             ("uncontracted".to_owned(), 48),
             ("unit".to_owned(), 8),
         ])

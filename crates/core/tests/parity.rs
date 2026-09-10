@@ -20,7 +20,7 @@
 //! JSON is encoded independently in Python. Cohort evidence lives under
 //! `docs/reports/answer-contract-*.md`. Later reviewed curriculum corrections and
 //! their exact source bindings live under
-//! `docs/content-foundations/curriculum-reviews/repairs-01/`.
+//! `docs/content-foundations/curriculum-reviews/`.
 
 mod common;
 
@@ -30,10 +30,10 @@ use cadus_core::curriculum::{
 use common::dump::tree;
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
-const TREE_HASH: &str = "b62cc60ac7155582a27d42d715ae3753a288285bc84290dcffa8bee67860c15f";
+const TREE_HASH: &str = "c36abbb213e59791ecc9684122d793c016c2f017ba79172441d89540c2937d52";
 
 /// The length of the dump in bytes, without the trailing newline.
-const DUMP_LEN: usize = 4_640_788;
+const DUMP_LEN: usize = 4_641_745;
 
 /// The `counts` object of the dump, as the oracle writes it.
 const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompassing_edges\":3200,\"exemplars\":8352,\"knowledge_points\":3138,\"prereq_edges\":3281,\"topics\":1090,\"units\":88}";

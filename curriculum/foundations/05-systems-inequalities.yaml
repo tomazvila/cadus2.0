@@ -327,10 +327,10 @@ topics:
         name: "Solve, then check a value"
         key_prerequisites: [one-step-inequalities]
         exemplars:
-          - problem: "Solve $3x+2\\le 14$, then test $x=4$. Is it included?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Isolating x gives $x \\le  4$. Substitute the candidate in the original inequality: $14 \\le  14$ is true. Every comparison must hold for an intersection."
+          - problem: 'Solve $3x+2<14$ and $3x+2\le14$ separately, then test $x=4$ in each solution. Report strict and inclusive as yes or no.'
+            answer: "strict = no; inclusive = yes"
+            answer_contract: {"kind":"multipart","parts":[{"name":"strict","contract":{"kind":"label","options":[["yes"],["no"]]}},{"name":"inclusive","contract":{"kind":"label","options":[["yes"],["no"]]}}]}
+            solution_sketch: 'Both inequalities have threshold 4. The strict solution x<4 excludes the boundary, while the inclusive solution x<=4 includes it.'
           - problem: "Solve $x/2-3>1$, then test $x=8$. Is it included?"
             answer: "no"
             answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
@@ -753,19 +753,19 @@ topics:
         exemplars:
           - problem: 'Write $x > 2$ in interval notation.'
             answer: "(2, ∞)"
-            answer_contract: {"kind":"inequality_union"}
+            answer_contract: {"kind":"required_inequality_notation"}
             solution_sketch: 'A ray to the right; $\infty$ is not a number, so it always takes a round bracket.'
           - problem: 'Write $x \le -1$ in interval notation.'
             answer: "(-∞, -1]"
-            answer_contract: {"kind":"inequality_union"}
+            answer_contract: {"kind":"required_inequality_notation"}
             solution_sketch: 'Every value at or below $-1$; the round bracket at $-\infty$ never closes, and the square bracket at $-1$ includes it.'
           - problem: 'Write the interval $[4, \infty)$ as an inequality.'
             answer: "x >= 4"
-            answer_contract: {"kind":"inequality_union"}
+            answer_contract: {"kind":"required_inequality_notation"}
             solution_sketch: 'A square bracket at $4$ becomes $\ge$; the ray extends right without bound.'
           - problem: 'Write $(-\infty, 3]$ as an inequality.'
             answer: "x <= 3"
-            answer_contract: {"kind":"inequality_union"}
+            answer_contract: {"kind":"required_inequality_notation"}
             solution_sketch: 'The ray extends left and includes $3$.'
         constraints: "single rays both directions; infinity always gets a round bracket; convert both ways"
       - id: kp3
@@ -774,19 +774,19 @@ topics:
         exemplars:
           - problem: 'Write the solution of $x < -2$ or $x > 4$ in interval notation.'
             answer: "(-∞, -2) ∪ (4, ∞)"
-            answer_contract: {"kind":"inequality_union"}
+            answer_contract: {"kind":"required_inequality_notation"}
             solution_sketch: 'Each ray becomes an interval; the "or" is written with the union symbol $\cup$.'
           - problem: 'Solve $2x + 1 \le -3$ or $x - 3 > 0$ and give the answer in interval notation.'
             answer: "(-∞, -2] ∪ (3, ∞)"
-            answer_contract: {"kind":"inequality_union"}
+            answer_contract: {"kind":"required_inequality_notation"}
             solution_sketch: '$2x \le -4$ gives $x \le -2$; the second piece gives $x > 3$.'
           - problem: 'Write $(-\infty, 1) \cup [5, \infty)$ as inequalities joined by "or".'
             answer: "x < 1 or x >= 5"
-            answer_contract: {"kind":"inequality_union"}
+            answer_contract: {"kind":"required_inequality_notation"}
             solution_sketch: 'The interval $(-\infty, 1)$ is $x < 1$; $[5, \infty)$ is $x \ge 5$.'
           - problem: 'Solve $x + 1 \le -4$ or $2x - 3 > 5$ and give the answer in interval notation.'
             answer: "(-∞, -5] ∪ (4, ∞)"
-            answer_contract: {"kind":"inequality_union"}
+            answer_contract: {"kind":"required_inequality_notation"}
             solution_sketch: '$x \le -5$ or $x > 4$, so $(-\infty,-5] \cup (4,\infty)$.'
         constraints: "two-piece unions from 'or' inequalities; at most two solving steps per piece; convert both ways"
     diagnostic_exemplar:
