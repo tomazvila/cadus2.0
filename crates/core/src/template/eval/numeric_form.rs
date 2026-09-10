@@ -18,14 +18,20 @@ pub(super) fn decimal_answer(
     let Canon::Rational(rational) = &value.canon else {
         return contracted(value.text, contract);
     };
-    let scale = decimal_scale(rational.denom())?;
-    let multiplier = BigInt::from(10_u8).pow(scale) / rational.denom();
-    let mantissa = rational.numer() * multiplier;
+    let (mantissa, scale) = terminating_parts(rational)?;
     let rendered = contracted(decimal_text(&mantissa, scale), contract)?;
     if rendered.canon != value.canon {
         return Err(refuse("decimal rendering changed the exact value"));
     }
     Ok(rendered)
+}
+
+pub(super) fn terminating_parts(
+    rational: &num_rational::BigRational,
+) -> Result<(BigInt, u32), EvalError> {
+    let scale = decimal_scale(rational.denom())?;
+    let multiplier = BigInt::from(10_u8).pow(scale) / rational.denom();
+    Ok((rational.numer() * multiplier, scale))
 }
 
 fn decimal_scale(denominator: &BigInt) -> Result<u32, EvalError> {

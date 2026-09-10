@@ -20,6 +20,7 @@ pub(super) fn validate(ordered: bool, member: &AnswerContract) -> Result<(), Und
                 | AnswerContract::RequiredForm { .. }
                 | AnswerContract::RequiredInequalityNotation
                 | AnswerContract::RequiredSinglePower
+                | AnswerContract::RequiredNormalizedScientificNotation
         )
     {
         return Err(Undecidable::new(

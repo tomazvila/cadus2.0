@@ -192,7 +192,9 @@ fn template_schema() -> Value {
     interval/inequality conversion, use convertnotation(source) with a \
     required_inequality_notation contract; the computed expected answer fixes the required \
     output notation for that instance. For one unevaluated numeric power, use \
-    powerform(1,[base,exponent]) with a required_single_power contract. Use \
+    powerform(1,[base,exponent]) with a required_single_power contract. A \
+    required_normalized_scientific_notation contract writes an exact terminating numeric \
+    answer as a standard coefficient times 10 to an integer power. Use \
     signcase(selector, [negative, zero, positive]) for a bounded sign split.",
             },
             "solution_sketch": {

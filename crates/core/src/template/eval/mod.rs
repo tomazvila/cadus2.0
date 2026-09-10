@@ -42,6 +42,7 @@ mod inequalities;
 mod inverse;
 mod notation;
 mod numeric_form;
+mod scientific;
 mod structured;
 mod symbol;
 mod triangle_law;
@@ -342,6 +343,9 @@ pub fn answer_for_contract(
         Some(contract @ AnswerContract::List { .. }) => list_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::ReducedRatio) => {
             reduced_ratio_answer(ast, bindings, contract)
+        }
+        Some(contract @ AnswerContract::RequiredNormalizedScientificNotation) => {
+            scientific::answer(ast, bindings, contract)
         }
         Some(
             contract @ (AnswerContract::InequalityUnion

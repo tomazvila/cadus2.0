@@ -1,12 +1,13 @@
 //! Explicit form, multiplicity, interval endpoints, and malformed-input checks.
 #![allow(clippy::unwrap_used)]
 
-use cadus_core::answer::{AnswerContract, NumericForm, Outcome, check_contract};
+use cadus_core::answer::{AnswerContract, AnswerPart, NumericForm, Outcome, check_contract};
 
 fn decide(policy: &AnswerContract, expected: &str, learner: &str, correct: bool) {
+    let outcome = check_contract(expected, learner, policy.clone());
     assert!(
-        matches!(check_contract(expected, learner, policy.clone()), Outcome::Decided(verdict) if verdict.correct == correct),
-        "{expected} vs {learner}"
+        matches!(&outcome, Outcome::Decided(verdict) if verdict.correct == correct),
+        "{expected} vs {learner}: {outcome:?}"
     );
 }
 
@@ -158,6 +159,11 @@ fn malformed_lists_and_unsupported_member_policies_are_refused() {
             .is_err()
     );
     assert!(
+        list(false, AnswerContract::RequiredNormalizedScientificNotation)
+            .validate()
+            .is_err()
+    );
+    assert!(
         list(true, list(true, AnswerContract::Exact))
             .validate()
             .is_err()
@@ -272,6 +278,7 @@ fn inequality_unions_refuse_nonnumeric_and_mixed_unknown_boundaries() {
         AnswerContract::RequiredForm {
             form: NumericForm::ReducedFraction,
         },
+        AnswerContract::RequiredNormalizedScientificNotation,
     ] {
         assert_eq!(
             serde_json::from_str::<AnswerContract>(&serde_json::to_string(&policy).unwrap())
@@ -279,4 +286,117 @@ fn inequality_unions_refuse_nonnumeric_and_mixed_unknown_boundaries() {
             policy
         );
     }
+}
+
+#[test]
+fn required_normalized_scientific_notation_preserves_standard_form() {
+    let policy = AnswerContract::RequiredNormalizedScientificNotation;
+    assert_eq!(
+        serde_json::to_string(&policy).unwrap(),
+        r#"{"kind":"required_normalized_scientific_notation"}"#
+    );
+    assert!(
+        serde_json::from_str::<AnswerContract>(
+            r#"{"kind":"required_normalized_scientific_notation","places":2}"#
+        )
+        .is_err()
+    );
+    for (expected, learner) in [
+        ("6 x 10^7", "6 x 10^7"),
+        ("6 x 10^7", "6 * 10^7"),
+        ("6 x 10^7", r"6 \times 10^{7}"),
+        ("6 x 10^7", r"6 \cdot 10^{7}"),
+        ("6 x 10^7", "6 \u{00d7} 10^7"),
+        ("6 x 10^7", "6*10**7"),
+        ("6 x 10^7", "(6) * (10^7)"),
+        ("6 x 10^7", "+6 * 10^+7"),
+        ("6 x 10^7", "6 * 10^(+7)"),
+        ("6 x 10^-3", r"6 \times 10^{-3}"),
+        ("-2.5 x 10^-4", "-2.50 * 10^(-4)"),
+        ("6 x 10^0", "6 * 10^0"),
+    ] {
+        decide(&policy, expected, learner, true);
+    }
+    for (expected, learner) in [
+        ("6 x 10^7", "7 x 10^7"),
+        ("6 x 10^7", "-6 x 10^7"),
+        ("6 x 10^7", "60000000"),
+        ("6 x 10^7", "60 x 10^6"),
+        ("6 x 10^7", "0.6 x 10^8"),
+        ("6 x 10^7", "10 x 10^6"),
+        ("6 x 10^7", "0 x 10^7"),
+        ("6 x 10^7", "(2 x 10^3)*(3 x 10^4)"),
+        ("6 x 10^7", "(3+3)*10^7"),
+        ("6 x 10^7", "2*3*10^7"),
+        ("6 x 10^6", "6 x 100^3"),
+        ("6 x 10^1", "6 x 10"),
+        ("6 x 10^0", "6"),
+        ("1.5 x 10^4", "3/2 x 10^4"),
+        ("6 x 10^7", "10^7 * 6"),
+    ] {
+        decide(&policy, expected, learner, false);
+    }
+    for invalid in ["60000000", "60 x 10^6", "0 x 10^4", "3/2 x 10^4"] {
+        assert!(policy.validate_expected(invalid).is_err(), "{invalid}");
+    }
+    assert!(matches!(
+        check_contract("6 x 10^7", "6 x 10^(", policy.clone()),
+        Outcome::Undecidable(_)
+    ));
+    assert!(matches!(
+        check_contract("6 x 10^7", "6 x 10^(14/2)", policy.clone()),
+        Outcome::Undecidable(_)
+    ));
+    assert!(matches!(
+        check_contract("6 x 10^7", "6 x 10^(3+4)", policy.clone()),
+        Outcome::Undecidable(_)
+    ));
+    assert!(
+        policy
+            .validate_expected(&format!("6 x 10^{}", "9".repeat(100)))
+            .is_err()
+    );
+    assert!(
+        policy
+            .validate_expected(&format!("1.{} x 10^2", "0".repeat(1_001)))
+            .is_err()
+    );
+    let ordered = list(true, policy.clone());
+    decide(
+        &ordered,
+        "6 x 10^7 and 2.5 x 10^-4",
+        "+6 * 10^+7 and 2.5 * 10^(-4)",
+        true,
+    );
+    decide(
+        &ordered,
+        "6 x 10^7 and 2.5 x 10^-4",
+        "60000000 and 2.5 x 10^-4",
+        false,
+    );
+    let multipart = AnswerContract::Multipart {
+        parts: vec![
+            AnswerPart {
+                name: "large".into(),
+                contract: policy.clone(),
+            },
+            AnswerPart {
+                name: "small".into(),
+                contract: policy.clone(),
+            },
+        ],
+    };
+    decide(
+        &multipart,
+        "large = 6 x 10^7; small = 2.5 x 10^-4",
+        "small = 2.5 * 10^-4; large = +6 * 10^(+7)",
+        true,
+    );
+    decide(
+        &multipart,
+        "large = 6 x 10^7; small = 2.5 x 10^-4",
+        "large = 60000000; small = 2.5 x 10^-4",
+        false,
+    );
+    decide(&AnswerContract::Exact, "6 x 10^7", "60000000", true);
 }

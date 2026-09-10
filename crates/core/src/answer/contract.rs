@@ -6,6 +6,7 @@ mod list;
 mod notation;
 mod power;
 mod relation;
+mod scientific;
 mod setup;
 mod structured;
 mod union;
@@ -54,6 +55,8 @@ pub enum AnswerContract {
     RequiredInequalityNotation,
     /// An exact numeric value written as one power of the authored literal base.
     RequiredSinglePower,
+    /// An exact value written in normalized scientific notation.
+    RequiredNormalizedScientificNotation,
     /// A ratio of two positive integers written in lowest terms as `a:b`.
     ReducedRatio,
     /// A strictly ascending list of exact numbers joined by `<`.
@@ -107,6 +110,7 @@ enum ContractDoc {
     InequalityUnion {},
     RequiredInequalityNotation {},
     RequiredSinglePower {},
+    RequiredNormalizedScientificNotation {},
     ReducedRatio {},
     AscendingChain {},
     PolynomialRelation {},
@@ -146,8 +150,11 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::RequiredForm { form } => Self::RequiredForm { form },
             ContractDoc::List { ordered, member } => Self::List { ordered, member },
             ContractDoc::InequalityUnion {} => Self::InequalityUnion,
-            ContractDoc::RequiredInequalityNotation {} => Self::RequiredInequalityNotation,
-            ContractDoc::RequiredSinglePower {} => Self::RequiredSinglePower,
+            document @ (ContractDoc::RequiredInequalityNotation {}
+            | ContractDoc::RequiredSinglePower {}
+            | ContractDoc::RequiredNormalizedScientificNotation {}) => {
+                required_expression_contract(document)
+            }
             ContractDoc::ReducedRatio {} => Self::ReducedRatio,
             ContractDoc::AscendingChain {} => Self::AscendingChain,
             ContractDoc::PolynomialRelation {} => Self::PolynomialRelation,
@@ -158,6 +165,17 @@ impl TryFrom<ContractDoc> for AnswerContract {
         };
         contract.validate()?;
         Ok(contract)
+    }
+}
+
+fn required_expression_contract(document: ContractDoc) -> AnswerContract {
+    match document {
+        ContractDoc::RequiredInequalityNotation {} => AnswerContract::RequiredInequalityNotation,
+        ContractDoc::RequiredSinglePower {} => AnswerContract::RequiredSinglePower,
+        ContractDoc::RequiredNormalizedScientificNotation {} => {
+            AnswerContract::RequiredNormalizedScientificNotation
+        }
+        _ => unreachable!("caller supplies a required expression contract"),
     }
 }
 
@@ -203,6 +221,7 @@ impl AnswerContract {
             Self::List { ordered, member } => list::expected(*ordered, member, expected),
             Self::InequalityUnion | Self::RequiredInequalityNotation => union::read(expected),
             Self::RequiredSinglePower => power::expected(expected),
+            Self::RequiredNormalizedScientificNotation => scientific::expected(expected),
             Self::ReducedRatio => notation::reduced_ratio(expected),
             Self::AscendingChain => notation::ascending_chain(expected),
             Self::PolynomialRelation => relation::read(expected),

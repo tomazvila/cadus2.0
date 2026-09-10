@@ -75,10 +75,10 @@ fn structured_contract(
                 (Err(reason), _) | (_, Err(reason)) => Outcome::Undecidable(reason),
             }
         }
-        AnswerContract::RequiredSinglePower => match super::power::equivalent(text, learner) {
-            Ok(correct) => decided(correct),
-            Err(reason) => Outcome::Undecidable(reason),
-        },
+        contract @ (AnswerContract::RequiredSinglePower
+        | AnswerContract::RequiredNormalizedScientificNotation) => {
+            required_expression_form(contract, text, learner)
+        }
         AnswerContract::ReducedRatio => parsed_or_recognized(
             super::notation::reduced_ratio(learner),
             expected,
@@ -94,6 +94,20 @@ fn structured_contract(
         _ => return None,
     };
     Some(outcome)
+}
+
+fn required_expression_form(contract: &AnswerContract, expected: &str, learner: &str) -> Outcome {
+    let result = match contract {
+        AnswerContract::RequiredSinglePower => super::power::equivalent(expected, learner),
+        AnswerContract::RequiredNormalizedScientificNotation => {
+            super::scientific::equivalent(expected, learner)
+        }
+        _ => unreachable!("caller supplies a required expression contract"),
+    };
+    match result {
+        Ok(correct) => decided(correct),
+        Err(reason) => Outcome::Undecidable(reason),
+    }
 }
 
 fn parsed(value: Result<Canon, Undecidable>, expected: &Canon) -> Outcome {
