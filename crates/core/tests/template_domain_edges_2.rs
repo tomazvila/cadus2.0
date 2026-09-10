@@ -153,6 +153,7 @@ fn the_diagnosis_filter_keeps_a_body_without_a_list_and_a_tag_it_cannot_read() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &exemplars,
+        finite: None,
     };
     let refusal = gate_diagnosis_body("not json", &spec, &vocabulary).expect_err("not JSON");
     assert_eq!(refusal.code, "diagnosis-body");
@@ -171,6 +172,7 @@ fn the_diagnosis_gate_skips_a_prose_exemplar_and_accepts_two_distinct_distractor
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &exemplars,
+        finite: None,
     };
     let distractor = |answer: &str| Distractor {
         answer: answer.to_string(),

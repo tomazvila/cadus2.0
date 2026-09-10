@@ -345,13 +345,14 @@ impl<'a> Checker<'a> {
     }
 
     fn check_knowledge_point(&mut self, value: &Value) {
-        const FIELDS: [&str; 6] = [
+        const FIELDS: [&str; 7] = [
             "visuals",
             "id",
             "name",
             "key_prerequisites",
             "exemplars",
             "constraints",
+            "finite_objective_domain",
         ];
         let Some(map) = self.struct_map(value, "KnowledgePoint") else {
             return;
@@ -376,6 +377,17 @@ impl<'a> Checker<'a> {
                 checker.check_string(value);
             }
         });
+        self.field(map, "finite_objective_domain", false, |checker, value| {
+            match crate::curriculum::FiniteObjectiveDomain::deserialize(value.clone()) {
+                Ok(_) => {}
+                Err(reason) => checker.report(&reason.to_string()),
+            }
+        });
+        if let Ok(point) = crate::curriculum::KnowledgePoint::deserialize(value.clone())
+            && let Err(reason) = point.validate_finite_objective_domain()
+        {
+            self.report(&reason);
+        }
         self.extras(map, &FIELDS);
     }
 
@@ -444,3 +456,6 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+mod finite_tests;

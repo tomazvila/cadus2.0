@@ -28,6 +28,7 @@ fn kp(id: &str, count: usize) -> KnowledgePoint {
             .map(|at| common::solved_exemplar(&format!("{id} item {at}"), &at.to_string()))
             .collect(),
         constraints: None,
+        finite_objective_domain: None,
         visuals: Vec::new(),
     }
 }

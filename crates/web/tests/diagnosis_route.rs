@@ -104,6 +104,7 @@ async fn an_authored_distractor_document_is_ready_and_writes_no_job_row() {
         let gate_spec = GateSpec {
             answer_kind: AnswerKind::Numeric,
             exemplars: &exemplars,
+            finite: None,
         };
         let vocabulary: Vec<String> = VOCABULARY.iter().map(|tag| (*tag).to_string()).collect();
         let (doc, dropped) = gate_diagnosis_body(&raw, &gate_spec, &vocabulary)

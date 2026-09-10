@@ -108,6 +108,7 @@ pub fn knowledge_point(id: &str, key_prerequisites: &[&str]) -> KnowledgePoint {
             .collect(),
         exemplars: Vec::new(),
         constraints: None,
+        finite_objective_domain: None,
         visuals: Vec::new(),
     }
 }

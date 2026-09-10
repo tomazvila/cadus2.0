@@ -367,6 +367,7 @@ fn a_template_tag_outside_the_vocabulary_is_dropped_and_the_stored_body_re_gates
     let gate_spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &spec.exemplars,
+        finite: None,
     };
     gate_body(&body, &gate_spec).expect("the stored body passes the gate a second time");
 }

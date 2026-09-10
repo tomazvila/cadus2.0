@@ -89,6 +89,7 @@ pub fn reject(body: &str, kind: AnswerKind, exemplar_answers: &[&str]) -> Reject
     let spec = GateSpec {
         answer_kind: kind,
         exemplars: &pool,
+        finite: None,
     };
     gate(&doc_of(body), &spec).expect_err("the gate refuses this document")
 }
@@ -108,6 +109,7 @@ pub fn accept(
     let spec = GateSpec {
         answer_kind: kind,
         exemplars: &pool,
+        finite: None,
     };
     match gate(&doc_of(body), &spec) {
         Ok(verified) => verified,
@@ -354,6 +356,7 @@ pub fn refuse_instance(instance: &cadus_core::template::Instance) -> Rejection {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     check_instance(&doc, &spec, instance).expect_err("the instance is refused")
 }

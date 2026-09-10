@@ -232,6 +232,7 @@ fn template_instances(
     let spec = GateSpec {
         answer_kind: answer_kind.0,
         exemplars: &kp.exemplars,
+        finite: None,
     };
     match gate(&doc, &spec) {
         Ok(_) => {

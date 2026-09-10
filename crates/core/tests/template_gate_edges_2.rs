@@ -19,6 +19,7 @@ fn read_refusal(body: &str) -> Rejection {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     gate_body(body, &spec).expect_err("the body is refused")
 }

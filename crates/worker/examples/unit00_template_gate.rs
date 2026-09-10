@@ -72,6 +72,7 @@ fn inspect(curriculum: &Curriculum, key: &str, body: &str) -> Result<Value, Stri
     let gate = GateSpec {
         answer_kind: spec.answer_kind,
         exemplars: &spec.exemplars,
+        finite: None,
     };
     let mut hashes = BTreeSet::new();
     let mut calculations = BTreeSet::new();

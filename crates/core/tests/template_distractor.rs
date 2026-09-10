@@ -105,6 +105,7 @@ fn refusal(body: &str) -> Rejection {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &exemplars,
+        finite: None,
     };
     gate_diagnosis_body(body, &spec, &vocabulary()).expect_err("the gate refuses this document")
 }
@@ -115,6 +116,7 @@ fn accepted(body: &str) -> (DiagnosisDoc, Vec<String>) {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &exemplars,
+        finite: None,
     };
     gate_diagnosis_body(body, &spec, &vocabulary()).expect("the gate accepts this document")
 }

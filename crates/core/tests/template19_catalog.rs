@@ -69,6 +69,7 @@ fn exact_nineteen_have_exhaustive_material_instances_and_computed_samples() {
         let spec = GateSpec {
             answer_kind: topic.answer_kind,
             exemplars: &kp.exemplars,
+            finite: None,
         };
         let verified = gate(&doc, &spec).unwrap_or_else(|error| panic!("{key}: {error}"));
         let walk = walk_satisfying(&doc.params, &doc.constraints).unwrap();

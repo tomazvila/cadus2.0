@@ -66,6 +66,7 @@ fn check(
     let gate_spec = GateSpec {
         answer_kind: spec.answer_kind,
         exemplars: &spec.exemplars,
+        finite: None,
     };
     let verified = gate(&doc, &gate_spec).map_err(|e| format!("{}: {}", e.code, e.message))?;
     if !verified.exhaustive {

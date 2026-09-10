@@ -158,6 +158,7 @@ fn an_exemplar_source_reads_a_knowledge_point() {
         key_prerequisites: Vec::new(),
         exemplars: exemplar_fixture(),
         constraints: None,
+        finite_objective_domain: None,
         visuals: Vec::new(),
     };
     let source = ExemplarSource::from_knowledge_point(&kp);

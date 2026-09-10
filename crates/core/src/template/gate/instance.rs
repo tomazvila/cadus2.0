@@ -136,6 +136,9 @@ fn check_one_instance(
     instance: &Instance,
 ) -> Result<(), Rejection> {
     let bindings = &instance.bindings;
+    if let Some(finite) = spec.finite.as_ref() {
+        finite.match_practice_instance(instance)?;
+    }
     if !scan(&instance.text).0.is_empty() {
         return Err(Rejection::new(
             "placeholder-left",

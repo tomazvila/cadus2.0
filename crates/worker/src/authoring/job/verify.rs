@@ -151,6 +151,7 @@ pub fn verify(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejecti
     let gate_spec = GateSpec {
         answer_kind: spec.answer_kind,
         exemplars: &spec.exemplars,
+        finite: None,
     };
     let (doc, verified) = gate_body(&body, &gate_spec)?;
     let filled = with_space_size(&doc, &verified);
@@ -288,6 +289,7 @@ pub fn verify_diagnosis(spec: &AuthoringSpec, arguments: &Value) -> Result<Strin
     let gate_spec = GateSpec {
         answer_kind: spec.answer_kind,
         exemplars: &spec.exemplars,
+        finite: None,
     };
     let (doc, dropped) = gate_diagnosis_body(&body, &gate_spec, &authoring_vocabulary())?;
     report_dropped(spec, Kind::Diagnosis, &dropped);

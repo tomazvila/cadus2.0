@@ -7,6 +7,7 @@
 pub mod arena;
 pub mod dump;
 pub mod finding;
+pub mod finite;
 pub mod graph;
 pub mod lint;
 pub mod load;
@@ -18,6 +19,7 @@ pub use arena::{
 pub(crate) use dump::render_json;
 pub use dump::{DUMP_SCHEMA, canonical_dump, curriculum_hash, python_repr_f64, sha256_hex};
 pub use finding::Finding;
+pub use finite::{FiniteCaseRole, FiniteCaseVariant, FiniteObjectiveCase, FiniteObjectiveDomain};
 pub use graph::{Csr, EncCsr, EncEdge};
 pub use lint::lint_curriculum;
 pub use load::{

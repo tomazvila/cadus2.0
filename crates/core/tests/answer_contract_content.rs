@@ -38,6 +38,7 @@ fn a_multi_step_template_uses_its_reviewed_contract() {
     let spec = GateSpec {
         answer_kind: AnswerKind::MultiStep,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).expect("the complete template gate accepts this representation");
     let instance = Compiled::new(&doc)
@@ -78,6 +79,7 @@ fn a_label_template_computes_a_text_choice_under_its_contract() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Expression,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
     let instance = Compiled::new(&doc)
@@ -114,6 +116,7 @@ fn a_multipart_template_computes_named_numeric_and_label_parts() {
     let spec = GateSpec {
         answer_kind: AnswerKind::MultiStep,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
     let instance = Compiled::new(&doc)
@@ -170,6 +173,7 @@ fn a_sign_case_template_covers_all_three_discriminant_outcomes() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
 }
@@ -194,6 +198,7 @@ fn a_unit_template_evaluates_its_numeric_expression_before_the_suffix() {
     let spec = GateSpec {
         answer_kind: AnswerKind::MultiStep,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
 }
@@ -412,6 +417,7 @@ fn quotient_remainder_writer_passes_the_numeric_gate_under_its_contract() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
 }

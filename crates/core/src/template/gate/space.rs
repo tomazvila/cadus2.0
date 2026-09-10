@@ -55,7 +55,11 @@ pub(super) fn build_walk(doc: &TemplateDoc) -> Result<Walk, Rejection> {
 
 /// The satisfying set is not empty, the stored count is the true one, and the
 /// space clears the distinct-problem floor.
-pub(super) fn check_space(doc: &TemplateDoc, walk: &Walk) -> Result<(), Rejection> {
+pub(super) fn check_space(
+    doc: &TemplateDoc,
+    spec: &GateSpec<'_>,
+    walk: &Walk,
+) -> Result<(), Rejection> {
     if walk.tuples.is_empty() {
         // The sampled branch names what it did, because it read a sample and not
         // the whole space (M4 review 1, finding 12).
@@ -80,7 +84,7 @@ pub(super) fn check_space(doc: &TemplateDoc, walk: &Walk) -> Result<(), Rejectio
         ));
     }
     let count = walk.space.count();
-    if count < MIN_SPACE_SIZE {
+    if spec.finite.is_none() && count < MIN_SPACE_SIZE {
         return Err(Rejection::new(
             "space-floor",
             format!(
