@@ -18,7 +18,9 @@
 //! D-F1 adds 314 reviewed per-exemplar policies. Each cohort preserves the
 //! previous snapshot after its new metadata is removed and sorted compact UTF-8
 //! JSON is encoded independently in Python. Cohort evidence lives under
-//! `docs/reports/answer-contract-*.md`. Original problem and answer text is intact.
+//! `docs/reports/answer-contract-*.md`. Later reviewed curriculum corrections and
+//! their exact source bindings live under
+//! `docs/content-foundations/curriculum-reviews/repairs-01/`.
 
 mod common;
 
@@ -28,10 +30,10 @@ use cadus_core::curriculum::{
 use common::dump::tree;
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
-const TREE_HASH: &str = "d7387d1f83c29c264f321713596faa071ca319773b58e1b5fa37cc1ddd0bc235";
+const TREE_HASH: &str = "b62cc60ac7155582a27d42d715ae3753a288285bc84290dcffa8bee67860c15f";
 
 /// The length of the dump in bytes, without the trailing newline.
-const DUMP_LEN: usize = 4_639_826;
+const DUMP_LEN: usize = 4_640_788;
 
 /// The `counts` object of the dump, as the oracle writes it.
 const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompassing_edges\":3200,\"exemplars\":8352,\"knowledge_points\":3138,\"prereq_edges\":3281,\"topics\":1090,\"units\":88}";
