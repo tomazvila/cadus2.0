@@ -157,7 +157,8 @@ fn check_one_instance(
     let tokens = identifier_tokens(&instance.answer);
     let structured = matches!(
         instance.answer_contract.as_ref(),
-        Some(crate::answer::AnswerContract::Label { .. })
+        Some(crate::answer::AnswerContract::RequiredAssignment)
+            | Some(crate::answer::AnswerContract::Label { .. })
             | Some(crate::answer::AnswerContract::Multipart { .. })
             | Some(crate::answer::AnswerContract::QuotientRemainder { .. })
     );

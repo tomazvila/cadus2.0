@@ -52,6 +52,7 @@ fn structured_contract(
     contract: &AnswerContract,
 ) -> Option<Outcome> {
     let outcome = match contract {
+        AnswerContract::RequiredAssignment => required_assignment(text, learner),
         AnswerContract::Label { options } => {
             decided(label_value(options, learner).as_ref() == Some(expected))
         }
@@ -94,6 +95,13 @@ fn structured_contract(
         _ => return None,
     };
     Some(outcome)
+}
+
+fn required_assignment(expected: &str, learner: &str) -> Outcome {
+    match super::assignment::equivalent(expected, learner) {
+        Ok(correct) => decided(correct),
+        Err(reason) => Outcome::Undecidable(reason),
+    }
 }
 
 fn required_expression_form(contract: &AnswerContract, expected: &str, learner: &str) -> Outcome {

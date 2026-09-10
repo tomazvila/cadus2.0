@@ -40,8 +40,9 @@ AAA. For a quotient-and-remainder contract, write \
 quotientremainder(quotient, remainder). To preserve an unevaluated exact power, use \
 powerform(coefficient, [base, exponent]). To convert a proved integer power identity under a \
 closed label contract, use logequation(base, [exponent, result]) or \
-expequation(base, [exponent, result]). For a one-decimal inverse-tangent angle under an \
-approximate contract, use atandeg(ratio). For an exact repeated-compounding factor \
+expequation(base, [exponent, result]). A required_assignment contract preserves an exact \
+assignment such as y=d and requires the learner to include the same target label. For a one-decimal \
+inverse-tangent angle under an approximate contract, use atandeg(ratio). For an exact repeated-compounding factor \
 $(1+1/n)^n$, use compounding(count) with a whole count \
 from 1 through 64. For a parent sine/cosine coordinate answer, use \
 quarterextremum(curve, [lo, hi, direction]); curve 0 is sine and 1 cosine, endpoints are whole \

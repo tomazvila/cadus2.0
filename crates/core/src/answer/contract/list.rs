@@ -6,7 +6,10 @@ use crate::answer::{Outcome, Verdict};
 pub(super) fn validate(ordered: bool, member: &AnswerContract) -> Result<(), Undecidable> {
     if matches!(
         member,
-        AnswerContract::None | AnswerContract::Multipart { .. } | AnswerContract::List { .. }
+        AnswerContract::None
+            | AnswerContract::RequiredAssignment
+            | AnswerContract::Multipart { .. }
+            | AnswerContract::List { .. }
     ) {
         return Err(Undecidable::new(
             "a list requires a flat deterministic member contract",

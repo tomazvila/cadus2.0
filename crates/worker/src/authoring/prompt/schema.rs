@@ -193,7 +193,9 @@ fn template_schema() -> Value {
     upperbound(variable, bound), with a one-value text choice for variable. For a bidirectional \
     interval/inequality conversion, use convertnotation(source) with a \
     required_inequality_notation contract; the computed expected answer fixes the required \
-    output notation for that instance. For one unevaluated numeric power, use \
+    output notation for that instance. A required_assignment contract preserves an exact \
+    assignment such as y=d and requires the learner to include the same target label. For one \
+    unevaluated numeric power, use \
     powerform(1,[base,exponent]) with a required_single_power contract. A \
     required_normalized_scientific_notation contract writes an exact terminating numeric \
     answer as a standard coefficient times 10 to an integer power. Use \
