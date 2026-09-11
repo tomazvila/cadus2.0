@@ -80,7 +80,7 @@ const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("coordinates", 252),
     ("decimal", 93),
     ("equation_or_inequality", 435),
-    ("expression", 591),
+    ("expression", 589),
     ("fraction", 233),
     ("integer", 1_169),
     ("interval", 20),
