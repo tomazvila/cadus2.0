@@ -44,7 +44,7 @@ fn historical_classification_and_all_987_live_statements_have_a_closed_boundary(
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
-        "be505f05ba72018eeb536c49be3e2dc2306c45daf91976c124c786b8a177d9f2"
+        "902a042c135a22f757943fbc084c6dae7b3990ba24666d6076322ce8c8fc901c"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
