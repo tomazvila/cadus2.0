@@ -92,7 +92,7 @@ fn interval_endpoints_are_graded_as_sets() {
         let exemplar = item(&curriculum, &key, index);
         assert!(matches!(
             exemplar.answer_contract,
-            Some(AnswerContract::InequalityUnion)
+            Some(AnswerContract::RequiredInequalityNotation)
         ));
         assert!(matches!(grade(&curriculum, &key, index, &exemplar.answer),
             Outcome::Decided(verdict) if verdict.correct));

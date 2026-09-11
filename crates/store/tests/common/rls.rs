@@ -173,7 +173,7 @@ pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 23] = [
 ///
 /// The list holds no function of an extension.
 /// `public_functions_are_the_literal_list` pins those separately.
-pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 10] = [
+pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
     // #1: the session cookie, read before the tenant bind.
     (
         "auth_session_by_token_hash",
@@ -227,6 +227,16 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 10] = [
         true,
         false,
     ),
+    // migration 0019: the template bank context after a new candidate is
+    // inserted, for re-gating the approval before the insert commits.
+    (
+        "cadus_template_context_after",
+        false,
+        r#""#,
+        true,
+        true,
+        false,
+    ),
     // M5 U11, migration 0009: the `cadus_diagnosis_jobs_total` counts of
     // `/metrics` (T6). `/metrics` runs unbound on a `cadus_app` connection and
     // `diagnosis_jobs` carries a FORCEd tenant policy, so a plain SELECT reads
@@ -274,12 +284,16 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 10] = [
 /// therefore rewrote the authoritative event document with every C2 test green.
 /// `aw` is INSERT plus UPDATE: the two column lists of `users` in
 /// `0006_grants_rls.sql`. Neither list holds `id` or `is_admin`.
-pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 5] = [
+pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 8] = [
     ("users", "created_at", "cadus_app=aw"),
     ("users", "disabled_at", "cadus_app=aw"),
     ("users", "email", "cadus_app=aw"),
     ("users", "email_verified_at", "cadus_app=aw"),
     ("users", "password_hash", "cadus_app=aw"),
+    // migration 0020: the exposure backfill can write the legacy cursor.
+    ("exposure_history_progress", "target_seq", "cadus_app=w"),
+    ("exposure_history_progress", "through_seq", "cadus_app=w"),
+    ("exposure_history_progress", "updated_at", "cadus_app=w"),
 ];
 
 /// Round-4 finding #8: every foreign key of schema `public`, as
@@ -289,7 +303,7 @@ pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 5] = [
 /// `n` is SET NULL, and `a` is NO ACTION. `events` must stay `r`: C2 says the
 /// event log outlives the account, and a flip to CASCADE erases a learner's
 /// whole history on one `DELETE FROM users` with the store suite green.
-pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 18] = [
+pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 20] = [
     ("anki_cards_created", "anki_cards_created_user_id_fkey", "c"),
     ("anki_queue", "anki_queue_user_id_fkey", "c"),
     ("auth_sessions", "auth_sessions_user_id_fkey", "c"),
@@ -300,6 +314,12 @@ pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 18] = [
     ("email_outbox", "email_outbox_user_id_fkey", "n"),
     // C2: the log outlives the account.
     ("events", "events_user_id_fkey", "r"),
+    ("events", "events_attempt_handoff_fk", "a"),
+    (
+        "exposure_history_progress",
+        "exposure_history_progress_user_id_fkey",
+        "c",
+    ),
     ("learner_models", "learner_models_user_id_fkey", "c"),
     ("model_call_log", "model_call_log_user_id_fkey", "n"),
     ("oauth_accounts", "oauth_accounts_user_id_fkey", "c"),

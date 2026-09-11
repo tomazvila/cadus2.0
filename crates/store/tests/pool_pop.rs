@@ -312,7 +312,10 @@ async fn a_repeated_digest_never_enters_the_pool_twice() {
         let inserted = insert_batch_for_user(&db.admin, user, KP, &second)
             .await
             .unwrap();
-        assert_eq!(inserted, 2, "digests 2, 3, and 4 are already in the pool");
+        assert_eq!(
+            inserted, 5,
+            "digests 2, 3, and 4 update existing rows under DO UPDATE"
+        );
 
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 7);
 

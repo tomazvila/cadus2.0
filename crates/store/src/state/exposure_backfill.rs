@@ -63,7 +63,7 @@ pub async fn backfill_attempt_digests(
         let kind: String = row.try_get("type")?;
         if kind == "attempt" {
             let size: Option<i32> = row.try_get("text_bytes")?;
-            if size.is_some_and(|n| n >= 0 && n <= TEXT_LIMIT) {
+            if size.is_some_and(|n| (0..=TEXT_LIMIT).contains(&n)) {
                 let bytes = size.unwrap_or_default() as usize;
                 if page.bytes_processed + bytes > PAGE_BYTES {
                     break;

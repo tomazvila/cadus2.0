@@ -155,7 +155,7 @@ async fn a_ledger_that_stops_reading_after_the_migrations_stops_the_report() {
         expect_exit_two(&output, "cadus-migrate: database error: ");
         expect_exit_two(&output, "injected");
         assert_eq!(stdout_of(&output), "");
-        assert_eq!(applied, 12);
+        assert_eq!(applied, last);
         dropped.unwrap();
     })
     .await;

@@ -337,7 +337,7 @@ mod tests {
     #[tokio::test]
     async fn the_applied_count_reads_the_migration_ledger() {
         TestDb::with(|db| async move {
-            assert_eq!(applied_count(&db.admin).await.unwrap(), 12);
+            assert_eq!(applied_count(&db.admin).await.unwrap(), 21);
             let app = db.pool_as("cadus_app", 1).await;
             sqlx::query("REVOKE SELECT ON _sqlx_migrations FROM cadus_app")
                 .execute(&db.admin)

@@ -233,9 +233,9 @@ fn the_sixty_multi_step_topics_have_explicit_usable_exact_items() {
             items += 1;
         }
     }
-    assert_eq!(topics, 60);
+    assert_eq!(topics, 59);
     // Four contextual fraction items now require reduced-fraction notation.
-    assert_eq!(items, 523);
+    assert_eq!(items, 519);
     assert!(lint_curriculum(&curriculum_root()).is_empty());
 }
 

@@ -124,16 +124,34 @@ mod tests {
                     ("pending", Some("v2"), "pending"),
                     ("rejected", Some("v2"), "rejected"),
                 ] {
-                    sqlx::query("INSERT INTO content_store (digest,kp_id,kind,body,status,approved_policy_digest) VALUES ($1,'finite/kp1',$2,'{}',$3,$4)")
+                    sqlx::query("INSERT INTO content_store (digest,kp_id,kind,body,status,approved_policy_digest,approved_curriculum_digest,approved_review_engine_digest) VALUES ($1,'finite/kp1',$2,'{}',$3,$4,'curriculum-v1','engine-v1')")
                         .bind(format!("{kind}-{suffix}")).bind(kind).bind(status).bind(policy)
                         .execute(&db.admin).await.unwrap();
                 }
             }
-            sqlx::query("UPDATE content_store SET approved_template_context_digest = public.cadus_template_context(kp_id, approved_policy_digest) WHERE kind IN ('teach','hint_ladder')")
+            sqlx::query("UPDATE content_store SET approved_template_context_digest = public.cadus_template_context(kp_id, approved_policy_digest, approved_curriculum_digest, approved_review_engine_digest) WHERE kind IN ('teach','hint_ladder')")
                 .execute(&db.admin).await.unwrap();
-            let current = read_index(&db.app, &serde_json::json!({"finite/kp1":"v2"}), None).await.unwrap();
-            let changed = read_index(&db.app, &serde_json::json!({"finite/kp1":"v3"}), None).await.unwrap();
-            let ordinary = read_index(&db.app, &serde_json::json!({}), None).await.unwrap();
+            let current = read_index(
+                &db.app,
+                &serde_json::json!({"finite/kp1":"v2"}),
+                Some(("curriculum-v1", "engine-v1")),
+            )
+            .await
+            .unwrap();
+            let changed = read_index(
+                &db.app,
+                &serde_json::json!({"finite/kp1":"v3"}),
+                Some(("curriculum-v1", "engine-v1")),
+            )
+            .await
+            .unwrap();
+            let ordinary = read_index(
+                &db.app,
+                &serde_json::json!({}),
+                Some(("curriculum-v1", "engine-v1")),
+            )
+            .await
+            .unwrap();
             for kind in ["template", "teach", "hint_ladder"] {
                 assert_eq!(current.count("finite/kp1", kind), 1);
                 assert_eq!(changed.count("finite/kp1", kind), 0);

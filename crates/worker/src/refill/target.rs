@@ -138,6 +138,7 @@ pub(super) async fn refill_target(
 /// The source carries the authored exemplars, so the per-instance re-check
 /// applies the A6 envelope to every instance it draws. A knowledge point the
 /// curriculum does not name has none, and the envelope rule then stays silent.
+#[allow(clippy::too_many_arguments)]
 async fn fill_from_template(
     db: &Db,
     target: &PoolTarget,

@@ -170,7 +170,7 @@ fn the_seeded_family_reaches_every_event_type() {
     // either. Their wire forms are pinned by `events.rs` and the focused
     // projector suites; this test measures the historical fixture family.
     for name in Event::TYPE_NAMES {
-        if ["retention_probe", "drill_result"].contains(&name) {
+        if ["retention_probe", "drill_result", "ordinary_problem_served"].contains(&name) {
             assert!(!seen.contains(name));
             continue;
         }
