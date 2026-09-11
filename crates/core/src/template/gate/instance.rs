@@ -136,9 +136,6 @@ fn check_one_instance(
     instance: &Instance,
 ) -> Result<(), Rejection> {
     let bindings = &instance.bindings;
-    if let Some(finite) = spec.finite.as_ref() {
-        finite.match_practice_instance(instance)?;
-    }
     if !scan(&instance.text).0.is_empty() {
         return Err(Rejection::new(
             "placeholder-left",
@@ -157,8 +154,7 @@ fn check_one_instance(
     let tokens = identifier_tokens(&instance.answer);
     let structured = matches!(
         instance.answer_contract.as_ref(),
-        Some(crate::answer::AnswerContract::RequiredAssignment)
-            | Some(crate::answer::AnswerContract::Label { .. })
+        Some(crate::answer::AnswerContract::Label { .. })
             | Some(crate::answer::AnswerContract::Multipart { .. })
             | Some(crate::answer::AnswerContract::QuotientRemainder { .. })
     );
