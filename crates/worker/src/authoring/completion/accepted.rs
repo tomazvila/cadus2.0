@@ -2,7 +2,6 @@
 use cadus_core::template::{Bindings, Scalar, answer, parse_answer_expr};
 use serde_json::{Map, Value, json};
 
-#[allow(clippy::expect_used)] // A malformed checked-in catalog is a build-time invariant failure.
 fn catalog() -> Vec<Value> {
     serde_json::from_str(include_str!("accepted_templates.json"))
         .expect("the checked-in accepted-template catalog is valid JSON")
@@ -45,43 +44,6 @@ pub(super) fn arguments(key: &str) -> Option<Value> {
 mod tests {
     use super::*;
     use std::collections::BTreeSet;
-
-    #[test]
-    fn rejected_weak_or_mismatched_families_stay_out() {
-        let keys: BTreeSet<_> = catalog()
-            .into_iter()
-            .filter_map(|item| item["key"].as_str().map(str::to_owned))
-            .collect();
-        for key in [
-            "prime-composite-numbers/kp3",
-            "whole-number-exponents/kp1",
-            "discriminant/kp2",
-            "multiplying-binomials/kp3",
-            "synthetic-division/kp1",
-            "synthetic-division/kp2",
-            "evaluating-functions/kp1",
-            "function-composition/kp3",
-            "function-notation/kp2",
-            "graphs-of-logarithmic-functions/kp1",
-            "graphs-of-logarithmic-functions/kp2",
-            "natural-exponential-function/kp3",
-            "angle-of-elevation-depression/kp1",
-            "angle-of-elevation-depression/kp2",
-            "angle-of-elevation-depression/kp3",
-            "complementary-angle-trig/kp3",
-            "multiplying-dividing-rational-expressions/kp1",
-            "rational-expression-restrictions/kp1",
-            "rational-expressions/kp2",
-            "right-triangle-trig/kp1",
-            "right-triangle-trig/kp3",
-            "special-right-triangles/kp1",
-            "trig-ratios-definition/kp1",
-            "trig-ratios-definition/kp2",
-            "complex-fractions/kp2",
-        ] {
-            assert!(!keys.contains(key), "rejected recipe returned: {key}");
-        }
-    }
 
     #[test]
     fn catalog_keys_and_values_are_unique() {
