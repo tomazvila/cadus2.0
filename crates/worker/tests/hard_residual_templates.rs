@@ -1,32 +1,57 @@
-//! Reviewed hard-residual artifacts retain their current production-gate verdicts.
+//! New hard-residual drafts run through the current production gate offline.
 #![allow(clippy::unwrap_used)]
-mod common;
-use cadus_worker::authoring::{job::verify_kind, prompt::Kind};
-use common::reviewed_templates::{
-    assert_report_with_authored_collisions, assert_template19_replacements, directory_rows,
-    run_rows, spec,
+#[path = "../examples/unit01/verify.rs"]
+mod verify;
+use cadus_core::curriculum::load_curriculum;
+use cadus_worker::authoring::{
+    cli::{AuthorArgs, select_for},
+    job::verify_kind,
+    prompt::Kind,
 };
 use serde_json::{Value, json};
+use std::path::{Path, PathBuf};
+
+fn root() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
+}
 
 fn drafts() -> Vec<Value> {
-    directory_rows("docs/content-foundations/u08-u09-hard")
+    let mut paths: Vec<_> = std::fs::read_dir(root().join("docs/content-foundations/u08-u09-hard"))
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .collect();
+    paths.sort();
+    paths
+        .into_iter()
+        .flat_map(|path| {
+            serde_json::from_str::<Vec<Value>>(&std::fs::read_to_string(path).unwrap()).unwrap()
+        })
+        .collect()
 }
 
 #[test]
-fn archived_families_keep_exact_current_verdicts_and_wrong_samples_fail() {
+fn exhaustive_pending_families_pass_and_wrong_samples_fail() {
     let rows = drafts();
-    let report = run_rows(&rows, "target/hard-residual/regression");
+    let output = root().join("target/hard-residual/regression");
+    std::fs::create_dir_all(&output).unwrap();
+    let input = output.join("drafts.json");
+    std::fs::write(&input, serde_json::to_string(&rows).unwrap()).unwrap();
+    let report = verify::run(&input, &output);
+    assert_eq!(report["passed"], rows.len(), "{report}");
+    let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
+    assert!(findings.is_empty());
     assert_eq!(rows.len(), 5);
-    assert_report_with_authored_collisions(
-        &report,
-        rows.len(),
-        Some(36),
-        &["logarithm-basics/kp1", "logarithm-basics/kp2"],
-    );
-    assert_template19_replacements(&rows, &["logarithm-basics/kp1", "logarithm-basics/kp2"]);
     for row in rows {
         assert_eq!(row["status"], "pending");
-        let spec = spec(row["kp_id"].as_str().unwrap());
+        let spec = select_for(
+            &curriculum,
+            &AuthorArgs {
+                kps: vec![row["kp_id"].as_str().unwrap().to_owned()],
+                ..AuthorArgs::default()
+            },
+        )
+        .unwrap()
+        .remove(0);
         let mut wrong = row["arguments"].clone();
         wrong["samples"][0]["expected"] = json!("999");
         assert!(verify_kind(Kind::Template, &spec, &wrong, &[]).is_err());

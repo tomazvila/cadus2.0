@@ -33,20 +33,11 @@
 //! a panic.
 
 mod builtin;
-mod compounding;
 mod equation;
 mod exact;
-mod finite_graph;
 mod functions;
-mod inequalities;
 mod inverse;
-mod notation;
-mod numeric_form;
-mod quarter_value;
-mod scientific;
 mod structured;
-mod symbol;
-mod triangle_law;
 mod write;
 
 use builtin::call;
@@ -318,40 +309,26 @@ pub fn answer_for_contract(
     if let Ast::Func(name, args) = ast {
         match name.as_str() {
             "powerform" => return structured::power_form(ast, bindings, contract),
-            "logequation" | "expequation" | "relationform" => {
+            "logequation" | "expequation" => {
                 return equation::write(name, args, bindings, contract);
             }
             "atandeg" => return inverse::degrees(args, bindings, contract),
-            "ascendingchain" => return notation::ascending_chain(args, bindings, contract),
             _ => {}
         }
     }
     match contract {
-        Some(
-            contract @ AnswerContract::RequiredForm {
-                form: crate::answer::NumericForm::Decimal,
-            },
-        ) => numeric_form::decimal_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::Label { .. }) => label_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::Unit { unit, .. }) => {
             unit_answer(ast, bindings, contract, unit)
-        }
-        Some(contract @ AnswerContract::PolynomialRelation) => {
-            let value = answer(ast, bindings)?;
-            contracted(value.text, contract)
         }
         Some(AnswerContract::Multipart { parts }) => multipart_answer(ast, bindings, parts),
         Some(contract @ AnswerContract::List { .. }) => list_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::ReducedRatio) => {
             reduced_ratio_answer(ast, bindings, contract)
         }
-        Some(contract @ AnswerContract::RequiredNormalizedScientificNotation) => {
-            scientific::answer(ast, bindings, contract)
+        Some(contract @ AnswerContract::InequalityUnion) => {
+            inequality_union_answer(ast, bindings, contract)
         }
-        Some(
-            contract @ (AnswerContract::InequalityUnion
-            | AnswerContract::RequiredInequalityNotation),
-        ) => inequalities::union_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::QuotientRemainder { .. }) => {
             quotient_remainder_answer(ast, bindings, contract)
         }
@@ -364,7 +341,6 @@ fn quotient_remainder_answer(
     bindings: &Bindings,
     contract: &AnswerContract,
 ) -> Result<Answer, EvalError> {
-    debug_assert!(matches!(contract, AnswerContract::QuotientRemainder { .. }));
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
     };
@@ -374,6 +350,30 @@ fn quotient_remainder_answer(
     let quotient = answer(&args[0], bindings)?.text;
     let remainder = answer(&args[1], bindings)?.text;
     contracted(format!("{quotient} R{remainder}"), contract)
+}
+
+fn inequality_union_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: &AnswerContract,
+) -> Result<Answer, EvalError> {
+    let Ast::Func(name, args) = ast else {
+        return answer(ast, bindings);
+    };
+    if args.len() != 2 || !matches!(name.as_str(), "excludepoint" | "lowerbound" | "upperbound") {
+        return answer(ast, bindings);
+    }
+    let Some(variable) = text_binding(&args[0], bindings) else {
+        return answer(ast, bindings);
+    };
+    let bound = answer(&args[1], bindings)?.text;
+    let text = match name.as_str() {
+        "excludepoint" => format!("{variable} < {bound} or {variable} > {bound}"),
+        "lowerbound" => format!("{variable} >= {bound}"),
+        "upperbound" => format!("{variable} <= {bound}"),
+        _ => unreachable!(),
+    };
+    contracted(text, contract)
 }
 
 fn reduced_ratio_answer(
@@ -408,10 +408,6 @@ fn multipart_answer(
 ) -> Result<Answer, EvalError> {
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
-    };
-    let args = match args.as_slice() {
-        [Ast::Tuple(items)] if parts.len() != 1 => items.as_slice(),
-        items => items,
     };
     if name != "multipart" || args.len() != parts.len() {
         return answer(ast, bindings);
