@@ -213,6 +213,16 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
     // Instruction context helpers preserve the caller's table privileges.
     ("cadus_template_bank", false, "", true, true, false),
     ("cadus_template_context", false, "", true, true, false),
+    // migration 0019: the template bank context after a new candidate is
+    // inserted, for re-gating the approval before the insert commits.
+    (
+        "cadus_template_context_after",
+        false,
+        r#""#,
+        true,
+        true,
+        false,
+    ),
     // M5 U1, migration 0007: the worker-liveness read of `/api/ready`
     // (D-M5-6). `diagnosis_jobs` carries a FORCEd tenant policy and the
     // readiness probe runs unbound, so a plain SELECT reads zero rows on every
@@ -223,16 +233,6 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
         "diagnosis_claim_age_secs",
         true,
         r#"{"search_path=public, pg_temp"}"#,
-        true,
-        true,
-        false,
-    ),
-    // migration 0019: the template bank context after a new candidate is
-    // inserted, for re-gating the approval before the insert commits.
-    (
-        "cadus_template_context_after",
-        false,
-        r#""#,
         true,
         true,
         false,
@@ -285,15 +285,15 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
 /// `aw` is INSERT plus UPDATE: the two column lists of `users` in
 /// `0006_grants_rls.sql`. Neither list holds `id` or `is_admin`.
 pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 8] = [
+    // migration 0020: the exposure backfill can write the legacy cursor.
+    ("exposure_history_progress", "target_seq", "cadus_app=w"),
+    ("exposure_history_progress", "through_seq", "cadus_app=w"),
+    ("exposure_history_progress", "updated_at", "cadus_app=w"),
     ("users", "created_at", "cadus_app=aw"),
     ("users", "disabled_at", "cadus_app=aw"),
     ("users", "email", "cadus_app=aw"),
     ("users", "email_verified_at", "cadus_app=aw"),
     ("users", "password_hash", "cadus_app=aw"),
-    // migration 0020: the exposure backfill can write the legacy cursor.
-    ("exposure_history_progress", "target_seq", "cadus_app=w"),
-    ("exposure_history_progress", "through_seq", "cadus_app=w"),
-    ("exposure_history_progress", "updated_at", "cadus_app=w"),
 ];
 
 /// Round-4 finding #8: every foreign key of schema `public`, as
@@ -313,8 +313,8 @@ pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 20] = [
     ("diagnosis_jobs", "diagnosis_jobs_user_id_fkey", "c"),
     ("email_outbox", "email_outbox_user_id_fkey", "n"),
     // C2: the log outlives the account.
-    ("events", "events_user_id_fkey", "r"),
     ("events", "events_attempt_handoff_fk", "a"),
+    ("events", "events_user_id_fkey", "r"),
     (
         "exposure_history_progress",
         "exposure_history_progress_user_id_fkey",

@@ -330,7 +330,7 @@ async fn rls_coverage_is_the_literal_list() {
         ));
         expected.sort();
 
-        assert_eq!(found.len(), 18);
+        assert_eq!(found.len(), 19);
         assert_eq!(found, expected);
 
         // #6: schema public holds no view and no materialized view. A view runs

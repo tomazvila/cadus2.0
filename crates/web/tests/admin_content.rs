@@ -162,6 +162,8 @@ async fn the_show_route_carries_the_gate_notes_and_the_authoring_bill() {
                 "digest": "r5-pending-digest",
                 "gated": true,
                 "exhaustive": true,
+                "finite_cases": [],
+                "finite_policy_fingerprint": null,
                 "instances_checked": 17,
                 "notes": [
                     "the crossed-corner rule is skipped for a and b: the constraints admit no \
