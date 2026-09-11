@@ -1,5 +1,5 @@
 //! Exact quadrantal values stay finite, exhaustive, and policy-bound.
-#![allow(clippy::unwrap_used, clippy::expect_used)]
+#![allow(clippy::unwrap_used, clippy::expect_used, dead_code)]
 
 use cadus_core::answer::ast::Ast;
 use cadus_core::answer::canonical_form;
