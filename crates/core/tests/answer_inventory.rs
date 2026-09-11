@@ -82,7 +82,7 @@ const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("equation_or_inequality", 435),
     ("expression", 589),
     ("fraction", 233),
-    ("integer", 1_169),
+    ("integer", 1_118),
     ("interval", 20),
     ("mixed_number", 13),
     ("ordered_list", 35),
