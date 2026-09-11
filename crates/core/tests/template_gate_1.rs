@@ -343,8 +343,12 @@ fn the_reserved_and_non_answer_name_sets_are_the_1_0_literals() {
     // preserving every historical entry and pinning the complete current set.
     assert_eq!(
         RESERVED_NAMES.to_vec(),
-        "ascendingchain Abs And E Eq False Float Ge Gt ITE Integer Le Lt Max Min Ne Not Or Piecewise Rational S True abs atandeg binomial cancel divisibilitylabel equalitylabel linearclass relationform ceiling compounding cos e exp expequation expand excludepoint rayunion convertnotation symbol boundarycircle boundarystyle boundaryincluded raydirection negativeabs factor factorial factorlist false firstmultiples floor gcd lcm lowerbound ln log logequation max min multipart nsimplify pi primeclass primefactors powerform quarterextremum quartervalue quotientremainder repeatedfactors sign signcase simplify sin sqrt tan together true trianglelaw upperbound"
-            .split(' ')
+        "Abs And E Eq False Float Ge Gt ITE Integer Le Lt Max Min Ne Not Or Piecewise Rational S True abs \
+         atandeg binomial cancel ceiling cos divisibilitylabel equalitylabel e exp expequation expand \
+         excludepoint factor factorial factorlist false firstmultiples floor gcd lcm lowerbound ln log \
+         logequation max min multipart nsimplify pi primeclass primefactors powerform quotientremainder \
+         repeatedfactors sign signcase simplify sin sqrt tan together true upperbound"
+            .split_whitespace()
             .collect::<Vec<&str>>()
     );
     for (name, _) in cadus_core::template::EVAL_FUNCTIONS {
