@@ -45,28 +45,29 @@ pub const SOLUTION_TWO: &str = "Take the parts away to reach 37.5.";
 /// The fixture content: `addition` and `subtraction` with one exemplar each,
 /// and a quiz of two questions.
 pub fn quiz_content() -> Content {
-    Content {
-        curriculum: one_unit_curriculum(vec![
-            topic(
-                "addition",
-                vec![kp("kp1", vec![exemplar(PROBLEM_TEXT, EXPECTED_ANSWER)])],
-            ),
-            topic(
-                "subtraction",
-                vec![kp(
-                    "kp1",
-                    vec![exemplar_with_solution(TEXT_TWO, ANSWER_TWO, SOLUTION_TWO)],
-                )],
-            ),
-        ]),
-        cfg: Config {
+    let curriculum = one_unit_curriculum(vec![
+        topic(
+            "addition",
+            vec![kp("kp1", vec![exemplar(PROBLEM_TEXT, EXPECTED_ANSWER)])],
+        ),
+        topic(
+            "subtraction",
+            vec![kp(
+                "kp1",
+                vec![exemplar_with_solution(TEXT_TWO, ANSWER_TWO, SOLUTION_TWO)],
+            )],
+        ),
+    ]);
+    super::open_content_with(
+        curriculum,
+        Config {
             quiz: QuizConfig {
                 questions: QUIZ_QUESTIONS,
                 ..QuizConfig::default()
             },
             ..Config::default()
         },
-    }
+    )
 }
 
 /// The router of a quiz test, with the fixture content loaded.
@@ -83,7 +84,7 @@ pub fn passed_lesson(topic: &str) -> Value {
     serde_json::to_value(Event::LessonResult(LessonResult {
         ts: Timestamp::from_micros(BASE_US),
         session: Some(SESSION.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: Slug::new(topic).unwrap(),
         passed: true,
         failed_at_kp: None,

@@ -1,156 +1,33 @@
-# Phase C (gap I-18): metric unit conversion / dimensional analysis.
-# The tree is deliberately Europeanised (metric units, EUR) and its word problems
-# use cm/m/km, g/kg, ml/l and km/h throughout — yet before this unit no topic
-# taught converting between metric units at all (the only KP-level touch was
-# geometry's density-measurement-problems "Capacity and unit conversion").
-unit: measurement-units
-course: foundations
+unit: "measurement-units"
+course: "foundations"
 module: "Measurement & Units"
-topics:
-  - id: metric-unit-conversion
-    name: Metric Unit Conversion
-    # core: baseline measurement machinery — geometry's measurement/density word
-    # problems and rate problems tree-wide assume fluent metric conversion.
-    core: true
-    difficulty: 0.3
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 90
-    prerequisites:
-      - id: decimal-multiplication-powers-of-ten
-        weight: 0.7
-        key: true
-      - id: decimal-place-value
-        weight: 0.4
-      - id: decimal-operations
-        weight: 0.3
-    knowledge_points:
-      - id: kp1
-        name: Length units (mm, cm, m, km)
-        key_prerequisites: [decimal-multiplication-powers-of-ten]
-        constraints: "one-step conversions; 10 mm = 1 cm, 100 cm = 1 m, 1000 m = 1 km; target unit always named in the problem; answers are bare numbers with exact decimals"
-        exemplars:
-          - problem: 'Convert $3.5$ m to centimetres.'
-            answer: "350"
-            solution_sketch: '$1$ m $= 100$ cm, so multiply by $100$: $3.5 \cdot 100 = 350$.'
-          - problem: 'Convert $1250$ m to kilometres.'
-            answer: "1.25"
-            solution_sketch: 'Going to the larger unit divides: $1250 \div 1000 = 1.25$.'
-          - problem: 'Convert $42$ mm to centimetres.'
-            answer: "4.2"
-      - id: kp2
-        name: Mass and capacity units (mg, g, kg, t; ml, l)
-        key_prerequisites: [decimal-multiplication-powers-of-ten]
-        constraints: "one-step conversions; 1000 mg = 1 g, 1000 g = 1 kg, 1000 kg = 1 t, 1000 ml = 1 l; exact decimal answers"
-        exemplars:
-          - problem: 'Convert $0.75$ kg to grams.'
-            answer: "750"
-          - problem: 'Convert $2500$ ml to litres.'
-            answer: "2.5"
-            solution_sketch: '$1$ l $= 1000$ ml, so divide by $1000$.'
-          - problem: 'Convert $3.2$ t to kilograms.'
-            answer: "3200"
-      - id: kp3
-        name: Two-step conversions and mixed-unit comparisons
-        key_prerequisites: [decimal-multiplication-powers-of-ten, decimal-operations]
-        constraints: "chain two steps (e.g. km to cm) or bring both quantities to a common unit before comparing; answers stay exact"
-        exemplars:
-          - problem: 'Convert $0.6$ km to centimetres.'
-            answer: "60000"
-            solution_sketch: '$0.6$ km $= 600$ m $= 60000$ cm.'
-          - problem: 'A bottle holds $1.5$ l and a glass holds $250$ ml. How many glasses does the bottle fill?'
-            answer: "6"
-            solution_sketch: '$1.5$ l $= 1500$ ml; $1500 \div 250 = 6$.'
-          - problem: 'By how many grams is $4.8$ kg heavier than $650$ g?'
-            answer: "4150"
-            solution_sketch: '$4.8$ kg $= 4800$ g; $4800 - 650 = 4150$.'
-    diagnostic_exemplar:
-      problem: 'A jug holds $1.8$ l and a glass holds $150$ ml. How many glasses does the jug fill?'
-      answer: "12"
-      solution_sketch: 'Work in one unit: $1.8$ l $= 1800$ ml, and $1800 \div 150 = 12$.'
-    anki_seeds:
-      - front: "1 km = ? m"
-        back: "1000 m"
-        type: basic
-      - front: "1 m = ? cm"
-        back: "100 cm"
-        type: basic
-      - front: "1 l = ? ml"
-        back: "1000 ml"
-        type: basic
-
-  - id: dimensional-analysis
-    name: Dimensional Analysis
-    # core: false — terminal skill; no other topic consumes rate/area/volume unit
-    # conversion (requirements §7 defaults a second unit-conversion topic to
-    # supplemental).
-    core: false
-    difficulty: 0.5
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 120
-    prerequisites:
-      - id: metric-unit-conversion
-        weight: 0.8
-        key: true
-      - id: unit-rates
-        weight: 0.5
-        key: true
-      - id: multiplying-fractions
-        weight: 0.4
-      - id: decimal-operations
-        weight: 0.3
-    knowledge_points:
-      - id: kp1
-        name: Unit factors and chained conversions
-        key_prerequisites: [metric-unit-conversion, multiplying-fractions]
-        constraints: "multiply by at most two unit factors; metric and time units only; values chosen for exact answers"
-        exemplars:
-          - problem: 'Convert $2.5$ hours to seconds.'
-            answer: "9000"
-            solution_sketch: 'Multiply by $60$ min/h and $60$ s/min: $2.5 \cdot 60 \cdot 60 = 9000$.'
-          - problem: 'Convert $1$ day to minutes.'
-            answer: "1440"
-          - problem: 'Ribbon costs €$4$ per metre. What is the cost, in euros, of $250$ cm of ribbon?'
-            answer: "10"
-            solution_sketch: '$250$ cm $= 2.5$ m; the cm cancel and $2.5 \cdot 4 = 10$.'
-      - id: kp2
-        name: Converting rates (km/h and m/s)
-        key_prerequisites: [unit-rates, metric-unit-conversion]
-        constraints: "speeds divisible by 3.6 (km/h to m/s) or integers times 3.6 (m/s to km/h) so answers are exact"
-        exemplars:
-          - problem: 'Convert $72$ km/h to m/s.'
-            answer: "20"
-            solution_sketch: '$72$ km/h $= \frac{72000 \text{ m}}{3600 \text{ s}} = 20$ m/s (divide by $3.6$).'
-          - problem: 'Convert $15$ m/s to km/h.'
-            answer: "54"
-            solution_sketch: 'Multiply by $3.6$: $15 \cdot 3.6 = 54$.'
-          - problem: 'A pump moves $0.3$ litres per second. How many litres per hour is that?'
-            answer: "1080"
-      - id: kp3
-        name: Area and volume units
-        key_prerequisites: [metric-unit-conversion]
-        constraints: "square or cube the length factor: 1 m² = 10000 cm², 1 l = 1000 cm³, 1 m³ = 1000 l; exact answers"
-        exemplars:
-          - problem: 'Convert $2$ m² to cm².'
-            answer: "20000"
-            solution_sketch: '$1$ m $= 100$ cm, so $1$ m² $= 100^2 = 10000$ cm² — the factor is squared, not reused.'
-          - problem: 'Convert $3500$ cm³ to litres.'
-            answer: "3.5"
-            solution_sketch: '$1$ l $= 1000$ cm³.'
-          - problem: 'A tank has volume $0.4$ m³. How many litres does it hold?'
-            answer: "400"
-    diagnostic_exemplar:
-      problem: 'A tank of volume $0.9$ m³ is filled at $30$ litres per minute. How many seconds does it take to fill?'
-      answer: "1800"
-      solution_sketch: '$0.9$ m³ $= 900$ l, so filling takes $\frac{900}{30} = 30$ min $= 1800$ s.'
-    anki_seeds:
-      - front: "km/h → m/s: divide by..."
-        back: "3.6"
-        type: basic
-      - front: "1 m² = ? cm²"
-        back: "10000 cm² (the length factor 100, squared)"
-        type: basic
-      - front: "1 m³ = ? l"
-        back: "1000 l"
-        type: basic
+topics: [
+  {"id": "metric-unit-conversion", "name": "Metric Unit Conversion", "core": true, "difficulty": 0.3, "drill": false, "answer_kind": "numeric", "expected_time_secs": 90, "prerequisites": [{"id": "decimal-multiplication-powers-of-ten", "weight": 0.7, "key": true}, {"id": "decimal-place-value", "weight": 0.4}, {"id": "decimal-operations", "weight": 0.3}], "diagnostic_exemplar": {"problem": "A jug holds $1.8$ l and a glass holds $150$ ml. How many glasses does the jug fill?", "answer": "12", "solution_sketch": "Work in one unit: $1.8$ l $= 1800$ ml, and $1800 \\div 150 = 12$."}, "anki_seeds": [{"front": "1 km = ? m", "back": "1000 m", "type": "basic"}, {"front": "1 m = ? cm", "back": "100 cm", "type": "basic"}, {"front": "1 l = ? ml", "back": "1000 ml", "type": "basic"}], "knowledge_points": [
+    {"id": "kp1", "name": "Length units (mm, cm, m, km)", "key_prerequisites": ["decimal-multiplication-powers-of-ten"], "constraints": "one-step conversions; 10 mm = 1 cm, 100 cm = 1 m, 1000 m = 1 km; target unit always named in the problem; answers are bare numbers with exact decimals", "exemplars": [
+      {"problem": "Convert $3.5$ m to centimetres.", "answer": "350", "solution_sketch": "Each metre contains $100$ cm, so $3.5\\cdot100=350$ cm.", "answer_contract": {"kind": "exact"}}, {"problem": "A distance marker reads $1250$ m. Write its distance in kilometres as a number.", "answer": "1.25", "solution_sketch": "Group metres into thousands: $1250/1000=1.25$ km.", "answer_contract": {"kind": "exact"}},
+      {"problem": "A ruler marks a length of $42$ mm. How many centimetres is that?", "answer": "4.2", "solution_sketch": "Each group of $10$ mm is one cm, so $42/10=4.2$ cm.", "answer_contract": {"kind": "exact"}}, {"problem": "Complete the conversion equation $d\\text{ km}=7000\\text{ m}$ by giving $d$.", "answer": "7", "solution_sketch": "Since one km is $1000$ m, $1000d=7000$ and $d=7$.", "answer_contract": {"kind": "exact"}}
+    ]},
+    {"id": "kp2", "name": "Mass and capacity units (mg, g, kg, t; ml, l)", "key_prerequisites": ["decimal-multiplication-powers-of-ten"], "constraints": "one-step conversions; 1000 mg = 1 g, 1000 g = 1 kg, 1000 kg = 1 t, 1000 ml = 1 l; exact decimal answers", "exemplars": [
+      {"problem": "Convert $0.75$ kg to grams.", "answer": "750", "solution_sketch": "One kg contains $1000$ g; $0.75\\cdot1000=750$ g.", "answer_contract": {"kind": "exact"}}, {"problem": "A measuring jug contains $2500$ ml. Give its volume in litres.", "answer": "2.5", "solution_sketch": "Divide by $1000$ ml per litre: $2500/1000=2.5$ l.", "answer_contract": {"kind": "exact"}},
+      {"problem": "Complete $m\\text{ t}=3200\\text{ kg}$ by giving $m$.", "answer": "3.2", "solution_sketch": "Each tonne contributes $1000$ kg, so $1000m=3200$ and $m=3.2$.", "answer_contract": {"kind": "exact"}}, {"problem": "A mass label reads $4500$ mg. Express it in grams.", "answer": "4.5", "solution_sketch": "There are $1000$ mg per gram; $4500/1000=4.5$ g.", "answer_contract": {"kind": "exact"}}
+    ]},
+    {"id": "kp3", "name": "Two-step conversions and mixed-unit comparisons", "key_prerequisites": ["decimal-multiplication-powers-of-ten", "decimal-operations"], "constraints": "chain two steps (e.g. km to cm) or bring both quantities to a common unit before comparing; answers stay exact", "exemplars": [
+      {"problem": "Convert $0.6$ km to centimetres.", "answer": "60000", "solution_sketch": "Chain the factors: $0.6\\cdot1000\\cdot100=60000$ cm.", "answer_contract": {"kind": "exact"}}, {"problem": "A bottle holds $1.5$ l and a glass $250$ ml. How many full glasses does the bottle fill?", "answer": "6", "solution_sketch": "Convert the bottle to $1500$ ml, then divide by $250$ ml per glass: $1500/250=6$.", "answer_contract": {"kind": "exact"}},
+      {"problem": "By how many grams is $4.8$ kg heavier than $650$ g?", "answer": "4150", "solution_sketch": "Convert the first mass to $4800$ g; the difference is $4800-650=4150$ g.", "answer_contract": {"kind": "exact"}}, {"problem": "A cable has two sections, $0.02$ km and $350$ cm. Find its total length in metres.", "answer": "23.5", "solution_sketch": "Convert each section: $0.02\\cdot1000=20$ m and $350/100=3.5$ m. Add to $23.5$ m.", "answer_contract": {"kind": "exact"}}
+    ]}
+  ]},
+  {"id": "dimensional-analysis", "name": "Dimensional Analysis", "core": false, "difficulty": 0.5, "drill": false, "answer_kind": "numeric", "expected_time_secs": 120, "prerequisites": [{"id": "metric-unit-conversion", "weight": 0.8, "key": true}, {"id": "unit-rates", "weight": 0.5, "key": true}, {"id": "multiplying-fractions", "weight": 0.4}, {"id": "decimal-operations", "weight": 0.3}], "diagnostic_exemplar": {"problem": "A tank of volume $0.9$ m³ is filled at $30$ litres per minute. How many seconds does it take to fill?", "answer": "1800", "solution_sketch": "$0.9$ m³ $= 900$ l, so filling takes $\\frac{900}{30} = 30$ min $= 1800$ s."}, "anki_seeds": [{"front": "km/h → m/s: divide by...", "back": "3.6", "type": "basic"}, {"front": "1 m² = ? cm²", "back": "10000 cm² (the length factor 100, squared)", "type": "basic"}, {"front": "1 m³ = ? l", "back": "1000 l", "type": "basic"}], "knowledge_points": [
+    {"id": "kp1", "name": "Unit factors and chained conversions", "key_prerequisites": ["metric-unit-conversion", "multiplying-fractions"], "constraints": "multiply by at most two unit factors; metric and time units only; values chosen for exact answers", "exemplars": [
+      {"problem": "Convert $2.5$ hours to seconds.", "answer": "9000", "solution_sketch": "Multiply by $60$ min/h and $60$ s/min; hours and minutes cancel: $2.5\\cdot60\\cdot60=9000$ s.", "answer_contract": {"kind": "exact"}}, {"problem": "Convert one day to minutes.", "answer": "1440", "solution_sketch": "Multiply $1$ day by $24$ h/day and $60$ min/h: the remaining unit is minutes and the value is $1440$.", "answer_contract": {"kind": "exact"}},
+      {"problem": "Ribbon costs €$4$ per metre. What is the cost in euros of $250$ cm?", "answer": "10", "solution_sketch": "$(250\\text{ cm})(1\\text{ m}/100\\text{ cm})(4\\text{ EUR}/\\text{m})=10\\text{ EUR}$; cm and m cancel.", "answer_contract": {"kind": "exact"}}, {"problem": "A machine uses $3$ grams of material per second. How many kilograms does it use in $2000$ seconds?", "answer": "6", "solution_sketch": "$(2000\\text{ s})(3\\text{ g}/\\text{s})(1\\text{ kg}/1000\\text{ g})=6\\text{ kg}$.", "answer_contract": {"kind": "exact"}}
+    ]},
+    {"id": "kp2", "name": "Converting rates (km/h and m/s)", "key_prerequisites": ["unit-rates", "metric-unit-conversion"], "constraints": "speeds divisible by 3.6 (km/h to m/s) or integers times 3.6 (m/s to km/h) so answers are exact", "exemplars": [
+      {"problem": "Convert $72$ km/h to m/s.", "answer": "20", "solution_sketch": "$(72\\text{ km}/\\text{h})(1000\\text{ m}/\\text{km})(\\text{h}/3600\\text{ s})=20\\text{ m}/\\text{s}$.", "answer_contract": {"kind": "exact"}}, {"problem": "Convert $15$ m/s to km/h.", "answer": "54", "solution_sketch": "Multiply by $3600$ s/h and divide by $1000$ m/km: $15\\cdot3.6=54$ km/h.", "answer_contract": {"kind": "exact"}},
+      {"problem": "A pump moves $0.3$ litres each second. How many litres per hour is that?", "answer": "1080", "solution_sketch": "Multiply the rate by $3600$ seconds per hour: $0.3\\cdot3600=1080$ l/h.", "answer_contract": {"kind": "exact"}}, {"problem": "A cyclist covers $90$ metres in $5$ seconds at constant speed. Express that speed in km/h.", "answer": "64.8", "solution_sketch": "First $90/5=18$ m/s; then $18\\cdot3600/1000=64.8$ km/h.", "answer_contract": {"kind": "exact"}}
+    ]},
+    {"id": "kp3", "visuals": [{"kind": "geometry", "figure": {"shape": "polygon", "vertices": [{"x": "0", "y": "0", "label": "A"}, {"x": "100", "y": "0", "label": "B"}, {"x": "100", "y": "100", "label": "C"}, {"x": "0", "y": "100", "label": "D"}], "right_angles": [0, 1, 2, 3]}, "caption": "Reference example: coordinates are centimetres. This square has side 100 cm = 1 m, so its area is 10000 square centimetres = 1 square metre."}], "name": "Area and volume units", "key_prerequisites": ["metric-unit-conversion"], "constraints": "square or cube the length factor: 1 m² = 10000 cm², 1 l = 1000 cm³, 1 m³ = 1000 l; exact answers", "exemplars": [
+      {"problem": "Convert $2$ square metres to square centimetres.", "answer": "20000", "solution_sketch": "Squaring $100$ cm/m gives $10000$ square cm per square m; $2\\cdot10000=20000$.", "answer_contract": {"kind": "exact"}}, {"problem": "Convert $3500$ cubic centimetres to litres.", "answer": "3.5", "solution_sketch": "Each litre is $1000$ cubic cm, so $3500/1000=3.5$ litres.", "answer_contract": {"kind": "exact"}},
+      {"problem": "A tank has volume $0.4$ cubic metres. How many litres does it hold?", "answer": "400", "solution_sketch": "A cubic metre is $1000$ litres; $0.4\\cdot1000=400$ litres.", "answer_contract": {"kind": "exact"}}, {"problem": "A cube has edge $20$ cm. Find its volume in litres.", "answer": "8", "solution_sketch": "Cube the edge: $20^3=8000$ cubic cm. Divide by $1000$ cubic cm per litre to get $8$ litres.", "answer_contract": {"kind": "exact"}}
+    ]}
+  ]}
+]

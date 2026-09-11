@@ -24,7 +24,21 @@ pub(super) fn is_variable_name(name: &str, extra: &[&str]) -> bool {
     if FUNCTIONS.contains(&name) || extra.contains(&name) {
         return false;
     }
-    GREEK_VARIABLES.contains(&name) || name.chars().count() == 1
+    GREEK_VARIABLES.contains(&name)
+        || name.chars().count() == 1
+        || [
+            "area",
+            "perimeter",
+            "volume",
+            "length",
+            "width",
+            "height",
+            "radius",
+            "diameter",
+            "slope",
+            "intercept",
+        ]
+        .contains(&name.to_lowercase().as_str())
 }
 
 /// Split a multi-letter run into its leading letters and its last letter, or refuse it.

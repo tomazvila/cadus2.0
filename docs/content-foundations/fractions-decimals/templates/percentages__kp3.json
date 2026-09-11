@@ -1,0 +1,139 @@
+[
+  {
+    "kp_id": "percentages/kp3",
+    "kind": "template",
+    "arguments": {
+      "answer_expr": "multipart(a*b/100,b/2)",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "required",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "win_percent",
+            "contract": {
+              "kind": "exact"
+            }
+          }
+        ]
+      },
+      "constraints": [],
+      "distractors": [],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            20,
+            40,
+            60
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            25,
+            50,
+            75,
+            100
+          ]
+        }
+      },
+      "samples": [
+        {
+          "params": {
+            "a": 20,
+            "b": 25
+          },
+          "expected": "required = 5; win_percent = 25/2"
+        },
+        {
+          "params": {
+            "a": 20,
+            "b": 50
+          },
+          "expected": "required = 10; win_percent = 25"
+        },
+        {
+          "params": {
+            "a": 20,
+            "b": 75
+          },
+          "expected": "required = 15; win_percent = 75/2"
+        },
+        {
+          "params": {
+            "a": 20,
+            "b": 100
+          },
+          "expected": "required = 20; win_percent = 50"
+        },
+        {
+          "params": {
+            "a": 40,
+            "b": 25
+          },
+          "expected": "required = 10; win_percent = 25/2"
+        },
+        {
+          "params": {
+            "a": 40,
+            "b": 50
+          },
+          "expected": "required = 20; win_percent = 25"
+        },
+        {
+          "params": {
+            "a": 40,
+            "b": 75
+          },
+          "expected": "required = 30; win_percent = 75/2"
+        },
+        {
+          "params": {
+            "a": 40,
+            "b": 100
+          },
+          "expected": "required = 40; win_percent = 50"
+        },
+        {
+          "params": {
+            "a": 60,
+            "b": 25
+          },
+          "expected": "required = 15; win_percent = 25/2"
+        },
+        {
+          "params": {
+            "a": 60,
+            "b": 50
+          },
+          "expected": "required = 30; win_percent = 25"
+        },
+        {
+          "params": {
+            "a": 60,
+            "b": 75
+          },
+          "expected": "required = 45; win_percent = 75/2"
+        },
+        {
+          "params": {
+            "a": 60,
+            "b": 100
+          },
+          "expected": "required = 60; win_percent = 50"
+        }
+      ],
+      "statement": "A quiz has ${{{a}}}$ questions and requires ${{{b}}}$ percent correct. A team wins ${{{b}}}$ of 200 games. Give required = the required number of quiz answers; win_percent = the team win percent as a bare number.",
+      "solution_sketch": "Multiply the quiz question count by the required percent divided by 100 to find the number of correct answers needed. Separately, divide the team wins by its total games and multiply by 100 to find the win percent.",
+      "hints": [
+        "For a required count, multiply the quiz total by the percent written over 100.",
+        "For a percentage from wins out of 200, divide wins by 200 then multiply by 100."
+      ]
+    }
+  }
+]

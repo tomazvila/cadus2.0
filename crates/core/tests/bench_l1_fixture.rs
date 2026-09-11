@@ -41,6 +41,7 @@ fn the_fixture_holds_twenty_gated_templates() {
         let spec = GateSpec {
             answer_kind: doc.answer_kind,
             exemplars: &no_exemplars,
+            finite: None,
         };
         let verified = gate(doc, &spec)
             .unwrap_or_else(|rejection| panic!("{name} does not pass the gate: {rejection}"));

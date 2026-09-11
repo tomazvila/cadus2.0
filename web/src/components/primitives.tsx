@@ -109,11 +109,22 @@ export function Ring({ fraction, label = '', sub = '' }: { fraction: number; lab
 
 export const tickPath = 'M20 6L9 17l-5-5';
 export const crossPath = 'M18 6L6 18M6 6l12 12';
+/** The mark of an attempt nobody graded (D-F2). It is a question, never a cross. */
+const questionPath = 'M9 9a3 3 0 1 1 3 3v2';
 
 export function Tick() {
   return (
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
       <path d={tickPath} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function Question() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path d={questionPath} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="18" r="1.2" fill="currentColor" />
     </svg>
   );
 }

@@ -203,7 +203,7 @@ fn closed_task_ids_reads_the_review_results() {
             Event::ReviewResult(cadus_core::event::ReviewResult {
                 ts: Timestamp::from_micros(BASE_US),
                 session: Some("s_2026-01-01a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 topic: Slug::new("addition").unwrap(),
                 passed: true,
                 weighted_score: 1.0,
@@ -211,6 +211,8 @@ fn closed_task_ids_reads_the_review_results() {
                 quality_tier: WorkQuality::NearlyPerfect,
                 assisted: false,
                 task_id: Some("s_2026-01-01a-multi-step".to_string()),
+                inconclusive: false,
+                confirmation_skills: Vec::new(),
             }),
         ),
     ];

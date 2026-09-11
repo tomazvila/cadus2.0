@@ -41,6 +41,7 @@ fn the_document_rows_refuse_a_version_a_kind_and_an_empty_field() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     let rejection = gate(&old, &spec).expect_err("the version is old");
     assert_eq!(rejection.code, "template-version");
@@ -244,6 +245,7 @@ fn the_per_instance_rules_on_hand_built_instances() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     let shown = hand_instance(4, "The square is 16", "16");
     assert_eq!(check_instance(&doc, &spec, &shown), Ok(()));

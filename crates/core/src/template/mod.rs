@@ -80,11 +80,11 @@ pub use draw::{
 };
 pub use eval::{
     Answer, EVAL_FUNCTIONS, EXTRA_FUNCTIONS, EvalError, MAX_FACTORIAL, MAX_VALUE_BITS, answer,
-    evaluate, parse_answer_expr, write,
+    answer_for_contract, evaluate, parse_answer_expr, write,
 };
 pub use gate::{
-    Envelope, FREE_SYMBOLS, GATE_DRAW_BUDGET, GATE_SAMPLES, GATE_SEED, GateSpec, MAX_EXPONENT,
-    NON_ANSWERS, RESERVED_NAMES, Rejection, TEMPLATABLE_KINDS, Verified, check_instance,
-    exemplar_envelope, gate, gate_body, with_space_size,
+    Envelope, FREE_SYMBOLS, FiniteGateSpec, GATE_DRAW_BUDGET, GATE_SAMPLES, GATE_SEED, GateSpec,
+    MAX_EXPONENT, NON_ANSWERS, RESERVED_NAMES, Rejection, TEMPLATABLE_KINDS, Verified,
+    VerifiedFiniteCase, check_instance, exemplar_envelope, gate, gate_body, with_space_size,
 };
 pub use render::{RenderError, SNIPPET_CHARS, StrayBrace, placeholders, render, scan, stray_brace};

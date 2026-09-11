@@ -1,8 +1,8 @@
 //! The gate of a teach page (L4, spec section 7 row R6).
-
 use crate::template::gate::{Rejection, contains_token, py_str};
 
 use super::body::{object, only_known, text};
+use super::finite::{permitted_collision, teach_case};
 use super::{InstructionSpec, TEACH_FIELDS, TeachPage, WORKED_EXAMPLE_FIELDS, WorkedExample};
 
 /// The gate of a teach page (L4, spec section 7 row R6).
@@ -12,6 +12,21 @@ use super::{InstructionSpec, TEACH_FIELDS, TeachPage, WORKED_EXAMPLE_FIELDS, Wor
 /// Returns the [`Rejection`] of the first rule the body breaks. The message is
 /// the literal text the next authoring attempt reads.
 pub fn gate_teach(body: &str, spec: &InstructionSpec<'_>) -> Result<TeachPage, Rejection> {
+    gate_teach_with_policy(body, spec, None)
+}
+
+/// Gate a page against an optional trusted finite case catalog.
+///
+/// A registered worked example uses a TeachOnly or TaughtRehearsal case.
+/// Fresh practice and reserved assessment cases remain protected.
+///
+/// # Errors
+/// Returns a shape, role, unknown-case or disclosure rejection.
+pub fn gate_teach_with_policy(
+    body: &str,
+    spec: &InstructionSpec<'_>,
+    policy: Option<&crate::curriculum::FiniteObjectiveDomain>,
+) -> Result<TeachPage, Rejection> {
     let fields = object(body, "teach")?;
     only_known(&fields, &TEACH_FIELDS, "teach page", "teach-unknown-field")?;
     let concept = text(
@@ -64,8 +79,11 @@ per entry, ending with the final answer"
         .enumerate()
         .map(|(index, step)| step_text(index, step))
         .collect::<Result<Vec<String>, Rejection>>()?;
+    let case = teach_case(&problem, policy)?;
     for (index, exemplar) in spec.exemplars.iter().enumerate() {
-        if exemplar.problem.trim() == problem.trim() {
+        if exemplar.problem.trim() == problem.trim()
+            && !permitted_collision(case, &exemplar.problem)
+        {
             return Err(Rejection {
                 code: "teach-worked-example",
                 message: format!(
@@ -77,7 +95,7 @@ learner has not attempted yet (Hard Rule 1)",
             });
         }
     }
-    check_no_other_answer(&problem, written.last().map_or("", String::as_str), spec)?;
+    check_teach_disclosures(&problem, &written, spec, case)?;
     Ok(TeachPage {
         concept,
         worked_example: WorkedExample {
@@ -100,44 +118,79 @@ step is one line of the solution a learner reads"
     }
 }
 
-/// The last step names no answer of a served problem OTHER than the worked one.
-///
-/// Hard Rule 1. The worked example ends with its own answer, so a rule that
-/// refused every served answer refused every worked example a knowledge point
-/// with a template holds. The rule is therefore the PAIR rule: the gate reads
-/// each served problem beside its answer, it skips the served problem the page
-/// works, and it refuses the last step that names any other served answer.
-///
-/// The check reads the LAST step alone. That step is the answer of the page, and
-/// a second answer stated there is a second answer handed over. An earlier step
-/// carries the method, and a numeral inside it is arithmetic on the way to the
-/// answer.
-///
-/// The teach half of finding F15 stood open until this rule: `verify_teach`
-/// filled [`InstructionSpec::instance_answers`] and `gate_teach` read the
-/// exemplar problems alone, so no test and no mutation separated a build that
-/// carried the field from a build that dropped it (M6 review 2, findings V2 and
-/// V11).
-fn check_no_other_answer(
+fn normalized_problem(value: &str) -> String {
+    let mut text = value.trim().trim_end_matches(['.', '?']).trim();
+    for (open, close) in [("$", "$"), ("\\(", "\\)"), ("\\[", "\\]")] {
+        if text.len() >= open.len() + close.len() && text.starts_with(open) && text.ends_with(close)
+        {
+            text = &text[open.len()..text.len() - close.len()];
+        }
+    }
+    text.replace("\\div", "/")
+        .replace("\\times", "*")
+        .replace("\\cdot", "*")
+        .chars()
+        .filter(|ch| !ch.is_whitespace())
+        .map(|ch| match ch as u32 {
+            0x00F7 => '/',
+            0x00D7 | 0x00B7 => '*',
+            _ => ch,
+        })
+        .collect()
+}
+fn contains_expression(text: &str, expression: &str) -> bool {
+    text.match_indices(expression).any(|(index, _)| {
+        let before = text[..index].chars().next_back();
+        let after = text[index + expression.len()..].chars().next();
+        !before.is_some_and(|ch| ch.is_ascii_alphanumeric())
+            && !after.is_some_and(|ch| ch.is_ascii_alphanumeric())
+    })
+}
+
+fn direct_expression(problem: &str) -> Option<String> {
+    ["Compute ", "Calculate ", "Evaluate ", "Simplify "]
+        .into_iter()
+        .find_map(|prefix| problem.trim().strip_prefix(prefix))
+        .map(normalized_problem)
+        .filter(|expression| expression.len() > 2)
+}
+
+fn same_problem(left: &str, right: &str) -> bool {
+    normalized_problem(left) == normalized_problem(right)
+        || direct_expression(left)
+            .zip(direct_expression(right))
+            .is_some_and(|(left, right)| left == right)
+}
+
+fn check_teach_disclosures(
     problem: &str,
-    last: &str,
+    steps: &[String],
     spec: &InstructionSpec<'_>,
+    taught: Option<&crate::curriculum::FiniteObjectiveCase>,
 ) -> Result<(), Rejection> {
+    let last = steps.last().map_or("", String::as_str);
+    let normalized_last = normalized_problem(last);
     for (served_problem, answer) in spec.served() {
-        if answer.is_empty() || served_problem.trim() == problem.trim() {
+        if permitted_collision(taught, served_problem) {
             continue;
         }
-        if contains_token(last, answer) {
+        if same_problem(served_problem, problem) {
+            return Err(Rejection {
+                code: "teach-worked-example",
+                message: "the worked example repeats a served problem; use different operands before the learner attempts it".to_owned(),
+            });
+        }
+        if let Some(expression) = direct_expression(served_problem)
+            && contains_expression(&normalized_last, &expression)
+            && !answer.is_empty()
+            && contains_token(last, answer)
+        {
             return Err(Rejection {
                 code: "teach-answer",
                 message: format!(
-                    "the last step of 'worked_example.steps' reads {}, which names {}, the answer \
-of {} — this knowledge point serves that problem too, and the page works {}, so the step hands the \
-learner an answer before the attempt (Hard Rule 1)",
-                    py_str(last),
-                    py_str(answer),
+                    "the final step solves served problem {} and names its answer {} (Hard Rule 1)",
                     py_str(served_problem),
-                    py_str(problem)
+                    py_str(answer)
                 ),
             });
         }

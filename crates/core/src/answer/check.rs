@@ -17,7 +17,12 @@
 //! 2. The two string keys are equal: `correct = true`.
 //! 3. Both sides parse and canonicalize: the verdict is the equality of the two
 //!    canonical forms, under the label rule of [`same_answer`]. If either side
-//!    leaves the grammar, the outcome is [`Outcome::Undecidable`] (V2).
+//!    leaves the grammar, the outcome is [`Outcome::Undecidable`] (V2). If one
+//!    side alone carries a unit, the outcome is [`Outcome::Undecidable`] with
+//!    the reason `a unit is missing` (D-F3); the contract of D-F1 decides that
+//!    pair later. A set against a list or a tuple is [`Outcome::Undecidable`]
+//!    as well: the two shapes hold one member set, and the contract decides
+//!    the shape.
 //! 4. The learner wrote a period-grouped integer whose value matches: `correct =
 //!    true` with `notation = true` (spec section 2.4).
 //! 5. The learner typed a DECIMAL, and the decimal is the exact rounding of the
@@ -51,6 +56,7 @@ use super::canon::{Canon, canon};
 use super::normalize::{MAX_ANSWER_CHARS, is_grouped_integer, normalize};
 use super::parse::parse;
 use super::rounding::{Rounding, rounds_to};
+use super::unit::lookup;
 
 /// The decision of the checker on one answer pair (C4).
 ///
@@ -184,6 +190,9 @@ fn decide(expected: &str, learner: &str, kind: AnswerKind) -> (Outcome, Option<F
         Ok(value) => value,
         Err(reason) => return (Outcome::Undecidable(reason), None),
     };
+    if let Some(reason) = shape_gap(&expected_value, &learner_value) {
+        return (Outcome::Undecidable(Undecidable::new(reason)), None);
+    }
     if same_answer(&expected_value, &learner_value) {
         return (Outcome::decided(true), None);
     }
@@ -202,6 +211,29 @@ fn decide(expected: &str, learner: &str, kind: AnswerKind) -> (Outcome, Option<F
     (Outcome::decided(false), None)
 }
 
+/// The refusal of a pair whose two shapes the checker does not compare (D-F3).
+///
+/// A unit on one side alone: the contract of D-F1 decides later whether a bare
+/// number is acceptable for a measured answer; the grammar does not, so the
+/// pair gets no verdict (V2). A set against a list or a tuple: an unordered
+/// collection and an ordered one are two shapes of one member set, and the
+/// answer contract decides which shape the item asks for
+/// (`docs/reference/undecidable-answers.md`, the 2.0 productions).
+fn shape_gap(expected: &Canon, learner: &Canon) -> Option<&'static str> {
+    match (unlabeled(expected), unlabeled(learner)) {
+        (Canon::Quantity { .. }, Canon::Quantity { .. }) => None,
+        (Canon::Quantity { .. }, _) => Some("a unit is missing"),
+        (_, Canon::Quantity { .. }) => Some("a unit on the learner side only"),
+        (Canon::Set(_), Canon::List(_)) | (Canon::List(_), Canon::Set(_)) => {
+            Some("a set against a list")
+        }
+        (Canon::Set(_), Canon::Tuple(_)) | (Canon::Tuple(_), Canon::Set(_)) => {
+            Some("a set against a tuple")
+        }
+        _ => None,
+    }
+}
+
 /// Whether the learner wrote the expected value as a rounded decimal.
 ///
 /// The rule reads the learner TREE and not the learner value alone, because the
@@ -210,12 +242,47 @@ fn decide(expected: &str, learner: &str, kind: AnswerKind) -> (Outcome, Option<F
 /// carry no digit count, so the rule leaves them to the next rung.
 ///
 /// A label falls away on both sides, which is the rule [`same_answer`] holds for
-/// a one-sided label.
+/// a one-sided label. A unit stands on both sides or on neither, because
+/// [`shape_gap`] refused the one-sided pair: the rounding then reads the
+/// expected value in the unit the learner typed, so `1.33 h` is the rounding of
+/// `80 min` (D-F3).
 fn rounding_variant(expected: &Canon, learner_tree: &Ast) -> Rounding {
-    let Some((value, scale)) = typed_decimal(learner_tree) else {
+    let expected = unlabeled(expected);
+    let (Canon::Quantity { quantity, value }, Ast::Quantity { value: tree, unit }) =
+        (expected, learner_tree)
+    else {
+        let Some((value, scale)) = typed_decimal(learner_tree) else {
+            return Rounding::NotANumber;
+        };
+        return rounds_to(expected, &value, scale);
+    };
+    let Some((decimal, scale)) = typed_decimal(tree) else {
         return Rounding::NotANumber;
     };
-    rounds_to(unlabeled(expected), &value, scale)
+    let Some(unit) = lookup(unit) else {
+        return Rounding::NotANumber;
+    };
+    if unit.quantity != *quantity {
+        return Rounding::Different;
+    }
+    match in_unit(value, &unit.factor()) {
+        Some(expected) => rounds_to(&expected, &decimal, scale),
+        None => Rounding::NotANumber,
+    }
+}
+
+/// Write a number of base units in a unit of `factor` base units.
+fn in_unit(value: &Canon, factor: &BigRational) -> Option<Canon> {
+    match value {
+        Canon::Rational(number) => Some(Canon::Rational(number / factor)),
+        Canon::Radical(parts) => Some(Canon::Radical(
+            parts
+                .iter()
+                .map(|(basis, coefficient)| (basis.clone(), coefficient / factor))
+                .collect(),
+        )),
+        _ => None,
+    }
 }
 
 /// The exact value and the count of digits after the point the learner typed,

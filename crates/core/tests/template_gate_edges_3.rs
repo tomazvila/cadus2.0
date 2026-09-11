@@ -19,6 +19,7 @@ fn check_hint(hint: &str) -> Result<(), Rejection> {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     check_instance(&doc, &spec, &hand_instance(4, "Compute $4^{2}$.", "16"))
 }

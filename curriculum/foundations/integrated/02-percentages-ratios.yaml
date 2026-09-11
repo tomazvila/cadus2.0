@@ -1,0 +1,96 @@
+# Integrated task (D-F10): percentages and ratios.
+# A ratio splits the daily count, prices turn the counts into revenue, and a
+# percent change acts on one price only. The final answer is a percent change of
+# the whole, which no single component step gives.
+id: integrated-cafe-price-change
+title: Price change at the cafe
+course: foundations
+topic: percent-applications
+component_topics:
+  - percent-applications
+  - ratios-proportions
+domain: percentages_ratios
+scenario: >
+  A cafe sells 240 hot drinks on a normal day. The drinks divide between coffee
+  and tea in the ratio 5:3. Coffee costs 2.40 EUR and tea costs 1.80 EUR. The
+  roaster raises the coffee price by 15 percent. The tea price does not change,
+  and the cafe sells the same counts after the rise.
+given:
+  - label: Drinks per day
+    value: "240"
+  - label: Coffee to tea ratio
+    value: "5:3"
+  - label: Coffee price
+    value: 2.40 EUR
+  - label: Tea price
+    value: 1.80 EUR
+  - label: Coffee price rise
+    value: 15 percent
+    note: >
+      The counts hold after the rise. If 10 percent of the coffee buyers move to
+      tea, the revenue rise is smaller than the answer here.
+method:
+  prompt: Which method gives the percent change of the daily revenue?
+  options:
+    - id: revenue-before-and-after
+      label: Find the revenue before and after, then divide the difference by the revenue before.
+      correct: true
+      why: A percent change compares a difference against the value it started from.
+    - id: apply-15-to-total
+      label: Raise the whole daily revenue by 15 percent.
+      correct: false
+      why: The rise acts on the coffee price only, so the whole does not rise by 15 percent.
+    - id: average-the-prices
+      label: Average the two prices and raise the average by 15 percent.
+      correct: false
+      why: The counts of coffee and tea differ, so their average price is not the revenue.
+steps:
+  - id: coffee-count
+    ask:
+      prompt: How many coffees does the cafe sell on a normal day?
+      answer: "150"
+      unit: drinks
+      hints:
+        - The ratio 5:3 divides the day into 8 equal parts.
+        - One part is 240/8 drinks, and coffee holds 5 parts.
+    skills:
+      - ratios-proportions/kp1
+  - id: revenue-before
+    ask:
+      prompt: What is the daily drink revenue before the rise, in EUR?
+      answer: "522"
+      unit: EUR
+      hints:
+        - Tea holds the other 3 parts of the day.
+        - Multiply each count by its price and add the two products.
+    skills:
+      - ratios-proportions/kp2
+  - id: new-coffee-price
+    ask:
+      prompt: What is the coffee price after the 15 percent rise, in EUR?
+      answer: "2.76"
+      contract:
+        kind: approx
+        decimals: 2
+      unit: EUR
+      hints:
+        - A rise of 15 percent multiplies the price by 1.15.
+    skills:
+      - percent-applications/kp1
+final:
+  ask:
+    prompt: By what percent does the daily drink revenue rise, to 1 decimal?
+    answer: "10.3"
+    contract:
+      kind: approx
+      decimals: 1
+    unit: percent
+    hints:
+      - The tea revenue does not change.
+      - Divide the revenue difference by the revenue before the rise.
+  interpretation: >
+    The revenue rises by 10.3 percent, not by 15 percent: the rise acts on the
+    coffee half of the revenue only. The cafe gains 54 EUR a day while the
+    counts hold.
+  skills:
+    - percent-applications/kp3

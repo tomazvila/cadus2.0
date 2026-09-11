@@ -56,10 +56,13 @@ pub mod diagnosis;
 pub mod error;
 pub mod grade;
 pub mod health;
+pub mod integrated;
 pub mod metrics;
 pub mod operator;
 pub mod origin;
 pub mod path;
+pub mod report;
+mod route_prelude;
 pub mod security;
 pub mod serve;
 pub mod session;
@@ -220,6 +223,7 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/graph", get(session::graph))
         .route("/api/modules", get(session::modules))
         .route("/api/export", get(session::export))
+        .route("/api/report/retention", get(report::retention))
         .route("/api/enroll", post(session::enroll))
         .route("/api/session/start", post(session::session_start))
         .route("/api/session/end", post(session::session_end))
@@ -230,6 +234,19 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/task/{task_id}/hint", post(serve::hint))
         // Unit U8, spec section 11. The same rule: before the three layers.
         .route("/api/task/{task_id}/answer", post(grade::answer))
+        // D-F10: the integrated task. A multi-step task with an authored item
+        // serves it here as ONE problem and grades it in one submission; a task
+        // with no item answers 409 and keeps the per-component routes above.
+        .route("/api/task/{task_id}/integrated", post(integrated::serve))
+        .route(
+            "/api/task/{task_id}/integrated/hint",
+            post(integrated::hint_rung),
+        )
+        .route(
+            "/api/task/{task_id}/integrated/answer",
+            post(integrated::answer),
+        )
+        .route("/api/task/{task_id}/quiz-result", post(grade::quiz_result))
         // The placement diagnostic, spec section 2. It sits with the task routes
         // and before the three layers, for the same reason they do.
         .route("/api/diag/start", post(diag::start))
@@ -254,6 +271,13 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/admin/content/{digest}", get(admin::show))
         .route("/api/admin/content/{digest}/approve", post(admin::approve))
         .route("/api/admin/content/{digest}/reject", post(admin::reject))
+        // f4-outcome: the recovery path of the third outcome (D-F2). Both
+        // refuse an account that is not an admin.
+        .route("/api/admin/ungraded", get(admin::list_ungraded))
+        .route(
+            "/api/admin/ungraded/{attempt_id}/regrade",
+            post(admin::regrade_ungraded),
+        )
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)

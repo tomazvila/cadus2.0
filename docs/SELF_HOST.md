@@ -586,7 +586,7 @@ Read the columns like this:
   for a full one.
 
 **One pass authors at most one document per pair.** A template bank of three
-therefore fills over three passes, and a human reviews what each pass stored
+therefore fills over three passes, and an independent AI reviewer checks each pass
 before the next pass runs (C6). The last line states the bill: one model call per
 document when the gate accepts the first reply, and five calls when every attempt
 is refused.
@@ -714,7 +714,7 @@ CADUS_CURRICULUM=crates/worker/tests/fixtures/pool \
 
 A dry run makes no call and writes no row, so it is safe on any database.
 
-## The review surface (C6)
+## The AI evidence review surface (C6)
 
 M6 R5 puts the four review routes on `/api/admin/content*`. All four serve an
 ADMIN account only: a session on an account with `users.is_admin = false` gets
@@ -755,7 +755,7 @@ Four rules an operator must know:
   }
   ```
 
-  An APPROVED page or ladder is never touched: a human passed it. An empty list
+  An APPROVED page or ladder is never touched: an explicit review passed it. An empty list
   means the approval refused nothing. A `null` means the re-gate itself failed;
   the approval still stands, and the worker log carries the reason.
 

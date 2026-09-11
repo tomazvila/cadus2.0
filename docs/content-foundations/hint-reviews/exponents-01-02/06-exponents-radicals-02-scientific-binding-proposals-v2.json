@@ -1,0 +1,1621 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "external_unit06_normalized_scientific_template_binding_proposal_v2",
+  "authored_at_utc": "2026-09-10T02:16:27.571608+00:00",
+  "supersedes": "hint-authored/06-exponents-radicals-02-scientific-binding-proposals-v1.json",
+  "superseded_sha256": "e0efa1778a0d4c4ec72bc0e3bf0ad5a129a809042d95dc06d9c36a9453339804",
+  "source_bindings": {
+    "cohort02_v4": "hint-authored/06-exponents-radicals-02-repair-proposals-v4.json",
+    "cohort02_v4_sha256": "b6d8ecfb96e46407406f71699cc3a09c8f34a894a7af60bad784ade6694672e9",
+    "curriculum": "curriculum-after-repairs-02.json",
+    "curriculum_sha256": "b1fbf0bb3c4cd09efed5f70355c15b2b1403df928b796204dc051539b1e58242",
+    "curriculum_runtime_sha256": "c36abbb213e59791ecc9684122d793c016c2f017ba79172441d89540c2937d52",
+    "selected_templates": "docs/content-foundations/whole-course-teach/inputs/templates.json",
+    "selected_templates_sha256": "b147146a9d5b4014bf069cbfd61c5cb0adcbac6b689462ae05ca64ba77fe4197",
+    "normalized_scientific_implementation_commit": "0522747c",
+    "normalized_scientific_root_review": "normalized-scientific-notation-root-review-v2.json",
+    "normalized_scientific_root_review_sha256": "0401cc50d7a159fde9a84c01d95a21192ac67154c3bc568d084df36d96d3cabd"
+  },
+  "summary": {
+    "normalized_operation_templates": 6,
+    "bidirectional_conversion_templates": 2,
+    "templates": 8,
+    "bindings": 132,
+    "repository_mutations": 0
+  },
+  "design": {
+    "operation_kps": "Preserve each current exercise family, explicitly request coefficient-first a times 10^n output, and bind its numeric result to required_normalized_scientific_notation.",
+    "mixed_direction_conversion": "Each conversion task asks both canonical directions on separate values drawn from disjoint coefficient domains and uses multipart contracts: normalized scientific plus exact ordinary integer or decimal. Neither prompt value reveals the other answer.",
+    "coefficient_rule": "Every normalized answer has a positive coefficient at least one and strictly less than ten."
+  },
+  "template_repairs": [
+    {
+      "key": "scientific-notation/kp1",
+      "base_selected_template_sha256": "b8231aef238fc851a875c2839a840e7a1bb49e57bcac13427d037ff40cfe315d",
+      "curriculum_kp_sha256": "c0c20b7497713239b5cd30386c50a2f8d98c6c29d2d4bcb7d1a8f00cdaafd3e3",
+      "curriculum_objective": "Multiply in scientific notation",
+      "curriculum_constraints": "multiply coefficients, add exponents",
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "6 x 10^7",
+          "problem": "Compute $(2 \\times 10^3)(3 \\times 10^4)$.",
+          "solution_sketch": "$2 \\cdot 3 = 6$; $10^{3+4} = 10^7$."
+        },
+        {
+          "answer": "6 x 10^3",
+          "problem": "What is $(3 \\times 10^{-2})(2 \\times 10^5)$?",
+          "solution_sketch": "$3 \\cdot 2 = 6$; $10^{-2+5} = 10^3$."
+        },
+        {
+          "answer": "8 x 10^5",
+          "problem": "Multiply $(4 \\times 10^2)(2 \\times 10^3)$.",
+          "solution_sketch": "$4 \\cdot 2 = 8$; $10^{2+3} = 10^5$."
+        },
+        {
+          "answer": "9 x 10^2",
+          "problem": "Find the product $(3 \\times 10^{-4})(3 \\times 10^6)$.",
+          "solution_sketch": "$3 \\cdot 3 = 9$; $10^{-4+6} = 10^2$."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_expr": "a*200000",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Operate on the coefficients separately from the powers of ten, then check coefficient normalization."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                "1.1",
+                "1.2",
+                "1.3",
+                "1.4",
+                "1.5",
+                "1.6",
+                "1.7",
+                "1.8",
+                "1.9",
+                "2.0",
+                "2.1",
+                "2.2"
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "2.2 x 10^5",
+              "params": {
+                "a": "1.1"
+              }
+            },
+            {
+              "expected": "2.4 x 10^5",
+              "params": {
+                "a": "1.2"
+              }
+            },
+            {
+              "expected": "2.6 x 10^5",
+              "params": {
+                "a": "1.3"
+              }
+            },
+            {
+              "expected": "2.8 x 10^5",
+              "params": {
+                "a": "1.4"
+              }
+            },
+            {
+              "expected": "3 x 10^5",
+              "params": {
+                "a": "1.5"
+              }
+            },
+            {
+              "expected": "3.2 x 10^5",
+              "params": {
+                "a": "1.6"
+              }
+            },
+            {
+              "expected": "3.4 x 10^5",
+              "params": {
+                "a": "1.7"
+              }
+            },
+            {
+              "expected": "3.6 x 10^5",
+              "params": {
+                "a": "1.8"
+              }
+            },
+            {
+              "expected": "3.8 x 10^5",
+              "params": {
+                "a": "1.9"
+              }
+            },
+            {
+              "expected": "4 x 10^5",
+              "params": {
+                "a": "2.0"
+              }
+            },
+            {
+              "expected": "4.2 x 10^5",
+              "params": {
+                "a": "2.1"
+              }
+            },
+            {
+              "expected": "4.4 x 10^5",
+              "params": {
+                "a": "2.2"
+              }
+            }
+          ],
+          "solution_sketch": "Multiply coefficients to obtain $2({a})$, and add exponents $2+3=5$. Thus the value is $2({a})\\times10^5$; the coefficient is between $2.2$ and $4.4$.",
+          "statement": "Compute $[({a})\\times10^2](2\\times10^3)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+          "answer_contract": {
+            "kind": "required_normalized_scientific_notation"
+          }
+        },
+        "kind": "template",
+        "kp_id": "scientific-notation/kp1"
+      },
+      "proposed_template_sha256": "f46d6919cbaed6d6e0b37a07257b79c71f85e3998bd896120151bc638471650d",
+      "binding_count": 12,
+      "independent_arithmetic": "Every sample recomputed exactly with Decimal place-value arithmetic; every scientific coefficient has magnitude at least one and strictly less than ten."
+    },
+    {
+      "key": "scientific-notation/kp2",
+      "base_selected_template_sha256": "79c06095a722967e7197484afa8c72a2e7d9c548a278a5bfece3ccfbb02baa8b",
+      "curriculum_kp_sha256": "7c73c23bac36792c06b10bc72b4b941e270dd6d6213c715c222bddf8c7df4c5d",
+      "curriculum_objective": "Divide in scientific notation",
+      "curriculum_constraints": "divide coefficients, subtract exponents",
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "4 x 10^3",
+          "problem": "Compute $\\frac{8 \\times 10^5}{2 \\times 10^2}$.",
+          "solution_sketch": "$\\frac{8}{2} = 4$; $10^{5-2} = 10^3$."
+        },
+        {
+          "answer": "3 x 10^-2",
+          "problem": "What is $\\frac{9 \\times 10^3}{3 \\times 10^5}$?",
+          "solution_sketch": "$\\frac{9}{3} = 3$; $10^{3-5} = 10^{-2}$."
+        },
+        {
+          "answer": "2 x 10^2",
+          "problem": "Divide $\\frac{6 \\times 10^4}{3 \\times 10^2}$.",
+          "solution_sketch": "$\\frac{6}{3} = 2$; $10^{4-2} = 10^2$."
+        },
+        {
+          "answer": "3 x 10^3",
+          "problem": "Find the quotient $\\frac{9 \\times 10^7}{3 \\times 10^4}$.",
+          "solution_sketch": "$\\frac{9}{3} = 3$; $10^{7-4} = 10^3$."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_expr": "a*500",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Operate on the coefficients separately from the powers of ten, then check coefficient normalization."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                "1.1",
+                "1.2",
+                "1.3",
+                "1.4",
+                "1.5",
+                "1.6",
+                "1.7",
+                "1.8",
+                "1.9",
+                "2.0",
+                "2.1",
+                "2.2"
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "5.5 x 10^2",
+              "params": {
+                "a": "1.1"
+              }
+            },
+            {
+              "expected": "6 x 10^2",
+              "params": {
+                "a": "1.2"
+              }
+            },
+            {
+              "expected": "6.5 x 10^2",
+              "params": {
+                "a": "1.3"
+              }
+            },
+            {
+              "expected": "7 x 10^2",
+              "params": {
+                "a": "1.4"
+              }
+            },
+            {
+              "expected": "7.5 x 10^2",
+              "params": {
+                "a": "1.5"
+              }
+            },
+            {
+              "expected": "8 x 10^2",
+              "params": {
+                "a": "1.6"
+              }
+            },
+            {
+              "expected": "8.5 x 10^2",
+              "params": {
+                "a": "1.7"
+              }
+            },
+            {
+              "expected": "9 x 10^2",
+              "params": {
+                "a": "1.8"
+              }
+            },
+            {
+              "expected": "9.5 x 10^2",
+              "params": {
+                "a": "1.9"
+              }
+            },
+            {
+              "expected": "1 x 10^3",
+              "params": {
+                "a": "2.0"
+              }
+            },
+            {
+              "expected": "1.05 x 10^3",
+              "params": {
+                "a": "2.1"
+              }
+            },
+            {
+              "expected": "1.1 x 10^3",
+              "params": {
+                "a": "2.2"
+              }
+            }
+          ],
+          "solution_sketch": "Divide coefficients and subtract exponents: $(({a})/2)\\times10^3$. If that coefficient is below one, multiply it by ten and lower the exponent to two.",
+          "statement": "Compute $[({a})\\times10^5]/(2\\times10^2)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+          "answer_contract": {
+            "kind": "required_normalized_scientific_notation"
+          }
+        },
+        "kind": "template",
+        "kp_id": "scientific-notation/kp2"
+      },
+      "proposed_template_sha256": "f1731548ee3c7890e0eb423e40602ce0b70210cc4ed3b1b37be882a9197b0ce3",
+      "binding_count": 12,
+      "independent_arithmetic": "Every sample recomputed exactly with Decimal place-value arithmetic; every scientific coefficient has magnitude at least one and strictly less than ten."
+    },
+    {
+      "key": "scientific-notation/kp3",
+      "base_selected_template_sha256": "b517a090a05d4f4530d1c4efa3bc9cc13b6801fb480eb8d99490f754c956122c",
+      "curriculum_kp_sha256": "ac5bafa15ac25644627797c19b61b84a612fe6ec7b16327583c5b19a3fe3f15f",
+      "curriculum_objective": "Renormalize the result",
+      "curriculum_constraints": "coefficient must land back in [1, 10)",
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "2 x 10^8",
+          "problem": "Compute $(4 \\times 10^3)(5 \\times 10^4)$ in proper scientific notation.",
+          "solution_sketch": "$20 \\times 10^7 = 2 \\times 10^8$."
+        },
+        {
+          "answer": "2.5 x 10^-4",
+          "problem": "Compute $\\frac{2 \\times 10^2}{8 \\times 10^5}$ in proper scientific notation.",
+          "solution_sketch": "$0.25 \\times 10^{-3} = 2.5 \\times 10^{-4}$."
+        },
+        {
+          "answer": "2.4 x 10^8",
+          "problem": "Find $(6 \\times 10^3)(4 \\times 10^4)$ in proper scientific notation.",
+          "solution_sketch": "$24 \\times 10^7 = 2.4 \\times 10^8$."
+        },
+        {
+          "answer": "5 x 10^-4",
+          "problem": "Find $\\frac{3 \\times 10^2}{6 \\times 10^5}$ in proper scientific notation.",
+          "solution_sketch": "$0.5 \\times 10^{-3} = 5 \\times 10^{-4}$."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_expr": "a*80000000",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Operate on the coefficients separately from the powers of ten, then check coefficient normalization."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                "2.0",
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.4",
+                "2.5",
+                "2.6",
+                "2.7",
+                "2.8",
+                "2.9",
+                "3.0",
+                "3.1"
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "1.6 x 10^8",
+              "params": {
+                "a": "2.0"
+              }
+            },
+            {
+              "expected": "1.68 x 10^8",
+              "params": {
+                "a": "2.1"
+              }
+            },
+            {
+              "expected": "1.76 x 10^8",
+              "params": {
+                "a": "2.2"
+              }
+            },
+            {
+              "expected": "1.84 x 10^8",
+              "params": {
+                "a": "2.3"
+              }
+            },
+            {
+              "expected": "1.92 x 10^8",
+              "params": {
+                "a": "2.4"
+              }
+            },
+            {
+              "expected": "2 x 10^8",
+              "params": {
+                "a": "2.5"
+              }
+            },
+            {
+              "expected": "2.08 x 10^8",
+              "params": {
+                "a": "2.6"
+              }
+            },
+            {
+              "expected": "2.16 x 10^8",
+              "params": {
+                "a": "2.7"
+              }
+            },
+            {
+              "expected": "2.24 x 10^8",
+              "params": {
+                "a": "2.8"
+              }
+            },
+            {
+              "expected": "2.32 x 10^8",
+              "params": {
+                "a": "2.9"
+              }
+            },
+            {
+              "expected": "2.4 x 10^8",
+              "params": {
+                "a": "3.0"
+              }
+            },
+            {
+              "expected": "2.48 x 10^8",
+              "params": {
+                "a": "3.1"
+              }
+            }
+          ],
+          "solution_sketch": "The product is $8({a})\\times10^7$. Since $8({a})$ lies between $16$ and $24.8$, rewrite it as $0.8({a})\\times10^8$.",
+          "statement": "Compute $[({a})\\times10^3](8\\times10^4)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+          "answer_contract": {
+            "kind": "required_normalized_scientific_notation"
+          }
+        },
+        "kind": "template",
+        "kp_id": "scientific-notation/kp3"
+      },
+      "proposed_template_sha256": "f9b970c62e83ebc49afcb97fdac275c3e07fffc88ca23f065dcc5c73e7e25ce8",
+      "binding_count": 12,
+      "independent_arithmetic": "Every sample recomputed exactly with Decimal place-value arithmetic; every scientific coefficient has magnitude at least one and strictly less than ten."
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp1",
+      "base_selected_template_sha256": "925172a17aea176a0850ba1a0a118a19aab2c47004f59d190bbc520687e6b748",
+      "curriculum_kp_sha256": "c491db04a2d8265f8628356d868613c1e424ab84d5f8cffbfa1f1746c67ee430",
+      "curriculum_objective": "Same power of 10",
+      "curriculum_constraints": "matching exponents; add or subtract coefficients only",
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "7.7 x 10^4",
+          "problem": "Compute $3.2 \\times 10^4 + 4.5 \\times 10^4$.",
+          "solution_sketch": "Same power: add coefficients $3.2 + 4.5$."
+        },
+        {
+          "answer": "6 x 10^3",
+          "problem": "Compute $8 \\times 10^3 - 2 \\times 10^3$.",
+          "solution_sketch": "Same power: subtract coefficients $8 - 2 = 6$."
+        },
+        {
+          "answer": "5.5 x 10^5",
+          "problem": "Add $2.1 \\times 10^5$ and $3.4 \\times 10^5$.",
+          "solution_sketch": "Same power: add coefficients $2.1 + 3.4 = 5.5$."
+        },
+        {
+          "answer": "4 x 10^4",
+          "problem": "Subtract $5 \\times 10^4$ from $9 \\times 10^4$.",
+          "solution_sketch": "Same power: subtract coefficients $9 - 5 = 4$."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_expr": "(a+2)*10000",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Express both terms using the same power of ten before adding or subtracting their coefficients."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                "1.1",
+                "1.2",
+                "1.3",
+                "1.4",
+                "1.5",
+                "1.6",
+                "1.7",
+                "1.8",
+                "1.9",
+                "2.0",
+                "2.1",
+                "2.2"
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "3.1 x 10^4",
+              "params": {
+                "a": "1.1"
+              }
+            },
+            {
+              "expected": "3.2 x 10^4",
+              "params": {
+                "a": "1.2"
+              }
+            },
+            {
+              "expected": "3.3 x 10^4",
+              "params": {
+                "a": "1.3"
+              }
+            },
+            {
+              "expected": "3.4 x 10^4",
+              "params": {
+                "a": "1.4"
+              }
+            },
+            {
+              "expected": "3.5 x 10^4",
+              "params": {
+                "a": "1.5"
+              }
+            },
+            {
+              "expected": "3.6 x 10^4",
+              "params": {
+                "a": "1.6"
+              }
+            },
+            {
+              "expected": "3.7 x 10^4",
+              "params": {
+                "a": "1.7"
+              }
+            },
+            {
+              "expected": "3.8 x 10^4",
+              "params": {
+                "a": "1.8"
+              }
+            },
+            {
+              "expected": "3.9 x 10^4",
+              "params": {
+                "a": "1.9"
+              }
+            },
+            {
+              "expected": "4 x 10^4",
+              "params": {
+                "a": "2.0"
+              }
+            },
+            {
+              "expected": "4.1 x 10^4",
+              "params": {
+                "a": "2.1"
+              }
+            },
+            {
+              "expected": "4.2 x 10^4",
+              "params": {
+                "a": "2.2"
+              }
+            }
+          ],
+          "solution_sketch": "The powers already match. Add only the coefficients: $(({a})+2)\\times10^4$.",
+          "statement": "Compute $[({a})\\times10^4]+(2\\times10^4)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+          "answer_contract": {
+            "kind": "required_normalized_scientific_notation"
+          }
+        },
+        "kind": "template",
+        "kp_id": "scientific-notation-addition-subtraction/kp1"
+      },
+      "proposed_template_sha256": "b36912117a912b8fa8aba91e1f117b4fecdf81b6e5fa4778d170264b479cb0c3",
+      "binding_count": 12,
+      "independent_arithmetic": "Every sample recomputed exactly with Decimal place-value arithmetic; every scientific coefficient has magnitude at least one and strictly less than ten."
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp2",
+      "base_selected_template_sha256": "5b1a6178bfc8317d2daed3f7ea07314d17c5e7bd1c56d1a9c4201037f765f98a",
+      "curriculum_kp_sha256": "c3dd453d5efe8b384851826c6d321120607be6ad7b6f6f5ca22e9ac41040e620",
+      "curriculum_objective": "Different powers: match exponents first",
+      "curriculum_constraints": "rewrite the smaller-exponent term to match the larger exponent",
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "5.3 x 10^4",
+          "problem": "Compute $5 \\times 10^4 + 3 \\times 10^3$ in scientific notation.",
+          "solution_sketch": "$3 \\times 10^3 = 0.3 \\times 10^4$; $5 + 0.3 = 5.3$."
+        },
+        {
+          "answer": "5.8 x 10^5",
+          "problem": "Compute $6.2 \\times 10^5 - 4 \\times 10^4$ in scientific notation.",
+          "solution_sketch": "$4 \\times 10^4 = 0.4 \\times 10^5$; $6.2 - 0.4 = 5.8$."
+        },
+        {
+          "answer": "4.6 x 10^5",
+          "problem": "Add $4 \\times 10^5$ and $6 \\times 10^4$, in scientific notation.",
+          "solution_sketch": "$6 \\times 10^4 = 0.6 \\times 10^5$; $4 + 0.6 = 4.6$."
+        },
+        {
+          "answer": "7 x 10^6",
+          "problem": "Subtract $5 \\times 10^5$ from $7.5 \\times 10^6$, in scientific notation.",
+          "solution_sketch": "$5 \\times 10^5 = 0.5 \\times 10^6$; $7.5 - 0.5 = 7$."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_expr": "(a-3/10)*100000",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Express both terms using the same power of ten before adding or subtracting their coefficients."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                "2.0",
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.4",
+                "2.5",
+                "2.6",
+                "2.7",
+                "2.8",
+                "2.9",
+                "3.0",
+                "3.1"
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "1.7 x 10^5",
+              "params": {
+                "a": "2.0"
+              }
+            },
+            {
+              "expected": "1.8 x 10^5",
+              "params": {
+                "a": "2.1"
+              }
+            },
+            {
+              "expected": "1.9 x 10^5",
+              "params": {
+                "a": "2.2"
+              }
+            },
+            {
+              "expected": "2 x 10^5",
+              "params": {
+                "a": "2.3"
+              }
+            },
+            {
+              "expected": "2.1 x 10^5",
+              "params": {
+                "a": "2.4"
+              }
+            },
+            {
+              "expected": "2.2 x 10^5",
+              "params": {
+                "a": "2.5"
+              }
+            },
+            {
+              "expected": "2.3 x 10^5",
+              "params": {
+                "a": "2.6"
+              }
+            },
+            {
+              "expected": "2.4 x 10^5",
+              "params": {
+                "a": "2.7"
+              }
+            },
+            {
+              "expected": "2.5 x 10^5",
+              "params": {
+                "a": "2.8"
+              }
+            },
+            {
+              "expected": "2.6 x 10^5",
+              "params": {
+                "a": "2.9"
+              }
+            },
+            {
+              "expected": "2.7 x 10^5",
+              "params": {
+                "a": "3.0"
+              }
+            },
+            {
+              "expected": "2.8 x 10^5",
+              "params": {
+                "a": "3.1"
+              }
+            }
+          ],
+          "solution_sketch": "Match exponents: $3\\times10^4=0.3\\times10^5$. Subtract coefficients to obtain $(({a})-0.3)\\times10^5$.",
+          "statement": "Compute $[({a})\\times10^5]-(3\\times10^4)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+          "answer_contract": {
+            "kind": "required_normalized_scientific_notation"
+          }
+        },
+        "kind": "template",
+        "kp_id": "scientific-notation-addition-subtraction/kp2"
+      },
+      "proposed_template_sha256": "f2d91ec4ae458559a7b05a7762693256a2103fe31b13030ec47dc0bca9c0de42",
+      "binding_count": 12,
+      "independent_arithmetic": "Every sample recomputed exactly with Decimal place-value arithmetic; every scientific coefficient has magnitude at least one and strictly less than ten."
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp3",
+      "base_selected_template_sha256": "571a8982ab2a4fe09cb34b2a85f3b224cc80d6552334c104a28b82c66ded0458",
+      "curriculum_kp_sha256": "0abb9068ebc6c766d43fad34ce83f702d79f467fa4cabb91a6f0b31e2ad2bd40",
+      "curriculum_objective": "Renormalize after adding",
+      "curriculum_constraints": "coefficient must land back in [1, 10)",
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "1.7 x 10^4",
+          "problem": "Compute $9 \\times 10^3 + 8 \\times 10^3$ in proper scientific notation.",
+          "solution_sketch": "$17 \\times 10^3 = 1.7 \\times 10^4$."
+        },
+        {
+          "answer": "1 x 10^5",
+          "problem": "Compute $1.05 \\times 10^6 - 9.5 \\times 10^5$ in proper scientific notation.",
+          "solution_sketch": "$10.5 \\times 10^5 - 9.5 \\times 10^5 = 1.0 \\times 10^5$."
+        },
+        {
+          "answer": "1.3 x 10^5",
+          "problem": "Add $7 \\times 10^4$ and $6 \\times 10^4$, in proper scientific notation.",
+          "solution_sketch": "$13 \\times 10^4 = 1.3 \\times 10^5$."
+        },
+        {
+          "answer": "1.2 x 10^5",
+          "problem": "Subtract $8 \\times 10^4$ from $2 \\times 10^5$, in proper scientific notation.",
+          "solution_sketch": "$20 \\times 10^4 - 8 \\times 10^4 = 12 \\times 10^4 = 1.2 \\times 10^5$."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_expr": "(a+8)*10000",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Express both terms using the same power of ten before adding or subtracting their coefficients."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.4",
+                "2.5",
+                "2.6",
+                "2.7",
+                "2.8",
+                "2.9",
+                "3.0",
+                "3.1",
+                "3.2"
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "1.01 x 10^5",
+              "params": {
+                "a": "2.1"
+              }
+            },
+            {
+              "expected": "1.02 x 10^5",
+              "params": {
+                "a": "2.2"
+              }
+            },
+            {
+              "expected": "1.03 x 10^5",
+              "params": {
+                "a": "2.3"
+              }
+            },
+            {
+              "expected": "1.04 x 10^5",
+              "params": {
+                "a": "2.4"
+              }
+            },
+            {
+              "expected": "1.05 x 10^5",
+              "params": {
+                "a": "2.5"
+              }
+            },
+            {
+              "expected": "1.06 x 10^5",
+              "params": {
+                "a": "2.6"
+              }
+            },
+            {
+              "expected": "1.07 x 10^5",
+              "params": {
+                "a": "2.7"
+              }
+            },
+            {
+              "expected": "1.08 x 10^5",
+              "params": {
+                "a": "2.8"
+              }
+            },
+            {
+              "expected": "1.09 x 10^5",
+              "params": {
+                "a": "2.9"
+              }
+            },
+            {
+              "expected": "1.1 x 10^5",
+              "params": {
+                "a": "3.0"
+              }
+            },
+            {
+              "expected": "1.11 x 10^5",
+              "params": {
+                "a": "3.1"
+              }
+            },
+            {
+              "expected": "1.12 x 10^5",
+              "params": {
+                "a": "3.2"
+              }
+            }
+          ],
+          "solution_sketch": "Add coefficients: $(({a})+8)\\times10^4$. The sum lies between ten and twenty, so the normalized form is $((({a})+8)/10)\\times10^5$.",
+          "statement": "Compute $[({a})\\times10^4]+(8\\times10^4)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+          "answer_contract": {
+            "kind": "required_normalized_scientific_notation"
+          }
+        },
+        "kind": "template",
+        "kp_id": "scientific-notation-addition-subtraction/kp3"
+      },
+      "proposed_template_sha256": "5a6296b8a5df6ec7d10d0e1fd86db13b0373564c9ff33f5d8f1789f5002be176",
+      "binding_count": 12,
+      "independent_arithmetic": "Every sample recomputed exactly with Decimal place-value arithmetic; every scientific coefficient has magnitude at least one and strictly less than ten."
+    },
+    {
+      "key": "scientific-notation-conversion/kp1",
+      "base_selected_template_sha256": "7b3c902fe23f1c90410cfbf4b7a696255cba2e20f86bcb7a52b775e3346ff2c6",
+      "curriculum_kp_sha256": "283799badc116cbe893aa043cdc6bde0abcdd48d8b5fcc4ab7e2a01872343d6c",
+      "curriculum_objective": "Convert large numbers to and from scientific notation",
+      "curriculum_constraints": "coefficient a satisfies 1 <= a < 10",
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "4.5 x 10^4",
+          "problem": "Write $45000$ in scientific notation.",
+          "solution_sketch": "$45000 = 4.5 \\times 10^4$: move the decimal point $4$ places."
+        },
+        {
+          "answer": "3200",
+          "problem": "Write $3.2 \\times 10^3$ as a standard number.",
+          "solution_sketch": "$3.2 \\times 10^3 = 3200$: move the decimal point $3$ places right."
+        },
+        {
+          "answer": "6.7 x 10^4",
+          "problem": "Express $67000$ in scientific notation.",
+          "solution_sketch": "Move the decimal point $4$ places: $6.7 \\times 10^4$."
+        },
+        {
+          "answer": "510",
+          "problem": "Express $5.1 \\times 10^2$ as a standard number.",
+          "solution_sketch": "Move the decimal point $2$ places right: $510$."
+        }
+      ],
+      "proposed_template": {
+        "kind": "template",
+        "kp_id": "scientific-notation-conversion/kp1",
+        "arguments": {
+          "answer_contract": {
+            "kind": "multipart",
+            "parts": [
+              {
+                "name": "scientific",
+                "contract": {
+                  "kind": "required_normalized_scientific_notation"
+                }
+              },
+              {
+                "name": "ordinary",
+                "contract": {
+                  "kind": "required_form",
+                  "form": "integer"
+                }
+              }
+            ]
+          },
+          "answer_expr": "multipart((10*m+d)*1000,(10*p+q)*1000)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Move the decimal to form a coefficient from one up to but excluding ten; reverse that place-value shift when expanding the scientific form."
+          ],
+          "params": {
+            "m": {
+              "kind": "choice",
+              "values": [
+                1,
+                2,
+                3
+              ]
+            },
+            "d": {
+              "kind": "choice",
+              "values": [
+                1,
+                2
+              ]
+            },
+            "p": {
+              "kind": "choice",
+              "values": [
+                6,
+                7,
+                8
+              ]
+            },
+            "q": {
+              "kind": "choice",
+              "values": [
+                3,
+                4
+              ]
+            }
+          },
+          "samples": [
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 1.1 x 10^4; ordinary = 63000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 1.1 x 10^4; ordinary = 64000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 1.1 x 10^4; ordinary = 73000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 1.1 x 10^4; ordinary = 74000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 8,
+                "q": 3
+              },
+              "expected": "scientific = 1.1 x 10^4; ordinary = 83000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 8,
+                "q": 4
+              },
+              "expected": "scientific = 1.1 x 10^4; ordinary = 84000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 1.2 x 10^4; ordinary = 63000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 1.2 x 10^4; ordinary = 64000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 1.2 x 10^4; ordinary = 73000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 1.2 x 10^4; ordinary = 74000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 8,
+                "q": 3
+              },
+              "expected": "scientific = 1.2 x 10^4; ordinary = 83000"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 8,
+                "q": 4
+              },
+              "expected": "scientific = 1.2 x 10^4; ordinary = 84000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 2.1 x 10^4; ordinary = 63000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 2.1 x 10^4; ordinary = 64000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 2.1 x 10^4; ordinary = 73000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 2.1 x 10^4; ordinary = 74000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 8,
+                "q": 3
+              },
+              "expected": "scientific = 2.1 x 10^4; ordinary = 83000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 8,
+                "q": 4
+              },
+              "expected": "scientific = 2.1 x 10^4; ordinary = 84000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 2.2 x 10^4; ordinary = 63000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 2.2 x 10^4; ordinary = 64000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 2.2 x 10^4; ordinary = 73000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 2.2 x 10^4; ordinary = 74000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 8,
+                "q": 3
+              },
+              "expected": "scientific = 2.2 x 10^4; ordinary = 83000"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 8,
+                "q": 4
+              },
+              "expected": "scientific = 2.2 x 10^4; ordinary = 84000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 3.1 x 10^4; ordinary = 63000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 3.1 x 10^4; ordinary = 64000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 3.1 x 10^4; ordinary = 73000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 3.1 x 10^4; ordinary = 74000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 8,
+                "q": 3
+              },
+              "expected": "scientific = 3.1 x 10^4; ordinary = 83000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 8,
+                "q": 4
+              },
+              "expected": "scientific = 3.1 x 10^4; ordinary = 84000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 3.2 x 10^4; ordinary = 63000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 3.2 x 10^4; ordinary = 64000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 3.2 x 10^4; ordinary = 73000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 3.2 x 10^4; ordinary = 74000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 8,
+                "q": 3
+              },
+              "expected": "scientific = 3.2 x 10^4; ordinary = 83000"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 8,
+                "q": 4
+              },
+              "expected": "scientific = 3.2 x 10^4; ordinary = 84000"
+            }
+          ],
+          "statement": "Convert both ways. Write ${m}{d}000$ in normalized scientific notation. Separately, write ${p}.{q}\\times10^4$ as an ordinary whole number. Report scientific and ordinary.",
+          "solution_sketch": "For the first value, place the decimal after its first digit and record a positive exponent of four. For the separate second value, expand by shifting its decimal four places right."
+        }
+      },
+      "proposed_template_sha256": "06e6699087c845a39a78dc41cc9387025d75af14fdc439e282ff44812ba8d8d3",
+      "binding_count": 36,
+      "independent_arithmetic": "Every sample recomputed exactly with Decimal place-value arithmetic; every scientific coefficient has magnitude at least one and strictly less than ten."
+    },
+    {
+      "key": "scientific-notation-conversion/kp2",
+      "base_selected_template_sha256": "50c3da85cebb6c491a1c19bdefcc5dcad38229caa3920c340c3b199e9d092fa2",
+      "curriculum_kp_sha256": "033d0902a0c0cdf8e80f475afbd8328d40f833fb5e632fe4c2a65c11e316a257",
+      "curriculum_objective": "Small numbers with negative exponents",
+      "curriculum_constraints": "negative exponent for numbers less than 1",
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "7.2 x 10^-4",
+          "problem": "Write $0.00072$ in scientific notation.",
+          "solution_sketch": "$0.00072 = 7.2 \\times 10^{-4}$: move the decimal point $4$ places right."
+        },
+        {
+          "answer": "0.006",
+          "problem": "Write $6 \\times 10^{-3}$ as a decimal.",
+          "solution_sketch": "$6 \\times 10^{-3} = 0.006$: move the decimal point $3$ places left."
+        },
+        {
+          "answer": "4 x 10^-4",
+          "problem": "Express $0.0004$ in scientific notation.",
+          "solution_sketch": "Move the decimal point $4$ places right: $4 \\times 10^{-4}$."
+        },
+        {
+          "answer": "0.09",
+          "problem": "Express $9 \\times 10^{-2}$ as a decimal.",
+          "solution_sketch": "Move the decimal point $2$ places left: $0.09$."
+        }
+      ],
+      "proposed_template": {
+        "kind": "template",
+        "kp_id": "scientific-notation-conversion/kp2",
+        "arguments": {
+          "answer_contract": {
+            "kind": "multipart",
+            "parts": [
+              {
+                "name": "scientific",
+                "contract": {
+                  "kind": "required_normalized_scientific_notation"
+                }
+              },
+              {
+                "name": "ordinary",
+                "contract": {
+                  "kind": "required_form",
+                  "form": "decimal"
+                }
+              }
+            ]
+          },
+          "answer_expr": "multipart((10*m+d)/100000,(10*p+q)/100000)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "For a small positive number, moving the decimal right to form the normalized coefficient gives the magnitude of a negative exponent; reverse the shift to expand it."
+          ],
+          "params": {
+            "m": {
+              "kind": "choice",
+              "values": [
+                1,
+                2,
+                3
+              ]
+            },
+            "d": {
+              "kind": "choice",
+              "values": [
+                1,
+                2
+              ]
+            },
+            "p": {
+              "kind": "choice",
+              "values": [
+                6,
+                7
+              ]
+            },
+            "q": {
+              "kind": "choice",
+              "values": [
+                3,
+                4
+              ]
+            }
+          },
+          "samples": [
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 1.1 x 10^-4; ordinary = 0.00063"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 1.1 x 10^-4; ordinary = 0.00064"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 1.1 x 10^-4; ordinary = 0.00073"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 1,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 1.1 x 10^-4; ordinary = 0.00074"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 1.2 x 10^-4; ordinary = 0.00063"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 1.2 x 10^-4; ordinary = 0.00064"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 1.2 x 10^-4; ordinary = 0.00073"
+            },
+            {
+              "params": {
+                "m": 1,
+                "d": 2,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 1.2 x 10^-4; ordinary = 0.00074"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 2.1 x 10^-4; ordinary = 0.00063"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 2.1 x 10^-4; ordinary = 0.00064"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 2.1 x 10^-4; ordinary = 0.00073"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 1,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 2.1 x 10^-4; ordinary = 0.00074"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 2.2 x 10^-4; ordinary = 0.00063"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 2.2 x 10^-4; ordinary = 0.00064"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 2.2 x 10^-4; ordinary = 0.00073"
+            },
+            {
+              "params": {
+                "m": 2,
+                "d": 2,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 2.2 x 10^-4; ordinary = 0.00074"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 3.1 x 10^-4; ordinary = 0.00063"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 3.1 x 10^-4; ordinary = 0.00064"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 3.1 x 10^-4; ordinary = 0.00073"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 1,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 3.1 x 10^-4; ordinary = 0.00074"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 6,
+                "q": 3
+              },
+              "expected": "scientific = 3.2 x 10^-4; ordinary = 0.00063"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 6,
+                "q": 4
+              },
+              "expected": "scientific = 3.2 x 10^-4; ordinary = 0.00064"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 7,
+                "q": 3
+              },
+              "expected": "scientific = 3.2 x 10^-4; ordinary = 0.00073"
+            },
+            {
+              "params": {
+                "m": 3,
+                "d": 2,
+                "p": 7,
+                "q": 4
+              },
+              "expected": "scientific = 3.2 x 10^-4; ordinary = 0.00074"
+            }
+          ],
+          "statement": "Convert both ways. Write $0.000{m}{d}$ in normalized scientific notation. Separately, write ${p}.{q}\\times10^{{-4}}$ as an ordinary decimal. Report scientific and ordinary.",
+          "solution_sketch": "For the first value, move its decimal four places right and use exponent $-4$. For the separate second value, expand by shifting four places left and preserve the leading zeros."
+        }
+      },
+      "proposed_template_sha256": "9293a25b7159da5601dfc16f8f12ae95b8cd0423f77a749ebae7b2e7af3f88a4",
+      "binding_count": 24,
+      "independent_arithmetic": "Every sample recomputed exactly with Decimal place-value arithmetic; every scientific coefficient has magnitude at least one and strictly less than ten."
+    }
+  ],
+  "status": "external-proposal-pending-independent-root-review-and-production-gate"
+}

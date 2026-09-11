@@ -20,6 +20,12 @@
 //!   the gate hands its skipped checks to its caller and the caller reports them.
 //!   The refill worker drops them today, and this route is where an operator
 //!   reads them.
+//! - `readiness` — the D-F5 counts per course: how many knowledge points a
+//!   lesson serves, how many it blocks, and how many each blocker stops. It is
+//!   the same audit `cadus-worker readiness` prints, from the same code, so the
+//!   operator screen and the committed report never disagree. The block reads
+//!   `content_store` once and stands outside row-level security, the same as
+//!   `approved_templates` below.
 //!
 //! # Two bounds, both explicit
 //!
@@ -44,9 +50,11 @@ use axum::Json;
 use axum::extract::{Query, State};
 use axum::http::{HeaderMap, StatusCode};
 use cadus_core::pool::split_kp_key;
+use cadus_core::readiness::{Blocker, CourseReport, ReadinessReport};
 use cadus_core::template::{GateSpec, gate_body};
 use cadus_store::begin_tenant;
-use cadus_store::pool::{KpFlag, approved_template};
+use cadus_store::content::approved_index_current;
+use cadus_store::pool::KpFlag;
 use serde_json::{Value, json};
 
 use crate::AppState;
@@ -73,6 +81,27 @@ pub const KP_PARAM: &str = "kp";
 /// covers this route (`docs/reference/l1-budget.md`, section 2.1, the route
 /// table).
 pub const GATE_NOTE_LIMIT: usize = 20;
+
+/// The D-F5 readiness of one course, as JSON.
+fn readiness_json(course: &CourseReport) -> Value {
+    json!({
+        "course_id": course.course_id,
+        "topics": course.topics,
+        "knowledge_points": course.knowledge_points,
+        "ready": course.ready,
+        "blocked": course.blocked,
+        "blockers": course
+            .blockers
+            .iter()
+            .map(|(blocker, count)| (blocker.as_str().to_owned(), json!(count)))
+            .collect::<serde_json::Map<String, Value>>(),
+    })
+}
+
+/// Every blocker name, so a client reads a stable key set.
+fn blocker_names() -> Vec<&'static str> {
+    Blocker::every().iter().map(|one| one.as_str()).collect()
+}
 
 /// One `flags` row, as JSON.
 fn flag_json(flag: &KpFlag) -> Value {
@@ -110,6 +139,10 @@ pub(crate) fn gate_json(content: &Content, kp_id: &str, digest: &str, body: &str
             "gated": true,
             "exhaustive": verified.exhaustive,
             "instances_checked": verified.instances_checked,
+            "finite_policy_fingerprint": verified.finite_policy_fingerprint,
+            "finite_cases": verified.finite_cases.iter().map(|case| json!({
+                "case_id": case.case_id, "role": case.role, "instance_hash": case.instance_hash,
+            })).collect::<Vec<_>>(),
             "notes": verified.notes,
         }),
         Err(rejection) => json!({
@@ -137,9 +170,12 @@ pub(crate) fn spec_of<'a>(content: &'a Content, kp_id: &str) -> Option<GateSpec<
     graph
         .topic(topic_idx)
         .zip(graph.knowledge_point(topic_idx, kp_idx))
-        .map(|(topic, kp)| GateSpec {
-            answer_kind: topic.answer_kind,
-            exemplars: &kp.exemplars,
+        .and_then(|(topic, kp)| {
+            let spec = GateSpec::new(topic.answer_kind, &kp.exemplars);
+            match kp.finite_objective_domain.as_ref() {
+                Some(policy) => spec.with_finite(kp_id, policy).ok(),
+                None => Some(spec),
+            }
         })
 }
 
@@ -179,6 +215,34 @@ pub async fn flags(
         cadus_store::pool::operator_flags(&mut *tx),
     )
     .await?;
+    // The D-F5 audit: one grouped read of the approved rows, then map lookups
+    // over the curriculum half `Content` built at boot.
+    let index = store_call(
+        &state.db,
+        "operator flags: content index",
+        approved_index_current(
+            &mut *tx,
+            &content.curriculum,
+            content.curriculum_context_digest()?,
+            content.review_engine_digest(),
+        ),
+    )
+    .await?;
+    let set = content.readiness.resolve(&index);
+    let readiness = ReadinessReport::build(&content.readiness, &set, None);
+    let rows: Vec<KpFlag> = rows
+        .into_iter()
+        .map(|mut row| {
+            let count = index
+                .documents
+                .get(&(row.kp_id.clone(), "template".to_owned()))
+                .copied()
+                .unwrap_or(0);
+            row.approved_templates = i64::try_from(count).unwrap_or(i64::MAX);
+            row.needs_template = count == 0;
+            row
+        })
+        .collect();
     let rows: Vec<KpFlag> = match wanted {
         Some(kp_id) => rows.into_iter().filter(|row| row.kp_id == kp_id).collect(),
         None => rows,
@@ -194,10 +258,15 @@ pub async fn flags(
             truncated = true;
             break;
         }
+        let policy = content.policy_digest(&row.kp_id)?;
         let found = store_call(
             &state.db,
             "operator flags: template read",
-            approved_template(&mut *tx, &row.kp_id),
+            cadus_store::pool::approved_template_current(
+                &mut *tx,
+                &row.kp_id,
+                content.review_context(policy.as_deref())?,
+            ),
         )
         .await?;
         // The row counted an approved template, so the read finds one.
@@ -215,5 +284,13 @@ pub async fn flags(
         "gate": gate,
         "gate_limit": GATE_NOTE_LIMIT,
         "gate_truncated": truncated,
+        "readiness": {
+            "blockers": blocker_names(),
+            "courses": readiness
+                .courses
+                .iter()
+                .map(readiness_json)
+                .collect::<Vec<Value>>(),
+        },
     })))
 }

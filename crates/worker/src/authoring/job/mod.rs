@@ -86,13 +86,6 @@
 //! same [`Rejection`], so the retry block carries a literal message whatever the
 //! kind is.
 //!
-//! # What this unit does not do
-//!
-//! Every kind has its gate now. Unit R6 added the teach gate and the hint ladder
-//! gate (`cadus_core::instruction`); unit R7 added the diagnosis gate
-//! (`cadus_core::template::distractor`). [`verify_kind`] answers a gate for all
-//! four kinds, so no kind reaches the table unverified.
-//!
 //! # The two doors before a gate
 //!
 //! [`verify_kind`] runs `crate::authoring::repair::repair_arguments` on the
@@ -105,7 +98,10 @@
 //! and never unapproves it ([`stale_slots`], [`stale_rows`]; spec section 2.2,
 //! "Prompt digest"; M6 review finding F4).
 
+mod parallel;
 mod pass;
+mod preflight;
+mod settings;
 mod store;
 mod verify;
 
@@ -114,7 +110,9 @@ use sha2::{Digest, Sha256};
 
 use crate::authoring::prompt::{DIGEST_CHARS, Kind};
 
+pub use parallel::run_parallel;
 pub use pass::{author_one, run_batch};
+pub use preflight::preflight;
 pub use store::{
     StaleRow, Stored, render_stale, served_instances, slots_taken, stale_rows, stale_slots,
     store_pending,
@@ -309,26 +307,11 @@ pub struct BatchReport {
 pub struct AuthoringJob {
     client: Client,
     attempts: u32,
-}
-
-impl AuthoringJob {
-    /// Build the job around a client, with the [`AUTHORING_ATTEMPTS`] bound.
-    #[must_use]
-    pub const fn new(client: Client) -> Self {
-        Self {
-            client,
-            attempts: AUTHORING_ATTEMPTS,
-        }
-    }
-
-    /// Build the job with another attempt bound.
-    ///
-    /// A bound of 0 makes no call and declines at once, which is what the dry
-    /// run of unit R8 wants.
-    #[must_use]
-    pub const fn with_attempts(client: Client, attempts: u32) -> Self {
-        Self { client, attempts }
-    }
+    budget: Option<crate::authoring::budget::Budget>,
+    endpoint_status: std::sync::atomic::AtomicU16,
+    portable_schema: bool,
+    decline_dir: Option<std::path::PathBuf>,
+    missing_only: bool,
 }
 
 /// The approved documents one kind keeps per knowledge point.

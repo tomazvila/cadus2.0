@@ -16,15 +16,51 @@ use cadus_core::instruction::{InstructionSpec, gate_hint_ladder};
 use cadus_store::test_support::TestDb;
 use common::{
     EXEMPLAR_TEXT_2, EXPECTED_ANSWER, KEY, LESSON, POOL_ANSWER, POOL_TEXT, PROBLEM_TEXT, REVIEW,
-    assert_refused, drill_app as app, exemplar, hint_ok, hint_raw, hint_task,
-    learner_with_pool_row, lesson_problem, lesson_state, model_calls, parse, problem_id_of,
-    put_state, seed_content, seed_due_review, seed_learner, seed_open_session,
-    seed_pending_content, serve_ok, stored_state,
+    assert_refused, drill_app as app, exemplar, hint_ok, hint_raw, hint_task, lesson_problem,
+    lesson_state, model_calls, parse, problem_id_of, put_state, seed_content, seed_due_review,
+    seed_learner, seed_open_session, seed_pending_content, serve_ok, stored_state,
 };
 use serde_json::{Value, json};
 
 /// A problem id no serve ever dealt.
 const STALE: &str = "0123456789abcdef0123456789abcdef";
+
+/// Current template-backed fixtures carry the same source stamp as serving.
+async fn learner_with_source(db: &TestDb, email: &str) -> sqlx::types::Uuid {
+    let user = common::learner_with_pool_row(db, email).await;
+    seed_source(db).await;
+    sqlx::query(
+        "UPDATE serving_pool AS sp
+         SET content_digest = cs.digest,
+             source_curriculum_digest = cs.approved_curriculum_digest,
+             source_review_engine_digest = cs.approved_review_engine_digest
+         FROM content_store AS cs
+         WHERE sp.user_id = $1 AND cs.digest = 'hint-source'",
+    )
+    .bind(user)
+    .execute(&db.admin)
+    .await
+    .unwrap();
+    user
+}
+
+async fn seed_source(db: &TestDb) {
+    seed_content(
+        db,
+        KEY,
+        "template",
+        "hint-source",
+        json!({
+            "v":1, "topic_id":"addition", "answer_kind":"numeric",
+            "statement":"Compute {a} + 34.75.",
+            "params":{"a":{"kind":"int","low":1,"high":30}},
+            "answer_expr":"a + 139/4",
+            "samples":[{"params":{"a":1},"expected":"35.75"},
+                       {"params":{"a":21},"expected":"55.75"}], "space_size":30
+        }),
+    )
+    .await;
+}
 
 /// Approve a two-rung ladder for `KEY`.
 async fn seed_two_rungs(db: &TestDb) {
@@ -60,7 +96,7 @@ async fn hint_scanned(app: &axum::Router, user: sqlx::types::Uuid, problem_id: &
 #[tokio::test]
 async fn a_stale_problem_id_is_404_unknown_problem_on_hint_and_on_answer() {
     TestDb::with(|db| async move {
-        let user = learner_with_pool_row(&db, "stale@example.com").await;
+        let user = learner_with_source(&db, "stale@example.com").await;
         let app = app(&db);
         seed_two_rungs(&db).await;
 
@@ -98,7 +134,7 @@ async fn a_stale_problem_id_is_404_unknown_problem_on_hint_and_on_answer() {
 #[tokio::test]
 async fn a_hint_never_carries_the_expected_answer() {
     TestDb::with(|db| async move {
-        let user = learner_with_pool_row(&db, "hint@example.com").await;
+        let user = learner_with_source(&db, "hint@example.com").await;
         let app = app(&db);
         seed_two_rungs(&db).await;
 
@@ -135,6 +171,7 @@ async fn the_third_hint_on_a_review_escalates_to_the_reference_lesson() {
         let user = seed_learner(&db, "escalate@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
+        seed_source(&db).await;
         seed_content(
             &db,
             KEY,
@@ -151,6 +188,18 @@ async fn the_third_hint_on_a_review_escalates_to_the_reference_lesson() {
         live.text = POOL_TEXT.to_string();
         live.expected.answer = POOL_ANSWER.to_string();
         live.solution_sketch = None;
+        let curriculum_digest =
+            cadus_core::curriculum::review_context_digest(&common::drill_curriculum()).unwrap();
+        live.handoff = Some(cadus_web::state::ProblemHandoff {
+            item_digest: cadus_core::learner::problem_text_hash(&live.text),
+            item_source: cadus_core::event::ItemSource::Template,
+            source_content_digest: Some("hint-source".to_string()),
+            source_curriculum_digest: Some(curriculum_digest),
+            source_review_engine_digest: Some(cadus_core::review_engine::DIGEST.to_string()),
+            finite_case_id: None,
+            finite_case_role: None,
+            exposure: cadus_core::event::Exposure::First,
+        });
         let mut scratch = lesson_state(live, 0, false);
         scratch.tasks.remove(REVIEW);
         put_state(&db, user, &scratch).await;
@@ -169,7 +218,7 @@ async fn the_third_hint_on_a_review_escalates_to_the_reference_lesson() {
 #[tokio::test]
 async fn a_knowledge_point_with_no_approved_ladder_refuses_the_hint() {
     TestDb::with(|db| async move {
-        let user = learner_with_pool_row(&db, "noladder@example.com").await;
+        let user = learner_with_source(&db, "noladder@example.com").await;
         let app = app(&db);
 
         let problem_id = problem_id_of(&serve_ok(&app, user, LESSON).await);
@@ -214,7 +263,7 @@ async fn a_knowledge_point_with_no_approved_ladder_refuses_the_hint() {
 #[tokio::test]
 async fn an_approved_hint_ladder_from_the_gate_serves_with_no_model_call() {
     TestDb::with(|db| async move {
-        let user = learner_with_pool_row(&db, "authoredladder@example.com").await;
+        let user = learner_with_source(&db, "authoredladder@example.com").await;
         let app = app(&db);
 
         // The tool arguments of one authoring attempt, as the model emits them.

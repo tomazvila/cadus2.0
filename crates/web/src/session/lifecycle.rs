@@ -99,7 +99,7 @@ pub async fn session_start(req: Ready) -> Reply {
             let event = Event::SessionStart(SessionStart {
                 ts: req.now,
                 session: Some(session.clone()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
             });
             req.append(&mut tx, &event).await?;
             session
@@ -154,7 +154,7 @@ pub async fn session_end(req: Ready, body: Option<Json<Value>>) -> Reply {
     let event = Event::SessionEnd(SessionEnd {
         ts: req.now,
         session: Some(session.clone()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         xp_earned,
         minutes,
     });

@@ -293,7 +293,8 @@ describe('the dashboard', () => {
     await mount();
     const more = document.querySelector('details.more-menu') as HTMLDetailsElement;
     expect(more.open).toBe(false);
-    expect(more.querySelectorAll('button').length).toBe(5);
+    // Five actions, plus the "Load the report" control of the retention card (D-F11).
+    expect(more.querySelectorAll('button').length).toBe(6);
   });
 
   it('reports zero axe violations', async () => {

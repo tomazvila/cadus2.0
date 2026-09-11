@@ -14,24 +14,13 @@ fn expected_time(graph: &Curriculum, served: &ServedProblem) -> Option<i64> {
         .map(|topic| topic.expected_time_secs)
 }
 
-/// The answer kind the checker decides, or the refusal of one it never decides.
+/// The answer kind of the served problem.
 ///
-/// T6, spec section 7: the `undecidable` decision of the counter is taken
-/// here. This service asks no model for a verdict, so the kind ends here.
-fn graded_kind(state: &AppState, served: &ServedProblem) -> Result<AnswerKind, ApiError> {
-    let Some(kind) = answer_kind(served) else {
-        return Err(broken_state("the served problem names no answer kind"));
-    };
-    if matches!(kind, AnswerKind::Numeric | AnswerKind::Expression) {
-        return Ok(kind);
-    }
-    state.metrics.count_grade(metrics::GRADE_UNDECIDABLE);
-    Err(ApiError::new(
-        StatusCode::CONFLICT,
-        UNDECIDABLE_KIND,
-        "This answer kind has no deterministic verdict, and this service never asks a model \
-         for one.",
-    ))
+/// EVERY kind reaches the grade path now (D-F1, D-F2). The route no longer
+/// refuses a kind with `409`: a kind the checker does not decide gives the
+/// UNGRADED outcome, and the learner reads a reason and takes the next task.
+fn served_kind(served: &ServedProblem) -> Result<AnswerKind, ApiError> {
+    answer_kind(served).ok_or_else(|| broken_state("the served problem names no answer kind"))
 }
 
 /// A solve time as the seconds the session clock adds up.
@@ -59,16 +48,11 @@ async fn save_and_commit(
 ///
 /// The route never calls a model and never waits for one. Section 4.3 gives the
 /// order of the steps and this function follows it top to bottom.
-pub async fn answer(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    ApiPath(task_id): ApiPath<String>,
-    raw: Option<Json<Value>>,
-) -> Result<Json<Value>, ApiError> {
+pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
+    let (state, user_id, task_id, raw, now) = task_request(request);
     let (content, body) = route_input(&state, raw.as_ref())?;
     let submitted = submission(body)?;
     let graph = &content.curriculum;
-    let (_, now) = now_pair();
 
     let Open {
         mut tx,
@@ -90,26 +74,32 @@ pub async fn answer(
         now.micros(),
         expected_time(graph, &served),
     );
-    let kind = graded_kind(&state, &served)?;
-    let grade = deterministic_grade(&served.expected.answer, &submitted.answer, kind);
+    let kind = served_kind(&served)?;
+    let grade = grade_item(&served.expected, &submitted.answer, kind);
     // T6, spec section 7: one count per grade DECISION, taken with no model call.
     state.metrics.count_grade(metrics::grade_result(&grade));
     let mut error_tags = grade.error_tags.clone();
-    error_tags.extend(timing_tags);
+    error_tags.extend(timing_tags.iter().cloned());
     scratch.active_secs += elapsed_of(secs);
 
     // H3, section 5.4. `open` bound the row to the open session, so the session
     // stands; the field is carried as the log spells it.
-    let assisted = reference_assisted(task.task_type, submitted.assisted, served.hints_given.len());
+    let assisted = if served.rework.is_some() {
+        submitted.assisted || !served.hints_given.is_empty()
+    } else {
+        reference_assisted(task.task_type, submitted.assisted, served.hints_given.len())
+    };
     let session = scratch.session.clone();
+    let timing = timing::reading(graph, &task, &served, &grade, secs, assisted, &timing_tags);
     let graded = Graded {
+        timing,
         grade: &grade,
         error_tags: &error_tags,
         secs,
         kind,
         assisted,
     };
-    let (attempt, stash) = build_attempt(
+    let (attempt, _stash) = build_attempt(
         &task,
         &served,
         &submitted,
@@ -119,20 +109,9 @@ pub async fn answer(
         attempt_index(&events, &task.task_id),
     )?;
 
-    // H3 first branch: an assisted attempt that grades CORRECT is NOT recorded.
-    // It is stashed, the problem stays live, and the next submission is the
-    // unaided re-solve (`api.py:1520-1532`).
-    if stash_required(assisted, &grade, &served) {
-        scratch
-            .served
-            .entry(task_id)
-            .and_modify(|live| live.rework = Some(stash));
-        return save_and_commit(&state, tx, user_id, &scratch)
-            .await
-            .map(|()| Json(rework_reply(&served)));
-    }
-
-    let (recorded, attempt_id) = recorded_attempt(&served, attempt, &grade, now, session.clone())?;
+    let recorded = attempt;
+    let attempt_id = recorded.attempt_id.clone();
+    feedback::update_practice(&mut scratch, &task_id, &served, &recorded);
 
     // Step 6. One INSERT. Zero rows back means the attempt already stands, so
     // the fold, the advance and the state write are all skipped and the whole
@@ -154,6 +133,7 @@ pub async fn answer(
             answer: &submitted.answer,
             work: submitted.work.as_deref(),
             correct: grade.correct,
+            ungraded: grade.outcome.is_ungraded(),
         },
         write: true,
     };
@@ -164,10 +144,10 @@ pub async fn answer(
 
     // Step 7. The lesson advance, its close event, and its remediation.
     let moved =
-        advance_and_fold(&state, content, &mut tx, user_id, now, &recorded, &events).await?;
+        advance_and_fold(&state, content, &mut tx, user_id, &task, &recorded, &events).await?;
 
     // Step 8 and step 10: move the task on, draw the next problem, write the row.
-    if task.task_type == TaskType::Quiz {
+    if task.task_type == TaskType::Quiz && !recorded.feedback_practice {
         let closed = task_moved_on(
             progress_for(&mut scratch, &task, graph),
             task.task_type,
@@ -181,10 +161,14 @@ pub async fn answer(
     // Step 9. The pre-authored lookup and, on a miss with none, the enqueue.
     // Both run inside THIS transaction (spec section 4.3, D-M5-1).
     let diagnosis = diagnosis::decide(&state, &mut tx, user_id, &mut scratch, &about).await?;
-    let closed = task_moved_on(
-        progress_for(&mut scratch, &task, graph),
+    let pending_practice = scratch.feedback_practice.contains_key(&task_id);
+    let progress = progress_for(&mut scratch, &task, graph);
+    let closed = practice_progress(
+        progress,
         task.task_type,
         &moved,
+        &recorded,
+        pending_practice,
     );
     let next = next_problem(
         &state,
@@ -201,43 +185,6 @@ pub async fn answer(
     Ok(Json(reply(
         &recorded, &moved, &served, next, closed, diagnosis,
     )))
-}
-
-/// H3 first branch: an assisted attempt that grades CORRECT is stashed and not
-/// recorded, unless a stash already stands and this submission is its re-solve.
-fn stash_required(assisted: bool, grade: &Grade, served: &ServedProblem) -> bool {
-    assisted && grade.correct && served.rework.is_none()
-}
-
-/// The attempt the log records, and its id.
-///
-/// H3 second branch: when a stash stands, this submission IS the unaided
-/// re-solve. The STASHED attempt is what gets recorded, under `-rework`; a
-/// failed re-solve rewrites it to a miss and drops its `assisted` flag, so the
-/// assisted pass does not stand (`api.py:1373-1375`). With no stash, the
-/// attempt of this submission is recorded as built.
-fn recorded_attempt(
-    served: &ServedProblem,
-    attempt: Attempt,
-    grade: &Grade,
-    now: Timestamp,
-    session: Option<String>,
-) -> Result<(Attempt, String), ApiError> {
-    let Some(stash) = &served.rework else {
-        let id = attempt.attempt_id.clone();
-        return Ok((attempt, id));
-    };
-    let mut stashed: Attempt = serde_json::from_value(stash.clone())
-        .map_err(|err| broken_state(&format!("the stashed attempt did not read: {err}")))?;
-    stashed.ts = now;
-    stashed.session = session;
-    stashed.attempt_id = format!("{}-rework", attempt.attempt_id);
-    if !grade.correct {
-        stashed.correct = false;
-        stashed.assisted = false;
-    }
-    let id = stashed.attempt_id.clone();
-    Ok((stashed, id))
 }
 
 /// The reply of a request whose attempt already stands (spec section 4.3
@@ -263,23 +210,25 @@ async fn already_recorded(
         write: false,
         miss: Miss {
             correct: standing.correct,
+            ungraded: standing.outcome.is_ungraded(),
             ..about.miss
         },
         ..about
     };
     let replayed = diagnosis::decide(state, &mut tx, user_id, scratch, &replay).await?;
-    let body = json!({
-        "attempt_id": standing.attempt_id,
-        "correct": standing.correct,
-        "work_quality": standing.work_quality,
-        "error_tags": standing.error_tags,
-        "secs": standing.secs.get(),
-        "task_status": STATUS_ALREADY_RECORDED,
-        "remediation": Vec::<Value>::new(),
-        "next": Value::Null,
-        "diagnosis": replayed,
-    });
-    tx.rollback().await.map(|()| Json(body)).map_err(db_failed)
+    let mut body = outcome_fields(standing);
+    body.insert("attempt_id".to_string(), json!(standing.attempt_id));
+    body.insert("work_quality".to_string(), json!(standing.work_quality));
+    body.insert("error_tags".to_string(), json!(standing.error_tags));
+    body.insert("secs".to_string(), json!(standing.secs.get()));
+    body.insert("task_status".to_string(), json!(STATUS_ALREADY_RECORDED));
+    body.insert("remediation".to_string(), json!(Vec::<Value>::new()));
+    body.insert("next".to_string(), Value::Null);
+    body.insert("diagnosis".to_string(), replayed);
+    tx.rollback()
+        .await
+        .map(|()| Json(Value::Object(body)))
+        .map_err(db_failed)
 }
 
 /// Step 7: the lesson advance, the close events it appends, and the fold.
@@ -291,21 +240,35 @@ async fn advance_and_fold(
     content: &Content,
     tx: &mut Transaction<'static, Postgres>,
     user_id: Uuid,
-    now: Timestamp,
+    task: &Task,
     recorded: &Attempt,
     events: &[EventRow],
 ) -> Result<Advance, ApiError> {
+    let now = recorded.ts;
     let history = store(state, load_session_view(tx, user_id)).await?;
-    let moved = advance(
-        &content.curriculum,
-        &content.cfg,
-        now,
-        recorded,
-        events,
-        &history,
-    );
+    let moved = if task.task_type == TaskType::Review {
+        review::close_review(task, recorded, events, &content.cfg)
+    } else if task.task_type == TaskType::Quiz {
+        quiz::close_quiz(task, recorded, events, &content.cfg)
+    } else if task.task_type == TaskType::Drill {
+        drill::close_drill(task, recorded, events)
+    } else {
+        advance(
+            &content.curriculum,
+            &content.cfg,
+            now,
+            recorded,
+            events,
+            &history,
+        )
+    };
     for extra in moved.events() {
         store(state, append_event(tx, user_id, &extra, None)).await?;
+    }
+    // f19-retention: the attempt on a probe task is the delayed measurement, so it
+    // writes its own event with the provenance (D-F11). A plain task writes none.
+    if let Some(probe) = crate::report::probe::probe_event(&content.cfg, recorded, events, now) {
+        store(state, append_event(tx, user_id, &probe, None)).await?;
     }
     let input = projection_input(content, now);
     store(state, project_and_save(tx, user_id, &input, None)).await?;
@@ -372,18 +335,10 @@ async fn next_problem(
         return None;
     }
     scratch.served.remove(&task.task_id);
-    install_next(
-        state,
-        content,
-        tx,
-        user_id,
-        task,
-        scratch,
-        unix_seconds(now.micros()),
-    )
-    .await
-    .map_err(|err| {
-        tracing::warn!(task_id = %task.task_id, code = %err.code, "answer: no next problem");
-    })
-    .ok()
+    install_next(state, content, tx, user_id, task, scratch, now)
+        .await
+        .map_err(|err| {
+            tracing::warn!(task_id = %task.task_id, code = %err.code, "answer: no next problem");
+        })
+        .ok()
 }

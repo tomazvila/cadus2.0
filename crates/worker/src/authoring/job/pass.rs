@@ -2,37 +2,17 @@
 
 use cadus_core::instruction::ServedInstance;
 use cadus_core::pool::kp_key;
-use cadus_core::template::TEMPLATABLE_KINDS;
 use cadus_model_client::{Attempt, Call};
 use cadus_store::Db;
 
 use super::{
-    AuthoringJob, BatchReport, Decline, Outcome, Report, bank_target, served_instances,
+    AuthoringJob, BatchReport, Decline, Outcome, Report, bank_target, preflight, served_instances,
     slots_taken, stale_slots, store_pending, verify_kind,
 };
 use crate::WorkerError;
 use crate::authoring::cost;
 use crate::authoring::prompt::{self, AuthoringSpec, Kind};
 use crate::model_log::{self, CallRecord, PURPOSE_AUTHORING};
-
-/// The reason a knowledge point no gate can accept declines with, or `None`
-/// when the gate of `kind` reads no answer kind (T3, finding F19).
-///
-/// The template gate AND the diagnosis gate refuse every document of an
-/// undecidable answer kind, with one message, so five calls of either kind buy
-/// five copies of one refusal. A teach page and a hint ladder carry no answer
-/// expression, so the rule is not theirs: a knowledge point nothing can grade is
-/// still a knowledge point a page teaches and a ladder supports.
-fn undecidable(kind: Kind, spec: &AuthoringSpec) -> Option<String> {
-    let gated = matches!(kind, Kind::Template | Kind::Diagnosis);
-    if gated && !TEMPLATABLE_KINDS.contains(&spec.answer_kind) {
-        return Some(format!(
-            "answer kind {} is not symbolically decidable",
-            spec.answer_kind
-        ));
-    }
-    None
-}
 
 /// Make one model call, and put its bill in the ledger BEFORE anything else
 /// reads the reply (T6).
@@ -46,9 +26,42 @@ async fn call_model(
     spec: &AuthoringSpec,
     feedback: Option<&str>,
     kp_id: &str,
+    instances: &[ServedInstance],
 ) -> Call {
-    let request = prompt::request(kind, spec, feedback);
-    let call = job.client.call(&request).await;
+    let mut request = prompt::request(kind, spec, feedback);
+    if job.portable_schema {
+        crate::authoring::portable::prepare(&mut request, kind, instances);
+    }
+    let mut call = job
+        .client
+        .call_guarded(
+            &request,
+            |body, max_tokens| {
+                if let Some(status) = job.endpoint_failure() {
+                    return Err(cadus_model_client::ModelError::Config(format!(
+                        "author endpoint rejected HTTP {status}; later requests stopped"
+                    )));
+                }
+                job.budget
+                    .as_ref()
+                    .map_or(Ok(()), |budget| budget.prepare(body, max_tokens))
+            },
+            |attempt| {
+                if let Some(budget) = &job.budget {
+                    budget.observe(attempt);
+                }
+            },
+        )
+        .await;
+    if let Err(cadus_model_client::ModelError::Status { status, .. }) = &call.result
+        && matches!(status, 400 | 401 | 403 | 404 | 405 | 410 | 422)
+    {
+        job.endpoint_status
+            .store(*status, std::sync::atomic::Ordering::SeqCst);
+    }
+    if job.portable_schema {
+        call.result = call.result.and_then(crate::authoring::portable::unpack);
+    }
     let record = CallRecord {
         purpose: PURPOSE_AUTHORING,
         user_id: None,
@@ -167,6 +180,9 @@ pub async fn author_one(
     // other one, because it is the check that keeps T3 amortized: one knowledge
     // point is paid for once and then serves forever.
     let taken = slots_taken(db, &kp_id, kind).await?;
+    if job.missing_only && taken > 0 {
+        return Ok(Report::quiet(kp_id, kind, Outcome::Skipped));
+    }
     // Spec section 2.2, "Prompt digest": a slot an EDITED prompt wrote does not
     // fill the bank. The pass re-authors it, and the old row keeps the approval
     // it has (M6 review finding F4).
@@ -182,7 +198,8 @@ pub async fn author_one(
     }
 
     // Step 2: a knowledge point the gate can never accept costs nothing.
-    if let Some(reason) = undecidable(kind, spec) {
+    if let Err(rejection) = preflight(kind, spec) {
+        let reason = rejection.message;
         tracing::warn!(kp = %kp_id, reason, "authoring: the knowledge point declines with no call");
         let decline = Decline {
             kp_id: kp_id.clone(),
@@ -201,7 +218,24 @@ pub async fn author_one(
     let mut spent = 0_u32;
 
     for attempt in 1..=job.attempts {
-        let call = call_model(db, job, kind, spec, feedback.as_deref(), &kp_id).await;
+        let call = call_model(
+            db,
+            job,
+            kind,
+            spec,
+            feedback.as_deref(),
+            &kp_id,
+            &instance_answers,
+        )
+        .await;
+        if call.attempts.is_empty() {
+            reasons.push(
+                call.result
+                    .err()
+                    .map_or_else(|| "no HTTP request".to_owned(), |e| e.to_string()),
+            );
+            break;
+        }
         spent = attempt;
         http_attempts.extend(call.attempts);
 
@@ -216,6 +250,11 @@ pub async fn author_one(
                         .await;
                 }
                 Err(rejection) => {
+                    if let Some(directory) = &job.decline_dir {
+                        crate::authoring::portable::snapshot(
+                            directory, &kp_id, kind, attempt, &arguments, &rejection,
+                        );
+                    }
                     // The LITERAL message becomes the next attempt's feedback.
                     feedback = Some(rejection.message.clone());
                     format!("{}: {}", rejection.code, rejection.message)
@@ -225,6 +264,9 @@ pub async fn author_one(
         tracing::warn!(kp = %kp_id, kind = kind_name, attempt, reason = refusal,
                        "authoring: the attempt was refused");
         reasons.push(refusal);
+        if job.endpoint_failure().is_some() {
+            break;
+        }
     }
 
     tracing::error!(kp = %kp_id, kind = kind_name, attempts = spent,
@@ -257,7 +299,7 @@ pub async fn author_one(
 /// # Errors
 ///
 /// Returns [`WorkerError::Store`] when a count fails or the bound expires.
-async fn stale_first<'a>(
+pub(super) async fn stale_first<'a>(
     db: &Db,
     kind: Kind,
     specs: &'a [AuthoringSpec],
@@ -277,7 +319,7 @@ async fn stale_first<'a>(
 }
 
 /// Count one report of [`author_one`] in the batch.
-fn count(batch: &mut BatchReport, report: Report) {
+pub(super) fn count(batch: &mut BatchReport, report: Report) {
     batch.calls = batch.calls.saturating_add(report.attempts);
     if report.alert {
         batch.alerts = batch.alerts.saturating_add(1);
@@ -330,39 +372,8 @@ pub async fn run_batch(
 
 #[cfg(test)]
 mod tests {
-    use super::{BatchReport, Decline, Outcome, Report, count, undecidable};
-    use crate::authoring::prompt::{AuthoringSpec, Kind};
-    use cadus_core::curriculum::AnswerKind;
-
-    /// A spec of this answer kind.
-    fn spec(answer_kind: AnswerKind) -> AuthoringSpec {
-        AuthoringSpec {
-            kp_id: "squares".to_owned(),
-            kp_name: "Perfect squares".to_owned(),
-            topic_id: "perfect-squares".to_owned(),
-            topic_name: "Perfect squares".to_owned(),
-            answer_kind,
-            difficulty_target: None,
-            constraints: None,
-            exemplars: Vec::new(),
-        }
-    }
-
-    /// The zero-call guard reads the answer kind on the two gated kinds only
-    /// (T3, finding F19).
-    #[test]
-    fn only_the_gated_kinds_decline_an_undecidable_answer_kind() {
-        let proof = spec(AnswerKind::Proof);
-        let reason = Some("answer kind proof is not symbolically decidable".to_owned());
-        assert_eq!(undecidable(Kind::Template, &proof), reason);
-        assert_eq!(undecidable(Kind::Diagnosis, &proof), reason);
-        assert_eq!(undecidable(Kind::Teach, &proof), None);
-        assert_eq!(undecidable(Kind::HintLadder, &proof), None);
-        assert_eq!(
-            undecidable(Kind::Template, &spec(AnswerKind::Numeric)),
-            None
-        );
-    }
+    use super::{BatchReport, Decline, Outcome, Report, count};
+    use crate::authoring::prompt::Kind;
 
     /// Every outcome lands in one column of the batch, and a decline record
     /// reaches the list.

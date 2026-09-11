@@ -130,6 +130,7 @@ export interface ProbeResult {
 
 /** The three verdicts a probe shows: a class suffix and a title, and nothing else. */
 function verdictOf({ res, skipped }: ProbeResult): { kind: string; title: string } {
+  if (res.outcome === 'ungraded') return { kind: 'ungraded', title: 'Not marked' };
   if (res.correct) return { kind: 'correct', title: 'Correct' };
   if (skipped) return { kind: 'skip', title: 'Skipped' };
   return { kind: 'incorrect', title: 'Not this time' };
@@ -140,7 +141,7 @@ export function ProbeFeedback({ result }: { result: ProbeResult }) {
   const { kind, title } = verdictOf(result);
   return (
     <div className={`feedback feedback-${kind}`}>
-      <span className="feedback-mark">{result.res.correct ? <Tick /> : <Cross />}</span>
+      <span className="feedback-mark">{kind === 'ungraded' ? '—' : result.res.correct ? <Tick /> : <Cross />}</span>
       <span className="feedback-title">{title}</span>
     </div>
   );

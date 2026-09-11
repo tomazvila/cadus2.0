@@ -9,11 +9,38 @@
  * Hard Rule 2: `correct` is mathematical correctness only. Partial credit lives in
  * `work_quality`, and this panel shows both and derives neither from the other. Hard Rule
  * 3: `remediation` is rendered as the core sent it, in the core's order.
+ *
+ * D-F2 adds the third state, "Not marked". The checker reached no verdict, so the panel
+ * says so and names the service's own reason. It carries no red, no "wrong" wording, no
+ * solution, and no AI explanation, because none of those is true of an attempt nobody
+ * graded. The learner reads the reason and takes the next problem.
  */
-import { Chip, Cross, Tick } from '@/components/primitives';
+import { Chip, Cross, Question, Tick } from '@/components/primitives';
 import { MathBlock } from '@/components/MathBlock';
 import { signed } from '@/lib/format';
-import type { AnswerResponse, ReworkResponse } from '@/api/types';
+import { isUngraded } from '@/api/types';
+import type { AnswerResponse, AttemptOutcome, ReworkResponse } from '@/api/types';
+
+/** The panel mood of each outcome. `ungraded` is neutral: it is not a miss (D-F2). */
+const MOOD: Record<AttemptOutcome, string> = {
+  correct: 'correct',
+  incorrect: 'incorrect',
+  ungraded: 'ungraded',
+};
+
+/** The heading of each outcome. No wording here calls an ungraded answer wrong. */
+const TITLE: Record<AttemptOutcome, string> = {
+  correct: 'Correct',
+  incorrect: 'Not quite',
+  ungraded: 'Not marked',
+};
+
+/** The glyph of each outcome. */
+const MARK: Record<AttemptOutcome, React.ReactNode> = {
+  correct: <Tick />,
+  incorrect: <Cross />,
+  ungraded: <Question />,
+};
 
 export interface FeedbackProps {
   res: AnswerResponse;
@@ -40,14 +67,25 @@ export function Feedback({
   continueRef,
   children,
 }: FeedbackProps) {
+  const ungraded = isUngraded(res);
   return (
-    <div className={`feedback feedback-${res.correct ? 'correct' : 'incorrect'}`}>
+    <div className={`feedback feedback-${MOOD[res.outcome]}`}>
       <div className="feedback-head">
-        <span className="feedback-mark">{res.correct ? <Tick /> : <Cross />}</span>
-        <span className="feedback-title">{res.correct ? 'Correct' : 'Not quite'}</span>
-        <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip>
+        <span className="feedback-mark">{MARK[res.outcome]}</span>
+        <span className="feedback-title">{TITLE[res.outcome]}</span>
+        {/* An ungraded attempt earned no tier and no XP, so neither chip appears. */}
+        {ungraded ? null : (
+          <Chip className="chip-quality">{String(res.work_quality).replace(/_/g, ' ')}</Chip>
+        )}
         {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null}
       </div>
+
+      {res.feedback_blocked ? <p role="status">Fresh practice is unavailable for this skill. Your answer is saved.</p> : null}
+      {res.task_status === 'task_failed' && res.correct ? <p>This practice answer is correct. The original assessment still needs more practice.</p> : null}
+      {res.task_status === 'task_inconclusive' ? (
+        <p className="feedback-reason">This review needs confirmation. A fresh question will check each uncertain skill.</p>
+      ) : null}
+      {res.reason ? <p className="feedback-reason muted">{res.reason}</p> : null}
 
       {/* Verbatim, never re-interpreted: the checker owns the vocabulary (trap T3). */}
       {res.error_tags.length ? (
@@ -76,11 +114,12 @@ export function Feedback({
         </div>
       ) : null}
 
-      {children}
+      {/* D-F4: no diagnosis fires on an ungraded attempt, so its slot stays empty. */}
+      {ungraded ? null : children}
 
       <div className="actions">
         <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>
-          {hasNext ? 'Next problem →' : 'Continue →'}
+          {res.feedback_blocked ? 'Check for fresh practice →' : res.feedback_practice ? 'Done studying — try a fresh problem →' : hasNext ? 'Next problem →' : 'Continue →'}
         </button>
         {/* The way out from here is always safe: the attempt already stands, and an
             unfinished task is re-served next time. */}

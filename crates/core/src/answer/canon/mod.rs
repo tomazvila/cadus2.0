@@ -10,7 +10,8 @@
 //! denominator sum. A sum is a map of terms, a term is a rational coefficient and
 //! a monomial, and a monomial maps an [`Atom`] to an integer exponent. The atoms
 //! are a square root of a squarefree integer, `pi`, `e`, an exponential with an
-//! argument that is not a whole number, a variable, and a function call. One form
+//! argument that is not a whole number, a variable, a function call, and a root
+//! of index 2 or more of a prime, an atom, or an opaque value (D-F3). One form
 //! therefore holds a rational, a radical, a Laurent polynomial, a function
 //! application, and a quotient of two polynomials together.
 //!
@@ -105,6 +106,7 @@
 mod arith;
 mod quotient;
 mod read;
+mod root;
 mod sum;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -115,6 +117,7 @@ use num_traits::Zero;
 
 use super::Undecidable;
 use super::ast::Ast;
+use super::unit::Quantity;
 
 /// The largest count of terms one canonical sum holds.
 const MAX_TERMS: usize = 512;
@@ -152,7 +155,7 @@ const MAX_DEPTH: usize = 128;
 ///
 /// The denominator of the exact rational is `10^scale`, so the scale must stay
 /// inside [`MAX_BITS`].
-const MAX_SCALE: u32 = 1_000;
+pub(crate) const MAX_SCALE: u32 = 1_000;
 
 /// The largest trial divisor the radical factoring tries.
 ///
@@ -182,6 +185,13 @@ pub enum Atom {
     Var(String),
     /// An application of a whitelisted function to canonical arguments.
     Call(String, Vec<Canon>),
+    /// The root of a value, `base^(1/index)` (D-F3).
+    ///
+    /// The base is one prime, one atom, or an opaque value; the root law of
+    /// [`root`] keeps one root per base in a monomial and holds the exponent in
+    /// lowest terms. A square root of a rational never builds this atom: it is
+    /// [`Atom::Sqrt`].
+    Root(Box<Canon>, i64),
 }
 
 /// A product of atoms with integer exponents. No exponent is zero.
@@ -214,6 +224,8 @@ pub struct Basis {
 /// is equality of two `Canon` values.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Canon {
+    /// One option of a closed, reviewed choice vocabulary.
+    Label(String),
     /// An exact rational.
     Rational(BigRational),
     /// A rational combination of roots and constants, keyed by basis.
@@ -255,6 +267,17 @@ pub enum Canon {
         hi: Option<Box<Canon>>,
         /// True when the upper end belongs to the range. False when `hi` is `None`.
         hi_closed: bool,
+    },
+    /// A number with a unit, scaled into the base unit of its kind (D-F3).
+    ///
+    /// `1 m` and `100 cm` are one value: both are 100 of the base unit of
+    /// [`Quantity::Length`]. Two kinds are two answers. `check` owns the rule
+    /// that a unit on one side alone gives no verdict.
+    Quantity {
+        /// The kind the unit measures.
+        quantity: Quantity,
+        /// The value in the base unit. A rational or a radical.
+        value: Box<Canon>,
     },
     /// A value with the label of the unknown it answers for.
     ///

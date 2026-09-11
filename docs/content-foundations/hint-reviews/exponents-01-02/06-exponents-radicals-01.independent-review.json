@@ -1,0 +1,709 @@
+{
+  "schema_version": 1,
+  "reviewer": {
+    "agent": "/root/orchestrator",
+    "model": "gpt-6-astra",
+    "role": "independent semantic reviewer"
+  },
+  "reviewed_at_utc": "2026-09-09T23:26:10.713070+00:00",
+  "authored_sha256": "4d4eb27c5d46dbc7c9093bdf6663853d5c21b45a2eeb9f9ff1c50d8292de6652",
+  "context_snapshot": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/exponents01-current-review-context.json",
+  "context_snapshot_sha256": "a747797a1598e13375a87d775acb442bac81373354963a864d3fa6be4693dc0c",
+  "math_artifact": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-01.math-checks.json",
+  "math_sha256": "ce1c5b8c742c8708924866ca088da85461904367f7886bb10132fc20cc816776",
+  "summary": {
+    "kps": 24,
+    "hints_accept": 13,
+    "hints_revise": 11,
+    "templates_with_explicit_findings": 14,
+    "symbolic_bindings": 288,
+    "math_mismatches": 0
+  },
+  "records": [
+    {
+      "key": "exponent-product-rule/kp1",
+      "authored_row_sha256": "432e9651dd3b8851eac217135d609c854a02d3a76213120b6ecb9518a3a8b600",
+      "curriculum_kp_sha256": "0b962bfaf49f17c3f1a646ef82e450c34e950556aac51dda919c929b90a1c47c",
+      "topic_prerequisites_sha256": "faa9dfe7abafde6b6c050d48429aa9f397362997270d7d6f60299198a65fa048",
+      "selected_template_sha256": "c09ab72127f6cd5d6b292854877342e8a4882cac096170f1f2848bcae1558e90",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Common base preserved, positive exponents added; numerical coefficients can be multiplied when present.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "exponent-product-rule/kp1",
+        "template_sha256": "c09ab72127f6cd5d6b292854877342e8a4882cac096170f1f2848bcae1558e90",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**2)*(3*x**3)",
+        "sample_domain_complete": true
+      },
+      "objective": "Multiply powers of the same base",
+      "constraints": "same base; positive integer exponents; add exponents"
+    },
+    {
+      "key": "exponent-product-rule/kp2",
+      "authored_row_sha256": "97e9234e4032551cc434e6d16eab02e7feb512ff2b270e23325870df4c771a57",
+      "curriculum_kp_sha256": "d7e8d6a9ea48430897d43bcb7a4ea77281be9eb9ceeb75a0c9dfe09744f6f70a",
+      "topic_prerequisites_sha256": "faa9dfe7abafde6b6c050d48429aa9f397362997270d7d6f60299198a65fa048",
+      "selected_template_sha256": "72f55a0cf8583c43a718595221142749b4c814e97a6b9978e22cbd9f13d219bc",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The final rung explicitly evaluates, contradicting the required unevaluated single power. Keep the original numeric base; add the exponents; write that base with the combined exponent and stop before evaluating the power.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "exponent-product-rule/kp2",
+            "exponent-quotient-rule/kp2",
+            "power-of-a-power-rule/kp2"
+          ],
+          "kind": "explicit_objective_and_output_form",
+          "finding": "Constraints explicitly require a single unevaluated power; statement/answer_expr currently evaluate to integers. No corresponding form contract preserves the original base and combined exponent.",
+          "required_change": "Repair statement, expected rendering and answer contract together. Assess an unevaluated power of the named original base; reject evaluated integers and unchanged source operations."
+        }
+      ],
+      "independent_math": {
+        "key": "exponent-product-rule/kp2",
+        "template_sha256": "72f55a0cf8583c43a718595221142749b4c814e97a6b9978e22cbd9f13d219bc",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "{a}**2*{a}**3",
+        "sample_domain_complete": true
+      },
+      "objective": "Numeric bases left in exponent form",
+      "constraints": "answer stays as a single power, not evaluated"
+    },
+    {
+      "key": "exponent-product-rule/kp3",
+      "authored_row_sha256": "cd5e2dea38e6aff71d4bd3dffa716434a2fc6f7d3cf0d37085ef9abc33801a6b",
+      "curriculum_kp_sha256": "39f3bdfc30d3314d5c7870aab2ffdca1bcffab7d654cf84c9eda4fe865c69d3b",
+      "topic_prerequisites_sha256": "faa9dfe7abafde6b6c050d48429aa9f397362997270d7d6f60299198a65fa048",
+      "selected_template_sha256": "4e047dfc7d95e9abb8775990df4051f060230b38afd21f99a836391e3f02bbbb",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Includes exponent1 for a bare base and adds all same-base factors; coefficient multiplication is separately handled.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "exponent-product-rule/kp3",
+        "template_sha256": "4e047dfc7d95e9abb8775990df4051f060230b38afd21f99a836391e3f02bbbb",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x)*(x**2)*(2*x**3)",
+        "sample_domain_complete": true
+      },
+      "objective": "Three or more factors, including bare bases",
+      "constraints": "treat a bare base as exponent 1"
+    },
+    {
+      "key": "exponent-quotient-rule/kp1",
+      "authored_row_sha256": "5939ccb41b1261cb40b78d13a30ff9f372c1a5d4fad74cc95668618d908a6dcd",
+      "curriculum_kp_sha256": "1e410a49f9aec62ad0d2e81a907f48c1c367302c3dfe894bc3a62af936c4b8bc",
+      "topic_prerequisites_sha256": "f0884d3f55c9c93a838209c6b3cd33f4a59458ce6e8c91686607fc6d4f25179d",
+      "selected_template_sha256": "c20470b363951e9ea647d2f6fd5a7267e6e04649d800404b1546e3885590a04f",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Numerator exponent minus denominator exponent matches the strictly larger top-exponent constraint; any coefficient division is separate.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "exponent-quotient-rule/kp1",
+        "template_sha256": "c20470b363951e9ea647d2f6fd5a7267e6e04649d800404b1546e3885590a04f",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**7)/x**3",
+        "sample_domain_complete": true
+      },
+      "objective": "Divide powers of the same base",
+      "constraints": "same base; larger exponent on top; subtract exponents"
+    },
+    {
+      "key": "exponent-quotient-rule/kp2",
+      "authored_row_sha256": "e1fa3b2a4999b7f05a9d8d035d1ce5ae14adb0aec3591ab8b0e6b7d4f0cda24b",
+      "curriculum_kp_sha256": "10987868ce794135b7d8c8d71157ae311848ba8833e6e1084d597f624e5ea3e6",
+      "topic_prerequisites_sha256": "f0884d3f55c9c93a838209c6b3cd33f4a59458ce6e8c91686607fc6d4f25179d",
+      "selected_template_sha256": "295a10fccc91bf60df18d9f207bc93021864e6dfffb1baecc905d1e6fdf107b4",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The final rung evaluates despite the explicit single-power requirement. Subtract denominator exponent from numerator exponent; keep the requested original base and the resulting exponent without calculating the power.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "exponent-product-rule/kp2",
+            "exponent-quotient-rule/kp2",
+            "power-of-a-power-rule/kp2"
+          ],
+          "kind": "explicit_objective_and_output_form",
+          "finding": "Constraints explicitly require a single unevaluated power; statement/answer_expr currently evaluate to integers. No corresponding form contract preserves the original base and combined exponent.",
+          "required_change": "Repair statement, expected rendering and answer contract together. Assess an unevaluated power of the named original base; reject evaluated integers and unchanged source operations."
+        }
+      ],
+      "independent_math": {
+        "key": "exponent-quotient-rule/kp2",
+        "template_sha256": "295a10fccc91bf60df18d9f207bc93021864e6dfffb1baecc905d1e6fdf107b4",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "{a}**7/{a}**3",
+        "sample_domain_complete": true
+      },
+      "objective": "Numeric bases left in exponent form",
+      "constraints": "answer stays as a single power, not evaluated"
+    },
+    {
+      "key": "exponent-quotient-rule/kp3",
+      "authored_row_sha256": "15bd733ea0cae0eb278d35f4478b358d3978a647aa6344de6e2ff6e049af7101",
+      "curriculum_kp_sha256": "815c57eba5b57b4c85ba704cca136386e526778ef4bacb9cfe08e1899dcff8b0",
+      "topic_prerequisites_sha256": "f0884d3f55c9c93a838209c6b3cd33f4a59458ce6e8c91686607fc6d4f25179d",
+      "selected_template_sha256": "d72e9e804459852b6255d0dfd28dfa206446b7082344dd5df482dce2e120c9c4",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Bare bases become exponent1 and an exponent1 result is written as the base; other positive exponents retained.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "exponent-quotient-rule/kp3"
+          ],
+          "kind": "missing_target_structure",
+          "finding": "Every selected problem ax^6/x^2 has neither a bare variable factor nor an exponent1 result, which are this KP’s distinguishing objective.",
+          "required_change": "Use a denominator bare base and/or a quotient leaving exponent1, with positive remaining exponent. Keep the nonzero condition."
+        }
+      ],
+      "independent_math": {
+        "key": "exponent-quotient-rule/kp3",
+        "template_sha256": "d72e9e804459852b6255d0dfd28dfa206446b7082344dd5df482dce2e120c9c4",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**6)/x**2",
+        "sample_domain_complete": true
+      },
+      "objective": "Quotients that leave exponent 1, and bare bases",
+      "constraints": "treat a bare base as exponent 1; keep results with positive exponents"
+    },
+    {
+      "key": "exponent-product-quotient-rules/kp1",
+      "authored_row_sha256": "628b1cd8d694ecd2f044308aca573296e7c95ba5791adf0fbee1007fae1cbe52",
+      "curriculum_kp_sha256": "8297e1b5a4f34be37172387a7dbab950b60b76ba1288d8aedfb4234b363c9c92",
+      "topic_prerequisites_sha256": "46a4bb599b5f9bd05b2d6f4699199b8c7c572f63727e5a7318730ad17cd13787",
+      "selected_template_sha256": "72f7773e7b0b8c8b11b70456fe6bc086f56e05343ab459f960c7a850e9714a4b",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "One numerator-product exponent sum followed by one denominator-exponent subtraction; coefficients remain separate when present.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "exponent-product-quotient-rules/kp1",
+        "template_sha256": "72f7773e7b0b8c8b11b70456fe6bc086f56e05343ab459f960c7a850e9714a4b",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**3)*(x**4)/x**2",
+        "sample_domain_complete": true
+      },
+      "objective": "Product and quotient rules together",
+      "constraints": "one product and one quotient step per problem"
+    },
+    {
+      "key": "exponent-product-quotient-rules/kp2",
+      "authored_row_sha256": "0967365cdb7ba18051d69878dd61fdeb00fddf310f6ffa3f73df5042d2923a4d",
+      "curriculum_kp_sha256": "f6fa437815965241b8b5e4fef15b50a0b86ab28e14fff8583ed0d322dd3c5460",
+      "topic_prerequisites_sha256": "46a4bb599b5f9bd05b2d6f4699199b8c7c572f63727e5a7318730ad17cd13787",
+      "selected_template_sha256": "6c7cb25ca7c932b884643e5dc23a23e74d26a02b8840a1d29c18bbe1ac764580",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Separates ordinary coefficient arithmetic from exponent combination and supports products and quotients.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "exponent-product-quotient-rules/kp2",
+        "template_sha256": "6c7cb25ca7c932b884643e5dc23a23e74d26a02b8840a1d29c18bbe1ac764580",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "(3*x**2)*({a}*x**5)/(6*x**3)",
+        "sample_domain_complete": true
+      },
+      "objective": "Coefficients with product/quotient rules",
+      "constraints": "multiply/divide coefficients; apply exponent rule to variables"
+    },
+    {
+      "key": "exponent-product-quotient-rules/kp3",
+      "authored_row_sha256": "9daea335066a9db54de368313782df5bc14af60af6ad07939ff49208d10f0f5d",
+      "curriculum_kp_sha256": "5cf2aaa524533863b943d1fecefc3069f7f5f9a5a315b7cfb4b0fc79f5e44533",
+      "topic_prerequisites_sha256": "46a4bb599b5f9bd05b2d6f4699199b8c7c572f63727e5a7318730ad17cd13787",
+      "selected_template_sha256": "128167fc51e42a0c1ead02df3a84270a12435ec4c1dc73f1ef349ed99c660d22",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Replace literal x and y with each distinct base: canonical examples also use a and b. Group matching-base factors, add numerator contributions/subtract denominator contributions for each, then combine the resulting factors without mixing different bases.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "exponent-product-quotient-rules/kp3",
+        "template_sha256": "128167fc51e42a0c1ead02df3a84270a12435ec4c1dc73f1ef349ed99c660d22",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**4*y**2)*(x**3*y**4)/(x**2*y)",
+        "sample_domain_complete": true
+      },
+      "objective": "Two variables at once",
+      "constraints": "apply the rules base by base"
+    },
+    {
+      "key": "power-of-a-power-rule/kp1",
+      "authored_row_sha256": "46494816280d4b33ff1068e4931a4ec22314f6414c81b592dc481a53ebbab69b",
+      "curriculum_kp_sha256": "0b44d3dc47665577cda374481326808dda6e702b5652e7816161aa893e35bc04",
+      "topic_prerequisites_sha256": "f67108e5a4c74640bfa7dbec5d89a159d796708858abe7b6c7fbc54b99601bb6",
+      "selected_template_sha256": "529687737483a9c4adf27a96c3d823b92cf69853bf81c8127f89b979c25500ad",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Retains the original variable base and multiplies inner/outer exponents; fits the canonical single-variable power once the premature product-power template is repaired.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "power-of-a-power-rule/kp1",
+            "power-of-a-power-rule/kp3"
+          ],
+          "kind": "premature_prerequisite",
+          "finding": "Current templates raise the product a*x^n, requiring distribution of an outer power to a coefficient and a variable factor. Power of a product is introduced in the next topic and absent these KP prerequisites; canonical examples use a single variable power.",
+          "required_change": "Remove the coefficient from inside the powered group. Use variable inner/outer exponents or subsequent same-base product/quotient factors for domain variety while keeping the intended rule."
+        }
+      ],
+      "independent_math": {
+        "key": "power-of-a-power-rule/kp1",
+        "template_sha256": "529687737483a9c4adf27a96c3d823b92cf69853bf81c8127f89b979c25500ad",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**2)**3",
+        "sample_domain_complete": true
+      },
+      "objective": "Multiply the exponents",
+      "constraints": "single variable base; multiply the exponents"
+    },
+    {
+      "key": "power-of-a-power-rule/kp2",
+      "authored_row_sha256": "9d3d0076d8c78808aad65bf29043eae0b14c631cd648ca23634f9a58fa2a9e2a",
+      "curriculum_kp_sha256": "158268da64eaf3f5aedd20ed4aa70574a536205db91cd5d6c2e0aacfbb82ece5",
+      "topic_prerequisites_sha256": "f67108e5a4c74640bfa7dbec5d89a159d796708858abe7b6c7fbc54b99601bb6",
+      "selected_template_sha256": "b53a93cd4d546b441aa1282cded42d6e37820b615aeb69e945c42e3f1ad2c641",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Rungs1/3 tell the learner to evaluate the numeric base. Multiply the inner and outer exponents, retain the original numeric base and leave the result as one unevaluated power.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "exponent-product-rule/kp2",
+            "exponent-quotient-rule/kp2",
+            "power-of-a-power-rule/kp2"
+          ],
+          "kind": "explicit_objective_and_output_form",
+          "finding": "Constraints explicitly require a single unevaluated power; statement/answer_expr currently evaluate to integers. No corresponding form contract preserves the original base and combined exponent.",
+          "required_change": "Repair statement, expected rendering and answer contract together. Assess an unevaluated power of the named original base; reject evaluated integers and unchanged source operations."
+        }
+      ],
+      "independent_math": {
+        "key": "power-of-a-power-rule/kp2",
+        "template_sha256": "b53a93cd4d546b441aa1282cded42d6e37820b615aeb69e945c42e3f1ad2c641",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}**2)**3",
+        "sample_domain_complete": true
+      },
+      "objective": "Numeric bases left in exponent form",
+      "constraints": "answer stays as a single power, not evaluated"
+    },
+    {
+      "key": "power-of-a-power-rule/kp3",
+      "authored_row_sha256": "0b63670fcf3d1066c64de5856ddeda3579f9e32bb9ebbc0ba8bfbd29281e54d3",
+      "curriculum_kp_sha256": "9e1b5ec2927f62ab3066c08296713a4af24523865b0eced03e5ad271395b4471",
+      "topic_prerequisites_sha256": "f67108e5a4c74640bfa7dbec5d89a159d796708858abe7b6c7fbc54b99601bb6",
+      "selected_template_sha256": "41e2460a996f588ff549d05bfefc130e881127b22ff52202d47046bcb4c1268b",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The first two rungs hardcode a quotient, missing both canonical product examples. Apply the outer exponent first; then add matching-base exponents for multiplication or subtract for division, according to the actual remaining operation.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "power-of-a-power-rule/kp1",
+            "power-of-a-power-rule/kp3"
+          ],
+          "kind": "premature_prerequisite",
+          "finding": "Current templates raise the product a*x^n, requiring distribution of an outer power to a coefficient and a variable factor. Power of a product is introduced in the next topic and absent these KP prerequisites; canonical examples use a single variable power.",
+          "required_change": "Remove the coefficient from inside the powered group. Use variable inner/outer exponents or subsequent same-base product/quotient factors for domain variety while keeping the intended rule."
+        }
+      ],
+      "independent_math": {
+        "key": "power-of-a-power-rule/kp3",
+        "template_sha256": "41e2460a996f588ff549d05bfefc130e881127b22ff52202d47046bcb4c1268b",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**4)**2/x**3",
+        "sample_domain_complete": true
+      },
+      "objective": "Combine with product and quotient rules",
+      "constraints": "power of a power first, then product/quotient rule"
+    },
+    {
+      "key": "power-rule-exponents/kp1",
+      "authored_row_sha256": "f82eb9364ef075bb611e8859b5613915024c46645eeb20c71ad8c118e6a50225",
+      "curriculum_kp_sha256": "4aa4ca41ebaa276f6fe1422d72748902effceaddb9a9494f9a505665d557e432",
+      "topic_prerequisites_sha256": "bc006e6423a4858ba0326534e27ae8ac1ab888d51f6548afa87edc8b9511c5bd",
+      "selected_template_sha256": "4de3befcd6283ba329576e4ba9adcb367a077941dc810905ac8863d052d68ce5",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Outside power applies independently to coefficient and variable factor; inner/outer variable exponents multiplied.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "power-rule-exponents/kp1",
+        "template_sha256": "4de3befcd6283ba329576e4ba9adcb367a077941dc810905ac8863d052d68ce5",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**3)**2",
+        "sample_domain_complete": true
+      },
+      "objective": "Power of a product",
+      "constraints": "raise each factor to the power"
+    },
+    {
+      "key": "power-rule-exponents/kp2",
+      "authored_row_sha256": "51b3c8e173f0be45c63fa3dd7de97cac92e6a77849543d6a3cb55c1e6efe58f7",
+      "curriculum_kp_sha256": "038187918420bf1d87237792ace2dffb8141d4aa4ec69ce72305048a47e92585",
+      "topic_prerequisites_sha256": "bc006e6423a4858ba0326534e27ae8ac1ab888d51f6548afa87edc8b9511c5bd",
+      "selected_template_sha256": "328b2219a899cbd31b11455880e2df0cd566a9b8cb1d9a1d37e93915f6f1453e",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Raises numerator and denominator factors, multiplies inner exponents and preserves the nonzero denominator condition.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "power-rule-exponents/kp2",
+        "template_sha256": "328b2219a899cbd31b11455880e2df0cd566a9b8cb1d9a1d37e93915f6f1453e",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}/x**2)**3",
+        "sample_domain_complete": true
+      },
+      "objective": "Power of a quotient",
+      "constraints": "raise numerator and denominator to the power"
+    },
+    {
+      "key": "power-rule-exponents/kp3",
+      "authored_row_sha256": "1fd6dfad9e4992cd48720c20d9f57d17a8ed750ac7b59a033730cfd05cd7bbbb",
+      "curriculum_kp_sha256": "e1cd4454b5b50329ffb92c51491327af0674a015840d1708ece1be6c417d0f06",
+      "topic_prerequisites_sha256": "bc006e6423a4858ba0326534e27ae8ac1ab888d51f6548afa87edc8b9511c5bd",
+      "selected_template_sha256": "d882e836acf358973914d8f277377cc69e00bd9a28e3b7a5e779c88a08a1f82a",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Applies outer powers before combining same-base factors and numerical coefficients; no fixed exponent arithmetic is disclosed.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "power-rule-exponents/kp3"
+          ],
+          "kind": "scope_and_difficulty",
+          "finding": "Constraint calls for power rules then product rule with small coefficients. Current family additionally divides by2x and reaches a=13, coefficient169/2. The extra quotient is absent the canonical product-only objective; small has no precise bound.",
+          "required_change": "Use power then product without the extra quotient. Bound the coefficient family using the canonical small-coefficient examples; record the local chosen bound rather than inventing a coursewide definition of small."
+        }
+      ],
+      "independent_math": {
+        "key": "power-rule-exponents/kp3",
+        "template_sha256": "d882e836acf358973914d8f277377cc69e00bd9a28e3b7a5e779c88a08a1f82a",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**2)**2*x**3/(2*x)",
+        "sample_domain_complete": true
+      },
+      "objective": "Combinations of power rules",
+      "constraints": "power rules first, then product rule; small coefficients"
+    },
+    {
+      "key": "zero-exponent-rule/kp1",
+      "authored_row_sha256": "24acc40d3b2b2101fd1cafb05a9eb3145b45f94c42d82ee452c1a23bb7b2f73c",
+      "curriculum_kp_sha256": "95f5f00cd4298744ebc1746beff4db3e89e602c1b6df8329263ea2bd484bc364",
+      "topic_prerequisites_sha256": "813d77ace2b6c4b9d6ab582f5ac1e77a469354f89ecc2d8bec25b6beb7be657e",
+      "selected_template_sha256": "d1daef3824684a6bae18566ad91d246147d6b65f09fd49acc7e209324052e02e",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Multiplicative identity is a synonym for the fixed final answer1 and directly discloses it. Use meaningful retrieval: compare a quotient of equal nonzero powers with its quotient-rule exponent, then ask what value makes that quotient and the zero-power expression agree. Do not substitute another synonym for1.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "zero-exponent-rule/kp1",
+        "template_sha256": "d1daef3824684a6bae18566ad91d246147d6b65f09fd49acc7e209324052e02e",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "(-{a})**0",
+        "sample_domain_complete": true
+      },
+      "objective": "Evaluate a nonzero base to the zero power",
+      "constraints": "any nonzero base to the 0 power is 1"
+    },
+    {
+      "key": "zero-exponent-rule/kp2",
+      "authored_row_sha256": "e55695284415e97f4b4b0e8ddf74d600ef7c5e4c51c87365dc7aec942b54928b",
+      "curriculum_kp_sha256": "700d189e74ad33339a947496a61bd4711da978ecd428898b928c5d75567632ca",
+      "topic_prerequisites_sha256": "813d77ace2b6c4b9d6ab582f5ac1e77a469354f89ecc2d8bec25b6beb7be657e",
+      "selected_template_sha256": "009a7eaf48f7ac5df0043bae970f861afed99e88ea621fe5b9252e72ed826910",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The ladder teaches addition/subtraction of zero-power terms, while the KP contrasts the whole grouped base (ax)^0 with an outside coefficient a*x^0. Identify exactly which factors the exponent covers, apply the rule only to that nonzero base, then retain and combine any factor outside the exponent.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "zero-exponent-rule/kp2"
+          ],
+          "kind": "wrong_skill",
+          "finding": "Current a+7^0-3^0 family never contrasts whether an exponent covers a whole product or just its variable factor.",
+          "required_change": "Provide both (ax)^0 and a*x^0 cases across the family, with nonzero a and x, and explicit grouping."
+        }
+      ],
+      "independent_math": {
+        "key": "zero-exponent-rule/kp2",
+        "template_sha256": "009a7eaf48f7ac5df0043bae970f861afed99e88ea621fe5b9252e72ed826910",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "{a}+7**0-3**0",
+        "sample_domain_complete": true
+      },
+      "objective": "Zero exponents inside expressions",
+      "constraints": "contrast (ax)^0 with a*x^0"
+    },
+    {
+      "key": "zero-exponent-rule/kp3",
+      "authored_row_sha256": "7b5c2ac9e6bcca1b999e04a78b0120c2d8361010c07db695df4690fcd2c19dc2",
+      "curriculum_kp_sha256": "7be2951014abe9c20a174db37e75c83ad5f3337cab5252f062ad14fddca894c8",
+      "topic_prerequisites_sha256": "813d77ace2b6c4b9d6ab582f5ac1e77a469354f89ecc2d8bec25b6beb7be657e",
+      "selected_template_sha256": "f306b99a6133d4baf9aff093cca044ce8cad5092206033f6fb1415e41ea6e7aa",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The quotient derivation is relevant but the final identity statement discloses the quotient value and gives no action for the canonical sums of two zero powers. Ask the learner to reconcile equal-power cancellation with exponent subtraction, then use the resulting rule on each shown zero-power term and perform the remaining operation if present.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "zero-exponent-rule/kp3",
+        "template_sha256": "f306b99a6133d4baf9aff093cca044ce8cad5092206033f6fb1415e41ea6e7aa",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "{a}**4/{a}**4",
+        "sample_domain_complete": true
+      },
+      "objective": "Why it works: the quotient rule",
+      "constraints": "connect a^0 = 1 to a^n / a^n"
+    },
+    {
+      "key": "negative-zero-exponents/kp1",
+      "authored_row_sha256": "c7eead1416a313cc0c527cf03256274fee52c3876197e723262cd5832ea22a8a",
+      "curriculum_kp_sha256": "466de7e7638873ab4632822684b797422d638fa280c1b2b83a05a6939265729a",
+      "topic_prerequisites_sha256": "1a0cf549f0bfac13213bcad06671a22e56adeeff0e7d3df4f62a58404efab677",
+      "selected_template_sha256": "6b0f365e51f56da51d2eae4aab41658da372caa23e3bd102b0c21c670cc2ef63",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The final evaluate instruction assumes a numeric base, while half the canonical examples ask for symbolic reciprocals. Invert the entire nonzero base and make its exponent positive; calculate a numeric denominator when given numbers, but keep a symbolic denominator as a positive power.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "negative-zero-exponents/kp1"
+          ],
+          "kind": "fraction_representation_and_legacy_rounding",
+          "finding": "Current numeric reciprocal task requests an exact fraction but has no answer policy; e.g.2^-2=1/4 is susceptible to legacy learner-chosen one-place rounding0.2.",
+          "required_change": "Bind exact mathematical checking and the requested fraction representation. Preserve the lesson’s actual simplification demand rather than silently adding a lowest-terms requirement to unrelated introductory tasks.",
+          "verification": "Rounding path is grounded in previously inspected legacy checker and existing core regression behavior; no new Rust reproduction executed in this review."
+        }
+      ],
+      "independent_math": {
+        "key": "negative-zero-exponents/kp1",
+        "template_sha256": "6b0f365e51f56da51d2eae4aab41658da372caa23e3bd102b0c21c670cc2ef63",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "{a}**(-2)",
+        "sample_domain_complete": true
+      },
+      "objective": "Negative exponent as a reciprocal",
+      "constraints": "a^-n = 1/a^n"
+    },
+    {
+      "key": "negative-zero-exponents/kp2",
+      "authored_row_sha256": "b9464f210016c03a9bee83f2f81b3209d06ebbaeb33466f9c6ed855633773a35",
+      "curriculum_kp_sha256": "14f28d058ba582a634758ed94315e16cf4a1a90d8741611ada1143d2d4a318f1",
+      "topic_prerequisites_sha256": "1a0cf549f0bfac13213bcad06671a22e56adeeff0e7d3df4f62a58404efab677",
+      "selected_template_sha256": "b4b761ac25a35c49e5d06c68ea5da1d97a992986c431da34066bfba384bc423c",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The ladder only moves a negative-power denominator factor upward. It misses the explicit fraction-to-power-minus-one branch. Identify the whole base carrying the negative exponent; a denominator negative-power factor becomes a numerator positive power, while a whole fraction to minus one swaps its numerator and denominator.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "negative-zero-exponents/kp2",
+            "negative-zero-exponents/kp3",
+            "simplifying-negative-exponent-expressions/kp1",
+            "simplifying-negative-exponent-expressions/kp2",
+            "simplifying-negative-exponent-expressions/kp3"
+          ],
+          "kind": "positive_exponent_output_requirement",
+          "finding": "The full KP objectives/examples require positive-exponent rewriting; current templates have no policy enforcing that output structure. Equivalent negative-power spelling must not satisfy the form requirement. Some current statements merely say simplify, omitting the positive-exponent instruction.",
+          "required_change": "Explicitly request positive-exponent output and bind a suitable structural policy plus exact equivalence; test rejection of source negative-power spelling and acceptance of equivalent positive-power numerator/denominator forms."
+        }
+      ],
+      "independent_math": {
+        "key": "negative-zero-exponents/kp2",
+        "template_sha256": "b4b761ac25a35c49e5d06c68ea5da1d97a992986c431da34066bfba384bc423c",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "1/({a}*x**(-3))",
+        "sample_domain_complete": true
+      },
+      "objective": "Negative exponents in denominators",
+      "constraints": "a^-n in a denominator moves up as a^n; (a/b)^-1 = b/a"
+    },
+    {
+      "key": "negative-zero-exponents/kp3",
+      "authored_row_sha256": "cc77b33fad94f80a05889671d31968277f6b1939d711d4be4811351e825e5ddf",
+      "curriculum_kp_sha256": "c46e6e36886538bac54e8cfdaa86206af71bb05f03b498c695edb9b236169826",
+      "topic_prerequisites_sha256": "1a0cf549f0bfac13213bcad06671a22e56adeeff0e7d3df4f62a58404efab677",
+      "selected_template_sha256": "44b494c53c4a19b2febfe6f8a9bcb82ad54227e1f5af565fe571fa4e73badf92",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Combines exponents first and moves only negative results into reciprocals, allowing both positive and negative net-exponent examples.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "negative-zero-exponents/kp2",
+            "negative-zero-exponents/kp3",
+            "simplifying-negative-exponent-expressions/kp1",
+            "simplifying-negative-exponent-expressions/kp2",
+            "simplifying-negative-exponent-expressions/kp3"
+          ],
+          "kind": "positive_exponent_output_requirement",
+          "finding": "The full KP objectives/examples require positive-exponent rewriting; current templates have no policy enforcing that output structure. Equivalent negative-power spelling must not satisfy the form requirement. Some current statements merely say simplify, omitting the positive-exponent instruction.",
+          "required_change": "Explicitly request positive-exponent output and bind a suitable structural policy plus exact equivalence; test rejection of source negative-power spelling and acceptance of equivalent positive-power numerator/denominator forms."
+        }
+      ],
+      "independent_math": {
+        "key": "negative-zero-exponents/kp3",
+        "template_sha256": "44b494c53c4a19b2febfe6f8a9bcb82ad54227e1f5af565fe571fa4e73badf92",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "{a}*x**(-2)*x**5",
+        "sample_domain_complete": true
+      },
+      "objective": "Combine with exponent rules",
+      "constraints": "combine exponents first, then rewrite negatives as reciprocals"
+    },
+    {
+      "key": "simplifying-negative-exponent-expressions/kp1",
+      "authored_row_sha256": "83fa404d6184e6f2cf55dbc37da7c5a9a1d688880c0cb17f37a4d8bdbdb60f4a",
+      "curriculum_kp_sha256": "f1af33ab0c30509f6454a49b63dc6ca2db27cfc4276ceac7278b3ef827e7777a",
+      "topic_prerequisites_sha256": "ac80bb0818317473794c207c941839ce0c28fa1f164291e76d82e5464a7f60ca",
+      "selected_template_sha256": "20b1f7ac9aa2472587198409702e788cdc6e57cccf6c76b27361815dff69c497",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Subtraction keeps exponent signs, then a negative result is moved to the opposite side of the fraction bar.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "negative-zero-exponents/kp2",
+            "negative-zero-exponents/kp3",
+            "simplifying-negative-exponent-expressions/kp1",
+            "simplifying-negative-exponent-expressions/kp2",
+            "simplifying-negative-exponent-expressions/kp3"
+          ],
+          "kind": "positive_exponent_output_requirement",
+          "finding": "The full KP objectives/examples require positive-exponent rewriting; current templates have no policy enforcing that output structure. Equivalent negative-power spelling must not satisfy the form requirement. Some current statements merely say simplify, omitting the positive-exponent instruction.",
+          "required_change": "Explicitly request positive-exponent output and bind a suitable structural policy plus exact equivalence; test rejection of source negative-power spelling and acceptance of equivalent positive-power numerator/denominator forms."
+        }
+      ],
+      "independent_math": {
+        "key": "simplifying-negative-exponent-expressions/kp1",
+        "template_sha256": "20b1f7ac9aa2472587198409702e788cdc6e57cccf6c76b27361815dff69c497",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**(-3))/x**2",
+        "sample_domain_complete": true
+      },
+      "objective": "Quotients with negative exponents",
+      "constraints": "subtract exponents carefully with signs; final answer uses positive exponents"
+    },
+    {
+      "key": "simplifying-negative-exponent-expressions/kp2",
+      "authored_row_sha256": "e086fe7ce6dd9c1a759e003118d1f2474de516e5c2b661a16c82b892c5269e9c",
+      "curriculum_kp_sha256": "8b4bc59650a832f108048b000833af168f63d888fa9904aab5f607c67d03c5e8",
+      "topic_prerequisites_sha256": "ac80bb0818317473794c207c941839ce0c28fa1f164291e76d82e5464a7f60ca",
+      "selected_template_sha256": "6c42dbaface590a96cae2afc00577a0241b4353a48e0c40603cfc655b38b1575",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Multiplies signed exponents, rewrites a negative result as a reciprocal and also raises any coefficient to the outside power.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "negative-zero-exponents/kp2",
+            "negative-zero-exponents/kp3",
+            "simplifying-negative-exponent-expressions/kp1",
+            "simplifying-negative-exponent-expressions/kp2",
+            "simplifying-negative-exponent-expressions/kp3"
+          ],
+          "kind": "positive_exponent_output_requirement",
+          "finding": "The full KP objectives/examples require positive-exponent rewriting; current templates have no policy enforcing that output structure. Equivalent negative-power spelling must not satisfy the form requirement. Some current statements merely say simplify, omitting the positive-exponent instruction.",
+          "required_change": "Explicitly request positive-exponent output and bind a suitable structural policy plus exact equivalence; test rejection of source negative-power spelling and acceptance of equivalent positive-power numerator/denominator forms."
+        }
+      ],
+      "independent_math": {
+        "key": "simplifying-negative-exponent-expressions/kp2",
+        "template_sha256": "6c42dbaface590a96cae2afc00577a0241b4353a48e0c40603cfc655b38b1575",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**(-2))**3",
+        "sample_domain_complete": true
+      },
+      "objective": "Powers of terms with negative exponents",
+      "constraints": "multiply exponents, keep track of the sign"
+    },
+    {
+      "key": "simplifying-negative-exponent-expressions/kp3",
+      "authored_row_sha256": "ee2691a4cc2d4733f52c6f96dae55ec9327e8af130d467c798fe68cacdf356b7",
+      "curriculum_kp_sha256": "d72b84747a6fd2a271a20c9764506d1d0feacdb36bde546f874033af395682e1",
+      "topic_prerequisites_sha256": "ac80bb0818317473794c207c941839ce0c28fa1f164291e76d82e5464a7f60ca",
+      "selected_template_sha256": "d5a4fd785d6390d7a839b389e49166a49b89fd081b4da637c27710f5bd6d1b20",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The ladder assumes an outer power and x/y labels, missing ordinary coefficient quotients, a/y variables and whole-product reciprocals. Apply an outside power only when present, including to the full coefficient; simplify the coefficient ratio and each distinct base separately; rewrite remaining negative powers by inverting the whole affected factor. Preserve nonzero original-domain conditions.",
+      "template_decision": "revise",
+      "template_findings": [
+        {
+          "keys": [
+            "negative-zero-exponents/kp2",
+            "negative-zero-exponents/kp3",
+            "simplifying-negative-exponent-expressions/kp1",
+            "simplifying-negative-exponent-expressions/kp2",
+            "simplifying-negative-exponent-expressions/kp3"
+          ],
+          "kind": "positive_exponent_output_requirement",
+          "finding": "The full KP objectives/examples require positive-exponent rewriting; current templates have no policy enforcing that output structure. Equivalent negative-power spelling must not satisfy the form requirement. Some current statements merely say simplify, omitting the positive-exponent instruction.",
+          "required_change": "Explicitly request positive-exponent output and bind a suitable structural policy plus exact equivalence; test rejection of source negative-power spelling and acceptance of equivalent positive-power numerator/denominator forms."
+        }
+      ],
+      "independent_math": {
+        "key": "simplifying-negative-exponent-expressions/kp3",
+        "template_sha256": "d5a4fd785d6390d7a839b389e49166a49b89fd081b4da637c27710f5bd6d1b20",
+        "finite_bindings": 12,
+        "all_symbolic_results_match": true,
+        "source_expression_template": "({a}*x**(-2)*y**3)**2/(2*x*y**(-1))",
+        "sample_domain_complete": true
+      },
+      "objective": "Full expressions with coefficients and two variables",
+      "constraints": "coefficients reduce; each variable handled separately"
+    }
+  ],
+  "assessment_gap_candidates": [
+    {
+      "kind": "copied_unsimplified_monomial",
+      "status": "code-path hypothesis requiring a targeted core regression; not claimed runtime-tested",
+      "examples": [
+        {
+          "kp": "exponent-product-rule/kp1",
+          "input": "(2*x^2)*(3*x^3)",
+          "expected": "6*x^5"
+        },
+        {
+          "kp": "simplifying-negative-exponent-expressions/kp1",
+          "input": "2*x^(-3)/x^2",
+          "expected": "2/x^5"
+        }
+      ],
+      "required_review": "Canonical mathematical equivalence may accept a copied unsimplified source. Where the actual objective requires a simplified term or positive powers, verify and enforce that requested structure while accepting harmless factor order and markup."
+    }
+  ],
+  "curriculum_notes": "Several symbolic quotient/negative-exponent exemplars omit explicit nonzero original-domain assumptions. Preserve defined-domain conditions in learner-facing material; related groups already tracked in the curriculum exemplar ledger.",
+  "verification": {
+    "grounded": "All24 full constraints/objectives,96 full exemplar problem/answer/sketch rows and actual topic/key prerequisites read. Entire current unit YAML bytes match original source revision6d786c58246a011ec37ac4263a4eb097b1bf2db1. Exact authored and selected-template body bindings checked.",
+    "tested": "288 complete finite cases symbolically recomputed as exact coefficient plus integer exponent map from independently transcribed displayed source expressions; no answer_expr evaluation or floating point.",
+    "not_verified": "New structural-policy counterexamples require core runtime regressions. No instruction gates, Teach acceptance, live approval or serving writes performed."
+  },
+  "serving_approval": "none"
+}

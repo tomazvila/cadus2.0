@@ -10,7 +10,6 @@ use axum::response::Response;
 use cadus_core::curriculum::Curriculum;
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-use cadus_web::state::Content;
 use cadus_web::{AppState, create_app};
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
@@ -22,7 +21,7 @@ use super::{LESSON, PROBLEM_ID, addition_curriculum, present_session};
 /// The state of a test, on the `cadus_app` pool of `db`, with `arena` loaded.
 pub fn state_with_content(db: &TestDb, arena: Curriculum) -> AppState {
     AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
-        .with_content(Arc::new(Content::new(arena)))
+        .with_content(Arc::new(super::open_content(arena)))
 }
 
 /// The router of a test, with `arena` loaded.

@@ -144,6 +144,7 @@ fn a_ladder_that_names_no_instance_answer_is_accepted() {
 #[test]
 fn a_rung_that_names_an_answer_the_exemplar_problem_shows_is_still_rejected() {
     let exemplars = vec![Exemplar {
+        answer_contract: None,
         problem: "What is 49 divided by 7?".to_owned(),
         answer: "7".to_owned(),
         solution_sketch: None,

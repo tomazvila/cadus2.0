@@ -198,6 +198,30 @@ export interface StatusResponse {
   frontier: number;
   due_reviews: number;
   nearly_due: number;
+  /**
+   * The ungraded-attempt count of each topic that has one (D-F2).
+   *
+   * A topic with none is absent, so an empty object means nothing is waiting.
+   */
+  ungraded_attempts: Record<string, number>;
+  /** The count of ungraded attempts the recovery list holds. */
+  ungraded: number;
+  /** D-F6: the practiced, inferred and to-confirm counts behind the progress bar. */
+  mastery?: MasteryCounts;
+}
+
+/**
+ * The three honest mastery numbers of `GET /api/status` (D-F6).
+ *
+ * `practiced` counts the topics the learner passed. `inferred` counts the placed and
+ * floor topics that carry no direct answer. `to_confirm` lists the inferred topics the
+ * next session confirms, which is at most `mastery.max_per_session` of them.
+ */
+interface MasteryCounts {
+  practiced: number;
+  inferred: number;
+  total: number;
+  to_confirm: string[];
 }
 
 /** The mastery state of one topic (`core::event::TopicStatus`). */
@@ -257,4 +281,5 @@ export interface EnrollResponse {
 
 export * from './types-study';
 export * from './types-review';
+export * from './types-integrated';
 export * from './contract';

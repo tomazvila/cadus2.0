@@ -26,3 +26,28 @@ pub fn read_jsonl<T: serde::de::DeserializeOwned>(name: &str) -> Vec<T> {
         .map(|line| serde_json::from_str(line).unwrap_or_else(|e| panic!("row {line}: {e}")))
         .collect()
 }
+
+/// One row of `recovered_2_0.jsonl`: an answer the 1.0 residue held and a 2.0
+/// production reads (D-F3, unit f2-grammar).
+#[derive(serde::Deserialize)]
+pub struct RecoveredRow {
+    pub answer: String,
+    pub topic_id: String,
+    pub kp_id: String,
+    pub exemplar_index: i64,
+    /// The name of the production that reads the answer.
+    pub production: String,
+}
+
+/// Read the committed set of answers the 2.0 productions recovered.
+pub fn committed_recovered() -> Vec<RecoveredRow> {
+    read_jsonl("recovered_2_0.jsonl")
+}
+
+/// The identity of every recovered answer: `(topic_id, kp_id, exemplar_index, answer)`.
+pub fn recovered_keys() -> std::collections::BTreeSet<(String, String, i64, String)> {
+    committed_recovered()
+        .into_iter()
+        .map(|row| (row.topic_id, row.kp_id, row.exemplar_index, row.answer))
+        .collect()
+}

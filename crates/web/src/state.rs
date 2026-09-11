@@ -30,14 +30,19 @@
 //! refusals: a `done` task is `409 task_complete`, and a `problem_id` that is
 //! not the task's current one is `404 unknown_problem`.
 
+mod content_policy;
+
 use std::collections::BTreeMap;
 
 use axum::extract::FromRequestParts;
 use axum::http::StatusCode;
 use axum::http::request::Parts;
 use cadus_core::config::Config;
-use cadus_core::curriculum::Curriculum;
+use cadus_core::curriculum::{Curriculum, FiniteCaseRole};
+use cadus_core::event::{Exposure, ItemSource};
+use cadus_core::integrated::IntegratedSet;
 use cadus_core::pool::{PoolAnswer, Ring, TaskMemory};
+use cadus_core::readiness::ReadinessIndex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value as Json;
 use sqlx::types::Uuid;
@@ -78,16 +83,82 @@ pub struct Content {
     pub curriculum: Curriculum,
     /// The scheduler constants (M3).
     pub cfg: Config,
+    /// The curriculum half of the readiness audit (D-F5).
+    ///
+    /// The build reads every authored exemplar answer once, so it stands here
+    /// beside the arena and no request pays for it. A request adds the approved
+    /// documents of `content_store` with
+    /// [`ReadinessIndex::resolve`](cadus_core::readiness::ReadinessIndex::resolve),
+    /// which is map lookups only.
+    pub readiness: ReadinessIndex,
+    /// The hand-authored integrated tasks (D-F10).
+    ///
+    /// The set is loaded beside the curriculum and shared read-only, the same
+    /// way the arena is. A deployment with no authored file holds an empty set,
+    /// and every multi-step task then keeps its per-component serve.
+    pub integrated: IntegratedSet,
+    /// Stable semantic fingerprint of every effective curriculum topic.
+    curriculum_context_digest: Option<String>,
+    /// Build-time fingerprint shared with the offline content gates.
+    review_engine_digest: &'static str,
 }
 
 impl Content {
     /// Pair a loaded curriculum with the default scheduler config.
     #[must_use]
     pub fn new(curriculum: Curriculum) -> Self {
+        Self::with_config(curriculum, Config::default())
+    }
+
+    /// Pair a loaded curriculum with the scheduler config the caller names.
+    #[must_use]
+    pub fn with_config(curriculum: Curriculum, cfg: Config) -> Self {
+        let readiness = ReadinessIndex::build(&curriculum);
+        let curriculum_context_digest =
+            cadus_core::curriculum::review_context_digest(&curriculum).ok();
         Self {
             curriculum,
-            cfg: Config::default(),
+            cfg,
+            readiness,
+            integrated: IntegratedSet::empty(),
+            curriculum_context_digest,
+            review_engine_digest: cadus_core::review_engine::DIGEST,
         }
+    }
+
+    /// Attach the authored integrated set (D-F10).
+    ///
+    /// The boot path reads the set from the curriculum root once and hands it
+    /// over here, so no request reads a file.
+    #[must_use]
+    pub fn with_integrated(mut self, integrated: IntegratedSet) -> Self {
+        self.integrated = integrated;
+        self
+    }
+
+    /// Effective curriculum semantics reviewed with authored content.
+    pub fn curriculum_context_digest(&self) -> Result<&str, ApiError> {
+        self.curriculum_context_digest.as_deref().ok_or_else(|| {
+            ApiError::internal("The current curriculum review context could not be read.")
+        })
+    }
+
+    /// Exact executable renderer/evaluator/gate source fingerprint.
+    #[must_use]
+    pub const fn review_engine_digest(&self) -> &'static str {
+        self.review_engine_digest
+    }
+
+    /// Trusted content-review dimensions for one objective policy.
+    pub fn review_context<'a>(
+        &'a self,
+        policy_digest: Option<&'a str>,
+    ) -> Result<cadus_store::content::CurrentContext<'a>, ApiError> {
+        Ok(cadus_store::content::CurrentContext {
+            policy_digest,
+            curriculum_digest: self.curriculum_context_digest()?,
+            review_engine_digest: self.review_engine_digest(),
+        })
     }
 }
 
@@ -113,6 +184,33 @@ impl<S: Sync> FromRequestParts<S> for Tenant {
             )
         })
     }
+}
+
+/// Server-owned exposure facts frozen when one ordinary problem is handed off.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProblemHandoff {
+    /// Digest of the rendered statement.
+    pub item_digest: String,
+    /// Authored source of the item.
+    pub item_source: ItemSource,
+    /// Immutable source document used for hint compatibility after bank changes.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_content_digest: Option<String>,
+    /// Effective curriculum semantics that produced this problem.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_curriculum_digest: Option<String>,
+    /// Compiled render/check semantics that produced this problem.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_review_engine_digest: Option<String>,
+    /// Stable reviewed finite case id, when this KP owns a finite universe.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub finite_case_id: Option<String>,
+    /// Curriculum-owned role of that finite case.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub finite_case_role: Option<FiniteCaseRole>,
+    /// Exposure classification at hand-off.
+    pub exposure: Exposure,
 }
 
 /// One problem that is live on the learner's screen (`state.py:43-60`).
@@ -155,6 +253,9 @@ pub struct ServedProblem {
     /// When the problem went on screen, in Unix seconds. It is re-stamped at
     /// every hand-off, a re-serve included (section 5.6).
     pub started_at: f64,
+    /// A repeated hand-off invalidates a continuous solve-time claim.
+    #[serde(default)]
+    pub timing_interrupted: bool,
     /// The hints already handed out. A non-empty list makes the attempt
     /// reference-assisted (H3, section 5.4).
     #[serde(default)]
@@ -165,6 +266,9 @@ pub struct ServedProblem {
     /// The stashed assisted pass that waits for its unaided re-solve (H3).
     #[serde(default)]
     pub rework: Option<Json>,
+    /// Item-level hand-off evidence. Historical D-S6 rows carry none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub handoff: Option<ProblemHandoff>,
 }
 
 impl ServedProblem {
@@ -214,6 +318,9 @@ pub struct TaskProgress {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct QuizBuffer {
+    /// Whether the post-reveal independent-practice queue was started.
+    #[serde(default)]
+    pub practice_started: bool,
     /// The answers, in serve order.
     #[serde(default)]
     pub answers: Vec<Json>,
@@ -243,6 +350,9 @@ pub struct MultistepBuffer {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct WebState {
+    /// Approved instruction shown before a whole-item application, keyed by task.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub integrated_instruction: BTreeMap<String, String>,
     /// The session this scratch belongs to. A drift resets the document.
     #[serde(default)]
     pub session: Option<String>,
@@ -269,6 +379,12 @@ pub struct WebState {
     /// what it missed.
     #[serde(default)]
     pub pending_diagnoses: BTreeMap<String, String>,
+    /// Fresh same-skill practice owed after feedback, keyed by task.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub feedback_practice: BTreeMap<String, Json>,
+    /// Whole integrated-item clocks keyed by the server item identity.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub integrated_timing: BTreeMap<String, crate::integrated::TimingWindow>,
     /// The server-measured active time of the session, in seconds.
     #[serde(default)]
     pub active_secs: f64,

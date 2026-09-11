@@ -1,0 +1,1891 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "external_unit05_hint_template_repair_proposal_v2",
+  "cohort_id": "05-systems-inequalities-03",
+  "authored_at_utc": "2026-09-10T00:50:01.494045+00:00",
+  "source_bindings": {
+    "original_packet": "hint-authoring-cohorts/05-systems-inequalities-03.json",
+    "original_packet_sha256": "cedee30c2a6cce0735bcb48eaaf1517bf3625daf4da85069dd967b6b45f67004",
+    "authored_hints": "hint-authored/05-systems-inequalities-03.json",
+    "authored_hints_sha256": "8129b10b6ff1c2010d30bcf78f4ee9b15385e417cd96651d977a3d0d23a19fb9",
+    "independent_review": "hint-authored/05-systems-inequalities-03.independent-review.json",
+    "independent_review_sha256": "3fa1d9b31d8c463b3f19208fb70f60404c4b5f745f5c286e195703cb12ba6645",
+    "current_review_context": "hint-authored/systems03-current-review-context.json",
+    "current_review_context_sha256": "bc195f0932d454f404e930d16992ecdc9427a434f15c6d58ab15e07207c1cbca",
+    "curriculum_artifact_file_sha256": "4bed472669cce76dae0ecac8d825e99d9f1bafe5a585aa9123bbca353c43567f",
+    "curriculum_runtime_sha256": "b62cc60ac7155582a27d42d715ae3753a288285bc84290dcffa8bee67860c15f"
+  },
+  "summary": {
+    "hint_repairs": 14,
+    "accepted_hints_carried_forward_without_replacement": 10,
+    "template_repairs": 7,
+    "template_bindings_in_proposals": 108,
+    "serving_changes": 0
+  },
+  "hint_repairs": [
+    {
+      "key": "systems-substitution/kp2",
+      "base_authored_row_sha256": "19bb51d86435b534ae7c5232b191f1990dbbebd367ed50c5c1eb63e0906b367a",
+      "curriculum_kp_sha256": "9dc69be59f661a787e5d7046c17df9cfbe825e797ee5d005c815d22673f6f853",
+      "review_required_change": "Rungs1/3 require isolated x and solving y. Canonical examples2 and4 isolate y. Say replace the isolated variable, distribute every signed coefficient over its grouped expression, solve the remaining variable, recover the isolated variable and check both equations.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Solve by substitution: $x=2y+3$ and $3x-4y=19$. Give $(x,y)$.",
+          "answer": "(13, 5)"
+        },
+        {
+          "problem": "Solve by substitution: $y=3x-2$ and $5x-2y=0$. Give $(x,y)$.",
+          "answer": "(4, 10)"
+        },
+        {
+          "problem": "Solve by substitution: $x=7-2y$ and $4x+3y=13$. Give $(x,y)$.",
+          "answer": "(1, 3)"
+        },
+        {
+          "problem": "Solve by substitution: $y=-2(x-1)$ and $3x+2y=9$. Give $(x,y)$.",
+          "answer": "(-5, 12)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-substitution/kp2",
+        "objective": "Substitution with distribution",
+        "constraints": "distribute a coefficient over the substituted expression",
+        "hints": [
+          "Identify which variable is isolated and replace that variable everywhere in the other equation with its full expression.",
+          "Distribute every signed coefficient across the substituted grouped expression, then solve for the remaining variable.",
+          "Use the isolated equation to recover the first variable and verify the ordered pair in both originals."
+        ]
+      },
+      "proposed_row_sha256": "86af0a6e963c8bb5f86ebdd317fad4b77c3d7b0dd64de45d149630c8c6344e9d"
+    },
+    {
+      "key": "elimination-with-addition/kp3",
+      "base_authored_row_sha256": "01f326980a2e016fb46fb5de74bf541b486b09a67d674574b50c658987738a5c",
+      "curriculum_kp_sha256": "efe43fec50738b2e34c644388aaece267e10d3977ebe066a4115142bd5b4b732",
+      "review_required_change": "The verification KP constraint covers signed solutions without requiring opposite coefficients. Rung1 hardcodes addition. Choose addition for opposites or subtraction for equal coefficients, then recover the second value and explicitly verify both originals. Current examples happen to use opposites; avoid narrowing the full verification scope to that one prerequisite case.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Solve by elimination: $2x+y=13$ and $x-y=8$. Give $(x,y)$.",
+          "answer": "(7, -1)"
+        },
+        {
+          "problem": "Solve by elimination: $x+2y=-1$ and $-x+3y=16$. Give $(x,y)$.",
+          "answer": "(-7, 3)"
+        },
+        {
+          "problem": "Solve by elimination: $3x-2y=4$ and $x+2y=-12$. Give $(x,y)$.",
+          "answer": "(-2, -5)"
+        },
+        {
+          "problem": "Solve by elimination: $-2x+y=-11$ and $2x+2y=2$. Give $(x,y)$.",
+          "answer": "(4, -3)"
+        }
+      ],
+      "proposed_row": {
+        "key": "elimination-with-addition/kp3",
+        "objective": "Back-substitute and verify",
+        "constraints": "solutions may include negatives; verify in both equations",
+        "hints": [
+          "Compare the target-variable coefficients: add equations when they are opposites, or subtract one equation from the other when they are equal.",
+          "Solve the resulting one-variable equation, then substitute back to recover the second coordinate.",
+          "Verify both coordinates in both original equations, including every signed term."
+        ]
+      },
+      "proposed_row_sha256": "4aec688c5d6347f3e930265284d4327278be175b303efee28f47f83724a52a57"
+    },
+    {
+      "key": "systems-special-cases/kp2",
+      "base_authored_row_sha256": "55e09a77d93034047b8a88c2f12ca1bad067db0ab04acfbf9c0d207f1c7372e6",
+      "curriculum_kp_sha256": "5e5c022ab51022a900b93f035ce0679cf3eccb5aef4fd40e9f481edffbb0997e",
+      "review_required_change": "Rung1 asks both lines to be put in slope-intercept form, impossible for canonical x=5. Treat vertical lines separately: compare fixed x values when both vertical; one vertical and one nonvertical meet once. For nonvertical lines compare slopes, then intercepts when slopes match; include the different-slope single-intersection branch.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Read the graph geometry of $y=2x+5$ and $y=2x-1$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid.",
+          "answer": "one = no; infinite = no"
+        },
+        {
+          "problem": "Compare slopes and intercepts of $y=-x+6$ and $2y=-2x+12$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid.",
+          "answer": "one = no; infinite = yes"
+        },
+        {
+          "problem": "Compare the vertical and sloping graphs $x=5$ and $y=3x-2$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid.",
+          "answer": "one = yes; infinite = no"
+        },
+        {
+          "problem": "Interpret the graphs $2x+y=9$ and $y=4$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid.",
+          "answer": "one = yes; infinite = no"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-special-cases/kp2",
+        "objective": "Detect special cases from slopes and graphs",
+        "constraints": "parallel -> none; same line -> infinitely many; else one",
+        "hints": [
+          "Identify vertical lines before using slopes: two vertical lines with the same fixed x coincide, different fixed x values are parallel, and one vertical plus one nonvertical line meets once.",
+          "For two nonvertical lines, compare slopes first; different slopes meet once, while equal slopes require an intercept comparison.",
+          "Equal slope and intercept means the same line and infinitely many solutions; equal slope with different intercepts means no solution."
+        ]
+      },
+      "proposed_row_sha256": "219f11d33c1d4535f6fd39d57c2d9ddac9e69e1a0d52305c15823bacb1af5608"
+    },
+    {
+      "key": "systems-special-cases/kp3",
+      "base_authored_row_sha256": "b2286990eea3754bf709384adcbbb86e80a3ae9c14ab7b885864418ef58649e0",
+      "curriculum_kp_sha256": "e4e8efe7135c397c61e7210f48abcf65b479ef1a4ea6a940bea0912cd07e6558",
+      "review_required_change": "Rung2 calls false statements and identities merely special cases, and rung3 adds no classification method. Complete the progression: a remaining nonzero-coefficient equation gives one pair; a false numerical equality gives no pair; a true identity after eliminating both variables leaves the same line. Then map that conclusion to the requested fields.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Classify algebraically $2x+y=3$ and $x-y=6$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid.",
+          "answer": "one = yes; infinite = no"
+        },
+        {
+          "problem": "Classify algebraically $y=4x-7$ and $2y=8x-10$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid.",
+          "answer": "one = no; infinite = no"
+        },
+        {
+          "problem": "Classify algebraically $x/2+y=3$ and $x+2y=6$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid.",
+          "answer": "one = no; infinite = yes"
+        },
+        {
+          "problem": "Classify algebraically $x=2y-5$ and $3x+y=13$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid.",
+          "answer": "one = yes; infinite = no"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-special-cases/kp3",
+        "objective": "Classify one / none / infinitely many",
+        "constraints": "mix all three cases across generated problems",
+        "hints": [
+          "Use elimination to align one variable and combine the equations without introducing a new classification formula.",
+          "If a variable term remains, the system determines one pair; if all variable terms disappear, inspect the numerical statement.",
+          "A false numerical equality means no solution, while a true identity means both equations describe the same line; map that classification to every requested field."
+        ]
+      },
+      "proposed_row_sha256": "905a0bb71e39effe8e543b73a59130bde2aabceb40c7974a21ebe3fb86bb92fb"
+    },
+    {
+      "key": "systems-of-linear-inequalities/kp2",
+      "base_authored_row_sha256": "fa5dcd85ae59d02ebc74af8772b093c3cb41685e062a6330f5ac87124e2bf9c2",
+      "curriculum_kp_sha256": "36c0dabb2f7e3ff2e5d7c18b81cbacc34571c5f62b99c577ea627321d5b67c72",
+      "review_required_change": "Rewriting only the equality boundary loses the inequality-direction change when dividing by a negative y coefficient. Rewrite each inequality with y alone, reversing its comparison under negative multiplication/division; then read slope/intercept, boundary inclusion and shading direction. Intersect the two selected half-planes. Canonical negative-coefficient examples and half the current domain require this.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "For $y<=2x+3$ and $y>-x+1$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes.",
+          "answer": "solid = (2,3,-1); dashed = (-1,1,1)"
+        },
+        {
+          "problem": "For $y<3x-2$ and $y>=x+4$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes.",
+          "answer": "solid = (1,4,1); dashed = (3,-2,-1)"
+        },
+        {
+          "problem": "For $-2y<=4x-6$ and $3y>3x+12$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes.",
+          "answer": "solid = (-2,3,1); dashed = (1,4,1)"
+        },
+        {
+          "problem": "For $x+2y>=8$ and $-y>x-5$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes.",
+          "answer": "solid = (-1/2,4,1); dashed = (-1,5,-1)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-of-linear-inequalities/kp2",
+        "objective": "Boundary styles and the overlap region",
+        "constraints": "one strict and one inclusive inequality per problem",
+        "hints": [
+          "Rewrite each full inequality with y alone. Reverse its comparison whenever isolating y requires multiplication or division by a negative number.",
+          "Read each boundary line from the equality case, using a solid line for an inclusive sign and a dashed line for a strict sign; use the solved comparison to choose above or below.",
+          "Shade the half-plane selected by each inequality and keep only their overlap."
+        ]
+      },
+      "proposed_row_sha256": "923772ba7d347a9b1e83de96585973f3f548e620024d950db1f577025992a67f"
+    },
+    {
+      "key": "systems-of-linear-inequalities/kp3",
+      "base_authored_row_sha256": "f94a9868a538b957323e5d3baef38feb5dc2c3811530009462ab66efb9339267",
+      "curriculum_kp_sha256": "31ef4e985d780f7c6ef3547032ac8667ca09a8fd3e3a4597a38481f12b4e53de",
+      "review_required_change": "Rungs1/2 assume one upper and one lower bound with y strictly between two expressions. The constraint permits general two-inequality intersections. Substitute each candidate into both original inequalities, preserve their actual signs/inclusion, and select the one satisfying both. The separate off-boundary constraint can be checked without imposing a strip-shaped region.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Which of $(1,3)$ or $(2,1)$ belongs to the overlap of $y>x+1$ and $y<x+5$? Give the ordered pair.",
+          "answer": "(1,3)"
+        },
+        {
+          "problem": "Which of $(0,7)$ or $(2,3)$ belongs to the overlap of $x+y<6$ and $y>=x$? Give the ordered pair.",
+          "answer": "(2,3)"
+        },
+        {
+          "problem": "Which of $(-1,3)$ or $(1,-2)$ belongs to the overlap of $-2y<x$ and $y<=x+6$? Give the ordered pair.",
+          "answer": "(-1,3)"
+        },
+        {
+          "problem": "Which of $(3,6)$ or $(2,4)$ belongs to the overlap of $y>2x-1$ and $y<-x+8$? Give the ordered pair.",
+          "answer": "(2,4)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-of-linear-inequalities/kp3",
+        "objective": "Locate a point in the solution region",
+        "constraints": "candidate points off the boundary lines",
+        "hints": [
+          "Substitute each candidate point into both original inequalities, keeping every actual comparison sign and endpoint rule.",
+          "A candidate belongs to the system only when both inequalities hold, regardless of whether the overlap is a strip, wedge, or another two-half-plane region.",
+          "Compare the two candidates from their paired truth results and select the one satisfying both; check that neither is an unintended boundary point when required."
+        ]
+      },
+      "proposed_row_sha256": "96b2676b0f78d035de2cbe1f25bf1f9f5b8d95d3542f01701e30617f6ed72a2a"
+    },
+    {
+      "key": "systems-money-problems/kp1",
+      "base_authored_row_sha256": "e16ffb7ad2ecea4b2ff4ef860dd90d2ae4634f3632820bad239ee685dd02fcdf",
+      "curriculum_kp_sha256": "505909c57516d3dbaf6c4de4109ac22d63e07e7478ee8aec94d2a735a1e00a01",
+      "review_required_change": "Pass/ticket/euro wording fails canonical coins priced in cents. Use the two stated item types, common currency units, total-count equation and value-per-item times count equation. Preserve requested first/second order and verify both totals.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Adult and child tickets have values 9 and 4 euros, respectively. There are 17 items with total value 108 euros. Find the counts (first type, second type).",
+          "answer": "(8, 9)"
+        },
+        {
+          "problem": "Five-cent and twenty-cent coins have values 5 and 20 cents, respectively. There are 13 items with total value 155 cents. Find the counts (first type, second type).",
+          "answer": "(7, 6)"
+        },
+        {
+          "problem": "Large and small meal vouchers have values 12 and 7 euros, respectively. There are 19 items with total value 173 euros. Find the counts (first type, second type).",
+          "answer": "(8, 11)"
+        },
+        {
+          "problem": "Standard and premium tokens have values 6 and 15 euros, respectively. There are 11 items with total value 138 euros. Find the counts (first type, second type).",
+          "answer": "(3, 8)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-money-problems/kp1",
+        "objective": "Count equation plus value equation",
+        "constraints": "one count equation and one value equation",
+        "hints": [
+          "Define variables for the two actual item types and write their total-count equation in the requested first/second order.",
+          "Convert all prices to one currency unit, then write price times count for each type in the total-value equation.",
+          "Solve the system and verify that both counts are nonnegative integers satisfying both the item total and value total."
+        ]
+      },
+      "proposed_row_sha256": "23391421512de84557a1873436c0e334645370e2b552c9e32c94d52a386e3b1b"
+    },
+    {
+      "key": "systems-money-problems/kp3",
+      "base_authored_row_sha256": "cb55af452647dee14ed712e59c2c3380c472c5afe92f00d38871379694843776",
+      "curriculum_kp_sha256": "f913866ee46b5ba55575f84a9a29467b1903443b3b530e97ebef0c0f5ad2fb1a",
+      "review_required_change": "Ticket wording narrows the full coin/coupon/token scope. Define counts of the actual two types, use a common currency unit, recover both counts before reporting the requested one, and verify nonnegative integers and both totals.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Adult and child tickets have values 11 and 5 euros, respectively. There are 24 items with total value 174 euros. How many of the first type are there? Verify both totals.",
+          "answer": "9"
+        },
+        {
+          "problem": "Twenty-five-cent and ten-cent coins have values 25 and 10 cents, respectively. There are 18 items with total value 285 cents. How many of the first type are there? Verify both totals.",
+          "answer": "7"
+        },
+        {
+          "problem": "Full-price and discount coupons have values 8 and 3 euros, respectively. There are 16 items with total value 48 euros. How many of the first type are there? Verify both totals.",
+          "answer": "0"
+        },
+        {
+          "problem": "Basic and deluxe tokens have values 4 and 9 euros, respectively. There are 23 items with total value 147 euros. How many of the first type are there? Verify both totals.",
+          "answer": "12"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-money-problems/kp3",
+        "objective": "Solve and verify in context",
+        "constraints": "verify counts are nonnegative integers and totals match",
+        "hints": [
+          "Define counts for the two named types and put all values in one common currency unit.",
+          "Use one equation for the total number of items and one for their total value; solve for both counts before selecting the requested one.",
+          "Check nonnegative integer counts, both totals, and the requested reporting order."
+        ]
+      },
+      "proposed_row_sha256": "fa862e2cab77e763b3fd452bdfcc15f7799b44646f1c4451f4ee2b5507b0797d"
+    },
+    {
+      "key": "systems-mixture-problems/kp1",
+      "base_authored_row_sha256": "b8d2c7ba65c15f332c0ded93929407e3e28cea28b4a553f659ca8cb018bf42f0",
+      "curriculum_kp_sha256": "fc764aea7bd2598e1bb1b24f1955c4180f48ed8e252064fe96785577f4ff54bd",
+      "review_required_change": "Rung3 does not explain deriving the target pure amount, and forcing decimal concentration adds an unnecessary conversion for fractional inputs. Use concentration as a fraction of one, read T, and obtain M directly if supplied or as target fraction times T. Match coefficients to ingredient order; 100% contributes its full amount and water contributes zero.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Blend 10% and 50% acid into 16 liters at 25%. Let x and y be the amounts of the first and second ingredients. Complete $x+y=T$ and $px+qy=M$ by giving $(T,p,q,M)$; p and q are pure-substance fractions, and M is the pure amount.",
+          "answer": "(16,1/10,1/2,4)"
+        },
+        {
+          "problem": "Dilute pure acid (100%) with water (0%) into 9 liters at 40%. Let x and y be the amounts of the first and second ingredients. Complete $x+y=T$ and $px+qy=M$ by giving $(T,p,q,M)$; p and q are pure-substance fractions, and M is the pure amount.",
+          "answer": "(9,1,0,18/5)"
+        },
+        {
+          "problem": "Combine solutions with pure fractions 1/4 and 3/4 into 14 liters with pure fraction 3/7. Let x and y be the amounts of the first and second ingredients. Complete $x+y=T$ and $px+qy=M$ by giving $(T,p,q,M)$; p and q are pure-substance fractions, and M is the pure amount.",
+          "answer": "(14,1/4,3/4,6)"
+        },
+        {
+          "problem": "Blend 30% and 80% solutions into 20 liters containing 11 liters of pure substance. Let x and y be the amounts of the first and second ingredients. Complete $x+y=T$ and $px+qy=M$ by giving $(T,p,q,M)$; p and q are pure-substance fractions, and M is the pure amount.",
+          "answer": "(20,3/10,4/5,11)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-mixture-problems/kp1",
+        "objective": "Set up the amount and value equations",
+        "constraints": "amount equation plus concentration (pure-substance) equation",
+        "hints": [
+          "Let the two ingredient amounts total the stated mixture amount T, and write every concentration as an exact fraction of one.",
+          "Find the target pure-substance amount M from the supplied amount, or compute it as target concentration times T; a pure ingredient contributes its full amount and water contributes zero.",
+          "Write the setup $x+y=T$ and $px+qy=M$, match p and q to the ingredient order, check units, and report the requested coefficient tuple $(T,p,q,M)$ without solving."
+        ]
+      },
+      "proposed_row_sha256": "cc5e3a12c344cfc47c7d932837d928adf73012a339b7cbd0fa1987ab4502bba2"
+    },
+    {
+      "key": "systems-mixture-problems/kp2",
+      "base_authored_row_sha256": "ab44afbd25d1e4867a89f4b4e28cbe6c2146192e2bfd61ff28013682dddafe5b",
+      "curriculum_kp_sha256": "0629d5e34a2680c54d11a9e21afad9b278a59f8e7b365d0204955b3e8bce4349",
+      "review_required_change": "Salt-only wording fails acid/pure-water variants. Use the named pure substance and exact fractional or decimal concentrations; obtain target pure amount from stated amount or strength times total. Solve both balances and check positive ingredient amounts, total volume AND pure-substance balance.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Blend 10% and 40% acid into 18 liters at 20%. Give the amounts (first, second) in liters; assume volumes add.",
+          "answer": "(12,6)"
+        },
+        {
+          "problem": "Dilute pure acid (100%) with water (0%) into 7 liters at 30%. Give the amounts (first, second) in liters; assume volumes add.",
+          "answer": "(21/10,49/10)"
+        },
+        {
+          "problem": "Combine solutions with pure fractions 1/5 and 4/5 into 15 liters with pure fraction 1/2. Give the amounts (first, second) in liters; assume volumes add.",
+          "answer": "(15/2,15/2)"
+        },
+        {
+          "problem": "Blend 25% and 75% solutions into 24 liters containing 15 liters of pure substance. Give the amounts (first, second) in liters; assume volumes add.",
+          "answer": "(6,18)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-mixture-problems/kp2",
+        "objective": "Percent-solution mixtures",
+        "constraints": "target strength strictly between the two ingredient strengths",
+        "hints": [
+          "Name the pure substance being tracked and express every concentration as an exact fraction or decimal of one.",
+          "Use one equation for total volume and one for pure-substance amount, obtaining the target amount from a supplied value or target strength times the total.",
+          "Solve and check positive ingredient amounts, total volume, and the complete pure-substance balance."
+        ]
+      },
+      "proposed_row_sha256": "6edae18946505ea72aff12c3fc8d9131140da0f3a3d94d687cbfc4c2c5dc4ef0"
+    },
+    {
+      "key": "systems-mixture-problems/kp3",
+      "base_authored_row_sha256": "467c6a28c56d2fc30d055c18d44a01dbd806d75142aa02a0573995733e4d7000",
+      "curriculum_kp_sha256": "0b360df16a8953a2ddbe0275f516ab39295578dc7b5feecab1915cd35df31519",
+      "review_required_change": "Coffee-only wording and missing unit alignment fail nuts/tea/grain and cents/kg or grams inputs. Convert masses and prices to consistent requested units; form mass balance and price-times-mass value balance, using supplied total value or blend price times total mass. Solve and check both balances in ingredient order.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Blend tea priced at 6 and 14 euros/kg into 12 kilograms worth 9 euros/kg. Give the masses (first, second) in kilograms; assume no loss.",
+          "answer": "(15/2,9/2)"
+        },
+        {
+          "problem": "Combine nuts priced at 8 and 20 euros/kg into 10 kilograms with total value 128 euros. Give the masses (first, second) in kilograms; assume no loss.",
+          "answer": "(6,4)"
+        },
+        {
+          "problem": "Mix coffee priced at 1600 and 1000 cents/kg into 9 kilograms worth 12 euros/kg. Give the masses (first, second) in kilograms; assume no loss.",
+          "answer": "(3,6)"
+        },
+        {
+          "problem": "Blend grain priced at 4 and 10 euros/kg into 8000 grams worth 7 euros/kg. Give the masses (first, second) in kilograms; assume no loss.",
+          "answer": "(4,4)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-mixture-problems/kp3",
+        "objective": "Price-blend mixtures",
+        "constraints": "blend price between the two ingredient prices; halves allowed",
+        "hints": [
+          "Convert masses and prices to consistent units matching the requested output, then define the two ingredient masses in order.",
+          "Write the mass balance and the value balance using price times mass; if only blend price is given, multiply it by total mass to get total value.",
+          "Solve and verify both masses are allowed, their sum is correct, and their ingredient values add to the stated total value."
+        ]
+      },
+      "proposed_row_sha256": "b0f01731161dc76d0e148979c150dc1038550e0c4fc5b846291f238673129ff5"
+    },
+    {
+      "key": "systems-rate-problems/kp1",
+      "base_authored_row_sha256": "86a94ca460e07aa1e1f7a028b01656bb53a0909a8f6fef60b573c2f3362df7c4",
+      "curriculum_kp_sha256": "c4427a0d42665bbe021305cb17357eb2a7d7d7efa6534b0e6223ff057c67f772",
+      "review_required_change": "Sum/difference method is correct but omits required unit conversion for the canonical metres/minute-to-km/hour case. First express both ground speeds in the requested common unit, identify with/against flow regardless of their textual order, then recover the half-sum and current speed and check both directions.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "A boat maintains a constant still-medium speed. Its ground speeds are 18 km/h with the current or wind and 10 km/h against it. Find (still-medium speed, current or wind speed) in km/h.",
+          "answer": "(14, 4)"
+        },
+        {
+          "problem": "A flight log records ground speeds of 420 km/h against a steady wind and 540 km/h with it. The plane keeps the same airspeed. Find (airspeed, wind speed) in km/h.",
+          "answer": "(480, 60)"
+        },
+        {
+          "problem": "A kayak maintains the same paddling effort. Its ground speeds are 200 metres/min with the current and 150 metres/min against it. Find (still-water speed, current speed) in km/h.",
+          "answer": "(21/2, 3/2)"
+        },
+        {
+          "problem": "A ferry runs at 37 km/h downstream and 25 km/h upstream. A learner uses the full difference as the current speed. Correct the calculation and give (still-water speed, current speed) in km/h.",
+          "answer": "(31, 6)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-rate-problems/kp1",
+        "objective": "Current and wind: sum and difference",
+        "constraints": "downstream = sum, upstream = difference of the two rates",
+        "hints": [
+          "Convert both observed ground speeds to the same requested units, then identify the with-flow and against-flow values by meaning rather than sentence order.",
+          "The still-medium speed of the boat or plane is half their sum, and the current or wind speed is half their positive difference.",
+          "Check that adding and subtracting the current or wind speed reproduce both original ground speeds in the requested order."
+        ]
+      },
+      "proposed_row_sha256": "0566cd6c56e60d83d5bd5207c38b55b8f980b31dbf01e6439cda6312d45187c9"
+    },
+    {
+      "key": "systems-rate-problems/kp2",
+      "base_authored_row_sha256": "56674d691c2995124dd4a0095813e0e6f723a08dadd5fdc4c6d7222a1641a34e",
+      "curriculum_kp_sha256": "4f342d564f87fb11583cafb953857ae427c6e115a1781974a5a32052d0031b51",
+      "review_required_change": "Distance/time is correct only after units agree; canonical minutes must become hours. Identify the with-flow and against-flow legs by meaning, compute ground speeds in requested units, use half their sum/difference, and check each original distance with its time.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "A canoe travels 42 km in 2 h with the current or wind and 42 km in 3 h against it. Its still-medium speed and the current or wind stay constant. Find (still-medium speed, current or wind speed) in km/h.",
+          "answer": "(35/2, 7/2)"
+        },
+        {
+          "problem": "A plane travels 1800 km in 3 h with the current or wind and 2000 km in 4 h against it. Its still-medium speed and the current or wind stay constant. Find (still-medium speed, current or wind speed) in km/h.",
+          "answer": "(550, 50)"
+        },
+        {
+          "problem": "A launch travels 60 km in 180 minutes downstream and 48 km in 240 minutes upstream. Its still-water speed and the current stay constant. Find (still-water speed, current speed) in km/h.",
+          "answer": "(16, 4)"
+        },
+        {
+          "problem": "A ferry log lists an upstream leg of 45 km taking 3 h and a downstream leg of 35 km taking 1 h. Its still-water speed and the current stay constant. Find (still-water speed, current speed) in km/h.",
+          "answer": "(25, 10)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-rate-problems/kp2",
+        "objective": "Compute the two speeds from d = rt first",
+        "constraints": "distances divide evenly by the times",
+        "hints": [
+          "Convert each travel time and distance to common units, then compute each leg’s ground speed as distance divided by time.",
+          "Identify the with-flow and against-flow speeds; take half their sum for the boat or plane’s still-medium speed and half their difference for the current or wind.",
+          "Check each recovered ground speed against its original distance and time."
+        ]
+      },
+      "proposed_row_sha256": "da6bfa53094c913fdf3b3a05d3574127c90d112aa55dabd21e2bc8e49c0793ce"
+    },
+    {
+      "key": "systems-rate-problems/kp3",
+      "base_authored_row_sha256": "7f57ff141035a4df70be2d1c3b7b98c150364b17e2d59ec88f601b1e5fa491b3",
+      "curriculum_kp_sha256": "733e65cda7e665a838c436fed089820455d92f0f4b51cde0cf1778196917f3df",
+      "review_required_change": "Rung2 hardcodes a directly supplied speed difference, missing canonical extra-distance and speed-ratio cases. Convert times/units, derive combined speed from separation/time, then translate the second relationship: speed difference directly, extra distance divided by common time, or stated ratio. Solve and check both relationships.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "problem": "Two cars start 420 km apart and travel toward each other at constant speeds, meeting after 3 h. The faster speed exceeds the slower by 12 km/h. Find (faster, slower) in km/h.",
+          "answer": "(76, 64)"
+        },
+        {
+          "problem": "Two trains start 660 km apart and move toward each other at constant speeds, meeting after 6 h. The faster train covers 108 km more than the slower during those 6 h. Find (faster, slower) in km/h.",
+          "answer": "(64, 46)"
+        },
+        {
+          "problem": "Two cyclists start 99 km apart and travel toward each other at constant speeds, meeting after 180 minutes. The faster speed exceeds the slower by 5 km/h. Find (faster, slower) in km/h.",
+          "answer": "(19, 14)"
+        },
+        {
+          "problem": "Two walkers start 46 km apart and travel toward each other at constant speeds, meeting after 4 h. The faster speed is 25/21 times the slower speed. Find (faster, slower) in km/h.",
+          "answer": "(25/4, 21/4)"
+        }
+      ],
+      "proposed_row": {
+        "key": "systems-rate-problems/kp3",
+        "objective": "Two travelers",
+        "constraints": "meeting problems: combined speed = total distance / time",
+        "hints": [
+          "Convert all times, distances, and speeds to common units, then derive the combined speed from separation divided by common travel time.",
+          "Translate the second relationship as given: a direct speed difference, extra distance divided by the common time, or a stated speed ratio.",
+          "Solve the two speed relationships and check both the combined separation and the second condition."
+        ]
+      },
+      "proposed_row_sha256": "9329a6d8e48cf4ea985d5ff763ba3584270a9f187dfa0cb793e396d44dfe5258"
+    }
+  ],
+  "template_repairs": [
+    {
+      "key": "systems-special-cases/kp1",
+      "base_selected_template_sha256": "aa57408cb3e50aa08f6d9f8c0f6ec80ae736637ce47523b2b4959d4da01d279e",
+      "review_findings": [
+        {
+          "keys": [
+            "systems-special-cases/kp1",
+            "systems-special-cases/kp2",
+            "systems-special-cases/kp3"
+          ],
+          "finding": "Embedded hint says translate each relationship separately, but the task is to classify already-given equations by proportionality, slopes or elimination.",
+          "required_change": "Use a method-specific classification hint, preserving all intended classification cases."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "multipart",
+            "parts": [
+              {
+                "contract": {
+                  "kind": "label",
+                  "options": [
+                    [
+                      "yes"
+                    ],
+                    [
+                      "no"
+                    ]
+                  ]
+                },
+                "name": "infinite"
+              },
+              {
+                "contract": {
+                  "kind": "label",
+                  "options": [
+                    [
+                      "yes"
+                    ],
+                    [
+                      "no"
+                    ]
+                  ]
+                },
+                "name": "none"
+              }
+            ]
+          },
+          "answer_expr": "multipart(equalitylabel(a,b),equalitylabel(signcase(a-b,[1,0,1]),1))",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Eliminate one equation from the other: a true identity means the same line, while a false numerical equality means no common point."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                5,
+                8
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                2,
+                5,
+                8,
+                11
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "infinite = yes; none = no",
+              "params": {
+                "a": 2,
+                "b": 2
+              }
+            },
+            {
+              "expected": "infinite = no; none = yes",
+              "params": {
+                "a": 2,
+                "b": 5
+              }
+            },
+            {
+              "expected": "infinite = no; none = yes",
+              "params": {
+                "a": 2,
+                "b": 8
+              }
+            },
+            {
+              "expected": "infinite = no; none = yes",
+              "params": {
+                "a": 2,
+                "b": 11
+              }
+            },
+            {
+              "expected": "infinite = no; none = yes",
+              "params": {
+                "a": 5,
+                "b": 2
+              }
+            },
+            {
+              "expected": "infinite = yes; none = no",
+              "params": {
+                "a": 5,
+                "b": 5
+              }
+            },
+            {
+              "expected": "infinite = no; none = yes",
+              "params": {
+                "a": 5,
+                "b": 8
+              }
+            },
+            {
+              "expected": "infinite = no; none = yes",
+              "params": {
+                "a": 5,
+                "b": 11
+              }
+            },
+            {
+              "expected": "infinite = no; none = yes",
+              "params": {
+                "a": 8,
+                "b": 2
+              }
+            },
+            {
+              "expected": "infinite = no; none = yes",
+              "params": {
+                "a": 8,
+                "b": 5
+              }
+            },
+            {
+              "expected": "infinite = yes; none = no",
+              "params": {
+                "a": 8,
+                "b": 8
+              }
+            },
+            {
+              "expected": "infinite = no; none = yes",
+              "params": {
+                "a": 8,
+                "b": 11
+              }
+            }
+          ],
+          "solution_sketch": "Twice the first left side equals the second left side. Subtracting twice the first equation leaves a right-side difference of twice the second parameter minus twice the first. A nonzero difference is inconsistent; a vanishing difference leaves the same nondegenerate line.",
+          "statement": "Use elimination on $x+({a}+2({b}))y={a}$ and $2x+2({a}+2({b}))y=2({b})$. Classify the solution set: report infinite and none as yes/no fields, with exactly one yes."
+        },
+        "kind": "template",
+        "kp_id": "systems-special-cases/kp1"
+      },
+      "proposed_template_sha256": "0d6cfe12c35439f8bac58efe9b7e90439950c996fe64cebaf9cb76bff1204d5f",
+      "binding_count": 12
+    },
+    {
+      "key": "systems-special-cases/kp2",
+      "base_selected_template_sha256": "d3936305fa5257fc2eb88d130e863cfaded2edf765c38f24bda2fc6055070103",
+      "review_findings": [
+        {
+          "keys": [
+            "systems-special-cases/kp1",
+            "systems-special-cases/kp2",
+            "systems-special-cases/kp3"
+          ],
+          "finding": "Embedded hint says translate each relationship separately, but the task is to classify already-given equations by proportionality, slopes or elimination.",
+          "required_change": "Use a method-specific classification hint, preserving all intended classification cases."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "multipart",
+            "parts": [
+              {
+                "contract": {
+                  "kind": "label",
+                  "options": [
+                    [
+                      "yes"
+                    ],
+                    [
+                      "no"
+                    ]
+                  ]
+                },
+                "name": "one"
+              },
+              {
+                "contract": {
+                  "kind": "label",
+                  "options": [
+                    [
+                      "yes"
+                    ],
+                    [
+                      "no"
+                    ]
+                  ]
+                },
+                "name": "infinite"
+              }
+            ]
+          },
+          "answer_expr": "multipart(equalitylabel(signcase(a-b,[1,0,1]),1),equalitylabel((a-b)^2+(13-c)^2,0))",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Handle vertical lines separately; otherwise compare slopes first and intercepts only when the slopes match."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                -3,
+                1,
+                4
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                -3,
+                1,
+                4,
+                6
+              ]
+            },
+            "c": {
+              "kind": "choice",
+              "values": [
+                13,
+                19
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "one = no; infinite = yes",
+              "params": {
+                "a": -3,
+                "b": -3,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = no; infinite = no",
+              "params": {
+                "a": -3,
+                "b": -3,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": -3,
+                "b": 1,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": -3,
+                "b": 1,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": -3,
+                "b": 4,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": -3,
+                "b": 4,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": -3,
+                "b": 6,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": -3,
+                "b": 6,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 1,
+                "b": -3,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 1,
+                "b": -3,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = no; infinite = yes",
+              "params": {
+                "a": 1,
+                "b": 1,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = no; infinite = no",
+              "params": {
+                "a": 1,
+                "b": 1,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 1,
+                "b": 4,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 1,
+                "b": 4,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 1,
+                "b": 6,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 1,
+                "b": 6,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 4,
+                "b": -3,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 4,
+                "b": -3,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 4,
+                "b": 1,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 4,
+                "b": 1,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = no; infinite = yes",
+              "params": {
+                "a": 4,
+                "b": 4,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = no; infinite = no",
+              "params": {
+                "a": 4,
+                "b": 4,
+                "c": 19
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 4,
+                "b": 6,
+                "c": 13
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 4,
+                "b": 6,
+                "c": 19
+              }
+            }
+          ],
+          "solution_sketch": "Normalize both equations. Different slopes yield one intersection. With equal slopes, matching intercepts describe the same line and infinitely many points; different intercepts describe parallel distinct lines with no common point.",
+          "statement": "Compare slopes and intercepts of $y=({a})x+13+2({a})+({b})$ and $2y=2({b})x+2({c}+2({a})+({b}))$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+        },
+        "kind": "template",
+        "kp_id": "systems-special-cases/kp2"
+      },
+      "proposed_template_sha256": "a28f54d41e0cd80218db024fa62da7b344d82f6062ae860e2d3d7b22aae73f42",
+      "binding_count": 24
+    },
+    {
+      "key": "systems-special-cases/kp3",
+      "base_selected_template_sha256": "a2fdfae3f3b9a7720b855831bd2fd5537bddef7e7319aea051ccb7191972953a",
+      "review_findings": [
+        {
+          "keys": [
+            "systems-special-cases/kp1",
+            "systems-special-cases/kp2",
+            "systems-special-cases/kp3"
+          ],
+          "finding": "Embedded hint says translate each relationship separately, but the task is to classify already-given equations by proportionality, slopes or elimination.",
+          "required_change": "Use a method-specific classification hint, preserving all intended classification cases."
+        },
+        {
+          "keys": [
+            "systems-special-cases/kp3"
+          ],
+          "finding": "Statement offers the coefficient determinant, which is not introduced by this Foundations KP or its actual prerequisites. Its sketch also uses slope classification despite this family explicitly asking an algebraic method.",
+          "required_change": "Remove the determinant reference. Give elimination reasoning: subtract aligned equations, inspect whether a variable coefficient remains or the numerical equality is true/false."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "multipart",
+            "parts": [
+              {
+                "contract": {
+                  "kind": "label",
+                  "options": [
+                    [
+                      "yes"
+                    ],
+                    [
+                      "no"
+                    ]
+                  ]
+                },
+                "name": "one"
+              },
+              {
+                "contract": {
+                  "kind": "label",
+                  "options": [
+                    [
+                      "yes"
+                    ],
+                    [
+                      "no"
+                    ]
+                  ]
+                },
+                "name": "infinite"
+              }
+            ]
+          },
+          "answer_expr": "multipart(equalitylabel(signcase(a-b,[1,0,1]),1),equalitylabel((a-b)^2+(17-c)^2,0))",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Eliminate aligned equations, then classify from a remaining variable term, a false numerical equality, or a true identity."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                5,
+                7
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                2,
+                5,
+                7,
+                9
+              ]
+            },
+            "c": {
+              "kind": "choice",
+              "values": [
+                17,
+                23
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "one = no; infinite = yes",
+              "params": {
+                "a": 2,
+                "b": 2,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = no; infinite = no",
+              "params": {
+                "a": 2,
+                "b": 2,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 2,
+                "b": 5,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 2,
+                "b": 5,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 2,
+                "b": 7,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 2,
+                "b": 7,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 2,
+                "b": 9,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 2,
+                "b": 9,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 5,
+                "b": 2,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 5,
+                "b": 2,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = no; infinite = yes",
+              "params": {
+                "a": 5,
+                "b": 5,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = no; infinite = no",
+              "params": {
+                "a": 5,
+                "b": 5,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 5,
+                "b": 7,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 5,
+                "b": 7,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 5,
+                "b": 9,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 5,
+                "b": 9,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 7,
+                "b": 2,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 7,
+                "b": 2,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 7,
+                "b": 5,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 7,
+                "b": 5,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = no; infinite = yes",
+              "params": {
+                "a": 7,
+                "b": 7,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = no; infinite = no",
+              "params": {
+                "a": 7,
+                "b": 7,
+                "c": 23
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 7,
+                "b": 9,
+                "c": 17
+              }
+            },
+            {
+              "expected": "one = yes; infinite = no",
+              "params": {
+                "a": 7,
+                "b": 9,
+                "c": 23
+              }
+            }
+          ],
+          "solution_sketch": "Subtract one aligned equation from the other. If the x coefficient remains nonzero, one x value and then one y value are determined. If x also disappears, a false numerical equality gives no solution and a true identity gives infinitely many solutions.",
+          "statement": "Classify $({a})x+y=17+2({a})+({b})$ and $({b})x+y={c}+2({a})+({b})$ using elimination. Report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+        },
+        "kind": "template",
+        "kp_id": "systems-special-cases/kp3"
+      },
+      "proposed_template_sha256": "f5c8ba8e5818d8649365cdbf39cf9aa71080ddbafe7de4afde57a3192d5dc43b",
+      "binding_count": 24
+    },
+    {
+      "key": "systems-of-linear-inequalities/kp1",
+      "base_selected_template_sha256": "c00ef27e61b93600a558b7453227c75af5fedd35d227e4123dca6ba57676e9ed",
+      "review_findings": [
+        {
+          "keys": [
+            "systems-of-linear-inequalities/kp1",
+            "systems-of-linear-inequalities/kp2",
+            "systems-of-linear-inequalities/kp3"
+          ],
+          "finding": "Embedded relationship-translation boilerplate does not target point substitution, inequality-direction/boundary decisions, or checking two candidates.",
+          "required_change": "Give one concise task-specific method hint for each KP; retain both-inequality AND semantics."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "multipart",
+            "parts": [
+              {
+                "contract": {
+                  "arity": 2,
+                  "kind": "coordinates"
+                },
+                "name": "residuals"
+              },
+              {
+                "contract": {
+                  "kind": "label",
+                  "options": [
+                    [
+                      "yes"
+                    ],
+                    [
+                      "no"
+                    ]
+                  ]
+                },
+                "name": "solution"
+              }
+            ]
+          },
+          "answer_expr": "multipart((b-a-1,b+a-9),equalitylabel(signcase(b-a-1,[0,0,1])+signcase(b+a-9,[1,1,0]),2))",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Substitute the same point into both inequalities and require both comparisons to hold, preserving each strict or inclusive sign."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                1,
+                2,
+                3
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                1,
+                3,
+                5,
+                7
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "residuals = (-1,-7); solution = no",
+              "params": {
+                "a": 1,
+                "b": 1
+              }
+            },
+            {
+              "expected": "residuals = (1,-5); solution = yes",
+              "params": {
+                "a": 1,
+                "b": 3
+              }
+            },
+            {
+              "expected": "residuals = (3,-3); solution = yes",
+              "params": {
+                "a": 1,
+                "b": 5
+              }
+            },
+            {
+              "expected": "residuals = (5,-1); solution = yes",
+              "params": {
+                "a": 1,
+                "b": 7
+              }
+            },
+            {
+              "expected": "residuals = (-2,-6); solution = no",
+              "params": {
+                "a": 2,
+                "b": 1
+              }
+            },
+            {
+              "expected": "residuals = (0,-4); solution = no",
+              "params": {
+                "a": 2,
+                "b": 3
+              }
+            },
+            {
+              "expected": "residuals = (2,-2); solution = yes",
+              "params": {
+                "a": 2,
+                "b": 5
+              }
+            },
+            {
+              "expected": "residuals = (4,0); solution = yes",
+              "params": {
+                "a": 2,
+                "b": 7
+              }
+            },
+            {
+              "expected": "residuals = (-3,-5); solution = no",
+              "params": {
+                "a": 3,
+                "b": 1
+              }
+            },
+            {
+              "expected": "residuals = (-1,-3); solution = no",
+              "params": {
+                "a": 3,
+                "b": 3
+              }
+            },
+            {
+              "expected": "residuals = (1,-1); solution = yes",
+              "params": {
+                "a": 3,
+                "b": 5
+              }
+            },
+            {
+              "expected": "residuals = (3,1); solution = no",
+              "params": {
+                "a": 3,
+                "b": 7
+              }
+            }
+          ],
+          "solution_sketch": "Substitute the point into each inequality. The first left-minus-right difference must be strictly positive; the second must be nonpositive. Both conditions are required.",
+          "statement": "Check $({a},{b})$ against $y>x+1$ and $y<=-x+9$. Report residuals as the ordered pair of left-side-minus-right-side differences for each inequality after substitution; report solution as yes or no."
+        },
+        "kind": "template",
+        "kp_id": "systems-of-linear-inequalities/kp1"
+      },
+      "proposed_template_sha256": "478721f31df56c71ccb471804ef879849ec10665298fd81b918da31bccc7b360",
+      "binding_count": 12
+    },
+    {
+      "key": "systems-of-linear-inequalities/kp2",
+      "base_selected_template_sha256": "649d648589b46969f10e3df5718205bfcad48b3a3a56f22dc19602d1ee91f952",
+      "review_findings": [
+        {
+          "keys": [
+            "systems-of-linear-inequalities/kp1",
+            "systems-of-linear-inequalities/kp2",
+            "systems-of-linear-inequalities/kp3"
+          ],
+          "finding": "Embedded relationship-translation boilerplate does not target point substitution, inequality-direction/boundary decisions, or checking two candidates.",
+          "required_change": "Give one concise task-specific method hint for each KP; retain both-inequality AND semantics."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "multipart",
+            "parts": [
+              {
+                "contract": {
+                  "arity": 3,
+                  "kind": "coordinates"
+                },
+                "name": "solid"
+              },
+              {
+                "contract": {
+                  "arity": 3,
+                  "kind": "coordinates"
+                },
+                "name": "dashed"
+              }
+            ]
+          },
+          "answer_expr": "multipart((2/a,b/a,signcase(a,[1,0,-1])),(-1,4,1))",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Isolate y in each inequality, reversing the sign after negative division; then choose boundary style and shading direction before intersecting the half-planes."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                -3,
+                -1,
+                2,
+                4
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                -5,
+                1,
+                6
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "solid = (-2/3,5/3,1); dashed = (-1,4,1)",
+              "params": {
+                "a": -3,
+                "b": -5
+              }
+            },
+            {
+              "expected": "solid = (-2/3,-1/3,1); dashed = (-1,4,1)",
+              "params": {
+                "a": -3,
+                "b": 1
+              }
+            },
+            {
+              "expected": "solid = (-2/3,-2,1); dashed = (-1,4,1)",
+              "params": {
+                "a": -3,
+                "b": 6
+              }
+            },
+            {
+              "expected": "solid = (-2,5,1); dashed = (-1,4,1)",
+              "params": {
+                "a": -1,
+                "b": -5
+              }
+            },
+            {
+              "expected": "solid = (-2,-1,1); dashed = (-1,4,1)",
+              "params": {
+                "a": -1,
+                "b": 1
+              }
+            },
+            {
+              "expected": "solid = (-2,-6,1); dashed = (-1,4,1)",
+              "params": {
+                "a": -1,
+                "b": 6
+              }
+            },
+            {
+              "expected": "solid = (1,-5/2,-1); dashed = (-1,4,1)",
+              "params": {
+                "a": 2,
+                "b": -5
+              }
+            },
+            {
+              "expected": "solid = (1,1/2,-1); dashed = (-1,4,1)",
+              "params": {
+                "a": 2,
+                "b": 1
+              }
+            },
+            {
+              "expected": "solid = (1,3,-1); dashed = (-1,4,1)",
+              "params": {
+                "a": 2,
+                "b": 6
+              }
+            },
+            {
+              "expected": "solid = (1/2,-5/4,-1); dashed = (-1,4,1)",
+              "params": {
+                "a": 4,
+                "b": -5
+              }
+            },
+            {
+              "expected": "solid = (1/2,1/4,-1); dashed = (-1,4,1)",
+              "params": {
+                "a": 4,
+                "b": 1
+              }
+            },
+            {
+              "expected": "solid = (1/2,3/2,-1); dashed = (-1,4,1)",
+              "params": {
+                "a": 4,
+                "b": 6
+              }
+            }
+          ],
+          "solution_sketch": "Divide the first inequality by its vertical coefficient. Negative division reverses the direction, while its boundary remains solid. The second inequality is strict, so its boundary is dashed and the shaded side is above it. Intersect the two shaded sides.",
+          "statement": "For $({a})y<=2x+({b})$ and $y>-x+4$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes."
+        },
+        "kind": "template",
+        "kp_id": "systems-of-linear-inequalities/kp2"
+      },
+      "proposed_template_sha256": "2810a86d9f20a16c99bbf9688bf844e6ea593cc4a4230b0ac8afd8c91594801d",
+      "binding_count": 12
+    },
+    {
+      "key": "systems-of-linear-inequalities/kp3",
+      "base_selected_template_sha256": "554194017939ee9ef9a1edf6a38567f02a6116fd404859a958d5afdb7bad31c1",
+      "review_findings": [
+        {
+          "keys": [
+            "systems-of-linear-inequalities/kp1",
+            "systems-of-linear-inequalities/kp2",
+            "systems-of-linear-inequalities/kp3"
+          ],
+          "finding": "Embedded relationship-translation boilerplate does not target point substitution, inequality-direction/boundary decisions, or checking two candidates.",
+          "required_change": "Give one concise task-specific method hint for each KP; retain both-inequality AND semantics."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "arity": 2,
+            "kind": "coordinates"
+          },
+          "answer_expr": "(a,2*a+signcase(b,[1,3,5]))",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Substitute each candidate into both original inequalities and select the one satisfying both comparisons."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                -2,
+                2
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "(1,3)",
+              "params": {
+                "a": 1,
+                "b": -2
+              }
+            },
+            {
+              "expected": "(1,7)",
+              "params": {
+                "a": 1,
+                "b": 2
+              }
+            },
+            {
+              "expected": "(2,5)",
+              "params": {
+                "a": 2,
+                "b": -2
+              }
+            },
+            {
+              "expected": "(2,9)",
+              "params": {
+                "a": 2,
+                "b": 2
+              }
+            },
+            {
+              "expected": "(3,7)",
+              "params": {
+                "a": 3,
+                "b": -2
+              }
+            },
+            {
+              "expected": "(3,11)",
+              "params": {
+                "a": 3,
+                "b": 2
+              }
+            },
+            {
+              "expected": "(4,9)",
+              "params": {
+                "a": 4,
+                "b": -2
+              }
+            },
+            {
+              "expected": "(4,13)",
+              "params": {
+                "a": 4,
+                "b": 2
+              }
+            },
+            {
+              "expected": "(5,11)",
+              "params": {
+                "a": 5,
+                "b": -2
+              }
+            },
+            {
+              "expected": "(5,15)",
+              "params": {
+                "a": 5,
+                "b": 2
+              }
+            },
+            {
+              "expected": "(6,13)",
+              "params": {
+                "a": 6,
+                "b": -2
+              }
+            },
+            {
+              "expected": "(6,17)",
+              "params": {
+                "a": 6,
+                "b": 2
+              }
+            }
+          ],
+          "solution_sketch": "Subtract twice the horizontal coordinate from the candidate height. The resulting offset must lie strictly between the lower offset and that offset plus six. Test each candidate against both bounds; neither candidate lies on a boundary.",
+          "statement": "Which of $({a},2({a})+1)$ or $({a},2({a})+5)$ belongs to the overlap of $y>2x+({b})$ and $y<2x+({b})+6$? Give the ordered pair."
+        },
+        "kind": "template",
+        "kp_id": "systems-of-linear-inequalities/kp3"
+      },
+      "proposed_template_sha256": "b23bbaf59db497c0030f30563b2f793d35c13d899c1c50d50745d67c0e85cb33",
+      "binding_count": 12
+    },
+    {
+      "key": "systems-mixture-problems/kp3",
+      "base_selected_template_sha256": "26a9cdcd6e5e861cf81665188d5ef9c372d26faa4255d9f45f03e28ab0c25de4",
+      "review_findings": [
+        {
+          "keys": [
+            "systems-mixture-problems/kp3"
+          ],
+          "finding": "All12 current bindings produce fifths although the scoped price-blend level specifies halves allowed. Example11kg at7 euros/kg from5 and15 euros/kg gives44/5 and11/5kg.",
+          "required_change": "Select a finite domain with both masses integers or half-integers and target price strictly between ingredient prices. Preserve the full mass/value task and exact coordinates contract.",
+          "counterexample_count": 12
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "arity": 2,
+            "kind": "coordinates"
+          },
+          "answer_expr": "(a*(15-b)/10,a*(b-5)/10)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Use a mass balance and a price-times-mass value balance in consistent units, then verify both balances."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                10,
+                15,
+                20
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                7,
+                9,
+                11,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "params": {
+                "a": 10,
+                "b": 7
+              },
+              "expected": "(8,2)"
+            },
+            {
+              "params": {
+                "a": 10,
+                "b": 9
+              },
+              "expected": "(6,4)"
+            },
+            {
+              "params": {
+                "a": 10,
+                "b": 11
+              },
+              "expected": "(4,6)"
+            },
+            {
+              "params": {
+                "a": 10,
+                "b": 13
+              },
+              "expected": "(2,8)"
+            },
+            {
+              "params": {
+                "a": 15,
+                "b": 7
+              },
+              "expected": "(12,3)"
+            },
+            {
+              "params": {
+                "a": 15,
+                "b": 9
+              },
+              "expected": "(9,6)"
+            },
+            {
+              "params": {
+                "a": 15,
+                "b": 11
+              },
+              "expected": "(6,9)"
+            },
+            {
+              "params": {
+                "a": 15,
+                "b": 13
+              },
+              "expected": "(3,12)"
+            },
+            {
+              "params": {
+                "a": 20,
+                "b": 7
+              },
+              "expected": "(16,4)"
+            },
+            {
+              "params": {
+                "a": 20,
+                "b": 9
+              },
+              "expected": "(12,8)"
+            },
+            {
+              "params": {
+                "a": 20,
+                "b": 11
+              },
+              "expected": "(8,12)"
+            },
+            {
+              "params": {
+                "a": 20,
+                "b": 13
+              },
+              "expected": "(4,16)"
+            }
+          ],
+          "solution_sketch": "Mass balance gives $x+y={a}$; value balance gives $5x+15y={b}({a})$. Subtract five times the mass equation, solve for the second mass, and recover the first.",
+          "statement": "Blend coffee priced at 5 and 15 euros/kg into {a} kilograms worth {b} euros/kg. Give the masses (first, second) in kilograms; assume no loss."
+        },
+        "kind": "template",
+        "kp_id": "systems-mixture-problems/kp3"
+      },
+      "proposed_template_sha256": "68554a7b12a01f3ef68ef8368a5c66d84795624ef57219e2236c29e238253725",
+      "binding_count": 12
+    }
+  ],
+  "independent_checks": {
+    "all_hint_ladders_have_exactly_three_progressive_rungs": true,
+    "curriculum_exemplars_read_for_revised_hints": 56,
+    "mixture_kp3_all_masses_integer_or_half": true,
+    "mixture_kp3_target_strictly_between_prices": true
+  },
+  "status": "proposal_only_pending_root_independent_review",
+  "supersedes": {
+    "path": "hint-authored/05-systems-inequalities-03-repair-proposals.json",
+    "sha256": "8e32d0de626f67ab9dc6b6351671d36ffd72bde5b071356a78d1f9deb2a1936d",
+    "reason": "Peer review kept mixture kp1 at setup/report scope and generalized rate language across boat/current and plane/wind contexts."
+  },
+  "delta_scope": [
+    "systems-mixture-problems/kp1 proposed hint ladder",
+    "systems-rate-problems/kp1 proposed hint ladder",
+    "systems-rate-problems/kp2 proposed hint ladder"
+  ]
+}

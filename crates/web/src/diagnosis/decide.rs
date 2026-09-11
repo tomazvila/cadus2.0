@@ -34,6 +34,8 @@ pub(crate) struct Miss<'a> {
     pub work: Option<&'a str>,
     /// The deterministic verdict of THIS submission.
     pub correct: bool,
+    /// Whether THIS submission got no deterministic verdict (D-F2, D-F4).
+    pub ungraded: bool,
 }
 
 /// Everything one diagnosis decision reads about its own grade.
@@ -69,7 +71,10 @@ pub(crate) async fn decide(
         write,
     } = about;
     let (kind, write) = (*kind, *write);
-    if miss.correct || miss.answer.trim().is_empty() {
+    // D-F4: the model-assisted diagnosis runs on a decided MISS and on nothing
+    // else. An ungraded attempt has no mistake to diagnose, because the checker
+    // named no mistake, so no job is enqueued and no pre-authored answer is read.
+    if miss.correct || miss.ungraded || miss.answer.trim().is_empty() {
         return Ok(json!({ "status": STATUS_NOT_OFFERED }));
     }
 
@@ -82,9 +87,19 @@ pub(crate) async fn decide(
     // problem (M5 review 1, findings F10 and F16).
     if let (Some(topic), Some(point)) = (served.serving_topic(), served.kp.as_deref()) {
         let key = kp_key(topic, point);
+        let loaded = state
+            .content
+            .as_ref()
+            .ok_or_else(|| ApiError::internal("The current curriculum is unavailable."))?;
+        let policy = loaded.policy_digest(&key)?;
         let doc = bound(
             &state.db,
-            cadus_store::content::approved_document(&mut **tx, &key, KIND_DIAGNOSIS),
+            cadus_store::content::approved_document_current(
+                &mut **tx,
+                &key,
+                KIND_DIAGNOSIS,
+                loaded.review_context(policy.as_deref())?,
+            ),
         )
         .await
         .map_err(|err| failed(&err))?;

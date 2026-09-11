@@ -247,7 +247,8 @@ impl<'a> Checker<'a> {
     }
 
     fn check_course(&mut self, value: &Value) {
-        const FIELDS: [&str; 5] = [
+        const FIELDS: [&str; 6] = [
+            "visuals",
             "id",
             "name",
             "order",
@@ -344,12 +345,14 @@ impl<'a> Checker<'a> {
     }
 
     fn check_knowledge_point(&mut self, value: &Value) {
-        const FIELDS: [&str; 5] = [
+        const FIELDS: [&str; 7] = [
+            "visuals",
             "id",
             "name",
             "key_prerequisites",
             "exemplars",
             "constraints",
+            "finite_objective_domain",
         ];
         let Some(map) = self.struct_map(value, "KnowledgePoint") else {
             return;
@@ -362,21 +365,52 @@ impl<'a> Checker<'a> {
         self.field(map, "exemplars", false, |checker, value| {
             checker.each(value, Self::check_exemplar);
         });
+        self.field(map, "visuals", false, |checker, value| {
+            checker.each(value, |checker, visual| {
+                if let Err(error) = crate::visual::VisualSpec::deserialize(visual.clone()) {
+                    checker.report(&error.to_string());
+                }
+            });
+        });
         self.field(map, "constraints", false, |checker, value| {
             if !value.is_null() {
                 checker.check_string(value);
             }
         });
+        self.field(map, "finite_objective_domain", false, |checker, value| {
+            match crate::curriculum::FiniteObjectiveDomain::deserialize(value.clone()) {
+                Ok(_) => {}
+                Err(reason) => checker.report(&reason.to_string()),
+            }
+        });
+        if let Ok(point) = crate::curriculum::KnowledgePoint::deserialize(value.clone())
+            && let Err(reason) = point.validate_finite_objective_domain()
+        {
+            self.report(&reason);
+        }
         self.extras(map, &FIELDS);
     }
 
     fn check_exemplar(&mut self, value: &Value) {
-        const FIELDS: [&str; 3] = ["problem", "answer", "solution_sketch"];
+        const FIELDS: [&str; 4] = ["problem", "answer", "solution_sketch", "answer_contract"];
         let Some(map) = self.struct_map(value, "Exemplar") else {
             return;
         };
         self.field(map, "problem", true, Self::check_string);
         self.field(map, "answer", true, Self::check_string);
+        self.field(map, "answer_contract", false, |checker, value| {
+            if value.is_null() {
+                return;
+            }
+            match crate::answer::AnswerContract::deserialize(value.clone()) {
+                Ok(contract) => {
+                    if let Err(reason) = contract.validate() {
+                        checker.report(reason.reason);
+                    }
+                }
+                Err(reason) => checker.report(&reason.to_string()),
+            }
+        });
         self.field(map, "solution_sketch", false, |checker, value| {
             if !value.is_null() {
                 checker.check_string(value);
@@ -422,3 +456,6 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+mod finite_tests;

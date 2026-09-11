@@ -145,6 +145,8 @@ pub(super) fn stored_attempt<'a>(events: &'a [EventRow], attempt_id: &str) -> Op
 
 /// The verdict one submission got, with the clock beside it.
 pub(super) struct Graded<'a> {
+    /// The policy reading of the server clock.
+    pub(super) timing: cadus_core::timing::SpeedReading,
     /// The deterministic verdict.
     pub(super) grade: &'a Grade,
     /// The verdict's tags and the timing tags, in that order.
@@ -171,6 +173,12 @@ pub(super) fn build_attempt(
     now: Timestamp,
     index: i64,
 ) -> Result<(Attempt, Value), ApiError> {
+    if let Some(stash) = &served.rework
+        && stash.get("digest").and_then(Value::as_str).is_none()
+        && serde_json::from_value::<Attempt>(stash.clone()).is_err()
+    {
+        return Err(broken_state("the feedback state is invalid"));
+    }
     let Some(topic) = served.topic.as_deref().and_then(|id| Slug::new(id).ok()) else {
         return Err(broken_state("the served problem names no topic"));
     };
@@ -178,13 +186,14 @@ pub(super) fn build_attempt(
     let attempt = Attempt {
         ts: now,
         session: session.map(str::to_string),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         attempt_id: format!("{}-{index}", task.task_id),
         task_id: task.task_id.clone(),
         topic,
         kp: served.kp.as_deref().and_then(|id| Slug::new(id).ok()),
         task_type: task.task_type,
         problem: AttemptProblem {
+            answer_contract: served.expected.answer_contract.clone().map(Box::new),
             text: served.text.clone(),
             expected: served.expected.answer.clone(),
         },
@@ -192,6 +201,33 @@ pub(super) fn build_attempt(
         work: submitted.work.clone().filter(|text| !text.is_empty()),
         answer_kind: Some(event_kind(graded.kind)),
         correct: graded.grade.correct,
+        outcome: graded.grade.outcome.clone(),
+        item_digest: Some(served.handoff.as_ref().map_or_else(
+            || problem_text_hash(&served.text),
+            |handoff| handoff.item_digest.clone(),
+        )),
+        item_source: served.handoff.as_ref().map(|handoff| handoff.item_source),
+        exposure: served.handoff.as_ref().map(|handoff| handoff.exposure),
+        timing_reliable: Some(graded.timing.ratio.is_some()),
+        timing: Some(graded.timing),
+        skills: served
+            .kp
+            .iter()
+            .map(|kp| format!("{}/{kp}", served.serving_topic().unwrap_or_default()))
+            .collect(),
+        feedback_practice: served
+            .rework
+            .as_ref()
+            .and_then(|value| value.get("digest"))
+            .and_then(Value::as_str)
+            .is_some(),
+        independent_after_feedback: !graded.assisted
+            && served
+                .rework
+                .as_ref()
+                .and_then(|value| value.get("digest"))
+                .and_then(Value::as_str)
+                .is_some_and(|digest| digest != problem_text_hash(&served.text)),
         secs,
         error_tags: graded.error_tags.to_vec(),
         work_quality: graded.grade.work_quality,
@@ -286,6 +322,57 @@ mod tests {
             .map(|err| err.code)
     }
 
+    #[test]
+    fn the_attempt_copies_the_server_owned_handoff_classification() {
+        let mut live = served(Some("numeric"));
+        live.handoff = Some(crate::state::ProblemHandoff {
+            item_digest: "semantic-render-digest".to_owned(),
+            item_source: cadus_core::event::ItemSource::Template,
+            source_content_digest: Some("reviewed-template".to_owned()),
+            source_curriculum_digest: Some("curriculum-v1".to_owned()),
+            source_review_engine_digest: Some("engine-v1".to_owned()),
+            finite_case_id: Some("case-a".to_owned()),
+            finite_case_role: Some(cadus_core::curriculum::FiniteCaseRole::PracticeFresh),
+            exposure: cadus_core::event::Exposure::Repeat,
+        });
+        let grade = Grade {
+            correct: false,
+            outcome: AttemptOutcome::Incorrect,
+            work_quality: WorkQuality::NearlyPassable,
+            error_tags: Vec::new(),
+        };
+        let graded = Graded {
+            timing: cadus_core::timing::read(&cadus_core::timing::TimingFacts::new(0, 0, false)),
+            grade: &grade,
+            error_tags: &[],
+            secs: 20,
+            kind: AnswerKind::Numeric,
+            assisted: false,
+        };
+        let (attempt, stash) = build_attempt(
+            &lesson(),
+            &live,
+            &miss(),
+            &graded,
+            Some("s"),
+            Timestamp::from_micros(0),
+            1,
+        )
+        .unwrap();
+        assert_eq!(
+            attempt.item_digest.as_deref(),
+            Some("semantic-render-digest")
+        );
+        assert_eq!(
+            attempt.item_source,
+            Some(cadus_core::event::ItemSource::Template)
+        );
+        assert_eq!(attempt.exposure, Some(cadus_core::event::Exposure::Repeat));
+        assert_eq!(stash["item_digest"], "semantic-render-digest");
+        assert_eq!(stash["item_source"], "template");
+        assert_eq!(stash["exposure"], "repeat");
+    }
+
     /// A negative solve time is not an event field, a problem with no topic
     /// names no attempt topic, and an instant outside the wire range does not
     /// serialize: each one is `state_unavailable`, never a panic.
@@ -293,10 +380,12 @@ mod tests {
     fn an_attempt_the_event_grammar_refuses_is_state_unavailable() {
         let grade = Grade {
             correct: false,
+            outcome: AttemptOutcome::of_correct(false),
             work_quality: WorkQuality::NearlyPassable,
             error_tags: Vec::new(),
         };
         let mut graded = Graded {
+            timing: cadus_core::timing::read(&cadus_core::timing::TimingFacts::new(0, 0, false)),
             grade: &grade,
             error_tags: &[],
             secs: -1,

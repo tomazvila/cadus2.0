@@ -1,7 +1,10 @@
 //! M5 U8: the recorded event shapes of the grade path, diffed field by field
 //! against the 1.0 shapes (oracle parity, HANDOVER section 2.5).
 //!
-//! Every key list here is the sorted key list of the 1.0 payload, written out.
+//! Every key list here is the sorted key list of the payload, written out. Unit
+//! f4-outcome moved the `attempt` shape to v2 (D-F2, D-F9): `v` is 2, and the
+//! row carries the evidence a grade records. A field this path leaves at its
+//! default stays OFF the wire, so the 1.0 keys are still the bulk of the list.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
@@ -18,8 +21,16 @@ use serde_json::{Value, json};
 use sqlx::types::Uuid;
 use sqlx::types::chrono::DateTime;
 
-/// The sorted key list of a 1.0 `attempt` event (`projector-1.0-spec.md:43`).
-const ATTEMPT_KEYS: [&str; 19] = [
+/// The digest of [`PROBLEM_TEXT`]: the first 12 hex characters of its SHA-1.
+///
+/// `sha1sum` of `Compute 8 + 5.5.` with no trailing newline starts with these.
+const PROBLEM_DIGEST: &str = "8f7200f627d1";
+
+/// The sorted key list of a v2 `attempt` event (`projector-1.0-spec.md:43`, D-F9).
+///
+/// The 1.0 list plus item identity, skills, and server-owned timing evidence.
+/// `correct` alone spells a decided outcome; optional unused evidence is omitted.
+const ATTEMPT_KEYS: [&str; 23] = [
     "answer_kind",
     "assisted",
     "attempt_id",
@@ -27,12 +38,16 @@ const ATTEMPT_KEYS: [&str; 19] = [
     "error_tags",
     "given_answer",
     "grader_note",
+    "item_digest",
     "kp",
     "problem",
     "secs",
     "session",
+    "skills",
     "task_id",
     "task_type",
+    "timing",
+    "timing_reliable",
     "topic",
     "ts",
     "type",
@@ -97,7 +112,11 @@ fn assert_attempt_shape(event: &Value) {
     assert_eq!(event["grader_note"], "deterministic");
     assert_eq!(event["assisted"], false);
     assert_eq!(event["session"], SESSION);
-    assert_eq!(event["v"], 1);
+    assert_eq!(event["v"], 2);
+    // D-F9. `item_digest` is the 12-hex SHA-1 prefix of the problem text, and
+    // `skills` names the knowledge point the item exercised.
+    assert_eq!(event["item_digest"], PROBLEM_DIGEST);
+    assert_eq!(event["skills"], json!(["addition/kp1"]));
 }
 
 /// The recorded `attempt` event, diffed field by field against the 1.0 shape
@@ -202,7 +221,7 @@ async fn the_recorded_session_stream_matches_the_1_0_event_shapes() {
         assert_eq!(result["quality_tier"], "nearly_passable");
         assert_eq!(result["assisted"], false);
         assert_eq!(result["session"], SESSION);
-        assert_eq!(result["v"], 1);
+        assert_eq!(result["v"], 2);
 
         assert_eq!(
             keys_of(remediation),
@@ -221,7 +240,7 @@ async fn the_recorded_session_stream_matches_the_1_0_event_shapes() {
         assert_eq!(remediation["source_topic"], "addition");
         assert_eq!(remediation["targets"], json!([]));
         assert_eq!(remediation["session"], SESSION);
-        assert_eq!(remediation["v"], 1);
+        assert_eq!(remediation["v"], 2);
 
         // The envelope instant of all three is the RFC 3339 `Z` spelling of 1.0.
         for event in [attempt, result, remediation] {

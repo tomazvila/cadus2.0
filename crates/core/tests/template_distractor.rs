@@ -72,6 +72,7 @@ fn vocabulary() -> Vec<String> {
 /// The knowledge point every test gates for. Its authored answer is `13.5`.
 fn exemplars() -> Vec<Exemplar> {
     vec![Exemplar {
+        answer_contract: None,
         problem: "Compute $8 + 5.5$.".to_owned(),
         answer: "13.5".to_owned(),
         solution_sketch: None,
@@ -104,6 +105,7 @@ fn refusal(body: &str) -> Rejection {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &exemplars,
+        finite: None,
     };
     gate_diagnosis_body(body, &spec, &vocabulary()).expect_err("the gate refuses this document")
 }
@@ -114,6 +116,7 @@ fn accepted(body: &str) -> (DiagnosisDoc, Vec<String>) {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &exemplars,
+        finite: None,
     };
     gate_diagnosis_body(body, &spec, &vocabulary()).expect("the gate accepts this document")
 }

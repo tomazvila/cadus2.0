@@ -19,6 +19,7 @@ fn read_refusal(body: &str) -> Rejection {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     gate_body(body, &spec).expect_err("the body is refused")
 }
@@ -133,6 +134,16 @@ fn a_stray_brace_snippet_quotes_its_escapes() {
     assert_eq!(
         rejection.message,
         "text has an unescaped brace at index 12 ('}\\'\\n\\r\\t x') — literal LaTeX braces must be doubled"
+    );
+}
+
+#[test]
+fn an_unclosed_statement_math_delimiter_is_refused() {
+    let rejection = reject_squares(&body_with(&[("statement", r#""Compute ${a}""#)]));
+    assert_eq!(rejection.code, "math-delimiter");
+    assert_eq!(
+        rejection.message,
+        "text has an unmatched '$' math delimiter"
     );
 }
 

@@ -20,12 +20,16 @@ use sha1::{Digest as _, Sha1};
 use sha2::Sha256;
 
 use crate::event::{EventError, KpProgress, Slug, Timestamp, TopicStatus};
+use crate::retention::state::RetentionState;
 
 /// The number of hex characters of the SHA-1 digest that [`problem_text_hash`] keeps.
 const PROBLEM_TEXT_HASH_LEN: usize = 12;
 
 /// The recent-problem window kept on each [`TopicState`] (`LAST_PROBLEMS_WINDOW`).
 pub const LAST_PROBLEMS_WINDOW: usize = 20;
+
+/// The count of ungraded attempts the recovery list keeps (D-F2).
+pub const UNGRADED_WINDOW: usize = 20;
 
 /// A stable, unsalted short digest of a problem text, for the dedup window (trap T17).
 ///
@@ -96,6 +100,17 @@ pub struct TopicState {
     /// The progress of each knowledge point of the topic.
     #[serde(default)]
     pub kp_progress: BTreeMap<String, KpProgress>,
+    /// The count of ungraded attempts on the topic (D-F2). NEW IN 2.0.
+    ///
+    /// An ungraded attempt moves no other field of this state. The writer skips a
+    /// zero count, so a model with no ungraded attempt keeps the 1.0 shape.
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub ungraded_attempts: u32,
+}
+
+/// Whether a count is zero. It keeps a zero count out of the wire shape.
+const fn is_zero(count: &u32) -> bool {
+    *count == 0
 }
 
 /// The initial `speed` of a topic state.
@@ -117,6 +132,7 @@ impl Default for TopicState {
             explicit_only: false,
             last_problems: Vec::new(),
             kp_progress: BTreeMap::new(),
+            ungraded_attempts: 0,
         }
     }
 }
@@ -210,10 +226,30 @@ pub struct PendingRemediation {
     pub targets: Vec<Slug>,
 }
 
+/// One ungraded attempt of the recovery path (D-F2). NEW IN 2.0.
+///
+/// The admin list reads it, and a `regraded` event closes it.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UngradedAttempt {
+    /// The `attempt_id` of the ungraded attempt.
+    pub attempt_id: String,
+    /// The topic the attempt practiced.
+    pub topic: String,
+    /// Why the attempt has no verdict.
+    pub reason: String,
+}
+
 /// The rebuildable derived state of one learner.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct LearnerModel {
+    /// Replayable whole-item application and delayed-assessment evidence.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::integrated::journey::JourneyState::is_empty"
+    )]
+    pub integrated_journey: crate::integrated::journey::JourneyState,
     /// The wall-clock `now` of the build. It is NOT a cursor, and it is excluded from
     /// every parity comparison (trap T10).
     #[serde(default)]
@@ -233,6 +269,19 @@ pub struct LearnerModel {
     /// The pending remediations, in trigger order.
     #[serde(default)]
     pub pending_remediation: Vec<PendingRemediation>,
+    /// The last [`UNGRADED_WINDOW`] ungraded attempts, oldest first (D-F2). NEW IN 2.0.
+    ///
+    /// The writer skips an empty list, so a model with no ungraded attempt keeps the
+    /// 1.0 shape.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub ungraded: Vec<UngradedAttempt>,
+    /// What the delayed retention probes answered (D-F11). NEW IN 2.0.
+    ///
+    /// The fold builds it from `retention_probe` events and from nothing else, and
+    /// the writer skips an empty state, so every model of a log without a probe
+    /// keeps its 1.0 shape and its parity bytes.
+    #[serde(default, skip_serializing_if = "RetentionState::is_empty")]
+    pub retention: RetentionState,
     /// The `config_hash` the model was built with. It detects config drift.
     #[serde(default)]
     pub config_hash: Option<String>,

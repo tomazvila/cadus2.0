@@ -33,12 +33,22 @@
 //! `404 not_found`, and an id that is not a UUID is still the handler's own
 //! answer.
 
+use axum::Json;
 use axum::extract::rejection::PathRejection;
-use axum::extract::{FromRequestParts, Path};
+use axum::extract::{FromRequestParts, Path, State};
 use axum::http::request::Parts;
 use serde::de::DeserializeOwned;
+use serde_json::Value;
 
+use crate::AppState;
 use crate::error::ApiError;
+use crate::state::Tenant;
+
+/// The state, tenant, and task id shared by every task-scoped handler.
+pub type TaskContext = (State<AppState>, Tenant, ApiPath<String>);
+
+/// A task context plus its optional JSON request body.
+pub type TaskWithBody = (TaskContext, Option<Json<Value>>);
 
 /// One path parameter, with the axum rejection mapped to the envelope.
 ///

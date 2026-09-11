@@ -65,6 +65,8 @@
 //! does not know, and a document that does not read, both give an error and never
 //! an unwrap.
 
+mod finite_insert;
+mod finite_set;
 mod pop;
 mod refill;
 
@@ -73,10 +75,15 @@ use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::{PgExecutor, PgPool};
 use uuid::Uuid;
 
-pub use pop::{pop_with_ring, pop_with_ring_tx, reclaim_exemplar_tx};
+pub use finite_insert::{NewFiniteInstance, insert_current_finite_tx, insert_finite_tx};
+pub use finite_set::{finite_approval_current_tx, finite_pool_complete_tx};
+pub use pop::{
+    FiniteDraw, FiniteEligibility, pop_finite_tx, pop_with_ring, pop_with_ring_current_tx,
+    pop_with_ring_tx, reclaim_exemplar_tx,
+};
 pub use refill::{
-    approved_template, operator_flags, operator_flags_with_exhausted, refill_targets,
-    refill_targets_skipping, retire_unapproved, unclaimed_depth,
+    approved_template, approved_template_current, operator_flags, operator_flags_with_exhausted,
+    refill_targets, refill_targets_skipping, retire_unapproved, unclaimed_depth,
 };
 
 use crate::{StoreError, begin_tenant};
@@ -87,6 +94,15 @@ use crate::{StoreError, begin_tenant};
 /// `i64`, because the `LIMIT` bind of the pop is an `i64`.
 pub const POP_LIMIT: i64 = cadus_core::pool::POP_CANDIDATES as i64;
 
+/// Trusted semantics used to render and check one template instance.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GenerationContext {
+    /// Effective curriculum fingerprint.
+    pub curriculum_digest: String,
+    /// Compiled review-engine fingerprint.
+    pub review_engine_digest: String,
+}
+
 /// One instance on its way into the pool.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NewInstance {
@@ -94,6 +110,8 @@ pub struct NewInstance {
     pub source: Source,
     /// The `content_store` digest, when the source names one.
     pub content_digest: Option<String>,
+    /// Context that produced this template row; exemplars carry none.
+    pub generation_context: Option<GenerationContext>,
     /// The `problem` document.
     pub problem: PoolProblem,
     /// The `expected_answer` document.
@@ -114,10 +132,18 @@ impl NewInstance {
         Self {
             source,
             content_digest,
+            generation_context: None,
             problem: PoolProblem::from_instance(instance, seed),
             expected_answer: PoolAnswer::from_instance(instance),
             instance_hash: instance.instance_hash.clone(),
         }
+    }
+
+    /// Stamp the trusted renderer context on a template-produced row.
+    #[must_use]
+    pub fn with_generation_context(mut self, context: &GenerationContext) -> Self {
+        self.generation_context = Some(context.clone());
+        self
     }
 }
 
@@ -130,6 +156,8 @@ pub struct PoolRow {
     pub source: Source,
     /// The `content_store` digest, when the row has one.
     pub content_digest: Option<String>,
+    /// Context that produced this persisted template row.
+    pub generation_context: Option<GenerationContext>,
     /// The `problem` document.
     pub problem: PoolProblem,
     /// The `expected_answer` document.
@@ -186,6 +214,8 @@ pub struct ApprovedTemplate {
     pub digest: String,
     /// The document text, as `content_store.body` holds it.
     pub body: String,
+    /// Context under which this source is approved and may generate rows.
+    pub generation_context: GenerationContext,
 }
 
 /// The A6 operator row of one knowledge point.
@@ -298,12 +328,24 @@ where
 
     let mut sources: Vec<String> = Vec::with_capacity(rows.len());
     let mut digests: Vec<Option<String>> = Vec::with_capacity(rows.len());
+    let mut curriculum_digests: Vec<Option<String>> = Vec::with_capacity(rows.len());
+    let mut engine_digests: Vec<Option<String>> = Vec::with_capacity(rows.len());
     let mut problems: Vec<String> = Vec::with_capacity(rows.len());
     let mut answers: Vec<String> = Vec::with_capacity(rows.len());
     let mut hashes: Vec<String> = Vec::with_capacity(rows.len());
     for row in rows {
         sources.push(row.source.as_str().to_string());
         digests.push(row.content_digest.clone());
+        curriculum_digests.push(
+            row.generation_context
+                .as_ref()
+                .map(|context| context.curriculum_digest.clone()),
+        );
+        engine_digests.push(
+            row.generation_context
+                .as_ref()
+                .map(|context| context.review_engine_digest.clone()),
+        );
         problems.push(row.problem.to_body().unwrap_or_default());
         answers.push(row.expected_answer.to_body().unwrap_or_default());
         hashes.push(row.instance_hash.clone());
@@ -312,18 +354,33 @@ where
     let inserted = sqlx::query_scalar!(
         r#"
         INSERT INTO serving_pool
-            (user_id, kp_id, source, content_digest, problem, expected_answer, instance_hash)
-        SELECT $1, $2, batch.source, batch.digest, batch.problem::jsonb,
-               batch.expected::jsonb, batch.instance_hash
-        FROM unnest($3::text[], $4::text[], $5::text[], $6::text[], $7::text[])
-             AS batch(source, digest, problem, expected, instance_hash)
-        ON CONFLICT (user_id, kp_id, instance_hash) DO NOTHING
+            (user_id, kp_id, source, content_digest, source_curriculum_digest,
+             source_review_engine_digest, problem, expected_answer, instance_hash)
+        SELECT $1, $2, batch.source, batch.digest, batch.curriculum_digest,
+               batch.engine_digest, batch.problem::jsonb, batch.expected::jsonb,
+               batch.instance_hash
+        FROM unnest($3::text[], $4::text[], $5::text[], $6::text[], $7::text[],
+                    $8::text[], $9::text[])
+             AS batch(source, digest, curriculum_digest, engine_digest, problem,
+                      expected, instance_hash)
+        ON CONFLICT (user_id, kp_id, instance_hash) DO UPDATE
+        SET source = EXCLUDED.source,
+            content_digest = EXCLUDED.content_digest,
+            source_curriculum_digest = EXCLUDED.source_curriculum_digest,
+            source_review_engine_digest = EXCLUDED.source_review_engine_digest,
+            problem = EXCLUDED.problem,
+            expected_answer = EXCLUDED.expected_answer
+        WHERE serving_pool.claimed_at IS NULL
+          AND serving_pool.problem = EXCLUDED.problem
+          AND serving_pool.expected_answer = EXCLUDED.expected_answer
         RETURNING id AS "id!"
         "#,
         user_id,
         kp_id,
         &sources,
         digests.as_slice() as &[Option<String>],
+        curriculum_digests.as_slice() as &[Option<String>],
+        engine_digests.as_slice() as &[Option<String>],
         &problems,
         &answers,
         &hashes,

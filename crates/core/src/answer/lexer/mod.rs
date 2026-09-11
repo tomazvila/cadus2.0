@@ -22,8 +22,9 @@
 //!   in front of it and to nothing else.
 //! - `^{n}` becomes `Pow LParen … RParen`, so the exponent keeps its brackets.
 //! - `\cdot` and `\times` are [`Tok::Star`]; `\left` and `\right` are dropped;
-//!   `°` is dropped; a vulgar glyph is a [`Tok::Frac`] of two digit runs; a run
-//!   of superscript digits is `Pow` and a number.
+//!   `°`, `€`, and `$` are [`Tok::Unit`] (D-F3); a vulgar glyph is a
+//!   [`Tok::Frac`] of two digit runs; a run of superscript digits is `Pow` and
+//!   a number.
 //!
 //! A character the grammar does not know ends the read with [`Undecidable`].
 
@@ -83,6 +84,8 @@ pub enum Tok {
     Root,
     /// The postfix percent sign. It divides the primary in front of it by 100.
     Percent,
+    /// A unit glyph: `°`, `€`, or `$` (D-F3).
+    Unit(String),
     /// A run of ASCII letters.
     Ident(String),
     /// `+`
@@ -197,9 +200,10 @@ impl Lexer<'_> {
                 self.at += 1;
                 Ok(())
             }
-            // The degree sign carries no value: 1.0 deletes it (`_UNICODE_SIMPLE`).
-            '°' => {
-                self.at += 1;
+            // A degree sign, a euro sign, and a dollar sign are unit tokens of
+            // the value-with-unit production (D-F3). 1.0 deleted the degree sign.
+            '°' | '€' | '$' => {
+                self.push(Tok::Unit(c.to_string()), 1);
                 Ok(())
             }
             '\\' => self.backslash_word(),

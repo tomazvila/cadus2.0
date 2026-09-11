@@ -33,7 +33,20 @@
 //! a panic.
 
 mod builtin;
+mod compounding;
+mod equation;
 mod exact;
+mod finite_graph;
+mod functions;
+mod inequalities;
+mod inverse;
+mod notation;
+mod numeric_form;
+mod quarter_value;
+mod scientific;
+mod structured;
+mod symbol;
+mod triangle_law;
 mod write;
 
 use builtin::call;
@@ -44,41 +57,15 @@ use exact::{
 use num_rational::BigRational;
 
 use crate::answer::ast::Ast;
-use crate::answer::{Canon, Undecidable, canonical_form, parse_with_functions};
+use crate::answer::{
+    AnswerContract, AnswerPart, Canon, Undecidable, canonical_form, parse_with_functions,
+};
 
 use super::domain::Bindings;
+use structured::{label_answer, list_answer};
 
+pub use functions::{EVAL_FUNCTIONS, EXTRA_FUNCTIONS};
 pub use write::write;
-
-/// The evaluation-only functions and the argument count each one takes.
-///
-/// `abs` and `sqrt` are in the M2 grammar already. The other eight are not, and
-/// [`parse_with_functions`] admits them for this one purpose. Every one of them
-/// is erased before the answer string exists.
-pub const EVAL_FUNCTIONS: [(&str, usize); 10] = [
-    ("abs", 1),
-    ("sqrt", 1),
-    ("gcd", 2),
-    ("lcm", 2),
-    ("floor", 1),
-    ("ceiling", 1),
-    ("min", 2),
-    ("max", 2),
-    ("factorial", 1),
-    ("binomial", 2),
-];
-
-/// The function names [`parse_with_functions`] admits beyond the M2 grammar.
-pub const EXTRA_FUNCTIONS: [&str; 8] = [
-    "gcd",
-    "lcm",
-    "floor",
-    "ceiling",
-    "min",
-    "max",
-    "factorial",
-    "binomial",
-];
 
 /// The largest bit width of a numerator or a denominator of an intermediate.
 ///
@@ -144,6 +131,9 @@ pub enum EvalError {
         /// The count the call writes.
         given: usize,
     },
+    /// `signcase` did not receive its bounded three-branch representation.
+    #[error("signcase needs [negative, zero, positive] as its second argument")]
+    SignCaseShape,
     /// A division by zero.
     #[error("answer_expr divides by zero")]
     DivideByZero,
@@ -226,16 +216,16 @@ pub fn evaluate(ast: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
         } => mixed_literal(whole, numerator, denominator),
         Ast::Var(name) => bound_value(name, bindings),
         Ast::Const(constant) => Ok(Ast::Const(*constant)),
-        Ast::Neg(inner) => negate(inner, bindings),
+        Ast::Neg(inner) | Ast::Sqrt(inner) => unary(ast, inner, bindings),
         Ast::Add(items) => fold(items, bindings, Fold::Add),
         Ast::Mul(items) => fold(items, bindings, Fold::Mul),
         Ast::Div(left, right) => divide(left, right, bindings),
         Ast::Pow(base, exponent) => raise(base, *exponent, bindings),
-        Ast::Sqrt(inner) => root(inner, bindings),
+        Ast::RationalPow { base: inner, .. } | Ast::Quantity { value: inner, .. } => {
+            Ok(rebuilt(ast, evaluate(inner, bindings)?))
+        }
         Ast::Func(name, args) => call(name, args, bindings),
-        Ast::Tuple(items) => evaluate_all(items, bindings).map(Ast::Tuple),
-        Ast::Set(items) => evaluate_all(items, bindings).map(Ast::Set),
-        Ast::List(items) => evaluate_all(items, bindings).map(Ast::List),
+        Ast::Tuple(items) | Ast::Set(items) | Ast::List(items) => collection(ast, items, bindings),
         Ast::Interval {
             lo,
             hi,
@@ -254,6 +244,47 @@ pub fn evaluate(ast: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
     }
 }
 
+/// Rebuild a rational power or a quantity around its evaluated child.
+fn rebuilt(ast: &Ast, child: Ast) -> Ast {
+    match ast {
+        Ast::RationalPow {
+            numerator,
+            denominator,
+            ..
+        } => Ast::RationalPow {
+            base: Box::new(child),
+            numerator: *numerator,
+            denominator: *denominator,
+        },
+        Ast::Quantity { unit, .. } => Ast::Quantity {
+            value: Box::new(child),
+            unit,
+        },
+        // The caller passes one of the two nodes above; every other node keeps
+        // its evaluated child as the value.
+        _ => child,
+    }
+}
+
+/// Evaluate a negation or a root, by the kind of the node.
+fn unary(ast: &Ast, inner: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
+    if matches!(ast, Ast::Neg(_)) {
+        negate(inner, bindings)
+    } else {
+        root(inner, bindings)
+    }
+}
+
+/// Evaluate the items of a tuple, a set, or a list, and rebuild the node.
+fn collection(ast: &Ast, items: &[Ast], bindings: &Bindings) -> Result<Ast, EvalError> {
+    let values = evaluate_all(items, bindings)?;
+    Ok(match ast {
+        Ast::Tuple(_) => Ast::Tuple(values),
+        Ast::Set(_) => Ast::Set(values),
+        _ => Ast::List(values),
+    })
+}
+
 /// Compute the answer of one bound tuple, as a string and as a canonical form.
 ///
 /// The string is the expected answer a pool row carries, and the canonical form
@@ -270,4 +301,155 @@ pub fn answer(ast: &Ast, bindings: &Bindings) -> Result<Answer, EvalError> {
         Ok(canon) => Ok(Answer { text, canon }),
         Err(reason) => Err(EvalError::NotCanonical { text, reason }),
     }
+}
+
+/// Compute an answer under a reviewed structured policy.
+///
+/// Ordinary policies keep the mathematical evaluator. A label may select one
+/// text-valued parameter directly. A flat multipart policy uses
+/// `multipart(part_1, part_2)`, with arguments in the policy's part order; a
+/// label part may likewise be a text-valued parameter. The contract validates
+/// the final text and supplies its canonical form before anything can be stored.
+pub fn answer_for_contract(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: Option<&AnswerContract>,
+) -> Result<Answer, EvalError> {
+    if let Ast::Func(name, args) = ast {
+        match name.as_str() {
+            "powerform" => return structured::power_form(ast, bindings, contract),
+            "logequation" | "expequation" | "relationform" => {
+                return equation::write(name, args, bindings, contract);
+            }
+            "atandeg" => return inverse::degrees(args, bindings, contract),
+            "ascendingchain" => return notation::ascending_chain(args, bindings, contract),
+            _ => {}
+        }
+    }
+    match contract {
+        Some(
+            contract @ AnswerContract::RequiredForm {
+                form: crate::answer::NumericForm::Decimal,
+            },
+        ) => numeric_form::decimal_answer(ast, bindings, contract),
+        Some(contract @ AnswerContract::Label { .. }) => label_answer(ast, bindings, contract),
+        Some(contract @ AnswerContract::Unit { unit, .. }) => {
+            unit_answer(ast, bindings, contract, unit)
+        }
+        Some(contract @ AnswerContract::PolynomialRelation) => {
+            let value = answer(ast, bindings)?;
+            contracted(value.text, contract)
+        }
+        Some(AnswerContract::Multipart { parts }) => multipart_answer(ast, bindings, parts),
+        Some(contract @ AnswerContract::List { .. }) => list_answer(ast, bindings, contract),
+        Some(contract @ AnswerContract::ReducedRatio) => {
+            reduced_ratio_answer(ast, bindings, contract)
+        }
+        Some(contract @ AnswerContract::RequiredNormalizedScientificNotation) => {
+            scientific::answer(ast, bindings, contract)
+        }
+        Some(
+            contract @ (AnswerContract::InequalityUnion
+            | AnswerContract::RequiredInequalityNotation),
+        ) => inequalities::union_answer(ast, bindings, contract),
+        Some(contract @ AnswerContract::QuotientRemainder { .. }) => {
+            quotient_remainder_answer(ast, bindings, contract)
+        }
+        _ => answer(ast, bindings),
+    }
+}
+
+fn quotient_remainder_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: &AnswerContract,
+) -> Result<Answer, EvalError> {
+    debug_assert!(matches!(contract, AnswerContract::QuotientRemainder { .. }));
+    let Ast::Func(name, args) = ast else {
+        return answer(ast, bindings);
+    };
+    if name != "quotientremainder" || args.len() != 2 {
+        return answer(ast, bindings);
+    }
+    let quotient = answer(&args[0], bindings)?.text;
+    let remainder = answer(&args[1], bindings)?.text;
+    contracted(format!("{quotient} R{remainder}"), contract)
+}
+
+fn reduced_ratio_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: &AnswerContract,
+) -> Result<Answer, EvalError> {
+    let value = answer(ast, bindings)?;
+    let Canon::Rational(ratio) = &value.canon else {
+        return contracted(value.text, contract);
+    };
+    contracted(format!("{}:{}", ratio.numer(), ratio.denom()), contract)
+}
+
+fn unit_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: &AnswerContract,
+    unit: &str,
+) -> Result<Answer, EvalError> {
+    let value = answer(ast, bindings)?;
+    if matches!(value.canon, Canon::Quantity { .. }) {
+        return contracted(value.text, contract);
+    }
+    contracted(format!("{} {unit}", value.text), contract)
+}
+
+fn multipart_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    parts: &[AnswerPart],
+) -> Result<Answer, EvalError> {
+    let Ast::Func(name, args) = ast else {
+        return answer(ast, bindings);
+    };
+    let args = match args.as_slice() {
+        [Ast::Tuple(items)] if parts.len() != 1 => items.as_slice(),
+        items => items,
+    };
+    if name != "multipart" || args.len() != parts.len() {
+        return answer(ast, bindings);
+    }
+    let fields = parts
+        .iter()
+        .zip(args)
+        .map(|(part, arg)| part_text(part, arg, bindings))
+        .collect::<Result<Vec<_>, _>>()?;
+    contracted(
+        fields.join("; "),
+        &AnswerContract::Multipart {
+            parts: parts.to_vec(),
+        },
+    )
+}
+
+fn part_text(part: &AnswerPart, ast: &Ast, bindings: &Bindings) -> Result<String, EvalError> {
+    let value = answer_for_contract(ast, bindings, Some(&part.contract))?.text;
+    Ok(format!("{} = {value}", part.name))
+}
+
+fn text_binding(ast: &Ast, bindings: &Bindings) -> Option<String> {
+    let Ast::Var(name) = ast else {
+        return None;
+    };
+    bindings
+        .get(name)
+        .filter(|value| value.as_rational().is_none())
+        .map(|value| value.canonical_string())
+}
+
+fn contracted(text: String, contract: &AnswerContract) -> Result<Answer, EvalError> {
+    contract
+        .validate_expected(&text)
+        .map(|canon| Answer {
+            text: text.clone(),
+            canon,
+        })
+        .map_err(|reason| EvalError::NotCanonical { text, reason })
 }

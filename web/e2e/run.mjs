@@ -3,6 +3,7 @@
  * The click-through driver.
  *
  *   node e2e/run.mjs demo                     one walk against a clean build
+ *   node e2e/run.mjs journey                  the complete 2.0 learning journey
  *   node e2e/run.mjs authed --api=URL         one walk against the M5 service
  *   node e2e/run.mjs acceptance               the S13 acceptance check
  *
@@ -195,8 +196,17 @@ async function acceptance() {
   }
 
   console.log('\n### CLEAN BUILD — every flow must pass');
-  const { code } = await against(buildClean(), 'demo.mjs');
+  const clean = buildClean();
+  const { code } = await against(clean, 'demo.mjs');
   results.push({ id: 'clean', pass: code === 0, detail: `exit=${String(code)}` });
+
+  console.log('\n### 2.0 JOURNEY — instruction through delayed retention');
+  const journey = await against(clean, 'journey.mjs');
+  results.push({
+    id: 'journey',
+    pass: journey.code === 0,
+    detail: `exit=${String(journey.code)}`,
+  });
 
   console.log('\n================ S13 ACCEPTANCE ================');
   for (const r of results) {
@@ -216,6 +226,9 @@ if (command === 'acceptance') {
 } else if (command === 'demo') {
   const dist = process.argv.includes('--no-build') ? join(web, 'dist') : buildClean();
   exit = (await against(dist, 'demo.mjs')).code;
+} else if (command === 'journey') {
+  const dist = process.argv.includes('--no-build') ? join(web, 'dist') : buildClean();
+  exit = (await against(dist, 'journey.mjs')).code;
 } else if (command === 'authed') {
   if (!api) throw new Error('authed needs --api=http://127.0.0.1:8080');
   const dist = process.argv.includes('--no-build') ? join(web, 'dist') : buildClean();

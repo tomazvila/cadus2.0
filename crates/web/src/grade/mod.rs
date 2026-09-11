@@ -12,6 +12,16 @@
 //! row U8 of section 11. Rulings D-M5-2, D-M5-3, D-M5-4 and D-M5-7 of
 //! `docs/plans/M5.md` are binding.
 //!
+//! # The three outcomes (D-F2)
+//!
+//! [`deterministic_grade`] gives one of three outcomes. `correct` and `incorrect`
+//! are the two decided ones, and `correct: bool` still spells them. The third is
+//! UNGRADED: the checker had no verdict, so the reply names the reason, claims no
+//! correctness, reveals no solution, and hands back the NEXT task. The fold
+//! ignores an ungraded attempt, the lesson does not advance on one, and the A4
+//! diagnosis never fires for one (D-F4). EVERY answer kind reaches this path; a
+//! `proof` takes [`PROOF_UNGRADED`] with no checker call.
+//!
 //! # The steps, in one transaction
 //!
 //! The advisory lock, the state read, the validate, the timing, the check, the
@@ -41,7 +51,7 @@
 //! count and passed the 150 ms Postgres segment of L2 on its own.
 //! `crates/store/tests/bench_long_log.rs` is the gate.
 //!
-//! The H3 unaided re-solve takes the same id with `-rework` after it.
+//! D-F8 records the helped attempt, then serves a fresh same-skill problem.
 //!
 //! # The history read (M5 review 2, finding V2)
 //!
@@ -63,13 +73,10 @@
 //! STORED verdict and nothing appended (spec section 4.3 step 6: "reply with the
 //! state read").
 //!
-//! # What this unit does NOT do
+//! # Task close
 //!
-//! The explicit task close of 1.0 (`service.complete_task`: the `review_result`,
-//! the `quiz_result` and the multi-step closes, their weighted scores, and their
-//! XP) is not ported yet, and neither is `POST /api/task/{id}/abort`. A
-//! non-lesson task therefore reaches `done` by count parity, exactly as
-//! `api.py:1610-1614` does, but no close event stands behind it.
+//! A final review answer appends its evidence-aware review result (D-F7).
+//! Quiz and multi-step result handlers remain separate work.
 //!
 //! # The `diagnosis` field (unit U9)
 //!
@@ -81,15 +88,15 @@
 //! reveal (trap W7), and the reveal unit is the one that hands the prose out.
 
 use axum::Json;
-use axum::extract::State;
 use axum::http::StatusCode;
 use cadus_core::answer::check::{Outcome, check};
 use cadus_core::config::Config;
 use cadus_core::curriculum::{AnswerKind, Curriculum};
 use cadus_core::event::{
-    Attempt, AttemptProblem, Event, LessonResult, RemediationTriggered, SchemaVersion, Secs, Slug,
-    TaskType, Timestamp, WorkQuality,
+    Attempt, AttemptOutcome, AttemptProblem, Event, LessonResult, RemediationTriggered,
+    SchemaVersion, Secs, Slug, TaskType, Timestamp, WorkQuality,
 };
+use cadus_core::learner::problem_text_hash;
 use cadus_core::projector::{kp_failed, kp_passed};
 use cadus_core::selector::{
     REMEDIATION_LESSON_FAIL, REMEDIATION_REPEAT_FAIL, Task, remediation_for_repeat_fail,
@@ -106,18 +113,25 @@ use crate::AppState;
 use crate::diagnosis::{self, Miss, Pending};
 use crate::error::ApiError;
 use crate::metrics;
-use crate::path::ApiPath;
+use crate::path::TaskWithBody;
+use crate::route_prelude::task_request;
 use crate::serve::{Open, find, install_next, open, progress_for, unix_seconds};
-use crate::session::{content, now_pair, projection_input, write_state};
+use crate::session::{content, projection_input, write_state};
 pub(crate) use crate::session::{db_failed, store};
 use crate::state::{
-    Content, INVALID_REQUEST, STATE_UNAVAILABLE, ServedProblem, TaskProgress, Tenant, WebState,
+    Content, INVALID_REQUEST, STATE_UNAVAILABLE, ServedProblem, TaskProgress, WebState,
 };
 
 mod advance;
+mod drill;
+mod feedback;
+mod quiz;
 mod reply;
+mod review;
+pub use quiz::result as quiz_result;
 mod route;
 mod submission;
+mod timing;
 mod verdict;
 
 use advance::*;
@@ -125,18 +139,20 @@ use reply::*;
 pub use route::answer;
 use submission::*;
 use verdict::round2;
-pub use verdict::{deterministic_grade, measure_secs, reference_assisted};
+pub use verdict::{
+    deterministic_grade, grade_item, measure_secs, reference_assisted, ungraded_grade,
+};
 
 /// The code of an answer or a work field over its cap (`api.py:1292-1293`).
 pub const ANSWER_TOO_LARGE: &str = "answer_too_large";
 
-/// The code of an answer whose kind the checker never decides.
+/// The reason a `proof` answer carries no deterministic verdict (V2, D-F1).
 ///
-/// Spec section 5.1: a `multi-step` or a `proof` answer gets NO synchronous
-/// verdict. V2 keeps both kinds out of the serving pool, so this refusal guards
-/// a state the M5 routes cannot reach. It exists so that no path can fabricate a
-/// `correct` the checker did not decide (C4), and it enqueues nothing.
-pub const UNDECIDABLE_KIND: &str = "undecidable_kind";
+/// No checker decides a proof, so the grade path spends no work on one: it names
+/// this reason and records the UNGRADED outcome. The route no longer refuses the
+/// kind with a `409`, because a refusal left the learner with no outcome at all
+/// (audit 3a).
+pub const PROOF_UNGRADED: &str = "no deterministic verdict for a proof";
 
 /// The task is open and the learner owes it more problems.
 pub const STATUS_CONTINUE: &str = "continue";
@@ -185,9 +201,7 @@ pub const TAG_BLANK_ANSWER: &str = "blank-answer";
 /// The verdict now ships before any prose exists, so the instruction is a
 /// constant and not model output. It is served on every miss and on every
 /// assisted-correct `rework_required` reply (L2, L3).
-pub const RE_SOLVE: &str = "Study the worked solution above until you can see why each step \
-                            follows. Then close it and solve the original problem again \
-                            yourself, from memory and unaided. Do that before you move on.";
+pub const RE_SOLVE: &str = "Study the worked solution. Select Done studying to hide it, then solve a fresh problem without help.";
 
 /// The loaded content and the JSON body of a task route that reads one.
 ///
@@ -205,7 +219,12 @@ pub(crate) fn route_input<'a>(
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Grade {
     /// Whether the answer is the authored answer (C4).
+    ///
+    /// It equals `outcome == AttemptOutcome::Correct`.
     pub correct: bool,
+    /// The graded outcome (D-F2). An answer with no deterministic verdict is
+    /// `Ungraded`, and an ungraded attempt is NOT a miss.
+    pub outcome: AttemptOutcome,
     /// The work-quality tier (D-M5-2).
     pub work_quality: WorkQuality,
     /// The error tags the SERVER observed (D-M5-4). The diagnosis of unit U9

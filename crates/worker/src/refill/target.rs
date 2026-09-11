@@ -2,14 +2,17 @@
 
 use cadus_core::curriculum::{Exemplar, KnowledgePoint};
 use cadus_core::pool::{
-    Batch, ExemplarSource, PoolAnswer, PoolProblem, ProblemSource, REFUSAL_FLAG_PERCENT, Source,
-    TemplateSource,
+    Batch, ExemplarSource, ProblemSource, REFUSAL_FLAG_PERCENT, Source, TemplateSource,
 };
 use cadus_core::template::{GateSpec, TemplateDoc, from_body, gate};
 use cadus_store::Db;
-use cadus_store::pool::{NewInstance, PoolTarget};
+use cadus_store::content::CurrentContext;
+use cadus_store::pool::{GenerationContext, NewInstance, PoolTarget};
 
-use super::{AnswerKindOf, RefillJob, RefillState, batch_seed};
+use super::{
+    AnswerKindOf, RefillJob, RefillState, batch_seed,
+    finite::{fill_finite, new_instance},
+};
 use crate::WorkerError;
 
 /// What one target gave.
@@ -22,6 +25,8 @@ pub(super) enum Filled {
         refused: u64,
         flagged: bool,
     },
+    /// The finite case set already exists and rotates after first exposure.
+    RotationalComplete,
     /// The pair has no approved template and no exemplar.
     NoSource,
 }
@@ -46,10 +51,35 @@ pub(super) async fn refill_target(
     let seed = batch_seed(job.cfg.base_seed, target.user_id, &target.kp_id, nonce);
     let known = job.knowledge_point(&target.kp_id);
 
-    // Step 1: an approved template (A1). C6 binds the approval to the digest, so
-    // `approved_template` never returns a pending body.
-    if let Some(approved) = cadus_store::pool::approved_template(db.pool(), &target.kp_id).await? {
+    let finite = known.and_then(|(kp, _)| kp.finite_objective_domain.as_ref());
+    let policy_digest = finite
+        .map(|policy| policy.fingerprint(&target.kp_id))
+        .transpose()
+        .map_err(refill_error)?;
+    let generation_context = GenerationContext {
+        curriculum_digest: cadus_core::curriculum::review_context_digest(job.curriculum)
+            .map_err(refill_error)?,
+        review_engine_digest: cadus_core::review_engine::DIGEST.to_owned(),
+    };
+
+    // Step 1: only the newest approval bound to the current trusted policy.
+    if let Some(approved) = cadus_store::pool::approved_template_current(
+        db.pool(),
+        &target.kp_id,
+        CurrentContext {
+            policy_digest: policy_digest.as_deref(),
+            curriculum_digest: &generation_context.curriculum_digest,
+            review_engine_digest: &generation_context.review_engine_digest,
+        },
+    )
+    .await?
+    {
+        let cache_key = policy_digest.as_ref().map_or_else(
+            || approved.digest.clone(),
+            |policy| format!("{}:{policy}", approved.digest),
+        );
         match template_instances(
+            &cache_key,
             &approved.digest,
             &approved.body,
             state,
@@ -57,13 +87,27 @@ pub(super) async fn refill_target(
             known,
         ) {
             Ok(Some(doc)) => {
-                return fill_from_template(db, target, &approved.digest, &doc, known, need, seed)
-                    .await;
+                return fill_from_template(
+                    db,
+                    target,
+                    &approved.digest,
+                    &doc,
+                    known,
+                    need,
+                    seed,
+                    &approved.generation_context,
+                )
+                .await;
             }
-            // The gate refused the approved document, or the body did not read.
-            // The knowledge point falls back to its exemplars (A6) instead of
-            // going off the air.
             Ok(None) => {}
+            Err(reason) if finite.is_some() => {
+                tracing::warn!(
+                    kp_id = %target.kp_id,
+                    digest = %approved.digest,
+                    reason = %reason,
+                    "refill: the current-policy finite template is not servable"
+                );
+            }
             Err(reason) => {
                 tracing::warn!(
                     kp_id = %target.kp_id,
@@ -73,6 +117,12 @@ pub(super) async fn refill_target(
                 );
             }
         }
+    }
+
+    // A finite objective never falls back to a partial exemplar subset. Its
+    // reviewed current-policy template is the only complete practice source.
+    if finite.is_some() {
+        return Ok(Filled::NoSource);
     }
 
     // Step 2: the A6 exemplar fallback. No model call, no synchronous
@@ -96,16 +146,29 @@ async fn fill_from_template(
     known: Option<(&KnowledgePoint, AnswerKindOf)>,
     need: usize,
     seed: u64,
+    generation_context: &GenerationContext,
 ) -> Result<Filled, WorkerError> {
     let exemplars: &[Exemplar] = known.map_or(&[], |(kp, _)| kp.exemplars.as_slice());
     let source = TemplateSource::new(target.kp_id.clone(), doc)
         .map_err(refill_error)?
         .with_digest(digest)
         .with_exemplars(exemplars);
+    if let Some(policy) = known.and_then(|(kp, _)| kp.finite_objective_domain.as_ref()) {
+        return fill_finite(db, target, digest, source, policy, seed, generation_context).await;
+    }
     let batch = source
         .fill(&target.kp_id, need, seed)
         .map_err(refill_error)?;
-    write_batch(db, target, &batch, Source::Template, Some(digest), seed).await
+    write_batch(
+        db,
+        target,
+        &batch,
+        Source::Template,
+        Some(digest),
+        seed,
+        Some(generation_context),
+    )
+    .await
 }
 
 /// Draw one batch from the authored exemplars and write it (A6).
@@ -131,7 +194,7 @@ async fn fill_from_exemplars(
     let Ok(batch) = source.fill(&target.kp_id, need, seed) else {
         return Ok(Filled::NoSource);
     };
-    write_batch(db, target, &batch, Source::Exemplar, None, seed).await
+    write_batch(db, target, &batch, Source::Exemplar, None, seed, None).await
 }
 
 /// Log the refusals of one batch, write the rest, and count both.
@@ -142,10 +205,20 @@ async fn write_batch(
     source: Source,
     digest: Option<&str>,
     seed: u64,
+    generation_context: Option<&GenerationContext>,
 ) -> Result<Filled, WorkerError> {
     let flagged = report_refusals(&target.kp_id, digest, batch);
     let refused = u64::try_from(batch.refusals().len()).unwrap_or(u64::MAX);
-    let inserted = insert(db, target, batch.instances(), source, digest, seed).await?;
+    let inserted = insert(
+        db,
+        target,
+        batch.instances(),
+        source,
+        digest,
+        seed,
+        generation_context,
+    )
+    .await?;
     Ok(Filled::Rows {
         source,
         inserted,
@@ -159,7 +232,7 @@ async fn write_batch(
 /// A refusal means the gate accepted a document one of whose instances breaks a
 /// per-instance rule. That is a content defect, so every one of them reaches the
 /// log with the rule that refused it.
-fn report_refusals(kp_id: &str, digest: Option<&str>, batch: &Batch) -> bool {
+pub(super) fn report_refusals(kp_id: &str, digest: Option<&str>, batch: &Batch) -> bool {
     let digest = digest.unwrap_or("");
     for refused in batch.refusals() {
         tracing::warn!(
@@ -193,13 +266,14 @@ fn report_refusals(kp_id: &str, digest: Option<&str>, batch: &Batch) -> bool {
 /// `Ok(Some(doc))` means the document is servable. `Ok(None)` means a cached
 /// refusal. `Err(reason)` means this call read the refusal.
 fn template_instances(
+    cache_key: &str,
     digest: &str,
     body: &str,
     state: &mut RefillState,
     kp_key: &str,
     known: Option<(&KnowledgePoint, AnswerKindOf)>,
 ) -> Result<Option<TemplateDoc>, String> {
-    if state.is_refused(digest) {
+    if state.is_refused(cache_key) {
         return Ok(None);
     }
 
@@ -207,12 +281,12 @@ fn template_instances(
         Ok(doc) => doc,
         Err(err) => {
             let reason = format!("the body did not read: {err}");
-            state.refuse(digest, &reason);
+            state.refuse(cache_key, &reason);
             return Err(reason);
         }
     };
 
-    if state.is_accepted(digest) {
+    if state.is_accepted(cache_key) {
         return Ok(Some(doc));
     }
 
@@ -225,22 +299,23 @@ fn template_instances(
             digest = %digest,
             "refill: the curriculum does not name this knowledge point; the gate did not run again"
         );
-        state.accept(digest);
+        state.accept(cache_key);
         return Ok(Some(doc));
     };
 
-    let spec = GateSpec {
-        answer_kind: answer_kind.0,
-        exemplars: &kp.exemplars,
+    let base = GateSpec::new(answer_kind.0, &kp.exemplars);
+    let spec = match kp.finite_objective_domain.as_ref() {
+        Some(policy) => base.with_finite(kp_key, policy)?,
+        None => base,
     };
     match gate(&doc, &spec) {
         Ok(_) => {
-            state.accept(digest);
+            state.accept(cache_key);
             Ok(Some(doc))
         }
         Err(rejection) => {
             let reason = format!("[{}] {}", rejection.code, rejection.message);
-            state.refuse(digest, &reason);
+            state.refuse(cache_key, &reason);
             Err(reason)
         }
     }
@@ -254,18 +329,16 @@ async fn insert(
     source: Source,
     digest: Option<&str>,
     seed: u64,
+    generation_context: Option<&GenerationContext>,
 ) -> Result<u64, WorkerError> {
     if instances.is_empty() {
         return Ok(0);
     }
     let rows: Vec<NewInstance> = instances
         .iter()
-        .map(|instance| NewInstance {
-            source,
-            content_digest: digest.map(str::to_string),
-            problem: PoolProblem::from_instance(instance, seed),
-            expected_answer: PoolAnswer::from_instance(instance),
-            instance_hash: instance.instance_hash.clone(),
+        .map(|instance| {
+            let row = new_instance(instance, source, digest, seed);
+            generation_context.map_or(row.clone(), |context| row.with_generation_context(context))
         })
         .collect();
     let inserted =
@@ -300,6 +373,7 @@ mod tests {
     /// One batch of one exemplar instance.
     fn one_instance() -> cadus_core::pool::Batch {
         let exemplars = [Exemplar {
+            answer_contract: None,
             problem: "Compute $7^2$.".to_owned(),
             answer: "49".to_owned(),
             solution_sketch: None,
@@ -330,6 +404,7 @@ mod tests {
             Source::Exemplar,
             None,
             0,
+            None,
         )
         .await
         .expect("an empty batch is not an error");
@@ -348,6 +423,7 @@ mod tests {
             Source::Exemplar,
             None,
             0,
+            None,
         )
         .await
         .expect_err("a closed port answers no write");
@@ -366,6 +442,7 @@ mod tests {
                 Source::Exemplar,
                 None,
                 0,
+                None,
             )
             .await
             .expect("the batch writes");

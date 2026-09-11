@@ -6,8 +6,8 @@ use crate::answer::Canon;
 use crate::curriculum::model::Exemplar;
 use crate::template::gate::py_str;
 use crate::template::{
-    Bindings, Compiled, EXHAUSTIVE_SPACE_LIMIT, GateSpec, Instance, InstantiateError, TemplateDoc,
-    check_instance, rng_from_seed,
+    Bindings, Compiled, EXHAUSTIVE_SPACE_LIMIT, FiniteGateSpec, GateSpec, Instance,
+    InstantiateError, TemplateDoc, check_instance, rng_from_seed,
 };
 
 use super::super::Source;
@@ -33,6 +33,8 @@ pub struct TemplateSource<'doc> {
     /// curriculum does not name it; then there is no envelope to read and the
     /// envelope rule is silent, exactly as the gate is silent in that case.
     exemplars: &'doc [Exemplar],
+    /// Reviewed finite policy for exact per-instance role checks.
+    finite: Option<FiniteGateSpec<'doc>>,
 }
 
 impl<'doc> TemplateSource<'doc> {
@@ -48,6 +50,7 @@ impl<'doc> TemplateSource<'doc> {
             digest: None,
             compiled: Compiled::new(doc)?,
             exemplars: &[],
+            finite: None,
         })
     }
 
@@ -75,16 +78,27 @@ impl<'doc> TemplateSource<'doc> {
         self.exemplars
     }
 
+    /// Attach trusted finite policy from the source knowledge point.
+    pub fn with_finite_policy(
+        mut self,
+        kp_id: &str,
+        policy: &'doc crate::curriculum::FiniteObjectiveDomain,
+    ) -> Result<Self, String> {
+        self.finite = Some(FiniteGateSpec::new(kp_id, policy)?);
+        Ok(self)
+    }
+
     /// The [`GateSpec`] the per-instance re-check runs against.
     ///
     /// The answer kind is the document's own. The gate refuses a document whose
     /// `answer_kind` differs from the knowledge point's, so the two agree on
     /// every document that reached the pool.
     #[must_use]
-    pub const fn gate_spec(&self) -> GateSpec<'doc> {
+    pub fn gate_spec(&self) -> GateSpec<'doc> {
         GateSpec {
             answer_kind: self.compiled.doc().answer_kind,
             exemplars: self.exemplars,
+            finite: self.finite.clone(),
         }
     }
 

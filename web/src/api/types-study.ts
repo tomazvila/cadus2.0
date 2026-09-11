@@ -4,6 +4,7 @@
  * `types.ts` carries the conventions and the source-of-truth order. Every rule there holds
  * here.
  */
+import type { RenderedVisual } from '@/lib/visual';
 import type { Remediation, XpState } from './types';
 
 // ---------------------------------------------------------------------------
@@ -38,6 +39,8 @@ interface TopicRef {
 
 /** One planned task (`session.rs` `trim_task`). */
 export interface PlanTask {
+  integrated_instruction_required?: boolean;
+  integrated_assessment?: boolean;
   task_id: string;
   task_type: TaskType;
   /** Null for a quiz, which mixes several topics. */
@@ -55,6 +58,8 @@ export interface PlanTask {
    * prose, so the SPA renders it verbatim and never rewrites it.
    */
   why: string | null;
+  /** D-F6: the task confirms a topic the course inferred from a placement. */
+  confirm?: boolean;
   /**
    * Server-side completion. The session view filters the WHOLE task list on
    * `progress.done`: per-mount memory left a reload restarting at a closed task and
@@ -72,12 +77,31 @@ interface PlanConstraints {
 }
 
 /** `GET /api/session/plan`. */
+/**
+ * One planned task the readiness rule of D-F5 stopped.
+ *
+ * The service plans a lesson only where an approved teach page, three practice
+ * items and one held-out item exist. A task it stops is NOT hidden: it stands
+ * here with the conditions the content does not meet, so the learner reads why
+ * the topic is absent instead of finding a silent gap.
+ */
+export interface BlockedTask {
+  task_type: TaskType;
+  topic: string;
+  /** The knowledge point of a blocked lesson, or null. */
+  kp: string | null;
+  /** `teachable`, `practicable`, `assessable`, and the rest of the seven. */
+  blockers: string[];
+}
+
 export interface SessionPlanResponse {
   session: string;
   tasks: PlanTask[];
   quiz_due: boolean;
   constraints: PlanConstraints;
   course_complete: boolean;
+  /** The planned tasks the readiness rule stopped. */
+  blocked: BlockedTask[];
   /** RFC 3339, or null when nothing blocks the frontier. */
   frontier_blocked_until: string | null;
 }
@@ -94,6 +118,8 @@ export interface SessionPlanResponse {
  * wrong problem (trap T13, SERVE-idem).
  */
 export interface ServedProblem {
+  /** A fresh practice item outside the original assessment count. */
+  feedback_practice?: boolean;
   problem_id: string;
   /** 1-based. */
   index: number;
@@ -114,6 +140,15 @@ export interface ServedProblem {
    * quiz stamped by no serve yet.
    */
   quiz_elapsed_secs?: number;
+  /**
+   * The drawn figures of this knowledge point (unit f9).
+   *
+   * The server renders the SVG and the text equivalent together
+   * (`cadus_core::visual::render_all`), so the browser repeats no geometry. The key is
+   * ABSENT when the knowledge point authors no figure, and a figure the check refuses
+   * never reaches this list.
+   */
+  visuals?: RenderedVisual[];
 }
 
 /** `POST /api/task/{task_id}/teach` — the authored teach page (L4). */
@@ -132,6 +167,14 @@ export interface HintResponse {
   reference_lesson?: { topic: string; name: string };
 }
 
+/**
+ * The three outcomes of one attempt (D-F2).
+ *
+ * `ungraded` is the third one: the checker had no deterministic verdict, so the attempt
+ * moved nothing and the reply names a `reason` instead of a `correct`.
+ */
+export type AttemptOutcome = 'correct' | 'incorrect' | 'ungraded';
+
 type WorkQuality =
   | 'perfect'
   | 'nearly_perfect'
@@ -144,6 +187,7 @@ type TaskStatus =
   | 'continue'
   | 'kp_advance'
   | 'task_passed'
+  | 'task_inconclusive'
   | 'task_failed'
   /** NOTHING was recorded twice: the attempt already stood. Never a normal advance. */
   | 'already_recorded';
@@ -196,6 +240,8 @@ export interface DiagStartResponse {
  * future payload grew a field (DIAG-nosol).
  */
 export interface DiagAnswerResponse {
+  outcome?: 'correct' | 'incorrect' | 'ungraded';
+  reason?: string;
   correct?: boolean;
   next_probe?: DiagProbe | { done: true } | null;
 }
@@ -226,9 +272,27 @@ export interface DiagnosisJob {
  * apply.
  */
 export interface AnswerResponse {
+  /** The next question confirms independent work after feedback. */
+  feedback_practice?: boolean;
+  /** A fresh item is unavailable; the original answer remains saved. */
+  feedback_blocked?: boolean;
   attempt_id: string;
-  /** Mathematical correctness only. Partial credit lives in `work_quality`. */
-  correct: boolean;
+  /**
+   * The graded outcome (D-F2). `ungraded` means the checker reached no verdict.
+   *
+   * An ungraded attempt is NOT a miss: nothing about the learner moved, no solution is
+   * revealed, and no diagnosis fires.
+   */
+  outcome: AttemptOutcome;
+  /**
+   * Mathematical correctness only. Partial credit lives in `work_quality`.
+   *
+   * ABSENT on an `ungraded` reply: the service claims no correctness there, and a
+   * `false` would read as a miss.
+   */
+  correct?: boolean;
+  /** Why the attempt has no verdict. Present on an `ungraded` reply only. */
+  reason?: string;
   work_quality: WorkQuality;
   /** Rendered verbatim, never re-interpreted (trap T3). */
   error_tags: string[];
@@ -280,6 +344,11 @@ export interface QuizReceiptResponse {
 
 export type TaskAnswerResponse = AnswerResponse | ReworkResponse | QuizReceiptResponse;
 
+/** Narrow a grade reply to the third outcome (D-F2). */
+export function isUngraded(reply: AnswerResponse): boolean {
+  return reply.outcome === 'ungraded';
+}
+
 /** Narrow a grade reply to the H3 rework branch. */
 export function isRework(reply: TaskAnswerResponse): reply is ReworkResponse {
   return (reply as ReworkResponse).rework_required === true;
@@ -290,3 +359,13 @@ export function isQuizReceipt(reply: TaskAnswerResponse): reply is QuizReceiptRe
   return (reply as QuizReceiptResponse).accepted === true;
 }
 
+
+/** Evidence released after every original quiz answer is recorded. */
+export interface QuizResultResponse {
+  inconclusive: boolean;
+  score: number;
+  xp: number;
+  practice_pending: boolean;
+  practice_available: boolean;
+  answers: { problem_id: string; text: string; given_answer: string; correct: boolean; outcome: string; reason?: string | null; solution_sketch?: string | null }[];
+}

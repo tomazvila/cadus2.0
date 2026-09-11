@@ -58,6 +58,7 @@ fn two_leaves() -> Curriculum {
 /// The same topic, with a diagnostic exemplar the probe set needs.
 fn with_exemplar(mut topic: Topic) -> Topic {
     topic.diagnostic_exemplar = Some(Exemplar {
+        answer_contract: None,
         problem: format!("probe {}", topic.id.as_str()),
         answer: "7".to_owned(),
         solution_sketch: None,

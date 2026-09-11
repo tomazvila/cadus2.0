@@ -9,14 +9,15 @@ use crate::event::Timestamp;
 use crate::learner::TopicState;
 
 use super::interleave::{SlotKind, constraints_of};
+use super::plan::SessionPlan;
 use super::review::{in_retry_delay, retry_available_at};
-use super::task::{SessionPlan, Task};
-use super::topic_set::{TopicSet, course_scope, frontier, mastered_set};
+use super::task::Task;
+use super::topic_set::{TopicSet, course_scope, frontier, known_set};
 
 /// The frontier of the course scope, split by the lesson-fail retry delay.
 pub(super) struct Frontier {
-    /// The mastered set the frontier came from.
-    pub(super) mastered: TopicSet,
+    /// The known set the frontier came from (D-F6).
+    pub(super) known: TopicSet,
     /// The topics of the course scope.
     pub(super) course_topics: TopicSet,
     /// The frontier inside the course scope, before the gap-fill chain filter.
@@ -39,9 +40,9 @@ impl Frontier {
         chain: Option<&BTreeSet<String>>,
     ) -> Self {
         let default = TopicState::default();
-        let mastered = mastered_set(states, graph);
+        let known = known_set(states, graph);
         let course_topics = course_scope(graph, course_id);
-        let topics = frontier(graph, &mastered).intersect(&course_topics);
+        let topics = frontier(graph, &known).intersect(&course_topics);
         let mut ids: Vec<String> = topics
             .sorted_ids(graph)
             .into_iter()
@@ -65,7 +66,7 @@ impl Frontier {
             None
         };
         Self {
-            mastered,
+            known,
             course_topics,
             topics,
             available,
@@ -91,6 +92,9 @@ impl Frontier {
             constraints: constraints_of(seq, !self.available.is_empty(), cfg),
             course_complete,
             frontier_blocked_until: self.blocked_until.map(Timestamp::from_micros),
+            // The composer fills the readiness list; the frontier knows nothing
+            // about the content store.
+            blocked: Vec::new(),
         }
     }
 }

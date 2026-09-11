@@ -99,6 +99,7 @@
 //! Nothing here calls a model (T1). The refill draws, renders, and evaluates in
 //! process, exactly as the gate does.
 
+mod finite;
 mod state;
 mod target;
 
@@ -241,6 +242,8 @@ pub struct RefillReport {
     ///
     /// Each one leaves the target list for [`REFILL_BACKOFF`].
     pub without_source: usize,
+    /// Finite pairs whose complete reviewed set already rotates from the pool.
+    pub rotational_complete: usize,
     /// The count of pairs whose fill or insert failed.
     pub failed: usize,
     /// The count of instances the per-instance re-check refused (C4).
@@ -389,6 +392,10 @@ pub async fn refill_once_at(
                     "refill: the knowledge point has no approved template and no exemplar; \
                      the pair leaves the target list and operator_flags names it (A6)"
                 );
+            }
+            Ok(Filled::RotationalComplete) => {
+                report.rotational_complete = report.rotational_complete.saturating_add(1);
+                state.note_filled(target.user_id, &target.kp_id);
             }
             Ok(Filled::Rows {
                 source,

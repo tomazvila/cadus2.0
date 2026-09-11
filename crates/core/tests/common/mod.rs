@@ -108,6 +108,19 @@ pub fn knowledge_point(id: &str, key_prerequisites: &[&str]) -> KnowledgePoint {
             .collect(),
         exemplars: Vec::new(),
         constraints: None,
+        finite_objective_domain: None,
+        visuals: Vec::new(),
+    }
+}
+
+/// One decidable exemplar with the standard arithmetic solution sketch.
+#[must_use]
+pub fn solved_exemplar(problem: &str, answer: &str) -> cadus_core::curriculum::Exemplar {
+    cadus_core::curriculum::Exemplar {
+        problem: problem.to_owned(),
+        answer_contract: None,
+        answer: answer.to_owned(),
+        solution_sketch: Some("Add the parts.".to_owned()),
     }
 }
 
@@ -345,7 +358,9 @@ pub mod fire;
 pub mod fixtures;
 pub mod fuzz;
 pub mod gate;
+pub mod grammar;
 pub mod instruction_fixtures;
+pub mod inventory;
 pub mod lint_view;
 pub mod oracle;
 pub mod parity;
@@ -355,5 +370,8 @@ pub mod paths;
 pub mod pool_fixtures;
 pub mod scratch;
 pub mod selector;
+pub mod shape;
 pub mod template;
 pub mod xp_states;
+
+pub mod readiness;

@@ -14,15 +14,40 @@
     clippy::unimplemented
 )]
 
+pub mod authoring;
 pub mod content;
 pub mod fake;
 pub mod fault;
 pub mod pool;
 pub mod process;
 pub mod queue;
+pub mod reviewed_templates;
+pub mod symbolic;
 pub mod teach;
+pub mod template_batch;
 
+use std::path::Path;
 use std::sync::{Arc, Mutex};
+
+use serde_json::Value;
+
+pub fn repo_root() -> std::path::PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
+}
+
+pub fn json_rows(paths: &[&str], array_field: Option<&str>) -> Vec<Value> {
+    paths
+        .iter()
+        .flat_map(|relative| {
+            let source = std::fs::read_to_string(repo_root().join(relative)).unwrap();
+            let value = serde_json::from_str::<Value>(&source).unwrap();
+            match array_field {
+                Some(field) => value[field].as_array().unwrap().clone(),
+                None => value.as_array().unwrap().clone(),
+            }
+        })
+        .collect()
+}
 
 pub use content::{
     ContentRow, Seed, assert_one_row, content_rows, content_rows_of_kind, ledger_shape,

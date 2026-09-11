@@ -11,6 +11,8 @@ use std::fmt;
 use serde::de::{Deserializer, Unexpected, Visitor};
 use serde::{Deserialize, Serialize};
 
+use super::finite::FiniteObjectiveDomain;
+
 /// The default of `Topic::core` (spec section 1).
 fn default_true() -> bool {
     true
@@ -169,9 +171,22 @@ impl fmt::Display for AnkiType {
 #[serde(deny_unknown_fields)]
 pub struct Exemplar {
     pub problem: String,
+    /// The policy captured with this item; absence preserves legacy semantics.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub answer_contract: Option<crate::answer::AnswerContract>,
     pub answer: String,
     #[serde(default)]
     pub solution_sketch: Option<String>,
+}
+
+impl Exemplar {
+    /// Validate this item's authored answer under its captured policy.
+    pub fn canonical_answer(&self) -> Result<crate::answer::Canon, crate::answer::Undecidable> {
+        self.answer_contract.as_ref().map_or_else(
+            || crate::answer::canonical_form(&self.answer),
+            |contract| contract.validate_expected(&self.answer),
+        )
+    }
 }
 
 /// A declarative-recall card candidate authored on a topic.
@@ -210,6 +225,46 @@ pub struct KnowledgePoint {
     /// of A1 and D-S4 is a 2.0 addition and not a port.
     #[serde(default)]
     pub constraints: Option<String>,
+    /// Reviewed complete case universe for a genuinely finite objective.
+    ///
+    /// The legacy canonical dump deliberately excludes this 2.0 policy field;
+    /// its fingerprint is the separate freshness boundary.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub finite_objective_domain: Option<FiniteObjectiveDomain>,
+    /// The mathematical visuals the objective needs (unit f9). NEW IN 2.0.
+    ///
+    /// The field is absent from 1.0 and absent from the canonical dump, so it
+    /// never moves the curriculum hash. An empty list means the author wrote no
+    /// visual, and the readiness audit then reports the knowledge point as one
+    /// with no visual.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub visuals: Vec<crate::visual::VisualSpec>,
+}
+
+impl KnowledgePoint {
+    /// Validate a finite policy and bind every canonical exemplar to one case.
+    pub fn validate_finite_objective_domain(&self) -> Result<(), String> {
+        let Some(policy) = &self.finite_objective_domain else {
+            return Ok(());
+        };
+        policy.validate()?;
+        for exemplar in &self.exemplars {
+            if policy
+                .case_for(
+                    &exemplar.problem,
+                    &exemplar.answer,
+                    exemplar.answer_contract.as_ref(),
+                )
+                .is_none()
+            {
+                return Err(format!(
+                    "canonical exemplar {:?} does not match any reviewed finite case variant",
+                    exemplar.problem
+                ));
+            }
+        }
+        Ok(())
+    }
 }
 
 /// A curriculum topic. The cardinality rules — at least one knowledge point and

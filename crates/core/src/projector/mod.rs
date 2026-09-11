@@ -35,7 +35,7 @@
 //! [`crate::event::Event::from_json`] rejects it with an error value first; an event
 //! that names a topic outside the curriculum is skipped exactly where 1.0 skips it.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use chrono_tz::Tz;
 
@@ -43,11 +43,14 @@ use crate::config::Config;
 use crate::curriculum::Curriculum;
 use crate::event::{Event, Slug};
 use crate::fire::{clamp, py_max, py_min};
-use crate::learner::TopicState;
+use crate::learner::{TopicState, UngradedAttempt};
 use crate::numeric::{OutOfRangeError, TimeError, resolve_timezone};
+use crate::retention::state::RetentionState;
 
 mod entry;
 mod handlers;
+mod integrated;
+mod pass_rule;
 mod regrade;
 mod state;
 
@@ -55,13 +58,16 @@ pub use entry::{
     ProjectionInput, blob_digest, canonical_blob, kp_failed, kp_passed, project,
     project_incremental,
 };
+pub use pass_rule::PassRule;
 pub use regrade::apply_regrades;
 
 /// The projection-logic version stamped into the model (`projector.py:89`).
 ///
 /// A stale cache is detected with it: 1 to 2 for the methodology fixes, 2 to 3 for
-/// [`apply_regrades`]. ANY change to the fold bumps this number.
-pub const PROJECTOR_VERSION: i64 = 3;
+/// [`apply_regrades`], 3 to 4 for the third attempt outcome (D-F2). ANY change to the
+/// fold bumps this number, and a bump replays every model in full (D-O6).
+/// Version 7 indexes instructed application and delayed integrated assessments.
+pub const PROJECTOR_VERSION: i64 = 7;
 
 /// The neutral prior a placed topic's diagnostic answers fold onto (`projector.py:98`).
 pub const ABILITY_SEED_PRIOR: f64 = 0.5;
@@ -146,9 +152,27 @@ pub struct Projector<'a> {
     quiz_last_ts: Option<i64>,
     quiz_retake_pending: bool,
     remediation: Vec<(i64, String, Vec<Slug>)>,
+    /// Count of complete tasks in the event stream.
+    completed_tasks: usize,
+    /// Idempotent task-close identities for delayed confirmation.
+    completed_task_ids: BTreeSet<String>,
+    /// Independent feedback evidence and the task count that makes its probe due.
+    feedback_confirmations: Vec<(i64, String, usize)>,
     last_practice: BTreeMap<String, i64>,
     diag_answers: BTreeMap<String, Vec<(bool, f64)>>,
+    ungraded: Vec<UngradedAttempt>,
+    /// What the delayed probes answered (D-F11). It folds `retention_probe` and
+    /// nothing else, so it is empty for every log written before 2.0.
+    retention: RetentionState,
+    integrated_journey: crate::integrated::journey::JourneyState,
     last_ts: Option<i64>,
+
+    /// The task ids of the OPEN confirmation items (D-F6). A `task_served` with
+    /// `confirm` set opens one, and the review result of the topic closes it.
+    confirm_tasks: BTreeSet<String>,
+    /// The topics of the OPEN confirmation items. A `review_result` with no
+    /// `task_id` binds through the topic instead.
+    confirm_topics: BTreeSet<String>,
 
     /// The count of the events the fold applied. It is also the 0-based index of the
     /// event the fold applies now.
@@ -176,9 +200,17 @@ impl<'a> Projector<'a> {
             quiz_last_ts: None,
             quiz_retake_pending: false,
             remediation: Vec::new(),
+            completed_tasks: 0,
+            completed_task_ids: BTreeSet::new(),
+            feedback_confirmations: Vec::new(),
             last_practice: BTreeMap::new(),
             diag_answers: BTreeMap::new(),
+            ungraded: Vec::new(),
+            retention: RetentionState::default(),
+            integrated_journey: crate::integrated::journey::JourneyState::default(),
             last_ts: None,
+            confirm_tasks: BTreeSet::new(),
+            confirm_topics: BTreeSet::new(),
             applied: 0,
             failure: None,
         }
@@ -229,14 +261,33 @@ impl<'a> Projector<'a> {
     ///
     /// A `regraded` event never arrives here: [`apply_regrades`] consumes it ahead of
     /// the fold and hands the corrected events over instead. `task_served`,
-    /// `session_start`, `session_end`, `anki_card_created`, `config_changed`, and
-    /// `curriculum_changed` carry no derived state, so they are no-ops.
+    /// `session_start`, `session_end`, `anki_card_created`, `config_changed`,
+    /// and `curriculum_changed` carry no derived state, so they are no-ops.
+    ///
+    /// `retention_probe` DOES carry derived state (D-F11): it tallies into
+    /// [`crate::retention::RetentionState`]. The event type is new in the 2.0
+    /// schema and no committed 1.0 log holds one, so every cached model of an
+    /// earlier log still equals a full replay and [`PROJECTOR_VERSION`] stands.
+    /// The `task_served` confirmation marker of D-F6 makes the same argument.
+    ///
+    /// `task_served` is a no-op too, EXCEPT for the D-F6 confirmation marker: a
+    /// served confirmation opens the item that the topic's review result closes.
+    /// The path is unreachable for every log written before D-F6, because no
+    /// such log carries the field. [`PROJECTOR_VERSION`] therefore stands: every
+    /// cached model of an earlier log still equals a full replay.
     ///
     /// After a failed event the fold applies NOTHING more, and
     /// [`Projector::finalize`] reports the failure. A 1.0 exception ends the 1.0 fold
     /// at the same event.
     pub fn apply(&mut self, event: &Event, apply_fire: bool) {
         if self.failure.is_some() {
+            return;
+        }
+        // Item-level hand-offs are durable serving provenance. Their lifetime
+        // exposure is queried through the indexed event log when a probe draws;
+        // they move neither learning state nor the projection's time reference.
+        if matches!(event, Event::OrdinaryProblemServed(_)) {
+            self.applied += 1;
             return;
         }
         let ts = event.ts().micros();
@@ -248,17 +299,25 @@ impl<'a> Projector<'a> {
             Event::LessonResult(body) => self.on_lesson_result(body, ts, apply_fire),
             Event::ReviewResult(body) => self.on_review_result(body, ts, apply_fire),
             Event::QuizResult(body) => self.on_quiz_result(body, ts, apply_fire),
+            Event::DrillResult(body) => self.complete_task(body.task_id.clone()),
             Event::RemediationTriggered(body) => self.on_remediation(body, ts),
             Event::DiagnosticAnswer(body) => self.on_diagnostic_answer(body),
             Event::DiagnosticPlaced(body) => self.on_diagnostic_placed(body, ts, apply_fire),
             Event::ProfileReset(body) => self.on_profile_reset(body, apply_fire),
-            Event::SessionStart(_)
+            Event::TaskServed(body) => self.on_task_served(body),
+            Event::IntegratedAttempt(body) => self.on_integrated_attempt(body, apply_fire),
+            Event::IntegratedServed(body) => self.integrated_journey.served(body),
+            Event::OrdinaryProblemServed(_)
+            | Event::SessionStart(_)
             | Event::SessionEnd(_)
-            | Event::TaskServed(_)
             | Event::Regraded(_)
             | Event::AnkiCardCreated(_)
             | Event::ConfigChanged(_)
-            | Event::CurriculumChanged(_) => {}
+            | Event::CurriculumChanged(_)
+            // The integrated serve records exposure; its attempt above persists KP credit.
+            // Hint events preserve server-owned assistance but move no learning state.
+            | Event::IntegratedHintRevealed(_) => {}
+            Event::RetentionProbe(body) => self.retention.apply(body, &self.cfg.retention),
         }
         self.applied += 1;
     }

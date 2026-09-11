@@ -40,7 +40,24 @@ pub async fn hint(
     let served = scratch.validate(&task_id, &problem_id)?;
     let (topic, key, rung) = ladder_key(served)?;
 
-    let doc = store(&state, approved_document(&mut *tx, &key, KIND_HINT_LADDER)).await?;
+    let source = hint_source(served)?;
+    let policy = content.policy_digest(&key)?;
+    let doc = store(
+        &state,
+        cadus_store::content::approved_document_for_source(
+            &mut *tx,
+            &key,
+            KIND_HINT_LADDER,
+            cadus_store::content::CurrentContext {
+                policy_digest: policy.as_deref(),
+                curriculum_digest: content.curriculum_context_digest()?,
+                review_engine_digest: content.review_engine_digest(),
+            },
+            source.content_digest,
+            Some((source.curriculum_digest, source.review_engine_digest)),
+        ),
+    )
+    .await?;
     let ladder: HintLadder = read_document(
         doc.ok_or_else(no_ladder)?,
         "hint",
@@ -67,6 +84,50 @@ pub async fn hint(
         payload["reference_lesson"] = reference_lesson(&content.curriculum, &topic);
     }
     Ok(Json(payload))
+}
+
+/// Legacy live questions without provenance can still be graded; their hint
+/// compatibility must be established by a newly served question.
+struct HintSource<'a> {
+    content_digest: Option<&'a str>,
+    curriculum_digest: &'a str,
+    review_engine_digest: &'a str,
+}
+
+fn hint_source(served: &ServedProblem) -> Result<HintSource<'_>, ApiError> {
+    let handoff = served.handoff.as_ref().ok_or_else(hint_context_changed)?;
+    let curriculum_digest = handoff
+        .source_curriculum_digest
+        .as_deref()
+        .ok_or_else(hint_context_changed)?;
+    let review_engine_digest = handoff
+        .source_review_engine_digest
+        .as_deref()
+        .ok_or_else(hint_context_changed)?;
+    let content_digest = match handoff.item_source {
+        ItemSource::Template => Some(
+            handoff
+                .source_content_digest
+                .as_deref()
+                .ok_or_else(hint_context_changed)?,
+        ),
+        ItemSource::Exemplar => None,
+        ItemSource::Generator | ItemSource::Integrated | ItemSource::Probe => {
+            return Err(hint_context_changed());
+        }
+    };
+    Ok(HintSource {
+        content_digest,
+        curriculum_digest,
+        review_engine_digest,
+    })
+}
+
+fn hint_context_changed() -> ApiError {
+    conflict(
+        "hint_context_changed",
+        "Hints are unavailable for this older question. You can still submit your answer.",
+    )
 }
 
 /// The `problem_id` of the request body, or the `422` of a body without one.

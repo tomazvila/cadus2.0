@@ -115,7 +115,11 @@ impl SessionView {
             Event::Attempt(body) => self.record_attempt(body),
             Event::LessonResult(body) => self.close_lesson(body),
             Event::ReviewResult(body) => self.close_review(body),
-            Event::QuizResult(body) => {
+            Event::DrillResult(body) => {
+                self.closed_task_ids.insert(body.task_id.clone());
+            }
+            Event::QuizResult(body) if !body.inconclusive => {
+                self.credit(body.xp);
                 self.quiz_high_score_streak = if body.score >= QUIZ_HIGH_SCORE {
                     self.quiz_high_score_streak.saturating_add(1)
                 } else {
@@ -198,7 +202,9 @@ impl SessionView {
         if let Some(task_id) = body.task_id.as_ref() {
             self.closed_task_ids.insert(task_id.clone());
         }
-        self.credit(body.xp);
+        if !body.inconclusive {
+            self.credit(body.xp);
+        }
     }
 
     /// Credit `xp` to every session that is open at this point of the log.

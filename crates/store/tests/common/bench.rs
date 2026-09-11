@@ -94,6 +94,7 @@ pub fn instance_row(text: String, answer: String, binding: String, seed: u64) ->
     NewInstance {
         source: Source::Template,
         content_digest: None,
+        generation_context: None,
         instance_hash: problem_text_hash(&text),
         problem: PoolProblem {
             v: POOL_ROW_VERSION,
@@ -102,6 +103,7 @@ pub fn instance_row(text: String, answer: String, binding: String, seed: u64) ->
             seed,
         },
         expected_answer: PoolAnswer {
+            answer_contract: None,
             v: POOL_ROW_VERSION,
             answer,
         },

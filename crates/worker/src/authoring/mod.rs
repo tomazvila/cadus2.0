@@ -13,8 +13,13 @@
 //! subcommand, its plan, and its dry run. Unit FIX-M6-A2 adds the LaTeX escape
 //! repair of the boundary ([`repair`]), which every gate runs behind.
 
+pub mod budget;
 pub mod cli;
+pub mod completion;
 pub mod cost;
+pub mod execution;
 pub mod job;
+pub mod portable;
 pub mod prompt;
 pub mod repair;
+pub mod selection;

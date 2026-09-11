@@ -37,6 +37,8 @@ const STATUS: StatusResponse = {
   frontier: 4,
   due_reviews: 2,
   nearly_due: 1,
+  ungraded_attempts: {},
+  ungraded: 0,
 };
 
 export const status = (over: Partial<StatusResponse> = {}): StatusResponse => ({ ...STATUS, ...over });

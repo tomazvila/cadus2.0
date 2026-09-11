@@ -111,10 +111,51 @@ pub(super) fn serve_payload(
         "time_budget_secs": time_budget_secs,
         "countdown": countdown,
     });
+    if served
+        .rework
+        .as_ref()
+        .is_some_and(|value| value.get("digest").is_some())
+    {
+        payload["feedback_practice"] = json!(true);
+        payload["countdown"] = json!(false);
+    }
     if let Some(elapsed) = quiz_elapsed_secs {
         payload["quiz_elapsed_secs"] = json!(elapsed);
     }
+    let visuals = visuals_of(graph, served, &served.problem_id);
+    if !visuals.is_empty() {
+        payload["visuals"] = json!(visuals);
+    }
     payload
+}
+
+/// The drawn figures of the knowledge point this problem serves (unit f9).
+///
+/// The key stays OUT of the payload when the knowledge point authors no figure,
+/// so every problem of today keeps the shape 1.0 gives it. A figure the check
+/// refuses never reaches the learner: `render_all` drops it, and the readiness
+/// audit reports the knowledge point as one with no visual.
+fn visuals_of(
+    graph: &Curriculum,
+    served: &ServedProblem,
+    problem_id: &str,
+) -> Vec<cadus_core::visual::RenderedVisual> {
+    let Some(kp_id) = served.kp.as_deref() else {
+        return Vec::new();
+    };
+    let topic_id = served.serve_topic.as_deref().or(served.topic.as_deref());
+    let Some(topic) = topic_id
+        .and_then(|id| graph.idx_of(id))
+        .and_then(|idx| graph.topic(idx))
+    else {
+        return Vec::new();
+    };
+    topic
+        .knowledge_points
+        .iter()
+        .find(|kp| kp.id.as_str() == kp_id)
+        .map(|kp| cadus_core::visual::render_all(&kp.visuals, problem_id))
+        .unwrap_or_default()
 }
 
 /// The authored solve time of a topic, when the arena holds the topic.
@@ -142,6 +183,7 @@ mod tests {
     /// One live problem of `topic` at index 0, with no clock.
     fn served(topic: Option<&str>) -> ServedProblem {
         ServedProblem {
+            timing_interrupted: false,
             problem_id: "p1".to_string(),
             task_id: "t1".to_string(),
             topic: topic.map(str::to_string),
@@ -150,6 +192,7 @@ mod tests {
             answer_kind: None,
             text: "Give 7.".to_string(),
             expected: cadus_core::pool::PoolAnswer {
+                answer_contract: None,
                 v: 1,
                 answer: "7".to_string(),
             },
@@ -158,7 +201,95 @@ mod tests {
             hints_given: Vec::new(),
             index: 0,
             rework: None,
+            handoff: None,
         }
+    }
+
+    /// An arena whose `figures/plot` knowledge point authors one number line.
+    fn arena_with_a_visual() -> Curriculum {
+        fixture::arena(&[json!({
+            "id": "figures",
+            "name": "The figures topic",
+            "difficulty": 0.3,
+            "answer_kind": "numeric",
+            "expected_time_secs": 30,
+            "knowledge_points": [{
+                "id": "plot",
+                "name": "Plot a point",
+                "exemplars": [{"problem": "Plot 3.", "answer": "3"}],
+                "visuals": [
+                    {"kind": "number_line", "min": 0, "max": 5, "tick": 1,
+                     "points": [{"at": 3}]},
+                    {"kind": "number_line", "min": 5, "max": 0, "tick": 1},
+                ],
+            }],
+        })])
+    }
+
+    /// The served problem of `figures/plot`.
+    fn served_figure() -> ServedProblem {
+        let mut problem = served(Some("figures"));
+        problem.kp = Some("plot".to_string());
+        problem
+    }
+
+    #[test]
+    fn the_payload_carries_the_drawn_figures_of_the_knowledge_point() {
+        let graph = arena_with_a_visual();
+        let payload = serve_payload(
+            &served_figure(),
+            &task(TaskType::Lesson, Some("figures")),
+            &graph,
+            60,
+            None,
+        );
+        let visuals = payload["visuals"].as_array().unwrap();
+        // The second authored figure does not ascend, so the render drops it.
+        assert_eq!(visuals.len(), 1);
+        assert_eq!(visuals[0]["kind"], "number_line");
+        assert!(visuals[0]["svg"].as_str().unwrap().contains("role=\"img\""));
+        assert!(
+            visuals[0]["svg"]
+                .as_str()
+                .unwrap()
+                .contains("aria-labelledby=\"p1-0-title p1-0-desc\"")
+        );
+        assert_eq!(
+            visuals[0]["text"],
+            "A number line from 0 to 5 with a tick every 1. A filled point at 3."
+        );
+    }
+
+    #[test]
+    fn a_knowledge_point_with_no_authored_figure_keeps_the_payload_shape_of_one_zero() {
+        let payload = serve_payload(
+            &served(Some("addition")),
+            &task(TaskType::Lesson, Some("addition")),
+            &graph(),
+            60,
+            None,
+        );
+        assert!(payload.get("visuals").is_none());
+    }
+
+    #[test]
+    fn the_figure_lookup_answers_nothing_for_an_unknown_topic_or_knowledge_point() {
+        let graph = arena_with_a_visual();
+        let mut unknown_kp = served_figure();
+        unknown_kp.kp = Some("no-such-kp".to_string());
+        assert!(visuals_of(&graph, &unknown_kp, "p1").is_empty());
+
+        let mut no_kp = served_figure();
+        no_kp.kp = None;
+        assert!(visuals_of(&graph, &no_kp, "p1").is_empty());
+
+        let mut unknown_topic = served_figure();
+        unknown_topic.topic = Some("no-such-topic".to_string());
+        assert!(visuals_of(&graph, &unknown_topic, "p1").is_empty());
+
+        let mut no_topic = served_figure();
+        no_topic.topic = None;
+        assert!(visuals_of(&graph, &no_topic, "p1").is_empty());
     }
 
     #[test]

@@ -6,8 +6,10 @@ use std::collections::BTreeSet;
 use cadus_core::curriculum::Curriculum;
 use cadus_core::event::Timestamp;
 use cadus_core::learner::LearnerModel;
+use cadus_core::readiness::{Blocker, ReadinessSet};
 use cadus_core::selector::{
-    SeededSampler, SessionContext, SessionPlan, Task, compose_session, is_course_complete,
+    BlockedTask, SeededSampler, SessionContext, SessionPlan, Task, compose_session,
+    is_course_complete,
 };
 use cadus_store::state::SessionView;
 use serde_json::{Value, json};
@@ -38,14 +40,31 @@ pub async fn session_plan(req: Ready) -> Reply {
     let graph = req.graph();
     let model = projection.model;
     let course = view.enrollment_stack.last().map(String::as_str);
-    let plan = compose_plan(&req.content, &view, &model, &session, req.now);
+    // The readiness of D-F5, read in the SAME transaction as the projection, so
+    // the listed plan and the served plan cannot disagree.
+    let readiness = req.readiness(&mut tx).await?;
+    let mut plan = compose_plan(&req.content, &view, &model, &session, req.now, &readiness);
+    crate::serve::restore_feedback_tasks(&mut plan, &scratch);
 
     let tasks: Vec<Value> = plan
         .tasks
         .iter()
-        .map(|task| trim_task(task, graph, &scratch))
+        .map(|task| {
+            let mut value = trim_task(task, graph, &scratch);
+            value["integrated_instruction_required"] =
+                json!(crate::integrated::instruction::required(&req.content, task));
+            if task
+                .integrated_assessment_of
+                .as_ref()
+                .and_then(|source| model.integrated_journey.assessments.get(source))
+                .is_some_and(|held| held.completed)
+            {
+                value["progress"]["done"] = json!(true);
+            }
+            value
+        })
         .collect();
-    let complete = is_course_complete(&model.topics, graph, course, None);
+    let complete = is_course_complete(&model.topics, graph, &req.content.cfg, course, None);
 
     let body = json!({
         "session": plan.session,
@@ -59,6 +78,7 @@ pub async fn session_plan(req: Ready) -> Reply {
             "lessons": plan.constraints.lessons,
         },
         "course_complete": complete,
+        "blocked": plan.blocked.iter().map(blocked_json).collect::<Vec<Value>>(),
         "frontier_blocked_until": plan
             .frontier_blocked_until
             .and_then(|stamp| DateTime::<Utc>::from_timestamp_micros(stamp.micros()))
@@ -84,6 +104,7 @@ pub(crate) fn compose_plan(
     model: &LearnerModel,
     session: &str,
     now: Timestamp,
+    readiness: &ReadinessSet,
 ) -> SessionPlan {
     let course = view.enrollment_stack.last().map(String::as_str);
     let days = view.study_days();
@@ -101,15 +122,26 @@ pub(crate) fn compose_plan(
         .with_active_study_days(Some(&days))
         .with_quiz_streak(view.quiz_high_score_streak)
         .with_test_prep(&no_test_prep)
-        .with_multistep(i64::try_from(closed.len()).unwrap_or(i64::MAX), closed);
-    compose_session(
+        .with_multistep(i64::try_from(closed.len()).unwrap_or(i64::MAX), closed)
+        .with_readiness(Some(readiness))
+        // f19-retention: the delayed probe of D-F11. The state is the fold's, so
+        // the schedule reads the probes that already ran and never repeats one.
+        .with_retention(Some(&model.retention));
+    let mut plan = compose_session(
         &model.topics,
         &content.curriculum,
         &content.cfg,
         now.micros(),
         &mut sampler,
         &ctx,
-    )
+    );
+    if let Some(task) = model
+        .integrated_journey
+        .task(&content.integrated, session, now)
+    {
+        plan.tasks.push(task);
+    }
+    plan
 }
 
 /// The quiz-sampler seed of one session (`service.py:1259`).
@@ -123,6 +155,24 @@ fn session_seed(session: &str) -> u64 {
         seed = seed.wrapping_mul(256).wrapping_add(u64::from(*byte));
     }
     seed
+}
+
+/// One blocked task, as the SPA reads it (D-F5).
+///
+/// The list names the topic, the knowledge point, and the conditions the
+/// content does not meet. Nothing here is a served problem, so Hard Rule 1
+/// stands: no statement, no answer, and no solution sketch.
+fn blocked_json(task: &BlockedTask) -> Value {
+    json!({
+        "task_type": task.task_type.as_str(),
+        "topic": task.topic,
+        "kp": task.kp,
+        "blockers": task
+            .blockers
+            .iter()
+            .map(|blocker| Blocker::as_str(*blocker))
+            .collect::<Vec<&str>>(),
+    })
 }
 
 /// The client-safe view of one task (`_trim_task`, `api.py:988-1006`).
@@ -152,6 +202,10 @@ fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
         "time_budget_secs": task.time_budget_secs,
         "difficulty_target": task.difficulty_target,
         "why": task.why,
+        // D-F6: the client labels a confirmation item, and it never reads a
+        // scheduling decision back out of `why`.
+        "confirm": task.confirm,
+        "integrated_assessment": task.integrated_assessment_of.is_some(),
         "progress": {"answered": answered, "done": done},
     })
 }

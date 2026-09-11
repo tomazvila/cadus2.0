@@ -4,7 +4,9 @@
 //! carries a literal message whatever the kind is. `crate::authoring::repair`
 //! runs before every gate, on every kind.
 
-use cadus_core::instruction::{InstructionSpec, ServedInstance, gate_hint_ladder, gate_teach};
+use cadus_core::instruction::{
+    InstructionSpec, ServedInstance, gate_hint_ladder, gate_teach_with_policy,
+};
 use cadus_core::pool::kp_key;
 use cadus_core::template::{
     GateSpec, Rejection, TEMPLATE_VERSION, gate_body, gate_diagnosis_body, keep_known_tags,
@@ -12,6 +14,7 @@ use cadus_core::template::{
 };
 use serde_json::Value;
 
+use super::preflight;
 use crate::authoring::prompt::{AuthoringSpec, Kind};
 use crate::authoring::repair;
 use crate::diagnosis::MODEL_ERROR_TAGS;
@@ -45,7 +48,13 @@ fn assemble_value(spec: &AuthoringSpec, arguments: &Value) -> Result<Value, Reje
         return Err(no_arguments());
     };
     let mut body = fields.clone();
-    for server_side in ["v", "topic_id", "answer_kind", "space_size"] {
+    for server_side in [
+        "v",
+        "topic_id",
+        "answer_kind",
+        "space_size",
+        "answer_contract",
+    ] {
         body.remove(server_side);
     }
     body.insert("v".to_owned(), Value::from(TEMPLATE_VERSION));
@@ -85,9 +94,73 @@ fn unwritable(err: serde_json::Error) -> Rejection {
 /// takes the vocabulary and runs the same drop in the same place.
 fn assemble_kept(kind: Kind, spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
     let mut body = assemble_value(spec, arguments)?;
+    if kind == Kind::Template {
+        let contract = template_contract(spec, arguments)?;
+        if let Some(contract) = contract {
+            body["answer_contract"] = contract;
+        }
+    }
     let dropped = keep_known_tags(&mut body, &authoring_vocabulary());
     report_dropped(spec, kind, &dropped);
     Ok(body.to_string())
+}
+
+/// Retain reviewed exactness while allowing an explicit set-shape refinement.
+fn template_contract(spec: &AuthoringSpec, arguments: &Value) -> Result<Option<Value>, Rejection> {
+    let supplied = arguments.get("answer_contract");
+    let Some(reviewed) = spec.template_contract() else {
+        return Ok(supplied.cloned());
+    };
+    if let Some(supplied) = supplied {
+        let parsed = serde_json::from_value::<cadus_core::answer::AnswerContract>(supplied.clone())
+            .map_err(|error| Rejection {
+                code: "answer-contract",
+                message: format!("the supplied answer contract is malformed: {error}"),
+            })?;
+        // A set restricts Exact to a collection-shaped response with the same
+        // canonical equality. It cannot introduce approximate tolerance or
+        // weaken a reviewed structural contract.
+        if reviewed == cadus_core::answer::AnswerContract::Exact
+            && parsed == cadus_core::answer::AnswerContract::Set
+        {
+            return Ok(Some(supplied.clone()));
+        }
+        if parsed != reviewed {
+            return Err(Rejection {
+                code: "answer-contract",
+                message: "the supplied answer contract conflicts with the reviewed exemplar policy"
+                    .to_owned(),
+            });
+        }
+    }
+    serde_json::to_value(reviewed).map(Some).map_err(unwritable)
+}
+
+fn finite_policy(
+    spec: &AuthoringSpec,
+) -> Result<Option<&cadus_core::curriculum::FiniteObjectiveDomain>, Rejection> {
+    let Some(finite) = &spec.finite else {
+        return Ok(None);
+    };
+    finite
+        .validate(&spec.kp_key())
+        .map_err(|message| Rejection {
+            code: "finite-policy",
+            message,
+        })?;
+    Ok(Some(&finite.domain))
+}
+
+fn template_gate_spec(spec: &AuthoringSpec) -> Result<GateSpec<'_>, Rejection> {
+    let base = GateSpec::new(spec.answer_kind, &spec.exemplars);
+    let Some(finite) = finite_policy(spec)? else {
+        return Ok(base);
+    };
+    base.with_finite(&spec.kp_key(), finite)
+        .map_err(|message| Rejection {
+            code: "finite-policy",
+            message,
+        })
 }
 
 /// Assemble, gate, and fill in the satisfying count.
@@ -104,10 +177,7 @@ pub fn verify(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejecti
     // dropped, on this document and on the diagnosis document alike, and the
     // drop runs before the gate reads the body.
     let body = assemble_kept(Kind::Template, spec, arguments)?;
-    let gate_spec = GateSpec {
-        answer_kind: spec.answer_kind,
-        exemplars: &spec.exemplars,
-    };
+    let gate_spec = template_gate_spec(spec)?;
     let (doc, verified) = gate_body(&body, &gate_spec)?;
     let filled = with_space_size(&doc, &verified);
     to_body(&filled).map_err(unwritable)
@@ -144,11 +214,13 @@ fn verify_instruction<T>(
     arguments: &Value,
     instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
+    let policy = finite_policy(spec)?;
     let body = instruction_body(arguments)?;
     let gate_spec = InstructionSpec {
         exemplars: &spec.exemplars,
         instance_answers: instance_answers.to_vec(),
     };
+    let _ = policy;
     write(&gate(&body, &gate_spec)?).map_err(unwritable)
 }
 
@@ -163,13 +235,13 @@ pub fn verify_teach(
     arguments: &Value,
     instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
-    verify_instruction(
-        gate_teach,
-        serde_json::to_string,
-        spec,
-        arguments,
-        instance_answers,
-    )
+    let policy = finite_policy(spec)?;
+    let body = instruction_body(arguments)?;
+    let gate_spec = InstructionSpec {
+        exemplars: &spec.exemplars,
+        instance_answers: instance_answers.to_vec(),
+    };
+    serde_json::to_string(&gate_teach_with_policy(&body, &gate_spec, policy)?).map_err(unwritable)
 }
 
 /// Gate one hint ladder, and write the body the row stores (L5, unit R6).
@@ -244,6 +316,7 @@ pub fn verify_diagnosis(spec: &AuthoringSpec, arguments: &Value) -> Result<Strin
     let gate_spec = GateSpec {
         answer_kind: spec.answer_kind,
         exemplars: &spec.exemplars,
+        finite: None,
     };
     let (doc, dropped) = gate_diagnosis_body(&body, &gate_spec, &authoring_vocabulary())?;
     report_dropped(spec, Kind::Diagnosis, &dropped);
@@ -267,6 +340,7 @@ pub fn verify_kind(
     arguments: &Value,
     instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
+    preflight(kind, spec)?;
     // Trap T1, on EVERY kind and before EVERY gate. A model that writes one
     // backslash emits valid JSON whose decoded value is `$<TAB>imes$`; no gate
     // reads a control character, so the mangled text reached `content_store` on
@@ -301,6 +375,7 @@ mod tests {
             difficulty_target: None,
             constraints: None,
             exemplars: Vec::new(),
+            finite: None,
         }
     }
 

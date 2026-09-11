@@ -99,6 +99,10 @@ const DOC: ReviewDocument = {
   ...item({ digest: 'd2', authoring_attempts: 4, authoring_cost_usd: '0.0300' }),
   approved_at: null,
   review_reason: null,
+  curriculum_digest: 'curriculum-v1',
+  approved_curriculum_digest: null,
+  review_engine_digest: 'engine-v1',
+  approved_review_engine_digest: null,
   body: { statement: 'Solve $5x = 20$ for $x$.', answer: '4' },
   gate: {
     kp_id: 'algebra:linear',

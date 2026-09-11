@@ -5,7 +5,7 @@
 use cadus_store::test_support::TestDb;
 use uuid::Uuid;
 
-/// The 15 tables that carry a tenant policy (`docs/SCHEMA.md`, C3).
+/// The 16 tables that carry a tenant policy (`docs/SCHEMA.md`, C3).
 ///
 /// `diagnosis_jobs` and `email_outbox` joined the list with round-3 finding #15.
 /// The worker reads both as `cadus_admin`, which holds BYPASSRLS, so the old
@@ -19,7 +19,7 @@ use uuid::Uuid;
 ///
 /// The order is the `C` collation order of `pg_class.relname`, because the
 /// catalog queries below order by that column.
-pub const RLS_TABLES: [&str; 15] = [
+pub const RLS_TABLES: [&str; 16] = [
     "anki_cards_created",
     "anki_queue",
     "auth_sessions",
@@ -28,6 +28,7 @@ pub const RLS_TABLES: [&str; 15] = [
     "diagnosis_jobs",
     "email_outbox",
     "events",
+    "exposure_history_progress",
     "learner_models",
     "oauth_accounts",
     "profiles",
@@ -43,7 +44,7 @@ pub const EXEMPT_TABLES: [&str; 1] = ["model_call_log"];
 /// The union of the two lists above: every `public` table with a `user_id`
 /// column. The literal union pins that no table sits outside both buckets
 /// (finding #23).
-pub const ALL_USER_ID_TABLES: [&str; 16] = [
+pub const ALL_USER_ID_TABLES: [&str; 17] = [
     "anki_cards_created",
     "anki_queue",
     "auth_sessions",
@@ -52,6 +53,7 @@ pub const ALL_USER_ID_TABLES: [&str; 16] = [
     "diagnosis_jobs",
     "email_outbox",
     "events",
+    "exposure_history_progress",
     "learner_models",
     "model_call_log",
     "oauth_accounts",
@@ -63,7 +65,7 @@ pub const ALL_USER_ID_TABLES: [&str; 16] = [
 ];
 
 /// The literal text of the `tenant_isolation` predicate, as Postgres prints it
-/// from the catalog. Both `USING` and `WITH CHECK` carry this text on all 15
+/// from the catalog. Both `USING` and `WITH CHECK` carry this text on all 16
 /// policies. The literal pins the `nullif` guard and the `true` missing-ok flag,
 /// so an edit of `migrations/0006_grants_rls.sql` cannot pass in silence (C3).
 pub const POLICY_PREDICATE: &str =
@@ -112,7 +114,7 @@ pub const APP_SEQUENCE_PRIVILEGES: [(&str, [bool; 3]); 1] = [
 /// writes five of its columns.
 /// `app_role_privilege_matrix_is_the_literal_table` asserts the column grants
 /// separately.
-pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 20] = [
+pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 23] = [
     // #8: the runtime role holds nothing on the migration ledger.
     ("_sqlx_migrations", [false, false, false, false, false]),
     ("anki_cards_created", [true, true, true, true, false]),
@@ -127,6 +129,18 @@ pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 20] = [
     ("email_outbox", [true, true, true, true, false]),
     // C2: events is append-only for the runtime role.
     ("events", [true, true, false, false, false]),
+    (
+        "exposure_history_progress",
+        [true, true, false, false, false],
+    ),
+    (
+        "finite_exposure_aliases",
+        [true, false, false, false, false],
+    ),
+    (
+        "finite_exposure_contexts",
+        [true, false, false, false, false],
+    ),
     ("learner_models", [true, true, true, true, false]),
     // #5: only the worker spends tokens, and the worker is cadus_admin.
     ("model_call_log", [false, false, false, false, false]),
@@ -159,7 +173,7 @@ pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 20] = [
 ///
 /// The list holds no function of an extension.
 /// `public_functions_are_the_literal_list` pins those separately.
-pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 8] = [
+pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 10] = [
     // #1: the session cookie, read before the tenant bind.
     (
         "auth_session_by_token_hash",
@@ -196,6 +210,9 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 8] = [
         true,
         false,
     ),
+    // Instruction context helpers preserve the caller's table privileges.
+    ("cadus_template_bank", false, "", true, true, false),
+    ("cadus_template_context", false, "", true, true, false),
     // M5 U1, migration 0007: the worker-liveness read of `/api/ready`
     // (D-M5-6). `diagnosis_jobs` carries a FORCEd tenant policy and the
     // readiness probe runs unbound, so a plain SELECT reads zero rows on every

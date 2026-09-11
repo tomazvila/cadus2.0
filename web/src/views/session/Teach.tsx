@@ -30,7 +30,7 @@ export function Teach({ task, instruction, onContinue }: TeachProps) {
     <>
       <div className="task-header">
         <div className="task-meta">
-          <Chip className="chip-lesson">lesson</Chip>
+          <Chip className="chip-lesson">{task.task_type === 'multi-step' ? 'application preparation' : 'lesson'}</Chip>
           <span className="topic-name">{topic?.name || topic?.id || 'Lesson'}</span>
           {topic?.module ? <span className="topic-module">{topic.module}</span> : null}
         </div>

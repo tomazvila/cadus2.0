@@ -28,17 +28,31 @@ topics:
             solution_sketch: 'The term is $-5y$; the sign belongs to the coefficient.'
           - problem: 'What is the constant term of $2x^2 + 3x - 8$?'
             answer: "-8"
+            solution_sketch: 'The constant term has no variable factor: $-8$.'
+          - problem: 'How many terms does $5x - 3y + 8$ have?'
+            answer: "3"
+            solution_sketch: 'Terms are separated by $+$ and $-$: $5x$, $-3y$, $8$.'
         constraints: "two to four terms; integer coefficients from -9 to 9"
       - id: kp2
         name: "Identify like terms"
         key_prerequisites: [order-of-operations]
         exemplars:
-          - problem: 'In $5x + 3y - 2x + 7$, one other term is a like term of $5x$. Which term is it?'
+          - problem: "In $5x + 3y - 2x + 7$, one other term is a like term of $5x$. Which term is it?"
             answer: "-2x"
-            solution_sketch: 'Like terms have the same variable part; $5x$ and $-2x$ both have $x$.'
-          - problem: 'Are $4a^2$ and $4a$ like terms? Answer yes or no.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Like terms have the same variable part; $5x$ and $-2x$ both have $x$."
+          - problem: "Are $4a^2$ and $4a$ like terms? Answer yes or no."
             answer: "no"
-            solution_sketch: 'The variable parts $a^2$ and $a$ differ.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "The variable parts $a^2$ and $a$ differ."
+          - problem: "In $2xy + 5x + 3xy - 1$, collect the terms whose variable part is $xy$. Give their sum."
+            answer: "5xy"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matching terms are $2xy$ and $3xy$; adding their coefficients gives $(2+3)xy=5xy$."
+          - problem: "A term must be like $-4x^2$. Choose $7x$, $7x^2$, or $7y^2$."
+            answer: "7x^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The variable and its exponent must both match: the required variable part is $x^2$."
         constraints: "at most two variables; exponents <= 2"
     diagnostic_exemplar:
       problem: 'In $6a - 4b + 2 - 9a$, which term is a like term of $6a$?'
@@ -75,18 +89,34 @@ topics:
             solution_sketch: '$3(4) + 5 = 12 + 5 = 17$.'
           - problem: 'Evaluate $2a - 7$ when $a = 10$.'
             answer: "13"
+            solution_sketch: '$2(10) - 7 = 13$.'
           - problem: 'Evaluate $10 - 2m$ when $m = 3$.'
             answer: "4"
+            solution_sketch: '$10 - 2(3) = 4$.'
+          - problem: 'Evaluate $4x - 5$ when $x = 6$.'
+            answer: "19"
+            solution_sketch: '$4(6) - 5 = 19$.'
         constraints: "one variable; positive integer inputs; coefficients <= 9"
       - id: kp2
         name: "Two variables with whole-number inputs"
         key_prerequisites: [order-of-operations, multiplication-tables]
         exemplars:
-          - problem: 'Evaluate $2ab$ when $a = 5$ and $b = 3$.'
+          - problem: "Evaluate $2ab$ when $a = 5$ and $b = 3$."
             answer: "30"
-            solution_sketch: '$2 \times 5 \times 3 = 30$.'
-          - problem: 'Evaluate $x + 3y$ when $x = 2$ and $y = 4$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2 \\times 5 \\times 3 = 30$."
+          - problem: "Evaluate $x + 3y$ when $x = 2$ and $y = 4$."
             answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2+3(4)=2+12=14$."
+          - problem: "A rectangle has width $a=4$ and length $b=7$. Evaluate $2(a+b)$."
+            answer: "22"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Add inside the parentheses first: $2(4+7)=2(11)=22$."
+          - problem: "For $p=9$ and $q=3$, find the value of $(p-q)/q$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The numerator is $9-3=6$; dividing by $q$ gives $6/3=2$."
         constraints: "two variables; positive integer inputs <= 10"
     diagnostic_exemplar:
       problem: 'Evaluate $2x + 3y$ when $x = 4$ and $y = 5$.'
@@ -119,34 +149,64 @@ topics:
         name: "Expressions with exponents"
         key_prerequisites: [substituting-values, integer-exponents-intro]
         exemplars:
-          - problem: 'Evaluate $x^2 + y$ when $x = 3$ and $y = 4$.'
+          - problem: "Evaluate $x^2 + y$ when $x = 3$ and $y = 4$."
             answer: "13"
-            solution_sketch: '$3^2 + 4 = 9 + 4 = 13$.'
-          - problem: 'Evaluate $2a^2$ when $a = 3$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3^2 + 4 = 9 + 4 = 13$."
+          - problem: "Evaluate $2a^2$ when $a = 3$."
             answer: "18"
-            solution_sketch: 'Exponent first: $2 \times 9 = 18$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Exponent first: $2 \\times 9 = 18$."
+          - problem: "Evaluate $(a+b)^2$ for $a=2$ and $b=5$."
+            answer: "49"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The grouped base is $2+5=7$; its square is $7^2=49$."
+          - problem: "A square has side $s=6$. Evaluate $s^2-4s$, the numerical difference between its area and perimeter."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The area value is $6^2=36$ and the perimeter value is $4(6)=24$; $36-24=12$."
         constraints: "exponents <= 2; positive inputs"
       - id: kp2
         name: "Negative inputs with order of operations"
         key_prerequisites: [integer-addition-subtraction, integer-multiplication-division]
         exemplars:
-          - problem: 'Evaluate $x^2 - 3x$ when $x = -2$.'
+          - problem: "Evaluate $x^2 - 3x$ when $x = -2$."
             answer: "10"
-            solution_sketch: '$(-2)^2 - 3(-2) = 4 + 6 = 10$.'
-          - problem: 'Evaluate $\frac{a - b}{2}$ when $a = -3$ and $b = 9$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$(-2)^2 - 3(-2) = 4 + 6 = 10$."
+          - problem: "Evaluate $\\frac{a - b}{2}$ when $a = -3$ and $b = 9$."
             answer: "-6"
-            solution_sketch: '$\frac{-3 - 9}{2} = -\frac{12}{2} = -6$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$\\frac{-3 - 9}{2} = -\\frac{12}{2} = -6$."
+          - problem: "For $x=-4$, evaluate $(-x)^2$."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Negating the input gives $-(-4)=4$; then $4^2=16$."
+          - problem: "For $a=-3$, evaluate $-a^2$."
+            answer: "-9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The exponent applies to $a$ before the leading minus: $-((-3)^2)=-9$."
         constraints: "inputs in -9..9; watch sign of squared negatives"
       - id: kp3
         name: "Multi-term expressions with negatives and exponents"
         key_prerequisites: [substituting-values, integer-exponents-intro]
         exemplars:
-          - problem: 'Evaluate $-x^2 + 5x$ when $x = -1$.'
-            answer: "-6"
-            solution_sketch: '$-(-1)^2 + 5(-1) = -1 - 5 = -6$.'
-          - problem: 'Evaluate $2x^2 - x + 1$ when $x = -3$.'
+          - problem: "Evaluate $-x^2+5x+2$ for $x=-1$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$-(-1)^2+5(-1)+2=-1-5+2=-4$."
+          - problem: "Evaluate $2x^2-x+1$ for $x=-3$."
             answer: "22"
-            solution_sketch: '$2(9) - (-3) + 1 = 18 + 3 + 1 = 22$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2(-3)^2-(-3)+1=18+3+1=22$."
+          - problem: "A learner evaluated $(-x)^2+2x-3$ at $x=-2$ as $-11$. Find the correct value."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The grouped base is $-(-2)=2$, so its square is $4$. The three terms give $4-4-3=-3$."
+          - problem: "For $a=-2$ and $b=3$, evaluate $a^2-ab-b^2$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$(-2)^2-(-2)(3)-3^2=4+6-9=1$."
         constraints: "three terms; inputs in -9..9; distinguish -x^2 from (-x)^2"
     diagnostic_exemplar:
       problem: 'Evaluate $3x^2 - 2x$ when $x = -2$.'
@@ -177,8 +237,16 @@ topics:
         exemplars:
           - problem: 'Write an expression: $7$ more than a number $n$.'
             answer: "n + 7"
+            solution_sketch: '"$7$ more than" adds: $n + 7$.'
           - problem: 'Write an expression: the difference of a number $x$ and $4$.'
             answer: "x - 4"
+            solution_sketch: 'The difference subtracts in the stated order: $x - 4$.'
+          - problem: 'Write an expression: $9$ more than a number $m$.'
+            answer: "m + 9"
+            solution_sketch: '"$9$ more than" adds: $m + 9$.'
+          - problem: 'Write an expression: the difference of a number $y$ and $6$.'
+            answer: "y - 6"
+            solution_sketch: 'The difference subtracts in the stated order: $y - 6$.'
         constraints: "one operation; single variable"
       - id: kp2
         name: "Product and quotient phrases"
@@ -186,8 +254,16 @@ topics:
         exemplars:
           - problem: 'Write an expression: the product of $6$ and $w$.'
             answer: "6w"
+            solution_sketch: 'Product means multiply: $6w$.'
           - problem: 'Write an expression: the quotient of $y$ and $5$.'
             answer: "y/5"
+            solution_sketch: 'Quotient means divide: $y/5$.'
+          - problem: 'Write an expression: the product of $8$ and $v$.'
+            answer: "8v"
+            solution_sketch: 'Product means multiply: $8v$.'
+          - problem: 'Write an expression: the quotient of $z$ and $9$.'
+            answer: "z/9"
+            solution_sketch: 'Quotient means divide: $z/9$.'
         constraints: "one operation; single variable"
       - id: kp3
         name: "Two-operation phrases"
@@ -198,6 +274,13 @@ topics:
             solution_sketch: '"$3$ less than" reverses the order: start with $2n$, subtract $3$.'
           - problem: 'Write an expression: $5$ more than the product of $4$ and $t$.'
             answer: "4t + 5"
+            solution_sketch: 'The product $4t$ comes first, then add $5$.'
+          - problem: 'Write an expression: $5$ less than three times a number $m$.'
+            answer: "3m - 5"
+            solution_sketch: '"$5$ less than" reverses the order: start with $3m$, subtract $5$.'
+          - problem: 'Write an expression: $7$ more than the product of $6$ and $w$.'
+            answer: "6w + 7"
+            solution_sketch: 'The product $6w$ comes first, then add $7$.'
         constraints: "two operations; watch order-reversing phrases (less than, fewer than)"
     diagnostic_exemplar:
       problem: 'Write an expression: $8$ less than three times a number $x$.'
@@ -227,12 +310,22 @@ topics:
         name: "Expression from a table of values"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: 'A table pairs $n = 1, 2, 3$ with $5, 8, 11$. Write an expression for the value at position $n$.'
+          - problem: "A table follows a linear rule and pairs $n = 1, 2, 3$ with $5, 8, 11$. Write the rule for the value at any position $n$."
             answer: "3n + 2"
-            solution_sketch: 'Values climb by $3$ each step, so $3n + c$; at $n = 1$, $3 + c = 5$ gives $c = 2$.'
-          - problem: 'A table pairs $n = 1, 2, 3$ with $6, 10, 14$. Write an expression for the value at position $n$.'
-            answer: "4n + 2"
-            solution_sketch: 'Common step $4$; $4(1) + 2 = 6$ checks.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Values climb by $3$ each step, so $3n + c$; at $n = 1$, $3 + c = 5$ gives $c = 2$."
+          - problem: "A table follows a linear rule and has $(n,v)=(2,7),(4,13),(6,19)$. Write $v$ as an expression in $n$."
+            answer: "3n+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A change of $2$ positions adds $6$, so each position adds $3$. At the first entry, $7-3(2)=1$; the rule is $3n+1$."
+          - problem: "A table starts with $(n,v)=(0,4)$ and each increase of $1$ in $n$ adds $5$ to $v$. Write the rule for $v$."
+            answer: "5n+4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Each step contributes $5n$ from position zero, whose value is $4$. At position zero, the variable contribution vanishes, leaving the required first value $4$."
+          - problem: "A table follows a linear rule, lists $n:1,2,3$ and $v:9,11,13$, and a learner proposes $2n+9$. Correct the rule for every position."
+            answer: "2n+7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The step is $2$, but position $1$ already includes one step. The constant is $9-2=7$, so the first value is $2(1)+7=9$."
         constraints: "linear patterns with positive integer step; check against the first entry"
       - id: kp2
         name: "Expression from a real-world rule"
@@ -240,9 +333,16 @@ topics:
         exemplars:
           - problem: 'A gym charges €20 to join plus €8 per month. Write an expression for the total cost after $m$ months.'
             answer: "8m + 20"
+            solution_sketch: 'Fixed €20 plus €8 per month: $8m + 20$.'
           - problem: 'A toothpick pattern uses $3$ toothpicks for $1$ triangle, $5$ for $2$, $7$ for $3$, adding $2$ per triangle. Write an expression for the toothpicks in $n$ triangles.'
             answer: "2n + 1"
-            solution_sketch: 'Step $2$ per square; $2(1) + 1 = 3$ checks.'
+            solution_sketch: 'Each additional triangle adds $2$ toothpicks. Starting from $3$ for one triangle gives $3+2(n-1)=2n+1$.'
+          - problem: 'A parking garage charges €5 to enter plus €3 per hour. Write an expression for the total cost after $h$ hours.'
+            answer: "3h + 5"
+            solution_sketch: 'The rate $3$ per hour is the coefficient; the flat $5$ is added once.'
+          - problem: 'A fence post pattern uses $4$ posts for $1$ section, $7$ for $2$, $10$ for $3$, adding $3$ per section. Write an expression for the posts in $n$ sections.'
+            answer: "3n + 1"
+            solution_sketch: 'Step $3$ per section; $3(1) + 1 = 4$ checks.'
         constraints: "start value plus constant rate; single variable"
     diagnostic_exemplar:
       problem: 'A table pairs $n = 1, 2, 3$ with $7$, $11$, $15$. Write an expression for the value at position $n$.'
@@ -268,26 +368,47 @@ topics:
         weight: 0.3
     knowledge_points:
       - id: kp1
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":"A"},{"x":"7","y":"0","label":"B"},{"x":"7","y":"4","label":"C"},{"x":"0","y":"4","label":"D"}],"right_angles":[0,1,2,3]},"caption":"Reference example: A reference rectangle has width 7 and height 4. Coordinates give the side lengths; this diagram is an independent example."}]
         name: "Geometry formulas"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: 'Use $A = lw$ to find the area when $l = 8$ and $w = 5$.'
+          - problem: "Use $A = lw$ to find the area when $l = 8$ and $w = 5$."
             answer: "40"
-          - problem: 'Use $P = 2l + 2w$ to find the perimeter when $l = 7$ and $w = 3$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$A=lw=8(5)=40$."
+          - problem: "Use $P = 2l + 2w$ to find the perimeter when $l = 7$ and $w = 3$."
             answer: "20"
-            solution_sketch: '$2(7) + 2(3) = 14 + 6 = 20$.'
-          - problem: 'Use $A = \frac{1}{2}bh$ to find the area when $b = 10$ and $h = 7$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2(7) + 2(3) = 14 + 6 = 20$."
+          - problem: "Use $A = \\frac{1}{2}bh$ to find the area when $b = 10$ and $h = 7$."
             answer: "35"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$A=bh/2=10(7)/2=35$."
+          - problem: "Use $A=(a+b)h/2$ for a trapezoid with parallel sides $a=5$, $b=9$ and height $h=4$."
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Average the parallel sides: $(5+9)/2=7$. Multiplying by the height gives $7(4)=28$."
         constraints: "whole-number inputs; area/perimeter formulas"
       - id: kp2
         name: "Rate and science formulas"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: 'Use $d = rt$ to find the distance when $r = 55$ and $t = 3$.'
+          - problem: "Use $d = rt$ to find the distance when $r = 55$ and $t = 3$."
             answer: "165"
-          - problem: 'Use $E = \frac{1}{2}mv^2$ to find the kinetic energy in joules when $m = 6$ and $v = 4$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$d=rt=55(3)=165$."
+          - problem: "Use $E = \\frac{1}{2}mv^2$ to find the kinetic energy in joules when $m = 6$ and $v = 4$."
             answer: "48"
-            solution_sketch: '$\frac{1}{2}(6) = 3$; $3 \times 4^2 = 3 \times 16 = 48$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$\\frac{1}{2}(6) = 3$; $3 \\times 4^2 = 3 \\times 16 = 48$."
+          - problem: "Use $d=at^2/2$ with $a=4$ and $t=3$ to find distance from rest."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Square the time first: $3^2=9$. Then $d=4(9)/2=18$."
+          - problem: "Use $F=9C/5+32$ with $C=10$ to calculate the temperature in degrees Fahrenheit."
+            answer: "50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The scaled temperature is $9(10)/5=18$; adding the offset gives $18+32=50$."
         constraints: "inputs chosen so fraction coefficients produce whole numbers"
     diagnostic_exemplar:
       problem: 'Use $E = \frac{1}{2}mv^2$ to find the kinetic energy in joules when $m = 4$ and $v = 5$.'
@@ -319,30 +440,64 @@ topics:
         name: "Combine like terms with positive coefficients"
         key_prerequisites: [parts-of-an-expression]
         exemplars:
-          - problem: 'Simplify $3x + 5x$.'
+          - problem: "Simplify $3x + 5x$."
             answer: "8x"
-          - problem: 'Simplify $7a + 2a + a$.'
-            answer: "10a"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3x+5x=(3+5)x=8x$."
+          - problem: "Simplify $7a+2a+4a$."
+            answer: "13a"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$7a+2a+4a=(7+2+4)a=13a$."
+          - problem: "A triangle has side lengths $2x$, $3x$, and $4x$. Express its perimeter as one term."
+            answer: "9x"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The perimeter is $2x+3x+4x=(2+3+4)x=9x$."
+          - problem: "A learner claims $4y+6y=10y^2$. Correct the simplified expression."
+            answer: "10y"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Like terms keep their common variable part: $(4+6)y=10y$, with no change to the exponent."
         constraints: "single variable; positive coefficients <= 9"
       - id: kp2
         name: "Negative coefficients and subtraction"
         key_prerequisites: [integer-addition-subtraction]
         exemplars:
-          - problem: 'Simplify $8y - 3y$.'
+          - problem: "Simplify $8y - 3y$."
             answer: "5y"
-          - problem: 'Simplify $4x - 9x$.'
-            answer: "-5x"
-            solution_sketch: '$4 - 9 = -5$, so $-5x$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$8y-3y=(8-3)y=5y$."
+          - problem: "Simplify $-3x-5x+2x$."
+            answer: "-6x"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The signed coefficients sum to $-3-5+2=-6$."
+          - problem: "A balance changes by $-7x$, then $+2x$, then $-x$. Write the net change as one term."
+            answer: "-6x"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Add the three signed changes: $(-7+2-1)x=-6x$."
+          - problem: "A learner claims $2x-8x=6x$. Correct the simplified expression."
+            answer: "-6x"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtracting the coefficients gives $2-8=-6$, so the remaining term is $-6x$."
         constraints: "results may be negative; single variable"
       - id: kp3
         name: "Multiple variable types and constants"
         key_prerequisites: [integer-addition-subtraction, parts-of-an-expression]
         exemplars:
-          - problem: 'Simplify $3x + 2 + 5x - 7$.'
-            answer: "8x - 5"
-            solution_sketch: '$(3x + 5x) + (2 - 7) = 8x - 5$.'
-          - problem: 'Simplify $6a + 4b - 2a + b$.'
-            answer: "4a + 5b"
+          - problem: "Simplify $3x+2y+4+5x-y-7$."
+            answer: "8x+y-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Group by variable part: $(3+5)x+(2-1)y+(4-7)=8x+y-3$."
+          - problem: "Combine the three charges $2x+3y+1$, $x-y+4$, and $3x+2y-2$."
+            answer: "6x+4y+3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coefficients of $x$ sum to $2+1+3=6$, those of $y$ to $3-1+2=4$, and constants to $1+4-2=3$."
+          - problem: "Simplify $5x^2+3x-2+x^2-7x+6$."
+            answer: "6x^2-4x+4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The $x^2$, $x$, and constant groups give $(5+1)x^2+(3-7)x+(-2+6)=6x^2-4x+4$."
+          - problem: "A learner combined $4x-2y+3-6x+5y-1$ into $x+2$. Correct the expression."
+            answer: "-2x+3y+2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Different variable parts stay separate. The three sums are $(4-6)x$, $(-2+5)y$, and $3-1$."
         constraints: "two variable types plus constants; keep unlike terms separate"
     diagnostic_exemplar:
       problem: 'Simplify $5x + 3 - 2x + 8$.'
@@ -374,32 +529,64 @@ topics:
         name: "Distribute a positive factor over a sum"
         key_prerequisites: [integer-multiplication-division]
         exemplars:
-          - problem: 'Expand $3(x + 4)$.'
+          - problem: "Expand $3(x + 4)$."
             answer: "3x + 12"
-          - problem: 'Expand $5(2a + 1)$.'
-            answer: "10a + 5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3(x+4)=3x+3(4)=3x+12$."
+          - problem: "A rectangle has height $4$ and width $2x+3$. Expand its area expression."
+            answer: "8x+12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply the height by both parts of the width: $4(2x+3)=4(2x)+4(3)=8x+12$."
+          - problem: "A learner writes $5(x+2)=5x+2$. Expand the left side correctly."
+            answer: "5x+10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The outer factor multiplies both summands: $5x+5(2)=5x+10$."
+          - problem: "Expand $(x+6)2$."
+            answer: "2x+12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Commutativity gives $2(x+6)$; distributing gives $2x+2(6)=2x+12$."
         constraints: "positive factor; two-term binomial"
       - id: kp2
         name: "Negative multipliers and subtraction"
         key_prerequisites: [integer-multiplication-division]
         exemplars:
-          - problem: 'Expand $-2(x - 5)$.'
+          - problem: "Expand $-2(x - 5)$."
             answer: "-2x + 10"
-            solution_sketch: '$-2 \cdot x = -2x$; $-2 \cdot (-5) = +10$.'
-          - problem: 'Expand $-(3y + 7)$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$-2 \\cdot x = -2x$; $-2 \\cdot (-5) = +10$."
+          - problem: "Expand $-(3y + 7)$."
             answer: "-3y - 7"
-            solution_sketch: 'Distributing $-1$: $-3y - 7$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$-(3y+7)=(-1)(3y)+(-1)(7)=-3y-7$."
+          - problem: "Expand $-3(2x+5)$."
+            answer: "-6x-15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both products are negative: $(-3)(2x)+(-3)(5)=-6x-15$."
+          - problem: "Correct the sign error in $-(4-x)=-4-x$ by expanding the left side."
+            answer: "x-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiplying $-x$ by $-1$ gives $+x$: $(-1)(4)+(-1)(-x)=-4+x$."
         constraints: "negative factor or leading minus; watch both signs"
       - id: kp3
         name: "Distribute then combine like terms"
         key_prerequisites: [combining-like-terms]
         exemplars:
-          - problem: 'Expand and simplify $2(x + 3) + 4x$.'
+          - problem: "Expand and simplify $2(x + 3) + 4x$."
             answer: "6x + 6"
-            solution_sketch: '$2x + 6 + 4x = 6x + 6$.'
-          - problem: 'Expand and simplify $3(a - 2) - (a + 1)$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2x + 6 + 4x = 6x + 6$."
+          - problem: "Expand and simplify $3(a - 2) - (a + 1)$."
             answer: "2a - 7"
-            solution_sketch: '$3a - 6 - a - 1 = 2a - 7$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3a - 6 - a - 1 = 2a - 7$."
+          - problem: "Subtract the expression $2(x-5)$ from $3x+1$, then simplify."
+            answer: "x+11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$(3x+1)-2(x-5)=3x+1-2x+10=x+11$."
+          - problem: "A rectangle has length $2x+1$ and width $x+3$. Expand and simplify $2(2x+1)+2(x+3)$."
+            answer: "6x+8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The two products give $4x+2+2x+6$; collecting like terms gives $6x+8$."
         constraints: "combine after distributing; single variable"
     diagnostic_exemplar:
       problem: 'Expand and simplify $5 - 3(x - 2)$.'
@@ -429,21 +616,43 @@ topics:
         name: "Factor out the GCF"
         key_prerequisites: [distributive-property, gcf-lcm]
         exemplars:
-          - problem: 'Factor $6x + 9$.'
-            answer: "3(2x + 3)"
-            solution_sketch: 'GCF of $6$ and $9$ is $3$: $6x + 9 = 3(2x + 3)$.'
-          - problem: 'Factor $10a - 15$.'
-            answer: "5(2a - 3)"
+          - problem: "Factor $6x+9$ by its GCF and check by expanding."
+            answer: "3(2x+3)"
+            answer_contract: {"kind": "required_form", "form": "factored_linear"}
+            solution_sketch: "The integer GCF is $3$; divide both terms by it to get $2x$ and $3$. Expansion multiplies back to $6x+9$."
+          - problem: "A rectangle has area $8x+12$ and integer height equal to the GCF of the two coefficients. Factor its area and check."
+            answer: "4(2x+3)"
+            answer_contract: {"kind": "required_form", "form": "factored_linear"}
+            solution_sketch: "The GCF of $8$ and $12$ is $4$, giving width $2x+3$. Multiplying height by width returns $8x+12$."
+          - problem: "A learner factors $10x+15$ using $2$. Factor using the greatest common factor and verify."
+            answer: "5(2x+3)"
+            answer_contract: {"kind": "required_form", "form": "factored_linear"}
+            solution_sketch: "The coefficients share greatest integer factor $5$, and the quotients are $2x$ and $3$. The products $5(2x)$ and $5(3)$ return the original terms."
+          - problem: "Factor the difference $14x-21$ by its GCF and expand to check."
+            answer: "7(2x-3)"
+            answer_contract: {"kind": "required_form", "form": "factored_linear"}
+            solution_sketch: "The GCF is $7$. Dividing gives $2x-3$, and distribution gives $14x-21$, including the negative constant."
         constraints: "two terms; GCF between 2 and 9; verify by expanding"
       - id: kp2
         name: "Factor with negatives and two variables"
         key_prerequisites: [distributive-property, gcf-lcm]
         exemplars:
-          - problem: 'Factor $-4x - 8$ by pulling out $-4$.'
-            answer: "-4(x + 2)"
-            solution_sketch: '$-4 \cdot x = -4x$ and $-4 \cdot 2 = -8$.'
-          - problem: 'Factor $12x + 18y$.'
-            answer: "6(2x + 3y)"
+          - problem: "Factor $-4x-8$ by extracting $-4$, then check."
+            answer: "-4(x+2)"
+            answer_contract: {"kind": "required_form", "form": "factored_linear"}
+            solution_sketch: "The quotients are $x$ and $2$. Expanding multiplies each by $-4$, restoring $-4x-8$."
+          - problem: "Factor $12x+18y$ by the GCF and check both terms."
+            answer: "6(2x+3y)"
+            answer_contract: {"kind": "required_form", "form": "factored_linear"}
+            solution_sketch: "The integer GCF is $6$; division yields $2x$ and $3y$. The products recover $12x$ and $18y$."
+          - problem: "A signed balance is $-6x+9y$. Factor out $-3$ and check the signs."
+            answer: "-3(2x-3y)"
+            answer_contract: {"kind": "required_form", "form": "factored_linear"}
+            solution_sketch: "The quotients are $2x$ and $-3y$. A negative times a negative restores the positive term $9y$."
+          - problem: "A learner writes $-8x-12y=-4(2x-3y)$. Correct the factorization and expand to check."
+            answer: "-4(2x+3y)"
+            answer_contract: {"kind": "required_form", "form": "factored_linear"}
+            solution_sketch: "Both original terms are negative; dividing each by $-4$ gives positive quotients $2x$ and $3y$. Distribution therefore restores both negative terms."
         constraints: "GCF may be negative; expand to check both signs"
     diagnostic_exemplar:
       problem: 'Factor $9x + 15y$.'
@@ -475,23 +684,43 @@ topics:
         name: "Decide equivalence by simplifying"
         key_prerequisites: [distributive-property, combining-like-terms]
         exemplars:
-          - problem: 'Are $2(x + 3)$ and $2x + 6$ equivalent? Answer yes or no.'
+          - problem: "Are $2(x + 3)$ and $2x + 6$ equivalent? Answer yes or no."
             answer: "yes"
-            solution_sketch: 'Expanding $2(x + 3)$ gives exactly $2x + 6$.'
-          - problem: 'Are $3x + 4x$ and $7x^2$ equivalent? Answer yes or no.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Expanding $2(x + 3)$ gives exactly $2x + 6$."
+          - problem: "Are $3x + 4x$ and $7x^2$ equivalent? Answer yes or no."
             answer: "no"
-            solution_sketch: '$3x + 4x = 7x$, not $7x^2$.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "$3x + 4x = 7x$, not $7x^2$."
+          - problem: "Is $5x-2(x-3)$ equivalent to $3x+6$? Answer yes or no."
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "$5x-2x+6=3x+6$, so the expressions have identical coefficients."
+          - problem: "A square has perimeter $4x$. A learner proposes $x^2$ as an equivalent expression for every $x$. Is the claim valid? Answer yes or no."
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "At $x=2$, the perimeter is $4(2)=8$ while the proposed expression is $2^2=4$. One counterexample disproves equivalence."
         constraints: "one expression simplifies (or fails to) into the other; single variable"
       - id: kp2
         name: "Simplify to a standard equivalent form"
         key_prerequisites: [distributive-property, combining-like-terms]
         exemplars:
-          - problem: 'Write $4(2x - 1) + 3$ in the form $ax + b$.'
+          - problem: "Write $4(2x - 1) + 3$ in the form $ax + b$."
             answer: "8x - 1"
-            solution_sketch: '$8x - 4 + 3 = 8x - 1$.'
-          - problem: 'Write $5(x + 2) - 3(x - 1)$ in the form $ax + b$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$8x - 4 + 3 = 8x - 1$."
+          - problem: "Write $5(x + 2) - 3(x - 1)$ in the form $ax + b$."
             answer: "2x + 13"
-            solution_sketch: '$5x + 10 - 3x + 3 = 2x + 13$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$5x + 10 - 3x + 3 = 2x + 13$."
+          - problem: "A rectangle has sides $x+3$ and $2x-1$. Express its perimeter in the form $ax+b$."
+            answer: "6x+4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand $2(x+3)+2(2x-1)=2x+6+4x-2$, then combine to get $6x+4$."
+          - problem: "Correct the expansion and collection in $3(x-2)+x=3x-2$. Give the form $ax+b$."
+            answer: "4x-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Distributing gives $3x-6+x$. The $x$ coefficients add to $4$, while the constant remains $-6$."
         constraints: "distribute and combine; integer coefficients"
     diagnostic_exemplar:
       problem: 'Write $3(2x + 1) - 2(x - 4)$ in the form $ax + b$.'
@@ -525,24 +754,41 @@ topics:
         exemplars:
           - problem: 'Is $x = 4$ a solution of $3x - 5 = 7$? Answer yes or no.'
             answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$3(4) - 5 = 7$; both sides equal $7$.'
           - problem: 'Is $x = 3$ a solution of $x + 8 = 12$? Answer yes or no.'
             answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$3 + 8 = 11 \ne 12$.'
           - problem: 'Is $m = -2$ a solution of $2m + 9 = 5$? Answer yes or no.'
             answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$2(-2) + 9 = 5$.'
+          - problem: 'Is $t = -3$ a solution of $5t + 2 = -13$? Answer yes or no.'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$5(-3) + 2 = -13$.'
         constraints: "one- or two-step equations; integer candidates in -9..9"
       - id: kp2
         name: "Pick the solution from candidates"
         key_prerequisites: [substituting-values]
         exemplars:
-          - problem: 'Which of $x = 2$, $x = 3$, $x = 4$ solves $5x - 6 = 9$?'
+          - problem: "Which of $x = 2$, $x = 3$, $x = 4$ solves $5x - 6 = 9$?"
             answer: "3"
-            solution_sketch: '$5(3) - 6 = 9$.'
-          - problem: 'Which of $y = -1$, $y = 0$, $y = 1$ solves $4y + 3 = -1$?'
-            answer: "-1"
-            solution_sketch: '$4(-1) + 3 = -1$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$5(3) - 6 = 9$."
+          - problem: "Test $x=-2$, $x=0$, and $x=2$ in $x^2+x=6$. Which candidate works?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The left sides are respectively $2$, $0$, and $6$, from squaring each candidate and adding it. Only $x=2$ gives $6$."
+          - problem: "A machine maps $x$ to $3(x-1)$. Which input $1$, $2$, or $4$ produces $9$?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The three outputs are $0$, $3$, and $9$; only input $4$ works."
+          - problem: "Which of $-6$, $-3$, or $6$ solves $x/3=-2$?"
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Dividing the candidates by $3$ gives $-2$, $-1$, and $2$. The first matches the right side."
         constraints: "three candidates; exactly one works"
     diagnostic_exemplar:
       problem: 'Which of $x = -2$, $x = 1$, $x = 3$ solves $4x - 5 = -1$?'
@@ -572,23 +818,43 @@ topics:
         name: "Solve x + a = b"
         key_prerequisites: [integer-addition-subtraction]
         exemplars:
-          - problem: 'Solve $x + 7 = 12$.'
+          - problem: "Solve $x + 7 = 12$."
             answer: "5"
-            solution_sketch: 'Subtract $7$: $x = 5$.'
-          - problem: 'Solve $m + 15 = 8$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $7$: $x = 5$."
+          - problem: "A function table follows the rule output = input $+9$. The output is $4$ in one row. Find that row's input."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $x+9=4$ for the missing input. Subtract $9$: $x=-5$."
+          - problem: "Solve $x+(-6)=8$."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract the added number $-6$: $x=8-(-6)=14$."
+          - problem: "A learner solves $x+5=-2$ as $x=3$. Correct the solution."
             answer: "-7"
-            solution_sketch: 'Subtract $15$: $m = -7$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Undo addition by subtracting $5$ from both sides: $x=-2-5=-7$."
         constraints: "subtract to undo addition; integer solutions"
       - id: kp2
         name: "Solve x - a = b"
         key_prerequisites: [integer-addition-subtraction]
         exemplars:
-          - problem: 'Solve $x - 6 = 10$.'
+          - problem: "Solve $x - 6 = 10$."
             answer: "16"
-            solution_sketch: 'Add $6$: $x = 16$.'
-          - problem: 'Solve $y - 4 = -9$.'
-            answer: "-5"
-            solution_sketch: 'Add $4$: $y = -5$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Add $6$: $x = 16$."
+          - problem: "After removing $7$ units from an unknown quantity, $-3$ remain. Solve $x-7=-3$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Restore the removed $7$: $x=-3+7=4$."
+          - problem: "A point starts at coordinate $x$ and moves $4$ units right to $9$. Find its starting coordinate."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The movement gives $x-(-4)=9$. Add $-4$ to both sides: $x=5$."
+          - problem: "A learner solves $x-8=-5$ by subtracting $8$. Find the correct value of $x$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inverse of subtracting $8$ is adding it: $x=-5+8=3$."
         constraints: "add to undo subtraction; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $x + 9 = 2$.'
@@ -622,34 +888,64 @@ topics:
         name: "Solve by dividing"
         key_prerequisites: [integer-multiplication-division]
         exemplars:
-          - problem: 'Solve $3x = 21$.'
+          - problem: "Solve $3x = 21$."
             answer: "7"
-            solution_sketch: 'Divide by $3$: $x = 7$.'
-          - problem: 'Solve $5t = -35$.'
-            answer: "-7"
-            solution_sketch: 'Divide by $5$: $t = -7$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divide by $3$: $x = 7$."
+          - problem: "Seven equal packets contain $42$ beads altogether. Solve $7x=42$ for the beads per packet."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divide the total into seven equal groups: $x=42/7=6$."
+          - problem: "For the function $f(x)=-3x$, find the input whose output is $18$."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set $-3x=18$. Divide the output by the scale factor $-3$: $x=-6$."
+          - problem: "A learner claims $4x=20$ gives $x=16$. Find the correct solution."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The $4$ is a factor of $x$; dividing gives $x=20/4=5$."
         constraints: "exact integer solutions; coefficients <= 9"
       - id: kp2
         name: "Solve division forms by multiplying"
         key_prerequisites: [integer-multiplication-division]
         exemplars:
-          - problem: 'Solve $\frac{x}{5} = 4$.'
+          - problem: "Solve $\\frac{x}{5} = 4$."
             answer: "20"
-            solution_sketch: 'Multiply by $5$: $x = 20$.'
-          - problem: 'Solve $\frac{x}{-3} = 6$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $5$: $x = 20$."
+          - problem: "A circuit maps input $x$ to $x/(-3)$ by reversing and reducing its signal. Its output is $6$. Recover the input."
             answer: "-18"
-            solution_sketch: 'Multiply by $-3$: $x = -18$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply the quotient $6$ by its divisor $-3$: $x=6(-3)=-18$."
+          - problem: "A table uses the rule output = input $/8$. One row has output $2$. Find its missing input."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The row represents $x/8=2$. Multiply the output by $8$ to recover the input: $x=16$."
+          - problem: "Correct the solution $x=3$ offered for $x/4=12$."
+            answer: "48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiplication reverses division by $4$: $x=4(12)=48$."
         constraints: "divisors from -9 to 9; integer solutions"
       - id: kp3
         name: "Mixed one-step equations, negative coefficients"
         key_prerequisites: [integer-multiplication-division, addition-subtraction-equations]
         exemplars:
-          - problem: 'Solve $-4x = -24$.'
+          - problem: "Solve $-4x = -24$."
             answer: "6"
-            solution_sketch: 'Divide by $-4$: $x = 6$.'
-          - problem: 'Solve $x + 11 = 3$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divide by $-4$: $x = 6$."
+          - problem: "Solve $x + 11 = 3$."
             answer: "-8"
-            solution_sketch: 'Subtract $11$: $x = -8$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $11$: $x = -8$."
+          - problem: "Solve $x/(-5)=-3$."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by the negative divisor: $x=(-5)(-3)=15$."
+          - problem: "A temperature falls by $8$ degrees and reaches $-2$. Solve $x-8=-2$ for its starting value."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Undo the decrease by adding $8$: $x=-2+8=6$."
         constraints: "choose the correct inverse operation; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $-6x = 42$.'
@@ -683,23 +979,43 @@ topics:
         name: "Solve ax + b = c"
         key_prerequisites: [one-step-equations]
         exemplars:
-          - problem: 'Solve $2x + 3 = 11$.'
+          - problem: "Solve $2x + 3 = 11$."
             answer: "4"
-            solution_sketch: '$2x = 8$; $x = 4$.'
-          - problem: 'Solve $3x + 4 = -8$.'
-            answer: "-4"
-            solution_sketch: '$3x = -12$; $x = -4$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2x = 8$; $x = 4$."
+          - problem: "A function table uses $f(x)=4x-7$. Find the missing input in the row whose output is $9$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Add $7$ to $4x-7=9$: $4x=16$. Divide by $4$: $x=4$."
+          - problem: "A taxi fare is $3x+4$ euros and totals $25$ euros. Find $x$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract the fixed fee: $3x=25-4=21$. Divide by $3$: $x=7$."
+          - problem: "A learner divides only $2x$ by $2$ in $2x+5=17$. Solve correctly."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First subtract $5$ from both sides, giving $2x=12$; then divide both sides by $2$, giving $x=6$."
         constraints: "integer solutions; undo addition before multiplication"
       - id: kp2
         name: "Division form and negative coefficients"
         key_prerequisites: [integer-multiplication-division]
         exemplars:
-          - problem: 'Solve $\frac{x}{3} + 2 = 6$.'
+          - problem: "Solve $\\frac{x}{3} + 2 = 6$."
             answer: "12"
-            solution_sketch: '$\frac{x}{3} = 4$; $x = 12$.'
-          - problem: 'Solve $-2x + 5 = 13$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$\\frac{x}{3} = 4$; $x = 12$."
+          - problem: "Solve $-2x + 5 = 13$."
             answer: "-4"
-            solution_sketch: '$-2x = 8$; $x = -4$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$-2x = 8$; $x = -4$."
+          - problem: "A machine divides its input by $-4$, then subtracts $3$. Its output is $2$. Find the input."
+            answer: "-20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Undo subtraction first: $x/(-4)=5$. Multiply by $-4$: $x=-20$."
+          - problem: "Correct the claim that $7-3x=19$ has solution $4$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $7$ to get $-3x=12$; division by $-3$ gives $x=-4$."
         constraints: "integer solutions; watch sign when dividing by a negative"
     diagnostic_exemplar:
       problem: 'Solve $-3x + 7 = 19$.'
@@ -729,23 +1045,43 @@ topics:
         name: "Collect the variable on one side"
         key_prerequisites: [two-step-equations, combining-like-terms]
         exemplars:
-          - problem: 'Solve $5x + 3 = 2x + 18$.'
+          - problem: "Solve $5x + 3 = 2x + 18$."
             answer: "5"
-            solution_sketch: 'Subtract $2x$: $3x + 3 = 18$; $3x = 15$; $x = 5$.'
-          - problem: 'Solve $4x - 7 = x + 5$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $2x$: $3x + 3 = 18$; $3x = 15$; $x = 5$."
+          - problem: "The lines $y=4x-7$ and $y=x+5$ intersect at one point. Find its $x$-coordinate."
             answer: "4"
-            solution_sketch: '$3x = 12$; $x = 4$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "At the intersection the outputs agree: $4x-7=x+5$. Thus $3x=12$ and $x=4$."
+          - problem: "Two lengths are $2x+8$ and $5x-1$. They are equal. Find $x$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set $2x+8=5x-1$. Subtract $2x$ and add $1$: $9=3x$, so $x=3$."
+          - problem: "A learner cancels all variable terms in $6x+2=4x+10$. Find the solution."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtracting $4x$ leaves $2x+2=10$; subtract $2$ and divide by $2$ to get $x=4$."
         constraints: "variable on both sides; integer solutions"
       - id: kp2
         name: "Negative coefficients and constants on both sides"
         key_prerequisites: [two-step-equations, combining-like-terms]
         exemplars:
-          - problem: 'Solve $3x + 10 = 7x - 2$.'
-            answer: "3"
-            solution_sketch: 'Subtract $3x$: $10 = 4x - 2$; $12 = 4x$; $x = 3$.'
-          - problem: 'Solve $2 - 5x = 2x + 16$.'
+          - problem: "Solve $2 - 5x = 2x + 16$."
             answer: "-2"
-            solution_sketch: 'Add $5x$: $2 = 7x + 16$; $-14 = 7x$; $x = -2$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Add $5x$: $2 = 7x + 16$; $-14 = 7x$; $x = -2$."
+          - problem: "Find the $x$-coordinate where the graphs $y=-2x-9$ and $y=-5x+3$ meet."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Equal outputs give $-2x-9=-5x+3$. Add $5x$, then add $9$: $3x=12$, so $x=4$."
+          - problem: "Two signed changes $7-4x$ and $-x-8$ are equal. Find $x$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set $7-4x=-x-8$. Add $4x$: $7=3x-8$. Add $8$ and divide by $3$: $x=5$."
+          - problem: "Correct the sign error in solving $-6x+1=-2x-11$ as $x=-3$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Add $6x$ to both sides: $1=4x-11$. Thus $12=4x$ and $x=3$."
         constraints: "move the smaller variable term to avoid negative coefficients; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $5 - 2x = 3x - 10$.'
@@ -775,23 +1111,43 @@ topics:
         name: "Distribute, then solve the two-step equation"
         key_prerequisites: [distributive-property, two-step-equations]
         exemplars:
-          - problem: 'Solve $2(x + 3) = 16$.'
+          - problem: "Solve $2(x + 3) = 16$."
             answer: "5"
-            solution_sketch: '$2x + 6 = 16$; $2x = 10$; $x = 5$.'
-          - problem: 'Solve $3(2x - 1) = 15$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2x + 6 = 16$; $2x = 10$; $x = 5$."
+          - problem: "Three identical boxes each contain $2x-1$ counters, for $15$ counters total. Find $x$."
             answer: "3"
-            solution_sketch: '$6x - 3 = 15$; $6x = 18$; $x = 3$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3(2x-1)=15$ distributes to $6x-3=15$. Add $3$, then divide by $6$: $x=3$."
+          - problem: "A rectangle of height $4$ and width $x+2$ has area $28$. Find $x$ by distributing."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$4(x+2)=28$ expands to $4x+8=28$. Then $4x=20$, so $x=5$."
+          - problem: "A learner writes $5(x-2)=15$ as $5x-2=15$. Solve the original equation."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Distribute to both terms: $5x-10=15$; then $5x=25$ and $x=5$."
         constraints: "one set of parentheses; positive multiplier; integer solutions"
       - id: kp2
         name: "Negative multipliers and extra constant terms"
         key_prerequisites: [distributive-property, two-step-equations]
         exemplars:
-          - problem: 'Solve $-2(x - 4) = 10$.'
+          - problem: "Solve $-2(x - 4) = 10$."
             answer: "-1"
-            solution_sketch: '$-2x + 8 = 10$; $-2x = 2$; $x = -1$.'
-          - problem: 'Solve $4(x + 2) - 3 = 17$.'
-            answer: "3"
-            solution_sketch: '$4x + 8 - 3 = 17$; $4x = 12$; $x = 3$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$-2x + 8 = 10$; $-2x = 2$; $x = -1$."
+          - problem: "Solve $-3(2x+1)+5=14$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Distribute: $-6x-3+5=14$. Combine and subtract $2$: $-6x=12$; $x=-2$."
+          - problem: "A machine computes $7-2(x+4)$. Its output is $-9$. Find the input."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$7-2x-8=-9$ simplifies to $-2x-1=-9$. Thus $-2x=-8$ and $x=4$."
+          - problem: "Correct the expansion used to solve $-(3x-5)-2=12$ as $-3x-7=12$."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The leading minus changes both signs: $-3x+5-2=12$. Thus $-3x=9$, giving $x=-3$."
         constraints: "watch signs when distributing a negative; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $-3(x - 2) = 18$.'
@@ -823,34 +1179,64 @@ topics:
         name: "Combine like terms before solving"
         key_prerequisites: [combining-like-terms]
         exemplars:
-          - problem: 'Solve $3x + 2x + 4 = 24$.'
+          - problem: "Solve $3x + 2x + 4 = 24$."
             answer: "4"
-            solution_sketch: '$5x + 4 = 24$; $5x = 20$; $x = 4$.'
-          - problem: 'Solve $7x - 3x - 5 = 11$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$5x + 4 = 24$; $5x = 20$; $x = 4$."
+          - problem: "For $f(x)=7x-3x-5$, find the input whose output is $11$."
             answer: "4"
-            solution_sketch: '$4x - 5 = 11$; $4x = 16$; $x = 4$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Combine the two input terms: $f(x)=4x-5$. Set $4x-5=11$, then solve $4x=16$, so $x=4$."
+          - problem: "The sides of a triangle are $x$, $2x+1$, and $3x-1$. Its perimeter is $36$. Find $x$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Adding the three sides gives $x+2x+1+3x-1=36$, hence $6x=36$ and $x=6$."
+          - problem: "Correct the collection in $9+4x-6x=1$: a learner used $10x$. Find $x$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The variable coefficient is $4-6=-2$. Thus $9-2x=1$, $-2x=-8$, and $x=4$."
         constraints: "combine on one side; integer solutions"
       - id: kp2
         name: "Distribute and collect across both sides"
         key_prerequisites: [distribute-then-solve, variables-both-sides]
         exemplars:
-          - problem: 'Solve $3(2x - 1) = 4x + 9$.'
+          - problem: "Solve $3(2x - 1) = 4x + 9$."
             answer: "6"
-            solution_sketch: '$6x - 3 = 4x + 9$; $2x = 12$; $x = 6$.'
-          - problem: 'Solve $5(x - 2) = 2(x + 4)$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$6x - 3 = 4x + 9$; $2x = 12$; $x = 6$."
+          - problem: "Solve $5(x - 2) = 2(x + 4)$."
             answer: "6"
-            solution_sketch: '$5x - 10 = 2x + 8$; $3x = 18$; $x = 6$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$5x - 10 = 2x + 8$; $3x = 18$; $x = 6$."
+          - problem: "A rectangle of height $3$ and width $x+1$ has the same area as one of height $2$ and width $x+4$. Find $x$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3(x+1)=2(x+4)$ expands to $3x+3=2x+8$. Subtracting $2x$ and $3$ gives $x=5$."
+          - problem: "Correct the claim that $2(x-3)=3-x$ has solution $2$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand: $2x-6=3-x$. Add $x$ and $6$: $3x=9$, giving $x=3$."
         constraints: "parentheses on one or both sides; integer solutions"
       - id: kp3
         name: "Full pipeline: distribute, combine, collect, solve"
         key_prerequisites: [distribute-then-solve, variables-both-sides]
         exemplars:
-          - problem: 'Solve $4x + 6 - x = 2(x + 5)$.'
+          - problem: "Solve $4x + 6 - x = 2(x + 5)$."
             answer: "4"
-            solution_sketch: '$3x + 6 = 2x + 10$; $x = 4$.'
-          - problem: 'Solve $7 - 2(x - 3) = 3x - 2$.'
-            answer: "3"
-            solution_sketch: '$7 - 2x + 6 = 3x - 2$; $13 - 2x = 3x - 2$; $15 = 5x$; $x = 3$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3x + 6 = 2x + 10$; $x = 4$."
+          - problem: "Solve $2(3x-1)-x=3(x+2)+4$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand and combine: $6x-2-x=3x+6+4$, so $5x-2=3x+10$. Collect: $2x=12$, hence $x=6$."
+          - problem: "Solve $2(x+3)+2x=3(x+2)+x/2$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand and combine to get $4x+6=7x/2+6$. Collect to obtain $x/2=0$, hence $x=0$."
+          - problem: "A learner loses a minus sign in $5-2(x-1)+3x=4(x+1)-3$. Solve correctly."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sides simplify to $7+x$ and $4x+1$. Subtracting $x+1$ leaves $6=3x$, so $x=2$."
         constraints: "requires all three simplification moves; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $5x - 2(x - 3) = 2x + 11$.'
@@ -880,37 +1266,68 @@ topics:
         name: "Recognize no-solution equations"
         key_prerequisites: [variables-both-sides]
         exemplars:
-          - problem: 'Solve $3x + 5 = 3x - 2$.'
-            answer: "no solution"
-            solution_sketch: 'Subtracting $3x$ leaves $5 = -2$, which is false.'
-          - problem: 'Solve $2(x + 4) = 2x + 5$.'
-            answer: "no solution"
-            solution_sketch: '$2x + 8 = 2x + 5$ gives $8 = 5$, false.'
+          - problem: "How many real solutions does $3x + 5 = 3x - 2$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtracting $3x$ leaves $5 = -2$, which is false."
+          - problem: "How many real solutions does $2(x + 4) = 2x + 5$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2x + 8 = 2x + 5$ gives $8 = 5$, false."
+          - problem: "How many real solutions does $5x-2x+4=3x+9$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Combining on the left gives $3x+4$. Removing $3x$ from both sides would require $4=9$, a false comparison."
+          - problem: "How many real solutions does $x/2+3=(x+8)/2$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $2$: $x+6=x+8$. Removing $x$ would require $6=8$, which is false."
         constraints: "variable terms cancel leaving a false statement"
       - id: kp2
         name: "Recognize identities"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: 'Solve $2(3x + 4) = 6x + 8$.'
-            answer: "all real numbers"
-            solution_sketch: 'Both sides expand to $6x + 8$; every value works.'
-          - problem: 'Solve $4x - 2x + 7 = 2x + 7$.'
-            answer: "all real numbers"
-            solution_sketch: 'The left side simplifies to $2x + 7$, identical to the right.'
+          - problem: "How many real values fail to satisfy $2(3x + 4) = 6x + 8$?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both sides expand to $6x + 8$; every value works."
+          - problem: "How many real values fail to satisfy $4x - 2x + 7 = 2x + 7$?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The left side simplifies to $2x + 7$, identical to the right."
+          - problem: "How many real values fail to satisfy $(6x+9)/3=2x+3$?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'Divide each numerator term by $3$: $(6x+9)/3=2x+3$. This equals the right side for every real $x$, so zero real values fail to satisfy the equation.'
+          - problem: "A learner claims $7-(2x+3)=4-2x$ has only solution $0$. How many real values actually fail to satisfy the equation?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expanding the left gives $7-2x-3=4-2x$. Both sides therefore produce the same value at every real input."
         constraints: "variable terms cancel leaving a true statement"
       - id: kp3
         name: "Classify: one solution, none, or infinitely many"
         key_prerequisites: [multi-step-equations, variables-both-sides]
         exemplars:
-          - problem: 'Solve $3(x - 1) = 3x - 3$.'
+          - problem: "Classify $3(x-1)=3x-3$: one solution, no solution, or all real numbers."
             answer: "all real numbers"
-            solution_sketch: '$3x - 3 = 3x - 3$ is an identity.'
-          - problem: 'Solve $2x + 3 = x + 3$.'
-            answer: "0"
-            solution_sketch: 'Subtract $x$ and $3$: $x = 0$ — one solution (zero is a valid solution!).'
+            answer_contract: {"kind": "label", "options": [["one solution"], ["no solution"], ["all real numbers"]]}
+            solution_sketch: "Distribution makes the left side $3x-3$, identical to the right for every real input."
+          - problem: "Classify $2x+3=x+3$: one solution, no solution, or all real numbers."
+            answer: "one solution"
+            answer_contract: {"kind": "label", "options": [["one solution"], ["no solution"], ["all real numbers"]]}
+            solution_sketch: "Subtracting $x$ and $3$ leaves $x=0$. Exactly one real value works."
+          - problem: "Classify $2(x+1)=2x+5$: one solution, no solution, or all real numbers."
+            answer: "no solution"
+            answer_contract: {"kind": "label", "options": [["one solution"], ["no solution"], ["all real numbers"]]}
+            solution_sketch: "Expanding and removing $2x$ would require $2=5$, a false comparison."
+          - problem: "A learner calls $x/2+1=3$ impossible because the answer is positive. Classify it: one solution, no solution, or all real numbers."
+            answer: "one solution"
+            answer_contract: {"kind": "label", "options": [["one solution"], ["no solution"], ["all real numbers"]]}
+            solution_sketch: "Subtract $1$ and multiply by $2$: $x=4$. The nonzero coefficient gives a unique value."
         constraints: "mix all three outcomes; do not confuse x = 0 with no solution"
     diagnostic_exemplar:
       problem: 'Solve $3(2x - 1) = 6x + 5$.'
+      answer_contract: {kind: label, options: [['no solution'], ['all real numbers']]}
       answer: 'no solution'
       solution_sketch: '$6x - 3 = 6x + 5$ leaves $-3 = 5$, which is false.'
     anki_seeds:
@@ -942,23 +1359,43 @@ topics:
         name: "Solve directly with decimal arithmetic"
         key_prerequisites: [decimal-operations, multi-step-equations]
         exemplars:
-          - problem: 'Solve $0.5x + 1.2 = 3.2$.'
+          - problem: "Solve $0.5x + 1.2 = 3.2$."
             answer: "4"
-            solution_sketch: '$0.5x = 2$; $x = 4$.'
-          - problem: 'Solve $2.4x = -7.2$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$0.5x = 2$; $x = 4$."
+          - problem: "Solve $2.4x = -7.2$."
             answer: "-3"
-            solution_sketch: 'Divide by $2.4$: $x = -3$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divide by $2.4$: $x = -3$."
+          - problem: "A charge of $1.5$ euros per unit plus $0.5$ euros totals $8.0$ euros. Find the units."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $0.5$: $1.5x=7.5$. Division gives $x=7.5/1.5=5$."
+          - problem: "Correct the sign of the solution of $1.2-0.4x=2.8$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $1.2$: $-0.4x=1.6$. Divide by $-0.4$ to get $x=-4$."
         constraints: "one decimal place; integer solutions"
       - id: kp2
         name: "Clear decimals by multiplying by a power of 10"
         key_prerequisites: [decimal-operations, multi-step-equations]
         exemplars:
-          - problem: 'Solve $0.3x - 1.5 = 0.6$.'
+          - problem: "Solve $0.3x - 1.5 = 0.6$."
             answer: "7"
-            solution_sketch: 'Multiply by $10$: $3x - 15 = 6$; $3x = 21$; $x = 7$.'
-          - problem: 'Solve $0.25x + 0.5 = 1.75$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $10$: $3x - 15 = 6$; $3x = 21$; $x = 7$."
+          - problem: "Solve $0.25x+0.50=1.75$ by clearing decimals."
             answer: "5"
-            solution_sketch: 'Multiply by $100$: $25x + 50 = 175$; $25x = 125$; $x = 5$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply every term by $100$: $25x+50=175$. Then $25x=125$ and $x=5$."
+          - problem: "Clear decimals on both sides to solve $0.4x+0.2=0.1x+2.0$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply every term by $10$: $4x+2=x+20$. Collect to get $3x=18$, hence $x=6$."
+          - problem: "A learner multiplies only the variable term by $100$ in $0.06x-0.12=0.30$. Solve correctly."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiplying every term gives $6x-12=30$. Adding $12$ and dividing by $6$ gives $x=7$."
         constraints: "multiply EVERY term by 10 or 100; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $0.25x - 0.75 = 1.5$.'
@@ -994,34 +1431,64 @@ topics:
         name: "Isolate a single fractional term"
         key_prerequisites: [multiplying-fractions]
         exemplars:
-          - problem: 'Solve $\frac{x}{2} + 3 = 7$.'
+          - problem: "Solve $\\frac{x}{2} + 3 = 7$."
             answer: "8"
-            solution_sketch: '$\frac{x}{2} = 4$; $x = 8$.'
-          - problem: 'Solve $\frac{2}{3}x = 8$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$\\frac{x}{2} = 4$; $x = 8$."
+          - problem: "Solve $\\frac{2}{3}x = 8$."
             answer: "12"
-            solution_sketch: 'Multiply by $\frac{3}{2}$: $x = 12$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $\\frac{3}{2}$: $x = 12$."
+          - problem: "Solve $5-x/4=8$."
+            answer: "-12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $5$: $-x/4=3$. Multiply by $-4$: $x=-12$."
+          - problem: "One third of the difference between $x$ and $2$ is $5$. Find $x$."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$(x-2)/3=5$. Multiply by $3$: $x-2=15$. Add $2$: $x=17$."
         constraints: "one fractional term; integer solution"
       - id: kp2
         name: "Clear denominators with the LCD"
         key_prerequisites: [adding-subtracting-fractions]
         exemplars:
-          - problem: 'Solve $\frac{x}{3} + \frac{x}{6} = 5$.'
+          - problem: "Solve $\\frac{x}{3} + \\frac{x}{6} = 5$."
             answer: "10"
-            solution_sketch: 'Multiply by $6$: $2x + x = 30$; $3x = 30$; $x = 10$.'
-          - problem: 'Solve $\frac{x + 1}{2} = \frac{x - 1}{3}$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $6$: $2x + x = 30$; $3x = 30$; $x = 10$."
+          - problem: "Solve $\\frac{x + 1}{2} = \\frac{x - 1}{3}$."
             answer: "-5"
-            solution_sketch: '$3(x + 1) = 2(x - 1)$; $3x + 3 = 2x - 2$; $x = -5$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3(x + 1) = 2(x - 1)$; $3x + 3 = 2x - 2$; $x = -5$."
+          - problem: "Solve $x/4+1/2=x/6+1$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply every term by LCD $12$: $3x+6=2x+12$. Collecting gives $x=6$."
+          - problem: "A learner clears denominators in $x/2-x/3=4$ but leaves $4$ unchanged. Solve correctly."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply every term by $6$: $3x-2x=24$. The left side is $x$, so $x=24$."
         constraints: "multiply EVERY term by the LCD; integer solution"
       - id: kp3
         name: "Fractions combined with distribution"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: 'Solve $\frac{2}{3}(x - 6) = 4$.'
+          - problem: "Solve $\\frac{2}{3}(x - 6) = 4$."
             answer: "12"
-            solution_sketch: '$x - 6 = 6$; $x = 12$.'
-          - problem: 'Solve $\frac{1}{2}x + \frac{1}{3}x = 10$.'
-            answer: "12"
-            solution_sketch: 'LCD $6$: $3x + 2x = 60$; $5x = 60$; $x = 12$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Distributing produces variable term $2x/3$ and constant $-4$. Move that constant to the other side: $2x/3=8$, hence $x=12$. Check: the inner difference is $6$, and two thirds of it is $4$."
+          - problem: "Solve $(x+4)/2+(x-2)/3=8$ and check."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $6$: $3(x+4)+2(x-2)=48$. Expand to $5x+8=48$, giving $x=8$. Check: the two quotients are $6$ and $2$, whose sum is $8$."
+          - problem: "Solve $3(x-2)/4=(x+6)/2$ and check."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $4$: $3x-6=2x+12$, hence $x=18$. Check: $3(18-2)/4=12$ and $(18+6)/2=12$."
+          - problem: "Correct the distribution in $(x-3)/2-(x+1)/4=1$, then solve and check."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply by $4$: $2(x-3)-(x+1)=4$. Expand: $x-7=4$, so $x=11$. Check: the first quotient is $4$, the second $3$, and their difference is $1$."
         constraints: "integer solutions; check by substituting back"
     diagnostic_exemplar:
       problem: 'Solve $\frac{2}{3}(x - 3) = \frac{x}{2}$.'
@@ -1053,9 +1520,20 @@ topics:
         exemplars:
           - problem: 'Solve $y = x + b$ for $x$.'
             answer: "x = y - b"
-          - problem: 'Solve $d = rt$ for $t$.'
+            answer_contract: {kind: exact}
+            solution_sketch: 'Subtract $b$ from both sides: $x = y - b$.'
+          - problem: 'Solve $d = rt$ for $t$. Assume $r\ne0$.'
             answer: "t = d/r"
-            solution_sketch: 'Divide both sides by $r$.'
+            answer_contract: {kind: exact}
+            solution_sketch: 'Divide both sides by $r$. Division is valid because $r\ne0$.'
+          - problem: 'Solve $p = q - r$ for $q$.'
+            answer: "q = p + r"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add $r$ to both sides.'
+          - problem: 'Solve $A = bh$ for $h$. Assume $b\ne0$.'
+            answer: "h = A/b"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide both sides by $b$. Division is valid because $b\ne0$.'
         constraints: "one inverse operation; target variable appears once"
       - id: kp2
         name: "Two-step rearrangements"
@@ -1063,10 +1541,20 @@ topics:
         exemplars:
           - problem: 'Solve $C = 2 \cdot \pi \cdot r$ for $r$.'
             answer: "r = C/(2*pi)"
+            answer_contract: {kind: exact}
             solution_sketch: 'Divide both sides by $2\pi$.'
           - problem: 'Solve $P = 2l + 2w$ for $l$.'
             answer: "l = (P - 2w)/2"
+            answer_contract: {kind: exact}
             solution_sketch: 'Subtract $2w$, then divide by $2$.'
+          - problem: 'Solve $V = lwh$ for $w$ (treat $l$ and $h$ as known). Assume $lh\ne0$.'
+            answer: "w = V/(l*h)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide both sides by $l$ and by $h$. Division is valid because $lh\ne0$.'
+          - problem: 'Solve $y = mx + b$ for $x$ (treat $m$ and $b$ as known). Assume $m\ne0$.'
+            answer: "x = (y - b)/m"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $b$, then divide by $m$. Division is valid because $m\ne0$.'
         constraints: "two inverse operations; target variable appears once"
     diagnostic_exemplar:
       problem: 'Solve $v = u + at$ for $t$.'
@@ -1100,23 +1588,43 @@ topics:
         name: "Multi-term formulas"
         key_prerequisites: [multi-step-equations, rearranging-formulas]
         exemplars:
-          - problem: 'Solve $ax + b = c$ for $x$.'
+          - problem: 'Solve $ax + b = c$ for $x$. Assume $a\ne0$.'
             answer: "x = (c - b)/a"
-            solution_sketch: 'Subtract $b$, then divide by $a$.'
-          - problem: 'Solve $A = \frac{1}{2}bh$ for $h$.'
+            answer_contract: {kind: exact}
+            solution_sketch: 'Subtract $b$, then divide by $a$. Division is valid because $a\ne0$.'
+          - problem: 'Solve $A = \frac{1}{2}bh$ for $h$. Assume $b\ne0$.'
             answer: "h = 2A/b"
-            solution_sketch: 'Multiply by $2$, divide by $b$.'
+            answer_contract: {kind: exact}
+            solution_sketch: 'Multiply by $2$, divide by $b$. Division is valid because $b\ne0$.'
+          - problem: 'Solve $px + q = r$ for $x$. Assume $p\ne0$.'
+            answer: "x = (r - q)/p"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract $q$, then divide by $p$. Division is valid because $p\ne0$.'
+          - problem: 'Solve $V = \frac{1}{3}Bh$ for $B$. Assume $h\ne0$.'
+            answer: "B = 3V/h"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply by $3$, divide by $h$. Division is valid because $h\ne0$.'
         constraints: "target variable appears once; keep other letters symbolic"
       - id: kp2
         name: "Target variable in more than one term"
         key_prerequisites: [distributive-property]
         exemplars:
-          - problem: 'Solve $ax + bx = c$ for $x$.'
+          - problem: 'Solve $ax + bx = c$ for $x$. Assume $a+b\ne0$.'
             answer: "x = c/(a + b)"
-            solution_sketch: 'Factor: $x(a + b) = c$; divide by $(a + b)$.'
+            answer_contract: {kind: exact}
+            solution_sketch: 'Factor: $x(a + b) = c$; divide by $(a + b)$. Division is valid because $a+b\ne0$.'
           - problem: 'Solve $x = \frac{y - 3}{2}$ for $y$.'
             answer: "y = 2x + 3"
+            answer_contract: {kind: exact}
             solution_sketch: '$2x = y - 3$; $y = 2x + 3$.'
+          - problem: 'Solve $mx - nx = k$ for $x$. Assume $m-n\ne0$.'
+            answer: "x = k/(m - n)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Factor: $x(m - n) = k$; divide by $(m - n)$. Division is valid because $m-n\ne0$.'
+          - problem: 'Solve $y = \frac{x + 5}{3}$ for $x$.'
+            answer: "x = 3y - 5"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$3y = x + 5$; $x = 3y - 5$.'
         constraints: "may require factoring out the target variable"
       - id: kp3
         name: "Formulas requiring distribution or clearing a fraction"
@@ -1124,10 +1632,20 @@ topics:
         exemplars:
           - problem: 'Solve $S = 2(l + w)$ for $w$.'
             answer: "w = S/2 - l"
+            answer_contract: {kind: exact}
             solution_sketch: 'Divide by $2$: $\frac{S}{2} = l + w$; subtract $l$.'
-          - problem: 'Solve $A = \frac{1}{2}h(a + b)$ for $a$.'
+          - problem: 'Solve $A = \frac{1}{2}h(a + b)$ for $a$. Assume $h\ne0$.'
             answer: "a = 2A/h - b"
-            solution_sketch: 'Multiply by $2$: $2A = h(a + b)$; divide by $h$; subtract $b$.'
+            answer_contract: {kind: exact}
+            solution_sketch: 'Multiply by $2$: $2A = h(a + b)$; divide by $h$; subtract $b$. Division is valid because $h\ne0$.'
+          - problem: 'Solve $P = 2(a + b)$ for $b$.'
+            answer: "b = P/2 - a"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Divide by $2$: $\frac{P}{2} = a + b$; subtract $a$.'
+          - problem: 'Solve $T = \frac{1}{2}k(m + n)$ for $m$. Assume $k\ne0$.'
+            answer: "m = 2T/k - n"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply by $2$: $2T = k(m + n)$; divide by $k$; subtract $n$. Division is valid because $k\ne0$.'
         constraints: "undo an outer factor before reaching the target variable"
     diagnostic_exemplar:
       problem: 'Solve $ax - bx = c$ for $x$.'
@@ -1157,22 +1675,43 @@ topics:
         name: "Solve |x| = a"
         key_prerequisites: [absolute-value]
         exemplars:
-          - problem: 'Solve $|x| = 7$.'
-            answer: "x = 7 or x = -7"
-            solution_sketch: 'Two numbers sit $7$ units from $0$.'
-          - problem: 'Solve $|x| = 12$.'
-            answer: "x = 12 or x = -12"
+          - problem: "Solve $|x|=7$. Give a set of solutions."
+            answer: "{-7,7}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Absolute value measures distance from zero. The two points at distance $7$ are $-7$ and $7$."
+          - problem: "Which real positions are exactly $4$ units from zero on a number line? Give a set."
+            answer: "{-4,4}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "There is one position on each side of zero: moving left $4$ gives $-4$ and moving right $4$ gives $4$."
+          - problem: "A learner gives only $x=9$ for $|x|=9$. Give the complete solution set."
+            answer: "{-9,9}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both a number and its negative have the same absolute value; $|-9|=9$ as well, so both signs are needed."
+          - problem: "The graphs $y=|x|$ and $y=5$ intersect at which $x$-coordinates? Give a set."
+            answer: "{-5,5}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Intersections occur where $|x|=5$. The two points are equally far from zero, so $x=-5$ or $x=5$."
         constraints: "right side positive; two solutions"
       - id: kp2
         name: "Solve |x + b| = c with a one-step inside"
         key_prerequisites: [one-step-equations, absolute-value]
         exemplars:
-          - problem: 'Solve $|x - 3| = 5$.'
-            answer: "x = 8 or x = -2"
-            solution_sketch: '$x - 3 = 5$ or $x - 3 = -5$.'
-          - problem: 'Solve $|x + 4| = 2$.'
-            answer: "x = -2 or x = -6"
-            solution_sketch: '$x + 4 = 2 \to x = -2$; $x + 4 = -2 \to x = -6$.'
+          - problem: "Solve $|x - 3| = 5$."
+            answer: "{-2,8}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$x-3=5$ gives $x=8$; $x-3=-5$ gives $x=-2$."
+          - problem: "The graphs $y=|x+4|$ and $y=2$ intersect at which $x$-coordinates? Give a set."
+            answer: "{-6,-2}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "At an intersection, $x+4=2$ or $x+4=-2$. These give $x=-2$ and $x=-6$."
+          - problem: "Find the real positions $6$ units from $2$. Give their set."
+            answer: "{-4,8}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The distance equation is $|x-2|=6$. Solve $x-2=6$ and $x-2=-6$, giving $8$ and $-4$."
+          - problem: "A learner finds only $x=3$ for $|x+2|=5$. Give the complete solution set."
+            answer: "{-7,3}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The omitted branch is $x+2=-5$, giving $x=-7$; the positive branch gives $x=3$."
         constraints: "split into two one-step equations; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $|x - 4| = 6$.'
@@ -1204,34 +1743,64 @@ topics:
         name: "Absolute value of a linear expression"
         key_prerequisites: [two-step-equations, basic-absolute-value-equations]
         exemplars:
-          - problem: 'Solve $|2x + 1| = 9$.'
-            answer: "x = 4 or x = -5"
-            solution_sketch: '$2x + 1 = 9 \to x = 4$; $2x + 1 = -9 \to x = -5$.'
-          - problem: 'Solve $|3x - 6| = 12$.'
-            answer: "x = 6 or x = -2"
-            solution_sketch: '$3x - 6 = 12 \to x = 6$; $3x - 6 = -12 \to x = -2$.'
+          - problem: "Solve $|2x + 1| = 9$."
+            answer: "{-5,4}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2x + 1 = 9 \\to x = 4$; $2x + 1 = -9 \\to x = -5$."
+          - problem: "The graph $y=|3x-6|$ meets the horizontal line $y=12$ at which $x$-coordinates? Give a set."
+            answer: "{-2,6}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Intersections satisfy $3x-6=12$ or $3x-6=-12$. Solving gives $x=6$ or $x=-2$."
+          - problem: "A sensor reports the magnitude $|4x-8|$ as $12$. Find all possible $x$ as a set."
+            answer: "{-1,5}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set $4x-8=12$ or $4x-8=-12$. The equations give $4x=20$ or $4x=-4$, hence $5$ or $-1$."
+          - problem: "Correct the incomplete solution $x=2$ to $|5x+5|=15$. Give the full set."
+            answer: "{-4,2}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The positive branch gives $5x+5=15$, hence $x=2$. The negative branch gives $5x+5=-15$, hence $x=-4$."
         constraints: "split into two linear equations; integer solutions"
       - id: kp2
         name: "Isolate the absolute value first"
         key_prerequisites: [two-step-equations, basic-absolute-value-equations]
         exemplars:
-          - problem: 'Solve $|x + 2| - 3 = 4$.'
-            answer: "x = 5 or x = -9"
-            solution_sketch: '$|x + 2| = 7$; $x + 2 = 7$ or $x + 2 = -7$.'
-          - problem: 'Solve $2|x| = 10$.'
-            answer: "x = 5 or x = -5"
-            solution_sketch: '$|x| = 5$.'
+          - problem: "Solve $|x + 2| - 3 = 4$."
+            answer: "{-9,5}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Add $3$: $|x+2|=7$. The branches $x+2=7$ and $x+2=-7$ give $5$ and $-9$."
+          - problem: "Solve $2|x| = 10$."
+            answer: "{-5,5}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divide by $2$: $|x|=5$. The distance condition gives $x=-5$ or $x=5$."
+          - problem: "Solve $3|2x-1|+4=13$. Give the solution set."
+            answer: "{-1,2}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $4$ and divide by $3$: $|2x-1|=3$. Solve $2x-1=3$ or $2x-1=-3$, giving $2$ and $-1$."
+          - problem: "A learner splits $10-2|x+3|=2$ before isolating. Solve correctly as a set."
+            answer: "{-7,1}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $10$ and divide by $-2$: $|x+3|=4$. Its two branches give $x=1$ or $x=-7$."
         constraints: "isolate |..| before splitting into cases"
       - id: kp3
         name: "Recognize no-solution cases"
         key_prerequisites: [basic-absolute-value-equations]
         exemplars:
-          - problem: 'Solve $|x - 5| = -3$.'
-            answer: "no solution"
-            solution_sketch: 'An absolute value is never negative.'
-          - problem: 'Solve $|2x| + 7 = 3$.'
-            answer: "no solution"
-            solution_sketch: 'Isolating gives $|2x| = -4$, impossible.'
+          - problem: "How many real solutions does $|x - 5| = -3$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An absolute value is never negative."
+          - problem: "How many real solutions does $|2x| + 7 = 3$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolating gives $|2x| = -4$, impossible."
+          - problem: "How many real solutions does $2|x+1|+5=1$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $5$ and divide by $2$: $|x+1|=-2$. A magnitude is nonnegative, so no real input works."
+          - problem: "A learner proposes $x=0$ for $7-|3x-2|=10$. How many real solutions actually exist?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Subtract $7$ and negate: $|3x-2|=-3$. The required negative magnitude is impossible."
         constraints: "isolated absolute value equals a negative number"
     diagnostic_exemplar:
       problem: 'Solve $|3x - 1| - 2 = 6$.'
@@ -1268,20 +1837,50 @@ topics:
         exemplars:
           - problem: 'A number increased by $7$ is $22$. Find the number.'
             answer: "15"
+            answer_contract: {kind: exact}
             solution_sketch: '$x + 7 = 22$; $x = 15$.'
           - problem: 'Twice a number minus $5$ is $9$. Find the number.'
             answer: "7"
+            answer_contract: {kind: exact}
             solution_sketch: '$2x - 5 = 9$; $2x = 14$; $x = 7$.'
+          - problem: 'A number decreased by $9$ is $14$. Find the number.'
+            answer: "23"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x - 9 = 14$; $x = 23$.'
+          - problem: 'Three times a number plus $8$ is $29$. Find the number.'
+            answer: "7"
+            answer_contract: {kind: exact}
+            solution_sketch: '$3x + 8 = 29$; $3x = 21$; $x = 7$.'
         constraints: "define one variable; integer answer"
       - id: kp2
         name: "Write the equation without solving"
         key_prerequisites: [translating-phrases-to-expressions]
         exemplars:
-          - problem: 'Write an equation: five more than three times a number $n$ is $26$.'
-            answer: "3n + 5 = 26"
-          - problem: 'Write an equation: the quotient of a number $y$ and $4$ is $12$.'
+          - problem: "Write an equation: $5$ more than $3$ times a number $n$ is $26$. Use * for multiplication and / for division. Preserve the stated operations; do not simplify or solve."
+            answer: "3*n + 5 = 26"
+            answer_contract: {"kind": "relation_setup"}
+            solution_sketch: "Multiply $n$ by $3$, then add $5$. The word \"is\" sets this expression equal to $26$."
+          - problem: "Write an equation: the quotient of a number $y$ and $4$ is $12$. Use * for multiplication and / for division. Preserve the stated operations; do not simplify or solve."
             answer: "y/4 = 12"
-        constraints: '"is" marks the equals sign; do not solve'
+            answer_contract: {"kind": "relation_setup"}
+            solution_sketch: "The number $y$ is the dividend and $4$ is the divisor. Set their quotient equal to $12$."
+          - problem: "Write an equation: $4$ times the sum of a number $x$ and $7$ is $44$. Use * for multiplication and / for division. Preserve the stated operations; do not simplify or solve."
+            answer: "4*(x + 7) = 44"
+            answer_contract: {"kind": "relation_setup"}
+            solution_sketch: "First form the sum $x + 7$. Multiply the whole sum by $4$ and set the product equal to $44$."
+          - problem: "Write an equation: $9$ less than the quotient of a number $x$ and $3$ is $2$. Use * for multiplication and / for division. Preserve the stated operations; do not simplify or solve."
+            answer: "x/3 - 9 = 2"
+            answer_contract: {"kind": "relation_setup"}
+            solution_sketch: "First divide $x$ by $3$. Subtract $9$ from that quotient and set the difference equal to $2$."
+          - problem: "Write an equation: the difference of $17$ and $2$ times a number $x$ is $5$. Use * for multiplication and / for division. Preserve the stated operations; do not simplify or solve."
+            answer: "17 - 2*x = 5"
+            answer_contract: {"kind": "relation_setup"}
+            solution_sketch: "Form the product $2*x$. Subtract this product from $17$, in the stated order, and set the difference equal to $5$."
+          - problem: "Write an equation: the quotient of the difference of a number $x$ and $5$, and $7$, is $3$. Use * for multiplication and / for division. Preserve the stated operations; do not simplify or solve."
+            answer: "(x - 5)/7 = 3"
+            answer_contract: {"kind": "relation_setup"}
+            solution_sketch: "First subtract $5$ from $x$. Divide the whole difference by $7$ and set the quotient equal to $3$."
+        constraints: '"is" marks the equals sign; preserve grouping and operation order; do not simplify or solve'
     diagnostic_exemplar:
       problem: 'Seven less than twice a number is $11$. Find the number.'
       answer: "9"
@@ -1314,28 +1913,46 @@ topics:
         exemplars:
           - problem: 'The sum of a number and twice the number is $24$. Find the number.'
             answer: "8"
+            answer_contract: {kind: exact}
             solution_sketch: '$x + 2x = 24$; $3x = 24$; $x = 8$.'
           - problem: 'Seven less than three times a number is $20$. Find the number.'
             answer: "9"
+            answer_contract: {kind: exact}
             solution_sketch: '$3x - 7 = 20$; $3x = 27$; $x = 9$.'
+          - problem: 'Five less than four times a number is $23$. Find the number.'
+            answer: "7"
+            answer_contract: {kind: exact}
+            solution_sketch: '$4x - 5 = 23$; $4x = 28$; $x = 7$.'
+          - problem: 'The sum of a number and three times the number is $32$. Find the number.'
+            answer: "8"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x + 3x = 32$; $4x = 32$; $x = 8$.'
         constraints: "one unknown; combine like terms or two steps; integer answer"
       - id: kp2
         name: "Consecutive integers and totals"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: 'Two consecutive integers sum to $27$. Find them.'
-            answer: "13 and 14"
-            solution_sketch: '$x + (x + 1) = 27$; $2x + 1 = 27$; $x = 13$.'
-          - problem: 'The sum of three consecutive integers is $42$. Find them.'
-            answer: "13, 14, and 15"
-            solution_sketch: '$3x + 3 = 42$; $x = 13$.'
-          - problem: 'Two consecutive even integers sum to $46$. Find them.'
-            answer: "22 and 24"
-            solution_sketch: '$x + (x + 2) = 46$; $2x = 44$; $x = 22$.'
+          - problem: "Two consecutive integers sum to $27$. Find them."
+            answer: "{13,14}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$x + (x + 1) = 27$; $2x + 1 = 27$; $x = 13$."
+          - problem: "The sum of three consecutive integers is $42$. Find them."
+            answer: "{13,14,15}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3x + 3 = 42$; $x = 13$."
+          - problem: "Two consecutive even integers sum to $46$. Find them."
+            answer: "{22,24}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$x + (x + 2) = 46$; $2x = 44$; $x = 22$."
+          - problem: "Three consecutive odd integers total $33$. Give their set."
+            answer: "{9,11,13}"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the integers as $x,x+2,x+4$. Their sum gives $3x+6=33$, hence $x=9$; the other two are $11$ and $13$."
         constraints: "represent related quantities in terms of one variable"
     diagnostic_exemplar:
       problem: 'Three consecutive even integers sum to $48$. Find them.'
-      answer: '14, 16, and 18'
+      answer_contract: {kind: list, ordered: false, member: {kind: exact}}
+      answer: '14, 16, 18'
       solution_sketch: '$x + (x + 2) + (x + 4) = 48$; $3x + 6 = 48$; $x = 14$.'
     anki_seeds:
       - front: "Consecutive integers starting at x are written..."
@@ -1363,23 +1980,44 @@ topics:
         name: "Money and cost setups"
         key_prerequisites: [translating-sentences-to-equations]
         exemplars:
-          - problem: 'Tickets cost €8 each and you spent €56. How many tickets did you buy?'
+          - problem: "Tickets cost €8 each and you spent €56. How many tickets did you buy?"
             answer: "7"
-            solution_sketch: '$8x = 56$; $x = 7$.'
-          - problem: 'A taxi charges a €3 base fare plus €2 per kilometre. The fare was €17. How many kilometres was the ride?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$8x = 56$; $x = 7$."
+          - problem: "A taxi charges a €3 base fare plus €2 per kilometre. The fare was €17. How many kilometres was the ride?"
             answer: "7"
-            solution_sketch: '$2k + 3 = 17$; $2k = 14$; $k = 7$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2k + 3 = 17$; $2k = 14$; $k = 7$."
+          - problem: "You have €50 and buy notebooks at €6 each, leaving €8. How many notebooks did you buy?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The spent amount is $50-8=42$ euros; $6n=42$ gives $n=7$."
+          - problem: "Notebooks cost €5 each. After a €4 coupon, the total is €26. How many notebooks were bought?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coupon gives $5n-4=26$. Add $4$ to get $5n=30$, then divide by $5$: $n=6$."
         constraints: "unit price times quantity, possibly plus a fixed fee; whole-number answers"
       - id: kp2
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":"A"},{"x":"7","y":"0","label":"B"},{"x":"7","y":"4","label":"C"},{"x":"0","y":"4","label":"D"}],"right_angles":[0,1,2,3]},"caption":"Reference example: A reference rectangle has width 7 and height 4. Coordinates give the side lengths; this diagram is an independent example."}]
         name: "Perimeter and side-length setups"
         key_prerequisites: [multi-step-equations, translating-sentences-to-equations]
         exemplars:
-          - problem: 'A rectangle''s length is $3$ more than its width and the perimeter is $26$. Find the width.'
+          - problem: "A rectangle's length is $3$ more than its width and the perimeter is $26$. Find the width."
             answer: "5"
-            solution_sketch: '$2w + 2(w + 3) = 26$; $4w + 6 = 26$; $w = 5$.'
-          - problem: 'A triangle has sides $x$, $x + 2$, and $x + 4$, and its perimeter is $30$. Find the shortest side.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$2w + 2(w + 3) = 26$; $4w + 6 = 26$; $w = 5$."
+          - problem: "A triangle has sides $x$, $x + 2$, and $x + 4$, and its perimeter is $30$. Find the shortest side."
             answer: "8"
-            solution_sketch: '$3x + 6 = 30$; $3x = 24$; $x = 8$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3x + 6 = 30$; $3x = 24$; $x = 8$."
+          - problem: "An isosceles triangle has equal sides $2x$ cm and base $x+3$ cm. Its perimeter is $28$ cm. Find $x$ in cm."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Add the sides: $2x+2x+(x+3)=28$. Then $5x=25$, hence $x=5$ cm; the side lengths are $10,10,8$ cm."
+          - problem: "A square has side $x-2$ cm and perimeter $24$ cm. Find $x$ in cm."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$4(x-2)=24$ gives $x-2=6$, hence $x=8$ cm. Four sides of $6$ cm total $24$ cm."
         constraints: "express each side in terms of one variable; check units"
     diagnostic_exemplar:
       problem: 'The length of a rectangle is $5$ more than its width and the perimeter is $38$. Find the width.'
@@ -1415,21 +2053,41 @@ topics:
         exemplars:
           - problem: 'Maya and Liam sold $51$ raffle tickets in all; Maya sold twice as many as Liam. How many did Maya sell?'
             answer: "34"
+            answer_contract: {kind: exact}
             solution_sketch: 'Liam $x$, Maya $2x$: $3x = 51$; $x = 17$; Maya sold $34$.'
           - problem: 'A $36$ cm ribbon is cut into two pieces; one piece is $8$ cm longer than the other. How long is the shorter piece?'
             answer: "14"
+            answer_contract: {kind: exact}
             solution_sketch: '$x + (x + 8) = 36$; $2x = 28$; $x = 14$.'
+          - problem: 'Two clubs have $60$ members combined; the chess club has three times as many members as the debate club. How many are in the chess club?'
+            answer: "45"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Debate $x$, chess $3x$: $4x = 60$; $x = 15$; chess has $45$.'
+          - problem: 'A $40$ m rope is cut into two pieces; one piece is $6$ m longer than the other. How long is the shorter piece?'
+            answer: "17"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$x + (x + 6) = 40$; $2x = 34$; $x = 17$.'
         constraints: "express both quantities with one variable; answer the question asked"
       - id: kp2
         name: "Break-even setups with the variable on both sides"
         key_prerequisites: [variables-both-sides, multi-step-equations]
         exemplars:
-          - problem: 'Plan A costs €20 plus €5 per class; Plan B costs €10 plus €7 per class. For how many classes do the plans cost the same?'
+          - problem: "Plan A costs €20 plus €5 per class; Plan B costs €10 plus €7 per class. For how many classes do the plans cost the same?"
             answer: "5"
-            solution_sketch: '$20 + 5c = 10 + 7c$; $10 = 2c$; $c = 5$.'
-          - problem: 'Tank A holds $300$ L and drains at $15$ L/min; tank B holds $180$ L and drains at $5$ L/min. After how many minutes do they hold the same amount?'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$20 + 5c = 10 + 7c$; $10 = 2c$; $c = 5$."
+          - problem: "Tank A holds $300$ L and drains at $15$ L/min; tank B holds $180$ L and drains at $5$ L/min. After how many minutes do they hold the same amount?"
             answer: "12"
-            solution_sketch: '$300 - 15t = 180 - 5t$; $120 = 10t$; $t = 12$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$300 - 15t = 180 - 5t$; $120 = 10t$; $t = 12$."
+          - problem: "A shop has fixed costs €90 and costs €3 per item. It sells each item for €8. How many items must it sell to break even?"
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set cost equal to revenue: $90+3n=8n$. Subtract $3n$: $90=5n$, hence $n=18$."
+          - problem: "A runner starts $120$ m ahead at $4$ m/s. A second runner follows at $6$ m/s. After how many seconds are their positions equal?"
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The positions are $120+4t$ and $6t$. Equating gives $120=2t$, hence $t=60$ seconds."
         constraints: "two linear models set equal; positive integer answers"
       - id: kp3
         name: "Age and comparison problems"
@@ -1437,10 +2095,20 @@ topics:
         exemplars:
           - problem: 'Ana is $4$ years older than Ben, and the sum of their ages is $30$. How old is Ana?'
             answer: "17"
+            answer_contract: {kind: exact}
             solution_sketch: 'Ben $x$, Ana $x + 4$: $2x + 4 = 30$; $x = 13$; Ana is $17$.'
           - problem: 'A father is $3$ times as old as his son. In $12$ years he will be twice as old as his son. How old is the son now?'
             answer: "12"
+            answer_contract: {kind: exact}
             solution_sketch: '$3s + 12 = 2(s + 12)$; $3s + 12 = 2s + 24$; $s = 12$.'
+          - problem: 'Nora is $6$ years older than Omar, and the sum of their ages is $28$. How old is Nora?'
+            answer: "17"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Omar $x$, Nora $x + 6$: $2x + 6 = 28$; $x = 11$; Nora is $17$.'
+          - problem: 'A father is $5$ times as old as his son. In $10$ years he will be $3$ times as old as his son. How old is the son now?'
+            answer: "10"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$5s + 10 = 3(s + 10)$; $5s + 10 = 3s + 30$; $s = 10$.'
         constraints: "relate ages now and after a time shift; integer answers"
     diagnostic_exemplar:
       problem: 'A mother is $4$ times as old as her daughter. In $6$ years she will be $3$ times as old as her daughter. How old is the daughter now?'

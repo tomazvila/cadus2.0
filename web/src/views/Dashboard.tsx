@@ -45,6 +45,7 @@ import { num, pct } from '@/lib/format';
 import { toast } from '@/app/toast';
 import { CoursePicker } from './dashboard/CoursePicker';
 import { PrimaryAction } from './dashboard/PrimaryAction';
+import { RetentionCard } from './dashboard/RetentionCard';
 import type { ApiClient, JourneyCourse, PlanTask, StatusResponse } from '@/api/types';
 
 export interface DashboardProps {
@@ -221,6 +222,14 @@ export function Dashboard({
   const fraction = goal ? today / goal : 0;
   const due = num(status.due_reviews);
   const frontier = num(status.frontier);
+  // D-F6 — HONEST PROGRESS. The bar reads `course_progress`, which counts the topics the
+  // learner PRACTICED. These three numbers say what stands behind it: a placement gives
+  // credit, not evidence, so an inferred topic waits for one confirmation item.
+  const mastery = status.mastery;
+  const practiced = num(mastery?.practiced);
+  const inferred = num(mastery?.inferred);
+  const toConfirm = mastery?.to_confirm?.length ?? 0;
+  const ungraded = num(status.ungraded);
 
   const courseArc = courses.length ? (
     <div className="course-arc">
@@ -276,7 +285,23 @@ export function Dashboard({
           <Stat value={`${frontier}`} label="frontier" />
           <Stat value={`${pct(status.velocity.course_progress)}%`} label="course" />
           <Stat value={status.velocity.eta ?? '—'} label="ETA" />
+          {/* D-F2: the attempts nobody graded. The tile appears only when one waits,
+              so a learner with none reads the same six tiles as before. */}
+          {ungraded > 0 ? (
+            <Stat value={`${ungraded}`} label="not marked" className="warn" />
+          ) : null}
         </div>
+        {mastery ? (
+          <div className="stat-grid mastery-grid">
+            <Stat value={`${practiced}`} label="practiced" />
+            <Stat value={`${inferred}`} label="inferred from placement" />
+            <Stat
+              value={`${toConfirm}`}
+              label="to confirm"
+              className={toConfirm > 0 ? 'accent' : undefined}
+            />
+          </div>
+        ) : null}
       </div>
 
       {/* W-C2: one primary action, chosen by the state of the plan. */}
@@ -327,6 +352,8 @@ export function Dashboard({
         <p className="muted small more-caption">
           Export my data downloads your full event log — the same data a re-import consumes.
         </p>
+        {/* f19-retention: the delayed-probe report. It loads on demand (D-F11). */}
+        <RetentionCard api={api} call={call} />
       </details>
 
       {demo ? (

@@ -11,238 +11,32 @@
 //! fields in declaration order. Do not sort these fields.
 
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 use crate::learner::short_sha256;
+use crate::retention::policy::{PolicyVersion, RetentionConfig};
 
-/// The FIRe engine constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct FireConfig {
-    /// The memory level at or below which a review is due.
-    pub due_threshold: f64,
-    /// The review interval, in days, per whole repetition number.
-    pub interval_table: Vec<f64>,
-    /// The lowest early-credit factor of a pass.
-    pub early_floor: f64,
-    /// The largest overdue decay factor of a miss.
-    pub decay_cap: f64,
-    /// The smallest propagated credit or penalty that still lands.
-    pub min_credit: f64,
-    /// The edge weight at which a review knocks out another review.
-    pub knockout_weight: f64,
-    /// The speed below which a topic absorbs no propagated credit.
-    pub explicit_speed_threshold: f64,
-    /// The lowest and highest speed of a topic.
-    pub speed_clamp: (f64, f64),
+/// A configuration value the core refuses.
+#[derive(Debug, Clone, PartialEq, Eq, Error)]
+pub enum ConfigError {
+    /// `lesson.kp_pass` holds no term.
+    #[error("`lesson.kp_pass` is empty; it needs one term such as `2consec`")]
+    EmptyPassRule,
+    /// One term of `lesson.kp_pass` is outside the grammar of
+    /// [`crate::projector::PassRule`].
+    #[error("`lesson.kp_pass` term `{term}` is not `<n>consec` or `<k>of<m>`")]
+    PassRuleTerm {
+        /// The term the parser refused.
+        term: String,
+    },
 }
 
-impl Default for FireConfig {
-    fn default() -> Self {
-        Self {
-            due_threshold: 0.5,
-            interval_table: vec![2.0, 4.5, 10.0, 21.0, 45.0, 100.0, 220.0, 480.0],
-            early_floor: 0.15,
-            decay_cap: 3.0,
-            min_credit: 0.05,
-            knockout_weight: 0.8,
-            explicit_speed_threshold: 1.0,
-            speed_clamp: (0.33, 3.0),
-        }
-    }
-}
+mod sections;
 
-/// The ability-update constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct AbilityConfig {
-    /// The exponential moving average rate of the ability update.
-    pub ewma_alpha: f64,
-}
-
-impl Default for AbilityConfig {
-    fn default() -> Self {
-        Self { ewma_alpha: 0.3 }
-    }
-}
-
-/// The lesson constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct LessonConfig {
-    /// The rule that passes a knowledge point.
-    pub kp_pass: String,
-    /// The number of misses that fails a lesson.
-    pub fail_after: i64,
-    /// The days a failed topic waits before a retry.
-    pub retry_delay_days: i64,
-}
-
-impl Default for LessonConfig {
-    fn default() -> Self {
-        Self {
-            kp_pass: "2consec|3of4".to_owned(),
-            fail_after: 5,
-            retry_delay_days: 1,
-        }
-    }
-}
-
-/// The review constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ReviewConfig {
-    /// The number of questions in a review.
-    pub questions: i64,
-    /// The weighted score that passes a review.
-    pub pass_weighted: f64,
-}
-
-impl Default for ReviewConfig {
-    fn default() -> Self {
-        Self {
-            questions: 4,
-            pass_weighted: 0.65,
-        }
-    }
-}
-
-/// The session-composition constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct SelectorConfig {
-    /// The smallest share of a session that lessons take.
-    pub lesson_ratio_min: f64,
-    /// The reviews served before a lesson is forced.
-    pub max_reviews_per_lesson: i64,
-}
-
-impl Default for SelectorConfig {
-    fn default() -> Self {
-        Self {
-            lesson_ratio_min: 0.25,
-            max_reviews_per_lesson: 3,
-        }
-    }
-}
-
-/// The quiz cadence constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct QuizConfig {
-    /// The days between quizzes.
-    pub cadence_days: i64,
-    /// The XP between quizzes.
-    pub cadence_xp: i64,
-    /// The number of questions in a quiz.
-    pub questions: i64,
-    /// The score below which a retake becomes pending.
-    pub retake_below: f64,
-}
-
-impl Default for QuizConfig {
-    fn default() -> Self {
-        Self {
-            cadence_days: 7,
-            cadence_xp: 200,
-            questions: 8,
-            retake_below: 0.8,
-        }
-    }
-}
-
-/// The placement diagnostic constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct DiagConfig {
-    /// The largest number of diagnostic questions.
-    pub max_questions: i64,
-    /// The graph radius a diagnostic answer covers.
-    pub coverage_radius: i64,
-    /// The credit a sibling topic gets from an answer.
-    pub sibling_credit: f64,
-    /// The largest conditional balance.
-    pub conditional_max: f64,
-}
-
-impl Default for DiagConfig {
-    fn default() -> Self {
-        Self {
-            max_questions: 40,
-            coverage_radius: 3,
-            sibling_credit: 0.5,
-            conditional_max: 1.0,
-        }
-    }
-}
-
-/// The XP multiplier of each work-quality tier.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct XpTiers {
-    /// The multiplier of `perfect`.
-    pub perfect: f64,
-    /// The multiplier of `nearly_perfect`.
-    pub nearly_perfect: f64,
-    /// The multiplier of `passable`.
-    pub passable: f64,
-    /// The multiplier of `nearly_passable`.
-    pub nearly_passable: f64,
-    /// The multiplier of `poor`.
-    pub poor: f64,
-    /// The multiplier of `blowoff`. It is negative on purpose.
-    pub blowoff: f64,
-}
-
-impl Default for XpTiers {
-    fn default() -> Self {
-        Self {
-            perfect: 1.3,
-            nearly_perfect: 1.0,
-            passable: 0.85,
-            nearly_passable: 0.3,
-            poor: 0.0,
-            blowoff: -0.5,
-        }
-    }
-}
-
-/// The XP constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct XpConfig {
-    /// The daily XP goal that carries the streak.
-    pub daily_goal: i64,
-    /// The multiplier of each work-quality tier.
-    pub tiers: XpTiers,
-}
-
-impl Default for XpConfig {
-    fn default() -> Self {
-        Self {
-            daily_goal: 40,
-            tiers: XpTiers::default(),
-        }
-    }
-}
-
-/// The speed-drill constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct DrillConfig {
-    /// The number of questions in a drill.
-    pub questions: i64,
-    /// The seconds a drill question targets.
-    pub target_secs: i64,
-}
-
-impl Default for DrillConfig {
-    fn default() -> Self {
-        Self {
-            questions: 20,
-            target_secs: 6,
-        }
-    }
-}
+pub use sections::{
+    AbilityConfig, DiagConfig, DrillConfig, FireConfig, LessonConfig, MasteryConfig, QuizConfig,
+    ReadinessConfig, ReviewConfig, SelectorConfig, XpConfig, XpTiers,
+};
 
 /// The error tags a grader may assign, in 1.0 order.
 ///
@@ -291,11 +85,37 @@ pub struct Config {
     pub xp: XpConfig,
     /// The speed-drill constants.
     pub drill: DrillConfig,
+    /// The readiness gate of D-F5.
+    ///
+    /// The field is NOT serialized, so it stays out of the
+    /// [`Config::hash_preimage`] and the drift digest keeps the 1.0 value
+    /// (trap T16). The reason is the contract of that digest: it detects drift
+    /// of the 1.0 SCHEDULER CONSTANTS, and every stored `learner_models` row
+    /// and every parity fixture carries `797575e985c12149` for the defaults.
+    /// The readiness gate is a serve-eligibility policy of 2.0 and no
+    /// scheduling constant, so a change to it must not invalidate a projection.
+    /// D-F12 adds `policy_version`, which is where a 2.0 policy is versioned.
+    #[serde(default, skip_serializing)]
+    pub readiness: ReadinessConfig,
     /// The error tags a grader may assign.
     pub error_tags: Vec<String>,
     /// The IANA time zone of the day boundary. `None` means the profile's zone, and
     /// a profile with no zone means UTC (trap T9).
     pub timezone: Option<String>,
+    /// The mastery-claim constants (D-F6). It stays OUT of the hash preimage.
+    #[serde(default, skip_serializing)]
+    pub mastery: MasteryConfig,
+    /// The delayed-retention constants (D-F11). It stays OUT of the hash preimage.
+    #[serde(default, skip_serializing)]
+    pub retention: RetentionConfig,
+    /// The version stamp of the 2.0 policy set (D-F12).
+    ///
+    /// It stays OUT of the hash preimage for the reason `readiness` states: the
+    /// 1.0 digest detects drift of the 1.0 SCHEDULER CONSTANTS, and a stored
+    /// projection must survive a 2.0 policy bump. [`Config::policy_digest`] is
+    /// the digest of the 2.0 policies.
+    #[serde(default, skip_serializing)]
+    pub policy_version: PolicyVersion,
 }
 
 impl Default for Config {
@@ -310,8 +130,12 @@ impl Default for Config {
             diag: DiagConfig::default(),
             xp: XpConfig::default(),
             drill: DrillConfig::default(),
+            readiness: ReadinessConfig::default(),
             error_tags: default_error_tags(),
             timezone: None,
+            mastery: MasteryConfig::default(),
+            retention: RetentionConfig::default(),
+            policy_version: PolicyVersion::default(),
         }
     }
 }
@@ -341,5 +165,100 @@ impl Config {
     /// Returns the `serde_json` error when the config does not serialize.
     pub fn config_hash(&self) -> Result<String, serde_json::Error> {
         self.hash_preimage().map(|preimage| short_sha256(&preimage))
+    }
+
+    /// The preimage of the 2.0 policy digest (D-F12).
+    ///
+    /// It names every VERSIONED number the 1.0 hash preimage leaves out, plus the
+    /// two 1.0 numbers D-F12 versions: the review interval table and the ability
+    /// weight. The text is compact JSON in a fixed key order.
+    #[must_use]
+    pub fn policy_preimage(&self) -> String {
+        let delays: Vec<String> = self.retention.delays().iter().map(u32::to_string).collect();
+        let intervals: Vec<String> = self
+            .fire
+            .interval_table
+            .iter()
+            .map(|days| format!("{days:?}"))
+            .collect();
+        format!(
+            "{{\"version\":{},\"kp_pass\":\"{}\",\"intervals\":[{}],\"ewma_alpha\":{:?},\
+             \"due_threshold\":{:?},\"probe_delays\":[{}],\"probes_per_session\":{},\
+             \"readiness\":{},\"confirm_inferred\":{}}}",
+            self.policy_version.version,
+            self.lesson.kp_pass(),
+            intervals.join(","),
+            self.ability.ewma_alpha,
+            self.fire.due_threshold,
+            delays.join(","),
+            self.retention.max_per_session,
+            self.readiness.enforce,
+            self.mastery.confirm_inferred,
+        )
+    }
+
+    /// The drift digest of the 2.0 policy set: the first 16 hex characters of the
+    /// SHA-256 of [`Config::policy_preimage`] (D-F12).
+    ///
+    /// A report prints it beside the policy version, so a reader always knows which
+    /// numbers produced a retention row.
+    #[must_use]
+    pub fn policy_digest(&self) -> String {
+        short_sha256(&self.policy_preimage())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_1_0_config_hash_survives_the_2_0_policy_fields() {
+        let cfg = Config::default();
+        assert_eq!(cfg.config_hash().expect("a hash"), "797575e985c12149");
+        assert!(!cfg.hash_preimage().expect("a preimage").contains("policy"));
+        assert!(
+            !cfg.hash_preimage()
+                .expect("a preimage")
+                .contains("probe_delays_days")
+        );
+    }
+
+    #[test]
+    fn a_probe_delay_change_moves_the_policy_digest_and_not_the_config_hash() {
+        let base = Config::default();
+        let mut changed = Config::default();
+        changed.retention.probe_delays_days = vec![7, 30];
+        assert_eq!(
+            base.config_hash().expect("a hash"),
+            changed.config_hash().expect("a hash")
+        );
+        assert_ne!(base.policy_digest(), changed.policy_digest());
+    }
+
+    #[test]
+    fn the_policy_version_bump_moves_the_policy_digest() {
+        let base = Config::default();
+        let mut changed = Config::default();
+        changed.policy_version.version += 1;
+        assert_ne!(base.policy_digest(), changed.policy_digest());
+    }
+
+    #[test]
+    fn the_policy_preimage_names_every_versioned_number() {
+        let preimage = Config::default().policy_preimage();
+        for key in [
+            "version",
+            "kp_pass",
+            "intervals",
+            "ewma_alpha",
+            "due_threshold",
+            "probe_delays",
+            "probes_per_session",
+            "readiness",
+            "confirm_inferred",
+        ] {
+            assert!(preimage.contains(key), "`{key}` is missing from {preimage}");
+        }
     }
 }

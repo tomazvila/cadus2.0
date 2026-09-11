@@ -38,8 +38,8 @@ use std::time::Duration;
 use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
 use cadus_store::shutdown::{Shutdown, close_within};
 use cadus_store::{Db, DbConfig, bounded};
-use cadus_worker::authoring::cli::{self, AuthorArgs, Command};
-use cadus_worker::authoring::job::{self, AuthoringJob, run_batch};
+use cadus_worker::authoring::cli::{self, AuthorArgs, Command, ReadinessArgs};
+use cadus_worker::authoring::job::{self, AuthoringJob};
 use cadus_worker::{DiagnosisJob, RefillJob, WorkerConfig, WorkerError};
 
 use curriculum::load_arena;
@@ -76,6 +76,10 @@ async fn main() -> ExitCode {
             Ok(()) => ExitCode::SUCCESS,
             Err(err) => fail(&err.to_string()),
         },
+        Command::Readiness(args) => match readiness(&args).await {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(err) => fail(&err.to_string()),
+        },
     }
 }
 
@@ -105,7 +109,7 @@ fn fail(reason: &str) -> ExitCode {
 async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     let curriculum = load_arena()?;
     let specs =
-        cli::select(&curriculum, &args.kps).map_err(|err| WorkerError::Config(err.to_string()))?;
+        cli::select_for(&curriculum, args).map_err(|err| WorkerError::Config(err.to_string()))?;
     let kinds = args.kinds();
 
     let db_cfg = DbConfig::from_env()?;
@@ -121,8 +125,21 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
         return Ok(());
     }
 
-    let rows = cli::plan(&db, &specs, &kinds).await?;
+    let mut rows = cli::plan(&db, &specs, &kinds).await?;
+    if args.missing_only {
+        for row in &mut rows {
+            row.target = 1;
+        }
+    }
     print!("{}", cli::render_plan(&rows, args.dry_run));
+    if args.template_passes > 1 {
+        let documents = cli::staged_documents(&rows, args.template_passes);
+        println!(
+            "staged plan: {} template rounds; {documents} documents; at most {} HTTP attempts before budget limits",
+            args.template_passes,
+            documents * 10
+        );
+    }
 
     if args.dry_run {
         close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
@@ -130,6 +147,26 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     }
 
     let job = authoring_job()?;
+    let max_tokens = cadus_model_client::ModelConfig::authoring_from_env()
+        .map_err(config_error)?
+        .output_tokens
+        .saturating_mul(cadus_model_client::TRUNCATION_FACTOR);
+    let budget = cadus_worker::authoring::budget::Budget::new(
+        args.budget_micros
+            .ok_or_else(|| config_error("a paid author pass requires --budget-usd"))?,
+        args.request_reserve_micros
+            .ok_or_else(|| config_error("a paid author pass requires --request-reserve-usd"))?,
+        max_tokens,
+    )?;
+    println!(
+        "reservation cap: {} micro-USD; request reserve: {} micro-USD; largest output: {max_tokens}",
+        args.budget_micros.unwrap_or(0),
+        args.request_reserve_micros.unwrap_or(0)
+    );
+    let job = job
+        .with_budget(budget.clone())
+        .with_transport(args.portable_schema, args.decline_dir.clone())
+        .with_missing_only(args.missing_only);
     // The order of `kinds` is the order of `prompt::KINDS`, whatever order the
     // operator named on the command line (`cli::AuthorArgs::kinds`), and
     // `template` leads it. That order is a contract of the gate and not a
@@ -137,12 +174,83 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     // knowledge point, `approved` AND `pending`, so a template this same process
     // stored minutes earlier gates the page and the ladder authored after it
     // (`job::served_instances`; M6 review 2, finding V1).
-    for kind in kinds {
-        let report = run_batch(&db, &job, kind, &specs).await?;
-        print!("{}", cli::render_batch(kind, &report));
-    }
+    let result =
+        cadus_worker::authoring::execution::run(&db, &job, &budget, &specs, &kinds, args).await;
     close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
+    result
+}
+
+/// Run one readiness audit and write its reports (D-F5).
+///
+/// The order is fixed: read the curriculum, open the pool, run the audit, print
+/// the summary, write the files the operator named. The audit spends NO model
+/// token and writes no database row: it reads `content_store` once and does
+/// pure CPU work over the arena.
+///
+/// The summary goes to stdout, because it is the operator's output; the log
+/// stays on stderr.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Config`] for a curriculum that does not load and for
+/// a report file that does not write, and the error of the store for a read
+/// that fails.
+async fn readiness(args: &ReadinessArgs) -> Result<(), WorkerError> {
+    let curriculum = load_arena()?;
+    let db_cfg = DbConfig::from_env()?;
+    let db = Db::connect(&db_cfg).await?;
+    let run = cadus_worker::readiness_run(&db, &curriculum, args.course.as_deref()).await;
+    close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
+    let run = run?;
+
+    let (ready, blocked) = run.report.totals();
+    let course = args.course.as_deref().unwrap_or("every course");
+    println!(
+        "readiness {course}: knowledge points ready {ready}, blocked {blocked},          contract failures {}",
+        run.contract_failures().len()
+    );
+    for blocker in cadus_core::readiness::Blocker::every() {
+        let count = run.report.histogram().get(&blocker).copied().unwrap_or(0);
+        println!("blocker {} {count}", blocker.as_str());
+    }
+
+    if let Some(path) = &args.md {
+        let text = cadus_worker::render_readiness_markdown(&run, &report_date());
+        write_report(path, &text)?;
+        println!("wrote {path}");
+    }
+    if let Some(path) = &args.json {
+        let text = cadus_worker::render_readiness_json(&run).to_string();
+        write_report(path, &text)?;
+        println!("wrote {path}");
+    }
     Ok(())
+}
+
+/// The UTC date of the run, as `YYYY-MM-DD`.
+///
+/// The report names the day it was made, and nothing else reads the value.
+/// `utc_date` is the same day boundary the quiz cadence reads.
+fn report_date() -> String {
+    let micros = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|since| i64::try_from(since.as_micros()).unwrap_or(0))
+        .unwrap_or(0);
+    cadus_core::selector::utc_date(micros).map_or_else(
+        || "an unknown date".to_owned(),
+        |day| day.format("%Y-%m-%d").to_string(),
+    )
+}
+
+/// Write one report file, or the error that names the path.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Config`] when the write fails. The message names the
+/// path, so an operator repairs the call without this file.
+fn write_report(path: &str, text: &str) -> Result<(), WorkerError> {
+    std::fs::write(path, text)
+        .map_err(|err| WorkerError::Config(format!("the report at {path} did not write: {err}")))
 }
 
 /// Build the authoring job from the environment.

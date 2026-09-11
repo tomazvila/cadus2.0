@@ -3,7 +3,8 @@
 use num_bigint::BigInt;
 
 use super::build::{collapse, letter_run, make_call, make_interval, make_quotient, parse_number};
-use super::{GREEK_VARIABLES, MAX_EXPONENT, Parser};
+use super::exponent::raise;
+use super::{GREEK_VARIABLES, Parser};
 use crate::answer::Undecidable;
 use crate::answer::ast::{Ast, Const};
 use crate::answer::lexer::Tok;
@@ -22,11 +23,11 @@ impl Parser<'_> {
         })
     }
 
-    /// Parse an atom and at most one integer power.
+    /// Parse an atom and at most one power.
     ///
     /// The one base with a free exponent is `e`: `e**t` is the whitelisted function
-    /// `exp(t)`, which the grammar holds exactly. Every other base takes an integer
-    /// exponent, because `Ast::Pow` carries an integer and nothing else (D6).
+    /// `exp(t)`, which the grammar holds exactly. Every other base takes a whole
+    /// exponent or a bracketed rational one, `x^(1/2)` (D-F3).
     fn parse_power(&mut self) -> Result<Ast, Undecidable> {
         if let Some((leading, last)) = self.peek_letter_run() {
             self.bump();
@@ -93,45 +94,7 @@ impl Parser<'_> {
         if self.peek() == Some(&Tok::Pow) {
             return Err(Undecidable::new("a tower of powers"));
         }
-        Ok(Ast::Pow(Box::new(base), exponent))
-    }
-
-    /// Parse the exponent of a power. The grammar allows an integer literal only.
-    fn parse_exponent(&mut self) -> Result<i64, Undecidable> {
-        let parenthesized = self.eat(&Tok::LParen);
-        let mut negative = false;
-        loop {
-            if self.eat(&Tok::Minus) {
-                negative = !negative;
-            } else if self.eat(&Tok::Plus) {
-            } else {
-                break;
-            }
-        }
-        let Some(Tok::Num(text)) = self.peek() else {
-            return Err(Undecidable::new("an exponent that is not a whole number"));
-        };
-        if text.contains('.') {
-            return Err(Undecidable::new("an exponent that is not a whole number"));
-        }
-        let magnitude: i64 = text
-            .parse()
-            .map_err(|_| Undecidable::new("an exponent outside the evaluation bound"))?;
-        self.bump();
-        // `2^50%` writes the exponent 50/100, and [`Ast::Pow`] carries a whole
-        // number and nothing else (D6). The percent binds tighter than the
-        // power, so this is the same refusal that `2^0.5` gets, and the answer
-        // never takes the second reading `(2^50)/100` (review round 3, #3, #4).
-        if self.peek() == Some(&Tok::Percent) {
-            return Err(Undecidable::new("an exponent that is not a whole number"));
-        }
-        if parenthesized && !self.eat(&Tok::RParen) {
-            return Err(Undecidable::new("an exponent that is not a whole number"));
-        }
-        if magnitude > MAX_EXPONENT {
-            return Err(Undecidable::new("an exponent outside the evaluation bound"));
-        }
-        Ok(if negative { -magnitude } else { magnitude })
+        Ok(raise(base, exponent))
     }
 
     /// Parse one atom: a literal, a name, a bracketed group, or a collection.
@@ -175,11 +138,9 @@ impl Parser<'_> {
                 Tok::LBrace => {
                     parser.bump();
                     let items = parser.parse_items(&Tok::RBrace, "a set with no closing brace")?;
-                    if items.is_empty() {
-                        return Err(Undecidable::new("an empty set"));
-                    }
                     Ok(Ast::Set(items))
                 }
+                Tok::Unit(_) => Err(Undecidable::new("a unit inside an expression")),
                 _ => Err(Undecidable::new("a symbol where a value belongs")),
             }
         })
@@ -278,7 +239,7 @@ impl Parser<'_> {
         let argument = self.parse_juxtaposed_argument()?;
         let call = make_call(name, vec![argument]);
         Ok(match power {
-            Some(exponent) => Ast::Pow(Box::new(call), exponent),
+            Some(exponent) => raise(call, exponent),
             None => call,
         })
     }

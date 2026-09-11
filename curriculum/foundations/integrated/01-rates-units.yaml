@@ -1,0 +1,89 @@
+# Integrated task (D-F10): rates and units.
+# One delivery run carries a speed conversion, a rate conversion, and a fuel
+# rate. The learner must choose the unit factor chain before the numbers help.
+id: integrated-courier-shift
+title: Plan a courier shift
+course: foundations
+topic: dimensional-analysis
+component_topics:
+  - dimensional-analysis
+  - metric-unit-conversion
+domain: rates_units
+scenario: >
+  A courier van covers 54 km of city route in 45 minutes. The van uses 6.5 L of
+  fuel per 100 km at that speed. The driver works a 3 hour shift and holds the
+  same average speed and the same fuel rate for the whole shift.
+given:
+  - label: Route length
+    value: 54 km
+  - label: Route time
+    value: 45 min
+  - label: Fuel rate
+    value: 6.5 L per 100 km
+  - label: Shift length
+    value: 3 h
+    note: >
+      The shift holds no stop. A 30 minute stop removes 36 km from the shift and
+      changes the fuel answer.
+method:
+  prompt: Which method gives the average speed in kilometers per hour?
+  options:
+    - id: unit-factor-chain
+      label: Multiply the distance per minute by 60 minutes per hour.
+      correct: true
+      why: The minutes cancel, so the answer carries the unit km/h.
+    - id: distance-times-time
+      label: Multiply the distance by the time.
+      correct: false
+      why: That gives km*min, which is not a speed.
+    - id: distance-over-100
+      label: Divide the distance by 100.
+      correct: false
+      why: The 100 belongs to the fuel rate, not to the speed.
+steps:
+  - id: average-speed
+    ask:
+      prompt: What is the average speed of the van, in kilometers per hour?
+      answer: "72"
+      unit: km/h
+      hints:
+        - The route time is in minutes and the answer is per hour.
+        - One hour holds 60 minutes, so scale the distance by 60/45.
+    skills:
+      - dimensional-analysis/kp2
+  - id: speed-in-metres
+    ask:
+      prompt: What is the same speed in meters per second?
+      answer: "20"
+      unit: m/s
+      hints:
+        - One kilometer is 1000 m and one hour is 3600 s.
+        - Divide the km/h value by 3.6.
+    skills:
+      - dimensional-analysis/kp2
+      - metric-unit-conversion/kp1
+  - id: shift-distance
+    ask:
+      prompt: How far does the van travel in the 3 hour shift?
+      answer: "216"
+      unit: km
+      hints:
+        - The speed is a distance for every hour of the shift.
+    skills:
+      - dimensional-analysis/kp1
+final:
+  ask:
+    prompt: How much fuel does the shift use, in liters, to 2 decimals?
+    answer: "14.04"
+    contract:
+      kind: approx
+      decimals: 2
+    unit: L
+    hints:
+      - The fuel rate is stated for 100 km.
+      - Multiply the shift distance by 6.5/100.
+  interpretation: >
+    The shift uses 14.04 L. A 50 L tank covers three such shifts with 7.88 L
+    left, so the van refuels on the fourth shift and not before.
+  skills:
+    - dimensional-analysis/kp1

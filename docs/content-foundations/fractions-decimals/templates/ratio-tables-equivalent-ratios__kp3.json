@@ -1,0 +1,189 @@
+[
+  {
+    "kp_id": "ratio-tables-equivalent-ratios/kp3",
+    "kind": "template",
+    "arguments": {
+      "answer_expr": "multipart(3*a,2*b,signcase(3*a-2*b,[v,u,u]))",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "a_scoops",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "b_scoops",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "stronger",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "A"
+                ],
+                [
+                  "B"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "constraints": [],
+      "distractors": [],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            2,
+            3,
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            2,
+            4,
+            5,
+            7
+          ]
+        },
+        "u": {
+          "kind": "choice",
+          "values": [
+            "A"
+          ]
+        },
+        "v": {
+          "kind": "choice",
+          "values": [
+            "B"
+          ]
+        }
+      },
+      "samples": [
+        {
+          "params": {
+            "a": 2,
+            "b": 2,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 6; b_scoops = 4; stronger = A"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 4,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 6; b_scoops = 8; stronger = B"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 5,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 6; b_scoops = 10; stronger = B"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 7,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 6; b_scoops = 14; stronger = B"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 2,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 9; b_scoops = 4; stronger = A"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 4,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 9; b_scoops = 8; stronger = A"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 5,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 9; b_scoops = 10; stronger = B"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 7,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 9; b_scoops = 14; stronger = B"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 2,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 12; b_scoops = 4; stronger = A"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 4,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 12; b_scoops = 8; stronger = A"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 5,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 12; b_scoops = 10; stronger = A"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 7,
+            "u": "A",
+            "v": "B"
+          },
+          "expected": "a_scoops = 12; b_scoops = 14; stronger = B"
+        }
+      ],
+      "statement": "Mix A uses ${a}$ scoops per two cups. Mix B uses ${b}$ scoops per three cups. Scale both to six cups. Give a_scoops, b_scoops, and stronger = {u} or {v} for the mix with more scoops at six cups.",
+      "solution_sketch": "Six cups is three times two cups and twice three cups. Multiply the Mix A scoop count by three and the Mix B scoop count by two. The mix with the larger scaled scoop count is stronger at this common volume.",
+      "hints": [
+        "Scale Mix A by three and Mix B by two so both use six cups.",
+        "Compare the two scaled scoop counts, then report the label of the larger one."
+      ]
+    }
+  }
+]

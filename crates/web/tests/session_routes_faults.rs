@@ -200,7 +200,7 @@ async fn a_lock_wait_past_the_client_bound_is_500_on_the_session_start() {
     TestDb::with(|db| async move {
         let app = cadus_web::create_app(
             cadus_web::AppState::new(cadus_store::Db::new(db.app.clone(), 500)).with_content(
-                std::sync::Arc::new(cadus_web::state::Content::new(common::sessions::graph())),
+                std::sync::Arc::new(common::open_content(common::sessions::graph())),
             ),
         );
         let user = cached_learner(&db, "fault-bound@example.com").await;

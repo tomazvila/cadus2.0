@@ -22,6 +22,7 @@ use cadus_core::xp::{
     current_streak, daily_totals, estimate_eta, quality_multiplier, task_xp, topics_per_week,
     window_start, xp_per_day,
 };
+use common::selector::cfg;
 use common::xp_states::{mini_ids_sorted, mini_states};
 use common::{assert_approx, mini_curriculum, noon_us, on, utc};
 
@@ -30,13 +31,13 @@ use common::{assert_approx, mini_curriculum, noon_us, on, utc};
 // --------------------------------------------------------------------------- //
 
 #[test]
-fn course_progress_counts_mastered_topics() {
+fn course_progress_counts_practiced_topics() {
     let graph = mini_curriculum();
     let states = mini_states(6);
     assert_approx(
-        course_progress(&states, &graph, "testcourse"),
+        course_progress(&states, &graph, "testcourse", &cfg()),
         6.0 / 12.0,
-        "six of twelve mastered",
+        "six of twelve practiced",
     );
 }
 
@@ -56,7 +57,7 @@ fn progress_ignores_review_only_credit() {
             )
         })
         .collect();
-    assert_eq!(course_progress(&states, &graph, "testcourse"), 0.0);
+    assert_eq!(course_progress(&states, &graph, "testcourse", &cfg()), 0.0);
 }
 
 // --------------------------------------------------------------------------- //
@@ -69,7 +70,15 @@ fn estimate_eta_from_remaining_and_velocity() {
     let states = mini_states(6);
     // 6 done, total XP 120 -> 20 XP per topic; 6 remaining -> 120 XP; at 10 XP
     // per day -> 12 days.
-    let eta = estimate_eta(&states, &graph, "testcourse", 120.0, 10.0, on(2026, 7, 14));
+    let eta = estimate_eta(
+        &states,
+        &graph,
+        "testcourse",
+        120.0,
+        10.0,
+        on(2026, 7, 14),
+        &cfg(),
+    );
     assert_eq!(eta, Some(on(2026, 7, 26)));
 }
 
@@ -78,7 +87,15 @@ fn estimate_eta_none_without_velocity() {
     let graph = mini_curriculum();
     let states = mini_states(0);
     assert_eq!(
-        estimate_eta(&states, &graph, "testcourse", 0.0, 0.0, on(2026, 7, 14)),
+        estimate_eta(
+            &states,
+            &graph,
+            "testcourse",
+            0.0,
+            0.0,
+            on(2026, 7, 14),
+            &cfg(),
+        ),
         None
     );
 }
@@ -88,7 +105,15 @@ fn estimate_eta_uses_default_before_any_completion() {
     let graph = mini_curriculum();
     let states = mini_states(0);
     // 12 topics * 12.0 XP per topic / 12.0 XP per day -> 12 days.
-    let eta = estimate_eta(&states, &graph, "testcourse", 0.0, 12.0, on(2026, 7, 14));
+    let eta = estimate_eta(
+        &states,
+        &graph,
+        "testcourse",
+        0.0,
+        12.0,
+        on(2026, 7, 14),
+        &cfg(),
+    );
     assert_eq!(eta, Some(on(2026, 7, 26)));
 }
 
@@ -97,7 +122,15 @@ fn estimate_eta_of_a_complete_course_is_today() {
     let graph = mini_curriculum();
     let states = mini_states(12);
     assert_eq!(
-        estimate_eta(&states, &graph, "testcourse", 240.0, 10.0, on(2026, 7, 14)),
+        estimate_eta(
+            &states,
+            &graph,
+            "testcourse",
+            240.0,
+            10.0,
+            on(2026, 7, 14),
+            &cfg(),
+        ),
         Some(on(2026, 7, 14))
     );
 }
@@ -126,6 +159,7 @@ fn compute_velocity_state_integration() {
         t_us: noon_us(2026, 7, 14),
         zone: utc(),
         window_days: 28,
+        cfg: &cfg(),
     })
     .unwrap();
 
@@ -151,6 +185,7 @@ fn compute_velocity_state_without_a_course_has_no_progress_and_no_eta() {
         t_us: noon_us(2026, 7, 14),
         zone: utc(),
         window_days: 28,
+        cfg: &cfg(),
     })
     .unwrap();
 
@@ -267,7 +302,7 @@ fn a_streak_walk_stops_at_the_first_representable_date() {
 fn an_empty_course_and_an_infinite_quotient_give_the_undefined_answers() {
     let graph = mini_curriculum();
     let states = mini_states(0);
-    assert_eq!(course_progress(&states, &graph, "nocourse"), 0.0);
+    assert_eq!(course_progress(&states, &graph, "nocourse", &cfg()), 0.0);
     assert_eq!(
         estimate_eta(
             &states,
@@ -275,7 +310,8 @@ fn an_empty_course_and_an_infinite_quotient_give_the_undefined_answers() {
             "testcourse",
             0.0,
             f64::MIN_POSITIVE,
-            on(2026, 7, 28)
+            on(2026, 7, 28),
+            &cfg(),
         ),
         None
     );
@@ -308,6 +344,7 @@ fn an_unrepresentable_instant_is_an_error_on_every_path() {
         t_us: noon_us(2026, 7, 14),
         zone: utc(),
         window_days: 28,
+        cfg: &cfg(),
     };
     assert!(compute_velocity_state(&VelocityInput { t_us: far, ..input }).is_err());
     assert!(

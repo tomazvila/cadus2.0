@@ -261,26 +261,25 @@ async fn an_undecidable_answer_kind_declines_with_no_call_for_every_gated_kind()
 /// An endpoint that refuses every request declines with the endpoint's reason,
 /// and the reason is not fed back as authoring feedback.
 ///
-/// A 400 never retries inside the client (spec section 6.5), so five authoring
-/// attempts are five HTTP attempts.
+/// A permanent endpoint rejection stops both transport and author retries.
 #[tokio::test]
-async fn an_endpoint_that_refuses_every_attempt_declines() {
+async fn a_permanent_endpoint_rejection_stops_after_one_request() {
     TestDb::with(|db| async move {
         let refusals: Vec<(u16, String)> = (0..5)
             .map(|_| (400, json!({"error": "no such model"}).to_string()))
             .collect();
         let fake = FakeModel::start(refusals).await;
 
-        let report = author_expect(&db, &fake, Kind::Template, &spec(), Outcome::Declined, 5).await;
+        let report = author_expect(&db, &fake, Kind::Template, &spec(), Outcome::Declined, 1).await;
 
         let decline = report.decline.expect("a decline record");
-        assert_eq!(decline.reasons.len(), 5);
+        assert_eq!(decline.reasons.len(), 1);
         assert_eq!(
             decline.reasons[0],
             "model endpoint answered 400: {\"error\":\"no such model\"}"
         );
         // No gate ever ran, so no attempt carried a retry block.
-        for index in 0..5 {
+        for index in 0..1 {
             let message = fake.user_message(index);
             assert!(
                 !message.contains(RETRY_HEADER),
@@ -288,7 +287,7 @@ async fn an_endpoint_that_refuses_every_attempt_declines() {
             );
         }
         assert!(content_rows(&db.admin, KP_KEY).await.is_empty());
-        assert_eq!(ledger(&db).await, (5, 0));
+        assert_eq!(ledger(&db).await, (1, 0));
     })
     .await;
 }

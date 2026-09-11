@@ -55,6 +55,12 @@ impl Parser<'_> {
                     factors.push(parser.parse_unary()?);
                     continue;
                 }
+                // A unit glyph reaches a product only inside a longer answer,
+                // such as `5 € + 3 €` or `sin(30°)`: the value-with-unit
+                // production reads a unit at the end of the answer alone (D-F3).
+                if matches!(parser.peek(), Some(Tok::Unit(_))) {
+                    return Err(Undecidable::new("a unit inside an expression"));
+                }
                 break;
             }
             Ok(collapse(factors, Ast::Mul))
@@ -141,7 +147,13 @@ impl Parser<'_> {
     /// product sign into the source for the same reading, and that sign landed
     /// on the last letter of `\cdot` (review round 3, finding #8). A token needs
     /// no sign.
+    ///
+    /// The marker of a quotient with a remainder starts no factor: a product
+    /// ends in front of it, and the answer production reads it (D-F3).
     pub(super) fn starts_operand(&self) -> bool {
+        if self.at_remainder_marker() {
+            return false;
+        }
         matches!(
             self.peek(),
             Some(

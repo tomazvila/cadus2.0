@@ -20,16 +20,19 @@
 
 use std::fmt::Write as _;
 
-use cadus_core::curriculum::{Curriculum, KnowledgePoint, Topic};
-use cadus_core::pool::{kp_key, split_kp_key};
+use cadus_core::pool::kp_key;
 use cadus_store::Db;
 
 use crate::WorkerError;
 use crate::authoring::job::{AUTHORING_ATTEMPTS, bank_target, slots_taken};
 use crate::authoring::prompt::{AuthoringSpec, KINDS, Kind};
+pub use crate::authoring::selection::{select, select_for};
 
 /// The subcommand name of one authoring pass.
 pub const AUTHOR: &str = "author";
+
+/// The subcommand name of one readiness audit (D-F5).
+pub const READINESS: &str = "readiness";
 
 /// The text `--help` prints.
 pub const HELP: &str = "\
@@ -38,17 +41,34 @@ cadus-worker — the Cadus background worker
 USAGE:
     cadus-worker                    run the tick loop (refill, diagnosis)
     cadus-worker author [OPTIONS]   run one authoring pass
+    cadus-worker readiness [OPTS]   audit the content and write the report
     cadus-worker --help             print this text
 
 AUTHOR OPTIONS:
+    --course <id>           author only this course, e.g. foundations.
+    --template-passes <1..3> fill template families before instruction; default 1.
+    --kp-file <path>       serving keys, one per line; blank/# comment lines ignored.
+    --missing-only         fill only pairs with no pending or approved document.
     --kp <topic_id/kp_id>   author for this knowledge point; repeatable.
                             The default is every knowledge point of the tree.
     --kind <kind>           author this kind; repeatable. One of template,
                             teach, hint_ladder, diagnosis. The default is all
                             four.
     --dry-run               print the plan, and make no model call and no write.
+    --budget-usd <amount>   required for paid runs; hard shared reservation cap.
+    --request-reserve-usd <amount>
+                            required upper price bound for each HTTP request,
+                            including the largest truncation output and fees.
+    --portable-schema       wrap draft JSON in one provider-portable string field.
+    --decline-dir <path>     save declined draft arguments; no credentials.
+    --concurrency <1..64>    active knowledge points; default 1. Kinds stay ordered.
     --stale                 list the approved documents an older prompt wrote,
                             and make no model call and no write.
+
+READINESS OPTIONS:
+    --course <id>           audit this course only. The default is every course.
+    --json <path>           write the JSON report to this file.
+    --md <path>             write the Markdown report to this file.
 
 ENVIRONMENT:
     DATABASE_URL       the connection the pass reads and writes (cadus_admin).
@@ -66,6 +86,19 @@ pub enum Command {
     Help,
     /// Run one authoring pass.
     Author(AuthorArgs),
+    /// Run one readiness audit (D-F5).
+    Readiness(ReadinessArgs),
+}
+
+/// The options of one `readiness` subcommand.
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct ReadinessArgs {
+    /// The course the audit covers. `None` covers every course.
+    pub course: Option<String>,
+    /// The file the JSON report goes to.
+    pub json: Option<String>,
+    /// The file the Markdown report goes to.
+    pub md: Option<String>,
 }
 
 /// The options of one `author` subcommand.
@@ -73,6 +106,14 @@ pub enum Command {
 pub struct AuthorArgs {
     /// The serving keys the operator named. Empty means every knowledge point.
     pub kps: Vec<String>,
+    /// Additional explicit serving keys from a newline-separated file.
+    pub kp_file: Option<String>,
+    /// Skip every pair that already has pending or approved content.
+    pub missing_only: bool,
+    /// Restrict every author pass to this curriculum course.
+    pub course: Option<String>,
+    /// Number of template bank passes before instruction; zero selects one.
+    pub template_passes: usize,
     /// The kinds the operator named. Empty means every kind of [`KINDS`].
     pub kinds: Vec<Kind>,
     /// Print the plan and make no call.
@@ -83,6 +124,16 @@ pub struct AuthorArgs {
     /// for re-authoring and never unapproves one, so an operator needs a way to
     /// read the mark (M6 review finding F4).
     pub stale: bool,
+    /// Total reservation cap in millionths of a dollar.
+    pub budget_micros: Option<u64>,
+    /// Provider upper cost bound per HTTP request in millionths of a dollar.
+    pub request_reserve_micros: Option<u64>,
+    /// Active knowledge points; zero selects the default of one.
+    pub concurrency: usize,
+    /// Use one JSON-string tool argument for providers with limited JSON schema support.
+    pub portable_schema: bool,
+    /// Save declined draft arguments and refusal facts in this directory.
+    pub decline_dir: Option<String>,
 }
 
 impl AuthorArgs {
@@ -125,28 +176,113 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
     if first == "--help" || first == "-h" {
         return Ok(Command::Help);
     }
+    if first == READINESS {
+        return parse_readiness(args);
+    }
     if first != AUTHOR {
         return Err(CliError(format!(
             "unknown argument `{first}` — run `cadus-worker --help`"
         )));
     }
 
+    parse_author(args)
+}
+
+fn parse_author<'a>(mut args: impl Iterator<Item = &'a str>) -> Result<Command, CliError> {
     let mut parsed = AuthorArgs::default();
     while let Some(argument) = args.next() {
+        if apply_author_argument(&mut parsed, argument, &mut args)? {
+            return Ok(Command::Help);
+        }
+    }
+    Ok(Command::Author(parsed))
+}
+
+/// Apply one author option. The caller supplies the following token; flag options
+/// ignore it, while valued options validate it through [`value_of`].
+fn apply_author_argument<'a>(
+    parsed: &mut AuthorArgs,
+    argument: &str,
+    args: &mut impl Iterator<Item = &'a str>,
+) -> Result<bool, CliError> {
+    if apply_author_flag(parsed, argument) {
+        return Ok(false);
+    }
+    match argument {
+        "--kp-file" => parsed.kp_file = Some(value_of(argument, args.next())?),
+        "--decline-dir" => parsed.decline_dir = Some(value_of(argument, args.next())?),
+        "--budget-usd" | "--request-reserve-usd" => parse_money(parsed, argument, args.next())?,
+        "--concurrency" => parsed.concurrency = bounded_number(argument, args.next(), 64)?,
+        "--help" | "-h" => return Ok(true),
+        "--kp" => parsed.kps.push(value_of(argument, args.next())?),
+        "--course" => parsed.course = Some(value_of(argument, args.next())?),
+        "--template-passes" => parsed.template_passes = bounded_number(argument, args.next(), 3)?,
+        "--kind" => parsed.kinds.push(parse_kind(args.next())?),
+        other => {
+            return Err(CliError(format!(
+                "unknown option `{other}` — run `cadus-worker --help`"
+            )));
+        }
+    }
+    Ok(false)
+}
+
+fn apply_author_flag(parsed: &mut AuthorArgs, argument: &str) -> bool {
+    match argument {
+        "--dry-run" => parsed.dry_run = true,
+        "--missing-only" => parsed.missing_only = true,
+        "--stale" => parsed.stale = true,
+        "--portable-schema" => parsed.portable_schema = true,
+        _ => return false,
+    }
+    true
+}
+
+fn parse_money(
+    parsed: &mut AuthorArgs,
+    argument: &str,
+    next: Option<&str>,
+) -> Result<(), CliError> {
+    let value = value_of(argument, next)?;
+    let money = crate::authoring::budget::usd_micros(&value).map_err(CliError)?;
+    if argument == "--budget-usd" {
+        parsed.budget_micros = Some(money);
+    } else {
+        parsed.request_reserve_micros = Some(money);
+    }
+    Ok(())
+}
+
+fn bounded_number(option: &str, value: Option<&str>, max: usize) -> Result<usize, CliError> {
+    value_of(option, value)?
+        .parse()
+        .ok()
+        .filter(|number| (1..=max).contains(number))
+        .ok_or_else(|| CliError(format!("{} must be in 1..={max}", &option[2..])))
+}
+
+fn parse_kind(value: Option<&str>) -> Result<Kind, CliError> {
+    let raw = value_of("--kind", value)?;
+    Kind::from_wire(&raw).ok_or_else(|| {
+        CliError(format!(
+            "unknown kind `{raw}` — the kinds are template, teach, hint_ladder, diagnosis"
+        ))
+    })
+}
+
+/// Read the options of the `readiness` subcommand.
+///
+/// # Errors
+///
+/// Returns [`CliError`] for an unknown option and for an option with no value.
+fn parse_readiness<'a>(mut args: impl Iterator<Item = &'a str>) -> Result<Command, CliError> {
+    let mut parsed = ReadinessArgs::default();
+    while let Some(argument) = args.next() {
         match argument {
-            "--dry-run" => parsed.dry_run = true,
-            "--stale" => parsed.stale = true,
             "--help" | "-h" => return Ok(Command::Help),
-            "--kp" => parsed.kps.push(value_of("--kp", args.next())?),
-            "--kind" => {
-                let raw = value_of("--kind", args.next())?;
-                let kind = Kind::from_wire(&raw).ok_or_else(|| {
-                    CliError(format!(
-                        "unknown kind `{raw}` — the kinds are template, teach, hint_ladder, diagnosis"
-                    ))
-                })?;
-                parsed.kinds.push(kind);
-            }
+            "--course" => parsed.course = Some(value_of("--course", args.next())?),
+            "--json" => parsed.json = Some(value_of("--json", args.next())?),
+            "--md" => parsed.md = Some(value_of("--md", args.next())?),
             other => {
                 return Err(CliError(format!(
                     "unknown option `{other}` — run `cadus-worker --help`"
@@ -154,7 +290,7 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
             }
         }
     }
-    Ok(Command::Author(parsed))
+    Ok(Command::Readiness(parsed))
 }
 
 /// The value of one option, or the refusal an option with no value earns.
@@ -166,76 +302,6 @@ fn value_of(option: &str, value: Option<&str>) -> Result<String, CliError> {
     match value {
         Some(text) if !text.starts_with("--") => Ok(text.to_owned()),
         _ => Err(CliError(format!("the option `{option}` needs a value"))),
-    }
-}
-
-/// The authoring specs of the knowledge points the operator named.
-///
-/// An empty `keys` list selects EVERY knowledge point of the tree, in curriculum
-/// order. A named key selects one, and the answer keeps the order the operator
-/// wrote.
-///
-/// Every spec states no difficulty target. The curriculum carries a topic
-/// difficulty number, not the sentence the prompt asks for, so the prompt takes
-/// `prompt::DEFAULT_DIFFICULTY`.
-///
-/// # Errors
-///
-/// Returns [`CliError`] naming a key the curriculum does not hold.
-pub fn select(curriculum: &Curriculum, keys: &[String]) -> Result<Vec<AuthoringSpec>, CliError> {
-    if keys.is_empty() {
-        return Ok(every_spec(curriculum));
-    }
-    let mut specs = Vec::with_capacity(keys.len());
-    for key in keys {
-        specs.push(one_spec(curriculum, key)?);
-    }
-    Ok(specs)
-}
-
-/// Every knowledge point of the tree, in curriculum order.
-fn every_spec(curriculum: &Curriculum) -> Vec<AuthoringSpec> {
-    let mut specs = Vec::new();
-    for topic in curriculum.topics() {
-        for kp in &topic.knowledge_points {
-            specs.push(spec_of(topic, kp));
-        }
-    }
-    specs
-}
-
-/// The spec of one serving key, or the refusal an unknown key earns.
-fn one_spec(curriculum: &Curriculum, key: &str) -> Result<AuthoringSpec, CliError> {
-    let Some((topic_id, kp_id)) = split_kp_key(key) else {
-        return Err(CliError(format!(
-            "the knowledge point `{key}` is not a serving key — write it as `<topic_id>/<kp_id>`"
-        )));
-    };
-    curriculum
-        .topics()
-        .iter()
-        .find(|topic| topic.id.as_str() == topic_id)
-        .and_then(|topic| {
-            topic
-                .knowledge_points
-                .iter()
-                .find(|kp| kp.id.as_str() == kp_id)
-                .map(|kp| spec_of(topic, kp))
-        })
-        .ok_or_else(|| CliError(format!("the curriculum holds no knowledge point `{key}`")))
-}
-
-/// One curriculum knowledge point, as the spec the prompt reads.
-fn spec_of(topic: &Topic, kp: &KnowledgePoint) -> AuthoringSpec {
-    AuthoringSpec {
-        kp_id: kp.id.as_str().to_owned(),
-        kp_name: kp.name.clone(),
-        topic_id: topic.id.as_str().to_owned(),
-        topic_name: topic.name.clone(),
-        answer_kind: topic.answer_kind,
-        difficulty_target: None,
-        constraints: kp.constraints.clone(),
-        exemplars: kp.exemplars.clone(),
     }
 }
 
@@ -300,18 +366,36 @@ pub fn documents(rows: &[PlanRow]) -> i64 {
     rows.iter().map(PlanRow::to_author).sum()
 }
 
+/// Documents the requested stages attempt, after occupied bank slots.
+#[must_use]
+pub fn staged_documents(rows: &[PlanRow], template_rounds: usize) -> i64 {
+    rows.iter()
+        .map(|row| {
+            let rounds = if row.kind == Kind::Template {
+                i64::try_from(template_rounds.max(1)).unwrap_or(i64::MAX)
+            } else {
+                1
+            };
+            (row.target - row.taken).max(0).min(rounds)
+        })
+        .sum()
+}
+
 /// The model calls the plan spends: the floor and the ceiling (T3).
 ///
 /// One document takes one call when the gate accepts the first reply, and
 /// [`AUTHORING_ATTEMPTS`](crate::authoring::job::AUTHORING_ATTEMPTS) calls when
-/// every attempt is refused. The pair is the operator's bill before the pass
+/// every attempt is refused. Each author attempt also includes the transport
+/// retry bound. The pair is the operator's bill before the pass
 /// runs.
 #[must_use]
 pub fn call_bounds(rows: &[PlanRow]) -> (i64, i64) {
     let documents = documents(rows);
     (
         documents,
-        documents.saturating_mul(i64::from(AUTHORING_ATTEMPTS)),
+        documents
+            .saturating_mul(i64::from(AUTHORING_ATTEMPTS))
+            .saturating_mul(i64::from(cadus_model_client::MAX_ATTEMPTS)),
     )
 }
 

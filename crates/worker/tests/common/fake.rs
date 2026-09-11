@@ -192,10 +192,12 @@ pub fn squares_spec() -> AuthoringSpec {
         difficulty_target: None,
         constraints: None,
         exemplars: vec![Exemplar {
+            answer_contract: None,
             problem: "Compute $7^2$.".to_owned(),
             answer: "49".to_owned(),
             solution_sketch: None,
         }],
+        finite: None,
     }
 }
 
@@ -324,15 +326,18 @@ pub fn golden_spec() -> AuthoringSpec {
         ),
         exemplars: vec![
             Exemplar {
+                answer_contract: None,
                 problem: "Compute $52 - 27$.".to_owned(),
                 answer: "25".to_owned(),
                 solution_sketch: Some("Borrow one ten, then subtract the ones column.".to_owned()),
             },
             Exemplar {
+                answer_contract: None,
                 problem: "Compute $81 - 46$.".to_owned(),
                 answer: "35".to_owned(),
                 solution_sketch: None,
             },
         ],
+        finite: None,
     }
 }

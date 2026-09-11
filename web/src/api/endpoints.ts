@@ -23,7 +23,9 @@ import type {
   OkResponse,
   OperatorFlagsResponse,
   ReadyResponse,
+  RegradeResponse,
   RejectResponse,
+  RetentionReportResponse,
   ReviewDocument,
   ReviewListResponse,
   ServedProblem,
@@ -34,8 +36,15 @@ import type {
   SignupResponse,
   StatusResponse,
   TaskAnswerResponse,
+  QuizResultResponse,
   TeachResponse,
+  UngradedListResponse,
 } from './types';
+import type {
+  IntegratedGrade,
+  IntegratedHintResponse,
+  IntegratedProblem,
+} from './types-integrated';
 
 /** A path segment. A task id or a provider name reaches the URL escaped. */
 const seg = (value: string) => encodeURIComponent(value);
@@ -80,6 +89,7 @@ export const api: ApiClient = {
 
   // --- Dashboard and curriculum -------------------------------------------
   getStatus: () => request<StatusResponse>('GET', '/status'),
+  getRetentionReport: () => request<RetentionReportResponse>('GET', '/report/retention'),
   // `scope` is a VIEW FILTER only. The learner whose state is joined comes from the
   // session identity, never from this parameter.
   getGraph: (scope) =>
@@ -102,12 +112,38 @@ export const api: ApiClient = {
   // as `undefined`: those are different bytes on the wire, and the body reader refuses a
   // field whose type it does not expect. TypeScript's excess-property check fires on
   // object LITERALS only, so a caller passing a variable would put extra keys on the wire.
+  taskQuizResult: (taskId, practice = false) => request<QuizResultResponse>('POST', `/task/${seg(taskId)}/quiz-result`, { practice }),
   taskAnswer: (taskId, { problem_id, answer, work, assisted }) =>
     request<TaskAnswerResponse>('POST', `/task/${seg(taskId)}/answer`, {
       problem_id,
       answer,
       ...(work === undefined ? {} : { work }),
       ...(assisted === undefined ? {} : { assisted }),
+    }),
+
+  // The integrated task (D-F10). Every one of the three resolves the item from the TASK,
+  // so no path here names an item id the learner could change.
+  taskIntegrated: (taskId) =>
+    request<IntegratedProblem>('POST', `/task/${seg(taskId)}/integrated`, {}),
+  taskIntegratedHint: (taskId, { field, index }) =>
+    request<IntegratedHintResponse>('POST', `/task/${seg(taskId)}/integrated/hint`, {
+      field,
+      index,
+    }),
+  // A WHITELIST, the same rule the graded answer above keeps: an absent method and an
+  // absent note are OMITTED, never sent as `undefined`.
+  taskIntegratedAnswer: (taskId, { method, steps, final_answer, reasoning }) =>
+    request<IntegratedGrade>('POST', `/task/${seg(taskId)}/integrated/answer`, {
+      ...(method === undefined || method === null ? {} : { method }),
+      // The whitelist runs per field too: a step object is rebuilt key by key, so a
+      // caller's extra property never reaches the wire.
+      steps: steps.map(({ id, answer, hints_used }) => ({ id, answer, hints_used })),
+      final_answer: {
+        id: final_answer.id,
+        answer: final_answer.answer,
+        hints_used: final_answer.hints_used,
+      },
+      ...(reasoning === undefined ? {} : { reasoning }),
     }),
 
   // --- The placement diagnostic (spec section 2) ---------------------------
@@ -154,8 +190,19 @@ export const api: ApiClient = {
   getContent: (digest) => request<ReviewDocument>('GET', `/admin/content/${seg(digest)}`),
   // The body is ignored by the handler, and `{}` is sent anyway: a POST with no body
   // carries no `Content-Type`, and the CSRF layer reads a simple request differently.
-  approveContent: (digest) =>
-    request<ApproveResponse>('POST', `/admin/content/${seg(digest)}/approve`, {}),
+  approveContent: (
+    digest, policyDigest, templateContextDigest, curriculumDigest, reviewEngineDigest,
+  ) =>
+    request<ApproveResponse>('POST', `/admin/content/${seg(digest)}/approve`,
+      {
+        policy_digest: policyDigest,
+        template_context_digest: templateContextDigest,
+        curriculum_digest: curriculumDigest,
+        review_engine_digest: reviewEngineDigest,
+      }),
   rejectContent: (digest, reason) =>
     request<RejectResponse>('POST', `/admin/content/${seg(digest)}/reject`, { reason }),
+  listUngraded: () => request<UngradedListResponse>('GET', '/admin/ungraded'),
+  regradeUngraded: (attemptId, outcome) =>
+    request<RegradeResponse>('POST', `/admin/ungraded/${seg(attemptId)}/regrade`, { outcome }),
 };

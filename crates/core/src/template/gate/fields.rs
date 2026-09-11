@@ -79,7 +79,30 @@ fn check_field(field: &str, doc: &TemplateDoc, what: &str, code: &str) -> Result
             ),
         ));
     }
+    if unmatched_math_delimiter(field) {
+        return Err(Rejection::new(
+            "math-delimiter",
+            format!("{what} has an unmatched '$' math delimiter"),
+        ));
+    }
     Ok(())
+}
+
+/// Whether an odd count of unescaped dollar signs leaves inline math open.
+fn unmatched_math_delimiter(field: &str) -> bool {
+    let mut backslashes = 0_usize;
+    let mut open = false;
+    for character in field.chars() {
+        if character == '\\' {
+            backslashes += 1;
+            continue;
+        }
+        if character == '$' && backslashes.is_multiple_of(2) {
+            open = !open;
+        }
+        backslashes = 0;
+    }
+    open
 }
 
 // --------------------------------------------------------------------------
@@ -200,12 +223,29 @@ pub(super) fn check_answer_names(
     ast: &Ast,
     spec: &GateSpec,
 ) -> Result<(), Rejection> {
+    let symbolic_relation = matches!(
+        doc.answer_contract,
+        Some(
+            crate::answer::AnswerContract::PolynomialRelation
+                | crate::answer::AnswerContract::RelationSetup
+        )
+    );
+    let assignment_label = match (&doc.answer_contract, ast) {
+        (Some(crate::answer::AnswerContract::RequiredAssignment), Ast::Assign { var, value })
+            if !ast_names(value).contains(var) =>
+        {
+            Some(var.as_str())
+        }
+        _ => None,
+    };
     let unknown: Vec<String> = ast_names(ast)
         .into_iter()
         .filter(|name| !doc.params.contains_key(name))
         .filter(|name| !RESERVED_NAMES.contains(&name.as_str()))
+        .filter(|name| assignment_label != Some(name.as_str()))
         .filter(|name| {
-            spec.answer_kind != AnswerKind::Expression || !FREE_SYMBOLS.contains(&name.as_str())
+            (spec.answer_kind != AnswerKind::Expression && !symbolic_relation)
+                || !FREE_SYMBOLS.contains(&name.as_str())
         })
         .collect();
     if !unknown.is_empty() {
@@ -237,6 +277,9 @@ fn collect_ast_names(ast: &Ast, names: &mut BTreeSet<String>) {
             }
         }
         Ast::Neg(inner) | Ast::Sqrt(inner) | Ast::Pow(inner, _) => collect_ast_names(inner, names),
+        Ast::RationalPow { base: inner, .. } | Ast::Quantity { value: inner, .. } => {
+            collect_ast_names(inner, names);
+        }
         Ast::Add(items)
         | Ast::Mul(items)
         | Ast::Tuple(items)

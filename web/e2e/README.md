@@ -1,7 +1,8 @@
 # The browser click-through (S13)
 
-Two walks that drive the BUILT bundle in a real Chromium: `demo.mjs` against `?demo=1`, and
-`authed.mjs` against the M5 `cadus-web` binary. Beside them, `packaging.sh` (S14) drives the
+Three walks drive the BUILT bundle in a real Chromium: `demo.mjs` against `?demo=1`,
+`journey.mjs` against `?demo=journey`, and `authed.mjs` against the M5 `cadus-web` binary.
+Beside them, `packaging.sh` (S14) drives the
 deployed stack itself — Caddy, the service and the database — with curl instead of a browser.
 
 ## Why this exists, concretely
@@ -33,13 +34,15 @@ proves the detectors still work by breaking the build on purpose.
 
 ```sh
 node e2e/run.mjs demo                      # one walk against a clean build
+node e2e/run.mjs journey                   # instruction through delayed retention
 node e2e/run.mjs authed --api=URL          # one walk against a running cadus-web
 node e2e/run.mjs acceptance                # the S13 acceptance check
 ```
 
 `acceptance` is what the unit is measured by. It builds each of the three deliberately broken
 trees of `breaks.mjs`, runs the demo walk against each, and requires **that** failure to be
-named; then it builds the real tree and requires a clean pass. Its output ends:
+named; then it builds the real tree and requires both the compatibility walk and the complete
+2.0 journey to pass. Its output ends:
 
 ```
 ================ S13 ACCEPTANCE ================
@@ -47,6 +50,7 @@ named; then it builds the real tree and requires a clean pass. Its output ends:
   PASS  raw-latex      exit=1 reported="FAIL-2 raw LaTeX"=true
   PASS  wrong-problem  exit=1 reported="FAIL-3 wrong problem"=true
   PASS  clean          exit=0
+  PASS  journey        exit=0
 ```
 
 Add `--no-build` to reuse `web/dist`, and `--port=N` to move the origin off 4173.
@@ -110,6 +114,13 @@ list view), a lesson end to end (worked example → practice → **SERVE-idem** 
 1400 ms auto-advance → the next knowledge point), the placement (three ground rules, and
 **DIAG-nosol**: a mark and nothing else), and a 390 px viewport checked for horizontal
 overflow.
+
+**`journey.mjs`** — the deterministic 2.0 browser fixture. It walks approved instruction →
+integrated application → field-level feedback → a distinct unseen seven-day assessment → the
+retention report. It checks rendered KaTeX on both tasks, including the MathML accessibility
+tree and the hidden visual presentation, and proves the delayed assessment repeats no
+instruction. This is browser/UI evidence; the Rust journey and recovery suites own database
+persistence, replay, and scheduler time.
 
 **`authed.mjs`** — the only path that exercises the session cookie, the CSRF origin layer and
 the service's own payloads. Sign-in, the `HttpOnly` cookie with empty web storage

@@ -136,6 +136,9 @@ fn check_one_instance(
     instance: &Instance,
 ) -> Result<(), Rejection> {
     let bindings = &instance.bindings;
+    if let Some(finite) = spec.finite.as_ref() {
+        finite.match_practice_instance(instance)?;
+    }
     if !scan(&instance.text).0.is_empty() {
         return Err(Rejection::new(
             "placeholder-left",
@@ -152,21 +155,30 @@ fn check_one_instance(
         ));
     }
     let tokens = identifier_tokens(&instance.answer);
-    let poisoned: Vec<String> = tokens
-        .iter()
-        .filter(|token| NON_ANSWERS.contains(&token.as_str()))
-        .cloned()
-        .collect();
-    if !poisoned.is_empty() {
-        return Err(Rejection::new(
-            "not-a-number",
-            format!(
-                "instance {} answers {}, which is not a number ({})",
-                py_bindings(bindings),
-                py_str(&instance.answer),
-                py_list(&poisoned)
-            ),
-        ));
+    let structured = matches!(
+        instance.answer_contract.as_ref(),
+        Some(crate::answer::AnswerContract::RequiredAssignment)
+            | Some(crate::answer::AnswerContract::Label { .. })
+            | Some(crate::answer::AnswerContract::Multipart { .. })
+            | Some(crate::answer::AnswerContract::QuotientRemainder { .. })
+    );
+    if !structured {
+        let poisoned: Vec<String> = tokens
+            .iter()
+            .filter(|token| NON_ANSWERS.contains(&token.as_str()))
+            .cloned()
+            .collect();
+        if !poisoned.is_empty() {
+            return Err(Rejection::new(
+                "not-a-number",
+                format!(
+                    "instance {} answers {}, which is not a number ({})",
+                    py_bindings(bindings),
+                    py_str(&instance.answer),
+                    py_list(&poisoned)
+                ),
+            ));
+        }
     }
     if trailing_zero_run(&instance.answer) {
         return Err(Rejection::new(
@@ -178,7 +190,7 @@ fn check_one_instance(
             ),
         ));
     }
-    if spec.answer_kind == AnswerKind::Numeric {
+    if spec.answer_kind == AnswerKind::Numeric && !structured {
         let leftover: Vec<String> = tokens
             .into_iter()
             .filter(|token| !RESERVED_NAMES.contains(&token.as_str()))
@@ -204,7 +216,14 @@ fn check_one_instance(
 
 /// The answer string reads back as the canonical form the instance carries (V2).
 fn check_canonical(instance: &Instance) -> Result<(), Rejection> {
-    let read = canonical_form(&instance.answer).map_err(|reason| {
+    let read = instance
+        .answer_contract
+        .as_ref()
+        .map_or_else(
+            || canonical_form(&instance.answer),
+            |contract| contract.validate_expected(&instance.answer),
+        )
+        .map_err(|reason| {
         Rejection::new(
             "undecidable-answer",
             format!(

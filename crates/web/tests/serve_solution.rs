@@ -26,8 +26,8 @@ use axum::Router;
 use cadus_store::test_support::TestDb;
 use common::{
     COMPONENT_KEY, COMPONENT_SOLUTION, COMPONENT_TEXT, COUNTING_LESSON as LESSON, TemplateRow,
-    answer_task_ok, component_app as app, problem_id_of, seed_content, seed_content_aged,
-    seed_learner, seed_open_session, seed_template_row, seeded_bindings, serve_ok, template_body,
+    answer_task_ok, component_app as app, problem_id_of, seed_learner, seed_open_session,
+    seed_template_row_for, seeded_bindings, serve_ok, template_body,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -35,8 +35,9 @@ use sqlx::types::Uuid;
 /// Put the seeded `counting/kp1` template row, drawn from `digest`, into the
 /// pool of `user`: `Count on from 8 by -3.`, whose answer is 5.
 async fn seed_counting_row(db: &TestDb, user: Uuid, digest: &str) {
-    seed_template_row(
+    seed_template_row_for(
         db,
+        &common::component_curriculum(),
         user,
         TemplateRow {
             key: COMPONENT_KEY,
@@ -46,6 +47,30 @@ async fn seed_counting_row(db: &TestDb, user: Uuid, digest: &str) {
             answer: "5",
             hash: "hash-template",
         },
+    )
+    .await;
+}
+
+async fn seed_content(db: &TestDb, key: &str, kind: &str, digest: &str, body: Value) {
+    common::seed_content_for(db, &common::component_curriculum(), key, kind, digest, body).await;
+}
+
+async fn seed_content_aged(
+    db: &TestDb,
+    key: &str,
+    kind: &str,
+    digest: &str,
+    body: Value,
+    days_ago: i32,
+) {
+    common::seed_content_aged_for(
+        db,
+        &common::component_curriculum(),
+        key,
+        kind,
+        digest,
+        body,
+        days_ago,
     )
     .await;
 }

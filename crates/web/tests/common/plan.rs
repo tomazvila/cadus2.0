@@ -5,7 +5,7 @@
 use std::collections::BTreeMap;
 
 use axum::Router;
-use cadus_core::curriculum::{Curriculum, PrereqEdge, Slug, Topic};
+use cadus_core::curriculum::{Curriculum, PrereqEdge, Slug, Topic, review_context_digest};
 use cadus_core::event::{Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::pool::{PoolAnswer, PoolProblem};
@@ -112,6 +112,23 @@ pub fn drill_app(db: &TestDb) -> Router {
     app_with_content(db, drill_curriculum())
 }
 
+/// The same router with the D-F5 readiness rule ON.
+///
+/// Every other router of these tests turns the rule off, because a test
+/// database approves no document and the rule would then block every lesson.
+/// This one is the rule's own fixture.
+pub fn gated_app(db: &TestDb) -> Router {
+    cadus_web::create_app(
+        cadus_web::AppState::new(cadus_store::Db::new(
+            db.app.clone(),
+            cadus_store::DEFAULT_CLIENT_TIMEOUT_MS,
+        ))
+        .with_content(std::sync::Arc::new(cadus_web::state::Content::new(
+            drill_curriculum(),
+        ))),
+    )
+}
+
 /// The two-topic fixture of the component tests.
 ///
 /// `counting` is a KEY prerequisite of `addition`, so `review_mix` of `addition`
@@ -207,15 +224,38 @@ pub async fn seed_content_aged(
     body: Value,
     days_ago: i32,
 ) {
+    seed_content_aged_for(db, &drill_curriculum(), key, kind, digest, body, days_ago).await;
+}
+
+/// Approve one authored document against the exact curriculum loaded by a test.
+pub async fn seed_content_aged_for(
+    db: &TestDb,
+    curriculum: &Curriculum,
+    key: &str,
+    kind: &str,
+    digest: &str,
+    body: Value,
+    days_ago: i32,
+) {
+    let curriculum_digest = review_context_digest(curriculum).unwrap();
+    let review_engine_digest = cadus_core::review_engine::DIGEST;
     sqlx::query(
-        "INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at)
-         VALUES ($1, $2, $3, $4, 'approved', now() - make_interval(days => $5))",
+        "INSERT INTO content_store
+            (digest, kp_id, kind, body, status, approved_at,
+             approved_template_context_digest, approved_curriculum_digest,
+             approved_review_engine_digest)
+         VALUES ($1, $2, $3, $4, 'approved', now() - make_interval(days => $5),
+                 CASE WHEN $3 IN ('teach', 'hint_ladder')
+                      THEN public.cadus_template_context($2, NULL, $6, $7) ELSE NULL END,
+                 $6, $7)",
     )
     .bind(digest)
     .bind(key)
     .bind(kind)
     .bind(body)
     .bind(days_ago)
+    .bind(curriculum_digest)
+    .bind(review_engine_digest)
     .execute(&db.admin)
     .await
     .unwrap();
@@ -242,6 +282,18 @@ pub async fn seed_content(db: &TestDb, key: &str, kind: &str, digest: &str, body
     seed_content_aged(db, key, kind, digest, body, 0).await;
 }
 
+/// Approve one authored document against the exact curriculum loaded by a test.
+pub async fn seed_content_for(
+    db: &TestDb,
+    curriculum: &Curriculum,
+    key: &str,
+    kind: &str,
+    digest: &str,
+    body: Value,
+) {
+    seed_content_aged_for(db, curriculum, key, kind, digest, body, 0).await;
+}
+
 /// One template row of the pool, as the draw of one document wrote it.
 pub struct TemplateRow<'a> {
     /// The serving key.
@@ -260,6 +312,17 @@ pub struct TemplateRow<'a> {
 
 /// Put one unclaimed template row into the pool of `user`.
 pub async fn seed_template_row(db: &TestDb, user: Uuid, row: TemplateRow<'_>) {
+    seed_template_row_for(db, &drill_curriculum(), user, row).await;
+}
+
+/// Put one unclaimed template row under the test's exact generation context.
+pub async fn seed_template_row_for(
+    db: &TestDb,
+    curriculum: &Curriculum,
+    user: Uuid,
+    row: TemplateRow<'_>,
+) {
+    let curriculum_digest = review_context_digest(curriculum).unwrap();
     let problem = PoolProblem {
         v: 1,
         text: row.text.to_string(),
@@ -267,13 +330,15 @@ pub async fn seed_template_row(db: &TestDb, user: Uuid, row: TemplateRow<'_>) {
         seed: 7,
     };
     let expected = PoolAnswer {
+        answer_contract: None,
         v: 1,
         answer: row.answer.to_string(),
     };
     sqlx::query(
         "INSERT INTO serving_pool
-            (user_id, kp_id, source, content_digest, problem, expected_answer, instance_hash)
-         VALUES ($1, $2, 'template', $3, $4::text::jsonb, $5::text::jsonb, $6)",
+            (user_id, kp_id, source, content_digest, problem, expected_answer, instance_hash,
+             source_curriculum_digest, source_review_engine_digest)
+         VALUES ($1, $2, 'template', $3, $4::text::jsonb, $5::text::jsonb, $6, $7, $8)",
     )
     .bind(user)
     .bind(row.key)
@@ -281,6 +346,8 @@ pub async fn seed_template_row(db: &TestDb, user: Uuid, row: TemplateRow<'_>) {
     .bind(problem.to_body().unwrap())
     .bind(expected.to_body().unwrap())
     .bind(row.hash)
+    .bind(curriculum_digest)
+    .bind(cadus_core::review_engine::DIGEST)
     .execute(&db.admin)
     .await
     .unwrap();

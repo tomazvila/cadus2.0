@@ -1,6 +1,11 @@
 //! `POST /api/task/{task_id}/serve`: one transaction, the `task_served` event,
 //! and the one place that installs a served problem.
 
+#[cfg(test)]
+use super::exposure::exposure_of;
+use super::exposure::{
+    HandoffRequest, ProbeCandidate, record_handoff, repeats_feedback, repeats_probe,
+};
 use super::*;
 
 /// The task ids this session already served (`served_task_ids`,
@@ -59,7 +64,7 @@ async fn record_first_serve(
     let event = Event::TaskServed(TaskServed {
         ts: now,
         session: Some(session.to_owned()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         task_id: task.task_id.clone(),
         task_type: task.task_type,
         // A quiz task spans many topics and names none of its own, so its event
@@ -74,6 +79,10 @@ async fn record_first_serve(
             .filter_map(slug_of)
             .collect(),
         seed: None,
+        // f19-retention: the marker the fold counts the SESSION probe by, and the
+        // grade route writes the measurement event from (D-F11).
+        probe_delay_days: task.probe_delay_days,
+        confirm: task.confirm,
     });
     store(state, append_event(tx, user_id, &event, None)).await?;
     Ok(true)
@@ -100,6 +109,12 @@ pub async fn serve(
         events,
     } = open(&state, content, user_id, now, true).await?;
     let task = find(&plan, &task_id)?;
+    if task.integrated_assessment_of.is_some() {
+        return Err(conflict(
+            "integrated_task_required",
+            "This assessment is one whole integrated scenario.",
+        ));
+    }
     if progress_for(&mut scratch, task, graph).done {
         return Err(conflict(TASK_COMPLETE, "This task is already complete."));
     }
@@ -115,21 +130,11 @@ pub async fn serve(
     // back (`_serve_live`, section 5.6).
     let payload = match scratch.served.get_mut(&task_id) {
         Some(live) => {
+            live.timing_interrupted = true;
             live.started_at = started_at;
             serve_payload(live, task, graph, content.cfg.drill.target_secs, elapsed)
         }
-        None => {
-            install_next(
-                &state,
-                content,
-                &mut tx,
-                user_id,
-                task,
-                &mut scratch,
-                started_at,
-            )
-            .await?
-        }
+        None => install_next(&state, content, &mut tx, user_id, task, &mut scratch, now).await?,
     };
     // The hand-off happened, so the task is served. The event goes in once per
     // task and per session, and it is what fills the drill cadence (D-M5-8).
@@ -166,8 +171,9 @@ pub(crate) async fn install_next(
     user_id: Uuid,
     task: &Task,
     scratch: &mut WebState,
-    started_at: f64,
+    handoff_at: Timestamp,
 ) -> Result<Value, ApiError> {
+    let started_at = unix_seconds(handoff_at.micros());
     let graph = &content.curriculum;
     let task_id = task.task_id.clone();
     let progress = progress_for(scratch, task, graph).clone();
@@ -178,31 +184,209 @@ pub(crate) async fn install_next(
     // serve route already started (V6).
     let elapsed = quiz_elapsed(scratch, &task_id, task.task_type, started_at);
 
-    let target = target_of(task, index, &progress, graph)?;
-    let (ring, memory) = (scratch.ring(&target.serve), scratch.memory(&task_id));
-    let avoid = Avoid::new(&ring, &memory);
-    let row = draw(state, tx, user_id, graph, &target, &avoid).await?;
-    let solution_sketch = solution_of(state, tx, graph, &target, &row).await?;
+    let feedback = scratch.feedback_practice.get(&task_id).cloned();
+    let target = match feedback.as_ref() {
+        Some(pending) => Target::new(
+            pending["record_topic"]
+                .as_str()
+                .or(pending["topic"].as_str())
+                .unwrap_or_default()
+                .to_owned(),
+            pending["topic"].as_str().unwrap_or_default().to_owned(),
+            pending["kp"].as_str().unwrap_or_default().to_owned(),
+        ),
+        None => target_of(task, index, &progress, graph)?,
+    };
+    // Audit finding (j), the server half. A lesson practices a knowledge point
+    // only when an approved teach page exists for it: without the page the
+    // learner practices a skill the service never taught. Every other task type
+    // revisits a skill the learner already met, so this reads for a lesson only
+    // and costs one indexed row (D-O3).
+    //
+    // `Config::readiness::enforce` guards it, the same switch the selector rule
+    // of D-F5 reads. The two are ONE policy: a deployment that turns the rule
+    // off plans the lesson and serves it.
+    let policy = content.policy_digest(&target.key)?;
+    if content.cfg.readiness.enforce
+        && task.task_type == TaskType::Lesson
+        && store(
+            state,
+            approved_document_current(
+                &mut **tx,
+                &target.key,
+                KIND_TEACH,
+                content.review_context(policy.as_deref())?,
+            ),
+        )
+        .await?
+        .is_none()
+    {
+        return Err(no_instruction());
+    }
+    let windows = (scratch.ring(&target.serve), scratch.memory(&task_id));
+    let (row, previously_claimed) = draw_fresh(
+        state,
+        tx,
+        user_id,
+        content,
+        &target,
+        windows,
+        FreshPolicy {
+            feedback: feedback.as_ref(),
+            probe_seen: task
+                .probe_delay_days
+                .map(|_| task.recent_problem_hashes.as_slice()),
+        },
+    )
+    .await?;
+    let solution_sketch = solution_of(state, tx, content, &target, &row).await?;
+    let expected = answer_of(graph, &target, &row);
+    let (problem_id, handoff) = record_handoff(
+        tx,
+        HandoffRequest {
+            state,
+            content,
+            user_id,
+            task_id: &task_id,
+            target: &target,
+            scratch,
+            row: &row,
+            expected: &expected,
+            previously_claimed,
+            at: handoff_at,
+        },
+    )
+    .await?;
 
     let served = ServedProblem {
-        problem_id: Uuid::new_v4().simple().to_string(),
+        timing_interrupted: false,
+        problem_id,
         task_id: task_id.clone(),
         topic: Some(target.record.clone()),
         serve_topic: Some(target.serve.clone()),
         kp: Some(target.kp.clone()),
         answer_kind: answer_kind_of(graph, &target.serve),
         text: row.problem.text.clone(),
-        expected: row.expected_answer.clone(),
+        expected,
         solution_sketch,
         started_at,
         hints_given: Vec::new(),
         index,
-        rework: None,
+        rework: feedback.clone(),
+        handoff: Some(handoff),
     };
     let payload = serve_payload(&served, task, graph, content.cfg.drill.target_secs, elapsed);
     scratch.record_served(&target.serve, &task_id, &row.instance_hash);
     scratch.served.insert(task_id, served);
     let row = progress_for(scratch, task, graph);
-    row.served = row.served.saturating_add(1);
+    if feedback.is_none() || task.task_type == TaskType::Lesson {
+        row.served = row.served.saturating_add(1);
+    }
     Ok(payload)
+}
+
+/// An explicit block preserves the saved answer and the outstanding practice.
+fn fresh_unavailable() -> ApiError {
+    ApiError::new(
+        StatusCode::CONFLICT,
+        "fresh_practice_unavailable",
+        "No fresh problem is available for this skill. Your answer is saved.",
+    )
+}
+
+/// Extra exclusions applied while drawing one fresh problem.
+struct FreshPolicy<'a> {
+    feedback: Option<&'a Value>,
+    probe_seen: Option<&'a [String]>,
+}
+
+/// Draw within a bounded freshness window, preserving an explicit block when exhausted.
+async fn draw_fresh(
+    state: &AppState,
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    content: &Content,
+    target: &Target,
+    windows: (cadus_core::pool::Ring, cadus_core::pool::TaskMemory),
+    policy: FreshPolicy<'_>,
+) -> Result<(PoolRow, bool), ApiError> {
+    let graph = &content.curriculum;
+    let (mut ring, memory) = windows;
+    let mut selected = None;
+    for _ in 0..8 {
+        let avoid = Avoid::new(&ring, &memory);
+        let (row, previously_claimed) = draw(state, tx, user_id, content, target, &avoid)
+            .await
+            .map_err(|error| {
+                if policy.feedback.is_some() && error.code == POOL_UNAVAILABLE {
+                    fresh_unavailable()
+                } else {
+                    error
+                }
+            })?;
+        let digest = cadus_core::learner::problem_text_hash(&row.problem.text);
+        let repeated_probe = match policy.probe_seen {
+            Some(recent) => {
+                repeats_probe(
+                    tx,
+                    ProbeCandidate {
+                        state,
+                        user_id,
+                        graph,
+                        target,
+                        row: &row,
+                        previously_claimed,
+                        recent,
+                        digest: &digest,
+                    },
+                )
+                .await?
+            }
+            None => false,
+        };
+        if !repeated_probe && !repeats_feedback(policy.feedback, &digest) {
+            selected = Some((row, previously_claimed));
+            break;
+        }
+        ring.push(&row.instance_hash);
+    }
+    selected.ok_or_else(|| {
+        if policy.feedback.is_some() {
+            fresh_unavailable()
+        } else {
+            no_problem(&target.serve)
+        }
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fresh_practice_is_first_only_without_prior_exposure() {
+        assert_eq!(
+            exposure_of(Some(FiniteCaseRole::PracticeFresh), false, false),
+            Exposure::First
+        );
+        assert_eq!(
+            exposure_of(Some(FiniteCaseRole::PracticeFresh), true, false),
+            Exposure::Repeat
+        );
+        assert_eq!(
+            exposure_of(Some(FiniteCaseRole::PracticeFresh), false, true),
+            Exposure::Repeat
+        );
+    }
+
+    #[test]
+    fn taught_rehearsal_and_prior_ordinary_items_are_repeats() {
+        assert_eq!(
+            exposure_of(Some(FiniteCaseRole::TaughtRehearsal), false, false),
+            Exposure::Repeat
+        );
+        assert_eq!(exposure_of(None, true, false), Exposure::Repeat);
+        assert_eq!(exposure_of(None, false, true), Exposure::Repeat);
+        assert_eq!(exposure_of(None, false, false), Exposure::First);
+    }
 }

@@ -102,7 +102,14 @@ pub(super) fn target_of(
         TaskType::Review | TaskType::Drill | TaskType::Diagnostic => {
             let topic = topic_or_refuse(task)?;
             let serve = component_of(task, position, graph).unwrap_or_else(|| topic.clone());
-            let kp = kp_or_refuse(graph, &serve, index)?;
+            let kp = if task.task_type == TaskType::Review && task.is_remediation {
+                task.start_at_kp
+                    .clone()
+                    .map(Ok)
+                    .unwrap_or_else(|| kp_or_refuse(graph, &serve, index))?
+            } else {
+                kp_or_refuse(graph, &serve, index)?
+            };
             Ok(Target::new(topic, serve, kp))
         }
     }

@@ -13,11 +13,12 @@ use cadus_core::curriculum::{Curriculum, TopicIdx};
 use cadus_core::event::TopicStatus;
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::selector::{
-    course_scope, due_reviews, frontier, is_mastered, mastered_set, nearly_due, quiz_is_due,
-    schedule_drills,
+    confirmations, course_scope, due_reviews, frontier, is_known, known_set, nearly_due,
+    quiz_is_due, schedule_drills,
 };
-use cadus_store::state::{EventRow, load_events, project_current};
-use serde_json::{Value, json};
+use cadus_core::xp::{CourseCounts, course_counts};
+use cadus_store::state::{EventRow, load_events};
+use serde_json::{Map, Value, json};
 
 use super::EXPORT_MEDIA_TYPE;
 use super::store::{Ready, Reply, begin, json_of, reply_read, store, unknown_course};
@@ -61,7 +62,7 @@ pub(super) fn due_counts(
 ) -> (usize, usize, usize) {
     let states = &model.topics;
     let scope = course_scope(graph, course);
-    let mastered = mastered_set(states, graph);
+    let mastered = known_set(states, graph);
     let open_frontier = frontier(graph, &mastered).intersect(&scope);
     let no_test_prep: BTreeSet<String> = BTreeSet::new();
     let due = due_reviews(states, graph, cfg, t_us, &no_test_prep);
@@ -73,9 +74,48 @@ pub(super) fn due_counts(
     (open_frontier.indices().count(), due.len(), nearly)
 }
 
+/// The three honest mastery numbers of the dashboard (D-F6).
+///
+/// `practiced` counts the topics the learner passed, `inferred` counts the
+/// placed and floor topics that carry no direct answer, and `to_confirm` lists
+/// the inferred topics the next session confirms. A learner with no enrolled
+/// course gets zeros and an empty list.
+fn mastery_view(
+    model: &LearnerModel,
+    graph: &Curriculum,
+    cfg: &Config,
+    t_us: i64,
+    course: Option<&str>,
+) -> Value {
+    let counts = course.map_or_else(CourseCounts::default, |id| {
+        course_counts(&model.topics, graph, id)
+    });
+    let busy: BTreeSet<String> = BTreeSet::new();
+    let to_confirm = confirmations(&model.topics, graph, cfg, t_us, course, &busy);
+    json!({
+        "practiced": counts.practiced,
+        "inferred": counts.inferred,
+        "total": counts.total,
+        "to_confirm": to_confirm,
+    })
+}
+
 /// Whether one topic state counts as placed on the dashboard.
 fn is_placed(topic: &TopicState) -> bool {
     matches!(topic.status, TopicStatus::Placed | TopicStatus::Learning)
+}
+
+/// The ungraded-attempt count of each topic that has one (D-F2).
+///
+/// A topic with no ungraded attempt is absent, so the map holds only what the
+/// learner and the operator need to see.
+fn ungraded_attempts(model: &LearnerModel) -> Map<String, Value> {
+    model
+        .topics
+        .iter()
+        .filter(|(_, state)| state.ungraded_attempts > 0)
+        .map(|(tid, state)| (tid.clone(), json!(state.ungraded_attempts)))
+        .collect()
 }
 
 // --------------------------------------------------------------------------- //
@@ -86,11 +126,7 @@ fn is_placed(topic: &TopicState) -> bool {
 ///
 /// It is a pure read: no event is appended and no row is written.
 pub async fn status(req: Ready) -> Reply {
-    let input = req.input();
-    let mut tx = req.begin().await?;
-    let projection = req
-        .store(project_current(&mut tx, req.user_id, &input))
-        .await?;
+    let (mut tx, projection) = req.begin_projection().await?;
     let model = projection.model;
     let mut view = projection.view;
     // The dashboard reads `drill_due` off the same repaired view the plan and
@@ -134,6 +170,12 @@ pub async fn status(req: Ready) -> Reply {
         "frontier": frontier_count,
         "due_reviews": due_count,
         "nearly_due": nearly_count,
+        // D-F6: the progress bar reads `velocity.course_progress`, which counts
+        // the practiced topics alone. These three numbers say what stands
+        // behind it.
+        "mastery": mastery_view(&model, graph, cfg, t_us, course),
+        "ungraded_attempts": ungraded_attempts(&model),
+        "ungraded": model.ungraded.len(),
     });
     reply_read(tx, body).await
 }
@@ -198,7 +240,7 @@ fn graph_view<'a>(
             view.modules.push(module);
         }
         let topic_state = model.topics.get(id).unwrap_or(&default);
-        if is_mastered(topic_state) {
+        if is_known(topic_state) {
             view.mastered += 1;
         }
         view.nodes.push(json!({

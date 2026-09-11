@@ -33,7 +33,7 @@ fn started(seq: i64, session: &str) -> EventRow {
         event: Event::SessionStart(SessionStart {
             ts: Timestamp::from_micros(seq),
             session: Some(session.to_string()),
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
         }),
     }
 }
@@ -88,7 +88,7 @@ fn a_regraded_above_the_cursor_replays_the_whole_log() {
     let rows = start_then(Event::Regraded(Regraded {
         ts: Timestamp::from_micros(2),
         session: Some("s_1970-01-01a".to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         task_id: "s_1970-01-01a-review-addition".to_string(),
         topic: Slug::new("addition").unwrap(),
         attempts: Vec::new(),
@@ -120,7 +120,7 @@ fn a_projector_error_stops_the_forward_fold() {
     let rows = start_then(Event::ReviewResult(ReviewResult {
         ts: Timestamp::from_micros(2),
         session: Some("s_1970-01-01a".to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: Slug::new("addition").unwrap(),
         passed: true,
         weighted_score: 1.0,
@@ -128,6 +128,8 @@ fn a_projector_error_stops_the_forward_fold() {
         quality_tier: WorkQuality::Perfect,
         assisted: false,
         task_id: Some("s_1970-01-01a-review-addition".to_string()),
+        inconclusive: false,
+        confirmation_skills: Vec::new(),
     }));
     assert!(fold_over(Some(SessionView::default()), rows).is_err());
 }

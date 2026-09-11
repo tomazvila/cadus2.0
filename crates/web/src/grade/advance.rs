@@ -20,7 +20,7 @@ pub(super) struct Advance {
 
 impl Advance {
     /// The answer for every attempt that closes nothing.
-    const fn carry_on() -> Self {
+    pub(super) const fn carry_on() -> Self {
         Self {
             status: STATUS_CONTINUE,
             result: None,
@@ -60,6 +60,10 @@ impl Advance {
 /// Only a lesson advances here. A review, a drill, a quiz and a multi-step task
 /// close explicitly, because their pass rule is order-sensitive over the whole
 /// question set, so every non-lesson attempt is [`STATUS_CONTINUE`].
+///
+/// An UNGRADED attempt advances nothing (D-F2). It is not in the knowledge-point
+/// sequence, it closes no lesson, and it earns no XP, because the checker gave no
+/// verdict to count. The learner still takes the next problem.
 pub(super) fn advance(
     graph: &Curriculum,
     cfg: &Config,
@@ -68,8 +72,14 @@ pub(super) fn advance(
     prior: &[EventRow],
     history: &SessionView,
 ) -> Advance {
-    if attempt.task_type != TaskType::Lesson {
+    if !decided_lesson_attempt(attempt) {
         return Advance::carry_on();
+    }
+    if failed_lesson_practice(attempt, prior) {
+        return Advance {
+            status: STATUS_TASK_FAILED,
+            ..Advance::carry_on()
+        };
     }
     let Some(idx) = graph.idx_of(attempt.topic.as_str()) else {
         return Advance::carry_on();
@@ -88,8 +98,12 @@ pub(super) fn advance(
     let mut sequence: Vec<bool> = prior
         .iter()
         .filter_map(|row| match &row.event {
+            // An ungraded prior attempt is not evidence, so it never enters the
+            // sequence the pass rule reads (D-F2).
             Event::Attempt(body)
                 if body.task_id == attempt.task_id
+                    && !body.outcome.is_ungraded()
+                    && !body.assisted
                     && body.kp.as_ref().map(|slug| slug.as_str().to_string()) == kp =>
             {
                 Some(body.correct)
@@ -102,7 +116,7 @@ pub(super) fn advance(
     if kp_failed(&sequence, cfg) {
         return lesson_failed(graph, cfg, now, attempt, kp.as_deref(), history);
     }
-    if !kp_passed(&sequence) {
+    if !kp_passed(&sequence, cfg.lesson.pass_rule()) {
         return Advance::carry_on();
     }
     // The knowledge point passed. A lesson with a later knowledge point advances
@@ -120,6 +134,17 @@ pub(super) fn advance(
         };
     }
     lesson_passed(cfg, now, attempt, prior, kp_ids.len())
+}
+
+/// A lesson advances on independent checker decisions.
+fn decided_lesson_attempt(attempt: &Attempt) -> bool {
+    attempt.task_type == TaskType::Lesson && !attempt.outcome.is_ungraded() && !attempt.assisted
+}
+
+/// A supplemental item preserves its already-recorded failed lesson result.
+fn failed_lesson_practice(attempt: &Attempt, prior: &[EventRow]) -> bool {
+    attempt.feedback_practice && prior.iter().any(|row| matches!(&row.event,
+        Event::LessonResult(result) if !result.passed && result.topic == attempt.topic && result.session == attempt.session))
 }
 
 /// The passing lesson close and its XP (`advance_task`, the pass arm).
@@ -144,7 +169,7 @@ fn lesson_passed(
         result: Some(Event::LessonResult(LessonResult {
             ts: now,
             session: attempt.session.clone(),
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             topic: attempt.topic.clone(),
             passed: true,
             failed_at_kp: None,
@@ -180,7 +205,7 @@ fn lesson_failed(
     let result = Event::LessonResult(LessonResult {
         ts: now,
         session: attempt.session.clone(),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: attempt.topic.clone(),
         passed: false,
         failed_at_kp: failed_at_kp.clone(),
@@ -231,7 +256,7 @@ fn triggered(
     vec![RemediationTriggered {
         ts: now,
         session: attempt.session.clone(),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         kind: kind.to_string(),
         source_topic: attempt.topic.clone(),
         targets,
@@ -259,6 +284,26 @@ pub(super) fn task_moved_on(
     let closed = progress.total > 0 && progress.answered >= progress.total;
     progress.done = closed;
     closed
+}
+
+/// Supplemental practice preserves the original assessment count.
+pub(super) fn practice_progress(
+    progress: &mut TaskProgress,
+    kind: TaskType,
+    moved: &Advance,
+    attempt: &Attempt,
+    pending: bool,
+) -> bool {
+    if kind == TaskType::Lesson {
+        let closed = task_moved_on(progress, kind, moved);
+        progress.done = closed && !pending;
+        return progress.done;
+    }
+    if !attempt.feedback_practice {
+        task_moved_on(progress, kind, moved);
+    }
+    progress.done = !pending && progress.total > 0 && progress.answered >= progress.total;
+    progress.done
 }
 
 #[cfg(test)]

@@ -7,8 +7,9 @@ use crate::config::Config;
 use crate::curriculum::Curriculum;
 use crate::numeric::round_dp;
 
+use super::plan::Constraints;
 use super::review::count_as_float;
-use super::task::{Constraints, Task};
+use super::task::Task;
 
 /// One slot of the interleaved sequence.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -164,6 +165,12 @@ pub fn assign_ids(tasks: &mut [Task], session_id: &str) {
             Some(topic) => format!("{session_id}-{kind}-{topic}"),
             None => format!("{session_id}-{kind}"),
         };
+        if task.task_type == crate::event::TaskType::Review
+            && task.is_remediation
+            && let Some(kp) = &task.start_at_kp
+        {
+            task.task_id.push_str(&format!("-confirm-{kp}"));
+        }
     }
 }
 

@@ -8,21 +8,26 @@ use crate::curriculum::Curriculum;
 use crate::event::TaskType;
 use crate::fire::has_review_history;
 use crate::learner::TopicState;
+use crate::retention::seen_digests;
 
 use super::compress::compress_with;
+use super::confirm::{confirm_task, confirmations};
 use super::context::SessionContext;
+use super::eligible::{gate_of, hold_lessons, hold_quiz, hold_topics};
 use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
 use super::interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
 use super::multistep::{multistep_components, multistep_is_due, multistep_task, remediation_tasks};
+use super::plan::{BlockedTask, SessionPlan};
 use super::quiz::{QuizSampler, quiz_composer, quiz_is_due};
 use super::reserve::reserve_open_plan;
+use super::retention::retention_probe;
 use super::review::{due_reviews, nearly_due, order_lessons_with};
 use super::task::{
-    SessionPlan, Task, drill_task, knockout_count, lesson_task, quiz_task, review_task,
-    schedule_drills,
+    Task, drill_task, knockout_count, lesson_task, probe_task, quiz_task, review_task,
 };
 use super::topic_set::ReachCache;
+use super::trigger::schedule_drills;
 use super::{MULTISTEP_ENABLED, MULTISTEP_MIN_COMPONENTS};
 
 /// The review side of one composition: the due list, the compression, and the
@@ -219,7 +224,7 @@ pub fn compose_session(
     let mut cache = ReachCache::new(graph);
     let front = Frontier::new(states, graph, cfg, t_us, ctx.course_id, ctx.gap_fill_chain);
     let course_complete = ctx.gap_fill_chain.is_none()
-        && is_course_complete(states, graph, ctx.course_id, Some(&front.mastered));
+        && is_course_complete(states, graph, cfg, ctx.course_id, Some(&front.known));
 
     // Priority 1: the remediation queue. It is computed first so the review and
     // lesson lists can dedupe against it.
@@ -236,8 +241,31 @@ pub fn compose_session(
     let mut lessons_ordered = reviews.lessons.clone();
     lessons_ordered.retain(|tid| !remediation_topics.contains(tid));
 
+    // The readiness rule of D-F5. A lesson the content cannot teach, practice
+    // and assess leaves the serve list here, and the composer takes the next
+    // ready task (audit finding j).
+    let gate = gate_of(cfg, ctx.readiness);
+    let mut blocked: Vec<BlockedTask> = Vec::new();
+    if let Some(gate) = gate {
+        blocked.extend(hold_lessons(gate, graph, states, &mut lessons_ordered));
+        blocked.extend(hold_topics(gate, TaskType::Review, &mut review_topics));
+    }
+
     // The multi-step integration task absorbs several due reviews.
     let multistep = multistep_plan(states, graph, ctx, &reviews.due, &mut review_topics);
+
+    // The confirmation items of D-F6. They stand after the remediation queue and
+    // before the interleaved sequence, and a topic the plan already serves waits.
+    let mut busy: BTreeSet<String> = remediation_topics.clone();
+    busy.extend(review_topics.iter().cloned());
+    busy.extend(lessons_ordered.iter().cloned());
+    if let Some(task) = multistep.as_ref() {
+        busy.extend(task.component_topics.iter().cloned());
+    }
+    let confirm: Vec<Task> = confirmations(states, graph, cfg, t_us, ctx.course_id, &busy)
+        .iter()
+        .map(|tid| confirm_task(tid, states, graph))
+        .collect();
 
     let seq = interleave(&review_topics, &lessons_ordered, cfg);
     let slots = SlotInputs {
@@ -249,6 +277,7 @@ pub fn compose_session(
         reviews: &reviews,
     };
     let mut tasks: Vec<Task> = remediation;
+    tasks.extend(confirm);
     tasks.extend(seq.iter().map(|(kind, tid)| slots.task(*kind, tid)));
     tasks.extend(multistep);
 
@@ -261,14 +290,36 @@ pub fn compose_session(
         ctx.active_study_days,
     );
     if quiz_due {
-        let plan = quiz_composer(states, graph, cfg, t_us, sampler, ctx.learned_at);
+        let mut plan = quiz_composer(states, graph, cfg, t_us, sampler, ctx.learned_at);
+        if let Some(gate) = gate {
+            blocked.extend(hold_quiz(gate, &mut plan));
+        }
         if !plan.questions.is_empty() {
             tasks.push(quiz_task(&plan, ctx.quiz_high_score_streak));
         }
     }
 
-    for tid in schedule_drills(states, graph, t_us, ctx.last_drill_at) {
+    let mut drills = schedule_drills(states, graph, t_us, ctx.last_drill_at);
+    if let Some(gate) = gate {
+        blocked.extend(hold_topics(gate, TaskType::Drill, &mut drills));
+    }
+    for tid in drills {
         tasks.push(drill_task(&tid, cfg));
+    }
+
+    // The delayed retention probe of D-F11. It stands LAST of the study tasks: a
+    // measurement never displaces the work of the session. `ctx.retention` of
+    // `None` turns the whole rule off, so every caller that never read the
+    // retention state composes the plan it composed before this unit.
+    if let Some(probe) = retention_probe(ctx, states, graph, cfg, t_us) {
+        let seen: Vec<String> = ctx
+            .retention
+            .map(|state| seen_digests(states, state, &probe.topic))
+            .unwrap_or_default()
+            .into_iter()
+            .map(std::borrow::ToOwned::to_owned)
+            .collect();
+        tasks.push(probe_task(&probe, states, graph, seen));
     }
 
     if let Some(limit) = ctx.n {
@@ -276,7 +327,9 @@ pub fn compose_session(
     }
     assign_ids(&mut tasks, ctx.session_id);
 
-    front.plan(ctx.session_id, tasks, quiz_due, course_complete, &seq, cfg)
+    let mut plan = front.plan(ctx.session_id, tasks, quiz_due, course_complete, &seq, cfg);
+    plan.blocked = blocked;
+    plan
 }
 
 #[cfg(test)]

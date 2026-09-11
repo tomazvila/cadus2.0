@@ -1,0 +1,1447 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "external_unit06_hint_template_repair_proposal_v8",
+  "cohort_id": "06-exponents-radicals-01",
+  "authored_at_utc": "2026-09-10T01:56:25.850791+00:00",
+  "source_bindings": {
+    "original_packet": "hint-authoring-cohorts/06-exponents-radicals-01.json",
+    "original_packet_sha256": "4eb6b57d985a6fcea90a3738973a6d08763fc47de3948eb42fc560067d284371",
+    "authored_hints": "hint-authored/06-exponents-radicals-01.json",
+    "authored_hints_sha256": "4d4eb27c5d46dbc7c9093bdf6663853d5c21b45a2eeb9f9ff1c50d8292de6652",
+    "independent_review": "hint-authored/06-exponents-radicals-01.independent-review.json",
+    "independent_review_sha256": "490bcb88ee5f471f605c764c3087689fb037dbaa8fa32847bd04f010323fa055",
+    "curriculum_artifact": "curriculum-after-repairs-02.json",
+    "curriculum_artifact_file_sha256": "b1fbf0bb3c4cd09efed5f70355c15b2b1403df928b796204dc051539b1e58242",
+    "curriculum_runtime_sha256": "c36abbb213e59791ecc9684122d793c016c2f017ba79172441d89540c2937d52",
+    "selected_templates_file_sha256": "b147146a9d5b4014bf069cbfd61c5cb0adcbac6b689462ae05ca64ba77fe4197"
+  },
+  "summary": {
+    "hint_repairs": 11,
+    "accepted_hints_carried_forward_without_replacement": 13,
+    "template_repairs": 6,
+    "template_findings_already_resolved": 3,
+    "template_findings_policy_deferred": 5,
+    "proposed_template_bindings": 72,
+    "serving_changes": 0
+  },
+  "hint_repairs": [
+    {
+      "key": "exponent-product-rule/kp2",
+      "base_authored_row_sha256": "97e9234e4032551cc434e6d16eab02e7feb512ff2b270e23325870df4c771a57",
+      "curriculum_kp_sha256": "36f9a9402e72fd0a5e1dcd3099d3386015f96d45fb35f5d4388ca78354e9f950",
+      "review_required_change": "The final rung explicitly evaluates, contradicting the required unevaluated single power. Keep the original numeric base; add the exponents; write that base with the combined exponent and stop before evaluating the power.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "2^7",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "Write $2^3 \\cdot 2^4$ as a single power of $2$.",
+          "solution_sketch": "$3 + 4 = 7$."
+        },
+        {
+          "answer": "5^5",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "What single power of $5$ equals $5^2 \\cdot 5^3$?",
+          "solution_sketch": "$2 + 3 = 5$."
+        },
+        {
+          "answer": "3^6",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "Simplify $3^4 \\cdot 3^2$ and write the result as $3$ raised to one exponent.",
+          "solution_sketch": "$4 + 2 = 6$."
+        },
+        {
+          "answer": "7^6",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "Write $7^3 \\cdot 7^3$ as a single power of $7$.",
+          "solution_sketch": "$3 + 3 = 6$."
+        }
+      ],
+      "proposed_row": {
+        "key": "exponent-product-rule/kp2",
+        "objective": "Numeric bases left in exponent form",
+        "constraints": "answer stays as a single power, not evaluated",
+        "hints": [
+          "Identify the common numeric base and keep it unchanged.",
+          "Add the exponents on the factors with that base.",
+          "Write the original base with the combined exponent as one power, and stop without evaluating it."
+        ]
+      },
+      "proposed_row_sha256": "452e82587cdb8133bc7d0b6cbb272914d9bb5b69eb249a123fd798fc01ae77e5"
+    },
+    {
+      "key": "exponent-quotient-rule/kp2",
+      "base_authored_row_sha256": "e1fa3b2a4999b7f05a9d8d035d1ce5ae14adb0aec3591ab8b0e6b7d4f0cda24b",
+      "curriculum_kp_sha256": "cfad37692ff5dd6c4fc427fdb0db714dbb839ad480fb90fcf0826e501837f617",
+      "review_required_change": "The final rung evaluates despite the explicit single-power requirement. Subtract denominator exponent from numerator exponent; keep the requested original base and the resulting exponent without calculating the power.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "3^3",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "Write $\\frac{3^5}{3^2}$ as a single power of $3$.",
+          "solution_sketch": "$5 - 2 = 3$."
+        },
+        {
+          "answer": "7^1",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "What single power of $7$ equals $\\frac{7^6}{7^5}$?",
+          "solution_sketch": "$6 - 5 = 1$."
+        },
+        {
+          "answer": "5^4",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "Simplify $\\frac{5^7}{5^3}$ and write the result as $5$ raised to one exponent.",
+          "solution_sketch": "$7 - 3 = 4$."
+        },
+        {
+          "answer": "2^3",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "Write $\\frac{2^9}{2^6}$ as a single power of $2$.",
+          "solution_sketch": "$9 - 6 = 3$."
+        }
+      ],
+      "proposed_row": {
+        "key": "exponent-quotient-rule/kp2",
+        "objective": "Numeric bases left in exponent form",
+        "constraints": "answer stays as a single power, not evaluated",
+        "hints": [
+          "Identify the common nonzero numeric base and keep it unchanged.",
+          "Subtract the denominator exponent from the numerator exponent.",
+          "Write the original base with the resulting exponent as one power, and stop without evaluating it."
+        ]
+      },
+      "proposed_row_sha256": "96543103b063e4bc840f3920cb5fdc6ea98b04e20bad97befb5d45dbe7e26f72"
+    },
+    {
+      "key": "exponent-product-quotient-rules/kp3",
+      "base_authored_row_sha256": "9daea335066a9db54de368313782df5bc14af60af6ad07939ff49208d10f0f5d",
+      "curriculum_kp_sha256": "5cf2aaa524533863b943d1fecefc3069f7f5f9a5a315b7cfb4b0fc79f5e44533",
+      "review_required_change": "Replace literal x and y with each distinct base: canonical examples also use a and b. Group matching-base factors, add numerator contributions/subtract denominator contributions for each, then combine the resulting factors without mixing different bases.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "x^6 y^4",
+          "problem": "Simplify $(x^2 y^3)(x^4 y)$.",
+          "solution_sketch": "Handle each base separately: $x^{2+4}$, $y^{3+1}$."
+        },
+        {
+          "answer": "a^3 b^2",
+          "problem": "Simplify $\\frac{a^5 b^3}{a^2 b}$.",
+          "solution_sketch": "Handle each base separately: $a^{5-2}$, $b^{3-1}$."
+        },
+        {
+          "answer": "x^5 y^6",
+          "problem": "Simplify $(x^3 y^2)(x^2 y^4)$.",
+          "solution_sketch": "Handle each base separately: $x^{3+2}$, $y^{2+4}$."
+        },
+        {
+          "answer": "a^3 b^3",
+          "problem": "Simplify $\\frac{a^6 b^5}{a^3 b^2}$.",
+          "solution_sketch": "Handle each base separately: $a^{6-3}$, $b^{5-2}$."
+        }
+      ],
+      "proposed_row": {
+        "key": "exponent-product-quotient-rules/kp3",
+        "objective": "Two variables at once",
+        "constraints": "apply the rules base by base",
+        "hints": [
+          "Group factors by each distinct base; do not combine exponents from different bases.",
+          "For each base, add numerator exponent contributions and subtract denominator exponent contributions, treating a bare base as exponent one.",
+          "Write the simplified factor for every base, then multiply those factors together."
+        ]
+      },
+      "proposed_row_sha256": "012ea6e4e0cb5290b4a66d899f57203f61f6c7ef889a8ca703619e6119331145"
+    },
+    {
+      "key": "power-of-a-power-rule/kp2",
+      "base_authored_row_sha256": "9d3d0076d8c78808aad65bf29043eae0b14c631cd648ca23634f9a58fa2a9e2a",
+      "curriculum_kp_sha256": "76a38cfa2c40457bb6d89074a46c019d494d56cb06b495b76df3e40025c6c4e8",
+      "review_required_change": "Rungs1/3 tell the learner to evaluate the numeric base. Multiply the inner and outer exponents, retain the original numeric base and leave the result as one unevaluated power.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "2^6",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "Write $(2^2)^3$ as a single power of $2$.",
+          "solution_sketch": "$2 \\cdot 3 = 6$."
+        },
+        {
+          "answer": "10^6",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "What single power of $10$ equals $(10^3)^2$?",
+          "solution_sketch": "$3 \\cdot 2 = 6$."
+        },
+        {
+          "answer": "3^8",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "Simplify $(3^2)^4$ and write the result as $3$ raised to one exponent.",
+          "solution_sketch": "$2 \\cdot 4 = 8$."
+        },
+        {
+          "answer": "5^9",
+          "answer_contract": {
+            "kind": "required_single_power"
+          },
+          "problem": "Write $(5^3)^3$ as a single power of $5$.",
+          "solution_sketch": "$3 \\cdot 3 = 9$."
+        }
+      ],
+      "proposed_row": {
+        "key": "power-of-a-power-rule/kp2",
+        "objective": "Numeric bases left in exponent form",
+        "constraints": "answer stays as a single power, not evaluated",
+        "hints": [
+          "Keep the original numeric base unchanged.",
+          "Multiply the inner exponent by the outer exponent.",
+          "Write the original base with the product exponent as one power, and stop without evaluating it."
+        ]
+      },
+      "proposed_row_sha256": "8a8da8d4b44f689a77985c085ddc5b77130dd8fb7486859ae4ecd261e9abc31c"
+    },
+    {
+      "key": "power-of-a-power-rule/kp3",
+      "base_authored_row_sha256": "0b63670fcf3d1066c64de5856ddeda3579f9e32bb9ebbc0ba8bfbd29281e54d3",
+      "curriculum_kp_sha256": "9e1b5ec2927f62ab3066c08296713a4af24523865b0eced03e5ad271395b4471",
+      "review_required_change": "The first two rungs hardcode a quotient, missing both canonical product examples. Apply the outer exponent first; then add matching-base exponents for multiplication or subtract for division, according to the actual remaining operation.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "x^10",
+          "problem": "Simplify $(x^2)^3 \\cdot x^4$.",
+          "solution_sketch": "$x^6 \\cdot x^4 = x^{10}$."
+        },
+        {
+          "answer": "y^5",
+          "problem": "Simplify $\\frac{(y^3)^3}{y^4}$.",
+          "solution_sketch": "$y^9 / y^4 = y^5$."
+        },
+        {
+          "answer": "a^11",
+          "problem": "Simplify $(a^2)^4 \\cdot a^3$.",
+          "solution_sketch": "$a^8 \\cdot a^3 = a^{11}$."
+        },
+        {
+          "answer": "b^3",
+          "problem": "Simplify $\\frac{(b^4)^2}{b^5}$.",
+          "solution_sketch": "$b^8 / b^5 = b^3$."
+        }
+      ],
+      "proposed_row": {
+        "key": "power-of-a-power-rule/kp3",
+        "objective": "Combine with product and quotient rules",
+        "constraints": "power of a power first, then product/quotient rule",
+        "hints": [
+          "Apply the outer power first by multiplying the inner and outer exponents.",
+          "Inspect the remaining same-base operation: add exponents for multiplication or subtract denominator exponents for division.",
+          "Write the base with the final exponent and simplify any separate numerical coefficient."
+        ]
+      },
+      "proposed_row_sha256": "fd7bb134311df8f3c54e9f2d9f34d25906b1201a30f650dbdf0f9837c08b0899"
+    },
+    {
+      "key": "zero-exponent-rule/kp1",
+      "base_authored_row_sha256": "24acc40d3b2b2101fd1cafb05a9eb3145b45f94c42d82ee452c1a23bb7b2f73c",
+      "curriculum_kp_sha256": "95f5f00cd4298744ebc1746beff4db3e89e602c1b6df8329263ea2bd484bc364",
+      "review_required_change": "Multiplicative identity is a synonym for the fixed final answer1 and directly discloses it. Use meaningful retrieval: compare a quotient of equal nonzero powers with its quotient-rule exponent, then ask what value makes that quotient and the zero-power expression agree. Do not substitute another synonym for1.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "1",
+          "problem": "Simplify $5^0$.",
+          "solution_sketch": "$5^0 = 1$ for any nonzero base."
+        },
+        {
+          "answer": "1",
+          "problem": "Simplify $(-4)^0$.",
+          "solution_sketch": "$(-4)^0 = 1$; the base is nonzero, so its sign does not matter here."
+        },
+        {
+          "answer": "1",
+          "problem": "What does $8^0$ equal?",
+          "solution_sketch": "$8^0 = 1$ since $8 \\ne 0$."
+        },
+        {
+          "answer": "1",
+          "problem": "What does $(-11)^0$ equal?",
+          "solution_sketch": "$(-11)^0 = 1$ since the base is nonzero."
+        }
+      ],
+      "proposed_row": {
+        "key": "zero-exponent-rule/kp1",
+        "objective": "Evaluate a nonzero base to the zero power",
+        "constraints": "any nonzero base to the 0 power is 1",
+        "hints": [
+          "Rewrite a quotient of equal nonzero powers by subtracting its exponents.",
+          "Compare that quotient-rule result with the same nonzero base raised to the resulting exponent.",
+          "Use the value required to make the two equivalent expressions agree."
+        ]
+      },
+      "proposed_row_sha256": "3f71f1282d9b2c78e0a0f04e19e062457d11d96e277e7b34252668637c97323c"
+    },
+    {
+      "key": "zero-exponent-rule/kp2",
+      "base_authored_row_sha256": "e55695284415e97f4b4b0e8ddf74d600ef7c5e4c51c87365dc7aec942b54928b",
+      "curriculum_kp_sha256": "700d189e74ad33339a947496a61bd4711da978ecd428898b928c5d75567632ca",
+      "review_required_change": "The ladder teaches addition/subtraction of zero-power terms, while the KP contrasts the whole grouped base (ax)^0 with an outside coefficient a*x^0. Identify exactly which factors the exponent covers, apply the rule only to that nonzero base, then retain and combine any factor outside the exponent.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "1",
+          "problem": "Simplify $(3x)^0$ for $x \\ne 0$.",
+          "solution_sketch": "The whole base $3x$ is nonzero and raised to the $0$ power: $1$."
+        },
+        {
+          "answer": "3",
+          "problem": "Simplify $3x^0$ for $x \\ne 0$.",
+          "solution_sketch": "Only $x$ carries the exponent: $3 \\cdot 1 = 3$."
+        },
+        {
+          "answer": "1",
+          "problem": "What is $(5x)^0$ for $x \\ne 0$?",
+          "solution_sketch": "The whole base $5x$ is nonzero and raised to the $0$ power: $1$."
+        },
+        {
+          "answer": "7",
+          "problem": "What is $7x^0$ for $x \\ne 0$?",
+          "solution_sketch": "Only $x$ carries the exponent: $7 \\cdot 1 = 7$."
+        }
+      ],
+      "proposed_row": {
+        "key": "zero-exponent-rule/kp2",
+        "objective": "Zero exponents inside expressions",
+        "constraints": "contrast (ax)^0 with a*x^0",
+        "hints": [
+          "Identify the complete base covered by the zero exponent; parentheses determine whether a whole product or only one factor is powered.",
+          "Apply the zero-exponent rule only to that nonzero powered base, leaving every factor outside the exponent in place.",
+          "Combine the remaining factors or terms after the powered base has been simplified."
+        ]
+      },
+      "proposed_row_sha256": "f07f90efe016777e68f008b4330b5e3668e6203458b3ef928ef818a0abaf4143"
+    },
+    {
+      "key": "zero-exponent-rule/kp3",
+      "base_authored_row_sha256": "7b5c2ac9e6bcca1b999e04a78b0120c2d8361010c07db695df4690fcd2c19dc2",
+      "curriculum_kp_sha256": "7be2951014abe9c20a174db37e75c83ad5f3337cab5252f062ad14fddca894c8",
+      "review_required_change": "The quotient derivation is relevant but the final identity statement discloses the quotient value and gives no action for the canonical sums of two zero powers. Ask the learner to reconcile equal-power cancellation with exponent subtraction, then use the resulting rule on each shown zero-power term and perform the remaining operation if present.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "1",
+          "problem": "Use the quotient rule to write $\\frac{x^5}{x^5}$ as a single power of $x$. What is that power worth for $x \\ne 0$?",
+          "solution_sketch": "$x^{5-5} = x^0$; but any nonzero number divided by itself is $1$, so $x^0 = 1$."
+        },
+        {
+          "answer": "2",
+          "problem": "Compute $2^0 + 3^0$.",
+          "solution_sketch": "$2^0 = 1$ and $3^0 = 1$; $1 + 1 = 2$."
+        },
+        {
+          "answer": "1",
+          "problem": "Use the quotient rule to write $\\frac{y^3}{y^3}$ as a single power of $y$. What is that power worth for $y \\ne 0$?",
+          "solution_sketch": "$y^{3-3} = y^0$; and $y^3/y^3 = 1$, so $y^0 = 1$."
+        },
+        {
+          "answer": "2",
+          "problem": "What is $4^0 + 5^0$?",
+          "solution_sketch": "$4^0 = 1$ and $5^0 = 1$; $1 + 1 = 2$."
+        }
+      ],
+      "proposed_row": {
+        "key": "zero-exponent-rule/kp3",
+        "objective": "Why it works: the quotient rule",
+        "constraints": "connect a^0 = 1 to a^n / a^n",
+        "hints": [
+          "Use equal-power cancellation and exponent subtraction to determine the zero exponent case for a nonzero base.",
+          "Apply that rule separately to every displayed zero-power term, respecting the grouping of each base.",
+          "Perform the remaining addition, subtraction, or multiplication after simplifying the zero powers."
+        ]
+      },
+      "proposed_row_sha256": "48d2becb8e4bdf6e70ae7649cd9bb12f0e8bd3e33610044cff173e874a955437"
+    },
+    {
+      "key": "negative-zero-exponents/kp1",
+      "base_authored_row_sha256": "c7eead1416a313cc0c527cf03256274fee52c3876197e723262cd5832ea22a8a",
+      "curriculum_kp_sha256": "466de7e7638873ab4632822684b797422d638fa280c1b2b83a05a6939265729a",
+      "review_required_change": "The final evaluate instruction assumes a numeric base, while half the canonical examples ask for symbolic reciprocals. Invert the entire nonzero base and make its exponent positive; calculate a numeric denominator when given numbers, but keep a symbolic denominator as a positive power.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "1/8",
+          "problem": "Write $2^{-3}$ as a fraction.",
+          "solution_sketch": "$\\frac{1}{2^3} = \\frac{1}{8}$."
+        },
+        {
+          "answer": "1/x^2",
+          "problem": "Rewrite $x^{-2}$ with a positive exponent.",
+          "solution_sketch": "$x^{-2} = \\frac{1}{x^2}$."
+        },
+        {
+          "answer": "1/9",
+          "problem": "Express $3^{-2}$ as a fraction.",
+          "solution_sketch": "$\\frac{1}{3^2} = \\frac{1}{9}$."
+        },
+        {
+          "answer": "1/y^4",
+          "problem": "Rewrite $y^{-4}$ with a positive exponent.",
+          "solution_sketch": "$y^{-4} = \\frac{1}{y^4}$."
+        }
+      ],
+      "proposed_row": {
+        "key": "negative-zero-exponents/kp1",
+        "objective": "Negative exponent as a reciprocal",
+        "constraints": "a^-n = 1/a^n",
+        "hints": [
+          "Identify the entire nonzero base carrying the negative exponent.",
+          "Invert that base and change the exponent to its positive opposite.",
+          "Evaluate a numeric denominator when the base is numeric, or keep a symbolic denominator as a positive power."
+        ]
+      },
+      "proposed_row_sha256": "562585a50d266a2391bcd3b211f1fe637588898adca637375dc2b7c4058f418d"
+    },
+    {
+      "key": "negative-zero-exponents/kp2",
+      "base_authored_row_sha256": "b9464f210016c03a9bee83f2f81b3209d06ebbaeb33466f9c6ed855633773a35",
+      "curriculum_kp_sha256": "14f28d058ba582a634758ed94315e16cf4a1a90d8741611ada1143d2d4a318f1",
+      "review_required_change": "The ladder only moves a negative-power denominator factor upward. It misses the explicit fraction-to-power-minus-one branch. Identify the whole base carrying the negative exponent; a denominator negative-power factor becomes a numerator positive power, while a whole fraction to minus one swaps its numerator and denominator.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "x^3",
+          "problem": "Rewrite $\\frac{1}{x^{-3}}$ with a positive exponent.",
+          "solution_sketch": "Dividing by $\\frac{1}{x^3}$ multiplies by $x^3$."
+        },
+        {
+          "answer": "3/2",
+          "problem": "Write $\\left(\\frac{2}{3}\\right)^{-1}$ as a fraction.",
+          "solution_sketch": "$(a/b)^{-1} = b/a$, so $(2/3)^{-1} = 3/2$."
+        },
+        {
+          "answer": "y^4",
+          "problem": "Rewrite $\\frac{1}{y^{-4}}$ with a positive exponent.",
+          "solution_sketch": "Dividing by $\\frac{1}{y^4}$ multiplies by $y^4$."
+        },
+        {
+          "answer": "5/3",
+          "problem": "Express $\\left(\\frac{3}{5}\\right)^{-1}$ as a fraction.",
+          "solution_sketch": "$(a/b)^{-1} = b/a$: $\\frac{5}{3}$."
+        }
+      ],
+      "proposed_row": {
+        "key": "negative-zero-exponents/kp2",
+        "objective": "Negative exponents in denominators",
+        "constraints": "a^-n in a denominator moves up as a^n; (a/b)^-1 = b/a",
+        "hints": [
+          "Identify whether the negative exponent applies to a denominator factor or to an entire fraction.",
+          "Move a denominator factor with a negative exponent to the numerator with a positive exponent; for a whole fraction raised to negative one, swap numerator and denominator.",
+          "Check that the rewritten expression is equivalent on the original nonzero domain and contains only positive exponents."
+        ]
+      },
+      "proposed_row_sha256": "a4d7e964dda7dd3651273226578491b942aa5ad1e13fd2133d9497eb37366056"
+    },
+    {
+      "key": "simplifying-negative-exponent-expressions/kp3",
+      "base_authored_row_sha256": "ee2691a4cc2d4733f52c6f96dae55ec9327e8af130d467c798fe68cacdf356b7",
+      "curriculum_kp_sha256": "d72b84747a6fd2a271a20c9764506d1d0feacdb36bde546f874033af395682e1",
+      "review_required_change": "The ladder assumes an outer power and x/y labels, missing ordinary coefficient quotients, a/y variables and whole-product reciprocals. Apply an outside power only when present, including to the full coefficient; simplify the coefficient ratio and each distinct base separately; rewrite remaining negative powers by inverting the whole affected factor. Preserve nonzero original-domain conditions.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "2y^4 / x^3",
+          "problem": "Simplify $\\frac{6x^{-2}y}{3xy^{-3}}$ and write with positive exponents.",
+          "solution_sketch": "$\\frac{6}{3} = 2$; $x^{-2-1} = x^{-3}$; $y^{1-(-3)} = y^4$."
+        },
+        {
+          "answer": "1/(3x^2)",
+          "problem": "Simplify $(3x^2)^{-1}$ and write with positive exponents.",
+          "solution_sketch": "A negative exponent on the whole product moves it to the denominator: $\\frac{1}{3x^2}$."
+        },
+        {
+          "answer": "2y^5 / a^3",
+          "problem": "Simplify $\\frac{10a^{-1}y^3}{5a^2y^{-2}}$ and write with positive exponents.",
+          "solution_sketch": "$\\frac{10}{5} = 2$; $a^{-1-2} = a^{-3}$; $y^{3-(-2)} = y^5$."
+        },
+        {
+          "answer": "1/(2x^3)",
+          "problem": "What is $(2x^3)^{-1}$ written with positive exponents?",
+          "solution_sketch": "A negative exponent on the whole product moves it to the denominator."
+        }
+      ],
+      "proposed_row": {
+        "key": "simplifying-negative-exponent-expressions/kp3",
+        "objective": "Full expressions with coefficients and two variables",
+        "constraints": "coefficients reduce; each variable handled separately",
+        "hints": [
+          "Apply an outside power first when one is present, including to the full numerical coefficient.",
+          "Simplify the coefficient ratio and combine exponents separately for each distinct base.",
+          "Move every factor with a negative final exponent across the fraction bar, keep original nonzero-domain conditions, and report only positive exponents."
+        ]
+      },
+      "proposed_row_sha256": "58140f7834de21d91b6a15abcaaed6f9a60bfeeec671fdaded83c7b876435d01"
+    }
+  ],
+  "template_repairs": [
+    {
+      "key": "exponent-quotient-rule/kp3",
+      "base_selected_template_sha256": "d72e9e804459852b6255d0dfd28dfa206446b7082344dd5df482dce2e120c9c4",
+      "curriculum_kp_sha256": "815c57eba5b57b4c85ba704cca136386e526778ef4bacb9cfe08e1899dcff8b0",
+      "review_findings": [
+        {
+          "keys": [
+            "exponent-quotient-rule/kp3"
+          ],
+          "kind": "missing_target_structure",
+          "finding": "Every selected problem ax^6/x^2 has neither a bare variable factor nor an exponent1 result, which are this KP’s distinguishing objective.",
+          "required_change": "Use a denominator bare base and/or a quotient leaving exponent1, with positive remaining exponent. Keep the nonzero condition."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "answer_expr": "powerform(1,[x,a-1])",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Treat the bare denominator base as exponent one, then subtract."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "x",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "x^2",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "x^3",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "x^4",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "x^5",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "x^6",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "x^7",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "x^8",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "x^9",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "x^10",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "x^11",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "x^12",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "The denominator $x$ is $x^1$. Subtract one from the displayed numerator exponent and write exponent one as a bare $x$.",
+          "statement": "Simplify $x^{{{a}}}/x$ for $x\\ne0$. Treat the bare denominator as a first power."
+        },
+        "kind": "template",
+        "kp_id": "exponent-quotient-rule/kp3"
+      },
+      "proposed_template_sha256": "1db3ea3ec7c46f79b098777bceeedfd8987f7e8b7fe5c73f5e13767e3716fef6",
+      "binding_count": 12,
+      "independent_arithmetic": "Every listed sample was generated from the displayed exponent/zero-power rule with exact integer or rational arithmetic."
+    },
+    {
+      "key": "power-of-a-power-rule/kp1",
+      "base_selected_template_sha256": "529687737483a9c4adf27a96c3d823b92cf69853bf81c8127f89b979c25500ad",
+      "curriculum_kp_sha256": "0b44d3dc47665577cda374481326808dda6e702b5652e7816161aa893e35bc04",
+      "review_findings": [
+        {
+          "keys": [
+            "power-of-a-power-rule/kp1",
+            "power-of-a-power-rule/kp3"
+          ],
+          "kind": "premature_prerequisite",
+          "finding": "Current templates raise the product a*x^n, requiring distribution of an outer power to a coefficient and a variable factor. Power of a product is introduced in the next topic and absent these KP prerequisites; canonical examples use a single variable power.",
+          "required_change": "Remove the coefficient from inside the powered group. Use variable inner/outer exponents or subsequent same-base product/quotient factors for domain variety while keeping the intended rule."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "answer_expr": "powerform(1,[x,a*b])",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Keep the single variable base and multiply the inner and outer exponents."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "x^4",
+              "params": {
+                "a": 2,
+                "b": 2
+              }
+            },
+            {
+              "expected": "x^6",
+              "params": {
+                "a": 2,
+                "b": 3
+              }
+            },
+            {
+              "expected": "x^8",
+              "params": {
+                "a": 2,
+                "b": 4
+              }
+            },
+            {
+              "expected": "x^10",
+              "params": {
+                "a": 2,
+                "b": 5
+              }
+            },
+            {
+              "expected": "x^6",
+              "params": {
+                "a": 3,
+                "b": 2
+              }
+            },
+            {
+              "expected": "x^9",
+              "params": {
+                "a": 3,
+                "b": 3
+              }
+            },
+            {
+              "expected": "x^12",
+              "params": {
+                "a": 3,
+                "b": 4
+              }
+            },
+            {
+              "expected": "x^15",
+              "params": {
+                "a": 3,
+                "b": 5
+              }
+            },
+            {
+              "expected": "x^8",
+              "params": {
+                "a": 4,
+                "b": 2
+              }
+            },
+            {
+              "expected": "x^12",
+              "params": {
+                "a": 4,
+                "b": 3
+              }
+            },
+            {
+              "expected": "x^16",
+              "params": {
+                "a": 4,
+                "b": 4
+              }
+            },
+            {
+              "expected": "x^20",
+              "params": {
+                "a": 4,
+                "b": 5
+              }
+            }
+          ],
+          "solution_sketch": "Keep base $x$ and multiply the displayed inner and outer exponents.",
+          "statement": "Simplify $(x^{{{a}}})^{{{b}}}$."
+        },
+        "kind": "template",
+        "kp_id": "power-of-a-power-rule/kp1"
+      },
+      "proposed_template_sha256": "cfbb6c8133fe4d54069c1420fde4c9b3f1e52149a81a3a822a76a33482fd4329",
+      "binding_count": 12,
+      "independent_arithmetic": "Every listed sample was generated from the displayed exponent/zero-power rule with exact integer or rational arithmetic."
+    },
+    {
+      "key": "power-of-a-power-rule/kp3",
+      "base_selected_template_sha256": "41e2460a996f588ff549d05bfefc130e881127b22ff52202d47046bcb4c1268b",
+      "curriculum_kp_sha256": "9e1b5ec2927f62ab3066c08296713a4af24523865b0eced03e5ad271395b4471",
+      "review_findings": [
+        {
+          "keys": [
+            "power-of-a-power-rule/kp1",
+            "power-of-a-power-rule/kp3"
+          ],
+          "kind": "premature_prerequisite",
+          "finding": "Current templates raise the product a*x^n, requiring distribution of an outer power to a coefficient and a variable factor. Power of a product is introduced in the next topic and absent these KP prerequisites; canonical examples use a single variable power.",
+          "required_change": "Remove the coefficient from inside the powered group. Use variable inner/outer exponents or subsequent same-base product/quotient factors for domain variety while keeping the intended rule."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "answer_expr": "powerform(1,[x,a*b+c])",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Apply the power of a power first, then use the product rule on the remaining same-base factor."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                2,
+                3
+              ]
+            },
+            "c": {
+              "kind": "choice",
+              "values": [
+                1,
+                2
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "x^5",
+              "params": {
+                "a": 2,
+                "b": 2,
+                "c": 1
+              }
+            },
+            {
+              "expected": "x^6",
+              "params": {
+                "a": 2,
+                "b": 2,
+                "c": 2
+              }
+            },
+            {
+              "expected": "x^7",
+              "params": {
+                "a": 2,
+                "b": 3,
+                "c": 1
+              }
+            },
+            {
+              "expected": "x^8",
+              "params": {
+                "a": 2,
+                "b": 3,
+                "c": 2
+              }
+            },
+            {
+              "expected": "x^7",
+              "params": {
+                "a": 3,
+                "b": 2,
+                "c": 1
+              }
+            },
+            {
+              "expected": "x^8",
+              "params": {
+                "a": 3,
+                "b": 2,
+                "c": 2
+              }
+            },
+            {
+              "expected": "x^10",
+              "params": {
+                "a": 3,
+                "b": 3,
+                "c": 1
+              }
+            },
+            {
+              "expected": "x^11",
+              "params": {
+                "a": 3,
+                "b": 3,
+                "c": 2
+              }
+            },
+            {
+              "expected": "x^9",
+              "params": {
+                "a": 4,
+                "b": 2,
+                "c": 1
+              }
+            },
+            {
+              "expected": "x^10",
+              "params": {
+                "a": 4,
+                "b": 2,
+                "c": 2
+              }
+            },
+            {
+              "expected": "x^13",
+              "params": {
+                "a": 4,
+                "b": 3,
+                "c": 1
+              }
+            },
+            {
+              "expected": "x^14",
+              "params": {
+                "a": 4,
+                "b": 3,
+                "c": 2
+              }
+            }
+          ],
+          "solution_sketch": "Multiply the displayed inner and outer exponents first, then add the exponent of the remaining product factor.",
+          "statement": "Simplify $(x^{{{a}}})^{{{b}}}\\cdot x^{{{c}}}$."
+        },
+        "kind": "template",
+        "kp_id": "power-of-a-power-rule/kp3"
+      },
+      "proposed_template_sha256": "0d98b17c8a392e6b7d5917613ee99ab664df0289bfd1d72d64d8fd9e1eb81e2c",
+      "binding_count": 12,
+      "independent_arithmetic": "Every listed sample was generated from the displayed exponent/zero-power rule with exact integer or rational arithmetic."
+    },
+    {
+      "key": "power-rule-exponents/kp3",
+      "base_selected_template_sha256": "d882e836acf358973914d8f277377cc69e00bd9a28e3b7a5e779c88a08a1f82a",
+      "curriculum_kp_sha256": "e1cd4454b5b50329ffb92c51491327af0674a015840d1708ece1be6c417d0f06",
+      "review_findings": [
+        {
+          "keys": [
+            "power-rule-exponents/kp3"
+          ],
+          "kind": "scope_and_difficulty",
+          "finding": "Constraint calls for power rules then product rule with small coefficients. Current family additionally divides by2x and reaches a=13, coefficient169/2. The extra quotient is absent the canonical product-only objective; small has no precise bound.",
+          "required_change": "Use power then product without the extra quotient. Bound the coefficient family using the canonical small-coefficient examples; record the local chosen bound rather than inventing a coursewide definition of small."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "answer_expr": "powerform(a**2*b,[x,2*c+1])",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Apply the outside power to its coefficient and variable factor, then multiply the remaining factor."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                1,
+                2
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                1,
+                2
+              ]
+            },
+            "c": {
+              "kind": "choice",
+              "values": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "1*x^3",
+              "params": {
+                "a": 1,
+                "b": 1,
+                "c": 1
+              }
+            },
+            {
+              "expected": "1*x^5",
+              "params": {
+                "a": 1,
+                "b": 1,
+                "c": 2
+              }
+            },
+            {
+              "expected": "1*x^7",
+              "params": {
+                "a": 1,
+                "b": 1,
+                "c": 3
+              }
+            },
+            {
+              "expected": "2*x^3",
+              "params": {
+                "a": 1,
+                "b": 2,
+                "c": 1
+              }
+            },
+            {
+              "expected": "2*x^5",
+              "params": {
+                "a": 1,
+                "b": 2,
+                "c": 2
+              }
+            },
+            {
+              "expected": "2*x^7",
+              "params": {
+                "a": 1,
+                "b": 2,
+                "c": 3
+              }
+            },
+            {
+              "expected": "4*x^3",
+              "params": {
+                "a": 2,
+                "b": 1,
+                "c": 1
+              }
+            },
+            {
+              "expected": "4*x^5",
+              "params": {
+                "a": 2,
+                "b": 1,
+                "c": 2
+              }
+            },
+            {
+              "expected": "4*x^7",
+              "params": {
+                "a": 2,
+                "b": 1,
+                "c": 3
+              }
+            },
+            {
+              "expected": "8*x^3",
+              "params": {
+                "a": 2,
+                "b": 2,
+                "c": 1
+              }
+            },
+            {
+              "expected": "8*x^5",
+              "params": {
+                "a": 2,
+                "b": 2,
+                "c": 2
+              }
+            },
+            {
+              "expected": "8*x^7",
+              "params": {
+                "a": 2,
+                "b": 2,
+                "c": 3
+              }
+            }
+          ],
+          "solution_sketch": "Power first: square coefficient ${a}$ and double the displayed inner exponent. Then multiply by ${b}x$, multiplying coefficients and adding one to the exponent.",
+          "statement": "Simplify $({a}x^{{{c}}})^2({b}x)$."
+        },
+        "kind": "template",
+        "kp_id": "power-rule-exponents/kp3"
+      },
+      "proposed_template_sha256": "5b45c5f28e493fad62cebd17f6a1820341e286264a316d95bb70e78fb3a5d872",
+      "binding_count": 12,
+      "independent_arithmetic": "Every listed sample was generated from the displayed exponent/zero-power rule with exact integer or rational arithmetic."
+    },
+    {
+      "key": "zero-exponent-rule/kp2",
+      "base_selected_template_sha256": "009a7eaf48f7ac5df0043bae970f861afed99e88ea621fe5b9252e72ed826910",
+      "curriculum_kp_sha256": "700d189e74ad33339a947496a61bd4711da978ecd428898b928c5d75567632ca",
+      "review_findings": [
+        {
+          "keys": [
+            "zero-exponent-rule/kp2"
+          ],
+          "kind": "wrong_skill",
+          "finding": "Current a+7^0-3^0 family never contrasts whether an exponent covers a whole product or just its variable factor.",
+          "required_change": "Provide both (ax)^0 and a*x^0 cases across the family, with nonzero a and x, and explicit grouping."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "multipart",
+            "parts": [
+              {
+                "name": "grouped",
+                "contract": {
+                  "kind": "exact"
+                }
+              },
+              {
+                "name": "outside",
+                "contract": {
+                  "kind": "exact"
+                }
+              }
+            ]
+          },
+          "answer_expr": "multipart((1,a))",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Determine whether the zero exponent covers the whole product or only the variable factor."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4
+              ]
+            },
+            "x": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                5,
+                7
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "grouped = 1; outside = 2",
+              "params": {
+                "a": 2,
+                "x": 2
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 2",
+              "params": {
+                "a": 2,
+                "x": 3
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 2",
+              "params": {
+                "a": 2,
+                "x": 5
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 2",
+              "params": {
+                "a": 2,
+                "x": 7
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 3",
+              "params": {
+                "a": 3,
+                "x": 2
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 3",
+              "params": {
+                "a": 3,
+                "x": 3
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 3",
+              "params": {
+                "a": 3,
+                "x": 5
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 3",
+              "params": {
+                "a": 3,
+                "x": 7
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 4",
+              "params": {
+                "a": 4,
+                "x": 2
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 4",
+              "params": {
+                "a": 4,
+                "x": 3
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 4",
+              "params": {
+                "a": 4,
+                "x": 5
+              }
+            },
+            {
+              "expected": "grouped = 1; outside = 4",
+              "params": {
+                "a": 4,
+                "x": 7
+              }
+            }
+          ],
+          "solution_sketch": "Because ${a}\\cdot{x}\\ne0$, the whole grouped base gives $({a}\\cdot{x})^0=1$. In ${a}\\cdot({x})^0$, only ${x}$ is powered, so the outside coefficient ${a}$ remains.",
+          "statement": "For nonzero values shown, evaluate both expressions. Report grouped = $({a}\\cdot{x})^0$ and outside = ${a}\\cdot({x})^0$."
+        },
+        "kind": "template",
+        "kp_id": "zero-exponent-rule/kp2"
+      },
+      "proposed_template_sha256": "b915199936c2e89010eee325f7020b25293cf0c2efae39a3b2f98818d297ada7",
+      "binding_count": 12,
+      "independent_arithmetic": "Every listed sample was generated from the displayed exponent/zero-power rule with exact integer or rational arithmetic."
+    },
+    {
+      "key": "negative-zero-exponents/kp1",
+      "base_selected_template_sha256": "6b0f365e51f56da51d2eae4aab41658da372caa23e3bd102b0c21c670cc2ef63",
+      "curriculum_kp_sha256": "466de7e7638873ab4632822684b797422d638fa280c1b2b83a05a6939265729a",
+      "review_findings": [
+        {
+          "keys": [
+            "negative-zero-exponents/kp1"
+          ],
+          "kind": "fraction_representation_and_legacy_rounding",
+          "finding": "Current numeric reciprocal task requests an exact fraction but has no answer policy; e.g.2^-2=1/4 is susceptible to legacy learner-chosen one-place rounding0.2.",
+          "required_change": "Bind exact mathematical checking and the requested fraction representation. Preserve the lesson’s actual simplification demand rather than silently adding a lowest-terms requirement to unrelated introductory tasks.",
+          "verification": "Rounding path is grounded in previously inspected legacy checker and existing core regression behavior; no new Rust reproduction executed in this review."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "required_form",
+            "form": "reduced_fraction"
+          },
+          "answer_expr": "1/a**2",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "A negative exponent inverts the nonzero base; then make the exponent positive."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "1/4",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "1/9",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "1/16",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "1/25",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "1/36",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "1/49",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "1/64",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "1/81",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "1/100",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "1/121",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "1/144",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "1/169",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "Invert the nonzero base and use a positive exponent: ${a}^{{-2}}=1/{a}^2$. Evaluate the square in the denominator.",
+          "statement": "Rewrite ${a}^{{-2}}$ using a positive exponent, then give the exact reduced fraction."
+        },
+        "kind": "template",
+        "kp_id": "negative-zero-exponents/kp1"
+      },
+      "proposed_template_sha256": "2718f8f46b882fae9b9c7a8d554a785d506886c631d0c75a402bd5e25aeb567f",
+      "binding_count": 12,
+      "independent_arithmetic": "Every listed sample was generated from the displayed exponent/zero-power rule with exact integer or rational arithmetic."
+    }
+  ],
+  "already_resolved_template_findings": [
+    {
+      "key": "exponent-product-rule/kp2",
+      "review_selected_template_sha256": "72f55a0cf8583c43a718595221142749b4c814e97a6b9978e22cbd9f13d219bc",
+      "current_selected_template_sha256": "08f18a49b6ded3ae29ea1de60d72d766f844c73308767f534517e279ee30a263",
+      "resolution": "Current selected template now uses required_single_power, powerform, and unevaluated same-base output; no further template change proposed."
+    },
+    {
+      "key": "exponent-quotient-rule/kp2",
+      "review_selected_template_sha256": "295a10fccc91bf60df18d9f207bc93021864e6dfffb1baecc905d1e6fdf107b4",
+      "current_selected_template_sha256": "3a1e7aae54df95b64570c3a2630df5e9005ccf7d8be9a70c469430815bc8f891",
+      "resolution": "Current selected template now uses required_single_power, powerform, and unevaluated same-base output; no further template change proposed."
+    },
+    {
+      "key": "power-of-a-power-rule/kp2",
+      "review_selected_template_sha256": "b53a93cd4d546b441aa1282cded42d6e37820b615aeb69e945c42e3f1ad2c641",
+      "current_selected_template_sha256": "3dcca8eb676f93314388f9a1d58d100ff19aba588b99d802dae2fe4e601f11da",
+      "resolution": "Current selected template now uses required_single_power, powerform, and unevaluated same-base output; no further template change proposed."
+    }
+  ],
+  "policy_deferred_template_findings": [
+    {
+      "key": "negative-zero-exponents/kp2",
+      "base_selected_template_sha256": "b4b761ac25a35c49e5d06c68ea5da1d97a992986c431da34066bfba384bc423c",
+      "required_policy": "positive_exponent_output",
+      "status": "deferred-until-policy-is-implemented-and-bound",
+      "reason": "Exact equivalence alone cannot enforce the explicit positive-exponent output requirement; this proposal does not weaken or simulate that contract."
+    },
+    {
+      "key": "negative-zero-exponents/kp3",
+      "base_selected_template_sha256": "44b494c53c4a19b2febfe6f8a9bcb82ad54227e1f5af565fe571fa4e73badf92",
+      "required_policy": "positive_exponent_output",
+      "status": "deferred-until-policy-is-implemented-and-bound",
+      "reason": "Exact equivalence alone cannot enforce the explicit positive-exponent output requirement; this proposal does not weaken or simulate that contract."
+    },
+    {
+      "key": "simplifying-negative-exponent-expressions/kp1",
+      "base_selected_template_sha256": "20b1f7ac9aa2472587198409702e788cdc6e57cccf6c76b27361815dff69c497",
+      "required_policy": "positive_exponent_output",
+      "status": "deferred-until-policy-is-implemented-and-bound",
+      "reason": "Exact equivalence alone cannot enforce the explicit positive-exponent output requirement; this proposal does not weaken or simulate that contract."
+    },
+    {
+      "key": "simplifying-negative-exponent-expressions/kp2",
+      "base_selected_template_sha256": "6c42dbaface590a96cae2afc00577a0241b4353a48e0c40603cfc655b38b1575",
+      "required_policy": "positive_exponent_output",
+      "status": "deferred-until-policy-is-implemented-and-bound",
+      "reason": "Exact equivalence alone cannot enforce the explicit positive-exponent output requirement; this proposal does not weaken or simulate that contract."
+    },
+    {
+      "key": "simplifying-negative-exponent-expressions/kp3",
+      "base_selected_template_sha256": "d5a4fd785d6390d7a839b389e49166a49b89fd081b4da637c27710f5bd6d1b20",
+      "required_policy": "positive_exponent_output",
+      "status": "deferred-until-policy-is-implemented-and-bound",
+      "reason": "Exact equivalence alone cannot enforce the explicit positive-exponent output requirement; this proposal does not weaken or simulate that contract."
+    }
+  ],
+  "independent_checks": {
+    "all_24_curriculum_rows_and_96_exemplars_read": true,
+    "all_current_hint_and_template_bodies_read": true,
+    "all_proposed_template_samples_recomputed": true,
+    "repository_mutations": 0
+  },
+  "status": "external-proposal-pending-independent-root-review-and-gate",
+  "supersedes": "hint-authored/06-exponents-radicals-01-repair-proposals-v7.json",
+  "superseded_sha256": "7e9d15a8b8ed9e3a17242654d61b2980c5e486818ce48fdee2c0263804f2d009",
+  "delta_scope": "Remove unnecessary outside-coefficient variation from the first three symbolic families; vary the actual numerator, inner, outer, and product exponents across twelve tasks.",
+  "feature_dependency": {
+    "proposal": "hint-authored/06-exponents-radicals-symbolic-powerform-feature-proposal.json",
+    "implementation_status": "reviewable-uncommitted",
+    "required_before_integration": true
+  }
+}

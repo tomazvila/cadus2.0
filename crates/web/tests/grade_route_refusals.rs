@@ -1,8 +1,9 @@
 //! M5 U8: the refusals of the grade path (spec section 10), the no-panic rule,
 //! and the M5 U11 deterministic-grade counter (T6, spec section 7).
 //!
-//! No test here reaches the checker: every case is refused before the grade,
-//! and the counter tests read one label per learner.
+//! Every refusal here happens before the grade. The counter tests read one label
+//! per learner. Unit f4-outcome removed the answer-kind refusal: a kind the
+//! checker does not decide is the UNGRADED outcome, not a `409` (D-F2).
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
@@ -166,20 +167,27 @@ async fn the_opening_refusals_are_the_pinned_literals() {
     .await;
 }
 
-/// Spec section 5.1. A `multi-step` or a `proof` answer gets NO synchronous
-/// verdict: the route refuses it, records nothing, and asks no model.
+/// D-F2. A `proof` answer gets no deterministic verdict, and the route no longer
+/// refuses the kind: it records the UNGRADED outcome and names the reason.
 #[tokio::test]
-async fn an_undecidable_kind_gets_no_verdict_and_records_nothing() {
+async fn a_proof_answer_is_ungraded_and_is_recorded() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = proof_learner(&db, "proof@example.com").await;
 
         let proof = json!({"problem_id": PROBLEM_ID, "answer": "Assume the contrary."});
-        assert_eq!(
-            refusal(&app, Some(user), proof).await,
-            (StatusCode::CONFLICT, "undecidable_kind".to_string())
-        );
-        assert_eq!(events_of_type(&db, user, "attempt").await.len(), 0);
+        let (status, raw) = post_answer(&app, Some(user), Some(proof)).await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let body = parse(&raw);
+        assert_eq!(body["outcome"], "ungraded");
+        assert_eq!(body["reason"], "no deterministic verdict for a proof");
+        // No `correct` claim, and no answer reveal (Hard Rule 1).
+        assert!(body.get("correct").is_none(), "{body}");
+        assert!(body.get("solution").is_none(), "{body}");
+        assert!(body.get("re_solve").is_none(), "{body}");
+        // The attempt IS in the log, and the diagnosis never fires (D-F4).
+        assert_eq!(events_of_type(&db, user, "attempt").await.len(), 1);
+        assert_eq!(body["diagnosis"]["status"], "not_offered");
     })
     .await;
 }
@@ -261,31 +269,30 @@ async fn every_deterministic_verdict_counts_its_own_grade_label() {
         );
         holds(
             &text,
-            "cadus_deterministic_grade_total{result=\"undecidable\"} 0",
+            "cadus_deterministic_grade_total{result=\"ungraded\"} 0",
         );
     })
     .await;
 }
 
-/// An answer kind with no deterministic verdict counts `undecidable`.
+/// An attempt with no deterministic verdict counts `ungraded` (D-F2).
 ///
-/// The route refuses the kind with `409 undecidable_kind` and asks no model, so
-/// the refusal is the decision and the counter records it. Nothing is graded and
-/// nothing is recorded, so no other label moves.
+/// The checker gave no verdict, so the count is neither a pass nor a miss and no
+/// other label moves.
 #[tokio::test]
-async fn an_undecidable_kind_counts_one_undecidable_grade() {
+async fn an_ungraded_attempt_counts_one_ungraded_grade() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = proof_learner(&db, "count-proof@example.com").await;
 
         let proof = json!({"problem_id": PROBLEM_ID, "answer": "Assume the contrary."});
         let (status, body) = post_answer(&app, Some(user), Some(proof)).await;
-        assert_eq!(status, StatusCode::CONFLICT, "{body}");
+        assert_eq!(status, StatusCode::OK, "{body}");
 
         let text = scrape(&app).await;
         holds(
             &text,
-            "cadus_deterministic_grade_total{result=\"undecidable\"} 1",
+            "cadus_deterministic_grade_total{result=\"ungraded\"} 1",
         );
         holds(
             &text,

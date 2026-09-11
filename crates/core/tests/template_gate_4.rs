@@ -254,6 +254,7 @@ fn the_per_instance_check_refuses_one_instance_the_gate_refuses() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     let compiled = Compiled::new(&doc).expect("the template compiles");
 
@@ -287,6 +288,7 @@ fn the_per_instance_check_reads_the_hint_rule() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     let instance = squares_instance(&doc, 4);
     assert_eq!(instance.answer, "16");
@@ -311,6 +313,7 @@ fn the_per_instance_check_reads_the_answer_string_back() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     let instance = squares_instance(&doc, 5);
     assert_eq!(instance.answer, "25");

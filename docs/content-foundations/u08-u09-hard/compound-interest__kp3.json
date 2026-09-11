@@ -1,0 +1,126 @@
+[
+  {
+    "kp_id": "compound-interest/kp3",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "An account opens with \u20ac850 at a nominal annual rate of $6\\%$, compounded ${a}$ times per year. Write its balance after ${b}$ years as an unevaluated power expression, simplifying the periodic rate and period count.",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            4,
+            12
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        }
+      },
+      "answer_expr": "powerform(850,[1+0.06/a,a*b])",
+      "answer_contract": {
+        "kind": "exact"
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": 4,
+            "b": 6
+          },
+          "expected": "850*(1.015)^24"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 7
+          },
+          "expected": "850*(1.015)^28"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 8
+          },
+          "expected": "850*(1.015)^32"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 9
+          },
+          "expected": "850*(1.015)^36"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 10
+          },
+          "expected": "850*(1.015)^40"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 11
+          },
+          "expected": "850*(1.015)^44"
+        },
+        {
+          "params": {
+            "a": 12,
+            "b": 6
+          },
+          "expected": "850*(1.005)^72"
+        },
+        {
+          "params": {
+            "a": 12,
+            "b": 7
+          },
+          "expected": "850*(1.005)^84"
+        },
+        {
+          "params": {
+            "a": 12,
+            "b": 8
+          },
+          "expected": "850*(1.005)^96"
+        },
+        {
+          "params": {
+            "a": 12,
+            "b": 9
+          },
+          "expected": "850*(1.005)^108"
+        },
+        {
+          "params": {
+            "a": 12,
+            "b": 10
+          },
+          "expected": "850*(1.005)^120"
+        },
+        {
+          "params": {
+            "a": 12,
+            "b": 11
+          },
+          "expected": "850*(1.005)^132"
+        }
+      ],
+      "solution_sketch": "The annual decimal rate is $0.06$. Divide by ${a}$ to get the periodic rate; add $1$ for the period multiplier. There are ${a}\\cdot{b}$ periods, so raise that multiplier to this count and multiply by \u20ac850.",
+      "hints": [
+        "How does the number of updates per year affect both the rate and period count?"
+      ],
+      "distractors": []
+    }
+  }
+]

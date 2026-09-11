@@ -13,15 +13,23 @@
 
 pub mod answer;
 pub mod config;
+#[doc(hidden)]
+pub mod content_audit_facts;
 pub mod curriculum;
 pub mod diagnostic;
 pub mod event;
 pub mod fire;
 pub mod instruction;
+pub mod integrated;
 pub mod learner;
 pub mod numeric;
 pub mod pool;
 pub mod projector;
+pub mod readiness;
+pub mod retention;
+pub mod review_engine;
 pub mod selector;
 pub mod template;
+pub mod timing;
+pub mod visual;
 pub mod xp;

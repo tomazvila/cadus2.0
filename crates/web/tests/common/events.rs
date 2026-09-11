@@ -2,9 +2,9 @@
 
 use axum::http::StatusCode;
 use cadus_core::event::{
-    AnswerKind, Attempt, AttemptProblem, EnrollReason, Enrolled, Event, LessonResult, QuizResult,
-    SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskServed, TaskType, Timestamp,
-    WorkQuality,
+    AnswerKind, Attempt, AttemptOutcome, AttemptProblem, EnrollReason, Enrolled, Event,
+    LessonResult, QuizResult, SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskServed,
+    TaskType, Timestamp, WorkQuality,
 };
 use cadus_core::pool::{PoolAnswer, Ring, TaskMemory};
 use cadus_store::state::{EventRow, append_event, load_web_state, lock_web_state, save_web_state};
@@ -36,7 +36,7 @@ pub fn start(session: &str, offset: i64) -> Event {
     Event::SessionStart(SessionStart {
         ts: Timestamp::from_micros(BASE_US + offset),
         session: Some(session.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
     })
 }
 
@@ -45,7 +45,7 @@ pub fn end(session: &str, offset: i64) -> Event {
     Event::SessionEnd(SessionEnd {
         ts: Timestamp::from_micros(BASE_US + offset),
         session: Some(session.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         xp_earned: 0.0,
         minutes: 0.0,
     })
@@ -56,7 +56,7 @@ pub fn lesson(session: &str, topic: &str, xp: f64, passed: bool, offset: i64) ->
     Event::LessonResult(LessonResult {
         ts: Timestamp::from_micros(BASE_US + offset),
         session: Some(session.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: Slug::new(topic).unwrap(),
         passed,
         failed_at_kp: None,
@@ -71,7 +71,7 @@ pub fn enrolled(course: &str, reason: Option<EnrollReason>) -> Event {
     Event::Enrolled(Enrolled {
         ts: Timestamp::from_micros(BASE_US),
         session: None,
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         course: Slug::new(course).unwrap(),
         reason,
         return_to: None,
@@ -83,7 +83,7 @@ pub fn served(task_id: &str, task_type: TaskType, topic: Option<&str>, offset: i
     Event::TaskServed(TaskServed {
         ts: Timestamp::from_micros(BASE_US + offset),
         session: Some("s_2026-01-01a".to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         task_id: task_id.to_string(),
         task_type,
         topic: topic.map(|id| Slug::new(id).unwrap()),
@@ -91,6 +91,8 @@ pub fn served(task_id: &str, task_type: TaskType, topic: Option<&str>, offset: i
         problems: Vec::new(),
         component_topics: Vec::new(),
         seed: None,
+        probe_delay_days: None,
+        confirm: false,
     })
 }
 
@@ -99,13 +101,14 @@ pub fn graded(attempt_id: &str, offset: i64) -> Event {
     Event::Attempt(Attempt {
         ts: Timestamp::from_micros(BASE_US + offset),
         session: Some("s_2026-01-01a".to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         attempt_id: attempt_id.to_string(),
         task_id: "s_2026-01-01a-review-addition".to_string(),
         topic: Slug::new("addition").unwrap(),
         kp: None,
         task_type: TaskType::Review,
         problem: AttemptProblem {
+            answer_contract: None,
             text: "Compute $8 - 5$.".to_string(),
             expected: "3".to_string(),
         },
@@ -113,6 +116,15 @@ pub fn graded(attempt_id: &str, offset: i64) -> Event {
         work: None,
         answer_kind: Some(AnswerKind::Numeric),
         correct: true,
+        outcome: AttemptOutcome::Correct,
+        item_digest: None,
+        item_source: None,
+        exposure: None,
+        timing_reliable: None,
+        timing: None,
+        skills: Vec::new(),
+        independent_after_feedback: false,
+        feedback_practice: false,
         secs: Secs::new(12).unwrap(),
         error_tags: Vec::new(),
         work_quality: WorkQuality::NearlyPerfect,
@@ -124,9 +136,10 @@ pub fn graded(attempt_id: &str, offset: i64) -> Event {
 /// A quiz result with a score.
 pub fn quiz(score: f64, offset: i64) -> Event {
     Event::QuizResult(QuizResult {
+        inconclusive: false,
         ts: Timestamp::from_micros(BASE_US + offset),
         session: Some("s_2026-01-01a".to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         quiz_id: format!("q{offset}"),
         score,
         per_topic: Vec::new(),
@@ -138,6 +151,7 @@ pub fn quiz(score: f64, offset: i64) -> Event {
 /// of 2026.
 pub fn review_problem(task_id: &str) -> ServedProblem {
     ServedProblem {
+        timing_interrupted: false,
         problem_id: "p1".to_string(),
         task_id: task_id.to_string(),
         topic: Some("addition".to_string()),
@@ -146,6 +160,7 @@ pub fn review_problem(task_id: &str) -> ServedProblem {
         answer_kind: Some("numeric".to_string()),
         text: "Compute $8 - 5$.".to_string(),
         expected: PoolAnswer {
+            answer_contract: None,
             v: 1,
             answer: "3".to_string(),
         },
@@ -154,5 +169,6 @@ pub fn review_problem(task_id: &str) -> ServedProblem {
         hints_given: Vec::new(),
         index: 0,
         rework: None,
+        handoff: None,
     }
 }

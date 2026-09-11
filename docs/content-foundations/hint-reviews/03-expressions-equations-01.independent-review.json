@@ -1,0 +1,5316 @@
+{
+  "schema_version": 1,
+  "review_type": "independent_whole_KP_authorship_and_selected_family_review_not_live_approval",
+  "reviewer": {
+    "identity": "/root/orchestrator",
+    "model": "gpt-6-astra"
+  },
+  "reviewed_at": "2026-09-09T22:03:36.946097+00:00",
+  "authored_file_sha256": "e858fee30004e56f63ac2ec5517f3999229467d896c5a1c85c5a31ee8510eeae",
+  "frozen_authored_input": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/review-inputs/03-expressions-equations-01-e858fee30004.json",
+  "source_packet": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authoring-cohorts/03-expressions-equations-01.json",
+  "source_packet_sha256": "5ad1987426e3bc5a1933bc03a0b318debd815764414c82530c809313eb3f9d1e",
+  "current_templates_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/postzero-curated-01/templates.json",
+  "current_templates_sha256": "801e1a6f9f27275cf136ce42f0b39318264b8692836592c83f0c702784bcbdfc",
+  "math_evidence_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/03-expressions-equations-01.math-checks.json",
+  "math_evidence_sha256": "1c3c4fea2a0dcaa4fb82d845d6073f4faabd7f66ff721b3d3ea542fb43e444f1",
+  "summary": {
+    "knowledge_points": 24,
+    "accept": 24,
+    "revise": 0,
+    "previously_accepted_unchanged": 7,
+    "mechanical_gate_accept": 24,
+    "mechanical_gate_reject": 0,
+    "all_practice_bindings_used_for_gate": 349
+  },
+  "verification_boundary": "Every changed ladder independently reread against full frozen KP objectives, constraints, all exemplars and prerequisites. Previously accepted rows unchanged. Full finite production-context mechanical gate passes for the exact snapshot. Existing independent math and separate selected-template findings remain bound to the unchanged template snapshot. This accepts hint authorship only; no live API write or live digest approval occurred.",
+  "curriculum_boundary_notes": [
+    "parts-of-an-expression/kp2 includes a combine-like-terms exemplar before its dedicated later topic; either preserve a brief instructional branch or repair the exemplar ownership, rather than silently ignore it."
+  ],
+  "rows": [
+    {
+      "key": "parts-of-an-expression/kp1",
+      "decision": "accept",
+      "reason": "Identifies signed terms, coefficients and constants, includes implicit coefficient one and returns the requested component.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "parts-of-an-expression/kp1",
+        "objective": "Terms, coefficients, and constants",
+        "constraints": "two to four terms; integer coefficients from -9 to 9",
+        "hints": [
+          "Find the pieces joined by addition or subtraction outside parentheses. Keep each piece with its sign.",
+          "A coefficient is the signed number multiplying a variable; a constant has no variable. A letter written alone has coefficient one.",
+          "Check whether the question asks for a count, a coefficient, or a constant, then give that requested part with its sign."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "order-of-operations",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "3",
+          "problem": "How many terms does $4x + 7 - 2y$ have?",
+          "solution_sketch": "Terms are separated by $+$ and $-$: $4x$, $7$, $-2y$."
+        },
+        {
+          "answer": "-5",
+          "problem": "What is the coefficient of $y$ in $3x - 5y + 2$?",
+          "solution_sketch": "The term is $-5y$; the sign belongs to the coefficient."
+        },
+        {
+          "answer": "-8",
+          "problem": "What is the constant term of $2x^2 + 3x - 8$?",
+          "solution_sketch": "The constant term has no variable factor: $-8$."
+        },
+        {
+          "answer": "3",
+          "problem": "How many terms does $5x - 3y + 8$ have?",
+          "solution_sketch": "Terms are separated by $+$ and $-$: $5x$, $-3y$, $8$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "multipart",
+          "parts": [
+            {
+              "contract": {
+                "kind": "exact"
+              },
+              "name": "terms"
+            },
+            {
+              "contract": {
+                "kind": "exact"
+              },
+              "name": "coefficient"
+            },
+            {
+              "contract": {
+                "kind": "exact"
+              },
+              "name": "constant"
+            }
+          ]
+        },
+        "answer_expr": "multipart(3,a,b)",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Count the separate summands, keeping a parenthesized sign with its term.",
+          "Read the signed numerical factor of the requested variable, then the term with no variable."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              -9,
+              -7,
+              -4,
+              2
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              -8,
+              -3,
+              6
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "terms = 3; coefficient = -9; constant = -8",
+            "params": {
+              "a": -9,
+              "b": -8
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = -9; constant = -3",
+            "params": {
+              "a": -9,
+              "b": -3
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = -9; constant = 6",
+            "params": {
+              "a": -9,
+              "b": 6
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = -7; constant = -8",
+            "params": {
+              "a": -7,
+              "b": -8
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = -7; constant = -3",
+            "params": {
+              "a": -7,
+              "b": -3
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = -7; constant = 6",
+            "params": {
+              "a": -7,
+              "b": 6
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = -4; constant = -8",
+            "params": {
+              "a": -4,
+              "b": -8
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = -4; constant = -3",
+            "params": {
+              "a": -4,
+              "b": -3
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = -4; constant = 6",
+            "params": {
+              "a": -4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = 2; constant = -8",
+            "params": {
+              "a": 2,
+              "b": -8
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = 2; constant = -3",
+            "params": {
+              "a": 2,
+              "b": -3
+            }
+          },
+          {
+            "expected": "terms = 3; coefficient = 2; constant = 6",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          }
+        ],
+        "solution_sketch": "The separate summands are $4x$, $({a})y$, and $({b})$. The numerical factor multiplying $y$ is ${a}$, and the summand with no letter is ${b}$. Keep each sign attached.",
+        "statement": "For $4x+({a})y+({b})$, report terms = the number of terms; coefficient = the coefficient of $y$; constant = the constant term."
+      },
+      "template_math": {
+        "key": "parts-of-an-expression/kp1",
+        "admissible_bindings": 12,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 12
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "parts-of-an-expression/kp1",
+        "practice_instances": 12,
+        "reason": null
+      }
+    },
+    {
+      "key": "parts-of-an-expression/kp2",
+      "decision": "accept",
+      "reason": "Matches complete variable/exponent parts while allowing coefficient and sign differences.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "parts-of-an-expression/kp2",
+        "objective": "Identify like terms",
+        "constraints": "at most two variables; exponents <= 2",
+        "hints": [
+          "Look at each term's letters and powers. Like terms must have the same letters raised to the same powers.",
+          "Select the matching terms, keeping their signs. Their numerical coefficients can differ.",
+          "If asked for their sum, add the signed coefficients and keep the shared variable part. Otherwise give the requested matching term or comparison."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "order-of-operations",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "-2x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "In $5x + 3y - 2x + 7$, one other term is a like term of $5x$. Which term is it?",
+          "solution_sketch": "Like terms have the same variable part; $5x$ and $-2x$ both have $x$."
+        },
+        {
+          "answer": "no",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "Are $4a^2$ and $4a$ like terms? Answer yes or no.",
+          "solution_sketch": "The variable parts $a^2$ and $a$ differ."
+        },
+        {
+          "answer": "5xy",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "In $2xy + 5x + 3xy - 1$, collect the terms whose variable part is $xy$. Give their sum.",
+          "solution_sketch": "The matching terms are $2xy$ and $3xy$; adding their coefficients gives $(2+3)xy=5xy$."
+        },
+        {
+          "answer": "7x^2",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A term must be like $-4x^2$. Choose $7x$, $7x^2$, or $7y^2$.",
+          "solution_sketch": "The variable and its exponent must both match: the required variable part is $x^2$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "-a*x",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Which terms share the required variable part?"
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "-2x",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "-3x",
+            "params": {
+              "a": 3
+            }
+          },
+          {
+            "expected": "-4x",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "-5x",
+            "params": {
+              "a": 5
+            }
+          },
+          {
+            "expected": "-6x",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "-7x",
+            "params": {
+              "a": 7
+            }
+          },
+          {
+            "expected": "-8x",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "-9x",
+            "params": {
+              "a": 9
+            }
+          },
+          {
+            "expected": "-10x",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "-11x",
+            "params": {
+              "a": 11
+            }
+          },
+          {
+            "expected": "-12x",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "-13x",
+            "params": {
+              "a": 13
+            }
+          }
+        ],
+        "solution_sketch": "The matching variable part is $x$; the subtraction sign belongs to the term, giving $-{a}x$.",
+        "statement": "In $5x+3y-{a}x$, give the other term like $5x$."
+      },
+      "template_math": {
+        "key": "parts-of-an-expression/kp2",
+        "admissible_bindings": 12,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 12
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "parts-of-an-expression/kp2",
+        "practice_instances": 12,
+        "reason": null
+      }
+    },
+    {
+      "key": "substituting-values/kp1",
+      "decision": "accept",
+      "reason": "Replaces every occurrence by its assigned signed value in parentheses and preserves operations.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "substituting-values/kp1",
+        "objective": "Substitute one value into a linear expression",
+        "constraints": "one variable; positive integer inputs; coefficients <= 9",
+        "hints": [
+          "Replace the variable everywhere with the given value, using parentheses around the replacement.",
+          "Do the multiplication before the addition or subtraction. Keep the quantities in the original order.",
+          "Check each replacement and sign against the original expression, then finish the calculation."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "order-of-operations",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "multiplication-tables",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "17",
+          "problem": "Evaluate $3x + 5$ when $x = 4$.",
+          "solution_sketch": "$3(4) + 5 = 12 + 5 = 17$."
+        },
+        {
+          "answer": "13",
+          "problem": "Evaluate $2a - 7$ when $a = 10$.",
+          "solution_sketch": "$2(10) - 7 = 13$."
+        },
+        {
+          "answer": "4",
+          "problem": "Evaluate $10 - 2m$ when $m = 3$.",
+          "solution_sketch": "$10 - 2(3) = 4$."
+        },
+        {
+          "answer": "19",
+          "problem": "Evaluate $4x - 5$ when $x = 6$.",
+          "solution_sketch": "$4(6) - 5 = 19$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "a*v+b",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Replace the variable with the given input in parentheses.",
+          "Complete multiplication before applying the constant term."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              -8,
+              -4
+            ]
+          },
+          "v": {
+            "kind": "choice",
+            "values": [
+              11,
+              13
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "58",
+            "params": {
+              "a": 6,
+              "b": -8,
+              "v": 11
+            }
+          },
+          {
+            "expected": "70",
+            "params": {
+              "a": 6,
+              "b": -8,
+              "v": 13
+            }
+          },
+          {
+            "expected": "62",
+            "params": {
+              "a": 6,
+              "b": -4,
+              "v": 11
+            }
+          },
+          {
+            "expected": "74",
+            "params": {
+              "a": 6,
+              "b": -4,
+              "v": 13
+            }
+          },
+          {
+            "expected": "69",
+            "params": {
+              "a": 7,
+              "b": -8,
+              "v": 11
+            }
+          },
+          {
+            "expected": "83",
+            "params": {
+              "a": 7,
+              "b": -8,
+              "v": 13
+            }
+          },
+          {
+            "expected": "73",
+            "params": {
+              "a": 7,
+              "b": -4,
+              "v": 11
+            }
+          },
+          {
+            "expected": "87",
+            "params": {
+              "a": 7,
+              "b": -4,
+              "v": 13
+            }
+          },
+          {
+            "expected": "80",
+            "params": {
+              "a": 8,
+              "b": -8,
+              "v": 11
+            }
+          },
+          {
+            "expected": "96",
+            "params": {
+              "a": 8,
+              "b": -8,
+              "v": 13
+            }
+          },
+          {
+            "expected": "84",
+            "params": {
+              "a": 8,
+              "b": -4,
+              "v": 11
+            }
+          },
+          {
+            "expected": "100",
+            "params": {
+              "a": 8,
+              "b": -4,
+              "v": 13
+            }
+          }
+        ],
+        "solution_sketch": "Replace $x$ with ${v}$ to get ${a}({v})+({b})$. Multiply first, then add the signed constant.",
+        "statement": "Evaluate ${a}x+({b})$ at $x={v}$."
+      },
+      "template_math": {
+        "key": "substituting-values/kp1",
+        "admissible_bindings": 12,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 12
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "substituting-values/kp1",
+        "practice_instances": 12,
+        "reason": null
+      }
+    },
+    {
+      "key": "substituting-values/kp2",
+      "decision": "accept",
+      "reason": "Maps each letter to its own value and retains complete substitution grouping.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "substituting-values/kp2",
+        "objective": "Two variables with whole-number inputs",
+        "constraints": "two variables; positive integer inputs <= 10",
+        "hints": [
+          "Match each letter to its own value and replace every occurrence, including repeated letters.",
+          "Calculate inside parentheses first. Then do multiplication and division before any outside addition or subtraction.",
+          "Check that you used both given values in the right places and kept the original order of subtraction or division."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "order-of-operations",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "multiplication-tables",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "30",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $2ab$ when $a = 5$ and $b = 3$.",
+          "solution_sketch": "$2 \\times 5 \\times 3 = 30$."
+        },
+        {
+          "answer": "14",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $x + 3y$ when $x = 2$ and $y = 4$.",
+          "solution_sketch": "$2+3(4)=2+12=14$."
+        },
+        {
+          "answer": "22",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A rectangle has width $a=4$ and length $b=7$. Evaluate $2(a+b)$.",
+          "solution_sketch": "Add inside the parentheses first: $2(4+7)=2(11)=22$."
+        },
+        {
+          "answer": "2",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "For $p=9$ and $q=3$, find the value of $(p-q)/q$.",
+          "solution_sketch": "The numerator is $9-3=6$; dividing by $q$ gives $6/3=2$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "2*a*b+a",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Which inverse operation isolates the unknown?"
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "26",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "30",
+            "params": {
+              "a": 2,
+              "b": 7
+            }
+          },
+          {
+            "expected": "34",
+            "params": {
+              "a": 2,
+              "b": 8
+            }
+          },
+          {
+            "expected": "38",
+            "params": {
+              "a": 2,
+              "b": 9
+            }
+          },
+          {
+            "expected": "39",
+            "params": {
+              "a": 3,
+              "b": 6
+            }
+          },
+          {
+            "expected": "45",
+            "params": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          {
+            "expected": "51",
+            "params": {
+              "a": 3,
+              "b": 8
+            }
+          },
+          {
+            "expected": "57",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "52",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "60",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "68",
+            "params": {
+              "a": 4,
+              "b": 8
+            }
+          },
+          {
+            "expected": "76",
+            "params": {
+              "a": 4,
+              "b": 9
+            }
+          },
+          {
+            "expected": "65",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "75",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "85",
+            "params": {
+              "a": 5,
+              "b": 8
+            }
+          },
+          {
+            "expected": "95",
+            "params": {
+              "a": 5,
+              "b": 9
+            }
+          }
+        ],
+        "solution_sketch": "Multiply first: $2({a})({b})$, then add the input ${a}$; the value is $2({a})({b})+{a}$.",
+        "statement": "Evaluate $2pq+p$ at $p={a}$ and $q={b}$."
+      },
+      "template_math": {
+        "key": "substituting-values/kp2",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [
+        {
+          "category": "wrong_embedded_method",
+          "finding": "The stored template hint asks which inverse operation isolates the unknown, although this is evaluation at two supplied values.",
+          "required_change": "Give the variable-to-value substitution and multiplication/grouping step for the evaluation task."
+        }
+      ],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "substituting-values/kp2",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "evaluating-expressions/kp1",
+      "decision": "accept",
+      "reason": "Applies grouping and operation priorities, checking every input and sign.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "evaluating-expressions/kp1",
+        "objective": "Expressions with exponents",
+        "constraints": "exponents <= 2; positive inputs",
+        "hints": [
+          "Replace every letter with its value. Find the complete base of each power, including any parentheses around it.",
+          "Calculate inside a grouped base before raising it to its power. Square by multiplying that whole base by itself.",
+          "Finish the remaining multiplication, division, addition, and subtraction in order. Check that an outside factor was kept outside the power."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "substituting-values",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "integer-multiplication-division",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-exponents-intro",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "13",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $x^2 + y$ when $x = 3$ and $y = 4$.",
+          "solution_sketch": "$3^2 + 4 = 9 + 4 = 13$."
+        },
+        {
+          "answer": "18",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $2a^2$ when $a = 3$.",
+          "solution_sketch": "Exponent first: $2 \\times 9 = 18$."
+        },
+        {
+          "answer": "49",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $(a+b)^2$ for $a=2$ and $b=5$.",
+          "solution_sketch": "The grouped base is $2+5=7$; its square is $7^2=49$."
+        },
+        {
+          "answer": "12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A square has side $s=6$. Evaluate $s^2-4s$, the numerical difference between its area and perimeter.",
+          "solution_sketch": "The area value is $6^2=36$ and the perimeter value is $4(6)=24$; $36-24=12$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "(a+b)^2",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "What do the grouped operations require you to calculate first?"
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "64",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "81",
+            "params": {
+              "a": 2,
+              "b": 7
+            }
+          },
+          {
+            "expected": "100",
+            "params": {
+              "a": 2,
+              "b": 8
+            }
+          },
+          {
+            "expected": "121",
+            "params": {
+              "a": 2,
+              "b": 9
+            }
+          },
+          {
+            "expected": "81",
+            "params": {
+              "a": 3,
+              "b": 6
+            }
+          },
+          {
+            "expected": "100",
+            "params": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          {
+            "expected": "121",
+            "params": {
+              "a": 3,
+              "b": 8
+            }
+          },
+          {
+            "expected": "144",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "100",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "121",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "144",
+            "params": {
+              "a": 4,
+              "b": 8
+            }
+          },
+          {
+            "expected": "169",
+            "params": {
+              "a": 4,
+              "b": 9
+            }
+          },
+          {
+            "expected": "121",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "144",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "169",
+            "params": {
+              "a": 5,
+              "b": 8
+            }
+          },
+          {
+            "expected": "196",
+            "params": {
+              "a": 5,
+              "b": 9
+            }
+          }
+        ],
+        "solution_sketch": "The grouped base is ${a}+{b}$. Multiply that sum by itself: $({a}+{b})({a}+{b})$.",
+        "statement": "Evaluate $(x+{b})^{{2}}$ when $x={a}$."
+      },
+      "template_math": {
+        "key": "evaluating-expressions/kp1",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "evaluating-expressions/kp1",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "evaluating-expressions/kp2",
+      "decision": "accept",
+      "reason": "Preserves grouped numerators and powered bases, separates outside minus and finishes multiplication/division before addition/subtraction.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "evaluating-expressions/kp2",
+        "objective": "Negative inputs with order of operations",
+        "constraints": "inputs in -9..9; watch sign of squared negatives",
+        "hints": [
+          "Put each substituted value in parentheses and preserve the original grouping, including the numerator of a fraction.",
+          "Calculate within groups using the order of operations. Raise the complete indicated base to its power before applying any minus outside that power.",
+          "Finish multiplication and division before addition and subtraction. Check every original sign and every substituted value."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "substituting-values",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "integer-multiplication-division",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-exponents-intro",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "10",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $x^2 - 3x$ when $x = -2$.",
+          "solution_sketch": "$(-2)^2 - 3(-2) = 4 + 6 = 10$."
+        },
+        {
+          "answer": "-6",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $\\frac{a - b}{2}$ when $a = -3$ and $b = 9$.",
+          "solution_sketch": "$\\frac{-3 - 9}{2} = -\\frac{12}{2} = -6$."
+        },
+        {
+          "answer": "16",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "For $x=-4$, evaluate $(-x)^2$.",
+          "solution_sketch": "Negating the input gives $-(-4)=4$; then $4^2=16$."
+        },
+        {
+          "answer": "-9",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "For $a=-3$, evaluate $-a^2$.",
+          "solution_sketch": "The exponent applies to $a$ before the leading minus: $-((-3)^2)=-9$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "-a^2+2*a",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "What do the grouped operations require you to calculate first?"
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              -12,
+              -11,
+              -10,
+              -9,
+              -8,
+              -7,
+              -6,
+              -5,
+              -4,
+              -3,
+              -2,
+              -1
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "-168",
+            "params": {
+              "a": -12
+            }
+          },
+          {
+            "expected": "-143",
+            "params": {
+              "a": -11
+            }
+          },
+          {
+            "expected": "-120",
+            "params": {
+              "a": -10
+            }
+          },
+          {
+            "expected": "-99",
+            "params": {
+              "a": -9
+            }
+          },
+          {
+            "expected": "-80",
+            "params": {
+              "a": -8
+            }
+          },
+          {
+            "expected": "-63",
+            "params": {
+              "a": -7
+            }
+          },
+          {
+            "expected": "-48",
+            "params": {
+              "a": -6
+            }
+          },
+          {
+            "expected": "-35",
+            "params": {
+              "a": -5
+            }
+          },
+          {
+            "expected": "-24",
+            "params": {
+              "a": -4
+            }
+          },
+          {
+            "expected": "-15",
+            "params": {
+              "a": -3
+            }
+          },
+          {
+            "expected": "-8",
+            "params": {
+              "a": -2
+            }
+          },
+          {
+            "expected": "-3",
+            "params": {
+              "a": -1
+            }
+          }
+        ],
+        "solution_sketch": "Square the negative input before the leading minus: $-({a})^{{2}}+2({a})$.",
+        "statement": "Evaluate $-x^{{2}}+2x$ at $x={a}$."
+      },
+      "template_math": {
+        "key": "evaluating-expressions/kp2",
+        "admissible_bindings": 12,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 12
+      },
+      "separate_template_findings": [
+        {
+          "category": "bound",
+          "finding": "Three of 12 current inputs (-12,-11,-10) violate the explicit -9..9 input range.",
+          "required_change": "Remove out-of-range inputs while retaining a genuine negative-input/outside-minus family."
+        },
+        {
+          "category": "generic_embedded_hint",
+          "finding": "The embedded hint assumes grouped operations but does not identify the actual substitution, complete power base or formula priority needed by this family.",
+          "required_change": "Replace it with the actual family-specific next evaluation step; keep all variable values and original grouping intact."
+        }
+      ],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "evaluating-expressions/kp2",
+        "practice_instances": 12,
+        "reason": null
+      }
+    },
+    {
+      "key": "evaluating-expressions/kp3",
+      "decision": "accept",
+      "reason": "Substitutes each value in parentheses, identifies complete powered bases, evaluates products and combines every signed term without losing outside minuses.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "evaluating-expressions/kp3",
+        "objective": "Multi-term expressions with negatives and exponents",
+        "constraints": "three terms; inputs in -9..9; distinguish -x^2 from (-x)^2",
+        "hints": [
+          "Substitute every value in parentheses. Mark which quantity each exponent applies to.",
+          "Evaluate grouped bases and powers first, then the products in each term. Keep a minus outside a power separate from its base.",
+          "Combine the three signed term values. Check that each original term, variable, and sign appears in your calculation."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "substituting-values",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "integer-multiplication-division",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-exponents-intro",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "-4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $-x^2+5x+2$ for $x=-1$.",
+          "solution_sketch": "$-(-1)^2+5(-1)+2=-1-5+2=-4$."
+        },
+        {
+          "answer": "22",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Evaluate $2x^2-x+1$ for $x=-3$.",
+          "solution_sketch": "$2(-3)^2-(-3)+1=18+3+1=22$."
+        },
+        {
+          "answer": "-3",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner evaluated $(-x)^2+2x-3$ at $x=-2$ as $-11$. Find the correct value.",
+          "solution_sketch": "The grouped base is $-(-2)=2$, so its square is $4$. The three terms give $4-4-3=-3$."
+        },
+        {
+          "answer": "1",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "For $a=-2$ and $b=3$, evaluate $a^2-ab-b^2$.",
+          "solution_sketch": "$(-2)^2-(-2)(3)-3^2=4+6-9=1$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "-a^2-3*a+4",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "What do the grouped operations require you to calculate first?"
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              -9,
+              -8,
+              -7,
+              -6,
+              -5,
+              -4,
+              -3,
+              -2,
+              -1,
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "-50",
+            "params": {
+              "a": -9
+            }
+          },
+          {
+            "expected": "-36",
+            "params": {
+              "a": -8
+            }
+          },
+          {
+            "expected": "-24",
+            "params": {
+              "a": -7
+            }
+          },
+          {
+            "expected": "-14",
+            "params": {
+              "a": -6
+            }
+          },
+          {
+            "expected": "-6",
+            "params": {
+              "a": -5
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": -4
+            }
+          },
+          {
+            "expected": "4",
+            "params": {
+              "a": -3
+            }
+          },
+          {
+            "expected": "6",
+            "params": {
+              "a": -2
+            }
+          },
+          {
+            "expected": "6",
+            "params": {
+              "a": -1
+            }
+          },
+          {
+            "expected": "4",
+            "params": {
+              "a": 0
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 1
+            }
+          },
+          {
+            "expected": "-6",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "-14",
+            "params": {
+              "a": 3
+            }
+          }
+        ],
+        "solution_sketch": "Square the input before applying the leading minus. The three terms give $-({a})({a})-3({a})+4$.",
+        "statement": "Evaluate $-x^{{2}}-3x+4$ at $x={a}$."
+      },
+      "template_math": {
+        "key": "evaluating-expressions/kp3",
+        "admissible_bindings": 13,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 13
+      },
+      "separate_template_findings": [
+        {
+          "category": "generic_embedded_hint",
+          "finding": "The embedded hint assumes grouped operations but does not identify the actual substitution, complete power base or formula priority needed by this family.",
+          "required_change": "Replace it with the actual family-specific next evaluation step; keep all variable values and original grouping intact."
+        }
+      ],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "evaluating-expressions/kp3",
+        "practice_instances": 13,
+        "reason": null
+      }
+    },
+    {
+      "key": "translating-phrases-to-expressions/kp1",
+      "decision": "accept",
+      "reason": "Translates sum/more-than addition and preserves first-minus-second difference order, then reads the expression back.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "translating-phrases-to-expressions/kp1",
+        "objective": "Sum and difference phrases",
+        "constraints": "one operation; single variable",
+        "hints": [
+          "Identify the letter for the unknown and the other quantity in the phrase.",
+          "A sum or an amount more than a quantity calls for addition. For the difference of two quantities, subtract the second from the first.",
+          "Read your expression back in words. Check that any subtraction uses the order named in the phrase."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "n + 7",
+          "problem": "Write an expression: $7$ more than a number $n$.",
+          "solution_sketch": "\"$7$ more than\" adds: $n + 7$."
+        },
+        {
+          "answer": "x - 4",
+          "problem": "Write an expression: the difference of a number $x$ and $4$.",
+          "solution_sketch": "The difference subtracts in the stated order: $x - 4$."
+        },
+        {
+          "answer": "m + 9",
+          "problem": "Write an expression: $9$ more than a number $m$.",
+          "solution_sketch": "\"$9$ more than\" adds: $m + 9$."
+        },
+        {
+          "answer": "y - 6",
+          "problem": "Write an expression: the difference of a number $y$ and $6$.",
+          "solution_sketch": "The difference subtracts in the stated order: $y - 6$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "x-a",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Identify which quantity is named first.",
+          "Use subtraction and preserve the stated order."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "x - 21",
+            "params": {
+              "a": 21
+            }
+          },
+          {
+            "expected": "x - 22",
+            "params": {
+              "a": 22
+            }
+          },
+          {
+            "expected": "x - 23",
+            "params": {
+              "a": 23
+            }
+          },
+          {
+            "expected": "x - 24",
+            "params": {
+              "a": 24
+            }
+          },
+          {
+            "expected": "x - 25",
+            "params": {
+              "a": 25
+            }
+          },
+          {
+            "expected": "x - 26",
+            "params": {
+              "a": 26
+            }
+          },
+          {
+            "expected": "x - 27",
+            "params": {
+              "a": 27
+            }
+          },
+          {
+            "expected": "x - 28",
+            "params": {
+              "a": 28
+            }
+          },
+          {
+            "expected": "x - 29",
+            "params": {
+              "a": 29
+            }
+          },
+          {
+            "expected": "x - 30",
+            "params": {
+              "a": 30
+            }
+          },
+          {
+            "expected": "x - 31",
+            "params": {
+              "a": 31
+            }
+          },
+          {
+            "expected": "x - 32",
+            "params": {
+              "a": 32
+            }
+          }
+        ],
+        "solution_sketch": "The first named quantity is $x$ and the second is ${a}$. A difference subtracts the second quantity from the first.",
+        "statement": "Write an expression for the difference of $x$ and ${a}$, in that order."
+      },
+      "template_math": {
+        "key": "translating-phrases-to-expressions/kp1",
+        "admissible_bindings": 12,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 12
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "translating-phrases-to-expressions/kp1",
+        "practice_instances": 12,
+        "reason": null
+      }
+    },
+    {
+      "key": "translating-phrases-to-expressions/kp2",
+      "decision": "accept",
+      "reason": "Separates product from ordered quotient and checks the divisor is the denominator.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "translating-phrases-to-expressions/kp2",
+        "objective": "Product and quotient phrases",
+        "constraints": "one operation; single variable",
+        "hints": [
+          "Identify the two quantities and whether the phrase asks for their product or quotient.",
+          "Multiply for a product. For the quotient of two quantities, divide the first named quantity by the second.",
+          "Read the expression back. For division, check that the denominator is the quantity being divided by."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "6w",
+          "problem": "Write an expression: the product of $6$ and $w$.",
+          "solution_sketch": "Product means multiply: $6w$."
+        },
+        {
+          "answer": "y/5",
+          "problem": "Write an expression: the quotient of $y$ and $5$.",
+          "solution_sketch": "Quotient means divide: $y/5$."
+        },
+        {
+          "answer": "8v",
+          "problem": "Write an expression: the product of $8$ and $v$.",
+          "solution_sketch": "Product means multiply: $8v$."
+        },
+        {
+          "answer": "z/9",
+          "problem": "Write an expression: the quotient of $z$ and $9$.",
+          "solution_sketch": "Quotient means divide: $z/9$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "x/a",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "A quotient represents division.",
+          "Place the first quantity above the second quantity in a fraction."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "x/21",
+            "params": {
+              "a": 21
+            }
+          },
+          {
+            "expected": "x/22",
+            "params": {
+              "a": 22
+            }
+          },
+          {
+            "expected": "x/23",
+            "params": {
+              "a": 23
+            }
+          },
+          {
+            "expected": "x/24",
+            "params": {
+              "a": 24
+            }
+          },
+          {
+            "expected": "x/25",
+            "params": {
+              "a": 25
+            }
+          },
+          {
+            "expected": "x/26",
+            "params": {
+              "a": 26
+            }
+          },
+          {
+            "expected": "x/27",
+            "params": {
+              "a": 27
+            }
+          },
+          {
+            "expected": "x/28",
+            "params": {
+              "a": 28
+            }
+          },
+          {
+            "expected": "x/29",
+            "params": {
+              "a": 29
+            }
+          },
+          {
+            "expected": "x/30",
+            "params": {
+              "a": 30
+            }
+          },
+          {
+            "expected": "x/31",
+            "params": {
+              "a": 31
+            }
+          },
+          {
+            "expected": "x/32",
+            "params": {
+              "a": 32
+            }
+          }
+        ],
+        "solution_sketch": "A quotient divides the first named quantity by the second. Here $x$ is the numerator and ${a}$ is the nonzero denominator.",
+        "statement": "Write an expression for the quotient of $x$ and ${a}$, in that order."
+      },
+      "template_math": {
+        "key": "translating-phrases-to-expressions/kp2",
+        "admissible_bindings": 12,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 12
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "translating-phrases-to-expressions/kp2",
+        "practice_instances": 12,
+        "reason": null
+      }
+    },
+    {
+      "key": "translating-phrases-to-expressions/kp3",
+      "decision": "accept",
+      "reason": "Builds the inner quantity first, interprets less/more than relative to that quantity and groups entire sums/differences when multiplied.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "translating-phrases-to-expressions/kp3",
+        "objective": "Two-operation phrases",
+        "constraints": "two operations; watch order-reversing phrases (less than, fewer than)",
+        "hints": [
+          "Find the quantity that must be built first, such as a multiple of the variable or a quotient.",
+          "An amount less than that quantity is subtracted from it; an amount more than it is added to it.",
+          "Use parentheses when an operation applies to an entire sum or difference. Read back both operations to check their order."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "2n - 3",
+          "problem": "Write an expression: $3$ less than twice a number $n$.",
+          "solution_sketch": "\"$3$ less than\" reverses the order: start with $2n$, subtract $3$."
+        },
+        {
+          "answer": "4t + 5",
+          "problem": "Write an expression: $5$ more than the product of $4$ and $t$.",
+          "solution_sketch": "The product $4t$ comes first, then add $5$."
+        },
+        {
+          "answer": "3m - 5",
+          "problem": "Write an expression: $5$ less than three times a number $m$.",
+          "solution_sketch": "\"$5$ less than\" reverses the order: start with $3m$, subtract $5$."
+        },
+        {
+          "answer": "6w + 7",
+          "problem": "Write an expression: $7$ more than the product of $6$ and $w$.",
+          "solution_sketch": "The product $6w$ comes first, then add $7$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "b*x-a",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Translate the multiplication phrase first.",
+          "For 'less than', subtract the stated amount from that product."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              21,
+              23,
+              27,
+              29
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "6*x - 21",
+            "params": {
+              "a": 21,
+              "b": 6
+            }
+          },
+          {
+            "expected": "7*x - 21",
+            "params": {
+              "a": 21,
+              "b": 7
+            }
+          },
+          {
+            "expected": "8*x - 21",
+            "params": {
+              "a": 21,
+              "b": 8
+            }
+          },
+          {
+            "expected": "6*x - 23",
+            "params": {
+              "a": 23,
+              "b": 6
+            }
+          },
+          {
+            "expected": "7*x - 23",
+            "params": {
+              "a": 23,
+              "b": 7
+            }
+          },
+          {
+            "expected": "8*x - 23",
+            "params": {
+              "a": 23,
+              "b": 8
+            }
+          },
+          {
+            "expected": "6*x - 27",
+            "params": {
+              "a": 27,
+              "b": 6
+            }
+          },
+          {
+            "expected": "7*x - 27",
+            "params": {
+              "a": 27,
+              "b": 7
+            }
+          },
+          {
+            "expected": "8*x - 27",
+            "params": {
+              "a": 27,
+              "b": 8
+            }
+          },
+          {
+            "expected": "6*x - 29",
+            "params": {
+              "a": 29,
+              "b": 6
+            }
+          },
+          {
+            "expected": "7*x - 29",
+            "params": {
+              "a": 29,
+              "b": 7
+            }
+          },
+          {
+            "expected": "8*x - 29",
+            "params": {
+              "a": 29,
+              "b": 8
+            }
+          }
+        ],
+        "solution_sketch": "First form the product ${b}x$. The phrase '${a}$ less than' subtracts ${a}$ from this product, so the product comes first.",
+        "statement": "Write an expression for ${a}$ less than ${b}$ times the number $x$."
+      },
+      "template_math": {
+        "key": "translating-phrases-to-expressions/kp3",
+        "admissible_bindings": 12,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 12
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "translating-phrases-to-expressions/kp3",
+        "practice_instances": 12,
+        "reason": null
+      }
+    },
+    {
+      "key": "writing-expressions-from-patterns/kp1",
+      "decision": "accept",
+      "reason": "Finds output change per input change, obtains the constant from a known pair and checks multiple pairs.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "writing-expressions-from-patterns/kp1",
+        "objective": "Expression from a table of values",
+        "constraints": "linear patterns with positive integer step; check against the first entry",
+        "hints": [
+          "Compare two table entries. Divide the change in output by the change in input to find the increase per input unit.",
+          "Multiply that rate by the variable. Find the constant by subtracting rate times a known input from its listed output.",
+          "Add the constant to your variable term. Substitute the first listed input and another input to check that both outputs match."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "translating-phrases-to-expressions",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": true,
+          "weight": 0.5
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "3n + 2",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A table follows a linear rule and pairs $n = 1, 2, 3$ with $5, 8, 11$. Write the rule for the value at any position $n$.",
+          "solution_sketch": "Values climb by $3$ each step, so $3n + c$; at $n = 1$, $3 + c = 5$ gives $c = 2$."
+        },
+        {
+          "answer": "3n+1",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A table follows a linear rule and has $(n,v)=(2,7),(4,13),(6,19)$. Write $v$ as an expression in $n$.",
+          "solution_sketch": "A change of $2$ positions adds $6$, so each position adds $3$. At the first entry, $7-3(2)=1$; the rule is $3n+1$."
+        },
+        {
+          "answer": "5n+4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A table starts with $(n,v)=(0,4)$ and each increase of $1$ in $n$ adds $5$ to $v$. Write the rule for $v$.",
+          "solution_sketch": "Each step contributes $5n$ from position zero, whose value is $4$. At position zero, the variable contribution vanishes, leaving the required first value $4$."
+        },
+        {
+          "answer": "2n+7",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A table follows a linear rule, lists $n:1,2,3$ and $v:9,11,13$, and a learner proposes $2n+9$. Correct the rule for every position.",
+          "solution_sketch": "The step is $2$, but position $1$ already includes one step. The constant is $9-2=7$, so the first value is $2(1)+7=9$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "a*n+b-a",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "How does the output change for each input step?"
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "2n+4",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "2n+5",
+            "params": {
+              "a": 2,
+              "b": 7
+            }
+          },
+          {
+            "expected": "2n+6",
+            "params": {
+              "a": 2,
+              "b": 8
+            }
+          },
+          {
+            "expected": "2n+7",
+            "params": {
+              "a": 2,
+              "b": 9
+            }
+          },
+          {
+            "expected": "3n+3",
+            "params": {
+              "a": 3,
+              "b": 6
+            }
+          },
+          {
+            "expected": "3n+4",
+            "params": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          {
+            "expected": "3n+5",
+            "params": {
+              "a": 3,
+              "b": 8
+            }
+          },
+          {
+            "expected": "3n+6",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "4n+2",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "4n+3",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "4n+4",
+            "params": {
+              "a": 4,
+              "b": 8
+            }
+          },
+          {
+            "expected": "4n+5",
+            "params": {
+              "a": 4,
+              "b": 9
+            }
+          },
+          {
+            "expected": "5n+1",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "5n+2",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "5n+3",
+            "params": {
+              "a": 5,
+              "b": 8
+            }
+          },
+          {
+            "expected": "5n+4",
+            "params": {
+              "a": 5,
+              "b": 9
+            }
+          }
+        ],
+        "solution_sketch": "Starting from position one takes $n-1$ steps: $v={b}+{a}(n-1)={a}n+({b}-{a})$. At the first entry the step term vanishes.",
+        "statement": "A table has first entry $(n,v)=(1,{b})$ and each next position adds ${a}$. Write $v$ in terms of $n$."
+      },
+      "template_math": {
+        "key": "writing-expressions-from-patterns/kp1",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "writing-expressions-from-patterns/kp1",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "writing-expressions-from-patterns/kp2",
+      "decision": "accept",
+      "reason": "Combines starting and repeated contributions, distinguishing zero-stage fees from first-stage objects.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "writing-expressions-from-patterns/kp2",
+        "objective": "Expression from a real-world rule",
+        "constraints": "start value plus constant rate; single variable",
+        "hints": [
+          "Identify what the variable counts, how much each extra unit adds, and the count where the starting amount is given.",
+          "Start with that known amount and add the rate times the number of extra units. From a first item, extra units are the total count minus one.",
+          "Simplify the expression and test the given starting count and one later count. For a fee charged at zero use, the variable counts all units of use."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "translating-phrases-to-expressions",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": true,
+          "weight": 0.5
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "8m + 20",
+          "problem": "A gym charges €20 to join plus €8 per month. Write an expression for the total cost after $m$ months.",
+          "solution_sketch": "Fixed €20 plus €8 per month: $8m + 20$."
+        },
+        {
+          "answer": "2n + 1",
+          "problem": "A toothpick pattern uses $3$ toothpicks for $1$ triangle, $5$ for $2$, $7$ for $3$, adding $2$ per triangle. Write an expression for the toothpicks in $n$ triangles.",
+          "solution_sketch": "Step $2$ per square; $2(1) + 1 = 3$ checks."
+        },
+        {
+          "answer": "3h + 5",
+          "problem": "A parking garage charges €5 to enter plus €3 per hour. Write an expression for the total cost after $h$ hours.",
+          "solution_sketch": "The rate $3$ per hour is the coefficient; the flat $5$ is added once."
+        },
+        {
+          "answer": "3n + 1",
+          "problem": "A fence post pattern uses $4$ posts for $1$ section, $7$ for $2$, $10$ for $3$, adding $3$ per section. Write an expression for the posts in $n$ sections.",
+          "solution_sketch": "Step $3$ per section; $3(1) + 1 = 4$ checks."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "a+b*n",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Separate the one-time payment from the payment repeated for each rental.",
+          "Multiply the per-rental rate by the number of rentals, then include the fixed payment."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              61,
+              67,
+              73
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              11,
+              13,
+              17,
+              19
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "11*n + 61",
+            "params": {
+              "a": 61,
+              "b": 11
+            }
+          },
+          {
+            "expected": "13*n + 61",
+            "params": {
+              "a": 61,
+              "b": 13
+            }
+          },
+          {
+            "expected": "17*n + 61",
+            "params": {
+              "a": 61,
+              "b": 17
+            }
+          },
+          {
+            "expected": "19*n + 61",
+            "params": {
+              "a": 61,
+              "b": 19
+            }
+          },
+          {
+            "expected": "11*n + 67",
+            "params": {
+              "a": 67,
+              "b": 11
+            }
+          },
+          {
+            "expected": "13*n + 67",
+            "params": {
+              "a": 67,
+              "b": 13
+            }
+          },
+          {
+            "expected": "17*n + 67",
+            "params": {
+              "a": 67,
+              "b": 17
+            }
+          },
+          {
+            "expected": "19*n + 67",
+            "params": {
+              "a": 67,
+              "b": 19
+            }
+          },
+          {
+            "expected": "11*n + 73",
+            "params": {
+              "a": 73,
+              "b": 11
+            }
+          },
+          {
+            "expected": "13*n + 73",
+            "params": {
+              "a": 73,
+              "b": 13
+            }
+          },
+          {
+            "expected": "17*n + 73",
+            "params": {
+              "a": 73,
+              "b": 17
+            }
+          },
+          {
+            "expected": "19*n + 73",
+            "params": {
+              "a": 73,
+              "b": 19
+            }
+          }
+        ],
+        "solution_sketch": "The fee €{a} is paid once. The rentals cost €{b} each, so $n$ rentals contribute ${b}n$. Add the fixed and changing parts; at zero rentals the expression must equal the joining fee.",
+        "statement": "A tool library charges a one-time joining fee of €{a} and €{b} for each rental. Write the total cost in euros after $n$ rentals."
+      },
+      "template_math": {
+        "key": "writing-expressions-from-patterns/kp2",
+        "admissible_bindings": 12,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 12
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "writing-expressions-from-patterns/kp2",
+        "practice_instances": 12,
+        "reason": null
+      }
+    },
+    {
+      "key": "evaluating-formulas/kp1",
+      "decision": "accept",
+      "reason": "Variable/value mapping, parenthesized substitution and unit checking apply to all four supplied area/perimeter formulas, including the grouped trapezoid numerator and fractional triangle coefficient. Expression evaluation is a declared prerequisite.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "evaluating-formulas/kp1",
+        "objective": "Geometry formulas",
+        "constraints": "whole-number inputs; area/perimeter formulas",
+        "hints": [
+          "Identify each formula variable and supplied value.",
+          "Substitute with parentheses and calculate in formula order.",
+          "Check the result has the appropriate unit."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "evaluating-expressions",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "multiplying-fractions",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "40",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $A = lw$ to find the area when $l = 8$ and $w = 5$.",
+          "solution_sketch": "$A=lw=8(5)=40$."
+        },
+        {
+          "answer": "20",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $P = 2l + 2w$ to find the perimeter when $l = 7$ and $w = 3$.",
+          "solution_sketch": "$2(7) + 2(3) = 14 + 6 = 20$."
+        },
+        {
+          "answer": "35",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $A = \\frac{1}{2}bh$ to find the area when $b = 10$ and $h = 7$.",
+          "solution_sketch": "$A=bh/2=10(7)/2=35$."
+        },
+        {
+          "answer": "28",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $A=(a+b)h/2$ for a trapezoid with parallel sides $a=5$, $b=9$ and height $h=4$.",
+          "solution_sketch": "Average the parallel sides: $(5+9)/2=7$. Multiplying by the height gives $7(4)=28$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "2*a+2*b",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "What do the grouped operations require you to calculate first?"
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "16",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "18",
+            "params": {
+              "a": 2,
+              "b": 7
+            }
+          },
+          {
+            "expected": "20",
+            "params": {
+              "a": 2,
+              "b": 8
+            }
+          },
+          {
+            "expected": "22",
+            "params": {
+              "a": 2,
+              "b": 9
+            }
+          },
+          {
+            "expected": "18",
+            "params": {
+              "a": 3,
+              "b": 6
+            }
+          },
+          {
+            "expected": "20",
+            "params": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          {
+            "expected": "22",
+            "params": {
+              "a": 3,
+              "b": 8
+            }
+          },
+          {
+            "expected": "24",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "20",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "22",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "24",
+            "params": {
+              "a": 4,
+              "b": 8
+            }
+          },
+          {
+            "expected": "26",
+            "params": {
+              "a": 4,
+              "b": 9
+            }
+          },
+          {
+            "expected": "22",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "24",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "26",
+            "params": {
+              "a": 5,
+              "b": 8
+            }
+          },
+          {
+            "expected": "28",
+            "params": {
+              "a": 5,
+              "b": 9
+            }
+          }
+        ],
+        "solution_sketch": "There are two sides of each length; their total is $2({a})+2({b})$.",
+        "statement": "Use $P=2l+2w$ for sides $l={a}$ and $w={b}$. Find $P$."
+      },
+      "template_math": {
+        "key": "evaluating-formulas/kp1",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [
+        {
+          "category": "generic_embedded_hint",
+          "finding": "The embedded hint assumes grouped operations but does not identify the actual substitution, complete power base or formula priority needed by this family.",
+          "required_change": "Replace it with the actual family-specific next evaluation step; keep all variable values and original grouping intact."
+        }
+      ],
+      "changed_since_previous_review": false,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "evaluating-formulas/kp1",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "evaluating-formulas/kp2",
+      "decision": "accept",
+      "reason": "The same formula-substitution method covers rate products, squared speed/time, fractional coefficients and affine temperature conversion without hardcoding a formula or output unit.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "evaluating-formulas/kp2",
+        "objective": "Rate and science formulas",
+        "constraints": "inputs chosen so fraction coefficients produce whole numbers",
+        "hints": [
+          "Identify each formula variable and supplied value.",
+          "Substitute with parentheses and calculate in formula order.",
+          "Check the result has the appropriate unit."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "evaluating-expressions",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "multiplying-fractions",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "165",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $d = rt$ to find the distance when $r = 55$ and $t = 3$.",
+          "solution_sketch": "$d=rt=55(3)=165$."
+        },
+        {
+          "answer": "48",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $E = \\frac{1}{2}mv^2$ to find the kinetic energy in joules when $m = 6$ and $v = 4$.",
+          "solution_sketch": "$\\frac{1}{2}(6) = 3$; $3 \\times 4^2 = 3 \\times 16 = 48$."
+        },
+        {
+          "answer": "18",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $d=at^2/2$ with $a=4$ and $t=3$ to find distance from rest.",
+          "solution_sketch": "Square the time first: $3^2=9$. Then $d=4(9)/2=18$."
+        },
+        {
+          "answer": "50",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $F=9C/5+32$ with $C=10$ to calculate the temperature in degrees Fahrenheit.",
+          "solution_sketch": "The scaled temperature is $9(10)/5=18$; adding the offset gives $18+32=50$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "a*b^2/2",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "What do the grouped operations require you to calculate first?"
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              4,
+              6,
+              8
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "4",
+            "params": {
+              "a": 2,
+              "b": 2
+            }
+          },
+          {
+            "expected": "9",
+            "params": {
+              "a": 2,
+              "b": 3
+            }
+          },
+          {
+            "expected": "16",
+            "params": {
+              "a": 2,
+              "b": 4
+            }
+          },
+          {
+            "expected": "25",
+            "params": {
+              "a": 2,
+              "b": 5
+            }
+          },
+          {
+            "expected": "8",
+            "params": {
+              "a": 4,
+              "b": 2
+            }
+          },
+          {
+            "expected": "18",
+            "params": {
+              "a": 4,
+              "b": 3
+            }
+          },
+          {
+            "expected": "32",
+            "params": {
+              "a": 4,
+              "b": 4
+            }
+          },
+          {
+            "expected": "50",
+            "params": {
+              "a": 4,
+              "b": 5
+            }
+          },
+          {
+            "expected": "12",
+            "params": {
+              "a": 6,
+              "b": 2
+            }
+          },
+          {
+            "expected": "27",
+            "params": {
+              "a": 6,
+              "b": 3
+            }
+          },
+          {
+            "expected": "48",
+            "params": {
+              "a": 6,
+              "b": 4
+            }
+          },
+          {
+            "expected": "75",
+            "params": {
+              "a": 6,
+              "b": 5
+            }
+          },
+          {
+            "expected": "16",
+            "params": {
+              "a": 8,
+              "b": 2
+            }
+          },
+          {
+            "expected": "36",
+            "params": {
+              "a": 8,
+              "b": 3
+            }
+          },
+          {
+            "expected": "64",
+            "params": {
+              "a": 8,
+              "b": 4
+            }
+          },
+          {
+            "expected": "100",
+            "params": {
+              "a": 8,
+              "b": 5
+            }
+          }
+        ],
+        "solution_sketch": "Square speed before multiplying by mass, then halve: $E={a}({b})^{{2}}/2$.",
+        "statement": "Use $E=mv^{{2}}/2$ when $m={a}$ and $v={b}$. Find $E$."
+      },
+      "template_math": {
+        "key": "evaluating-formulas/kp2",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [
+        {
+          "category": "generic_embedded_hint",
+          "finding": "The embedded hint assumes grouped operations but does not identify the actual substitution, complete power base or formula priority needed by this family.",
+          "required_change": "Replace it with the actual family-specific next evaluation step; keep all variable values and original grouping intact."
+        }
+      ],
+      "changed_since_previous_review": false,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "evaluating-formulas/kp2",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "combining-like-terms/kp1",
+      "decision": "accept",
+      "reason": "The ladder groups matching variable parts/exponents and changes coefficients only. This handles two/three positive terms and rejects replacing addition by an exponent change; checking all terms also covers perimeter sums.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "combining-like-terms/kp1",
+        "objective": "Combine like terms with positive coefficients",
+        "constraints": "single variable; positive coefficients <= 9",
+        "hints": [
+          "Group only terms with identical variable parts and exponents.",
+          "Add or subtract coefficients while keeping signs.",
+          "Leave unlike terms separate and check every term was used."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "integer-addition-subtraction",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": false,
+          "weight": 0.0
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "8x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $3x + 5x$.",
+          "solution_sketch": "$3x+5x=(3+5)x=8x$."
+        },
+        {
+          "answer": "13a",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $7a+2a+4a$.",
+          "solution_sketch": "$7a+2a+4a=(7+2+4)a=13a$."
+        },
+        {
+          "answer": "9x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A triangle has side lengths $2x$, $3x$, and $4x$. Express its perimeter as one term.",
+          "solution_sketch": "The perimeter is $2x+3x+4x=(2+3+4)x=9x$."
+        },
+        {
+          "answer": "10y",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner claims $4y+6y=10y^2$. Correct the simplified expression.",
+          "solution_sketch": "Like terms keep their common variable part: $(4+6)y=10y$, with no change to the exponent."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "(a+b+1)*x",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Add the positive coefficients while keeping the shared variable part."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "9x",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "10x",
+            "params": {
+              "a": 2,
+              "b": 7
+            }
+          },
+          {
+            "expected": "11x",
+            "params": {
+              "a": 2,
+              "b": 8
+            }
+          },
+          {
+            "expected": "12x",
+            "params": {
+              "a": 2,
+              "b": 9
+            }
+          },
+          {
+            "expected": "10x",
+            "params": {
+              "a": 3,
+              "b": 6
+            }
+          },
+          {
+            "expected": "11x",
+            "params": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          {
+            "expected": "12x",
+            "params": {
+              "a": 3,
+              "b": 8
+            }
+          },
+          {
+            "expected": "13x",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "11x",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "12x",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "13x",
+            "params": {
+              "a": 4,
+              "b": 8
+            }
+          },
+          {
+            "expected": "14x",
+            "params": {
+              "a": 4,
+              "b": 9
+            }
+          },
+          {
+            "expected": "12x",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "13x",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "14x",
+            "params": {
+              "a": 5,
+              "b": 8
+            }
+          },
+          {
+            "expected": "15x",
+            "params": {
+              "a": 5,
+              "b": 9
+            }
+          }
+        ],
+        "solution_sketch": "All terms have variable part $x$; their coefficient sum is ${a}+{b}+1$, giving $({a}+{b}+1)x$.",
+        "statement": "Combine ${a}x+{b}x+x$."
+      },
+      "template_math": {
+        "key": "combining-like-terms/kp1",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": false,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "combining-like-terms/kp1",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "combining-like-terms/kp2",
+      "decision": "accept",
+      "reason": "The signed coefficient operation, matching-variable criterion and term-accounting check cover negative results, a coefficient of negative one and multi-term signed changes.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "combining-like-terms/kp2",
+        "objective": "Negative coefficients and subtraction",
+        "constraints": "results may be negative; single variable",
+        "hints": [
+          "Group only terms with identical variable parts and exponents.",
+          "Add or subtract coefficients while keeping signs.",
+          "Leave unlike terms separate and check every term was used."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "integer-addition-subtraction",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": false,
+          "weight": 0.0
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "5y",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $8y - 3y$.",
+          "solution_sketch": "$8y-3y=(8-3)y=5y$."
+        },
+        {
+          "answer": "-6x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $-3x-5x+2x$.",
+          "solution_sketch": "The signed coefficients sum to $-3-5+2=-6$."
+        },
+        {
+          "answer": "-6x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A balance changes by $-7x$, then $+2x$, then $-x$. Write the net change as one term.",
+          "solution_sketch": "Add the three signed changes: $(-7+2-1)x=-6x$."
+        },
+        {
+          "answer": "-6x",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner claims $2x-8x=6x$. Correct the simplified expression.",
+          "solution_sketch": "Subtracting the coefficients gives $2-8=-6$, so the remaining term is $-6x$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "(-a-b+2)*x",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Keep each subtraction sign attached to its coefficient before adding the coefficients."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "-6x",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "-7x",
+            "params": {
+              "a": 2,
+              "b": 7
+            }
+          },
+          {
+            "expected": "-8x",
+            "params": {
+              "a": 2,
+              "b": 8
+            }
+          },
+          {
+            "expected": "-9x",
+            "params": {
+              "a": 2,
+              "b": 9
+            }
+          },
+          {
+            "expected": "-7x",
+            "params": {
+              "a": 3,
+              "b": 6
+            }
+          },
+          {
+            "expected": "-8x",
+            "params": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          {
+            "expected": "-9x",
+            "params": {
+              "a": 3,
+              "b": 8
+            }
+          },
+          {
+            "expected": "-10x",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "-8x",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "-9x",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "-10x",
+            "params": {
+              "a": 4,
+              "b": 8
+            }
+          },
+          {
+            "expected": "-11x",
+            "params": {
+              "a": 4,
+              "b": 9
+            }
+          },
+          {
+            "expected": "-9x",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "-10x",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "-11x",
+            "params": {
+              "a": 5,
+              "b": 8
+            }
+          },
+          {
+            "expected": "-12x",
+            "params": {
+              "a": 5,
+              "b": 9
+            }
+          }
+        ],
+        "solution_sketch": "Collect signed coefficients: $(-{a}-{b}+2)x$. The subtraction signs stay with their terms.",
+        "statement": "Combine $-{a}x-{b}x+2x$."
+      },
+      "template_math": {
+        "key": "combining-like-terms/kp2",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": false,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "combining-like-terms/kp2",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "combining-like-terms/kp3",
+      "decision": "accept",
+      "reason": "The identical-variable-part-and-exponent condition separates x from x-squared and y; grouping and signed coefficient combination also include variable-free constants. It is not restricted to the current x/y family.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "combining-like-terms/kp3",
+        "objective": "Multiple variable types and constants",
+        "constraints": "two variable types plus constants; keep unlike terms separate",
+        "hints": [
+          "Group only terms with identical variable parts and exponents.",
+          "Add or subtract coefficients while keeping signs.",
+          "Leave unlike terms separate and check every term was used."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "integer-addition-subtraction",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "parts-of-an-expression",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": false,
+          "weight": 0.0
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "8x+y-3",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $3x+2y+4+5x-y-7$.",
+          "solution_sketch": "Group by variable part: $(3+5)x+(2-1)y+(4-7)=8x+y-3$."
+        },
+        {
+          "answer": "6x+4y+3",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Combine the three charges $2x+3y+1$, $x-y+4$, and $3x+2y-2$.",
+          "solution_sketch": "The coefficients of $x$ sum to $2+1+3=6$, those of $y$ to $3-1+2=4$, and constants to $1+4-2=3$."
+        },
+        {
+          "answer": "6x^2-4x+4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Simplify $5x^2+3x-2+x^2-7x+6$.",
+          "solution_sketch": "The $x^2$, $x$, and constant groups give $(5+1)x^2+(3-7)x+(-2+6)=6x^2-4x+4$."
+        },
+        {
+          "answer": "-2x+3y+2",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner combined $4x-2y+3-6x+5y-1$ into $x+2$. Correct the expression.",
+          "solution_sketch": "Different variable parts stay separate. The three sums are $(4-6)x$, $(-2+5)y$, and $3-1$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "(a-2)*x+(b-1)*y+7",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Group the x-terms, y-terms, and constants separately."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              4,
+              5,
+              6,
+              7
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "2x+3y+7",
+            "params": {
+              "a": 4,
+              "b": 4
+            }
+          },
+          {
+            "expected": "2x+4y+7",
+            "params": {
+              "a": 4,
+              "b": 5
+            }
+          },
+          {
+            "expected": "2x+5y+7",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "2x+6y+7",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "3x+3y+7",
+            "params": {
+              "a": 5,
+              "b": 4
+            }
+          },
+          {
+            "expected": "3x+4y+7",
+            "params": {
+              "a": 5,
+              "b": 5
+            }
+          },
+          {
+            "expected": "3x+5y+7",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "3x+6y+7",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "4x+3y+7",
+            "params": {
+              "a": 6,
+              "b": 4
+            }
+          },
+          {
+            "expected": "4x+4y+7",
+            "params": {
+              "a": 6,
+              "b": 5
+            }
+          },
+          {
+            "expected": "4x+5y+7",
+            "params": {
+              "a": 6,
+              "b": 6
+            }
+          },
+          {
+            "expected": "4x+6y+7",
+            "params": {
+              "a": 6,
+              "b": 7
+            }
+          },
+          {
+            "expected": "5x+3y+7",
+            "params": {
+              "a": 7,
+              "b": 4
+            }
+          },
+          {
+            "expected": "5x+4y+7",
+            "params": {
+              "a": 7,
+              "b": 5
+            }
+          },
+          {
+            "expected": "5x+5y+7",
+            "params": {
+              "a": 7,
+              "b": 6
+            }
+          },
+          {
+            "expected": "5x+6y+7",
+            "params": {
+              "a": 7,
+              "b": 7
+            }
+          }
+        ],
+        "solution_sketch": "Group the $x$, $y$, and constant terms separately: $({a}-2)x+({b}-1)y+(3+4)$.",
+        "statement": "Combine ${a}x+{b}y+3-2x-y+4$."
+      },
+      "template_math": {
+        "key": "combining-like-terms/kp3",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": false,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "combining-like-terms/kp3",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "distributive-property/kp1",
+      "decision": "accept",
+      "reason": "Multiplying the outside factor by every term is the correct operation whether that factor is written left or right. The ladder prevents the exemplar error of multiplying only the variable term.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "distributive-property/kp1",
+        "objective": "Distribute a positive factor over a sum",
+        "constraints": "positive factor; two-term binomial",
+        "hints": [
+          "Multiply the outside factor by every term in parentheses.",
+          "Carry a negative sign to each product when needed.",
+          "Then combine matching terms."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "integer-multiplication-division",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "3x + 12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $3(x + 4)$.",
+          "solution_sketch": "$3(x+4)=3x+3(4)=3x+12$."
+        },
+        {
+          "answer": "8x+12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A rectangle has height $4$ and width $2x+3$. Expand its area expression.",
+          "solution_sketch": "Multiply the height by both parts of the width: $4(2x+3)=4(2x)+4(3)=8x+12$."
+        },
+        {
+          "answer": "5x+10",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A learner writes $5(x+2)=5x+2$. Expand the left side correctly.",
+          "solution_sketch": "The outer factor multiplies both summands: $5x+5(2)=5x+10$."
+        },
+        {
+          "answer": "2x+12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $(x+6)2$.",
+          "solution_sketch": "Commutativity gives $2(x+6)$; distributing gives $2x+2(6)=2x+12$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "a*x+a*b",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Multiply both the variable term and the constant by the outside factor."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "2x+12",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "2x+14",
+            "params": {
+              "a": 2,
+              "b": 7
+            }
+          },
+          {
+            "expected": "2x+16",
+            "params": {
+              "a": 2,
+              "b": 8
+            }
+          },
+          {
+            "expected": "2x+18",
+            "params": {
+              "a": 2,
+              "b": 9
+            }
+          },
+          {
+            "expected": "3x+18",
+            "params": {
+              "a": 3,
+              "b": 6
+            }
+          },
+          {
+            "expected": "3x+21",
+            "params": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          {
+            "expected": "3x+24",
+            "params": {
+              "a": 3,
+              "b": 8
+            }
+          },
+          {
+            "expected": "3x+27",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "4x+24",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "4x+28",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "4x+32",
+            "params": {
+              "a": 4,
+              "b": 8
+            }
+          },
+          {
+            "expected": "4x+36",
+            "params": {
+              "a": 4,
+              "b": 9
+            }
+          },
+          {
+            "expected": "5x+30",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "5x+35",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "5x+40",
+            "params": {
+              "a": 5,
+              "b": 8
+            }
+          },
+          {
+            "expected": "5x+45",
+            "params": {
+              "a": 5,
+              "b": 9
+            }
+          }
+        ],
+        "solution_sketch": "Multiply each binomial term by the positive outer factor: ${a}x+{a}({b})$.",
+        "statement": "Expand ${a}(x+{b})$."
+      },
+      "template_math": {
+        "key": "distributive-property/kp1",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": false,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "distributive-property/kp1",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "distributive-property/kp2",
+      "decision": "accept",
+      "reason": "Multiplies every signed term by the complete outside factor and verifies using products or substitution from existing prerequisites.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "distributive-property/kp2",
+        "objective": "Negative multipliers and subtraction",
+        "constraints": "negative factor or leading minus; watch both signs",
+        "hints": [
+          "Include the sign in the outside factor. A minus directly before parentheses means multiplying the whole group by negative one.",
+          "Multiply that signed factor by every term inside, including each term's sign.",
+          "Check each product and its sign separately. Substitute a value into the original expression and your expansion to check the calculation."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "integer-multiplication-division",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "-2x + 10",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $-2(x - 5)$.",
+          "solution_sketch": "$-2 \\cdot x = -2x$; $-2 \\cdot (-5) = +10$."
+        },
+        {
+          "answer": "-3y - 7",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $-(3y + 7)$.",
+          "solution_sketch": "$-(3y+7)=(-1)(3y)+(-1)(7)=-3y-7$."
+        },
+        {
+          "answer": "-6x-15",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand $-3(2x+5)$.",
+          "solution_sketch": "Both products are negative: $(-3)(2x)+(-3)(5)=-6x-15$."
+        },
+        {
+          "answer": "x-4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Correct the sign error in $-(4-x)=-4-x$ by expanding the left side.",
+          "solution_sketch": "Multiplying $-x$ by $-1$ gives $+x$: $(-1)(4)+(-1)(-x)=-4+x$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "-a*x+a*b",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Treat the outside factor as negative when multiplying both terms."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "-2x+12",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "-2x+14",
+            "params": {
+              "a": 2,
+              "b": 7
+            }
+          },
+          {
+            "expected": "-2x+16",
+            "params": {
+              "a": 2,
+              "b": 8
+            }
+          },
+          {
+            "expected": "-2x+18",
+            "params": {
+              "a": 2,
+              "b": 9
+            }
+          },
+          {
+            "expected": "-3x+18",
+            "params": {
+              "a": 3,
+              "b": 6
+            }
+          },
+          {
+            "expected": "-3x+21",
+            "params": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          {
+            "expected": "-3x+24",
+            "params": {
+              "a": 3,
+              "b": 8
+            }
+          },
+          {
+            "expected": "-3x+27",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "-4x+24",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "-4x+28",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "-4x+32",
+            "params": {
+              "a": 4,
+              "b": 8
+            }
+          },
+          {
+            "expected": "-4x+36",
+            "params": {
+              "a": 4,
+              "b": 9
+            }
+          },
+          {
+            "expected": "-5x+30",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "-5x+35",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "-5x+40",
+            "params": {
+              "a": 5,
+              "b": 8
+            }
+          },
+          {
+            "expected": "-5x+45",
+            "params": {
+              "a": 5,
+              "b": 9
+            }
+          }
+        ],
+        "solution_sketch": "Distribute both signs: $(-{a})x+(-{a})(-{b})=-{a}x+{a}({b})$.",
+        "statement": "Expand $-{a}(x-{b})$."
+      },
+      "template_math": {
+        "key": "distributive-property/kp2",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "distributive-property/kp2",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "distributive-property/kp3",
+      "decision": "accept",
+      "reason": "Groups a subtracted expression, distributes every signed factor and checks that every original contribution is retained.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "distributive-property/kp3",
+        "objective": "Distribute then combine like terms",
+        "constraints": "combine after distributing; single variable",
+        "hints": [
+          "Write the starting expression with its grouping. When subtracting an expression, put that entire expression in parentheses.",
+          "Multiply each signed outside factor by every term in its group. Then gather matching variable terms and gather constants.",
+          "Combine each group of like terms with its signs. Check that every original term contributed once, including terms after a leading minus."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "integer-multiplication-division",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-addition-subtraction",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "6x + 6",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand and simplify $2(x + 3) + 4x$.",
+          "solution_sketch": "$2x + 6 + 4x = 6x + 6$."
+        },
+        {
+          "answer": "2a - 7",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Expand and simplify $3(a - 2) - (a + 1)$.",
+          "solution_sketch": "$3a - 6 - a - 1 = 2a - 7$."
+        },
+        {
+          "answer": "x+11",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Subtract the expression $2(x-5)$ from $3x+1$, then simplify.",
+          "solution_sketch": "$(3x+1)-2(x-5)=3x+1-2x+10=x+11$."
+        },
+        {
+          "answer": "6x+8",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A rectangle has length $2x+1$ and width $x+3$. Expand and simplify $2(2x+1)+2(x+3)$.",
+          "solution_sketch": "The two products give $4x+2+2x+6$; collecting like terms gives $6x+8$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "(a+b)*x+2*a",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Distribute first, then add the coefficients of the x-terms."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "8x+4",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "9x+4",
+            "params": {
+              "a": 2,
+              "b": 7
+            }
+          },
+          {
+            "expected": "10x+4",
+            "params": {
+              "a": 2,
+              "b": 8
+            }
+          },
+          {
+            "expected": "11x+4",
+            "params": {
+              "a": 2,
+              "b": 9
+            }
+          },
+          {
+            "expected": "9x+6",
+            "params": {
+              "a": 3,
+              "b": 6
+            }
+          },
+          {
+            "expected": "10x+6",
+            "params": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          {
+            "expected": "11x+6",
+            "params": {
+              "a": 3,
+              "b": 8
+            }
+          },
+          {
+            "expected": "12x+6",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "10x+8",
+            "params": {
+              "a": 4,
+              "b": 6
+            }
+          },
+          {
+            "expected": "11x+8",
+            "params": {
+              "a": 4,
+              "b": 7
+            }
+          },
+          {
+            "expected": "12x+8",
+            "params": {
+              "a": 4,
+              "b": 8
+            }
+          },
+          {
+            "expected": "13x+8",
+            "params": {
+              "a": 4,
+              "b": 9
+            }
+          },
+          {
+            "expected": "11x+10",
+            "params": {
+              "a": 5,
+              "b": 6
+            }
+          },
+          {
+            "expected": "12x+10",
+            "params": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          {
+            "expected": "13x+10",
+            "params": {
+              "a": 5,
+              "b": 8
+            }
+          },
+          {
+            "expected": "14x+10",
+            "params": {
+              "a": 5,
+              "b": 9
+            }
+          }
+        ],
+        "solution_sketch": "Distribution gives ${a}x+2({a})+{b}x$; group the variable terms as $({a}+{b})x+2({a})$.",
+        "statement": "Expand and combine ${a}(x+2)+{b}x$."
+      },
+      "template_math": {
+        "key": "distributive-property/kp3",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "distributive-property/kp3",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "factoring-linear-expressions/kp1",
+      "decision": "accept",
+      "reason": "Finding the actual GCF, dividing every term by it and expanding to check cover all positive-GCF exemplars, including a negative constant and the requirement to extract the greatest factor.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "factoring-linear-expressions/kp1",
+        "objective": "Factor out the GCF",
+        "constraints": "two terms; GCF between 2 and 9; verify by expanding",
+        "hints": [
+          "Find a greatest common factor shared by every term.",
+          "Place it outside parentheses and divide each term by it inside.",
+          "Expand to check coefficients and signs."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "distributive-property",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "gcf-lcm",
+          "key": true,
+          "weight": 0.5
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "3(2x+3)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "Factor $6x+9$ by its GCF and check by expanding.",
+          "solution_sketch": "The integer GCF is $3$; divide both terms by it to get $2x$ and $3$. Expansion multiplies back to $6x+9$."
+        },
+        {
+          "answer": "4(2x+3)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "A rectangle has area $8x+12$ and integer height equal to the GCF of the two coefficients. Factor its area and check.",
+          "solution_sketch": "The GCF of $8$ and $12$ is $4$, giving width $2x+3$. Multiplying height by width returns $8x+12$."
+        },
+        {
+          "answer": "5(2x+3)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "A learner factors $10x+15$ using $2$. Factor using the greatest common factor and verify.",
+          "solution_sketch": "The coefficients share greatest integer factor $5$, and the quotients are $2x$ and $3$. The products $5(2x)$ and $5(3)$ return the original terms."
+        },
+        {
+          "answer": "7(2x-3)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "Factor the difference $14x-21$ by its GCF and expand to check.",
+          "solution_sketch": "The GCF is $7$. Dividing gives $2x-3$, and distribution gives $14x-21$, including the negative constant."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "form": "factored_linear",
+          "kind": "required_form"
+        },
+        "answer_expr": "gcd(a,b)*(a/gcd(a,b)*x+b/gcd(a,b))",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Find the greatest common integer factor before dividing each term."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              6,
+              8,
+              10,
+              14
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              12,
+              18,
+              22,
+              26
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "6*(2 + x)",
+            "params": {
+              "a": 6,
+              "b": 12
+            }
+          },
+          {
+            "expected": "6*(3 + x)",
+            "params": {
+              "a": 6,
+              "b": 18
+            }
+          },
+          {
+            "expected": "2*(11 + 3*x)",
+            "params": {
+              "a": 6,
+              "b": 22
+            }
+          },
+          {
+            "expected": "2*(13 + 3*x)",
+            "params": {
+              "a": 6,
+              "b": 26
+            }
+          },
+          {
+            "expected": "4*(3 + 2*x)",
+            "params": {
+              "a": 8,
+              "b": 12
+            }
+          },
+          {
+            "expected": "2*(9 + 4*x)",
+            "params": {
+              "a": 8,
+              "b": 18
+            }
+          },
+          {
+            "expected": "2*(11 + 4*x)",
+            "params": {
+              "a": 8,
+              "b": 22
+            }
+          },
+          {
+            "expected": "2*(13 + 4*x)",
+            "params": {
+              "a": 8,
+              "b": 26
+            }
+          },
+          {
+            "expected": "2*(6 + 5*x)",
+            "params": {
+              "a": 10,
+              "b": 12
+            }
+          },
+          {
+            "expected": "2*(9 + 5*x)",
+            "params": {
+              "a": 10,
+              "b": 18
+            }
+          },
+          {
+            "expected": "2*(11 + 5*x)",
+            "params": {
+              "a": 10,
+              "b": 22
+            }
+          },
+          {
+            "expected": "2*(13 + 5*x)",
+            "params": {
+              "a": 10,
+              "b": 26
+            }
+          },
+          {
+            "expected": "2*(6 + 7*x)",
+            "params": {
+              "a": 14,
+              "b": 12
+            }
+          },
+          {
+            "expected": "2*(9 + 7*x)",
+            "params": {
+              "a": 14,
+              "b": 18
+            }
+          },
+          {
+            "expected": "2*(11 + 7*x)",
+            "params": {
+              "a": 14,
+              "b": 22
+            }
+          },
+          {
+            "expected": "2*(13 + 7*x)",
+            "params": {
+              "a": 14,
+              "b": 26
+            }
+          }
+        ],
+        "solution_sketch": "The GCF is $\\gcd({a},{b})$. Divide both coefficients by it; the inner coefficients are coprime, and expansion restores the original expression.",
+        "statement": "Factor ${a}x+{b}$ completely by its greatest common factor."
+      },
+      "template_math": {
+        "key": "factoring-linear-expressions/kp1",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": false,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "factoring-linear-expressions/kp1",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "factoring-linear-expressions/kp2",
+      "decision": "accept",
+      "reason": "Uses the requested outside-factor sign, divides every signed term by that factor and verifies by expansion.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "factoring-linear-expressions/kp2",
+        "objective": "Factor with negatives and two variables",
+        "constraints": "GCF may be negative; expand to check both signs",
+        "hints": [
+          "Find the greatest common factor of the numerical coefficients. Use the sign of the outside factor specified by the question.",
+          "Divide every signed term by that same signed factor, keeping each variable with its quotient.",
+          "Write the factor outside parentheses and the quotients inside. Multiply back into both terms to check their coefficients and signs."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "distributive-property",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "gcf-lcm",
+          "key": true,
+          "weight": 0.5
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "-4(x+2)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "Factor $-4x-8$ by extracting $-4$, then check.",
+          "solution_sketch": "The quotients are $x$ and $2$. Expanding multiplies each by $-4$, restoring $-4x-8$."
+        },
+        {
+          "answer": "6(2x+3y)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "Factor $12x+18y$ by the GCF and check both terms.",
+          "solution_sketch": "The integer GCF is $6$; division yields $2x$ and $3y$. The products recover $12x$ and $18y$."
+        },
+        {
+          "answer": "-3(2x-3y)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "A signed balance is $-6x+9y$. Factor out $-3$ and check the signs.",
+          "solution_sketch": "The quotients are $2x$ and $-3y$. A negative times a negative restores the positive term $9y$."
+        },
+        {
+          "answer": "-4(2x+3y)",
+          "answer_contract": {
+            "form": "factored_linear",
+            "kind": "required_form"
+          },
+          "problem": "A learner writes $-8x-12y=-4(2x-3y)$. Correct the factorization and expand to check.",
+          "solution_sketch": "Both original terms are negative; dividing each by $-4$ gives positive quotients $2x$ and $3y$. Distribution therefore restores both negative terms."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "form": "factored_linear",
+          "kind": "required_form"
+        },
+        "answer_expr": "-gcd(a,b)*(a/gcd(a,b)*x+b/gcd(a,b)*y)",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Find the greatest common integer factor before dividing each term."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              6,
+              8,
+              10,
+              14
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              12,
+              18,
+              22,
+              26
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "-6*(x + 2*y)",
+            "params": {
+              "a": 6,
+              "b": 12
+            }
+          },
+          {
+            "expected": "-6*(x + 3*y)",
+            "params": {
+              "a": 6,
+              "b": 18
+            }
+          },
+          {
+            "expected": "-2*(3*x + 11*y)",
+            "params": {
+              "a": 6,
+              "b": 22
+            }
+          },
+          {
+            "expected": "-2*(3*x + 13*y)",
+            "params": {
+              "a": 6,
+              "b": 26
+            }
+          },
+          {
+            "expected": "-4*(2*x + 3*y)",
+            "params": {
+              "a": 8,
+              "b": 12
+            }
+          },
+          {
+            "expected": "-2*(4*x + 9*y)",
+            "params": {
+              "a": 8,
+              "b": 18
+            }
+          },
+          {
+            "expected": "-2*(4*x + 11*y)",
+            "params": {
+              "a": 8,
+              "b": 22
+            }
+          },
+          {
+            "expected": "-2*(4*x + 13*y)",
+            "params": {
+              "a": 8,
+              "b": 26
+            }
+          },
+          {
+            "expected": "-2*(5*x + 6*y)",
+            "params": {
+              "a": 10,
+              "b": 12
+            }
+          },
+          {
+            "expected": "-2*(5*x + 9*y)",
+            "params": {
+              "a": 10,
+              "b": 18
+            }
+          },
+          {
+            "expected": "-2*(5*x + 11*y)",
+            "params": {
+              "a": 10,
+              "b": 22
+            }
+          },
+          {
+            "expected": "-2*(5*x + 13*y)",
+            "params": {
+              "a": 10,
+              "b": 26
+            }
+          },
+          {
+            "expected": "-2*(7*x + 6*y)",
+            "params": {
+              "a": 14,
+              "b": 12
+            }
+          },
+          {
+            "expected": "-2*(7*x + 9*y)",
+            "params": {
+              "a": 14,
+              "b": 18
+            }
+          },
+          {
+            "expected": "-2*(7*x + 11*y)",
+            "params": {
+              "a": 14,
+              "b": 22
+            }
+          },
+          {
+            "expected": "-2*(7*x + 13*y)",
+            "params": {
+              "a": 14,
+              "b": 26
+            }
+          }
+        ],
+        "solution_sketch": "The GCF is $\\gcd({a},{b})$. Divide both signed coefficients by it, keep the inner leading coefficient positive, and expand to verify.",
+        "statement": "Factor $-{a}x-{b}y$ completely."
+      },
+      "template_math": {
+        "key": "factoring-linear-expressions/kp2",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [
+        {
+          "category": "explanation_sign",
+          "finding": "The current sketch identifies positive gcd(a,b), says divide signed coefficients by it, but also asks for a positive inner leading coefficient. Actual expected answers extract NEGATIVE gcd(a,b), so that described division has the wrong sign.",
+          "required_change": "State that the extracted factor is the negative of the positive GCF magnitude, and divide each signed coefficient by that actual negative outside factor."
+        }
+      ],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "factoring-linear-expressions/kp2",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "equivalent-expressions/kp1",
+      "decision": "accept",
+      "reason": "Compares simplified coefficients/constants and distinguishes a counterexample from an insufficient single matching value.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "equivalent-expressions/kp1",
+        "objective": "Decide equivalence by simplifying",
+        "constraints": "one expression simplifies (or fails to) into the other; single variable",
+        "hints": [
+          "Expand any grouped products and combine like terms in each expression. Keep different variable powers separate.",
+          "Compare the signed coefficient of each variable power and compare the constants. Equivalent expressions have matching simplified terms.",
+          "A value that gives different results disproves equivalence. A single matching result is insufficient: use the simplified expressions to check agreement for every allowed value."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "distributive-property",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "substituting-values",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "yes",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "Are $2(x + 3)$ and $2x + 6$ equivalent? Answer yes or no.",
+          "solution_sketch": "Expanding $2(x + 3)$ gives exactly $2x + 6$."
+        },
+        {
+          "answer": "no",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "Are $3x + 4x$ and $7x^2$ equivalent? Answer yes or no.",
+          "solution_sketch": "$3x + 4x = 7x$, not $7x^2$."
+        },
+        {
+          "answer": "yes",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "Is $5x-2(x-3)$ equivalent to $3x+6$? Answer yes or no.",
+          "solution_sketch": "$5x-2x+6=3x+6$, so the expressions have identical coefficients."
+        },
+        {
+          "answer": "no",
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "problem": "A square has perimeter $4x$. A learner proposes $x^2$ as an equivalent expression for every $x$. Is the claim valid? Answer yes or no.",
+          "solution_sketch": "At $x=2$, the perimeter is $4(2)=8$ while the proposed expression is $2^2=4$. One counterexample disproves equivalence."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "label",
+          "options": [
+            [
+              "yes"
+            ],
+            [
+              "no"
+            ]
+          ]
+        },
+        "answer_expr": "equalitylabel(a*(x+b),a*x+c)",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Expansion makes both variable coefficients and constant terms directly comparable."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              3,
+              4
+            ]
+          },
+          "c": {
+            "kind": "choice",
+            "values": [
+              6,
+              8,
+              9,
+              12
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "yes",
+            "params": {
+              "a": 2,
+              "b": 3,
+              "c": 6
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 2,
+              "b": 3,
+              "c": 8
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 2,
+              "b": 3,
+              "c": 9
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 2,
+              "b": 3,
+              "c": 12
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 2,
+              "b": 4,
+              "c": 6
+            }
+          },
+          {
+            "expected": "yes",
+            "params": {
+              "a": 2,
+              "b": 4,
+              "c": 8
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 2,
+              "b": 4,
+              "c": 9
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 2,
+              "b": 4,
+              "c": 12
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 3,
+              "b": 3,
+              "c": 6
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 3,
+              "b": 3,
+              "c": 8
+            }
+          },
+          {
+            "expected": "yes",
+            "params": {
+              "a": 3,
+              "b": 3,
+              "c": 9
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 3,
+              "b": 3,
+              "c": 12
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 3,
+              "b": 4,
+              "c": 6
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 3,
+              "b": 4,
+              "c": 8
+            }
+          },
+          {
+            "expected": "no",
+            "params": {
+              "a": 3,
+              "b": 4,
+              "c": 9
+            }
+          },
+          {
+            "expected": "yes",
+            "params": {
+              "a": 3,
+              "b": 4,
+              "c": 12
+            }
+          }
+        ],
+        "solution_sketch": "Expand the first expression to ${a}x+{a}({b})$, then compare its constant term with ${c}$.",
+        "statement": "Are ${a}(x+{b})$ and ${a}x+{c}$ equivalent? Answer yes or no."
+      },
+      "template_math": {
+        "key": "equivalent-expressions/kp1",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "equivalent-expressions/kp1",
+        "practice_instances": 16,
+        "reason": null
+      }
+    },
+    {
+      "key": "equivalent-expressions/kp2",
+      "decision": "accept",
+      "reason": "Builds the described expression or shape formula before distribution and collection into the requested form.",
+      "required_change": null,
+      "authored_snapshot": {
+        "key": "equivalent-expressions/kp2",
+        "objective": "Simplify to a standard equivalent form",
+        "constraints": "distribute and combine; integer coefficients",
+        "hints": [
+          "Write the expression described by the problem, using the relevant formula if a shape is involved.",
+          "Distribute every signed factor to all terms in its parentheses. Combine matching variable terms, and combine constants separately.",
+          "Arrange the result in the requested form, keeping the coefficient with its variable. Check that expanding and collecting preserved every original term."
+        ]
+      },
+      "metadata_matches": true,
+      "prerequisites_reviewed": [
+        {
+          "id": "distributive-property",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "combining-like-terms",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "substituting-values",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "curriculum_exemplars_reviewed": [
+        {
+          "answer": "8x - 1",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Write $4(2x - 1) + 3$ in the form $ax + b$.",
+          "solution_sketch": "$8x - 4 + 3 = 8x - 1$."
+        },
+        {
+          "answer": "2x + 13",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Write $5(x + 2) - 3(x - 1)$ in the form $ax + b$.",
+          "solution_sketch": "$5x + 10 - 3x + 3 = 2x + 13$."
+        },
+        {
+          "answer": "6x+4",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A rectangle has sides $x+3$ and $2x-1$. Express its perimeter in the form $ax+b$.",
+          "solution_sketch": "Expand $2(x+3)+2(2x-1)=2x+6+4x-2$, then combine to get $6x+4$."
+        },
+        {
+          "answer": "4x-6",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Correct the expansion and collection in $3(x-2)+x=3x-2$. Give the form $ax+b$.",
+          "solution_sketch": "Distributing gives $3x-6+x$. The $x$ coefficients add to $4$, while the constant remains $-6$."
+        }
+      ],
+      "current_selected_template": {
+        "answer_contract": {
+          "kind": "exact"
+        },
+        "answer_expr": "(a-b)*x+3*a+2",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Distribute, then collect the x-terms and constants separately."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              6,
+              7,
+              8,
+              9
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "4x+20",
+            "params": {
+              "a": 6,
+              "b": 2
+            }
+          },
+          {
+            "expected": "3x+20",
+            "params": {
+              "a": 6,
+              "b": 3
+            }
+          },
+          {
+            "expected": "2x+20",
+            "params": {
+              "a": 6,
+              "b": 4
+            }
+          },
+          {
+            "expected": "1x+20",
+            "params": {
+              "a": 6,
+              "b": 5
+            }
+          },
+          {
+            "expected": "5x+23",
+            "params": {
+              "a": 7,
+              "b": 2
+            }
+          },
+          {
+            "expected": "4x+23",
+            "params": {
+              "a": 7,
+              "b": 3
+            }
+          },
+          {
+            "expected": "3x+23",
+            "params": {
+              "a": 7,
+              "b": 4
+            }
+          },
+          {
+            "expected": "2x+23",
+            "params": {
+              "a": 7,
+              "b": 5
+            }
+          },
+          {
+            "expected": "6x+26",
+            "params": {
+              "a": 8,
+              "b": 2
+            }
+          },
+          {
+            "expected": "5x+26",
+            "params": {
+              "a": 8,
+              "b": 3
+            }
+          },
+          {
+            "expected": "4x+26",
+            "params": {
+              "a": 8,
+              "b": 4
+            }
+          },
+          {
+            "expected": "3x+26",
+            "params": {
+              "a": 8,
+              "b": 5
+            }
+          },
+          {
+            "expected": "7x+29",
+            "params": {
+              "a": 9,
+              "b": 2
+            }
+          },
+          {
+            "expected": "6x+29",
+            "params": {
+              "a": 9,
+              "b": 3
+            }
+          },
+          {
+            "expected": "5x+29",
+            "params": {
+              "a": 9,
+              "b": 4
+            }
+          },
+          {
+            "expected": "4x+29",
+            "params": {
+              "a": 9,
+              "b": 5
+            }
+          }
+        ],
+        "solution_sketch": "Distribute to get ${a}x+3({a})-{b}x+2$; collect to $({a}-{b})x+(3({a})+2)$.",
+        "statement": "Write ${a}(x+3)-{b}x+2$ as $mx+c$."
+      },
+      "template_math": {
+        "key": "equivalent-expressions/kp2",
+        "admissible_bindings": 16,
+        "sample_domain_exactly_equals_admissible_domain": true,
+        "independent_matches": 16
+      },
+      "separate_template_findings": [],
+      "changed_since_previous_review": true,
+      "mechanical_gate": {
+        "accepted": true,
+        "exhaustive": true,
+        "kind": "hint_ladder",
+        "kp_id": "equivalent-expressions/kp2",
+        "practice_instances": 16,
+        "reason": null
+      }
+    }
+  ],
+  "previous_review_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/03-expressions-equations-01.independent-review.json",
+  "previous_review_sha256": "0c343bd81a2df7083ac59a1e6d3f2085f27026837fa92bd360ac79ab61a6b7b1",
+  "mechanical_gate_evidence": {
+    "path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/integer-expressions-final-instruction-output-01.json",
+    "sha256": "2e9a0ffdb9637031faa55bbe35afa5735011bbf56f54d6062854e57f229caee8",
+    "gate_source_hash": "558471ecd46ac2fc99822156adf8f1b53640e2a1e3b11be73df047076604dbb3",
+    "input_sha256": "b535829c6f755141bff6b1353883e6c51bc6105dcc13142089a0fe8fc5b94ebb",
+    "curriculum_hash": "d7387d1f83c29c264f321713596faa071ca319773b58e1b5fa37cc1ddd0bc235",
+    "exhaustive": true
+  },
+  "reviewer_guidance_corrections": [
+    "Distributive-property/kp2 now checks products/substitution; earlier reviewer factoring suggestion required a later topic."
+  ]
+}

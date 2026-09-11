@@ -99,10 +99,7 @@ fn a_last_step_that_names_another_served_answer_is_rejected() {
     assert_eq!(rejection.code, "teach-answer");
     assert_eq!(
         rejection.message,
-        "the last step of 'worked_example.steps' reads 'The product is 225, the same way $9^2$ is \
-81.', which names '81', the answer of 'Compute $9^2$.' — this knowledge point serves that problem \
-too, and the page works 'Compute $15^2$.', so the step hands the learner an answer before the \
-attempt (Hard Rule 1)"
+        "the final step solves served problem 'Compute $9^2$.' and names its answer '81' (Hard Rule 1)"
     );
 }
 
@@ -128,11 +125,9 @@ fn a_last_step_that_names_only_its_own_answer_is_accepted() {
     assert_eq!(page.worked_example.problem, "Compute $15^2$.");
 }
 
-/// The page works its OWN problem to its own answer, and the gate accepts that.
-/// The worked problem here is the served instance `Compute $9^2$.`, so 81 is the
-/// answer of the problem the page works and not the answer of another one.
+/// A worked example must not reveal an exact practice problem before its attempt.
 #[test]
-fn a_page_that_works_a_served_problem_states_that_answer() {
+fn a_page_that_repeats_a_served_template_problem_is_refused() {
     let exemplars = exemplars();
     let body = r#"{
         "concept": "Squaring a number multiplies it by itself.",
@@ -141,11 +136,30 @@ fn a_page_that_works_a_served_problem_states_that_answer() {
             "steps": ["Write $9$ twice.", "The product is 81."]
         }
     }"#;
+    let refusal = gate_teach(body, &spec_with_instances(&exemplars, &INSTANCES)).unwrap_err();
+    assert_eq!(refusal.code, "teach-worked-example");
+}
 
-    let page = gate_teach(body, &spec_with_instances(&exemplars, &INSTANCES))
-        .expect("81 is the answer of the problem the page works");
-
-    assert_eq!(page.worked_example.steps.len(), 2);
+/// Equal answers from distinct arithmetic problems do not disclose problem identity.
+#[test]
+fn a_distinct_addition_example_survives_an_equal_served_sum() {
+    let exemplars = [];
+    let instances = [("Compute $4 + 1$.", "5")];
+    let body = r#"{
+        "concept": "Addition combines two quantities.",
+        "worked_example": {
+            "problem": "Compute $2 + 3$.",
+            "steps": ["Start at two and count three more.", "The sum is 5."]
+        }
+    }"#;
+    gate_teach(body, &spec_with_instances(&exemplars, &instances)).unwrap();
+    let dense = [
+        ("Another problem with answer two", "2"),
+        ("Another problem with answer three", "3"),
+        ("Compute $4 + 1$.", "5"),
+    ];
+    let equation = body.replace("The sum is 5.", "$2 + 3 = 5$.");
+    gate_teach(&equation, &spec_with_instances(&exemplars, &dense)).unwrap();
 }
 
 /// An EARLIER step is not the answer of the page, so a numeral on the way to it
@@ -366,12 +380,38 @@ fn give_away(answer: &str) -> String {
     format!(r#"{{"hints": [{rung}]}}"#)
 }
 
+/// Gate every exemplar whose problem already contains its answer.
+///
+/// The result distinguishes a nonempty cohort from one where every exemplar
+/// is blind under the historical exemption.
+fn gate_shown_answers(key: &str, exemplars: &[cadus_core::curriculum::Exemplar]) -> Option<bool> {
+    let shown: Vec<_> = exemplars
+        .iter()
+        .filter(|exemplar| stands_alone(&exemplar.problem, &exemplar.answer))
+        .collect();
+    if shown.is_empty() {
+        return None;
+    }
+    let all_shown = shown.len() == exemplars.len();
+    for exemplar in shown {
+        match gate_hint_ladder(&give_away(&exemplar.answer), &spec(exemplars)) {
+            Ok(_) => panic!(
+                "{key} accepted a rung that states the answer {:?}",
+                exemplar.answer
+            ),
+            Err(rejection) => assert_eq!(rejection.code, "hint-answer", "{key}"),
+        }
+    }
+    Some(all_shown)
+}
+
 /// Finding F25. Before this fix the gate skipped an exemplar outright whenever
 /// the exemplar's own problem carried its answer, so for those knowledge points a
 /// rung that stated the answer verbatim passed the gate, was stored `pending`,
-/// and served through the L5 hint route. The count of shipped knowledge points
-/// that took the exemption is pinned here, and every one of them now refuses a
-/// give-away rung.
+/// and served through the L5 hint route. Every currently matching exemplar must
+/// refuse a give-away rung. The final census is only a review tripwire: authored
+/// tuple and structured answers can legitimately stop appearing verbatim in
+/// their problems, but a census change must still run this complete live sweep.
 #[test]
 fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     let (curriculum, _) = cadus_core::curriculum::load_raw_curriculum(&curriculum_root())
@@ -379,37 +419,34 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
 
     let mut exempted = 0_usize;
     let mut blind = 0_usize;
+    let mut foundations_exempted = 0_usize;
+    let mut foundations_blind = 0_usize;
     for topic in curriculum.topics() {
         for kp in &topic.topic.knowledge_points {
-            let shown: Vec<&cadus_core::curriculum::Exemplar> = kp
-                .exemplars
-                .iter()
-                .filter(|exemplar| stands_alone(&exemplar.problem, &exemplar.answer))
-                .collect();
-            if shown.is_empty() {
-                continue;
-            }
-            exempted += 1;
-            if shown.len() == kp.exemplars.len() {
-                blind += 1;
-            }
             let key = format!("{}/{}", topic.topic.id, kp.id);
-            for exemplar in shown {
-                match gate_hint_ladder(&give_away(&exemplar.answer), &spec(&kp.exemplars)) {
-                    Ok(_) => panic!(
-                        "{key} accepted a rung that states the answer {:?}",
-                        exemplar.answer
-                    ),
-                    Err(rejection) => assert_eq!(rejection.code, "hint-answer", "{key}"),
+            let Some(all_shown) = gate_shown_answers(&key, &kp.exemplars) else {
+                continue;
+            };
+            exempted += 1;
+            if topic.course_dir == "foundations" {
+                foundations_exempted += 1;
+            }
+            if all_shown {
+                blind += 1;
+                if topic.course_dir == "foundations" {
+                    foundations_blind += 1;
                 }
             }
         }
     }
 
-    // `exempted` counts the knowledge points that held at least one exempted
-    // exemplar. `blind` counts the ones whose exemplars were ALL exempted: a
-    // ladder that stated every answer of those passed the whole gate.
-    assert_eq!((exempted, blind), (307, 62));
+    // `exempted` counts knowledge points with at least one formerly exempted
+    // exemplar. `blind` counts knowledge points whose exemplars were all
+    // formerly exempted. The first census covers every shipped course; the
+    // second makes the Foundations-only scope explicit. The loop above is the
+    // fail-closed invariant for every member of both cohorts.
+    assert_eq!((exempted, blind), (363, 60));
+    assert_eq!((foundations_exempted, foundations_blind), (157, 30));
 }
 
 /// A sample that does not instantiate and a draw that does not evaluate

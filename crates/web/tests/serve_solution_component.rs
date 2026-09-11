@@ -11,9 +11,13 @@ use cadus_store::test_support::TestDb;
 use common::{
     COMPONENT_ANSWER, COMPONENT_KEY, COMPONENT_TEXT, PARENT_KEY, PROBLEM_TEXT, REVIEW,
     answer_task_ok, component_app as app, events_of_type, hint_ok, learner_at_review_index,
-    learner_at_the_component_question, problem_id_of, seed_content, serve_ok,
+    learner_at_the_component_question, problem_id_of, serve_ok,
 };
-use serde_json::json;
+use serde_json::{Value, json};
+
+async fn seed_content(db: &TestDb, key: &str, kind: &str, digest: &str, body: Value) {
+    common::seed_content_for(db, &common::component_curriculum(), key, kind, digest, body).await;
+}
 
 /// The review draws serve index 1 from the COMPONENT skill, so the hint comes
 /// from the component's authored ladder. The parent topic's ladder is approved

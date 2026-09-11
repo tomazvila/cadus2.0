@@ -48,11 +48,12 @@ fn the_prose_class_never_parses() {
 fn out_of_grammar_shapes_never_parse() {
     // `xy` left this list in the M2 fix wave: a short run of variable letters is
     // the product `x*y` now. `a_letter_run_the_grammar_does_not_own_stays_
-    // undecidable` holds the runs that stay outside the grammar.
+    // undecidable` holds the runs that stay outside the grammar. `9 R2`,
+    // `23 R14`, and `x + 2 remainder 3` left the list with the
+    // quotient-and-remainder production of D-F3 (unit f2-grammar), which
+    // `answer_remainder.rs` pins.
     for text in [
-        "9 R2",
-        "23 R14",
-        "x + 2 remainder 3",
+        "9 r2",
         "log_b(x)",
         "n!",
         "3/0",
@@ -141,7 +142,12 @@ fn deep_nesting_is_refused_and_never_overflows_the_stack() {
 }
 
 #[test]
-fn the_corpus_splits_into_3227_parsed_and_265_undecidable_answers() {
+fn the_corpus_splits_into_3257_parsed_and_235_undecidable_answers() {
+    // The 1.0 residue was 265. The rational-exponent production of D-F3 (unit
+    // f2-grammar) reads 15 of those rows and the quotient-and-remainder
+    // production reads 16, which `recovered_2_0.jsonl` names. The
+    // value-with-unit production refuses one row, `cos 70°`: 1.0 read it as
+    // the cosine of 70 radians, and a unit inside an expression has no reading.
     let rows = corpus();
     assert_eq!(rows.len(), 3_492, "corpus size");
     let mut parsed = 0_usize;
@@ -153,8 +159,8 @@ fn the_corpus_splits_into_3227_parsed_and_265_undecidable_answers() {
             refused += 1;
         }
     }
-    assert_eq!(parsed, 3_227, "answers inside the grammar");
-    assert_eq!(refused, 265, "answers outside the grammar");
+    assert_eq!(parsed, 3_257, "answers inside the grammar");
+    assert_eq!(refused, 235, "answers outside the grammar");
 }
 
 #[test]
@@ -189,7 +195,48 @@ fn the_undecidable_answers_are_exactly_the_committed_fixture() {
         missing.is_empty() && extra.is_empty(),
         "the residue moved: missing {missing:?}, extra {extra:?}"
     );
-    assert_eq!(committed.len(), 265);
+    assert_eq!(committed.len(), 235);
+}
+
+#[test]
+fn the_recovered_answers_keep_their_identity_and_parse() {
+    // The 1.0 residue held 265 answers. A 2.0 production moves a row it reads
+    // into `recovered_2_0.jsonl` with the production name, so the two fixtures
+    // together are still the 265 rows of the 1.0 residue. The productions of
+    // D-F3 (unit f2-grammar): `rational_exponent` reads 15 rows, and
+    // `quotient_remainder` reads 16 rows.
+    let residue = committed_residue();
+    let recovered = committed_recovered();
+    let keys = recovered_keys();
+    assert_eq!(recovered.len(), keys.len(), "no recovered row repeats");
+    assert!(
+        residue.is_disjoint(&keys),
+        "a recovered row is still refused"
+    );
+    // One row joined the residue: the value-with-unit production refuses
+    // `cos 70°`, a unit inside an expression (`answer_unit.rs`).
+    let joined: Key = (
+        "complementary-angle-trig".to_string(),
+        "kp1".to_string(),
+        0,
+        "cos 70°".to_string(),
+    );
+    assert!(residue.contains(&joined), "`cos 70°` is refused");
+    assert_eq!(residue.len() + keys.len(), 265 + 1, "the 1.0 residue");
+    let mut per_production: std::collections::BTreeMap<&str, usize> = Default::default();
+    for row in &recovered {
+        assert!(
+            parse(&normalize(&row.answer).source).is_ok(),
+            "{:?} is in the recovered fixture and the grammar refuses it",
+            row.answer
+        );
+        *per_production.entry(row.production.as_str()).or_insert(0) += 1;
+    }
+    let counts: Vec<(&str, usize)> = per_production.into_iter().collect();
+    assert_eq!(
+        counts,
+        [("quotient_remainder", 16), ("rational_exponent", 15)]
+    );
 }
 
 #[test]

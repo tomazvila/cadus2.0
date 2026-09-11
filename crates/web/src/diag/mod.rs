@@ -67,9 +67,17 @@ fn topic_record<'a>(graph: &'a Curriculum, topic: &str) -> Option<&'a Topic> {
     graph.idx_of(topic).and_then(|idx| graph.topic(idx))
 }
 
-/// The answer kind of one topic, or `None` when the arena does not hold it.
-fn topic_kind(graph: &Curriculum, topic: &str) -> Option<AnswerKind> {
-    topic_record(graph, topic).map(|record| record.answer_kind)
+/// An explicit supported contract makes a multi-step final answer markable.
+fn markable(record: &Topic) -> bool {
+    if record.answer_kind == AnswerKind::Proof {
+        return false;
+    }
+    record.diagnostic_exemplar.as_ref().is_some_and(|item| {
+        item.answer_contract.as_ref().map_or_else(
+            || deterministic(record.answer_kind),
+            |contract| contract.validate_expected(&item.answer).is_ok(),
+        )
+    })
 }
 
 /// The `409 no_diagnostic` of a call with no diagnostic in progress.
@@ -92,6 +100,7 @@ fn probe_problem(
     let problem_id = Uuid::new_v4().simple().to_string();
     let text = exemplar.map_or_else(|| NO_EXEMPLAR.to_owned(), |item| item.problem.clone());
     let served = ServedProblem {
+        timing_interrupted: false,
         problem_id: problem_id.clone(),
         task_id: DIAG_TASK_ID.to_owned(),
         topic: Some(topic.to_owned()),
@@ -100,6 +109,7 @@ fn probe_problem(
         answer_kind: Some(record.answer_kind.as_str().to_owned()),
         text: text.clone(),
         expected: PoolAnswer {
+            answer_contract: exemplar.and_then(|item| item.answer_contract.clone()),
             v: cadus_core::pool::POOL_ROW_VERSION,
             answer: exemplar.map(|item| item.answer.clone()).unwrap_or_default(),
         },
@@ -108,6 +118,7 @@ fn probe_problem(
         hints_given: Vec::new(),
         index: index as i64,
         rework: None,
+        handoff: None,
     };
     (
         served,

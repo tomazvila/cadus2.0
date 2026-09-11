@@ -140,6 +140,18 @@ pub struct DiagnosticAnswer {
     pub secs: Secs,
     /// How much the answer counts, from 0.0 to 1.0.
     pub weight: Weight,
+    /// The explicit third outcome. Legacy rows derive a verdict from `correct`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub outcome: Option<super::AttemptOutcome>,
+    /// The served identity, for an audit of an unmarked response.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub problem_id: Option<String>,
+    /// The original response, preserved in the private event log.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub submitted: Option<String>,
+    /// The private problem and its captured policy.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub problem: Option<super::AttemptProblem>,
 }
 
 /// A placement diagnostic closed and placed the learner.

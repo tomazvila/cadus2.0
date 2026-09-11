@@ -23,6 +23,7 @@ import type {
   ApiClient,
   DiagnosisJob,
   PlanTask,
+  RetentionRow,
   ServedProblem,
   TaskAnswerResponse,
   User,
@@ -85,6 +86,27 @@ const norm = (value: string) => value.replace(/\s/g, '').replace(/^\+/, '');
 
 /** A short delay, so a demo screen shows its loading state the way the real one does. */
 const wait = (ms: number) => new Promise<void>((resolve) => { setTimeout(resolve, ms); });
+/** One retention row with no probe behind it. Every rate is `null`, never a zero. */
+function emptyRetentionRow(delay_days: number): RetentionRow {
+  return {
+    delay_days,
+    probes: 0,
+    retained_accuracy: null,
+    assistance_dependence: null,
+    mean_independent_secs: null,
+    sufficient: false,
+    provenance: {
+      independent: 0,
+      independent_correct: 0,
+      correct: 0,
+      assisted: 0,
+      repeated: 0,
+      unknown_exposure: 0,
+      ungraded: 0,
+    },
+  };
+}
+
 async function reply<T>(value: T, ms = 120): Promise<T> {
   await wait(ms);
   return value;
@@ -104,12 +126,16 @@ function demoTask(answered: number): PlanTask {
     time_budget_secs: 600,
     difficulty_target: 0.7,
     why: 'Frontier topic: fractions is ready to learn.',
+    confirm: false,
     progress: { answered, done: answered >= DEMO_PROBLEMS.length },
   };
 }
 
 /** The message the four review routes refuse a demo caller with (C6). */
 const DEMO_ADMIN_ONLY = 'This route serves an admin account only.';
+
+/** The refusal of a task that has no authored integrated item (D-F10). */
+const DEMO_NO_INTEGRATED = 'This task has no integrated problem; serve it part by part.';
 
 /** A refusal the demo cannot honestly answer. Same shape as a served one. */
 function refuse(status: number, code: string, message: string): never {
@@ -193,6 +219,10 @@ export function createDemoApi(): ApiClient {
         frontier: 4,
         due_reviews: 2,
         nearly_due: 1,
+        mastery: { practiced: 9, inferred: 6, total: 50, to_confirm: ['whole-numbers'] },
+        // The demo grades every answer, so nothing waits for a human (D-F2).
+        ungraded_attempts: {},
+        ungraded: 0,
       }),
 
     getGraph: (scope) =>
@@ -265,6 +295,7 @@ export function createDemoApi(): ApiClient {
           lessons: 1,
         },
         course_complete: false,
+        blocked: [],
         frontier_blocked_until: null,
       }),
 
@@ -300,6 +331,7 @@ export function createDemoApi(): ApiClient {
       return reply({ hint: DEMO_HINTS[hintCount - 1], hint_number: hintCount });
     },
 
+    taskQuizResult: async () => ({ inconclusive: false, score: 0, xp: 0, answers: [], practice_pending: false, practice_available: false }),
     taskAnswer: async (taskId, body): Promise<TaskAnswerResponse> => {
       if (taskId !== DEMO_TASK_ID) refuse(404, 'unknown_task', 'The demo plans one task.');
       const problem = DEMO_PROBLEMS[cursor];
@@ -315,6 +347,7 @@ export function createDemoApi(): ApiClient {
       const done = cursor >= DEMO_PROBLEMS.length;
       const reply_: TaskAnswerResponse = {
         attempt_id: attempt,
+        outcome: correct ? 'correct' : 'incorrect',
         correct,
         work_quality: correct ? 'perfect' : 'nearly_passable',
         error_tags: [],
@@ -330,6 +363,13 @@ export function createDemoApi(): ApiClient {
       };
       return reply(reply_);
     },
+
+    // D-F10. The demo plans one lesson and authors no integrated item, so these three
+    // answer what the service answers for a task with no item: the caller then serves the
+    // task part by part, which is the path the demo does run.
+    taskIntegrated: async () => refuse(409, 'no_integrated_item', DEMO_NO_INTEGRATED),
+    taskIntegratedHint: async () => refuse(409, 'no_integrated_item', DEMO_NO_INTEGRATED),
+    taskIntegratedAnswer: async () => refuse(409, 'no_integrated_item', DEMO_NO_INTEGRATED),
 
     diagStart: placement.diagStart,
     diagAnswer: placement.diagAnswer,
@@ -347,8 +387,29 @@ export function createDemoApi(): ApiClient {
     downloadExport: async () =>
       refuse(403, 'forbidden', 'The demo keeps no event log to export.'),
 
-    // The review surface (C6). The demo account is NOT an admin, so all five admin routes
-    // — the operator flags above and these four — answer the same `403 forbidden` the
+    // f19-retention. The demo account answered no delayed probe, so every rate is
+    // `null`. That is the honest rehearsal: the card has to render "no evidence yet"
+    // for every learner who never reached the first 7-day probe.
+    getRetentionReport: () =>
+      reply({
+        policy: {
+          version: 1,
+          label: 'v1 (uncalibrated)',
+          calibrated: false,
+          digest: 'demo000000000000',
+          probe_delays_days: [7, 30, 90],
+          min_sample: 20,
+        },
+        retention: {
+          by_delay: [7, 30, 90].map((delay_days) => emptyRetentionRow(delay_days)),
+          total: emptyRetentionRow(0),
+        },
+        placement: { failed_confirmation: [], awaiting_confirmation: [] },
+        integrated: { served: 0, passed: 0, failed: 0, inconclusive: 0, open: 0, pass_rate: null },
+      }),
+
+    // The review surface (C6). The demo account is NOT an admin, so every admin route
+    // — the operator flags above and these six — answers the same `403 forbidden` the
     // service answers a signed-in learner. That is what makes `?demo=1` an honest
     // rehearsal of the non-admin path the two admin screens have to render (REVIEW-admin),
     // and it is why the demo defines no fixture queue: a demo that showed a review queue
@@ -357,5 +418,8 @@ export function createDemoApi(): ApiClient {
     getContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
     approveContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
     rejectContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    // The recovery path of the third outcome is admin-only too (D-F2).
+    listUngraded: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    regradeUngraded: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
   };
 }

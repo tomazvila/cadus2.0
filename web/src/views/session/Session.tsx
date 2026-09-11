@@ -1,52 +1,12 @@
 /**
- * The guided study loop: plan, serve, teach, hint, answer, feedback, re-solve, advance.
- *
- * THE HIGHEST-STAKES SCREEN IN THE APP. Every answer it posts appends a row to the
- * `events` table, and `cadus_app` holds no UPDATE and no DELETE on it. A defect here writes
- * permanent corruption into the learner's real progress, so five rules are load-bearing and
- * each one is claimed by a named test.
- *
- *   F-37-1c — ONE PHASE GATE. Every submit path — the Submit button, the Enter key, the
- *   drill auto-submit — starts with `gate.tryEnter('ready', 'submitting')`, set
- *   SYNCHRONOUSLY before the first await. Enter bypasses the disabled button by design
- *   (a keydown on the input does not read the button), so the gate, not the attribute, is
- *   what stops a second post of one `problem_id`. The loser of that race gets
- *   `404 unknown_problem` against an append-only log.
- *
- *   DD-3/P1 — THE RE-SOLVE. An assisted answer that grades correct is NOT recorded. The
- *   service stashes it and keeps the problem live, so the view returns to `ready` with the
- *   solution revealed and the SAME submit sends the unaided re-solve. `feedback` is not
- *   terminal. The re-solve is UNTIMED: the return to `ready` stops and clears the drill
- *   countdown, because a leftover second that runs out posts a blank re-solve and the
- *   service then rewrites the stashed assisted pass into a permanent miss.
- *
- *   NO-2BILL — ONE WRITE PER MOUNT. A lesson mount posts `/teach` and nothing else; the
- *   serve waits for "I've got it". 1.0 fired a warm-up serve behind the worked example, and
- *   that is two writes on one mount plus a `started_at` stamped before the learner read a
- *   word.
- *
- *   W-A4 — THE REFERENCE LESSON ONCE. Every hint after the third repeats the pointer; it is
- *   rendered once, however many hints follow.
- *
- *   W-C5 — SUBMIT IS DOMINANT. One `.btn-primary` on the card. Hint is quiet, and Exit is
- *   quieter still. There is no "Give up" control, and its absence is a service fact, not a
- *   design choice: 1.0 abandoned a task through `POST /api/task/{id}/abort`, and the M5
- *   route list (`crates/web/src/lib.rs` `create_app`) has no such route. A button that
- *   posts nothing is worse than no button, so the tag's wording names Exit in its place.
- *
- * THE CLOCK IS DISPLAY ONLY (trap T4). The service measures session time from its own
- * accumulator and prices XP with it, so `sessionEnd()` is called with NO arguments and this
- * view keeps no cumulative counter.
- *
- * THE DIAGNOSIS IS A PASSENGER (S9). The verdict, the solution and the re-solve instruction
- * come from local CPU and paint at once; the `diagnosis` field of the same reply feeds a
- * panel that fills in later, from the one per-session subscription this view opens. Nothing
- * in the loop waits on it, and no exit is blocked by it — see `useDiagnosis.ts`.
- *
- * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so navigation arrives as props.
+ * Guided study loop. The synchronous phase gate owns every advance and submit.
+ * Lessons teach before serving; assisted answers retain the untimed re-solve.
+ * The server owns elapsed time and append-only progress. Integrated multi-step
+ * tasks resolve before per-component serving, and complete through the same plan.
  */
 import { useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
+import { MathVisuals } from '@/components/MathVisual';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
 import { LoadingBlock } from '@/components/primitives';
@@ -57,6 +17,7 @@ import { usePhase } from '@/hooks/usePhase';
 import type {
   AnswerResponse,
   ApiClient,
+  IntegratedProblem,
   PlanTask,
   ReworkResponse,
   ServedProblem,
@@ -67,8 +28,12 @@ import type {
 import { useSessionPlan } from './useSessionPlan';
 import { useGrade, type SessionPhase } from './useGrade';
 import { clockStart, isDrill, useSessionClock } from './useSessionClock';
-import { EmptyPlan, ProblemHeader, SessionSummary, emptyPlanMessage } from './SessionScreens';
+import {
+  EmptyPlan, NoInstruction, ProblemHeader, SessionSummary, emptyPlanMessage,
+} from './SessionScreens';
 import { Teach } from './Teach';
+import { Integrated } from './Integrated';
+import { serveIntegrated } from './serveIntegrated';
 import { Feedback, Rework } from './Feedback';
 import { Diagnosis } from './Diagnosis';
 import { useDiagnosisStream } from './useDiagnosis';
@@ -116,6 +81,7 @@ export function Session({
   // `not_offered` to every grade, so it opens nothing.
   const diagnosis = useDiagnosisStream({ api, life, enabled: !demo });
 
+  const [integrated, setIntegrated] = useState<IntegratedProblem | null>(null);
   const [problem, setProblem] = useState<ServedProblem | null>(null);
   const [teaching, setTeaching] = useState<TeachResponse | null>(null);
   const [hints, setHints] = useState<string[]>(NO_HINTS);
@@ -195,6 +161,18 @@ export function Session({
     });
   };
 
+  const serveWholeItem = (): void => {
+    const task = taskRef.current!;
+    setLive(null, 0);
+    void call(() => serveIntegrated(api, task.task_id), (item) => {
+      if (!life.alive() || taskRef.current?.task_id !== task.task_id) return;
+      if (!item) { serveThenShow(); return; }
+      setTeaching(null);
+      setIntegrated(item);
+      gate.enter('ready');
+    }, { retryGate: () => life.alive() && gate.is('loading') && taskRef.current?.task_id === task.task_id });
+  };
+
   /** Start the task on screen. The phase is `loading` on every path that leads here. */
   const startTask = (): void => {
     // The ref is written before the effect that starts a task runs, so it names one.
@@ -205,7 +183,12 @@ export function Session({
     // BEFORE anything is served, so this view never posts a quiz answer.
     if (task.task_type === 'quiz') { onQuiz(task); return; }
 
-    if (task.task_type === 'lesson') {
+    if (task.task_type === 'multi-step' && !task.integrated_instruction_required) {
+      serveWholeItem();
+      return;
+    }
+
+    if (task.task_type === 'lesson' || task.integrated_instruction_required) {
       // Teach FIRST, and teach ALONE (NO-2BILL). Every topic has knowledge points, so the
       // view needs no served problem to know a fresh lesson must teach.
       void call(() => api.taskTeach(task.task_id), (instruction) => {
@@ -213,9 +196,10 @@ export function Session({
         setTeaching(instruction);
         gate.enter('teaching');
       }).then((instruction) => {
-        // Teach failed and was toasted with a Retry. Practice is still servable, so fall
-        // through rather than strand the task on a spinner.
-        if (!instruction && life.alive()) serveThenShow();
+        // AUDIT FINDING (j). A failed teach NEVER falls through to practice. The service
+        // has no worked example for this knowledge point, so practising it hands the
+        // learner a skill nobody taught. The card says so and offers the next task.
+        if (!instruction && life.alive()) gate.enter('no-instruction');
       });
       return;
     }
@@ -225,7 +209,16 @@ export function Session({
 
   /** The learner read the worked example. One press serves; a second in the same tick stops. */
   const practise = (): void => {
-    if (gate.tryEnter('teaching', 'loading')) serveThenShow();
+    if (!gate.tryEnter('teaching', 'loading')) return;
+    if (taskRef.current?.task_type === 'multi-step') serveWholeItem();
+    else serveThenShow();
+  };
+
+  /** Leave a lesson the service cannot teach. One press advances; a second stops. */
+  const skipTask = (): void => {
+    if (!gate.tryEnter('no-instruction', 'loading')) return;
+    setTeaching(null);
+    advanceTask();
   };
 
   // ---- the plan ------------------------------------------------------------
@@ -297,7 +290,9 @@ export function Session({
   const advance = (next?: ServedProblem | null, nextUnavailable = false): void => {
     if (!gate.tryEnter('feedback', 'loading')) return;
     // The verdict goes now, so no feedback panel stands over the next task's load.
+    const restampAfterStudy = result?.feedback_practice;
     setResult(null);
+    if (restampAfterStudy) { serveThenShow(); return; }
 
     // The attempt IS recorded and the task is NOT finished: the service could not draw the
     // next problem. Re-serve the SAME task. Falling through to `advanceTask` would skip the
@@ -334,9 +329,10 @@ export function Session({
   // cleanup cancels it when a click advances first.
   useEffect(() => {
     if (phase !== 'feedback') return undefined;
-    // A verdict is on screen in `feedback`, so the state holds one.
-    const verdict = result!;
-    if (!verdict.correct || !verdict.next) return undefined;
+    // Integrated feedback has its own receipt and advances only on Continue.
+    if (!result) return;
+    const verdict = result;
+    if (verdict.feedback_practice || !verdict.correct || !verdict.next) return undefined;
     const { next } = verdict;
     const id = life.setTimeout(() => { advanceRef.current(next); }, AUTO_ADVANCE_MS);
     return () => life.clearTimer(id);
@@ -345,8 +341,8 @@ export function Session({
   // Focus moves on every transition (spec section 4.5). Each control is on screen in the
   // phase that focuses it, so the refs name them.
   useEffect(() => {
-    if (phase === 'ready') answerRef.current!.focus();
-    else if (phase === 'feedback') continueRef.current!.focus();
+    if (phase === 'ready') answerRef.current?.focus();
+    else if (phase === 'feedback') continueRef.current?.focus();
     else if (phase === 'done') homeRef.current!.focus();
   }, [phase, problem, result]);
 
@@ -372,7 +368,21 @@ export function Session({
     );
   }
 
-  if (teaching && session.task) {
+  if (!session.task) {
+    return <section className="view-session"><LoadingBlock label="Preparing your session…" /></section>;
+  }
+
+  // AUDIT FINDING (j): the lesson has no approved teach page. No practice is served
+  // from here; the one control leads to the next task.
+  if (phase === 'no-instruction') {
+    return (
+      <section className="view-session">
+        <NoInstruction task={session.task} onSkip={skipTask} onExit={onExit} />
+      </section>
+    );
+  }
+
+  if (teaching) {
     return (
       <section className="view-session" aria-busy={phase === 'loading'}>
         <Teach task={session.task} instruction={teaching} onContinue={practise} />
@@ -380,7 +390,22 @@ export function Session({
     );
   }
 
-  if (!problem || !session.task) {
+  if (integrated) {
+    return <section className="view-session">
+      <p hidden={!session.task.integrated_assessment}>Delayed application assessment</p>
+      <button type="button" className="btn btn-ghost" onClick={onExit}>Exit</button>
+      <Integrated key={session.task.task_id} api={api} taskId={session.task.task_id}
+        problem={integrated} onUnauthorized={demo ? undefined : onUnauthorized}
+        onGraded={() => gate.enter('feedback')}
+        onContinue={() => {
+          if (!gate.tryEnter('feedback', 'loading')) return;
+          setIntegrated(null);
+          advanceTask();
+        }} />
+    </section>;
+  }
+
+  if (!problem) {
     return <section className="view-session"><LoadingBlock label="Preparing your session…" /></section>;
   }
 
@@ -401,6 +426,8 @@ export function Session({
 
       <div className="card problem-card">
         <MathBlock>{problem.text}</MathBlock>
+        {/* The figures of the knowledge point, each with its text equivalent (unit f9). */}
+        <MathVisuals visuals={problem.visuals} />
 
         <div className="hint-list">
           {hints.map((h, i) => (

@@ -1,0 +1,110 @@
+"""Check repaired algebra against authored and sibling semantic families."""
+import json
+from pathlib import Path
+
+import sympy as s
+
+from check_math import expr
+from check_residual_math import REPAIRED
+from check_parameter_math import coefficient_polynomial
+from check_residual_structured import named
+
+ROOT = Path(__file__).resolve().parents[3]
+FACTORING = ("factoring-", "difference-of-squares/", "perfect-square-trinomials/",
+             "sum-difference-of-cubes/", "quadratics-in-form/", "choosing-factoring-strategy/")
+
+
+def parameter_signature(key, item):
+    if key.startswith("writing-quadratics-from-roots/") or key == "applying-the-quadratic-formula/kp1":
+        if not item["answer"].startswith("("):
+            return None
+        poly = coefficient_polynomial(item["answer"])
+        task = "root-equation" if key.startswith("writing-") else key
+        return (task, s.srepr(s.expand(poly)))
+    if key.startswith("converting-to-vertex-form/"):
+        if "vertex_parameters" in item["answer"]:
+            a, h, k = named(item["answer"])["vertex_parameters"]
+        elif key.endswith("kp1"):
+            h, k = expr(item["answer"])
+            a = 1
+        else:
+            a, h, k = expr(item["answer"])
+        return ("vertex-conversion", s.srepr(s.expand(a*(s.Symbol("x")-h)**2+k)))
+    if key == "completing-the-square/kp1":
+        values = named(item["answer"])
+        return (key, str(2*values["shift"]))
+    return None
+
+
+def signature(key, item):
+    parameter = parameter_signature(key, item)
+    if parameter:
+        return parameter
+    if key.startswith(FACTORING):
+        try:
+            value = expr(item["answer"])
+            if not value.has(s.Symbol("x")):
+                return None
+            return ("factor", s.srepr(s.expand(value)))
+        except (TypeError, SyntaxError, AttributeError):
+            return None
+    if key in {"quadratic-formula/kp3", "discriminant/kp2"}:
+        if not item["answer"].isdigit():
+            return None
+        import re
+        math = re.findall(r"\$([^$]*)\$", item["problem"])
+        try:
+            expression = math[0].split("=", 1)
+            raw = expression[-1] if expression[0] == "y" else expression[0]
+            poly = expr(raw)
+            if isinstance(poly, (tuple, s.Tuple)) and len(poly) == 3:
+                a, b, c = poly
+                poly = a*s.Symbol("x")**2+b*s.Symbol("x")+c
+            if not poly.has(s.Symbol("x")) or not item["answer"].isdigit():
+                return None
+            return ("count", s.srepr(s.Poly(poly, s.Symbol("x")).monic().as_expr()))
+        except (TypeError, SyntaxError, IndexError):
+            return None
+    return None
+
+
+def existing_signatures(facts,rows):
+    existing = {}
+    for kp in facts["kps"]:
+        for item in kp["exemplars"]:
+            sig = signature(kp["kp_key"], item)
+            if sig:
+                existing.setdefault(sig, []).append(kp["kp_key"])
+    for row in rows:
+        if row["kp_id"] in REPAIRED:
+            continue
+        for item in row["instances"]:
+            sig = signature(row["kp_id"], item)
+            if sig:
+                existing.setdefault(sig, []).append(row["kp_id"])
+    return existing
+
+
+def check_repaired(rows,existing):
+    checked = 0
+    for row in rows:
+        if row["kp_id"] not in REPAIRED:
+            continue
+        for item in row["instances"]:
+            sig = signature(row["kp_id"], item)
+            if sig:
+                assert sig not in existing, (row["kp_id"], item["problem"], existing.get(sig))
+                existing[sig] = [row["kp_id"]]
+                checked += 1
+    return checked
+
+
+def main():
+    facts = json.loads((ROOT / "target/unit07/facts.json").read_text())
+    rows = json.loads((ROOT / "docs/reports/unit07-template-evidence.json").read_text())
+    checked = check_repaired(rows,existing_signatures(facts,rows))
+    print(f"Semantic algebra collision checks: {checked} repaired instances, no collisions")
+
+
+if __name__ == "__main__":
+    main()

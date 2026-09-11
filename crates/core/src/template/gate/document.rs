@@ -24,7 +24,20 @@ pub(super) fn check_document(doc: &TemplateDoc, spec: &GateSpec) -> Result<(), R
             ),
         ));
     }
-    if !TEMPLATABLE_KINDS.contains(&spec.answer_kind) {
+    if let Some(contract) = &doc.answer_contract {
+        contract
+            .validate()
+            .map_err(|reason| Rejection::new("answer-contract", reason.reason.to_owned()))?;
+        if contract == &crate::answer::AnswerContract::None {
+            return Err(Rejection::new(
+                "answer-contract",
+                "a template requires a deterministic answer contract".to_owned(),
+            ));
+        }
+    }
+    let contracted_multi_step =
+        spec.answer_kind == AnswerKind::MultiStep && doc.answer_contract.is_some();
+    if !TEMPLATABLE_KINDS.contains(&spec.answer_kind) && !contracted_multi_step {
         return Err(Rejection::new(
             "answer-kind",
             format!(
@@ -89,7 +102,15 @@ pub(super) fn check_params(
                 ),
             ));
         }
-        if spec.answer_kind == AnswerKind::Expression && FREE_SYMBOLS.contains(&name.as_str()) {
+        let symbolic_answer = spec.answer_kind == AnswerKind::Expression
+            || matches!(
+                doc.answer_contract,
+                Some(
+                    crate::answer::AnswerContract::PolynomialRelation
+                        | crate::answer::AnswerContract::RelationSetup
+                )
+            );
+        if symbolic_answer && FREE_SYMBOLS.contains(&name.as_str()) {
             return Err(Rejection::new(
                 "unknown-collision",
                 format!(

@@ -52,8 +52,11 @@ pub fn topic(id: &str, prereq: Option<&str>) -> Topic {
             key_prerequisites: Vec::new(),
             exemplars: Vec::new(),
             constraints: None,
+            finite_objective_domain: None,
+            visuals: Vec::new(),
         }],
         diagnostic_exemplar: Some(Exemplar {
+            answer_contract: None,
             problem: format!("probe for {id}: what is 3 + 4?"),
             answer: ANSWER.to_owned(),
             solution_sketch: Some(SKETCH.to_owned()),
@@ -97,11 +100,7 @@ pub fn graph() -> Curriculum {
 /// The router of a test, with the fixture curriculum loaded.
 pub fn app(db: &TestDb) -> Router {
     create_app(
-        AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS)).with_content(Arc::new(
-            Content {
-                curriculum: graph(),
-                cfg: Config::default(),
-            },
-        )),
+        AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
+            .with_content(Arc::new(super::open_content(graph()))),
     )
 }

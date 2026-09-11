@@ -182,35 +182,35 @@ pub fn print_report(report: &Report) {
 // The tests
 // ---------------------------------------------------------------------------
 /// The literal size of the generated set.
-pub const GENERATED_PAIRS: usize = 17_874;
+pub const GENERATED_PAIRS: usize = 17_675;
 
 /// The literal pair count of every generator, in name order.
 pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
     ("algebraic_refactor", 65),
-    ("appended_junk", 1562),
+    ("appended_junk", 1545),
     ("ascii_to_unicode", 70),
     ("caret_power", 0),
-    ("case_flip", 735),
+    ("case_flip", 727),
     ("coarse_decimal", 92),
     ("comma_space_removed", 197),
     ("comma_thousands", 44),
     ("decimal_to_fraction", 105),
-    ("digit_transposition", 604),
-    ("dollar_wrapped", 1298),
+    ("digit_transposition", 591),
+    ("dollar_wrapped", 1281),
     ("dot_thousands", 44),
     ("equivalent_fraction", 165),
-    ("explicit_multiplication", 351),
+    ("explicit_multiplication", 350),
     ("figure_space_thousands", 44),
     ("fraction_to_decimal", 79),
-    ("identity", 1562),
-    ("implicit_multiplication", 270),
-    ("internal_spaces", 1063),
-    ("last_digit_bumped", 1519),
+    ("identity", 1545),
+    ("implicit_multiplication", 262),
+    ("internal_spaces", 1057),
+    ("last_digit_bumped", 1502),
     ("narrow_space_thousands", 44),
     ("nbsp_thousands", 44),
-    ("over_thousand", 256),
+    ("over_thousand", 248),
     ("plus_spaced", 337),
-    ("product_reorder", 276),
+    ("product_reorder", 268),
     ("rewrite_apart", 50),
     ("rewrite_cancel", 78),
     ("rewrite_expand", 25),
@@ -219,18 +219,18 @@ pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
     ("rewrite_together", 116),
     ("set_element_changed", 9),
     ("set_reordered", 11),
-    ("sign_flipped", 1559),
+    ("sign_flipped", 1542),
     ("significant_decimal", 248),
     ("space_thousands", 44),
-    ("star_power", 333),
+    ("star_power", 331),
     ("sum_reorder", 206),
     ("thin_space_thousands", 44),
-    ("times_thousand", 300),
-    ("trailing_period", 1562),
-    ("trailing_zero", 408),
+    ("times_thousand", 292),
+    ("trailing_period", 1545),
+    ("trailing_zero", 400),
     ("tuple_swapped", 183),
-    ("unicode_to_ascii", 54),
-    ("whitespace_padding", 1562),
+    ("unicode_to_ascii", 44),
+    ("whitespace_padding", 1545),
     ("wrong_exponent", 175),
     ("wrong_radicand", 37),
 ];
@@ -246,10 +246,17 @@ pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
 /// is correct with a notation tag, and a rounding of `pi` or `e` has no exact
 /// rational bound, so the checker refuses it (V2) and the pair leaves the
 /// comparison. Class 1 was 965, class 3 was 16,554, and class 4 was 355.
+///
+/// The rational-exponent production of D-F3 (unit f2-grammar) reads five
+/// learner spellings that were class 1 (`x**(1/2)` for `sqrt(x)`). The 31
+/// corpus rows the productions recover and the 16 rows that read as a
+/// quantity (`5 m/s`, `30°`) stay out of the set, because 1.0 has no
+/// comparable verdict on them: the set holds 17,675 pairs, class 1 is 1,050,
+/// and class 3 is 16,305.
 pub const CLASS_COUNTS: [(&str, usize); 5] = [
-    ("class 1 outside_grammar", 1056),
+    ("class 1 outside_grammar", 1050),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 16498),
+    ("class 3 comparable", 16305),
     ("class 4 documented_divergence", 320),
     ("oracle_silent", 0),
 ];

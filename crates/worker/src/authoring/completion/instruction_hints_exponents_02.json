@@ -1,0 +1,242 @@
+[
+  {
+    "key": "scientific-notation-conversion/kp1",
+    "objective": "Convert large numbers to and from scientific notation",
+    "constraints": "coefficient a satisfies 1 <= a < 10",
+    "hints": [
+      "Read the requested direction and the exponent instead of assuming a fixed number of places.",
+      "To write scientific notation, move the decimal until the coefficient is at least one and less than ten, then record the number of places as a positive exponent; to write an ordinary number, expand the positive power of ten.",
+      "Check that the scientific and ordinary representations have exactly the same place value."
+    ]
+  },
+  {
+    "key": "scientific-notation-conversion/kp2",
+    "objective": "Small numbers with negative exponents",
+    "constraints": "negative exponent for numbers less than 1",
+    "hints": [
+      "Read the requested direction and the negative exponent.",
+      "To form scientific notation, move the small decimal right until its coefficient is at least one and strictly less than ten; the number of rightward places becomes the magnitude of the negative exponent. To form an ordinary decimal, shift according to the given negative exponent and preserve leading zeros.",
+      "Check that both forms represent exactly the same small positive value."
+    ]
+  },
+  {
+    "key": "scientific-notation-conversion/kp3",
+    "objective": "Valid form and comparing magnitudes",
+    "constraints": "renormalize the coefficient into [1, 10); compare exponents before coefficients",
+    "hints": [
+      "Normalize each supplied scientific expression first, shifting its decimal and compensating its exponent so the value stays unchanged.",
+      "For a notation task, stop when the coefficient is at least one and less than ten; for a comparison, compare normalized exponents first and coefficients only when the exponents match.",
+      "Give the requested normalized form or comparison result for the original expressions."
+    ]
+  },
+  {
+    "key": "scientific-notation/kp1",
+    "objective": "Multiply in scientific notation",
+    "constraints": "multiply coefficients, add exponents",
+    "hints": [
+      "Multiply the numerical coefficients separately.",
+      "Add the exponents of ten, because equal-base powers are being multiplied.",
+      "Normalize the result: shift any out-of-range coefficient until it is at least one and strictly less than ten, and compensate the exponent."
+    ]
+  },
+  {
+    "key": "scientific-notation/kp2",
+    "objective": "Divide in scientific notation",
+    "constraints": "divide coefficients, subtract exponents",
+    "hints": [
+      "Divide the numerical coefficients and subtract the denominator exponent of ten from the numerator exponent.",
+      "If the coefficient is below one, move its decimal right and decrease the exponent by the same number of places; if it is at least ten, move left and increase the exponent.",
+      "Write the exact normalized coefficient times ten to the resulting integer exponent."
+    ]
+  },
+  {
+    "key": "scientific-notation/kp3",
+    "objective": "Renormalize the result",
+    "constraints": "coefficient must land back in [1, 10)",
+    "hints": [
+      "Perform the stated coefficient product or quotient and combine the powers of ten with the matching exponent rule.",
+      "Normalize an oversized coefficient by shifting left and increasing the exponent; normalize a positive coefficient below one by shifting right and decreasing the exponent.",
+      "Verify that the normalized coefficient is at least one and less than ten and that the decimal shift preserved the value."
+    ]
+  },
+  {
+    "key": "scientific-notation-addition-subtraction/kp1",
+    "objective": "Same power of 10",
+    "constraints": "matching exponents; add or subtract coefficients only",
+    "hints": [
+      "Keep the shared power of ten outside the coefficient calculation.",
+      "Add or subtract only the coefficients.",
+      "Retain the common power of ten."
+    ]
+  },
+  {
+    "key": "scientific-notation-addition-subtraction/kp2",
+    "objective": "Different powers: match exponents first",
+    "constraints": "rewrite the smaller-exponent term to match the larger exponent",
+    "hints": [
+      "Rewrite the term with the smaller exponent to use the larger exponent, scaling that term’s coefficient downward by the matching power of ten to preserve value.",
+      "Perform the stated addition or subtraction on the aligned coefficients and keep the common power of ten.",
+      "Normalize the result until its coefficient is at least one and strictly less than ten, then verify its value against the original expression."
+    ]
+  },
+  {
+    "key": "scientific-notation-addition-subtraction/kp3",
+    "objective": "Renormalize after adding",
+    "constraints": "coefficient must land back in [1, 10)",
+    "hints": [
+      "Align the powers of ten when necessary, then perform the stated addition or subtraction on the coefficients.",
+      "If the positive coefficient is at least ten, shift left and increase the exponent; if it is below one, shift right and decrease the exponent.",
+      "Write the normalized result and check that the coefficient is at least one and strictly less than ten without changing the value."
+    ]
+  },
+  {
+    "key": "perfect-square-roots/kp1",
+    "objective": "Squares of 1 through 15",
+    "constraints": "bases 1-15",
+    "hints": [
+      "Interpret a square as the product of two equal copies of the given number.",
+      "Multiply those equal factors to find the square.",
+      "Use square units only for an area; preserve counting units for an array and use no unit for a pure numerical expression."
+    ]
+  },
+  {
+    "key": "perfect-square-roots/kp2",
+    "objective": "Roots of perfect squares up to 144",
+    "constraints": "perfect squares up to 144",
+    "hints": [
+      "Identify the radicand and seek its principal, nonnegative square root.",
+      "Choose a candidate whose square equals the radicand.",
+      "Square the candidate to verify it, and attach a length unit only when the problem supplies an area context."
+    ]
+  },
+  {
+    "key": "perfect-square-roots/kp3",
+    "objective": "Larger perfect squares and multiples of ten",
+    "constraints": "perfect squares up to 400",
+    "hints": [
+      "Identify the radicand and a candidate principal, nonnegative root.",
+      "Check the candidate by ordinary multiplication of the number by itself.",
+      "Report the verified root, preserving only units actually supplied by the context."
+    ]
+  },
+  {
+    "key": "square-roots/kp1",
+    "objective": "Roots inside arithmetic expressions",
+    "constraints": "perfect-square radicands only",
+    "hints": [
+      "Evaluate each principal square root before combining terms.",
+      "Identify the remaining operation or contextual quantity after the roots are known.",
+      "Apply the requested addition, subtraction, or multiplication and preserve any relevant units."
+    ]
+  },
+  {
+    "key": "square-roots/kp2",
+    "objective": "Roots of fractions",
+    "constraints": "root of a fraction = root of top over root of bottom",
+    "hints": [
+      "Take the principal roots of the numerator and positive denominator separately.",
+      "Form the nonnegative fraction from those roots and simplify it exactly.",
+      "Square the fraction to verify that it returns the original radicand."
+    ]
+  },
+  {
+    "key": "square-roots/kp3",
+    "objective": "Products of roots",
+    "constraints": "products of perfect squares",
+    "hints": [
+      "Evaluate the known principal square roots first.",
+      "If a product is requested, multiply the roots; if one factor is missing, divide the known product by the known nonzero factor.",
+      "Substitute the result into the original product to verify it."
+    ]
+  },
+  {
+    "key": "estimating-square-roots/kp1",
+    "objective": "Bracket a root between consecutive integers",
+    "constraints": "non-perfect-square radicands under 200",
+    "hints": [
+      "Find consecutive perfect squares surrounding the radicand.",
+      "Their roots give consecutive integer bounds.",
+      "Choose the requested lower bound."
+    ]
+  },
+  {
+    "key": "estimating-square-roots/kp2",
+    "objective": "Round a root to the nearest integer",
+    "constraints": "compare distances to the two nearest perfect squares",
+    "hints": [
+      "Bracket the radicand between squares of consecutive nonnegative integers.",
+      "Square the midpoint between those two integers and compare the radicand with that exact threshold.",
+      "Choose the lower integer below the squared-midpoint threshold and the upper integer above it, following the stated tie rule if equality occurs."
+    ]
+  },
+  {
+    "key": "estimating-square-roots/kp3",
+    "objective": "Order values involving roots",
+    "constraints": "compare by squaring",
+    "hints": [
+      "For nonnegative competing values, compare them by comparing their squares with each radicand.",
+      "Place each root relative to the ordinary numbers, or identify the requested extreme.",
+      "Return every original expression in the requested order when an ordering is asked, and return only the requested value for a selection task."
+    ]
+  },
+  {
+    "key": "cube-roots/kp1",
+    "objective": "Cube roots of perfect cubes",
+    "constraints": "perfect cubes up to 1000",
+    "hints": [
+      "Recall perfect cubes near the radicand.",
+      "Find a candidate whose product of three equal factors equals the radicand.",
+      "Cube the candidate to verify the real cube root."
+    ]
+  },
+  {
+    "key": "cube-roots/kp2",
+    "objective": "Cube roots of negative numbers",
+    "constraints": "negative perfect-cube radicands",
+    "hints": [
+      "A negative cube has a negative cube root.",
+      "Find the positive magnitude first.",
+      "Attach the negative sign and cube-check it."
+    ]
+  },
+  {
+    "key": "cube-roots/kp3",
+    "objective": "Fourth and fifth roots",
+    "constraints": "small perfect powers only",
+    "hints": [
+      "Read the actual root index, including whether it is four or five.",
+      "Test a small candidate by raising it to that index, using that many equal factors.",
+      "Choose the nonnegative principal root for an even index and preserve the real sign for an odd index."
+    ]
+  },
+  {
+    "key": "simplifying-radicals/kp1",
+    "objective": "Factor out a perfect square",
+    "constraints": "pull out the largest perfect-square factor",
+    "hints": [
+      "Find the largest perfect-square factor of the radicand, or keep extracting square factors until the remainder is squarefree.",
+      "Take the square root of that perfect-square factor outside the radical.",
+      "Multiply the extracted factors and leave only a squarefree factor inside the radical."
+    ]
+  },
+  {
+    "key": "simplifying-radicals/kp2",
+    "objective": "Larger radicands and coefficients",
+    "constraints": "multiply any outside coefficient after simplifying",
+    "hints": [
+      "Simplify the radical before multiplying by its outside coefficient.",
+      "Extract the largest square factor.",
+      "Multiply the outside factors and retain the remaining radical."
+    ]
+  },
+  {
+    "key": "simplifying-radicals/kp3",
+    "objective": "Prime factorization for large radicands",
+    "constraints": "radicands 100-300; pair up prime factors",
+    "hints": [
+      "Prime-factor the radicand.",
+      "Pair identical prime factors; each pair contributes one outside factor.",
+      "Multiply the outside factors and leave unpaired primes inside."
+    ]
+  }
+]

@@ -1,0 +1,87 @@
+# Integrated task (D-F10): workforce and capacity.
+# Person-minutes meet a service window and a staffing lower bound. The division
+# does not come out whole, so the bound rounds up and the assumption matters.
+id: integrated-clinic-window
+title: Staff the vaccination window
+course: foundations
+topic: unit-rates
+component_topics:
+  - unit-rates
+  - inequality-word-problems
+domain: workforce_capacity
+scenario: >
+  A clinic opens a 4 hour vaccination window on Saturday and books 96 patients.
+  One nurse needs 15 minutes for one patient and takes a 20 minute break inside
+  the window. Every nurse works the whole window.
+given:
+  - label: Service window
+    value: 4 h
+  - label: Booked patients
+    value: "96"
+  - label: Time for one patient
+    value: 15 min
+  - label: Break for one nurse
+    value: 20 min
+    note: >
+      The 15 minutes hold for every patient. If a second dose takes 18 minutes,
+      the work grows to 1728 person-minutes and the window needs 8 nurses.
+method:
+  prompt: Which method gives the number of nurses the window needs?
+  options:
+    - id: person-minutes-over-nurse-minutes
+      label: Divide the person-minutes of work by the minutes one nurse works, then round up.
+      correct: true
+      why: Every nurse gives the same minutes, so the ratio is the count of nurses.
+    - id: patients-over-hours
+      label: Divide the patients by the hours of the window.
+      correct: false
+      why: That answers patients per hour and names no nurse.
+    - id: patients-over-fifteen
+      label: Divide the patients by 15.
+      correct: false
+      why: 15 is minutes for one patient, so the quotient carries no useful unit.
+steps:
+  - id: work-person-minutes
+    ask:
+      prompt: How many person-minutes of work does the window hold?
+      answer: "1440"
+      unit: person-minutes
+      hints:
+        - Every patient needs the same time.
+        - Multiply the booked patients by the minutes for one patient.
+    skills:
+      - unit-rates/kp1
+  - id: nurse-minutes
+    ask:
+      prompt: How many minutes does one nurse work with patients in the window?
+      answer: "220"
+      unit: min
+      hints:
+        - The window is stated in hours.
+        - The break is inside the window, so it leaves the working minutes.
+    skills:
+      - unit-rates/kp3
+  - id: patients-per-nurse
+    ask:
+      prompt: How many patients can one nurse see in the window?
+      answer: "14"
+      unit: patients
+      hints:
+        - Divide the working minutes of one nurse by the minutes for one patient.
+        - A part patient is not a patient, so go down to the whole number.
+    skills:
+      - unit-rates/kp3
+final:
+  ask:
+    prompt: What is the smallest number of nurses that clears the booking?
+    answer: "7"
+    unit: nurses
+    hints:
+      - Compare the work of the window against the work one nurse gives.
+      - A part nurse cannot be staffed, so go up to the whole number.
+  interpretation: >
+    One nurse sees 14 patients, so 7 nurses see up to 98 patients and clear the
+    96 bookings with 2 places spare. 6 nurses see up to 84 patients and leave 12
+    patients unseen at the end of the window.
+  skills:
+    - inequality-word-problems/kp2

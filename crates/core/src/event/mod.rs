@@ -4,10 +4,12 @@
 //! the fold. The shapes here are the 1.0 shapes byte for byte, because 2.0 must read
 //! and write the same log:
 //!
-//! - [`Event`] is a tagged union on the `type` key, with 16 members.
+//! - [`Event`] is a tagged union on the `type` key, with 17 members.
 //! - Every member carries the envelope `ts`, `session`, and `v`.
 //! - Every member forbids an unknown key, as 1.0's `extra="forbid"` does.
-//! - `v` is `1`. 1.0 holds an empty shim table, so any other version is an error.
+//! - `v` is `1` or `2`. 2.0 holds ONE shim: a v1 `attempt` row reads as v2 through
+//!   [`Attempt::normalize`], which derives `outcome` from `correct`. An original row
+//!   is never rewritten (C2), so the reader writes back the `v` it read.
 //! - [`Timestamp`] parses RFC 3339, reads a naive value as UTC (trap T8), and writes
 //!   `...Z` with second precision when the microsecond part is zero.
 //!
@@ -19,23 +21,33 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 mod body;
+mod integrated;
 mod kind;
 mod note;
 mod scalar;
 
 pub use body::{
-    Attempt, AttemptProblem, LessonResult, QuizResult, QuizTopicResult, RegradedAttempt,
-    ReviewResult, ServedProblem, TaskServed,
+    Attempt, AttemptProblem, DrillResult, LessonResult, OrdinaryProblemServed, QuizResult,
+    QuizTopicResult, RegradedAttempt, RetentionProbe, ReviewResult, ServedProblem, TaskServed,
 };
-pub use kind::{AnswerKind, EnrollReason, KpProgress, TaskType, TopicStatus, WorkQuality};
+pub use integrated::{
+    IntegratedAttempt, IntegratedField, IntegratedHintRevealed, IntegratedServed,
+};
+pub use kind::{
+    AnswerKind, AttemptOutcome, EnrollReason, Exposure, ItemSource, KpProgress, TaskType,
+    TopicStatus, WorkQuality,
+};
 pub use note::{
     AnkiCardCreated, ConfigChanged, CurriculumChanged, DiagnosticAnswer, DiagnosticPlaced,
     Enrolled, ProfileReset, Regraded, RemediationTriggered, SessionEnd, SessionStart,
 };
 pub use scalar::{PositiveSecs, SchemaVersion, Secs, Slug, Timestamp, Weight};
 
-/// The one schema version this build reads. 1.0 holds an empty shim table.
-pub const SCHEMA_VERSION: i64 = 1;
+/// The schema version this build writes (D-F2, D-F9).
+pub const SCHEMA_VERSION: i64 = 2;
+
+/// The first schema version. A row at this version reads through the shim.
+pub const SCHEMA_VERSION_V1: i64 = 1;
 
 /// An event that does not parse, or does not satisfy the 1.0 schema.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
@@ -67,6 +79,9 @@ pub enum Event {
     /// A task was served.
     #[serde(rename = "task_served")]
     TaskServed(TaskServed),
+    /// One ordinary problem handed to the learner.
+    #[serde(rename = "ordinary_problem_served")]
+    OrdinaryProblemServed(OrdinaryProblemServed),
     /// One graded problem attempt.
     #[serde(rename = "attempt")]
     Attempt(Attempt),
@@ -103,6 +118,21 @@ pub enum Event {
     /// The curriculum changed.
     #[serde(rename = "curriculum_changed")]
     CurriculumChanged(CurriculumChanged),
+    /// One delayed retention probe (D-F11).
+    #[serde(rename = "retention_probe")]
+    RetentionProbe(RetentionProbe),
+    /// One integrated task handed to a learner (D-F10).
+    #[serde(rename = "integrated_served")]
+    IntegratedServed(IntegratedServed),
+    /// One graded submission of a whole integrated task (D-F10).
+    #[serde(rename = "integrated_attempt")]
+    IntegratedAttempt(IntegratedAttempt),
+    /// One server-confirmed hint reveal of an integrated task.
+    #[serde(rename = "integrated_hint_revealed")]
+    IntegratedHintRevealed(IntegratedHintRevealed),
+    /// An entire drill completed.
+    #[serde(rename = "drill_result")]
+    DrillResult(DrillResult),
 }
 
 /// Apply `body` to the inner payload of every [`Event`] member.
@@ -113,6 +143,7 @@ macro_rules! for_each_event {
             Event::SessionEnd($inner) => $body,
             Event::Enrolled($inner) => $body,
             Event::TaskServed($inner) => $body,
+            Event::OrdinaryProblemServed($inner) => $body,
             Event::Attempt($inner) => $body,
             Event::LessonResult($inner) => $body,
             Event::ReviewResult($inner) => $body,
@@ -125,17 +156,54 @@ macro_rules! for_each_event {
             Event::AnkiCardCreated($inner) => $body,
             Event::ConfigChanged($inner) => $body,
             Event::CurriculumChanged($inner) => $body,
+            Event::RetentionProbe($inner) => $body,
+            Event::IntegratedServed($inner) => $body,
+            Event::IntegratedAttempt($inner) => $body,
+            Event::IntegratedHintRevealed($inner) => $body,
+            Event::DrillResult($inner) => $body,
+        }
+    };
+}
+
+/// Map every event variant to its stable wire discriminator. Keeping the match in
+/// one macro lets accessors remain one-decision functions as the event family grows.
+macro_rules! event_type_name {
+    ($event:expr) => {
+        match $event {
+            Event::SessionStart(_) => "session_start",
+            Event::SessionEnd(_) => "session_end",
+            Event::Enrolled(_) => "enrolled",
+            Event::TaskServed(_) => "task_served",
+            Event::OrdinaryProblemServed(_) => "ordinary_problem_served",
+            Event::Attempt(_) => "attempt",
+            Event::LessonResult(_) => "lesson_result",
+            Event::ReviewResult(_) => "review_result",
+            Event::QuizResult(_) => "quiz_result",
+            Event::RemediationTriggered(_) => "remediation_triggered",
+            Event::DiagnosticAnswer(_) => "diagnostic_answer",
+            Event::DiagnosticPlaced(_) => "diagnostic_placed",
+            Event::ProfileReset(_) => "profile_reset",
+            Event::Regraded(_) => "regraded",
+            Event::AnkiCardCreated(_) => "anki_card_created",
+            Event::ConfigChanged(_) => "config_changed",
+            Event::CurriculumChanged(_) => "curriculum_changed",
+            Event::RetentionProbe(_) => "retention_probe",
+            Event::IntegratedServed(_) => "integrated_served",
+            Event::IntegratedAttempt(_) => "integrated_attempt",
+            Event::IntegratedHintRevealed(_) => "integrated_hint_revealed",
+            Event::DrillResult(_) => "drill_result",
         }
     };
 }
 
 impl Event {
-    /// The 16 `type` values, in the order this module declares them.
-    pub const TYPE_NAMES: [&'static str; 16] = [
+    /// The 19 ordinary-task `type` values, in declaration order.
+    pub const TYPE_NAMES: [&'static str; 19] = [
         "session_start",
         "session_end",
         "enrolled",
         "task_served",
+        "ordinary_problem_served",
         "attempt",
         "lesson_result",
         "review_result",
@@ -148,6 +216,8 @@ impl Event {
         "anki_card_created",
         "config_changed",
         "curriculum_changed",
+        "retention_probe",
+        "drill_result",
     ];
 
     /// Read one event from JSON text.
@@ -155,9 +225,32 @@ impl Event {
     /// # Errors
     ///
     /// Returns [`EventError::Json`] for malformed text, an unknown `type`, an unknown
-    /// key, a missing required key, an out-of-range value, or a `v` other than 1.
+    /// key, a missing required key, an out-of-range value, or a `v` other than 1 or 2.
     pub fn from_json(text: &str) -> Result<Self, EventError> {
-        serde_json::from_str(text).map_err(|error| EventError::Json(error.to_string()))
+        let mut event: Self =
+            serde_json::from_str(text).map_err(|error| EventError::Json(error.to_string()))?;
+        event.normalize();
+        Ok(event)
+    }
+
+    /// Apply the v1 shim to a body that serde built (D-F2).
+    ///
+    /// [`Event::from_json`] calls it, and so does every other reader that builds an
+    /// event through serde — the store decodes the `jsonb` payload straight into this
+    /// type. The step is idempotent for attempts and diagnostic answers.
+    pub fn normalize(&mut self) {
+        match self {
+            Self::Attempt(body) => body.normalize(),
+            Self::DiagnosticAnswer(body) => {
+                if let Some(outcome) = &body.outcome {
+                    body.correct = *outcome == AttemptOutcome::Correct;
+                    if outcome.is_ungraded() {
+                        body.weight = Weight::default();
+                    }
+                }
+            }
+            _ => {}
+        }
     }
 
     /// Write the event as canonical JSON: sorted keys, compact separators, non-ASCII
@@ -179,24 +272,7 @@ impl Event {
     /// The `type` value of this event.
     #[must_use]
     pub const fn type_name(&self) -> &'static str {
-        match self {
-            Self::SessionStart(_) => "session_start",
-            Self::SessionEnd(_) => "session_end",
-            Self::Enrolled(_) => "enrolled",
-            Self::TaskServed(_) => "task_served",
-            Self::Attempt(_) => "attempt",
-            Self::LessonResult(_) => "lesson_result",
-            Self::ReviewResult(_) => "review_result",
-            Self::QuizResult(_) => "quiz_result",
-            Self::RemediationTriggered(_) => "remediation_triggered",
-            Self::DiagnosticAnswer(_) => "diagnostic_answer",
-            Self::DiagnosticPlaced(_) => "diagnostic_placed",
-            Self::ProfileReset(_) => "profile_reset",
-            Self::Regraded(_) => "regraded",
-            Self::AnkiCardCreated(_) => "anki_card_created",
-            Self::ConfigChanged(_) => "config_changed",
-            Self::CurriculumChanged(_) => "curriculum_changed",
-        }
+        event_type_name!(self)
     }
 
     /// The `ts` of this event.
@@ -211,7 +287,7 @@ impl Event {
         for_each_event!(self, inner => inner.session.as_deref())
     }
 
-    /// The `v` of this event. It is always 1.
+    /// The `v` of this event. It is 1 on a row this build did not write.
     #[must_use]
     pub fn v(&self) -> SchemaVersion {
         for_each_event!(self, inner => inner.v)
@@ -227,12 +303,13 @@ fn serialize_error(error: serde_json::Error) -> EventError {
 mod tests {
     use super::*;
 
-    /// The smallest valid body of each of the 16 types, in declaration order.
-    const MINIMAL: [&str; 16] = [
+    /// The smallest valid body of each of the 19 types, in declaration order.
+    const MINIMAL: [&str; 19] = [
         r#"{"type":"session_start","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
         r#"{"type":"session_end","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
         r#"{"type":"enrolled","ts":"2026-03-02T09:00:00Z","session":"s","course":"c"}"#,
         r#"{"type":"task_served","ts":"2026-03-02T09:00:00Z","session":"s","task_id":"t","task_type":"lesson"}"#,
+        r#"{"type":"ordinary_problem_served","ts":"2026-03-02T09:00:00Z","session":"s","task_id":"t","problem_id":"p1","kp_id":"x/kp1","item_digest":"digest","item_source":"exemplar","exposure":"first"}"#,
         r#"{"type":"attempt","ts":"2026-03-02T09:00:00Z","session":"s","attempt_id":"a","task_id":"t","topic":"x","task_type":"lesson","problem":{"text":"p","expected":"1"},"given_answer":"1","correct":true,"secs":3,"work_quality":"perfect"}"#,
         r#"{"type":"lesson_result","ts":"2026-03-02T09:00:00Z","session":"s","topic":"x","passed":true,"quality_tier":"perfect"}"#,
         r#"{"type":"review_result","ts":"2026-03-02T09:00:00Z","session":"s","topic":"x","passed":true,"weighted_score":1.0,"quality_tier":"perfect"}"#,
@@ -245,6 +322,8 @@ mod tests {
         r#"{"type":"anki_card_created","ts":"2026-03-02T09:00:00Z","session":"s","topic":"x","deck":"d","note_id":1,"front_hash":"h"}"#,
         r#"{"type":"config_changed","ts":"2026-03-02T09:00:00Z","session":"s","summary":"m"}"#,
         r#"{"type":"curriculum_changed","ts":"2026-03-02T09:00:00Z","session":"s","summary":"m"}"#,
+        r#"{"type":"retention_probe","ts":"2026-03-02T09:00:00Z","session":"s","kp":"kp1","topic":"x","delay_days":7,"outcome":"correct","secs":9}"#,
+        r#"{"type":"drill_result","ts":"2026-03-02T09:00:00Z","session":"s","task_id":"s-drill-x"}"#,
     ];
 
     #[test]

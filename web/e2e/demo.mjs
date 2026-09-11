@@ -12,17 +12,12 @@
  *
  * `BASE` names the origin the server is on. `SHOTS` is where the screenshots land.
  */
-import { chromium } from 'playwright';
 import {
-  Run, checkMathRendered, checkNotBlank, checkSameProblem, finishWalk,
+  checkMathRendered, checkNotBlank, checkSameProblem, finishWalk, startWalk,
 } from './checks.mjs';
 
 const BASE = process.env.BASE ?? 'http://127.0.0.1:4173';
-const SHOTS = process.env.SHOTS ?? './shots';
-
-const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1400, height: 950 } });
-const run = new Run(page, { shots: SHOTS, prefix: 'demo-' });
+const { browser, page, run } = await startWalk('demo-');
 
 /** The lesson, from the dashboard to the first practice problem. */
 async function intoLesson() {

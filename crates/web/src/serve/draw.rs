@@ -12,16 +12,46 @@ pub(super) async fn draw(
     state: &AppState,
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,
-    graph: &Curriculum,
+    content: &Content,
     target: &Target,
     avoid: &Avoid<'_>,
-) -> Result<PoolRow, ApiError> {
-    let popped = store(state, pop_with_ring_tx(tx, user_id, &target.key, avoid)).await?;
-    if let Some(claimed) = popped.claimed {
-        return Ok(claimed.row);
+) -> Result<(PoolRow, bool), ApiError> {
+    let graph = &content.curriculum;
+    let generation_context = cadus_store::pool::GenerationContext {
+        curriculum_digest: content.curriculum_context_digest()?.to_owned(),
+        review_engine_digest: content.review_engine_digest().to_owned(),
+    };
+    if let Some(kp) = authored_kp(graph, &target.serve, &target.kp)
+        && let Some(policy) = kp.finite_objective_domain.as_ref()
+    {
+        let topic = graph
+            .idx_of(&target.serve)
+            .and_then(|idx| graph.topic(idx))
+            .ok_or_else(|| no_problem(&target.serve))?;
+        let spec = cadus_core::template::GateSpec::new(topic.answer_kind, &kp.exemplars)
+            .with_finite(&target.key, policy)
+            .map_err(|_| no_problem(&target.serve))?;
+        return super::finite::draw(
+            state,
+            tx,
+            user_id,
+            &target.key,
+            &spec,
+            avoid,
+            &generation_context,
+        )
+        .await;
     }
-    if let Some(row) = refill(state, tx, user_id, graph, target, avoid).await? {
-        return Ok(row);
+    let popped = store(
+        state,
+        pop_with_ring_current_tx(tx, user_id, &target.key, avoid, &generation_context),
+    )
+    .await?;
+    if let Some(claimed) = popped.claimed {
+        return Ok((claimed.row, false));
+    }
+    if let Some(row) = refill(state, tx, user_id, content, target, avoid).await? {
+        return Ok((row, false));
     }
     let rotated = store(state, reclaim_exemplar_tx(tx, user_id, &target.key, avoid)).await?;
     match rotated {
@@ -32,7 +62,7 @@ pub(super) async fn draw(
                 "serve: the A6 exemplar rotation served an instance again; this knowledge point \
                  needs an approved template"
             );
-            Ok(row)
+            Ok((row, true))
         }
         None => Err(no_problem(&target.serve)),
     }
@@ -45,16 +75,25 @@ async fn refill(
     state: &AppState,
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,
-    graph: &Curriculum,
+    content: &Content,
     target: &Target,
     avoid: &Avoid<'_>,
 ) -> Result<Option<PoolRow>, ApiError> {
+    let graph = &content.curriculum;
     let rows = exemplar_rows(graph, target);
     if rows.is_empty() {
         return Ok(None);
     }
     store(state, insert_batch(&mut **tx, user_id, &target.key, &rows)).await?;
-    let refilled = store(state, pop_with_ring_tx(tx, user_id, &target.key, avoid)).await?;
+    let generation_context = cadus_store::pool::GenerationContext {
+        curriculum_digest: content.curriculum_context_digest()?.to_owned(),
+        review_engine_digest: cadus_core::review_engine::DIGEST.to_owned(),
+    };
+    let refilled = store(
+        state,
+        pop_with_ring_current_tx(tx, user_id, &target.key, avoid, &generation_context),
+    )
+    .await?;
     let Some(claimed) = refilled.claimed else {
         return Ok(None);
     };
@@ -100,6 +139,28 @@ pub(super) fn exemplar_rows(graph: &Curriculum, target: &Target) -> Vec<NewInsta
     }
 }
 
+/// Capture the current authored policy for a newly served exemplar. Matching
+/// both statement and answer keeps changed content from borrowing a policy.
+/// Template rows retain their approved document's policy. Existing served
+/// problems bypass this function and keep their original captured policy.
+pub(super) fn answer_of(
+    graph: &Curriculum,
+    target: &Target,
+    row: &PoolRow,
+) -> cadus_core::pool::PoolAnswer {
+    let mut answer = row.expected_answer.clone();
+    if row.source == Source::Exemplar
+        && let Some(exemplar) = authored_kp(graph, &target.serve, &target.kp).and_then(|kp| {
+            kp.exemplars
+                .iter()
+                .find(|item| item.problem == row.problem.text && item.answer == answer.answer)
+        })
+    {
+        answer.answer_contract = exemplar.answer_contract.clone();
+    }
+    answer
+}
+
 /// The authored worked solution of the drawn row, or `None`.
 ///
 /// The grade reply of unit U8 reveals it after the attempt commits, and the
@@ -124,17 +185,31 @@ pub(super) fn exemplar_rows(graph: &Curriculum, target: &Target) -> Vec<NewInsta
 pub(super) async fn solution_of(
     state: &AppState,
     tx: &mut Transaction<'_, Postgres>,
-    graph: &Curriculum,
+    content: &Content,
     target: &Target,
     row: &PoolRow,
 ) -> Result<Option<String>, ApiError> {
+    let graph = &content.curriculum;
     if row.source == Source::Exemplar {
         return Ok(exemplar_sketch(graph, target, &row.problem.text));
     }
     let Some(digest) = row.content_digest.as_deref() else {
         return Ok(None);
     };
-    let found = store(state, approved_template(&mut **tx, &target.key)).await?;
+    let policy = authored_kp(graph, &target.serve, &target.kp)
+        .and_then(|kp| kp.finite_objective_domain.as_ref())
+        .map(|policy| policy.fingerprint(&target.key))
+        .transpose()
+        .map_err(|_| no_problem(&target.serve))?;
+    let found = store(
+        state,
+        cadus_store::pool::approved_template_current(
+            &mut **tx,
+            &target.key,
+            content.review_context(policy.as_deref())?,
+        ),
+    )
+    .await?;
     // C6: the row was drawn from ONE digest, and the approved document may be a
     // later one. The sketch of a different document is not this problem's
     // solution.
@@ -314,5 +389,36 @@ mod tests {
             exemplar_sketch(&exemplar, &target("counting", "kp9"), "Give 7."),
             None
         );
+    }
+    #[test]
+    fn a_new_exemplar_serve_captures_the_matching_current_policy() {
+        use cadus_core::answer::AnswerContract;
+        let mut topic = topic_doc("counting", &[("kp1", &["7"])]);
+        topic["knowledge_points"][0]["exemplars"][0]["answer_contract"] = json!({"kind": "exact"});
+        let graph = arena(&[topic]);
+        let target = target("counting", "kp1");
+        let instance = exemplar_rows(&graph, &target).remove(0);
+        let mut row = PoolRow {
+            id: Uuid::nil(),
+            source: Source::Exemplar,
+            content_digest: None,
+            generation_context: None,
+            problem: instance.problem,
+            expected_answer: instance.expected_answer,
+            instance_hash: instance.instance_hash,
+        };
+        row.expected_answer.answer_contract = None;
+        let captured = answer_of(&graph, &target, &row);
+        assert_eq!(captured.answer_contract, Some(AnswerContract::Exact));
+        assert_eq!(row.expected_answer.answer_contract, None);
+        row.expected_answer.answer = "8".to_owned();
+        assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
+        row.expected_answer.answer = "7".to_owned();
+        row.problem.text = "Different question".to_owned();
+        assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
+        row.problem.text = "Give 7.".to_owned();
+        row.source = Source::Template;
+        assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
+        assert_eq!(captured.answer_contract, Some(AnswerContract::Exact));
     }
 }

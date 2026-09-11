@@ -110,22 +110,15 @@ async fn a_second_correct_answer_at_the_last_kp_passes_the_lesson() {
     .await;
 }
 
-/// The passing lesson is reference-assisted when ANY of its attempts was: the
-/// earlier answer took a hint, so the close carries `assisted: true` even
-/// though the closing answer did not.
+/// A helped answer supplies no independent lesson-pass evidence (D-F8).
 #[tokio::test]
-async fn a_lesson_passed_with_an_earlier_assisted_answer_closes_assisted() {
+async fn an_earlier_assisted_answer_does_not_satisfy_the_pass_rule() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner_at_the_second_pass(&db, "assisted-pass@example.com", "kp2", true).await;
-
         let body = answer_lesson_ok(&app, user, "13.5").await;
-        assert_eq!(body["task_status"], "task_passed");
-
-        let closes = events_of_type(&db, user, "lesson_result").await;
-        assert_eq!(closes.len(), 1);
-        assert_eq!(closes[0]["passed"], true);
-        assert_eq!(closes[0]["assisted"], true);
+        assert_eq!(body["task_status"], "continue");
+        assert!(events_of_type(&db, user, "lesson_result").await.is_empty());
     })
     .await;
 }

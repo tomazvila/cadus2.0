@@ -12,7 +12,7 @@ use super::*;
 /// Walk one canonical form and collect its radical atoms.
 pub fn collect_radical_atoms(canon: &Canon, out: &mut BTreeSet<String>) {
     match canon {
-        Canon::Rational(_) => {}
+        Canon::Rational(_) | Canon::Label(_) => {}
         Canon::Radical(terms) => {
             for basis in terms.keys() {
                 if !basis.radicand.is_one() {
@@ -40,7 +40,9 @@ pub fn collect_radical_atoms(canon: &Canon, out: &mut BTreeSet<String>) {
                 collect_radical_atoms(end, out);
             }
         }
-        Canon::Assign { value, .. } => collect_radical_atoms(value, out),
+        Canon::Assign { value, .. } | Canon::Quantity { value, .. } => {
+            collect_radical_atoms(value, out);
+        }
     }
 }
 
@@ -63,6 +65,10 @@ pub fn collect_poly_radicals(poly: &cadus_core::answer::Poly, out: &mut BTreeSet
                 }
             }
             Atom::Exp(inner) => collect_radical_atoms(inner, out),
+            Atom::Root(base, index) => {
+                out.insert(format!("root({base:?}, {index})**{exponent}"));
+                collect_radical_atoms(base, out);
+            }
             Atom::Pi | Atom::E | Atom::Var(_) => {}
         }
     }
@@ -308,7 +314,7 @@ pub fn holds_the_variable_x(answer: &str) -> bool {
 /// Collect the variable names of one canonical form.
 pub fn collect_variable_names(canon: &Canon, out: &mut BTreeSet<String>) {
     match canon {
-        Canon::Rational(_) | Canon::Radical(_) => {}
+        Canon::Rational(_) | Canon::Radical(_) | Canon::Label(_) => {}
         Canon::Poly(poly) => collect_poly_variables(poly, out),
         Canon::Value { num, den } => {
             collect_poly_variables(num, out);
@@ -332,7 +338,9 @@ pub fn collect_variable_names(canon: &Canon, out: &mut BTreeSet<String>) {
                 collect_variable_names(end, out);
             }
         }
-        Canon::Assign { value, .. } => collect_variable_names(value, out),
+        Canon::Assign { value, .. } | Canon::Quantity { value, .. } => {
+            collect_variable_names(value, out);
+        }
     }
 }
 
@@ -348,7 +356,7 @@ pub fn collect_poly_variables(poly: &cadus_core::answer::Poly, out: &mut BTreeSe
                     collect_variable_names(arg, out);
                 }
             }
-            Atom::Exp(inner) => collect_variable_names(inner, out),
+            Atom::Exp(inner) | Atom::Root(inner, _) => collect_variable_names(inner, out),
             Atom::Sqrt(_) | Atom::Pi | Atom::E => {}
         }
     }

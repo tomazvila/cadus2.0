@@ -69,10 +69,14 @@ fn a_set_a_list_and_a_tuple_are_three_different_answers() {
             Canon::Rational(whole(5)),
         ])
     );
-    assert_eq!(check("{1, 3, 5}", "[1, 3, 5]", E), decided(false, false));
-    assert_eq!(check("{1, 3, 5}", "(1, 3, 5)", E), decided(false, false));
+    // The set production of D-F3 (unit f2-grammar) gives a set against an
+    // ordered collection no verdict: the two shapes hold one member set, and
+    // the answer contract decides the shape. 1.0 answered False. A list
+    // against a tuple stays False. `answer_set.rs` pins the production.
+    assert_undecidable("{1, 3, 5}", "[1, 3, 5]", E, "a set against a list");
+    assert_undecidable("{1, 3, 5}", "(1, 3, 5)", E, "a set against a tuple");
     assert_eq!(check("[1, 3, 5]", "(1, 3, 5)", E), decided(false, false));
-    assert_eq!(check("[1, 3, 5]", "{1, 3, 5}", E), decided(false, false));
+    assert_undecidable("[1, 3, 5]", "{1, 3, 5}", E, "a set against a list");
     // A repeated set member collapses, and a repeated list member does not.
     assert_eq!(check("{1, 3, 5}", "{1, 3, 5, 5}", E), decided(true, false));
     assert_eq!(check("[1, 3, 5]", "[1, 3, 5, 5]", E), decided(false, false));

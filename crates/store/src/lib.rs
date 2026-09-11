@@ -29,6 +29,7 @@ pub mod auth;
 pub mod config;
 pub mod content;
 pub mod diagnosis;
+pub mod integrated;
 pub mod pool;
 pub mod shutdown;
 pub mod state;

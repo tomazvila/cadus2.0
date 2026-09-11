@@ -7,10 +7,12 @@
 export { ApiError, NETWORK_MESSAGE, dispositionFilename, downloadFile, request } from './client';
 export { api } from './endpoints';
 export { createDemoApi } from './demo';
+export { createIntegratedDemoApi } from './integrated-demo';
 export * from './types';
 
 import { api } from './endpoints';
 import { createDemoApi } from './demo';
+import { createIntegratedDemoApi } from './integrated-demo';
 import type { ApiClient } from './types';
 
 /**
@@ -21,5 +23,7 @@ import type { ApiClient } from './types';
  * — reading `location.search` inside would make every caller depend on a global.
  */
 export function resolveApi(search: string): ApiClient {
-  return new URLSearchParams(search).get('demo') === '1' ? createDemoApi() : api;
+  const mode = new URLSearchParams(search).get('demo');
+  if (mode === 'journey') return createIntegratedDemoApi();
+  return mode === '1' ? createDemoApi() : api;
 }

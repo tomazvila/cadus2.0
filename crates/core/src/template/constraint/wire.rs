@@ -128,7 +128,7 @@ impl From<Term> for TermRepr {
 /// A whole number that fits an `i64` writes as a JSON number, so a document that
 /// reads `{"lit": 100}` writes `{"lit": 100}` again. The round trip must hold
 /// byte for byte, because `content_store.digest` covers the whole body (spec
-/// section 8, trap 8) and a changed byte asks for a new human approval (C6).
+/// section 8, trap 8) and a changed byte asks for a new content approval (C6).
 fn literal_scalar(number: &BigRational) -> Scalar {
     if let Some(value) = i64_of(number) {
         return Scalar::Int(value);

@@ -2,7 +2,9 @@
 
 use std::collections::BTreeMap;
 
-use crate::event::{Attempt, Event, LessonResult, Regraded, RegradedAttempt, ReviewResult};
+use crate::event::{
+    Attempt, AttemptOutcome, Event, LessonResult, Regraded, RegradedAttempt, ReviewResult,
+};
 
 /// The stream with every `regraded` correction folded in (`projector.py:698-770`).
 ///
@@ -105,6 +107,13 @@ impl<'a> Corrections<'a> {
             fixed.work_quality = correction.work_quality;
             fixed.error_tags.clone_from(&correction.error_tags);
             fixed.grader_note.clone_from(&correction.grader_note);
+            // A correction of an UNGRADED attempt names the outcome a human
+            // reached (D-F2). `correct` follows the outcome, so the invariant
+            // `correct == (outcome == Correct)` holds after the correction too.
+            if let Some(outcome) = &correction.outcome {
+                fixed.correct = *outcome == AttemptOutcome::Correct;
+                fixed.outcome = outcome.clone();
+            }
         }
         fixed
     }
@@ -123,6 +132,10 @@ impl<'a> Corrections<'a> {
     /// The review result with the correction of `task_id` applied.
     fn corrected_review(&self, body: &ReviewResult, task_id: Option<&str>) -> ReviewResult {
         let mut fixed = body.clone();
+        if body.inconclusive {
+            fixed.xp = 0.0;
+            return fixed;
+        }
         apply_task_correction(
             &mut fixed.quality_tier,
             &mut fixed.xp,

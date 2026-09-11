@@ -1,0 +1,752 @@
+{
+  "schema_version": 1,
+  "reviewer": {
+    "agent": "/root/orchestrator",
+    "model": "gpt-6-astra",
+    "role": "independent semantic reviewer"
+  },
+  "reviewed_at_utc": "2026-09-09T23:35:24.315812+00:00",
+  "authored_sha256": "f947049d232f3713bd6f224dfeef9b4a1a10663785c62035be35909744a2766e",
+  "context_snapshot": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/exponents02-current-review-context.json",
+  "context_snapshot_sha256": "0892cc621aae3e98b9c7e2cbe75ba4a41474b2826478d0a2c369ec09e94c19cb",
+  "math_artifact": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-02.math-checks.json",
+  "math_sha256": "51035e15f736ada9247f94bc186a56b1824d527f17c584fb76bfc6ce34c0cc06",
+  "summary": {
+    "kps": 24,
+    "hints_accept": 5,
+    "hints_revise": 19,
+    "templates_with_explicit_findings_or_scope_resolution": 14,
+    "independent_bindings": 288,
+    "math_mismatches": 0,
+    "strict_domain_violations": 11
+  },
+  "records": [
+    {
+      "key": "scientific-notation-conversion/kp1",
+      "authored_row_sha256": "a186dc3aa824d011e66f76605fe8b76f0efef466ea12aa34ac728f3f5b5c7f9f",
+      "curriculum_kp_sha256": "283799badc116cbe893aa043cdc6bde0abcdd48d8b5fcc4ab7e2a01872343d6c",
+      "topic_prerequisites_sha256": "ae2dbff8a87249686113467e375e51d92dd4799a1ea14abd335b6f0c65214d42",
+      "selected_template_sha256": "7b3c902fe23f1c90410cfbf4b7a696255cba2e20f86bcb7a52b775e3346ff2c6",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Hardcodes four places and only scientific-to-ordinary conversion. Read the actual exponent/direction; to form scientific notation move the decimal until the coefficient is in[1,10) and count places, while to form an ordinary number expand the given positive power. Verify both representations name the same value.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "scientific-notation-conversion/kp1"
+          ],
+          "kind": "ordinary_numeric_representation",
+          "finding": "Current ordinary-number conversion outputs correct integers but its missing form policy does not enforce conversion out of scientific notation.",
+          "required_change": "Bind ordinary numeric-literal output and exact value. Preserve equivalent harmless ordinary notation; reject a copied scientific expression. A specific integer-form policy can be used only with suitably explicit family wording."
+        }
+      ],
+      "independent_math": {
+        "key": "scientific-notation-conversion/kp1",
+        "template_sha256": "7b3c902fe23f1c90410cfbf4b7a696255cba2e20f86bcb7a52b775e3346ff2c6",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Convert large numbers to and from scientific notation",
+      "constraints": "coefficient a satisfies 1 <= a < 10"
+    },
+    {
+      "key": "scientific-notation-conversion/kp2",
+      "authored_row_sha256": "be83649005e1f00b75bbab86756a239559344adad0b7adaee24871692d7e8e33",
+      "curriculum_kp_sha256": "033d0902a0c0cdf8e80f475afbd8328d40f833fb5e632fe4c2a65c11e316a257",
+      "topic_prerequisites_sha256": "ae2dbff8a87249686113467e375e51d92dd4799a1ea14abd335b6f0c65214d42",
+      "selected_template_sha256": "50c3da85cebb6c491a1c19bdefcc5dcad38229caa3920c340c3b199e9d092fa2",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Only covers expanding a negative power to a decimal. Add the inverse conversion: move a small decimal to a coefficient in[1,10), count places and use a negative exponent. Retain leading zeros when expanding; determine the shift from the actual exponent.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "scientific-notation-conversion/kp2"
+          ],
+          "kind": "decimal_representation_and_exactness",
+          "finding": "Ordinary small-number conversion currently renders fractions such as11/100000 and has no policy preventing learner-chosen rounding to0.0.",
+          "required_change": "Render and require the exact ordinary decimal, preserving leading zeros and allowing equivalent trailing zeros. Existing Decimal form supports this family; retain the conversion direction."
+        }
+      ],
+      "independent_math": {
+        "key": "scientific-notation-conversion/kp2",
+        "template_sha256": "50c3da85cebb6c491a1c19bdefcc5dcad38229caa3920c340c3b199e9d092fa2",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Small numbers with negative exponents",
+      "constraints": "negative exponent for numbers less than 1"
+    },
+    {
+      "key": "scientific-notation-conversion/kp3",
+      "authored_row_sha256": "bf7f80fe169f97133fa3917d075ab76a80a4e9944b670bc933ef6d945bc4413b",
+      "curriculum_kp_sha256": "3ab5506d5cb30a5fce755fecd6fc947cdbfd36318ede2298b05a7a153eb53507",
+      "topic_prerequisites_sha256": "ae2dbff8a87249686113467e375e51d92dd4799a1ea14abd335b6f0c65214d42",
+      "selected_template_sha256": "d7a90a8789759c899af975991158bf64a12e10dd37118f2e70b8f6dd4350bdc1",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Only comparison is covered, and comparing exponents first requires normalized coefficients. First normalize each supplied expression, adjusting the exponent to preserve value. For a form task stop with proper notation; for comparison compare exponents, then coefficients if equal, and report the requested original value.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "scientific-notation-conversion/kp3",
+        "template_sha256": "d7a90a8789759c899af975991158bf64a12e10dd37118f2e70b8f6dd4350bdc1",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Valid form and comparing magnitudes",
+      "constraints": "renormalize the coefficient into [1, 10); compare exponents before coefficients"
+    },
+    {
+      "key": "scientific-notation/kp1",
+      "authored_row_sha256": "2037764b82456eb0b17724c3f28c1873fa9c30e0d20ea11973cb666aac76ea9d",
+      "curriculum_kp_sha256": "c0c20b7497713239b5cd30386c50a2f8d98c6c29d2d4bcb7d1a8f00cdaafd3e3",
+      "topic_prerequisites_sha256": "551a70ba70fdea77d4c5bc7056d2cd7889c2b67b36aefe42f3fc2683f05361e3",
+      "selected_template_sha256": "b8231aef238fc851a875c2839a840e7a1bb49e57bcac13427d037ff40cfe315d",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Say add the EXPONENTS of ten, not add the powers of ten. Multiply coefficients separately, combine exponents, then confirm a normalized scientific coefficient and adjust it with the exponent if required.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "scientific-notation/kp1",
+            "scientific-notation/kp2",
+            "scientific-notation/kp3",
+            "scientific-notation-addition-subtraction/kp1",
+            "scientific-notation-addition-subtraction/kp2",
+            "scientific-notation-addition-subtraction/kp3"
+          ],
+          "kind": "normalized_scientific_output",
+          "finding": "The scientific-operation objectives and canonical answers require scientific notation, but current answer_expr values render ordinary integers with no normalized scientific-form contract.",
+          "required_change": "Preserve expected normalized coefficient times10 to an integer power in rendering and exact structural assessment. Require coefficient in[1,10) for these positive families; reject unnormalized coefficients, evaluated ordinary numbers and unchanged source operations."
+        }
+      ],
+      "independent_math": {
+        "key": "scientific-notation/kp1",
+        "template_sha256": "b8231aef238fc851a875c2839a840e7a1bb49e57bcac13427d037ff40cfe315d",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Multiply in scientific notation",
+      "constraints": "multiply coefficients, add exponents"
+    },
+    {
+      "key": "scientific-notation/kp2",
+      "authored_row_sha256": "f6aebd2fd71d040d55c4f5d53e5d6f0ad29fc5ab64cbf108d6ea08b863334b83",
+      "curriculum_kp_sha256": "7c73c23bac36792c06b10bc72b4b941e270dd6d6213c715c222bddf8c7df4c5d",
+      "topic_prerequisites_sha256": "551a70ba70fdea77d4c5bc7056d2cd7889c2b67b36aefe42f3fc2683f05361e3",
+      "selected_template_sha256": "79c06095a722967e7197484afa8c72a2e7d9c548a278a5bfece3ccfbb02baa8b",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The last rung names scientific notation without explaining normalization; nine current coefficients a/2 are below1. After coefficient division and exponent subtraction, shift an out-of-range coefficient and compensate with the exponent before writing the normalized result.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "scientific-notation/kp1",
+            "scientific-notation/kp2",
+            "scientific-notation/kp3",
+            "scientific-notation-addition-subtraction/kp1",
+            "scientific-notation-addition-subtraction/kp2",
+            "scientific-notation-addition-subtraction/kp3"
+          ],
+          "kind": "normalized_scientific_output",
+          "finding": "The scientific-operation objectives and canonical answers require scientific notation, but current answer_expr values render ordinary integers with no normalized scientific-form contract.",
+          "required_change": "Preserve expected normalized coefficient times10 to an integer power in rendering and exact structural assessment. Require coefficient in[1,10) for these positive families; reject unnormalized coefficients, evaluated ordinary numbers and unchanged source operations."
+        }
+      ],
+      "independent_math": {
+        "key": "scientific-notation/kp2",
+        "template_sha256": "79c06095a722967e7197484afa8c72a2e7d9c548a278a5bfece3ccfbb02baa8b",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Divide in scientific notation",
+      "constraints": "divide coefficients, subtract exponents"
+    },
+    {
+      "key": "scientific-notation/kp3",
+      "authored_row_sha256": "a05603c232e1da9788a592a55cf896b22ed9a0a33f90de8a61f91f10a3be780b",
+      "curriculum_kp_sha256": "ac5bafa15ac25644627797c19b61b84a612fe6ec7b16327583c5b19a3fe3f15f",
+      "topic_prerequisites_sha256": "551a70ba70fdea77d4c5bc7056d2cd7889c2b67b36aefe42f3fc2683f05361e3",
+      "selected_template_sha256": "b517a090a05d4f4530d1c4efa3bc9cc13b6801fb480eb8d99490f754c956122c",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Multiplication-only and oversized-coefficient-only guidance misses canonical division/undersized coefficients. Perform the actual product or quotient first, then normalize both coefficient>=10 and0<coefficient<1 cases by opposite decimal/exponent shifts that preserve value.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "scientific-notation/kp1",
+            "scientific-notation/kp2",
+            "scientific-notation/kp3",
+            "scientific-notation-addition-subtraction/kp1",
+            "scientific-notation-addition-subtraction/kp2",
+            "scientific-notation-addition-subtraction/kp3"
+          ],
+          "kind": "normalized_scientific_output",
+          "finding": "The scientific-operation objectives and canonical answers require scientific notation, but current answer_expr values render ordinary integers with no normalized scientific-form contract.",
+          "required_change": "Preserve expected normalized coefficient times10 to an integer power in rendering and exact structural assessment. Require coefficient in[1,10) for these positive families; reject unnormalized coefficients, evaluated ordinary numbers and unchanged source operations."
+        }
+      ],
+      "independent_math": {
+        "key": "scientific-notation/kp3",
+        "template_sha256": "b517a090a05d4f4530d1c4efa3bc9cc13b6801fb480eb8d99490f754c956122c",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Renormalize the result",
+      "constraints": "coefficient must land back in [1, 10)"
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp1",
+      "authored_row_sha256": "8b44a398dc5cda5266893d53e0b1733cdb5f4a5a76d6e62881c79372518ee6fd",
+      "curriculum_kp_sha256": "c491db04a2d8265f8628356d868613c1e424ab84d5f8cffbfa1f1746c67ee430",
+      "topic_prerequisites_sha256": "223189b9ed68a1d3b43d2fe3ad57e780d36c08cf329c809dcd00cda08ee10857",
+      "selected_template_sha256": "925172a17aea176a0850ba1a0a118a19aab2c47004f59d190bbc520687e6b748",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Separates the common power from the actual coefficient addition/subtraction; matches the same-power objective and canonical/current normal coefficient domain.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "scientific-notation/kp1",
+            "scientific-notation/kp2",
+            "scientific-notation/kp3",
+            "scientific-notation-addition-subtraction/kp1",
+            "scientific-notation-addition-subtraction/kp2",
+            "scientific-notation-addition-subtraction/kp3"
+          ],
+          "kind": "normalized_scientific_output",
+          "finding": "The scientific-operation objectives and canonical answers require scientific notation, but current answer_expr values render ordinary integers with no normalized scientific-form contract.",
+          "required_change": "Preserve expected normalized coefficient times10 to an integer power in rendering and exact structural assessment. Require coefficient in[1,10) for these positive families; reject unnormalized coefficients, evaluated ordinary numbers and unchanged source operations."
+        }
+      ],
+      "independent_math": {
+        "key": "scientific-notation-addition-subtraction/kp1",
+        "template_sha256": "925172a17aea176a0850ba1a0a118a19aab2c47004f59d190bbc520687e6b748",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Same power of 10",
+      "constraints": "matching exponents; add or subtract coefficients only"
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp2",
+      "authored_row_sha256": "2ab44ef16611efff6aceb6202af03003334aa84419991ce44e61dd68e0e1c6e8",
+      "curriculum_kp_sha256": "c3dd453d5efe8b384851826c6d321120607be6ad7b6f6f5ca22e9ac41040e620",
+      "topic_prerequisites_sha256": "223189b9ed68a1d3b43d2fe3ad57e780d36c08cf329c809dcd00cda08ee10857",
+      "selected_template_sha256": "5b1a6178bfc8317d2daed3f7ea07314d17c5e7bd1c56d1a9c4201037f765f98a",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The final rung always subtracts, contradicting half the canonical examples. Match the larger exponent by scaling the smaller-exponent coefficient downward, then perform the stated addition or subtraction on coefficients and keep the common power.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "scientific-notation/kp1",
+            "scientific-notation/kp2",
+            "scientific-notation/kp3",
+            "scientific-notation-addition-subtraction/kp1",
+            "scientific-notation-addition-subtraction/kp2",
+            "scientific-notation-addition-subtraction/kp3"
+          ],
+          "kind": "normalized_scientific_output",
+          "finding": "The scientific-operation objectives and canonical answers require scientific notation, but current answer_expr values render ordinary integers with no normalized scientific-form contract.",
+          "required_change": "Preserve expected normalized coefficient times10 to an integer power in rendering and exact structural assessment. Require coefficient in[1,10) for these positive families; reject unnormalized coefficients, evaluated ordinary numbers and unchanged source operations."
+        }
+      ],
+      "independent_math": {
+        "key": "scientific-notation-addition-subtraction/kp2",
+        "template_sha256": "5b1a6178bfc8317d2daed3f7ea07314d17c5e7bd1c56d1a9c4201037f765f98a",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Different powers: match exponents first",
+      "constraints": "rewrite the smaller-exponent term to match the larger exponent"
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp3",
+      "authored_row_sha256": "f2a04ffff83a75f63997c700ff78cac21a7479f5aec1267e53aae81454bf63eb",
+      "curriculum_kp_sha256": "0abb9068ebc6c766d43fad34ce83f702d79f467fa4cabb91a6f0b31e2ad2bd40",
+      "topic_prerequisites_sha256": "223189b9ed68a1d3b43d2fe3ad57e780d36c08cf329c809dcd00cda08ee10857",
+      "selected_template_sha256": "571a8982ab2a4fe09cb34b2a85f3b224cc80d6552334c104a28b82c66ded0458",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Hardcodes addition and coefficient>=10. Match powers if necessary, do the stated addition/subtraction, then normalize either an oversized or an undersized positive result; decreasing the exponent is required when shifting a coefficient upward from below1.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "scientific-notation/kp1",
+            "scientific-notation/kp2",
+            "scientific-notation/kp3",
+            "scientific-notation-addition-subtraction/kp1",
+            "scientific-notation-addition-subtraction/kp2",
+            "scientific-notation-addition-subtraction/kp3"
+          ],
+          "kind": "normalized_scientific_output",
+          "finding": "The scientific-operation objectives and canonical answers require scientific notation, but current answer_expr values render ordinary integers with no normalized scientific-form contract.",
+          "required_change": "Preserve expected normalized coefficient times10 to an integer power in rendering and exact structural assessment. Require coefficient in[1,10) for these positive families; reject unnormalized coefficients, evaluated ordinary numbers and unchanged source operations."
+        }
+      ],
+      "independent_math": {
+        "key": "scientific-notation-addition-subtraction/kp3",
+        "template_sha256": "571a8982ab2a4fe09cb34b2a85f3b224cc80d6552334c104a28b82c66ded0458",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Renormalize after adding",
+      "constraints": "coefficient must land back in [1, 10)"
+    },
+    {
+      "key": "perfect-square-roots/kp1",
+      "authored_row_sha256": "7519d651659084624b3f496e5bc38e2e319f0d9cce36461effb5ff606bdd9b8e",
+      "curriculum_kp_sha256": "3e8d81e544e6f4a15520519bc16a9f6a5aaa5f4ea15d9ab97cd40a44a56fb8cb",
+      "topic_prerequisites_sha256": "c3d2048cc69c29454ba48b49a843f5ded60359fa9507ae06ee8a11c4c67ab61e",
+      "selected_template_sha256": "c01bb33c1c63dc15416c4032bfe4a05a5d2291c23e1d04980ef3dde385118d15",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The ladder assumes a physical square and tells every learner to square the unit. Pure numeric powers have no unit, and mosaic tile counts are tiles rather than square tiles. Explain the product of two equal copies of the given number; use area units only when the requested quantity is an area, and preserve count units for arrays.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "perfect-square-roots/kp1",
+        "template_sha256": "c01bb33c1c63dc15416c4032bfe4a05a5d2291c23e1d04980ef3dde385118d15",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Squares of 1 through 15",
+      "constraints": "bases 1-15"
+    },
+    {
+      "key": "perfect-square-roots/kp2",
+      "authored_row_sha256": "2befcdfd57fa553817f7bfb86d5506ebff7399ecb7da628aa6df3330913d0ad3",
+      "curriculum_kp_sha256": "e9480fc3c82193363ecebad8fa3063d3fb11f571913c8e97e20193863554748f",
+      "topic_prerequisites_sha256": "c3d2048cc69c29454ba48b49a843f5ded60359fa9507ae06ee8a11c4c67ab61e",
+      "selected_template_sha256": "17cc3540b8fe7d50bef34827f56276cd45b490a0c5601979b3cc09e561d6792b",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Replace area/length-only wording with the given radicand and its principal nonnegative root. Connect an area to side length when that context is actually supplied; square the candidate to verify both pure-number and contextual cases.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "perfect-square-roots/kp2",
+        "template_sha256": "17cc3540b8fe7d50bef34827f56276cd45b490a0c5601979b3cc09e561d6792b",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Roots of perfect squares up to 144",
+      "constraints": "perfect squares up to 144"
+    },
+    {
+      "key": "perfect-square-roots/kp3",
+      "authored_row_sha256": "394a7551e2fa31abf551445519e99d9f6bdfc6dffa6a7a6f1cae2a170fad7b6b",
+      "curriculum_kp_sha256": "443b64f7ac09c2de4c26e0f714378e1d9de1e57390835ffc9ada17f420f33fd4",
+      "topic_prerequisites_sha256": "c3d2048cc69c29454ba48b49a843f5ded60359fa9507ae06ee8a11c4c67ab61e",
+      "selected_template_sha256": "07453c7e7e52eebaeb287f88f38e3a78928fefa6484b1ba8a1dd8dfd48e2d983",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Same area/side-length overfit: canonical tasks also directly name square roots. Use the radicand, a candidate nonnegative root and a square check, preserving any actual context units.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "perfect-square-roots/kp3",
+        "template_sha256": "07453c7e7e52eebaeb287f88f38e3a78928fefa6484b1ba8a1dd8dfd48e2d983",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Larger perfect squares and multiples of ten",
+      "constraints": "perfect squares up to 400"
+    },
+    {
+      "key": "square-roots/kp1",
+      "authored_row_sha256": "3d146bf08026b1fc3569b539a606cb33415be6f74c725e695f9cb902734745f4",
+      "curriculum_kp_sha256": "ea4fdfc2374f00660bebc528c782a720945fc49b8ee10637ca8ba09fe23f7ecb",
+      "topic_prerequisites_sha256": "f44607f7343de6fe5cd66da6efb8110084a2f5747fccb610eb03158ff066b1a1",
+      "selected_template_sha256": "7846dd0eae992b3eb5e19f5535c2e8b37ad4ec08a424de8228a1b3df6939173f",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Final rung only adds/subtracts, missing canonical2sqrt81 and the perimeter4sqrt9. Evaluate all principal roots, identify the actual remaining arithmetic or contextual quantity, then apply the required addition, subtraction or multiplication.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "square-roots/kp1",
+        "template_sha256": "7846dd0eae992b3eb5e19f5535c2e8b37ad4ec08a424de8228a1b3df6939173f",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Roots inside arithmetic expressions",
+      "constraints": "perfect-square radicands only"
+    },
+    {
+      "key": "square-roots/kp2",
+      "authored_row_sha256": "755d746cd70fb0a94098dddd483f7ea1eed9ed7bef799e7ca16ea27e5cb01dbd",
+      "curriculum_kp_sha256": "8ffd9a3ab8ac44bac5792871da33799ccf8379f7942ac067b24914248686e787",
+      "topic_prerequisites_sha256": "f44607f7343de6fe5cd66da6efb8110084a2f5747fccb610eb03158ff066b1a1",
+      "selected_template_sha256": "b3930babcfd9f1bb5ba57f8d4465033deb37611135322c064319a57a7d734511",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The positive choice comes from the principal square-root convention, not an assumed length context. Take roots of numerator and positive denominator, use the principal nonnegative value, and square the fraction to verify.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "square-roots/kp2"
+          ],
+          "kind": "exact_fraction_assessment",
+          "finding": "All12 current roots are b/13 with b1..12; absent policy permits unequal learner-chosen rounded decimals instead of exact roots.",
+          "required_change": "Use explicit exact checking with the intended fraction rendering/form. Preserve the principal root and nonzero denominator."
+        }
+      ],
+      "independent_math": {
+        "key": "square-roots/kp2",
+        "template_sha256": "b3930babcfd9f1bb5ba57f8d4465033deb37611135322c064319a57a7d734511",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Roots of fractions",
+      "constraints": "root of a fraction = root of top over root of bottom"
+    },
+    {
+      "key": "square-roots/kp3",
+      "authored_row_sha256": "09b17baab893ed07679ab92050553aede3fb2612a26152026ca804715812bd1f",
+      "curriculum_kp_sha256": "f8bf751dd0702cb3f0088df8e1229933e373cc12766bd8df520ff2c36b6bef34",
+      "topic_prerequisites_sha256": "f44607f7343de6fe5cd66da6efb8110084a2f5747fccb610eb03158ff066b1a1",
+      "selected_template_sha256": "c079d4d11f0d20b1db111fe1e371d0d81f237b15660c7b1b1787e6c68fb994a0",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "The ladder only multiplies known roots, missing the canonical missing-factor equation. After evaluating roots, multiply when a product is requested; if a factor is missing, divide the known product by the known nonzero factor and verify the original product.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "square-roots/kp3",
+        "template_sha256": "c079d4d11f0d20b1db111fe1e371d0d81f237b15660c7b1b1787e6c68fb994a0",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Products of roots",
+      "constraints": "products of perfect squares"
+    },
+    {
+      "key": "estimating-square-roots/kp1",
+      "authored_row_sha256": "4cbc2185db5e911e122184404971580561c78039b7cd625b593bd2a88caf8a8b",
+      "curriculum_kp_sha256": "d9c44e3608ac7fb3209bac06504eab37bdecf617079d6ea8e4f0a03df8cab1d2",
+      "topic_prerequisites_sha256": "4dcdfce11bc403ba4c6ff6775bca87c5aaf4783bae28ab1d3bc2e6fbedb07224",
+      "selected_template_sha256": "c6dee810ccedada61c11a265b204e3d98d519e72b467e537f0192611c69dd2ab",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Finds consecutive surrounding squares, transfers their nonnegative roots to integer bounds, and selects the requested lower bound.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "estimating-square-roots/kp1",
+        "template_sha256": "c6dee810ccedada61c11a265b204e3d98d519e72b467e537f0192611c69dd2ab",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Bracket a root between consecutive integers",
+      "constraints": "non-perfect-square radicands under 200"
+    },
+    {
+      "key": "estimating-square-roots/kp2",
+      "authored_row_sha256": "38b80f64d2889d4eb94c353fa45e17d985564885e648918c110de285908880aa",
+      "curriculum_kp_sha256": "101a50b4bfb962bee7f6cb351072520bfa0a0f8d67ce145d51e6141b971913e3",
+      "topic_prerequisites_sha256": "4dcdfce11bc403ba4c6ff6775bca87c5aaf4783bae28ab1d3bc2e6fbedb07224",
+      "selected_template_sha256": "2f7fd47a29df7f8499bad651b2f04e07ddc015e9261653a2ece60044a1622214",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Square-distance comparison is safe for integer radicands but not general decimals: sqrt6.4 rounds to3 although6.4 is closer to4 than9. Prefer a universally correct ladder: bracket between integers, square their midpoint, compare the radicand with that threshold, and round accordingly. All current integer examples/templates produce correct results under the existing shortcut.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "estimating-square-roots/kp2",
+        "template_sha256": "2f7fd47a29df7f8499bad651b2f04e07ddc015e9261653a2ece60044a1622214",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Round a root to the nearest integer",
+      "constraints": "compare distances to the two nearest perfect squares"
+    },
+    {
+      "key": "estimating-square-roots/kp3",
+      "authored_row_sha256": "524166b28ccc44f5eb85f61ce828e484608d748810d6f02d60ee83e66e160bac",
+      "curriculum_kp_sha256": "e4901192ff2ab6bce3de139ae8618caf63adef95f4435ccec049e93c685e5a0c",
+      "topic_prerequisites_sha256": "4dcdfce11bc403ba4c6ff6775bca87c5aaf4783bae28ab1d3bc2e6fbedb07224",
+      "selected_template_sha256": "dc9786cbf10278f9f79b3630c74031b24997439877a7c0c34657785ba14fb4e7",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Final rung only selects the larger of two values, missing canonical ordering of three values. Compare nonnegative values through their squares, then either select the requested extreme or order ALL original expressions as asked.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "estimating-square-roots/kp3",
+        "template_sha256": "dc9786cbf10278f9f79b3630c74031b24997439877a7c0c34657785ba14fb4e7",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Order values involving roots",
+      "constraints": "compare by squaring"
+    },
+    {
+      "key": "cube-roots/kp1",
+      "authored_row_sha256": "ab3585cb49de3f9fe2a8d4bbed267fb9dfd5bfb7274ca66fffde6f0d059756c3",
+      "curriculum_kp_sha256": "9748b8331a7b9fab296f30d1042a0bd93104d31db6f1ab1c2f68d5e436a92e81",
+      "topic_prerequisites_sha256": "1cc9ecf8d0ecf35b1e6f01095af5130696b9a26c32deaab66d97d20c31b4ab9f",
+      "selected_template_sha256": "d40cd9201c755cab028a4b1e80314e896e8ca75ca3d03e80a799e4d9c64472c4",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Replace ambiguous multiplied by itself three times with a product of THREE equal factors. Then find a candidate and cube-check it; the wording should distinguish cubing from performing three multiplications after the original factor.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "cube-roots/kp1"
+          ],
+          "kind": "numeric_bound_violation",
+          "finding": "Two of12 selected radicands1331 and1728 exceed the explicit perfect-cube bound1000.",
+          "required_change": "Restrict this KP to permitted cubes. Do not enlarge a declared numeric range solely to obtain an arbitrary number of distinct bindings.",
+          "violating_bindings": 2
+        }
+      ],
+      "independent_math": {
+        "key": "cube-roots/kp1",
+        "template_sha256": "d40cd9201c755cab028a4b1e80314e896e8ca75ca3d03e80a799e4d9c64472c4",
+        "raw_bindings": 12,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Cube roots of perfect cubes",
+      "constraints": "perfect cubes up to 1000"
+    },
+    {
+      "key": "cube-roots/kp2",
+      "authored_row_sha256": "9262b835420b9d1ba9ff77a59a877c1186b90371a878b6cb4dceb75ce120cfdb",
+      "curriculum_kp_sha256": "a098daf131b639804da3f5ffd2a6f205a682cea7429aec76acf0bb421b55b04f",
+      "topic_prerequisites_sha256": "1cc9ecf8d0ecf35b1e6f01095af5130696b9a26c32deaab66d97d20c31b4ab9f",
+      "selected_template_sha256": "80e6d883fb13502dfbe89a7ff3cf9eba9e5925a7269f0dfbe644b36cc18d3de8",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Identifies the negative sign of a real odd root, finds its magnitude and verifies by cubing; no fixed magnitude is disclosed.",
+      "template_decision": "value_and_topic_scope_pass",
+      "template_findings": [],
+      "independent_math": {
+        "key": "cube-roots/kp2",
+        "template_sha256": "80e6d883fb13502dfbe89a7ff3cf9eba9e5925a7269f0dfbe644b36cc18d3de8",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Cube roots of negative numbers",
+      "constraints": "negative perfect-cube radicands"
+    },
+    {
+      "key": "cube-roots/kp3",
+      "authored_row_sha256": "955bef87a6391d52d3662a3d579baa931fe1b33ae30fb52fed849423af55f5c4",
+      "curriculum_kp_sha256": "172a69a21669c0a6f7f88244cc865c7d5ff64f17708cc78e355bde4f84931451",
+      "topic_prerequisites_sha256": "1cc9ecf8d0ecf35b1e6f01095af5130696b9a26c32deaab66d97d20c31b4ab9f",
+      "selected_template_sha256": "8354edf903b9656dce1be40f1db62f53487862fc2b9ca105fe8a980d5612744b",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Fourth-power-only guidance misses fifth roots. Read the actual root index, test the candidate with that many equal factors, choose the nonnegative principal root for an even index and preserve the real sign for an odd index.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "cube-roots/kp3"
+          ],
+          "kind": "ambiguous_small_domain_needs_resolution",
+          "finding": "Small perfect powers is not quantitatively defined; canonical roots are2/3 and radicands<=243, while selected fourth roots range to12 and radicands20736.",
+          "required_change": "Choose and document a locally justified small-root/radicand family aligned with the intended introductory difficulty. Check fourth and fifth roots in the whole-KP hints. Do not falsely label a specific numeric maximum as an existing written constraint."
+        }
+      ],
+      "independent_math": {
+        "key": "cube-roots/kp3",
+        "template_sha256": "8354edf903b9656dce1be40f1db62f53487862fc2b9ca105fe8a980d5612744b",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Fourth and fifth roots",
+      "constraints": "small perfect powers only"
+    },
+    {
+      "key": "simplifying-radicals/kp1",
+      "authored_row_sha256": "7d33c5bfe1fdf5038130966da528d8bac4f563a3031a137ad04114b7037b608c",
+      "curriculum_kp_sha256": "17863bfdd38351123c00bc7e5628e40c32e6e2a6dda6defe2705a4f6950f1e99",
+      "topic_prerequisites_sha256": "e3804e5ad362d5038ef8b7991b6a3512181f20badf4ae3013cd6a1002cd0f545",
+      "selected_template_sha256": "861931a6ce4673497971696edcb76ab43d8f11ea0979452161305cc500a92451",
+      "hint_decision": "revise",
+      "hint_evidence_and_required_change": "Any square factor plus a merely non-square remainder can leave an unsimplified radical: sqrt72 can become2sqrt18. Require the LARGEST square factor or repeat extraction until the remaining radicand has no perfect-square factor greater than1 (squarefree), then write the extracted coefficient times that radical.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "simplifying-radicals/kp1",
+            "simplifying-radicals/kp2",
+            "simplifying-radicals/kp3"
+          ],
+          "kind": "simplest_radical_output",
+          "finding": "Exact canonical equivalence intentionally maps sqrt8 to2sqrt2, so it does not by itself enforce extracting the largest square factor. Existing core answer_check_1.rs:311 proves this canonicalization.",
+          "required_change": "Assess exact value plus the requested simplest numeric radical form; reject unchanged reducible radicals and partial extraction such as2sqrt18 for sqrt72. Accept equivalent harmless coefficient/factor order and markup.",
+          "verification": "Existing tests/code inspected; no new runtime form-regression test executed by this reviewer."
+        }
+      ],
+      "independent_math": {
+        "key": "simplifying-radicals/kp1",
+        "template_sha256": "861931a6ce4673497971696edcb76ab43d8f11ea0979452161305cc500a92451",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Factor out a perfect square",
+      "constraints": "pull out the largest perfect-square factor"
+    },
+    {
+      "key": "simplifying-radicals/kp2",
+      "authored_row_sha256": "f7a3f30d7d42db297f1d70b4460b6726794252b13d68834d82b22d9c3ef08fca",
+      "curriculum_kp_sha256": "06ea79e180bfb746788a3ee48041b077d52b98971edd8ae2496c781f4c940af7",
+      "topic_prerequisites_sha256": "e3804e5ad362d5038ef8b7991b6a3512181f20badf4ae3013cd6a1002cd0f545",
+      "selected_template_sha256": "76c50eeab55e082b7cde423a5e1449431a33f2f77b13f0211f2eb9fe4260e5a7",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Explicitly extracts the largest square factor before multiplying any outside coefficient; preserves the squarefree remainder.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "simplifying-radicals/kp1",
+            "simplifying-radicals/kp2",
+            "simplifying-radicals/kp3"
+          ],
+          "kind": "simplest_radical_output",
+          "finding": "Exact canonical equivalence intentionally maps sqrt8 to2sqrt2, so it does not by itself enforce extracting the largest square factor. Existing core answer_check_1.rs:311 proves this canonicalization.",
+          "required_change": "Assess exact value plus the requested simplest numeric radical form; reject unchanged reducible radicals and partial extraction such as2sqrt18 for sqrt72. Accept equivalent harmless coefficient/factor order and markup.",
+          "verification": "Existing tests/code inspected; no new runtime form-regression test executed by this reviewer."
+        }
+      ],
+      "independent_math": {
+        "key": "simplifying-radicals/kp2",
+        "template_sha256": "76c50eeab55e082b7cde423a5e1449431a33f2f77b13f0211f2eb9fe4260e5a7",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Larger radicands and coefficients",
+      "constraints": "multiply any outside coefficient after simplifying"
+    },
+    {
+      "key": "simplifying-radicals/kp3",
+      "authored_row_sha256": "8512824c9c6be5b6c370f9f24e6489cb326625e8ab7edb9fe2d2990fd42b44cd",
+      "curriculum_kp_sha256": "b3e76fb88b5faeaceec458bd4f0c05f0e0b23f206552cf75dc41b87b213c8c2e",
+      "topic_prerequisites_sha256": "e3804e5ad362d5038ef8b7991b6a3512181f20badf4ae3013cd6a1002cd0f545",
+      "selected_template_sha256": "beb2a2af0515b0f370886d5844e11d63f2052b746d0e790ff8f7605d4346a9e6",
+      "hint_decision": "accept",
+      "hint_evidence_and_required_change": "Prime factorization, pairing and extraction are correctly distinguished; unpaired primes remain inside.",
+      "template_decision": "revise_or_resolve",
+      "template_findings": [
+        {
+          "keys": [
+            "simplifying-radicals/kp1",
+            "simplifying-radicals/kp2",
+            "simplifying-radicals/kp3"
+          ],
+          "kind": "simplest_radical_output",
+          "finding": "Exact canonical equivalence intentionally maps sqrt8 to2sqrt2, so it does not by itself enforce extracting the largest square factor. Existing core answer_check_1.rs:311 proves this canonicalization.",
+          "required_change": "Assess exact value plus the requested simplest numeric radical form; reject unchanged reducible radicals and partial extraction such as2sqrt18 for sqrt72. Accept equivalent harmless coefficient/factor order and markup.",
+          "verification": "Existing tests/code inspected; no new runtime form-regression test executed by this reviewer."
+        },
+        {
+          "keys": [
+            "simplifying-radicals/kp3"
+          ],
+          "kind": "numeric_bound_violation",
+          "finding": "Nine of12 current radicands lie outside100..300:96 and384,486,600,726,864,1014,1176,1350. Only150,216,294 meet the bound.",
+          "required_change": "Use radicands100..300 requiring prime-factor pairing. Show the actual prime factorization in the solution rather than only naming an unknown square factor.",
+          "violating_bindings": 9
+        }
+      ],
+      "independent_math": {
+        "key": "simplifying-radicals/kp3",
+        "template_sha256": "beb2a2af0515b0f370886d5844e11d63f2052b746d0e790ff8f7605d4346a9e6",
+        "raw_bindings": 144,
+        "valid_bindings": 12,
+        "all_independent_results_match": true,
+        "sample_domain_complete": true,
+        "declared_filter_equals_independent_semantic_filter": true
+      },
+      "objective": "Prime factorization for large radicands",
+      "constraints": "radicands 100-300; pair up prime factors"
+    }
+  ],
+  "curriculum_findings": [
+    {
+      "key": "estimating-square-roots/kp2",
+      "kind": "unstated_domain_for_heuristic",
+      "finding": "The written compare-distances-to-perfect-squares rule needs an integer-radicand restriction; the general decimal counterexample is attached in the math artifact. Current canonical and selected cases are integers and correctly answered.",
+      "preferred_change": "Teach comparison against the squared midpoint of the root interval; use concrete midpoint arithmetic to avoid requiring binomial expansion. Update the constraint wording consistently."
+    },
+    {
+      "key": "perfect-square-roots/kp3",
+      "exemplar_indices": [
+        2,
+        3
+      ],
+      "kind": "prerequisite_pedagogy_review",
+      "finding": "The larger-square examples use a binomial-square expansion and the square-root product rule before those methods appear in this topic’s actual prerequisites. The answers19 and18 are correct.",
+      "preferred_change": "Explain the direct ordinary multiplication checks19×19=361 and18×18=324, or explicitly derive the alternate method using already-known arithmetic; do not require unintroduced named identities."
+    }
+  ],
+  "verification": {
+    "grounded": "All24 full objectives/constraints,96 full exemplar problem/answer/sketch rows and actual topic/key prerequisites read; current unit raw YAML matches frozen source revision. Exact authored and current selected-template bindings verified.",
+    "tested": "All288 finite cases independently recomputed with exact fractions, integer power checks, prime factorization and squared-midpoint logic. Raw constraints independently matched to helper-field semantics. No answer_expr evaluation or floating point.",
+    "not_verified": "New assessment-form runtime regressions remain core-worker work. No Teach review, new instruction gates, live approvals or serving changes performed."
+  },
+  "serving_approval": "none"
+}

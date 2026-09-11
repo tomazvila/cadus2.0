@@ -1,0 +1,1061 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "external_unit06_hint_template_repair_proposal_v6",
+  "cohort_id": "06-exponents-radicals-02",
+  "authored_at_utc": "2026-09-10T02:16:27.615156+00:00",
+  "source_bindings": {
+    "original_packet": "hint-authoring-cohorts/06-exponents-radicals-02.json",
+    "original_packet_sha256": "f3690de15924d5a5df346fad6d7b5cb3a765cc1baed334b424ee2a2a220f43a0",
+    "authored_hints": "hint-authored/06-exponents-radicals-02.json",
+    "authored_hints_sha256": "f947049d232f3713bd6f224dfeef9b4a1a10663785c62035be35909744a2766e",
+    "independent_review": "hint-authored/06-exponents-radicals-02.independent-review.json",
+    "independent_review_sha256": "2d57fa0810980e8b20c89a8452621ae750289385c8b542b6f0d908c31e1587a5",
+    "curriculum_artifact": "curriculum-after-repairs-02.json",
+    "curriculum_artifact_file_sha256": "b1fbf0bb3c4cd09efed5f70355c15b2b1403df928b796204dc051539b1e58242",
+    "curriculum_runtime_sha256": "c36abbb213e59791ecc9684122d793c016c2f017ba79172441d89540c2937d52",
+    "selected_templates_file_sha256": "b147146a9d5b4014bf069cbfd61c5cb0adcbac6b689462ae05ca64ba77fe4197"
+  },
+  "summary": {
+    "hint_repairs": 19,
+    "accepted_hints_carried_forward_without_replacement": 5,
+    "direct_template_repairs": 1,
+    "pending_scientific_template_candidates": 8,
+    "template_findings_policy_deferred": 5,
+    "direct_template_bindings": 12,
+    "pending_scientific_bindings": 132,
+    "serving_changes": 0
+  },
+  "hint_repairs": [
+    {
+      "key": "scientific-notation-conversion/kp1",
+      "base_authored_row_sha256": "a186dc3aa824d011e66f76605fe8b76f0efef466ea12aa34ac728f3f5b5c7f9f",
+      "curriculum_kp_sha256": "283799badc116cbe893aa043cdc6bde0abcdd48d8b5fcc4ab7e2a01872343d6c",
+      "review_required_change": "Hardcodes four places and only scientific-to-ordinary conversion. Read the actual exponent/direction; to form scientific notation move the decimal until the coefficient is in[1,10) and count places, while to form an ordinary number expand the given positive power. Verify both representations name the same value.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "4.5 x 10^4",
+          "problem": "Write $45000$ in scientific notation.",
+          "solution_sketch": "$45000 = 4.5 \\times 10^4$: move the decimal point $4$ places."
+        },
+        {
+          "answer": "3200",
+          "problem": "Write $3.2 \\times 10^3$ as a standard number.",
+          "solution_sketch": "$3.2 \\times 10^3 = 3200$: move the decimal point $3$ places right."
+        },
+        {
+          "answer": "6.7 x 10^4",
+          "problem": "Express $67000$ in scientific notation.",
+          "solution_sketch": "Move the decimal point $4$ places: $6.7 \\times 10^4$."
+        },
+        {
+          "answer": "510",
+          "problem": "Express $5.1 \\times 10^2$ as a standard number.",
+          "solution_sketch": "Move the decimal point $2$ places right: $510$."
+        }
+      ],
+      "proposed_row": {
+        "key": "scientific-notation-conversion/kp1",
+        "objective": "Convert large numbers to and from scientific notation",
+        "constraints": "coefficient a satisfies 1 <= a < 10",
+        "hints": [
+          "Read the requested direction and the exponent instead of assuming a fixed number of places.",
+          "To write scientific notation, move the decimal until the coefficient is at least one and less than ten, then record the number of places as a positive exponent; to write an ordinary number, expand the positive power of ten.",
+          "Check that the scientific and ordinary representations have exactly the same place value."
+        ]
+      },
+      "proposed_row_sha256": "301b4678b1ed2216f412d99266b1d0426f0810d9dea44b2fbf29261b81682d82"
+    },
+    {
+      "key": "scientific-notation-conversion/kp2",
+      "base_authored_row_sha256": "be83649005e1f00b75bbab86756a239559344adad0b7adaee24871692d7e8e33",
+      "curriculum_kp_sha256": "033d0902a0c0cdf8e80f475afbd8328d40f833fb5e632fe4c2a65c11e316a257",
+      "review_required_change": "Only covers expanding a negative power to a decimal. Add the inverse conversion: move a small decimal to a coefficient in[1,10), count places and use a negative exponent. Retain leading zeros when expanding; determine the shift from the actual exponent.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "7.2 x 10^-4",
+          "problem": "Write $0.00072$ in scientific notation.",
+          "solution_sketch": "$0.00072 = 7.2 \\times 10^{-4}$: move the decimal point $4$ places right."
+        },
+        {
+          "answer": "0.006",
+          "problem": "Write $6 \\times 10^{-3}$ as a decimal.",
+          "solution_sketch": "$6 \\times 10^{-3} = 0.006$: move the decimal point $3$ places left."
+        },
+        {
+          "answer": "4 x 10^-4",
+          "problem": "Express $0.0004$ in scientific notation.",
+          "solution_sketch": "Move the decimal point $4$ places right: $4 \\times 10^{-4}$."
+        },
+        {
+          "answer": "0.09",
+          "problem": "Express $9 \\times 10^{-2}$ as a decimal.",
+          "solution_sketch": "Move the decimal point $2$ places left: $0.09$."
+        }
+      ],
+      "proposed_row": {
+        "key": "scientific-notation-conversion/kp2",
+        "objective": "Small numbers with negative exponents",
+        "constraints": "negative exponent for numbers less than 1",
+        "hints": [
+          "Read the requested direction and the negative exponent.",
+          "To form scientific notation, move the small decimal right until its coefficient is at least one and strictly less than ten; the number of rightward places becomes the magnitude of the negative exponent. To form an ordinary decimal, shift according to the given negative exponent and preserve leading zeros.",
+          "Check that both forms represent exactly the same small positive value."
+        ]
+      },
+      "proposed_row_sha256": "fea307207181b478c523dc2b22ca60d8dd8c06afc71fb386a48f25dc0874a83c"
+    },
+    {
+      "key": "scientific-notation-conversion/kp3",
+      "base_authored_row_sha256": "bf7f80fe169f97133fa3917d075ab76a80a4e9944b670bc933ef6d945bc4413b",
+      "curriculum_kp_sha256": "3ab5506d5cb30a5fce755fecd6fc947cdbfd36318ede2298b05a7a153eb53507",
+      "review_required_change": "Only comparison is covered, and comparing exponents first requires normalized coefficients. First normalize each supplied expression, adjusting the exponent to preserve value. For a form task stop with proper notation; for comparison compare exponents, then coefficients if equal, and report the requested original value.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "1.2 x 10^4",
+          "problem": "Rewrite $12 \\times 10^3$ in proper scientific notation.",
+          "solution_sketch": "$12 = 1.2 \\times 10$; add one to the exponent."
+        },
+        {
+          "answer": "3 x 10^5",
+          "problem": "Which is larger: $3 \\times 10^5$ or $9 \\times 10^4$?",
+          "solution_sketch": "Compare exponents first: $10^5 > 10^4$."
+        },
+        {
+          "answer": "4.5 x 10^3",
+          "problem": "Express $45 \\times 10^2$ in proper scientific notation.",
+          "solution_sketch": "$45 = 4.5 \\times 10$; add one to the exponent: $4.5 \\times 10^3$."
+        },
+        {
+          "answer": "2 x 10^6",
+          "problem": "Between $2 \\times 10^6$ and $8 \\times 10^5$, which is larger?",
+          "solution_sketch": "Compare exponents first: $10^6 > 10^5$."
+        }
+      ],
+      "proposed_row": {
+        "key": "scientific-notation-conversion/kp3",
+        "objective": "Valid form and comparing magnitudes",
+        "constraints": "renormalize the coefficient into [1, 10); compare exponents before coefficients",
+        "hints": [
+          "Normalize each supplied scientific expression first, shifting its decimal and compensating its exponent so the value stays unchanged.",
+          "For a notation task, stop when the coefficient is at least one and less than ten; for a comparison, compare normalized exponents first and coefficients only when the exponents match.",
+          "Give the requested normalized form or comparison result for the original expressions."
+        ]
+      },
+      "proposed_row_sha256": "0c95d12a35ab1ca09ae69c22622d79479fb7704f98b0076076f96280ddf2a19b"
+    },
+    {
+      "key": "scientific-notation/kp1",
+      "base_authored_row_sha256": "2037764b82456eb0b17724c3f28c1873fa9c30e0d20ea11973cb666aac76ea9d",
+      "curriculum_kp_sha256": "c0c20b7497713239b5cd30386c50a2f8d98c6c29d2d4bcb7d1a8f00cdaafd3e3",
+      "review_required_change": "Say add the EXPONENTS of ten, not add the powers of ten. Multiply coefficients separately, combine exponents, then confirm a normalized scientific coefficient and adjust it with the exponent if required.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "6 x 10^7",
+          "problem": "Compute $(2 \\times 10^3)(3 \\times 10^4)$.",
+          "solution_sketch": "$2 \\cdot 3 = 6$; $10^{3+4} = 10^7$."
+        },
+        {
+          "answer": "6 x 10^3",
+          "problem": "What is $(3 \\times 10^{-2})(2 \\times 10^5)$?",
+          "solution_sketch": "$3 \\cdot 2 = 6$; $10^{-2+5} = 10^3$."
+        },
+        {
+          "answer": "8 x 10^5",
+          "problem": "Multiply $(4 \\times 10^2)(2 \\times 10^3)$.",
+          "solution_sketch": "$4 \\cdot 2 = 8$; $10^{2+3} = 10^5$."
+        },
+        {
+          "answer": "9 x 10^2",
+          "problem": "Find the product $(3 \\times 10^{-4})(3 \\times 10^6)$.",
+          "solution_sketch": "$3 \\cdot 3 = 9$; $10^{-4+6} = 10^2$."
+        }
+      ],
+      "proposed_row": {
+        "key": "scientific-notation/kp1",
+        "objective": "Multiply in scientific notation",
+        "constraints": "multiply coefficients, add exponents",
+        "hints": [
+          "Multiply the numerical coefficients separately.",
+          "Add the exponents of ten, because equal-base powers are being multiplied.",
+          "Normalize the result: shift any out-of-range coefficient until it is at least one and strictly less than ten, and compensate the exponent."
+        ]
+      },
+      "proposed_row_sha256": "ebfaf335dc800ae2a1a2ae4a7d6d51cf5064c74a617a6e5ad4c2097327129ffe"
+    },
+    {
+      "key": "scientific-notation/kp2",
+      "base_authored_row_sha256": "f6aebd2fd71d040d55c4f5d53e5d6f0ad29fc5ab64cbf108d6ea08b863334b83",
+      "curriculum_kp_sha256": "7c73c23bac36792c06b10bc72b4b941e270dd6d6213c715c222bddf8c7df4c5d",
+      "review_required_change": "The last rung names scientific notation without explaining normalization; nine current coefficients a/2 are below1. After coefficient division and exponent subtraction, shift an out-of-range coefficient and compensate with the exponent before writing the normalized result.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "4 x 10^3",
+          "problem": "Compute $\\frac{8 \\times 10^5}{2 \\times 10^2}$.",
+          "solution_sketch": "$\\frac{8}{2} = 4$; $10^{5-2} = 10^3$."
+        },
+        {
+          "answer": "3 x 10^-2",
+          "problem": "What is $\\frac{9 \\times 10^3}{3 \\times 10^5}$?",
+          "solution_sketch": "$\\frac{9}{3} = 3$; $10^{3-5} = 10^{-2}$."
+        },
+        {
+          "answer": "2 x 10^2",
+          "problem": "Divide $\\frac{6 \\times 10^4}{3 \\times 10^2}$.",
+          "solution_sketch": "$\\frac{6}{3} = 2$; $10^{4-2} = 10^2$."
+        },
+        {
+          "answer": "3 x 10^3",
+          "problem": "Find the quotient $\\frac{9 \\times 10^7}{3 \\times 10^4}$.",
+          "solution_sketch": "$\\frac{9}{3} = 3$; $10^{7-4} = 10^3$."
+        }
+      ],
+      "proposed_row": {
+        "key": "scientific-notation/kp2",
+        "objective": "Divide in scientific notation",
+        "constraints": "divide coefficients, subtract exponents",
+        "hints": [
+          "Divide the numerical coefficients and subtract the denominator exponent of ten from the numerator exponent.",
+          "If the coefficient is below one, move its decimal right and decrease the exponent by the same number of places; if it is at least ten, move left and increase the exponent.",
+          "Write the exact normalized coefficient times ten to the resulting integer exponent."
+        ]
+      },
+      "proposed_row_sha256": "be619f5059c8ca138c224c73a17aa91d1492468aea629a0f06a24f4278951234"
+    },
+    {
+      "key": "scientific-notation/kp3",
+      "base_authored_row_sha256": "a05603c232e1da9788a592a55cf896b22ed9a0a33f90de8a61f91f10a3be780b",
+      "curriculum_kp_sha256": "ac5bafa15ac25644627797c19b61b84a612fe6ec7b16327583c5b19a3fe3f15f",
+      "review_required_change": "Multiplication-only and oversized-coefficient-only guidance misses canonical division/undersized coefficients. Perform the actual product or quotient first, then normalize both coefficient>=10 and0<coefficient<1 cases by opposite decimal/exponent shifts that preserve value.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "2 x 10^8",
+          "problem": "Compute $(4 \\times 10^3)(5 \\times 10^4)$ in proper scientific notation.",
+          "solution_sketch": "$20 \\times 10^7 = 2 \\times 10^8$."
+        },
+        {
+          "answer": "2.5 x 10^-4",
+          "problem": "Compute $\\frac{2 \\times 10^2}{8 \\times 10^5}$ in proper scientific notation.",
+          "solution_sketch": "$0.25 \\times 10^{-3} = 2.5 \\times 10^{-4}$."
+        },
+        {
+          "answer": "2.4 x 10^8",
+          "problem": "Find $(6 \\times 10^3)(4 \\times 10^4)$ in proper scientific notation.",
+          "solution_sketch": "$24 \\times 10^7 = 2.4 \\times 10^8$."
+        },
+        {
+          "answer": "5 x 10^-4",
+          "problem": "Find $\\frac{3 \\times 10^2}{6 \\times 10^5}$ in proper scientific notation.",
+          "solution_sketch": "$0.5 \\times 10^{-3} = 5 \\times 10^{-4}$."
+        }
+      ],
+      "proposed_row": {
+        "key": "scientific-notation/kp3",
+        "objective": "Renormalize the result",
+        "constraints": "coefficient must land back in [1, 10)",
+        "hints": [
+          "Perform the stated coefficient product or quotient and combine the powers of ten with the matching exponent rule.",
+          "Normalize an oversized coefficient by shifting left and increasing the exponent; normalize a positive coefficient below one by shifting right and decreasing the exponent.",
+          "Verify that the normalized coefficient is at least one and less than ten and that the decimal shift preserved the value."
+        ]
+      },
+      "proposed_row_sha256": "7b214529693572d19509f9e1acf745dade73e3acdb1276e8444ea27d3ffb47a9"
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp2",
+      "base_authored_row_sha256": "2ab44ef16611efff6aceb6202af03003334aa84419991ce44e61dd68e0e1c6e8",
+      "curriculum_kp_sha256": "c3dd453d5efe8b384851826c6d321120607be6ad7b6f6f5ca22e9ac41040e620",
+      "review_required_change": "The final rung always subtracts, contradicting half the canonical examples. Match the larger exponent by scaling the smaller-exponent coefficient downward, then perform the stated addition or subtraction on coefficients and keep the common power.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "5.3 x 10^4",
+          "problem": "Compute $5 \\times 10^4 + 3 \\times 10^3$ in scientific notation.",
+          "solution_sketch": "$3 \\times 10^3 = 0.3 \\times 10^4$; $5 + 0.3 = 5.3$."
+        },
+        {
+          "answer": "5.8 x 10^5",
+          "problem": "Compute $6.2 \\times 10^5 - 4 \\times 10^4$ in scientific notation.",
+          "solution_sketch": "$4 \\times 10^4 = 0.4 \\times 10^5$; $6.2 - 0.4 = 5.8$."
+        },
+        {
+          "answer": "4.6 x 10^5",
+          "problem": "Add $4 \\times 10^5$ and $6 \\times 10^4$, in scientific notation.",
+          "solution_sketch": "$6 \\times 10^4 = 0.6 \\times 10^5$; $4 + 0.6 = 4.6$."
+        },
+        {
+          "answer": "7 x 10^6",
+          "problem": "Subtract $5 \\times 10^5$ from $7.5 \\times 10^6$, in scientific notation.",
+          "solution_sketch": "$5 \\times 10^5 = 0.5 \\times 10^6$; $7.5 - 0.5 = 7$."
+        }
+      ],
+      "proposed_row": {
+        "key": "scientific-notation-addition-subtraction/kp2",
+        "objective": "Different powers: match exponents first",
+        "constraints": "rewrite the smaller-exponent term to match the larger exponent",
+        "hints": [
+          "Rewrite the term with the smaller exponent to use the larger exponent, scaling that term’s coefficient downward by the matching power of ten to preserve value.",
+          "Perform the stated addition or subtraction on the aligned coefficients and keep the common power of ten.",
+          "Normalize the result until its coefficient is at least one and strictly less than ten, then verify its value against the original expression."
+        ]
+      },
+      "proposed_row_sha256": "f064669e28fbb7886533b76922713a67d61ada18134e9e9ef29b3312231647fd"
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp3",
+      "base_authored_row_sha256": "f2a04ffff83a75f63997c700ff78cac21a7479f5aec1267e53aae81454bf63eb",
+      "curriculum_kp_sha256": "0abb9068ebc6c766d43fad34ce83f702d79f467fa4cabb91a6f0b31e2ad2bd40",
+      "review_required_change": "Hardcodes addition and coefficient>=10. Match powers if necessary, do the stated addition/subtraction, then normalize either an oversized or an undersized positive result; decreasing the exponent is required when shifting a coefficient upward from below1.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "1.7 x 10^4",
+          "problem": "Compute $9 \\times 10^3 + 8 \\times 10^3$ in proper scientific notation.",
+          "solution_sketch": "$17 \\times 10^3 = 1.7 \\times 10^4$."
+        },
+        {
+          "answer": "1 x 10^5",
+          "problem": "Compute $1.05 \\times 10^6 - 9.5 \\times 10^5$ in proper scientific notation.",
+          "solution_sketch": "$10.5 \\times 10^5 - 9.5 \\times 10^5 = 1.0 \\times 10^5$."
+        },
+        {
+          "answer": "1.3 x 10^5",
+          "problem": "Add $7 \\times 10^4$ and $6 \\times 10^4$, in proper scientific notation.",
+          "solution_sketch": "$13 \\times 10^4 = 1.3 \\times 10^5$."
+        },
+        {
+          "answer": "1.2 x 10^5",
+          "problem": "Subtract $8 \\times 10^4$ from $2 \\times 10^5$, in proper scientific notation.",
+          "solution_sketch": "$20 \\times 10^4 - 8 \\times 10^4 = 12 \\times 10^4 = 1.2 \\times 10^5$."
+        }
+      ],
+      "proposed_row": {
+        "key": "scientific-notation-addition-subtraction/kp3",
+        "objective": "Renormalize after adding",
+        "constraints": "coefficient must land back in [1, 10)",
+        "hints": [
+          "Align the powers of ten when necessary, then perform the stated addition or subtraction on the coefficients.",
+          "If the positive coefficient is at least ten, shift left and increase the exponent; if it is below one, shift right and decrease the exponent.",
+          "Write the normalized result and check that the coefficient is at least one and strictly less than ten without changing the value."
+        ]
+      },
+      "proposed_row_sha256": "bed798d754b700e3d76fb41438329664ff147f10aa7fbd00b50aa98f9866c336"
+    },
+    {
+      "key": "perfect-square-roots/kp1",
+      "base_authored_row_sha256": "7519d651659084624b3f496e5bc38e2e319f0d9cce36461effb5ff606bdd9b8e",
+      "curriculum_kp_sha256": "3e8d81e544e6f4a15520519bc16a9f6a5aaa5f4ea15d9ab97cd40a44a56fb8cb",
+      "review_required_change": "The ladder assumes a physical square and tells every learner to square the unit. Pure numeric powers have no unit, and mosaic tile counts are tiles rather than square tiles. Explain the product of two equal copies of the given number; use area units only when the requested quantity is an area, and preserve count units for arrays.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "169",
+          "problem": "Compute $13^2$.",
+          "solution_sketch": "$13^2 = 169$."
+        },
+        {
+          "answer": "225",
+          "problem": "What is $15^2$?",
+          "solution_sketch": "$15^2 = 225$."
+        },
+        {
+          "answer": "49",
+          "problem": "Find $7^2$.",
+          "solution_sketch": "$7^2 = 49$."
+        },
+        {
+          "answer": "144",
+          "problem": "Evaluate $12^2$.",
+          "solution_sketch": "$12^2 = 144$."
+        }
+      ],
+      "proposed_row": {
+        "key": "perfect-square-roots/kp1",
+        "objective": "Squares of 1 through 15",
+        "constraints": "bases 1-15",
+        "hints": [
+          "Interpret a square as the product of two equal copies of the given number.",
+          "Multiply those equal factors to find the square.",
+          "Use square units only for an area; preserve counting units for an array and use no unit for a pure numerical expression."
+        ]
+      },
+      "proposed_row_sha256": "8c4b0d196a95fbb23f5e5a7d931f92e4b596a1203d7bba98e7b8e2257a581991"
+    },
+    {
+      "key": "perfect-square-roots/kp2",
+      "base_authored_row_sha256": "2befcdfd57fa553817f7bfb86d5506ebff7399ecb7da628aa6df3330913d0ad3",
+      "curriculum_kp_sha256": "e9480fc3c82193363ecebad8fa3063d3fb11f571913c8e97e20193863554748f",
+      "review_required_change": "Replace area/length-only wording with the given radicand and its principal nonnegative root. Connect an area to side length when that context is actually supplied; square the candidate to verify both pure-number and contextual cases.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "7",
+          "problem": "Compute $\\sqrt{49}$.",
+          "solution_sketch": "$7^2 = 49$, so the principal square root is $7$."
+        },
+        {
+          "answer": "11",
+          "problem": "A square garden has area $121$ square metres. Find its side length in metres.",
+          "solution_sketch": "$s^2=121$ and a length is positive. Since $11\\cdot11=121$, $s=11$."
+        },
+        {
+          "answer": "10",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "The nonnegative number $s$ satisfies $s^2=100$. Find $s$.",
+          "solution_sketch": "Both $10$ and $-10$ square to $100$; the condition $s\\ge0$ selects $10$."
+        },
+        {
+          "answer": "9",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Nine equal rows contain $81$ tiles in a square array. Use the row count to find $\\sqrt{81}$.",
+          "solution_sketch": "$81=9\\cdot9$. The square array has $9$ tiles on each side, so its principal root is $9$."
+        }
+      ],
+      "proposed_row": {
+        "key": "perfect-square-roots/kp2",
+        "objective": "Roots of perfect squares up to 144",
+        "constraints": "perfect squares up to 144",
+        "hints": [
+          "Identify the radicand and seek its principal, nonnegative square root.",
+          "Choose a candidate whose square equals the radicand.",
+          "Square the candidate to verify it, and attach a length unit only when the problem supplies an area context."
+        ]
+      },
+      "proposed_row_sha256": "211fd89fdadaee4f507706362943755642cbc278e8b10da2ddbf1504dd13aeb8"
+    },
+    {
+      "key": "perfect-square-roots/kp3",
+      "base_authored_row_sha256": "394a7551e2fa31abf551445519e99d9f6bdfc6dffa6a7a6f1cae2a170fad7b6b",
+      "curriculum_kp_sha256": "443b64f7ac09c2de4c26e0f714378e1d9de1e57390835ffc9ada17f420f33fd4",
+      "review_required_change": "Same area/side-length overfit: canonical tasks also directly name square roots. Use the radicand, a candidate nonnegative root and a square check, preserving any actual context units.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "20",
+          "problem": "Compute $\\sqrt{400}$.",
+          "solution_sketch": "$20^2 = 400$."
+        },
+        {
+          "answer": "15",
+          "problem": "A square panel covers $225$ square centimetres. Find its side length in centimetres.",
+          "solution_sketch": "$s^2=225$; $15\\cdot15=225$ and $s>0$, so the side is $15$."
+        },
+        {
+          "answer": "19",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Use $(20-1)^2$ to find $\\sqrt{361}$.",
+          "solution_sketch": "$(20-1)^2=400-40+1=361$. Hence the nonnegative root is $20-1=19$."
+        },
+        {
+          "answer": "18",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Factor $324=4\\cdot81$ and find its principal square root using the product rule.",
+          "solution_sketch": "$\\sqrt{324}=\\sqrt4\\sqrt{81}=2\\cdot9=18$; both factors are nonnegative."
+        }
+      ],
+      "proposed_row": {
+        "key": "perfect-square-roots/kp3",
+        "objective": "Larger perfect squares and multiples of ten",
+        "constraints": "perfect squares up to 400",
+        "hints": [
+          "Identify the radicand and a candidate principal, nonnegative root.",
+          "Check the candidate by ordinary multiplication of the number by itself.",
+          "Report the verified root, preserving only units actually supplied by the context."
+        ]
+      },
+      "proposed_row_sha256": "da1f1a35f235e06f27c4f64549ebabf6c85b61d58f9291b6305d68bbadda21af"
+    },
+    {
+      "key": "square-roots/kp1",
+      "base_authored_row_sha256": "3d146bf08026b1fc3569b539a606cb33415be6f74c725e695f9cb902734745f4",
+      "curriculum_kp_sha256": "ea4fdfc2374f00660bebc528c782a720945fc49b8ee10637ca8ba09fe23f7ecb",
+      "review_required_change": "Final rung only adds/subtracts, missing canonical2sqrt81 and the perimeter4sqrt9. Evaluate all principal roots, identify the actual remaining arithmetic or contextual quantity, then apply the required addition, subtraction or multiplication.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "14",
+          "problem": "Compute $\\sqrt{36} + \\sqrt{64}$.",
+          "solution_sketch": "$6 + 8 = 14$."
+        },
+        {
+          "answer": "18",
+          "problem": "Compute $2\\sqrt{81}$.",
+          "solution_sketch": "$2 \\cdot 9 = 18$."
+        },
+        {
+          "answer": "5",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Compute $\\sqrt{64}-\\sqrt{9}$.",
+          "solution_sketch": "$8^2=64$ and $3^2=9$. Subtract the principal roots: $8-3=5$."
+        },
+        {
+          "answer": "12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A square has area $9$ square metres. Find its perimeter in metres.",
+          "solution_sketch": "The side is $\\sqrt9=3$ metres; four equal sides give $4\\cdot3=12$ metres."
+        }
+      ],
+      "proposed_row": {
+        "key": "square-roots/kp1",
+        "objective": "Roots inside arithmetic expressions",
+        "constraints": "perfect-square radicands only",
+        "hints": [
+          "Evaluate each principal square root before combining terms.",
+          "Identify the remaining operation or contextual quantity after the roots are known.",
+          "Apply the requested addition, subtraction, or multiplication and preserve any relevant units."
+        ]
+      },
+      "proposed_row_sha256": "ebf4c2fb6e68ce88383387e5d2a2d37661e7b9e3f09e6ee84036e656b6747233"
+    },
+    {
+      "key": "square-roots/kp2",
+      "base_authored_row_sha256": "755d746cd70fb0a94098dddd483f7ea1eed9ed7bef799e7ca16ea27e5cb01dbd",
+      "curriculum_kp_sha256": "8ffd9a3ab8ac44bac5792871da33799ccf8379f7942ac067b24914248686e787",
+      "review_required_change": "The positive choice comes from the principal square-root convention, not an assumed length context. Take roots of numerator and positive denominator, use the principal nonnegative value, and square the fraction to verify.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "3/4",
+          "problem": "Compute $\\sqrt{\\frac{9}{16}}$.",
+          "solution_sketch": "$\\frac{\\sqrt{9}}{\\sqrt{16}} = \\frac{3}{4}$."
+        },
+        {
+          "answer": "7/10",
+          "problem": "What is $\\sqrt{\\frac{49}{100}}$?",
+          "solution_sketch": "$\\frac{\\sqrt{49}}{\\sqrt{100}} = \\frac{7}{10}$."
+        },
+        {
+          "answer": "5/6",
+          "problem": "Find $\\sqrt{\\frac{25}{36}}$.",
+          "solution_sketch": "$\\frac{\\sqrt{25}}{\\sqrt{36}} = \\frac{5}{6}$."
+        },
+        {
+          "answer": "2/3",
+          "problem": "Evaluate $\\sqrt{\\frac{4}{9}}$.",
+          "solution_sketch": "$\\frac{\\sqrt{4}}{\\sqrt{9}} = \\frac{2}{3}$."
+        }
+      ],
+      "proposed_row": {
+        "key": "square-roots/kp2",
+        "objective": "Roots of fractions",
+        "constraints": "root of a fraction = root of top over root of bottom",
+        "hints": [
+          "Take the principal roots of the numerator and positive denominator separately.",
+          "Form the nonnegative fraction from those roots and simplify it exactly.",
+          "Square the fraction to verify that it returns the original radicand."
+        ]
+      },
+      "proposed_row_sha256": "7a52250721be5c850a183b56d534b394395fb4b37bb48ef65180650e294ca486"
+    },
+    {
+      "key": "square-roots/kp3",
+      "base_authored_row_sha256": "09b17baab893ed07679ab92050553aede3fb2612a26152026ca804715812bd1f",
+      "curriculum_kp_sha256": "f8bf751dd0702cb3f0088df8e1229933e373cc12766bd8df520ff2c36b6bef34",
+      "review_required_change": "The ladder only multiplies known roots, missing the canonical missing-factor equation. After evaluating roots, multiply when a product is requested; if a factor is missing, divide the known product by the known nonzero factor and verify the original product.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "20",
+          "problem": "Compute $\\sqrt{100} \\cdot \\sqrt{4}$.",
+          "solution_sketch": "$10 \\cdot 2 = 20$."
+        },
+        {
+          "answer": "6",
+          "problem": "Compute $\\sqrt{4 \\cdot 9}$.",
+          "solution_sketch": "$\\sqrt{36} = 6$, or $2 \\cdot 3$."
+        },
+        {
+          "answer": "12",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "A rectangle has side lengths $\\sqrt9$ and $\\sqrt{16}$. Find its area.",
+          "solution_sketch": "Area is the product of the sides: $\\sqrt9\\sqrt{16}=3\\cdot4=12$."
+        },
+        {
+          "answer": "5",
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "problem": "Find the positive factor $q$ in $\\sqrt4\\,q=\\sqrt{100}$.",
+          "solution_sketch": "$2q=10$, so $q=5$. Check the product: $\\sqrt4\\sqrt{25}=\\sqrt{100}$."
+        }
+      ],
+      "proposed_row": {
+        "key": "square-roots/kp3",
+        "objective": "Products of roots",
+        "constraints": "products of perfect squares",
+        "hints": [
+          "Evaluate the known principal square roots first.",
+          "If a product is requested, multiply the roots; if one factor is missing, divide the known product by the known nonzero factor.",
+          "Substitute the result into the original product to verify it."
+        ]
+      },
+      "proposed_row_sha256": "6f839dbee3f9c9a9cc5fc620a454b042c302c303e15bd44121382d83aae20954"
+    },
+    {
+      "key": "estimating-square-roots/kp2",
+      "base_authored_row_sha256": "38b80f64d2889d4eb94c353fa45e17d985564885e648918c110de285908880aa",
+      "curriculum_kp_sha256": "101a50b4bfb962bee7f6cb351072520bfa0a0f8d67ce145d51e6141b971913e3",
+      "review_required_change": "Square-distance comparison is safe for integer radicands but not general decimals: sqrt6.4 rounds to3 although6.4 is closer to4 than9. Prefer a universally correct ladder: bracket between integers, square their midpoint, compare the radicand with that threshold, and round accordingly. All current integer examples/templates produce correct results under the existing shortcut.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "7",
+          "problem": "Estimate $\\sqrt{50}$ to the nearest integer.",
+          "solution_sketch": "$49$ is much closer than $64$."
+        },
+        {
+          "answer": "3",
+          "problem": "What is $\\sqrt{8}$ rounded to the nearest integer?",
+          "solution_sketch": "$8$ is closer to $9$ than to $4$."
+        },
+        {
+          "answer": "6",
+          "problem": "Round $\\sqrt{40}$ to the nearest whole number.",
+          "solution_sketch": "$40$ is closer to $36$ than to $49$."
+        },
+        {
+          "answer": "10",
+          "problem": "Find the nearest integer to $\\sqrt{95}$.",
+          "solution_sketch": "$95$ is much closer to $100$ than to $81$."
+        }
+      ],
+      "proposed_row": {
+        "key": "estimating-square-roots/kp2",
+        "objective": "Round a root to the nearest integer",
+        "constraints": "compare distances to the two nearest perfect squares",
+        "hints": [
+          "Bracket the radicand between squares of consecutive nonnegative integers.",
+          "Square the midpoint between those two integers and compare the radicand with that exact threshold.",
+          "Choose the lower integer below the squared-midpoint threshold and the upper integer above it, following the stated tie rule if equality occurs."
+        ]
+      },
+      "proposed_row_sha256": "15f08a87abc5841bf63ec98574a7c5db1d30c176eabd4ee53ca35e46632824d3"
+    },
+    {
+      "key": "estimating-square-roots/kp3",
+      "base_authored_row_sha256": "524166b28ccc44f5eb85f61ce828e484608d748810d6f02d60ee83e66e160bac",
+      "curriculum_kp_sha256": "e4901192ff2ab6bce3de139ae8618caf63adef95f4435ccec049e93c685e5a0c",
+      "review_required_change": "Final rung only selects the larger of two values, missing canonical ordering of three values. Compare nonnegative values through their squares, then either select the requested extreme or order ALL original expressions as asked.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "5, sqrt(30), 6",
+          "problem": "Order from least to greatest: $5$, $\\sqrt{30}$, $6$.",
+          "solution_sketch": "$25 < 30 < 36$."
+        },
+        {
+          "answer": "8",
+          "problem": "Which is larger: $\\sqrt{60}$ or $8$?",
+          "solution_sketch": "$8 = \\sqrt{64} > \\sqrt{60}$."
+        },
+        {
+          "answer": "6, sqrt(40), 7",
+          "problem": "Arrange $6$, $\\sqrt{40}$, $7$ from least to greatest.",
+          "solution_sketch": "$36 < 40 < 49$."
+        },
+        {
+          "answer": "7",
+          "problem": "Between $\\sqrt{40}$ and $7$, which is larger?",
+          "solution_sketch": "$7 = \\sqrt{49} > \\sqrt{40}$."
+        }
+      ],
+      "proposed_row": {
+        "key": "estimating-square-roots/kp3",
+        "objective": "Order values involving roots",
+        "constraints": "compare by squaring",
+        "hints": [
+          "For nonnegative competing values, compare them by comparing their squares with each radicand.",
+          "Place each root relative to the ordinary numbers, or identify the requested extreme.",
+          "Return every original expression in the requested order when an ordering is asked, and return only the requested value for a selection task."
+        ]
+      },
+      "proposed_row_sha256": "10a9a17afddca6fde27ced9936c912f07f890e68d2c38f38da5b77eb1e7fde15"
+    },
+    {
+      "key": "cube-roots/kp1",
+      "base_authored_row_sha256": "ab3585cb49de3f9fe2a8d4bbed267fb9dfd5bfb7274ca66fffde6f0d059756c3",
+      "curriculum_kp_sha256": "9748b8331a7b9fab296f30d1042a0bd93104d31db6f1ab1c2f68d5e436a92e81",
+      "review_required_change": "Replace ambiguous multiplied by itself three times with a product of THREE equal factors. Then find a candidate and cube-check it; the wording should distinguish cubing from performing three multiplications after the original factor.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "3",
+          "problem": "Compute $\\sqrt[3]{27}$.",
+          "solution_sketch": "$3^3 = 27$."
+        },
+        {
+          "answer": "4",
+          "problem": "What is $\\sqrt[3]{64}$?",
+          "solution_sketch": "$4^3 = 64$."
+        },
+        {
+          "answer": "5",
+          "problem": "Find $\\sqrt[3]{125}$.",
+          "solution_sketch": "$5^3 = 125$."
+        },
+        {
+          "answer": "10",
+          "problem": "Evaluate $\\sqrt[3]{1000}$.",
+          "solution_sketch": "$10^3 = 1000$."
+        }
+      ],
+      "proposed_row": {
+        "key": "cube-roots/kp1",
+        "objective": "Cube roots of perfect cubes",
+        "constraints": "perfect cubes up to 1000",
+        "hints": [
+          "Recall perfect cubes near the radicand.",
+          "Find a candidate whose product of three equal factors equals the radicand.",
+          "Cube the candidate to verify the real cube root."
+        ]
+      },
+      "proposed_row_sha256": "5fffe4e4013a5c4407aa1c05418c35fbbf4d670414e89b9612df76366a986a24"
+    },
+    {
+      "key": "cube-roots/kp3",
+      "base_authored_row_sha256": "955bef87a6391d52d3662a3d579baa931fe1b33ae30fb52fed849423af55f5c4",
+      "curriculum_kp_sha256": "172a69a21669c0a6f7f88244cc865c7d5ff64f17708cc78e355bde4f84931451",
+      "review_required_change": "Fourth-power-only guidance misses fifth roots. Read the actual root index, test the candidate with that many equal factors, choose the nonnegative principal root for an even index and preserve the real sign for an odd index.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "2",
+          "problem": "Compute $\\sqrt[4]{16}$.",
+          "solution_sketch": "$2^4 = 16$."
+        },
+        {
+          "answer": "2",
+          "problem": "What is $\\sqrt[5]{32}$?",
+          "solution_sketch": "$2^5 = 32$."
+        },
+        {
+          "answer": "3",
+          "problem": "Find $\\sqrt[4]{81}$.",
+          "solution_sketch": "$3^4 = 81$."
+        },
+        {
+          "answer": "3",
+          "problem": "Evaluate $\\sqrt[5]{243}$.",
+          "solution_sketch": "$3^5 = 243$."
+        }
+      ],
+      "proposed_row": {
+        "key": "cube-roots/kp3",
+        "objective": "Fourth and fifth roots",
+        "constraints": "small perfect powers only",
+        "hints": [
+          "Read the actual root index, including whether it is four or five.",
+          "Test a small candidate by raising it to that index, using that many equal factors.",
+          "Choose the nonnegative principal root for an even index and preserve the real sign for an odd index."
+        ]
+      },
+      "proposed_row_sha256": "a1d79ca27f60c1c227b1f1154333c943fbb253505de41b774adac1569cf7b933"
+    },
+    {
+      "key": "simplifying-radicals/kp1",
+      "base_authored_row_sha256": "7d33c5bfe1fdf5038130966da528d8bac4f563a3031a137ad04114b7037b608c",
+      "curriculum_kp_sha256": "17863bfdd38351123c00bc7e5628e40c32e6e2a6dda6defe2705a4f6950f1e99",
+      "review_required_change": "Any square factor plus a merely non-square remainder can leave an unsimplified radical: sqrt72 can become2sqrt18. Require the LARGEST square factor or repeat extraction until the remaining radicand has no perfect-square factor greater than1 (squarefree), then write the extracted coefficient times that radical.",
+      "curriculum_exemplars_reviewed": 4,
+      "coverage_evidence": [
+        {
+          "answer": "2*sqrt(3)",
+          "problem": "Simplify $\\sqrt{12}$.",
+          "solution_sketch": "$12 = 4 \\cdot 3$; $\\sqrt{4} = 2$."
+        },
+        {
+          "answer": "5*sqrt(2)",
+          "problem": "What is $\\sqrt{50}$ in simplest radical form?",
+          "solution_sketch": "$50 = 25 \\cdot 2$."
+        },
+        {
+          "answer": "3*sqrt(3)",
+          "problem": "Reduce $\\sqrt{27}$ to simplest radical form.",
+          "solution_sketch": "$27 = 9 \\cdot 3$; $\\sqrt{9} = 3$."
+        },
+        {
+          "answer": "2*sqrt(5)",
+          "problem": "Write $\\sqrt{20}$ in simplest radical form.",
+          "solution_sketch": "$20 = 4 \\cdot 5$; $\\sqrt{4} = 2$."
+        }
+      ],
+      "proposed_row": {
+        "key": "simplifying-radicals/kp1",
+        "objective": "Factor out a perfect square",
+        "constraints": "pull out the largest perfect-square factor",
+        "hints": [
+          "Find the largest perfect-square factor of the radicand, or keep extracting square factors until the remainder is squarefree.",
+          "Take the square root of that perfect-square factor outside the radical.",
+          "Multiply the extracted factors and leave only a squarefree factor inside the radical."
+        ]
+      },
+      "proposed_row_sha256": "394fb1548d003819e683c36ff80ea46676a3fa231f9c322973085e67ebf4decf"
+    }
+  ],
+  "template_repairs": [
+    {
+      "key": "square-roots/kp2",
+      "base_selected_template_sha256": "b3930babcfd9f1bb5ba57f8d4465033deb37611135322c064319a57a7d734511",
+      "curriculum_kp_sha256": "8ffd9a3ab8ac44bac5792871da33799ccf8379f7942ac067b24914248686e787",
+      "review_findings": [
+        {
+          "keys": [
+            "square-roots/kp2"
+          ],
+          "kind": "exact_fraction_assessment",
+          "finding": "All12 current roots are b/13 with b1..12; absent policy permits unequal learner-chosen rounded decimals instead of exact roots.",
+          "required_change": "Use explicit exact checking with the intended fraction rendering/form. Preserve the principal root and nonzero denominator."
+        }
+      ],
+      "proposed_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "required_form",
+            "form": "reduced_fraction"
+          },
+          "answer_expr": "sqrt(a/169)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Take the principal root of numerator and denominator and simplify the exact fraction."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                1,
+                4,
+                9,
+                16,
+                25,
+                36,
+                49,
+                64,
+                81,
+                100,
+                121,
+                144
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "1/13",
+              "params": {
+                "a": 1
+              }
+            },
+            {
+              "expected": "2/13",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "3/13",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "4/13",
+              "params": {
+                "a": 16
+              }
+            },
+            {
+              "expected": "5/13",
+              "params": {
+                "a": 25
+              }
+            },
+            {
+              "expected": "6/13",
+              "params": {
+                "a": 36
+              }
+            },
+            {
+              "expected": "7/13",
+              "params": {
+                "a": 49
+              }
+            },
+            {
+              "expected": "8/13",
+              "params": {
+                "a": 64
+              }
+            },
+            {
+              "expected": "9/13",
+              "params": {
+                "a": 81
+              }
+            },
+            {
+              "expected": "10/13",
+              "params": {
+                "a": 100
+              }
+            },
+            {
+              "expected": "11/13",
+              "params": {
+                "a": 121
+              }
+            },
+            {
+              "expected": "12/13",
+              "params": {
+                "a": 144
+              }
+            }
+          ],
+          "solution_sketch": "Find the principal square root of the displayed perfect-square numerator and of $169$. Form the nonnegative fraction and square it to verify the original radicand.",
+          "statement": "Find the principal square root of ${a}/169$. Give the exact answer as a reduced fraction."
+        },
+        "kind": "template",
+        "kp_id": "square-roots/kp2"
+      },
+      "proposed_template_sha256": "d6478b6443c5fe24498091adcb7aae0b113f8ad7e90282a2dfd51dcc14ba72d2",
+      "binding_count": 12,
+      "independent_arithmetic": "All finite samples recomputed exactly from decimal shifts, rational square roots, or integer powers."
+    }
+  ],
+  "policy_deferred_template_findings": [
+    {
+      "key": "simplifying-radicals/kp1",
+      "base_selected_template_sha256": "861931a6ce4673497971696edcb76ab43d8f11ea0979452161305cc500a92451",
+      "required_policy": "simplest_radical_output",
+      "status": "deferred-until-policy-is-implemented-and-bound",
+      "reason": "Exact equivalence cannot enforce full extraction to a squarefree radicand; no weaker form check is proposed."
+    },
+    {
+      "key": "simplifying-radicals/kp2",
+      "base_selected_template_sha256": "76c50eeab55e082b7cde423a5e1449431a33f2f77b13f0211f2eb9fe4260e5a7",
+      "required_policy": "simplest_radical_output",
+      "status": "deferred-until-policy-is-implemented-and-bound",
+      "reason": "Exact equivalence cannot enforce full extraction to a squarefree radicand; no weaker form check is proposed."
+    },
+    {
+      "key": "simplifying-radicals/kp3",
+      "base_selected_template_sha256": "beb2a2af0515b0f370886d5844e11d63f2052b746d0e790ff8f7605d4346a9e6",
+      "required_policy": "simplest_radical_output",
+      "status": "deferred-until-policy-is-implemented-and-bound",
+      "reason": "Exact equivalence cannot enforce full extraction to a squarefree radicand; no weaker form check is proposed.",
+      "additional_required_content_change": "Restrict radicands to 100–300 and show their actual prime factorizations when the representation policy becomes available."
+    },
+    {
+      "key": "cube-roots/kp1",
+      "base_selected_template_sha256": "d40cd9201c755cab028a4b1e80314e896e8ca75ca3d03e80a799e4d9c64472c4",
+      "required_policy": "reviewed_finite_domain_below_randomization_floor",
+      "status": "deferred-until-finite-domain-policy-is-approved-and-bound",
+      "reason": "The valid written domain has ten nonnegative perfect cubes from 1 through 1000; this proposal does not invent out-of-scope values merely to reach twelve bindings.",
+      "additional_required_content_change": "Use evaluated literal radicands and explicit candidate-power verification, without revealing the root as a displayed symbolic power."
+    },
+    {
+      "key": "cube-roots/kp3",
+      "base_selected_template_sha256": "8354edf903b9656dce1be40f1db62f53487862fc2b9ca105fe8a980d5612744b",
+      "required_policy": "reviewed_finite_domain_below_randomization_floor",
+      "status": "deferred-until-finite-domain-policy-is-approved-and-bound",
+      "reason": "The valid written domain has four canonical small fourth/fifth-root cases; this proposal does not invent out-of-scope values merely to reach twelve bindings.",
+      "additional_required_content_change": "Use evaluated literal radicands and explicit candidate-power verification, without revealing the root as a displayed symbolic power."
+    }
+  ],
+  "independent_checks": {
+    "all_24_curriculum_rows_and_96_exemplars_read": true,
+    "all_current_hint_and_template_bodies_read": true,
+    "all_proposed_template_samples_recomputed": true,
+    "repository_mutations": 0
+  },
+  "status": "external-proposals-pending-independent-root-peer-review",
+  "supersedes": "hint-authored/06-exponents-radicals-02-repair-proposals-v5.json",
+  "superseded_sha256": "c77e317e045caa86077b01337d32475ad687a385e632890328a332aac96a2d47",
+  "delta_scope": "Link pending scientific v2 candidates after explicit coefficient-first prompts and non-revealing bidirectional conversion values; make addition/subtraction kp3 state the normalized coefficient upper bound strictly. Other hint and direct-template values are preserved from v5.",
+  "pending_scientific_template_candidates": [
+    {
+      "key": "scientific-notation/kp1",
+      "proposal": "hint-authored/06-exponents-radicals-02-scientific-binding-proposals-v2.json",
+      "proposal_sha256": "53be3eba81b60dcbfdc23565a512c6661a588cb65e18dbaecf5a90c3daae1240",
+      "proposed_template_sha256": "f46d6919cbaed6d6e0b37a07257b79c71f85e3998bd896120151bc638471650d",
+      "binding_count": 12,
+      "status": "pending-independent-root-peer-review"
+    },
+    {
+      "key": "scientific-notation/kp2",
+      "proposal": "hint-authored/06-exponents-radicals-02-scientific-binding-proposals-v2.json",
+      "proposal_sha256": "53be3eba81b60dcbfdc23565a512c6661a588cb65e18dbaecf5a90c3daae1240",
+      "proposed_template_sha256": "f1731548ee3c7890e0eb423e40602ce0b70210cc4ed3b1b37be882a9197b0ce3",
+      "binding_count": 12,
+      "status": "pending-independent-root-peer-review"
+    },
+    {
+      "key": "scientific-notation/kp3",
+      "proposal": "hint-authored/06-exponents-radicals-02-scientific-binding-proposals-v2.json",
+      "proposal_sha256": "53be3eba81b60dcbfdc23565a512c6661a588cb65e18dbaecf5a90c3daae1240",
+      "proposed_template_sha256": "f9b970c62e83ebc49afcb97fdac275c3e07fffc88ca23f065dcc5c73e7e25ce8",
+      "binding_count": 12,
+      "status": "pending-independent-root-peer-review"
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp1",
+      "proposal": "hint-authored/06-exponents-radicals-02-scientific-binding-proposals-v2.json",
+      "proposal_sha256": "53be3eba81b60dcbfdc23565a512c6661a588cb65e18dbaecf5a90c3daae1240",
+      "proposed_template_sha256": "b36912117a912b8fa8aba91e1f117b4fecdf81b6e5fa4778d170264b479cb0c3",
+      "binding_count": 12,
+      "status": "pending-independent-root-peer-review"
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp2",
+      "proposal": "hint-authored/06-exponents-radicals-02-scientific-binding-proposals-v2.json",
+      "proposal_sha256": "53be3eba81b60dcbfdc23565a512c6661a588cb65e18dbaecf5a90c3daae1240",
+      "proposed_template_sha256": "f2d91ec4ae458559a7b05a7762693256a2103fe31b13030ec47dc0bca9c0de42",
+      "binding_count": 12,
+      "status": "pending-independent-root-peer-review"
+    },
+    {
+      "key": "scientific-notation-addition-subtraction/kp3",
+      "proposal": "hint-authored/06-exponents-radicals-02-scientific-binding-proposals-v2.json",
+      "proposal_sha256": "53be3eba81b60dcbfdc23565a512c6661a588cb65e18dbaecf5a90c3daae1240",
+      "proposed_template_sha256": "5a6296b8a5df6ec7d10d0e1fd86db13b0373564c9ff33f5d8f1789f5002be176",
+      "binding_count": 12,
+      "status": "pending-independent-root-peer-review"
+    },
+    {
+      "key": "scientific-notation-conversion/kp1",
+      "proposal": "hint-authored/06-exponents-radicals-02-scientific-binding-proposals-v2.json",
+      "proposal_sha256": "53be3eba81b60dcbfdc23565a512c6661a588cb65e18dbaecf5a90c3daae1240",
+      "proposed_template_sha256": "06e6699087c845a39a78dc41cc9387025d75af14fdc439e282ff44812ba8d8d3",
+      "binding_count": 36,
+      "status": "pending-independent-root-peer-review"
+    },
+    {
+      "key": "scientific-notation-conversion/kp2",
+      "proposal": "hint-authored/06-exponents-radicals-02-scientific-binding-proposals-v2.json",
+      "proposal_sha256": "53be3eba81b60dcbfdc23565a512c6661a588cb65e18dbaecf5a90c3daae1240",
+      "proposed_template_sha256": "9293a25b7159da5601dfc16f8f12ae95b8cd0423f77a749ebae7b2e7af3f88a4",
+      "binding_count": 24,
+      "status": "pending-independent-root-peer-review"
+    }
+  ]
+}

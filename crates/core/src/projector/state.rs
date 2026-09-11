@@ -150,8 +150,11 @@ impl Projector<'_> {
             let open: Vec<Slug> = targets
                 .iter()
                 .filter(|target| {
+                    let key = kind
+                        .strip_prefix("review_confirmation:")
+                        .map_or_else(|| target.as_str().to_owned(), |kp| format!("{target}/{kp}"));
                     self.last_practice
-                        .get(target.as_str())
+                        .get(&key)
                         .is_none_or(|practiced| practiced < ts)
                 })
                 .cloned()
@@ -170,6 +173,22 @@ impl Projector<'_> {
                 kind: kind.clone(),
                 targets: open,
             });
+        }
+        for (_, skill, due) in &self.feedback_confirmations {
+            if self.completed_tasks < *due {
+                continue;
+            }
+            if let Some((topic, kp)) = skill.split_once('/')
+                && let Ok(topic) = Slug::new(topic)
+            {
+                let kind = format!("review_confirmation:{kp}");
+                if seen.insert((kind.clone(), vec![topic.as_str().to_owned()])) {
+                    out.push(PendingRemediation {
+                        kind,
+                        targets: vec![topic],
+                    });
+                }
+            }
         }
         out
     }
@@ -250,6 +269,7 @@ impl Projector<'_> {
             t_us: t_ref,
             zone: self.zone,
             window_days: VELOCITY_WINDOW_DAYS,
+            cfg: self.cfg,
         };
         compute_velocity_state(&input).map_err(ProjectorError::Time)
     }
@@ -296,6 +316,9 @@ impl Projector<'_> {
             quiz,
             velocity,
             pending_remediation: self.pending_remediation(),
+            ungraded: self.ungraded.clone(),
+            retention: self.retention.clone(),
+            integrated_journey: self.integrated_journey.clone(),
             config_hash: Some(config_hash),
             projector_version: Some(PROJECTOR_VERSION),
             through_seq: None,
@@ -320,9 +343,10 @@ mod tests {
     /// A quiz result at `ts_us` with no question and no XP.
     fn quiz_at(ts_us: i64) -> Event {
         Event::QuizResult(QuizResult {
+            inconclusive: false,
             ts: Timestamp::from_micros(ts_us),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             quiz_id: "z".to_owned(),
             score: 1.0,
             per_topic: Vec::new(),
@@ -335,7 +359,7 @@ mod tests {
         Event::ReviewResult(ReviewResult {
             ts: Timestamp::from_micros(ts_us),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             topic: Slug::new("q").expect("a slug"),
             passed: true,
             weighted_score: 1.0,
@@ -343,6 +367,8 @@ mod tests {
             quality_tier: WorkQuality::Perfect,
             assisted: false,
             task_id: None,
+            inconclusive: false,
+            confirmation_skills: Vec::new(),
         })
     }
 
@@ -375,7 +401,7 @@ mod tests {
             &Event::SessionStart(SessionStart {
                 ts: Timestamp::from_micros(i64::MAX),
                 session: None,
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
             }),
             true,
         );

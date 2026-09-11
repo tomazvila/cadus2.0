@@ -108,6 +108,7 @@ pub async fn seed_pool_row(
         seed: 7,
     };
     let expected = PoolAnswer {
+        answer_contract: None,
         v: 1,
         answer: answer.to_string(),
     };
@@ -134,11 +135,15 @@ pub async fn seed_cached_model(db: &TestDb, user: Uuid, model: &LearnerModel, th
         r#"
         INSERT INTO learner_models
             (user_id, model, through_seq, projector_version, config_hash)
-        VALUES ($1, $2, $3, 3, $4)
+        VALUES ($1, $2, $3, $4, $5)
         "#,
         user,
         serde_json::to_value(model).unwrap(),
         through_seq,
+        // The seeded cache must be a VALID cache, so it carries the version this
+        // build folds with. A stale version forces the full replay and the test
+        // then measures the replay it did not mean to measure.
+        i32::try_from(cadus_core::projector::PROJECTOR_VERSION).unwrap(),
         Config::default().config_hash().unwrap()
     )
     .execute(&db.admin)
@@ -154,6 +159,7 @@ pub fn now_secs() -> f64 {
 /// One live problem of the `addition` lesson, `age_secs` old, at `kp`.
 pub fn lesson_problem(age_secs: f64, kp: &str, hints: Vec<String>) -> ServedProblem {
     ServedProblem {
+        timing_interrupted: false,
         problem_id: PROBLEM_ID.to_string(),
         task_id: LESSON.to_string(),
         topic: Some("addition".to_string()),
@@ -162,6 +168,7 @@ pub fn lesson_problem(age_secs: f64, kp: &str, hints: Vec<String>) -> ServedProb
         answer_kind: Some("numeric".to_string()),
         text: PROBLEM_TEXT.to_string(),
         expected: PoolAnswer {
+            answer_contract: None,
             v: 1,
             answer: EXPECTED_ANSWER.to_string(),
         },
@@ -170,6 +177,7 @@ pub fn lesson_problem(age_secs: f64, kp: &str, hints: Vec<String>) -> ServedProb
         hints_given: hints,
         index: 0,
         rework: None,
+        handoff: None,
     }
 }
 

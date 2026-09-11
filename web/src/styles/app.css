@@ -139,6 +139,8 @@ p { margin: 0.4rem 0; }
 
 /* ---- stats and the progress ring ---- */
 .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-top: 1rem; }
+/* D-F6: the three mastery numbers sit under the headline grid, quieter than it. */
+.mastery-grid { margin-top: 0.6rem; border-top: 1px solid var(--border); padding-top: 0.6rem; }
 .stat {
   background: var(--surface-2); border-radius: 10px; padding: 0.7rem 0.6rem; text-align: center;
 }
@@ -345,6 +347,17 @@ p { margin: 0.4rem 0; }
 .more-caption { margin: 0.6rem 0 0; }
 .demo-hint { text-align: center; margin-top: 1rem; }
 
+/* f19-retention: the delayed-probe card of the quiet disclosure (D-F11). The table
+   scrolls sideways on a narrow screen rather than squeezing five columns. */
+.retention-card { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.8rem; }
+.retention-card h3 { margin: 0 0 0.2rem; font-size: 1rem; }
+.retention-card p { margin: 0.4rem 0 0; }
+.retention-card .btn { margin-top: 0.6rem; }
+.retention-table { width: 100%; margin-top: 0.6rem; border-collapse: collapse; font-size: 0.85rem; }
+.retention-table th, .retention-table td { text-align: left; padding: 0.3rem 0.5rem 0.3rem 0; }
+.retention-table thead th { color: var(--muted); font-weight: 500; font-size: 0.75rem; }
+.retention-table tbody tr { border-top: 1px solid var(--border); }
+
 /* The course picker inside the modal. */
 .picker-list { display: grid; gap: 0.4rem; margin-top: 0.7rem; }
 
@@ -407,10 +420,14 @@ p { margin: 0.4rem 0; }
 .feedback-correct { background: var(--good-weak); border-color: var(--good); }
 .feedback-incorrect { background: var(--bad-weak); border-color: var(--bad); }
 .feedback-rework { background: var(--surface-2); }
+/* D-F2: an ungraded attempt is not a miss, so the panel carries no red. */
+.feedback-ungraded { background: var(--surface-2); border-color: var(--border); }
 .feedback-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
 .feedback-mark { display: inline-flex; }
 .feedback-correct .feedback-mark { color: var(--good); }
 .feedback-incorrect .feedback-mark { color: var(--bad); }
+.feedback-ungraded .feedback-mark { color: var(--muted); }
+.feedback-reason { margin: 0 0 0.5rem; }
 .feedback-title { font-weight: 700; font-size: 1.05rem; }
 .feedback-text { margin: 0.3rem 0 0.6rem; }
 .feedback .actions { margin-top: 0.8rem; }
@@ -754,3 +771,25 @@ p { margin: 0.4rem 0; }
     scroll-behavior: auto !important;
   }
 }
+
+/* ---- mathematical visuals (unit f9) ----
+   The server draws the figure with class names and no presentation attributes, so every
+   color comes from the tokens here. A learner who inverts the theme keeps the contrast, and
+   a learner who prints the page keeps the figure. */
+.math-visuals { display: flex; flex-direction: column; gap: 0.75rem; margin: 0.75rem 0; }
+.math-visual { margin: 0; }
+.math-visual-frame svg { width: 100%; height: auto; max-width: 480px; }
+.math-visual-text { color: var(--muted); font-size: 0.92rem; margin-top: 0.25rem; }
+.math-visual-text summary { cursor: pointer; }
+.cadus-visual-axis { stroke: var(--text); stroke-width: 2; }
+.cadus-visual-tick,
+.cadus-visual-grid { stroke: var(--border); stroke-width: 1; }
+.cadus-visual-interval,
+.cadus-visual-segment { stroke: var(--accent); stroke-width: 3; fill: none; }
+.cadus-visual-point { fill: var(--accent); }
+.cadus-visual-point-open { fill: var(--bg); stroke: var(--accent); stroke-width: 2; }
+.cadus-visual-label { fill: var(--text); font-size: 12px; }
+.cadus-visual-part { fill: var(--surface-2); stroke: var(--text); stroke-width: 1; }
+.cadus-visual-part-shaded { fill: var(--accent); stroke: var(--text); stroke-width: 1; }
+.cadus-visual-shape { fill: var(--accent-weak); stroke: var(--accent); stroke-width: 2; }
+.cadus-visual-right-angle { fill: none; stroke: var(--text); stroke-width: 1.5; }

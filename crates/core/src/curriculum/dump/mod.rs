@@ -247,6 +247,9 @@ fn kp_value(kp: &KnowledgePoint) -> Value {
         ),
     );
     map.insert("name".to_owned(), text(&kp.name));
+    if !kp.visuals.is_empty() {
+        map.insert("visuals".to_owned(), serde_json::json!(kp.visuals));
+    }
     Value::Object(map)
 }
 
@@ -254,6 +257,9 @@ fn kp_value(kp: &KnowledgePoint) -> Value {
 fn exemplar_value(exemplar: &Exemplar) -> Value {
     let mut map = Map::new();
     map.insert("answer".to_owned(), text(&exemplar.answer));
+    if let Some(contract) = &exemplar.answer_contract {
+        map.insert("answer_contract".to_owned(), serde_json::json!(contract));
+    }
     map.insert("problem".to_owned(), text(&exemplar.problem));
     map.insert(
         "solution_sketch".to_owned(),

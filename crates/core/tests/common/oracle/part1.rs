@@ -73,15 +73,30 @@ pub struct Row {
 /// The corpus repeats an answer string across topics (`6` occurs hundreds of
 /// times). A repeat adds no pair, so the set is keyed by the answer text and the
 /// answer kind.
+///
+/// An answer that a 2.0 production recovered from the 1.0 residue
+/// (`recovered_2_0.jsonl`) stays out of the set, and so does an answer that
+/// reads as a quantity. 1.0 reads `9 R2` as `18*R`, refuses `x^(1/2)`, reads
+/// `5 m/s` as `5*m/s`, and deletes the degree sign of `30°`, so no 1.0 verdict
+/// on such a pair is comparable, and the committed verdict file holds none.
+/// The productions pin their own verdicts in their own test files (unit
+/// f2-grammar, D-F3).
 pub fn in_grammar_rows() -> Vec<Row> {
     let path = fixture("corpus_1_0.jsonl");
     let text =
         std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("read {}: {e}", path.display()));
+    let recovered: BTreeSet<String> = committed_recovered()
+        .into_iter()
+        .map(|row| row.answer)
+        .collect();
     let mut seen: BTreeSet<(String, String)> = BTreeSet::new();
     let mut rows = Vec::new();
     for line in text.lines() {
         let parsed: CorpusLine =
             serde_json::from_str(line).unwrap_or_else(|e| panic!("row {line}: {e}"));
+        if recovered.contains(&parsed.answer) {
+            continue;
+        }
         let kind = match parsed.answer_kind.as_str() {
             "numeric" => AnswerKind::Numeric,
             "expression" => AnswerKind::Expression,
@@ -94,6 +109,9 @@ pub fn in_grammar_rows() -> Vec<Row> {
         let Ok(ast) = parse(&source) else {
             continue;
         };
+        if matches!(ast, Ast::Quantity { .. }) {
+            continue;
+        }
         let printed = print_ast(&ast, PREC_LOWEST);
         let canon = canonical_form(&parsed.answer).ok();
         rows.push(Row {
@@ -157,6 +175,17 @@ pub fn print_ast(ast: &Ast, parent: u8) -> String {
         Ast::Const(value) => value.name().to_string(),
         Ast::Sqrt(inner) => format!("sqrt({})", print_ast(inner, PREC_LOWEST)),
         Ast::Pow(base, exponent) => print_power(base, *exponent, parent),
+        Ast::RationalPow {
+            base,
+            numerator,
+            denominator,
+        } => bracket_if(
+            format!(
+                "{}**({numerator}/{denominator})",
+                print_ast(base, PREC_POWER)
+            ),
+            parent >= PREC_POWER,
+        ),
         Ast::Neg(inner) => bracket_if(
             format!("-{}", print_ast(inner, PREC_UNARY)),
             parent >= PREC_UNARY,
@@ -165,9 +194,7 @@ pub fn print_ast(ast: &Ast, parent: u8) -> String {
         Ast::Mul(factors) => print_product(factors, parent),
         Ast::Div(left, right) => print_quotient(left, right, parent),
         Ast::Func(name, arguments) => format!("{name}({})", print_list(arguments)),
-        Ast::Tuple(items) => format!("({})", print_list(items)),
-        Ast::Set(items) => format!("{{{}}}", print_list(items)),
-        Ast::List(items) => format!("[{}]", print_list(items)),
+        Ast::Tuple(items) | Ast::Set(items) | Ast::List(items) => print_wrapped(ast, items),
         Ast::Interval {
             lo,
             hi,
@@ -178,6 +205,7 @@ pub fn print_ast(ast: &Ast, parent: u8) -> String {
             format!("{var} {} {}", op.symbol(), print_ast(bound, PREC_LOWEST))
         }
         Ast::Assign { var, value } => format!("{var} = {}", print_ast(value, PREC_LOWEST)),
+        Ast::Quantity { value, unit } => format!("{} {unit}", print_ast(value, PREC_LOWEST)),
         Ast::Chain {
             lo,
             lo_closed,

@@ -114,10 +114,12 @@ fn spec() -> AuthoringSpec {
         difficulty_target: None,
         constraints: None,
         exemplars: vec![Exemplar {
+            answer_contract: None,
             problem: "Compute $8 + 5.5$.".to_owned(),
             answer: "13.5".to_owned(),
             solution_sketch: None,
         }],
+        finite: None,
     }
 }
 
@@ -143,7 +145,7 @@ async fn an_error_tag_outside_the_vocabulary_never_reaches_the_stored_row() {
         assert_eq!(report.digest.as_deref(), Some(STORED_DIGEST));
         assert_eq!(fake.call_count(), 1);
 
-        // A human reviews the one row before it serves. The column holds
+        // An independent AI reviewer approves the row before it serves. The column holds
         // jsonb, which keeps neither key order nor whitespace, so the row is
         // read as a value and [`STORED_DIGEST`] pins the bytes.
         let row = assert_one_row(&db.admin, KP_KEY, "diagnosis", STORED_DIGEST, "pending", 1).await;
@@ -366,6 +368,7 @@ fn a_template_tag_outside_the_vocabulary_is_dropped_and_the_stored_body_re_gates
     let gate_spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &spec.exemplars,
+        finite: None,
     };
     gate_body(&body, &gate_spec).expect("the stored body passes the gate a second time");
 }

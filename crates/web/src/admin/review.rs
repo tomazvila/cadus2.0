@@ -4,7 +4,9 @@
 use axum::Json;
 use axum::extract::State;
 use cadus_core::curriculum::Exemplar;
-use cadus_core::instruction::{InstructionSpec, ServedInstance, regate, template_instances};
+use cadus_core::instruction::{
+    InstructionSpec, ServedInstance, regate_with_policy, template_instances,
+};
 use cadus_store::content::{self, Admin, KIND_TEMPLATE};
 use cadus_store::{Db, StoreError};
 use serde_json::{Value, json};
@@ -22,13 +24,10 @@ use crate::state::Content;
 
 /// `POST /api/admin/content/{digest}/approve` — approve one digest (C6).
 ///
-/// The route reads no field of the request body. Approval binds to the digest in
-/// the path and to nothing else, so an edited body is a new digest with its own
-/// approval.
-///
-/// The call is idempotent: [`cadus_store::content::approve`] keeps the first
-/// `approved_by` and the first `approved_at`, so a second approval of one digest
-/// answers the first stamp.
+/// Approval binds the immutable content digest and the currently loaded finite
+/// policy fingerprint. A changed policy requires a fresh AI or optional human
+/// review. Instruction approval also binds the complete eligible template bank. Repeating
+/// approval under the same context preserves its first stamp.
 ///
 /// `rejected_documents` names every pending page and ladder the re-gate moved to
 /// `rejected`, and it is an empty list when the approval refuses nothing. It is
@@ -47,12 +46,72 @@ pub async fn approve(
     State(state): State<AppState>,
     AdminUser(authed): AdminUser,
     ApiPath(digest): ApiPath<String>,
+    LimitedBody(body): LimitedBody,
 ) -> Result<Json<Value>, ApiError> {
     let admin = admin_path(&state)?;
-    let decision = decided(
-        "admin content approve",
-        content::approve(Admin::new(admin), &digest, Some(authed.user.id)).await,
+    let found = crate::grade::store(&state, content::document(state.db.pool(), &digest))
+        .await?
+        .ok_or_else(super::unknown_digest)?;
+    let policy = state
+        .content
+        .as_ref()
+        .map(|loaded| loaded.policy_digest(&found.item.kp_id))
+        .transpose()?
+        .flatten();
+    let curriculum_digest = state
+        .content
+        .as_ref()
+        .ok_or_else(|| ApiError::internal("The current curriculum is unavailable."))?
+        .curriculum_context_digest()?;
+    let review_engine_digest = state
+        .content
+        .as_ref()
+        .map(|content| content.review_engine_digest())
+        .ok_or_else(|| ApiError::internal("The current review engine is unavailable."))?;
+    let current = content::CurrentContext {
+        policy_digest: policy.as_deref(),
+        curriculum_digest,
+        review_engine_digest,
+    };
+    let template_context = if matches!(
+        found.item.kind.as_str(),
+        "template" | "teach" | "hint_ladder"
+    ) {
+        crate::grade::store(
+            &state,
+            content::template_review_context(
+                state.db.pool(),
+                &found.item.kp_id,
+                current,
+                (found.item.kind == KIND_TEMPLATE).then_some(digest.as_str()),
+            ),
+        )
+        .await?
+        .0
+    } else {
+        None
+    };
+    check_approval_context(
+        &body,
+        policy.as_deref(),
+        template_context.as_deref(),
+        curriculum_digest,
+        review_engine_digest,
     )?;
+    let decision = crate::grade::store(
+        &state,
+        content::approve_current(
+            Admin::new(admin),
+            &digest,
+            Some(authed.user.id),
+            content::ApprovalContext {
+                current,
+                template_context_digest: template_context.as_deref(),
+            },
+        ),
+    )
+    .await?
+    .ok_or_else(context_changed)?;
 
     // The approval changed the material this knowledge point serves, so every
     // pending page and ladder of it is judged again (the FIX2-M6-A ruling, part
@@ -71,8 +130,60 @@ pub async fn approve(
         "digest": decision.digest,
         "status": decision.status,
         "approved_at": decision.approved_at.map(|at| at.to_rfc3339()),
+        "approved_policy_digest": policy,
+        "approved_template_context_digest": matches!(
+            found.item.kind.as_str(), "template" | "teach" | "hint_ladder"
+        ).then_some(template_context).flatten(),
+        "approved_curriculum_digest": curriculum_digest,
+        "approved_review_engine_digest": review_engine_digest,
         "rejected_documents": regated,
     })))
+}
+
+#[derive(Default, serde::Deserialize)]
+struct ApprovalContext {
+    #[serde(default)]
+    policy_digest: Option<String>,
+    #[serde(default)]
+    template_context_digest: Option<String>,
+    #[serde(default)]
+    curriculum_digest: Option<String>,
+    #[serde(default)]
+    review_engine_digest: Option<String>,
+}
+
+fn check_approval_context(
+    body: &[u8],
+    current: Option<&str>,
+    template_context: Option<&str>,
+    curriculum_digest: &str,
+    review_engine_digest: &str,
+) -> Result<(), ApiError> {
+    let expected: ApprovalContext = if body.is_empty() {
+        ApprovalContext::default()
+    } else {
+        serde_json::from_slice(body).map_err(|_| {
+            ApiError::invalid_request(
+                "The approval context must contain a policy digest or null.".to_owned(),
+            )
+        })?
+    };
+    if expected.policy_digest.as_deref() != current
+        || expected.template_context_digest.as_deref() != template_context
+        || expected.curriculum_digest.as_deref() != Some(curriculum_digest)
+        || expected.review_engine_digest.as_deref() != Some(review_engine_digest)
+    {
+        return Err(context_changed());
+    }
+    Ok(())
+}
+
+fn context_changed() -> ApiError {
+    ApiError::new(
+        axum::http::StatusCode::CONFLICT,
+        "review_context_changed",
+        "The exercise policy or template bank changed. Review the current content before approval.",
+    )
 }
 
 /// One document the re-gate moved to `rejected` (C6).
@@ -139,8 +250,8 @@ async fn regate_after_approval(
 ///
 /// - a PENDING page or ladder the gate now refuses moves to `rejected`, and the
 ///   gate's own message is the `review_reason` the queue shows;
-/// - an APPROVED page or ladder is not read: a human passed it, and this
-///   function does not undo a human verdict;
+/// - an APPROVED page or ladder retains its decision and serves only while its
+///   template-context stamp matches the current bank;
 /// - a template is not judged at all: `cadus_core::instruction::regate` answers
 ///   [`None`] for every kind but the two instruction kinds.
 ///
@@ -178,7 +289,12 @@ async fn regate_knowledge_point(
 
     let mut regated: Vec<Regated> = Vec::new();
     for row in &rows {
-        let Some(rejection) = regate(&row.kind, &row.body.to_string(), &spec) else {
+        let policy = gate_spec
+            .as_ref()
+            .and_then(|spec| spec.finite.as_ref())
+            .map(|finite| finite.policy);
+        let Some(rejection) = regate_with_policy(&row.kind, &row.body.to_string(), &spec, policy)
+        else {
             continue;
         };
         content::reject(Admin::new(admin), &row.digest, &rejection.message).await?;
@@ -260,163 +376,4 @@ pub async fn reject(
 }
 
 #[cfg(test)]
-mod tests {
-    #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
-
-    use cadus_store::test_support::TestDb;
-    use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-    use sqlx::PgPool;
-
-    use super::{Regated, regate_knowledge_point};
-
-    // ----------------------------------------------------------------------- //
-
-    /// The serving key of the knowledge point under test.
-    const KP: &str = "perfect-squares/squares";
-
-    /// A template document of `KP`. It renders `Compute $9^{2}$.` with the
-    /// answer 81, among the twelve squares of 1 to 12.
-    const TEMPLATE: &str = r#"{"v":1,"topic_id":"perfect-squares","answer_kind":"numeric","statement":"Compute ${a}^{{2}}$.","params":{"a":{"kind":"int","low":1,"high":12}},"answer_expr":"a**2","samples":[{"params":{"a":1},"expected":"1"},{"params":{"a":12},"expected":"144"}],"space_size":12}"#;
-
-    /// A ladder whose only rung states 81, the answer of a rendered instance.
-    const GIVE_AWAY: &str = r#"{"hints": ["For a base of 9 the product is 81."]}"#;
-
-    /// The gate sentence that ladder earns.
-    const GIVE_AWAY_REASON: &str = "rung 0 reads 'For a base of 9 the product is 81.', which \
-names the answer '81' this knowledge point serves — a hint is a question, never the final step \
-(Hard Rule 3)";
-
-    /// A teach page that works a problem the template never renders.
-    const CLEAN_PAGE: &str = r#"{"concept": "Squaring multiplies a number by itself.",
-        "worked_example": {"problem": "Compute $15^2$.",
-        "steps": ["Write the base twice.", "The product is 225."]}}"#;
-
-    /// Seed one `content_store` row.
-    async fn seed(pool: &PgPool, digest: &str, kind: &str, status: &str, body: &str) {
-        sqlx::query(
-            "INSERT INTO content_store (digest, kp_id, kind, body, status)
-             VALUES ($1, $2, $3, $4::jsonb, $5)",
-        )
-        .bind(digest)
-        .bind(KP)
-        .bind(kind)
-        .bind(body)
-        .bind(status)
-        .execute(pool)
-        .await
-        .unwrap();
-    }
-
-    /// The status and the review reason of one row.
-    async fn state_of(pool: &PgPool, digest: &str) -> (String, Option<String>) {
-        sqlx::query_as::<_, (String, Option<String>)>(
-            "SELECT status, review_reason FROM content_store WHERE digest = $1",
-        )
-        .bind(digest)
-        .fetch_one(pool)
-        .await
-        .unwrap()
-    }
-
-    /// FIX2-M6-A, part 3. Approving a template judges the PENDING pages and
-    /// ladders of that knowledge point again.
-    ///
-    /// A ladder authored before any template existed was gated with an empty
-    /// instance set, so a rung that states a rendered answer stands `pending` and
-    /// one click serves it. The re-gate moves it to `rejected`, with the gate's
-    /// own sentence as the reason. The approved ladder beside it is not touched:
-    /// a human passed that one, and this path does not undo a human verdict.
-    #[tokio::test]
-    async fn the_re_gate_refuses_a_pending_ladder_the_new_material_gives_away() {
-        TestDb::with(|db| async move {
-            let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-            seed(
-                &db.admin,
-                "sha256:the-template",
-                "template",
-                "approved",
-                TEMPLATE,
-            )
-            .await;
-            seed(
-                &db.admin,
-                "sha256:the-ladder",
-                "hint_ladder",
-                "pending",
-                GIVE_AWAY,
-            )
-            .await;
-            seed(
-                &db.admin,
-                "sha256:passed",
-                "hint_ladder",
-                "approved",
-                GIVE_AWAY,
-            )
-            .await;
-            seed(&db.admin, "sha256:the-page", "teach", "pending", CLEAN_PAGE).await;
-
-            let regated = regate_knowledge_point(&handle, &handle, None, KP)
-                .await
-                .expect("the re-gate runs");
-
-            assert_eq!(
-                regated,
-                vec![Regated {
-                    digest: "sha256:the-ladder".to_owned(),
-                    kind: "hint_ladder".to_owned(),
-                    reason: GIVE_AWAY_REASON.to_owned(),
-                }]
-            );
-            assert_eq!(
-                state_of(&db.admin, "sha256:the-ladder").await,
-                ("rejected".to_owned(), Some(GIVE_AWAY_REASON.to_owned()))
-            );
-            // A human passed this one. The re-gate never reads it.
-            assert_eq!(
-                state_of(&db.admin, "sha256:passed").await,
-                ("approved".to_owned(), None)
-            );
-            // The page names no served answer, so it waits for its reviewer.
-            assert_eq!(
-                state_of(&db.admin, "sha256:the-page").await,
-                ("pending".to_owned(), None)
-            );
-            // A template is not an instruction document, so it is not judged.
-            assert_eq!(
-                state_of(&db.admin, "sha256:the-template").await,
-                ("approved".to_owned(), None)
-            );
-        })
-        .await;
-    }
-
-    /// The same ladder with no template on the knowledge point is left alone:
-    /// nothing serves 81, so the ladder gives nothing away. The stored TEMPLATE is
-    /// what makes the difference, and this test is the control.
-    #[tokio::test]
-    async fn the_re_gate_refuses_nothing_when_no_template_serves() {
-        TestDb::with(|db| async move {
-            let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-            seed(
-                &db.admin,
-                "sha256:the-ladder",
-                "hint_ladder",
-                "pending",
-                GIVE_AWAY,
-            )
-            .await;
-
-            let regated = regate_knowledge_point(&handle, &handle, None, KP)
-                .await
-                .expect("the re-gate runs");
-
-            assert_eq!(regated, Vec::new());
-            assert_eq!(
-                state_of(&db.admin, "sha256:the-ladder").await,
-                ("pending".to_owned(), None)
-            );
-        })
-        .await;
-    }
-}
+mod tests;

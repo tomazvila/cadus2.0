@@ -75,6 +75,7 @@ pub fn exemplars(answers: &[&str]) -> Vec<Exemplar> {
     answers
         .iter()
         .map(|answer| Exemplar {
+            answer_contract: None,
             problem: "Compute $7^2$.".to_string(),
             answer: (*answer).to_string(),
             solution_sketch: None,
@@ -88,6 +89,7 @@ pub fn reject(body: &str, kind: AnswerKind, exemplar_answers: &[&str]) -> Reject
     let spec = GateSpec {
         answer_kind: kind,
         exemplars: &pool,
+        finite: None,
     };
     gate(&doc_of(body), &spec).expect_err("the gate refuses this document")
 }
@@ -107,6 +109,7 @@ pub fn accept(
     let spec = GateSpec {
         answer_kind: kind,
         exemplars: &pool,
+        finite: None,
     };
     match gate(&doc_of(body), &spec) {
         Ok(verified) => verified,
@@ -337,6 +340,7 @@ pub fn rational_r_body(constraints: &str) -> String {
 /// One hand-built instance of the base document at `a`, with the canonical form of 16.
 pub fn hand_instance(a: i64, text: &str, answer: &str) -> cadus_core::template::Instance {
     cadus_core::template::Instance {
+        answer_contract: None,
         bindings: bind(&[("a", a)]),
         text: text.to_string(),
         answer: answer.to_string(),
@@ -352,6 +356,7 @@ pub fn refuse_instance(instance: &cadus_core::template::Instance) -> Rejection {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     check_instance(&doc, &spec, instance).expect_err("the instance is refused")
 }

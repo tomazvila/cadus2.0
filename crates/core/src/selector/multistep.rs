@@ -7,12 +7,13 @@ use crate::config::Config;
 use crate::curriculum::Curriculum;
 use crate::event::TaskType;
 use crate::learner::{PendingRemediation, TopicState};
-use crate::xp::is_mastered;
+use crate::xp::is_known;
 
-use super::review::review_mix;
-use super::task::{Task, start_kp};
+use super::task::{Task, review_shell, start_kp};
 use super::topic_set::TopicSet;
-use super::{DIFFICULTY_TARGET, MULTISTEP_CADENCE, MULTISTEP_MAX_COMPONENTS};
+use super::{
+    DIFFICULTY_TARGET, MULTISTEP_CADENCE, MULTISTEP_MAX_COMPONENTS, REMEDIATION_CONFIRM_FAILED,
+};
 
 /// Whether the periodic multi-step cadence fires
 /// (`multistep_is_due`, `selector.py:1050-1068`).
@@ -117,23 +118,49 @@ pub fn remediation_tasks(
     for item in pending {
         for target in &item.targets {
             let id = target.as_str();
+            if let Some(kp) = item.kind.strip_prefix("review_confirmation:") {
+                let key = format!("{id}/{kp}");
+                if graph
+                    .idx_of(id)
+                    .and_then(|idx| graph.kp_idx_of(idx, kp))
+                    .is_some()
+                    && seen.insert(key)
+                {
+                    tasks.push(Task {
+                        is_remediation: true,
+                        start_at_kp: Some(kp.to_owned()),
+                        mix: Vec::new(),
+                        confirm: states.get(id).is_some_and(crate::xp::is_inferred),
+                        ..review_shell(
+                            id,
+                            states,
+                            graph,
+                            1,
+                            "Confirm this skill independently.".to_owned(),
+                        )
+                    });
+                }
+                continue;
+            }
             if seen.contains(id) || graph.idx_of(id).is_none() {
                 continue;
             }
             seen.insert(id.to_owned());
             let state = states.get(id).unwrap_or(&default);
             let kind = &item.kind;
-            let task = if is_mastered(state) {
+            // A failed confirmation always peels back to the LESSON: the topic
+            // is known by inference only, and the inference just failed (D-F6).
+            let relearn = kind == REMEDIATION_CONFIRM_FAILED;
+            let task = if is_known(state) && !relearn {
                 Task {
-                    task_type: TaskType::Review,
-                    topic: Some(id.to_owned()),
-                    n_problems: Some(cfg.review.questions),
-                    mix: review_mix(graph, id),
-                    difficulty_target: Some(DIFFICULTY_TARGET.to_owned()),
-                    recent_problem_hashes: state.last_problems.clone(),
-                    why: format!("remediation ({kind}); remedial review"),
                     is_remediation: true,
-                    ..Task::default()
+                    ..review_shell(
+                        id,
+                        states,
+                        graph,
+                        cfg.review.questions,
+                        format!("remediation ({kind}); remedial review"),
+                    )
                 }
             } else {
                 Task {

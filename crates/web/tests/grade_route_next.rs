@@ -66,6 +66,7 @@ async fn a_drawn_next_problem_carries_no_next_unavailable_key() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner_with_kp1(&db, "has-next@example.com", 5.0).await;
+        common::seed_pool_row(&db, user, common::KEY, "Compute 4 + 5.", "9", "fresh-next").await;
 
         let body = answer_lesson_ok(&app, user, "14").await;
         assert_eq!(body["task_status"], "continue");
@@ -148,6 +149,47 @@ async fn a_served_problem_with_no_topic_is_500_state_unavailable() {
         let mut live = lesson_problem(5.0, "kp1", Vec::new());
         live.topic = None;
         assert_state_unavailable(&db, "no-topic@example.com", live).await;
+    })
+    .await;
+}
+
+/// A one-item pool retains the obligation until a fresh item becomes available.
+#[tokio::test]
+async fn feedback_never_reuses_the_studied_problem_and_resumes_after_refill() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner_with_kp1(&db, "fresh-unavailable@example.com", 5.0).await;
+        let reply = answer_lesson_ok(&app, user, "14").await;
+        assert_eq!(reply["next_unavailable"], true);
+        assert_eq!(reply["feedback_practice"], true);
+        assert_eq!(reply["feedback_blocked"], true);
+        let (blocked_status, blocked) = common::serve_task(&app, user, common::LESSON).await;
+        assert_eq!(blocked_status, StatusCode::CONFLICT);
+        assert_eq!(blocked["error"]["code"], "fresh_practice_unavailable");
+        assert!(
+            stored_state(&db, user)
+                .await
+                .feedback_practice
+                .contains_key(common::LESSON)
+        );
+        common::seed_pool_row(
+            &db,
+            user,
+            common::KEY,
+            "Compute 7 + 3.",
+            "10",
+            "after-refill",
+        )
+        .await;
+        let (status, next) = common::serve_task(&app, user, common::LESSON).await;
+        assert_eq!(status, StatusCode::OK, "{next}");
+        assert_eq!(next["text"], "Compute 7 + 3.");
+        assert_eq!(next["kp"], "kp1");
+        assert!(
+            stored_state(&db, user).await.served[common::LESSON]
+                .rework
+                .is_some()
+        );
     })
     .await;
 }

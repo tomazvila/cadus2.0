@@ -16,6 +16,22 @@ pub mod http;
 pub mod process;
 pub mod purity;
 pub mod sources;
+/// Learner-visible sentence decomposition shared by translation tests.
+pub mod translation {
+    /// Split prose from the math spans delimited by `$`.
+    #[must_use]
+    pub fn sentence_parts(sentence: &str) -> (String, Vec<&str>) {
+        let pieces: Vec<_> = sentence.split('$').collect();
+        let values = pieces.iter().skip(1).step_by(2).copied().collect();
+        let shape = pieces
+            .iter()
+            .step_by(2)
+            .copied()
+            .collect::<Vec<_>>()
+            .join("{}");
+        (shape, values)
+    }
+}
 
 /// The value of `result`, or a stop of the test with `what` and the error.
 ///

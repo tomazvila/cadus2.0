@@ -4,8 +4,20 @@
 use serde::{Deserialize, Serialize};
 
 use super::{
-    AnswerKind, PositiveSecs, SchemaVersion, Secs, Slug, TaskType, Timestamp, WorkQuality,
+    AnswerKind, AttemptOutcome, Exposure, ItemSource, PositiveSecs, SchemaVersion, Secs, Slug,
+    TaskType, Timestamp, WorkQuality,
 };
+use crate::curriculum::FiniteCaseRole;
+
+/// Whether a flag is off. It keeps a default flag off the wire (C2).
+const fn is_off(flag: &bool) -> bool {
+    !*flag
+}
+
+/// The outcome a body carries before [`Attempt::normalize`] reads `correct`.
+fn incorrect() -> AttemptOutcome {
+    AttemptOutcome::Incorrect
+}
 
 /// A problem stub recorded on `task_served`.
 ///
@@ -31,6 +43,9 @@ pub struct AttemptProblem {
     /// The problem text the learner saw. [`crate::learner::problem_text_hash`] hashes
     /// this text, with no whitespace normalization (trap T17).
     pub text: String,
+    /// The policy captured with this item; absence preserves legacy semantics.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub answer_contract: Option<Box<crate::answer::AnswerContract>>,
     /// The expected answer.
     pub expected: String,
 }
@@ -49,13 +64,19 @@ pub struct QuizTopicResult {
 
 /// The replacement grade fields for one superseded `attempt`.
 ///
-/// `correct` is deliberately absent: a correction restates how well the work was
-/// done, never whether the answer was right (C4).
+/// `correct` is absent: a correction restates how well the work was done, and the
+/// checker owns whether the answer was right (C4). The one exception is
+/// `outcome`, and it exists because an UNGRADED attempt has NO checker verdict to
+/// own (D-F2): a human is then the only grader, and the recovery path gives the
+/// attempt the verdict the checker could not reach.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RegradedAttempt {
     /// The attempt this correction supersedes.
     pub attempt_id: String,
+    /// The replacement outcome. `None` leaves the recorded outcome standing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub outcome: Option<AttemptOutcome>,
     /// The replacement work-quality tier.
     pub work_quality: WorkQuality,
     /// The replacement error tags. They replace the whole list, in order.
@@ -64,6 +85,41 @@ pub struct RegradedAttempt {
     /// The replacement grader note.
     #[serde(default)]
     pub grader_note: Option<String>,
+}
+
+/// One ordinary problem reached the learner's screen.
+///
+/// Unlike `task_served`, this item-level event records an abandoned hand-off.
+/// Finite case identity stays stable when a reviewed rendering changes.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OrdinaryProblemServed {
+    /// When the problem reached the learner.
+    pub ts: Timestamp,
+    /// The open session.
+    #[serde(default)]
+    pub session: Option<String>,
+    /// The schema version.
+    #[serde(default = "SchemaVersion::current")]
+    pub v: SchemaVersion,
+    /// The task receiving the problem.
+    pub task_id: String,
+    /// The server-owned live problem id.
+    pub problem_id: String,
+    /// The full serving key `<topic>/<kp>`.
+    pub kp_id: String,
+    /// Digest of the rendered statement.
+    pub item_digest: String,
+    /// Authored source of the item.
+    pub item_source: ItemSource,
+    /// Stable reviewed finite case id, when the KP owns a finite universe.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub finite_case_id: Option<String>,
+    /// Curriculum-owned role of that finite case.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub finite_case_role: Option<FiniteCaseRole>,
+    /// Exposure classification frozen at hand-off.
+    pub exposure: Exposure,
 }
 
 /// A task was served. The fold treats it as a no-op.
@@ -97,13 +153,42 @@ pub struct TaskServed {
     /// The seed the composer used.
     #[serde(default)]
     pub seed: Option<i64>,
+    /// The delay, in days, of the retention probe this task serves (D-F11).
+    ///
+    /// `None` is an ordinary task. The writer SKIPS the field when it is `None`,
+    /// so every event written before D-F11 keeps its bytes (C2). The fold reads
+    /// the marker to count the probes a SESSION served, so a refresh or an
+    /// abandoned probe never buys the session a second one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub probe_delay_days: Option<u32>,
+    /// Whether the task confirms an inferred topic (D-F6). NEW IN 2.0.
+    ///
+    /// The writer SKIPS a false value, so every event written before D-F6 keeps
+    /// its canonical bytes and its digest.
+    #[serde(default, skip_serializing_if = "is_not_set")]
+    pub confirm: bool,
+}
+
+/// Whether a boolean field stays at its default. The canonical writer skips it.
+const fn is_not_set(flag: &bool) -> bool {
+    !*flag
 }
 
 /// One graded problem attempt. It is the load-bearing event.
 ///
-/// The projector reads only `problem.text` and `correct` from it (spec section 4.1).
-/// It never reads `work_quality`, `error_tags`, `secs`, `assisted`, `work`,
-/// `answer_kind`, or `kp`. FIRe fires from the result events instead.
+/// The projector reads `problem.text`, `correct`, and `outcome` from it (spec section
+/// 4.1, D-F2). It never reads `work_quality`, `error_tags`, `secs`, `assisted`,
+/// `work`, `answer_kind`, or `kp`. FIRe fires from the result events instead.
+///
+/// Schema v2 (D-F2, D-F9)
+/// ----------------------
+/// `outcome` names the third outcome, and `correct` stays and equals
+/// `outcome == Correct`. The writer skips `outcome` when `correct` alone spells it,
+/// so a v1 row that this build reads and writes back keeps its bytes (C2). A v1 row
+/// carries no `outcome` key, and [`Attempt::normalize`] derives one from `correct`.
+///
+/// `exposure` and `timing_reliable` stay `None` on a v1 row: the reliability of old
+/// evidence is not reconstructible, so the reader never invents a value for it.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Attempt {
@@ -137,7 +222,39 @@ pub struct Attempt {
     #[serde(default)]
     pub answer_kind: Option<AnswerKind>,
     /// Whether the answer was mathematically correct (C4).
+    ///
+    /// It equals `outcome == AttemptOutcome::Correct` after [`Attempt::normalize`].
     pub correct: bool,
+    /// The graded outcome (D-F2). A v1 row derives it from `correct`.
+    #[serde(
+        default = "incorrect",
+        skip_serializing_if = "AttemptOutcome::is_derivable"
+    )]
+    pub outcome: AttemptOutcome,
+    /// The digest of the served problem (D-F9).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub item_digest: Option<String>,
+    /// Where the served item came from (D-F9).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub item_source: Option<ItemSource>,
+    /// Whether the learner saw this digest before (D-F9). `None` on a v1 row.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub exposure: Option<Exposure>,
+    /// Whether the timer of this attempt is trustworthy (D-F9). `None` on a v1 row.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timing_reliable: Option<bool>,
+    /// Frozen policy reading; absent in historical attempts.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timing: Option<crate::timing::SpeedReading>,
+    /// The knowledge points the item exercised (D-F9).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub skills: Vec<String>,
+    /// Whether the learner answered a fresh item alone after feedback (D-F8).
+    #[serde(default, skip_serializing_if = "is_off")]
+    pub independent_after_feedback: bool,
+    /// A server-assigned practice item after feedback, separate from assessment.
+    #[serde(default, skip_serializing_if = "is_off")]
+    pub feedback_practice: bool,
     /// The time the learner took.
     pub secs: Secs,
     /// The grader's error tags.
@@ -211,12 +328,24 @@ pub struct ReviewResult {
     /// The task the review closed. A null value binds through the preceding attempt.
     #[serde(default)]
     pub task_id: Option<String>,
+    /// Whether the review ended without a pass or a fail decision (D-F7).
+    ///
+    /// Unit f13 sets it. The writer skips it when it is off, so a v1 row keeps its
+    /// bytes (C2).
+    #[serde(default, skip_serializing_if = "is_off")]
+    pub inconclusive: bool,
+    /// Skills that require one independent confirmation (D-F7).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub confirmation_skills: Vec<String>,
 }
 
 /// A quiz closed.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct QuizResult {
+    /// Unknown evidence leaves the batch verdict pending.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub inconclusive: bool,
     /// When the event happened.
     pub ts: Timestamp,
     /// The session id.
@@ -235,4 +364,86 @@ pub struct QuizResult {
     /// The XP the quiz priced.
     #[serde(default)]
     pub xp: f64,
+}
+
+impl Attempt {
+    /// Reconcile `outcome` and `correct` after a read (the v1 shim, D-F2).
+    ///
+    /// A v1 row carries no `outcome` key, so the field arrives at its serde default
+    /// and this step replaces it with the outcome `correct` spells. An ungraded
+    /// outcome survives the step, and its `correct` goes off, because an ungraded
+    /// attempt claims no correctness (C4).
+    ///
+    /// [`crate::event::Event::from_json`] is the one caller. The step is idempotent.
+    pub fn normalize(&mut self) {
+        if self.outcome.is_ungraded() {
+            self.correct = false;
+        } else {
+            self.outcome = AttemptOutcome::of_correct(self.correct);
+        }
+    }
+}
+
+/// A delayed retention probe on one knowledge point (D-F11).
+///
+/// The selector serves an unseen item some days after the lesson passed, and this
+/// event records what came back. The fold treats it as a no-op until unit f19.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RetentionProbe {
+    /// When the event happened.
+    pub ts: Timestamp,
+    /// The session id.
+    #[serde(default)]
+    pub session: Option<String>,
+    /// The schema version.
+    #[serde(default = "SchemaVersion::current")]
+    pub v: SchemaVersion,
+    /// The knowledge point the probe tested.
+    pub kp: Slug,
+    /// The topic the knowledge point belongs to.
+    pub topic: Slug,
+    /// The days between the lesson pass and the probe.
+    pub delay_days: u32,
+    /// The digest of the probed item.
+    ///
+    /// It is a [`crate::learner::problem_text_hash`] of the rendered problem, the
+    /// SAME digest `TopicState::last_problems` and `ServedProblem::text_hash`
+    /// carry. One kind of digest is the whole point: the unseen rule compares this
+    /// value against the learner's exposure history, and two spellings would let a
+    /// seen item through.
+    #[serde(default)]
+    pub item_digest: Option<String>,
+    /// The outcome of the probe.
+    pub outcome: AttemptOutcome,
+    /// Whether the learner used help.
+    #[serde(default)]
+    pub assisted: bool,
+    /// Whether the learner saw this digest before.
+    #[serde(default)]
+    pub exposure: Option<Exposure>,
+    /// The time the learner took.
+    pub secs: Secs,
+    /// The policy stamp the probe ran under: `v<N>:<policy digest>` (D-F12).
+    ///
+    /// `None` means a probe written before the stamp existed. The writer skips it,
+    /// so no earlier event changes its bytes.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub policy: Option<String>,
+}
+
+/// A drill completed its original batch and any required independent practice.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DrillResult {
+    /// The server close time.
+    pub ts: Timestamp,
+    /// The session owning the task.
+    #[serde(default)]
+    pub session: Option<String>,
+    /// The event schema version.
+    #[serde(default = "SchemaVersion::current")]
+    pub v: SchemaVersion,
+    /// The stable task identity used for replay deduplication.
+    pub task_id: String,
 }

@@ -5,8 +5,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use chrono::NaiveDate;
 
 use crate::learner::{PendingRemediation, QuizState};
+use crate::readiness::ReadinessGate;
+use crate::retention::RetentionState;
 
-use super::task::SessionPlan;
+use super::plan::SessionPlan;
 
 /// The empty topic-id set a [`SessionContext`] defaults to.
 static NO_IDS: BTreeSet<String> = BTreeSet::new();
@@ -51,6 +53,17 @@ pub struct SessionContext<'a> {
     pub open_multistep_components: Option<&'a [String]>,
     /// The cap on the number of served tasks.
     pub n: Option<usize>,
+    /// The readiness of the knowledge points (D-F5).
+    ///
+    /// `None` turns the eligibility rule off, and so does
+    /// `Config::readiness::enforce` set to `false`. A caller that reads no
+    /// content store therefore plans as it did before this rule.
+    pub readiness: Option<&'a dyn ReadinessGate>,
+    /// What the delayed probes answered so far (D-F11).
+    ///
+    /// `None` turns the probe schedule off, so a caller that never reads the
+    /// retention state plans as it did before this rule.
+    pub retention: Option<&'a RetentionState>,
 }
 
 impl Default for SessionContext<'_> {
@@ -72,6 +85,8 @@ impl Default for SessionContext<'_> {
             closed_task_ids: &NO_IDS,
             open_multistep_components: None,
             n: None,
+            readiness: None,
+            retention: None,
         }
     }
 }
@@ -159,6 +174,20 @@ impl<'a> SessionContext<'a> {
     #[must_use]
     pub const fn with_limit(mut self, n: Option<usize>) -> Self {
         self.n = n;
+        self
+    }
+
+    /// Set the delayed-probe state of D-F11.
+    #[must_use]
+    pub const fn with_retention(mut self, retention: Option<&'a RetentionState>) -> Self {
+        self.retention = retention;
+        self
+    }
+
+    /// Set the readiness rule of D-F5.
+    #[must_use]
+    pub const fn with_readiness(mut self, readiness: Option<&'a dyn ReadinessGate>) -> Self {
+        self.readiness = readiness;
         self
     }
 

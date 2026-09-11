@@ -1,0 +1,156 @@
+[
+  {
+    "kp_id": "simple-interest/kp3",
+    "kind": "template",
+    "arguments": {
+      "answer_expr": "multipart(p+i,100*i/(p*t))",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "balance",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "annual_percent",
+            "contract": {
+              "kind": "exact"
+            }
+          }
+        ]
+      },
+      "constraints": [],
+      "distractors": [],
+      "params": {
+        "p": {
+          "kind": "choice",
+          "values": [
+            200,
+            400
+          ]
+        },
+        "t": {
+          "kind": "choice",
+          "values": [
+            2,
+            3
+          ]
+        },
+        "i": {
+          "kind": "choice",
+          "values": [
+            24,
+            48,
+            72
+          ]
+        }
+      },
+      "samples": [
+        {
+          "params": {
+            "p": 200,
+            "t": 2,
+            "i": 24
+          },
+          "expected": "balance = 224; annual_percent = 6"
+        },
+        {
+          "params": {
+            "p": 200,
+            "t": 2,
+            "i": 48
+          },
+          "expected": "balance = 248; annual_percent = 12"
+        },
+        {
+          "params": {
+            "p": 200,
+            "t": 2,
+            "i": 72
+          },
+          "expected": "balance = 272; annual_percent = 18"
+        },
+        {
+          "params": {
+            "p": 200,
+            "t": 3,
+            "i": 24
+          },
+          "expected": "balance = 224; annual_percent = 4"
+        },
+        {
+          "params": {
+            "p": 200,
+            "t": 3,
+            "i": 48
+          },
+          "expected": "balance = 248; annual_percent = 8"
+        },
+        {
+          "params": {
+            "p": 200,
+            "t": 3,
+            "i": 72
+          },
+          "expected": "balance = 272; annual_percent = 12"
+        },
+        {
+          "params": {
+            "p": 400,
+            "t": 2,
+            "i": 24
+          },
+          "expected": "balance = 424; annual_percent = 3"
+        },
+        {
+          "params": {
+            "p": 400,
+            "t": 2,
+            "i": 48
+          },
+          "expected": "balance = 448; annual_percent = 6"
+        },
+        {
+          "params": {
+            "p": 400,
+            "t": 2,
+            "i": 72
+          },
+          "expected": "balance = 472; annual_percent = 9"
+        },
+        {
+          "params": {
+            "p": 400,
+            "t": 3,
+            "i": 24
+          },
+          "expected": "balance = 424; annual_percent = 2"
+        },
+        {
+          "params": {
+            "p": 400,
+            "t": 3,
+            "i": 48
+          },
+          "expected": "balance = 448; annual_percent = 4"
+        },
+        {
+          "params": {
+            "p": 400,
+            "t": 3,
+            "i": 72
+          },
+          "expected": "balance = 472; annual_percent = 6"
+        }
+      ],
+      "statement": "A deposit of ${p}$ euros earns ${i}$ euros of simple interest over ${t}$ years. Give balance = the final balance in euros; annual_percent = the annual interest rate as a percent number.",
+      "solution_sketch": "Add the interest to the principal for the final balance. Divide total interest by the number of years to find one year's interest. Divide that by the original principal, then multiply by 100 to obtain the annual percent rate.",
+      "hints": [
+        "The final balance includes both the original deposit and all interest earned.",
+        "Find one year's interest first, then express it as a percentage of the original deposit."
+      ]
+    }
+  }
+]

@@ -1,0 +1,858 @@
+[
+  {
+    "kp_id": "checking-systems-solutions/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "residuals",
+            "contract": {
+              "kind": "coordinates",
+              "arity": 2
+            }
+          },
+          {
+            "name": "solution",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "statement": "Check the proposed point $(2,3)$ in $x+2y={a}$ and $3x-y={b}$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no.",
+      "answer_expr": "multipart((8-a,3-b),equalitylabel((8-a)^2+(3-b)^2,0))",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            6,
+            8,
+            10
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            0,
+            3,
+            6,
+            9
+          ]
+        }
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": 6,
+            "b": 0
+          },
+          "expected": "residuals = (2,3); solution = no"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 3
+          },
+          "expected": "residuals = (2,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 6
+          },
+          "expected": "residuals = (2,-3); solution = no"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 9
+          },
+          "expected": "residuals = (2,-6); solution = no"
+        },
+        {
+          "params": {
+            "a": 8,
+            "b": 0
+          },
+          "expected": "residuals = (0,3); solution = no"
+        },
+        {
+          "params": {
+            "a": 8,
+            "b": 3
+          },
+          "expected": "residuals = (0,0); solution = yes"
+        },
+        {
+          "params": {
+            "a": 8,
+            "b": 6
+          },
+          "expected": "residuals = (0,-3); solution = no"
+        },
+        {
+          "params": {
+            "a": 8,
+            "b": 9
+          },
+          "expected": "residuals = (0,-6); solution = no"
+        },
+        {
+          "params": {
+            "a": 10,
+            "b": 0
+          },
+          "expected": "residuals = (-2,3); solution = no"
+        },
+        {
+          "params": {
+            "a": 10,
+            "b": 3
+          },
+          "expected": "residuals = (-2,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 10,
+            "b": 6
+          },
+          "expected": "residuals = (-2,-3); solution = no"
+        },
+        {
+          "params": {
+            "a": 10,
+            "b": 9
+          },
+          "expected": "residuals = (-2,-6); solution = no"
+        }
+      ],
+      "solution_sketch": "Substitute the point into each left side, obtaining eight and three. Subtract each corresponding right side. Both resulting differences must vanish for the point to solve the system.",
+      "hints": [
+        "Translate each relationship separately, preserving the requested order."
+      ]
+    }
+  },
+  {
+    "kp_id": "checking-systems-solutions/kp2",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "residuals",
+            "contract": {
+              "kind": "coordinates",
+              "arity": 2
+            }
+          },
+          {
+            "name": "solution",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "statement": "One equation holds at $({a},{b})$ in $2x+3y=11$ and $x+y=13$. Identify the failure. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no.",
+      "answer_expr": "multipart((2*a+3*b-11,a+b-13),equalitylabel((2*a+3*b-11)^2+(a+b-13)^2,0))",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -9,
+            -8,
+            -7,
+            -6,
+            -5,
+            -4,
+            -3,
+            -2,
+            -1,
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            -5,
+            -4,
+            -3,
+            -2,
+            -1,
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "op": "eq",
+          "left": {
+            "mul": [
+              {
+                "sub": [
+                  {
+                    "add": [
+                      {
+                        "mul": [
+                          {
+                            "lit": 2
+                          },
+                          "a"
+                        ]
+                      },
+                      {
+                        "mul": [
+                          {
+                            "lit": 3
+                          },
+                          "b"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "lit": 11
+                  }
+                ]
+              },
+              {
+                "sub": [
+                  {
+                    "add": [
+                      "a",
+                      "b"
+                    ]
+                  },
+                  {
+                    "lit": 13
+                  }
+                ]
+              }
+            ]
+          },
+          "right": {
+            "lit": 0
+          }
+        },
+        {
+          "op": "ne",
+          "left": {
+            "add": [
+              {
+                "mul": [
+                  {
+                    "sub": [
+                      {
+                        "add": [
+                          {
+                            "mul": [
+                              {
+                                "lit": 2
+                              },
+                              "a"
+                            ]
+                          },
+                          {
+                            "mul": [
+                              {
+                                "lit": 3
+                              },
+                              "b"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "lit": 11
+                      }
+                    ]
+                  },
+                  {
+                    "sub": [
+                      {
+                        "add": [
+                          {
+                            "mul": [
+                              {
+                                "lit": 2
+                              },
+                              "a"
+                            ]
+                          },
+                          {
+                            "mul": [
+                              {
+                                "lit": 3
+                              },
+                              "b"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "lit": 11
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "mul": [
+                  {
+                    "sub": [
+                      {
+                        "add": [
+                          "a",
+                          "b"
+                        ]
+                      },
+                      {
+                        "lit": 13
+                      }
+                    ]
+                  },
+                  {
+                    "sub": [
+                      {
+                        "add": [
+                          "a",
+                          "b"
+                        ]
+                      },
+                      {
+                        "lit": 13
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "right": {
+            "lit": 0
+          }
+        }
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": -8,
+            "b": 9
+          },
+          "expected": "residuals = (0,-12); solution = no"
+        },
+        {
+          "params": {
+            "a": -5,
+            "b": 7
+          },
+          "expected": "residuals = (0,-11); solution = no"
+        },
+        {
+          "params": {
+            "a": -2,
+            "b": 5
+          },
+          "expected": "residuals = (0,-10); solution = no"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 13
+          },
+          "expected": "residuals = (28,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 3
+          },
+          "expected": "residuals = (0,-9); solution = no"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 12
+          },
+          "expected": "residuals = (27,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 11
+          },
+          "expected": "residuals = (26,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 10
+          },
+          "expected": "residuals = (25,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 1
+          },
+          "expected": "residuals = (0,-8); solution = no"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 9
+          },
+          "expected": "residuals = (24,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 5,
+            "b": 8
+          },
+          "expected": "residuals = (23,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 7
+          },
+          "expected": "residuals = (22,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 7,
+            "b": -1
+          },
+          "expected": "residuals = (0,-7); solution = no"
+        },
+        {
+          "params": {
+            "a": 7,
+            "b": 6
+          },
+          "expected": "residuals = (21,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 8,
+            "b": 5
+          },
+          "expected": "residuals = (20,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 9,
+            "b": 4
+          },
+          "expected": "residuals = (19,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 10,
+            "b": -3
+          },
+          "expected": "residuals = (0,-6); solution = no"
+        },
+        {
+          "params": {
+            "a": 10,
+            "b": 3
+          },
+          "expected": "residuals = (18,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 11,
+            "b": 2
+          },
+          "expected": "residuals = (17,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 12,
+            "b": 1
+          },
+          "expected": "residuals = (16,0); solution = no"
+        },
+        {
+          "params": {
+            "a": 13,
+            "b": -5
+          },
+          "expected": "residuals = (0,-5); solution = no"
+        },
+        {
+          "params": {
+            "a": 13,
+            "b": 0
+          },
+          "expected": "residuals = (15,0); solution = no"
+        }
+      ],
+      "solution_sketch": "Evaluate the two left sides using the proposed coordinates. Subtract eleven and thirteen respectively. The nonzero residual identifies the equation that rejects the candidate.",
+      "hints": [
+        "Translate each relationship separately, preserving the requested order."
+      ]
+    }
+  },
+  {
+    "kp_id": "checking-systems-solutions/kp3",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "answer_contract": {
+        "kind": "coordinates",
+        "arity": 2
+      },
+      "statement": "Which of $({a},1)$ or $({a},3)$ satisfies both $x+y={b}$ and $2x+y={a}+{b}$? Give the ordered pair.",
+      "answer_expr": "(a,b-a)",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "op": "eq",
+          "left": {
+            "mul": [
+              {
+                "sub": [
+                  {
+                    "sub": [
+                      "b",
+                      "a"
+                    ]
+                  },
+                  {
+                    "lit": 1
+                  }
+                ]
+              },
+              {
+                "sub": [
+                  {
+                    "sub": [
+                      "b",
+                      "a"
+                    ]
+                  },
+                  {
+                    "lit": 3
+                  }
+                ]
+              }
+            ]
+          },
+          "right": {
+            "lit": 0
+          }
+        }
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": 1,
+            "b": 2
+          },
+          "expected": "(1,1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 4
+          },
+          "expected": "(1,3)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3
+          },
+          "expected": "(2,1)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 5
+          },
+          "expected": "(2,3)"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 4
+          },
+          "expected": "(3,1)"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 6
+          },
+          "expected": "(3,3)"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 5
+          },
+          "expected": "(4,1)"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 7
+          },
+          "expected": "(4,3)"
+        },
+        {
+          "params": {
+            "a": 5,
+            "b": 6
+          },
+          "expected": "(5,1)"
+        },
+        {
+          "params": {
+            "a": 5,
+            "b": 8
+          },
+          "expected": "(5,3)"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 7
+          },
+          "expected": "(6,1)"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 9
+          },
+          "expected": "(6,3)"
+        }
+      ],
+      "solution_sketch": "Subtract the first equation from the second to isolate the horizontal coordinate. Subtract that coordinate from the first total to find the vertical coordinate, and check both candidates.",
+      "hints": [
+        "Translate each relationship separately, preserving the requested order."
+      ]
+    }
+  },
+  {
+    "kp_id": "graphing-systems/kp3",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "residuals",
+            "contract": {
+              "kind": "coordinates",
+              "arity": 2
+            }
+          },
+          {
+            "name": "solution",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "statement": "A graph-based estimate is $({a},{b})$ for $x+2y=7$ and $3x-y=7$. Check the estimate exactly. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no.",
+      "answer_expr": "multipart((a+2*b-7,3*a-b-7),equalitylabel((a+2*b-7)^2+(3*a-b-7)^2,0))",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            2,
+            3,
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": 2,
+            "b": 0
+          },
+          "expected": "residuals = (-5,-1); solution = no"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 1
+          },
+          "expected": "residuals = (-3,-2); solution = no"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 2
+          },
+          "expected": "residuals = (-1,-3); solution = no"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3
+          },
+          "expected": "residuals = (1,-4); solution = no"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 0
+          },
+          "expected": "residuals = (-4,2); solution = no"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 1
+          },
+          "expected": "residuals = (-2,1); solution = no"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 2
+          },
+          "expected": "residuals = (0,0); solution = yes"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 3
+          },
+          "expected": "residuals = (2,-1); solution = no"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 0
+          },
+          "expected": "residuals = (-3,5); solution = no"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 1
+          },
+          "expected": "residuals = (-1,4); solution = no"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 2
+          },
+          "expected": "residuals = (1,3); solution = no"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 3
+          },
+          "expected": "residuals = (3,2); solution = no"
+        }
+      ],
+      "solution_sketch": "An apparent crossing must satisfy both equations exactly. Substitute the estimated coordinates, compute each left-minus-right difference, and accept only if both vanish.",
+      "hints": [
+        "Translate each relationship separately, preserving the requested order."
+      ]
+    }
+  }
+]

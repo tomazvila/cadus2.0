@@ -1,22 +1,18 @@
 //! The served task, the session plan, and the builders of one review, lesson,
 //! quiz or drill task (`model.py:628-683`, `selector.py:845-1041`).
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 use crate::config::Config;
 use crate::curriculum::Curriculum;
-use crate::event::{EventError, KpProgress, Slug, TaskType, Timestamp};
-use crate::learner::{PendingRemediation, TopicState};
-use crate::numeric::round_half_even_i64_saturating;
-use crate::xp::is_mastered;
+use crate::event::{KpProgress, TaskType};
+use crate::learner::TopicState;
+use crate::retention::ProbePlan;
 
-use super::quiz::{QuizPlan, i64_as_float, quiz_difficulty_target};
+use super::DIFFICULTY_TARGET;
+use super::quiz::{QuizPlan, quiz_difficulty_target};
 use super::review::review_mix;
 use super::topic_set::TopicSet;
-use super::{
-    DAY_US, DIFFICULTY_TARGET, DRILL_INTERVAL_DAYS, DRILL_MASTERY_ABILITY, REMEDIATION_QUIZ_MISS,
-    REMEDIATION_REPEAT_FAIL,
-};
 
 /// One served task (`Task`, `model.py:628-672`).
 ///
@@ -29,6 +25,10 @@ use super::{
 /// typed facts the re-serve keys on.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Task {
+    /// A pinned authored whole-item assessment, resolved by the server.
+    pub integrated_item_id: Option<String>,
+    /// The earlier independent application whose delayed transfer is tested.
+    pub integrated_assessment_of: Option<String>,
     /// The content-stable id, assigned by [`assign_ids`].
     pub task_id: String,
     /// The kind of task.
@@ -59,6 +59,19 @@ pub struct Task {
     pub is_remediation: bool,
     /// Whether a review is served before its due date.
     pub nearly_due: bool,
+    /// Whether the review confirms an inferred topic (D-F6).
+    ///
+    /// The serve route copies the marker onto `task_served`, and the fold reads
+    /// it back to move a passed topic to `Learning`.
+    pub confirm: bool,
+    /// The delay, in days, of the retention probe this task serves (D-F11).
+    ///
+    /// `None` is an ordinary task. The serve route copies the marker onto
+    /// `task_served`, so the fold counts the probe of the SESSION at the serve and
+    /// not at the answer; the grade route writes the `retention_probe` event.
+    pub probe_delay_days: Option<u32>,
+    /// The knowledge point the retention probe tests (D-F11).
+    pub probe_kp: Option<String>,
 }
 
 impl Default for Task {
@@ -67,6 +80,8 @@ impl Default for Task {
     /// empty until [`assign_ids`] names the task.
     fn default() -> Self {
         Self {
+            integrated_item_id: None,
+            integrated_assessment_of: None,
             task_id: String::new(),
             task_type: TaskType::Lesson,
             topic: None,
@@ -82,40 +97,11 @@ impl Default for Task {
             component_topics: Vec::new(),
             is_remediation: false,
             nearly_due: false,
+            confirm: false,
+            probe_delay_days: None,
+            probe_kp: None,
         }
     }
-}
-
-/// The session constraints reported with a plan (`_constraints`, `selector.py:1499-1519`).
-#[derive(Debug, Clone, Default, PartialEq)]
-pub struct Constraints {
-    /// Whether the lesson share reaches `selector.lesson_ratio_min`.
-    pub lesson_ratio_ok: bool,
-    /// The lesson share of the interleaved sequence, rounded to 4 places.
-    pub lesson_ratio: f64,
-    /// Whether no review run exceeds `selector.max_reviews_per_lesson`.
-    pub throttle_ok: bool,
-    /// The number of reviews in the sequence.
-    pub reviews: i64,
-    /// The number of lessons in the sequence.
-    pub lessons: i64,
-}
-
-/// The composed session (`SessionPlan`, `model.py:675-683`).
-#[derive(Debug, Clone, Default, PartialEq)]
-pub struct SessionPlan {
-    /// The session id the task ids are keyed on.
-    pub session: String,
-    /// The tasks, in serve order.
-    pub tasks: Vec<Task>,
-    /// Whether a quiz is due.
-    pub quiz_due: bool,
-    /// The throttle and ratio report.
-    pub constraints: Constraints,
-    /// Whether every topic of the course scope is mastered.
-    pub course_complete: bool,
-    /// When the first retry-delayed frontier lesson reopens.
-    pub frontier_blocked_until: Option<Timestamp>,
 }
 
 /// The knowledge point a lesson resumes at (`_start_kp`, `selector.py:910-916`).
@@ -164,20 +150,64 @@ pub(super) fn review_task(
             "; knocks out {n_ko} other due topic(s) via encompassing"
         ));
     }
+    Task {
+        nearly_due: nearly,
+        ..review_shell(tid, states, graph, cfg.review.questions, why)
+    }
+}
+
+/// The common shape of every review task: the topic, the question count, the
+/// mix, the difficulty target, and the anti-repeat digests.
+///
+/// The due review, the remedial review and the D-F6 confirmation item all build
+/// on it, and each one adds its own marker.
+pub(super) fn review_shell(
+    tid: &str,
+    states: &BTreeMap<String, TopicState>,
+    graph: &Curriculum,
+    n_problems: i64,
+    why: String,
+) -> Task {
     let default = TopicState::default();
     let state = states.get(tid).unwrap_or(&default);
     Task {
         task_type: TaskType::Review,
         topic: Some(tid.to_owned()),
-        n_problems: Some(cfg.review.questions),
+        n_problems: Some(n_problems),
         mix: review_mix(graph, tid),
         difficulty_target: Some(DIFFICULTY_TARGET.to_owned()),
         recent_problem_hashes: state.last_problems.clone(),
         why,
-        nearly_due: nearly,
         ..Task::default()
     }
 }
+
+/// Build one delayed retention probe (D-F11).
+///
+/// It is a review task of ONE problem, and it carries the marker the serve route
+/// and the grade route read. `recent_problem_hashes` holds the LIFETIME exposure
+/// index, so the draw refuses every item the learner ever met: a probe on a seen
+/// item measures familiarity and no delayed recall.
+pub(super) fn probe_task(
+    plan: &ProbePlan,
+    states: &BTreeMap<String, TopicState>,
+    graph: &Curriculum,
+    seen: Vec<String>,
+) -> Task {
+    let why = format!(
+        "retention probe; the lesson passed {} days ago and this item is new",
+        plan.elapsed_days
+    );
+    Task {
+        probe_delay_days: Some(plan.delay_days),
+        probe_kp: Some(plan.kp.clone()),
+        recent_problem_hashes: seen,
+        ..review_shell(&plan.topic, states, graph, PROBE_PROBLEMS, why)
+    }
+}
+
+/// The number of problems one retention probe serves.
+pub const PROBE_PROBLEMS: i64 = 1;
 
 /// Build a frontier lesson task (`_lesson_task`, `selector.py:978-1010`).
 pub(super) fn lesson_task(
@@ -267,96 +297,15 @@ pub(super) fn drill_task(tid: &str, cfg: &Config) -> Task {
     }
 }
 
-/// The drill-tagged topics due for a timed drill, SORTED
-/// (`schedule_drills`, `selector.py:845-869`).
-///
-/// A topic qualifies when it is drill-tagged, mastered, still below the
-/// automaticity bar, and outside the drill cadence window. `last_drill_at` maps
-/// a topic id to the UTC microseconds of its last drill.
-///
-/// The cadence window rounds two constants, so it uses the saturating rounding
-/// form and reports no error.
-#[must_use]
-pub fn schedule_drills(
-    states: &BTreeMap<String, TopicState>,
-    graph: &Curriculum,
-    t_us: i64,
-    last_drill_at: Option<&BTreeMap<String, i64>>,
-) -> Vec<String> {
-    let window_us = round_half_even_i64_saturating(DRILL_INTERVAL_DAYS * i64_as_float(DAY_US));
-    let mut out: Vec<String> = Vec::new();
-    for topic in graph.topics() {
-        if !topic.drill {
-            continue;
-        }
-        let id = topic.id.as_str();
-        let Some(state) = states.get(id) else {
-            continue;
-        };
-        if !is_mastered(state) || state.ability >= DRILL_MASTERY_ABILITY {
-            continue;
-        }
-        if let Some(last) = last_drill_at.and_then(|map| map.get(id).copied())
-            && t_us.saturating_sub(last) < window_us
-        {
-            continue;
-        }
-        out.push(id.to_owned());
-    }
-    out.sort_unstable();
-    out
-}
-
-/// The quiz-miss trigger: one remedial review of the missed topic
-/// (`remediation_for_quiz_miss`, `selector.py:877-879`).
-///
-/// # Errors
-///
-/// Returns [`EventError`] when `topic` is not a legal slug.
-pub fn remediation_for_quiz_miss(topic: &str) -> Result<PendingRemediation, EventError> {
-    Ok(PendingRemediation {
-        kind: REMEDIATION_QUIZ_MISS.to_owned(),
-        targets: vec![Slug::new(topic)?],
-    })
-}
-
-/// The repeat-fail trigger: remedial work on the key prerequisites of the failed
-/// knowledge point (`remediation_for_repeat_fail`, `selector.py:882-903`).
-///
-/// The targets are the key prerequisites that are themselves topics, sorted.
-/// [`compose_session`] serves each as a review or a lesson, by mastery.
-#[must_use]
-pub fn remediation_for_repeat_fail(
-    topic: &str,
-    failed_kp: &str,
-    graph: &Curriculum,
-) -> PendingRemediation {
-    let mut key_prereqs: BTreeSet<&str> = BTreeSet::new();
-    if let Some(idx) = graph.idx_of(topic) {
-        for kp in graph.knowledge_points(idx) {
-            if kp.id.as_str() == failed_kp {
-                for key in &kp.key_prerequisites {
-                    key_prereqs.insert(key.as_str());
-                }
-            }
-        }
-    }
-    PendingRemediation {
-        kind: REMEDIATION_REPEAT_FAIL.to_owned(),
-        targets: key_prereqs
-            .into_iter()
-            .filter(|id| graph.idx_of(id).is_some())
-            .filter_map(|id| Slug::new(id).ok())
-            .collect(),
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::fire::testing::{T_US, graph, knowledge_point, learned, topic};
     use crate::selector::QUIZ_DIFFICULTY_TARGETS;
     use crate::selector::quiz::QuizQuestion;
+    use crate::selector::{
+        remediation_for_quiz_miss, remediation_for_repeat_fail, schedule_drills,
+    };
 
     #[test]
     fn the_builders_write_the_1_0_prose_and_the_drills_follow_the_bar() {

@@ -29,7 +29,7 @@ use common::scrape;
 use axum::Router;
 use axum::body::Body;
 use axum::http::Request;
-use cadus_core::event::WorkQuality;
+use cadus_core::event::{AttemptOutcome, WorkQuality};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::grade::Grade;
@@ -117,6 +117,7 @@ async fn seed_job(pool: &PgPool, user: Uuid, attempt: &str, status: &str) {
 fn the_grade_label_of_a_verdict_is_the_one_the_tags_name() {
     let correct = Grade {
         correct: true,
+        outcome: AttemptOutcome::of_correct(true),
         work_quality: WorkQuality::NearlyPerfect,
         error_tags: Vec::new(),
     };
@@ -124,6 +125,7 @@ fn the_grade_label_of_a_verdict_is_the_one_the_tags_name() {
 
     let notation = Grade {
         correct: true,
+        outcome: AttemptOutcome::of_correct(true),
         work_quality: WorkQuality::NearlyPerfect,
         error_tags: vec!["notation".to_string()],
     };
@@ -131,6 +133,7 @@ fn the_grade_label_of_a_verdict_is_the_one_the_tags_name() {
 
     let blank = Grade {
         correct: false,
+        outcome: AttemptOutcome::of_correct(false),
         work_quality: WorkQuality::Poor,
         error_tags: vec!["blank-answer".to_string()],
     };
@@ -138,6 +141,7 @@ fn the_grade_label_of_a_verdict_is_the_one_the_tags_name() {
 
     let miss = Grade {
         correct: false,
+        outcome: AttemptOutcome::of_correct(false),
         work_quality: WorkQuality::NearlyPassable,
         error_tags: Vec::new(),
     };
@@ -146,6 +150,7 @@ fn the_grade_label_of_a_verdict_is_the_one_the_tags_name() {
     // A miss the clock tagged is still a miss.
     let slow = Grade {
         correct: false,
+        outcome: AttemptOutcome::of_correct(false),
         work_quality: WorkQuality::NearlyPassable,
         error_tags: vec!["timing-unreliable".to_string()],
     };
@@ -311,7 +316,7 @@ async fn a_fresh_process_ships_every_grade_label_at_zero() {
     TestDb::with(|db| async move {
         let text = scrape(&app_of(&db)).await;
 
-        for result in ["correct", "notation", "blank", "incorrect", "undecidable"] {
+        for result in ["correct", "notation", "blank", "incorrect", "ungraded"] {
             holds(
                 &text,
                 &format!("cadus_deterministic_grade_total{{result=\"{result}\"}} 0"),

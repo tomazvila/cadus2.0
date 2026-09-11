@@ -1,0 +1,1548 @@
+{
+  "status": "pending-independent-ai-review; no source mutation",
+  "source_curriculum_sha256": "15c1127772390f11047b5142ab2921b831f6f6e58644bd8f0f816e5e7011e2de",
+  "rows": [
+    {
+      "key": "gcf-lcm/kp1",
+      "original": {
+        "constraints": "two numbers 40-150 where listing factors is slow",
+        "exemplars": [
+          {
+            "answer": "15",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Find the GCF of $45$ and $60$.",
+            "solution_sketch": "$45 = 3^2 \\times 5$, $60 = 2^2 \\times 3 \\times 5$; common part $3 \\times 5 = 15$."
+          },
+          {
+            "answer": "24",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "What is the greatest common factor of $72$ and $120$?",
+            "solution_sketch": "$72 = 2^3 \\times 3^2$, $120 = 2^3 \\times 3 \\times 5$; $2^3 \\times 3 = 24$."
+          },
+          {
+            "answer": "15",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "$90$ and $105$ share a greatest common factor. Find it.",
+            "solution_sketch": "$90 = 2 \\times 3 \\times 3 \\times 5$, $105 = 3 \\times 5 \\times 7$; common part gives $15$."
+          },
+          {
+            "answer": "42",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Determine the GCF of $126$ and $168$.",
+            "solution_sketch": "$126 = 2 \\times 3 \\times 3 \\times 7$, $168 = 2 \\times 2 \\times 2 \\times 3 \\times 7$; common part gives $42$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "prime-factorization"
+        ],
+        "name": "GCF via prime factorization"
+      },
+      "proposed": {
+        "constraints": "two numbers 40-150 where listing factors is slow",
+        "exemplars": [
+          {
+            "answer": "15",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Find the GCF of $45$ and $60$.",
+            "solution_sketch": "$45 = 3^2 \\times 5$, $60 = 2^2 \\times 3 \\times 5$; common part $3 \\times 5 = 15$."
+          },
+          {
+            "answer": "24",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "What is the greatest common factor of $72$ and $120$?",
+            "solution_sketch": "$72 = 2^3 \\times 3^2$, $120 = 2^3 \\times 3 \\times 5$; $2^3 \\times 3 = 24$."
+          },
+          {
+            "answer": "15",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "$90$ and $105$ share a greatest common factor. Find it.",
+            "solution_sketch": "$90 = 2 \\times 3 \\times 3 \\times 5$, $105 = 3 \\times 5 \\times 7$; common part gives $15$."
+          },
+          {
+            "answer": "42",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Determine the GCF of $126$ and $84$.",
+            "solution_sketch": "$126=2\\times3^2\\times7$ and $84=2^2\\times3\\times7$. The shared prime factors give $2\\times3\\times7=42$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "prime-factorization"
+        ],
+        "name": "GCF via prime factorization"
+      },
+      "reasons": [
+        "Replace out-of-range168 with84; both input values now40..150; gcd remains42."
+      ],
+      "original_sha256": "e422eebf05b82b49411523623b0435caac9ee27d72ce98c468c2f0183b62b732"
+    },
+    {
+      "key": "order-of-operations/kp1",
+      "original": {
+        "constraints": "single-digit operands, no parentheses",
+        "exemplars": [
+          {
+            "answer": "23",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Compute $3 + 4 \\times 5$.",
+            "solution_sketch": "Multiply first: $4 \\times 5 = 20$, then $3 + 20 = 23$."
+          },
+          {
+            "answer": "17",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Compute $20 - 12 \\div 4$.",
+            "solution_sketch": "Divide first: $12 \\div 4 = 3$, then $20 - 3 = 17$."
+          },
+          {
+            "answer": "27",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Evaluate $6 + 3 \\times 7$.",
+            "solution_sketch": "Multiply first: $3 \\times 7 = 21$, then $6 + 21 = 27$."
+          },
+          {
+            "answer": "3",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Compute $9 - 2 \\times 3$.",
+            "solution_sketch": "Multiply first: $2 \\times 3 = 6$, then $9 - 6 = 3$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "division-facts"
+        ],
+        "name": "Multiply and divide before add and subtract"
+      },
+      "proposed": {
+        "constraints": "single-digit operands, no parentheses",
+        "exemplars": [
+          {
+            "answer": "23",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Compute $3 + 4 \\times 5$.",
+            "solution_sketch": "Multiply first: $4 \\times 5 = 20$, then $3 + 20 = 23$."
+          },
+          {
+            "answer": "7",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Compute $9-8\\div4$.",
+            "solution_sketch": "Divide first: $8\\div4=2$, then $9-2=7$."
+          },
+          {
+            "answer": "27",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Evaluate $6 + 3 \\times 7$.",
+            "solution_sketch": "Multiply first: $3 \\times 7 = 21$, then $6 + 21 = 27$."
+          },
+          {
+            "answer": "3",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Compute $9 - 2 \\times 3$.",
+            "solution_sketch": "Multiply first: $2 \\times 3 = 6$, then $9 - 6 = 3$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "division-facts"
+        ],
+        "name": "Multiply and divide before add and subtract"
+      },
+      "reasons": [
+        "Keep all input operands single-digit and preserve division-before-subtraction objective."
+      ],
+      "original_sha256": "77b6e474585e96dfd9739700ffaa9cfa5a097f57ed90d5015b761ddf1029f161"
+    },
+    {
+      "key": "prime-composite-numbers/kp2",
+      "original": {
+        "constraints": "primes below 50",
+        "exemplars": [
+          {
+            "answer": "11, 13, 17, 19",
+            "problem": "List all the primes between $10$ and $20$.",
+            "solution_sketch": "Checking each candidate from $10$ to $20$: $11, 13, 17, 19$ have no smaller factor."
+          },
+          {
+            "answer": "31",
+            "problem": "What is the smallest prime greater than $30$?",
+            "solution_sketch": "$31$ has no factor besides $1$ and itself; $30$ is even."
+          },
+          {
+            "answer": "23, 29",
+            "problem": "List all the primes between $20$ and $30$.",
+            "solution_sketch": "Checking each candidate from $20$ to $30$: $23, 29$ have no smaller factor."
+          },
+          {
+            "answer": "53",
+            "problem": "Find the smallest prime number that is greater than $50$.",
+            "solution_sketch": "$53$ has no factor besides $1$ and itself; every value from $51$ to $52$ has one."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "factors-and-multiples"
+        ],
+        "name": "Knowing the small primes"
+      },
+      "proposed": {
+        "constraints": "primes below 50",
+        "exemplars": [
+          {
+            "answer": "11, 13, 17, 19",
+            "problem": "List all the primes between $10$ and $20$.",
+            "solution_sketch": "Checking each candidate from $10$ to $20$: $11, 13, 17, 19$ have no smaller factor."
+          },
+          {
+            "answer": "31",
+            "problem": "What is the smallest prime greater than $30$?",
+            "solution_sketch": "$31$ has no factor besides $1$ and itself; $30$ is even."
+          },
+          {
+            "answer": "23, 29",
+            "problem": "List all the primes between $20$ and $30$.",
+            "solution_sketch": "Checking each candidate from $20$ to $30$: $23, 29$ have no smaller factor."
+          },
+          {
+            "answer": "47",
+            "problem": "Find the smallest prime number greater than $43$.",
+            "solution_sketch": "$44$ and $46$ are even, and $45$ is divisible by $3$. For $47$, none of $2,3,5,6$ divides evenly, and $4$ cannot divide an odd number. Any factor pair would have a member below $7$, since $7\\times7=49>47$. Thus $47$ is prime."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "factors-and-multiples"
+        ],
+        "name": "Knowing the small primes"
+      },
+      "reasons": [
+        "Keep the requested prime below50 while retaining a search with intervening composites."
+      ],
+      "original_sha256": "247af05f5332634d8036388fefda3e51077f7a983b0465847a27869f66ad3432"
+    },
+    {
+      "key": "integer-order-of-operations/kp1",
+      "original": {
+        "constraints": "one multiplication or division plus one addition or subtraction; values from -12 to 12",
+        "exemplars": [
+          {
+            "answer": "-11",
+            "problem": "Compute $-3 + 4 \\times (-2)$.",
+            "solution_sketch": "Multiply first: $-3 + (-8) = -11$."
+          },
+          {
+            "answer": "13",
+            "problem": "Compute $10 - 12 \\div (-4)$.",
+            "solution_sketch": "$12 \\div (-4) = -3$; $10 - (-3) = 13$."
+          },
+          {
+            "answer": "-2",
+            "problem": "Compute $-8 - 3 \\times (-2)$.",
+            "solution_sketch": "Multiply first: $3 \\times (-2) = -6$; $-8 - (-6) = -2$."
+          },
+          {
+            "answer": "4",
+            "problem": "Compute $9 + 20 \\div (-4)$.",
+            "solution_sketch": "Divide first: $20 \\div (-4) = -5$; $9 + (-5) = 4$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "order-of-operations",
+          "integer-multiplication-division"
+        ],
+        "name": "Mixed operations without parentheses"
+      },
+      "proposed": {
+        "constraints": "one multiplication or division plus one addition or subtraction; values from -12 to 12",
+        "exemplars": [
+          {
+            "answer": "-11",
+            "problem": "Compute $-3 + 4 \\times (-2)$.",
+            "solution_sketch": "Multiply first: $-3 + (-8) = -11$."
+          },
+          {
+            "answer": "13",
+            "problem": "Compute $10 - 12 \\div (-4)$.",
+            "solution_sketch": "$12 \\div (-4) = -3$; $10 - (-3) = 13$."
+          },
+          {
+            "answer": "-2",
+            "problem": "Compute $-8 - 3 \\times (-2)$.",
+            "solution_sketch": "Multiply first: $3 \\times (-2) = -6$; $-8 - (-6) = -2$."
+          },
+          {
+            "answer": "7",
+            "problem": "Compute $9+8\\div(-4)$.",
+            "solution_sketch": "Divide first: $8\\div(-4)=-2$, then $9+(-2)=7$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "order-of-operations",
+          "integer-multiplication-division"
+        ],
+        "name": "Mixed operations without parentheses"
+      },
+      "reasons": [
+        "Replace input20outside-12..12 with8; preserve signed division before addition."
+      ],
+      "original_sha256": "625e8358d6d12e536dd1ab02204d3d9863cd4974ba1230e3c2841fabda3e3ac8"
+    },
+    {
+      "key": "writing-expressions-from-patterns/kp2",
+      "original": {
+        "constraints": "start value plus constant rate; single variable",
+        "exemplars": [
+          {
+            "answer": "8m + 20",
+            "problem": "A gym charges €20 to join plus €8 per month. Write an expression for the total cost after $m$ months.",
+            "solution_sketch": "Fixed €20 plus €8 per month: $8m + 20$."
+          },
+          {
+            "answer": "2n + 1",
+            "problem": "A toothpick pattern uses $3$ toothpicks for $1$ triangle, $5$ for $2$, $7$ for $3$, adding $2$ per triangle. Write an expression for the toothpicks in $n$ triangles.",
+            "solution_sketch": "Step $2$ per square; $2(1) + 1 = 3$ checks."
+          },
+          {
+            "answer": "3h + 5",
+            "problem": "A parking garage charges €5 to enter plus €3 per hour. Write an expression for the total cost after $h$ hours.",
+            "solution_sketch": "The rate $3$ per hour is the coefficient; the flat $5$ is added once."
+          },
+          {
+            "answer": "3n + 1",
+            "problem": "A fence post pattern uses $4$ posts for $1$ section, $7$ for $2$, $10$ for $3$, adding $3$ per section. Write an expression for the posts in $n$ sections.",
+            "solution_sketch": "Step $3$ per section; $3(1) + 1 = 4$ checks."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "translating-phrases-to-expressions"
+        ],
+        "name": "Expression from a real-world rule"
+      },
+      "proposed": {
+        "constraints": "start value plus constant rate; single variable",
+        "exemplars": [
+          {
+            "answer": "8m + 20",
+            "problem": "A gym charges €20 to join plus €8 per month. Write an expression for the total cost after $m$ months.",
+            "solution_sketch": "Fixed €20 plus €8 per month: $8m + 20$."
+          },
+          {
+            "answer": "2n + 1",
+            "problem": "A toothpick pattern uses $3$ toothpicks for $1$ triangle, $5$ for $2$, $7$ for $3$, adding $2$ per triangle. Write an expression for the toothpicks in $n$ triangles.",
+            "solution_sketch": "Each additional triangle adds $2$ toothpicks. Starting from $3$ for one triangle gives $3+2(n-1)=2n+1$."
+          },
+          {
+            "answer": "3h + 5",
+            "problem": "A parking garage charges €5 to enter plus €3 per hour. Write an expression for the total cost after $h$ hours.",
+            "solution_sketch": "The rate $3$ per hour is the coefficient; the flat $5$ is added once."
+          },
+          {
+            "answer": "3n + 1",
+            "problem": "A fence post pattern uses $4$ posts for $1$ section, $7$ for $2$, $10$ for $3$, adding $3$ per section. Write an expression for the posts in $n$ sections.",
+            "solution_sketch": "Step $3$ per section; $3(1) + 1 = 4$ checks."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "translating-phrases-to-expressions"
+        ],
+        "name": "Expression from a real-world rule"
+      },
+      "reasons": [
+        "Correct the repeated shape name."
+      ],
+      "original_sha256": "8ef7383a9984971f725c4c1c10ff6985d9b767a1cae9f06a26ff14daf16fbb5f"
+    },
+    {
+      "key": "equations-special-cases/kp2",
+      "original": {
+        "constraints": "variable terms cancel leaving a true statement",
+        "exemplars": [
+          {
+            "answer": "0",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "How many real values fail to satisfy $2(3x + 4) = 6x + 8$?",
+            "solution_sketch": "Both sides expand to $6x + 8$; every value works."
+          },
+          {
+            "answer": "0",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "How many real values fail to satisfy $4x - 2x + 7 = 2x + 7$?",
+            "solution_sketch": "The left side simplifies to $2x + 7$, identical to the right."
+          },
+          {
+            "answer": "0",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "How many real values fail to satisfy $(6x+9)/3=2x+3$?",
+            "solution_sketch": "Distributing the denominator on the right gives $x/3+6/3=x/3+2$, the same expression as the left for every real input."
+          },
+          {
+            "answer": "0",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "A learner claims $7-(2x+3)=4-2x$ has only solution $0$. How many real values actually fail to satisfy the equation?",
+            "solution_sketch": "Expanding the left gives $7-2x-3=4-2x$. Both sides therefore produce the same value at every real input."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "multi-step-equations"
+        ],
+        "name": "Recognize identities"
+      },
+      "proposed": {
+        "constraints": "variable terms cancel leaving a true statement",
+        "exemplars": [
+          {
+            "answer": "0",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "How many real values fail to satisfy $2(3x + 4) = 6x + 8$?",
+            "solution_sketch": "Both sides expand to $6x + 8$; every value works."
+          },
+          {
+            "answer": "0",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "How many real values fail to satisfy $4x - 2x + 7 = 2x + 7$?",
+            "solution_sketch": "The left side simplifies to $2x + 7$, identical to the right."
+          },
+          {
+            "answer": "0",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "How many real values fail to satisfy $(6x+9)/3=2x+3$?",
+            "solution_sketch": "Divide each numerator term by $3$: $(6x+9)/3=2x+3$. This equals the right side for every real $x$, so zero real values fail to satisfy the equation."
+          },
+          {
+            "answer": "0",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "A learner claims $7-(2x+3)=4-2x$ has only solution $0$. How many real values actually fail to satisfy the equation?",
+            "solution_sketch": "Expanding the left gives $7-2x-3=4-2x$. Both sides therefore produce the same value at every real input."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "multi-step-equations"
+        ],
+        "name": "Recognize identities"
+      },
+      "reasons": [
+        "Replace unrelated solution sketch with the actual identity computation."
+      ],
+      "original_sha256": "3b27a513db1eb43ad7017c39726646f0c7bd9670de6e4b95f0a09acef99ad0db"
+    },
+    {
+      "key": "simple-interest/kp3",
+      "original": {
+        "constraints": "balance = principal + interest; clean rates",
+        "exemplars": [
+          {
+            "answer": "660",
+            "problem": "€600 is deposited at $5\\%$ simple interest per year. What is the account balance after $2$ years?",
+            "solution_sketch": "Interest $600 \\times 0.05 \\times 2 = 60$; balance $600 + 60 = 660$."
+          },
+          {
+            "answer": "5",
+            "problem": "A €400 deposit earned €60 of simple interest over $3$ years. The annual rate is $r\\%$. Find $r$.",
+            "solution_sketch": "$r = \\frac{60}{400 \\times 3} = 0.05 = 5\\%$."
+          },
+          {
+            "answer": "396",
+            "problem": "A loan of €300 charges $8\\%$ simple interest per year for four years. Find the principal plus all interest, in euros.",
+            "solution_sketch": "Interest is $300\\times0.08\\times4=96$ euros; principal plus interest is $300+96=396$ euros."
+          },
+          {
+            "answer": "3",
+            "problem": "A table lists principal €500, total simple interest €75, and duration five years. Find the annual percent rate as a number.",
+            "solution_sketch": "One year earns $75\\div5=15$ euros. The percent rate is $(15/500)\\times100=3$."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "decimal-operations"
+        ],
+        "name": "Totals and finding the rate"
+      },
+      "proposed": {
+        "constraints": "balance = principal + interest; clean rates",
+        "exemplars": [
+          {
+            "answer": "660",
+            "problem": "€600 is deposited at $5\\%$ simple interest per year. What is the account balance after $2$ years?",
+            "solution_sketch": "Interest $600 \\times 0.05 \\times 2 = 60$; balance $600 + 60 = 660$."
+          },
+          {
+            "answer": "5",
+            "problem": "A €400 deposit earned €60 of simple interest over $3$ years. The annual rate is $r\\%$. Find $r$.",
+            "solution_sketch": "The annual decimal rate is $60/(400\\times3)=0.05$. Since the prompt writes the rate as $r\\%$, convert to percent: $r=100(0.05)=5$."
+          },
+          {
+            "answer": "396",
+            "problem": "A loan of €300 charges $8\\%$ simple interest per year for four years. Find the principal plus all interest, in euros.",
+            "solution_sketch": "Interest is $300\\times0.08\\times4=96$ euros; principal plus interest is $300+96=396$ euros."
+          },
+          {
+            "answer": "3",
+            "problem": "A table lists principal €500, total simple interest €75, and duration five years. Find the annual percent rate as a number.",
+            "solution_sketch": "One year earns $75\\div5=15$ euros. The percent rate is $(15/500)\\times100=3$."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "decimal-operations"
+        ],
+        "name": "Totals and finding the rate"
+      },
+      "reasons": [
+        "Distinguish decimal annual rate from r measured in percent."
+      ],
+      "original_sha256": "e630978acb3204d32d7979b6f7e18617deb8d8f978e5e6280b5c34d53a1579eb"
+    },
+    {
+      "key": "decimal-multiplication-powers-of-ten/kp3",
+      "original": {
+        "constraints": "shifts of 3 places, may need padding zeros",
+        "exemplars": [
+          {
+            "answer": "50",
+            "problem": "Compute $0.05 \\times 1000$.",
+            "solution_sketch": "Multiplying by $1000$ moves the decimal point 3 place(s) right: $50$."
+          },
+          {
+            "answer": "0.0075",
+            "problem": "Compute $7.5 \\div 1000$.",
+            "solution_sketch": "Dividing by $1000$ moves the decimal point 3 place(s) left: $0.0075$."
+          },
+          {
+            "answer": "900",
+            "problem": "Convert $0.9$ kilometres to metres, using $1000$ metres per kilometre.",
+            "solution_sketch": "Nine tenths of $1000$ metres is $900$ metres: $0.9\\times1000=900$."
+          },
+          {
+            "answer": "0.012",
+            "problem": "First divide $12$ by $10$, then divide that result by $100$. Give the final decimal.",
+            "solution_sketch": "$12\\div10=1.2$; $1.2\\div100=0.012$, a combined three-place shift right."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "multiplying-by-powers-of-ten"
+        ],
+        "name": "Thousands and combined moves"
+      },
+      "proposed": {
+        "constraints": "shifts of 3 places, may need padding zeros",
+        "exemplars": [
+          {
+            "answer": "50",
+            "problem": "Compute $0.05 \\times 1000$.",
+            "solution_sketch": "Multiplying by $1000$ moves the decimal point 3 place(s) right: $50$."
+          },
+          {
+            "answer": "0.0075",
+            "problem": "Compute $7.5 \\div 1000$.",
+            "solution_sketch": "Dividing by $1000$ moves the decimal point 3 place(s) left: $0.0075$."
+          },
+          {
+            "answer": "900",
+            "problem": "Convert $0.9$ kilometres to metres, using $1000$ metres per kilometre.",
+            "solution_sketch": "Nine tenths of $1000$ metres is $900$ metres: $0.9\\times1000=900$."
+          },
+          {
+            "answer": "0.012",
+            "problem": "First divide $12$ by $10$, then divide that result by $100$. Give the final decimal.",
+            "solution_sketch": "$12\\div10=1.2$ and $1.2\\div100=0.012$. The decimal point moves three places left in total."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "multiplying-by-powers-of-ten"
+        ],
+        "name": "Thousands and combined moves"
+      },
+      "reasons": [
+        "Correct decimal-point movement for division."
+      ],
+      "original_sha256": "8e96db21eeca1f9dc35b3c8c53b3c906bd619788d40bda6a7046ac8b06e028a0"
+    },
+    {
+      "key": "rearranging-formulas/kp1",
+      "original": {
+        "constraints": "one inverse operation; target variable appears once",
+        "exemplars": [
+          {
+            "answer": "x = y - b",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $y = x + b$ for $x$.",
+            "solution_sketch": "Subtract $b$ from both sides: $x = y - b$."
+          },
+          {
+            "answer": "t = d/r",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $d = rt$ for $t$.",
+            "solution_sketch": "Divide both sides by $r$."
+          },
+          {
+            "answer": "q = p + r",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $p = q - r$ for $q$.",
+            "solution_sketch": "Add $r$ to both sides."
+          },
+          {
+            "answer": "h = A/b",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $A = bh$ for $h$.",
+            "solution_sketch": "Divide both sides by $b$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "two-step-equations",
+          "evaluating-formulas"
+        ],
+        "name": "One-step rearrangements"
+      },
+      "proposed": {
+        "constraints": "one inverse operation; target variable appears once",
+        "exemplars": [
+          {
+            "answer": "x = y - b",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $y = x + b$ for $x$.",
+            "solution_sketch": "Subtract $b$ from both sides: $x = y - b$."
+          },
+          {
+            "answer": "t = d/r",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $d = rt$ for $t$. Assume $r\\ne0$.",
+            "solution_sketch": "Divide both sides by $r$. Division is valid because $r\\ne0$."
+          },
+          {
+            "answer": "q = p + r",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $p = q - r$ for $q$.",
+            "solution_sketch": "Add $r$ to both sides."
+          },
+          {
+            "answer": "h = A/b",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $A = bh$ for $h$. Assume $b\\ne0$.",
+            "solution_sketch": "Divide both sides by $b$. Division is valid because $b\\ne0$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "two-step-equations",
+          "evaluating-formulas"
+        ],
+        "name": "One-step rearrangements"
+      },
+      "reasons": [
+        "State the nonzero divisor domain needed by this rearrangement.",
+        "State the nonzero divisor domain needed by this rearrangement."
+      ],
+      "original_sha256": "1a784222839f537ac784356a026797f8c2f83a1fc70e5e1a8399f02b5150352e"
+    },
+    {
+      "key": "rearranging-formulas/kp2",
+      "original": {
+        "constraints": "two inverse operations; target variable appears once",
+        "exemplars": [
+          {
+            "answer": "r = C/(2*pi)",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $C = 2 \\cdot \\pi \\cdot r$ for $r$.",
+            "solution_sketch": "Divide both sides by $2\\pi$."
+          },
+          {
+            "answer": "l = (P - 2w)/2",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $P = 2l + 2w$ for $l$.",
+            "solution_sketch": "Subtract $2w$, then divide by $2$."
+          },
+          {
+            "answer": "w = V/(l*h)",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $V = lwh$ for $w$ (treat $l$ and $h$ as known).",
+            "solution_sketch": "Divide both sides by $l$ and by $h$."
+          },
+          {
+            "answer": "x = (y - b)/m",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $y = mx + b$ for $x$ (treat $m$ and $b$ as known).",
+            "solution_sketch": "Subtract $b$, then divide by $m$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "two-step-equations",
+          "evaluating-formulas"
+        ],
+        "name": "Two-step rearrangements"
+      },
+      "proposed": {
+        "constraints": "two inverse operations; target variable appears once",
+        "exemplars": [
+          {
+            "answer": "r = C/(2*pi)",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $C = 2 \\cdot \\pi \\cdot r$ for $r$.",
+            "solution_sketch": "Divide both sides by $2\\pi$."
+          },
+          {
+            "answer": "l = (P - 2w)/2",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $P = 2l + 2w$ for $l$.",
+            "solution_sketch": "Subtract $2w$, then divide by $2$."
+          },
+          {
+            "answer": "w = V/(l*h)",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $V = lwh$ for $w$ (treat $l$ and $h$ as known). Assume $lh\\ne0$.",
+            "solution_sketch": "Divide both sides by $l$ and by $h$. Division is valid because $lh\\ne0$."
+          },
+          {
+            "answer": "x = (y - b)/m",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $y = mx + b$ for $x$ (treat $m$ and $b$ as known). Assume $m\\ne0$.",
+            "solution_sketch": "Subtract $b$, then divide by $m$. Division is valid because $m\\ne0$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "two-step-equations",
+          "evaluating-formulas"
+        ],
+        "name": "Two-step rearrangements"
+      },
+      "reasons": [
+        "State the nonzero divisor domain needed by this rearrangement.",
+        "State the nonzero divisor domain needed by this rearrangement."
+      ],
+      "original_sha256": "431c9929a17d20ce8873305bc435c83630c18b8d972af4fee427102f45f7389b"
+    },
+    {
+      "key": "literal-equations/kp1",
+      "original": {
+        "constraints": "target variable appears once; keep other letters symbolic",
+        "exemplars": [
+          {
+            "answer": "x = (c - b)/a",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $ax + b = c$ for $x$.",
+            "solution_sketch": "Subtract $b$, then divide by $a$."
+          },
+          {
+            "answer": "h = 2A/b",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $A = \\frac{1}{2}bh$ for $h$.",
+            "solution_sketch": "Multiply by $2$, divide by $b$."
+          },
+          {
+            "answer": "x = (r - q)/p",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $px + q = r$ for $x$.",
+            "solution_sketch": "Subtract $q$, then divide by $p$."
+          },
+          {
+            "answer": "B = 3V/h",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $V = \\frac{1}{3}Bh$ for $B$.",
+            "solution_sketch": "Multiply by $3$, divide by $h$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "multi-step-equations",
+          "rearranging-formulas"
+        ],
+        "name": "Multi-term formulas"
+      },
+      "proposed": {
+        "constraints": "target variable appears once; keep other letters symbolic",
+        "exemplars": [
+          {
+            "answer": "x = (c - b)/a",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $ax + b = c$ for $x$. Assume $a\\ne0$.",
+            "solution_sketch": "Subtract $b$, then divide by $a$. Division is valid because $a\\ne0$."
+          },
+          {
+            "answer": "h = 2A/b",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $A = \\frac{1}{2}bh$ for $h$. Assume $b\\ne0$.",
+            "solution_sketch": "Multiply by $2$, divide by $b$. Division is valid because $b\\ne0$."
+          },
+          {
+            "answer": "x = (r - q)/p",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $px + q = r$ for $x$. Assume $p\\ne0$.",
+            "solution_sketch": "Subtract $q$, then divide by $p$. Division is valid because $p\\ne0$."
+          },
+          {
+            "answer": "B = 3V/h",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $V = \\frac{1}{3}Bh$ for $B$. Assume $h\\ne0$.",
+            "solution_sketch": "Multiply by $3$, divide by $h$. Division is valid because $h\\ne0$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "multi-step-equations",
+          "rearranging-formulas"
+        ],
+        "name": "Multi-term formulas"
+      },
+      "reasons": [
+        "State the nonzero divisor domain needed by this rearrangement.",
+        "State the nonzero divisor domain needed by this rearrangement.",
+        "State the nonzero divisor domain needed by this rearrangement.",
+        "State the nonzero divisor domain needed by this rearrangement."
+      ],
+      "original_sha256": "cb28d56a3e463a3d46a1d6af24340cb9640d8678323438579879626bd9a617e9"
+    },
+    {
+      "key": "literal-equations/kp2",
+      "original": {
+        "constraints": "may require factoring out the target variable",
+        "exemplars": [
+          {
+            "answer": "x = c/(a + b)",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $ax + bx = c$ for $x$.",
+            "solution_sketch": "Factor: $x(a + b) = c$; divide by $(a + b)$."
+          },
+          {
+            "answer": "y = 2x + 3",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x = \\frac{y - 3}{2}$ for $y$.",
+            "solution_sketch": "$2x = y - 3$; $y = 2x + 3$."
+          },
+          {
+            "answer": "x = k/(m - n)",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $mx - nx = k$ for $x$.",
+            "solution_sketch": "Factor: $x(m - n) = k$; divide by $(m - n)$."
+          },
+          {
+            "answer": "x = 3y - 5",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $y = \\frac{x + 5}{3}$ for $x$.",
+            "solution_sketch": "$3y = x + 5$; $x = 3y - 5$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "distributive-property"
+        ],
+        "name": "Target variable in more than one term"
+      },
+      "proposed": {
+        "constraints": "may require factoring out the target variable",
+        "exemplars": [
+          {
+            "answer": "x = c/(a + b)",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $ax + bx = c$ for $x$. Assume $a+b\\ne0$.",
+            "solution_sketch": "Factor: $x(a + b) = c$; divide by $(a + b)$. Division is valid because $a+b\\ne0$."
+          },
+          {
+            "answer": "y = 2x + 3",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x = \\frac{y - 3}{2}$ for $y$.",
+            "solution_sketch": "$2x = y - 3$; $y = 2x + 3$."
+          },
+          {
+            "answer": "x = k/(m - n)",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $mx - nx = k$ for $x$. Assume $m-n\\ne0$.",
+            "solution_sketch": "Factor: $x(m - n) = k$; divide by $(m - n)$. Division is valid because $m-n\\ne0$."
+          },
+          {
+            "answer": "x = 3y - 5",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $y = \\frac{x + 5}{3}$ for $x$.",
+            "solution_sketch": "$3y = x + 5$; $x = 3y - 5$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "distributive-property"
+        ],
+        "name": "Target variable in more than one term"
+      },
+      "reasons": [
+        "State the nonzero divisor domain needed by this rearrangement.",
+        "State the nonzero divisor domain needed by this rearrangement."
+      ],
+      "original_sha256": "c5b08e5266a66bfb7233243cfb3d3c4bedd5294a30156db81000bec5110959ad"
+    },
+    {
+      "key": "literal-equations/kp3",
+      "original": {
+        "constraints": "undo an outer factor before reaching the target variable",
+        "exemplars": [
+          {
+            "answer": "w = S/2 - l",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $S = 2(l + w)$ for $w$.",
+            "solution_sketch": "Divide by $2$: $\\frac{S}{2} = l + w$; subtract $l$."
+          },
+          {
+            "answer": "a = 2A/h - b",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $A = \\frac{1}{2}h(a + b)$ for $a$.",
+            "solution_sketch": "Multiply by $2$: $2A = h(a + b)$; divide by $h$; subtract $b$."
+          },
+          {
+            "answer": "b = P/2 - a",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $P = 2(a + b)$ for $b$.",
+            "solution_sketch": "Divide by $2$: $\\frac{P}{2} = a + b$; subtract $a$."
+          },
+          {
+            "answer": "m = 2T/k - n",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $T = \\frac{1}{2}k(m + n)$ for $m$.",
+            "solution_sketch": "Multiply by $2$: $2T = k(m + n)$; divide by $k$; subtract $n$."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "distributive-property",
+          "rearranging-formulas"
+        ],
+        "name": "Formulas requiring distribution or clearing a fraction"
+      },
+      "proposed": {
+        "constraints": "undo an outer factor before reaching the target variable",
+        "exemplars": [
+          {
+            "answer": "w = S/2 - l",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $S = 2(l + w)$ for $w$.",
+            "solution_sketch": "Divide by $2$: $\\frac{S}{2} = l + w$; subtract $l$."
+          },
+          {
+            "answer": "a = 2A/h - b",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $A = \\frac{1}{2}h(a + b)$ for $a$. Assume $h\\ne0$.",
+            "solution_sketch": "Multiply by $2$: $2A = h(a + b)$; divide by $h$; subtract $b$. Division is valid because $h\\ne0$."
+          },
+          {
+            "answer": "b = P/2 - a",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $P = 2(a + b)$ for $b$.",
+            "solution_sketch": "Divide by $2$: $\\frac{P}{2} = a + b$; subtract $a$."
+          },
+          {
+            "answer": "m = 2T/k - n",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $T = \\frac{1}{2}k(m + n)$ for $m$. Assume $k\\ne0$.",
+            "solution_sketch": "Multiply by $2$: $2T = k(m + n)$; divide by $k$; subtract $n$. Division is valid because $k\\ne0$."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "distributive-property",
+          "rearranging-formulas"
+        ],
+        "name": "Formulas requiring distribution or clearing a fraction"
+      },
+      "reasons": [
+        "State the nonzero divisor domain needed by this rearrangement.",
+        "State the nonzero divisor domain needed by this rearrangement."
+      ],
+      "original_sha256": "83849e6d9ff7b98d7ac609075596ca6094053ea6f7bbeb306e58c232fbf7cd2f"
+    },
+    {
+      "key": "one-step-inequalities/kp1",
+      "original": {
+        "constraints": "integer constants; keep the inequality direction",
+        "exemplars": [
+          {
+            "answer": "x <= 13",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x+8\\le 21$.",
+            "solution_sketch": "Collect variable terms and constants: $(1)x \\le  13$. Divide by $1$ and preserve the comparison. The boundary is $13$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 11",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x-7>4$.",
+            "solution_sketch": "Collect variable terms and constants: $(1)x > 11$. Divide by $1$ and preserve the comparison. The boundary is $11$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 11",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $13<x+2$.",
+            "solution_sketch": "Collect variable terms and constants: $(-1)x < -11$. Divide by $-1$ and reverse the comparison. The boundary is $11$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x >= -8",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x+5\\ge -3$.",
+            "solution_sketch": "Collect variable terms and constants: $(1)x \\ge  -8$. Divide by $1$ and preserve the comparison. The boundary is $-8$. Equality is included exactly when the comparison is inclusive."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "one-step-equations"
+        ],
+        "name": "Add or subtract on both sides"
+      },
+      "proposed": {
+        "constraints": "integer constants; keep the inequality direction",
+        "exemplars": [
+          {
+            "answer": "x <= 13",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x+8\\le 21$.",
+            "solution_sketch": "Collect variable terms and constants: $(1)x \\le  13$. Divide by $1$ and preserve the comparison. The boundary is $13$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 11",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x-7>4$.",
+            "solution_sketch": "Collect variable terms and constants: $(1)x > 11$. Divide by $1$ and preserve the comparison. The boundary is $11$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 11",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $13<x+2$.",
+            "solution_sketch": "Subtract $2$ from both sides: $11<x$. This says the same thing as $x>11$; the inequality direction is preserved during subtraction."
+          },
+          {
+            "answer": "x >= -8",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x+5\\ge -3$.",
+            "solution_sketch": "Collect variable terms and constants: $(1)x \\ge  -8$. Divide by $1$ and preserve the comparison. The boundary is $-8$. Equality is included exactly when the comparison is inclusive."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "one-step-equations"
+        ],
+        "name": "Add or subtract on both sides"
+      },
+      "reasons": [
+        "Preserve positive-coefficient prerequisite boundary; explain reversed written order without negative division."
+      ],
+      "original_sha256": "9254f0be75ff048b1e7ae7c39e6a00371299eee2390d473f1e0f2f2a8eb68d9f"
+    },
+    {
+      "key": "one-step-inequalities/kp2",
+      "original": {
+        "constraints": "positive coefficients only; no sign flips",
+        "exemplars": [
+          {
+            "answer": "x <= 7",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $4x\\le 28$.",
+            "solution_sketch": "Collect variable terms and constants: $(4)x \\le  28$. Divide by $4$ and preserve the comparison. The boundary is $7$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 15",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/3>5$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/3)x > 5$. Divide by $1/3$ and preserve the comparison. The boundary is $15$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x <= 3",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $21\\ge 7x$.",
+            "solution_sketch": "Collect variable terms and constants: $(-7)x \\ge  -21$. Divide by $-7$ and reverse the comparison. The boundary is $3$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x >= -10",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/5\\ge -2$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/5)x \\ge  -2$. Divide by $1/5$ and preserve the comparison. The boundary is $-10$. Equality is included exactly when the comparison is inclusive."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "one-step-equations"
+        ],
+        "name": "Multiply or divide by a positive"
+      },
+      "proposed": {
+        "constraints": "positive coefficients only; no sign flips",
+        "exemplars": [
+          {
+            "answer": "x <= 7",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $4x\\le 28$.",
+            "solution_sketch": "Collect variable terms and constants: $(4)x \\le  28$. Divide by $4$ and preserve the comparison. The boundary is $7$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 15",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/3>5$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/3)x > 5$. Divide by $1/3$ and preserve the comparison. The boundary is $15$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x <= 3",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $21\\ge 7x$.",
+            "solution_sketch": "Divide both sides by positive $7$: $3\\ge x$. Equivalently, $x\\le3$. Division by a positive number preserves the comparison."
+          },
+          {
+            "answer": "x >= -10",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/5\\ge -2$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/5)x \\ge  -2$. Divide by $1/5$ and preserve the comparison. The boundary is $-10$. Equality is included exactly when the comparison is inclusive."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "one-step-equations"
+        ],
+        "name": "Multiply or divide by a positive"
+      },
+      "reasons": [
+        "Preserve positive-coefficient prerequisite boundary; explain reversed written order without negative division."
+      ],
+      "original_sha256": "c989f8ea9a6df7d792cd5b565ad62259db6fbdfb7cef508f53c827634c3e9c6d"
+    },
+    {
+      "key": "two-step-inequalities/kp1",
+      "original": {
+        "constraints": "undo addition first, then division; positive coefficients",
+        "exemplars": [
+          {
+            "answer": "x <= 8",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $3x+4\\le 28$.",
+            "solution_sketch": "Collect variable terms and constants: $(3)x \\le  24$. Divide by $3$ and preserve the comparison. The boundary is $8$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 7",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $2x-9>5$.",
+            "solution_sketch": "Collect variable terms and constants: $(2)x > 14$. Divide by $2$ and preserve the comparison. The boundary is $7$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x <= 4",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $17\\ge 4x+1$.",
+            "solution_sketch": "Collect variable terms and constants: $(-4)x \\ge  -16$. Divide by $-4$ and reverse the comparison. The boundary is $4$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x >= -3",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $5x-3\\ge -18$.",
+            "solution_sketch": "Collect variable terms and constants: $(5)x \\ge  -15$. Divide by $5$ and preserve the comparison. The boundary is $-3$. Equality is included exactly when the comparison is inclusive."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "two-step-equations"
+        ],
+        "name": "Two steps with a positive coefficient"
+      },
+      "proposed": {
+        "constraints": "undo addition first, then division; positive coefficients",
+        "exemplars": [
+          {
+            "answer": "x <= 8",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $3x+4\\le 28$.",
+            "solution_sketch": "Collect variable terms and constants: $(3)x \\le  24$. Divide by $3$ and preserve the comparison. The boundary is $8$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 7",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $2x-9>5$.",
+            "solution_sketch": "Collect variable terms and constants: $(2)x > 14$. Divide by $2$ and preserve the comparison. The boundary is $7$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x <= 4",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $17\\ge 4x+1$.",
+            "solution_sketch": "Subtract $1$ from both sides: $16\\ge4x$. Divide by positive $4$: $4\\ge x$, or $x\\le4$."
+          },
+          {
+            "answer": "x >= -3",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $5x-3\\ge -18$.",
+            "solution_sketch": "Collect variable terms and constants: $(5)x \\ge  -15$. Divide by $5$ and preserve the comparison. The boundary is $-3$. Equality is included exactly when the comparison is inclusive."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "two-step-equations"
+        ],
+        "name": "Two steps with a positive coefficient"
+      },
+      "reasons": [
+        "Preserve positive-coefficient prerequisite boundary; explain reversed written order without negative division."
+      ],
+      "original_sha256": "f35ab5202e645526faa31923ee5efb042336f3584779d27a10b530763073b740"
+    },
+    {
+      "key": "two-step-inequalities/kp2",
+      "original": {
+        "constraints": "unit-fraction coefficients; integer answers",
+        "exemplars": [
+          {
+            "answer": "x <= 14",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/2+5\\le 12$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/2)x \\le  7$. Divide by $1/2$ and preserve the comparison. The boundary is $14$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 18",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/3-4>2$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/3)x > 6$. Divide by $1/3$ and preserve the comparison. The boundary is $18$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x <= 24",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $7\\ge x/4+1$.",
+            "solution_sketch": "Collect variable terms and constants: $(-1/4)x \\ge  -6$. Divide by $-1/4$ and reverse the comparison. The boundary is $24$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x >= -20",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/5-2\\ge -6$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/5)x \\ge  -4$. Divide by $1/5$ and preserve the comparison. The boundary is $-20$. Equality is included exactly when the comparison is inclusive."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "two-step-equations"
+        ],
+        "name": "Two steps with fractions"
+      },
+      "proposed": {
+        "constraints": "unit-fraction coefficients; integer answers",
+        "exemplars": [
+          {
+            "answer": "x <= 14",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/2+5\\le 12$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/2)x \\le  7$. Divide by $1/2$ and preserve the comparison. The boundary is $14$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x > 18",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/3-4>2$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/3)x > 6$. Divide by $1/3$ and preserve the comparison. The boundary is $18$. Equality is included exactly when the comparison is inclusive."
+          },
+          {
+            "answer": "x <= 24",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $7\\ge x/4+1$.",
+            "solution_sketch": "Subtract $1$ from both sides: $6\\ge x/4$. Multiply by positive $4$: $24\\ge x$, or $x\\le24$."
+          },
+          {
+            "answer": "x >= -20",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Solve $x/5-2\\ge -6$.",
+            "solution_sketch": "Collect variable terms and constants: $(1/5)x \\ge  -4$. Divide by $1/5$ and preserve the comparison. The boundary is $-20$. Equality is included exactly when the comparison is inclusive."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "two-step-equations"
+        ],
+        "name": "Two steps with fractions"
+      },
+      "reasons": [
+        "Preserve positive-coefficient prerequisite boundary; explain reversed written order without negative division."
+      ],
+      "original_sha256": "5fd411b6d91a968357890ff942d10d9bb3d9c39124690c4cd71ace572280c276"
+    },
+    {
+      "key": "fraction-word-problems/kp1",
+      "original": {
+        "constraints": "denominators up to 12; exact fraction answers",
+        "exemplars": [
+          {
+            "answer": "17/12",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Lena ran $\\frac{3}{4}$ km, rested, then ran $\\frac{2}{3}$ km. How far did she run in total (as a fraction of a kilometre)?",
+            "solution_sketch": "$\\frac{9}{12} + \\frac{8}{12} = \\frac{17}{12}$."
+          },
+          {
+            "answer": "1/6",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "A recipe needs $\\frac{2}{3}$ cup of milk; you have measured $\\frac{1}{2}$ cup. How much more is needed?",
+            "solution_sketch": "$\\frac{2}{3} = \\frac{4}{6}$ and $\\frac{1}{2} = \\frac{3}{6}$; $\\frac{4}{6} - \\frac{3}{6} = \\frac{1}{6}$."
+          },
+          {
+            "answer": "13/12",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "A painter used $\\frac{5}{6}$ can of paint on one wall and $\\frac{1}{4}$ can on another. How much paint was used in total (as a fraction of a can)?",
+            "solution_sketch": "$\\frac{5}{6} = \\frac{10}{12}$ and $\\frac{1}{4} = \\frac{3}{12}$; $\\frac{10}{12} + \\frac{3}{12} = \\frac{13}{12}$."
+          },
+          {
+            "answer": "13/24",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "A tank is $\\frac{7}{8}$ full; after use it is $\\frac{1}{3}$ full. How much of the tank was used (as a fraction)?",
+            "solution_sketch": "$\\frac{7}{8} = \\frac{21}{24}$ and $\\frac{1}{3} = \\frac{8}{24}$; $\\frac{21}{24} - \\frac{8}{24} = \\frac{13}{24}$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "adding-subtracting-fractions"
+        ],
+        "name": "Adding and subtracting in context"
+      },
+      "proposed": {
+        "constraints": "denominators up to 12; exact fraction answers in lowest terms",
+        "exemplars": [
+          {
+            "answer": "17/12",
+            "answer_contract": {
+              "kind": "required_form",
+              "form": "reduced_fraction"
+            },
+            "problem": "Lena ran $\\frac{3}{4}$ km, rested, then ran $\\frac{2}{3}$ km. How far did she run in total (as a fraction of a kilometre)? Give an exact fraction in lowest terms.",
+            "solution_sketch": "$\\frac{9}{12} + \\frac{8}{12} = \\frac{17}{12}$."
+          },
+          {
+            "answer": "1/6",
+            "answer_contract": {
+              "kind": "required_form",
+              "form": "reduced_fraction"
+            },
+            "problem": "A recipe needs $\\frac{2}{3}$ cup of milk; you have measured $\\frac{1}{2}$ cup. How much more is needed? Give an exact fraction in lowest terms.",
+            "solution_sketch": "$\\frac{2}{3} = \\frac{4}{6}$ and $\\frac{1}{2} = \\frac{3}{6}$; $\\frac{4}{6} - \\frac{3}{6} = \\frac{1}{6}$."
+          },
+          {
+            "answer": "13/12",
+            "answer_contract": {
+              "kind": "required_form",
+              "form": "reduced_fraction"
+            },
+            "problem": "A painter used $\\frac{5}{6}$ can of paint on one wall and $\\frac{1}{4}$ can on another. How much paint was used in total (as a fraction of a can)? Give an exact fraction in lowest terms.",
+            "solution_sketch": "$\\frac{5}{6} = \\frac{10}{12}$ and $\\frac{1}{4} = \\frac{3}{12}$; $\\frac{10}{12} + \\frac{3}{12} = \\frac{13}{12}$."
+          },
+          {
+            "answer": "13/24",
+            "answer_contract": {
+              "kind": "required_form",
+              "form": "reduced_fraction"
+            },
+            "problem": "A tank is $\\frac{7}{8}$ full; after use it is $\\frac{1}{3}$ full. How much of the tank was used (as a fraction)? Give an exact fraction in lowest terms.",
+            "solution_sketch": "$\\frac{7}{8} = \\frac{21}{24}$ and $\\frac{1}{3} = \\frac{8}{24}$; $\\frac{21}{24} - \\frac{8}{24} = \\frac{13}{24}$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "adding-subtracting-fractions"
+        ],
+        "name": "Adding and subtracting in context"
+      },
+      "reasons": [
+        "Align requested exact fraction output and selected lowest-terms task with reduced-fraction assessment; all four expected fractions are already reduced.",
+        "Align requested exact fraction output and selected lowest-terms task with reduced-fraction assessment; all four expected fractions are already reduced.",
+        "Align requested exact fraction output and selected lowest-terms task with reduced-fraction assessment; all four expected fractions are already reduced.",
+        "Align requested exact fraction output and selected lowest-terms task with reduced-fraction assessment; all four expected fractions are already reduced."
+      ],
+      "original_sha256": "0e058aa298180a77db20305aa1c7a6baed973421eec4313c24bf723b9a6cb99f"
+    }
+  ]
+}

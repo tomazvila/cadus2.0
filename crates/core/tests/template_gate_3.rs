@@ -34,6 +34,7 @@ fn the_body_read_reports_the_1_0_shape_rejections() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     // The last row reads as a document — an empty list is a list — so the typed
     // read passes it to the gate and the gate refuses it. The message is the
@@ -107,6 +108,7 @@ fn gate_body_reads_and_verifies_a_well_formed_body() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
+        finite: None,
     };
     let (doc, verified) = gate_body(&body_with(&[]), &spec).expect("the body verifies");
     assert_eq!(doc.answer_expr, "a**2");

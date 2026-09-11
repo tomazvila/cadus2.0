@@ -6,7 +6,9 @@
  * that advanced a cursor per call would let the click-through pass against a fiction.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { ApiError, ROUTES, api, createDemoApi, resolveApi } from '@/api';
+import {
+  ApiError, ROUTES, api, createDemoApi, createIntegratedDemoApi, resolveApi,
+} from '@/api';
 import type { ApiClient } from '@/api';
 
 describe('the demo client', () => {
@@ -16,8 +18,12 @@ describe('the demo client', () => {
       .filter((r) => r.via !== 'none')
       .map((r) => r.client)
       .filter((member): member is keyof ApiClient => member !== null);
-    // 33 until the three `/api/diag/*` placement rows landed.
-    expect(named.length).toBe(36);
+    // 33 until the three `/api/diag/*` placement rows landed, 36 until the two
+    // `/api/admin/ungraded*` recovery rows landed (D-F2), 38 until the three
+    // `/api/task/{task_id}/integrated*` rows landed (D-F10), 41 until the
+    // `/api/report/retention` row landed (D-F11), 42 until the integrated
+    // instruction row completed the A4.1 journey.
+    expect(named.length).toBe(43);
     for (const member of named) {
       expect(typeof demo[member], `the demo lacks ${member}`).toBe('function');
     }
@@ -35,6 +41,19 @@ describe('the demo client', () => {
     expect(resolveApi('?demo=0').demo).toBe(false);
     expect(resolveApi('').demo).toBe(false);
     expect(resolveApi('?verify=abc').demo).toBe(false);
+  });
+
+  it('resolves the complete integrated browser fixture only by its explicit mode', async () => {
+    expect(resolveApi('?demo=journey').demo).toBe(true);
+    const journey = createIntegratedDemoApi();
+    const plan = await journey.getPlan();
+    expect(plan.tasks.map((task) => ({
+      instruction: task.integrated_instruction_required,
+      assessment: task.integrated_assessment,
+    }))).toEqual([
+      { instruction: true, assessment: false },
+      { instruction: false, assessment: true },
+    ]);
   });
 
   it('keeps its state per client, not per module', async () => {

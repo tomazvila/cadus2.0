@@ -183,7 +183,7 @@ describe('the demo refusals of the admin routes', () => {
       () => demo.getOperatorFlags(),
       () => demo.listContent(),
       () => demo.getContent('d1'),
-      () => demo.approveContent('d1'),
+      () => demo.approveContent('d1', null, null, 'curriculum-v1', 'engine-v1'),
       () => demo.rejectContent('d1', 'why'),
     ];
     for (const call of calls) {
@@ -213,19 +213,22 @@ describe('the demo payloads, literally', () => {
   it('answers the status of the frozen contract', async () => {
     vi.useFakeTimers();
     expect(await settle(createDemoApi().getStatus())).toEqual({
-      course: { id: 'foundations', name: 'Foundations' },
-      placed: true,
-      courses: COURSES,
-      test_prep: null,
-      xp: XP,
-      velocity: { xp_per_day_28d: 21.5, topics_per_week_28d: 2.25, course_progress: 0.18, eta: '2026-11-04' },
-      quiz: { last_at: '2026-08-24', xp_since: 120, retake_pending: false },
-      pending_remediation: [],
-      quiz_due: false,
-      drill_due: false,
-      frontier: 4,
-      due_reviews: 2,
+      ungraded: 0,
+      ungraded_attempts: {},
+      mastery: { to_confirm: ['whole-numbers'], total: 50, inferred: 6, practiced: 9 },
       nearly_due: 1,
+      due_reviews: 2,
+      frontier: 4,
+      drill_due: false,
+      quiz_due: false,
+      pending_remediation: [],
+      quiz: { retake_pending: false, xp_since: 120, last_at: '2026-08-24' },
+      velocity: { eta: '2026-11-04', course_progress: 0.18, topics_per_week_28d: 2.25, xp_per_day_28d: 21.5 },
+      xp: XP,
+      test_prep: null,
+      courses: COURSES,
+      placed: true,
+      course: { name: 'Foundations', id: 'foundations' },
     });
   });
 
@@ -265,11 +268,13 @@ describe('the demo payloads, literally', () => {
         time_budget_secs: 600,
         difficulty_target: 0.7,
         why: 'Frontier topic: fractions is ready to learn.',
+        confirm: false,
         progress: { answered: 0, done: false },
       }],
       quiz_due: false,
       constraints: { lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 2, lessons: 1 },
       course_complete: false,
+      blocked: [],
       frontier_blocked_until: null,
     });
     expect((await settle(demo.sessionEnd())).session).toBe('demo-session');
@@ -301,6 +306,7 @@ describe('the demo payloads, literally', () => {
     });
     expect(await settle(demo.taskAnswer('demo-lesson', { problem_id: 'demo-p1', answer: ' 3 / 4 ' }))).toEqual({
       attempt_id: 'demo-lesson-1',
+      outcome: 'correct',
       correct: true,
       work_quality: 'perfect',
       error_tags: [],

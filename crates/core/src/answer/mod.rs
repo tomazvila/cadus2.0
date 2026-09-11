@@ -30,17 +30,21 @@
 pub mod ast;
 pub mod canon;
 pub mod check;
+pub mod contract;
 pub mod lexer;
 pub mod normalize;
 pub mod parse;
 pub mod rounding;
+pub mod unit;
 
 pub use ast::{Ast, Const, IneqOp};
 pub use canon::{Atom, Basis, Canon, Monomial, Poly, canon};
 pub use check::{Outcome, Verdict, canonical_form, check, notation_note, same_answer};
+pub use contract::{AnswerContract, AnswerPart, NumericForm, check_contract};
 pub use normalize::{MAX_ANSWER_CHARS, Normalized, normalize};
 pub use parse::{parse, parse_with_functions};
 pub use rounding::{Rounding, rounds_to};
+pub use unit::Quantity;
 
 /// The answer is outside the decidable grammar, so the checker has no verdict (V2).
 ///

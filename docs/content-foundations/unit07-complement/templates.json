@@ -1,0 +1,979 @@
+[
+  {
+    "kp_id": "polynomial-basics/kp2",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "Classify ${a}x^4+({b})x^3+({c})x+({d})$ after omitting zero terms. Choose {f}, {g}, or {h}.",
+      "answer_expr": "signcase(a/2+b/3+c/5-d/9-2,[f,g,h])",
+      "solution_sketch": "The four power groups have coefficients ${a}$, ${b}$, ${c}$, and ${d}$. Each nonzero coefficient contributes one term; a zero coefficient contributes none. Distinct powers cannot be combined.",
+      "hints": [
+        "Count nonzero power groups, including the constant when it is nonzero."
+      ],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            0,
+            2
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            0,
+            3
+          ]
+        },
+        "c": {
+          "kind": "choice",
+          "values": [
+            0,
+            5
+          ]
+        },
+        "d": {
+          "kind": "choice",
+          "values": [
+            0,
+            -9
+          ]
+        },
+        "f": {
+          "kind": "choice",
+          "values": [
+            "monomial"
+          ]
+        },
+        "g": {
+          "kind": "choice",
+          "values": [
+            "binomial"
+          ]
+        },
+        "h": {
+          "kind": "choice",
+          "values": [
+            "trinomial"
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "op": "ge",
+          "left": {
+            "add": [
+              {
+                "mul": [
+                  {
+                    "lit": "1/2"
+                  },
+                  "a"
+                ]
+              },
+              {
+                "mul": [
+                  {
+                    "lit": "1/3"
+                  },
+                  "b"
+                ]
+              },
+              {
+                "mul": [
+                  {
+                    "lit": "1/5"
+                  },
+                  "c"
+                ]
+              },
+              {
+                "mul": [
+                  {
+                    "lit": "-1/9"
+                  },
+                  "d"
+                ]
+              }
+            ]
+          },
+          "right": {
+            "lit": 1
+          }
+        },
+        {
+          "op": "le",
+          "left": {
+            "add": [
+              {
+                "mul": [
+                  {
+                    "lit": "1/2"
+                  },
+                  "a"
+                ]
+              },
+              {
+                "mul": [
+                  {
+                    "lit": "1/3"
+                  },
+                  "b"
+                ]
+              },
+              {
+                "mul": [
+                  {
+                    "lit": "1/5"
+                  },
+                  "c"
+                ]
+              },
+              {
+                "mul": [
+                  {
+                    "lit": "-1/9"
+                  },
+                  "d"
+                ]
+              }
+            ]
+          },
+          "right": {
+            "lit": 3
+          }
+        }
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": 0,
+            "b": 0,
+            "c": 0,
+            "d": -9,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "monomial"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 0,
+            "c": 5,
+            "d": 0,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "monomial"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 0,
+            "c": 5,
+            "d": -9,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "binomial"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 3,
+            "c": 0,
+            "d": 0,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "monomial"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 3,
+            "c": 0,
+            "d": -9,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "binomial"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 3,
+            "c": 5,
+            "d": 0,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "binomial"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 3,
+            "c": 5,
+            "d": -9,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "trinomial"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "d": 0,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "monomial"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "d": -9,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "binomial"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 0,
+            "c": 5,
+            "d": 0,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "binomial"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 0,
+            "c": 5,
+            "d": -9,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "trinomial"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3,
+            "c": 0,
+            "d": 0,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "binomial"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3,
+            "c": 0,
+            "d": -9,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "trinomial"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3,
+            "c": 5,
+            "d": 0,
+            "f": "monomial",
+            "g": "binomial",
+            "h": "trinomial"
+          },
+          "expected": "trinomial"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "difference-of-squares/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "Factor $x^2-{a}$. Report lower_factor and upper_factor, the monic linear factors in increasing constant order.",
+      "answer_expr": "multipart(x-sqrt(a),x+sqrt(a))",
+      "solution_sketch": "The positive square root of ${a}$ gives the magnitude of both constants. Choose opposite signs: their sum is zero and their product is $-{a}$, reconstructing the original polynomial.",
+      "hints": [
+        "The two monic factors are conjugates; their constant product must be negative."
+      ],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            289,
+            324,
+            361,
+            400,
+            441,
+            484,
+            529,
+            576,
+            625,
+            676,
+            729,
+            784
+          ]
+        }
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": 289
+          },
+          "expected": "lower_factor = x-17; upper_factor = x+17"
+        },
+        {
+          "params": {
+            "a": 324
+          },
+          "expected": "lower_factor = x-18; upper_factor = x+18"
+        },
+        {
+          "params": {
+            "a": 361
+          },
+          "expected": "lower_factor = x-19; upper_factor = x+19"
+        },
+        {
+          "params": {
+            "a": 400
+          },
+          "expected": "lower_factor = x-20; upper_factor = x+20"
+        },
+        {
+          "params": {
+            "a": 441
+          },
+          "expected": "lower_factor = x-21; upper_factor = x+21"
+        },
+        {
+          "params": {
+            "a": 484
+          },
+          "expected": "lower_factor = x-22; upper_factor = x+22"
+        },
+        {
+          "params": {
+            "a": 529
+          },
+          "expected": "lower_factor = x-23; upper_factor = x+23"
+        },
+        {
+          "params": {
+            "a": 576
+          },
+          "expected": "lower_factor = x-24; upper_factor = x+24"
+        },
+        {
+          "params": {
+            "a": 625
+          },
+          "expected": "lower_factor = x-25; upper_factor = x+25"
+        },
+        {
+          "params": {
+            "a": 676
+          },
+          "expected": "lower_factor = x-26; upper_factor = x+26"
+        },
+        {
+          "params": {
+            "a": 729
+          },
+          "expected": "lower_factor = x-27; upper_factor = x+27"
+        },
+        {
+          "params": {
+            "a": 784
+          },
+          "expected": "lower_factor = x-28; upper_factor = x+28"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "choosing-factoring-strategy/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "For ${g}x^2+({g}*{b})x-({g}*{c})$, choose the first factoring move: {f}, {s}, or {h}. Evaluate coefficient products and check a common factor first.",
+      "answer_expr": "signcase(g-1,[f,signcase(b,[s,s,h]),f])",
+      "solution_sketch": "The coefficient products share ${g}$. If ${g}>1$, extract it first. Otherwise, when ${b}=0$ the two remaining terms are squares; when ${b}>0$, find constants with sum ${b}$ and product $-{c}$.",
+      "hints": [
+        "Check the integer GCF, then count the nonzero terms before choosing a pattern."
+      ],
+      "params": {
+        "g": {
+          "kind": "choice",
+          "values": [
+            1,
+            2
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            0,
+            48,
+            80,
+            120
+          ]
+        },
+        "c": {
+          "kind": "choice",
+          "values": [
+            49,
+            81,
+            121
+          ]
+        },
+        "f": {
+          "kind": "choice",
+          "values": [
+            "GCF"
+          ]
+        },
+        "s": {
+          "kind": "choice",
+          "values": [
+            "difference of squares"
+          ]
+        },
+        "h": {
+          "kind": "choice",
+          "values": [
+            "trinomial factoring"
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "op": "eq",
+          "left": {
+            "mul": [
+              "b",
+              {
+                "add": [
+                  "b",
+                  {
+                    "mul": [
+                      {
+                        "lit": -1
+                      },
+                      "c"
+                    ]
+                  },
+                  {
+                    "lit": 1
+                  }
+                ]
+              }
+            ]
+          },
+          "right": {
+            "lit": 0
+          }
+        }
+      ],
+      "samples": [
+        {
+          "params": {
+            "g": 1,
+            "b": 0,
+            "c": 49,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "difference of squares"
+        },
+        {
+          "params": {
+            "g": 1,
+            "b": 0,
+            "c": 81,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "difference of squares"
+        },
+        {
+          "params": {
+            "g": 1,
+            "b": 0,
+            "c": 121,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "difference of squares"
+        },
+        {
+          "params": {
+            "g": 1,
+            "b": 48,
+            "c": 49,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "trinomial factoring"
+        },
+        {
+          "params": {
+            "g": 1,
+            "b": 80,
+            "c": 81,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "trinomial factoring"
+        },
+        {
+          "params": {
+            "g": 1,
+            "b": 120,
+            "c": 121,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "trinomial factoring"
+        },
+        {
+          "params": {
+            "g": 2,
+            "b": 0,
+            "c": 49,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "GCF"
+        },
+        {
+          "params": {
+            "g": 2,
+            "b": 0,
+            "c": 81,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "GCF"
+        },
+        {
+          "params": {
+            "g": 2,
+            "b": 0,
+            "c": 121,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "GCF"
+        },
+        {
+          "params": {
+            "g": 2,
+            "b": 48,
+            "c": 49,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "GCF"
+        },
+        {
+          "params": {
+            "g": 2,
+            "b": 80,
+            "c": 81,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "GCF"
+        },
+        {
+          "params": {
+            "g": 2,
+            "b": 120,
+            "c": 121,
+            "f": "GCF",
+            "s": "difference of squares",
+            "h": "trinomial factoring"
+          },
+          "expected": "GCF"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "parabola-vertex-form/kp2",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "For $y={a}(x-2)^2+({k})$, report direction ({d} or {u}) and extreme_value.",
+      "answer_expr": "multipart(signcase(a,[d,u,u]),k)",
+      "solution_sketch": "The square is zero at $x=2$ and nonnegative elsewhere. Multiplying by ${a}$ makes the vertex output ${k}$ a minimum for a positive coefficient or a maximum for a negative coefficient.",
+      "hints": [
+        "Use the sign of the leading coefficient and the value when the square vanishes."
+      ],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -2,
+            3
+          ]
+        },
+        "k": {
+          "kind": "choice",
+          "values": [
+            -8,
+            -5,
+            -2,
+            7,
+            10,
+            12
+          ]
+        },
+        "d": {
+          "kind": "choice",
+          "values": [
+            "downward"
+          ]
+        },
+        "u": {
+          "kind": "choice",
+          "values": [
+            "upward"
+          ]
+        }
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": -2,
+            "k": -8,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; extreme_value = -8"
+        },
+        {
+          "params": {
+            "a": -2,
+            "k": -5,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; extreme_value = -5"
+        },
+        {
+          "params": {
+            "a": -2,
+            "k": -2,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; extreme_value = -2"
+        },
+        {
+          "params": {
+            "a": -2,
+            "k": 7,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; extreme_value = 7"
+        },
+        {
+          "params": {
+            "a": -2,
+            "k": 10,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; extreme_value = 10"
+        },
+        {
+          "params": {
+            "a": -2,
+            "k": 12,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; extreme_value = 12"
+        },
+        {
+          "params": {
+            "a": 3,
+            "k": -8,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; extreme_value = -8"
+        },
+        {
+          "params": {
+            "a": 3,
+            "k": -5,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; extreme_value = -5"
+        },
+        {
+          "params": {
+            "a": 3,
+            "k": -2,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; extreme_value = -2"
+        },
+        {
+          "params": {
+            "a": 3,
+            "k": 7,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; extreme_value = 7"
+        },
+        {
+          "params": {
+            "a": 3,
+            "k": 10,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; extreme_value = 10"
+        },
+        {
+          "params": {
+            "a": 3,
+            "k": 12,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; extreme_value = 12"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "quadratic-graphs-vertex/kp3",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "Sketch $y={a}x^2-({a}*({l}+{r}))x+({a}*{l}*{r})$. Report direction ({d} or {u}), vertex, left_intercept, right_intercept, and y_intercept; use points for all intercepts.",
+      "answer_expr": "multipart(signcase(a,[d,u,u]),((l+r)/2,-a*(r-l)^2/4),(l,0),(r,0),(0,a*l*r))",
+      "solution_sketch": "The polynomial factors as ${a}(x-({l}))(x-({r}))$. The two zeros are ${l}$ and ${r}$; evaluate their midpoint for the vertex. The coefficient ${a}$ controls opening, and substituting zero gives ${a}*{l}*{r}$ for the vertical intercept ordinate.",
+      "hints": [
+        "Find the zeros, average their inputs, then evaluate the midpoint and zero."
+      ],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -1,
+            1
+          ]
+        },
+        "l": {
+          "kind": "choice",
+          "values": [
+            -8,
+            -6
+          ]
+        },
+        "r": {
+          "kind": "choice",
+          "values": [
+            4,
+            8,
+            12
+          ]
+        },
+        "d": {
+          "kind": "choice",
+          "values": [
+            "downward"
+          ]
+        },
+        "u": {
+          "kind": "choice",
+          "values": [
+            "upward"
+          ]
+        }
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": -1,
+            "l": -8,
+            "r": 4,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; vertex = (-2, 36); left_intercept = (-8, 0); right_intercept = (4, 0); y_intercept = (0, 32)"
+        },
+        {
+          "params": {
+            "a": -1,
+            "l": -8,
+            "r": 8,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; vertex = (0, 64); left_intercept = (-8, 0); right_intercept = (8, 0); y_intercept = (0, 64)"
+        },
+        {
+          "params": {
+            "a": -1,
+            "l": -8,
+            "r": 12,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; vertex = (2, 100); left_intercept = (-8, 0); right_intercept = (12, 0); y_intercept = (0, 96)"
+        },
+        {
+          "params": {
+            "a": -1,
+            "l": -6,
+            "r": 4,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; vertex = (-1, 25); left_intercept = (-6, 0); right_intercept = (4, 0); y_intercept = (0, 24)"
+        },
+        {
+          "params": {
+            "a": -1,
+            "l": -6,
+            "r": 8,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; vertex = (1, 49); left_intercept = (-6, 0); right_intercept = (8, 0); y_intercept = (0, 48)"
+        },
+        {
+          "params": {
+            "a": -1,
+            "l": -6,
+            "r": 12,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = downward; vertex = (3, 81); left_intercept = (-6, 0); right_intercept = (12, 0); y_intercept = (0, 72)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "l": -8,
+            "r": 4,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; vertex = (-2, -36); left_intercept = (-8, 0); right_intercept = (4, 0); y_intercept = (0, -32)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "l": -8,
+            "r": 8,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; vertex = (0, -64); left_intercept = (-8, 0); right_intercept = (8, 0); y_intercept = (0, -64)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "l": -8,
+            "r": 12,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; vertex = (2, -100); left_intercept = (-8, 0); right_intercept = (12, 0); y_intercept = (0, -96)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "l": -6,
+            "r": 4,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; vertex = (-1, -25); left_intercept = (-6, 0); right_intercept = (4, 0); y_intercept = (0, -24)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "l": -6,
+            "r": 8,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; vertex = (1, -49); left_intercept = (-6, 0); right_intercept = (8, 0); y_intercept = (0, -48)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "l": -6,
+            "r": 12,
+            "d": "downward",
+            "u": "upward"
+          },
+          "expected": "direction = upward; vertex = (3, -81); left_intercept = (-6, 0); right_intercept = (12, 0); y_intercept = (0, -72)"
+        }
+      ],
+      "distractors": []
+    }
+  }
+]

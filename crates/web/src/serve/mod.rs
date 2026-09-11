@@ -72,40 +72,38 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use axum::Json;
-use axum::extract::State;
-use axum::http::StatusCode;
-use cadus_core::curriculum::{Curriculum, KnowledgePoint};
-use cadus_core::event::{Event, SchemaVersion, Slug, TaskServed, TaskType, Timestamp};
-use cadus_core::pool::{Avoid, ExemplarSource, ProblemSource, Source, kp_key};
-use cadus_core::selector::{SessionPlan, Task};
-use cadus_core::template::{Bindings, Value as Binding, from_body, literal_to_rational, render};
-use cadus_store::content::{ApprovedDoc, KIND_HINT_LADDER, KIND_TEACH, approved_document};
-use cadus_store::pool::{
-    NewInstance, PoolRow, approved_template, insert_batch, pop_with_ring_tx, reclaim_exemplar_tx,
-};
-use cadus_store::state::{
-    EventRow, append_event, lock_web_state, project_and_save, project_current,
-};
-use serde::de::DeserializeOwned;
-use serde_json::{Value, json};
-use sqlx::types::Uuid;
-use sqlx::{Postgres, Transaction};
-
-use crate::AppState;
-use crate::error::ApiError;
-use crate::grade::{db_failed, route_input, store};
-use crate::path::ApiPath;
+use crate::route_prelude::*;
 use crate::session::{
     INTERNAL_ERROR, begin, compose_plan, content, now_pair, projection_input, read_state,
-    view_for_open_session, write_state,
+    readiness_of, view_for_open_session, write_state,
 };
 use crate::state::Content;
 use crate::state::{
-    INVALID_REQUEST, NO_OPEN_SESSION, ServedProblem, TASK_COMPLETE, TaskProgress, Tenant, WebState,
+    INVALID_REQUEST, NO_OPEN_SESSION, ProblemHandoff, ServedProblem, TASK_COMPLETE, TaskProgress,
+    Tenant, WebState,
 };
+use cadus_core::curriculum::{Curriculum, FiniteCaseRole, KnowledgePoint};
+use cadus_core::event::{
+    Event, Exposure, ItemSource, OrdinaryProblemServed, SchemaVersion, Slug, TaskServed, TaskType,
+    Timestamp,
+};
+use cadus_core::learner::problem_text_hash;
+use cadus_core::pool::{Avoid, ExemplarSource, ProblemSource, Source, kp_key};
+use cadus_core::selector::{SessionPlan, Task};
+use cadus_core::template::{Bindings, Value as Binding, from_body, literal_to_rational, render};
+use cadus_store::content::{ApprovedDoc, KIND_HINT_LADDER, KIND_TEACH, approved_document_current};
+use cadus_store::pool::{
+    NewInstance, PoolRow, insert_batch, pop_with_ring_current_tx, reclaim_exemplar_tx,
+};
+use cadus_store::state::{
+    EventRow, HandoffIdentity, advance_handoff_cursor, append_event, handoff_seen, lock_web_state,
+    project_and_save, project_current,
+};
+use serde::de::DeserializeOwned;
 
 mod draw;
+mod exposure;
+mod finite;
 #[cfg(test)]
 mod fixture;
 mod hint;
@@ -241,7 +239,11 @@ pub(crate) async fn open(
     let events = view_for_open_session(state, &mut tx, user_id, &mut view, &session).await?;
     let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
     scratch.bind(&session);
-    let plan = compose_plan(content, &view, &projection.model, &session, now);
+    // The readiness of D-F5, read in the SAME transaction: the plan these three
+    // routes look a task up in is the plan `GET /api/session/plan` listed.
+    let readiness = readiness_of(state, content, &mut tx).await?;
+    let mut plan = compose_plan(content, &view, &projection.model, &session, now, &readiness);
+    restore_feedback_tasks(&mut plan, &scratch);
     Ok(Open {
         tx,
         events,
@@ -306,4 +308,29 @@ fn no_problem(topic_id: &str) -> ApiError {
         POOL_UNAVAILABLE,
         format!("Topic {topic_id:?} has no problem to serve."),
     )
+}
+
+/// Keep recorded quiz reveals and pending feedback addressable after replanning.
+pub(crate) fn restore_feedback_tasks(plan: &mut SessionPlan, scratch: &WebState) {
+    for (id, progress) in &scratch.tasks {
+        if plan.tasks.iter().any(|task| task.task_id == *id) {
+            continue;
+        }
+        let pending = scratch.feedback_practice.get(id);
+        let kind = match progress.task_type.as_str() {
+            "quiz" if scratch.quizzes.contains_key(id) => TaskType::Quiz,
+            "lesson" if pending.is_some() => TaskType::Lesson,
+            _ => continue,
+        };
+        plan.tasks.push(Task {
+            task_id: id.clone(),
+            task_type: kind,
+            n_problems: Some(progress.total),
+            topic: pending
+                .and_then(|p| p["record_topic"].as_str())
+                .map(str::to_owned),
+            start_at_kp: pending.and_then(|p| p["kp"].as_str()).map(str::to_owned),
+            ..Task::default()
+        });
+    }
 }

@@ -53,6 +53,7 @@ fn the_fill_refuses_the_instance_the_gates_sample_never_read() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &exemplars,
+        finite: None,
     };
     let verified = gate(&doc, &spec).expect("the gate accepts the document");
     assert!(
@@ -175,6 +176,7 @@ fn check_instance_refuses_a_negative_answer_with_the_gate_message() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &exemplars,
+        finite: None,
     };
 
     let mut bindings = Bindings::new();
@@ -196,6 +198,7 @@ fn check_instance_refuses_a_negative_answer_with_the_gate_message() {
     let bare = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &[],
+        finite: None,
     };
     assert!(check_instance(&doc, &bare, &instance).is_ok());
 }
@@ -217,6 +220,7 @@ fn check_instance_refuses_a_hint_that_names_the_answer() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &[],
+        finite: None,
     };
 
     // a = 1 answers 4, and the rung reads `4`.
