@@ -239,11 +239,13 @@ with the hash.
 9. Owner decision still open from §6: whether the parity fixtures keep the 1.0 rules
    behind `readiness.enforce` and `mastery.confirm_inferred` or move to 2.0 digests.
 
-## 8. Integrated closure audit (verified through `c647a67c`, 2026-09-07)
-This revision is 182 commits after `699fa89`. The reconciled checklist has 62
-`done`, 4 `open`, and zero `pending integration` rows. The isolated post-zero
-content and readiness receipts are final for `c647a67c`; release-bundle,
-restored-snapshot and repository-gate receipts remain release boundaries.
+## 8. Integrated closure audit (receipts through `c647a67c`, repairs through `1e27b2f8`, 2026-09-07)
+The reconciled checklist has 62 `done`, 4 `open`, and zero `pending integration`
+rows. The isolated post-zero content and readiness receipts are exact for
+`c647a67c`. This documentation patch starts from candidate source commit
+`1e27b2f8`, which includes the later fail-closed inventory, parity, manifest and
+startup repairs. Bundle, exact-head replay, quality and merge-gate receipts remain
+release boundaries.
 
 ### 8.1 Definitively closed since section 7
 - Integrated behavior: `d750e83` persists server-owned hint progression,
@@ -325,6 +327,20 @@ restored-snapshot and repository-gate receipts remain release boundaries.
   `bfaff1d999c5e956cac48cbe63433b603e60f434ba4c768ef03e12e20f78b9eb`;
   readiness Markdown
   `dcd37c6d2707202777c36f298c88509476710ea28c81e489f339a35e137799aa`.
+- Candidate-head maintenance after the `c647a67c` receipts separates immutable
+  review evidence from live inventories: `21053c5d`, `6e83e906`, `a6fb0d2f`,
+  `eda14426` and `e448c085`. The live Foundations tree has 809 knowledge points,
+  3,247 exemplars, 1,802 explicit policies and zero missing solution sketches;
+  the live multi-step census is 987 statements, while the historical 1,695-row
+  contract inventory and 542-row multi-step review remain unchanged.
+- `3f755fe7` and `36c14b3d` close rational-tolerance and coefficient-form
+  regressions. `89030a26` refreshes the canonical whole-tree pin to 8,352
+  exemplars, 4,639,826 bytes and SHA-256
+  `d7387d1f83c29c264f321713596faa071ca319773b58e1b5fa37cc1ddd0bc235`.
+  `36caccc6`, `609d78f0`, `199a6c3c` and `1e27b2f8` respectively scope the
+  Foundations instruction census, pin the complete template-helper registry,
+  refresh the visual manifest and preserve shutdown during startup loading.
+  These focused repairs do not substitute for the final exact-head gates.
 - Generated/imported documents remain `pending` in isolated databases. A human
   must approve every digest intended for serving; no automated step in this work
   grants approval.
@@ -369,15 +385,15 @@ The open IDs are `(h)`, P2.3, P5.5 and A2.2.
   and rollback execution.
 
 ### 8.5 Final verification placeholders
-- Final integration: `[ROOT: commit=<sha>; clean=<yes/no>; timestamp=<ISO-8601>]`.
+- Final integration: `[ROOT-IDENTITY: commit=<sha>; clean=<yes/no>; timestamp=<ISO-8601>]`.
 - Post-zero pipeline on `c647a67c`: exit 0; template 809; Teach 809;
   hint-ladder 809; total pending 2,427; approved 0; rejected 0; model cost $0.
   Pipeline-script SHA-256 is `0c39bb13d22f36f06c32438bfad6b674956c676519a0076efe7e5eb5f13fae13`;
   log SHA-256 is `76172d94efb667de875f452cb69777dba6874be9bba15c6bd883d22eff621b07`;
   inventory SHA-256 is `1d5b1633008fe18833cff9dbbc6f567fc9df30f909d317d0005cdbe8207ac199`.
-- Release bundle: `[ROOT: command=<exact>; exit=<n>; documents=<n>;
+- Release bundle: `[ROOT-BUNDLE: command=<exact>; exit=<n>; documents=<n>;
   bundle_sha256=<sha>; verify_exit=<n>]`.
-- Exact-head restored-production replay: `[ROOT: command=<exact>; exit=<n>;
+- Exact-head restored-production replay: `[ROOT-REPLAY: command=<exact>; exit=<n>;
   receipt_sha256=<sha>; production_fingerprint=<value>;
   restored_before=<value>; restored_after=<value>; disposable_removed=<yes/no>]`.
 - Database-backed readiness on `c647a67c`: exit 0; ready 0; blocked 809;
@@ -393,8 +409,9 @@ The open IDs are `(h)`, P2.3, P5.5 and A2.2.
   CARGO_BUILD_JOBS=1 CADUS_TEST_DATABASE_URL=postgresql://test:test@127.0.0.1:55434/cadus2_gate scripts/gate.sh >target/final-gate.log 2>&1
   sha256sum target/final-quality.log target/final-gate.log
   ```
-  Final results: `[ROOT: quality_exit=<n>; quality_final=<line>;
-  quality_elapsed=<duration>; quality_log_sha256=<sha>; gate_exit=<n>;
-  gate_final=<line>; gate_elapsed=<duration>; gate_log_sha256=<sha>]`.
+  Quality result: `[ROOT-QUALITY: candidate_commit=<sha>; command=<exact>;
+  exit=<n>; final=<line>; elapsed=<duration>; log_sha256=<sha>]`.
+  Merge-gate result: `[ROOT-GATE: candidate_commit=<sha>; command=<exact>;
+  exit=<n>; final=<line>; elapsed=<duration>; log_sha256=<sha>]`.
 - Human content approval, deployment, rollback execution and real-data calibration
   remain unperformed.
