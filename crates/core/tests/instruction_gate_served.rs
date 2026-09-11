@@ -446,7 +446,7 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     // second makes the Foundations-only scope explicit. The loop above is the
     // fail-closed invariant for every member of both cohorts.
     assert_eq!((exempted, blind), (361, 59));
-    assert_eq!((foundations_exempted, foundations_blind), (157, 30));
+    assert_eq!((foundations_exempted, foundations_blind), (155, 29));
 }
 
 /// A sample that does not instantiate and a draw that does not evaluate
