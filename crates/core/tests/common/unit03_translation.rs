@@ -3,7 +3,14 @@
 
 /// Read only learner-visible prose and math spans, with no answer or bindings.
 pub fn reconstruct(sentence: &str) -> (String, String) {
-    let (shape, values) = cadus_testkit::translation::sentence_parts(sentence);
+    let pieces: Vec<_> = sentence.split('$').collect();
+    let values: Vec<_> = pieces.iter().skip(1).step_by(2).copied().collect();
+    let shape = pieces
+        .iter()
+        .step_by(2)
+        .copied()
+        .collect::<Vec<_>>()
+        .join("{}");
     let shape = shape.split(". Use *").next().unwrap_or(&shape);
     match (shape, values.as_slice()) {
         ("Write an equation: {} more than {} times a number {} is {}", [b, a, x, c]) => (

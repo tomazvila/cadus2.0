@@ -52,7 +52,6 @@ fn structured_contract(
     contract: &AnswerContract,
 ) -> Option<Outcome> {
     let outcome = match contract {
-        AnswerContract::RequiredAssignment => required_assignment(text, learner),
         AnswerContract::Label { options } => {
             decided(label_value(options, learner).as_ref() == Some(expected))
         }
@@ -64,23 +63,6 @@ fn structured_contract(
             Ok(value) => decided(super::union::equivalent(expected, &value)),
             Err(reason) => Outcome::Undecidable(reason),
         },
-        AnswerContract::RequiredInequalityNotation => {
-            match (
-                super::union::read_with_notation(text),
-                super::union::read_with_notation(learner),
-            ) {
-                (Ok((_, expected_notation)), Ok((value, learner_notation))) => decided(
-                    expected_notation == learner_notation
-                        && super::union::equivalent(expected, &value),
-                ),
-                (Err(reason), _) | (_, Err(reason)) => Outcome::Undecidable(reason),
-            }
-        }
-        contract @ (AnswerContract::RequiredSinglePower
-        | AnswerContract::RequiredNormalizedScientificNotation
-        | AnswerContract::RequiredSimplestRadical) => {
-            required_expression_form(contract, text, learner)
-        }
         AnswerContract::ReducedRatio => parsed_or_recognized(
             super::notation::reduced_ratio(learner),
             expected,
@@ -96,28 +78,6 @@ fn structured_contract(
         _ => return None,
     };
     Some(outcome)
-}
-
-fn required_assignment(expected: &str, learner: &str) -> Outcome {
-    match super::assignment::equivalent(expected, learner) {
-        Ok(correct) => decided(correct),
-        Err(reason) => Outcome::Undecidable(reason),
-    }
-}
-
-fn required_expression_form(contract: &AnswerContract, expected: &str, learner: &str) -> Outcome {
-    let result = match contract {
-        AnswerContract::RequiredSinglePower => super::power::equivalent(expected, learner),
-        AnswerContract::RequiredNormalizedScientificNotation => {
-            super::scientific::equivalent(expected, learner)
-        }
-        AnswerContract::RequiredSimplestRadical => super::radical::equivalent(expected, learner),
-        _ => unreachable!("caller supplies a required expression contract"),
-    };
-    match result {
-        Ok(correct) => decided(correct),
-        Err(reason) => Outcome::Undecidable(reason),
-    }
 }
 
 fn parsed(value: Result<Canon, Undecidable>, expected: &Canon) -> Outcome {

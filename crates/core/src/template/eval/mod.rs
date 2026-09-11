@@ -33,7 +33,15 @@
 //! a panic.
 
 mod builtin;
+mod compounding;
+mod equation;
 mod exact;
+mod finite_graph;
+mod functions;
+mod inequalities;
+mod inverse;
+mod structured;
+mod triangle_law;
 mod write;
 
 use builtin::call;
@@ -42,7 +50,6 @@ use exact::{
     fraction_literal, inequality, interval, literal, mixed_literal, negate, raise, root,
 };
 use num_rational::BigRational;
-use num_traits::ToPrimitive;
 
 use crate::answer::ast::Ast;
 use crate::answer::{
@@ -50,54 +57,10 @@ use crate::answer::{
 };
 
 use super::domain::Bindings;
+use structured::{label_answer, list_answer};
 
+pub use functions::{EVAL_FUNCTIONS, EXTRA_FUNCTIONS};
 pub use write::write;
-
-/// The evaluation-only functions and the argument count each one takes.
-///
-/// `abs` and `sqrt` are in the M2 grammar already. The others are not, and
-/// [`parse_with_functions`] admits them for this one purpose. Every one of them
-/// is erased before the answer string exists. `signcase(x, [a, b, c])` selects
-/// the negative, zero, or positive branch without admitting general predicates.
-pub const EVAL_FUNCTIONS: [(&str, usize); 17] = [
-    ("abs", 1),
-    ("sqrt", 1),
-    ("gcd", 2),
-    ("lcm", 2),
-    ("floor", 1),
-    ("ceiling", 1),
-    ("min", 2),
-    ("max", 2),
-    ("factorial", 1),
-    ("binomial", 2),
-    ("signcase", 2),
-    ("excludepoint", 2),
-    ("lowerbound", 2),
-    ("upperbound", 2),
-    ("quotientremainder", 2),
-    ("divisibilitylabel", 2),
-    ("primeclass", 1),
-];
-
-/// The function names [`parse_with_functions`] admits beyond the M2 grammar.
-pub const EXTRA_FUNCTIONS: [&str; 16] = [
-    "gcd",
-    "lcm",
-    "floor",
-    "ceiling",
-    "min",
-    "max",
-    "factorial",
-    "binomial",
-    "multipart",
-    "signcase",
-    "excludepoint",
-    "lowerbound",
-    "upperbound",
-    "quotientremainder",
-    "divisibilitylabel",
-    "primeclass",
-];
 
 /// The largest bit width of a numerator or a denominator of an intermediate.
 ///
@@ -347,17 +310,28 @@ pub fn answer_for_contract(
     bindings: &Bindings,
     contract: Option<&AnswerContract>,
 ) -> Result<Answer, EvalError> {
+    if let Ast::Func(name, args) = ast {
+        match name.as_str() {
+            "powerform" => return structured::power_form(ast, bindings, contract),
+            "logequation" | "expequation" | "relationform" => {
+                return equation::write(name, args, bindings, contract);
+            }
+            "atandeg" => return inverse::degrees(args, bindings, contract),
+            _ => {}
+        }
+    }
     match contract {
         Some(contract @ AnswerContract::Label { .. }) => label_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::Unit { unit, .. }) => {
             unit_answer(ast, bindings, contract, unit)
         }
         Some(AnswerContract::Multipart { parts }) => multipart_answer(ast, bindings, parts),
+        Some(contract @ AnswerContract::List { .. }) => list_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::ReducedRatio) => {
             reduced_ratio_answer(ast, bindings, contract)
         }
         Some(contract @ AnswerContract::InequalityUnion) => {
-            inequality_union_answer(ast, bindings, contract)
+            inequalities::union_answer(ast, bindings, contract)
         }
         Some(contract @ AnswerContract::QuotientRemainder { .. }) => {
             quotient_remainder_answer(ast, bindings, contract)
@@ -380,30 +354,6 @@ fn quotient_remainder_answer(
     let quotient = answer(&args[0], bindings)?.text;
     let remainder = answer(&args[1], bindings)?.text;
     contracted(format!("{quotient} R{remainder}"), contract)
-}
-
-fn inequality_union_answer(
-    ast: &Ast,
-    bindings: &Bindings,
-    contract: &AnswerContract,
-) -> Result<Answer, EvalError> {
-    let Ast::Func(name, args) = ast else {
-        return answer(ast, bindings);
-    };
-    if args.len() != 2 || !matches!(name.as_str(), "excludepoint" | "lowerbound" | "upperbound") {
-        return answer(ast, bindings);
-    }
-    let Some(variable) = text_binding(&args[0], bindings) else {
-        return answer(ast, bindings);
-    };
-    let bound = answer(&args[1], bindings)?.text;
-    let text = match name.as_str() {
-        "excludepoint" => format!("{variable} < {bound} or {variable} > {bound}"),
-        "lowerbound" => format!("{variable} >= {bound}"),
-        "upperbound" => format!("{variable} <= {bound}"),
-        _ => unreachable!(),
-    };
-    contracted(text, contract)
 }
 
 fn reduced_ratio_answer(
@@ -431,84 +381,6 @@ fn unit_answer(
     contracted(format!("{} {unit}", value.text), contract)
 }
 
-fn label_answer(
-    ast: &Ast,
-    bindings: &Bindings,
-    contract: &AnswerContract,
-) -> Result<Answer, EvalError> {
-    if let Some(text) = text_binding(ast, bindings) {
-        return contracted(text, contract);
-    }
-    let Ast::Func(name, args) = ast else {
-        return answer(ast, bindings);
-    };
-    let text = match (name.as_str(), args.as_slice()) {
-        ("divisibilitylabel", [number, divisor]) => {
-            let number = bounded_whole(number, bindings, "divisibilitylabel")?;
-            let divisor = bounded_whole(divisor, bindings, "divisibilitylabel")?;
-            if divisor == 0 {
-                return Err(EvalError::Domain {
-                    func: "divisibilitylabel",
-                    value: divisor.to_string(),
-                });
-            }
-            if number % divisor == 0 { "yes" } else { "no" }
-        }
-        ("primeclass", [number]) => {
-            let number = bounded_whole(number, bindings, "primeclass")?;
-            if number < 2 {
-                "neither"
-            } else if is_prime(number) {
-                "prime"
-            } else {
-                "composite"
-            }
-        }
-        _ => return answer(ast, bindings),
-    };
-    contracted(text.to_owned(), contract)
-}
-
-const MAX_LABEL_INTEGER: u32 = 1_000_000;
-
-fn bounded_whole(ast: &Ast, bindings: &Bindings, func: &'static str) -> Result<u32, EvalError> {
-    let value = answer(ast, bindings)?;
-    let Canon::Rational(value) = value.canon else {
-        return Err(EvalError::NotWhole { func });
-    };
-    if !value.is_integer() {
-        return Err(EvalError::NotWhole { func });
-    }
-    value
-        .to_integer()
-        .to_u32()
-        .filter(|value| *value <= MAX_LABEL_INTEGER)
-        .ok_or_else(|| EvalError::Domain {
-            func,
-            value: value.to_string(),
-        })
-}
-
-fn is_prime(number: u32) -> bool {
-    if number < 2 {
-        return false;
-    }
-    if number == 2 {
-        return true;
-    }
-    if number % 2 == 0 {
-        return false;
-    }
-    let mut divisor = 3;
-    while divisor <= number / divisor {
-        if number % divisor == 0 {
-            return false;
-        }
-        divisor += 2;
-    }
-    true
-}
-
 fn multipart_answer(
     ast: &Ast,
     bindings: &Bindings,
@@ -516,6 +388,10 @@ fn multipart_answer(
 ) -> Result<Answer, EvalError> {
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
+    };
+    let args = match args.as_slice() {
+        [Ast::Tuple(items)] if parts.len() != 1 => items.as_slice(),
+        items => items,
     };
     if name != "multipart" || args.len() != parts.len() {
         return answer(ast, bindings);

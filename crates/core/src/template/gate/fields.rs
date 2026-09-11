@@ -223,28 +223,16 @@ pub(super) fn check_answer_names(
     ast: &Ast,
     spec: &GateSpec,
 ) -> Result<(), Rejection> {
-    let symbolic_relation = matches!(
+    let setup_relation = matches!(
         doc.answer_contract,
-        Some(
-            crate::answer::AnswerContract::PolynomialRelation
-                | crate::answer::AnswerContract::RelationSetup
-        )
+        Some(crate::answer::AnswerContract::RelationSetup)
     );
-    let assignment_label = match (&doc.answer_contract, ast) {
-        (Some(crate::answer::AnswerContract::RequiredAssignment), Ast::Assign { var, value })
-            if !ast_names(value).contains(var) =>
-        {
-            Some(var.as_str())
-        }
-        _ => None,
-    };
     let unknown: Vec<String> = ast_names(ast)
         .into_iter()
         .filter(|name| !doc.params.contains_key(name))
         .filter(|name| !RESERVED_NAMES.contains(&name.as_str()))
-        .filter(|name| assignment_label != Some(name.as_str()))
         .filter(|name| {
-            (spec.answer_kind != AnswerKind::Expression && !symbolic_relation)
+            (spec.answer_kind != AnswerKind::Expression && !setup_relation)
                 || !FREE_SYMBOLS.contains(&name.as_str())
         })
         .collect();

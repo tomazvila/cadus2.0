@@ -208,7 +208,7 @@ topics:
           - problem: "Solve $13<x+2$."
             answer: "x > 11"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Subtract $2$ from both sides: $11<x$. This says the same thing as $x>11$; the inequality direction is preserved during subtraction.'
+            solution_sketch: "Collect variable terms and constants: $(-1)x < -11$. Divide by $-1$ and reverse the comparison. The boundary is $11$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $x+5\\ge -3$."
             answer: "x >= -8"
             answer_contract: {"kind": "exact"}
@@ -229,7 +229,7 @@ topics:
           - problem: "Solve $21\\ge 7x$."
             answer: "x <= 3"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Divide both sides by positive $7$: $3\ge x$. Equivalently, $x\le3$. Division by a positive number preserves the comparison.'
+            solution_sketch: "Collect variable terms and constants: $(-7)x \\ge  -21$. Divide by $-7$ and reverse the comparison. The boundary is $3$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $x/5\\ge -2$."
             answer: "x >= -10"
             answer_contract: {"kind": "exact"}
@@ -296,7 +296,7 @@ topics:
           - problem: "Solve $17\\ge 4x+1$."
             answer: "x <= 4"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Subtract $1$ from both sides: $16\ge4x$. Divide by positive $4$: $4\ge x$, or $x\le4$.'
+            solution_sketch: "Collect variable terms and constants: $(-4)x \\ge  -16$. Divide by $-4$ and reverse the comparison. The boundary is $4$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $5x-3\\ge -18$."
             answer: "x >= -3"
             answer_contract: {"kind": "exact"}
@@ -317,7 +317,7 @@ topics:
           - problem: "Solve $7\\ge x/4+1$."
             answer: "x <= 24"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Subtract $1$ from both sides: $6\ge x/4$. Multiply by positive $4$: $24\ge x$, or $x\le24$.'
+            solution_sketch: "Collect variable terms and constants: $(-1/4)x \\ge  -6$. Divide by $-1/4$ and reverse the comparison. The boundary is $24$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $x/5-2\\ge -6$."
             answer: "x >= -20"
             answer_contract: {"kind": "exact"}
@@ -327,10 +327,10 @@ topics:
         name: "Solve, then check a value"
         key_prerequisites: [one-step-inequalities]
         exemplars:
-          - problem: 'Solve $3x+2<14$ and $3x+2\le14$ separately, then test $x=4$ in each solution. Report strict and inclusive as yes or no.'
-            answer: "strict = no; inclusive = yes"
-            answer_contract: {"kind":"multipart","parts":[{"name":"strict","contract":{"kind":"label","options":[["yes"],["no"]]}},{"name":"inclusive","contract":{"kind":"label","options":[["yes"],["no"]]}}]}
-            solution_sketch: 'Both inequalities have threshold 4. The strict solution x<4 excludes the boundary, while the inclusive solution x<=4 includes it.'
+          - problem: "Solve $3x+2\\le 14$, then test $x=4$. Is it included?"
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Isolating x gives $x \\le  4$. Substitute the candidate in the original inequality: $14 \\le  14$ is true. Every comparison must hold for an intersection."
           - problem: "Solve $x/2-3>1$, then test $x=8$. Is it included?"
             answer: "no"
             answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
@@ -635,19 +635,15 @@ topics:
         exemplars:
           - problem: 'Solve $-5 \le 2x - 1 < 7$.'
             answer: "-2 <= x < 4"
-            answer_contract: {kind: exact}
             solution_sketch: 'Add $1$: $-4 \le 2x < 8$; divide by $2$.'
           - problem: 'Solve $3 < 2x + 1 \le 11$.'
             answer: "1 < x <= 5"
-            answer_contract: {kind: exact}
             solution_sketch: 'Subtract $1$: $2 < 2x \le 10$; divide by $2$.'
           - problem: 'Solve $-3 \le 2x + 1 < 9$.'
             answer: "-2 <= x < 4"
-            answer_contract: {kind: exact}
             solution_sketch: 'Subtract $1$: $-4 \le 2x < 8$; divide by $2$.'
           - problem: 'Solve $5 < 3x - 1 \le 14$.'
             answer: "2 < x <= 5"
-            answer_contract: {kind: exact}
             solution_sketch: 'Add $1$: $6 < 3x \le 15$; divide by $3$.'
         constraints: "keep operations balanced across all parts"
       - id: kp2
@@ -753,19 +749,19 @@ topics:
         exemplars:
           - problem: 'Write $x > 2$ in interval notation.'
             answer: "(2, ∞)"
-            answer_contract: {"kind":"required_inequality_notation"}
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'A ray to the right; $\infty$ is not a number, so it always takes a round bracket.'
           - problem: 'Write $x \le -1$ in interval notation.'
             answer: "(-∞, -1]"
-            answer_contract: {"kind":"required_inequality_notation"}
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'Every value at or below $-1$; the round bracket at $-\infty$ never closes, and the square bracket at $-1$ includes it.'
           - problem: 'Write the interval $[4, \infty)$ as an inequality.'
             answer: "x >= 4"
-            answer_contract: {"kind":"required_inequality_notation"}
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'A square bracket at $4$ becomes $\ge$; the ray extends right without bound.'
           - problem: 'Write $(-\infty, 3]$ as an inequality.'
             answer: "x <= 3"
-            answer_contract: {"kind":"required_inequality_notation"}
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'The ray extends left and includes $3$.'
         constraints: "single rays both directions; infinity always gets a round bracket; convert both ways"
       - id: kp3
@@ -774,19 +770,19 @@ topics:
         exemplars:
           - problem: 'Write the solution of $x < -2$ or $x > 4$ in interval notation.'
             answer: "(-∞, -2) ∪ (4, ∞)"
-            answer_contract: {"kind":"required_inequality_notation"}
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'Each ray becomes an interval; the "or" is written with the union symbol $\cup$.'
           - problem: 'Solve $2x + 1 \le -3$ or $x - 3 > 0$ and give the answer in interval notation.'
             answer: "(-∞, -2] ∪ (3, ∞)"
-            answer_contract: {"kind":"required_inequality_notation"}
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: '$2x \le -4$ gives $x \le -2$; the second piece gives $x > 3$.'
           - problem: 'Write $(-\infty, 1) \cup [5, \infty)$ as inequalities joined by "or".'
             answer: "x < 1 or x >= 5"
-            answer_contract: {"kind":"required_inequality_notation"}
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'The interval $(-\infty, 1)$ is $x < 1$; $[5, \infty)$ is $x \ge 5$.'
           - problem: 'Solve $x + 1 \le -4$ or $2x - 3 > 5$ and give the answer in interval notation.'
             answer: "(-∞, -5] ∪ (4, ∞)"
-            answer_contract: {"kind":"required_inequality_notation"}
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: '$x \le -5$ or $x > 4$, so $(-\infty,-5] \cup (4,\infty)$.'
         constraints: "two-piece unions from 'or' inequalities; at most two solving steps per piece; convert both ways"
     diagnostic_exemplar:
