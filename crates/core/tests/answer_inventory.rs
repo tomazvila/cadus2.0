@@ -152,11 +152,7 @@ fn the_live_foundations_inventory_carries_the_current_counts() {
         LIVE_KNOWLEDGE_POINTS,
         "Foundations knowledge points"
     );
-    assert_eq!(
-        inventory.len(),
-        LIVE_EXEMPLARS,
-        "Foundations exemplars"
-    );
+    assert_eq!(inventory.len(), LIVE_EXEMPLARS, "Foundations exemplars");
     let sketched = inventory
         .iter()
         .filter(|row| row.has_solution_sketch)
