@@ -70,15 +70,6 @@ def main():
     import template_arithmetic, template_factoring, template_solving, template_graphing
     for module in (template_arithmetic, template_factoring, template_solving, template_graphing):
         module.build(add)
-    from residual_recipes import replacements
-    repairs = replacements()
-    from residual_structured import replacements as structured_replacements
-    repairs.update(structured_replacements())
-    from residual_cubes import replacements as cube_replacements
-    repairs.update(cube_replacements())
-    from residual_parameters import replacements as parameter_replacements
-    repairs.update(parameter_replacements())
-    ROWS[:] = [repairs.get(row["kp_id"], row) for row in ROWS]
     keys = [row["kp_id"] for row in ROWS]
     assert len(set(keys)) == len(keys)
     target = ROOT / "target/unit07/candidates.json"

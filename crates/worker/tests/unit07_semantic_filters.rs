@@ -35,7 +35,7 @@ fn unsafe_representation_and_constant_families_are_fail_closed() {
         .iter()
         .map(|row| row["kp_id"].as_str().unwrap())
         .collect();
-    assert!(semantic_keys().is_subset(&pending_keys));
+    assert!(pending_keys.is_disjoint(&semantic_keys()));
 
     let blockers = rows("docs/reports/unit07-schema-blockers.json");
     let blocked: BTreeSet<_> = blockers
@@ -43,12 +43,12 @@ fn unsafe_representation_and_constant_families_are_fail_closed() {
         .filter(|row| row["code"] == "semantic-family")
         .map(|row| row["kp_id"].as_str().unwrap())
         .collect();
-    assert!(blocked.is_empty());
+    assert_eq!(blocked, semantic_keys());
 }
 
 #[test]
-fn negative_controls_preserve_the_rejected_legacy_samples() {
-    let blockers = rows("scripts/authoring/unit07/legacy_semantic_controls.json");
+fn negative_controls_expose_the_exact_normalization_failures() {
+    let blockers = rows("docs/reports/unit07-schema-blockers.json");
     let by_key: BTreeMap<_, _> = blockers
         .iter()
         .filter(|row| row["code"] == "semantic-family")
@@ -83,12 +83,12 @@ fn negative_controls_preserve_the_rejected_legacy_samples() {
 }
 
 #[test]
-fn coefficient_tuple_preserves_all_three_formula_coefficients() {
-    let pending = rows("docs/content-foundations/unit07/templates.json");
-    let row = pending
+fn unsupported_three_part_multipart_remains_blocked() {
+    let blockers = rows("docs/reports/unit07-schema-blockers.json");
+    let row = blockers
         .iter()
         .find(|row| row["kp_id"] == "applying-the-quadratic-formula/kp1")
         .unwrap();
-    assert_eq!(row["arguments"]["answer_expr"], "(a,-b,c)");
-    assert!(row["arguments"]["samples"].as_array().unwrap().len() >= 12);
+    assert_eq!(row["code"], "grammar");
+    assert!(row["message"].as_str().unwrap().contains("wrong count"));
 }

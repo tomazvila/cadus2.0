@@ -153,13 +153,13 @@ fn vertex_reading_rejects_a_sign_error_on_k() {
 fn parabola_direction_label_rejects_the_opposite_direction() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
-    // "For y = -3(x - 4)^2 + 8..." a = -3 < 0, so
+    // "Does y = -2(x - 1)^2 + 3 open upward or downward...?" a = -2 < 0, so
     // it opens downward; the opposite-direction label must be rejected by
     // the multipart contract's label sub-check, not just its exact half.
     let (item, kind) = exemplar(&curriculum, "parabola-vertex-form", "kp2", 0);
-    assert_eq!(item.answer, "direction = downward; extreme_value = 8");
+    assert_eq!(item.answer, "direction = downward; extreme_value = 3");
     assert_marked_incorrect(
-        grade(item, kind, "direction = upward; extreme_value = 8"),
+        grade(item, kind, "direction = upward; extreme_value = 3"),
         "opposite opening direction",
     );
 }

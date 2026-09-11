@@ -96,10 +96,6 @@ def solve(key, math):
 
 def check(row, item):
     key = row["kp_id"]
-    from check_residual_math import REPAIRED, validate
-    if key in REPAIRED:
-        validate(key, item)
-        return
     math = re.findall(r"\$([^$]*)\$", item["problem"])
     got = s.sympify(item["answer"])
     factoring = ("factoring-", "difference-of-squares", "perfect-square-trinomials", "sum-difference-of-cubes", "quadratics-in-form", "choosing-factoring-strategy")

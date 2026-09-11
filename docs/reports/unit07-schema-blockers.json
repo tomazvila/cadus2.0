@@ -200,6 +200,162 @@
     "stage": "production-worker-gate"
   },
   {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "-a*x**2*(x**2+3)",
+        "constraints": [
+          {
+            "left": "b",
+            "op": "eq",
+            "right": {
+              "mul": [
+                {
+                  "lit": 3
+                },
+                "a"
+              ]
+            }
+          }
+        ],
+        "distractors": [],
+        "hints": [
+          "Choose the negative common factor, including the lowest variable power."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              6,
+              9,
+              12,
+              15,
+              18,
+              21,
+              24,
+              27,
+              30,
+              33,
+              36,
+              39
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "2*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 2,
+              "b": 6
+            }
+          },
+          {
+            "expected": "3*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 3,
+              "b": 9
+            }
+          },
+          {
+            "expected": "4*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 4,
+              "b": 12
+            }
+          },
+          {
+            "expected": "5*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 5,
+              "b": 15
+            }
+          },
+          {
+            "expected": "6*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 6,
+              "b": 18
+            }
+          },
+          {
+            "expected": "7*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 7,
+              "b": 21
+            }
+          },
+          {
+            "expected": "8*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 8,
+              "b": 24
+            }
+          },
+          {
+            "expected": "9*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 9,
+              "b": 27
+            }
+          },
+          {
+            "expected": "10*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 10,
+              "b": 30
+            }
+          },
+          {
+            "expected": "11*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 11,
+              "b": 33
+            }
+          },
+          {
+            "expected": "12*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 12,
+              "b": 36
+            }
+          },
+          {
+            "expected": "13*x**2*(-x**2 - 3)",
+            "params": {
+              "a": 13,
+              "b": 39
+            }
+          }
+        ],
+        "solution_sketch": "Extract $-{a}x^2$: the first term leaves $x^2$ and the second leaves $3$. Both remaining coefficients are positive.",
+        "statement": "Factor $-{a}x^4-{b}x^2$ by extracting a negative GCF."
+      },
+      "kind": "template",
+      "kp_id": "factoring-gcf/kp2",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "factoring-gcf/kp2",
+    "message": "the computed answer moves the requested negative GCF inside the remaining factor",
+    "stage": "semantic-review"
+  },
+  {
     "authored_contracts": [
       null,
       null,
@@ -305,6 +461,893 @@
     "kp_id": "difference-of-squares/kp1",
     "message": "the declared domains produce only 10 distinct problem(s); at least 12 are needed for randomized values and for avoidance of a recently-served problem to mean anything (Hard Rule 4)",
     "stage": "production-worker-gate"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(2*x**2-sqrt(a))*(2*x**2+sqrt(a))",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Take the square root of the coefficient and halve the even exponent."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              1,
+              9,
+              25,
+              49,
+              81,
+              121,
+              169,
+              225,
+              289,
+              361,
+              441,
+              529
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "4*x**4 - 1",
+            "params": {
+              "a": 1
+            }
+          },
+          {
+            "expected": "4*x**4 - 9",
+            "params": {
+              "a": 9
+            }
+          },
+          {
+            "expected": "4*x**4 - 25",
+            "params": {
+              "a": 25
+            }
+          },
+          {
+            "expected": "4*x**4 - 49",
+            "params": {
+              "a": 49
+            }
+          },
+          {
+            "expected": "4*x**4 - 81",
+            "params": {
+              "a": 81
+            }
+          },
+          {
+            "expected": "4*x**4 - 121",
+            "params": {
+              "a": 121
+            }
+          },
+          {
+            "expected": "4*x**4 - 169",
+            "params": {
+              "a": 169
+            }
+          },
+          {
+            "expected": "4*x**4 - 225",
+            "params": {
+              "a": 225
+            }
+          },
+          {
+            "expected": "4*x**4 - 289",
+            "params": {
+              "a": 289
+            }
+          },
+          {
+            "expected": "4*x**4 - 361",
+            "params": {
+              "a": 361
+            }
+          },
+          {
+            "expected": "4*x**4 - 441",
+            "params": {
+              "a": 441
+            }
+          },
+          {
+            "expected": "4*x**4 - 529",
+            "params": {
+              "a": 529
+            }
+          }
+        ],
+        "solution_sketch": "The two squares are $(2x^2)^2$ and $(\\sqrt{{{a}}})^2$. Their conjugates are the integer factors.",
+        "statement": "Factor $4x^4-{a}$ over the integers using a difference of squares."
+      },
+      "kind": "template",
+      "kp_id": "difference-of-squares/kp2",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "difference-of-squares/kp2",
+    "message": "the computed answer collapses to the unfactored dividend",
+    "stage": "semantic-review"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "3*(x-sqrt(a/3))*(x+sqrt(a/3))",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "First remove the common coefficient, then inspect the remaining two terms."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              12,
+              48,
+              75,
+              108,
+              147,
+              192,
+              243,
+              300,
+              363,
+              432,
+              507,
+              588
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "3*x**2 - 12",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "3*x**2 - 48",
+            "params": {
+              "a": 48
+            }
+          },
+          {
+            "expected": "3*x**2 - 75",
+            "params": {
+              "a": 75
+            }
+          },
+          {
+            "expected": "3*x**2 - 108",
+            "params": {
+              "a": 108
+            }
+          },
+          {
+            "expected": "3*x**2 - 147",
+            "params": {
+              "a": 147
+            }
+          },
+          {
+            "expected": "3*x**2 - 192",
+            "params": {
+              "a": 192
+            }
+          },
+          {
+            "expected": "3*x**2 - 243",
+            "params": {
+              "a": 243
+            }
+          },
+          {
+            "expected": "3*x**2 - 300",
+            "params": {
+              "a": 300
+            }
+          },
+          {
+            "expected": "3*x**2 - 363",
+            "params": {
+              "a": 363
+            }
+          },
+          {
+            "expected": "3*x**2 - 432",
+            "params": {
+              "a": 432
+            }
+          },
+          {
+            "expected": "3*x**2 - 507",
+            "params": {
+              "a": 507
+            }
+          },
+          {
+            "expected": "3*x**2 - 588",
+            "params": {
+              "a": 588
+            }
+          }
+        ],
+        "solution_sketch": "Extract $3$, leaving $x^2-{a}/3$. The remaining constant is a perfect square, so factor the conjugate pair.",
+        "statement": "Factor $3x^2-{a}$ completely over the integers."
+      },
+      "kind": "template",
+      "kp_id": "difference-of-squares/kp3",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "difference-of-squares/kp3",
+    "message": "the computed answer collapses to the unfactored dividend",
+    "stage": "semantic-review"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(2*x+a/4)**2",
+        "constraints": [
+          {
+            "left": "b",
+            "op": "eq",
+            "right": {
+              "mul": [
+                {
+                  "lit": "1/16"
+                },
+                {
+                  "mul": [
+                    "a",
+                    "a"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "distractors": [],
+        "hints": [
+          "Check both squared end terms and the cross-product."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              8,
+              12,
+              16,
+              20,
+              24,
+              28,
+              32,
+              36,
+              40,
+              44,
+              48,
+              52
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              4,
+              9,
+              16,
+              25,
+              36,
+              49,
+              64,
+              81,
+              100,
+              121,
+              144,
+              169
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "4*(x + 1)**2",
+            "params": {
+              "a": 8,
+              "b": 4
+            }
+          },
+          {
+            "expected": "(2*x + 3)**2",
+            "params": {
+              "a": 12,
+              "b": 9
+            }
+          },
+          {
+            "expected": "4*(x + 2)**2",
+            "params": {
+              "a": 16,
+              "b": 16
+            }
+          },
+          {
+            "expected": "(2*x + 5)**2",
+            "params": {
+              "a": 20,
+              "b": 25
+            }
+          },
+          {
+            "expected": "4*(x + 3)**2",
+            "params": {
+              "a": 24,
+              "b": 36
+            }
+          },
+          {
+            "expected": "(2*x + 7)**2",
+            "params": {
+              "a": 28,
+              "b": 49
+            }
+          },
+          {
+            "expected": "4*(x + 4)**2",
+            "params": {
+              "a": 32,
+              "b": 64
+            }
+          },
+          {
+            "expected": "(2*x + 9)**2",
+            "params": {
+              "a": 36,
+              "b": 81
+            }
+          },
+          {
+            "expected": "4*(x + 5)**2",
+            "params": {
+              "a": 40,
+              "b": 100
+            }
+          },
+          {
+            "expected": "(2*x + 11)**2",
+            "params": {
+              "a": 44,
+              "b": 121
+            }
+          },
+          {
+            "expected": "4*(x + 6)**2",
+            "params": {
+              "a": 48,
+              "b": 144
+            }
+          },
+          {
+            "expected": "(2*x + 13)**2",
+            "params": {
+              "a": 52,
+              "b": 169
+            }
+          }
+        ],
+        "solution_sketch": "The first square root is $2x$ and the second is ${a}/4$. Twice their product is ${a}x$, confirming the pattern.",
+        "statement": "Factor $4x^2+{a}x+{b}$ as a squared binomial."
+      },
+      "kind": "template",
+      "kp_id": "perfect-square-trinomials/kp3",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "perfect-square-trinomials/kp3",
+    "message": "the computed answer becomes a scalar times a monic square instead of one squared binomial",
+    "stage": "semantic-review"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(x-a**(1/3))*(x**2+a**(1/3)*x+a**(2/3))",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "The quadratic factor in a difference of cubes uses positive signs."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              216,
+              343,
+              512,
+              729,
+              1000,
+              1331,
+              1728,
+              2197,
+              2744,
+              3375,
+              4096,
+              4913
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "x**3 - 216",
+            "params": {
+              "a": 216
+            }
+          },
+          {
+            "expected": "x**3 - 343",
+            "params": {
+              "a": 343
+            }
+          },
+          {
+            "expected": "x**3 - 512",
+            "params": {
+              "a": 512
+            }
+          },
+          {
+            "expected": "x**3 - 729",
+            "params": {
+              "a": 729
+            }
+          },
+          {
+            "expected": "x**3 - 1000",
+            "params": {
+              "a": 1000
+            }
+          },
+          {
+            "expected": "x**3 - 1331",
+            "params": {
+              "a": 1331
+            }
+          },
+          {
+            "expected": "x**3 - 1728",
+            "params": {
+              "a": 1728
+            }
+          },
+          {
+            "expected": "x**3 - 2197",
+            "params": {
+              "a": 2197
+            }
+          },
+          {
+            "expected": "x**3 - 2744",
+            "params": {
+              "a": 2744
+            }
+          },
+          {
+            "expected": "x**3 - 3375",
+            "params": {
+              "a": 3375
+            }
+          },
+          {
+            "expected": "x**3 - 4096",
+            "params": {
+              "a": 4096
+            }
+          },
+          {
+            "expected": "x**3 - 4913",
+            "params": {
+              "a": 4913
+            }
+          }
+        ],
+        "solution_sketch": "Let $b=\\sqrt[3]{{{a}}}$. The factors are $x-b$ and $x^2+bx+b^2$; the inner cross-products cancel when multiplied.",
+        "statement": "Factor $x^3-{a}$ using the difference-of-cubes identity."
+      },
+      "kind": "template",
+      "kp_id": "sum-difference-of-cubes/kp1",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "sum-difference-of-cubes/kp1",
+    "message": "the computed answer collapses to the unfactored dividend",
+    "stage": "semantic-review"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(x+a**(1/3))*(x**2-a**(1/3)*x+a**(2/3))",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "For a cube sum, the trinomial middle sign is negative."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              216,
+              343,
+              512,
+              729,
+              1000,
+              1331,
+              1728,
+              2197,
+              2744,
+              3375,
+              4096,
+              4913
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "x**3 + 216",
+            "params": {
+              "a": 216
+            }
+          },
+          {
+            "expected": "x**3 + 343",
+            "params": {
+              "a": 343
+            }
+          },
+          {
+            "expected": "x**3 + 512",
+            "params": {
+              "a": 512
+            }
+          },
+          {
+            "expected": "x**3 + 729",
+            "params": {
+              "a": 729
+            }
+          },
+          {
+            "expected": "x**3 + 1000",
+            "params": {
+              "a": 1000
+            }
+          },
+          {
+            "expected": "x**3 + 1331",
+            "params": {
+              "a": 1331
+            }
+          },
+          {
+            "expected": "x**3 + 1728",
+            "params": {
+              "a": 1728
+            }
+          },
+          {
+            "expected": "x**3 + 2197",
+            "params": {
+              "a": 2197
+            }
+          },
+          {
+            "expected": "x**3 + 2744",
+            "params": {
+              "a": 2744
+            }
+          },
+          {
+            "expected": "x**3 + 3375",
+            "params": {
+              "a": 3375
+            }
+          },
+          {
+            "expected": "x**3 + 4096",
+            "params": {
+              "a": 4096
+            }
+          },
+          {
+            "expected": "x**3 + 4913",
+            "params": {
+              "a": 4913
+            }
+          }
+        ],
+        "solution_sketch": "Let $b=\\sqrt[3]{{{a}}}$. Use $x+b$ and $x^2-bx+b^2$; the quadratic middle sign opposes the linear sign.",
+        "statement": "Factor $x^3+{a}$ using the sum-of-cubes identity."
+      },
+      "kind": "template",
+      "kp_id": "sum-difference-of-cubes/kp2",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "sum-difference-of-cubes/kp2",
+    "message": "the computed answer collapses to the unfactored dividend",
+    "stage": "semantic-review"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(2*x+a**(1/3))*(4*x**2-2*a**(1/3)*x+a**(2/3))",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Take cube roots of the full terms, including their coefficients."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              1,
+              27,
+              125,
+              343,
+              729,
+              1331,
+              2197,
+              3375,
+              4913,
+              6859,
+              9261,
+              12167
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "8*x**3 + 1",
+            "params": {
+              "a": 1
+            }
+          },
+          {
+            "expected": "8*x**3 + 27",
+            "params": {
+              "a": 27
+            }
+          },
+          {
+            "expected": "8*x**3 + 125",
+            "params": {
+              "a": 125
+            }
+          },
+          {
+            "expected": "8*x**3 + 343",
+            "params": {
+              "a": 343
+            }
+          },
+          {
+            "expected": "8*x**3 + 729",
+            "params": {
+              "a": 729
+            }
+          },
+          {
+            "expected": "8*x**3 + 1331",
+            "params": {
+              "a": 1331
+            }
+          },
+          {
+            "expected": "8*x**3 + 2197",
+            "params": {
+              "a": 2197
+            }
+          },
+          {
+            "expected": "8*x**3 + 3375",
+            "params": {
+              "a": 3375
+            }
+          },
+          {
+            "expected": "8*x**3 + 4913",
+            "params": {
+              "a": 4913
+            }
+          },
+          {
+            "expected": "8*x**3 + 6859",
+            "params": {
+              "a": 6859
+            }
+          },
+          {
+            "expected": "8*x**3 + 9261",
+            "params": {
+              "a": 9261
+            }
+          },
+          {
+            "expected": "8*x**3 + 12167",
+            "params": {
+              "a": 12167
+            }
+          }
+        ],
+        "solution_sketch": "The cube roots are $2x$ and $\\sqrt[3]{{{a}}}$. Square the first root, subtract their product, and add the square of the second for the quadratic factor.",
+        "statement": "Factor $8x^3+{a}$ over the integers using the cube identity."
+      },
+      "kind": "template",
+      "kp_id": "sum-difference-of-cubes/kp3",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "sum-difference-of-cubes/kp3",
+    "message": "the computed answer collapses to the unfactored dividend",
+    "stage": "semantic-review"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(x-1)*(x+1)*(x-sqrt(b))*(x+sqrt(b))",
+        "constraints": [
+          {
+            "left": "b",
+            "op": "eq",
+            "right": {
+              "add": [
+                {
+                  "lit": -1
+                },
+                "a"
+              ]
+            }
+          }
+        ],
+        "distractors": [],
+        "hints": [
+          "After substitution, inspect every quadratic factor for another square difference."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              10,
+              26,
+              37,
+              50,
+              65,
+              82,
+              101,
+              122,
+              145,
+              170,
+              197,
+              226
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              9,
+              25,
+              36,
+              49,
+              64,
+              81,
+              100,
+              121,
+              144,
+              169,
+              196,
+              225
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "x**4 - 10*x**2 + 9",
+            "params": {
+              "a": 10,
+              "b": 9
+            }
+          },
+          {
+            "expected": "x**4 - 26*x**2 + 25",
+            "params": {
+              "a": 26,
+              "b": 25
+            }
+          },
+          {
+            "expected": "x**4 - 37*x**2 + 36",
+            "params": {
+              "a": 37,
+              "b": 36
+            }
+          },
+          {
+            "expected": "x**4 - 50*x**2 + 49",
+            "params": {
+              "a": 50,
+              "b": 49
+            }
+          },
+          {
+            "expected": "x**4 - 65*x**2 + 64",
+            "params": {
+              "a": 65,
+              "b": 64
+            }
+          },
+          {
+            "expected": "x**4 - 82*x**2 + 81",
+            "params": {
+              "a": 82,
+              "b": 81
+            }
+          },
+          {
+            "expected": "x**4 - 101*x**2 + 100",
+            "params": {
+              "a": 101,
+              "b": 100
+            }
+          },
+          {
+            "expected": "x**4 - 122*x**2 + 121",
+            "params": {
+              "a": 122,
+              "b": 121
+            }
+          },
+          {
+            "expected": "x**4 - 145*x**2 + 144",
+            "params": {
+              "a": 145,
+              "b": 144
+            }
+          },
+          {
+            "expected": "x**4 - 170*x**2 + 169",
+            "params": {
+              "a": 170,
+              "b": 169
+            }
+          },
+          {
+            "expected": "x**4 - 197*x**2 + 196",
+            "params": {
+              "a": 197,
+              "b": 196
+            }
+          },
+          {
+            "expected": "x**4 - 226*x**2 + 225",
+            "params": {
+              "a": 226,
+              "b": 225
+            }
+          }
+        ],
+        "solution_sketch": "Set $u=x^2$. Since ${a}={b}+1$, the quadratic factors as $(u-1)(u-{b})$. Return to $x$ and split both differences of squares.",
+        "statement": "Factor $x^4-{a}x^2+{b}$ completely over the integers."
+      },
+      "kind": "template",
+      "kp_id": "quadratics-in-form/kp2",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "quadratics-in-form/kp2",
+    "message": "the computed answer collapses to the unfactored dividend",
+    "stage": "semantic-review"
   },
   {
     "authored_contracts": [
@@ -453,6 +1496,1173 @@
     "kp_id": "choosing-factoring-strategy/kp1",
     "message": "answer_expr 'GCF' is outside the decidable grammar: a name that is not a function or variable",
     "stage": "production-worker-gate"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "2*x*(x-sqrt(a/2))*(x+sqrt(a/2))",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Remove a common monomial, then inspect the two-term remainder."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              18,
+              32,
+              50,
+              72,
+              98,
+              128,
+              162,
+              200,
+              242,
+              288,
+              338,
+              392
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "2*x*(x**2 - 9)",
+            "params": {
+              "a": 18
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 16)",
+            "params": {
+              "a": 32
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 25)",
+            "params": {
+              "a": 50
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 36)",
+            "params": {
+              "a": 72
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 49)",
+            "params": {
+              "a": 98
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 64)",
+            "params": {
+              "a": 128
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 81)",
+            "params": {
+              "a": 162
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 100)",
+            "params": {
+              "a": 200
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 121)",
+            "params": {
+              "a": 242
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 144)",
+            "params": {
+              "a": 288
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 169)",
+            "params": {
+              "a": 338
+            }
+          },
+          {
+            "expected": "2*x*(x**2 - 196)",
+            "params": {
+              "a": 392
+            }
+          }
+        ],
+        "solution_sketch": "Extract $2x$, leaving $x^2-{a}/2$. Its constant is a square, so split the remaining difference of squares.",
+        "statement": "Factor $2x^3-{a}x$ completely over the integers."
+      },
+      "kind": "template",
+      "kp_id": "choosing-factoring-strategy/kp2",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "choosing-factoring-strategy/kp2",
+    "message": "the computed answer stops before factoring the remaining difference of squares",
+    "stage": "semantic-review"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(x-a**(1/4))*(x+a**(1/4))*(x**2+sqrt(a))",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Continue factoring a factor whenever it still matches a square-difference pattern."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              256,
+              625,
+              1296,
+              2401,
+              4096,
+              6561,
+              10000,
+              14641,
+              20736,
+              28561,
+              38416,
+              50625
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "x**4 - 256",
+            "params": {
+              "a": 256
+            }
+          },
+          {
+            "expected": "x**4 - 625",
+            "params": {
+              "a": 625
+            }
+          },
+          {
+            "expected": "x**4 - 1296",
+            "params": {
+              "a": 1296
+            }
+          },
+          {
+            "expected": "x**4 - 2401",
+            "params": {
+              "a": 2401
+            }
+          },
+          {
+            "expected": "x**4 - 4096",
+            "params": {
+              "a": 4096
+            }
+          },
+          {
+            "expected": "x**4 - 6561",
+            "params": {
+              "a": 6561
+            }
+          },
+          {
+            "expected": "x**4 - 10000",
+            "params": {
+              "a": 10000
+            }
+          },
+          {
+            "expected": "x**4 - 14641",
+            "params": {
+              "a": 14641
+            }
+          },
+          {
+            "expected": "x**4 - 20736",
+            "params": {
+              "a": 20736
+            }
+          },
+          {
+            "expected": "x**4 - 28561",
+            "params": {
+              "a": 28561
+            }
+          },
+          {
+            "expected": "x**4 - 38416",
+            "params": {
+              "a": 38416
+            }
+          },
+          {
+            "expected": "x**4 - 50625",
+            "params": {
+              "a": 50625
+            }
+          }
+        ],
+        "solution_sketch": "First write $(x^2-\\sqrt{{{a}}})(x^2+\\sqrt{{{a}}})$. The first factor is another difference of squares; the second remains irreducible over the integers.",
+        "statement": "Factor $x^4-{a}$ completely over the integers."
+      },
+      "kind": "template",
+      "kp_id": "choosing-factoring-strategy/kp3",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "choosing-factoring-strategy/kp3",
+    "message": "the computed answer collapses to the unfactored dividend",
+    "stage": "semantic-review"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "polynomial_relation"
+      },
+      {
+        "kind": "polynomial_relation"
+      },
+      {
+        "kind": "polynomial_relation"
+      },
+      {
+        "kind": "polynomial_relation"
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "x**2+(3-a)*x-3*a",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Build one linear factor from each root, then multiply."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "x**2 + x - 6",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "x**2 - 9",
+            "params": {
+              "a": 3
+            }
+          },
+          {
+            "expected": "x**2 - x - 12",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "x**2 - 2*x - 15",
+            "params": {
+              "a": 5
+            }
+          },
+          {
+            "expected": "x**2 - 3*x - 18",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "x**2 - 4*x - 21",
+            "params": {
+              "a": 7
+            }
+          },
+          {
+            "expected": "x**2 - 5*x - 24",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "x**2 - 6*x - 27",
+            "params": {
+              "a": 9
+            }
+          },
+          {
+            "expected": "x**2 - 7*x - 30",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "x**2 - 8*x - 33",
+            "params": {
+              "a": 11
+            }
+          },
+          {
+            "expected": "x**2 - 9*x - 36",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "x**2 - 10*x - 39",
+            "params": {
+              "a": 13
+            }
+          }
+        ],
+        "solution_sketch": "Use factors $x-{a}$ and $x+3$. Their product expands to $x^2+(3-{a})x-3({a})$.",
+        "statement": "A monic quadratic equation has roots ${a}$ and $-3$. Write its expanded left side $P(x)$ for the equation $P(x)=0$."
+      },
+      "kind": "template",
+      "kp_id": "writing-quadratics-from-roots/kp1",
+      "status": "pending"
+    },
+    "code": "unknown-names",
+    "inherited_contract": {
+      "kind": "polynomial_relation"
+    },
+    "kp_id": "writing-quadratics-from-roots/kp1",
+    "message": "answer_expr references unknown names ['x']",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "polynomial_relation"
+      },
+      {
+        "kind": "polynomial_relation"
+      },
+      {
+        "kind": "polynomial_relation"
+      },
+      {
+        "kind": "polynomial_relation"
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "x**2-2*a*x+a**2",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "A repeated root appears in both linear factors."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "x**2 - 4*x + 4",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "x**2 - 6*x + 9",
+            "params": {
+              "a": 3
+            }
+          },
+          {
+            "expected": "x**2 - 8*x + 16",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "x**2 - 10*x + 25",
+            "params": {
+              "a": 5
+            }
+          },
+          {
+            "expected": "x**2 - 12*x + 36",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "x**2 - 14*x + 49",
+            "params": {
+              "a": 7
+            }
+          },
+          {
+            "expected": "x**2 - 16*x + 64",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "x**2 - 18*x + 81",
+            "params": {
+              "a": 9
+            }
+          },
+          {
+            "expected": "x**2 - 20*x + 100",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "x**2 - 22*x + 121",
+            "params": {
+              "a": 11
+            }
+          },
+          {
+            "expected": "x**2 - 24*x + 144",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "x**2 - 26*x + 169",
+            "params": {
+              "a": 13
+            }
+          }
+        ],
+        "solution_sketch": "The repeated root gives two equal factors: $(x-{a})^2$. Expansion includes the cross term $-2({a})x$.",
+        "statement": "A monic quadratic has the repeated root ${a}$. Write its expanded left side $P(x)$ for $P(x)=0$."
+      },
+      "kind": "template",
+      "kp_id": "writing-quadratics-from-roots/kp2",
+      "status": "pending"
+    },
+    "code": "unknown-names",
+    "inherited_contract": {
+      "kind": "polynomial_relation"
+    },
+    "kp_id": "writing-quadratics-from-roots/kp2",
+    "message": "answer_expr references unknown names ['x']",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "polynomial_relation"
+      },
+      {
+        "kind": "polynomial_relation"
+      },
+      {
+        "kind": "polynomial_relation"
+      },
+      {
+        "kind": "polynomial_relation"
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "a*x**2+(2*a-1)*x-2",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Turn the fractional root into an integer-coefficient linear factor."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "2*x**2 + 3*x - 2",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "3*x**2 + 5*x - 2",
+            "params": {
+              "a": 3
+            }
+          },
+          {
+            "expected": "4*x**2 + 7*x - 2",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "5*x**2 + 9*x - 2",
+            "params": {
+              "a": 5
+            }
+          },
+          {
+            "expected": "6*x**2 + 11*x - 2",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "7*x**2 + 13*x - 2",
+            "params": {
+              "a": 7
+            }
+          },
+          {
+            "expected": "8*x**2 + 15*x - 2",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "9*x**2 + 17*x - 2",
+            "params": {
+              "a": 9
+            }
+          },
+          {
+            "expected": "10*x**2 + 19*x - 2",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "11*x**2 + 21*x - 2",
+            "params": {
+              "a": 11
+            }
+          },
+          {
+            "expected": "12*x**2 + 23*x - 2",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "13*x**2 + 25*x - 2",
+            "params": {
+              "a": 13
+            }
+          }
+        ],
+        "solution_sketch": "Clear the first factor's denominator to get ${a}x-1$. Multiply it by $x+2$, producing integer coefficients with no common factor.",
+        "statement": "A quadratic has roots $1/{a}$ and $-2$. With smallest positive integer leading coefficient, write its expanded left side $P(x)$ for $P(x)=0$."
+      },
+      "kind": "template",
+      "kp_id": "writing-quadratics-from-roots/kp3",
+      "status": "pending"
+    },
+    "code": "unknown-names",
+    "inherited_contract": {
+      "kind": "polynomial_relation"
+    },
+    "kp_id": "writing-quadratics-from-roots/kp3",
+    "message": "answer_expr references unknown names ['x']",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "constant"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "perfect_square"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "constant"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "perfect_square"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "constant"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "perfect_square"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "constant"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "perfect_square"
+          }
+        ]
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(a**2/4,(x+a/2)**2)",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "The required constant is the square of half the linear coefficient."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              4,
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20,
+              22,
+              24,
+              26
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "(4, (x + 2)**2)",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "(9, (x + 3)**2)",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "(16, (x + 4)**2)",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "(25, (x + 5)**2)",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "(36, (x + 6)**2)",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "(49, (x + 7)**2)",
+            "params": {
+              "a": 14
+            }
+          },
+          {
+            "expected": "(64, (x + 8)**2)",
+            "params": {
+              "a": 16
+            }
+          },
+          {
+            "expected": "(81, (x + 9)**2)",
+            "params": {
+              "a": 18
+            }
+          },
+          {
+            "expected": "(100, (x + 10)**2)",
+            "params": {
+              "a": 20
+            }
+          },
+          {
+            "expected": "(121, (x + 11)**2)",
+            "params": {
+              "a": 22
+            }
+          },
+          {
+            "expected": "(144, (x + 12)**2)",
+            "params": {
+              "a": 24
+            }
+          },
+          {
+            "expected": "(169, (x + 13)**2)",
+            "params": {
+              "a": 26
+            }
+          }
+        ],
+        "solution_sketch": "Half the linear coefficient is ${a}/2$. Squaring that half gives the added constant, and $x+{a}/2$ is the binomial to square.",
+        "statement": "Complete the square for $x^2+{a}x$. Report (added constant, squared binomial) in that order."
+      },
+      "kind": "template",
+      "kp_id": "completing-the-square/kp1",
+      "status": "pending"
+    },
+    "code": "unknown-names",
+    "inherited_contract": {
+      "kind": "multipart",
+      "parts": [
+        {
+          "contract": {
+            "kind": "exact"
+          },
+          "name": "constant"
+        },
+        {
+          "contract": {
+            "kind": "exact"
+          },
+          "name": "perfect_square"
+        }
+      ]
+    },
+    "kp_id": "completing-the-square/kp1",
+    "message": "answer_expr references unknown names ['x']",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "a"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "b"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "c"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "a"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "b"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "c"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "a"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "b"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "c"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "a"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "b"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "c"
+          }
+        ]
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "multipart(2,-3,a)",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Identify the coefficients only after rearranging into standard form."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "a = 2; b = -3; c = 2",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 3",
+            "params": {
+              "a": 3
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 4",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 5",
+            "params": {
+              "a": 5
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 6",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 7",
+            "params": {
+              "a": 7
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 8",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 9",
+            "params": {
+              "a": 9
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 10",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 11",
+            "params": {
+              "a": 11
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 12",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "a = 2; b = -3; c = 13",
+            "params": {
+              "a": 13
+            }
+          }
+        ],
+        "solution_sketch": "Move $3x$ left: $2x^2-3x+{a}=0$. Read coefficients in descending powers, keeping the minus sign on the linear term.",
+        "statement": "Rewrite $2x^2+{a}=3x$ with zero on the right. Report its quadratic-formula coefficients as (a, b, c)."
+      },
+      "kind": "template",
+      "kp_id": "applying-the-quadratic-formula/kp1",
+      "status": "pending"
+    },
+    "code": "grammar",
+    "inherited_contract": {
+      "kind": "multipart",
+      "parts": [
+        {
+          "contract": {
+            "kind": "exact"
+          },
+          "name": "a"
+        },
+        {
+          "contract": {
+            "kind": "exact"
+          },
+          "name": "b"
+        },
+        {
+          "contract": {
+            "kind": "exact"
+          },
+          "name": "c"
+        }
+      ]
+    },
+    "kp_id": "applying-the-quadratic-formula/kp1",
+    "message": "answer_expr 'multipart(2,-3,a)' is outside the decidable grammar: a function call with the wrong count of arguments",
+    "stage": "production-worker-gate"
+  },
+  {
+    "candidate": {
+      "arguments": {
+        "answer_expr": "0",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Check whether the discriminant admits a real square root before calculating roots."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "0",
+            "params": {
+              "a": 3
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 5
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 7
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 9
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 11
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 13
+            }
+          },
+          {
+            "expected": "0",
+            "params": {
+              "a": 14
+            }
+          }
+        ],
+        "solution_sketch": "The discriminant is $16-8({a})$. Every allowed constant exceeds $2$, making it negative, so the quadratic formula yields no real roots.",
+        "statement": "How many real solutions does $2x^2+4x+{a}=0$ have? Decide using the quadratic formula's discriminant."
+      },
+      "kind": "template",
+      "kp_id": "quadratic-formula/kp3",
+      "status": "pending"
+    },
+    "code": "semantic-family",
+    "kp_id": "quadratic-formula/kp3",
+    "message": "every generated instance has the fixed answer zero and exercises only one discriminant case",
+    "stage": "semantic-review"
   },
   {
     "authored_contracts": [
@@ -693,6 +2903,412 @@
     },
     "kp_id": "parabola-vertex-form/kp2",
     "message": "answer_expr '(upward,a)' is outside the decidable grammar: a name that is not a function or variable",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "x"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "y"
+          }
+        ]
+      },
+      {
+        "kind": "exact"
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "x"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "y"
+          }
+        ]
+      },
+      {
+        "kind": "exact"
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(a,a**2-3)",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Read the axis from the vertex form, then substitute the requested input."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "(2, 1)",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "(3, 6)",
+            "params": {
+              "a": 3
+            }
+          },
+          {
+            "expected": "(4, 13)",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "(5, 22)",
+            "params": {
+              "a": 5
+            }
+          },
+          {
+            "expected": "(6, 33)",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "(7, 46)",
+            "params": {
+              "a": 7
+            }
+          },
+          {
+            "expected": "(8, 61)",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "(9, 78)",
+            "params": {
+              "a": 9
+            }
+          },
+          {
+            "expected": "(10, 97)",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "(11, 118)",
+            "params": {
+              "a": 11
+            }
+          },
+          {
+            "expected": "(12, 141)",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "(13, 166)",
+            "params": {
+              "a": 13
+            }
+          }
+        ],
+        "solution_sketch": "The axis passes through $x={a}$. Substitution of zero gives $y=(0-{a})^2-3=({a})^2-3$.",
+        "statement": "For $y=(x-{a})^2-3$, report (axis coordinate, y at x=0), where the axis is x equal to the first entry."
+      },
+      "kind": "template",
+      "kp_id": "parabola-vertex-form/kp3",
+      "status": "pending"
+    },
+    "code": "answer-kind",
+    "inherited_contract": null,
+    "kp_id": "parabola-vertex-form/kp3",
+    "message": "answer kind multi-step is not symbolically decidable",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "left_intercept"
+          },
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "right_intercept"
+          },
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "vertex"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "vertex"
+          },
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "y_intercept"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "left_intercept"
+          },
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "right_intercept"
+          },
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "vertex"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "vertex"
+          },
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "y_intercept"
+          }
+        ]
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "((1,0),(a-1,0),(a/2,b-a**2/4))",
+        "constraints": [
+          {
+            "left": "b",
+            "op": "eq",
+            "right": {
+              "add": [
+                {
+                  "lit": -1
+                },
+                "a"
+              ]
+            }
+          }
+        ],
+        "distractors": [],
+        "hints": [
+          "Find the zeros, then evaluate the quadratic halfway between them."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
+          },
+          "b": {
+            "kind": "choice",
+            "values": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "((1, 0), (3, 0), (2, -1))",
+            "params": {
+              "a": 4,
+              "b": 3
+            }
+          },
+          {
+            "expected": "((1, 0), (4, 0), (5/2, -9/4))",
+            "params": {
+              "a": 5,
+              "b": 4
+            }
+          },
+          {
+            "expected": "((1, 0), (5, 0), (3, -4))",
+            "params": {
+              "a": 6,
+              "b": 5
+            }
+          },
+          {
+            "expected": "((1, 0), (6, 0), (7/2, -25/4))",
+            "params": {
+              "a": 7,
+              "b": 6
+            }
+          },
+          {
+            "expected": "((1, 0), (7, 0), (4, -9))",
+            "params": {
+              "a": 8,
+              "b": 7
+            }
+          },
+          {
+            "expected": "((1, 0), (8, 0), (9/2, -49/4))",
+            "params": {
+              "a": 9,
+              "b": 8
+            }
+          },
+          {
+            "expected": "((1, 0), (9, 0), (5, -16))",
+            "params": {
+              "a": 10,
+              "b": 9
+            }
+          },
+          {
+            "expected": "((1, 0), (10, 0), (11/2, -81/4))",
+            "params": {
+              "a": 11,
+              "b": 10
+            }
+          },
+          {
+            "expected": "((1, 0), (11, 0), (6, -25))",
+            "params": {
+              "a": 12,
+              "b": 11
+            }
+          },
+          {
+            "expected": "((1, 0), (12, 0), (13/2, -121/4))",
+            "params": {
+              "a": 13,
+              "b": 12
+            }
+          },
+          {
+            "expected": "((1, 0), (13, 0), (7, -36))",
+            "params": {
+              "a": 14,
+              "b": 13
+            }
+          },
+          {
+            "expected": "((1, 0), (14, 0), (15/2, -169/4))",
+            "params": {
+              "a": 15,
+              "b": 14
+            }
+          }
+        ],
+        "solution_sketch": "Factor as $(x-1)(x-({a}-1))$ for the intercepts. Their midpoint is $x={a}/2$; evaluation there gives $y={b}-({a})^2/4$.",
+        "statement": "For $y=x^2-{a}x+{b}$, report (left x-intercept point, right x-intercept point, vertex point)."
+      },
+      "kind": "template",
+      "kp_id": "quadratic-graphs-vertex/kp2",
+      "status": "pending"
+    },
+    "code": "answer-kind",
+    "inherited_contract": null,
+    "kp_id": "quadratic-graphs-vertex/kp2",
+    "message": "answer kind multi-step is not symbolically decidable",
     "stage": "production-worker-gate"
   },
   {
@@ -1025,6 +3641,749 @@
     "code": "answer-kind",
     "inherited_contract": null,
     "kp_id": "quadratic-graphs-vertex/kp3",
+    "message": "answer kind multi-step is not symbolically decidable",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "exact"
+      },
+      {
+        "kind": "exact"
+      },
+      {
+        "kind": "exact"
+      },
+      {
+        "kind": "exact"
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(x+a/2)**2+3-a**2/4",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Complete the square while keeping the polynomial's value unchanged."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              4,
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20,
+              22,
+              24
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "(x + 1)**2 + 2",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "(x + 2)**2 - 1",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "(x + 3)**2 - 6",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "(x + 4)**2 - 13",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "(x + 5)**2 - 22",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "(x + 6)**2 - 33",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "(x + 7)**2 - 46",
+            "params": {
+              "a": 14
+            }
+          },
+          {
+            "expected": "(x + 8)**2 - 61",
+            "params": {
+              "a": 16
+            }
+          },
+          {
+            "expected": "(x + 9)**2 - 78",
+            "params": {
+              "a": 18
+            }
+          },
+          {
+            "expected": "(x + 10)**2 - 97",
+            "params": {
+              "a": 20
+            }
+          },
+          {
+            "expected": "(x + 11)**2 - 118",
+            "params": {
+              "a": 22
+            }
+          },
+          {
+            "expected": "(x + 12)**2 - 141",
+            "params": {
+              "a": 24
+            }
+          }
+        ],
+        "solution_sketch": "Add and subtract $({a}/2)^2$: the square is $(x+{a}/2)^2$ and the remaining constant is $3-({a}/2)^2$.",
+        "statement": "Convert $y=x^2+{a}x+3$ to vertex form. Return the expression on the right of y equals."
+      },
+      "kind": "template",
+      "kp_id": "converting-to-vertex-form/kp1",
+      "status": "pending"
+    },
+    "code": "unknown-names",
+    "inherited_contract": {
+      "kind": "exact"
+    },
+    "kp_id": "converting-to-vertex-form/kp1",
+    "message": "answer_expr references unknown names ['x']",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "exact"
+      },
+      {
+        "kind": "exact"
+      },
+      {
+        "kind": "exact"
+      },
+      {
+        "kind": "exact"
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "2*(x+a/4)**2+3-a**2/8",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "The leading coefficient multiplies the square-completion adjustment too."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              4,
+              8,
+              12,
+              16,
+              20,
+              24,
+              28,
+              32,
+              36,
+              40,
+              44,
+              48
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "2*(x + 1)**2 + 1",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "2*(x + 2)**2 - 5",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "2*(x + 3)**2 - 15",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "2*(x + 4)**2 - 29",
+            "params": {
+              "a": 16
+            }
+          },
+          {
+            "expected": "2*(x + 5)**2 - 47",
+            "params": {
+              "a": 20
+            }
+          },
+          {
+            "expected": "2*(x + 6)**2 - 69",
+            "params": {
+              "a": 24
+            }
+          },
+          {
+            "expected": "2*(x + 7)**2 - 95",
+            "params": {
+              "a": 28
+            }
+          },
+          {
+            "expected": "2*(x + 8)**2 - 125",
+            "params": {
+              "a": 32
+            }
+          },
+          {
+            "expected": "2*(x + 9)**2 - 159",
+            "params": {
+              "a": 36
+            }
+          },
+          {
+            "expected": "2*(x + 10)**2 - 197",
+            "params": {
+              "a": 40
+            }
+          },
+          {
+            "expected": "2*(x + 11)**2 - 239",
+            "params": {
+              "a": 44
+            }
+          },
+          {
+            "expected": "2*(x + 12)**2 - 285",
+            "params": {
+              "a": 48
+            }
+          }
+        ],
+        "solution_sketch": "Factor $2$ from the variable terms, then complete the inner square with half-coefficient ${a}/4$. Compensate outside by subtracting $2({a}/4)^2$.",
+        "statement": "Convert $y=2x^2+{a}x+3$ to vertex form. Return the expression on the right of y equals."
+      },
+      "kind": "template",
+      "kp_id": "converting-to-vertex-form/kp2",
+      "status": "pending"
+    },
+    "code": "unknown-names",
+    "inherited_contract": {
+      "kind": "exact"
+    },
+    "kp_id": "converting-to-vertex-form/kp2",
+    "message": "answer_expr references unknown names ['x']",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "vertex_form"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "minimum"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "vertex_form"
+          },
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "vertex"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "vertex_form"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "minimum"
+          }
+        ]
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "vertex_form"
+          },
+          {
+            "contract": {
+              "arity": 2,
+              "kind": "coordinates"
+            },
+            "name": "vertex"
+          }
+        ]
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "((x+a/2)**2+3-a**2/4,3-a**2/4)",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Once the square is isolated, read the lowest output from the remaining constant."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              2,
+              4,
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20,
+              22,
+              24
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "((x + 1)**2 + 2, 2)",
+            "params": {
+              "a": 2
+            }
+          },
+          {
+            "expected": "((x + 2)**2 - 1, -1)",
+            "params": {
+              "a": 4
+            }
+          },
+          {
+            "expected": "((x + 3)**2 - 6, -6)",
+            "params": {
+              "a": 6
+            }
+          },
+          {
+            "expected": "((x + 4)**2 - 13, -13)",
+            "params": {
+              "a": 8
+            }
+          },
+          {
+            "expected": "((x + 5)**2 - 22, -22)",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "((x + 6)**2 - 33, -33)",
+            "params": {
+              "a": 12
+            }
+          },
+          {
+            "expected": "((x + 7)**2 - 46, -46)",
+            "params": {
+              "a": 14
+            }
+          },
+          {
+            "expected": "((x + 8)**2 - 61, -61)",
+            "params": {
+              "a": 16
+            }
+          },
+          {
+            "expected": "((x + 9)**2 - 78, -78)",
+            "params": {
+              "a": 18
+            }
+          },
+          {
+            "expected": "((x + 10)**2 - 97, -97)",
+            "params": {
+              "a": 20
+            }
+          },
+          {
+            "expected": "((x + 11)**2 - 118, -118)",
+            "params": {
+              "a": 22
+            }
+          },
+          {
+            "expected": "((x + 12)**2 - 141, -141)",
+            "params": {
+              "a": 24
+            }
+          }
+        ],
+        "solution_sketch": "Complete the square to $(x+{a}/2)^2+3-({a}/2)^2$. The square has minimum zero, leaving the outside constant as the minimum value.",
+        "statement": "For $y=x^2+{a}x+3$, report (vertex-form expression, minimum value) after completing the square."
+      },
+      "kind": "template",
+      "kp_id": "converting-to-vertex-form/kp3",
+      "status": "pending"
+    },
+    "code": "answer-kind",
+    "inherited_contract": null,
+    "kp_id": "converting-to-vertex-form/kp3",
+    "message": "answer kind multi-step is not symbolically decidable",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "exact"
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "smaller"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "larger"
+          }
+        ]
+      },
+      {
+        "kind": "exact"
+      },
+      {
+        "kind": "multipart",
+        "parts": [
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "smaller"
+          },
+          {
+            "contract": {
+              "kind": "exact"
+            },
+            "name": "larger"
+          }
+        ]
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(-3+sqrt(9+4*a))/2",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "Build the area equation from width times length and discard a negative length."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              10,
+              18,
+              28,
+              40,
+              54,
+              70,
+              88,
+              108,
+              130,
+              154,
+              180,
+              208
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "2",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "3",
+            "params": {
+              "a": 18
+            }
+          },
+          {
+            "expected": "4",
+            "params": {
+              "a": 28
+            }
+          },
+          {
+            "expected": "5",
+            "params": {
+              "a": 40
+            }
+          },
+          {
+            "expected": "6",
+            "params": {
+              "a": 54
+            }
+          },
+          {
+            "expected": "7",
+            "params": {
+              "a": 70
+            }
+          },
+          {
+            "expected": "8",
+            "params": {
+              "a": 88
+            }
+          },
+          {
+            "expected": "9",
+            "params": {
+              "a": 108
+            }
+          },
+          {
+            "expected": "10",
+            "params": {
+              "a": 130
+            }
+          },
+          {
+            "expected": "11",
+            "params": {
+              "a": 154
+            }
+          },
+          {
+            "expected": "12",
+            "params": {
+              "a": 180
+            }
+          },
+          {
+            "expected": "13",
+            "params": {
+              "a": 208
+            }
+          }
+        ],
+        "solution_sketch": "Let width be $w$. The area equation $w(w+3)={a}$ becomes $w^2+3w-{a}=0$. Factor using the integer pair with product $-{a}$ and sum $3$; retain the positive root for a length.",
+        "statement": "A rectangle has length three units more than its width and area ${a}$ square units. Find its positive width."
+      },
+      "kind": "template",
+      "kp_id": "quadratic-applications/kp1",
+      "status": "pending"
+    },
+    "code": "answer-kind",
+    "inherited_contract": null,
+    "kp_id": "quadratic-applications/kp1",
+    "message": "answer kind multi-step is not symbolically decidable",
+    "stage": "production-worker-gate"
+  },
+  {
+    "authored_contracts": [
+      {
+        "kind": "unit",
+        "quantity": "time",
+        "unit": "s"
+      },
+      {
+        "kind": "unit",
+        "quantity": "length",
+        "unit": "m"
+      },
+      {
+        "kind": "unit",
+        "quantity": "time",
+        "unit": "s"
+      },
+      {
+        "kind": "unit",
+        "quantity": "length",
+        "unit": "m"
+      }
+    ],
+    "candidate": {
+      "arguments": {
+        "answer_expr": "(a**2/20) m",
+        "constraints": [],
+        "distractors": [],
+        "hints": [
+          "The negative quadratic coefficient makes the vertex the highest point."
+        ],
+        "params": {
+          "a": {
+            "kind": "choice",
+            "values": [
+              10,
+              20,
+              30,
+              40,
+              50,
+              60,
+              70,
+              80,
+              90,
+              100,
+              110,
+              120
+            ]
+          }
+        },
+        "samples": [
+          {
+            "expected": "5 m",
+            "params": {
+              "a": 10
+            }
+          },
+          {
+            "expected": "20 m",
+            "params": {
+              "a": 20
+            }
+          },
+          {
+            "expected": "45 m",
+            "params": {
+              "a": 30
+            }
+          },
+          {
+            "expected": "80 m",
+            "params": {
+              "a": 40
+            }
+          },
+          {
+            "expected": "125 m",
+            "params": {
+              "a": 50
+            }
+          },
+          {
+            "expected": "180 m",
+            "params": {
+              "a": 60
+            }
+          },
+          {
+            "expected": "245 m",
+            "params": {
+              "a": 70
+            }
+          },
+          {
+            "expected": "320 m",
+            "params": {
+              "a": 80
+            }
+          },
+          {
+            "expected": "405 m",
+            "params": {
+              "a": 90
+            }
+          },
+          {
+            "expected": "500 m",
+            "params": {
+              "a": 100
+            }
+          },
+          {
+            "expected": "605 m",
+            "params": {
+              "a": 110
+            }
+          },
+          {
+            "expected": "720 m",
+            "params": {
+              "a": 120
+            }
+          }
+        ],
+        "solution_sketch": "The vertex time is $t={a}/10$. Substitution gives $-5({a}/10)^2+{a}({a}/10)=({a})^2/20$ metres.",
+        "statement": "A ball's height is $h(t)=-5t^2+{a}t$ metres. Find the maximum height, including units."
+      },
+      "kind": "template",
+      "kp_id": "quadratic-applications/kp2",
+      "status": "pending"
+    },
+    "code": "answer-kind",
+    "inherited_contract": null,
+    "kp_id": "quadratic-applications/kp2",
     "message": "answer kind multi-step is not symbolically decidable",
     "stage": "production-worker-gate"
   }

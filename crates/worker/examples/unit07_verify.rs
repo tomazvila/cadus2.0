@@ -4,7 +4,7 @@ use std::path::Path;
 
 use cadus_core::curriculum::{Curriculum, lint_curriculum, load_curriculum};
 use cadus_core::learner::problem_text_hash;
-use cadus_core::template::{Bindings, Compiled, TemplateDoc, render, walk_satisfying};
+use cadus_core::template::{Compiled, TemplateDoc, render, walk_satisfying};
 use cadus_worker::authoring::cli::select;
 use cadus_worker::authoring::job::verify_kind;
 use cadus_worker::authoring::prompt::{AuthoringSpec, Kind};
@@ -63,9 +63,37 @@ fn inspect_instances(body: &str, known: &BTreeSet<String>) -> Result<Vec<Value>,
     let mut seen = BTreeSet::new();
     let mut rows = Vec::new();
     for bindings in walk.tuples {
-        rows.push(inspect_instance(
-            &doc, &compiled, bindings, known, &mut seen,
-        )?);
+        let item = compiled
+            .instantiate(bindings.clone())
+            .map_err(|e| e.to_string())?;
+        if known.contains(&item.instance_hash) || !seen.insert(item.instance_hash.clone()) {
+            return Err(format!("authored/sibling collision: {}", item.text));
+        }
+        let sketch = render(
+            doc.solution_sketch.as_deref().ok_or("missing sketch")?,
+            &bindings,
+        )
+        .map_err(|e| e.to_string())?;
+        let hints = doc
+            .hints
+            .iter()
+            .map(|h| render(h, &bindings))
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|e| e.to_string())?;
+        for text in [&item.text, &item.answer, &sketch]
+            .into_iter()
+            .chain(hints.iter())
+        {
+            balanced(text)?;
+        }
+        let params: std::collections::BTreeMap<_, _> = bindings
+            .iter()
+            .map(|(k, v)| (k, v.canonical_string()))
+            .collect();
+        rows.push(
+            json!({"params":params,"problem":item.text,"answer":item.answer,
+            "solution_sketch":sketch,"hints":hints,"hash":item.instance_hash}),
+        );
     }
     if rows.len() < 12 {
         return Err(format!(
@@ -74,46 +102,6 @@ fn inspect_instances(body: &str, known: &BTreeSet<String>) -> Result<Vec<Value>,
         ));
     }
     Ok(rows)
-}
-
-fn inspect_instance(
-    doc: &TemplateDoc,
-    compiled: &Compiled,
-    bindings: Bindings,
-    known: &BTreeSet<String>,
-    seen: &mut BTreeSet<String>,
-) -> Result<Value, String> {
-    let item = compiled
-        .instantiate(bindings.clone())
-        .map_err(|e| e.to_string())?;
-    if known.contains(&item.instance_hash) || !seen.insert(item.instance_hash.clone()) {
-        return Err(format!("authored/sibling collision: {}", item.text));
-    }
-    let sketch = render(
-        doc.solution_sketch.as_deref().ok_or("missing sketch")?,
-        &bindings,
-    )
-    .map_err(|e| e.to_string())?;
-    let hints = doc
-        .hints
-        .iter()
-        .map(|hint| render(hint, &bindings))
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|e| e.to_string())?;
-    for text in [&item.text, &item.answer, &sketch]
-        .into_iter()
-        .chain(hints.iter())
-    {
-        balanced(text)?;
-    }
-    let params: std::collections::BTreeMap<_, _> = bindings
-        .iter()
-        .map(|(key, value)| (key, value.canonical_string()))
-        .collect();
-    Ok(
-        json!({"params":params,"problem":item.text,"answer":item.answer,
-        "solution_sketch":sketch,"hints":hints,"hash":item.instance_hash}),
-    )
 }
 
 fn review(row: &Value, spec: &AuthoringSpec, known: &BTreeSet<String>) -> Value {
@@ -131,6 +119,36 @@ fn review(row: &Value, spec: &AuthoringSpec, known: &BTreeSet<String>) -> Value 
     }
 }
 
+fn semantic_exclusion(key: &str) -> Option<&'static str> {
+    match key {
+        "factoring-gcf/kp2" => {
+            Some("the computed answer moves the requested negative GCF inside the remaining factor")
+        }
+        "difference-of-squares/kp2" | "difference-of-squares/kp3" => {
+            Some("the computed answer collapses to the unfactored dividend")
+        }
+        "perfect-square-trinomials/kp3" => Some(
+            "the computed answer becomes a scalar times a monic square instead of one squared binomial",
+        ),
+        "sum-difference-of-cubes/kp1"
+        | "sum-difference-of-cubes/kp2"
+        | "sum-difference-of-cubes/kp3"
+        | "quadratics-in-form/kp2" => {
+            Some("the computed answer collapses to the unfactored dividend")
+        }
+        "choosing-factoring-strategy/kp2" => {
+            Some("the computed answer stops before factoring the remaining difference of squares")
+        }
+        "choosing-factoring-strategy/kp3" => {
+            Some("the computed answer collapses to the unfactored dividend")
+        }
+        "quadratic-formula/kp3" => Some(
+            "every generated instance has the fixed answer zero and exercises only one discriminant case",
+        ),
+        _ => None,
+    }
+}
+
 fn read_curriculum(root: &Path) -> Result<Curriculum, String> {
     let findings = lint_curriculum(&root.join("curriculum"));
     if !findings.is_empty() {
@@ -144,8 +162,13 @@ fn read_curriculum(root: &Path) -> Result<Curriculum, String> {
     Ok(curriculum)
 }
 
-fn owned_keys(curriculum: &Curriculum) -> BTreeSet<String> {
-    curriculum
+fn run() -> Result<(), String> {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let curriculum = read_curriculum(&root)?;
+    let input = std::fs::read_to_string(root.join("target/unit07/candidates.json"))
+        .map_err(|e| e.to_string())?;
+    let rows: Vec<Value> = serde_json::from_str(&input).map_err(|e| e.to_string())?;
+    let owned: BTreeSet<String> = curriculum
         .topics_in_course("foundations")
         .iter()
         .filter(|index| curriculum.unit_of(**index) == "polynomials-quadratics")
@@ -156,16 +179,7 @@ fn owned_keys(curriculum: &Curriculum) -> BTreeSet<String> {
                 .iter()
                 .map(|kp| format!("{}/{}", topic.id, kp.id))
         })
-        .collect()
-}
-
-fn run() -> Result<(), String> {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let curriculum = read_curriculum(&root)?;
-    let input = std::fs::read_to_string(root.join("target/unit07/candidates.json"))
-        .map_err(|e| e.to_string())?;
-    let rows: Vec<Value> = serde_json::from_str(&input).map_err(|e| e.to_string())?;
-    let owned = owned_keys(&curriculum);
+        .collect();
     let mut known = authored(&curriculum, &owned)?;
     let mut keys = BTreeSet::new();
     let mut pending = Vec::new();
@@ -179,7 +193,13 @@ fn run() -> Result<(), String> {
         let spec = select(&curriculum, std::slice::from_ref(&key))
             .map_err(|e| e.to_string())?
             .remove(0);
-        let checked = review(&row, &spec, &known);
+        let checked = semantic_exclusion(&key).map_or_else(
+            || review(&row, &spec, &known),
+            |message| {
+                json!({"kp_id":key,"stage":"semantic-review",
+                "code":"semantic-family","message":message,"candidate":row})
+            },
+        );
         if checked["stage"] == "passed" {
             let instances = checked["instances"].as_array().ok_or("missing instances")?;
             println!("PASS {key}: {} instances", instances.len());

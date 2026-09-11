@@ -4,7 +4,7 @@
 
 The unit owns 102 knowledge points and 408 exemplars. All 102 are clean in the six authored-content audit categories. Seventy-four are clean across all seven codes and have checked-in pending template drafts. Twenty-eight retain only a missing-template finding, including 11 semantic-family exclusions and 17 exact production-worker rejections recorded in [the blocker packet](unit07-schema-blockers.json).
 
-- Against integration `d4be3956`, whole-course duplicate KPs are **35 → 26** and all other audit codes are non-regressing.
+- Against integration `d4be3956`, whole-course duplicate KPs are **84 → 75** and all other audit codes are non-regressing.
 - Changed **284 exemplar rows** and **54 answers** relative to the initial dirty YAML. Fifty-one expanded factoring answers were replaced with factored answers; this includes the out-of-range square-difference example, corrected from 121 to 100. The other answer changes correct the square-garden calculation and two examples whose KP requires shifted squares.
 - Added **74 pending templates**, with exactly **12** distinct valid instances each: **888 total**.
 - Preserved the existing dirty improvement, with further revisions to make contexts concrete and sketches instructional. Already-correct factored answers retain their existing spelling.
@@ -16,15 +16,15 @@ Counts are affected KPs, not individual duplicate pairs or template instances.
 
 | Code | Reproduced dirty baseline, whole course | Final whole course | Final unit07 |
 |---|---:|---:|---:|
-| `fewer_than_four_exemplars` | 329 | 245 | 0 |
-| `missing_solution_sketch` | 175 | 115 | 0 |
-| `undecidable_authored_answer` | 73 | 70 | 0 |
+| `fewer_than_four_exemplars` | 502 | 418 | 0 |
+| `missing_solution_sketch` | 302 | 242 | 0 |
+| `undecidable_authored_answer` | 103 | 100 | 0 |
 | `singleton_label_contract` | 0 | 0 | 0 |
-| `duplicate_problem_answer_family` | 35 | 26 | 0 |
-| `absent_pending_template_recipe` | 438 | 375 | 28 |
-| `generic_or_tautological_sketch` | 4 | 4 | 0 |
+| `duplicate_problem_answer_family` | 84 | 75 | 0 |
+| `absent_pending_template_recipe` | 568 | 505 | 28 |
+| `generic_or_tautological_sketch` | 5 | 5 | 0 |
 
-The final whole-course audit has 375 issue KPs; unit07 has only its 28 explicitly blocked pending-template recipes. Its exit status is 1 because these residuals remain. See [the complete live audit](unit07-audit.json) and [machine-readable summary and digests](unit07-summary.json).
+The final whole-course audit has 518 issue KPs; unit07 has only its 28 explicitly blocked pending-template recipes. Its exit status is 1 because these residuals remain. See [the complete live audit](unit07-audit.json) and [machine-readable summary and digests](unit07-summary.json).
 
 **Baseline discrepancy:** the supplied `audit.json` says 28 generic-sketch KPs. Replaying the untouched audit on a curriculum copy containing the exact initial dirty YAML gives 22. The final audit also gives 22. No generic-count reduction is attributed to this correction. The original `audit.json` is preserved.
 
