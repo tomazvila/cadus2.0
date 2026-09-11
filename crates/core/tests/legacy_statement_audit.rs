@@ -143,7 +143,7 @@ fn historical_classification_and_all_987_live_statements_have_a_closed_boundary(
                 live["problem"] == row["problem"] && live["answer"] == row["answer"]
             })
             .count(),
-        222
+        227
     );
     assert_eq!(
         counts,
