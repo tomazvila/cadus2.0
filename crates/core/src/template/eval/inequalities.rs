@@ -10,11 +10,18 @@ pub(super) fn union_answer(
     bindings: &Bindings,
     contract: &AnswerContract,
 ) -> Result<Answer, EvalError> {
+    debug_assert!(matches!(
+        contract,
+        AnswerContract::InequalityUnion | AnswerContract::RequiredInequalityNotation
+    ));
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
     };
     if name == "rayunion" {
         return rays(args, bindings, contract);
+    }
+    if name == "convertnotation" {
+        return super::notation::convert(args, bindings, contract);
     }
     if args.len() != 2 || !matches!(name.as_str(), "excludepoint" | "lowerbound" | "upperbound") {
         return answer(ast, bindings);
@@ -82,7 +89,9 @@ pub(super) fn label_answer(
     contract: &AnswerContract,
 ) -> Result<Answer, EvalError> {
     let (op, negative) = match (name, args) {
-        ("boundaryincluded" | "raydirection", [op]) => (op, false),
+        ("boundaryincluded" | "boundarycircle" | "boundarystyle" | "raydirection", [op]) => {
+            (op, false)
+        }
         ("negativeabs", [rhs, op]) => {
             if rational(rhs, bindings)? >= BigRational::zero() {
                 return Err(relation_shape());
@@ -97,6 +106,18 @@ pub(super) fn label_answer(
             "all real numbers"
         } else {
             "no solution"
+        }
+    } else if name == "boundarycircle" {
+        if matches!(op.as_str(), "<=" | ">=") {
+            "closed"
+        } else {
+            "open"
+        }
+    } else if name == "boundarystyle" {
+        if matches!(op.as_str(), "<=" | ">=") {
+            "solid"
+        } else {
+            "dashed"
         }
     } else if name == "raydirection" {
         if matches!(op.as_str(), ">" | ">=") {
