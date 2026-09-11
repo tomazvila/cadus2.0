@@ -33,15 +33,12 @@
 //! a panic.
 
 mod builtin;
-mod compounding;
 mod equation;
 mod exact;
-mod finite_graph;
 mod functions;
 mod inequalities;
 mod inverse;
 mod structured;
-mod triangle_law;
 mod write;
 
 use builtin::call;
@@ -313,7 +310,7 @@ pub fn answer_for_contract(
     if let Ast::Func(name, args) = ast {
         match name.as_str() {
             "powerform" => return structured::power_form(ast, bindings, contract),
-            "logequation" | "expequation" | "relationform" => {
+            "logequation" | "expequation" => {
                 return equation::write(name, args, bindings, contract);
             }
             "atandeg" => return inverse::degrees(args, bindings, contract),

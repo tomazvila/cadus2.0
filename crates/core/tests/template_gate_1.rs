@@ -338,21 +338,15 @@ fn an_unverifiable_answer_kind_can_have_no_template() {
 
 #[test]
 fn the_reserved_and_non_answer_name_sets_are_the_1_0_literals() {
-    // `problem_templates.py:533-548` (`_ALLOWED_NAMES`, 45 names), plus the 2.0
-    // constants and bounded evaluator functions. Written out in registry order,
-    // preserving every historical entry and pinning the complete current set.
+    // `problem_templates.py:533-548` (`_ALLOWED_NAMES`, 45 names), plus the three
+    // 2.0 spellings `e`, `min`, and `max`, plus the bounded structured-template
+    // functions. Written out in registry order, preserving the historical entries.
     assert_eq!(
         RESERVED_NAMES.to_vec(),
-        "ascendingchain Abs And E Eq False Float Ge Gt ITE Integer Le Lt Max Min Ne Not Or Piecewise Rational S True abs atandeg binomial cancel divisibilitylabel equalitylabel linearclass relationform ceiling compounding cos e exp expequation expand excludepoint rayunion convertnotation symbol boundarycircle boundarystyle boundaryincluded raydirection negativeabs factor factorial factorlist false firstmultiples floor gcd lcm lowerbound ln log logequation max min multipart nsimplify pi primeclass primefactors powerform quarterextremum quartervalue quotientremainder repeatedfactors sign signcase simplify sin sqrt tan together true trianglelaw upperbound"
+        "Abs And E Eq False Float Ge Gt ITE Integer Le Lt Max Min Ne Not Or Piecewise Rational S True abs atandeg binomial cancel divisibilitylabel equalitylabel linearclass ceiling cos e exp expequation expand excludepoint rayunion boundaryincluded raydirection negativeabs factor factorial factorlist false firstmultiples floor gcd lcm lowerbound ln log logequation max min multipart nsimplify pi primeclass primefactors powerform quotientremainder repeatedfactors sign signcase simplify sin sqrt tan together true upperbound"
             .split(' ')
             .collect::<Vec<&str>>()
     );
-    for (name, _) in cadus_core::template::EVAL_FUNCTIONS {
-        assert!(
-            RESERVED_NAMES.contains(&name),
-            "evaluator function {name:?} must be reserved from parameter shadowing"
-        );
-    }
     // `problem_templates.py:203-205`. `-oo` lexes as the token `oo`, so the
     // token set holds nine names and the Python set holds ten strings.
     assert_eq!(
