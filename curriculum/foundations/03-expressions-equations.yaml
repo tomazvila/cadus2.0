@@ -336,7 +336,7 @@ topics:
             solution_sketch: 'Fixed €20 plus €8 per month: $8m + 20$.'
           - problem: 'A toothpick pattern uses $3$ toothpicks for $1$ triangle, $5$ for $2$, $7$ for $3$, adding $2$ per triangle. Write an expression for the toothpicks in $n$ triangles.'
             answer: "2n + 1"
-            solution_sketch: 'Step $2$ per square; $2(1) + 1 = 3$ checks.'
+            solution_sketch: 'Each additional triangle adds $2$ toothpicks. Starting from $3$ for one triangle gives $3+2(n-1)=2n+1$.'
           - problem: 'A parking garage charges €5 to enter plus €3 per hour. Write an expression for the total cost after $h$ hours.'
             answer: "3h + 5"
             solution_sketch: 'The rate $3$ per hour is the coefficient; the flat $5$ is added once.'
@@ -1298,7 +1298,7 @@ topics:
           - problem: "How many real values fail to satisfy $(6x+9)/3=2x+3$?"
             answer: "0"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Distributing the denominator on the right gives $x/3+6/3=x/3+2$, the same expression as the left for every real input."
+            solution_sketch: 'Divide each numerator term by $3$: $(6x+9)/3=2x+3$. This equals the right side for every real $x$, so zero real values fail to satisfy the equation.'
           - problem: "A learner claims $7-(2x+3)=4-2x$ has only solution $0$. How many real values actually fail to satisfy the equation?"
             answer: "0"
             answer_contract: {"kind": "exact"}
@@ -1522,18 +1522,18 @@ topics:
             answer: "x = y - b"
             answer_contract: {kind: exact}
             solution_sketch: 'Subtract $b$ from both sides: $x = y - b$.'
-          - problem: 'Solve $d = rt$ for $t$.'
+          - problem: 'Solve $d = rt$ for $t$. Assume $r\ne0$.'
             answer: "t = d/r"
             answer_contract: {kind: exact}
-            solution_sketch: 'Divide both sides by $r$.'
+            solution_sketch: 'Divide both sides by $r$. Division is valid because $r\ne0$.'
           - problem: 'Solve $p = q - r$ for $q$.'
             answer: "q = p + r"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Add $r$ to both sides.'
-          - problem: 'Solve $A = bh$ for $h$.'
+          - problem: 'Solve $A = bh$ for $h$. Assume $b\ne0$.'
             answer: "h = A/b"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide both sides by $b$.'
+            solution_sketch: 'Divide both sides by $b$. Division is valid because $b\ne0$.'
         constraints: "one inverse operation; target variable appears once"
       - id: kp2
         name: "Two-step rearrangements"
@@ -1547,14 +1547,14 @@ topics:
             answer: "l = (P - 2w)/2"
             answer_contract: {kind: exact}
             solution_sketch: 'Subtract $2w$, then divide by $2$.'
-          - problem: 'Solve $V = lwh$ for $w$ (treat $l$ and $h$ as known).'
+          - problem: 'Solve $V = lwh$ for $w$ (treat $l$ and $h$ as known). Assume $lh\ne0$.'
             answer: "w = V/(l*h)"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide both sides by $l$ and by $h$.'
-          - problem: 'Solve $y = mx + b$ for $x$ (treat $m$ and $b$ as known).'
+            solution_sketch: 'Divide both sides by $l$ and by $h$. Division is valid because $lh\ne0$.'
+          - problem: 'Solve $y = mx + b$ for $x$ (treat $m$ and $b$ as known). Assume $m\ne0$.'
             answer: "x = (y - b)/m"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract $b$, then divide by $m$.'
+            solution_sketch: 'Subtract $b$, then divide by $m$. Division is valid because $m\ne0$.'
         constraints: "two inverse operations; target variable appears once"
     diagnostic_exemplar:
       problem: 'Solve $v = u + at$ for $t$.'
@@ -1588,39 +1588,39 @@ topics:
         name: "Multi-term formulas"
         key_prerequisites: [multi-step-equations, rearranging-formulas]
         exemplars:
-          - problem: 'Solve $ax + b = c$ for $x$.'
+          - problem: 'Solve $ax + b = c$ for $x$. Assume $a\ne0$.'
             answer: "x = (c - b)/a"
             answer_contract: {kind: exact}
-            solution_sketch: 'Subtract $b$, then divide by $a$.'
-          - problem: 'Solve $A = \frac{1}{2}bh$ for $h$.'
+            solution_sketch: 'Subtract $b$, then divide by $a$. Division is valid because $a\ne0$.'
+          - problem: 'Solve $A = \frac{1}{2}bh$ for $h$. Assume $b\ne0$.'
             answer: "h = 2A/b"
             answer_contract: {kind: exact}
-            solution_sketch: 'Multiply by $2$, divide by $b$.'
-          - problem: 'Solve $px + q = r$ for $x$.'
+            solution_sketch: 'Multiply by $2$, divide by $b$. Division is valid because $b\ne0$.'
+          - problem: 'Solve $px + q = r$ for $x$. Assume $p\ne0$.'
             answer: "x = (r - q)/p"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract $q$, then divide by $p$.'
-          - problem: 'Solve $V = \frac{1}{3}Bh$ for $B$.'
+            solution_sketch: 'Subtract $q$, then divide by $p$. Division is valid because $p\ne0$.'
+          - problem: 'Solve $V = \frac{1}{3}Bh$ for $B$. Assume $h\ne0$.'
             answer: "B = 3V/h"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply by $3$, divide by $h$.'
+            solution_sketch: 'Multiply by $3$, divide by $h$. Division is valid because $h\ne0$.'
         constraints: "target variable appears once; keep other letters symbolic"
       - id: kp2
         name: "Target variable in more than one term"
         key_prerequisites: [distributive-property]
         exemplars:
-          - problem: 'Solve $ax + bx = c$ for $x$.'
+          - problem: 'Solve $ax + bx = c$ for $x$. Assume $a+b\ne0$.'
             answer: "x = c/(a + b)"
             answer_contract: {kind: exact}
-            solution_sketch: 'Factor: $x(a + b) = c$; divide by $(a + b)$.'
+            solution_sketch: 'Factor: $x(a + b) = c$; divide by $(a + b)$. Division is valid because $a+b\ne0$.'
           - problem: 'Solve $x = \frac{y - 3}{2}$ for $y$.'
             answer: "y = 2x + 3"
             answer_contract: {kind: exact}
             solution_sketch: '$2x = y - 3$; $y = 2x + 3$.'
-          - problem: 'Solve $mx - nx = k$ for $x$.'
+          - problem: 'Solve $mx - nx = k$ for $x$. Assume $m-n\ne0$.'
             answer: "x = k/(m - n)"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Factor: $x(m - n) = k$; divide by $(m - n)$.'
+            solution_sketch: 'Factor: $x(m - n) = k$; divide by $(m - n)$. Division is valid because $m-n\ne0$.'
           - problem: 'Solve $y = \frac{x + 5}{3}$ for $x$.'
             answer: "x = 3y - 5"
             answer_contract: {"kind":"exact"}
@@ -1634,18 +1634,18 @@ topics:
             answer: "w = S/2 - l"
             answer_contract: {kind: exact}
             solution_sketch: 'Divide by $2$: $\frac{S}{2} = l + w$; subtract $l$.'
-          - problem: 'Solve $A = \frac{1}{2}h(a + b)$ for $a$.'
+          - problem: 'Solve $A = \frac{1}{2}h(a + b)$ for $a$. Assume $h\ne0$.'
             answer: "a = 2A/h - b"
             answer_contract: {kind: exact}
-            solution_sketch: 'Multiply by $2$: $2A = h(a + b)$; divide by $h$; subtract $b$.'
+            solution_sketch: 'Multiply by $2$: $2A = h(a + b)$; divide by $h$; subtract $b$. Division is valid because $h\ne0$.'
           - problem: 'Solve $P = 2(a + b)$ for $b$.'
             answer: "b = P/2 - a"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Divide by $2$: $\frac{P}{2} = a + b$; subtract $a$.'
-          - problem: 'Solve $T = \frac{1}{2}k(m + n)$ for $m$.'
+          - problem: 'Solve $T = \frac{1}{2}k(m + n)$ for $m$. Assume $k\ne0$.'
             answer: "m = 2T/k - n"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply by $2$: $2T = k(m + n)$; divide by $k$; subtract $n$.'
+            solution_sketch: 'Multiply by $2$: $2T = k(m + n)$; divide by $k$; subtract $n$. Division is valid because $k\ne0$.'
         constraints: "undo an outer factor before reaching the target variable"
     diagnostic_exemplar:
       problem: 'Solve $ax - bx = c$ for $x$.'
@@ -1837,15 +1837,19 @@ topics:
         exemplars:
           - problem: 'A number increased by $7$ is $22$. Find the number.'
             answer: "15"
+            answer_contract: {kind: exact}
             solution_sketch: '$x + 7 = 22$; $x = 15$.'
           - problem: 'Twice a number minus $5$ is $9$. Find the number.'
             answer: "7"
+            answer_contract: {kind: exact}
             solution_sketch: '$2x - 5 = 9$; $2x = 14$; $x = 7$.'
           - problem: 'A number decreased by $9$ is $14$. Find the number.'
             answer: "23"
+            answer_contract: {kind: exact}
             solution_sketch: '$x - 9 = 14$; $x = 23$.'
           - problem: 'Three times a number plus $8$ is $29$. Find the number.'
             answer: "7"
+            answer_contract: {kind: exact}
             solution_sketch: '$3x + 8 = 29$; $3x = 21$; $x = 7$.'
         constraints: "define one variable; integer answer"
       - id: kp2
@@ -1909,15 +1913,19 @@ topics:
         exemplars:
           - problem: 'The sum of a number and twice the number is $24$. Find the number.'
             answer: "8"
+            answer_contract: {kind: exact}
             solution_sketch: '$x + 2x = 24$; $3x = 24$; $x = 8$.'
           - problem: 'Seven less than three times a number is $20$. Find the number.'
             answer: "9"
+            answer_contract: {kind: exact}
             solution_sketch: '$3x - 7 = 20$; $3x = 27$; $x = 9$.'
           - problem: 'Five less than four times a number is $23$. Find the number.'
             answer: "7"
+            answer_contract: {kind: exact}
             solution_sketch: '$4x - 5 = 23$; $4x = 28$; $x = 7$.'
           - problem: 'The sum of a number and three times the number is $32$. Find the number.'
             answer: "8"
+            answer_contract: {kind: exact}
             solution_sketch: '$x + 3x = 32$; $4x = 32$; $x = 8$.'
         constraints: "one unknown; combine like terms or two steps; integer answer"
       - id: kp2

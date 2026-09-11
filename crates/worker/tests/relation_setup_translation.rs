@@ -1,5 +1,6 @@
 //! Exhaustive production-gate coverage for setup-preserving translation recipes.
 #![allow(clippy::unwrap_used, clippy::panic)]
+mod common;
 use std::{collections::BTreeSet, fs, path::PathBuf};
 
 use cadus_core::{
@@ -9,6 +10,7 @@ use cadus_core::{
     template::{Compiled, from_body, walk_satisfying},
 };
 use cadus_worker::authoring::{cli::select, job::verify_kind, prompt::Kind};
+use common::template_batch::verified_body;
 use serde_json::Value;
 
 fn root() -> PathBuf {
@@ -46,9 +48,7 @@ fn all_sixty_instances_pass_the_current_worker_and_remain_distinct() {
     for row in rows {
         let key = row["kp_id"].as_str().unwrap();
         assert_eq!(row["status"], "pending");
-        let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-        let body = verify_kind(Kind::Template, &spec, &row["arguments"], &[])
-            .unwrap_or_else(|error| panic!("{key}: {error:?}"));
+        let body = verified_body(&curriculum, &row);
         let doc = from_body(&body).unwrap();
         assert!(matches!(
             doc.answer_contract,
@@ -70,11 +70,12 @@ fn all_sixty_instances_pass_the_current_worker_and_remain_distinct() {
         assert_eq!(doc.samples.len(), 12);
         let mut answers = BTreeSet::new();
         for binding in walk.tuples {
-            let sample = doc
+            let sample_index = doc
                 .samples
                 .iter()
-                .find(|s| s.bindings() == binding)
+                .position(|sample| sample.bindings() == binding)
                 .unwrap();
+            let sample = &doc.samples[sample_index];
             let instance = compiled.instantiate(binding).unwrap();
             assert!(problem_hashes.insert(instance.instance_hash.clone()));
             assert!(answers.insert(instance.answer.clone()));
@@ -117,14 +118,7 @@ fn current_gate_rejects_unknowns_malformed_shapes_and_contract_bypass() {
 }
 
 fn reconstruct(sentence: &str) -> String {
-    let pieces: Vec<_> = sentence.split('$').collect();
-    let values: Vec<_> = pieces.iter().skip(1).step_by(2).copied().collect();
-    let shape = pieces
-        .iter()
-        .step_by(2)
-        .copied()
-        .collect::<Vec<_>>()
-        .join("{}");
+    let (shape, values) = cadus_testkit::translation::sentence_parts(sentence);
     match (shape.as_str(), values.as_slice()) {
         (
             "Write an equation: {} times a number {} plus {} is {}. Preserve the setup; do not solve.",

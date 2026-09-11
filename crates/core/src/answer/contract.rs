@@ -1,10 +1,14 @@
 //! Per-item acceptance rules (D-F1, C4, D6).
 
+mod assignment;
 mod evaluate;
 mod form;
 mod list;
 mod notation;
+mod power;
+mod radical;
 mod relation;
+mod scientific;
 mod setup;
 mod structured;
 mod union;
@@ -23,6 +27,8 @@ pub use form::NumericForm;
 pub enum AnswerContract {
     /// Exact mathematical equivalence.
     Exact,
+    /// An exact value written with the authored assignment target.
+    RequiredAssignment,
     /// The exact value rounded half-to-even to the authored decimal count.
     Approx { decimals: u8 },
     /// An inclusive absolute error bound, as an exact positive rational.
@@ -49,6 +55,14 @@ pub enum AnswerContract {
     },
     /// An exact union of rational intervals over one named unknown.
     InequalityUnion,
+    /// An exact inequality union written in the same notation as the authored answer.
+    RequiredInequalityNotation,
+    /// An exact numeric value written as one power of the authored literal base.
+    RequiredSinglePower,
+    /// An exact value written in normalized scientific notation.
+    RequiredNormalizedScientificNotation,
+    /// An exact reduced rational times one simplified square root.
+    RequiredSimplestRadical,
     /// A ratio of two positive integers written in lowest terms as `a:b`.
     ReducedRatio,
     /// A strictly ascending list of exact numbers joined by `<`.
@@ -77,6 +91,7 @@ pub struct AnswerPart {
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum ContractDoc {
     Exact {},
+    RequiredAssignment {},
     Approx {
         decimals: Option<u8>,
         tolerance: Option<String>,
@@ -100,6 +115,10 @@ enum ContractDoc {
         member: Box<AnswerContract>,
     },
     InequalityUnion {},
+    RequiredInequalityNotation {},
+    RequiredSinglePower {},
+    RequiredNormalizedScientificNotation {},
+    RequiredSimplestRadical {},
     ReducedRatio {},
     AscendingChain {},
     PolynomialRelation {},
@@ -139,6 +158,11 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::RequiredForm { form } => Self::RequiredForm { form },
             ContractDoc::List { ordered, member } => Self::List { ordered, member },
             ContractDoc::InequalityUnion {} => Self::InequalityUnion,
+            document @ (ContractDoc::RequiredAssignment {}
+            | ContractDoc::RequiredInequalityNotation {}
+            | ContractDoc::RequiredSinglePower {}
+            | ContractDoc::RequiredNormalizedScientificNotation {}
+            | ContractDoc::RequiredSimplestRadical {}) => required_syntax_contract(document),
             ContractDoc::ReducedRatio {} => Self::ReducedRatio,
             ContractDoc::AscendingChain {} => Self::AscendingChain,
             ContractDoc::PolynomialRelation {} => Self::PolynomialRelation,
@@ -149,6 +173,19 @@ impl TryFrom<ContractDoc> for AnswerContract {
         };
         contract.validate()?;
         Ok(contract)
+    }
+}
+
+fn required_syntax_contract(document: ContractDoc) -> AnswerContract {
+    match document {
+        ContractDoc::RequiredAssignment {} => AnswerContract::RequiredAssignment,
+        ContractDoc::RequiredInequalityNotation {} => AnswerContract::RequiredInequalityNotation,
+        ContractDoc::RequiredSinglePower {} => AnswerContract::RequiredSinglePower,
+        ContractDoc::RequiredNormalizedScientificNotation {} => {
+            AnswerContract::RequiredNormalizedScientificNotation
+        }
+        ContractDoc::RequiredSimplestRadical {} => AnswerContract::RequiredSimplestRadical,
+        _ => unreachable!("caller supplies a required syntax contract"),
     }
 }
 
@@ -192,7 +229,11 @@ impl AnswerContract {
             }),
             Self::Multipart { parts } => multipart_values(parts, expected),
             Self::List { ordered, member } => list::expected(*ordered, member, expected),
-            Self::InequalityUnion => union::read(expected),
+            Self::InequalityUnion | Self::RequiredInequalityNotation => union::read(expected),
+            contract @ (Self::RequiredAssignment
+            | Self::RequiredSinglePower
+            | Self::RequiredNormalizedScientificNotation
+            | Self::RequiredSimplestRadical) => required_syntax_expected(contract, expected),
             Self::ReducedRatio => notation::reduced_ratio(expected),
             Self::AscendingChain => notation::ascending_chain(expected),
             Self::PolynomialRelation => relation::read(expected),
@@ -211,6 +252,19 @@ impl AnswerContract {
                 }
             }
         }
+    }
+}
+
+fn required_syntax_expected(
+    contract: &AnswerContract,
+    expected: &str,
+) -> Result<Canon, Undecidable> {
+    match contract {
+        AnswerContract::RequiredAssignment => assignment::expected(expected),
+        AnswerContract::RequiredSinglePower => power::expected(expected),
+        AnswerContract::RequiredNormalizedScientificNotation => scientific::expected(expected),
+        AnswerContract::RequiredSimplestRadical => radical::expected(expected),
+        _ => unreachable!("caller supplies a required syntax contract"),
     }
 }
 
