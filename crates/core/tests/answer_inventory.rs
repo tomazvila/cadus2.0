@@ -97,23 +97,23 @@ const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
 const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 6] =
     [(0, 78), (1, 4), (2, 46), (3, 12), (4, 662), (5, 7)];
 const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
-    ("decided", 2_775),
+    ("decided", 2_815),
     (
         "undecidable(a chained inequality needs one variable in the middle)",
         2,
     ),
-    ("undecidable(a character outside the grammar)", 145),
+    ("undecidable(a character outside the grammar)", 132),
     (
         "undecidable(a disjunction requires finite scalar solutions)",
         19,
     ),
     (
         "undecidable(a name that is not a function or variable)",
-        187,
+        171,
     ),
     ("undecidable(a symbol where a value belongs)", 4),
     ("undecidable(an inequality with no bare variable)", 4),
-    ("undecidable(trailing text after the answer)", 10),
+    ("undecidable(trailing text after the answer)", 22),
 ];
 
 #[test]
