@@ -42,6 +42,7 @@ pub(super) fn match_practice_instance(
     })
 }
 
+#[allow(dead_code)]
 pub(super) fn check_complete(
     compiled: &Compiled<'_>,
     spec: &GateSpec<'_>,
@@ -97,6 +98,7 @@ pub(super) fn check_complete(
     Ok(found.into_values().collect())
 }
 
+#[allow(dead_code)]
 pub(super) fn check_policy(policy: &FiniteObjectiveDomain) -> Result<(), Rejection> {
     policy
         .validate()

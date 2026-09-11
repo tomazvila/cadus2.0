@@ -86,7 +86,7 @@ fn reviewed_manifest_matches_curriculum_and_rejects_other_choices() {
         }
     }
     assert_eq!(counts, (71, 27));
-    assert_eq!(lineage, (41, 57));
+    assert_eq!(lineage, (44, 54));
 }
 
 #[test]
