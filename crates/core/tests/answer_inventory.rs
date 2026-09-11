@@ -87,7 +87,7 @@ const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("mixed_number", 13),
     ("ordered_list", 30),
     ("other", 8),
-    ("prose", 186),
+    ("prose", 170),
     ("quotient_remainder", 24),
     ("radical", 108),
     ("rational_exponent", 6),
