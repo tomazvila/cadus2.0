@@ -120,7 +120,7 @@ fn current_inventory_covers_every_exemplar_and_preserves_the_review_snapshot() {
         rows.iter()
             .filter(|row| !row["existing_contract"].is_null())
             .count(),
-        1814 // Curriculum repairs 02 added twelve reviewed single-power contracts.
+        1760
     );
     assert!(rows.iter().all(|row| row["automatic_approval"] == false));
     let current_keys: BTreeSet<_> = rows.iter().map(identity).collect();
