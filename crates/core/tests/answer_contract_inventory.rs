@@ -115,7 +115,7 @@ fn current_inventory_covers_every_exemplar_and_preserves_the_review_snapshot() {
             }
         }
     }
-    assert_eq!(rows.len(), 3247);
+    assert_eq!(rows.len(), 3169);
     assert_eq!(
         rows.iter()
             .filter(|row| !row["existing_contract"].is_null())
