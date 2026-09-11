@@ -54,39 +54,6 @@ class ExemplarKey:
     exemplar_index: int
 
 
-def _exemplar_blocks(lines: list[str]) -> dict[ExemplarKey, tuple[int, int]]:
-    """Map every exemplar to its half-open field range after `problem:`."""
-    blocks = {}
-    topic_id = None
-    kp_id = None
-    exemplar_index = -1
-    for index, line in enumerate(lines):
-        previous_kp_id = kp_id
-        topic_id, kp_id = _track_topic_kp(line, topic_id, kp_id)
-        if kp_id != previous_kp_id:
-            exemplar_index = -1
-        elif _PROBLEM.match(line):
-            exemplar_index += 1
-        if not _PROBLEM.match(line) or topic_id is None or kp_id is None:
-            continue
-        end = index + 1
-        while end < len(lines) and _EXEMPLAR_FIELD.match(lines[end]):
-            end += 1
-        blocks[ExemplarKey(topic_id, kp_id, exemplar_index)] = (index + 1, end)
-    return blocks
-
-
-def _insert_lines(lines: list[str], insertions: dict[int, str]) -> str:
-    output = []
-    for index, line in enumerate(lines):
-        if index in insertions:
-            output.append(insertions[index])
-        output.append(line)
-    if len(lines) in insertions:
-        output.append(insertions[len(lines)])
-    return "".join(output)
-
-
 def apply_solution_sketches(
     path: Path, sketches: dict[ExemplarKey, str], *, write: bool
 ) -> tuple[str, list[ExemplarKey]]:
@@ -98,19 +65,44 @@ def apply_solution_sketches(
     did not itself write (an author-written sketch is never replaced).
     """
     lines = path.read_text().splitlines(keepends=True)
+    topic_id = None
+    kp_id = None
+    exemplar_index = -1
+    output: list[str] = []
     applied: list[ExemplarKey] = []
     remaining = dict(sketches)
-    insertions = {}
-    for key, (start, end) in _exemplar_blocks(lines).items():
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        previous_kp_id = kp_id
+        topic_id, kp_id = _track_topic_kp(line, topic_id, kp_id)
+        if kp_id != previous_kp_id:
+            exemplar_index = -1
+        elif _PROBLEM.match(line):
+            exemplar_index += 1
+        output.append(line)
+        index += 1
+        if not _PROBLEM.match(line) or topic_id is None or kp_id is None:
+            continue
+        key = ExemplarKey(topic_id, kp_id, exemplar_index)
         if key not in remaining:
             continue
-        if any(_SOLUTION_SKETCH.match(line) for line in lines[start:end]):
+        block_has_sketch = False
+        cursor = index
+        while cursor < len(lines) and _EXEMPLAR_FIELD.match(lines[cursor]):
+            if _SOLUTION_SKETCH.match(lines[cursor]):
+                block_has_sketch = True
+            cursor += 1
+        if block_has_sketch:
             raise Rejection(f"{key} already carries an authored solution_sketch")
-        insertions[end] = f"            solution_sketch: {_quoted(remaining.pop(key))}\n"
+        while index < cursor:
+            output.append(lines[index])
+            index += 1
+        output.append(f"            solution_sketch: {_quoted(remaining.pop(key))}\n")
         applied.append(key)
     if remaining:
         raise Rejection(f"never found in {path}: {sorted(remaining)}")
-    text = _insert_lines(lines, insertions)
+    text = "".join(output)
     if write:
         path.write_text(text)
     return text, applied
@@ -120,78 +112,6 @@ def apply_solution_sketches(
 class KpKey:
     topic_id: str
     kp_id: str
-
-
-@dataclass(frozen=True)
-class ExemplarPatch:
-    """Exact learner-facing replacements for one indexed exemplar."""
-
-    problem: str | None = None
-    answer: str | None = None
-    solution_sketch: str | None = None
-    answer_contract: str | None = None
-
-
-def _replacement_line(field: str, value: str) -> str:
-    """Render one replacement using the field's existing YAML convention."""
-    if field == "problem":
-        return f"          - problem: {_quoted(value)}\n"
-    if field == "answer":
-        if '"' in value:
-            raise Rejection(f"replacement answer holds a literal quote: {value!r}")
-        return f'            answer: "{value}"\n'
-    if field == "solution_sketch":
-        return f"            solution_sketch: {_quoted(value)}\n"
-    return f"            answer_contract: {value}\n"
-
-
-def _patch_block(
-    key: ExemplarKey, block: list[str], fields: dict[str, str | None]
-) -> list[str]:
-    """Replace requested fields in one already-located exemplar block."""
-    seen = set()
-    for offset, line in enumerate(block):
-        field = line.strip().split(":", 1)[0].removeprefix("- ")
-        value = fields.get(field)
-        if value is not None:
-            seen.add(field)
-            block[offset] = _replacement_line(field, value)
-    missing = {name for name, value in fields.items() if value is not None} - seen
-    if missing:
-        raise Rejection(f"{key} has no field(s) to replace: {sorted(missing)}")
-    return block
-
-
-def patch_exemplars(
-    path: Path, patches: dict[ExemplarKey, ExemplarPatch], *, write: bool
-) -> tuple[str, list[ExemplarKey]]:
-    """Replace selected fields of exact indexed exemplars without reformatting YAML."""
-    lines = path.read_text().splitlines(keepends=True)
-    remaining = dict(patches)
-    applied = []
-    for key, (start, end) in sorted(
-        _exemplar_blocks(lines).items(), key=lambda entry: entry[1][0], reverse=True
-    ):
-        patch = remaining.pop(key, None)
-        if patch is None:
-            continue
-        fields = {
-            "problem": patch.problem,
-            "answer": patch.answer,
-            "solution_sketch": patch.solution_sketch,
-            "answer_contract": patch.answer_contract,
-        }
-        begin = start - 1
-        lines[begin:end] = _patch_block(key, lines[begin:end], fields)
-        applied.append(key)
-    if remaining:
-        keys = sorted(remaining, key=lambda key: (key.topic_id, key.kp_id, key.exemplar_index))
-        raise Rejection(f"never found in {path}: {keys}")
-    applied.reverse()
-    text = "".join(lines)
-    if write:
-        path.write_text(text)
-    return text, applied
 
 
 @dataclass(frozen=True)
@@ -287,22 +207,53 @@ def insert_answer_contracts(
     module did not itself write (an authored contract is never replaced).
     """
     lines = path.read_text().splitlines(keepends=True)
+    topic_id = None
+    kp_id = None
+    exemplar_index = -1
+    output: list[str] = []
     applied: list[ExemplarKey] = []
     remaining = dict(contracts)
-    insertions = {}
-    for key, (start, end) in _exemplar_blocks(lines).items():
-        if key not in remaining:
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        previous_kp_id = kp_id
+        topic_id, kp_id = _track_topic_kp(line, topic_id, kp_id)
+        if kp_id != previous_kp_id:
+            exemplar_index = -1
+        elif _PROBLEM.match(line):
+            exemplar_index += 1
+        output.append(line)
+        index += 1
+        if not _PROBLEM.match(line) or topic_id is None or kp_id is None:
             continue
-        if any(_ANSWER_CONTRACT.match(line) for line in lines[start:end]):
+        key = ExemplarKey(topic_id, kp_id, exemplar_index)
+        block_has_contract = False
+        cursor = index
+        while cursor < len(lines) and _EXEMPLAR_FIELD.match(lines[cursor]):
+            if _ANSWER_CONTRACT.match(lines[cursor]):
+                block_has_contract = True
+            cursor += 1
+        if key not in remaining:
+            while index < cursor:
+                output.append(lines[index])
+                index += 1
+            continue
+        if block_has_contract:
             raise Rejection(f"{key} already carries an authored answer_contract")
-        answer = next((index for index in range(start, end) if _ANSWER.match(lines[index])), None)
-        if answer is None:
-            raise Rejection(f"{key} has no answer field")
-        insertions[answer + 1] = f"            answer_contract: {remaining.pop(key)}\n"
+        while index < cursor and not _ANSWER.match(lines[index]):
+            output.append(lines[index])
+            index += 1
+        if index < cursor:
+            output.append(lines[index])  # the `answer:` line itself
+            index += 1
+        output.append(f"            answer_contract: {remaining.pop(key)}\n")
+        while index < cursor:
+            output.append(lines[index])
+            index += 1
         applied.append(key)
     if remaining:
         raise Rejection(f"never found in {path}: {sorted(remaining)}")
-    text = _insert_lines(lines, insertions)
+    text = "".join(output)
     if write:
         path.write_text(text)
     return text, applied
