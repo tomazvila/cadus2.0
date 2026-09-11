@@ -63,6 +63,7 @@ mod body;
 mod coverage;
 mod document;
 mod fields;
+mod finite;
 mod instance;
 mod space;
 mod text;
@@ -70,7 +71,7 @@ mod text;
 use num_traits::{One, Signed};
 
 use crate::answer::{Canon, canonical_form};
-use crate::curriculum::{AnswerKind, Exemplar};
+use crate::curriculum::{AnswerKind, Exemplar, FiniteObjectiveDomain};
 
 use super::document::TemplateDoc;
 use super::domain::SpaceSize;
@@ -239,12 +240,69 @@ const EXPONENT_REASON: &str = "an exponent outside the evaluation bound";
 /// The topic owns the answer kind and the authored exemplars; the document owns
 /// everything else. 1.0 reads the same two fields off `ProblemSpec`
 /// (`problem_templates.py:839-940`).
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct GateSpec<'kp> {
     /// The answer kind of the topic.
     pub answer_kind: AnswerKind,
     /// The authored exemplars of the knowledge point.
     pub exemplars: &'kp [Exemplar],
+    /// Reviewed finite-universe policy, absent for ordinary objectives.
+    pub finite: Option<FiniteGateSpec<'kp>>,
+}
+
+/// A reviewed finite-universe template policy bound to a knowledge point.
+#[derive(Debug, Clone)]
+pub struct FiniteGateSpec<'kp> {
+    /// The trusted curriculum-owned policy.
+    pub policy: &'kp FiniteObjectiveDomain,
+    /// Lowercase SHA-256 scoped to its topic-qualified serving key.
+    pub policy_fingerprint: String,
+}
+
+impl<'kp> GateSpec<'kp> {
+    /// Build an ordinary gate specification.
+    #[must_use]
+    pub fn new(answer_kind: AnswerKind, exemplars: &'kp [Exemplar]) -> Self {
+        Self {
+            answer_kind,
+            exemplars,
+            finite: None,
+        }
+    }
+
+    /// Attach reviewed finite policy from the same curriculum knowledge point.
+    pub fn with_finite(
+        mut self,
+        kp_id: &str,
+        policy: &'kp FiniteObjectiveDomain,
+    ) -> Result<Self, String> {
+        self.finite = Some(FiniteGateSpec::new(kp_id, policy)?);
+        Ok(self)
+    }
+}
+
+impl<'kp> FiniteGateSpec<'kp> {
+    /// Bind trusted policy to its topic-qualified serving key.
+    pub fn new(kp_id: &str, policy: &'kp FiniteObjectiveDomain) -> Result<Self, String> {
+        Ok(Self {
+            policy,
+            policy_fingerprint: policy.fingerprint(kp_id)?,
+        })
+    }
+
+    /// Current source-policy fingerprint used by review and serving freshness checks.
+    #[must_use]
+    pub fn policy_fingerprint(&self) -> &str {
+        &self.policy_fingerprint
+    }
+
+    /// Match one generated practice instance to exactly one reviewed semantic case.
+    pub fn match_practice_instance(
+        &self,
+        instance: &crate::template::Instance,
+    ) -> Result<VerifiedFiniteCase, Rejection> {
+        finite::match_practice_instance(self, instance)
+    }
 }
 
 /// What every authored answer of a knowledge point looks like (1.0 `_exemplar_envelope`).
@@ -264,6 +322,17 @@ pub struct Envelope {
     pub non_negative: bool,
     /// Every authored answer is a whole number.
     pub integral: bool,
+}
+
+/// A template's exact match for one of its reviewed finite cases.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VerifiedFiniteCase {
+    /// Stable case identity inside its knowledge point.
+    pub case_id: String,
+    /// Reviewed instructional role.
+    pub role: crate::curriculum::FiniteCaseRole,
+    /// Digest of the exact rendered problem.
+    pub instance_hash: String,
 }
 
 /// A template document the gate refuses.
@@ -295,6 +364,10 @@ pub struct Verified {
     pub instances_checked: u64,
     /// True when the gate walked every tuple, false when it drew [`GATE_SAMPLES`].
     pub exhaustive: bool,
+    /// Current reviewed finite-policy fingerprint, when this is a finite objective.
+    pub finite_policy_fingerprint: Option<String>,
+    /// Exact case evidence for a reviewed finite objective.
+    pub finite_cases: Vec<VerifiedFiniteCase>,
     /// The checks the gate skipped, and the reason for each one.
     ///
     /// The core writes no log (R3), so the caller of the gate writes these lines
@@ -322,7 +395,7 @@ pub fn gate(doc: &TemplateDoc, spec: &GateSpec) -> Result<Verified, Rejection> {
     check_dead_parameters(doc, compiled.answer_ast())?;
     check_answer_names(doc, compiled.answer_ast(), spec)?;
     let walk = build_walk(doc)?;
-    check_space(doc, &walk)?;
+    check_space(doc, spec, &walk)?;
     let samples = check_samples(doc, &compiled, spec)?;
     check_distractors(doc, &compiled)?;
     let extremes = axis_extremes(doc, &values, &walk);
@@ -333,6 +406,12 @@ pub fn gate(doc: &TemplateDoc, spec: &GateSpec) -> Result<Verified, Rejection> {
         space: walk.space,
         instances_checked: u64::try_from(walk.tuples.len()).unwrap_or(u64::MAX),
         exhaustive: walk.exhaustive,
+        finite_policy_fingerprint: spec
+            .finite
+            .as_ref()
+            .map(FiniteGateSpec::policy_fingerprint)
+            .map(str::to_owned),
+        finite_cases: Vec::new(),
         notes,
     })
 }
