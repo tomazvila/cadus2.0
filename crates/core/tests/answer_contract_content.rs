@@ -11,6 +11,22 @@ use common::gate::{body_with, doc_of, exemplars};
 use common::paths::curriculum_root;
 use common::scratch::ScratchTree;
 
+fn assert_contract_accepts_own_answer(answer: &str, contract: AnswerContract) {
+    assert!(matches!(
+        check_contract(answer, answer, contract),
+        Outcome::Decided(verdict) if verdict.correct
+    ));
+}
+
+fn first_sample_answer(body: serde_json::Value) -> String {
+    let doc = from_body(&body.to_string()).unwrap();
+    Compiled::new(&doc)
+        .unwrap()
+        .instantiate(doc.samples[0].bindings())
+        .unwrap()
+        .answer
+}
+
 #[test]
 fn a_multi_step_template_uses_its_reviewed_contract() {
     let body = body_with(&[
@@ -22,6 +38,7 @@ fn a_multi_step_template_uses_its_reviewed_contract() {
     let spec = GateSpec {
         answer_kind: AnswerKind::MultiStep,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).expect("the complete template gate accepts this representation");
     let instance = Compiled::new(&doc)
@@ -62,6 +79,7 @@ fn a_label_template_computes_a_text_choice_under_its_contract() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Expression,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
     let instance = Compiled::new(&doc)
@@ -69,14 +87,7 @@ fn a_label_template_computes_a_text_choice_under_its_contract() {
         .draw(&mut rng_from_seed(3))
         .unwrap();
     assert!(matches!(instance.answer.as_str(), "yes" | "no"));
-    assert!(matches!(
-        check_contract(
-            &instance.answer,
-            &instance.answer,
-            instance.answer_contract.unwrap()
-        ),
-        Outcome::Decided(verdict) if verdict.correct
-    ));
+    assert_contract_accepts_own_answer(&instance.answer, instance.answer_contract.unwrap());
 }
 
 #[test]
@@ -105,6 +116,7 @@ fn a_multipart_template_computes_named_numeric_and_label_parts() {
     let spec = GateSpec {
         answer_kind: AnswerKind::MultiStep,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
     let instance = Compiled::new(&doc)
@@ -113,14 +125,7 @@ fn a_multipart_template_computes_named_numeric_and_label_parts() {
         .unwrap();
     assert!(instance.answer.starts_with("direction = "));
     assert!(instance.answer.contains("; extreme_value = "));
-    assert!(matches!(
-        check_contract(
-            &instance.answer,
-            &instance.answer,
-            instance.answer_contract.unwrap()
-        ),
-        Outcome::Decided(verdict) if verdict.correct
-    ));
+    assert_contract_accepts_own_answer(&instance.answer, instance.answer_contract.unwrap());
 }
 
 #[test]
@@ -168,6 +173,7 @@ fn a_sign_case_template_covers_all_three_discriminant_outcomes() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
 }
@@ -192,12 +198,13 @@ fn a_unit_template_evaluates_its_numeric_expression_before_the_suffix() {
     let spec = GateSpec {
         answer_kind: AnswerKind::MultiStep,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
 }
 
 #[test]
-fn the_fifty_one_inventory_topics_have_explicit_usable_exact_items() {
+fn the_sixty_multi_step_topics_have_explicit_usable_exact_items() {
     let (raw, findings) = load_raw_curriculum(&curriculum_root()).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let mut topics = 0;
@@ -226,9 +233,44 @@ fn the_fifty_one_inventory_topics_have_explicit_usable_exact_items() {
             items += 1;
         }
     }
-    assert_eq!(topics, 51);
-    assert_eq!(items, 457);
+    assert_eq!(topics, 59);
+    // Four contextual fraction items now require reduced-fraction notation.
+    assert_eq!(items, 519);
     assert!(lint_curriculum(&curriculum_root()).is_empty());
+}
+
+#[test]
+fn contextual_fraction_items_require_the_explicit_lowest_terms_form() {
+    let (raw, findings) = load_raw_curriculum(&curriculum_root()).unwrap();
+    assert!(findings.is_empty(), "{findings:?}");
+    let topic = raw
+        .topics()
+        .find(|entry| entry.topic.id.as_str() == "fraction-word-problems")
+        .unwrap();
+    let kp = topic
+        .topic
+        .knowledge_points
+        .iter()
+        .find(|kp| kp.id.as_str() == "kp1")
+        .unwrap();
+    let policy = AnswerContract::RequiredForm {
+        form: cadus_core::answer::NumericForm::ReducedFraction,
+    };
+    let unreduced = ["34/24", "2/12", "26/24", "26/48"];
+    assert_eq!(kp.exemplars.len(), unreduced.len());
+    for (item, wrong_form) in kp.exemplars.iter().zip(unreduced) {
+        assert_eq!(item.answer_contract, Some(policy.clone()));
+        assert!(item.problem.contains("lowest terms"));
+        assert_contract_accepts_own_answer(&item.answer, policy.clone());
+        assert!(matches!(
+            check_contract(&item.answer, wrong_form, AnswerContract::Exact),
+            Outcome::Decided(verdict) if verdict.correct
+        ));
+        assert!(matches!(
+            check_contract(&item.answer, wrong_form, policy.clone()),
+            Outcome::Decided(verdict) if !verdict.correct
+        ));
+    }
 }
 
 #[test]
@@ -271,12 +313,7 @@ fn inequality_union_templates_write_only_bounded_validated_relations() {
             "solution_sketch":"Apply the stated boundary.","hints":["Find the boundary."],
             "distractors":[],"samples":[{"params":{"x":"x","c":3},"expected":expected}]
         });
-        let doc = from_body(&body.to_string()).unwrap();
-        let item = Compiled::new(&doc)
-            .unwrap()
-            .instantiate(doc.samples[0].bindings())
-            .unwrap();
-        assert_eq!(item.answer, expected);
+        assert_eq!(first_sample_answer(body), expected);
     }
 
     let unsafe_body = serde_json::json!({
@@ -303,6 +340,18 @@ fn inequality_union_templates_write_only_bounded_validated_relations() {
 #[test]
 fn bounded_number_theory_writers_compute_closed_labels() {
     for (expression, value, expected, options) in [
+        (
+            "equalitylabel(a,18)",
+            18,
+            "yes",
+            vec![vec!["yes"], vec!["no"]],
+        ),
+        (
+            "equalitylabel(a,18)",
+            19,
+            "no",
+            vec![vec!["yes"], vec!["no"]],
+        ),
         (
             "divisibilitylabel(a,6)",
             18,
@@ -343,12 +392,7 @@ fn bounded_number_theory_writers_compute_closed_labels() {
             "solution_sketch":"Apply the definition.","hints":["Check the definition."],
             "distractors":[],"samples":[{"params":{"a":value},"expected":expected}]
         });
-        let doc = from_body(&body.to_string()).unwrap();
-        let item = Compiled::new(&doc)
-            .unwrap()
-            .instantiate(doc.samples[0].bindings())
-            .unwrap();
-        assert_eq!(item.answer, expected);
+        assert_eq!(first_sample_answer(body), expected);
     }
 }
 
@@ -373,6 +417,7 @@ fn quotient_remainder_writer_passes_the_numeric_gate_under_its_contract() {
     let spec = GateSpec {
         answer_kind: AnswerKind::Numeric,
         exemplars: &items,
+        finite: None,
     };
     gate(&doc, &spec).unwrap();
 }
@@ -395,6 +440,10 @@ fn structured_writers_refuse_invalid_domains_and_contract_outputs() {
         (
             serde_json::json!({"kind":"label","options":[["yes"],["no"]]}),
             "primeclass(a)",
+        ),
+        (
+            serde_json::json!({"kind":"label","options":[["prime"],["composite"]]}),
+            "equalitylabel(a,2)",
         ),
     ] {
         let body = serde_json::json!({

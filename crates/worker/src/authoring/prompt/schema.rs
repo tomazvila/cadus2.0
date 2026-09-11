@@ -170,9 +170,13 @@ fn template_schema() -> Value {
                 "description":
                     "The answer as an exact expression over the parameter names. The SERVER \
     computes every instance's answer from it, so it is exact over the whole domain. For a label \
-    contract, use one text-valued choice parameter, divisibilitylabel(number, divisor), \
+    contract, use one text-valued choice parameter, equalitylabel(left, right), divisibilitylabel(number, divisor), \
     or primeclass(number). For a quotient-and-remainder contract, use \
-    quotientremainder(quotient, remainder). For an ordered exact-list contract, use \
+    quotientremainder(quotient, remainder). To preserve an unevaluated exact power, use \
+    powerform(coefficient, [base, exponent]). Under a closed label contract, use \
+    logequation(base, [exponent, result]) or expequation(base, [exponent, result]) for a proved \
+    integer power identity. Under an approximate contract, use atandeg(ratio) for an \
+    inverse-tangent angle in degrees. For an ordered exact-list contract, use \
     factorlist(number), firstmultiples(number, count), primefactors(number), or \
     repeatedfactors(number, count). For a multipart contract, use \
     multipart(part1, part2) with arguments in contract part order; each argument is a mathematical \

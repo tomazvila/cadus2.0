@@ -1,10 +1,11 @@
 //! Bounded writers for structured closed-label answers.
 
-use num_traits::ToPrimitive;
+use num_rational::BigRational;
+use num_traits::{One, Signed, ToPrimitive, Zero};
 
 use crate::answer::ast::Ast;
 use crate::answer::{AnswerContract, Canon};
-use crate::template::domain::Bindings;
+use crate::template::{MAX_EXPONENT, domain::Bindings, gate::FREE_SYMBOLS};
 
 use super::{Answer, EvalError, answer, contracted, text_binding};
 
@@ -19,34 +20,147 @@ pub(super) fn label_answer(
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
     };
-    let text = match (name.as_str(), args.as_slice()) {
-        ("divisibilitylabel", [number, divisor]) => {
-            let number = bounded_whole(number, bindings, "divisibilitylabel")?;
-            let divisor = bounded_whole(divisor, bindings, "divisibilitylabel")?;
-            if divisor == 0 {
-                return Err(EvalError::Domain {
-                    func: "divisibilitylabel",
-                    value: divisor.to_string(),
-                });
-            }
-            if number % divisor == 0 { "yes" } else { "no" }
-        }
-        ("primeclass", [number]) => {
-            let number = bounded_whole(number, bindings, "primeclass")?;
-            if number < 2 {
-                "neither"
-            } else if is_prime(number) {
-                "prime"
-            } else {
-                "composite"
-            }
-        }
-        _ => return answer(ast, bindings),
+    if matches!(
+        name.as_str(),
+        "boundaryincluded" | "boundarycircle" | "boundarystyle" | "raydirection" | "negativeabs"
+    ) {
+        return super::inequalities::label_answer(name, args, bindings, contract);
+    }
+    if name == "signcase" {
+        return label_sign_case(args, bindings, contract);
+    }
+    let Some(text) = named_label(name, args, bindings)? else {
+        return answer(ast, bindings);
     };
     contracted(text.to_owned(), contract)
 }
 
+fn named_label(
+    name: &str,
+    args: &[Ast],
+    bindings: &Bindings,
+) -> Result<Option<&'static str>, EvalError> {
+    let text = match (name, args) {
+        ("trianglelaw", args) => super::triangle_law::choose(args, bindings)?,
+        ("equalitylabel", [left, right]) => equality_label(left, right, bindings)?,
+        ("divisibilitylabel", [number, divisor]) => divisibility_label(number, divisor, bindings)?,
+        ("primeclass", [number]) => prime_label(number, bindings)?,
+        ("linearclass", [Ast::Tuple(left), Ast::Tuple(right)])
+            if left.len() == 2 && right.len() == 2 =>
+        {
+            linear_class(&left[0], &left[1], &right[0], &right[1], bindings)?
+        }
+        _ => return Ok(None),
+    };
+    Ok(Some(text))
+}
+
+fn equality_label(left: &Ast, right: &Ast, bindings: &Bindings) -> Result<&'static str, EvalError> {
+    Ok(
+        if answer(left, bindings)?.canon == answer(right, bindings)?.canon {
+            "yes"
+        } else {
+            "no"
+        },
+    )
+}
+
+fn divisibility_label(
+    number: &Ast,
+    divisor: &Ast,
+    bindings: &Bindings,
+) -> Result<&'static str, EvalError> {
+    let number = bounded_whole(number, bindings, "divisibilitylabel")?;
+    let divisor = bounded_whole(divisor, bindings, "divisibilitylabel")?;
+    if divisor == 0 {
+        return Err(EvalError::Domain {
+            func: "divisibilitylabel",
+            value: divisor.to_string(),
+        });
+    }
+    Ok(if number.is_multiple_of(divisor) {
+        "yes"
+    } else {
+        "no"
+    })
+}
+
+fn prime_label(number: &Ast, bindings: &Bindings) -> Result<&'static str, EvalError> {
+    let number = bounded_whole(number, bindings, "primeclass")?;
+    Ok(if number < 2 {
+        "neither"
+    } else if is_prime(number) {
+        "prime"
+    } else {
+        "composite"
+    })
+}
+
+/// Select a closed label using the existing three-branch signcase grammar.
+/// Branches retain their label contract; nonnumeric and malformed selectors refuse.
+fn label_sign_case(
+    args: &[Ast],
+    bindings: &Bindings,
+    contract: &AnswerContract,
+) -> Result<Answer, EvalError> {
+    let [selector, Ast::List(choices)] = args else {
+        return Err(EvalError::SignCaseShape);
+    };
+    if choices.len() != 3 {
+        return Err(EvalError::SignCaseShape);
+    }
+    let Canon::Rational(value) = answer(selector, bindings)?.canon else {
+        return Err(EvalError::NotNumber { func: "signcase" });
+    };
+    let index = if value.is_negative() {
+        0
+    } else if value.is_zero() {
+        1
+    } else {
+        2
+    };
+    let result = label_answer(&choices[index], bindings, contract)?;
+    contracted(result.text, contract)
+}
+
+fn linear_class(
+    left_coefficient: &Ast,
+    left_constant: &Ast,
+    right_coefficient: &Ast,
+    right_constant: &Ast,
+    bindings: &Bindings,
+) -> Result<&'static str, EvalError> {
+    let left_coefficient = bounded_integer(left_coefficient, bindings, "linearclass")?;
+    let left_constant = bounded_integer(left_constant, bindings, "linearclass")?;
+    let right_coefficient = bounded_integer(right_coefficient, bindings, "linearclass")?;
+    let right_constant = bounded_integer(right_constant, bindings, "linearclass")?;
+    Ok(if left_coefficient != right_coefficient {
+        "one solution"
+    } else if left_constant == right_constant {
+        "all real numbers"
+    } else {
+        "no solution"
+    })
+}
+
 const MAX_LABEL_INTEGER: u32 = 1_000_000;
+
+fn bounded_integer(ast: &Ast, bindings: &Bindings, func: &'static str) -> Result<i64, EvalError> {
+    let value = answer(ast, bindings)?;
+    let Canon::Rational(value) = value.canon else {
+        return Err(EvalError::NotWhole { func });
+    };
+    value
+        .to_integer()
+        .to_i64()
+        .filter(|integer| {
+            value.is_integer() && integer.unsigned_abs() <= u64::from(MAX_LABEL_INTEGER)
+        })
+        .ok_or_else(|| EvalError::Domain {
+            func,
+            value: value.to_string(),
+        })
+}
 
 fn bounded_whole(ast: &Ast, bindings: &Bindings, func: &'static str) -> Result<u32, EvalError> {
     let value = answer(ast, bindings)?;
@@ -73,12 +187,12 @@ fn is_prime(number: u32) -> bool {
     if number == 2 {
         return true;
     }
-    if number % 2 == 0 {
+    if number.is_multiple_of(2) {
         return false;
     }
     let mut divisor = 3;
     while divisor <= number / divisor {
-        if number % divisor == 0 {
+        if number.is_multiple_of(divisor) {
             return false;
         }
         divisor += 2;
@@ -91,6 +205,7 @@ pub(super) fn list_answer(
     bindings: &Bindings,
     contract: &AnswerContract,
 ) -> Result<Answer, EvalError> {
+    debug_assert!(matches!(contract, AnswerContract::List { .. }));
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
     };
@@ -140,7 +255,7 @@ fn factors(number: u32) -> Vec<u32> {
     let mut high = Vec::new();
     let mut divisor = 1;
     while divisor <= number / divisor {
-        if number % divisor == 0 {
+        if number.is_multiple_of(divisor) {
             low.push(divisor);
             let partner = number / divisor;
             if partner != divisor {
@@ -164,7 +279,7 @@ fn prime_factors(mut number: u32) -> Result<Vec<u32>, EvalError> {
     let mut factors = Vec::new();
     let mut divisor = 2;
     while divisor <= number / divisor {
-        while number % divisor == 0 {
+        while number.is_multiple_of(divisor) {
             factors.push(divisor);
             number /= divisor;
         }
@@ -174,4 +289,86 @@ fn prime_factors(mut number: u32) -> Result<Vec<u32>, EvalError> {
         factors.push(number);
     }
     Ok(factors)
+}
+
+/// Write `coefficient * base^exponent` without evaluating away the power.
+pub(super) fn power_form(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: Option<&AnswerContract>,
+) -> Result<Answer, EvalError> {
+    let Some(contract @ (AnswerContract::Exact | AnswerContract::RequiredSinglePower)) = contract
+    else {
+        return Err(EvalError::NotNumber {
+            func: "powerform requires an exact power contract",
+        });
+    };
+    let Ast::Func(_, args) = ast else {
+        unreachable!();
+    };
+    let [coefficient, Ast::List(parts)] = args.as_slice() else {
+        return Err(EvalError::Arity {
+            func: "powerform".to_owned(),
+            want: 2,
+            given: args.len(),
+        });
+    };
+    let [base, exponent] = parts.as_slice() else {
+        return Err(EvalError::NotNumber {
+            func: "powerform requires [base, exponent]",
+        });
+    };
+    let coefficient = numeric(coefficient, bindings)?;
+    let symbolic_base = match base {
+        Ast::Var(name)
+            if contract == &AnswerContract::Exact
+                && FREE_SYMBOLS.contains(&name.as_str())
+                && !bindings.contains_key(name) =>
+        {
+            Some(name.as_str())
+        }
+        _ => None,
+    };
+    let numeric_base = if symbolic_base.is_none() {
+        Some(numeric(base, bindings)?)
+    } else {
+        None
+    };
+    let exponent = numeric(exponent, bindings)?;
+    let Canon::Rational(number) = &exponent.canon else {
+        unreachable!()
+    };
+    let power = number
+        .to_integer()
+        .to_i64()
+        .filter(|power| number.is_integer() && power.unsigned_abs() <= MAX_EXPONENT as u64)
+        .ok_or(EvalError::NotWhole {
+            func: "powerform bounded exponent",
+        })?;
+    let base_text = symbolic_base
+        .map(str::to_owned)
+        .or_else(|| numeric_base.map(|base| base.text))
+        .ok_or(EvalError::NotNumber { func: "powerform" })?;
+    let text = match contract {
+        AnswerContract::Exact => format!("({})*({base_text})^({power})", coefficient.text),
+        AnswerContract::RequiredSinglePower => {
+            if coefficient.canon != Canon::Rational(BigRational::one()) {
+                return Err(EvalError::Domain {
+                    func: "powerform coefficient",
+                    value: coefficient.text,
+                });
+            }
+            format!("({base_text})^({power})")
+        }
+        _ => unreachable!(),
+    };
+    contracted(text, contract)
+}
+
+fn numeric(ast: &Ast, bindings: &Bindings) -> Result<Answer, EvalError> {
+    let value = answer(ast, bindings)?;
+    if !matches!(value.canon, Canon::Rational(_)) {
+        return Err(EvalError::NotNumber { func: "powerform" });
+    }
+    Ok(value)
 }
