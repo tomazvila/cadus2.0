@@ -190,8 +190,16 @@ export const api: ApiClient = {
   getContent: (digest) => request<ReviewDocument>('GET', `/admin/content/${seg(digest)}`),
   // The body is ignored by the handler, and `{}` is sent anyway: a POST with no body
   // carries no `Content-Type`, and the CSRF layer reads a simple request differently.
-  approveContent: (digest) =>
-    request<ApproveResponse>('POST', `/admin/content/${seg(digest)}/approve`, {}),
+  approveContent: (
+    digest, policyDigest, templateContextDigest, curriculumDigest, reviewEngineDigest,
+  ) =>
+    request<ApproveResponse>('POST', `/admin/content/${seg(digest)}/approve`,
+      {
+        policy_digest: policyDigest,
+        template_context_digest: templateContextDigest,
+        curriculum_digest: curriculumDigest,
+        review_engine_digest: reviewEngineDigest,
+      }),
   rejectContent: (digest, reason) =>
     request<RejectResponse>('POST', `/admin/content/${seg(digest)}/reject`, { reason }),
   listUngraded: () => request<UngradedListResponse>('GET', '/admin/ungraded'),

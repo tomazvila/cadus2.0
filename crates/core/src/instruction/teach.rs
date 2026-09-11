@@ -2,6 +2,7 @@
 use crate::template::gate::{Rejection, contains_token, py_str};
 
 use super::body::{object, only_known, text};
+use super::finite::{permitted_collision, teach_case};
 use super::{InstructionSpec, TEACH_FIELDS, TeachPage, WORKED_EXAMPLE_FIELDS, WorkedExample};
 
 /// The gate of a teach page (L4, spec section 7 row R6).
@@ -11,6 +12,21 @@ use super::{InstructionSpec, TEACH_FIELDS, TeachPage, WORKED_EXAMPLE_FIELDS, Wor
 /// Returns the [`Rejection`] of the first rule the body breaks. The message is
 /// the literal text the next authoring attempt reads.
 pub fn gate_teach(body: &str, spec: &InstructionSpec<'_>) -> Result<TeachPage, Rejection> {
+    gate_teach_with_policy(body, spec, None)
+}
+
+/// Gate a page against an optional trusted finite case catalog.
+///
+/// A registered worked example uses a TeachOnly or TaughtRehearsal case.
+/// Fresh practice and reserved assessment cases remain protected.
+///
+/// # Errors
+/// Returns a shape, role, unknown-case or disclosure rejection.
+pub fn gate_teach_with_policy(
+    body: &str,
+    spec: &InstructionSpec<'_>,
+    policy: Option<&crate::curriculum::FiniteObjectiveDomain>,
+) -> Result<TeachPage, Rejection> {
     let fields = object(body, "teach")?;
     only_known(&fields, &TEACH_FIELDS, "teach page", "teach-unknown-field")?;
     let concept = text(
@@ -63,8 +79,11 @@ per entry, ending with the final answer"
         .enumerate()
         .map(|(index, step)| step_text(index, step))
         .collect::<Result<Vec<String>, Rejection>>()?;
+    let case = teach_case(&problem, policy)?;
     for (index, exemplar) in spec.exemplars.iter().enumerate() {
-        if exemplar.problem.trim() == problem.trim() {
+        if exemplar.problem.trim() == problem.trim()
+            && !permitted_collision(case, &exemplar.problem)
+        {
             return Err(Rejection {
                 code: "teach-worked-example",
                 message: format!(
@@ -76,7 +95,7 @@ learner has not attempted yet (Hard Rule 1)",
             });
         }
     }
-    check_teach_disclosures(&problem, &written, spec)?;
+    check_teach_disclosures(&problem, &written, spec, case)?;
     Ok(TeachPage {
         concept,
         worked_example: WorkedExample {
@@ -147,10 +166,14 @@ fn check_teach_disclosures(
     problem: &str,
     steps: &[String],
     spec: &InstructionSpec<'_>,
+    taught: Option<&crate::curriculum::FiniteObjectiveCase>,
 ) -> Result<(), Rejection> {
     let last = steps.last().map_or("", String::as_str);
     let normalized_last = normalized_problem(last);
     for (served_problem, answer) in spec.served() {
+        if permitted_collision(taught, served_problem) {
+            continue;
+        }
         if same_problem(served_problem, problem) {
             return Err(Rejection {
                 code: "teach-worked-example",

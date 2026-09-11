@@ -67,6 +67,18 @@ def keyed(rows, label):
     return result
 
 
+def validate_technical_row(key, row):
+    fields = {"kp_id", "teach_digest", "template_digest", "collision", "production_gate", "context_coverage", "ai_review"}
+    if set(row) != fields or row["kp_id"] != key:
+        raise Refused(f"technical row shape: {key}")
+    if row["collision"] != "clear" or row["production_gate"] != "accepted":
+        raise Refused(f"technical gate: {key}")
+    if row["context_coverage"] != "sampled_template_instances" or row["ai_review"] != "pending":
+        raise Refused(f"technical lifecycle: {key}")
+    if not all(isinstance(row[field], str) and row[field] for field in ("teach_digest", "template_digest")):
+        raise Refused(f"technical digests: {key}")
+
+
 def evidence_rows(evidence):
     if not isinstance(evidence, dict) or evidence.get("schema_version") != 2:
         raise Refused("unsupported technical evidence schema")
@@ -77,16 +89,8 @@ def evidence_rows(evidence):
     if not isinstance(rows, list) or len(rows) != COUNT:
         raise Refused("technical evidence must contain 735 rows")
     technical = keyed(rows, "technical evidence")
-    fields = {"kp_id", "teach_digest", "template_digest", "collision", "production_gate", "context_coverage", "ai_review"}
     for key, row in technical.items():
-        if set(row) != fields or row["kp_id"] != key:
-            raise Refused(f"technical row shape: {key}")
-        if row["collision"] != "clear" or row["production_gate"] != "accepted":
-            raise Refused(f"technical gate: {key}")
-        if row["context_coverage"] != "sampled_template_instances" or row["ai_review"] != "pending":
-            raise Refused(f"technical lifecycle: {key}")
-        if not all(isinstance(row[field], str) and row[field] for field in ("teach_digest", "template_digest")):
-            raise Refused(f"technical digests: {key}")
+        validate_technical_row(key, row)
     bindings = evidence.get("historical_row_sha256")
     if not isinstance(bindings, dict) or set(bindings) != set(technical):
         raise Refused("historical row binding keys differ")
@@ -94,6 +98,25 @@ def evidence_rows(evidence):
         raise Refused("invalid historical row binding")
     return source_paths, technical, bindings
 
+
+
+def historical_review_rows(sidecar, index):
+    historical = {}
+    review_files = index.get("reviews")
+    if not isinstance(review_files, list) or {row.get("path") for row in review_files if isinstance(row, dict)} != set(part_paths("reviews")):
+        raise Refused("historical review inventory")
+    for entry in review_files:
+        relative = entry["path"]
+        path = sidecar / "historical-archive" / relative
+        if entry.get("sha256") != sha256_bytes(path.read_bytes()):
+            raise Refused(f"historical review changed: {relative}")
+        for row in read_json(path):
+            key = row.get("kp_id")
+            digest = sha256_bytes(json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode())
+            if not isinstance(key, str) or key in historical:
+                raise Refused("invalid or duplicate historical KP")
+            historical[key] = (f"historical-archive/{relative}", digest)
+    return historical
 
 
 def archive_rows(sidecar, manifest, reviews, bindings):
@@ -116,21 +139,7 @@ def archive_rows(sidecar, manifest, reviews, bindings):
         path = row["path"]
         if row.get("sha256") != sha256_bytes((sidecar / "historical-archive" / path).read_bytes()):
             raise Refused(f"historical archive file changed: {path}")
-    historical = {}
-    review_files = index.get("reviews")
-    if not isinstance(review_files, list) or {row.get("path") for row in review_files if isinstance(row, dict)} != set(part_paths("reviews")):
-        raise Refused("historical review inventory")
-    for entry in review_files:
-        relative = entry["path"]
-        path = sidecar / "historical-archive" / relative
-        if entry.get("sha256") != sha256_bytes(path.read_bytes()):
-            raise Refused(f"historical review changed: {relative}")
-        for row in read_json(path):
-            key = row.get("kp_id")
-            digest = sha256_bytes(json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode())
-            if not isinstance(key, str) or key in historical:
-                raise Refused("invalid or duplicate historical KP")
-            historical[key] = (f"historical-archive/{relative}", digest)
+    historical = historical_review_rows(sidecar, index)
     if set(historical) != set(bindings) or any(bindings[key] != value[1] for key, value in historical.items()):
         raise Refused("historical row bindings changed")
     for row in reviews:

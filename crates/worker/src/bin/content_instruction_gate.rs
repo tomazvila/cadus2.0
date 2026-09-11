@@ -11,6 +11,9 @@ use serde::Deserialize;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
+#[path = "../../gate_fingerprint.rs"]
+mod gate_fingerprint;
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Input {
@@ -76,12 +79,18 @@ fn audit(curriculum: &Curriculum, input: Input) -> Result<Value, String> {
     if input.templates.is_empty() || input.documents.is_empty() {
         return Err("templates and documents must both be nonempty".into());
     }
-    let mut served = BTreeMap::new();
+    let mut served: BTreeMap<String, Vec<ServedInstance>> = BTreeMap::new();
+    let mut template_identities = std::collections::BTreeSet::new();
     for row in &input.templates {
         let all = instances(curriculum, row).map_err(|e| format!("{}: {e}", row.kp_id))?;
-        if served.insert(row.kp_id.clone(), all).is_some() {
-            return Err(format!("{}: duplicate selected template", row.kp_id));
+        let identity = format!(
+            "{:x}",
+            Sha256::digest(serde_json::to_vec(&row.arguments).map_err(|error| error.to_string())?)
+        );
+        if !template_identities.insert((row.kp_id.clone(), identity)) {
+            return Err(format!("{}: duplicate template document", row.kp_id));
         }
+        served.entry(row.kp_id.clone()).or_default().extend(all);
     }
     let mut seen = std::collections::BTreeSet::new();
     let mut results = Vec::new();
@@ -126,8 +135,19 @@ fn run() -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     let input = serde_json::from_str(&source).map_err(|e| e.to_string())?;
     let mut result = audit(&curriculum, input)?;
+    let mut files = Vec::new();
+    gate_fingerprint::collect(Path::new(&root), "yaml", &mut files)
+        .map_err(|error| error.to_string())?;
+    result["curriculum_source_hash"] = json!(
+        gate_fingerprint::fingerprint(Path::new(&root), files).map_err(|error| error.to_string())?
+    );
     result["input_sha256"] = json!(format!("{:x}", Sha256::digest(source.as_bytes())));
     result["gate_source_hash"] = json!(env!("CADUS_TEMPLATE_GATE_SOURCE_HASH"));
+    result["review_engine_digest"] = json!(cadus_core::review_engine::DIGEST);
+    result["canonical_curriculum_digest"] = json!(
+        cadus_core::curriculum::review_context_digest(&curriculum)
+            .map_err(|error| error.to_string())?
+    );
     serde_json::to_writer(std::io::stdout().lock(), &result).map_err(|e| e.to_string())
 }
 
@@ -230,6 +250,29 @@ mod tests {
         let duplicate = input["templates"][0].clone();
         input["templates"].as_array_mut().unwrap().push(duplicate);
         let error = audit(&curriculum, serde_json::from_value(input).unwrap()).unwrap_err();
-        assert!(error.contains("duplicate selected template"));
+        assert!(error.contains("duplicate template document"));
+    }
+
+    #[test]
+    fn leakage_found_only_in_a_second_ordinary_template_is_refused() {
+        let (curriculum, mut input) = fixture();
+        let mut second = input["templates"][0].clone();
+        let values: Vec<_> = [54, 55, 56, 57, 58, 64, 65, 66, 67, 68, 74, 75, 76, 77, 78]
+            .into_iter()
+            .collect();
+        let samples: Vec<_> = values
+            .iter()
+            .map(|value| json!({"params":{"a":value},"expected":(value + 26).to_string()}))
+            .collect();
+        second["arguments"]["params"] = json!({"a":{"kind":"choice","values":values}});
+        second["arguments"]["samples"] = json!(samples);
+        input["templates"].as_array_mut().unwrap().push(second);
+        let result = audit(&curriculum, serde_json::from_value(input.clone()).unwrap()).unwrap();
+        assert_eq!(result["documents"][0]["practice_instances"], 31);
+        assert_eq!(result["documents"][0]["accepted"], true);
+
+        input["documents"][0]["arguments"]["hints"][2] = json!("The answer is 80.");
+        let result = audit(&curriculum, serde_json::from_value(input).unwrap()).unwrap();
+        assert_eq!(result["documents"][0]["accepted"], false);
     }
 }

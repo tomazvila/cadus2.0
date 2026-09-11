@@ -79,23 +79,31 @@ use crate::session::{
 };
 use crate::state::Content;
 use crate::state::{
-    INVALID_REQUEST, NO_OPEN_SESSION, ServedProblem, TASK_COMPLETE, TaskProgress, Tenant, WebState,
+    INVALID_REQUEST, NO_OPEN_SESSION, ProblemHandoff, ServedProblem, TASK_COMPLETE, TaskProgress,
+    Tenant, WebState,
 };
-use cadus_core::curriculum::{Curriculum, KnowledgePoint};
-use cadus_core::event::{Event, SchemaVersion, Slug, TaskServed, TaskType, Timestamp};
+use cadus_core::curriculum::{Curriculum, FiniteCaseRole, KnowledgePoint};
+use cadus_core::event::{
+    Event, Exposure, ItemSource, OrdinaryProblemServed, SchemaVersion, Slug, TaskServed, TaskType,
+    Timestamp,
+};
+use cadus_core::learner::problem_text_hash;
 use cadus_core::pool::{Avoid, ExemplarSource, ProblemSource, Source, kp_key};
 use cadus_core::selector::{SessionPlan, Task};
 use cadus_core::template::{Bindings, Value as Binding, from_body, literal_to_rational, render};
-use cadus_store::content::{ApprovedDoc, KIND_HINT_LADDER, KIND_TEACH, approved_document};
+use cadus_store::content::{ApprovedDoc, KIND_HINT_LADDER, KIND_TEACH, approved_document_current};
 use cadus_store::pool::{
-    NewInstance, PoolRow, approved_template, insert_batch, pop_with_ring_tx, reclaim_exemplar_tx,
+    NewInstance, PoolRow, insert_batch, pop_with_ring_current_tx, reclaim_exemplar_tx,
 };
 use cadus_store::state::{
-    EventRow, append_event, lock_web_state, project_and_save, project_current,
+    EventRow, HandoffIdentity, advance_handoff_cursor, append_event, handoff_seen, lock_web_state,
+    project_and_save, project_current,
 };
 use serde::de::DeserializeOwned;
 
 mod draw;
+mod exposure;
+mod finite;
 #[cfg(test)]
 mod fixture;
 mod hint;

@@ -19,10 +19,20 @@ import {
 import type { ReviewDocument } from '@/api/types';
 
 /** The approve route, answering the digest it was given. */
-const approving = () => vi.fn(async (digest: string) => ({
+const approving = () => vi.fn(async (
+  digest: string,
+  policy: string | null,
+  bank: string | null,
+  curriculum: string,
+  engine: string,
+) => ({
   digest,
   status: 'approved',
   approved_at: '2026-08-30T12:00:00+00:00',
+  approved_policy_digest: policy,
+  approved_template_context_digest: bank,
+  approved_curriculum_digest: curriculum,
+  approved_review_engine_digest: engine,
 }));
 
 /** Press Approve, confirm it, and wait for the one post. */
@@ -40,6 +50,34 @@ const rejecting = () => vi.fn(async (digest: string) => ({ digest, status: 'reje
 // --------------------------------------------------------------------------- //
 
 describe('Approve', () => {
+  it('binds instruction approval to the template bank shown with the document', async () => {
+    const user = userEvent.setup();
+    const approve = approving();
+    await mountReview(stubApi({
+      getContent: async (digest) => ({
+        ...docOf(digest), template_context_digest: 'reviewed-bank',
+      }),
+      approveContent: approve,
+    }));
+    await approveSelected(user, approve);
+    expect(approve).toHaveBeenCalledWith(
+      'd2', null, 'reviewed-bank', 'curriculum-v1', 'engine-v1',
+    );
+  });
+
+  it('binds approval to the finite policy shown with the reviewed document', async () => {
+    const user = userEvent.setup();
+    const approve = approving();
+    await mountReview(stubApi({
+      getContent: async (digest) => ({ ...docOf(digest), policy_digest: 'reviewed-policy' }),
+      approveContent: approve,
+    }));
+    await approveSelected(user, approve);
+    expect(approve).toHaveBeenCalledWith(
+      'd2', 'reviewed-policy', null, 'curriculum-v1', 'engine-v1',
+    );
+  });
+
   it('posts the digest and the row leaves the pending list', async () => {
     const user = userEvent.setup();
     const approve = approving();
@@ -56,7 +94,9 @@ describe('Approve', () => {
 
     await user.click(dialogButton('Approve'));
 
-    await waitFor(() => expect(approve).toHaveBeenCalledWith('d2'));
+    await waitFor(() => expect(approve).toHaveBeenCalledWith(
+      'd2', null, null, 'curriculum-v1', 'engine-v1',
+    ));
     await waitFor(() => expect(rowButtons()).toHaveLength(3));
     // The row is gone from the queue, and the pane has moved to the row below it rather
     // than keeping a decided document under two live buttons.
@@ -79,7 +119,7 @@ describe('Approve', () => {
     await user.click(rowButtons()[1]!);
     await waitFor(() => expect(writeButton('Approve').disabled).toBe(false));
     await approveSelected(user, approve);
-    expect(approve).toHaveBeenCalledWith('d1');
+    expect(approve).toHaveBeenCalledWith('d1', null, null, 'curriculum-v1', 'engine-v1');
 
     await waitFor(() => expect(rowButtons()).toHaveLength(3));
     expect(document.querySelector('.review-row.is-selected')!.textContent).toContain('Borrowing');
@@ -157,7 +197,9 @@ describe('Approve', () => {
     expect(within(dialog).getByText('d1')).toBeTruthy();
     await user.click(within(dialog).getByRole('button', { name: 'Approve' }));
 
-    await waitFor(() => expect(approve).toHaveBeenCalledWith('d1'));
+    await waitFor(() => expect(approve).toHaveBeenCalledWith(
+      'd1', null, null, 'curriculum-v1', 'engine-v1',
+    ));
     expect(approve).toHaveBeenCalledTimes(1);
     expect(approve).not.toHaveBeenCalledWith('d2');
   });
@@ -192,7 +234,9 @@ describe('Approve', () => {
     await user.click(writeButton('Approve'));
     await user.click(dialogButton('Approve'));
 
-    await waitFor(() => expect(approve).toHaveBeenCalledWith('d4'));
+    await waitFor(() => expect(approve).toHaveBeenCalledWith(
+      'd4', null, null, 'curriculum-v1', 'engine-v1',
+    ));
     await waitFor(() => expect(rowButtons()).toHaveLength(3));
     // Nothing followed the last row, so the walk restarts at the top.
     expect(document.querySelector('.review-row.is-selected')!.textContent)
@@ -215,9 +259,16 @@ describe('Approve', () => {
   it('moves nothing when the write lands after the screen left', async () => {
     const user = userEvent.setup();
     let release!: () => void;
-    const approve = vi.fn(async () => {
+    const approve = vi.fn(async (
+      _digest: string, policy: string | null, bank: string | null,
+      curriculum: string, engine: string,
+    ) => {
       await new Promise<void>((r) => { release = r; });
-      return { digest: 'd2', status: 'approved', approved_at: null };
+      return {
+        digest: 'd2', status: 'approved', approved_at: null,
+        approved_policy_digest: policy, approved_template_context_digest: bank,
+        approved_curriculum_digest: curriculum, approved_review_engine_digest: engine,
+      };
     });
     const list = vi.fn(async () => QUEUE);
     const view = await mountReview(stubApi({ listContent: list, approveContent: approve }));

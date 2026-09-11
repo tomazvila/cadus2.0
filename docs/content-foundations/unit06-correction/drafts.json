@@ -542,11 +542,14 @@
   },
   {
     "arguments": {
-      "answer_expr": "a*x**4",
+      "answer_contract": {
+        "kind": "exact"
+      },
+      "answer_expr": "powerform(1,[x,a-1])",
       "constraints": [],
       "distractors": [],
       "hints": [
-        "Cancel matching factors in numerator and denominator; the base must be nonzero."
+        "Treat the bare denominator base as exponent one, then subtract."
       ],
       "params": {
         "a": {
@@ -569,80 +572,80 @@
       },
       "samples": [
         {
-          "expected": "2*x^4",
+          "expected": "x",
           "params": {
             "a": 2
           }
         },
         {
-          "expected": "3*x^4",
+          "expected": "x^2",
           "params": {
             "a": 3
           }
         },
         {
-          "expected": "4*x^4",
+          "expected": "x^3",
           "params": {
             "a": 4
           }
         },
         {
-          "expected": "5*x^4",
+          "expected": "x^4",
           "params": {
             "a": 5
           }
         },
         {
-          "expected": "6*x^4",
+          "expected": "x^5",
           "params": {
             "a": 6
           }
         },
         {
-          "expected": "7*x^4",
+          "expected": "x^6",
           "params": {
             "a": 7
           }
         },
         {
-          "expected": "8*x^4",
+          "expected": "x^7",
           "params": {
             "a": 8
           }
         },
         {
-          "expected": "9*x^4",
+          "expected": "x^8",
           "params": {
             "a": 9
           }
         },
         {
-          "expected": "10*x^4",
+          "expected": "x^9",
           "params": {
             "a": 10
           }
         },
         {
-          "expected": "11*x^4",
+          "expected": "x^10",
           "params": {
             "a": 11
           }
         },
         {
-          "expected": "12*x^4",
+          "expected": "x^11",
           "params": {
             "a": 12
           }
         },
         {
-          "expected": "13*x^4",
+          "expected": "x^12",
           "params": {
             "a": 13
           }
         }
       ],
-      "solution_sketch": "Cancel two of the six factors of $x$, leaving exponent $6-2=4$ and coefficient ${a}$.",
-      "statement": "Simplify $({a}x^6)/x^2$ for $x\\ne0$."
+      "solution_sketch": "The denominator $x$ is $x^1$. Subtract one from the displayed numerator exponent and write exponent one as a bare $x$.",
+      "statement": "Simplify $x^{{{a}}}/x$ for $x\\ne0$. Treat the bare denominator as a first power."
     },
     "kind": "template",
     "kp_id": "exponent-quotient-rule/kp3"
@@ -970,107 +973,122 @@
   },
   {
     "arguments": {
-      "answer_expr": "a**3*x**6",
+      "answer_contract": {
+        "kind": "exact"
+      },
+      "answer_expr": "powerform(1,[x,a*b])",
       "constraints": [],
       "distractors": [],
       "hints": [
-        "A power outside a power repeats the inner group; count all copies of the base."
+        "Keep the single variable base and multiply the inner and outer exponents."
       ],
       "params": {
         "a": {
           "kind": "choice",
           "values": [
+            2,
+            3,
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            2,
             3,
             4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14
+            5
           ]
         }
       },
       "samples": [
         {
-          "expected": "27*x^6",
+          "expected": "x^4",
           "params": {
-            "a": 3
+            "a": 2,
+            "b": 2
           }
         },
         {
-          "expected": "64*x^6",
+          "expected": "x^6",
           "params": {
-            "a": 4
+            "a": 2,
+            "b": 3
           }
         },
         {
-          "expected": "125*x^6",
+          "expected": "x^8",
           "params": {
-            "a": 5
+            "a": 2,
+            "b": 4
           }
         },
         {
-          "expected": "216*x^6",
+          "expected": "x^10",
           "params": {
-            "a": 6
+            "a": 2,
+            "b": 5
           }
         },
         {
-          "expected": "343*x^6",
+          "expected": "x^6",
           "params": {
-            "a": 7
+            "a": 3,
+            "b": 2
           }
         },
         {
-          "expected": "512*x^6",
+          "expected": "x^9",
           "params": {
-            "a": 8
+            "a": 3,
+            "b": 3
           }
         },
         {
-          "expected": "729*x^6",
+          "expected": "x^12",
           "params": {
-            "a": 9
+            "a": 3,
+            "b": 4
           }
         },
         {
-          "expected": "1000*x^6",
+          "expected": "x^15",
           "params": {
-            "a": 10
+            "a": 3,
+            "b": 5
           }
         },
         {
-          "expected": "1331*x^6",
+          "expected": "x^8",
           "params": {
-            "a": 11
+            "a": 4,
+            "b": 2
           }
         },
         {
-          "expected": "1728*x^6",
+          "expected": "x^12",
           "params": {
-            "a": 12
+            "a": 4,
+            "b": 3
           }
         },
         {
-          "expected": "2197*x^6",
+          "expected": "x^16",
           "params": {
-            "a": 13
+            "a": 4,
+            "b": 4
           }
         },
         {
-          "expected": "2744*x^6",
+          "expected": "x^20",
           "params": {
-            "a": 14
+            "a": 4,
+            "b": 5
           }
         }
       ],
-      "solution_sketch": "Cube the coefficient and multiply the exponents: $(x^2)^3=x^6$.",
-      "statement": "Simplify $({a}x^2)^3$."
+      "solution_sketch": "Keep base $x$ and multiply the displayed inner and outer exponents.",
+      "statement": "Simplify $(x^{{{a}}})^{{{b}}}$."
     },
     "kind": "template",
     "kp_id": "power-of-a-power-rule/kp1"
@@ -1187,11 +1205,14 @@
   },
   {
     "arguments": {
-      "answer_expr": "a**2*x**5",
+      "answer_contract": {
+        "kind": "exact"
+      },
+      "answer_expr": "powerform(1,[x,a*b+c])",
       "constraints": [],
       "distractors": [],
       "hints": [
-        "A power outside a power repeats the inner group; count all copies of the base."
+        "Apply the power of a power first, then use the product rule on the remaining same-base factor."
       ],
       "params": {
         "a": {
@@ -1199,95 +1220,124 @@
           "values": [
             2,
             3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            2,
+            3
+          ]
+        },
+        "c": {
+          "kind": "choice",
+          "values": [
+            1,
+            2
           ]
         }
       },
       "samples": [
         {
-          "expected": "4*x^5",
+          "expected": "x^5",
           "params": {
-            "a": 2
+            "a": 2,
+            "b": 2,
+            "c": 1
           }
         },
         {
-          "expected": "9*x^5",
+          "expected": "x^6",
           "params": {
-            "a": 3
+            "a": 2,
+            "b": 2,
+            "c": 2
           }
         },
         {
-          "expected": "16*x^5",
+          "expected": "x^7",
           "params": {
-            "a": 4
+            "a": 2,
+            "b": 3,
+            "c": 1
           }
         },
         {
-          "expected": "25*x^5",
+          "expected": "x^8",
           "params": {
-            "a": 5
+            "a": 2,
+            "b": 3,
+            "c": 2
           }
         },
         {
-          "expected": "36*x^5",
+          "expected": "x^7",
           "params": {
-            "a": 6
+            "a": 3,
+            "b": 2,
+            "c": 1
           }
         },
         {
-          "expected": "49*x^5",
+          "expected": "x^8",
           "params": {
-            "a": 7
+            "a": 3,
+            "b": 2,
+            "c": 2
           }
         },
         {
-          "expected": "64*x^5",
+          "expected": "x^10",
           "params": {
-            "a": 8
+            "a": 3,
+            "b": 3,
+            "c": 1
           }
         },
         {
-          "expected": "81*x^5",
+          "expected": "x^11",
           "params": {
-            "a": 9
+            "a": 3,
+            "b": 3,
+            "c": 2
           }
         },
         {
-          "expected": "100*x^5",
+          "expected": "x^9",
           "params": {
-            "a": 10
+            "a": 4,
+            "b": 2,
+            "c": 1
           }
         },
         {
-          "expected": "121*x^5",
+          "expected": "x^10",
           "params": {
-            "a": 11
+            "a": 4,
+            "b": 2,
+            "c": 2
           }
         },
         {
-          "expected": "144*x^5",
+          "expected": "x^13",
           "params": {
-            "a": 12
+            "a": 4,
+            "b": 3,
+            "c": 1
           }
         },
         {
-          "expected": "169*x^5",
+          "expected": "x^14",
           "params": {
-            "a": 13
+            "a": 4,
+            "b": 3,
+            "c": 2
           }
         }
       ],
-      "solution_sketch": "Square the coefficient, multiply $4\\cdot2=8$, then subtract the denominator exponent: $8-3=5$.",
-      "statement": "Simplify $({a}x^4)^2/x^3$ for $x\\ne0$."
+      "solution_sketch": "Multiply the displayed inner and outer exponents first, then add the exponent of the remaining product factor.",
+      "statement": "Simplify $(x^{{{a}}})^{{{b}}}\\cdot x^{{{c}}}$."
     },
     "kind": "template",
     "kp_id": "power-of-a-power-rule/kp3"
@@ -1508,107 +1558,139 @@
   },
   {
     "arguments": {
-      "answer_expr": "(a**2/2)*x**6",
+      "answer_contract": {
+        "kind": "exact"
+      },
+      "answer_expr": "powerform(a**2*b,[x,2*c+1])",
       "constraints": [],
       "distractors": [],
       "hints": [
-        "Apply the outside power to every factor, including the coefficient."
+        "Apply the outside power to its coefficient and variable factor, then multiply the remaining factor."
       ],
       "params": {
         "a": {
           "kind": "choice",
           "values": [
+            1,
+            2
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            1,
+            2
+          ]
+        },
+        "c": {
+          "kind": "choice",
+          "values": [
+            1,
             2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13
+            3
           ]
         }
       },
       "samples": [
         {
-          "expected": "2*x^6",
+          "expected": "1*x^3",
           "params": {
-            "a": 2
+            "a": 1,
+            "b": 1,
+            "c": 1
           }
         },
         {
-          "expected": "9/2*x^6",
+          "expected": "1*x^5",
           "params": {
-            "a": 3
+            "a": 1,
+            "b": 1,
+            "c": 2
           }
         },
         {
-          "expected": "8*x^6",
+          "expected": "1*x^7",
           "params": {
-            "a": 4
+            "a": 1,
+            "b": 1,
+            "c": 3
           }
         },
         {
-          "expected": "25/2*x^6",
+          "expected": "2*x^3",
           "params": {
-            "a": 5
+            "a": 1,
+            "b": 2,
+            "c": 1
           }
         },
         {
-          "expected": "18*x^6",
+          "expected": "2*x^5",
           "params": {
-            "a": 6
+            "a": 1,
+            "b": 2,
+            "c": 2
           }
         },
         {
-          "expected": "49/2*x^6",
+          "expected": "2*x^7",
           "params": {
-            "a": 7
+            "a": 1,
+            "b": 2,
+            "c": 3
           }
         },
         {
-          "expected": "32*x^6",
+          "expected": "4*x^3",
           "params": {
-            "a": 8
+            "a": 2,
+            "b": 1,
+            "c": 1
           }
         },
         {
-          "expected": "81/2*x^6",
+          "expected": "4*x^5",
           "params": {
-            "a": 9
+            "a": 2,
+            "b": 1,
+            "c": 2
           }
         },
         {
-          "expected": "50*x^6",
+          "expected": "4*x^7",
           "params": {
-            "a": 10
+            "a": 2,
+            "b": 1,
+            "c": 3
           }
         },
         {
-          "expected": "121/2*x^6",
+          "expected": "8*x^3",
           "params": {
-            "a": 11
+            "a": 2,
+            "b": 2,
+            "c": 1
           }
         },
         {
-          "expected": "72*x^6",
+          "expected": "8*x^5",
           "params": {
-            "a": 12
+            "a": 2,
+            "b": 2,
+            "c": 2
           }
         },
         {
-          "expected": "169/2*x^6",
+          "expected": "8*x^7",
           "params": {
-            "a": 13
+            "a": 2,
+            "b": 2,
+            "c": 3
           }
         }
       ],
-      "solution_sketch": "Squaring gives ${a}^2x^4$. Then $x$ has exponent $4+3-1=6$ and the coefficient is ${a}^2/2$.",
-      "statement": "Simplify $({a}x^2)^2x^3/(2x)$ for $x\\ne0$."
+      "solution_sketch": "Power first: square coefficient ${a}$ and double the displayed inner exponent. Then multiply by ${b}x$, multiplying coefficients and adding one to the exponent.",
+      "statement": "Simplify $({a}x^{{{c}}})^2({b}x)$."
     },
     "kind": "template",
     "kp_id": "power-rule-exponents/kp3"
@@ -1722,11 +1804,28 @@
   },
   {
     "arguments": {
-      "answer_expr": "a",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "grouped",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "outside",
+            "contract": {
+              "kind": "exact"
+            }
+          }
+        ]
+      },
+      "answer_expr": "multipart((1,a))",
       "constraints": [],
       "distractors": [],
       "hints": [
-        "Relate the zero exponent to a quotient of equal powers with a nonzero base."
+        "Determine whether the zero exponent covers the whole product or only the variable factor."
       ],
       "params": {
         "a": {
@@ -1734,95 +1833,107 @@
           "values": [
             2,
             3,
-            4,
+            4
+          ]
+        },
+        "x": {
+          "kind": "choice",
+          "values": [
+            2,
+            3,
             5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13
+            7
           ]
         }
       },
       "samples": [
         {
-          "expected": "2",
+          "expected": "grouped = 1; outside = 2",
           "params": {
-            "a": 2
+            "a": 2,
+            "x": 2
           }
         },
         {
-          "expected": "3",
+          "expected": "grouped = 1; outside = 2",
           "params": {
-            "a": 3
+            "a": 2,
+            "x": 3
           }
         },
         {
-          "expected": "4",
+          "expected": "grouped = 1; outside = 2",
           "params": {
-            "a": 4
+            "a": 2,
+            "x": 5
           }
         },
         {
-          "expected": "5",
+          "expected": "grouped = 1; outside = 2",
           "params": {
-            "a": 5
+            "a": 2,
+            "x": 7
           }
         },
         {
-          "expected": "6",
+          "expected": "grouped = 1; outside = 3",
           "params": {
-            "a": 6
+            "a": 3,
+            "x": 2
           }
         },
         {
-          "expected": "7",
+          "expected": "grouped = 1; outside = 3",
           "params": {
-            "a": 7
+            "a": 3,
+            "x": 3
           }
         },
         {
-          "expected": "8",
+          "expected": "grouped = 1; outside = 3",
           "params": {
-            "a": 8
+            "a": 3,
+            "x": 5
           }
         },
         {
-          "expected": "9",
+          "expected": "grouped = 1; outside = 3",
           "params": {
-            "a": 9
+            "a": 3,
+            "x": 7
           }
         },
         {
-          "expected": "10",
+          "expected": "grouped = 1; outside = 4",
           "params": {
-            "a": 10
+            "a": 4,
+            "x": 2
           }
         },
         {
-          "expected": "11",
+          "expected": "grouped = 1; outside = 4",
           "params": {
-            "a": 11
+            "a": 4,
+            "x": 3
           }
         },
         {
-          "expected": "12",
+          "expected": "grouped = 1; outside = 4",
           "params": {
-            "a": 12
+            "a": 4,
+            "x": 5
           }
         },
         {
-          "expected": "13",
+          "expected": "grouped = 1; outside = 4",
           "params": {
-            "a": 13
+            "a": 4,
+            "x": 7
           }
         }
       ],
-      "solution_sketch": "Both nonzero bases have zero power $1$, so ${a}+1-1={a}$.",
-      "statement": "Evaluate ${a}+7^0-3^0$."
+      "solution_sketch": "Because ${a}\\cdot{x}\\ne0$, the whole grouped base gives $({a}\\cdot{x})^0=1$. In ${a}\\cdot({x})^0$, only ${x}$ is powered, so the outside coefficient ${a}$ remains.",
+      "statement": "For nonzero values shown, evaluate both expressions. Report grouped = $({a}\\cdot{x})^0$ and outside = ${a}\\cdot({x})^0$."
     },
     "kind": "template",
     "kp_id": "zero-exponent-rule/kp2"
@@ -1936,11 +2047,15 @@
   },
   {
     "arguments": {
+      "answer_contract": {
+        "kind": "required_form",
+        "form": "reduced_fraction"
+      },
       "answer_expr": "1/a**2",
       "constraints": [],
       "distractors": [],
       "hints": [
-        "A negative exponent moves its base across the fraction bar; it does not change the sign of the base."
+        "A negative exponent inverts the nonzero base; then make the exponent positive."
       ],
       "params": {
         "a": {
@@ -2035,8 +2150,8 @@
           }
         }
       ],
-      "solution_sketch": "The negative exponent gives a reciprocal: $1/{a}^2=1/({a}\\cdot{a})$.",
-      "statement": "Evaluate ${a}^{{-2}}$ as an exact fraction."
+      "solution_sketch": "Invert the nonzero base and use a positive exponent: ${a}^{{-2}}=1/{a}^2$. Evaluate the square in the denominator.",
+      "statement": "Rewrite ${a}^{{-2}}$ using a positive exponent, then give the exact reduced fraction."
     },
     "kind": "template",
     "kp_id": "negative-zero-exponents/kp1"
@@ -2577,218 +2692,675 @@
     "kp_id": "simplifying-negative-exponent-expressions/kp3"
   },
   {
+    "kind": "template",
+    "kp_id": "scientific-notation-conversion/kp1",
     "arguments": {
-      "answer_expr": "a*10000",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "scientific",
+            "contract": {
+              "kind": "required_normalized_scientific_notation"
+            }
+          },
+          {
+            "name": "ordinary",
+            "contract": {
+              "kind": "required_form",
+              "form": "integer"
+            }
+          }
+        ]
+      },
+      "answer_expr": "multipart((10*m+d)*1000,(10*p+q)*1000)",
       "constraints": [],
       "distractors": [],
       "hints": [
-        "The sign of the power of ten determines which way to move the decimal point."
+        "Move the decimal to form a coefficient from one up to but excluding ten; reverse that place-value shift when expanding the scientific form."
       ],
       "params": {
-        "a": {
+        "m": {
           "kind": "choice",
           "values": [
-            "1.1",
-            "1.2",
-            "1.3",
-            "1.4",
-            "1.5",
-            "1.6",
-            "1.7",
-            "1.8",
-            "1.9",
-            "2.0",
-            "2.1",
-            "2.2"
+            1,
+            2,
+            3
+          ]
+        },
+        "d": {
+          "kind": "choice",
+          "values": [
+            1,
+            2
+          ]
+        },
+        "p": {
+          "kind": "choice",
+          "values": [
+            6,
+            7,
+            8
+          ]
+        },
+        "q": {
+          "kind": "choice",
+          "values": [
+            3,
+            4
           ]
         }
       },
       "samples": [
         {
-          "expected": "11000",
           "params": {
-            "a": "1.1"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 1.1 x 10^4; ordinary = 63000"
         },
         {
-          "expected": "12000",
           "params": {
-            "a": "1.2"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 1.1 x 10^4; ordinary = 64000"
         },
         {
-          "expected": "13000",
           "params": {
-            "a": "1.3"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 1.1 x 10^4; ordinary = 73000"
         },
         {
-          "expected": "14000",
           "params": {
-            "a": "1.4"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 1.1 x 10^4; ordinary = 74000"
         },
         {
-          "expected": "15000",
           "params": {
-            "a": "1.5"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 8,
+            "q": 3
+          },
+          "expected": "scientific = 1.1 x 10^4; ordinary = 83000"
         },
         {
-          "expected": "16000",
           "params": {
-            "a": "1.6"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 8,
+            "q": 4
+          },
+          "expected": "scientific = 1.1 x 10^4; ordinary = 84000"
         },
         {
-          "expected": "17000",
           "params": {
-            "a": "1.7"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 1.2 x 10^4; ordinary = 63000"
         },
         {
-          "expected": "18000",
           "params": {
-            "a": "1.8"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 1.2 x 10^4; ordinary = 64000"
         },
         {
-          "expected": "19000",
           "params": {
-            "a": "1.9"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 1.2 x 10^4; ordinary = 73000"
         },
         {
-          "expected": "20000",
           "params": {
-            "a": "2.0"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 1.2 x 10^4; ordinary = 74000"
         },
         {
-          "expected": "21000",
           "params": {
-            "a": "2.1"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 8,
+            "q": 3
+          },
+          "expected": "scientific = 1.2 x 10^4; ordinary = 83000"
         },
         {
-          "expected": "22000",
           "params": {
-            "a": "2.2"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 8,
+            "q": 4
+          },
+          "expected": "scientific = 1.2 x 10^4; ordinary = 84000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 1,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 2.1 x 10^4; ordinary = 63000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 1,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 2.1 x 10^4; ordinary = 64000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 1,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 2.1 x 10^4; ordinary = 73000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 1,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 2.1 x 10^4; ordinary = 74000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 1,
+            "p": 8,
+            "q": 3
+          },
+          "expected": "scientific = 2.1 x 10^4; ordinary = 83000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 1,
+            "p": 8,
+            "q": 4
+          },
+          "expected": "scientific = 2.1 x 10^4; ordinary = 84000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 2.2 x 10^4; ordinary = 63000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 2.2 x 10^4; ordinary = 64000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 2.2 x 10^4; ordinary = 73000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 2.2 x 10^4; ordinary = 74000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 8,
+            "q": 3
+          },
+          "expected": "scientific = 2.2 x 10^4; ordinary = 83000"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 8,
+            "q": 4
+          },
+          "expected": "scientific = 2.2 x 10^4; ordinary = 84000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 3.1 x 10^4; ordinary = 63000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 3.1 x 10^4; ordinary = 64000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 3.1 x 10^4; ordinary = 73000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 3.1 x 10^4; ordinary = 74000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 8,
+            "q": 3
+          },
+          "expected": "scientific = 3.1 x 10^4; ordinary = 83000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 8,
+            "q": 4
+          },
+          "expected": "scientific = 3.1 x 10^4; ordinary = 84000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 3.2 x 10^4; ordinary = 63000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 3.2 x 10^4; ordinary = 64000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 3.2 x 10^4; ordinary = 73000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 3.2 x 10^4; ordinary = 74000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 8,
+            "q": 3
+          },
+          "expected": "scientific = 3.2 x 10^4; ordinary = 83000"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 8,
+            "q": 4
+          },
+          "expected": "scientific = 3.2 x 10^4; ordinary = 84000"
         }
       ],
-      "solution_sketch": "Multiplication by $10^4$ moves the decimal four places right: $({a})\\times10000$.",
-      "statement": "Convert $({a})\\times10^4$ to an ordinary number."
-    },
-    "kind": "template",
-    "kp_id": "scientific-notation-conversion/kp1"
+      "statement": "Convert both ways. Write ${m}{d}000$ in normalized scientific notation. Separately, write ${p}.{q}\\times10^4$ as an ordinary whole number. Report scientific and ordinary.",
+      "solution_sketch": "For the first value, place the decimal after its first digit and record a positive exponent of four. For the separate second value, expand by shifting its decimal four places right."
+    }
   },
   {
+    "kind": "template",
+    "kp_id": "scientific-notation-conversion/kp2",
     "arguments": {
-      "answer_expr": "a/10000",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "scientific",
+            "contract": {
+              "kind": "required_normalized_scientific_notation"
+            }
+          },
+          {
+            "name": "ordinary",
+            "contract": {
+              "kind": "required_form",
+              "form": "decimal"
+            }
+          }
+        ]
+      },
+      "answer_expr": "multipart((10*m+d)/100000,(10*p+q)/100000)",
       "constraints": [],
       "distractors": [],
       "hints": [
-        "The sign of the power of ten determines which way to move the decimal point."
+        "For a small positive number, moving the decimal right to form the normalized coefficient gives the magnitude of a negative exponent; reverse the shift to expand it."
       ],
       "params": {
-        "a": {
+        "m": {
           "kind": "choice",
           "values": [
-            "1.1",
-            "1.2",
-            "1.3",
-            "1.4",
-            "1.5",
-            "1.6",
-            "1.7",
-            "1.8",
-            "1.9",
-            "2.0",
-            "2.1",
-            "2.2"
+            1,
+            2,
+            3
+          ]
+        },
+        "d": {
+          "kind": "choice",
+          "values": [
+            1,
+            2
+          ]
+        },
+        "p": {
+          "kind": "choice",
+          "values": [
+            6,
+            7
+          ]
+        },
+        "q": {
+          "kind": "choice",
+          "values": [
+            3,
+            4
           ]
         }
       },
       "samples": [
         {
-          "expected": "11/100000",
           "params": {
-            "a": "1.1"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 1.1 x 10^-4; ordinary = 0.00063"
         },
         {
-          "expected": "3/25000",
           "params": {
-            "a": "1.2"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 1.1 x 10^-4; ordinary = 0.00064"
         },
         {
-          "expected": "13/100000",
           "params": {
-            "a": "1.3"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 1.1 x 10^-4; ordinary = 0.00073"
         },
         {
-          "expected": "7/50000",
           "params": {
-            "a": "1.4"
-          }
+            "m": 1,
+            "d": 1,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 1.1 x 10^-4; ordinary = 0.00074"
         },
         {
-          "expected": "3/20000",
           "params": {
-            "a": "1.5"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 1.2 x 10^-4; ordinary = 0.00063"
         },
         {
-          "expected": "1/6250",
           "params": {
-            "a": "1.6"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 1.2 x 10^-4; ordinary = 0.00064"
         },
         {
-          "expected": "17/100000",
           "params": {
-            "a": "1.7"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 1.2 x 10^-4; ordinary = 0.00073"
         },
         {
-          "expected": "9/50000",
           "params": {
-            "a": "1.8"
-          }
+            "m": 1,
+            "d": 2,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 1.2 x 10^-4; ordinary = 0.00074"
         },
         {
-          "expected": "19/100000",
           "params": {
-            "a": "1.9"
-          }
+            "m": 2,
+            "d": 1,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 2.1 x 10^-4; ordinary = 0.00063"
         },
         {
-          "expected": "1/5000",
           "params": {
-            "a": "2.0"
-          }
+            "m": 2,
+            "d": 1,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 2.1 x 10^-4; ordinary = 0.00064"
         },
         {
-          "expected": "21/100000",
           "params": {
-            "a": "2.1"
-          }
+            "m": 2,
+            "d": 1,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 2.1 x 10^-4; ordinary = 0.00073"
         },
         {
-          "expected": "11/50000",
           "params": {
-            "a": "2.2"
-          }
+            "m": 2,
+            "d": 1,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 2.1 x 10^-4; ordinary = 0.00074"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 2.2 x 10^-4; ordinary = 0.00063"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 2.2 x 10^-4; ordinary = 0.00064"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 2.2 x 10^-4; ordinary = 0.00073"
+        },
+        {
+          "params": {
+            "m": 2,
+            "d": 2,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 2.2 x 10^-4; ordinary = 0.00074"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 3.1 x 10^-4; ordinary = 0.00063"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 3.1 x 10^-4; ordinary = 0.00064"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 3.1 x 10^-4; ordinary = 0.00073"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 1,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 3.1 x 10^-4; ordinary = 0.00074"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 6,
+            "q": 3
+          },
+          "expected": "scientific = 3.2 x 10^-4; ordinary = 0.00063"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 6,
+            "q": 4
+          },
+          "expected": "scientific = 3.2 x 10^-4; ordinary = 0.00064"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 7,
+            "q": 3
+          },
+          "expected": "scientific = 3.2 x 10^-4; ordinary = 0.00073"
+        },
+        {
+          "params": {
+            "m": 3,
+            "d": 2,
+            "p": 7,
+            "q": 4
+          },
+          "expected": "scientific = 3.2 x 10^-4; ordinary = 0.00074"
         }
       ],
-      "solution_sketch": "The negative exponent divides by $10000$: $({a})/10000$. The decimal moves four places left.",
-      "statement": "Write $({a})\\times10^{{-4}}$ as an ordinary number."
-    },
-    "kind": "template",
-    "kp_id": "scientific-notation-conversion/kp2"
+      "statement": "Convert both ways. Write $0.000{m}{d}$ in normalized scientific notation. Separately, write ${p}.{q}\\times10^{{-4}}$ as an ordinary decimal. Report scientific and ordinary.",
+      "solution_sketch": "For the first value, move its decimal four places right and use exponent $-4$. For the separate second value, expand by shifting four places left and preserve the leading zeros."
+    }
   },
   {
     "arguments": {
@@ -2926,80 +3498,83 @@
       },
       "samples": [
         {
-          "expected": "220000",
+          "expected": "2.2 x 10^5",
           "params": {
             "a": "1.1"
           }
         },
         {
-          "expected": "240000",
+          "expected": "2.4 x 10^5",
           "params": {
             "a": "1.2"
           }
         },
         {
-          "expected": "260000",
+          "expected": "2.6 x 10^5",
           "params": {
             "a": "1.3"
           }
         },
         {
-          "expected": "280000",
+          "expected": "2.8 x 10^5",
           "params": {
             "a": "1.4"
           }
         },
         {
-          "expected": "300000",
+          "expected": "3 x 10^5",
           "params": {
             "a": "1.5"
           }
         },
         {
-          "expected": "320000",
+          "expected": "3.2 x 10^5",
           "params": {
             "a": "1.6"
           }
         },
         {
-          "expected": "340000",
+          "expected": "3.4 x 10^5",
           "params": {
             "a": "1.7"
           }
         },
         {
-          "expected": "360000",
+          "expected": "3.6 x 10^5",
           "params": {
             "a": "1.8"
           }
         },
         {
-          "expected": "380000",
+          "expected": "3.8 x 10^5",
           "params": {
             "a": "1.9"
           }
         },
         {
-          "expected": "400000",
+          "expected": "4 x 10^5",
           "params": {
             "a": "2.0"
           }
         },
         {
-          "expected": "420000",
+          "expected": "4.2 x 10^5",
           "params": {
             "a": "2.1"
           }
         },
         {
-          "expected": "440000",
+          "expected": "4.4 x 10^5",
           "params": {
             "a": "2.2"
           }
         }
       ],
       "solution_sketch": "Multiply coefficients to obtain $2({a})$, and add exponents $2+3=5$. Thus the value is $2({a})\\times10^5$; the coefficient is between $2.2$ and $4.4$.",
-      "statement": "Compute $[({a})\\times10^2](2\\times10^3)$."
+      "statement": "Compute $[({a})\\times10^2](2\\times10^3)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+      "answer_contract": {
+        "kind": "required_normalized_scientific_notation"
+      }
     },
     "kind": "template",
     "kp_id": "scientific-notation/kp1"
@@ -3033,80 +3608,83 @@
       },
       "samples": [
         {
-          "expected": "550",
+          "expected": "5.5 x 10^2",
           "params": {
             "a": "1.1"
           }
         },
         {
-          "expected": "600",
+          "expected": "6 x 10^2",
           "params": {
             "a": "1.2"
           }
         },
         {
-          "expected": "650",
+          "expected": "6.5 x 10^2",
           "params": {
             "a": "1.3"
           }
         },
         {
-          "expected": "700",
+          "expected": "7 x 10^2",
           "params": {
             "a": "1.4"
           }
         },
         {
-          "expected": "750",
+          "expected": "7.5 x 10^2",
           "params": {
             "a": "1.5"
           }
         },
         {
-          "expected": "800",
+          "expected": "8 x 10^2",
           "params": {
             "a": "1.6"
           }
         },
         {
-          "expected": "850",
+          "expected": "8.5 x 10^2",
           "params": {
             "a": "1.7"
           }
         },
         {
-          "expected": "900",
+          "expected": "9 x 10^2",
           "params": {
             "a": "1.8"
           }
         },
         {
-          "expected": "950",
+          "expected": "9.5 x 10^2",
           "params": {
             "a": "1.9"
           }
         },
         {
-          "expected": "1000",
+          "expected": "1 x 10^3",
           "params": {
             "a": "2.0"
           }
         },
         {
-          "expected": "1050",
+          "expected": "1.05 x 10^3",
           "params": {
             "a": "2.1"
           }
         },
         {
-          "expected": "1100",
+          "expected": "1.1 x 10^3",
           "params": {
             "a": "2.2"
           }
         }
       ],
       "solution_sketch": "Divide coefficients and subtract exponents: $(({a})/2)\\times10^3$. If that coefficient is below one, multiply it by ten and lower the exponent to two.",
-      "statement": "Compute $[({a})\\times10^5]/(2\\times10^2)$."
+      "statement": "Compute $[({a})\\times10^5]/(2\\times10^2)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+      "answer_contract": {
+        "kind": "required_normalized_scientific_notation"
+      }
     },
     "kind": "template",
     "kp_id": "scientific-notation/kp2"
@@ -3140,80 +3718,83 @@
       },
       "samples": [
         {
-          "expected": "160000000",
+          "expected": "1.6 x 10^8",
           "params": {
             "a": "2.0"
           }
         },
         {
-          "expected": "168000000",
+          "expected": "1.68 x 10^8",
           "params": {
             "a": "2.1"
           }
         },
         {
-          "expected": "176000000",
+          "expected": "1.76 x 10^8",
           "params": {
             "a": "2.2"
           }
         },
         {
-          "expected": "184000000",
+          "expected": "1.84 x 10^8",
           "params": {
             "a": "2.3"
           }
         },
         {
-          "expected": "192000000",
+          "expected": "1.92 x 10^8",
           "params": {
             "a": "2.4"
           }
         },
         {
-          "expected": "200000000",
+          "expected": "2 x 10^8",
           "params": {
             "a": "2.5"
           }
         },
         {
-          "expected": "208000000",
+          "expected": "2.08 x 10^8",
           "params": {
             "a": "2.6"
           }
         },
         {
-          "expected": "216000000",
+          "expected": "2.16 x 10^8",
           "params": {
             "a": "2.7"
           }
         },
         {
-          "expected": "224000000",
+          "expected": "2.24 x 10^8",
           "params": {
             "a": "2.8"
           }
         },
         {
-          "expected": "232000000",
+          "expected": "2.32 x 10^8",
           "params": {
             "a": "2.9"
           }
         },
         {
-          "expected": "240000000",
+          "expected": "2.4 x 10^8",
           "params": {
             "a": "3.0"
           }
         },
         {
-          "expected": "248000000",
+          "expected": "2.48 x 10^8",
           "params": {
             "a": "3.1"
           }
         }
       ],
       "solution_sketch": "The product is $8({a})\\times10^7$. Since $8({a})$ lies between $16$ and $24.8$, rewrite it as $0.8({a})\\times10^8$.",
-      "statement": "Compute $[({a})\\times10^3](8\\times10^4)$, showing renormalization."
+      "statement": "Compute $[({a})\\times10^3](8\\times10^4)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+      "answer_contract": {
+        "kind": "required_normalized_scientific_notation"
+      }
     },
     "kind": "template",
     "kp_id": "scientific-notation/kp3"
@@ -3247,80 +3828,83 @@
       },
       "samples": [
         {
-          "expected": "31000",
+          "expected": "3.1 x 10^4",
           "params": {
             "a": "1.1"
           }
         },
         {
-          "expected": "32000",
+          "expected": "3.2 x 10^4",
           "params": {
             "a": "1.2"
           }
         },
         {
-          "expected": "33000",
+          "expected": "3.3 x 10^4",
           "params": {
             "a": "1.3"
           }
         },
         {
-          "expected": "34000",
+          "expected": "3.4 x 10^4",
           "params": {
             "a": "1.4"
           }
         },
         {
-          "expected": "35000",
+          "expected": "3.5 x 10^4",
           "params": {
             "a": "1.5"
           }
         },
         {
-          "expected": "36000",
+          "expected": "3.6 x 10^4",
           "params": {
             "a": "1.6"
           }
         },
         {
-          "expected": "37000",
+          "expected": "3.7 x 10^4",
           "params": {
             "a": "1.7"
           }
         },
         {
-          "expected": "38000",
+          "expected": "3.8 x 10^4",
           "params": {
             "a": "1.8"
           }
         },
         {
-          "expected": "39000",
+          "expected": "3.9 x 10^4",
           "params": {
             "a": "1.9"
           }
         },
         {
-          "expected": "40000",
+          "expected": "4 x 10^4",
           "params": {
             "a": "2.0"
           }
         },
         {
-          "expected": "41000",
+          "expected": "4.1 x 10^4",
           "params": {
             "a": "2.1"
           }
         },
         {
-          "expected": "42000",
+          "expected": "4.2 x 10^4",
           "params": {
             "a": "2.2"
           }
         }
       ],
       "solution_sketch": "The powers already match. Add only the coefficients: $(({a})+2)\\times10^4$.",
-      "statement": "Compute $[({a})\\times10^4]+(2\\times10^4)$."
+      "statement": "Compute $[({a})\\times10^4]+(2\\times10^4)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+      "answer_contract": {
+        "kind": "required_normalized_scientific_notation"
+      }
     },
     "kind": "template",
     "kp_id": "scientific-notation-addition-subtraction/kp1"
@@ -3354,80 +3938,83 @@
       },
       "samples": [
         {
-          "expected": "170000",
+          "expected": "1.7 x 10^5",
           "params": {
             "a": "2.0"
           }
         },
         {
-          "expected": "180000",
+          "expected": "1.8 x 10^5",
           "params": {
             "a": "2.1"
           }
         },
         {
-          "expected": "190000",
+          "expected": "1.9 x 10^5",
           "params": {
             "a": "2.2"
           }
         },
         {
-          "expected": "200000",
+          "expected": "2 x 10^5",
           "params": {
             "a": "2.3"
           }
         },
         {
-          "expected": "210000",
+          "expected": "2.1 x 10^5",
           "params": {
             "a": "2.4"
           }
         },
         {
-          "expected": "220000",
+          "expected": "2.2 x 10^5",
           "params": {
             "a": "2.5"
           }
         },
         {
-          "expected": "230000",
+          "expected": "2.3 x 10^5",
           "params": {
             "a": "2.6"
           }
         },
         {
-          "expected": "240000",
+          "expected": "2.4 x 10^5",
           "params": {
             "a": "2.7"
           }
         },
         {
-          "expected": "250000",
+          "expected": "2.5 x 10^5",
           "params": {
             "a": "2.8"
           }
         },
         {
-          "expected": "260000",
+          "expected": "2.6 x 10^5",
           "params": {
             "a": "2.9"
           }
         },
         {
-          "expected": "270000",
+          "expected": "2.7 x 10^5",
           "params": {
             "a": "3.0"
           }
         },
         {
-          "expected": "280000",
+          "expected": "2.8 x 10^5",
           "params": {
             "a": "3.1"
           }
         }
       ],
       "solution_sketch": "Match exponents: $3\\times10^4=0.3\\times10^5$. Subtract coefficients to obtain $(({a})-0.3)\\times10^5$.",
-      "statement": "Compute $[({a})\\times10^5]-(3\\times10^4)$."
+      "statement": "Compute $[({a})\\times10^5]-(3\\times10^4)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+      "answer_contract": {
+        "kind": "required_normalized_scientific_notation"
+      }
     },
     "kind": "template",
     "kp_id": "scientific-notation-addition-subtraction/kp2"
@@ -3461,80 +4048,83 @@
       },
       "samples": [
         {
-          "expected": "101000",
+          "expected": "1.01 x 10^5",
           "params": {
             "a": "2.1"
           }
         },
         {
-          "expected": "102000",
+          "expected": "1.02 x 10^5",
           "params": {
             "a": "2.2"
           }
         },
         {
-          "expected": "103000",
+          "expected": "1.03 x 10^5",
           "params": {
             "a": "2.3"
           }
         },
         {
-          "expected": "104000",
+          "expected": "1.04 x 10^5",
           "params": {
             "a": "2.4"
           }
         },
         {
-          "expected": "105000",
+          "expected": "1.05 x 10^5",
           "params": {
             "a": "2.5"
           }
         },
         {
-          "expected": "106000",
+          "expected": "1.06 x 10^5",
           "params": {
             "a": "2.6"
           }
         },
         {
-          "expected": "107000",
+          "expected": "1.07 x 10^5",
           "params": {
             "a": "2.7"
           }
         },
         {
-          "expected": "108000",
+          "expected": "1.08 x 10^5",
           "params": {
             "a": "2.8"
           }
         },
         {
-          "expected": "109000",
+          "expected": "1.09 x 10^5",
           "params": {
             "a": "2.9"
           }
         },
         {
-          "expected": "110000",
+          "expected": "1.1 x 10^5",
           "params": {
             "a": "3.0"
           }
         },
         {
-          "expected": "111000",
+          "expected": "1.11 x 10^5",
           "params": {
             "a": "3.1"
           }
         },
         {
-          "expected": "112000",
+          "expected": "1.12 x 10^5",
           "params": {
             "a": "3.2"
           }
         }
       ],
       "solution_sketch": "Add coefficients: $(({a})+8)\\times10^4$. The sum lies between ten and twenty, so the normalized form is $((({a})+8)/10)\\times10^5$.",
-      "statement": "Compute $[({a})\\times10^4]+(8\\times10^4)$ and renormalize."
+      "statement": "Compute $[({a})\\times10^4]+(8\\times10^4)$. Give only the final answer in normalized scientific notation, with the coefficient first in the form $a\\times10^n$.",
+      "answer_contract": {
+        "kind": "required_normalized_scientific_notation"
+      }
     },
     "kind": "template",
     "kp_id": "scientific-notation-addition-subtraction/kp3"
@@ -4143,22 +4733,15 @@
   },
   {
     "arguments": {
-      "answer_expr": "sqrt(a)/13",
-      "constraints": [
-        {
-          "left": {
-            "mul": [
-              "b",
-              "b"
-            ]
-          },
-          "op": "eq",
-          "right": "a"
-        }
-      ],
+      "answer_contract": {
+        "kind": "required_form",
+        "form": "reduced_fraction"
+      },
+      "answer_expr": "sqrt(a/169)",
+      "constraints": [],
       "distractors": [],
       "hints": [
-        "Evaluate the principal roots first, then perform the operation surrounding them."
+        "Take the principal root of numerator and denominator and simplify the exact fraction."
       ],
       "params": {
         "a": {
@@ -4177,113 +4760,84 @@
             121,
             144
           ]
-        },
-        "b": {
-          "kind": "choice",
-          "values": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12
-          ]
         }
       },
       "samples": [
         {
           "expected": "1/13",
           "params": {
-            "a": 1,
-            "b": 1
+            "a": 1
           }
         },
         {
           "expected": "2/13",
           "params": {
-            "a": 4,
-            "b": 2
+            "a": 4
           }
         },
         {
           "expected": "3/13",
           "params": {
-            "a": 9,
-            "b": 3
+            "a": 9
           }
         },
         {
           "expected": "4/13",
           "params": {
-            "a": 16,
-            "b": 4
+            "a": 16
           }
         },
         {
           "expected": "5/13",
           "params": {
-            "a": 25,
-            "b": 5
+            "a": 25
           }
         },
         {
           "expected": "6/13",
           "params": {
-            "a": 36,
-            "b": 6
+            "a": 36
           }
         },
         {
           "expected": "7/13",
           "params": {
-            "a": 49,
-            "b": 7
+            "a": 49
           }
         },
         {
           "expected": "8/13",
           "params": {
-            "a": 64,
-            "b": 8
+            "a": 64
           }
         },
         {
           "expected": "9/13",
           "params": {
-            "a": 81,
-            "b": 9
+            "a": 81
           }
         },
         {
           "expected": "10/13",
           "params": {
-            "a": 100,
-            "b": 10
+            "a": 100
           }
         },
         {
           "expected": "11/13",
           "params": {
-            "a": 121,
-            "b": 11
+            "a": 121
           }
         },
         {
           "expected": "12/13",
           "params": {
-            "a": 144,
-            "b": 12
+            "a": 144
           }
         }
       ],
-      "solution_sketch": "The denominator has root $13$ because $13^2=169$. The fraction therefore has positive root $\\sqrt{{{a}}}/13$. The exact result of these steps is ${b}/13$.",
-      "statement": "Find the positive $s$ satisfying $s^2={a}/169$."
+      "solution_sketch": "Find the principal square root of the displayed perfect-square numerator and of $169$. Form the nonnegative fraction and square it to verify the original radicand.",
+      "statement": "Find the principal square root of ${a}/169$. Give the exact answer as a reduced fraction."
     },
     "kind": "template",
     "kp_id": "square-roots/kp2"

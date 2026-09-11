@@ -94,7 +94,16 @@ fn instances_json(content: &Content, kp_id: &str, body: &Value) -> (Vec<Value>, 
         Err(err) => return (Vec::new(), Some(err.to_string())),
     };
     let source = match spec_of(content, kp_id) {
-        Some(spec) => source.with_exemplars(spec.exemplars),
+        Some(spec) => {
+            let source = source.with_exemplars(spec.exemplars);
+            match spec.finite {
+                Some(finite) => match source.with_finite_policy(kp_id, finite.policy) {
+                    Ok(source) => source,
+                    Err(reason) => return (Vec::new(), Some(reason)),
+                },
+                None => source,
+            }
+        }
         None => source,
     };
     match source.fill(kp_id, SAMPLE_INSTANCES, GATE_SEED) {
@@ -140,6 +149,10 @@ pub async fn show(
         item,
         review_reason,
         approved_at,
+        approved_policy_digest,
+        approved_template_context_digest,
+        approved_curriculum_digest,
+        approved_review_engine_digest,
     } = found.ok_or_else(unknown_digest)?;
 
     let is_template = item.kind == KIND_TEMPLATE;
@@ -154,10 +167,44 @@ pub async fn show(
         Value::Null
     };
 
+    let policy_digest = content.policy_digest(&item.kp_id)?;
+    let curriculum_digest = content.curriculum_context_digest()?;
+    let review_engine_digest = content.review_engine_digest();
+    let current = content::CurrentContext {
+        policy_digest: policy_digest.as_deref(),
+        curriculum_digest,
+        review_engine_digest,
+    };
+    let (bank_context, eligible_template_digests) = store_call(
+        &state.db,
+        "admin template review context",
+        content::template_review_context(
+            state.db.pool(),
+            &item.kp_id,
+            current,
+            is_template.then_some(item.digest.as_str()),
+        ),
+    )
+    .await?;
+    let template_context_digest =
+        if matches!(item.kind.as_str(), "template" | "teach" | "hint_ladder") {
+            bank_context
+        } else {
+            None
+        };
     let mut fields = item_fields(&item);
     fields.extend(
         json!({
             "approved_at": approved_at.map(|at| at.to_rfc3339()),
+            "policy_digest": policy_digest,
+            "approved_policy_digest": approved_policy_digest,
+            "template_context_digest": template_context_digest,
+            "approved_template_context_digest": approved_template_context_digest,
+            "curriculum_digest": curriculum_digest,
+            "approved_curriculum_digest": approved_curriculum_digest,
+            "review_engine_digest": review_engine_digest,
+            "approved_review_engine_digest": approved_review_engine_digest,
+            "eligible_template_digests": eligible_template_digests,
             "review_reason": review_reason,
             "body": item.body,
             "gate": gate,

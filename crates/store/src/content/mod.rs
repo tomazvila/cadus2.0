@@ -31,14 +31,20 @@
 //! because the authoring job runs it on its own write path.
 
 mod index;
+mod policy;
 mod review;
 
 use serde_json::Value as Json;
 use sqlx::PgExecutor;
 use sqlx::types::chrono::{DateTime, Utc};
+use sqlx::{Postgres, Transaction};
 use uuid::Uuid;
 
-pub use index::approved_index;
+pub use index::{approved_index, approved_index_current};
+pub use policy::{
+    ApprovalContext, CurrentContext, approve_current, approved_document_current,
+    approved_document_for_source, template_context_digest, template_review_context,
+};
 pub use review::{
     BANK_TARGET, LIST_LIMIT, RegateRow, ReviewFilter, ReviewItem, StoredDoc, document, regate_rows,
     review_list,
@@ -87,19 +93,16 @@ where
     E: PgExecutor<'e>,
 {
     let row = sqlx::query!(
-        r#"
-        SELECT digest AS "digest!", body AS "body!"
-        FROM content_store
-        WHERE kp_id = $1 AND kind = $2 AND status = 'approved'
-        ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest
-        LIMIT 1
-        "#,
+        r#"SELECT digest AS "digest!", body AS "body!"
+           FROM content_store
+           WHERE kp_id = $1 AND kind = $2 AND status = 'approved'
+           ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest
+           LIMIT 1"#,
         kp_id,
         kind,
     )
     .fetch_optional(executor)
     .await?;
-
     Ok(row.map(|row| ApprovedDoc {
         digest: row.digest,
         body: row.body,
@@ -159,6 +162,29 @@ impl<'a> Admin<'a> {
     pub const fn db(self) -> &'a Db {
         self.db
     }
+}
+
+/// Lock every approval/removal of one knowledge point's template bank.
+///
+/// The digest-to-key read and the advisory lock are separate statements. A
+/// context query issued after this returns a fresh READ COMMITTED snapshot.
+pub(crate) async fn lock_review_kp(
+    tx: &mut Transaction<'_, Postgres>,
+    digest: &str,
+) -> Result<bool, sqlx::Error> {
+    let kp_id =
+        sqlx::query_scalar::<_, String>("SELECT kp_id FROM content_store WHERE digest = $1")
+            .bind(digest)
+            .fetch_optional(&mut **tx)
+            .await?;
+    let Some(kp_id) = kp_id else {
+        return Ok(false);
+    };
+    sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 1129270867))")
+        .bind(kp_id)
+        .execute(&mut **tx)
+        .await?;
+    Ok(true)
 }
 
 /// One authored document to insert as `pending` (C6, T3).
@@ -333,9 +359,14 @@ pub async fn approve(
     approved_by: Option<Uuid>,
 ) -> Result<Decision, StoreError> {
     let db = admin.db();
-    let query = sqlx::query_as!(
-        Decision,
-        r#"
+    let decision = crate::bounded(db, async {
+        let mut tx = db.pool().begin().await?;
+        if !lock_review_kp(&mut tx, digest).await? {
+            return Ok(None);
+        }
+        let updated = sqlx::query_as!(
+            Decision,
+            r#"
         UPDATE content_store
         SET status = $2,
             approved_by = COALESCE(approved_by, $3),
@@ -343,14 +374,17 @@ pub async fn approve(
         WHERE digest = $1
         RETURNING digest AS "digest!", status AS "status!", approved_by, approved_at
         "#,
-        digest,
-        STATUS_APPROVED,
-        approved_by,
-    )
-    .fetch_optional(db.pool());
-    crate::bounded(db, query)
-        .await?
-        .ok_or_else(|| missing(digest))
+            digest,
+            STATUS_APPROVED,
+            approved_by,
+        )
+        .fetch_optional(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(updated)
+    })
+    .await?;
+    decision.ok_or_else(|| missing(digest))
 }
 
 /// Reject one document by its digest, with the reason the reviewer gave (C6).
@@ -379,22 +413,32 @@ pub async fn approve(
 /// [`insert_pending`] does.
 pub async fn reject(admin: Admin<'_>, digest: &str, reason: &str) -> Result<Decision, StoreError> {
     let db = admin.db();
-    let query = sqlx::query_as!(
-        Decision,
-        r#"
+    let decision = crate::bounded(db, async {
+        let mut tx = db.pool().begin().await?;
+        if !lock_review_kp(&mut tx, digest).await? {
+            return Ok(None);
+        }
+        let updated = sqlx::query_as!(
+            Decision,
+            r#"
         UPDATE content_store
-        SET status = $2, review_reason = $3, approved_by = NULL, approved_at = NULL
+        SET status = $2, review_reason = $3, approved_by = NULL, approved_at = NULL,
+            approved_policy_digest = NULL, approved_template_context_digest = NULL,
+            approved_curriculum_digest = NULL, approved_review_engine_digest = NULL
         WHERE digest = $1
         RETURNING digest AS "digest!", status AS "status!", approved_by, approved_at
         "#,
-        digest,
-        STATUS_REJECTED,
-        reason,
-    )
-    .fetch_optional(db.pool());
-    crate::bounded(db, query)
-        .await?
-        .ok_or_else(|| missing(digest))
+            digest,
+            STATUS_REJECTED,
+            reason,
+        )
+        .fetch_optional(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(updated)
+    })
+    .await?;
+    decision.ok_or_else(|| missing(digest))
 }
 
 /// The review verdict the table holds for one digest (C6).

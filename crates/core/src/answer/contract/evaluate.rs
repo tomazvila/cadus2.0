@@ -77,7 +77,8 @@ fn structured_contract(
             }
         }
         contract @ (AnswerContract::RequiredSinglePower
-        | AnswerContract::RequiredNormalizedScientificNotation) => {
+        | AnswerContract::RequiredNormalizedScientificNotation
+        | AnswerContract::RequiredSimplestRadical) => {
             required_expression_form(contract, text, learner)
         }
         AnswerContract::ReducedRatio => parsed_or_recognized(
@@ -110,6 +111,7 @@ fn required_expression_form(contract: &AnswerContract, expected: &str, learner: 
         AnswerContract::RequiredNormalizedScientificNotation => {
             super::scientific::equivalent(expected, learner)
         }
+        AnswerContract::RequiredSimplestRadical => super::radical::equivalent(expected, learner),
         _ => unreachable!("caller supplies a required expression contract"),
     };
     match result {

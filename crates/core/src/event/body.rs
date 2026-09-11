@@ -7,6 +7,7 @@ use super::{
     AnswerKind, AttemptOutcome, Exposure, ItemSource, PositiveSecs, SchemaVersion, Secs, Slug,
     TaskType, Timestamp, WorkQuality,
 };
+use crate::curriculum::FiniteCaseRole;
 
 /// Whether a flag is off. It keeps a default flag off the wire (C2).
 const fn is_off(flag: &bool) -> bool {
@@ -84,6 +85,41 @@ pub struct RegradedAttempt {
     /// The replacement grader note.
     #[serde(default)]
     pub grader_note: Option<String>,
+}
+
+/// One ordinary problem reached the learner's screen.
+///
+/// Unlike `task_served`, this item-level event records an abandoned hand-off.
+/// Finite case identity stays stable when a reviewed rendering changes.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OrdinaryProblemServed {
+    /// When the problem reached the learner.
+    pub ts: Timestamp,
+    /// The open session.
+    #[serde(default)]
+    pub session: Option<String>,
+    /// The schema version.
+    #[serde(default = "SchemaVersion::current")]
+    pub v: SchemaVersion,
+    /// The task receiving the problem.
+    pub task_id: String,
+    /// The server-owned live problem id.
+    pub problem_id: String,
+    /// The full serving key `<topic>/<kp>`.
+    pub kp_id: String,
+    /// Digest of the rendered statement.
+    pub item_digest: String,
+    /// Authored source of the item.
+    pub item_source: ItemSource,
+    /// Stable reviewed finite case id, when the KP owns a finite universe.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub finite_case_id: Option<String>,
+    /// Curriculum-owned role of that finite case.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub finite_case_role: Option<FiniteCaseRole>,
+    /// Exposure classification frozen at hand-off.
+    pub exposure: Exposure,
 }
 
 /// A task was served. The fold treats it as a no-op.

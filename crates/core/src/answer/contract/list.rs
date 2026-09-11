@@ -8,6 +8,7 @@ pub(super) fn validate(ordered: bool, member: &AnswerContract) -> Result<(), Und
         member,
         AnswerContract::None
             | AnswerContract::RequiredAssignment
+            | AnswerContract::RequiredSimplestRadical
             | AnswerContract::Multipart { .. }
             | AnswerContract::List { .. }
     ) {

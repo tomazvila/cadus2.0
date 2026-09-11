@@ -141,12 +141,28 @@ describe('the review routes', () => {
   it('read one document and post the two decisions with an escaped digest', async () => {
     const calls = record();
     await api.getContent('d/1');
-    await api.approveContent('d/1');
+    await api.approveContent('d/1', null, null, 'curriculum-v1', 'engine-v1');
     await api.rejectContent('d/1', 'why');
     expect(calls()).toEqual([
       ['GET', '/api/admin/content/d%2F1', null],
-      ['POST', '/api/admin/content/d%2F1/approve', '{}'],
+      ['POST', '/api/admin/content/d%2F1/approve', '{"policy_digest":null,"template_context_digest":null,"curriculum_digest":"curriculum-v1","review_engine_digest":"engine-v1"}'],
       ['POST', '/api/admin/content/d%2F1/reject', '{"reason":"why"}'],
     ]);
   });
+  it('binds instruction approval to its reviewed template bank', async () => {
+    const calls = record();
+    await api.approveContent('hint', null, 'reviewed-bank', 'curriculum-v1', 'engine-v1');
+    expect(calls()).toEqual([
+      ['POST', '/api/admin/content/hint/approve', '{"policy_digest":null,"template_context_digest":"reviewed-bank","curriculum_digest":"curriculum-v1","review_engine_digest":"engine-v1"}'],
+    ]);
+  });
+
+  it('sends the reviewed finite policy with the approval write', async () => {
+    const calls = record();
+    await api.approveContent('finite', 'reviewed-policy', null, 'curriculum-v1', 'engine-v1');
+    expect(calls()).toEqual([
+      ['POST', '/api/admin/content/finite/approve', '{"policy_digest":"reviewed-policy","template_context_digest":null,"curriculum_digest":"curriculum-v1","review_engine_digest":"engine-v1"}'],
+    ]);
+  });
+
 });

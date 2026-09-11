@@ -1,0 +1,67 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE content_store\n        SET status = $2,\n            approved_by = CASE\n                WHEN status = $2 AND approved_policy_digest IS NOT DISTINCT FROM $4\n                THEN approved_by ELSE $3 END,\n            approved_at = CASE\n                WHEN status = $2 AND approved_policy_digest IS NOT DISTINCT FROM $4\n                THEN approved_at ELSE now() END,\n            approved_policy_digest = $4\n        WHERE digest = $1\n        RETURNING digest AS \"digest!\", status AS \"status!\", approved_by, approved_at\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "digest!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "digest"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "status!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "status"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "approved_by",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "approved_by"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "approved_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "approved_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "b43d47a12375387c18811c90bccffc203a07e56f70065b5d2da6717535a11045"
+}

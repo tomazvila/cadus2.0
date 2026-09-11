@@ -118,6 +118,7 @@ fn probe_problem(
         hints_given: Vec::new(),
         index: index as i64,
         rework: None,
+        handoff: None,
     };
     (
         served,

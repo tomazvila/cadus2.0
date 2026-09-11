@@ -202,9 +202,12 @@ pub(super) fn build_attempt(
         answer_kind: Some(event_kind(graded.kind)),
         correct: graded.grade.correct,
         outcome: graded.grade.outcome.clone(),
-        item_digest: Some(problem_text_hash(&served.text)),
-        item_source: None,
-        exposure: None,
+        item_digest: Some(served.handoff.as_ref().map_or_else(
+            || problem_text_hash(&served.text),
+            |handoff| handoff.item_digest.clone(),
+        )),
+        item_source: served.handoff.as_ref().map(|handoff| handoff.item_source),
+        exposure: served.handoff.as_ref().map(|handoff| handoff.exposure),
         timing_reliable: Some(graded.timing.ratio.is_some()),
         timing: Some(graded.timing),
         skills: served
@@ -317,6 +320,57 @@ mod tests {
         build_attempt(&lesson(), live, &miss(), graded, Some("s"), now, 1)
             .err()
             .map(|err| err.code)
+    }
+
+    #[test]
+    fn the_attempt_copies_the_server_owned_handoff_classification() {
+        let mut live = served(Some("numeric"));
+        live.handoff = Some(crate::state::ProblemHandoff {
+            item_digest: "semantic-render-digest".to_owned(),
+            item_source: cadus_core::event::ItemSource::Template,
+            source_content_digest: Some("reviewed-template".to_owned()),
+            source_curriculum_digest: Some("curriculum-v1".to_owned()),
+            source_review_engine_digest: Some("engine-v1".to_owned()),
+            finite_case_id: Some("case-a".to_owned()),
+            finite_case_role: Some(cadus_core::curriculum::FiniteCaseRole::PracticeFresh),
+            exposure: cadus_core::event::Exposure::Repeat,
+        });
+        let grade = Grade {
+            correct: false,
+            outcome: AttemptOutcome::Incorrect,
+            work_quality: WorkQuality::NearlyPassable,
+            error_tags: Vec::new(),
+        };
+        let graded = Graded {
+            timing: cadus_core::timing::read(&cadus_core::timing::TimingFacts::new(0, 0, false)),
+            grade: &grade,
+            error_tags: &[],
+            secs: 20,
+            kind: AnswerKind::Numeric,
+            assisted: false,
+        };
+        let (attempt, stash) = build_attempt(
+            &lesson(),
+            &live,
+            &miss(),
+            &graded,
+            Some("s"),
+            Timestamp::from_micros(0),
+            1,
+        )
+        .unwrap();
+        assert_eq!(
+            attempt.item_digest.as_deref(),
+            Some("semantic-render-digest")
+        );
+        assert_eq!(
+            attempt.item_source,
+            Some(cadus_core::event::ItemSource::Template)
+        );
+        assert_eq!(attempt.exposure, Some(cadus_core::event::Exposure::Repeat));
+        assert_eq!(stash["item_digest"], "semantic-render-digest");
+        assert_eq!(stash["item_source"], "template");
+        assert_eq!(stash["exposure"], "repeat");
     }
 
     /// A negative solve time is not an event field, a problem with no topic

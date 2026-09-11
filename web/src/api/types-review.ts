@@ -104,6 +104,24 @@ interface RenderedInstance {
  * empty instance list, because there is no statement to render and no answer to compute.
  */
 export interface ReviewDocument extends ReviewItem {
+  /** Current trusted exercise policy; null for ordinary objectives. */
+  policy_digest?: string | null;
+  /** Policy captured by the existing approval, when present. */
+  approved_policy_digest?: string | null;
+  /** Current eligible template-bank fingerprint for instruction review. */
+  template_context_digest?: string | null;
+  /** Template bank covered by the existing instruction approval. */
+  approved_template_context_digest?: string | null;
+  /** Effective canonical curriculum reviewed with this document. */
+  curriculum_digest: string;
+  /** Curriculum captured by the existing approval, when present. */
+  approved_curriculum_digest: string | null;
+  /** Compiled renderer/checker identity reviewed with this document. */
+  review_engine_digest: string;
+  /** Engine captured by the existing approval, when present. */
+  approved_review_engine_digest: string | null;
+  /** Authoritative template membership, in digest order. */
+  eligible_template_digests?: string[];
   /** RFC 3339, or null while the document is not approved. */
   approved_at: string | null;
   /** The reason a reviewer refused it, or null. */
@@ -123,6 +141,10 @@ export interface ApproveResponse {
   digest: string;
   status: string;
   approved_at: string | null;
+  approved_policy_digest: string | null;
+  approved_template_context_digest: string | null;
+  approved_curriculum_digest: string;
+  approved_review_engine_digest: string;
 }
 
 /** `POST /api/admin/content/{digest}/reject`. */

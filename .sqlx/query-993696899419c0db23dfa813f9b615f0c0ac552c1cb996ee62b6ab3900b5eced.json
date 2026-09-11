@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT digest AS \"digest!\", body AS \"body!\"\n        FROM content_store\n        WHERE kp_id = $1 AND kind = $2 AND status = 'approved'\n        ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest\n        LIMIT 1\n        ",
+  "query": "\n        SELECT digest AS \"digest!\", body AS \"body!\"\n        FROM content_store\n        WHERE kp_id = $1 AND kind = $2 AND status = 'approved'\n          AND approved_policy_digest IS NOT DISTINCT FROM $3\n        ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest\n        LIMIT 1\n        ",
   "describe": {
     "columns": [
       {
@@ -29,6 +29,7 @@
     "parameters": {
       "Left": [
         "Text",
+        "Text",
         "Text"
       ]
     },
@@ -37,5 +38,5 @@
       false
     ]
   },
-  "hash": "26bb50b6a5432b6b7131256231f235c251ae07b935d8158d8afbd8eb36aed369"
+  "hash": "993696899419c0db23dfa813f9b615f0c0ac552c1cb996ee62b6ab3900b5eced"
 }

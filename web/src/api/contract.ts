@@ -133,7 +133,13 @@ export interface ApiClient {
   // and that refusal is what the two admin screens render (REVIEW-admin).
   listContent(filter?: ContentFilter): Promise<ReviewListResponse>;
   getContent(digest: string): Promise<ReviewDocument>;
-  approveContent(digest: string): Promise<ApproveResponse>;
+  approveContent(
+    digest: string,
+    policyDigest: string | null,
+    templateContextDigest: string | null,
+    curriculumDigest: string,
+    reviewEngineDigest: string,
+  ): Promise<ApproveResponse>;
   /** The reason is required by the service and by the screen (REVIEW-reason). */
   rejectContent(digest: string, reason: string): Promise<RejectResponse>;
 

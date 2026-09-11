@@ -23,8 +23,7 @@ use cadus_web::state::{Content, TaskProgress, WebState};
 use cadus_web::{AppState, create_app};
 use common::{
     KEY, LESSON, SESSION, drill_app, exemplar, gated_app, kp, one_unit_curriculum, parse,
-    plan_body, put_state, seed_content, seed_learner, seed_open_session, serve_ok, serve_raw,
-    topic,
+    plan_body, put_state, seed_learner, seed_open_session, serve_ok, serve_raw, topic,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -59,9 +58,10 @@ fn ready_app(db: &TestDb) -> Router {
 }
 
 /// Approve a teach page for `key`.
-async fn seed_teach_page(db: &TestDb, key: &str, digest: &str) {
-    seed_content(
+async fn seed_teach_page(db: &TestDb, curriculum: &Curriculum, key: &str, digest: &str) {
+    common::seed_content_for(
         db,
+        curriculum,
         key,
         "teach",
         digest,
@@ -135,7 +135,7 @@ async fn a_teach_page_alone_leaves_the_practice_and_assessment_blockers() {
         let user = seed_learner(&db, "readiness-teach@example.com").await;
         let app = gated_app(&db);
         seed_open_session(&db, user).await;
-        seed_teach_page(&db, KEY, "digest-teach").await;
+        seed_teach_page(&db, &common::drill_curriculum(), KEY, "digest-teach").await;
 
         let plan = plan_body(&app, user).await;
         let first = plan["blocked"]
@@ -164,7 +164,7 @@ async fn a_ready_lesson_serves_and_the_untaught_next_point_is_409_no_instruction
         let user = seed_learner(&db, "readiness-ready@example.com").await;
         let app = ready_app(&db);
         seed_open_session(&db, user).await;
-        seed_teach_page(&db, KEY, "digest-teach-1").await;
+        seed_teach_page(&db, &ready_curriculum(), KEY, "digest-teach-1").await;
 
         let plan = plan_body(&app, user).await;
         assert_eq!(plan["blocked"].as_array().unwrap().len(), 0, "{plan}");
@@ -179,7 +179,7 @@ async fn a_ready_lesson_serves_and_the_untaught_next_point_is_409_no_instruction
         assert_eq!(parse(&body)["error"]["code"], "no_instruction", "{body}");
 
         // Approve the second page and the same request serves.
-        seed_teach_page(&db, KEY_TWO, "digest-teach-2").await;
+        seed_teach_page(&db, &ready_curriculum(), KEY_TWO, "digest-teach-2").await;
         stand_lesson_at(&db, user, "kp2").await;
         let served = serve_ok(&app, user, LESSON).await;
         assert_eq!(served["kp"], "kp2", "{served}");

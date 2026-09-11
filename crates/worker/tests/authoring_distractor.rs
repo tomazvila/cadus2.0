@@ -119,6 +119,7 @@ fn spec() -> AuthoringSpec {
             answer: "13.5".to_owned(),
             solution_sketch: None,
         }],
+        finite: None,
     }
 }
 

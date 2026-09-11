@@ -4,7 +4,9 @@
 //! carries a literal message whatever the kind is. `crate::authoring::repair`
 //! runs before every gate, on every kind.
 
-use cadus_core::instruction::{InstructionSpec, ServedInstance, gate_hint_ladder, gate_teach};
+use cadus_core::instruction::{
+    InstructionSpec, ServedInstance, gate_hint_ladder, gate_teach_with_policy,
+};
 use cadus_core::pool::kp_key;
 use cadus_core::template::{
     GateSpec, Rejection, TEMPLATE_VERSION, gate_body, gate_diagnosis_body, keep_known_tags,
@@ -134,6 +136,33 @@ fn template_contract(spec: &AuthoringSpec, arguments: &Value) -> Result<Option<V
     serde_json::to_value(reviewed).map(Some).map_err(unwritable)
 }
 
+fn finite_policy(
+    spec: &AuthoringSpec,
+) -> Result<Option<&cadus_core::curriculum::FiniteObjectiveDomain>, Rejection> {
+    let Some(finite) = &spec.finite else {
+        return Ok(None);
+    };
+    finite
+        .validate(&spec.kp_key())
+        .map_err(|message| Rejection {
+            code: "finite-policy",
+            message,
+        })?;
+    Ok(Some(&finite.domain))
+}
+
+fn template_gate_spec(spec: &AuthoringSpec) -> Result<GateSpec<'_>, Rejection> {
+    let base = GateSpec::new(spec.answer_kind, &spec.exemplars);
+    let Some(finite) = finite_policy(spec)? else {
+        return Ok(base);
+    };
+    base.with_finite(&spec.kp_key(), finite)
+        .map_err(|message| Rejection {
+            code: "finite-policy",
+            message,
+        })
+}
+
 /// Assemble, gate, and fill in the satisfying count.
 ///
 /// The returned text is what the row stores and what the digest covers.
@@ -148,11 +177,7 @@ pub fn verify(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejecti
     // dropped, on this document and on the diagnosis document alike, and the
     // drop runs before the gate reads the body.
     let body = assemble_kept(Kind::Template, spec, arguments)?;
-    let gate_spec = GateSpec {
-        answer_kind: spec.answer_kind,
-        exemplars: &spec.exemplars,
-        finite: None,
-    };
+    let gate_spec = template_gate_spec(spec)?;
     let (doc, verified) = gate_body(&body, &gate_spec)?;
     let filled = with_space_size(&doc, &verified);
     to_body(&filled).map_err(unwritable)
@@ -189,11 +214,13 @@ fn verify_instruction<T>(
     arguments: &Value,
     instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
+    let policy = finite_policy(spec)?;
     let body = instruction_body(arguments)?;
     let gate_spec = InstructionSpec {
         exemplars: &spec.exemplars,
         instance_answers: instance_answers.to_vec(),
     };
+    let _ = policy;
     write(&gate(&body, &gate_spec)?).map_err(unwritable)
 }
 
@@ -208,13 +235,13 @@ pub fn verify_teach(
     arguments: &Value,
     instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
-    verify_instruction(
-        gate_teach,
-        serde_json::to_string,
-        spec,
-        arguments,
-        instance_answers,
-    )
+    let policy = finite_policy(spec)?;
+    let body = instruction_body(arguments)?;
+    let gate_spec = InstructionSpec {
+        exemplars: &spec.exemplars,
+        instance_answers: instance_answers.to_vec(),
+    };
+    serde_json::to_string(&gate_teach_with_policy(&body, &gate_spec, policy)?).map_err(unwritable)
 }
 
 /// Gate one hint ladder, and write the body the row stores (L5, unit R6).
@@ -348,6 +375,7 @@ mod tests {
             difficulty_target: None,
             constraints: None,
             exemplars: Vec::new(),
+            finite: None,
         }
     }
 

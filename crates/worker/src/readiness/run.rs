@@ -8,7 +8,7 @@ use cadus_core::curriculum::{AnswerKind, Curriculum, KnowledgePoint, Topic};
 use cadus_core::pool::{ExemplarSource, ProblemSource, kp_key};
 use cadus_core::readiness::{ReadinessIndex, ReadinessReport, ReadinessSet};
 use cadus_store::Db;
-use cadus_store::content::approved_index;
+use cadus_store::content::approved_index_current;
 
 use crate::WorkerError;
 
@@ -71,7 +71,15 @@ pub async fn run(
     curriculum: &Curriculum,
     course: Option<&str>,
 ) -> Result<ReadinessRun, WorkerError> {
-    let content = approved_index(db.pool()).await?;
+    let curriculum_digest =
+        cadus_core::curriculum::review_context_digest(curriculum).map_err(WorkerError::Config)?;
+    let content = approved_index_current(
+        db.pool(),
+        curriculum,
+        &curriculum_digest,
+        cadus_core::review_engine::DIGEST,
+    )
+    .await?;
     let index = ReadinessIndex::build(curriculum);
     let set: ReadinessSet = index.resolve(&content);
     let report = ReadinessReport::build(&index, &set, course);

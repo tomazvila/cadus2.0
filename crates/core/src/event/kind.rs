@@ -203,6 +203,8 @@ pub enum ItemSource {
     Integrated,
     /// A delayed retention probe.
     Probe,
+    /// A future generated ordinary item.
+    Generator,
 }
 
 /// Whether the learner saw this item digest before (D-F9).

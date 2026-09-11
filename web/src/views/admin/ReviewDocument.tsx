@@ -34,7 +34,7 @@ import { useAdminLoad } from './adminLoad';
 import { MathBlock } from '@/components/MathBlock';
 import { LoadingBlock } from '@/components/primitives';
 import { num } from '@/lib/format';
-import type { ApiClient } from '@/api/types';
+import type { ApiClient, ReviewDocument } from '@/api/types';
 
 /** The heading above the rendered instances. */
 const INSTANCES_TITLE = 'Rendered instances';
@@ -52,7 +52,7 @@ export interface ReviewDocumentPaneProps {
    * The digest of the body on screen, or null while none is. It MUST be stable — a state
    * setter, or a `useCallback` — because it is an effect dependency.
    */
-  onLoaded: (digest: string | null) => void;
+  onLoaded: (document: ReviewDocument | null) => void;
 }
 
 export function ReviewDocumentPane({
@@ -70,7 +70,7 @@ export function ReviewDocumentPane({
   // The digest the SERVICE gave the body below, and null on every path that renders no body.
   // The pane reads again only from its own failure block, so no payload ever waits behind a
   // fault here, and the payload alone decides.
-  const rendered = doc.data?.digest ?? null;
+  const rendered = doc.data ?? null;
   useEffect(() => {
     onLoaded(rendered);
   }, [onLoaded, rendered]);

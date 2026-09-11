@@ -47,7 +47,7 @@ import { useCall } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
 import { toast } from '@/app/toast';
 import { num } from '@/lib/format';
-import type { ApiClient, ReviewItem } from '@/api/types';
+import type { ApiClient, ReviewItem, ReviewDocument } from '@/api/types';
 
 /** The heading, and the string the click-through of S13 looks for. */
 const REVIEW_TITLE = 'Review queue';
@@ -201,7 +201,7 @@ export function ReviewScreen({ api, demo, onUnauthorized }: ReviewScreenProps) {
 
   // The digest of the body the pane has on screen, reported by the pane itself. It is null
   // before the first reply, and null again on a failed read. See the module note.
-  const [readDigest, setReadDigest] = useState<string | null>(null);
+  const [readDocument, setReadDocument] = useState<ReviewDocument | null>(null);
 
   const groups = useMemo(() => (queue.data ? groupByKp(queue.data.items) : []), [queue.data]);
   const order = useMemo(() => walkOrder(groups), [groups]);
@@ -220,7 +220,7 @@ export function ReviewScreen({ api, demo, onUnauthorized }: ReviewScreenProps) {
   // The document a decision may name: the selected row, and only while the pane has the body
   // of THAT digest on screen. Null disables both writes and both keys.
   const decidable =
-    selectedItem !== null && readDigest === selectedItem.digest ? selectedItem : null;
+    selectedItem !== null && readDocument?.digest === selectedItem.digest ? selectedItem : null;
 
   // True from the moment a dialog is asked for until it settles. The keyboard reads it, so
   // it is a ref and not state: a render is not needed, and the keydown that follows the
@@ -254,7 +254,17 @@ export function ReviewScreen({ api, demo, onUnauthorized }: ReviewScreenProps) {
       <ApproveConfirm item={item} onDone={resolve} />
     )));
     if (!ok) return;
-    await settle(item, { request: () => api.approveContent(item.digest), verb: 'Approved', kind: 'success' });
+    const policy = readDocument?.policy_digest ?? null;
+    const context = readDocument?.template_context_digest ?? null;
+    const curriculum = readDocument?.curriculum_digest;
+    const engine = readDocument?.review_engine_digest;
+    await settle(item, {
+      request: () => {
+        if (!curriculum || !engine) throw new Error('The review context is unavailable.');
+        return api.approveContent(item.digest, policy, context, curriculum, engine);
+      },
+      verb: 'Approved', kind: 'success',
+    });
   }
 
   async function reject(item: ReviewItem): Promise<void> {
@@ -408,7 +418,7 @@ export function ReviewScreen({ api, demo, onUnauthorized }: ReviewScreenProps) {
               digest={selectedItem!.digest}
               demo={demo}
               onUnauthorized={onUnauthorized}
-              onLoaded={setReadDigest}
+              onLoaded={setReadDocument}
             />
           </div>
         </div>

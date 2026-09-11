@@ -1,0 +1,3628 @@
+{
+  "schema_version": 1,
+  "status": "root-authored17revisions; independent semantic review and technical gate pending",
+  "scope": "Remaining17Unit06hint revisions, without changing canonical scope or selected templates",
+  "source_curriculum_dump_sha256": "b1fbf0bb3c4cd09efed5f70355c15b2b1403df928b796204dc051539b1e58242",
+  "rows": [
+    {
+      "key": "simplifying-radicals-variables/kp3",
+      "before": {
+        "key": "simplifying-radicals-variables/kp3",
+        "objective": "Coefficients and variables together",
+        "constraints": "simplify the number and each variable separately",
+        "hints": [
+          "Factor each variable power into its largest even-power part and any leftover factor.",
+          "Take the square root of each even-power part, using the nonnegative-variable assumption.",
+          "Keep one variable factor inside only when its exponent is odd."
+        ]
+      },
+      "proposed": {
+        "key": "simplifying-radicals-variables/kp3",
+        "objective": "Coefficients and variables together",
+        "constraints": "simplify the number and each variable separately",
+        "hints": [
+          "Find the largest perfect-square factor of the number, and split each variable power into an even power and any leftover factor.",
+          "Take the square roots of the square factors, using the stated nonnegative-variable assumption when extracting variables.",
+          "Multiply the outside numerical and variable factors. Keep the remaining factors together under one square root."
+        ]
+      },
+      "before_sha256": "64596e8520215112167b3d262ea93bb54b8645183bd7d39a3d1550e75573c7a6",
+      "proposed_sha256": "b7bd3fd438e9ab627238967cfccbb20cbb59467d10913078ed66f87a01f86a6c",
+      "prior_revision_reason": "Omitted the distinguishing numeric-factor simplification. First split the numerical radicand into its largest square factor and squarefree remainder, and each variable into even power plus leftover; extract both numerical and variable factors and multiply remaining factors under one root. Canonical sqrt(50*x^2), sqrt(72*x^3), sqrt(27*x^2), sqrt(45*x^5) all require this numeric step.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "simplify the number and each variable separately",
+        "exemplars": [
+          {
+            "answer": "5x*sqrt(2)",
+            "problem": "Simplify $\\sqrt{50x^2}$ ($x \\ge 0$).",
+            "solution_sketch": "$\\sqrt{25 \\cdot 2 \\cdot x^2} = 5x\\sqrt{2}$."
+          },
+          {
+            "answer": "6x*sqrt(2x)",
+            "problem": "Simplify $\\sqrt{72x^3}$ ($x \\ge 0$).",
+            "solution_sketch": "$72x^3 = 36 \\cdot 2 \\cdot x^2 \\cdot x$; $6x$ comes out."
+          },
+          {
+            "answer": "3x*sqrt(3)",
+            "problem": "What is $\\sqrt{27x^2}$ ($x \\ge 0$) in simplest form?",
+            "solution_sketch": "$\\sqrt{9 \\cdot 3 \\cdot x^2} = 3x\\sqrt{3}$."
+          },
+          {
+            "answer": "3x^2*sqrt(5x)",
+            "problem": "Simplify $\\sqrt{45x^5}$ ($x \\ge 0$).",
+            "solution_sketch": "$45x^5 = 9 \\cdot 5 \\cdot x^4 \\cdot x$; $3x^2$ comes out."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "simplifying-radicals"
+        ],
+        "name": "Coefficients and variables together"
+      },
+      "curriculum_kp_sha256": "e0ae4b2d44c52c8804dbf0b2569d3cee81648e5ff74588fb40364f74a21e2398",
+      "topic_prerequisites": [
+        {
+          "id": "simplifying-radicals",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "exponent-product-quotient-rules",
+          "key": true,
+          "weight": 0.4
+        },
+        {
+          "id": "power-rule-exponents",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "sqrt(a)*x**3*y**2",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Pair repeated variable factors under the root and use the stated sign assumptions when extracting them."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                4,
+                9,
+                16,
+                25,
+                36,
+                49,
+                64,
+                81,
+                100,
+                121,
+                144,
+                169
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "2*x^3*y^2",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "3*x^3*y^2",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "4*x^3*y^2",
+              "params": {
+                "a": 16
+              }
+            },
+            {
+              "expected": "5*x^3*y^2",
+              "params": {
+                "a": 25
+              }
+            },
+            {
+              "expected": "6*x^3*y^2",
+              "params": {
+                "a": 36
+              }
+            },
+            {
+              "expected": "7*x^3*y^2",
+              "params": {
+                "a": 49
+              }
+            },
+            {
+              "expected": "8*x^3*y^2",
+              "params": {
+                "a": 64
+              }
+            },
+            {
+              "expected": "9*x^3*y^2",
+              "params": {
+                "a": 81
+              }
+            },
+            {
+              "expected": "10*x^3*y^2",
+              "params": {
+                "a": 100
+              }
+            },
+            {
+              "expected": "11*x^3*y^2",
+              "params": {
+                "a": 121
+              }
+            },
+            {
+              "expected": "12*x^3*y^2",
+              "params": {
+                "a": 144
+              }
+            },
+            {
+              "expected": "13*x^3*y^2",
+              "params": {
+                "a": 169
+              }
+            }
+          ],
+          "solution_sketch": "The coefficient ${a}$ is a square. The even powers contribute $x^3$ and $y^2$, so the result is $\\sqrt{{{a}}}x^3y^2$.",
+          "statement": "Simplify $\\sqrt{{{a}x^6y^4}}$ for nonnegative $x,y$."
+        },
+        "kind": "template",
+        "kp_id": "simplifying-radicals-variables/kp3"
+      },
+      "selected_template_sha256": "c8da164b5a829cb038b9ede66fd803a5996d3c8b23c0dad11ebac2da81b16861",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "radical-operations/kp1",
+      "before": {
+        "key": "radical-operations/kp1",
+        "objective": "Multiply radicals",
+        "constraints": "sqrt(a)*sqrt(b) = sqrt(ab); multiply coefficients separately",
+        "hints": [
+          "Multiply coefficients separately from the radical factors.",
+          "For a product, multiply radicands; for a sum, distribute before simplifying.",
+          "In a conjugate pair, use the opposite middle terms to cancel."
+        ]
+      },
+      "proposed": {
+        "key": "radical-operations/kp1",
+        "objective": "Multiply radicals",
+        "constraints": "sqrt(a)*sqrt(b) = sqrt(ab); multiply coefficients separately",
+        "hints": [
+          "Multiply any coefficients outside the radicals separately from the numbers inside them.",
+          "Combine the nonnegative radicands into one product under a square root.",
+          "Extract its largest perfect-square factor and multiply that root into the outside coefficient."
+        ]
+      },
+      "before_sha256": "8e040559c0628858cf4af103fce502ca0b3691be8b20c7c4e24664585b6ba91e",
+      "proposed_sha256": "8b0cfce18d53cae716b6381c43fb080ffecd8273c2da3c99edd2c5b7de560041",
+      "prior_revision_reason": "Final rung jumps to future conjugates, which are irrelevant to the current multiplication skill. Multiply outside coefficients, multiply nonnegative radicands, then extract the largest square factor and combine coefficients. Do not teach distribution/conjugates as required for a two-root product.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "sqrt(a)*sqrt(b) = sqrt(ab); multiply coefficients separately",
+        "exemplars": [
+          {
+            "answer": "6",
+            "problem": "Simplify $\\sqrt{3} \\cdot \\sqrt{12}$.",
+            "solution_sketch": "$\\sqrt{36} = 6$."
+          },
+          {
+            "answer": "6*sqrt(10)",
+            "problem": "Simplify $2\\sqrt{5} \\cdot 3\\sqrt{2}$.",
+            "solution_sketch": "$2 \\cdot 3 = 6$; $\\sqrt{5 \\cdot 2} = \\sqrt{10}$."
+          },
+          {
+            "answer": "4",
+            "problem": "What is $\\sqrt{2} \\cdot \\sqrt{8}$?",
+            "solution_sketch": "$\\sqrt{16} = 4$."
+          },
+          {
+            "answer": "24",
+            "problem": "Simplify $3\\sqrt{2} \\cdot 2\\sqrt{8}$.",
+            "solution_sketch": "$3 \\cdot 2 = 6$; $\\sqrt{2 \\cdot 8} = \\sqrt{16} = 4$; $6 \\cdot 4 = 24$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "simplifying-radicals"
+        ],
+        "name": "Multiply radicals"
+      },
+      "curriculum_kp_sha256": "001506a9a28614e12cba3ec1bac61b179605bd09db2c3d98fa22de8786a8f818",
+      "topic_prerequisites": [
+        {
+          "id": "adding-subtracting-radicals",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "simplifying-radicals",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "distributive-property",
+          "key": false,
+          "weight": 0.4
+        },
+        {
+          "id": "multiplying-fractions",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "sqrt(5*a)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Distribute each factor, combine products of roots, and look for cancelling conjugate terms."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                20,
+                45,
+                80,
+                125,
+                180,
+                245,
+                320,
+                405,
+                500,
+                605,
+                720,
+                845
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "10",
+              "params": {
+                "a": 20
+              }
+            },
+            {
+              "expected": "15",
+              "params": {
+                "a": 45
+              }
+            },
+            {
+              "expected": "20",
+              "params": {
+                "a": 80
+              }
+            },
+            {
+              "expected": "25",
+              "params": {
+                "a": 125
+              }
+            },
+            {
+              "expected": "30",
+              "params": {
+                "a": 180
+              }
+            },
+            {
+              "expected": "35",
+              "params": {
+                "a": 245
+              }
+            },
+            {
+              "expected": "40",
+              "params": {
+                "a": 320
+              }
+            },
+            {
+              "expected": "45",
+              "params": {
+                "a": 405
+              }
+            },
+            {
+              "expected": "50",
+              "params": {
+                "a": 500
+              }
+            },
+            {
+              "expected": "55",
+              "params": {
+                "a": 605
+              }
+            },
+            {
+              "expected": "60",
+              "params": {
+                "a": 720
+              }
+            },
+            {
+              "expected": "65",
+              "params": {
+                "a": 845
+              }
+            }
+          ],
+          "solution_sketch": "Both radicands are positive. Combine them under one root, $\\sqrt{{5\\cdot{a}}}$; since ${a}=5c^2$, this is $5c$.",
+          "statement": "Simplify $\\sqrt5\\sqrt{{{a}}}$."
+        },
+        "kind": "template",
+        "kp_id": "radical-operations/kp1"
+      },
+      "selected_template_sha256": "b88eb46664e66986f120acd427dcdd92f61d1f108df0a5fc37746b68d618bf3e",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "radical-operations/kp2",
+      "before": {
+        "key": "radical-operations/kp2",
+        "objective": "Distribute a radical over a sum",
+        "constraints": "distribute, then simplify each product",
+        "hints": [
+          "Multiply coefficients separately from the radical factors.",
+          "For a product, multiply radicands; for a sum, distribute before simplifying.",
+          "In a conjugate pair, use the opposite middle terms to cancel."
+        ]
+      },
+      "proposed": {
+        "key": "radical-operations/kp2",
+        "objective": "Distribute a radical over a sum",
+        "constraints": "distribute, then simplify each product",
+        "hints": [
+          "Multiply the outside radical by every term inside the parentheses, keeping each term's sign.",
+          "Simplify each product by extracting perfect-square factors from its radical.",
+          "Combine terms only when their simplified radical parts match; keep unlike terms separate."
+        ]
+      },
+      "before_sha256": "8b8b072e52fb84d7606b6be939392bd0e793f5cb6eadae90423fe35e3c1ddcdb",
+      "proposed_sha256": "ea294a3a6ae71d94e07377a46d045d5b286595f5f9b46ffe5aebb5e62696b81b",
+      "prior_revision_reason": "Replace the conjugate ending with the actual distribution sequence: multiply the outside radical by every term, preserve each sign, simplify each product, then combine like radical terms. Include canonical differences as well as the current all-like sum.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "distribute, then simplify each product",
+        "exemplars": [
+          {
+            "answer": "2*sqrt(3) + sqrt(6)",
+            "problem": "Expand and simplify $\\sqrt{2}(\\sqrt{6} + \\sqrt{3})$.",
+            "solution_sketch": "$\\sqrt{12} + \\sqrt{6} = 2\\sqrt{3} + \\sqrt{6}$."
+          },
+          {
+            "answer": "6 - 5*sqrt(3)",
+            "problem": "Expand and simplify $\\sqrt{3}(2\\sqrt{3} - 5)$.",
+            "solution_sketch": "$2 \\cdot 3 - 5\\sqrt{3}$."
+          },
+          {
+            "answer": "6 - sqrt(6)",
+            "problem": "Expand and simplify $\\sqrt{3}(\\sqrt{12} - \\sqrt{2})$.",
+            "solution_sketch": "$\\sqrt{36} - \\sqrt{6} = 6 - \\sqrt{6}$."
+          },
+          {
+            "answer": "15 + 2*sqrt(5)",
+            "problem": "Expand and simplify $\\sqrt{5}(3\\sqrt{5} + 2)$.",
+            "solution_sketch": "$3 \\cdot 5 + 2\\sqrt{5}$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "distributive-property",
+          "simplifying-radicals"
+        ],
+        "name": "Distribute a radical over a sum"
+      },
+      "curriculum_kp_sha256": "425823ca46deb954e2e37554db51899c8ebb4146576b55232003a9c4b5bda4e9",
+      "topic_prerequisites": [
+        {
+          "id": "adding-subtracting-radicals",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "simplifying-radicals",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "distributive-property",
+          "key": false,
+          "weight": 0.4
+        },
+        {
+          "id": "multiplying-fractions",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "2+2*a",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Multiply the outside radical by each term before simplifying."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "4",
+              "params": {
+                "a": 1
+              }
+            },
+            {
+              "expected": "6",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "8",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "10",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "12",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "14",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "16",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "18",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "20",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "22",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "24",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "26",
+              "params": {
+                "a": 12
+              }
+            }
+          ],
+          "solution_sketch": "The products are $\\sqrt{{2}}\\sqrt{{2}}=2$ and ${a}\\sqrt{{2}}\\sqrt{{2}}=2({a})$, for a total of $2+2({a})$.",
+          "statement": "Distribute $\\sqrt{{2}}$ over $\\sqrt{{2}}+{a}\\sqrt{{2}}$ and simplify."
+        },
+        "kind": "template",
+        "kp_id": "radical-operations/kp2"
+      },
+      "selected_template_sha256": "2e60005b7b43b41c5d770777c968c9aec32cbda1680b7bd68fda22355a4286f6",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "radical-operations/kp3",
+      "before": {
+        "key": "radical-operations/kp3",
+        "objective": "Binomial products and conjugates",
+        "constraints": "FOIL-style products; conjugate pairs give integers",
+        "hints": [
+          "Multiply coefficients separately from the radical factors.",
+          "For a product, multiply radicands; for a sum, distribute before simplifying.",
+          "In a conjugate pair, use the opposite middle terms to cancel."
+        ]
+      },
+      "proposed": {
+        "key": "radical-operations/kp3",
+        "objective": "Binomial products and conjugates",
+        "constraints": "FOIL-style products; conjugate pairs give integers",
+        "hints": [
+          "Multiply each term of the first binomial by each term of the second, keeping the sign of every product.",
+          "Simplify the radical products, then collect like terms.",
+          "For conjugates, the opposite middle terms cancel and the end products give a difference of squares. Otherwise retain the radical terms that remain."
+        ]
+      },
+      "before_sha256": "6859e755251df16cc00d8b15ceba339a5f2b889d328c9a0c77b145dda7ab64f3",
+      "proposed_sha256": "a344e8f76a66b04e024adb95bbd55209c68f03da8ef88684ed7989b876226598",
+      "prior_revision_reason": "State that each term in the first binomial multiplies each term in the second, giving four signed products. Simplify and combine like terms. Only opposite middle terms in a conjugate pair cancel; canonical nonconjugate products retain radical middle terms.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "FOIL-style products; conjugate pairs give integers",
+        "exemplars": [
+          {
+            "answer": "1 + 2*sqrt(2)",
+            "problem": "Expand and simplify $(1 + \\sqrt{2})(3 - \\sqrt{2})$.",
+            "solution_sketch": "$3 - \\sqrt{2} + 3\\sqrt{2} - 2 = 1 + 2\\sqrt{2}$."
+          },
+          {
+            "answer": "1",
+            "problem": "Expand and simplify $(2 + \\sqrt{3})(2 - \\sqrt{3})$.",
+            "solution_sketch": "$4 - 3 = 1$ (conjugate pair)."
+          },
+          {
+            "answer": "-3 - sqrt(5)",
+            "problem": "Expand and simplify $(2 + \\sqrt{5})(1 - \\sqrt{5})$.",
+            "solution_sketch": "$2 - 2\\sqrt{5} + \\sqrt{5} - 5 = -3 - \\sqrt{5}$."
+          },
+          {
+            "answer": "7",
+            "problem": "What is $(3 + \\sqrt{2})(3 - \\sqrt{2})$?",
+            "solution_sketch": "$9 - 2 = 7$ (conjugate pair)."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "adding-subtracting-radicals",
+          "distributive-property"
+        ],
+        "name": "Binomial products and conjugates"
+      },
+      "curriculum_kp_sha256": "02c7806f159850b1b1bb569ccb6249ec0812d9fad4396324c044667697a0907c",
+      "topic_prerequisites": [
+        {
+          "id": "adding-subtracting-radicals",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "simplifying-radicals",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "distributive-property",
+          "key": false,
+          "weight": 0.4
+        },
+        {
+          "id": "multiplying-fractions",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "a**2-3",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Distribute each factor, combine products of roots, and look for cancelling conjugate terms."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "1",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "6",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "13",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "22",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "33",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "46",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "61",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "78",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "97",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "118",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "141",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "166",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "The cross terms cancel. Difference of squares leaves ${a}^2-(\\sqrt3)^2={a}^2-3$.",
+          "statement": "Multiply $({a}+\\sqrt3)({a}-\\sqrt3)$."
+        },
+        "kind": "template",
+        "kp_id": "radical-operations/kp3"
+      },
+      "selected_template_sha256": "7f14067f6473fbe24db9f06b9eaa40ec8dac54dd86cf655d5d8e2be271a7a26b",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "dividing-radicals/kp1",
+      "before": {
+        "key": "dividing-radicals/kp1",
+        "objective": "Quotient rule for radicals",
+        "constraints": "quotient of radicands is a perfect square",
+        "hints": [
+          "Separate the coefficient quotient from the radical quotient.",
+          "Simplify the radicands using the quotient rule when it applies.",
+          "Reduce numerical factors and keep the denominator nonzero."
+        ]
+      },
+      "proposed": {
+        "key": "dividing-radicals/kp1",
+        "objective": "Quotient rule for radicals",
+        "constraints": "quotient of radicands is a perfect square",
+        "hints": [
+          "Divide the numerator's radicand by the denominator's radicand.",
+          "Write that quotient under one square root and identify the perfect square.",
+          "Take its nonnegative root. Check by multiplying your result by the original denominator radical."
+        ]
+      },
+      "before_sha256": "0926bcff86982e8f6ba1d1cdf7ab864833e69399faa1151b4786140365ee9af0",
+      "proposed_sha256": "6940d7909ea64939b4ec80863ea93747924858d8abe4ff686313faa75fd07b20",
+      "prior_revision_reason": "The first rung separates nonexistent outside coefficients and the second only names a quotient rule. Ask for numerator radicand divided by denominator radicand, identify its perfect square, then take the nonnegative root and verify by multiplication.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "quotient of radicands is a perfect square",
+        "exemplars": [
+          {
+            "answer": "5",
+            "problem": "Simplify $\\frac{\\sqrt{50}}{\\sqrt{2}}$.",
+            "solution_sketch": "$\\sqrt{50/2} = \\sqrt{25} = 5$."
+          },
+          {
+            "answer": "4",
+            "problem": "What is $\\frac{\\sqrt{48}}{\\sqrt{3}}$?",
+            "solution_sketch": "$\\sqrt{16} = 4$."
+          },
+          {
+            "answer": "6",
+            "problem": "Find $\\frac{\\sqrt{72}}{\\sqrt{2}}$.",
+            "solution_sketch": "$\\sqrt{72/2} = \\sqrt{36} = 6$."
+          },
+          {
+            "answer": "3",
+            "problem": "Evaluate $\\frac{\\sqrt{45}}{\\sqrt{5}}$.",
+            "solution_sketch": "$\\sqrt{45/5} = \\sqrt{9} = 3$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "square-roots"
+        ],
+        "name": "Quotient rule for radicals"
+      },
+      "curriculum_kp_sha256": "373236fd4505214a5436d19332e4ee12ea406777a6bd39cca20847b1ff417344",
+      "topic_prerequisites": [
+        {
+          "id": "simplifying-radicals",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "dividing-fractions",
+          "key": true,
+          "weight": 0.4
+        },
+        {
+          "id": "square-roots",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "sqrt(a/3)",
+          "constraints": [
+            {
+              "left": {
+                "mul": [
+                  {
+                    "lit": 3
+                  },
+                  {
+                    "mul": [
+                      "b",
+                      "b"
+                    ]
+                  }
+                ]
+              },
+              "op": "eq",
+              "right": "a"
+            }
+          ],
+          "distractors": [],
+          "hints": [
+            "Separate the coefficient quotient from the radical quotient and simplify common nonzero factors."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                12,
+                27,
+                48,
+                75,
+                108,
+                147,
+                192,
+                243,
+                300,
+                363,
+                432,
+                507
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "2",
+              "params": {
+                "a": 12,
+                "b": 2
+              }
+            },
+            {
+              "expected": "3",
+              "params": {
+                "a": 27,
+                "b": 3
+              }
+            },
+            {
+              "expected": "4",
+              "params": {
+                "a": 48,
+                "b": 4
+              }
+            },
+            {
+              "expected": "5",
+              "params": {
+                "a": 75,
+                "b": 5
+              }
+            },
+            {
+              "expected": "6",
+              "params": {
+                "a": 108,
+                "b": 6
+              }
+            },
+            {
+              "expected": "7",
+              "params": {
+                "a": 147,
+                "b": 7
+              }
+            },
+            {
+              "expected": "8",
+              "params": {
+                "a": 192,
+                "b": 8
+              }
+            },
+            {
+              "expected": "9",
+              "params": {
+                "a": 243,
+                "b": 9
+              }
+            },
+            {
+              "expected": "10",
+              "params": {
+                "a": 300,
+                "b": 10
+              }
+            },
+            {
+              "expected": "11",
+              "params": {
+                "a": 363,
+                "b": 11
+              }
+            },
+            {
+              "expected": "12",
+              "params": {
+                "a": 432,
+                "b": 12
+              }
+            },
+            {
+              "expected": "13",
+              "params": {
+                "a": 507,
+                "b": 13
+              }
+            }
+          ],
+          "solution_sketch": "The denominator is positive, so divide inside: $\\sqrt{{{a}/3}}$. Since ${a}=3c^2$, its principal root is $c$. The exact result of these steps is ${b}$.",
+          "statement": "Simplify $\\sqrt{{{a}}}/\\sqrt3$."
+        },
+        "kind": "template",
+        "kp_id": "dividing-radicals/kp1"
+      },
+      "selected_template_sha256": "fc87370fa6a6f04f6cbda68143b92996b2081df5dc18e5d448540d4c067a50c5",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "dividing-radicals/kp2",
+      "before": {
+        "key": "dividing-radicals/kp2",
+        "objective": "Roots of fractions with simplification",
+        "constraints": "perfect-square denominators; numerator may need simplifying",
+        "hints": [
+          "Separate the coefficient quotient from the radical quotient.",
+          "Simplify the radicands using the quotient rule when it applies.",
+          "Reduce numerical factors and keep the denominator nonzero."
+        ]
+      },
+      "proposed": {
+        "key": "dividing-radicals/kp2",
+        "objective": "Roots of fractions with simplification",
+        "constraints": "perfect-square denominators; numerator may need simplifying",
+        "hints": [
+          "Take the square roots of the numerator and denominator separately; the denominator is a perfect square.",
+          "Extract the largest square factor from the numerator's radical.",
+          "Reduce any common numerical factor between the outside coefficient and the denominator, keeping the remaining radical exact."
+        ]
+      },
+      "before_sha256": "d610a3f792acf076edb66dbc4b2fb3ded105971285c600ab75d427cac795f542",
+      "proposed_sha256": "d9de20910ee9743fa43463c1e899e76cb932c8f922de3d2f54beabfe4f3d345c",
+      "prior_revision_reason": "Distinguish this KP: take roots of numerator and perfect-square denominator separately, extract square factors from the numerator, then reduce the resulting coefficient fraction. Current denominator50 template must be repaired separately.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "perfect-square denominators; numerator may need simplifying",
+        "exemplars": [
+          {
+            "answer": "3*sqrt(2)/7",
+            "problem": "Simplify $\\sqrt{\\frac{18}{49}}$.",
+            "solution_sketch": "$\\frac{\\sqrt{18}}{\\sqrt{49}} = \\frac{3\\sqrt{2}}{7}$."
+          },
+          {
+            "answer": "5*sqrt(3)/4",
+            "problem": "What is $\\sqrt{\\frac{75}{16}}$?",
+            "solution_sketch": "$\\frac{\\sqrt{75}}{4} = \\frac{5\\sqrt{3}}{4}$."
+          },
+          {
+            "answer": "5*sqrt(2)/9",
+            "problem": "Find $\\sqrt{\\frac{50}{81}}$.",
+            "solution_sketch": "$\\frac{\\sqrt{50}}{\\sqrt{81}} = \\frac{5\\sqrt{2}}{9}$."
+          },
+          {
+            "answer": "4*sqrt(3)/5",
+            "problem": "Evaluate $\\sqrt{\\frac{48}{25}}$.",
+            "solution_sketch": "$\\frac{\\sqrt{48}}{5} = \\frac{4\\sqrt{3}}{5}$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "dividing-fractions",
+          "simplifying-radicals"
+        ],
+        "name": "Roots of fractions with simplification"
+      },
+      "curriculum_kp_sha256": "4c508f605f17aa01441dd2f0964f36834d411f45ca4e5320ccedc1a6e85784ff",
+      "topic_prerequisites": [
+        {
+          "id": "simplifying-radicals",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "dividing-fractions",
+          "key": true,
+          "weight": 0.4
+        },
+        {
+          "id": "square-roots",
+          "key": false,
+          "weight": 0.4
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "sqrt(a/2)/5",
+          "constraints": [
+            {
+              "left": {
+                "mul": [
+                  {
+                    "lit": 2
+                  },
+                  {
+                    "mul": [
+                      "b",
+                      "b"
+                    ]
+                  }
+                ]
+              },
+              "op": "eq",
+              "right": "a"
+            }
+          ],
+          "distractors": [],
+          "hints": [
+            "Separate the coefficient quotient from the radical quotient and simplify common nonzero factors."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                8,
+                18,
+                32,
+                50,
+                72,
+                98,
+                128,
+                162,
+                200,
+                242,
+                288,
+                338
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "2/5",
+              "params": {
+                "a": 8,
+                "b": 2
+              }
+            },
+            {
+              "expected": "3/5",
+              "params": {
+                "a": 18,
+                "b": 3
+              }
+            },
+            {
+              "expected": "4/5",
+              "params": {
+                "a": 32,
+                "b": 4
+              }
+            },
+            {
+              "expected": "1",
+              "params": {
+                "a": 50,
+                "b": 5
+              }
+            },
+            {
+              "expected": "6/5",
+              "params": {
+                "a": 72,
+                "b": 6
+              }
+            },
+            {
+              "expected": "7/5",
+              "params": {
+                "a": 98,
+                "b": 7
+              }
+            },
+            {
+              "expected": "8/5",
+              "params": {
+                "a": 128,
+                "b": 8
+              }
+            },
+            {
+              "expected": "9/5",
+              "params": {
+                "a": 162,
+                "b": 9
+              }
+            },
+            {
+              "expected": "2",
+              "params": {
+                "a": 200,
+                "b": 10
+              }
+            },
+            {
+              "expected": "11/5",
+              "params": {
+                "a": 242,
+                "b": 11
+              }
+            },
+            {
+              "expected": "12/5",
+              "params": {
+                "a": 288,
+                "b": 12
+              }
+            },
+            {
+              "expected": "13/5",
+              "params": {
+                "a": 338,
+                "b": 13
+              }
+            }
+          ],
+          "solution_sketch": "Write ${a}=2c^2$ and $50=2\\cdot5^2$. Cancel the common factor two inside the fraction, giving $\\sqrt{{c^2/25}}=c/5$. The exact result of these steps is ${b}/5$.",
+          "statement": "Simplify $\\sqrt{{{a}/50}}$."
+        },
+        "kind": "template",
+        "kp_id": "dividing-radicals/kp2"
+      },
+      "selected_template_sha256": "829cc7282af9591024aae6343dc7bc0e4cc80cdd3f72edce7a277d5127526624",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "rationalizing-denominators/kp2",
+      "before": {
+        "key": "rationalizing-denominators/kp2",
+        "objective": "Simplify before or after rationalizing",
+        "constraints": "reduce the radical first to keep numbers small",
+        "hints": [
+          "Identify the radical expression remaining in the denominator.",
+          "Multiply numerator and denominator by that radical or by the matching conjugate.",
+          "Expand and simplify until the denominator is rational."
+        ]
+      },
+      "proposed": {
+        "key": "rationalizing-denominators/kp2",
+        "objective": "Simplify before or after rationalizing",
+        "constraints": "reduce the radical first to keep numbers small",
+        "hints": [
+          "First extract perfect-square factors from the denominator radical and reduce any common numerical coefficients.",
+          "Multiply both numerator and denominator by the remaining denominator radical.",
+          "Simplify the product in the denominator and reduce the resulting numerical coefficient."
+        ]
+      },
+      "before_sha256": "380dda60c001d26797c398d4e6181812fa279ad5cc144e3a17dc3226cc133462",
+      "proposed_sha256": "546c5ee92c3a5963a0ff2e1335cebd03fe4e369117329847f5ec0f270f41bb9b",
+      "prior_revision_reason": "Missing the expressly required first reduction. Extract square factors from the denominator radical and reduce ordinary coefficients before choosing a multiplier. Then multiply both top and bottom and reduce the rational coefficient.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "reduce the radical first to keep numbers small",
+        "exemplars": [
+          {
+            "answer": "sqrt(3)",
+            "problem": "Rationalize and simplify $\\frac{6}{\\sqrt{12}}$.",
+            "solution_sketch": "$\\frac{6}{2\\sqrt{3}} = \\frac{3}{\\sqrt{3}} = \\sqrt{3}$."
+          },
+          {
+            "answer": "sqrt(2)",
+            "problem": "What is $\\frac{4}{\\sqrt{8}}$ rationalized and simplified?",
+            "solution_sketch": "$\\frac{4}{2\\sqrt{2}} = \\frac{2}{\\sqrt{2}} = \\sqrt{2}$."
+          },
+          {
+            "answer": "4*sqrt(5)/5",
+            "problem": "Rationalize and simplify $\\frac{8}{\\sqrt{20}}$.",
+            "solution_sketch": "$\\frac{8}{2\\sqrt{5}} = \\frac{4}{\\sqrt{5}} = \\frac{4\\sqrt{5}}{5}$."
+          },
+          {
+            "answer": "sqrt(3)",
+            "problem": "Simplify the rationalized form of $\\frac{9}{\\sqrt{27}}$.",
+            "solution_sketch": "$\\frac{9}{3\\sqrt{3}} = \\frac{3}{\\sqrt{3}} = \\sqrt{3}$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "dividing-radicals"
+        ],
+        "name": "Simplify before or after rationalizing"
+      },
+      "curriculum_kp_sha256": "85bde2a42e1093b68a25c90e9f1c7917c59d9fb6df8f4bef94a3cc727e935e1b",
+      "topic_prerequisites": [
+        {
+          "id": "dividing-radicals",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "radical-operations",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "equivalent-fractions",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "a*sqrt(3)/6",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Choose a radical or conjugate multiplier that makes the denominator rational, and multiply both numerator and denominator."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "1/3*sqrt(3)",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "1/2*sqrt(3)",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "2/3*sqrt(3)",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "5/6*sqrt(3)",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "1*sqrt(3)",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "7/6*sqrt(3)",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "4/3*sqrt(3)",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "3/2*sqrt(3)",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "5/3*sqrt(3)",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "11/6*sqrt(3)",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "2*sqrt(3)",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "13/6*sqrt(3)",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "First $\\sqrt{{12}}=2\\sqrt3$. Multiply by $\\sqrt3/\\sqrt3$ to obtain ${a}\\sqrt3/(2\\cdot3)={a}\\sqrt3/6$.",
+          "statement": "Simplify and rationalize ${a}/\\sqrt{{12}}$."
+        },
+        "kind": "template",
+        "kp_id": "rationalizing-denominators/kp2"
+      },
+      "selected_template_sha256": "10827c369e143b9934329d2b967cebe8081318997364334f8537fcd6ede9e14f",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "rationalizing-denominators/kp3",
+      "before": {
+        "key": "rationalizing-denominators/kp3",
+        "objective": "Conjugate denominators",
+        "constraints": "multiply by the conjugate; denominator becomes an integer",
+        "hints": [
+          "Identify the radical expression remaining in the denominator.",
+          "Multiply numerator and denominator by that radical or by the matching conjugate.",
+          "Expand and simplify until the denominator is rational."
+        ]
+      },
+      "proposed": {
+        "key": "rationalizing-denominators/kp3",
+        "objective": "Conjugate denominators",
+        "constraints": "multiply by the conjugate; denominator becomes an integer",
+        "hints": [
+          "Form the denominator's conjugate by changing only the sign between its two terms.",
+          "Multiply the entire numerator and denominator by that conjugate; the denominator becomes the first term squared minus the second term squared.",
+          "Expand and simplify the numerator, reduce common factors, and preserve the sign if that difference of squares is negative."
+        ]
+      },
+      "before_sha256": "e8599816335b30a08372e61b3443d82787fa4dd453ad3386024d3b224806b024",
+      "proposed_sha256": "75221ccbc1563281c0ab7a037ce21ee14c4c2e3827724bcccd6e27a4581fe2ef",
+      "prior_revision_reason": "Give the actual conjugate construction: change only the sign between the two denominator terms. Multiply both numerator and denominator; use the difference of their squares and preserve its sign, even when the rational denominator is negative. A vague radical-or-conjugate choice does not teach this distinction.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "multiply by the conjugate; denominator becomes an integer",
+        "exemplars": [
+          {
+            "answer": "sqrt(3) - 1",
+            "problem": "Rationalize $\\frac{2}{1 + \\sqrt{3}}$.",
+            "solution_sketch": "Multiply by $\\frac{1 - \\sqrt{3}}{1 - \\sqrt{3}}$: $\\frac{2(1 - \\sqrt{3})}{1 - 3} = \\sqrt{3} - 1$."
+          },
+          {
+            "answer": "sqrt(5) + 2",
+            "problem": "Rationalize $\\frac{1}{\\sqrt{5} - 2}$.",
+            "solution_sketch": "$\\frac{\\sqrt{5} + 2}{5 - 4} = \\sqrt{5} + 2$."
+          },
+          {
+            "answer": "-6 + 3*sqrt(5)",
+            "problem": "Rationalize $\\frac{3}{2 + \\sqrt{5}}$.",
+            "solution_sketch": "Multiply by $\\frac{2-\\sqrt5}{2-\\sqrt5}$: $\\frac{3(2-\\sqrt5)}{4-5} = -6 + 3\\sqrt5$."
+          },
+          {
+            "answer": "sqrt(10) + 3",
+            "problem": "What is $\\frac{1}{\\sqrt{10} - 3}$ rationalized?",
+            "solution_sketch": "$\\frac{\\sqrt{10}+3}{10-9} = \\sqrt{10} + 3$."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "radical-operations"
+        ],
+        "name": "Conjugate denominators"
+      },
+      "curriculum_kp_sha256": "8bf4272691e3eb051b4c7ab8a905664c228195ee4485e0830299523fc3d92ed8",
+      "topic_prerequisites": [
+        {
+          "id": "dividing-radicals",
+          "key": true,
+          "weight": 0.7
+        },
+        {
+          "id": "radical-operations",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "equivalent-fractions",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "a*(4-sqrt(3))/13",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Choose a radical or conjugate multiplier that makes the denominator rational, and multiply both numerator and denominator."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "8/13-2/13*sqrt(3)",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "12/13-3/13*sqrt(3)",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "16/13-4/13*sqrt(3)",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "20/13-5/13*sqrt(3)",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "24/13-6/13*sqrt(3)",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "28/13-7/13*sqrt(3)",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "32/13-8/13*sqrt(3)",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "36/13-9/13*sqrt(3)",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "40/13-10/13*sqrt(3)",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "44/13-11/13*sqrt(3)",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "48/13-12/13*sqrt(3)",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "4-1*sqrt(3)",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "Multiply by the conjugate $4-\\sqrt3$. The denominator is $16-3=13$, giving ${a}(4-\\sqrt3)/13$.",
+          "statement": "Rationalize ${a}/(4+\\sqrt3)$."
+        },
+        "kind": "template",
+        "kp_id": "rationalizing-denominators/kp3"
+      },
+      "selected_template_sha256": "7196c52122987a3f68a87b174fb4e561ae24c9fb12a4f15fe32dec7c96fcb943",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "radical-exponent-conversion/kp1",
+      "before": {
+        "key": "radical-exponent-conversion/kp1",
+        "objective": "Unit fractions: a^(1/n) is an nth root",
+        "constraints": "a^(1/n) is the nth root of a",
+        "hints": [
+          "Read the denominator of a fractional exponent as the root index.",
+          "Read the numerator as the power applied to the rooted value.",
+          "Rewrite the expression in radical form and check the order of root and power."
+        ]
+      },
+      "proposed": {
+        "key": "radical-exponent-conversion/kp1",
+        "objective": "Unit fractions: a^(1/n) is an nth root",
+        "constraints": "a^(1/n) is the nth root of a",
+        "hints": [
+          "Identify the whole base, the root index, and whether the question requests a power, a radical, or the index alone.",
+          "A root of index n corresponds to exponent 1/n on that same whole base; read the relationship in the requested direction.",
+          "Write the requested notation, or return only the index when that is what the question asks."
+        ]
+      },
+      "before_sha256": "d739594f0ec0b3de90336491a18e4ab2a6de1434046f96ed10ec47fd53adf4a6",
+      "proposed_sha256": "323bec87d43afbfc8f12a0ec3b15f013bb4b26de1a26a20a88da390297427575",
+      "prior_revision_reason": "Final rung forces radical notation, opposite to the selected and canonical exponent-output tasks. Read the requested direction/component: a root of index n becomes exponent1/n on the same whole base; reverse the mapping only when a radical is requested, and return an index when asked for n.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "a^(1/n) is the nth root of a",
+        "exemplars": [
+          {
+            "answer": "x^(1/2)",
+            "problem": "Write $\\sqrt{x}$ as a power of $x$.",
+            "solution_sketch": "The root index becomes the denominator of the exponent: $x^{1/2}$."
+          },
+          {
+            "answer": "3",
+            "problem": "In radical form $x^{1/3}$ is the $n$th root of $x$. What is $n$?",
+            "solution_sketch": "The denominator of the fractional exponent is the root index."
+          },
+          {
+            "answer": "x^(1/4)",
+            "problem": "Write $\\sqrt[4]{x}$ as a power of $x$.",
+            "solution_sketch": "The root index $4$ becomes the exponent denominator."
+          },
+          {
+            "answer": "5",
+            "problem": "The exponent $x^{1/5}$ names the $n$th root of $x$. Find $n$.",
+            "solution_sketch": "The denominator of the fractional exponent is the root index."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "square-roots",
+          "cube-roots"
+        ],
+        "name": "Unit fractions: a^(1/n) is an nth root"
+      },
+      "curriculum_kp_sha256": "9b3512d47d2b5fcb111ddfcce8a283ea28a4a186d0c25fe71b57f8a4699ee8bb",
+      "topic_prerequisites": [
+        {
+          "id": "square-roots",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "cube-roots",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-exponents-intro",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "(a*x)**(1/2)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "The denominator of a fractional exponent is the root index and its numerator is the power."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "(2*x)^(1/2)",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "(3*x)^(1/2)",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "(4*x)^(1/2)",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "(5*x)^(1/2)",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "(6*x)^(1/2)",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "(7*x)^(1/2)",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "(8*x)^(1/2)",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "(9*x)^(1/2)",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "(10*x)^(1/2)",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "(11*x)^(1/2)",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "(12*x)^(1/2)",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "(13*x)^(1/2)",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "A square-root index is the reciprocal exponent $1/2$, applied to the entire radicand ${a}x$.",
+          "statement": "Write $\\sqrt{{{a}x}}$ using a fractional exponent, for $x>0$."
+        },
+        "kind": "template",
+        "kp_id": "radical-exponent-conversion/kp1"
+      },
+      "selected_template_sha256": "2c09808ea5e4c75bd0472f3e755f652fc822203c943af66180a393485aae74cf",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "radical-exponent-conversion/kp2",
+      "before": {
+        "key": "radical-exponent-conversion/kp2",
+        "objective": "General m/n form",
+        "constraints": "numerator is the power, denominator is the root index",
+        "hints": [
+          "Read the denominator of a fractional exponent as the root index.",
+          "Read the numerator as the power applied to the rooted value.",
+          "Rewrite the expression in radical form and check the order of root and power."
+        ]
+      },
+      "proposed": {
+        "key": "radical-exponent-conversion/kp2",
+        "objective": "General m/n form",
+        "constraints": "numerator is the power, denominator is the root index",
+        "hints": [
+          "Identify the base, the power on that base, and the radical's root index.",
+          "The power becomes the numerator of the fractional exponent; the root index becomes its denominator. Reverse those roles back into radical notation when requested.",
+          "Keep the exponent attached to the same base, and return only the named power or index if the question asks for that component."
+        ]
+      },
+      "before_sha256": "ad80ba5988812e54abd205496bc7975d7ecb17d8d1778925d0708e193a8397f2",
+      "proposed_sha256": "bbb2f9112973ec43988d52943db6522d32fa21bbdb71f8f36ee705755ed41dc3",
+      "prior_revision_reason": "Teach that the existing power becomes the numerator and root index the denominator, then write the requested exponent/radical form. Keep the power attached to the same base; numeric m/index questions ask only that component. Current whole-radicand exponent1/3 family requires separate template repair.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "numerator is the power, denominator is the root index",
+        "exemplars": [
+          {
+            "answer": "x^(2/3)",
+            "problem": "Write $\\sqrt[3]{x^2}$ as a power of $x$.",
+            "solution_sketch": "Power $2$, root index $3$: $x^{2/3}$."
+          },
+          {
+            "answer": "3",
+            "problem": "In radical form $x^{3/4} = \\sqrt[4]{x^m}$. What is $m$?",
+            "solution_sketch": "The numerator of the fractional exponent is the power inside the radical."
+          },
+          {
+            "answer": "x^(3/5)",
+            "problem": "What single power of $x$ equals $\\sqrt[5]{x^3}$?",
+            "solution_sketch": "Power $3$, root index $5$: $x^{3/5}$."
+          },
+          {
+            "answer": "2",
+            "problem": "The exponent form $x^{2/5} = \\sqrt[5]{x^m}$ names what value of $m$?",
+            "solution_sketch": "The numerator of the fractional exponent is the power inside the radical."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "cube-roots"
+        ],
+        "name": "General m/n form"
+      },
+      "curriculum_kp_sha256": "6cef1a0428708162a99b8b6e6bfa9f87667e554462009bcff5fac7c296c24f2f",
+      "topic_prerequisites": [
+        {
+          "id": "square-roots",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "cube-roots",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-exponents-intro",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "(a*x**2)**(1/3)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "The denominator of a fractional exponent is the root index and its numerator is the power."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "(2*x^2)^(1/3)",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "(3*x^2)^(1/3)",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "(4*x^2)^(1/3)",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "(5*x^2)^(1/3)",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "(6*x^2)^(1/3)",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "(7*x^2)^(1/3)",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "(8*x^2)^(1/3)",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "(9*x^2)^(1/3)",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "(10*x^2)^(1/3)",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "(11*x^2)^(1/3)",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "(12*x^2)^(1/3)",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "(13*x^2)^(1/3)",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "A cube-root index contributes denominator three, so raise the entire radicand ${a}x^2$ to $1/3$.",
+          "statement": "Write $\\sqrt[3]{{{a}x^2}}$ using a fractional exponent, for $x>0$."
+        },
+        "kind": "template",
+        "kp_id": "radical-exponent-conversion/kp2"
+      },
+      "selected_template_sha256": "d39dbf3e7591684890aa85334e3de0d3c49c91f42f89d6daee8e7b6b30e0fd2f",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "radical-exponent-conversion/kp3",
+      "before": {
+        "key": "radical-exponent-conversion/kp3",
+        "objective": "Evaluate unit fractional exponents",
+        "constraints": "perfect powers; positive base",
+        "hints": [
+          "Read the denominator of a fractional exponent as the root index.",
+          "Read the numerator as the power applied to the rooted value.",
+          "Rewrite the expression in radical form and check the order of root and power."
+        ]
+      },
+      "proposed": {
+        "key": "radical-exponent-conversion/kp3",
+        "objective": "Evaluate unit fractional exponents",
+        "constraints": "perfect powers; positive base",
+        "hints": [
+          "Read the denominator of the unit fractional exponent as the root index.",
+          "Find the positive number that produces the given base when raised to that index.",
+          "Check by taking that integer power, then report the numerical root value."
+        ]
+      },
+      "before_sha256": "0c4f625296efd43f8254ea7ab7e6fab64577e6e4dfd76154041f5aea35d7f9c2",
+      "proposed_sha256": "ce15bbae3d118930623253c3e1193addc852b75bbd9520cf04b1ec5dd9dd9be7",
+      "prior_revision_reason": "The ladder stops at notation rewriting instead of evaluation. Identify the root index, find the positive perfect root, and verify by raising that value to the index; return the numerical value.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "perfect powers; positive base",
+        "exemplars": [
+          {
+            "answer": "5",
+            "problem": "Compute $25^{1/2}$.",
+            "solution_sketch": "$\\sqrt{25} = 5$."
+          },
+          {
+            "answer": "2",
+            "problem": "What is $8^{1/3}$?",
+            "solution_sketch": "$\\sqrt[3]{8} = 2$."
+          },
+          {
+            "answer": "4",
+            "problem": "Find $16^{1/2}$.",
+            "solution_sketch": "$\\sqrt{16} = 4$."
+          },
+          {
+            "answer": "3",
+            "problem": "Evaluate $27^{1/3}$.",
+            "solution_sketch": "$\\sqrt[3]{27} = 3$."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "square-roots",
+          "cube-roots"
+        ],
+        "name": "Evaluate unit fractional exponents"
+      },
+      "curriculum_kp_sha256": "37f2ea73ae6bb91062988897e0312394bacc0c1add8e9ab10c2999dc22e3d38f",
+      "topic_prerequisites": [
+        {
+          "id": "square-roots",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "cube-roots",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "integer-exponents-intro",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "sqrt(a)",
+          "constraints": [
+            {
+              "left": {
+                "mul": [
+                  "b",
+                  "b"
+                ]
+              },
+              "op": "eq",
+              "right": "a"
+            }
+          ],
+          "distractors": [],
+          "hints": [
+            "The denominator of a fractional exponent is the root index and its numerator is the power."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                4,
+                9,
+                16,
+                25,
+                36,
+                49,
+                64,
+                81,
+                100,
+                121,
+                144,
+                169
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "2",
+              "params": {
+                "a": 4,
+                "b": 2
+              }
+            },
+            {
+              "expected": "3",
+              "params": {
+                "a": 9,
+                "b": 3
+              }
+            },
+            {
+              "expected": "4",
+              "params": {
+                "a": 16,
+                "b": 4
+              }
+            },
+            {
+              "expected": "5",
+              "params": {
+                "a": 25,
+                "b": 5
+              }
+            },
+            {
+              "expected": "6",
+              "params": {
+                "a": 36,
+                "b": 6
+              }
+            },
+            {
+              "expected": "7",
+              "params": {
+                "a": 49,
+                "b": 7
+              }
+            },
+            {
+              "expected": "8",
+              "params": {
+                "a": 64,
+                "b": 8
+              }
+            },
+            {
+              "expected": "9",
+              "params": {
+                "a": 81,
+                "b": 9
+              }
+            },
+            {
+              "expected": "10",
+              "params": {
+                "a": 100,
+                "b": 10
+              }
+            },
+            {
+              "expected": "11",
+              "params": {
+                "a": 121,
+                "b": 11
+              }
+            },
+            {
+              "expected": "12",
+              "params": {
+                "a": 144,
+                "b": 12
+              }
+            },
+            {
+              "expected": "13",
+              "params": {
+                "a": 169,
+                "b": 13
+              }
+            }
+          ],
+          "solution_sketch": "The denominator two specifies a square root. Find positive $c$ with $c^2={a}$; then ${a}^{{1/2}}=c$. The exact result of these steps is ${b}$.",
+          "statement": "Evaluate the unit fractional power ${a}^{{1/2}}$."
+        },
+        "kind": "template",
+        "kp_id": "radical-exponent-conversion/kp3"
+      },
+      "selected_template_sha256": "9f8a3552a960c7b06a4de5aaaaeda9154d7d5a6c323a0082456a5422b86c75fa",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "rational-exponents/kp1",
+      "before": {
+        "key": "rational-exponents/kp1",
+        "objective": "Evaluate a^(m/n)",
+        "constraints": "take the root first, then the power; perfect powers only",
+        "hints": [
+          "Use the denominator to take the indicated root before applying the numerator power.",
+          "For a negative exponent, form the reciprocal at the appropriate step.",
+          "Apply exponent rules with fractional exponents just as with integer exponents."
+        ]
+      },
+      "proposed": {
+        "key": "rational-exponents/kp1",
+        "objective": "Evaluate a^(m/n)",
+        "constraints": "take the root first, then the power; perfect powers only",
+        "hints": [
+          "Use the exponent's denominator as the index of the perfect root.",
+          "Take that root first, then raise it to the exponent's numerator.",
+          "Evaluate the resulting power exactly; check that raising the root to its index recovers the original base."
+        ]
+      },
+      "before_sha256": "fe64cf66d1457eb0db5f010771a15be86d1af17507a0f865195366bd6b592f17",
+      "proposed_sha256": "e3ed31c173531090483bcc0def47d2608ffacf2b4a084a213221e90fb216d490",
+      "prior_revision_reason": "Only the first rung applies; negative reciprocals and general exponent laws do not progress this positive numerical task. Take the indicated perfect root, raise that result to the numerator, and verify the exact value.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "take the root first, then the power; perfect powers only",
+        "exemplars": [
+          {
+            "answer": "4",
+            "problem": "Compute $8^{2/3}$.",
+            "solution_sketch": "$2\\cdot2\\cdot2=8$, so the cube root is $2$. Then square that root: $2\\cdot2=4$."
+          },
+          {
+            "answer": "8",
+            "problem": "What is $16^{3/4}$?",
+            "solution_sketch": "$(16^{1/4})^3 = 2^3 = 8$."
+          },
+          {
+            "answer": "8",
+            "problem": "Find $4^{3/2}$.",
+            "solution_sketch": "$(4^{1/2})^3 = 2^3 = 8$."
+          },
+          {
+            "answer": "27",
+            "problem": "Evaluate $9^{3/2}$.",
+            "solution_sketch": "$3\\cdot3=9$, so the principal square root is $3$. Cube it: $3\\cdot3\\cdot3=27$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "radical-exponent-conversion"
+        ],
+        "name": "Evaluate a^(m/n)"
+      },
+      "curriculum_kp_sha256": "86cbb2272decc98eeea94ddba3521636f5b580e25c62d89e40a05b3f587171ce",
+      "topic_prerequisites": [
+        {
+          "id": "radical-exponent-conversion",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "negative-zero-exponents",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "power-rule-exponents",
+          "key": false,
+          "weight": 0.5
+        },
+        {
+          "id": "simplifying-radicals",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "sqrt(a)**3",
+          "constraints": [
+            {
+              "left": {
+                "mul": [
+                  "b",
+                  "b"
+                ]
+              },
+              "op": "eq",
+              "right": {
+                "mul": [
+                  "a",
+                  "a",
+                  "a"
+                ]
+              }
+            }
+          ],
+          "distractors": [],
+          "hints": [
+            "Take the indicated root before the integer power; a negative exponent takes a reciprocal."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                4,
+                9,
+                16,
+                25,
+                36,
+                49,
+                64,
+                81,
+                100,
+                121,
+                144,
+                169
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                8,
+                27,
+                64,
+                125,
+                216,
+                343,
+                512,
+                729,
+                1000,
+                1331,
+                1728,
+                2197
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "8",
+              "params": {
+                "a": 4,
+                "b": 8
+              }
+            },
+            {
+              "expected": "27",
+              "params": {
+                "a": 9,
+                "b": 27
+              }
+            },
+            {
+              "expected": "64",
+              "params": {
+                "a": 16,
+                "b": 64
+              }
+            },
+            {
+              "expected": "125",
+              "params": {
+                "a": 25,
+                "b": 125
+              }
+            },
+            {
+              "expected": "216",
+              "params": {
+                "a": 36,
+                "b": 216
+              }
+            },
+            {
+              "expected": "343",
+              "params": {
+                "a": 49,
+                "b": 343
+              }
+            },
+            {
+              "expected": "512",
+              "params": {
+                "a": 64,
+                "b": 512
+              }
+            },
+            {
+              "expected": "729",
+              "params": {
+                "a": 81,
+                "b": 729
+              }
+            },
+            {
+              "expected": "1000",
+              "params": {
+                "a": 100,
+                "b": 1000
+              }
+            },
+            {
+              "expected": "1331",
+              "params": {
+                "a": 121,
+                "b": 1331
+              }
+            },
+            {
+              "expected": "1728",
+              "params": {
+                "a": 144,
+                "b": 1728
+              }
+            },
+            {
+              "expected": "2197",
+              "params": {
+                "a": 169,
+                "b": 2197
+              }
+            }
+          ],
+          "solution_sketch": "Find positive $c$ with $c^2={a}$. The half-power is $c$ and the numerator three cubes it, giving $c\\cdot c\\cdot c$. The exact result of these steps is ${b}$.",
+          "statement": "Evaluate ${a}^{{3/2}}$ by taking the root first."
+        },
+        "kind": "template",
+        "kp_id": "rational-exponents/kp1"
+      },
+      "selected_template_sha256": "03fdc14a3fed3a58245625cfda17c272bd43e5b176e19d4177fb22404a7c7c31",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "rational-exponents/kp2",
+      "before": {
+        "key": "rational-exponents/kp2",
+        "objective": "Negative rational exponents",
+        "constraints": "negative exponent -> reciprocal, then evaluate",
+        "hints": [
+          "Use the denominator to take the indicated root before applying the numerator power.",
+          "For a negative exponent, form the reciprocal at the appropriate step.",
+          "Apply exponent rules with fractional exponents just as with integer exponents."
+        ]
+      },
+      "proposed": {
+        "key": "rational-exponents/kp2",
+        "objective": "Negative rational exponents",
+        "constraints": "negative exponent -> reciprocal, then evaluate",
+        "hints": [
+          "Handle the negative exponent once: rewrite the expression as the reciprocal of the corresponding positive fractional power.",
+          "Inside that denominator, take the root named by the fractional exponent's denominator, then raise it to the positive numerator.",
+          "Keep that evaluated positive power in the denominator and simplify the reciprocal."
+        ]
+      },
+      "before_sha256": "7b975db79cd6fd32741688d20699b72d2b366d8d18589d7611db036ae8211a52",
+      "proposed_sha256": "d3721b022cda19ec1d8cf2808d08f56a83419b4c7c4ddeab99aea81dd03b9a73",
+      "prior_revision_reason": "The negative sign must be handled exactly once. Write the reciprocal of the positive power |m|/n, take the denominator-index root, raise to |m|, and invert. The current ordering can suggest applying a negative numerator power and then inverting again.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "negative exponent -> reciprocal, then evaluate",
+        "exemplars": [
+          {
+            "answer": "1/2",
+            "problem": "Compute $4^{-1/2}$.",
+            "solution_sketch": "$\\frac{1}{\\sqrt{4}} = \\frac{1}{2}$."
+          },
+          {
+            "answer": "1/9",
+            "problem": "What is $27^{-2/3}$?",
+            "solution_sketch": "$\\frac{1}{(27^{1/3})^2} = \\frac{1}{9}$."
+          },
+          {
+            "answer": "1/3",
+            "problem": "Find $9^{-1/2}$.",
+            "solution_sketch": "$\\frac{1}{\\sqrt{9}} = \\frac{1}{3}$."
+          },
+          {
+            "answer": "1/4",
+            "problem": "Evaluate $8^{-2/3}$.",
+            "solution_sketch": "$\\frac{1}{(8^{1/3})^2} = \\frac{1}{4}$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "negative-zero-exponents",
+          "radical-exponent-conversion"
+        ],
+        "name": "Negative rational exponents"
+      },
+      "curriculum_kp_sha256": "53ff376094dd31ffa68fe31841d51ebe368999908070a81fe0f97ee367620776",
+      "topic_prerequisites": [
+        {
+          "id": "radical-exponent-conversion",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "negative-zero-exponents",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "power-rule-exponents",
+          "key": false,
+          "weight": 0.5
+        },
+        {
+          "id": "simplifying-radicals",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "1/sqrt(a)**3",
+          "constraints": [
+            {
+              "left": {
+                "mul": [
+                  "b",
+                  "b"
+                ]
+              },
+              "op": "eq",
+              "right": {
+                "mul": [
+                  "a",
+                  "a",
+                  "a"
+                ]
+              }
+            }
+          ],
+          "distractors": [],
+          "hints": [
+            "Take the indicated root before the integer power; a negative exponent takes a reciprocal."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                4,
+                9,
+                16,
+                25,
+                36,
+                49,
+                64,
+                81,
+                100,
+                121,
+                144,
+                169
+              ]
+            },
+            "b": {
+              "kind": "choice",
+              "values": [
+                8,
+                27,
+                64,
+                125,
+                216,
+                343,
+                512,
+                729,
+                1000,
+                1331,
+                1728,
+                2197
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "1/8",
+              "params": {
+                "a": 4,
+                "b": 8
+              }
+            },
+            {
+              "expected": "1/27",
+              "params": {
+                "a": 9,
+                "b": 27
+              }
+            },
+            {
+              "expected": "1/64",
+              "params": {
+                "a": 16,
+                "b": 64
+              }
+            },
+            {
+              "expected": "1/125",
+              "params": {
+                "a": 25,
+                "b": 125
+              }
+            },
+            {
+              "expected": "1/216",
+              "params": {
+                "a": 36,
+                "b": 216
+              }
+            },
+            {
+              "expected": "1/343",
+              "params": {
+                "a": 49,
+                "b": 343
+              }
+            },
+            {
+              "expected": "1/512",
+              "params": {
+                "a": 64,
+                "b": 512
+              }
+            },
+            {
+              "expected": "1/729",
+              "params": {
+                "a": 81,
+                "b": 729
+              }
+            },
+            {
+              "expected": "1/1000",
+              "params": {
+                "a": 100,
+                "b": 1000
+              }
+            },
+            {
+              "expected": "1/1331",
+              "params": {
+                "a": 121,
+                "b": 1331
+              }
+            },
+            {
+              "expected": "1/1728",
+              "params": {
+                "a": 144,
+                "b": 1728
+              }
+            },
+            {
+              "expected": "1/2197",
+              "params": {
+                "a": 169,
+                "b": 2197
+              }
+            }
+          ],
+          "solution_sketch": "Let $c>0$ satisfy $c^2={a}$. First cube its square root to obtain $c^3$; the negative exponent takes the reciprocal $1/c^3$. The exact result of these steps is $1/{b}$.",
+          "statement": "Evaluate ${a}^{{-3/2}}$ exactly."
+        },
+        "kind": "template",
+        "kp_id": "rational-exponents/kp2"
+      },
+      "selected_template_sha256": "7e22a8aafcb5dced0ffdfac543b11a2d055232a8718654da3086bb3d439af628",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "rational-exponents/kp3",
+      "before": {
+        "key": "rational-exponents/kp3",
+        "objective": "Exponent laws with rational exponents",
+        "constraints": "same product/quotient/power rules, fractional arithmetic",
+        "hints": [
+          "Use the denominator to take the indicated root before applying the numerator power.",
+          "For a negative exponent, form the reciprocal at the appropriate step.",
+          "Apply exponent rules with fractional exponents just as with integer exponents."
+        ]
+      },
+      "proposed": {
+        "key": "rational-exponents/kp3",
+        "objective": "Exponent laws with rational exponents",
+        "constraints": "same product/quotient/power rules, fractional arithmetic",
+        "hints": [
+          "Decide whether the same-base powers are being multiplied, divided, or raised to another power.",
+          "For a product add the exponents; for a quotient subtract the denominator exponent; for a power of a power multiply the exponents.",
+          "Use common denominators where needed, reduce the resulting exponent, and keep the original base and its stated domain."
+        ]
+      },
+      "before_sha256": "c95b20fe1153623529799afa50e5a92b90935ab0726d8191b5b3e81579e72371",
+      "proposed_sha256": "09270af6020177b4b65f61c026f25c4a2582869ccfb4d7b46908e05b4bf922ad",
+      "prior_revision_reason": "Current first rungs describe evaluating numeric roots/reciprocals, while this KP combines symbolic powers. Identify product/quotient/power-of-power, respectively add/subtract/multiply fractional exponents, use common denominators as needed, and preserve the base and stated domain.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "same product/quotient/power rules, fractional arithmetic",
+        "exemplars": [
+          {
+            "answer": "x^(5/6)",
+            "problem": "Simplify $x^{1/2} \\cdot x^{1/3}$.",
+            "solution_sketch": "$\\frac{1}{2} + \\frac{1}{3} = \\frac{5}{6}$."
+          },
+          {
+            "answer": "x^2",
+            "problem": "Simplify $(x^{2/3})^3$.",
+            "solution_sketch": "$\\frac{2}{3} \\cdot 3 = 2$."
+          },
+          {
+            "answer": "x^(3/4)",
+            "problem": "What is $x^{1/4} \\cdot x^{1/2}$ in simplest form?",
+            "solution_sketch": "$\\frac{1}{4} + \\frac{1}{2} = \\frac{3}{4}$."
+          },
+          {
+            "answer": "x^3",
+            "problem": "What is $(x^{3/4})^4$ in simplest form?",
+            "solution_sketch": "$\\frac{3}{4} \\cdot 4 = 3$."
+          }
+        ],
+        "id": "kp3",
+        "key_prerequisites": [
+          "power-rule-exponents",
+          "radical-exponent-conversion"
+        ],
+        "name": "Exponent laws with rational exponents"
+      },
+      "curriculum_kp_sha256": "10a76e0e3d3557ba4efffa8d18ef51f8e44a2220d67ec12ff2e839ee5c719ba7",
+      "topic_prerequisites": [
+        {
+          "id": "radical-exponent-conversion",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "negative-zero-exponents",
+          "key": true,
+          "weight": 0.5
+        },
+        {
+          "id": "power-rule-exponents",
+          "key": false,
+          "weight": 0.5
+        },
+        {
+          "id": "simplifying-radicals",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_expr": "a*x**(3/4)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Take the indicated root before the integer power; a negative exponent takes a reciprocal."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "2*x^(3/4)",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "3*x^(3/4)",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "4*x^(3/4)",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "5*x^(3/4)",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "6*x^(3/4)",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "7*x^(3/4)",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "8*x^(3/4)",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "9*x^(3/4)",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "10*x^(3/4)",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "11*x^(3/4)",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "12*x^(3/4)",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "13*x^(3/4)",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "Use common denominator four: $1/4+1/2=3/4$. Keep coefficient ${a}$ and combine the equal base $x$.",
+          "statement": "Simplify ${a}x^{{1/4}}x^{{1/2}}$ for $x>0$."
+        },
+        "kind": "template",
+        "kp_id": "rational-exponents/kp3"
+      },
+      "selected_template_sha256": "e97b3c1050a5b5c41c90c09a74dc7847b8bd0803096f05b4a970448eae806f0d",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "pythagorean-theorem/kp2",
+      "before": {
+        "key": "pythagorean-theorem/kp2",
+        "objective": "Find a missing leg",
+        "constraints": "leg = sqrt(c^2 - a^2)",
+        "hints": [
+          "Identify the hypotenuse as the side opposite the right angle.",
+          "Use the sum of squared legs for a hypotenuse, or subtract a leg square for a missing leg.",
+          "Take the positive root and simplify it when it is not an integer."
+        ]
+      },
+      "proposed": {
+        "key": "pythagorean-theorem/kp2",
+        "objective": "Find a missing leg",
+        "constraints": "leg = sqrt(c^2 - a^2)",
+        "hints": [
+          "Identify the hypotenuse and the known leg before squaring either length.",
+          "Subtract the known leg's square from the hypotenuse's square.",
+          "Take the positive square root of that difference to obtain the missing leg."
+        ]
+      },
+      "before_sha256": "c50b9479140b7ffc10c90dd312f4193d0dd97cdf74fad42039de87ffe3a12e3f",
+      "proposed_sha256": "cf9bc1f90605e2f1f02ef56e51b2aa656db40cbc1ce6b7d4cde8f7f37e189f59",
+      "prior_revision_reason": "Make the subtraction order explicit: subtract the known leg square FROM the hypotenuse square, then take the positive root. Current wording names the subtrahend only and leaves the crucial minuend unspecified.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.independent-review.json",
+      "audit_sha256": "6f3a05bdf973d5fe96c35668fb3f2f1c9782e55eb73d05172393e2a67781745d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-03.json",
+      "authored_source_sha256": "311258f8e1c77e193d1576f2f304f8696babef10de6d1555c564b1d27ef060e1",
+      "curriculum_kp": {
+        "constraints": "leg = sqrt(c^2 - a^2)",
+        "exemplars": [
+          {
+            "answer": "12",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "A right triangle has hypotenuse $13$ and one leg $5$. Find the other leg.",
+            "solution_sketch": "$\\sqrt{169 - 25} = \\sqrt{144} = 12$."
+          },
+          {
+            "answer": "8",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "The hypotenuse of a right triangle is $10$ and one leg is $6$. What is the other leg?",
+            "solution_sketch": "$\\sqrt{100 - 36} = \\sqrt{64} = 8$."
+          },
+          {
+            "answer": "15",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "A right triangle's hypotenuse measures $17$ with one leg $8$. Find the other leg.",
+            "solution_sketch": "$\\sqrt{289 - 64} = \\sqrt{225} = 15$."
+          },
+          {
+            "answer": "12",
+            "answer_contract": {
+              "kind": "exact"
+            },
+            "problem": "Given hypotenuse $15$ and one leg $9$ on a right triangle, what is the other leg?",
+            "solution_sketch": "$\\sqrt{225 - 81} = \\sqrt{144} = 12$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "square-roots"
+        ],
+        "name": "Find a missing leg"
+      },
+      "curriculum_kp_sha256": "115362c16245b4a6cd1453fff22f6649cdba450f3fdfcc16e5c1fb8e76386c50",
+      "topic_prerequisites": [
+        {
+          "id": "square-roots",
+          "key": true,
+          "weight": 0.6
+        },
+        {
+          "id": "simplifying-radicals",
+          "key": false,
+          "weight": 0.4
+        },
+        {
+          "id": "evaluating-expressions",
+          "key": true,
+          "weight": 0.3
+        },
+        {
+          "id": "integer-multiplication-division",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "exact"
+          },
+          "answer_expr": "12*a",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Identify the hypotenuse before deciding whether to add or subtract the known squared lengths."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "24",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "36",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "48",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "60",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "72",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "84",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "96",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "108",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "120",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "132",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "144",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "156",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "Subtract leg square from hypotenuse square: $(169-25){a}^2=144{a}^2$. The positive length is $12\\cdot{a}$ cm.",
+          "statement": "A right triangle has hypotenuse $13\\cdot{a}$ and one leg $5\\cdot{a}$ cm. Find the other leg in cm."
+        },
+        "kind": "template",
+        "kp_id": "pythagorean-theorem/kp2"
+      },
+      "selected_template_sha256": "c523de77a33f139c72cf404bfe49c34c698d481762465d0ae0e36ec31542f96e",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "pythagorean-converse/kp1",
+      "before": {
+        "key": "pythagorean-converse/kp1",
+        "objective": "Verify a right triangle",
+        "constraints": "test a^2 + b^2 against c^2 with c the longest side",
+        "hints": [
+          "Put the longest side in the role of c before comparing squares.",
+          "Compute the two smaller-side squares and compare their sum with c squared.",
+          "Use equality for a right triangle; the direction of an unequal comparison determines the other classification."
+        ]
+      },
+      "proposed": {
+        "key": "pythagorean-converse/kp1",
+        "objective": "Verify a right triangle",
+        "constraints": "test a^2 + b^2 against c^2 with c the longest side",
+        "hints": [
+          "Identify the longest side. Square supplied side lengths, but use supplied areas of squares on the sides directly.",
+          "Compare the longest side's square with the sum of the other side squares.",
+          "Equality proves a right angle opposite the longest side. Use that fact to answer the stated right-angle or perpendicular-sides claim."
+        ]
+      },
+      "before_sha256": "087b9dccee23200c020c94bbcc474c37d5bb295aa2c9d9a2c058411d6b0f138a",
+      "proposed_sha256": "2c7257505dab289e46bc5313876d9c8c6e8ee9c4c7c043800c3c6930f43b80e7",
+      "prior_revision_reason": "Canonical input includes square AREAS64,225,289, not only side lengths. Distinguish these: square supplied lengths, but use supplied square areas directly. Compare the largest square with the sum of the other two; explain equality as the requested right-angle/perpendicular claim. Omit premature acute/obtuse classification.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-04.independent-review.json",
+      "audit_sha256": "97768ed8299f235cb723d44256a59bad5197e7de0ae2e356e4e2fb2711091a6d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-04.json",
+      "authored_source_sha256": "80bfd11f6d8268293d10aeb10251dc93a7800ff77367ed0019fbfee0ce792c60",
+      "curriculum_kp": {
+        "constraints": "test a^2 + b^2 against c^2 with c the longest side",
+        "exemplars": [
+          {
+            "answer": "yes",
+            "answer_contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            },
+            "problem": "Is a triangle with sides $5$, $12$, $13$ a right triangle?",
+            "solution_sketch": "$25 + 144 = 169 = 13^2$."
+          },
+          {
+            "answer": "yes",
+            "answer_contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            },
+            "problem": "Squares built on the three sides of a triangle have areas $64$, $225$, and $289$. Is the triangle right?",
+            "solution_sketch": "The largest side has square area $289$. Since $64+225=289$, the converse proves a right angle."
+          },
+          {
+            "answer": "yes",
+            "answer_contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            },
+            "problem": "A builder measures two sides of a triangular brace as $7$ and $24$ cm and the opposite side as $25$ cm. Are the first two sides perpendicular?",
+            "solution_sketch": "$7^2+24^2=49+576=625=25^2$. The angle opposite the longest side is right."
+          },
+          {
+            "answer": "yes",
+            "answer_contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            },
+            "problem": "The triple $(3,4,5)$ is scaled by $8$. Does the scaled triangle remain right?",
+            "solution_sketch": "The sides are $(24,32,40)$. Scaling squares multiplies both sides by $8^2$: $576+1024=1600$."
+          }
+        ],
+        "id": "kp1",
+        "key_prerequisites": [
+          "pythagorean-theorem"
+        ],
+        "name": "Verify a right triangle",
+        "visuals": [
+          {
+            "caption": "Reference example: A reference right triangle has legs 8 and 6 and hypotenuse 10; 8 squared plus 6 squared equals 10 squared.",
+            "figure": {
+              "angle_marks": [],
+              "right_angles": [
+                1
+              ],
+              "shape": "polygon",
+              "vertices": [
+                {
+                  "label": "A",
+                  "x": "0",
+                  "y": "0"
+                },
+                {
+                  "label": "B",
+                  "x": "8",
+                  "y": "0"
+                },
+                {
+                  "label": "C",
+                  "x": "8",
+                  "y": "6"
+                }
+              ]
+            },
+            "kind": "geometry"
+          }
+        ]
+      },
+      "curriculum_kp_sha256": "5a4fda0cea7531cd096d5a68426a8af1d55cbf0c361c1727c3dee573ee609a5c",
+      "topic_prerequisites": [
+        {
+          "id": "pythagorean-theorem",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "integer-multiplication-division",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "answer_expr": "equalitylabel((5*a)**2+(12*a)**2,(13*a)**2)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Compare the square of the longest side with the sum of the other squared lengths."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "yes",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "yes",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "The largest side has square $169{a}^2$; the other squares sum to $(25+144){a}^2=169{a}^2$, so yes.",
+          "statement": "A triangle has sides $5\\cdot{a}$, $12\\cdot{a}$, and $13\\cdot{a}$. Is it right?"
+        },
+        "kind": "template",
+        "kp_id": "pythagorean-converse/kp1"
+      },
+      "selected_template_sha256": "52a803fee4846189cae05ba93f2947dd7f7664e8b7dde03a49dadd82c1a2cef2",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    },
+    {
+      "key": "pythagorean-converse/kp2",
+      "before": {
+        "key": "pythagorean-converse/kp2",
+        "objective": "Recognize non-right triangles",
+        "constraints": "always compare against the square of the longest side",
+        "hints": [
+          "Put the longest side in the role of c before comparing squares.",
+          "Compute the two smaller-side squares and compare their sum with c squared.",
+          "Use equality for a right triangle; the direction of an unequal comparison determines the other classification."
+        ]
+      },
+      "proposed": {
+        "key": "pythagorean-converse/kp2",
+        "objective": "Recognize non-right triangles",
+        "constraints": "always compare against the square of the longest side",
+        "hints": [
+          "Put the longest side alone on one side of the comparison. If square areas are supplied, use them directly instead of squaring them again.",
+          "Compare that side square with the sum of the other two. An unequal result rules out a right triangle.",
+          "Answer the actual claim: a proposed test must use the longest side alone, and claimed perpendicular sides must satisfy the square-sum equality."
+        ]
+      },
+      "before_sha256": "164b398b73fb6f87063bf04faac9520a3b916fa97eaac4d90e63842ed53eacfc",
+      "proposed_sha256": "fe8eaf014cf860378bb8a4ef141a98533cab0aae6dd0fa2bbf867f8d3a5e5880",
+      "prior_revision_reason": "Handle supplied side-square areas without squaring again and put the longest side on the comparison side. One canonical question asks whether a proposed comparison used the correct side, so answer that actual claim. For right/not-right verification equality is sufficient; no premature acute/obtuse branch is needed.",
+      "audit_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-04.independent-review.json",
+      "audit_sha256": "97768ed8299f235cb723d44256a59bad5197e7de0ae2e356e4e2fb2711091a6d",
+      "authored_source_path": "/home/deploy/.cache/cadus2_orchestration/resume-20260909/hint-authored/06-exponents-radicals-04.json",
+      "authored_source_sha256": "80bfd11f6d8268293d10aeb10251dc93a7800ff77367ed0019fbfee0ce792c60",
+      "curriculum_kp": {
+        "constraints": "always compare against the square of the longest side",
+        "exemplars": [
+          {
+            "answer": "no",
+            "answer_contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            },
+            "problem": "Is a triangle with sides $4$, $5$, $6$ a right triangle?",
+            "solution_sketch": "$16 + 25 = 41 \\ne 36$."
+          },
+          {
+            "answer": "no",
+            "answer_contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            },
+            "problem": "Squares on a triangle have areas $4$, $9$, and $16$. Is there a right angle?",
+            "solution_sketch": "The longest side has square $16$, while $4+9=13$. The unequal totals rule out a right angle."
+          },
+          {
+            "answer": "no",
+            "answer_contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            },
+            "problem": "A frame has side lengths $5$, $6$, and $9$ cm. A builder claims the $5$ cm and $6$ cm sides are perpendicular. Is the claim correct?",
+            "solution_sketch": "Perpendicular sides would require $9^2=5^2+6^2$. But $81\\ne61$, so the claim fails."
+          },
+          {
+            "answer": "no",
+            "answer_contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            },
+            "problem": "A student tests sides $3$, $4$, $6$ using $3^2+6^2=4^2$. Is this the correct Pythagorean test?",
+            "solution_sketch": "The longest side is $6$, so the required comparison is $3^2+4^2=25$ against $6^2=36$."
+          }
+        ],
+        "id": "kp2",
+        "key_prerequisites": [
+          "pythagorean-theorem"
+        ],
+        "name": "Recognize non-right triangles",
+        "visuals": [
+          {
+            "caption": "Reference example: This reference triangle has squared side lengths 16, 13 and 5. No two sum to the third, so it is not right-angled.",
+            "figure": {
+              "angle_marks": [],
+              "right_angles": [],
+              "shape": "polygon",
+              "vertices": [
+                {
+                  "label": "A",
+                  "x": "0",
+                  "y": "0"
+                },
+                {
+                  "label": "B",
+                  "x": "4",
+                  "y": "0"
+                },
+                {
+                  "label": "C",
+                  "x": "1",
+                  "y": "2"
+                }
+              ]
+            },
+            "kind": "geometry"
+          }
+        ]
+      },
+      "curriculum_kp_sha256": "b7f10408c6060cffc1137bb89c72da418a4ec5d0d73d19270a5a4a4a936591c9",
+      "topic_prerequisites": [
+        {
+          "id": "pythagorean-theorem",
+          "key": true,
+          "weight": 0.8
+        },
+        {
+          "id": "integer-multiplication-division",
+          "key": false,
+          "weight": 0.3
+        }
+      ],
+      "selected_template": {
+        "arguments": {
+          "answer_contract": {
+            "kind": "label",
+            "options": [
+              [
+                "yes"
+              ],
+              [
+                "no"
+              ]
+            ]
+          },
+          "answer_expr": "equalitylabel((3*a)**2+(4*a)**2,(6*a)**2)",
+          "constraints": [],
+          "distractors": [],
+          "hints": [
+            "Compare the square of the longest side with the sum of the other squared lengths."
+          ],
+          "params": {
+            "a": {
+              "kind": "choice",
+              "values": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          },
+          "samples": [
+            {
+              "expected": "no",
+              "params": {
+                "a": 2
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 3
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 4
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 5
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 6
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 7
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 8
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 9
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 10
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 11
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 12
+              }
+            },
+            {
+              "expected": "no",
+              "params": {
+                "a": 13
+              }
+            }
+          ],
+          "solution_sketch": "The longest side has square $36{a}^2$ but the other squares total $25{a}^2$. Their inequality proves the triangle is not right.",
+          "statement": "A triangle has sides $3\\cdot{a}$, $4\\cdot{a}$, and $6\\cdot{a}$. Is it right?"
+        },
+        "kind": "template",
+        "kp_id": "pythagorean-converse/kp2"
+      },
+      "selected_template_sha256": "98ffb2b8172d3b2dd299a76ed0ee7122ce06869d3df4894bb868013c8eab992e",
+      "template_blockers": "preserve prior audit template findings; this proposal repairs hints only"
+    }
+  ]
+}

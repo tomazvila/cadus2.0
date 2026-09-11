@@ -35,8 +35,8 @@ use axum::http::{Method, StatusCode};
 use cadus_store::test_support::TestDb;
 use common::{
     LESSON, POOL_ANSWER, POOL_TEXT, assert_refused, call, claimed_rows, drill_app as app,
-    hint_task, learner_with_pool_row, lesson_problem, lesson_state, parse, put_state, seed_learner,
-    seed_open_session, serve_ok, serve_raw, serve_task, stored_state,
+    events_of_type, hint_task, learner_with_pool_row, lesson_problem, lesson_state, parse,
+    put_state, seed_learner, seed_open_session, serve_ok, serve_raw, serve_task, stored_state,
 };
 use serde_json::{Value, json};
 
@@ -108,7 +108,23 @@ async fn a_re_serve_returns_the_same_problem_id_and_a_fresh_started_at() {
         // (`api.py:520`). The D-S6 row stores the absent count as 0, and the
         // payload must not read it back from there.
         assert_eq!(first["total"], Value::Null);
-        let first_stamp = stored_state(&db, user).await.served[LESSON].started_at;
+        let first_state = stored_state(&db, user).await;
+        let first_stamp = first_state.served[LESSON].started_at;
+        let handoff = first_state.served[LESSON]
+            .handoff
+            .as_ref()
+            .expect("a new ordinary problem freezes its hand-off");
+        assert_eq!(handoff.item_source, cadus_core::event::ItemSource::Template);
+        assert_eq!(handoff.exposure, cadus_core::event::Exposure::First);
+        let recorded = events_of_type(&db, user, "ordinary_problem_served").await;
+        assert_eq!(
+            recorded.len(),
+            1,
+            "the abandoned hand-off is durable before an answer"
+        );
+        assert_eq!(recorded[0]["problem_id"], first["problem_id"]);
+        assert_eq!(recorded[0]["item_digest"], handoff.item_digest);
+        assert_eq!(recorded[0]["exposure"], "first");
 
         let second = serve_ok(&app, user, LESSON).await;
         assert_eq!(
@@ -131,6 +147,17 @@ async fn a_re_serve_returns_the_same_problem_id_and_a_fresh_started_at() {
         );
         assert_eq!(after.served.len(), 1, "served is keyed by task id");
         assert_eq!(after.tasks[LESSON].served, 1, "the re-serve counted twice");
+        assert_eq!(
+            after.served[LESSON].handoff,
+            first_state.served[LESSON].handoff
+        );
+        assert_eq!(
+            events_of_type(&db, user, "ordinary_problem_served")
+                .await
+                .len(),
+            1,
+            "a reload returns the frozen hand-off without appending another",
+        );
 
         // The re-serve claimed no second pool row.
         assert_eq!(claimed_rows(&db, user).await, 1);

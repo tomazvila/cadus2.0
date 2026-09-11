@@ -15,7 +15,9 @@ def document(digest, kp="topic/kp1", kind="teach", body=None):
         "digest": digest, "kp_id": kp, "kind": kind, "status": "pending",
         "created_at": "2026-09-06T12:00:00Z", "authoring_attempts": 1,
         "authoring_cost_usd": "0.000000", "body": body or {"concept": digest},
-        "gate": None, "instances": [], "instances_note": None,
+        "gate": None, "instances": [], "instances_note": None, "policy_digest": None, "approved_policy_digest": None, "template_context_digest": None, "approved_template_context_digest": None, "eligible_template_digests": [],
+        "curriculum_digest": "curriculum-v1", "approved_curriculum_digest": None,
+        "review_engine_digest": "engine-v1", "approved_review_engine_digest": None,
     }
 
 
@@ -31,11 +33,20 @@ class FakeApi:
     def document(self, digest):
         return json.loads(json.dumps(self.documents[digest]))
 
-    def decide(self, digest, decision, reason=None):
+    def decide(self, digest, decision, reason=None, policy_digest=None,
+               template_context_digest=None, curriculum_digest=None,
+               review_engine_digest=None):
         self.writes.append((digest, decision, reason))
         status = "approved" if decision == "approve" else "rejected"
         self.documents[digest]["status"] = status
-        return {"digest": digest, "status": status, "rejected_documents": []}
+        self.documents[digest]["approved_template_context_digest"] = template_context_digest
+        self.documents[digest]["approved_curriculum_digest"] = curriculum_digest
+        self.documents[digest]["approved_review_engine_digest"] = review_engine_digest
+        return {"digest": digest, "status": status, "rejected_documents": [],
+                "approved_policy_digest": policy_digest,
+                "approved_template_context_digest": template_context_digest,
+                "approved_curriculum_digest": curriculum_digest,
+                "approved_review_engine_digest": review_engine_digest}
 
 
 class ChangingApi(FakeApi):

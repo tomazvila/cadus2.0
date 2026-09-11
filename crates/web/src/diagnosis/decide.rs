@@ -87,9 +87,19 @@ pub(crate) async fn decide(
     // problem (M5 review 1, findings F10 and F16).
     if let (Some(topic), Some(point)) = (served.serving_topic(), served.kp.as_deref()) {
         let key = kp_key(topic, point);
+        let loaded = state
+            .content
+            .as_ref()
+            .ok_or_else(|| ApiError::internal("The current curriculum is unavailable."))?;
+        let policy = loaded.policy_digest(&key)?;
         let doc = bound(
             &state.db,
-            cadus_store::content::approved_document(&mut **tx, &key, KIND_DIAGNOSIS),
+            cadus_store::content::approved_document_current(
+                &mut **tx,
+                &key,
+                KIND_DIAGNOSIS,
+                loaded.review_context(policy.as_deref())?,
+            ),
         )
         .await
         .map_err(|err| failed(&err))?;

@@ -121,6 +121,7 @@ pub(super) fn validate_parts(parts: &[AnswerPart]) -> Result<(), Undecidable> {
         if matches!(
             part.contract,
             AnswerContract::RequiredAssignment
+                | AnswerContract::RequiredSimplestRadical
                 | AnswerContract::Multipart { .. }
                 | AnswerContract::None
         ) {

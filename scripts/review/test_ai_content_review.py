@@ -12,7 +12,7 @@ import content_review_packet as packet
 
 def item(digest="d", kind="template"):
     return {"digest": digest, "kp_id": "t/k", "kind": kind, "status": "pending",
-            "body": {"x": digest}, "gate": None, "instances": [], "instances_note": None}
+            "body": {"x": digest}, "gate": None, "instances": [], "instances_note": None, "policy_digest": None, "approved_policy_digest": None, "template_context_digest": None, "approved_template_context_digest": None, "eligible_template_digests": [], "curriculum_digest": "curriculum-v1", "approved_curriculum_digest": None, "review_engine_digest": "engine-v1", "approved_review_engine_digest": None}
 
 
 def checks(status="pass", evidence="recomputed independently"):

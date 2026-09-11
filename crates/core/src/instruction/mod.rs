@@ -68,6 +68,7 @@
 //! (C4). A body that is not a document at all is a rejection, not a crash.
 
 mod body;
+mod finite;
 mod hint;
 mod teach;
 
@@ -78,7 +79,7 @@ use crate::template::gate::Rejection;
 use crate::template::{Compiled, GATE_SEED, from_body, rng_from_seed};
 
 pub use hint::gate_hint_ladder;
-pub use teach::gate_teach;
+pub use teach::{gate_teach, gate_teach_with_policy};
 
 /// The `content_store.kind` of a teach page (L4).
 pub const KIND_TEACH: &str = "teach";
@@ -249,8 +250,19 @@ impl InstructionSpec<'_> {
 /// [`None`] means the document still passes. The caller leaves it alone.
 #[must_use]
 pub fn regate(kind: &str, body: &str, spec: &InstructionSpec<'_>) -> Option<Rejection> {
+    regate_with_policy(kind, body, spec, None)
+}
+
+/// Recheck instruction against the currently loaded reviewed finite policy.
+#[must_use]
+pub fn regate_with_policy(
+    kind: &str,
+    body: &str,
+    spec: &InstructionSpec<'_>,
+    policy: Option<&crate::curriculum::FiniteObjectiveDomain>,
+) -> Option<Rejection> {
     match kind {
-        KIND_TEACH => gate_teach(body, spec).err(),
+        KIND_TEACH => gate_teach_with_policy(body, spec, policy).err(),
         KIND_HINT_LADDER => gate_hint_ladder(body, spec).err(),
         _ => None,
     }

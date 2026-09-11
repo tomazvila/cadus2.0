@@ -335,18 +335,10 @@ async fn next_problem(
         return None;
     }
     scratch.served.remove(&task.task_id);
-    install_next(
-        state,
-        content,
-        tx,
-        user_id,
-        task,
-        scratch,
-        unix_seconds(now.micros()),
-    )
-    .await
-    .map_err(|err| {
-        tracing::warn!(task_id = %task.task_id, code = %err.code, "answer: no next problem");
-    })
-    .ok()
+    install_next(state, content, tx, user_id, task, scratch, now)
+        .await
+        .map_err(|err| {
+            tracing::warn!(task_id = %task.task_id, code = %err.code, "answer: no next problem");
+        })
+        .ok()
 }

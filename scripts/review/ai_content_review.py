@@ -27,29 +27,33 @@ def tree_hash(root):
     return packet.sha256(rows)
 
 
-def listed(api, **filters):
-    rows, page, limit = [], 0, None
-    while True:
-        query = "&".join(f"{key}={value}" for key, value in sorted(filters.items()))
-        answer = api.request("GET", f"?{query}&page={page}")
-        items, current = answer.get("items"), answer.get("limit")
-        if not isinstance(items, list) or type(current) is not int or current < 1:
-            raise packet.Refused("invalid selected-serving-set response")
-        if limit is not None and current != limit:
-            raise packet.Refused("selected-serving-set page size changed")
-        rows.extend(items); limit = current
-        if len(items) < limit:
-            return rows
-        page += 1
+def current_templates(api, item):
+    members = item.get("eligible_template_digests")
+    if (not isinstance(members, list) or not all(isinstance(value, str) and value for value in members)
+            or members != sorted(set(members))):
+        raise packet.Refused("missing or invalid authoritative template bank")
+    docs = [api.document(digest) for digest in members]
+    for digest, doc in zip(members, docs):
+        if (doc.get("digest") != digest or doc.get("kp_id") != item["kp_id"]
+                or doc.get("kind") != "template" or doc.get("status") != "approved"
+                or doc.get("policy_digest") != item["policy_digest"]
+                or doc.get("approved_policy_digest") != item["policy_digest"]
+                or doc.get("curriculum_digest") != item["curriculum_digest"]
+                or doc.get("approved_curriculum_digest") != item["curriculum_digest"]
+                or doc.get("review_engine_digest") != item["review_engine_digest"]
+                or doc.get("approved_review_engine_digest") != item["review_engine_digest"]):
+            raise packet.Refused("the authoritative template bank changed during review")
+    return docs
 
 
 def serving_hash(api, item):
-    rows = listed(api, kp=item["kp_id"], kind="template")
-    docs = [api.document(row["digest"]) for row in rows if row.get("status") == "approved"]
-    facts = [{"digest": doc["digest"], "fingerprint_sha256": packet.fingerprint(doc)} for doc in docs]
+    docs = current_templates(api, item)
+    facts = {doc["digest"]: {"digest": doc["digest"], "fingerprint_sha256": packet.fingerprint(doc)} for doc in docs}
     if item["kind"] == "template":
-        facts.append({"digest": item["digest"], "fingerprint_sha256": item["fingerprint_sha256"]})
-    return packet.sha256(sorted(facts, key=lambda row: row["digest"]))
+        if item["policy_digest"] is not None:
+            facts = {}  # A finite candidate replaces the previous single-template bank.
+        facts[item["digest"]] = {"digest": item["digest"], "fingerprint_sha256": item["fingerprint_sha256"]}
+    return packet.sha256(sorted(facts.values(), key=lambda row: row["digest"]))
 
 
 def context(packet_doc, api, curriculum):
@@ -63,16 +67,18 @@ def context(packet_doc, api, curriculum):
         raise packet.Refused("unsupported content kind")
     if "template" not in kinds:
         for item in indexed.values():
-            if not any(row.get("status") == "approved" for row in listed(api, kp=item["kp_id"], kind="template")):
+            if not current_templates(api, item):
                 raise packet.Refused("instruction review requires a refreshed approved template serving set")
     curriculum_hash = tree_hash(curriculum)
     rows = []
     for item in indexed.values():
         live = api.document(item["digest"])
-        if live.get("status") != "pending" or packet.fingerprint(live) != item["fingerprint_sha256"]:
+        if not packet.reviewable(live) or packet.fingerprint(live) != item["fingerprint_sha256"]:
             raise packet.Refused(f"{item['digest']}: packet is stale")
         rows.append({"digest": item["digest"], "fingerprint_sha256": item["fingerprint_sha256"],
                      "body_sha256": packet.sha256(item["body"]), "curriculum_sha256": curriculum_hash,
+                     "canonical_curriculum_digest": item["curriculum_digest"],
+                     "review_engine_digest": item["review_engine_digest"],
                      "selected_serving_set_sha256": serving_hash(api, item)})
     return sorted(rows, key=lambda row: row["digest"])
 

@@ -133,6 +133,7 @@ pub fn new_instance(index: usize) -> NewInstance {
     NewInstance {
         source: Source::Template,
         content_digest: Some("deadbeefdeadbeef".to_string()),
+        generation_context: None,
         problem: PoolProblem {
             v: 1,
             text: format!("Compute ${index}^2$."),

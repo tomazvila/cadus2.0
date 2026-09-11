@@ -1,4 +1,6 @@
 //! Writes current, non-semantic whole-course Teach technical evidence.
+// This offline verification executable stops immediately on invalid evidence.
+#![allow(clippy::expect_used, clippy::panic)]
 use std::{
     collections::BTreeMap,
     fs::{self, OpenOptions},
@@ -169,6 +171,6 @@ fn main() {
     file.write_all(&bytes).expect("write");
     assert_eq!(
         hash(&fs::read(&output).expect("output")),
-        hash(&serde_json::to_vec_pretty(&value).unwrap())
+        hash(&serde_json::to_vec_pretty(&value).expect("serialize verification output"))
     );
 }

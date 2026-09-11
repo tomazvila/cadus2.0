@@ -82,9 +82,12 @@ class Api:
             raise Refused(f"{method} {suffix or '/'} failed: {error}") from error
 
     def list_pending(self):
+        return self.list_status("pending")
+
+    def list_status(self, status):
         rows, page, limit = [], 0, None
         while True:
-            answer = self.request("GET", f"?status=pending&page={page}")
+            answer = self.request("GET", f"?status={status}&page={page}")
             items = answer.get("items")
             current_limit = answer.get("limit")
             if not isinstance(items, list) or type(current_limit) is not int or current_limit < 1:
@@ -104,9 +107,15 @@ class Api:
     def document(self, digest):
         return self.request("GET", "/" + urllib.parse.quote(digest, safe=""))
 
-    def decide(self, digest, decision, reason=None):
+    def decide(self, digest, decision, reason=None, policy_digest=None,
+               template_context_digest=None, curriculum_digest=None, review_engine_digest=None):
         suffix = "/" + urllib.parse.quote(digest, safe="") + "/" + decision
-        return self.request("POST", suffix, {} if decision == "approve" else {"reason": reason})
+        return self.request("POST", suffix, {
+            "policy_digest": policy_digest,
+            "template_context_digest": template_context_digest,
+            "curriculum_digest": curriculum_digest,
+            "review_engine_digest": review_engine_digest,
+        } if decision == "approve" else {"reason": reason})
 
 
 def source_index(source_root):
@@ -154,15 +163,34 @@ def index_source_file(index, source_root, manifest, filename):
 
 
 def fingerprint(document):
-    required = ("digest", "kp_id", "kind", "status", "body", "gate", "instances")
+    required = ("digest", "kp_id", "kind", "status", "body", "gate", "instances", "policy_digest", "approved_policy_digest",
+                "template_context_digest", "approved_template_context_digest", "eligible_template_digests",
+                "curriculum_digest", "approved_curriculum_digest", "review_engine_digest",
+                "approved_review_engine_digest")
     if not isinstance(document, dict) or any(field not in document for field in required):
         raise Refused("a review document is missing a fingerprint field")
     return sha256({field: document[field] for field in required})
 
 
+def reviewable(document):
+    pairs = (("policy_digest", "approved_policy_digest"),
+             ("template_context_digest", "approved_template_context_digest"),
+             ("curriculum_digest", "approved_curriculum_digest"),
+             ("review_engine_digest", "approved_review_engine_digest"))
+    return document.get("status") == "pending" or (
+        document.get("status") == "approved"
+        and all(key in document for pair in pairs for key in pair)
+        and any(document[current] != document[approved] for current, approved in pairs))
+
+
+def stale_policy_queue(api):
+    return [row for row in api.list_status("approved")
+            if reviewable(api.document(row["digest"]))]
+
+
 def packet_item(document, sources):
-    if document["status"] != "pending" or document["kind"] not in KINDS:
-        raise Refused(f"{document.get('digest')}: expected a pending known content kind")
+    if not reviewable(document) or document["kind"] not in KINDS:
+        raise Refused(f"{document.get('digest')}: expected a reviewable known content kind")
     matches = sources.get((document["kp_id"], document["kind"], canonical(document["body"])), [])
     return {
         "digest": document["digest"], "kp_id": document["kp_id"],
@@ -172,16 +200,25 @@ def packet_item(document, sources):
         "authoring_cost_usd": document.get("authoring_cost_usd"),
         "source_matches": matches, "body": document["body"],
         "gate": document["gate"], "instances": document["instances"],
+        "policy_digest": document["policy_digest"], "approved_policy_digest": document["approved_policy_digest"],
+        "template_context_digest": document["template_context_digest"],
+        "approved_template_context_digest": document["approved_template_context_digest"],
+        "eligible_template_digests": document["eligible_template_digests"],
+        "curriculum_digest": document["curriculum_digest"],
+        "approved_curriculum_digest": document["approved_curriculum_digest"],
+        "review_engine_digest": document["review_engine_digest"],
+        "approved_review_engine_digest": document["approved_review_engine_digest"],
         "instances_note": document.get("instances_note"),
         "fingerprint_sha256": fingerprint(document),
     }
 
 
-def export_packet(api, output, source_root, workers):
-    queue = api.list_pending()
+def export_packet(api, output, source_root, workers, stale_policy=False):
+    queue_read = (lambda: stale_policy_queue(api)) if stale_policy else api.list_pending
+    queue = queue_read()
     with ThreadPoolExecutor(max_workers=workers) as pool:
         documents = list(pool.map(lambda row: api.document(row["digest"]), queue))
-    after = api.list_pending()
+    after = queue_read()
     if [row.get("digest") for row in after] != [row.get("digest") for row in queue]:
         raise Refused("the pending queue changed during export")
     by_digest = {row["digest"]: row for row in queue}
@@ -193,7 +230,7 @@ def export_packet(api, output, source_root, workers):
     sources = source_index(source_root)
     items = sorted((packet_item(document, sources) for document in documents),
                    key=lambda item: (item["kp_id"], item["kind"], item["digest"]))
-    core = {"packet_version": PACKET_VERSION, "scope": "all_pending_content", "items": items}
+    core = {"packet_version": PACKET_VERSION, "scope": "stale_policy_content" if stale_policy else "all_pending_content", "items": items}
     packet = core | {"packet_sha256": sha256(core)}
     output.write_text(json.dumps(packet, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
     decisions = {"decision_version": DECISION_VERSION,
@@ -272,12 +309,16 @@ def apply_one_decision(api, item, decision, reason, receipt, receipt_path, befor
             write_receipt(receipt_path, receipt)
             raise
     live = api.document(item["digest"])
-    if live.get("status") != "pending" or fingerprint(live) != item.get("fingerprint_sha256"):
+    if not reviewable(live) or fingerprint(live) != item.get("fingerprint_sha256"):
         raise Refused(f"{item['digest']}: live document changed before its write")
     receipt["in_flight"] = {"digest": item["digest"], "decision": decision}
     write_receipt(receipt_path, receipt)
     try:
-        answer = api.decide(item["digest"], decision, reason)
+        answer = api.decide(
+            item["digest"], decision, reason, item["policy_digest"],
+            item["template_context_digest"], item["curriculum_digest"],
+            item["review_engine_digest"],
+        )
     except Exception as error:
         receipt["uncertain"] = receipt.pop("in_flight") | {"error": str(error)}
         write_receipt(receipt_path, receipt)
@@ -286,7 +327,12 @@ def apply_one_decision(api, item, decision, reason, receipt, receipt_path, befor
         receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "template re-gate outcome unavailable"}
         write_receipt(receipt_path, receipt)
         raise Refused(f"{item['digest']}: template re-gate outcome unavailable")
-    if answer.get("digest") != item["digest"] or answer.get("status") != (
+    policy_wrong = decision == "approve" and (
+        answer.get("approved_policy_digest") != item["policy_digest"]
+        or answer.get("approved_template_context_digest") != item["template_context_digest"]
+        or answer.get("approved_curriculum_digest") != item["curriculum_digest"]
+        or answer.get("approved_review_engine_digest") != item["review_engine_digest"])
+    if policy_wrong or answer.get("digest") != item["digest"] or answer.get("status") != (
             "approved" if decision == "approve" else "rejected"):
         receipt["uncertain"] = receipt.pop("in_flight", {"digest": item["digest"]}) | {"error": "malformed decision response"}
         write_receipt(receipt_path, receipt)
@@ -303,7 +349,7 @@ def apply_decisions(api, packet_path, decision_path, commit, receipt_path=None, 
     checked = []
     for item, decision, reason in selected:
         live = api.document(item["digest"])
-        if live.get("status") != "pending" or fingerprint(live) != item.get("fingerprint_sha256"):
+        if not reviewable(live) or fingerprint(live) != item.get("fingerprint_sha256"):
             raise Refused(f"{item['digest']}: live document differs from the reviewed pending document")
         checked.append((item, decision, reason))
     if not commit:
@@ -338,6 +384,7 @@ def parser():
     export.add_argument("--output", required=True, type=Path)
     export.add_argument("--source-root", type=Path, default=root / "docs/content-foundations")
     export.add_argument("--workers", type=int, default=8)
+    export.add_argument("--stale-policy", action="store_true", help="export approvals invalidated by a trusted policy change")
     apply = subs.add_parser("apply", parents=[common])
     apply.add_argument("--packet", required=True, type=Path)
     apply.add_argument("--decisions", required=True, type=Path)
@@ -353,8 +400,8 @@ def main(argv=None):
         if args.command == "export":
             if not 1 <= args.workers <= 32:
                 raise Refused("workers must be from 1 through 32")
-            count, decisions, digest = export_packet(api, args.output, args.source_root, args.workers)
-            print(f"exported {count} pending documents; packet sha256:{digest}; decisions {decisions}")
+            count, decisions, digest = export_packet(api, args.output, args.source_root, args.workers, args.stale_policy)
+            print(f"exported {count} reviewable documents; packet sha256:{digest}; decisions {decisions}")
         else:
             receipt = apply_decisions(api, args.packet, args.decisions, args.commit, args.receipt)
             print(f"checked {len(receipt.get('selected', receipt.get('receipts', [])))} explicit decisions; committed={receipt['committed']}")

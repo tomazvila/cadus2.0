@@ -94,7 +94,7 @@ impl FiniteObjectiveDomain {
     fn validate_case(
         case: &FiniteObjectiveCase,
         ids: &mut std::collections::BTreeSet<String>,
-        variants: &mut std::collections::BTreeSet<(String, String, String)>,
+        variants: &mut std::collections::BTreeSet<String>,
     ) -> Result<(), String> {
         if !ids.insert(case.id.as_str().to_owned()) {
             return Err(format!(
@@ -117,7 +117,7 @@ impl FiniteObjectiveDomain {
     fn validate_variant(
         case: &FiniteObjectiveCase,
         variant: &FiniteCaseVariant,
-        variants: &mut std::collections::BTreeSet<(String, String, String)>,
+        variants: &mut std::collections::BTreeSet<String>,
     ) -> Result<(), String> {
         if variant.problem.trim().is_empty() || variant.answer.trim().is_empty() {
             return Err(format!(
@@ -125,10 +125,8 @@ impl FiniteObjectiveDomain {
                 case.id.as_str()
             ));
         }
-        let policy = serde_json::to_string(&variant.answer_contract)
-            .map_err(|error| format!("finite case policy does not serialize: {error}"))?;
-        if !variants.insert((variant.problem.clone(), variant.answer.clone(), policy)) {
-            return Err("one finite rendering belongs to more than one semantic case".to_owned());
+        if !variants.insert(variant.problem.trim().to_owned()) {
+            return Err("one finite problem belongs to more than one semantic case or reviewed answer/contract variant".to_owned());
         }
         if let Some(contract) = &variant.answer_contract {
             contract.validate().map_err(|reason| reason.reason)?;

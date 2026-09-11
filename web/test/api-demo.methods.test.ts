@@ -183,7 +183,7 @@ describe('the demo refusals of the admin routes', () => {
       () => demo.getOperatorFlags(),
       () => demo.listContent(),
       () => demo.getContent('d1'),
-      () => demo.approveContent('d1'),
+      () => demo.approveContent('d1', null, null, 'curriculum-v1', 'engine-v1'),
       () => demo.rejectContent('d1', 'why'),
     ];
     for (const call of calls) {

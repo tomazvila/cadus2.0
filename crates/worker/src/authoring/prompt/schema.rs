@@ -198,7 +198,9 @@ fn template_schema() -> Value {
     unevaluated numeric power, use \
     powerform(1,[base,exponent]) with a required_single_power contract. A \
     required_normalized_scientific_notation contract writes an exact terminating numeric \
-    answer as a standard coefficient times 10 to an integer power. Use \
+    answer as a standard coefficient times 10 to an integer power. A \
+    required_simplest_radical contract writes an exact integer or a reduced rational \
+    coefficient times one squarefree integer root and requires rationalized denominators. Use \
     signcase(selector, [negative, zero, positive]) for a bounded sign split.",
             },
             "solution_sketch": {

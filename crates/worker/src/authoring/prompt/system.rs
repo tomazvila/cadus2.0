@@ -59,7 +59,9 @@ choice. For a bidirectional interval/inequality conversion, use convertnotation(
 required_inequality_notation contract; the computed expected answer fixes the required output \
 notation for that instance. For one unevaluated numeric power, use powerform(1,[base,exponent]) \
 with a required_single_power contract. A required_normalized_scientific_notation contract writes an \
-exact terminating numeric answer as a standard coefficient times 10 to an integer power. For a bounded sign split, use signcase(selector, [negative, zero, positive]). The server \
+exact terminating numeric answer as a standard coefficient times 10 to an integer power. A \
+required_simplest_radical contract writes an exact integer or a reduced rational coefficient times \
+one squarefree integer root and requires rationalized denominators. For a bounded sign split, use signcase(selector, [negative, zero, positive]). The server \
 validates every computed answer against the contract before storing the document, and the row remains pending until independent AI review approves its mathematics, objective alignment, explanations, and hints.
 
 'samples' is how you prove it, and the server checks WHERE you prove it. Work each instance out \

@@ -47,7 +47,17 @@ pub async fn teach(
     let kp = lesson_kp(current, task, graph, &topic).ok_or_else(no_instruction)?;
     let key = kp_key(&topic, &kp);
 
-    let doc = store(&state, approved_document(&mut *tx, &key, KIND_TEACH)).await?;
+    let policy = content.policy_digest(&key)?;
+    let doc = store(
+        &state,
+        cadus_store::content::approved_document_current(
+            &mut *tx,
+            &key,
+            KIND_TEACH,
+            content.review_context(policy.as_deref())?,
+        ),
+    )
+    .await?;
     // The transaction read one row and wrote nothing, so the drop rolls it back
     // and the read needs no second round trip.
     drop(tx);

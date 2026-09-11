@@ -4,7 +4,7 @@ use cadus_core::pool::{Avoid, PoolAnswer, PoolProblem, Source, pick};
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
-use super::{Claimed, POP_LIMIT, PoolRow, Pop};
+use super::{Claimed, GenerationContext, POP_LIMIT, PoolRow, Pop};
 use crate::{StoreError, begin_tenant};
 
 /// One `serving_pool` row as the two candidate reads return it.
@@ -12,6 +12,8 @@ struct RawRow {
     id: Uuid,
     source: String,
     content_digest: Option<String>,
+    source_curriculum_digest: Option<String>,
+    source_review_engine_digest: Option<String>,
     problem: String,
     expected: String,
     instance_hash: String,
@@ -30,6 +32,15 @@ impl RawRow {
             id: self.id,
             source,
             content_digest: self.content_digest,
+            generation_context: self
+                .source_curriculum_digest
+                .zip(self.source_review_engine_digest)
+                .map(
+                    |(curriculum_digest, review_engine_digest)| GenerationContext {
+                        curriculum_digest,
+                        review_engine_digest,
+                    },
+                ),
             problem: PoolProblem::from_body(&self.problem)?,
             expected_answer: PoolAnswer::from_body(&self.expected)?,
             instance_hash: self.instance_hash,
@@ -49,12 +60,16 @@ macro_rules! candidate_read {
             RawRow,
             r#"
         SELECT sp.id AS "id!", sp.source AS "source!", sp.content_digest,
+               sp.source_curriculum_digest, sp.source_review_engine_digest,
                sp.problem::text AS "problem!", sp.expected_answer::text AS "expected!",
                sp.instance_hash AS "instance_hash!""# + $tail,
             $($arg),+
         )
     };
 }
+
+mod finite;
+pub use finite::{FiniteDraw, FiniteEligibility, pop_finite_tx};
 
 /// Decode the rows of one candidate read.
 ///
@@ -158,6 +173,27 @@ pub async fn pop_with_ring_tx(
     kp_id: &str,
     avoid: &Avoid<'_>,
 ) -> Result<Pop, StoreError> {
+    pop_with_ring_context_tx(tx, user_id, kp_id, avoid, None).await
+}
+
+/// Pop only rows generated under the supplied current trusted context.
+pub async fn pop_with_ring_current_tx(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    kp_id: &str,
+    avoid: &Avoid<'_>,
+    context: &GenerationContext,
+) -> Result<Pop, StoreError> {
+    pop_with_ring_context_tx(tx, user_id, kp_id, avoid, Some(context)).await
+}
+
+async fn pop_with_ring_context_tx(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    kp_id: &str,
+    avoid: &Avoid<'_>,
+    context: Option<&GenerationContext>,
+) -> Result<Pop, StoreError> {
     let popped = candidate_read!(
         r#"
         FROM serving_pool AS sp
@@ -165,7 +201,13 @@ pub async fn pop_with_ring_tx(
         WHERE sp.user_id = $1
           AND sp.kp_id = $2
           AND sp.claimed_at IS NULL
-          AND (sp.content_digest IS NULL OR cs.status = 'approved')
+          AND (sp.content_digest IS NULL OR
+               (cs.status = 'approved' AND cs.approved_policy_digest IS NULL
+                AND ($4::text IS NULL OR
+                     (cs.approved_curriculum_digest = $4
+                      AND cs.approved_review_engine_digest = $5
+                      AND sp.source_curriculum_digest = $4
+                      AND sp.source_review_engine_digest = $5))))
         ORDER BY sp.created_at, sp.id
         FOR UPDATE OF sp SKIP LOCKED
         LIMIT $3
@@ -173,6 +215,8 @@ pub async fn pop_with_ring_tx(
         user_id,
         kp_id,
         POP_LIMIT,
+        context.map(|value| value.curriculum_digest.as_str()),
+        context.map(|value| value.review_engine_digest.as_str()),
     )
     .fetch_all(&mut **tx)
     .await?;
@@ -346,6 +390,8 @@ mod tests {
             id: Uuid::nil(),
             source: source.to_string(),
             content_digest: None,
+            source_curriculum_digest: None,
+            source_review_engine_digest: None,
             problem: problem.to_string(),
             expected: r#"{"v":1,"answer":"1"}"#.to_string(),
             instance_hash: "hash-1".to_string(),

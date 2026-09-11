@@ -27,8 +27,8 @@ mod note;
 mod scalar;
 
 pub use body::{
-    Attempt, AttemptProblem, DrillResult, LessonResult, QuizResult, QuizTopicResult,
-    RegradedAttempt, RetentionProbe, ReviewResult, ServedProblem, TaskServed,
+    Attempt, AttemptProblem, DrillResult, LessonResult, OrdinaryProblemServed, QuizResult,
+    QuizTopicResult, RegradedAttempt, RetentionProbe, ReviewResult, ServedProblem, TaskServed,
 };
 pub use integrated::{
     IntegratedAttempt, IntegratedField, IntegratedHintRevealed, IntegratedServed,
@@ -79,6 +79,9 @@ pub enum Event {
     /// A task was served.
     #[serde(rename = "task_served")]
     TaskServed(TaskServed),
+    /// One ordinary problem handed to the learner.
+    #[serde(rename = "ordinary_problem_served")]
+    OrdinaryProblemServed(OrdinaryProblemServed),
     /// One graded problem attempt.
     #[serde(rename = "attempt")]
     Attempt(Attempt),
@@ -140,6 +143,7 @@ macro_rules! for_each_event {
             Event::SessionEnd($inner) => $body,
             Event::Enrolled($inner) => $body,
             Event::TaskServed($inner) => $body,
+            Event::OrdinaryProblemServed($inner) => $body,
             Event::Attempt($inner) => $body,
             Event::LessonResult($inner) => $body,
             Event::ReviewResult($inner) => $body,
@@ -170,6 +174,7 @@ macro_rules! event_type_name {
             Event::SessionEnd(_) => "session_end",
             Event::Enrolled(_) => "enrolled",
             Event::TaskServed(_) => "task_served",
+            Event::OrdinaryProblemServed(_) => "ordinary_problem_served",
             Event::Attempt(_) => "attempt",
             Event::LessonResult(_) => "lesson_result",
             Event::ReviewResult(_) => "review_result",
@@ -192,12 +197,13 @@ macro_rules! event_type_name {
 }
 
 impl Event {
-    /// The 18 `type` values, in the order this module declares them.
-    pub const TYPE_NAMES: [&'static str; 18] = [
+    /// The 19 ordinary-task `type` values, in declaration order.
+    pub const TYPE_NAMES: [&'static str; 19] = [
         "session_start",
         "session_end",
         "enrolled",
         "task_served",
+        "ordinary_problem_served",
         "attempt",
         "lesson_result",
         "review_result",
@@ -297,12 +303,13 @@ fn serialize_error(error: serde_json::Error) -> EventError {
 mod tests {
     use super::*;
 
-    /// The smallest valid body of each of the 18 types, in declaration order.
-    const MINIMAL: [&str; 18] = [
+    /// The smallest valid body of each of the 19 types, in declaration order.
+    const MINIMAL: [&str; 19] = [
         r#"{"type":"session_start","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
         r#"{"type":"session_end","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
         r#"{"type":"enrolled","ts":"2026-03-02T09:00:00Z","session":"s","course":"c"}"#,
         r#"{"type":"task_served","ts":"2026-03-02T09:00:00Z","session":"s","task_id":"t","task_type":"lesson"}"#,
+        r#"{"type":"ordinary_problem_served","ts":"2026-03-02T09:00:00Z","session":"s","task_id":"t","problem_id":"p1","kp_id":"x/kp1","item_digest":"digest","item_source":"exemplar","exposure":"first"}"#,
         r#"{"type":"attempt","ts":"2026-03-02T09:00:00Z","session":"s","attempt_id":"a","task_id":"t","topic":"x","task_type":"lesson","problem":{"text":"p","expected":"1"},"given_answer":"1","correct":true,"secs":3,"work_quality":"perfect"}"#,
         r#"{"type":"lesson_result","ts":"2026-03-02T09:00:00Z","session":"s","topic":"x","passed":true,"quality_tier":"perfect"}"#,
         r#"{"type":"review_result","ts":"2026-03-02T09:00:00Z","session":"s","topic":"x","passed":true,"weighted_score":1.0,"quality_tier":"perfect"}"#,

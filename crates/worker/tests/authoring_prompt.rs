@@ -210,7 +210,7 @@ fn the_digest_is_sixteen_hex_characters_and_one_per_kind() {
 #[test]
 fn the_prompt_digests_of_this_checkout_are_pinned() {
     let pinned = [
-        (Kind::Template, "00f4212490fb3c10"),
+        (Kind::Template, "0637c8f6d53b6fa3"),
         (Kind::Teach, "dfc6329034bf030f"),
         (Kind::HintLadder, "c8e040f53fce1881"),
         // Unit R7 moved this one: the `emit_distractors` tool asks for a

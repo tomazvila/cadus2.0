@@ -57,7 +57,12 @@ class IntegrityTest(fixture.ApplyFixture):
         self.rows = {"t1": fixture.make_doc("t1", "k1"), "t2": fixture.make_doc("t2", "k2"),
                      "a": fixture.make_doc("a", "k1"), "b": fixture.make_doc("b", "k2")}
         self.rows["t1"]["status"] = self.rows["t2"]["status"] = "approved"
+        for digest in ("t1", "t2"):
+            self.rows[digest]["approved_curriculum_digest"] = "curriculum-v1"
+            self.rows[digest]["approved_review_engine_digest"] = "engine-v1"
         self.rows["a"]["kind"] = self.rows["b"]["kind"] = "teach"
+        for key,template in [("a","t1"),("b","t2")]:
+            self.rows[key]["eligible_template_digests"] = [template]
         items = [self.rows[d] | {"fingerprint_sha256": packet.fingerprint(self.rows[d])} for d in ("a", "b")]
         core = {"packet_version": 1, "scope": "all_pending_content", "items": items}
         self.packet = core | {"packet_sha256": packet.sha256(core)}

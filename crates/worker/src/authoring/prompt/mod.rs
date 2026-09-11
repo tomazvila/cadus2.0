@@ -39,7 +39,7 @@
 //! therefore reproduces the 1.0 wording of `prompts.py:766-774`, and the loop of
 //! R2 passes the literal gate message through it.
 
-use cadus_core::curriculum::{AnswerKind, Exemplar};
+use cadus_core::curriculum::{AnswerKind, Exemplar, FiniteCaseRole, FiniteObjectiveDomain};
 use cadus_model_client::ChatRequest;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
@@ -182,6 +182,34 @@ impl Kind {
     }
 }
 
+/// A trusted finite universe paired with its serving-key-scoped fingerprint.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FiniteAuthoringPolicy {
+    /// Reviewed curriculum policy used by every authoring and serving gate.
+    pub domain: FiniteObjectiveDomain,
+    /// Fingerprint computed from the topic-qualified knowledge-point key.
+    pub fingerprint: String,
+}
+
+impl FiniteAuthoringPolicy {
+    /// Bind one reviewed domain to its exact serving key.
+    pub fn new(kp_key: &str, domain: &FiniteObjectiveDomain) -> Result<Self, String> {
+        domain.validate()?;
+        Ok(Self {
+            domain: domain.clone(),
+            fingerprint: domain.fingerprint(kp_key)?,
+        })
+    }
+
+    /// Refuse a policy or key that changed after this authoring spec was built.
+    pub fn validate(&self, kp_key: &str) -> Result<(), String> {
+        self.domain.validate()?;
+        (self.domain.fingerprint(kp_key)? == self.fingerprint)
+            .then_some(())
+            .ok_or_else(|| "finite authoring policy fingerprint is stale".to_owned())
+    }
+}
+
 /// What one authoring call knows about the knowledge point it authors for.
 ///
 /// It is 1.0's `ProblemSpec` minus the serve-path fields: a template is not one
@@ -205,9 +233,17 @@ pub struct AuthoringSpec {
     pub constraints: Option<String>,
     /// The worked problems the content mirrors.
     pub exemplars: Vec<Exemplar>,
+    /// Complete reviewed finite universe, when this objective is genuinely finite.
+    pub finite: Option<FiniteAuthoringPolicy>,
 }
 
 impl AuthoringSpec {
+    /// Topic-qualified serving key used by policy fingerprints and content rows.
+    #[must_use]
+    pub fn kp_key(&self) -> String {
+        format!("{}/{}", self.topic_id, self.kp_id)
+    }
+
     /// One shared deterministic policy for templates of this knowledge point.
     #[must_use]
     pub fn template_contract(&self) -> Option<cadus_core::answer::AnswerContract> {
@@ -254,6 +290,16 @@ pub fn render_exemplars(exemplars: &[Exemplar]) -> String {
     lines.join("\n")
 }
 
+fn finite_role_visible(kind: Kind, role: FiniteCaseRole) -> bool {
+    match kind {
+        Kind::Template | Kind::HintLadder | Kind::Diagnosis => role.is_practice(),
+        Kind::Teach => matches!(
+            role,
+            FiniteCaseRole::TeachOnly | FiniteCaseRole::TaughtRehearsal
+        ),
+    }
+}
+
 /// The user message of one authoring call (1.0 `template_user`).
 ///
 /// The frame is 1.0's: topic, answer kind, knowledge point, difficulty target,
@@ -277,9 +323,42 @@ pub fn user_message(kind: Kind, spec: &AuthoringSpec, feedback: Option<&str>) ->
         )),
         None => lines.push("Constraints: none stated.".to_owned()),
     }
+    if let Some(finite) = &spec.finite {
+        lines.push(format!(
+            "Reviewed finite objective policy: fingerprint={}, review={}",
+            finite.fingerprint, finite.domain.review_ref
+        ));
+        for case in finite
+            .domain
+            .cases
+            .iter()
+            .filter(|case| finite_role_visible(kind, case.role))
+        {
+            lines.push(format!(
+                "  Case {} role {}:",
+                case.id.as_str(),
+                json!(case.role)
+            ));
+            for variant in &case.variants {
+                lines.push(format!(
+                    "    Problem: {} | Answer: {} | Answer contract: {}",
+                    variant.problem,
+                    variant.answer,
+                    json!(variant.answer_contract)
+                ));
+            }
+        }
+        if kind == Kind::Template {
+            lines.push("The template must exhaust exactly every practice_fresh and taught_rehearsal case above. Teach-only and reserved-assessment cases must remain absent.".to_owned());
+        }
+    }
     lines.push(String::new());
     lines.push(exemplar_preamble(kind).to_owned());
-    lines.push(render_exemplars(&spec.exemplars));
+    if spec.finite.is_some() {
+        lines.push("Use only the role-eligible reviewed finite cases listed above.".to_owned());
+    } else {
+        lines.push(render_exemplars(&spec.exemplars));
+    }
     if let Some(feedback) = feedback {
         lines.push(String::new());
         lines.push(retry_block(kind, feedback));

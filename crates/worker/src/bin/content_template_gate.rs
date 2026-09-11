@@ -61,6 +61,9 @@ fn run() -> Result<(), String> {
     let result = json!({
         "schema_version": 1,
         "gate_source_hash": env!("CADUS_TEMPLATE_GATE_SOURCE_HASH"),
+        "review_engine_digest": cadus_core::review_engine::DIGEST,
+        "canonical_curriculum_digest": cadus_core::curriculum::review_context_digest(&curriculum)
+            .map_err(|error| error.to_string())?,
         "curriculum_source_hash": curriculum_source_hash,
         "curriculum_hash": curriculum_hash(&curriculum),
         "recipes": recipes,

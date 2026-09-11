@@ -81,6 +81,10 @@ struct StoredRow {
     approved_templates: i64,
     review_reason: Option<String>,
     approved_at: Option<DateTime<Utc>>,
+    approved_policy_digest: Option<String>,
+    approved_template_context_digest: Option<String>,
+    approved_curriculum_digest: Option<String>,
+    approved_review_engine_digest: Option<String>,
 }
 
 impl StoredRow {
@@ -123,7 +127,9 @@ where
                c.status AS "status!", c.authoring_attempts AS "authoring_attempts!",
                c.authoring_cost_usd::text AS "cost_usd?",
                c.created_at AS "created_at!", c.body AS "body!",
-               c.review_reason, c.approved_at,
+               c.review_reason, c.approved_at, c.approved_policy_digest,
+               c.approved_template_context_digest, c.approved_curriculum_digest,
+               c.approved_review_engine_digest,
                (SELECT count(*) FROM content_store a
                  WHERE a.kp_id = c.kp_id AND a.kind = $4 AND a.status = $5)
                  AS "approved_templates!"
@@ -197,8 +203,8 @@ pub struct RegateRow {
 ///   are the answer set the gates judge against;
 /// - every `teach` and `hint_ladder` row that is `pending`. Those are the
 ///   documents the re-gate moves to `rejected`. An APPROVED page or ladder is
-///   not read: a human passed it, and a later template does not undo that
-///   verdict.
+///   not read here; its stored template-context stamp controls whether it remains
+///   eligible for serving after the bank changes.
 ///
 /// A `rejected` row is not read at all: it serves nothing already.
 ///
@@ -243,6 +249,14 @@ pub struct StoredDoc {
     pub review_reason: Option<String>,
     /// When the document was approved.
     pub approved_at: Option<DateTime<Utc>>,
+    /// Trusted policy fingerprint captured by the approving reviewer.
+    pub approved_policy_digest: Option<String>,
+    /// Template-bank context covered by this instruction approval.
+    pub approved_template_context_digest: Option<String>,
+    /// Effective curriculum covered by this approval.
+    pub approved_curriculum_digest: Option<String>,
+    /// Executable review engine covered by this approval.
+    pub approved_review_engine_digest: Option<String>,
 }
 
 /// One document of any status, by its digest (C6).
@@ -262,6 +276,10 @@ where
     Ok(rows.pop().map(|row| StoredDoc {
         review_reason: row.review_reason.clone(),
         approved_at: row.approved_at,
+        approved_policy_digest: row.approved_policy_digest.clone(),
+        approved_template_context_digest: row.approved_template_context_digest.clone(),
+        approved_curriculum_digest: row.approved_curriculum_digest.clone(),
+        approved_review_engine_digest: row.approved_review_engine_digest.clone(),
         item: row.into_item(),
     }))
 }

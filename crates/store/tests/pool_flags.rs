@@ -34,6 +34,10 @@ async fn only_an_approved_template_is_read() {
             Some(ApprovedTemplate {
                 digest: "approved-1".to_string(),
                 body: r#"{"v": 1, "statement": "approved body"}"#.to_string(),
+                generation_context: cadus_store::pool::GenerationContext {
+                    curriculum_digest: String::new(),
+                    review_engine_digest: String::new(),
+                },
             })
         );
     })

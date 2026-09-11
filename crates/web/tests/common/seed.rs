@@ -177,6 +177,7 @@ pub fn lesson_problem(age_secs: f64, kp: &str, hints: Vec<String>) -> ServedProb
         hints_given: hints,
         index: 0,
         rework: None,
+        handoff: None,
     }
 }
 

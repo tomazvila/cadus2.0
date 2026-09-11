@@ -11,7 +11,7 @@ use axum::http::request::Parts;
 use cadus_core::event::{Enrolled, Event, SchemaVersion, Slug, TaskType, Timestamp};
 use cadus_core::projector::ProjectionInput;
 use cadus_core::readiness::ReadinessSet;
-use cadus_store::content::approved_index;
+use cadus_store::content::approved_index_current;
 use cadus_store::state::{
     EventRow, Projection, SessionView, append_event, load_events_after, load_web_state,
     lock_web_state, project_and_save, project_current, save_web_state,
@@ -272,7 +272,16 @@ pub(crate) async fn readiness_of(
     content: &Content,
     tx: &mut Tx,
 ) -> Result<ReadinessSet, ApiError> {
-    let index = store(state, approved_index(&mut **tx)).await?;
+    let index = store(
+        state,
+        approved_index_current(
+            &mut **tx,
+            &content.curriculum,
+            content.curriculum_context_digest()?,
+            content.review_engine_digest(),
+        ),
+    )
+    .await?;
     Ok(content.readiness.resolve(&index))
 }
 

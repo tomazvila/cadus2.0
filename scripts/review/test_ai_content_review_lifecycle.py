@@ -5,7 +5,7 @@ import ai_content_review as ai
 import content_review_packet as p
 
 def make_doc(digest, kp):
-    return {"digest": digest, "kp_id": kp, "kind": "template", "status": "pending", "body": {"x": digest}, "gate": {"gated": True, "instances_checked": 8}, "instances": [], "instances_note": None}
+    return {"digest": digest, "kp_id": kp, "kind": "template", "status": "pending", "body": {"x": digest}, "gate": {"gated": True, "instances_checked": 8}, "instances": [], "instances_note": None, "policy_digest": None, "approved_policy_digest": None, "template_context_digest": None, "approved_template_context_digest": None, "eligible_template_digests": [], "curriculum_digest": "curriculum-v1", "approved_curriculum_digest": None, "review_engine_digest": "engine-v1", "approved_review_engine_digest": None}
 
 class ApplyFixture(unittest.TestCase):
     def setUp(self):
@@ -16,7 +16,11 @@ class ApplyFixture(unittest.TestCase):
         rows = [row for row in self.rows.values() if ("kp=" not in suffix or ("kp=" + row["kp_id"]) in suffix) and ("kind=" not in suffix or ("kind=" + row["kind"]) in suffix)]
         return {"items": [copy.deepcopy(row) for row in rows], "limit": 200}
     def document(self, digest): return copy.deepcopy(self.rows[digest])
-    def decide(self, digest, *_): self.writes.append(digest); self.rows[digest]["status"] = "approved"; return {"digest": digest, "status": "approved", "rejected_documents": []}
+    def decide(self, digest, decision, reason, policy, bank, curriculum, engine):
+        self.writes.append(digest); self.rows[digest]["status"] = "approved"
+        self.rows[digest]["approved_policy_digest"] = policy; self.rows[digest]["approved_template_context_digest"] = bank
+        self.rows[digest]["approved_curriculum_digest"] = curriculum; self.rows[digest]["approved_review_engine_digest"] = engine
+        return {"digest": digest, "status": "approved", "rejected_documents": [], "approved_policy_digest": policy, "approved_template_context_digest": bank, "approved_curriculum_digest": curriculum, "approved_review_engine_digest": engine}
     def execute(self, drift=False, verdict="approve", commit=True):
         contexts = ai.context(self.packet, self, self.root / "curriculum"); core = {"ai_review_version": 1, "packet_sha256": self.packet["packet_sha256"], "items": contexts}; review = core | {"context_sha256": p.sha256(core), "reviewer": {"identity":"i","model":"m","policy_version":"v"}, "decisions": [{"digest": digest, "decision":verdict, "reason":"reviewed", "checks": {name:{"status":"pass","evidence":"independent check"} for name in ai.CHECKS}} for digest in [item["digest"] for item in self.packet["items"]]]}; review_path = self.root / "review.json"; review_path.write_text(json.dumps(review)); original = p.Api; p.Api = lambda *_: self
         if drift:
@@ -33,8 +37,11 @@ class ApplyFixture(unittest.TestCase):
     def test_successful_same_kp_teach_and_hint_apply(self):
         self.rows = {"template": make_doc("template", "k"), "teach": make_doc("teach", "k"), "hint": make_doc("hint", "k")}
         self.rows["template"]["status"] = "approved"
+        self.rows["template"]["approved_curriculum_digest"] = "curriculum-v1"
+        self.rows["template"]["approved_review_engine_digest"] = "engine-v1"
         self.rows["teach"]["kind"] = "teach"
         self.rows["hint"]["kind"] = "hint_ladder"
+        for row in self.rows.values(): row["eligible_template_digests"] = ["template"]
         items = [self.rows[d] | {"fingerprint_sha256": p.fingerprint(self.rows[d])} for d in ("teach", "hint")]
         core = {"packet_version": 1, "scope": "all_pending_content", "items": items}
         self.packet = core | {"packet_sha256": p.sha256(core)}

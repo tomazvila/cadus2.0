@@ -42,6 +42,7 @@ fn served_as_probe(task_id: &str, prior: &[EventRow]) -> Option<(u32, Option<Str
 fn seen_before(digest: &str, prior: &[EventRow]) -> bool {
     prior.iter().any(|row| match &row.event {
         Event::Attempt(body) => problem_text_hash(&body.problem.text) == digest,
+        Event::OrdinaryProblemServed(body) => body.item_digest == digest,
         Event::RetentionProbe(body) => body.item_digest.as_deref() == Some(digest),
         _ => false,
     })
@@ -219,6 +220,43 @@ mod tests {
         )
         .expect("a probe");
         assert_eq!(probe_of(&event).exposure, Some(Exposure::Repeat));
+    }
+
+    #[test]
+    fn a_handoff_is_a_conservative_repeat_fallback_but_the_attempt_stamp_wins() {
+        let digest = problem_text_hash("p1");
+        let handoff = Event::from_json(
+            &format!(
+                r#"{{"type":"ordinary_problem_served","ts":"2026-01-01T00:00:00Z",
+               "session":"s1","task_id":"{TASK}","problem_id":"p1","kp_id":"t1/kp1",
+               "item_digest":"{digest}","item_source":"template","exposure":"first"}}"#,
+            )
+            .replace('\n', "")
+            .replace("               ", ""),
+        )
+        .expect("the hand-off reads");
+        let prior = [row(1, handoff), row(2, served(Some(7)))];
+
+        let fallback = probe_event(
+            &Config::default(),
+            &attempt("p1", false),
+            &prior,
+            Timestamp::from_micros(0),
+        )
+        .expect("a probe");
+        assert_eq!(probe_of(&fallback).exposure, Some(Exposure::Repeat));
+
+        let mut stamped = attempt("p1", false);
+        stamped.item_digest = Some(digest);
+        stamped.exposure = Some(Exposure::First);
+        let authoritative = probe_event(
+            &Config::default(),
+            &stamped,
+            &prior,
+            Timestamp::from_micros(0),
+        )
+        .expect("a probe");
+        assert_eq!(probe_of(&authoritative).exposure, Some(Exposure::First));
     }
 
     #[test]

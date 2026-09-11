@@ -13,8 +13,8 @@ fn fresh() -> IntegratedItem {
     )
     .unwrap()
 }
-fn journey_app(db: &TestDb) -> Router {
-    let graph = one_unit_curriculum(
+fn journey_curriculum() -> Curriculum {
+    one_unit_curriculum(
         COMPONENTS
             .iter()
             .map(|id| {
@@ -29,7 +29,10 @@ fn journey_app(db: &TestDb) -> Router {
                 )
             })
             .collect(),
-    );
+    )
+}
+fn journey_app(db: &TestDb) -> Router {
+    let graph = journey_curriculum();
     create_app(
         AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS)).with_content(Arc::new(
             Content::new(graph).with_integrated(IntegratedSet::from_items(vec![item(), fresh()])),
@@ -37,8 +40,9 @@ fn journey_app(db: &TestDb) -> Router {
     )
 }
 async fn teach_pages(db: &TestDb) {
+    let curriculum = journey_curriculum();
     for id in COMPONENTS {
-        common::seed_content(db,&format!("{id}/kp1"),"teach",&format!("teach-{id}"), json!({
+        common::seed_content_for(db,&curriculum,&format!("{id}/kp1"),"teach",&format!("teach-{id}"), json!({
             "concept":"Combine workload with capacity.","worked_example":{"problem":"Two visits need ten minutes each.","steps":["The total workload is twenty minutes."]}
         })).await;
     }

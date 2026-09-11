@@ -43,6 +43,25 @@ fn hints() -> &'static [HintRecipe] {
             include_str!("instruction_hints_systems_02.json"),
             include_str!("instruction_hints_systems_03.json"),
             include_str!("instruction_hints_systems_04.json"),
+            include_str!("instruction_hints_exponents_01.json"),
+            include_str!("instruction_hints_exponents_02.json"),
+            include_str!("instruction_hints_critical_validity.json"),
+            include_str!("instruction_hints_exponents_03.json"),
+            include_str!("instruction_hints_exponents_04.json"),
+            include_str!("instruction_hints_exponents_remaining_17.json"),
+            include_str!("instruction_hints_polynomials_01.json"),
+            include_str!("instruction_hints_polynomials_02.json"),
+            include_str!("instruction_hints_polynomials_03.json"),
+            include_str!("instruction_hints_polynomials_04.json"),
+            include_str!("instruction_hints_functions_01.json"),
+            include_str!("instruction_hints_functions_02.json"),
+            include_str!("instruction_hints_functions_03.json"),
+            include_str!("instruction_hints_functions_04.json"),
+            include_str!("instruction_hints_rational_01.json"),
+            include_str!("instruction_hints_rational_02.json"),
+            include_str!("instruction_hints_rational_03.json"),
+            include_str!("instruction_hints_rational_04.json"),
+            include_str!("instruction_hints_rational_05.json"),
         ] {
             let replacements = serde_json::from_str::<Vec<HintRecipe>>(shard)
                 .expect("the reviewed instruction-hint shard is valid");
@@ -98,7 +117,7 @@ mod tests {
     #[test]
     fn catalog_is_exact_unique_and_gated() {
         let keys: BTreeSet<_> = hints().iter().map(|row| row.key.as_str()).collect();
-        assert_eq!(keys.len(), 443);
+        assert_eq!(keys.len(), 649);
         assert_eq!(keys.len(), hints().len());
         for spec in specs() {
             let mut out = Proposals::default();

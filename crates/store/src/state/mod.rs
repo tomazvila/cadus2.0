@@ -53,6 +53,11 @@
 //! grade path calls it for the repeat-fail map, which no session window holds
 //! (M5 review 2, finding V2).
 
+mod exposure;
+mod exposure_aliases;
+mod exposure_backfill;
+mod exposure_history;
+mod exposure_reconcile;
 mod fold;
 mod view;
 
@@ -62,6 +67,13 @@ use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::{Postgres, Transaction};
 use uuid::Uuid;
 
+pub use exposure::{HandoffIdentity, advance_handoff_cursor, handoff_seen};
+pub use exposure_aliases::{AliasKind, ExposureAlias, publish_finite_exposure};
+pub use exposure_backfill::{BackfillPage, backfill_attempt_digests};
+pub use exposure_history::handoff_history_ready;
+pub use exposure_reconcile::{
+    ReconciliationItem, ReconciliationPage, ReconciliationRequest, reconcile_exposure_page,
+};
 pub use fold::{
     CachedModel, Projection, load_learner_model, load_session_view, project_and_save,
     project_current,
@@ -354,10 +366,16 @@ pub async fn append_event(
         ))
     })?;
 
+    let attempt_digest = match event {
+        Event::Attempt(attempt) => Some(cadus_core::learner::problem_text_hash(
+            &attempt.problem.text,
+        )),
+        _ => None,
+    };
     let seq = sqlx::query_scalar!(
         r#"
-        INSERT INTO events (user_id, seq, ts, type, session_id, v, attempt_id, payload)
-        SELECT $1, COALESCE(MAX(e.seq), 0) + 1, $2, $3, $4, $5, $6, $7
+        INSERT INTO events (user_id, seq, ts, type, session_id, v, attempt_id, payload, attempt_problem_digest)
+        SELECT $1, COALESCE(MAX(e.seq), 0) + 1, $2, $3, $4, $5, $6, $7, $8
         FROM events e WHERE e.user_id = $1
         ON CONFLICT (user_id, attempt_id) WHERE attempt_id IS NOT NULL DO NOTHING
         RETURNING seq
@@ -370,7 +388,8 @@ pub async fn append_event(
         attempt_id,
         // `as _`: the macro maps a `jsonb` parameter to `serde_json::Value`,
         // and `Json<T>` writes the same wire form.
-        sqlx::types::Json(event) as _
+        sqlx::types::Json(event) as _,
+        attempt_digest
     )
     .fetch_optional(&mut **tx)
     .await?;

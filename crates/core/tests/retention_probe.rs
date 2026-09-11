@@ -249,6 +249,23 @@ fn the_probe_never_repeats_an_item_the_learner_saw() {
 }
 
 #[test]
+fn an_ordinary_handoff_is_projection_neutral() {
+    let line = format!(
+        r#"{{"type":"ordinary_problem_served","ts":"2026-01-02T00:00:00Z","session":"s1",
+           "task_id":"t1","problem_id":"p1","kp_id":"{TOPIC}/kp1",
+           "item_digest":"abandoned-digest","item_source":"template","exposure":"first"}}"#,
+    )
+    .replace('\n', "")
+    .replace("           ", "");
+    let before = project(&stream(&[]), &input()).expect("the base fold succeeds");
+    let after = project(&stream(&[line]), &input()).expect("the hand-off fold succeeds");
+    assert_eq!(
+        after, before,
+        "serving provenance moves no learner state or time reference"
+    );
+}
+
+#[test]
 fn an_item_older_than_the_recent_window_is_still_refused() {
     // `TopicState::last_problems` keeps a bounded recent window, so a window alone
     // cannot answer "ever seen". The lifetime exposure index of the fold does.

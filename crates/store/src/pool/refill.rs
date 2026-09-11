@@ -205,22 +205,44 @@ pub async fn approved_template<'e, E>(
 where
     E: PgExecutor<'e>,
 {
-    let row = sqlx::query!(
-        r#"
-        SELECT digest AS "digest!", body::text AS "body!"
-        FROM content_store
-        WHERE kp_id = $1 AND kind = 'template' AND status = 'approved'
-        ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest
-        LIMIT 1
-        "#,
-        kp_id,
-    )
-    .fetch_optional(executor)
-    .await?;
+    let found =
+        crate::content::approved_document(executor, kp_id, crate::content::KIND_TEMPLATE).await?;
+    Ok(found.map(|doc| ApprovedTemplate {
+        digest: doc.digest,
+        body: doc.body.to_string(),
+        generation_context: super::GenerationContext {
+            curriculum_digest: String::new(),
+            review_engine_digest: String::new(),
+        },
+    }))
+}
 
-    Ok(row.map(|row| ApprovedTemplate {
-        digest: row.digest,
-        body: row.body,
+/// Read an approved template bound to the server's current curriculum policy.
+///
+/// # Errors
+/// Returns a database error if the read fails.
+pub async fn approved_template_current<'e, E>(
+    executor: E,
+    kp_id: &str,
+    context: crate::content::CurrentContext<'_>,
+) -> Result<Option<ApprovedTemplate>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let found = crate::content::approved_document_current(
+        executor,
+        kp_id,
+        crate::content::KIND_TEMPLATE,
+        context,
+    )
+    .await?;
+    Ok(found.map(|doc| ApprovedTemplate {
+        digest: doc.digest,
+        body: doc.body.to_string(),
+        generation_context: super::GenerationContext {
+            curriculum_digest: context.curriculum_digest.to_owned(),
+            review_engine_digest: context.review_engine_digest.to_owned(),
+        },
     }))
 }
 

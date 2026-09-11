@@ -1,7 +1,7 @@
 //! Explicit curriculum-course selection for offline author passes.
 use crate::authoring::{
     cli::{AuthorArgs, CliError},
-    prompt::AuthoringSpec,
+    prompt::{AuthoringSpec, FiniteAuthoringPolicy},
 };
 use cadus_core::{
     curriculum::{Curriculum, KnowledgePoint, Topic},
@@ -71,7 +71,7 @@ pub fn select_for(
 /// Returns [`CliError`] naming a key the curriculum does not hold.
 pub fn select(curriculum: &Curriculum, keys: &[String]) -> Result<Vec<AuthoringSpec>, CliError> {
     if keys.is_empty() {
-        return Ok(every_spec(curriculum));
+        return every_spec(curriculum);
     }
     let mut specs = Vec::with_capacity(keys.len());
     for key in keys {
@@ -81,14 +81,14 @@ pub fn select(curriculum: &Curriculum, keys: &[String]) -> Result<Vec<AuthoringS
 }
 
 /// Every knowledge point of the tree, in curriculum order.
-fn every_spec(curriculum: &Curriculum) -> Vec<AuthoringSpec> {
+fn every_spec(curriculum: &Curriculum) -> Result<Vec<AuthoringSpec>, CliError> {
     let mut specs = Vec::new();
     for topic in curriculum.topics() {
         for kp in &topic.knowledge_points {
-            specs.push(spec_of(topic, kp));
+            specs.push(spec_of(topic, kp)?);
         }
     }
-    specs
+    Ok(specs)
 }
 
 /// The spec of one serving key, or the refusal an unknown key earns.
@@ -98,23 +98,29 @@ fn one_spec(curriculum: &Curriculum, key: &str) -> Result<AuthoringSpec, CliErro
             "the knowledge point `{key}` is not a serving key — write it as `<topic_id>/<kp_id>`"
         )));
     };
-    curriculum
+    let topic = curriculum
         .topics()
         .iter()
         .find(|topic| topic.id.as_str() == topic_id)
-        .and_then(|topic| {
-            topic
-                .knowledge_points
-                .iter()
-                .find(|kp| kp.id.as_str() == kp_id)
-                .map(|kp| spec_of(topic, kp))
-        })
-        .ok_or_else(|| CliError(format!("the curriculum holds no knowledge point `{key}`")))
+        .ok_or_else(|| CliError(format!("the curriculum holds no knowledge point `{key}`")))?;
+    let kp = topic
+        .knowledge_points
+        .iter()
+        .find(|kp| kp.id.as_str() == kp_id)
+        .ok_or_else(|| CliError(format!("the curriculum holds no knowledge point `{key}`")))?;
+    spec_of(topic, kp)
 }
 
 /// One curriculum knowledge point, as the spec the prompt reads.
-fn spec_of(topic: &Topic, kp: &KnowledgePoint) -> AuthoringSpec {
-    AuthoringSpec {
+fn spec_of(topic: &Topic, kp: &KnowledgePoint) -> Result<AuthoringSpec, CliError> {
+    let kp_key = format!("{}/{}", topic.id.as_str(), kp.id.as_str());
+    let finite = kp
+        .finite_objective_domain
+        .as_ref()
+        .map(|domain| FiniteAuthoringPolicy::new(&kp_key, domain))
+        .transpose()
+        .map_err(CliError)?;
+    Ok(AuthoringSpec {
         kp_id: kp.id.as_str().to_owned(),
         kp_name: kp.name.clone(),
         topic_id: topic.id.as_str().to_owned(),
@@ -123,5 +129,6 @@ fn spec_of(topic: &Topic, kp: &KnowledgePoint) -> AuthoringSpec {
         difficulty_target: None,
         constraints: kp.constraints.clone(),
         exemplars: kp.exemplars.clone(),
-    }
+        finite,
+    })
 }

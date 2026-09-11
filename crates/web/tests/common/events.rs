@@ -169,5 +169,6 @@ pub fn review_problem(task_id: &str) -> ServedProblem {
         hints_given: Vec::new(),
         index: 0,
         rework: None,
+        handoff: None,
     }
 }

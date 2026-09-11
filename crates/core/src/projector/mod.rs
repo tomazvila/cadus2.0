@@ -283,6 +283,13 @@ impl<'a> Projector<'a> {
         if self.failure.is_some() {
             return;
         }
+        // Item-level hand-offs are durable serving provenance. Their lifetime
+        // exposure is queried through the indexed event log when a probe draws;
+        // they move neither learning state nor the projection's time reference.
+        if matches!(event, Event::OrdinaryProblemServed(_)) {
+            self.applied += 1;
+            return;
+        }
         let ts = event.ts().micros();
         self.last_ts = Some(self.last_ts.map_or(ts, |last| last.max(ts)));
 
@@ -300,7 +307,8 @@ impl<'a> Projector<'a> {
             Event::TaskServed(body) => self.on_task_served(body),
             Event::IntegratedAttempt(body) => self.on_integrated_attempt(body, apply_fire),
             Event::IntegratedServed(body) => self.integrated_journey.served(body),
-            Event::SessionStart(_)
+            Event::OrdinaryProblemServed(_)
+            | Event::SessionStart(_)
             | Event::SessionEnd(_)
             | Event::Regraded(_)
             | Event::AnkiCardCreated(_)

@@ -197,6 +197,7 @@ pub fn squares_spec() -> AuthoringSpec {
             answer: "49".to_owned(),
             solution_sketch: None,
         }],
+        finite: None,
     }
 }
 
@@ -337,5 +338,6 @@ pub fn golden_spec() -> AuthoringSpec {
                 solution_sketch: None,
             },
         ],
+        finite: None,
     }
 }
