@@ -1,5 +1,6 @@
 //! Bounded graph extrema and law selection preserve existing answer contracts.
 #![allow(clippy::unwrap_used)]
+#![allow(dead_code)]
 use cadus_core::answer::ast::Ast;
 use cadus_core::answer::{AnswerContract, canonical_form};
 use cadus_core::template::domain::{Bindings, Value};
