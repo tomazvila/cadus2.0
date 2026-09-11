@@ -402,16 +402,18 @@ pub fn gate(doc: &TemplateDoc, spec: &GateSpec) -> Result<Verified, Rejection> {
     let mut notes = walk.notes.clone();
     check_coverage(doc, &values, &extremes, &samples, &walk, &mut notes)?;
     check_instances(doc, &compiled, spec, &walk)?;
+    let finite_cases = finite::check_complete(&compiled, spec, &walk)?;
+    let finite_policy_fingerprint = spec
+        .finite
+        .as_ref()
+        .map(FiniteGateSpec::policy_fingerprint)
+        .map(str::to_owned);
     Ok(Verified {
         space: walk.space,
         instances_checked: u64::try_from(walk.tuples.len()).unwrap_or(u64::MAX),
         exhaustive: walk.exhaustive,
-        finite_policy_fingerprint: spec
-            .finite
-            .as_ref()
-            .map(FiniteGateSpec::policy_fingerprint)
-            .map(str::to_owned),
-        finite_cases: Vec::new(),
+        finite_policy_fingerprint,
+        finite_cases,
         notes,
     })
 }

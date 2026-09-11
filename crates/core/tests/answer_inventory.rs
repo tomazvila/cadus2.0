@@ -74,12 +74,12 @@ const HISTORICAL_SHAPE_COUNTS: [(&str, usize); 16] = [
 const HISTORICAL_DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 115), (1, 53), (2, 583), (3, 58)];
 
 const LIVE_KNOWLEDGE_POINTS: usize = 809;
-const LIVE_EXEMPLARS: usize = 3_247;
-const LIVE_WITHOUT_SKETCH: usize = 0;
+const LIVE_EXEMPLARS: usize = 3_169;
+const LIVE_WITHOUT_SKETCH: usize = 46;
 const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
-    ("coordinates", 276),
+    ("coordinates", 252),
     ("decimal", 93),
-    ("equation_or_inequality", 415),
+    ("equation_or_inequality", 435),
     ("expression", 591),
     ("fraction", 233),
     ("integer", 1_169),
@@ -95,14 +95,14 @@ const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("value_with_unit", 42),
 ];
 const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 6] =
-    [(0, 76), (1, 3), (2, 17), (3, 7), (4, 699), (5, 7)];
+    [(0, 78), (1, 4), (2, 46), (3, 12), (4, 662), (5, 7)];
 const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
-    ("decided", 2_889),
+    ("decided", 2_775),
     (
         "undecidable(a chained inequality needs one variable in the middle)",
         2,
     ),
-    ("undecidable(a character outside the grammar)", 132),
+    ("undecidable(a character outside the grammar)", 145),
     (
         "undecidable(a disjunction requires finite scalar solutions)",
         19,
@@ -152,7 +152,11 @@ fn the_live_foundations_inventory_carries_the_current_counts() {
         LIVE_KNOWLEDGE_POINTS,
         "Foundations knowledge points"
     );
-    assert_eq!(inventory.len(), LIVE_EXEMPLARS, "Foundations exemplars");
+    assert_eq!(
+        inventory.len(),
+        LIVE_EXEMPLARS,
+        "Foundations exemplars"
+    );
     let sketched = inventory
         .iter()
         .filter(|row| row.has_solution_sketch)
