@@ -89,10 +89,18 @@ fn every_non_residual_kp_is_practicable_assessable_and_has_solutions() {
     assert!(findings.is_empty(), "{findings:?}");
     let index = ReadinessIndex::build(&curriculum);
     let keys = unit_kp_keys();
-    assert_eq!(keys.len(), 81, "the unit file's own KP count moved; update this count");
+    assert_eq!(
+        keys.len(),
+        81,
+        "the unit file's own KP count moved; update this count"
+    );
 
     let residuals: BTreeSet<&str> = OPEN_RESIDUALS.iter().copied().collect();
-    assert_eq!(residuals.len(), OPEN_RESIDUALS.len(), "a duplicate residual entry");
+    assert_eq!(
+        residuals.len(),
+        OPEN_RESIDUALS.len(),
+        "a duplicate residual entry"
+    );
 
     let mut failures = Vec::new();
     let mut closed = 0usize;
@@ -107,7 +115,10 @@ fn every_non_residual_kp_is_practicable_assessable_and_has_solutions() {
             && facts.solutions;
         let is_residual = residuals.contains(key.as_str());
         if is_residual {
-            assert!(!is_closed, "{key}: listed as an open residual but is already fully closed");
+            assert!(
+                !is_closed,
+                "{key}: listed as an open residual but is already fully closed"
+            );
             continue;
         }
         if is_closed {
@@ -123,7 +134,10 @@ fn every_non_residual_kp_is_practicable_assessable_and_has_solutions() {
         }
     }
     for residual in &residuals {
-        assert!(keys.iter().any(|k| k == residual), "{residual}: not a real KP of this unit");
+        assert!(
+            keys.iter().any(|k| k == residual),
+            "{residual}: not a real KP of this unit"
+        );
     }
     eprintln!(
         "{closed}/{} non-residual KPs closed; {} residual(s) declared",
