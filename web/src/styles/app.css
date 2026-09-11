@@ -19,6 +19,28 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 
+/* ---- the phone viewport ---- */
+/* Four iOS Safari rules, and each one closes one zoom bug that a learner met on a phone:
+ *   * `text-size-adjust: 100%` stops Safari from inflating the text after a rotation to
+ *     landscape, which read as the page zooming in on its own.
+ *   * `overflow-x: clip` on the root keeps the layout viewport at the device width. One
+ *     element wider than the screen makes Safari zoom the whole page OUT on load to fit
+ *     it, and every screen after that opens small. `clip` (not `hidden`) creates no
+ *     scroll container, so the sticky topbar keeps working.
+ *   * `touch-action: manipulation` on every control removes the double-tap-to-zoom
+ *     gesture on it. A second tap on Submit or on a symbol key zoomed the page IN and left
+ *     it there.
+ *   * Every field is at least 16px (the `fields on a phone` section below): Safari zooms
+ *     in on a focused field with smaller text and never zooms back out on blur.
+ * The viewport meta in index.html keeps user zoom ENABLED. `maximum-scale=1` also stops
+ * all four and fails WCAG 1.4.4, so it is not the fix. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-x: clip; }
+body { overflow-x: clip; }
+button, summary, select, input, textarea, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -39,7 +61,8 @@ p { margin: 0.4rem 0; }
    scrolled card passes under it instead of showing through. */
 .topbar {
   display: flex; align-items: center; gap: 0.6rem;
-  padding: 0.8rem 1rem; border-bottom: 1px solid var(--border);
+  padding: 0.8rem max(1rem, env(safe-area-inset-right)) 0.8rem max(1rem, env(safe-area-inset-left));
+  border-bottom: 1px solid var(--border);
   position: sticky; top: 0; background: var(--bg); z-index: 5;
 }
 .brand {
@@ -47,7 +70,7 @@ p { margin: 0.4rem 0; }
   background: none; border: 0; color: var(--text); cursor: pointer;
   font-size: 1.05rem; font-weight: 650; padding: 0.2rem 0.3rem; border-radius: 8px;
 }
-.brand:hover { background: var(--surface-2); }
+@media (hover: hover) { .brand:hover { background: var(--surface-2); } }
 .brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .brand-mark { display: inline-flex; width: 1.15em; height: 1.15em; }
 .brand-mark svg { width: 100%; height: 100%; display: block; }
@@ -69,11 +92,15 @@ p { margin: 0.4rem 0; }
   font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em;
   color: var(--muted); padding: 0.3rem 0.5rem; border-radius: 6px;
 }
-.topbar-link:hover { color: var(--accent); background: var(--surface-2); }
+@media (hover: hover) { .topbar-link:hover { color: var(--accent); background: var(--surface-2); } }
 .topbar-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---- layout ---- */
-.view { max-width: var(--maxw); margin: 0 auto; padding: 1.2rem 1rem 4rem; }
+.view {
+  max-width: var(--maxw); margin: 0 auto;
+  padding: 1.2rem max(1rem, env(safe-area-inset-right)) calc(4rem + env(safe-area-inset-bottom))
+    max(1rem, env(safe-area-inset-left));
+}
 .card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); box-shadow: var(--shadow);
@@ -91,13 +118,13 @@ p { margin: 0.4rem 0; }
   display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
   min-height: 44px;
 }
-.btn:hover { background: var(--surface-2); }
+@media (hover: hover) { .btn:hover { background: var(--surface-2); } }
 .btn:active { transform: translateY(1px); }
 .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 650; }
-.btn-primary:hover { filter: brightness(1.08); background: var(--accent); }
+@media (hover: hover) { .btn-primary:hover { filter: brightness(1.08); background: var(--accent); } }
 .btn-ghost { border-color: transparent; background: transparent; color: var(--muted); }
-.btn-ghost:hover { background: var(--surface-2); }
+@media (hover: hover) { .btn-ghost:hover { background: var(--surface-2); } }
 .btn:disabled { opacity: 0.65; cursor: default; }
 
 /* ---- chips ---- */
@@ -141,7 +168,8 @@ p { margin: 0.4rem 0; }
 /* The container is in index.html with `aria-live="polite"` already on it, because a live
    region that mounts together with its content announces nothing. */
 .toasts {
-  position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 50;
+  position: fixed; left: 50%; bottom: max(1rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%); z-index: 50;
   display: grid; gap: 0.5rem; width: min(92vw, 460px);
 }
 .toast {
@@ -163,12 +191,16 @@ p { margin: 0.4rem 0; }
    `--scrim` is the only thing dimming the page behind it. */
 .modal-overlay {
   position: fixed; inset: 0; background: var(--scrim);
-  display: grid; place-items: center; z-index: 100; padding: 1rem;
+  display: grid; place-items: center; z-index: 100;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
 }
 .modal {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   box-shadow: var(--shadow); padding: 1.6rem; width: min(92vw, 380px);
   display: grid; gap: 0.7rem;
+  /* `dvh` follows the iOS toolbar as it collapses; the `vh` line is the fallback. */
+  max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem); overflow-y: auto;
 }
 .modal h2 { margin: 0 0 0.3rem; font-size: 1.1rem; }
 .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.7rem; }
@@ -177,7 +209,7 @@ p { margin: 0.4rem 0; }
 /* One card, seven modes. It reuses `.modal` for the surface — the same raised panel, the
    same hairline — and centers it in the view instead of over a scrim. The width matches the
    modal exactly, so a learner who signs in and then meets a dialog sees one shape twice. */
-.auth-view { display: grid; place-items: center; min-height: 62vh; padding: 1.5rem 0; }
+.auth-view { display: grid; place-items: center; min-height: 62vh; min-height: 62svh; padding: 1.5rem 0; }
 .auth-card { width: min(92vw, 380px); gap: 0.55rem; }
 .auth-brand { display: inline-flex; align-items: center; gap: 0.55rem; }
 .auth-brand .brand-mark { width: 1.7rem; height: 1.7rem; }
@@ -211,7 +243,7 @@ p { margin: 0.4rem 0; }
   background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
   color: var(--accent); font-weight: 600;
 }
-.link-btn:hover { text-decoration: underline; }
+@media (hover: hover) { .link-btn:hover { text-decoration: underline; } }
 .link-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 .auth-divider {
   display: flex; align-items: center; gap: 0.6rem;
@@ -263,7 +295,7 @@ p { margin: 0.4rem 0; }
   line-height: 1; color: var(--text); background: var(--surface);
   border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
 }
-.sym-key:hover { border-color: var(--accent); background: var(--accent-weak); }
+@media (hover: hover) { .sym-key:hover { border-color: var(--accent); background: var(--accent-weak); } }
 
 /* A native `<details>`: `.work summary` is styled here, and the element gives the disclosure
    keyboard and screen-reader semantics for free. */
@@ -466,7 +498,7 @@ p { margin: 0.4rem 0; }
 }
 .map-spacer { flex: 1 1 auto; }
 .map-select {
-  min-height: 44px; padding: 0 0.6rem;
+  min-height: 44px; padding: 0 0.6rem; font: inherit;
   background: var(--surface); color: var(--text);
   border: 1px solid var(--border); border-radius: 10px;
 }
@@ -488,11 +520,14 @@ p { margin: 0.4rem 0; }
 /* The canvas keeps its height in both modes, so the map does not jump when the reader
    comes back from the list. */
 .map-canvas {
-  position: relative; height: 60vh; min-height: 320px;
+  position: relative; height: 60vh; height: 60dvh; min-height: 320px;
   background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius);
   overflow: hidden;
 }
-.map-host { position: absolute; inset: 0; }
+/* `touch-action: none` hands every gesture on the canvas to Cytoscape. Without it a pinch
+   on the map zoomed the PAGE on iOS, and a one-finger drag scrolled the document instead
+   of panning the graph. Cytoscape sets this itself for IE and Edge only. */
+.map-host { position: absolute; inset: 0; touch-action: none; }
 .map-empty { padding: 3rem 1rem; text-align: center; }
 .map-panel {
   position: absolute; right: 1rem; bottom: 1rem; max-width: 320px; padding: 0.8rem 1rem;
@@ -569,7 +604,10 @@ p { margin: 0.4rem 0; }
 /* The queue on the left, the document on the right. It collapses to one column below the
    width where a 320px queue plus a document is unreadable. */
 .review-layout { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 1rem; }
-.review-queue { display: flex; flex-direction: column; gap: 0.8rem; max-height: 78vh; overflow-y: auto; }
+.review-queue {
+  display: flex; flex-direction: column; gap: 0.8rem;
+  max-height: 78vh; max-height: 78dvh; overflow-y: auto;
+}
 .review-group { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.6rem; }
 .review-group-head {
   display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem;
@@ -581,7 +619,7 @@ p { margin: 0.4rem 0; }
   padding: 0.5rem 0.6rem; border: 1px solid var(--border); border-radius: 10px;
   background: var(--surface); color: var(--text); font: inherit; cursor: pointer;
 }
-.review-row:hover { background: var(--surface-2); }
+@media (hover: hover) { .review-row:hover { background: var(--surface-2); } }
 .review-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* The selected row is marked by a border AND by `aria-current`, so the state is not carried
    by color alone. */
@@ -615,15 +653,93 @@ p { margin: 0.4rem 0; }
   .review-queue { max-height: none; }
 }
 
+/* ---- fields on a phone ---- */
+/* Safari zooms the page in when a focused field has text under 16px, and it does not zoom
+   back out on blur. Every field is at least 16px whatever the root size, so the zoom never
+   starts. `appearance: none` drops the inset shadow Safari paints inside a text field,
+   which fought the hairline border. The select keeps its native arrow, so it keeps its
+   native appearance. */
+.auth-input, .answer-input, .work-input, .map-select { font-size: max(1rem, 16px); }
+.answer-input { font-size: max(1.1rem, 16px); }
+.auth-input, .answer-input, .work-input { -webkit-appearance: none; appearance: none; }
+
+/* ---- touch ---- */
+/* A finger, not a pointer: every quiet control grows to the 44px target of spec section
+   4.5, and a press paints the surface, because `:hover` no longer does. */
+@media (pointer: coarse) {
+  .logout-btn, .topbar-link { min-height: 44px; }
+  .toast-action, .toast-close {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 44px; min-width: 44px;
+  }
+  .btn:not(.btn-primary):active, .sym-key:active, .review-row:active, .brand:active,
+  .topbar-link:active { background: var(--surface-2); }
+}
+
 /* ---- responsive ---- */
-@media (max-width: 400px) {
-  .view { padding: 1rem 0.75rem 4rem; }
-  .card { padding: 1rem; }
+/* Phones. 480px covers every iPhone and most Android phones in portrait; the old 400px
+   breakpoint caught none of them. One column, full-width controls, and the primary on a
+   row of its own at the bottom of each action row, where a thumb rests. */
+@media (max-width: 480px) {
+  .view {
+    padding-top: 1rem;
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+  }
+  .card, .problem-card { padding: 1rem; }
+  h2 { font-size: 1.3rem; }
+
+  .topbar { gap: 0.4rem; padding-top: 0.6rem; padding-bottom: 0.6rem; }
+  /* The address gives way: beside the brand, Map and Log out it truncated to two letters
+     and an ellipsis. The dashboard names the account in full. */
+  .user-email { display: none; }
+
   .ring svg { width: 96px; height: 96px; }
-  .stat-value { font-size: 1.15rem; }
-  .problem-text { font-size: 1.08rem; }
+  /* The stats pick their column count from the width: three across on a wide phone, two
+     on a narrow one. A fixed three split the ETA date over two lines at 390px. */
+  .stat-grid { gap: 0.4rem; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); }
+  .stat { padding: 0.6rem 0.4rem; }
+  .stat-value { font-size: 1.15rem; white-space: nowrap; }
   /* The ring first, the numbers under it: a 120px ring beside a heading overflows here. */
   .status-head { flex-direction: column-reverse; align-items: flex-start; }
+
+  .problem-text { font-size: 1.08rem; }
+  .task-right { flex-wrap: wrap; }
+  .quiz-note { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
+
+  /* The action rows. */
+  .actions .btn, .more-actions .btn, .modal-actions .btn, .review-actions .btn { flex: 1 1 auto; }
+  .actions .btn-primary { flex-basis: 100%; }
+  .modal-actions, .review-actions { flex-wrap: wrap; }
+  .modal { padding: 1.2rem; }
+
+  /* The twelve keys sit in six columns, two full rows: the flex wrap left a ragged last
+     row. Each key stays above the 44px target down to 360px. */
+  .sym-palette { display: grid; grid-template-columns: repeat(6, 1fr); }
+  .sym-key { min-width: 0; padding-left: 0; padding-right: 0; }
+
+  /* The map: the scope picker takes the row, the buttons the next, and the detail panel
+     docks to the bottom edge instead of covering the graph from the corner. */
+  .map-head { flex-direction: column; align-items: flex-start; gap: 0.1rem; }
+  .map-select { flex: 1 1 100%; }
+  .map-controls .btn { padding-left: 0.8rem; padding-right: 0.8rem; }
+  .map-canvas { height: 55vh; height: 55dvh; }
+  .map-panel { left: 0.5rem; right: 0.5rem; bottom: 0.5rem; max-width: none; padding: 0.7rem 0.8rem; }
+
+  .admin-head { flex-wrap: wrap; }
+  .admin-head h1 { font-size: 1.3rem; }
+}
+
+/* The narrowest phones: four columns of keys, three full rows. */
+@media (max-width: 360px) {
+  .sym-palette { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* A phone on its side: the auth card no longer reserves two thirds of a 380px-tall
+   viewport, and the map keeps a readable height. */
+@media (max-height: 500px) {
+  .auth-view { min-height: 0; padding: 0.5rem 0; }
+  .map-canvas { height: 70vh; height: 70dvh; min-height: 260px; }
 }
 
 /* Strip every animation and transition when the reader asks for less motion (spec section
