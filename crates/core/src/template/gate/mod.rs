@@ -410,6 +410,9 @@ pub fn gate(doc: &TemplateDoc, spec: &GateSpec) -> Result<Verified, Rejection> {
     check_dead_parameters(doc, compiled.answer_ast())?;
     check_answer_names(doc, compiled.answer_ast(), spec)?;
     let walk = build_walk(doc)?;
+    if let Some(finite) = spec.finite.as_ref() {
+        finite::check_policy(finite.policy)?;
+    }
     check_space(doc, spec, &walk)?;
     let samples = check_samples(doc, &compiled, spec)?;
     check_distractors(doc, &compiled)?;

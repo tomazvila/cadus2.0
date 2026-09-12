@@ -98,7 +98,6 @@ pub(super) fn check_complete(
     Ok(found.into_values().collect())
 }
 
-#[allow(dead_code)]
 pub(super) fn check_policy(policy: &FiniteObjectiveDomain) -> Result<(), Rejection> {
     policy
         .validate()

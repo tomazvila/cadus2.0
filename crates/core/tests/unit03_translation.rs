@@ -84,7 +84,6 @@ fn reverse_commutative_sum(equation: &str) -> String {
 }
 
 #[test]
-#[ignore]
 fn relation_form_preserves_reviewed_unsolved_structure_and_refuses_broad_use() {
     use cadus_core::{
         answer::AnswerContract,

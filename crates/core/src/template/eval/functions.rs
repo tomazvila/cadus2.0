@@ -42,7 +42,7 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 41] = [
     ("quartervalue", 2),
     ("compounding", 1),
     ("quarterextremum", 2),
-    ("convertnotation", 2),
+    ("convertnotation", 1),
     ("ascendingchain", 1),
     ("relationform", 2),
     ("trianglelaw", 1),
