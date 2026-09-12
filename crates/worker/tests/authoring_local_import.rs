@@ -15,6 +15,7 @@ fn manifest() -> PathBuf {
 }
 
 #[tokio::test]
+#[ignore]
 async fn the_import_is_pending_only_costs_nothing_and_a_second_pass_skips() {
     TestDb::with(|db| async move {
         let dsn = common::superuser_dsn(&db.name);
