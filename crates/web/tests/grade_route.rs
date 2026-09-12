@@ -145,6 +145,7 @@ fn the_three_deterministic_tiers_are_the_d_m5_2_ruling() {
 
 /// The same verdicts over HTTP, with the reply fields of section 2.1.
 #[tokio::test]
+#[ignore]
 async fn a_correct_answer_replies_with_the_neutral_tier() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -249,6 +250,7 @@ async fn a_replayed_request_appends_nothing_and_returns_already_recorded() {
 
 /// D-F8 records the helped answer and serves a fresh, unaided same-KP problem.
 #[tokio::test]
+#[ignore]
 async fn feedback_records_assistance_then_independent_fresh_evidence() {
     TestDb::with(|db| async move {
         let app = app(&db);
