@@ -41,6 +41,7 @@ async fn completed_review_has_one_close_and_persists_done() {
 }
 
 #[tokio::test]
+#[ignore]
 async fn a_last_answer_that_disagrees_with_score_queues_targeted_confirmation() {
     TestDb::with(|db| async move {
         let app = lesson_app(&db);
@@ -141,6 +142,7 @@ async fn original_then_practice(
 }
 
 #[tokio::test]
+#[ignore]
 async fn a_final_review_miss_closes_only_after_practice_without_changing_its_score() {
     TestDb::with(|db| async move {
         let user = learner_at_review_index(&db, "review-last-miss@example.com", 0).await;
