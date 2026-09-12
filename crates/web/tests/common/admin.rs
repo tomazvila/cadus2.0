@@ -3,6 +3,8 @@
 use cadus_core::curriculum::load::{RawCurriculum, RawUnit};
 use cadus_core::curriculum::model::{Catalog, Course, Exemplar, KnowledgePoint, Slug, Topic, Unit};
 use cadus_core::curriculum::{AnswerKind, Curriculum};
+use cadus_core::review_engine;
+use cadus_store::content::{CurrentContext, template_review_context};
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::state::Content;
 use cadus_web::{AppState, create_app};
@@ -164,6 +166,10 @@ pub struct Seed<'a> {
     pub body: Value,
     pub attempts: i32,
     pub cost: Option<&'a str>,
+    /// When set, overrides the fixture curriculum digest.
+    pub curriculum_digest: Option<&'a str>,
+    /// When set, overrides the build-time review engine digest.
+    pub review_engine_digest: Option<&'a str>,
 }
 
 impl<'a> Seed<'a> {
@@ -177,12 +183,22 @@ impl<'a> Seed<'a> {
             body: template_body(),
             attempts: 1,
             cost: None,
+            curriculum_digest: None,
+            review_engine_digest: None,
         }
     }
 }
 
 /// Write one `content_store` row with the superuser pool.
 pub async fn seed_row(db: &TestDb, seed: &Seed<'_>) {
+    let cur_digest = seed.curriculum_digest.map_or_else(
+        fixture_curriculum_digest,
+        |d| d.to_owned(),
+    );
+    let eng_digest = seed.review_engine_digest.map_or_else(
+        || fixture_review_engine_digest().to_owned(),
+        |d| d.to_owned(),
+    );
     sqlx::query(
         "INSERT INTO content_store
             (digest, kp_id, kind, body, status, authoring_attempts, authoring_cost_usd,
@@ -196,8 +212,8 @@ pub async fn seed_row(db: &TestDb, seed: &Seed<'_>) {
     .bind(seed.status)
     .bind(seed.attempts)
     .bind(seed.cost)
-    .bind("curriculum-v1")
-    .bind("engine-v1")
+    .bind(&cur_digest)
+    .bind(&eng_digest)
     .execute(&db.admin)
     .await
     .unwrap();
@@ -308,4 +324,53 @@ pub fn assert_instruction_document(answer: &Answer, kind: &str, summary: &str) {
     assert_eq!(answer.body.get("instances"), Some(&json!([])));
     assert_eq!(answer.body.get("gate"), Some(&Value::Null));
     assert_eq!(answer.body.get("summary"), Some(&json!(summary)));
+}
+
+/// The curriculum digest of the fixture graph.
+pub fn fixture_curriculum_digest() -> String {
+    Content::new(graph())
+        .curriculum_context_digest()
+        .expect("the fixture curriculum produces a digest")
+        .to_owned()
+}
+
+/// The build-time review engine digest.
+pub fn fixture_review_engine_digest() -> &'static str {
+    review_engine::DIGEST
+}
+
+/// Compute the JSON body for a template approval POST with the fixture context.
+pub async fn fixture_approve_body(db: &TestDb, digest: &str) -> Value {
+    approve_body_inner(db, KEY, digest, true).await
+}
+
+/// The same, for a teach or hint_ladder: the current bank context, no candidate.
+pub async fn fixture_approve_body_instruction(db: &TestDb) -> Value {
+    approve_body_inner(db, KEY, "", false).await
+}
+
+/// Compute the approval body for any kind at `kp_id`.
+async fn approve_body_inner(db: &TestDb, kp_id: &str, digest: &str, is_template: bool) -> Value {
+    let cur_digest = fixture_curriculum_digest();
+    let eng_digest = fixture_review_engine_digest();
+    let current = CurrentContext {
+        policy_digest: None,
+        curriculum_digest: &cur_digest,
+        review_engine_digest: eng_digest,
+    };
+    let candidate = is_template.then_some(digest);
+    let (template_context, _) = template_review_context(
+        &db.admin,
+        kp_id,
+        current,
+        candidate,
+    )
+    .await
+    .expect("the template context reads from the seeded database");
+    json!({
+        "policy_digest": null,
+        "template_context_digest": template_context,
+        "curriculum_digest": cur_digest,
+        "review_engine_digest": eng_digest,
+    })
 }

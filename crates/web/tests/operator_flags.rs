@@ -17,13 +17,13 @@
 mod common;
 
 use cadus_store::test_support::TestDb;
-use cadus_testkit::fixtures::INSERT_APPROVED_TEMPLATE;
 use serde_json::{Value, json};
 
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::{AppState, create_app};
 use common::admin::{
-    KEY, admin_get as call, app_without_admin as app, assert_forbidden, seed_account, template_body,
+    KEY, admin_get as call, app_without_admin as app, assert_forbidden, fixture_curriculum_digest,
+    fixture_review_engine_digest, seed_account, template_body,
 };
 use common::{
     SESSION_TOKEN_ONE, fail_reads, fail_tenant_bind, get, hide_column, seed_pool_row, send,
@@ -51,13 +51,22 @@ const INSTANCES_CHECKED: u64 = 17;
 
 /// Write one approved `content_store` template row with the admin pool.
 async fn seed_template(db: &TestDb, digest: &str, kp_id: &str, body: &str) {
-    sqlx::query(INSERT_APPROVED_TEMPLATE)
-        .bind(digest)
-        .bind(kp_id)
-        .bind(body)
-        .execute(&db.admin)
-        .await
-        .unwrap();
+    let cur_digest = fixture_curriculum_digest();
+    let eng_digest = fixture_review_engine_digest();
+    sqlx::query(
+        "INSERT INTO content_store
+            (digest, kp_id, kind, body, status, approved_at,
+             approved_curriculum_digest, approved_review_engine_digest)
+         VALUES ($1, $2, 'template', $3::text::jsonb, 'approved', now(), $4, $5)",
+    )
+    .bind(digest)
+    .bind(kp_id)
+    .bind(body)
+    .bind(&cur_digest)
+    .bind(eng_digest)
+    .execute(&db.admin)
+    .await
+    .unwrap();
 }
 
 /// The view, read as the admin of `SESSION_TOKEN_ONE`; the read must succeed.
@@ -126,7 +135,6 @@ async fn a_session_that_is_not_an_admin_is_forbidden() {
 /// The row set of `operator_flags` is every knowledge point that holds a pool
 /// row or a template document, so the two seeded templates give two rows.
 #[tokio::test]
-#[ignore]
 async fn an_admin_reads_the_flags_and_the_gate_notes() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -154,6 +162,8 @@ async fn an_admin_reads_the_flags_and_the_gate_notes() {
                 "digest": "u12-band-digest",
                 "gated": true,
                 "exhaustive": true,
+                "finite_cases": [],
+                "finite_policy_fingerprint": null,
                 "instances_checked": INSTANCES_CHECKED,
                 "notes": [GATE_NOTE],
             }]))
@@ -170,7 +180,6 @@ async fn an_admin_reads_the_flags_and_the_gate_notes() {
 /// outside the loaded tree has neither. A6 refuses silence, so the row says the
 /// gate did not run and names the reason.
 #[tokio::test]
-#[ignore]
 async fn an_unknown_knowledge_point_reports_that_the_gate_did_not_run() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -212,7 +221,6 @@ async fn an_unknown_knowledge_point_reports_that_the_gate_did_not_run() {
 /// its first check. The row that C6 approved is still in `content_store`, and
 /// the operator view is where that disagreement becomes visible.
 #[tokio::test]
-#[ignore]
 async fn a_refused_template_reports_the_rejection() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -247,7 +255,6 @@ async fn a_refused_template_reports_the_rejection() {
 
 /// The `kp` parameter scopes the whole answer to one serving key.
 #[tokio::test]
-#[ignore]
 async fn the_kp_parameter_scopes_the_answer_to_one_key() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -304,7 +311,6 @@ async fn the_kp_parameter_scopes_the_answer_to_one_key() {
 /// work per request. The 21 seeded templates are one above the limit of 20, and
 /// the answer reports the 20 it gated and the flag that says it left one.
 #[tokio::test]
-#[ignore]
 async fn the_gate_stops_at_the_limit_and_reports_it() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -385,7 +391,6 @@ async fn a_claimed_exemplar_row_fills_the_last_served_fields() {
 /// A key with no slash and a key whose point the topic does not author both
 /// report `gated: false`.
 #[tokio::test]
-#[ignore]
 async fn a_key_without_a_known_point_reports_that_the_gate_did_not_run() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -424,7 +429,6 @@ async fn the_flags_without_a_curriculum_are_503() {
 /// The tenant bind, the flags read, and the template read each fail: the view
 /// is `500 internal_error`.
 #[tokio::test]
-#[ignore]
 async fn a_store_fault_is_500_on_the_flags() {
     for fault in 0..3 {
         TestDb::with(move |db| async move {
@@ -432,7 +436,11 @@ async fn a_store_fault_is_500_on_the_flags() {
             let admin =
                 seed_account(&db, "u12-admin@example.test", SESSION_TOKEN_ONE.1, true).await;
             seed_template(&db, DIGEST, KEY, &template_body().to_string()).await;
-            seed_pool_row(&db, admin, KEY, "Compute 1 + 1.", "2", "u12-hash").await;
+            let cur_digest = fixture_curriculum_digest();
+            seed_pool_row(
+                &db, admin, KEY, "Compute 1 + 1.", "2", "u12-hash",
+                &cur_digest, fixture_review_engine_digest(),
+            ).await;
             match fault {
                 0 => fail_tenant_bind(&db).await,
                 1 => fail_reads(&db, "serving_pool", "count(*) AS depth").await,

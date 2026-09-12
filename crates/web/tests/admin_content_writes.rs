@@ -77,14 +77,14 @@ async fn a_reject_with_a_reason_writes_the_verdict() {
 /// An approve stamps the row with the reviewer, and a second approve is the
 /// same answer.
 #[tokio::test]
-#[ignore]
 async fn an_approve_stamps_the_reviewer_and_is_idempotent() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let reviewer = seed_admin(&db).await;
         seed_pending(&db).await;
 
-        let first = admin_post(&app, APPROVE_PATH, &json!({})).await;
+        let body = fixture_approve_body(&db, PENDING).await;
+        let first = admin_post(&app, APPROVE_PATH, &body).await;
         assert_eq!(first.status.as_u16(), 200, "{}", first.body);
         assert_eq!(first.body.get("digest"), Some(&json!("r5-pending-digest")));
         assert_eq!(first.body.get("status"), Some(&json!("approved")));
@@ -95,7 +95,7 @@ async fn an_approve_stamps_the_reviewer_and_is_idempotent() {
             .expect("the answer carries no approved_at")
             .to_string();
 
-        let second = admin_post(&app, APPROVE_PATH, &json!({})).await;
+        let second = admin_post(&app, APPROVE_PATH, &body).await;
         assert_eq!(second.status.as_u16(), 200, "{}", second.body);
         assert_eq!(
             second.body.get("approved_at").and_then(Value::as_str),

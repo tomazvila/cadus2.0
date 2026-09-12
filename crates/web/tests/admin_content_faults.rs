@@ -24,9 +24,9 @@ const TEACH_APPROVE_PATH: &str = "/api/admin/content/r5-teach-digest/approve";
 /// `content_store` read.
 const REGATE_NEEDLE: &str = "kind IN ($5, $6)";
 
-/// The text of the re-gate read of the approved template, and of no other
-/// `content_store` read.
-const DOCUMENT_NEEDLE: &str = "approved_templates";
+/// The text of the re-gate read of the pending pages and the approved
+/// template, and of no other `content_store` read.
+const RE_REGATE_NEEDLE: &str = "ORDER BY kind, digest";
 
 /// A pending teach page of `KEY` whose worked example is the authored
 /// exemplar, which the gate refuses once the point serves (Hard Rule 1).
@@ -42,6 +42,8 @@ fn teach_seed() -> Seed<'static> {
         }),
         attempts: 1,
         cost: None,
+        curriculum_digest: None,
+        review_engine_digest: None,
     }
 }
 
@@ -66,7 +68,6 @@ async fn instances_of(app: &Router, digest: &str) -> (usize, String) {
 
 /// A review write that fails past the row lookup is `500 internal_error`.
 #[tokio::test]
-#[ignore]
 async fn a_review_write_that_fails_is_500() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -74,7 +75,8 @@ async fn a_review_write_that_fails_is_500() {
         seed_pending(&db).await;
         fail_updates(&db, "content_store", "NEW.status = 'approved'").await;
 
-        let answer = admin_post(&app, APPROVE_PATH, &json!({})).await;
+        let body = fixture_approve_body(&db, PENDING).await;
+        let answer = admin_post(&app, APPROVE_PATH, &body).await;
         assert_eq!(answer.status.as_u16(), 500, "{}", answer.body);
         assert_eq!(answer.code(), "internal_error");
     })
@@ -180,13 +182,13 @@ async fn a_key_outside_the_curriculum_renders_without_an_envelope() {
 
 /// The show of an approved document carries its approval stamp.
 #[tokio::test]
-#[ignore]
 async fn the_show_of_an_approved_document_carries_its_stamp() {
     TestDb::with(|db| async move {
         let app = app(&db);
         seed_admin(&db).await;
         seed_pending(&db).await;
-        let approved = admin_post(&app, APPROVE_PATH, &json!({})).await;
+        let body = fixture_approve_body(&db, PENDING).await;
+        let approved = admin_post(&app, APPROVE_PATH, &body).await;
         assert_eq!(approved.status.as_u16(), 200, "{}", approved.body);
 
         let answer = admin_get(&app, SHOW_PATH).await;
@@ -204,7 +206,6 @@ async fn the_show_of_an_approved_document_carries_its_stamp() {
 /// answer. A second approved template with the same instances adds no
 /// instance twice.
 #[tokio::test]
-#[ignore]
 async fn an_approval_rejects_the_page_that_the_served_material_gives_away() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -213,7 +214,8 @@ async fn an_approval_rejects_the_page_that_the_served_material_gives_away() {
         seed_approved(&db, KEY, "r5-same-", 1).await;
         seed_row(&db, &teach_seed()).await;
 
-        let answer = admin_post(&app, APPROVE_PATH, &json!({})).await;
+        let body = fixture_approve_body(&db, PENDING).await;
+        let answer = admin_post(&app, APPROVE_PATH, &body).await;
         assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
         let rejected = answer.body["rejected_documents"].as_array().unwrap();
         assert_eq!(rejected.len(), 1, "{}", answer.body);
@@ -236,14 +238,14 @@ async fn an_approval_rejects_the_page_that_the_served_material_gives_away() {
 
 /// An approval of a page changes no answer set, so nothing is judged again.
 #[tokio::test]
-#[ignore]
 async fn an_approval_of_a_page_judges_nothing_again() {
     TestDb::with(|db| async move {
         let app = app(&db);
         seed_admin(&db).await;
         seed_row(&db, &teach_seed()).await;
 
-        let answer = admin_post(&app, TEACH_APPROVE_PATH, &json!({})).await;
+        let body = fixture_approve_body_instruction(&db).await;
+        let answer = admin_post(&app, TEACH_APPROVE_PATH, &body).await;
         assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
         assert_eq!(answer.body["rejected_documents"], json!([]));
 
@@ -256,7 +258,6 @@ async fn an_approval_of_a_page_judges_nothing_again() {
 /// A re-gate that does not run, at its read or at its rejection write, keeps
 /// the approval and answers `null` for the list.
 #[tokio::test]
-#[ignore]
 async fn a_regate_that_does_not_run_answers_null_and_keeps_the_approval() {
     for fault in [0, 1, 2] {
         TestDb::with(move |db| async move {
@@ -264,6 +265,7 @@ async fn a_regate_that_does_not_run_answers_null_and_keeps_the_approval() {
             seed_admin(&db).await;
             seed_pending(&db).await;
             seed_row(&db, &teach_seed()).await;
+            let body = fixture_approve_body(&db, PENDING).await;
             match fault {
                 0 => {
                     expose_to_policies(&db, "content_store").await;
@@ -272,11 +274,11 @@ async fn a_regate_that_does_not_run_answers_null_and_keeps_the_approval() {
                 1 => fail_updates(&db, "content_store", "NEW.status = 'rejected'").await,
                 _ => {
                     expose_to_policies(&db, "content_store").await;
-                    fail_reads(&db, "content_store", DOCUMENT_NEEDLE).await;
+                    fail_reads(&db, "content_store", RE_REGATE_NEEDLE).await;
                 }
             }
 
-            let answer = admin_post(&app, APPROVE_PATH, &json!({})).await;
+            let answer = admin_post(&app, APPROVE_PATH, &body).await;
             assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
             assert_eq!(answer.body["status"], "approved");
             assert_eq!(answer.body["rejected_documents"], Value::Null);
