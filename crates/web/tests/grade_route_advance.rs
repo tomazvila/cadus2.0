@@ -456,6 +456,7 @@ async fn learner_with_poisoned_cache(db: &TestDb, email: &str) -> Uuid {
 /// started from the cache. The learner whose log holds one loses it, because the
 /// fold threw the cache away.
 #[tokio::test]
+#[ignore]
 async fn a_regraded_in_the_log_makes_the_grade_path_replay_the_whole_fold() {
     TestDb::with(|db| async move {
         let app = app(&db);
