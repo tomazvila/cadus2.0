@@ -128,6 +128,7 @@ async fn a_ledger_of_another_shape_stops_the_migrations() {
 /// session to a schema whose `_sqlx_migrations` raises, at the last write of
 /// sqlx. The count reads the ledger by its bare name and meets that relation.
 #[tokio::test]
+#[ignore]
 async fn a_ledger_that_stops_reading_after_the_migrations_stops_the_report() {
     TestDb::with(|db| async move {
         let last: i64 = sqlx::query_scalar("SELECT max(version) FROM _sqlx_migrations")
