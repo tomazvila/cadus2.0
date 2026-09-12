@@ -172,15 +172,15 @@ async fn a_running_drill_keeps_its_task_and_appends_no_second_event() {
     .await;
 }
 
-/// V1 and V8 of M5 review 2. The serve appends `task_served`, so the serve folds
-/// and saves in the SAME transaction. A cursor one line behind the head makes
-/// `project_current` leave the "nothing new" branch, and the incremental branch
-/// then reads the whole log on every later request of that learner (F15, F18).
+/// V1 and V8 of M5 review 2. The serve appends `task_served` and
+/// `ordinary_problem_served`, so the serve folds and saves in the SAME
+/// transaction. A cursor one line behind the head makes `project_current` leave
+/// the "nothing new" branch, and the incremental branch then reads the whole log
+/// on every later request of that learner (F15, F18).
 ///
 /// Every expected value is a literal: the head line, the cursor line, and the
 /// count of the cadence rows.
 #[tokio::test]
-#[ignore]
 async fn a_serve_leaves_the_fold_cursor_at_the_log_head() {
     TestDb::with(|db| async move {
         let user = seed_learner(&db, "cursor@example.com").await;
@@ -194,17 +194,18 @@ async fn a_serve_leaves_the_fold_cursor_at_the_log_head() {
 
         let served = serve_drill(&app, user).await;
 
-        // The serve appended line 2, and the cursor moved onto it.
-        assert_eq!(log_head(&db, user).await, 2);
-        assert_eq!(fold_cursor(&db, user).await, 2);
+        // The serve appended `ordinary_problem_served` (hand-off) plus
+        // `task_served` (cadence), so the head advanced by 2.
+        assert_eq!(log_head(&db, user).await, 3);
+        assert_eq!(fold_cursor(&db, user).await, 3);
         assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
 
         // A re-serve of the live problem appends nothing, so the head and the
-        // cursor both stay on line 2.
+        // cursor both stay on line 3.
         let again = serve_drill(&app, user).await;
         assert_eq!(again["problem_id"], served["problem_id"]);
-        assert_eq!(log_head(&db, user).await, 2);
-        assert_eq!(fold_cursor(&db, user).await, 2);
+        assert_eq!(log_head(&db, user).await, 3);
+        assert_eq!(fold_cursor(&db, user).await, 3);
         assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
     })
     .await;

@@ -3,7 +3,9 @@
 mod common;
 use cadus_core::curriculum::{
     Curriculum, FiniteCaseRole, FiniteCaseVariant, FiniteObjectiveCase, FiniteObjectiveDomain, Slug,
+    review_context_digest,
 };
+use cadus_store::content::{CurrentContext, template_review_context};
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::create_app;
 use common::*;
@@ -39,9 +41,12 @@ fn body() -> Value {
         "hints":["Read the index."],"samples":[{"params":{"a":1},"expected":"1"},{"params":{"a":5},"expected":"5"}]})
 }
 
-async fn seed_template(db: &TestDb, policy: &FiniteObjectiveDomain, status: &str) {
-    sqlx::query("INSERT INTO content_store (digest,kp_id,kind,body,status,approved_policy_digest,approved_at,approved_curriculum_digest,approved_review_engine_digest) VALUES ('finite-content','addition/kp1','template',$1,$2,$3,now(),'curriculum-v1','engine-v1')")
+async fn seed_template(db: &TestDb, curriculum: &Curriculum, policy: &FiniteObjectiveDomain, status: &str) {
+    let cur_digest = review_context_digest(curriculum).unwrap();
+    sqlx::query("INSERT INTO content_store (digest,kp_id,kind,body,status,approved_policy_digest,approved_at,approved_curriculum_digest,approved_review_engine_digest) VALUES ('finite-content','addition/kp1','template',$1,$2,$3,now(),$4,$5)")
         .bind(body()).bind(status).bind(policy.fingerprint(KEY).unwrap())
+        .bind(&cur_digest)
+        .bind(cadus_core::review_engine::DIGEST)
         .execute(&db.admin).await.unwrap();
 }
 
@@ -53,15 +58,15 @@ async fn abandon_live(db: &TestDb, user: Uuid) {
     put_state(db, user, &scratch).await;
 }
 
-#[ignore]
 #[tokio::test]
 async fn five_approved_cases_rotate_for_twenty_authenticated_handoffs() {
     TestDb::with(|db| async move {
         let policy = policy(FiniteCaseRole::PracticeFresh);
-        seed_template(&db, &policy, "approved").await;
+        let curriculum = graph(&policy);
+        seed_template(&db, &curriculum, &policy, "approved").await;
         let user = seed_learner(&db, "finite-http@example.test").await;
         seed_open_session(&db, user).await;
-        let app = app_with_content(&db, graph(&policy));
+        let app = app_with_content(&db, curriculum);
         let mut problems = Vec::new();
         for turn in 0..20 {
             let (status, reply) = serve_task(&app, user, LESSON).await;
@@ -105,12 +110,12 @@ async fn five_approved_cases_rotate_for_twenty_authenticated_handoffs() {
     .await;
 }
 
-#[ignore]
 #[tokio::test]
 async fn taught_rehearsal_is_repeat_and_a_policy_change_requires_ai_reapproval() {
     TestDb::with(|db| async move {
-        let old = policy(FiniteCaseRole::PracticeFresh);
-        seed_template(&db, &old, "approved").await;
+        let old_policy = policy(FiniteCaseRole::PracticeFresh);
+        let old_curriculum = graph(&old_policy);
+        seed_template(&db, &old_curriculum, &old_policy, "approved").await;
         let user = seed_learner(&db, "finite-policy-review@example.test").await;
         sqlx::query("UPDATE users SET is_admin = true WHERE id = $1")
             .bind(user)
@@ -126,27 +131,89 @@ async fn taught_rehearsal_is_repeat_and_a_policy_change_requires_ai_reapproval()
         let (status, _) = serve_task(&app, user, LESSON).await;
         assert_eq!(status, StatusCode::CONFLICT);
         let approve = "/api/admin/content/finite-content/approve";
+        // The current trusted context the server derives from its loaded
+        // curriculum: the current policy fingerprint, the effective curriculum
+        // digest, the review engine digest, and the prospective template bank.
+        let cur_curriculum = graph(&current);
+        let cur_digest = review_context_digest(&cur_curriculum).unwrap();
+        let cur_engine = cadus_core::review_engine::DIGEST;
+        let fingerprint = current.fingerprint(KEY).unwrap();
+        let (template_ctx, _) = template_review_context(
+            &db.app,
+            KEY,
+            CurrentContext {
+                policy_digest: Some(&fingerprint),
+                curriculum_digest: &cur_digest,
+                review_engine_digest: cur_engine,
+            },
+            Some("finite-content"),
+        )
+        .await
+        .unwrap();
+        let template_ctx = template_ctx.unwrap();
+        // A stale policy fingerprint with the otherwise complete current
+        // template, curriculum and engine context is refused, and the stored
+        // approval under the old policy stays untouched.
         let (status, raw) = call(
             &app,
             Method::POST,
             approve,
             Some(user),
-            Some(json!({"policy_digest":old.fingerprint(KEY).unwrap()})),
+            Some(json!({
+                "policy_digest": old_policy.fingerprint(KEY).unwrap(),
+                "template_context_digest": template_ctx,
+                "curriculum_digest": cur_digest,
+                "review_engine_digest": cur_engine,
+            })),
         )
         .await;
         assert_eq!(status, StatusCode::CONFLICT, "{raw}");
         assert_eq!(parse(&raw)["error"]["code"], "review_context_changed");
-        let fingerprint = current.fingerprint(KEY).unwrap();
+        let stale: (Option<String>, Option<String>, Option<String>) = sqlx::query_as(
+            "SELECT approved_policy_digest, approved_curriculum_digest,
+                    approved_review_engine_digest
+             FROM content_store WHERE digest = 'finite-content'",
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(
+            stale.0.as_deref(),
+            Some(old_policy.fingerprint(KEY).unwrap().as_str())
+        );
+        assert_eq!(
+            stale.1.as_deref(),
+            Some(review_context_digest(&old_curriculum).unwrap().as_str())
+        );
+        assert_eq!(stale.2.as_deref(), Some(cur_engine));
+        // The current policy fingerprint with the same complete context is
+        // approved, and the API records the new approval itself.
         let (status, raw) = call(
             &app,
             Method::POST,
             approve,
             Some(user),
-            Some(json!({"policy_digest":fingerprint})),
+            Some(json!({
+                "policy_digest": fingerprint,
+                "template_context_digest": template_ctx,
+                "curriculum_digest": cur_digest,
+                "review_engine_digest": cur_engine,
+            })),
         )
         .await;
         assert_eq!(status, StatusCode::OK, "{raw}");
         assert_eq!(parse(&raw)["approved_policy_digest"], fingerprint);
+        let stored: (Option<String>, Option<String>, Option<String>) = sqlx::query_as(
+            "SELECT approved_policy_digest, approved_curriculum_digest,
+                    approved_review_engine_digest
+             FROM content_store WHERE digest = 'finite-content'",
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(stored.0.as_deref(), Some(fingerprint.as_str()));
+        assert_eq!(stored.1.as_deref(), Some(cur_digest.as_str()));
+        assert_eq!(stored.2.as_deref(), Some(cur_engine));
         let (status, reply) = serve_task(&app, user, LESSON).await;
         assert_eq!(status, StatusCode::OK, "{reply}");
         let scratch = stored_state(&db, user).await;
