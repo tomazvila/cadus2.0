@@ -4,8 +4,8 @@ use std::time::Duration;
 
 use axum::http::header;
 use cadus_core::curriculum::{
-    AnswerKind, Catalog, Course, Curriculum, Exemplar, KnowledgePoint, RawCurriculum, RawUnit,
-    Slug, Topic, Unit,
+    review_context_digest, AnswerKind, Catalog, Course, Curriculum, Exemplar, KnowledgePoint,
+    RawCurriculum, RawUnit, Slug, Topic, Unit,
 };
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
 use cadus_core::pool::PoolAnswer;
@@ -111,6 +111,8 @@ pub async fn learner(db: &TestDb, email: &str) -> Uuid {
 
 /// Put one approved kind-`diagnosis` document on `KEY` (spec section 6.2).
 pub async fn seed_distractors(db: &TestDb, digest: &str, body: &Value) {
+    let curr_digest = review_context_digest(&graph()).unwrap();
+    let engine_digest = cadus_core::review_engine::DIGEST;
     sqlx::query!(
         r#"
         INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at,
@@ -120,8 +122,8 @@ pub async fn seed_distractors(db: &TestDb, digest: &str, body: &Value) {
         digest,
         KEY,
         body,
-        "curriculum-v1",
-        "engine-v1",
+        curr_digest,
+        engine_digest,
     )
     .execute(&db.admin)
     .await

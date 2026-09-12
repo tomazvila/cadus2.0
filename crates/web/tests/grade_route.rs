@@ -34,14 +34,14 @@
 mod common;
 
 use axum::http::StatusCode;
-use cadus_core::curriculum::AnswerKind;
+use cadus_core::curriculum::{review_context_digest, AnswerKind};
 use cadus_core::event::{AttemptOutcome, TaskType, WorkQuality};
 use cadus_store::test_support::TestDb;
 use cadus_web::grade::{Grade, deterministic_grade, reference_assisted};
 use common::{
-    LESSON, PROBLEM_ID, SOLUTION, Verdict, answer_lesson as answer, answer_lesson_ok,
-    events_of_type, learner_with_kp1, lesson_app as app, lesson_learner, lesson_problem,
-    seed_attempt, seed_pool_row, stored_state,
+    LESSON, PROBLEM_ID, SOLUTION, Verdict, addition_curriculum, answer_lesson as answer,
+    answer_lesson_ok, events_of_type, learner_with_kp1, lesson_app as app, lesson_learner,
+    lesson_problem, seed_attempt, seed_pool_row, stored_state,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -145,11 +145,12 @@ fn the_three_deterministic_tiers_are_the_d_m5_2_ruling() {
 
 /// The same verdicts over HTTP, with the reply fields of section 2.1.
 #[tokio::test]
-#[ignore]
 async fn a_correct_answer_replies_with_the_neutral_tier() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner_with_kp1(&db, "correct@example.com", 5.0).await;
+        let curr_digest =
+            review_context_digest(&addition_curriculum(Vec::new())).unwrap();
         seed_pool_row(
             &db,
             user,
@@ -157,6 +158,8 @@ async fn a_correct_answer_replies_with_the_neutral_tier() {
             "Compute 1 + 1.",
             "2",
             "hash-next",
+            &curr_digest,
+            cadus_core::review_engine::DIGEST,
         )
         .await;
 
@@ -250,11 +253,12 @@ async fn a_replayed_request_appends_nothing_and_returns_already_recorded() {
 
 /// D-F8 records the helped answer and serves a fresh, unaided same-KP problem.
 #[tokio::test]
-#[ignore]
 async fn feedback_records_assistance_then_independent_fresh_evidence() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = hinted_learner(&db, "fresh-after-feedback@example.com").await;
+        let curr_digest =
+            review_context_digest(&addition_curriculum(Vec::new())).unwrap();
         seed_pool_row(
             &db,
             user,
@@ -262,6 +266,8 @@ async fn feedback_records_assistance_then_independent_fresh_evidence() {
             "Compute 4 + 5.",
             "9",
             "fresh-answer",
+            &curr_digest,
+            cadus_core::review_engine::DIGEST,
         )
         .await;
         let (status, feedback) = answer(&app, user, "13.5").await;

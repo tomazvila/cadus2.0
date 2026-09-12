@@ -10,12 +10,13 @@ mod common;
 
 use axum::Router;
 use axum::http::StatusCode;
+use cadus_core::curriculum::review_context_digest;
 use cadus_store::test_support::TestDb;
 use cadus_web::state::WebState;
 use common::{
-    KEY, LESSON, SESSION, a_miss, answer_lesson_ok, answer_task, enroll_course, learner_with_kp1,
-    lesson_app as app, put_state, seed_attempt, seed_learner, seed_open_session, seed_pool_row,
-    seed_task_attempt, serve_task,
+    KEY, LESSON, SESSION, a_miss, addition_curriculum, answer_lesson_ok, answer_task,
+    enroll_course, learner_with_kp1, lesson_app as app, put_state, seed_attempt, seed_learner,
+    seed_open_session, seed_pool_row, seed_task_attempt, serve_task,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -57,8 +58,14 @@ async fn attempt_ids(db: &TestDb, user: Uuid) -> Vec<String> {
 
 /// Two pool rows of the lesson, so two serves have a problem to draw.
 async fn seed_two_pool_rows(db: &TestDb, user: Uuid) {
-    seed_pool_row(db, user, KEY, "Compute 2 + 2.", "4", "hash-a").await;
-    seed_pool_row(db, user, KEY, "Compute 3 + 3.", "6", "hash-b").await;
+    let curr_digest =
+        review_context_digest(&addition_curriculum(Vec::new())).unwrap();
+    seed_pool_row(db, user, KEY, "Compute 2 + 2.", "4", "hash-a", &curr_digest,
+                  cadus_core::review_engine::DIGEST)
+    .await;
+    seed_pool_row(db, user, KEY, "Compute 3 + 3.", "6", "hash-b", &curr_digest,
+                  cadus_core::review_engine::DIGEST)
+    .await;
 }
 
 /// F1. `POST /api/enroll` clears the D-S6 row and leaves the session open, so
@@ -69,7 +76,6 @@ async fn seed_two_pool_rows(db: &TestDb, user: Uuid) {
 /// section 4.3 step 6. A counter that lives in the deletable scratch repeats
 /// `-1`, and the partial unique index then discards the whole second attempt.
 #[tokio::test]
-#[ignore]
 async fn an_enroll_between_two_answers_numbers_the_second_attempt_from_the_log() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -134,7 +140,6 @@ async fn an_attempt_of_a_sibling_task_does_not_move_this_number() {
 /// counter at all. The two answers take `-2` and `-3`: the number is the
 /// position in the LOG, never the position in the scratch.
 #[tokio::test]
-#[ignore]
 async fn a_serve_answer_chain_numbers_the_attempts_from_the_log() {
     TestDb::with(|db| async move {
         let app = app(&db);

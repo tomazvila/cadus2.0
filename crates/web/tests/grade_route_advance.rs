@@ -456,16 +456,16 @@ async fn learner_with_poisoned_cache(db: &TestDb, email: &str) -> Uuid {
 /// started from the cache. The learner whose log holds one loses it, because the
 /// fold threw the cache away.
 #[tokio::test]
-#[ignore]
 async fn a_regraded_in_the_log_makes_the_grade_path_replay_the_whole_fold() {
     TestDb::with(|db| async move {
         let app = app(&db);
 
-        // The incremental arm: session_start at 1, the new attempt at 2.
+        // The incremental arm: session_start at 1, the new attempt at 2, the
+        // ordinary_problem_served handoff at 3 (appended by install_next).
         let plain = learner_with_poisoned_cache(&db, "fold-plain@example.com").await;
         answer_lesson_ok(&app, plain, "13.5").await;
         let (model, cursor) = cached_model(&db, plain).await;
-        assert_eq!(cursor, 2);
+        assert_eq!(cursor, 3);
         assert_eq!(
             model["topics"][SENTINEL_TOPIC]["ability"],
             json!(0.75),
@@ -473,12 +473,12 @@ async fn a_regraded_in_the_log_makes_the_grade_path_replay_the_whole_fold() {
         );
 
         // The replay arm: session_start at 1, a `regraded` at 2, the new attempt
-        // at 3.
+        // at 3, the ordinary_problem_served handoff at 4.
         let repaired = learner_with_poisoned_cache(&db, "fold-regrade@example.com").await;
         seed_regraded(&db, repaired, 2, "s_2026-01-01a-lesson-addition-0").await;
         answer_lesson_ok(&app, repaired, "13.5").await;
         let (model, cursor) = cached_model(&db, repaired).await;
-        assert_eq!(cursor, 3);
+        assert_eq!(cursor, 4);
         assert!(
             model["topics"].get(SENTINEL_TOPIC).is_none(),
             "a regraded must force the full replay, which drops the cache: {model}"

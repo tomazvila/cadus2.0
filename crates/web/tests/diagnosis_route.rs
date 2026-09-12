@@ -48,7 +48,6 @@ use cadus_core::template::{GateSpec, gate_diagnosis_body};
 /// and **writes no job row** — that is the difference between a bill that scales
 /// with attempts and one that scales with distinct misconceptions.
 #[tokio::test]
-#[ignore]
 async fn a_matching_distractor_is_ready_and_writes_no_job_row() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -85,7 +84,6 @@ async fn a_matching_distractor_is_ready_and_writes_no_job_row() {
 /// The learner writes `13.0` and the document names `13`. The checker decides
 /// the form, so one authored answer names every spelling of one mistake.
 #[tokio::test]
-#[ignore]
 async fn an_authored_distractor_document_is_ready_and_writes_no_job_row() {
     TestDb::with(|db| async move {
         let app = app(&db);

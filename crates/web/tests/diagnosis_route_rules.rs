@@ -158,7 +158,6 @@ fn the_distractor_match_reads_the_checker_and_the_vocabulary() {
 /// stays at zero in the same scrape, which is the saving the label exists to
 /// show.
 #[tokio::test]
-#[ignore]
 async fn a_preauthored_hit_counts_ready_preauthored_and_enqueues_nothing() {
     TestDb::with(|db| async move {
         let app = app(&db);
