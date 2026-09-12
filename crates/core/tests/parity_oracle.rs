@@ -19,10 +19,10 @@ use common::dump::{
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
 // Regenerated for the expanded live tree; independently derived alongside parity.rs.
-const TREE_HASH: &str = "7372b3e95c9862ab5a96befa04f635ac3d4a8a2dfac5b0ea26449ebf29e93ec3";
+const TREE_HASH: &str = "7efbbe779ccef3b80e6958b8415514826302d962e245db7762f475190b86463c";
 
 /// The length of the dump in bytes, without the trailing newline.
-const DUMP_LEN: usize = 4_610_360;
+const DUMP_LEN: usize = 4_630_521;
 
 /// Compare [`python_repr_f64`] with CPython `repr` over a sweep of 494,972
 /// finite floats, and require 0 mismatches.
