@@ -11,7 +11,7 @@ use cadus_store::pool::operator_flags;
 use cadus_store::test_support::TestDb;
 use common::{
     EXEMPLAR_TEXT_2, EXPECTED_ANSWER, KEY, LESSON, POOL_TEXT, PROBLEM_TEXT, close_live,
-    drill_app as app, learner_with_pool_row, seed_learner, seed_open_session, serve_ok,
+    drill_app as app, learner_with_drill_pool_row, seed_learner, seed_open_session, serve_ok,
     stored_state,
 };
 
@@ -194,7 +194,7 @@ async fn the_exemplar_rotation_serves_the_list_again_when_it_is_exhausted() {
 #[ignore]
 async fn the_serve_pops_the_pool_before_it_falls_back() {
     TestDb::with(|db| async move {
-        let user = learner_with_pool_row(&db, "pop@example.com").await;
+        let user = learner_with_drill_pool_row(&db, "pop@example.com").await;
         let app = app(&db);
 
         let served = serve_ok(&app, user, LESSON).await;

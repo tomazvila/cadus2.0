@@ -11,9 +11,10 @@ mod common;
 
 use cadus_web::state::ServedProblem;
 use common::{
-    KEY, LESSON, PROBLEM_ID, StatusCode, TestDb, assert_refused, drill_app as app, hint_task,
-    lesson_learner, lesson_problem, lesson_state, put_state, seed_content, seed_learner,
-    seed_open_session, serve_task, stored_state, teach_task,
+    KEY, LESSON, POOL_TEXT, POOL_ANSWER, PROBLEM_ID, StatusCode, TestDb, assert_refused,
+    drill_app as app, drill_curriculum, hint_task, lesson_learner, lesson_problem, lesson_state,
+    put_state, seed_content, seed_learner, seed_open_session, serve_ok, serve_task, stored_state,
+    teach_task,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -102,9 +103,41 @@ async fn a_live_problem_that_names_no_knowledge_point_or_topic_has_no_ladder() {
 
 /// An approved ladder with no rung gives no hint: `409 no_hint_ladder`.
 #[tokio::test]
-#[ignore]
-async fn an_approved_ladder_with_no_rung_is_409_no_hint_ladder() {
+pub async fn an_approved_ladder_with_no_rung_is_409_no_hint_ladder() {
     TestDb::with(|db| async move {
+        use cadus_core::curriculum::review_context_digest;
+        let curriculum = drill_curriculum();
+        let curr_digest = review_context_digest(&curriculum).unwrap();
+        let user = seed_learner(&db, "empty-ladder@example.com").await;
+        seed_open_session(&db, user).await;
+        seed_content(
+            &db,
+            KEY,
+            "template",
+            "digest-src",
+            json!({}),
+        )
+        .await;
+        common::seed_pool_row(
+            &db, user, KEY, POOL_TEXT, POOL_ANSWER, "hash-empty",
+            &curr_digest, cadus_core::review_engine::DIGEST,
+        )
+        .await;
+        // Link pool row to the template source for hint context.
+        sqlx::query(
+            "UPDATE serving_pool SET content_digest = cs.digest
+             FROM content_store AS cs
+             WHERE serving_pool.user_id = $1 AND cs.digest = 'digest-src'
+               AND serving_pool.kp_id = $2",
+        )
+        .bind(user)
+        .bind(KEY)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        let app = app(&db);
+        let served = serve_ok(&app, user, LESSON).await;
+        let problem_id = served["problem_id"].as_str().unwrap().to_owned();
         seed_content(
             &db,
             KEY,
@@ -113,9 +146,8 @@ async fn an_approved_ladder_with_no_rung_is_409_no_hint_ladder() {
             json!({"hints": []}),
         )
         .await;
-        let live = lesson_problem(5.0, "kp1", Vec::new());
         assert_refused(
-            &hint_on(&db, "empty-ladder@example.com", live).await,
+            &hint_task(&app, user, LESSON, &problem_id).await,
             StatusCode::CONFLICT,
             "no_hint_ladder",
         );
@@ -126,9 +158,41 @@ async fn an_approved_ladder_with_no_rung_is_409_no_hint_ladder() {
 /// An approved ladder whose body is not a ladder is `500 internal_error`: the
 /// route reads one shape, and a body the gate never wrote fails there.
 #[tokio::test]
-#[ignore]
-async fn an_approved_ladder_that_does_not_read_is_500_internal_error() {
+pub async fn an_approved_ladder_that_does_not_read_is_500_internal_error() {
     TestDb::with(|db| async move {
+        use cadus_core::curriculum::review_context_digest;
+        let curriculum = drill_curriculum();
+        let curr_digest = review_context_digest(&curriculum).unwrap();
+        let user = seed_learner(&db, "broken-ladder@example.com").await;
+        seed_open_session(&db, user).await;
+        seed_content(
+            &db,
+            KEY,
+            "template",
+            "digest-src2",
+            json!({}),
+        )
+        .await;
+        common::seed_pool_row(
+            &db, user, KEY, POOL_TEXT, POOL_ANSWER, "hash-broken",
+            &curr_digest, cadus_core::review_engine::DIGEST,
+        )
+        .await;
+        // Link pool row to the template source for hint context.
+        sqlx::query(
+            "UPDATE serving_pool SET content_digest = cs.digest
+             FROM content_store AS cs
+             WHERE serving_pool.user_id = $1 AND cs.digest = 'digest-src2'
+               AND serving_pool.kp_id = $2",
+        )
+        .bind(user)
+        .bind(KEY)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        let app = app(&db);
+        let served = serve_ok(&app, user, LESSON).await;
+        let problem_id = served["problem_id"].as_str().unwrap().to_owned();
         seed_content(
             &db,
             KEY,
@@ -137,9 +201,8 @@ async fn an_approved_ladder_that_does_not_read_is_500_internal_error() {
             json!({"rungs": 3}),
         )
         .await;
-        let live = lesson_problem(5.0, "kp1", Vec::new());
         assert_refused(
-            &hint_on(&db, "broken-ladder@example.com", live).await,
+            &hint_task(&app, user, LESSON, &problem_id).await,
             StatusCode::INTERNAL_SERVER_ERROR,
             "internal_error",
         );

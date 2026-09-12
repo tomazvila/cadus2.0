@@ -17,7 +17,7 @@ use common::sessions::app_without_content;
 use common::{
     KEY, LESSON, POOL_ANSWER, POOL_TEXT, TemplateRow, app_with_content, assert_refused, close_live,
     drill_app as app, fail_commit_after, fail_reads, fail_writes, hide_column, hint_task,
-    learner_with_pool_row, one_unit_curriculum, problem_id_of, seed_content, seed_learner,
+    learner_with_drill_pool_row, one_unit_curriculum, problem_id_of, seed_content, seed_learner,
     seed_open_session, seed_template_row, serve_ok, serve_task, teach_task, topic,
 };
 use serde_json::json;
@@ -48,7 +48,7 @@ async fn assert_serve_is_500(app: &axum::Router, user: Uuid) {
 /// A learner with one live problem of `LESSON` and an approved one-rung
 /// ladder for `KEY`; the answer is the live problem id.
 async fn learner_with_live_problem(db: &TestDb, app: &axum::Router, email: &str) -> (Uuid, String) {
-    let user = learner_with_pool_row(db, email).await;
+    let user = learner_with_drill_pool_row(db, email).await;
     seed_content(
         db,
         KEY,
@@ -77,7 +77,7 @@ async fn assert_hint_and_teach_are_500(app: &axum::Router, user: Uuid, problem_i
 async fn a_pool_read_that_fails_is_500_on_the_serve() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner_with_pool_row(&db, "fault-pop@example.com").await;
+        let user = learner_with_drill_pool_row(&db, "fault-pop@example.com").await;
         fail_reads(&db, "serving_pool", POP_NEEDLE).await;
 
         assert_serve_is_500(&app, user).await;
@@ -164,7 +164,7 @@ async fn a_template_read_that_fails_is_500_on_the_serve() {
 async fn a_model_write_that_fails_is_500_on_the_serve() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner_with_pool_row(&db, "fault-model-write@example.com").await;
+        let user = learner_with_drill_pool_row(&db, "fault-model-write@example.com").await;
         fail_writes(&db, "learner_models", "true").await;
 
         assert_serve_is_500(&app, user).await;
@@ -177,7 +177,7 @@ async fn a_model_write_that_fails_is_500_on_the_serve() {
 async fn a_state_write_that_fails_is_500_on_the_serve() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner_with_pool_row(&db, "fault-state-write@example.com").await;
+        let user = learner_with_drill_pool_row(&db, "fault-state-write@example.com").await;
         fail_writes(&db, "web_states", "true").await;
 
         assert_serve_is_500(&app, user).await;

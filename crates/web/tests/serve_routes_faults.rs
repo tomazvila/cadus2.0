@@ -12,13 +12,14 @@ mod common;
 use common::{SESSION, enroll_course, fail_reads, fail_rows, hold_state_lock, put_state};
 
 use axum::http::StatusCode;
+use cadus_core::curriculum::review_context_digest;
 use cadus_store::test_support::TestDb;
 use cadus_web::state::WebState;
 use common::{
     DRILL, KEY, LESSON, POOL_ANSWER, POOL_TEXT, assert_refused, claimed_rows, drill_app as app,
-    fail_commit_after_insert, fail_writes, hint_task, problem_id_of, seed_content, seed_drill_due,
-    seed_learner, seed_open_session, seed_pool_row, serve_ok, serve_task, stored_state,
-    task_served_rows,
+    drill_curriculum, fail_commit_after_insert, fail_writes, hint_task, problem_id_of,
+    seed_content, seed_drill_due, seed_learner, seed_open_session, seed_pool_row, serve_ok,
+    serve_task, stored_state, task_served_rows,
 };
 use serde_json::json;
 use sqlx::types::Uuid;
@@ -68,13 +69,36 @@ async fn a_commit_that_fails_rolls_the_whole_serve_back() {
 /// The D-S6 write fails on the hint route: the hint is `500 internal_error`
 /// and the live problem records no hint.
 #[tokio::test]
-#[ignore]
 async fn a_state_write_that_fails_records_no_hint() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = seed_learner(&db, "fault-hint@example.com").await;
         seed_open_session(&db, user).await;
-        seed_pool_row(&db, user, KEY, POOL_TEXT, POOL_ANSWER, "hash-a").await;
+        let curriculum = drill_curriculum();
+        let curr_digest = review_context_digest(&curriculum).unwrap();
+        seed_pool_row(&db, user, KEY, POOL_TEXT, POOL_ANSWER, "hash-a",
+                      &curr_digest, cadus_core::review_engine::DIGEST).await;
+        seed_content(
+            &db,
+            KEY,
+            "template",
+            "digest-source",
+            json!({}),
+        )
+        .await;
+        // Link the pool row to the approved template source so the hint route
+        // finds it via the source digest.
+        sqlx::query(
+            "UPDATE serving_pool SET content_digest = cs.digest
+             FROM content_store AS cs
+             WHERE serving_pool.user_id = $1 AND cs.digest = 'digest-source'
+               AND serving_pool.kp_id = $2",
+        )
+        .bind(user)
+        .bind(KEY)
+        .execute(&db.admin)
+        .await
+        .unwrap();
         seed_content(
             &db,
             KEY,

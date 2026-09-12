@@ -5,7 +5,7 @@ use axum::http::StatusCode;
 use cadus_store::test_support::TestDb;
 use common::{
     KEY, LESSON, POOL_ANSWER, answer_task_ok, assert_refused, drill_app, hint_task,
-    learner_with_pool_row, problem_id_of, put_state, seed_content, serve_ok, stored_state,
+    learner_with_drill_pool_row, problem_id_of, put_state, seed_content, serve_ok, stored_state,
 };
 use serde_json::json;
 
@@ -48,7 +48,7 @@ async fn refresh_hint(db: &TestDb) {
 #[tokio::test]
 async fn template_bank_drift_refuses_hints_until_review_and_retired_sources_stay_refused() {
     TestDb::with(|db| async move {
-        let user = learner_with_pool_row(&db, "hint-context@example.test").await;
+        let user = learner_with_drill_pool_row(&db, "hint-context@example.test").await;
         template_and_hint(&db).await;
         let app = drill_app(&db);
         let id = problem_id_of(&serve_ok(&app, user, LESSON).await);
@@ -87,7 +87,7 @@ async fn template_bank_drift_refuses_hints_until_review_and_retired_sources_stay
 #[tokio::test]
 async fn legacy_live_questions_without_provenance_refuse_hints_but_keep_grading() {
     TestDb::with(|db| async move {
-        let user = learner_with_pool_row(&db, "legacy-hint-context@example.test").await;
+        let user = learner_with_drill_pool_row(&db, "legacy-hint-context@example.test").await;
         template_and_hint(&db).await;
         let app = drill_app(&db);
         let id = problem_id_of(&serve_ok(&app, user, LESSON).await);

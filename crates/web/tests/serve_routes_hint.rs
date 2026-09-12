@@ -27,7 +27,7 @@ const STALE: &str = "0123456789abcdef0123456789abcdef";
 
 /// Current template-backed fixtures carry the same source stamp as serving.
 async fn learner_with_source(db: &TestDb, email: &str) -> sqlx::types::Uuid {
-    let user = common::learner_with_pool_row(db, email).await;
+    let user = common::learner_with_drill_pool_row(db, email).await;
     seed_source(db).await;
     sqlx::query(
         "UPDATE serving_pool AS sp

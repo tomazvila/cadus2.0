@@ -35,7 +35,7 @@ use axum::http::{Method, StatusCode};
 use cadus_store::test_support::TestDb;
 use common::{
     LESSON, POOL_ANSWER, POOL_TEXT, assert_refused, call, claimed_rows, drill_app as app,
-    events_of_type, hint_task, learner_with_pool_row, lesson_problem, lesson_state, parse,
+    events_of_type, hint_task, learner_with_drill_pool_row, lesson_problem, lesson_state, parse,
     put_state, seed_learner, seed_open_session, serve_ok, serve_raw, serve_task, stored_state,
 };
 use serde_json::{Value, json};
@@ -93,10 +93,9 @@ async fn an_unknown_task_is_404_and_a_closed_session_is_409() {
 /// the problem goes on screen. It also serves no second problem: `served` is
 /// keyed by task id, and `progress.served` stays 1.
 #[tokio::test]
-#[ignore]
 async fn a_re_serve_returns_the_same_problem_id_and_a_fresh_started_at() {
     TestDb::with(|db| async move {
-        let user = learner_with_pool_row(&db, "reserve@example.com").await;
+        let user = learner_with_drill_pool_row(&db, "reserve@example.com").await;
         let app = app(&db);
 
         let first = serve_ok(&app, user, LESSON).await;
@@ -173,10 +172,9 @@ async fn a_re_serve_returns_the_same_problem_id_and_a_fresh_started_at() {
 /// Trap W7: scan the RAW JSON. A serve carries neither `expected` nor the
 /// solution sketch, and the answer text never appears in it.
 #[tokio::test]
-#[ignore]
 async fn a_serve_never_carries_the_expected_answer_or_the_sketch() {
     TestDb::with(|db| async move {
-        let user = learner_with_pool_row(&db, "secrecy@example.com").await;
+        let user = learner_with_drill_pool_row(&db, "secrecy@example.com").await;
         let app = app(&db);
 
         let (status, body) = serve_raw(&app, user, LESSON).await;

@@ -93,6 +93,10 @@ pub async fn seed_open_session(db: &TestDb, user: Uuid) {
 }
 
 /// Put one unclaimed template row into the pool of `(user, key)`.
+///
+/// `curriculum_digest` and `review_engine_digest` supply the generation context
+/// required by migration 0019. Without them the pop succeeds but the hand-off
+/// refuses the template row.
 pub async fn seed_pool_row(
     db: &TestDb,
     user: Uuid,
@@ -100,6 +104,8 @@ pub async fn seed_pool_row(
     text: &str,
     answer: &str,
     hash: &str,
+    curriculum_digest: &str,
+    review_engine_digest: &str,
 ) {
     let problem = PoolProblem {
         v: 1,
@@ -115,14 +121,17 @@ pub async fn seed_pool_row(
     sqlx::query!(
         r#"
         INSERT INTO serving_pool
-            (user_id, kp_id, source, content_digest, problem, expected_answer, instance_hash)
-        VALUES ($1, $2, 'template', NULL, $3::text::jsonb, $4::text::jsonb, $5)
+            (user_id, kp_id, source, content_digest, problem, expected_answer, instance_hash,
+             source_curriculum_digest, source_review_engine_digest)
+        VALUES ($1, $2, 'template', NULL, $3::text::jsonb, $4::text::jsonb, $5, $6, $7)
         "#,
         user,
         key,
         problem.to_body().unwrap(),
         expected.to_body().unwrap(),
         hash,
+        curriculum_digest,
+        review_engine_digest,
     )
     .execute(&db.admin)
     .await

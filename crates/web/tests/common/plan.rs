@@ -378,12 +378,30 @@ pub fn seeded_bindings() -> BTreeMap<String, String> {
 }
 
 /// A learner with an open session and one unclaimed pool row of `KEY`:
-/// `POOL_TEXT`, whose answer is `POOL_ANSWER`.
-pub async fn learner_with_pool_row(db: &TestDb, email: &str) -> Uuid {
+/// `POOL_TEXT`, whose answer is `POOL_ANSWER`, under the given curriculum
+/// and review-engine digest.
+pub async fn learner_with_pool_row(
+    db: &TestDb,
+    email: &str,
+    curriculum_digest: &str,
+    review_engine_digest: &str,
+) -> Uuid {
     let user = seed_learner(db, email).await;
     seed_open_session(db, user).await;
-    seed_pool_row(db, user, KEY, POOL_TEXT, POOL_ANSWER, "hash-a").await;
+    seed_pool_row(
+        db, user, KEY, POOL_TEXT, POOL_ANSWER, "hash-a",
+        curriculum_digest,
+        review_engine_digest,
+    )
+    .await;
     user
+}
+
+/// A learner with an open session and one unclaimed drill-curriculum pool row.
+pub async fn learner_with_drill_pool_row(db: &TestDb, email: &str) -> Uuid {
+    let curriculum = drill_curriculum();
+    let curriculum_digest = review_context_digest(&curriculum).unwrap();
+    learner_with_pool_row(db, email, &curriculum_digest, cadus_core::review_engine::DIGEST).await
 }
 
 /// A learner whose review of `addition` stands at serve index `served`, with
