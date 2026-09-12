@@ -44,7 +44,103 @@ pub(super) fn arguments(key: &str) -> Option<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cadus_core::template::render::render;
     use std::collections::BTreeSet;
+
+    fn make_bindings(a: i64) -> Bindings {
+        let mut b = Bindings::new();
+        b.insert("a".to_owned(), Scalar::Int(a).value());
+        b
+    }
+
+    fn recipe(key: &str) -> Value {
+        catalog()
+            .into_iter()
+            .find(|item| item["key"] == key)
+            .unwrap_or_else(|| panic!("recipe {key} not found"))
+    }
+
+    // Regression guards: digit concatenation and missing-time assumptions.
+
+    #[test]
+    fn function_notation_kp3_renders_explicit_multiplication() {
+        // a=12 -> f(2*12) not f(212), answer 6*12-2 = 70.
+        let r = recipe("function-notation/kp3");
+        let statement = r["statement"].as_str().unwrap();
+        let rendered = render(statement, &make_bindings(12)).unwrap();
+        assert!(
+            rendered.contains("2*12"),
+            "expected explicit 2*12 in rendered statement, got: {rendered}"
+        );
+        assert!(
+            !rendered.contains("212"),
+            "digit concatenation: statement should not contain 212: {rendered}"
+        );
+        let ast = parse_answer_expr(r["answer_expr"].as_str().unwrap()).unwrap();
+        let ans = answer(&ast, &make_bindings(12)).unwrap();
+        assert_eq!(ans.text, "70", "f(2*12) = 3*(24)-2 = 70");
+    }
+
+    #[test]
+    fn solving_right_triangles_sides_kp1_renders_explicit_multiplication() {
+        // a=12 -> 5*12 not 512.
+        let r = recipe("solving-right-triangles-sides/kp1");
+        let statement = r["statement"].as_str().unwrap();
+        let rendered = render(statement, &make_bindings(12)).unwrap();
+        assert!(
+            rendered.contains("5*12"),
+            "expected explicit 5*12 in rendered statement, got: {rendered}"
+        );
+        assert!(
+            !rendered.contains("512"),
+            "digit concatenation: statement should not contain 512: {rendered}"
+        );
+        let ast = parse_answer_expr(r["answer_expr"].as_str().unwrap()).unwrap();
+        let ans = answer(&ast, &make_bindings(12)).unwrap();
+        assert_eq!(ans.text, "36", "3*12 = 36");
+    }
+
+    #[test]
+    fn gcf_lcm_kp3_statement_makes_time_assumption_explicit() {
+        // Statement must say both events start together and use 2*{a}.
+        let r = recipe("gcf-lcm/kp3");
+        let statement = r["statement"].as_str().unwrap();
+        let rendered = render(statement, &make_bindings(13)).unwrap();
+        assert!(
+            rendered.contains("both occur together now"),
+            "rendered statement must mention the shared starting time: {rendered}"
+        );
+        assert!(
+            rendered.contains("2*13"),
+            "rendered should show 2*13, got: {rendered}"
+        );
+        assert!(
+            !rendered.contains("twice"),
+            "avoid ambiguous twice- wording: {rendered}"
+        );
+        let ast = parse_answer_expr(r["answer_expr"].as_str().unwrap()).unwrap();
+        let ans = answer(&ast, &make_bindings(13)).unwrap();
+        assert_eq!(ans.text, "26", "2*13 = 26");
+    }
+
+    #[test]
+    fn evaluating_polynomials_kp3_renders_negative_parameter() {
+        // Renderer wraps negative values: x^2-(-6) at x=5 gives answer 31.
+        let r = recipe("evaluating-polynomials/kp3");
+        let statement = r["statement"].as_str().unwrap();
+        let rendered = render(statement, &make_bindings(-6)).unwrap();
+        assert!(
+            rendered.contains("(-6)"),
+            "rendered should bracket negative value: {rendered}"
+        );
+        assert!(
+            !rendered.contains("--"),
+            "no unparenthesized double minus: {rendered}"
+        );
+        let ast = parse_answer_expr(r["answer_expr"].as_str().unwrap()).unwrap();
+        let ans = answer(&ast, &make_bindings(-6)).unwrap();
+        assert_eq!(ans.text, "31", "25-(-6) = 31");
+    }
 
     #[test]
     fn rejected_weak_or_mismatched_families_stay_out() {
