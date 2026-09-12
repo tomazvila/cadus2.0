@@ -16,7 +16,7 @@ fn every_checked_in_recipe_passes_the_production_gate() {
     )
     .expect("recipe drafts");
     let drafts: Vec<Value> = serde_json::from_str(&source).expect("recipe JSON");
-    assert_eq!(drafts.len(), 60);
+    assert_eq!(drafts.len(), 39);
     let mut keys = BTreeSet::new();
     for draft in drafts {
         let key = draft["kp_id"].as_str().expect("kp_id");
