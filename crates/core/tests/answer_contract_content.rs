@@ -233,9 +233,10 @@ fn the_sixty_multi_step_topics_have_explicit_usable_exact_items() {
             items += 1;
         }
     }
-    assert_eq!(topics, 58);
-    // Four contextual fraction items now require reduced-fraction notation.
-    assert_eq!(items, 503);
+    assert_eq!(topics, 59);
+    // Twelve writing-quadratics-from-roots exemplars and one applying-the-quadratic-formula
+    // exemplar now use explicit exact contracts (restored from polynomial_relation).
+    assert_eq!(items, 516);
     assert!(lint_curriculum(&curriculum_root()).is_empty());
 }
 
