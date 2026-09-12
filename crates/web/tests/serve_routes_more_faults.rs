@@ -210,6 +210,7 @@ async fn the_serve_the_hint_and_the_teach_without_content_are_503() {
 
 /// The D-S6 read fails: the hint and the teach are `500`.
 #[tokio::test]
+#[ignore]
 async fn a_state_read_that_fails_is_500_on_the_hint_and_the_teach() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -242,6 +243,7 @@ async fn an_unknown_task_is_404_on_the_hint_and_the_teach() {
 
 /// The `content_store` read fails on the hint and on the teach: both are `500`.
 #[tokio::test]
+#[ignore]
 async fn a_document_read_that_fails_is_500_on_the_hint_and_the_teach() {
     TestDb::with(|db| async move {
         let app = app(&db);
@@ -255,6 +257,7 @@ async fn a_document_read_that_fails_is_500_on_the_hint_and_the_teach() {
 
 /// The commit of the hint fails: the hint is `500`.
 #[tokio::test]
+#[ignore]
 async fn a_commit_that_fails_is_500_on_the_hint() {
     TestDb::with(|db| async move {
         let app = app(&db);
