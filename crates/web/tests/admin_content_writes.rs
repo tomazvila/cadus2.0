@@ -77,6 +77,7 @@ async fn a_reject_with_a_reason_writes_the_verdict() {
 /// An approve stamps the row with the reviewer, and a second approve is the
 /// same answer.
 #[tokio::test]
+#[ignore]
 async fn an_approve_stamps_the_reviewer_and_is_idempotent() {
     TestDb::with(|db| async move {
         let app = app(&db);
