@@ -75,7 +75,6 @@ fn the_row_of_an_instance_carries_its_documents() {
 /// The batch insert reports a refused statement, and the transaction wrapper
 /// reports a closed pool, a refused insert, and a failed commit.
 #[tokio::test]
-#[ignore]
 async fn the_batch_insert_reports_every_failed_step() {
     TestDb::with(|db| async move {
         let user = db.seed_user("insert@example.test").await;

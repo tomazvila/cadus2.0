@@ -21,29 +21,40 @@ async fn admin_exec(db: &TestDb, sql: String) {
         .expect("the fault statement runs");
 }
 
-/// A pool of one app connection whose backend was terminated.
-///
-/// The pool skips the liveness test on acquire, so the first statement of the
-/// next call goes to the dead backend and fails with SQLSTATE 57P01.
+/// before_acquire exclusively owns connection; terminate via admin with
+/// bounded server-confirmed wait; hand dead connection to application wrapper.
 pub async fn dead_pool(db: &TestDb) -> PgPool {
     let dsn = std::env::var("CADUS_TEST_DATABASE_URL").expect("the test DSN is set");
     let options: PgConnectOptions = dsn.parse().expect("the test DSN parses");
+
+    // Clone the admin pool so the before_acquire closure can use it.
+    let admin = db.admin.clone();
+
     let pool = PgPoolOptions::new()
         .max_connections(1)
         .test_before_acquire(false)
+        .before_acquire(move |conn, _meta| {
+            let admin = admin.clone();
+            Box::pin(async move {
+                // Read this connection's backend PID through the connection
+                // itself.  The connection is exclusively held by the callback.
+                let pid: i32 = sqlx::query_scalar("SELECT pg_backend_pid()")
+                    .fetch_one(&mut *conn)
+                    .await?;
+                // Terminate that backend via the superuser admin pool.
+                let ended: bool = sqlx::query_scalar("SELECT pg_terminate_backend($1, 5000)")
+                    .bind(pid)
+                    .fetch_one(&admin)
+                    .await?;
+                assert!(ended, "the backend {pid} was not terminated within 5000 ms");
+                // Dead connection: hand to app wrapper.
+                Ok(true)
+            })
+        })
         .connect_with(options.database(&db.name).username(APP_ROLE).password(""))
         .await
-        .expect("the one-connection pool opens");
-    let pid: i32 = sqlx::query_scalar("SELECT pg_backend_pid()")
-        .fetch_one(&pool)
-        .await
-        .expect("the backend pid reads");
-    let ended: bool = sqlx::query_scalar("SELECT pg_terminate_backend($1)")
-        .bind(pid)
-        .fetch_one(&db.admin)
-        .await
-        .expect("the terminate runs");
-    assert!(ended, "the backend {pid} was not terminated");
+        .expect("the dead pool opens");
+
     pool
 }
 
