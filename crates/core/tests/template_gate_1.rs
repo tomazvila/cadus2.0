@@ -343,7 +343,7 @@ fn the_reserved_and_non_answer_name_sets_are_the_1_0_literals() {
     // preserving every historical entry and pinning the complete current set.
     assert_eq!(
         RESERVED_NAMES.to_vec(),
-        "Abs And E Eq False Float Ge Gt ITE Integer Le Lt Max Min Ne Not Or Piecewise Rational S True abs atandeg binomial cancel divisibilitylabel equalitylabel ceiling cos e exp expequation expand excludepoint factor factorial factorlist false firstmultiples floor gcd lcm lowerbound ln log logequation max min multipart nsimplify pi primeclass primefactors powerform quotientremainder repeatedfactors sign signcase simplify sin sqrt tan together true upperbound"
+        "Abs And E Eq False Float Ge Gt ITE Integer Le Lt Max Min Ne Not Or Piecewise Rational S True abs atandeg binomial cancel divisibilitylabel equalitylabel ceiling cos e exp expequation expand excludepoint factor factorial factorlist false firstmultiples floor gcd lcm lowerbound ln log logequation max min multipart nsimplify pi primeclass primefactors powerform quotientremainder repeatedfactors sign signcase simplify sin sqrt tan together true upperbound ascendingchain boundarycircle boundaryincluded boundarystyle compounding convertnotation linearclass negativeabs quarterextremum quartervalue raydirection rayunion relationform symbol trianglelaw"
             .split(' ')
             .collect::<Vec<&str>>()
     );
