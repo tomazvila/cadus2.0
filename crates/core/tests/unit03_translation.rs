@@ -1,5 +1,5 @@
 //! Preserve the equation-translation objective in each authored exemplar.
-#![allow(clippy::unwrap_used, dead_code)]
+#![allow(clippy::unwrap_used)]
 
 #[path = "common/unit03_translation.rs"]
 mod semantic;

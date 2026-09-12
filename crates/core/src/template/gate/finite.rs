@@ -42,7 +42,6 @@ pub(super) fn match_practice_instance(
     })
 }
 
-#[allow(dead_code)]
 pub(super) fn check_complete(
     compiled: &Compiled<'_>,
     spec: &GateSpec<'_>,
