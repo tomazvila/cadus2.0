@@ -20,7 +20,7 @@ fn label() -> AnswerContract {
     .unwrap()
 }
 
-#[ignore]
+#[test]
 fn compounding_computes_the_exact_bounded_factor() {
     for (count, expected) in [(1, "2"), (2, "9/4"), (3, "64/27"), (4, "625/256")] {
         let result = answer(
@@ -32,7 +32,7 @@ fn compounding_computes_the_exact_bounded_factor() {
     }
 }
 
-#[ignore]
+#[test]
 fn compounding_refuses_unbounded_nonwhole_symbolic_and_wrong_arity_inputs() {
     for expression in [
         "compounding(0)",
@@ -57,7 +57,7 @@ fn compounding_refuses_unbounded_nonwhole_symbolic_and_wrong_arity_inputs() {
     }
 }
 
-#[ignore]
+#[test]
 fn graph_coordinates_pin_interior_extrema_endpoints_and_leftmost_ties() {
     for (expression, direction, expected) in [
         ("quarterextremum(0,[0,4,t])", "highest", "(pi/2,1)"),
@@ -83,7 +83,7 @@ fn graph_coordinates_pin_interior_extrema_endpoints_and_leftmost_ties() {
     }
 }
 
-#[ignore]
+#[test]
 fn graph_refuses_unsupported_families_bounds_types_directions_and_arity() {
     for expression in [
         "quarterextremum(2,[0,4,t])",
@@ -117,7 +117,7 @@ fn graph_refuses_unsupported_families_bounds_types_directions_and_arity() {
     assert!(evaluate(&ast, &Bindings::new()).is_err());
 }
 
-#[ignore]
+#[test]
 fn triangle_layouts_reconstruct_included_and_opposite_angle_incidence() {
     let ast = parse_answer_expr("trianglelaw(t)").unwrap();
     for (given, expected) in [
@@ -138,7 +138,7 @@ fn triangle_layouts_reconstruct_included_and_opposite_angle_incidence() {
     }
 }
 
-#[ignore]
+#[test]
 fn triangle_labels_refuse_malformed_unknown_duplicate_and_insufficient_data() {
     let ast = parse_answer_expr("trianglelaw(t)").unwrap();
     for given in [
@@ -170,7 +170,7 @@ fn triangle_labels_refuse_malformed_unknown_duplicate_and_insufficient_data() {
     assert!(answer_for_contract(&bad, &Bindings::new(), Some(&label())).is_err());
 }
 
-#[ignore]
+#[test]
 fn labels_require_the_declared_vocabulary_and_work_inside_multipart() {
     let ast = parse_answer_expr("trianglelaw(t)").unwrap();
     let wrong: AnswerContract =
@@ -187,7 +187,7 @@ fn labels_require_the_declared_vocabulary_and_work_inside_multipart() {
     assert_eq!(result.text, "law = Law of Cosines; value = 6");
 }
 
-#[ignore]
+#[test]
 fn helper_names_are_reserved_and_never_enter_the_learner_answer_grammar() {
     for name in [
         "compounding",

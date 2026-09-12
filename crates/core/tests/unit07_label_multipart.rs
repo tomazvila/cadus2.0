@@ -88,7 +88,6 @@ fn multipart_accepts_only_one_to_sixteen_exactly_matching_flat_parts() {
 }
 
 #[test]
-#[ignore]
 fn existing_numeric_and_structured_writers_keep_their_text() {
     let cases = [
         ("signcase(a,[11,12,13])", json!({"kind":"exact"}), "13"),

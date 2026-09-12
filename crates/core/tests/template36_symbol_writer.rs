@@ -15,7 +15,6 @@ fn values(text: &str) -> Bindings {
 }
 
 #[test]
-#[ignore]
 fn explicit_symbol_is_an_exact_operand_in_a_computed_expression() {
     for name in ["u", "v", "w", "x", "y", "z", "k", "n", "r", "t", "theta"] {
         let ast = parse_answer_expr("(symbol(j)+2)/a").unwrap();
@@ -29,7 +28,6 @@ fn explicit_symbol_is_an_exact_operand_in_a_computed_expression() {
 }
 
 #[test]
-#[ignore]
 fn symbol_rejects_reserved_constants_prose_and_expression_injection() {
     let ast = parse_answer_expr("symbol(j)").unwrap();
     for invalid in [
@@ -62,7 +60,6 @@ fn symbol_rejects_reserved_constants_prose_and_expression_injection() {
 }
 
 #[test]
-#[ignore]
 fn symbol_requires_one_direct_bound_text_parameter() {
     for invalid in [
         "symbol(1)",
@@ -84,7 +81,6 @@ fn symbol_requires_one_direct_bound_text_parameter() {
 }
 
 #[test]
-#[ignore]
 fn explicit_operand_preserves_a_nonzero_symbolic_denominator() {
     let ast = parse_answer_expr("1/(a*symbol(j)+3*symbol(k))").unwrap();
     let mut bindings = values("u");

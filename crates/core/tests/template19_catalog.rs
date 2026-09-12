@@ -43,7 +43,6 @@ fn document(row: &Value, curriculum: &Curriculum) -> Option<TemplateDoc> {
     serde_json::from_value(Value::Object(body)).ok()
 }
 
-#[ignore]
 #[test]
 fn exact_nineteen_have_exhaustive_material_instances_and_computed_samples() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
@@ -255,7 +254,6 @@ fn catalog_collision_coverage(
     (seen.len(), checked)
 }
 
-#[ignore]
 #[test]
 fn repaired_statements_do_not_collide_with_other_catalog_templates_or_exemplars() {
     let (curriculum, _) = load_curriculum(&root().join("curriculum")).unwrap();
@@ -270,7 +268,6 @@ fn repaired_statements_do_not_collide_with_other_catalog_templates_or_exemplars(
     assert!(checked >= 8400, "catalog instance coverage: {checked}");
 }
 
-#[ignore]
 #[test]
 fn exhaustive_review_packet_uses_the_real_rust_renderer() {
     let (curriculum, _) = load_curriculum(&root().join("curriculum")).unwrap();
