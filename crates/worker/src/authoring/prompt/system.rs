@@ -33,20 +33,36 @@ rest. Never write a decimal approximation of an exact value.
 
 STRUCTURED ANSWERS: when the exemplars do not share one reviewed answer contract, include the \
 deterministic 'answer_contract' the pending template needs. For a closed label, use a text choice \
-parameter as answer_expr, equalitylabel(left, right) for exact equality, divisibilitylabel(number, divisor) for yes/no divisibility, or \
-primeclass(number) for prime/composite/neither. For a quotient-and-remainder contract, write \
+parameter as answer_expr, equalitylabel(left, right) for exact equality, divisibilitylabel(number, divisor) for yes/no divisibility, linearclass((a,b),(c,d)) for the solution-count class of ax+b=cx+d, or \
+primeclass(number) for prime/composite/neither. trianglelaw(given) selects the starting law from \
+three distinct measurements a,b,c,A,B,C (lowercase side, uppercase opposite angle) and refuses \
+AAA. For a quotient-and-remainder contract, write \
 quotientremainder(quotient, remainder). To preserve an unevaluated exact power, use \
 powerform(coefficient, [base, exponent]). To convert a proved integer power identity under a \
 closed label contract, use logequation(base, [exponent, result]) or \
-expequation(base, [exponent, result]). For a one-decimal inverse-tangent angle under an \
-approximate contract, use atandeg(ratio). For an ordered exact list, use factorlist(number), \
+expequation(base, [exponent, result]). A required_assignment contract preserves an exact \
+assignment such as y=d and requires the learner to include the same target label. For a one-decimal \
+inverse-tangent angle under an approximate contract, use atandeg(ratio). For an exact repeated-compounding factor \
+$(1+1/n)^n$, use compounding(count) with a whole count \
+from 1 through 64. For a parent sine/cosine coordinate answer, use \
+quarterextremum(curve, [lo, hi, direction]); curve 0 is sine and 1 cosine, endpoints are whole \
+quarter turns with 0 <= lo < hi <= 4, and direction is highest or lowest. For an exact quadrantal \
+sine or cosine value, use quartervalue(family, quarter), where family is a text choice of sin or cos \
+and quarter is a whole index from 0 through 3. For an ordered \
+exact list, use factorlist(number), \
 firstmultiples(number, count), primefactors(number), or repeatedfactors(number, count). For a flat multipart answer, write multipart(part1, part2), with arguments \
 in the same order as the contract's named parts; an argument is a mathematical expression or, for a \
-label part, one text choice parameter. For a unit contract, keep answer_expr numeric; the server \
+label part, a supported label expression. For a unit contract, keep answer_expr numeric; the server \
 attaches the contract's unit. For an inequality-union contract, use excludepoint(variable, bound), \
 lowerbound(variable, bound), or upperbound(variable, bound), where variable is a one-value text \
-choice. For a bounded sign split, use signcase(selector, [negative, zero, positive]). The server \
-validates every computed answer against the contract before storing the document, and the row still requires human review.
+choice. For a bidirectional interval/inequality conversion, use convertnotation(source) with a \
+required_inequality_notation contract; the computed expected answer fixes the required output \
+notation for that instance. For one unevaluated numeric power, use powerform(1,[base,exponent]) \
+with a required_single_power contract. A required_normalized_scientific_notation contract writes an \
+exact terminating numeric answer as a standard coefficient times 10 to an integer power. A \
+required_simplest_radical contract writes an exact integer or a reduced rational coefficient times \
+one squarefree integer root and requires rationalized denominators. For a bounded sign split, use signcase(selector, [negative, zero, positive]). The server \
+validates every computed answer against the contract before storing the document, and the row remains pending until independent AI review approves its mathematics, objective alignment, explanations, and hints.
 
 'samples' is how you prove it, and the server checks WHERE you prove it. Work each instance out \
 BY HAND, binding every parameter, and state the answer you get. The server evaluates answer_expr \

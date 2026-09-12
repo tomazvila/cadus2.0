@@ -98,7 +98,6 @@ fn every_knowledge_point_of_the_unit_has_one_teach_page_and_one_hint_ladder() {
 }
 
 #[test]
-#[ignore]
 fn every_draft_passes_its_gate() {
     let (curriculum, _) = load_curriculum(&root().join("curriculum")).unwrap();
     let templates = template_served();

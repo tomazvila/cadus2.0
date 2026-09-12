@@ -138,7 +138,7 @@ fn template_schema() -> Value {
                 "type": "object",
                 "description":
                     "A deterministic answer policy when the exemplars do not already share one. \
-    The server validates it and the document remains pending for human review. Use kind label with \
+    The server validates it and the document remains pending for independent AI review. Use kind label with \
     explicit options for a closed choice, or kind multipart with ordered named parts for a flat \
     structured answer. A reviewed shared exemplar policy overrides this field.",
             },
@@ -171,19 +171,36 @@ fn template_schema() -> Value {
                     "The answer as an exact expression over the parameter names. The SERVER \
     computes every instance's answer from it, so it is exact over the whole domain. For a label \
     contract, use one text-valued choice parameter, equalitylabel(left, right), divisibilitylabel(number, divisor), \
-    or primeclass(number). For a quotient-and-remainder contract, use \
+    linearclass((a, b), (c, d)) for the solution-count class of ax+b=cx+d, or \
+    primeclass(number). trianglelaw(given) selects the starting law from three distinct measurements a,b,c,A,B,C and \
+    refuses AAA. For a quotient-and-remainder contract, use \
     quotientremainder(quotient, remainder). To preserve an unevaluated exact power, use \
     powerform(coefficient, [base, exponent]). Under a closed label contract, use \
     logequation(base, [exponent, result]) or expequation(base, [exponent, result]) for a proved \
     integer power identity. Under an approximate contract, use atandeg(ratio) for an \
-    inverse-tangent angle in degrees. For an ordered exact-list contract, use \
+    inverse-tangent angle in degrees. Use compounding(count) for the exact factor (1+1/n)^n \
+    with a whole count from 1 through 64. \
+    quarterextremum(curve, [lo, hi, direction]) returns the leftmost parent sine/cosine extremum \
+    as coordinates for whole quarter turns 0 <= lo < hi <= 4. \
+    quartervalue(family, quarter) returns the exact sine or cosine value when family is a text \
+    choice of sin or cos and quarter is a whole index from 0 through 3. For an ordered exact-list contract, use \
     factorlist(number), firstmultiples(number, count), primefactors(number), or \
     repeatedfactors(number, count). For a multipart contract, use \
     multipart(part1, part2) with arguments in contract part order; each argument is a mathematical \
-    expression or, for a label part, one text-valued choice parameter. For a unit contract, keep \
+    expression or, for a label part, a supported label expression. For a unit contract, keep \
     this expression numeric; the server attaches the declared unit. For an inequality-union \
     contract, use excludepoint(variable, bound), lowerbound(variable, bound), or \
-    upperbound(variable, bound), with a one-value text choice for variable. Use \
+    upperbound(variable, bound), with a one-value text choice for variable. For a bidirectional \
+    interval/inequality conversion, use convertnotation(source) with a \
+    required_inequality_notation contract; the computed expected answer fixes the required \
+    output notation for that instance. A required_assignment contract preserves an exact \
+    assignment such as y=d and requires the learner to include the same target label. For one \
+    unevaluated numeric power, use \
+    powerform(1,[base,exponent]) with a required_single_power contract. A \
+    required_normalized_scientific_notation contract writes an exact terminating numeric \
+    answer as a standard coefficient times 10 to an integer power. A \
+    required_simplest_radical contract writes an exact integer or a reduced rational \
+    coefficient times one squarefree integer root and requires rationalized denominators. Use \
     signcase(selector, [negative, zero, positive]) for a bounded sign split.",
             },
             "solution_sketch": {
