@@ -113,12 +113,15 @@ pub async fn learner(db: &TestDb, email: &str) -> Uuid {
 pub async fn seed_distractors(db: &TestDb, digest: &str, body: &Value) {
     sqlx::query!(
         r#"
-        INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at)
-        VALUES ($1, $2, 'diagnosis', $3, 'approved', now())
+        INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at,
+                                   approved_curriculum_digest, approved_review_engine_digest)
+        VALUES ($1, $2, 'diagnosis', $3, 'approved', now(), $4, $5)
         "#,
         digest,
         KEY,
         body,
+        "curriculum-v1",
+        "engine-v1",
     )
     .execute(&db.admin)
     .await

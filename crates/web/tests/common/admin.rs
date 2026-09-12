@@ -185,8 +185,9 @@ impl<'a> Seed<'a> {
 pub async fn seed_row(db: &TestDb, seed: &Seed<'_>) {
     sqlx::query(
         "INSERT INTO content_store
-            (digest, kp_id, kind, body, status, authoring_attempts, authoring_cost_usd)
-         VALUES ($1, $2, $3, $4::text::jsonb, $5, $6, $7::text::numeric)",
+            (digest, kp_id, kind, body, status, authoring_attempts, authoring_cost_usd,
+             approved_curriculum_digest, approved_review_engine_digest)
+         VALUES ($1, $2, $3, $4::text::jsonb, $5, $6, $7::text::numeric, $8, $9)",
     )
     .bind(seed.digest)
     .bind(seed.kp_id)
@@ -195,6 +196,8 @@ pub async fn seed_row(db: &TestDb, seed: &Seed<'_>) {
     .bind(seed.status)
     .bind(seed.attempts)
     .bind(seed.cost)
+    .bind("curriculum-v1")
+    .bind("engine-v1")
     .execute(&db.admin)
     .await
     .unwrap();
