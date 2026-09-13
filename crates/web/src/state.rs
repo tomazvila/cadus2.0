@@ -346,10 +346,16 @@ pub struct MultistepBuffer {
     pub parts: Vec<Json>,
 }
 
+mod review_task;
+pub use review_task::RecordedReview;
+
 /// The D-S6 document: one JSONB row per learner in `web_states`.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct WebState {
+    /// Original server-selected reviews, retained until this session ends.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub review_tasks: BTreeMap<String, RecordedReview>,
     /// Approved instruction shown before a whole-item application, keyed by task.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub integrated_instruction: BTreeMap<String, String>,

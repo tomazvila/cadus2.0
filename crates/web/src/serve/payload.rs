@@ -57,6 +57,12 @@ pub(crate) fn progress_for<'state>(
     task: &Task,
     graph: &Curriculum,
 ) -> &'state mut TaskProgress {
+    if task.task_type == TaskType::Review {
+        scratch
+            .review_tasks
+            .entry(task.task_id.clone())
+            .or_insert_with(|| crate::state::RecordedReview(task.clone()));
+    }
     scratch
         .tasks
         .entry(task.task_id.clone())

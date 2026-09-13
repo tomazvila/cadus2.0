@@ -34,7 +34,8 @@ pub async fn session_plan(req: Ready) -> Reply {
     let mut view = projection.view;
     // The listing composes from the SAME repaired view the serve route composes
     // from (V3, V9): a drill this session already serves keeps its place.
-    req.view_for_open_session(&mut tx, &mut view, &session)
+    let events = req
+        .view_for_open_session(&mut tx, &mut view, &session)
         .await?;
 
     let graph = req.graph();
@@ -44,7 +45,7 @@ pub async fn session_plan(req: Ready) -> Reply {
     // the listed plan and the served plan cannot disagree.
     let readiness = req.readiness(&mut tx).await?;
     let mut plan = compose_plan(&req.content, &view, &model, &session, req.now, &readiness);
-    crate::serve::restore_feedback_tasks(&mut plan, &scratch);
+    crate::serve::restore_session_tasks(&mut plan, &scratch, &events, graph, &model);
 
     let tasks: Vec<Value> = plan
         .tasks
