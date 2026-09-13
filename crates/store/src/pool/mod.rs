@@ -284,14 +284,15 @@ pub struct PoolTarget {
     pub depth: i64,
 }
 
-/// Insert a batch of instances and skip every digest the pool already holds.
+/// Insert a batch of instances or refresh their source metadata.
 ///
 /// The unique index `(user_id, kp_id, instance_hash)` is the pool invariant of
-/// A5, so `ON CONFLICT DO NOTHING` on that index is the whole idempotency rule: a
-/// refill that draws a statement the pool already carries inserts nothing and
-/// reports the smaller count.
+/// A5, so `ON CONFLICT DO UPDATE` on that index is the idempotency rule: a
+/// refill that draws a statement the pool already carries updates nothing for a
+/// duplicate whose source metadata is unchanged, and the returned count then
+/// reflects only genuinely new rows and legitimate context refreshes.
 ///
-/// The call returns the count of rows the statement inserted.
+/// The call returns the count of rows the statement inserted or refreshed.
 ///
 /// # The order inside one batch
 ///
@@ -373,6 +374,13 @@ where
         WHERE serving_pool.claimed_at IS NULL
           AND serving_pool.problem = EXCLUDED.problem
           AND serving_pool.expected_answer = EXCLUDED.expected_answer
+          AND (serving_pool.source, serving_pool.content_digest,
+               serving_pool.source_curriculum_digest,
+               serving_pool.source_review_engine_digest)
+          IS DISTINCT FROM
+              (EXCLUDED.source, EXCLUDED.content_digest,
+               EXCLUDED.source_curriculum_digest,
+               EXCLUDED.source_review_engine_digest)
         RETURNING id AS "id!"
         "#,
         user_id,
@@ -397,6 +405,10 @@ where
 /// `serving_pool` policy of `0006_grants_rls.sql` carries a `WITH CHECK`, and an
 /// unbound connection writes no row. The worker connects as `cadus_admin` and
 /// bypasses the policy, so the binding changes nothing for it.
+///
+/// The returned count follows the same contract as [`insert_batch`]: identical
+/// duplicates are not counted, and only genuinely new rows or rows whose source
+/// metadata changed contribute.
 ///
 /// # Errors
 ///

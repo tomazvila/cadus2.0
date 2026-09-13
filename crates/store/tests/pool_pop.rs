@@ -291,9 +291,11 @@ async fn a_claimed_row_stays_and_never_pops_again() {
 // (4) The batch insert.
 // --------------------------------------------------------------------------
 
-/// `ON CONFLICT DO NOTHING` on `(user_id, kp_id, instance_hash)` (A5).
+/// ON CONFLICT DO UPDATE on (user_id, kp_id, instance_hash) (A5).
 ///
-/// The second call repeats three of the five digests, so it inserts 2.
+/// The second call repeats three of the five digests with identical source
+/// metadata, so the IS DISTINCT FROM predicate skips them and only the two
+/// genuinely new instance hashes are counted.  Thus 5 + 2 = 7 distinct rows.
 #[tokio::test]
 async fn a_repeated_digest_never_enters_the_pool_twice() {
     TestDb::with(|db| async move {
@@ -313,8 +315,8 @@ async fn a_repeated_digest_never_enters_the_pool_twice() {
             .await
             .unwrap();
         assert_eq!(
-            inserted, 5,
-            "digests 2, 3, and 4 update existing rows under DO UPDATE"
+            inserted, 2,
+            "digests 2, 3, and 4 are identical-metadata duplicates filtered by IS DISTINCT FROM; 5 and 6 are new"
         );
 
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 7);
