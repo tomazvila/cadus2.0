@@ -101,7 +101,12 @@ def generate():
     geometry(add)
     keys = json.loads(Path("crates/core/tests/fixtures/exponents_radicals_unit_kps.json").read_text())
     assert sorted(row["kp_id"] for row in rows) == sorted(keys)
-    return enrich(rows)
+    rows = enrich(rows)
+    repairs = json.loads(Path(__file__).with_name("companion_template_repairs.json").read_text())
+    for row in rows:
+        if row["kp_id"] in repairs:
+            row["arguments"] = repairs[row["kp_id"]]
+    return rows
 
 
 if __name__ == "__main__":

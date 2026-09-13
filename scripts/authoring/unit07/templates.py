@@ -70,6 +70,11 @@ def main():
     import template_arithmetic, template_factoring, template_solving, template_graphing
     for module in (template_arithmetic, template_factoring, template_solving, template_graphing):
         module.build(add)
+    repairs = json.loads((ROOT / "scripts/authoring/companion_template_repairs.json").read_text())
+    for row in ROWS:
+        if row["kp_id"] in repairs:
+            row["arguments"] = repairs[row["kp_id"]]
+            row.pop("requested_contract", None)
     keys = [row["kp_id"] for row in ROWS]
     assert len(set(keys)) == len(keys)
     target = ROOT / "target/unit07/candidates.json"

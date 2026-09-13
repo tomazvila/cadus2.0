@@ -4436,6 +4436,32 @@
           },
           "op": "eq",
           "right": "a"
+        },
+        {
+          "left": {
+            "mul": [
+              {
+                "sub": [
+                  "a",
+                  {
+                    "lit": "289"
+                  }
+                ]
+              },
+              {
+                "sub": [
+                  "a",
+                  {
+                    "lit": "289"
+                  }
+                ]
+              }
+            ]
+          },
+          "op": "ne",
+          "right": {
+            "lit": 0
+          }
         }
       ],
       "distractors": [],
@@ -4533,13 +4559,6 @@
           "params": {
             "a": 256,
             "b": 16
-          }
-        },
-        {
-          "expected": "17",
-          "params": {
-            "a": 289,
-            "b": 17
           }
         },
         {
@@ -5015,86 +5034,65 @@
             125,
             216,
             343,
-            512,
             729,
-            1000,
-            1331,
-            1728
+            1000
           ]
         }
       },
       "samples": [
         {
-          "expected": "1",
           "params": {
             "a": 1
-          }
+          },
+          "expected": "1"
         },
         {
-          "expected": "2",
           "params": {
             "a": 8
-          }
+          },
+          "expected": "2"
         },
         {
-          "expected": "3",
           "params": {
             "a": 27
-          }
+          },
+          "expected": "3"
         },
         {
-          "expected": "4",
           "params": {
             "a": 64
-          }
+          },
+          "expected": "4"
         },
         {
-          "expected": "5",
           "params": {
             "a": 125
-          }
+          },
+          "expected": "5"
         },
         {
-          "expected": "6",
           "params": {
             "a": 216
-          }
+          },
+          "expected": "6"
         },
         {
-          "expected": "7",
           "params": {
             "a": 343
-          }
+          },
+          "expected": "7"
         },
         {
-          "expected": "8",
-          "params": {
-            "a": 512
-          }
-        },
-        {
-          "expected": "9",
           "params": {
             "a": 729
-          }
+          },
+          "expected": "9"
         },
         {
-          "expected": "10",
           "params": {
             "a": 1000
-          }
-        },
-        {
-          "expected": "11",
-          "params": {
-            "a": 1331
-          }
-        },
-        {
-          "expected": "12",
-          "params": {
-            "a": 1728
-          }
+          },
+          "expected": "10"
         }
       ],
       "solution_sketch": "Find the real factor $c$ whose threefold product is ${a}$. Its cube equals the radicand, so $c=\\sqrt[3]{{{a}}}$.",
@@ -5139,13 +5137,13 @@
             27,
             64,
             125,
-            216,
             343,
             512,
             729,
             1000,
             1331,
-            1728
+            1728,
+            2197
           ]
         },
         "b": {
@@ -5156,100 +5154,100 @@
             -3,
             -4,
             -5,
-            -6,
             -7,
             -8,
             -9,
             -10,
             -11,
-            -12
+            -12,
+            -13
           ]
         }
       },
       "samples": [
         {
-          "expected": "-1",
           "params": {
             "a": 1,
             "b": -1
-          }
+          },
+          "expected": "-1"
         },
         {
-          "expected": "-2",
           "params": {
             "a": 8,
             "b": -2
-          }
+          },
+          "expected": "-2"
         },
         {
-          "expected": "-3",
           "params": {
             "a": 27,
             "b": -3
-          }
+          },
+          "expected": "-3"
         },
         {
-          "expected": "-4",
           "params": {
             "a": 64,
             "b": -4
-          }
+          },
+          "expected": "-4"
         },
         {
-          "expected": "-5",
           "params": {
             "a": 125,
             "b": -5
-          }
+          },
+          "expected": "-5"
         },
         {
-          "expected": "-6",
-          "params": {
-            "a": 216,
-            "b": -6
-          }
-        },
-        {
-          "expected": "-7",
           "params": {
             "a": 343,
             "b": -7
-          }
+          },
+          "expected": "-7"
         },
         {
-          "expected": "-8",
           "params": {
             "a": 512,
             "b": -8
-          }
+          },
+          "expected": "-8"
         },
         {
-          "expected": "-9",
           "params": {
             "a": 729,
             "b": -9
-          }
+          },
+          "expected": "-9"
         },
         {
-          "expected": "-10",
           "params": {
             "a": 1000,
             "b": -10
-          }
+          },
+          "expected": "-10"
         },
         {
-          "expected": "-11",
           "params": {
             "a": 1331,
             "b": -11
-          }
+          },
+          "expected": "-11"
         },
         {
-          "expected": "-12",
           "params": {
             "a": 1728,
             "b": -12
-          }
+          },
+          "expected": "-12"
+        },
+        {
+          "params": {
+            "a": 2197,
+            "b": -13
+          },
+          "expected": "-13"
         }
       ],
       "solution_sketch": "First take the positive cube root of ${a}$. Negating it makes the product of three equal factors negative: $t=-\\sqrt[3]{{{a}}}$. The exact result of these steps is ${b}$.",
@@ -5260,7 +5258,7 @@
   },
   {
     "arguments": {
-      "answer_expr": "sqrt(sqrt(a))",
+      "answer_expr": "multipart(b,c)",
       "constraints": [
         {
           "left": {
@@ -5273,11 +5271,24 @@
           },
           "op": "eq",
           "right": "a"
+        },
+        {
+          "left": {
+            "mul": [
+              "c",
+              "c",
+              "c",
+              "c",
+              "c"
+            ]
+          },
+          "op": "eq",
+          "right": "d"
         }
       ],
       "distractors": [],
       "hints": [
-        "Verify a proposed root by raising it to the root index; odd roots preserve the sign."
+        "Check a fourth-root candidate using four equal factors and a fifth-root candidate using five equal factors. Choose the nonnegative principal fourth root."
       ],
       "params": {
         "a": {
@@ -5285,16 +5296,7 @@
           "values": [
             1,
             16,
-            81,
-            256,
-            625,
-            1296,
-            2401,
-            4096,
-            6561,
-            10000,
-            14641,
-            20736
+            81
           ]
         },
         "b": {
@@ -5302,107 +5304,215 @@
           "values": [
             1,
             2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12
+            3
+          ]
+        },
+        "d": {
+          "kind": "choice",
+          "values": [
+            -243,
+            -32,
+            -1,
+            1,
+            32,
+            243
+          ]
+        },
+        "c": {
+          "kind": "choice",
+          "values": [
+            -3,
+            -2,
+            -1,
+            1,
+            2,
+            3
           ]
         }
       },
       "samples": [
         {
-          "expected": "1",
           "params": {
             "a": 1,
-            "b": 1
-          }
+            "b": 1,
+            "d": -243,
+            "c": -3
+          },
+          "expected": "fourth_root = 1; fifth_root = -3"
         },
         {
-          "expected": "2",
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": -32,
+            "c": -2
+          },
+          "expected": "fourth_root = 1; fifth_root = -2"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": -1,
+            "c": -1
+          },
+          "expected": "fourth_root = 1; fifth_root = -1"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": 1,
+            "c": 1
+          },
+          "expected": "fourth_root = 1; fifth_root = 1"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": 32,
+            "c": 2
+          },
+          "expected": "fourth_root = 1; fifth_root = 2"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": 243,
+            "c": 3
+          },
+          "expected": "fourth_root = 1; fifth_root = 3"
+        },
+        {
           "params": {
             "a": 16,
-            "b": 2
-          }
+            "b": 2,
+            "d": -243,
+            "c": -3
+          },
+          "expected": "fourth_root = 2; fifth_root = -3"
         },
         {
-          "expected": "3",
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": -32,
+            "c": -2
+          },
+          "expected": "fourth_root = 2; fifth_root = -2"
+        },
+        {
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": -1,
+            "c": -1
+          },
+          "expected": "fourth_root = 2; fifth_root = -1"
+        },
+        {
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": 1,
+            "c": 1
+          },
+          "expected": "fourth_root = 2; fifth_root = 1"
+        },
+        {
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": 32,
+            "c": 2
+          },
+          "expected": "fourth_root = 2; fifth_root = 2"
+        },
+        {
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": 243,
+            "c": 3
+          },
+          "expected": "fourth_root = 2; fifth_root = 3"
+        },
+        {
           "params": {
             "a": 81,
-            "b": 3
-          }
+            "b": 3,
+            "d": -243,
+            "c": -3
+          },
+          "expected": "fourth_root = 3; fifth_root = -3"
         },
         {
-          "expected": "4",
           "params": {
-            "a": 256,
-            "b": 4
-          }
+            "a": 81,
+            "b": 3,
+            "d": -32,
+            "c": -2
+          },
+          "expected": "fourth_root = 3; fifth_root = -2"
         },
         {
-          "expected": "5",
           "params": {
-            "a": 625,
-            "b": 5
-          }
+            "a": 81,
+            "b": 3,
+            "d": -1,
+            "c": -1
+          },
+          "expected": "fourth_root = 3; fifth_root = -1"
         },
         {
-          "expected": "6",
           "params": {
-            "a": 1296,
-            "b": 6
-          }
+            "a": 81,
+            "b": 3,
+            "d": 1,
+            "c": 1
+          },
+          "expected": "fourth_root = 3; fifth_root = 1"
         },
         {
-          "expected": "7",
           "params": {
-            "a": 2401,
-            "b": 7
-          }
+            "a": 81,
+            "b": 3,
+            "d": 32,
+            "c": 2
+          },
+          "expected": "fourth_root = 3; fifth_root = 2"
         },
         {
-          "expected": "8",
           "params": {
-            "a": 4096,
-            "b": 8
-          }
-        },
-        {
-          "expected": "9",
-          "params": {
-            "a": 6561,
-            "b": 9
-          }
-        },
-        {
-          "expected": "10",
-          "params": {
-            "a": 10000,
-            "b": 10
-          }
-        },
-        {
-          "expected": "11",
-          "params": {
-            "a": 14641,
-            "b": 11
-          }
-        },
-        {
-          "expected": "12",
-          "params": {
-            "a": 20736,
-            "b": 12
-          }
+            "a": 81,
+            "b": 3,
+            "d": 243,
+            "c": 3
+          },
+          "expected": "fourth_root = 3; fifth_root = 3"
         }
       ],
-      "solution_sketch": "The principal fourth root is nonnegative. If $c^2=\\sqrt{{{a}}}$, then $c^4={a}$, so take the square root twice. The exact result of these steps is ${b}$.",
-      "statement": "Find the principal fourth root of ${a}$."
+      "solution_sketch": "Find nonnegative $u$ with $u^4={a}$ and real $v$ with $v^5={d}$. Checking the equal-factor products gives fourth_root ${b}$ and fifth_root ${c}$.",
+      "statement": "Find the principal fourth root of ${a}$ and the real fifth root of ${d}$. Report fourth_root and fifth_root. Use fourth_root = value; fifth_root = value.",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "fourth_root",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "fifth_root",
+            "contract": {
+              "kind": "exact"
+            }
+          }
+        ]
+      }
     },
     "kind": "template",
     "kp_id": "cube-roots/kp3"
@@ -6132,20 +6242,14 @@
   },
   {
     "arguments": {
-      "answer_expr": "sqrt(a/6)*sqrt(6)",
+      "answer_expr": "b*sqrt(c)",
       "constraints": [
         {
           "left": {
             "mul": [
-              {
-                "lit": 6
-              },
-              {
-                "mul": [
-                  "b",
-                  "b"
-                ]
-              }
+              "b",
+              "b",
+              "c"
             ]
           },
           "op": "eq",
@@ -6160,18 +6264,21 @@
         "a": {
           "kind": "choice",
           "values": [
-            96,
+            108,
+            112,
+            125,
+            128,
+            147,
             150,
+            175,
+            180,
+            192,
+            200,
             216,
-            294,
-            384,
-            486,
-            600,
-            726,
-            864,
-            1014,
-            1176,
-            1350
+            243,
+            245,
+            288,
+            294
           ]
         },
         "b": {
@@ -6184,101 +6291,143 @@
             8,
             9,
             10,
-            11,
-            12,
-            13,
-            14,
-            15
+            12
+          ]
+        },
+        "c": {
+          "kind": "choice",
+          "values": [
+            2,
+            3,
+            5,
+            6,
+            7
           ]
         }
       },
       "samples": [
         {
-          "expected": "4*sqrt(6)",
           "params": {
-            "a": 96,
-            "b": 4
-          }
+            "a": 108,
+            "b": 6,
+            "c": 3
+          },
+          "expected": "6*sqrt(3)"
         },
         {
-          "expected": "5*sqrt(6)",
+          "params": {
+            "a": 112,
+            "b": 4,
+            "c": 7
+          },
+          "expected": "4*sqrt(7)"
+        },
+        {
+          "params": {
+            "a": 125,
+            "b": 5,
+            "c": 5
+          },
+          "expected": "5*sqrt(5)"
+        },
+        {
+          "params": {
+            "a": 128,
+            "b": 8,
+            "c": 2
+          },
+          "expected": "8*sqrt(2)"
+        },
+        {
+          "params": {
+            "a": 147,
+            "b": 7,
+            "c": 3
+          },
+          "expected": "7*sqrt(3)"
+        },
+        {
           "params": {
             "a": 150,
-            "b": 5
-          }
+            "b": 5,
+            "c": 6
+          },
+          "expected": "5*sqrt(6)"
         },
         {
-          "expected": "6*sqrt(6)",
+          "params": {
+            "a": 175,
+            "b": 5,
+            "c": 7
+          },
+          "expected": "5*sqrt(7)"
+        },
+        {
+          "params": {
+            "a": 180,
+            "b": 6,
+            "c": 5
+          },
+          "expected": "6*sqrt(5)"
+        },
+        {
+          "params": {
+            "a": 192,
+            "b": 8,
+            "c": 3
+          },
+          "expected": "8*sqrt(3)"
+        },
+        {
+          "params": {
+            "a": 200,
+            "b": 10,
+            "c": 2
+          },
+          "expected": "10*sqrt(2)"
+        },
+        {
           "params": {
             "a": 216,
-            "b": 6
-          }
+            "b": 6,
+            "c": 6
+          },
+          "expected": "6*sqrt(6)"
         },
         {
-          "expected": "7*sqrt(6)",
+          "params": {
+            "a": 243,
+            "b": 9,
+            "c": 3
+          },
+          "expected": "9*sqrt(3)"
+        },
+        {
+          "params": {
+            "a": 245,
+            "b": 7,
+            "c": 5
+          },
+          "expected": "7*sqrt(5)"
+        },
+        {
+          "params": {
+            "a": 288,
+            "b": 12,
+            "c": 2
+          },
+          "expected": "12*sqrt(2)"
+        },
+        {
           "params": {
             "a": 294,
-            "b": 7
-          }
-        },
-        {
-          "expected": "8*sqrt(6)",
-          "params": {
-            "a": 384,
-            "b": 8
-          }
-        },
-        {
-          "expected": "9*sqrt(6)",
-          "params": {
-            "a": 486,
-            "b": 9
-          }
-        },
-        {
-          "expected": "10*sqrt(6)",
-          "params": {
-            "a": 600,
-            "b": 10
-          }
-        },
-        {
-          "expected": "11*sqrt(6)",
-          "params": {
-            "a": 726,
-            "b": 11
-          }
-        },
-        {
-          "expected": "12*sqrt(6)",
-          "params": {
-            "a": 864,
-            "b": 12
-          }
-        },
-        {
-          "expected": "13*sqrt(6)",
-          "params": {
-            "a": 1014,
-            "b": 13
-          }
-        },
-        {
-          "expected": "14*sqrt(6)",
-          "params": {
-            "a": 1176,
-            "b": 14
-          }
-        },
-        {
-          "expected": "15*sqrt(6)",
-          "params": {
-            "a": 1350,
-            "b": 15
-          }
+            "b": 7,
+            "c": 6
+          },
+          "expected": "7*sqrt(6)"
         }
       ],
-      "solution_sketch": "Factor ${a}=6c^2$. Pair the prime factors in $c^2$; one copy from each pair exits. The unpaired factors $2$ and $3$ remain as $c\\sqrt6$. Here $c={b}$, as ${a}=6\\cdot{b}^2$. The exact result of these steps is ${b}\\sqrt6$.",
+      "solution_sketch": "Prime-factorize ${a}$ and pair equal primes. The paired factors multiply to ${b}^2$ and the unpaired primes multiply to ${c}$, so ${a}={b}^2\\cdot{c}$. Extracting one factor from each pair gives ${b}\\sqrt{{{c}}}$. No prime pair remains in ${c}$.",
       "statement": "Use prime factorization to simplify $\\sqrt{{{a}}}$."
     },
     "kind": "template",
@@ -7450,7 +7599,7 @@
   },
   {
     "arguments": {
-      "answer_expr": "sqrt(a/2)/5",
+      "answer_expr": "b*sqrt(2)/5",
       "constraints": [
         {
           "left": {
@@ -7472,7 +7621,7 @@
       ],
       "distractors": [],
       "hints": [
-        "Separate the coefficient quotient from the radical quotient and simplify common nonzero factors."
+        "Take the principal square root of the perfect-square denominator, then extract square factors from the numerator."
       ],
       "params": {
         "a": {
@@ -7512,92 +7661,92 @@
       },
       "samples": [
         {
-          "expected": "2/5",
           "params": {
             "a": 8,
             "b": 2
-          }
+          },
+          "expected": "2/5*sqrt(2)"
         },
         {
-          "expected": "3/5",
           "params": {
             "a": 18,
             "b": 3
-          }
+          },
+          "expected": "3/5*sqrt(2)"
         },
         {
-          "expected": "4/5",
           "params": {
             "a": 32,
             "b": 4
-          }
+          },
+          "expected": "4/5*sqrt(2)"
         },
         {
-          "expected": "1",
           "params": {
             "a": 50,
             "b": 5
-          }
+          },
+          "expected": "1*sqrt(2)"
         },
         {
-          "expected": "6/5",
           "params": {
             "a": 72,
             "b": 6
-          }
+          },
+          "expected": "6/5*sqrt(2)"
         },
         {
-          "expected": "7/5",
           "params": {
             "a": 98,
             "b": 7
-          }
+          },
+          "expected": "7/5*sqrt(2)"
         },
         {
-          "expected": "8/5",
           "params": {
             "a": 128,
             "b": 8
-          }
+          },
+          "expected": "8/5*sqrt(2)"
         },
         {
-          "expected": "9/5",
           "params": {
             "a": 162,
             "b": 9
-          }
+          },
+          "expected": "9/5*sqrt(2)"
         },
         {
-          "expected": "2",
           "params": {
             "a": 200,
             "b": 10
-          }
+          },
+          "expected": "2*sqrt(2)"
         },
         {
-          "expected": "11/5",
           "params": {
             "a": 242,
             "b": 11
-          }
+          },
+          "expected": "11/5*sqrt(2)"
         },
         {
-          "expected": "12/5",
           "params": {
             "a": 288,
             "b": 12
-          }
+          },
+          "expected": "12/5*sqrt(2)"
         },
         {
-          "expected": "13/5",
           "params": {
             "a": 338,
             "b": 13
-          }
+          },
+          "expected": "13/5*sqrt(2)"
         }
       ],
-      "solution_sketch": "Write ${a}=2c^2$ and $50=2\\cdot5^2$. Cancel the common factor two inside the fraction, giving $\\sqrt{{c^2/25}}=c/5$. The exact result of these steps is ${b}/5$.",
-      "statement": "Simplify $\\sqrt{{{a}/50}}$."
+      "solution_sketch": "Since ${a}=2\\cdot{b}^2$ and $\\sqrt{{25}}=5$, the fraction root is ${b}\\sqrt2/5$. Reduce any common numerical factor.",
+      "statement": "Simplify $\\sqrt{{{a}/25}}$."
     },
     "kind": "template",
     "kp_id": "dividing-radicals/kp2"

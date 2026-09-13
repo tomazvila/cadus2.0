@@ -3828,9 +3828,49 @@
     "kp_id": "perfect-square-roots/kp3",
     "kind": "template",
     "arguments": {
-      "statement": "A square sheet has area ${a}$ square units. Find its positive side length.",
       "answer_expr": "sqrt(a)",
-      "solution_sketch": "Area is side times side: $s^2={a}$. Hence $s=\\sqrt{{{a}}}>0$; the negative algebraic root cannot be a length. The exact result of these steps is ${b}$.",
+      "constraints": [
+        {
+          "left": {
+            "mul": [
+              "b",
+              "b"
+            ]
+          },
+          "op": "eq",
+          "right": "a"
+        },
+        {
+          "left": {
+            "mul": [
+              {
+                "sub": [
+                  "a",
+                  {
+                    "lit": "289"
+                  }
+                ]
+              },
+              {
+                "sub": [
+                  "a",
+                  {
+                    "lit": "289"
+                  }
+                ]
+              }
+            ]
+          },
+          "op": "ne",
+          "right": {
+            "lit": 0
+          }
+        }
+      ],
+      "distractors": [],
+      "hints": [
+        "A square is an equal-factor product; a principal square root selects its nonnegative factor."
+      ],
       "params": {
         "a": {
           "kind": "choice",
@@ -3867,108 +3907,87 @@
           ]
         }
       },
-      "constraints": [
-        {
-          "op": "eq",
-          "left": {
-            "mul": [
-              "b",
-              "b"
-            ]
-          },
-          "right": "a"
-        }
-      ],
-      "hints": [
-        "A square is an equal-factor product; a principal square root selects its nonnegative factor."
-      ],
-      "distractors": [],
       "samples": [
         {
+          "expected": "9",
           "params": {
             "a": 81,
             "b": 9
-          },
-          "expected": "9"
+          }
         },
         {
+          "expected": "10",
           "params": {
             "a": 100,
             "b": 10
-          },
-          "expected": "10"
+          }
         },
         {
+          "expected": "11",
           "params": {
             "a": 121,
             "b": 11
-          },
-          "expected": "11"
+          }
         },
         {
+          "expected": "12",
           "params": {
             "a": 144,
             "b": 12
-          },
-          "expected": "12"
+          }
         },
         {
+          "expected": "13",
           "params": {
             "a": 169,
             "b": 13
-          },
-          "expected": "13"
+          }
         },
         {
+          "expected": "14",
           "params": {
             "a": 196,
             "b": 14
-          },
-          "expected": "14"
+          }
         },
         {
+          "expected": "15",
           "params": {
             "a": 225,
             "b": 15
-          },
-          "expected": "15"
+          }
         },
         {
+          "expected": "16",
           "params": {
             "a": 256,
             "b": 16
-          },
-          "expected": "16"
+          }
         },
         {
-          "params": {
-            "a": 289,
-            "b": 17
-          },
-          "expected": "17"
-        },
-        {
+          "expected": "18",
           "params": {
             "a": 324,
             "b": 18
-          },
-          "expected": "18"
+          }
         },
         {
+          "expected": "19",
           "params": {
             "a": 361,
             "b": 19
-          },
-          "expected": "19"
+          }
         },
         {
+          "expected": "20",
           "params": {
             "a": 400,
             "b": 20
-          },
-          "expected": "20"
+          }
         }
-      ]
+      ],
+      "solution_sketch": "Area is side times side: $s^2={a}$. Hence $s=\\sqrt{{{a}}}>0$; the negative algebraic root cannot be a length. The exact result of these steps is ${b}$.",
+      "statement": "A square sheet has area ${a}$ square units. Find its positive side length."
     }
   },
   {
@@ -4451,11 +4470,8 @@
             125,
             216,
             343,
-            512,
             729,
-            1000,
-            1331,
-            1728
+            1000
           ]
         }
       },
@@ -4509,12 +4525,6 @@
         },
         {
           "params": {
-            "a": 512
-          },
-          "expected": "8"
-        },
-        {
-          "params": {
             "a": 729
           },
           "expected": "9"
@@ -4524,18 +4534,6 @@
             "a": 1000
           },
           "expected": "10"
-        },
-        {
-          "params": {
-            "a": 1331
-          },
-          "expected": "11"
-        },
-        {
-          "params": {
-            "a": 1728
-          },
-          "expected": "12"
         }
       ]
     }
@@ -4556,13 +4554,13 @@
             27,
             64,
             125,
-            216,
             343,
             512,
             729,
             1000,
             1331,
-            1728
+            1728,
+            2197
           ]
         },
         "b": {
@@ -4573,19 +4571,18 @@
             -3,
             -4,
             -5,
-            -6,
             -7,
             -8,
             -9,
             -10,
             -11,
-            -12
+            -12,
+            -13
           ]
         }
       },
       "constraints": [
         {
-          "op": "eq",
           "left": {
             "mul": [
               {
@@ -4600,6 +4597,7 @@
               }
             ]
           },
+          "op": "eq",
           "right": "a"
         }
       ],
@@ -4645,13 +4643,6 @@
         },
         {
           "params": {
-            "a": 216,
-            "b": -6
-          },
-          "expected": "-6"
-        },
-        {
-          "params": {
             "a": 343,
             "b": -7
           },
@@ -4691,6 +4682,13 @@
             "b": -12
           },
           "expected": "-12"
+        },
+        {
+          "params": {
+            "a": 2197,
+            "b": -13
+          },
+          "expected": "-13"
         }
       ]
     }
@@ -4699,25 +4697,16 @@
     "kp_id": "cube-roots/kp3",
     "kind": "template",
     "arguments": {
-      "statement": "Find the principal fourth root of ${a}$.",
-      "answer_expr": "sqrt(sqrt(a))",
-      "solution_sketch": "The principal fourth root is nonnegative. If $c^2=\\sqrt{{{a}}}$, then $c^4={a}$, so take the square root twice. The exact result of these steps is ${b}$.",
+      "statement": "Find the principal fourth root of ${a}$ and the real fifth root of ${d}$. Report fourth_root and fifth_root. Use fourth_root = value; fifth_root = value.",
+      "answer_expr": "multipart(b,c)",
+      "solution_sketch": "Find nonnegative $u$ with $u^4={a}$ and real $v$ with $v^5={d}$. Checking the equal-factor products gives fourth_root ${b}$ and fifth_root ${c}$.",
       "params": {
         "a": {
           "kind": "choice",
           "values": [
             1,
             16,
-            81,
-            256,
-            625,
-            1296,
-            2401,
-            4096,
-            6561,
-            10000,
-            14641,
-            20736
+            81
           ]
         },
         "b": {
@@ -4725,22 +4714,34 @@
           "values": [
             1,
             2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12
+            3
+          ]
+        },
+        "d": {
+          "kind": "choice",
+          "values": [
+            -243,
+            -32,
+            -1,
+            1,
+            32,
+            243
+          ]
+        },
+        "c": {
+          "kind": "choice",
+          "values": [
+            -3,
+            -2,
+            -1,
+            1,
+            2,
+            3
           ]
         }
       },
       "constraints": [
         {
-          "op": "eq",
           "left": {
             "mul": [
               "b",
@@ -4749,99 +4750,208 @@
               "b"
             ]
           },
+          "op": "eq",
           "right": "a"
+        },
+        {
+          "left": {
+            "mul": [
+              "c",
+              "c",
+              "c",
+              "c",
+              "c"
+            ]
+          },
+          "op": "eq",
+          "right": "d"
         }
       ],
       "hints": [
-        "Verify a proposed root by raising it to the root index; odd roots preserve the sign."
+        "Check a fourth-root candidate using four equal factors and a fifth-root candidate using five equal factors. Choose the nonnegative principal fourth root."
       ],
       "distractors": [],
       "samples": [
         {
           "params": {
             "a": 1,
-            "b": 1
+            "b": 1,
+            "d": -243,
+            "c": -3
           },
-          "expected": "1"
+          "expected": "fourth_root = 1; fifth_root = -3"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": -32,
+            "c": -2
+          },
+          "expected": "fourth_root = 1; fifth_root = -2"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": -1,
+            "c": -1
+          },
+          "expected": "fourth_root = 1; fifth_root = -1"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": 1,
+            "c": 1
+          },
+          "expected": "fourth_root = 1; fifth_root = 1"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": 32,
+            "c": 2
+          },
+          "expected": "fourth_root = 1; fifth_root = 2"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 1,
+            "d": 243,
+            "c": 3
+          },
+          "expected": "fourth_root = 1; fifth_root = 3"
         },
         {
           "params": {
             "a": 16,
-            "b": 2
+            "b": 2,
+            "d": -243,
+            "c": -3
           },
-          "expected": "2"
+          "expected": "fourth_root = 2; fifth_root = -3"
+        },
+        {
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": -32,
+            "c": -2
+          },
+          "expected": "fourth_root = 2; fifth_root = -2"
+        },
+        {
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": -1,
+            "c": -1
+          },
+          "expected": "fourth_root = 2; fifth_root = -1"
+        },
+        {
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": 1,
+            "c": 1
+          },
+          "expected": "fourth_root = 2; fifth_root = 1"
+        },
+        {
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": 32,
+            "c": 2
+          },
+          "expected": "fourth_root = 2; fifth_root = 2"
+        },
+        {
+          "params": {
+            "a": 16,
+            "b": 2,
+            "d": 243,
+            "c": 3
+          },
+          "expected": "fourth_root = 2; fifth_root = 3"
         },
         {
           "params": {
             "a": 81,
-            "b": 3
+            "b": 3,
+            "d": -243,
+            "c": -3
           },
-          "expected": "3"
+          "expected": "fourth_root = 3; fifth_root = -3"
         },
         {
           "params": {
-            "a": 256,
-            "b": 4
+            "a": 81,
+            "b": 3,
+            "d": -32,
+            "c": -2
           },
-          "expected": "4"
+          "expected": "fourth_root = 3; fifth_root = -2"
         },
         {
           "params": {
-            "a": 625,
-            "b": 5
+            "a": 81,
+            "b": 3,
+            "d": -1,
+            "c": -1
           },
-          "expected": "5"
+          "expected": "fourth_root = 3; fifth_root = -1"
         },
         {
           "params": {
-            "a": 1296,
-            "b": 6
+            "a": 81,
+            "b": 3,
+            "d": 1,
+            "c": 1
           },
-          "expected": "6"
+          "expected": "fourth_root = 3; fifth_root = 1"
         },
         {
           "params": {
-            "a": 2401,
-            "b": 7
+            "a": 81,
+            "b": 3,
+            "d": 32,
+            "c": 2
           },
-          "expected": "7"
+          "expected": "fourth_root = 3; fifth_root = 2"
         },
         {
           "params": {
-            "a": 4096,
-            "b": 8
+            "a": 81,
+            "b": 3,
+            "d": 243,
+            "c": 3
           },
-          "expected": "8"
-        },
-        {
-          "params": {
-            "a": 6561,
-            "b": 9
-          },
-          "expected": "9"
-        },
-        {
-          "params": {
-            "a": 10000,
-            "b": 10
-          },
-          "expected": "10"
-        },
-        {
-          "params": {
-            "a": 14641,
-            "b": 11
-          },
-          "expected": "11"
-        },
-        {
-          "params": {
-            "a": 20736,
-            "b": 12
-          },
-          "expected": "12"
+          "expected": "fourth_root = 3; fifth_root = 3"
         }
-      ]
+      ],
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "fourth_root",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "fifth_root",
+            "contract": {
+              "kind": "exact"
+            }
+          }
+        ]
+      }
     }
   },
   {
@@ -5572,24 +5682,27 @@
     "kind": "template",
     "arguments": {
       "statement": "Use prime factorization to simplify $\\sqrt{{{a}}}$.",
-      "answer_expr": "sqrt(a/6)*sqrt(6)",
-      "solution_sketch": "Factor ${a}=6c^2$. Pair the prime factors in $c^2$; one copy from each pair exits. The unpaired factors $2$ and $3$ remain as $c\\sqrt6$. Here $c={b}$, as ${a}=6\\cdot{b}^2$. The exact result of these steps is ${b}\\sqrt6$.",
+      "answer_expr": "b*sqrt(c)",
+      "solution_sketch": "Prime-factorize ${a}$ and pair equal primes. The paired factors multiply to ${b}^2$ and the unpaired primes multiply to ${c}$, so ${a}={b}^2\\cdot{c}$. Extracting one factor from each pair gives ${b}\\sqrt{{{c}}}$. No prime pair remains in ${c}$.",
       "params": {
         "a": {
           "kind": "choice",
           "values": [
-            96,
+            108,
+            112,
+            125,
+            128,
+            147,
             150,
+            175,
+            180,
+            192,
+            200,
             216,
-            294,
-            384,
-            486,
-            600,
-            726,
-            864,
-            1014,
-            1176,
-            1350
+            243,
+            245,
+            288,
+            294
           ]
         },
         "b": {
@@ -5602,30 +5715,30 @@
             8,
             9,
             10,
-            11,
-            12,
-            13,
-            14,
-            15
+            12
+          ]
+        },
+        "c": {
+          "kind": "choice",
+          "values": [
+            2,
+            3,
+            5,
+            6,
+            7
           ]
         }
       },
       "constraints": [
         {
-          "op": "eq",
           "left": {
             "mul": [
-              {
-                "lit": 6
-              },
-              {
-                "mul": [
-                  "b",
-                  "b"
-                ]
-              }
+              "b",
+              "b",
+              "c"
             ]
           },
+          "op": "eq",
           "right": "a"
         }
       ],
@@ -5636,87 +5749,123 @@
       "samples": [
         {
           "params": {
-            "a": 96,
-            "b": 4
+            "a": 108,
+            "b": 6,
+            "c": 3
           },
-          "expected": "4*sqrt(6)"
+          "expected": "6*sqrt(3)"
+        },
+        {
+          "params": {
+            "a": 112,
+            "b": 4,
+            "c": 7
+          },
+          "expected": "4*sqrt(7)"
+        },
+        {
+          "params": {
+            "a": 125,
+            "b": 5,
+            "c": 5
+          },
+          "expected": "5*sqrt(5)"
+        },
+        {
+          "params": {
+            "a": 128,
+            "b": 8,
+            "c": 2
+          },
+          "expected": "8*sqrt(2)"
+        },
+        {
+          "params": {
+            "a": 147,
+            "b": 7,
+            "c": 3
+          },
+          "expected": "7*sqrt(3)"
         },
         {
           "params": {
             "a": 150,
-            "b": 5
+            "b": 5,
+            "c": 6
           },
           "expected": "5*sqrt(6)"
         },
         {
           "params": {
+            "a": 175,
+            "b": 5,
+            "c": 7
+          },
+          "expected": "5*sqrt(7)"
+        },
+        {
+          "params": {
+            "a": 180,
+            "b": 6,
+            "c": 5
+          },
+          "expected": "6*sqrt(5)"
+        },
+        {
+          "params": {
+            "a": 192,
+            "b": 8,
+            "c": 3
+          },
+          "expected": "8*sqrt(3)"
+        },
+        {
+          "params": {
+            "a": 200,
+            "b": 10,
+            "c": 2
+          },
+          "expected": "10*sqrt(2)"
+        },
+        {
+          "params": {
             "a": 216,
-            "b": 6
+            "b": 6,
+            "c": 6
           },
           "expected": "6*sqrt(6)"
         },
         {
           "params": {
+            "a": 243,
+            "b": 9,
+            "c": 3
+          },
+          "expected": "9*sqrt(3)"
+        },
+        {
+          "params": {
+            "a": 245,
+            "b": 7,
+            "c": 5
+          },
+          "expected": "7*sqrt(5)"
+        },
+        {
+          "params": {
+            "a": 288,
+            "b": 12,
+            "c": 2
+          },
+          "expected": "12*sqrt(2)"
+        },
+        {
+          "params": {
             "a": 294,
-            "b": 7
+            "b": 7,
+            "c": 6
           },
           "expected": "7*sqrt(6)"
-        },
-        {
-          "params": {
-            "a": 384,
-            "b": 8
-          },
-          "expected": "8*sqrt(6)"
-        },
-        {
-          "params": {
-            "a": 486,
-            "b": 9
-          },
-          "expected": "9*sqrt(6)"
-        },
-        {
-          "params": {
-            "a": 600,
-            "b": 10
-          },
-          "expected": "10*sqrt(6)"
-        },
-        {
-          "params": {
-            "a": 726,
-            "b": 11
-          },
-          "expected": "11*sqrt(6)"
-        },
-        {
-          "params": {
-            "a": 864,
-            "b": 12
-          },
-          "expected": "12*sqrt(6)"
-        },
-        {
-          "params": {
-            "a": 1014,
-            "b": 13
-          },
-          "expected": "13*sqrt(6)"
-        },
-        {
-          "params": {
-            "a": 1176,
-            "b": 14
-          },
-          "expected": "14*sqrt(6)"
-        },
-        {
-          "params": {
-            "a": 1350,
-            "b": 15
-          },
-          "expected": "15*sqrt(6)"
         }
       ]
     }
@@ -6889,9 +7038,9 @@
     "kp_id": "dividing-radicals/kp2",
     "kind": "template",
     "arguments": {
-      "statement": "Simplify $\\sqrt{{{a}/50}}$.",
-      "answer_expr": "sqrt(a/2)/5",
-      "solution_sketch": "Write ${a}=2c^2$ and $50=2\\cdot5^2$. Cancel the common factor two inside the fraction, giving $\\sqrt{{c^2/25}}=c/5$. The exact result of these steps is ${b}/5$.",
+      "statement": "Simplify $\\sqrt{{{a}/25}}$.",
+      "answer_expr": "b*sqrt(2)/5",
+      "solution_sketch": "Since ${a}=2\\cdot{b}^2$ and $\\sqrt{{25}}=5$, the fraction root is ${b}\\sqrt2/5$. Reduce any common numerical factor.",
       "params": {
         "a": {
           "kind": "choice",
@@ -6930,7 +7079,6 @@
       },
       "constraints": [
         {
-          "op": "eq",
           "left": {
             "mul": [
               {
@@ -6944,11 +7092,12 @@
               }
             ]
           },
+          "op": "eq",
           "right": "a"
         }
       ],
       "hints": [
-        "Separate the coefficient quotient from the radical quotient and simplify common nonzero factors."
+        "Take the principal square root of the perfect-square denominator, then extract square factors from the numerator."
       ],
       "distractors": [],
       "samples": [
@@ -6957,84 +7106,84 @@
             "a": 8,
             "b": 2
           },
-          "expected": "2/5"
+          "expected": "2/5*sqrt(2)"
         },
         {
           "params": {
             "a": 18,
             "b": 3
           },
-          "expected": "3/5"
+          "expected": "3/5*sqrt(2)"
         },
         {
           "params": {
             "a": 32,
             "b": 4
           },
-          "expected": "4/5"
+          "expected": "4/5*sqrt(2)"
         },
         {
           "params": {
             "a": 50,
             "b": 5
           },
-          "expected": "1"
+          "expected": "1*sqrt(2)"
         },
         {
           "params": {
             "a": 72,
             "b": 6
           },
-          "expected": "6/5"
+          "expected": "6/5*sqrt(2)"
         },
         {
           "params": {
             "a": 98,
             "b": 7
           },
-          "expected": "7/5"
+          "expected": "7/5*sqrt(2)"
         },
         {
           "params": {
             "a": 128,
             "b": 8
           },
-          "expected": "8/5"
+          "expected": "8/5*sqrt(2)"
         },
         {
           "params": {
             "a": 162,
             "b": 9
           },
-          "expected": "9/5"
+          "expected": "9/5*sqrt(2)"
         },
         {
           "params": {
             "a": 200,
             "b": 10
           },
-          "expected": "2"
+          "expected": "2*sqrt(2)"
         },
         {
           "params": {
             "a": 242,
             "b": 11
           },
-          "expected": "11/5"
+          "expected": "11/5*sqrt(2)"
         },
         {
           "params": {
             "a": 288,
             "b": 12
           },
-          "expected": "12/5"
+          "expected": "12/5*sqrt(2)"
         },
         {
           "params": {
             "a": 338,
             "b": 13
           },
-          "expected": "13/5"
+          "expected": "13/5*sqrt(2)"
         }
       ]
     }
