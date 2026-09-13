@@ -5,11 +5,17 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use cadus_core::{curriculum::load_curriculum, instruction::template_instances};
+use cadus_core::{
+    curriculum::{
+        load_curriculum, AnswerKind, Exemplar, FiniteCaseRole, FiniteCaseVariant,
+        FiniteObjectiveCase, FiniteObjectiveDomain, Slug,
+    },
+    instruction::template_instances,
+};
 use cadus_worker::authoring::{
     cli::{AuthorArgs, select_for},
     job::{document_digest, verify_kind},
-    prompt::{AuthoringSpec, Kind},
+    prompt::{AuthoringSpec, FiniteAuthoringPolicy, Kind},
 };
 use serde_json::Value;
 use sha2::{Digest, Sha256};
@@ -318,16 +324,139 @@ fn verify_pages(
             "{kp}"
         );
         let body: Value = serde_json::from_str(&body).unwrap();
-        let identity = normalized(body["worked_example"]["problem"].as_str().expect("problem"));
-        assert!(
-            !occupied.contains(&identity),
-            "{kp}: exemplar/template collision"
-        );
+        let raw_problem = body["worked_example"]["problem"].as_str().expect("problem");
+        let identity = normalized(raw_problem);
+        if occupied.contains(&identity) {
+            assert!(
+                is_registered_teach_case(&specs[kp], raw_problem),
+                "{kp}: exemplar/template collision"
+            );
+        }
         assert!(
             teach_problems.insert(identity),
             "{kp}: duplicate Teach problem"
         );
     }
+}
+
+/// Whether the problem is an EXACT registered variant of a reviewed finite
+/// teaching case (TeachOnly or TaughtRehearsal) in the spec's policy.
+///
+/// The production teach gate (`cadus_core::instruction::gate_teach_with_policy`
+/// -> `finite::permitted_collision`) recognizes exactly this subset: without a
+/// registered TeachOnly/TaughtRehearsal variant, an exemplar or template
+/// collision stays a Hard-Rule-1 rejection. The whole-course pages must mirror
+/// that gate and not re-reject what the gate expressly permits.
+fn is_registered_teach_case(spec: &AuthoringSpec, problem: &str) -> bool {
+    let Some(finite) = &spec.finite else {
+        return false;
+    };
+    finite.domain.cases.iter().any(|case| {
+        matches!(
+            case.role,
+            FiniteCaseRole::TeachOnly | FiniteCaseRole::TaughtRehearsal
+        ) && case
+            .variants
+            .iter()
+            .any(|variant| variant.problem.trim() == problem.trim())
+    })
+}
+
+/// The collision allowance is a NARROW exception: the worked problem must be an
+/// exact registered teaching variant, and the production gate (already run by
+/// [`verify_kind`] above) has validated that the policy is current and the role
+/// eligible. PracticeFresh and ReservedAssessment cases stay protected, and a
+/// knowledge point with no finite policy stays fully collision-checked.
+#[test]
+fn finite_teach_collision_allowance_matches_the_registered_teaching_roles() {
+    fn case(id: &str, role: FiniteCaseRole, problems: &[&str]) -> FiniteObjectiveCase {
+        FiniteObjectiveCase {
+            id: Slug::new(id).unwrap(),
+            role,
+            variants: problems
+                .iter()
+                .map(|problem| FiniteCaseVariant {
+                    problem: (*problem).to_owned(),
+                    answer: "test".to_owned(),
+                    answer_contract: None,
+                })
+                .collect(),
+        }
+    }
+    fn domain(cases: Vec<FiniteObjectiveCase>) -> FiniteObjectiveDomain {
+        FiniteObjectiveDomain {
+            schema_version: 1,
+            review_ref: "sha256:regression".to_owned(),
+            cases,
+        }
+    }
+    fn spec(finite: Option<FiniteAuthoringPolicy>) -> AuthoringSpec {
+        AuthoringSpec {
+            kp_id: "kp1".to_owned(),
+            kp_name: "Regression".to_owned(),
+            topic_id: "finite-regression".to_owned(),
+            topic_name: "Regression".to_owned(),
+            answer_kind: AnswerKind::Numeric,
+            difficulty_target: None,
+            constraints: None,
+            exemplars: vec![Exemplar {
+                problem: "Practice case.".to_owned(),
+                answer: "4".to_owned(),
+                answer_contract: None,
+                solution_sketch: None,
+            }],
+            finite,
+        }
+    }
+    fn finite(cases: Vec<FiniteObjectiveCase>) -> FiniteAuthoringPolicy {
+        FiniteAuthoringPolicy {
+            domain: domain(cases),
+            fingerprint: "sha256:regression".to_owned(),
+        }
+    }
+
+    let teach_only = spec(Some(finite(vec![case(
+        "taught",
+        FiniteCaseRole::TeachOnly,
+        &["Two sides and their included angle are known."],
+    )])));
+    assert!(is_registered_teach_case(
+        &teach_only,
+        "Two sides and their included angle are known."
+    ));
+
+    let rehearsal = spec(Some(finite(vec![case(
+        "rehearsal",
+        FiniteCaseRole::TaughtRehearsal,
+        &["A pair of triangles is measured."],
+    )])));
+    assert!(is_registered_teach_case(
+        &rehearsal,
+        "A pair of triangles is measured."
+    ));
+
+    let practice = spec(Some(finite(vec![case(
+        "practice",
+        FiniteCaseRole::PracticeFresh,
+        &["Compute 2 + 2."],
+    )])));
+    assert!(!is_registered_teach_case(&practice, "Compute 2 + 2."));
+
+    let assessment = spec(Some(finite(vec![case(
+        "assessment",
+        FiniteCaseRole::ReservedAssessment,
+        &["Reserved item."],
+    )])));
+    assert!(!is_registered_teach_case(&assessment, "Reserved item."));
+
+    let undeclared = spec(Some(finite(vec![case(
+        "taught",
+        FiniteCaseRole::TeachOnly,
+        &["A registered exact problem."],
+    )])));
+    assert!(!is_registered_teach_case(&undeclared, "An undeclared problem."));
+
+    assert!(!is_registered_teach_case(&spec(None), "Compute 3 + 3."));
 }
 
 #[test]
