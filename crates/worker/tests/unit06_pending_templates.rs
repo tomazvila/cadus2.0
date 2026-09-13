@@ -28,7 +28,10 @@ fn root() -> PathBuf {
 
 fn read(file: &str) -> Vec<Value> {
     if file == "historical-candidates.json" {
-        return serde_json::from_str(&fs::read_to_string(root().join(HISTORY).join("template-candidates.json")).unwrap()).unwrap();
+        return serde_json::from_str(
+            &fs::read_to_string(root().join(HISTORY).join("template-candidates.json")).unwrap(),
+        )
+        .unwrap();
     }
     if file == "candidates.json" {
         return serde_json::from_str(
@@ -67,28 +70,51 @@ fn template19_sources() -> BTreeMap<String, Value> {
         .collect()
 }
 
-
 fn historical_spec(key: &str) -> prompt::AuthoringSpec {
-    let records: Vec<Value> = serde_json::from_str(&fs::read_to_string(root().join(HISTORY).join("authoring-specs.json")).unwrap()).unwrap();
-    let row = records.iter().find(|r| format!("{}/{}", r["topic_id"].as_str().unwrap(), r["kp_id"].as_str().unwrap()) == key).unwrap();
-    let finite = if row["finite_objective_domain"].is_null() { None } else {
+    let records: Vec<Value> = serde_json::from_str(
+        &fs::read_to_string(root().join(HISTORY).join("authoring-specs.json")).unwrap(),
+    )
+    .unwrap();
+    let row = records
+        .iter()
+        .find(|r| {
+            format!(
+                "{}/{}",
+                r["topic_id"].as_str().unwrap(),
+                r["kp_id"].as_str().unwrap()
+            ) == key
+        })
+        .unwrap();
+    let finite = if row["finite_objective_domain"].is_null() {
+        None
+    } else {
         let domain = serde_json::from_value(row["finite_objective_domain"].clone()).unwrap();
         Some(prompt::FiniteAuthoringPolicy::new(key, &domain).unwrap())
     };
     prompt::AuthoringSpec {
-        kp_id: row["kp_id"].as_str().unwrap().to_owned(), kp_name: row["kp_name"].as_str().unwrap().to_owned(),
-        topic_id: row["topic_id"].as_str().unwrap().to_owned(), topic_name: row["topic_name"].as_str().unwrap().to_owned(),
+        kp_id: row["kp_id"].as_str().unwrap().to_owned(),
+        kp_name: row["kp_name"].as_str().unwrap().to_owned(),
+        topic_id: row["topic_id"].as_str().unwrap().to_owned(),
+        topic_name: row["topic_name"].as_str().unwrap().to_owned(),
         answer_kind: serde_json::from_value(row["answer_kind"].clone()).unwrap(),
         difficulty_target: serde_json::from_value(row["difficulty_target"].clone()).unwrap(),
         constraints: serde_json::from_value(row["constraints"].clone()).unwrap(),
-        exemplars: serde_json::from_value(row["exemplars"].clone()).unwrap(), finite,
+        exemplars: serde_json::from_value(row["exemplars"].clone()).unwrap(),
+        finite,
     }
 }
 
 fn assert_historical_sources() {
-    let manifest: Value = serde_json::from_str(&fs::read_to_string(root().join(HISTORY).join("manifest.json")).unwrap()).unwrap();
+    let manifest: Value = serde_json::from_str(
+        &fs::read_to_string(root().join(HISTORY).join("manifest.json")).unwrap(),
+    )
+    .unwrap();
     for (path, entry) in manifest["files"].as_object().unwrap() {
-        assert_eq!(current_evidence::hash_bytes(&fs::read(root().join(path)).unwrap()), entry["sha256"], "historical source drift: {path}");
+        assert_eq!(
+            current_evidence::hash_bytes(&fs::read(root().join(path)).unwrap()),
+            entry["sha256"],
+            "historical source drift: {path}"
+        );
     }
 }
 
@@ -190,7 +216,10 @@ fn every_historical_instance_rejects_an_off_by_one_answer_and_matches_its_record
         let walked = template::walk_satisfying(&doc.params, &doc.constraints).unwrap();
         assert!(walked.exhaustive);
         assert_eq!(walked.tuples.len(), 12);
-        assert_eq!(row["instances"].as_array().unwrap().len(), walked.tuples.len());
+        assert_eq!(
+            row["instances"].as_array().unwrap().len(),
+            walked.tuples.len()
+        );
         for (tuple, recorded) in walked
             .tuples
             .into_iter()
@@ -242,16 +271,22 @@ fn every_historical_candidate_is_recorded_pending_or_explicitly_superseded() {
     assert_eq!(json!(read("schema-blockers.json").len()), 0);
 }
 
-
-
 /// Preserve true mirrors and independently source-bound pre-existing draft lineages.
-fn validate_current_lineages(drafts: &[Value], candidates: &[Value], manifest: &Value) -> Result<(), String> {
+fn validate_current_lineages(
+    drafts: &[Value],
+    candidates: &[Value],
+    manifest: &Value,
+) -> Result<(), String> {
     let index = |rows: &[Value]| -> Result<BTreeMap<String, Value>, String> {
-        if rows.len() != 78 { return Err("expected78lineage rows".to_owned()); }
+        if rows.len() != 78 {
+            return Err("expected78lineage rows".to_owned());
+        }
         let mut found = BTreeMap::new();
         for row in rows {
             let key = row["kp_id"].as_str().ok_or("missing lineage KP ID")?;
-            if row["kind"] != "template" { return Err(format!("{key}: wrong lineage kind")); }
+            if row["kind"] != "template" {
+                return Err(format!("{key}: wrong lineage kind"));
+            }
             if found.insert(key.to_owned(), row.clone()).is_some() {
                 return Err(format!("{key}: duplicate lineage key"));
             }
@@ -260,13 +295,17 @@ fn validate_current_lineages(drafts: &[Value], candidates: &[Value], manifest: &
     };
     let drafts = index(drafts)?;
     let candidates = index(candidates)?;
-    let expected: BTreeSet<String> = serde_json::from_value(manifest["all_kp_ids"].clone())
-        .map_err(|e| e.to_string())?;
-    if expected.len() != 78 || drafts.keys().cloned().collect::<BTreeSet<_>>() != expected
-        || candidates.keys().cloned().collect::<BTreeSet<_>>() != expected {
+    let expected: BTreeSet<String> =
+        serde_json::from_value(manifest["all_kp_ids"].clone()).map_err(|e| e.to_string())?;
+    if expected.len() != 78
+        || drafts.keys().cloned().collect::<BTreeSet<_>>() != expected
+        || candidates.keys().cloned().collect::<BTreeSet<_>>() != expected
+    {
         return Err("lineage key sets differ from original78KP inventory".to_owned());
     }
-    let distinct = manifest["distinct_lineages"].as_object().ok_or("missing distinct lineages")?;
+    let distinct = manifest["distinct_lineages"]
+        .as_object()
+        .ok_or("missing distinct lineages")?;
     if distinct.len() != 21 || distinct.keys().any(|key| !expected.contains(key)) {
         return Err("expected21named distinct lineages".to_owned());
     }
@@ -275,27 +314,45 @@ fn validate_current_lineages(drafts: &[Value], candidates: &[Value], manifest: &
         let draft = &drafts[key];
         let candidate = &candidates[key];
         if let Some(binding) = distinct.get(key) {
-            if current_evidence::hash_bytes(draft.to_string().as_bytes()) != binding["draft_row_sha256"]
-                || current_evidence::hash_bytes(candidate.to_string().as_bytes()) != binding["fixture_row_sha256"] {
+            if current_evidence::hash_bytes(draft.to_string().as_bytes())
+                != binding["draft_row_sha256"]
+                || current_evidence::hash_bytes(candidate.to_string().as_bytes())
+                    != binding["fixture_row_sha256"]
+            {
                 return Err(format!("{key}: original distinct lineage row drift"));
             }
         } else {
-            if draft != candidate { return Err(format!("{key}: true mirror drift")); }
+            if draft != candidate {
+                return Err(format!("{key}: true mirror drift"));
+            }
             mirrors += 1;
         }
     }
-    if mirrors != 57 { return Err("expected57true mirrors".to_owned()); }
+    if mirrors != 57 {
+        return Err("expected57true mirrors".to_owned());
+    }
     Ok(())
 }
 
 fn assert_current_lineages() {
-    let bytes = fs::read(root().join("docs/content-foundations/unit06-correction/current-lineage-manifest.json")).unwrap();
-    assert_eq!(current_evidence::hash_bytes(&bytes), "sha256:7a87fab092427f1573699544a23aa61469d6c8e57430d96cb3817dd21e22ce53", "lineage manifest source drift");
+    let bytes = fs::read(
+        root().join("docs/content-foundations/unit06-correction/current-lineage-manifest.json"),
+    )
+    .unwrap();
+    assert_eq!(
+        current_evidence::hash_bytes(&bytes),
+        "sha256:7a87fab092427f1573699544a23aa61469d6c8e57430d96cb3817dd21e22ce53",
+        "lineage manifest source drift"
+    );
     let manifest: Value = serde_json::from_slice(&bytes).unwrap();
     let archived = |name: &str| -> Vec<Value> {
         let source = &manifest["archives"][name];
         let bytes = fs::read(root().join(source["path"].as_str().unwrap())).unwrap();
-        assert_eq!(current_evidence::hash_bytes(&bytes), source["sha256"], "original {name} archive drift");
+        assert_eq!(
+            current_evidence::hash_bytes(&bytes),
+            source["sha256"],
+            "original {name} archive drift"
+        );
         serde_json::from_slice(&bytes).unwrap()
     };
     // Replay the original two lineages from exact archived source bytes as well
@@ -308,33 +365,61 @@ fn assert_current_lineages() {
     // exception must never allow a changed row to inherit its original binding.
     for key in manifest["distinct_lineages"].as_object().unwrap().keys() {
         let mut changed_drafts = drafts.clone();
-        let row = changed_drafts.iter_mut().find(|row| row["kp_id"] == key.as_str()).unwrap();
+        let row = changed_drafts
+            .iter_mut()
+            .find(|row| row["kp_id"] == key.as_str())
+            .unwrap();
         row["arguments"]["statement"] = json!("altered draft lineage negative control");
-        assert!(validate_current_lineages(&changed_drafts, &candidates, &manifest).is_err(), "{key}: changed draft accepted");
+        assert!(
+            validate_current_lineages(&changed_drafts, &candidates, &manifest).is_err(),
+            "{key}: changed draft accepted"
+        );
         let mut changed_candidates = candidates.clone();
-        let row = changed_candidates.iter_mut().find(|row| row["kp_id"] == key.as_str()).unwrap();
+        let row = changed_candidates
+            .iter_mut()
+            .find(|row| row["kp_id"] == key.as_str())
+            .unwrap();
         row["arguments"]["statement"] = json!("altered fixture lineage negative control");
-        assert!(validate_current_lineages(&drafts, &changed_candidates, &manifest).is_err(), "{key}: changed fixture accepted");
+        assert!(
+            validate_current_lineages(&drafts, &changed_candidates, &manifest).is_err(),
+            "{key}: changed fixture accepted"
+        );
     }
-    let mirror_index = drafts.iter().position(|row| !manifest["distinct_lineages"].as_object().unwrap()
-        .contains_key(row["kp_id"].as_str().unwrap())).unwrap();
+    let mirror_index = drafts
+        .iter()
+        .position(|row| {
+            !manifest["distinct_lineages"]
+                .as_object()
+                .unwrap()
+                .contains_key(row["kp_id"].as_str().unwrap())
+        })
+        .unwrap();
     let mut changed_mirror = drafts.clone();
-    changed_mirror[mirror_index]["arguments"]["statement"] = json!("altered true mirror negative control");
+    changed_mirror[mirror_index]["arguments"]["statement"] =
+        json!("altered true mirror negative control");
     assert!(validate_current_lineages(&changed_mirror, &candidates, &manifest).is_err());
 }
 
 #[test]
 fn all_current_candidates_match_current_source_bound_native_evidence() {
     let actual = current_evidence::current_receipt(&root());
-    let recorded: Value = serde_json::from_str(&fs::read_to_string(root().join(current_evidence::RECEIPT)).unwrap()).unwrap();
+    let recorded: Value =
+        serde_json::from_str(&fs::read_to_string(root().join(current_evidence::RECEIPT)).unwrap())
+            .unwrap();
     assert_eq!(recorded["artifact_kind"], "native_technical_receipt");
     assert_eq!(recorded["ai_review"], "not_performed");
     current_evidence::source_matches(&recorded, &actual["sources"]).unwrap();
-    assert_eq!(recorded, actual, "regenerate only the current technical receipt after reviewed source changes");
+    assert_eq!(
+        recorded, actual,
+        "regenerate only the current technical receipt after reviewed source changes"
+    );
     assert_current_lineages();
     let mut stale = actual["sources"].clone();
     let mut changed_input = fs::read(root().join(current_evidence::CANDIDATES)).unwrap();
     changed_input.push(b' ');
     stale["candidate_sha256"] = json!(current_evidence::hash_bytes(&changed_input));
-    assert!(current_evidence::source_matches(&recorded, &stale).is_err(), "stale candidate bytes must invalidate the technical receipt");
+    assert!(
+        current_evidence::source_matches(&recorded, &stale).is_err(),
+        "stale candidate bytes must invalidate the technical receipt"
+    );
 }
