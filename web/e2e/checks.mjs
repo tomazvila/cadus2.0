@@ -11,7 +11,6 @@
  * (`/home/deploy/dev/cadus/web/e2e/README.md`).
  */
 
-import { chromium } from 'playwright';
 
 /** The literal each failure reports. `run.mjs` greps the run output for these. */
 export const FAIL_BLANK = 'FAIL-1 blank page';
@@ -114,6 +113,7 @@ export class Run {
 
 /** Open the shared browser/page/recorder fixture for one deterministic walk. */
 export async function startWalk(prefix) {
+  const { chromium } = await import('playwright');
   const shots = process.env.SHOTS ?? './shots';
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1400, height: 950 } });
