@@ -110,10 +110,10 @@ pub fn current_receipt(root: &Path) -> Value {
         }
     }
     for topic in curriculum.topics() {
-        if specs.iter().any(|s| s.topic_id == topic.id.as_str()) {
-            if let Some(item) = &topic.diagnostic_exemplar {
-                authored.insert(problem_text_hash(item.problem.trim()));
-            }
+        if specs.iter().any(|s| s.topic_id == topic.id.as_str())
+            && let Some(item) = &topic.diagnostic_exemplar
+        {
+            authored.insert(problem_text_hash(item.problem.trim()));
         }
     }
     let mut siblings = BTreeSet::new();
