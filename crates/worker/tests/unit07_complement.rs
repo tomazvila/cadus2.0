@@ -103,7 +103,11 @@ fn inspect(
     );
     let capacity = expected["count"].as_u64().unwrap() as usize;
     if key == "difference-of-squares/kp1" {
-        let finite = spec.finite.as_ref().expect("reviewed finite square domain");
+        let finite = spec
+            .finite
+            .as_ref()
+            .ok_or("reviewed finite square domain")
+            .unwrap();
         finite.validate(key).unwrap();
         assert_eq!(finite.domain.cases.len(), 10);
         assert_eq!(
@@ -135,7 +139,8 @@ fn inspect(
                     .iter()
                     .any(|variant| variant.problem == worked)
             })
-            .expect("reserved worked square36");
+            .ok_or("reserved worked square36")
+            .unwrap();
         assert_eq!(taught.role, FiniteCaseRole::TeachOnly);
     } else {
         assert!(
@@ -165,7 +170,8 @@ fn inspect(
             let case = finite
                 .domain
                 .case_for(&item.text, &item.answer, item.answer_contract.as_ref())
-                .expect("native registered finite variant");
+                .ok_or("native registered finite variant")
+                .unwrap();
             assert_eq!(case.role, FiniteCaseRole::PracticeFresh);
             assert!(
                 practice_cases.insert(case.id.as_str().to_owned()),
