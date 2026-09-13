@@ -90,11 +90,29 @@ async fn an_empty_content_store_blocks_every_knowledge_point_on_the_teach_page()
 #[tokio::test]
 async fn one_approved_teach_page_clears_one_teachable_blocker() {
     TestDb::with(|db| async move {
-        seed_content(&db.admin, "digest-teach", SQUARES, "teach", "approved").await;
+        let curriculum = arena();
+        // The approved document must carry the current generation context
+        // (migration 0019) or the readiness index does not see it at all.
+        let curriculum_digest =
+            cadus_core::curriculum::review_context_digest(&curriculum).unwrap();
+        sqlx::query(
+            "INSERT INTO content_store
+                (digest, kp_id, kind, body, status, approved_at,
+                 approved_template_context_digest, approved_curriculum_digest,
+                 approved_review_engine_digest)
+             VALUES ($1, $2, 'teach', '{}', 'approved', now(),
+                     public.cadus_template_context($2, NULL, $3, $4), $3, $4)",
+        )
+        .bind("digest-teach")
+        .bind(SQUARES)
+        .bind(&curriculum_digest)
+        .bind(cadus_core::review_engine::DIGEST)
+        .execute(&db.admin)
+        .await
+        .unwrap();
         // A pending document never counts (C6).
         seed_content(&db.admin, "digest-pending", ADDING, "teach", "pending").await;
 
-        let curriculum = arena();
         let run = readiness_run(&handle(&db), &curriculum, None)
             .await
             .unwrap();

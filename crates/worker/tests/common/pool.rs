@@ -2,11 +2,11 @@
 
 use std::time::Instant;
 
-use cadus_core::curriculum::{Curriculum, load_curriculum};
+use cadus_core::curriculum::{Curriculum, load_curriculum, review_context_digest};
 use cadus_core::pool::PoolProblem;
+use cadus_core::review_engine;
 use cadus_store::Db;
 use cadus_store::test_support::TestDb;
-use cadus_testkit::fixtures::INSERT_APPROVED_TEMPLATE;
 use cadus_worker::{
     RefillConfig, RefillJob, RefillReport, RefillState, WorkerError, refill_once_at,
 };
@@ -104,15 +104,31 @@ pub async fn seed_fixed_user(admin: &PgPool) -> Uuid {
     seed_user_with_id(admin, USER_ID, "refill@example.test").await
 }
 
-/// Insert one approved template document (C6).
+/// Insert one approved template document (C6), bound to the current pool
+/// fixture curriculum and review engine (migration 0019).
+///
+/// The refill and readiness reads filter approvals on `approved_curriculum_digest`
+/// and `approved_review_engine_digest`, so a row without them is invisible to
+/// [`cadus_store::pool::approved_template_current`]. This seed binds the digests
+/// the worker derives from [`arena`], the fixture tree every refill test runs.
 pub async fn seed_approved_template(admin: &PgPool, digest: &str, kp_id: &str, body: &str) {
-    sqlx::query(INSERT_APPROVED_TEMPLATE)
-        .bind(digest)
-        .bind(kp_id)
-        .bind(body)
-        .execute(admin)
-        .await
-        .expect("the content row inserts");
+    let curriculum_digest = review_context_digest(&arena())
+        .expect("the pool fixture curriculum fingerprints");
+    let review_engine_digest = review_engine::DIGEST;
+    sqlx::query(
+        "INSERT INTO content_store
+            (digest, kp_id, kind, body, status, approved_at,
+             approved_curriculum_digest, approved_review_engine_digest)
+         VALUES ($1, $2, 'template', $3::text::jsonb, 'approved', now(), $4, $5)",
+    )
+    .bind(digest)
+    .bind(kp_id)
+    .bind(body)
+    .bind(&curriculum_digest)
+    .bind(review_engine_digest)
+    .execute(admin)
+    .await
+    .expect("the content row inserts");
 }
 
 /// Put one claimed row into the pool, so the `(user, kp)` pair exists.
