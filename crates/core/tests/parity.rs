@@ -1,25 +1,7 @@
-//! U4 acceptance, part 1: the canonical dump, the curriculum hash, and the
-//! Python float text (D1, R5, C5).
-//!
-//! Every expected value below is a literal from
-//! `docs/reference/curriculum-1.0-spec.md` sections 3 and 8, or from a recorded
-//! run of `scripts/oracle/dump_curriculum_1_0.py` against `curriculum/`:
-//!
-//! ```text
-//! $ /home/deploy/dev/cadus/.venv/bin/python \
-//!       scripts/oracle/dump_curriculum_1_0.py curriculum | wc -c
-//! 4052882
-//! sha256=f121f9baf73f29e89679a3304c5405352f0ff47f163a0140bd0e92102a0a8b9e
-//! ```
-//!
-//! The 4,052,882 bytes count the trailing newline the oracle writes;
-//! [`canonical_dump`] returns the 4,052,881 bytes before it.
-//!
-//! D-F1 adds 314 reviewed per-exemplar policies. Each cohort preserves the
-//! previous snapshot after its new metadata is removed and sorted compact UTF-8
-//! JSON is encoded independently in Python. Cohort evidence lives under
-//! `docs/reports/answer-contract-*.md`. Later reviewed curriculum corrections and
-//! their exact source bindings live under
+//! Pinned regression checks for the canonical dump, curriculum hash, and
+//! float formatting. Historical expectations are recorded in
+//! `docs/reference/curriculum-1.0-spec.md` and the answer-contract reports.
+//! Reviewed curriculum corrections and their exact source bindings live in
 //! `docs/content-foundations/curriculum-reviews/`.
 
 mod common;
