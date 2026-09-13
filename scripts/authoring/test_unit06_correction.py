@@ -86,10 +86,13 @@ class Unit06CorrectionTest(unittest.TestCase):
         for name in ("drafts.json", "stored-review.json"):
             path = LEGACY / name
             before = subprocess.check_output(["git", "show", "HEAD:" + str(path)], text=True)
-            original = {(r["kp_id"], r["kind"]): r for r in json.loads(before)}
-            for row in json.loads(path.read_text()):
-                if row["kp_id"] not in keys or row["kind"] != "template":
-                    self.assertEqual(original[row["kp_id"], row["kind"]], row)
+            original = json.loads(before)
+            current = json.loads(path.read_text())
+            # Preserve historical versions, their multiplicity, and their order.
+            self.assertEqual(
+                [r for r in original if r["kp_id"] not in keys or r["kind"] != "template"],
+                [r for r in current if r["kp_id"] not in keys or r["kind"] != "template"],
+            )
             replacement = {r["kp_id"]: r for r in json.loads(path.read_text()) if r["kp_id"] in keys and r["kind"] == "template"}
             self.assertEqual(replace_records(before, replacement), path.read_text())
 

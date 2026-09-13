@@ -13,16 +13,16 @@ def product(r):
     r("exponent-product-rule/kp1", "Simplify $({a}x^2)(3x^3)$.", "3*a*x**5",
       "The equal base $x$ gets exponent $2+3=5$; multiply the numerical coefficients to get $3\\cdot{a}$.",
       lambda a: f"{3*a}*x^5")
-    r("exponent-product-rule/kp2", "Write ${a}^2\\cdot{a}^3$ as one power, then evaluate it.", "a**5",
-      "The factors have equal base ${a}$, so add exponents: $2+3=5$.", lambda a: str(a**5))
+    r("exponent-product-rule/kp2", "Write ${a}^2\\cdot{a}^3$ as one power.", "powerform(1,[a,5])",
+      "The factors have equal base ${a}$, so add exponents: $2+3=5$.", lambda a: f"({a})^(5)")
     r("exponent-product-rule/kp3", "Simplify $({a}x)(x^2)(2x^3)$.", "2*a*x**6",
       "Add the exponents $1+2+3=6$ and multiply the coefficients ${a}$ and $2$.",
       lambda a: f"{2*a}*x^6")
     r("exponent-quotient-rule/kp1", "Simplify $({a}x^7)/x^3$ for $x\\ne0$.", "a*x**4",
       "Subtract denominator exponent from numerator exponent: $7-3=4$; the coefficient ${a}$ remains.",
       lambda a: f"{a}*x^4")
-    r("exponent-quotient-rule/kp2", "Evaluate ${a}^7/{a}^3$.", "a**4",
-      "The nonzero equal bases give exponent $7-3=4$.", lambda a: str(a**4))
+    r("exponent-quotient-rule/kp2", "Write ${a}^7/{a}^3$ as one power.", "powerform(1,[a,4])",
+      "The nonzero equal bases give exponent $7-3=4$.", lambda a: f"({a})^(4)")
     r("exponent-quotient-rule/kp3", "Simplify $({a}x^6)/x^2$ for $x\\ne0$.", "a*x**4",
       "Cancel two of the six factors of $x$, leaving exponent $6-2=4$ and coefficient ${a}$.", lambda a: f"{a}*x^4")
     r("exponent-product-quotient-rules/kp1", "Simplify $({a}x^3)(x^4)/x^2$ for $x\\ne0$.", "a*x**5",
@@ -40,8 +40,8 @@ def powers(r):
     r("power-of-a-power-rule/kp1", "Simplify $({a}x^2)^3$.", "a**3*x**6",
       "Cube the coefficient and multiply the exponents: $(x^2)^3=x^6$.", lambda a: f"{a**3}*x^6",
       list(range(3, 15)))
-    r("power-of-a-power-rule/kp2", "Evaluate $({a}^2)^3$ as one power.", "a**6",
-      "Multiply the inner and outer exponents: $2\\cdot3=6$.", lambda a: str(a**6))
+    r("power-of-a-power-rule/kp2", "Write $({a}^2)^3$ as one power.", "powerform(1,[a,6])",
+      "Multiply the inner and outer exponents: $2\\cdot3=6$.", lambda a: f"({a})^(6)")
     r("power-of-a-power-rule/kp3", "Simplify $({a}x^4)^2/x^3$ for $x\\ne0$.", "a**2*x**5",
       "Square the coefficient, multiply $4\\cdot2=8$, then subtract the denominator exponent: $8-3=5$.",
       lambda a: f"{a*a}*x^5")

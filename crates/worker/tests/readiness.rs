@@ -93,8 +93,7 @@ async fn one_approved_teach_page_clears_one_teachable_blocker() {
         let curriculum = arena();
         // The approved document must carry the current generation context
         // (migration 0019) or the readiness index does not see it at all.
-        let curriculum_digest =
-            cadus_core::curriculum::review_context_digest(&curriculum).unwrap();
+        let curriculum_digest = cadus_core::curriculum::review_context_digest(&curriculum).unwrap();
         sqlx::query(
             "INSERT INTO content_store
                 (digest, kp_id, kind, body, status, approved_at,

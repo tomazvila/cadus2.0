@@ -4,9 +4,7 @@ mod common;
 use cadus_worker::authoring::{job::verify_kind, prompt::Kind};
 use common::{
     repo_root as root,
-    reviewed_templates::{
-        assert_template19_replacements, file_rows, run_rows, spec,
-    },
+    reviewed_templates::{assert_template19_replacements, file_rows, run_rows, spec},
 };
 use serde_json::{Value, json};
 

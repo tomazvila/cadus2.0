@@ -6,9 +6,7 @@
 mod common;
 
 use cadus_core::pool::Source;
-use cadus_store::pool::{
-    GenerationContext, NewInstance, insert_batch_for_user, unclaimed_depth,
-};
+use cadus_store::pool::{GenerationContext, NewInstance, insert_batch_for_user, unclaimed_depth};
 use cadus_store::test_support::TestDb;
 use common::{KP, seed_template};
 
@@ -114,9 +112,26 @@ async fn exact_nullable_duplicate_reports_zero() {
         let user = db.seed_user("nullable-dup@example.test").await;
         seed_template(&db.admin, CONTENT_DIGEST, KP, "approved", "ok").await;
 
-        let rows = vec![make_instance("h1", Source::Template, Some(CONTENT_DIGEST), None)];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1, "first insert counts 1");
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 0, "exact duplicate reports 0");
+        let rows = vec![make_instance(
+            "h1",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            None,
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1,
+            "first insert counts 1"
+        );
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            0,
+            "exact duplicate reports 0"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
     })
     .await;
@@ -133,10 +148,31 @@ async fn identical_full_context_duplicate_reports_zero() {
         seed_template(&db.admin, CONTENT_DIGEST, KP, "approved", "ok").await;
 
         let ctx = Some(old_context());
-        let rows = vec![make_instance("h2", Source::Template, Some(CONTENT_DIGEST), ctx.clone())];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1);
-        let rows2 = vec![make_instance("h2", Source::Template, Some(CONTENT_DIGEST), ctx)];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows2).await.unwrap(), 0, "identical full-context duplicate reports 0");
+        let rows = vec![make_instance(
+            "h2",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            ctx.clone(),
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1
+        );
+        let rows2 = vec![make_instance(
+            "h2",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            ctx,
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows2)
+                .await
+                .unwrap(),
+            0,
+            "identical full-context duplicate reports 0"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
     })
     .await;
@@ -152,16 +188,37 @@ async fn curriculum_refresh_reports_one() {
         let user = db.seed_user("refresh-cur@example.test").await;
         seed_template(&db.admin, CONTENT_DIGEST, KP, "approved", "ok").await;
 
-        let rows = vec![make_instance("h3", Source::Template, Some(CONTENT_DIGEST), Some(old_context()))];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1);
+        let rows = vec![make_instance(
+            "h3",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            Some(old_context()),
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1
+        );
 
         // Change only the curriculum digest; engine stays OLD_ENGINE.
         let changed = GenerationContext {
             curriculum_digest: NEW_CURRICULUM.to_string(),
             review_engine_digest: OLD_ENGINE.to_string(),
         };
-        let rows = vec![make_instance("h3", Source::Template, Some(CONTENT_DIGEST), Some(changed))];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1, "curriculum refresh reports 1");
+        let rows = vec![make_instance(
+            "h3",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            Some(changed),
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1,
+            "curriculum refresh reports 1"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
 
         let (_, _, cur, eng) = read_metadata(&db.admin, user, KP, "h3").await;
@@ -181,15 +238,36 @@ async fn engine_refresh_reports_one() {
         let user = db.seed_user("refresh-eng@example.test").await;
         seed_template(&db.admin, CONTENT_DIGEST, KP, "approved", "ok").await;
 
-        let rows = vec![make_instance("h4", Source::Template, Some(CONTENT_DIGEST), Some(old_context()))];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1);
+        let rows = vec![make_instance(
+            "h4",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            Some(old_context()),
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1
+        );
 
         let changed = GenerationContext {
             curriculum_digest: OLD_CURRICULUM.to_string(),
             review_engine_digest: NEW_ENGINE.to_string(),
         };
-        let rows = vec![make_instance("h4", Source::Template, Some(CONTENT_DIGEST), Some(changed))];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1, "engine refresh reports 1");
+        let rows = vec![make_instance(
+            "h4",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            Some(changed),
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1,
+            "engine refresh reports 1"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
 
         let (_, _, cur, eng) = read_metadata(&db.admin, user, KP, "h4").await;
@@ -209,11 +287,32 @@ async fn source_change_refresh_reports_one() {
         let user = db.seed_user("refresh-src@example.test").await;
         seed_template(&db.admin, CONTENT_DIGEST, KP, "approved", "ok").await;
 
-        let rows = vec![make_instance("h5", Source::Template, Some(CONTENT_DIGEST), None)];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1);
+        let rows = vec![make_instance(
+            "h5",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            None,
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1
+        );
 
-        let rows = vec![make_instance("h5", Source::Exemplar, Some(CONTENT_DIGEST), None)];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1, "source change reports 1");
+        let rows = vec![make_instance(
+            "h5",
+            Source::Exemplar,
+            Some(CONTENT_DIGEST),
+            None,
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1,
+            "source change reports 1"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
 
         let (src, _, _, _) = read_metadata(&db.admin, user, KP, "h5").await;
@@ -233,19 +332,50 @@ async fn content_digest_refresh_reports_one_then_replay_zero() {
         seed_template(&db.admin, CONTENT_DIGEST, KP, "approved", "ok").await;
         seed_template(&db.admin, OTHER_DIGEST, KP, "approved", "ok").await;
 
-        let rows = vec![make_instance("h9", Source::Template, Some(CONTENT_DIGEST), None)];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1);
+        let rows = vec![make_instance(
+            "h9",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            None,
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1
+        );
 
         // Refresh with a different content_digest.
-        let rows = vec![make_instance("h9", Source::Template, Some(OTHER_DIGEST), None)];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1, "content_digest refresh reports 1");
+        let rows = vec![make_instance(
+            "h9",
+            Source::Template,
+            Some(OTHER_DIGEST),
+            None,
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1,
+            "content_digest refresh reports 1"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
 
         let (_, cd, _, _) = read_metadata(&db.admin, user, KP, "h9").await;
-        assert_eq!(cd.as_deref(), Some(OTHER_DIGEST), "new content_digest persisted");
+        assert_eq!(
+            cd.as_deref(),
+            Some(OTHER_DIGEST),
+            "new content_digest persisted"
+        );
 
         // Replay with the same new digest reports 0.
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 0, "identical content_digest replay reports 0");
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            0,
+            "identical content_digest replay reports 0"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
     })
     .await;
@@ -261,23 +391,54 @@ async fn claimed_row_is_not_overwritten() {
         let user = db.seed_user("claimed-row@example.test").await;
         seed_template(&db.admin, CONTENT_DIGEST, KP, "approved", "ok").await;
 
-        let rows = vec![make_instance("h6", Source::Template, Some(CONTENT_DIGEST), Some(old_context()))];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1);
+        let rows = vec![make_instance(
+            "h6",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            Some(old_context()),
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1
+        );
 
         let claimed = common::claim_fresh(&db.app, user, KP).await;
         assert_eq!(claimed.row.instance_hash, "h6");
 
         // Snapshot the stored metadata before the attempted update.
-        let (src_before, cd_before, cur_before, eng_before) = read_metadata(&db.admin, user, KP, "h6").await;
+        let (src_before, cd_before, cur_before, eng_before) =
+            read_metadata(&db.admin, user, KP, "h6").await;
         let (prob_before, ans_before) = read_body(&db.admin, user, KP, "h6").await;
 
-        let rows = vec![make_instance("h6", Source::Exemplar, Some(OTHER_DIGEST), Some(old_context()))];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 0, "claimed row not updated");
+        let rows = vec![make_instance(
+            "h6",
+            Source::Exemplar,
+            Some(OTHER_DIGEST),
+            Some(old_context()),
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            0,
+            "claimed row not updated"
+        );
 
-        let (src_after, cd_after, cur_after, eng_after) = read_metadata(&db.admin, user, KP, "h6").await;
+        let (src_after, cd_after, cur_after, eng_after) =
+            read_metadata(&db.admin, user, KP, "h6").await;
         let (prob_after, ans_after) = read_body(&db.admin, user, KP, "h6").await;
-        assert_eq!((src_after, cd_after, cur_after, eng_after), (src_before, cd_before, cur_before, eng_before), "metadata unchanged after blocked update");
-        assert_eq!((prob_after, ans_after), (prob_before, ans_before), "body unchanged after blocked update");
+        assert_eq!(
+            (src_after, cd_after, cur_after, eng_after),
+            (src_before, cd_before, cur_before, eng_before),
+            "metadata unchanged after blocked update"
+        );
+        assert_eq!(
+            (prob_after, ans_after),
+            (prob_before, ans_before),
+            "body unchanged after blocked update"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 0);
     })
     .await;
@@ -293,10 +454,21 @@ async fn different_problem_is_not_overwritten() {
         let user = db.seed_user("diff-prob@example.test").await;
         seed_template(&db.admin, CONTENT_DIGEST, KP, "approved", "ok").await;
 
-        let rows = vec![make_instance("h7", Source::Template, Some(CONTENT_DIGEST), None)];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1);
+        let rows = vec![make_instance(
+            "h7",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            None,
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1
+        );
 
-        let (src_before, cd_before, cur_before, eng_before) = read_metadata(&db.admin, user, KP, "h7").await;
+        let (src_before, cd_before, cur_before, eng_before) =
+            read_metadata(&db.admin, user, KP, "h7").await;
         let (prob_before, ans_before) = read_body(&db.admin, user, KP, "h7").await;
 
         let different = NewInstance {
@@ -306,15 +478,35 @@ async fn different_problem_is_not_overwritten() {
                 bindings: Default::default(),
                 seed: 99,
             },
-            ..make_instance("h7", Source::Template, Some(CONTENT_DIGEST), Some(new_context()))
+            ..make_instance(
+                "h7",
+                Source::Template,
+                Some(CONTENT_DIGEST),
+                Some(new_context()),
+            )
         };
         let rows = vec![different];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 0, "different problem blocks update");
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            0,
+            "different problem blocks update"
+        );
 
-        let (src_after, cd_after, cur_after, eng_after) = read_metadata(&db.admin, user, KP, "h7").await;
+        let (src_after, cd_after, cur_after, eng_after) =
+            read_metadata(&db.admin, user, KP, "h7").await;
         let (prob_after, ans_after) = read_body(&db.admin, user, KP, "h7").await;
-        assert_eq!((src_after, cd_after, cur_after, eng_after), (src_before, cd_before, cur_before, eng_before), "metadata unchanged after blocked update");
-        assert_eq!((prob_after, ans_after), (prob_before, ans_before), "problem/answer unchanged after blocked update");
+        assert_eq!(
+            (src_after, cd_after, cur_after, eng_after),
+            (src_before, cd_before, cur_before, eng_before),
+            "metadata unchanged after blocked update"
+        );
+        assert_eq!(
+            (prob_after, ans_after),
+            (prob_before, ans_before),
+            "problem/answer unchanged after blocked update"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
     })
     .await;
@@ -330,10 +522,21 @@ async fn different_answer_is_not_overwritten() {
         let user = db.seed_user("diff-ans@example.test").await;
         seed_template(&db.admin, CONTENT_DIGEST, KP, "approved", "ok").await;
 
-        let rows = vec![make_instance("h8", Source::Template, Some(CONTENT_DIGEST), None)];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 1);
+        let rows = vec![make_instance(
+            "h8",
+            Source::Template,
+            Some(CONTENT_DIGEST),
+            None,
+        )];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1
+        );
 
-        let (src_before, cd_before, cur_before, eng_before) = read_metadata(&db.admin, user, KP, "h8").await;
+        let (src_before, cd_before, cur_before, eng_before) =
+            read_metadata(&db.admin, user, KP, "h8").await;
         let (prob_before, ans_before) = read_body(&db.admin, user, KP, "h8").await;
 
         let different = NewInstance {
@@ -342,15 +545,35 @@ async fn different_answer_is_not_overwritten() {
                 v: 1,
                 answer: "99".to_string(),
             },
-            ..make_instance("h8", Source::Template, Some(CONTENT_DIGEST), Some(new_context()))
+            ..make_instance(
+                "h8",
+                Source::Template,
+                Some(CONTENT_DIGEST),
+                Some(new_context()),
+            )
         };
         let rows = vec![different];
-        assert_eq!(insert_batch_for_user(&db.admin, user, KP, &rows).await.unwrap(), 0, "different answer blocks update");
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            0,
+            "different answer blocks update"
+        );
 
-        let (src_after, cd_after, cur_after, eng_after) = read_metadata(&db.admin, user, KP, "h8").await;
+        let (src_after, cd_after, cur_after, eng_after) =
+            read_metadata(&db.admin, user, KP, "h8").await;
         let (prob_after, ans_after) = read_body(&db.admin, user, KP, "h8").await;
-        assert_eq!((src_after, cd_after, cur_after, eng_after), (src_before, cd_before, cur_before, eng_before), "metadata unchanged after blocked update");
-        assert_eq!((prob_after, ans_after), (prob_before, ans_before), "problem/answer unchanged after blocked update");
+        assert_eq!(
+            (src_after, cd_after, cur_after, eng_after),
+            (src_before, cd_before, cur_before, eng_before),
+            "metadata unchanged after blocked update"
+        );
+        assert_eq!(
+            (prob_after, ans_after),
+            (prob_before, ans_before),
+            "problem/answer unchanged after blocked update"
+        );
         assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
     })
     .await;

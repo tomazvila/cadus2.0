@@ -112,8 +112,8 @@ pub async fn seed_fixed_user(admin: &PgPool) -> Uuid {
 /// [`cadus_store::pool::approved_template_current`]. This seed binds the digests
 /// the worker derives from [`arena`], the fixture tree every refill test runs.
 pub async fn seed_approved_template(admin: &PgPool, digest: &str, kp_id: &str, body: &str) {
-    let curriculum_digest = review_context_digest(&arena())
-        .expect("the pool fixture curriculum fingerprints");
+    let curriculum_digest =
+        review_context_digest(&arena()).expect("the pool fixture curriculum fingerprints");
     let review_engine_digest = review_engine::DIGEST;
     sqlx::query(
         "INSERT INTO content_store

@@ -7,8 +7,8 @@ use std::{
 
 use cadus_core::{
     curriculum::{
-        load_curriculum, AnswerKind, Exemplar, FiniteCaseRole, FiniteCaseVariant,
-        FiniteObjectiveCase, FiniteObjectiveDomain, Slug,
+        AnswerKind, Exemplar, FiniteCaseRole, FiniteCaseVariant, FiniteObjectiveCase,
+        FiniteObjectiveDomain, Slug, load_curriculum,
     },
     instruction::template_instances,
 };
@@ -454,7 +454,10 @@ fn finite_teach_collision_allowance_matches_the_registered_teaching_roles() {
         FiniteCaseRole::TeachOnly,
         &["A registered exact problem."],
     )])));
-    assert!(!is_registered_teach_case(&undeclared, "An undeclared problem."));
+    assert!(!is_registered_teach_case(
+        &undeclared,
+        "An undeclared problem."
+    ));
 
     assert!(!is_registered_teach_case(&spec(None), "Compute 3 + 3."));
 }
