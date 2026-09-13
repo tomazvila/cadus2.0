@@ -30,10 +30,10 @@ use cadus_core::curriculum::{
 use common::dump::tree;
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
-const TREE_HASH: &str = "d89581820978d8ba7a98ea5ec6cd25400b6b0f5f052cb6489689af48134c23a4";
+const TREE_HASH: &str = "4afb128b42fa599bc4ec40d612f914cc9667f75459ff99f8f4e3ee3c5ef7b5a6";
 
 /// The length of the dump in bytes, without the trailing newline.
-const DUMP_LEN: usize = 4_630_690;
+const DUMP_LEN: usize = 4_631_098;
 
 /// The `counts` object of the dump, as the oracle writes it.
 const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompassing_edges\":3200,\"exemplars\":8352,\"knowledge_points\":3138,\"prereq_edges\":3281,\"topics\":1090,\"units\":88}";

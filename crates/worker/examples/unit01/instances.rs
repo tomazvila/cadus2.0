@@ -1,7 +1,7 @@
 //! Check every served problem against authored content and sibling templates.
 use cadus_core::{
     curriculum::Curriculum,
-    template::{Compiled, TemplateDoc, render},
+    template::{Compiled, GateSpec, TemplateDoc, render},
 };
 use serde_json::{Value, json};
 use std::{collections::BTreeSet, path::Path};
@@ -9,6 +9,8 @@ use std::{collections::BTreeSet, path::Path};
 pub fn check(
     doc: &TemplateDoc,
     occupied: &BTreeSet<String>,
+    siblings: &BTreeSet<String>,
+    gate_spec: &GateSpec<'_>,
 ) -> Result<(BTreeSet<String>, Vec<Value>), String> {
     let compiled = Compiled::new(doc).map_err(|e| format!("{e:?}"))?;
     let mut problems = BTreeSet::new();
@@ -17,8 +19,18 @@ pub fn check(
         let item = compiled
             .instantiate(sample.bindings())
             .map_err(|e| format!("{e:?}"))?;
-        if occupied.contains(&item.instance_hash) {
+        if siblings.contains(&item.instance_hash) || problems.contains(&item.instance_hash) {
             return Err(format!("authored/sibling collision: {}", item.text));
+        }
+        if occupied.contains(&item.instance_hash) {
+            let Some(finite) = &gate_spec.finite else {
+                return Err(format!("authored/sibling collision: {}", item.text));
+            };
+            // Only an exact reviewed practice variant may overlap authored history.
+            // The native matcher excludes teach-only and reserved-assessment roles.
+            finite
+                .match_practice_instance(&item)
+                .map_err(|error| format!("{}: {}", error.code, error.message))?;
         }
         if !balanced(&item.text) {
             return Err(format!("unbalanced statement: {}", item.text));

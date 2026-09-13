@@ -64,6 +64,44 @@ pub fn assert_report_with_authored_collisions(
     expected_instances: Option<u64>,
     colliding: &[&str],
 ) {
+    assert_report_counts(report, expected_rows, expected_instances, colliding, &[]);
+}
+
+pub fn assert_report_with_instance_overrides(
+    report: &Value,
+    expected_rows: usize,
+    expected_instances: u64,
+    overrides: &[(&str, u64)],
+) {
+    let keys: BTreeSet<_> = overrides.iter().map(|(key, _)| *key).collect();
+    assert_eq!(keys.len(), overrides.len(), "duplicate count override");
+    for key in keys {
+        assert_eq!(
+            report["rows"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|row| row["kp_id"] == key)
+                .count(),
+            1
+        );
+    }
+    assert_report_counts(
+        report,
+        expected_rows,
+        Some(expected_instances),
+        &[],
+        overrides,
+    );
+}
+
+fn assert_report_counts(
+    report: &Value,
+    expected_rows: usize,
+    expected_instances: Option<u64>,
+    colliding: &[&str],
+    overrides: &[(&str, u64)],
+) {
     assert_eq!(report["checked"], expected_rows, "{report}");
     assert_eq!(
         report["passed"],
@@ -88,7 +126,12 @@ pub fn assert_report_with_authored_collisions(
         }
         assert_eq!(row["evidence"]["exhaustive"], true);
         if expected_instances.is_some() {
-            assert_eq!(row["evidence"]["distinct_instances"], 12);
+            let expected = overrides
+                .iter()
+                .find(|(candidate, _)| *candidate == key)
+                .map_or(12, |(_, count)| *count);
+            assert_eq!(row["evidence"]["distinct_instances"], expected, "{key}");
+            assert_eq!(row["evidence"]["instances_checked"], expected, "{key}");
         } else {
             assert!(row["evidence"]["distinct_instances"].as_u64().unwrap() >= 12);
         }

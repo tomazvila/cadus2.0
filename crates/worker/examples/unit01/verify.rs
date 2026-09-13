@@ -27,7 +27,8 @@ pub fn run(path: &Path, output: &Path) -> Value {
     )
     .unwrap();
     let drafts: Vec<Value> = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
-    let mut occupied = instances::authored(&curriculum, &root.join("docs/content-foundations"));
+    let occupied = instances::authored(&curriculum, &root.join("docs/content-foundations"));
+    let mut siblings = BTreeSet::new();
     let mut reports = Vec::new();
     let mut accepted = Vec::new();
     for row in drafts {
@@ -36,7 +37,7 @@ pub fn run(path: &Path, output: &Path) -> Value {
             .iter()
             .find(|s| format!("{}/{}", s.topic_id, s.kp_id) == key)
             .unwrap();
-        match check(spec, &row["arguments"], &mut occupied) {
+        match check(spec, &row["arguments"], &occupied, &mut siblings) {
             Ok((body, evidence)) => {
                 accepted
                     .push(json!({"kp_id":key,"kind":"template","status":"pending","body":body}));
@@ -58,35 +59,43 @@ pub fn run(path: &Path, output: &Path) -> Value {
 fn check(
     spec: &AuthoringSpec,
     args: &Value,
-    occupied: &mut BTreeSet<String>,
+    occupied: &BTreeSet<String>,
+    siblings: &mut BTreeSet<String>,
 ) -> Result<(Value, Value)> {
     let body = verify_kind(Kind::Template, spec, args, &[])
         .map_err(|e| format!("{}: {}", e.code, e.message))?;
     let doc = from_body(&body).map_err(|e| e.to_string())?;
-    let gate_spec = GateSpec {
-        answer_kind: spec.answer_kind,
-        exemplars: &spec.exemplars,
-        finite: None,
-    };
+    let mut gate_spec = GateSpec::new(spec.answer_kind, &spec.exemplars);
+    if let Some(finite) = &spec.finite {
+        finite.validate(&spec.kp_key())?;
+        gate_spec = gate_spec.with_finite(&spec.kp_key(), &finite.domain)?;
+    }
     let verified = gate(&doc, &gate_spec).map_err(|e| format!("{}: {}", e.code, e.message))?;
     if !verified.exhaustive {
         return Err("finite recipe gate was not exhaustive".to_owned());
     }
-    let (problems, instances) = instances::check(&doc, occupied)?;
-    if problems.len() < 12 || problems.len() as u64 != verified.instances_checked {
+    let (problems, instances) = instances::check(&doc, occupied, siblings, &gate_spec)?;
+    if (gate_spec.finite.is_none() && problems.len() < 12)
+        || problems.len() as u64 != verified.instances_checked
+        || problems.len() != doc.samples.len()
+    {
         return Err(format!(
             "sample/instance coverage: {} distinct, {} gated",
             problems.len(),
             verified.instances_checked
         ));
     }
-    occupied.extend(problems);
+    siblings.extend(problems);
     Ok((
         serde_json::from_str(&body).unwrap(),
         json!({
             "exhaustive":true,"instances_checked":verified.instances_checked,
             "distinct_instances":instances.len(),"authored_sibling_collisions":0,
-            "balanced_math":true,"answer_contract":doc.answer_contract,"instances":instances
+            "balanced_math":true,"answer_contract":doc.answer_contract,"instances":instances,
+            "finite_policy_fingerprint":verified.finite_policy_fingerprint,
+            "finite_cases":verified.finite_cases.iter().map(|case| json!({
+                "case_id":case.case_id,"role":case.role,"instance_hash":case.instance_hash
+            })).collect::<Vec<_>>()
         }),
     ))
 }

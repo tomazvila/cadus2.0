@@ -3,20 +3,90 @@
 mod common;
 
 use cadus_worker::authoring::{job::verify_kind, prompt::Kind};
-use common::reviewed_templates::{directory_rows, spec};
+use common::reviewed_templates::{
+    assert_report_with_instance_overrides, assert_standard_negative, directory_rows, run_rows, spec,
+};
 use serde_json::json;
 
 fn drafts() -> Vec<serde_json::Value> {
     directory_rows("docs/content-foundations/functions-exponentials/templates")
 }
 
-crate::reviewed_template_tests!(
-    "docs/content-foundations/functions-exponentials/templates",
-    78,
-    "target/unit08/regression",
-    936,
-    "evaluating-functions/kp1"
-);
+#[test]
+fn all_pending_templates_exhaust_the_real_gate_and_avoid_authored_and_sibling_problems() {
+    let rows = drafts();
+    assert_eq!(rows.len(), 78);
+    let report = run_rows(&rows, "target/unit08/regression");
+    // Reviewed domains: 75 ordinary twelve-case rows, one 24-case rate row,
+    // eleven fresh same-base equations, and three eligible natural-exponential cases.
+    assert_report_with_instance_overrides(
+        &report,
+        78,
+        938,
+        &[
+            ("percent-growth-decay-factors/kp3", 24),
+            ("exponential-equations-same-base/kp3", 11),
+            ("natural-exponential-function/kp2", 3),
+        ],
+    );
+    for row in report["rows"].as_array().unwrap() {
+        let key = row["kp_id"].as_str().unwrap();
+        let finite = row["evidence"]["finite_cases"].as_array().unwrap();
+        let expected: std::collections::BTreeSet<(String, String)> = match key {
+            "exponential-equations-same-base/kp3" => [4, 5, 10]
+                .into_iter()
+                .flat_map(|base| {
+                    (3..=6)
+                        .filter(move |power| base != 5 || *power != 6)
+                        .map(move |power| {
+                            (
+                                format!("base-exponent-{base}-{power}"),
+                                "practice_fresh".to_owned(),
+                            )
+                        })
+                })
+                .collect(),
+            "natural-exponential-function/kp2" => [
+                ("exponent-1".to_owned(), "practice_fresh".to_owned()),
+                ("exponent-2".to_owned(), "taught_rehearsal".to_owned()),
+                ("exponent-3".to_owned(), "practice_fresh".to_owned()),
+            ]
+            .into_iter()
+            .collect(),
+            _ => std::collections::BTreeSet::new(),
+        };
+        let actual: std::collections::BTreeSet<_> = finite
+            .iter()
+            .map(|case| {
+                (
+                    case["case_id"].as_str().unwrap().to_owned(),
+                    case["role"].as_str().unwrap().to_owned(),
+                )
+            })
+            .collect();
+        assert_eq!(actual, expected, "{key}: exact reviewed finite roles");
+        assert_eq!(finite.len(), expected.len(), "{key}: duplicate finite case");
+        if expected.is_empty() {
+            assert!(
+                row["evidence"]["finite_policy_fingerprint"].is_null(),
+                "{key}"
+            );
+        } else {
+            let current = spec(key);
+            let policy = current.finite.as_ref().unwrap();
+            policy.validate(key).unwrap();
+            assert_eq!(
+                row["evidence"]["finite_policy_fingerprint"], policy.fingerprint,
+                "{key}"
+            );
+        }
+    }
+}
+
+#[test]
+fn wrong_samples_small_spaces_and_wrong_contracts_are_rejected() {
+    assert_standard_negative(drafts(), "evaluating-functions/kp1");
+}
 
 #[test]
 fn label_templates_reject_wrong_samples_and_hidden_answer_bindings() {

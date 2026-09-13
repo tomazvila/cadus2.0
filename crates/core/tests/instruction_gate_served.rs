@@ -445,8 +445,10 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     // formerly exempted. The first census covers every shipped course; the
     // second makes the Foundations-only scope explicit. The loop above is the
     // fail-closed invariant for every member of both cohorts.
-    assert_eq!((exempted, blind), (363, 59));
-    assert_eq!((foundations_exempted, foundations_blind), (157, 29));
+    // The reviewed full-factoring example in multiplying-dividing-rational-expressions/kp2
+    // answers "1", which appears in its problem and adds one Foundations cohort member.
+    assert_eq!((exempted, blind), (364, 59));
+    assert_eq!((foundations_exempted, foundations_blind), (158, 29));
 }
 
 /// A sample that does not instantiate and a draw that does not evaluate
