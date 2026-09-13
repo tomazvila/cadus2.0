@@ -5,8 +5,7 @@ use cadus_worker::authoring::{job::verify_kind, prompt::Kind};
 use common::{
     repo_root as root,
     reviewed_templates::{
-        assert_report_with_authored_collisions, assert_template19_replacements, file_rows,
-        run_rows, spec,
+        assert_template19_replacements, file_rows, run_rows, spec,
     },
 };
 use serde_json::{Value, json};
@@ -25,12 +24,32 @@ fn archived_rows_have_exact_canonical_replacements_and_current_gate_verdicts() {
             .sum::<usize>(),
         138
     );
-    assert_report_with_authored_collisions(
-        &report,
-        rows.len(),
-        None,
-        &["law-of-sines-cosines/kp1"],
-    );
+    assert_eq!(report["checked"], rows.len(), "{report}");
+    assert_eq!(report["passed"], 3, "{report}");
+    // Preserve these pending drafts as historical evidence. The restored finite
+    // objectives cover single logarithms; the two sum-of-logs drafts must fail
+    // closed instead of expanding the reviewed domains.
+    for row in report["rows"].as_array().unwrap() {
+        let key = row["kp_id"].as_str().unwrap();
+        let rejection = match key {
+            "common-natural-logarithms/kp1" | "common-natural-logarithms/kp2" => {
+                Some("finite-case-unknown:")
+            }
+            "law-of-sines-cosines/kp1" => Some("authored/sibling collision:"),
+            _ => None,
+        };
+        if let Some(prefix) = rejection {
+            assert_eq!(row["passed"], false, "{key}: {row}");
+            assert!(
+                row["rejection"].as_str().unwrap().starts_with(prefix),
+                "{key}: {row}"
+            );
+        } else {
+            assert_eq!(row["passed"], true, "{key}: {row}");
+            assert_eq!(row["evidence"]["exhaustive"], true, "{key}: {row}");
+            assert!(row["evidence"]["distinct_instances"].as_u64().unwrap() >= 12);
+        }
+    }
     assert_eq!(
         report["rows"]
             .as_array()
@@ -39,7 +58,7 @@ fn archived_rows_have_exact_canonical_replacements_and_current_gate_verdicts() {
             .filter(|row| row["passed"] == true)
             .map(|row| row["evidence"]["instances_checked"].as_u64().unwrap())
             .sum::<u64>(),
-        122
+        52
     );
     assert_template19_replacements(&rows, &["law-of-sines-cosines/kp1"]);
 }

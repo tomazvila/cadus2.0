@@ -1,5 +1,9 @@
-//! New hard-residual drafts run through the current production gate offline.
+//! Archived hard-residual drafts retain exact replacements and current gate evidence.
 #![allow(clippy::unwrap_used)]
+mod common;
+use common::reviewed_templates::{
+    assert_report_with_authored_collisions, assert_template19_replacements,
+};
 #[path = "../examples/unit01/verify.rs"]
 mod verify;
 use cadus_core::curriculum::load_curriculum;
@@ -30,14 +34,18 @@ fn drafts() -> Vec<Value> {
 }
 
 #[test]
-fn exhaustive_pending_families_pass_and_wrong_samples_fail() {
+fn archived_families_keep_canonical_replacements_and_wrong_samples_fail() {
     let rows = drafts();
     let output = root().join("target/hard-residual/regression");
     std::fs::create_dir_all(&output).unwrap();
     let input = output.join("drafts.json");
     std::fs::write(&input, serde_json::to_string(&rows).unwrap()).unwrap();
     let report = verify::run(&input, &output);
-    assert_eq!(report["passed"], rows.len(), "{report}");
+    // These two unchanged drafts are already represented by the canonical
+    // template19 candidates and their recorded worked examples.
+    let replaced = ["logarithm-basics/kp1", "logarithm-basics/kp2"];
+    assert_template19_replacements(&rows, &replaced);
+    assert_report_with_authored_collisions(&report, rows.len(), None, &replaced);
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
     assert_eq!(rows.len(), 5);
