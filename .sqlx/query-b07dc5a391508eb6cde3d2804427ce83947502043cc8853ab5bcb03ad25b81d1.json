@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT sp.id AS \"id!\", sp.source AS \"source!\", sp.content_digest,\n               sp.problem::text AS \"problem!\", sp.expected_answer::text AS \"expected!\",\n               sp.instance_hash AS \"instance_hash!\"\n        FROM serving_pool AS sp\n        JOIN content_store AS cs ON cs.digest = sp.content_digest\n        WHERE sp.user_id = $1 AND sp.kp_id = $2\n          AND sp.source = 'template'\n          AND (sp.claimed_at IS NOT NULL) = $3\n          AND cs.digest = $4 AND cs.status = 'approved'\n          AND cs.approved_policy_digest = $5\n          AND (sp.instance_hash, sp.finite_case_id) IN (\n              SELECT * FROM unnest($6::text[], $7::text[])\n          )\n          AND cs.digest = (\n              SELECT digest FROM content_store\n              WHERE kp_id = $2 AND kind = 'template' AND status = 'approved'\n                AND approved_policy_digest = $5\n              ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest\n              LIMIT 1\n          )\n        ORDER BY CASE WHEN $3 THEN sp.claimed_at ELSE sp.created_at END, sp.id\n        FOR UPDATE OF sp SKIP LOCKED\n        LIMIT $8\n        ",
+  "query": "\n        SELECT sp.id AS \"id!\", sp.source AS \"source!\", sp.content_digest,\n               sp.source_curriculum_digest, sp.source_review_engine_digest,\n               sp.problem::text AS \"problem!\", sp.expected_answer::text AS \"expected!\",\n               sp.instance_hash AS \"instance_hash!\"\n        FROM serving_pool AS sp\n        WHERE sp.user_id = $1\n          AND sp.kp_id = $2\n          AND sp.source = 'exemplar'\n          AND sp.claimed_at IS NOT NULL\n        ORDER BY sp.claimed_at, sp.id\n        FOR UPDATE OF sp SKIP LOCKED\n        LIMIT $3\n        ",
   "describe": {
     "columns": [
       {
@@ -38,18 +38,40 @@
       },
       {
         "ordinal": 3,
+        "name": "source_curriculum_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source_curriculum_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "source_review_engine_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source_review_engine_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
         "name": "problem!",
         "type_info": "Text",
         "origin": "Expression"
       },
       {
-        "ordinal": 4,
+        "ordinal": 6,
         "name": "expected!",
         "type_info": "Text",
         "origin": "Expression"
       },
       {
-        "ordinal": 5,
+        "ordinal": 7,
         "name": "instance_hash!",
         "type_info": "Text",
         "origin": {
@@ -64,11 +86,6 @@
       "Left": [
         "Uuid",
         "Text",
-        "Bool",
-        "Text",
-        "Text",
-        "TextArray",
-        "TextArray",
         "Int8"
       ]
     },
@@ -76,10 +93,12 @@
       false,
       false,
       true,
+      true,
+      true,
       null,
       null,
       false
     ]
   },
-  "hash": "150c5b4ceabc6428460efef2c83f75013a63f735a376ea63291ea3e4736ad556"
+  "hash": "b07dc5a391508eb6cde3d2804427ce83947502043cc8853ab5bcb03ad25b81d1"
 }

@@ -2,8 +2,8 @@
 #![allow(clippy::unwrap_used)]
 mod common;
 use axum::http::StatusCode;
-use cadus_store::test_support::TestDb;
 use cadus_core::curriculum::review_context_digest;
+use cadus_store::test_support::TestDb;
 use common::{
     REVIEW, addition_curriculum, answer_task, events_of_type, learner_at_review_index, lesson_app,
     serve_task, stored_state,
@@ -49,7 +49,7 @@ async fn a_last_answer_that_disagrees_with_score_queues_targeted_confirmation() 
         let curriculum = addition_curriculum(Vec::new());
         let cur_digest = review_context_digest(&curriculum).unwrap();
         let engine_digest = cadus_core::review_engine::DIGEST;
-        seed_variety(&db, user, &cur_digest, engine_digest).await;
+        seed_variety(&db, user, (&cur_digest, engine_digest)).await;
         assert_eq!(serve_task(&app, user, REVIEW).await.0, StatusCode::OK);
         let mut last = json!({});
         for correct in [false, false, false, true] {
@@ -88,7 +88,7 @@ async fn a_last_answer_that_disagrees_with_score_queues_targeted_confirmation() 
     .await;
 }
 
-async fn seed_variety(db: &TestDb, user: sqlx::types::Uuid, curriculum_digest: &str, engine_digest: &str) {
+async fn seed_variety(db: &TestDb, user: sqlx::types::Uuid, digests: (&str, &str)) {
     for kp in ["kp1", "kp2"] {
         for index in 0..8 {
             common::seed_pool_row(
@@ -98,8 +98,7 @@ async fn seed_variety(db: &TestDb, user: sqlx::types::Uuid, curriculum_digest: &
                 &format!("Give {kp} value {index}."),
                 &index.to_string(),
                 &format!("fresh-{kp}-{index}"),
-                curriculum_digest,
-                engine_digest,
+                digests,
             )
             .await;
         }
@@ -154,7 +153,7 @@ async fn a_final_review_miss_closes_only_after_practice_without_changing_its_sco
         let curriculum = addition_curriculum(Vec::new());
         let cur_digest = review_context_digest(&curriculum).unwrap();
         let engine_digest = cadus_core::review_engine::DIGEST;
-        seed_variety(&db, user, &cur_digest, engine_digest).await;
+        seed_variety(&db, user, (&cur_digest, engine_digest)).await;
         assert_eq!(serve_task(&app, user, REVIEW).await.0, StatusCode::OK);
         let mut last = json!({});
         for correct in [true, true, true, false] {

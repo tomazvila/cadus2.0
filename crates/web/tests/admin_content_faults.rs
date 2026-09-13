@@ -9,9 +9,7 @@ mod common;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::{AppState, create_app};
 use common::admin::*;
-use common::{
-    SESSION_TOKEN_ONE, expose_to_policies, fail_reads, fail_updates, hide_column, send,
-};
+use common::{SESSION_TOKEN_ONE, expose_to_policies, fail_reads, fail_updates, hide_column, send};
 
 /// The digest of the pending teach page of `KEY`.
 const TEACH: &str = "r5-teach-digest";
@@ -25,8 +23,6 @@ const TEACH_APPROVE_PATH: &str = "/api/admin/content/r5-teach-digest/approve";
 /// The text of the re-gate read of the pending pages, and of no other
 /// `content_store` read.
 const REGATE_NEEDLE: &str = "kind IN ($5, $6)";
-
-
 
 /// A pending teach page of `KEY` whose worked example is the authored
 /// exemplar, which the gate refuses once the point serves (Hard Rule 1).

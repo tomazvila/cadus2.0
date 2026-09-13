@@ -98,10 +98,19 @@ const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 6] =
     [(0, 74), (1, 4), (2, 17), (3, 8), (4, 699), (5, 7)];
 const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
     ("decided", 2_893),
-    ("undecidable(a chained inequality needs one variable in the middle)", 2),
+    (
+        "undecidable(a chained inequality needs one variable in the middle)",
+        2,
+    ),
     ("undecidable(a character outside the grammar)", 131),
-    ("undecidable(a disjunction requires finite scalar solutions)", 19),
-    ("undecidable(a name that is not a function or variable)", 184),
+    (
+        "undecidable(a disjunction requires finite scalar solutions)",
+        19,
+    ),
+    (
+        "undecidable(a name that is not a function or variable)",
+        184,
+    ),
     ("undecidable(a symbol where a value belongs)", 4),
     ("undecidable(an inequality with no bare variable)", 4),
     ("undecidable(trailing text after the answer)", 10),

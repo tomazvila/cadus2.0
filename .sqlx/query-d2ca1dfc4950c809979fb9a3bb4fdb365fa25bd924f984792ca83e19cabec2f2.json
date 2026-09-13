@@ -1,0 +1,47 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT digest AS \"digest!\", body AS \"body!\"\n        FROM content_store c\n        WHERE kp_id = $1 AND kind = $2 AND status = 'approved'\n          AND approved_policy_digest IS NOT DISTINCT FROM $3\n          AND approved_curriculum_digest = $5\n          AND approved_review_engine_digest = $6\n          AND (kind NOT IN ('teach','hint_ladder') OR\n               approved_template_context_digest IS NOT DISTINCT FROM\n               public.cadus_template_context(kp_id, $3, $5, $6))\n          AND ($4::text IS NULL OR $4 = ANY(public.cadus_template_bank(kp_id, $3, $5, $6)))\n          AND ($7::text IS NULL OR ($7 = $5 AND $8 = $6))\n        ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest\n        LIMIT 1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "digest!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "digest"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "body!",
+        "type_info": "Jsonb",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "body"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "d2ca1dfc4950c809979fb9a3bb4fdb365fa25bd924f984792ca83e19cabec2f2"
+}

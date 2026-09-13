@@ -11,7 +11,7 @@ mod common;
 
 use cadus_web::state::ServedProblem;
 use common::{
-    KEY, LESSON, POOL_TEXT, POOL_ANSWER, PROBLEM_ID, StatusCode, TestDb, assert_refused,
+    KEY, LESSON, POOL_ANSWER, POOL_TEXT, PROBLEM_ID, StatusCode, TestDb, assert_refused,
     drill_app as app, drill_curriculum, hint_task, lesson_learner, lesson_problem, lesson_state,
     put_state, seed_content, seed_learner, seed_open_session, serve_ok, serve_task, stored_state,
     teach_task,
@@ -110,17 +110,15 @@ pub async fn an_approved_ladder_with_no_rung_is_409_no_hint_ladder() {
         let curr_digest = review_context_digest(&curriculum).unwrap();
         let user = seed_learner(&db, "empty-ladder@example.com").await;
         seed_open_session(&db, user).await;
-        seed_content(
-            &db,
-            KEY,
-            "template",
-            "digest-src",
-            json!({}),
-        )
-        .await;
+        seed_content(&db, KEY, "template", "digest-src", json!({})).await;
         common::seed_pool_row(
-            &db, user, KEY, POOL_TEXT, POOL_ANSWER, "hash-empty",
-            &curr_digest, cadus_core::review_engine::DIGEST,
+            &db,
+            user,
+            KEY,
+            POOL_TEXT,
+            POOL_ANSWER,
+            "hash-empty",
+            (&curr_digest, cadus_core::review_engine::DIGEST),
         )
         .await;
         // Link pool row to the template source for hint context.
@@ -165,17 +163,15 @@ pub async fn an_approved_ladder_that_does_not_read_is_500_internal_error() {
         let curr_digest = review_context_digest(&curriculum).unwrap();
         let user = seed_learner(&db, "broken-ladder@example.com").await;
         seed_open_session(&db, user).await;
-        seed_content(
-            &db,
-            KEY,
-            "template",
-            "digest-src2",
-            json!({}),
-        )
-        .await;
+        seed_content(&db, KEY, "template", "digest-src2", json!({})).await;
         common::seed_pool_row(
-            &db, user, KEY, POOL_TEXT, POOL_ANSWER, "hash-broken",
-            &curr_digest, cadus_core::review_engine::DIGEST,
+            &db,
+            user,
+            KEY,
+            POOL_TEXT,
+            POOL_ANSWER,
+            "hash-broken",
+            (&curr_digest, cadus_core::review_engine::DIGEST),
         )
         .await;
         // Link pool row to the template source for hint context.

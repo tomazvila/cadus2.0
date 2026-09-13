@@ -438,9 +438,15 @@ async fn a_store_fault_is_500_on_the_flags() {
             seed_template(&db, DIGEST, KEY, &template_body().to_string()).await;
             let cur_digest = fixture_curriculum_digest();
             seed_pool_row(
-                &db, admin, KEY, "Compute 1 + 1.", "2", "u12-hash",
-                &cur_digest, fixture_review_engine_digest(),
-            ).await;
+                &db,
+                admin,
+                KEY,
+                "Compute 1 + 1.",
+                "2",
+                "u12-hash",
+                (&cur_digest, fixture_review_engine_digest()),
+            )
+            .await;
             match fault {
                 0 => fail_tenant_bind(&db).await,
                 1 => fail_reads(&db, "serving_pool", "count(*) AS depth").await,

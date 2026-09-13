@@ -104,9 +104,9 @@ pub async fn seed_pool_row(
     text: &str,
     answer: &str,
     hash: &str,
-    curriculum_digest: &str,
-    review_engine_digest: &str,
+    digests: (&str, &str),
 ) {
+    let (curriculum_digest, review_engine_digest) = digests;
     let problem = PoolProblem {
         v: 1,
         text: text.to_string(),

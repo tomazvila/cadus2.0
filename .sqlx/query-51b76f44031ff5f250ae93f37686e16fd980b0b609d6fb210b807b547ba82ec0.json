@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        INSERT INTO events (user_id, seq, ts, type, session_id, v, attempt_id, payload)\n        SELECT $1, COALESCE(MAX(e.seq), 0) + 1, $2, $3, $4, $5, $6, $7\n        FROM events e WHERE e.user_id = $1\n        ON CONFLICT (user_id, attempt_id) WHERE attempt_id IS NOT NULL DO NOTHING\n        RETURNING seq\n        ",
+  "query": "\n        INSERT INTO events (user_id, seq, ts, type, session_id, v, attempt_id, payload, attempt_problem_digest)\n        SELECT $1, COALESCE(MAX(e.seq), 0) + 1, $2, $3, $4, $5, $6, $7, $8\n        FROM events e WHERE e.user_id = $1\n        ON CONFLICT (user_id, attempt_id) WHERE attempt_id IS NOT NULL DO NOTHING\n        RETURNING seq\n        ",
   "describe": {
     "columns": [
       {
@@ -23,12 +23,13 @@
         "Text",
         "Int2",
         "Text",
-        "Jsonb"
+        "Jsonb",
+        "Text"
       ]
     },
     "nullable": [
       false
     ]
   },
-  "hash": "d4a3f8d362e56b3d1a74987316dadf90c0a31cdda01aa2bb462ec2a78f3e4f2d"
+  "hash": "51b76f44031ff5f250ae93f37686e16fd980b0b609d6fb210b807b547ba82ec0"
 }

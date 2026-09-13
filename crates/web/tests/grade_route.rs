@@ -34,7 +34,7 @@
 mod common;
 
 use axum::http::StatusCode;
-use cadus_core::curriculum::{review_context_digest, AnswerKind};
+use cadus_core::curriculum::{AnswerKind, review_context_digest};
 use cadus_core::event::{AttemptOutcome, TaskType, WorkQuality};
 use cadus_store::test_support::TestDb;
 use cadus_web::grade::{Grade, deterministic_grade, reference_assisted};
@@ -149,8 +149,7 @@ async fn a_correct_answer_replies_with_the_neutral_tier() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner_with_kp1(&db, "correct@example.com", 5.0).await;
-        let curr_digest =
-            review_context_digest(&addition_curriculum(Vec::new())).unwrap();
+        let curr_digest = review_context_digest(&addition_curriculum(Vec::new())).unwrap();
         seed_pool_row(
             &db,
             user,
@@ -158,8 +157,7 @@ async fn a_correct_answer_replies_with_the_neutral_tier() {
             "Compute 1 + 1.",
             "2",
             "hash-next",
-            &curr_digest,
-            cadus_core::review_engine::DIGEST,
+            (&curr_digest, cadus_core::review_engine::DIGEST),
         )
         .await;
 
@@ -257,8 +255,7 @@ async fn feedback_records_assistance_then_independent_fresh_evidence() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = hinted_learner(&db, "fresh-after-feedback@example.com").await;
-        let curr_digest =
-            review_context_digest(&addition_curriculum(Vec::new())).unwrap();
+        let curr_digest = review_context_digest(&addition_curriculum(Vec::new())).unwrap();
         seed_pool_row(
             &db,
             user,
@@ -266,8 +263,7 @@ async fn feedback_records_assistance_then_independent_fresh_evidence() {
             "Compute 4 + 5.",
             "9",
             "fresh-answer",
-            &curr_digest,
-            cadus_core::review_engine::DIGEST,
+            (&curr_digest, cadus_core::review_engine::DIGEST),
         )
         .await;
         let (status, feedback) = answer(&app, user, "13.5").await;

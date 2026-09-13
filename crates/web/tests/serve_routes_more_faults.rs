@@ -51,14 +51,7 @@ async fn learner_with_live_problem(db: &TestDb, app: &axum::Router, email: &str)
     let user = learner_with_drill_pool_row(db, email).await;
     // Seed a template source and link the pool row to it so the hint route
     // can find the hint ladder via the hand-off source context.
-    seed_content(
-        db,
-        KEY,
-        "template",
-        "live-source",
-        json!({}),
-    )
-    .await;
+    seed_content(db, KEY, "template", "live-source", json!({})).await;
     sqlx::query(
         "UPDATE serving_pool SET content_digest = cs.digest
          FROM content_store AS cs

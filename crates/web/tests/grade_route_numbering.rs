@@ -58,13 +58,26 @@ async fn attempt_ids(db: &TestDb, user: Uuid) -> Vec<String> {
 
 /// Two pool rows of the lesson, so two serves have a problem to draw.
 async fn seed_two_pool_rows(db: &TestDb, user: Uuid) {
-    let curr_digest =
-        review_context_digest(&addition_curriculum(Vec::new())).unwrap();
-    seed_pool_row(db, user, KEY, "Compute 2 + 2.", "4", "hash-a", &curr_digest,
-                  cadus_core::review_engine::DIGEST)
+    let curr_digest = review_context_digest(&addition_curriculum(Vec::new())).unwrap();
+    seed_pool_row(
+        db,
+        user,
+        KEY,
+        "Compute 2 + 2.",
+        "4",
+        "hash-a",
+        (&curr_digest, cadus_core::review_engine::DIGEST),
+    )
     .await;
-    seed_pool_row(db, user, KEY, "Compute 3 + 3.", "6", "hash-b", &curr_digest,
-                  cadus_core::review_engine::DIGEST)
+    seed_pool_row(
+        db,
+        user,
+        KEY,
+        "Compute 3 + 3.",
+        "6",
+        "hash-b",
+        (&curr_digest, cadus_core::review_engine::DIGEST),
+    )
     .await;
 }
 

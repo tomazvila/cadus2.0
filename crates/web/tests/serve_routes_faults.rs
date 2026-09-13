@@ -76,16 +76,17 @@ async fn a_state_write_that_fails_records_no_hint() {
         seed_open_session(&db, user).await;
         let curriculum = drill_curriculum();
         let curr_digest = review_context_digest(&curriculum).unwrap();
-        seed_pool_row(&db, user, KEY, POOL_TEXT, POOL_ANSWER, "hash-a",
-                      &curr_digest, cadus_core::review_engine::DIGEST).await;
-        seed_content(
+        seed_pool_row(
             &db,
+            user,
             KEY,
-            "template",
-            "digest-source",
-            json!({}),
+            POOL_TEXT,
+            POOL_ANSWER,
+            "hash-a",
+            (&curr_digest, cadus_core::review_engine::DIGEST),
         )
         .await;
+        seed_content(&db, KEY, "template", "digest-source", json!({})).await;
         // Link the pool row to the approved template source so the hint route
         // finds it via the source digest.
         sqlx::query(

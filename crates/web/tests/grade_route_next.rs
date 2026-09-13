@@ -11,8 +11,9 @@ mod common;
 use cadus_core::curriculum::review_context_digest;
 use cadus_web::state::ServedProblem;
 use common::{
-    PROBLEM_ID, StatusCode, TestDb, addition_curriculum, answer_lesson, answer_lesson_ok, answer_task, events_of_type,
-    learner_with_kp1, lesson_app as app, lesson_learner, lesson_problem, stored_state,
+    PROBLEM_ID, StatusCode, TestDb, addition_curriculum, answer_lesson, answer_lesson_ok,
+    answer_task, events_of_type, learner_with_kp1, lesson_app as app, lesson_learner,
+    lesson_problem, stored_state,
 };
 use serde_json::{Value, json};
 
@@ -67,12 +68,17 @@ async fn a_drawn_next_problem_carries_no_next_unavailable_key() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner_with_kp1(&db, "has-next@example.com", 5.0).await;
-        let curr_digest =
-            review_context_digest(&addition_curriculum(Vec::new())).unwrap();
+        let curr_digest = review_context_digest(&addition_curriculum(Vec::new())).unwrap();
         common::seed_pool_row(
-            &db, user, common::KEY, "Compute 4 + 5.", "9", "fresh-next",
-            &curr_digest, cadus_core::review_engine::DIGEST,
-        ).await;
+            &db,
+            user,
+            common::KEY,
+            "Compute 4 + 5.",
+            "9",
+            "fresh-next",
+            (&curr_digest, cadus_core::review_engine::DIGEST),
+        )
+        .await;
 
         let body = answer_lesson_ok(&app, user, "14").await;
         assert_eq!(body["task_status"], "continue");
@@ -178,8 +184,7 @@ async fn feedback_never_reuses_the_studied_problem_and_resumes_after_refill() {
                 .feedback_practice
                 .contains_key(common::LESSON)
         );
-        let curr_digest =
-            review_context_digest(&addition_curriculum(Vec::new())).unwrap();
+        let curr_digest = review_context_digest(&addition_curriculum(Vec::new())).unwrap();
         common::seed_pool_row(
             &db,
             user,
@@ -187,8 +192,7 @@ async fn feedback_never_reuses_the_studied_problem_and_resumes_after_refill() {
             "Compute 7 + 3.",
             "10",
             "after-refill",
-            &curr_digest,
-            cadus_core::review_engine::DIGEST,
+            (&curr_digest, cadus_core::review_engine::DIGEST),
         )
         .await;
         let (status, next) = common::serve_task(&app, user, common::LESSON).await;

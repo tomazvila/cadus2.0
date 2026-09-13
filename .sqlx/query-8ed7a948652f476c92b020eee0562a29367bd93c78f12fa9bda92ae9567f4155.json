@@ -1,0 +1,29 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT NOT EXISTS (\n            SELECT 1 FROM unnest($6::text[], $7::text[]) AS wanted(hash, case_id)\n            WHERE NOT EXISTS (\n                SELECT 1 FROM serving_pool AS sp\n                WHERE sp.user_id = $1 AND sp.kp_id = $2\n                  AND sp.source = 'template' AND sp.content_digest = $3\n                  AND sp.source_curriculum_digest = $4\n                  AND sp.source_review_engine_digest = $5\n                  AND sp.instance_hash = wanted.hash AND sp.finite_case_id = wanted.case_id\n            )\n        ) AS \"complete!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "complete!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "TextArray",
+        "TextArray"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "8ed7a948652f476c92b020eee0562a29367bd93c78f12fa9bda92ae9567f4155"
+}

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT c.digest AS \"digest!\", c.kp_id AS \"kp_id!\", c.kind AS \"kind!\",\n               c.status AS \"status!\", c.authoring_attempts AS \"authoring_attempts!\",\n               c.authoring_cost_usd::text AS \"cost_usd?\",\n               c.created_at AS \"created_at!\", c.body AS \"body!\",\n               c.review_reason, c.approved_at, c.approved_policy_digest,\n               (SELECT count(*) FROM content_store a\n                 WHERE a.kp_id = c.kp_id AND a.kind = $4 AND a.status = $5)\n                 AS \"approved_templates!\"\n        FROM content_store c\n        WHERE ($1::text IS NULL OR c.status = $1)\n          AND ($2::text IS NULL OR c.kind = $2)\n          AND ($3::text IS NULL OR c.kp_id = $3)\n          AND ($7::text IS NULL OR c.digest = $7)\n        ORDER BY c.created_at DESC, c.digest\n        LIMIT $6 OFFSET $8\n        ",
+  "query": "\n        SELECT c.digest AS \"digest!\", c.kp_id AS \"kp_id!\", c.kind AS \"kind!\",\n               c.status AS \"status!\", c.authoring_attempts AS \"authoring_attempts!\",\n               c.authoring_cost_usd::text AS \"cost_usd?\",\n               c.created_at AS \"created_at!\", c.body AS \"body!\",\n               c.review_reason, c.approved_at, c.approved_policy_digest,\n               c.approved_template_context_digest, c.approved_curriculum_digest,\n               c.approved_review_engine_digest,\n               (SELECT count(*) FROM content_store a\n                 WHERE a.kp_id = c.kp_id AND a.kind = $4 AND a.status = $5)\n                 AS \"approved_templates!\"\n        FROM content_store c\n        WHERE ($1::text IS NULL OR c.status = $1)\n          AND ($2::text IS NULL OR c.kind = $2)\n          AND ($3::text IS NULL OR c.kp_id = $3)\n          AND ($7::text IS NULL OR c.digest = $7)\n        ORDER BY c.created_at DESC, c.digest\n        LIMIT $6 OFFSET $8\n        ",
   "describe": {
     "columns": [
       {
@@ -121,6 +121,39 @@
       },
       {
         "ordinal": 11,
+        "name": "approved_template_context_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "approved_template_context_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 12,
+        "name": "approved_curriculum_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "approved_curriculum_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 13,
+        "name": "approved_review_engine_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "approved_review_engine_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 14,
         "name": "approved_templates!",
         "type_info": "Int8",
         "origin": "Expression"
@@ -150,8 +183,11 @@
       true,
       true,
       true,
+      true,
+      true,
+      true,
       null
     ]
   },
-  "hash": "5962612e852d2b5ab1818384f68bd3733a876d3be1a2bda12f71b538859ce4a2"
+  "hash": "00e4117b2c78b2d3e1c1ff6b75b8c5f4f8a247043bb43026b9b7c88e050c0fd2"
 }

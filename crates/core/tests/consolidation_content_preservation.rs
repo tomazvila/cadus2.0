@@ -38,8 +38,16 @@ fn is_tautology(sketch: &str) -> bool {
     sketch.split(';').any(|part| {
         let trimmed = part.trim().trim_start_matches('$').trim_end_matches('$');
         if let Some(eq_pos) = trimmed.find(" = ") {
-            let lhs = trimmed[..eq_pos].trim().trim_start_matches('$').trim_end_matches('$').trim();
-            let rhs = trimmed[eq_pos + 3..].trim().trim_start_matches('$').trim_end_matches('$').trim();
+            let lhs = trimmed[..eq_pos]
+                .trim()
+                .trim_start_matches('$')
+                .trim_end_matches('$')
+                .trim();
+            let rhs = trimmed[eq_pos + 3..]
+                .trim()
+                .trim_start_matches('$')
+                .trim_end_matches('$')
+                .trim();
             lhs == rhs && !lhs.contains("\\times") && !lhs.contains('+') && !lhs.contains('-')
         } else {
             false
@@ -48,10 +56,14 @@ fn is_tautology(sketch: &str) -> bool {
 }
 
 fn assert_context_and_variety(problems: &[String], word_prefix: &str) {
-    assert!(problems.iter().any(|p| p.starts_with(word_prefix)),
-        "expected word problem starting with {word_prefix:?}, got: {problems:?}");
-    assert!(problems.iter().any(|p| p.contains("Find")),
-        "expected Find-variant, got: {problems:?}");
+    assert!(
+        problems.iter().any(|p| p.starts_with(word_prefix)),
+        "expected word problem starting with {word_prefix:?}, got: {problems:?}"
+    );
+    assert!(
+        problems.iter().any(|p| p.contains("Find")),
+        "expected Find-variant, got: {problems:?}"
+    );
 }
 
 fn assert_finite_domain(kp: &KnowledgePoint, case_ids: &[&str], expo_roles: &[FiniteCaseRole]) {
@@ -63,8 +75,10 @@ fn assert_finite_domain(kp: &KnowledgePoint, case_ids: &[&str], expo_roles: &[Fi
         assert!(ids.contains(want), "missing case {want} in {ids:?}");
     }
     for role in expo_roles {
-        assert!(d.cases.iter().any(|c| c.role == *role),
-            "missing role {role:?}");
+        assert!(
+            d.cases.iter().any(|c| c.role == *role),
+            "missing role {role:?}"
+        );
     }
     kp.validate_finite_objective_domain().unwrap();
 }
@@ -97,7 +111,10 @@ fn contextual_mixed_practice_across_arithmetic_core() {
 
     // division-facts kp1
     let p = kp_problems(&c, "division-facts", "kp1");
-    assert!(p.iter().any(|p| p.contains("cookies") && p.contains("shared")));
+    assert!(
+        p.iter()
+            .any(|p| p.contains("cookies") && p.contains("shared"))
+    );
     assert!(p.iter().any(|p| p.contains("Find")));
 
     // perfect-squares kp1
@@ -112,9 +129,21 @@ fn multiplication_sketches_are_pedagogical_not_tautological() {
     let c = common::paths::tree();
     let sketches = kp_sketches(&c, "multiplication-tables", "kp1");
 
-    assert!(sketches.iter().any(|s| s.contains("6 \\times 7 = 6 \\times 5 + 6 \\times 2")));
-    assert!(sketches.iter().any(|s| s.contains("8 \\times 4 = 8 \\times 2 \\times 2")));
-    assert!(sketches.iter().any(|s| s.contains("9 \\times 6 = 10 \\times 6 - 6")));
+    assert!(
+        sketches
+            .iter()
+            .any(|s| s.contains("6 \\times 7 = 6 \\times 5 + 6 \\times 2"))
+    );
+    assert!(
+        sketches
+            .iter()
+            .any(|s| s.contains("8 \\times 4 = 8 \\times 2 \\times 2"))
+    );
+    assert!(
+        sketches
+            .iter()
+            .any(|s| s.contains("9 \\times 6 = 10 \\times 6 - 6"))
+    );
     assert!(sketches.iter().any(|s| s.contains("appends one zero")));
 
     for s in &sketches {
@@ -128,14 +157,22 @@ fn multiplication_sketches_are_pedagogical_not_tautological() {
 fn both_log_kps_have_valid_finite_objective_domain() {
     let c = common::paths::tree();
     let kps = c.knowledge_points(c.idx_of("common-natural-logarithms").unwrap());
-    assert_eq!(kps.iter().filter(|kp| kp.finite_objective_domain.is_some()).count(), 2);
+    assert_eq!(
+        kps.iter()
+            .filter(|kp| kp.finite_objective_domain.is_some())
+            .count(),
+        2
+    );
     let kp1 = kps.iter().find(|kp| kp.id.as_str() == "kp1").unwrap();
     let kp2 = kps.iter().find(|kp| kp.id.as_str() == "kp2").unwrap();
 
     assert_finite_domain(
         kp1,
         &["common-neg4", "common-0", "common-6"],
-        &[FiniteCaseRole::PracticeFresh, FiniteCaseRole::ReservedAssessment],
+        &[
+            FiniteCaseRole::PracticeFresh,
+            FiniteCaseRole::ReservedAssessment,
+        ],
     );
     assert_finite_domain(
         kp2,

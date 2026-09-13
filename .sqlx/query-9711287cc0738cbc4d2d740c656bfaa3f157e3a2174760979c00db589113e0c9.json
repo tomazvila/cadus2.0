@@ -1,0 +1,106 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT sp.id AS \"id!\", sp.source AS \"source!\", sp.content_digest,\n               sp.source_curriculum_digest, sp.source_review_engine_digest,\n               sp.problem::text AS \"problem!\", sp.expected_answer::text AS \"expected!\",\n               sp.instance_hash AS \"instance_hash!\"\n        FROM serving_pool AS sp\n        LEFT JOIN content_store AS cs ON cs.digest = sp.content_digest\n        WHERE sp.user_id = $1\n          AND sp.kp_id = $2\n          AND sp.claimed_at IS NULL\n          AND (sp.content_digest IS NULL OR\n               (cs.status = 'approved' AND cs.approved_policy_digest IS NULL\n                AND ($4::text IS NULL OR\n                     (cs.approved_curriculum_digest = $4\n                      AND cs.approved_review_engine_digest = $5\n                      AND sp.source_curriculum_digest = $4\n                      AND sp.source_review_engine_digest = $5))))\n        ORDER BY sp.created_at, sp.id\n        FOR UPDATE OF sp SKIP LOCKED\n        LIMIT $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id!",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "source!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "content_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "content_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "source_curriculum_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source_curriculum_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "source_review_engine_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source_review_engine_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "problem!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 6,
+        "name": "expected!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 7,
+        "name": "instance_hash!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "instance_hash"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Int8",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      true,
+      null,
+      null,
+      false
+    ]
+  },
+  "hash": "9711287cc0738cbc4d2d740c656bfaa3f157e3a2174760979c00db589113e0c9"
+}

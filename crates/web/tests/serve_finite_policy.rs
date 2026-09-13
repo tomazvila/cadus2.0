@@ -2,8 +2,8 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 mod common;
 use cadus_core::curriculum::{
-    Curriculum, FiniteCaseRole, FiniteCaseVariant, FiniteObjectiveCase, FiniteObjectiveDomain, Slug,
-    review_context_digest,
+    Curriculum, FiniteCaseRole, FiniteCaseVariant, FiniteObjectiveCase, FiniteObjectiveDomain,
+    Slug, review_context_digest,
 };
 use cadus_store::content::{CurrentContext, template_review_context};
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
@@ -41,7 +41,12 @@ fn body() -> Value {
         "hints":["Read the index."],"samples":[{"params":{"a":1},"expected":"1"},{"params":{"a":5},"expected":"5"}]})
 }
 
-async fn seed_template(db: &TestDb, curriculum: &Curriculum, policy: &FiniteObjectiveDomain, status: &str) {
+async fn seed_template(
+    db: &TestDb,
+    curriculum: &Curriculum,
+    policy: &FiniteObjectiveDomain,
+    status: &str,
+) {
     let cur_digest = review_context_digest(curriculum).unwrap();
     sqlx::query("INSERT INTO content_store (digest,kp_id,kind,body,status,approved_policy_digest,approved_at,approved_curriculum_digest,approved_review_engine_digest) VALUES ('finite-content','addition/kp1','template',$1,$2,$3,now(),$4,$5)")
         .bind(body()).bind(status).bind(policy.fingerprint(KEY).unwrap())

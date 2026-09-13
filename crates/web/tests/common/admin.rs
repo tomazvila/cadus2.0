@@ -191,10 +191,9 @@ impl<'a> Seed<'a> {
 
 /// Write one `content_store` row with the superuser pool.
 pub async fn seed_row(db: &TestDb, seed: &Seed<'_>) {
-    let cur_digest = seed.curriculum_digest.map_or_else(
-        fixture_curriculum_digest,
-        |d| d.to_owned(),
-    );
+    let cur_digest = seed
+        .curriculum_digest
+        .map_or_else(fixture_curriculum_digest, |d| d.to_owned());
     let eng_digest = seed.review_engine_digest.map_or_else(
         || fixture_review_engine_digest().to_owned(),
         |d| d.to_owned(),
@@ -359,14 +358,9 @@ async fn approve_body_inner(db: &TestDb, kp_id: &str, digest: &str, is_template:
         review_engine_digest: eng_digest,
     };
     let candidate = is_template.then_some(digest);
-    let (template_context, _) = template_review_context(
-        &db.admin,
-        kp_id,
-        current,
-        candidate,
-    )
-    .await
-    .expect("the template context reads from the seeded database");
+    let (template_context, _) = template_review_context(&db.admin, kp_id, current, candidate)
+        .await
+        .expect("the template context reads from the seeded database");
     json!({
         "policy_digest": null,
         "template_context_digest": template_context,

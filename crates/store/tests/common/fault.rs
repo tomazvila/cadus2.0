@@ -30,7 +30,7 @@ pub async fn dead_pool(db: &TestDb) -> PgPool {
     // Clone the admin pool so the before_acquire closure can use it.
     let admin = db.admin.clone();
 
-    let pool = PgPoolOptions::new()
+    PgPoolOptions::new()
         .max_connections(1)
         .test_before_acquire(false)
         .before_acquire(move |conn, _meta| {
@@ -53,9 +53,7 @@ pub async fn dead_pool(db: &TestDb) -> PgPool {
         })
         .connect_with(options.database(&db.name).username(APP_ROLE).password(""))
         .await
-        .expect("the dead pool opens");
-
-    pool
+        .expect("the dead pool opens")
 }
 
 /// A closed app pool: every acquire fails at once with `PoolClosed`.
