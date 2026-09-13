@@ -1,5 +1,5 @@
 //! Part of `tests/admin_content.rs`: the store faults and the document shapes
-//! the review routes report. The header of that file gives the requirements
+//! the review routes report.  The header of that file gives the requirements
 //! and the rules.
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
@@ -9,7 +9,9 @@ mod common;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::{AppState, create_app};
 use common::admin::*;
-use common::{SESSION_TOKEN_ONE, expose_to_policies, fail_reads, fail_updates, hide_column, send};
+use common::{
+    SESSION_TOKEN_ONE, expose_to_policies, fail_reads, fail_updates, hide_column, send,
+};
 
 /// The digest of the pending teach page of `KEY`.
 const TEACH: &str = "r5-teach-digest";
@@ -24,9 +26,7 @@ const TEACH_APPROVE_PATH: &str = "/api/admin/content/r5-teach-digest/approve";
 /// `content_store` read.
 const REGATE_NEEDLE: &str = "kind IN ($5, $6)";
 
-/// The text of the re-gate read of the pending pages and the approved
-/// template, and of no other `content_store` read.
-const RE_REGATE_NEEDLE: &str = "ORDER BY kind, digest";
+
 
 /// A pending teach page of `KEY` whose worked example is the authored
 /// exemplar, which the gate refuses once the point serves (Hard Rule 1).
@@ -203,7 +203,7 @@ async fn the_show_of_an_approved_document_carries_its_stamp() {
 
 /// An approval of a template judges the pending pages of its knowledge point
 /// again: the page that works the exemplar is rejected and named in the
-/// answer. A second approved template with the same instances adds no
+/// answer.  A second approved template with the same instances adds no
 /// instance twice.
 #[tokio::test]
 async fn an_approval_rejects_the_page_that_the_served_material_gives_away() {
@@ -274,7 +274,7 @@ async fn a_regate_that_does_not_run_answers_null_and_keeps_the_approval() {
                 1 => fail_updates(&db, "content_store", "NEW.status = 'rejected'").await,
                 _ => {
                     expose_to_policies(&db, "content_store").await;
-                    fail_reads(&db, "content_store", RE_REGATE_NEEDLE).await;
+                    fail_approved_document_read(&db).await;
                 }
             }
 
@@ -287,6 +287,39 @@ async fn a_regate_that_does_not_run_answers_null_and_keeps_the_approval() {
         })
         .await;
     }
+}
+
+/// Fail the document re-read after approval. Passing the row status into the
+/// fault function makes the condition independent of SQL evaluation order.
+/// The initial pending lookup and the separate re-gate query remain readable.
+async fn fail_approved_document_read(db: &TestDb) {
+    sqlx::query(sqlx::AssertSqlSafe(
+        "CREATE OR REPLACE FUNCTION test_fault_approved_doc(row_status text) RETURNS boolean \
+         LANGUAGE plpgsql STABLE AS $$ \
+         BEGIN \
+         IF row_status = 'approved' AND position('approved_templates' in current_query()) > 0 THEN \
+         RAISE EXCEPTION 'injected fault: approved document read'; \
+         END IF; \
+         RETURN true; \
+         END $$",
+    ))
+    .execute(&db.admin)
+    .await
+    .unwrap();
+    sqlx::query(sqlx::AssertSqlSafe(
+        "GRANT EXECUTE ON FUNCTION test_fault_approved_doc(text) TO cadus_app",
+    ))
+    .execute(&db.admin)
+    .await
+    .unwrap();
+    sqlx::query(sqlx::AssertSqlSafe(
+        "CREATE POLICY test_fault_approved_doc ON content_store \
+         AS RESTRICTIVE FOR SELECT \
+         USING (test_fault_approved_doc(status))",
+    ))
+    .execute(&db.admin)
+    .await
+    .unwrap();
 }
 
 /// A reject body that is not JSON at all is `422`.
