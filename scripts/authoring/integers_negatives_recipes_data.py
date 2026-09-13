@@ -365,9 +365,9 @@ RECIPES: dict[KpKey, list[NewExemplar]] = {
         # held-out: division comes first, and the leading term is positive
         # (the existing two both start negative).
         _exact(
-            "Compute $9 + 20 \\div (-4)$.",
-            str(9 + 20 // -4),
-            f"Divide first: $20 \\div (-4) = -5$; $9 + (-5) = {9 + 20 // -4}$.",
+            "Compute $9+8\\div(-4)$.",
+            str(9 + 8 // -4),
+            f"Divide first: $8\\div(-4)=-2$, then $9+(-2)={9 + 8 // -4}$.",
         ),
     ],
     # constraint: "one set of parentheses; values from -12 to 12"
