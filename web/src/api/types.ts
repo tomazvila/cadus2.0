@@ -279,6 +279,7 @@ export interface EnrollResponse {
 // The other halves of the contract, kept in sibling files so no file passes 500 lines.
 // ---------------------------------------------------------------------------
 
+export * from './types-report';
 export * from './types-study';
 export * from './types-review';
 export * from './types-integrated';

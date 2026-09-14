@@ -4,6 +4,7 @@
  * `types.ts` carries the conventions and the source-of-truth order. Every rule there holds
  * here.
  */
+import type { ProblemReportReceipt, ProblemReportSubmission } from './types-report';
 import type {
   EnrollResponse,
   GraphResponse,
@@ -96,6 +97,8 @@ export interface ApiClient {
   sessionStart(): Promise<SessionStartResponse>;
   sessionEnd(minutes?: number): Promise<SessionEndResponse>;
   getPlan(): Promise<SessionPlanResponse>;
+  taskReport(taskId: string, body: ProblemReportSubmission, signal?: AbortSignal): Promise<ProblemReportReceipt>;
+  getProblemReport(reportId: string, signal?: AbortSignal): Promise<ProblemReportReceipt>;
   taskServe(taskId: string): Promise<ServedProblem>;
   taskQuizResult(taskId: string, practice?: boolean): Promise<QuizResultResponse>;
   taskTeach(taskId: string): Promise<TeachResponse>;
@@ -202,6 +205,8 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'POST', path: '/api/task/{task_id}/teach', auth: 'S', via: 'method', client: 'taskTeach' },
   { method: 'POST', path: '/api/task/{task_id}/hint', auth: 'S', via: 'method', client: 'taskHint' },
   { method: 'POST', path: '/api/task/{task_id}/answer', auth: 'S', via: 'method', client: 'taskAnswer' },
+  { method: 'POST', path: '/api/task/{task_id}/report', auth: 'S', via: 'method', client: 'taskReport' },
+  { method: 'GET', path: '/api/reports/{report_id}', auth: 'S', via: 'method', client: 'getProblemReport' },
   { method: 'POST', path: '/api/task/{task_id}/integrated', auth: 'S', via: 'method', client: 'taskIntegrated' },
   { method: 'POST', path: '/api/task/{task_id}/integrated/hint', auth: 'S', via: 'method', client: 'taskIntegratedHint' },
   { method: 'POST', path: '/api/task/{task_id}/integrated/answer', auth: 'S', via: 'method', client: 'taskIntegratedAnswer' },

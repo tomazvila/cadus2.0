@@ -41,14 +41,17 @@ pub async fn attempt(
     user_id: Uuid,
     key: &str,
 ) -> Result<Option<cadus_core::event::IntegratedAttempt>, StoreError> {
-    let row = sqlx::query_scalar::<_, Json<Event>>(
-        "SELECT payload FROM events WHERE user_id = $1 AND attempt_id = $2",
+    let row = sqlx::query_as::<_, (i64, Json<Event>)>(
+        "SELECT seq,payload FROM events WHERE user_id = $1 AND attempt_id = $2",
     )
     .bind(user_id)
     .bind(key)
     .fetch_optional(&mut **tx)
     .await?;
-    Ok(row.and_then(|row| match row.0 {
+    let mut rows: Vec<crate::state::EventRow> = row.into_iter()
+        .map(|(seq, Json(event))| crate::state::EventRow { seq,event }).collect();
+    crate::reports::task_outcomes::overlay(tx,user_id,&mut rows).await?;
+    Ok(rows.into_iter().find_map(|row| match row.event {
         Event::IntegratedAttempt(attempt) => Some(attempt),
         _ => None,
     }))

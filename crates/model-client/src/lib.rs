@@ -50,6 +50,8 @@ mod attempt;
 mod config;
 mod reply;
 mod transport;
+pub mod qwen;
+pub use qwen::{QwenClient, post_json};
 
 use std::time::{Duration, Instant};
 

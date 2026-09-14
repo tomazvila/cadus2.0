@@ -33,6 +33,7 @@ pub mod integrated;
 pub mod pool;
 pub mod shutdown;
 pub mod state;
+pub mod reports;
 
 pub use config::{
     CLIENT_TIMEOUT_VAR, DEFAULT_CLIENT_TIMEOUT_MS, DEFAULT_STATEMENT_TIMEOUT_MS, DbConfig,

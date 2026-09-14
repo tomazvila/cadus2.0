@@ -17,7 +17,7 @@ use cadus_core::selector::{
     quiz_is_due, schedule_drills,
 };
 use cadus_core::xp::{CourseCounts, course_counts};
-use cadus_store::state::{EventRow, load_events};
+use cadus_store::state::{EventRow, load_raw_events};
 use serde_json::{Map, Value, json};
 
 use super::EXPORT_MEDIA_TYPE;
@@ -338,7 +338,7 @@ pub async fn export(
     Tenant(user_id): Tenant,
 ) -> Result<Response, ApiError> {
     let mut tx = begin(&state, user_id).await?;
-    let events = store(&state, load_events(&mut tx, user_id)).await?;
+    let events = store(&state, load_raw_events(&mut tx, user_id)).await?;
     drop(tx);
     let body = export_body(&events);
 

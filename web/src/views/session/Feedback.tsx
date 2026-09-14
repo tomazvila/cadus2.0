@@ -48,7 +48,8 @@ export interface FeedbackProps {
   hasNext: boolean;
   onContinue: () => void;
   onEnd: () => void;
-  continueRef?: React.Ref<HTMLButtonElement>;
+  onRefresh?: () => void;
+  continueRef?: React.Ref<HTMLButtonElement> | undefined;
   /**
    * The async diagnosis panel (S9), rendered LAST and above the actions.
    *
@@ -64,9 +65,12 @@ export function Feedback({
   hasNext,
   onContinue,
   onEnd,
+  onRefresh,
   continueRef,
   children,
 }: FeedbackProps) {
+  if (res.report_corrected) return <CorrectedFeedback res={res} onContinue={onRefresh ?? onContinue}
+    onEnd={onEnd} continueRef={continueRef} />;
   const ungraded = isUngraded(res);
   return (
     <div className={`feedback feedback-${MOOD[res.outcome]}`}>
@@ -153,4 +157,16 @@ export function Rework({ res }: { res: ReworkResponse }) {
       </div>
     </div>
   );
+}
+
+function CorrectedFeedback({ res, onContinue, onEnd, continueRef }: Pick<FeedbackProps, 'res' | 'onContinue' | 'onEnd' | 'continueRef'>) {
+  return <div className="feedback feedback-correct">
+    <div className="feedback-head"><span className="feedback-mark"><Tick /></span><span className="feedback-title">Correct</span></div>
+    <p role="status">Grade corrected after verification.</p>
+    {res.solution ? <div className="solution"><div className="solution-label">Solution</div><MathBlock className="solution-text">{res.solution}</MathBlock></div> : null}
+    <div className="actions">
+      <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>Continue with updated progress</button>
+      <button type="button" className="btn btn-ghost" onClick={onEnd}>End session</button>
+    </div>
+  </div>;
 }

@@ -81,6 +81,13 @@ impl HttpClient {
         Self::with_trust(base_url, provider, roots)
     }
 
+    /// Build a transport for an exact internal URL, without the completion suffix.
+    pub(crate) fn new_exact(url: &str) -> Result<Self, TransportError> {
+        let mut client = Self::new(url)?;
+        client.endpoint = Url::parse(url).map_err(|err| why("the URL does not parse", &err))?;
+        Ok(client)
+    }
+
     /// [`HttpClient::new`] over a given crypto provider and trust store.
     ///
     /// A test gives a trust store that holds its own certificate authority,
@@ -165,13 +172,16 @@ impl HttpClient {
         // `Value::to_string` is the JSON text of the body, and it never fails.
         let payload = body.to_string().into_bytes();
 
-        let request = Request::builder()
+        let mut request = Request::builder()
             .method("POST")
             .uri(&path)
             .header(HOST, &authority)
             .header(CONTENT_TYPE, "application/json")
-            .header(AUTHORIZATION, format!("Bearer {}", cfg.api_key))
-            .header(TITLE_HEADER, TITLE)
+            .header(TITLE_HEADER, TITLE);
+        if !cfg.api_key.is_empty() {
+            request = request.header(AUTHORIZATION, format!("Bearer {}", cfg.api_key));
+        }
+        let request = request
             .body(Full::new(Bytes::from(payload)))
             .map_err(|err| why("the request does not build", &err))?;
 

@@ -301,7 +301,7 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
         />
       );
     case 'diagnostic':
-      return <Diagnostic diag={placement} demo={api.demo} onUnauthorized={onUnauthorized} onExit={goHome} />;
+      return <Diagnostic diag={placement} reportApi={api} demo={api.demo} onUnauthorized={onUnauthorized} onExit={goHome} />;
     case 'map':
       return <CurriculumMap {...common} onExit={() => { setView(view.back); }} />;
     default:

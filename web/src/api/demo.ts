@@ -301,6 +301,8 @@ export function createDemoApi(): ApiClient {
 
     // SERVE-idem: the SAME problem comes back until an answer commits it. `cursor` is read
     // here and written only by `taskAnswer`.
+    taskReport: async () => { throw new ApiError(503, 'report_unavailable', 'Reports need a signed-in session. The demo has no review worker.'); },
+    getProblemReport: async () => { throw new ApiError(503, 'report_unavailable', 'Reports need a signed-in session. The demo has no review worker.'); },
     taskServe: async (taskId) => {
       if (taskId !== DEMO_TASK_ID) refuse(404, 'unknown_task', 'The demo plans one task.');
       if (cursor >= DEMO_PROBLEMS.length) {

@@ -66,7 +66,10 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     progress_for(&mut scratch, &task, graph);
     // The section 4.2 re-check, in its two refusals: a closed task is
     // `409 task_complete`, a superseded id is `404 unknown_problem`.
-    let served = scratch.validate(&task_id, &submitted.problem_id)?.clone();
+    let mut served = scratch.validate(&task_id, &submitted.problem_id)?.clone();
+    let verified_answer = crate::problem_reports::apply(
+        &state, content, &mut tx, &mut served, &submitted.answer,
+    ).await?;
 
     // The clock is measured BEFORE the grade, so no grading work inflates it.
     let (secs, timing_tags) = measure_secs(
@@ -75,7 +78,12 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         expected_time(graph, &served),
     );
     let kind = served_kind(&served)?;
-    let grade = grade_served_item(&served, &submitted.answer, kind);
+    let grade = if verified_answer {
+        Grade { correct: true, outcome: AttemptOutcome::Correct,
+            work_quality: WorkQuality::NearlyPerfect, error_tags: Vec::new() }
+    } else {
+        grade_served_item(&served, &submitted.answer, kind)
+    };
     // T6, spec section 7: one count per grade DECISION, taken with no model call.
     state.metrics.count_grade(metrics::grade_result(&grade));
     let mut error_tags = grade.error_tags.clone();

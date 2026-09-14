@@ -62,6 +62,7 @@ pub mod operator;
 pub mod origin;
 pub mod path;
 pub mod report;
+pub mod problem_reports;
 mod route_prelude;
 pub mod security;
 pub mod serve;
@@ -234,6 +235,8 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/task/{task_id}/hint", post(serve::hint))
         // Unit U8, spec section 11. The same rule: before the three layers.
         .route("/api/task/{task_id}/answer", post(grade::answer))
+        .route("/api/task/{task_id}/report", post(problem_reports::create))
+        .route("/api/reports/{report_id}", get(problem_reports::get))
         // D-F10: the integrated task. A multi-step task with an authored item
         // serves it here as ONE problem and grades it in one submission; a task
         // with no item answers 409 and keeps the per-component routes above.

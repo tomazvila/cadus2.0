@@ -174,7 +174,10 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     )
     .await?;
     assistance::submission(&mut submission, &used);
-    let mut result = grade(item, &submission);
+    let (corrected_item, mut result) =
+        crate::problem_reports::grade_integrated(&state, content, &mut tx, item, &submission)
+            .await?;
+    let item = &corrected_item;
     assistance::verdict(&mut result, &used);
     let mut record = attempt_event(item, &result, &submission, &task_id, &session, now);
     record.instruction_kp = scratch.integrated_instruction.get(&task_id).cloned();

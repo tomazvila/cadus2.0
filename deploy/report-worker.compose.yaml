@@ -1,0 +1,57 @@
+# Add this override to the existing homelab Compose invocation. It starts nothing alone.
+# See REPORT_WORKER.md. Secrets are supplied by the existing deployment environment.
+services:
+  cadus2-report-worker:
+    image: ${CADUS_REPORT_WORKER_IMAGE:-cadus2:latest}
+    restart: unless-stopped
+    init: true
+    command: [cadus-report-worker]
+    environment:
+      DATABASE_URL: postgresql://cadus_admin:${CADUS2_ADMIN_PASSWORD:?CADUS2_ADMIN_PASSWORD is required}@cadus2-db:5432/cadus
+      RUST_LOG: info
+      QWEN_BASE_URL: http://10.8.0.3:8080/v1
+      QWEN_MODEL: qwen-uncensored
+      QWEN_VERIFY_URL: http://cadus2-verifier:8080
+      QWEN_MAX_TOKENS: '8192'
+      QWEN_TIMEOUT_SECS: '600'
+      QWEN_VERIFY_TIMEOUT_SECS: '120'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=32m,mode=1777
+    cpus: '1.0'
+    mem_limit: 1g
+    pids_limit: 64
+    stop_grace_period: 30s
+    depends_on:
+      cadus2-migrate:
+        condition: service_completed_successfully
+      cadus2-verifier:
+        condition: service_healthy
+    networks: [cadus2-backend, cadus2-verification]
+
+  cadus2-verifier:
+    image: cadus-verifier:report-dev-20260914
+    restart: unless-stopped
+    init: true
+    user: '65532:65532'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=256m,mode=1777
+    cpus: '2.0'
+    mem_limit: 3g
+    pids_limit: 64
+    healthcheck:
+      test: [CMD, python3, -E, -s, -B, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=3).read()"]
+      interval: 120s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks: [cadus2-verification]
+
+networks:
+  cadus2-verification:
+    internal: true

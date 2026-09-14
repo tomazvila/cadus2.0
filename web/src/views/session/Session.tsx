@@ -37,6 +37,9 @@ import { serveIntegrated } from './serveIntegrated';
 import { Feedback, Rework } from './Feedback';
 import { Diagnosis } from './Diagnosis';
 import { useDiagnosisStream } from './useDiagnosis';
+import { useProblemReport } from './useProblemReport';
+import { ProblemReport, QuestionReport } from './ProblemReport';
+import { applyReportCorrection } from './applyReportCorrection';
 
 /** The auto-advance window, in milliseconds. The 1.0 literal. */
 const AUTO_ADVANCE_MS = 1400;
@@ -87,6 +90,9 @@ export function Session({
   const [hints, setHints] = useState<string[]>(NO_HINTS);
   const [referenceLesson, setReferenceLesson] = useState<string | null>(null);
   const [result, setResult] = useState<AnswerResponse | null>(null);
+  const report = useProblemReport(api, undefined, (receipt, context) => {
+    setResult((previous) => applyReportCorrection(previous, receipt, context));
+  });
   const [rework, setRework] = useState<ReworkResponse | null>(null);
   const [summary, setSummary] = useState<SessionEndResponse | null>(null);
 
@@ -283,6 +289,7 @@ export function Session({
     problemRef, taskRef, answerRef, workRef,
     answeredForRef: answeredFor, timedOutForRef: timedOutFor,
     setResult, setRework, setElapsed, setHints, setReferenceLesson,
+    onSubmitted: report.remember,
     countdown, elapsed,
   });
 
@@ -328,7 +335,7 @@ export function Session({
   // registered in the lifetime, so leaving the view inside the window cancels it, and the
   // cleanup cancels it when a click advances first.
   useEffect(() => {
-    if (phase !== 'feedback') return undefined;
+    if (phase !== 'feedback' || report.open) return undefined;
     // Integrated feedback has its own receipt and advances only on Continue.
     if (!result) return;
     const verdict = result;
@@ -336,7 +343,7 @@ export function Session({
     const { next } = verdict;
     const id = life.setTimeout(() => { advanceRef.current(next); }, AUTO_ADVANCE_MS);
     return () => life.clearTimer(id);
-  }, [phase, result, life]);
+  }, [phase, result, life, report.open]);
 
   // Focus moves on every transition (spec section 4.5). Each control is on screen in the
   // phase that focuses it, so the refs name them.
@@ -349,7 +356,7 @@ export function Session({
   // ---- render --------------------------------------------------------------
 
   if (phase === 'done') {
-    return <SessionSummary summary={summary} homeRef={homeRef} onExit={onExit} />;
+    return <><SessionSummary summary={summary} homeRef={homeRef} onExit={onExit} /><ProblemReport report={report} /></>;
   }
 
   if (phase === 'closing') {
@@ -386,6 +393,7 @@ export function Session({
     return (
       <section className="view-session" aria-busy={phase === 'loading'}>
         <Teach task={session.task} instruction={teaching} onContinue={practise} />
+        <ProblemReport report={report} />
       </section>
     );
   }
@@ -394,7 +402,7 @@ export function Session({
     return <section className="view-session">
       <p hidden={!session.task.integrated_assessment}>Delayed application assessment</p>
       <button type="button" className="btn btn-ghost" onClick={onExit}>Exit</button>
-      <Integrated key={session.task.task_id} api={api} taskId={session.task.task_id}
+      <Integrated key={session.task.task_id} api={api} reportApi={api} taskId={session.task.task_id}
         problem={integrated} onUnauthorized={demo ? undefined : onUnauthorized}
         onGraded={() => gate.enter('feedback')}
         onContinue={() => {
@@ -470,6 +478,11 @@ export function Session({
           </div>
         )}
 
+        <QuestionReport enabled={phase === 'ready'} key={`served:${problem.problem_id}`} api={api} hideResult context={{
+          task_id: session.task.task_id, problem_id: problem.problem_id, report_kind: 'served',
+          problem_text: problem.text, answer: '', work: '',
+        }} />
+        <ProblemReport report={report} />
         {rework ? <Rework res={rework} /> : null}
 
         {result ? (
@@ -478,6 +491,7 @@ export function Session({
             hasNext={!!result.next || !!result.next_unavailable}
             onContinue={() => advance(result.next, result.next_unavailable)}
             onEnd={endSession}
+            onRefresh={onExit}
             continueRef={continueRef}
           >
             {/* Keyed by the attempt, so a second grade of the same problem — the DD-3/P1

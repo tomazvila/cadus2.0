@@ -5,7 +5,7 @@
 use cadus_store::test_support::TestDb;
 use uuid::Uuid;
 
-/// The 16 tables that carry a tenant policy (`docs/SCHEMA.md`, C3).
+/// The 17 tables that carry a tenant policy (`docs/SCHEMA.md`, C3).
 ///
 /// `diagnosis_jobs` and `email_outbox` joined the list with round-3 finding #15.
 /// The worker reads both as `cadus_admin`, which holds BYPASSRLS, so the old
@@ -19,7 +19,7 @@ use uuid::Uuid;
 ///
 /// The order is the `C` collation order of `pg_class.relname`, because the
 /// catalog queries below order by that column.
-pub const RLS_TABLES: [&str; 16] = [
+pub const RLS_TABLES: [&str; 18] = [
     "anki_cards_created",
     "anki_queue",
     "auth_sessions",
@@ -31,6 +31,8 @@ pub const RLS_TABLES: [&str; 16] = [
     "exposure_history_progress",
     "learner_models",
     "oauth_accounts",
+    "problem_report_diagnostics",
+    "problem_reports",
     "profiles",
     "serving_pool",
     "session_plans",
@@ -44,7 +46,7 @@ pub const EXEMPT_TABLES: [&str; 1] = ["model_call_log"];
 /// The union of the two lists above: every `public` table with a `user_id`
 /// column. The literal union pins that no table sits outside both buckets
 /// (finding #23).
-pub const ALL_USER_ID_TABLES: [&str; 17] = [
+pub const ALL_USER_ID_TABLES: [&str; 19] = [
     "anki_cards_created",
     "anki_queue",
     "auth_sessions",
@@ -57,6 +59,8 @@ pub const ALL_USER_ID_TABLES: [&str; 17] = [
     "learner_models",
     "model_call_log",
     "oauth_accounts",
+    "problem_report_diagnostics",
+    "problem_reports",
     "profiles",
     "serving_pool",
     "session_plans",
@@ -65,7 +69,7 @@ pub const ALL_USER_ID_TABLES: [&str; 17] = [
 ];
 
 /// The literal text of the `tenant_isolation` predicate, as Postgres prints it
-/// from the catalog. Both `USING` and `WITH CHECK` carry this text on all 16
+/// from the catalog. Both `USING` and `WITH CHECK` carry this text on all 17
 /// policies. The literal pins the `nullif` guard and the `true` missing-ok flag,
 /// so an edit of `migrations/0006_grants_rls.sql` cannot pass in silence (C3).
 pub const POLICY_PREDICATE: &str =
@@ -114,7 +118,7 @@ pub const APP_SEQUENCE_PRIVILEGES: [(&str, [bool; 3]); 1] = [
 /// writes five of its columns.
 /// `app_role_privilege_matrix_is_the_literal_table` asserts the column grants
 /// separately.
-pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 23] = [
+pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 27] = [
     // #8: the runtime role holds nothing on the migration ledger.
     ("_sqlx_migrations", [false, false, false, false, false]),
     ("anki_cards_created", [true, true, true, true, false]),
@@ -145,6 +149,11 @@ pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 23] = [
     // #5: only the worker spends tokens, and the worker is cadus_admin.
     ("model_call_log", [false, false, false, false, false]),
     ("oauth_accounts", [true, true, true, true, false]),
+    // Reports permit only the seven input-column INSERT grants listed below.
+    ("problem_corrections", [true, false, false, false, false]),
+    ("problem_report_diagnostics", [true, true, true, false, false]),
+    ("problem_report_steps", [false, false, false, false, false]),
+    ("problem_reports", [true, false, false, false, false]),
     ("profiles", [true, true, true, true, false]),
     ("serving_pool", [true, true, true, true, false]),
     ("session_plans", [true, true, true, true, false]),
@@ -284,11 +293,18 @@ pub const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 11] = [
 /// therefore rewrote the authoritative event document with every C2 test green.
 /// `aw` is INSERT plus UPDATE: the two column lists of `users` in
 /// `0006_grants_rls.sql`. Neither list holds `id` or `is_admin`.
-pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 8] = [
+pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 15] = [
     // migration 0020: the exposure backfill can write the legacy cursor.
     ("exposure_history_progress", "target_seq", "cadus_app=w"),
     ("exposure_history_progress", "through_seq", "cadus_app=w"),
     ("exposure_history_progress", "updated_at", "cadus_app=w"),
+    ("problem_reports", "attempt_id", "cadus_app=a"),
+    ("problem_reports", "input", "cadus_app=a"),
+    ("problem_reports", "problem_id", "cadus_app=a"),
+    ("problem_reports", "request_id", "cadus_app=a"),
+    ("problem_reports", "source_hash", "cadus_app=a"),
+    ("problem_reports", "task_id", "cadus_app=a"),
+    ("problem_reports", "user_id", "cadus_app=a"),
     ("users", "created_at", "cadus_app=aw"),
     ("users", "disabled_at", "cadus_app=aw"),
     ("users", "email", "cadus_app=aw"),
@@ -303,7 +319,7 @@ pub const COLUMN_ACL_GRANTS: [(&str, &str, &str); 8] = [
 /// `n` is SET NULL, and `a` is NO ACTION. `events` must stay `r`: C2 says the
 /// event log outlives the account, and a flip to CASCADE erases a learner's
 /// whole history on one `DELETE FROM users` with the store suite green.
-pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 20] = [
+pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 24] = [
     ("anki_cards_created", "anki_cards_created_user_id_fkey", "c"),
     ("anki_queue", "anki_queue_user_id_fkey", "c"),
     ("auth_sessions", "auth_sessions_user_id_fkey", "c"),
@@ -323,6 +339,18 @@ pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 20] = [
     ("learner_models", "learner_models_user_id_fkey", "c"),
     ("model_call_log", "model_call_log_user_id_fkey", "n"),
     ("oauth_accounts", "oauth_accounts_user_id_fkey", "c"),
+    (
+        "problem_corrections",
+        "problem_corrections_report_id_fkey",
+        "a",
+    ),
+    ("problem_report_diagnostics", "problem_report_diagnostics_user_id_fkey", "c"),
+    (
+        "problem_report_steps",
+        "problem_report_steps_report_id_fkey",
+        "c",
+    ),
+    ("problem_reports", "problem_reports_user_id_fkey", "c"),
     ("profiles", "profiles_user_id_fkey", "c"),
     ("serving_pool", "serving_pool_content_digest_fkey", "a"),
     ("serving_pool", "serving_pool_user_id_fkey", "c"),

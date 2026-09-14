@@ -105,6 +105,14 @@ pub async fn start(req: Ready, body: Option<Json<Value>>) -> Reply {
     }
 
     let diag = markable_diagnostic(&req.content, course.id.as_str());
+    req.store(cadus_store::reports::diagnostics::start(
+        &mut tx,
+        req.user_id,
+        &json!(diag),
+        &json!(req.content.cfg),
+        req.content.curriculum_context_digest()?,
+    ))
+    .await?;
     let mut scratch = req.read_state(&mut tx).await?;
     let probe = deal_probe(&diag, &req.content, &mut scratch, req.now);
     save_diagnostic(&req.state, &mut tx, req.user_id, &diag, &scratch).await?;
@@ -194,10 +202,15 @@ fn mark_probe(
     served: &ServedProblem,
     submitted: &str,
     now_micros: i64,
+    verified_alias: bool,
 ) -> Marked {
     let expected_time = topic_record(graph, topic).map(|record| record.expected_time_secs);
     let (secs, _) = measure_secs(served.started_at, now_micros, expected_time);
-    let grade = grade_item(&served.expected, submitted, kind);
+    let mut grade = grade_item(&served.expected, submitted, kind);
+    if verified_alias {
+        grade.correct = true;
+        grade.outcome = AttemptOutcome::Correct;
+    }
     let weight = if grade.outcome.is_ungraded() {
         0.0
     } else {
@@ -258,7 +271,10 @@ pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
     let mut tx = req.open_locked().await?;
     let mut diag = load_diagnostic(&req.state, &mut tx, req.user_id).await?;
     let mut scratch = req.read_state(&mut tx).await?;
-    let served = served_probe(&scratch, &problem_id)?;
+    let mut served = served_probe(&scratch, &problem_id)?;
+    let verified_alias =
+        crate::problem_reports::apply(&req.state, &req.content, &mut tx, &mut served, &submitted)
+            .await?;
     let (topic, kind) = probe_topic(&diag, graph, &served)?;
 
     let marked = mark_probe(
@@ -268,6 +284,7 @@ pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
         &served,
         &submitted,
         req.now.micros(),
+        verified_alias,
     );
     if marked.outcome.is_ungraded() {
         // The probe was asked, but it contributes no placement evidence.
@@ -296,6 +313,12 @@ pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
         &submitted,
     );
     req.append(&mut tx, &event).await?;
+    req.store(cadus_store::reports::diagnostics::save(
+        &mut tx,
+        req.user_id,
+        &json!(diag),
+    ))
+    .await?;
 
     let next = deal_probe(&diag, &req.content, &mut scratch, req.now);
     save_diagnostic(&req.state, &mut tx, req.user_id, &diag, &scratch).await?;
@@ -360,6 +383,12 @@ pub async fn finish(req: Ready) -> Reply {
         .await?;
     let event = placed_event(req.now, projection.view.current_session.clone(), &result);
     req.append_and_fold(&mut tx, &event, &input).await?;
+    req.store(cadus_store::reports::diagnostics::close(
+        &mut tx,
+        req.user_id,
+        &json!(diag),
+    ))
+    .await?;
     req.store(clear_diag_state(&mut tx, req.user_id)).await?;
 
     let mut scratch = req.read_state(&mut tx).await?;

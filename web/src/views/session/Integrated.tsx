@@ -28,11 +28,14 @@ import { usePhase } from '@/hooks/usePhase';
 import { useLifetime } from '@/hooks/useLifetime';
 import { MathBlock } from '@/components/MathBlock';
 import { Chip } from '@/components/primitives';
+import { QuestionReport } from './ProblemReport';
+import type { ProblemReportApi, ReportApplied } from './useProblemReport';
 import type {
   IntegratedApi,
   IntegratedFieldGrade,
   IntegratedGrade,
   IntegratedProblem,
+  IntegratedSubmission,
 } from '@/api/types';
 
 /** The field id of the final answer. It is the server's literal (`FINAL_FIELD_ID`). */
@@ -40,6 +43,7 @@ const FINAL = 'final';
 
 export interface IntegratedProps {
   api: IntegratedApi;
+  reportApi?: ProblemReportApi;
   taskId: string;
   problem: IntegratedProblem;
   /** Called with the grade after the service returns it. */
@@ -81,7 +85,7 @@ function VerdictRow({ label, grade }: { label: string; grade: IntegratedFieldGra
   );
 }
 
-export function Integrated({ api, taskId, problem, onGraded, onContinue, onUnauthorized }: IntegratedProps) {
+export function Integrated({ api, reportApi, taskId, problem, onGraded, onContinue, onUnauthorized }: IntegratedProps) {
   const [fields, setFields] = useState<Record<string, FieldState>>(() => Object.fromEntries(
     Object.entries(problem.hints_used ?? {}).map(([id, hintsUsed]) => [id, { ...emptyField, hintsUsed }]),
   ));
@@ -92,6 +96,7 @@ export function Integrated({ api, taskId, problem, onGraded, onContinue, onUnaut
   const life = useLifetime();
   const busy = phase === 'hinting' || phase === 'submitting';
   const [failure, setFailure] = useState<string | null>(null);
+  const submittedBody = useRef<IntegratedSubmission | null>(null);
   const finalRef = useRef<HTMLInputElement>(null);
   const continueRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -129,7 +134,7 @@ export function Integrated({ api, taskId, problem, onGraded, onContinue, onUnaut
     setFailure(null);
     let reply: IntegratedGrade;
     try {
-      reply = await api.taskIntegratedAnswer(taskId, {
+      const body: IntegratedSubmission = {
         method,
         steps: problem.steps.map((step) => ({
           id: step.id,
@@ -142,7 +147,9 @@ export function Integrated({ api, taskId, problem, onGraded, onContinue, onUnaut
           hints_used: field(FINAL).hintsUsed,
         },
         ...(reasoning.trim() ? { reasoning } : {}),
-      });
+      };
+      submittedBody.current = body;
+      reply = await api.taskIntegratedAnswer(taskId, body);
     } catch (error) {
       if (!life.alive()) return;
       if (error instanceof ApiError && error.sessionExpired) onUnauthorized?.();
@@ -154,6 +161,16 @@ export function Integrated({ api, taskId, problem, onGraded, onContinue, onUnaut
     gate.enter('graded');
     setGrade(reply);
     onGraded?.(reply);
+  };
+
+  const refreshCorrectedGrade = async () => {
+    if (!submittedBody.current) return;
+    try {
+      const corrected = await api.taskIntegratedAnswer(taskId, submittedBody.current);
+      if (life.alive()) setGrade(corrected);
+    } catch {
+      if (life.alive()) setFailure('The correction is saved. Reload this task to refresh its result.');
+    }
   };
 
   const answerBox = (id: string, ask: IntegratedProblem['final_ask'], label: string) => (
@@ -261,6 +278,8 @@ export function Integrated({ api, taskId, problem, onGraded, onContinue, onUnaut
         </button>
       ) : null}
 
+      <IntegratedReports api={reportApi} taskId={taskId} problem={problem} grade={grade} field={field} reasoning={reasoning}
+        onApplied={() => { void refreshCorrectedGrade(); }} />
       {failure ? <p className="integrated-failure">{failure}</p> : null}
 
       {grade ? (
@@ -301,4 +320,23 @@ export function Integrated({ api, taskId, problem, onGraded, onContinue, onUnaut
       ) : null}
     </section>
   );
+}
+
+function IntegratedReports({ api, taskId, problem, grade, field, reasoning, onApplied }: {
+  api: ProblemReportApi | undefined; taskId: string; problem: IntegratedProblem;
+  grade: IntegratedGrade | null; field: (id: string) => FieldState; reasoning: string; onApplied: ReportApplied;
+}) {
+  if (!api) return null;
+  const submitted = grade !== null;
+  const reportField = (id: string, prompt: string, label?: string) => <QuestionReport
+    key={`${problem.item_digest}:${id}:${submitted}`} api={api} hideResult={!submitted} label={label} onApplied={onApplied} context={{
+      task_id: taskId, problem_id: problem.item_id, item_digest: problem.item_digest, field_id: id,
+      report_kind: submitted ? 'integrated' : 'served', submitted,
+      problem_text: [problem.scenario, prompt].join('\n'),
+      answer: submitted ? field(id).answer : '', work: reasoning,
+    }} />;
+  return <>
+    {reportField(FINAL, problem.final_ask.prompt)}
+    {problem.steps.map((step, index) => reportField(step.id, step.ask.prompt, `Report step ${index + 1}`))}
+  </>;
 }

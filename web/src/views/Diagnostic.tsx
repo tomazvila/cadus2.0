@@ -39,6 +39,8 @@ import { useCall } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
 import { usePhase } from '@/hooks/usePhase';
 import { num } from '@/lib/format';
+import { ProblemReport, QuestionReport } from './session/ProblemReport';
+import { useProblemReport, type ProblemReportApi } from './session/useProblemReport';
 import {
   DIAG_START_FAILED,
   IntroCard,
@@ -66,6 +68,7 @@ export const DIAG_NO_SOLUTIONS_NOTE =
 export interface DiagnosticProps {
   /** The three placement calls. See `api/diag.ts` for why this is not on `ApiClient`. */
   diag: DiagnosticApi;
+  reportApi?: ProblemReportApi;
   /** Demo mode. A 401 then keeps the learner on the screen. */
   demo: boolean;
   onUnauthorized: () => void;
@@ -73,7 +76,7 @@ export interface DiagnosticProps {
   onExit: () => void;
 }
 
-export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticProps) {
+export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: DiagnosticProps) {
   const life = useLifetime();
   const call = useCall({ demo, onUnauthorized });
   const [phase, gate] = usePhase<Phase>('intro');
@@ -84,6 +87,10 @@ export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticPro
   const [result, setResult] = useState<ProbeResult | null>(null);
   const [summary, setSummary] = useState<DiagFinishResponse | null>(null);
   const [startFailed, setStartFailed] = useState(false);
+  const report = useProblemReport(reportApi ?? null, undefined, (_receipt, context) => {
+    setResult((previous) => previous && probeRef.current?.problem_id === context.problem_id
+      ? { ...previous, res: { ...previous.res, correct: true, outcome: 'correct' } } : previous);
+  });
 
   const answerRef = useRef<AnswerFieldHandle>(null);
   const introRef = useRef<HTMLDivElement>(null);
@@ -149,6 +156,8 @@ export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticPro
     void call(
       () => diag.diagAnswer({ problem_id: current.problem_id, answer }),
       (res) => {
+        if (reportApi) report.remember({ task_id: 'diag', problem_id: current.problem_id, report_kind: 'diagnostic',
+          problem_text: current.text, answer, work: '' });
         setResult({ res, skipped });
         gate.enter('feedback');
       },
@@ -183,13 +192,13 @@ export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticPro
    * placement rows to an append-only log with no DELETE.
    */
   useEffect(() => {
-    if (phase !== 'feedback') return;
+    if (phase !== 'feedback' || report.open) return;
     // A verdict is on screen in `feedback`, so the state holds one.
     const next = result!.res.next_probe;
     // `null`, `{ done: true }` and a probe with no id all say the placement is over.
     const isProbe = next != null && 'problem_id' in next && next.problem_id !== '';
 
-    life.setTimeout(() => {
+    const timer = life.setTimeout(() => {
       if (isProbe) {
         setProbe(next);
         probeRef.current = next;
@@ -201,9 +210,8 @@ export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticPro
         finishRef.current();
       }
     }, DIAG_BEAT_MS);
-    // No cleanup: the timer is registered in the lifetime, which clears it when the view
-    // leaves, and the phase moves on only when the timer itself fired.
-  }, [phase, result, life, gate]);
+    return () => life.clearTimer(timer);
+  }, [phase, result, life, gate, report.open]);
 
   const submitTyped = (): void => {
     const field = answerRef.current!;
@@ -218,7 +226,8 @@ export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticPro
   }
 
   if (phase === 'done') {
-    return <PlacementDone summary={summary} homeRef={homeRef} onExit={onExit} />;
+    return <><PlacementDone summary={summary} homeRef={homeRef} onExit={onExit} />
+      <ProblemReport report={report} /></>;
   }
 
   if (phase === 'loading') {
@@ -288,6 +297,11 @@ export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticPro
           </button>
         </div>
 
+        {reportApi ? <QuestionReport key={`served:${question.problem_id}`} api={reportApi} hideResult context={{
+          task_id: 'diag', problem_id: question.problem_id, report_kind: 'served',
+          problem_text: question.text, answer: '', work: '',
+        }} /> : null}
+        <ProblemReport report={report} hideResult />
         {result ? <ProbeFeedback result={result} /> : null}
 
         {qNum === 1 ? <p className="muted small">{DIAG_NO_SOLUTIONS_NOTE}</p> : null}

@@ -26,6 +26,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ApiError } from '@/api';
 import { QuizResults } from './QuizResults';
+import { QuestionReport } from './session/ProblemReport';
 import { MathBlock } from '@/components/MathBlock';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { Chip, LoadingBlock } from '@/components/primitives';
@@ -424,6 +425,10 @@ export function Quiz({
 
         {/* QUIZ-reveal: a running count and an explicit promise. NOTHING about whether the
             last answer was right. */}
+        <QuestionReport key={question.problem_id} api={api} hideResult context={{
+          task_id: task.task_id, problem_id: question.problem_id, report_kind: 'served',
+          problem_text: question.text, answer: '', work: '',
+        }} />
         <div className="quiz-note">
           <span className="remaining">{`${remaining} remaining`}</span>
           <span className="muted">{QUIZ_SILENCE_NOTE}</span>

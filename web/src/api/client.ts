@@ -99,9 +99,9 @@ async function readJson<T>(res: Response): Promise<T | null> {
  * would render an error object as data. A download body is a blob, never JSON, so it gets
  * no such treatment — see `downloadFile`.
  */
-export async function request<T>(method: string, path: string, body?: JsonBody): Promise<T> {
+export async function request<T>(method: string, path: string, body?: JsonBody, signal?: AbortSignal): Promise<T> {
   const headers: Record<string, string> = {};
-  const opts: RequestInit = { method, credentials: 'same-origin', headers };
+  const opts: RequestInit = { method, credentials: 'same-origin', headers, ...(signal ? { signal } : {}) };
   if (body !== undefined) {
     headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(body);

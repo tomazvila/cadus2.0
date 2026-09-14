@@ -20,6 +20,7 @@ pub mod diagnosis;
 pub mod model_log;
 pub mod readiness;
 pub mod refill;
+pub mod reports;
 
 use std::future::Future;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};

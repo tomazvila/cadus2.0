@@ -22,8 +22,8 @@ describe('the demo client', () => {
     // `/api/admin/ungraded*` recovery rows landed (D-F2), 38 until the three
     // `/api/task/{task_id}/integrated*` rows landed (D-F10), 41 until the
     // `/api/report/retention` row landed (D-F11), 42 until the integrated
-    // instruction row completed the A4.1 journey.
-    expect(named.length).toBe(43);
+    // instruction row completed the A4.1 journey; the two question-report routes bring the total to 45.
+    expect(named.length).toBe(45);
     for (const member of named) {
       expect(typeof demo[member], `the demo lacks ${member}`).toBe('function');
     }

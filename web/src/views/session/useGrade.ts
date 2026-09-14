@@ -27,6 +27,7 @@
  * it (the React rule of `useCall`).
  */
 import { useEffect, type RefObject } from 'react';
+import type { SubmittedProblemContext } from '@/api/types-report';
 import { isQuizReceipt, isRework } from '@/api/types';
 import { releaseOnFail } from '@/hooks/screen';
 import type { AnswerFieldHandle } from '@/components/AnswerField';
@@ -55,6 +56,7 @@ export interface GradeDeps {
   answeredForRef: RefObject<string | null>;
   /** The problem whose drill timeout already fired. */
   timedOutForRef: RefObject<string | null>;
+  onSubmitted?: (context: SubmittedProblemContext) => void;
   setResult: (result: AnswerResponse | null) => void;
   setRework: (rework: ReworkResponse | null) => void;
   setElapsed: (secs: number) => void;
@@ -73,7 +75,7 @@ export interface Grade {
 export function useGrade({
   api, call, gate, life, session,
   problemRef, taskRef, answerRef, workRef, answeredForRef, timedOutForRef,
-  setResult, setRework, setElapsed, setHints, setReferenceLesson,
+  setResult, setRework, setElapsed, setHints, setReferenceLesson, onSubmitted,
   countdown, elapsed,
 }: GradeDeps): Grade {
   // Plain functions, rebuilt per render: `session` is a new object every render, so a memo
@@ -130,6 +132,8 @@ export function useGrade({
           gate.enter('ready');
           return;
         }
+        onSubmitted?.({ task_id: task.task_id, problem_id: current.problem_id,
+          attempt_id: reply.attempt_id, problem_text: current.text, answer, work });
         setResult(reply);
         setRework(null);
         // Hard Rule 3: the core scheduled it, so ask the core for a new plan when this task

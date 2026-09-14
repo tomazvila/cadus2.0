@@ -51,8 +51,7 @@ use crate::session::{content, now_pair};
 use crate::state::{Content, INVALID_REQUEST, Tenant};
 use cadus_core::event::{Event, TaskType, Timestamp};
 use cadus_core::integrated::{
-    FINAL_FIELD_ID, IntegratedGrade, IntegratedItem, Submission, grade, hint, hints_available,
-    view_of,
+    FINAL_FIELD_ID, IntegratedGrade, IntegratedItem, Submission, hint, hints_available, view_of,
 };
 use cadus_core::selector::Task;
 use cadus_store::state::append_event;

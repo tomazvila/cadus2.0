@@ -272,6 +272,8 @@ export interface DiagnosisJob {
  * apply.
  */
 export interface AnswerResponse {
+  /** Set after the report service confirms a committed grade correction. */
+  report_corrected?: boolean;
   /** The next question confirms independent work after feedback. */
   feedback_practice?: boolean;
   /** A fresh item is unavailable; the original answer remains saved. */

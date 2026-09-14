@@ -5,12 +5,13 @@
 # TWO images out of one file. `docker-compose.yml` names the stage of each one in
 # a `target:` key, so neither depends on the order of the stages below.
 #
-#   target: runtime  -- the app image. ONE image, THREE commands. The compose
-#                       stack runs it three times:
+#   target: runtime  -- the app image. ONE image, FOUR commands. The compose
+#                       stack runs it for the web, workers and migrations:
 #                         * cadus-web      -- the HTTP tutor, connects as the
 #                                             cadus_app role (RLS applies).
 #                         * cadus-worker   -- the async layer (R4), connects as
 #                                             the cadus_admin role.
+#                         * cadus-report-worker -- submitted-answer report workflow.
 #                         * cadus-migrate  -- a one-shot that runs migrations/
 #                                             and exits 0.
 #                       The default CMD runs cadus-web. The orchestrator
@@ -28,7 +29,7 @@
 #   * spa-builder  -- node:22.21.1-bookworm-slim builds web/ into web/dist.
 #   * spa          -- caddy:2 plus that dist. It carries NO node: the node lives
 #                     in the build stage alone.
-#   * runtime      -- debian:bookworm-slim carries the three binaries and the
+#   * runtime      -- debian:bookworm-slim carries the four binaries and the
 #                     curriculum tree. It carries no compiler, no source, no SQL
 #                     file, and no node. `sqlx` embeds the migrations in
 #                     cadus-migrate at compile time.
@@ -126,7 +127,7 @@ FROM caddy:2 AS spa
 COPY --from=spa-builder /src/web/dist /srv
 
 # --------------------------------------------------------------------------- #
-# Stage 4 -- runtime: slim, non-root, three binaries
+# Stage 4 -- runtime: slim, non-root, four binaries
 # --------------------------------------------------------------------------- #
 # This stage is LAST, so a plain `docker build .` with no `--target` still builds
 # the app image, as it did before the SPA arrived.
@@ -152,6 +153,7 @@ WORKDIR /app
 
 COPY --from=builder /src/target/release/cadus-web /usr/local/bin/cadus-web
 COPY --from=builder /src/target/release/cadus-worker /usr/local/bin/cadus-worker
+COPY --from=builder /src/target/release/cadus-report-worker /usr/local/bin/cadus-report-worker
 COPY --from=builder /src/target/release/cadus-migrate /usr/local/bin/cadus-migrate
 
 # The curriculum tree (D-S1, C5). The worker reads it for the A6 exemplar

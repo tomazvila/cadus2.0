@@ -5,6 +5,7 @@
  * table is the index; this is the implementation.
  */
 import { downloadFile, request } from './client';
+import type { ProblemReportReceipt } from './types-report';
 import type {
   DiagAnswerResponse,
   DiagFinishResponse,
@@ -104,6 +105,16 @@ export const api: ApiClient = {
   sessionEnd: (minutes) =>
     request<SessionEndResponse>('POST', '/session/end', minutes === undefined ? {} : { minutes }),
   getPlan: () => request<SessionPlanResponse>('GET', '/session/plan'),
+  taskReport: (taskId, { problem_id, attempt_id, note, request_id, report_kind, item_digest, field_id }, signal) =>
+    request<ProblemReportReceipt>('POST', `/task/${seg(taskId)}/report`, {
+      problem_id, request_id, ...(attempt_id === undefined ? {} : { attempt_id }),
+      ...(report_kind === undefined ? {} : { report_kind }),
+      ...(item_digest === undefined ? {} : { item_digest }),
+      ...(field_id === undefined ? {} : { field_id }),
+      ...(note === undefined ? {} : { note }),
+    }, signal),
+  getProblemReport: (reportId, signal) =>
+    request<ProblemReportReceipt>('GET', `/reports/${seg(reportId)}`, undefined, signal),
   taskServe: (taskId) => request<ServedProblem>('POST', `/task/${seg(taskId)}/serve`, {}),
   taskTeach: (taskId) => request<TeachResponse>('POST', `/task/${seg(taskId)}/teach`, {}),
   taskHint: (taskId, problemId) =>

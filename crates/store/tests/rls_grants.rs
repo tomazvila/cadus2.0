@@ -263,3 +263,85 @@ async fn app_role_reads_content_store_and_never_writes_it() {
     })
     .await;
 }
+
+/// Input-only INSERT privileges cannot mint a report result, worker lease, or status.
+#[tokio::test]
+async fn report_inputs_cannot_forge_worker_owned_columns() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("report-input-only@example.test").await;
+        for (column, sql) in [
+            ("id", "INSERT INTO problem_reports
+                (user_id,request_id,task_id,problem_id,attempt_id,source_hash,input,id)
+                SELECT $1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb,gen_random_uuid()
+                WHERE false"),
+            ("status", "INSERT INTO problem_reports
+                (user_id,request_id,task_id,problem_id,attempt_id,source_hash,input,status)
+                SELECT $1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb,'completed'
+                WHERE false"),
+            ("stage", "INSERT INTO problem_reports
+                (user_id,request_id,task_id,problem_id,attempt_id,source_hash,input,stage)
+                SELECT $1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb,'published'
+                WHERE false"),
+            ("attempt", "INSERT INTO problem_reports
+                (user_id,request_id,task_id,problem_id,attempt_id,source_hash,input,attempt)
+                SELECT $1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb,3
+                WHERE false"),
+            ("lease", "INSERT INTO problem_reports
+                (user_id,request_id,task_id,problem_id,attempt_id,source_hash,input,lease)
+                SELECT $1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb,gen_random_uuid()
+                WHERE false"),
+            ("lease_until", "INSERT INTO problem_reports
+                (user_id,request_id,task_id,problem_id,attempt_id,source_hash,input,lease_until)
+                SELECT $1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb,now()
+                WHERE false"),
+            ("result", "INSERT INTO problem_reports
+                (user_id,request_id,task_id,problem_id,attempt_id,source_hash,input,result)
+                SELECT $1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb,'{}'::jsonb
+                WHERE false"),
+            ("created_at", "INSERT INTO problem_reports
+                (user_id,request_id,task_id,problem_id,attempt_id,source_hash,input,created_at)
+                SELECT $1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb,now()
+                WHERE false"),
+            ("updated_at", "INSERT INTO problem_reports
+                (user_id,request_id,task_id,problem_id,attempt_id,source_hash,input,updated_at)
+                SELECT $1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb,now()
+                WHERE false"),
+        ] {
+            let mut tx = begin_tenant(&db.app, user).await.unwrap();
+            let denied = sqlx::query(sql).bind(user).execute(&mut *tx).await.unwrap_err();
+            assert_eq!(sqlstate(&denied), "42501", "forged column {column}");
+            tx.rollback().await.unwrap();
+        }
+        for sql in [
+            "UPDATE problem_reports SET result = '{}'::jsonb",
+            "DELETE FROM problem_reports",
+            "TRUNCATE problem_reports",
+        ] {
+            let mut tx = begin_tenant(&db.app, user).await.unwrap();
+            let denied = sqlx::query(sql).execute(&mut *tx).await.unwrap_err();
+            assert_eq!(sqlstate(&denied), "42501", "{sql}");
+            tx.rollback().await.unwrap();
+        }
+    }).await;
+}
+
+/// BYPASSRLS does not grant the worker UPDATE, DELETE, or TRUNCATE on immutable evidence.
+#[tokio::test]
+async fn report_evidence_and_corrections_are_append_only_for_admin() {
+    TestDb::with(|db| async move {
+        for sql in [
+            "UPDATE problem_report_steps SET evidence = '{}'::jsonb",
+            "DELETE FROM problem_report_steps",
+            "TRUNCATE problem_report_steps",
+            "UPDATE problem_corrections SET body = '{}'::jsonb",
+            "DELETE FROM problem_corrections",
+            "TRUNCATE problem_corrections",
+        ] {
+            let mut tx = db.admin.begin().await.unwrap();
+            sqlx::query("SET LOCAL ROLE cadus_admin").execute(&mut *tx).await.unwrap();
+            let denied = sqlx::query(sql).execute(&mut *tx).await.unwrap_err();
+            assert_eq!(sqlstate(&denied), "42501", "{sql}");
+            tx.rollback().await.unwrap();
+        }
+    }).await;
+}

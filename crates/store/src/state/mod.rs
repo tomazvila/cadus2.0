@@ -295,6 +295,17 @@ pub async fn load_events_after(
     user_id: Uuid,
     after_seq: i64,
 ) -> Result<Vec<EventRow>, StoreError> {
+    let mut rows = load_raw_events_after(tx, user_id, after_seq).await?;
+    crate::reports::task_outcomes::overlay(tx, user_id, &mut rows).await?;
+    Ok(rows)
+}
+
+/// Read immutable rows for append-only repair reconstruction.
+pub(crate) async fn load_raw_events_after(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    after_seq: i64,
+) -> Result<Vec<EventRow>, StoreError> {
     let rows = sqlx::query!(
         r#"
         SELECT seq AS "seq!", payload AS "payload!: sqlx::types::Json<Event>"
@@ -331,6 +342,14 @@ pub async fn load_events_after(
 ///
 /// Returns [`StoreError::Db`] when the statement fails or when a payload is not
 /// an event of this build.
+pub async fn load_raw_events(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+) -> Result<Vec<EventRow>, StoreError> {
+    load_raw_events_after(tx, user_id, 0).await
+}
+
+/// Read the effective learner history, including verified report repairs.
 pub async fn load_events(
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,

@@ -295,7 +295,11 @@ async fn rls_coverage_is_the_literal_list() {
             .map(|table| {
                 (
                     (*table).to_string(),
-                    "tenant_isolation".to_string(),
+                    if *table == "problem_reports" {
+                        "tenant_problem_reports".to_string()
+                    } else {
+                        "tenant_isolation".to_string()
+                    },
                     // '*' is the polcmd of a policy that covers every command.
                     "*".to_string(),
                     Some(POLICY_PREDICATE.to_string()),
@@ -330,7 +334,7 @@ async fn rls_coverage_is_the_literal_list() {
         ));
         expected.sort();
 
-        assert_eq!(found.len(), 19);
+        assert_eq!(found.len(), 21);
         assert_eq!(found, expected);
 
         // #6: schema public holds no view and no materialized view. A view runs
@@ -431,4 +435,34 @@ async fn app_role_sequence_privileges_are_the_literal_table() {
         assert!(admin_privileges.may_select, "cadus_admin keeps SELECT");
     })
     .await;
+}
+
+/// Report results are mutable only in the worker queue; evidence and corrections append.
+#[tokio::test]
+async fn report_admin_grants_and_non_tenant_evidence_tables_are_exact() {
+    TestDb::with(|db| async move {
+        type ReportPrivileges = (String, bool, bool, bool, bool, bool, bool, bool);
+        let mut rows: Vec<ReportPrivileges> = sqlx::query_as(
+            "SELECT c.relname::text,
+                    has_table_privilege('cadus_admin', c.oid, 'SELECT'),
+                    has_table_privilege('cadus_admin', c.oid, 'INSERT'),
+                    has_table_privilege('cadus_admin', c.oid, 'UPDATE'),
+                    has_table_privilege('cadus_admin', c.oid, 'DELETE'),
+                    has_table_privilege('cadus_admin', c.oid, 'TRUNCATE'),
+                    c.relrowsecurity, c.relforcerowsecurity
+             FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+             WHERE n.nspname = 'public'
+               AND c.relname IN ('problem_reports','problem_report_steps','problem_corrections')
+             ORDER BY c.relname",
+        )
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
+        rows.sort();
+        assert_eq!(rows, vec![
+            ("problem_corrections".to_string(), true, true, false, false, false, false, false),
+            ("problem_report_steps".to_string(), true, true, false, false, false, false, false),
+            ("problem_reports".to_string(), true, true, true, true, false, true, true),
+        ]);
+    }).await;
 }
