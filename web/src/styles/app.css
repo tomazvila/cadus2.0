@@ -47,6 +47,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  /* A stacking context of the body's own, so the fixed backdrop can sit at z-index -1:
+     above the page background, below every screen. Without it the negative child would
+      fall behind the canvas and the art would never show. */
+  isolation: isolate;
 }
 
 h1, h2, h3 { line-height: 1.25; margin: 0 0 0.4rem; }
@@ -63,7 +67,13 @@ p { margin: 0.4rem 0; }
   display: flex; align-items: center; gap: 0.6rem;
   padding: 0.8rem max(1rem, env(safe-area-inset-right)) 0.8rem max(1rem, env(safe-area-inset-left));
   border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; background: var(--bg); z-index: 5;
+  position: sticky; top: 0; z-index: 5;
+  /* Glass: the engraved backdrop glows through, blurred, and a scrolled card still
+     disappears under the bar. `color-mix` reads the token, so the palette keeps its one
+     home (TOKENS-hex). */
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 .brand {
   display: inline-flex; align-items: center; gap: 0.5rem;
@@ -102,7 +112,12 @@ p { margin: 0.4rem 0; }
     max(1rem, env(safe-area-inset-left));
 }
 .card {
-  background: var(--surface); border: 1px solid var(--border);
+  /* Glass over the backdrop: 86% surface keeps every text contrast the solid panel had,
+     and the blur behind turns the engraving into a faint glow at the panel's edge. */
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
   border-radius: var(--radius); box-shadow: var(--shadow);
   padding: 1.2rem; margin-bottom: 1rem;
 }
@@ -198,7 +213,10 @@ p { margin: 0.4rem 0; }
     max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
 }
 .modal {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border); border-radius: var(--radius);
   box-shadow: var(--shadow); padding: 1.6rem; width: min(92vw, 380px);
   display: grid; gap: 0.7rem;
   /* `dvh` follows the iOS toolbar as it collapses; the `vh` line is the fallback. */
@@ -759,8 +777,54 @@ p { margin: 0.4rem 0; }
   .map-canvas { height: 70vh; height: 70dvh; min-height: 260px; }
 }
 
+/* ---- the engraved backdrop (the caduceus) ----
+   The markup lives in `index.html`: a caduceus whose two serpents are sine waves
+   winding the staff, wing rays fanning from its top, and a halo of Euclidean
+   construction circles around it all — the Cadus answer to an engraved emblem. It is
+   scenery, so it never takes a pointer, never enters the accessibility tree, and reads
+   every stroke color from the tokens here (TOKENS-hex). The surfaces above render as
+   glass over it: 86% surface, blurred, so a card stays readable while the emblem glows
+   through the gutters and behind the topbar. */
+.backdrop {
+  position: fixed; inset: 0; z-index: -1;
+  pointer-events: none;
+}
+.bd-svg { width: 100%; height: 100%; display: block; }
+
+/* The strokes. Accent for the geometry, accent-2 for the living serpents, muted for the
+   staff — the same hierarchy the cards use. */
+.bd-ray    { stroke: var(--accent);   stroke-opacity: 0.20; stroke-width: 1; }
+.bd-spoke  { stroke: var(--accent);   stroke-opacity: 0.30; stroke-width: 1.3; }
+.bd-halo   { fill: none; stroke: var(--accent); stroke-opacity: 0.22; stroke-width: 1.2; }
+.bd-const  { fill: none; stroke: var(--muted);  stroke-opacity: 0.18; stroke-width: 1; }
+.bd-staff  { stroke: var(--muted);    stroke-opacity: 0.45; stroke-width: 4; stroke-linecap: round; }
+.bd-staff-thin { stroke: var(--muted); stroke-opacity: 0.20; stroke-width: 1.5; }
+.bd-orb    { fill: none; stroke: var(--accent-2); stroke-opacity: 0.55; stroke-width: 2; }
+.bd-wing   { stroke: var(--accent);   stroke-opacity: 0.35; stroke-width: 1.6; }
+.bd-serpent {
+  fill: none; stroke: var(--accent-2); stroke-opacity: 0.38;
+  stroke-width: 3; stroke-linecap: round; stroke-dasharray: 6 10;
+}
+
+/* The halo turns once per four minutes — motion a learner feels rather than watches.
+   `transform-box: fill-box` pins the origin to the group's own center, so the spin is
+   about the emblem, not the viewport. */
+.bd-rotor {
+  transform-box: fill-box; transform-origin: center;
+  animation: bd-spin 240s linear infinite;
+}
+/* The serpents crawl: the dash gap drifts along the sine, so the wind reads as flow. */
+.bd-serpent { animation: bd-crawl 26s linear infinite; }
+/* The halo breathes, slowly, between two nearly-equal opacities. */
+.bd-halo { animation: bd-breathe 14s ease-in-out infinite; }
+
+@keyframes bd-spin   { to { transform: rotate(360deg); } }
+@keyframes bd-crawl  { to { stroke-dashoffset: -320; } }
+@keyframes bd-breathe { 0%, 100% { opacity: 0.75; } 50% { opacity: 1; } }
+
 /* Strip every animation and transition when the reader asks for less motion (spec section
-   4.5). It sits at the end so it wins over every rule above it. */
+   4.5). It sits at the end so it wins over every rule above it — the backdrop's three
+   animations included, which freeze into a still engraving. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
