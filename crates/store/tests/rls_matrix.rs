@@ -459,10 +459,41 @@ async fn report_admin_grants_and_non_tenant_evidence_tables_are_exact() {
         .await
         .unwrap();
         rows.sort();
-        assert_eq!(rows, vec![
-            ("problem_corrections".to_string(), true, true, false, false, false, false, false),
-            ("problem_report_steps".to_string(), true, true, false, false, false, false, false),
-            ("problem_reports".to_string(), true, true, true, true, false, true, true),
-        ]);
-    }).await;
+        assert_eq!(
+            rows,
+            vec![
+                (
+                    "problem_corrections".to_string(),
+                    true,
+                    true,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ),
+                (
+                    "problem_report_steps".to_string(),
+                    true,
+                    true,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ),
+                (
+                    "problem_reports".to_string(),
+                    true,
+                    true,
+                    true,
+                    true,
+                    false,
+                    true,
+                    true
+                ),
+            ]
+        );
+    })
+    .await;
 }

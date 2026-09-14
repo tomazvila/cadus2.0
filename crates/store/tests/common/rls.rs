@@ -151,7 +151,10 @@ pub const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 27] = [
     ("oauth_accounts", [true, true, true, true, false]),
     // Reports permit only the seven input-column INSERT grants listed below.
     ("problem_corrections", [true, false, false, false, false]),
-    ("problem_report_diagnostics", [true, true, true, false, false]),
+    (
+        "problem_report_diagnostics",
+        [true, true, true, false, false],
+    ),
     ("problem_report_steps", [false, false, false, false, false]),
     ("problem_reports", [true, false, false, false, false]),
     ("profiles", [true, true, true, true, false]),
@@ -344,7 +347,11 @@ pub const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 24] = [
         "problem_corrections_report_id_fkey",
         "a",
     ),
-    ("problem_report_diagnostics", "problem_report_diagnostics_user_id_fkey", "c"),
+    (
+        "problem_report_diagnostics",
+        "problem_report_diagnostics_user_id_fkey",
+        "c",
+    ),
     (
         "problem_report_steps",
         "problem_report_steps_report_id_fkey",

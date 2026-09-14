@@ -1,7 +1,7 @@
 //! Durable report jobs and immutable, source-bound correction versions.
 //! SQL uses fixed parameterized statements, matching the exposure store.
-pub(crate) mod task_outcomes;
 pub mod diagnostics;
+pub(crate) mod task_outcomes;
 
 /// Stable identity of mathematical content across accepted-answer repairs.
 pub fn source_identity(source: &serde_json::Value) -> serde_json::Value {
@@ -320,8 +320,12 @@ pub async fn finish(
                         unresolved("A newer correction was published during review. Please retry.");
                 } else {
                     let (corrected, summary) = task_outcomes::complete_submission(
-                        &mut tx, job.user_id, &job.input, job.id,
-                    ).await?;
+                        &mut tx,
+                        job.user_id,
+                        &job.input,
+                        job.id,
+                    )
+                    .await?;
                     answer["task_recalculation"] = summary;
                     if let Some(corrected) = corrected {
                         append_event(&mut tx, job.user_id, &corrected, None).await?;

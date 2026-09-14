@@ -573,7 +573,12 @@ async fn verified_publication_appends_regrade_and_native_replay_preserves_origin
         assert_eq!(new_log.len(), 4);
         let raw: Vec<sqlx::types::Json<Event>> = sqlx::query_scalar(
             "SELECT payload FROM events WHERE user_id=$1 AND seq<=$2 ORDER BY seq",
-        ).bind(item.user).bind(before.through_seq).fetch_all(&db.admin).await.unwrap();
+        )
+        .bind(item.user)
+        .bind(before.through_seq)
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
         for (before, after) in old_log.iter().zip(raw) {
             let mut event = after.0;
             event.normalize();
@@ -740,34 +745,63 @@ async fn corrected_closed_review_replays_cached_result_and_session_xp() {
         let item = fixture(&db, "report-closed-review@example.test", "incorrect").await;
         let scene = Scene::new(&db);
         let mut tx = open_locked(&scene.handle, item.user).await;
-        let result = Event::from_json(&json!({
-            "type":"review_result","ts":"2026-01-01T00:00:01Z","session":SESSION,
-            "task_id":TASK,"topic":"addition","passed":false,"weighted_score":0.0,
-            "inconclusive":true,"quality_tier":"poor","xp":0.0
-        }).to_string()).unwrap();
-        append_event(&mut tx,item.user,&result,None).await.unwrap();
-        let before = project_and_save(&mut tx,item.user,&scene.input(),None).await.unwrap();
+        let result = Event::from_json(
+            &json!({
+                "type":"review_result","ts":"2026-01-01T00:00:01Z","session":SESSION,
+                "task_id":TASK,"topic":"addition","passed":false,"weighted_score":0.0,
+                "inconclusive":true,"quality_tier":"poor","xp":0.0
+            })
+            .to_string(),
+        )
+        .unwrap();
+        append_event(&mut tx, item.user, &result, None)
+            .await
+            .unwrap();
+        let before = project_and_save(&mut tx, item.user, &scene.input(), None)
+            .await
+            .unwrap();
         tx.commit().await.unwrap();
-        submit(&db,&item,Uuid::new_v4()).await;
+        submit(&db, &item, Uuid::new_v4()).await;
         let handle = worker(&db).await;
         let job = reports::claim(&handle).await.unwrap().unwrap();
-        reports::finish(&handle,&job,&success(),Some(&correction(&item))).await.unwrap();
-        let mut tx = open_locked(&scene.handle,item.user).await;
-        let replayed = project_current(&mut tx,item.user,&scene.input()).await.unwrap();
+        reports::finish(&handle, &job, &success(), Some(&correction(&item)))
+            .await
+            .unwrap();
+        let mut tx = open_locked(&scene.handle, item.user).await;
+        let replayed = project_current(&mut tx, item.user, &scene.input())
+            .await
+            .unwrap();
         assert!(replayed.replayed);
         assert!(replayed.model.xp.total > before.model.xp.total);
-        assert!(replayed.view.session_xp[SESSION] > before.view.session_xp.get(SESSION).copied().unwrap_or_default());
-        let effective = cadus_store::state::load_events(&mut tx,item.user).await.unwrap();
-        let Event::ReviewResult(result) = &effective[3].event else { panic!() };
+        assert!(
+            replayed.view.session_xp[SESSION]
+                > before
+                    .view
+                    .session_xp
+                    .get(SESSION)
+                    .copied()
+                    .unwrap_or_default()
+        );
+        let effective = cadus_store::state::load_events(&mut tx, item.user)
+            .await
+            .unwrap();
+        let Event::ReviewResult(result) = &effective[3].event else {
+            panic!()
+        };
         assert!(result.passed);
         assert!(!result.inconclusive);
-        assert_eq!(result.weighted_score,1.0);
+        assert_eq!(result.weighted_score, 1.0);
         assert!(result.xp > 0.0);
-        let original: Value = sqlx::query_scalar("SELECT payload FROM events WHERE user_id=$1 AND seq=4")
-            .bind(item.user).fetch_one(&mut *tx).await.unwrap();
-        assert_eq!(original["passed"],false);
-        assert_eq!(original["xp"],0.0);
+        let original: Value =
+            sqlx::query_scalar("SELECT payload FROM events WHERE user_id=$1 AND seq=4")
+                .bind(item.user)
+                .fetch_one(&mut *tx)
+                .await
+                .unwrap();
+        assert_eq!(original["passed"], false);
+        assert_eq!(original["xp"], 0.0);
         tx.rollback().await.unwrap();
         handle.pool().close().await;
-    }).await;
+    })
+    .await;
 }

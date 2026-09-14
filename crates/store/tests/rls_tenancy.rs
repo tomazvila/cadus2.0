@@ -343,26 +343,44 @@ async fn report_queue_isolates_tenants_and_refuses_cross_tenant_input() {
             VALUES ($1,gen_random_uuid(),'task','problem','attempt',repeat('a',64),'{}'::jsonb)";
         for user in [a, b] {
             let mut tx = begin_tenant(&db.app, user).await.unwrap();
-            sqlx::query(insert).bind(user).execute(&mut *tx).await.unwrap();
+            sqlx::query(insert)
+                .bind(user)
+                .execute(&mut *tx)
+                .await
+                .unwrap();
             tx.commit().await.unwrap();
         }
         let mut tx = begin_tenant(&db.app, a).await.unwrap();
         let rows: Vec<uuid::Uuid> = sqlx::query_scalar("SELECT user_id FROM problem_reports")
-            .fetch_all(&mut *tx).await.unwrap();
+            .fetch_all(&mut *tx)
+            .await
+            .unwrap();
         assert_eq!(rows, vec![a]);
         tx.rollback().await.unwrap();
         let unbound: i64 = sqlx::query_scalar("SELECT count(*) FROM problem_reports")
-            .fetch_one(&db.app).await.unwrap();
+            .fetch_one(&db.app)
+            .await
+            .unwrap();
         assert_eq!(unbound, 0);
         let mut tx = begin_tenant(&db.app, a).await.unwrap();
-        let denied = sqlx::query(insert).bind(b).execute(&mut *tx).await.unwrap_err();
+        let denied = sqlx::query(insert)
+            .bind(b)
+            .execute(&mut *tx)
+            .await
+            .unwrap_err();
         assert_eq!(sqlstate(&denied), "42501");
         tx.rollback().await.unwrap();
         let mut tx = db.admin.begin().await.unwrap();
-        sqlx::query("SET LOCAL ROLE cadus_admin").execute(&mut *tx).await.unwrap();
+        sqlx::query("SET LOCAL ROLE cadus_admin")
+            .execute(&mut *tx)
+            .await
+            .unwrap();
         let all: i64 = sqlx::query_scalar("SELECT count(*) FROM problem_reports")
-            .fetch_one(&mut *tx).await.unwrap();
+            .fetch_one(&mut *tx)
+            .await
+            .unwrap();
         assert_eq!(all, 2);
         tx.rollback().await.unwrap();
-    }).await;
+    })
+    .await;
 }

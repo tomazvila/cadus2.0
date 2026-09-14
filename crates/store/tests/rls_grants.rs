@@ -338,10 +338,14 @@ async fn report_evidence_and_corrections_are_append_only_for_admin() {
             "TRUNCATE problem_corrections",
         ] {
             let mut tx = db.admin.begin().await.unwrap();
-            sqlx::query("SET LOCAL ROLE cadus_admin").execute(&mut *tx).await.unwrap();
+            sqlx::query("SET LOCAL ROLE cadus_admin")
+                .execute(&mut *tx)
+                .await
+                .unwrap();
             let denied = sqlx::query(sql).execute(&mut *tx).await.unwrap_err();
             assert_eq!(sqlstate(&denied), "42501", "{sql}");
             tx.rollback().await.unwrap();
         }
-    }).await;
+    })
+    .await;
 }

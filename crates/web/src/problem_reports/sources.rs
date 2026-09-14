@@ -184,7 +184,11 @@ pub(super) async fn snapshot(
         let task_type = if task == "diag" {
             "diagnostic".to_owned()
         } else {
-            scratch.tasks.get(task).map(|progress| progress.task_type.clone()).unwrap_or_default()
+            scratch
+                .tasks
+                .get(task)
+                .map(|progress| progress.task_type.clone())
+                .unwrap_or_default()
         };
         let id = format!("served:{task}:{problem_id}");
         let mut packet = json!({"attempt":null,"event_seq":0,"content_only":true,

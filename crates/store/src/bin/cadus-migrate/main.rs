@@ -324,9 +324,9 @@ mod tests {
         assert_eq!(migrated.database_url, base.database_url);
     }
 
-    /// The count is 12 after every migration, an error when the role cannot
-    /// read the ledger, an error when the pool is closed, and 0 on a database
-    /// that holds no ledger.
+    /// The count is 23 after every migration (migrations 0001 to 0023), an
+    /// error when the role cannot read the ledger, an error when the pool is
+    /// closed, and 0 on a database that holds no ledger.
     ///
     /// The throwaway database of `TestDb` makes all four states itself. The
     /// last step drops the ledger table, which puts that database in the state
@@ -337,7 +337,7 @@ mod tests {
     #[tokio::test]
     async fn the_applied_count_reads_the_migration_ledger() {
         TestDb::with(|db| async move {
-            assert_eq!(applied_count(&db.admin).await.unwrap(), 21);
+            assert_eq!(applied_count(&db.admin).await.unwrap(), 23);
             let app = db.pool_as("cadus_app", 1).await;
             sqlx::query("REVOKE SELECT ON _sqlx_migrations FROM cadus_app")
                 .execute(&db.admin)

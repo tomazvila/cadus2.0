@@ -48,9 +48,11 @@ pub async fn attempt(
     .bind(key)
     .fetch_optional(&mut **tx)
     .await?;
-    let mut rows: Vec<crate::state::EventRow> = row.into_iter()
-        .map(|(seq, Json(event))| crate::state::EventRow { seq,event }).collect();
-    crate::reports::task_outcomes::overlay(tx,user_id,&mut rows).await?;
+    let mut rows: Vec<crate::state::EventRow> = row
+        .into_iter()
+        .map(|(seq, Json(event))| crate::state::EventRow { seq, event })
+        .collect();
+    crate::reports::task_outcomes::overlay(tx, user_id, &mut rows).await?;
     Ok(rows.into_iter().find_map(|row| match row.event {
         Event::IntegratedAttempt(attempt) => Some(attempt),
         _ => None,
