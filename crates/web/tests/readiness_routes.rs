@@ -106,9 +106,7 @@ fn blockers(entry: &Value) -> Vec<&str> {
 /// The `ready_curriculum` exemplars all add a number to itself, so the test can
 /// close the lesson without reading the `expected` the payload never carries.
 fn answer_of(text: &str) -> String {
-    let inner = text
-        .trim_start_matches("Compute ")
-        .trim_end_matches('.');
+    let inner = text.trim_start_matches("Compute ").trim_end_matches('.');
     let (left, _right) = inner.split_once(" + ").expect("an addition statement");
     let n: i64 = left.trim().parse().expect("the addend is a number");
     (n * 2).to_string()

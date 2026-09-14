@@ -123,10 +123,7 @@ async fn the_admin_drain_lists_the_pending_verification_message() {
             .as_str()
             .expect("the drain carries the raw token");
         assert!(!token.is_empty());
-        assert_eq!(
-            item["payload"]["link"],
-            json!(format!("/?verify={token}"))
-        );
+        assert_eq!(item["payload"]["link"], json!(format!("/?verify={token}")));
     })
     .await;
 }

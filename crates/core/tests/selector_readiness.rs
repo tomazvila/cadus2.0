@@ -206,9 +206,11 @@ fn the_rule_is_off_with_no_gate_and_off_when_the_config_says_so() {
 #[test]
 fn a_failed_confirmation_with_no_teach_page_falls_back_to_practice_only() {
     let graph = common::selector::graph_of(
-        vec![topic("p")
-            .kps(vec![ready_kp("kp1"), ready_kp("kp2")])
-            .build()],
+        vec![
+            topic("p")
+                .kps(vec![ready_kp("kp1"), ready_kp("kp2")])
+                .build(),
+        ],
         &[],
     );
     // The topic is PLACED (inferred, never practiced), the state a failed
@@ -258,10 +260,7 @@ fn a_failed_confirmation_with_no_teach_page_falls_back_to_practice_only() {
 /// not turned into a review that could serve nothing.
 #[test]
 fn a_failed_confirmation_with_no_practicable_point_is_skipped() {
-    let graph = common::selector::graph_of(
-        vec![topic("p").kps(vec![thin_kp("kp1")]).build()],
-        &[],
-    );
+    let graph = common::selector::graph_of(vec![topic("p").kps(vec![thin_kp("kp1")]).build()], &[]);
     let placed = TopicState {
         status: TopicStatus::Placed,
         ..TopicState::default()

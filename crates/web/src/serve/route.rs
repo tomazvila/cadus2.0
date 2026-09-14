@@ -92,6 +92,24 @@ async fn record_first_serve(
 ///
 /// The whole route is ONE transaction. A problem that is already live is handed
 /// straight back with a fresh `started_at` and the same `problem_id`.
+///
+/// The attempts the session's event window already holds for one task
+/// (F-grind-6). Mirrors the count `grade::submission::attempt_index` derives
+/// its attempt ids from: the durable answer record of the task.
+fn attempts_in_window(events: &[EventRow], task_id: &str) -> i64 {
+    let prefix = format!("{task_id}-");
+    events
+        .iter()
+        .filter(|row| match &row.event {
+            Event::Attempt(attempt) => attempt
+                .attempt_id
+                .strip_prefix(&prefix)
+                .is_some_and(|rest| rest.starts_with(|first: char| first.is_ascii_digit())),
+            _ => false,
+        })
+        .count() as i64
+}
+
 pub async fn serve(
     State(state): State<AppState>,
     Tenant(user_id): Tenant,
@@ -99,15 +117,34 @@ pub async fn serve(
 ) -> Result<Json<Value>, ApiError> {
     let (_, now) = now_pair();
     let content = content(&state)?;
-    let graph = &content.curriculum;
     let started_at = unix_seconds(now.micros());
+
+    let opened = open(&state, content, user_id, now, true).await?;
+    serve_one(&state, content, opened, user_id, task_id, now, started_at).await
+}
+
+/// The body of one serve request over an open transaction.
+///
+/// Split from [`serve`] so the quiz reconciliation (F-grind-6) can commit its
+/// corrected scratch state and reopen cleanly before the problem is drawn.
+#[allow(clippy::too_many_arguments)]
+async fn serve_one(
+    state: &AppState,
+    content: &Content,
+    opened: Open,
+    user_id: Uuid,
+    task_id: String,
+    now: Timestamp,
+    started_at: f64,
+) -> Result<Json<Value>, ApiError> {
+    let graph = &content.curriculum;
 
     let Open {
         mut tx,
         mut scratch,
         plan,
         events,
-    } = open(&state, content, user_id, now, true).await?;
+    } = opened;
     let task = find(&plan, &task_id)?;
     if task.integrated_assessment_of.is_some() {
         return Err(conflict(
@@ -115,6 +152,50 @@ pub async fn serve(
             "This assessment is one whole integrated scenario.",
         ));
     }
+
+    // F-grind-6: a QUIZ's position lives in the scratch state (`answered`),
+    // while the attempts live in the session's event window. The two can
+    // diverge — a scratch state rebuilt under a live session (a cleared
+    // `web_states` row, a reopened session, a reused session id) resets
+    // `answered` to zero while the window keeps the attempts. The serve then
+    // re-installs question 1 forever and every answer dedups as
+    // `already_recorded`, so the quiz can never finish. The window is the
+    // durable record: raise the scratch cursor to it before anything reads
+    // progress.
+    if task.task_type == TaskType::Quiz {
+        let recorded = attempts_in_window(&events, &task_id);
+        let (stale, done) = {
+            let progress = progress_for(&mut scratch, task, graph);
+            let stale = recorded > progress.answered;
+            if stale {
+                progress.answered = recorded;
+                progress.served = progress.served.max(recorded);
+                if progress.total > 0 && progress.answered >= progress.total {
+                    progress.done = true;
+                }
+            }
+            (stale, progress.done)
+        };
+        if stale {
+            // A live served problem below the reconciled cursor is one the log
+            // already holds; drop it so the draw below installs the first
+            // un-answered question instead of handing the stale one back.
+            scratch.served.remove(&task_id);
+            write_state(&state.db, &mut tx, user_id, &scratch).await?;
+            tx.commit().await.map_err(db_failed)?;
+            if done {
+                // Every question the log holds is answered: the quiz finished
+                // under the attempts the window already carries.
+                return Err(conflict(TASK_COMPLETE, "This task is already complete."));
+            }
+            let reopened = open(state, content, user_id, now, true).await?;
+            return Box::pin(serve_one(
+                state, content, reopened, user_id, task_id, now, started_at,
+            ))
+            .await;
+        }
+    }
+
     if progress_for(&mut scratch, task, graph).done {
         return Err(conflict(TASK_COMPLETE, "This task is already complete."));
     }
@@ -134,12 +215,12 @@ pub async fn serve(
             live.started_at = started_at;
             serve_payload(live, task, graph, content.cfg.drill.target_secs, elapsed)
         }
-        None => install_next(&state, content, &mut tx, user_id, task, &mut scratch, now).await?,
+        None => install_next(state, content, &mut tx, user_id, task, &mut scratch, now).await?,
     };
     // The hand-off happened, so the task is served. The event goes in once per
     // task and per session, and it is what fills the drill cadence (D-M5-8).
     let appended =
-        record_first_serve(&state, &mut tx, user_id, task, &plan.session, &events, now).await?;
+        record_first_serve(state, &mut tx, user_id, task, &plan.session, &events, now).await?;
     // An append moves the head of the log, so the fold cursor moves with it in
     // the SAME transaction (V1, V8). A cursor one line behind takes every later
     // request of this learner out of the "nothing new" branch of
@@ -148,7 +229,7 @@ pub async fn serve(
     // the common re-serve writes no `learner_models` row at all.
     if appended {
         let input = projection_input(content, now);
-        store(&state, project_and_save(&mut tx, user_id, &input, None)).await?;
+        store(state, project_and_save(&mut tx, user_id, &input, None)).await?;
     }
     write_state(&state.db, &mut tx, user_id, &scratch).await?;
     tx.commit().await.map_err(db_failed)?;

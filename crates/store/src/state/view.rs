@@ -258,7 +258,9 @@ impl SessionView {
     /// The next unused session id of `today`: `s_<date><letter>`.
     ///
     /// The letters run `a` to `z` (`service.py:316`). A day that used all 26
-    /// gives `z` again, which is what the 1.0 loop does when it falls off.
+    /// wraps to two letters (`aa`, `ab`, …): reusing `z` would collide task ids
+    /// with the morning's session, and every answer under a reused task id
+    /// dedups against the event log as `already_recorded` (F-grind-9).
     #[must_use]
     pub fn new_session_id(&self, today: DateTime<Utc>) -> String {
         let prefix = format!("s_{}", today.date_naive());
@@ -268,7 +270,17 @@ impl SessionView {
                 return candidate;
             }
         }
-        format!("{prefix}z")
+        for first in SESSION_LETTERS.chars() {
+            for second in SESSION_LETTERS.chars() {
+                let candidate = format!("{prefix}{first}{second}");
+                if !self.session_ids.contains(&candidate) {
+                    return candidate;
+                }
+            }
+        }
+        // 26 + 26^2 sessions in one day: the loop below is unreachable in any
+        // real log, and `z` again matches the 1.0 fall-off it replaces.
+        format!("{prefix}zz")
     }
 }
 

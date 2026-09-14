@@ -456,8 +456,8 @@ fn an_unrepresentable_attempt_and_an_ignored_event_change_nothing() {
     assert_eq!(view, SessionView::default());
 }
 
-/// The next session id of a day takes the first unused letter, and a day
-/// that used all 26 gives `z` again.
+/// The next session id of a day takes the first unused letter, wraps to two
+/// letters after `z`, and never reuses an id of the same day.
 #[test]
 fn the_next_session_id_takes_the_first_unused_letter() {
     let today = DateTime::<Utc>::from_timestamp(1_767_225_600, 0).expect("the instant");
@@ -469,5 +469,9 @@ fn the_next_session_id_takes_the_first_unused_letter() {
     for letter in "abcdefghijklmnopqrstuvwxyz".chars() {
         view.session_ids.insert(format!("s_2026-01-01{letter}"));
     }
-    assert_eq!(view.new_session_id(today), "s_2026-01-01z");
+    // The single letters are exhausted: the next id wraps, it does not reuse
+    // `z` — a reused id collides task ids across sessions (F-grind-9).
+    assert_eq!(view.new_session_id(today), "s_2026-01-01aa");
+    view.session_ids.insert("s_2026-01-01aa".to_string());
+    assert_eq!(view.new_session_id(today), "s_2026-01-01ab");
 }

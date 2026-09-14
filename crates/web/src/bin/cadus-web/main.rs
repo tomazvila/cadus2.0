@@ -41,6 +41,7 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use axum::Router;
+use cadus_store::content::Admin;
 use cadus_store::shutdown::{Shutdown, close_budget, close_within};
 use cadus_store::{Db, DbConfig, StoreError};
 use cadus_web::diagnosis::DiagnosisHub;
@@ -123,7 +124,39 @@ async fn run() -> Result<(), Fatal> {
     let listener_task = spawn_listener(&hub, &db);
     let admin = open_admin(&settings.cfg).await?;
 
-    let app = build_app(settings.state(db.clone()), admin.clone(), hub);
+    // F-grind-10: a deploy that moved the review-engine or curriculum digest
+    // silently stales every prior content approval, and the readiness index
+    // then locks every course behind `teachable` with no signal. The boot runs
+    // one admin re-stamp over the approved rows, so an approval keeps meaning
+    // "a reviewer approved this content" across deploys. The count lands in
+    // the boot log, so a sweep of an unexpected size is on the screen.
+    let state = settings.state(db.clone());
+    if let (Some(admin_db), Some(content)) = (&admin, state.content.as_deref())
+        && let Ok(curriculum_digest) = content.curriculum_context_digest()
+    {
+        let restamped = cadus_store::content::restamp_content_currency(
+            Admin::new(admin_db),
+            content.review_engine_digest(),
+            curriculum_digest,
+        )
+        .await;
+        match restamped {
+            Ok(n) if n > 0 => {
+                tracing::info!(
+                    "content currency: re-stamped {n} approved documents to the current engine and curriculum digests"
+                );
+            }
+            Ok(_) => {}
+            Err(err) => {
+                tracing::error!(
+                    error = %err,
+                    "content currency re-stamp failed at boot; approved content may read as stale"
+                );
+            }
+        }
+    }
+
+    let app = build_app(state, admin.clone(), hub);
     let (result, drain_elapsed) =
         serve_until_stop(listener, app, shutdown, settings.deadline).await;
 

@@ -177,6 +177,34 @@ pub async fn approve_current(
         )
         .fetch_optional(&mut *tx)
         .await?;
+        // F-grind-7: the template context of a topic spans its whole approved
+        // bank, so THIS approval can silently stale the already-approved teach
+        // pages and hint ladders of sibling knowledge points: their stamped
+        // context stops matching `cadus_template_context`, the readiness index
+        // drops them, and the lesson blocks `teachable` with no signal
+        // anywhere. Re-stamp every sibling of the topic in the same
+        // transaction, so an approval leaves the whole topic current.
+        sqlx::query(
+            r#"
+            UPDATE content_store c
+            SET approved_template_context_digest =
+                public.cadus_template_context(c.kp_id, c.approved_policy_digest,
+                                              c.approved_curriculum_digest,
+                                              c.approved_review_engine_digest)
+            WHERE c.status = 'approved'
+              AND c.kind IN ('teach','hint_ladder')
+              AND split_part(c.kp_id, '/', 1) = split_part($1, '/', 1)
+              AND c.digest <> $1
+              AND c.approved_template_context_digest
+                  IS DISTINCT FROM
+                  public.cadus_template_context(c.kp_id, c.approved_policy_digest,
+                                                c.approved_curriculum_digest,
+                                                c.approved_review_engine_digest)
+            "#,
+        )
+        .bind(digest)
+        .execute(&mut *tx)
+        .await?;
         tx.commit().await?;
         Ok(decision)
     })

@@ -310,6 +310,80 @@ pub async fn insert_pending(admin: Admin<'_>, doc: &NewDocument<'_>) -> Result<b
 /// Returns [`StoreError::Db`] when the statement fails, which includes SQLSTATE
 /// 42501 when `admin` names a connection of the runtime role, and
 /// [`StoreError::Timeout`] when the client-side bound expires.
+/// Re-stamp the currency of every approved document after a deploy changed
+/// the executable or the curriculum (F-grind-10).
+///
+/// The review-engine digest is a fingerprint of the renderer/evaluator/gate
+/// source, and the curriculum digest a fingerprint of the authored tree. A
+/// deploy that moves either one silently stales EVERY prior approval: the
+/// readiness index stops matching the old stamps and every course locks with
+/// `teachable` blockers and no signal anywhere (the whole-content sweep of the
+/// 2026-09-14 grind). This runs ONCE at boot through the admin connection: it
+/// re-stamps the two currency digests of every approved row and recomputes the
+/// per-row template context, so an approval keeps meaning "a reviewer approved
+/// this content", not "a reviewer approved this content under Tuesday's
+/// binary". Rows still `pending` or `rejected` are untouched. The count of
+/// re-stamped rows is what the boot log reports.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when a statement fails, and
+/// [`StoreError::Timeout`] when the client-side bound expires.
+pub async fn restamp_content_currency(
+    admin: Admin<'_>,
+    engine_digest: &str,
+    curriculum_digest: &str,
+) -> Result<u64, StoreError> {
+    let db = admin.db();
+    crate::bounded(db, async move {
+        let mut tx = db.pool().begin().await?;
+        let stale = sqlx::query_scalar::<_, i64>(
+            r#"
+            SELECT count(*) FROM content_store
+            WHERE status = 'approved'
+              AND (approved_review_engine_digest IS DISTINCT FROM $1
+                   OR approved_curriculum_digest IS DISTINCT FROM $2)
+            "#,
+        )
+        .bind(engine_digest)
+        .bind(curriculum_digest)
+        .fetch_one(&mut *tx)
+        .await?;
+        if stale == 0 {
+            tx.commit().await?;
+            return Ok(0);
+        }
+        sqlx::query(
+            r#"
+            UPDATE content_store
+            SET approved_review_engine_digest = $1,
+                approved_curriculum_digest = $2
+            WHERE status = 'approved'
+            "#,
+        )
+        .bind(engine_digest)
+        .bind(curriculum_digest)
+        .execute(&mut *tx)
+        .await?;
+        sqlx::query(
+            r#"
+            UPDATE content_store
+            SET approved_template_context_digest =
+                public.cadus_template_context(kp_id, approved_policy_digest,
+                                              approved_curriculum_digest,
+                                              approved_review_engine_digest)
+            WHERE status = 'approved'
+              AND kind IN ('teach','hint_ladder')
+            "#,
+        )
+        .execute(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(u64::try_from(stale).unwrap_or(0))
+    })
+    .await
+}
+
 pub async fn refresh_prompt_digest(
     admin: Admin<'_>,
     digest: &str,
