@@ -123,6 +123,7 @@ use crate::state::{
 };
 
 mod advance;
+mod answer_format;
 mod drill;
 mod feedback;
 mod quiz;
@@ -140,7 +141,8 @@ pub use route::answer;
 use submission::*;
 use verdict::round2;
 pub use verdict::{
-    deterministic_grade, grade_item, measure_secs, reference_assisted, ungraded_grade,
+    deterministic_grade, grade_item, grade_served_item, measure_secs, reference_assisted,
+    ungraded_grade,
 };
 
 /// The code of an answer or a work field over its cap (`api.py:1292-1293`).

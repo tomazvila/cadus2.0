@@ -20,7 +20,7 @@ use super::*;
 /// it. It is never a model verdict and never a pass.
 #[must_use]
 pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Grade {
-    grade_outcome(answer, check(expected, answer, kind))
+    grade_outcome(expected, answer, check(expected, answer, kind))
 }
 
 /// Grade the policy captured in the served item (D-F1, C2).
@@ -37,12 +37,26 @@ pub fn grade_item(
         return deterministic_grade(&expected.answer, answer, kind);
     };
     grade_outcome(
+        &expected.answer,
         answer,
         cadus_core::answer::check_contract(&expected.answer, answer, contract),
     )
 }
 
-fn grade_outcome(answer: &str, outcome: Outcome) -> Grade {
+/// Grade a served item with source-scoped input representation support.
+///
+/// Equivalent factor-pair input is checked against the captured answer contract.
+/// The caller retains the original submission for learner history.
+pub fn grade_served_item(served: &ServedProblem, answer: &str, kind: AnswerKind) -> Grade {
+    let normalized = super::answer_format::factor_pairs(served, answer, kind);
+    grade_item(
+        &served.expected,
+        normalized.as_deref().unwrap_or(answer),
+        kind,
+    )
+}
+
+fn grade_outcome(expected: &str, answer: &str, outcome: Outcome) -> Grade {
     if answer.trim().is_empty() && matches!(outcome, Outcome::Decided(_)) {
         return Grade {
             correct: false,
@@ -68,7 +82,18 @@ fn grade_outcome(answer: &str, outcome: Outcome) -> Grade {
             work_quality: WorkQuality::NearlyPassable,
             error_tags: Vec::new(),
         },
-        Outcome::Undecidable(refusal) => ungraded_grade(refusal.reason),
+        Outcome::Undecidable(refusal) => {
+            let reason = if refusal.reason == "trailing text after the answer" {
+                if answer.contains('=') && !expected.contains('=') {
+                    "Enter only the final expression, without an equals sign. Put your steps in Show working."
+                } else {
+                    "I could not read the whole answer. Enter only the requested final answer; put your steps in Show working."
+                }
+            } else {
+                refusal.reason
+            };
+            ungraded_grade(reason)
+        }
     }
 }
 

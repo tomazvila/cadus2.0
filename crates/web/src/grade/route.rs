@@ -75,7 +75,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         expected_time(graph, &served),
     );
     let kind = served_kind(&served)?;
-    let grade = grade_item(&served.expected, &submitted.answer, kind);
+    let grade = grade_served_item(&served, &submitted.answer, kind);
     // T6, spec section 7: one count per grade DECISION, taken with no model call.
     state.metrics.count_grade(metrics::grade_result(&grade));
     let mut error_tags = grade.error_tags.clone();
