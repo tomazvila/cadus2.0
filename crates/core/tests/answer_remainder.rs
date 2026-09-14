@@ -27,6 +27,10 @@ fn every_spelling_of_a_quotient_with_a_remainder_is_one_tuple() {
     // The corpus spellings.
     assert_eq!(ast("241 R2"), Ast::Tuple(vec![int(241), int(2)]));
     assert_eq!(ast("23 R14"), Ast::Tuple(vec![int(23), int(14)]));
+    // The lower-case marker is the same production, case-insensitively.
+    assert_eq!(ast("23 r 14"), Ast::Tuple(vec![int(23), int(14)]));
+    assert_eq!(ast("23r14"), Ast::Tuple(vec![int(23), int(14)]));
+    assert_eq!(ast("12 r 27"), Ast::Tuple(vec![int(12), int(27)]));
     assert_eq!(
         ast("x + 2 remainder 3"),
         Ast::Tuple(vec![Ast::Add(vec![v("x"), int(2)]), int(3)])
@@ -76,9 +80,10 @@ fn the_letter_r_stays_a_variable_outside_the_marker_position() {
     assert_eq!(ast("2 R x"), Ast::Mul(vec![int(2), v("R"), v("x")]));
     assert_eq!(ast("R 2"), Ast::Mul(vec![v("R"), int(2)]));
     assert_eq!(ast("x R 2"), Ast::Mul(vec![v("x"), v("R"), int(2)]));
-    // The lower-case `r` is never the marker (the task rule `q r r`).
-    assert_eq!(refusal("9 r2"), "a number glued to a name reads as a label");
-    assert_eq!(ast("9 r 2"), Ast::Mul(vec![int(9), v("r"), int(2)]));
+    // The lower-case `r` is the marker in the same position, so the common
+    // learner spelling of a quotient and a remainder reads as the pair.
+    assert_eq!(ast("9 r2"), Ast::Tuple(vec![int(9), int(2)]));
+    assert_eq!(ast("9 r 2"), Ast::Tuple(vec![int(9), int(2)]));
     // A marker with nothing after it, or a second marker, is refused.
     assert_eq!(
         refusal("9 remainder"),
@@ -147,25 +152,22 @@ fn the_task_pairs_of_d_f3_are_decided_on_both_kinds() {
         ("2x^2 + 4x + 5 remainder 11", "(2x^2 + 4x + 5, 11)", E, true),
         ("2x^2 + 4x + 5 remainder 11", "2x^2 + 4x + 5", E, false),
     ]);
-    // A `9 R 2` learner spelling for the authored tuple, on both kinds.
+    // A `9 R 2` learner spelling for the authored tuple, on both kinds, in
+    // either case.
     assert_eq!(check("(9, 2)", "9 R 2", E), decided(true, false));
-    assert_eq!(check("(9, 2)", "9 r 2", E), decided(false, false));
+    assert_eq!(check("(9, 2)", "9 r 2", E), decided(true, false));
 }
 
 #[test]
-fn the_lower_case_marker_gets_no_pair_reading() {
+fn the_lower_case_marker_gets_the_same_pair_reading() {
     // The string rung reads case-free, so `9 r2` is the string `9 R2` (rung 2).
     assert_eq!(check("9 R2", "9 r2", N), decided(true, false));
-    // Against the authored tuple, `9 r2` is the label refusal (V2).
-    assert_undecidable(
-        "(9, 2)",
-        "9 r2",
-        N,
-        "a number glued to a name reads as a label",
-    );
-    // `9 r 2` is the product `18*r`, which is not the pair.
-    assert_eq!(check("9 R2", "9 r 2", N), decided(false, false));
-    assert_eq!(check("(9, 2)", "9 r 2", N), decided(false, false));
+    // Against the authored tuple, the lower-case marker builds the same pair.
+    assert_eq!(check("(9, 2)", "9 r2", N), decided(true, false));
+    assert_eq!(check("9 R2", "9 r 2", N), decided(true, false));
+    assert_eq!(check("(9, 2)", "9 r 2", N), decided(true, false));
+    assert_eq!(check("23 R14", "23 r 14", N), decided(true, false));
+    assert_eq!(check("12 R 27", "12r27", N), decided(true, false));
     // `9 2/2` is two numbers side by side, as before (review round 1).
     assert_undecidable("9 R2", "9 2/2", N, "two numbers stand side by side");
 }

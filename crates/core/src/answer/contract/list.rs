@@ -35,6 +35,23 @@ pub(super) fn validate(ordered: bool, member: &AnswerContract) -> Result<(), Und
 }
 
 fn values(text: &str) -> Result<Vec<&str>, Undecidable> {
+    values_with(text, false)
+}
+
+/// Split a list, folding a glued three-digit thousands group into one member.
+///
+/// The plain [`values`] split reads every comma as a list separator, so
+/// `89, 698, 712, 1,205` splits into five members and an ordering answer can
+/// never match its four-item authored answer. This split keeps the comma in the
+/// member when it carries no space and three digits follow it, so the member
+/// reads as one grouped number (`1,205`) the way the whole-answer rule of the V4
+/// table reads it. A following digit or a space makes it a separator again, so
+/// `1, 205` stays two members.
+fn values_grouped(text: &str) -> Result<Vec<&str>, Undecidable> {
+    values_with(text, true)
+}
+
+fn values_with(text: &str, merge_thousands: bool) -> Result<Vec<&str>, Undecidable> {
     let text = text.trim();
     if text.ends_with(" and") || text.starts_with("and ") {
         return Err(bad_list());
@@ -57,7 +74,11 @@ fn values(text: &str) -> Result<Vec<&str>, Undecidable> {
             _ => {}
         }
         let width = if depth == 0 && ch == ',' {
-            1
+            if merge_thousands && is_thousands_comma(text, at) {
+                0
+            } else {
+                1
+            }
         } else if depth == 0 && text[at..].starts_with(" and ") {
             5
         } else {
@@ -74,6 +95,30 @@ fn values(text: &str) -> Result<Vec<&str>, Undecidable> {
         return Err(bad_list());
     }
     Ok(parts)
+}
+
+/// Whether the comma at `at` is the separator of a glued three-digit group.
+///
+/// The comma must have one to three digits in front of it and exactly three
+/// digits immediately behind it, with no space after it. That is the group shape
+/// of the V4 table, and it is the same shape [`crate::answer::parse`] folds in a
+/// bare comma list.
+fn is_thousands_comma(text: &str, at: usize) -> bool {
+    let bytes = text.as_bytes();
+    let mut left = 0_usize;
+    let mut cursor = at;
+    while cursor > 0 && bytes[cursor - 1].is_ascii_digit() {
+        left += 1;
+        cursor -= 1;
+    }
+    if !(1..=3).contains(&left) {
+        return false;
+    }
+    let after = bytes.get(at + 1..).unwrap_or_default();
+    if after.len() < 3 || !after[..3].iter().all(u8::is_ascii_digit) {
+        return false;
+    }
+    !matches!(after.get(3), Some(byte) if byte.is_ascii_digit())
 }
 
 fn bad_list() -> Undecidable {
@@ -122,7 +167,18 @@ fn ordered_grade(
     learner_text: &str,
 ) -> Result<bool, Undecidable> {
     let expected = values(expected_text)?;
-    let learner = values(learner_text)?;
+    let mut learner = values(learner_text)?;
+    // A learner who writes the displayed thousands notation (`1,205`) splits
+    // into more members than the authored answer. When the grouped split alone
+    // restores the authored count, that is the one reading of the answer and it
+    // is graded. Otherwise the plain split stands, so no answer gains a second
+    // reading by accident.
+    if expected.len() != learner.len()
+        && let Ok(grouped) = values_grouped(learner_text)
+        && grouped.len() == expected.len()
+    {
+        learner = grouped;
+    }
     if expected.len() != learner.len() {
         let sample = expected.first().ok_or_else(bad_list)?;
         for given in learner {

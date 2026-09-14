@@ -31,6 +31,8 @@ mod exponent;
 mod term;
 mod unit;
 
+use num_bigint::BigInt;
+
 use build::{is_variable_name, make_quotient, simple_inequality};
 
 use super::Undecidable;
@@ -288,6 +290,9 @@ impl Parser<'_> {
         }
         let mut items = vec![first];
         while self.eat(&Tok::Comma) {
+            if self.merge_thousands_group(&mut items) {
+                continue;
+            }
             self.check_bare_comma_group()?;
             items.push(self.parse_expr()?);
         }
@@ -296,12 +301,13 @@ impl Parser<'_> {
 
     /// Whether the cursor is on the marker of a quotient with a remainder (D-F3).
     ///
-    /// `9 R2`, `9 R 2`, `9R2`, and `x + 2 remainder 3` all read into the tuple
-    /// `(quotient, remainder)`, which is the authored spelling `(9, 2)`. The word
-    /// `remainder` is always the marker. The letter `R` is the marker only
-    /// between two number tokens, so `2R` and `R` stay the variable `R`, and
-    /// `2 R x` stays the product. The lower-case `r` is never the marker: `9 r2`
-    /// keeps its label refusal, and `9 r 2` keeps the product reading.
+    /// `9 R2`, `9 R 2`, `9R2`, `9 r 2`, and `x + 2 remainder 3` all read into the
+    /// tuple `(quotient, remainder)`, which is the authored spelling `(9, 2)`. The
+    /// word `remainder` is always the marker. The single letter `R` or `r` is the
+    /// marker, case-insensitively, only between two number tokens, so `2R` and `R`
+    /// stay the variable `R`, and `2 R x` stays the product. The position rule
+    /// keeps the common learner spelling `23 r 14` on the pair reading without
+    /// turning a lone `r` (radius) or `2r` into a marker.
     ///
     /// A remainder that is not smaller than the divisor is not the concern of
     /// the grammar: no divisor is known here.
@@ -312,7 +318,7 @@ impl Parser<'_> {
         if name == "remainder" {
             return true;
         }
-        if name != "R" {
+        if name != "R" && name != "r" {
             return false;
         }
         let before = self.at.checked_sub(1).and_then(|at| self.tokens.get(at));
@@ -358,6 +364,63 @@ impl Parser<'_> {
             ));
         }
         Ok(())
+    }
+
+    /// Fold a `1,205`-shaped comma into the integer in front of it.
+    ///
+    /// The whole-answer rewrite of the V4 table strips the separators of a
+    /// grouped integer only when that grouped integer IS the whole answer. In a
+    /// bare list the group reaches the parser, where `1,205` carries two
+    /// readings: the number 1205 and the pair `(1, 205)`. This method takes the
+    /// number reading when the comma has no space after it and the three digits
+    /// after it end the item, so `89, 698, 712, 1,205` is the four-item list
+    /// `89, 698, 712, 1205` and an ordering problem grades instead of looping on
+    /// "not marked". A comma that a following `%` or operator keeps open is not a
+    /// group here, and `check_bare_comma_group` still refuses it, so
+    /// `1,500%` and `3 + 1,500` keep their pair reading and the same reason.
+    ///
+    /// The merge appends the three digits to the integer the list already holds,
+    /// so a run of groups (`1,205,678`, which the whole-answer rewrite has already
+    /// stripped) is no concern and no second parse runs.
+    fn merge_thousands_group(&mut self, items: &mut [Ast]) -> bool {
+        let plain = |text: &str| text.chars().all(|c| c.is_ascii_digit());
+        let Some(Tok::Num(right)) = self.peek() else {
+            return false;
+        };
+        if !plain(right) || right.chars().count() != 3 {
+            return false;
+        }
+        if self
+            .tokens
+            .get(self.at)
+            .is_none_or(|token| token.space_before)
+        {
+            return false;
+        }
+        // The group ends the item: a comma or the end of the answer follows.
+        if !matches!(self.peek_at(1), Some(Tok::Comma) | None) {
+            return false;
+        }
+        let Some(Tok::Num(left)) = self
+            .at
+            .checked_sub(2)
+            .and_then(|at| self.tokens.get(at))
+            .map(|token| &token.kind)
+        else {
+            return false;
+        };
+        if !plain(left) || !(1..=3).contains(&left.chars().count()) {
+            return false;
+        }
+        let Ok(right) = right.parse::<BigInt>() else {
+            return false;
+        };
+        let Some(Ast::Integer(whole)) = items.last_mut() else {
+            return false;
+        };
+        *whole = whole.clone() * BigInt::from(1_000_u32) + right;
+        self.bump();
+        true
     }
 
     /// Read a leading `<var> =` label and return the variable name.

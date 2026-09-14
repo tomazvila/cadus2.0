@@ -49,11 +49,10 @@ fn out_of_grammar_shapes_never_parse() {
     // `xy` left this list in the M2 fix wave: a short run of variable letters is
     // the product `x*y` now. `a_letter_run_the_grammar_does_not_own_stays_
     // undecidable` holds the runs that stay outside the grammar. `9 R2`,
-    // `23 R14`, and `x + 2 remainder 3` left the list with the
-    // quotient-and-remainder production of D-F3 (unit f2-grammar), which
-    // `answer_remainder.rs` pins.
+    // `23 R14`, `x + 2 remainder 3`, and the lower-case `9 r2`/`23 r 14` left
+    // the list with the quotient-and-remainder production of D-F3 (unit
+    // f2-grammar), which `answer_remainder.rs` pins.
     for text in [
-        "9 r2",
         "log_b(x)",
         "n!",
         "3/0",
