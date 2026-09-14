@@ -93,6 +93,12 @@ pub(crate) fn progress_for<'state>(
 /// row flattens the absent count to 0, so reading it back would tell the client
 /// a lesson has zero problems.
 ///
+/// `index` never passes `total`. A one-problem review answers a wrong attempt
+/// with supplemental practice, and the stored serve counter ticks past the
+/// single problem, so the raw `served.index + 1` would read "2 of 1". The clamp
+/// is display-only: `served.index` still drives target rotation in
+/// `next_serve_index`.
+///
 /// `quiz_elapsed_secs` is the EIGHTH key, and a QUIZ serve alone carries it
 /// (M6-review-2, V6). Every other task type emits the seven keys of 1.0, so no
 /// other route and no other payload changes shape.
@@ -108,9 +114,17 @@ pub(super) fn serve_payload(
     } else {
         (expected_time(graph, served.topic.as_deref()), false)
     };
+    // A review with one problem can store an index past its count after a
+    // wrong answer queues the supplemental practice. The counter the UI reads
+    // stays within the task's own problem count; every other task type keeps
+    // the index it computed.
+    let index = match task.n_problems {
+        Some(total) if total > 0 => served.index.saturating_add(1).min(total),
+        _ => served.index.saturating_add(1),
+    };
     let mut payload = json!({
         "problem_id": served.problem_id,
-        "index": served.index + 1,
+        "index": index,
         "total": task.n_problems,
         "text": served.text,
         "kp": served.kp,
@@ -332,6 +346,28 @@ mod tests {
         assert_eq!(next_serve_index(TaskType::Quiz, &progress), 2);
         assert_eq!(next_serve_index(TaskType::MultiStep, &progress), 2);
         assert_eq!(next_serve_index(TaskType::Review, &progress), 3);
+    }
+
+    /// ISSUE-0: a one-problem review that has served and answered its single
+    /// problem installs the queued practice at `progress.served == 1`, so the
+    /// raw `served.index + 1` would read "2 of 1". The emitted index is clamped
+    /// to the task's problem count.
+    #[test]
+    fn a_review_payload_never_reports_an_index_past_its_total() {
+        let mut review = task(TaskType::Review, Some("addition"));
+        review.n_problems = Some(1);
+        // One problem went on screen and a wrong answer queued its practice.
+        let mut problem = served(Some("addition"));
+        problem.index = 1;
+        let payload = serve_payload(&problem, &review, &graph(), 45, None);
+        assert_eq!(payload["total"], 1);
+        assert_eq!(payload["index"], 1);
+        assert!(
+            payload["index"].as_i64().unwrap() <= payload["total"].as_i64().unwrap(),
+            "a review reported {} of {}: {payload}",
+            payload["index"],
+            payload["total"]
+        );
     }
 
     #[test]
