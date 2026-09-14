@@ -157,7 +157,7 @@ describe('the plan cursor', () => {
     expect(sessionEnd).not.toHaveBeenCalled();
   });
 
-  it('drops the verdict and locks the card while the next task loads', async () => {
+  it('drops the verdict and question while the next task loads', async () => {
     const serve = held<ServedProblem>();
     const taskServe = vi.fn<ApiClient['taskServe']>()
       .mockResolvedValueOnce(P(1))
@@ -169,11 +169,11 @@ describe('the plan cursor', () => {
     await submitAnswer('3/4');
     await press('Continue →');
 
-    // The old problem stands, busy, with no verdict over it and no way to post again.
-    expect(section().getAttribute('aria-busy')).toBe('true');
+    // The next task starts with a loading screen and no question from the completed task.
+    expect(screen.getByText('Preparing your session…')).toBeTruthy();
     expect(document.querySelector('.feedback')).toBeNull();
-    expect(answerInput().disabled).toBe(true);
-    expect(submitButton().hasAttribute('disabled')).toBe(true);
+    expect(screen.queryByLabelText('Answer')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Submit' })).toBeNull();
 
     await act(async () => { serve.release(P(1, { problem_id: 'p9' })); });
     expect(section().getAttribute('aria-busy')).toBe('false');

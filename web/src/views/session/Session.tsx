@@ -34,6 +34,7 @@ import {
 import { Teach } from './Teach';
 import { Integrated } from './Integrated';
 import { serveIntegrated } from './serveIntegrated';
+import { loadPlannedTask } from './loadPlannedTask';
 import { Feedback, Rework } from './Feedback';
 import { Diagnosis } from './Diagnosis';
 import { useDiagnosisStream } from './useDiagnosis';
@@ -158,11 +159,37 @@ export function Session({
 
   // ---- serving -------------------------------------------------------------
 
+  /** Load only for the active task; recover stale plans before showing a question. */
+  const loadTask = <T,>(
+    request: () => Promise<T>,
+    onLoaded: (value: T) => void,
+    onFail?: () => void,
+  ): void => {
+    const taskId = taskRef.current!.task_id;
+    const current = () => life.alive() && taskRef.current?.task_id === taskId;
+    void call(() => loadPlannedTask(api, taskId, request), (loaded) => {
+      if (!current() || !gate.is('loading')) return;
+      if (loaded.kind === 'replanned') {
+        setLive(null, 0);
+        setTeaching(null);
+        setIntegrated(null);
+        setRework(null);
+        session.replan(loaded.plan);
+        return;
+      }
+      onLoaded(loaded.value);
+    }, {
+      retryGate: () => current()
+        && (gate.is('loading') || gate.tryEnter('no-instruction', 'loading')),
+      onFail: () => { if (current() && gate.is('loading')) onFail?.(); },
+    });
+  };
+
   /** Serve the task on screen. Every caller has the phase at `loading` already. */
   const serveThenShow = (): void => {
     // A serve is asked for by a task on screen, so the ref names one.
     const task = taskRef.current!;
-    void call(() => api.taskServe(task.task_id), (served) => {
+    loadTask(() => api.taskServe(task.task_id), (served) => {
       // Drop the worked example, or the teach branch keeps winning the render and the
       // lesson shows no answer field and no way on.
       setTeaching(null);
@@ -175,13 +202,13 @@ export function Session({
   const serveWholeItem = (): void => {
     const task = taskRef.current!;
     setLive(null, 0);
-    void call(() => serveIntegrated(api, task.task_id), (item) => {
+    loadTask(() => serveIntegrated(api, task.task_id), (item) => {
       if (!life.alive() || taskRef.current?.task_id !== task.task_id) return;
       if (!item) { serveThenShow(); return; }
       setTeaching(null);
       setIntegrated(item);
       gate.enter('ready');
-    }, { retryGate: () => life.alive() && gate.is('loading') && taskRef.current?.task_id === task.task_id });
+    });
   };
 
   /** Start the task on screen. The phase is `loading` on every path that leads here. */
@@ -202,15 +229,15 @@ export function Session({
     if (task.task_type === 'lesson' || task.integrated_instruction_required) {
       // Teach FIRST, and teach ALONE (NO-2BILL). Every topic has knowledge points, so the
       // view needs no served problem to know a fresh lesson must teach.
-      void call(() => api.taskTeach(task.task_id), (instruction) => {
+      loadTask(() => api.taskTeach(task.task_id), (instruction) => {
         taughtKp.current = instruction.kp;
         setTeaching(instruction);
         gate.enter('teaching');
-      }).then((instruction) => {
+      }, () => {
         // AUDIT FINDING (j). A failed teach NEVER falls through to practice. The service
         // has no worked example for this knowledge point, so practising it hands the
         // learner a skill nobody taught. The card says so and offers the next task.
-        if (!instruction && life.alive()) gate.enter('no-instruction');
+        gate.enter('no-instruction');
       });
       return;
     }
@@ -244,6 +271,7 @@ export function Session({
 
   /** The task is over. `advance` put the phase at `loading` before it came here. */
   const advanceTask = (): void => {
+    setLive(null, 0);
     if (!session.needsReplan()) {
       // Decided HERE, not watched for in an effect: an effect that ends the session would
       // have to write state synchronously, and the decision belongs where the move happens.
