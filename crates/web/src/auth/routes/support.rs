@@ -8,10 +8,10 @@ use axum::body::Bytes;
 use axum::http::{HeaderMap, HeaderValue, StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use cadus_store::auth::{
-    AccountProfile, NewSession, account_profile, delete_tokens_for_purpose, insert_session,
-    insert_token, set_password_hash, token_by_hash,
+    AccountProfile, NewSession, PURPOSE_VERIFY, account_profile, delete_tokens_for_purpose,
+    insert_session, insert_token, set_password_hash, token_by_hash,
 };
-use cadus_store::{Db, begin_tenant};
+use cadus_store::{Db, StoreError, begin_tenant};
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
 use sqlx::types::chrono::{DateTime, Utc};
@@ -19,7 +19,7 @@ use sqlx::{Postgres, Transaction};
 
 use super::{
     ACCEPT_SESSION_TOKEN, DUMMY_MISMATCH, DUMMY_PASSWORD, EMAIL_TOO_LONG_MESSAGE, MAX_EMAIL_BYTES,
-    Public,
+    Public, RESET_LINK_KEY, VERIFY_LINK_KEY,
 };
 use crate::AppState;
 use crate::auth::email::normalize_email;
@@ -302,6 +302,9 @@ pub(super) async fn sign_in(
 ///
 /// A new link supersedes the live ones of the same purpose, so a leaked older
 /// link stops working the moment a fresh one is asked for.
+///
+/// The SAME transaction queues the mail: `auth_tokens` holds the SHA-256 digest
+/// alone, so the raw token reaches `email_outbox` here or nowhere.
 pub(super) async fn mint_token(
     db: &Db,
     user_id: Uuid,
@@ -312,6 +315,9 @@ pub(super) async fn mint_token(
     let raw = new_token()?;
     let expires_at = now + Duration::from_secs(ttl_secs);
     let mut tx = bind(db, user_id).await?;
+    let profile = store_call(db, "account read", account_profile(&mut *tx))
+        .await?
+        .ok_or_else(no_account_row)?;
     store_call(
         db,
         "token insert",
@@ -324,8 +330,51 @@ pub(super) async fn mint_token(
         insert_token(&mut *tx, user_id, &hash_token(&raw), purpose, expires_at),
     )
     .await?;
+    queue_mail(db, &mut tx, user_id, &profile.email, purpose, &raw).await?;
     commit(db, tx, "token insert").await?;
     Ok(raw)
+}
+
+/// Write the `email_outbox` row of one freshly minted token.
+///
+/// The row is the seam a mailer or an operator drains. It carries the raw token
+/// and the link the token belongs in, because this is the one place the raw
+/// token exists: `auth_tokens` already holds the digest alone. The write runs
+/// inside the bound mint transaction, so the token row and its mail commit
+/// together or not at all.
+async fn queue_mail(
+    db: &Db,
+    tx: &mut Transaction<'static, Postgres>,
+    user_id: Uuid,
+    to_addr: &str,
+    purpose: &str,
+    token: &str,
+) -> Result<(), ApiError> {
+    let key = if purpose == PURPOSE_VERIFY {
+        VERIFY_LINK_KEY
+    } else {
+        RESET_LINK_KEY
+    };
+    let payload = json!({
+        "token": token,
+        "purpose": purpose,
+        "link": format!("/?{key}={token}"),
+    });
+    let document = payload.to_string();
+    store_call(db, "outbox insert", async {
+        sqlx::query(
+            "INSERT INTO email_outbox (user_id, to_addr, kind, payload)
+             VALUES ($1, $2, $3, $4::text::jsonb)",
+        )
+        .bind(user_id)
+        .bind(to_addr)
+        .bind(purpose)
+        .bind(&document)
+        .execute(&mut **tx)
+        .await?;
+        Ok::<(), StoreError>(())
+    })
+    .await
 }
 
 /// Read one out-of-band token and refuse every unspendable shape.

@@ -44,11 +44,14 @@
 //! `Accept-Session-Token: true` (D-M5-5). The database holds the SHA-256 digest
 //! alone.
 //!
-//! # What M5 does not carry
+//! # What M5 does not carry to a real inbox
 //!
-//! The reset and verification tokens land in `auth_tokens`. M5 has no unit that
-//! delivers mail, so nothing sends the link yet; `email_outbox` and its drain
-//! are the place that work belongs.
+//! The reset and verification tokens land in `auth_tokens` as a SHA-256 digest
+//! alone. The mint path ALSO queues the raw token and its link in
+//! `email_outbox`, so nothing is lost, but M5 still carries no mailer unit that
+//! drains the queue. `GET /api/admin/outbox` is the operator drain until one
+//! exists: it lists the pending messages, tokens and links included, and
+//! `POST /api/admin/outbox/{id}/sent` marks one delivered by hand.
 
 use axum::Router;
 use axum::routing::{get, post};
@@ -56,6 +59,7 @@ use axum::routing::{get, post};
 use crate::AppState;
 
 mod account;
+mod outbox;
 mod public;
 mod recovery;
 mod support;
@@ -86,6 +90,17 @@ pub const BAD_RESET_TOKEN_MESSAGE: &str = "This password-reset link is invalid o
 
 /// The refusal message of an unspendable verification token.
 pub const BAD_VERIFY_TOKEN_MESSAGE: &str = "This verification link is invalid or has expired.";
+
+/// The query key the SPA boot reads a verification token from.
+///
+/// The 1.0 mailer links to `/?verify=<token>`, and the SPA boot reads both that
+/// spelling and the 2.0 route-table `/verify?token=<token>`. This build emits
+/// the first: it needs no SPA route of its own, so the link works against the
+/// served root wherever the SPA is mounted.
+pub const VERIFY_LINK_KEY: &str = "verify";
+
+/// The query key the SPA boot reads a reset token from. See [`VERIFY_LINK_KEY`].
+pub const RESET_LINK_KEY: &str = "reset";
 
 /// The password of the anti-enumeration dummy hash.
 ///
@@ -132,4 +147,9 @@ pub fn router() -> Router<AppState> {
         .route("/api/auth/password/reset", post(reset_password))
         .route("/api/auth/verify-email", post(verify_email))
         .route("/api/auth/verify-email/resend", post(resend_verification))
+        // The operator drain of `email_outbox`. The two paths are `const`s, so
+        // the SPA route inventory of `tests/route_table.rs` does not walk them:
+        // no SPA screen reads the outbox.
+        .route(outbox::OUTBOX_PATH, get(outbox::list_pending))
+        .route(outbox::OUTBOX_SENT_PATH, post(outbox::mark_sent))
 }
