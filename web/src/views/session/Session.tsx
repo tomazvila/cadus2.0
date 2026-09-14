@@ -135,6 +135,11 @@ export function Session({
     // Both latches belong to the problem that is live, so a fresh serve starts unlatched.
     timedOutFor.current = null;
     answeredFor.current = null;
+    // A fresh serve also drops the previous problem's report context. Without this the
+    // shared "Report submitted question" panel lingers into the new problem's `ready`
+    // phase and renders a second report button beside the per-problem one. The re-solve
+    // never calls `setLive`, so its report panel survives, as it should.
+    report.clear();
     // The clock's starting value travels WITH the problem, so the ticking effect never
     // writes state synchronously to reset it.
     setElapsed(startAt);

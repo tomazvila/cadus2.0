@@ -45,6 +45,21 @@ export function useProblemReport(api: ProblemReportApi | null, initialContext?: 
     setOpen(false);
   }
 
+  /** Drop everything, context included. A fresh serve must not leave the previous
+   *  submission's question reachable — its button would render beside the new one. */
+  function clear() {
+    stop();
+    submission.current = null;
+    applied.current = null;
+    setContext(null);
+    setReceipt(null);
+    setNote('');
+    setError('');
+    setBusy(false);
+    setNoteLocked(false);
+    setOpen(false);
+  }
+
   function accept(value: ProblemReportReceipt) {
     setReceipt(value);
     if (context && onApplied && applied.current !== value.report_id
@@ -122,7 +137,7 @@ export function useProblemReport(api: ProblemReportApi | null, initialContext?: 
     setOpen(false);
   }
 
-  return { context, open, note, setNote, receipt, error, busy, remember, show, close, send,
+  return { context, open, note, setNote, receipt, error, busy, remember, clear, show, close, send,
     refresh: () => { if (receipt) void refresh(receipt.report_id); },
     noteLocked,
   };
