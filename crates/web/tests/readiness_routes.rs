@@ -1,5 +1,6 @@
 //! The readiness rule of D-F5 on the HTTP surface: the plan, the blocked list,
-//! and the serve route that refuses a lesson it cannot teach.
+//! and the serve route that degrades to practice-only for a knowledge point it
+//! cannot teach.
 //!
 //! Audit finding (j). Every other route test turns the rule off, because a test
 //! database approves no document. This file turns it ON and is the test of the
@@ -22,14 +23,12 @@ use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::state::{Content, TaskProgress, WebState};
 use cadus_web::{AppState, create_app};
 use common::{
-    KEY, LESSON, SESSION, drill_app, exemplar, gated_app, kp, one_unit_curriculum, parse,
-    plan_body, put_state, seed_learner, seed_open_session, serve_ok, serve_raw, topic,
+    KEY, LESSON, SESSION, answer_task_ok, drill_app, exemplar, gated_app, kp, one_unit_curriculum,
+    plan_body, put_state, seed_learner, seed_open_session, serve_ok, stored_state, teach_task,
+    topic,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
-
-/// The serving key of the second knowledge point of `addition`.
-const KEY_TWO: &str = "addition/kp2";
 
 /// A curriculum whose `addition` topic authors FOUR decidable exemplars per
 /// knowledge point: three stay in practice and the fourth is held out, so the
@@ -102,6 +101,19 @@ fn blockers(entry: &Value) -> Vec<&str> {
         .collect()
 }
 
+/// The answer of a `Compute n + n.` statement, read from its text.
+///
+/// The `ready_curriculum` exemplars all add a number to itself, so the test can
+/// close the lesson without reading the `expected` the payload never carries.
+fn answer_of(text: &str) -> String {
+    let inner = text
+        .trim_start_matches("Compute ")
+        .trim_end_matches('.');
+    let (left, _right) = inner.split_once(" + ").expect("an addition statement");
+    let n: i64 = left.trim().parse().expect("the addend is a number");
+    (n * 2).to_string()
+}
+
 /// With an empty `content_store` the plan serves no lesson, and the `blocked`
 /// list names the topic and the three conditions the content does not meet.
 /// Audit findings (h) and (j) together.
@@ -152,14 +164,15 @@ async fn a_teach_page_alone_leaves_the_practice_and_assessment_blockers() {
 }
 
 /// A knowledge point that teaches, practices and assesses is planned and
-/// served, and the SECOND knowledge point of the same lesson — the one with no
-/// approved teach page — takes `409 no_instruction` instead of practice.
+/// served. When the lesson stands at its SECOND knowledge point — the one with
+/// no approved teach page — serve falls back to practice-only instead of
+/// `409 no_instruction`, and the task can still reach `done` (ISSUE-5).
 ///
-/// It is the server half of audit finding (j): the plan gate reads the
-/// knowledge point the lesson STARTS at, and the serve reads the one it stands
-/// at, so the serve carries its own check.
+/// The plan gate reads the knowledge point the lesson STARTS at, so a lesson
+/// may begin at a taught point and later cross into an untaught one. The serve
+/// no longer dead-ends there.
 #[tokio::test]
-async fn a_ready_lesson_serves_and_the_untaught_next_point_is_409_no_instruction() {
+async fn a_ready_lesson_serves_and_the_untaught_next_point_is_practice_only() {
     TestDb::with(|db| async move {
         let user = seed_learner(&db, "readiness-ready@example.com").await;
         let app = ready_app(&db);
@@ -172,17 +185,40 @@ async fn a_ready_lesson_serves_and_the_untaught_next_point_is_409_no_instruction
         let served = serve_ok(&app, user, LESSON).await;
         assert_eq!(served["kp"], "kp1", "{served}");
 
-        // The lesson now stands at `kp2`, which no approved page teaches.
+        // The lesson now stands at `kp2`, which no approved page teaches. The
+        // teach route still reports the missing page...
         stand_lesson_at(&db, user, "kp2").await;
-        let (status, body) = serve_raw(&app, user, LESSON).await;
+        let (status, body) = teach_task(&app, user, LESSON).await;
         assert_eq!(status, StatusCode::CONFLICT, "{body}");
-        assert_eq!(parse(&body)["error"]["code"], "no_instruction", "{body}");
+        assert_eq!(body["error"]["code"], "no_instruction", "{body}");
 
-        // Approve the second page and the same request serves.
-        seed_teach_page(&db, &ready_curriculum(), KEY_TWO, "digest-teach-2").await;
-        stand_lesson_at(&db, user, "kp2").await;
+        // ...but serve degrades to a practice-only problem of `kp2`.
         let served = serve_ok(&app, user, LESSON).await;
         assert_eq!(served["kp"], "kp2", "{served}");
+
+        // ...and the learner can finish the point and the task.
+        let mut next = served;
+        let mut passed = false;
+        for _ in 0..4 {
+            let reply = answer_task_ok(
+                &app,
+                user,
+                LESSON,
+                json!({
+                    "problem_id": next["problem_id"],
+                    "answer": answer_of(next["text"].as_str().unwrap()),
+                }),
+            )
+            .await;
+            if reply["task_status"] == "task_passed" {
+                passed = true;
+                break;
+            }
+            next = reply["next"].clone();
+            assert_eq!(next["kp"], "kp2", "{reply}");
+        }
+        assert!(passed, "the lesson never reached task_passed");
+        assert!(stored_state(&db, user).await.tasks[LESSON].done);
     })
     .await;
 }

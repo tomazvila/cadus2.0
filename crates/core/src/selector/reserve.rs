@@ -199,7 +199,7 @@ pub fn reserve_open_plan(
         .filter(|task| task_still_valid(task, states, graph, cfg, t_us, &validity))
         .cloned()
         .collect();
-    let fresh = remediation_tasks(ctx.pending_remediation, states, graph, cfg);
+    let fresh = remediation_tasks(ctx.pending_remediation, states, graph, cfg, ctx.readiness);
     let mut kept = prepend_remediation(kept, fresh, &open_plan.session);
 
     if let Some(limit) = ctx.n {

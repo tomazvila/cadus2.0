@@ -141,7 +141,7 @@ fn each_uncertain_kp_gets_a_distinct_one_item_task() {
             targets: vec![Slug::new("topic").unwrap()],
         })
         .collect();
-    let mut tasks = remediation_tasks(&pending, &BTreeMap::new(), &graph, &Config::default());
+    let mut tasks = remediation_tasks(&pending, &BTreeMap::new(), &graph, &Config::default(), None);
     assign_ids(&mut tasks, "next");
     assert_eq!(tasks.len(), 2);
     assert_eq!(tasks[0].task_id, "next-review-topic-confirm-kp1");

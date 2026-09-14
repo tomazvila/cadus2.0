@@ -200,29 +200,15 @@ pub(crate) async fn install_next(
     // Audit finding (j), the server half. A lesson practices a knowledge point
     // only when an approved teach page exists for it: without the page the
     // learner practices a skill the service never taught. Every other task type
-    // revisits a skill the learner already met, so this reads for a lesson only
-    // and costs one indexed row (D-O3).
+    // revisits a skill the learner already met.
     //
-    // `Config::readiness::enforce` guards it, the same switch the selector rule
-    // of D-F5 reads. The two are ONE policy: a deployment that turns the rule
-    // off plans the lesson and serves it.
-    let policy = content.policy_digest(&target.key)?;
-    if content.cfg.readiness.enforce
-        && task.task_type == TaskType::Lesson
-        && store(
-            state,
-            approved_document_current(
-                &mut **tx,
-                &target.key,
-                KIND_TEACH,
-                content.review_context(policy.as_deref())?,
-            ),
-        )
-        .await?
-        .is_none()
-    {
-        return Err(no_instruction());
-    }
+    // The plan gate of D-F5 stops an unteachable lesson at the START knowledge
+    // point. A lesson whose LATER point has no page cannot be stopped there:
+    // the learner already began the task and has the earlier point open. Serve
+    // therefore degrades to practice-only for that point (the teach route still
+    // reports `no_instruction`, and the SPA falls through to practice) so the
+    // task can reach `done` instead of dead-ending on `no_instruction` (ISSUE-5).
+    //
     let windows = (scratch.ring(&target.serve), scratch.memory(&task_id));
     let (row, previously_claimed) = draw_fresh(
         state,

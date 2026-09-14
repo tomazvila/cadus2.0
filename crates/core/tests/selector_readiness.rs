@@ -12,9 +12,9 @@ use std::collections::BTreeMap;
 
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Curriculum, Exemplar, KnowledgePoint};
-use cadus_core::event::TaskType;
+use cadus_core::event::{Slug, TaskType, TopicStatus};
 use cadus_core::instruction::{KIND_HINT_LADDER, KIND_TEACH};
-use cadus_core::learner::TopicState;
+use cadus_core::learner::{PendingRemediation, TopicState};
 use cadus_core::readiness::{Blocker, KIND_TEMPLATE, MapContent, ReadinessIndex, ReadinessSet};
 use cadus_core::selector::{SessionContext, SessionPlan, compose_session};
 
@@ -197,4 +197,90 @@ fn the_rule_is_off_with_no_gate_and_off_when_the_config_says_so() {
     assert_eq!(quiet.tasks.len(), 2);
     assert!(quiet.blocked.is_empty());
     assert!(cfg().readiness.enforce);
+}
+
+/// A failed confirmation queues a peel-back LESSON. When the content has no
+/// approved teach page for that lesson, the remediation path must apply the
+/// same `teachable` gate as ordinary planning: the lesson is NOT scheduled, and
+/// a practice-only remediation review takes its place (ISSUE-4).
+#[test]
+fn a_failed_confirmation_with_no_teach_page_falls_back_to_practice_only() {
+    let graph = common::selector::graph_of(
+        vec![topic("p")
+            .kps(vec![ready_kp("kp1"), ready_kp("kp2")])
+            .build()],
+        &[],
+    );
+    // The topic is PLACED (inferred, never practiced), the state a failed
+    // confirmation leaves behind. No approved teach page exists.
+    let placed = TopicState {
+        status: TopicStatus::Placed,
+        ..TopicState::default()
+    };
+    let states = states_of(vec![("p", placed)]);
+    let set = set_of(&graph, &MapContent::default());
+    let pending = vec![PendingRemediation {
+        kind: "confirm_failed".to_owned(),
+        targets: vec![Slug::new("p").expect("a slug")],
+    }];
+    let quiz = quiz_quiet();
+    let ctx = SessionContext::default()
+        .with_quiz_state(Some(&quiz))
+        .with_pending_remediation(&pending)
+        .with_readiness(Some(&set));
+    let plan = compose_session(&states, &graph, &cfg(), T_US, &mut sampler(1), &ctx);
+
+    // The peel-back LESSON is not served...
+    assert!(
+        plan.tasks
+            .iter()
+            .all(|task| !(task.task_type == TaskType::Lesson
+                && task.topic.as_deref() == Some("p"))),
+        "an unteachable remediation lesson was scheduled: {:?}",
+        plan.tasks
+    );
+    // ...and the target is not dropped, but downgraded to a practice-only
+    // remediation review.
+    let fallback = plan
+        .tasks
+        .iter()
+        .find(|task| task.is_remediation && task.topic.as_deref() == Some("p"))
+        .expect("the remediation target was not scheduled at all");
+    assert_eq!(fallback.task_type, TaskType::Review);
+    assert!(
+        fallback.why.contains("practice-only"),
+        "the fallback does not name itself: {}",
+        fallback.why
+    );
+}
+
+/// A remediation target with no practicable knowledge point at all is dropped,
+/// not turned into a review that could serve nothing.
+#[test]
+fn a_failed_confirmation_with_no_practicable_point_is_skipped() {
+    let graph = common::selector::graph_of(
+        vec![topic("p").kps(vec![thin_kp("kp1")]).build()],
+        &[],
+    );
+    let placed = TopicState {
+        status: TopicStatus::Placed,
+        ..TopicState::default()
+    };
+    let states = states_of(vec![("p", placed)]);
+    let set = set_of(&graph, &MapContent::default());
+    let pending = vec![PendingRemediation {
+        kind: "confirm_failed".to_owned(),
+        targets: vec![Slug::new("p").expect("a slug")],
+    }];
+    let quiz = quiz_quiet();
+    let ctx = SessionContext::default()
+        .with_quiz_state(Some(&quiz))
+        .with_pending_remediation(&pending)
+        .with_readiness(Some(&set));
+    let plan = compose_session(&states, &graph, &cfg(), T_US, &mut sampler(1), &ctx);
+    assert!(
+        plan.tasks.iter().all(|task| !task.is_remediation),
+        "a remediation target with no practicable point was scheduled: {:?}",
+        plan.tasks
+    );
 }

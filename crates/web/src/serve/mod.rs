@@ -91,7 +91,7 @@ use cadus_core::learner::problem_text_hash;
 use cadus_core::pool::{Avoid, ExemplarSource, ProblemSource, Source, kp_key};
 use cadus_core::selector::{SessionPlan, Task};
 use cadus_core::template::{Bindings, Value as Binding, from_body, literal_to_rational, render};
-use cadus_store::content::{ApprovedDoc, KIND_HINT_LADDER, KIND_TEACH, approved_document_current};
+use cadus_store::content::{ApprovedDoc, KIND_HINT_LADDER, KIND_TEACH};
 use cadus_store::pool::{
     NewInstance, PoolRow, insert_batch, pop_with_ring_current_tx, reclaim_exemplar_tx,
 };

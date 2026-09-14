@@ -7,8 +7,10 @@ use crate::config::Config;
 use crate::curriculum::Curriculum;
 use crate::event::TaskType;
 use crate::learner::{PendingRemediation, TopicState};
+use crate::readiness::ReadinessGate;
 use crate::xp::is_known;
 
+use super::eligible::gate_of;
 use super::task::{Task, review_shell, start_kp};
 use super::topic_set::TopicSet;
 use super::{
@@ -105,15 +107,22 @@ pub(super) fn multistep_task(
 ///
 /// A mastered target gets a remedial review; an unmastered one gets its lesson,
 /// the peel-back of PEDAGOGY 8. Each target is served once, first occurrence wins.
+///
+/// The peel-back LESSON passes the same `teachable` gate as a frontier lesson
+/// (D-F5) when the caller supplies a [`ReadinessGate`] and the config enforces
+/// it. A lesson the content cannot teach degrades to a practice-only review, or
+/// drops when the topic has no practicable knowledge point at all (ISSUE-4).
 #[must_use]
 pub fn remediation_tasks(
     pending: &[PendingRemediation],
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
     cfg: &Config,
+    readiness: Option<&dyn ReadinessGate>,
 ) -> Vec<Task> {
     let mut tasks: Vec<Task> = Vec::new();
     let mut seen: BTreeSet<String> = BTreeSet::new();
+    let gate = gate_of(cfg, readiness);
     let default = TopicState::default();
     for item in pending {
         for target in &item.targets {
@@ -163,12 +172,40 @@ pub fn remediation_tasks(
                     )
                 }
             } else {
-                Task {
-                    topic: Some(id.to_owned()),
-                    start_at_kp: start_kp(graph, id, state),
-                    why: format!("remediation ({kind}); peel-back lesson"),
-                    is_remediation: true,
-                    ..Task::default()
+                let kp = start_kp(graph, id, state);
+                // The SAME gate the frontier lesson reads (D-F5). A peel-back
+                // lesson the content cannot teach must not enter the plan: the
+                // learner would be assigned a task they cannot open. Fall back
+                // to a practice-only review of the same topic, or drop the
+                // target when no knowledge point is practicable at all.
+                let blocked = gate
+                    .zip(kp.as_deref())
+                    .is_some_and(|(gate, kp)| !gate.lesson_blockers(id, kp).is_empty());
+                if blocked {
+                    if gate.is_some_and(|gate| !gate.topic_practicable(id)) {
+                        continue;
+                    }
+                    Task {
+                        start_at_kp: kp,
+                        is_remediation: true,
+                        ..review_shell(
+                            id,
+                            states,
+                            graph,
+                            cfg.review.questions,
+                            format!(
+                                "remediation ({kind}); practice-only fallback, no approved teach page"
+                            ),
+                        )
+                    }
+                } else {
+                    Task {
+                        topic: Some(id.to_owned()),
+                        start_at_kp: kp,
+                        why: format!("remediation ({kind}); peel-back lesson"),
+                        is_remediation: true,
+                        ..Task::default()
+                    }
                 }
             };
             tasks.push(task);
@@ -223,7 +260,7 @@ mod tests {
             kind: "repeat_fail".to_owned(),
             targets: targets[..1].to_vec(),
         });
-        let tasks = remediation_tasks(&pending, &states, &tree, &cfg);
+        let tasks = remediation_tasks(&pending, &states, &tree, &cfg, None);
         let kinds: Vec<TaskType> = tasks.iter().map(|task| task.task_type).collect();
         assert_eq!(kinds, [TaskType::Review, TaskType::Lesson]);
         assert!(tasks.iter().all(|task| task.is_remediation));

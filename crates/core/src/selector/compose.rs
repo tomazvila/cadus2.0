@@ -228,7 +228,7 @@ pub fn compose_session(
 
     // Priority 1: the remediation queue. It is computed first so the review and
     // lesson lists can dedupe against it.
-    let remediation = remediation_tasks(ctx.pending_remediation, states, graph, cfg);
+    let remediation = remediation_tasks(ctx.pending_remediation, states, graph, cfg, ctx.readiness);
     let remediation_topics: BTreeSet<String> = remediation
         .iter()
         .filter_map(|task| task.topic.clone())
