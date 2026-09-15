@@ -94,12 +94,18 @@ fn grade_outcome(expected: &str, answer: &str, outcome: Outcome) -> Grade {
 ///
 /// A refusal reason names the production that fired, which tells the learner
 /// nothing about the FORM to type (the ISSUE-2 ruling: the refusal must teach
-/// the format, not the maths). The unit refusals and the trailing-text refusal
-/// are the two a mathematically correct answer can hit, so each gets actionable
+/// the format, not the maths). The unit refusals, the trailing-text refusal,
+/// and the name refusal (a word like `units` beside the value, ISSUE-13) are
+/// the ones a mathematically correct answer can hit, so each gets actionable
 /// guidance; every other reason stands as the checker wrote it.
 fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
     match reason {
         "a unit is missing" => missing_unit_guidance(expected),
+        "a name that is not a function or variable" => {
+            "I could not read a word in that answer. Enter just the number or expression \
+             \u{2014} remove any words, such as 'units'."
+                .to_string()
+        }
         "a unit on the learner side only" => {
             "The expected answer here is a bare number, so enter the value alone, without a unit."
                 .to_string()
@@ -371,5 +377,37 @@ mod tests {
                 "I could not read the whole answer. Enter only the requested final answer; put your steps in Show working."
             )
         );
+    }
+
+    // ISSUE-13 (ISSUES.md): the name refusal speaks human, the way H-1 taught
+    // the unit refusals to.
+
+    /// The exact screen of ISSUE-13: a correct value followed by the word
+    /// `units` is refused with the format to type, never with the grammar's
+    /// wording. A trailing word is not auto-accepted: the learner-side unit
+    /// (`13.5 cm` against `13.5`) is refused with teaching under the same
+    /// ruling, and C4 keeps the checker from inventing a reading for prose.
+    #[test]
+    fn a_word_beside_the_value_teaches_the_format() {
+        let grade = deterministic_grade("6/5", "6/5 units", AnswerKind::Numeric);
+        assert!(matches!(grade.outcome, AttemptOutcome::Ungraded { .. }));
+        assert_eq!(
+            grade.outcome.reason(),
+            Some(
+                "I could not read a word in that answer. Enter just the number or expression \
+                 \u{2014} remove any words, such as 'units'."
+            )
+        );
+    }
+
+    /// The mixed-number ruling of ISSUE-13: the natural mixed-number input
+    /// already reads as ONE value, the whole and the fraction together, so the
+    /// re-scaled-number-line screen grades `1 1/5` correct against `6/5` with
+    /// no refusal and no product reading.
+    #[test]
+    fn a_mixed_number_input_reads_as_one_value() {
+        let grade = deterministic_grade("6/5", "1 1/5", AnswerKind::Numeric);
+        assert!(grade.correct);
+        assert!(matches!(grade.outcome, AttemptOutcome::Correct));
     }
 }

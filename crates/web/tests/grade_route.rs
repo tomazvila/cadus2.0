@@ -129,13 +129,16 @@ fn the_three_deterministic_tiers_are_the_d_m5_2_ruling() {
         }
     );
     // An answer outside the grammar is UNGRADED, never a pass, never a miss, and
-    // never a model verdict (D-F2, audit finding c).
+    // never a model verdict (D-F2, audit finding c). The refusal reason is the
+    // ISSUE-13 learner copy: the grammar's wording never reaches the learner.
     assert_eq!(
         deterministic_grade("13.5", "about thirteen and a half", AnswerKind::Numeric),
         Grade {
             correct: false,
             outcome: AttemptOutcome::Ungraded {
-                reason: "a name that is not a function or variable".to_owned(),
+                reason: "I could not read a word in that answer. Enter just the number or \
+                         expression \u{2014} remove any words, such as 'units'."
+                    .to_owned(),
             },
             work_quality: WorkQuality::NearlyPassable,
             error_tags: Vec::new(),
@@ -210,6 +213,30 @@ async fn a_unitless_answer_to_a_measured_problem_teaches_the_format() {
         assert_eq!(
             body["reason"],
             "This answer is a measurement, so it needs its unit. Write the value with the unit cm, for example 42 cm."
+        );
+        // An ungraded attempt reveals no solution (D-F2).
+        assert!(body.get("solution").is_none());
+    })
+    .await;
+}
+
+/// ISSUE-13 (ISSUES.md): a correct value followed by a word (`units`) is
+/// UNGRADED with learner-facing copy that names the form to type, never the
+/// grammar's wording, and it reveals no solution (D-F2).
+#[tokio::test]
+async fn a_word_beside_the_value_teaches_the_format() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let mut live = lesson_problem(5.0, "kp1", Vec::new());
+        live.expected.answer = "6/5".to_string();
+        let user = lesson_learner(&db, "name-refusal@example.com", live).await;
+
+        let body = answer_lesson_ok(&app, user, "6/5 units").await;
+        assert_eq!(body["outcome"], "ungraded");
+        assert_eq!(body.get("correct"), None);
+        assert_eq!(
+            body["reason"],
+            "I could not read a word in that answer. Enter just the number or expression \u{2014} remove any words, such as 'units'."
         );
         // An ungraded attempt reveals no solution (D-F2).
         assert!(body.get("solution").is_none());

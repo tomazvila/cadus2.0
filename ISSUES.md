@@ -335,6 +335,57 @@ steps to reproduce, expected vs actual.
   exist in geometry files (01-triangles-congruence ×9, 02-similarity ×5, …)
   and may hide the same mismatch.
 
+### ISSUE-13 — Raw grammar refusal ("a name that is not a function or variable") shown verbatim to the learner (fixed)
+
+- **Date:** 2026-09-15
+- **Area:** Learner UX / answer-refusal copy (companion to H-1, ISSUE-2)
+- **Severity:** Minor-to-major (confusing; the correct answer reads as "Not
+  marked" with developer-speak)
+- **Description:** On a re-scaled-number-line review (dividing-fractions kp2:
+  "one new unit has length 5/8 … old coordinate 3/4" — authored answer `6/5`),
+  a learner answer containing a word token (e.g. `6/5 units`) is refused with
+  the raw parse error **"a name that is not a function or variable"** shown as
+  the refusal reason on the feedback screen. The H-1 fix taught *unit*
+  refusals to speak human; *name* refusals still leak grammar internals.
+  Related trap to verify: a correct mixed number (`1 1/5`) may parse as
+  `1 × 1/5` — if so, the natural mixed-number input silently means the wrong
+  value on the same screen.
+- **Fix:** name refusals get learner-facing copy ("answer with just the number
+  or expression — remove any words like 'units'"), ideally accepting a
+  trailing unit word; verify mixed-number parsing behaviour explicitly.
+- **Acceptance:** a test asserting the learner-facing copy for a
+  name-token refusal, and a documented/decided mixed-number input rule.
+
+**Fixed (2026-09-15):** `crates/web/src/grade/verdict.rs::format_guidance`
+now maps `a name that is not a function or variable` to learner copy ("I
+could not read a word in that answer. Enter just the number or expression
+— remove any words, such as 'units'."), so the re-scaled-number-line screen
+reads the same way H-1 taught the unit refusals to. Two rulings recorded:
+
+1. **A trailing word is refused with teaching, never auto-accepted.** The
+   issue's "ideally accepting a trailing unit word" is declined on purpose:
+   the learner-side unit (`13.5 cm` against `13.5`) is already refused with
+   format guidance under `a unit on the learner side only`, so accepting
+   `6/5 units` while refusing `6/5 cm` would grade the same shape two ways;
+   and C4 keeps the checker from inventing a reading for prose (the checker
+   never reads words, so it cannot decide which word to forgive). The copy
+   makes the fix one resubmission away: drop the words, and the answer
+   grades correct with XP.
+2. **Mixed-number input is already correct and now pinned.** Verified
+   against the exact screen: `1 1/5` parses to `Ast::Mixed{1, 1, 5}` = 6/5
+   (one whole and one fifth, NOT `1 × 1/5`) and grades CORRECT against the
+   authored `6/5`; `1½` reads as the vulgar-glyph spelling of the same rule
+   (so `1½` = 3/2, not 6/5). The five spellings and their refusals were
+   already pinned in core (`answer_parse_1/2.rs`, `answer_check_1.rs`);
+   `verdict.rs` now pins the web path too
+   (`a_mixed_number_input_reads_as_one_value`).
+
+Tests: inline `grade::verdict` (`a_word_beside_the_value_teaches_the_format`,
+`a_mixed_number_input_reads_as_one_value`) and the HTTP path in
+`tests/grade_route.rs::a_word_beside_the_value_teaches_the_format`; the
+D-M5-2 tier pin's ungraded specimen now carries the learner copy as its
+`reason`, exactly as the grammar never names a production to the learner.
+
 ## Open questions / observations
 
 - Mail delivery: `email_outbox` exists but nothing drains it (documented in
