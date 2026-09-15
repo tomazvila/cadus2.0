@@ -166,19 +166,14 @@ describe('the router', () => {
     expect(view().textContent).toContain('Correct');
     expect(screen.getByRole('button', { name: 'Next problem →' })).toBeTruthy();
 
-    // AUTO_ADVANCE_MS is 1400 and it fires on correct-with-next, so the walk does not click
-    // Continue: a click on top of the armed timer advances TWICE and skips a problem.
-    // Problem 2 belongs to `kp-linear-one-step`, a knowledge point this lesson has not
-    // taught, so the lesson teaches it before it practises it.
-    await waitFor(
-      () => expect(view().querySelector('.teach-card')).not.toBeNull(),
-      { timeout: 4000 },
-    );
+    // The learner takes Continue; the next problem belongs to `kp-linear-one-step`, a
+    // knowledge point this lesson has not taught, so the lesson teaches it first.
+    await user.click(screen.getByRole('button', { name: 'Next problem →' }));
+    await waitFor(() => expect(view().querySelector('.teach-card')).not.toBeNull());
     await user.click(screen.getByRole('button', { name: /practice/ }));
     await waitFor(() => expect(view().querySelector('.progress-count')).not.toBeNull());
     expect(view().querySelector('.progress-count')!.textContent).toBe('2 / 3');
-    // The window is 1400 ms of REAL time, which the file's default budget cannot hold.
-  }, 15000);
+  });
 
   it('opens the map over the session and gives the session back', async () => {
     // The topbar offers the map from every screen, so the map has to remember where it was

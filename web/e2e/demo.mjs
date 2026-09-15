@@ -118,7 +118,7 @@ async function main() {
   run.note(`hint shown: "${hint.slice(0, 70)}"`);
   if (hint.includes('3/4')) run.fail(`Hard Rule 1: the hint carries the answer — "${hint}"`);
 
-  // --- the grade, its solution, and the auto-advance -------------------------
+  // --- the grade, its solution, and the wait-for-Continue -------------------
   await page.locator('.answer-input').fill('3/4');
   await page.locator('.actions .btn-primary').click();
   await page.waitForSelector('.feedback-correct', { timeout: 25000 });
@@ -126,13 +126,14 @@ async function main() {
   await checkMathRendered(run, '.solution-text', 'the worked solution');
   await run.snap('lesson-feedback');
 
-  // Auto-advance is 1400 ms, correct answers only. Problem 2 belongs to a knowledge point
-  // this lesson has not taught, so the lesson teaches it before it practises it.
+  // The verdict waits for the learner (no auto-advance). Problem 2 belongs to a knowledge
+  // point this lesson has not taught, so the lesson teaches it before it practises it.
+  await page.locator('.feedback .actions .btn-primary').click();
   await page.waitForSelector('.teach-card', { timeout: 20000 });
   await page.locator('.teach-card button').click();
   await page.waitForSelector('.problem-card .answer-input', { timeout: 25000 });
   const second = await run.text('.progress-count');
-  run.note(`auto-advanced to ${second}`);
+  run.note(`continued to ${second}`);
   if (second !== '2 / 3') run.fail(`the second problem reads ${second}, not 2 / 3`);
 
   // --- the placement: three ground rules, and no solution, ever --------------

@@ -42,9 +42,6 @@ import { useProblemReport } from './useProblemReport';
 import { ProblemReport, QuestionReport } from './ProblemReport';
 import { applyReportCorrection } from './applyReportCorrection';
 
-/** The auto-advance window, in milliseconds. The 1.0 literal. */
-const AUTO_ADVANCE_MS = 1400;
-
 /** No hint yet. One array for every problem that starts, so nothing rebuilds. */
 const NO_HINTS: string[] = [];
 
@@ -326,7 +323,7 @@ export function Session({
     countdown, elapsed,
   });
 
-  /** The ONE way out of `feedback`. A second click, or an auto-advance racing it, stops. */
+  /** The ONE way out of `feedback`. A second click stops at the already-shut gate. */
   const advance = (next?: ServedProblem | null, nextUnavailable = false): void => {
     if (!gate.tryEnter('feedback', 'loading')) return;
     // The verdict goes now, so no feedback panel stands over the next task's load.
@@ -358,25 +355,9 @@ export function Session({
     advanceTask();
   };
 
-  // The auto-advance fires `advance` renders after it was armed, so it reads the newest one
-  // through a ref, and the effect below never re-arms because a render rebuilt the function.
-  const advanceRef = useRef(advance);
-  useEffect(() => { advanceRef.current = advance; });
-
-  // Auto-advance: 1400 ms, correct answers only, and only when a next problem is already in
-  // hand. `next_unavailable` needs a deliberate click, because it re-serves. The timer is
-  // registered in the lifetime, so leaving the view inside the window cancels it, and the
-  // cleanup cancels it when a click advances first.
-  useEffect(() => {
-    if (phase !== 'feedback' || report.open) return undefined;
-    // Integrated feedback has its own receipt and advances only on Continue.
-    if (!result) return;
-    const verdict = result;
-    if (verdict.feedback_practice || !verdict.correct || !verdict.next) return undefined;
-    const { next } = verdict;
-    const id = life.setTimeout(() => { advanceRef.current(next); }, AUTO_ADVANCE_MS);
-    return () => life.clearTimer(id);
-  }, [phase, result, life, report.open]);
+  // No auto-advance: the verdict stays on screen until the learner takes Continue (click or
+  // Enter — the button holds focus). The spec's 1400 ms timer was removed by request: it
+  // raced the learner off the solution before they finished reading it.
 
   // Focus moves on every transition (spec section 4.5). Each control is on screen in the
   // phase that focuses it, so the refs name them.

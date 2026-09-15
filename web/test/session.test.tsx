@@ -13,8 +13,9 @@
  *
  * Every fixture is the frozen contract of `docs/reference/web-service-1.0-spec.md`
  * (`test/helpers/session.tsx`), so each assertion is a literal a reader checks by hand:
- * three problems in the task, the progress count `1 / 3`, the clock `0:00`, the
- * auto-advance at 1400 ms. This part holds the loop, the gate, the re-solve and the hints;
+ * three problems in the task, the progress count `1 / 3`, the clock `0:00`, the verdict
+ * that waits for the learner (no auto-advance). This part holds the loop, the gate, the
+ * re-solve and the hints;
  * `session.retry.test.tsx` and `session.advance.test.tsx` hold the rest.
  */
 import { describe, expect, it, vi } from 'vitest';
@@ -189,7 +190,7 @@ describe('DD-3/P1: the re-solve', () => {
     expect(screen.queryByText('Make it stick')).toBeNull();
   });
 
-  it('DD-3/P1: the re-solve panel arms no auto-advance', async () => {
+  it('DD-3/P1: the re-solve panel is not terminal and no timer moves it', async () => {
     vi.useFakeTimers();
     const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => REWORK);
     await mount({ api: stubApi({ taskAnswer }) });

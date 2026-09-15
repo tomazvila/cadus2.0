@@ -141,7 +141,8 @@ export function Feedback({
  *
  * An assisted correct answer is NOT recorded. The service stashes it, keeps the problem
  * live, and waits for the unaided re-solve; the SAME submit sends it. So this panel reveals
- * the solution to study, arms no auto-advance, and is not terminal — the view returns to
+ * the solution to study, arms no auto-advance (the verdict always waits for the learner),
+ * and is not terminal — the view returns to
  * `ready` behind it.
  *
  * The instruction is the SERVICE's `re_solve` string, not a sentence written here. One

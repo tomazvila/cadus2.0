@@ -28,7 +28,7 @@ const DASHBOARD_STATUS: StatusResponse = dashboardStatus({
 });
 
 describe('the advance', () => {
-  it('auto-advance fires only on correct-with-next', async () => {
+  it('a correct verdict waits for the learner — no auto-advance', async () => {
     vi.useFakeTimers();
     const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => graded());
     await mount({ api: stubApi({ taskAnswer }) });
@@ -36,17 +36,18 @@ describe('the advance', () => {
     await submitAnswer('3/4');
     expect(progressCount()).toBe('1 / 3');
 
-    // Nothing at 1399 ms; the next problem at 1400.
-    await act(async () => { vi.advanceTimersByTime(1399); });
+    // No timer moves the learner: long past the old 1400 ms window, the verdict stands.
+    await act(async () => { vi.advanceTimersByTime(5000); });
     expect(screen.getByText('Correct')).toBeTruthy();
-    await act(async () => { vi.advanceTimersByTime(1); });
+    expect(progressCount()).toBe('1 / 3');
 
-    expect(progressCount()).toBe('2 / 3');
+    // The learner takes Continue themselves.
+    expect(await clickNext()).toBe('2 / 3');
     expect(screen.queryByText('Correct')).toBeNull();
     expect(answerInput().value).toBe('');
   });
 
-  it('auto-advance never fires on a miss', async () => {
+  it('a miss waits for the learner too', async () => {
     vi.useFakeTimers();
     await mount({ api: stubApi({ taskAnswer: async () => graded({ correct: false }) }) });
 
@@ -56,7 +57,7 @@ describe('the advance', () => {
     expect(progressCount()).toBe('1 / 3');
   });
 
-  it('auto-advance never fires when the service could draw no next problem', async () => {
+  it('next_unavailable keeps the verdict and says the task is not over', async () => {
     vi.useFakeTimers();
     const taskServe = vi.fn<ApiClient['taskServe']>(async () => P(1));
     await mount({
@@ -70,14 +71,14 @@ describe('the advance', () => {
     expect(taskServe).toHaveBeenCalledTimes(1);
   });
 
-  it('auto-advance cancels on click', async () => {
+  it('a click inside the old auto-advance window advances exactly once', async () => {
     vi.useFakeTimers();
     const replies = [graded(), graded({ next: P(3), attempt_id: 'a-2' })];
     const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => replies.shift() ?? graded({ next: null }));
     await mount({ api: stubApi({ taskAnswer }) });
 
-    // The click lands inside the 1400 ms window and takes the one transition out of
-    // `feedback`. The timer then finds the gate shut.
+    // The one click takes the one transition out of `feedback`; with no timer armed,
+    // nothing can double-fire behind it.
     await submitThenWait('3/4', 600);
     expect(await clickNext()).toBe('2 / 3');
 

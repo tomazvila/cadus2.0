@@ -7,7 +7,7 @@
  * the page while the learner is reading it.
  *
  * WHAT IT NEVER DOES. It does not gate the verdict, it does not disable the Continue button,
- * and it does not delay the auto-advance. The learner can leave at any point; the job dies
+ * and it does not delay the learner's Continue. The learner can leave at any point; the job dies
  * with the view.
  *
  * `not_offered` renders NOTHING. The state is real — a correct answer, a blank one, or an

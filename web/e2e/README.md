@@ -111,7 +111,7 @@ serve one.
 **`demo.mjs`** — the canned backend, no account, no network. The dashboard (one primary
 action, W-C2), the curriculum map (a painted Cytoscape canvas, the readout, the accessible
 list view), a lesson end to end (worked example → practice → **SERVE-idem** → hint → grade →
-1400 ms auto-advance → the next knowledge point), the placement (three ground rules, and
+grade → the learner's own Continue → the next knowledge point), the placement (three ground rules, and
 **DIAG-nosol**: a mark and nothing else), and a 390 px viewport checked for horizontal
 overflow.
 

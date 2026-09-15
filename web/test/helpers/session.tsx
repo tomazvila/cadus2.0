@@ -3,7 +3,8 @@
  *
  * Every fixture is the frozen contract of `docs/reference/web-service-1.0-spec.md`, so
  * each assertion in the parts is a literal a reader checks by hand: three problems in the
- * task, the progress count `1 / 3`, the clock `0:00`, the auto-advance at 1400 ms.
+ * task, the progress count `1 / 3`, the clock `0:00`, the verdict that waits for the
+ * learner (no auto-advance).
  */
 import { StrictMode } from 'react';
 import { vi } from 'vitest';

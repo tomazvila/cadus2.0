@@ -58,7 +58,7 @@ const JOB_ID = '9f1d6f0e-0000-4000-8000-000000000001';
 
 const SOLUTION = 'Divide both parts by 2.';
 
-/** A miss. `next: null` keeps the feedback panel on screen: no auto-advance can steal it. */
+/** A miss. `next: null` keeps the feedback panel on screen: nothing steals it. */
 const missed = (over: Partial<AnswerResponse> = {}): AnswerResponse => ({
   attempt_id: 'a-1',
   outcome: 'incorrect',

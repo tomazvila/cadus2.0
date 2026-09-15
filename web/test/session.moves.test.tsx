@@ -2,7 +2,7 @@
  * The session view, move by move: what each transition clears, locks, focuses and posts.
  *
  * `session.test.tsx` holds the study loop and the gate; this part pins the shape of every
- * move — the plan cursor, the wrap-up screen, the auto-advance timer and the class names —
+ * move — the plan cursor, the wrap-up screen, the waiting verdict and the class names —
  * so that a change of one line in the view fails one test here.
  */
 import { describe, expect, it, vi } from 'vitest';
@@ -258,25 +258,29 @@ describe('the wrap-up', () => {
   });
 });
 
-describe('the auto-advance', () => {
-  it('advances to the problem of the newest verdict, never of an older one', async () => {
+describe('the verdict waits for the learner', () => {
+  it('advances only when the learner clicks, even long after a correct verdict', async () => {
     vi.useFakeTimers();
     const taskAnswer = vi.fn<ApiClient['taskAnswer']>()
       .mockResolvedValueOnce(graded({ next: P(2) }))
       .mockResolvedValue(graded({ next: P(3) }));
     await mount({ api: stubApi({ taskAnswer }) });
 
-    // The learner outruns the first timer, answers again, and the second verdict lands
-    // with its own timer. Only that one may fire.
     await submitAnswer('1/2');
+    // Nothing moves the learner off the verdict by itself.
+    await act(async () => { vi.advanceTimersByTime(5000); });
+    expect(progressCount()).toBe('1 / 3');
     await press('Next problem →');
     expect(progressCount()).toBe('2 / 3');
+
     await submitAnswer('2/2');
-    await act(async () => { vi.advanceTimersByTime(1400); });
+    await act(async () => { vi.advanceTimersByTime(5000); });
+    expect(progressCount()).toBe('2 / 3');
+    await press('Next problem →');
     expect(progressCount()).toBe('3 / 3');
   });
 
-  it('never fires on a miss, and never for a verdict with no next problem', async () => {
+  it('never moves on a miss, and never for a verdict with no next problem', async () => {
     vi.useFakeTimers();
     const sessionEnd = vi.fn<ApiClient['sessionEnd']>(async () => closed());
     const taskAnswer = vi.fn<ApiClient['taskAnswer']>()
@@ -351,7 +355,7 @@ describe('the card', () => {
 
   it('stops the clock on the verdict, and restarts it with the next problem', async () => {
     vi.useFakeTimers();
-    // A miss, so no auto-advance moves the clock on by itself.
+    // A miss, so nothing moves the clock on by itself.
     await mount({ api: stubApi({ taskAnswer: async () => graded({ correct: false }) }) });
     await act(async () => { vi.advanceTimersByTime(2500); });
     expect(timer().textContent).toBe('0:02');
