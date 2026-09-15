@@ -21,7 +21,7 @@ pub use dump::{DUMP_SCHEMA, canonical_dump, curriculum_hash, python_repr_f64, sh
 pub use finding::Finding;
 pub use finite::{FiniteCaseRole, FiniteCaseVariant, FiniteObjectiveCase, FiniteObjectiveDomain};
 pub use graph::{Csr, EncCsr, EncEdge};
-pub use lint::lint_curriculum;
+pub use lint::{lint_curriculum, lint_curriculum_full};
 pub use load::{
     ParseError, Parsed, ParsedUnit, RawCurriculum, RawTopic, RawUnit, load_raw_curriculum,
     parse_curriculum,

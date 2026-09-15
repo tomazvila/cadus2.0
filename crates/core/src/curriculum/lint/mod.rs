@@ -44,6 +44,24 @@ use super::model::Topic;
 ///
 /// An empty result means the curriculum is clean.
 pub fn lint_curriculum(root: &Path) -> Vec<Finding> {
+    lint_run(root, false)
+}
+
+/// The parity lint plus the exemplar content rules (F-grind-lint).
+///
+/// The 1.0 parity harness pins [`lint_curriculum`] finding-for-finding, and
+/// these exemplar rules are 2.0 additions the 1.0 linter cannot produce, so
+/// they live behind this entry point. The CI authoring check
+/// (`bin/lint_curriculum.rs`) and any content sweep run THIS one: it is the
+/// check that catches the defect classes the grind found in exemplars —
+/// undecidable answers (ISSUE-11), missing sketches, KP exemplar counts below
+/// the held-out minimum, statements that never state an ask, and topics whose
+/// declared `answer_kind` cannot grade their own exemplars.
+pub fn lint_curriculum_full(root: &Path) -> Vec<Finding> {
+    lint_run(root, true)
+}
+
+fn lint_run(root: &Path, exemplars: bool) -> Vec<Finding> {
     let parsed = parse_curriculum(root);
     if parsed.error.is_some() {
         return vec![Finding::new("empty", "no curriculum found")];
@@ -58,6 +76,9 @@ pub fn lint_curriculum(root: &Path) -> Vec<Finding> {
     lint.check_core_ancestors();
     lint.check_modules();
     lint.check_mastery_floor_forms(&catalog);
+    if exemplars {
+        rules::check_exemplars(&mut lint);
+    }
     // A cycle or a duplicate id makes the derived graph ill-defined, so the
     // reachability rule is skipped entirely then (spec section 5, rule 16).
     if cycle.is_none() && !lint.has_duplicate_id() {
@@ -191,6 +212,7 @@ fn missing_ref(field: &str, id: &str, tid: &str) -> Finding {
 /// which is what 1.0 lint does before it goes on with the rest of the rules.
 #[derive(Default)]
 struct Table<'a> {
+    files: Vec<String>,
     topics: Vec<&'a Topic>,
     courses: Vec<&'a str>,
     modules: Vec<&'a str>,
@@ -218,6 +240,7 @@ impl<'a> Table<'a> {
                 }
                 table.by_id.insert(id, table.topics.len());
                 table.topics.push(topic);
+                table.files.push(parsed_unit.rel_path());
                 // The course of a topic is the authored `course` field, not the
                 // directory of the file (`cadus/graph.py:272`).
                 table.courses.push(unit.course.as_str());
@@ -225,6 +248,11 @@ impl<'a> Table<'a> {
             }
         }
         table
+    }
+
+    /// The file of one topic, or `""` when the position is out of range.
+    fn file(&self, position: usize) -> &str {
+        self.files.get(position).map(String::as_str).unwrap_or("")
     }
 
     /// The id of one topic, or `""` when the position is out of range.

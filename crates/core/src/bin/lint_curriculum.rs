@@ -2,7 +2,7 @@
 //!
 //! This is the port of 1.0 `scripts/lint_curriculum.py`. It runs every rule of
 //! `docs/reference/curriculum-1.0-spec.md` section 5 through
-//! [`cadus_core::curriculum::lint_curriculum`], prints each violation, and exits
+//! [`cadus_core::curriculum::lint_curriculum_full`], prints each violation, and exits
 //! non-zero when the tree holds any finding — advisory findings included.
 //!
 //! Usage:
@@ -18,7 +18,7 @@ use std::env;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use cadus_core::curriculum::lint_curriculum;
+use cadus_core::curriculum::lint_curriculum_full;
 
 /// The environment variable that names the curriculum tree.
 const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
@@ -38,7 +38,7 @@ fn main() -> ExitCode {
     // argument text and not a canonical path.
     let shown = path.display().to_string();
 
-    let findings = lint_curriculum(&path);
+    let findings = lint_curriculum_full(&path);
     if findings.is_empty() {
         println!("OK: {shown} is a valid curriculum (0 findings).");
         return ExitCode::SUCCESS;
