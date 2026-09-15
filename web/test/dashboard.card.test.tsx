@@ -41,11 +41,10 @@ describe('the status card', () => {
     expect(stat('ETA').querySelector('.stat-value')!.textContent).toBe('—');
   });
 
-  it('shows the not-marked tile only while an ungraded attempt waits, and explains it', async () => {
+  it('shows the not-marked tile only while an ungraded attempt waits, and explains it on hover', async () => {
     // D-F2: nothing waits, so the learner reads the same six tiles as before.
     const first = await mount();
     expect(stat('not marked')).toBeUndefined();
-    expect(document.querySelector('.ungraded-note')).toBeNull();
     first.unmount();
     cleanup();
 
@@ -53,12 +52,13 @@ describe('the status card', () => {
     const tile = stat('not marked');
     expect(tile.querySelector('.stat-value')!.textContent).toBe('2');
     expect(tile.className).toBe('stat warn');
-    // H-2 (ISSUES.md): the tile alone is a dead end; the note says what the state
-    // means and what happens to the attempt.
-    const note = document.querySelector('.ungraded-note')!;
-    const said = (note.textContent ?? '').replace(/\s+/g, ' ');
-    expect(said).toContain('the checker could not read the answer');
-    expect(said).toContain('A tutor can still mark them by hand');
+    // H-2 (ISSUES.md), retold as a tooltip: every tile explains itself on hover, and
+    // the not-marked tile carries the whole story — what happened, what it scored,
+    // and the human way out. The prose paragraph under the grid is gone.
+    const said = tile.getAttribute('title') ?? '';
+    expect(said).toContain('could not read');
+    expect(said).toContain('Nothing was scored');
+    expect(said).toContain('tutor can still mark them by hand');
   });
 
   it('dashes an ETA the observed pace cannot honestly carry', async () => {

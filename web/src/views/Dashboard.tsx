@@ -312,37 +312,36 @@ export function Dashboard({
           <Ring fraction={fraction} label={`${pct(fraction)}%`} sub="daily goal" />
         </div>
         <div className="stat-grid">
-          <Stat value={`${num(status.xp.streak_days)}`} label="day streak" className="accent" />
-          <Stat value={`${due}`} label="due now" className={due > 0 ? 'warn' : undefined} />
-          <Stat value={`${num(status.nearly_due)}`} label="nearly due" />
-          <Stat value={`${frontier}`} label="frontier" />
-          <Stat value={`${pct(status.velocity.course_progress)}%`} label="course" />
+          <Stat value={`${num(status.xp.streak_days)}`} label="day streak" className="accent"
+            title="Consecutive days with at least one answered problem." />
+          <Stat value={`${due}`} label="due now" className={due > 0 ? 'warn' : undefined}
+            title="Reviews scheduled for today. Skipping them lets the skill fade." />
+          <Stat value={`${num(status.nearly_due)}`} label="nearly due"
+            title="Reviews that come due in the next few days." />
+          <Stat value={`${frontier}`} label="frontier"
+            title="New topics at the edge of what you know — ready to learn next." />
+          <Stat value={`${pct(status.velocity.course_progress)}%`} label="course"
+            title="Share of the course's topics you have practiced." />
           <Stat value={etaDisplay(status.velocity)} label="ETA" title={etaTitle(status.velocity)} />
           {/* D-F2: the attempts nobody graded. The tile appears only when one waits,
-              so a learner with none reads the same six tiles as before. */}
+              so a learner with none reads the same six tiles as before. The tooltip
+              carries the H-2 explanation; the prose paragraph under the grid is gone. */}
           {ungraded > 0 ? (
-            <Stat value={`${ungraded}`} label="not marked" className="warn" />
+            <Stat value={`${ungraded}`} label="not marked" className="warn"
+              title={`The checker could not read ${ungraded === 1 ? 'this answer' : 'these answers'} — usually a form it cannot grade, such as a missing unit. Nothing was scored for or against you, and a tutor can still mark ${ungraded === 1 ? 'it' : 'them'} by hand.`} />
           ) : null}
         </div>
-        {/* H-2 (ISSUES.md): the decision for an ungraded attempt is DOCUMENTED, and the
-            learner reads it where the tile lives. The attempt scores nothing, an admin can
-            still regrade it (D-F2), and no SQL stands between the learner and that fact. */}
-        {ungraded > 0 ? (
-          <p className="muted ungraded-note">
-            {`“Not marked” means the checker could not read the answer — usually a form it cannot
-            grade, such as a missing unit. Nothing was scored for or against you. A tutor can
-            still mark ${ungraded === 1 ? 'it' : 'them'} by hand, and the skill comes back in a
-            later session either way.`}
-          </p>
-        ) : null}
         {mastery ? (
           <div className="stat-grid mastery-grid">
-            <Stat value={`${practiced}`} label="practiced" />
-            <Stat value={`${inferred}`} label="inferred from placement" />
+            <Stat value={`${practiced}`} label="practiced"
+              title="Topics where you have answered problems yourself." />
+            <Stat value={`${inferred}`} label="inferred from placement"
+              title="Credited by the placement without practice — one confirmation item locks them in." />
             <Stat
               value={`${toConfirm}`}
               label="to confirm"
               className={toConfirm > 0 ? 'accent' : undefined}
+              title="Inferred topics waiting for their first confirmation item."
             />
           </div>
         ) : null}
