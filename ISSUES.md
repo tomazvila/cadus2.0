@@ -308,6 +308,33 @@ steps to reproduce, expected vs actual.
   surface must surface mass staleness.
 - **Actual:** Whole-curriculum silent lockout after a routine code deploy.
 
+### ISSUE-11 — Topic declares `answer_kind: multi-step` but its exemplars are numeric facts: every answer grades ungraded, the lesson is a bottomless pit
+
+- **Date:** 2026-09-15
+- **Area:** Curriculum content / answer-kind routing / readiness decidability check
+- **Severity:** Major (lesson unfinishable; found by the grind in geometry)
+- **Description:** `points-lines-planes` (geometry) declares
+  `answer_kind: multi-step`, but its knowledge points are simple counting
+  facts ("How many distinct lines do three non-collinear points determine?"
+  → "3"). The practice-only lesson serves the (numeric) exemplars, and the
+  grader routes every answer through the topic's declared `multi-step` kind:
+  **496 consecutive attempts all returned `outcome.ungraded.reason = "the
+  answer kind is not decidable"`** — the lesson can never advance. Two gaps
+  compound here: (a) the curriculum declaration does not match the content;
+  (b) the readiness decidability check (`canonical_answer`) validates the
+  exemplar answer STRING but ignores the topic's `answer_kind`, so the
+  readiness gate reported `practicable ✓` for the very exemplars the grader
+  refuses. The curriculum lint reported `findings: 0` for the same file.
+- **Fix applied:** the topic declaration changed to `answer_kind: numeric`
+  (curriculum commit). **Still outstanding (product):** the readiness
+  decidability check and the curriculum lint should validate exemplars under
+  the topic's declared `answer_kind`, so declaration/content mismatches are
+  flagged at authoring time instead of surfacing as an unfinishable lesson.
+- **Sweep:** the same audit should run across all 1,090 topics
+  (`answer_kind` vs exemplar decidability) — other `multi-step` declarations
+  exist in geometry files (01-triangles-congruence ×9, 02-similarity ×5, …)
+  and may hide the same mismatch.
+
 ## Open questions / observations
 
 - Mail delivery: `email_outbox` exists but nothing drains it (documented in
