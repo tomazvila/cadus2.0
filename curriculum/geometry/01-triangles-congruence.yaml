@@ -207,6 +207,15 @@ topics:
             solution_sketch: 'A dilation with scale factor other than $1$ changes distances.'
           - problem: 'What two measurements does every rigid motion preserve?'
             answer: 'Distances (segment lengths) and angle measures.'
+          - problem: 'Which rigid motion maps each point $(x, y)$ to $(x, -y)$: translation, reflection, rotation, or dilation?'
+            answer: 'reflection'
+            solution_sketch: 'Negating the $y$-coordinate is a reflection across the $x$-axis.'
+          - problem: 'Which rigid motion maps each point $(x, y)$ to $(x + 4, y - 1)$: translation, reflection, rotation, or dilation?'
+            answer: 'translation'
+            solution_sketch: 'Adding a constant vector to every point is a translation.'
+          - problem: 'Which rigid motion turns a figure about a fixed point: translation, reflection, rotation, or dilation?'
+            answer: 'rotation'
+            solution_sketch: 'A rotation spins the figure about a center through a given angle.'
         constraints: "the three rigid motions vs dilation; conceptual identification only"
       - id: kp2
         name: Apply rigid motions to coordinates
@@ -214,11 +223,16 @@ topics:
         exemplars:
           - problem: 'The translation $(x, y) \mapsto (x + 3, y - 2)$ maps $(4, 5)$ to which point?'
             answer: "(7, 3)"
+            solution_sketch: 'Add $3$ to the $x$-coordinate and subtract $2$ from the $y$-coordinate: $(4 + 3, 5 - 2) = (7, 3)$.'
           - problem: 'Reflection across the $x$-axis maps $(3, -7)$ to which point?'
             answer: "(3, 7)"
             solution_sketch: 'Reflection across the $x$-axis negates the $y$-coordinate.'
           - problem: 'Reflection across the $y$-axis maps $(-2, 5)$ to which point?'
             answer: "(2, 5)"
+            solution_sketch: 'Reflection across the $y$-axis negates the $x$-coordinate.'
+          - problem: 'The translation $(x, y) \mapsto (x - 5, y + 6)$ maps $(2, -1)$ to which point?'
+            answer: "(-3, 5)"
+            solution_sketch: '$(2 - 5,\, -1 + 6) = (-3, 5)$.'
         constraints: "translations by integer vectors; reflections across the axes only; integer coordinates"
       - id: kp3
         name: Congruence via rigid motions
@@ -229,6 +243,18 @@ topics:
           - problem: 'A translation maps $\triangle ABC$ to $\triangle DEF$ with $A \mapsto D$, $B \mapsto E$. If $AB = 9$, find $DE$.'
             answer: "9"
             solution_sketch: 'Rigid motions preserve lengths.'
+          - problem: 'A reflection maps $\triangle ABC$ onto $\triangle DEF$. If $m\angle A = 52^\circ$, find $m\angle D$, in degrees.'
+            answer: "52"
+            solution_sketch: 'A reflection is a rigid motion, so corresponding angles are preserved: $m\angle D = m\angle A = 52^\circ$.'
+          - problem: 'A rotation maps $\triangle ABC$ onto $\triangle JKL$. If $BC = 11$, find $KL$.'
+            answer: "11"
+            solution_sketch: 'Rotations preserve lengths, so $KL = BC = 11$.'
+          - problem: 'A rigid motion maps $\overline{PQ}$ onto $\overline{XY}$. If $PQ = 7$, find $XY$.'
+            answer: "7"
+            solution_sketch: 'Rigid motions preserve segment lengths.'
+          - problem: 'A translation maps $\triangle ABC$ exactly onto $\triangle DEF$. Are the triangles congruent? Answer yes or no.'
+            answer: 'yes'
+            solution_sketch: 'A translation is a rigid motion, and a rigid motion mapping one figure onto the other is exactly congruence.'
         constraints: "single rigid motion; read off preserved lengths or angles"
     diagnostic_exemplar:
       problem: 'A reflection across the $y$-axis maps $\triangle ABC$ onto $\triangle DEF$, with vertex $A(-6, 2)$ mapping to $D$. Give the coordinates of $D$, and state whether $\triangle ABC \cong \triangle DEF$ and why.'
@@ -573,6 +599,13 @@ topics:
             solution_sketch: 'A median ends at the midpoint of the opposite side.'
           - problem: 'How many medians does a triangle have?'
             answer: "3"
+            solution_sketch: 'One median from each of the three vertices.'
+          - problem: '$\overline{BD}$ is a median of $\triangle ABC$ with $D$ on $\overline{AC}$. If $AC = 26$, find $DC$.'
+            answer: "13"
+            solution_sketch: 'The median hits the midpoint: $DC = 26 / 2 = 13$.'
+          - problem: '$\overline{AM}$ is a median of $\triangle ABC$ with $M$ on $\overline{BC}$. If $BM = 9$, find $BC$.'
+            answer: "18"
+            solution_sketch: '$M$ is the midpoint of $\overline{BC}$, so $BC = 2 \cdot 9 = 18$.'
         constraints: "even side lengths so midpoint splits are whole numbers"
       - id: kp2
         name: The centroid divides each median 2:1
@@ -584,6 +617,12 @@ topics:
           - problem: 'The centroid $G$ lies on median $\overline{AM}$ with $GM = 5$. Give the ordered pair $(AG, AM)$.'
             answer: "(10, 15)"
             solution_sketch: '$AG = 2 \cdot GM = 10$; $AM = AG + GM = 15$.'
+          - problem: 'Median $\overline{AM}$ of $\triangle ABC$ has length $24$, with centroid $G$. Find $GM$.'
+            answer: "8"
+            solution_sketch: '$GM = \frac{1}{3} \cdot AM = \frac{1}{3} \cdot 24 = 8$.'
+          - problem: 'The centroid $G$ lies on median $\overline{AM}$ with $AG = 14$. Find $GM$.'
+            answer: "7"
+            solution_sketch: '$AG$ is twice $GM$: $GM = 14 / 2 = 7$.'
         constraints: "median lengths divisible by 3; vertex-to-centroid is the long piece; two-part answers requested as an ordered pair"
       - id: kp3
         name: Centroid computations with variables and coordinates
@@ -595,6 +634,12 @@ topics:
           - problem: 'On median $\overline{AM}$ with centroid $G$: $AG = 4x$ and $GM = x + 3$. Find $AM$.'
             answer: "18"
             solution_sketch: '$AG = 2 \cdot GM$: $4x = 2x + 6 \Rightarrow x = 3$; $AM = 12 + 6 = 18$.'
+          - problem: 'A triangle has vertices $(0, 0)$, $(12, 0)$, and $(0, 6)$. Find its centroid.'
+            answer: "(4, 2)"
+            solution_sketch: 'Average the vertices: $\left(\frac{0+12+0}{3}, \frac{0+0+6}{3}\right) = (4, 2)$.'
+          - problem: 'On median $\overline{AM}$ with centroid $G$: $AG = 3x - 2$ and $GM = x + 4$. Find $AG$.'
+            answer: "28"
+            solution_sketch: '$AG = 2 \cdot GM$: $3x - 2 = 2x + 8 \Rightarrow x = 10$; $AG = 28$.'
         constraints: "vertex coordinates chosen so the centroid is integral; linear expressions with integer solutions"
     diagnostic_exemplar:
       problem: 'On median $\overline{AM}$ of $\triangle ABC$ with centroid $G$: $AG = 3x$ and $GM = x + 4$. Find $AM$.'
