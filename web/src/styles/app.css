@@ -67,13 +67,7 @@ p { margin: 0.4rem 0; }
   display: flex; align-items: center; gap: 0.6rem;
   padding: 0.8rem max(1rem, env(safe-area-inset-right)) 0.8rem max(1rem, env(safe-area-inset-left));
   border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 5;
-  /* Glass: the engraved backdrop glows through, blurred, and a scrolled card still
-     disappears under the bar. `color-mix` reads the token, so the palette keeps its one
-     home (TOKENS-hex). */
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  position: sticky; top: 0; background: var(--bg); z-index: 5;
 }
 .brand {
   display: inline-flex; align-items: center; gap: 0.5rem;
@@ -112,12 +106,7 @@ p { margin: 0.4rem 0; }
     max(1rem, env(safe-area-inset-left));
 }
 .card {
-  /* Glass over the backdrop: 86% surface keeps every text contrast the solid panel had,
-     and the blur behind turns the engraving into a faint glow at the panel's edge. */
-  background: color-mix(in srgb, var(--surface) 86%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+  background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); box-shadow: var(--shadow);
   padding: 1.2rem; margin-bottom: 1rem;
 }
@@ -213,10 +202,7 @@ p { margin: 0.4rem 0; }
     max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
 }
 .modal {
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   box-shadow: var(--shadow); padding: 1.6rem; width: min(92vw, 380px);
   display: grid; gap: 0.7rem;
   /* `dvh` follows the iOS toolbar as it collapses; the `vh` line is the fallback. */
@@ -778,69 +764,53 @@ p { margin: 0.4rem 0; }
 }
 
 /* ---- the engraved backdrop (the caduceus) ----
-   The markup lives in `index.html`: a caduceus whose two serpents are sine waves
-   winding the staff, wing rays fanning from its top, and a halo of Euclidean
-   construction circles around it all — the Cadus answer to an engraved emblem. It is
-   scenery, so it never takes a pointer, never enters the accessibility tree, and reads
-   every stroke color from the tokens here (TOKENS-hex). The surfaces above render as
-   glass over it: 86% surface, blurred, so a card stays readable while the emblem glows
-   through the gutters and behind the topbar. */
+   The texture is a STATIC RASTER (`public/bg.png`): the astrolabe tick ring, ray fan,
+   guilloche bands, stipple fields, rose curves, Lissajous, wings, staff and tetractys,
+   with the shading pre-dithered to a 1-bit halftone like an engraved print. One image
+   decode, one compositor layer, zero per-frame work — the lag of the previous
+   700-element SVG with a rotating group came from Chromium re-rasterizing the whole
+   full-screen layer every frame, and the blur on every card multiplying that.
+
+   The box is a SQUARE sized to the larger viewport edge, centered, which is exactly the
+   geometry `background-size: cover` uses for a square image — so the serpent overlay
+   below, drawn in the same 1000x1000 box, stays registered on the texture at every
+   viewport shape. The only animation left is this layer's 16s opacity breathe (compositor
+   work only) and the serpent dash crawl (four paths). Both freeze under reduced motion. */
 .backdrop {
-  position: fixed; inset: 0; z-index: -1;
-  pointer-events: none;
+  position: fixed; left: 50%; top: 50%;
+  width: max(100vw, 100vh); height: max(100vw, 100vh);
+  transform: translate(-50%, -50%);
+  z-index: -1; pointer-events: none;
+  animation: bd-breathe 16s ease-in-out infinite;
+}
+/* The texture sits on the ::before so the light-theme invert never touches the
+   serpent strokes above it. */
+.backdrop::before {
+  content: ""; position: absolute; inset: 0;
+  background: url("/bg.png") center / cover no-repeat;
+  opacity: 0.6;
 }
 .bd-svg { width: 100%; height: 100%; display: block; }
 
-/* The strokes. Accent for the geometry, accent-2 for the living serpents, muted for the
-   staff — the same hierarchy the cards use. The density tiers exist so the engraving
-   reads AT A DISTANCE: instrument rings sharp, fill bands quiet, curves quieter still. */
-.bd-ray    { stroke: var(--accent);   stroke-opacity: 0.26; stroke-width: 1; }
-.bd-spoke  { stroke: var(--accent);   stroke-opacity: 0.40; stroke-width: 1.3; }
-.bd-tick   { stroke: var(--accent);   stroke-opacity: 0.40; stroke-width: 1; }
-.bd-tick-major { stroke: var(--accent); stroke-opacity: 0.55; stroke-width: 1.4; }
-.bd-halo   { fill: none; stroke: var(--accent); stroke-opacity: 0.30; stroke-width: 1.2; }
-.bd-hatch  { fill: none; stroke: var(--accent); stroke-opacity: 0.16; stroke-width: 1; }
-.bd-stipple { fill: none; stroke: var(--accent); stroke-opacity: 0.30; }
-.bd-rose   { fill: none; stroke: var(--accent-2); stroke-opacity: 0.22; stroke-width: 1.2; }
-.bd-liss   { fill: none; stroke: var(--accent-2); stroke-opacity: 0.20; stroke-width: 1.2; }
-.bd-const  { fill: none; stroke: var(--muted);  stroke-opacity: 0.25; stroke-width: 1; }
-.bd-staff  { stroke: var(--muted);    stroke-opacity: 0.55; stroke-width: 4; stroke-linecap: round; }
-.bd-staff-thin { stroke: var(--muted); stroke-opacity: 0.25; stroke-width: 1.5; }
-.bd-orb    { fill: none; stroke: var(--accent-2); stroke-opacity: 0.65; stroke-width: 2; }
-.bd-orb-thin { fill: none; stroke: var(--accent-2); stroke-opacity: 0.35; stroke-width: 1; }
-.bd-wing   { stroke: var(--accent);   stroke-opacity: 0.50; stroke-width: 1.6; }
-.bd-wing-inner { stroke: var(--accent); stroke-opacity: 0.35; stroke-width: 1; }
 .bd-serpent {
-  fill: none; stroke: var(--accent-2); stroke-opacity: 0.55;
-  stroke-width: 3; stroke-linecap: round; stroke-dasharray: 6 10;
+  fill: none; stroke: var(--accent-2); stroke-opacity: 0.5;
+  stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 5 9;
+  animation: bd-crawl 26s linear infinite;
 }
 .bd-serpent-thin {
-  fill: none; stroke: var(--accent-2); stroke-opacity: 0.30;
-  stroke-width: 1.4; stroke-linecap: round; stroke-dasharray: 4 12;
+  fill: none; stroke: var(--accent); stroke-opacity: 0.35;
+  stroke-width: 1.2; stroke-linecap: butt; stroke-dasharray: 3 11;
+  animation: bd-crawl 40s linear infinite;
 }
-.bd-tet    { stroke: var(--accent); stroke-opacity: 0.35; stroke-width: 1; }
-.bd-dot    { fill: var(--accent-2); opacity: 0.55; }
 
-/* The halo turns once per four minutes — motion a learner feels rather than watches.
-   `transform-box: fill-box` pins the origin to the group's own center, so the spin is
-   about the emblem, not the viewport. */
-.bd-rotor {
-  transform-box: fill-box; transform-origin: center;
-  animation: bd-spin 240s linear infinite;
+@keyframes bd-crawl  { to { stroke-dashoffset: -280; } }
+@keyframes bd-breathe { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
+
+@media (prefers-color-scheme: light) {
+  /* The texture is white-on-transparent; inverted it prints black lines on the day
+     palette, quieter than at night because dark ink weighs more than light. */
+  .backdrop::before { filter: invert(1); opacity: 0.32; }
 }
-/* The serpents crawl: the dash gap drifts along the sine, so the wind reads as flow. The
-   thin braid companions drift slower, so the rope seems to twist. */
-.bd-serpent      { animation: bd-crawl 26s linear infinite; }
-.bd-serpent-thin { animation: bd-crawl 40s linear infinite; }
-/* The stipple fields shimmer between two densities, far slower than the crawl. */
-.bd-stipple { animation: bd-shimmer 20s ease-in-out infinite; }
-/* The halo breathes, slowly, between two nearly-equal opacities. */
-.bd-halo { animation: bd-breathe 14s ease-in-out infinite; }
-
-@keyframes bd-spin   { to { transform: rotate(360deg); } }
-@keyframes bd-crawl  { to { stroke-dashoffset: -320; } }
-@keyframes bd-shimmer { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-@keyframes bd-breathe { 0%, 100% { opacity: 0.75; } 50% { opacity: 1; } }
 
 /* Strip every animation and transition when the reader asks for less motion (spec section
    4.5). It sits at the end so it wins over every rule above it — the backdrop's three
