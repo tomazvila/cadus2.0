@@ -180,10 +180,19 @@ p { margin: 0.4rem 0; }
 }
 .toast {
   display: flex; align-items: center; gap: 0.6rem; background: var(--surface);
-  border: 1px solid var(--border); border-left: 4px solid var(--bad);
+  border: 1px solid var(--border);
   border-radius: 10px; padding: 0.7rem 0.9rem; box-shadow: var(--shadow);
   animation: rise 0.18s ease;
 }
+/* The semantic signal is a status dot, not a thick side stripe: same color meaning,
+   none of the one-sided-accent tell. Color alone carries no meaning here — the close
+   and action controls remain. */
+.toast::before {
+  content: ""; flex: 0 0 auto; width: 8px; height: 8px; border-radius: 999px;
+  background: var(--bad);
+}
+.toast-info::before { background: var(--accent); }
+.toast-success::before { background: var(--good); }
 .toast-info { border-left-color: var(--accent); }
 .toast-success { border-left-color: var(--good); }
 .toast-msg { flex: 1; font-size: 0.92rem; }
@@ -375,6 +384,24 @@ p { margin: 0.4rem 0; }
 }
 .btn-primary.is-busy::after { color: var(--accent-ink); }
 
+/* ---- the study loop: the action row and the report affordance ----
+   The Submit row needs air above and below it: it follows the answer fields and precedes
+   the report affordance, and two controls touching edge to edge read as one broken row. */
+.problem-card .actions { margin-top: 0.6rem; margin-bottom: 1rem; }
+/* The report affordance is QUIET while closed — a ghost control, no nested card — and
+   only becomes a panel once it is open. A full card frame around an idle ghost button
+   read as a stray empty box between Submit and the rest of the card. */
+.problem-report {
+  border: 0; background: transparent; padding: 0.1rem 0.2rem;
+  box-shadow: none; margin-bottom: 0;
+}
+.problem-report:has([aria-expanded="true"]) {
+  border: 1px solid var(--border); background: var(--surface);
+  padding: 1.2rem; box-shadow: var(--shadow); margin-bottom: 1rem;
+}
+/* A small gap between the worked example and the way on (the teach card). */
+.teach-card > .btn { margin-top: 0.3rem; }
+
 /* ---- the study loop ---- */
 /* One dominant control per card (W-C5): Submit carries `.btn-primary`, Hint and Exit stay
    ghost weight. `.actions` puts the primary LAST in the source order and first on screen,
@@ -459,7 +486,9 @@ p { margin: 0.4rem 0; }
   color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
   padding: 0.15rem 0.6rem;
 }
-.teach-card { border-left: 3px solid var(--accent); }
+/* `.teach-card` carries no frame of its own: the WORKED EXAMPLE badge above it is the
+   signal that this is taught material — a colored side stripe was the slop tell the
+   detector names first. */
 .teach-concept { font-size: 1.05rem; margin-bottom: 1rem; }
 .teach-example {
   background: var(--surface-2); border-radius: 10px; padding: 0.9rem 1.1rem;
@@ -499,7 +528,7 @@ p { margin: 0.4rem 0; }
   height: 6px; background: var(--surface-2); border-radius: 999px;
   overflow: hidden; margin-bottom: 1rem;
 }
-.progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
+.progress-fill { height: 100%; background: var(--accent); transform-origin: left center; transition: transform 0.3s ease; }
 /* A tick or a cross beside one word, on one line. There is no body to this panel, because
    placement reveals no solution (DIAG-nosol). */
 .view-diagnostic .feedback { display: flex; align-items: center; gap: 0.5rem; }

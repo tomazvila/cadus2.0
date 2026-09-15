@@ -23,8 +23,14 @@ export function Teach({ task, instruction, onContinue }: TeachProps) {
   const { topic } = task;
   const example = instruction.worked_example;
 
-  // The button is on screen for the life of this effect, so the ref names it.
-  useEffect(() => { buttonRef.current!.focus(); }, []);
+  // The button is on screen for the life of this effect, so the ref names it. Focus is
+  // keyboard wayfinding — but a bare focus() on mount YANKS the browser scroll to the
+  // button, pinning it against the topbar and cutting the lesson header off above. Arrive
+  // at the top of the lesson and focus in place instead.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    buttonRef.current!.focus({ preventScroll: true });
+  }, []);
 
   return (
     <>

@@ -258,7 +258,9 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
       </div>
 
       <div className="progress-bar">
-        <div className="progress-fill" style={{ width: `${Math.min(100, (qNum / cap) * 100)}%` }} />
+        {/* scaleX, not width: the fill animates on the compositor instead of thrashing
+            layout every question. */}
+        <div className="progress-fill" style={{ transform: `scaleX(${Math.min(100, (qNum / cap) * 100) / 100})` }} />
       </div>
 
       <div className="card problem-card">
