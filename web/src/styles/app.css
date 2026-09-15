@@ -764,52 +764,35 @@ p { margin: 0.4rem 0; }
 }
 
 /* ---- the engraved backdrop (the caduceus) ----
-   The texture is a STATIC RASTER (`public/bg.png`): the astrolabe tick ring, ray fan,
-   guilloche bands, stipple fields, rose curves, Lissajous, wings, staff and tetractys,
-   with the shading pre-dithered to a 1-bit halftone like an engraved print. One image
-   decode, one compositor layer, zero per-frame work — the lag of the previous
-   700-element SVG with a rotating group came from Chromium re-rasterizing the whole
-   full-screen layer every frame, and the blur on every card multiplying that.
-
-   The box is a SQUARE sized to the larger viewport edge, centered, which is exactly the
-   geometry `background-size: cover` uses for a square image — so the serpent overlay
-   below, drawn in the same 1000x1000 box, stays registered on the texture at every
-   viewport shape. The only animation left is this layer's 16s opacity breathe (compositor
-   work only) and the serpent dash crawl (four paths). Both freeze under reduced motion. */
+   ONE static raster, /bg.png: the full emblem — caduceus with its serpents, astrolabe
+   ring, ray fan, guilloche bands, stipple, rose curves, Lissajous, tetractys — with the
+   shading pre-dithered to a 1-bit halftone like an engraved print. No inline SVG, no
+   animation, no blur: one image decode on one compositor layer and not a single
+   per-frame repaint anywhere. The reduced-motion rule below has nothing left to strip. */
 .backdrop {
-  position: fixed; left: 50%; top: 50%;
-  width: max(100vw, 100vh); height: max(100vw, 100vh);
-  transform: translate(-50%, -50%);
-  z-index: -1; pointer-events: none;
-  animation: bd-breathe 16s ease-in-out infinite;
-}
-/* The texture sits on the ::before so the light-theme invert never touches the
-   serpent strokes above it. */
-.backdrop::before {
-  content: ""; position: absolute; inset: 0;
+  position: fixed; inset: 0; z-index: -1;
+  pointer-events: none;
   background: url("/bg.png") center / cover no-repeat;
-  opacity: 0.6;
+  opacity: 0.55;
 }
-.bd-svg { width: 100%; height: 100%; display: block; }
-
-.bd-serpent {
-  fill: none; stroke: var(--accent-2); stroke-opacity: 0.5;
-  stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 5 9;
-  animation: bd-crawl 26s linear infinite;
-}
-.bd-serpent-thin {
-  fill: none; stroke: var(--accent); stroke-opacity: 0.35;
-  stroke-width: 1.2; stroke-linecap: butt; stroke-dasharray: 3 11;
-  animation: bd-crawl 40s linear infinite;
-}
-
-@keyframes bd-crawl  { to { stroke-dashoffset: -280; } }
-@keyframes bd-breathe { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
-
 @media (prefers-color-scheme: light) {
   /* The texture is white-on-transparent; inverted it prints black lines on the day
      palette, quieter than at night because dark ink weighs more than light. */
-  .backdrop::before { filter: invert(1); opacity: 0.32; }
+  .backdrop { filter: invert(1); opacity: 0.30; }
+}
+
+/* ---- the reading scrim ----
+   Muted prose that sits DIRECTLY on the dithered texture is illegible: the halftone
+   grain is noise at exactly the size of small text. The content column therefore gets
+   a wash of its own background — 80% --bg, so the emblem still glows through the
+   column's edges while every sentence inside reads against near-solid color. Wide
+   screens keep wide gutters of bare texture; a phone is column, so the wash covers it. */
+.view {
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  box-shadow: 0 0 0 max(1rem, env(safe-area-inset-left)) color-mix(in srgb, var(--bg) 80%, transparent);
+}
+@media (prefers-color-scheme: light) {
+  .view { background: color-mix(in srgb, var(--bg) 88%, transparent); }
 }
 
 /* Strip every animation and transition when the reader asks for less motion (spec section
