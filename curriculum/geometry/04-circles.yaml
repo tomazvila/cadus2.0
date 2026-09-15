@@ -293,8 +293,16 @@ topics:
         exemplars:
           - problem: 'A central angle measures $80^\circ$. Find the measure of its intercepted arc, in degrees.'
             answer: "80"
+            solution_sketch: 'A central angle equals its intercepted arc: $80^\circ$.'
           - problem: 'Arc $AB$ of a circle measures $65^\circ$. Find the central angle $\angle AOB$, in degrees.'
             answer: "65"
+            solution_sketch: 'The central angle equals its arc: $65^\circ$.'
+          - problem: 'A central angle in a circle measures $115^\circ$. Find the measure of its intercepted arc, in degrees.'
+            answer: "115"
+            solution_sketch: 'Arc measure equals central angle measure: $115$.'
+          - problem: 'In a circle with center $O$, arc $XY$ measures $38^\circ$. Find $m\angle XOY$, in degrees.'
+            answer: "38"
+            solution_sketch: '$\angle XOY$ is the central angle of arc $XY$, so it measures $38^\circ$.'
         constraints: "arc measure equals central angle measure; whole degrees"
       - id: kp2
         name: Arc addition and major arcs
@@ -306,6 +314,12 @@ topics:
           - problem: 'On a circle, arc $AB = 110^\circ$ and arc $BC = 90^\circ$ (non-overlapping). Find the measure of arc $ABC$, in degrees.'
             answer: "200"
             solution_sketch: 'Adjacent arcs add: $110 + 90 = 200$.'
+          - problem: 'A minor arc measures $95^\circ$. Find the corresponding major arc, in degrees.'
+            answer: "265"
+            solution_sketch: '$360 - 95 = 265$.'
+          - problem: 'On a circle, arc $AB = 85^\circ$ and arc $BC = 120^\circ$ (non-overlapping). Find the measure of arc $ABC$, in degrees.'
+            answer: "205"
+            solution_sketch: 'Adjacent arcs add: $85 + 120 = 205$.'
         constraints: "arcs sum to 360; adjacent arcs add"
       - id: kp3
         name: Diameters and equally spaced points
@@ -313,9 +327,16 @@ topics:
         exemplars:
           - problem: 'A diameter divides a circle into two arcs. What is the measure of each, in degrees?'
             answer: "180"
+            solution_sketch: 'A diameter cuts the circle in half: $360 / 2 = 180$.'
           - problem: 'Five points are equally spaced around a circle. Find the measure of the arc between two adjacent points, in degrees.'
             answer: "72"
             solution_sketch: '$360 / 5 = 72$.'
+          - problem: 'Six points are equally spaced around a circle. Find the measure of the arc between two adjacent points, in degrees.'
+            answer: "60"
+            solution_sketch: '$360 / 6 = 60$.'
+          - problem: 'Eight points are equally spaced around a circle. Find the measure of the arc from the first point to the third, passing through the second, in degrees.'
+            answer: "90"
+            solution_sketch: 'Adjacent arcs measure $360 / 8 = 45$; two of them give $90$.'
         constraints: "equally spaced points divide 360 evenly"
     diagnostic_exemplar:
       problem: 'A minor arc measures $130^\circ$. Find the corresponding major arc, in degrees.'
@@ -911,6 +932,18 @@ topics:
             solution_sketch: 'Standard form $(x - h)^2 + (y - k)^2 = r^2$.'
           - problem: 'Write the equation of the circle centered at the origin with radius $\sqrt{7}$.'
             answer: '$x^2 + y^2 = 7$'
+          - problem: 'A circle has center $(3, -1)$ and radius $6$. Find $r^2$.'
+            answer: "36"
+            solution_sketch: 'In standard form $(x - h)^2 + (y - k)^2 = r^2$, the right side is $r^2 = 36$.'
+          - problem: 'A circle centered at the origin has radius $\sqrt{10}$. Find $r^2$.'
+            answer: "10"
+            solution_sketch: 'The equation is $x^2 + y^2 = r^2$, and $r^2 = (\sqrt{10})^2 = 10$.'
+          - problem: 'A circle has center $(-3, 5)$ and radius $4$. Find $r^2$.'
+            answer: "16"
+            solution_sketch: '$r^2 = 4^2 = 16$, regardless of the center.'
+          - problem: 'A circle has center $(2, 7)$ and $r^2 = 25$. Find its radius.'
+            answer: "5"
+            solution_sketch: '$r = \sqrt{25} = 5$.'
         constraints: "integer centers; r^2 stays exact"
       - id: kp2
         name: Read off the center and radius; test points
@@ -921,7 +954,19 @@ topics:
             solution_sketch: '$h = -1$, $k = 5$, $r = \sqrt{36} = 6$.'
           - problem: 'Does the point $(3, 2)$ lie on the circle $x^2 + y^2 = 13$? Answer yes or no.'
             answer: 'yes'
+            answer_contract: {kind: label, options: [[yes], [no]]}
             solution_sketch: '$3^2 + 2^2 = 13$.'
+          - problem: 'What is the radius of the circle $(x - 3)^2 + (y + 4)^2 = 81$?'
+            answer: "9"
+            solution_sketch: '$r = \sqrt{81} = 9$.'
+          - problem: 'Does the point $(-2, 5)$ lie on the circle $(x + 2)^2 + (y - 5)^2 = 16$? Answer yes or no.'
+            answer: 'no'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: '$(x + 2)^2 + (y - 5)^2 = 0 + 0 = 0 \ne 16$, so no.'
+          - problem: 'Does the point $(1, 4)$ lie on the circle $(x - 1)^2 + (y + 3)^2 = 49$? Answer yes or no.'
+            answer: 'yes'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: '$(1 - 1)^2 + (4 + 3)^2 = 0 + 49 = 49$, so yes.'
         constraints: "perfect-square r^2 when a numeric radius is requested; watch the sign flips"
       - id: kp3
         name: General form and completing the square
@@ -936,6 +981,15 @@ topics:
           - problem: 'Write the equation of the circle with center $(1, 2)$ passing through $(4, 6)$.'
             answer: '$(x - 1)^2 + (y - 2)^2 = 25$'
             solution_sketch: '$r = \sqrt{3^2 + 4^2} = 5$, so $r^2 = 25$.'
+          - problem: 'Find the radius of $x^2 + y^2 - 4x + 6y - 12 = 0$.'
+            answer: "5"
+            solution_sketch: '$(x - 2)^2 + (y + 3)^2 = 4 + 9 + 12 = 25$, so $r = 5$.'
+          - problem: 'For the circle $x^2 + y^2 + 10x - 4y + 4 = 0$, find the $x$-coordinate of its center.'
+            answer: "-5"
+            solution_sketch: '$(x + 5)^2 + (y - 2)^2 = 25 + 4 - 4 = 25$; the center is $(-5, 2)$, so the $x$-coordinate is $-5$.'
+          - problem: 'Find the radius of $x^2 + y^2 - 2x + 12y + 21 = 0$.'
+            answer: "4"
+            solution_sketch: '$(x - 1)^2 + (y + 6)^2 = 1 + 36 - 21 = 16$, so $r = 4$.'
         constraints: "even linear coefficients so completing the square is clean; positive right side"
     diagnostic_exemplar:
       problem: 'Find the center and radius of $x^2 + y^2 - 4x + 6y - 3 = 0$.'
