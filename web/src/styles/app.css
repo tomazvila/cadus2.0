@@ -792,19 +792,34 @@ p { margin: 0.4rem 0; }
 .bd-svg { width: 100%; height: 100%; display: block; }
 
 /* The strokes. Accent for the geometry, accent-2 for the living serpents, muted for the
-   staff — the same hierarchy the cards use. */
-.bd-ray    { stroke: var(--accent);   stroke-opacity: 0.20; stroke-width: 1; }
-.bd-spoke  { stroke: var(--accent);   stroke-opacity: 0.30; stroke-width: 1.3; }
-.bd-halo   { fill: none; stroke: var(--accent); stroke-opacity: 0.22; stroke-width: 1.2; }
-.bd-const  { fill: none; stroke: var(--muted);  stroke-opacity: 0.18; stroke-width: 1; }
-.bd-staff  { stroke: var(--muted);    stroke-opacity: 0.45; stroke-width: 4; stroke-linecap: round; }
-.bd-staff-thin { stroke: var(--muted); stroke-opacity: 0.20; stroke-width: 1.5; }
-.bd-orb    { fill: none; stroke: var(--accent-2); stroke-opacity: 0.55; stroke-width: 2; }
-.bd-wing   { stroke: var(--accent);   stroke-opacity: 0.35; stroke-width: 1.6; }
+   staff — the same hierarchy the cards use. The density tiers exist so the engraving
+   reads AT A DISTANCE: instrument rings sharp, fill bands quiet, curves quieter still. */
+.bd-ray    { stroke: var(--accent);   stroke-opacity: 0.26; stroke-width: 1; }
+.bd-spoke  { stroke: var(--accent);   stroke-opacity: 0.40; stroke-width: 1.3; }
+.bd-tick   { stroke: var(--accent);   stroke-opacity: 0.40; stroke-width: 1; }
+.bd-tick-major { stroke: var(--accent); stroke-opacity: 0.55; stroke-width: 1.4; }
+.bd-halo   { fill: none; stroke: var(--accent); stroke-opacity: 0.30; stroke-width: 1.2; }
+.bd-hatch  { fill: none; stroke: var(--accent); stroke-opacity: 0.16; stroke-width: 1; }
+.bd-stipple { fill: none; stroke: var(--accent); stroke-opacity: 0.30; }
+.bd-rose   { fill: none; stroke: var(--accent-2); stroke-opacity: 0.22; stroke-width: 1.2; }
+.bd-liss   { fill: none; stroke: var(--accent-2); stroke-opacity: 0.20; stroke-width: 1.2; }
+.bd-const  { fill: none; stroke: var(--muted);  stroke-opacity: 0.25; stroke-width: 1; }
+.bd-staff  { stroke: var(--muted);    stroke-opacity: 0.55; stroke-width: 4; stroke-linecap: round; }
+.bd-staff-thin { stroke: var(--muted); stroke-opacity: 0.25; stroke-width: 1.5; }
+.bd-orb    { fill: none; stroke: var(--accent-2); stroke-opacity: 0.65; stroke-width: 2; }
+.bd-orb-thin { fill: none; stroke: var(--accent-2); stroke-opacity: 0.35; stroke-width: 1; }
+.bd-wing   { stroke: var(--accent);   stroke-opacity: 0.50; stroke-width: 1.6; }
+.bd-wing-inner { stroke: var(--accent); stroke-opacity: 0.35; stroke-width: 1; }
 .bd-serpent {
-  fill: none; stroke: var(--accent-2); stroke-opacity: 0.38;
+  fill: none; stroke: var(--accent-2); stroke-opacity: 0.55;
   stroke-width: 3; stroke-linecap: round; stroke-dasharray: 6 10;
 }
+.bd-serpent-thin {
+  fill: none; stroke: var(--accent-2); stroke-opacity: 0.30;
+  stroke-width: 1.4; stroke-linecap: round; stroke-dasharray: 4 12;
+}
+.bd-tet    { stroke: var(--accent); stroke-opacity: 0.35; stroke-width: 1; }
+.bd-dot    { fill: var(--accent-2); opacity: 0.55; }
 
 /* The halo turns once per four minutes — motion a learner feels rather than watches.
    `transform-box: fill-box` pins the origin to the group's own center, so the spin is
@@ -813,13 +828,18 @@ p { margin: 0.4rem 0; }
   transform-box: fill-box; transform-origin: center;
   animation: bd-spin 240s linear infinite;
 }
-/* The serpents crawl: the dash gap drifts along the sine, so the wind reads as flow. */
-.bd-serpent { animation: bd-crawl 26s linear infinite; }
+/* The serpents crawl: the dash gap drifts along the sine, so the wind reads as flow. The
+   thin braid companions drift slower, so the rope seems to twist. */
+.bd-serpent      { animation: bd-crawl 26s linear infinite; }
+.bd-serpent-thin { animation: bd-crawl 40s linear infinite; }
+/* The stipple fields shimmer between two densities, far slower than the crawl. */
+.bd-stipple { animation: bd-shimmer 20s ease-in-out infinite; }
 /* The halo breathes, slowly, between two nearly-equal opacities. */
 .bd-halo { animation: bd-breathe 14s ease-in-out infinite; }
 
 @keyframes bd-spin   { to { transform: rotate(360deg); } }
 @keyframes bd-crawl  { to { stroke-dashoffset: -320; } }
+@keyframes bd-shimmer { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
 @keyframes bd-breathe { 0%, 100% { opacity: 0.75; } 50% { opacity: 1; } }
 
 /* Strip every animation and transition when the reader asks for less motion (spec section
