@@ -59,6 +59,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         events,
         mut scratch,
         plan,
+        readiness,
     } = open(&state, content, user_id, now, true).await?;
     let task = find(&plan, &task_id)?.clone();
     // The answer path MAY install the progress row (`_validate`, `api.py:1303`).
@@ -189,6 +190,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         user_id,
         &task,
         &mut scratch,
+        &readiness,
         now,
         closed,
     )
@@ -339,6 +341,7 @@ async fn next_problem(
     user_id: Uuid,
     task: &Task,
     scratch: &mut WebState,
+    readiness: &ReadinessSet,
     now: Timestamp,
     closed: bool,
 ) -> Option<Value> {
@@ -347,7 +350,7 @@ async fn next_problem(
         return None;
     }
     scratch.served.remove(&task.task_id);
-    install_next(state, content, tx, user_id, task, scratch, now)
+    install_next(state, content, tx, user_id, task, scratch, readiness, now)
         .await
         .map_err(|err| {
             tracing::warn!(task_id = %task.task_id, code = %err.code, "answer: no next problem");

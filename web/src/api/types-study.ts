@@ -109,7 +109,8 @@ export interface SessionPlanResponse {
 /**
  * `POST /api/task/{task_id}/serve` — the task's live problem.
  *
- * Seven keys on every serve, and an eighth on a QUIZ serve (`serve.rs`
+ * Seven keys on every serve, `hint_available beside them on every non-quiz serve (H-3),
+ * and the quiz clock as the eighth on a QUIZ serve (`serve.rs`
  * `serve_payload`). `expected` and `solution_sketch` are named out of this payload on
  * purpose (Hard Rule 1).
  *
@@ -149,6 +150,15 @@ export interface ServedProblem {
    * never reaches this list.
    */
   visuals?: RenderedVisual[];
+  /**
+   * Whether this knowledge point holds an approved hint ladder (H-3).
+   *
+   * The serve stamps it from the same content store read the readiness gate
+   * uses. Absent on a payload whose serving key the index does not name; a
+   * `false` means the hint route can only refuse, so the view hides the
+   * affordance instead of spending the round trip on `409 no_hint_ladder`.
+   */
+  hint_available?: boolean;
 }
 
 /** `POST /api/task/{task_id}/teach` — the authored teach page (L4). */

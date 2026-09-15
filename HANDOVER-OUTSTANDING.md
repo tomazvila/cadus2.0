@@ -1,10 +1,16 @@
 # Handover — outstanding issues from the CADUS 2.0 grind evaluation
 
+> **STATUS (2026-09-15):** H-1, H-3, H-4, H-5, H-6, H-7 and H-8 are FIXED
+> (see the "Handover fixes (H-1…H-8)" section at the end of `ISSUES.md` for
+> what shipped where). H-2 received a documented decision (option c) plus the
+> dashboard UX text. `REQUIREMENTS.md` still wins over everything; `ISSUES.md`
+> is the log of record; this file keeps the repro detail.
+
 **To:** the next agent on this box.
 **From:** the grind evaluation of 2026-09-14/15 (fresh-learner walkthrough + full
 automated grind). 11 numbered issues were found and are ALL fixed, deployed and
 verified — see `ISSUES.md` and commits `fc93a25c`, `adda454b`, `9d935270`,
-`8bdc8063`, `fa6d18fa`. This note covers what is STILL OPEN.
+`8bdc8063`, `fa6d18fa`.
 
 **Authority:** `REQUIREMENTS.md` wins over everything; `ISSUES.md` is the log
 of record; this file adds repro detail the log entries lack.

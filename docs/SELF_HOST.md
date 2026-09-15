@@ -137,6 +137,31 @@ up until the new schema is in place.
 If step 3 fails, read the output of `migrate`, correct the migration, and run
 the script again. The site serves the old version for the whole time.
 
+## Homelab topology (H-7)
+
+The box this deployment actually runs on does not use the repo compose file
+above. It serves Cadus from the homelab project at `/home/deploy/homelab
+(`compose.yaml there includes `services/cadus2/compose.yaml), where the
+homelab proxy terminates TLS for `https://cadus.<DOMAIN> and the SPA bundle
+rides `cadus2-edge. The services are `cadus2-db`, `cadus2-migrate`,
+`cadus2-web`, `cadus2-worker`, `cadus2-report-worker and `cadus2-edge, and
+the edge mounts `deploy/ of THIS checkout read-only.
+
+For that topology, deploy with:
+
+```sh
+scripts/deploy_homelab.sh
+```
+
+The script follows the same order — refuse a dirty tree (the edge mount serves
+working-tree files, so a dirty checkout would reach the containers under a
+commit label the images do not name), build BOTH images from HEAD (`cadus2:latest
+runtime and `cadus2-edge:latest spa; they go together, or the old bundle serves
+against the new API), run the `cadus2-migrate one-shot, then
+`up -d --no-deps the serving services — and it checks the containers stayed up
+before it prints DEPLOY OK. `--homelab-dir DIR (or `CADUS_HOMELAB_ROOT)
+points it at a different project root.
+
 ## The role model (C3)
 
 Migration `0001_roles` creates three cluster roles. Each process uses exactly

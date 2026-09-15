@@ -341,3 +341,90 @@ steps to reproduce, expected vs actual.
   `crates/web/src/auth/routes/mod.rs`). Verification links must be read from
   the database by hand — except the raw token is never stored, so the outbox
   alone would not help either; a mailer must send at mint time.
+
+## Handover fixes (H-1…H-8, 2026-09-15)
+
+The eight outstanding items of `HANDOVER-OUTSTANDING.md`, in its order:
+
+### H-1 — Unit-contract refusals teach the format (fixed)
+
+The unit refusals now get the same ISSUE-2 treatment as the trailing-text
+refusal. `crates/web/src/grade/verdict.rs` maps `a unit is missing` to
+guidance that reads the unit out of the authored answer ("This answer is a
+measurement, so it needs its unit. Write the value with the unit cm, for
+example 42 cm."), `a unit on the learner side only` to drop the unit, and
+`a unit inside an expression` to move it out. The example value is never the
+answer (Hard Rule 1). Tests: inline `grade::verdict`, and the HTTP path in
+`tests/grade_route.rs::a_unitless_answer_to_a_measured_problem_teaches_the_format`.
+
+### H-2 — Ungraded attempts: decision + UX text (documented)
+
+**Decision (option c of H-2):** ungraded attempts stay admin-regrade-only
+(D-F2 owns the semantics; no scheduling change), but the dashboard tile now
+explains the state where the learner reads it: the checker could not read the
+form, nothing was scored, a tutor can still mark it by hand. The tile plus the
+note (`ungraded-note` in `web/src/views/Dashboard.tsx`) is the learner-visible
+path; `status.ungraded` reaches 0 via `POST /api/admin/ungraded/{attempt_id}/regrade`
+without SQL.
+
+### H-3 — Hint-ladder coverage: the SPA gates on availability
+
+The serve payload stamps `hint_available` from the SAME transaction's
+readiness index (`serve::stamp_hint_availability`; the flag is the stored
+`Readiness.hints`). The SPA hides the Hint button and the `H` key when it is
+`false`, and a review with no ladder offers the re-study-the-lesson note up
+front instead of after three refusals. A quiz payload keeps its exact
+eight-key shape (pinned in `quiz_route_clock.rs`). The bulk backfill lever
+(`cadus-worker author --kind hint_ladder`) stays the operator's option; the
+readiness report prints the hint blocker count per course either way.
+Tests: `serve_routes_hint.rs::the_serve_payload_stamps_hint_availability_from_the_store`.
+
+### H-4 — Readiness vs selector: parity pinned by test
+
+The live disagreement (ready 0 / blocked 809) no longer reproduces on the
+deployed worker (`readiness foundations: ready 780, blocked 29`); it was the
+stale worker image of ISSUE-8. The code paths were ALREADY the same
+(`approved_index_current` + `ReadinessIndex::resolve`), so the fix is the
+regression test: `crates/web/tests/readiness_parity.rs` runs the worker audit
+(`cadus_worker::readiness_run`) beside the operator surface
+(`GET /api/operator/flags`) over ONE fixture and asserts the courses, counts
+and blocker histograms agree at empty, taught and hint-approved stages — plus
+a unit test that the worker's `review_context_digest` and the web boot's
+`curriculum_context_digest` are one digest for one curriculum (the edge a
+stale image broke).
+
+### H-5 — A drill's final answer closes loudly (fixed)
+
+`close_drill` now returns `task_status: task_passed` on the answer that emits
+the `drill_result` event (a drill earns no XP there, and nothing else about
+the close changed). Test: `tests/drill_result.rs` pins the close reply, and
+the SPA renders a completion line for `task_passed` in `Feedback.tsx`.
+
+### H-6 — Honest ETA framing (fixed, frontend)
+
+The dashboard shows the core's ETA only inside a 730-day horizon
+(`etaDisplay` in `web/src/views/Dashboard.tsx`); a multi-year extrapolation
+from the 28-day window, a past date, and no date all read as an honest dash,
+with a tooltip explaining the rule. The date itself stays the core's claim —
+the screen re-derives nothing. Tests in `test/dashboard.card.test.tsx`.
+
+### H-7 — One command deploys HEAD on this box (fixed)
+
+`scripts/deploy_homelab.sh` implements the §1 manual order for the homelab
+project (`/home/deploy/homelab`, services `cadus2-*`): refuse a dirty tree,
+build BOTH images from HEAD, run the `cadus2-migrate one-shot, then
+`up -d --no-deps the serving services, then hold the containers to two stable
+`running` polls before DEPLOY OK. Documented in `docs/SELF_HOST.md` section
+"Homelab topology". Stub-validated end to end (refusals, migration failure
+path, poll loop); shellcheck clean. The repo `scripts/deploy.sh is untouched.
+
+### H-8 — The orchestrator lives in the repo (fixed)
+
+`/tmp/orchestrator.py` moved to `scripts/grind/orchestrator.py` (no secrets;
+the cookie stays outside). Fix (a): a serve/answer error no longer skips the
+task — the round re-fetches the plan and walks it again (bounded at three),
+which is the known `unknown_task` stale-plan case; the round stats now carry
+`plan_refetches`. Fix (c) retained: `make_due` still writes the model rewrite
+over stdin (`db_stdin`). The grind log now also has a durable copy at
+`verification/orchestrator-grind.log`.
+

@@ -1,5 +1,7 @@
 //! The pure grade (spec section 5): the tier, the assisted rule, and the clock.
 
+use cadus_core::answer::{Ast, parse};
+
 use super::*;
 
 /// Grade one submission with no model call at all (A3, spec section 5.1).
@@ -83,18 +85,84 @@ fn grade_outcome(expected: &str, answer: &str, outcome: Outcome) -> Grade {
             error_tags: Vec::new(),
         },
         Outcome::Undecidable(refusal) => {
-            let reason = if refusal.reason == "trailing text after the answer" {
-                if answer.contains('=') && !expected.contains('=') {
-                    "Enter only the final expression, without an equals sign. Put your steps in Show working."
-                } else {
-                    "I could not read the whole answer. Enter only the requested final answer; put your steps in Show working."
-                }
-            } else {
-                refusal.reason
-            };
-            ungraded_grade(reason)
+            ungraded_grade(&format_guidance(expected, answer, refusal.reason))
         }
     }
+}
+
+/// The learner-facing wording of a refusal that only names a grammar production.
+///
+/// A refusal reason names the production that fired, which tells the learner
+/// nothing about the FORM to type (the ISSUE-2 ruling: the refusal must teach
+/// the format, not the maths). The unit refusals and the trailing-text refusal
+/// are the two a mathematically correct answer can hit, so each gets actionable
+/// guidance; every other reason stands as the checker wrote it.
+fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
+    match reason {
+        "a unit is missing" => missing_unit_guidance(expected),
+        "a unit on the learner side only" => {
+            "The expected answer here is a bare number, so enter the value alone, without a unit."
+                .to_string()
+        }
+        "a unit inside an expression" => {
+            "A unit cannot sit inside an expression. Enter the unit only on the final answer, by itself."
+                .to_string()
+        }
+        "trailing text after the answer" => {
+            if answer.contains('=') && !expected.contains('=') {
+                "Enter only the final expression, without an equals sign. Put your steps in Show working."
+                    .to_string()
+            } else {
+                "I could not read the whole answer. Enter only the requested final answer; put your steps in Show working."
+                    .to_string()
+            }
+        }
+        other => other.to_string(),
+    }
+}
+
+/// The guidance of an answer that left the unit off a measured value.
+///
+/// The refusal names no unit, so the guidance reads one out of the authored
+/// answer and writes an EXAMPLE with a value that is not the answer (a value in
+/// the reply never names the expected value, Hard Rule 1).
+fn missing_unit_guidance(expected: &str) -> String {
+    match expected_unit(expected) {
+        Some(unit) => format!(
+            "This answer is a measurement, so it needs its unit. Write the value with the unit {unit}, for example {example}.",
+            example = unit_example(unit),
+        ),
+        None => "This answer is a measurement, so it needs its unit. Write the value with its unit.".to_string(),
+    }
+}
+
+/// A sample value in `unit` that is not the authored answer.
+fn unit_example(unit: &str) -> String {
+    match unit {
+        // The currency glyph sits in front, the degree mark glues on.
+        "$" => "$42".to_string(),
+        "°" | "€" => format!("42{unit}"),
+        _ => format!("42 {unit}"),
+    }
+}
+
+/// The unit spelling the authored answer carries, when it is one quantity.
+fn expected_unit(expected: &str) -> Option<&'static str> {
+    fn walk(tree: &Ast) -> Option<&'static str> {
+        match tree {
+            Ast::Quantity { unit, .. } => Some(unit),
+            Ast::Assign { value, .. } | Ast::Neg(value) | Ast::Sqrt(value) => walk(value),
+            Ast::Add(terms) | Ast::Mul(terms) | Ast::Tuple(terms) | Ast::Set(terms)
+            | Ast::List(terms) | Ast::Func(_, terms) => terms.iter().find_map(walk),
+            Ast::Div(a, b) => walk(a).or_else(|| walk(b)),
+            Ast::Pow(value, ..) => walk(value),
+            Ast::Interval { lo, hi, .. } => walk(lo).or_else(|| walk(hi)),
+            Ast::Ineq { bound, .. } => walk(bound),
+            Ast::Chain { lo, hi, .. } => walk(lo).or_else(|| walk(hi)),
+            _ => None,
+        }
+    }
+    walk(&parse(expected).ok()?)
 }
 
 /// The grade of an answer with no deterministic verdict (D-F2).
@@ -221,5 +289,87 @@ mod tests {
         assert!((round2(1.049) - 1.05).abs() < f64::EPSILON);
         assert!((round2(2.004) - 2.0).abs() < f64::EPSILON);
         assert!((round2(7.0) - 7.0).abs() < f64::EPSILON);
+    }
+
+    // H-1 (ISSUES.md): a unit-contract refusal teaches the format, the way the
+    // ISSUE-2 ruling made the trailing-text refusal teach it.
+
+    /// A unitless answer to a measured value reads the unit out of the authored
+    /// answer and shows an example that is not the answer.
+    #[test]
+    fn a_unitless_answer_names_the_unit_to_write() {
+        let grade = deterministic_grade("30°", "30", AnswerKind::Numeric);
+        assert_eq!(
+            grade.outcome.reason(),
+            Some(
+                "This answer is a measurement, so it needs its unit. Write the value with the \
+                 unit °, for example 42°."
+            )
+        );
+        let grade = deterministic_grade("56.5 cm", "56.5", AnswerKind::Numeric);
+        assert!(grade
+            .outcome
+            .reason()
+            .is_some_and(|reason| reason.contains("unit cm, for example 42 cm.")));
+    }
+
+    /// The unit read survives a label, and a currency answers in its own order.
+    #[test]
+    fn the_unit_guidance_reads_the_authored_spelling() {
+        let grade = deterministic_grade("d = 5 cm", "5", AnswerKind::Numeric);
+        assert!(grade
+            .outcome
+            .reason()
+            .is_some_and(|reason| reason.contains("unit cm")));
+        let grade = deterministic_grade("$5", "5", AnswerKind::Numeric);
+        assert!(grade
+            .outcome
+            .reason()
+            .is_some_and(|reason| reason.contains("for example $42.")));
+        let grade = deterministic_grade("5 €", "5", AnswerKind::Numeric);
+        assert!(grade
+            .outcome
+            .reason()
+            .is_some_and(|reason| reason.contains("for example 42€.")));
+    }
+
+    /// A unit the learner alone carried tells them to drop it; a unit inside an
+    /// expression tells them where a unit may stand.
+    #[test]
+    fn the_other_unit_refusals_teach_their_own_form() {
+        let grade = deterministic_grade("13.5", "13.5 cm", AnswerKind::Numeric);
+        assert_eq!(
+            grade.outcome.reason(),
+            Some(
+                "The expected answer here is a bare number, so enter the value alone, without a unit."
+            )
+        );
+        let grade = deterministic_grade("30°", "sin(30°)", AnswerKind::Expression);
+        assert_eq!(
+            grade.outcome.reason(),
+            Some(
+                "A unit cannot sit inside an expression. Enter the unit only on the final answer, by itself."
+            )
+        );
+    }
+
+    /// The trailing-text refusals keep the guidance the grade path already
+    /// served, now worded by the same helper.
+    #[test]
+    fn the_trailing_text_refusal_keeps_its_two_guidances() {
+        let grade = deterministic_grade("13.5", "13.5 = the total", AnswerKind::Numeric);
+        assert_eq!(
+            grade.outcome.reason(),
+            Some(
+                "Enter only the final expression, without an equals sign. Put your steps in Show working."
+            )
+        );
+        let grade = deterministic_grade("23", "9 R2 R3", AnswerKind::Numeric);
+        assert_eq!(
+            grade.outcome.reason(),
+            Some(
+                "I could not read the whole answer. Enter only the requested final answer; put your steps in Show working."
+            )
+        );
     }
 }

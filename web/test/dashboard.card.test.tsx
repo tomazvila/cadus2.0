@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { act, cleanup, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ApiError, createDemoApi } from '@/api';
-import { hasScheduledWork } from '@/views/Dashboard';
+import { etaDisplay, hasScheduledWork } from '@/views/Dashboard';
 import { toastStore } from '@/app/toast';
 import { held } from './helpers/held';
 import { EMPTY_PLAN, ONE_COURSE, mount, status, stubApi } from './helpers/dashboard';
@@ -41,10 +41,11 @@ describe('the status card', () => {
     expect(stat('ETA').querySelector('.stat-value')!.textContent).toBe('—');
   });
 
-  it('shows the not-marked tile only while an ungraded attempt waits', async () => {
+  it('shows the not-marked tile only while an ungraded attempt waits, and explains it', async () => {
     // D-F2: nothing waits, so the learner reads the same six tiles as before.
     const first = await mount();
     expect(stat('not marked')).toBeUndefined();
+    expect(document.querySelector('.ungraded-note')).toBeNull();
     first.unmount();
     cleanup();
 
@@ -52,6 +53,27 @@ describe('the status card', () => {
     const tile = stat('not marked');
     expect(tile.querySelector('.stat-value')!.textContent).toBe('2');
     expect(tile.className).toBe('stat warn');
+    // H-2 (ISSUES.md): the tile alone is a dead end; the note says what the state
+    // means and what happens to the attempt.
+    const note = document.querySelector('.ungraded-note')!;
+    const said = (note.textContent ?? '').replace(/\s+/g, ' ');
+    expect(said).toContain('the checker could not read the answer');
+    expect(said).toContain('A tutor can still mark them by hand');
+  });
+
+  it('dashes an ETA the observed pace cannot honestly carry', async () => {
+    // H-6 (ISSUES.md): the horizon is 730 days. A date inside it shows; a
+    // multi-year extrapolation from a 28-day window does not.
+    expect(etaDisplay({ ...status().velocity, eta: '2030-01-01' }, new Date('2026-09-15T00:00:00'))).toBe('—');
+    expect(etaDisplay({ ...status().velocity, eta: '2027-09-01' }, new Date('2026-09-15T00:00:00'))).toBe('2027-09-01');
+    expect(etaDisplay({ ...status().velocity, eta: null }, new Date('2026-09-15T00:00:00'))).toBe('—');
+    // A past date is a stale extrapolation, not a missed promise.
+    expect(etaDisplay({ ...status().velocity, eta: '2026-01-01' }, new Date('2026-09-15T00:00:00'))).toBe('—');
+    // A date 700 days out sits inside the horizon.
+    const inside = new Date('2026-09-15T00:00:00');
+    inside.setDate(inside.getDate() + 700);
+    const etaStr = inside.toISOString().slice(0, 10);
+    expect(etaDisplay({ ...status().velocity, eta: etaStr }, new Date('2026-09-15T00:00:00'))).toBe(etaStr);
   });
 
   it('draws the course arc with the current course marked', async () => {

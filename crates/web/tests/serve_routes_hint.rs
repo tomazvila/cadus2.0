@@ -309,3 +309,28 @@ async fn an_approved_hint_ladder_from_the_gate_serves_with_no_model_call() {
     })
     .await;
 }
+
+// --------------------------------------------------------------------------- //
+// H-3 (ISSUES.md): the availability the SPA gates on
+// --------------------------------------------------------------------------- //
+
+/// The serve payload stamps `hint_available` from the approved documents of the
+/// SAME transaction, so the SPA can hide the hint affordance where no ladder is
+/// approved instead of spending the round trip on `409 no_hint_ladder`.
+#[tokio::test]
+async fn the_serve_payload_stamps_hint_availability_from_the_store() {
+    TestDb::with(|db| async move {
+        let user = learner_with_source(&db, "hint-flag@example.com").await;
+        let app = app(&db);
+
+        // No ladder is approved: the affordance has nothing to serve.
+        let served = serve_ok(&app, user, LESSON).await;
+        assert_eq!(served["hint_available"], false);
+
+        // The approved ladder flips the flag on the next serve.
+        seed_two_rungs(&db).await;
+        let served = serve_ok(&app, user, LESSON).await;
+        assert_eq!(served["hint_available"], true);
+    })
+    .await;
+}

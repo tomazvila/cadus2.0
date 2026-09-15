@@ -194,6 +194,29 @@ async fn a_blank_answer_is_poor_and_carries_the_re_solve_text() {
     .await;
 }
 
+/// H-1 (ISSUES.md): a unitless answer to a measured problem is UNGRADED with
+/// guidance that names the unit to write, and it reveals no solution (D-F2).
+#[tokio::test]
+async fn a_unitless_answer_to_a_measured_problem_teaches_the_format() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let mut live = lesson_problem(5.0, "kp1", Vec::new());
+        live.expected.answer = "56.5 cm".to_string();
+        let user = lesson_learner(&db, "unit-guidance@example.com", live).await;
+
+        let body = answer_lesson_ok(&app, user, "56.5").await;
+        assert_eq!(body["outcome"], "ungraded");
+        assert_eq!(body.get("correct"), None);
+        assert_eq!(
+            body["reason"],
+            "This answer is a measurement, so it needs its unit. Write the value with the unit cm, for example 42 cm."
+        );
+        // An ungraded attempt reveals no solution (D-F2).
+        assert!(body.get("solution").is_none());
+    })
+    .await;
+}
+
 // --------------------------------------------------------------------------- //
 // Acceptance 2: the replay
 // --------------------------------------------------------------------------- //

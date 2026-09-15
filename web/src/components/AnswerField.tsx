@@ -32,7 +32,7 @@ export interface AnswerFieldHandle {
 export interface AnswerFieldProps {
   placeholder?: string;
   onSubmit?: () => void;
-  onHint?: () => void;
+  onHint?: (() => void) | undefined;
   disabled?: boolean;
   ref?: Ref<AnswerFieldHandle>;
 }

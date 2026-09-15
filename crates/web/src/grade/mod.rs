@@ -98,6 +98,7 @@ use cadus_core::event::{
 };
 use cadus_core::learner::problem_text_hash;
 use cadus_core::projector::{kp_failed, kp_passed};
+use cadus_core::readiness::ReadinessSet;
 use cadus_core::selector::{
     REMEDIATION_LESSON_FAIL, REMEDIATION_REPEAT_FAIL, Task, remediation_for_repeat_fail,
 };

@@ -80,6 +80,39 @@ export function hasScheduledWork(status: StatusResponse): boolean {
   );
 }
 
+/**
+ * The farthest horizon an ETA may project (H-6, ISSUES.md).
+ *
+ * `velocity.eta` extrapolates a completion date from a 28-day pace window. A
+ * window that short cannot honestly promise a date years out — an early learner
+ * read "four years" — so the dashboard only shows a date the observed pace can
+ * still carry, and dashes the rest.
+ */
+export const ETA_HORIZON_DAYS = 730;
+
+/**
+ * The honest ETA line (H-6, ISSUES.md).
+ *
+ * `—` when the core reports no date (no pace in the window), when its date lies
+ * in the past (a stale extrapolation, not a missed promise), and when the date
+ * lies beyond [`ETA_HORIZON_DAYS`]. Inside the horizon the core's date shows
+ * unchanged — the date is the core's own claim, and this screen re-derives
+ * nothing.
+ */
+export function etaDisplay(velocity: StatusResponse['velocity'], today: Date = new Date()): string {
+  const eta = velocity.eta;
+  if (!eta) return '—';
+  const days = Math.round((Date.parse(`${eta}T00:00:00`) - today.getTime()) / 86_400_000);
+  return Number.isFinite(days) && days >= 0 && days <= ETA_HORIZON_DAYS ? eta : '—';
+}
+
+/** The tooltip of the ETA tile: the horizon rule, spelled out where it applies. */
+function etaTitle(velocity: StatusResponse['velocity']): string {
+  return velocity.eta
+    ? 'Projected from your last 4 weeks of practice. It sharpens as you go.'
+    : 'No pace in the last 4 weeks yet, so there is nothing to project from.';
+}
+
 interface State {
   /** Bumped by anything that changes server state. The fetch effect depends on it. */
   gen: number;
@@ -284,13 +317,24 @@ export function Dashboard({
           <Stat value={`${num(status.nearly_due)}`} label="nearly due" />
           <Stat value={`${frontier}`} label="frontier" />
           <Stat value={`${pct(status.velocity.course_progress)}%`} label="course" />
-          <Stat value={status.velocity.eta ?? '—'} label="ETA" />
+          <Stat value={etaDisplay(status.velocity)} label="ETA" title={etaTitle(status.velocity)} />
           {/* D-F2: the attempts nobody graded. The tile appears only when one waits,
               so a learner with none reads the same six tiles as before. */}
           {ungraded > 0 ? (
             <Stat value={`${ungraded}`} label="not marked" className="warn" />
           ) : null}
         </div>
+        {/* H-2 (ISSUES.md): the decision for an ungraded attempt is DOCUMENTED, and the
+            learner reads it where the tile lives. The attempt scores nothing, an admin can
+            still regrade it (D-F2), and no SQL stands between the learner and that fact. */}
+        {ungraded > 0 ? (
+          <p className="muted ungraded-note">
+            {`“Not marked” means the checker could not read the answer — usually a form it cannot
+            grade, such as a missing unit. Nothing was scored for or against you. A tutor can
+            still mark ${ungraded === 1 ? 'it' : 'them'} by hand, and the skill comes back in a
+            later session either way.`}
+          </p>
+        ) : null}
         {mastery ? (
           <div className="stat-grid mastery-grid">
             <Stat value={`${practiced}`} label="practiced" />

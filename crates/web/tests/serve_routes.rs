@@ -191,10 +191,11 @@ async fn a_serve_never_carries_the_expected_answer_or_the_sketch() {
             !body.contains(POOL_ANSWER),
             "the serve leaked the answer text: {body}"
         );
-        // The LESSON payload carries these seven fields and no eighth
-        // (`_serve_payload`, `api.py:501-527`). A QUIZ serve carries one more,
-        // the whole-quiz clock, and this list is what holds that key to the
-        // quiz: `crates/web/tests/quiz_route_clock.rs` pins the eight keys there.
+        // The LESSON payload carries these seven fields plus `hint_available
+        // (H-3, ISSUES.md). A QUIZ serve carries the whole-quiz clock instead and
+        // NO hint flag — a quiz takes no hint — and that list is what holds both
+        // keys in place: `crates/web/tests/quiz_route_clock.rs` pins the eight
+        // keys there.
         let payload = parse(&body);
         let keys: Vec<&str> = payload
             .as_object()
@@ -206,6 +207,7 @@ async fn a_serve_never_carries_the_expected_answer_or_the_sketch() {
             keys,
             vec![
                 "countdown",
+                "hint_available",
                 "index",
                 "kp",
                 "problem_id",

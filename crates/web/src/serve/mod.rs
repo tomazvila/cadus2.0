@@ -83,6 +83,7 @@ use crate::state::{
     Tenant, WebState,
 };
 use cadus_core::curriculum::{Curriculum, FiniteCaseRole, KnowledgePoint};
+use cadus_core::readiness::ReadinessSet;
 use cadus_core::event::{
     Event, Exposure, ItemSource, OrdinaryProblemServed, SchemaVersion, Slug, TaskServed, TaskType,
     Timestamp,
@@ -202,6 +203,10 @@ pub(crate) struct Open {
     pub(crate) scratch: WebState,
     /// The plan of the open session.
     pub(crate) plan: SessionPlan,
+    /// The readiness of every knowledge point, read in the SAME transaction
+    /// (D-F5). The serve payload stamps `hint_available` from it, so the SPA can
+    /// gate the hint affordance on the ladder the store actually holds (H-3).
+    pub(crate) readiness: ReadinessSet,
 }
 
 /// Open the transaction, read the state and the session window, and compose the
@@ -257,6 +262,7 @@ pub(crate) async fn open(
         events,
         scratch,
         plan,
+        readiness,
     })
 }
 

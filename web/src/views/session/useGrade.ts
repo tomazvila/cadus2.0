@@ -181,6 +181,9 @@ export function useGrade({
     // The same gate: no hint is fired at a problem already being graded. The `H` key reaches
     // here while the buttons are disabled.
     if (!gate.is('ready')) return;
+    // H-3: a payload that names no approved ladder can only refuse. The button is hidden,
+    // so this guard is for the keyboard path alone.
+    if (problemRef.current?.hint_available === false) return;
     const current = problemRef.current!;
     const task = taskRef.current!;
 

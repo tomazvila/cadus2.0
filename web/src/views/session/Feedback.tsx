@@ -86,6 +86,9 @@ export function Feedback({
 
       {res.feedback_blocked ? <p role="status">Fresh practice is unavailable for this skill. Your answer is saved.</p> : null}
       {res.task_status === 'task_failed' && res.correct ? <p>This practice answer is correct. The original assessment still needs more practice.</p> : null}
+      {res.task_status === 'task_passed' ? (
+        <p role="status">Task complete. The next task is up when you continue.</p>
+      ) : null}
       {res.task_status === 'task_inconclusive' ? (
         <p className="feedback-reason">This review needs confirmation. A fresh question will check each uncertain skill.</p>
       ) : null}

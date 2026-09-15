@@ -44,6 +44,9 @@ async fn a_drill_records_one_completion_after_its_final_independent_answer() {
         )
         .await;
         assert_eq!(done["correct"], true);
+        // H-5 (ISSUES.md): the close answer is the drill's completion moment, so it
+        // names the close instead of a bare `continue` with no next problem.
+        assert_eq!(done["task_status"], "task_passed");
         let results = events_of_type(&db, user, "drill_result").await;
         assert_eq!(results.len(), 1);
         assert_eq!(results[0]["task_id"], DRILL);

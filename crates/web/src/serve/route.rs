@@ -144,6 +144,7 @@ async fn serve_one(
         mut scratch,
         plan,
         events,
+        readiness,
     } = opened;
     let task = find(&plan, &task_id)?;
     if task.integrated_assessment_of.is_some() {
@@ -213,9 +214,24 @@ async fn serve_one(
         Some(live) => {
             live.timing_interrupted = true;
             live.started_at = started_at;
-            serve_payload(live, task, graph, content.cfg.drill.target_secs, elapsed)
+            let mut payload =
+                serve_payload(live, task, graph, content.cfg.drill.target_secs, elapsed);
+            stamp_hint_availability(&mut payload, &readiness, task, live);
+            payload
         }
-        None => install_next(state, content, &mut tx, user_id, task, &mut scratch, now).await?,
+        None => {
+            install_next(
+                state,
+                content,
+                &mut tx,
+                user_id,
+                task,
+                &mut scratch,
+                &readiness,
+                now,
+            )
+            .await?
+        }
     };
     // The hand-off happened, so the task is served. The event goes in once per
     // task and per session, and it is what fills the drill cadence (D-M5-8).
@@ -245,6 +261,10 @@ async fn serve_one(
 ///
 /// The caller owns the transaction: this writes into `scratch` and into the
 /// pool, and it commits nothing.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "the draw reads the content, the task, the scratch, the readiness and the transaction"
+)]
 pub(crate) async fn install_next(
     state: &AppState,
     content: &Content,
@@ -252,6 +272,7 @@ pub(crate) async fn install_next(
     user_id: Uuid,
     task: &Task,
     scratch: &mut WebState,
+    readiness: &ReadinessSet,
     handoff_at: Timestamp,
 ) -> Result<Value, ApiError> {
     let started_at = unix_seconds(handoff_at.micros());
@@ -342,7 +363,8 @@ pub(crate) async fn install_next(
         rework: feedback.clone(),
         handoff: Some(handoff),
     };
-    let payload = serve_payload(&served, task, graph, content.cfg.drill.target_secs, elapsed);
+    let mut payload = serve_payload(&served, task, graph, content.cfg.drill.target_secs, elapsed);
+    stamp_hint_availability(&mut payload, readiness, task, &served);
     scratch.record_served(&target.serve, &task_id, &row.instance_hash);
     scratch.served.insert(task_id, served);
     let row = progress_for(scratch, task, graph);

@@ -100,8 +100,9 @@ pub(crate) fn progress_for<'state>(
 /// `next_serve_index`.
 ///
 /// `quiz_elapsed_secs` is the EIGHTH key, and a QUIZ serve alone carries it
-/// (M6-review-2, V6). Every other task type emits the seven keys of 1.0, so no
-/// other route and no other payload changes shape.
+/// (M6-review-2, V6). Every non-quiz serve carries `hint_available beside the
+/// seven keys of 1.0 (H-3, ISSUES.md); a quiz takes no hint, so its payload
+/// keeps the exact eight-key shape.
 pub(super) fn serve_payload(
     served: &ServedProblem,
     task: &Task,
@@ -176,6 +177,37 @@ fn visuals_of(
         .find(|kp| kp.id.as_str() == kp_id)
         .map(|kp| cadus_core::visual::render_all(&kp.visuals, problem_id))
         .unwrap_or_default()
+}
+
+/// Stamp `hint_available` on a serve payload when the store decides it (H-3).
+///
+/// The readiness set of the serve's own transaction answers whether the served
+/// knowledge point holds an approved hint ladder (L5). A key that answers no
+/// readiness — a payload whose serving key the index does not name — stamps
+/// nothing, so a client that reads no flag assumes the historical behavior: ask,
+/// and the refusal is `409 no_hint_ladder`. A flag of `false` is the SPA's
+/// signal to hide the hint affordance, so no click spends a round trip on a
+/// refusal the store already knew about.
+pub(crate) fn stamp_hint_availability(
+    payload: &mut Value,
+    readiness: &ReadinessSet,
+    task: &Task,
+    served: &ServedProblem,
+) {
+    // A quiz takes no hint at all (`409 no_hints_in_quiz), so its payload keeps
+    // the exact key set the quiz client reads.
+    if task.task_type == TaskType::Quiz {
+        return;
+    }
+    let Some(kp) = served.kp.as_deref() else {
+        return;
+    };
+    let Some(topic) = served.serve_topic.as_deref().or(served.topic.as_deref()) else {
+        return;
+    };
+    if let Some(found) = readiness.get(&kp_key(topic, kp)) {
+        payload["hint_available"] = json!(found.hints);
+    }
 }
 
 /// The authored solve time of a topic, when the arena holds the topic.
