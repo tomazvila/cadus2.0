@@ -41,8 +41,10 @@ function ReportDetails({ report, submitted, hideResult, close }: {
     <MathBlock>{context.problem_text}</MathBlock>
     {submitted ? <p>Your submitted answer: <span>{context.answer || '(blank)'}</span></p> : <p>No answer submission is required to send a report.</p>}
     <p className="muted">Qwen reviews the report. Mathematical verification and any applied changes are shown separately.</p>
-    <label htmlFor={noteId}>What should we check? (optional)</label>
-    <textarea id={noteId} maxLength={2000} rows={3} value={report.note} disabled={report.busy || report.noteLocked}
+    <label className="auth-label" htmlFor={noteId}>What should we check? (optional)</label>
+    {/* The shared work-field pattern, not a bare UA textarea: unstyled, the textarea
+        flows inline with its label and the two overlap. */}
+    <textarea id={noteId} className="work-input" maxLength={2000} rows={3} value={report.note} disabled={report.busy || report.noteLocked}
       onChange={(event) => report.setNote(event.target.value)} />
     <div role="status" aria-live="polite" aria-atomic="true">
       {report.busy && !report.receipt ? <p>Sending report...</p> : null}
