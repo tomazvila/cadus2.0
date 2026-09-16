@@ -190,10 +190,10 @@ topics:
 
   - id: writing-geometric-proofs
     name: Writing Two-Column and Paragraph Proofs
-    core: true                 # the assembled proof-writing skill the four proof-demanding geometry topics gate on
+    core: true                 # the assembled proof-writing skill the four proof-demanding geometry topics gate on (flipped to decidable single-answer items)
     difficulty: 0.38
     drill: false
-    answer_kind: proof
+    answer_kind: numeric
     expected_time_secs: 180
     prerequisites:
       - id: postulates-theorems-justifications
@@ -204,37 +204,70 @@ topics:
         name: Complete a partially written two-column proof
         key_prerequisites: [postulates-theorems-justifications]
         exemplars:
-          - problem: 'A two-column proof reads — Statements: 1. $M$ is the midpoint of $\overline{AB}$; 2. $AM = MB$. Reasons: 1. Given; 2. (blank). Supply the missing reason.'
-            answer: 'Definition of midpoint.'
-          - problem: 'A two-column proof that $m\angle 1 = m\angle 3$ reads — Statements: 1. $\angle 1$ and $\angle 2$ form a linear pair; $\angle 2$ and $\angle 3$ form a linear pair; 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$; 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$; 4. $m\angle 1 = m\angle 3$. Give the reasons for steps 2, 3, and 4.'
-            answer: '2. Linear pair postulate; 3. substitution (both sums equal $180^\circ$); 4. subtraction property of equality.'
-            solution_sketch: 'Each statement is licensed by exactly one named postulate or property; subtracting $m\angle 2$ finishes.'
-        constraints: "3-5 line proofs about segments and angles; one or two blanks, in either column; reasons limited to given, definitions, addition postulates, linear pair postulate, properties of equality"
+          - problem: 'A two-column proof reads — Statements: 1. $M$ is the midpoint of $\overline{AB}$; 2. $AM = MB$. Reasons: 1. Given; 2. (blank). Which reason completes step 2: the definition of midpoint, the definition of angle bisector, the segment addition postulate, or the symmetric property?'
+            answer: 'the definition of midpoint'
+            answer_contract: {kind: label, options: [['the definition of midpoint'], ['the definition of angle bisector'], ['the segment addition postulate'], ['the symmetric property']]}
+            solution_sketch: 'A midpoint is exactly the point that splits the segment into two equal parts, so $AM = MB$ is the definition of midpoint.'
+          - problem: 'A two-column proof that $m\angle 1 = m\angle 3$ reads — Statements: 1. $\angle 1$ and $\angle 2$ form a linear pair; $\angle 2$ and $\angle 3$ form a linear pair; 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$. Which reason completes step 2: the linear pair postulate, the definition of supplementary angles, the substitution property, or the symmetric property?'
+            answer: 'the linear pair postulate'
+            answer_contract: {kind: label, options: [['the linear pair postulate'], ['the definition of supplementary angles'], ['the substitution property'], ['the symmetric property']]}
+            solution_sketch: 'A linear pair of angles sums to $180^\circ$ by the linear pair postulate, which licenses both equations in step 2.'
+          - problem: 'A two-column proof continues — Statements: 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$; 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$. Which property justifies step 3: the substitution property, the subtraction property of equality, the addition property of equality, or the transitive property?'
+            answer: 'the substitution property'
+            answer_contract: {kind: label, options: [['the substitution property'], ['the subtraction property of equality'], ['the addition property of equality'], ['the transitive property']]}
+            solution_sketch: 'Both sums equal $180^\circ$, so $180^\circ$ is substituted for one sum in the other: the substitution property.'
+          - problem: 'A two-column proof continues — Statements: 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$; 4. $m\angle 1 = m\angle 3$. Which property justifies step 4: the subtraction property of equality, the addition property of equality, the substitution property, or the reflexive property?'
+            answer: 'the subtraction property of equality'
+            answer_contract: {kind: label, options: [['the subtraction property of equality'], ['the addition property of equality'], ['the substitution property'], ['the reflexive property']]}
+            solution_sketch: 'Subtracting the common term $m\angle 2$ from both sides of the equal sums leaves $m\angle 1 = m\angle 3$.'
+        constraints: "3-5 line proofs about segments and angles; single blanks answered by choosing the named reason via a label contract; reasons limited to given, definitions, addition postulates, linear pair postulate, properties of equality"
       - id: kp2
-        name: Write a short two-column proof
+        name: Justify the steps of a short two-column proof
         key_prerequisites: [postulates-theorems-justifications]
         exemplars:
-          - problem: 'Write a two-column proof. Given: $\angle 1$ and $\angle 2$ are supplementary; $\angle 2$ and $\angle 3$ are supplementary. Prove: $\angle 1 \cong \angle 3$.'
-            answer: '1. $\angle 1, \angle 2$ supplementary; $\angle 2, \angle 3$ supplementary (Given). 2. $m\angle 1 + m\angle 2 = 180^\circ$; $m\angle 2 + m\angle 3 = 180^\circ$ (definition of supplementary). 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$ (substitution). 4. $m\angle 1 = m\angle 3$ (subtraction property). 5. $\angle 1 \cong \angle 3$ (definition of congruent angles).'
-            solution_sketch: 'The congruent supplements argument: both angles are supplementary to the same angle.'
-          - problem: 'Write a two-column proof. Given: $B$ is the midpoint of $\overline{AC}$ and $AB = 5$. Prove: $AC = 10$.'
-            answer: '1. $B$ is the midpoint of $\overline{AC}$; $AB = 5$ (Given). 2. $AB = BC$ (definition of midpoint). 3. $BC = 5$ (substitution). 4. $AB + BC = AC$ (segment addition postulate). 5. $AC = 5 + 5 = 10$ (substitution).'
-            solution_sketch: 'Midpoint halves the segment; segment addition reassembles it.'
-        constraints: "every statement carries a reason; 4-6 lines; content limited to segment/angle addition, midpoints, bisectors, supplementary/complementary pairs, vertical angles"
+          - problem: 'A two-column proof that $\angle 1 \cong \angle 3$ reads — Statements: 1. $\angle 1$ and $\angle 2$ are supplementary; $\angle 2$ and $\angle 3$ are supplementary (Given); 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$ (blank). Which reason completes step 2: the definition of supplementary angles, the linear pair postulate, the vertical angles theorem, or the symmetric property?'
+            answer: 'the definition of supplementary angles'
+            answer_contract: {kind: label, options: [['the definition of supplementary angles'], ['the linear pair postulate'], ['the vertical angles theorem'], ['the symmetric property']]}
+            solution_sketch: 'Supplementary angles sum to $180^\circ$ by the definition of supplementary angles — no position (linear pair) is claimed here.'
+          - problem: 'A two-column proof that $AC = 10$ reads — Statements: 1. $B$ is the midpoint of $\overline{AC}$; $AB = 5$ (Given); 2. $AB = BC$ (blank). Which reason completes step 2: the definition of midpoint, the segment addition postulate, the substitution property, or the addition property of equality?'
+            answer: 'the definition of midpoint'
+            answer_contract: {kind: label, options: [['the definition of midpoint'], ['the segment addition postulate'], ['the substitution property'], ['the addition property of equality']]}
+            solution_sketch: 'A midpoint divides the segment into two equal parts, so $AB = BC$ is the definition of midpoint.'
+          - problem: 'A two-column proof continues — Statements: 3. $BC = 5$ (substitution); 4. $AB + BC = AC$ (blank); 5. $AC = 5 + 5 = 10$. Which reason completes step 4: the segment addition postulate, the definition of midpoint, the subtraction property of equality, or the transitive property?'
+            answer: 'the segment addition postulate'
+            answer_contract: {kind: label, options: [['the segment addition postulate'], ['the definition of midpoint'], ['the subtraction property of equality'], ['the transitive property']]}
+            solution_sketch: 'Since $B$ lies on $\overline{AC}$, the two parts add to the whole: the segment addition postulate.'
+          - problem: 'A two-column proof of the congruent complements fact reads — Statements: 1. $\angle 1$ and $\angle 2$ are complementary; $\angle 3$ and $\angle 2$ are complementary (Given); 2. $m\angle 1 + m\angle 2 = 90^\circ$ and $m\angle 3 + m\angle 2 = 90^\circ$ (definition of complementary); 3. $m\angle 1 + m\angle 2 = m\angle 3 + m\angle 2$ (blank). Which reason completes step 3: the substitution property, the subtraction property of equality, the definition of congruent angles, or the reflexive property?'
+            answer: 'the substitution property'
+            answer_contract: {kind: label, options: [['the substitution property'], ['the subtraction property of equality'], ['the definition of congruent angles'], ['the reflexive property']]}
+            solution_sketch: 'Both sums equal $90^\circ$, so one $90^\circ$ replaces the other by the substitution property.'
+        constraints: "4-6 line proofs; the single blank reason is chosen via a label contract among named definitions, postulates, and properties; content limited to segment/angle addition, midpoints, bisectors, supplementary/complementary pairs, vertical angles"
       - id: kp3
-        name: Paragraph proofs
+        name: Justify the reasoning in a paragraph proof
         key_prerequisites: [postulates-theorems-justifications]
         exemplars:
-          - problem: 'Write a paragraph proof: vertical angles $\angle 1$ and $\angle 3$ are congruent.'
-            answer: '$\angle 1$ and $\angle 2$ form a linear pair, as do $\angle 2$ and $\angle 3$, so each of $\angle 1$ and $\angle 3$ is supplementary to $\angle 2$ by the linear pair postulate. Then $m\angle 1 = 180^\circ - m\angle 2 = m\angle 3$, so $\angle 1 \cong \angle 3$.'
-            solution_sketch: 'Both vertical angles are supplements of the shared angle between them.'
-          - problem: 'Rewrite as a paragraph proof — Statements: 1. $\overrightarrow{BD}$ bisects $\angle ABC$; 2. $\angle ABD \cong \angle DBC$; 3. $m\angle ABD = m\angle DBC$. Reasons: 1. Given; 2. definition of angle bisector; 3. definition of congruent angles.'
-            answer: 'Since $\overrightarrow{BD}$ bisects $\angle ABC$, the definition of angle bisector gives $\angle ABD \cong \angle DBC$, and congruent angles have equal measures, so $m\angle ABD = m\angle DBC$.'
-        constraints: "same content scope as kp2; every claim in the paragraph must still name its reason; 2-4 sentences"
+          - problem: 'A paragraph proof of the vertical angles theorem begins: "$\angle 1$ and $\angle 2$ form a linear pair, as do $\angle 2$ and $\angle 3$, so $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$." Which postulate supports that claim: the linear pair postulate, the vertical angles theorem, the angle addition postulate, or the definition of congruent angles?'
+            answer: 'the linear pair postulate'
+            answer_contract: {kind: label, options: [['the linear pair postulate'], ['the vertical angles theorem'], ['the angle addition postulate'], ['the definition of congruent angles']]}
+            solution_sketch: 'Angles forming a linear pair are supplementary by the linear pair postulate, so each pair sums to $180^\circ$.'
+          - problem: 'A paragraph proof continues: "...so each of $\angle 1$ and $\angle 3$ is supplementary to $\angle 2$..." and concludes "$\angle 1 \cong \angle 3$." Which definition lets the proof end by writing congruence rather than equality of measures: the definition of congruent angles, the definition of supplementary angles, the definition of vertical angles, or the definition of a linear pair?'
+            answer: 'the definition of congruent angles'
+            answer_contract: {kind: label, options: [['the definition of congruent angles'], ['the definition of supplementary angles'], ['the definition of vertical angles'], ['the definition of a linear pair']]}
+            solution_sketch: 'Equal measures correspond to congruent angles by the definition of congruent angles.'
+          - problem: 'A paragraph proof states: "Since $\overrightarrow{BD}$ bisects $\angle ABC$, $\angle ABD \cong \angle DBC$." Which definition justifies that claim: the definition of angle bisector, the definition of congruent angles, the angle addition postulate, or the definition of an adjacent angle?'
+            answer: 'the definition of angle bisector'
+            answer_contract: {kind: label, options: [['the definition of angle bisector'], ['the definition of congruent angles'], ['the angle addition postulate'], ['the definition of an adjacent angle']]}
+            solution_sketch: 'A bisector splits the angle into two congruent angles by the definition of angle bisector.'
+          - problem: 'A paragraph proof continues: "...and congruent angles have equal measures, so $m\angle ABD = m\angle DBC$." Which definition supports replacing congruence with equality of measures: the definition of congruent angles, the substitution property, the definition of angle bisector, or the symmetric property?'
+            answer: 'the definition of congruent angles'
+            answer_contract: {kind: label, options: [['the definition of congruent angles'], ['the substitution property'], ['the definition of angle bisector'], ['the symmetric property']]}
+            solution_sketch: 'By definition, congruent angles are angles with equal measures.'
+        constraints: "same content scope as kp2; single-blank reason questions answered via a label contract among named definitions, postulates, and properties"
     diagnostic_exemplar:
-      problem: 'Write a two-column proof. Given: $\angle 1$ and $\angle 2$ are vertical angles. Prove: $\angle 1 \cong \angle 2$.'
-      answer: '1. $\angle 1$ and $\angle 2$ are vertical angles (Given). 2. $\angle 1$ and $\angle 3$ form a linear pair; $\angle 2$ and $\angle 3$ form a linear pair (definition of vertical angles: the sides form two intersecting lines). 3. $m\angle 1 + m\angle 3 = 180^\circ$; $m\angle 2 + m\angle 3 = 180^\circ$ (linear pair postulate). 4. $m\angle 1 + m\angle 3 = m\angle 2 + m\angle 3$ (substitution). 5. $m\angle 1 = m\angle 2$, so $\angle 1 \cong \angle 2$ (subtraction property; definition of congruent angles).'
-      solution_sketch: 'Both angles are supplements of the shared adjacent angle.'
+      problem: 'A two-column proof that $\angle 1 \cong \angle 2$ (vertical angles) reads — Statements: 1. $\angle 1$ and $\angle 2$ are vertical angles (Given); 2. $\angle 1$ and $\angle 3$ form a linear pair; $\angle 2$ and $\angle 3$ form a linear pair (blank). Which reason completes step 2: the definition of vertical angles, the linear pair postulate, the vertical angles theorem, or the substitution property?'
+      answer: 'the definition of vertical angles'
+      answer_contract: {kind: label, options: [['the definition of vertical angles'], ['the linear pair postulate'], ['the vertical angles theorem'], ['the substitution property']]}
+      solution_sketch: 'Vertical angles are defined by two intersecting lines whose opposite sides form the pairs; the linear pairs in step 2 come from the definition of vertical angles.'
     anki_seeds:
       - front: "The two columns of a two-column proof are..."
         back: "statements and reasons"

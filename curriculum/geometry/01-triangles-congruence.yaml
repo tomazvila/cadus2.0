@@ -114,13 +114,23 @@ topics:
         name: Can three lengths form a triangle?
         key_prerequisites: [linear-inequalities]
         exemplars:
-          - problem: 'Can segments of length $4$, $5$, and $10$ form a triangle?'
-            answer: 'No; $4 + 5 = 9 < 10$.'
-            solution_sketch: 'Each pair of sides must sum to more than the third; $4 + 5 < 10$ fails.'
-          - problem: 'Can segments of length $6$, $8$, and $12$ form a triangle?'
-            answer: 'Yes; every pair sums to more than the third side.'
-            solution_sketch: 'Check the tightest case: $6 + 8 = 14 > 12$.'
-        constraints: "integer side lengths 1-30; only the smallest-two sum needs checking"
+          - problem: 'Can segments of length $4$, $5$, and $10$ form a triangle? Answer yes or no.'
+            answer: 'no'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: 'Each pair of sides must sum to more than the third; $4 + 5 = 9 < 10$ fails.'
+          - problem: 'Can segments of length $6$, $8$, and $12$ form a triangle? Answer yes or no.'
+            answer: 'yes'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: 'Check the tightest case: $6 + 8 = 14 > 12$, so every pair sums to more than the third.'
+          - problem: 'Can segments of length $10$, $10$, and $21$ form a triangle? Answer yes or no.'
+            answer: 'no'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: 'The tightest case fails: $10 + 10 = 20 < 21$.'
+          - problem: 'Can segments of length $7$, $9$, and $12$ form a triangle? Answer yes or no.'
+            answer: 'yes'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: 'The tightest case holds: $7 + 9 = 16 > 12$, so every pair sums to more than the third.'
+        constraints: "integer side lengths 1-30; only the smallest-two sum needs checking; answered yes or no"
       - id: kp2
         name: Range of the third side
         key_prerequisites: [linear-inequalities]
@@ -130,18 +140,41 @@ topics:
             solution_sketch: '$|9 - 5| < x < 9 + 5$.'
           - problem: 'Two sides of a triangle measure $7$ and $7$. What values are possible for the third side $x$?'
             answer: '0 < x < 14'
-        constraints: "answer as a strict double inequality difference < x < sum"
+          - problem: 'Two sides of a triangle measure $5$ and $9$. What is the greatest whole-number length possible for the third side?'
+            answer: "13"
+            solution_sketch: '$9 - 5 < x < 9 + 5$ gives $4 < x < 14$, so the greatest whole number is $13$.'
+          - problem: 'Two sides of a triangle measure $8$ and $3$. What is the least whole-number length possible for the third side?'
+            answer: "6"
+            solution_sketch: '$8 - 3 < x < 8 + 3$ gives $5 < x < 11$, so the least whole number is $6$.'
+          - problem: 'Two sides of a triangle measure $10$ and $6$. Can the third side have length $17$? Answer yes or no.'
+            answer: 'no'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: '$10 - 6 < x < 10 + 6$ gives $4 < x < 16$, and $17$ falls outside that range.'
+          - problem: 'Two sides of a triangle measure $12$ and $4$. What is the greatest whole-number length possible for the third side?'
+            answer: "15"
+            solution_sketch: '$12 - 4 < x < 12 + 4$ gives $8 < x < 16$, so the greatest whole number is $15$.'
+        constraints: "range items answer as a strict double inequality difference < x < sum; whole-number-bound and yes-or-no range items answer with a single integer or yes/no"
       - id: kp3
         name: Order sides and angles
         key_prerequisites: [classifying-triangles]
         exemplars:
-          - problem: 'In $\triangle ABC$, $AB = 7$, $BC = 9$, and $CA = 12$. Which angle is largest?'
-            answer: '$\angle B$'
+          - problem: 'In $\triangle ABC$, $AB = 7$, $BC = 9$, and $CA = 12$. Which angle is largest: $\angle A$, $\angle B$, or $\angle C$?'
+            answer: 'B'
+            answer_contract: {kind: label, options: [[A], [B], [C]]}
             solution_sketch: 'The largest angle sits opposite the longest side $CA = 12$, and the angle opposite $\overline{CA}$ is $\angle B$.'
-          - problem: 'In $\triangle DEF$, $m\angle D = 50^\circ$, $m\angle E = 60^\circ$, and $m\angle F = 70^\circ$. Which side is longest?'
-            answer: '$\overline{DE}$'
-            solution_sketch: 'The longest side sits opposite the largest angle $\angle F$.'
-        constraints: "distinct side lengths / angle measures; ask for largest or smallest only"
+          - problem: 'In $\triangle DEF$, $m\angle D = 50^\circ$, $m\angle E = 60^\circ$, and $m\angle F = 70^\circ$. Which side is longest: $\overline{DE}$, $\overline{EF}$, or $\overline{FD}$?'
+            answer: 'DE'
+            answer_contract: {kind: label, options: [[DE], [EF], [FD]]}
+            solution_sketch: 'The longest side sits opposite the largest angle $\angle F$, which is $\overline{DE}$.'
+          - problem: 'In $\triangle PQR$, $PQ = 6$, $QR = 11$, and $RP = 8$. Which angle is smallest: $\angle P$, $\angle Q$, or $\angle R$?'
+            answer: 'R'
+            answer_contract: {kind: label, options: [[P], [Q], [R]]}
+            solution_sketch: 'The smallest angle sits opposite the shortest side $PQ = 6$, and the angle opposite $\overline{PQ}$ is $\angle R$.'
+          - problem: 'In $\triangle XYZ$, $m\angle X = 40^\circ$, $m\angle Y = 95^\circ$, and $m\angle Z = 45^\circ$. Which side is shortest: $\overline{XY}$, $\overline{YZ}$, or $\overline{ZX}$?'
+            answer: 'YZ'
+            answer_contract: {kind: label, options: [[XY], [YZ], [ZX]]}
+            solution_sketch: 'The shortest side sits opposite the smallest angle $\angle X = 40^\circ$, which is $\overline{YZ}$.'
+        constraints: "distinct side lengths / angle measures; ask for largest or smallest only; the answer names the vertex letter or the two-letter segment"
     diagnostic_exemplar:
       problem: 'Two sides of a triangle measure $8$ and $3$. List all possible integer lengths for the third side.'
       answer: '6, 7, 8, 9, or 10'
