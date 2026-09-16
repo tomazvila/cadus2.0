@@ -23,12 +23,16 @@ topics:
         exemplars:
           - problem: 'Find the area of a rectangle with sides $8$ and $5$.'
             answer: "40"
+            solution_sketch: 'Rectangle area $= 8 \cdot 5 = 40$.'
           - problem: 'Find the area of a triangle with base $10$ and height $7$.'
             answer: "35"
             solution_sketch: '$\frac{1}{2} \cdot 10 \cdot 7 = 35$.'
           - problem: 'Find the area of a triangle with base $12$ and height $9$.'
             answer: "54"
             solution_sketch: '$\frac{1}{2} \cdot 12 \cdot 9 = 54$.'
+          - problem: 'Find the area of a rectangle with sides $11$ and $6$.'
+            answer: "66"
+            solution_sketch: '$11 \cdot 6 = 66$.'
         constraints: "whole-number dimensions; even base-height products for triangles"
       - id: kp2
         name: Use the height, not a slant side
@@ -43,6 +47,9 @@ topics:
           - problem: 'A triangle has base $18$, sides $11$ and $11$, and the height to that base is $8$. Find its area.'
             answer: "72"
             solution_sketch: 'Only the base and its height matter: $\frac{1}{2} \cdot 18 \cdot 8 = 72$.'
+          - problem: 'A right triangle has legs $10$ and $7$. Find its area.'
+            answer: "35"
+            solution_sketch: 'The legs are a base-height pair: $\frac{1}{2} \cdot 10 \cdot 7 = 35$.'
         constraints: "height given explicitly or as a leg; slant sides appear as distractors"
       - id: kp3
         name: Work backwards from an area
@@ -53,9 +60,13 @@ topics:
             solution_sketch: '$\frac{1}{2} \cdot 12 \cdot h = 42 \Rightarrow h = 7$.'
           - problem: 'A rectangle has area $72$ and one side of length $9$. Find the other side.'
             answer: "8"
+            solution_sketch: '$9 \cdot s = 72 \Rightarrow s = 8$.'
           - problem: 'A triangle has area $30$ and height $10$. Find its base.'
             answer: "6"
             solution_sketch: '$\frac{1}{2} \cdot b \cdot 10 = 30 \Rightarrow b = 6$.'
+          - problem: 'A triangle has area $54$ and base $9$. Find its height.'
+            answer: "12"
+            solution_sketch: '$\frac{1}{2} \cdot 9 \cdot h = 54 \Rightarrow h = 12$.'
         constraints: "divide out cleanly to whole numbers"
     diagnostic_exemplar:
       problem: 'A triangle has base $16$, sides $17$ and $17$, and the height to that base is $15$. Find its area.'
@@ -1064,6 +1075,7 @@ topics:
             solution_sketch: '$V = \pi r^2 h = 9\pi \cdot 7 = 63\pi$.'
           - problem: 'Find the volume of a cylinder with radius $2$ and height $9$ (exact).'
             answer: '$36\pi$'
+            solution_sketch: '$V = \pi r^2 h = 4\pi \cdot 9 = 36\pi$.'
           - problem: 'Find the volume of a cylinder with radius $5$ and height $4$. Use $\pi \approx 3.14$.'
             answer: "314"
             solution_sketch: '$V = \pi r^2 h \approx 3.14 \cdot 25 \cdot 4 = 314$.'
@@ -1582,7 +1594,7 @@ topics:
     core: false                # proof-practice genre; terminal
     difficulty: 0.52
     drill: false
-    answer_kind: multi-step
+    answer_kind: numeric       # flipped from multi-step: exemplars are single-answer (labels with contracts / numerals), per the proven pattern
     expected_time_secs: 240
     prerequisites:
       - id: distance-midpoint-formulas
@@ -1602,34 +1614,59 @@ topics:
         name: Parallel and perpendicular via slope
         key_prerequisites: [slope]
         exemplars:
-          - problem: 'Show that quadrilateral $A(0,0)$, $B(4,1)$, $C(6,5)$, $D(2,4)$ is a parallelogram.'
-            answer: 'Slopes: $AB = DC = \frac{1}{4}$ and $BC = AD = 2$; both pairs of opposite sides are parallel, so $ABCD$ is a parallelogram.'
-            solution_sketch: '$m_{AB} = \frac{1}{4}$, $m_{DC} = \frac{5-4}{6-2} = \frac{1}{4}$; $m_{BC} = \frac{5-1}{6-4} = 2$, $m_{AD} = \frac{4}{2} = 2$.'
-          - problem: 'Are the segments through $(0,0),(3,2)$ and through $(1,5),(-3,11)$ perpendicular? Justify with slopes.'
-            answer: 'Yes; slopes $\frac{2}{3}$ and $-\frac{3}{2}$ multiply to $-1$.'
-            solution_sketch: 'Second slope $= \frac{11-5}{-3-1} = -\frac{3}{2}$; product with $\frac{2}{3}$ is $-1$.'
+          - problem: 'Quadrilateral $A(0,0)$, $B(4,1)$, $C(6,5)$, $D(2,4)$: the slope of $\overline{AB}$ is $\frac{1}{4}$. What is the slope of $\overline{DC}$ for $D(2,4)$, $C(6,5)$, as a fraction?'
+            answer: '1/4'
+            solution_sketch: '$m_{DC} = \frac{5-4}{6-2} = \frac{1}{4}$. Equal slopes make $\overline{AB} \parallel \overline{DC}$; together with $\overline{BC} \parallel \overline{AD}$ this proves a parallelogram.'
+          - problem: 'Are the segments through $(0,0),(3,2)$ and through $(1,5),(-3,11)$ perpendicular? The first has slope $\frac{2}{3}$; the second has slope $-\frac{3}{2}$. Answer yes or no.'
+            answer: 'yes'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: 'The slopes multiply to $\frac{2}{3} \cdot (-\frac{3}{2}) = -1$, so the segments are perpendicular.'
+          - problem: 'Line $p$ has slope $3$. A line perpendicular to $p$ must have what slope?'
+            answer: '-1/3'
+            solution_sketch: 'Perpendicular slopes are negative reciprocals: $-\frac{1}{3}$, since $3 \cdot (-\frac{1}{3}) = -1$.'
+          - problem: 'Quadrilateral $P(0,0)$, $Q(2,0)$, $R(2,3)$, $S(0,3)$: the slopes of $\overline{PQ}$ and $\overline{RS}$ are both $0$ and the slopes of $\overline{QR}$ and $\overline{PS}$ are both undefined. What kind of quadrilateral is it: parallelogram, trapezoid with one parallel pair, or kite?'
+            answer: 'parallelogram'
+            answer_contract: {kind: label, options: [[parallelogram], ['trapezoid with one parallel pair'], [kite]]}
+            solution_sketch: 'Both pairs of opposite sides are parallel (equal slopes), so $PQRS$ is a parallelogram (in fact a rectangle).'
         constraints: "integer coordinates; slopes must be stated as the justification"
       - id: kp2
         name: Classify triangles with the distance formula
         key_prerequisites: [distance-midpoint-formulas]
         exemplars:
-          - problem: 'Classify the triangle $A(0,0)$, $B(6,0)$, $C(3,3)$ as precisely as possible.'
-            answer: 'Isosceles right triangle: $AC = BC = 3\sqrt{2}$ and $AC^2 + BC^2 = 36 = AB^2$.'
-            solution_sketch: '$AC = \sqrt{9+9} = 3\sqrt{2} = BC$; $18 + 18 = 36 = 6^2$, so the angle at $C$ is right.'
-          - problem: 'Show that the triangle $P(1,1)$, $Q(4,5)$, $R(-3,4)$ is isosceles.'
-            answer: '$PQ = PR = 5$, so two sides are congruent.'
-            solution_sketch: '$PQ = \sqrt{3^2+4^2} = 5$; $PR = \sqrt{(-4)^2+3^2} = 5$.'
+          - problem: 'The triangle $P(1,1)$, $Q(4,5)$, $R(-3,4)$ has $PQ = 5$ and $PR = 5$. What is its classification by sides: equilateral, isosceles, or scalene?'
+            answer: 'isosceles'
+            answer_contract: {kind: label, options: [[equilateral], [isosceles], [scalene]]}
+            solution_sketch: '$PQ = \sqrt{3^2+4^2} = 5$ and $PR = \sqrt{(-4)^2+3^2} = 5$: two congruent sides, so isosceles.'
+          - problem: 'Triangle $A(0,0)$, $B(6,0)$, $C(3,3)$ has $AC = BC = 3\sqrt{2}$ and $AB = 6$. What kind of triangle is it: equilateral, isosceles, or scalene?'
+            answer: 'isosceles'
+            answer_contract: {kind: label, options: [[equilateral], [isosceles], [scalene]]}
+            solution_sketch: 'Two sides are congruent ($3\sqrt{2}$ each) but the third is different, so it is isosceles.'
+          - problem: 'What is the length of the segment from $(0,0)$ to $(6,8)$?'
+            answer: "10"
+            solution_sketch: '$\sqrt{6^2 + 8^2} = 10$ — the distance formula is the Pythagorean theorem in the plane.'
+          - problem: 'Triangle with vertices $(0,0)$, $(4,0)$, $(0,3)$: two of its sides are legs of lengths $4$ and $3$. Classify it by its angles: acute, right, or obtuse?'
+            answer: 'right'
+            answer_contract: {kind: label, options: [[acute], [right], [obtuse]]}
+            solution_sketch: 'The legs meet at the origin at a right angle (the axes are perpendicular), so the triangle is right; $3^2 + 4^2 = 5^2$ confirms it.'
         constraints: "distances land on Pythagorean triples or clean radicals; classification must cite the computed lengths"
       - id: kp3
         name: Quadrilateral proofs via midpoints and diagonals
         key_prerequisites: [distance-midpoint-formulas, slope]
         exemplars:
-          - problem: 'Show that the diagonals of quadrilateral $A(0,0)$, $B(5,0)$, $C(7,3)$, $D(2,3)$ bisect each other, and state what that proves.'
-            answer: 'Midpoint of $\overline{AC}$ = midpoint of $\overline{BD}$ = $\left(\frac{7}{2}, \frac{3}{2}\right)$; the diagonals bisect each other, so $ABCD$ is a parallelogram.'
-            solution_sketch: 'Midpoint of $AC$: $(3.5, 1.5)$; midpoint of $BD$: $(3.5, 1.5)$.'
-          - problem: 'Quadrilateral $ABCD$ is known to be a parallelogram with $A(0,0)$, $B(6,3)$, $C(4,7)$, $D(-2,4)$. Use its diagonals to decide whether it is a rectangle.'
-            answer: 'Yes: $AC = BD = \sqrt{65}$, and a parallelogram with congruent diagonals is a rectangle.'
-            solution_sketch: '$AC = \sqrt{4^2 + 7^2} = \sqrt{65}$; $BD = \sqrt{(-8)^2 + 1^2} = \sqrt{65}$.'
+          - problem: 'Quadrilateral $A(0,0)$, $B(5,0)$, $C(7,3)$, $D(2,3)$: the midpoint of diagonal $\overline{AC}$ is $(3.5, 1.5)$. What is the midpoint of diagonal $\overline{BD}$ from $B(5,0)$ to $D(2,3)$?'
+            answer: '(3.5, 1.5)'
+            solution_sketch: '$\left(\frac{5+2}{2}, \frac{0+3}{2}\right) = (3.5, 1.5)$. The shared midpoint means the diagonals bisect each other, so $ABCD$ is a parallelogram.'
+          - problem: 'Quadrilateral $ABCD$ is a parallelogram with $A(0,0)$, $B(6,3)$, $C(4,7)$, $D(-2,4)$, and both diagonals have length $\sqrt{65}$. A parallelogram with congruent diagonals is what: rectangle, rhombus, or square?'
+            answer: 'rectangle'
+            answer_contract: {kind: label, options: [[rectangle], [rhombus], [square]]}
+            solution_sketch: 'Congruent diagonals are the rectangle test for parallelograms.'
+          - problem: 'What is the midpoint of the segment from $(0,0)$ to $(6,8)$?'
+            answer: '(3, 4)'
+            solution_sketch: '$\left(\frac{0+6}{2}, \frac{0+8}{2}\right) = (3, 4)$.'
+          - problem: 'The diagonals of a quadrilateral are perpendicular and bisect each other and are congruent. What is the most specific name for it: parallelogram, rectangle, rhombus, or square?'
+            answer: 'square'
+            answer_contract: {kind: label, options: [[parallelogram], [rectangle], [rhombus], [square]]}
+            solution_sketch: 'Bisection makes a parallelogram, congruent diagonals a rectangle, perpendicular diagonals a rhombus; all three means square.'
         constraints: "each conclusion must name the theorem used (diagonal bisection, congruent diagonals, perpendicular diagonals)"
     diagnostic_exemplar:
       problem: 'Use the diagonals of quadrilateral $A(0,0)$, $B(4,2)$, $C(3,4)$, $D(-1,2)$ to prove that it is a rectangle.'
