@@ -163,7 +163,7 @@ async fn serve_one(
     // `already_recorded`, so the quiz can never finish. The window is the
     // durable record: raise the scratch cursor to it before anything reads
     // progress.
-    if task.task_type == TaskType::Quiz {
+    if matches!(task.task_type, TaskType::Quiz | TaskType::Review) {
         let recorded = attempts_in_window(&events, &task_id);
         let (stale, done) = {
             let progress = progress_for(&mut scratch, task, graph);
