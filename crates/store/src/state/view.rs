@@ -278,9 +278,17 @@ impl SessionView {
                 }
             }
         }
-        // 26 + 26^2 sessions in one day: the loop below is unreachable in any
-        // real log, and `z` again matches the 1.0 fall-off it replaces.
-        format!("{prefix}zz")
+        for first in SESSION_LETTERS.chars() {
+            for second in SESSION_LETTERS.chars() {
+                for third in SESSION_LETTERS.chars() {
+                    let candidate = format!("{prefix}{first}{second}{third}");
+                    if !self.session_ids.contains(&candidate) {
+                        return candidate;
+                    }
+                }
+            }
+        }
+        format!("{prefix}zzz")
     }
 }
 
