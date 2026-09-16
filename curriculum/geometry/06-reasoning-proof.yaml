@@ -7,7 +7,7 @@ topics:
     core: true                 # proof machinery: every proof-demanding geometry topic builds on it
     difficulty: 0.3
     drill: false
-    answer_kind: multi-step
+    answer_kind: numeric       # flipped from multi-step: exemplars are single-answer (labels with contracts / numerals)
     expected_time_secs: 90
     prerequisites:
       - id: angle-relationships
@@ -21,31 +21,62 @@ topics:
         name: Conjectures from examples and counterexamples
         key_prerequisites: [angle-relationships]
         exemplars:
-          - problem: 'A student measures three pairs of vertical angles and finds each pair congruent, then concludes that vertical angles are always congruent. Is this inductive or deductive reasoning?'
-            answer: 'Inductive; the conclusion generalizes from observed examples rather than following from accepted facts.'
-          - problem: 'Conjecture: any two acute angles are complementary. Give a counterexample.'
-            answer: 'Angles of $30^\circ$ and $40^\circ$: both are acute, but $30^\circ + 40^\circ = 70^\circ \neq 90^\circ$.'
-            solution_sketch: 'One pair of acute angles whose measures do not sum to $90^\circ$ disproves the conjecture.'
+          - problem: 'A student measures three pairs of vertical angles, finds each pair congruent, and concludes that vertical angles are always congruent. Is this inductive or deductive reasoning?'
+            answer: 'inductive'
+            answer_contract: {kind: label, options: [[inductive], [deductive]]}
+            solution_sketch: 'The conclusion generalizes from observed examples rather than following from accepted facts, so it is inductive.'
+          - problem: 'Conjecture: any two acute angles are complementary. Which pair of angle measures is a counterexample: $30^\circ$ and $40^\circ$, $30^\circ$ and $60^\circ$, $45^\circ$ and $45^\circ$, or $10^\circ$ and $80^\circ$?'
+            answer: '30 and 40'
+            answer_contract: {kind: label, options: [[30 and 40], [30 and 60], [45 and 45], [10 and 80]]}
+            solution_sketch: 'Both $30^\circ$ and $40^\circ$ are acute, but $30 + 40 = 70 \neq 90$: the hypothesis holds and the conclusion fails.'
+          - problem: 'Conjecture: the sum of two acute angles is always acute. Which pair of angle measures is a counterexample: $30^\circ$ and $20^\circ$, $40^\circ$ and $40^\circ$, $50^\circ$ and $30^\circ$, or $70^\circ$ and $80^\circ$?'
+            answer: '70 and 80'
+            answer_contract: {kind: label, options: [[30 and 20], [40 and 40], [50 and 30], [70 and 80]]}
+            solution_sketch: 'Both $70^\circ$ and $80^\circ$ are acute, but their sum $150^\circ$ is obtuse, not acute.'
+          - problem: 'A single example that shows a conjecture to be false is called what: a conjecture, a counterexample, a theorem, or a hypothesis?'
+            answer: 'counterexample'
+            answer_contract: {kind: label, options: [[conjecture], [counterexample], [theorem], [hypothesis]]}
+            solution_sketch: 'One example satisfying the hypothesis but violating the conclusion disproves the conjecture.'
         constraints: "concrete geometric conjectures about angles, segments, or triangles; a counterexample must satisfy the hypothesis and violate the conclusion; no symbolic logic"
       - id: kp2
         name: Hypothesis and conclusion of an if-then statement
         key_prerequisites: []
         exemplars:
-          - problem: 'Rewrite in if-then form: "All right angles are congruent." Identify the hypothesis and the conclusion.'
-            answer: 'If two angles are right angles, then they are congruent. Hypothesis: the two angles are right angles; conclusion: they are congruent.'
-          - problem: 'Identify the hypothesis and the conclusion of: "If a point $M$ is the midpoint of $\overline{AB}$, then $AM = MB$."'
-            answer: 'Hypothesis: $M$ is the midpoint of $\overline{AB}$; conclusion: $AM = MB$.'
+          - problem: 'In the if-then form of "All right angles are congruent", what is the hypothesis: two angles are right angles, two angles are congruent, two angles are complementary, or two angles are vertical angles?'
+            answer: 'two angles are right angles'
+            answer_contract: {kind: label, options: [[two angles are right angles], [two angles are congruent], [two angles are complementary], [two angles are vertical angles]]}
+            solution_sketch: 'If-then form: "If two angles are right angles, then they are congruent"; the part after "if" is the hypothesis.'
+          - problem: 'What is the conclusion of "If a point $M$ is the midpoint of $\overline{AB}$, then $AM = MB$": $M$ is the midpoint of $\overline{AB}$, $AM = MB$, $AB = 2 \cdot AM$, or $M$ lies between $A$ and $B$?'
+            answer: 'AM = MB'
+            answer_contract: {kind: label, options: [[M is the midpoint of AB], [AM = MB], [AB = 2 x AM], [M lies between A and B]]}
+            solution_sketch: 'The conclusion is the part after "then": $AM = MB$.'
+          - problem: 'What is the conclusion of "If two angles are supplementary, then their measures sum to $180^\circ$": two angles are supplementary, their measures sum to $180^\circ$, two angles are congruent, or their measures sum to $90^\circ$?'
+            answer: 'their measures sum to 180 degrees'
+            answer_contract: {kind: label, options: [[two angles are supplementary], [their measures sum to 180 degrees], [two angles are congruent], [their measures sum to 90 degrees]]}
+            solution_sketch: 'The conclusion is the part after "then": the measures sum to $180^\circ$.'
+          - problem: 'Rewrite as an if-then statement: "Vertical angles are congruent." What is the hypothesis of the if-then form: two angles are congruent, two angles are vertical angles, two angles share a vertex, or two angles are supplementary?'
+            answer: 'two angles are vertical angles'
+            answer_contract: {kind: label, options: [[two angles are congruent], [two angles are vertical angles], [two angles share a vertex], [two angles are supplementary]]}
+            solution_sketch: 'If-then form: "If two angles are vertical angles, then they are congruent"; the part after "if" is the hypothesis.'
         constraints: "statements about angles, segments, triangles, or parallel lines; ask for the if-then rewrite and the two parts"
       - id: kp3
         name: Converses and deduction with geometric statements
         key_prerequisites: [angle-relationships]
         exemplars:
-          - problem: 'Write the converse of: "If two angles are vertical angles, then they are congruent." Is the converse true?'
-            answer: 'Converse: if two angles are congruent, then they are vertical angles. False; two congruent corresponding angles at parallel lines are congruent without being vertical.'
-            solution_sketch: 'Swap the hypothesis and the conclusion, then look for congruent angles that are not vertical.'
-          - problem: 'Given the true statement "if $M$ is the midpoint of $\overline{AB}$, then $AM = MB$", and given that $M$ is the midpoint of $\overline{AB}$ with $AB = 14$, what may you deduce about $AM$?'
-            answer: '$AM = MB = 7$; the hypothesis holds, so the conclusion follows deductively.'
-            solution_sketch: 'The statement plus its satisfied hypothesis yields the conclusion; the halves are $14/2 = 7$.'
+          - problem: 'What is the converse of "If two angles are vertical angles, then they are congruent": if two angles are congruent, then they are vertical angles; if two angles are vertical angles, then they are supplementary; if two angles are congruent, then they are right angles; or two vertical angles are never congruent?'
+            answer: 'if two angles are congruent, then they are vertical angles'
+            answer_contract: {kind: label, options: [['if two angles are congruent, then they are vertical angles'], ['if two angles are vertical angles, then they are supplementary'], ['if two angles are congruent, then they are right angles'], ['two vertical angles are never congruent']]}
+            solution_sketch: 'The converse swaps the hypothesis and the conclusion.'
+          - problem: 'Given the true statement "if $M$ is the midpoint of $\overline{AB}$, then $AM = MB$", and given that $M$ is the midpoint of $\overline{AB}$ with $AB = 14$, what is $AM$?'
+            answer: "7"
+            solution_sketch: 'The hypothesis holds, so the conclusion follows deductively: $AM = 14/2 = 7$.'
+          - problem: 'Is the converse of "If two angles are right angles, then they are congruent" true? Answer yes or no.'
+            answer: 'no'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: 'The converse says congruent angles are right angles, but two $40^\circ$ angles are congruent without being right.'
+          - problem: 'Given the true statement "if two angles form a linear pair, then they are supplementary", and $\angle 1$ and $\angle 2$ form a linear pair with $m\angle 1 = 110^\circ$, what is $m\angle 2$, in degrees?'
+            answer: "70"
+            solution_sketch: 'The hypothesis holds, so the conclusion follows: $m\angle 2 = 180 - 110 = 70$.'
         constraints: "converse formed by swapping hypothesis and conclusion; a false converse needs a counterexample; deductions stay one step, using stated geometric facts only; no truth tables"
     diagnostic_exemplar:
       problem: 'Write the converse of "if two angles are vertical angles, then they are congruent", state whether the converse is true, and give a counterexample if it is false.'
