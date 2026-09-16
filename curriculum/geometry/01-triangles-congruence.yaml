@@ -215,6 +215,12 @@ topics:
           - problem: 'Two sides of a triangle measure $4$ and $4$. How many integer values are possible for the third side?'
             answer: "7"
             solution_sketch: '$0 < x < 8$ gives $x \in \{1, \dots, 7\}$.'
+          - problem: 'Two sides of a triangle measure $7$ and $3$. How many integer values are possible for the third side?'
+            answer: "5"
+            solution_sketch: '$4 < x < 10$ gives $x \in \{5, 6, 7, 8, 9\}$: $5$ values.'
+          - problem: 'Two sides of a triangle measure $10$ and $6$. How many integer values are possible for the third side?'
+            answer: "11"
+            solution_sketch: '$4 < x < 16$ gives $x \in \{5, \dots, 15\}$: $11$ values.'
         constraints: "strict inequalities; count integers in the open interval"
       - id: kp2
         name: Bound the perimeter
@@ -226,16 +232,39 @@ topics:
           - problem: 'Two sides of a triangle measure $9$ and $9$. Between what two values must the perimeter $p$ lie?'
             answer: '18 < p < 36'
             solution_sketch: '$0 < x < 18$, so $18 < 18 + x < 36$.'
+          - problem: 'Two sides of a triangle measure $6$ and $10$. What is the greatest possible whole-number perimeter of the triangle?'
+            answer: "31"
+            solution_sketch: 'The third side satisfies $4 < x < 16$, so the greatest whole-number value is $x = 15$; $p = 6 + 10 + 15 = 31$.'
+          - problem: 'Two sides of a triangle measure $5$ and $8$. What is the least possible whole-number perimeter of the triangle?'
+            answer: "17"
+            solution_sketch: 'The third side satisfies $3 < x < 13$, so the least whole-number value is $x = 4$; $p = 5 + 8 + 4 = 17$.'
+          - problem: 'Two sides of a triangle measure $9$ and $12$. How many distinct whole-number perimeters are possible?'
+            answer: "17"
+            solution_sketch: 'The third side satisfies $3 < x < 21$, so $x$ takes $17$ whole-number values ($4$ through $20$), each giving a distinct perimeter.'
+          - problem: 'Two sides of a triangle measure $4$ and $11$. What is the greatest possible whole-number perimeter of the triangle?'
+            answer: "29"
+            solution_sketch: 'The third side satisfies $7 < x < 15$, so the greatest whole-number value is $x = 14$; $p = 4 + 11 + 14 = 29$.'
         constraints: "answer as a strict double inequality on the perimeter"
       - id: kp3
         name: Feasible isosceles side sets
         key_prerequisites: [triangle-inequality-classification]
         exemplars:
           - problem: 'Can an isosceles triangle have sides $4$, $4$, and $10$?'
-            answer: 'No; $4 + 4 = 8 < 10$.'
+            answer: 'No'
+            answer_contract: {kind: label, options: [[Yes], [No]]}
+            solution_sketch: 'The two legs would give $4 + 4 = 8 < 10$, violating the triangle inequality.'
           - problem: 'An isosceles triangle has perimeter $20$ and one side of length $8$. Find all possible side sets.'
             answer: '$\{8, 8, 4\}$ and $\{6, 6, 8\}$'
             solution_sketch: 'Legs $8$: base $20 - 16 = 4$ (valid, $8+4>8$). Base $8$: legs $6$ each (valid, $6+6>8$). Both pass the triangle inequality.'
+          - problem: 'An isosceles triangle has perimeter $20$ and one side of length $8$. How many distinct side sets are possible?'
+            answer: "2"
+            solution_sketch: 'Legs $8$: base $20 - 16 = 4$ (valid, $8 + 4 > 8$). Base $8$: legs $6$ each (valid, $6 + 6 > 8$). Both work: $2$ sets.'
+          - problem: 'An isosceles triangle has perimeter $20$ and one side of length $8$. If the side of length $8$ is a leg, what is the length of the base?'
+            answer: "4"
+            solution_sketch: 'Base $= 20 - 2 \cdot 8 = 4$, and it is valid since $8 + 4 > 8$.'
+          - problem: 'An isosceles triangle has perimeter $26$ and one side of length $6$. How many distinct side sets are possible?'
+            answer: "1"
+            solution_sketch: 'Legs $6$: base $14$ fails ($6 + 6 < 14$). Base $6$: legs $10$ each works ($10 + 10 > 6$). Only $1$ set.'
         constraints: "check both the legs-given and base-given cases; verify each candidate with the triangle inequality"
     diagnostic_exemplar:
       problem: 'An isosceles triangle has perimeter $24$ and one side of length $10$. Find all possible side sets.'
@@ -361,20 +390,43 @@ topics:
         name: Recognize SSS
         key_prerequisites: [triangle-inequality-classification]
         exemplars:
-          - problem: 'Two triangles have all three pairs of corresponding sides congruent. Which congruence criterion applies?'
+          - problem: 'Two triangles have all three pairs of corresponding sides congruent. Which congruence criterion applies: SSS or SAS?'
             answer: 'SSS'
+            answer_contract: {kind: label, options: [[SSS], [SAS]]}
+            solution_sketch: 'Three congruent side pairs with no angle information: Side-Side-Side.'
           - problem: 'Given $\overline{AB} \cong \overline{DE}$, $\overline{BC} \cong \overline{EF}$, and $\overline{CA} \cong \overline{FD}$, which criterion shows $\triangle ABC \cong \triangle DEF$?'
             answer: 'SSS'
+            answer_contract: {kind: label, options: [[SSS], [SAS]]}
+            solution_sketch: 'All three corresponding side pairs are marked congruent, so the criterion is SSS.'
+          - problem: 'Triangle 1 has side lengths $7$, $9$, and $12$; triangle 2 has side lengths $12$, $7$, and $9$. Which criterion shows them congruent: SSS or SAS?'
+            answer: 'SSS'
+            answer_contract: {kind: label, options: [[SSS], [SAS]]}
+            solution_sketch: 'The three side lengths match pairwise ($7$--$7$, $9$--$9$, $12$--$12$) and no angle is used, so SSS applies.'
+          - problem: 'Two triangles each have sides of lengths $6$, $8$, and $10$. Which criterion shows them congruent: SSS or SAS?'
+            answer: 'SSS'
+            answer_contract: {kind: label, options: [[SSS], [SAS]]}
+            solution_sketch: 'Matching all three side lengths pins down the triangles completely, with no angle information: SSS.'
         constraints: "three side pairs marked; no angle information given"
       - id: kp2
         name: Recognize SAS and the included angle
         key_prerequisites: [triangle-angle-sum]
         exemplars:
-          - problem: 'Two triangles have two pairs of congruent sides, and the angles between those sides are congruent. Which congruence criterion applies?'
+          - problem: 'Two triangles have two pairs of congruent sides, and the angles between those sides are congruent. Which congruence criterion applies: SSS or SAS?'
             answer: 'SAS'
+            answer_contract: {kind: label, options: [[SSS], [SAS]]}
             solution_sketch: 'Side-Angle-Side: the congruent angle is included between the two congruent sides.'
           - problem: 'In $\triangle ABC$, sides $\overline{AB}$ and $\overline{BC}$ are marked. Is $\angle A$ the included angle for these two sides?'
-            answer: 'No; the included angle is $\angle B$, the angle between $\overline{AB}$ and $\overline{BC}$.'
+            answer: 'No'
+            answer_contract: {kind: label, options: [[Yes], [No]]}
+            solution_sketch: 'The included angle is $\angle B$, the angle between $\overline{AB}$ and $\overline{BC}$ at their common endpoint.'
+          - problem: 'In $\triangle ABC$, sides $\overline{AB}$ and $\overline{AC}$ are marked. Which angle is included between these two sides: $\angle A$, $\angle B$, or $\angle C$?'
+            answer: 'A'
+            answer_contract: {kind: label, options: [[A], [B], [C]]}
+            solution_sketch: 'The included angle sits at the common endpoint of the two marked sides, which is vertex $A$.'
+          - problem: 'Two triangles have two pairs of congruent sides and one pair of congruent angles, but the congruent angle in each triangle is NOT between the marked sides. Do these markings prove the triangles congruent by SAS?'
+            answer: 'No'
+            answer_contract: {kind: label, options: [[Yes], [No]]}
+            solution_sketch: 'SAS requires the congruent angle to be included between the two pairs of congruent sides; a non-included angle is not enough.'
         constraints: "the included/non-included distinction is the point; two sides and one angle marked"
       - id: kp3
         name: Solve for marked values under SSS or SAS
@@ -386,6 +438,12 @@ topics:
           - problem: 'The included angles of an SAS pair measure $(2x + 16)^\circ$ and $(4x - 8)^\circ$. Find their common measure, in degrees.'
             answer: "40"
             solution_sketch: '$2x + 16 = 4x - 8 \Rightarrow x = 12$; each angle is $40^\circ$.'
+          - problem: '$\triangle ABC \cong \triangle DEF$ by SSS with $AB = 5x - 2$ and $DE = 3x + 8$ ($\overline{AB}$ corresponds to $\overline{DE}$). Find $AB$.'
+            answer: "23"
+            solution_sketch: '$5x - 2 = 3x + 8 \Rightarrow 2x = 10 \Rightarrow x = 5$; $AB = 5(5) - 2 = 23$.'
+          - problem: 'The included angles of an SAS pair measure $(3x + 10)^\circ$ and $(5x - 14)^\circ$. Find their common measure, in degrees.'
+            answer: "46"
+            solution_sketch: '$3x + 10 = 5x - 14 \Rightarrow 2x = 24 \Rightarrow x = 12$; each angle is $3(12) + 10 = 46^\circ$.'
         constraints: "corresponding parts equal; linear expressions with integer solutions"
     diagnostic_exemplar:
       problem: 'In $\triangle ABC$ and $\triangle XYZ$: $\overline{AB} \cong \overline{XY}$, $\overline{AC} \cong \overline{XZ}$, and $\angle A \cong \angle X$, where $m\angle A = (2x + 16)^\circ$ and $m\angle X = (4x - 8)^\circ$. Name the congruence criterion and find $m\angle A$, in degrees.'
