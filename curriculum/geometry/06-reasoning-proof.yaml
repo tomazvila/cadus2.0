@@ -95,7 +95,7 @@ topics:
     core: true                 # the "reasons" vocabulary every proof step cites; gates all geometry proof topics
     difficulty: 0.34
     drill: false
-    answer_kind: multi-step
+    answer_kind: numeric       # flipped from multi-step: single-answer content (labels with contracts / numerals)
     expected_time_secs: 90
     prerequisites:
       - id: geometric-reasoning
@@ -110,32 +110,71 @@ topics:
         key_prerequisites: []
         exemplars:
           - problem: 'Is "through any two distinct points there is exactly one line" a definition, a postulate, or a theorem?'
-            answer: 'A postulate; it is accepted without proof.'
+            answer: 'postulate'
+            answer_contract: {kind: label, options: [[definition], [postulate], [theorem]]}
+            solution_sketch: 'It is accepted without proof, so it is a postulate (an axiom).'
           - problem: 'Is "vertical angles are congruent" a definition, a postulate, or a theorem?'
-            answer: 'A theorem; it can be proved from the linear pair postulate.'
+            answer: 'theorem'
+            answer_contract: {kind: label, options: [[definition], [postulate], [theorem]]}
             solution_sketch: 'Both vertical angles are supplementary to the same angle, which forces them congruent — a proved statement is a theorem.'
+          - problem: 'Is "a midpoint of a segment is the point that divides it into two congruent segments" a definition, a postulate, or a theorem?'
+            answer: 'definition'
+            answer_contract: {kind: label, options: [[definition], [postulate], [theorem]]}
+            solution_sketch: 'It states exactly what the term midpoint means, so it is a definition.'
+          - problem: 'Is "if two angles are supplementary to the same angle, then they are congruent" a definition, a postulate, or a theorem?'
+            answer: 'theorem'
+            answer_contract: {kind: label, options: [[definition], [postulate], [theorem]]}
+            solution_sketch: 'It is proved by subtracting both supplementary equations from $180^\circ$; a proved statement is a theorem, not an accepted one.'
         constraints: "classify standard geometry statements as definition, postulate, or theorem; include one reversible definition (midpoint, bisector, right angle) per set"
       - id: kp2
         name: Properties of equality and congruence as reasons
         key_prerequisites: [segment-angle-addition]
         exemplars:
           - problem: 'Which property justifies: if $AB = CD$ and $CD = EF$, then $AB = EF$?'
-            answer: 'The transitive property of equality.'
+            answer: 'transitive property of equality'
+            answer_contract: {kind: label, options: [[reflexive property of equality], [symmetric property of equality], [transitive property of equality], [substitution property of equality]]}
+            solution_sketch: '$AB$ and $EF$ both equal the middle term $CD$, so the equality chains through $CD$ — the transitive property.'
           - problem: 'Which property justifies: $\angle A \cong \angle A$?'
-            answer: 'The reflexive property of congruence.'
+            answer: 'reflexive property of congruence'
+            answer_contract: {kind: label, options: [[reflexive property of congruence], [symmetric property of congruence], [transitive property of congruence], [commutative property]]}
+            solution_sketch: 'A figure is always congruent to itself; the reflexive property states exactly that.'
           - problem: 'Which property justifies the step from $m\angle 1 + 25 = 90$ to $m\angle 1 = 65$?'
-            answer: 'The subtraction property of equality.'
+            answer: 'subtraction property of equality'
+            answer_contract: {kind: label, options: [[addition property of equality], [subtraction property of equality], [multiplication property of equality], [transitive property of equality]]}
+            solution_sketch: 'Subtracting the same amount ($25$) from both sides of a true equation is the subtraction property of equality.'
+          - problem: 'Which property justifies: if $AB = XY$, then $XY = AB$?'
+            answer: 'symmetric property of equality'
+            answer_contract: {kind: label, options: [[reflexive property of equality], [symmetric property of equality], [transitive property of equality], [substitution property of equality]]}
+            solution_sketch: 'Swapping the two sides of a true equality keeps it true — the symmetric property.'
+          - problem: 'Which property justifies replacing $AB$ with $CD$ in the equation $AB + BC = AC$ when $AB = CD$ is known?'
+            answer: 'substitution property of equality'
+            answer_contract: {kind: label, options: [[reflexive property of equality], [symmetric property of equality], [transitive property of equality], [substitution property of equality]]}
+            solution_sketch: 'A quantity may replace its equal; putting $CD$ in place of $AB$ is the substitution property.'
         constraints: "reasons drawn from reflexive, symmetric, transitive, substitution, and addition/subtraction properties; one algebraic step at most"
       - id: kp3
         name: Choose the justification for a geometric step
         key_prerequisites: [segment-angle-addition, angle-relationships]
         exemplars:
           - problem: '$M$ is the midpoint of $\overline{AB}$. What reason justifies the statement $AM = MB$?'
-            answer: 'The definition of midpoint.'
+            answer: 'definition of midpoint'
+            answer_contract: {kind: label, options: [[definition of midpoint], [segment addition postulate], [reflexive property], [vertical angles theorem]]}
+            solution_sketch: 'A midpoint is defined as the point splitting the segment into two congruent pieces, so $AM = MB$ is exactly the definition of midpoint.'
           - problem: 'Ray $\overrightarrow{OB}$ lies in the interior of $\angle AOC$. What reason justifies $m\angle AOB + m\angle BOC = m\angle AOC$?'
-            answer: 'The angle addition postulate.'
+            answer: 'angle addition postulate'
+            answer_contract: {kind: label, options: [[angle addition postulate], [linear pair postulate], [definition of angle bisector], [vertical angles theorem]]}
+            solution_sketch: 'Adding the two adjacent parts to get the whole angle is exactly what the angle addition postulate states.'
           - problem: '$\angle 1$ and $\angle 2$ form a linear pair. What reason justifies $m\angle 1 + m\angle 2 = 180^\circ$?'
-            answer: 'The linear pair postulate (angles forming a linear pair are supplementary).'
+            answer: 'linear pair postulate'
+            answer_contract: {kind: label, options: [[linear pair postulate], [angle addition postulate], [vertical angles theorem], [definition of congruent angles]]}
+            solution_sketch: 'The linear pair postulate says angles forming a linear pair are supplementary.'
+          - problem: 'Lines $m$ and $n$ intersect at point $P$, forming angles $\angle 1$ and $\angle 2$ that are vertical angles. What reason justifies $\angle 1 \cong \angle 2$?'
+            answer: 'vertical angles theorem'
+            answer_contract: {kind: label, options: [[vertical angles theorem], [linear pair postulate], [angle addition postulate], [definition of midpoint]]}
+            solution_sketch: 'The vertical angles theorem states that vertical angles formed by intersecting lines are congruent.'
+          - problem: 'A ray bisects an angle, forming two half-angles. Which reason justifies the two half-angles being congruent?'
+            answer: 'definition of angle bisector'
+            answer_contract: {kind: label, options: [[definition of angle bisector], [linear pair postulate], [vertical angles theorem], [angle addition postulate]]}
+            solution_sketch: 'A bisector is defined as the ray that splits the angle into two congruent angles.'
         constraints: "each item is one proof step needing one named reason: definitions of midpoint/bisector/right angle, segment and angle addition postulates, linear pair postulate, vertical angles theorem"
     diagnostic_exemplar:
       problem: 'Give the reason that justifies each step: (1) $\overrightarrow{BD}$ bisects $\angle ABC$, so $\angle ABD \cong \angle DBC$; (2) $m\angle ABD = m\angle DBC$ and $m\angle DBC = 32^\circ$, so $m\angle ABD = 32^\circ$.'
