@@ -678,24 +678,40 @@ topics:
         name: "All three measures for one data set"
         key_prerequisites: [mean-of-a-data-set, median-and-mode]
         exemplars:
-          - problem: 'For the data $1, 3, 3, 7, 6$: find the mean, the median, and the mode.'
-            answer: 'Mean $4$, median $3$, mode $3$.'
-            solution_sketch: 'Sum $= 20$, mean $= 20/5 = 4$. Sorted: $1, 3, 3, 6, 7$; median $= 3$; mode $= 3$.'
-          - problem: 'For the data $5, 9, 2, 9, 5, 9$: find the mean, the median, and the mode.'
-            answer: 'Mean $6.5$, median $7$, mode $9$.'
-            solution_sketch: 'Sum $= 39$, so mean $= 39/6 = 6.5$. Sorted: $2, 5, 5, 9, 9, 9$; median $= (5+9)/2 = 7$. The value $9$ appears most often.'
-        constraints: "5-7 values with exactly one mode; mean an integer or ending in .5"
+          - problem: 'For the data $1, 3, 3, 7, 6$: give the ordered triple (mean, median, mode).'
+            answer: '$(4, 3, 3)$'
+            solution_sketch: 'Sum $= 20$, mean $= 20/5 = 4$. Sorted: $1, 3, 3, 6, 7$; median $= 3$; mode $= 3$. Triple: $(4, 3, 3)$.'
+          - problem: 'For the data $5, 9, 2, 9, 5, 9$: give the ordered triple (mean, median, mode).'
+            answer: '$(6.5, 7, 9)$'
+            solution_sketch: 'Sum $= 39$, so mean $= 39/6 = 6.5$. Sorted: $2, 5, 5, 9, 9, 9$; median $= (5+9)/2 = 7$; the value $9$ appears most often. Triple: $(6.5, 7, 9)$.'
+          - problem: 'For the data $1, 2, 2, 6, 9$: give the ordered triple (mean, median, mode).'
+            answer: '$(4, 2, 2)$'
+            solution_sketch: 'Sum $= 20$, mean $= 20/5 = 4$. Sorted: $1, 2, 2, 6, 9$; median $= 2$; mode $= 2$. Triple: $(4, 2, 2)$.'
+          - problem: 'For the data $2, 3, 3, 6, 7, 9$: give the ordered triple (mean, median, mode).'
+            answer: '$(5, 4.5, 3)$'
+            solution_sketch: 'Sum $= 30$, mean $= 30/6 = 5$. Sorted: $2, 3, 3, 6, 7, 9$; median $= (3+6)/2 = 4.5$; mode $= 3$. Triple: $(5, 4.5, 3)$.'
+        constraints: "5-7 values with exactly one mode; mean an integer or ending in .5; answer is the ordered triple (mean, median, mode)"
       - id: kp2
         name: "Comparing mean and median"
         key_prerequisites: [mean-of-a-data-set, median-and-mode]
         exemplars:
           - problem: 'The data $20, 22, 23, 25, 90$ contains one outlier. Which is larger, the mean or the median?'
-            answer: 'The mean.'
+            answer: 'the mean'
+            answer_contract: {kind: label, options: [[the mean], [the median]]}
             solution_sketch: 'The outlier $90$ pulls the mean up (mean $= 36$) while the median stays at $23$.'
-          - problem: 'Salaries at a shop are $30, 32, 35, 38, 200$ (thousands). Which measure better represents a typical salary, and what is it?'
-            answer: 'The median, $35$ thousand.'
-            solution_sketch: 'The $200$ inflates the mean to $67$ thousand; the median ignores the extreme value.'
-        constraints: "one extreme value in a set of 5-6; the direction of the pull must be computable by inspection"
+          - problem: 'Salaries at a shop are $30, 32, 35, 38, 200$ (thousands). Which measure better represents a typical salary?'
+            answer: 'the median'
+            answer_contract: {kind: label, options: [[the mean], [the median]]}
+            solution_sketch: 'The $200$ inflates the mean to $67$ thousand; the median $35$ thousand ignores the extreme value.'
+          - problem: 'The data $2, 4, 5, 6, 40$ contains one outlier. Which is larger, the mean or the median?'
+            answer: 'the mean'
+            answer_contract: {kind: label, options: [[the mean], [the median]]}
+            solution_sketch: 'Mean $= 57/5 = 11.4$, pulled above the median $5$ by the outlier $40$.'
+          - problem: 'For the data $8, 9, 10, 11, 12$, which is larger?'
+            answer: 'they are equal'
+            answer_contract: {kind: label, options: [[the mean], [the median], [they are equal]]}
+            solution_sketch: 'The data is symmetric about $10$: mean $= 50/5 = 10$ and median $= 10$.'
+        constraints: "one extreme value in a set of 5-6 (or a symmetric set for the equal case); the direction of the pull must be computable by inspection; comparison answers use the label contract (the mean / the median / they are equal)"
       - id: kp3
         name: "Updating the mean"
         key_prerequisites: [mean-of-a-data-set, weighted-averages]
@@ -706,6 +722,12 @@ topics:
           - problem: 'After $4$ quizzes a student averages $6.5$ (out of $10$). She scores $9$ on the fifth quiz. What is her new average?'
             answer: "7"
             solution_sketch: 'Total $= 4 \cdot 6.5 + 9 = 35$; new mean $= 35/5 = 7$.'
+          - problem: 'The mean of $4$ values is $9$. A fifth value $14$ is added. What is the new mean?'
+            answer: "10"
+            solution_sketch: 'Total $= 4 \cdot 9 = 36$; new sum $= 36 + 14 = 50$; new mean $= 50/5 = 10$.'
+          - problem: 'The data $10, 20, 30, 40$ has mean $25$. The value $10$ is removed. What is the new mean?'
+            answer: "30"
+            solution_sketch: 'Total $= 4 \cdot 25 = 100$; new sum $= 100 - 10 = 90$; new mean $= 90/3 = 30$.'
         constraints: "start from a stated mean over 3-6 values; one value added or removed; new mean is an integer"
     diagnostic_exemplar:
       problem: 'For the data $4, 8, 3, 8, 7$: find the mean, the median, and the mode. A sixth value $12$ is then added — find the new mean.'
@@ -1041,6 +1063,12 @@ topics:
           - problem: 'Find the population standard deviation $\sigma$ of $1, 3, 5, 7, 9$.'
             answer: "2*sqrt(2)"
             solution_sketch: 'Mean $= 5$; squared deviations $16, 4, 0, 4, 16$ sum to $40$; $\sigma^2 = 8$, so $\sigma = \sqrt{8} = 2\sqrt{2}$.'
+          - problem: 'Find the population standard deviation $\sigma$ of $10, 10, 14, 14$.'
+            answer: "2"
+            solution_sketch: 'Mean $= 12$; each deviation is $\pm 2$, so $\sigma^2 = 16/4 = 4$ and $\sigma = 2$.'
+          - problem: 'Find the population standard deviation $\sigma$ of $2, 4, 6, 8$.'
+            answer: "sqrt(5)"
+            solution_sketch: 'Mean $= 5$; squared deviations $9, 1, 1, 9$ sum to $20$; $\sigma^2 = 20/4 = 5$, so $\sigma = \sqrt{5}$.'
         constraints: "variance a perfect square or of the form k^2 * m with small m; answer exact, radicals written as sqrt(...)"
       - id: kp2
         name: "Sample variance and standard deviation (divide by n-1)"
@@ -1055,6 +1083,9 @@ topics:
           - problem: 'Find the sample standard deviation $s$ of $6, 8, 10, 12, 14$.'
             answer: "sqrt(10)"
             solution_sketch: '$s^2 = 40/4 = 10$, so $s = \sqrt{10}$.'
+          - problem: 'Find the sample standard deviation $s$ of $1, 3, 5, 7, 9$.'
+            answer: "sqrt(10)"
+            solution_sketch: 'Mean $= 5$; squared deviations $16, 4, 0, 4, 16$ sum to $40$; $s^2 = 40/(5-1) = 10$, so $s = \sqrt{10}$.'
         constraints: "sum of squared deviations divisible by n-1; always say sample vs population explicitly"
       - id: kp3
         name: "Interpreting and transforming the standard deviation"
@@ -1069,6 +1100,9 @@ topics:
           - problem: 'A data set has $\sigma = 3$. Every value is doubled. What is the new $\sigma$?'
             answer: "6"
             solution_sketch: 'Scaling by $c$ scales deviations by $c$: $\sigma \to |c| \sigma = 2 \cdot 3 = 6$.'
+          - problem: 'A data set has $\sigma = 5$. Every value is tripled. What is the new $\sigma$?'
+            answer: "15"
+            solution_sketch: 'Scaling by $c$ scales deviations by $c$: $\sigma \to |c| \sigma = 3 \cdot 5 = 15$.'
         constraints: "one transformation per problem (shift by a constant or scale by a positive integer); original sigma given or trivially 0"
     diagnostic_exemplar:
       problem: 'Find the sample standard deviation $s$ of $5, 7, 9, 11, 13$.'

@@ -20,20 +20,42 @@ topics:
         exemplars:
           - problem: 'List the sample space for rolling one six-sided die.'
             answer: '$\{1, 2, 3, 4, 5, 6\}$'
+            answer_contract: {kind: set}
+            solution_sketch: 'One die has six faces; list them all.'
           - problem: 'A spinner has three equal sectors labeled A, B, C. List the sample space for one spin.'
             answer: '$\{A, B, C\}$'
+            answer_contract: {kind: set}
+            solution_sketch: 'One spin lands on one of the three sectors.'
+          - problem: 'List the sample space for flipping one coin.'
+            answer: '$\{H, T\}$'
+            answer_contract: {kind: set}
+            solution_sketch: 'A coin lands heads or tails: two outcomes.'
+          - problem: 'A bag holds four cards numbered $1$ to $4$. List the sample space for drawing one card.'
+            answer: '$\{1, 2, 3, 4\}$'
+            answer_contract: {kind: set}
+            solution_sketch: 'One draw: the card can show any of the four numbers.'
         constraints: "one-stage experiments with <= 8 outcomes (die, coin, spinner, labeled cards)"
       - id: kp2
         name: "Outcomes of two-stage experiments"
         key_prerequisites: [multiplication-principle]
         exemplars:
           - problem: 'List the sample space for flipping a coin twice.'
-            answer: '$\{HH, HT, TH, TT\}$'
+            answer: '$\{(H, H), (H, T), (T, H), (T, T)\}$'
+            answer_contract: {kind: set}
             solution_sketch: 'Each flip has $2$ outcomes; list all ordered pairs.'
           - problem: 'A coin is flipped and then a three-sector spinner (A, B, C) is spun. List the sample space.'
-            answer: '$\{HA, HB, HC, TA, TB, TC\}$'
+            answer: '$\{(H, A), (H, B), (H, C), (T, A), (T, B), (T, C)\}$'
+            answer_contract: {kind: set}
             solution_sketch: 'Pair each coin result with each spinner result: $2 \cdot 3 = 6$ ordered outcomes.'
-        constraints: "two stages; total outcomes <= 12; outcomes written as ordered pairs or strings"
+          - problem: 'A coin is flipped and then a four-sector spinner (A, B, C, D) is spun. List the sample space.'
+            answer: '$\{(H, A), (H, B), (H, C), (H, D), (T, A), (T, B), (T, C), (T, D)\}$'
+            answer_contract: {kind: set}
+            solution_sketch: 'Pair each coin result with each spinner result: $2 \cdot 4 = 8$ ordered outcomes.'
+          - problem: 'Two spinners are spun: one with sectors A, B, C and one with sectors X, Y. List the sample space.'
+            answer: '$\{(A, X), (A, Y), (B, X), (B, Y), (C, X), (C, Y)\}$'
+            answer_contract: {kind: set}
+            solution_sketch: 'Pair each result of the first spinner with each result of the second: $3 \cdot 2 = 6$ ordered outcomes.'
+        constraints: "two stages; total outcomes <= 12; outcomes written as ordered pairs (single letters and digits are decidable; string outcomes like HH are not)"
       - id: kp3
         name: "Counting outcomes without listing"
         key_prerequisites: [multiplication-principle]
@@ -44,10 +66,17 @@ topics:
           - problem: 'How many outcomes are in the sample space of rolling two six-sided dice?'
             answer: "36"
             solution_sketch: '$6 \cdot 6 = 36$ ordered pairs.'
+          - problem: 'How many outcomes are in the sample space of flipping a coin $4$ times?'
+            answer: "16"
+            solution_sketch: '$2 \cdot 2 \cdot 2 \cdot 2 = 16$.'
+          - problem: 'How many outcomes are in the sample space of rolling a six-sided die and spinning a three-sector spinner?'
+            answer: "18"
+            solution_sketch: '$6 \cdot 3 = 18$ ordered pairs.'
         constraints: "2-3 stages; counts <= 216; require the multiplication principle, not listing"
     diagnostic_exemplar:
       problem: 'A coin is flipped and a four-sided die is rolled. List the sample space.'
-      answer: '$\{H1, H2, H3, H4, T1, T2, T3, T4\}$'
+      answer: '$\{(H, 1), (H, 2), (H, 3), (H, 4), (T, 1), (T, 2), (T, 3), (T, 4)\}$'
+      answer_contract: {kind: set}
       solution_sketch: 'Pair each coin result with each die result: $2 \cdot 4 = 8$ ordered outcomes.'
     anki_seeds:
       - front: 'The sample space of an experiment is...'
