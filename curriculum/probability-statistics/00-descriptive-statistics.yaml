@@ -270,27 +270,55 @@ topics:
           - problem: 'With bars Art $12$, Band $18$, Chess $6$, what fraction of all members are in Art?'
             answer: '$\frac{1}{3}$'
             solution_sketch: 'Total $= 36$; $12/36 = 1/3$.'
+          - problem: 'A bar graph shows pet counts: dogs $9$, cats $6$, fish $5$. What fraction of all the pets are cats? Give a fraction in lowest terms.'
+            answer: "3/10"
+            solution_sketch: 'Total $= 9 + 6 + 5 = 20$; $6/20 = 3/10$.'
+          - problem: 'A bar graph shows book sales: Fiction $14$, Nonfiction $8$, Poetry $3$. How many more Fiction books were sold than Nonfiction?'
+            answer: "6"
+            solution_sketch: '$14 - 8 = 6$.'
         constraints: "3-4 categories, single- or double-digit bar heights; totals divide cleanly for fraction questions"
       - id: kp2
         name: "Shape of a distribution"
         key_prerequisites: [frequency-tables-histograms]
         exemplars:
           - problem: 'A histogram has a tall peak on the left and a long tail stretching to the right. How is the distribution skewed?'
-            answer: 'Right-skewed (positively skewed).'
+            answer: 'Right-skewed'
+            answer_contract: {kind: label, options: [[Symmetric], [Uniform], [Left-skewed], [Right-skewed]]}
             solution_sketch: 'Skew direction follows the long tail, not the peak.'
           - problem: 'A histogram of bar heights $2, 5, 8, 5, 2$ over equal intervals has what shape?'
-            answer: 'Symmetric (single peak in the middle).'
+            answer: 'Symmetric'
+            answer_contract: {kind: label, options: [[Symmetric], [Uniform], [Left-skewed], [Right-skewed]]}
+            solution_sketch: 'The heights rise to a single middle peak and fall symmetrically.'
+          - problem: 'A histogram has bars of equal height over equal intervals. What shape is the distribution?'
+            answer: 'Uniform'
+            answer_contract: {kind: label, options: [[Symmetric], [Uniform], [Left-skewed], [Right-skewed]]}
+            solution_sketch: 'Equal heights mean no peak: every interval is about equally common.'
+          - problem: 'A histogram has a tall peak on the right and a long tail stretching to the left. How is the distribution skewed?'
+            answer: 'Left-skewed'
+            answer_contract: {kind: label, options: [[Symmetric], [Uniform], [Left-skewed], [Right-skewed]]}
+            solution_sketch: 'The long tail points left, so the distribution is left-skewed (negatively skewed).'
         constraints: "shapes limited to symmetric, uniform, left-skewed, right-skewed; describe histograms in words"
       - id: kp3
         name: "Spotting misleading graphs"
         key_prerequisites: [frequency-tables-histograms]
         exemplars:
           - problem: 'A bar chart''s vertical axis starts at $50$ instead of $0$. What effect does this have on the bars?'
-            answer: 'It exaggerates the differences between the bars.'
+            answer: 'It exaggerates the differences between the bars'
+            answer_contract: {kind: label, options: [[It exaggerates the differences between the bars], [It makes the bars look more equal], [It reverses the order of the bars], [It has no effect on the bars]]}
             solution_sketch: 'Truncating the axis removes the common base, so small differences look large.'
           - problem: 'Bars of heights $60$ and $63$ are drawn on an axis starting at $58$. Roughly how many times taller does the second bar look, and what is the true ratio?'
             answer: 'It looks about $2.5$ times as tall; the true ratio is $63/60 = 1.05$.'
             solution_sketch: 'Drawn heights are $2$ and $5$ units above the cut axis, but the actual values differ by only $5\%$.'
+          - problem: 'A bar chart uses interval widths of $2$ for the first three bars and widths of $10$ for the rest. Which flaw does the chart have?'
+            answer: 'Unequal intervals'
+            answer_contract: {kind: label, options: [[Truncated vertical axis], [Unequal intervals], [Missing axis labels]]}
+            solution_sketch: 'Bars must span equal-width intervals so their heights can be compared fairly.'
+          - problem: 'A bar chart''s vertical axis starts at $40$ instead of $0$. A bar represents a value of $52$. How many units tall is the drawn bar?'
+            answer: "12"
+            solution_sketch: 'The drawn height is the value above the cut axis: $52 - 40 = 12$ units.'
+          - problem: 'Two bars represent values $60$ and $63$ on an axis that starts at $0$. What is the true ratio of the second bar''s height to the first, as a decimal?'
+            answer: "1.05"
+            solution_sketch: '$63/60 = 1.05$ — the bars differ by only $5\%$ when the axis starts at $0$.'
         constraints: "flaws limited to truncated axes, unequal intervals, or missing labels; one flaw per problem"
     diagnostic_exemplar:
       problem: 'A histogram of commute times has bar heights $9, 6, 3, 1$ over $0$-$14$, $15$-$29$, $30$-$44$, $45$-$59$ minutes. How many commutes are $30$ minutes or longer, and what is the shape of the distribution?'
@@ -491,6 +519,12 @@ topics:
           - problem: 'A class of $10$ students averages $6$ (out of $10$) and a class of $20$ students averages $9$. What is the combined mean?'
             answer: "8"
             solution_sketch: 'Total $= 10 \cdot 6 + 20 \cdot 9 = 60 + 180 = 240$; mean $= 240/30 = 8$.'
+          - problem: 'One group of $15$ students averages $8$ (out of $10$) and another group of $5$ students averages $4$. What is the combined mean?'
+            answer: "7"
+            solution_sketch: 'Total $= 15 \cdot 8 + 5 \cdot 4 = 120 + 20 = 140$; mean $= 140/20 = 7$.'
+          - problem: 'Two tests score $5$ each and three tests score $10$ each (out of $10$). What is the mean of the five marks?'
+            answer: "8"
+            solution_sketch: '$(2 \cdot 5 + 3 \cdot 10)/5 = (10 + 30)/5 = 40/5 = 8$.'
         constraints: "2-3 groups; group sizes and means are integers; the combined mean is an integer; marks on the 0-10 scale"
       - id: kp2
         name: "Weighted mean with percent weights"
@@ -502,6 +536,12 @@ topics:
           - problem: 'Marks $7, 9, 4$ (out of $10$) carry weights $0.5, 0.3, 0.2$. Compute the weighted average.'
             answer: "7"
             solution_sketch: '$0.5 \cdot 7 + 0.3 \cdot 9 + 0.2 \cdot 4 = 3.5 + 2.7 + 0.8 = 7$.'
+          - problem: 'Midterm and final each count $50\%$. With midterm $8$ and final $7$ (out of $10$), what is the course mark?'
+            answer: "7.5"
+            solution_sketch: '$0.5 \cdot 8 + 0.5 \cdot 7 = 4 + 3.5 = 7.5$.'
+          - problem: 'Marks $6, 10, 8$ (out of $10$) carry weights $0.4, 0.4, 0.2$. Compute the weighted average.'
+            answer: "8"
+            solution_sketch: '$0.4 \cdot 6 + 0.4 \cdot 10 + 0.2 \cdot 8 = 2.4 + 4 + 1.6 = 8$.'
         constraints: "2-3 weights summing to 1 (or 100%); weights in steps of 0.1; marks on the 0-10 scale; results integers or ending in .5"
       - id: kp3
         name: "Solving for an unknown score"
@@ -513,6 +553,12 @@ topics:
           - problem: 'Two quizzes weighted equally with a project that counts double: quiz marks are $6$ and $8$ (out of $10$). What project mark makes the weighted average (weights $1, 1, 2$) equal to $8$?'
             answer: "9"
             solution_sketch: '$(6 + 8 + 2p)/4 = 8$, so $14 + 2p = 32$ and $p = 9$.'
+          - problem: 'Homework counts $50\%$ with average $6$ (out of $10$), and the exam counts the other $50\%$. What exam mark gives an overall mark of $8$?'
+            answer: "10"
+            solution_sketch: '$0.5 \cdot 6 + 0.5x = 8$, so $0.5x = 5$ and $x = 10$.'
+          - problem: 'Three quizzes count equally and the project counts double (weights $1, 1, 2$). Quiz marks are $7, 9, 6$ (out of $10$). What project mark makes the weighted average $8$?'
+            answer: "5"
+            solution_sketch: '$(7 + 9 + 6 + 2p)/4 = 8$, so $22 + 2p = 32$ and $p = 5$.'
         constraints: "one unknown; weights given as percents or small integer multiples; marks on the 0-10 scale; unknown comes out a whole number <= 10"
     diagnostic_exemplar:
       problem: 'A course mark is $20\%$ homework and $80\%$ exam. The homework average is $9$ (out of $10$). What exam mark gives an overall mark of $8.2$?'
@@ -554,6 +600,15 @@ topics:
           - problem: 'Values $0, 1, 2$ occur with frequencies $4, 9, 7$. Give (number of data values, their sum) as an ordered pair.'
             answer: '$(20, 23)$'
             solution_sketch: 'Count $= 4 + 9 + 7 = 20$; sum $= 0 \cdot 4 + 1 \cdot 9 + 2 \cdot 7 = 23$.'
+          - problem: 'A frequency table lists values $2, 5, 7$ with frequencies $4, 1, 5$. What is the sum of all the data values?'
+            answer: "48"
+            solution_sketch: '$2 \cdot 4 + 5 \cdot 1 + 7 \cdot 5 = 8 + 5 + 35 = 48$.'
+          - problem: 'Values $1, 3, 6$ occur with frequencies $5, 2, 3$. How many data values are there in total?'
+            answer: "10"
+            solution_sketch: 'The total count is the sum of the frequencies: $5 + 2 + 3 = 10$.'
+          - problem: 'Values $0, 4, 8$ occur with frequencies $6, 2, 2$. What is the sum of all the data values?'
+            answer: "24"
+            solution_sketch: '$0 \cdot 6 + 4 \cdot 2 + 8 \cdot 2 = 0 + 8 + 16 = 24$.'
         constraints: "3-4 rows; values 0-9, frequencies 1-9"
       - id: kp2
         name: "Mean from a frequency table"
@@ -565,6 +620,12 @@ topics:
           - problem: 'Values $1, 2, 3, 4$ occur with frequencies $4, 3, 2, 1$. Find the mean.'
             answer: "2"
             solution_sketch: 'Sum $= 4 + 6 + 6 + 4 = 20$; count $= 10$; mean $= 20/10 = 2$.'
+          - problem: 'Values $1, 3, 5$ occur with frequencies $2, 5, 3$. Find the mean.'
+            answer: "3.2"
+            solution_sketch: 'Sum $= 2 + 15 + 15 = 32$; count $= 10$; mean $= 32/10 = 3.2$.'
+          - problem: 'Values $0, 2, 5$ occur with frequencies $4, 4, 2$. Find the mean.'
+            answer: "1.8"
+            solution_sketch: 'Sum $= 0 + 8 + 10 = 18$; count $= 10$; mean $= 18/10 = 1.8$.'
         constraints: "total frequency 10, 20, or 25 so the mean has at most one decimal place"
       - id: kp3
         name: "Missing frequency from a given mean"
@@ -576,6 +637,12 @@ topics:
           - problem: 'The value $2$ occurs $9$ times and the value $8$ occurs $f$ times. The mean is $3.5$. Find $f$.'
             answer: "3"
             solution_sketch: '$(18 + 8f)/(9 + f) = 3.5 \Rightarrow 18 + 8f = 31.5 + 3.5f \Rightarrow 4.5f = 13.5 \Rightarrow f = 3$.'
+          - problem: 'The value $3$ occurs $4$ times and the value $8$ occurs $f$ times. The mean is $6$. Find $f$.'
+            answer: "6"
+            solution_sketch: '$(12 + 8f)/(4 + f) = 6 \Rightarrow 12 + 8f = 24 + 6f \Rightarrow 2f = 12 \Rightarrow f = 6$.'
+          - problem: 'The value $10$ occurs $2$ times and the value $4$ occurs $f$ times. The mean is $6$. Find $f$.'
+            answer: "4"
+            solution_sketch: '$(20 + 4f)/(2 + f) = 6 \Rightarrow 20 + 4f = 12 + 6f \Rightarrow 2f = 8 \Rightarrow f = 4$.'
         constraints: "two rows, one unknown frequency; choose numbers so the unknown frequency is a whole number"
     diagnostic_exemplar:
       problem: 'The value $3$ occurs $6$ times and the value $8$ occurs $f$ times. The mean is $5$. Find $f$.'
@@ -733,6 +800,18 @@ topics:
           - problem: 'On a standardized test taken by $400$ students, $340$ scored below Leo. What is his percentile rank?'
             answer: '85th percentile'
             solution_sketch: '$340/400 = 85\%$ of the scores lie below his.'
+          - problem: 'In a class of $20$ students, $15$ scored below Priya. What is her percentile rank, as a number?'
+            answer: "75"
+            solution_sketch: '$15/20 = 75\%$ of the scores lie below hers, so she is at the 75th percentile.'
+          - problem: 'Out of $50$ runners, $40$ finished behind Sam. What is Sam''s percentile rank, as a number?'
+            answer: "80"
+            solution_sketch: '$40/50 = 80\%$, so Sam is at the 80th percentile.'
+          - problem: 'A score is at the 70th percentile among $40$ scores. About how many scores does it exceed?'
+            answer: "28"
+            solution_sketch: '$70\%$ of $40$ is $0.7 \cdot 40 = 28$.'
+          - problem: 'In a group of $25$, Maya''s mark is at the 60th percentile. How many marks are below hers?'
+            answer: "15"
+            solution_sketch: '$60\%$ of $25$ is $0.6 \cdot 25 = 15$.'
         constraints: "totals of 20, 25, 40, or 50; number below is a clean percent of the total"
       - id: kp2
         name: "Interpreting a percentile"
@@ -740,10 +819,21 @@ topics:
         exemplars:
           - problem: 'A test mark is at the 90th percentile. Does that mean (a) the student answered $90\%$ of the questions correctly, or (b) the mark is higher than $90\%$ of all marks?'
             answer: '(b)'
+            answer_contract: {kind: label, options: [[(a)], [(b)]]}
             solution_sketch: 'A percentile ranks the mark against other marks; it says nothing about percent correct.'
           - problem: 'A baby''s weight is at the 30th percentile. What fraction of babies weigh less? Give a fraction in lowest terms.'
             answer: "3/10"
             solution_sketch: '$30\%$ of babies weigh less, i.e. $\frac{3}{10}$.'
+          - problem: 'A value is at the 40th percentile. What fraction of the values lie below it? Give a fraction in lowest terms.'
+            answer: "2/5"
+            solution_sketch: '$40\% = \frac{40}{100} = \frac{2}{5}$ of the values lie below it.'
+          - problem: 'A puppy''s weight is at the 80th percentile. What fraction of puppies weigh less? Give a fraction in lowest terms.'
+            answer: "4/5"
+            solution_sketch: '$80\% = \frac{80}{100} = \frac{4}{5}$ of the puppies weigh less.'
+          - problem: 'A mark is at the 25th percentile. Does that mean (a) the student got $25\%$ of the questions right, or (b) the mark is higher than $25\%$ of all marks?'
+            answer: '(b)'
+            answer_contract: {kind: label, options: [[(a)], [(b)]]}
+            solution_sketch: 'A percentile compares the mark to other marks, not to the total possible points.'
         constraints: "interpretation only; contrast percentile with percent-correct explicitly; answers are an option label or an exact fraction"
       - id: kp3
         name: "Quartiles as percentiles"
@@ -751,11 +841,22 @@ topics:
         exemplars:
           - problem: 'The median is which percentile?'
             answer: '50th'
+            answer_contract: {kind: label, options: [[25th], [50th], [75th], [100th]]}
+            solution_sketch: 'The median has $50\%$ of the values below it.'
           - problem: 'Give the percentile numbers of $Q_1$ and $Q_3$ as the ordered pair $(Q_1, Q_3)$.'
             answer: '$(25, 75)$'
           - problem: 'A value at the 75th percentile of $80$ data values exceeds about how many of them?'
             answer: "60"
             solution_sketch: '$0.75 \cdot 80 = 60$.'
+          - problem: 'A value at the 25th percentile of $40$ data values exceeds about how many of them?'
+            answer: "10"
+            solution_sketch: '$0.25 \cdot 40 = 10$.'
+          - problem: 'A value at the 75th percentile of $60$ data values exceeds about how many of them?'
+            answer: "45"
+            solution_sketch: '$0.75 \cdot 60 = 45$.'
+          - problem: '$Q_1$ of a data set of $80$ values exceeds about how many of them?'
+            answer: "20"
+            solution_sketch: '$Q_1$ is the 25th percentile: $0.25 \cdot 80 = 20$.'
         constraints: "counts divisible by 4; stick to the 25/50/75 anchors"
     diagnostic_exemplar:
       problem: 'In a class of $40$ students, Maya\''s mark sits exactly at the third quartile $Q_3$. How many of the $40$ students scored below her?'
@@ -856,6 +957,15 @@ topics:
           - problem: 'What do the deviations from the mean always sum to?'
             answer: "0"
             solution_sketch: '$\sum (x_i - \bar{x}) = \sum x_i - n\bar{x} = 0$ by the definition of the mean.'
+          - problem: 'The data $3, 7, 8$ has mean $6$. What is the deviation of the value $8$?'
+            answer: "2"
+            solution_sketch: 'Deviation $= x - \bar{x} = 8 - 6 = 2$.'
+          - problem: 'A data set has mean $10$. What is the deviation of the value $7$?'
+            answer: "-3"
+            solution_sketch: 'Deviation $= 7 - 10 = -3$.'
+          - problem: 'The data $1, 5, 9$ has mean $5$. How many of the deviations are negative?'
+            answer: "2"
+            solution_sketch: 'Deviations are $-4, 0, 4$; two of them are negative.'
         constraints: "3-5 values with an integer mean; deviations are single-digit integers"
       - id: kp2
         name: "Squared deviations"
@@ -867,6 +977,12 @@ topics:
           - problem: 'The data $1, 3, 5, 7$ has mean $4$. Compute $\sum (x_i - \bar{x})^2$.'
             answer: "20"
             solution_sketch: '$9 + 1 + 1 + 9 = 20$.'
+          - problem: 'The data $3, 3, 6, 12$ has mean $6$. Compute the sum of squared deviations $\sum (x_i - \bar{x})^2$.'
+            answer: "54"
+            solution_sketch: 'Deviations $-3, -3, 0, 6$; squares $9 + 9 + 0 + 36 = 54$.'
+          - problem: 'The data $2, 2, 2, 10$ has mean $4$. Compute $\sum (x_i - \bar{x})^2$.'
+            answer: "48"
+            solution_sketch: 'Deviations $-2, -2, -2, 6$; squares $4 + 4 + 4 + 36 = 48$.'
         constraints: "3-5 values, integer mean; squared deviations sum below 100"
       - id: kp3
         name: "Population variance"
@@ -878,6 +994,12 @@ topics:
           - problem: 'Find the population variance $\sigma^2$ of $2, 4, 6, 8$.'
             answer: "5"
             solution_sketch: 'Mean $= 5$; squared deviations $9, 1, 1, 9$ sum to $20$; $\sigma^2 = 20/4 = 5$.'
+          - problem: 'Find the population variance $\sigma^2$ of $4, 4, 4, 12$.'
+            answer: "12"
+            solution_sketch: 'Mean $= 6$; squared deviations $4, 4, 4, 36$ sum to $48$; $\sigma^2 = 48/4 = 12$.'
+          - problem: 'Find the population variance $\sigma^2$ of $0, 4, 6, 10$.'
+            answer: "13"
+            solution_sketch: 'Mean $= 5$; squared deviations $25, 1, 1, 25$ sum to $52$; $\sigma^2 = 52/4 = 13$.'
         constraints: "4-5 values with an integer mean; squared deviations sum to a multiple of n"
     diagnostic_exemplar:
       problem: 'Find the population variance $\sigma^2$ of $1, 3, 5, 7$.'
