@@ -7,7 +7,7 @@ topics:
     core: true
     difficulty: 0.3
     drill: false
-    answer_kind: multi-step
+    answer_kind: numeric
     expected_time_secs: 90
     prerequisites:
       - id: mean-median-mode
@@ -22,6 +22,20 @@ topics:
             answer: 'Population: all $40{,}000$ residents; sample: the $200$ surveyed.'
           - problem: 'What is the difference between a census and a sample?'
             answer: 'A census measures every member of the population; a sample measures only part of it.'
+          - problem: 'A researcher surveys $25$ of the $120$ teachers at a school. How many teachers are not in the sample?'
+            answer: "95"
+            solution_sketch: '$120 - 25 = 95$ teachers are left out of the sample.'
+          - problem: 'A town conducts a census of its $4000$ residents. How many residents are measured?'
+            answer: "4000"
+            solution_sketch: 'A census measures every member of the population, so all $4000$.'
+          - problem: 'A quality inspector tests $40$ of the $1000$ bulbs produced today. Which group is the population?'
+            answer: 'all $1000$ bulbs'
+            answer_contract: {kind: label, options: [[all 1000 bulbs], [the 40 tested bulbs]]}
+            solution_sketch: 'The population is the whole group about which conclusions are drawn; the $40$ tested are the sample.'
+          - problem: 'A marine biologist measures the length of $30$ of the $2000$ fish in a lake. Which is larger, the population or the sample?'
+            answer: 'the population'
+            answer_contract: {kind: label, options: [[the population], [the sample]]}
+            solution_sketch: 'The population (all $2000$ fish) contains the sample (the $30$ measured), so it is larger.'
         constraints: "concrete scenarios; the answer names both groups explicitly"
       - id: kp2
         name: "Parameter versus statistic"
@@ -31,6 +45,20 @@ topics:
             answer: 'A statistic; it describes the sample, not the whole population.'
           - problem: 'The symbols $\mu$ and $\sigma$ describe a ___, while $\bar{x}$ and $s$ describe a ___.'
             answer: 'Population; sample.'
+          - problem: 'The average height of ALL $500$ students at a school is $162$ cm. Is $162$ a parameter or a statistic?'
+            answer: 'a parameter'
+            answer_contract: {kind: label, options: [[a parameter], [a statistic]]}
+            solution_sketch: 'It describes the whole population, so it is a parameter.'
+          - problem: 'The mean of the $30$ sampled bolts is $8.2$ mm. Is $8.2$ a parameter or a statistic?'
+            answer: 'a statistic'
+            answer_contract: {kind: label, options: [[a parameter], [a statistic]]}
+            solution_sketch: 'It is computed from a sample, so it is a statistic.'
+          - problem: 'The population $2, 4, 6$ has mean $\mu$. Compute $\mu$.'
+            answer: "4"
+            solution_sketch: '$\mu = (2+4+6)/3 = 12/3 = 4$ — a parameter, since it describes the whole population.'
+          - problem: 'The sample $3, 5, 7, 9$ has mean $\bar{x}$. Compute $\bar{x}$.'
+            answer: "6"
+            solution_sketch: '$\bar{x} = 24/4 = 6$ — a statistic, since it describes only the sample.'
         constraints: "one classification item and one notation item per set"
       - id: kp3
         name: "Why sample at all"
@@ -40,6 +68,20 @@ topics:
             answer: 'A sample is cheaper and faster; a census may be impractical or impossible.'
           - problem: 'A factory wants the average lifetime of its lightbulbs. Why is a census a bad idea?'
             answer: 'Lifetime testing destroys the bulb — a census would destroy every product.'
+          - problem: 'A factory tests the lifetime of $50$ of the $5000$ bulbs it produced. How many bulbs escape destruction?'
+            answer: "4950"
+            solution_sketch: '$5000 - 50 = 4950$ bulbs are never tested — sampling spares the rest of the production run.'
+          - problem: 'Which is cheaper to carry out: a census of $2000$ households or a sample of $200$ households?'
+            answer: 'the sample'
+            answer_contract: {kind: label, options: [[the census], [the sample]]}
+            solution_sketch: 'Measuring $200$ households costs about a tenth of measuring all $2000$.'
+          - problem: 'A fishery has $10000$ cod and a team can measure $100$ of them. The sample is what fraction of the population? Give a fraction in lowest terms.'
+            answer: "1/100"
+            solution_sketch: '$100/10000 = 1/100$ — a tiny sample suffices to estimate the population mean.'
+          - problem: 'To estimate the average commute of commuters in a city, which takes less time?'
+            answer: 'surveying $500$ commuters'
+            answer_contract: {kind: label, options: [[surveying 500 commuters], [surveying every commuter]]}
+            solution_sketch: 'A sample of $500$ is far faster than a census of every commuter.'
         constraints: "scenarios where cost, time, or destructive testing forces sampling"
     diagnostic_exemplar:
       problem: 'An inspector tests $50$ of the $5000$ batteries produced in a day; the mean life of the $50$ is $21$ hours. Identify the population, the sample, and whether $21$ hours is a parameter or a statistic.'
@@ -302,6 +344,15 @@ topics:
           - problem: 'A population has $\mu = 40$, $\sigma = 10$. For $n = 25$, give (mean of $\bar{x}$, SE of $\bar{x}$) as an ordered pair.'
             answer: '$(40, 2)$'
             solution_sketch: '$E[\bar{x}] = \mu = 40$; $\operatorname{SE} = 10/\sqrt{25} = 2$.'
+          - problem: 'A population has $\sigma = 15$. For samples of size $n = 25$, find the standard error of the sample mean.'
+            answer: "3"
+            solution_sketch: '$\operatorname{SE} = 15/\sqrt{25} = 15/5 = 3$.'
+          - problem: 'A population has $\sigma = 14$. For samples of size $n = 49$, find the standard error of the sample mean.'
+            answer: "2"
+            solution_sketch: '$\operatorname{SE} = 14/\sqrt{49} = 14/7 = 2$.'
+          - problem: 'A population has $\mu = 60$ and $\sigma = 8$. For $n = 16$, find the standard error of the sample mean as a single number.'
+            answer: "2"
+            solution_sketch: '$\operatorname{SE} = 8/\sqrt{16} = 8/4 = 2$ (the mean of $\bar{x}$ is $\mu = 60$).'
         constraints: "n a perfect square (4, 9, 16, 25, 36, 100); sigma divisible by sqrt(n)"
       - id: kp2
         name: "Averages vary less than individuals"
@@ -313,6 +364,15 @@ topics:
           - problem: 'One die roll has SD $\sigma$. By what factor is the SD of the average of $100$ rolls smaller?'
             answer: "10"
             solution_sketch: 'Averaging $n$ values shrinks the spread by $\sqrt{n}$: $\sqrt{100} = 10$, so a single roll varies far more.'
+          - problem: 'A population has $\sigma = 20$. Find the standard error of the mean of $100$ observations.'
+            answer: "2"
+            solution_sketch: '$\operatorname{SE} = 20/\sqrt{100} = 20/10 = 2$ — far tighter than the SD $20$ of single values.'
+          - problem: 'A single observation of a population has SD $24$. By what factor is the SD of the mean of $36$ observations smaller?'
+            answer: "6"
+            solution_sketch: 'Averaging $n$ values shrinks the spread by $\sqrt{n} = \sqrt{36} = 6$.'
+          - problem: 'A population has $\sigma = 9$. Find the standard error of the mean of $81$ observations.'
+            answer: "1"
+            solution_sketch: '$\operatorname{SE} = 9/\sqrt{81} = 9/9 = 1$.'
         constraints: "one computation and one shrink-factor item; n a perfect square"
       - id: kp3
         name: "How sample size changes the SE"
@@ -324,6 +384,12 @@ topics:
           - problem: 'A population has $\sigma = 20$. What sample size makes the standard error equal to $5$?'
             answer: "16"
             solution_sketch: '$20/\sqrt{n} = 5$ gives $\sqrt{n} = 4$, so $n = 16$.'
+          - problem: 'A population has $\sigma = 12$. What sample size makes the standard error of the sample mean equal to $2$?'
+            answer: "36"
+            solution_sketch: '$12/\sqrt{n} = 2$ gives $\sqrt{n} = 6$, so $n = 36$.'
+          - problem: 'The standard error of $\bar{x}$ at sample size $n$ is $2$. By what factor must the sample size be multiplied to make the standard error equal to $1$?'
+            answer: "4"
+            solution_sketch: 'Halving the SE requires $\sqrt{n}$ to double, so $n$ is multiplied by $2^2 = 4$.'
         constraints: "n and target SE chosen so sqrt(n) is a whole number"
     diagnostic_exemplar:
       problem: 'A population has $\sigma = 18$. What sample size makes the standard error of the sample mean equal to $3$?'
@@ -583,7 +649,7 @@ topics:
     core: false                # terminal regression branch
     difficulty: 0.4
     drill: false
-    answer_kind: multi-step
+    answer_kind: numeric
     expected_time_secs: 120
     prerequisites:
       - id: plotting-points
@@ -601,6 +667,22 @@ topics:
             answer: 'Negative direction, linear form.'
           - problem: 'Two scatterplots show the same downward trend; in one the points hug a line, in the other they form a loose cloud. Which shows the stronger relationship?'
             answer: 'The one hugging the line; tighter clustering means a stronger relationship.'
+          - problem: 'In a scatterplot, $y$ increases roughly along a straight line as $x$ increases. What is the direction of the relationship?'
+            answer: 'positive'
+            answer_contract: {kind: label, options: [[positive], [negative]]}
+            solution_sketch: 'Both variables rise together, so the direction is positive.'
+          - problem: 'Points in a scatterplot trace a curved U-shape. What is the form of the relationship?'
+            answer: 'curved'
+            answer_contract: {kind: label, options: [[linear], [curved]]}
+            solution_sketch: 'A U-shape is not well described by a straight line, so the form is curved.'
+          - problem: 'Two scatterplots show the same upward trend; in one the points hug a line, in the other they form a loose cloud. Which shows the stronger relationship?'
+            answer: 'the one hugging a line'
+            answer_contract: {kind: label, options: [[the one hugging a line], [the loose cloud]]}
+            solution_sketch: 'Tighter clustering around a line means a stronger relationship.'
+          - problem: 'Hours of TV watched and test scores fall together roughly along a line that slopes down. What is the direction of the relationship?'
+            answer: 'negative'
+            answer_contract: {kind: label, options: [[positive], [negative]]}
+            solution_sketch: 'One variable rises while the other falls, so the direction is negative.'
         constraints: "verbal descriptions covering direction, form, and strength"
       - id: kp2
         name: "Interpreting the correlation coefficient"
@@ -613,6 +695,19 @@ topics:
             answer: '$-1 \le r \le 1$'
           - problem: 'Describe the relationship when $r = -0.9$.'
             answer: 'A strong negative linear relationship.'
+          - problem: 'Which indicates a stronger linear relationship: $r = 0.3$ or $r = -0.8$? Give $|r|$ of the stronger one.'
+            answer: "0.8"
+            solution_sketch: 'Strength is $|r|$: $0.8 > 0.3$, so $r = -0.8$ (negative direction) is stronger.'
+          - problem: 'Which indicates a stronger linear relationship: $r = -0.9$ or $r = 0.5$? Give the $r$ value of the stronger one.'
+            answer: "-0.9"
+            solution_sketch: '$|-0.9| = 0.9 > 0.5$, so $r = -0.9$ is the stronger association.'
+          - problem: 'Give the largest possible value of the correlation coefficient $r$ as a number.'
+            answer: "1"
+            solution_sketch: '$r$ always lies between $-1$ and $1$; the maximum $r = 1$ is a perfect positive line.'
+          - problem: 'Two variables have $r = -0.6$. As $x$ increases, does $y$ tend to increase or decrease?'
+            answer: 'decrease'
+            answer_contract: {kind: label, options: [[increase], [decrease]]}
+            solution_sketch: 'A negative $r$ means $y$ tends to fall as $x$ rises.'
         constraints: "r values given to one decimal; comparisons hinge on |r| vs sign"
       - id: kp3
         name: "Facts and cautions about r"
@@ -622,6 +717,22 @@ topics:
             answer: 'No; $r$ is symmetric in $x$ and $y$ (and has no units).'
           - problem: 'A scatterplot shows a perfect parabola opening upward. Must $|r|$ be close to $1$?'
             answer: 'No; $r$ measures only linear association, and a symmetric curve can give $r$ near $0$.'
+          - problem: 'Does swapping the roles of $x$ and $y$ change the value of $r$? Answer (a) yes or (b) no.'
+            answer: '(b)'
+            answer_contract: {kind: label, options: [[(a)], [(b)]]}
+            solution_sketch: '$r$ is symmetric in $x$ and $y$ (and has no units).'
+          - problem: 'A scatterplot shows a perfect symmetric parabola opening upward. Is $|r|$ close to $1$ or close to $0$?'
+            answer: 'close to 0'
+            answer_contract: {kind: label, options: [[close to 1], [close to 0]]}
+            solution_sketch: '$r$ measures only linear association; the two symmetric halves of the parabola cancel.'
+          - problem: 'Does the correlation coefficient $r$ carry units? Answer (a) yes or (b) no.'
+            answer: '(b)'
+            answer_contract: {kind: label, options: [[(a)], [(b)]]}
+            solution_sketch: '$r$ is built from standardized quantities, so it is unitless.'
+          - problem: 'If every $y$ value is doubled (and $x$ is unchanged), what happens to $r$?'
+            answer: 'it is unchanged'
+            answer_contract: {kind: label, options: [[it doubles], [it is unchanged], [its sign flips]]}
+            solution_sketch: '$r$ is unchanged by positive rescaling of either variable — it is scale-invariant and unitless.'
         constraints: "conceptual items on unitlessness, symmetry, and linearity-only"
     diagnostic_exemplar:
       problem: 'A scatterplot of $y$ against $x$ shows points lying exactly on a symmetric parabola opening upward. Is $r$ close to $-1$, $0$, or $+1$ — and why?'
