@@ -86,7 +86,12 @@ async fn a_multi_step_answer_reaches_the_checker_and_is_ungraded() {
         let user = learner_of(&db, "kind-multistep@example.com", "multi-step", "12").await;
         let body = answer(&app, user, "12").await;
         assert_eq!(body["outcome"], "ungraded");
-        assert_eq!(body["reason"], "the answer kind is not decidable");
+        // C5 teaches the format instead of leaking the grammar production: the
+        // refusal names what to type, the way the unit refusals do (H-1).
+        assert_eq!(
+            body["reason"],
+            "Enter the final answer as one number or expression, for example 12. Put the steps in Show working."
+        );
         assert!(body.get("correct").is_none(), "{body}");
         holds_an_outcome(&body);
         // The attempt is recorded, so the recovery path can regrade it.
