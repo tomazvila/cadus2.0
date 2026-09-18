@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# C3: the key-correctness self-check over the curriculum.
+#
+# Builds the checker and execs it over the curriculum tree. The tool reads the
+# approved template rows of content_store when DATABASE_URL is set (read-only),
+# and it makes no model call. It exits 0 only when no key check failed, so it
+# is the acceptance command of every content worker.
+#
+# Usage: scripts/check_keys [CURRICULUM_DIR]
+set -euo pipefail
+root="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$root"
+export SQLX_OFFLINE=true
+cargo build -p check_keys
+exec ./target/debug/check_keys --curriculum "${1:-$root/curriculum}"
