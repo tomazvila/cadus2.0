@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 use super::{Canon, MAX_ANSWER_CHARS, Quantity, Undecidable, canonical_form};
 use structured::{label_value, multipart_values, tolerance_value, validate_shape};
 
-pub use evaluate::check_contract;
+pub use evaluate::{TriageVerdict, check_contract, triage_verdict};
 pub use form::NumericForm;
 
 /// A reviewed item's answer policy. Absence retains the historical policy.
@@ -44,6 +44,13 @@ pub enum AnswerContract {
     },
     /// An ordered tuple of two to four real numeric coordinates.
     Coordinates { arity: u8 },
+    /// A grid of exact rational entries, compared entry by entry.
+    Matrix {
+        /// The count of rows of the grid.
+        rows: u8,
+        /// The count of columns of the grid.
+        cols: u8,
+    },
     /// An unordered set; order and repeated members have no effect.
     Set,
     /// An authored numeric notation requirement.
@@ -106,6 +113,10 @@ enum ContractDoc {
     Coordinates {
         arity: u8,
     },
+    Matrix {
+        rows: u8,
+        cols: u8,
+    },
     Set {},
     RequiredForm {
         form: NumericForm,
@@ -154,6 +165,7 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::Unit { quantity, unit } => Self::Unit { quantity, unit },
             ContractDoc::QuotientRemainder { divisor } => Self::QuotientRemainder { divisor },
             ContractDoc::Coordinates { arity } => Self::Coordinates { arity },
+            ContractDoc::Matrix { rows, cols } => Self::Matrix { rows, cols },
             ContractDoc::Set {} => Self::Set,
             ContractDoc::RequiredForm { form } => Self::RequiredForm { form },
             ContractDoc::List { ordered, member } => Self::List { ordered, member },
@@ -203,6 +215,13 @@ impl AnswerContract {
             Self::QuotientRemainder { divisor: Some(0) } => Err(Undecidable::new(
                 "a quotient contract requires a positive divisor",
             )),
+            Self::Matrix { rows, cols }
+                if *rows == 0 || *cols == 0 || u32::from(*rows) * u32::from(*cols) > 64 =>
+            {
+                Err(Undecidable::new(
+                    "a matrix requires one to 64 entries in at least one row and column",
+                ))
+            }
             Self::Unit { quantity, unit } => match super::unit::lookup(unit) {
                 Some(found) if found.quantity == *quantity => Ok(()),
                 _ => Err(Undecidable::new(
@@ -230,6 +249,7 @@ impl AnswerContract {
             Self::Multipart { parts } => multipart_values(parts, expected),
             Self::List { ordered, member } => list::expected(*ordered, member, expected),
             Self::InequalityUnion | Self::RequiredInequalityNotation => union::read(expected),
+            Self::Matrix { rows, cols } => structured::matrix_value(*rows, *cols, expected),
             contract @ (Self::RequiredAssignment
             | Self::RequiredSinglePower
             | Self::RequiredNormalizedScientificNotation

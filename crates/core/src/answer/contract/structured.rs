@@ -34,6 +34,7 @@ pub(super) fn validate_shape(contract: &AnswerContract, value: &Canon) -> bool {
         AnswerContract::Coordinates { arity } => {
             matches!(value, Canon::Tuple(items) if items.len() == usize::from(*arity) && items.iter().all(number))
         }
+        AnswerContract::Matrix { rows, cols } => matrix_shape(value, *rows, *cols),
         AnswerContract::QuotientRemainder { divisor } => quotient_shape(value, *divisor),
         AnswerContract::Set => matches!(value, Canon::Set(_)),
         _ => true,
@@ -55,6 +56,96 @@ fn quotient_shape(value: &Canon, divisor: Option<u64>) -> bool {
         && remainder.is_integer()
         && remainder >= &BigRational::zero()
         && divisor.is_none_or(|value| remainder < &BigRational::from_integer(BigInt::from(value)))
+}
+
+/// The raw rows of a matrix answer: bracketed rows, or plain rows joined by `;`.
+///
+/// `[[1,2],[3,4]]` and `[1,2;3,4]` are one matrix. A structural failure is a
+/// refusal; the caller owns the dimension rule and the entry rule.
+pub(super) fn matrix_rows(text: &str) -> Result<Vec<Vec<&str>>, Undecidable> {
+    let bad = || Undecidable::new("a matrix must be written as bracketed rows of entries");
+    let text = text.trim();
+    let inner = text
+        .strip_prefix('[')
+        .and_then(|rest| rest.strip_suffix(']'))
+        .ok_or_else(bad)?;
+    let mut rows = Vec::new();
+    let mut rest = inner.trim();
+    while !rest.is_empty() {
+        if let Some(after_open) = rest.strip_prefix('[') {
+            let close = after_open.find(']').ok_or_else(bad)?;
+            let row = &after_open[..close];
+            if row.contains(['[', ';']) {
+                return Err(bad());
+            }
+            rows.push(row);
+            rest = after_open[close + 1..].trim_start();
+            rest = rest.strip_prefix([',', ';']).unwrap_or(rest).trim_start();
+        } else {
+            match rest.split_once(';') {
+                Some((row, tail)) => {
+                    rows.push(row.trim());
+                    rest = tail.trim();
+                }
+                None => {
+                    rows.push(rest);
+                    rest = "";
+                }
+            }
+        }
+    }
+    rows.iter()
+        .map(|row| {
+            let entries = row.split(',').map(str::trim).collect::<Vec<_>>();
+            if entries.iter().any(|entry| entry.is_empty()) {
+                return Err(Undecidable::new(
+                    "a matrix row requires comma-separated entries",
+                ));
+            }
+            Ok(entries)
+        })
+        .collect()
+}
+
+/// The matrix of `rows` by `cols` exact rational entries an answer names.
+///
+/// The grid reads as a list of rows, each row a list of exact rationals, so the
+/// entry comparison is the exact equality of the numeric contracts.
+pub(super) fn matrix_value(rows: u8, cols: u8, text: &str) -> Result<Canon, Undecidable> {
+    let parsed = matrix_rows(text)?;
+    let (rows, cols) = (usize::from(rows), usize::from(cols));
+    let shaped = parsed.len() == rows && parsed.iter().all(|row| row.len() == cols);
+    if !shaped {
+        return Err(Undecidable::new(
+            "a matrix answer requires the expected count of rows and entries per row",
+        ));
+    }
+    let grid = parsed
+        .iter()
+        .map(|row| row.iter().map(|entry| matrix_entry(entry)).collect())
+        .collect::<Result<Vec<Vec<Canon>>, Undecidable>>()?;
+    Ok(Canon::List(grid.into_iter().map(Canon::List).collect()))
+}
+
+/// One exact rational or decimal entry of a matrix.
+fn matrix_entry(text: &str) -> Result<Canon, Undecidable> {
+    match canonical_form(text) {
+        Ok(Canon::Rational(value)) => Ok(Canon::Rational(value)),
+        _ => Err(Undecidable::new(
+            "a matrix entry must be an exact rational or decimal",
+        )),
+    }
+}
+
+/// Whether the canonical form is the expected grid of exact rationals.
+fn matrix_shape(value: &Canon, rows: u8, cols: u8) -> bool {
+    let Canon::List(grid) = value else {
+        return false;
+    };
+    grid.len() == usize::from(rows)
+        && grid.iter().all(|row| {
+            matches!(row, Canon::List(entries) if entries.len() == usize::from(cols) && entries.iter().all(|entry| matches!(entry, Canon::Rational(_))))
+        })
 }
 
 fn choice_key(text: &str) -> String {
