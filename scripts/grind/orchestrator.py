@@ -73,6 +73,27 @@ def expected_for(task):
 
 # ---------------- session work ----------------
 
+def plan_action(plan: dict) -> str:
+    """Classify a session plan into the driver's next move (W-C3: an empty plan
+    is a DESIGNED status, not a dead end). One of:
+      "walk"   — tasks to serve, or a quiz due that the quiz path serves;
+      "author" — no tasks but the frontier is blocked: author the blocked
+                 topics via the authoring branch, then re-fetch;
+      "end"    — no tasks and the course is complete: normal completion;
+      "idle"   — nothing due and the frontier open: nothing to do, end the
+                 session honestly instead of looping.
+    Missing keys are treated as empty/false."""
+    if plan.get("tasks"):
+        return "walk"
+    if plan.get("quiz_due"):
+        return "walk"
+    if plan.get("blocked"):
+        return "author"
+    if plan.get("course_complete"):
+        return "end"
+    return "idle"
+
+
 def answer_task(task, task_type, confirm, stats):
     wrong_next = (not confirm) and task_type in ("lesson", "drill") and random.random() < 0.03
     first = True
@@ -166,7 +187,7 @@ def session_round(course):
         blocked = plan.get("blocked", [])
         if not tasks:
             api("POST", "/api/session/end", {})
-            return stats, "empty_plan", blocked
+            return stats, plan_action(plan), blocked
         stale = False
         for t in tasks:
             st = answer_task(t["task_id"], t["task_type"], bool(t.get("confirm")) or t["task_type"] == "review", stats)
@@ -281,6 +302,22 @@ def main():
             return
         stats, how, blocked = session_round(course)
         log(f"round [{course}]: {how} {stats}")
+        if how == "idle":
+            log("plan idle (nothing due, frontier open) — ending session")
+            return
+        if how == "end":
+            # course complete per plan: enroll the next one, or finish
+            nxt = COURSES[idx + 1] if idx + 1 < len(COURSES) else None
+            if nxt is None:
+                log("ALL COURSES COMPLETE")
+                return
+            r = api("POST", "/api/enroll", {"course": nxt})
+            if "error" not in r:
+                idx += 1
+                authored_topics.clear()
+                log("ENROLLED", nxt)
+                continue
+            log("enroll refused:", json.dumps(r["error"])[:150])
         if how == "ok" and stats["answers"] > 0:
             idle_rounds = 0
             continue
