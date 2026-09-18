@@ -2,8 +2,13 @@
 //!
 //! This is the port of 1.0 `scripts/lint_curriculum.py`. It runs every rule of
 //! `docs/reference/curriculum-1.0-spec.md` section 5 through
-//! [`cadus_core::curriculum::lint_curriculum_full`], prints each violation, and exits
+//! [`cadus_core::curriculum::lint_curriculum`] — the 1.0-parity rule set, pinned
+//! finding-for-finding by the parity tests — prints each violation, and exits
 //! non-zero when the tree holds any finding — advisory findings included.
+//!
+//! The exemplar CONTENT rules (sketches, asks, the practice floor) live behind
+//! [`cadus_core::curriculum::lint_curriculum_full`]; the authoring sweep runs
+//! them from `lint_exemplars`-style checks, not from this parity-pinned binary.
 //!
 //! Usage:
 //!
@@ -18,7 +23,7 @@ use std::env;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use cadus_core::curriculum::lint_curriculum_full;
+use cadus_core::curriculum::lint_curriculum;
 
 /// The environment variable that names the curriculum tree.
 const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
@@ -38,7 +43,7 @@ fn main() -> ExitCode {
     // argument text and not a canonical path.
     let shown = path.display().to_string();
 
-    let findings = lint_curriculum_full(&path);
+    let findings = lint_curriculum(&path);
     if findings.is_empty() {
         println!("OK: {shown} is a valid curriculum (0 findings).");
         return ExitCode::SUCCESS;

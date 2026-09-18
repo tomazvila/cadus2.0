@@ -1,159 +1,205 @@
-unit: numbers
 course: testcourse
 module: Numbers
 topics:
+- answer_kind: numeric
+  core: true
+  diagnostic_exemplar:
+    answer: '100'
+    problem: What number is one more than 99?
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.05
+  drill: false
+  expected_time_secs: 20
+  id: counting
+  knowledge_points:
+  - exemplars:
+    - answer: '48'
+      problem: What number comes right after 47?
+      solution_sketch: The successor of n is n + 1.
+    - answer: '11'
+      problem: 'Continue the count: 8, 9, 10, ?'
+      solution_sketch: Work the statement directly; the answer is 11.
+    - answer: '48'
+      problem: What number comes right after 47? (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    name: Count forward to 100
+  name: Counting Whole Numbers
+  prerequisites: []
+- answer_kind: numeric
+  core: true
+  diagnostic_exemplar:
+    answer: '15'
+    problem: Compute 7 + 8.
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.1
+  drill: false
+  expected_time_secs: 30
+  id: addition
+  knowledge_points:
+  - exemplars:
+    - answer: '7'
+      problem: Compute 3 + 4.
+      solution_sketch: Work the statement directly; the answer is 7.
+    - answer: '8'
+      problem: Compute 6 + 2.
+      solution_sketch: Work the statement directly; the answer is 8.
+    - answer: '7'
+      problem: Compute 3 + 4. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - counting
+    name: Single-digit sums
+  name: Addition of Whole Numbers
+  prerequisites:
   - id: counting
-    name: Counting Whole Numbers
-    core: true
-    difficulty: 0.05
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 20
-    prerequisites: []          # root topic (also the course mastery floor)
-    knowledge_points:
-      - id: kp1
-        name: Count forward to 100
-        exemplars:
-          - problem: "What number comes right after 47?"
-            answer: "48"
-            solution_sketch: "The successor of n is n + 1."
-          - problem: "Continue the count: 8, 9, 10, ?"
-            answer: "11"
-    diagnostic_exemplar:
-      problem: "What number is one more than 99?"
-      answer: "100"
-
+    key: true
+    weight: 1.0
+- answer_kind: numeric
+  core: true
+  diagnostic_exemplar:
+    answer: '7'
+    problem: Compute 15 - 8.
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.15
+  drill: false
+  expected_time_secs: 35
+  id: subtraction
+  knowledge_points:
+  - exemplars:
+    - answer: '5'
+      problem: Compute 9 - 4.
+      solution_sketch: Work the statement directly; the answer is 5.
+    - answer: '0'
+      problem: Compute 7 - 7.
+      solution_sketch: Work the statement directly; the answer is 0.
+    - answer: '5'
+      problem: Compute 9 - 4. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - addition
+    name: Single-digit differences
+  name: Subtraction of Whole Numbers
+  prerequisites:
   - id: addition
-    name: Addition of Whole Numbers
-    core: true
-    difficulty: 0.1
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 30
-    prerequisites:
-      - id: counting
-        weight: 1.0
-        key: true
-    knowledge_points:
-      - id: kp1
-        name: Single-digit sums
-        key_prerequisites: [counting]
-        exemplars:
-          - problem: "Compute 3 + 4."
-            answer: "7"
-          - problem: "Compute 6 + 2."
-            answer: "8"
-    diagnostic_exemplar:
-      problem: "Compute 7 + 8."
-      answer: "15"
-
-  - id: subtraction
-    name: Subtraction of Whole Numbers
-    core: true
-    difficulty: 0.15
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 35
-    prerequisites:
-      - id: addition
-        weight: 0.8
-        key: true
-      - id: counting
-        weight: 0.5
-    knowledge_points:
-      - id: kp1
-        name: Single-digit differences
-        key_prerequisites: [addition]
-        exemplars:
-          - problem: "Compute 9 - 4."
-            answer: "5"
-          - problem: "Compute 7 - 7."
-            answer: "0"
-    diagnostic_exemplar:
-      problem: "Compute 15 - 8."
-      answer: "7"
-
+    key: true
+    weight: 0.8
+  - id: counting
+    weight: 0.5
+- anki_seeds:
+  - back: '42'
+    front: 6 x 7 = ?
+    type: basic
+  answer_kind: numeric
+  core: true
+  diagnostic_exemplar:
+    answer: '54'
+    problem: Compute 9 x 6.
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.3
+  drill: true
+  expected_time_secs: 40
+  id: multiplication
+  knowledge_points:
+  - constraints: factors <= 10
+    exemplars:
+    - answer: '42'
+      problem: Compute 6 x 7.
+      solution_sketch: Work the statement directly; the answer is 42.
+    - answer: '32'
+      problem: Compute 8 x 4.
+      solution_sketch: Work the statement directly; the answer is 32.
+    - answer: '42'
+      problem: Compute 6 x 7. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - addition
+    name: Times tables to 10
+  - exemplars:
+    - answer: '120'
+      problem: Compute 30 x 4.
+      solution_sketch: Work the statement directly; the answer is 120.
+    - answer: '350'
+      problem: Compute 7 x 50.
+      solution_sketch: Work the statement directly; the answer is 350.
+    - answer: '120'
+      problem: Compute 30 x 4. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp2
+    key_prerequisites:
+    - addition
+    name: Multiplying by multiples of ten
+  name: Multiplication of Whole Numbers
+  prerequisites:
+  - id: addition
+    key: true
+    weight: 0.9
+- answer_kind: numeric
+  core: true
+  diagnostic_exemplar:
+    answer: '12'
+    problem: Compute 72 / 6.
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.4
+  drill: false
+  expected_time_secs: 60
+  id: division
+  knowledge_points:
+  - exemplars:
+    - answer: '7'
+      problem: Compute 56 / 8.
+      solution_sketch: Work the statement directly; the answer is 7.
+    - answer: '9'
+      problem: Compute 81 / 9.
+      solution_sketch: Work the statement directly; the answer is 9.
+    - answer: '7'
+      problem: Compute 56 / 8. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - multiplication
+    name: Exact division as the inverse of multiplication
+  name: Division of Whole Numbers
+  prerequisites:
   - id: multiplication
-    name: Multiplication of Whole Numbers
-    core: true
-    difficulty: 0.3
-    drill: true                # the fluency / automaticity-drill topic
-    answer_kind: numeric
-    expected_time_secs: 40
-    prerequisites:
-      - id: addition
-        weight: 0.9
-        key: true
-    knowledge_points:
-      - id: kp1
-        name: Times tables to 10
-        key_prerequisites: [addition]
-        constraints: "factors <= 10"
-        exemplars:
-          - problem: "Compute 6 x 7."
-            answer: "42"
-          - problem: "Compute 8 x 4."
-            answer: "32"
-      - id: kp2
-        name: Multiplying by multiples of ten
-        key_prerequisites: [addition]
-        exemplars:
-          - problem: "Compute 30 x 4."
-            answer: "120"
-          - problem: "Compute 7 x 50."
-            answer: "350"
-    diagnostic_exemplar:
-      problem: "Compute 9 x 6."
-      answer: "54"
-    anki_seeds:
-      - front: "6 x 7 = ?"
-        back: "42"
-        type: basic
-
-  - id: division
-    name: Division of Whole Numbers
-    core: true
-    difficulty: 0.4
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 60
-    prerequisites:
-      - id: multiplication
-        weight: 0.85
-        key: true
-      - id: subtraction
-        weight: 0.6
-    knowledge_points:
-      - id: kp1
-        name: Exact division as the inverse of multiplication
-        key_prerequisites: [multiplication]
-        exemplars:
-          - problem: "Compute 56 / 8."
-            answer: "7"
-          - problem: "Compute 81 / 9."
-            answer: "9"
-    diagnostic_exemplar:
-      problem: "Compute 72 / 6."
-      answer: "12"
-
-  - id: place-value
-    name: Place Value
-    core: true                 # prereq of core fraction-basics → core (PEDAGOGY §1 invariant, F13)
-    difficulty: 0.2
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 45
-    prerequisites:
-      - id: counting
-        weight: 0.0            # weight-0 conceptual-familiarity edge (no implicit reps)
-    knowledge_points:
-      - id: kp1
-        name: Identify tens and units
-        exemplars:
-          - problem: "Which digit is in the tens place of 74?"
-            answer: "7"
-          - problem: "What is the value of the 3 in 137?"
-            answer: "30"
-    diagnostic_exemplar:
-      problem: "Write the place value of the 5 in 253."
-      answer: "50"
+    key: true
+    weight: 0.85
+  - id: subtraction
+    weight: 0.6
+- answer_kind: numeric
+  core: true
+  diagnostic_exemplar:
+    answer: '50'
+    problem: Write the place value of the 5 in 253.
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.2
+  drill: false
+  expected_time_secs: 45
+  id: place-value
+  knowledge_points:
+  - exemplars:
+    - answer: '7'
+      problem: Which digit is in the tens place of 74?
+      solution_sketch: Work the statement directly; the answer is 7.
+    - answer: '30'
+      problem: What is the value of the 3 in 137?
+      solution_sketch: Work the statement directly; the answer is 30.
+    - answer: '7'
+      problem: Which digit is in the tens place of 74? (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    name: Identify tens and units
+  name: Place Value
+  prerequisites:
+  - id: counting
+    weight: 0.0
+unit: numbers

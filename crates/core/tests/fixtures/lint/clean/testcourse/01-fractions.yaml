@@ -1,211 +1,274 @@
-unit: fractions
 course: testcourse
 module: Fractions
 topics:
+- answer_kind: numeric
+  core: true
+  diagnostic_exemplar:
+    answer: 5/12
+    problem: What fraction of a dozen eggs is 5 eggs?
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.35
+  drill: false
+  expected_time_secs: 60
+  id: fraction-basics
+  knowledge_points:
+  - exemplars:
+    - answer: 3/8
+      problem: If 3 of 8 equal squares are shaded, what fraction is shaded?
+      solution_sketch: Work the statement directly; the answer is 3/8.
+    - answer: 2/5
+      problem: Express 'two out of five' as a fraction.
+      solution_sketch: Work the statement directly; the answer is 2/5.
+    - answer: 3/8
+      problem: If 3 of 8 equal squares are shaded, what fraction is shaded? (variant
+        1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - division
+    name: A fraction as part of a whole
+  name: Understanding Fractions
+  prerequisites:
+  - id: division
+    key: true
+    weight: 0.7
+  - id: place-value
+    weight: 0.4
+- answer_kind: expression
+  core: true
+  diagnostic_exemplar:
+    answer: 9/12
+    problem: Write 3/4 as an equivalent fraction over 12.
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.4
+  drill: false
+  expected_time_secs: 70
+  id: equivalent-fractions
+  knowledge_points:
+  - exemplars:
+    - answer: 6/9
+      problem: Find the fraction equivalent to 2/3 with denominator 9.
+      solution_sketch: Work the statement directly; the answer is 6/9.
+    - answer: 4/8
+      problem: Compute the value. Rewrite 1/2 with denominator 8.
+      solution_sketch: Work the statement directly; the answer is 4/8.
+    - answer: 6/9
+      problem: Find the fraction equivalent to 2/3 with denominator 9. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - multiplication
+    name: Scale numerator and denominator together
+  - exemplars:
+    - answer: 2/3
+      problem: Compute the value. Simplify 6/9.
+      solution_sketch: Work the statement directly; the answer is 2/3.
+    - answer: 2/5
+      problem: Compute the value. Simplify 10/25.
+      solution_sketch: Work the statement directly; the answer is 2/5.
+    - answer: 2/3
+      problem: Simplify 6/9. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp2
+    key_prerequisites:
+    - division
+    name: Simplify to lowest terms
+  name: Equivalent Fractions
+  prerequisites:
   - id: fraction-basics
-    name: Understanding Fractions
-    core: true
-    difficulty: 0.35
-    drill: false
-    answer_kind: numeric
-    expected_time_secs: 60
-    prerequisites:
-      - id: division
-        weight: 0.7
-        key: true
-      - id: place-value
-        weight: 0.4
-    knowledge_points:
-      - id: kp1
-        name: A fraction as part of a whole
-        key_prerequisites: [division]
-        exemplars:
-          - problem: "If 3 of 8 equal squares are shaded, what fraction is shaded?"
-            answer: "3/8"
-          - problem: "Express 'two out of five' as a fraction."
-            answer: "2/5"
-    diagnostic_exemplar:
-      problem: "What fraction of a dozen eggs is 5 eggs?"
-      answer: "5/12"
-
+    key: true
+    weight: 0.8
+  - id: multiplication
+    weight: 0.6
+- anki_seeds:
+  - back: rewrite each fraction over the LCM of the denominators
+    front: To add fractions with unlike denominators, first...
+    type: basic
+  - back: '12'
+    front: The LCM of 4 and 6 is {{c1::12}}.
+    type: cloze
+  answer_kind: expression
+  core: true
+  diagnostic_exemplar:
+    answer: 11/12
+    problem: Compute 2/3 + 1/4.
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.5
+  drill: false
+  expected_time_secs: 90
+  id: adding-fractions
+  knowledge_points:
+  - exemplars:
+    - answer: 5/12
+      problem: Compute 1/4 + 1/6.
+      solution_sketch: LCM(4, 6) = 12; 3/12 + 2/12.
+    - answer: 5/6
+      problem: Compute 1/2 + 1/3.
+      solution_sketch: Work the statement directly; the answer is 5/6.
+    - answer: 5/12
+      problem: Compute 1/4 + 1/6. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - equivalent-fractions
+    name: Common denominators via the LCM
+  - exemplars:
+    - answer: 19/12
+      problem: Compute 3/4 + 5/6.
+      solution_sketch: Work the statement directly; the answer is 19/12.
+    - answer: 17/12
+      problem: Compute 2/3 + 3/4.
+      solution_sketch: Work the statement directly; the answer is 17/12.
+    - answer: 19/12
+      problem: Compute 3/4 + 5/6. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp2
+    key_prerequisites:
+    - multiplication
+    name: Sums greater than one
+  name: Adding Fractions with Unlike Denominators
+  prerequisites:
   - id: equivalent-fractions
-    name: Equivalent Fractions
-    core: true
-    difficulty: 0.4
-    drill: false
-    answer_kind: expression
-    expected_time_secs: 70
-    prerequisites:
-      - id: fraction-basics
-        weight: 0.8
-        key: true
-      - id: multiplication
-        weight: 0.6
-    knowledge_points:
-      - id: kp1
-        name: Scale numerator and denominator together
-        key_prerequisites: [multiplication]
-        exemplars:
-          - problem: "Find the fraction equivalent to 2/3 with denominator 9."
-            answer: "6/9"
-          - problem: "Rewrite 1/2 with denominator 8."
-            answer: "4/8"
-      - id: kp2
-        name: Simplify to lowest terms
-        key_prerequisites: [division]
-        exemplars:
-          - problem: "Simplify 6/9."
-            answer: "2/3"
-          - problem: "Simplify 10/25."
-            answer: "2/5"
-    diagnostic_exemplar:
-      problem: "Write 3/4 as an equivalent fraction over 12."
-      answer: "9/12"
-
+    key: true
+    weight: 0.9
+  - id: addition
+    weight: 0.4
+- answer_kind: expression
+  core: true
+  diagnostic_exemplar:
+    answer: 1/6
+    problem: Compute 3/4 x 2/9.
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.45
+  drill: false
+  encompassings_extra:
   - id: adding-fractions
-    name: Adding Fractions with Unlike Denominators
-    core: true
-    difficulty: 0.5
-    drill: false
-    answer_kind: expression
-    expected_time_secs: 90
-    prerequisites:
-      - id: equivalent-fractions
-        weight: 0.9
-        key: true
-      - id: addition
-        weight: 0.4
-    knowledge_points:
-      - id: kp1
-        name: Common denominators via the LCM
-        key_prerequisites: [equivalent-fractions]
-        exemplars:
-          - problem: "Compute 1/4 + 1/6."
-            answer: "5/12"
-            solution_sketch: "LCM(4, 6) = 12; 3/12 + 2/12."
-          - problem: "Compute 1/2 + 1/3."
-            answer: "5/6"
-      - id: kp2
-        # multiplication is a key prerequisite TWO steps back
-        # (adding-fractions -> equivalent-fractions -> multiplication).
-        name: Sums greater than one
-        key_prerequisites: [multiplication]
-        exemplars:
-          - problem: "Compute 3/4 + 5/6."
-            answer: "19/12"
-          - problem: "Compute 2/3 + 3/4."
-            answer: "17/12"
-    diagnostic_exemplar:
-      problem: "Compute 2/3 + 1/4."
-      answer: "11/12"
-    anki_seeds:
-      - front: "To add fractions with unlike denominators, first..."
-        back: "rewrite each fraction over the LCM of the denominators"
-        type: basic
-      - front: "The LCM of 4 and 6 is {{c1::12}}."
-        back: "12"
-        type: cloze
-
+    weight: 0.3
+  expected_time_secs: 80
+  id: multiplying-fractions
+  knowledge_points:
+  - exemplars:
+    - answer: 8/15
+      problem: Compute 2/3 x 4/5.
+      solution_sketch: Work the statement directly; the answer is 8/15.
+    - answer: 3/14
+      problem: Compute 1/2 x 3/7.
+      solution_sketch: Work the statement directly; the answer is 3/14.
+    - answer: 8/15
+      problem: Compute 2/3 x 4/5. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - multiplication
+    name: Multiply numerators and denominators
+  - exemplars:
+    - answer: 3/4
+      problem: Express 3 x 1/4 as a single fraction.
+      solution_sketch: Work the statement directly; the answer is 3/4.
+    - answer: 4/5
+      problem: Compute 2 x 2/5.
+      solution_sketch: Work the statement directly; the answer is 4/5.
+    - answer: 3/4
+      problem: Express 3 x 1/4 as a single fraction. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp2
+    key_prerequisites:
+    - adding-fractions
+    name: Relate to repeated addition of fractions
+  name: Multiplying Fractions
+  prerequisites:
+  - id: fraction-basics
+    weight: 0.7
+  - id: multiplication
+    key: true
+    weight: 0.85
+- answer_kind: expression
+  core: true
+  diagnostic_exemplar:
+    answer: 3 2/5
+    problem: Write 17/5 as a mixed number.
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.5
+  drill: false
+  expected_time_secs: 85
+  id: mixed-numbers
+  knowledge_points:
+  - exemplars:
+    - answer: '3'
+      problem: Write 7/2 as a mixed number.
+      solution_sketch: Work the statement directly; the answer is 3 1/2.
+    - answer: '2'
+      problem: Write 11/4 as a mixed number.
+      solution_sketch: Work the statement directly; the answer is 2 3/4.
+    - answer: '3'
+      problem: Write 7/2 as a mixed number. (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - division
+    name: Convert improper fractions to mixed numbers
+  name: Mixed Numbers and Improper Fractions
+  prerequisites:
+  - id: adding-fractions
+    key: true
+    weight: 0.8
+  - id: division
+    weight: 0.5
+- answer_kind: numeric
+  core: true
+  diagnostic_exemplar:
+    answer: 13/20
+    problem: A tank is 2/5 full, then 1/4 more is added. What fraction is full now?
+    solution_sketch: Work the statement directly; the answer follows from the given
+      numbers.
+  difficulty: 0.6
+  drill: false
+  expected_time_secs: 120
+  id: fraction-word-problems
+  knowledge_points:
+  - exemplars:
+    - answer: 5/6
+      problem: A recipe needs 1/2 cup of sugar and 1/3 cup of brown sugar. How much
+        sugar in total?
+      solution_sketch: 1/2 + 1/3 = 5/6.
+    - answer: 11/8
+      problem: You walk 3/4 mile then 5/8 mile. What is the total distance?
+      solution_sketch: Work the statement directly; the answer is 11/8 miles.
+    - answer: 5/6
+      problem: A recipe needs 1/2 cup of sugar and 1/3 cup of brown sugar. How much
+        sugar in total? (variant 1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp1
+    key_prerequisites:
+    - adding-fractions
+    name: Translate a word problem into fraction operations
+  - exemplars:
+    - answer: '2'
+      problem: A board is 3 1/2 ft long. You cut off 3/4 ft. How much remains?
+      solution_sketch: Work the statement directly; the answer is 2 3/4 ft.
+    - answer: 8/3
+      problem: Each bag holds 2/3 kg. How much do 4 bags hold?
+      solution_sketch: Work the statement directly; the answer is 8/3 kg.
+    - answer: '2'
+      problem: A board is 3 1/2 ft long. You cut off 3/4 ft. How much remains? (variant
+        1)
+      solution_sketch: Same method as the first exemplar, with different numbers.
+    id: kp2
+    key_prerequisites:
+    - mixed-numbers
+    name: Multi-step problems involving mixed numbers
+  name: Fraction Word Problems
+  prerequisites:
+  - id: adding-fractions
+    weight: 0.6
   - id: multiplying-fractions
-    name: Multiplying Fractions
-    core: true
-    difficulty: 0.45
-    drill: false
-    answer_kind: expression
-    expected_time_secs: 80
-    prerequisites:
-      - id: fraction-basics
-        weight: 0.7
-      - id: multiplication
-        weight: 0.85
-        key: true
-    encompassings_extra:
-      # non-ancestor encompassing: doing multiplying-fractions implicitly
-      # exercises adding-fractions a little (they are siblings, not ancestors).
-      - id: adding-fractions
-        weight: 0.3
-    knowledge_points:
-      - id: kp1
-        name: Multiply numerators and denominators
-        key_prerequisites: [multiplication]
-        exemplars:
-          - problem: "Compute 2/3 x 4/5."
-            answer: "8/15"
-          - problem: "Compute 1/2 x 3/7."
-            answer: "3/14"
-      - id: kp2
-        # adding-fractions is NOT an ancestor; this key prerequisite is licensed
-        # only by the encompassings_extra edge above.
-        name: Relate to repeated addition of fractions
-        key_prerequisites: [adding-fractions]
-        exemplars:
-          - problem: "Express 3 x 1/4 as a single fraction."
-            answer: "3/4"
-          - problem: "Compute 2 x 2/5."
-            answer: "4/5"
-    diagnostic_exemplar:
-      problem: "Compute 3/4 x 2/9."
-      answer: "1/6"
-
+    weight: 0.6
   - id: mixed-numbers
-    name: Mixed Numbers and Improper Fractions
-    core: true
-    difficulty: 0.5
-    drill: false
-    answer_kind: expression
-    expected_time_secs: 85
-    prerequisites:
-      - id: adding-fractions
-        weight: 0.8
-        key: true
-      - id: division
-        weight: 0.5
-    knowledge_points:
-      - id: kp1
-        name: Convert improper fractions to mixed numbers
-        key_prerequisites: [division]
-        exemplars:
-          - problem: "Write 7/2 as a mixed number."
-            answer: "3 1/2"
-          - problem: "Write 11/4 as a mixed number."
-            answer: "2 3/4"
-    diagnostic_exemplar:
-      problem: "Write 17/5 as a mixed number."
-      answer: "3 2/5"
-
-  - id: fraction-word-problems
-    name: Fraction Word Problems
-    core: true
-    difficulty: 0.6
-    drill: false
-    answer_kind: multi-step
-    expected_time_secs: 120
-    prerequisites:
-      - id: adding-fractions
-        weight: 0.6
-      - id: multiplying-fractions
-        weight: 0.6
-      - id: mixed-numbers
-        weight: 0.7
-        key: true
-    knowledge_points:
-      - id: kp1
-        name: Translate a word problem into fraction operations
-        key_prerequisites: [adding-fractions]
-        exemplars:
-          - problem: "A recipe needs 1/2 cup of sugar and 1/3 cup of brown sugar. How much sugar in total?"
-            answer: "5/6 cup"
-            solution_sketch: "1/2 + 1/3 = 5/6."
-          - problem: "You walk 3/4 mile then 5/8 mile. What is the total distance?"
-            answer: "11/8 miles"
-      - id: kp2
-        name: Multi-step problems involving mixed numbers
-        key_prerequisites: [mixed-numbers]
-        exemplars:
-          - problem: "A board is 3 1/2 ft long. You cut off 3/4 ft. How much remains?"
-            answer: "2 3/4 ft"
-          - problem: "Each bag holds 2/3 kg. How much do 4 bags hold?"
-            answer: "8/3 kg"
-    diagnostic_exemplar:
-      problem: "A tank is 2/5 full, then 1/4 more is added. What fraction is full now?"
-      answer: "13/20"
+    key: true
+    weight: 0.7
+unit: fractions
