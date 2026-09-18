@@ -40,7 +40,29 @@ fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract)
         AnswerContract::Tolerance { tolerance } => {
             absolute_tolerance(expected, &learner, tolerance)
         }
-        _ => decided(same_answer(expected, &learner)),
+        AnswerContract::Exact
+        | AnswerContract::Unit { .. }
+        | AnswerContract::QuotientRemainder { .. }
+        | AnswerContract::Coordinates { .. }
+        | AnswerContract::Set
+        | AnswerContract::RequiredForm { .. } => decided(same_answer(expected, &learner)),
+        AnswerContract::RequiredAssignment
+        | AnswerContract::Label { .. }
+        | AnswerContract::Multipart { .. }
+        | AnswerContract::List { .. }
+        | AnswerContract::Matrix { .. }
+        | AnswerContract::InequalityUnion
+        | AnswerContract::RequiredInequalityNotation
+        | AnswerContract::RequiredSinglePower
+        | AnswerContract::RequiredNormalizedScientificNotation
+        | AnswerContract::RequiredSimplestRadical
+        | AnswerContract::ReducedRatio
+        | AnswerContract::AscendingChain
+        | AnswerContract::PolynomialRelation
+        | AnswerContract::RelationSetup
+        | AnswerContract::None => {
+            unreachable!("the structured contracts decide before the learner answer canonicalizes")
+        }
     }
 }
 
@@ -91,11 +113,37 @@ fn structured_contract(
             expected,
             super::notation::recognizes_chain(learner),
         ),
+        AnswerContract::Matrix { rows, cols } => matrix(expected, *rows, *cols, learner),
         AnswerContract::PolynomialRelation => parsed(super::relation::read(learner), expected),
         AnswerContract::RelationSetup => parsed(super::setup::read(learner), expected),
-        _ => return None,
+        AnswerContract::Exact
+        | AnswerContract::Approx { .. }
+        | AnswerContract::Tolerance { .. }
+        | AnswerContract::Unit { .. }
+        | AnswerContract::QuotientRemainder { .. }
+        | AnswerContract::Coordinates { .. }
+        | AnswerContract::Set
+        | AnswerContract::RequiredForm { .. }
+        | AnswerContract::None => return None,
     };
     Some(outcome)
+}
+
+/// Grade a matrix: the shape decides wrong, the entries compare exactly.
+fn matrix(expected: &Canon, rows: u8, cols: u8, learner: &str) -> Outcome {
+    let parsed = match super::structured::matrix_rows(learner) {
+        Ok(parsed) => parsed,
+        Err(reason) => return Outcome::Undecidable(reason),
+    };
+    let shaped = parsed.len() == usize::from(rows)
+        && parsed.iter().all(|row| row.len() == usize::from(cols));
+    if !shaped {
+        return decided(false);
+    }
+    match super::structured::matrix_value(rows, cols, learner) {
+        Ok(value) => decided(same_answer(expected, &value)),
+        Err(reason) => Outcome::Undecidable(reason),
+    }
 }
 
 fn required_assignment(expected: &str, learner: &str) -> Outcome {
@@ -196,5 +244,304 @@ fn approximate(expected: &Canon, learner: &Canon, decimals: u8) -> Outcome {
             Outcome::Undecidable(Undecidable::new("the answer contract requires a number"))
         }
         Rounding::Refused(reason) => Outcome::Undecidable(Undecidable::new(reason)),
+    }
+}
+
+/// Whether a contract grades deterministically or needs a teacher.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TriageVerdict {
+    /// The deterministic grader decides the answer.
+    Grades,
+    /// The contract claims no deterministic verdict, so a teacher grades it.
+    TeachOnly,
+}
+
+/// The one triage rule over the whole contract enum, with no fallback.
+///
+/// Every variant the grader decides is [`TriageVerdict::Grades`]; only
+/// [`AnswerContract::None`] is [`TriageVerdict::TeachOnly`] (V2, A3). The match
+/// names every variant, so a new contract cannot merge into the pool until it
+/// states its own triage.
+#[must_use]
+pub fn triage_verdict(contract: &AnswerContract) -> TriageVerdict {
+    match contract {
+        AnswerContract::None => TriageVerdict::TeachOnly,
+        AnswerContract::Exact
+        | AnswerContract::RequiredAssignment
+        | AnswerContract::Approx { .. }
+        | AnswerContract::Tolerance { .. }
+        | AnswerContract::Unit { .. }
+        | AnswerContract::QuotientRemainder { .. }
+        | AnswerContract::Coordinates { .. }
+        | AnswerContract::Matrix { .. }
+        | AnswerContract::Set
+        | AnswerContract::RequiredForm { .. }
+        | AnswerContract::List { .. }
+        | AnswerContract::InequalityUnion
+        | AnswerContract::RequiredInequalityNotation
+        | AnswerContract::RequiredSinglePower
+        | AnswerContract::RequiredNormalizedScientificNotation
+        | AnswerContract::RequiredSimplestRadical
+        | AnswerContract::ReducedRatio
+        | AnswerContract::AscendingChain
+        | AnswerContract::PolynomialRelation
+        | AnswerContract::RelationSetup
+        | AnswerContract::Label { .. }
+        | AnswerContract::Multipart { .. } => TriageVerdict::Grades,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::super::NumericForm;
+    use super::*;
+    use crate::answer::Quantity;
+
+    /// Every `Grades` contract decides one authored answer and refuses its
+    /// mutation (a `+1` component, a changed label, or a changed form).
+    #[test]
+    fn every_grading_contract_decides_one_correct_and_one_mutated_answer() {
+        let cases: Vec<(AnswerContract, &str, &str, &str)> = vec![
+            (AnswerContract::Exact, "1/2", "0.5", "1/3"),
+            (AnswerContract::RequiredAssignment, "y = 3", "y=3", "y = 4"),
+            (
+                AnswerContract::Approx { decimals: 2 },
+                "sqrt(2)",
+                "1.41",
+                "1.42",
+            ),
+            (
+                AnswerContract::Tolerance {
+                    tolerance: "1/100".into(),
+                },
+                "1",
+                "1.01",
+                "1.1",
+            ),
+            (
+                AnswerContract::Unit {
+                    quantity: Quantity::Volume,
+                    unit: "L".into(),
+                },
+                "4.2 L",
+                "4200 ml",
+                "4.3 L",
+            ),
+            (
+                AnswerContract::QuotientRemainder { divisor: Some(3) },
+                "9 R2",
+                "9 remainder 2",
+                "(9, 3)",
+            ),
+            (
+                AnswerContract::Coordinates { arity: 2 },
+                "(1,2)",
+                "(1, 2)",
+                "(2, 1)",
+            ),
+            (
+                AnswerContract::Matrix { rows: 2, cols: 2 },
+                "[[1,2],[3,4]]",
+                "[1,2;3,4]",
+                "[[1,2],[4,3]]",
+            ),
+            (AnswerContract::Set, "{2,4,6}", "{6,2,4}", "{2,4}"),
+            (
+                AnswerContract::RequiredForm {
+                    form: NumericForm::ReducedFraction,
+                },
+                "1/2",
+                "\\frac{1}{2}",
+                "2/4",
+            ),
+            (
+                AnswerContract::List {
+                    ordered: true,
+                    member: Box::new(AnswerContract::Exact),
+                },
+                "1, 2, 3",
+                "1, 2, 3",
+                "1, 3, 2",
+            ),
+            (
+                AnswerContract::InequalityUnion,
+                "x < 2 or x > 3",
+                "3 < x or 2 > x",
+                "x < 2",
+            ),
+            (
+                AnswerContract::RequiredInequalityNotation,
+                "x < 2 or x > 3",
+                "2 > x or 3 < x",
+                "x <= 2 or x > 3",
+            ),
+            (AnswerContract::RequiredSinglePower, "2^(3)", "2^(3)", "8"),
+            (
+                AnswerContract::RequiredNormalizedScientificNotation,
+                "6 x 10^7",
+                "6 x 10^7",
+                "60000000",
+            ),
+            (
+                AnswerContract::RequiredSimplestRadical,
+                "2*sqrt(3)",
+                "2*sqrt(3)",
+                "3*sqrt(2)",
+            ),
+            (AnswerContract::ReducedRatio, "3:4", "3:4", "3:5"),
+            (
+                AnswerContract::AscendingChain,
+                "-3 < 0 < 2",
+                "-6/2 < 0 < 4/2",
+                "-3 < 2 < 0",
+            ),
+            (
+                AnswerContract::PolynomialRelation,
+                "x^2 - 1 = 0",
+                "0 = x^2 - 1",
+                "x^2 - 2 = 0",
+            ),
+            (
+                AnswerContract::RelationSetup,
+                "2x + 3 = 11",
+                "3 + 2x = 11",
+                "2x + 4 = 11",
+            ),
+            (
+                AnswerContract::Label {
+                    options: vec![
+                        vec!["yes".into(), "true".into()],
+                        vec!["no".into(), "false".into()],
+                    ],
+                },
+                "yes",
+                " TRUE ",
+                "no",
+            ),
+            (
+                AnswerContract::Multipart {
+                    parts: vec![
+                        crate::answer::AnswerPart {
+                            name: "x".into(),
+                            contract: AnswerContract::Exact,
+                        },
+                        crate::answer::AnswerPart {
+                            name: "estimate".into(),
+                            contract: AnswerContract::Approx { decimals: 2 },
+                        },
+                    ],
+                },
+                "x = 2; estimate = 1/3",
+                "estimate=0.33; x=4/2",
+                "x=2; estimate=0.34",
+            ),
+        ];
+        for (contract, expected, correct, mutated) in cases {
+            assert!(
+                triage_verdict(&contract) == TriageVerdict::Grades,
+                "{contract:?} must grade"
+            );
+            grades(expected, correct, &contract, true);
+            grades(expected, mutated, &contract, false);
+        }
+    }
+
+    #[test]
+    fn matrix_grades_dimensions_entries_and_refuses_unparseable_input() {
+        let policy = AnswerContract::Matrix { rows: 2, cols: 2 };
+        for learner in ["[[1, 2], [3, 4]]", "[[1.0,2],[3,4]]", "[1,2;3,4]"] {
+            grades("[[1,2],[3,4]]", learner, &policy, true);
+        }
+        // Wrong dimensions are decided wrong, never undecidable.
+        for learner in ["[[1,2],[3,4],[5,6]]", "[[1,2,3],[4,5,6]]", "[[1,2]]"] {
+            grades("[[1,2],[3,4]]", learner, &policy, false);
+        }
+        grades("[[1,2],[3,4]]", "[[1,2],[3,5]]", &policy, false);
+        // A malformed matrix or a non-numeric entry gives no verdict, and the
+        // refusal names the expected shape.
+        for learner in ["[1,2;3", "1,2;3,4", "[[1,2],[3,4]"] {
+            assert!(
+                matches!(
+                    check_contract("[[1,2],[3,4]]", learner, policy.clone()),
+                    Outcome::Undecidable(reason) if reason.reason.contains("matrix")
+                ),
+                "{learner:?} must refuse with a matrix reason"
+            );
+        }
+        assert!(matches!(
+            check_contract("[[1,2],[3,4]]", "[[1,2],[x,4]]", policy.clone()),
+            Outcome::Undecidable(_)
+        ));
+        assert!(
+            serde_json::to_string(&policy).unwrap() == r#"{"kind":"matrix","rows":2,"cols":2}"#
+        );
+        assert!(
+            serde_json::from_str::<AnswerContract>(r#"{"kind":"matrix","rows":0,"cols":2}"#)
+                .is_err()
+        );
+        assert!(policy.validate_expected("[[1,2],[3]]").is_err());
+    }
+
+    #[test]
+    fn triage_names_every_grading_contract_and_only_none_teaches() {
+        assert_eq!(
+            triage_verdict(&AnswerContract::None),
+            TriageVerdict::TeachOnly
+        );
+        let graded = [
+            AnswerContract::Exact,
+            AnswerContract::RequiredAssignment,
+            AnswerContract::Approx { decimals: 1 },
+            AnswerContract::Tolerance {
+                tolerance: "1/2".into(),
+            },
+            AnswerContract::Unit {
+                quantity: Quantity::Length,
+                unit: "m".into(),
+            },
+            AnswerContract::QuotientRemainder { divisor: None },
+            AnswerContract::Coordinates { arity: 2 },
+            AnswerContract::Matrix { rows: 1, cols: 1 },
+            AnswerContract::Set,
+            AnswerContract::RequiredForm {
+                form: NumericForm::Integer,
+            },
+            AnswerContract::List {
+                ordered: false,
+                member: Box::new(AnswerContract::Exact),
+            },
+            AnswerContract::InequalityUnion,
+            AnswerContract::RequiredInequalityNotation,
+            AnswerContract::RequiredSinglePower,
+            AnswerContract::RequiredNormalizedScientificNotation,
+            AnswerContract::RequiredSimplestRadical,
+            AnswerContract::ReducedRatio,
+            AnswerContract::AscendingChain,
+            AnswerContract::PolynomialRelation,
+            AnswerContract::RelationSetup,
+            AnswerContract::Label {
+                options: vec![vec!["yes".into()]],
+            },
+            AnswerContract::Multipart {
+                parts: vec![crate::answer::AnswerPart {
+                    name: "x".into(),
+                    contract: AnswerContract::Exact,
+                }],
+            },
+        ];
+        assert_eq!(graded.len(), 22);
+        for contract in graded {
+            assert_eq!(triage_verdict(&contract), TriageVerdict::Grades);
+        }
+    }
+
+    fn grades(expected: &str, learner: &str, contract: &AnswerContract, correct: bool) {
+        assert!(
+            matches!(
+                check_contract(expected, learner, contract.clone()),
+                Outcome::Decided(verdict) if verdict.correct == correct
+            ),
+            "{contract:?}: {expected:?} vs {learner:?}"
+        );
     }
 }
