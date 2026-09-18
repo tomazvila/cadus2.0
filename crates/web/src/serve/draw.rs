@@ -1,7 +1,23 @@
 //! The pool draw with the A6 exemplar fallback, and the authored solution
 //! sketch of the drawn row (A4, D-M5-3).
+//!
+//! # The self-check exemplars (tier 2)
+//!
+//! An exemplar whose authored answer has no deterministic assessment — an
+//! explicit `kind: none` contract, or a missing contract whose answer leaves
+//! the decidable grammar (V2) — is refused by [`ExemplarSource::fill`] and
+//! would leave its knowledge point dark (`409 pool_unavailable`). The tier-2
+//! courses author much of their practice that way, so [`exemplar_rows`] also
+//! builds a SELF-CHECK pool row for every such exemplar: the row records the
+//! `none` contract, the serve shows the worked solution plainly, and the grade
+//! path refuses every verdict for it (D-F1). A deterministic wrong can never
+//! fire for one.
 
 use super::*;
+
+use cadus_core::answer::AnswerContract;
+use cadus_core::curriculum::Exemplar;
+use cadus_core::pool::{POOL_ROW_VERSION, PoolAnswer, PoolProblem};
 
 /// Take one instance out of the pool, and fall back to the exemplars (A6).
 ///
@@ -122,7 +138,7 @@ pub(super) fn exemplar_rows(graph: &Curriculum, target: &Target) -> Vec<NewInsta
     let source = ExemplarSource::new(&target.key, &kp.exemplars);
     // The seed changes nothing for an exemplar list: the rotation is author
     // order and no draw runs.
-    match source.fill(&target.key, source.len(), 0) {
+    let mut rows: Vec<NewInstance> = match source.fill(&target.key, source.len(), 0) {
         Ok(batch) => batch
             .instances()
             .iter()
@@ -132,10 +148,58 @@ pub(super) fn exemplar_rows(graph: &Curriculum, target: &Target) -> Vec<NewInsta
             tracing::warn!(
                 kp_id = %target.key,
                 error = %reason,
-                "serve: the A6 exemplar fallback built no instance"
+                "serve: the A6 exemplar fallback built no decidable instance"
             );
             Vec::new()
         }
+    };
+    // The teach-only exemplars join the batch as self-check rows, so a
+    // knowledge point whose whole list is teach-only serves its worked
+    // solutions instead of dying on `pool_unavailable` (tier 2).
+    rows.extend(kp.exemplars.iter().filter_map(|exemplar| {
+        self_check_contract(exemplar).map(|contract| self_check_row(exemplar, contract))
+    }));
+    rows
+}
+
+/// The teach-only contract of one exemplar, when it has no decidable answer.
+///
+/// An explicit `kind: none` contract is authored teach-only by definition. A
+/// MISSING contract whose answer leaves the decidable grammar (V2) is one too:
+/// the checker has no verdict for the item, so it is a self-check and not a
+/// graded drill. A missing contract whose answer still decides keeps the
+/// legacy semantics — the checker grades it (C4, model.rs).
+fn self_check_contract(exemplar: &Exemplar) -> Option<AnswerContract> {
+    match &exemplar.answer_contract {
+        Some(AnswerContract::None) => Some(AnswerContract::None),
+        Some(_) => None,
+        None if exemplar.canonical_answer().is_err() => Some(AnswerContract::None),
+        None => None,
+    }
+}
+
+/// The self-check pool row of one teach-only exemplar.
+///
+/// The row records the `none` contract, so the grade path refuses every
+/// verdict for it before it reads the answer pair (`check_contract` →
+/// Undecidable, D-F1), and no deterministic wrong can ever fire.
+fn self_check_row(exemplar: &Exemplar, contract: AnswerContract) -> NewInstance {
+    NewInstance {
+        source: Source::Exemplar,
+        content_digest: None,
+        generation_context: None,
+        problem: PoolProblem {
+            v: POOL_ROW_VERSION,
+            text: exemplar.problem.clone(),
+            bindings: BTreeMap::new(),
+            seed: 0,
+        },
+        expected_answer: PoolAnswer {
+            v: POOL_ROW_VERSION,
+            answer_contract: Some(contract),
+            answer: exemplar.answer.clone(),
+        },
+        instance_hash: problem_text_hash(&exemplar.problem),
     }
 }
 
@@ -156,7 +220,13 @@ pub(super) fn answer_of(
                 .find(|item| item.problem == row.problem.text && item.answer == answer.answer)
         })
     {
-        answer.answer_contract = exemplar.answer_contract.clone();
+        // An explicit authored contract wins; a missing contract on an
+        // undecidable answer is the teach-only policy the row must carry, so
+        // the grade path never decides a verdict for the item.
+        answer.answer_contract = exemplar
+            .answer_contract
+            .clone()
+            .or_else(|| self_check_contract(exemplar));
     }
     answer
 }
@@ -367,14 +437,46 @@ mod tests {
     }
 
     #[test]
-    fn the_exemplar_rows_skip_an_undecidable_list_and_an_unknown_point() {
+    fn the_exemplar_rows_serve_an_undecidable_list_as_self_check_rows() {
         let undecidable = arena(&[topic_doc("words", &[("kp1", &["many", "few"])])]);
-        assert!(exemplar_rows(&undecidable, &target("words", "kp1")).is_empty());
+        let rows = exemplar_rows(&undecidable, &target("words", "kp1"));
+        // The tier-2 change: an exemplar list the checker cannot decide is no
+        // longer a dark knowledge point. Every exemplar becomes a self-check
+        // row that records the `none` contract, so the grade path refuses
+        // every verdict for it and no deterministic wrong can fire.
+        assert_eq!(rows.len(), 2);
+        assert!(rows.iter().all(|row| row.source == Source::Exemplar));
+        assert!(
+            rows.iter()
+                .all(|row| row.expected_answer.answer_contract == Some(AnswerContract::None))
+        );
+        assert!(rows.iter().all(|row| row.content_digest.is_none()));
         assert!(exemplar_rows(&graph(), &target("addition", "kp9")).is_empty());
         assert!(exemplar_rows(&graph(), &target("empty", "kp1")).is_empty());
         // A topic the arena does not hold gives no authored knowledge point.
         assert!(exemplar_rows(&graph(), &target("nowhere", "kp1")).is_empty());
         assert_eq!(exemplar_rows(&graph(), &target("addition", "kp1")).len(), 1);
+    }
+
+    /// An exemplar with an explicit contract keeps it; a missing contract on a
+    /// decidable answer keeps the legacy grading; only the undecidable answers
+    /// and the explicit `none` take the self-check policy.
+    #[test]
+    fn the_self_check_policy_follows_the_authored_contract() {
+        let mut declared = Exemplar {
+            answer_contract: Some(AnswerContract::Exact),
+            problem: "Give 7.".to_owned(),
+            answer: "7".to_owned(),
+            solution_sketch: Some("Count to 7.".to_owned()),
+        };
+        declared.answer_contract = Some(AnswerContract::None);
+        assert_eq!(self_check_contract(&declared), Some(AnswerContract::None));
+        declared.answer_contract = Some(AnswerContract::Exact);
+        assert_eq!(self_check_contract(&declared), None);
+        declared.answer_contract = None;
+        assert_eq!(self_check_contract(&declared), None);
+        declared.answer = "many".to_owned();
+        assert_eq!(self_check_contract(&declared), Some(AnswerContract::None));
     }
 
     #[test]

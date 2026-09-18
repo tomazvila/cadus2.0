@@ -3,6 +3,8 @@
 
 use super::*;
 
+use cadus_core::answer::AnswerContract;
+
 /// Whole seconds from `started_at` to `now`, never below zero.
 ///
 /// A clock that reads backwards gives the learner time the quiz never had, so a
@@ -142,6 +144,17 @@ pub(super) fn serve_payload(
     }
     if let Some(elapsed) = quiz_elapsed_secs {
         payload["quiz_elapsed_secs"] = json!(elapsed);
+    }
+    // A SELF-CHECK item (contract `none`, the tier-2 exemplar path) carries no
+    // deterministic verdict at all, so the serve shows the worked solution
+    // plainly: the learner reads the sketch and checks their own answer (the
+    // attempt still grades UNGRADED — no verdict, no mastery credit). A graded
+    // item reveals nothing here (Hard Rule 1): its solution waits for the
+    // grade reply after the attempt commits.
+    if served.expected.answer_contract == Some(AnswerContract::None)
+        && let Some(solution) = served.solution_sketch.as_deref()
+    {
+        payload["solution"] = json!(solution);
     }
     let visuals = visuals_of(graph, served, &served.problem_id);
     if !visuals.is_empty() {
