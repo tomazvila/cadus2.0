@@ -1,6 +1,6 @@
 //! The pure grade (spec section 5): the tier, the assisted rule, and the clock.
 
-use cadus_core::answer::{Ast, parse};
+use cadus_core::answer::{Ast, Canon, canonical_form, parse};
 
 use super::*;
 
@@ -90,14 +90,15 @@ fn grade_outcome(expected: &str, answer: &str, outcome: Outcome) -> Grade {
     }
 }
 
-/// The learner-facing wording of a refusal that only names a grammar production.
+/// The learner-facing wording of a refusal.
 ///
 /// A refusal reason names the production that fired, which tells the learner
 /// nothing about the FORM to type (the ISSUE-2 ruling: the refusal must teach
-/// the format, not the maths). The unit refusals, the trailing-text refusal,
-/// and the name refusal (a word like `units` beside the value, ISSUE-13) are
-/// the ones a mathematically correct answer can hit, so each gets actionable
-/// guidance; every other reason stands as the checker wrote it.
+/// the format, not the maths). Every reason a learner answer can reach maps to
+/// a prompt that names the expected format; the unit refusals, the trailing-text
+/// refusal, and the name refusal (a word like `units` beside the value,
+/// ISSUE-13) were the first ones, and C5 covered the rest. No arm ever names
+/// the expected value itself (Hard Rule 1).
 fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
     match reason {
         "a unit is missing" => missing_unit_guidance(expected),
@@ -114,7 +115,7 @@ fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
             "A unit cannot sit inside an expression. Enter the unit only on the final answer, by itself."
                 .to_string()
         }
-        "trailing text after the answer" => {
+        "trailing text after the answer" | "a disjunction branch has trailing text" => {
             if answer.contains('=') && !expected.contains('=') {
                 "Enter only the final expression, without an equals sign. Put your steps in Show working."
                     .to_string()
@@ -123,8 +124,235 @@ fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
                     .to_string()
             }
         }
-        other => other.to_string(),
+        // C5: the rest of the runtime refusals, each with the format to type.
+        "the answer is longer than the input cap" => format!(
+            "The answer is too long \u{2014} keep it under {MAX_ANSWER_CHARS} characters."
+        ),
+        "the answer kind is not decidable" => {
+            "Enter the final answer as one number or expression, for example 12. Put the steps in Show working."
+                .to_string()
+        }
+        "a character outside the grammar"
+        | "the answer ends where a value belongs"
+        | "a symbol where a value belongs"
+        | "the answer is empty" => unreadable_guidance(expected),
+        "a function name with no argument" => {
+            "Write the function with its value in brackets, for example sin(30).".to_string()
+        }
+        "a root with no argument" => {
+            "Write the root with its value in brackets, for example sqrt(2).".to_string()
+        }
+        "a number with two points" | "a point with no digit after it" => {
+            "Write the decimal with one point and a digit on each side of it, for example 1.5."
+                .to_string()
+        }
+        "two numbers stand side by side" => {
+            "I could not read two numbers side by side. Write one value \u{2014} a fraction as a/b, or a product with a times sign, for example 3*4."
+                .to_string()
+        }
+        "two percent signs on one number" => {
+            "Write the percent sign once, for example 25%.".to_string()
+        }
+        "a unit outside the table" => {
+            "I do not know that unit. Write the unit the standard way, for example cm, kg, or s."
+                .to_string()
+        }
+        "an interval that has no two ends" => {
+            "Write the interval with both of its ends, for example [1, 5].".to_string()
+        }
+        "an inequality between two variables" | "an inequality with no bare variable" => {
+            "Write the inequality with one unknown and one number, for example x < 3.".to_string()
+        }
+        "a division by zero" | "a fraction with a zero denominator"
+        | "a quotient with a zero divisor" => {
+            "A fraction cannot have zero in the denominator. Write the fraction as a/b with a nonzero b."
+                .to_string()
+        }
+        "arithmetic on a collection" => {
+            "Enter the final value itself \u{2014} one number, for example 12 \u{2014} rather than arithmetic on a list or set."
+                .to_string()
+        }
+        "arithmetic on a labeled value" => {
+            "Enter the value alone, without a label like x =. Put any working in Show working."
+                .to_string()
+        }
+        "arithmetic on a quantity" | "a quantity whose value is not a number" => {
+            "Do the arithmetic in plain numbers, and put the unit only on the final answer, for example 42 rather than 40 + 2 cm."
+                .to_string()
+        }
+        "a zero base with a non-positive exponent" => {
+            "A power needs a nonzero base, for example 2^3.".to_string()
+        }
+        "a set against a list" | "a set against a tuple" => set_shape_guidance(expected),
+        "each named answer part must occur exactly once" => multipart_guidance(expected),
+        "a matrix must be written as bracketed rows of entries"
+        | "a matrix row requires comma-separated entries"
+        | "a matrix entry must be an exact rational or decimal"
+        | "a matrix answer requires the expected count of rows and entries per row" => {
+            "Write the answer as a matrix \u{2014} bracketed rows of entries inside one pair of brackets, for example [[1,2],[3,4]]."
+                .to_string()
+        }
+        "a list requires one to 32 complete members" => {
+            "Write the list as values separated by commas, for example 1, 2, 3.".to_string()
+        }
+        "a reduced ratio requires two coprime positive integers separated by one colon" => {
+            "Write the ratio as two whole numbers with a colon, for example 3:4, in lowest terms."
+                .to_string()
+        }
+        "an ascending chain requires two to 16 strictly increasing rational values" => {
+            "Write the values in increasing order joined by <, for example -3 < 0 < 2."
+                .to_string()
+        }
+        "an inequality union requires one unknown and at most 16 rational intervals" => {
+            "Write the answer for one unknown, with the pieces joined by or, for example x < 2 or x > 3."
+                .to_string()
+        }
+        "a required single power needs one reduced numeric literal base" => {
+            "Write the answer as one power of a whole number, for example 2^3.".to_string()
+        }
+        "normalized scientific notation needs one decimal coefficient with magnitude in [1, 10) times 10 to an integer power" => {
+            "Write the answer in scientific notation \u{2014} a number from 1 up to 10 times a power of 10, for example 6.2 x 10^7."
+                .to_string()
+        }
+        "a required simplest radical needs a reduced rational times one squarefree integer root" => {
+            "Write the answer as a whole or fractional number times one simplified square root, for example 2*sqrt(3)."
+                .to_string()
+        }
+        "a polynomial relation requires two polynomial expressions and one comparison" => {
+            "Write one polynomial expression on each side of =, <, or >, for example x^2 - 1 = 0."
+                .to_string()
+        }
+        "a relation setup requires one symbolic left side and one exact numeric right side" => {
+            "Write the unknown on the left and one number on the right, for example 2x + 3 = 11."
+                .to_string()
+        }
+        "the answer contract requires a number" => {
+            "Enter the answer as one number, for example 1.5.".to_string()
+        }
+        other => bucket_guidance(expected, other),
     }
+}
+
+/// The wording of the reasons that carry no arm of their own.
+///
+/// Three buckets cover the remainder. An answer that outruns a bound of the
+/// grammar reads as too much to mark; a reason that names an authored or
+/// contract fault is honest that the problem itself may be at fault; whatever
+/// is left gets the same unreadable-answer prompt as a stray character.
+fn bucket_guidance(expected: &str, reason: &str) -> String {
+    if reason.contains("bound")
+        || reason.contains("deeply")
+        || reason.contains("tower")
+        || reason.contains("exceeds")
+        || reason.contains("past the")
+        || reason.contains("outside the")
+    {
+        return "That answer is more than the checker can read at once. Simplify it, and enter one short final value \u{2014} a number or a compact power, for example 2^8."
+            .to_string();
+    }
+    if reason.contains("authored")
+        || reason.contains("contract")
+        || reason.contains("tolerance")
+        || reason.contains("choice")
+        || reason.contains("aliases")
+        || reason.contains("part names")
+        || reason.contains("multipart")
+        || reason.contains("label")
+        || reason.contains("coordinates require")
+        || reason.contains("quotient contract")
+        || reason.contains("item has no deterministic")
+    {
+        return "This answer could not be marked automatically, and the problem itself may be at fault. Re-enter it as one simple value \u{2014} a number or a short expression \u{2014} and if it still reads as not marked, your teacher will look at it."
+            .to_string();
+    }
+    unreadable_guidance(expected)
+}
+
+/// The guidance of an answer the grammar could not read at all.
+///
+/// The authored answer names the format to type: a terminating decimal asks
+/// for its decimal form, any other fraction asks for `a/b`, and everything
+/// else for plain numbers and the arithmetic symbols. No example ever carries
+/// the authored value (Hard Rule 1).
+fn unreadable_guidance(expected: &str) -> String {
+    let reduced = match canonical_form(expected) {
+        Ok(Canon::Rational(value)) if !value.is_integer() => Some(value.to_string()),
+        _ => None,
+    };
+    if let Some(reduced) = reduced {
+        return if terminating_decimal(&reduced) {
+            "I could not read that. Write the answer as a decimal, for example 1.5.".to_string()
+        } else {
+            "I could not read that. Write the fraction as a/b \u{2014} two whole numbers with a slash between them, for example 3/4."
+                .to_string()
+        };
+    }
+    "I could not read that. Enter one value with plain numbers and the symbols + \u{2212} * / ( ) ^, for example (3 + 4)/2."
+        .to_string()
+}
+
+/// Whether a reduced fraction in its `a/b` text form has a terminating decimal
+/// spelling: a denominator of only 2s and 5s is a power of ten in disguise, so
+/// the value has one exact decimal form; any other prime keeps the value in
+/// its fraction form. A denominator past `u128` is far beyond the grammar's
+/// size bound, and reads as non-terminating.
+fn terminating_decimal(reduced: &str) -> bool {
+    let Some((_, denominator)) = reduced.split_once('/') else {
+        return true; // an integer is its own decimal
+    };
+    let Ok(mut rest) = denominator.parse::<u128>() else {
+        return false;
+    };
+    for prime in [2, 5] {
+        while rest % prime == 0 {
+            rest /= prime;
+        }
+    }
+    rest == 1
+}
+
+/// The guidance of a shape gap between a set and an ordered collection.
+///
+/// The authored shape owns the wording: the learner wrote the other one, so the
+/// prompt names the shape to type, with an example in the same notation.
+fn set_shape_guidance(expected: &str) -> String {
+    match canonical_form(expected) {
+        Ok(Canon::Set(_)) => {
+            "The answer is an unordered set, so write it in braces, like {1, 2, 3}.".to_string()
+        }
+        Ok(Canon::List(_)) => {
+            "The answer is an ordered list, so write it in brackets, like [1, 2, 3].".to_string()
+        }
+        Ok(Canon::Tuple(_)) => {
+            "The answer is one ordered group, so write it in parentheses, like (1, 2)."
+                .to_string()
+        }
+        _ => {
+            "Write the answer all in one shape \u{2014} braces for a set like {1, 2}, brackets for a list like [1, 2], or parentheses for a pair like (1, 2)."
+                .to_string()
+        }
+    }
+}
+
+/// The guidance of a multipart answer whose named parts did not read once each.
+///
+/// The part NAMES come out of the authored answer; the example values are
+/// placeholders, so the reply never names an expected value (Hard Rule 1).
+fn multipart_guidance(expected: &str) -> String {
+    let names: Vec<&str> = expected
+        .split(';')
+        .filter_map(|field| field.split_once('=').map(|(name, _)| name.trim()))
+        .collect();
+    if names.is_empty() {
+        return "Answer each named part once, separated by semicolons \u{2014} for example x = 3; y = 4."
+            .to_string();
+    }
+    let example = names
+        .iter()
+        .map(|name| format!("{name} = \u{2026}"))
+        .collect::<Vec<_>>()
+        .join("; ");
+    format!("Answer each named part once, separated by semicolons \u{2014} for example {example}.")
 }
 
 /// The guidance of an answer that left the unit off a measured value.
@@ -268,6 +496,8 @@ pub(super) fn round2(value: f64) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cadus_core::answer::AnswerContract;
+    use cadus_core::pool::PoolAnswer;
 
     /// One Unix microsecond instant, 4,000 seconds after `started_at` 0.
     const LATER_US: i64 = 4_000_000_000;
@@ -424,5 +654,186 @@ mod tests {
         let grade = deterministic_grade("6/5", "1 1/5", AnswerKind::Numeric);
         assert!(grade.correct);
         assert!(matches!(grade.outcome, AttemptOutcome::Correct));
+    }
+
+    // C5: every remaining Undecidable reason teaches the expected format.
+
+    /// The input cap reads as a length limit with the number in it.
+    #[test]
+    fn the_input_cap_refusal_names_the_limit() {
+        let grade = deterministic_grade("13.5", &"1".repeat(4_001), AnswerKind::Numeric);
+        assert!(matches!(grade.outcome, AttemptOutcome::Ungraded { .. }));
+        assert_eq!(
+            grade.outcome.reason(),
+            Some("The answer is too long \u{2014} keep it under 4000 characters.")
+        );
+    }
+
+    /// An unparseable answer to a fraction item asks for `a/b`; a decimal
+    /// answer asks for its decimal form; a whole-number item asks for plain
+    /// numbers. No example names the authored value (Hard Rule 1).
+    #[test]
+    fn an_unreadable_answer_asks_for_the_expected_shape() {
+        let grade = deterministic_grade("1/3", "1/3 ???", AnswerKind::Numeric);
+        assert!(matches!(grade.outcome, AttemptOutcome::Ungraded { .. }));
+        assert!(
+            grade
+                .outcome
+                .reason()
+                .is_some_and(|reason| reason.contains("Write the fraction as a/b"))
+        );
+        // A terminating decimal asks for its decimal form, not for a fraction.
+        let grade = deterministic_grade("13.5", "13.5 ???", AnswerKind::Numeric);
+        assert!(
+            grade
+                .outcome
+                .reason()
+                .is_some_and(|reason| reason.contains("Write the answer as a decimal"))
+        );
+    }
+
+    /// A malformed matrix answer names the bracketed-rows shape with a stock
+    /// example, never the authored entries.
+    #[test]
+    fn a_malformed_matrix_teaches_the_grid_shape() {
+        let grade = grade_item(
+            &PoolAnswer {
+                v: 1,
+                answer: "[[1,2],[3,4]]".to_string(),
+                answer_contract: Some(AnswerContract::Matrix { rows: 2, cols: 2 }),
+            },
+            "[1,2;3",
+            AnswerKind::Numeric,
+        );
+        assert!(matches!(grade.outcome, AttemptOutcome::Ungraded { .. }));
+        assert!(
+            grade
+                .outcome
+                .reason()
+                .is_some_and(|reason| reason.contains("[[1,2],[3,4]]"))
+        );
+    }
+
+    /// A set read against a list names the authored shape: braces for a set,
+    /// brackets for a list.
+    #[test]
+    fn a_shape_gap_names_the_authored_shape() {
+        let grade = deterministic_grade("{1, 2}", "[1, 2]", AnswerKind::Numeric);
+        assert_eq!(
+            grade.outcome.reason(),
+            Some("The answer is an unordered set, so write it in braces, like {1, 2, 3}.")
+        );
+        let grade = deterministic_grade("1, 2", "{1, 2}", AnswerKind::Numeric);
+        // A bare comma pair is one ordered group, so the prompt names the
+        // parentheses shape the authored answer carries.
+        assert_eq!(
+            grade.outcome.reason(),
+            Some("The answer is one ordered group, so write it in parentheses, like (1, 2).")
+        );
+    }
+
+    /// A zero denominator teaches the `a/b` form, the way the ISSUE-2 ruling
+    /// taught the trailing-text form.
+    #[test]
+    fn a_zero_denominator_teaches_the_fraction_form() {
+        let grade = deterministic_grade("1/2", "1/0", AnswerKind::Numeric);
+        assert!(matches!(grade.outcome, AttemptOutcome::Ungraded { .. }));
+        assert!(
+            grade
+                .outcome
+                .reason()
+                .is_some_and(|reason| reason.contains("Write the fraction as a/b"))
+        );
+    }
+
+    /// Every reason the grammar and the contracts can emit maps to a
+    /// learner-facing prompt: never the raw production name, and never empty.
+    /// The list is the reason strings of `crates/core/src/answer/`.
+    #[test]
+    fn every_refusal_reason_reads_human() {
+        let reasons = [
+            "a character outside the grammar",
+            "a decimal past the size bound",
+            "a disjunction branch has trailing text",
+            "a disjunction exceeds 16 alternatives",
+            "a division by zero",
+            "a fraction with a zero denominator",
+            "a function name with no argument",
+            "a list requires one to 32 complete members",
+            "a list requires a flat deterministic member contract",
+            "a matrix must be written as bracketed rows of entries",
+            "a matrix row requires comma-separated entries",
+            "a matrix entry must be an exact rational or decimal",
+            "a matrix answer requires the expected count of rows and entries per row",
+            "a matrix requires one to 64 entries in at least one row and column",
+            "an ascending chain requires two to 16 strictly increasing rational values",
+            "an inequality between two variables",
+            "an inequality union requires one unknown and at most 16 rational intervals",
+            "an inequality with no bare variable",
+            "an interval that has no two ends",
+            "an exponent outside the evaluation bound",
+            "an exponent past the size bound",
+            "a number past the size bound",
+            "a number with two points",
+            "a point with no digit after it",
+            "a polynomial relation requires two polynomial expressions and one comparison",
+            "a quantity whose value is not a number",
+            "a quotient with a zero divisor",
+            "a quotient contract requires a positive divisor",
+            "a radicand past the factoring bound",
+            "a reduced ratio requires two coprime positive integers separated by one colon",
+            "a relation setup requires one symbolic left side and one exact numeric right side",
+            "a required single power needs one reduced numeric literal base",
+            "a required simplest radical needs a reduced rational times one squarefree integer root",
+            "a root with no argument",
+            "a set against a list",
+            "a set against a tuple",
+            "a symbol where a value belongs",
+            "a tower of powers",
+            "a unit is missing",
+            "a unit inside an expression",
+            "a unit on the learner side only",
+            "a unit outside the table",
+            "a zero base with a non-positive exponent",
+            "arithmetic on a collection",
+            "arithmetic on a labeled value",
+            "arithmetic on a quantity",
+            "each named answer part must occur exactly once",
+            "normalized scientific notation needs one decimal coefficient with magnitude in [1, 10) times 10 to an integer power",
+            "the answer contract requires a number",
+            "the answer contract supports at most 18 decimal places",
+            "the answer ends where a value belongs",
+            "the answer goes past the term bound",
+            "the answer goes past the work bound",
+            "the answer is empty",
+            "the answer is longer than the input cap",
+            "the answer kind is not decidable",
+            "the answer nests too deeply",
+            "the answer contract requires a positive divisor",
+            "the authored answer does not match its required form",
+            "the authored answer is outside the choice vocabulary",
+            "the authored answer does not match its contract shape",
+            "the authored answer must be an assignment such as y = 4",
+            "the contract unit does not match its quantity",
+            "the tolerance must be an exact positive rational of at most 80 characters",
+            "a label contract requires one to 32 choices",
+            "a choice requires one to eight explicit aliases",
+            "choice aliases must be bounded, nonempty, and unique",
+            "a multipart answer requires one to 16 parts",
+            "part names must be bounded unique identifiers",
+            "multipart parts require flat deterministic contracts",
+            "an item has no deterministic answer contract",
+            "the item has no deterministic answer contract",
+            "a required assignment needs the authored target",
+            "two numbers stand side by side",
+            "two percent signs on one number",
+            "trailing text after the answer",
+            "a name that is not a function or variable",
+        ];
+        for reason in reasons {
+            let guidance = format_guidance("1/2", "6/5 ???", reason);
+            assert!(!guidance.is_empty(), "{reason}: empty guidance");
+            assert_ne!(guidance, reason, "{reason}: the raw production leaked");
+        }
     }
 }
