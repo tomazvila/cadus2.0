@@ -1,5 +1,5 @@
-//! The two review writes, `POST /api/admin/content/{digest}/approve` and
-//! `/reject`, and the re-gate an approval runs (C6).
+//! The three content writes of the review surface — `approve`, `reject` and
+//! `revoke` — and the re-gate an approval runs (C6).
 
 use axum::Json;
 use axum::extract::State;
@@ -372,6 +372,74 @@ pub async fn reject(
     Ok(Json(json!({
         "digest": decision.digest,
         "status": decision.status,
+    })))
+}
+
+/// `POST /api/admin/content/{digest}/revoke` — pull ONE digest out of service
+/// because its key is wrong (S6; the stop-serving half of the J9 protocol idea,
+/// read-only — the dispute, quarantine and sweep protocol of J9 itself stays
+/// parked).
+///
+/// The unit of action is the content digest, and nothing else changes: no
+/// curriculum YAML is edited, no other digest of the same knowledge point is
+/// touched, and the row keeps its body, so the digest still addresses what was
+/// served.
+///
+/// # Why the write rides `content::reject`
+///
+/// The schema admits three statuses — `pending`, `approved`, `rejected`
+/// (migration `0005_content.sql`) — and this slice adds no migration, so a
+/// revoked row carries the existing non-served status with the key fault as its
+/// `review_reason`. Every serve read takes `status = 'approved'` only
+/// ([`approved_document`](cadus_store::content::approved_document),
+/// `cadus_store::pool::approved_template_current`), so the digest stops serving
+/// the moment the status moves, with no serve-path edit of its own.
+///
+/// The acting admin id goes into the answer and the operational log; the table
+/// has no column for a revoking admin, and the approval stamp must stay cleared,
+/// because `content::approve` keeps the first stamp through `COALESCE`.
+///
+/// The call is idempotent: a re-call sets the same status and the same reason
+/// and answers the same state.
+///
+/// An affected attempt is then recovered through the existing
+/// `POST /api/admin/ungraded/{attempt_id}/regrade` path, which appends the
+/// existing `regraded` event. Nothing is wired here for it: that endpoint reads
+/// the event log and never the content status.
+///
+/// # Errors
+///
+/// - `401 unauthorized` — the request carries no live session.
+/// - `403 forbidden` — the account is not an admin.
+/// - `404 not_found` — `content_store` holds no row with that digest.
+/// - `422 invalid_request` — the body is not an object, or the reason is absent,
+///   blank, or too long.
+/// - `503 admin_path_unavailable` — this deployment configured no admin
+///   connection.
+/// - `500 internal_error` — the statement failed or passed its bound.
+pub async fn revoke(
+    State(state): State<AppState>,
+    AdminUser(authed): AdminUser,
+    ApiPath(digest): ApiPath<String>,
+    LimitedBody(body): LimitedBody,
+) -> Result<Json<Value>, ApiError> {
+    let reason = reason_of(&body)?;
+    let admin = admin_path(&state)?;
+    let decision = decided(
+        "admin content revoke",
+        content::reject(Admin::new(admin), &digest, &reason).await,
+    )?;
+    tracing::warn!(
+        admin = %authed.user.id,
+        digest = %decision.digest,
+        reason,
+        "admin content revoke: the key of this digest is wrong"
+    );
+    Ok(Json(json!({
+        "digest": decision.digest,
+        "status": decision.status,
+        "revoked_by": authed.user.id,
+        "reason": reason,
     })))
 }
 
