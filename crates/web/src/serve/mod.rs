@@ -83,13 +83,13 @@ use crate::state::{
     Tenant, WebState,
 };
 use cadus_core::curriculum::{Curriculum, FiniteCaseRole, KnowledgePoint};
-use cadus_core::readiness::ReadinessSet;
 use cadus_core::event::{
     Event, Exposure, ItemSource, OrdinaryProblemServed, SchemaVersion, Slug, TaskServed, TaskType,
     Timestamp,
 };
 use cadus_core::learner::problem_text_hash;
 use cadus_core::pool::{Avoid, ExemplarSource, ProblemSource, Source, kp_key};
+use cadus_core::readiness::ReadinessSet;
 use cadus_core::selector::{SessionPlan, Task};
 use cadus_core::template::{Bindings, Value as Binding, from_body, literal_to_rational, render};
 use cadus_store::content::{ApprovedDoc, KIND_HINT_LADDER, KIND_TEACH};

@@ -30,10 +30,7 @@ BASE = os.environ.get("CADUS_GRIND_BASE", "https://cadus.homelab.tomazvi.la")
 COOKIE = os.environ.get("CADUS_GRIND_COOKIE", "/tmp/cadus_cookies.txt")
 ORIGIN = f"Origin: {BASE}"
 USER = os.environ.get("CADUS_GRIND_USER", "6440c036-a358-4bd8-9c05-5df93ae65123")
-COURSES = ["foundations", "geometry", "probability-statistics", "proofs",
-           "precalculus", "discrete-mathematics", "calculus-1", "calculus-2",
-           "linear-algebra", "multivariable-calculus", "differential-equations",
-           "abstract-algebra", "category-theory"]
+COURSES = ["probability-statistics", "precalculus", "discrete-mathematics"]
 MODEL_ENV = ["-e", "OPENAI_MODEL=deepseek/deepseek-chat",
              "-e", "OPENROUTER_PROVIDER_ORDER=deepinfra"]
 LOG = open(os.environ.get("CADUS_GRIND_LOG", "/tmp/orchestrator.log"), "a", buffering=1)
@@ -111,7 +108,7 @@ def answer_task(task, task_type, confirm, stats):
             exp = "0"
         inject = wrong_next and random.random() < 0.6
         ans = ("0" if exp != "0" else "1") if inject else exp
-        time.sleep(0.8 if task_type != "drill" else 1.6)
+        time.sleep(0.15 if task_type != "drill" else 0.4)
         resp = api("POST", f"/api/task/{task}/answer", {"problem_id": pid, "answer": ans})
         stats["answers"] += 1
         if inject:
@@ -219,7 +216,7 @@ def author_kp(kp):
            "-e", f"OPENAI_MODEL={model}",
            "-e", f"OPENROUTER_PROVIDER_ORDER={pool}",
            "cadus2-worker", "sh", "-c",
-        f"cadus-worker author --kp {kp} --kind template --kind teach --kind hint_ladder --kind diagnosis "
+        f"cadus-worker author --kp {kp} --kind template --kind teach "
         f"--budget-usd 30.00 --request-reserve-usd 0.25"]
     r = subprocess.run(cmd, capture_output=True, text=True)
     return r.stdout.count("gate accepted")

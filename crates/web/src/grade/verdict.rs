@@ -138,7 +138,10 @@ fn missing_unit_guidance(expected: &str) -> String {
             "This answer is a measurement, so it needs its unit. Write the value with the unit {unit}, for example {example}.",
             example = unit_example(unit),
         ),
-        None => "This answer is a measurement, so it needs its unit. Write the value with its unit.".to_string(),
+        None => {
+            "This answer is a measurement, so it needs its unit. Write the value with its unit."
+                .to_string()
+        }
     }
 }
 
@@ -158,8 +161,12 @@ fn expected_unit(expected: &str) -> Option<&'static str> {
         match tree {
             Ast::Quantity { unit, .. } => Some(unit),
             Ast::Assign { value, .. } | Ast::Neg(value) | Ast::Sqrt(value) => walk(value),
-            Ast::Add(terms) | Ast::Mul(terms) | Ast::Tuple(terms) | Ast::Set(terms)
-            | Ast::List(terms) | Ast::Func(_, terms) => terms.iter().find_map(walk),
+            Ast::Add(terms)
+            | Ast::Mul(terms)
+            | Ast::Tuple(terms)
+            | Ast::Set(terms)
+            | Ast::List(terms)
+            | Ast::Func(_, terms) => terms.iter().find_map(walk),
             Ast::Div(a, b) => walk(a).or_else(|| walk(b)),
             Ast::Pow(value, ..) => walk(value),
             Ast::Interval { lo, hi, .. } => walk(lo).or_else(|| walk(hi)),
@@ -313,30 +320,38 @@ mod tests {
             )
         );
         let grade = deterministic_grade("56.5 cm", "56.5", AnswerKind::Numeric);
-        assert!(grade
-            .outcome
-            .reason()
-            .is_some_and(|reason| reason.contains("unit cm, for example 42 cm.")));
+        assert!(
+            grade
+                .outcome
+                .reason()
+                .is_some_and(|reason| reason.contains("unit cm, for example 42 cm."))
+        );
     }
 
     /// The unit read survives a label, and a currency answers in its own order.
     #[test]
     fn the_unit_guidance_reads_the_authored_spelling() {
         let grade = deterministic_grade("d = 5 cm", "5", AnswerKind::Numeric);
-        assert!(grade
-            .outcome
-            .reason()
-            .is_some_and(|reason| reason.contains("unit cm")));
+        assert!(
+            grade
+                .outcome
+                .reason()
+                .is_some_and(|reason| reason.contains("unit cm"))
+        );
         let grade = deterministic_grade("$5", "5", AnswerKind::Numeric);
-        assert!(grade
-            .outcome
-            .reason()
-            .is_some_and(|reason| reason.contains("for example $42.")));
+        assert!(
+            grade
+                .outcome
+                .reason()
+                .is_some_and(|reason| reason.contains("for example $42."))
+        );
         let grade = deterministic_grade("5 €", "5", AnswerKind::Numeric);
-        assert!(grade
-            .outcome
-            .reason()
-            .is_some_and(|reason| reason.contains("for example 42€.")));
+        assert!(
+            grade
+                .outcome
+                .reason()
+                .is_some_and(|reason| reason.contains("for example 42€."))
+        );
     }
 
     /// A unit the learner alone carried tells them to drop it; a unit inside an

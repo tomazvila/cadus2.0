@@ -27,9 +27,7 @@ use common::{kp, one_unit_curriculum, seed_content_for, topic};
 use serde_json::{Value, json};
 
 /// The readiness of the operator surface, read as the admin.
-async fn operator_readiness(
-    router: &axum::Router,
-) -> Vec<(String, usize, usize, Value)> {
+async fn operator_readiness(router: &axum::Router) -> Vec<(String, usize, usize, Value)> {
     let answer = common::admin::admin_get(router, "/api/operator/flags").await;
     assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
     let courses = answer.body["readiness"]["courses"]
@@ -59,11 +57,13 @@ fn worker_readiness(run: &cadus_worker::ReadinessRun) -> Vec<(String, usize, usi
                 course.course_id.clone(),
                 course.ready,
                 course.blocked,
-                json!(course
-                    .blockers
-                    .iter()
-                    .map(|(blocker, count)| (blocker.as_str().to_owned(), json!(count)))
-                    .collect::<serde_json::Map<String, Value>>()),
+                json!(
+                    course
+                        .blockers
+                        .iter()
+                        .map(|(blocker, count)| (blocker.as_str().to_owned(), json!(count)))
+                        .collect::<serde_json::Map<String, Value>>()
+                ),
             )
         })
         .collect()
@@ -78,10 +78,7 @@ fn four_exemplars(first: i64) -> Vec<cadus_core::curriculum::Exemplar> {
 }
 
 fn parity_curriculum() -> Curriculum {
-    one_unit_curriculum(vec![topic(
-        "addition",
-        vec![kp("kp1", four_exemplars(1))],
-    )])
+    one_unit_curriculum(vec![topic("addition", vec![kp("kp1", four_exemplars(1))])])
 }
 
 /// Assert the two audits name the SAME courses with the SAME counts.
@@ -207,4 +204,4 @@ fn the_two_context_digests_are_one_digest() {
         fixture_curriculum_digest(),
         "two different curricula must not share one context digest"
     );
-    }
+}
