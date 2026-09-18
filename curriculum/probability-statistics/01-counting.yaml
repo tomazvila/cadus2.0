@@ -420,6 +420,12 @@ topics:
           - problem: 'In how many ways can A, B, C, D stand in a line with A last?'
             answer: "6"
             solution_sketch: 'A is fixed; $3! = 6$ orders for the rest.'
+          - problem: 'In how many ways can $6$ books be arranged on a shelf if one particular book must be rightmost?'
+            answer: "120"
+            solution_sketch: 'Fix that book; arrange the remaining $5$: $5! = 120$.'
+          - problem: 'In how many ways can A, B, C, D, E stand in a line with C first?'
+            answer: "24"
+            solution_sketch: 'C is fixed; $4! = 24$ orders for the rest.'
         constraints: "n between 4 and 6; exactly one object pinned to one position"
       - id: kp2
         name: "Items that must be together (block method)"
@@ -431,6 +437,12 @@ topics:
           - problem: 'Five books are shelved; two specific books must sit next to each other. How many arrangements?'
             answer: "48"
             solution_sketch: 'Block plus $3$ others: $4! = 24$; the block orders internally in $2!$ ways: $24 \cdot 2 = 48$.'
+          - problem: 'In how many ways can $5$ people stand in a line if two particular people must be adjacent?'
+            answer: "48"
+            solution_sketch: 'Glue the pair into a block: $4! = 24$ orders, times $2!$ orders inside the block: $24 \cdot 2 = 48$.'
+          - problem: 'Six books are shelved; two specific books must sit next to each other. How many arrangements?'
+            answer: "240"
+            solution_sketch: 'Block plus $4$ others: $5! = 120$; times $2!$ inside the block: $120 \cdot 2 = 240$.'
         constraints: "one block of exactly 2 items; total items 4-6"
       - id: kp3
         name: "Items that must be apart, and alternating arrangements"
@@ -442,6 +454,12 @@ topics:
           - problem: 'In how many ways can $3$ boys and $3$ girls stand in a line, alternating boy-girl?'
             answer: "72"
             solution_sketch: 'Two patterns (BGBGBG or GBGBGB); each fills in $3! \cdot 3!= 36$ ways: $2 \cdot 36 = 72$.'
+          - problem: 'In how many ways can $5$ people stand in a line if two particular people must NOT be adjacent?'
+            answer: "72"
+            solution_sketch: 'Total $5! = 120$ minus the together-count $4! \cdot 2 = 48$: $120 - 48 = 72$.'
+          - problem: 'In how many ways can $6$ people stand in a line if two particular people must NOT be adjacent?'
+            answer: "480"
+            solution_sketch: 'Total $6! = 720$; together (block method) $5! \cdot 2 = 240$; apart $720 - 240 = 480$.'
         constraints: "\"apart\" solved as total minus together; alternating uses equal group sizes of 3"
     diagnostic_exemplar:
       problem: 'In how many ways can $5$ people stand in a line if two particular people must NOT be adjacent?'
@@ -477,6 +495,12 @@ topics:
           - problem: 'In how many ways can $6$ people sit around a round table (rotations identical)?'
             answer: "120"
             solution_sketch: '$(6-1)! = 5! = 120$.'
+          - problem: 'In how many ways can $5$ people sit around a round table (rotations identical)?'
+            answer: "24"
+            solution_sketch: '$(5-1)! = 4! = 24$.'
+          - problem: 'In how many ways can $3$ keys be arranged on a circular ring if rotations are considered the same (reflections distinct)?'
+            answer: "2"
+            solution_sketch: '$(3-1)! = 2! = 2$.'
         constraints: "n between 3 and 7; rotations equivalent, reflections distinct (state this)"
       - id: kp2
         name: "Row versus circle"
@@ -488,6 +512,15 @@ topics:
           - problem: 'For $6$ objects, how many times larger is the row count $6!$ than the circular count $(6-1)!$?'
             answer: "6"
             solution_sketch: 'Each circular arrangement can be rotated into $6$ different rows that all represent the same circle, so the row count is $6$ times the circular count.'
+          - problem: 'For $4$ objects, how many times larger is the row count $4!$ than the circular count $(4-1)!$?'
+            answer: "4"
+            solution_sketch: 'Each circular arrangement can be rotated into $4$ different rows, so the row count is $4$ times the circular count.'
+          - problem: '$4$ charms can be arranged in a row in $24$ ways. How many circular arrangements are there (rotations identical)?'
+            answer: "6"
+            solution_sketch: 'Each circular arrangement corresponds to $4$ rows: $24/4 = 6$.'
+          - problem: '$6$ beads are arranged around a circular bracelet (rotations identical). How many arrangements are there?'
+            answer: "120"
+            solution_sketch: '$(6-1)! = 5! = 120$.'
         constraints: "always state that rotations (only) are identified; n between 4 and 6"
       - id: kp3
         name: "Circular arrangements with a restriction"
@@ -499,6 +532,12 @@ topics:
           - problem: '$6$ people sit around a round table, and Alice is fixed in a particular seat. In how many ways can the remaining people be seated?'
             answer: "120"
             solution_sketch: 'With one seat pinned, the remaining $5$ people arrange freely: $5! = 120$.'
+          - problem: '$4$ people sit around a round table; two particular people must sit together. How many seatings (rotations identical)?'
+            answer: "4"
+            solution_sketch: 'Glue the pair: $3$ units in a circle give $(3-1)! = 2$; the pair orders in $2!$ ways: $2 \cdot 2 = 4$.'
+          - problem: '$4$ people sit around a round table, and Bob is pinned to a particular seat. In how many ways can the remaining people be seated?'
+            answer: "6"
+            solution_sketch: 'With one seat pinned, the remaining $3$ people arrange freely: $3! = 6$.'
         constraints: "one restriction: a glued pair or one pinned person; n between 4 and 6"
     diagnostic_exemplar:
       problem: '$6$ people sit around a round table (rotations identical); two particular people insist on sitting together. How many seatings are there?'
@@ -543,6 +582,9 @@ topics:
           - problem: 'Compute $\binom{10}{3}$.'
             answer: "120"
             solution_sketch: '$\frac{10 \cdot 9 \cdot 8}{6} = \frac{720}{6} = 120$.'
+          - problem: 'Compute $\binom{8}{2}$.'
+            answer: "28"
+            solution_sketch: '$\frac{8 \cdot 7}{2!} = \frac{56}{2} = 28$.'
         constraints: "n <= 12, k <= 4; division cancels cleanly"
       - id: kp2
         name: "Combination vs permutation in context"
@@ -554,6 +596,12 @@ topics:
           - problem: 'How many ways can you pick $4$ pizza toppings from $9$ available?'
             answer: "126"
             solution_sketch: '$\binom{9}{4} = \frac{9 \cdot 8 \cdot 7 \cdot 6}{24} = \frac{3024}{24} = 126$.'
+          - problem: 'How many $2$-person teams can be formed from $10$ players?'
+            answer: "45"
+            solution_sketch: 'Order does not matter: $\binom{10}{2} = \frac{10 \cdot 9}{2} = 45$.'
+          - problem: 'How many ways can a coach choose $3$ starters from $8$ players?'
+            answer: "56"
+            solution_sketch: '$\binom{8}{3} = \frac{8 \cdot 7 \cdot 6}{6} = 56$.'
         constraints: "contexts where order clearly does not matter (committees, hands, toppings); answers below 300"
       - id: kp3
         name: "Symmetry and multi-group selections"
@@ -565,6 +613,12 @@ topics:
           - problem: 'A team needs $2$ of $5$ women and $2$ of $4$ men. How many teams?'
             answer: "60"
             solution_sketch: '$\binom{5}{2} \cdot \binom{4}{2} = 10 \cdot 6 = 60$; independent choices multiply.'
+          - problem: 'Use symmetry to compute $\binom{10}{8}$.'
+            answer: "45"
+            solution_sketch: '$\binom{10}{8} = \binom{10}{2} = 45$; choosing $8$ to include is choosing $2$ to leave out.'
+          - problem: 'A gift bag uses $2$ of $4$ chocolates and $3$ of $5$ candies. How many different bags are possible?'
+            answer: "60"
+            solution_sketch: '$\binom{4}{2} \cdot \binom{5}{3} = 6 \cdot 10 = 60$; independent choices multiply.'
         constraints: "two independent groups at most; each binomial coefficient at most C(10,3)"
     diagnostic_exemplar:
       problem: 'A committee needs $2$ of $6$ teachers and $2$ of $5$ students. How many committees are possible?'
