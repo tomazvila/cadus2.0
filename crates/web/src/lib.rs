@@ -268,12 +268,16 @@ pub fn create_app(state: AppState) -> Router {
         // M5 U12: the A6 operator view. It reads its own credential, and it
         // refuses every account that is not an admin.
         .route("/api/operator/flags", get(operator::flags))
-        // M6 R5: the C6 review surface. All four refuse an account that is not
-        // an admin, and both writes take the admin connection of `AppState`.
+        // M6 R5: the C6 review surface. All five refuse an account that is not
+        // an admin, and the content writes take the admin connection of
+        // `AppState`.
         .route("/api/admin/content", get(admin::list))
         .route("/api/admin/content/{digest}", get(admin::show))
         .route("/api/admin/content/{digest}/approve", post(admin::approve))
         .route("/api/admin/content/{digest}/reject", post(admin::reject))
+        // S6: the admin action that stops serving one digest whose key is
+        // wrong, so the existing ungraded regrade path can recover a hit.
+        .route("/api/admin/content/{digest}/revoke", post(admin::revoke))
         // f4-outcome: the recovery path of the third outcome (D-F2). Both
         // refuse an account that is not an admin.
         .route("/api/admin/ungraded", get(admin::list_ungraded))

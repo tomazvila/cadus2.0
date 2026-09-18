@@ -14,6 +14,7 @@
 //! | `GET /api/admin/content/{digest}` | the body, the gate notes, and [`SAMPLE_INSTANCES`] rendered instances |
 //! | `POST /api/admin/content/{digest}/approve` | `{digest, status, approved_at, rejected_documents}` |
 //! | `POST /api/admin/content/{digest}/reject` | `{digest, status}`, and the reason is required |
+//! | `POST /api/admin/content/{digest}/revoke` | `{digest, status, revoked_by, reason}` — the key is wrong (S6) |
 //! | `GET /api/admin/ungraded` | the ungraded attempts of the learner (D-F2) |
 //! | `POST /api/admin/ungraded/{attempt_id}/regrade` | the human verdict of one ungraded attempt |
 //!
@@ -77,7 +78,7 @@ mod review;
 mod ungraded;
 
 pub use queue::{list, show};
-pub use review::{Regated, approve, reject};
+pub use review::{Regated, approve, reject, revoke};
 pub use ungraded::{list_ungraded, regrade_ungraded};
 
 /// The count of instances the show route renders (1.0 `SAMPLE_INSTANCES`,
