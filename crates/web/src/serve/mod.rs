@@ -17,6 +17,12 @@
 //! and the payload builders below name every field they emit. Trap W7 gives the
 //! test rule: scan the raw JSON, do not read the fields.
 //!
+//! The ONE exception is the self-check item of the tier-2 exemplar path: an
+//! exemplar whose answer contract is `none` (or whose authored answer the
+//! checker cannot decide) carries no deterministic verdict at all, so its
+//! worked solution is the item — the serve shows it plainly, and every attempt
+//! on it grades UNGRADED (draw.rs). A graded item still reveals nothing here.
+//!
 //! # One transaction, and the clock
 //!
 //! There is no model call (T1, R4), so the whole serve is one transaction
