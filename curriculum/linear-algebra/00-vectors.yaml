@@ -39,6 +39,7 @@ topics:
             solution_sketch: 'Add the vector to the initial point: $(1 + 3, 4 + (-2))$.'
           - problem: 'Is the vector from $P(0, 0)$ to $Q(2, 3)$ equal to the vector from $R(5, 1)$ to $S(7, 4)$?'
             answer: "Yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: 'Both have component form $(2, 3)$; vectors are equal when their components agree.'
           - problem: 'The vector $(-1, 5)$ ends at $Q(2, 3)$. Where does it start?'
             answer: "(3, -2)"
@@ -113,12 +114,14 @@ topics:
         exemplars:
           - problem: 'Is $(6, -4)$ parallel to $(-3, 2)$?'
             answer: "Yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$(6, -4) = -2(-3, 2)$, a scalar multiple.'
           - problem: 'Find $k$ so that $(6, k)$ is parallel to $(2, 3)$.'
             answer: "9"
             solution_sketch: '$(6, k) = 3(2, 3)$ forces $k = 9$.'
           - problem: 'Is $(4, 6)$ parallel to $(2, 5)$?'
             answer: "No"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$4 = 2c$ gives $c = 2$, but $6 \neq 2 \cdot 5$.'
         constraints: "scalar multiples with integer ratio; solve-for-k problems must have integer k"
     diagnostic_exemplar:
@@ -316,6 +319,7 @@ topics:
         exemplars:
           - problem: 'For the triangle $A(0, 0)$, $B(3, 4)$, $C(6, 0)$, show that $|AB| = |CB|$.'
             answer: "Both equal 5"
+            answer_contract: {kind: none}
             solution_sketch: '$B - A = (3, 4)$ and $B - C = (-3, 4)$; both have norm $5$.'
           - problem: 'Which of $Q(4, 5)$ and $R(5, 1)$ is closer to $P(1, 1)$?'
             answer: "R"
@@ -382,6 +386,7 @@ topics:
         exemplars:
           - problem: 'Verify the triangle inequality $\|\mathbf{u} + \mathbf{v}\| \leq \|\mathbf{u}\| + \|\mathbf{v}\|$ for $\mathbf{u} = (3, 0)$, $\mathbf{v} = (0, 4)$.'
             answer: "5 <= 7, so it holds"
+            answer_contract: {kind: none}
             solution_sketch: '$\|\mathbf{u} + \mathbf{v}\| = \|(3, 4)\| = 5$ and $3 + 4 = 7$.'
           - problem: 'If $\|\mathbf{v}\| = 5$, what is $\|\mathbf{v}/5\|$?'
             answer: "1"
@@ -486,12 +491,14 @@ topics:
         exemplars:
           - problem: 'Are $(4, -2)$ and $(1, 2)$ orthogonal?'
             answer: "Yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$(4)(1) + (-2)(2) = 4 - 4 = 0$; zero dot product means orthogonal.'
           - problem: 'Find $k$ so that $(2, k)$ is orthogonal to $(3, -6)$.'
             answer: "k = 1"
             solution_sketch: '$6 - 6k = 0$ forces $k = 1$.'
           - problem: 'Are $(1, 2, 3)$ and $(2, 1, -1)$ orthogonal?'
             answer: "No"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$2 + 2 - 3 = 1 \neq 0$.'
         constraints: "integer components; solve-for-k problems must have integer k"
       - id: kp2
@@ -500,12 +507,15 @@ topics:
         exemplars:
           - problem: 'Is the angle between $(2, 1)$ and $(1, -3)$ acute, right, or obtuse?'
             answer: "Obtuse"
+            answer_contract: {kind: none}
             solution_sketch: 'Dot product $2 - 3 = -1 < 0$, so the angle exceeds $90^\circ$.'
           - problem: 'Is the angle between $(3, 1)$ and $(1, 2)$ acute, right, or obtuse?'
             answer: "Acute"
+            answer_contract: {kind: none}
             solution_sketch: 'Dot product $3 + 2 = 5 > 0$.'
           - problem: 'Find all $k$ so that the angle between $(1, 0)$ and $(1, k)$ is $60^\circ$.'
             answer: '$k = \sqrt{3}$ or $k = -\sqrt{3}$'
+            answer_contract: {kind: none}
             solution_sketch: '$\cos 60^\circ = \frac{1}{\sqrt{1 + k^2}} = \frac{1}{2}$ gives $k^2 = 3$.'
         constraints: "sign questions use small integers; exact-angle questions target 30/45/60 degrees"
       - id: kp3
@@ -514,9 +524,11 @@ topics:
         exemplars:
           - problem: 'Find the angle between $(1, 0)$ and $(1, 1)$.'
             answer: "45 degrees"
+            answer_contract: {kind: none}
             solution_sketch: '$\cos\theta = \frac{1}{1 \cdot \sqrt{2}} = \frac{1}{\sqrt{2}}$, so $\theta = 45^\circ$.'
           - problem: 'Find the angle between $(2, 2)$ and $(0, 3)$.'
             answer: "45 degrees"
+            answer_contract: {kind: none}
             solution_sketch: '$\cos\theta = \frac{6}{2\sqrt{2} \cdot 3} = \frac{1}{\sqrt{2}}$.'
           - problem: 'Find $\cos\theta$ for the angle $\theta$ between $(1, 2)$ and $(2, 1)$.'
             answer: "4/5"
@@ -525,6 +537,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Find the angle between $\mathbf{u} = (3, 3)$ and $\mathbf{v} = (0, -5)$.'
       answer: '135 degrees'
+      answer_contract: {kind: none}
       solution_sketch: '$\mathbf{u} \cdot \mathbf{v} = -15 < 0$ (obtuse); $\cos\theta = -15/(3\sqrt2 \cdot 5) = -1/\sqrt2$, so $\theta = 135^\circ$.'
     anki_seeds:
       - front: 'Angle formula linking the dot product and the norms of $\mathbf{u}, \mathbf{v}$?'
@@ -574,6 +587,7 @@ topics:
             solution_sketch: '$4 + 2 \cdot 1 + 1 = 7$.'
           - problem: 'If $\|\mathbf{u}\| = \|\mathbf{v}\|$, show that $(\mathbf{u} + \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v}) = 0$.'
             answer: "It expands to ||u||^2 - ||v||^2 = 0"
+            answer_contract: {kind: none}
             solution_sketch: 'Expand: $\mathbf{u} \cdot \mathbf{u} - \mathbf{u} \cdot \mathbf{v} + \mathbf{v} \cdot \mathbf{u} - \mathbf{v} \cdot \mathbf{v} = \|\mathbf{u}\|^2 - \|\mathbf{v}\|^2$.'
         constraints: "use the identity ||u+v||^2 = ||u||^2 + 2 u.v + ||v||^2 with small integer data"
       - id: kp3
@@ -582,12 +596,15 @@ topics:
         exemplars:
           - problem: 'Verify $\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}$ for $\mathbf{u} = (1, 2)$, $\mathbf{v} = (3, -1)$, $\mathbf{w} = (0, 4)$.'
             answer: "Both sides equal 9"
+            answer_contract: {kind: none}
             solution_sketch: 'Left: $(1, 2) \cdot (3, 3) = 9$. Right: $1 + 8 = 9$.'
           - problem: 'Verify $\|\mathbf{u} + \mathbf{v}\|^2 = \|\mathbf{u}\|^2 + 2\,\mathbf{u} \cdot \mathbf{v} + \|\mathbf{v}\|^2$ for $\mathbf{u} = (3, 0)$, $\mathbf{v} = (0, 4)$.'
             answer: "Both sides equal 25"
+            answer_contract: {kind: none}
             solution_sketch: '$\|(3, 4)\|^2 = 25$ and $9 + 0 + 16 = 25$.'
           - problem: 'Check the Cauchy-Schwarz inequality $|\mathbf{u} \cdot \mathbf{v}| \leq \|\mathbf{u}\|\,\|\mathbf{v}\|$ for $\mathbf{u} = (1, 2)$, $\mathbf{v} = (2, 1)$.'
             answer: "4 <= 5, so it holds"
+            answer_contract: {kind: none}
             solution_sketch: '$|\mathbf{u} \cdot \mathbf{v}| = 4$; $\|\mathbf{u}\|\,\|\mathbf{v}\| = \sqrt{5}\sqrt{5} = 5$.'
         constraints: "small integer vectors; both sides must evaluate to the same clean number"
     diagnostic_exemplar:

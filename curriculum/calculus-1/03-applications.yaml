@@ -27,6 +27,7 @@ topics:
         exemplars:
           - problem: 'A particle has position $s(t) = t^3 - 6t^2 + 9t$ (meters, seconds). Find the velocity $v(t)$ and acceleration $a(t)$.'
             answer: "v(t) = 3t^2 - 12t + 9; a(t) = 6t - 12"
+            answer_contract: {kind: none}
             solution_sketch: '$v = s''$, $a = v'' = s''''$.'
           - problem: 'For $s(t) = t^2 - 4t + 3$, find $v(2)$.'
             answer: "0"
@@ -38,6 +39,7 @@ topics:
         exemplars:
           - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, when is the particle at rest?'
             answer: "t = 1 and t = 3"
+            answer_contract: {kind: none}
             solution_sketch: '$v(t) = 3t^2 - 12t + 9 = 3(t-1)(t-3) = 0$.'
           - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, on what interval (for $t > 0$) is the particle moving left?'
             answer: "(1, 3)"
@@ -49,13 +51,17 @@ topics:
         exemplars:
           - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, is the particle speeding up or slowing down at $t = 4$?'
             answer: "speeding up (v(4) = 9 > 0 and a(4) = 12 > 0 have the same sign)"
+            answer_contract: {kind: none}
             solution_sketch: '$v(4) = 48 - 48 + 9 = 9$, $a(4) = 24 - 12 = 12$; same sign means speeding up.'
           - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, is the particle speeding up or slowing down at $t = 0$?'
             answer: "slowing down (v(0) = 9 > 0 but a(0) = -12 < 0)"
+            answer_contract: {kind: none}
+            solution_sketch: "slowing down (v(0) = 9 > 0 but a(0) = -12 < 0)"
         constraints: "test times where neither v nor a is zero"
     diagnostic_exemplar:
       problem: 'A particle has position $s(t) = t^3 - 9t^2 + 24t$ (meters, seconds). Is it speeding up or slowing down at $t = 1$?'
       answer: "slowing down — v(1) = 9 > 0 but a(1) = -12 < 0 (opposite signs)"
+      answer_contract: {kind: none}
       solution_sketch: '$v(t) = 3t^2 - 18t + 24$, $v(1) = 9$; $a(t) = 6t - 18$, $a(1) = -12$.'
     anki_seeds:
       - front: "Position s(t): velocity = ? and acceleration = ?"
@@ -116,6 +122,7 @@ topics:
         exemplars:
           - problem: 'Water pours into a cylindrical tank of radius $3$ m at $18$ m³/min. Using $V = \pi r^2 h$, how fast is the water level rising?'
             answer: "2/π m/min"
+            answer_contract: {kind: none}
             solution_sketch: '$V = 9\pi h$, so $\frac{dV}{dt} = 9\pi \frac{dh}{dt}$ and $\frac{dh}{dt} = \frac{18}{9\pi} = \frac{2}{\pi}$.'
           - problem: 'A rectangular pool with base $4$ m by $5$ m fills at $10$ m³/h. How fast does the depth rise?'
             answer: "1/2 m/h"
@@ -124,6 +131,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Water pours into a cylindrical tank of radius $2$ m at $12$ m³/min. Using $V = \pi r^2 h$, how fast is the water level rising?'
       answer: "3/π m/min"
+      answer_contract: {kind: none}
       solution_sketch: '$V = 4\pi h$, so $\frac{dV}{dt} = 4\pi \frac{dh}{dt} = 12$ gives $\frac{dh}{dt} = \frac{3}{\pi}$.'
     anki_seeds:
       - front: "Related-rates procedure in four steps:"
@@ -163,6 +171,7 @@ topics:
         exemplars:
           - problem: 'A $5$ m ladder leans against a wall. Its base slides away at $2$ m/s. How fast is the top sliding down when the base is $3$ m from the wall?'
             answer: "3/2 m/s downward (dy/dt = -3/2)"
+            answer_contract: {kind: none}
             solution_sketch: '$x^2 + y^2 = 25$ with $y = 4$; $2x\frac{dx}{dt} + 2y\frac{dy}{dt} = 0$ gives $\frac{dy}{dt} = -\frac{3 \cdot 2}{4} = -\frac{3}{2}$.'
           - problem: 'One car drives north at $60$ km/h, another east at $80$ km/h, both from the same point. How fast is the distance between them growing when the northbound car is $30$ km and the eastbound car $40$ km from the start?'
             answer: "100 km/h"
@@ -174,9 +183,11 @@ topics:
         exemplars:
           - problem: 'Water pours at $2$ m³/min into an inverted cone of height $10$ m and top radius $5$ m (so $r = h/2$ at depth $h$). How fast is the depth rising when $h = 4$ m?'
             answer: "1/(2π) m/min"
+            answer_contract: {kind: none}
             solution_sketch: '$V = \frac{\pi}{3}\left(\frac{h}{2}\right)^2 h = \frac{\pi h^3}{12}$; $\frac{dV}{dt} = \frac{\pi h^2}{4}\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{2}{4\pi} = \frac{1}{2\pi}$.'
           - problem: 'An inverted conical tank has height $6$ m and top radius $3$ m. Water enters at $9$ m³/min. How fast is the depth rising when $h = 2$ m?'
             answer: "9/π m/min"
+            answer_contract: {kind: none}
             solution_sketch: '$r = h/2$ gives $V = \frac{\pi h^3}{12}$; $\frac{dV}{dt} = \frac{\pi h^2}{4}\frac{dh}{dt} = \pi \frac{dh}{dt}$ at $h = 2$.'
         constraints: "cone dimensions give a simple ratio r = kh; eliminate r via similar triangles before differentiating"
       - id: kp3
@@ -188,11 +199,13 @@ topics:
             solution_sketch: 'Similar triangles: $\frac{s}{2} = \frac{x + s}{5}$ gives $s = \frac{2}{3}x$; tip $= x + s = \frac{5}{3}x$, so tip speed $= \frac{5}{3} \cdot 2 = \frac{10}{3}$.'
           - problem: 'A rectangle''s length grows at $3$ cm/s while its width shrinks at $2$ cm/s. How fast is the area changing when the length is $10$ cm and the width $6$ cm?'
             answer: "-2 cm²/s (shrinking at 2 cm²/s)"
+            answer_contract: {kind: none}
             solution_sketch: 'Product rule: $\frac{dA}{dt} = \frac{dl}{dt}w + l\frac{dw}{dt} = 3 \cdot 6 + 10 \cdot (-2) = -2$.'
         constraints: "two changing quantities; similar-triangle or product-rule relationships; integer data"
     diagnostic_exemplar:
       problem: 'Water pours at $3$ m³/min into an inverted cone of height $8$ m and top radius $4$ m (so $r = h/2$ at depth $h$). How fast is the depth rising when $h = 4$ m?'
       answer: "3/(4π) m/min"
+      answer_contract: {kind: none}
       solution_sketch: '$V = \frac{1}{3}\pi (h/2)^2 h = \frac{\pi h^3}{12}$; $\frac{dV}{dt} = \frac{\pi h^2}{4}\frac{dh}{dt}$; at $h = 4$: $3 = 4\pi \frac{dh}{dt}$.'
     anki_seeds:
       - front: "In a conical-tank problem, how do you get V in terms of h alone?"
@@ -301,6 +314,8 @@ topics:
         exemplars:
           - problem: 'For $y = x^3$, write $dy$ in terms of $x$ and $dx$ (give the expression that $dy$ equals).'
             answer: "3x^2 dx"
+            answer_contract: {kind: none}
+            solution_sketch: "3x^2 dx"
           - problem: 'For $y = x^3$, compute $dy$ when $x = 2$ and $dx = 0.1$.'
             answer: "1.2"
             solution_sketch: '$dy = 3 \cdot 4 \cdot 0.1 = 1.2$.'
@@ -362,9 +377,11 @@ topics:
         exemplars:
           - problem: 'Apply one step of Newton''s method to $f(x) = x^2 - 5$ starting at $x_0 = 2$.'
             answer: "x₁ = 9/4 = 2.25"
+            answer_contract: {kind: none}
             solution_sketch: '$x_1 = x_0 - \frac{f(x_0)}{f''(x_0)} = 2 - \frac{-1}{4} = \frac{9}{4}$.'
           - problem: 'Apply one step of Newton''s method to $f(x) = x^3 - 2x - 5$ starting at $x_0 = 2$.'
             answer: "x₁ = 2.1"
+            answer_contract: {kind: none}
             solution_sketch: '$f(2) = -1$, $f''(2) = 10$; $x_1 = 2 + \frac{1}{10} = 2.1$.'
         constraints: "f(x₀) and f'(x₀) are small integers; x₁ is a simple fraction or decimal"
       - id: kp2
@@ -373,9 +390,12 @@ topics:
         exemplars:
           - problem: 'Apply two steps of Newton''s method to $f(x) = x^2 - 2$ starting at $x_0 = 1$. Give $x_1$ and $x_2$ exactly.'
             answer: "x₁ = 3/2; x₂ = 17/12"
+            answer_contract: {kind: none}
             solution_sketch: '$x_1 = 1 - \frac{-1}{2} = \frac{3}{2}$; $x_2 = \frac{3}{2} - \frac{1/4}{3} = \frac{3}{2} - \frac{1}{12} = \frac{17}{12}$.'
           - problem: 'For $f(x) = x^2 - 5$ with $x_1 = 9/4$, is $x_1$ closer to $\sqrt{5}$ than $x_0 = 2$ was? ($\sqrt{5} \approx 2.2361$)'
             answer: "yes — |2.25 - 2.2361| ≈ 0.014 vs |2 - 2.2361| ≈ 0.236"
+            answer_contract: {kind: none}
+            solution_sketch: "yes — |2.25 - 2.2361| ≈ 0.014 vs |2 - 2.2361| ≈ 0.236"
         constraints: "keep arithmetic exact (fractions); two iterations at most"
       - id: kp3
         name: Geometric meaning and failure modes
@@ -383,12 +403,17 @@ topics:
         exemplars:
           - problem: 'Geometrically, Newton''s method replaces the curve $y = f(x)$ at $x_n$ by what, and takes $x_{n+1}$ to be what?'
             answer: "the tangent line at (xₙ, f(xₙ)); its x-intercept"
+            answer_contract: {kind: none}
+            solution_sketch: "the tangent line at (xₙ, f(xₙ)); its x-intercept"
           - problem: 'Why does Newton''s method fail for $f(x) = x^2 - 5$ if you start at $x_0 = 0$?'
             answer: "f'(0) = 0 — the tangent is horizontal and never crosses the x-axis"
+            answer_contract: {kind: none}
+            solution_sketch: "f'(0) = 0 — the tangent is horizontal and never crosses the x-axis"
         constraints: "conceptual questions; failure cases where f'(xₙ) = 0"
     diagnostic_exemplar:
       problem: 'Apply two steps of Newton''s method to $f(x) = x^2 - 3$ starting at $x_0 = 2$. Give $x_1$ and $x_2$ exactly.'
       answer: 'x₁ = 7/4; x₂ = 97/56'
+      answer_contract: {kind: none}
       solution_sketch: '$x_1 = 2 - \frac{1}{4} = \frac{7}{4}$; then $f(7/4) = \frac{1}{16}$ and $f''(7/4) = \frac{7}{2}$, so $x_2 = \frac{7}{4} - \frac{1/16}{7/2} = \frac{7}{4} - \frac{1}{56} = \frac{97}{56}$.'
     anki_seeds:
       - front: "Newton's method iteration: x_{n+1} = ?"
@@ -423,9 +448,11 @@ topics:
         exemplars:
           - problem: 'Find the critical points of $f(x) = x^3 - 3x$.'
             answer: "x = -1 and x = 1"
+            answer_contract: {kind: none}
             solution_sketch: '$f''(x) = 3x^2 - 3 = 3(x-1)(x+1) = 0$.'
           - problem: 'Find the critical points of $f(x) = x^3 - 6x^2 + 9x$.'
             answer: "x = 1 and x = 3"
+            answer_contract: {kind: none}
             solution_sketch: '$f''(x) = 3x^2 - 12x + 9 = 3(x-1)(x-3)$.'
           - problem: 'Find the critical point of $f(x) = x^2 - 4x + 1$.'
             answer: "x = 2"
@@ -436,9 +463,11 @@ topics:
         exemplars:
           - problem: 'Find the critical point of $f(x) = x^{2/3}$.'
             answer: "x = 0 (f' does not exist there)"
+            answer_contract: {kind: none}
             solution_sketch: '$f''(x) = \frac{2}{3}x^{-1/3}$ is never $0$ but is undefined at $x = 0$, which is in the domain of $f$.'
           - problem: 'Find the critical points of $f(x) = x + \frac{4}{x}$.'
             answer: "x = -2 and x = 2 (x = 0 is NOT a critical point — it is not in the domain)"
+            answer_contract: {kind: none}
             solution_sketch: '$f''(x) = 1 - \frac{4}{x^2} = 0$ at $x = \pm 2$; $0$ is excluded from the domain of $f$.'
         constraints: "include one f'-undefined case and one domain trap; answers are small integers"
       - id: kp3
@@ -447,13 +476,17 @@ topics:
         exemplars:
           - problem: 'For $f(x) = x^3 - 3x$, classify each critical point as a local max or local min and give the function value there.'
             answer: "local max f(-1) = 2; local min f(1) = -2"
+            answer_contract: {kind: none}
             solution_sketch: '$f''$ is $+, -, +$ on the three intervals, so $x = -1$ is a max and $x = 1$ a min; $f(-1) = 2$, $f(1) = -2$.'
           - problem: 'For $f(x) = x^2 - 4x + 1$, is the critical point $x = 2$ a local max or min?'
             answer: "local min (f' changes - to +)"
+            answer_contract: {kind: none}
+            solution_sketch: "local min (f' changes - to +)"
         constraints: "derivative sign changes cleanly at each critical point; function values are integers"
     diagnostic_exemplar:
       problem: 'For $f(x) = x + \frac{9}{x}$, find the critical points and classify each as a local maximum or minimum.'
       answer: "x = -3 is a local max (f(-3) = -6) and x = 3 is a local min (f(3) = 6); x = 0 is not a critical point (not in the domain)"
+      answer_contract: {kind: none}
       solution_sketch: '$f''(x) = 1 - \frac{9}{x^2} = 0$ at $x = \pm 3$; $f''''(x) = \frac{18}{x^3}$ is negative at $-3$, positive at $3$.'
     anki_seeds:
       - front: "A critical point of f is a point in the domain where..."
@@ -488,6 +521,7 @@ topics:
         exemplars:
           - problem: 'Verify that $f(x) = x^2 - 4x + 3$ satisfies Rolle''s theorem on $[1, 3]$ and find the $c$ with $f''(c) = 0$.'
             answer: "f(1) = f(3) = 0; c = 2"
+            answer_contract: {kind: none}
             solution_sketch: 'Both endpoint values are $0$; $f''(x) = 2x - 4 = 0$ at $c = 2$.'
           - problem: 'Find the $c$ in $(0, \pi)$ where $f''(c) = 0$ for $f(x) = \sin x$ (note $\sin 0 = \sin \pi = 0$).'
             answer: "c = π/2"
@@ -498,9 +532,12 @@ topics:
         exemplars:
           - problem: 'Verify that $f(x) = x^3 - 4x$ satisfies Rolle''s theorem on $[0, 2]$ and find the $c$ in $(0, 2)$ with $f''(c) = 0$.'
             answer: "f(0) = f(2) = 0; c = 2/√3 = 2√3/3"
+            answer_contract: {kind: none}
             solution_sketch: '$f''(x) = 3x^2 - 4 = 0$ gives $c = \pm\frac{2}{\sqrt{3}}$; only the positive root lies in $(0, 2)$.'
           - problem: 'Verify that $f(x) = x^3 - x$ satisfies Rolle''s theorem on $[-1, 1]$ and find all $c$ in $(-1, 1)$ with $f''(c) = 0$.'
             answer: "f(-1) = f(1) = 0; c = ±1/√3 = ±√3/3"
+            answer_contract: {kind: none}
+            solution_sketch: "f(-1) = f(1) = 0; c = ±1/√3 = ±√3/3"
         constraints: "endpoint values equal (usually both 0); c is an exact radical inside the interval"
       - id: kp3
         name: When the hypotheses fail and what Rolle guarantees
@@ -508,12 +545,17 @@ topics:
         exemplars:
           - problem: '$f(x) = |x|$ satisfies $f(-1) = f(1)$ but has no $c$ in $(-1, 1)$ with $f''(c) = 0$. Which hypothesis of Rolle''s theorem fails?'
             answer: "differentiability — f is not differentiable at x = 0"
+            answer_contract: {kind: none}
+            solution_sketch: "differentiability — f is not differentiable at x = 0"
           - problem: 'A differentiable function has $f(2) = f(7) = 4$. What does Rolle''s theorem guarantee?'
             answer: "some c in (2, 7) with f'(c) = 0"
+            answer_contract: {kind: none}
+            solution_sketch: "some c in (2, 7) with f'(c) = 0"
         constraints: "one hypothesis-failure example, one conceptual guarantee question"
     diagnostic_exemplar:
       problem: 'Verify that $f(x) = x^3 - 9x$ satisfies the hypotheses of Rolle''s theorem on $[0, 3]$ and find the $c$ in $(0, 3)$ with $f''(c) = 0$.'
       answer: 'f is a polynomial (continuous and differentiable) with f(0) = f(3) = 0; c = √3'
+      answer_contract: {kind: none}
       solution_sketch: '$f(0) = 0$ and $f(3) = 27 - 27 = 0$; $f''(x) = 3x^2 - 9 = 0$ gives $x = \sqrt{3} \approx 1.73$, which lies in $(0, 3)$.'
     anki_seeds:
       - front: "Rolle's theorem: if f is continuous on [a,b], differentiable on (a,b), and f(a) = f(b), then..."
@@ -559,8 +601,12 @@ topics:
         exemplars:
           - problem: 'Does the MVT apply to $f(x) = |x|$ on $[-1, 2]$? Why or why not?'
             answer: "no — f is not differentiable at x = 0, which is inside (-1, 2)"
+            answer_contract: {kind: none}
+            solution_sketch: "no — f is not differentiable at x = 0, which is inside (-1, 2)"
           - problem: 'Does the MVT apply to $f(x) = \frac{1}{x}$ on $[-1, 1]$? Why or why not?'
             answer: "no — f is not continuous on [-1, 1] (undefined at x = 0)"
+            answer_contract: {kind: none}
+            solution_sketch: "no — f is not continuous on [-1, 1] (undefined at x = 0)"
         constraints: "corner or discontinuity inside the interval; name the failed hypothesis"
       - id: kp3
         name: Consequences of the MVT
@@ -571,6 +617,8 @@ topics:
             solution_sketch: 'By the MVT, $f(5) - f(1) = f''(c) \cdot 4 \leq 8$, so $f(5) \leq 11$.'
           - problem: 'If $f''(x) = 0$ for every $x$ in an interval, what does the MVT imply about $f$ on that interval?'
             answer: "f is constant on the interval"
+            answer_contract: {kind: none}
+            solution_sketch: "f is constant on the interval"
         constraints: "bounded-derivative estimates with integer data; conceptual consequence questions"
     diagnostic_exemplar:
       problem: 'Suppose $f$ is differentiable with $f(2) = 5$ and $f''(x) \leq 3$ for all $x$. Using the Mean Value Theorem, what is the largest possible value of $f(6)$?'
@@ -607,8 +655,12 @@ topics:
         exemplars:
           - problem: 'What does the Extreme Value Theorem guarantee for a continuous function $f$ on a closed interval $[a, b]$?'
             answer: "f attains an absolute maximum and an absolute minimum on [a, b]"
+            answer_contract: {kind: none}
+            solution_sketch: "f attains an absolute maximum and an absolute minimum on [a, b]"
           - problem: 'Does $f(x) = \frac{1}{x}$ attain an absolute maximum on the open interval $(0, 1)$?'
             answer: "no — f is unbounded as x → 0⁺ (the EVT needs a closed interval and continuity)"
+            answer_contract: {kind: none}
+            solution_sketch: "no — f is unbounded as x → 0⁺ (the EVT needs a closed interval and continuity)"
         constraints: "one guarantee question, one counterexample on an open interval or with a discontinuity"
       - id: kp2
         name: The closed-interval method
@@ -616,9 +668,12 @@ topics:
         exemplars:
           - problem: 'Find the absolute maximum and minimum of $f(x) = x^3 - 3x$ on $[0, 2]$.'
             answer: "absolute max 2 at x = 2; absolute min -2 at x = 1"
+            answer_contract: {kind: none}
             solution_sketch: 'Candidates: critical point $x = 1$ (value $-2$) and endpoints $f(0) = 0$, $f(2) = 2$.'
           - problem: 'Find the absolute maximum and minimum of $f(x) = x^2 - 2x$ on $[0, 3]$.'
             answer: "absolute max 3 at x = 3; absolute min -1 at x = 1"
+            answer_contract: {kind: none}
+            solution_sketch: "absolute max 3 at x = 3; absolute min -1 at x = 1"
         constraints: "compare f at interior critical points and both endpoints; all values integers"
       - id: kp3
         name: Closed-interval method with several critical points
@@ -626,14 +681,17 @@ topics:
         exemplars:
           - problem: 'Find the absolute maximum and minimum of $f(x) = x^4 - 2x^2$ on $[-2, 1]$.'
             answer: "absolute max 8 at x = -2; absolute min -1 at x = -1 and x = 1"
+            answer_contract: {kind: none}
             solution_sketch: '$f''(x) = 4x^3 - 4x = 4x(x-1)(x+1)$; compare $f(-2) = 8$, $f(-1) = -1$, $f(0) = 0$, $f(1) = -1$.'
           - problem: 'Find the absolute maximum of $f(x) = x^3 - 12x$ on $[-3, 3]$.'
             answer: "16 at x = -2"
+            answer_contract: {kind: none}
             solution_sketch: 'Critical points $\pm 2$; compare $f(-3) = 9$, $f(-2) = 16$, $f(2) = -16$, $f(3) = -9$.'
         constraints: "two or three interior critical points; ties allowed; integer values"
     diagnostic_exemplar:
       problem: 'Find the absolute maximum and minimum of $f(x) = x^4 - 8x^2$ on $[-1, 3]$.'
       answer: 'absolute max 9 at x = 3; absolute min -16 at x = 2'
+      answer_contract: {kind: none}
       solution_sketch: '$f''(x) = 4x(x^2 - 4)$ gives interior critical points $x = 0$ and $x = 2$ (note $x = -2$ is outside the interval); compare $f(-1) = -7$, $f(0) = 0$, $f(2) = -16$, $f(3) = 9$.'
     anki_seeds:
       - front: "To find absolute extrema of a continuous f on [a, b], compare f at..."
@@ -671,9 +729,12 @@ topics:
         exemplars:
           - problem: 'Find the intervals where $f(x) = x^3 - 3x$ is increasing and where it is decreasing.'
             answer: "increasing on (-∞, -1) and (1, ∞); decreasing on (-1, 1)"
+            answer_contract: {kind: none}
             solution_sketch: '$f''(x) = 3(x-1)(x+1)$: positive outside $[-1, 1]$, negative inside.'
           - problem: 'Find where $f(x) = x^2 - 6x$ is decreasing.'
             answer: "(-∞, 3)"
+            answer_contract: {kind: none}
+            solution_sketch: "(-∞, 3)"
         constraints: "derivative factors over the integers; report open intervals"
       - id: kp2
         name: The first derivative test
@@ -681,9 +742,12 @@ topics:
         exemplars:
           - problem: 'Use the first derivative test to classify the critical points of $f(x) = x^3 - 6x^2 + 9x$ and give the function values there.'
             answer: "local max f(1) = 4; local min f(3) = 0"
+            answer_contract: {kind: none}
             solution_sketch: '$f'' = 3(x-1)(x-3)$ is $+, -, +$, so max at $1$ and min at $3$; $f(1) = 4$, $f(3) = 0$.'
           - problem: '$f''(x) = x^2(x - 2)$. Does $f$ have a local extremum at $x = 0$?'
             answer: "no — f' does not change sign at 0 (negative on both sides)"
+            answer_contract: {kind: none}
+            solution_sketch: "no — f' does not change sign at 0 (negative on both sides)"
         constraints: "include one no-sign-change trap; function values are integers"
       - id: kp3
         name: Monotonicity with products and exponentials
@@ -691,13 +755,17 @@ topics:
         exemplars:
           - problem: 'Find the intervals of increase and decrease of $f(x) = x e^{-x}$.'
             answer: "increasing on (-∞, 1); decreasing on (1, ∞)"
+            answer_contract: {kind: none}
             solution_sketch: '$f''(x) = e^{-x}(1 - x)$; $e^{-x} > 0$ always, so the sign is the sign of $1 - x$.'
           - problem: 'Where does $f(x) = x e^{-x}$ attain its local maximum, and what is the value?'
             answer: "x = 1; f(1) = 1/e"
+            answer_contract: {kind: none}
+            solution_sketch: "x = 1; f(1) = 1/e"
         constraints: "the exponential factor is always positive — sign comes from the polynomial factor"
     diagnostic_exemplar:
       problem: 'Find the intervals of increase and decrease of $f(x) = x^2 e^{-x}$.'
       answer: "increasing on (0, 2); decreasing on (-∞, 0) and (2, ∞)"
+      answer_contract: {kind: none}
       solution_sketch: '$f''(x) = e^{-x}(2x - x^2) = e^{-x} x(2 - x)$, positive exactly for $0 < x < 2$.'
     anki_seeds:
       - front: "f' > 0 on an interval means f is ___ there; f' < 0 means f is ___."
@@ -729,9 +797,11 @@ topics:
         exemplars:
           - problem: 'Find the intervals of concavity of $f(x) = x^3 - 3x$.'
             answer: "concave down on (-∞, 0); concave up on (0, ∞)"
+            answer_contract: {kind: none}
             solution_sketch: '$f''''(x) = 6x$: negative for $x < 0$, positive for $x > 0$.'
           - problem: 'Where is $f(x) = x^3 + 3x^2$ concave up?'
             answer: "(-1, ∞)"
+            answer_contract: {kind: none}
             solution_sketch: '$f''''(x) = 6x + 6 > 0$ when $x > -1$.'
         constraints: "second derivative factors cleanly; report open intervals"
       - id: kp2
@@ -740,9 +810,12 @@ topics:
         exemplars:
           - problem: 'Find the inflection points of $f(x) = x^4 - 6x^2$.'
             answer: "x = -1 and x = 1"
+            answer_contract: {kind: none}
             solution_sketch: '$f''''(x) = 12x^2 - 12 = 12(x-1)(x+1)$ changes sign at both roots.'
           - problem: 'Does $f(x) = x^4$ have an inflection point at $x = 0$?'
             answer: "no — f''(x) = 12x² is ≥ 0 on both sides (no sign change)"
+            answer_contract: {kind: none}
+            solution_sketch: "no — f''(x) = 12x² is ≥ 0 on both sides (no sign change)"
         constraints: "include one f'' = 0 without sign change trap"
       - id: kp3
         name: Concavity and the graph
@@ -750,6 +823,8 @@ topics:
         exemplars:
           - problem: 'A function has $f''(x) > 0$ and $f''''(x) < 0$ on an interval. Describe the shape of its graph there.'
             answer: "increasing but bending downward (rising at a decreasing rate)"
+            answer_contract: {kind: none}
+            solution_sketch: "increasing but bending downward (rising at a decreasing rate)"
           - problem: 'For $f(x) = x^3 - 3x$, give the inflection point as an ordered pair.'
             answer: "(0, 0)"
             solution_sketch: '$f''''$ changes sign at $x = 0$ and $f(0) = 0$.'
@@ -757,6 +832,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Find the intervals of concavity of $f(x) = x^3 - 6x^2$ and give its inflection point as an ordered pair.'
       answer: 'concave down on (-∞, 2), concave up on (2, ∞); inflection point (2, -16)'
+      answer_contract: {kind: none}
       solution_sketch: '$f''''(x) = 6x - 12$ is negative for $x < 2$ and positive for $x > 2$; $f(2) = 8 - 24 = -16$.'
     anki_seeds:
       - front: "f'' > 0 on an interval means the graph of f is ___ there."
@@ -789,9 +865,12 @@ topics:
         exemplars:
           - problem: 'Use the second derivative test to classify the critical points $x = 1$ and $x = 3$ of $f(x) = x^3 - 6x^2 + 9x$.'
             answer: "local max at x = 1 (f''(1) = -6 < 0); local min at x = 3 (f''(3) = 6 > 0)"
+            answer_contract: {kind: none}
             solution_sketch: '$f''''(x) = 6x - 12$; negative at $1$, positive at $3$.'
           - problem: 'Use the second derivative test on the critical point $x = 0$ of $f(x) = x^2 + 1$.'
             answer: "local min (f''(0) = 2 > 0)"
+            answer_contract: {kind: none}
+            solution_sketch: "local min (f''(0) = 2 > 0)"
         constraints: "f'' nonzero at each tested critical point (test is conclusive)"
       - id: kp2
         name: When the test is inconclusive
@@ -799,8 +878,12 @@ topics:
         exemplars:
           - problem: '$f(x) = x^4$ has a critical point at $x = 0$ with $f''''(0) = 0$. What does the second derivative test say, and how do you classify the point?'
             answer: "the test is inconclusive; the first derivative test (f' = 4x³ changes - to +) shows a local min"
+            answer_contract: {kind: none}
+            solution_sketch: "the test is inconclusive; the first derivative test (f' = 4x³ changes - to +) shows a local min"
           - problem: '$f(x) = x^3$ has a critical point at $x = 0$ with $f''''(0) = 0$. Classify it.'
             answer: "neither a max nor a min — f' = 3x² does not change sign"
+            answer_contract: {kind: none}
+            solution_sketch: "neither a max nor a min — f' = 3x² does not change sign"
         constraints: "f''(c) = 0 cases; fall back to the first derivative test"
       - id: kp3
         name: Choose the right test
@@ -808,13 +891,17 @@ topics:
         exemplars:
           - problem: 'Classify the critical points of $f(x) = x^4 - 4x^3$ (use whichever test works at each point).'
             answer: "x = 3 is a local min (f''(3) = 36 > 0); x = 0 is not an extremum (f' = 4x²(x-3) keeps the same sign around 0)"
+            answer_contract: {kind: none}
             solution_sketch: '$f''(x) = 4x^3 - 12x^2 = 4x^2(x - 3)$; $f''''(x) = 12x^2 - 24x$, $f''''(0) = 0$ forces the sign-chart fallback at $0$.'
           - problem: 'For a critical point $c$ with $f''''(c) < 0$, what can you conclude?'
             answer: "f has a local maximum at c"
+            answer_contract: {kind: none}
+            solution_sketch: "f has a local maximum at c"
         constraints: "one mixed problem needing both tests; conclusions stated with the justifying sign"
     diagnostic_exemplar:
       problem: 'The function $f(x) = x^4 + 4x^3$ has critical points $x = 0$ and $x = -3$. Classify each (use whichever test works at each point).'
       answer: "x = -3 is a local min (f''(-3) = 36 > 0); x = 0 is not an extremum (f''(0) = 0 and f' = 4x²(x + 3) does not change sign at 0)"
+      answer_contract: {kind: none}
       solution_sketch: '$f''''(x) = 12x^2 + 24x$ is $36 > 0$ at $x = -3$, a local min. At $x = 0$ it is $0$, so the test is inconclusive and the first derivative decides: the $4x^2$ factor of $f''(x) = 4x^2(x+3)$ keeps the sign positive on both sides of $0$.'
     anki_seeds:
       - front: "Second derivative test: at a critical point c with f'(c) = 0, f''(c) > 0 means ___ and f''(c) < 0 means ___."
@@ -849,9 +936,11 @@ topics:
         exemplars:
           - problem: 'For $f(x) = x^3 - 3x$, find all intervals of increase/decrease, local extrema, intervals of concavity, and inflection points.'
             answer: "increasing on (-∞, -1) and (1, ∞), decreasing on (-1, 1); local max f(-1) = 2, local min f(1) = -2; concave down on (-∞, 0), concave up on (0, ∞); inflection at (0, 0)"
+            answer_contract: {kind: none}
             solution_sketch: '$f'' = 3(x-1)(x+1)$ and $f'''' = 6x$; assemble the sign charts.'
           - problem: 'For $f(x) = x^3 - 6x^2$, find the local extrema and the inflection point.'
             answer: "local max f(0) = 0; local min f(4) = -32; inflection at (2, -16)"
+            answer_contract: {kind: none}
             solution_sketch: '$f'' = 3x(x - 4)$, $f'''' = 6x - 12$.'
         constraints: "cubics with integer critical points and inflection points; report every feature"
       - id: kp2
@@ -860,9 +949,12 @@ topics:
         exemplars:
           - problem: 'For $f(x) = x^4 - 6x^2$, find the local extrema and inflection points.'
             answer: "local min f(±√3) = -9 at x = ±√3; local max f(0) = 0; inflection points at x = ±1 (value -5)"
+            answer_contract: {kind: none}
             solution_sketch: '$f'' = 4x(x^2 - 3)$, $f'''' = 12x^2 - 12$; the sign of $f''$ is $-, +, -, +$.'
           - problem: 'For $f(x) = x^4 - 2x^2$, how many local extrema and how many inflection points does it have?'
             answer: "3 local extrema (min at ±1, max at 0); 2 inflection points (x = ±1/√3)"
+            answer_contract: {kind: none}
+            solution_sketch: "3 local extrema (min at ±1, max at 0); 2 inflection points (x = ±1/√3)"
         constraints: "even quartics with symmetric features; radical critical points allowed"
       - id: kp3
         name: Reconstruct features from f'
@@ -870,13 +962,17 @@ topics:
         exemplars:
           - problem: 'Suppose $f''(x) = (x-1)^2(x-3)$. Find where $f$ has local extrema.'
             answer: "local min at x = 3 only (f' does not change sign at x = 1)"
+            answer_contract: {kind: none}
             solution_sketch: '$(x-1)^2 \geq 0$, so the sign of $f''$ is the sign of $x - 3$: no change at $1$, $-$ to $+$ at $3$.'
           - problem: 'Suppose $f''(x) = x(x - 2)$. On what interval is $f$ decreasing, and where are its inflection points?'
             answer: "decreasing on (0, 2); inflection of f at x = 1 (where f'' = 2x - 2 changes sign)"
+            answer_contract: {kind: none}
+            solution_sketch: "decreasing on (0, 2); inflection of f at x = 1 (where f'' = 2x - 2 changes sign)"
         constraints: "give f' in factored form; ask for features of f, not of f'"
     diagnostic_exemplar:
       problem: 'For $f(x) = x^3 - 12x$, give the local extrema and the inflection point.'
       answer: "local max f(-2) = 16; local min f(2) = -16; inflection at (0, 0)"
+      answer_contract: {kind: none}
       solution_sketch: '$f'' = 3(x-2)(x+2)$, $f'''' = 6x$.'
     anki_seeds:
       - front: "Complete curve-analysis checklist (from f' and f''):"
@@ -910,9 +1006,11 @@ topics:
         exemplars:
           - problem: 'Two positive numbers sum to $20$. Find the pair with the largest product.'
             answer: "10 and 10 (product 100)"
+            answer_contract: {kind: none}
             solution_sketch: 'Maximize $P(x) = x(20 - x)$: $P''(x) = 20 - 2x = 0$ at $x = 10$.'
           - problem: 'Two positive numbers have product $100$. Find the pair with the smallest sum.'
             answer: "10 and 10 (sum 20)"
+            answer_contract: {kind: none}
             solution_sketch: 'Minimize $S(x) = x + \frac{100}{x}$: $S''(x) = 1 - \frac{100}{x^2} = 0$ at $x = 10$.'
         constraints: "constraint eliminates one variable; optimum at integer values"
       - id: kp2
@@ -921,9 +1019,11 @@ topics:
         exemplars:
           - problem: 'A farmer has $400$ m of fence for a rectangular field. What dimensions maximize the area, and what is that area?'
             answer: "100 m × 100 m; area 10000 m²"
+            answer_contract: {kind: none}
             solution_sketch: '$A(x) = x(200 - x)$; $A''(x) = 200 - 2x = 0$ at $x = 100$.'
           - problem: 'A rectangular pen uses a barn as one side, with $120$ m of fence for the other three sides. What dimensions maximize the area?'
             answer: "30 m (each side perpendicular to the barn) × 60 m (parallel side); area 1800 m²"
+            answer_contract: {kind: none}
             solution_sketch: '$A(x) = x(120 - 2x)$; $A''(x) = 120 - 4x = 0$ at $x = 30$, so the parallel side is $60$.'
         constraints: "perimeter-style constraint linear in the dimensions; integer optimum"
       - id: kp3
@@ -932,13 +1032,17 @@ topics:
         exemplars:
           - problem: 'In the sum-20 problem, $P(x) = x(20 - x)$ on $[0, 20]$ has critical point $x = 10$. Confirm $x = 10$ gives the absolute maximum.'
             answer: "P(0) = P(20) = 0 while P(10) = 100 (or: P''(x) = -2 < 0 everywhere)"
+            answer_contract: {kind: none}
             solution_sketch: 'Closed-interval check or the second derivative — both confirm the interior critical point is the max.'
           - problem: 'For $S(x) = x + \frac{100}{x}$ on $(0, \infty)$, confirm that $x = 10$ gives the absolute minimum.'
             answer: "S''(x) = 200/x³ > 0 for all x > 0, so S is concave up and x = 10 is the global min"
+            answer_contract: {kind: none}
+            solution_sketch: "S''(x) = 200/x³ > 0 for all x > 0, so S is concave up and x = 10 is the global min"
         constraints: "justify via endpoint comparison or second-derivative sign; no unjustified answers"
     diagnostic_exemplar:
       problem: 'A rectangular pen uses a wall as one side, with $60$ m of fence for the other three sides. What dimensions maximize the area, and what is that area?'
       answer: "15 m (each side perpendicular to the wall) × 30 m (parallel side); area 450 m²"
+      answer_contract: {kind: none}
       solution_sketch: '$2x + y = 60$; $A = x(60 - 2x)$; $A'' = 60 - 4x = 0$ at $x = 15$, $y = 30$.'
     anki_seeds:
       - front: "Optimization procedure in four steps:"
@@ -973,9 +1077,11 @@ topics:
         exemplars:
           - problem: 'An open-top box is made from a $12 \times 12$ cm sheet by cutting equal squares of side $x$ from the corners and folding. Find the $x$ that maximizes the volume, and the volume.'
             answer: "x = 2 cm; volume 128 cm³"
+            answer_contract: {kind: none}
             solution_sketch: '$V = x(12 - 2x)^2$; $V'' = (12-2x)(12-6x) = 0$ at $x = 2$ or $x = 6$ (degenerate); $V(2) = 2 \cdot 64 = 128$.'
           - problem: 'An open-top box has a square base and volume $32$ m³. Find the dimensions minimizing the material $S = x^2 + 4xh$.'
             answer: "base 4 m × 4 m, height 2 m"
+            answer_contract: {kind: none}
             solution_sketch: '$h = \frac{32}{x^2}$, so $S = x^2 + \frac{128}{x}$; $S'' = 2x - \frac{128}{x^2} = 0$ at $x^3 = 64$.'
         constraints: "state the volume/surface formulas in the problem; optimum at small integers"
       - id: kp2
@@ -984,9 +1090,11 @@ topics:
         exemplars:
           - problem: 'A rectangular field of area $800$ m² borders a straight river, so only three sides need fencing. Find the dimensions minimizing the total fence, and the minimum length.'
             answer: "20 m (each side perpendicular to the river) × 40 m (parallel side); 80 m of fence"
+            answer_contract: {kind: none}
             solution_sketch: '$F = 2x + \frac{800}{x}$; $F'' = 2 - \frac{800}{x^2} = 0$ at $x = 20$, parallel side $\frac{800}{20} = 40$.'
           - problem: 'A closed cylindrical can must hold $250\pi$ cm³. Using $S = 2\pi r^2 + 2\pi r h$, find the radius and height minimizing the surface area.'
             answer: "r = 5 cm, h = 10 cm"
+            answer_contract: {kind: none}
             solution_sketch: '$h = \frac{250}{r^2}$, so $S = 2\pi r^2 + \frac{500\pi}{r}$; $S'' = 4\pi r - \frac{500\pi}{r^2} = 0$ at $r^3 = 125$.'
         constraints: "area/volume constraint plus linear-or-quadratic objective; integer optimum"
       - id: kp3
@@ -995,6 +1103,7 @@ topics:
         exemplars:
           - problem: 'Find the point on the curve $y = \sqrt{x}$ closest to $(3, 0)$.'
             answer: "(5/2, √(5/2)) = (5/2, √10/2)"
+            answer_contract: {kind: none}
             solution_sketch: 'Minimize $d^2 = (x - 3)^2 + x$; derivative $2(x - 3) + 1 = 0$ gives $x = \frac{5}{2}$.'
           - problem: 'For the previous problem, what is the minimum distance itself?'
             answer: "√11/2"
@@ -1035,9 +1144,11 @@ topics:
         exemplars:
           - problem: 'The cost of producing $x$ items is $C(x) = \frac{x^2}{10} + 40x + 1000$ euros. Find the marginal cost at $x = 50$.'
             answer: "€50 per item"
+            answer_contract: {kind: none}
             solution_sketch: '$C''(x) = \frac{x}{5} + 40$; $C''(50) = 10 + 40 = 50$.'
           - problem: 'Revenue is $R(x) = 500x - \frac{x^2}{2}$. Find the marginal revenue at $x = 200$.'
             answer: "€300 per item"
+            answer_contract: {kind: none}
             solution_sketch: '$R''(x) = 500 - x$; $R''(200) = 300$.'
         constraints: "quadratic cost/revenue with integer marginal values; state units"
       - id: kp2
@@ -1046,9 +1157,12 @@ topics:
         exemplars:
           - problem: 'For $C(x) = \frac{x^2}{10} + 40x + 1000$, compare the marginal cost $C''(50)$ with the actual cost of the 51st item, $C(51) - C(50)$.'
             answer: "C'(50) = 50; C(51) - C(50) = 50.1 — the marginal cost approximates the next item's cost"
+            answer_contract: {kind: none}
             solution_sketch: '$C(51) - C(50) = \frac{2601 - 2500}{10} + 40 = 10.1 + 40 = 50.1$.'
           - problem: 'Why is $C''(x)$ a good estimate of the cost of item $x + 1$?'
             answer: "it is the linearization estimate: C(x+1) - C(x) ≈ C'(x)·1"
+            answer_contract: {kind: none}
+            solution_sketch: "it is the linearization estimate: C(x+1) - C(x) ≈ C'(x)·1"
         constraints: "actual and marginal values differ by a small terminating decimal"
       - id: kp3
         name: Maximize profit with marginals
@@ -1056,13 +1170,17 @@ topics:
         exemplars:
           - problem: 'Revenue is $R(x) = 200x$ and cost is $C(x) = x^2 + 40x + 1000$, both in euros. How many items maximize the profit $P = R - C$, and what is the maximum profit?'
             answer: "x = 80 items; profit €5400"
+            answer_contract: {kind: none}
             solution_sketch: '$P(x) = -x^2 + 160x - 1000$; $P''(x) = -2x + 160 = 0$ at $x = 80$; $P(80) = 5400$.'
           - problem: 'At the profit-maximizing quantity, how are marginal revenue and marginal cost related?'
             answer: "they are equal: R'(x) = C'(x)"
+            answer_contract: {kind: none}
+            solution_sketch: "they are equal: R'(x) = C'(x)"
         constraints: "quadratic profit with integer vertex; P'' < 0 so the critical point is the max"
     diagnostic_exemplar:
       problem: 'Revenue is $R(x) = 120x$ and cost is $C(x) = x^2 + 20x + 800$, both in euros. How many items maximize the profit $P = R - C$, and what is the maximum profit?'
       answer: "x = 50 items; maximum profit €1700"
+      answer_contract: {kind: none}
       solution_sketch: '$P(x) = -x^2 + 100x - 800$; $P''(x) = -2x + 100 = 0$ at $x = 50$; $P(50) = 1700$.'
     anki_seeds:
       - front: "Marginal cost is defined as..."

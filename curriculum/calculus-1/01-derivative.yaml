@@ -45,6 +45,7 @@ topics:
             solution_sketch: 'The secant slope IS the average rate of change: $\frac{9 - 1}{2} = 4$.'
           - problem: 'A tank holds $V(t) = t^2$ litres after $t$ minutes. Compute the average rate of change of $V$ on $[2, 5]$ and give its units.'
             answer: "7 L/min"
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{25 - 4}{3} = 7$; volume per time gives L/min.'
           - problem: 'A particle at position $s(t) = 2t^2$ meters: find its average velocity on $[0, 3]$.'
             answer: "6 m/s"
@@ -308,6 +309,8 @@ topics:
         exemplars:
           - problem: '$f$ is decreasing near $x = 5$. What is the sign of $f''(5)$?'
             answer: "negative"
+            answer_contract: {kind: none}
+            solution_sketch: "negative"
           - problem: '$s(t)$ gives a car''s position in kilometres after $t$ hours, and $s''(2) = 60$. What is the car''s speed at $t = 2$? Give the value with units.'
             answer: "60 km/h"
         constraints: "connect increasing/decreasing to derivative sign; units of f' are (output units)/(input units)"
@@ -408,9 +411,12 @@ topics:
         exemplars:
           - problem: 'Is $f(x) = |x|$ differentiable at $x = 0$? Explain using one-sided difference quotients.'
             answer: "no — the left quotient gives -1, the right gives 1 (a corner)"
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{|h|}{h}$ is $-1$ for $h < 0$ and $1$ for $h > 0$; the defining limit does not exist.'
           - problem: 'If $f$ is differentiable at $a$, must $f$ be continuous at $a$? If $f$ is continuous at $a$, must it be differentiable there?'
             answer: "yes; no (|x| at 0 is the standard counterexample)"
+            answer_contract: {kind: none}
+            solution_sketch: "yes; no (|x| at 0 is the standard counterexample)"
         constraints: "corner examples built from |x - a|; cite the implication and its failed converse"
       - id: kp2
         name: Spot non-differentiable points
@@ -418,10 +424,16 @@ topics:
         exemplars:
           - problem: '$f(x) = x^{1/3}$ has a vertical tangent at $x = 0$. Is $f$ differentiable there?'
             answer: "no — the difference quotient tends to +∞ (vertical tangent)"
+            answer_contract: {kind: none}
+            solution_sketch: "no — the difference quotient tends to +∞ (vertical tangent)"
           - problem: 'List the three standard graph features where a continuous function fails to be differentiable.'
             answer: "corners, cusps, and vertical tangents"
+            answer_contract: {kind: none}
+            solution_sketch: "corners, cusps, and vertical tangents"
           - problem: 'Can a function be differentiable at a jump discontinuity?'
             answer: "no — differentiability requires continuity"
+            answer_contract: {kind: none}
+            solution_sketch: "no — differentiability requires continuity"
         constraints: "classify by feature (corner / cusp / vertical tangent / discontinuity); no computation beyond sign checks"
       - id: kp3
         name: Piecewise differentiability checks
@@ -429,13 +441,17 @@ topics:
         exemplars:
           - problem: 'Let $f(x) = x^2$ for $x \leq 1$ and $f(x) = 2x - 1$ for $x > 1$. Is $f$ differentiable at $x = 1$?'
             answer: "yes — f is continuous there (both branches give 1) and both one-sided slopes equal 2"
+            answer_contract: {kind: none}
             solution_sketch: 'Values: $1 = 1$. Slopes: $2x |_{x=1} = 2$ and $2$. Both match, so $f''(1) = 2$.'
           - problem: 'Let $g(x) = x^2$ for $x \leq 1$ and $g(x) = 3x - 2$ for $x > 1$. Is $g$ differentiable at $x = 1$?'
             answer: "no — g is continuous (1 = 1) but the one-sided slopes are 2 and 3"
+            answer_contract: {kind: none}
+            solution_sketch: "no — g is continuous (1 = 1) but the one-sided slopes are 2 and 3"
         constraints: "two-branch polynomials; check value match first, then one-sided slopes"
     diagnostic_exemplar:
       problem: 'Let $f(x) = x^2$ for $x \leq 2$ and $f(x) = 4x - 4$ for $x > 2$. Is $f$ differentiable at $x = 2$?'
       answer: "yes — f is continuous at 2 (both branches give 4) and both one-sided slopes equal 4, so f'(2) = 4"
+      answer_contract: {kind: none}
       solution_sketch: 'Differentiability needs continuity plus matching one-sided slopes: the branches agree at $2$ ($2^2 = 4 = 4(2) - 4$), and $2x|_{x=2} = 4$ matches the slope $4$ of the linear branch.'
     anki_seeds:
       - front: "Differentiable ⇒ continuous. Continuous ⇒ differentiable?"
@@ -608,6 +624,7 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = (x + 1)(x - 3)$ two ways: by the product rule and by expanding first. Confirm they agree.'
             answer: "2x - 2 (both ways)"
+            answer_contract: {kind: none}
             solution_sketch: 'Product rule: $(x - 3) + (x + 1) = 2x - 2$; expansion $x^2 - 2x - 3$ differentiates to the same.'
           - problem: 'Differentiate $x^3 \cdot x^2$ by the product rule and confirm it matches $\frac{d}{dx} x^5$.'
             answer: "5x^4"

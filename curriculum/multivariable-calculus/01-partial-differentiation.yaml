@@ -38,11 +38,16 @@ topics:
         exemplars:
           - problem: 'Find the domain of $f(x, y) = \sqrt{9 - x^2 - y^2}$.'
             answer: 'The closed disk $x^2 + y^2 \le 9$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The radicand must be nonnegative: $9 - x^2 - y^2 \ge 0$.'
           - problem: 'Let $f(x, y) = \ln(x + y - 1)$. Compute $f(2, 3)$ and state the domain.'
             answer: '$f(2, 3) = \ln 4$; domain $x + y > 1$.'
+            solution_sketch: '$f(2,3)=\ln(2+3-1)=\ln 4$; the log requires $x+y-1>0$, i.e. $x+y>1$.'
+            answer_contract: {kind: none}
           - problem: 'Find the domain of $f(x, y) = \dfrac{x + y}{x - y}$.'
             answer: 'All $(x, y)$ with $x \ne y$.'
+            solution_sketch: 'The denominator $x-y$ must be nonzero, so the domain is all $(x,y)$ with $x\ne y$.'
+            answer_contract: {kind: none}
         constraints: "domains defined by one square root, log, or nonzero denominator; regions are disks, half-planes, or the plane minus a line"
       - id: kp3
         name: "Ranges of simple functions"
@@ -53,10 +58,13 @@ topics:
             solution_sketch: 'The radicand runs from $0$ (on the boundary circle) to $9$ (at the origin).'
           - problem: 'Find the range of $f(x, y) = x^2 + y^2$.'
             answer: '$[0, \infty)$'
+            solution_sketch: 'Since $x^2+y^2\ge 0$ and every nonnegative value is attained, the range is $[0,\infty)$.'
+            answer_contract: {kind: none}
         constraints: "ranges of sums of squares or a root of one; closed-form interval answers"
     diagnostic_exemplar:
       problem: 'Let $f(x, y) = \sqrt{25 - x^2 - y^2}$. Compute $f(3, 0)$ and state the domain and the range of $f$.'
       answer: '$f(3, 0) = 4$; domain the closed disk $x^2 + y^2 \le 25$; range $[0, 5]$.'
+      answer_contract: {kind: none}
       solution_sketch: '$f(3,0) = \sqrt{25 - 9} = 4$. The radicand must be non-negative, giving the disk of radius $5$; on it $25 - x^2 - y^2$ runs over $[0, 25]$, so $f$ runs over $[0, 5]$.'
     anki_seeds:
       - front: 'The domain of a function $f(x, y)$ is a subset of...'
@@ -87,11 +95,15 @@ topics:
         exemplars:
           - problem: 'Describe the level curves of $f(x, y) = x^2 + y^2$.'
             answer: 'Concentric circles $x^2 + y^2 = k$ of radius $\sqrt{k}$ for $k > 0$ (and the single point at the origin for $k = 0$).'
+            solution_sketch: 'Setting $f=k$ gives $x^2+y^2=k$: circles of radius $\sqrt{k}$ for $k>0$, and the origin for $k=0$.'
+            answer_contract: {kind: none}
           - problem: 'Find an equation of the level curve of $f(x, y) = y - x^2$ passing through $(1, 3)$.'
             answer: '$y = x^2 + 2$'
             solution_sketch: '$f(1, 3) = 3 - 1 = 2$, so the level curve is $y - x^2 = 2$.'
           - problem: 'Describe the level curves of $f(x, y) = xy$.'
             answer: 'Hyperbolas $xy = k$ for $k \ne 0$; the two coordinate axes for $k = 0$.'
+            solution_sketch: 'Setting $f=k$ gives $xy=k$: hyperbolas in the first and third quadrants for $k>0$, in the second and fourth for $k<0$, and the two axes for $k=0$.'
+            answer_contract: {kind: none}
         constraints: "level sets are circles, lines, parabolas, or hyperbolas; k values keep radii and intercepts exact"
       - id: kp2
         name: "Reading contour maps"
@@ -99,11 +111,16 @@ topics:
         exemplars:
           - problem: 'For $f(x, y) = x^2 + y^2$, the contours $k = 1, 4, 9$ are circles of radii $1, 2, 3$: equal radius steps for larger and larger jumps in level. What does this say about the surface $z = f(x, y)$?'
             answer: 'The surface steepens away from the origin: each unit step outward raises the height by more than the last (jumps of $3$, then $5$).'
+            answer_contract: {kind: none}
             solution_sketch: 'Equal horizontal steps ($\Delta r = 1$) produce growing height gains $\Delta k = 3, 5, \dots$, so the paraboloid gets steeper outward.'
           - problem: 'The level curves of a function $f(x, y)$ are evenly spaced parallel lines. What kind of function is $f$?'
             answer: 'A linear function $f(x, y) = ax + by + c$; its graph is a plane.'
+            solution_sketch: 'Evenly spaced parallel level curves mean the value changes at a constant rate in a fixed direction: a linear function $f(x,y)=ax+by+c$, whose graph is a plane.'
+            answer_contract: {kind: none}
           - problem: 'On a contour map, what does it mean when level curves crowd close together?'
             answer: 'The function changes rapidly there — the graph is steep.'
+            solution_sketch: 'Closely spaced level curves mean the function changes rapidly over a short distance, so the graph is steep there.'
+            answer_contract: {kind: none}
         constraints: "qualitative reading of contour maps: spacing vs steepness, parallel lines vs planes"
       - id: kp3
         name: "Graphs of two-variable functions"
@@ -111,13 +128,17 @@ topics:
         exemplars:
           - problem: 'Identify the graph of $f(x, y) = \sqrt{9 - x^2 - y^2}$.'
             answer: 'The upper hemisphere of the sphere $x^2 + y^2 + z^2 = 9$ (radius $3$).'
+            answer_contract: {kind: none}
             solution_sketch: '$z = \sqrt{9 - x^2 - y^2}$ squares to the sphere equation with $z \ge 0$.'
           - problem: 'Identify the graph of $f(x, y) = 6 - 2x - 3y$.'
             answer: 'The plane $2x + 3y + z = 6$.'
+            solution_sketch: 'The graph satisfies $z=6-2x-3y$, i.e. $2x+3y+z=6$, a plane.'
+            answer_contract: {kind: none}
         constraints: "graphs are planes, paraboloids, or hemispheres recognizable from the quadric catalog"
     diagnostic_exemplar:
       problem: 'Identify the graph of $f(x, y) = \sqrt{16 - x^2 - y^2}$ and describe its level curves.'
       answer: 'The graph is the upper hemisphere of the sphere $x^2 + y^2 + z^2 = 16$ (radius $4$). The level curves $f = k$ are the concentric circles $x^2 + y^2 = 16 - k^2$ of radius $\sqrt{16 - k^2}$, for $0 \le k \le 4$; equally spaced levels crowd together near the rim $x^2 + y^2 = 16$, where the hemisphere is steepest, and spread out near the top $k = 4$, where it flattens.'
+      answer_contract: {kind: none}
       solution_sketch: 'Squaring $z = \sqrt{16 - x^2 - y^2}$ with $z \ge 0$ gives $x^2 + y^2 + z^2 = 16$, $z \ge 0$. Setting $f = k$ gives $x^2 + y^2 = 16 - k^2$.'
     anki_seeds:
       - front: 'What is a level curve of $f(x, y)$?'
@@ -148,8 +169,11 @@ topics:
         exemplars:
           - problem: 'Describe the level surfaces of $f(x, y, z) = x^2 + y^2 + z^2$.'
             answer: 'Concentric spheres of radius $\sqrt{k}$ centered at the origin for $k > 0$ (the origin itself for $k = 0$).'
+            solution_sketch: 'Setting $f=k$ gives $x^2+y^2+z^2=k$: spheres of radius $\sqrt{k}$ for $k>0$, and the origin for $k=0$.'
+            answer_contract: {kind: none}
           - problem: 'Find the level surface of $f(x, y, z) = x^2 + y^2 - z$ passing through the origin.'
             answer: 'The paraboloid $z = x^2 + y^2$.'
+            answer_contract: {kind: none}
             solution_sketch: '$f(0,0,0) = 0$, so the surface is $x^2 + y^2 - z = 0$.'
         constraints: "f is a quadratic or linear polynomial; the required level passes through a given small-integer point"
       - id: kp2
@@ -158,14 +182,21 @@ topics:
         exemplars:
           - problem: 'Identify the level surface $f(x, y, z) = 2x + 3y + z = 6$.'
             answer: 'A plane (normal vector $\langle 2, 3, 1 \rangle$).'
+            solution_sketch: 'The level surface $2x+3y+z=6$ is a plane with normal vector $\langle 2,3,1\rangle$.'
+            answer_contract: {kind: none}
           - problem: 'Identify the level surface of $f(x, y, z) = x^2 + y^2 - z^2$ at level $k = 1$, and at $k = 0$.'
             answer: '$k = 1$: a hyperboloid of one sheet; $k = 0$: a double cone.'
+            solution_sketch: 'For $k=1$, $x^2+y^2-z^2=1$ is a hyperboloid of one sheet; for $k=0$ it is the double cone $z^2=x^2+y^2$.'
+            answer_contract: {kind: none}
           - problem: 'Identify the surface $x^2 + y^2 = 4$ regarded as a level surface in $\mathbb{R}^3$.'
             answer: 'A circular cylinder of radius $2$ about the $z$-axis.'
+            solution_sketch: 'The equation $x^2+y^2=4$ has no $z$, so it is a circular cylinder of radius $2$ about the $z$-axis.'
+            answer_contract: {kind: none}
         constraints: "surfaces come from the standard quadric catalog: spheres, planes, cylinders, cones, paraboloids, hyperboloids"
     diagnostic_exemplar:
       problem: 'Identify the level surface of $f(x, y, z) = x^2 + y^2 - z^2$ at $k = 4$, and at $k = 0$.'
       answer: '$k = 4$: the hyperboloid of one sheet $x^2 + y^2 - z^2 = 4$ with axis the $z$-axis. $k = 0$: the double cone $z^2 = x^2 + y^2$ with axis the $z$-axis.'
+      answer_contract: {kind: none}
       solution_sketch: 'For $k > 0$ the equation $x^2 + y^2 - z^2 = k$ has one negative square and non-empty traces $z = c$ for every $c$, so it is a one-sheeted hyperboloid; at $k = 0$ it degenerates to $x^2 + y^2 = z^2$, the cone.'
     anki_seeds:
       - front: 'What is a level surface of $f(x, y, z)$?'
@@ -196,9 +227,12 @@ topics:
         exemplars:
           - problem: 'Evaluate $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + y^2}$ along the line $y = x$, and along the line $y = 0$.'
             answer: 'Along $y = x$: $\frac{x^2}{2x^2} = \frac{1}{2}$. Along $y = 0$: $0$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Substitute the path into the formula and take a one-variable limit.'
           - problem: 'Evaluate $\lim_{(x,y) \to (0,0)} \dfrac{x^2 - y^2}{x^2 + y^2}$ along each coordinate axis.'
             answer: 'Along the $x$-axis ($y = 0$): $1$. Along the $y$-axis ($x = 0$): $-1$.'
+            solution_sketch: 'On $y=0$ the quotient is $x^2/x^2=1$; on $x=0$ it is $-y^2/y^2=-1$. The two path limits differ.'
+            answer_contract: {kind: none}
         constraints: "paths are lines y = mx, axes, or parabolas; the restricted limit is a one-variable computation"
       - id: kp2
         name: "The two-path test"
@@ -206,14 +240,17 @@ topics:
         exemplars:
           - problem: 'Show that $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + y^2}$ does not exist.'
             answer: 'Along $y = 0$ the function is $0$; along $y = x$ it is $\frac{x^2}{2x^2} = \frac{1}{2}$. Different path limits, so the limit does not exist.'
+            answer_contract: {kind: none}
             solution_sketch: 'Two straight-line paths give limits $0$ and $\frac{1}{2}$.'
           - problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{2xy^2}{x^2 + y^4}$ exists.'
             answer: 'No: along $y = 0$ the limit is $0$, but along the parabola $x = y^2$ it is $\frac{2y^4}{2y^4} = 1$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Straight lines all give $0$, but the parabolic path $x = y^2$ gives $1$ — so lines alone never prove existence.'
         constraints: "rational functions homogeneous of degree 0 (or needing one parabolic path); always exhibit two explicit paths"
     diagnostic_exemplar:
       problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{x^2 - y^2}{x^2 + y^2}$ exists.'
       answer: 'No: along $y = 0$ the limit is $1$; along $x = 0$ it is $-1$.'
+      answer_contract: {kind: none}
       solution_sketch: 'The two coordinate-axis paths give different values, so no limit exists.'
     anki_seeds:
       - front: 'Two-path test for multivariable limits?'
@@ -269,16 +306,21 @@ topics:
         exemplars:
           - problem: 'Where is $f(x, y) = \dfrac{1}{x^2 + y^2 - 1}$ continuous?'
             answer: 'Everywhere except on the circle $x^2 + y^2 = 1$.'
+            answer_contract: {kind: none}
             solution_sketch: 'A quotient of continuous functions is continuous wherever the denominator is nonzero.'
           - problem: 'Where is $f(x, y) = \ln(x + y)$ continuous?'
             answer: 'On the open half-plane $x + y > 0$.'
+            solution_sketch: 'The logarithm is continuous where its argument is positive, so $f$ is continuous on the open half-plane $x+y>0$.'
+            answer_contract: {kind: none}
           - problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{x^2 y^2}{x^2 + y^2}$ exists, and find it if so.'
             answer: 'Yes; the limit is $0$.'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{x^2 y^2}{x^2 + y^2} \le y^2 \cdot \frac{x^2}{x^2+y^2} \le y^2 \to 0$: squeeze. (Paths only suggest the value; the bound proves it.)'
         constraints: "continuity questions reduce to where a denominator or log/root argument fails; existence decisions need an explicit squeeze bound"
     diagnostic_exemplar:
       problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{x y^3}{x^2 + y^2}$ exists, and find it if so.'
       answer: 'Yes; the limit is $0$.'
+      answer_contract: {kind: none}
       solution_sketch: '$\left|\frac{xy^3}{x^2+y^2}\right| = |xy| \cdot \frac{y^2}{x^2+y^2} \le |xy| \to 0$, so the squeeze gives $0$.'
     anki_seeds:
       - front: 'Standard squeeze bounds at $(0,0)$: $\dfrac{x^2}{x^2 + y^2} \le$ {{c1::$1$}} and $|x| \le$ {{c2::$\sqrt{x^2 + y^2}$}}.'
@@ -326,13 +368,17 @@ topics:
         exemplars:
           - problem: 'Write $\dfrac{x^2 - y^2}{x^2 + y^2}$ in polar coordinates and conclude whether its limit at the origin exists.'
             answer: 'It equals $\cos 2\theta$: the value depends on the approach angle and is independent of $r$, so the limit does not exist.'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{r^2\cos^2\theta - r^2\sin^2\theta}{r^2} = \cos 2\theta$.'
           - problem: 'Write $\dfrac{xy}{x^2 + y^2}$ in polar coordinates and conclude whether its limit at the origin exists.'
             answer: 'It equals $\cos\theta \sin\theta = \frac{1}{2}\sin 2\theta$, which depends on $\theta$: no limit.'
+            solution_sketch: 'With $x=r\cos\theta$, $y=r\sin\theta$, the quotient is $\cos\theta\sin\theta=\tfrac12\sin 2\theta$, which depends on $\theta$; hence the limit does not exist.'
+            answer_contract: {kind: none}
         constraints: "homogeneous degree-0 quotients whose polar form is a pure function of theta"
     diagnostic_exemplar:
       problem: 'Use polar coordinates to decide whether $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + 2y^2}$ exists.'
       answer: 'No, the limit does not exist.'
+      answer_contract: {kind: none}
       solution_sketch: 'In polar coordinates the quotient is $\dfrac{r^2\cos\theta\sin\theta}{r^2(\cos^2\theta + 2\sin^2\theta)} = \dfrac{\cos\theta\,\sin\theta}{1 + \sin^2\theta}$: independent of $r$ but varying with $\theta$ (it equals $0$ along $\theta = 0$ and $\tfrac{1}{3}$ along $\theta = \pi/4$), so the value depends on the direction of approach.'
     anki_seeds:
       - front: 'Polar substitution for limits at the origin?'
@@ -429,8 +475,11 @@ topics:
         exemplars:
           - problem: 'A table gives $f(2, 1) = 10$ and $f(2.5, 1) = 12$. Estimate $f_x(2, 1)$.'
             answer: '$f_x(2, 1) \approx \dfrac{12 - 10}{0.5} = 4$'
+            solution_sketch: '$f_x(2,1)\approx\frac{f(2.5,1)-f(2,1)}{0.5}=\frac{12-10}{0.5}=4$.'
+            answer_contract: {kind: none}
           - problem: 'A table gives $f(1.9, 3) = 7.2$ and $f(2.1, 3) = 7.8$. Use a central difference to estimate $f_x(2, 3)$.'
             answer: '$f_x(2, 3) \approx \dfrac{7.8 - 7.2}{0.2} = 3$'
+            answer_contract: {kind: none}
             solution_sketch: 'Central difference: $\frac{f(2.1,3) - f(1.9,3)}{2(0.1)}$.'
         constraints: "one variable changes at a time; difference quotients evaluate to one-decimal or integer answers"
       - id: kp2
@@ -439,14 +488,21 @@ topics:
         exemplars:
           - problem: 'Let $T(x, t)$ be the temperature at position $x$ and time $t$. What does $T_t(5, 30)$ measure?'
             answer: 'The instantaneous rate of change of temperature with respect to time at position $x = 5$, at time $t = 30$ (position held fixed).'
+            solution_sketch: '$T_t(5,30)$ is the rate of change of temperature in time at the fixed position $x=5$ and time $t=30$.'
+            answer_contract: {kind: none}
           - problem: 'On a contour map of $f$, moving right (in the $+x$ direction) from a point $P$ you cross from the level curve $f = 40$ to the level curve $f = 30$. What is the sign of $f_x(P)$?'
             answer: 'Negative: $f$ decreases in the $+x$ direction.'
+            solution_sketch: 'Crossing from the higher level $f=40$ to the lower level $f=30$ as $x$ increases means $f$ decreases in the $+x$ direction, so $f_x(P)<0$.'
+            answer_contract: {kind: none}
           - problem: 'Along the horizontal line through $P$, the contour $f = 10$ crosses at $x = 2$ and the contour $f = 20$ crosses at $x = 3$. Estimate $f_x$ near $P$.'
             answer: '$f_x \approx \dfrac{20 - 10}{3 - 2} = 10$'
+            solution_sketch: '$f_x\approx\frac{20-10}{3-2}=10$.'
+            answer_contract: {kind: none}
         constraints: "contour levels differ by round numbers; interpretation answers must name the fixed variable"
     diagnostic_exemplar:
       problem: 'On a contour map of $f$, the level curve $f = 30$ crosses the horizontal line through $P$ at $x = 4$ and the level curve $f = 24$ crosses it at $x = 6$. Estimate $f_x$ near $P$, and say what its sign means.'
       answer: '$f_x \approx \dfrac{24 - 30}{6 - 4} = -3$; the sign is negative, so $f$ decreases as one moves in the $+x$ direction.'
+      answer_contract: {kind: none}
       solution_sketch: 'Along the horizontal line only $x$ varies, so the difference quotient in $x$ estimates $f_x$.'
     anki_seeds:
       - front: 'Difference-quotient estimate of $f_x(a,b)$ from a table?'
@@ -483,8 +539,12 @@ topics:
         exemplars:
           - problem: 'Let $f(x, y) = e^{xy}$. Find $f_x$ and $f_y$.'
             answer: '$f_x = y e^{xy}$, $\; f_y = x e^{xy}$'
+            solution_sketch: 'Holding $y$ fixed, $f_x=y e^{xy}$; holding $x$ fixed, $f_y=x e^{xy}$.'
+            answer_contract: {kind: none}
           - problem: 'Let $f(x, y) = \ln(x^2 + y^2)$. Find $f_x$.'
             answer: '$\dfrac{2x}{x^2 + y^2}$'
+            solution_sketch: '$f_x=\frac{1}{x^2+y^2}\cdot 2x=\frac{2x}{x^2+y^2}$.'
+            answer_contract: {kind: none}
         constraints: "one composition layer; inner functions polynomial in x, y"
       - id: kp2
         name: "Trigonometric compositions"
@@ -616,9 +676,11 @@ topics:
         exemplars:
           - problem: 'Find the linearization $L(x, y)$ of $f(x, y) = \sqrt{x^2 + y^2}$ at $(3, 4)$ and use it to estimate $f(3.1, 3.9)$.'
             answer: '$L(x,y) = 5 + \frac{3}{5}(x - 3) + \frac{4}{5}(y - 4)$; $\;f(3.1, 3.9) \approx 4.98$'
+            answer_contract: {kind: none}
             solution_sketch: '$f(3,4) = 5$, $f_x = \frac{x}{\sqrt{x^2+y^2}} = \frac{3}{5}$, $f_y = \frac{4}{5}$. Then $L(3.1, 3.9) = 5 + 0.6(0.1) + 0.8(-0.1) = 4.98$.'
           - problem: 'Find the linearization of $f(x, y) = x^2 y$ at $(1, 2)$ and estimate $f(1.1, 1.9)$.'
             answer: '$L(x,y) = 2 + 4(x - 1) + (y - 2)$; $\;f(1.1, 1.9) \approx 2.3$'
+            answer_contract: {kind: none}
             solution_sketch: '$f(1,2) = 2$, $f_x = 2xy = 4$, $f_y = x^2 = 1$; $L(1.1, 1.9) = 2 + 0.4 - 0.1 = 2.3$ (true value $2.299$).'
         constraints: "base points where f and its partials are exact rationals; estimates stay within 0.05 of the true value"
     diagnostic_exemplar:
@@ -654,8 +716,12 @@ topics:
         exemplars:
           - problem: 'Find the total differential $dz$ of $z = x^2 y^3$, and evaluate it at $(1, 1)$ with $dx = 0.1$, $dy = -0.2$.'
             answer: '$dz = 2xy^3\, dx + 3x^2 y^2\, dy$; at the given values $dz = 0.2 - 0.6 = -0.4$'
+            solution_sketch: '$dz=2xy^3\,dx+3x^2y^2\,dy$; at $(1,1)$ with $dx=0.1$, $dy=-0.2$ this is $0.2-0.6=-0.4$.'
+            answer_contract: {kind: none}
           - problem: 'Find the total differential of $w = x^2 + y^2 + z^2$.'
             answer: '$dw = 2x\,dx + 2y\,dy + 2z\,dz$'
+            solution_sketch: '$dw=2x\,dx+2y\,dy+2z\,dz$.'
+            answer_contract: {kind: none}
         constraints: "polynomial or single-radical functions; numeric evaluations use one-decimal increments"
       - id: kp2
         name: "Error estimation"
@@ -663,14 +729,17 @@ topics:
         exemplars:
           - problem: 'A box has measured dimensions $10 \times 5 \times 2$ cm, each with maximum error $0.1$ cm. Use differentials to estimate the maximum error in the volume $V = xyz$.'
             answer: '$dV = yz\,dx + xz\,dy + xy\,dz = (10 + 20 + 50)(0.1) = 8$ cm$^3$'
+            answer_contract: {kind: none}
             solution_sketch: '$yz = 10$, $xz = 20$, $xy = 50$; each error contributes with the worst sign.'
           - problem: 'The radius and height of a cylinder are measured as $r = 5$ and $h = 10$ with relative errors of $1\%$ and $0.5\%$. Estimate the relative error in $V = \pi r^2 h$.'
             answer: '$\dfrac{dV}{V} = 2\dfrac{dr}{r} + \dfrac{dh}{h} = 2(0.01) + 0.005 = 0.025 = 2.5\%$'
+            answer_contract: {kind: none}
             solution_sketch: 'Logarithmic differential: $\ln V = \ln \pi + 2\ln r + \ln h$.'
         constraints: "measurement errors of 0.05-0.1 units or 0.5-2 percent; answers exact decimals or percents"
     diagnostic_exemplar:
       problem: 'A rectangular box is measured as $20 \times 10 \times 5$ cm, each dimension with a maximum error of $0.1$ cm. Use differentials to estimate the maximum error in the computed volume $V = xyz$.'
       answer: '$35$ cm$^3$'
+      answer_contract: {kind: none}
       solution_sketch: '$dV = yz\,dx + xz\,dy + xy\,dz = (50 + 100 + 200)(0.1) = 35$.'
     anki_seeds:
       - front: 'Total differential of $z = f(x, y)$?'
@@ -715,12 +784,17 @@ topics:
         exemplars:
           - problem: 'Let $z = x^2 + y^2$ with $x = \cos t$, $y = \sin t$. Compute $\frac{dz}{dt}$ and explain the answer.'
             answer: '$\frac{dz}{dt} = 2x(-\sin t) + 2y\cos t = 0$: the point moves along the unit circle, a level curve of $z$.'
+            solution_sketch: '$\frac{dz}{dt}=2x(-\sin t)+2y(\cos t)=-2\cos t\sin t+2\sin t\cos t=0$, since $(x,y)$ moves along the level curve $x^2+y^2=1$.'
+            answer_contract: {kind: none}
           - problem: 'The temperature at $(x, y)$ is $T(x, y) = x^2 y$. A bug at $(2, 1)$ moves with $\frac{dx}{dt} = 3$ and $\frac{dy}{dt} = -1$. How fast is the temperature changing at the bug''s location?'
             answer: '$\frac{dT}{dt} = 2xy \cdot 3 + x^2 \cdot (-1) = 12 - 4 = 8$'
+            solution_sketch: '$\frac{dT}{dt}=T_x x''+T_y y''=(2xy)(3)+(x^2)(-1)=12-4=8$ at $(2,1)$.'
+            answer_contract: {kind: none}
         constraints: "evaluation at a specific instant with integer partials and velocities; include one level-curve (zero-rate) case"
     diagnostic_exemplar:
       problem: 'The temperature at $(x, y)$ is $T(x, y) = x^2 y$. A particle passing through $(3, 2)$ has $\frac{dx}{dt} = -1$ and $\frac{dy}{dt} = 4$. How fast is the temperature at the particle changing?'
       answer: '$24$ degrees per unit time.'
+      answer_contract: {kind: none}
       solution_sketch: '$\frac{dT}{dt} = T_x \frac{dx}{dt} + T_y \frac{dy}{dt} = 2xy(-1) + x^2(4) = 12(-1) + 9(4) = 24$.'
     anki_seeds:
       - front: 'Chain rule for $z = f(x, y)$, $x = x(t)$, $y = y(t)$?'
@@ -768,6 +842,7 @@ topics:
             solution_sketch: '$\frac{\partial u}{\partial s} = 2xy^3 \cdot t^2 + 3x^2y^2 \cdot 2st$; with $x = st^2$, $y = s^2t$ both terms combine to $2s^7t^7 + 6s^7t^7$. Check: $u = s^8 t^7$.'
           - problem: 'Suppose $z = f(x, y)$ with $x = g(s, t)$, $y = h(s, t)$, and at $(s, t) = (1, 2)$: $g(1,2) = 3$, $h(1,2) = 4$, $g_s(1,2) = -1$, $h_s(1,2) = 6$, $f_x(3,4) = 5$, $f_y(3,4) = 2$. Find $\frac{\partial z}{\partial s}$ at $(1, 2)$.'
             answer: '$5(-1) + 2(6) = 7$'
+            answer_contract: {kind: none}
             solution_sketch: 'Follow both branches of the tree: $z_s = f_x g_s + f_y h_s$, evaluated at the matching points.'
         constraints: "one symbolic and one numeric (table-values) exemplar; every branch of the tree contributes exactly one product"
       - id: kp3
@@ -776,14 +851,17 @@ topics:
         exemplars:
           - problem: 'Use $\frac{dy}{dx} = -F_x / F_y$ to find $\frac{dy}{dx}$ for the folium $x^3 + y^3 = 6xy$.'
             answer: '$\dfrac{dy}{dx} = \dfrac{2y - x^2}{y^2 - 2x}$'
+            answer_contract: {kind: none}
             solution_sketch: '$F = x^3 + y^3 - 6xy$; $F_x = 3x^2 - 6y$, $F_y = 3y^2 - 6x$; $-F_x/F_y = \frac{6y - 3x^2}{3y^2 - 6x} = \frac{2y - x^2}{y^2 - 2x}$.'
           - problem: 'For the sphere $x^2 + y^2 + z^2 = 9$, find $\frac{\partial z}{\partial x}$.'
             answer: '$-\dfrac{x}{z}$'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{\partial z}{\partial x} = -F_x/F_z = -\frac{2x}{2z}$.'
         constraints: "F polynomial with integer coefficients; answers simplified by canceling common factors"
     diagnostic_exemplar:
       problem: 'Use $\frac{dy}{dx} = -F_x / F_y$ to find $\frac{dy}{dx}$ for the curve $x^3 + y^3 = 9xy$.'
       answer: '$\dfrac{3y - x^2}{y^2 - 3x}$'
+      answer_contract: {kind: none}
       solution_sketch: 'With $F = x^3 + y^3 - 9xy$: $F_x = 3x^2 - 9y$ and $F_y = 3y^2 - 9x$, so $\frac{dy}{dx} = -\dfrac{3x^2 - 9y}{3y^2 - 9x} = \dfrac{3y - x^2}{y^2 - 3x}$.'
     anki_seeds:
       - front: 'General multivariable chain rule via tree diagram?'

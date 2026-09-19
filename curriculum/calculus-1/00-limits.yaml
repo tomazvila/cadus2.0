@@ -35,6 +35,7 @@ topics:
         exemplars:
           - problem: 'For $g(x) = 3x + 1$, compute $g(1.9)$, $g(1.99)$, $g(2.01)$, $g(2.1)$ and use them to estimate $\lim_{x \to 2} g(x)$.'
             answer: "7 (the values are 6.7, 6.97, 7.03, 7.3)"
+            answer_contract: {kind: none}
             solution_sketch: 'Evaluate at inputs closing in on $2$ from each side; the outputs close in on $7$.'
           - problem: 'To probe $\lim_{x \to 5} f(x)$ numerically, which list of inputs is appropriate: (a) $4.9, 4.99, 5.01, 5.1$ or (b) $4, 4.5, 6, 7$? Answer (a) or (b).'
             answer: "(a)"
@@ -48,6 +49,8 @@ topics:
             answer: "3"
           - problem: 'A table gives $f(3.9) = 2$, $f(3.99) = 2$, $f(4.01) = 7$, $f(4.1) = 7$. Do the two sides of the table suggest the same limiting value at $x = 4$?'
             answer: "no — the left side suggests 2, the right side 7"
+            answer_contract: {kind: none}
+            solution_sketch: "no — the left side suggests 2, the right side 7"
         constraints: "one-sided reads only; no limit-existence theory beyond comparing the two sides"
     diagnostic_exemplar:
       problem: 'For $g(x) = 2x + 1$, compute $g(2.9)$, $g(2.99)$, $g(3.01)$, $g(3.1)$ and use them to estimate $\lim_{x \to 3} g(x)$.'
@@ -107,13 +110,17 @@ topics:
         exemplars:
           - problem: 'Let $f(x) = \frac{|x|}{x}$. A table gives $f(-0.1) = -1$, $f(-0.01) = -1$, $f(0.01) = 1$, $f(0.1) = 1$. What is $\lim_{x \to 0} f(x)$?'
             answer: "DNE"
+            answer_contract: {kind: none}
             solution_sketch: 'From the left the values approach $-1$; from the right, $1$. Since the sides disagree, the two-sided limit does not exist.'
           - problem: 'A table for $h$ near $x = 4$ gives $h(3.9) = 2$, $h(3.99) = 2$, $h(4.01) = 7$, $h(4.1) = 7$. What is $\lim_{x \to 4} h(x)$?'
             answer: "DNE"
+            answer_contract: {kind: none}
+            solution_sketch: "DNE"
         constraints: "left and right values approach two different finite numbers; answer is DNE"
     diagnostic_exemplar:
       problem: 'The graph of $h$ is the line $y = 2x$ for $x < 3$ and the horizontal line $y = 1$ for $x > 3$, with a filled dot at $(3, 1)$. Find $\lim_{x \to 3} h(x)$, or answer DNE if it does not exist.'
       answer: 'DNE'
+      answer_contract: {kind: none}
       solution_sketch: 'The left branch rises to $6$ while the right branch sits at $1$; the value $h(3) = 1$ is irrelevant, and because the one-sided limits differ the two-sided limit does not exist.'
     anki_seeds:
       - front: "The limit of f(x) as x → a depends on values of f near a, but never on..."
@@ -237,14 +244,17 @@ topics:
             answer: "4"
           - problem: 'Given $\lim_{x \to 1^-} g(x) = 2$ and $\lim_{x \to 1^+} g(x) = 6$, find $\lim_{x \to 1} g(x)$.'
             answer: "DNE"
+            answer_contract: {kind: none}
             solution_sketch: 'The one-sided limits differ ($2 \neq 6$), so the two-sided limit does not exist.'
           - problem: 'Evaluate $\lim_{x \to 0} \frac{|x|}{x}$.'
             answer: "DNE"
+            answer_contract: {kind: none}
             solution_sketch: 'The left limit is $-1$ and the right limit is $1$; they disagree, so the two-sided limit does not exist.'
         constraints: "compare given or computed one-sided limits; answer a number, or DNE when the sides disagree"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to 7} \frac{|x - 7|}{x - 7}$, or answer DNE if it does not exist.'
       answer: 'DNE'
+      answer_contract: {kind: none}
       solution_sketch: 'For $x < 7$ the quotient is $-1$ and for $x > 7$ it is $+1$; the one-sided limits disagree, so the two-sided limit does not exist.'
     anki_seeds:
       - front: "lim_{x→a⁻} means x approaches a from values that are ___ a; lim_{x→a⁺} from values ___ a."
@@ -277,6 +287,7 @@ topics:
         exemplars:
           - problem: 'Let $f(x) = x + 1$ for $x < 2$ and $f(x) = x^2$ for $x \geq 2$. Find $\lim_{x \to 2^-} f(x)$, $\lim_{x \to 2^+} f(x)$, and $\lim_{x \to 2} f(x)$.'
             answer: "left 3, right 4, two-sided DNE"
+            answer_contract: {kind: none}
             solution_sketch: 'Use the $x < 2$ branch from the left ($2 + 1 = 3$) and the $x \geq 2$ branch from the right ($2^2 = 4$); they disagree, so the two-sided limit does not exist.'
           - problem: 'Let $g(x) = 2x$ for $x < 3$ and $g(x) = 9 - x$ for $x \geq 3$. Find $\lim_{x \to 3} g(x)$.'
             answer: "6"
@@ -339,9 +350,11 @@ topics:
         exemplars:
           - problem: 'Substitute $x = 3$ into $\frac{x^2 - 9}{x - 3}$. What form results? (Answer with the resulting quotient of the two values, e.g. $7/0$.)'
             answer: "0/0"
+            answer_contract: {kind: none}
             solution_sketch: 'Numerator and denominator both vanish at $3$, giving the indeterminate form $\frac{0}{0}$ — the limit must be found another way (here, by factoring).'
           - problem: 'What form does direct substitution give for $\lim_{x \to 2} \frac{x^2 - 1}{x - 2}$? (Answer with the resulting quotient of the two values.)'
             answer: "3/0"
+            answer_contract: {kind: none}
             solution_sketch: 'A nonzero numerator over a zero denominator is not indeterminate: the limit is infinite or does not exist, and factoring will not help.'
           - problem: 'Substitute $x = 1$ into $\frac{x^2 + 1}{x + 1}$ and evaluate the limit if possible.'
             answer: "1"
@@ -495,12 +508,15 @@ topics:
         exemplars:
           - problem: 'Evaluate $\lim_{x \to \infty} \frac{x^3 + 1}{x + 2}$.'
             answer: "∞"
+            answer_contract: {kind: none}
             solution_sketch: 'The quotient behaves like $x^2$, which grows without bound.'
           - problem: 'Evaluate $\lim_{x \to \infty} \frac{2x^2 + 3}{1 - x}$.'
             answer: "-∞"
+            answer_contract: {kind: none}
             solution_sketch: 'The quotient behaves like $\frac{2x^2}{-x} = -2x \to -\infty$.'
           - problem: 'Evaluate $\lim_{x \to -\infty} \frac{x^2 + 1}{x + 5}$.'
             answer: "-∞"
+            answer_contract: {kind: none}
             solution_sketch: 'The quotient behaves like $x$, which tends to $-\infty$.'
         constraints: "numerator degree exceeds denominator degree by 1 or 2; determine the sign from the leading terms"
       - id: kp3
@@ -520,6 +536,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to -\infty} \frac{2x^2 + 3}{x + 5}$.'
       answer: '-∞'
+      answer_contract: {kind: none}
       solution_sketch: 'The numerator degree exceeds the denominator degree by one, so the quotient behaves like $2x$; as $x \to -\infty$ this tends to $-\infty$.'
     anki_seeds:
       - front: "For a rational function with equal numerator and denominator degree, lim_{x→±∞} equals..."
@@ -554,11 +571,15 @@ topics:
         exemplars:
           - problem: 'Evaluate $\lim_{x \to 0^+} \frac{1}{x}$.'
             answer: "∞"
+            answer_contract: {kind: none}
+            solution_sketch: "∞"
           - problem: 'Evaluate $\lim_{x \to 2^-} \frac{1}{x - 2}$.'
             answer: "-∞"
+            answer_contract: {kind: none}
             solution_sketch: 'As $x \to 2^-$ the denominator is small and negative, so the fraction blows up to $-\infty$.'
           - problem: 'Evaluate $\lim_{x \to 3^+} \frac{x + 1}{3 - x}$.'
             answer: "-∞"
+            answer_contract: {kind: none}
             solution_sketch: 'The numerator approaches $4 > 0$ while $3 - x$ is small and negative, so the quotient tends to $-\infty$.'
         constraints: "nonzero numerator over a vanishing denominator; determine the sign from the chosen side"
       - id: kp2
@@ -569,9 +590,11 @@ topics:
             answer: "x = 3"
           - problem: 'Does $f(x) = \frac{x^2 - 4}{x - 2}$ have a vertical asymptote at $x = 2$?'
             answer: "no — the factor cancels, leaving a hole at (2, 4)"
+            answer_contract: {kind: none}
             solution_sketch: '$f(x) = x + 2$ for $x \neq 2$: the limit at $2$ is finite, so the gap is a removable hole, not an asymptote.'
           - problem: 'Find all vertical asymptotes and holes of $f(x) = \frac{x + 5}{x^2 - 25}$.'
             answer: "vertical asymptote x = 5; hole at x = -5"
+            answer_contract: {kind: none}
             solution_sketch: '$f(x) = \frac{1}{x - 5}$ for $x \neq -5$: the surviving zero of the denominator gives the asymptote, the canceled one a hole.'
         constraints: "factor and cancel first; distinguish surviving denominator zeros (asymptotes) from canceled ones (holes)"
       - id: kp3
@@ -580,16 +603,21 @@ topics:
         exemplars:
           - problem: 'Find all vertical and horizontal asymptotes of $f(x) = \frac{2x^2}{x^2 - 9}$.'
             answer: "vertical: x = 3 and x = -3; horizontal: y = 2"
+            answer_contract: {kind: none}
             solution_sketch: 'The denominator vanishes (without cancellation) at $x = \pm 3$; equal degrees give the horizontal asymptote $y = 2$.'
           - problem: 'Find all vertical and horizontal asymptotes of $f(x) = \frac{x - 1}{x^2 + 1}$.'
             answer: "no vertical asymptote; horizontal: y = 0"
+            answer_contract: {kind: none}
+            solution_sketch: "no vertical asymptote; horizontal: y = 0"
           - problem: 'Evaluate $\lim_{x \to 1} \frac{1}{(x - 1)^2}$.'
             answer: "∞"
+            answer_contract: {kind: none}
             solution_sketch: 'Both one-sided limits are $+\infty$ (the square keeps the denominator positive), so the two-sided infinite limit is $\infty$.'
         constraints: "rational functions; report every vertical and horizontal asymptote, or a two-sided infinite limit"
     diagnostic_exemplar:
       problem: 'Find all vertical asymptotes, all holes, and the horizontal asymptote of $f(x) = \frac{x - 3}{x^2 - 9}$.'
       answer: 'vertical asymptote x = -3; hole at x = 3; horizontal asymptote y = 0'
+      answer_contract: {kind: none}
       solution_sketch: '$f(x) = \frac{x-3}{(x-3)(x+3)} = \frac{1}{x+3}$ for $x \neq 3$: the canceled factor leaves a hole at $x = 3$, the surviving zero gives the vertical asymptote $x = -3$, and the denominator degree exceeds the numerator degree, so $y = 0$.'
     anki_seeds:
       - front: "f has a vertical asymptote at x = a when..."
@@ -707,6 +735,7 @@ topics:
         exemplars:
           - problem: 'Evaluate $\lim_{x \to 0} \sin\left(\frac{1}{x}\right)$, or answer DNE if it does not exist.'
             answer: "DNE"
+            answer_contract: {kind: none}
             solution_sketch: 'Without a vanishing factor there is no squeeze: the values keep hitting $\pm 1$ arbitrarily close to $0$.'
           - problem: 'Evaluate $\lim_{x \to 0} x^4 \cos\left(\frac{2}{x}\right)$.'
             answer: "0"
@@ -879,12 +908,16 @@ topics:
         exemplars:
           - problem: 'Let $f(x) = \frac{x^2 - 1}{x - 1}$ for $x \neq 1$ and $f(1) = 2$. Is $f$ continuous at $x = 1$? (yes/no, with the limit)'
             answer: "yes; the limit is 2 and equals f(1)"
+            answer_contract: {kind: none}
             solution_sketch: '$\lim_{x \to 1} f(x) = \lim_{x \to 1} (x + 1) = 2 = f(1)$: all three conditions hold.'
           - problem: 'Let $g(x) = x^2$ for $x \leq 2$ and $g(x) = 3x - 2$ for $x > 2$. Is $g$ continuous at $x = 2$? (yes/no)'
             answer: "yes"
+            answer_contract: {kind: none}
             solution_sketch: 'Left limit $4$, right limit $3 \cdot 2 - 2 = 4$, and $g(2) = 4$: continuous.'
           - problem: 'Let $f(x) = \frac{x^2 - 4}{x - 2}$ for $x \neq 2$ and $f(2) = 3$. Is $f$ continuous at $x = 2$?'
             answer: "no — the limit is 4 but f(2) = 3"
+            answer_contract: {kind: none}
+            solution_sketch: "no — the limit is 4 but f(2) = 3"
         constraints: "verify f(a) defined, limit exists, limit = f(a); values are small integers; include one failing case"
       - id: kp2
         name: Identify which condition fails
@@ -892,10 +925,16 @@ topics:
         exemplars:
           - problem: 'For $f(x) = \frac{1}{x - 3}$ at $x = 3$, which continuity condition fails first?'
             answer: "f(3) is undefined (and the limit does not exist either)"
+            answer_contract: {kind: none}
+            solution_sketch: "f(3) is undefined (and the limit does not exist either)"
           - problem: 'For $f(x) = \frac{|x|}{x}$ at $x = 0$, which continuity condition fails?'
             answer: "the limit does not exist (left -1, right 1)"
+            answer_contract: {kind: none}
+            solution_sketch: "the limit does not exist (left -1, right 1)"
           - problem: 'The graph of $g$ is a curve approaching height $2$ from both sides of $x = 1$, with a filled dot at $(1, 5)$. Which condition fails?'
             answer: "the limit (2) does not equal g(1) = 5"
+            answer_contract: {kind: none}
+            solution_sketch: "the limit (2) does not equal g(1) = 5"
         constraints: "one failing condition per problem; the student names it"
       - id: kp3
         name: Where standard functions are continuous
@@ -903,14 +942,21 @@ topics:
         exemplars:
           - problem: 'At which points is $f(x) = \frac{x + 1}{x^2 - 9}$ continuous?'
             answer: "all real x except x = 3 and x = -3"
+            answer_contract: {kind: none}
+            solution_sketch: "all real x except x = 3 and x = -3"
           - problem: 'On what interval is $f(x) = \sqrt{x - 2}$ continuous?'
             answer: "[2, ∞)"
+            answer_contract: {kind: none}
+            solution_sketch: "[2, ∞)"
           - problem: 'At which points is the polynomial $p(x) = x^3 - 4x + 1$ continuous?'
             answer: "everywhere (all polynomials are continuous on ℝ)"
+            answer_contract: {kind: none}
+            solution_sketch: "everywhere (all polynomials are continuous on ℝ)"
         constraints: "polynomials, rational functions, and square roots; answer with the set where continuity holds"
     diagnostic_exemplar:
       problem: 'Let $f(x) = \frac{x^2 - 9}{x - 3}$ for $x \neq 3$ and $f(3) = 5$. Is $f$ continuous at $x = 3$? If not, name the condition that fails.'
       answer: 'no — f(3) = 5 is defined and the limit exists, but the third condition fails: the limit is 6, not f(3) = 5'
+      answer_contract: {kind: none}
       solution_sketch: 'Cancel: $\frac{(x-3)(x+3)}{x-3} \to 6$ as $x \to 3$, while $f(3) = 5$.'
     anki_seeds:
       - front: "f is continuous at a exactly when three conditions hold:"
@@ -945,11 +991,16 @@ topics:
         exemplars:
           - problem: 'Classify the discontinuity of $f(x) = \frac{x^2 - 9}{x - 3}$ at $x = 3$ (removable / jump / infinite).'
             answer: "removable"
+            answer_contract: {kind: none}
             solution_sketch: 'The limit exists ($= 6$) but $f(3)$ is undefined; redefining $f(3) = 6$ removes the hole.'
           - problem: 'Classify the discontinuity of $f(x) = \frac{|x|}{x}$ at $x = 0$.'
             answer: "jump"
+            answer_contract: {kind: none}
+            solution_sketch: "jump"
           - problem: 'Classify the discontinuity of $f(x) = \frac{1}{(x - 2)^2}$ at $x = 2$.'
             answer: "infinite"
+            answer_contract: {kind: none}
+            solution_sketch: "infinite"
         constraints: "one discontinuity per problem; answer names the type"
       - id: kp2
         name: Choose a constant to make a function continuous
@@ -975,6 +1026,8 @@ topics:
             answer: "[-3, 3]"
           - problem: 'If $f$ and $g$ are continuous everywhere, must $f \circ g$ be continuous everywhere?'
             answer: "yes — compositions of continuous functions are continuous"
+            answer_contract: {kind: none}
+            solution_sketch: "yes — compositions of continuous functions are continuous"
         constraints: "domains determined by roots and denominators; interval answers in interval notation"
     diagnostic_exemplar:
       problem: 'Find $c$ so that $f(x) = x + c$ for $x < 1$ and $f(x) = 4x$ for $x \geq 1$ is continuous at $x = 1$.'
@@ -1013,9 +1066,12 @@ topics:
         exemplars:
           - problem: 'Show that $f(x) = x^3 + x - 3$ has a root in $(1, 2)$.'
             answer: "f is continuous, f(1) = -1 < 0 and f(2) = 7 > 0, so the IVT gives a root in (1, 2)"
+            answer_contract: {kind: none}
             solution_sketch: 'Polynomials are continuous; the sign change plus the IVT forces $f(c) = 0$ for some $c$ in $(1, 2)$.'
           - problem: 'Does $f(x) = x^2 - 2$ have a root in $(0, 2)$? Justify with the IVT.'
             answer: "yes — f(0) = -2 < 0 < f(2) = 2 and f is continuous"
+            answer_contract: {kind: none}
+            solution_sketch: "yes — f(0) = -2 < 0 < f(2) = 2 and f is continuous"
         constraints: "cubic or quadratic with integer endpoint values of opposite sign; cite continuity + sign change"
       - id: kp2
         name: Locate a root interval from values
@@ -1025,6 +1081,8 @@ topics:
             answer: "(1, 2)"
           - problem: 'A continuous $f$ has $f(0) = 3$ and $f(4) = -5$. What does the IVT guarantee?'
             answer: "some c in (0, 4) with f(c) = 0"
+            answer_contract: {kind: none}
+            solution_sketch: "some c in (0, 4) with f(c) = 0"
         constraints: "table of integer values with exactly one sign change; identify the bracketing interval"
       - id: kp3
         name: Intermediate values other than zero, and why continuity is essential
@@ -1032,12 +1090,17 @@ topics:
         exemplars:
           - problem: '$f$ is continuous on $[1, 3]$ with $f(1) = 4$ and $f(3) = 10$. Must $f$ take the value $7$ somewhere in $(1, 3)$?'
             answer: "yes — 7 lies between 4 and 10, so the IVT applies"
+            answer_contract: {kind: none}
+            solution_sketch: "yes — 7 lies between 4 and 10, so the IVT applies"
           - problem: '$g(x) = \frac{1}{x}$ satisfies $g(-1) = -1 < 0 < g(1) = 1$ yet has no root in $(-1, 1)$. Why does this not contradict the IVT?'
             answer: "g is not continuous on [-1, 1] (it is undefined at 0), so the IVT does not apply"
+            answer_contract: {kind: none}
+            solution_sketch: "g is not continuous on [-1, 1] (it is undefined at 0), so the IVT does not apply"
         constraints: "one intermediate-value application with N ≠ 0 and one broken-hypothesis example"
     diagnostic_exemplar:
       problem: 'Use the Intermediate Value Theorem to show that $f(x) = x^3 + x$ takes the value $5$ somewhere in $(1, 2)$.'
       answer: 'f is a polynomial, hence continuous on [1, 2], and f(1) = 2 < 5 < 10 = f(2), so the IVT gives some c in (1, 2) with f(c) = 5'
+      answer_contract: {kind: none}
       solution_sketch: 'Apply the IVT with the intermediate value $N = 5$ lying between $f(1) = 2$ and $f(2) = 10$.'
     anki_seeds:
       - front: "IVT: if f is continuous on [a, b] and N is between f(a) and f(b), then..."

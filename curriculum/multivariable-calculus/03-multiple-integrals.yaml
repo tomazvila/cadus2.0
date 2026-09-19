@@ -83,9 +83,12 @@ topics:
         exemplars:
           - problem: 'Describe the region bounded by $y = x^2$ and $y = x$ as a type I region.'
             answer: '$0 \le x \le 1$, $\;x^2 \le y \le x$'
+            answer_contract: {kind: none}
             solution_sketch: 'The curves meet at $(0,0)$ and $(1,1)$, and $x \ge x^2$ on $[0,1]$.'
           - problem: 'Describe the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$ as a type I region.'
             answer: '$0 \le x \le 1$, $\;0 \le y \le x$'
+            solution_sketch: 'The triangle has $0\le x\le 1$ with $y$ from the bottom edge $y=0$ to the top edge $y=x$.'
+            answer_contract: {kind: none}
         constraints: "regions bounded by lines and one parabola; intersection points at integer coordinates"
       - id: kp2
         name: "Type II descriptions (horizontal slices)"
@@ -93,9 +96,12 @@ topics:
         exemplars:
           - problem: 'Describe the region bounded by $y = x^2$ and $y = x$ as a type II region.'
             answer: '$0 \le y \le 1$, $\;y \le x \le \sqrt{y}$'
+            answer_contract: {kind: none}
             solution_sketch: 'Solve each boundary for $x$: the line $y = x$ gives $x = y$ (left edge), the parabola $y = x^2$ gives $x = \sqrt{y}$ (right edge); on $[0, 1]$, $y \le \sqrt{y}$.'
           - problem: 'Describe the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$ as a type II region.'
             answer: '$0 \le y \le 1$, $\;y \le x \le 1$'
+            solution_sketch: 'For fixed $y\in[0,1]$, $x$ runs from the edge $x=y$ to the edge $x=1$.'
+            answer_contract: {kind: none}
         constraints: "same regions as kp1 re-sliced horizontally; boundaries solved for x in terms of y"
       - id: kp3
         name: "Reading the region from an iterated integral"
@@ -103,12 +109,17 @@ topics:
         exemplars:
           - problem: 'Sketch/describe the region of $\int_0^1 \int_y^1 f(x,y) \, dx \, dy$ and rewrite the integral with the order reversed.'
             answer: 'The triangle $0 \le y \le x \le 1$; reversed: $\int_0^1 \int_0^x f(x,y)\, dy\, dx$.'
+            solution_sketch: 'The inner integral has $x\ge y$, $0\le y\le 1$, so the region is the triangle $0\le y\le x\le 1$; reversing gives $\int_0^1\int_0^x f\,dy\,dx$.'
+            answer_contract: {kind: none}
           - problem: 'The first-quadrant region under $y = 4 - x^2$ is $0 \le x \le 2$, $0 \le y \le 4 - x^2$. Describe it as a type II region.'
             answer: '$0 \le y \le 4$, $\;0 \le x \le \sqrt{4 - y}$'
+            solution_sketch: 'For fixed $y\in[0,4]$ the region runs from $x=0$ to $x=\sqrt{4-y}$.'
+            answer_contract: {kind: none}
         constraints: "regions are triangles or parabola-bounded; both orders must be written with exact bounds"
     diagnostic_exemplar:
       problem: 'Describe the region of $\int_0^2 \int_x^2 f(x, y)\,dy\,dx$, and rewrite the integral with the order of integration reversed.'
       answer: 'The triangle $0 \le x \le y \le 2$ (vertices $(0,0)$, $(0,2)$, $(2,2)$); reversed, $\int_0^2 \int_0^y f(x, y)\,dx\,dy$.'
+      answer_contract: {kind: none}
       solution_sketch: 'The given limits are the type I description $0 \le x \le 2$, $x \le y \le 2$. Slicing horizontally instead: $y$ runs over $[0, 2]$ and, for each $y$, $x$ runs from $0$ to $y$.'
     anki_seeds:
       - front: 'Type I vs type II region?'
@@ -172,6 +183,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Evaluate $\int_0^1 \int_{3y}^{3} e^{x^2}\,dx\,dy$ by reversing the order of integration.'
       answer: '$\dfrac{e^9 - 1}{6}$'
+      answer_contract: {kind: none}
       solution_sketch: 'The region $0 \le y \le 1$, $3y \le x \le 3$ is the triangle $0 \le x \le 3$, $0 \le y \le x/3$. Reversed: $\int_0^3 \int_0^{x/3} e^{x^2}\,dy\,dx = \int_0^3 \frac{x}{3}e^{x^2}\,dx = \frac{1}{6}\left[e^{x^2}\right]_0^3 = \frac{e^9 - 1}{6}$.'
     anki_seeds:
       - front: 'When must you reverse the order of integration in a double integral?'
@@ -221,6 +233,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Find the average value of $f(x, y) = x + y$ over the triangle with vertices $(0,0)$, $(2,0)$, $(0,2)$.'
       answer: '$\dfrac{4}{3}$'
+      answer_contract: {kind: none}
       solution_sketch: 'The triangle has area $2$. By symmetry $\iint (x+y)\,dA = 2\iint x\,dA = 2\int_0^2 x(2 - x)\,dx = 2\left(4 - \tfrac{8}{3}\right) = \tfrac{8}{3}$, so the average is $\tfrac{8}{3} \div 2 = \tfrac{4}{3}$.'
     anki_seeds:
       - front: 'Average value of $f$ over a plane region $D$?'
@@ -262,6 +275,7 @@ topics:
         exemplars:
           - problem: 'For the uniform lamina ($\rho = 1$) on $[0,2] \times [0,1]$, compute the moments $M_y = \iint x\, dA$ and $M_x = \iint y\, dA$.'
             answer: '$M_y = 2$; $M_x = 1$.'
+            answer_contract: {kind: none}
             solution_sketch: '$M_y = \int_0^2 x\, dx \cdot 1 = 2$; $M_x = 2 \cdot \int_0^1 y\, dy = 1$.'
           - problem: 'For the lamina on $[0,1]^2$ with density $\rho = y$, compute the moment $M_x = \iint y \rho \, dA$.'
             answer: '$\frac{1}{3}$'
@@ -284,6 +298,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Find the centre of mass of the lamina occupying $[0, 2] \times [0, 1]$ with density $\rho(x, y) = x$.'
       answer: '$\left(\dfrac{4}{3},\; \dfrac{1}{2}\right)$'
+      answer_contract: {kind: none}
       solution_sketch: '$m = \int_0^2\!\int_0^1 x\,dy\,dx = 2$; $M_y = \int_0^2\!\int_0^1 x^2\,dy\,dx = \tfrac{8}{3}$; $M_x = \int_0^2\!\int_0^1 xy\,dy\,dx = 1$. Hence $\bar x = \tfrac{8}{3}/2 = \tfrac{4}{3}$ and $\bar y = 1/2$.'
     anki_seeds:
       - front: 'Center of mass formulas for a lamina with density $\rho$?'
@@ -391,6 +406,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Find the area of the part of the paraboloid $z = x^2 + y^2$ lying below the plane $z = 4$.'
       answer: '$\dfrac{\pi}{6}\left(17\sqrt{17} - 1\right)$'
+      answer_contract: {kind: none}
       solution_sketch: '$dS = \sqrt{1 + 4x^2 + 4y^2}\,dA$, and the shadow is the disk $r \le 2$, so $A = \int_0^{2\pi}\!\int_0^2 \sqrt{1 + 4r^2}\,r\,dr\,d\theta = 2\pi \cdot \tfrac{1}{12}\left[(1 + 4r^2)^{3/2}\right]_0^2 = \tfrac{\pi}{6}\left(17\sqrt{17} - 1\right)$.'
     anki_seeds:
       - front: 'Surface area of the graph $z = f(x, y)$ over a region $D$?'
@@ -451,6 +467,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Evaluate $\iiint_E x\,dV$ where $E$ is the tetrahedron bounded by the coordinate planes and the plane $x + 2y + z = 2$.'
       answer: '$\dfrac{1}{3}$'
+      answer_contract: {kind: none}
       solution_sketch: 'Bounds: $0 \le x \le 2$, $0 \le y \le \frac{2-x}{2}$, $0 \le z \le 2 - x - 2y$. Integrating in $z$ then $y$ gives $\int_0^{(2-x)/2}(2 - x - 2y)\,dy = \frac{(2-x)^2}{4}$, so the integral is $\int_0^2 \frac{x(2-x)^2}{4}\,dx = \frac{1}{4}\left(12 - \frac{32}{3}\right) = \frac{1}{3}$.'
     anki_seeds:
       - front: 'How do you compute a volume with a triple integral?'
@@ -533,8 +550,11 @@ topics:
         exemplars:
           - problem: 'Describe the solid cylinder $x^2 + y^2 \le 4$, $0 \le z \le 3$ in cylindrical coordinates.'
             answer: '$0 \le r \le 2$, $\;0 \le \theta \le 2\pi$, $\;0 \le z \le 3$'
+            solution_sketch: 'With $x^2+y^2\le 4$ meaning $0\le r\le 2$ and $z$ free from $0$ to $3$: $0\le r\le 2$, $0\le\theta\le 2\pi$, $0\le z\le 3$.'
+            answer_contract: {kind: none}
           - problem: 'Rewrite $\iiint_E z \, dV$ over the cylinder $x^2 + y^2 \le 1$, $0 \le z \le 2$ as an iterated integral in cylindrical coordinates (do not evaluate).'
             answer: '$\int_0^{2\pi} \int_0^1 \int_0^2 z\, r \, dz\, dr\, d\theta$'
+            answer_contract: {kind: none}
             solution_sketch: 'The region is a product in $(r, \theta, z)$; the volume element contributes the factor $r$.'
         constraints: "solids are coordinate cylinders/cones; the answer is the description or set-up, always including the factor r"
       - id: kp2
@@ -562,6 +582,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Use cylindrical coordinates to find the volume of the solid bounded above by the paraboloid $z = 12 - x^2 - y^2$ and below by the cone $z = \sqrt{x^2 + y^2}$.'
       answer: '$\dfrac{99\pi}{2}$'
+      answer_contract: {kind: none}
       solution_sketch: 'The surfaces meet where $12 - r^2 = r$, i.e. $r = 3$. Then $V = \int_0^{2\pi}\!\int_0^3 \left[(12 - r^2) - r\right] r\,dr\,d\theta = 2\pi\left[6r^2 - \tfrac{r^4}{4} - \tfrac{r^3}{3}\right]_0^3 = 2\pi\left(54 - \tfrac{81}{4} - 9\right) = \tfrac{99\pi}{2}$.'
     anki_seeds:
       - front: 'Volume element in cylindrical coordinates?'
@@ -601,6 +622,8 @@ topics:
             solution_sketch: '$x = 2\sin\frac{\pi}{3}\cos 0 = \sqrt{3}$, $y = 2\sin\frac{\pi}{3}\sin 0 = 0$, $z = 2\cos\frac{\pi}{3} = 1$.'
           - problem: 'Describe the upper half of the unit ball in spherical coordinates.'
             answer: '$0 \le \rho \le 1$, $\;0 \le \varphi \le \frac{\pi}{2}$, $\;0 \le \theta \le 2\pi$'
+            solution_sketch: 'The upper half of the unit ball has $0\le\rho\le 1$, polar angle $0\le\varphi\le\pi/2$ from the positive $z$-axis, and $0\le\theta\le 2\pi$.'
+            answer_contract: {kind: none}
         constraints: "angles at standard unit-circle values; balls, half-balls, and cones as regions"
       - id: kp2
         name: "Evaluating spherical integrals"
@@ -630,6 +653,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Use spherical coordinates to find the volume of the region inside the sphere $\rho \le 2$ and above the cone $\varphi \le \frac{\pi}{3}$.'
       answer: '$\dfrac{8\pi}{3}$'
+      answer_contract: {kind: none}
       solution_sketch: '$V = \int_0^{2\pi}\!\int_0^{\pi/3}\!\int_0^2 \rho^2 \sin\varphi \,d\rho\,d\varphi\,d\theta = 2\pi \cdot \tfrac{8}{3} \cdot \left[-\cos\varphi\right]_0^{\pi/3} = 2\pi \cdot \tfrac{8}{3} \cdot \tfrac{1}{2} = \tfrac{8\pi}{3}$.'
     anki_seeds:
       - front: 'Volume element in spherical coordinates?'
@@ -691,10 +715,13 @@ topics:
             solution_sketch: '$x = \sqrt{u/v}$, $y = \sqrt{uv}$ has Jacobian $\frac{1}{2v}$; area $= \int_1^4 \int_1^4 \frac{1}{2v}\, dv\, du = 3 \cdot \frac{\ln 4}{2} = 3\ln 2$.'
           - problem: 'Which substitution turns the region bounded by $y = x$, $y = x + 2$, $y = -x$, $y = -x + 4$ into a rectangle?'
             answer: '$u = y - x$, $v = y + x$ (the region becomes $0 \le u \le 2$, $0 \le v \le 4$).'
+            solution_sketch: 'Set $u=y-x$ and $v=y+x$; the lines $y=x$ and $y=x+2$ give $u=0,2$, and $y=-x$, $y=-x+4$ give $v=0,4$, a rectangle.'
+            answer_contract: {kind: none}
         constraints: "boundary curves become u = const, v = const; final answers involve at most one logarithm"
     diagnostic_exemplar:
       problem: 'Evaluate $\iint_R (x + y)\,dA$, where $R$ is the parallelogram with vertices $(0,0)$, $(3,1)$, $(4,3)$, $(1,2)$, using the change of variables $x = 3u + v$, $y = u + 2v$.'
       answer: '$\dfrac{35}{2}$'
+      answer_contract: {kind: none}
       solution_sketch: 'The map sends the unit square $0 \le u, v \le 1$ onto $R$, and its Jacobian is $3 \cdot 2 - 1 \cdot 1 = 5$. Since $x + y = 4u + 3v$, the integral is $\int_0^1\!\int_0^1 (4u + 3v)\cdot 5\,du\,dv = 5\left(2 + \tfrac{3}{2}\right) = \tfrac{35}{2}$.'
     anki_seeds:
       - front: 'Change-of-variables formula for double integrals?'

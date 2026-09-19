@@ -26,8 +26,12 @@ topics:
         exemplars:
           - problem: 'Let $\mathbf{F}(x, y) = \langle -y, x \rangle$. Compute $\mathbf{F}(2, 1)$ and describe the field geometrically.'
             answer: '$\mathbf{F}(2, 1) = \langle -1, 2 \rangle$; the field rotates counterclockwise about the origin (each vector is perpendicular to the position vector).'
+            solution_sketch: '$\mathbf{F}(2,1)=\langle -1,2\rangle$; since $\mathbf{F}\cdot\langle x,y\rangle=0$, each vector is perpendicular to the position vector and the field rotates counterclockwise.'
+            answer_contract: {kind: none}
           - problem: 'Let $\mathbf{F}(x, y) = \langle x, y \rangle$. What is $|\mathbf{F}(x, y)|$, and in which direction does the field point?'
             answer: '$|\mathbf{F}| = \sqrt{x^2 + y^2}$; the field points radially outward from the origin.'
+            solution_sketch: '$|\mathbf{F}|=\sqrt{x^2+y^2}$, and $\mathbf{F}$ points in the direction $\langle x,y\rangle$, radially outward from the origin.'
+            answer_contract: {kind: none}
         constraints: "fields built from x, y with integer coefficients; evaluation at small integer points; identify radial vs rotational"
       - id: kp2
         name: "Gradient fields"
@@ -35,13 +39,17 @@ topics:
         exemplars:
           - problem: 'Find the gradient field of $f(x, y) = x^2 y - y^3$.'
             answer: '$\nabla f = \langle 2xy, x^2 - 3y^2 \rangle$'
+            solution_sketch: '$\nabla f=\langle 2xy, x^2-3y^2\rangle$.'
+            answer_contract: {kind: none}
           - problem: 'Find a function $f$ whose gradient field is $\mathbf{F} = \langle 2x, 2y \rangle$.'
             answer: '$f(x, y) = x^2 + y^2$ (plus any constant)'
+            answer_contract: {kind: none}
             solution_sketch: 'Antidifferentiate: $f_x = 2x \Rightarrow f = x^2 + g(y)$; then $g''(y) = 2y$.'
         constraints: "potentials are polynomials of degree at most 3"
     diagnostic_exemplar:
       problem: 'Find the gradient field of $f(x, y) = x^3 y - y^2$ and evaluate it at $(1, 2)$.'
       answer: '$\nabla f = \langle 3x^2 y,\; x^3 - 2y \rangle$; $\nabla f(1, 2) = \langle 6, -3 \rangle$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Differentiate in each variable: $f_x = 3x^2y$, $f_y = x^3 - 2y$; at $(1,2)$ these are $6$ and $1 - 4 = -3$.'
     anki_seeds:
       - front: 'What is a vector field on $\mathbb{R}^2$?'
@@ -212,6 +220,7 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int_C y^2\, dx + x\, dy$ along the two-segment path $(0,0) \to (1,0) \to (1,1)$. Compare with the value $\frac{5}{6}$ along the straight segment to $(1,1)$.'
             answer: '$1$ — different from $\frac{5}{6}$, so this integral is path-dependent.'
+            answer_contract: {kind: none}
             solution_sketch: 'On $(0,0) \to (1,0)$: $y = 0$, $dy = 0$, contribution $0$. On $(1,0) \to (1,1)$: $dx = 0$, $\int_0^1 1\, dy = 1$.'
           - problem: 'Evaluate $\oint_C x\, dy - y\, dx$ counterclockwise around the triangle $(0,0)$, $(1,0)$, $(0,1)$.'
             answer: "1"
@@ -231,6 +240,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Evaluate $\oint_C x^2\,dy - y\,dx$ counterclockwise around the triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$.'
       answer: '$\dfrac{5}{6}$'
+      answer_contract: {kind: none}
       solution_sketch: 'On $(0,0) \to (1,0)$: $y = 0$, $dy = 0$, contribution $0$. On $(1,0) \to (0,1)$, with $x = 1-t$, $y = t$: the integrand is $\left[(1-t)^2 + t\right]dt$, giving $\tfrac{1}{3} + \tfrac{1}{2} = \tfrac{5}{6}$. On $(0,1) \to (0,0)$: $x = 0$, $dx = 0$, contribution $0$.'
     anki_seeds:
       - front: 'How does $\int_C P\, dx + Q\, dy$ relate to a vector line integral?'
@@ -261,10 +271,16 @@ topics:
         exemplars:
           - problem: 'Is $\mathbf{F} = \langle 2xy, x^2 \rangle$ conservative on $\mathbb{R}^2$?'
             answer: 'Yes: $\frac{\partial}{\partial y}(2xy) = 2x = \frac{\partial}{\partial x}(x^2)$.'
+            solution_sketch: '$P_y=2x$ and $Q_x=2x$, so the field is conservative on $\mathbb{R}^2$.'
+            answer_contract: {kind: none}
           - problem: 'Is $\mathbf{F} = \langle y, -x \rangle$ conservative?'
             answer: 'No: $P_y = 1 \ne -1 = Q_x$.'
+            solution_sketch: '$P_y=1$ and $Q_x=-1$ differ, so the field is not conservative.'
+            answer_contract: {kind: none}
           - problem: 'Is $\mathbf{F} = \langle y^2 + 2x, 2xy + 3 \rangle$ conservative on $\mathbb{R}^2$?'
             answer: 'Yes: $P_y = 2y = Q_x$.'
+            solution_sketch: '$P_y=2y$ and $Q_x=2y$, so the field is conservative on $\mathbb{R}^2$.'
+            answer_contract: {kind: none}
         constraints: "fields polynomial on all of R^2 (simply connected, so P_y = Q_x is decisive)"
       - id: kp2
         name: "Finding potential functions"
@@ -272,11 +288,15 @@ topics:
         exemplars:
           - problem: 'Find a potential function for $\mathbf{F} = \langle 2xy, x^2 \rangle$.'
             answer: '$f(x, y) = x^2 y$ (plus any constant)'
+            answer_contract: {kind: none}
             solution_sketch: '$f_x = 2xy \Rightarrow f = x^2 y + g(y)$; then $f_y = x^2 + g''(y) = x^2$ forces $g'' = 0$.'
           - problem: 'Find a potential function for $\mathbf{F} = \langle e^y, x e^y \rangle$.'
             answer: '$f(x, y) = x e^y$'
+            solution_sketch: 'Integrating $f_x=e^y$ gives $f=xe^y+g(y)$; then $f_y=xe^y+g''(y)=xe^y$, so $g$ is constant.'
+            answer_contract: {kind: none}
           - problem: 'Find a potential function for $\mathbf{F} = \langle 2x + y, x + 2y \rangle$.'
             answer: '$f(x, y) = x^2 + xy + y^2$'
+            answer_contract: {kind: none}
             solution_sketch: 'Integrate $f_x = 2x + y$ in $x$: $f = x^2 + xy + g(y)$; match $f_y = x + g''(y) = x + 2y$.'
         constraints: "potentials are polynomials or x e^y-type products; verify by re-differentiating"
       - id: kp3
@@ -285,14 +305,17 @@ topics:
         exemplars:
           - problem: 'Find a potential function for $\mathbf{F} = \langle 2xy + y^3, x^2 + 3xy^2 \rangle$.'
             answer: '$f(x, y) = x^2 y + x y^3$'
+            answer_contract: {kind: none}
             solution_sketch: 'Check $P_y = 2x + 3y^2 = Q_x$; integrate $f_x$: $f = x^2 y + x y^3 + g(y)$; matching $f_y$ forces $g'' = 0$.'
           - problem: 'Find a potential function for $\mathbf{F} = \langle 3x^2 + 2xy, x^2 + 2y \rangle$.'
             answer: '$f(x, y) = x^3 + x^2 y + y^2$'
+            answer_contract: {kind: none}
             solution_sketch: '$f = x^3 + x^2 y + g(y)$ from $f_x$; then $g''(y) = 2y$.'
         constraints: "every mixed term appears in BOTH components; degree at most 4; always verify with the component test first"
     diagnostic_exemplar:
       problem: 'Show that $\mathbf{F} = \langle 3x^2 + 2xy^3,\; 3x^2y^2 + 4y \rangle$ is conservative and find a potential function.'
       answer: '$P_y = 6xy^2 = Q_x$, so $\mathbf{F}$ is conservative; $f(x, y) = x^3 + x^2y^3 + 2y^2$ (plus any constant).'
+      answer_contract: {kind: none}
       solution_sketch: 'Integrating $P$ in $x$: $f = x^3 + x^2y^3 + g(y)$. Then $f_y = 3x^2y^2 + g''(y) = 3x^2y^2 + 4y$ forces $g''(y) = 4y$, so $g(y) = 2y^2$.'
     anki_seeds:
       - front: 'Component test for a conservative field $\mathbf{F} = \langle P, Q \rangle$ on a simply connected domain?'
@@ -388,9 +411,11 @@ topics:
         exemplars:
           - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle y, z, x \rangle$.'
             answer: '$\langle -1, -1, -1 \rangle$'
+            answer_contract: {kind: none}
             solution_sketch: '$\nabla \times \mathbf{F} = \langle \partial_y x - \partial_z z,\; \partial_z y - \partial_x x,\; \partial_x z - \partial_y y \rangle = \langle -1, -1, -1 \rangle$.'
           - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle xy, yz, xz \rangle$.'
             answer: '$\langle -y, -z, -x \rangle$'
+            answer_contract: {kind: none}
             solution_sketch: 'First component: $\partial_y(xz) - \partial_z(yz) = -y$; the others follow the same cyclic pattern.'
         constraints: "components are monomials in x, y, z; compute via the symbolic determinant with i, j, k"
       - id: kp3
@@ -443,8 +468,12 @@ topics:
         exemplars:
           - problem: 'Is $\mathbf{F} = \langle yz, xz, xy \rangle$ conservative on $\mathbb{R}^3$?'
             answer: 'Yes: $\operatorname{curl}\mathbf{F} = \mathbf{0}$ (e.g. the first component is $\partial_y(xy) - \partial_z(xz) = x - x = 0$).'
+            solution_sketch: 'Each component of $\operatorname{curl}\mathbf{F}$ vanishes (e.g. $\partial_y(xy)-\partial_z(xz)=x-x=0$), so $\mathbf{F}$ is conservative on $\mathbb{R}^3$.'
+            answer_contract: {kind: none}
           - problem: 'Is $\mathbf{F} = \langle y, -x, 0 \rangle$ conservative on $\mathbb{R}^3$?'
             answer: 'No: $\operatorname{curl}\mathbf{F} = \langle 0, 0, -2 \rangle \ne \mathbf{0}$.'
+            solution_sketch: 'The curl is $\langle 0,0,-2\rangle\ne\mathbf{0}$, so the field is not conservative.'
+            answer_contract: {kind: none}
         constraints: "polynomial fields on all of R^3; the curl either vanishes identically or has a constant nonzero component"
       - id: kp2
         name: "Finding 3D potential functions"
@@ -452,9 +481,11 @@ topics:
         exemplars:
           - problem: 'Find a potential function for $\mathbf{F} = \langle yz, xz, xy \rangle$.'
             answer: '$f(x, y, z) = xyz$'
+            answer_contract: {kind: none}
             solution_sketch: '$f = xyz + g(y,z)$ from $f_x = yz$; matching $f_y = xz$ and $f_z = xy$ forces $g$ constant.'
           - problem: 'Find a potential function for $\mathbf{F} = \langle y + z, x + z, x + y \rangle$.'
             answer: '$f(x, y, z) = xy + yz + zx$'
+            answer_contract: {kind: none}
             solution_sketch: 'Integrate $f_x = y + z$: $f = xy + xz + g(y,z)$; then $f_y = x + g_y = x + z$ gives $g = yz$, and $f_z$ checks out.'
         constraints: "potentials are sums of degree-2 or -3 monomials; successive integration in x, then y, then z"
       - id: kp3
@@ -524,10 +555,13 @@ topics:
             solution_sketch: '$\frac{1}{2}\int_0^{2\pi} \left(3\cos t \cdot 2\cos t - 2\sin t \cdot (-3\sin t)\right) dt = \frac{1}{2}\int_0^{2\pi} 6\, dt = 6\pi$.'
           - problem: 'Why does $\frac{1}{2}\oint_C (x\, dy - y\, dx)$ compute the enclosed area?'
             answer: 'Because $Q_x - P_y = \frac{1}{2} - \left(-\frac{1}{2}\right) = 1$, so by Green''s theorem the integral equals $\iint_D 1\, dA = A$.'
+            solution_sketch: 'Here $Q_x-P_y=\tfrac12-(-\tfrac12)=1$, so Green''s theorem gives $\iint_D 1\,dA$, the area of $D$.'
+            answer_contract: {kind: none}
         constraints: "ellipses and polygons parametrized with sin/cos or segments; the integrand collapses via sin^2 + cos^2 = 1"
     diagnostic_exemplar:
       problem: 'Use Green''s theorem to evaluate $\oint_C xy\,dx + x^2\,dy$ where $C$ is the boundary of the triangle with vertices $(0,0)$, $(2,0)$, $(2,2)$, traversed counterclockwise.'
       answer: '$\dfrac{8}{3}$'
+      answer_contract: {kind: none}
       solution_sketch: '$Q_x - P_y = 2x - x = x$, and the triangle is $0 \le x \le 2$, $0 \le y \le x$, so the integral is $\int_0^2\!\int_0^x x\,dy\,dx = \int_0^2 x^2\,dx = \tfrac{8}{3}$.'
     anki_seeds:
       - front: 'Green''s theorem (circulation form)?'
@@ -616,8 +650,12 @@ topics:
         exemplars:
           - problem: 'Parametrize the cylinder $x^2 + y^2 = 4$, $0 \le z \le 3$.'
             answer: '$\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z \rangle$, $\;0 \le \theta \le 2\pi$, $\;0 \le z \le 3$'
+            solution_sketch: '$\mathbf{r}(\theta,z)=\langle 2\cos\theta,2\sin\theta,z\rangle$ with $0\le\theta\le 2\pi$, $0\le z\le 3$.'
+            answer_contract: {kind: none}
           - problem: 'Parametrize the graph $z = x^2 + y^2$ over the unit disk.'
             answer: '$\mathbf{r}(x, y) = \langle x, y, x^2 + y^2 \rangle$, $\;x^2 + y^2 \le 1$'
+            solution_sketch: 'Use $x,y$ as parameters: $\mathbf{r}(x,y)=\langle x,y,x^2+y^2\rangle$ over $x^2+y^2\le 1$.'
+            answer_contract: {kind: none}
         constraints: "cylinders, spheres, and graphs; always state the parameter domain"
       - id: kp2
         name: "Normal vectors r_u x r_v"
@@ -625,9 +663,11 @@ topics:
         exemplars:
           - problem: 'For the plane $\mathbf{r}(u, v) = \langle u, v, 1 - u - v \rangle$, compute $\mathbf{r}_u \times \mathbf{r}_v$.'
             answer: '$\langle 1, 1, 1 \rangle$'
+            answer_contract: {kind: none}
             solution_sketch: '$\mathbf{r}_u = \langle 1, 0, -1 \rangle$, $\mathbf{r}_v = \langle 0, 1, -1 \rangle$; the cross product is $\langle 1, 1, 1 \rangle$.'
           - problem: 'For the cylinder $\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z \rangle$, compute $\mathbf{r}_\theta \times \mathbf{r}_z$.'
             answer: '$\langle 2\cos\theta, 2\sin\theta, 0 \rangle$ — the outward radial direction, with magnitude $2$.'
+            answer_contract: {kind: none}
             solution_sketch: '$\mathbf{r}_\theta = \langle -2\sin\theta, 2\cos\theta, 0 \rangle$, $\mathbf{r}_z = \langle 0, 0, 1 \rangle$; cross out the determinant.'
         constraints: "planes and cylinders; cross products have clean components; note the geometric direction of the normal"
       - id: kp3
@@ -743,10 +783,15 @@ topics:
         exemplars:
           - problem: 'For $\mathbf{F} = \langle x, y \rangle$, compute $\operatorname{div}\mathbf{F}$ and interpret it.'
             answer: '$\operatorname{div}\mathbf{F} = 2 > 0$: the field is expanding — every point acts as a source.'
+            solution_sketch: '$\operatorname{div}\mathbf{F}=1+1=2>0$, so the field has positive divergence and expands: every point is a source.'
+            answer_contract: {kind: none}
           - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle -y, x, 0 \rangle$ and interpret it.'
             answer: '$\langle 0, 0, 2 \rangle$: the field rotates counterclockwise about the $z$-axis, with constant angular tendency.'
+            solution_sketch: '$\operatorname{curl}\langle -y,x,0\rangle=\langle 0,0,2\rangle$, a constant rotation about the $z$-axis.'
+            answer_contract: {kind: none}
           - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle yz, xz, xy \rangle$. What does the result say about $\mathbf{F}$?'
             answer: '$\mathbf{0}$; the field is irrotational, and indeed $\mathbf{F} = \nabla(xyz)$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Each component of the curl cancels, e.g. $\partial_y(xy) - \partial_z(xz) = x - x = 0$.'
         constraints: "radial vs rotational model fields; interpretation must name source/sink or axis and sense of rotation"
       - id: kp2
@@ -896,6 +941,7 @@ topics:
             solution_sketch: '$S$ shares its boundary (the circle $x^2 + y^2 = 4$ in $z = 0$) with the flat disk, so by Stokes'' theorem both surfaces give the same value. $\operatorname{curl}\mathbf{F} = \langle 0, -z, 2 \rangle$, which on the disk ($z = 0$) is $\langle 0, 0, 2 \rangle$: flux $= 2 \cdot 4\pi = 8\pi$.'
           - problem: 'Explain why the flux of $\operatorname{curl}\mathbf{F}$ through the upper unit hemisphere (upward normal) equals its flux through the unit disk in the $xy$-plane (upward normal), and use this to evaluate it for $\mathbf{F} = \langle -y, x, z^2 \rangle$.'
             answer: 'Both surfaces have the same positively oriented boundary (the unit circle), so Stokes'' theorem equates both fluxes to $\oint_C \mathbf{F} \cdot d\mathbf{r}$; the value is $2\pi$.'
+            answer_contract: {kind: none}
             solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle 0, 0, 2 \rangle$; through the disk the flux is $2\pi$, hence through the hemisphere too.'
         constraints: "the two surfaces share a circular boundary; the convenient replacement is a flat disk where the curl's z-component is a constant or single monomial; the inconvenient surface is a paraboloid or hemisphere"
       - id: kp3
@@ -904,6 +950,7 @@ topics:
         exemplars:
           - problem: 'Verify Stokes'' theorem for $\mathbf{F} = \langle z, x, y \rangle$ on the upper unit hemisphere with upward normal: compute both $\oint_C \mathbf{F} \cdot d\mathbf{r}$ around the unit circle and $\iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$, and confirm they agree.'
             answer: 'Both sides equal $\pi$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Line side: $\mathbf{r}(t) = \langle \cos t, \sin t, 0 \rangle$ gives $\mathbf{F} \cdot \mathbf{r}'' = \cos^2 t$, integrating to $\pi$. Surface side: $\operatorname{curl}\mathbf{F} = \langle 1, 1, 1 \rangle$ and $\operatorname{curl}\mathbf{F} \cdot \mathbf{N} = \sin^2\varphi\cos\theta + \sin^2\varphi\sin\theta + \sin\varphi\cos\varphi$; the $\theta$-integrals kill the first two terms, leaving $2\pi \int_0^{\pi/2} \sin\varphi\cos\varphi\, d\varphi = \pi$.'
           - problem: 'Evaluate $\iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$ for $\mathbf{F} = \langle y^2, x, z^2 \rangle$, where $S$ is the paraboloid $z = 1 - x^2 - y^2$, $z \ge 0$, with upward normal — by integrating around the boundary instead.'
             answer: '$\pi$'

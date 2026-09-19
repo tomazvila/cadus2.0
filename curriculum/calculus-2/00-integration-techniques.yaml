@@ -41,6 +41,7 @@ topics:
         exemplars:
           - problem: 'For $\int x \sin x \, dx$, state the choice of $u$ and $dv$, then evaluate.'
             answer: '$u = x$, $dv = \sin x\,dx$; the integral is $-x \cos x + \sin x + C$'
+            answer_contract: {kind: none}
             solution_sketch: 'The algebraic factor differentiates to a constant: $u = x$, $dv = \sin x\,dx$ gives $-x\cos x + \int \cos x\,dx$.'
           - problem: 'Evaluate $\int x e^{-x} \, dx$.'
             answer: '$-(x + 1)e^{-x} + C$'
@@ -61,6 +62,7 @@ topics:
             solution_sketch: '$u = \ln x$, $dv = x\,dx$: $\frac{x^2}{2}\ln x - \int \frac{x}{2}\,dx$. Derivative check: $x\ln x + \frac{x}{2} - \frac{x}{2} = x\ln x$.'
           - problem: 'Evaluate $\int \arctan x \, dx$.'
             answer: '$x \arctan x - \frac{1}{2}\ln(1 + x^2) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$u = \arctan x$, $dv = dx$: $x\arctan x - \int \frac{x}{1+x^2}\,dx$; the remaining integral is a $u$-substitution giving $\frac{1}{2}\ln(1+x^2)$.'
         constraints: "integrand involves ln x or an inverse trig function; choose u = the log/inverse function, dv = the rest"
     diagnostic_exemplar:
@@ -272,15 +274,19 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \tan x \, dx$.'
             answer: '$\ln|\sec x| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\int \frac{\sin x}{\cos x}\,dx$ with $u = \cos x$ gives $-\ln|\cos x| + C = \ln|\sec x| + C$.'
           - problem: 'Evaluate $\int \cot x \, dx$.'
             answer: '$\ln|\sin x| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\int \frac{\cos x}{\sin x}\,dx$ with $u = \sin x$.'
           - problem: 'Evaluate $\int \sec x \, dx$.'
             answer: '$\ln|\sec x + \tan x| + C$'
+            answer_contract: {kind: none}
             solution_sketch: 'Multiply by $\frac{\sec x + \tan x}{\sec x + \tan x}$; the numerator is the derivative of the denominator.'
           - problem: 'Evaluate $\int \csc x \, dx$.'
             answer: '$\ln|\csc x - \cot x| + C$'
+            answer_contract: {kind: none}
             solution_sketch: 'Multiply by $\frac{\csc x - \cot x}{\csc x - \cot x}$; the numerator $\csc x\cot x - \csc^2 x$ is the derivative of the denominator. Equivalently $-\ln|\csc x + \cot x| + C$.'
         constraints: "the four basic quotient integrals (tan, cot, sec, csc); answers as logarithms with absolute values"
       - id: kp2
@@ -295,6 +301,7 @@ topics:
             solution_sketch: '$\sec^4 x = (1 + \tan^2 x)\sec^2 x$; $u = \tan x$ gives $\int (1 + u^2)\,du$.'
           - problem: 'Evaluate $\int \tan^3 x \, dx$.'
             answer: '$\frac{\tan^2 x}{2} + \ln|\cos x| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\tan^3 x = \tan x(\sec^2 x - 1)$; the first piece is $u = \tan x$, the second is $-\int \tan x\,dx$.'
         constraints: "powers of tan <= 3, powers of sec <= 4; use sec^2 = 1 + tan^2 to peel off a sec^2 or convert tan^2"
       - id: kp3
@@ -434,12 +441,15 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{x^2 + 2x + 5}$.'
             answer: '$\frac{1}{2}\arctan\left(\frac{x + 1}{2}\right) + C$'
+            answer_contract: {kind: none}
             solution_sketch: 'Complete the square: $x^2 + 2x + 5 = (x+1)^2 + 4$; substitute $u = x + 1$ and use $\int \frac{du}{u^2 + a^2} = \frac{1}{a}\arctan\frac{u}{a}$.'
           - problem: 'Evaluate $\int \frac{dx}{x^2 - 4x + 13}$.'
             answer: '$\frac{1}{3}\arctan\left(\frac{x - 2}{3}\right) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$x^2 - 4x + 13 = (x-2)^2 + 9$; the $a = 3$ arctangent pattern.'
           - problem: 'Evaluate $\int \frac{dx}{x^2 + 6x + 10}$.'
             answer: '$\arctan(x + 3) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$x^2 + 6x + 10 = (x+3)^2 + 1$.'
         constraints: "irreducible quadratic with integer center and radius; a in {1, 2, 3}"
       - id: kp2
@@ -448,9 +458,11 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{\sqrt{3 - 2x - x^2}}$.'
             answer: '$\arcsin\left(\frac{x + 1}{2}\right) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$3 - 2x - x^2 = 4 - (x+1)^2$; substitute $u = x + 1$ and use $\int \frac{du}{\sqrt{a^2 - u^2}} = \arcsin\frac{u}{a}$.'
           - problem: 'Evaluate $\int \frac{dx}{\sqrt{8 - 2x - x^2}}$.'
             answer: '$\arcsin\left(\frac{x + 1}{3}\right) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$8 - 2x - x^2 = 9 - (x+1)^2$; the $a = 3$ arcsine pattern.'
         constraints: "negative-leading-coefficient quadratics under a square root; completed square has integer center and radius"
       - id: kp3
@@ -459,6 +471,7 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{2x + 3}{x^2 + 2x + 5} \, dx$.'
             answer: '$\ln(x^2 + 2x + 5) + \frac{1}{2}\arctan\left(\frac{x + 1}{2}\right) + C$'
+            answer_contract: {kind: none}
             solution_sketch: 'Write $2x + 3 = (2x + 2) + 1$: the first part is $\int \frac{du}{u}$ with $u$ the denominator, the second is the arctangent pattern.'
           - problem: 'Evaluate $\int \frac{2x + 2}{x^2 + 2x + 5} \, dx$.'
             answer: '$\ln(x^2 + 2x + 5) + C$'
@@ -467,6 +480,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Evaluate $\int \frac{2x + 6}{x^2 + 4x + 5} \, dx$.'
       answer: '$\ln(x^2 + 4x + 5) + 2\arctan(x + 2) + C$'
+      answer_contract: {kind: none}
       solution_sketch: 'Write $2x + 6 = (2x + 4) + 2$: the first part is a logarithm, the second is $2\int \frac{dx}{(x+2)^2 + 1}$.'
     anki_seeds:
       - front: '$\int \frac{du}{u^2 + a^2} = $ ?'
@@ -501,9 +515,11 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{\sqrt{4 - x^2}}$.'
             answer: '$\arcsin\left(\frac{x}{2}\right) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$x = 2\sin\theta$, $dx = 2\cos\theta\,d\theta$, $\sqrt{4 - x^2} = 2\cos\theta$: $\int d\theta = \theta + C$.'
           - problem: 'Evaluate $\int \sqrt{1 - x^2} \, dx$.'
             answer: '$\frac{1}{2}\left(\arcsin x + x\sqrt{1 - x^2}\right) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$x = \sin\theta$: $\int \cos^2\theta\,d\theta = \frac{\theta}{2} + \frac{\sin 2\theta}{4} = \frac{\theta + \sin\theta\cos\theta}{2}$; back-substitute.'
           - problem: 'Evaluate $\int_0^2 \sqrt{4 - x^2} \, dx$.'
             answer: '$\pi$'
@@ -515,6 +531,7 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{x^2 + 9}$.'
             answer: '$\frac{1}{3}\arctan\left(\frac{x}{3}\right) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$x = 3\tan\theta$: $\int \frac{3\sec^2\theta}{9\sec^2\theta}\,d\theta = \frac{\theta}{3} + C$.'
           - problem: 'Evaluate $\int \frac{dx}{(1 + x^2)^{3/2}}$.'
             answer: '$\frac{x}{\sqrt{1 + x^2}} + C$'
@@ -526,6 +543,7 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{\sqrt{x^2 - 4}}$ for $x > 2$.'
             answer: '$\ln\left|x + \sqrt{x^2 - 4}\right| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$x = 2\sec\theta$: $\int \sec\theta\,d\theta = \ln|\sec\theta + \tan\theta|$; back-substituting gives $\ln|x + \sqrt{x^2-4}| + C$ (the $-\ln 2$ folds into $C$).'
           - problem: 'Evaluate $\int \frac{dx}{(x^2 + 2x + 2)^{3/2}}$.'
             answer: '$\frac{x + 1}{\sqrt{x^2 + 2x + 2}} + C$'
@@ -577,12 +595,15 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{x^2 - 1}$.'
             answer: '$\frac{1}{2}\ln\left|\frac{x - 1}{x + 1}\right| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{1}{(x-1)(x+1)} = \frac{1/2}{x-1} - \frac{1/2}{x+1}$; integrate each term to logs.'
           - problem: 'Evaluate $\int \frac{5x - 4}{(x - 2)(x + 1)} \, dx$.'
             answer: '$2\ln|x - 2| + 3\ln|x + 1| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$5x - 4 = A(x+1) + B(x-2)$; $x = 2$ gives $A = 2$, $x = -1$ gives $B = 3$.'
           - problem: 'Evaluate $\int \frac{dx}{x(x + 1)}$.'
             answer: '$\ln\left|\frac{x}{x + 1}\right| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{1}{x(x+1)} = \frac{1}{x} - \frac{1}{x+1}$.'
         constraints: "denominator = product of two distinct linear factors with integer roots; numerator degree <= 1"
       - id: kp3
@@ -633,9 +654,11 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{2x + 3}{(x + 1)^2} \, dx$.'
             answer: '$2\ln|x + 1| - \frac{1}{x + 1} + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$2x + 3 = 2(x+1) + 1$, so the integrand is $\frac{2}{x+1} + \frac{1}{(x+1)^2}$.'
           - problem: 'Evaluate $\int \frac{dx}{x^2(x + 1)}$.'
             answer: '$-\ln|x| - \frac{1}{x} + \ln|x + 1| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{1}{x^2(x+1)} = \frac{-1}{x} + \frac{1}{x^2} + \frac{1}{x+1}$ (from $1 = Ax(x+1) + B(x+1) + Cx^2$ with $B = 1$, $C = 1$, $A = -1$).'
         constraints: "one repeated linear factor of multiplicity 2; total denominator degree <= 3"
       - id: kp2
@@ -644,9 +667,11 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{x^2}{x + 1} \, dx$.'
             answer: '$\frac{x^2}{2} - x + \ln|x + 1| + C$'
+            answer_contract: {kind: none}
             solution_sketch: 'Divide first: $\frac{x^2}{x+1} = x - 1 + \frac{1}{x+1}$.'
           - problem: 'Evaluate $\int \frac{x^2 + 1}{x^2 - 1} \, dx$.'
             answer: '$x + \ln\left|\frac{x - 1}{x + 1}\right| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{x^2 + 1}{x^2 - 1} = 1 + \frac{2}{x^2 - 1}$; then $\frac{2}{(x-1)(x+1)} = \frac{1}{x-1} - \frac{1}{x+1}$.'
         constraints: "numerator degree >= denominator degree; quotient is degree <= 1; remainder decomposes over distinct linear factors"
       - id: kp3
@@ -655,14 +680,17 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{x(x^2 + 1)}$.'
             answer: '$\ln|x| - \frac{1}{2}\ln(x^2 + 1) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{1}{x(x^2+1)} = \frac{1}{x} - \frac{x}{x^2+1}$; the second term integrates by $u = x^2 + 1$.'
           - problem: 'Evaluate $\int \frac{4}{x(x^2 + 4)} \, dx$.'
             answer: '$\ln|x| - \frac{1}{2}\ln(x^2 + 4) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{4}{x(x^2+4)} = \frac{1}{x} - \frac{x}{x^2+4}$; check by recombining over the common denominator.'
         constraints: "at most one irreducible quadratic factor (x^2 + 1 or x^2 + 4); Bx + C numerator handled by u = the quadratic"
     diagnostic_exemplar:
       problem: 'Evaluate $\int \frac{x^2 + 2}{x(x^2 + 1)} \, dx$.'
       answer: '$2\ln|x| - \frac{1}{2}\ln(x^2 + 1) + C$'
+      answer_contract: {kind: none}
       solution_sketch: 'The irreducible quadratic needs $\frac{A}{x} + \frac{Bx + C}{x^2+1}$; matching coefficients gives $A = 2$, $B = -1$, $C = 0$.'
     anki_seeds:
       - front: "Partial fraction form for a repeated factor (x - a)^2?"
@@ -700,6 +728,7 @@ topics:
         exemplars:
           - problem: 'With $t = \tan(x/2)$, express $\sin x$, $\cos x$, and $dx$ in terms of $t$.'
             answer: '$\sin x = \frac{2t}{1 + t^2}$, $\cos x = \frac{1 - t^2}{1 + t^2}$, $dx = \frac{2\,dt}{1 + t^2}$'
+            answer_contract: {kind: none}
             solution_sketch: 'Double-angle formulas with $\tan(x/2) = t$: $\sin x = 2\sin\frac{x}{2}\cos\frac{x}{2}$, $\cos x = \cos^2\frac{x}{2} - \sin^2\frac{x}{2}$; divide by $\cos^2\frac{x}{2} + \sin^2\frac{x}{2}$.'
           - problem: 'Evaluate $\int \frac{dx}{1 + \sin x}$.'
             answer: '$-\frac{2}{1 + \tan(x/2)} + C$'
@@ -714,17 +743,21 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int \frac{dx}{3 + 5\cos x}$.'
             answer: '$\frac{1}{4}\ln\left|\frac{2 + \tan(x/2)}{2 - \tan(x/2)}\right| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$t = \tan(x/2)$: the integrand becomes $\frac{2}{8 - 2t^2} = \frac{1}{4 - t^2}$; partial fractions give $\frac{1}{4}\ln\left|\frac{2+t}{2-t}\right|$.'
           - problem: 'Evaluate $\int \frac{dx}{5 + 4\cos x}$.'
             answer: '$\frac{2}{3}\arctan\left(\frac{\tan(x/2)}{3}\right) + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$t = \tan(x/2)$: $5 + 4\cos x = \frac{9 + t^2}{1 + t^2}$, so the integral is $\int \frac{2\,dt}{9 + t^2} = \frac{2}{3}\arctan\frac{t}{3}$.'
           - problem: 'Evaluate $\int \csc x \, dx$ using $t = \tan(x/2)$.'
             answer: '$\ln\left|\tan\frac{x}{2}\right| + C$'
+            answer_contract: {kind: none}
             solution_sketch: '$\csc x\,dx = \frac{1+t^2}{2t}\cdot\frac{2\,dt}{1+t^2} = \frac{dt}{t}$.'
         constraints: "integrand rational in sin x and cos x with small integer coefficients; the t-integral is an arctan pattern or splits over distinct linear factors"
     diagnostic_exemplar:
       problem: 'Evaluate $\int \frac{dx}{2 + \cos x}$.'
       answer: '$\frac{2}{\sqrt{3}}\arctan\left(\frac{\tan(x/2)}{\sqrt{3}}\right) + C$'
+      answer_contract: {kind: none}
       solution_sketch: 'With $t = \tan(x/2)$ the integrand becomes $\frac{2\,dt}{3 + t^2}$.'
     anki_seeds:
       - front: 'Weierstrass substitution $t = \tan(x/2)$: the three replacement formulas?'
@@ -760,6 +793,7 @@ topics:
             solution_sketch: '$\lim_{b\to\infty} [-\frac{1}{x}]_1^b = \lim_{b\to\infty} (1 - \frac{1}{b}) = 1$.'
           - problem: 'Evaluate $\int_1^{\infty} \frac{dx}{x}$ or state that it diverges.'
             answer: 'diverges'
+            answer_contract: {kind: none}
             solution_sketch: '$\lim_{b\to\infty} \ln b = \infty$.'
         constraints: "one infinite endpoint; power-function integrands; always write the limit explicitly"
       - id: kp2
@@ -785,6 +819,7 @@ topics:
             solution_sketch: 'Split at $0$: each half contributes $\frac{\pi}{2}$ (both limits must exist separately).'
           - problem: 'Evaluate $\int_0^{\infty} \cos x \, dx$ or state that it diverges.'
             answer: 'diverges'
+            answer_contract: {kind: none}
             solution_sketch: 'The limit of $[\sin x]_0^b = \sin b$ oscillates between $-1$ and $1$, so the improper integral diverges.'
         constraints: "split doubly infinite integrals at 0; include one oscillating-divergence example"
     diagnostic_exemplar:
@@ -825,6 +860,7 @@ topics:
             solution_sketch: '$\lim_{a\to 0^+} [2\sqrt{x}]_a^1 = 2 - 0 = 2$.'
           - problem: 'Evaluate $\int_0^1 \frac{dx}{x^2}$ or state that it diverges.'
             answer: 'diverges'
+            answer_contract: {kind: none}
             solution_sketch: '$\lim_{a\to 0^+} [-\frac{1}{x}]_a^1 = \lim_{a\to 0^+} (\frac{1}{a} - 1) = \infty$.'
           - problem: 'Evaluate $\int_0^4 \frac{dx}{\sqrt{x}}$.'
             answer: "4"
@@ -839,6 +875,7 @@ topics:
             solution_sketch: '$\lim_{b\to 1^-} [-\frac{3}{2}(1-x)^{2/3}]_0^b = 0 + \frac{3}{2} = \frac{3}{2}$.'
           - problem: 'Evaluate $\int_0^1 \frac{dx}{1 - x}$ or state that it diverges.'
             answer: 'diverges'
+            answer_contract: {kind: none}
             solution_sketch: '$\lim_{b\to 1^-} [-\ln(1-x)]_0^b = \infty$.'
         constraints: "asymptote at the upper endpoint; integrand (b - x)^{-p} with p in {1/3, 1/2, 1, 2}"
       - id: kp3
@@ -847,6 +884,7 @@ topics:
         exemplars:
           - problem: 'Applying the FTC directly to $\int_{-1}^{1} \frac{dx}{x^2}$ gives $-2$, which cannot be right for a positive integrand. State the correct verdict: converges or diverges?'
             answer: 'diverges'
+            answer_contract: {kind: none}
             solution_sketch: 'The FTC requires continuity on the whole interval, but the integrand blows up at $x = 0$ inside it. Split there: $\lim_{a\to 0^+}\int_a^1 \frac{dx}{x^2} = \infty$, so each half diverges and so does the whole. A negative value for a positive integrand is the tell-tale sign the FTC was misapplied.'
           - problem: 'Evaluate $\int_0^3 \frac{dx}{(x - 1)^{2/3}}$ or state that it diverges.'
             answer: '3 + 3*2^(1/3)'
@@ -889,6 +927,7 @@ topics:
         exemplars:
           - problem: 'For which $p$ does $\int_1^{\infty} \frac{dx}{x^p}$ converge, and what is $\int_1^{\infty} \frac{dx}{x^{3/2}}$?'
             answer: 'converges iff $p > 1$; the integral equals $2$'
+            answer_contract: {kind: none}
             solution_sketch: 'For $p \neq 1$ the antiderivative is $\frac{x^{1-p}}{1-p}$, finite at $\infty$ iff $p > 1$. With $p = 3/2$: $[-2x^{-1/2}]_1^{\infty} = 2$.'
           - problem: 'For which $p$ does $\int_0^1 \frac{dx}{x^p}$ converge?'
             answer: '$p < 1$'
@@ -911,17 +950,21 @@ topics:
         exemplars:
           - problem: 'Does $\int_1^{\infty} \frac{dx}{x^3 + 1}$ converge?'
             answer: 'yes — $0 \le \frac{1}{x^3 + 1} \le \frac{1}{x^3}$ and $\int_1^{\infty} x^{-3}\,dx$ converges'
+            answer_contract: {kind: none}
             solution_sketch: 'Compare with the convergent $p = 3$ integral; smaller positive integrand converges.'
           - problem: 'Does $\int_1^{\infty} \frac{2 + \sin x}{x} \, dx$ converge?'
             answer: 'no — $\frac{2 + \sin x}{x} \ge \frac{1}{x}$ and $\int_1^{\infty} \frac{dx}{x}$ diverges'
+            answer_contract: {kind: none}
             solution_sketch: '$2 + \sin x \ge 1$, so the integrand dominates the divergent $p = 1$ integral.'
           - problem: 'Show that $\int_1^{\infty} e^{-x^2} \, dx$ converges.'
             answer: 'for $x \ge 1$, $e^{-x^2} \le e^{-x}$, and $\int_1^{\infty} e^{-x}\,dx = e^{-1}$ converges'
+            answer_contract: {kind: none}
             solution_sketch: '$x^2 \ge x$ on $[1, \infty)$ makes $e^{-x^2} \le e^{-x}$; comparison with a convergent exponential.'
         constraints: "comparisons against p-integrals or e^{-x}; the inequality must hold on the whole interval and be stated"
     diagnostic_exemplar:
       problem: 'Determine whether $\int_1^{\infty} \frac{dx}{\sqrt{x^6 + 1}}$ converges.'
       answer: 'converges — $\frac{1}{\sqrt{x^6 + 1}} \le \frac{1}{x^3}$ and $\int_1^{\infty} x^{-3}\,dx$ converges'
+      answer_contract: {kind: none}
       solution_sketch: '$\sqrt{x^6 + 1} \ge x^3$, so the integrand is dominated by a convergent $p = 3$ integral.'
     anki_seeds:
       - front: '$\int_1^{\infty} x^{-p} \, dx$ converges exactly when...'
@@ -960,6 +1003,7 @@ topics:
         exemplars:
           - problem: 'Name the best technique for each: (a) $\int x e^{x^2}\,dx$, (b) $\int x \ln x\,dx$, (c) $\int \frac{dx}{x^2 - 9}$, (d) $\int \sqrt{4 - x^2}\,dx$.'
             answer: '(a) u-substitution ($u = x^2$), (b) integration by parts, (c) partial fractions, (d) trigonometric substitution'
+            answer_contract: {kind: none}
             solution_sketch: '(a) the derivative of $x^2$ is present up to a constant; (b) algebraic times log; (c) $x^2 - 9 = (x-3)(x+3)$; (d) the $a^2 - x^2$ radical pattern.'
           - problem: 'Evaluate $\int x e^{x^2} \, dx$.'
             answer: '$\frac{e^{x^2}}{2} + C$'
@@ -982,14 +1026,17 @@ topics:
         exemplars:
           - problem: 'Evaluate $\int x \arctan x \, dx$.'
             answer: '$\frac{x^2 + 1}{2}\arctan x - \frac{x}{2} + C$'
+            answer_contract: {kind: none}
             solution_sketch: 'Parts with $u = \arctan x$: $\frac{x^2}{2}\arctan x - \frac{1}{2}\int \frac{x^2}{1+x^2}\,dx$; write $\frac{x^2}{1+x^2} = 1 - \frac{1}{1+x^2}$.'
           - problem: 'Evaluate $\int \ln(x^2 + 1) \, dx$.'
             answer: '$x\ln(x^2 + 1) - 2x + 2\arctan x + C$'
+            answer_contract: {kind: none}
             solution_sketch: 'Parts with $u = \ln(x^2+1)$, $dv = dx$: $x\ln(x^2+1) - \int \frac{2x^2}{x^2+1}\,dx$; the remainder splits as $2 - \frac{2}{x^2+1}$.'
         constraints: "exactly two techniques chained; the follow-up integral must be an improper-fraction split or an arctan pattern"
     diagnostic_exemplar:
       problem: 'Evaluate $\int x \sec^2 x \, dx$.'
       answer: '$x \tan x + \ln|\cos x| + C$'
+      answer_contract: {kind: none}
       solution_sketch: 'Parts with $u = x$, $dv = \sec^2 x\,dx$: $x\tan x - \int \tan x\,dx = x\tan x + \ln|\cos x| + C$.'
     anki_seeds:
       - front: "First question to ask before choosing an integration technique?"

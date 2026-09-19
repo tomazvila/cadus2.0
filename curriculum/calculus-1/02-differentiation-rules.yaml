@@ -359,6 +359,7 @@ topics:
             solution_sketch: '$-x^{-2} \to 2x^{-3}$.'
           - problem: 'The $n$th derivative of $x^n$ equals...'
             answer: "n!"
+            answer_contract: {kind: none}
             solution_sketch: 'Each step peels off one factor: $n x^{n-1} \to n(n-1)x^{n-2} \to \cdots \to n!$.'
         constraints: "degree-drop and negative-power patterns; exploit structure instead of grinding"
       - id: kp3
@@ -548,11 +549,15 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = 2^x$.'
             answer: "2^x ln 2"
+            answer_contract: {kind: none}
             solution_sketch: '$2^x = e^{x \ln 2}$, so the derivative is $e^{x \ln 2} \cdot \ln 2$.'
           - problem: 'Differentiate $f(x) = 10^x$.'
             answer: "10^x ln 10"
+            answer_contract: {kind: none}
+            solution_sketch: "10^x ln 10"
           - problem: 'Differentiate $f(x) = 3^{2x}$.'
             answer: "(2 ln 3) 3^(2x)"
+            answer_contract: {kind: none}
             solution_sketch: 'Chain rule on $e^{2x \ln 3}$: the factor is $2\ln 3$.'
         constraints: "bases 2, 3, 5, or 10; rewrite as e^(x ln a) or use the memorized a^x ln a"
       - id: kp2
@@ -579,11 +584,13 @@ topics:
             solution_sketch: 'Quotient rule: $\frac{e^x x - e^x}{x^2}$.'
           - problem: 'Differentiate $f(x) = x \cdot 2^x$.'
             answer: "2^x(1 + x ln 2)"
+            answer_contract: {kind: none}
             solution_sketch: 'Product rule: $2^x + x \cdot 2^x \ln 2$.'
         constraints: "one product and one quotient mixing power, exponential, and log factors"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x \cdot 3^x$.'
       answer: "3^x (1 + x ln 3)"
+      answer_contract: {kind: none}
       solution_sketch: 'Product rule with $\frac{d}{dx}3^x = 3^x\ln 3$: $3^x + x\,3^x\ln 3$, then factor out $3^x$.'
     anki_seeds:
       - front: "d/dx a^x = ?"
@@ -627,9 +634,12 @@ topics:
         exemplars:
           - problem: 'Let $f(x) = x^2$ for $x < 1$ and $f(x) = 2x - 1$ for $x \geq 1$. Is $f$ differentiable at $x = 1$, and if so what is $f''(1)$?'
             answer: "yes; f'(1) = 2"
+            answer_contract: {kind: none}
             solution_sketch: 'Values match ($1 = 1$) and one-sided slopes match ($2 \cdot 1 = 2$), so $f''(1) = 2$.'
           - problem: 'Let $g(x) = x^2$ for $x < 2$ and $g(x) = 4x - 3$ for $x \geq 2$. Is $g$ differentiable at $x = 2$?'
             answer: "no — g is not even continuous there (4 ≠ 5)"
+            answer_contract: {kind: none}
+            solution_sketch: "no — g is not even continuous there (4 ≠ 5)"
         constraints: "check continuity first, then one-sided derivatives; polynomial branches"
       - id: kp3
         name: Choose constants to make a piecewise function differentiable
@@ -637,14 +647,17 @@ topics:
         exemplars:
           - problem: 'Find $a$ and $b$ so that $f(x) = x^2$ for $x \leq 2$ and $f(x) = ax + b$ for $x > 2$ is differentiable at $x = 2$.'
             answer: "a = 4, b = -4"
+            answer_contract: {kind: none}
             solution_sketch: 'Slopes: $2 \cdot 2 = a$. Continuity: $4 = 2a + b = 8 + b$, so $b = -4$.'
           - problem: 'Find $a$ and $b$ so that $f(x) = ax^3$ for $x \leq 1$ and $f(x) = 3x + b$ for $x > 1$ is differentiable at $x = 1$.'
             answer: "a = 1, b = -2"
+            answer_contract: {kind: none}
             solution_sketch: 'Slopes: $3a = 3$ gives $a = 1$. Continuity: $1 = 3 + b$ gives $b = -2$.'
         constraints: "two unknowns; the slope equation and the continuity equation each yield an integer"
     diagnostic_exemplar:
       problem: 'Find $a$ and $b$ so that $f(x) = x^2$ for $x \leq 3$ and $f(x) = ax + b$ for $x > 3$ is differentiable at $x = 3$.'
       answer: "a = 6, b = -9"
+      answer_contract: {kind: none}
       solution_sketch: 'Two conditions, slopes first: $2(3) = a$ gives $a = 6$, and then matching values, $3^2 = 6(3) + b$, gives $b = -9$.'
     anki_seeds:
       - front: "To make a piecewise function differentiable at its seam you need TWO equations:"
@@ -674,8 +687,12 @@ topics:
         exemplars:
           - problem: 'If $y$ is a function of $x$, what is $\frac{d}{dx}\left[y^4\right]$?'
             answer: "4y^3 · dy/dx"
+            answer_contract: {kind: none}
+            solution_sketch: "4y^3 · dy/dx"
           - problem: 'If $y$ is a function of $x$, what is $\frac{d}{dx}\left[y^2 + x^3\right]$?'
             answer: "2y · dy/dx + 3x^2"
+            answer_contract: {kind: none}
+            solution_sketch: "2y · dy/dx + 3x^2"
         constraints: "single y-power terms; every y-term picks up a dy/dx factor"
       - id: kp2
         name: Solve for dy/dx (powers of x and y only)
@@ -893,6 +910,8 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = x \arctan x$.'
             answer: "arctan x + x/(1 + x^2)"
+            answer_contract: {kind: none}
+            solution_sketch: "arctan x + x/(1 + x^2)"
           - problem: 'For $f(x) = \arcsin x$, find $f''(1/2)$.'
             answer: "2√3/3"
             solution_sketch: '$\frac{1}{\sqrt{1 - 1/4}} = \frac{1}{\sqrt{3}/2} = \frac{2}{\sqrt{3}} = \frac{2\sqrt{3}}{3}$.'
@@ -902,6 +921,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x \arctan(2x)$.'
       answer: "arctan(2x) + 2x/(1 + 4x^2)"
+      answer_contract: {kind: none}
       solution_sketch: 'Product rule with $\frac{d}{dx}\arctan(2x) = \frac{2}{1 + (2x)^2}$: $\arctan(2x) + \frac{2x}{1 + 4x^2}$.'
     anki_seeds:
       - front: "d/dx arcsin x and d/dx arctan x = ?"
@@ -936,12 +956,15 @@ topics:
         exemplars:
           - problem: 'Differentiate $y = x^x$ for $x > 0$.'
             answer: "x^x (ln x + 1)"
+            answer_contract: {kind: none}
             solution_sketch: '$\ln y = x \ln x$; differentiate: $\frac{y''}{y} = \ln x + 1$; multiply by $y$.'
           - problem: 'Differentiate $y = x^{2x}$ for $x > 0$.'
             answer: "2x^(2x) (ln x + 1)"
+            answer_contract: {kind: none}
             solution_sketch: '$\ln y = 2x \ln x$ gives $\frac{y''}{y} = 2\ln x + 2$.'
           - problem: 'Differentiate $y = x^{\sin x}$ for $x > 0$.'
             answer: "x^(sin x) (cos(x) ln(x) + sin(x)/x)"
+            answer_contract: {kind: none}
             solution_sketch: '$\ln y = \sin x \ln x$; differentiate: $\frac{y''}{y} = \cos x \ln x + \frac{\sin x}{x}$; multiply by $y$.'
         constraints: "x^(u(x)) forms; take ln of both sides, differentiate implicitly, multiply back by y"
       - id: kp2
@@ -961,14 +984,17 @@ topics:
         exemplars:
           - problem: 'Which of $2^x$, $x^2$, and $x^x$ REQUIRES logarithmic differentiation (rather than a standard rule)?'
             answer: "x^x"
+            answer_contract: {kind: none}
             solution_sketch: 'Only $x^x$ has a varying base AND a varying exponent; $2^x$ uses $a^x \ln a$ and $x^2$ the power rule.'
           - problem: 'Differentiate $y = x^x$ by first rewriting it as $e^{x \ln x}$.'
             answer: "x^x (ln x + 1)"
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{d}{dx} e^{x \ln x} = e^{x \ln x}(\ln x + 1)$ — the same result as taking logs.'
         constraints: "contrast constant-base, constant-exponent, and variable-variable cases"
     diagnostic_exemplar:
       problem: 'Differentiate $y = x^{\ln x}$ for $x > 0$.'
       answer: "x^(ln x) (2 ln x)/x"
+      answer_contract: {kind: none}
       solution_sketch: '$\ln y = (\ln x)^2$, so $y''/y = 2\ln x \cdot \frac{1}{x}$ and $y'' = x^{\ln x}\cdot\frac{2\ln x}{x}$.'
     anki_seeds:
       - front: "Logarithmic differentiation procedure:"

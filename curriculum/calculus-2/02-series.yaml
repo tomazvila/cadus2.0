@@ -30,6 +30,7 @@ topics:
             solution_sketch: 'Substitute $n = 1, 2, 3, 4$.'
           - problem: 'Give a formula for the general term $a_n$ of $\frac{1}{2}, \frac{1}{4}, \frac{1}{8}, \frac{1}{16}, \ldots$ starting at $n = 1$.'
             answer: '$1/2^n$'
+            answer_contract: {kind: none}
             solution_sketch: 'Each term is half the previous one: a geometric sequence with ratio $\frac{1}{2}$.'
         constraints: "explicit formulas with signs, powers, and linear/quadratic terms; n starts at 1"
       - id: kp2
@@ -55,12 +56,14 @@ topics:
             solution_sketch: '$|r| < 1$ forces $r^n \to 0$.'
           - problem: 'Does the sequence $a_n = (-1)^n$ converge? If so, give its limit; otherwise state that it diverges.'
             answer: 'diverges'
+            answer_contract: {kind: none}
             solution_sketch: 'The subsequences of even and odd terms have different limits, so no single limit exists.'
           - problem: 'Find $\lim_{n\to\infty} \frac{2^n}{3^n}$.'
             answer: "0"
             solution_sketch: '$\frac{2^n}{3^n} = \left(\frac{2}{3}\right)^n$ and $\left|\frac{2}{3}\right| < 1$.'
           - problem: 'Does the sequence $a_n = \left(\frac{3}{2}\right)^n$ converge? If so, give its limit; otherwise state that it diverges.'
             answer: 'diverges'
+            answer_contract: {kind: none}
             solution_sketch: '$r = \frac{3}{2} > 1$, so $r^n$ grows without bound.'
         constraints: "r^n with |r| < 1, |r| = 1, |r| > 1; include one non-convergent oscillating case"
     diagnostic_exemplar:
@@ -172,12 +175,14 @@ topics:
         exemplars:
           - problem: 'Write $\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16} + \cdots$ in sigma notation.'
             answer: '$\sum_{n=1}^{\infty} \frac{1}{2^n}$'
+            answer_contract: {kind: none}
             solution_sketch: 'The $n$th term is $\frac{1}{2^n}$.'
           - problem: 'Compute the partial sum $\sum_{k=1}^{4} \frac{1}{k}$.'
             answer: '$25/12$'
             solution_sketch: '$1 + \frac{1}{2} + \frac{1}{3} + \frac{1}{4} = \frac{12 + 6 + 4 + 3}{12} = \frac{25}{12}$.'
           - problem: 'Write $1 - \frac{1}{3} + \frac{1}{9} - \frac{1}{27} + \cdots$ in sigma notation.'
             answer: '$\sum_{n=0}^{\infty} \left(-\frac{1}{3}\right)^n$'
+            answer_contract: {kind: none}
             solution_sketch: 'Alternating signs with ratio $\frac{1}{3}$: powers of $-\frac{1}{3}$.'
         constraints: "terms are simple fractions or powers; watch the starting index (n = 0 vs n = 1)"
       - id: kp2
@@ -186,6 +191,7 @@ topics:
         exemplars:
           - problem: 'For $\sum_{n=1}^{\infty} \frac{1}{2^n}$, compute $S_1, S_2, S_3, S_4$ and conjecture the sum.'
             answer: '$\frac{1}{2}, \frac{3}{4}, \frac{7}{8}, \frac{15}{16}$; the sum is $1$'
+            answer_contract: {kind: none}
             solution_sketch: '$S_N = 1 - \frac{1}{2^N} \to 1$.'
           - problem: 'A series has partial sums $S_N = \frac{2N}{N+1}$. Find its sum.'
             answer: "2"
@@ -200,17 +206,21 @@ topics:
         exemplars:
           - problem: 'Does $\sum_{n=1}^{\infty} 1$ converge? Justify with partial sums.'
             answer: 'no; $S_N = N \to \infty$'
+            answer_contract: {kind: none}
             solution_sketch: 'The partial sums grow without bound.'
           - problem: 'Does $\sum_{n=1}^{\infty} (-1)^n$ converge? Justify with partial sums.'
             answer: 'no; the partial sums oscillate between $-1$ and $0$'
+            answer_contract: {kind: none}
             solution_sketch: '$S_1 = -1, S_2 = 0, S_3 = -1, \ldots$: no single limit.'
           - problem: 'Does $\sum_{n=1}^{\infty} n$ converge? Justify with partial sums.'
             answer: 'no; $S_N = \frac{N(N+1)}{2} \to \infty$'
+            answer_contract: {kind: none}
             solution_sketch: 'The arithmetic partial-sum formula grows without bound.'
         constraints: "divergence exhibited directly from a closed-form or oscillating partial-sum sequence"
     diagnostic_exemplar:
       problem: 'A series has partial sums $S_N = \frac{N}{N+1}$. Does it converge, and to what?'
       answer: 'yes; the sum is $1$'
+      answer_contract: {kind: none}
       solution_sketch: 'By definition the sum is $\lim_{N\to\infty} S_N = 1$.'
     anki_seeds:
       - front: "A series converges means, precisely, that..."
@@ -256,6 +266,7 @@ topics:
         exemplars:
           - problem: 'Does $\sum_{n=0}^{\infty} \left(\frac{3}{2}\right)^n$ converge? If so give its sum; otherwise state that it diverges.'
             answer: 'diverges'
+            answer_contract: {kind: none}
             solution_sketch: 'A geometric series converges iff $|r| < 1$; here $|r| = \frac{3}{2} \ge 1$, so it diverges.'
           - problem: 'Does $\sum_{n=0}^{\infty} (0.99)^n$ converge? If so, give its sum.'
             answer: "100"
@@ -329,6 +340,7 @@ topics:
             solution_sketch: '$\frac{1}{n+1} - \frac{1}{n+2}$ telescopes to $\frac{1}{2} - \frac{1}{N+2} \to \frac{1}{2}$.'
           - problem: 'Does $\sum_{n=1}^{\infty} \ln\left(\frac{n+1}{n}\right)$ converge? If so give its sum; otherwise state that it diverges.'
             answer: 'diverges'
+            answer_contract: {kind: none}
             solution_sketch: '$\ln(n+1) - \ln n$ telescopes to $\ln(N+1)$, which diverges.'
         constraints: "require writing the Nth partial sum before taking the limit; include one divergent telescope"
       - id: kp3
@@ -439,12 +451,15 @@ topics:
         exemplars:
           - problem: 'Does $\sum_{n=1}^{\infty} \frac{n}{n+1}$ converge?'
             answer: 'no; the terms tend to $1 \ne 0$'
+            answer_contract: {kind: none}
             solution_sketch: 'If $a_n \not\to 0$, the series diverges.'
           - problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{2n+1}$ converge?'
             answer: 'no; the terms oscillate toward $\pm\frac{1}{2}$, so $a_n \not\to 0$'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{n}{2n+1} \to \frac{1}{2}$, and the signs alternate, so the terms have no limit at all.'
           - problem: 'Does $\sum_{n=1}^{\infty} n \sin\left(\frac{1}{n}\right)$ converge?'
             answer: 'no; $n\sin\left(\frac{1}{n}\right) \to 1 \ne 0$'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{\sin(1/n)}{1/n} \to 1$, so the terms tend to $1$.'
         constraints: "term limits computable by rational-sequence rules or the standard sin(1/n) limit"
       - id: kp2
@@ -453,14 +468,17 @@ topics:
         exemplars:
           - problem: 'The terms of the harmonic series $\sum \frac{1}{n}$ tend to $0$. Does the test conclude convergence?'
             answer: 'no; the test is silent when $a_n \to 0$ (and in fact the harmonic series diverges)'
+            answer_contract: {kind: none}
             solution_sketch: 'The divergence test only ever proves divergence.'
           - problem: 'True or false: if $a_n \to 0$, then $\sum a_n$ converges.'
             answer: 'false (counterexample: the harmonic series)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{1}{n} \to 0$, yet $\sum \frac{1}{n}$ diverges.'
         constraints: "conceptual questions distinguishing the test from its false converse"
     diagnostic_exemplar:
       problem: 'Does $\sum_{n=1}^{\infty} \frac{2n}{3n + 5}$ converge? And does the divergence test settle $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$?'
       answer: 'The first diverges (its terms tend to $\frac{2}{3} \ne 0$); the test says nothing about the second, whose terms do tend to $0$ (it in fact diverges, as a $p$-series with $p = \frac12$)'
+      answer_contract: {kind: none}
       solution_sketch: 'The divergence test can only prove divergence: $a_n \to 0$ is necessary but not sufficient for convergence.'
     anki_seeds:
       - front: 'The $n$th-term divergence test says:'
@@ -493,12 +511,15 @@ topics:
         exemplars:
           - problem: 'Does $\sum_{n=1}^{\infty} \frac{1}{n^2}$ converge or diverge?'
             answer: 'converges ($p$-series, $p = 2 > 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'A $p$-series converges iff $p > 1$, mirroring $\int_1^{\infty} x^{-p}\,dx$.'
           - problem: 'Does $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$ converge or diverge?'
             answer: 'diverges ($p = \frac{1}{2} \le 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$p = \frac{1}{2} \le 1$.'
           - problem: 'Does the harmonic series $\sum_{n=1}^{\infty} \frac{1}{n}$ converge or diverge?'
             answer: 'diverges ($p = 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\int_1^{\infty} \frac{dx}{x} = \infty$, so the series diverges by the integral test.'
         constraints: "p in {1/3, 1/2, 1, 3/2, 2, 3}; verdicts must name the test and the value of p"
       - id: kp2
@@ -507,9 +528,11 @@ topics:
         exemplars:
           - problem: 'Use the integral test to decide whether $\sum_{n=2}^{\infty} \frac{1}{n \ln n}$ converges.'
             answer: 'diverges ($\int_2^{\infty} \frac{dx}{x\ln x} = \lim_{b\to\infty} \ln(\ln b) - \ln(\ln 2) = \infty$)'
+            answer_contract: {kind: none}
             solution_sketch: '$u = \ln x$ turns the integral into $\int \frac{du}{u}$, which diverges.'
           - problem: 'Use the integral test to decide whether $\sum_{n=1}^{\infty} n e^{-n^2}$ converges.'
             answer: 'converges ($\int_1^{\infty} x e^{-x^2} dx = \frac{1}{2e}$, finite)'
+            answer_contract: {kind: none}
             solution_sketch: '$u = x^2$: the integral equals $\frac{1}{2}e^{-1}$; a finite integral means the series converges.'
         constraints: "integrand must be positive, continuous, decreasing on the tail; integral solvable by one substitution"
       - id: kp3
@@ -518,14 +541,17 @@ topics:
         exemplars:
           - problem: 'Why can the integral test not be applied directly to $\sum_{n=1}^{\infty} \frac{(-1)^n}{n}$?'
             answer: 'the terms are not positive (the test requires positive, continuous, decreasing terms)'
+            answer_contract: {kind: none}
             solution_sketch: 'The integral test hypotheses are: $f$ positive, continuous, decreasing on $[N, \infty)$ with $a_n = f(n)$. Alternating terms violate positivity.'
           - problem: 'Using the remainder estimate $R_N \le \int_N^{\infty} f(x)\,dx$, bound the error when $\sum_{n=1}^{\infty} \frac{1}{n^2}$ is approximated by its first $10$ terms.'
             answer: '$R_{10} \le \frac{1}{10}$'
+            answer_contract: {kind: none}
             solution_sketch: '$\int_{10}^{\infty} \frac{dx}{x^2} = \frac{1}{10}$.'
         constraints: "hypothesis questions list all three conditions; remainder bounds for p = 2 or p = 3 only"
     diagnostic_exemplar:
       problem: 'Use the integral test to decide whether $\sum_{n=1}^{\infty} \frac{n}{n^2 + 1}$ converges, stating the hypotheses you checked.'
       answer: 'Diverges: $f(x) = \frac{x}{x^2+1}$ is positive, continuous and decreasing for $x \ge 1$, and $\int_1^{\infty} \frac{x\,dx}{x^2+1} = \lim_{b\to\infty}\frac12\ln(b^2+1) - \frac12\ln 2 = \infty$'
+      answer_contract: {kind: none}
       solution_sketch: 'The substitution $u = x^2 + 1$ turns the integral into $\frac12\ln u$, which is unbounded, so the series diverges with the integral.'
     anki_seeds:
       - front: 'The $p$-series $\sum 1/n^p$ converges exactly when...'
@@ -557,12 +583,15 @@ topics:
         exemplars:
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{n^2 + 3}$ converges, with justification.'
             answer: 'converges (direct comparison: $\frac{1}{n^2+3} < \frac{1}{n^2}$, a convergent $p$-series)'
+            answer_contract: {kind: none}
             solution_sketch: 'Terms are positive and bounded above by a convergent series, so the partial sums are bounded.'
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{2^n + 1}$ converges.'
             answer: 'converges (direct comparison with the geometric series $\sum \frac{1}{2^n}$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{1}{2^n + 1} < \frac{1}{2^n}$ and $\sum 2^{-n}$ converges.'
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{\sin^2 n}{n^2}$ converges.'
             answer: 'converges (direct comparison: $\frac{\sin^2 n}{n^2} \le \frac{1}{n^2}$)'
+            answer_contract: {kind: none}
             solution_sketch: '$0 \le \sin^2 n \le 1$ bounds the terms by a convergent $p$-series.'
         constraints: "comparator is a p-series or geometric series; the bound must hold termwise"
       - id: kp2
@@ -571,9 +600,11 @@ topics:
         exemplars:
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n + 1}{n^2}$ converges.'
             answer: 'diverges (direct comparison: $\frac{n+1}{n^2} > \frac{1}{n}$, the harmonic series)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{n+1}{n^2} = \frac{1}{n} + \frac{1}{n^2} > \frac{1}{n}$.'
           - problem: 'Decide whether $\sum_{n=3}^{\infty} \frac{\ln n}{n}$ converges.'
             answer: 'diverges ($\frac{\ln n}{n} > \frac{1}{n}$ for $n \ge 3$, and the harmonic series diverges)'
+            answer_contract: {kind: none}
             solution_sketch: '$\ln n > 1$ once $n \ge 3$, so the terms dominate the harmonic terms.'
         constraints: "the inequality must go the useful direction; divergent comparator is the harmonic series or a p-series with p <= 1"
       - id: kp3
@@ -582,14 +613,17 @@ topics:
         exemplars:
           - problem: 'The naive bound $\frac{1}{n^2 - 1} > \frac{1}{n^2}$ points the wrong way. Decide whether $\sum_{n=2}^{\infty} \frac{1}{n^2 - 1}$ converges anyway.'
             answer: 'converges ($\frac{1}{n^2-1} \le \frac{2}{n^2}$ for $n \ge 2$, and $\sum \frac{2}{n^2}$ converges)'
+            answer_contract: {kind: none}
             solution_sketch: 'For $n \ge 2$, $n^2 - 1 \ge \frac{n^2}{2}$, so the terms are at most $\frac{2}{n^2}$.'
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{2^n - 1}$ converges, using a corrected comparison.'
             answer: 'converges ($\frac{1}{2^n - 1} \le \frac{1}{2^{n-1}}$, a convergent geometric series)'
+            answer_contract: {kind: none}
             solution_sketch: '$2^n - 1 \ge 2^{n-1}$ for $n \ge 1$ repairs the direction of the bound.'
         constraints: "denominators shrunk by a subtraction; repair with a constant multiple of the natural comparator"
     diagnostic_exemplar:
       problem: 'Decide whether $\sum_{n=2}^{\infty} \frac{1}{n^2 - n}$ converges. Note that the naive bound $\frac{1}{n^2 - n} > \frac{1}{n^2}$ points the wrong way.'
       answer: 'Converges: for $n \ge 2$, $n^2 - n \ge \frac{n^2}{2}$, so $\frac{1}{n^2-n} \le \frac{2}{n^2}$, and $\sum \frac{2}{n^2}$ is a convergent $p$-series'
+      answer_contract: {kind: none}
       solution_sketch: 'A comparison that bounds the terms from below by a convergent series proves nothing; halving the denominator restores a usable upper bound.'
     anki_seeds:
       - front: "Direct comparison proves convergence when your positive terms are..."
@@ -621,12 +655,15 @@ topics:
         exemplars:
           - problem: 'Use limit comparison to decide whether $\sum_{n=1}^{\infty} \frac{1}{2n + 1}$ converges.'
             answer: 'diverges (limit comparison with $\sum \frac{1}{n}$: $L = \frac{1}{2}$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\lim \frac{1/(2n+1)}{1/n} = \frac{1}{2} \in (0, \infty)$, so both series share the harmonic series'' fate.'
           - problem: 'Use limit comparison to decide whether $\sum_{n=1}^{\infty} \frac{3n^2 + n}{n^4 + 2}$ converges.'
             answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = 3$)'
+            answer_contract: {kind: none}
             solution_sketch: 'Dominant behavior is $\frac{3n^2}{n^4} = \frac{3}{n^2}$; the limit of the ratio is $3$.'
           - problem: 'Use limit comparison to decide whether $\sum_{n=1}^{\infty} \sin\left(\frac{1}{n}\right)$ converges.'
             answer: 'diverges (limit comparison with $\sum \frac{1}{n}$: $L = 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{\sin(1/n)}{1/n} \to 1$, so the series behaves like the harmonic series.'
         constraints: "L must land in (0, infinity); state L explicitly in the verdict"
       - id: kp2
@@ -635,12 +672,15 @@ topics:
         exemplars:
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{\sqrt{n}}{n^2 + 1}$ converges.'
             answer: 'converges (behaves like $\sum n^{-3/2}$; limit comparison gives $L = 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'Keep dominant powers: $\frac{n^{1/2}}{n^2} = n^{-3/2}$, a convergent $p$-series.'
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2^n}{3^n - n}$ converges.'
             answer: 'converges (limit comparison with $\sum (2/3)^n$: $L = 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'The $n$ is negligible against $3^n$; $\frac{2^n/(3^n - n)}{(2/3)^n} = \frac{3^n}{3^n - n} \to 1$.'
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n + 3}{n^3 - n + 1}$ converges.'
             answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'Dominant terms give $\frac{n}{n^3} = \frac{1}{n^2}$.'
         constraints: "comparator read off from dominant numerator/denominator terms; mixed polynomial-exponential allowed"
       - id: kp3
@@ -649,14 +689,17 @@ topics:
         exemplars:
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \left(1 - \cos\frac{1}{n}\right)$ converges.'
             answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = \frac{1}{2}$)'
+            answer_contract: {kind: none}
             solution_sketch: '$1 - \cos t \approx \frac{t^2}{2}$ for small $t$, so the terms behave like $\frac{1}{2n^2}$.'
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{n \cdot 2^n}$ converges, choosing the simplest test.'
             answer: 'converges (direct comparison: $\frac{1}{n \cdot 2^n} \le \frac{1}{2^n}$)'
+            answer_contract: {kind: none}
             solution_sketch: 'The extra factor of $n$ only helps; a direct geometric bound is immediate.'
         constraints: "one problem where limit comparison is essential, one where a direct bound is quicker"
     diagnostic_exemplar:
       problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2n + 1}{n^3 + 4}$ converges. Name the test, comparator, and limit.'
       answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = 2$)'
+      answer_contract: {kind: none}
       solution_sketch: 'Dominant behavior $\frac{2n}{n^3} = \frac{2}{n^2}$; the ratio tends to $2 \in (0, \infty)$.'
     anki_seeds:
       - front: 'Limit comparison test: if $\lim a_n/b_n = L$ with $0 < L < \infty$, then...'
@@ -688,12 +731,15 @@ topics:
         exemplars:
           - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{2^n}{n!}$.'
             answer: 'converges ($L = \lim \frac{2}{n+1} = 0 < 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{2^{n+1} n!}{(n+1)!\, 2^n} = \frac{2}{n+1} \to 0$.'
           - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n!}{10^n}$.'
             answer: 'diverges ($L = \lim \frac{n+1}{10} = \infty$)'
+            answer_contract: {kind: none}
             solution_sketch: 'Factorials beat exponentials; the ratio $\frac{n+1}{10}$ grows without bound.'
           - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n}{2^n}$.'
             answer: 'converges ($L = \frac{1}{2} < 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{n+1}{2n} \to \frac{1}{2}$.'
         constraints: "terms built from n!, c^n, and powers of n; always state L and compare to 1"
       - id: kp2
@@ -705,9 +751,11 @@ topics:
             solution_sketch: '$(n+1)! = (n+1) \cdot n \cdot (n-1)!$.'
           - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{3^n}{n \cdot 2^n}$.'
             answer: 'diverges ($L = \lim \frac{3}{2} \cdot \frac{n}{n+1} = \frac{3}{2} > 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{3}{2}\cdot\frac{n}{n+1} \to \frac{3}{2}$.'
           - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n!}{n^n}$.'
             answer: 'converges ($L = \lim \left(\frac{n}{n+1}\right)^n = \frac{1}{e} < 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{(n+1)\, n^n}{(n+1)^{n+1}} = \left(\frac{n}{n+1}\right)^n \to e^{-1}$.'
         constraints: "cancel factorials and exponentials fully before taking the limit; L may involve e"
       - id: kp3
@@ -716,14 +764,17 @@ topics:
         exemplars:
           - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^2}{2^n}$.'
             answer: 'converges ($L = \lim \frac{1}{2}\left(\frac{n+1}{n}\right)^2 = \frac{1}{2} < 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'The polynomial factor contributes limit $1$; the geometric factor decides.'
           - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{(2n)!}{(n!)^2}$.'
             answer: 'diverges ($L = \lim \frac{(2n+2)(2n+1)}{(n+1)^2} = 4 > 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{(2n+2)(2n+1)}{(n+1)^2} \to 4$.'
         constraints: "products of polynomial, exponential, and factorial factors; state L exactly"
     diagnostic_exemplar:
       problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^2 3^n}{n!}$.'
       answer: 'converges ($L = \lim \frac{3(n+1)}{n^2} = 0 < 1$)'
+      answer_contract: {kind: none}
       solution_sketch: 'The ratio is $\frac{(n+1)^2 3^{n+1} n!}{n^2 3^n (n+1)!} = \frac{3(n+1)}{n^2} \to 0$.'
     anki_seeds:
       - front: 'Ratio test: with $L = \lim |a_{n+1}/a_n|$, the series converges when..., diverges when..., and when $L = 1$...'
@@ -753,12 +804,15 @@ topics:
         exemplars:
           - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(\frac{n}{2n + 1}\right)^n$.'
             answer: 'converges ($L = \lim \frac{n}{2n+1} = \frac{1}{2} < 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\sqrt[n]{a_n} = \frac{n}{2n+1} \to \frac{1}{2}$.'
           - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(\frac{3n + 1}{2n + 5}\right)^n$.'
             answer: 'diverges ($L = \frac{3}{2} > 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'The $n$th root is $\frac{3n+1}{2n+5} \to \frac{3}{2}$.'
           - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(1 + \frac{1}{n}\right)^{-n^2}$.'
             answer: 'converges ($L = \lim \left(1 + \frac{1}{n}\right)^{-n} = \frac{1}{e} < 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\sqrt[n]{a_n} = \left(1 + \frac{1}{n}\right)^{-n} \to e^{-1}$.'
         constraints: "a_n is an explicit nth power; L may involve e"
       - id: kp2
@@ -767,9 +821,11 @@ topics:
         exemplars:
           - problem: 'Apply the ratio test to $\sum_{n=1}^{\infty} \frac{1}{n^2}$; what does it tell you, and does the series converge?'
             answer: '$L = 1$, so the ratio test is inconclusive; the series converges anyway ($p$-series, $p = 2$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{n^2}{(n+1)^2} \to 1$. Fall back to the $p$-series fact.'
           - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^n}{n!}$.'
             answer: 'diverges ($L = \lim \left(1 + \frac{1}{n}\right)^n = e > 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{(n+1)^{n+1} n!}{(n+1)!\, n^n} = \left(\frac{n+1}{n}\right)^n \to e$.'
         constraints: "include at least one L = 1 case per set; resolution must invoke another test"
       - id: kp3
@@ -778,14 +834,17 @@ topics:
         exemplars:
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2^n}{n^n}$ converges, choosing the natural test.'
             answer: 'converges (root test: $L = \lim \frac{2}{n} = 0 < 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'The $n$th power in the denominator makes the root test immediate.'
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n! \, 3^n}{n^n}$ converges.'
             answer: 'diverges (ratio test: $L = \lim 3\left(\frac{n}{n+1}\right)^n = \frac{3}{e} > 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{a_{n+1}}{a_n} = 3\left(\frac{n}{n+1}\right)^n \to \frac{3}{e} \approx 1.10$.'
         constraints: "root test when a_n is an nth power; ratio test when factorials appear; verdicts state L"
     diagnostic_exemplar:
       problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n! \, 2^n}{n^n}$ converges, choosing the more natural test.'
       answer: 'converges (ratio test: $L = \lim 2\left(\frac{n}{n+1}\right)^n = \frac{2}{e} < 1$)'
+      answer_contract: {kind: none}
       solution_sketch: 'The factorial makes the ratio test natural; the ratio simplifies to $2/(1 + 1/n)^n \to 2/e \approx 0.74 < 1$.'
     anki_seeds:
       - front: 'Root test: with $L = \lim \sqrt[n]{|a_n|}$, the conclusions are...'
@@ -817,12 +876,15 @@ topics:
         exemplars:
           - problem: 'Does $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$ converge?'
             answer: 'yes (alternating series test: $\frac{1}{n}$ is decreasing with limit $0$)'
+            answer_contract: {kind: none}
             solution_sketch: '$b_n = \frac{1}{n}$ is positive, decreasing, and $\to 0$.'
           - problem: 'Does $\sum_{n=1}^{\infty} \frac{(-1)^n}{\sqrt{n}}$ converge?'
             answer: 'yes (AST: $\frac{1}{\sqrt{n}}$ decreases to $0$)'
+            answer_contract: {kind: none}
             solution_sketch: 'Both hypotheses of the alternating series test hold.'
           - problem: 'Does $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{2n + 1}$ converge?'
             answer: 'yes (AST: $\frac{1}{2n+1}$ decreases to $0$)'
+            answer_contract: {kind: none}
             solution_sketch: 'Positive, decreasing, limit $0$.'
         constraints: "b_n is a simple decreasing rational or radical expression; cite both hypotheses"
       - id: kp2
@@ -831,14 +893,17 @@ topics:
         exemplars:
           - problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{n + 1}$ converge?'
             answer: 'no (terms do not tend to $0$; divergence by the term test)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{n}{n+1} \to 1 \ne 0$, so the series diverges regardless of the alternating signs.'
           - problem: 'Verify that the AST applies to $\sum_{n=3}^{\infty} \frac{(-1)^n \ln n}{n}$ and give the verdict.'
             answer: 'converges ($\frac{\ln n}{n}$ is decreasing for $n \ge 3$ and tends to $0$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{d}{dx}\frac{\ln x}{x} = \frac{1 - \ln x}{x^2} < 0$ for $x > e$; and $\frac{\ln n}{n} \to 0$.'
         constraints: "check both AST hypotheses explicitly; include a term-test failure case"
     diagnostic_exemplar:
       problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{2n + 1}$ converge? Name the test that decides it.'
       answer: 'no: $|a_n| \to \frac12 \ne 0$, so the alternating series test does not apply and the series diverges by the term test'
+      answer_contract: {kind: none}
       solution_sketch: 'The AST needs terms decreasing to $0$; here they approach $\frac12$, so the hypothesis fails and divergence follows from the $n$-th term test.'
     anki_seeds:
       - front: "Alternating series test hypotheses on b_n?"
@@ -871,9 +936,11 @@ topics:
         exemplars:
           - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ as absolutely convergent, conditionally convergent, or divergent.'
             answer: 'absolutely convergent ($\sum \frac{1}{n^2}$ converges)'
+            answer_contract: {kind: none}
             solution_sketch: 'The absolute series is a convergent $p$-series, $p = 2$.'
           - problem: 'Does $\sum_{n=1}^{\infty} \frac{\cos n}{n^2}$ converge?'
             answer: 'yes; it converges absolutely ($\left|\frac{\cos n}{n^2}\right| \le \frac{1}{n^2}$)'
+            answer_contract: {kind: none}
             solution_sketch: 'Absolute convergence (by direct comparison) implies convergence, even with irregular signs.'
         constraints: "absolute series handled by a p-series or a direct comparison; use one non-alternating sign pattern"
       - id: kp2
@@ -882,12 +949,15 @@ topics:
         exemplars:
           - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$.'
             answer: 'conditionally convergent (converges by AST, but $\sum \frac{1}{n}$ diverges)'
+            answer_contract: {kind: none}
             solution_sketch: 'The series converges while its absolute version, the harmonic series, does not.'
           - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n}{\sqrt{n}}$.'
             answer: 'conditionally convergent (AST applies; $\sum n^{-1/2}$ diverges, $p = \frac{1}{2}$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{1}{\sqrt{n}}$ decreases to $0$, but the absolute series is a divergent $p$-series.'
           - problem: 'Classify $\sum_{n=1}^{\infty} (-1)^n \left(\frac{2}{3}\right)^n$.'
             answer: 'absolutely convergent ($\sum (2/3)^n$ is a convergent geometric series)'
+            answer_contract: {kind: none}
             solution_sketch: 'The absolute series has ratio $\frac{2}{3} < 1$.'
         constraints: "absolute series is always a p-series or geometric series; require the three-way classification"
       - id: kp3
@@ -896,14 +966,17 @@ topics:
         exemplars:
           - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n n}{n^2 + 1}$.'
             answer: 'conditionally convergent (AST applies; the absolute series behaves like $\sum \frac{1}{n}$, $L = 1$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{n}{n^2+1}$ decreases to $0$ for $n \ge 1$; limit comparison of the absolute series with the harmonic series gives $L = 1$.'
           - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n (n + 1)}{n}$.'
             answer: 'divergent (the terms do not tend to $0$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{n+1}{n} \to 1$; the term test settles it before any AST reasoning.'
         constraints: "absolute series needs a limit comparison; include one term-test divergence disguised as an AST problem"
     diagnostic_exemplar:
       problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n n}{n^2 + 4}$ as absolutely convergent, conditionally convergent, or divergent.'
       answer: 'conditionally convergent (the AST applies since $\frac{n}{n^2+4}$ decreases to $0$, but the absolute series behaves like $\sum \frac{1}{n}$, which diverges)'
+      answer_contract: {kind: none}
       solution_sketch: 'Limit comparison of $\frac{n}{n^2+4}$ with $\frac1n$ gives $L = 1$, so the absolute series diverges while the alternating one converges.'
     anki_seeds:
       - front: "Conditionally convergent means..."
@@ -933,9 +1006,11 @@ topics:
         exemplars:
           - problem: 'The alternating harmonic series is approximated by its first $4$ terms. Bound the error.'
             answer: '$|R_4| \le b_5 = \frac{1}{5}$'
+            answer_contract: {kind: none}
             solution_sketch: 'For an alternating series meeting the AST hypotheses, the error is at most the first omitted term.'
           - problem: '$\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ is approximated by its first $6$ terms. Bound the error.'
             answer: '$|R_6| \le b_7 = \frac{1}{49}$'
+            answer_contract: {kind: none}
             solution_sketch: 'First omitted term: $\frac{1}{7^2}$.'
         constraints: "error bounds use the first omitted term; b_n is 1/n, 1/n^2, or 1/n!"
       - id: kp2
@@ -944,9 +1019,11 @@ topics:
         exemplars:
           - problem: 'How many terms of $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ guarantee an error of at most $\frac{1}{100}$?'
             answer: '$9$ terms ($b_{10} = \frac{1}{100}$)'
+            answer_contract: {kind: none}
             solution_sketch: '$|R_n| \le b_{n+1} = \frac{1}{(n+1)^2} \le \frac{1}{100}$ requires $n + 1 \ge 10$, i.e. $n \ge 9$.'
           - problem: 'How many terms of $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^3}$ guarantee an error of at most $\frac{1}{1000}$?'
             answer: '$9$ terms ($b_{10} = \frac{1}{1000}$)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{1}{(n+1)^3} \le 10^{-3}$ requires $n + 1 \ge 10$.'
         constraints: "thresholds are powers of 10; answer with the count of terms, showing the b_(n+1) inequality"
       - id: kp3
@@ -955,14 +1032,17 @@ topics:
         exemplars:
           - problem: 'Approximate $\sum_{n=0}^{\infty} \frac{(-1)^n}{n!}$ using terms through $n = 4$, and bound the error.'
             answer: '$\frac{3}{8}$, with error $\le \frac{1}{120}$'
+            answer_contract: {kind: none}
             solution_sketch: '$1 - 1 + \frac{1}{2} - \frac{1}{6} + \frac{1}{24} = \frac{9}{24} = \frac{3}{8}$; the first omitted term is $\frac{1}{5!}$.'
           - problem: 'Approximate $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ using its first $3$ terms, and bound the error.'
             answer: '$\frac{31}{36}$, with error $\le \frac{1}{16}$'
+            answer_contract: {kind: none}
             solution_sketch: '$1 - \frac{1}{4} + \frac{1}{9} = \frac{31}{36}$; first omitted term $\frac{1}{4^2}$.'
         constraints: "partial sums evaluate to clean fractions; always pair the estimate with its bound"
     diagnostic_exemplar:
       problem: 'Approximate $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ by its first $4$ terms, giving the value as a fraction, and bound the error.'
       answer: '$\frac{115}{144}$, with error at most $b_5 = \frac{1}{25}$'
+      answer_contract: {kind: none}
       solution_sketch: '$1 - \frac14 + \frac19 - \frac1{16} = \frac{115}{144}$; for an alternating series the error is at most the first omitted term.'
     anki_seeds:
       - front: "Alternating series error bound: the error after n terms is at most..."
@@ -997,12 +1077,15 @@ topics:
         exemplars:
           - problem: 'Which test fits $\sum_{n=1}^{\infty} \frac{n^2}{n^4 + 1}$, and what is the verdict?'
             answer: 'limit comparison with $\sum \frac{1}{n^2}$; converges ($L = 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'Rational terms: compare with the dominant-power $p$-series.'
           - problem: 'Which test fits $\sum_{n=1}^{\infty} \frac{n!}{100^n}$, and what is the verdict?'
             answer: 'ratio test; diverges ($L = \lim \frac{n+1}{100} = \infty$)'
+            answer_contract: {kind: none}
             solution_sketch: 'A factorial signals the ratio test.'
           - problem: 'Which test fits $\sum_{n=2}^{\infty} \frac{(-1)^n}{\ln n}$, and what is the verdict?'
             answer: 'alternating series test; converges ($\frac{1}{\ln n}$ decreases to $0$)'
+            answer_contract: {kind: none}
             solution_sketch: 'Alternating signs with slowly decaying terms: AST.'
         constraints: "one rational, one factorial/exponential, one alternating per set; verdicts name test and reason"
       - id: kp2
@@ -1011,12 +1094,15 @@ topics:
         exemplars:
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \left(\frac{n}{n+1}\right)^{n^2}$ converges.'
             answer: 'converges (root test: $L = \lim \left(\frac{n}{n+1}\right)^n = \frac{1}{e} < 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'The $n$th root is $\left(\frac{n}{n+1}\right)^n \to e^{-1}$.'
           - problem: 'Decide whether $\sum_{n=2}^{\infty} \frac{1}{n (\ln n)^2}$ converges.'
             answer: 'converges (integral test: $\int_2^{\infty} \frac{dx}{x(\ln x)^2} = \frac{1}{\ln 2}$, finite)'
+            answer_contract: {kind: none}
             solution_sketch: '$u = \ln x$ gives $\int_{\ln 2}^{\infty} \frac{du}{u^2}$, which is finite.'
           - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{3^n + n}{2^n + n^2}$ converges.'
             answer: 'diverges (the terms behave like $\left(\frac{3}{2}\right)^n \to \infty$; term test)'
+            answer_contract: {kind: none}
             solution_sketch: 'Dominant terms give $\frac{3^n}{2^n}$, which grows without bound, so $a_n \not\to 0$.'
         constraints: "each set mixes at least three different applicable tests; verdicts must be fully justified"
       - id: kp3
@@ -1025,14 +1111,17 @@ topics:
         exemplars:
           - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n \sqrt{n}}{n + 4}$ as absolutely convergent, conditionally convergent, or divergent.'
             answer: 'conditionally convergent (AST applies for $n \ge 4$; the absolute series behaves like $\sum n^{-1/2}$, which diverges)'
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{\sqrt{n}}{n+4}$ decreases to $0$ for $n \ge 4$; limit comparison of the absolute series with $n^{-1/2}$ gives $L = 1$.'
           - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n}{n^{3/2}}$.'
             answer: 'absolutely convergent ($p$-series with $p = \frac{3}{2} > 1$)'
+            answer_contract: {kind: none}
             solution_sketch: 'The absolute series already converges; no AST needed.'
         constraints: "require the three-way classification with the deciding test named at each step"
     diagnostic_exemplar:
       problem: 'Classify $\sum_{n=2}^{\infty} \frac{(-1)^n}{\sqrt{n} + 1}$ as absolutely convergent, conditionally convergent, or divergent, naming the tests you use.'
       answer: 'conditionally convergent (AST: $\frac{1}{\sqrt n + 1}$ decreases to $0$; limit comparison of the absolute series with $\sum n^{-1/2}$ gives $L = 1$, and that $p$-series diverges)'
+      answer_contract: {kind: none}
       solution_sketch: 'Read the form: alternating with terms decreasing to zero, so it converges; the absolute series is a $p$-series comparison with $p = \frac12 \le 1$.'
     anki_seeds:
       - front: "Series strategy: factorials or c^n suggest ..., nth powers suggest ..., rational terms suggest ..."

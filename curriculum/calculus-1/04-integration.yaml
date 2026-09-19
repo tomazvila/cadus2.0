@@ -181,9 +181,11 @@ topics:
         exemplars:
           - problem: 'If $f$ is increasing on $[a, b]$, does a right Riemann sum overestimate or underestimate $\int_a^b f(x)\,dx$?'
             answer: "overestimate"
+            answer_contract: {kind: none}
             solution_sketch: 'On each subinterval the right endpoint gives the largest value, so every rectangle is too tall.'
           - problem: 'For $\int_0^2 x^2\,dx$ (exact value $8/3$), the left sum with $n = 4$ gave $1.75$ and the right sum $3.75$. Which one is the underestimate?'
             answer: "the left sum"
+            answer_contract: {kind: none}
             solution_sketch: '$x^2$ is increasing on $[0, 2]$, so left endpoints give the smallest heights: $1.75 < \frac{8}{3} < 3.75$.'
         constraints: "monotonic integrands only; ask for the direction of the error"
     diagnostic_exemplar:
@@ -291,6 +293,8 @@ topics:
             solution_sketch: 'As $n \to \infty$ the rectangle error vanishes; the limit is the definite integral, here the triangle area $\frac{1}{2} \cdot 4 \cdot 4$.'
           - problem: 'What does $\lim_{n \to \infty} \sum_{i=1}^{n} f(x_i)\,\Delta x$ define (for sample points $x_i$ in the $i$-th subinterval of $[a, b]$)?'
             answer: "the definite integral ∫_a^b f(x) dx"
+            answer_contract: {kind: none}
+            solution_sketch: "the definite integral ∫_a^b f(x) dx"
         constraints: "conceptual limit questions anchored to a computable geometric area"
       - id: kp2
         name: Additivity, reversal, and linearity
@@ -310,6 +314,7 @@ topics:
         exemplars:
           - problem: 'If $2 \leq f(x) \leq 5$ for all $x$ in $[1, 4]$, what bounds does this give on $\int_1^4 f(x)\,dx$?'
             answer: "6 ≤ ∫ ≤ 15"
+            answer_contract: {kind: none}
             solution_sketch: '$m(b - a) \leq \int \leq M(b - a)$ with $b - a = 3$.'
           - problem: 'Evaluate $\int_{-3}^{3} x^3 \, dx$ using symmetry.'
             answer: "0"
@@ -374,9 +379,12 @@ topics:
         exemplars:
           - problem: '$\int_0^2 x^2\,dx = \frac{8}{3} \approx 2.667$, and the $n = 4$ trapezoid estimate is $2.75$. Since $x^2$ is concave up, does the trapezoid rule over- or underestimate here?'
             answer: "overestimate"
+            answer_contract: {kind: none}
             solution_sketch: 'Chords lie above a concave-up curve, so the trapezoid rule overestimates (and the midpoint rule, using tangent-trapezoids below the curve, underestimates: $2.625$).'
           - problem: 'If $f$ is concave down on $[a, b]$, does the trapezoid rule over- or underestimate $\int_a^b f\,dx$?'
             answer: "underestimate — chords lie below a concave-down curve"
+            answer_contract: {kind: none}
+            solution_sketch: "underestimate — chords lie below a concave-down curve"
         constraints: "integrand with fixed concavity on the interval; ask only for the direction"
     diagnostic_exemplar:
       problem: 'Approximate $\int_0^4 x^2\,dx$ with the trapezoid rule using $n = 2$, then report the difference (your estimate minus the exact value $\frac{64}{3}$).'
@@ -435,8 +443,12 @@ topics:
         exemplars:
           - problem: 'If $v(t)$ is a velocity in m/s and $t$ is in seconds, what does $\int_0^6 v(t)\,dt \approx 51$ mean, with units?'
             answer: "the object traveled approximately 51 meters during the first 6 seconds"
+            answer_contract: {kind: none}
+            solution_sketch: "the object traveled approximately 51 meters during the first 6 seconds"
           - problem: 'If $r(t)$ is a pumping rate in liters/minute, then $\int_0^{10} r(t)\,dt$ is the total volume pumped in the first $10$ minutes. In what units?'
             answer: "liters"
+            answer_contract: {kind: none}
+            solution_sketch: "liters"
         constraints: "the integral of a rate carries the units (rate units) × (input units)"
     diagnostic_exemplar:
       problem: 'A table gives $v(0) = 3$, $v(1) = 5$, $v(4) = 11$, with $v$ in m/s and $t$ in seconds. Estimate $\int_0^4 v(t)\,dt$ with the trapezoid rule.'
@@ -619,6 +631,7 @@ topics:
         exemplars:
           - problem: 'The temperature is $T(t) = 12 + 2t$ degrees Celsius, $t$ in hours. Find the average temperature over $[0, 6]$.'
             answer: "18 degrees Celsius"
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{1}{6}\int_0^6 (12 + 2t)\,dt = \frac{1}{6}(72 + 36) = 18$.'
           - problem: 'A car''s velocity is $v(t) = 3t^2$ m/s. Find its average velocity over $[0, 2]$.'
             answer: "4 m/s"
@@ -673,6 +686,7 @@ topics:
             solution_sketch: 'Split at the root $x = 1$: $\left|\int_0^1\right| + \int_1^2 = \frac{2}{3} + \frac{4}{3} = 2$.'
           - problem: 'For $y = x^2 - 1$ on $[0, 2]$, compare the net signed area with the total area.'
             answer: "net = 2/3; total = 2"
+            answer_contract: {kind: none}
             solution_sketch: '$\int_0^2 (x^2 - 1)\,dx = \frac{8}{3} - 2 = \frac{2}{3}$, but the areas add to $2$.'
         constraints: "one interior sign change at an integer or simple root; report both net and total when asked"
       - id: kp3
@@ -681,9 +695,12 @@ topics:
         exemplars:
           - problem: 'Compute $\int_{-2}^{2} x^3\,dx$ and the total area between $y = x^3$ and the x-axis over $[-2, 2]$. Why do they differ?'
             answer: "integral = 0; total area = 8 — the signed halves cancel in the integral but areas add"
+            answer_contract: {kind: none}
             solution_sketch: 'By oddness the integral vanishes; area $= 2\int_0^2 x^3\,dx = 2 \cdot 4 = 8$.'
           - problem: 'True or false: if $\int_a^b f(x)\,dx = 0$ then the region between $f$ and the axis on $[a, b]$ has zero area.'
             answer: "false — equal areas above and below the axis cancel in the integral"
+            answer_contract: {kind: none}
+            solution_sketch: "false — equal areas above and below the axis cancel in the integral"
         constraints: "odd functions on symmetric intervals; contrast signed integral with geometric area"
     diagnostic_exemplar:
       problem: 'Find the total area between $y = x$ and the x-axis over $[-1, 2]$.'
@@ -736,6 +753,7 @@ topics:
             solution_sketch: '$s(t) = t^2 + t + 3$; $s(2) = 4 + 2 + 3 = 9$.'
           - problem: 'Given $v(t) = 3t^2 - 2$ and $s(1) = 0$, find $s(t)$.'
             answer: "s(t) = t^3 - 2t + 1"
+            answer_contract: {kind: none}
             solution_sketch: '$s(t) = t^3 - 2t + C$; $1 - 2 + C = 0$ gives $C = 1$.'
         constraints: "polynomial velocity; initial condition pins down C"
       - id: kp3

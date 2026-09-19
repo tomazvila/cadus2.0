@@ -21,12 +21,15 @@ topics:
         key_prerequisites: [systems-elimination]
         exemplars:
           - problem: 'Write the augmented matrix of the system $x + 2y = 5$, $3x + 4y = 11$.'
-            answer: '$\begin{pmatrix}1&2&5\\3&4&11\end{pmatrix}$'
+            answer: "[1,2,5;3,4,11]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
           - problem: 'Write the augmented matrix of the system $2x - y = 3$, $y = 4$.'
-            answer: '$\begin{pmatrix}2&-1&3\\0&1&4\end{pmatrix}$'
+            answer: "[2,-1,3;0,1,4]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
             solution_sketch: 'A missing variable contributes a coefficient of $0$.'
           - problem: 'Write the augmented matrix of $x + y + z = 6$, $x - y + z = 2$, $2x + y - z = 1$.'
-            answer: '$\begin{pmatrix}1&1&1&6\\1&-1&1&2\\2&1&-1&1\end{pmatrix}$'
+            answer: "[1,1,1,6;1,-1,1,2;2,1,-1,1]"
+            answer_contract: {"cols":4,"kind":"matrix","rows":3}
         constraints: "2 or 3 equations; integer coefficients in -5..5; include a missing-term system occasionally"
       - id: kp2
         name: From augmented matrix to system
@@ -34,8 +37,11 @@ topics:
         exemplars:
           - problem: 'Write out the system with augmented matrix $\begin{pmatrix}1&-3&2\\4&1&9\end{pmatrix}$ (variables $x, y$).'
             answer: "x - 3y = 2, 4x + y = 9"
+            answer_contract: {kind: none}
+            solution_sketch: 'Each row is one equation: the first row gives $x - 3y = 2$, the second gives $4x + y = 9$.'
           - problem: 'For the augmented matrix $\begin{pmatrix}2&0&1&7\\0&1&-1&3\end{pmatrix}$, state the coefficient matrix.'
-            answer: '$\begin{pmatrix}2&0&1\\0&1&-1\end{pmatrix}$'
+            answer: "[2,0,1;0,1,-1]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
             solution_sketch: 'Drop the constants column.'
         constraints: "sizes up to 3x4; integer entries in -9..9"
       - id: kp3
@@ -43,14 +49,17 @@ topics:
         key_prerequisites: [systems-elimination]
         exemplars:
           - problem: 'Adult tickets cost €8 and child tickets €5. In total $30$ tickets were sold for €195. Write the augmented matrix for the counts $a, c$.'
-            answer: '$\begin{pmatrix}1&1&30\\8&5&195\end{pmatrix}$'
+            answer: "[1,1,30;8,5,195]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
             solution_sketch: 'Equations: $a + c = 30$ and $8a + 5c = 195$.'
           - problem: 'Two numbers have sum $20$ and difference $4$. Write the augmented matrix for the system in $x, y$.'
-            answer: '$\begin{pmatrix}1&1&20\\1&-1&4\end{pmatrix}$'
+            answer: "[1,1,20;1,-1,4]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
         constraints: "two-unknown word problems with small integer data; the matrix is the answer, not the solution"
     diagnostic_exemplar:
       problem: 'Adult tickets cost €9 and child tickets €4. In total $25$ tickets were sold for €160. Write the augmented matrix for the counts $a, c$.'
-      answer: '$\begin{pmatrix}1&1&25\\9&4&160\end{pmatrix}$'
+      answer: "[1,1,25;9,4,160]"
+      answer_contract: {"cols":3,"kind":"matrix","rows":2}
       solution_sketch: 'The conditions are $a + c = 25$ and $9a + 4c = 160$; stack the coefficients and constants.'
     anki_seeds:
       - front: 'The augmented matrix of a linear system contains...'
@@ -77,10 +86,12 @@ topics:
         key_prerequisites: [augmented-matrix-representation, systems-elimination]
         exemplars:
           - problem: 'Apply $R_2 \to R_2 - 2R_1$ to the augmented matrix $\begin{pmatrix}1&2&5\\2&3&8\end{pmatrix}$.'
-            answer: '$\begin{pmatrix}1&2&5\\0&-1&-2\end{pmatrix}$'
+            answer: "[1,2,5;0,-1,-2]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
             solution_sketch: 'Row 2 becomes $(2-2, 3-4, 8-10)$.'
           - problem: 'Apply $R_2 \to R_2 + 3R_1$ to $\begin{pmatrix}1&-1&2\\-3&2&1\end{pmatrix}$.'
-            answer: '$\begin{pmatrix}1&-1&2\\0&-1&7\end{pmatrix}$'
+            answer: "[1,-1,2;0,-1,7]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
             solution_sketch: 'Row 2 becomes $(-3+3, 2-3, 1+6)$.'
         constraints: "2x3 or 3x4 augmented matrices with integer entries; one replacement operation"
       - id: kp2
@@ -89,8 +100,11 @@ topics:
         exemplars:
           - problem: 'Apply $R_1 \leftrightarrow R_2$, then $R_1 \to \frac{1}{3}R_1$, to $\begin{pmatrix}0&1&4\\3&6&9\end{pmatrix}$.'
             answer: '$\begin{pmatrix}3&6&9\\0&1&4\end{pmatrix}$ then $\begin{pmatrix}1&2&3\\0&1&4\end{pmatrix}$'
+            answer_contract: {kind: none}
+            solution_sketch: 'Swapping gives $\begin{pmatrix}3&6&9\\0&1&4\end{pmatrix}$; dividing the first row by 3 gives $\begin{pmatrix}1&2&3\\0&1&4\end{pmatrix}$.'
           - problem: 'Apply $R_2 \to \frac{1}{2}R_2$ to $\begin{pmatrix}1&0&3\\0&2&8\end{pmatrix}$.'
-            answer: '$\begin{pmatrix}1&0&3\\0&1&4\end{pmatrix}$'
+            answer: "[1,0,3;0,1,4]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
         constraints: "scaling always by the reciprocal of an entry so results stay integer"
       - id: kp3
         name: Identifying operations and why they are safe
@@ -98,14 +112,17 @@ topics:
         exemplars:
           - problem: 'What single row operation turns $\begin{pmatrix}1&2&5\\3&4&11\end{pmatrix}$ into $\begin{pmatrix}1&2&5\\0&-2&-4\end{pmatrix}$?'
             answer: '$R_2 \to R_2 - 3R_1$'
+            answer_contract: {kind: none}
             solution_sketch: 'Row 2 changed by subtracting $3 \times (1, 2, 5)$.'
           - problem: 'Do elementary row operations change the solution set of a system? Why?'
             answer: "No; each operation is reversible and preserves every solution"
+            answer_contract: {kind: none}
             solution_sketch: 'Each operation has an inverse operation of the same type, so no solutions are gained or lost.'
         constraints: "identify-the-operation problems use a single replacement, swap, or scaling"
     diagnostic_exemplar:
       problem: 'Which two row operations, applied in order, turn $\begin{pmatrix}1&3&2\\4&5&1\end{pmatrix}$ into $\begin{pmatrix}1&3&2\\0&1&1\end{pmatrix}$?'
       answer: '$R_2 \to R_2 - 4R_1$, then $R_2 \to -\frac{1}{7}R_2$'
+      answer_contract: {kind: none}
       solution_sketch: '$R_2 - 4R_1 = (0, -7, -7)$; scaling that row by $-\frac{1}{7}$ gives $(0, 1, 1)$.'
     anki_seeds:
       - front: 'The three elementary row operations?'
@@ -136,9 +153,11 @@ topics:
         exemplars:
           - problem: 'Solve: $x + 3y = 7$, $y = 2$.'
             answer: "x = 1, y = 2"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: 'Substitute $y = 2$ into the first equation: $x = 7 - 6$.'
           - problem: 'Solve the system with augmented matrix $\begin{pmatrix}1&3&7\\0&1&2\end{pmatrix}$.'
             answer: "x = 1, y = 2"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
         constraints: "second equation gives y directly; integer solutions in -5..5"
       - id: kp2
         name: Triangular 3x3 systems
@@ -146,9 +165,11 @@ topics:
         exemplars:
           - problem: 'Solve: $x + y + z = 6$, $y + 2z = 8$, $z = 3$.'
             answer: "x = 1, y = 2, z = 3"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: '$z = 3$; then $y = 8 - 6 = 2$; then $x = 6 - 2 - 3 = 1$.'
           - problem: 'Solve: $x - 2y + z = 0$, $y - z = 1$, $2z = 4$.'
             answer: "x = 4, y = 3, z = 2"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: '$z = 2$; $y = 1 + 2 = 3$; $x = 2y - z = 6 - 2 = 4$.'
         constraints: "strictly triangular; integer solutions in -5..5"
       - id: kp3
@@ -157,14 +178,17 @@ topics:
         exemplars:
           - problem: 'Solve the system with augmented matrix $\begin{pmatrix}1&1&1&6\\0&2&1&7\\0&0&3&9\end{pmatrix}$.'
             answer: "x = 1, y = 2, z = 3"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: '$3z = 9$ gives $z = 3$; $2y + 3 = 7$ gives $y = 2$; $x = 6 - 2 - 3 = 1$.'
           - problem: 'Solve the system with augmented matrix $\begin{pmatrix}1&0&2&5\\0&1&-1&0\\0&0&1&2\end{pmatrix}$.'
             answer: "x = 1, y = 2, z = 2"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: '$z = 2$; $y = z = 2$; $x = 5 - 4 = 1$.'
         constraints: "echelon matrices with pivots that divide their right-hand sides evenly"
     diagnostic_exemplar:
       problem: 'Solve the system with augmented matrix $\begin{pmatrix}1&2&1&7\\0&1&3&8\\0&0&2&4\end{pmatrix}$.'
       answer: 'x = 1, y = 2, z = 2'
+      answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
       solution_sketch: '$2z = 4$ gives $z = 2$; then $y + 6 = 8$ gives $y = 2$; then $x + 4 + 2 = 7$ gives $x = 1$.'
     anki_seeds:
       - front: 'Back substitution solves a triangular system in which order?'
@@ -189,12 +213,15 @@ topics:
         exemplars:
           - problem: 'Is $\begin{pmatrix}1&2&3\\0&1&4\end{pmatrix}$ in echelon form?'
             answer: "Yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: 'Each leading entry sits strictly to the right of the one above.'
           - problem: 'Is $\begin{pmatrix}0&1\\1&0\end{pmatrix}$ in echelon form?'
             answer: "No"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: 'The second leading entry is to the LEFT of the first.'
           - problem: 'Is $\begin{pmatrix}1&5&2\\0&0&3\\0&0&0\end{pmatrix}$ in echelon form?'
             answer: "Yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: 'Zero rows at the bottom are allowed.'
         constraints: "sizes up to 3x4; mix clear yes and no cases"
       - id: kp2
@@ -203,11 +230,16 @@ topics:
         exemplars:
           - problem: 'Is $\begin{pmatrix}1&0&2\\0&1&3\end{pmatrix}$ in reduced row echelon form?'
             answer: "Yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: 'Pivots are $1$ and are the only nonzero entries in their columns.'
           - problem: 'Is $\begin{pmatrix}1&2&3\\0&1&4\end{pmatrix}$ in RREF? If not, why not?'
             answer: "No: the entry above the second pivot is 2, not 0"
+            answer_contract: {kind: none}
+            solution_sketch: 'RREF needs a zero above every pivot; here the 2 sits above the second pivot, so it is not in RREF.'
           - problem: 'Is $\begin{pmatrix}2&0\\0&1\end{pmatrix}$ in RREF? If not, why not?'
             answer: "No: the first pivot is 2, not 1"
+            answer_contract: {kind: none}
+            solution_sketch: 'RREF requires every pivot to be 1, but the first pivot is 2.'
         constraints: "matrices in REF; the RREF failure must be a single named condition"
       - id: kp3
         name: Pivot positions and finishing the reduction
@@ -215,13 +247,17 @@ topics:
         exemplars:
           - problem: 'List the pivot columns of $\begin{pmatrix}1&2&0&4\\0&0&1&3\end{pmatrix}$.'
             answer: "Columns 1 and 3"
+            answer_contract: {kind: none}
+            solution_sketch: 'The pivots are the leading 1s, in columns 1 and 3.'
           - problem: 'Bring $\begin{pmatrix}1&2&4\\0&1&3\end{pmatrix}$ to RREF.'
-            answer: '$\begin{pmatrix}1&0&-2\\0&1&3\end{pmatrix}$'
+            answer: "[1,0,-2;0,1,3]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
             solution_sketch: '$R_1 \to R_1 - 2R_2$ clears the entry above the second pivot.'
         constraints: "one clearing operation away from RREF; integer entries"
     diagnostic_exemplar:
       problem: 'Is $\begin{pmatrix}1&2&5\\0&1&3\end{pmatrix}$ in reduced row echelon form? If not, bring it to RREF.'
       answer: 'No (the entry above the second pivot is not $0$); the RREF is $\begin{pmatrix}1&0&-1\\0&1&3\end{pmatrix}$'
+      answer_contract: {kind: none}
       solution_sketch: 'It is in echelon form with leading $1$s, but RREF also needs zeros above each pivot: $R_1 \to R_1 - 2R_2$ gives $(1, 0, -1)$.'
     anki_seeds:
       - front: 'What extra conditions does reduced row echelon form (RREF) add to echelon form?'
@@ -253,10 +289,12 @@ topics:
         key_prerequisites: [elementary-row-operations, echelon-form-recognition]
         exemplars:
           - problem: 'Row reduce $\begin{pmatrix}1&3&4\\2&4&6\end{pmatrix}$ to RREF.'
-            answer: '$\begin{pmatrix}1&0&1\\0&1&1\end{pmatrix}$'
+            answer: "[1,0,1;0,1,1]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
             solution_sketch: '$R_2 - 2R_1$ gives $(0, -2, -2)$; scale by $-\frac{1}{2}$; then $R_1 - 3R_2$.'
           - problem: 'Row reduce $\begin{pmatrix}1&2&3\\2&6&10\end{pmatrix}$ to RREF.'
-            answer: '$\begin{pmatrix}1&0&-1\\0&1&2\end{pmatrix}$'
+            answer: "[1,0,-1;0,1,2]"
+            answer_contract: {"cols":3,"kind":"matrix","rows":2}
             solution_sketch: '$R_2 - 2R_1$ gives $(0, 2, 4)$; scale to $(0, 1, 2)$; then $R_1 - 2R_2$.'
         constraints: "2x3 augmented matrices whose RREF has integer entries"
       - id: kp2
@@ -265,9 +303,11 @@ topics:
         exemplars:
           - problem: 'Solve by row reduction: $x + 2y = 5$, $3x + 4y = 11$.'
             answer: "x = 1, y = 2"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: '$R_2 - 3R_1$ gives $-2y = -4$, so $y = 2$; back-substitute for $x = 1$.'
           - problem: 'Solve by row reduction: $2x + y = 4$, $4x + 3y = 10$.'
             answer: "x = 1, y = 2"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: '$R_2 - 2R_1$ gives $y = 2$; then $2x + 2 = 4$.'
         constraints: "unique integer solutions with coordinates in -5..5"
       - id: kp3
@@ -276,14 +316,17 @@ topics:
         exemplars:
           - problem: 'Solve: $x + y + z = 6$, $x - y + z = 2$, $2x + y - z = 1$.'
             answer: "x = 1, y = 2, z = 3"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: 'Subtracting the first two equations gives $2y = 4$, so $y = 2$; then $x + z = 4$ and $2x - z = -1$, so $x = 1$, $z = 3$.'
           - problem: 'Solve: $x + 2y + z = 1$, $2x - y + 3z = 8$, $x + y + 2z = 3$.'
             answer: "x = 2, y = -1, z = 1"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: '$R_2 - 2R_1$: $-5y + z = 6$; $R_3 - R_1$: $-y + z = 2$. Subtracting gives $-4y = 4$, so $y = -1$, $z = 1$, $x = 2$.'
         constraints: "unique integer solutions with coordinates in -3..3; coefficients in -3..3"
     diagnostic_exemplar:
       problem: 'Solve by row reduction: $x + y + z = 6$, $2x + y - z = 1$, $x - y + 2z = 5$.'
       answer: 'x = 1, y = 2, z = 3'
+      answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
       solution_sketch: 'Eliminating $x$ gives $-y - 3z = -11$ and $-2y + z = -1$; solving these gives $y = 2$, $z = 3$, hence $x = 1$.'
     anki_seeds:
       - front: 'Overall strategy of Gaussian elimination?'
@@ -313,9 +356,11 @@ topics:
         exemplars:
           - problem: 'How many solutions does the system $x + y = 2$, $2x + 2y = 5$ have?'
             answer: "None"
+            answer_contract: {kind: none}
             solution_sketch: '$R_2 - 2R_1$ gives $0 = 1$, a contradiction.'
           - problem: 'How many solutions does the system $x - y = 1$, $3x - 3y = 4$ have?'
             answer: "None"
+            answer_contract: {kind: none}
             solution_sketch: '$R_2 - 3R_1$ gives $0 = 1$.'
         constraints: "the contradictory row must be an obvious multiple; 2x2 or 3x3"
       - id: kp2
@@ -324,9 +369,11 @@ topics:
         exemplars:
           - problem: 'How many solutions does the system $x + y = 2$, $2x + 2y = 4$ have?'
             answer: "Infinitely many"
+            answer_contract: {kind: none}
             solution_sketch: 'The second equation is twice the first; one equation, two unknowns.'
           - problem: 'How many solutions does the system with RREF $\begin{pmatrix}1&2&3\\0&0&0\end{pmatrix}$ have?'
             answer: "Infinitely many"
+            answer_contract: {kind: none}
             solution_sketch: 'One pivot, two variables: the second variable is free.'
         constraints: "dependent rows are exact multiples; keep to 2x2 and 2x3"
       - id: kp3
@@ -346,6 +393,7 @@ topics:
     diagnostic_exemplar:
       problem: 'For which $h$ does the system $x + 2y = 3$, $2x + hy = 7$ have no solution, for which $h$ does it have exactly one solution, and for which $h$ does it have infinitely many?'
       answer: 'No solution when h = 4; exactly one solution for every h other than 4; infinitely many for no value of h'
+      answer_contract: {kind: none}
       solution_sketch: 'For $h \ne 4$ the coefficient matrix has two pivots, so the solution is unique. For $h = 4$ row reduction gives $0 = 7 - 6 = 1$, which is inconsistent; the constants never match, so infinitely many solutions never occur.'
     anki_seeds:
       - front: 'An echelon row $(0\ \cdots\ 0 \mid b)$ with $b \neq 0$ means the system is...'
@@ -378,6 +426,7 @@ topics:
         exemplars:
           - problem: 'The echelon form of an augmented matrix is $\begin{pmatrix}1&2&0&4\\0&0&1&3\end{pmatrix}$ with variables $x, y, z$. Which variables are basic and which are free?'
             answer: "x and z are basic; y is free"
+            answer_contract: {kind: none}
             solution_sketch: 'Pivots sit in columns 1 and 3; column 2 has no pivot, so $y$ is free.'
           - problem: 'A $3 \times 5$ coefficient matrix has $3$ pivots. How many free variables does $A\mathbf{x} = \mathbf{0}$ have?'
             answer: "2"
@@ -389,8 +438,10 @@ topics:
         exemplars:
           - problem: 'Describe all solutions of $x + 2y = 4$ using a parameter $t$ for $y$.'
             answer: "x = 4 - 2t, y = t"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
           - problem: 'Solve the system $x + y + z = 4$, $y - z = 1$, taking $z = t$ as the free variable.'
             answer: "x = 3 - 2t, y = 1 + t, z = t"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: '$y = 1 + t$; then $x = 4 - (1 + t) - t = 3 - 2t$.'
         constraints: "exactly one free variable; integer coefficients in the parametric form"
       - id: kp3
@@ -399,13 +450,16 @@ topics:
         exemplars:
           - problem: 'Describe all solutions of $x + 2y - z = 3$ with $y = s$ and $z = t$ free.'
             answer: "x = 3 - 2s + t, y = s, z = t"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
           - problem: 'The RREF of an augmented matrix is $\begin{pmatrix}1&2&0&3&4\\0&0&1&2&5\end{pmatrix}$ with variables $x_1, x_2, x_3, x_4$. Give the general solution with $x_2 = s$, $x_4 = t$.'
             answer: "x1 = 4 - 2s - 3t, x2 = s, x3 = 5 - 2t, x4 = t"
+            answer_contract: {kind: none}
             solution_sketch: 'Row 1: $x_1 = 4 - 2x_2 - 3x_4$; row 2: $x_3 = 5 - 2x_4$.'
         constraints: "two free variables; every coefficient an integer in -4..5"
     diagnostic_exemplar:
       problem: 'The RREF of an augmented matrix is $\begin{pmatrix}1&3&0&2&5\\0&0&1&4&1\end{pmatrix}$ with variables $x_1, x_2, x_3, x_4$. Which variables are free, and what is the general solution with $x_2 = s$ and $x_4 = t$?'
       answer: 'x2 and x4 are free; x1 = 5 - 3s - 2t, x2 = s, x3 = 1 - 4t, x4 = t'
+      answer_contract: {kind: none}
       solution_sketch: 'Pivots sit in columns $1$ and $3$, so $x_2, x_4$ are free; the rows read $x_1 = 5 - 3x_2 - 2x_4$ and $x_3 = 1 - 4x_4$.'
     anki_seeds:
       - front: 'A variable of a linear system is free when its column in echelon form...'
@@ -457,6 +511,8 @@ topics:
         exemplars:
           - problem: 'Write $A\mathbf{x}$ as a combination of the columns $a_1, a_2$ of $A$ when $\mathbf{x} = (3, -1)$.'
             answer: '$3a_1 - a_2$'
+            answer_contract: {kind: none}
+            solution_sketch: '$A\mathbf{x} = x_1 a_1 + x_2 a_2 = 3a_1 + (-1)a_2 = 3a_1 - a_2$.'
           - problem: 'For $A = \begin{pmatrix}1&2\\0&1\end{pmatrix}$ and $\mathbf{x} = (2, 3)$, compute $A\mathbf{x}$ both row-by-row and as $2\mathbf{a}_1 + 3\mathbf{a}_2$.'
             answer: "(8, 3)"
             solution_sketch: '$2(1, 0) + 3(2, 1) = (8, 3)$; rows give $2 + 6 = 8$ and $3$.'
@@ -496,8 +552,11 @@ topics:
         exemplars:
           - problem: 'Write the system $x + 2y = 5$, $3x + 4y = 11$ in the form $A\mathbf{x} = \mathbf{b}$.'
             answer: '$A = \begin{pmatrix}1&2\\3&4\end{pmatrix}$, $\mathbf{b} = (5, 11)$'
+            answer_contract: {kind: none}
+            solution_sketch: 'The coefficient matrix is $A = \begin{pmatrix}1&2\\3&4\end{pmatrix}$, the unknown is $\mathbf{x} = (x, y)$, and $\mathbf{b} = (5, 11)$.'
           - problem: 'Express $\mathbf{b} = (5, 11)$ as a linear combination $c_1\mathbf{a}_1 + c_2\mathbf{a}_2$ of $\mathbf{a}_1 = (1, 3)$ and $\mathbf{a}_2 = (2, 4)$.'
             answer: "b = 1a1 + 2a2 (c1 = 1, c2 = 2)"
+            answer_contract: {kind: none}
             solution_sketch: 'Solve $c_1 + 2c_2 = 5$, $3c_1 + 4c_2 = 11$: elimination gives $c_2 = 2$, $c_1 = 1$.'
         constraints: "integer coefficient vectors; combination coefficients in -3..3"
       - id: kp2
@@ -506,9 +565,11 @@ topics:
         exemplars:
           - problem: 'Is $(1, 2, 3)$ a linear combination of $(1, 0, 1)$ and $(0, 1, 1)$?'
             answer: "Yes: 1(1,0,1) + 2(0,1,1) = (1,2,3)"
+            answer_contract: {kind: none}
             solution_sketch: 'First two components force $c_1 = 1$, $c_2 = 2$; the third checks: $1 + 2 = 3$.'
           - problem: 'Is $(2, 1, 4)$ a linear combination of $(1, 0, 1)$ and $(0, 1, 1)$?'
             answer: "No"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$c_1 = 2$, $c_2 = 1$ are forced, but $c_1 + c_2 = 3 \neq 4$.'
         constraints: "2 vectors in R^3 with the first two components forcing the coefficients; answer verifiable in one line"
       - id: kp3
@@ -525,6 +586,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Express $\mathbf{b} = (3, 5)$ as a linear combination of $\mathbf{a}_1 = (1, 1)$ and $\mathbf{a}_2 = (1, -1)$.'
       answer: "b = 4a1 - 1a2 (c1 = 4, c2 = -1)"
+      answer_contract: {kind: none}
       solution_sketch: '$c_1 + c_2 = 3$, $c_1 - c_2 = 5$; adding gives $c_1 = 4$, so $c_2 = -1$.'
     anki_seeds:
       - front: '$A\mathbf{x} = \mathbf{b}$ is consistent exactly when $\mathbf{b}$ lies in...'
@@ -554,9 +616,12 @@ topics:
         exemplars:
           - problem: 'Does the system $x + 2y = 0$, $3x - y = 0$ have a solution? If so, how many?'
             answer: "Yes; only the trivial solution x = 0, y = 0"
+            answer_contract: {kind: none}
             solution_sketch: '$R_2 - 3R_1$ gives $-7y = 0$, so $y = 0$ and then $x = 0$.'
           - problem: 'Why is every homogeneous system $A\mathbf{x} = \mathbf{0}$ consistent?'
             answer: "x = 0 is always a solution"
+            answer_contract: {kind: none}
+            solution_sketch: '$\mathbf{x} = \mathbf{0}$ always satisfies $A\mathbf{0} = \mathbf{0}$, so a solution always exists.'
         constraints: "2x2 systems; emphasize that 0 always works"
       - id: kp2
         name: Nontrivial solutions in parametric form
@@ -564,9 +629,11 @@ topics:
         exemplars:
           - problem: 'Find all solutions of $x + 2y = 0$, $2x + 4y = 0$.'
             answer: "x = -2t, y = t"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: 'The second equation is redundant; set $y = t$.'
           - problem: 'Find all solutions of $x + y - z = 0$, $y + z = 0$, taking $z = t$.'
             answer: "x = 2t, y = -t, z = t"
+            answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":false}
             solution_sketch: '$y = -t$; then $x = -y + z = t + t = 2t$.'
         constraints: "exactly one free variable; integer parametric coefficients"
       - id: kp3
@@ -575,15 +642,21 @@ topics:
         exemplars:
           - problem: 'A homogeneous system has $2$ equations and $3$ unknowns. Must it have nonzero solutions?'
             answer: "Yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: 'At most $2$ pivots for $3$ variables leaves at least one free variable.'
           - problem: 'If $A$ is $3 \times 3$ with $3$ pivots, what are the solutions of $A\mathbf{x} = \mathbf{0}$?'
             answer: "Only the trivial solution x = 0"
+            answer_contract: {kind: none}
+            solution_sketch: 'Three pivots in a 3x3 system leave no free variables, so the only solution is the trivial one $\mathbf{x} = \mathbf{0}$.'
           - problem: '$A\mathbf{x} = \mathbf{0}$ has a free variable. How many solutions are there?'
             answer: "Infinitely many"
+            answer_contract: {kind: none}
+            solution_sketch: 'A free variable can take any real value, and each choice gives a distinct solution, so there are infinitely many.'
         constraints: "reason from pivot counts; no computation beyond counting"
     diagnostic_exemplar:
       problem: 'A homogeneous system in $x, y, z$ consists of the single equation $x + 3y - z = 0$. Must it have nonzero solutions? Give all solutions, taking $y = s$ and $z = t$.'
       answer: 'Yes (1 equation, 3 unknowns leaves free variables); x = -3s + t, y = s, z = t'
+      answer_contract: {kind: none}
       solution_sketch: 'With more unknowns than equations there is at least one free variable, so nontrivial solutions exist; solving for the pivot variable gives $x = -3y + z$.'
     anki_seeds:
       - front: 'A homogeneous system $A\mathbf{x} = \mathbf{0}$ is always consistent because...'
@@ -674,9 +747,11 @@ topics:
         exemplars:
           - problem: 'At junction $A$, $100$ cars/hour enter and split into flows $x_1$ and $x_2$. At junction $B$, flow $x_1$ plus $30$ cars/hour enter, and $80$ cars/hour leave. Find $x_1$ and $x_2$.'
             answer: "x1 = 50, x2 = 50"
+            answer_contract: {kind: none}
             solution_sketch: 'Junction $B$: $x_1 + 30 = 80$, so $x_1 = 50$; junction $A$: $x_1 + x_2 = 100$.'
           - problem: 'A network has conservation equations $x_1 + x_2 = 60$ and $x_2 + x_3 = 40$. With $x_3 = t$ free, describe all flows.'
             answer: "x1 = 20 + t, x2 = 40 - t, x3 = t"
+            answer_contract: {kind: none}
             solution_sketch: '$x_2 = 40 - t$; then $x_1 = 60 - x_2 = 20 + t$.'
         constraints: "flow-in = flow-out at each node; totals in 20..200, integer solutions"
       - id: kp2
@@ -685,6 +760,7 @@ topics:
         exemplars:
           - problem: 'Tickets cost €10 (adult), €6 (student), €4 (child). $20$ tickets were sold for €158, with twice as many student tickets as child tickets. How many of each were sold?'
             answer: "11 adult, 6 student, 3 child"
+            answer_contract: {kind: none}
             solution_sketch: '$a + s + c = 20$, $10a + 6s + 4c = 158$, $s = 2c$. Substituting $a = 20 - 3c$ gives $200 - 14c = 158$, so $c = 3$.'
           - problem: 'Three numbers sum to $12$; the second is twice the first; the third exceeds the first by $4$. Find them.'
             answer: "2, 4, 6"
@@ -696,14 +772,17 @@ topics:
         exemplars:
           - problem: 'A chemist mixes $10\%$, $30\%$, and $50\%$ acid solutions to make $12$ L of $35\%$ acid, using twice as much $50\%$ solution as $10\%$ solution. How many liters of each?'
             answer: "3 L of 10%, 3 L of 30%, 6 L of 50%"
+            answer_contract: {kind: none}
             solution_sketch: '$x + y + z = 12$, $0.1x + 0.3y + 0.5z = 4.2$, $z = 2x$. Substituting $y = 12 - 3x$ gives $3.6 + 0.2x = 4.2$, so $x = 3$.'
           - problem: '€5000 is split across accounts paying $2\%$, $3\%$, and $4\%$. The $4\%$ account holds as much as the other two combined, and total interest is €155. Find the three amounts.'
             answer: "€2000 at 2%, €500 at 3%, €2500 at 4%"
+            answer_contract: {kind: none}
             solution_sketch: '$z = x + y$ with $x + y + z = 5000$ gives $z = 2500$. Interest: $0.02x + 0.03y + 100 = 155$, so $2x + 3y = 5500$; with $x + y = 2500$ this gives $y = 500$, $x = 2000$.'
         constraints: "3 unknowns; percentages in easy decimals; integer answers"
     diagnostic_exemplar:
       problem: 'Tickets cost €12 (adult), €7 (student), and €5 (child). $24$ tickets were sold for €244, and three times as many student tickets as child tickets were sold. How many of each were sold?'
       answer: '16 adult, 6 student, 2 child'
+      answer_contract: {kind: none}
       solution_sketch: 'With $s = 3c$ and $a + s + c = 24$ we get $a = 24 - 4c$; then $12(24 - 4c) + 21c + 5c = 244$ gives $c = 2$, so $s = 6$ and $a = 16$.'
     anki_seeds:
       - front: 'The conservation law used at each node of a network-flow model?'
