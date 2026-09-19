@@ -31,9 +31,11 @@ topics:
         exemplars:
           - problem: 'List the ring axioms: what structure do $(R, +)$ and $(R, \cdot)$ carry, and what links them?'
             answer: '$(R,+)$ is an abelian group, multiplication is associative, and the two distributive laws $a(b+c) = ab+ac$, $(a+b)c = ac+bc$ hold.'
+            answer_contract: {kind: none}
             solution_sketch: 'Commutative multiplication and unity are extra properties, not part of the bare definition.'
           - problem: 'Is the set of odd integers a ring under the usual operations?'
             answer: 'No: it is not closed under addition ($1 + 1 = 2$ is even), so $(R,+)$ is not a group.'
+            answer_contract: {kind: none}
             solution_sketch: 'Check additive closure first.'
         constraints: "verify/refute ring structure for subsets of Z, Q, Z_n; identify which axiom fails"
       - id: kp2
@@ -42,6 +44,7 @@ topics:
         exemplars:
           - problem: 'Does the ring $2\mathbb{Z}$ of even integers have a multiplicative identity?'
             answer: 'No: $2n \cdot u = 2n$ for all $n$ would force $u = 1 \notin 2\mathbb{Z}$.'
+            answer_contract: {kind: none}
             solution_sketch: 'A ring need not have unity; $2\mathbb{Z}$ is the standard example.'
           - problem: 'In $\mathbb{Z}[\sqrt{2}] = \{a + b\sqrt{2} : a, b \in \mathbb{Z}\}$, compute $(1 + 2\sqrt{2})(3 - \sqrt{2})$.'
             answer: '$-1 + 5\sqrt{2}$'
@@ -53,14 +56,17 @@ topics:
         exemplars:
           - problem: 'Prove that $a \cdot 0 = 0$ in any ring.'
             answer: '$a\cdot 0 = a(0+0) = a\cdot 0 + a\cdot 0$; subtract $a \cdot 0$ from both sides.'
+            answer_contract: {kind: none}
             solution_sketch: 'Distribute over $0 = 0 + 0$ and cancel in the additive group.'
           - problem: 'Prove that $(-a)b = -(ab)$.'
             answer: '$ab + (-a)b = (a + (-a))b = 0\cdot b = 0$, so $(-a)b$ is the additive inverse of $ab$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Distribute $(a + (-a))b$ and use uniqueness of additive inverses.'
         constraints: "two-line consequences of distributivity; cite each axiom used"
     diagnostic_exemplar:
       problem: 'Prove that $(-a)b = -(ab)$ in any ring $R$, naming the axioms you use, and illustrate the identity in $\mathbb{Z}_{10}$ with $a = 3$, $b = 7$.'
       answer: 'By distributivity, $ab + (-a)b = (a + (-a))b = 0 \cdot b$, and $0 \cdot b = 0$ (from $0b = (0+0)b = 0b + 0b$ and cancellation in the abelian group $(R,+)$). So $(-a)b$ is an additive inverse of $ab$, and additive inverses are unique, hence $(-a)b = -(ab)$. In $\mathbb{Z}_{10}$: $-3 = 7$, so $(-3) \cdot 7 = 49 \equiv 9$, while $3 \cdot 7 = 21 \equiv 1$ and $-1 = 9$ — both sides equal $9$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Use distributivity to show $ab + (-a)b = 0$, together with $0 \cdot b = 0$ and uniqueness of additive inverses; then check both sides numerically mod $10$.'
     anki_seeds:
       - front: "Ring axioms in one line?"
@@ -105,9 +111,11 @@ topics:
         exemplars:
           - problem: 'For which $n > 1$ is $\mathbb{Z}_n$ an integral domain?'
             answer: 'Exactly the primes.'
+            answer_contract: {kind: none}
             solution_sketch: 'Composite $n = ab$ gives zero divisors $a, b$; prime $p$ has none since $p \mid ab \implies p \mid a$ or $p \mid b$.'
           - problem: 'Prove that cancellation holds in an integral domain: $ab = ac, a \neq 0 \implies b = c$.'
             answer: '$a(b - c) = 0$ and $a \neq 0$ force $b - c = 0$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Factor and use the no-zero-divisors property.'
         constraints: "domain verdicts for Z_n, Z, Z[x], products like Z x Z; cancellation proofs"
       - id: kp3
@@ -116,6 +124,7 @@ topics:
         exemplars:
           - problem: 'Find all solutions of $2x = 0$ in $\mathbb{Z}_6$.'
             answer: '$x = 0$ and $x = 3$'
+            answer_contract: {kind: none}
             solution_sketch: 'Zero divisors break the "only trivial solution" rule: $2 \cdot 3 = 6 = 0$.'
           - problem: 'Find all idempotents of $\mathbb{Z}_6$ (elements with $x^2 = x$).'
             answer: '$0, 1, 3, 4$'
@@ -124,6 +133,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Find all solutions of $x^2 = x$ in $\mathbb{Z}_{12}$, and use one of them to decide whether $\mathbb{Z}_{12}$ is an integral domain.'
       answer: '$x^2 = x$ means $x(x-1) \equiv 0 \pmod{12}$; checking the residues gives $x = 0, 1, 4, 9$ (indeed $4^2 = 16 \equiv 4$ and $9^2 = 81 \equiv 9$). The solution $x = 4$ exhibits zero divisors: $4 \cdot 3 = 12 \equiv 0$ with $4 \ne 0$ and $3 \ne 0$. So $\mathbb{Z}_{12}$ is not an integral domain.'
+      answer_contract: {kind: none}
       solution_sketch: 'Solve $x(x-1) \equiv 0 \pmod{12}$ over the residues; the nontrivial idempotents $4$ and $9$ exist precisely because $12$ splits into coprime factors, and each one hands you a zero divisor.'
     anki_seeds:
       - front: "$\\mathbb{Z}_n$ is an integral domain iff..."
@@ -294,9 +304,11 @@ topics:
         exemplars:
           - problem: 'Describe the elements and operations of $\mathbb{Z}/6\mathbb{Z}$ and identify the ring.'
             answer: 'Cosets $k + 6\mathbb{Z}$ for $k = 0,\dots,5$, added and multiplied via representatives; it is $\mathbb{Z}_6$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The ideal $6\mathbb{Z}$ collapses multiples of $6$ to zero; coset arithmetic is mod-$6$ arithmetic.'
           - problem: 'Why must $I$ be an ideal (not just a subring) for multiplication on $R/I$ to be well defined?'
             answer: 'Changing representatives $a \to a + i$ changes $ab$ by $ib$, which must lie in $I$ — that is absorption.'
+            answer_contract: {kind: none}
             solution_sketch: '$(a+i)(b+j) = ab + (ib + aj + ij)$; the bracket lies in $I$ exactly when $I$ absorbs products.'
         constraints: "construction-level reasoning; Z/nZ examples"
       - id: kp2
@@ -305,6 +317,7 @@ topics:
         exemplars:
           - problem: 'How many elements does $\mathbb{Z}_2[x]/\langle x^2 + x + 1 \rangle$ have? List them.'
             answer: '$4$: the cosets of $0, 1, x, x+1$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Every polynomial reduces mod $x^2+x+1$ to a remainder of degree $< 2$ with coefficients in $\mathbb{Z}_2$: $2^2 = 4$ remainders.'
           - problem: 'In $\mathbb{Z}_2[x]/\langle x^2+x+1 \rangle$, writing $\alpha$ for the coset of $x$, compute $\alpha^2$.'
             answer: '$\alpha + 1$'
@@ -319,6 +332,7 @@ topics:
             solution_sketch: '$(1+x)(2+x) = 2 + 3x + x^2 \equiv 2 + 3x - 1 = 1 + 3x$ using $x^2 \equiv -1$.'
           - problem: 'Identify the ring $\mathbb{Z}[x]/\langle x \rangle$.'
             answer: '$\mathbb{Z}$'
+            answer_contract: {kind: none}
             solution_sketch: 'Evaluation at $0$ is onto $\mathbb{Z}$ with kernel $\langle x \rangle$; apply the first isomorphism theorem for rings.'
         constraints: "reduce products/powers modulo x^2 + c; identify quotients via evaluation maps"
     diagnostic_exemplar:
@@ -363,9 +377,11 @@ topics:
         exemplars:
           - problem: 'In $\mathbb{Z}_6[x]$, compute $(2x + 1)(3x + 4)$ and note the degree.'
             answer: '$6x^2 + 11x + 4 = 5x + 4$ — degree $1$, not $2$.'
+            answer_contract: {kind: none}
             solution_sketch: '$6 \equiv 0$ and $11 \equiv 5$ mod $6$: zero divisors in the coefficients can kill the leading term.'
           - problem: 'If $D$ is an integral domain and $f, g \neq 0$ in $D[x]$, what is $\deg(fg)$?'
             answer: '$\deg f + \deg g$'
+            answer_contract: {kind: none}
             solution_sketch: 'Leading coefficients multiply to something nonzero in a domain.'
         constraints: "products in Z_n[x] (n <= 8, degrees <= 2); the degree formula and when it fails"
       - id: kp2
@@ -374,9 +390,11 @@ topics:
         exemplars:
           - problem: 'In $\mathbb{Z}_3[x]$, divide $x^3 + 2x + 1$ by $x + 1$: give quotient and remainder.'
             answer: 'Quotient $x^2 + 2x$, remainder $1$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Long division mod 3: $x^3 + 2x + 1 = (x+1)(x^2 + 2x) + 1$; check: $(x+1)(x^2+2x) = x^3 + 3x^2 + 2x = x^3 + 2x$.'
           - problem: 'Divide $x^4 + 3x^3 + x + 2$ by $x^2 + 1$ in $\mathbb{Q}[x]$.'
             answer: 'Quotient $x^2 + 3x - 1$, remainder $-2x + 3$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Standard long division; verify $(x^2+1)(x^2+3x-1) + (-2x+3) = x^4+3x^3+x+2$.'
         constraints: "divisors monic of degree <= 2; coefficients in Q, Z_3, or Z_5; verify by multiplying back"
       - id: kp3
@@ -385,14 +403,17 @@ topics:
         exemplars:
           - problem: 'State the factor theorem for a commutative ring with unity, and use it: is $x - 2$ a factor of $f(x) = x^3 - 3x + 2$ in $\mathbb{Q}[x]$?'
             answer: '$x - a$ divides $f$ iff $f(a) = 0$; here $f(2) = 8 - 6 + 2 = 4 \neq 0$, so no.'
+            answer_contract: {kind: none}
             solution_sketch: 'Divide with remainder $f(x) = (x-a)q(x) + f(a)$; evaluate at $2$.'
           - problem: 'How many roots does $x^2 - 1$ have in $\mathbb{Z}_8$?'
             answer: '$4$: $x = 1, 3, 5, 7$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Test the odd residues: each squares to $1$ mod $8$. Over a non-domain, a degree-$n$ polynomial can exceed $n$ roots.'
         constraints: "root counting in Z_n vs fields; remainder theorem evaluations"
     diagnostic_exemplar:
       problem: 'In $\mathbb{Z}_5[x]$, divide $x^3 + 4x^2 + 2$ by $x + 2$ and give quotient and remainder.'
       answer: 'Quotient $x^2 + 2x + 1$, remainder $0$ — so $x + 2$ divides it.'
+      answer_contract: {kind: none}
       solution_sketch: 'Synthetic division at $x = -2 \equiv 3$: coefficients $1, 4, 0, 2$ reduce to quotient $1, 2, 1$ with remainder $0$. Check: $(x+2)(x^2+2x+1) = x^3 + 4x^2 + 5x + 2 \equiv x^3 + 4x^2 + 2$ in $\mathbb{Z}_5$.'
     anki_seeds:
       - front: "Degree formula $\\deg(fg) = \\deg f + \\deg g$ requires the coefficient ring to be..."
@@ -432,9 +453,11 @@ topics:
         exemplars:
           - problem: 'Is $x^2 + x + 1$ irreducible over $\mathbb{Z}_2$?'
             answer: 'Yes: $f(0) = 1, f(1) = 1$ — no roots, and degree $\le 3$ without roots means irreducible.'
+            answer_contract: {kind: none}
             solution_sketch: 'For degree 2 or 3, reducibility forces a linear factor, hence a root.'
           - problem: 'Factor $x^2 + 1$ over $\mathbb{Z}_5$.'
             answer: '$(x + 2)(x + 3)$ — equivalently $(x-2)(x-3)$.'
+            answer_contract: {kind: none}
             solution_sketch: '$2^2 = 4 \equiv -1$ and $3^2 = 9 \equiv -1$, so $\pm 2$ are roots; check $(x+2)(x+3) = x^2 + 5x + 6 = x^2 + 1$.'
         constraints: "degree 2-3 over Z_2, Z_3, Z_5; the no-root criterion applies only up to degree 3"
       - id: kp2
@@ -446,6 +469,7 @@ topics:
             solution_sketch: 'Candidates $\pm1, \pm2, \pm3, \pm6, \pm\tfrac12, \pm\tfrac32$; $x = 2$ works, divide to get $2x^2 + 5x + 3 = (x+1)(2x+3)$.'
           - problem: 'Show $x^3 - x + 1$ is irreducible over $\mathbb{Q}$.'
             answer: 'Possible rational roots $\pm 1$ give $1$ and $1$; no roots and degree 3 means irreducible.'
+            answer_contract: {kind: none}
             solution_sketch: 'Rational roots must be $\pm 1$ (divisors of constant over divisors of leading); both fail.'
         constraints: "cubics with integer coefficients, |coefficients| <= 10; complete factorizations verified by expansion"
       - id: kp3
@@ -454,14 +478,17 @@ topics:
         exemplars:
           - problem: 'Prove $x^5 + 6x + 3$ is irreducible over $\mathbb{Q}$.'
             answer: 'Eisenstein at $p = 3$: $3 \mid 6, 3$; $3 \nmid 1$; $9 \nmid 3$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Check the three Eisenstein conditions on $p = 3$.'
           - problem: 'Show $x^3 + x + 1$ is irreducible over $\mathbb{Q}$ by reducing mod $2$.'
             answer: 'Mod $2$ it has no roots ($f(0)=f(1)=1$), so it is irreducible in $\mathbb{Z}_2[x]$; irreducibility mod a prime (degree preserved) lifts to $\mathbb{Q}$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The mod-$p$ test: if the reduction (same degree) is irreducible over $\mathbb{Z}_p$, the original is irreducible over $\mathbb{Q}$.'
         constraints: "Eisenstein with p in {2, 3, 5}; mod-p test with p = 2, 3; degree <= 5"
     diagnostic_exemplar:
       problem: 'Decide whether each is irreducible over $\mathbb{Q}$: (a) $x^4 + 10x + 5$, (b) $x^2 - 9$.'
       answer: '(a) Irreducible by Eisenstein at $p = 5$ ($5 \mid 10, 5$; $5 \nmid 1$; $25 \nmid 5$). (b) Reducible: $(x-3)(x+3)$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Eisenstein handles (a); (b) is a difference of squares.'
     anki_seeds:
       - front: "Eisenstein's criterion at prime $p$?"
@@ -570,6 +597,7 @@ topics:
             solution_sketch: '$N(3 + 2i) = 3^2 + 2^2 = 13$. ($N$ is multiplicative: $N(zw) = N(z)N(w)$.)'
           - problem: 'Divide $7 + 2i$ by $2 - i$ in $\mathbb{Z}[i]$: find $q, r$ with $7 + 2i = (2 - i)q + r$ and $N(r) < N(2 - i)$.'
             answer: '$q = 2 + 2i$, $r = 1$'
+            answer_contract: {kind: none}
             solution_sketch: 'Exact quotient: $\frac{7+2i}{2-i} = \frac{(7+2i)(2+i)}{5} = \frac{12 + 11i}{5} = 2.4 + 2.2i$; round to the nearest Gaussian integer $q = 2 + 2i$. Then $r = 7 + 2i - (2-i)(2+2i) = 7 + 2i - (6 + 2i) = 1$, and $N(1) = 1 < 5 = N(2 - i)$.'
         constraints: "norms and one-step divisions in Z[i] with parts |a|, |b| <= 8; the degree norm on F[x] cited from polynomial-rings; Z with absolute value as the base example"
       - id: kp2
@@ -578,6 +606,7 @@ topics:
         exemplars:
           - problem: 'Prove that every Euclidean domain is a principal ideal domain.'
             answer: 'In a nonzero ideal $I$, pick $d \neq 0$ of minimal norm. For any $a \in I$, write $a = qd + r$ with $r = 0$ or $N(r) < N(d)$; since $r = a - qd \in I$, minimality forces $r = 0$. So $I = \langle d \rangle$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Well-ordering supplies a minimal-norm element; division with remainder shows it generates — the same argument that made every ideal of $\mathbb{Z}$ principal.'
           - problem: 'Find a single generator of the ideal $\langle x^2 - 1,\ x^2 - 3x + 2 \rangle$ in $\mathbb{Q}[x]$.'
             answer: '$x - 1$'
@@ -589,14 +618,17 @@ topics:
         exemplars:
           - problem: 'Show that $\langle 2, x \rangle$ is not principal in $\mathbb{Z}[x]$, so $\mathbb{Z}[x]$ is not a PID.'
             answer: 'A generator $f$ would divide $2$, so $f = \pm 1$ or $\pm 2$. But $\pm 2 \nmid x$ in $\mathbb{Z}[x]$, and $f = \pm 1$ would make the ideal all of $\mathbb{Z}[x]$ — yet $\langle 2, x \rangle$ is exactly the polynomials with even constant term, a proper ideal. Contradiction.'
+            answer_contract: {kind: none}
             solution_sketch: 'Constrain the candidate generator through divisibility of $2$, then rule each candidate out.'
           - problem: 'Which of these rings are PIDs: $\mathbb{Z}$, $\ \mathbb{Q}[x]$, $\ \mathbb{Z}[x]$?'
             answer: '$\mathbb{Z}$ and $\mathbb{Q}[x]$ are PIDs (both Euclidean); $\mathbb{Z}[x]$ is not (witness $\langle 2, x \rangle$).'
+            answer_contract: {kind: none}
             solution_sketch: 'Euclidean $\implies$ PID covers the first two; the previous exemplar refutes the third.'
         constraints: "classify Z, F[x], Z[x], fields; the <2, x> argument reproduced, not just quoted"
     diagnostic_exemplar:
       problem: 'Show that the ideal $\langle 3, x \rangle$ of $\mathbb{Z}[x]$ is not principal, and explain why no ideal of $\mathbb{Q}[x]$ can fail in this way.'
       answer: 'First, $\langle 3, x \rangle = \{p \in \mathbb{Z}[x] : 3 \mid p(0)\}$, a proper ideal since $1 \notin$ it. Suppose $\langle 3, x\rangle = \langle f \rangle$. Then $f \mid 3$, so $f$ is a constant $\pm 1$ or $\pm 3$. If $f = \pm 1$ the ideal would be all of $\mathbb{Z}[x]$, contradicting properness; if $f = \pm 3$ then $f \nmid x$ (that would need $3$ to divide the coefficient $1$), contradicting $x \in \langle f \rangle$. So no single generator exists. In $\mathbb{Q}[x]$ this cannot happen: division with remainder by degree makes $\mathbb{Q}[x]$ a Euclidean domain, and in a Euclidean domain a nonzero element of least norm in an ideal generates it — every Euclidean domain is a PID.'
+      answer_contract: {kind: none}
       solution_sketch: 'Describe the ideal concretely, then rule out both candidate generators. The contrast: $\mathbb{Q}[x]$ has a degree norm with division, so a least-degree element of any ideal generates it.'
     anki_seeds:
       - front: "Euclidean domain?"
@@ -633,9 +665,11 @@ topics:
         exemplars:
           - problem: 'Define irreducible and prime elements of an integral domain, and prove that every prime element is irreducible.'
             answer: '$p$ (nonzero, non-unit) is prime if $p \mid ab \implies p \mid a$ or $p \mid b$; irreducible if $p = ab \implies a$ or $b$ is a unit. If $p = ab$, then $p \mid ab$, say $p \mid a$: $a = pc$ gives $p = pcb$, so $cb = 1$ (cancellation) and $b$ is a unit.'
+            answer_contract: {kind: none}
             solution_sketch: 'Apply the prime property to the factorization itself, then cancel $p$ in the domain.'
           - problem: 'In $\mathbb{Z}[\sqrt{-5}]$ with $N(a + b\sqrt{-5}) = a^2 + 5b^2$, show that $2$ is irreducible.'
             answer: 'If $2 = xy$ with $x, y$ non-units, then $N(x)N(y) = N(2) = 4$ with $N(x) = N(y) = 2$; but $a^2 + 5b^2 = 2$ has no integer solutions. So no such factorization exists.'
+            answer_contract: {kind: none}
             solution_sketch: 'Norms are multiplicative and units have norm $1$; rule out the middle norm value.'
         constraints: "norm arguments in Z[sqrt(-5)] and Z[i], norms <= 30; the prime => irreducible proof with cancellation cited"
       - id: kp2
@@ -644,9 +678,11 @@ topics:
         exemplars:
           - problem: 'State the UFD property and the chain of implications relating Euclidean domains, PIDs, and UFDs.'
             answer: 'A UFD is a domain where every nonzero non-unit factors into irreducibles, uniquely up to order and unit factors. Euclidean $\Rightarrow$ PID $\Rightarrow$ UFD (each implication strict).'
+            answer_contract: {kind: none}
             solution_sketch: 'The chain may be quoted; $\mathbb{Z}$, $F[x]$, $\mathbb{Z}[i]$ are the working examples, $\mathbb{Z}[x]$ a UFD that is not a PID.'
           - problem: 'Factor $5$ into irreducibles in $\mathbb{Z}[i]$.'
             answer: '$5 = (2 + i)(2 - i)$'
+            answer_contract: {kind: none}
             solution_sketch: 'Both factors have norm $5$, and a norm-$5$ element is irreducible (a proper factor would need norm $\sqrt5$-impossible: norms multiply and $5$ is prime in $\mathbb{Z}$).'
         constraints: "factorizations in Z[i] with norms <= 25; irreducibility certified by prime norms; the implication chain quoted, not proved"
       - id: kp3
@@ -655,14 +691,17 @@ topics:
         exemplars:
           - problem: 'Show that $6 = 2 \cdot 3 = (1 + \sqrt{-5})(1 - \sqrt{-5})$ gives two essentially different factorizations into irreducibles in $\mathbb{Z}[\sqrt{-5}]$.'
             answer: 'Norms: $N(2) = 4$, $N(3) = 9$, $N(1 \pm \sqrt{-5}) = 6$. Each factor is irreducible: a proper splitting would need a factor of norm $2$ or $3$, and $a^2 + 5b^2$ never equals $2$ or $3$. The units are $\pm 1$ (norm $1$), and no factor of one factorization is a unit multiple of a factor of the other (their norms differ). So factorization is not unique.'
+            answer_contract: {kind: none}
             solution_sketch: 'Certify all four factors irreducible by ruling out norms 2 and 3; compare norms to rule out associates.'
           - problem: 'Deduce that $2$ is not prime in $\mathbb{Z}[\sqrt{-5}]$, and explain why this proves $\mathbb{Z}[\sqrt{-5}]$ is not a UFD.'
             answer: '$2 \mid (1+\sqrt{-5})(1-\sqrt{-5}) = 6$, but $2$ divides neither factor ($N(2) = 4 \nmid 6$). So $2$ is irreducible but not prime — impossible in a UFD, where irreducible and prime coincide.'
+            answer_contract: {kind: none}
             solution_sketch: 'Use the norm to refute both divisibilities; in a UFD every irreducible is prime.'
         constraints: "the classic Z[sqrt(-5)] computation; every irreducibility claim justified by a norm argument"
     diagnostic_exemplar:
       problem: 'In $\mathbb{Z}[\sqrt{-5}]$ with norm $N(a + b\sqrt{-5}) = a^2 + 5b^2$, show that $3$ is irreducible but not prime, and state what this proves about $\mathbb{Z}[\sqrt{-5}]$.'
       answer: 'Irreducible: if $3 = xy$ with $x, y$ non-units then $N(x)N(y) = N(3) = 9$ with $N(x) = N(y) = 3$ (the units are exactly the elements of norm $1$); but $a^2 + 5b^2 = 3$ has no integer solution, since $b = 0$ would force $a^2 = 3$ and $|b| \ge 1$ makes the norm at least $5$. Not prime: $3 \mid 6 = (1 + \sqrt{-5})(1 - \sqrt{-5})$, yet $3$ divides neither factor, because $N(3) = 9$ does not divide $N(1 \pm \sqrt{-5}) = 6$. In a UFD irreducible and prime elements coincide, so $\mathbb{Z}[\sqrt{-5}]$ is not a UFD.'
+      answer_contract: {kind: none}
       solution_sketch: 'Norms are multiplicative and units are exactly the norm-$1$ elements. Rule out a factor of norm $3$, then exhibit a product that $3$ divides without dividing either factor.'
     anki_seeds:
       - front: "Chain: Euclidean, PID, UFD?"

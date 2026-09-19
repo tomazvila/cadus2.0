@@ -26,9 +26,11 @@ topics:
         exemplars:
           - problem: 'List all distinct cosets of $H = \{0, 4, 8\}$ in $\mathbb{Z}_{12}$.'
             answer: '$H = \{0,4,8\}$, $1+H = \{1,5,9\}$, $2+H = \{2,6,10\}$, $3+H = \{3,7,11\}$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Add representatives $0,1,2,3$ to $H$; after that the cosets repeat. They partition $\mathbb{Z}_{12}$ into $4$ blocks of size $3$.'
           - problem: 'In $(\mathbb{Z}, +)$, describe the cosets of $5\mathbb{Z}$.'
             answer: 'The five residue classes $5\mathbb{Z},\ 1+5\mathbb{Z},\ 2+5\mathbb{Z},\ 3+5\mathbb{Z},\ 4+5\mathbb{Z}$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Two integers lie in the same coset iff they differ by a multiple of $5$ — exactly congruence mod $5$.'
         constraints: "subgroups of Z_n (n <= 24) or nZ in Z; answers as explicit sets or residue classes"
       - id: kp2
@@ -37,9 +39,11 @@ topics:
         exemplars:
           - problem: 'In $S_3$ with $H = \{e, (1\,2)\}$, compute the left coset $(1\,3)H$ and the right coset $H(1\,3)$ (composition right to left).'
             answer: '$(1\,3)H = \{(1\,3), (1\,2\,3)\}$ but $H(1\,3) = \{(1\,3), (1\,3\,2)\}$; they differ.'
+            answer_contract: {kind: none}
             solution_sketch: '$(1\,3)(1\,2) = (1\,2\,3)$ while $(1\,2)(1\,3) = (1\,3\,2)$, so left and right cosets of $H$ at $(1\,3)$ are different sets.'
           - problem: 'When is $aH = H$?'
             answer: 'Exactly when $a \in H$.'
+            answer_contract: {kind: none}
             solution_sketch: 'If $aH = H$ then $a = ae \in H$; conversely $a \in H$ makes $aH \subseteq H$ and equal by cancellation.'
         constraints: "H of order 2 or 3 in S_3 or D_4; always state the composition convention"
       - id: kp3
@@ -48,14 +52,17 @@ topics:
         exemplars:
           - problem: 'Prove: $aH = bH$ if and only if $a^{-1}b \in H$.'
             answer: 'If $aH = bH$ then $b = ah$ for some $h$, so $a^{-1}b = h \in H$; conversely $a^{-1}b = h$ gives $bH = ahH = aH$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Both directions unwind the definition; the relation $a \sim b \iff a^{-1}b \in H$ is an equivalence relation whose classes are the left cosets.'
           - problem: 'Two cosets $aH$ and $bH$ share an element. What can you conclude?'
             answer: '$aH = bH$ — distinct cosets are disjoint.'
+            answer_contract: {kind: none}
             solution_sketch: 'Cosets are equivalence classes, so they are equal or disjoint.'
         constraints: "short proofs using the equivalence-class characterization"
     diagnostic_exemplar:
       problem: 'In $S_3$ (composing right to left) let $H = \{e, (2\,3)\}$. List all left cosets of $H$, and decide whether $(1\,2)H = H(1\,2)$.'
       answer: 'The left cosets are $H = \{e, (2\,3)\}$, $(1\,2)H = \{(1\,2), (1\,2\,3)\}$ and $(1\,3)H = \{(1\,3), (1\,3\,2)\}$: three cosets of size $2$ partitioning $S_3$. But $H(1\,2) = \{(1\,2), (1\,3\,2)\}$, so $(1\,2)H \ne H(1\,2)$ — left and right cosets of this subgroup differ.'
+      answer_contract: {kind: none}
       solution_sketch: 'Multiply $H$ on the left by one representative from each block; the cosets partition $S_3$ into three blocks of size $2$. Then compute $H(1\,2)$ and compare — a non-normal subgroup of a non-abelian group has different left and right cosets.'
     anki_seeds:
       - front: "When are two left cosets equal: $aH = bH$ iff ...?"
@@ -86,6 +93,7 @@ topics:
         exemplars:
           - problem: 'State Lagrange''s theorem and define the index $[G : H]$.'
             answer: 'If $H \le G$ with $G$ finite, then $|H|$ divides $|G|$; the index $[G:H] = |G|/|H|$ is the number of left cosets.'
+            answer_contract: {kind: none}
             solution_sketch: 'The cosets of $H$ partition $G$ and each biject with $H$ (via $h \mapsto ah$), so $|G| = [G:H]\,|H|$.'
           - problem: 'A group $G$ has order $20$ and $H \le G$ has order $5$. Compute $[G : H]$.'
             answer: "4"
@@ -97,6 +105,7 @@ topics:
         exemplars:
           - problem: 'Can a group of order $20$ have a subgroup of order $8$?'
             answer: 'No: $8 \nmid 20$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Lagrange forces subgroup orders to divide the group order.'
           - problem: 'List all possible orders of subgroups of a group of order $21$.'
             answer: '$1, 3, 7, 21$'
@@ -108,14 +117,17 @@ topics:
         exemplars:
           - problem: 'Does every group of order $12$ have a subgroup of order $6$? Give a counterexample or proof.'
             answer: 'No: $A_4$ has order $12$ but no subgroup of order $6$.'
+            answer_contract: {kind: none}
             solution_sketch: '$A_4$ is the standard counterexample to the converse of Lagrange; a subgroup of index $2$ would contain every 3-cycle, forcing it to be all of $A_4$.'
           - problem: 'True or false: if $d$ divides $|G|$, then $G$ has an element of order $d$.'
             answer: 'False — e.g. $U(8)$ has order $4$ but no element of order $4$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Element orders divide $|G|$, but not every divisor is realized; $U(8)$ is a Klein-four counterexample.'
         constraints: "counterexample recall: A_4 (subgroups), U(8) or Klein four (element orders)"
     diagnostic_exemplar:
       problem: 'A group $G$ has order $12$ and a subgroup $H$ with $[G : H] = 3$. Find $|H|$, and decide whether every group of order $12$ must contain a subgroup of order $6$.'
       answer: '$|H| = |G|/[G:H] = 12/3 = 4$. No: the converse of Lagrange fails. $A_4$ has order $12$ but no subgroup of order $6$ — such a subgroup would have index $2$, hence be normal with quotient of order $2$, so it would contain $g^2$ for every $g$; every $3$-cycle is a square ($\sigma = (\sigma^2)^2$), giving all eight $3$-cycles inside a subgroup of size $6$, a contradiction.'
+      answer_contract: {kind: none}
       solution_sketch: 'Lagrange gives $|G| = |H| \cdot [G:H]$. For the second part, divisibility is necessary but not sufficient: $A_4$ is the standard counterexample.'
     anki_seeds:
       - front: "Lagrange's theorem?"
@@ -280,9 +292,11 @@ topics:
         exemplars:
           - problem: 'In $G/N$, cosets multiply by $(aN)(bN) = abN$. Why is normality of $N$ needed for this to be well defined?'
             answer: 'Changing representatives $a \to an_1$, $b \to bn_2$ must not change $abN$; this requires $Nb = bN$, i.e. normality.'
+            answer_contract: {kind: none}
             solution_sketch: '$(an_1)(bn_2) = ab(b^{-1}n_1b)n_2$, which lies in $abN$ exactly when $b^{-1}n_1b \in N$ — the conjugation test.'
           - problem: 'What are the identity and the inverse of $aN$ in $G/N$?'
             answer: 'Identity $eN = N$; inverse $(aN)^{-1} = a^{-1}N$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Direct check from the coset product formula.'
         constraints: "definition-level questions on the quotient construction"
       - id: kp2
@@ -291,9 +305,11 @@ topics:
         exemplars:
           - problem: 'Let $H = \langle 4 \rangle = \{0,4,8\}$ in $\mathbb{Z}_{12}$. What is the order of $\mathbb{Z}_{12}/H$, and the order of the element $2 + H$?'
             answer: '$|\mathbb{Z}_{12}/H| = 4$; the element $2+H$ has order $2$.'
+            answer_contract: {kind: none}
             solution_sketch: '$12/3 = 4$ cosets. $2+2 = 4 \in H$, so $(2+H)+(2+H) = H$ already; $2+H \neq H$, so its order is $2$.'
           - problem: 'Identify the quotient $\mathbb{Z}/6\mathbb{Z}$ up to isomorphism.'
             answer: '$\mathbb{Z}_6$'
+            answer_contract: {kind: none}
             solution_sketch: 'Cosets are residue classes mod $6$ and add as residues do.'
         constraints: "quotients of Z_n (n <= 24) and Z; orders of quotient elements via smallest k with ka in H"
       - id: kp3
@@ -302,9 +318,11 @@ topics:
         exemplars:
           - problem: 'Identify $S_3 / A_3$ up to isomorphism.'
             answer: '$\mathbb{Z}_2$'
+            answer_contract: {kind: none}
             solution_sketch: 'The quotient has order $6/3 = 2$, and the only group of order $2$ is $\mathbb{Z}_2$.'
           - problem: 'True or false: every quotient of a cyclic group is cyclic.'
             answer: 'True: if $G = \langle g \rangle$ then $G/N = \langle gN \rangle$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The image of a generator generates the quotient.'
         constraints: "quotient orders <= 8; identify small quotients by order and element orders"
     diagnostic_exemplar:
@@ -410,9 +428,11 @@ topics:
         exemplars:
           - problem: 'For finite subgroups $H, K \le G$, the product set $HK = \{hk : h \in H, k \in K\}$ satisfies $|HK| = \frac{|H||K|}{|H \cap K|}$. In $S_3$, take $H = \{e, (1\,2)\}$ and $K = \{e, (1\,3)\}$. Compute $|HK|$, and deduce that $HK$ is not a subgroup of $S_3$.'
             answer: '$|HK| = \frac{2 \cdot 2}{1} = 4$; a subgroup of $S_3$ would need order dividing $6$, and $4 \nmid 6$, so $HK$ is not a subgroup.'
+            answer_contract: {kind: none}
             solution_sketch: '$H \cap K = \{e\}$, so the formula gives $4$; Lagrange rules $4$ out as a subgroup order in $S_3$.'
           - problem: 'In $\mathbb{Z}_{12}$, let $H = \langle 2 \rangle$ and $K = \langle 3 \rangle$. Compute $H \cap K$ and $|H + K|$, and identify $H + K$.'
             answer: '$H \cap K = \langle 6 \rangle = \{0, 6\}$, so $|H + K| = \frac{6 \cdot 4}{2} = 12$: $H + K = \mathbb{Z}_{12}$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Additive notation: $H = \{0,2,\dots,10\}$, $K = \{0,3,6,9\}$; their intersection is the multiples of $\mathrm{lcm}(2,3) = 6$; the counting formula forces the whole group.'
         constraints: "|HK| computations in Z_n (n <= 24), S_3, D_4; each solution states H ∩ K explicitly; one problem per set draws a subgroup/non-subgroup conclusion via Lagrange"
       - id: kp2
@@ -421,9 +441,11 @@ topics:
         exemplars:
           - problem: 'Let $H, K \trianglelefteq G$ with $H \cap K = \{e\}$. Prove that every $h \in H$ commutes with every $k \in K$.'
             answer: 'Consider $x = hkh^{-1}k^{-1}$. Grouping as $(hkh^{-1})k^{-1}$ and using $K \trianglelefteq G$ gives $x \in K$; grouping as $h(kh^{-1}k^{-1})$ and using $H \trianglelefteq G$ gives $x \in H$. So $x \in H \cap K = \{e\}$, i.e. $hk = kh$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The commutator lands in both normal subgroups, hence in the trivial intersection.'
           - problem: 'State the recognition criterion, and verify it for $G = \mathbb{Z}_6$ with $H = \langle 2 \rangle$ and $K = \langle 3 \rangle$: conclude $\mathbb{Z}_6 \cong H \times K$.'
             answer: 'If $H, K \trianglelefteq G$, $H \cap K = \{e\}$, and $HK = G$, then $(h, k) \mapsto hk$ is an isomorphism $H \times K \to G$. Here $H = \{0,2,4\}$ and $K = \{0,3\}$ are normal (abelian group), $H \cap K = \{0\}$, and $|H + K| = \frac{3 \cdot 2}{1} = 6$ forces $H + K = \mathbb{Z}_6$. So $\mathbb{Z}_6 \cong \mathbb{Z}_3 \times \mathbb{Z}_2$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Check the three conditions; the counting formula certifies $HK = G$ without listing sums. (The map is a homomorphism because $H$ and $K$ commute elementwise, injective by trivial intersection, onto by $HK = G$.)'
         constraints: "the commutator trick proved once then citable; verifications in Z_n (n <= 24) and D_n; every verification checks all three conditions explicitly"
       - id: kp3
@@ -432,14 +454,17 @@ topics:
         exemplars:
           - problem: 'Let $|G| = 15$ with normal subgroups $H$ of order $3$ and $K$ of order $5$. Prove $G \cong \mathbb{Z}_3 \times \mathbb{Z}_5$, and deduce that $G$ is cyclic.'
             answer: '$|H \cap K|$ divides both $3$ and $5$ (Lagrange in $H$ and in $K$), so $H \cap K = \{e\}$. Then $|HK| = \frac{3 \cdot 5}{1} = 15 = |G|$, so $HK = G$ and the recognition criterion gives $G \cong H \times K$. Groups of prime order are cyclic, so $G \cong \mathbb{Z}_3 \times \mathbb{Z}_5 \cong \mathbb{Z}_{15}$ since $\gcd(3,5) = 1$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Coprime orders force a trivial intersection; the counting formula fills the group; finish with the gcd criterion for cyclicity of products.'
           - problem: 'Let $|G| = 20$ with normal subgroups $P$ of order $4$ and $Q$ of order $5$. Show $G \cong P \times Q$.'
             answer: '$|P \cap Q|$ divides $\gcd(4, 5) = 1$, so $P \cap Q = \{e\}$; then $|PQ| = \frac{4 \cdot 5}{1} = 20 = |G|$, so $PQ = G$. All three recognition conditions hold, hence $G \cong P \times Q$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The same two-step argument: coprimality kills the intersection, counting forces $PQ = G$.'
         constraints: "orders pq or p^2 q with p, q <= 11; the intersection-divides-gcd step justified by Lagrange every time"
     diagnostic_exemplar:
       problem: 'A group $G$ of order $35$ has normal subgroups $H \cong \mathbb{Z}_5$ and $K \cong \mathbb{Z}_7$. Show $H \cap K = \{e\}$, compute $|HK|$, and identify $G$ up to isomorphism.'
       answer: '$|H \cap K|$ divides $\gcd(5, 7) = 1$, so $H \cap K = \{e\}$; $|HK| = \frac{5 \cdot 7}{1} = 35$, so $HK = G$; the recognition criterion gives $G \cong \mathbb{Z}_5 \times \mathbb{Z}_7 \cong \mathbb{Z}_{35}$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Lagrange forces the trivial intersection, the counting formula forces $HK = G$, and coprime cyclic factors multiply to a cyclic group.'
     anki_seeds:
       - front: "Internal direct product recognition criterion?"
@@ -484,6 +509,7 @@ topics:
         exemplars:
           - problem: 'The commutator of $a, b \in G$ is $[a, b] = a^{-1}b^{-1}ab$. Prove: $[a, b] = e$ if and only if $ab = ba$.'
             answer: '$a^{-1}b^{-1}ab = e \iff ab = ba$, by multiplying on the left by $ba$ (or unwinding: $ab = ba \iff b^{-1}ab = a \iff a^{-1}b^{-1}ab = e$).'
+            answer_contract: {kind: none}
             solution_sketch: 'Cancel step by step; the commutator is the "correction term" between $ab$ and $ba$.'
           - problem: 'In $S_3$ (composing right to left), compute the commutator $[(1\,2), (1\,3)] = (1\,2)^{-1}(1\,3)^{-1}(1\,2)(1\,3)$.'
             answer: '$(1\,2\,3)$'
@@ -495,9 +521,11 @@ topics:
         exemplars:
           - problem: '$[G, G]$ is the subgroup generated by all commutators. Prove that $[G, G]$ is normal in $G$.'
             answer: '$g[a,b]g^{-1} = [gag^{-1},\, gbg^{-1}]$, so conjugation sends commutators to commutators, hence preserves the subgroup they generate.'
+            answer_contract: {kind: none}
             solution_sketch: 'Verify the conjugation identity by expanding both sides; a generating set closed under conjugation generates a normal subgroup.'
           - problem: 'Identify $[S_3, S_3]$.'
             answer: '$A_3$'
+            answer_contract: {kind: none}
             solution_sketch: 'Every commutator is even (parities cancel), so $[S_3, S_3] \subseteq A_3$; and $[(1\,2),(1\,3)] = (1\,2\,3)$ shows it contains a generator of $A_3 = \{e, (1\,2\,3), (1\,3\,2)\}$.'
         constraints: "identify [G,G] for abelian groups ({e}), S_3 (A_3), D_4 ({e, r^2}); the conjugation-of-commutators normality argument"
       - id: kp3
@@ -506,14 +534,17 @@ topics:
         exemplars:
           - problem: 'Prove that the quotient $G/[G, G]$ is abelian.'
             answer: 'Writing $N = [G,G]$: $(aN)^{-1}(bN)^{-1}(aN)(bN) = [a,b]N = N$, so any two cosets commute.'
+            answer_contract: {kind: none}
             solution_sketch: 'The commutator of two cosets is the coset of the commutator, which lies in $N$ by definition.'
           - problem: 'Prove: for $N \trianglelefteq G$, the quotient $G/N$ is abelian if and only if $[G, G] \subseteq N$.'
             answer: '$aN \cdot bN = bN \cdot aN \iff [a,b] \in N$ for all $a, b$; that holds for all pairs iff $N$ contains every commutator, i.e. $[G,G] \subseteq N$.'
+            answer_contract: {kind: none}
             solution_sketch: '$[G,G]$ is the smallest normal subgroup with abelian quotient — the universal property of abelianization.'
         constraints: "the two structural proofs, plus computing abelianizations of S_3 (Z_2) and D_4 (Z_2 x Z_2) by order and element-order counts"
     diagnostic_exemplar:
       problem: 'In $D_4$ (with $r$ of order $4$, $s$ a reflection), compute $[s, r] = s^{-1}r^{-1}sr$, state $[D_4, D_4]$, and identify the abelianization $D_4/[D_4, D_4]$.'
       answer: '$[s, r] = r^2$ (since $s^{-1}r^{-1}s = r$); $[D_4, D_4] = \{e, r^2\}$; the quotient has order $4$ with every non-identity coset of order $2$, so it is $\mathbb{Z}_2 \times \mathbb{Z}_2$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Use $srs^{-1} = r^{-1}$ to evaluate the commutator; all commutators land in $\langle r^2 \rangle$; classify the order-4 quotient by element orders.'
     anki_seeds:
       - front: "Commutator $[a, b]$ and what $[a,b] = e$ means?"

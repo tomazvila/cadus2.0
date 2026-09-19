@@ -40,6 +40,8 @@ topics:
             solution_sketch: '$\sin^2 3x = \frac{1 - \cos 6x}{2}$; the constant half contributes $\pi$.'
           - problem: 'State the orthogonality relations for $\{\sin nx, \cos nx\}$ on $[-\pi, \pi]$.'
             answer: '$\int_{-\pi}^{\pi}\sin mx\sin nx\,dx = \int_{-\pi}^{\pi}\cos mx\cos nx\,dx = 0$ for $m \neq n$; $\int_{-\pi}^{\pi}\sin mx\cos nx\,dx = 0$ always; each of $\int\sin^2 nx$, $\int\cos^2 nx$ equals $\pi$ ($n \ge 1$).'
+            answer_contract: {kind: none}
+            solution_sketch: '$\int_{-\pi}^{\pi}\sin mx\sin nx\,dx = \int_{-\pi}^{\pi}\cos mx\cos nx\,dx = 0$ for $m \neq n$; $\int_{-\pi}^{\pi}\sin mx\cos nx\,dx = 0$ always; each of $\int\sin^2 nx$, $\int\cos^2 nx$ equals $\pi$ ($n \ge 1$).'
         constraints: "integer frequencies at most 6; every integral computable by product-to-sum or half-angle identities from trigonometric-integrals"
       - id: kp2
         name: Computing Fourier coefficients
@@ -47,12 +49,15 @@ topics:
         exemplars:
           - problem: 'Find the Fourier coefficients $b_n$ of $f(x) = x$ on $(-\pi, \pi)$, using $b_n = \frac{1}{\pi}\int_{-\pi}^{\pi} f(x)\sin nx\,dx$.'
             answer: '$b_n = \dfrac{2(-1)^{n+1}}{n}$'
+            answer_contract: {kind: none}
             solution_sketch: 'Integrate $x\sin nx$ by parts: $\frac{2}{\pi}\int_0^{\pi} x\sin nx\,dx = \frac{2}{\pi}\cdot\frac{-\pi\cos n\pi}{n} = \frac{2(-1)^{n+1}}{n}$.'
           - problem: 'Let $f(x) = 0$ on $(-\pi, 0)$ and $f(x) = 1$ on $(0, \pi)$. Compute $a_0$, $a_n$ and $b_n$.'
             answer: '$a_0 = 1$, $a_n = 0$, $b_n = \dfrac{1 - (-1)^n}{n\pi}$ (so $b_n = \frac{2}{n\pi}$ for odd $n$, $0$ for even $n$).'
+            answer_contract: {kind: none}
             solution_sketch: 'Each integral only runs over $(0, \pi)$ where $f = 1$: $a_n$ integrates $\cos nx$ to $0$; $b_n = \frac{1}{\pi}\cdot\frac{1 - \cos n\pi}{n}$.'
           - problem: 'Write out the Fourier series of the square wave above through its first two nonzero sine terms.'
             answer: '$f(x) \sim \dfrac{1}{2} + \dfrac{2}{\pi}\sin x + \dfrac{2}{3\pi}\sin 3x + \cdots$'
+            answer_contract: {kind: none}
             solution_sketch: 'The constant term is $a_0/2 = 1/2$; only odd $n$ survive.'
         constraints: "period 2 pi only; f piecewise constant or linear with at most two pieces and jump points at 0 or +-pi; coefficients come out as clean multiples of 1/n, 1/n^2, or (1-(-1)^n)/(n pi)"
       - id: kp3
@@ -61,9 +66,11 @@ topics:
         exemplars:
           - problem: 'The square wave ($0$ on $(-\pi,0)$, $1$ on $(0,\pi)$) has a jump at $x = 0$. To what value does its Fourier series converge there?'
             answer: '$\dfrac{1}{2}$'
+            answer_contract: {kind: none}
             solution_sketch: 'At a jump the series converges to the midpoint of the one-sided limits: $(0 + 1)/2$.'
           - problem: 'The Fourier series of $f(x) = x$ on $(-\pi,\pi)$ is $\sum_{n\ge 1} \frac{2(-1)^{n+1}}{n}\sin nx$. Evaluate both sides at $x = \pi/2$ to sum $1 - \frac{1}{3} + \frac{1}{5} - \cdots$.'
             answer: '$1 - \dfrac{1}{3} + \dfrac{1}{5} - \cdots = \dfrac{\pi}{4}$'
+            answer_contract: {kind: none}
             solution_sketch: '$\sin(n\pi/2)$ vanishes for even $n$ and alternates for odd $n$; the identity $\frac{\pi}{2} = 2(1 - \frac{1}{3} + \frac{1}{5} - \cdots)$ follows.'
           - problem: 'To what value does the Fourier series of $f(x) = x$ on $(-\pi, \pi)$ converge at the endpoint $x = \pi$?'
             answer: "0"
@@ -72,6 +79,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Find the Fourier coefficients $b_n$ of $f(x) = x$ on $(-\pi, \pi)$, and state the value to which its Fourier series converges at $x = \pi$.'
       answer: '$b_n = \dfrac{2(-1)^{n+1}}{n}$ (and every $a_n = 0$, since $f$ is odd); at $x = \pi$ the series converges to $0$.'
+      answer_contract: {kind: none}
       solution_sketch: '$b_n = \frac{1}{\pi}\int_{-\pi}^{\pi} x\sin nx\,dx = \frac{2}{\pi}\int_0^{\pi} x\sin nx\,dx$, which by parts is $\frac{2(-1)^{n+1}}{n}$. At $x = \pi$ the periodic extension jumps from $\pi$ to $-\pi$, and the series converges to the average $0$.'
     anki_seeds:
       - front: 'Fourier coefficient formulas on $[-\pi, \pi]$?'
@@ -109,10 +117,15 @@ topics:
         exemplars:
           - problem: 'Which Fourier coefficients of $f(x) = x^3$ on $(-\pi, \pi)$ vanish, and why?'
             answer: 'All $a_n$ (including $a_0$): $f$ is odd, so its series is a pure sine series.'
+            answer_contract: {kind: none}
+            solution_sketch: 'All $a_n$ (including $a_0$): $f$ is odd, so its series is a pure sine series.'
           - problem: 'Which Fourier coefficients of $f(x) = x^2$ on $(-\pi, \pi)$ vanish?'
             answer: 'All $b_n$: $f$ is even, so its series is a pure cosine series.'
+            answer_contract: {kind: none}
+            solution_sketch: 'All $b_n$: $f$ is even, so its series is a pure cosine series.'
           - problem: 'For an even function $f$ on $(-\pi,\pi)$, rewrite $a_n = \frac{1}{\pi}\int_{-\pi}^{\pi} f\cos nx\,dx$ as an integral over $(0, \pi)$.'
             answer: '$a_n = \dfrac{2}{\pi}\int_0^{\pi} f(x)\cos nx\,dx$'
+            answer_contract: {kind: none}
             solution_sketch: 'The integrand $f\cos nx$ is even, so the integral doubles over the half-interval.'
         constraints: "f a power of x, |x|, or a product of one power and one sine/cosine — or an unspecified f known only to be even or odd, for half-interval rewrites of the coefficient formulas; justification must name even/odd parity"
       - id: kp2
@@ -121,9 +134,11 @@ topics:
         exemplars:
           - problem: 'Expand $f(x) = 1$ on $(0, \pi)$ in a sine series: compute $b_n = \frac{2}{\pi}\int_0^{\pi}\sin nx\,dx$ and write the first two nonzero terms.'
             answer: '$b_n = \dfrac{2(1 - (-1)^n)}{n\pi}$; $\quad f \sim \dfrac{4}{\pi}\sin x + \dfrac{4}{3\pi}\sin 3x + \cdots$'
+            answer_contract: {kind: none}
             solution_sketch: '$\int_0^{\pi}\sin nx\,dx = \frac{1 - \cos n\pi}{n}$; even $n$ vanish, odd $n$ give $4/(n\pi)$.'
           - problem: 'Expand $f(x) = x$ on $(0, 1)$ in a sine series with $L = 1$: $b_n = 2\int_0^1 x\sin(n\pi x)\,dx$.'
             answer: '$b_n = \dfrac{2(-1)^{n+1}}{n\pi}$'
+            answer_contract: {kind: none}
             solution_sketch: 'By parts: $2\left[\frac{-x\cos n\pi x}{n\pi}\right]_0^1 + \frac{2}{n\pi}\int_0^1 \cos n\pi x\,dx = \frac{-2\cos n\pi}{n\pi}$.'
         constraints: "L in {1, pi}; f constant or linear; the general-L formula b_n = (2/L) integral of f sin(n pi x / L) must be quoted before use"
       - id: kp3
@@ -132,13 +147,17 @@ topics:
         exemplars:
           - problem: 'Expand $f(x) = x$ on $(0, \pi)$ in a cosine series: compute $a_0$ and $a_n = \frac{2}{\pi}\int_0^{\pi} x\cos nx\,dx$.'
             answer: '$a_0 = \pi$ and $a_n = \dfrac{2((-1)^n - 1)}{\pi n^2}$ (so $-\frac{4}{\pi n^2}$ for odd $n$, $0$ for even $n$).'
+            answer_contract: {kind: none}
             solution_sketch: 'By parts the boundary term vanishes, leaving $\frac{2}{\pi}\cdot\frac{\cos n\pi - 1}{n^2}$.'
           - problem: 'Why does a half-range cosine expansion of a continuous $f$ tend to converge faster than its sine expansion?'
             answer: "The cosine (even) extension stays continuous at the endpoints, while the odd extension generally jumps there — and jumps slow convergence to $1/n$-sized coefficients."
+            answer_contract: {kind: none}
+            solution_sketch: "The cosine (even) extension stays continuous at the endpoints, while the odd extension generally jumps there — and jumps slow convergence to $1/n$-sized coefficients."
         constraints: "L in {1, pi}; f constant or linear; coefficients must come out as clean multiples of 1/n^2 or (± signs handled via (-1)^n, never a bare plus-minus in an answer)"
     diagnostic_exemplar:
       problem: 'Expand $f(x) = x$ on $(0, \pi)$ in a half-range cosine series: give $a_0$ and $a_n$.'
       answer: '$a_0 = \pi$ and $a_n = \dfrac{2\left((-1)^n - 1\right)}{\pi n^2}$ (so $-\frac{4}{\pi n^2}$ for odd $n$, and $0$ for even $n$).'
+      answer_contract: {kind: none}
       solution_sketch: 'The cosine series uses the even extension, so $a_n = \frac{2}{\pi}\int_0^{\pi} x\cos nx\,dx$; integrating by parts gives $\frac{2((-1)^n - 1)}{\pi n^2}$, and $a_0 = \frac{2}{\pi}\int_0^{\pi} x\,dx = \pi$.'
     anki_seeds:
       - front: "Odd function on (-L, L): its Fourier series contains..."
@@ -177,11 +196,15 @@ topics:
         exemplars:
           - problem: 'Substitute $u(x,t) = X(x)T(t)$ into the heat equation $u_t = k\,u_{xx}$ and derive the two ordinary differential equations.'
             answer: '$X'''' + \lambda X = 0$ and $T'' + \lambda k T = 0$, where $\lambda$ is the separation constant.'
+            answer_contract: {kind: none}
             solution_sketch: '$XT'' = kX''''T$ gives $\dfrac{T''}{kT} = \dfrac{X''''}{X}$; a function of $t$ equals a function of $x$ only if both are a constant $-\lambda$.'
           - problem: 'Why must $\frac{T''(t)}{kT(t)} = \frac{X''''(x)}{X(x)}$ be constant?'
             answer: "The left side depends only on $t$ and the right only on $x$; a function of $t$ can equal a function of $x$ for all $t, x$ only if both are the same constant."
+            answer_contract: {kind: none}
+            solution_sketch: "The left side depends only on $t$ and the right only on $x$; a function of $t$ can equal a function of $x$ for all $t, x$ only if both are the same constant."
           - problem: 'For $u_t = u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$, state the eigenvalues and the product solutions $u_n$.'
             answer: '$\lambda_n = n^2$ with $u_n(x,t) = e^{-n^2 t}\sin nx$, for $n = 1, 2, 3, \ldots$'
+            answer_contract: {kind: none}
             solution_sketch: 'The boundary conditions force $X(0) = X(\pi) = 0$ — the eigenvalue problem $X'''' + \lambda X = 0$ from boundary value problems; then $T'' = -n^2 T$ gives $T = e^{-n^2 t}$.'
         constraints: "Dirichlet boundary conditions only; separation constant written -lambda; the X-equation must be identified as the eigenvalue problem from boundary-value-problems-intro"
       - id: kp2
@@ -190,12 +213,16 @@ topics:
         exemplars:
           - problem: 'Solve $u_t = u_{xx}$ on $(0,\pi)$, $u(0,t) = u(\pi,t) = 0$, $u(x,0) = 3\sin x - \sin 2x$.'
             answer: '$u(x,t) = 3e^{-t}\sin x - e^{-4t}\sin 2x$'
+            answer_contract: {kind: none}
             solution_sketch: 'Each mode $\sin nx$ evolves independently with factor $e^{-n^2 t}$.'
           - problem: 'Solve $u_t = 2u_{xx}$ on $(0,1)$, $u(0,t) = u(1,t) = 0$, $u(x,0) = 5\sin 3\pi x$.'
             answer: '$u(x,t) = 5e^{-18\pi^2 t}\sin 3\pi x$'
+            answer_contract: {kind: none}
             solution_sketch: 'With $L = 1$ and $k = 2$ the mode $n = 3$ decays at rate $k(n\pi/L)^2 = 18\pi^2$.'
           - problem: 'In the solution above, which mode of a general initial temperature dies out fastest, and what is the limit of $u$ as $t \to \infty$?'
             answer: 'High modes die fastest (rate $kn^2\pi^2/L^2$ grows with $n$); $u \to 0$, the steady state with both ends held at $0$.'
+            answer_contract: {kind: none}
+            solution_sketch: 'High modes die fastest (rate $kn^2\pi^2/L^2$ grows with $n$); $u \to 0$, the steady state with both ends held at $0$.'
         constraints: "initial data a combination of at most two sine modes; k and L chosen so decay rates are clean multiples of 1 or pi^2"
       - id: kp3
         name: General initial data via sine series
@@ -203,14 +230,17 @@ topics:
         exemplars:
           - problem: 'Write the general solution of $u_t = k\,u_{xx}$ on $(0, L)$ with $u(0,t) = u(L,t) = 0$ and $u(x,0) = f(x)$.'
             answer: '$u(x,t) = \sum_{n=1}^{\infty} b_n e^{-k(n\pi/L)^2 t}\sin\dfrac{n\pi x}{L}$, where $b_n = \dfrac{2}{L}\int_0^L f(x)\sin\dfrac{n\pi x}{L}\,dx$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Superpose the product solutions; at $t = 0$ the series must be the sine series of $f$.'
           - problem: 'A rod on $(0, \pi)$ with ends held at $0$ starts at constant temperature $u(x,0) = 100$. Solve $u_t = u_{xx}$.'
             answer: '$u(x,t) = \sum_{n \text{ odd}} \dfrac{400}{n\pi} e^{-n^2 t}\sin nx$'
+            answer_contract: {kind: none}
             solution_sketch: 'The sine coefficients of the constant $100$ are $\frac{200(1 - (-1)^n)}{n\pi}$: $\frac{400}{n\pi}$ for odd $n$. Attach $e^{-n^2 t}$ to each mode.'
         constraints: "initial data constant or linear, whose sine coefficients were computed in fourier-sine-cosine-series; L in {1, pi}"
     diagnostic_exemplar:
       problem: 'Solve $u_t = u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$ and initial temperature $u(x,0) = 50$.'
       answer: '$u(x,t) = \sum_{n \text{ odd}} \dfrac{200}{n\pi}\,e^{-n^2 t}\sin nx$'
+      answer_contract: {kind: none}
       solution_sketch: 'Separation gives the product solutions $e^{-n^2 t}\sin nx$, so $u = \sum b_n e^{-n^2 t}\sin nx$ with $b_n = \frac{2}{\pi}\int_0^{\pi} 50\sin nx\,dx = \frac{100(1 - (-1)^n)}{n\pi}$, which is $\frac{200}{n\pi}$ for odd $n$ and $0$ for even $n$.'
     anki_seeds:
       - front: "Separation of variables for the heat equation: the ansatz and what it produces?"

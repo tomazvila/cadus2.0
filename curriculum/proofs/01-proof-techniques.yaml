@@ -759,9 +759,11 @@ topics:
         key_prerequisites: [direct-proof]
         exemplars:
           - problem: 'Criticize this "proof" that $n^2 - n + 11$ is prime for all positive integers $n$: "it holds for $n = 1, 2, 3, 4, 5$."'
+            answer_contract: {kind: none}
             answer: 'Checking examples never proves a universal claim; indeed $n = 11$ gives $121 = 11^2$, composite.'
             solution_sketch: 'A universal statement needs an argument for arbitrary $n$; finitely many verified cases prove nothing beyond themselves, and here the pattern actually fails at $n = 11$.'
           - problem: 'A student proves "the sum of two even integers is even" by computing $4 + 6 = 10$. What is missing?'
+            answer_contract: {kind: none}
             answer: 'The argument must take arbitrary even integers $2a, 2b$ and show $2a + 2b = 2(a+b)$; one instance is not a proof.'
             solution_sketch: 'The claim quantifies over all pairs; the proof must use arbitrary representatives, not specific numbers.'
         constraints: "the flawed argument verifies instances; the fix is an arbitrary-element proof or a counterexample"
@@ -770,9 +772,11 @@ topics:
         key_prerequisites: [rules-of-inference]
         exemplars:
           - problem: 'Find the flaw: "To prove that if $n$ is even then $n^2$ is even, note that $n^2$ even implies $n$ even, so the statement holds."'
+            answer_contract: {kind: none}
             answer: 'The argument proves (asserts) the converse instead of the claim — a converse error.'
             solution_sketch: '$Q \to P$ is not $P \to Q$; citing the converse establishes nothing about the original conditional.'
           - problem: 'Find the flaw: a "proof" of $\tfrac{a+b}{2} \ge \sqrt{ab}$ (for $a, b \ge 0$) that starts from $\tfrac{a+b}{2} \ge \sqrt{ab}$, squares both sides, and ends at $(a - b)^2 \ge 0$, concluding "true".'
+            answer_contract: {kind: none}
             answer: 'It assumes what is to be proved and derives a truth from it; the logic must run from $(a-b)^2 \ge 0$ back to the claim, with each step reversible.'
             solution_sketch: 'Deriving a true statement from $S$ does not prove $S$ ($F \to T$ is true). The repair: start from $(a - b)^2 \ge 0$ and reverse the (reversible, nonnegativity-respecting) steps to reach the claim.'
         constraints: "flag arguing-from-the-conclusion; require reversibility or a rewritten forward proof"
@@ -781,14 +785,17 @@ topics:
         key_prerequisites: [direct-proof]
         exemplars:
           - problem: 'Find the error: "$a = b \Rightarrow a^2 = ab \Rightarrow a^2 - b^2 = ab - b^2 \Rightarrow (a+b)(a-b) = b(a-b) \Rightarrow a + b = b \Rightarrow 2 = 1$ (at $a = b = 1$)."'
+            answer_contract: {kind: none}
             answer: 'The cancellation of $(a - b)$ divides by zero, since $a = b$.'
             solution_sketch: 'Every step is valid except cancelling $a - b$, which is $0$ by hypothesis; division by zero manufactures the absurdity.'
           - problem: 'Find the error: "$(-3)^2 = 3^2$, so taking square roots, $-3 = 3$."'
+            answer_contract: {kind: none}
             answer: '$\sqrt{x^2} = |x|$, not $x$; the correct conclusion is $|-3| = |3|$.'
             solution_sketch: 'Square-rooting both sides of an equation yields absolute values; dropping them silently is invalid for negative quantities.'
         constraints: "hidden division by zero or invalid root extraction; the learner names the exact illegal step"
     diagnostic_exemplar:
       problem: 'Identify the error in each argument: (a) "The sum of two even integers is even — indeed $4 + 6 = 10$." (b) "If $a = b$ then $a^2 = ab$, so $a^2 - b^2 = ab - b^2$, so $(a+b)(a-b) = b(a-b)$, hence $a + b = b$; taking $a = b = 1$ gives $2 = 1$."'
+      answer_contract: {kind: none}
       answer: '(a) Proof by example: one instance cannot establish a universal claim. A proof must start from arbitrary even integers $2a$ and $2b$ and show $2a + 2b = 2(a+b)$. (b) An illegal cancellation: passing from $(a+b)(a-b) = b(a-b)$ to $a + b = b$ divides by $a - b$, which is $0$ because $a = b$. Division by zero is not a valid step, so the conclusion does not follow.'
       solution_sketch: 'Ask what each step actually licenses: one instance never proves "for all", and cancelling a factor requires it to be nonzero.'
     anki_seeds:

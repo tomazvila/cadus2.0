@@ -23,12 +23,16 @@ topics:
         exemplars:
           - problem: "State the order of $y'' + 3y' - y = x$."
             answer: "Order 2."
+            answer_contract: {kind: none}
             solution_sketch: "The highest derivative appearing is $y''$."
           - problem: "State the order of $(y')^3 + y = 0$."
             answer: "Order 1."
+            answer_contract: {kind: none}
             solution_sketch: "Only the first derivative appears; cubing it does not change the order."
           - problem: "State the order of $y''' - x^2 y' = e^x$."
             answer: "Order 3."
+            answer_contract: {kind: none}
+            solution_sketch: "Order 3."
         constraints: "orders 1-3; include powers of lower-order derivatives as distractors"
       - id: kp2
         name: Linear or nonlinear
@@ -36,11 +40,15 @@ topics:
         exemplars:
           - problem: 'State whether $y'''' + xy = \sin x$ is linear.'
             answer: "Linear."
+            answer_contract: {kind: none}
             solution_sketch: "The unknown $y$ and its derivatives appear to the first power with coefficients depending only on $x$."
           - problem: "State whether $y' + y^2 = x$ is linear."
             answer: "Nonlinear: the $y^2$ term."
+            answer_contract: {kind: none}
+            solution_sketch: "Nonlinear: the $y^2$ term."
           - problem: 'State whether $y'''' + \sin y = 0$ is linear.'
             answer: 'Nonlinear: $\sin y$ is a nonlinear function of the unknown.'
+            answer_contract: {kind: none}
             solution_sketch: 'Compare with $y'''' + (\sin x)\,y = 0$, which IS linear: what matters is how $y$ enters, not $x$.'
         constraints: "nonlinearity caused by powers of y or y', products y y', or functions like sin y, e^y; include a linear equation with variable coefficients as a foil"
       - id: kp3
@@ -49,15 +57,21 @@ topics:
         exemplars:
           - problem: "A population $P$ grows at a rate proportional to its size. Write the differential equation."
             answer: "$P' = kP$"
+            answer_contract: {kind: none}
+            solution_sketch: "$P' = kP$"
           - problem: "A body's temperature $T$ changes at a rate proportional to the difference between $T$ and the ambient $20^{\\circ}$C. Write the differential equation."
             answer: "$T' = -k(T - 20)$"
+            answer_contract: {kind: none}
             solution_sketch: "The minus sign makes a hot body cool toward $20$."
           - problem: "A quantity $y$ decreases at a rate proportional to the square of $y$. Write the differential equation."
             answer: "$y' = -ky^2$"
+            answer_contract: {kind: none}
+            solution_sketch: "$y' = -ky^2$"
         constraints: "proportionality statements with k > 0; always ask for the sign that matches the described behavior"
     diagnostic_exemplar:
       problem: 'A quantity $y$ decreases at a rate proportional to the square of $y$. Write the differential equation, and state its order and whether it is linear.'
       answer: '$y'' = -ky^2$; order $1$; nonlinear (the unknown appears squared).'
+      answer_contract: {kind: none}
       solution_sketch: '"Rate of change" is $y''$, "proportional to $y^2$" gives $ky^2$, and "decreases" makes it negative. The highest derivative is the first, and $y^2$ is a nonlinear function of the unknown.'
     anki_seeds:
       - front: "The order of a differential equation is..."
@@ -94,11 +108,15 @@ topics:
         exemplars:
           - problem: "Verify that $y = e^{3x}$ is a solution of $y' - 3y = 0$."
             answer: "Yes: $y' = 3e^{3x} = 3y$, so $y' - 3y = 0$."
+            answer_contract: {kind: none}
             solution_sketch: "Differentiate, substitute, and confirm the equation reduces to $0 = 0$."
           - problem: "Is $y = x^2$ a solution of $xy' = 2y$ for $x > 0$?"
             answer: "Yes: $xy' = x(2x) = 2x^2 = 2y$."
+            answer_contract: {kind: none}
+            solution_sketch: "Yes: $xy' = x(2x) = 2x^2 = 2y$."
           - problem: 'Verify that $y = \sin 2x$ solves $y'''' + 4y = 0$.'
             answer: 'Yes: $y'''' = -4\sin 2x$, so $y'''' + 4y = -4\sin 2x + 4\sin 2x = 0$.'
+            answer_contract: {kind: none}
             solution_sketch: 'By the chain rule $y'' = 2\cos 2x$ and $y'''' = -4\sin 2x$; substitute and cancel.'
         constraints: "candidate solutions built from e^{kx}, sin/cos of kx, and polynomials; verification always closes to an identity"
       - id: kp2
@@ -107,10 +125,15 @@ topics:
         exemplars:
           - problem: "Show that any function $y(x)$ satisfying $x^2 + y^2 = 9$ solves $y' = -x/y$."
             answer: "Differentiating implicitly: $2x + 2y\\,y' = 0$, so $y' = -x/y$."
+            answer_contract: {kind: none}
+            solution_sketch: "Differentiating implicitly: $2x + 2y\\,y' = 0$, so $y' = -x/y$."
           - problem: "Show that curves $x^3 + y^3 = 7$ satisfy $y' = -x^2/y^2$."
             answer: "Implicit differentiation gives $3x^2 + 3y^2 y' = 0$, so $y' = -x^2/y^2$."
+            answer_contract: {kind: none}
+            solution_sketch: "Implicit differentiation gives $3x^2 + 3y^2 y' = 0$, so $y' = -x^2/y^2$."
           - problem: "Verify that $xy = 4$ defines a solution of $xy' + y = 0$."
             answer: "Differentiating $xy = 4$: $y + xy' = 0$, which is the equation."
+            answer_contract: {kind: none}
             solution_sketch: "Product rule on the left of $xy = 4$; the result is exactly the ODE."
         constraints: "implicit relations polynomial in x and y; one implicit differentiation closes the verification"
       - id: kp3
@@ -122,11 +145,13 @@ topics:
             solution_sketch: "$y(0) = Ce^0 = C = 5$."
           - problem: "For which values of $r$ is $y = e^{rx}$ a solution of $y'' - y' - 6y = 0$?"
             answer: "$r = 3$ or $r = -2$"
+            answer_contract: {kind: none}
             solution_sketch: "Substituting gives $(r^2 - r - 6)e^{rx} = 0$, so $r^2 - r - 6 = (r-3)(r+2) = 0$."
         constraints: "one unknown constant or exponent parameter; the resulting algebraic equation is linear or a factorable quadratic"
     diagnostic_exemplar:
       problem: 'Show that $y^2 = x^2 + C$ defines a solution of $y\,y'' = x$, and find the value of $C$ for which the solution passes through $(1, 3)$.'
       answer: 'Differentiating implicitly gives $2y\,y'' = 2x$, i.e. $y\,y'' = x$; and $y(1) = 3$ forces $9 = 1 + C$, so $C = 8$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Implicit differentiation verifies the family; substituting the point fits the constant.'
     anki_seeds:
       - front: "To verify that y = f(x) solves an ODE, you..."
@@ -160,11 +185,16 @@ topics:
         exemplars:
           - problem: "Does $y' = x - y$ with $y(0) = 1$ have a unique solution near $x = 0$?"
             answer: 'Yes: $f = x - y$ and $\partial f/\partial y = -1$ are continuous everywhere.'
+            answer_contract: {kind: none}
             solution_sketch: 'Picard''s theorem: continuity of $f$ and $f_y$ on a rectangle around $(0, 1)$ guarantees a unique local solution.'
           - problem: 'Does $y'' = \sqrt{y}$ with $y(1) = 4$ have a unique solution near $x = 1$?'
             answer: 'Yes: $f = \sqrt{y}$ and $f_y = \dfrac{1}{2\sqrt{y}}$ are continuous near $y = 4 > 0$.'
+            answer_contract: {kind: none}
+            solution_sketch: 'Yes: $f = \sqrt{y}$ and $f_y = \dfrac{1}{2\sqrt{y}}$ are continuous near $y = 4 > 0$.'
           - problem: "Does $y' = y/x$ with $y(2) = 1$ have a unique solution near $x = 2$?"
             answer: "Yes: $f = y/x$ and $f_y = 1/x$ are continuous near $(2, 1)$, away from $x = 0$."
+            answer_contract: {kind: none}
+            solution_sketch: "Yes: $f = y/x$ and $f_y = 1/x$ are continuous near $(2, 1)$, away from $x = 0$."
         constraints: "check continuity of f and f_y on a rectangle around the initial point; initial data placed safely away from any trouble spots"
       - id: kp2
         name: Where the guarantee fails
@@ -172,12 +202,15 @@ topics:
         exemplars:
           - problem: "For $y' = 3y^{2/3}$ with $y(0) = 0$, does the theorem guarantee uniqueness? Exhibit two solutions on $x \\geq 0$."
             answer: "No: $f_y = 2y^{-1/3}$ blows up at $y = 0$. Both $y = 0$ and $y = x^3$ solve the IVP."
+            answer_contract: {kind: none}
             solution_sketch: "Check $y = x^3$: $y' = 3x^2$ and $3(x^3)^{2/3} = 3x^2$. Uniqueness fails exactly where $f_y$ is discontinuous."
           - problem: 'For $y'' = 2\sqrt{y}$ with $y(0) = 0$, exhibit two solutions on $x \geq 0$.'
             answer: '$y = 0$ and $y = x^2$.'
+            answer_contract: {kind: none}
             solution_sketch: 'For $y = x^2$ ($x \geq 0$): $y'' = 2x = 2\sqrt{x^2}$. $f_y = 1/\sqrt{y}$ is unbounded at $y = 0$.'
           - problem: "Solve $y' = y^2$ with $y(0) = 1$. On what interval does the solution exist?"
             answer: '$y = \dfrac{1}{1 - x}$, which exists only on $(-\infty, 1)$.'
+            answer_contract: {kind: none}
             solution_sketch: "Separable; the solution blows up at $x = 1$ even though $f = y^2$ is continuous everywhere — existence is only local."
         constraints: "failure modes: f_y discontinuous at the initial y (non-uniqueness) or blow-up in finite time (local existence); solutions verifiable by substitution"
       - id: kp3
@@ -192,6 +225,7 @@ topics:
             solution_sketch: '$\tan x$ is continuous between consecutive odd multiples of $\pi/2$; take the interval containing $0$.'
           - problem: "For $(x+1)y' + y = \\dfrac{1}{x}$ with $y(1) = 2$, find the largest guaranteed interval."
             answer: '$(0, \infty)$'
+            answer_contract: {kind: none}
             solution_sketch: "Trouble spots are $x = -1$ and $x = 0$; the largest interval containing $x_0 = 1$ avoiding both is $(0, \\infty)$."
         constraints: "linear equations with 1-2 discontinuity points; the answer is the largest open interval containing x_0 avoiding all of them"
     diagnostic_exemplar:
@@ -240,12 +274,16 @@ topics:
         exemplars:
           - problem: "For $y' = x^2 + y$, describe all points where the slope field is horizontal."
             answer: "The points on the parabola $y = -x^2$."
+            answer_contract: {kind: none}
             solution_sketch: "Set $x^2 + y = 0$."
           - problem: "For $y' = x - y$, on what curve do the slope marks all have slope $2$?"
             answer: "The line $y = x - 2$."
+            answer_contract: {kind: none}
             solution_sketch: "Set $x - y = 2$."
           - problem: "For $y' = y - 2x$, where is the slope field horizontal?"
             answer: "On the line $y = 2x$."
+            answer_contract: {kind: none}
+            solution_sketch: "On the line $y = 2x$."
         constraints: "isoclines f(x,y) = c are lines or parabolas; ask for horizontal (c = 0) and one nonzero c"
       - id: kp3
         name: Qualitative behavior from the field
@@ -253,15 +291,21 @@ topics:
         exemplars:
           - problem: "Explain why no solution curve of $y' = 1 + y^2$ ever has a horizontal tangent."
             answer: "The slope $1 + y^2 \\geq 1 > 0$ everywhere, so every solution is strictly increasing."
+            answer_contract: {kind: none}
+            solution_sketch: "The slope $1 + y^2 \\geq 1 > 0$ everywhere, so every solution is strictly increasing."
           - problem: "For $y' = x$, describe the slope field and the family of solution curves."
             answer: 'Slopes depend only on $x$ (constant along vertical lines), horizontal along the $y$-axis; the solutions are the parabolas $y = \frac{x^2}{2} + C$.'
+            answer_contract: {kind: none}
+            solution_sketch: 'Slopes depend only on $x$ (constant along vertical lines), horizontal along the $y$-axis; the solutions are the parabolas $y = \frac{x^2}{2} + C$.'
           - problem: "For $y' = y$, along which lines are the slope marks constant?"
             answer: "Along horizontal lines: the slope depends only on $y$."
+            answer_contract: {kind: none}
             solution_sketch: "An equation $y' = f(y)$ (autonomous) has a slope field that is invariant under horizontal shifts."
         constraints: "qualitative questions: monotonicity from sign of f, symmetry of the field, identifying whether slopes depend on x, y, or both"
     diagnostic_exemplar:
       problem: 'For $y'' = x^2 + 1$, say where the slope marks are horizontal, along which lines they are constant, and give the family of solution curves.'
       answer: 'Nowhere horizontal: $x^2 + 1 \ge 1 > 0$, so every solution is strictly increasing. The slope depends only on $x$, so the marks are constant along vertical lines. The solutions are $y = \frac{x^3}{3} + x + C$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Horizontal marks would need $x^2 + 1 = 0$, which has no real solution; constancy along vertical lines follows from the absence of $y$; integrating gives the family.'
     anki_seeds:
       - front: "The slope field of y' = f(x, y) assigns to each point (x, y)..."
@@ -292,11 +336,15 @@ topics:
         exemplars:
           - problem: "Find the equilibrium solutions of $y' = y^2 - 5y + 6$."
             answer: "$y = 2$ and $y = 3$."
+            answer_contract: {kind: none}
             solution_sketch: "Solve $f(y) = (y-2)(y-3) = 0$."
           - problem: "Find the equilibrium solutions of $y' = 4y - y^2$."
             answer: "$y = 0$ and $y = 4$."
+            answer_contract: {kind: none}
+            solution_sketch: "$y = 0$ and $y = 4$."
           - problem: "Describe the phase line of $y' = y(2 - y)$."
             answer: "Equilibria at $0$ and $2$; arrows point down below $0$, up on $(0, 2)$, down above $2$."
+            answer_contract: {kind: none}
             solution_sketch: "Sign chart of $f(y) = y(2-y)$: negative, positive, negative."
         constraints: "f(y) factorable with integer roots; phase line = equilibria plus arrow directions from the sign of f"
       - id: kp2
@@ -305,12 +353,15 @@ topics:
         exemplars:
           - problem: "Find the equilibrium solutions of $y' = y(2 - y)$ and classify their stability."
             answer: "$y = 0$ unstable; $y = 2$ stable."
+            answer_contract: {kind: none}
             solution_sketch: "$f(y) = y(2-y)$ is negative for $y < 0$, positive on $(0, 2)$, negative for $y > 2$: the flow points away from $0$ and toward $2$."
           - problem: "Find and classify the equilibria of $y' = y^2 - 9$."
             answer: "$y = -3$ stable; $y = 3$ unstable."
+            answer_contract: {kind: none}
             solution_sketch: "$f > 0$ for $|y| > 3$ and $f < 0$ on $(-3, 3)$: solutions rise into $-3$ from below, fall into it from above, and flee $3$."
           - problem: "Classify the equilibrium of $y' = (y - 1)^2$."
             answer: "$y = 1$ is semistable: attracting from below, repelling from above."
+            answer_contract: {kind: none}
             solution_sketch: "$f \\geq 0$ on both sides, so solutions increase toward $1$ from below and increase away from it above."
         constraints: "f(y) factorable with integer roots; classify via a sign chart of f, no derivative test needed"
       - id: kp3
@@ -330,6 +381,7 @@ topics:
     diagnostic_exemplar:
       problem: "For $y' = y(y - 3)$: find all equilibria, classify their stability, and find $\\lim_{t \\to \\infty} y(t)$ for the solution with $y(0) = 1$."
       answer: "$y = 0$ stable, $y = 3$ unstable; the solution with $y(0) = 1$ tends to $0$."
+      answer_contract: {kind: none}
       solution_sketch: "$f > 0$ for $y < 0$, $f < 0$ on $(0,3)$, $f > 0$ for $y > 3$; from $y(0) = 1$ the solution decreases to $0$."
     anki_seeds:
       - front: "Equilibrium solutions of the autonomous equation y' = f(y) are..."
@@ -428,10 +480,16 @@ topics:
         exemplars:
           - problem: "Is $y' = xy + x$ separable? If so, factor the right side."
             answer: "Yes: $y' = x(y + 1)$."
+            answer_contract: {kind: none}
+            solution_sketch: "Yes: $y' = x(y + 1)$."
           - problem: "Is $y' = x + y$ separable?"
             answer: "No: $x + y$ cannot be written as $g(x)h(y)$."
+            answer_contract: {kind: none}
+            solution_sketch: "No: $x + y$ cannot be written as $g(x)h(y)$."
           - problem: "Is $y' = e^{x+y}$ separable?"
             answer: "Yes: $e^{x+y} = e^x e^y$."
+            answer_contract: {kind: none}
+            solution_sketch: "Yes: $e^{x+y} = e^x e^y$."
         constraints: "right sides that factor (or fail to factor) as g(x)h(y); include sums that only look separable"
       - id: kp2
         name: Separate and integrate
@@ -439,12 +497,15 @@ topics:
         exemplars:
           - problem: 'Find the general solution of $\frac{dy}{dx} = \frac{x}{y}$.'
             answer: "$y^2 = x^2 + C$"
+            answer_contract: {kind: none}
             solution_sketch: 'Separate: $y\,dy = x\,dx$; integrate to $\frac{y^2}{2} = \frac{x^2}{2} + C$ and absorb the 2 into $C$.'
           - problem: "Find the general solution of $y' = 3x^2 y^2$."
             answer: "$y = -\\dfrac{1}{x^3 + C}$"
+            answer_contract: {kind: none}
             solution_sketch: "Separate to $y^{-2}dy = 3x^2\\,dx$; integrating gives $-1/y = x^3 + C$; solve for $y$."
           - problem: 'Find the general solution of $\frac{dy}{dx} = \frac{x^2}{y^2}$.'
             answer: "$y^3 = x^3 + C$"
+            answer_contract: {kind: none}
             solution_sketch: '$y^2\,dy = x^2\,dx$ integrates to $\frac{y^3}{3} = \frac{x^3}{3} + C$; absorb the 3.'
         constraints: "antiderivatives are powers only; general solutions carry an explicit C, absorbed constants renamed"
       - id: kp3
@@ -453,9 +514,11 @@ topics:
         exemplars:
           - problem: 'Find the general solution of $\frac{dy}{dx} = \frac{y}{x}$ for $x > 0$.'
             answer: "$y = Cx$"
+            answer_contract: {kind: none}
             solution_sketch: '$\frac{dy}{y} = \frac{dx}{x}$ gives $\ln|y| = \ln x + C$; exponentiating and renaming $e^C$ yields $y = Cx$.'
           - problem: 'Find the general solution of $\frac{dy}{dx} = xy$.'
             answer: "$y = Ce^{x^2/2}$"
+            answer_contract: {kind: none}
             solution_sketch: 'Separate: $\frac{dy}{y} = x\,dx$, so $\ln|y| = \frac{x^2}{2} + C$; exponentiate and rename the constant.'
           - problem: "Find the general solution of $(1 + x^2)\\,y' = xy$."
             answer: '$y = C\sqrt{1 + x^2}$'
@@ -464,6 +527,7 @@ topics:
     diagnostic_exemplar:
       problem: "Find the general solution of $y' = -2xy$."
       answer: "$y = Ce^{-x^2}$"
+      answer_contract: {kind: none}
       solution_sketch: '$\frac{dy}{y} = -2x\,dx$ gives $\ln|y| = -x^2 + C$; exponentiate and rename the constant.'
     anki_seeds:
       - front: "A first-order ODE is separable when it can be written as..."
@@ -511,6 +575,7 @@ topics:
         exemplars:
           - problem: "Find an implicit general solution of $y' = -\\dfrac{x}{y}$."
             answer: "$x^2 + y^2 = C$"
+            answer_contract: {kind: none}
             solution_sketch: '$y\,dy = -x\,dx$ integrates to $\frac{y^2}{2} = -\frac{x^2}{2} + C$; clear the fractions.'
           - problem: "Solve $y' = \\dfrac{2x + 1}{2y}$ with $y(0) = -1$."
             answer: '$y = -\sqrt{x^2 + x + 1}$'
@@ -525,16 +590,21 @@ topics:
         exemplars:
           - problem: "Find all constant solutions of $y' = y^2 - 4$."
             answer: "$y = 2$ and $y = -2$."
+            answer_contract: {kind: none}
             solution_sketch: "Constant solutions are the zeros of the right side."
           - problem: "Solve $y' = y^2$ with $y(0) = 1$ and give the interval of validity."
             answer: '$y = \dfrac{1}{1 - x}$ on $(-\infty, 1)$.'
+            answer_contract: {kind: none}
             solution_sketch: "$-1/y = x + C$ with $C = -1$; the solution blows up at $x = 1$, so the interval containing $x_0 = 0$ is $(-\\infty, 1)$."
           - problem: "When solving $y' = y^2$ by dividing both sides by $y^2$, which solution is lost?"
             answer: "The constant solution $y = 0$."
+            answer_contract: {kind: none}
+            solution_sketch: "The constant solution $y = 0$."
         constraints: "constant solutions are integer zeros of h(y); intervals of validity bounded by blow-up points or where the branch formula degenerates"
     diagnostic_exemplar:
       problem: 'Solve $y'' = -\dfrac{x}{y}$ with $y(0) = -3$, and state the interval of validity.'
       answer: '$y = -\sqrt{9 - x^2}$ on $(-3, 3)$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Separating gives $y\,dy = -x\,dx$, so $y^2 = 9 - x^2$. The initial value $y(0) = -3$ selects the negative branch, and the square root is real (and $y \neq 0$) only for $|x| < 3$.'
     anki_seeds:
       - front: "When you divide a separable equation by h(y), you may lose..."
@@ -568,11 +638,16 @@ topics:
         exemplars:
           - problem: "Write $xy' - y = x^2$ ($x > 0$) in standard form and identify $P(x)$ and $Q(x)$."
             answer: "$y' - \\dfrac{1}{x}y = x$; $P(x) = -\\dfrac{1}{x}$, $Q(x) = x$."
+            answer_contract: {kind: none}
             solution_sketch: "Divide through by the coefficient of $y'$."
           - problem: "Write $2y' + 8y = 6e^x$ in standard form."
             answer: "$y' + 4y = 3e^x$"
+            answer_contract: {kind: none}
+            solution_sketch: "$y' + 4y = 3e^x$"
           - problem: "Identify $P$ and $Q$ for $y' = x - 3y$."
             answer: "$y' + 3y = x$: $P(x) = 3$, $Q(x) = x$."
+            answer_contract: {kind: none}
+            solution_sketch: "$y' + 3y = x$: $P(x) = 3$, $Q(x) = x$."
         constraints: "leading coefficient constant or a power of x; always divide through before reading off P and Q"
       - id: kp2
         name: "Computing $\\mu = e^{\\int P\\,dx}$"
@@ -580,12 +655,16 @@ topics:
         exemplars:
           - problem: "Find an integrating factor for $y' + 2y = e^x$."
             answer: "$\\mu = e^{2x}$"
+            answer_contract: {kind: none}
             solution_sketch: '$\mu = e^{\int 2\,dx} = e^{2x}$.'
           - problem: "Find an integrating factor for $y' + \\dfrac{2}{x}y = x$ on $x > 0$."
             answer: "$\\mu = x^2$"
+            answer_contract: {kind: none}
             solution_sketch: '$\mu = e^{\int (2/x)\,dx} = e^{2\ln x} = x^2$.'
           - problem: 'Find an integrating factor for $y'' + (\cos x)\,y = \cos x$.'
             answer: '$\mu = e^{\sin x}$'
+            answer_contract: {kind: none}
+            solution_sketch: '$\mu = e^{\sin x}$'
         constraints: "P(x) constant, k/x, or an easily integrated function; simplify e^{k ln x} to x^k"
       - id: kp3
         name: Verifying the product-rule collapse
@@ -593,13 +672,17 @@ topics:
         exemplars:
           - problem: "Show that after multiplying $y' + 2y = e^x$ by $\\mu = e^{2x}$, the left side is $(e^{2x}y)'$."
             answer: "$(e^{2x}y)' = e^{2x}y' + 2e^{2x}y = e^{2x}(y' + 2y)$, which matches."
+            answer_contract: {kind: none}
             solution_sketch: "Product rule on $e^{2x}y$; the exponential's derivative reproduces the $P(x)y$ term."
           - problem: "Show that $x^2\\left(y' + \\dfrac{2}{x}y\\right) = (x^2 y)'$."
             answer: "$(x^2 y)' = x^2 y' + 2xy = x^2\\left(y' + \\dfrac{2}{x}y\\right)$."
+            answer_contract: {kind: none}
+            solution_sketch: "$(x^2 y)' = x^2 y' + 2xy = x^2\\left(y' + \\dfrac{2}{x}y\\right)$."
         constraints: "one product-rule expansion; the point is mu' = P mu"
     diagnostic_exemplar:
       problem: 'Write $xy'' + 3y = x^2$ ($x > 0$) in standard form, find its integrating factor $\mu$, and show that multiplying by $\mu$ turns the left side into $(\mu y)''$.'
       answer: 'Standard form $y'' + \dfrac{3}{x}y = x$, so $\mu = e^{\int 3/x\,dx} = x^3$; and $x^3\left(y'' + \frac{3}{x}y\right) = x^3 y'' + 3x^2 y = (x^3 y)''$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Divide by $x$ to reach standard form, integrate $P = 3/x$, then check the product rule.'
     anki_seeds:
       - front: "Integrating factor for y' + P(x)y = Q(x)?"
@@ -633,12 +716,15 @@ topics:
         exemplars:
           - problem: "Find the general solution of $y' + 2y = e^x$."
             answer: "$y = \\dfrac{e^x}{3} + Ce^{-2x}$"
+            answer_contract: {kind: none}
             solution_sketch: "Multiply by $e^{2x}$: $(e^{2x}y)' = e^{3x}$, so $e^{2x}y = \\dfrac{e^{3x}}{3} + C$."
           - problem: "Find the general solution of $y' + \\dfrac{1}{x}y = x$ on $x > 0$."
             answer: "$y = \\dfrac{x^2}{3} + \\dfrac{C}{x}$"
+            answer_contract: {kind: none}
             solution_sketch: "With $\\mu = x$: $(xy)' = x^2$, so $xy = \\dfrac{x^3}{3} + C$."
           - problem: "Find the general solution of $y' + 3y = 6$."
             answer: "$y = 2 + Ce^{-3x}$"
+            answer_contract: {kind: none}
             solution_sketch: "$(e^{3x}y)' = 6e^{3x}$, so $e^{3x}y = 2e^{3x} + C$."
         constraints: "right side polynomial or e^{kx} integrating in one step; answers carry an explicit C"
       - id: kp2
@@ -647,9 +733,11 @@ topics:
         exemplars:
           - problem: "Find the general solution of $y' - y = x$."
             answer: "$y = -x - 1 + Ce^x$"
+            answer_contract: {kind: none}
             solution_sketch: "With $\\mu = e^{-x}$: $(e^{-x}y)' = xe^{-x}$; integration by parts gives $e^{-x}y = -(x+1)e^{-x} + C$."
           - problem: 'Find the general solution of $y'' + y = \sin x$.'
             answer: '$y = \dfrac{\sin x - \cos x}{2} + Ce^{-x}$'
+            answer_contract: {kind: none}
             solution_sketch: '$(e^x y)'' = e^x \sin x$; integrating (parts twice, or the standard formula) gives $e^x y = \frac{e^x(\sin x - \cos x)}{2} + C$.'
         constraints: "right side polynomial times e^{kx} or sin/cos; at most two integrations by parts"
       - id: kp3
@@ -661,6 +749,7 @@ topics:
             solution_sketch: "The constant solution is $y = 2$, so $y = 2 + Ce^{-3x}$; $y(0) = 4$ gives $C = 2$."
           - problem: 'Solve $xy'' + y = \sin x$ with $y(\pi/2) = 2/\pi$.'
             answer: '$y = \dfrac{1 - \cos x}{x}$'
+            answer_contract: {kind: none}
             solution_sketch: 'The left side is already $(xy)''$, so $xy = -\cos x + C$. At $x = \pi/2$: $\frac{\pi}{2}\cdot\frac{2}{\pi} = 1 = 0 + C$, so $C = 1$.'
         constraints: "initial data chosen so C is a clean rational; recognize (xy)' and (e^{kx}y)' collapses"
     diagnostic_exemplar:
@@ -696,12 +785,15 @@ topics:
         exemplars:
           - problem: "For $y' + y = y^2$, identify $n$, the substitution, and the resulting linear equation."
             answer: "$n = 2$; $v = y^{-1}$ gives $v' - v = -1$."
+            answer_contract: {kind: none}
             solution_sketch: "Divide by $y^2$: $y^{-2}y' + y^{-1} = 1$; with $v = y^{-1}$, $v' = -y^{-2}y'$, so $-v' + v = 1$."
           - problem: "For $y' - y = xy^3$, find the substitution and the resulting linear equation."
             answer: "$v = y^{-2}$ gives $v' + 2v = -2x$."
+            answer_contract: {kind: none}
             solution_sketch: "Divide by $y^3$: $y^{-3}y' - y^{-2} = x$; since $v' = -2y^{-3}y'$, this is $-\\tfrac{1}{2}v' - v = x$."
           - problem: 'What substitution turns $y'' + \dfrac{y}{x} = \sqrt{y}$ into a linear equation, and what equation results?'
             answer: '$v = \sqrt{y}$ gives $v'' + \dfrac{v}{2x} = \dfrac{1}{2}$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Here $n = \tfrac{1}{2}$, so $v = y^{1/2}$; writing $y = v^2$, $y'' = 2vv''$ and dividing by $2v$ gives the linear equation.'
         constraints: "n in {2, 3, 1/2}; the transformed equation must be stated in standard linear form"
       - id: kp2
@@ -710,9 +802,11 @@ topics:
         exemplars:
           - problem: "Find the general solution of $y' + y = y^2$."
             answer: "$y = \\dfrac{1}{1 + Ce^{x}}$"
+            answer_contract: {kind: none}
             solution_sketch: "$v = y^{-1}$ gives $v' - v = -1$, so $v = 1 + Ce^x$; invert."
           - problem: "Find the general solution of $y' + \\dfrac{y}{x} = y^2$ on $x > 0$."
             answer: "$y = \\dfrac{1}{x(C - \\ln x)}$"
+            answer_contract: {kind: none}
             solution_sketch: "$v = y^{-1}$ gives $v' - \\dfrac{v}{x} = -1$; with $\\mu = 1/x$, $(v/x)' = -1/x$, so $v = x(C - \\ln x)$."
         constraints: "coefficients constant or k/x; the linear stage solves with one integrating factor; present y explicitly"
       - id: kp3
@@ -721,14 +815,17 @@ topics:
         exemplars:
           - problem: "Solve $y' + y = y^2$ with $y(0) = 2$."
             answer: "$y = \\dfrac{2}{2 - e^{x}}$"
+            answer_contract: {kind: none}
             solution_sketch: "$v = y^{-1}$: $v = 1 + Ce^x$ with $v(0) = \\tfrac{1}{2}$ gives $C = -\\tfrac{1}{2}$, so $y = \\dfrac{1}{1 - e^x/2}$."
           - problem: "Solve $y' - y = xy^3$ with $y(0) = 1$."
             answer: '$y = \left(\tfrac{1}{2}e^{-2x} - x + \tfrac{1}{2}\right)^{-1/2}$'
+            answer_contract: {kind: none}
             solution_sketch: "$v = y^{-2}$ satisfies $v' + 2v = -2x$, so $v = Ce^{-2x} - x + \\tfrac{1}{2}$; $v(0) = 1$ gives $C = \\tfrac{1}{2}$; then $y = v^{-1/2}$."
         constraints: "initial data keeps v positive near x0; state the solution explicitly"
     diagnostic_exemplar:
       problem: 'Solve $y'' + y = y^2$ with $y(0) = 3$.'
       answer: '$y = \dfrac{3}{3 - 2e^{x}}$'
+      answer_contract: {kind: none}
       solution_sketch: 'With $n = 2$, put $v = y^{-1}$: dividing by $y^2$ gives $-v'' + v = 1$, i.e. $v'' - v = -1$, whose solution is $v = 1 + Ce^{x}$. Then $y = \frac{1}{1 + Ce^x}$, and $y(0) = 3$ gives $C = -\frac{2}{3}$, i.e. $y = \frac{3}{3 - 2e^x}$.'
     anki_seeds:
       - front: "A Bernoulli equation has the form..."
@@ -759,10 +856,16 @@ topics:
         exemplars:
           - problem: "Can $y' = \\dfrac{x + y}{x}$ be written as a function of $v = y/x$ alone?"
             answer: "Yes: $y' = 1 + \\dfrac{y}{x} = 1 + v$."
+            answer_contract: {kind: none}
+            solution_sketch: "Yes: $y' = 1 + \\dfrac{y}{x} = 1 + v$."
           - problem: "Can $y' = \\dfrac{x^2 + y^2}{xy}$ be written as a function of $y/x$ alone?"
             answer: "Yes: dividing top and bottom by $x^2$ gives $y' = \\dfrac{1 + v^2}{v}$."
+            answer_contract: {kind: none}
+            solution_sketch: "Yes: dividing top and bottom by $x^2$ gives $y' = \\dfrac{1 + v^2}{v}$."
           - problem: "Is $y' = x + y^2$ homogeneous?"
             answer: "No: $x + y^2$ is not a function of $y/x$ alone."
+            answer_contract: {kind: none}
+            solution_sketch: "No: $x + y^2$ is not a function of $y/x$ alone."
         constraints: "right sides are ratios of degree-matched polynomials (homogeneous) or degree-mismatched foils"
       - id: kp2
         name: The substitution mechanics
@@ -770,11 +873,16 @@ topics:
         exemplars:
           - problem: "Substitute $y = vx$ into $y' = 1 + \\dfrac{y}{x}$ and simplify."
             answer: "$v + xv' = 1 + v$, so $xv' = 1$."
+            answer_contract: {kind: none}
             solution_sketch: "Product rule: $y' = v + xv'$; the $v$ terms cancel, leaving a separable equation."
           - problem: "Substitute $y = vx$ into $y' = \\dfrac{x^2 + y^2}{xy}$ and simplify."
             answer: "$v + xv' = \\dfrac{1 + v^2}{v}$, so $xv' = \\dfrac{1}{v}$."
+            answer_contract: {kind: none}
+            solution_sketch: "$v + xv' = \\dfrac{1 + v^2}{v}$, so $xv' = \\dfrac{1}{v}$."
           - problem: "Substitute $y = vx$ into $y' = \\dfrac{y^2 + 2xy}{x^2}$ and simplify."
             answer: "$v + xv' = v^2 + 2v$, so $xv' = v^2 + v$."
+            answer_contract: {kind: none}
+            solution_sketch: "$v + xv' = v^2 + 2v$, so $xv' = v^2 + v$."
         constraints: "always y = vx with y' = v + xv'; the result must be visibly separable in v and x"
       - id: kp3
         name: Complete solutions
@@ -782,9 +890,11 @@ topics:
         exemplars:
           - problem: "Solve $xy' = x + y$ for $x > 0$."
             answer: "$y = x\\ln x + Cx$"
+            answer_contract: {kind: none}
             solution_sketch: "$v = y/x$ gives $xv' = 1$, so $v = \\ln x + C$; multiply back by $x$."
           - problem: "Find the general solution of $y' = \\dfrac{x^2 + y^2}{xy}$ for $x > 0$."
             answer: "$y^2 = x^2(2\\ln x + C)$"
+            answer_contract: {kind: none}
             solution_sketch: "$xv' = 1/v$ separates to $v\\,dv = \\dfrac{dx}{x}$, so $\\dfrac{v^2}{2} = \\ln x + C$; substitute $v = y/x$."
           - problem: "Solve $y' = \\dfrac{x^2 + y^2}{xy}$ with $y(1) = 2$."
             answer: "$y = x\\sqrt{2\\ln x + 4}$"
@@ -826,9 +936,12 @@ topics:
         exemplars:
           - problem: "Is $(2xy + 3)\\,dx + (x^2 - 1)\\,dy = 0$ exact?"
             answer: "Yes: $M_y = 2x = N_x$."
+            answer_contract: {kind: none}
             solution_sketch: "Compute $\\partial M/\\partial y = 2x$ and $\\partial N/\\partial x = 2x$; they agree."
           - problem: "Is $y^2\\,dx + x\\,dy = 0$ exact?"
             answer: "No: $M_y = 2y$ but $N_x = 1$."
+            answer_contract: {kind: none}
+            solution_sketch: "No: $M_y = 2y$ but $N_x = 1$."
           - problem: "For which constant $b$ is $(ye^x + 2x)\\,dx + be^x\\,dy = 0$ exact?"
             answer: "$b = 1$"
             solution_sketch: "$M_y = e^x$ and $N_x = be^x$; exactness forces $b = 1$."
@@ -839,12 +952,15 @@ topics:
         exemplars:
           - problem: "Solve $(2xy + 3)\\,dx + (x^2 - 1)\\,dy = 0$."
             answer: "$x^2 y + 3x - y = C$"
+            answer_contract: {kind: none}
             solution_sketch: "Integrate $M$ in $x$: $F = x^2 y + 3x + h(y)$; then $F_y = x^2 + h'(y) = x^2 - 1$ gives $h(y) = -y$."
           - problem: "Solve $(2x + y)\\,dx + (x + 2y)\\,dy = 0$."
             answer: "$x^2 + xy + y^2 = C$"
+            answer_contract: {kind: none}
             solution_sketch: "$F = x^2 + xy + h(y)$; $F_y = x + h'(y) = x + 2y$ gives $h(y) = y^2$."
           - problem: 'Solve $(\cos x + y)\,dx + (x + e^y)\,dy = 0$.'
             answer: '$\sin x + xy + e^y = C$'
+            answer_contract: {kind: none}
             solution_sketch: '$M_y = 1 = N_x$, so exact. $F = \sin x + xy + h(y)$; $F_y = x + h''(y) = x + e^y$ gives $h(y) = e^y$.'
         constraints: "always verify exactness first; F recoverable with one integration in x plus matching h(y); leave the answer implicit as F(x,y) = C"
       - id: kp3
@@ -853,14 +969,17 @@ topics:
         exemplars:
           - problem: "Solve $(3x^2 + 2y)\\,dx + (2x + 2y)\\,dy = 0$ with $y(1) = 1$."
             answer: "$x^3 + 2xy + y^2 = 4$"
+            answer_contract: {kind: none}
             solution_sketch: "$M_y = 2 = N_x$; $F = x^3 + 2xy + y^2$. Evaluating at $(1,1)$: $1 + 2 + 1 = 4$."
           - problem: 'Solve $(y\cos x + 1)\,dx + \sin x\,dy = 0$ with $y(\pi/2) = 3$.'
             answer: '$y\sin x + x = 3 + \dfrac{\pi}{2}$'
+            answer_contract: {kind: none}
             solution_sketch: '$M_y = \cos x = N_x$; $F = y\sin x + x$. At $(\pi/2,\,3)$: $3 + \pi/2$.'
         constraints: "leave answers implicit; the constant is fixed by evaluating F at the initial point"
     diagnostic_exemplar:
       problem: 'Solve $(2xy - 3x^2)\,dx + (x^2 + 2y)\,dy = 0$ with $y(1) = 2$.'
       answer: '$x^2 y - x^3 + y^2 = 5$'
+      answer_contract: {kind: none}
       solution_sketch: '$M_y = 2x = N_x$, so the equation is exact; $F = x^2y - x^3 + y^2$ satisfies $F_x = M$ and $F_y = N$. Then $F(1,2) = 2 - 1 + 4 = 5$.'
     anki_seeds:
       - front: "Exactness test for M dx + N dy = 0?"
@@ -891,12 +1010,16 @@ topics:
         exemplars:
           - problem: "The equation $(3xy + y^2)\\,dx + (x^2 + xy)\\,dy = 0$ is not exact. Find an integrating factor $\\mu(x)$."
             answer: "$\\mu = x$"
+            answer_contract: {kind: none}
             solution_sketch: "$\\dfrac{M_y - N_x}{N} = \\dfrac{(3x + 2y) - (2x + y)}{x^2 + xy} = \\dfrac{x + y}{x(x + y)} = \\dfrac{1}{x}$, so $\\mu = e^{\\int dx/x} = x$."
           - problem: "Find an integrating factor $\\mu(x)$ for $2y\\,dx + x\\,dy = 0$."
             answer: "$\\mu = x$"
+            answer_contract: {kind: none}
             solution_sketch: "$\\dfrac{M_y - N_x}{N} = \\dfrac{2 - 1}{x} = \\dfrac{1}{x}$."
           - problem: "For an equation with $\\dfrac{M_y - N_x}{N} = \\dfrac{3}{x}$, find $\\mu(x)$."
             answer: "$\\mu = x^3$"
+            answer_contract: {kind: none}
+            solution_sketch: "$\\mu = x^3$"
         constraints: "(M_y - N_x)/N must simplify to a function of x alone (typically k/x); mu = e^{integral}"
       - id: kp2
         name: "Finding $\\mu(y)$"
@@ -904,9 +1027,11 @@ topics:
         exemplars:
           - problem: "The equation $y\\,dx + (2x - ye^y)\\,dy = 0$ is not exact. Find an integrating factor $\\mu(y)$."
             answer: "$\\mu = y$"
+            answer_contract: {kind: none}
             solution_sketch: "$\\dfrac{N_x - M_y}{M} = \\dfrac{2 - 1}{y} = \\dfrac{1}{y}$, so $\\mu = e^{\\int dy/y} = y$."
           - problem: "Find an integrating factor $\\mu(y)$ for $y\\,dx + 3x\\,dy = 0$."
             answer: "$\\mu = y^2$"
+            answer_contract: {kind: none}
             solution_sketch: "$\\dfrac{N_x - M_y}{M} = \\dfrac{3 - 1}{y} = \\dfrac{2}{y}$, so $\\mu = e^{2\\ln y} = y^2$."
         constraints: "(N_x - M_y)/M must simplify to a function of y alone (typically k/y)"
       - id: kp3
@@ -915,17 +1040,21 @@ topics:
         exemplars:
           - problem: "Solve $2y\\,dx + x\\,dy = 0$ using the integrating factor $\\mu = x$."
             answer: "$x^2 y = C$"
+            answer_contract: {kind: none}
             solution_sketch: "Multiplying gives $2xy\\,dx + x^2\\,dy = d(x^2 y)$."
           - problem: "Solve $(3xy + y^2)\\,dx + (x^2 + xy)\\,dy = 0$ using $\\mu = x$."
             answer: "$2x^3 y + x^2 y^2 = C$"
+            answer_contract: {kind: none}
             solution_sketch: "After multiplying, $F = x^3 y + \\dfrac{x^2 y^2}{2}$ satisfies $F_x = 3x^2y + xy^2$, $F_y = x^3 + x^2 y$; clear the fraction."
           - problem: "Solve $y\\,dx + (2x - ye^y)\\,dy = 0$ using $\\mu = y$."
             answer: "$xy^2 - (y^2 - 2y + 2)e^y = C$"
+            answer_contract: {kind: none}
             solution_sketch: "After multiplying, $F = xy^2 + h(y)$ with $h'(y) = -y^2 e^y$; integrating by parts twice, $h = -(y^2 - 2y + 2)e^y$."
         constraints: "after multiplying by mu the equation must pass the exactness test; reconstruct F as in exact equations"
     diagnostic_exemplar:
       problem: "Solve $y\\,dx + 3x\\,dy = 0$ by finding an integrating factor."
       answer: "$xy^3 = C$"
+      answer_contract: {kind: none}
       solution_sketch: "$\\mu = y^2$ makes the equation $y^3\\,dx + 3xy^2\\,dy = d(xy^3) = 0$."
     anki_seeds:
       - front: "When does M dx + N dy = 0 admit an integrating factor mu(x)?"
@@ -964,12 +1093,16 @@ topics:
         exemplars:
           - problem: "A population obeys $P' = kP$ and doubles every $10$ hours. Find $k$ exactly."
             answer: '$k = \dfrac{\ln 2}{10}$ per hour'
+            answer_contract: {kind: none}
             solution_sketch: '$P = P_0 e^{kt}$ and $P(10) = 2P_0$ give $e^{10k} = 2$, so $k = \frac{\ln 2}{10}$.'
           - problem: "A radioactive isotope has half-life $5730$ years. Find its decay constant $k$ in $N' = -kN$."
             answer: '$k = \dfrac{\ln 2}{5730}$ per year'
+            answer_contract: {kind: none}
             solution_sketch: '$N = N_0 e^{-kt}$ with $N(5730) = N_0/2$ gives $e^{-5730k} = \frac{1}{2}$.'
           - problem: "Solve $P' = 0.02P$ with $P(0) = 500$."
             answer: "$P(t) = 500e^{0.02t}$"
+            answer_contract: {kind: none}
+            solution_sketch: "$P(t) = 500e^{0.02t}$"
         constraints: "doubling times and half-lives are clean integers; express rate constants exactly with ln"
       - id: kp2
         name: Time-to-reach questions
@@ -977,9 +1110,11 @@ topics:
         exemplars:
           - problem: "A substance decays exponentially with half-life $8$ days. How long until only $25\\%$ of it remains?"
             answer: "$16$ days"
+            answer_contract: {kind: none}
             solution_sketch: "$25\\% = (1/2)^2$: exactly two half-lives."
           - problem: "A bacteria culture doubles every $3$ hours and starts at $100$ cells. When does it reach $800$ cells?"
             answer: "$9$ hours"
+            answer_contract: {kind: none}
             solution_sketch: "$800/100 = 8 = 2^3$: three doubling times."
           - problem: "Solve for the time at which $P(t) = 200e^{0.05t}$ reaches $1000$."
             answer: "$t = 20\\ln 5$"
@@ -991,14 +1126,17 @@ topics:
         exemplars:
           - problem: "A population satisfies $P' = kP$ with $P(2) = 300$ and $P(5) = 2400$. Find $k$ and $P(0)$ exactly."
             answer: "$k = \\ln 2$; $P(0) = 75$."
+            answer_contract: {kind: none}
             solution_sketch: "$\\dfrac{P(5)}{P(2)} = e^{3k} = 8$ gives $k = \\ln 2$; then $P(0) = 300e^{-2\\ln 2} = 300/4 = 75$."
           - problem: "A sample decays from $800$ g to $100$ g in $6$ hours. Find its half-life."
             answer: "$2$ hours"
+            answer_contract: {kind: none}
             solution_sketch: "$100/800 = (1/2)^3$: three half-lives in $6$ hours."
         constraints: "data ratios are powers of 2 so k and the half-life come out as clean multiples of ln 2"
     diagnostic_exemplar:
       problem: 'A population satisfies $P'' = kP$ with $P(2) = 500$ and $P(6) = 8000$. Find $k$ and $P(0)$ exactly.'
       answer: '$k = \ln 2$; $P(0) = 125$.'
+      answer_contract: {kind: none}
       solution_sketch: '$\frac{P(6)}{P(2)} = e^{4k} = 16$, so $k = \frac{\ln 16}{4} = \ln 2$. Then $P(0) = P(2)e^{-2k} = \frac{500}{4} = 125$.'
     anki_seeds:
       - front: "Solution of the natural growth equation P' = kP?"
@@ -1029,12 +1167,15 @@ topics:
         exemplars:
           - problem: "A body cools in a $20^{\\circ}$C room. Write the cooling ODE and its general solution."
             answer: "$T' = -k(T - 20)$; $T = 20 + Ce^{-kt}$."
+            answer_contract: {kind: none}
             solution_sketch: "The shifted variable $u = T - 20$ satisfies $u' = -ku$."
           - problem: "A cup of coffee at $90^{\\circ}$C sits in a $25^{\\circ}$C room. Write $T(t)$ with $k$ undetermined."
             answer: "$T = 25 + 65e^{-kt}$"
             solution_sketch: "$C = T(0) - 25 = 65$."
           - problem: "For $T = 15 + 40e^{-2t}$, identify the ambient temperature and the initial temperature."
             answer: "Ambient $15^{\\circ}$; $T(0) = 55^{\\circ}$."
+            answer_contract: {kind: none}
+            solution_sketch: "Ambient $15^{\\circ}$; $T(0) = 55^{\\circ}$."
         constraints: "ambient temperatures and initial temperatures are integers; solution always in the form A + Ce^{-kt}"
       - id: kp2
         name: "Finding $k$ from data"
@@ -1042,6 +1183,7 @@ topics:
         exemplars:
           - problem: 'A body cools by Newton''s law $T'' = -k(T - 20)$ in a $20^{\circ}$C room. If $T(0) = 100$ and $T(10) = 60$, find $T(t)$.'
             answer: '$T(t) = 20 + 80e^{-(\ln 2/10)\,t}$'
+            answer_contract: {kind: none}
             solution_sketch: '$T = 20 + Ce^{-kt}$ with $C = 80$; $T(10) = 60$ gives $e^{-10k} = \frac{40}{80} = \frac{1}{2}$, so $k = \frac{\ln 2}{10}$.'
           - problem: "A cold drink at $5^{\\circ}$C warms in a $25^{\\circ}$C room, reaching $15^{\\circ}$C after $4$ minutes. Find $T(t)$."
             answer: '$T = 25 - 20e^{-(\ln 2/4)\,t}$'
@@ -1053,14 +1195,17 @@ topics:
         exemplars:
           - problem: 'With $T(t) = 20 + 80e^{-(\ln 2/10)t}$, when does the body reach $30^{\circ}$C?'
             answer: "$t = 30$ minutes"
+            answer_contract: {kind: none}
             solution_sketch: "$80e^{-kt} = 10$ means the gap has halved three times: $3 \\times 10 = 30$."
           - problem: 'With $T = 25 - 20e^{-(\ln 2/4)t}$, when does the drink reach $20^{\circ}$C?'
             answer: "$t = 8$ minutes"
+            answer_contract: {kind: none}
             solution_sketch: "$20e^{-kt} = 5$: the gap quarters, i.e. two halvings of $4$ minutes each."
         constraints: "target gaps are the initial gap divided by a power of 2, so times are integer multiples of the halving time"
     diagnostic_exemplar:
       problem: "A body in a $20^{\\circ}$C room cools from $100^{\\circ}$C to $60^{\\circ}$C in $10$ minutes. When does it reach $25^{\\circ}$C?"
       answer: "$40$ minutes"
+      answer_contract: {kind: none}
       solution_sketch: "The gap halves every $10$ minutes: $80 \\to 40 \\to 20 \\to 10 \\to 5$ takes four halvings."
     anki_seeds:
       - front: "Newton's law of cooling as an ODE (ambient temperature A)?"
@@ -1091,11 +1236,15 @@ topics:
         exemplars:
           - problem: "A $100$ L tank starts with pure water. Brine at $2$ g/L flows in at $5$ L/min; the well-mixed solution leaves at $5$ L/min. Write the ODE for the salt $A(t)$."
             answer: "$A' = 10 - \\dfrac{A}{20}$, $A(0) = 0$."
+            answer_contract: {kind: none}
             solution_sketch: "Rate in $= 2 \\cdot 5 = 10$ g/min; rate out $= 5 \\cdot \\dfrac{A}{100} = \\dfrac{A}{20}$."
           - problem: "A $50$ L tank holds $10$ g of salt. Brine at $1$ g/L flows in at $2$ L/min, and the mixture leaves at $2$ L/min. Write the ODE."
             answer: "$A' = 2 - \\dfrac{A}{25}$, $A(0) = 10$."
+            answer_contract: {kind: none}
+            solution_sketch: "$A' = 2 - \\dfrac{A}{25}$, $A(0) = 10$."
           - problem: "Pure water flows at $4$ L/min into a $200$ L tank of brine, and the mixture drains at $4$ L/min. Write the ODE for the salt $A(t)$."
             answer: "$A' = -\\dfrac{A}{50}$"
+            answer_contract: {kind: none}
             solution_sketch: "Rate in is $0$; rate out is $4 \\cdot \\dfrac{A}{200}$."
         constraints: "constant volume (equal flow rates); rate out = (outflow rate) x A/V; integer concentrations and flows"
       - id: kp2
@@ -1104,12 +1253,16 @@ topics:
         exemplars:
           - problem: "Solve $A' = 10 - \\dfrac{A}{20}$ with $A(0) = 0$."
             answer: "$A(t) = 200(1 - e^{-t/20})$"
+            answer_contract: {kind: none}
             solution_sketch: "Equilibrium $200$; $A = 200 + Ce^{-t/20}$ with $C = -200$."
           - problem: "Solve $A' = 2 - \\dfrac{A}{25}$ with $A(0) = 10$."
             answer: "$A(t) = 50 - 40e^{-t/25}$"
+            answer_contract: {kind: none}
             solution_sketch: "Equilibrium $50$; $A(0) = 10$ gives $C = -40$."
           - problem: "Solve $A' = -\\dfrac{A}{50}$ with $A(0) = 30$."
             answer: "$A(t) = 30e^{-t/50}$"
+            answer_contract: {kind: none}
+            solution_sketch: "$A(t) = 30e^{-t/50}$"
         constraints: "solutions have the shape (limit) + C e^{-t/tau}; C fixed by the initial amount"
       - id: kp3
         name: Long-run behavior and timing
@@ -1117,16 +1270,21 @@ topics:
         exemplars:
           - problem: "For $A(t) = 200(1 - e^{-t/20})$, how much salt does the tank hold in the long run?"
             answer: "$200$ g"
+            answer_contract: {kind: none}
             solution_sketch: "Set $A' = 0$ (or note the inflow concentration $2$ g/L times the $100$ L volume)."
           - problem: "For $A(t) = 200(1 - e^{-t/20})$, when does the tank hold $100$ g?"
             answer: "$t = 20\\ln 2$ minutes"
+            answer_contract: {kind: none}
             solution_sketch: "$1 - e^{-t/20} = \\tfrac{1}{2}$ gives $e^{-t/20} = \\tfrac{1}{2}$."
           - problem: "What is the long-run concentration in a constant-volume tank fed with brine at $2$ g/L?"
             answer: "$2$ g/L — the inflow concentration."
+            answer_contract: {kind: none}
+            solution_sketch: "$2$ g/L — the inflow concentration."
         constraints: "long-run amount = inflow concentration x volume; timing answers are clean multiples of tau ln 2"
     diagnostic_exemplar:
       problem: 'A $40$ L tank starts with pure water. Brine containing $3$ g/L flows in at $4$ L/min and the well-mixed solution leaves at $4$ L/min. Find the amount of salt $A(t)$ in the tank, and the time at which it reaches $60$ g.'
       answer: '$A(t) = 120\left(1 - e^{-t/10}\right)$; it reaches $60$ g at $t = 10\ln 2$ minutes.'
+      answer_contract: {kind: none}
       solution_sketch: 'Balance: $A'' = 3 \cdot 4 - \frac{A}{40}\cdot 4 = 12 - \frac{A}{10}$ with $A(0) = 0$, whose solution is $A = 120(1 - e^{-t/10})$. Setting $A = 60$ gives $e^{-t/10} = \frac{1}{2}$.'
     anki_seeds:
       - front: "In a constant-volume mixing tank, the rate of salt leaving is..."
@@ -1160,6 +1318,8 @@ topics:
         exemplars:
           - problem: "Identify $r$ and the carrying capacity $K$ in $P' = 3P\\left(1 - \\dfrac{P}{600}\\right)$."
             answer: "$r = 3$; $K = 600$."
+            answer_contract: {kind: none}
+            solution_sketch: "$r = 3$; $K = 600$."
           - problem: "For $P' = 0.5P\\left(1 - \\dfrac{P}{100}\\right)$ with $P(0) = 10$, find $\\lim_{t \\to \\infty} P(t)$."
             answer: "$100$"
             solution_sketch: "Any solution starting in $(0, 100)$ increases to the carrying capacity $100$."
@@ -1173,9 +1333,11 @@ topics:
         exemplars:
           - problem: "Solve the logistic equation $y' = y(1 - y)$ with $y(0) = \\tfrac{1}{2}$."
             answer: "$y = \\dfrac{1}{1 + e^{-t}}$"
+            answer_contract: {kind: none}
             solution_sketch: "Partial fractions on $\\dfrac{dy}{y(1-y)}$ give the general solution $y = \\dfrac{1}{1 + Ce^{-t}}$; $y(0) = \\tfrac{1}{2}$ forces $C = 1$."
           - problem: "Solve $P' = 2P\\left(1 - \\dfrac{P}{1000}\\right)$ with $P(0) = 100$."
             answer: "$P = \\dfrac{1000}{1 + 9e^{-2t}}$"
+            answer_contract: {kind: none}
             solution_sketch: "The general solution is $P = \\dfrac{K}{1 + Ce^{-rt}}$ with $K = 1000$, $r = 2$; $P(0) = 100$ gives $C = 9$."
         constraints: "K and r integers; C = (K - P0)/P0 comes out an integer"
       - id: kp3
@@ -1184,6 +1346,7 @@ topics:
         exemplars:
           - problem: "A population follows $P(t) = \\dfrac{1000}{1 + 9e^{-t}}$. Find $P(0)$ and the carrying capacity."
             answer: "$P(0) = 100$; carrying capacity $1000$."
+            answer_contract: {kind: none}
             solution_sketch: "$P(0) = 1000/(1+9) = 100$; as $t \\to \\infty$ the denominator tends to $1$."
           - problem: "For $P(t) = \\dfrac{1000}{1 + 9e^{-t}}$, when does $P = 500$?"
             answer: "$t = \\ln 9$"
@@ -1192,6 +1355,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Solve $P'' = 2P\left(1 - \dfrac{P}{600}\right)$ with $P(0) = 200$, and state the carrying capacity.'
       answer: '$P(t) = \dfrac{600}{1 + 2e^{-2t}}$; carrying capacity $600$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Here $r = 2$ and $K = 600$. Partial fractions give $P = \frac{K}{1 + Ae^{-rt}}$ with $A = \frac{K - P_0}{P_0} = \frac{400}{200} = 2$.'
     anki_seeds:
       - front: "In the logistic equation P' = rP(1 - P/K), K is the..."
@@ -1231,9 +1395,11 @@ topics:
             solution_sketch: "Set $P' = 0$: $0.5P = 100$."
           - problem: "Solve $P' = 0.5P - 100$ with $P(0) = 300$ and describe the long-run behavior."
             answer: "$P = 200 + 100e^{t/2}$: the population grows without bound."
+            answer_contract: {kind: none}
             solution_sketch: "$P - 200$ satisfies natural growth; starting above the (unstable) equilibrium, the population runs away upward."
           - problem: "Solve $P' = 0.5P - 100$ with $P(0) = 100$. When does the population die out?"
             answer: "$P = 200 - 100e^{t/2}$; extinction at $t = 2\\ln 2$ years."
+            answer_contract: {kind: none}
             solution_sketch: "Below the equilibrium the gap grows: $200 - 100e^{t/2} = 0$ gives $e^{t/2} = 2$."
         constraints: "P' = kP - h with clean equilibrium h/k; the equilibrium is unstable — solutions diverge on both sides"
       - id: kp2
@@ -1242,9 +1408,12 @@ topics:
         exemplars:
           - problem: "A falling object obeys $v' = 10 - 2v$ with $v(0) = 0$ (drag proportional to speed). Find $v(t)$ and the terminal velocity."
             answer: "$v = 5(1 - e^{-2t})$; terminal velocity $5$ m/s."
+            answer_contract: {kind: none}
             solution_sketch: "Equilibrium $v = 5$; $v = 5 + Ce^{-2t}$ with $C = -5$."
           - problem: "A drug is infused at $20$ mg/h and eliminated at relative rate $1/4$ per hour: $A' = 20 - \\dfrac{A}{4}$, $A(0) = 0$. Find $A(t)$ and the long-run amount."
             answer: "$A = 80(1 - e^{-t/4})$; long-run $80$ mg."
+            answer_contract: {kind: none}
+            solution_sketch: "$A = 80(1 - e^{-t/4})$; long-run $80$ mg."
           - problem: "A capacitor charges by $V' = \\dfrac{12 - V}{2}$ with $V(0) = 0$. Find $V(t)$."
             answer: "$V = 12(1 - e^{-t/2})$"
             solution_sketch: "Same structure as a mixing tank: approach the source voltage $12$ exponentially."
@@ -1255,14 +1424,17 @@ topics:
         exemplars:
           - problem: "Coffee at $90^{\\circ}$C in a $20^{\\circ}$C room cools to $70^{\\circ}$C in $5$ minutes. How long after the start does it reach $50^{\\circ}$C? Give an exact answer."
             answer: '$t = \dfrac{5\ln(7/3)}{\ln(7/5)}$ minutes ($\approx 12.6$)'
+            answer_contract: {kind: none}
             solution_sketch: "$T = 20 + 70e^{-kt}$; $T(5) = 70$ gives $e^{-5k} = \\tfrac{5}{7}$. Then $70e^{-kt} = 30$ gives $t = \\dfrac{\\ln(7/3)}{k}$ with $k = \\tfrac{1}{5}\\ln\\tfrac{7}{5}$."
           - problem: "A population doubles in $5$ hours. Exactly how long until it is $10$ times its initial size?"
             answer: '$t = \dfrac{5\ln 10}{\ln 2}$ hours'
+            answer_contract: {kind: none}
             solution_sketch: "$k = \\tfrac{\\ln 2}{5}$; solve $e^{kt} = 10$."
         constraints: "first stage determines k from one measurement; second stage inverts for a time; answers exact in logarithms"
     diagnostic_exemplar:
       problem: 'A fish population grows at relative rate $0.4$ per year but is harvested at a constant $200$ fish per year: $P'' = 0.4P - 200$. With $P(0) = 400$, when does the population die out? Give an exact answer.'
       answer: '$t = \dfrac{5\ln 5}{2}$ years.'
+      answer_contract: {kind: none}
       solution_sketch: 'The equilibrium is $P = 500$, and $P = 500 + (400 - 500)e^{0.4t} = 500 - 100e^{0.4t}$. This is zero when $e^{0.4t} = 5$, i.e. $t = \frac{\ln 5}{0.4} = \frac{5\ln 5}{2}$.'
     anki_seeds:
       - front: "Equilibrium of the harvested growth model P' = kP - h?"
@@ -1293,12 +1465,16 @@ topics:
         exemplars:
           - problem: "Find the differential equation satisfied by the family $y = Cx^2$."
             answer: "$y' = \\dfrac{2y}{x}$"
+            answer_contract: {kind: none}
             solution_sketch: "$y' = 2Cx$ and $C = y/x^2$, so $y' = 2(y/x^2)x = 2y/x$."
           - problem: "Find the differential equation of the circles $x^2 + y^2 = C$."
             answer: "$y' = -\\dfrac{x}{y}$"
+            answer_contract: {kind: none}
             solution_sketch: "Differentiate implicitly: $2x + 2yy' = 0$."
           - problem: "Find the differential equation of the lines $y = Cx$."
             answer: "$y' = \\dfrac{y}{x}$"
+            answer_contract: {kind: none}
+            solution_sketch: "$y' = \\dfrac{y}{x}$"
         constraints: "one-parameter families; eliminate C between the equation and its derivative"
       - id: kp2
         name: The orthogonality condition
@@ -1306,9 +1482,12 @@ topics:
         exemplars:
           - problem: "The family $y = Cx^2$ satisfies $y' = 2y/x$. What ODE do its orthogonal trajectories satisfy?"
             answer: "$y' = -\\dfrac{x}{2y}$"
+            answer_contract: {kind: none}
             solution_sketch: "Replace $y'$ by $-1/y'$: perpendicular slopes are negative reciprocals."
           - problem: "The circles $x^2 + y^2 = C$ satisfy $y' = -x/y$. What ODE do their orthogonal trajectories satisfy?"
             answer: "$y' = \\dfrac{y}{x}$"
+            answer_contract: {kind: none}
+            solution_sketch: "$y' = \\dfrac{y}{x}$"
         constraints: "pure slope-swap step: y' -> -1/y'; simplify the resulting right side"
       - id: kp3
         name: Solving for the trajectories
@@ -1316,14 +1495,17 @@ topics:
         exemplars:
           - problem: "Find the orthogonal trajectories of the parabolas $y = Cx^2$."
             answer: "The ellipses $x^2 + 2y^2 = C$."
+            answer_contract: {kind: none}
             solution_sketch: "Solve $y' = -\\dfrac{x}{2y}$: $2y\\,dy = -x\\,dx$ gives $y^2 = -\\dfrac{x^2}{2} + C$."
           - problem: "Find the orthogonal trajectories of the circles $x^2 + y^2 = C$."
             answer: "The lines $y = Cx$."
+            answer_contract: {kind: none}
             solution_sketch: "Solve $y' = y/x$: separable, $\\ln|y| = \\ln|x| + C$."
         constraints: "trajectory ODEs are separable with power/log integrals; present the orthogonal family with its own constant C"
     diagnostic_exemplar:
       problem: "Find the orthogonal trajectories of the lines $y = Cx$."
       answer: "The circles $x^2 + y^2 = C$."
+      answer_contract: {kind: none}
       solution_sketch: "The lines satisfy $y' = y/x$; the trajectories solve $y' = -x/y$, which integrates to $x^2 + y^2 = C$."
     anki_seeds:
       - front: "To find orthogonal trajectories of a family with ODE y' = f(x, y), solve..."

@@ -94,9 +94,11 @@ topics:
         exemplars:
           - problem: 'Prove that $\mathbb{Z}_4 \not\cong U(8)$.'
             answer: '$\mathbb{Z}_4$ has an element of order $4$ (namely $1$); every element of $U(8)$ satisfies $x^2 = 1$. Isomorphisms preserve orders.'
+            answer_contract: {kind: none}
             solution_sketch: 'Compare maximal element orders: $4$ vs $2$.'
           - problem: 'Prove that $\mathbb{Z}_2 \times \mathbb{Z}_2 \not\cong \mathbb{Z}_4$ by counting elements of order $2$.'
             answer: 'The Klein group has $3$ elements of order $2$; $\mathbb{Z}_4$ has exactly $1$ (namely $2$).'
+            answer_contract: {kind: none}
             solution_sketch: 'The count of elements of each order is an isomorphism invariant.'
         constraints: "groups of order <= 12; distinguish via element-order counts"
       - id: kp2
@@ -105,9 +107,11 @@ topics:
         exemplars:
           - problem: 'Prove that $S_3 \not\cong \mathbb{Z}_6$.'
             answer: '$\mathbb{Z}_6$ is abelian; $S_3$ is not ($(1\,2)(1\,3) \neq (1\,3)(1\,2)$).'
+            answer_contract: {kind: none}
             solution_sketch: 'Abelian-ness transfers across isomorphisms; exhibit one non-commuting pair.'
           - problem: 'Prove that $(\mathbb{Q}, +) \not\cong (\mathbb{Z}, +)$.'
             answer: '$\mathbb{Z}$ is cyclic; $\mathbb{Q}$ is not (no single rational generates all of $\mathbb{Q}$: $q/2 \notin \langle q \rangle$).'
+            answer_contract: {kind: none}
             solution_sketch: 'Cyclicity is invariant; any candidate generator fails to reach half of itself.'
         constraints: "one clean invariant per problem; include one infinite-group example per set"
       - id: kp3
@@ -116,14 +120,17 @@ topics:
         exemplars:
           - problem: 'Decide: $\mathbb{Z}_{12} \cong \mathbb{Z}_4 \times \mathbb{Z}_3$?'
             answer: 'Yes: $\gcd(4,3) = 1$, so the product is cyclic of order $12$.'
+            answer_contract: {kind: none}
             solution_sketch: '$(1,1)$ has order $\mathrm{lcm}(4,3) = 12$; a cyclic group of order $12$ is unique up to isomorphism.'
           - problem: 'Decide: $D_6$ (order $12$) $\cong A_4$?'
             answer: 'No: $D_6$ has an element of order $6$ (the rotation $r$); $A_4$ has elements of orders $1, 2, 3$ only.'
+            answer_contract: {kind: none}
             solution_sketch: 'Compare element orders — $A_4$''s elements are the identity, double transpositions, and 3-cycles.'
         constraints: "yes/no with proof, orders <= 12; use the gcd criterion and order profiles"
     diagnostic_exemplar:
       problem: 'Are $\mathbb{Z}_8$, $\mathbb{Z}_4 \times \mathbb{Z}_2$, and $\mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2$ pairwise non-isomorphic? Prove it.'
       answer: 'Yes: their maximal element orders are $8$, $4$, and $2$ respectively, and maximal order is an isomorphism invariant.'
+      answer_contract: {kind: none}
       solution_sketch: 'Compute the largest order in each (generator; $(1,0)$ of order $4$; all non-identity elements order $2$).'
     anki_seeds:
       - front: "Fastest way to show two finite groups are NOT isomorphic?"
@@ -154,9 +161,11 @@ topics:
         exemplars:
           - problem: 'Let $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_{12}$, $\varphi(x) = 3x \bmod 12$. Find $\ker \varphi$ and $\mathrm{im}\, \varphi$.'
             answer: '$\ker \varphi = \{0, 4, 8\}$; $\mathrm{im}\, \varphi = \{0, 3, 6, 9\}$.'
+            answer_contract: {kind: none}
             solution_sketch: '$3x \equiv 0 \pmod{12}$ iff $x \equiv 0 \pmod 4$. The image is the multiples of $3$.'
           - problem: 'Find the kernel of the sign homomorphism $\mathrm{sgn} : S_4 \to \{\pm 1\}$.'
             answer: '$A_4$'
+            answer_contract: {kind: none}
             solution_sketch: 'The even permutations are exactly those with sign $+1$.'
         constraints: "maps k -> ak on Z_n, sign map, reduction maps Z -> Z_n; answers as explicit sets or named subgroups"
       - id: kp2
@@ -165,9 +174,11 @@ topics:
         exemplars:
           - problem: 'Prove that $\ker \varphi$ is a normal subgroup of $G$.'
             answer: 'It is a subgroup (contains $e$, closed under products/inverses since $\varphi$ respects them), and $\varphi(gkg^{-1}) = \varphi(g)e\varphi(g)^{-1} = e$, so it is closed under conjugation.'
+            answer_contract: {kind: none}
             solution_sketch: 'Subgroup checks follow from the homomorphism law; conjugation stays in the kernel because the image conjugates the identity.'
           - problem: 'Prove: $\varphi$ is injective iff $\ker \varphi = \{e\}$.'
             answer: 'If injective, only $e$ maps to $e$. Conversely $\varphi(a) = \varphi(b) \implies \varphi(ab^{-1}) = e \implies ab^{-1} = e \implies a = b$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The trivial-kernel condition converts equal images into a kernel element.'
         constraints: "the two standard lemmas, proved from the definitions"
       - id: kp3
@@ -179,11 +190,13 @@ topics:
             solution_sketch: 'Cosets of the kernel biject with image points: $|\mathrm{im}\,\varphi| = |G|/|\ker\varphi| = 24/4 = 6$.'
           - problem: 'How many elements map to any single point of the image (same setup)?'
             answer: '$4$ — each fiber is a coset of the kernel.'
+            answer_contract: {kind: none}
             solution_sketch: 'Fibers of a homomorphism are kernel cosets, all of size $|\ker \varphi|$.'
         constraints: "fiber/counting problems with |G| <= 60"
     diagnostic_exemplar:
       problem: 'For $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_{12}$, $\varphi(x) = 4x \bmod 12$: compute $\ker \varphi$ and $\mathrm{im}\,\varphi$, check that $|\ker \varphi| \cdot |\mathrm{im}\,\varphi| = 12$, and say whether $\varphi$ is injective.'
       answer: '$\ker \varphi = \{0, 3, 6, 9\}$ and $\mathrm{im}\,\varphi = \{0, 4, 8\}$, so $4 \cdot 3 = 12$. $\varphi$ is not injective: the kernel is bigger than $\{0\}$ (for instance $\varphi(3) = \varphi(0) = 0$), and a homomorphism is injective exactly when its kernel is trivial.'
+      answer_contract: {kind: none}
       solution_sketch: '$4x \equiv 0 \pmod{12}$ iff $3 \mid x$; the image consists of the multiples of $\gcd(4,12) = 4$. Then apply the kernel criterion for injectivity.'
     anki_seeds:
       - front: "$\\ker \\varphi$ for a group homomorphism is always a ______ of the domain."
@@ -414,9 +427,11 @@ topics:
         exemplars:
           - problem: 'Classify all groups of order $4$ up to isomorphism.'
             answer: '$\mathbb{Z}_4$ and the Klein group $\mathbb{Z}_2 \times \mathbb{Z}_2$.'
+            answer_contract: {kind: none}
             solution_sketch: 'If some element has order $4$, cyclic. Otherwise all non-identity elements have order $2$, forcing the Klein table.'
           - problem: 'Prove every group of order at most $5$ is abelian.'
             answer: 'Orders $1,2,3,5$ are $1$ or prime, hence cyclic; order $4$ gives $\mathbb{Z}_4$ or Klein, both abelian.'
+            answer_contract: {kind: none}
             solution_sketch: 'Prime orders are cyclic by Lagrange; order 4 splits into the two known cases.'
         constraints: "orders <= 5; case analysis on element orders"
       - id: kp2
@@ -425,9 +440,11 @@ topics:
         exemplars:
           - problem: 'Name the two groups of order $6$ up to isomorphism and one invariant separating them.'
             answer: '$\mathbb{Z}_6$ and $S_3 \cong D_3$; abelian-ness (or: existence of an element of order $6$).'
+            answer_contract: {kind: none}
             solution_sketch: 'The abelian one is cyclic; the non-abelian one is the symmetric group on $3$ letters.'
           - problem: 'A group of order $10$ is non-abelian. Identify it up to isomorphism.'
             answer: '$D_5$'
+            answer_contract: {kind: none}
             solution_sketch: 'For prime $p$, the groups of order $2p$ are $\mathbb{Z}_{2p}$ and $D_p$; non-abelian forces $D_5$.'
         constraints: "orders 6, 10, 14: cyclic vs dihedral dichotomy (may be quoted)"
       - id: kp3
@@ -436,14 +453,17 @@ topics:
         exemplars:
           - problem: 'Identify $U(12)$ up to isomorphism.'
             answer: '$\mathbb{Z}_2 \times \mathbb{Z}_2$ (Klein): $U(12) = \{1,5,7,11\}$ and $5^2 = 7^2 = 11^2 = 1$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Order $4$ with no element of order $4$ is Klein.'
           - problem: 'Identify $U(10)$ up to isomorphism.'
             answer: '$\mathbb{Z}_4$: $3$ has order $4$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Order $4$ with an element of order $4$ is cyclic.'
         constraints: "U(n) for n <= 16, small quotients and products; match against Z_n, Klein, S_3, D_4, D_5"
     diagnostic_exemplar:
       problem: 'The group $U(18)$ has order $6$. Decide which of the two groups of order $6$ it is, and name the invariant that settles it.'
       answer: 'Up to isomorphism the groups of order $6$ are $\mathbb{Z}_6$ and $S_3 \cong D_3$, separated by commutativity (equivalently, by having an element of order $6$). $U(18) = \{1,5,7,11,13,17\}$ is abelian, since multiplication mod $18$ is commutative, so $U(18) \cong \mathbb{Z}_6$. Concretely $5$ has order $6$: $5,\ 25 \equiv 7,\ 35 \equiv 17,\ 85 \equiv 13,\ 65 \equiv 11,\ 55 \equiv 1$, so $U(18) = \langle 5 \rangle$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Recall the order-$6$ catalogue, then test the separating invariant on $U(18)$ — abelian-ness, confirmed by exhibiting a generator.'
     anki_seeds:
       - front: "The two groups of order 4 up to isomorphism?"
@@ -487,6 +507,7 @@ topics:
             solution_sketch: 'Cancel adjacent inverse pairs: $a(bb^{-1})a^{-1}ba = (aa^{-1})ba = ba$; no further cancellation is possible.'
           - problem: 'Identify the free group on one generator, $F(\{a\})$, up to isomorphism.'
             answer: '$(\mathbb{Z}, +)$'
+            answer_contract: {kind: none}
             solution_sketch: 'Reduced words are exactly the powers $a^n$ ($n \in \mathbb{Z}$), and $a^m a^n = a^{m+n}$: the map $a^n \mapsto n$ is an isomorphism.'
         constraints: "words of length <= 8 on at most 2 generators; note F on >= 2 generators is nonabelian (ab and ba are distinct reduced words)"
       - id: kp2
@@ -495,6 +516,7 @@ topics:
         exemplars:
           - problem: 'Explain why homomorphisms $F(\{a\}) \to G$ correspond exactly to elements of $G$.'
             answer: 'Freeness: any choice $\varphi(a) = g$ extends uniquely by $\varphi(a^n) = g^n$, and there are no relations to respect — so $\varphi \leftrightarrow \varphi(a)$ is a bijection with $G$.'
+            answer_contract: {kind: none}
             solution_sketch: 'A homomorphism out of a free group is determined by, and free to choose, the images of the generators.'
           - problem: 'How many homomorphisms are there from $F(\{a, b\})$ to $\mathbb{Z}_5$?'
             answer: "25"
@@ -506,14 +528,17 @@ topics:
         exemplars:
           - problem: 'Identify the group $\langle a \mid a^6 = e \rangle$ up to isomorphism.'
             answer: '$\mathbb{Z}_6$'
+            answer_contract: {kind: none}
             solution_sketch: 'One generator with the single relation $a^6 = e$ leaves exactly the powers $e, a, \dots, a^5$ — the cyclic group of order $6$ (the quotient of $F(\{a\})$ by the relation).'
           - problem: 'The presentation $\langle r, s \mid r^4 = s^2 = e,\ srs = r^{-1} \rangle$ defines which familiar group of order $8$?'
             answer: '$D_4$'
+            answer_contract: {kind: none}
             solution_sketch: 'These are exactly the dihedral relations: a quarter-turn $r$, a reflection $s$, and conjugation by $s$ inverting $r$; the relations reduce every word to one of $r^i s^j$ ($0 \le i < 4$, $j \in \{0,1\}$).'
         constraints: "match presentations to Z_n, D_n (n <= 6), and Z_m x Z_n (via commuting generators); target orders <= 12; that the relations cap the order may be quoted"
     diagnostic_exemplar:
       problem: 'How many homomorphisms are there from the free group $F(\{a, b\})$ to $\mathbb{Z}_3$, and which group does the presentation $\langle x \mid x^5 = e \rangle$ define?'
       answer: '$3^2 = 9$ homomorphisms; the presentation defines $\mathbb{Z}_5$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Generators of a free group map freely; a single generator with $x^5 = e$ gives the cyclic group of order $5$.'
     anki_seeds:
       - front: "What is the free group $F(S)$?"

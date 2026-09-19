@@ -305,6 +305,7 @@ topics:
             solution_sketch: 'Multiples of $9$ mod $12$: $9, 6, 3, 0$; equivalently $\langle 9 \rangle = \langle \gcd(9,12) \rangle = \langle 3 \rangle$.'
           - problem: 'List the elements of $\langle 3 \rangle$ in $U(7)$.'
             answer: '$\{1, 2, 3, 4, 5, 6\}$ — all of $U(7)$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Powers of $3$ mod $7$ are $3, 2, 6, 4, 5, 1$, so $3$ generates the whole group.'
         constraints: "ambient groups Z_n (n <= 24) or U(p) (p <= 13); answer as a set"
       - id: kp2
@@ -324,14 +325,17 @@ topics:
         exemplars:
           - problem: 'Prove that every cyclic group is abelian.'
             answer: 'Any two elements are $g^i$ and $g^j$, and $g^i g^j = g^{i+j} = g^j g^i$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Powers of a single generator commute because integer addition commutes.'
           - problem: 'Is $U(8)$ cyclic?'
             answer: 'No: every non-identity element has order $2$, but a cyclic group of order $4$ needs an element of order $4$.'
+            answer_contract: {kind: none}
             solution_sketch: '$3^2 = 5^2 = 7^2 = 1$ mod $8$, so no element has order $4 = |U(8)|$.'
         constraints: "short proofs or cyclic/non-cyclic verdicts with an order-based reason"
     diagnostic_exemplar:
       problem: 'How many generators does $\mathbb{Z}_{20}$ have, and is $U(8)$ cyclic?'
       answer: '$\mathbb{Z}_{20}$ has $\varphi(20) = 8$ generators; $U(8)$ is not cyclic.'
+      answer_contract: {kind: none}
       solution_sketch: 'Generators of $\mathbb{Z}_{20}$ are the residues coprime to $20$, and $\varphi(20) = 8$. In $U(8)$ every non-identity element has order $2$.'
     anki_seeds:
       - front: "When does $k$ generate $\\mathbb{Z}_n$?"
@@ -505,6 +509,7 @@ topics:
             solution_sketch: 'Reverse the cycle: $(1\,3\,5\,2)^{-1} = (2\,5\,3\,1) = (1\,2\,5\,3)$.'
           - problem: 'Write the permutation of $\{1,\dots,6\}$ given by $1\mapsto 4, 2\mapsto 5, 3\mapsto 3, 4\mapsto 6, 5\mapsto 2, 6\mapsto 1$ as a product of disjoint cycles.'
             answer: '$(1\,4\,6)(2\,5)$'
+            answer_contract: {kind: none}
             solution_sketch: 'Follow orbits: $1 \to 4 \to 6 \to 1$ and $2 \to 5 \to 2$; $3$ is fixed.'
         constraints: "n <= 8; disjoint cycle output, fixed points omitted"
       - id: kp3
@@ -521,6 +526,7 @@ topics:
     diagnostic_exemplar:
       problem: 'In $S_6$, let $\sigma = (1\,4\,6)(2\,5)$. Compute $\sigma^{-1}$ in cycle notation and the order of $\sigma$.'
       answer: '$\sigma^{-1} = (1\,6\,4)(2\,5)$; order $6$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Invert each disjoint cycle by reversal; the order is $\mathrm{lcm}(3, 2) = 6$.'
     anki_seeds:
       - front: "Order of a permutation written in disjoint cycles?"
@@ -554,9 +560,11 @@ topics:
         exemplars:
           - problem: 'Write the cycle $(1\,2\,3\,4)$ as a product of transpositions and state its parity.'
             answer: '$(1\,4)(1\,3)(1\,2)$ — three transpositions, so odd.'
+            answer_contract: {kind: none}
             solution_sketch: 'A $k$-cycle equals $k-1$ transpositions; $4 - 1 = 3$ is odd.'
           - problem: 'Is the permutation $(1\,4\,6)(2\,5)(3\,7)$ even or odd?'
             answer: 'Even.'
+            answer_contract: {kind: none}
             solution_sketch: 'Transposition counts: $2 + 1 + 1 = 4$, an even total.'
         constraints: "parity of products of disjoint cycles in S_n, n <= 9; k-cycle is even iff k is odd"
       - id: kp2
@@ -568,6 +576,7 @@ topics:
             solution_sketch: 'Exactly half of $S_n$ is even for $n \ge 2$: $|A_4| = 4!/2 = 12$.'
           - problem: 'Is $(1\,2\,3)$ an element of $A_5$?'
             answer: 'Yes: a 3-cycle is even ($2$ transpositions).'
+            answer_contract: {kind: none}
             solution_sketch: '3-cycles decompose into two transpositions, hence are even and lie in $A_n$.'
         constraints: "membership in A_n and |A_n| = n!/2; n <= 8"
       - id: kp3
@@ -576,14 +585,17 @@ topics:
         exemplars:
           - problem: 'The product of two odd permutations is even or odd?'
             answer: 'Even.'
+            answer_contract: {kind: none}
             solution_sketch: 'Parities add mod $2$: odd + odd = even.'
           - problem: 'Can $(1\,2)$ be written as a product of $4$ transpositions?'
             answer: 'No: $(1\,2)$ is odd, and any product of $4$ transpositions is even; parity is well-defined.'
+            answer_contract: {kind: none}
             solution_sketch: 'The parity of the number of transpositions is an invariant of the permutation.'
         constraints: "parity algebra; well-definedness facts, no full proof of invariance required"
     diagnostic_exemplar:
       problem: 'Determine the parity of $\sigma = (1\,3\,5)(2\,4)(6\,7)$ in $S_7$, and state $|A_7|$.'
       answer: '$\sigma$ is even ($2+1+1 = 4$ transpositions); $|A_7| = 7!/2 = 2520$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Count $k-1$ transpositions per $k$-cycle and sum; half of $5040$ permutations are even.'
     anki_seeds:
       - front: "A $k$-cycle is even exactly when..."
@@ -623,9 +635,11 @@ topics:
         exemplars:
           - problem: 'Why is the set of ALL $2 \times 2$ real matrices under multiplication not a group, and how does $GL_2(\mathbb{R})$ repair this?'
             answer: 'Matrices with $\det = 0$ (e.g. the zero matrix) have no inverse. $GL_2(\mathbb{R})$ keeps exactly the invertible matrices ($\det \neq 0$); products stay invertible since $\det(AB) = \det A \, \det B \neq 0$, the identity $I$ is there, and inverses exist by definition.'
+            answer_contract: {kind: none}
             solution_sketch: 'Check each group axiom on the invertible matrices; closure is the multiplicativity of the determinant.'
           - problem: 'Is $A = \begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}$ an element of $GL_2(\mathbb{R})$?'
             answer: 'No: $\det A = 1 \cdot 4 - 2 \cdot 2 = 0$, so $A$ is not invertible.'
+            answer_contract: {kind: none}
             solution_sketch: 'Membership in $GL_n$ is exactly $\det \neq 0$.'
         constraints: "membership tests via 2x2 determinants with integer entries |a_ij| <= 5; axiom checks cite det multiplicativity"
       - id: kp2
@@ -634,6 +648,7 @@ topics:
         exemplars:
           - problem: 'In $GL_2(\mathbb{R})$, let $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ and $B = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$. Compute $AB$ and $BA$. Is $GL_2(\mathbb{R})$ abelian?'
             answer: '$AB = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}$ but $BA = \begin{pmatrix} 1 & 1 \\ 1 & 2 \end{pmatrix}$ — so $GL_2(\mathbb{R})$ is not abelian.'
+            answer_contract: {kind: none}
             solution_sketch: 'Multiply both ways; one non-commuting pair refutes commutativity.'
           - problem: 'Find the order of $R = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$ in $GL_2(\mathbb{R})$.'
             answer: "4"
@@ -645,6 +660,7 @@ topics:
         exemplars:
           - problem: 'Prove that $SL_2(\mathbb{R}) = \{A \in GL_2(\mathbb{R}) : \det A = 1\}$ is a subgroup of $GL_2(\mathbb{R})$.'
             answer: 'It is nonempty ($I \in SL_2$), and for $\det A = \det B = 1$ we get $\det(AB^{-1}) = \det A / \det B = 1$ — the one-step subgroup test.'
+            answer_contract: {kind: none}
             solution_sketch: 'Determinant multiplicativity plus $\det(B^{-1}) = 1/\det B$ feed the one-step test.'
           - problem: 'Compute $|GL_2(\mathbb{Z}_2)|$, the number of invertible $2 \times 2$ matrices over $\mathbb{Z}_2$.'
             answer: "6"
@@ -653,6 +669,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Show that $SL_2(\mathbb{Z}_5) = \{A \in GL_2(\mathbb{Z}_5) : \det A = 1\}$ is a subgroup of $GL_2(\mathbb{Z}_5)$, and find the order of $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ in it.'
       answer: '$SL_2(\mathbb{Z}_5)$ is nonempty since $\det I = 1$, and if $\det A = \det B = 1$ then $\det(AB^{-1}) = \det A / \det B = 1$, so $AB^{-1} \in SL_2(\mathbb{Z}_5)$; the one-step subgroup test applies. For the order: $A^{n} = \begin{pmatrix} 1 & n \\ 0 & 1 \end{pmatrix}$, which is the identity first when $n \equiv 0 \pmod 5$, so $A$ has order $5$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Use multiplicativity of the determinant with the one-step test, then compute powers of the shear matrix and see when the top-right entry vanishes mod $5$.'
     anki_seeds:
       - front: "$GL_n(\\mathbb{R})$ is defined as..."

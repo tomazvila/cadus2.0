@@ -26,9 +26,11 @@ topics:
         exemplars:
           - problem: 'What must be added to the axioms of a commutative ring with unity ($1 \neq 0$) to get a field?'
             answer: 'Every nonzero element has a multiplicative inverse.'
+            answer_contract: {kind: none}
             solution_sketch: 'Fields are commutative division rings; units are everything nonzero.'
           - problem: 'Every field is an integral domain. Prove it.'
             answer: 'If $ab = 0$ and $a \neq 0$, multiply by $a^{-1}$: $b = a^{-1}ab = a^{-1}0 = 0$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Invertibility kills zero divisors.'
         constraints: "axiom-level questions; classify Q, R, Z, Z_n, Z[x] as field / domain / neither"
       - id: kp2
@@ -37,9 +39,11 @@ topics:
         exemplars:
           - problem: 'Find the characteristic of $\mathbb{Z}_{12}$, of $\mathbb{Q}$, and of $\mathbb{Z}_7$.'
             answer: '$12$; $0$; $7$'
+            answer_contract: {kind: none}
             solution_sketch: 'The characteristic is the additive order of $1$ (or $0$ if infinite).'
           - problem: 'Prove that the characteristic of a field is $0$ or prime.'
             answer: 'If $\mathrm{char} = mn$ with $1 < m, n < mn$, then $(m\cdot 1)(n \cdot 1) = mn \cdot 1 = 0$ gives zero divisors — impossible in a field.'
+            answer_contract: {kind: none}
             solution_sketch: 'A composite characteristic factors into two nonzero elements multiplying to zero.'
         constraints: "characteristics of Z_n, Q, products; the primality proof"
       - id: kp3
@@ -51,11 +55,13 @@ topics:
             solution_sketch: 'Binomial coefficients $\binom{3}{1} = \binom{3}{2} = 3 \equiv 0$; only the end terms survive.'
           - problem: 'In $\mathbb{Z}_5$, compute $(2 + 3)^5$ and $2^5 + 3^5$, and compare.'
             answer: 'Both are $0$: $(5)^5 \equiv 0$ and $32 + 243 = 275 \equiv 0 \pmod 5$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The Frobenius identity $(a+b)^p = a^p + b^p$ holds in characteristic $p$.'
         constraints: "p in {2, 3, 5}; expansions verified with small numbers"
     diagnostic_exemplar:
       problem: 'In a commutative ring of characteristic $5$, expand $(a + b)^5$ in simplest form and justify which terms vanish. Then give the characteristic of a field with $25$ elements.'
       answer: '$(a+b)^5 = a^5 + b^5$: by the binomial theorem the middle coefficients are $\binom{5}{1} = 5$, $\binom{5}{2} = 10$, $\binom{5}{3} = 10$, $\binom{5}{4} = 5$, each divisible by $5$, so those terms are $0$ in characteristic $5$. A field with $25 = 5^2$ elements has characteristic $5$: its prime subfield is $\mathbb{Z}_5$, and a finite field of order $p^{n}$ has characteristic the prime $p$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Only the two end terms of the binomial expansion survive — this is the Frobenius map $x \mapsto x^{p}$. A finite field has prime-power order and characteristic that prime.'
     anki_seeds:
       - front: "Characteristic of a ring with unity?"
@@ -95,9 +101,11 @@ topics:
         exemplars:
           - problem: 'Let $D$ be an integral domain. On $D \times (D \setminus \{0\})$ define $(a, b) \sim (c, d) \iff ad = bc$. Prove that $\sim$ is transitive, and point out where you use that $D$ is a domain.'
             answer: 'Suppose $(a,b) \sim (c,d)$ and $(c,d) \sim (e,f)$: $ad = bc$ and $cf = de$. Then $adf = bcf = bde$, so $d(af - be) = 0$. Since $d \neq 0$ and $D$ has no zero divisors, $af = be$, i.e. $(a,b) \sim (e,f)$. The cancellation of $d$ is exactly where the domain property is used.'
+            answer_contract: {kind: none}
             solution_sketch: 'Multiply the two defining equations to a common expression and cancel $d$ — legal only without zero divisors.'
           - problem: 'Fractions are added by $\frac{a}{b} + \frac{c}{d} = \frac{ad + bc}{bd}$. Why does the denominator $bd$ stay legal, and where does that fail in a ring with zero divisors?'
             answer: 'Denominators must be nonzero: $b, d \neq 0$ gives $bd \neq 0$ precisely because a domain has no zero divisors. In $\mathbb{Z}_6$, $b = 2$ and $d = 3$ are nonzero yet $bd = 0$, so the sum would have a zero denominator — the construction breaks.'
+            answer_contract: {kind: none}
             solution_sketch: 'Closure of $D \setminus \{0\}$ under multiplication is equivalent to having no zero divisors.'
         constraints: "the transitivity and denominator-closure arguments, each localizing exactly where the domain hypothesis is used; well-definedness of + or x checked on one representative change"
       - id: kp2
@@ -106,9 +114,11 @@ topics:
         exemplars:
           - problem: 'Identify the field of fractions of $\mathbb{Z}$ and of $\mathbb{Q}[x]$.'
             answer: '$\mathrm{Frac}(\mathbb{Z}) = \mathbb{Q}$; $\mathrm{Frac}(\mathbb{Q}[x]) = \mathbb{Q}(x)$, the field of rational functions $p/q$ with $p, q \in \mathbb{Q}[x]$, $q \neq 0$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The construction applied to $\mathbb{Z}$ produces exactly the rationals; applied to a polynomial ring over a field it produces the rational-function field.'
           - problem: 'What is the field of fractions of a field $F$? Justify.'
             answer: '$F$ itself (up to isomorphism): every fraction $a/b$ equals $ab^{-1}/1$, since $b$ is already invertible in $F$, so the embedding $a \mapsto a/1$ is onto.'
+            answer_contract: {kind: none}
             solution_sketch: 'Invertible denominators collapse every fraction to an element of $F$.'
         constraints: "identifications for Z, F[x] (F in {Q, Z_p}), Z[sqrt(2)] (giving Q(sqrt(2)) = {a + b sqrt(2), a, b rational}), and fields; each identification says what the elements look like"
       - id: kp3
@@ -117,14 +127,17 @@ topics:
         exemplars:
           - problem: 'Prove that $\iota : D \to \mathrm{Frac}(D)$, $\iota(a) = \frac{a}{1}$, is an injective ring homomorphism.'
             answer: '$\iota(a + b) = \frac{a+b}{1} = \frac{a}{1} + \frac{b}{1}$ and $\iota(ab) = \frac{ab}{1} = \frac{a}{1} \cdot \frac{b}{1}$ by the fraction operations with denominator $1$. Injective: $\frac{a}{1} = \frac{b}{1}$ means $a \cdot 1 = 1 \cdot b$, i.e. $a = b$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Denominator-1 fractions add and multiply like $D$ itself; equality of such fractions unwinds to equality in $D$.'
           - problem: 'Show that any field $K$ containing an integral domain $D$ (as a subring) contains a subfield isomorphic to $\mathrm{Frac}(D)$. What does this say about $\mathbb{Q}$ and $\mathbb{Z}$?'
             answer: 'Map $\frac{a}{b} \mapsto ab^{-1} \in K$ (defined since $b \neq 0$ is invertible in $K$); it is well defined ($ad = bc \implies ab^{-1} = cd^{-1}$), a ring homomorphism, and injective since a nonzero fraction maps to a nonzero element — its image is a subfield isomorphic to $\mathrm{Frac}(D)$. Hence $\mathbb{Q}$ is (up to isomorphism) the smallest field containing $\mathbb{Z}$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The universal property, lite: fractions have nowhere to go but $ab^{-1}$, so $\mathrm{Frac}(D)$ embeds in every field around $D$.'
         constraints: "the embedding and minimality proofs in guided steps; conclude 'every integral domain embeds in a field' explicitly once per set"
     diagnostic_exemplar:
       problem: 'Identify the field of fractions of the integral domain $\mathbb{Z}[\sqrt{2}] = \{a + b\sqrt{2} : a, b \in \mathbb{Z}\}$ as an explicit subfield of $\mathbb{R}$, and justify your answer.'
       answer: 'It is $\mathbb{Q}(\sqrt{2}) = \{p + q\sqrt{2} : p, q \in \mathbb{Q}\}$. Every quotient of elements of $\mathbb{Z}[\sqrt2]$ lies there: for $c + d\sqrt2 \ne 0$, $\frac{a+b\sqrt2}{c+d\sqrt2} = \frac{(a+b\sqrt2)(c-d\sqrt2)}{c^2 - 2d^2}$, and $c^2 - 2d^2 \ne 0$ because $\sqrt2$ is irrational; the result has the form $p + q\sqrt2$ with $p, q \in \mathbb{Q}$. Conversely $\mathbb{Q}(\sqrt2)$ is a field containing $\mathbb{Z}[\sqrt2]$, and any field containing a domain $D$ contains a copy of $\mathrm{Frac}(D)$ via $a/b \mapsto ab^{-1}$; since each $p + q\sqrt2$ is such a quotient, $\mathrm{Frac}(\mathbb{Z}[\sqrt2]) = \mathbb{Q}(\sqrt2)$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Rationalise the denominator with the conjugate; the norm $c^2 - 2d^2$ is nonzero by irrationality of $\sqrt2$. Then use that $\mathrm{Frac}(D)$ embeds in every field containing $D$, so it is the smallest such field.'
     anki_seeds:
       - front: "Field of fractions of an integral domain $D$?"
@@ -164,6 +177,7 @@ topics:
             solution_sketch: '$3x = -4 = 3$, and multiplying by $3^{-1} = 5$ gives $x = 15 = 1$. Check: $3 + 5 = 8 \equiv 1$.'
           - problem: 'Find all solutions of $x^2 = 2$ in $\mathbb{Z}_7$.'
             answer: '$x = 3$ and $x = 4$'
+            answer_contract: {kind: none}
             solution_sketch: '$3^2 = 9 \equiv 2$ and $4^2 = 16 \equiv 2$; a quadratic over a field has at most two roots.'
         constraints: "p <= 13; linear and quadratic equations solved by field arithmetic"
       - id: kp2
@@ -172,9 +186,11 @@ topics:
         exemplars:
           - problem: 'Prove that $\mathbb{Z}_p$ ($p$ prime) is a field.'
             answer: 'For $a \neq 0$, $\gcd(a, p) = 1$, so Bezout gives $ax + py = 1$, i.e. $ax \equiv 1$: every nonzero element is invertible.'
+            answer_contract: {kind: none}
             solution_sketch: 'Primality makes every nonzero residue coprime to $p$; extended Euclid produces the inverse.'
           - problem: 'Use Fermat''s little theorem to express $a^{-1}$ in $\mathbb{Z}_p$, and compute $4^{-1}$ in $\mathbb{Z}_7$ this way.'
             answer: '$a^{-1} = a^{p-2}$; $4^5 = 1024 = 146\cdot7 + 2$, so $4^{-1} = 2$.'
+            answer_contract: {kind: none}
             solution_sketch: '$a \cdot a^{p-2} = a^{p-1} = 1$. And indeed $4 \cdot 2 = 8 \equiv 1 \pmod 7$.'
         constraints: "the Bezout proof; Fermat-inverse computations with p <= 11"
       - id: kp3
@@ -183,14 +199,17 @@ topics:
         exemplars:
           - problem: 'Is there a field with exactly $6$ elements?'
             answer: 'No: every finite field has prime-power order, and $6 = 2 \cdot 3$ is not a prime power.'
+            answer_contract: {kind: none}
             solution_sketch: 'A finite field is a vector space over its prime subfield $\mathbb{Z}_p$, so its size is $p^n$.'
           - problem: 'Describe a field with $4$ elements.'
             answer: '$\mathbb{Z}_2[x]/\langle x^2 + x + 1 \rangle = \{0, 1, \alpha, \alpha + 1\}$ with $\alpha^2 = \alpha + 1$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Quotient by an irreducible quadratic over $\mathbb{Z}_2$; the four remainders form a field.'
         constraints: "existence/size questions for orders <= 27; construction via irreducible polynomials may be quoted"
     diagnostic_exemplar:
       problem: 'Describe a field with exactly $9$ elements, justifying that it is a field, and compute the inverse of $\alpha$, the root of the polynomial you adjoin.'
       answer: 'Take $F = \mathbb{Z}_3[x]/\langle x^2 + 1\rangle$. The polynomial $x^2 + 1$ has no root in $\mathbb{Z}_3$ ($0, 1, 2$ give $1, 2, 2$), so being of degree $2$ it is irreducible; hence $\langle x^2+1\rangle$ is maximal and the quotient is a field. Its elements are $a + b\alpha$ with $a, b \in \mathbb{Z}_3$ and $\alpha$ the class of $x$, so $|F| = 3^2 = 9$. Since $\alpha^2 = -1 = 2$, we get $\alpha \cdot 2\alpha = 2\alpha^2 = 2 \cdot 2 = 4 = 1$, so $\alpha^{-1} = 2\alpha$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Adjoin a root of an irreducible quadratic over $\mathbb{Z}_3$ (Kronecker) to get $3^2$ elements, then invert $\alpha$ using $\alpha^2 = 2$.'
     anki_seeds:
       - front: "$\\mathbb{Z}_n$ is a field iff..."
@@ -319,6 +338,7 @@ topics:
         exemplars:
           - problem: 'Compute $[\mathbb{Q}(\sqrt{2}) : \mathbb{Q}]$ and $[\mathbb{Q}(\sqrt[3]{2}) : \mathbb{Q}]$.'
             answer: '$2$ and $3$'
+            answer_contract: {kind: none}
             solution_sketch: 'The degree of a simple algebraic extension equals the degree of the generator''s minimal polynomial ($x^2 - 2$ and $x^3 - 2$).'
           - problem: 'What is $[\mathbb{C} : \mathbb{R}]$?'
             answer: "2"
@@ -330,9 +350,11 @@ topics:
         exemplars:
           - problem: 'State the tower law and use it: given $[\mathbb{Q}(\sqrt2, \sqrt3) : \mathbb{Q}(\sqrt2)] = 2$, compute $[\mathbb{Q}(\sqrt2, \sqrt3) : \mathbb{Q}]$.'
             answer: '$[K : F] = [K : E][E : F]$ for $F \subseteq E \subseteq K$; here $2 \cdot 2 = 4$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Multiply the degrees down the tower through $E = \mathbb{Q}(\sqrt2)$.'
           - problem: 'Can $\mathbb{Q}(\sqrt[3]{2})$ contain $\sqrt{2}$?'
             answer: 'No: that would put $\mathbb{Q}(\sqrt2)$, of degree $2$, inside a degree-$3$ extension, but $2 \nmid 3$ (tower law).'
+            answer_contract: {kind: none}
             solution_sketch: 'Degrees of intermediate fields divide the total degree.'
         constraints: "towers of height 2; divisibility arguments from the tower law"
     diagnostic_exemplar:
@@ -450,9 +472,11 @@ topics:
         exemplars:
           - problem: 'Show that $\mathbb{Z}_3[x]/\langle x^2 + 1 \rangle$ is a field with $9$ elements containing a root of $x^2 + 1$.'
             answer: '$x^2 + 1$ has no root in $\mathbb{Z}_3$ ($0, 1, 2$ give $1, 2, 2$), so it is irreducible (degree $2$) and the quotient by the maximal ideal $\langle x^2+1 \rangle$ is a field with $3^2 = 9$ elements. The coset $\alpha = x + \langle x^2 + 1 \rangle$ satisfies $\alpha^2 + 1 = 0$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Irreducible $\implies$ maximal ideal $\implies$ field quotient; the residue of $x$ is a root by construction.'
           - problem: 'For $f$ irreducible over $F$, what is the degree $[F[x]/\langle f \rangle : F]$?'
             answer: '$\deg f$'
+            answer_contract: {kind: none}
             solution_sketch: 'The cosets of $1, x, \dots, x^{\deg f - 1}$ form a basis — reduction mod $f$ leaves remainders of degree $< \deg f$.'
         constraints: "Kronecker constructions over Z_2, Z_3, Q with degree-2 or degree-3 polynomials; irreducibility checked by root tests"
       - id: kp2
@@ -461,9 +485,11 @@ topics:
         exemplars:
           - problem: 'Find the splitting field of $x^4 - 1$ over $\mathbb{Q}$ and its degree over $\mathbb{Q}$.'
             answer: '$\mathbb{Q}(i)$, of degree $2$.'
+            answer_contract: {kind: none}
             solution_sketch: 'The roots are $\pm 1, \pm i$; adjoining $i$ captures all four, and $[\mathbb{Q}(i) : \mathbb{Q}] = 2$ via the minimal polynomial $x^2 + 1$.'
           - problem: 'Explain why $\mathbb{Q}(\sqrt[3]{2})$ is NOT the splitting field of $x^3 - 2$ over $\mathbb{Q}$, then give the splitting field and its degree.'
             answer: '$\mathbb{Q}(\sqrt[3]2) \subseteq \mathbb{R}$ contains only the real root; the roots $\sqrt[3]2\,\omega$ and $\sqrt[3]2\,\omega^2$ ($\omega$ a primitive cube root of unity) are non-real. The splitting field is $\mathbb{Q}(\sqrt[3]2, \omega)$, of degree $3 \cdot 2 = 6$.'
+            answer_contract: {kind: none}
             solution_sketch: 'A splitting field must contain ALL roots. Tower: degree $3$ for $\sqrt[3]2$, then degree $2$ for $\omega$ (root of $x^2 + x + 1$, which stays irreducible over the real field $\mathbb{Q}(\sqrt[3]2)$).'
         constraints: "polynomials of degree <= 4 over Q with radical or root-of-unity roots; every problem exhibits the full root list"
       - id: kp3
@@ -475,6 +501,7 @@ topics:
             solution_sketch: 'The splitting field is $\mathbb{Q}(\sqrt2, \sqrt3)$. Tower: $[\mathbb{Q}(\sqrt2) : \mathbb{Q}] = 2$, and $\sqrt3 \notin \mathbb{Q}(\sqrt2)$ keeps $x^2 - 3$ irreducible there, so another factor of $2$: total $4$.'
           - problem: 'What is the largest possible degree of the splitting field of a cubic over $\mathbb{Q}$, and give a cubic achieving it.'
             answer: '$3! = 6$; e.g. $x^3 - 2$.'
+            answer_contract: {kind: none}
             solution_sketch: 'In general the splitting field of a degree-$n$ polynomial has degree dividing $n!$ (may be quoted); $x^3 - 2$ attains $6$.'
         constraints: "tower-law computations of height <= 2; the n! bound may be quoted; non-membership facts like sqrt(3) not in Q(sqrt(2)) may be given"
     diagnostic_exemplar:
