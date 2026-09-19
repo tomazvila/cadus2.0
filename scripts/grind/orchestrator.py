@@ -268,6 +268,9 @@ def restamp_contexts():
           WHERE status='approved' AND kind IN ('teach','hint_ladder');""")
 
 def make_due():
+    if os.environ.get("CADUS_GRIND_NO_MAKE_DUE"):
+        log("make_due disabled (walkthrough honesty mode)")
+        return
     db(f"UPDATE events SET ts = ts + (now() - (SELECT max(ts) FROM events WHERE user_id='{USER}')) WHERE user_id='{USER}';")
     m = db(f"SELECT model::text FROM learner_models WHERE user_id='{USER}';")
     if not m:
@@ -290,6 +293,10 @@ def make_due():
 # ---------------- main ----------------
 
 def main():
+    # Walkthrough mode: any course id may be named on the command line; a course
+    # outside COURSES becomes a single-course run (wave-3 per-learner walkthroughs).
+    if len(sys.argv) > 1 and sys.argv[1] not in COURSES:
+        COURSES[:] = [sys.argv[1]]
     idx = COURSES.index(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1] in COURSES else 0
     deadline = time.time() + float(sys.argv[2] if len(sys.argv) > 2 else 3600)
     authored_topics = set()
