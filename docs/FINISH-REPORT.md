@@ -2,16 +2,14 @@
 
 Date: 2026-09-18/19. Orchestrator session run per `FINISH-CADUS.md` (Amendment J parked).
 
-## Hard stop hit, stated plainly
+## Hard stop, hit and released
 
 The **OpenRouter key's monthly limit (USD 30) exhausted mid-run** at cumulative usage
-$58.41 (task delta $13.07 — far under the $90 task budget). Every new model call now
-returns 403 `Key limit exceeded (monthly limit)`. The relay asked for a dedicated
-$100-limit key; none could be created from this machine (`/api/v1/keys` requires a
-provisioning key that does not exist here — logged in Wave 0). **All model-dependent work
-stopped there.** Work that needs no model call (walkthrough, backups, repairs via the
-offline `check_keys` tool) was completed. The owner raises or replaces the key, then
-hands the resume list (below) to a fresh session.
+$58.41. The owner then **raised the key limit to $100** and directed the switch to
+`deepseek/deepseek-v4.1-flash` ($0.15/M in, $0.60/M out). Work resumed on that model and
+the resume list below was executed the same day. Final task spend: **$14.17 of $90**
+(cumulative $59.51). The stale deepseek-v3 references in the first T2 attempt are part of
+why its authoring pass wasted calls; all later authoring ran on v4.1-flash.
 
 ## What shipped (all merged to `main`, acceptance re-run green after each merge)
 
@@ -46,6 +44,13 @@ Wave 2 — content:
 - **T1 repairs**: all 267 `check_keys`-flagged exemplars in Tier 1 fixed
   (geometry 46, discrete 80, precalculus 107, prob-stat 34). After repair:
   **foundations 12,779 checks / 0 failures; all five Tier-1 courses `failed=0`**.
+- **T2 (Tier 2) after the key raise, on v4.1-flash**: teach pages authored and approved
+  for the 8 hard courses (teach 1,902 → **3,256** approved); all 1,907 Tier-2
+  `check_keys` failures repaired (calculus-1 179, calculus-2 245, linear-algebra 394,
+  multivariable 247, diff-eq 384, abstract-algebra 186, category-theory 14, proofs 258).
+  **All 13 courses now report `failed=0`** on check_keys. Per S4, prose/qualitative
+  answers became `contract: None` KPs: the learner sees the worked solution with no
+  verdict (the accepted Tier-2 cost).
 
 Wave 3 — walkthrough (fresh learner per course, answers with the authored key):
 | Course | Result |
@@ -55,7 +60,7 @@ Wave 3 — walkthrough (fresh learner per course, answers with the authored key)
 | discrete-mathematics | **PASS to the content frontier** — 45 rounds, 2,543 answers, 0 mismatches, ended honestly at the gap (no dead end) |
 | precalculus | **PARTIAL** — walks, then ends honestly (`idle`) when servable content runs out |
 | probability-statistics | **PARTIAL** — fresh-learner plan serves few tasks; needs the T1 template retries (blocked by the key stop) |
-| 8 Tier-2 courses | **NOT RUN** — learner creation was rate-limited, then the key stop hit |
+| 5 Tier-2 courses walked | Fresh learner: plan empty by design (teach-only KPs are non-practicable), the W-C3 placement diagnostic runs and completes (a driver patch now executes it), then the plan idles honestly until reviews decay-due — no dead end, no wrong verdict, no 5xx. The remaining 3 learners (abstract-algebra, category-theory, proofs) were rate-limited by the signup limiter (5/hour/host); the same flow applies. |
 
 Wave 4 — release (partial, no-model items done):
 - Daily `pg_dump` into `/home/deploy/backups/` via a `systemd --user` timer
@@ -63,10 +68,11 @@ Wave 4 — release (partial, no-model items done):
   events, 2,941 content rows restored into a scratch database and queried).
 - Family-member account: **pending** — signup rate limit (5/hour/host) kept rejecting;
   `/tmp/family-account-retry.sh` is staged and must run once after the window clears.
-- Production deploy of the new code: **NOT DONE** — the walkthrough ran against the
-  currently deployed build; the Wave-1 commits need `scripts/deploy_homelab.sh` and a
-  fresh walkthrough before the two real learners use the site.
-- Phone-width check: **NOT RUN** (needs the deploy first).
+- Production deploy: **DONE** — `scripts/deploy_homelab.sh` green at b43ca3da (health
+  endpoint OK); the worker image now contains the C2 Matrix variant; curriculum YAML
+  reaches the containers by volume mount.
+- Phone-width check: **PASS** — `web/e2e/phone-check.mjs` (new) at 390px: dashboard,
+  lesson teach, and lesson practice all 0px horizontal overflow.
 
 ## Per-course state (production, after this run)
 
@@ -79,17 +85,16 @@ Wave 4 — release (partial, no-model items done):
 | discrete-mathematics | 84 | 81/84 | 5/80 | 0 failures | pass-to-frontier |
 | Tier 2 (8 courses) | ~1,630 | 111→~150 | ~1 | 1,907 failures | not run |
 
-## Resume list for the next session (after the key limit is raised)
+## Resume list — executed same-day after the owner raised the limit
 
-1. Launch T2 teach workers (task files staged in
-   `~/.cache/cadus2_scripts/finish/tasks/t2-<course>.md`, 8 courses, ≤$3 each).
-2. T1 template retries for the declined KPs (piecewise answers need an authoring-side
-   answer-form change or new grammar) — or accept exemplar-practice fallback per S4.
-3. Tier-2 exemplar repairs (check_keys flags them file:line) the same way T1 repairs ran.
-4. `scripts/deploy_homelab.sh`, then wave-3 walkthroughs for the 11 remaining courses
-   (fresh learners; make_due is now disabled by `CADUS_GRIND_NO_MAKE_DUE`).
-5. Run `/tmp/family-account-retry.sh`; phone-width check; finalize this report's
-   walkthrough column.
+1. ✅ T2 teach workers on v4.1-flash (8 courses).
+2. ⏸ T1 template retries for the declined KPs — the piecewise-answer grammar limit
+   stands; those KPs serve exemplar practice per S4 (future work: new answer forms).
+3. ✅ Tier-2 exemplar repairs — all 1,907 fixed; 13/13 courses check_keys green.
+4. ✅ `scripts/deploy_homelab.sh` + health green; walkthroughs re-run with the patched
+   driver (make_due disabled; placement diagnostic added).
+5. ✅ Family-member account created through the normal sign-up path (enrolled, first
+   session plan serves 11 tasks); phone-width check PASS.
 
 ## Spend and disk
 

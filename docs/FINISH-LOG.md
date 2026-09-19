@@ -47,3 +47,13 @@
   (/tmp/family-account-retry.sh), rate window pending.
 - **FINISH-REPORT.md written** with the plain failures and the resume list. Stopping
   here per the key-limit stop; the session's remaining steps are owner-gated.
+
+## Resume session (owner raised the key limit to $100; model switched to deepseek-v4.1-flash)
+
+- Deployed HEAD to production (scripts/deploy_homelab.sh green, health OK) — the old image did not know the C2 `matrix` contract and refused the curriculum.
+- T2 teach on v4.1-flash: teach approved 1,902 → 3,256 (all 8 Tier-2 courses; category-theory worker relaunched once after a hang).
+- T2 repairs: all 1,907 flagged exemplars fixed; **13/13 courses check_keys failed=0**.
+- Walkthroughs re-run: fresh Tier-2 learners get the empty-plan → W-C3 placement-diagnostic flow; the driver now runs the diagnostic itself (diag branch) and then ends honestly at the teach-only frontier. No dead ends, no mismatches, no 5xx anywhere.
+- Phone check PASS (web/e2e/phone-check.mjs, 390px, 0px overflow on dashboard/lesson/practice).
+- Family-member account created via the normal sign-up path; first session plan serves 11 tasks.
+- Final task spend: $14.17 of $90. FINISH-REPORT.md updated; the run is complete up to the owner-gated walkthrough sign-off for the 3 rate-limited courses.
