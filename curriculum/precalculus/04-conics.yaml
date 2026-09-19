@@ -28,9 +28,12 @@ topics:
         exemplars:
           - problem: 'Find the focus and directrix of $x^2 = 8y$.'
             answer: "focus (0, 2); directrix y = -2"
+            answer_contract: {kind: none}
             solution_sketch: '$4p = 8$, so $p = 2$; the parabola opens upward.'
           - problem: 'Find the focus and directrix of $y^2 = 12x$.'
             answer: "focus (3, 0); directrix x = -3"
+            answer_contract: {kind: none}
+            solution_sketch: '$4p = 12$, so $p = 3$; the parabola opens right: focus $(3, 0)$, directrix $x = -3$.'
       - id: kp2
         name: Write the equation from focus or directrix
         key_prerequisites: [distance-midpoint-formulas]
@@ -38,9 +41,11 @@ topics:
         exemplars:
           - problem: 'Write the equation of the parabola with focus $(0, 3)$ and directrix $y = -3$.'
             answer: "x^2 = 12y"
+            answer_contract: {kind: polynomial_relation}
             solution_sketch: 'Vertex at the origin, $p = 3$, opens upward: $x^2 = 4py$.'
           - problem: 'Write the equation of the parabola with vertex at the origin and focus $(-2, 0)$.'
             answer: "y^2 = -8x"
+            answer_contract: {kind: polynomial_relation}
       - id: kp3
         name: Shifted vertex
         key_prerequisites: [quadratic-graphs-vertex, completing-the-square]
@@ -48,13 +53,16 @@ topics:
         exemplars:
           - problem: 'For $(x - 1)^2 = 4(y + 2)$, find the vertex, focus, and directrix.'
             answer: "vertex (1, -2); focus (1, -1); directrix y = -3"
+            answer_contract: {kind: none}
             solution_sketch: '$4p = 4$ gives $p = 1$; move $p$ up from the vertex for the focus.'
           - problem: 'Find the vertex and focus of $(y - 3)^2 = 8(x - 1)$.'
-            answer: "vertex (1, 3); focus (3, 3)"
+            answer: "vertex = (1, 3); focus = (3, 3)"
+            answer_contract: {kind: multipart, parts: [{name: vertex, contract: {kind: coordinates, arity: 2}}, {name: focus, contract: {kind: coordinates, arity: 2}}]}
             solution_sketch: '$p = 2$, opening right.'
     diagnostic_exemplar:
       problem: 'For $(x + 2)^2 = 8(y - 1)$, find the vertex, focus, and directrix.'
       answer: "vertex (-2, 1); focus (-2, 3); directrix y = -1"
+      answer_contract: {kind: none}
       solution_sketch: '$4p = 8$ gives $p = 2$, opening upward: focus $2$ above the vertex, directrix $2$ below.'
     anki_seeds:
       - front: "For x² = 4py, the focus and directrix are..."
@@ -90,8 +98,11 @@ topics:
         exemplars:
           - problem: 'For $\frac{x^2}{25} + \frac{y^2}{9} = 1$, find the vertices and the endpoints of the minor axis.'
             answer: "vertices (±5, 0); minor-axis endpoints (0, ±3)"
+            answer_contract: {kind: none}
+            solution_sketch: '$a^2 = 25$ (horizontal major axis): vertices $(\\pm 5, 0)$; $b^2 = 9$: minor-axis endpoints $(0, \\pm 3)$.'
           - problem: 'Which axis is the major axis of $\frac{x^2}{9} + \frac{y^2}{25} = 1$?'
             answer: "the y-axis"
+            answer_contract: {kind: label, options: [[the y-axis], [the x-axis]]}
             solution_sketch: 'The larger denominator sits under $y^2$.'
       - id: kp2
         name: Find the foci with c² = a² - b²
@@ -99,10 +110,13 @@ topics:
         constraints: "centre at the origin; a², b² chosen so c is an integer (or a single clean radical); cover both horizontal and vertical major axes"
         exemplars:
           - problem: 'Find the foci of $\frac{x^2}{25} + \frac{y^2}{9} = 1$.'
-            answer: "(±4, 0)"
+            answer: "(4, 0) and (-4, 0)"
+            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
             solution_sketch: '$c^2 = 25 - 9 = 16$.'
           - problem: 'Find the foci of $\frac{x^2}{9} + \frac{y^2}{25} = 1$.'
-            answer: "(0, ±4)"
+            answer: "(0, -4) and (0, 4)"
+            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
+            solution_sketch: 'Vertical major axis; $c^2 = 25 - 9 = 16$, so the foci are $(0, \\pm 4)$.'
       - id: kp3
         name: Write the equation from geometric data
         key_prerequisites: [parabola-focus-directrix]
@@ -110,12 +124,15 @@ topics:
         exemplars:
           - problem: 'Write the equation of the ellipse with vertices $(\pm 5, 0)$ and foci $(\pm 3, 0)$.'
             answer: "x^2/25 + y^2/16 = 1"
+            answer_contract: {kind: polynomial_relation}
             solution_sketch: '$b^2 = a^2 - c^2 = 25 - 9 = 16$.'
           - problem: 'Write the equation of the ellipse centered at $(2, -1)$ with a horizontal semi-major axis $4$ and semi-minor axis $2$.'
             answer: "(x - 2)^2/16 + (y + 1)^2/4 = 1"
+            answer_contract: {kind: polynomial_relation}
     diagnostic_exemplar:
       problem: 'Write the equation of the ellipse with vertices $(0, \pm 5)$ and foci $(0, \pm 4)$.'
       answer: "x^2/9 + y^2/25 = 1"
+      answer_contract: {kind: polynomial_relation}
       solution_sketch: 'Vertical major axis with $a = 5$; $b^2 = a^2 - c^2 = 25 - 16 = 9$.'
     anki_seeds:
       - front: "For an ellipse, c² = ?"
@@ -147,9 +164,12 @@ topics:
         exemplars:
           - problem: 'For $\frac{x^2}{9} - \frac{y^2}{16} = 1$, find the vertices and foci.'
             answer: "vertices (±3, 0); foci (±5, 0)"
+            answer_contract: {kind: none}
             solution_sketch: '$c^2 = 9 + 16 = 25$.'
           - problem: 'Find the asymptotes of $\frac{x^2}{9} - \frac{y^2}{16} = 1$.'
             answer: "y = ±(4/3)x"
+            answer_contract: {kind: none}
+            solution_sketch: 'Asymptote slopes $\\pm\\frac{b}{a} = \\pm\\frac{4}{3}$: $y = \\pm\\frac{4}{3}x$.'
       - id: kp2
         name: Vertical transverse axis
         key_prerequisites: [ellipses, simplifying-radicals]
@@ -157,9 +177,11 @@ topics:
         exemplars:
           - problem: 'For $\frac{y^2}{4} - \frac{x^2}{12} = 1$, find the vertices and foci.'
             answer: "vertices (0, ±2); foci (0, ±4)"
+            answer_contract: {kind: none}
             solution_sketch: '$c^2 = 4 + 12 = 16$; the $y^2$ term is positive, so the transverse axis is vertical.'
           - problem: 'Find the asymptotes of $\frac{y^2}{4} - \frac{x^2}{12} = 1$.'
             answer: "y = ±(√3/3)x"
+            answer_contract: {kind: none}
             solution_sketch: 'Slopes $\pm\frac{a}{b} = \pm\frac{2}{2\sqrt{3}} = \pm\frac{\sqrt{3}}{3}$.'
       - id: kp3
         name: Write the equation from vertices and foci
@@ -168,12 +190,15 @@ topics:
         exemplars:
           - problem: 'Write the equation of the hyperbola with vertices $(\pm 2, 0)$ and foci $(\pm 3, 0)$.'
             answer: "x^2/4 - y^2/5 = 1"
+            answer_contract: {kind: polynomial_relation}
             solution_sketch: '$b^2 = c^2 - a^2 = 9 - 4 = 5$.'
           - problem: 'Write the equation of the hyperbola with vertices $(0, \pm 3)$ and foci $(0, \pm 5)$.'
             answer: "y^2/9 - x^2/16 = 1"
+            answer_contract: {kind: polynomial_relation}
     diagnostic_exemplar:
       problem: 'Write the equation of the hyperbola with vertices $(0, \pm 2)$ and foci $(0, \pm 4)$, and give the equations of its asymptotes.'
       answer: 'y^2/4 - x^2/12 = 1; asymptotes y = ±(√3/3)x'
+      answer_contract: {kind: none}
       solution_sketch: 'Vertical transverse axis with $a = 2$, $c = 4$, so $b^2 = 16 - 4 = 12$; the asymptotes are $y = \pm\frac{a}{b}x = \pm\frac{2}{2\sqrt3}x = \pm\frac{\sqrt3}{3}x$.'
     anki_seeds:
       - front: "For a hyperbola, c² = ?"
@@ -209,12 +234,15 @@ topics:
         exemplars:
           - problem: 'Classify $4x^2 + 4y^2 - 8x = 0$.'
             answer: "circle"
+            answer_contract: {kind: label, options: [[circle], [ellipse], [hyperbola], [parabola]]}
             solution_sketch: 'Equal $x^2$ and $y^2$ coefficients.'
           - problem: 'Classify $9x^2 - 4y^2 + 18x + 8y = 31$.'
             answer: "hyperbola"
+            answer_contract: {kind: label, options: [[circle], [ellipse], [hyperbola], [parabola]]}
             solution_sketch: 'The $x^2$ and $y^2$ coefficients have opposite signs.'
           - problem: 'Classify $x^2 + 6x - y + 5 = 0$.'
             answer: "parabola"
+            answer_contract: {kind: label, options: [[circle], [ellipse], [hyperbola], [parabola]]}
             solution_sketch: 'Only one squared variable appears.'
       - id: kp2
         name: Circle and ellipse to standard form
@@ -223,9 +251,11 @@ topics:
         exemplars:
           - problem: 'Write $x^2 + y^2 - 6x + 4y - 3 = 0$ in standard form and state the center and radius.'
             answer: "(x - 3)^2 + (y + 2)^2 = 16; center (3, -2), radius 4"
+            answer_contract: {kind: none}
             solution_sketch: 'Complete both squares: $3 + 9 + 4 = 16$.'
           - problem: 'Write $4x^2 + y^2 - 8x = 0$ in standard form.'
             answer: "(x - 1)^2/1 + y^2/4 = 1"
+            answer_contract: {kind: polynomial_relation}
             solution_sketch: '$4(x - 1)^2 + y^2 = 4$; divide by $4$.'
       - id: kp3
         name: Hyperbola to standard form
@@ -234,6 +264,7 @@ topics:
         exemplars:
           - problem: 'Write $x^2 - 4y^2 + 2x + 16y = 19$ in standard form.'
             answer: "(x + 1)^2/4 - (y - 2)^2 = 1"
+            answer_contract: {kind: polynomial_relation}
             solution_sketch: '$(x + 1)^2 - 1 - 4[(y - 2)^2 - 4] = 19$ gives $(x + 1)^2 - 4(y - 2)^2 = 4$.'
           - problem: 'Find the center of the conic $x^2 - y^2 - 2x - 4y = 4$.'
             answer: "(1, -2)"
@@ -241,6 +272,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Write $9x^2 - 4y^2 - 18x - 16y = 43$ in standard form.'
       answer: "(x - 1)^2/4 - (y + 2)^2/9 = 1"
+      answer_contract: {kind: polynomial_relation}
       solution_sketch: '$9(x - 1)^2 - 9 - 4(y + 2)^2 + 16 = 43$ gives $9(x - 1)^2 - 4(y + 2)^2 = 36$; divide by $36$.'
     anki_seeds:
       - front: "With no xy term: x² and y² coefficients equal → ?; same sign → ?; opposite signs → ?; one missing → ?"
@@ -277,6 +309,7 @@ topics:
         exemplars:
           - problem: 'Solve the system $y = x^2$ and $y = x + 2$.'
             answer: "(-1, 1) and (2, 4)"
+            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
             solution_sketch: '$x^2 = x + 2$ gives $(x - 2)(x + 1) = 0$; substitute back for $y$.'
           - problem: 'For which value of $c$ does the line $y = 2x + c$ meet the parabola $y = x^2$ in exactly one point?'
             answer: "c = -1"
@@ -288,10 +321,11 @@ topics:
         exemplars:
           - problem: 'Solve the system $x^2 + y^2 = 25$ and $y = x + 1$.'
             answer: "(3, 4) and (-4, -3)"
+            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
             solution_sketch: '$x^2 + (x + 1)^2 = 25$ gives $x^2 + x - 12 = 0 = (x + 4)(x - 3)$.'
           - problem: 'In how many points do the line $x + y = 10$ and the circle $x^2 + y^2 = 25$ intersect?'
-            answer: "0 (they do not intersect)"
-            solution_sketch: 'Substituting $y = 10 - x$ gives $2x^2 - 20x + 75 = 0$ with discriminant $400 - 600 < 0$.'
+            answer: "0"
+            solution_sketch: 'Substituting $y = 10 - x$ gives $2x^2 - 20x + 75 = 0$ with discriminant $400 - 600 < 0$: no intersection points.'
       - id: kp3
         name: Conic and conic
         key_prerequisites: [equations-of-circles, quadratic-equations-factoring]
@@ -299,9 +333,11 @@ topics:
         exemplars:
           - problem: 'Solve the system $x^2 + y^2 = 20$ and $y = x^2$.'
             answer: "(2, 4) and (-2, 4)"
+            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
             solution_sketch: '$y + y^2 = 20$ gives $y = 4$ or $y = -5$; reject $y = -5$ since $y = x^2 \ge 0$, then $x = \pm 2$.'
           - problem: 'Solve the system $x^2 + y^2 = 9$ and $x^2 - y^2 = 9$.'
             answer: "(3, 0) and (-3, 0)"
+            answer_contract: {kind: list, ordered: false, member: {kind: coordinates, arity: 2}}
             solution_sketch: 'Adding gives $2x^2 = 18$, so $x = \pm 3$ and $y = 0$.'
           - problem: 'What is the maximum number of points in which a circle and an ellipse can intersect?'
             answer: "4"

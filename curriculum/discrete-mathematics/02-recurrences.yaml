@@ -85,10 +85,12 @@ topics:
         key_prerequisites: [recurrence-relations]
         exemplars:
           - problem: 'Solve $a_n = a_{n-1} + 3$ with $a_0 = 2$: give a closed formula for $a_n$.'
-            answer: '$a_n = 3n + 2$'
+            answer: '3n + 2'
+            answer_contract: {kind: exact}
             solution_sketch: 'Each step adds $3$, so after $n$ steps $a_n = 2 + 3n$. Verify: $a_0 = 2$, and $3n + 2 = (3(n-1) + 2) + 3$.'
           - problem: 'Solve $a_n = 2a_{n-1}$ with $a_0 = 5$.'
-            answer: '$a_n = 5 \cdot 2^n$'
+            answer: '5 * 2^n'
+            answer_contract: {kind: none}
             solution_sketch: 'Each step doubles: $a_n = 5 \cdot 2^n$; check $a_1 = 10$, $a_2 = 20$.'
         constraints: "a_n = a_{n-1} + d or a_n = r a_{n-1}; integer parameters; always verify by substitution"
       - id: kp2
@@ -96,15 +98,18 @@ topics:
         key_prerequisites: [recurrence-relations, summation-notation]
         exemplars:
           - problem: 'Solve $a_n = a_{n-1} + n$ with $a_0 = 0$.'
-            answer: '$a_n = \dfrac{n(n+1)}{2}$'
+            answer: 'n(n+1)/2'
+            answer_contract: {kind: exact}
             solution_sketch: 'Telescoping: $a_n = \sum_{k=1}^{n} k = n(n+1)/2$. Check $a_3 = 6$.'
           - problem: 'Solve $a_n = a_{n-1} + (2n - 1)$ with $a_0 = 0$.'
-            answer: '$a_n = n^2$'
+            answer: 'n^2'
+            answer_contract: {kind: exact}
             solution_sketch: 'The sum of the first $n$ odd numbers is $n^2$; check $a_1 = 1$, $a_2 = 4$, $a_3 = 9$.'
         constraints: "step depends linearly on n; solution is a known sum (triangular, odd numbers, geometric)"
     diagnostic_exemplar:
       problem: 'Solve $a_n = a_{n-1} + n$ with $a_0 = 1$: give a closed formula and check it at $n = 4$.'
-      answer: '$a_n = \dfrac{n(n+1)}{2} + 1$; $a_4 = 11$'
+      answer: 'formula = n(n+1)/2 + 1; a4 = 11'
+      answer_contract: {kind: multipart, parts: [{name: formula, contract: {kind: exact}}, {name: a4, contract: {kind: exact}}]}
       solution_sketch: 'Telescoping adds $1 + 2 + \cdots + n$ to $a_0$; check: $1, 2, 4, 7, 11$.'
     anki_seeds:
       - front: "Closed form of $a_n = a_{n-1} + d$, $a_0 = c$"
@@ -146,10 +151,12 @@ topics:
         key_prerequisites: [recurrence-relations, quadratic-equations-factoring]
         exemplars:
           - problem: 'Solve $a_n = a_{n-1} + 2a_{n-2}$ with $a_0 = 2$, $a_1 = 7$.'
-            answer: '$a_n = 3 \cdot 2^n - (-1)^n$'
+            answer: '3 * 2^n - (-1)^n'
+            answer_contract: {kind: none}
             solution_sketch: 'Characteristic equation $r^2 = r + 2$, i.e. $(r-2)(r+1) = 0$: roots $2, -1$. Then $A + B = 2$ and $2A - B = 7$ give $A = 3$, $B = -1$. Check $a_2 = 7 + 4 = 11 = 3 \cdot 4 - 1$.'
           - problem: 'Solve $a_n = 5a_{n-1} - 6a_{n-2}$ with $a_0 = 1$, $a_1 = 0$.'
-            answer: '$a_n = 3 \cdot 2^n - 2 \cdot 3^n$'
+            answer: '3 * 2^n - 2 * 3^n'
+            answer_contract: {kind: none}
             solution_sketch: '$r^2 - 5r + 6 = (r-2)(r-3)$: roots $2, 3$. $A + B = 1$, $2A + 3B = 0$ give $A = 3$, $B = -2$. Check $a_2 = -6 = 12 - 18$.'
         constraints: "characteristic quadratic factors over the integers; initial conditions give small integer coefficients; require a verification of one later term"
       - id: kp2
@@ -157,15 +164,18 @@ topics:
         key_prerequisites: [recurrence-relations, perfect-square-trinomials]
         exemplars:
           - problem: 'Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 4$.'
-            answer: '$a_n = (1 + n) \, 2^n$'
+            answer: '(1 + n) * 2^n'
+            answer_contract: {kind: none}
             solution_sketch: '$r^2 - 4r + 4 = (r - 2)^2$: double root $2$, so $a_n = (A + Bn)2^n$. $A = 1$; $(1 + B) \cdot 2 = 4$ gives $B = 1$. Check $a_2 = 16 - 4 = 12 = 3 \cdot 4$.'
           - problem: 'Solve $a_n = 6a_{n-1} - 9a_{n-2}$ with $a_0 = 2$, $a_1 = 3$.'
-            answer: '$a_n = (2 - n) \, 3^n$'
+            answer: '(2 - n) * 3^n'
+            answer_contract: {kind: none}
             solution_sketch: '$(r - 3)^2 = 0$: $a_n = (A + Bn)3^n$ with $A = 2$ and $(2 + B) \cdot 3 = 3$, so $B = -1$. Check $a_2 = 18 - 18 = 0 = (2-2) \cdot 9$.'
         constraints: "perfect-square characteristic polynomial; general solution (A + Bn) r^n"
     diagnostic_exemplar:
       problem: 'Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 6$.'
-      answer: '$a_n = (1 + 2n) \, 2^n$'
+      answer: '(1 + 2n) * 2^n'
+      answer_contract: {kind: none}
       solution_sketch: 'Repeated root $2$: $a_n = (A + Bn)2^n$; $A = 1$ and $2(1 + B) = 6$ give $B = 2$. Check: $a_2 = 4 \cdot 6 - 4 \cdot 1 = 20 = (1 + 4) \cdot 4$.'
     anki_seeds:
       - front: "Characteristic equation of $a_n = c_1 a_{n-1} + c_2 a_{n-2}$"
@@ -195,10 +205,12 @@ topics:
         key_prerequisites: [linear-homogeneous-recurrences]
         exemplars:
           - problem: 'Solve $a_n = 2a_{n-1} + 1$ with $a_0 = 0$ (the Tower of Hanoi recurrence).'
-            answer: '$a_n = 2^n - 1$'
+            answer: '2^n - 1'
+            answer_contract: {kind: none}
             solution_sketch: 'Particular constant solution: $p = 2p + 1$ gives $p = -1$. General: $A \cdot 2^n - 1$; $a_0 = 0$ forces $A = 1$. Check: $1, 3, 7, 15$.'
           - problem: 'Solve $a_n = 2a_{n-1} + 3$ with $a_0 = 2$.'
-            answer: '$a_n = 5 \cdot 2^n - 3$'
+            answer: '5 * 2^n - 3'
+            answer_contract: {kind: none}
             solution_sketch: '$p = 2p + 3$ gives $p = -3$; $A - 3 = 2$ so $A = 5$. Check $a_1 = 7 = 10 - 3$, $a_2 = 17 = 20 - 3$.'
         constraints: "a_n = r a_{n-1} + c with r != 1; particular solution c/(1-r) must be an integer"
       - id: kp2
@@ -206,15 +218,18 @@ topics:
         key_prerequisites: [linear-homogeneous-recurrences]
         exemplars:
           - problem: 'Solve $a_n = 2a_{n-1} + n$ with $a_0 = 1$.'
-            answer: '$a_n = 3 \cdot 2^n - n - 2$'
+            answer: '3 * 2^n - n - 2'
+            answer_contract: {kind: none}
             solution_sketch: 'Try $p_n = an + b$: $an + b = 2(a(n-1) + b) + n$ forces $a = -1$, $b = -2$. General: $A \cdot 2^n - n - 2$; $a_0 = 1$ gives $A = 3$. Check $a_1 = 3 = 6 - 3$, $a_2 = 8 = 12 - 4$.'
           - problem: 'Find a particular solution of $a_n = 3a_{n-1} + 4n$ (no initial condition needed).'
-            answer: '$p_n = -2n - 3$'
+            answer: '-2n - 3'
+            answer_contract: {kind: exact}
             solution_sketch: '$an + b = 3(a(n-1) + b) + 4n$ gives $a = 3a + 4$ so $a = -2$, and $b = 3b - 3a$ so $2b = 3a = -6$, $b = -3$. Check at $n = 1$: $-5 = 3(-3) + 4$.'
         constraints: "forcing an + b with integer particular solutions; method of undetermined coefficients; verify by substitution"
     diagnostic_exemplar:
       problem: 'Solve $a_n = 2a_{n-1} + n$ with $a_0 = 2$.'
-      answer: '$a_n = 2^{n+2} - n - 2$'
+      answer: '2^(n+2) - n - 2'
+      answer_contract: {kind: none}
       solution_sketch: 'Particular solution $p_n = -n - 2$; general $A \cdot 2^n - n - 2$ with $A - 2 = 2$, so $A = 4$. Check: $a_1 = 2 \cdot 2 + 1 = 5 = 8 - 3$.'
     anki_seeds:
       - front: "Solution structure for a nonhomogeneous linear recurrence"

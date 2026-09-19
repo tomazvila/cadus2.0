@@ -105,6 +105,7 @@ topics:
             solution_sketch: '$-2 \cdot 2 + 3 = -1$; the $x$-coordinate is unchanged.'
           - problem: 'Describe $y = -2(x - 1)^2$ as transformations of $y = x^2$.'
             answer: "shift right 1, stretch vertically by 2, reflect across the x-axis"
+            answer_contract: {kind: label, options: [["shift right 1, stretch vertically by 2, reflect across the x-axis"], ["shift left 1, stretch vertically by 2, reflect across the x-axis"], ["shift right 1, compress vertically by 2, reflect across the x-axis"], ["shift right 1, stretch vertically by 2, reflect across the y-axis"]]}
     diagnostic_exemplar:
       problem: 'The point $(3, 5)$ lies on $y = f(x)$. What point lies on $y = -2f(x) + 1$?'
       answer: "(3, -9)"
@@ -140,12 +141,15 @@ topics:
         exemplars:
           - problem: 'Is $f(x) = x^2 + 3$ even, odd, or neither?'
             answer: "even"
+            answer_contract: {kind: label, options: [[even], [odd], [neither]]}
             solution_sketch: '$f(-x) = (-x)^2 + 3 = x^2 + 3 = f(x)$.'
           - problem: 'Is $f(x) = x^3 - x$ even, odd, or neither?'
             answer: "odd"
+            answer_contract: {kind: label, options: [[even], [odd], [neither]]}
             solution_sketch: '$f(-x) = -x^3 + x = -(x^3 - x) = -f(x)$.'
           - problem: 'Is $f(x) = x^2 + x$ even, odd, or neither?'
             answer: "neither"
+            answer_contract: {kind: label, options: [[even], [odd], [neither]]}
       - id: kp2
         name: Symmetry and using known values
         key_prerequisites: [function-stretches-reflections]
@@ -153,12 +157,14 @@ topics:
         exemplars:
           - problem: 'A function is even. Its graph is symmetric about what?'
             answer: "the y-axis"
+            answer_contract: {kind: label, options: [[the y-axis], [the origin]]}
           - problem: 'If $f$ is odd and $f(2) = 7$, find $f(-2)$.'
             answer: "-7"
             solution_sketch: 'Odd means $f(-x) = -f(x)$.'
     diagnostic_exemplar:
       problem: 'Is $f(x) = x^3 - 4x$ even, odd, or neither? Name the symmetry of its graph, and use that symmetry to find $f(-3)$ given that $f(3) = 15$.'
       answer: 'odd; its graph is symmetric about the origin; f(-3) = -15'
+      answer_contract: {kind: none}
       solution_sketch: '$f(-x) = -x^3 + 4x = -f(x)$, so $f$ is odd — origin symmetry — and $f(-3) = -f(3) = -15$.'
     anki_seeds:
       - front: "Algebraic tests: f is even iff f(-x) = ...; f is odd iff f(-x) = ..."
@@ -192,7 +198,8 @@ topics:
         constraints: "two or three linear/quadratic pieces; test inputs on both sides of each breakpoint"
         exemplars:
           - problem: 'Let $f(x) = x + 2$ for $x < 0$ and $f(x) = x^2$ for $x \ge 0$. Find $f(-3)$ and $f(2)$.'
-            answer: "f(-3) = -1, f(2) = 4"
+            answer: "-1, 4"
+            answer_contract: {kind: list, ordered: true, member: {kind: exact}}
           - problem: 'Let $f(x) = 2x$ for $x < 1$ and $f(x) = 5$ for $x \ge 1$. Find $f(1)$.'
             answer: "5"
             solution_sketch: '$x = 1$ satisfies $x \ge 1$, so use the second piece.'
@@ -203,6 +210,8 @@ topics:
         exemplars:
           - problem: 'Write $|x - 3|$ as a piecewise rule.'
             answer: "x - 3 for x ≥ 3; 3 - x for x < 3"
+            answer_contract: {kind: none}
+            solution_sketch: 'For $x \ge 3$, $x - 3 \ge 0$ so $|x - 3| = x - 3$; for $x < 3$, $|x - 3| = 3 - x$.'
           - problem: 'State the vertex of $y = |x - 2| - 5$.'
             answer: "(2, -5)"
       - id: kp3
@@ -211,8 +220,9 @@ topics:
         constraints: "two linear (or one linear, one quadratic) pieces with integer coefficients; breakpoint |x| <= 3; ask whether the pieces meet or for the size of the jump"
         exemplars:
           - problem: 'Let $f(x) = x + 1$ for $x < 2$ and $f(x) = 3x - 3$ for $x \ge 2$. Do the two pieces meet at $x = 2$?'
-            answer: "yes; both give 3"
-            solution_sketch: '$2 + 1 = 3$ and $3(2) - 3 = 3$.'
+            answer: "yes"
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: '$2 + 1 = 3$ and $3(2) - 3 = 3$, so both pieces give $3$: they meet.'
           - problem: 'Let $f(x) = 2x$ for $x < 1$ and $f(x) = x + 3$ for $x \ge 1$. Find the gap between the pieces at $x = 1$.'
             answer: "2"
             solution_sketch: 'Left piece approaches $2$; right piece gives $4$; gap $= 4 - 2 = 2$.'

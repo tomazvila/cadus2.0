@@ -34,6 +34,7 @@ topics:
             solution_sketch: 'Kruskal: take $AB$ ($1$), $BC$ ($2$), $CD$ ($3$) — no cycles formed, all vertices covered. Weight $1 + 2 + 3 = 6$.'
           - problem: 'Vertices $A, B, C, D$; weights $AB = 2$, $AC = 3$, $BC = 4$, $BD = 1$, $CD = 5$. Give the edge set of the minimum spanning tree.'
             answer: '$\{AB, AC, BD\}$'
+            answer_contract: {kind: none}
             solution_sketch: 'Kruskal sorts $BD(1), AB(2), AC(3), BC(4), CD(5)$; the first three join all four vertices without a cycle: $1 + 2 + 3 = 6$.'
         constraints: "4-6 vertices, 5-8 edges, distinct small integer weights so the MST is unique; ask for total weight and/or edge list"
     diagnostic_exemplar:
@@ -221,7 +222,8 @@ topics:
         key_prerequisites: [graph-coloring, walks-paths-connectivity]
         exemplars:
           - problem: 'Is $C_6$ bipartite? Is $C_5$?'
-            answer: '$C_6$ yes; $C_5$ no.'
+            answer: 'c6 = yes; c5 = no'
+            answer_contract: {kind: multipart, parts: [{name: c6, contract: {"kind":"label","options":[["yes"],["no"]]}}, {name: c5, contract: {"kind":"label","options":[["yes"],["no"]]}}]}
             solution_sketch: 'A graph is bipartite iff it has no odd cycle; even cycles $2$-color by alternation, odd cycles do not.'
           - problem: 'How many edges does the complete bipartite graph $K_{3,4}$ have?'
             answer: "12"
@@ -235,13 +237,15 @@ topics:
             answer: "3"
             solution_sketch: 'A matching uses each left vertex at most once, so at most $3$ edges; pairing each left vertex with a distinct right vertex achieves it.'
           - problem: 'Workers $1, 2, 3$ can do jobs: $W_1\!: \{a\}$, $W_2\!: \{a, b\}$, $W_3\!: \{b\}$. Can every worker get a distinct job? Verify with Hall''s condition.'
-            answer: 'No: the set $\{W_1, W_2, W_3\}$ has neighborhood $\{a, b\}$ of size $2 < 3$, violating Hall''s condition.'
-            solution_sketch: 'Hall: a perfect matching of the left side exists iff every subset $S$ satisfies $|N(S)| \ge |S|$; here the whole set fails.'
+            answer: 'No'
+            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
+            solution_sketch: 'No: the set $\\{W_1, W_2, W_3\\}$ has neighborhood $\\{a, b\\}$ of size $2 < 3$, violating Hall''s condition. Hall: a perfect matching of the left side exists iff every subset $S$ satisfies $|N(S)| \ge |S|$; here the whole set fails.'
         constraints: "bipartite sides <= 5; either compute a maximum matching size or exhibit a violating set S"
     diagnostic_exemplar:
       problem: 'Workers $1, 2, 3, 4$ can do jobs: $W_1\!: \{a, b\}$, $W_2\!: \{b\}$, $W_3\!: \{b, c\}$, $W_4\!: \{b\}$. Can every worker get a distinct job? Verify with Hall''s condition.'
-      answer: 'No: the set $\{W_2, W_4\}$ has neighborhood $\{b\}$ of size $1 < 2$, violating Hall''s condition.'
-      solution_sketch: 'Two workers can only do job $b$; Hall''s condition fails on that pair.'
+      answer: 'No'
+      answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
+      solution_sketch: 'No: the set $\\{W_2, W_4\\}$ has neighborhood $\\{b\\}$ of size $1 < 2$, violating Hall''s condition. Two workers can only do job $b$; Hall''s condition fails on that pair.'
     anki_seeds:
       - front: "A graph is bipartite iff it contains no..."
         back: "odd cycle."

@@ -308,6 +308,7 @@ topics:
             solution_sketch: 'Truncating the axis removes the common base, so small differences look large.'
           - problem: 'Bars of heights $60$ and $63$ are drawn on an axis starting at $58$. Roughly how many times taller does the second bar look, and what is the true ratio?'
             answer: 'It looks about $2.5$ times as tall; the true ratio is $63/60 = 1.05$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Drawn heights are $2$ and $5$ units above the cut axis, but the actual values differ by only $5\%$.'
           - problem: 'A bar chart uses interval widths of $2$ for the first three bars and widths of $10$ for the rest. Which flaw does the chart have?'
             answer: 'Unequal intervals'
@@ -323,6 +324,7 @@ topics:
     diagnostic_exemplar:
       problem: 'A histogram of commute times has bar heights $9, 6, 3, 1$ over $0$-$14$, $15$-$29$, $30$-$44$, $45$-$59$ minutes. How many commutes are $30$ minutes or longer, and what is the shape of the distribution?'
       answer: '$4$ commutes; right-skewed.'
+      answer_contract: {kind: none}
       solution_sketch: '$3 + 1 = 4$; frequencies fall off in a long right tail.'
     anki_seeds:
       - front: 'A distribution with a long tail to the right is called...'
@@ -732,6 +734,7 @@ topics:
     diagnostic_exemplar:
       problem: 'For the data $4, 8, 3, 8, 7$: find the mean, the median, and the mode. A sixth value $12$ is then added — find the new mean.'
       answer: 'Mean $6$, median $7$, mode $8$; new mean $7$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Sum $30/5 = 6$; sorted $3, 4, 7, 8, 8$ gives median $7$ and mode $8$; new total $42/6 = 7$.'
     anki_seeds:
       - front: 'Which measure of center resists outliers: mean or median?'
@@ -755,9 +758,12 @@ topics:
         key_prerequisites: [mean-median-mode]
         exemplars:
           - problem: 'A large value is added to a data set. Which changes more, the mean or the median?'
-            answer: 'The mean; the median moves at most to a neighboring value.'
+            answer: 'the mean'
+            answer_contract: {kind: label, options: [[the mean], [the median]]}
+            solution_sketch: 'A large value pulls the mean substantially, while the median moves at most to a neighboring value.'
           - problem: 'The data $10, 11, 12, 13$ gains the value $2$. Does the mean increase or decrease, and what about the median?'
             answer: 'The mean decreases; the median decreases only slightly (from $11.5$ to $11$).'
+            answer_contract: {kind: none}
             solution_sketch: 'A low outlier drags the mean down; the sorted middle barely shifts.'
           - problem: 'The data $2, 4, 6, 8$ gains the value $50$. Which is pulled further from its old value: the mean or the median?'
             answer: 'the mean'
@@ -780,9 +786,11 @@ topics:
         exemplars:
           - problem: 'For the data $5, 6, 7, 8, 34$: compute the mean with and without the outlier $34$.'
             answer: 'With: $12$; without: $6.5$.'
+            answer_contract: {kind: none}
             solution_sketch: 'With: $60/5 = 12$. Without: $26/4 = 6.5$.'
           - problem: 'For the same data $5, 6, 7, 8, 34$: compute the median with and without $34$.'
             answer: 'With: $7$; without: $6.5$.'
+            answer_contract: {kind: none}
             solution_sketch: 'Sorted with outlier the middle is $7$; without, median $= (6+7)/2 = 6.5$. The median barely moves.'
           - problem: 'For the data $4, 5, 6, 7, 48$, compute the mean with the outlier included.'
             answer: "14"
@@ -817,6 +825,7 @@ topics:
     diagnostic_exemplar:
       problem: 'The mean of $6$ marks is $9$. The outlier $24$ is removed. Find the new mean of the remaining marks, and state whether the outlier had inflated or deflated the original mean.'
       answer: 'New mean $6$; the outlier had inflated the mean.'
+      answer_contract: {kind: none}
       solution_sketch: 'Total $6 \cdot 9 = 54$; $(54 - 24)/5 = 6 < 9$, so $24$ was pulling the mean up.'
     anki_seeds:
       - front: 'Adding one extreme high value to a data set does what to the mean and median?'
@@ -848,11 +857,11 @@ topics:
         name: "Percentile rank of a value"
         key_prerequisites: [median-and-mode, percentages]
         exemplars:
-          - problem: 'In a group of $20$ scores, $13$ are below Ana''s score. What is her percentile rank?'
-            answer: '65th percentile'
+          - problem: 'In a group of $20$ scores, $13$ are below Ana''s score. What is her percentile rank, as a number?'
+            answer: "65"
             solution_sketch: '$13/20 = 65\%$ of the scores lie below hers.'
-          - problem: 'On a standardized test taken by $400$ students, $340$ scored below Leo. What is his percentile rank?'
-            answer: '85th percentile'
+          - problem: 'On a standardized test taken by $400$ students, $340$ scored below Leo. What is his percentile rank, as a number?'
+            answer: "85"
             solution_sketch: '$340/400 = 85\%$ of the scores lie below his.'
           - problem: 'In a class of $20$ students, $15$ scored below Priya. What is her percentile rank, as a number?'
             answer: "75"
@@ -1200,9 +1209,13 @@ topics:
         key_prerequisites: [outliers-effect-on-center]
         exemplars:
           - problem: 'House prices on a street are mostly near €300,000, with one €3,000,000 mansion. Which measure of center should a report use?'
-            answer: 'The median; the outlier inflates the mean.'
+            answer: 'the median'
+            answer_contract: {kind: label, options: [[the mean], [the median], [the mode]]}
+            solution_sketch: 'The €3,000,000 mansion inflates the mean; the median resists the outlier.'
           - problem: 'A survey records each student''s favorite color. Which measure of center applies?'
-            answer: 'The mode; categorical data has no mean or median.'
+            answer: 'the mode'
+            answer_contract: {kind: label, options: [[the mean], [the median], [the mode]]}
+            solution_sketch: 'Categorical data has no mean or median; only the mode applies.'
           - problem: 'Quiz scores in a class are $2, 4, 5, 5, 6, 60$. Which measure of center best describes a typical score?'
             answer: 'the median'
             answer_contract: {kind: label, options: [[the mean], [the median], [the mode]]}
@@ -1225,9 +1238,13 @@ topics:
         key_prerequisites: [outliers-effect-on-center, range-iqr-boxplots]
         exemplars:
           - problem: 'A data set is reported with its median. Which measure of spread pairs with it, and why?'
-            answer: 'The IQR; like the median, it resists outliers.'
+            answer: 'the IQR'
+            answer_contract: {kind: label, options: [[the range], [the IQR], [the standard deviation]]}
+            solution_sketch: 'Like the median, the IQR resists outliers, so they pair naturally.'
           - problem: 'A symmetric, outlier-free data set is summarized by its mean. Which spread measure pairs naturally with the mean?'
-            answer: 'The standard deviation.'
+            answer: 'the standard deviation'
+            answer_contract: {kind: label, options: [[the range], [the IQR], [the standard deviation]]}
+            solution_sketch: 'The standard deviation uses every value, matching the mean.'
           - problem: 'A data set with one extreme high value is summarized by its median. Which measure of spread pairs with it?'
             answer: 'the IQR'
             answer_contract: {kind: label, options: [[the range], [the IQR], [the standard deviation]]}
@@ -1250,9 +1267,13 @@ topics:
         key_prerequisites: [outliers-effect-on-center]
         exemplars:
           - problem: 'A distribution has mean $58$ and median $45$. Is it more likely skewed left or right?'
-            answer: 'Right; a long right tail pulls the mean above the median.'
+            answer: 'right-skewed'
+            answer_contract: {kind: label, options: [[left-skewed], [right-skewed], [symmetric]]}
+            solution_sketch: 'A long right tail pulls the mean above the median.'
           - problem: 'For a roughly symmetric distribution, how do the mean and median compare?'
-            answer: 'They are approximately equal.'
+            answer: 'they are approximately equal'
+            answer_contract: {kind: label, options: [[the mean is larger], [the median is larger], [they are approximately equal]]}
+            solution_sketch: 'In a symmetric distribution neither tail pulls either summary, so they are approximately equal.'
           - problem: 'A distribution has mean $30$ and median $45$. Is it more likely skewed left or right?'
             answer: 'left-skewed'
             answer_contract: {kind: label, options: [[left-skewed], [right-skewed], [symmetric]]}
@@ -1273,6 +1294,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Household incomes in a city include a small number of extremely high earners. Which center-and-spread pair should a summary report, and why?'
       answer: 'Median and IQR; both resist the extreme high incomes that would inflate the mean and standard deviation.'
+      answer_contract: {kind: none}
       solution_sketch: 'Ask which summaries are resistant: the mean and standard deviation are dragged upward by the few extreme incomes, while the median and IQR depend only on position in the ordered data.'
     anki_seeds:
       - front: 'Skewed data or outliers: report which center-spread pair?'

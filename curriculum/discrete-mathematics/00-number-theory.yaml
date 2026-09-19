@@ -25,10 +25,12 @@ topics:
         key_prerequisites: [long-division]
         exemplars:
           - problem: 'Find the quotient $q$ and remainder $r$ with $0 \le r < 13$ when $100$ is divided by $13$.'
-            answer: '$q = 7$, $r = 9$'
+            answer: '7 R9'
+            answer_contract: {kind: quotient_remainder, divisor: 13}
             solution_sketch: '$13 \cdot 7 = 91 \le 100 < 104 = 13 \cdot 8$, so $q = 7$ and $r = 100 - 91 = 9$.'
           - problem: 'Find $q$ and $r$ with $0 \le r < 6$ so that $-27 = 6q + r$.'
-            answer: '$q = -5$, $r = 3$'
+            answer: '-5 R3'
+            answer_contract: {kind: quotient_remainder, divisor: 6}
             solution_sketch: 'The remainder must be nonnegative: $6 \cdot (-5) = -30 \le -27$, so $r = -27 - (-30) = 3$. Note $q = -4$ would give $r = -3 < 0$, which is not allowed.'
         constraints: "divisors 2-15; include at least one negative dividend; remainder must satisfy 0 <= r < d"
       - id: kp2
@@ -36,15 +38,18 @@ topics:
         key_prerequisites: [divisibility-parity-proofs]
         exemplars:
           - problem: 'Every integer has the form $3k$, $3k+1$, or $3k+2$. Which of these forms can a perfect square take? Equivalently: what are the possible remainders of $n^2$ on division by $3$?'
-            answer: '$0$ or $1$ (never $2$)'
+            answer: '{0, 1}'
+            answer_contract: {kind: set}
             solution_sketch: '$(3k)^2 = 3(3k^2)$ leaves $0$; $(3k+1)^2 = 3(3k^2+2k)+1$ leaves $1$; $(3k+2)^2 = 3(3k^2+4k+1)+1$ leaves $1$.'
           - problem: 'What are the possible remainders of a perfect square on division by $4$?'
-            answer: '$0$ or $1$'
-            solution_sketch: 'Even squares $(2k)^2 = 4k^2$ leave $0$; odd squares $(2k+1)^2 = 4(k^2+k)+1$ leave $1$.'
+            answer: '{0, 1}'
+            answer_contract: {kind: set}
+            solution_sketch: 'A perfect square is never $2$ or $3$ mod $4$. Even squares $(2k)^2 = 4k^2$ leave $0$; odd squares $(2k+1)^2 = 4(k^2+k)+1$ leave $1$.'
         constraints: "moduli 3, 4, or 8; verify claims by checking each residue class"
     diagnostic_exemplar:
       problem: 'Using the residue classes mod $8$, find all possible remainders of a perfect square on division by $8$.'
-      answer: '$0$, $1$, or $4$'
+      answer: '{0, 1, 4}'
+      answer_contract: {kind: set}
       solution_sketch: 'Check $r = 0, \dots, 7$: $r^2 \bmod 8$ gives $0, 1, 4, 1, 0, 1, 4, 1$.'
     anki_seeds:
       - front: "Division algorithm: for integers $a$ and $d > 0$ there exist unique $q, r$ with..."
@@ -96,15 +101,18 @@ topics:
         key_prerequisites: [division-algorithm]
         exemplars:
           - problem: 'Find integers $x, y$ with $20x + 7y = 1$.'
-            answer: '$x = -1$, $y = 3$ (one valid pair; check $-20 + 21 = 1$)'
+            answer: 'x = -1; y = 3'
+            answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
             solution_sketch: '$20 = 2 \cdot 7 + 6$; $7 = 1 \cdot 6 + 1$. Back-substitute: $1 = 7 - 6 = 7 - (20 - 2 \cdot 7) = 3 \cdot 7 - 20$.'
           - problem: 'Express $\gcd(42, 30) = 6$ in the form $42x + 30y$.'
-            answer: '$6 = 42 \cdot 3 + 30 \cdot (-4)$ (one valid pair)'
+            answer: 'x = 3; y = -4'
+            answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
             solution_sketch: '$42 = 1 \cdot 30 + 12$; $30 = 2 \cdot 12 + 6$. Back-substitute: $6 = 30 - 2 \cdot 12 = 30 - 2(42 - 30) = 3 \cdot 30 - 2 \cdot 42$; equivalently $42 \cdot 3 + 30 \cdot (-4) = 126 - 120 = 6$. Any pair satisfying the equation is correct.'
         constraints: "operands small enough for 2-3 back-substitution steps; accept any valid Bezout pair, require a verification check"
     diagnostic_exemplar:
       problem: 'Run the Euclidean algorithm on $25$ and $7$, then back-substitute to find integers $x, y$ with $25x + 7y = 1$.'
-      answer: '$x = 2$, $y = -7$ (one valid pair; check $50 - 49 = 1$)'
+      answer: 'x = 2; y = -7'
+      answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
       solution_sketch: '$25 = 3 \cdot 7 + 4$, $7 = 1 \cdot 4 + 3$, $4 = 1 \cdot 3 + 1$; back: $1 = 4 - 3 = 2 \cdot 4 - 7 = 2 \cdot 25 - 7 \cdot 7$.'
     anki_seeds:
       - front: "Euclidean algorithm key step: $\\gcd(a, b) = \\gcd(b, \\; ?)$ for $a = bq + r$"
@@ -252,8 +260,8 @@ topics:
         name: "Two congruences with coprime moduli"
         key_prerequisites: [linear-congruences]
         exemplars:
-          - problem: 'Find all $x$ with $x \equiv 2 \pmod 3$ and $x \equiv 3 \pmod 5$.'
-            answer: '$x \equiv 8 \pmod{15}$'
+          - problem: 'Find the least nonnegative $x$ with $x \equiv 2 \pmod 3$ and $x \equiv 3 \pmod 5$ (the full solution class is unique mod $15$).'
+            answer: '8'
             solution_sketch: 'Write $x = 5k + 3$; then $5k + 3 \equiv 2 \pmod 3$ gives $2k \equiv 2$, so $k \equiv 1 \pmod 3$. Thus $x = 5(3j + 1) + 3 = 15j + 8$. Check: $8 \bmod 3 = 2$, $8 \bmod 5 = 3$.'
           - problem: 'Find the smallest positive $x$ with $x \equiv 0 \pmod 7$ and $x \equiv 1 \pmod 4$.'
             answer: "21"
@@ -263,8 +271,8 @@ topics:
         name: "Systems of congruences; uniqueness mod the product"
         key_prerequisites: [linear-congruences]
         exemplars:
-          - problem: 'Solve the system $x \equiv 1 \pmod 2$, $x \equiv 2 \pmod 3$, $x \equiv 3 \pmod 5$.'
-            answer: '$x \equiv 23 \pmod{30}$'
+          - problem: 'Solve the system $x \equiv 1 \pmod 2$, $x \equiv 2 \pmod 3$, $x \equiv 3 \pmod 5$; give the least nonnegative solution.'
+            answer: '23'
             solution_sketch: 'From the last two: $x \equiv 8 \pmod{15}$ (i.e. $x \in \{8, 23\}$ mod $30$). Oddness picks $23$. Check: $23 = 11 \cdot 2 + 1 = 7 \cdot 3 + 2 = 4 \cdot 5 + 3$.'
           - problem: 'A number of soldiers leaves remainder $3$ when lined up in rows of $4$ and remainder $1$ in rows of $5$. What is the smallest possible positive count?'
             answer: "11"
@@ -371,10 +379,11 @@ topics:
         key_prerequisites: [fermat-euler-theorems, linear-congruences]
         exemplars:
           - problem: 'RSA with $p = 3$, $q = 11$, $e = 3$. Compute $n$, $\varphi(n)$, and the private exponent $d$.'
-            answer: '$n = 33$, $\varphi(n) = 20$, $d = 7$'
+            answer: 'n = 33; phi = 20; d = 7'
+            answer_contract: {kind: multipart, parts: [{name: n, contract: {kind: exact}}, {name: phi, contract: {kind: exact}}, {name: d, contract: {kind: exact}}]}
             solution_sketch: '$n = pq = 33$; $\varphi(n) = (p-1)(q-1) = 2 \cdot 10 = 20$; $d = e^{-1} \bmod 20$: $3 \cdot 7 = 21 \equiv 1 \pmod{20}$, so $d = 7$.'
           - problem: 'RSA with $p = 5$, $q = 11$, $e = 3$. Find $d$.'
-            answer: '$d = 27$'
+            answer: '27'
             solution_sketch: '$\varphi(55) = 4 \cdot 10 = 40$ and $3 \cdot 27 = 81 = 2 \cdot 40 + 1$, so $d = 27$.'
         constraints: "primes from {3,5,7,11,13}; e coprime to phi; d found via extended Euclid, stated as least positive residue"
       - id: kp2
@@ -390,7 +399,8 @@ topics:
         constraints: "n <= 60, messages 2-20 coprime to n; exponentiation by repeated squaring; verify round-trip when feasible"
     diagnostic_exemplar:
       problem: 'RSA with $p = 3$, $q = 11$, $e = 3$: encrypt $m = 2$, then state the private exponent $d$.'
-      answer: '$c = 8$; $d = 7$'
+      answer: 'c = 8; d = 7'
+      answer_contract: {kind: multipart, parts: [{name: c, contract: {kind: exact}}, {name: d, contract: {kind: exact}}]}
       solution_sketch: '$c = 2^3 = 8 \bmod 33$; $d = 3^{-1} \bmod 20 = 7$ since $21 \equiv 1 \pmod{20}$.'
     anki_seeds:
       - front: "RSA key relation between $e$ and $d$"

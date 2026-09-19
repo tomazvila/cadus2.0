@@ -83,6 +83,7 @@ topics:
     diagnostic_exemplar:
       problem: 'A triangle has exactly two congruent sides, and two of its angles measure $41^\circ$ each. Classify it by its sides and by its angles.'
       answer: 'isosceles and obtuse'
+      answer_contract: {kind: label, options: [['isosceles and acute'], ['isosceles and right'], ['isosceles and obtuse'], ['scalene and acute'], ['scalene and right'], ['scalene and obtuse'], ['equilateral and acute']]}
       solution_sketch: 'Exactly two congruent sides make it isosceles (not equilateral); the third angle is $180 - 41 - 41 = 98^\circ > 90^\circ$, so it is obtuse.'
     anki_seeds:
       - front: "A triangle with exactly two congruent sides is..."
@@ -178,6 +179,7 @@ topics:
     diagnostic_exemplar:
       problem: 'Two sides of a triangle measure $8$ and $3$. List all possible integer lengths for the third side.'
       answer: '6, 7, 8, 9, or 10'
+      answer_contract: {kind: none}
       solution_sketch: '$8 - 3 < x < 8 + 3$, so $5 < x < 11$.'
     anki_seeds:
       - front: "Triangle inequality: the sum of any two sides of a triangle must be..."
@@ -255,6 +257,7 @@ topics:
             solution_sketch: 'The two legs would give $4 + 4 = 8 < 10$, violating the triangle inequality.'
           - problem: 'An isosceles triangle has perimeter $20$ and one side of length $8$. Find all possible side sets.'
             answer: '$\{8, 8, 4\}$ and $\{6, 6, 8\}$'
+            answer_contract: {kind: none}
             solution_sketch: 'Legs $8$: base $20 - 16 = 4$ (valid, $8+4>8$). Base $8$: legs $6$ each (valid, $6+6>8$). Both pass the triangle inequality.'
           - problem: 'An isosceles triangle has perimeter $20$ and one side of length $8$. How many distinct side sets are possible?'
             answer: "2"
@@ -269,6 +272,7 @@ topics:
     diagnostic_exemplar:
       problem: 'An isosceles triangle has perimeter $24$ and one side of length $10$. Find all possible side sets.'
       answer: '$\{10, 10, 4\}$ and $\{7, 7, 10\}$'
+      answer_contract: {kind: none}
       solution_sketch: 'Legs $10$: base $24 - 20 = 4$ (valid, $10 + 4 > 10$). Base $10$: legs $7$ each (valid, $7 + 7 > 10$). Both pass the triangle inequality.'
     anki_seeds:
       - front: "The perimeter of a triangle with known sides a, b and unknown third side lies strictly between..."
@@ -301,6 +305,8 @@ topics:
             solution_sketch: 'A dilation with scale factor other than $1$ changes distances.'
           - problem: 'What two measurements does every rigid motion preserve?'
             answer: 'Distances (segment lengths) and angle measures.'
+            answer_contract: {kind: none}
+            solution_sketch: 'Rigid motions preserve segment lengths and angle measures; that is what makes the image congruent to the preimage.'
           - problem: 'Which rigid motion maps each point $(x, y)$ to $(x, -y)$: translation, reflection, rotation, or dilation?'
             answer: 'reflection'
 
@@ -339,7 +345,9 @@ topics:
         key_prerequisites: [segment-angle-addition, coordinate-plane]
         exemplars:
           - problem: 'A rotation maps $\triangle ABC$ exactly onto $\triangle DEF$. Are the triangles congruent?'
-            answer: 'Yes; a rigid motion mapping one figure onto another is exactly what congruence means.'
+            answer: 'yes'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: 'A rigid motion mapping one figure onto another is exactly what congruence means.'
           - problem: 'A translation maps $\triangle ABC$ to $\triangle DEF$ with $A \mapsto D$, $B \mapsto E$. If $AB = 9$, find $DE$.'
             answer: "9"
             solution_sketch: 'Rigid motions preserve lengths.'
@@ -354,11 +362,13 @@ topics:
             solution_sketch: 'Rigid motions preserve segment lengths.'
           - problem: 'A translation maps $\triangle ABC$ exactly onto $\triangle DEF$. Are the triangles congruent? Answer yes or no.'
             answer: 'yes'
+            answer_contract: {kind: label, options: [[yes], [no]]}
             solution_sketch: 'A translation is a rigid motion, and a rigid motion mapping one figure onto the other is exactly congruence.'
         constraints: "single rigid motion; read off preserved lengths or angles"
     diagnostic_exemplar:
       problem: 'A reflection across the $y$-axis maps $\triangle ABC$ onto $\triangle DEF$, with vertex $A(-6, 2)$ mapping to $D$. Give the coordinates of $D$, and state whether $\triangle ABC \cong \triangle DEF$ and why.'
       answer: 'D = (6, 2); yes, the triangles are congruent — a reflection is a rigid motion (it preserves distances and angles), and a rigid motion carrying one figure onto another is exactly what congruence means'
+      answer_contract: {kind: none}
       solution_sketch: 'Reflection across the $y$-axis negates the $x$-coordinate; rigid motions preserve lengths and angle measures.'
     anki_seeds:
       - front: "The three rigid motions are..."
@@ -448,6 +458,7 @@ topics:
     diagnostic_exemplar:
       problem: 'In $\triangle ABC$ and $\triangle XYZ$: $\overline{AB} \cong \overline{XY}$, $\overline{AC} \cong \overline{XZ}$, and $\angle A \cong \angle X$, where $m\angle A = (2x + 16)^\circ$ and $m\angle X = (4x - 8)^\circ$. Name the congruence criterion and find $m\angle A$, in degrees.'
       answer: 'SAS; m∠A = 40 degrees'
+      answer_contract: {kind: none}
       solution_sketch: '$\angle A$ is included between $\overline{AB}$ and $\overline{AC}$, so the criterion is SAS; $2x + 16 = 4x - 8$ gives $x = 12$ and $m\angle A = 40^\circ$.'
     anki_seeds:
       - front: "SAS congruence requires the congruent angle to be ... the two congruent sides"
@@ -520,6 +531,7 @@ topics:
         exemplars:
           - problem: 'Given $\angle A \cong \angle D$ and $\angle B \cong \angle E$, what follows about $\angle C$ and $\angle F$, and why?'
             answer: '$\angle C \cong \angle F$; both equal $180^\circ$ minus the other two angles.'
+            answer_contract: {kind: none}
             solution_sketch: 'Triangle angle sum forces the third pair, which is how AAS reduces to ASA.'
           - problem: 'Two angles of a triangle measure $40^\circ$ and $70^\circ$; the corresponding two angles of another triangle also measure $40^\circ$ and $70^\circ$. What is the third angle in each triangle, in degrees?'
             answer: "70"
@@ -539,6 +551,7 @@ topics:
     diagnostic_exemplar:
       problem: 'In $\triangle ABC$ and $\triangle DEF$: $\angle A \cong \angle D$, $\angle B \cong \angle E$, and $\overline{BC} \cong \overline{EF}$. State the congruence criterion, and explain why the triangles are congruent even though the congruent sides are not between the marked angles.'
       answer: 'AAS; the third angles are congruent too (each is 180° minus the other two), so the given side becomes an included side and ASA applies'
+      answer_contract: {kind: none}
       solution_sketch: 'Third-angle theorem: $\angle C \cong \angle F$, and $\overline{BC}$ lies between $\angle B$ and $\angle C$.'
     anki_seeds:
       - front: "ASA vs AAS: in ASA the congruent side is ... the two angles"
@@ -581,6 +594,8 @@ topics:
             solution_sketch: 'The Pythagorean theorem forces the other leg pair congruent too, so HL is really SSS for right triangles.'
           - problem: 'HL looks like SSA, which is not a valid criterion in general. Why is HL valid?'
             answer: 'The right angle fixes the remaining leg via the Pythagorean theorem, so HL is effectively SSS.'
+            answer_contract: {kind: none}
+            solution_sketch: 'In a right triangle the Pythagorean theorem determines the remaining leg from the hypotenuse and the given leg, so hypotenuse plus leg is really SSS.'
           - problem: 'A right triangle has legs $6$ and $8$, and hypotenuse $10$. A second right triangle has hypotenuse $10$ and one leg $8$. Are the triangles congruent by HL? Answer yes or no.'
             answer: 'yes'
             answer_contract: {kind: label, options: [[yes], [no]]}
@@ -624,6 +639,7 @@ topics:
     diagnostic_exemplar:
       problem: 'In right triangles $\triangle ABC$ (right angle at $C$) and $\triangle DEF$ (right angle at $F$), $\overline{AB} \cong \overline{DE}$ and $\overline{BC} \cong \overline{EF}$, with $AB = 5x - 3$ and $DE = 3x + 11$. Name the congruence criterion and find $AB$.'
       answer: 'HL; AB = 32'
+      answer_contract: {kind: none}
       solution_sketch: '$\overline{AB}$ and $\overline{DE}$ are the hypotenuses (opposite the right angles) and $\overline{BC}$, $\overline{EF}$ are corresponding legs, so HL applies; $5x - 3 = 3x + 11$ gives $x = 7$ and $AB = 32$.'
     anki_seeds:
       - front: "HL congruence applies only to ... triangles"
@@ -677,10 +693,12 @@ topics:
         key_prerequisites: [asa-aas-congruence]
         exemplars:
           - problem: 'Two triangles have all three pairs of corresponding angles congruent (AAA). Must the triangles be congruent?'
-            answer: 'No; AAA guarantees the same shape (similarity) but not the same size.'
-            solution_sketch: 'Two equilateral triangles with sides $1$ and $2$ have equal angles but are not congruent.'
+            answer: 'no'
+            answer_contract: {kind: label, options: [[yes], [no]]}
+            solution_sketch: 'AAA guarantees the same shape (similarity) but not the same size: two equilateral triangles with sides $1$ and $2$ have equal angles but are not congruent.'
           - problem: 'Two triangles agree in two sides and a non-included angle (SSA). Is SSA a valid congruence criterion?'
-            answer: 'No; SSA can produce two different triangles (the ambiguous case).'
+            answer: 'no'
+            answer_contract: {kind: label, options: [[yes], [no]]}
             solution_sketch: 'Keep two sides fixed and swing the non-included angle: it can land at two positions, giving different third sides.'
           - problem: 'Is AAA a valid triangle congruence criterion? Answer yes or no.'
             answer: 'no'
@@ -723,6 +741,7 @@ topics:
     diagnostic_exemplar:
       problem: 'In quadrilateral $PQRS$, $\overline{PQ} \cong \overline{RQ}$ and $\overline{PS} \cong \overline{RS}$, and diagonal $\overline{QS}$ is drawn. State the triangle congruence this gives and its criterion.'
       answer: '$\triangle PQS \cong \triangle RQS$ by SSS'
+      answer_contract: {kind: none}
       solution_sketch: 'The shared diagonal gives $\overline{QS} \cong \overline{QS}$ (reflexive), completing three side pairs; the vertex order follows the correspondence $P \leftrightarrow R$.'
     anki_seeds:
       - front: "The five valid triangle congruence criteria are..."

@@ -283,12 +283,15 @@ topics:
         exemplars:
           - problem: 'State the amplitude, period, phase shift, and midline of $y = 3\sin\left(2\left(x - \frac{\pi}{4}\right)\right) + 1$.'
             answer: "amplitude 3, period π, phase shift π/4 right, midline y = 1"
+            answer_contract: {kind: none}
             solution_sketch: 'Amplitude $|A| = 3$; period $2\pi/B = \pi$; the argument $2(x - \pi/4)$ shifts right $\pi/4$; midline $y = D = 1$.'
           - problem: 'State the phase shift of $y = \cos\left(x + \frac{\pi}{6}\right)$.'
             answer: "π/6 left"
+            answer_contract: {kind: none}
             solution_sketch: '$x + \frac{\pi}{6} = x - \left(-\frac{\pi}{6}\right)$, so $C = -\frac{\pi}{6}$: a shift left.'
           - problem: 'State the period and phase shift of $y = \sin\left(2x - \frac{\pi}{3}\right)$.'
             answer: "period π, phase shift π/6 right"
+            answer_contract: {kind: none}
             solution_sketch: 'Factor first: $\sin\left(2\left(x - \frac{\pi}{6}\right)\right)$. The shift is $\frac{\pi}{3} \div 2$, not $\frac{\pi}{3}$.'
       - id: kp2
         name: Write the equation from features or a graph
@@ -311,9 +314,11 @@ topics:
         exemplars:
           - problem: 'A Ferris wheel of radius $10$ m has its centre $12$ m above the ground and turns once every $60$ s. A cabin starts at the lowest point at $t = 0$. Write its height $h(t)$ in metres as a cosine function.'
             answer: "h(t) = 12 - 10 cos(πt/30)"
+            answer_contract: {kind: none}
             solution_sketch: 'Midline $12$, amplitude $10$, $B = \frac{2\pi}{60} = \frac{\pi}{30}$; starting at the minimum means a reflected cosine.'
           - problem: 'At a harbour the high tide of $6$ m occurs at 03:00 and the next low tide of $2$ m at 09:00. Model the depth $d(t)$ with a cosine, $t$ in hours after midnight.'
             answer: "d(t) = 2 cos(π(t - 3)/6) + 4"
+            answer_contract: {kind: none}
             solution_sketch: 'Midline $\frac{6+2}{2} = 4$, amplitude $2$; high-to-low is half a period, so the period is $12$ h and $B = \frac{\pi}{6}$; the cosine peaks at $t = 3$.'
           - problem: 'Using $h(t) = 12 - 10\cos\left(\frac{\pi t}{30}\right)$, find the cabin height at $t = 15$ s.'
             answer: "12 m"
@@ -321,6 +326,7 @@ topics:
     diagnostic_exemplar:
       problem: 'A Ferris wheel of radius $8$ m has its centre $10$ m above the ground and turns once every $40$ s. A cabin starts at the lowest point at $t = 0$. Write its height $h(t)$ in metres as a cosine function.'
       answer: "h(t) = 10 - 8 cos(πt/20)"
+      answer_contract: {kind: none}
       solution_sketch: 'Midline $10$, amplitude $8$, $B = \frac{2\pi}{40} = \frac{\pi}{20}$; starting at the minimum means a reflected cosine.'
     anki_seeds:
       - front: "For y = A sin(B(x − C)) + D, the phase shift is..."
@@ -362,24 +368,32 @@ topics:
         exemplars:
           - problem: 'State the period of $y = \tan x$ and the equations of its vertical asymptotes.'
             answer: "period π; asymptotes x = π/2 + πk for integer k"
+            answer_contract: {kind: none}
             solution_sketch: 'Tangent repeats every $\pi$ and blows up where $\cos x = 0$.'
           - problem: 'On $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$, is $y = \tan x$ increasing or decreasing, and where does it cross the $x$-axis?'
-            answer: "increasing; crosses at x = 0"
+            answer: "increasing"
+            answer_contract: {kind: label, options: [[increasing], [decreasing]]}
+            solution_sketch: 'On $(-\pi/2, \pi/2)$ tangent rises from $-\infty$ to $+\infty$, crossing the $x$-axis at $x = 0$.'
           - problem: 'State the domain of $y = \tan x$.'
             answer: "all real x except x = π/2 + πk (k an integer)"
+            answer_contract: {kind: none}
+            solution_sketch: 'Tangent is undefined exactly where $\\cos x = 0$, i.e. at $x = \pi/2 + \pi k$ for integers $k$.'
       - id: kp2
         name: Secant and cosecant from their reciprocals
         key_prerequisites: [reciprocal-trig-functions, sine-cosine-parent-graphs]
         constraints: "derive every feature from the sine or cosine graph: asymptotes at its zeros, branches anchored at its max/min"
         exemplars:
           - problem: 'State the vertical asymptotes of $y = \sec x$ on $[0, 2\pi]$.'
-            answer: "x = π/2 and x = 3π/2"
+            answer: "π/2, 3π/2"
+            answer_contract: {kind: list, ordered: false, member: {kind: exact}}
             solution_sketch: 'Secant blows up exactly where $\cos x = 0$.'
           - problem: 'State the range of $y = \csc x$.'
             answer: "y ≤ -1 or y ≥ 1"
+            answer_contract: {kind: inequality_union}
             solution_sketch: 'Reciprocals of $\sin x \in [-1, 1] \setminus \{0\}$ never land in $(-1, 1)$.'
           - problem: 'The graph of $y = \cos x$ has a maximum at $(0, 1)$. What feature does $y = \sec x$ have there?'
             answer: "a local minimum at (0, 1)"
+            answer_contract: {kind: label, options: [["a local minimum at (0, 1)"], ["a local maximum at (0, 1)"], [a vertical asymptote], [an x-intercept]]}
             solution_sketch: 'Where the base graph peaks at $1$, its reciprocal bottoms out at $1$.'
       - id: kp3
         name: Cotangent and transformed graphs
@@ -388,15 +402,19 @@ topics:
         exemplars:
           - problem: 'State the period of $y = \cot x$ and the equations of its vertical asymptotes.'
             answer: "period π; asymptotes x = πk for integer k"
+            answer_contract: {kind: none}
             solution_sketch: 'Cotangent blows up where $\sin x = 0$.'
           - problem: 'Find the period of $y = \tan(2x)$ and its vertical asymptote in $\left(0, \frac{\pi}{2}\right)$.'
             answer: "period π/2; asymptote x = π/4"
+            answer_contract: {kind: none}
             solution_sketch: 'Period $\pi/2$; asymptotes where $2x = \frac{\pi}{2} + \pi k$.'
           - problem: 'Is $y = \cot x$ increasing or decreasing on $(0, \pi)$?'
             answer: "decreasing"
+            answer_contract: {kind: label, options: [[decreasing], [increasing]]}
     diagnostic_exemplar:
       problem: 'Find the period of $y = \tan\frac{x}{2}$ and the equation of its vertical asymptote in $(0, 2\pi)$.'
       answer: "period 2π; asymptote x = π"
+      answer_contract: {kind: none}
       solution_sketch: 'Period $\pi \div \frac{1}{2} = 2\pi$; asymptotes where $\frac{x}{2} = \frac{\pi}{2} + \pi k$, so $x = \pi$ inside $(0, 2\pi)$.'
     anki_seeds:
       - front: "Period of tan and cot?"

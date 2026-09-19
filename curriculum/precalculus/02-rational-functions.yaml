@@ -31,9 +31,12 @@ topics:
         constraints: "denominators factor over the integers; include one hole case (common factor)"
         exemplars:
           - problem: 'Find the vertical asymptotes of $f(x) = \frac{x + 1}{(x - 2)(x + 3)}$.'
-            answer: "x = 2 and x = -3"
+            answer: "2, -3"
+            answer_contract: {kind: list, ordered: false, member: {kind: exact}}
+            solution_sketch: 'The denominator vanishes at $x = 2$ and $x = -3$, with no canceled factors: vertical asymptotes $x = 2$ and $x = -3$.'
           - problem: 'Does $f(x) = \frac{x^2 - 1}{x - 1}$ have a vertical asymptote at $x = 1$, or a hole?'
             answer: "a hole"
+            answer_contract: {kind: label, options: [[a hole], [a vertical asymptote]]}
             solution_sketch: '$\frac{(x-1)(x+1)}{x-1}$ simplifies to $x + 1$; the factor cancels.'
       - id: kp2
         name: Horizontal asymptotes by comparing degrees
@@ -47,6 +50,7 @@ topics:
             answer: "y = 0"
           - problem: 'Does $f(x) = \frac{x^2}{x - 1}$ have a horizontal asymptote?'
             answer: "no"
+            answer_contract: {kind: label, options: [[no], [yes]]}
             solution_sketch: 'Numerator degree exceeds denominator degree.'
       - id: kp3
         name: Full asymptote inventory
@@ -55,11 +59,16 @@ topics:
         exemplars:
           - problem: 'Find all asymptotes of $f(x) = \frac{3x^2 + 1}{x^2 - 4}$.'
             answer: "vertical: x = 2, x = -2; horizontal: y = 3"
+            answer_contract: {kind: none}
+            solution_sketch: 'The denominator factors $(x-2)(x+2)$: vertical asymptotes $x = 2, x = -2$; equal degrees give horizontal asymptote $y = 3$.'
           - problem: 'Find all asymptotes of $f(x) = \frac{1}{x + 5}$.'
             answer: "vertical: x = -5; horizontal: y = 0"
+            answer_contract: {kind: none}
+            solution_sketch: 'Vertical asymptote $x = -5$; degree top $<$ degree bottom gives horizontal asymptote $y = 0$.'
     diagnostic_exemplar:
       problem: 'Find every vertical asymptote, every hole, and the horizontal asymptote of $f(x) = \frac{2x^2 - 6x}{x^2 - 9}$.'
       answer: 'hole at x = 3; vertical asymptote x = -3; horizontal asymptote y = 2'
+      answer_contract: {kind: none}
       solution_sketch: '$f(x) = \frac{2x(x-3)}{(x-3)(x+3)} = \frac{2x}{x+3}$ for $x \neq 3$: the canceled factor leaves a hole at $x = 3$, the surviving zero gives $x = -3$, and equal degrees give $y = 2$.'
     anki_seeds:
       - front: "Horizontal asymptote when numerator and denominator have equal degree?"
@@ -91,9 +100,11 @@ topics:
         exemplars:
           - problem: 'Does $f(x) = \frac{x^2 + 1}{x - 1}$ have a slant asymptote?'
             answer: "yes"
+            answer_contract: {kind: label, options: [[yes], [no]]}
             solution_sketch: 'Numerator degree is exactly one more than denominator degree.'
           - problem: 'Does $f(x) = \frac{x^3}{x - 1}$ have a slant asymptote?'
             answer: "no"
+            answer_contract: {kind: label, options: [[yes], [no]]}
             solution_sketch: 'The degree gap is $2$, so the quotient is quadratic, not linear.'
       - id: kp2
         name: Find the slant asymptote by division
@@ -141,9 +152,11 @@ topics:
         constraints: "x-intercepts from numerator zeros (never where the denominator vanishes); y-intercept as f(0); integer or small-fraction coordinates"
         exemplars:
           - problem: 'Find the $x$- and $y$-intercepts of $f(x) = \frac{x - 2}{x + 1}$.'
-            answer: "x-intercept (2, 0); y-intercept (0, -2)"
+            answer: "x_intercept = (2, 0); y_intercept = (0, -2)"
+            answer_contract: {kind: multipart, parts: [{name: x_intercept, contract: {kind: coordinates, arity: 2}}, {name: y_intercept, contract: {kind: coordinates, arity: 2}}]}
           - problem: 'Find the intercepts of $f(x) = \frac{x^2 - 1}{x^2 - 4}$.'
-            answer: "x-intercepts (1, 0) and (-1, 0); y-intercept (0, 1/4)"
+            answer: "left_intercept = (-1, 0); right_intercept = (1, 0); y_intercept = (0, 1/4)"
+            answer_contract: {kind: multipart, parts: [{name: left_intercept, contract: {kind: coordinates, arity: 2}}, {name: right_intercept, contract: {kind: coordinates, arity: 2}}, {name: y_intercept, contract: {kind: coordinates, arity: 2}}]}
             solution_sketch: '$f(0) = \frac{-1}{-4} = \frac{1}{4}$.'
       - id: kp2
         name: Behavior near a vertical asymptote
@@ -152,9 +165,12 @@ topics:
         exemplars:
           - problem: 'For $f(x) = \frac{1}{x - 3}$, does $f(x)$ go to $+\infty$ or $-\infty$ as $x$ approaches $3$ from the right?'
             answer: "+∞"
+            answer_contract: {kind: label, options: [[+∞], [-∞]]}
             solution_sketch: 'Just right of $3$, the denominator is small and positive.'
           - problem: 'For $f(x) = \frac{1}{x - 3}$, what happens as $x$ approaches $3$ from the left?'
-            answer: "f(x) → -∞"
+            answer: "-∞"
+            answer_contract: {kind: label, options: [[-∞], [+∞]]}
+            solution_sketch: 'Just left of $3$, the denominator is small and negative, so $f(x) \to -\infty$.'
       - id: kp3
         name: Assemble the full feature set
         key_prerequisites: [vertical-horizontal-asymptotes, slant-asymptotes]
@@ -162,11 +178,16 @@ topics:
         exemplars:
           - problem: 'For $f(x) = \frac{x^2 - 1}{x^2 - 4}$, list the vertical asymptotes, horizontal asymptote, and intercepts.'
             answer: "VA: x = 2, x = -2; HA: y = 1; x-intercepts (±1, 0); y-intercept (0, 1/4)"
+            answer_contract: {kind: none}
+            solution_sketch: 'Vertical asymptotes $x = \pm 2$; equal degrees give $y = 1$; intercepts $(\pm 1, 0)$ and $(0, 1/4)$.'
           - problem: 'For $f(x) = \frac{2x}{x + 3}$, list the asymptotes and intercepts.'
             answer: "VA: x = -3; HA: y = 2; intercept (0, 0)"
+            answer_contract: {kind: none}
+            solution_sketch: 'Vertical asymptote $x = -3$; equal degrees give $y = 2$; the origin is both intercepts.'
     diagnostic_exemplar:
       problem: 'For $f(x) = \frac{x + 3}{x - 1}$, state the vertical asymptote, the horizontal asymptote, both intercepts, and whether $f(x) \to +\infty$ or $-\infty$ as $x \to 1^+$.'
       answer: 'VA: x = 1; HA: y = 1; x-intercept (-3, 0); y-intercept (0, -3); f(x) → +∞ as x → 1⁺'
+      answer_contract: {kind: none}
       solution_sketch: 'The denominator vanishes at $x = 1$ (numerator $4 \neq 0$ there), equal degrees give $y = 1$, $f(0) = -3$, $f(-3) = 0$; just right of $1$ the numerator is positive and the denominator is a small positive, so $f \to +\infty$.'
     anki_seeds:
       - front: "Intercepts of a rational function f = p/q:"
@@ -202,6 +223,7 @@ topics:
         exemplars:
           - problem: 'Solve $\frac{x - 2}{x + 1} > 0$.'
             answer: "x < -1 or x > 2"
+            answer_contract: {kind: inequality_union}
             solution_sketch: 'Critical points $-1$ and $2$; the ratio is positive outside them.'
           - problem: 'Solve $\frac{x + 5}{x - 3} < 0$.'
             answer: "-5 < x < 3"
@@ -212,6 +234,7 @@ topics:
         exemplars:
           - problem: 'Solve $\frac{x}{x - 3} \le 2$.'
             answer: "x < 3 or x ≥ 6"
+            answer_contract: {kind: inequality_union}
             solution_sketch: '$\frac{x}{x-3} - 2 = \frac{6 - x}{x - 3} \le 0$; sign chart over $3$ and $6$.'
           - problem: 'Solve $\frac{2}{x} \ge 1$ for $x \ne 0$.'
             answer: "0 < x ≤ 2"
@@ -223,12 +246,15 @@ topics:
         exemplars:
           - problem: 'Solve $\frac{x + 2}{x - 1} \ge 0$.'
             answer: "x ≤ -2 or x > 1"
+            answer_contract: {kind: inequality_union}
             solution_sketch: 'Include $x = -2$ (numerator zero); exclude $x = 1$ (undefined).'
           - problem: 'In $\frac{x - 4}{x + 3} \le 0$, which endpoint is included: $4$ or $-3$?'
-            answer: "4 (the solution is -3 < x ≤ 4)"
+            answer: "4"
+            solution_sketch: 'The numerator zero $4$ is included; the denominator zero $-3$ is excluded: solution $-3 < x \le 4$.'
     diagnostic_exemplar:
       problem: 'Solve $\frac{x}{x - 2} \le 3$.'
       answer: "x < 2 or x ≥ 3"
+      answer_contract: {kind: inequality_union}
       solution_sketch: 'Move everything left: $\frac{x}{x-2} - 3 = \frac{6 - 2x}{x - 2} \le 0$; sign chart over $2$ and $3$; include $x = 3$ (numerator zero), exclude $x = 2$ (undefined).'
     anki_seeds:
       - front: "Why can't you multiply both sides of a rational inequality by the denominator?"

@@ -78,9 +78,11 @@ topics:
         exemplars:
           - problem: 'A function satisfies $f(x, y) = 1$ exactly when $x \ne y$. Write $f$ in disjunctive normal form.'
             answer: '$x\bar{y} + \bar{x}y$'
+            answer_contract: {kind: none}
             solution_sketch: 'One minterm per true row: $(x,y) = (1,0)$ gives $x\bar{y}$; $(0,1)$ gives $\bar{x}y$. (This is XOR.)'
           - problem: 'Write the DNF of the majority function on $x, y, z$ (value $1$ when at least two inputs are $1$).'
             answer: '$xyz + xy\bar{z} + x\bar{y}z + \bar{x}yz$'
+            answer_contract: {kind: none}
             solution_sketch: 'The four true rows are $(1,1,1), (1,1,0), (1,0,1), (0,1,1)$; each becomes a minterm.'
         constraints: "2-3 variables; one minterm per satisfying row; count of minterms = count of 1-rows"
       - id: kp2
@@ -92,11 +94,13 @@ topics:
             solution_sketch: 'One minterm per row where the function is $1$.'
           - problem: 'Write $f(x,y) = 1$ exactly when $x = y = 1$ in CNF (product of clauses).'
             answer: '$x \cdot y$ — equivalently the clauses $(x)(y)$'
+            answer_contract: {kind: none}
             solution_sketch: 'AND of the two single-literal clauses forces both variables true; here CNF and the function coincide.'
         constraints: "2-3 variables; translate between truth table, DNF, and simple CNF"
     diagnostic_exemplar:
       problem: 'A function on $x, y, z$ equals $1$ exactly when exactly one of the inputs is $1$. Give its disjunctive normal form, and state how many clauses its full conjunctive normal form has.'
       answer: 'DNF: $x\bar{y}\bar{z} + \bar{x}y\bar{z} + \bar{x}\bar{y}z$; the full CNF has 5 clauses'
+      answer_contract: {kind: none}
       solution_sketch: 'One minterm per $1$-row — the rows $(1,0,0)$, $(0,1,0)$, $(0,0,1)$ — and one maxterm per $0$-row, of which there are $8 - 3 = 5$.'
     anki_seeds:
       - front: "Minterm for the row $x=1, y=0, z=1$"
@@ -129,8 +133,9 @@ topics:
             answer: "0"
             solution_sketch: 'NAND negates AND: $\overline{1 \cdot 1} = \bar{1} = 0$; on any other input pair it outputs $1$.'
           - problem: 'What is the output of an XOR gate on inputs $1, 0$, and on inputs $1, 1$?'
-            answer: '$1$ and $0$'
-            solution_sketch: 'XOR is $1$ exactly when the inputs differ.'
+            answer: 'first = 1; second = 0'
+            answer_contract: {kind: multipart, parts: [{name: first, contract: {kind: exact}}, {name: second, contract: {kind: exact}}]}
+            solution_sketch: 'On inputs $1, 0$ the XOR outputs $1$; on inputs $1, 1$ it outputs $0$ — XOR is $1$ exactly when the inputs differ.'
         constraints: "gates AND, OR, NOT, NAND, NOR, XOR; single-gate evaluations"
       - id: kp2
         name: "Circuits as expressions"
@@ -141,11 +146,13 @@ topics:
             solution_sketch: '$xy = 0$, $\bar{z} = 1$, and $0 + 1 = 1$.'
           - problem: 'Using only AND, OR, NOT gates, give an expression that computes XOR of $x$ and $y$. How many of these gates does your expression use?'
             answer: '$x\bar{y} + \bar{x}y$: $5$ gates ($2$ NOT, $2$ AND, $1$ OR)'
+            answer_contract: {kind: none}
             solution_sketch: 'Two inverters feed two AND gates whose outputs meet in one OR gate.'
         constraints: "circuits of 2-5 gates on 2-3 inputs; evaluate at given inputs or translate circuit <-> expression"
     diagnostic_exemplar:
       problem: 'Using only AND, OR, NOT gates, give an expression that computes XNOR of $x$ and $y$ (output $1$ exactly when $x = y$), and evaluate it at $x = 0$, $y = 0$.'
       answer: '$xy + \bar{x}\bar{y}$; output $1$ at $x = y = 0$.'
+      answer_contract: {kind: none}
       solution_sketch: 'Equal inputs satisfy one of the two terms; at $(0,0)$ the term $\bar{x}\bar{y}$ is $1$.'
     anki_seeds:
       - front: "NAND gate output is 0 exactly when..."
@@ -178,11 +185,13 @@ topics:
         key_prerequisites: [function-notation]
         exemplars:
           - problem: 'Show that $3n + 7$ is $O(n)$ by exhibiting constants $C$ and $n_0$.'
-            answer: 'E.g. $C = 10$, $n_0 = 1$: for $n \ge 1$, $3n + 7 \le 3n + 7n = 10n$.'
-            solution_sketch: 'Bound the constant term by a multiple of $n$ once $n \ge 1$; any valid $(C, n_0)$ pair is accepted.'
+            answer: 'C = 10; n0 = 1'
+            answer_contract: {kind: multipart, parts: [{name: C, contract: {kind: exact}}, {name: n0, contract: {kind: exact}}]}
+            solution_sketch: 'For $n \ge 1$, $3n + 7 \le 3n + 7n = 10n$, so $C = 10$, $n_0 = 1$ works. Bound the constant term by a multiple of $n$ once $n \ge 1$; any valid $(C, n_0)$ pair is accepted.'
           - problem: 'Is $n^2$ ever $O(n)$? Why not?'
-            answer: 'No: for any $C$, $n^2 > Cn$ once $n > C$.'
-            solution_sketch: 'The ratio $n^2/n = n$ is unbounded, so no constant $C$ works.'
+            answer: 'No'
+            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
+            solution_sketch: 'No: for any $C$, $n^2 > Cn$ once $n > C$. The ratio $n^2/n = n$ is unbounded, so no constant $C$ works.'
         constraints: "polynomials of degree <= 2 plus log terms; require explicit (C, n0) witnesses or an unboundedness argument"
       - id: kp2
         name: "Classifying by dominant term"
@@ -197,8 +206,9 @@ topics:
         constraints: "sums of at most 3 terms drawn from constants, log n, n, n log n, n^2, n^3, 2^n"
     diagnostic_exemplar:
       problem: 'Show that $5n + 9$ is $O(n)$ by exhibiting constants $C$ and $n_0$, and verify the inequality.'
-      answer: 'E.g. $C = 14$, $n_0 = 1$: for $n \ge 1$, $5n + 9 \le 5n + 9n = 14n$.'
-      solution_sketch: 'Any $C \ge 14$ with $n_0 = 1$ works (or e.g. $C = 6$ with $n_0 = 9$).'
+      answer: 'C = 14; n0 = 1'
+      answer_contract: {kind: multipart, parts: [{name: C, contract: {kind: exact}}, {name: n0, contract: {kind: exact}}]}
+      solution_sketch: 'For $n \ge 1$, $5n + 9 \le 5n + 9n = 14n$, so $C = 14$, $n_0 = 1$ works. Any $C \ge 14$ with $n_0 = 1$ works (or e.g. $C = 6$ with $n_0 = 9$).'
     anki_seeds:
       - front: "Definition: $f(n)$ is $O(g(n))$ means..."
         back: 'There exist constants $C > 0$ and $n_0$ with $|f(n)| \le C \, g(n)$ for all $n \ge n_0$.'
@@ -230,10 +240,12 @@ topics:
         key_prerequisites: [big-o-notation]
         exemplars:
           - problem: 'Is $n^2 + n$ in $\Theta(n^2)$? Justify with both bounds.'
-            answer: 'Yes: $n^2 \le n^2 + n \le 2n^2$ for $n \ge 1$, so it is both $\Omega(n^2)$ and $O(n^2)$.'
-            solution_sketch: 'Sandwich between $1 \cdot n^2$ and $2 \cdot n^2$.'
+            answer: 'Yes'
+            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
+            solution_sketch: 'Yes: $n^2 \le n^2 + n \le 2n^2$ for $n \ge 1$, so it is both $\Omega(n^2)$ and $O(n^2)$ — sandwich between $1 \cdot n^2$ and $2 \cdot n^2$.'
           - problem: 'Order by growth rate: $n \log n$, $2^n$, $n^2$, $\log n$, $n$.'
             answer: '$\log n \prec n \prec n\log n \prec n^2 \prec 2^n$'
+            answer_contract: {kind: none}
             solution_sketch: 'Logs below polynomials below exponentials; $n \log n$ sits between $n$ and $n^2$.'
         constraints: "order 3-5 functions from {log n, sqrt(n), n, n log n, n^2, n^3, 2^n, n!}; Theta claims need both O and Omega"
       - id: kp2
@@ -241,15 +253,18 @@ topics:
         key_prerequisites: [big-o-notation, logarithm-properties]
         exemplars:
           - problem: 'Are $\log_2 n$ and $\log_{10} n$ the same up to $\Theta$? Why?'
-            answer: 'Yes: $\log_2 n = \dfrac{\log_{10} n}{\log_{10} 2}$, a constant multiple.'
-            solution_sketch: 'Change-of-base is multiplication by a constant, which Theta ignores.'
+            answer: 'Yes'
+            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
+            solution_sketch: 'Yes: $\log_2 n = \dfrac{\log_{10} n}{\log_{10} 2}$, a constant multiple. Change-of-base is multiplication by a constant, which Theta ignores.'
           - problem: 'Is $2^{n+1}$ in $O(2^n)$? Is $2^{2n}$?'
-            answer: '$2^{n+1} = 2 \cdot 2^n$: yes. $2^{2n} = 4^n$: no — the ratio $2^n$ is unbounded.'
-            solution_sketch: 'A constant factor stays inside the class; an exponential factor does not.'
+            answer: 'in_O = yes; four_n = no'
+            answer_contract: {kind: multipart, parts: [{name: in_O, contract: {"kind":"label","options":[["yes"],["no"]]}}, {name: four_n, contract: {"kind":"label","options":[["yes"],["no"]]}}]}
+            solution_sketch: '$2^{n+1} = 2 \\cdot 2^n$: yes, a constant multiple. $2^{2n} = 4^n$: no — the ratio $2^n$ is unbounded. A constant factor stays inside the class; an exponential factor does not.'
         constraints: "additive vs multiplicative changes in exponents; change-of-base arguments"
     diagnostic_exemplar:
       problem: 'Is $2^{n+2}$ in $O(2^n)$? Is $4^n$? Justify both.'
       answer: '$2^{n+2} = 4 \cdot 2^n$: yes, a constant multiple. $4^n = 2^n \cdot 2^n$: no — the ratio $2^n$ is unbounded.'
+      answer_contract: {kind: none}
       solution_sketch: 'Additive shifts in the exponent scale by a constant; doubling the exponent does not.'
     anki_seeds:
       - front: '$f$ is $\Theta(g)$ means...'
@@ -288,10 +303,11 @@ topics:
         key_prerequisites: [recurrence-relations]
         exemplars:
           - problem: 'Merge sort satisfies $T(n) = 2T(n/2) + n$ with $T(1) = 0$: solving two half-size instances plus $n$ steps of merging. Compute $T(8)$.'
-            answer: '$T(8) = 24$'
+            answer: '24'
             solution_sketch: '$T(2) = 2 \cdot 0 + 2 = 2$; $T(4) = 2 \cdot 2 + 4 = 8$; $T(8) = 2 \cdot 8 + 8 = 24$. Each of the $\log_2 8 = 3$ levels of the recursion does $8$ units of work.'
           - problem: 'Binary search satisfies $T(n) = T(n/2) + 1$ with $T(1) = 1$. Identify $a$, $b$, and $f(n)$ in the pattern $T(n) = a\,T(n/b) + f(n)$, and compute $T(16)$.'
-            answer: '$a = 1$, $b = 2$, $f(n) = 1$; $T(16) = 5$'
+            answer: 'a = 1; b = 2; fn = 1; t16 = 5'
+            answer_contract: {kind: multipart, parts: [{name: a, contract: {kind: exact}}, {name: b, contract: {kind: exact}}, {name: fn, contract: {kind: exact}}, {name: t16, contract: {kind: exact}}]}
             solution_sketch: 'One recursive call ($a = 1$) on half the input ($b = 2$) plus one comparison ($f(n) = 1$). Iterating: $T(2) = 2$, $T(4) = 3$, $T(8) = 4$, $T(16) = 5$ — one step per halving.'
         constraints: "n a power of b; identify a, b, f(n) from a verbal description and iterate 3-4 levels by hand"
       - id: kp2
@@ -300,12 +316,15 @@ topics:
         exemplars:
           - problem: 'For $T(n) = 9T(n/3) + n$, compute the critical exponent $\log_b a$, compare $f(n)$ with $n^{\log_b a}$, and give the growth order of $T(n)$.'
             answer: '$\log_3 9 = 2$; $f(n) = n$ grows strictly slower than $n^2$, so $T(n) = \Theta(n^2)$ (leaves dominate, case 1).'
+            answer_contract: {kind: none}
             solution_sketch: '$n^{\log_3 9} = n^2$. Since $f(n) = n \prec n^2$, the work at the leaves dominates: $T(n) = \Theta(n^{\log_b a}) = \Theta(n^2)$.'
           - problem: 'Classify $T(n) = 2T(n/2) + n$.'
             answer: '$\log_2 2 = 1$ and $f(n) = n$ matches $n^1$, so $T(n) = \Theta(n \log n)$ (balanced, case 2).'
+            answer_contract: {kind: none}
             solution_sketch: 'When $f(n) = \Theta(n^{\log_b a})$, every one of the $\log_b n$ levels does the same order of work, so a $\log$ factor appears: $T(n) = \Theta(n \log n)$ — merge sort.'
           - problem: 'Classify $T(n) = 2T(n/2) + n^{2}$.'
             answer: '$f(n) = n^2$ grows strictly faster than $n^{\log_2 2} = n$, so $T(n) = \Theta(n^2)$ (root dominates, case 3).'
+            answer_contract: {kind: none}
             solution_sketch: 'The top level already does $n^2$ work and the levels below shrink geometrically ($2 \cdot (n/2)^2 = n^2/2$), so the root dominates: $T(n) = \Theta(f(n)) = \Theta(n^2)$.'
         constraints: "a, b small positive integers; f(n) a monomial so case comparison is by exponent and the case-3 regularity condition holds automatically; answers name the case and the Θ class"
       - id: kp3
@@ -314,14 +333,17 @@ topics:
         exemplars:
           - problem: 'Karatsuba multiplication satisfies $T(n) = 3T(n/2) + n$. Give the growth order of $T(n)$, leaving the exponent as a logarithm.'
             answer: '$\Theta(n^{\log_2 3}) \approx \Theta(n^{1.585})$: the critical exponent $\log_2 3$ exceeds $1$, so the leaves dominate (case 1).'
+            answer_contract: {kind: none}
             solution_sketch: '$n^{\log_2 3}$ with $\log_2 3 \approx 1.585 > 1 = \deg f$, so case 1 gives $T(n) = \Theta(n^{\log_2 3})$ — asymptotically faster than the schoolbook $\Theta(n^2)$.'
           - problem: 'Binary search satisfies $T(n) = T(n/2) + 1$. Use the Master Theorem to find its growth order.'
             answer: '$\log_2 1 = 0$, and $f(n) = 1$ matches $n^0$, so $T(n) = \Theta(\log n)$ (case 2).'
+            answer_contract: {kind: none}
             solution_sketch: 'Critical exponent $\log_2 1 = 0$; $f(n) = 1 = \Theta(n^0)$, so case 2 applies with $n^0 \log n = \log n$: $T(n) = \Theta(\log n)$.'
         constraints: "named algorithms with their recurrences stated in the problem; irrational critical exponents stay as log_b a"
     diagnostic_exemplar:
       problem: 'Use the Master Theorem: what is the growth order of $T(n) = 4T(n/2) + n$?'
       answer: '$\Theta(n^2)$: the critical exponent is $\log_2 4 = 2$ and $f(n) = n$ grows strictly slower than $n^2$, so the leaves dominate (case 1).'
+      answer_contract: {kind: none}
       solution_sketch: '$n^{\log_2 4} = n^2 \succ f(n) = n$: case 1, $T(n) = \Theta(n^{\log_b a}) = \Theta(n^2)$.'
     anki_seeds:
       - front: 'Master Theorem setup $T(n) = a\,T(n/b) + f(n)$: the critical exponent to compare $f$ against?'
