@@ -99,9 +99,25 @@ fn up_to_constant_accepts_one_constant_of_difference_only() {
             "{learner}"
         );
     }
-    // A known limit: a constant name has the value 0 at each point (frozen rule),
-    // so a term that is a product with the constant has no effect.
-    assert_eq!(verdict(X_CONSTANT, "x^2/2 + C", "x^2/2 + C*x"), Ok(true));
+    // D34: the rule holds with each constant name at 0 and again at 1.
+    for learner in ["x^2/2 + C^2", "x^2/2 - C", "x^2/2 + 2C"] {
+        assert_eq!(
+            verdict(X_CONSTANT, "x^2/2 + C", learner),
+            Ok(true),
+            "{learner}"
+        );
+    }
+    for learner in ["x^2/2 + C*x", "C*x^2/2", "x^2/2 + k*x + c"] {
+        assert_eq!(
+            verdict(X_CONSTANT, "x^2/2 + C", learner),
+            Ok(false),
+            "{learner}"
+        );
+    }
+    // A known limit: `ln(C*x)` is `ln(x)` plus a constant, but with the constant
+    // at 0 the learner value is not finite, so rule (3) gives "wrong".
+    assert_eq!(verdict(X_CONSTANT, "ln(x) + C", "ln(C*x)"), Ok(false));
+    assert_eq!(verdict(X_CONSTANT, "ln(x) + C", "ln(2x) + c"), Ok(true));
     // A listed variable named `C` is a variable and not a constant.
     let listed = r#"{"kind":"function","vars":["x","C"],"up_to_constant":true}"#;
     assert_eq!(verdict(listed, "x + C", "x + C + 1"), Ok(true));

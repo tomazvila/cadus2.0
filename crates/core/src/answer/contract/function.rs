@@ -103,16 +103,21 @@ impl FunctionSpec {
     /// its interval, so no two variables have the same fraction at one point.
     #[must_use]
     pub fn sample_points(&self) -> Vec<Env> {
+        self.points_with_constants(0.0)
+    }
+
+    /// The eight sample points, with each constant name at `constant` (D34).
+    fn points_with_constants(&self, constant: f64) -> Vec<Env> {
         (0..SAMPLE_FRACTIONS.len())
-            .map(|point| self.sample_point(point))
+            .map(|point| self.sample_point(point, constant))
             .collect()
     }
 
-    fn sample_point(&self, point: usize) -> Env {
+    fn sample_point(&self, point: usize, constant: f64) -> Env {
         let mut env = Env::new();
         if self.up_to_constant {
             for name in CONSTANT_NAMES {
-                env.insert(name.to_string(), 0.0);
+                env.insert(name.to_string(), constant);
             }
         }
         for (index, (name, (low, high))) in self.vars.iter().zip(&self.domain).enumerate() {
@@ -227,7 +232,8 @@ pub fn check(spec: &FunctionSpec, expected: &str, learner: &str) -> Outcome {
 /// The steps: (1) equal canonical forms are correct; (2) a learner name outside
 /// the variables is wrong; (3) a learner value that is not finite where the key
 /// is finite is wrong; (4) each difference must be in the tolerance; (5) with
-/// `up_to_constant`, the spread of the differences must be in the tolerance.
+/// `up_to_constant`, the spread of the differences must be in the tolerance,
+/// with each constant name at 0 and again with each constant name at 1 (D34).
 /// A key with fewer than [`MIN_FINITE_POINTS`] finite points gives "wrong".
 #[must_use]
 pub fn grade(expected: &Ast, learner: &Ast, spec: &FunctionSpec) -> Verdict {
@@ -240,9 +246,23 @@ pub fn grade(expected: &Ast, learner: &Ast, spec: &FunctionSpec) -> Verdict {
     }
 }
 
+/// Whether the two formulas agree. With `up_to_constant` the rule must hold
+/// with each constant name at 0 and again at 1 (D34): with 0 only, the learner
+/// term `C*x` has no effect and a wrong antiderivative gets "correct".
 fn agrees(expected: &Ast, learner: &Ast, spec: &FunctionSpec) -> bool {
+    let constants: &[f64] = if spec.up_to_constant {
+        &[0.0, 1.0]
+    } else {
+        &[0.0]
+    };
+    constants
+        .iter()
+        .all(|constant| agrees_at(expected, learner, spec, *constant))
+}
+
+fn agrees_at(expected: &Ast, learner: &Ast, spec: &FunctionSpec, constant: f64) -> bool {
     let mut pairs = Vec::new();
-    for env in spec.sample_points() {
+    for env in spec.points_with_constants(constant) {
         let Some(key) = eval(expected, &env) else {
             continue;
         };
