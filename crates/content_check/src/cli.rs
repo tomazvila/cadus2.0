@@ -52,7 +52,9 @@ fn options(args: &[String], allowed: &[&str]) -> Result<BTreeMap<String, String>
         let value = rest
             .next()
             .ok_or_else(|| format!("the option `{name}` needs a value"))?;
-        found.insert(key.to_owned(), value.clone());
+        if found.insert(key.to_owned(), value.clone()).is_some() {
+            return Err(format!("the option `{name}` occurs two times"));
+        }
     }
     Ok(found)
 }
@@ -72,7 +74,11 @@ fn input(args: &[String], allowed: &[&str]) -> Result<Input, String> {
         }
         let text = std::fs::read_to_string(&path)
             .map_err(|error| format!("cannot read `{path}`: {error}"))?;
-        return Ok(Input::Batch(text.lines().map(batch_line).collect()));
+        let lines: Vec<_> = text.lines().map(batch_line).collect();
+        if lines.is_empty() {
+            return Err(format!("the batch file `{path}` has no line"));
+        }
+        return Ok(Input::Batch(lines));
     }
     let contract = necessary(&mut found, "contract")?;
     let contract = serde_json::from_str(&contract)
@@ -169,6 +175,10 @@ mod tests {
         assert_eq!(
             options(&strings(&["expected", "1"]), &allowed).err(),
             Some("unknown option `expected`".to_owned())
+        );
+        assert_eq!(
+            options(&strings(&["--expected", "1", "--expected", "2"]), &allowed).err(),
+            Some("the option `--expected` occurs two times".to_owned())
         );
         assert_eq!(
             options(&strings(&["--expected"]), &allowed).err(),

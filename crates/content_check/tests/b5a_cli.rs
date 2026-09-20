@@ -134,6 +134,62 @@ fn batch_file_errors_are_exit_2() {
     assert_error(&run(&["grade", "--batch", "x.jsonl", "--expected", "1"]), 2);
 }
 
+#[test]
+fn empty_batch_file_is_exit_2() {
+    let path = batch_file("b5a_empty.jsonl", &[]);
+    std::fs::write(&path, "").unwrap();
+    for subcommand in ["grade", "mutants"] {
+        let text = assert_error(&run(&[subcommand, "--batch", &path]), 2);
+        assert!(text.contains("has no line"), "{text}");
+    }
+}
+
+#[test]
+fn truncated_batch_file_is_exit_2_with_an_error_object_for_the_cut_line() {
+    let path = batch_file("b5a_truncated.jsonl", &[]);
+    let whole = json!({"id": "a", "contract": {"kind": "exact"}, "expected": "2", "learner": "2"});
+    std::fs::write(&path, format!("{whole}\n{{\"id\": \"b\", \"contr")).unwrap();
+    let result = run(&["grade", "--batch", &path]);
+    assert_eq!(result.exit, 2);
+    let docs = result.lines();
+    assert_eq!(docs[0]["verdict"], "correct");
+    assert_eq!(docs[1]["schema"], "cadus.error.v1");
+}
+
+#[test]
+fn repeated_option_is_exit_2() {
+    let result = run(&[
+        "grade",
+        "--contract",
+        r#"{"kind":"exact"}"#,
+        "--expected",
+        "3",
+        "--learner",
+        "3",
+        "--learner",
+        "4",
+    ]);
+    let text = assert_error(&result, 2);
+    assert!(text.contains("two times"), "{text}");
+}
+
+#[cfg(unix)]
+#[test]
+fn argument_that_is_not_utf8_is_exit_2_and_not_a_panic() {
+    use std::os::unix::ffi::OsStrExt;
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_content_check"))
+        .args(["grade", "--contract", r#"{"kind":"exact"}"#, "--expected"])
+        .arg(std::ffi::OsStr::from_bytes(b"\xff"))
+        .args(["--learner", "1"])
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(2));
+    let doc: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(doc["schema"], "cadus.error.v1");
+    assert_eq!(doc["exit"], 2);
+    assert!(doc["error"].as_str().unwrap().contains("UTF-8"));
+}
+
 // ---- exit 4 ----
 
 // Lane B5b replaced the stub of `late.rs`: each late subcommand is in this
@@ -331,13 +387,26 @@ fn mutants_fail_when_the_key_is_not_correct_or_no_mutant_exists() {
     assert_eq!(doc["key_verdict"], "ungraded");
     assert!(doc["key_reason"].is_string());
     assert_eq!(doc["pass"], false);
-    // No numeric component: no mutant.
-    let doc = mutants(r#"{"kind":"exact"}"#, "x").doc();
+    // No numeric leaf under a kind with no whole-key rule: no mutant, and a cause (D40).
+    let doc = mutants(r#"{"kind":"polynomial_relation"}"#, "y = x").doc();
     assert_eq!(doc["key_verdict"], "correct");
     assert_eq!(doc["mutants"], json!([]));
+    assert_eq!(doc["cause"], "no-numeric-leaf");
     assert_eq!(doc["pass"], false);
-    // The tolerance is wider than the +1 step, thus the mutant grades correct.
-    let doc = mutants(r#"{"kind":"approx","tolerance":"5"}"#, "10").doc();
+    // One option: no other option, and a cause (review case m01).
+    let doc = mutants(
+        r#"{"kind":"label","options":[["converges","conv"]]}"#,
+        "converges",
+    )
+    .doc();
+    assert_eq!(doc["mutants"], json!([]));
+    assert_eq!(doc["cause"], "no-other-option");
+    assert_eq!(doc["pass"], false);
+    let doc = mutants(r#"{"kind":"none"}"#, "See the solution.").doc();
+    assert_eq!(doc["cause"], "no-rule");
+    assert_eq!(doc["pass"], false);
+    // Each candidate grades correct: the entry shows `correct`, and the item fails.
+    let doc = mutants(r#"{"kind":"set"}"#, "{7, 7}").doc();
     assert_eq!(doc["mutants"][0]["verdict"], "correct");
     assert_eq!(doc["pass"], false);
 }
