@@ -96,6 +96,18 @@ topics:
             answer: "(6, -3, -4)"
           - problem: 'Let $\mathbf{u} = (5, 2)$ and $\mathbf{v} = (3, 7)$. Compute $\mathbf{u} - \mathbf{v}$.'
             answer: "(2, -5)"
+          - problem: "Let $\\mathbf{u} = (4, a, -2)$ and $\\mathbf{v} = (-1, 5, b)$. Given that $\\mathbf{u} + \\mathbf{v} = (3, 1, 5)$, find $a$ and $b$."
+            answer: "a = -4; b = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "Step 1. Write the full objects: u = (4, a, -2), v = (-1, 5, b), and u + v = (3, 1, 5). Step 2. Use the rule for vector addition: add matching components. Step 3. First component: 4 + (-1) = 3, which checks. Step 4. Second component: a + 5 = 1, so a = 1 - 5 = -4. Step 5. Third component: -2 + b = 5, so b = 5 + 2 = 7. The solution is a = -4; b = 7."
+          - problem: "Let $\\mathbf{u} = (k, k+2)$ and $\\mathbf{v} = (4, -9)$. Given that $\\mathbf{u} + \\mathbf{v} = (-1, -12)$, find $k$."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1. Write the full objects: u = (k, k+2), v = (4, -9), and u + v = (-1, -12). Step 2. Use the rule for vector addition: add matching components. Step 3. First component: k + 4 = -1, so k = -1 - 4 = -5. Step 4. Check with the second component: (k + 2) + (-9) = -5 + 2 - 9 = -12, which matches. The value is k = -5."
+          - problem: "Let $\\mathbf{p} = (2, -5, 1)$ and $\\mathbf{q} = (k, 0, -3)$. Given that $\\mathbf{p} - \\mathbf{q} = (6, -5, 4)$, find $k$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1. Write the full objects: p = (2, -5, 1), q = (k, 0, -3), and p - q = (6, -5, 4). Step 2. Use the rule for vector subtraction: subtract matching components. Step 3. Second component: -5 - 0 = -5, which checks. Step 4. Third component: 1 - (-3) = 4, which checks. Step 5. First component: 2 - k = 6, so k = 2 - 6 = -4. The value is k = -4."
         constraints: "components are integers in -9..9; dimensions 2 or 3"
       - id: kp2
         name: Scalar multiplication
@@ -163,6 +175,18 @@ topics:
             answer: "(8, 5)"
           - problem: 'Compute $3(1, 0, 2) - (2, 2, 1)$.'
             answer: "(1, -2, 5)"
+          - problem: "Let u = (3, 1) and v = (2, -2). Compute 2u - 3v. Give the answer as (x, y)."
+            answer: "(0, 8)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write the combination 2u - 3v with u = (3, 1) and v = (2, -2). By scalar multiplication, 2u = (6, 2) and 3v = (6, -6). By vector subtraction, (6, 2) - (6, -6) = (0, 8). The result is (0, 8)."
+          - problem: "Let u = (1, -2, 3) and v = (-2, 1, 4). Compute -u + 3v. Give the answer as (x, y, z)."
+            answer: "(-7, 5, 9)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Write the combination -u + 3v with u = (1, -2, 3) and v = (-2, 1, 4). By scalar multiplication, -u = (-1, 2, -3) and 3v = (-6, 3, 12). By vector addition, (-1, 2, -3) + (-6, 3, 12) = (-7, 5, 9). The result is (-7, 5, 9)."
+          - problem: "A boat has velocity u = (2, 1) and current v = (1, -3). A trip uses velocity 3u - 2v. Compute the resulting velocity. Give the answer as (x, y)."
+            answer: "(4, 9)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write the resulting velocity 3u - 2v with u = (2, 1) and v = (1, -3). By scalar multiplication, 3u = (6, 3) and 2v = (2, -6). By vector subtraction, (6, 3) - (2, -6) = (4, 9). The resulting velocity is (4, 9)."
         constraints: "integer scalars in -3..3; integer components in -9..9; at most two terms"
       - id: kp2
         name: Combinations of three vectors
@@ -176,6 +200,18 @@ topics:
           - problem: 'Compute $\frac{1}{2}(\mathbf{u} + \mathbf{v})$ for $\mathbf{u} = (2, 4)$ and $\mathbf{v} = (6, 0)$.'
             answer: "(4, 2)"
             solution_sketch: '$\mathbf{u} + \mathbf{v} = (8, 4)$; halve each component.'
+          - problem: "Let u = (-1, 2), v = (3, -1), w = (0, 4). Compute -2u + v - 3w. Give the answer as (x, y)."
+            answer: "(5, -17)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start with -2u + v - 3w, where u = (-1, 2), v = (3, -1), w = (0, 4). By scalar multiplication, -2u = (2, -4), v = (3, -1), and -3w = (0, -12). By vector addition, add the components: (2 + 3 + 0, -4 + -1 + -12). Thus the result is (5, -17)."
+          - problem: "Let u = (4, -2, 6), v = (1, 3, -1), w = (-2, 0, 4). Compute 1/2 u - 2v + w. Give the answer as (x, y, z)."
+            answer: "(-2, -7, 9)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Start with 1/2 u - 2v + w, where u = (4, -2, 6), v = (1, 3, -1), w = (-2, 0, 4). By scalar multiplication, 1/2 u = (2, -1, 3), -2v = (-2, -6, 2), and w = (-2, 0, 4). By vector addition, add components: (2 - 2 - 2, -1 - 6 + 0, 3 + 2 + 4). Thus the combination is (-2, -7, 9)."
+          - problem: "A boat's displacement is 3a - b + 1/2 c, where a = (6, -4), b = (-2, 6), c = (0, 8). Find the total displacement as (x, y)."
+            answer: "(20, -14)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The displacement expression is 3a - b + 1/2 c, where a = (6, -4), b = (-2, 6), c = (0, 8). By scalar multiplication, 3a = (18, -12), -b = (2, -6), and 1/2 c = (0, 4). By vector addition, add the components: (18 + 2 + 0, -12 - 6 + 4). Thus the displacement is (20, -14)."
         constraints: "up to three terms; integer results; scalars in -3..3 plus the scalar 1/2"
       - id: kp3
         name: Solving for combination coefficients
@@ -190,6 +226,18 @@ topics:
           - problem: 'Find scalars $a, b$ with $a(1, 1) + b(1, -1) = (4, 2)$; state the pair $(a, b)$.'
             answer: "(3, 1)"
             solution_sketch: '$a + b = 4$ and $a - b = 2$; adding gives $2a = 6$.'
+          - problem: "Find scalars a, b with a(1, 2) + b(2, 1) = (5, 4); state the pair as (a, b)."
+            answer: "(1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set the components equal: a + 2b = 5 and 2a + b = 4. Elimination: multiply the first equation by 2 to get 2a + 4b = 10, subtract the second to get 3b = 6, so b = 2. Then a = 5 - 2b = 1. The pair is (1, 2)."
+          - problem: "Find scalars a, b with a(3, 1) + b(1, 2) = (11, 7); state the pair as (a, b)."
+            answer: "(3, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Equate components: 3a + b = 11 and a + 2b = 7. Solve the first equation for b: b = 11 - 3a. Substitute into the second: a + 2(11 - 3a) = 7, so -5a + 22 = 7 and a = 3. Then b = 11 - 9 = 2. The pair is (3, 2)."
+          - problem: "Find c so that c(2, 5) + (3, -1) = (9, 14)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the vector equation componentwise: 2c + 3 = 9 and 5c - 1 = 14. The first equation gives 2c = 6, so c = 3; the second gives 5c = 15, so c = 3. The value is 3."
         constraints: "coefficients are small integers in -9..9; systems solvable by inspection or one elimination"
     diagnostic_exemplar:
       problem: 'Find scalars $a, b$ with $a(1, 2) + b(3, -1) = (5, 3)$; state the pair $(a, b)$.'
@@ -229,6 +277,18 @@ topics:
             solution_sketch: '$\sqrt{1 + 4 + 4} = \sqrt{9} = 3$.'
           - problem: 'Compute $\|(-5, 12)\|$.'
             answer: "13"
+          - problem: "Compute the norm of the vector (2, 3, 6)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full vector is (2, 3, 6). By the Pythagorean theorem in three dimensions, the norm is sqrt(2^2 + 3^2 + 6^2) = sqrt(4 + 9 + 36) = sqrt(49). By the square-root rule, sqrt(49) = 7, so the answer is 7."
+          - problem: "Find the distance between the points (1, 2) and (4, 6)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The displacement vector is (4, 6) - (1, 2) = (3, 4). The distance is the norm of this displacement, so by the Pythagorean theorem it is sqrt(3^2 + 4^2) = sqrt(9 + 16) = sqrt(25). By the square-root rule, sqrt(25) = 5, so the answer is 5."
+          - problem: "The vector (-12, y) has norm 13, where y > 0. Find y."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full vector is (-12, y). By the Pythagorean theorem, sqrt((-12)^2 + y^2) = 13, so 144 + y^2 = 169. Subtracting gives y^2 = 25, and since y > 0 the square-root rule gives y = 5, so the answer is 5."
         constraints: "prefer Pythagorean-friendly components (3-4-5, 5-12-13, 1-2-2, 2-3-6 families)"
       - id: kp2
         name: Norms with radicals and scaling
@@ -241,6 +301,18 @@ topics:
           - problem: 'If $\|\mathbf{v}\| = 4$, what is $\|-2\mathbf{v}\|$?'
             answer: "8"
             solution_sketch: '$\|c\mathbf{v}\| = |c|\,\|\mathbf{v}\| = 2 \cdot 4$.'
+          - problem: "Compute the norm of the vector (3, 4)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, use the Euclidean norm rule: ||(3, 4)|| = sqrt(3^2 + 4^2). Step 2, sum the squares: 9 + 16 = 25. Step 3, take the square root: sqrt(25) = 5. The norm is 5."
+          - problem: "Compute the norm of the vector (1, 2, 2)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, use the Euclidean norm rule: ||(1, 2, 2)|| = sqrt(1^2 + 2^2 + 2^2). Step 2, sum the squares: 1 + 4 + 4 = 9. Step 3, take the square root: sqrt(9) = 3. The norm is 3."
+          - problem: "Suppose a vector v has norm sqrt(5). Find the norm of -3v."
+            answer: "3sqrt(5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, use the scaling rule for norms: ||-3v|| = |-3| ||v||. Step 2, substitute ||v|| = sqrt(5) and simplify the absolute value: 3 sqrt(5). The norm is 3sqrt(5)."
         constraints: "exact radical answers; scaling questions use integer scalars in -3..3"
       - id: kp3
         name: Unit vectors and prescribed lengths
@@ -255,6 +327,18 @@ topics:
           - problem: 'Find the vector of length $10$ in the direction of $(3, -4)$.'
             answer: "(6, -8)"
             solution_sketch: '$\|(3, -4)\| = 5$; scale the unit vector by $10$, i.e. multiply the vector by $2$.'
+          - problem: "Find the unit vector in the direction of $(10, 24)$ and give the answer as (x, y)."
+            answer: "(5/13, 12/13)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (norm rule): the norm of (10,24) is sqrt(10^2+24^2) = sqrt(676) = 26. Step 2 (unit vector rule): divide each component by 26 to get (10/26, 24/26) = (5/13, 12/13). The unit vector is (5/13, 12/13)."
+          - problem: "Find the unit vector in the direction of $(2, -3, 6)$ and give the answer as (x, y, z)."
+            answer: "(2/7, -3/7, 6/7)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (norm rule): the norm of (2,-3,6) is sqrt(2^2+(-3)^2+6^2) = sqrt(49) = 7. Step 2 (unit vector rule): divide each component by 7 to get (2/7, -3/7, 6/7). The unit vector is (2/7, -3/7, 6/7)."
+          - problem: "Find the vector of length $26$ in the direction of $(3, 4, 12)$ and give the answer as (x, y, z)."
+            answer: "(6, 8, 24)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (norm rule): the norm of (3,4,12) is sqrt(3^2+4^2+12^2) = sqrt(169) = 13. Step 2 (scale rule): the prescribed length 26 divided by the norm 13 gives scale factor 2. Step 3 (scalar multiplication): multiply each component of (3,4,12) by 2 to get (6,8,24). The vector of length 26 is (6, 8, 24)."
         constraints: "vectors with integer norms (3-4-5, 5-12-13, 2-3-6 families); prescribed lengths are integer multiples of the norm"
     diagnostic_exemplar:
       problem: 'Find the unit vector in the direction of $(5, 12)$.'
@@ -312,18 +396,50 @@ topics:
           - problem: 'Find the distance between $P(3, -1, 2)$ and $Q(5, 2, 8)$.'
             answer: "7"
             solution_sketch: '$Q - P = (2, 3, 6)$; $\sqrt{4 + 9 + 36} = 7$.'
+          - problem: "Let $P(2, -1, 4)$ and $Q(6, 7, 12)$. Find the distance between $P$ and $Q$ as a whole number."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Form the displacement vector: $Q - P = (6 - 2,\\ 7 - (-1),\\ 12 - 4) = (4, 8, 8)$. By the vector norm rule, the distance is $\\sqrt{4^2 + 8^2 + 8^2} = \\sqrt{16 + 64 + 64} = \\sqrt{144}$. The distance between $P$ and $Q$ is 12."
+          - problem: "A displacement vector $(4, 6, 12)$ takes the point $P(-1, 2, 0)$ to the point $Q$. Find the distance $PQ$."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The displacement from $P(-1, 2, 0)$ to $Q$ is the given vector $(4, 6, 12)$. By the vector norm rule, the distance is $\\sqrt{4^2 + 6^2 + 12^2} = \\sqrt{16 + 36 + 144} = \\sqrt{196}$. The distance $PQ$ is 14."
+          - problem: "The distance between $P(1, 2, 3)$ and $Q(2, 4, z)$ is 3. Find the larger possible value of $z$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The displacement vector is $Q - P = (1, 2, z - 3)$. By the vector norm rule, $3 = \\sqrt{1^2 + 2^2 + (z - 3)^2}$. Square: $9 = 1 + 4 + (z - 3)^2$, so $(z - 3)^2 = 4$. Thus $z = 5$ or $z = 1$, and the larger value is 5."
+          - problem: "A drone flies from point $A(1, 1, 1)$ to point $B(7, 10, 19)$. Find the distance it travels."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The displacement vector is $B - A = (6, 9, 18)$. By the vector norm rule, the distance is $\\sqrt{6^2 + 9^2 + 18^2} = \\sqrt{36 + 81 + 324} = \\sqrt{441}$. The distance is 21."
         constraints: "differences from the 1-2-2 or 2-3-6 families for integer answers"
       - id: kp3
         name: Comparing distances
         key_prerequisites: [component-form-of-vectors, vector-norms-unit-vectors]
         exemplars:
-          - problem: 'For the triangle $A(0, 0)$, $B(3, 4)$, $C(6, 0)$, show that $|AB| = |CB|$.'
-            answer: "Both equal 5"
-            answer_contract: {kind: none}
-            solution_sketch: '$B - A = (3, 4)$ and $B - C = (-3, 4)$; both have norm $5$.'
           - problem: 'Which of $Q(4, 5)$ and $R(5, 1)$ is closer to $P(1, 1)$?'
             answer: "R"
             solution_sketch: '$|PQ| = \|(3, 4)\| = 5$; $|PR| = \|(4, 0)\| = 4 < 5$.'
+          - problem: "For the triangle with A(0, 0), B(3, 4), and C(6, 0), find the distances |AB| and |CB|. Give the answer as (|AB|, |CB|)."
+            answer: "(5, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: Use component form to find each side vector. B - A = (3, 4), and B - C = (-3, 4). Step 2: Apply the vector norm. |AB| = sqrt(3^2 + 4^2) = 5 and |CB| = sqrt((-3)^2 + 4^2) = 5. Step 3: State the pair. The distances are (5, 5)."
+          - problem: "Point P is (0, 0). Point Q is (3, 4) and point R is (6, 8). Find the difference between the larger and the smaller distance from P to these two points."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Find vector PQ = (3, 4), with norm sqrt(3^2 + 4^2) = 5. Step 2: Find vector PR = (6, 8), with norm sqrt(6^2 + 8^2) = 10. Step 3: Compare the distances and subtract: 10 - 5 = 5. The difference is 5."
+          - problem: "For the points A(1, 2), B(4, 6), and C(1, 8), find |AB| - |AC|."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use component form. B - A = (3, 4) and C - A = (0, 6). Step 2: Take vector norms. |AB| = sqrt(3^2 + 4^2) = 5 and |AC| = sqrt(0^2 + 6^2) = 6. Step 3: Subtract in the given order: 5 - 6 = -1. The value is -1."
+          - problem: "The distances from P(0, 0) to Q(5, 12) and from P(0, 0) to R(9, 12) are compared. Find the larger of the two distances."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use component form. Q - P = (5, 12) and R - P = (9, 12). Step 2: Take vector norms. |PQ| = sqrt(5^2 + 12^2) = 13 and |PR| = sqrt(9^2 + 12^2) = 15. Step 3: Compare the values 13 and 15. The larger distance is 15."
+          - problem: "For the points A(0, 0), B(6, 8), and C(6, 0), find |AB| - |CB|."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use component form. B - A = (6, 8) and B - C = (0, 8). Step 2: Take vector norms. |AB| = sqrt(6^2 + 8^2) = 10 and |CB| = sqrt(0^2 + 8^2) = 8. Step 3: Subtract: 10 - 8 = 2. The value is 2."
         constraints: "distances chosen to be integers so comparisons are clean"
     diagnostic_exemplar:
       problem: 'Which of $Q(4, 2, 4)$ and $R(-1, 0, 2)$ is farther from $P(1, 2, 0)$? Give that distance.'
@@ -366,6 +482,18 @@ topics:
           - problem: 'Let $\mathbf{u} = (1, 2, 2)$. Compute $\|3\mathbf{u}\|$.'
             answer: "9"
             solution_sketch: '$\|3\mathbf{u}\| = 3\|\mathbf{u}\| = 3 \cdot 3$.'
+          - problem: "Let u = (1, 2) and v = (-1, -3). Compute the norm of 3u - 2v."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 3u - 2v. Step 1, scalar multiplication: 3u = (3, 6) and -2v = (2, 6). Step 2, vector addition: 3u - 2v = (5, 12). Step 3, norm formula: sqrt(5^2 + 12^2) = sqrt(169) = 13. The answer is 13."
+          - problem: "Let u = (1, 2) and v = (2, 2). Compute the norm of 2u + 2v."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 2u + 2v. Step 1, scalar multiplication: 2u = (2, 4) and 2v = (4, 4). Step 2, vector addition: 2u + 2v = (6, 8). Step 3, norm formula: sqrt(6^2 + 8^2) = sqrt(100) = 10. The answer is 10."
+          - problem: "Let u = (1, 2, 2) and v = (1, 1, 4). Compute the norm of u + v."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is u + v. Step 1, vector addition: u + v = (2, 3, 6). Step 2, norm formula: sqrt(2^2 + 3^2 + 6^2) = sqrt(49) = 7. The answer is 7."
         constraints: "combinations designed to land on Pythagorean-friendly vectors; scalars in -3..3"
       - id: kp2
         name: Geometric reasoning with vectors
@@ -376,9 +504,21 @@ topics:
           - problem: 'Starting at $P(1, 1)$, you translate by $2(2, -1)$. Where do you end?'
             answer: "(5, -1)"
             solution_sketch: '$P + (4, -2) = (5, -1)$.'
+          - problem: "The midpoint of P(-2, 5) and Q(8, -1) is M. Find the coordinates of M as (x, y)."
+            answer: "(3, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Use the midpoint rule M = (P + Q)/2. Compute P + Q = (-2,5)+(8,-1) = (6,4). Divide by 2: M = (3, 2)."
           - problem: 'Show that $A(1, 1)$, $B(3, 4)$, $C(5, 7)$ are collinear by computing $B - A$ and $C - B$; state the common difference vector.'
             answer: "(2, 3)"
             solution_sketch: '$B - A = (2, 3)$ and $C - B = (2, 3)$ are parallel and share the point $B$.'
+          - problem: "Point Q is the reflection of P(1, 2) across M(4, 5). Find Q as (x, y)."
+            answer: "(7, 8)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The midpoint M is the average of P and Q, so P + Q = 2M. Compute 2M - P = (8,10) - (1,2) = (7,8). The reflected point is (7, 8)."
+          - problem: "The points A(1, 2), B(3, 5), and C(7, k) are collinear. Find k."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For collinearity, the difference vectors B - A and C - B must be proportional. Compute B - A = (3,5)-(1,2) = (2,3). Since C - B = (4, k-5) and (4,6) = 2(2,3), k - 5 = 6, so k = 11. The value is 11."
         constraints: "integer coordinates; collinearity via equal or proportional difference vectors"
       - id: kp3
         name: Norm identities and comparisons
@@ -443,6 +583,18 @@ topics:
             answer: "26"
           - problem: 'Compute $(-1, 6) \cdot (2, 1)$.'
             answer: "4"
+          - problem: "Compute the dot product of $(5, -2)$ and $(-3, 4)$."
+            answer: "-23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the dot product rule: multiply matching components and add. The dot product is (5)(-3) + (-2)(4). Compute the products: -15 and -8. Add them: -15 + (-8) = -23. The dot product is -23."
+          - problem: "Find the dot product of $(-7, 2)$ and $(3, 8)$."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the dot product rule: multiply matching components and add. The dot product is (-7)(3) + (2)(8). Compute the products: -21 and 16. Add them: -21 + 16 = -5. The dot product is -5."
+          - problem: "The vectors $(3, k)$ and $(4, -6)$ are perpendicular. Find $k$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Perpendicular vectors have dot product zero. The dot product is (3)(4) + (k)(-6) = 12 - 6k. Set 12 - 6k = 0 and solve: 6k = 12, so k = 2. The value of k is 2."
         constraints: "integer components in -9..9"
       - id: kp3
         name: Dot products in space
