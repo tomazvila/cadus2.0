@@ -116,6 +116,30 @@ fn the_exact_contract_accepts_the_second_spellings() {
             "{expected} / {learner}"
         );
     }
+    // The two corpus answers that `recovered_2_0.jsonl` names for the
+    // `arc_function_name` production. The 1.0 checker read `arctan x` as a
+    // product of letters, so the verdicts of the two answers are here.
+    for (expected, learner, correct) in [
+        ("arctan x + x/(1 + x^2)", "arctan x + x/(1 + x^2)", true),
+        ("arctan x + x/(1 + x^2)", "x/(x^2 + 1) + atan(x)", true),
+        ("arctan x + x/(1 + x^2)", "arctan x - x/(1 + x^2)", false),
+        (
+            "arctan(2x) + 2x/(1 + 4x^2)",
+            "2x/(1 + 4x^2) + atan(2x)",
+            true,
+        ),
+        (
+            "arctan(2x) + 2x/(1 + 4x^2)",
+            "arctan(x) + 2x/(1 + 4x^2)",
+            false,
+        ),
+    ] {
+        assert_eq!(
+            exact_is_correct(expected, learner),
+            correct,
+            "{expected} / {learner}"
+        );
+    }
     assert!(!exact_is_correct("atan(x)", "arcsin(x)"));
     assert!(!exact_is_correct("abs(x+1)", "|x-1|"));
 }
@@ -210,6 +234,86 @@ fn the_token_reader_keeps_each_old_construct() {
         parse(&deep).expect_err("deep").reason,
         "the answer nests too deeply"
     );
+}
+
+/// Read a contract from its authored JSON text.
+fn contract(json: &str) -> AnswerContract {
+    serde_json::from_str(json).expect(json)
+}
+
+#[test]
+fn a_split_contract_counts_the_bars_of_the_full_answer() {
+    let refused_with = |expected: &str, learner: &str, json: &str, reason: &str| {
+        let outcome = check_contract(expected, learner, contract(json));
+        let Outcome::Undecidable(refusal) = outcome else {
+            panic!("{learner} under {json}: {outcome:?}");
+        };
+        assert_eq!(refusal.reason, reason, "{learner} under {json}");
+    };
+    let refused = |expected: &str, learner: &str, json: &str| {
+        refused_with(expected, learner, json, BAR_REFUSAL);
+    };
+    let ordered = r#"{"kind":"list","ordered":true,"member":{"kind":"exact"}}"#;
+    let unordered = r#"{"kind":"list","ordered":false,"member":{"kind":"exact"}}"#;
+    let parts = r#"{"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}"#;
+    for list in [ordered, unordered] {
+        // Four bars in the full answer: the refusal of the base.
+        refused("1, 3", "|-1|, |-3|", list);
+        refused("|-1|, |-3|", "1, 3", list);
+        refused("1, 3", "|1|, |3|, 5", list);
+        refused("1, 3", "|1|, 3|", list);
+        // A text that is not a complete list keeps the refusal of the split.
+        refused_with(
+            "1, 3",
+            "|1|, |3|,",
+            list,
+            "a list requires one to 32 complete members",
+        );
+    }
+    refused("{1, 3}", "{|-1|, |-3|}", r#"{"kind":"set"}"#);
+    refused(
+        "(1, 3)",
+        "(|-1|, |-3|)",
+        r#"{"kind":"coordinates","arity":2}"#,
+    );
+    // The multipart reader refuses a part with a bar before the lexer runs.
+    refused_with(
+        "a = 1, b = 3",
+        "a = |-1|, b = |-3|",
+        parts,
+        "each named answer part must occur exactly once",
+    );
+    // Two bars in the full answer: one member has the bar pair.
+    for (learner, correct) in [("|-1|, 3", false), ("abs(1), 3", false), ("1, 3", true)] {
+        let outcome = check_contract("1, 3", learner, contract(ordered));
+        let Outcome::Decided(verdict) = outcome else {
+            panic!("{learner}: {outcome:?}");
+        };
+        assert_eq!(verdict.correct, correct, "{learner}");
+    }
+    assert!(exact_list_is_correct("abs(x), 3", "|x|, 3", ordered));
+    assert!(exact_list_is_correct("3, abs(x)", "|x|, 3", unordered));
+    // A label member does not go to the lexer, so a label list keeps its bars.
+    let labels =
+        r#"{"kind":"list","ordered":true,"member":{"kind":"label","options":[["A|B"],["no"]]}}"#;
+    assert!(exact_list_is_correct(
+        "A|B, no, A|B",
+        "A|B, no, A|B",
+        labels
+    ));
+    assert!(exact_list_is_correct(
+        "A|B, A|B, A|B",
+        "A|B, A|B, A|B",
+        labels
+    ));
+}
+
+/// Whether the list contract of `json` marks `learner` correct.
+fn exact_list_is_correct(expected: &str, learner: &str, json: &str) -> bool {
+    match check_contract(expected, learner, contract(json)) {
+        Outcome::Decided(verdict) => verdict.correct,
+        Outcome::Undecidable(refusal) => panic!("{expected} / {learner}: {}", refusal.reason),
+    }
 }
 
 /// Answers of the shipped curriculum and of fact F8, with the tree of each at the

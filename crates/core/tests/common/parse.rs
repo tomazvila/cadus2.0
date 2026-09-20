@@ -147,7 +147,7 @@ pub const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("mixed_number", 8, 0),
     ("ordered_tuple", 178, 0),
     ("other", 7, 0),
-    ("prose_or_words", 0, 167),
+    ("prose_or_words", 2, 165),
     ("quotient_remainder", 16, 0),
     ("set_or_list", 5, 0),
     ("value_with_unit", 11, 1),
