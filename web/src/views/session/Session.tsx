@@ -7,7 +7,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import { MathVisuals } from '@/components/MathVisual';
-import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
+import type { AnswerFieldHandle } from '@/components/AnswerField';
+import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
 import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
 import { LoadingBlock } from '@/components/primitives';
 import { closeWith } from '@/hooks/screen';
@@ -36,6 +37,7 @@ import { Integrated } from './Integrated';
 import { serveIntegrated } from './serveIntegrated';
 import { loadPlannedTask } from './loadPlannedTask';
 import { Feedback, Rework } from './Feedback';
+import { HintButton, HintPanel } from './Hints';
 import { Diagnosis } from './Diagnosis';
 import { useDiagnosisStream } from './useDiagnosis';
 import { useProblemReport } from './useProblemReport';
@@ -460,9 +462,11 @@ export function Session({
 
         {/* Disabled only where the problem is over. A grade in flight leaves the field
             live: the phase gate, not the attribute, is what stops the second post. */}
-        <AnswerField
+        <AnswerInput
           ref={answerRef}
+          choices={problem.choices}
           disabled={locked && phase !== 'submitting'}
+          locked={locked}
           onSubmit={() => submit()}
           onHint={hintsAvailable ? requestHint : undefined}
         />
@@ -471,14 +475,9 @@ export function Session({
         {/* W-C5: one primary here, and the quiet controls beside it. */}
         {phase === 'feedback' ? null : (
           <div className="actions">
-            <button
-              type="button"
-              className={`btn btn-primary${phase === 'submitting' ? ' is-busy' : ''}`}
-              disabled={locked}
-              onClick={() => submit()}
-            >
+            <TypedSubmit choices={problem.choices} busy={phase === 'submitting'} disabled={locked} onClick={() => submit()}>
               Submit
-            </button>
+            </TypedSubmit>
             <HintButton hidden={!hintsAvailable} locked={locked} onClick={requestHint} />
           </div>
         )}
@@ -506,61 +505,5 @@ export function Session({
         ) : null}
       </div>
     </section>
-  );
-}
-
-/**
- * The hints already given, and the review escalations (H-3, ISSUES.md).
- *
- * A review whose knowledge point holds NO approved ladder offers the same way
- * out the three-hint escalation does, up front: the ladder does not exist, so
- * `requestHint` would only buy a `409 no_hint_ladder`.
- */
-function HintPanel({ hints, referenceLesson, hintsAvailable, taskType }: {
-  hints: string[];
-  referenceLesson: string | null;
-  hintsAvailable: boolean;
-  taskType: PlanTask['task_type'];
-}) {
-  return (
-    <div className="hint-list">
-      {hints.map((h, i) => (
-        <div key={`${i}:${h}`} className="hint">
-          <strong>{`Hint ${i + 1}: `}</strong>
-          <MathBlock className="hint-text">{String(h)}</MathBlock>
-        </div>
-      ))}
-      {referenceLesson ? (
-        <div className="reference-lesson">
-          {`Still stuck? This is a review — re-study the lesson “${referenceLesson}”, then answer as best you can.`}
-        </div>
-      ) : null}
-      {!hintsAvailable && taskType === 'review' ? (
-        <div className="reference-lesson">
-          No hints are written for this one yet. If you are stuck, re-study the lesson, then answer
-          as best you can.
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-/**
- * The hint affordance (H-3, ISSUES.md).
- *
- * An affordance the service can only refuse is not an affordance: the flag
- * comes from the serve, so a knowledge point with no approved ladder hides the
- * button instead of spending the click on `409 no_hint_ladder`.
- */
-function HintButton({ hidden, locked, onClick }: {
-  hidden: boolean;
-  locked: boolean;
-  onClick: () => void;
-}) {
-  if (hidden) return null;
-  return (
-    <button type="button" className="btn btn-ghost" disabled={locked} onClick={onClick}>
-      Hint
-    </button>
   );
 }

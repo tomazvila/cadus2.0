@@ -47,6 +47,8 @@ interface DemoProblem {
   kp: string;
   expected: string;
   solution: string;
+  /** The options of a Label problem, in the order to show. Absent for a typed problem. */
+  choices?: readonly string[];
 }
 
 const DEMO_PROBLEMS: readonly DemoProblem[] = [
@@ -70,6 +72,20 @@ const DEMO_PROBLEMS: readonly DemoProblem[] = [
     kp: 'kp-square-roots',
     expected: '7',
     solution: '$7 \\times 7 = 49$, so $\\sqrt{49} = 7$.',
+  },
+  {
+    // The Label problem: the payload has the key `choices`, and the view shows buttons.
+    problem_id: 'demo-p4',
+    text: 'A student solves $2x + 6 = 10$ in three steps. Which step is the first step that is not valid?',
+    kp: 'kp-find-the-error',
+    expected: 'Step 2: divide each side by 2 to get $x = 4$',
+    solution: 'Step 1 is valid. Step 2 is not valid: $4 \\div 2 = 2$, so $x = 2$.',
+    choices: [
+      'Step 3: put $x = 4$ back in the equation and find that $2 \\cdot 4 + 6 = 10$ is true',
+      'Step 1: subtract 6 from each side to get $2x = 4$',
+      'All three steps are valid',
+      'Step 2: divide each side by 2 to get $x = 4$',
+    ],
   },
 ];
 
@@ -169,6 +185,8 @@ export function createDemoApi(): ApiClient {
       kp: problem.kp,
       time_budget_secs: 120,
       countdown: false,
+      // The key is absent for a typed problem, as it is on the service.
+      ...(problem.choices ? { choices: [...problem.choices] } : {}),
     };
   };
 

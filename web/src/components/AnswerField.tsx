@@ -34,7 +34,7 @@ export interface AnswerFieldProps {
   onSubmit?: () => void;
   onHint?: (() => void) | undefined;
   disabled?: boolean;
-  ref?: Ref<AnswerFieldHandle>;
+  ref?: Ref<AnswerFieldHandle> | undefined;
 }
 
 /** Replace the selection with `text` and leave the caret after it. */
