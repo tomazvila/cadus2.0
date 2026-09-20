@@ -127,9 +127,8 @@ fn function_contract_is_exit_2_until_lane_b4b_merges() {
     support::assert_error(&support::mutants(contract, "x^2"), 2);
 }
 
-// FLOW: enable after B4b
+/// The `function` keys of the golden rows, with the pack v7 rules of lane B4b.
 #[test]
-#[ignore = "FLOW: enable after B4b (the `function` kind is not in this branch)"]
 fn function_keys_of_the_golden_rows_pass_after_b4b() {
     for key in ["x/sqrt(x^2+9)", "-3/(3x+1)^2"] {
         let doc = support::mutants(r#"{"kind":"function","vars":["x"]}"#, key).doc();
