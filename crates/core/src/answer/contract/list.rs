@@ -121,6 +121,24 @@ fn is_thousands_comma(text: &str, at: usize) -> bool {
     !matches!(after.get(3), Some(byte) if byte.is_ascii_digit())
 }
 
+/// Refuse a list whose full text has more than two bars.
+///
+/// The lexer reads `|a|` only when the full answer has exactly two bars, but a
+/// list gives each member to the lexer alone. Without this rule, `|-1|, |-3|`
+/// has four bars and each member has a bar pair. The list keeps the refusal
+/// that the lexer gives to a bar with no pair. A label member does not go to
+/// the lexer, so a label list keeps its bars. A text that is not a complete
+/// list keeps the refusal of the split.
+fn refuse_bars(member: &AnswerContract, text: &str) -> Result<(), Undecidable> {
+    if !matches!(member, AnswerContract::Label { .. })
+        && text.matches('|').count() > 2
+        && values(text).is_ok()
+    {
+        return Err(Undecidable::new("a character outside the grammar"));
+    }
+    Ok(())
+}
+
 fn bad_list() -> Undecidable {
     Undecidable::new("a list requires one to 32 complete members")
 }
@@ -146,7 +164,10 @@ pub(super) fn grade(
     expected_text: &str,
     learner: &str,
 ) -> Outcome {
-    let result = if ordered {
+    let bars = refuse_bars(member, expected_text).and_then(|()| refuse_bars(member, learner));
+    let result = if let Err(refusal) = bars {
+        Err(refusal)
+    } else if ordered {
         ordered_grade(member, expected_text, learner)
     } else {
         expected(false, member, expected_text)

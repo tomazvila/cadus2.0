@@ -25,11 +25,16 @@
 //!   `°`, `€`, and `$` are [`Tok::Unit`] (D-F3); a vulgar glyph is a
 //!   [`Tok::Frac`] of two digit runs; a run of superscript digits is `Pow` and
 //!   a number.
+//! - `arctan`, `arcsin`, and `arccos` are the names `atan`, `asin`, and `acos`.
+//! - `|A|` is the tokens of `abs(A)`, only when the full answer has exactly two
+//!   bars. With a different count of bars, a bar stays outside the grammar.
 //!
 //! A character the grammar does not know ends the read with [`Undecidable`].
 
+mod alias;
 mod word;
 
+use alias::{bar_body, brackets_close, count_bars, grammar_name};
 use word::{
     match_literal, raises_a_superscript, read_braced_after, read_frac, read_number, read_symbol,
     superscript_digit,
@@ -156,11 +161,13 @@ impl Token {
 /// [`MAX_LEX_DEPTH`].
 pub fn lex(source: &str) -> Result<Vec<Token>, Undecidable> {
     let chars: Vec<char> = source.chars().collect();
-    lex_run(&chars, 0)
+    lex_run(&chars, 0, count_bars(&chars) == 2)
 }
 
 /// Read one run of characters into tokens, `depth` braces deep.
-fn lex_run(chars: &[char], depth: usize) -> Result<Vec<Token>, Undecidable> {
+///
+/// `bars` is true when the full answer has exactly two bars.
+fn lex_run(chars: &[char], depth: usize, bars: bool) -> Result<Vec<Token>, Undecidable> {
     if depth > MAX_LEX_DEPTH {
         return Err(Undecidable::new("the answer nests too deeply"));
     }
@@ -168,6 +175,7 @@ fn lex_run(chars: &[char], depth: usize) -> Result<Vec<Token>, Undecidable> {
         chars,
         at: 0,
         depth,
+        bars,
         space_before: false,
         tokens: Vec::new(),
     };
@@ -185,6 +193,8 @@ struct Lexer<'a> {
     at: usize,
     /// The brace depth of the run.
     depth: usize,
+    /// True when the full answer has exactly two bars.
+    bars: bool,
     /// True when whitespace stands between the cursor and the last token.
     space_before: bool,
     /// The tokens read so far.
@@ -216,6 +226,7 @@ impl Lexer<'_> {
                 Ok(())
             }
             '^' => self.caret(),
+            '|' if self.bars => self.bar_pair(),
             c if c.is_ascii_digit() || c == '.' => self.number(),
             c if c.is_ascii_alphabetic() => {
                 self.identifier();
@@ -251,7 +262,7 @@ impl Lexer<'_> {
         }
         let text: String = self.chars.get(self.at..end).unwrap_or(&[]).iter().collect();
         let width = end - self.at;
-        self.push(Tok::Ident(text), width);
+        self.push(Tok::Ident(grammar_name(text)), width);
     }
 
     /// Read a vulgar glyph, a superscript run, or an operator at the cursor.
@@ -286,14 +297,14 @@ impl Lexer<'_> {
         let at = self.at;
         if let Some((numerator, denominator, next)) = read_frac(self.chars, at) {
             let kind = Tok::Frac {
-                numerator: lex_run(numerator, self.depth + 1)?,
-                denominator: lex_run(denominator, self.depth + 1)?,
+                numerator: lex_run(numerator, self.depth + 1, self.bars)?,
+                denominator: lex_run(denominator, self.depth + 1, self.bars)?,
             };
             self.push(kind, next - at);
             return Ok(());
         }
         if let Some((body, next)) = read_braced_after(self.chars, at, "\\sqrt") {
-            let kind = Tok::Sqrt(lex_run(body, self.depth + 1)?);
+            let kind = Tok::Sqrt(lex_run(body, self.depth + 1, self.bars)?);
             self.push(kind, next - at);
             return Ok(());
         }
@@ -328,7 +339,29 @@ impl Lexer<'_> {
             return Ok(());
         };
         self.tokens.push(Token::glued(Tok::LParen));
-        self.tokens.extend(lex_run(body, self.depth + 1)?);
+        self.tokens
+            .extend(lex_run(body, self.depth + 1, self.bars)?);
+        self.tokens.push(Token::glued(Tok::RParen));
+        self.at = next;
+        Ok(())
+    }
+
+    /// Read the bar pair `|A|` at the cursor into the tokens of `abs(A)`.
+    ///
+    /// The caller knows that the full answer has exactly two bars. The two bars
+    /// must stand in one run, and each bracket of the body must close in the
+    /// body. Each other shape gets the refusal that a bar gets with no pair.
+    fn bar_pair(&mut self) -> Result<(), Undecidable> {
+        let Some((body, next)) = bar_body(self.chars, self.at) else {
+            return Err(Undecidable::new("a character outside the grammar"));
+        };
+        let body = lex_run(&body, self.depth + 1, false)?;
+        if !brackets_close(&body) {
+            return Err(Undecidable::new("a character outside the grammar"));
+        }
+        self.push(Tok::Ident("abs".to_string()), 0);
+        self.tokens.push(Token::glued(Tok::LParen));
+        self.tokens.extend(body);
         self.tokens.push(Token::glued(Tok::RParen));
         self.at = next;
         Ok(())
