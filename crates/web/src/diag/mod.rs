@@ -119,10 +119,14 @@ fn probe_problem(
         rework: None,
         handoff: None,
     };
-    (
-        served,
-        json!({ "topic": topic, "problem_id": problem_id, "text": text }),
-    )
+    let mut probe = json!({ "topic": topic, "problem_id": problem_id, "text": text });
+    // A top-level Label contract shows its options; each other probe keeps the
+    // three keys of today. The order comes from `problem_id` only (Hard Rule 1).
+    let contract = served.expected.answer_contract.as_ref();
+    if let Some(choices) = crate::serve::choices::label_choices(contract, &problem_id) {
+        probe["choices"] = json!(choices);
+    }
+    (served, probe)
 }
 
 /// Serve the next probe, storing it as the live problem.
@@ -234,5 +238,49 @@ mod tests {
         assert_eq!(marks("proof", "Step 9", Some(&steps)), Some(false));
         assert_eq!(marks("proof", "Step 3", None), Some(false));
         assert_eq!(marks("numeric", "7", None), Some(true));
+    }
+
+    /// The probe object of a topic whose diagnostic exemplar has `contract`.
+    fn probe_of(contract: Option<&Value>) -> Value {
+        let record = json!({
+            "id": "t", "name": "T", "difficulty": 0.5, "answer_kind": "proof",
+            "expected_time_secs": 60,
+            "diagnostic_exemplar": {
+                "problem": "Which step is the first step that is not valid?",
+                "answer": "Step 3",
+                "answer_contract": contract,
+            },
+        });
+        let topic: Topic = serde_json::from_value(record).unwrap();
+        probe_problem(&topic, "t", 0, 0.0).1
+    }
+
+    /// A Label probe carries `choices` from its `problem_id`; a probe with no
+    /// contract keeps the three keys of today.
+    #[test]
+    fn a_label_probe_carries_the_choices_and_each_other_probe_has_no_key() {
+        let steps =
+            json!({ "kind": "label", "options": [["Step 1", "1"], ["Step 2"], ["Step 3"]] });
+        let probe = probe_of(Some(&steps));
+        let contract = serde_json::from_value(steps).unwrap();
+        let problem_id = probe["problem_id"].as_str().unwrap();
+        let expected = crate::serve::choices::label_choices(Some(&contract), problem_id);
+        assert_eq!(probe["choices"], json!(expected.unwrap()));
+        assert_eq!(probe["choices"].as_array().unwrap().len(), 3);
+
+        let plain = probe_of(None);
+        assert_eq!(plain.as_object().unwrap().len(), 3, "{plain}");
+        assert!(plain.get("choices").is_none());
+
+        // A topic with no diagnostic exemplar gives the fixed text and no key.
+        let record = json!({
+            "id": "t", "name": "T", "difficulty": 0.5, "answer_kind": "numeric",
+            "expected_time_secs": 60,
+        });
+        let bare: Topic = serde_json::from_value(record).unwrap();
+        let (served, probe) = probe_problem(&bare, "t", 2, 0.0);
+        assert_eq!(probe["text"], NO_EXEMPLAR);
+        assert_eq!(served.index, 2);
+        assert!(probe.get("choices").is_none());
     }
 }
