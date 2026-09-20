@@ -136,13 +136,13 @@ fn batch_file_errors_are_exit_2() {
 
 // ---- exit 4 ----
 
-// FLOW: lane B5b replaces the stub of `late.rs`; this expected value then changes.
+// Lane B5b replaced the stub of `late.rs`: each late subcommand is in this
+// build. With no option it gives the usage error (exit 2), not exit 4.
 #[test]
-fn late_subcommands_are_exit_4_in_this_build() {
-    let text = assert_error(&run(&["report", "--all", "--base", "curriculum"]), 4);
-    assert!(text.contains("`report`"), "{text}");
-    for subcommand in ["row", "diff", "dump-kp", "selftest"] {
-        assert_error(&run(&[subcommand]), 4);
+fn late_subcommands_are_in_this_build() {
+    for subcommand in ["report", "row", "diff", "dump-kp", "selftest"] {
+        let text = assert_error(&run(&[subcommand]), 2);
+        assert!(!text.contains("not in this build"), "{text}");
     }
 }
 
