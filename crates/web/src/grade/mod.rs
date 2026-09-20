@@ -19,8 +19,10 @@
 //! UNGRADED: the checker had no verdict, so the reply names the reason, claims no
 //! correctness, reveals no solution, and hands back the NEXT task. The fold
 //! ignores an ungraded attempt, the lesson does not advance on one, and the A4
-//! diagnosis never fires for one (D-F4). EVERY answer kind reaches this path; a
-//! `proof` takes [`PROOF_UNGRADED`] with no checker call.
+//! diagnosis never fires for one (D-F4). EVERY answer kind reaches this path. The
+//! answer contract decides before the topic kind: a `proof` item with a contract
+//! gets the verdict of the contract, and a `proof` item with no contract (or with
+//! the contract `none`) takes [`PROOF_UNGRADED`] with no checker call.
 //!
 //! # The steps, in one transaction
 //!
