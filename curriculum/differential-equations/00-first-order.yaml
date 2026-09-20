@@ -21,18 +21,30 @@ topics:
         name: Identifying the order
         key_prerequisites: [higher-order-derivatives]
         exemplars:
-          - problem: "State the order of $y'' + 3y' - y = x$."
-            answer: "Order 2."
-            answer_contract: {kind: none}
-            solution_sketch: "The highest derivative appearing is $y''$."
-          - problem: "State the order of $(y')^3 + y = 0$."
-            answer: "Order 1."
-            answer_contract: {kind: none}
-            solution_sketch: "Only the first derivative appears; cubing it does not change the order."
-          - problem: "State the order of $y''' - x^2 y' = e^x$."
-            answer: "Order 3."
-            answer_contract: {kind: none}
-            solution_sketch: "Order 3."
+          - problem: "Consider the differential equation y'' + 3y' - y = x, where y is a function of x. Find the order of this equation."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The order of an equation is the order of the highest derivative of y that appears. The full equation y'' + 3y' - y = x contains the second derivative y'' and the first derivative y' . The highest derivative is y'' , so the order is 2."
+          - problem: "Consider the differential equation (y')^3 + y = 0, where y is a function of x. Find the order of this equation."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The order of an equation is the order of the highest derivative of y that appears. In (y')^3 + y = 0 the exponent 3 is an algebraic power, not a higher derivative, so the only derivative present is the first derivative y' . The highest derivative is y' , so the order is 1."
+          - problem: "Consider the differential equation y''' - x^2 y' = e^x, where y is a function of x. Find the order of this equation."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The order of an equation is the order of the highest derivative of y that appears. The derivatives of y in y''' - x^2 y' = e^x are y''' (third) and y' (first); the factor x^2 is a coefficient, not a derivative of y. The highest derivative is y''' , so the order is 3."
+          - problem: "A falling body has position x that depends on time t and satisfies the differential equation x'' = -9.8 - (x')^2. Find the order of this equation."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The order of an equation is the order of the highest derivative of the unknown function that appears. The equation x'' = -9.8 - (x')^2 contains the second derivative x'' and the squared term (x')^2 , which is still only a first derivative. The highest derivative is x'' , so the order is 2."
+          - problem: "Equation A is y''' + (y')^2 = 0 and equation B is (y'')^2 + y' = x, where y is a function of x. Give the orders of equation A and equation B, in that order, as a list."
+            answer: "3, 2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The order of an equation is the order of the highest derivative of y that appears. In A the highest derivative is y''' and the square on y' does not raise the order, so A has order 3. In B the highest derivative is y'' and the square on y'' does not raise the order, so B has order 2. The list is 3, 2."
+          - problem: "Equation C is (dy/dt)^4 + y = sin(t) and equation D is (y'')^3 + (y')^5 = t, where y is a function of t. Give the orders of equation C and equation D, in that order, as a list."
+            answer: "1, 2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The order of an equation is the order of the highest derivative of y that appears. In C the only derivative is dy/dt, a first derivative, and the fourth power does not raise the order, so C has order 1. In D the highest derivative is y'' , and the powers 3 and 5 on lower-order derivatives do not raise the order, so D has order 2. The list is 1, 2."
         constraints: "orders 1-3; include powers of lower-order derivatives as distractors"
       - id: kp2
         name: Linear or nonlinear
@@ -813,14 +825,30 @@ topics:
         name: Bernoulli IVPs
         key_prerequisites: [linear-first-order-integrating-factor]
         exemplars:
-          - problem: "Solve $y' + y = y^2$ with $y(0) = 2$."
-            answer: "$y = \\dfrac{2}{2 - e^{x}}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$v = y^{-1}$: $v = 1 + Ce^x$ with $v(0) = \\tfrac{1}{2}$ gives $C = -\\tfrac{1}{2}$, so $y = \\dfrac{1}{1 - e^x/2}$."
-          - problem: "Solve $y' - y = xy^3$ with $y(0) = 1$."
-            answer: '$y = \left(\tfrac{1}{2}e^{-2x} - x + \tfrac{1}{2}\right)^{-1/2}$'
-            answer_contract: {kind: none}
-            solution_sketch: "$v = y^{-2}$ satisfies $v' + 2v = -2x$, so $v = Ce^{-2x} - x + \\tfrac{1}{2}$; $v(0) = 1$ gives $C = \\tfrac{1}{2}$; then $y = v^{-1/2}$."
+          - problem: "Solve y' + y = y^2 with y(0) = 2. State the solution explicitly."
+            answer: "2/(2-e^(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let v = y^(-1); the Bernoulli substitution turns the equation into the linear equation v' - v = -1. The integrating factor e^(-x) gives v = C e^(x) + 1, and v(0) = 1/2 forces C = -1/2, so v = 1 - e^(x)/2. Since y = 1/v, the explicit solution is 2/(2-e^(x))."
+          - problem: "Solve y' + y = 2y^3 with y(0) = 1/2. State the solution explicitly."
+            answer: "1/sqrt(2e^(2x)+2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For n = 3, set v = y^(-2); the Bernoulli substitution turns the equation into the linear equation v' - 2v = -4. The integrating factor e^(-2x) gives v = C e^(2x) + 2, and v(0) = 4 forces C = 2, so v = 2e^(2x) + 2, which stays positive for every x. Since y = v^(-1/2), the explicit solution is 1/sqrt(2e^(2x)+2)."
+          - problem: "Solve y' + 2y = y^2 with y(0) = 1. State the solution explicitly."
+            answer: "2/(e^(2x)+1)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let v = y^(-1); the Bernoulli substitution turns the equation into the linear equation v' - 2v = -1. The integrating factor e^(-2x) gives v = C e^(2x) + 1/2, and v(0) = 1 forces C = 1/2, so v = e^(2x)/2 + 1/2. Since y = 1/v, the explicit solution is 2/(e^(2x)+1)."
+          - problem: "Solve y' - y = y^2 with y(0) = 2. State the solution explicitly."
+            answer: "2/(3e^(-x)-2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let v = y^(-1); the Bernoulli substitution turns the equation into the linear equation v' + v = -1. The integrating factor e^(x) gives v = C e^(-x) - 1, and v(0) = 1/2 forces C = 3/2, so v = (3/2)e^(-x) - 1. Since y = 1/v, the explicit solution is 2/(3e^(-x)-2)."
+          - problem: "Solve y' + 2y = 2y^3 with y(0) = 1/2. State the solution explicitly."
+            answer: "1/sqrt(3e^(4x)+1)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For n = 3, set v = y^(-2); the Bernoulli substitution turns the equation into the linear equation v' - 4v = -4. The integrating factor e^(-4x) gives v = C e^(4x) + 1, and v(0) = 4 forces C = 3, so v = 3e^(4x) + 1, which stays positive for every x. Since y = v^(-1/2), the explicit solution is 1/sqrt(3e^(4x)+1)."
+          - problem: "Solve y' + 2y = 3y^2 with y(0) = 1. State the solution explicitly."
+            answer: "2/(3-e^(2x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let v = y^(-1); the Bernoulli substitution turns the equation into the linear equation v' - 2v = -3. The integrating factor e^(-2x) gives v = C e^(2x) + 3/2, and v(0) = 1 forces C = -1/2, so v = 3/2 - e^(2x)/2. Since y = 1/v, the explicit solution is 2/(3-e^(2x))."
         constraints: "initial data keeps v positive near x0; state the solution explicitly"
     diagnostic_exemplar:
       problem: 'Solve $y'' + y = y^2$ with $y(0) = 3$.'
