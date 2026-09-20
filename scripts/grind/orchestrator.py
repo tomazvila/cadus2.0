@@ -71,6 +71,55 @@ def expected_for(task):
     return db(f"SELECT doc->'served'->'{task}'->'expected'->>'answer' "
               f"FROM web_states WHERE user_id='{USER}';") or None
 
+
+def diag_expected(topic):
+    """The diagnostic exemplar answer for a topic, read from the curriculum YAML."""
+    for f in glob.glob("/home/deploy/dev/cadus2.0/curriculum/*/*.yaml"):
+        txt = open(f).read()
+        m = re.search(rf"- id: {re.escape(topic)}\n", txt)
+        if not m:
+            continue
+        seg = txt[m.start():]
+        nxt = re.search(r"\n  - id: ", seg[10:])
+        seg = seg[: nxt.start() + 10] if nxt else seg[:12000]
+        dm = re.search(r"diagnostic_exemplar:\s*\n\s+problem:[^\n]*\n\s+answer:\s*[\'\"]?(.+?)[\'\"]?\s*(?:\n|$)", seg)
+        if dm:
+            return dm.group(1).strip()
+    return None
+
+
+def run_placement(course):
+    """Run the placement diagnostic for a never-placed learner (W-C3: the empty
+    plan of a fresh learner offers the diagnostic; the walkthrough runs it).
+    Answers come from each probe topic's diagnostic exemplar in the YAML."""
+    started = api("POST", "/api/diag/start", {})
+    if "error" in started or "probe" not in started:
+        log("diag: refused", json.dumps(started)[:120])
+        return 0
+    n = 0
+    while n < 45:
+        probe = started.get("probe") or {}
+        topic, pid = probe.get("topic"), probe.get("problem_id")
+        if not topic or not pid:
+            break
+        ans = diag_expected(topic)
+        if ans is None:
+            log("diag: no exemplar key for", topic, "- stopping placement")
+            break
+        started = api("POST", "/api/diag/answer",
+                      {"problem_id": pid, "answer": ans})
+        n += 1
+        if "error" in started:
+            log("diag: answer refused", json.dumps(started)[:150])
+            break
+        if not started.get("probe"):
+            break
+    fin = api("POST", "/api/diag/finish", {})
+    log(f"diag: answered {n}, finish={json.dumps(fin)[:80]}")
+    api("POST", "/api/session/end", {})
+    db(f"DELETE FROM session_plans WHERE user_id='{USER}';")
+    return n
+
 # ---------------- session work ----------------
 
 def plan_action(plan: dict) -> str:
@@ -302,6 +351,7 @@ def main():
     authored_topics = set()
     accepted_by_topic = {}
     idle_rounds = 0
+    placed = False
     while time.time() < deadline:
         course, s = current_course(idx)
         if course == "ALL_DONE":
@@ -310,6 +360,9 @@ def main():
         stats, how, blocked = session_round(course)
         log(f"round [{course}]: {how} {stats}")
         if how == "idle":
+            if not placed and run_placement(course):
+                placed = True
+                continue
             log("plan idle (nothing due, frontier open) — ending session")
             return
         if how == "end":
