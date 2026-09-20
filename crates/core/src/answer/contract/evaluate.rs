@@ -4,6 +4,7 @@ use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::Signed;
 
+use super::function::FunctionSpec;
 use super::structured::{label_value, named_parts, tolerance_value, validate_shape};
 use super::{AnswerContract, AnswerPart, Canon, Undecidable, bounded, canonical_form};
 use crate::answer::{Outcome, Rounding, Verdict, rounds_to, same_answer};
@@ -60,6 +61,7 @@ fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract)
         | AnswerContract::AscendingChain
         | AnswerContract::PolynomialRelation
         | AnswerContract::RelationSetup
+        | AnswerContract::Function { .. }
         | AnswerContract::None => {
             unreachable!("the structured contracts decide before the learner answer canonicalizes")
         }
@@ -116,6 +118,14 @@ fn structured_contract(
         AnswerContract::Matrix { rows, cols } => matrix(expected, *rows, *cols, learner),
         AnswerContract::PolynomialRelation => parsed(super::relation::read(learner), expected),
         AnswerContract::RelationSetup => parsed(super::setup::read(learner), expected),
+        AnswerContract::Function {
+            vars,
+            up_to_constant,
+            domain,
+        } => FunctionSpec::new(vars, *up_to_constant, domain)
+            .map_or_else(Outcome::Undecidable, |spec| {
+                super::function::check(&spec, text, learner)
+            }),
         AnswerContract::Exact
         | AnswerContract::Approx { .. }
         | AnswerContract::Tolerance { .. }
@@ -244,50 +254,6 @@ fn approximate(expected: &Canon, learner: &Canon, decimals: u8) -> Outcome {
             Outcome::Undecidable(Undecidable::new("the answer contract requires a number"))
         }
         Rounding::Refused(reason) => Outcome::Undecidable(Undecidable::new(reason)),
-    }
-}
-
-/// Whether a contract grades deterministically or needs a teacher.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TriageVerdict {
-    /// The deterministic grader decides the answer.
-    Grades,
-    /// The contract claims no deterministic verdict, so a teacher grades it.
-    TeachOnly,
-}
-
-/// The one triage rule over the whole contract enum, with no fallback.
-///
-/// Every variant the grader decides is [`TriageVerdict::Grades`]; only
-/// [`AnswerContract::None`] is [`TriageVerdict::TeachOnly`] (V2, A3). The match
-/// names every variant, so a new contract cannot merge into the pool until it
-/// states its own triage.
-#[must_use]
-pub fn triage_verdict(contract: &AnswerContract) -> TriageVerdict {
-    match contract {
-        AnswerContract::None => TriageVerdict::TeachOnly,
-        AnswerContract::Exact
-        | AnswerContract::RequiredAssignment
-        | AnswerContract::Approx { .. }
-        | AnswerContract::Tolerance { .. }
-        | AnswerContract::Unit { .. }
-        | AnswerContract::QuotientRemainder { .. }
-        | AnswerContract::Coordinates { .. }
-        | AnswerContract::Matrix { .. }
-        | AnswerContract::Set
-        | AnswerContract::RequiredForm { .. }
-        | AnswerContract::List { .. }
-        | AnswerContract::InequalityUnion
-        | AnswerContract::RequiredInequalityNotation
-        | AnswerContract::RequiredSinglePower
-        | AnswerContract::RequiredNormalizedScientificNotation
-        | AnswerContract::RequiredSimplestRadical
-        | AnswerContract::ReducedRatio
-        | AnswerContract::AscendingChain
-        | AnswerContract::PolynomialRelation
-        | AnswerContract::RelationSetup
-        | AnswerContract::Label { .. }
-        | AnswerContract::Multipart { .. } => TriageVerdict::Grades,
     }
 }
 
@@ -438,7 +404,7 @@ mod tests {
         ];
         for (contract, expected, correct, mutated) in cases {
             assert!(
-                triage_verdict(&contract) == TriageVerdict::Grades,
+                super::super::triage_verdict(&contract) == super::super::TriageVerdict::Grades,
                 "{contract:?} must grade"
             );
             grades(expected, correct, &contract, true);
@@ -480,59 +446,6 @@ mod tests {
                 .is_err()
         );
         assert!(policy.validate_expected("[[1,2],[3]]").is_err());
-    }
-
-    #[test]
-    fn triage_names_every_grading_contract_and_only_none_teaches() {
-        assert_eq!(
-            triage_verdict(&AnswerContract::None),
-            TriageVerdict::TeachOnly
-        );
-        let graded = [
-            AnswerContract::Exact,
-            AnswerContract::RequiredAssignment,
-            AnswerContract::Approx { decimals: 1 },
-            AnswerContract::Tolerance {
-                tolerance: "1/2".into(),
-            },
-            AnswerContract::Unit {
-                quantity: Quantity::Length,
-                unit: "m".into(),
-            },
-            AnswerContract::QuotientRemainder { divisor: None },
-            AnswerContract::Coordinates { arity: 2 },
-            AnswerContract::Matrix { rows: 1, cols: 1 },
-            AnswerContract::Set,
-            AnswerContract::RequiredForm {
-                form: NumericForm::Integer,
-            },
-            AnswerContract::List {
-                ordered: false,
-                member: Box::new(AnswerContract::Exact),
-            },
-            AnswerContract::InequalityUnion,
-            AnswerContract::RequiredInequalityNotation,
-            AnswerContract::RequiredSinglePower,
-            AnswerContract::RequiredNormalizedScientificNotation,
-            AnswerContract::RequiredSimplestRadical,
-            AnswerContract::ReducedRatio,
-            AnswerContract::AscendingChain,
-            AnswerContract::PolynomialRelation,
-            AnswerContract::RelationSetup,
-            AnswerContract::Label {
-                options: vec![vec!["yes".into()]],
-            },
-            AnswerContract::Multipart {
-                parts: vec![crate::answer::AnswerPart {
-                    name: "x".into(),
-                    contract: AnswerContract::Exact,
-                }],
-            },
-        ];
-        assert_eq!(graded.len(), 22);
-        for contract in graded {
-            assert_eq!(triage_verdict(&contract), TriageVerdict::Grades);
-        }
     }
 
     fn grades(expected: &str, learner: &str, contract: &AnswerContract, correct: bool) {
