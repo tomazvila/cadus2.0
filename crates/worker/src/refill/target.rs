@@ -127,10 +127,10 @@ pub(super) async fn refill_target(
 
     // Step 2: the A6 exemplar fallback. No model call, no synchronous
     // generation: the rotation is the authored exemplar list.
-    let Some((kp, _)) = known else {
+    let Some((kp, kind)) = known else {
         return Ok(Filled::NoSource);
     };
-    fill_from_exemplars(db, target, kp, need, seed).await
+    fill_from_exemplars(db, target, kp, kind, need, seed).await
 }
 
 /// Draw one batch from the approved template and write it (A1, C4).
@@ -172,15 +172,28 @@ async fn fill_from_template(
     .await
 }
 
+/// The exemplar source of one knowledge point, with the answer kind of its
+/// topic. The source then takes an exemplar only if
+/// [`Exemplar::verdict_policy`] gives a verdict, so the pool gets no graded row
+/// for an exemplar that the grader does not mark.
+fn exemplar_source<'kp>(
+    kp_id: &str,
+    kp: &'kp KnowledgePoint,
+    kind: AnswerKindOf,
+) -> ExemplarSource<'kp> {
+    ExemplarSource::new(kp_id, kp.exemplars.as_slice()).with_topic_kind(kind.0)
+}
+
 /// Draw one batch from the authored exemplars and write it (A6).
 async fn fill_from_exemplars(
     db: &Db,
     target: &PoolTarget,
     kp: &KnowledgePoint,
+    kind: AnswerKindOf,
     need: usize,
     seed: u64,
 ) -> Result<Filled, WorkerError> {
-    let source = ExemplarSource::new(target.kp_id.clone(), kp.exemplars.as_slice());
+    let source = exemplar_source(&target.kp_id, kp, kind);
     if !source.covers_ring() {
         let exemplars = source.len();
         tracing::info!(
@@ -350,8 +363,9 @@ async fn insert(
 
 #[cfg(test)]
 mod tests {
-    use super::insert;
-    use cadus_core::curriculum::Exemplar;
+    use super::{exemplar_source, insert};
+    use crate::refill::AnswerKindOf;
+    use cadus_core::curriculum::{AnswerKind, Exemplar, KnowledgePoint};
     use cadus_core::pool::{ExemplarSource, ProblemSource, Source};
     use cadus_store::Db;
     use cadus_store::pool::PoolTarget;
@@ -382,6 +396,38 @@ mod tests {
         ExemplarSource::new(KP, &exemplars)
             .fill(KP, 1, 0)
             .expect("the exemplar fills")
+    }
+
+    /// A knowledge point with one exemplar: no contract, and a key that parses.
+    fn no_contract_kp() -> KnowledgePoint {
+        serde_json::from_value(serde_json::json!({
+            "id": "kp1",
+            "name": "kp1",
+            "exemplars": [{"problem": "Compute $7^2$.", "answer": "49"}],
+        }))
+        .expect("the knowledge point reads")
+    }
+
+    /// The count of graded pool rows that the refill makes for one topic kind.
+    fn graded_rows(kind: AnswerKind) -> usize {
+        let kp = no_contract_kp();
+        exemplar_source(KP, &kp, AnswerKindOf(kind))
+            .fill(KP, 1, 0)
+            .map_or(0, |batch| batch.instances().len())
+    }
+
+    /// A no-contract exemplar on a `proof` topic gives no graded pool row.
+    #[test]
+    fn a_no_contract_exemplar_on_a_proof_topic_gives_no_graded_row() {
+        assert_eq!(graded_rows(AnswerKind::Proof), 0);
+        assert_eq!(graded_rows(AnswerKind::Numeric), 1);
+    }
+
+    /// A no-contract exemplar on a `multi-step` topic gives no graded pool row.
+    #[test]
+    fn a_no_contract_exemplar_on_a_multi_step_topic_gives_no_graded_row() {
+        assert_eq!(graded_rows(AnswerKind::MultiStep), 0);
+        assert_eq!(graded_rows(AnswerKind::Expression), 1);
     }
 
     /// A `Db` over a lazy pool that points at a closed port.
