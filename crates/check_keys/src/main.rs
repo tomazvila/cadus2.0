@@ -469,7 +469,7 @@ fn check_answer(
         }
     }
     // Rung 3: the +1 mutation grades WRONG, or no numeric component exists.
-    let Some(mutant) = mutate::mutate_plus_one(answer) else {
+    let Some(mutant) = mutate::mutant_for(answer, contract) else {
         // A closed-choice answer mutates to another option of its vocabulary.
         if let Some(alternative) = contract.and_then(|contract| label_mutant(answer, contract)) {
             return mutant_status(answer, &alternative, contract, kind, at, item, failures);

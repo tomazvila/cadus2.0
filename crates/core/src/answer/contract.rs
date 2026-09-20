@@ -3,6 +3,7 @@
 mod assignment;
 mod evaluate;
 mod form;
+pub mod function;
 mod list;
 mod notation;
 mod power;
@@ -11,15 +12,19 @@ mod relation;
 mod scientific;
 mod setup;
 mod structured;
+mod triage;
 mod union;
+
+use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
 use super::{Canon, MAX_ANSWER_CHARS, Quantity, Undecidable, canonical_form};
 use structured::{label_value, multipart_values, tolerance_value, validate_shape};
 
-pub use evaluate::{TriageVerdict, check_contract, triage_verdict};
+pub use evaluate::check_contract;
 pub use form::NumericForm;
+pub use triage::{TriageVerdict, triage_verdict};
 
 /// A reviewed item's answer policy. Absence retains the historical policy.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -82,6 +87,19 @@ pub enum AnswerContract {
     Label { options: Vec<Vec<String>> },
     /// Named parts, each with its own deterministic policy.
     Multipart { parts: Vec<AnswerPart> },
+    /// A formula, equal to the key if the two agree at eight fixed sample points.
+    ///
+    /// This is the one variant that compares `f64` values (see `function`).
+    Function {
+        /// One to three variable names.
+        vars: Vec<String>,
+        /// If true, a difference that is one constant is correct (antiderivatives).
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        up_to_constant: bool,
+        /// The sample interval of a variable, as two exact rationals `[low, high]`.
+        #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+        domain: BTreeMap<String, (String, String)>,
+    },
     /// The item has no deterministic assessment.
     None,
 }
@@ -140,6 +158,13 @@ enum ContractDoc {
     Multipart {
         parts: Vec<AnswerPart>,
     },
+    Function {
+        vars: Vec<String>,
+        #[serde(default)]
+        up_to_constant: bool,
+        #[serde(default)]
+        domain: BTreeMap<String, (String, String)>,
+    },
     None {},
 }
 
@@ -148,7 +173,6 @@ impl TryFrom<ContractDoc> for AnswerContract {
 
     fn try_from(doc: ContractDoc) -> Result<Self, Self::Error> {
         let contract = match doc {
-            ContractDoc::Exact {} => Self::Exact,
             ContractDoc::Approx {
                 decimals: Some(decimals),
                 tolerance: None,
@@ -166,30 +190,36 @@ impl TryFrom<ContractDoc> for AnswerContract {
             ContractDoc::QuotientRemainder { divisor } => Self::QuotientRemainder { divisor },
             ContractDoc::Coordinates { arity } => Self::Coordinates { arity },
             ContractDoc::Matrix { rows, cols } => Self::Matrix { rows, cols },
-            ContractDoc::Set {} => Self::Set,
             ContractDoc::RequiredForm { form } => Self::RequiredForm { form },
             ContractDoc::List { ordered, member } => Self::List { ordered, member },
-            ContractDoc::InequalityUnion {} => Self::InequalityUnion,
-            document @ (ContractDoc::RequiredAssignment {}
-            | ContractDoc::RequiredInequalityNotation {}
-            | ContractDoc::RequiredSinglePower {}
-            | ContractDoc::RequiredNormalizedScientificNotation {}
-            | ContractDoc::RequiredSimplestRadical {}) => required_syntax_contract(document),
-            ContractDoc::ReducedRatio {} => Self::ReducedRatio,
-            ContractDoc::AscendingChain {} => Self::AscendingChain,
-            ContractDoc::PolynomialRelation {} => Self::PolynomialRelation,
-            ContractDoc::RelationSetup {} => Self::RelationSetup,
             ContractDoc::Label { options } => Self::Label { options },
             ContractDoc::Multipart { parts } => Self::Multipart { parts },
-            ContractDoc::None {} => Self::None,
+            ContractDoc::Function {
+                vars,
+                up_to_constant,
+                domain,
+            } => Self::Function {
+                vars,
+                up_to_constant,
+                domain,
+            },
+            document => fieldless_contract(document),
         };
         contract.validate()?;
         Ok(contract)
     }
 }
 
-fn required_syntax_contract(document: ContractDoc) -> AnswerContract {
+/// The contract of a document that has no field.
+fn fieldless_contract(document: ContractDoc) -> AnswerContract {
     match document {
+        ContractDoc::Exact {} => AnswerContract::Exact,
+        ContractDoc::Set {} => AnswerContract::Set,
+        ContractDoc::InequalityUnion {} => AnswerContract::InequalityUnion,
+        ContractDoc::ReducedRatio {} => AnswerContract::ReducedRatio,
+        ContractDoc::AscendingChain {} => AnswerContract::AscendingChain,
+        ContractDoc::PolynomialRelation {} => AnswerContract::PolynomialRelation,
+        ContractDoc::RelationSetup {} => AnswerContract::RelationSetup,
         ContractDoc::RequiredAssignment {} => AnswerContract::RequiredAssignment,
         ContractDoc::RequiredInequalityNotation {} => AnswerContract::RequiredInequalityNotation,
         ContractDoc::RequiredSinglePower {} => AnswerContract::RequiredSinglePower,
@@ -197,7 +227,9 @@ fn required_syntax_contract(document: ContractDoc) -> AnswerContract {
             AnswerContract::RequiredNormalizedScientificNotation
         }
         ContractDoc::RequiredSimplestRadical {} => AnswerContract::RequiredSimplestRadical,
-        _ => unreachable!("caller supplies a required syntax contract"),
+        // `None {}` is the one document that stays. A document that gets no arm
+        // here gives no verdict, which is the safe result.
+        _ => AnswerContract::None,
     }
 }
 
@@ -228,9 +260,21 @@ impl AnswerContract {
                     "the contract unit does not match its quantity",
                 )),
             },
+            other => other.validate_structure(),
+        }
+    }
+
+    /// The rules of the contracts that hold a list, names, or variables.
+    fn validate_structure(&self) -> Result<(), Undecidable> {
+        match self {
             Self::List { ordered, member } => list::validate(*ordered, member),
             Self::Label { options } => structured::validate_labels(options),
             Self::Multipart { parts } => structured::validate_parts(parts),
+            Self::Function {
+                vars,
+                up_to_constant,
+                domain,
+            } => function::FunctionSpec::new(vars, *up_to_constant, domain).map(|_| ()),
             _ => Ok(()),
         }
     }
@@ -254,10 +298,15 @@ impl AnswerContract {
             | Self::RequiredSinglePower
             | Self::RequiredNormalizedScientificNotation
             | Self::RequiredSimplestRadical) => required_syntax_expected(contract, expected),
-            Self::ReducedRatio => notation::reduced_ratio(expected),
-            Self::AscendingChain => notation::ascending_chain(expected),
+            Self::ReducedRatio | Self::AscendingChain => notation::expected(self, expected),
             Self::PolynomialRelation => relation::read(expected),
             Self::RelationSetup => setup::read(expected),
+            Self::Function {
+                vars,
+                up_to_constant,
+                domain,
+            } => function::FunctionSpec::new(vars, *up_to_constant, domain)
+                .and_then(|spec| function::expected(&spec, expected)),
             Self::RequiredForm { form } if !form::accepts(*form, expected) => Err(
                 Undecidable::new("the authored answer does not match its required form"),
             ),

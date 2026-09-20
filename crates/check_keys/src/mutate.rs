@@ -15,7 +15,8 @@
 use num_bigint::BigInt;
 
 use cadus_core::answer::ast::Ast;
-use cadus_core::answer::{normalize, parse};
+use cadus_core::answer::contract::function::CONSTANT_NAMES;
+use cadus_core::answer::{AnswerContract, normalize, parse};
 use cadus_core::template::eval::write;
 
 /// Build one wrong variant of an authored answer, if any mutation applies.
@@ -26,6 +27,46 @@ use cadus_core::template::eval::write;
 #[must_use]
 pub fn mutate_plus_one(answer: &str) -> Option<String> {
     mutate_via_tree(answer).or_else(|| mutate_via_text(answer))
+}
+
+/// Build the wrong variant that the contract of the item needs.
+///
+/// A `function` key gets `2*(E) + v`: `v` is the first variable, and `E` is the
+/// key with no leading `name =` label and, with `up_to_constant`, with no
+/// trailing constant term. The `+1` variant of a formula stays correct with
+/// `up_to_constant`, so it is not in use for this kind. Each other contract
+/// gets [`mutate_plus_one`].
+#[must_use]
+pub fn mutant_for(answer: &str, contract: Option<&AnswerContract>) -> Option<String> {
+    let Some(AnswerContract::Function {
+        vars,
+        up_to_constant,
+        ..
+    }) = contract
+    else {
+        return mutate_plus_one(answer);
+    };
+    let formula = answer
+        .split_once('=')
+        .map_or(answer, |(_, formula)| formula)
+        .trim();
+    let formula = if *up_to_constant {
+        without_constant(formula)
+    } else {
+        formula
+    };
+    vars.first()
+        .map(|variable| format!("2*({formula}) + {variable}"))
+}
+
+/// Remove one trailing `+ C`, `+ c`, `+ K` or `+ k` term.
+fn without_constant(formula: &str) -> &str {
+    CONSTANT_NAMES
+        .iter()
+        .find_map(|name| formula.strip_suffix(name))
+        .map(str::trim_end)
+        .and_then(|rest| rest.strip_suffix('+'))
+        .map_or(formula, str::trim_end)
 }
 
 /// Parse the answer, bump its first numeric leaf, and write the tree back.
@@ -120,4 +161,81 @@ fn mutate_via_text(answer: &str) -> Option<String> {
         return Some(out);
     }
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cadus_core::answer::{Outcome, check_contract};
+
+    fn function(up_to_constant: bool) -> AnswerContract {
+        let tail = if up_to_constant {
+            r#","up_to_constant":true"#
+        } else {
+            ""
+        };
+        let doc = format!(r#"{{"kind":"function","vars":["x","y"]{tail}}}"#);
+        serde_json::from_str(&doc)
+            .ok()
+            .unwrap_or(AnswerContract::None)
+    }
+
+    #[test]
+    fn a_function_key_gets_the_frozen_mutant() {
+        let plain = function(false);
+        let constant = function(true);
+        for (key, contract, mutant) in [
+            ("x/sqrt(x^2+9)", &plain, "2*(x/sqrt(x^2+9)) + x"),
+            ("y = x^2/2 + C", &constant, "2*(x^2/2) + x"),
+            ("x^2/2 +k", &constant, "2*(x^2/2) + x"),
+            ("f = x*y + K ", &constant, "2*(x*y) + x"),
+            ("x^2/2 + C", &plain, "2*(x^2/2 + C) + x"),
+            ("x*c", &constant, "2*(x*c) + x"),
+            ("x - c", &constant, "2*(x - c) + x"),
+        ] {
+            assert_eq!(mutant_for(key, Some(contract)).as_deref(), Some(mutant));
+        }
+    }
+
+    #[test]
+    fn each_other_contract_gets_the_plus_one_mutant() {
+        assert_eq!(mutant_for("41", None).as_deref(), Some("42"));
+        assert_eq!(
+            mutant_for("41", Some(&AnswerContract::Exact)),
+            mutate_plus_one("41")
+        );
+        assert_eq!(mutant_for("yes", Some(&AnswerContract::Exact)), None);
+    }
+
+    #[test]
+    fn the_function_mutant_grades_wrong() {
+        let x: AnswerContract = serde_json::from_str(r#"{"kind":"function","vars":["x"]}"#)
+            .ok()
+            .unwrap_or(AnswerContract::None);
+        let constant: AnswerContract =
+            serde_json::from_str(r#"{"kind":"function","vars":["x"],"up_to_constant":true}"#)
+                .ok()
+                .unwrap_or(AnswerContract::None);
+        // The first two keys are the `function` items of the golden row
+        // `FLOW/spec/golden/calc-chain-rule.row.json`.
+        for (key, contract) in [
+            ("x/sqrt(x^2+9)", &x),
+            ("-3/(3x+1)^2", &x),
+            ("y = x^2/2 + C", &constant),
+            ("ln(x) + C", &constant),
+        ] {
+            let mutant = mutant_for(key, Some(contract)).unwrap_or_default();
+            assert!(matches!(
+                check_contract(key, key, contract.clone()),
+                Outcome::Decided(verdict) if verdict.correct
+            ));
+            assert!(
+                matches!(
+                    check_contract(key, &mutant, contract.clone()),
+                    Outcome::Decided(verdict) if !verdict.correct
+                ),
+                "{key}: {mutant}"
+            );
+        }
+    }
 }
