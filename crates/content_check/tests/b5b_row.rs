@@ -268,18 +268,59 @@ fn bad_input_is_exit_2_with_the_error_document() {
         "b5b_row_cut.json",
         r#"{"kp": "precalculus/fx/kp2", "items": [{"ke"#,
     );
+    let row = scratch(
+        "b5b_row_other_kp.json",
+        r#"{"kp": "precalculus/fx/kp99", "items": []}"#,
+    );
+    let good = scratch(
+        "b5b_row_good.json",
+        r#"{"kp": "precalculus/fx/kp1", "items": []}"#,
+    );
     for args in [
         vec!["row", "--row", "/no/such/row.json", "--base", &base],
         // An empty file and a truncated file (pack v9).
         vec!["row", "--row", &none, "--base", &base],
         vec!["row", "--row", &cut, "--base", &base],
         vec!["row", "--base", &base],
+        vec!["row", "--row", &good],
         vec!["row", "--row", &none, "--base", &base, "--other", "1"],
+        vec!["row", "--row", &row, "--base", &base],
+        vec![
+            "row",
+            "--row",
+            &good,
+            "--base",
+            &base,
+            "--packet",
+            "/no/such.json",
+        ],
+        vec!["row", "--row", &good, "--base", &base, "--db", "not a dsn"],
         vec!["dump-kp", "--kp", "precalculus/fx/kp99", "--base", &base],
         vec!["dump-kp", "--kp", THREE, "--base", "/no/such/tree"],
         vec!["dump-kp", "--kp", THREE, "--base"],
+        vec!["dump-kp", "--kp", THREE],
+        vec!["dump-kp", "--base", &base],
+        vec![
+            "dump-kp",
+            "--kp",
+            THREE,
+            "--base",
+            &base,
+            "--db",
+            "not a dsn",
+        ],
         vec!["selftest", "--tree", &base, "--expected", &none],
+        vec!["selftest", "--tree", &base],
+        vec!["selftest", "--expected", &good],
+        vec!["selftest", "--tree", "/no/such/tree", "--expected", &good],
+        vec!["selftest", "--tree", &base, "--other"],
         vec!["report", "--all", "--base", &base, "--db", "not a dsn"],
+        vec!["report", "--all", "--base", &base, "--since", "no-such-ref"],
+        vec!["report", "--all"],
+        vec!["report", "--every", "--base", &base],
+        vec!["diff", "--kp", THREE],
+        vec!["diff", "--base", "HEAD"],
+        vec!["diff", "--base", "HEAD", "--kp", THREE, "--other", "1"],
     ] {
         error_text(&run(&args), 2);
     }
@@ -314,6 +355,64 @@ fn a_row_with_bad_fields_is_exit_2() {
     no_id["problem"] = Value::Null;
     let text = error_text(&check_row("bad_no_id", THREE, vec![no_id], &[]), 2);
     assert!(text.starts_with("the row item `-`"), "{text}");
+}
+
+/// `diff` needs a scratch directory, `git` and `tar`.
+#[test]
+fn diff_gives_exit_2_when_a_tool_or_the_scratch_directory_is_absent() {
+    use std::os::unix::fs::symlink;
+    use std::process::Command;
+    let args = [
+        "diff",
+        "--base",
+        "HEAD",
+        "--kp",
+        "calculus-1/chain-rule/kp1",
+        "--repo",
+        &support::repo(),
+    ];
+    let with_env = |key: &str, value: &str| {
+        let output = Command::new(env!("CARGO_BIN_EXE_content_check"))
+            .args(args)
+            .env(key, value)
+            .output()
+            .unwrap();
+        let doc: Value = serde_json::from_slice(&output.stdout).unwrap();
+        assert_eq!(output.status.code(), Some(2), "{doc}");
+        doc["error"].as_str().unwrap().to_owned()
+    };
+    let text = with_env("TMPDIR", "/proc/no-such-dir");
+    assert!(
+        text.starts_with("cannot make a scratch directory"),
+        "{text}"
+    );
+    let text = with_env("PATH", "/no/such/bin");
+    assert!(text.contains("cannot start"), "{text}");
+    // A PATH that has `git` and does not have `tar`.
+    let bin = scratch("b5b_only_git/keep", "");
+    let bin = bin.trim_end_matches("/keep");
+    let git = String::from_utf8(Command::new("which").arg("git").output().unwrap().stdout).unwrap();
+    let link = format!("{bin}/git");
+    let _ = std::fs::remove_file(&link);
+    symlink(std::fs::canonicalize(git.trim()).unwrap(), &link).unwrap();
+    let text = with_env("PATH", bin);
+    assert!(text.starts_with("tar: cannot start"), "{text}");
+}
+
+#[test]
+fn a_course_with_no_finding_is_pass_with_exit_0() {
+    let result = run(&[
+        "report",
+        "--course",
+        "linear-algebra",
+        "--base",
+        &fixture("tree"),
+    ]);
+    assert_eq!(result.exit, 0, "{}", result.doc);
+    assert_eq!(result.doc["result"], "PASS");
+    assert_eq!(result.doc["courses"][0]["result"], "PASS");
+    assert_eq!(result.doc["courses"][0]["kps_at_goal"], 1);
+    assert_eq!(result.doc["kps"][0]["goal"], true);
 }
 
 // ---- exit 3 ----
@@ -362,7 +461,7 @@ fn selftest_finds_each_defect_of_the_seeded_trees() {
         "--tree",
         &tree,
         "--expected",
-        &fixture("expected-seeded-v9.json"),
+        &flow("selftest/expected-tree.json"),
     ]);
     assert_eq!(result.exit, 0, "{}", result.doc);
     assert_eq!(

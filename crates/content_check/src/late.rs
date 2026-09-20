@@ -122,10 +122,11 @@ pub fn run(subcommand: &str, args: &[String]) -> Option<(Value, u8)> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{Fail, Opts, run};
 
-    fn strings(args: &[&str]) -> Vec<String> {
-        args.iter().map(|arg| (*arg).to_owned()).collect()
+    /// The arguments of one command line, from one text with spaces.
+    fn strings(line: &[&str]) -> Vec<String> {
+        line.iter().copied().map(String::from).collect()
     }
 
     #[test]

@@ -102,10 +102,7 @@ impl CourseSum {
         self.no_teach += usize::from(store.is_some_and(|s| !s.has_teach(&view.store_key)));
         self.with_finding += usize::from(!findings.is_empty());
         for found in findings {
-            let rule = found
-                .invariant
-                .clone()
-                .unwrap_or_else(|| found.code.clone());
+            let rule = found.invariant.clone().unwrap_or_default();
             *self.breaches.entry(rule).or_insert(0) += 1;
         }
     }

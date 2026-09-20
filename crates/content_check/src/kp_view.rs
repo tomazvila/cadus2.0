@@ -31,8 +31,6 @@ pub struct Item {
     pub verdict: bool,
     /// The text of the I3 breach of a verdict exemplar, if there is one.
     pub grader: Option<String>,
-    /// A verdict exemplar whose key has no mutant: I3 has no power there.
-    pub no_mutant: bool,
     /// I12, I13 and I14 apply (a new or changed exemplar).
     pub is_new: bool,
 }
@@ -41,11 +39,9 @@ impl Item {
     /// Build an item. `contract` is the JSON form of `exemplar.answer_contract`.
     pub fn new(exemplar: Exemplar, contract: Value, kind: AnswerKind) -> Self {
         let verdict = exemplar.verdict_policy(kind).is_ok();
-        let (grader, no_mutant) = if verdict {
-            grader::probe(&exemplar, &contract, kind)
-        } else {
-            (None, false)
-        };
+        let grader = verdict
+            .then(|| grader::probe(&exemplar, &contract, kind))
+            .flatten();
         Self {
             id: None,
             rule: None,
@@ -54,7 +50,6 @@ impl Item {
             contract,
             verdict,
             grader,
-            no_mutant,
             is_new: false,
         }
     }

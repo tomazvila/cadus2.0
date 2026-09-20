@@ -71,13 +71,9 @@ mod tests {
     fn i2_has_the_hard_floor_and_the_goal() {
         let three = check(&view((0..3).map(exact).collect()));
         assert_eq!(invariants(&three), ["I2"]);
-        assert!(three[0].detail.starts_with("V = 3"), "{}", three[0].detail);
+        assert!(three[0].detail.starts_with("V = 3"));
         let five = check(&view((0..5).map(exact).collect()));
-        assert!(
-            five[0].detail.starts_with("below-goal"),
-            "{}",
-            five[0].detail
-        );
+        assert!(five[0].detail.starts_with("below-goal"));
         assert_eq!(five[0].code, "invariant:I2");
         assert_eq!(check(&view((0..6).map(exact).collect())), []);
         let mut low_floor = view((0..4).map(exact).collect());
@@ -108,11 +104,7 @@ mod tests {
         // Not a proof KP.
         let found = check(&view(items.clone()));
         assert_eq!(invariants(&found), ["I4"]);
-        assert!(
-            found[0].detail.contains("contract: none"),
-            "{}",
-            found[0].detail
-        );
+        assert!(found[0].detail.contains("contract: none"));
         // Not the last exemplar.
         items.push(exact(6));
         proof.items = items.clone();
@@ -140,10 +132,6 @@ mod tests {
         ));
         let found = check(&view(items));
         assert_eq!(invariants(&found), ["I4"]);
-        assert!(
-            found[0].detail.contains("contract: exact"),
-            "{}",
-            found[0].detail
-        );
+        assert!(found[0].detail.contains("contract: exact"));
     }
 }

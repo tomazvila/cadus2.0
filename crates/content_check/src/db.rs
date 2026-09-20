@@ -5,8 +5,7 @@
 
 use std::collections::BTreeMap;
 
-use sqlx::Row;
-use sqlx::postgres::{PgConnectOptions, PgPoolOptions, PgRow};
+use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 
 use super::Fail;
 
@@ -14,6 +13,9 @@ use super::Fail;
 const QUERY: &str = "SELECT kp_id, kind, body #>> '{worked_example,problem}' AS problem \
 FROM content_store WHERE status = 'approved' AND kind IN ('teach', 'template') \
 ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest";
+
+/// One row of the query: `kp_id`, `kind`, the worked-example problem.
+type StoreRow = (String, String, Option<String>);
 
 /// The approved content of each KP. The key is `topic/kp`.
 #[derive(Debug, Default, PartialEq, Eq)]
@@ -49,16 +51,12 @@ impl Store {
         self.templates.get(key).copied().unwrap_or(0)
     }
 
-    fn add(&mut self, row: &PgRow) -> Result<(), sqlx::Error> {
-        let key: String = row.try_get("kp_id")?;
-        let kind: String = row.try_get("kind")?;
+    fn add(&mut self, (key, kind, problem): StoreRow) {
         if kind == "teach" {
-            let problem: Option<String> = row.try_get("problem")?;
             self.teach.entry(key).or_insert(problem);
         } else {
             *self.templates.entry(key).or_insert(0) += 1;
         }
-        Ok(())
     }
 }
 
@@ -75,12 +73,11 @@ async fn fetch(dsn: &str) -> Result<Store, Fail> {
         .connect_with(options)
         .await;
     let pool = fail("cannot connect", pool)?;
-    let rows = fail(
-        "cannot read content_store",
-        sqlx::query(QUERY).fetch_all(&pool).await,
-    )?;
+    let rows = sqlx::query_as::<_, StoreRow>(QUERY).fetch_all(&pool).await;
     pool.close().await;
     let mut store = Store::default();
-    let filled = rows.iter().try_for_each(|row| store.add(row));
-    fail("cannot read a row of content_store", filled).map(|()| store)
+    for row in fail("cannot read content_store", rows)? {
+        store.add(row);
+    }
+    Ok(store)
 }

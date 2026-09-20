@@ -145,7 +145,8 @@ fn shape_breach(texts: &[&str]) -> Option<String> {
         return Some("the options are not all numeric or all text".to_owned());
     }
     let lengths = plain.iter().map(|text| text.chars().count());
-    let (shortest, longest) = (lengths.clone().min()?, lengths.max()?);
+    let shortest = lengths.clone().min()?;
+    let longest = lengths.max().unwrap_or(shortest);
     (longest > 3 * shortest)
         .then(|| format!("option lengths {shortest} to {longest}: the ratio is more than 3"))
 }

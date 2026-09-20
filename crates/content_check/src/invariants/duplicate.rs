@@ -119,16 +119,8 @@ mod tests {
         );
         let found = check(&other);
         assert_eq!(invariants(&found), ["I5", "I5"]);
-        assert!(
-            found[0].detail.contains("diagnostic"),
-            "{}",
-            found[0].detail
-        );
-        assert!(
-            found[1].detail.contains("teach page"),
-            "{}",
-            found[1].detail
-        );
+        assert!(found[0].detail.contains("diagnostic"));
+        assert!(found[1].detail.contains("teach page"));
     }
 
     #[test]
