@@ -22,11 +22,14 @@ export interface MathBlockProps {
   children: string;
   /** The class of the rendered node. It carries the KaTeX cascade. */
   className?: string;
+  /** The element of the rendered node. Use `span` inside a `<button>`: a `div` is not valid there. */
+  as?: 'div' | 'span';
 }
 
 export const MathBlock = memo(function MathBlock({
   children,
   className = 'problem-text',
+  as: Tag = 'div',
 }: MathBlockProps) {
   // React diffs the OBJECT identity, so it must stay stable across renders.
   const markup = useMemo(() => ({ __html: renderMathToHtml(children) }), [children]);
@@ -34,5 +37,5 @@ export const MathBlock = memo(function MathBlock({
   // `renderMathToHtml` escapes the source through the `textContent` of a detached node before
   // KaTeX sees it, so model-authored markup arrives here as text. This is not the injection
   // site it resembles — see `lib/katex.ts`.
-  return <div className={className} dangerouslySetInnerHTML={markup} />;
+  return <Tag className={className} dangerouslySetInnerHTML={markup} />;
 });

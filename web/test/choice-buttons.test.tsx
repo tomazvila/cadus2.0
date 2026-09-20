@@ -6,7 +6,7 @@
  */
 import { createRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import katex from 'katex';
 import renderMathInElement from 'katex/contrib/auto-render';
@@ -74,6 +74,39 @@ describe('ChoiceButtons', () => {
     expect(button.querySelector('.choice-text .katex')).not.toBeNull();
     fireEvent.click(button);
     expect(onSubmit.mock.calls).toEqual([[raw]]);
+  });
+
+  it('puts the option text in a span, because a div is not valid in a button', () => {
+    render(<ChoiceButtons choices={STEPS} disabled={false} onSubmit={vi.fn()} />);
+    const inner = within(group()).getAllByRole('button').map((b) => b.firstElementChild!);
+    expect(inner.map((node) => `${node.tagName}.${node.className}`)).toEqual(
+      ['SPAN.choice-text', 'SPAN.choice-text', 'SPAN.choice-text', 'SPAN.choice-text'],
+    );
+    expect(group().querySelector('div')).toBeNull();
+  });
+
+  it('marks the selected option on the locked buttons only, by the index', () => {
+    const marks = () => within(group()).getAllByRole('button')
+      .map((b) => `${b.className}|${b.getAttribute('aria-pressed')}`);
+    const view = render(<ChoiceButtons choices={['same', 'same', 'c']} disabled selected={1} onSubmit={vi.fn()} />);
+    expect(marks()).toEqual([
+      'btn choice-button|null', 'btn choice-button is-selected|true', 'btn choice-button|null',
+    ]);
+    // An enabled button is not an answer yet, so it has no mark.
+    view.rerender(<ChoiceButtons choices={['same', 'same', 'c']} disabled={false} selected={1} onSubmit={vi.fn()} />);
+    expect(marks()).toEqual(['btn choice-button|null', 'btn choice-button|null', 'btn choice-button|null']);
+    // No selection: no mark on the locked buttons.
+    view.rerender(<ChoiceButtons choices={['same', 'same', 'c']} disabled onSubmit={vi.fn()} />);
+    expect(marks()).toEqual(['btn choice-button|null', 'btn choice-button|null', 'btn choice-button|null']);
+  });
+
+  it('gives the index to onSelect before the text goes to onSubmit', () => {
+    const order: string[] = [];
+    render(<ChoiceButtons choices={STEPS} disabled={false}
+      onSelect={(index) => { order.push(`select ${index}`); }}
+      onSubmit={(answer) => { order.push(`submit ${answer}`); }} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Step 4' }));
+    expect(order).toEqual(['select 2', 'submit Step 4']);
   });
 
   it('shows the markup of an option as text', () => {
@@ -159,7 +192,8 @@ describe('AnswerInput', () => {
     render(<AnswerInput ref={ref} choices={STEPS} disabled={false} onSubmit={vi.fn()} />);
     fireEvent.click(screen.getByRole('button', { name: 'Step 2' }));
     expect(ref.current!.value()).toBe('Step 2');
-    ref.current!.clear();
+    // `clear()` writes state too, so the test calls it in `act`.
+    act(() => { ref.current!.clear(); });
     expect(ref.current!.value()).toBe('');
   });
 
@@ -171,9 +205,26 @@ describe('AnswerInput', () => {
     const box = document.activeElement as HTMLElement;
     expect(box.className).toBe('choice-input');
     expect(box.getAttribute('tabindex')).toBe('-1');
+    // The focus stop has a role and a name for a screen reader.
+    expect(box).toBe(screen.getByRole('group', { name: 'Choose an answer' }));
     expect(box.contains(group())).toBe(true);
     fireEvent.keyDown(box, { key: 'Enter' });
     expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('marks the tapped option when the buttons lock, and clear() removes the mark', () => {
+    const ref = createRef<AnswerFieldHandle>();
+    const pressed = () => within(group()).getAllByRole('button')
+      .filter((b) => b.getAttribute('aria-pressed') === 'true').map((b) => b.textContent);
+    const view = render(<AnswerInput ref={ref} choices={STEPS} disabled={false} onSubmit={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Step 4' }));
+    expect(pressed()).toEqual([]);
+    view.rerender(<AnswerInput ref={ref} choices={STEPS} disabled onSubmit={vi.fn()} />);
+    expect(pressed()).toEqual(['Step 4']);
+    expect(screen.getByRole('button', { name: 'Step 4' }).className).toBe('btn choice-button is-selected');
+    act(() => { ref.current!.clear(); });
+    expect(pressed()).toEqual([]);
+    expect(ref.current!.value()).toBe('');
   });
 
   it('uses `locked` for the buttons and `disabled` for the typed field', () => {

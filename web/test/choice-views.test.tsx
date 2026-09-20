@@ -25,6 +25,8 @@ const labels = () => choiceButtons().map((b) => b.textContent);
 const allDisabled = () => choiceButtons().every((b) => b.disabled);
 const noneDisabled = () => choiceButtons().every((b) => !b.disabled);
 const typedField = () => screen.queryByLabelText('Answer');
+/** The text of each button that has `aria-pressed="true"`. */
+const pressed = () => choiceButtons().filter((b) => b.getAttribute('aria-pressed') === 'true').map((b) => b.textContent);
 
 /** Tap one option and let the continuations settle. */
 async function tap(name: string): Promise<void> {
@@ -97,6 +99,36 @@ describe('the session with a Label problem', () => {
       ['p1', 'Step 1'], ['p1', 'Step 3'],
     ]);
     expect(screen.getByText('Correct')).toBeTruthy();
+  });
+
+  it('shows in the verdict view which option the learner pressed', async () => {
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => session.graded({ correct: false }));
+    await session.mount({ api: session.stubApi({ taskServe: async () => labelProblem(), taskAnswer }) });
+    expect(pressed()).toEqual([]);
+    await tap('Step 4');
+    expect(screen.getByText('Not quite')).toBeTruthy();
+    expect(pressed()).toEqual(['Step 4']);
+    expect(choiceButtons().map((b) => b.className)).toEqual([
+      'btn choice-button', 'btn choice-button', 'btn choice-button is-selected', 'btn choice-button',
+    ]);
+  });
+
+  it('removes the mark for the re-solve, and marks the option of the second tap', async () => {
+    const second = held<TaskAnswerResponse>();
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>()
+      .mockResolvedValueOnce(session.REWORK)
+      .mockReturnValueOnce(second.promise);
+    await session.mount({ api: session.stubApi({ taskServe: async () => labelProblem(), taskAnswer }) });
+    await tap('Step 1');
+    // The re-solve starts with no answer: the buttons are enabled and no button has the mark.
+    expect(noneDisabled()).toBe(true);
+    expect(pressed()).toEqual([]);
+    expect(document.querySelector('.is-selected')).toBeNull();
+    await tap('Step 3');
+    expect(pressed()).toEqual(['Step 3']);
+    await act(async () => { second.release(session.graded({ next: null, task_status: 'task_passed' })); });
+    expect(screen.getByText('Correct')).toBeTruthy();
+    expect(pressed()).toEqual(['Step 3']);
   });
 
   it('moves to a typed problem after Continue, and that problem has the typed field', async () => {

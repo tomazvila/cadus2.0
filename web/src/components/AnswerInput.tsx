@@ -13,11 +13,15 @@
  * `clear()` removes the selection, so the re-solve of the same problem starts with no answer
  * and a drill timeout posts a blank answer.
  *
+ * THE SELECTION HAS TWO COPIES. The ref holds the text, because the submit function reads
+ * `value()` in the same tick as the tap, before a render. The state holds the index, so the
+ * locked buttons show which option the app sent. The tap and `clear()` write the two copies.
+ *
  * `focus()` of the choice mode puts the focus on the container, not on the first button. A
  * held Enter from the Continue button of the previous problem repeats on a focused button
  * and submits an option that the learner did not select. The container ignores that key.
  */
-import { useImperativeHandle, useRef, type ReactNode, type Ref } from 'react';
+import { useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { ChoiceButtons } from '@/components/ChoiceButtons';
 
@@ -78,20 +82,24 @@ function ChoiceInput({ choices, locked, onSubmit, ref }: {
   ref: Ref<AnswerFieldHandle> | undefined;
 }) {
   const selected = useRef('');
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const boxRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
     value: () => selected.current,
-    clear: () => { selected.current = ''; },
+    clear: () => { selected.current = ''; setSelectedIndex(null); },
     // The container is on screen for as long as the view holds the handle.
     focus: () => { boxRef.current!.focus(); },
   }));
 
   return (
-    <div ref={boxRef} tabIndex={-1} className="choice-input">
+    // The focus stop has a role and a name, so a screen reader announces it.
+    <div ref={boxRef} tabIndex={-1} className="choice-input" role="group" aria-label="Choose an answer">
       <ChoiceButtons
         choices={choices}
         disabled={locked}
+        selected={selectedIndex}
+        onSelect={setSelectedIndex}
         // Write first, then submit: the submit function reads `value()` before its first await.
         onSubmit={(answer) => { selected.current = answer; onSubmit(); }}
       />

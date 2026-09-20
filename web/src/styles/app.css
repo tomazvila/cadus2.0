@@ -312,7 +312,12 @@ p { margin: 0.4rem 0; }
   display: flex; width: 100%; min-width: 0; justify-content: flex-start; text-align: left;
   white-space: normal; overflow-wrap: anywhere;
 }
-.choice-text { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.choice-text { display: block; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+/* The submitted option. The buttons are disabled at that time, so the mark sets the opacity
+   back to 1: the learner must see which answer the app sent. */
+.choice-button.is-selected, .choice-button.is-selected:disabled {
+  opacity: 1; border: 2px solid var(--accent); background: var(--accent-weak); color: var(--text);
+}
 .choice-text .katex-display { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
 
 /* The palette is a `role="toolbar"` of twelve keys. Each key is a button, so it takes the

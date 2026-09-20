@@ -8,6 +8,7 @@
  *   3. A long option and its math wrap: no button is wider than the card.
  *   4. The page has no horizontal scroll: `scrollWidth <= innerWidth`.
  *   5. A tap gives a verdict, and the buttons are disabled after the verdict.
+ *   6. The verdict view marks the tapped option, and no other (`is-selected`, `aria-pressed`).
  *
  * Run it in the Playwright container, with the built bundle on `BASE`:
  *   npm run build && node e2e/serve.mjs --root=dist --port=4174 &
@@ -113,6 +114,12 @@ if (onLabel) {
   if (verdict !== 'Correct') fails.push(`the verdict reads "${verdict}", not "Correct"`);
   const disabled = await buttons.evaluateAll((all) => all.every((b) => b.disabled));
   if (!disabled) fails.push('the buttons are not disabled after the verdict');
+  const marked = await buttons.evaluateAll((all) => all
+    .filter((b) => b.classList.contains('is-selected') && b.getAttribute('aria-pressed') === 'true')
+    .map((b) => ({ text: b.textContent.trim(), border: getComputedStyle(b).borderTopWidth, opacity: getComputedStyle(b).opacity })));
+  console.log(`marked options: ${JSON.stringify(marked)}`);
+  if (marked.length !== 1 || !marked[0].text.startsWith('Step 2')) fails.push('the verdict view does not mark the tapped option only');
+  else if (marked[0].border !== '2px' || marked[0].opacity !== '1') fails.push('the mark of the tapped option has no visible style');
   await noHorizontalScroll('label-verdict');
   await page.screenshot({ path: `${SHOTS}/label-verdict.png`, fullPage: true });
 }
