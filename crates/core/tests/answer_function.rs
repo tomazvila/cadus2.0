@@ -378,22 +378,3 @@ fn each_document_with_no_field_reads_into_its_variant() {
             .is_ok()
     );
 }
-
-/// FLOW-STUB: phase 2 deletes this test with `function/stub.rs`.
-///
-/// Before the evaluator of lane B4a merges, no `function` key has a finite
-/// value. Thus each key is refused, and no learner answer gets a verdict.
-#[test]
-fn before_the_evaluator_merges_each_key_is_refused() {
-    let contract: AnswerContract = serde_json::from_str(SHAPES[1].1).unwrap();
-    for key in ["x^2/2 + C", "y = x^2", "sin(2x)"] {
-        assert_eq!(
-            contract.validate_expected(key).unwrap_err().reason,
-            "the authored function has fewer than six finite sample points"
-        );
-        assert!(matches!(
-            check_contract(key, key, contract.clone()),
-            Outcome::Undecidable(_)
-        ));
-    }
-}

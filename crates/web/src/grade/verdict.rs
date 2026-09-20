@@ -234,6 +234,10 @@ fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
         "the answer contract requires a number" => {
             "Enter the answer as one number, for example 1.5.".to_string()
         }
+        "a function answer must be one expression" => {
+            "Enter one formula, for example 3x^2 + 1. Do not enter a list, a set, or an inequality."
+                .to_string()
+        }
         other => bucket_guidance(expected, other),
     }
 }

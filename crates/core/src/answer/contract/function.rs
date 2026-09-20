@@ -4,8 +4,6 @@
 //! `f64` values at eight fixed sample points with the tolerance [`TOLERANCE`].
 //! It uses no random source and no clock, so one input gives one verdict.
 
-mod stub;
-
 use std::collections::{BTreeMap, BTreeSet};
 
 use num_traits::ToPrimitive;
@@ -14,9 +12,8 @@ use crate::answer::{
     Ast, Canon, Outcome, Undecidable, Verdict, canon, canonical_form, normalize, parse,
 };
 
-// FLOW-STUB: phase 2 changes this line to `pub use crate::answer::evalf::{Env, eval};`.
-pub use stub::Env;
-use stub::{eval, free_vars};
+use crate::answer::evalf::free_vars;
+pub use crate::answer::evalf::{Env, eval};
 
 /// The position of each sample point in its interval, as `(numerator, denominator)`.
 pub const SAMPLE_FRACTIONS: [(u32, u32); 8] = [
@@ -41,6 +38,10 @@ pub const DEFAULT_DOMAIN: (&str, &str) = ("1/4", "11/4");
 const BAD_VARS: &str = "a function contract requires one to three distinct variable names";
 const BAD_DOMAIN: &str =
     "a function domain requires two exact rationals with low below high for a listed variable";
+const POINT_NEAR_ZERO: &str =
+    "a function contract domain must keep each sample point 1/100 or more from zero";
+/// The smallest permitted distance of a variable sample value from 0.
+const MIN_SAMPLE_MAGNITUDE: f64 = 0.01;
 const NOT_ONE_EXPRESSION: &str = "a function answer must be one expression";
 
 /// The checked form of a `function` contract. `domain[i]` belongs to `vars[i]`.
@@ -79,11 +80,21 @@ impl FunctionSpec {
             .iter()
             .map(|name| interval(domain.get(name)))
             .collect::<Result<Vec<_>, _>>()?;
-        Ok(Self {
+        let spec = Self {
             vars: vars.to_vec(),
             up_to_constant,
             domain,
-        })
+        };
+        // A point near 0 makes a key such as `(1 - cos(x))/x^2` lose its digits,
+        // and an equal formula then gets "wrong".
+        let near_zero = spec.sample_points().iter().any(|env| {
+            vars.iter()
+                .any(|name| env[name].abs() < MIN_SAMPLE_MAGNITUDE)
+        });
+        if near_zero {
+            return Err(Undecidable::new(POINT_NEAR_ZERO));
+        }
+        Ok(spec)
     }
 
     /// The eight sample points. Each point has a value for each variable.
@@ -149,10 +160,14 @@ fn rational(text: &str) -> Option<f64> {
 /// # Errors
 ///
 /// Returns [`Undecidable`] if the parser refuses the key, if the key is not one
-/// expression, if it uses a name outside its variables, or if it has a finite
-/// value at fewer than [`MIN_FINITE_POINTS`] sample points.
+/// expression, if it uses a name outside its variables, if it uses `log` or the
+/// e notation of a number (D28), or if it has a finite value at fewer than
+/// [`MIN_FINITE_POINTS`] sample points.
 pub fn expected(spec: &FunctionSpec, expected: &str) -> Result<Canon, Undecidable> {
     let normalized = normalize(expected);
+    if let Some(reason) = ambiguous_notation(&normalized.source) {
+        return Err(Undecidable::new(reason));
+    }
     let tree = parse(&normalized.source)?;
     let formula = body(&tree);
     if !scalar(formula) {
@@ -173,6 +188,26 @@ pub fn expected(spec: &FunctionSpec, expected: &str) -> Result<Canon, Undecidabl
         ));
     }
     Ok(canon(&tree).unwrap_or(Canon::Label(normalized.string_key)))
+}
+
+/// The notation that a key must not use, because it has two readings (D28).
+///
+/// `log` is the natural logarithm for the evaluator and base 10 for the
+/// curriculum. The parser reads `1e-5` as `1*e - 5`, not as a power of ten.
+fn ambiguous_notation(source: &str) -> Option<&'static str> {
+    if source.to_lowercase().contains("log") {
+        return Some("the authored function must use ln, because log has two readings");
+    }
+    let bytes = source.as_bytes();
+    let exponent_at = |at: usize| {
+        let sign = usize::from(matches!(bytes.get(at + 2), Some(b'+' | b'-')));
+        bytes[at].is_ascii_digit()
+            && matches!(bytes.get(at + 1), Some(b'e' | b'E'))
+            && bytes.get(at + 2 + sign).is_some_and(u8::is_ascii_digit)
+    };
+    (0..bytes.len())
+        .any(exponent_at)
+        .then_some("the authored function must use 10^(n), because the form 1e-5 reads as 1*e - 5")
 }
 
 /// Grade a learner text against an authored key.

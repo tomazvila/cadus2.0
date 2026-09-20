@@ -402,6 +402,13 @@ mod tests {
                 "x=2; estimate=0.34",
             ),
         ];
+        let function = AnswerContract::Function {
+            vars: vec!["x".into()],
+            up_to_constant: true,
+            domain: std::collections::BTreeMap::new(),
+        };
+        let mut cases = cases;
+        cases.push((function, "y = x^2/2 + C", "x*x/2 + 7", "2*(x^2/2) + x"));
         for (contract, expected, correct, mutated) in cases {
             assert!(
                 super::super::triage_verdict(&contract) == super::super::TriageVerdict::Grades,
