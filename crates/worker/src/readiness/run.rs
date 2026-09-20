@@ -123,7 +123,8 @@ fn one_contract(key: &str, topic: &Topic, kp: &KnowledgePoint) -> ContractCheck 
         ..ContractCheck::default()
     };
     // The SERVE contract: the exact call `crates/web/src/serve/draw.rs` makes.
-    let source = ExemplarSource::new(key, kp.exemplars.as_slice());
+    let source =
+        ExemplarSource::new(key, kp.exemplars.as_slice()).with_topic_kind(topic.answer_kind);
     match source.fill(key, source.len().max(1), 0) {
         Ok(batch) => {
             result.instances = batch.instances().len();
@@ -162,4 +163,46 @@ fn grade_failures(kp: &KnowledgePoint, kind: AnswerKind) -> Vec<String> {
         out.push(format!("{}: {reason}", exemplar.answer));
     }
     out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The serve contract of a topic of `kind` with one no-contract exemplar
+    /// whose key parses.
+    fn contract_of(kind: &str) -> ContractCheck {
+        let topic: Topic = serde_json::from_value(serde_json::json!({
+            "id": "squares",
+            "name": "Squares",
+            "difficulty": 0.3,
+            "answer_kind": kind,
+            "expected_time_secs": 30,
+            "knowledge_points": [{
+                "id": "kp1",
+                "name": "kp1",
+                "exemplars": [{"problem": "Compute $7^2$.", "answer": "49"}],
+            }],
+        }))
+        .expect("the topic reads");
+        one_contract("squares/kp1", &topic, &topic.knowledge_points[0])
+    }
+
+    /// A no-contract exemplar on a `proof` topic is no graded pool row.
+    #[test]
+    fn a_no_contract_exemplar_on_a_proof_topic_is_no_graded_row() {
+        let check = contract_of("proof");
+        assert_eq!(check.instances, 0);
+        assert!(check.no_problem.is_some());
+        assert_eq!(contract_of("numeric").instances, 1);
+    }
+
+    /// A no-contract exemplar on a `multi-step` topic is no graded pool row.
+    #[test]
+    fn a_no_contract_exemplar_on_a_multi_step_topic_is_no_graded_row() {
+        let check = contract_of("multi-step");
+        assert_eq!(check.instances, 0);
+        assert!(check.no_problem.is_some());
+        assert_eq!(contract_of("expression").instances, 1);
+    }
 }
