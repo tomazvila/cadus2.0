@@ -67,11 +67,10 @@ fn topic_record<'a>(graph: &'a Curriculum, topic: &str) -> Option<&'a Topic> {
     graph.idx_of(topic).and_then(|idx| graph.topic(idx))
 }
 
-/// An explicit supported contract makes a multi-step final answer markable.
+/// An explicit supported contract makes a multi-step or `proof` final answer
+/// markable. A `proof` topic with no contract is not markable, because
+/// [`deterministic`] is false for `proof`.
 fn markable(record: &Topic) -> bool {
-    if record.answer_kind == AnswerKind::Proof {
-        return false;
-    }
     record.diagnostic_exemplar.as_ref().is_some_and(|item| {
         item.answer_contract.as_ref().map_or_else(
             || deterministic(record.answer_kind),
@@ -208,5 +207,32 @@ mod tests {
         assert!(deterministic(AnswerKind::Expression));
         assert!(!deterministic(AnswerKind::MultiStep));
         assert!(!deterministic(AnswerKind::Proof));
+    }
+
+    /// The `markable` result for a topic of `kind` whose diagnostic exemplar has
+    /// the key `answer`. `None` = the test record is not a topic.
+    fn marks(kind: &str, answer: &str, contract: Option<&Value>) -> Option<bool> {
+        let record = json!({
+            "id": "t", "name": "T", "difficulty": 0.5, "answer_kind": kind,
+            "expected_time_secs": 60,
+            "diagnostic_exemplar": {
+                "problem": "Which step has the error?",
+                "answer": answer,
+                "answer_contract": contract,
+            },
+        });
+        let topic: Option<Topic> = serde_json::from_value(record).ok();
+        topic.as_ref().map(markable)
+    }
+
+    /// The contract decides before the topic kind: a `proof` topic is markable
+    /// only with a contract that accepts its key.
+    #[test]
+    fn a_proof_topic_is_markable_only_with_a_valid_contract() {
+        let steps = json!({ "kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"]] });
+        assert_eq!(marks("proof", "Step 3", Some(&steps)), Some(true));
+        assert_eq!(marks("proof", "Step 9", Some(&steps)), Some(false));
+        assert_eq!(marks("proof", "Step 3", None), Some(false));
+        assert_eq!(marks("numeric", "7", None), Some(true));
     }
 }
