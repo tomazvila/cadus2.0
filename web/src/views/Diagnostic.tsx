@@ -32,7 +32,8 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
-import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
+import type { AnswerFieldHandle } from '@/components/AnswerField';
+import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
 import { Chip, LoadingBlock } from '@/components/primitives';
 import { closeWith, releaseOnFail } from '@/hooks/screen';
 import { useCall } from '@/hooks/useCall';
@@ -266,17 +267,13 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
       <div className="card problem-card">
         <MathBlock>{question.text}</MathBlock>
 
-        <AnswerField ref={answerRef} disabled={locked} onSubmit={submitTyped} />
+        <AnswerInput ref={answerRef} choices={question.choices} disabled={locked} onSubmit={submitTyped} />
 
         <div className="actions">
-          <button
-            type="button"
-            className={`btn btn-primary${phase === 'submitting' ? ' is-busy' : ''}`}
-            disabled={locked}
-            onClick={submitTyped}
-          >
+          {/* A tap on an answer button is the submit, so that probe shows no Submit. */}
+          <TypedSubmit choices={question.choices} busy={phase === 'submitting'} disabled={locked} onClick={submitTyped}>
             Submit
-          </button>
+          </TypedSubmit>
           {/* P3: an honest skip needs a REAL control. The intro tells the learner not to
               guess, and a blank Submit is refused — so Skip posts an empty answer, which
               the checker always grades incorrect. */}

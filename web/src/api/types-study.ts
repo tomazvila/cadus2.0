@@ -159,6 +159,14 @@ export interface ServedProblem {
    * affordance instead of spending the round trip on `409 no_hint_ladder`.
    */
   hint_available?: boolean;
+  /**
+   * The display text of each option of a top-level Label item, in the order to show.
+   *
+   * The key is ABSENT for each other item. The order of the service is stable for one
+   * `problem_id`, so the view does not sort and does not shuffle. The options are not the
+   * key: the answer is not in this payload (Hard Rule 1).
+   */
+  choices?: string[];
 }
 
 /** `POST /api/task/{task_id}/teach` — the authored teach page (L4). */
@@ -228,6 +236,8 @@ export interface DiagProbe {
   problem_id: string;
   topic?: TopicRef | string | null;
   text: string;
+  /** The options of a top-level Label item, as on `ServedProblem`. Absent for each other item. */
+  choices?: string[];
 }
 
 /**

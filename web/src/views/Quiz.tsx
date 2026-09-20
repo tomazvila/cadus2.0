@@ -28,7 +28,8 @@ import { ApiError } from '@/api';
 import { QuizResults } from './QuizResults';
 import { QuestionReport } from './session/ProblemReport';
 import { MathBlock } from '@/components/MathBlock';
-import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
+import type { AnswerFieldHandle } from '@/components/AnswerField';
+import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
 import { Chip, LoadingBlock } from '@/components/primitives';
 import { releaseOnFail } from '@/hooks/screen';
 import { useCall } from '@/hooks/useCall';
@@ -410,17 +411,13 @@ export function Quiz({
         <MathBlock>{question.text}</MathBlock>
 
         {/* No hint control: a hint inside a quiz is `409 no_hints_in_quiz`. */}
-        <AnswerField ref={answerRef} disabled={phase !== 'ready'} onSubmit={submit} />
+        <AnswerInput ref={answerRef} choices={question.choices} disabled={phase !== 'ready'} onSubmit={submit} />
 
+        {/* A tap on an answer button is the submit, so that question shows no Submit. */}
         <div className="actions">
-          <button
-            type="button"
-            className={`btn btn-primary${phase === 'submitting' ? ' is-busy' : ''}`}
-            disabled={phase !== 'ready'}
-            onClick={submit}
-          >
+          <TypedSubmit choices={question.choices} busy={phase === 'submitting'} disabled={phase !== 'ready'} onClick={submit}>
             Submit answer
-          </button>
+          </TypedSubmit>
         </div>
 
         {/* QUIZ-reveal: a running count and an explicit promise. NOTHING about whether the

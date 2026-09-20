@@ -1,6 +1,7 @@
 /** Completed quiz evidence and untimed, fresh independent practice. */
 import { useRef, useState } from 'react';
-import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
+import type { AnswerFieldHandle } from '@/components/AnswerField';
+import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
 import { MathBlock } from '@/components/MathBlock';
 import { useCall } from '@/hooks/useCall';
 import { usePhase } from '@/hooks/usePhase';
@@ -80,10 +81,10 @@ function QuizPractice({ api, taskId, onUnauthorized }: Props) {
     <p>Untimed. Solve a fresh problem for each missed skill without the worked solution.</p>
     {problem ? <div key={problem.problem_id}>
       <MathBlock>{problem.text}</MathBlock>
-      <AnswerField ref={answerRef} disabled={phase === 'loading'} onSubmit={submit} />
+      <AnswerInput ref={answerRef} choices={problem.choices} disabled={phase === 'loading'} onSubmit={submit} />
       <QuestionReport api={api} hideResult context={{ task_id: taskId, problem_id: problem.problem_id,
         report_kind: 'served', problem_text: problem.text, answer: '', work: '' }} />
-      <button type="button" className="btn btn-primary" disabled={phase === 'loading'} onClick={submit}>Submit practice answer</button>
+      <TypedSubmit choices={problem.choices} busy={false} disabled={phase === 'loading'} onClick={submit}>Submit practice answer</TypedSubmit>
     </div> : <>
       {feedback ? <div><p>{feedback.correct ? 'Correct' : feedback.outcome === 'ungraded' ? 'This answer needs review.' : 'Study the solution, then try a fresh problem.'}</p>{feedback.solution ? <MathBlock>{feedback.solution}</MathBlock> : null}</div> : null}
       <button type="button" className="btn btn-primary" disabled={phase === 'loading'} onClick={serve}>{feedback ? 'Done studying · Next fresh problem' : 'Start fresh practice'}</button>

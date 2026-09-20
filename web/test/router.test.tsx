@@ -11,7 +11,7 @@
  * click-through takes against the same replies. The one thing a double would buy — an
  * arbitrary payload — is the one thing that would let this file and the browser disagree.
  *
- * The literals below are `api/demo.ts`: three problems, `1 / 3` on the first, `3/4` for
+ * The literals below are `api/demo.ts`: four problems, `1 / 4` on the first, `3/4` for
  * `$\frac{6}{8}$`, and three placement probes in `api/diag.ts`.
  */
 import { describe, expect, it, vi } from 'vitest';
@@ -142,14 +142,14 @@ describe('the router', () => {
     await reachDashboard(createDemoApi());
 
     await reachFirstProblem(user);
-    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 3');
+    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 4');
     const first = view().querySelector('.problem-text')!.textContent;
 
     await user.click(screen.getByRole('button', { name: 'Exit' }));
     await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
 
     await reachFirstProblem(user);
-    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 3');
+    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 4');
     expect(view().querySelector('.problem-text')!.textContent).toBe(first);
   });
 
@@ -172,7 +172,7 @@ describe('the router', () => {
     await waitFor(() => expect(view().querySelector('.teach-card')).not.toBeNull());
     await user.click(screen.getByRole('button', { name: /practice/ }));
     await waitFor(() => expect(view().querySelector('.progress-count')).not.toBeNull());
-    expect(view().querySelector('.progress-count')!.textContent).toBe('2 / 3');
+    expect(view().querySelector('.progress-count')!.textContent).toBe('2 / 4');
   });
 
   it('opens the map over the session and gives the session back', async () => {
@@ -189,7 +189,7 @@ describe('the router', () => {
     await waitFor(() => expect(view().querySelector('.teach-card')).not.toBeNull());
     await user.click(screen.getByRole('button', { name: /practice/ }));
     await waitFor(() => expect(view().querySelector('.progress-count')).not.toBeNull());
-    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 3');
+    expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 4');
   });
 
   it('opens the placement and keeps ONE port across a re-render', async () => {

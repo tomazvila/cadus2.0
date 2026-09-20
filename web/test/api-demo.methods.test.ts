@@ -109,10 +109,10 @@ describe('the demo curriculum and session', () => {
     expect((await settle(demo.getPlan())).session).toBe('demo-session');
   });
 
-  it('numbers the plan task by the answers given, and closes it after the third', async () => {
+  it('numbers the plan task by the answers given, and closes it after the fourth', async () => {
     vi.useFakeTimers();
     const demo = createDemoApi();
-    const answers = ['3/4', '4', '7'];
+    const answers = ['3/4', '4', '7', 'Step 2: divide each side by 2 to get $x = 4$'];
     const statuses: string[] = [];
     for (const [i, answer] of answers.entries()) {
       const problem = await settle(demo.taskServe('demo-lesson'));
@@ -120,12 +120,12 @@ describe('the demo curriculum and session', () => {
       const graded = await settle(demo.taskAnswer('demo-lesson', { problem_id: problem.problem_id, answer }));
       if ('task_status' in graded) {
         statuses.push(graded.task_status);
-        expect(graded.next === null).toBe(i === 2);
+        expect(graded.next === null).toBe(i === 3);
         expect(graded.attempt_id).toBe(`demo-lesson-${i + 1}`);
       }
     }
-    expect(statuses).toEqual(['continue', 'continue', 'task_passed']);
-    expect((await settle(demo.getPlan())).tasks[0].progress).toEqual({ answered: 3, done: true });
+    expect(statuses).toEqual(['continue', 'continue', 'continue', 'task_passed']);
+    expect((await settle(demo.getPlan())).tasks[0].progress).toEqual({ answered: 4, done: true });
     expect(await refusal(demo.taskServe('demo-lesson'))).toMatchObject({
       status: 409, code: 'task_complete',
     });
@@ -248,7 +248,7 @@ describe('the demo payloads, literally', () => {
     });
   });
 
-  it('plans one lesson of three problems, and opens the session on it', async () => {
+  it('plans one lesson of four problems, and opens the session on it', async () => {
     vi.useFakeTimers();
     const demo = createDemoApi();
     expect(await settle(demo.sessionStart())).toEqual({
@@ -262,7 +262,7 @@ describe('the demo payloads, literally', () => {
         topic: { id: 'fractions', name: 'Fractions', module: 'Arithmetic' },
         kp: 'kp-fraction-simplify',
         start_at_kp: 'kp-fraction-simplify',
-        n_problems: 3,
+        n_problems: 4,
         mix: null,
         component_topics: null,
         time_budget_secs: 600,
@@ -286,7 +286,7 @@ describe('the demo payloads, literally', () => {
     expect(await settle(demo.taskServe('demo-lesson'))).toEqual({
       problem_id: 'demo-p1',
       index: 1,
-      total: 3,
+      total: 4,
       text: 'Simplify $\\frac{6}{8}$.',
       kp: 'kp-fraction-simplify',
       time_budget_secs: 120,
@@ -316,7 +316,7 @@ describe('the demo payloads, literally', () => {
       next: {
         problem_id: 'demo-p2',
         index: 2,
-        total: 3,
+        total: 4,
         text: 'Solve $2x + 1 = 9$ for $x$.',
         kp: 'kp-linear-one-step',
         time_budget_secs: 120,
@@ -335,8 +335,11 @@ describe('the demo payloads, literally', () => {
     const trailing = await settle(demo.taskAnswer('demo-lesson', { problem_id: 'demo-p2', answer: '4+' }));
     expect(trailing).toMatchObject({ correct: false });
     const plus = await settle(demo.taskAnswer('demo-lesson', { problem_id: 'demo-p3', answer: '+7' }));
-    expect(plus).toMatchObject({ correct: true, task_status: 'task_passed', next: null, attempt_id: 'demo-lesson-3' });
-    expect((await settle(demo.getPlan())).tasks[0].progress).toEqual({ answered: 3, done: true });
+    expect(plus).toMatchObject({ correct: true, task_status: 'continue', attempt_id: 'demo-lesson-3' });
+    expect((await settle(demo.getPlan())).tasks[0].progress).toEqual({ answered: 3, done: false });
+    const last = await settle(demo.taskAnswer('demo-lesson', { problem_id: 'demo-p4', answer: 'Step 2: divide each side by 2 to get $x = 4$' }));
+    expect(last).toMatchObject({ correct: true, task_status: 'task_passed', next: null, attempt_id: 'demo-lesson-4' });
+    expect((await settle(demo.getPlan())).tasks[0].progress).toEqual({ answered: 4, done: true });
   });
 
   it('names its refusals', async () => {
@@ -352,7 +355,7 @@ describe('the demo payloads, literally', () => {
     expect(await refusal(demo.getDiagnosis('j-9'))).toMatchObject({
       status: 404, code: 'unknown_diagnosis', message: 'The demo wrote no job j-9.',
     });
-    for (const answer of ['3/4', '4', '7']) {
+    for (const answer of ['3/4', '4', '7', 'All three steps are valid']) {
       const served = await settle(demo.taskServe('demo-lesson'));
       await settle(demo.taskAnswer('demo-lesson', { problem_id: served.problem_id, answer }));
     }

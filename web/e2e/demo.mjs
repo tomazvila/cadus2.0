@@ -94,8 +94,8 @@ async function main() {
   run.note(`practice problem ${first.position} · "${first.text}"`);
   await run.snap('lesson-practice');
   await checkMathRendered(run, '.problem-text', 'the problem statement');
-  if (first.position !== '1 / 3') {
-    run.fail(`the lesson opened at ${first.position}, not at 1 / 3`);
+  if (first.position !== '1 / 4') {
+    run.fail(`the lesson opened at ${first.position}, not at 1 / 4`);
   }
 
   // --- FAILURE 3: two serves in a row must serve the same problem -----------
@@ -134,7 +134,7 @@ async function main() {
   await page.waitForSelector('.problem-card .answer-input', { timeout: 25000 });
   const second = await run.text('.progress-count');
   run.note(`continued to ${second}`);
-  if (second !== '2 / 3') run.fail(`the second problem reads ${second}, not 2 / 3`);
+  if (second !== '2 / 4') run.fail(`the second problem reads ${second}, not 2 / 4`);
 
   // --- the placement: three ground rules, and no solution, ever --------------
   await home();
