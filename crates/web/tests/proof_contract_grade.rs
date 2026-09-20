@@ -129,6 +129,31 @@ async fn a_proof_item_with_no_contract_stays_ungraded() {
     .await;
 }
 
+/// A `proof` item served with the contract `none` stays ungraded with the proof
+/// reason. The serve path records this contract for each free-text proof
+/// exemplar. The key as the learner text and a blank answer get no verdict.
+#[tokio::test]
+async fn a_proof_item_with_the_none_contract_stays_ungraded() {
+    TestDb::with(|db| async move {
+        let app = lesson_app(&db);
+        for (index, given) in ["Step 3", "Step 2", ""].into_iter().enumerate() {
+            let mut live = proof_problem();
+            live.expected.answer_contract = Some(AnswerContract::None);
+            let email = format!("proof-none-contract-{index}@example.com");
+            let user = lesson_learner(&db, &email, live).await;
+            let body = answer(&app, user, given).await;
+            assert_eq!(body["outcome"], "ungraded", "{body}");
+            assert_eq!(body["reason"], "no deterministic verdict for a proof");
+            assert!(body.get("correct").is_none(), "{body}");
+            assert!(body.get("solution").is_none(), "{body}");
+            let events = events_of_type(&db, user, "attempt").await;
+            assert_eq!(events.len(), 1);
+            assert_eq!(events[0]["problem"]["answer_contract"]["kind"], "none");
+        }
+    })
+    .await;
+}
+
 /// Start the diagnostic of course `c1` and read the probe object.
 async fn start_probe(app: &axum::Router, user: Uuid) -> Value {
     let course = json!({"course": "c1"});
