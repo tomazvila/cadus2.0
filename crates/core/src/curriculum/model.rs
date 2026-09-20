@@ -187,6 +187,22 @@ impl Exemplar {
             |contract| contract.validate_expected(&self.answer),
         )
     }
+
+    /// The one definition of "this exemplar gives a verdict".
+    ///
+    /// A contract decides for each topic kind. With no contract, only the
+    /// `numeric` and `expression` kinds have a deterministic checker.
+    pub fn verdict_policy(
+        &self,
+        topic_kind: AnswerKind,
+    ) -> Result<crate::answer::Canon, crate::answer::Undecidable> {
+        match (&self.answer_contract, topic_kind) {
+            (None, AnswerKind::MultiStep | AnswerKind::Proof) => Err(
+                crate::answer::Undecidable::new("the answer kind is not decidable"),
+            ),
+            _ => self.canonical_answer(),
+        }
+    }
 }
 
 /// A declarative-recall card candidate authored on a topic.

@@ -2,8 +2,8 @@
 
 use std::collections::BTreeSet;
 
-use crate::answer::Undecidable;
-use crate::curriculum::model::{Exemplar, KnowledgePoint};
+use crate::answer::{Canon, Undecidable};
+use crate::curriculum::model::{AnswerKind, Exemplar, KnowledgePoint};
 use crate::learner::problem_text_hash;
 use crate::template::{Bindings, Instance};
 
@@ -46,6 +46,8 @@ pub struct ExemplarSource<'kp> {
     kp_id: String,
     /// The exemplars, in author order.
     exemplars: &'kp [Exemplar],
+    /// The answer kind of the topic, when the caller knows it.
+    topic_kind: Option<AnswerKind>,
 }
 
 impl<'kp> ExemplarSource<'kp> {
@@ -55,6 +57,26 @@ impl<'kp> ExemplarSource<'kp> {
         Self {
             kp_id: kp_id.into(),
             exemplars,
+            topic_kind: None,
+        }
+    }
+
+    /// Give the source the answer kind of the topic.
+    ///
+    /// With a kind, the source takes an exemplar only if
+    /// [`Exemplar::verdict_policy`] gives a verdict for it. With no kind, the
+    /// source reads [`Exemplar::canonical_answer`].
+    #[must_use]
+    pub const fn with_topic_kind(mut self, topic_kind: AnswerKind) -> Self {
+        self.topic_kind = Some(topic_kind);
+        self
+    }
+
+    /// The verdict rule of this source for one exemplar.
+    fn verdict(&self, exemplar: &Exemplar) -> Result<Canon, Undecidable> {
+        match self.topic_kind {
+            Some(kind) => exemplar.verdict_policy(kind),
+            None => exemplar.canonical_answer(),
         }
     }
 
@@ -64,6 +86,7 @@ impl<'kp> ExemplarSource<'kp> {
         Self {
             kp_id: kp.id.as_str().to_string(),
             exemplars: &kp.exemplars,
+            topic_kind: None,
         }
     }
 
@@ -102,7 +125,7 @@ impl<'kp> ExemplarSource<'kp> {
     pub fn refusals(&self) -> Vec<ExemplarRefusal> {
         let mut out = Vec::new();
         for (index, exemplar) in self.exemplars.iter().enumerate() {
-            if let Err(reason) = exemplar.canonical_answer() {
+            if let Err(reason) = self.verdict(exemplar) {
                 out.push(ExemplarRefusal {
                     index,
                     answer: exemplar.answer.clone(),
@@ -137,7 +160,7 @@ impl ProblemSource for ExemplarSource<'_> {
         // the digest alone decides a repeat here.
         let mut seen: BTreeSet<String> = BTreeSet::new();
         for exemplar in self.exemplars {
-            let canon = match exemplar.canonical_answer() {
+            let canon = match self.verdict(exemplar) {
                 Ok(canon) => canon,
                 // An exemplar answer the checker cannot decide is skipped and
                 // counted. One broken exemplar must not take the whole knowledge

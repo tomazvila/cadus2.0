@@ -15,9 +15,11 @@
 
 use super::*;
 
-use cadus_core::answer::AnswerContract;
-use cadus_core::curriculum::Exemplar;
-use cadus_core::pool::{POOL_ROW_VERSION, PoolAnswer, PoolProblem};
+#[path = "draw_exemplar.rs"]
+mod draw_exemplar;
+
+pub(super) use draw_exemplar::answer_of;
+use draw_exemplar::exemplar_rows;
 
 /// Take one instance out of the pool, and fall back to the exemplars (A6).
 ///
@@ -121,114 +123,6 @@ async fn refill(
         "serve: the pool was empty, so the A6 exemplar fallback filled it in process"
     );
     Ok(Some(claimed.row))
-}
-
-/// Instantiate the authored exemplars of the target knowledge point (A6).
-///
-/// The whole list goes in at once and the D5 ring picks, instead of 1.0's bare
-/// `pool[index % len]` (`serving-1.0-spec.md` section 6.1). An exemplar whose
-/// answer the checker cannot decide is skipped by
-/// [`ExemplarSource::fill`], so one broken exemplar never takes the knowledge
-/// point off the air. A knowledge point the arena does not hold, or one whose
-/// whole list is undecidable, gives no row.
-pub(super) fn exemplar_rows(graph: &Curriculum, target: &Target) -> Vec<NewInstance> {
-    let Some(kp) = authored_kp(graph, &target.serve, &target.kp) else {
-        return Vec::new();
-    };
-    let source = ExemplarSource::new(&target.key, &kp.exemplars);
-    // The seed changes nothing for an exemplar list: the rotation is author
-    // order and no draw runs.
-    let mut rows: Vec<NewInstance> = match source.fill(&target.key, source.len(), 0) {
-        Ok(batch) => batch
-            .instances()
-            .iter()
-            .map(|instance| NewInstance::from_instance(instance, Source::Exemplar, None, 0))
-            .collect(),
-        Err(reason) => {
-            tracing::warn!(
-                kp_id = %target.key,
-                error = %reason,
-                "serve: the A6 exemplar fallback built no decidable instance"
-            );
-            Vec::new()
-        }
-    };
-    // The teach-only exemplars join the batch as self-check rows, so a
-    // knowledge point whose whole list is teach-only serves its worked
-    // solutions instead of dying on `pool_unavailable` (tier 2).
-    rows.extend(kp.exemplars.iter().filter_map(|exemplar| {
-        self_check_contract(exemplar).map(|contract| self_check_row(exemplar, contract))
-    }));
-    rows
-}
-
-/// The teach-only contract of one exemplar, when it has no decidable answer.
-///
-/// An explicit `kind: none` contract is authored teach-only by definition. A
-/// MISSING contract whose answer leaves the decidable grammar (V2) is one too:
-/// the checker has no verdict for the item, so it is a self-check and not a
-/// graded drill. A missing contract whose answer still decides keeps the
-/// legacy semantics — the checker grades it (C4, model.rs).
-fn self_check_contract(exemplar: &Exemplar) -> Option<AnswerContract> {
-    match &exemplar.answer_contract {
-        Some(AnswerContract::None) => Some(AnswerContract::None),
-        Some(_) => None,
-        None if exemplar.canonical_answer().is_err() => Some(AnswerContract::None),
-        None => None,
-    }
-}
-
-/// The self-check pool row of one teach-only exemplar.
-///
-/// The row records the `none` contract, so the grade path refuses every
-/// verdict for it before it reads the answer pair (`check_contract` →
-/// Undecidable, D-F1), and no deterministic wrong can ever fire.
-fn self_check_row(exemplar: &Exemplar, contract: AnswerContract) -> NewInstance {
-    NewInstance {
-        source: Source::Exemplar,
-        content_digest: None,
-        generation_context: None,
-        problem: PoolProblem {
-            v: POOL_ROW_VERSION,
-            text: exemplar.problem.clone(),
-            bindings: BTreeMap::new(),
-            seed: 0,
-        },
-        expected_answer: PoolAnswer {
-            v: POOL_ROW_VERSION,
-            answer_contract: Some(contract),
-            answer: exemplar.answer.clone(),
-        },
-        instance_hash: problem_text_hash(&exemplar.problem),
-    }
-}
-
-/// Capture the current authored policy for a newly served exemplar. Matching
-/// both statement and answer keeps changed content from borrowing a policy.
-/// Template rows retain their approved document's policy. Existing served
-/// problems bypass this function and keep their original captured policy.
-pub(super) fn answer_of(
-    graph: &Curriculum,
-    target: &Target,
-    row: &PoolRow,
-) -> cadus_core::pool::PoolAnswer {
-    let mut answer = row.expected_answer.clone();
-    if row.source == Source::Exemplar
-        && let Some(exemplar) = authored_kp(graph, &target.serve, &target.kp).and_then(|kp| {
-            kp.exemplars
-                .iter()
-                .find(|item| item.problem == row.problem.text && item.answer == answer.answer)
-        })
-    {
-        // An explicit authored contract wins; a missing contract on an
-        // undecidable answer is the teach-only policy the row must carry, so
-        // the grade path never decides a verdict for the item.
-        answer.answer_contract = exemplar
-            .answer_contract
-            .clone()
-            .or_else(|| self_check_contract(exemplar));
-    }
-    answer
 }
 
 /// The authored worked solution of the drawn row, or `None`.
@@ -364,7 +258,7 @@ fn authored_kp<'graph>(
 
 #[cfg(test)]
 mod tests {
-    use super::fixture::{arena, graph, topic_doc};
+    use super::fixture::{arena, topic_doc};
     use super::*;
 
     /// The target that draws `kp` of `topic`, and records against it.
@@ -437,49 +331,6 @@ mod tests {
     }
 
     #[test]
-    fn the_exemplar_rows_serve_an_undecidable_list_as_self_check_rows() {
-        let undecidable = arena(&[topic_doc("words", &[("kp1", &["many", "few"])])]);
-        let rows = exemplar_rows(&undecidable, &target("words", "kp1"));
-        // The tier-2 change: an exemplar list the checker cannot decide is no
-        // longer a dark knowledge point. Every exemplar becomes a self-check
-        // row that records the `none` contract, so the grade path refuses
-        // every verdict for it and no deterministic wrong can fire.
-        assert_eq!(rows.len(), 2);
-        assert!(rows.iter().all(|row| row.source == Source::Exemplar));
-        assert!(
-            rows.iter()
-                .all(|row| row.expected_answer.answer_contract == Some(AnswerContract::None))
-        );
-        assert!(rows.iter().all(|row| row.content_digest.is_none()));
-        assert!(exemplar_rows(&graph(), &target("addition", "kp9")).is_empty());
-        assert!(exemplar_rows(&graph(), &target("empty", "kp1")).is_empty());
-        // A topic the arena does not hold gives no authored knowledge point.
-        assert!(exemplar_rows(&graph(), &target("nowhere", "kp1")).is_empty());
-        assert_eq!(exemplar_rows(&graph(), &target("addition", "kp1")).len(), 1);
-    }
-
-    /// An exemplar with an explicit contract keeps it; a missing contract on a
-    /// decidable answer keeps the legacy grading; only the undecidable answers
-    /// and the explicit `none` take the self-check policy.
-    #[test]
-    fn the_self_check_policy_follows_the_authored_contract() {
-        let mut declared = Exemplar {
-            answer_contract: Some(AnswerContract::Exact),
-            problem: "Give 7.".to_owned(),
-            answer: "7".to_owned(),
-            solution_sketch: Some("Count to 7.".to_owned()),
-        };
-        declared.answer_contract = Some(AnswerContract::None);
-        assert_eq!(self_check_contract(&declared), Some(AnswerContract::None));
-        declared.answer_contract = Some(AnswerContract::Exact);
-        assert_eq!(self_check_contract(&declared), None);
-        declared.answer_contract = None;
-        assert_eq!(self_check_contract(&declared), None);
-        declared.answer = "many".to_owned();
-        assert_eq!(self_check_contract(&declared), Some(AnswerContract::None));
-    }
-
-    #[test]
     fn the_exemplar_sketch_is_the_one_the_author_of_the_statement_wrote() {
         let exemplar = arena(&[topic_doc("counting", &[("kp1", &["7"])])]);
         // The fixture authors no sketch, so a matching statement gives none.
@@ -491,36 +342,5 @@ mod tests {
             exemplar_sketch(&exemplar, &target("counting", "kp9"), "Give 7."),
             None
         );
-    }
-    #[test]
-    fn a_new_exemplar_serve_captures_the_matching_current_policy() {
-        use cadus_core::answer::AnswerContract;
-        let mut topic = topic_doc("counting", &[("kp1", &["7"])]);
-        topic["knowledge_points"][0]["exemplars"][0]["answer_contract"] = json!({"kind": "exact"});
-        let graph = arena(&[topic]);
-        let target = target("counting", "kp1");
-        let instance = exemplar_rows(&graph, &target).remove(0);
-        let mut row = PoolRow {
-            id: Uuid::nil(),
-            source: Source::Exemplar,
-            content_digest: None,
-            generation_context: None,
-            problem: instance.problem,
-            expected_answer: instance.expected_answer,
-            instance_hash: instance.instance_hash,
-        };
-        row.expected_answer.answer_contract = None;
-        let captured = answer_of(&graph, &target, &row);
-        assert_eq!(captured.answer_contract, Some(AnswerContract::Exact));
-        assert_eq!(row.expected_answer.answer_contract, None);
-        row.expected_answer.answer = "8".to_owned();
-        assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
-        row.expected_answer.answer = "7".to_owned();
-        row.problem.text = "Different question".to_owned();
-        assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
-        row.problem.text = "Give 7.".to_owned();
-        row.source = Source::Template;
-        assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
-        assert_eq!(captured.answer_contract, Some(AnswerContract::Exact));
     }
 }

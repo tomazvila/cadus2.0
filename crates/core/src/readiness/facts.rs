@@ -174,14 +174,15 @@ fn existing_prereqs(curriculum: &Curriculum, topic: &Topic) -> Vec<String> {
 
 /// The curriculum facts of one knowledge point.
 ///
-/// The decidable list drops an exemplar the answer grammar refuses (V2) and an
+/// The decidable list drops an exemplar that gives no verdict
+/// ([`crate::curriculum::Exemplar::verdict_policy`]) and an
 /// exemplar whose problem statement repeats an earlier one, because the pool
 /// serves one statement once ([`crate::pool::ExemplarSource`]).
 fn kp_facts(topic: &Topic, kp: &KnowledgePoint) -> KpFacts {
     let mut decidable: Vec<usize> = Vec::new();
     let mut seen: BTreeSet<String> = BTreeSet::new();
     for (index, exemplar) in kp.exemplars.iter().enumerate() {
-        if exemplar.canonical_answer().is_err() {
+        if exemplar.verdict_policy(topic.answer_kind).is_err() {
             continue;
         }
         if !seen.insert(problem_text_hash(&exemplar.problem)) {
