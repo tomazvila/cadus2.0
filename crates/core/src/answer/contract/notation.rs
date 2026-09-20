@@ -5,8 +5,17 @@ use num_integer::Integer;
 use num_rational::BigRational;
 use num_traits::{One, Signed};
 
-use super::{Canon, Undecidable, canonical_form};
+use super::{AnswerContract, Canon, Undecidable, canonical_form};
 use crate::answer::normalize;
+
+/// Read the authored answer of a ratio contract or of a chain contract.
+pub(super) fn expected(contract: &AnswerContract, text: &str) -> Result<Canon, Undecidable> {
+    if matches!(contract, AnswerContract::ReducedRatio) {
+        reduced_ratio(text)
+    } else {
+        ascending_chain(text)
+    }
+}
 
 /// Read a positive, reduced integer ratio written with one colon.
 pub(super) fn reduced_ratio(text: &str) -> Result<Canon, Undecidable> {

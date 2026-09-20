@@ -25,6 +25,7 @@ pub(super) fn validate(ordered: bool, member: &AnswerContract) -> Result<(), Und
                 | AnswerContract::RequiredInequalityNotation
                 | AnswerContract::RequiredSinglePower
                 | AnswerContract::RequiredNormalizedScientificNotation
+                | AnswerContract::Function { .. }
         )
     {
         return Err(Undecidable::new(

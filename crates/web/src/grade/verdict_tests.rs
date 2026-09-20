@@ -341,3 +341,19 @@ fn every_refusal_reason_reads_human() {
         assert_ne!(guidance, reason, "{reason}: the raw production leaked");
     }
 }
+
+/// Lane B4b: a `function` answer that is a list gets the frozen format text.
+#[test]
+fn a_function_answer_that_is_not_one_formula_gets_the_frozen_guidance() {
+    const TEXT: &str =
+        "Enter one formula, for example 3x^2 + 1. Do not enter a list, a set, or an inequality.";
+    let reason = "a function answer must be one expression";
+    assert_eq!(format_guidance("x^2", "(1, 2)", reason), TEXT);
+    let contract: AnswerContract =
+        serde_json::from_str(r#"{"kind":"function","vars":["x"]}"#).unwrap();
+    let outcome = cadus_core::answer::check_contract("x/sqrt(x^2+9)", "(1, 2)", contract);
+    assert!(matches!(
+        outcome,
+        cadus_core::answer::Outcome::Undecidable(refusal) if format_guidance("x", "(1, 2)", refusal.reason) == TEXT
+    ));
+}
