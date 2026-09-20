@@ -178,9 +178,7 @@ fn probe_topic<'a>(
     }
     let record = topic_record(graph, topic)
         .filter(|record| {
-            deterministic(record.answer_kind)
-                || (record.answer_kind != AnswerKind::Proof
-                    && served.expected.answer_contract.is_some())
+            deterministic(record.answer_kind) || served.expected.answer_contract.is_some()
         })
         .ok_or_else(no_diagnostic)?;
     Ok((&record.id, record.answer_kind))
