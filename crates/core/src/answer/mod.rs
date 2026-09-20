@@ -3,6 +3,8 @@
 //! The module reads a learner answer and an authored answer into one decidable
 //! grammar. It holds exact values only: big integers, exact decimals, and exact
 //! fractions. No step of it uses a float, and no step of it runs a search (D6, L2).
+//! [`evalf`] is the one exception: it uses `f64`, and only the `function` contract
+//! calls it.
 //!
 //! The module has four stages:
 //!
@@ -31,6 +33,7 @@ pub mod ast;
 pub mod canon;
 pub mod check;
 pub mod contract;
+pub mod evalf;
 pub mod lexer;
 pub mod normalize;
 pub mod parse;
