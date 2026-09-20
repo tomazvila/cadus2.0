@@ -3,6 +3,7 @@
 
 use super::*;
 
+use super::choices::label_choices;
 use cadus_core::answer::AnswerContract;
 
 /// Whole seconds from `started_at` to `now`, never below zero.
@@ -105,6 +106,10 @@ pub(crate) fn progress_for<'state>(
 /// (M6-review-2, V6). Every non-quiz serve carries `hint_available beside the
 /// seven keys of 1.0 (H-3, ISSUES.md); a quiz takes no hint, so its payload
 /// keeps the exact eight-key shape.
+///
+/// `choices` is present only for a top-level Label contract: the option texts
+/// in an order that comes from `problem_id` only (`choices.rs`). Each other
+/// payload has no such key.
 pub(super) fn serve_payload(
     served: &ServedProblem,
     task: &Task,
@@ -155,6 +160,10 @@ pub(super) fn serve_payload(
         && let Some(solution) = served.solution_sketch.as_deref()
     {
         payload["solution"] = json!(solution);
+    }
+    let contract = served.expected.answer_contract.as_ref();
+    if let Some(choices) = label_choices(contract, &served.problem_id) {
+        payload["choices"] = json!(choices);
     }
     let visuals = visuals_of(graph, served, &served.problem_id);
     if !visuals.is_empty() {
@@ -241,12 +250,16 @@ pub(super) fn answer_kind_of(graph: &Curriculum, topic_id: &str) -> Option<Strin
 }
 
 #[cfg(test)]
+#[path = "payload_choices_tests.rs"]
+mod choices_tests;
+
+#[cfg(test)]
 mod tests {
     use super::fixture::{graph, task};
     use super::*;
 
     /// One live problem of `topic` at index 0, with no clock.
-    fn served(topic: Option<&str>) -> ServedProblem {
+    pub(super) fn served(topic: Option<&str>) -> ServedProblem {
         ServedProblem {
             timing_interrupted: false,
             problem_id: "p1".to_string(),

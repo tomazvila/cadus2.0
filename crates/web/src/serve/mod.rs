@@ -108,6 +108,7 @@ use cadus_store::state::{
 };
 use serde::de::DeserializeOwned;
 
+pub(crate) mod choices;
 mod draw;
 mod exposure;
 mod finite;
