@@ -12,18 +12,49 @@ use crate::grade::{fields, parse_contract};
 use crate::mutate::mutate_plus_one;
 use crate::output::Reply;
 
-/// One wrong variant of a key and the name of the rule that made it.
+/// One mutant place of a key: the rule and its candidates in the order of use.
+///
+/// The first candidate that does not grade `correct` is the mutant (D39).
 #[derive(Debug, PartialEq, Eq)]
-struct Mutant {
+struct Slot {
     rule: String,
-    learner: String,
+    first: String,
+    rest: Vec<String>,
+    /// The `mutant_kind` value of the document, if the rule has one (D40).
+    kind: Option<&'static str>,
 }
 
-impl Mutant {
-    fn new(rule: &str, learner: String) -> Self {
+impl Slot {
+    fn new(rule: &str, first: String) -> Self {
         Self {
             rule: rule.to_owned(),
-            learner,
+            first,
+            rest: Vec::new(),
+            kind: None,
+        }
+    }
+
+    fn candidates(&self) -> impl Iterator<Item = &String> {
+        std::iter::once(&self.first).chain(&self.rest)
+    }
+}
+
+/// The mutant places of one key.
+#[derive(Debug, PartialEq, Eq)]
+struct Plan {
+    slots: Vec<Slot>,
+    /// The `cause` value of the document if `slots` is empty (D40).
+    cause: &'static str,
+    /// The parts of a `multipart` key for which no mutant exists (D38).
+    no_mutant_parts: Vec<String>,
+}
+
+impl Plan {
+    fn of(slots: Vec<Slot>, cause: &'static str) -> Self {
+        Self {
+            slots,
+            cause,
+            no_mutant_parts: Vec::new(),
         }
     }
 }
@@ -37,55 +68,120 @@ fn mutants_doc(request: &Request) -> Result<Value, String> {
     let key = request.expected.as_str();
     let plan = plan(&request.contract, key);
     let contract = parse_contract(&request.contract)?;
+    let verdict_of = |learner: &str| fields(check_contract(key, learner, contract.clone())).0;
     let (key_verdict, key_reason, _) = fields(check_contract(key, key, contract.clone()));
     let mut all_wrong = true;
+    let mut exhausted = false;
     let mutants: Vec<Value> = plan
+        .slots
         .iter()
-        .map(|mutant| {
-            let outcome = check_contract(key, &mutant.learner, contract.clone());
-            let (verdict, _, _) = fields(outcome);
+        .map(|slot| {
+            let (learner, verdict) = slot
+                .candidates()
+                .map(|learner| (learner, verdict_of(learner)))
+                .find(|(_, verdict)| *verdict != "correct")
+                .unwrap_or_else(|| {
+                    exhausted = true;
+                    (&slot.first, "correct")
+                });
             all_wrong &= verdict == "wrong";
-            json!({"rule": mutant.rule, "learner": mutant.learner, "verdict": verdict})
+            let mut entry = json!({"rule": slot.rule, "learner": learner, "verdict": verdict});
+            if let Some(kind) = slot.kind {
+                entry["mutant_kind"] = json!(kind);
+            }
+            entry
         })
         .collect();
-    let pass = key_verdict == "correct" && !mutants.is_empty() && all_wrong;
-    Ok(
-        json!({"schema": "cadus.mutants.v1", "key_verdict": key_verdict,
-        "key_reason": key_reason, "mutants": mutants, "pass": pass}),
-    )
+    let pass = key_verdict == "correct"
+        && !mutants.is_empty()
+        && all_wrong
+        && plan.no_mutant_parts.is_empty();
+    let cause = if mutants.is_empty() {
+        Some(plan.cause)
+    } else {
+        exhausted.then_some("no-distinct-mutant")
+    };
+    let mut doc = json!({"schema": "cadus.mutants.v1", "key_verdict": key_verdict,
+        "key_reason": key_reason, "mutants": mutants, "pass": pass});
+    if let Some(cause) = cause {
+        doc["cause"] = json!(cause);
+    }
+    if !plan.no_mutant_parts.is_empty() {
+        doc["no_mutant_parts"] = json!(plan.no_mutant_parts);
+    }
+    Ok(doc)
 }
 
-/// The mutants of one key, by the `kind` of the contract JSON.
+/// The mutant places of one key, by the `kind` of the contract JSON.
 ///
 /// A kind with no rule of its own uses `plus-one`. The kind `none` has no
 /// deterministic grade, thus it has no mutant.
-fn plan(contract: &Value, key: &str) -> Vec<Mutant> {
+fn plan(contract: &Value, key: &str) -> Plan {
     match contract["kind"].as_str() {
-        Some("none") => Vec::new(),
+        Some("none") => Plan::of(Vec::new(), "no-rule"),
         Some("function") => function_mutant(contract, key),
         Some("label") => label_others(contract, key),
         Some("set" | "list") => member_removed(key),
         Some("multipart") => part_mutants(contract, key),
-        _ => plus_one(key),
+        Some("exact") => plus_one(key, true),
+        Some("approx") if contract["tolerance"].is_string() => approx_tolerance(contract, key),
+        _ => plus_one(key, false),
     }
 }
 
 /// `plus-one`: the rule of `check_keys::mutate::mutate_plus_one`.
-fn plus_one(key: &str) -> Vec<Mutant> {
-    mutate_plus_one(key)
-        .map(|learner| Mutant::new("plus-one", learner))
-        .into_iter()
-        .collect()
+///
+/// With `whole`, a key with no numeric leaf gets the mutant `(<key>) + 1` (D40).
+fn plus_one(key: &str, whole: bool) -> Plan {
+    let slot = mutate_plus_one(key)
+        .map(|learner| Slot::new("plus-one", learner))
+        .or_else(|| whole.then(|| whole_plus_one(key, "", "")));
+    Plan::of(slot.into_iter().collect(), "no-numeric-leaf")
+}
+
+/// The mutant `(<key>) + 1` between the marks of its collection, if it has one.
+///
+/// A leading `name =` label stays in front: `x = (c - b)/a` gives
+/// `x = ((c - b)/a) + 1`.
+fn whole_plus_one(key: &str, open: &str, close: &str) -> Slot {
+    let is_name = |text: &str| {
+        let text = text.trim();
+        !text.is_empty() && text.chars().all(|ch| ch.is_alphanumeric() || ch == '_')
+    };
+    let learner = match key.split_once('=') {
+        Some((name, body)) if is_name(name) => format!("{} = ({}) + 1", name.trim(), body.trim()),
+        _ => format!("({key}) + 1"),
+    };
+    Slot {
+        kind: Some("plus-one-whole"),
+        ..Slot::new("plus-one", format!("{open}{learner}{close}"))
+    }
+}
+
+/// `plus-one` for `approx` with a `tolerance`: the step is two times the
+/// tolerance plus one step of the last digit of the key (D39).
+///
+/// The mutant is an expression, so that this file needs no rational arithmetic.
+fn approx_tolerance(contract: &Value, key: &str) -> Plan {
+    let tolerance = contract["tolerance"].as_str().unwrap_or("0");
+    let key = key.trim();
+    let step = match key.rsplit_once('.') {
+        Some((_, digits)) if !digits.is_empty() && digits.bytes().all(|b| b.is_ascii_digit()) => {
+            format!("0.{}1", "0".repeat(digits.len() - 1))
+        }
+        _ => "1".to_owned(),
+    };
+    let learner = format!("{key} + 2*({tolerance}) + {step}");
+    Plan::of(vec![Slot::new("plus-one", learner)], "no-numeric-leaf")
 }
 
 /// `function-2x` for a contract JSON with `"kind": "function"`.
-fn function_mutant(contract: &Value, key: &str) -> Vec<Mutant> {
+fn function_mutant(contract: &Value, key: &str) -> Plan {
     let up_to_constant = contract["up_to_constant"] == true;
-    contract["vars"][0]
+    let slot = contract["vars"][0]
         .as_str()
-        .map(|var| Mutant::new("function-2x", function_2x(key, var, up_to_constant)))
-        .into_iter()
-        .collect()
+        .map(|var| Slot::new("function-2x", function_2x(key, var, up_to_constant)));
+    Plan::of(slot.into_iter().collect(), "no-variable")
 }
 
 /// The text rule of `rust-api.md` 2.4: `2*(E) + v`.
@@ -117,38 +213,59 @@ fn choice_key(text: &str) -> String {
 }
 
 /// `label-other`: the first alias of each option that is not the key.
-fn label_others(contract: &Value, key: &str) -> Vec<Mutant> {
+fn label_others(contract: &Value, key: &str) -> Plan {
     let key = choice_key(key);
     let is_key = |alias: &Value| alias.as_str().is_some_and(|alias| choice_key(alias) == key);
-    contract["options"]
+    let slots = contract["options"]
         .as_array()
         .into_iter()
         .flatten()
         .filter_map(Value::as_array)
         .filter(|aliases| !aliases.iter().any(is_key))
         .filter_map(|aliases| aliases.first().and_then(Value::as_str))
-        .map(|alias| Mutant::new("label-other", alias.to_owned()))
-        .collect()
+        .map(|alias| Slot::new("label-other", alias.to_owned()))
+        .collect();
+    Plan::of(slots, "no-other-option")
 }
 
-/// `member-removed`: the collection without its first member.
+/// `member-removed`: the collection without one member.
 ///
-/// A collection of one member uses `plus-one`.
-fn member_removed(key: &str) -> Vec<Mutant> {
+/// The candidates remove the first member, then the second, and so on; a
+/// candidate that grades `correct` (a repeated member) gives way to the next
+/// one (D39). A collection of one member uses `plus-one`, or the mutant
+/// `(<member>) + 1` if the member has no numeric leaf.
+fn member_removed(key: &str) -> Plan {
     let (open, inner, close) = unwrap_collection(key.trim());
     let members = split_members(inner);
+    let without = |skip: usize| {
+        let kept: Vec<&str> = members
+            .iter()
+            .enumerate()
+            .filter(|(at, _)| *at != skip)
+            .map(|(_, member)| *member)
+            .collect();
+        format!("{open}{}{close}", kept.join(", "))
+    };
     if members.len() < 2 {
-        return plus_one(key);
+        let mut plan = plus_one(key, false);
+        if plan.slots.is_empty() && !inner.trim().is_empty() {
+            plan.slots.push(whole_plus_one(inner.trim(), open, close));
+        }
+        return plan;
     }
-    let learner = format!("{open}{}{close}", members[1..].join(", "));
-    vec![Mutant::new("member-removed", learner)]
+    let slot = Slot {
+        rest: (1..members.len()).map(without).collect(),
+        ..Slot::new("member-removed", without(0))
+    };
+    Plan::of(vec![slot], "no-numeric-leaf")
 }
 
 /// Split `{..}` or `[..]` into the open mark, the inner text and the close mark.
 ///
-/// Text such as `[1, 2], [3, 4]` has no outer pair, thus it stays whole.
+/// Text such as `[1, 2], [3, 4]` has no outer pair, thus it stays whole. The
+/// third pair is the LaTeX set of the shipped keys: `$\{A, B\}$`.
 fn unwrap_collection(text: &str) -> (&str, &str, &str) {
-    [("{", "}"), ("[", "]")]
+    [("{", "}"), ("[", "]"), ("$\\{", "\\}$")]
         .into_iter()
         .find_map(|(open, close)| {
             let inner = text.strip_prefix(open)?.strip_suffix(close)?;
@@ -170,7 +287,7 @@ fn balanced(text: &str) -> bool {
     })
 }
 
-/// Split at each comma that is outside all brackets.
+/// Split at each comma and each ` and ` that is outside all brackets.
 fn split_members(inner: &str) -> Vec<&str> {
     let mut members = Vec::new();
     let mut depth = 0_i32;
@@ -183,6 +300,10 @@ fn split_members(inner: &str) -> Vec<&str> {
                 members.push(inner[start..at].trim());
                 start = at + 1;
             }
+            ' ' if depth == 0 && at >= start && inner[at..].starts_with(" and ") => {
+                members.push(inner[start..at].trim());
+                start = at + 5;
+            }
             _ => {}
         }
     }
@@ -190,220 +311,56 @@ fn split_members(inner: &str) -> Vec<&str> {
     members
 }
 
-/// One mutant for each part of a `multipart` key (`name = value; name = value`).
+/// One mutant place for each part of a `multipart` key (`name = value; name = value`).
 ///
-/// The part takes the first mutant of the rule of its kind. The other parts
-/// stay equal to the key. A part with no mutant gives no entry.
-fn part_mutants(contract: &Value, key: &str) -> Vec<Mutant> {
+/// The part takes the first place of the rule of its kind. The other parts
+/// stay equal to the key. A part with no mutant goes to `no_mutant_parts`;
+/// the item then has `pass: false` (D38).
+fn part_mutants(contract: &Value, key: &str) -> Plan {
     let fields: Vec<(&str, &str)> = key
         .split(';')
         .filter_map(|field| field.split_once('='))
         .map(|(name, value)| (name.trim(), value.trim()))
         .collect();
-    contract["parts"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .filter_map(|part| {
-            let name = part["name"].as_str()?;
-            let (_, value) = fields.iter().find(|(field, _)| *field == name)?;
-            let first = plan(&part["contract"], value).into_iter().next()?;
-            let learner = fields
-                .iter()
-                .map(|(field, value)| {
-                    let value = if *field == name {
-                        &first.learner
-                    } else {
-                        *value
-                    };
-                    format!("{field} = {value}")
-                })
-                .collect::<Vec<_>>()
-                .join("; ");
-            Some(Mutant::new(&format!("part:{name}:{}", first.rule), learner))
-        })
-        .collect()
+    let whole_key = |name: &str, learner: &str| {
+        fields
+            .iter()
+            .map(|(field, value)| {
+                let value = if *field == name { learner } else { *value };
+                format!("{field} = {value}")
+            })
+            .collect::<Vec<_>>()
+            .join("; ")
+    };
+    let mut plan = Plan::of(Vec::new(), "no-mutant-part");
+    for part in contract["parts"].as_array().into_iter().flatten() {
+        let name = part["name"].as_str().unwrap_or("");
+        let slot = fields
+            .iter()
+            .find(|(field, _)| *field == name)
+            .and_then(|(_, value)| {
+                self::plan(&part["contract"], value)
+                    .slots
+                    .into_iter()
+                    .next()
+            });
+        match slot {
+            Some(slot) => plan.slots.push(Slot {
+                rule: format!("part:{name}:{}", slot.rule),
+                first: whole_key(name, &slot.first),
+                rest: slot
+                    .rest
+                    .iter()
+                    .map(|learner| whole_key(name, learner))
+                    .collect(),
+                kind: slot.kind,
+            }),
+            None => plan.no_mutant_parts.push(name.to_owned()),
+        }
+    }
+    plan
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn learners(mutants: &[Mutant]) -> Vec<&str> {
-        mutants.iter().map(|m| m.learner.as_str()).collect()
-    }
-
-    fn rules(mutants: &[Mutant]) -> Vec<&str> {
-        mutants.iter().map(|m| m.rule.as_str()).collect()
-    }
-
-    #[test]
-    fn plus_one_kinds_use_the_shared_mutator() {
-        for kind in [
-            "exact",
-            "approx",
-            "coordinates",
-            "matrix",
-            "inequality_union",
-            "unit",
-        ] {
-            let mutants = plan(&json!({"kind": kind}), "(46, 54)");
-            assert_eq!(rules(&mutants), ["plus-one"], "{kind}");
-            assert_eq!(learners(&mutants), ["(47, 54)"], "{kind}");
-        }
-        assert_eq!(plan(&json!({"kind": "exact"}), "x"), []);
-        assert_eq!(plan(&json!("no object"), "7").len(), 1);
-    }
-
-    /// The shared mutator reaches the first numeric leaf of each tree shape, and
-    /// its text path serves a key that the grammar does not read.
-    #[test]
-    fn plus_one_reaches_each_shape_of_a_key() {
-        let exact = json!({"kind": "exact"});
-        for (key, want) in [
-            ("2.5", None),
-            ("1/2", None),
-            ("2 1/2", None),
-            ("-sqrt(3)", None),
-            ("x^2", None),
-            ("(x+1)^2", None),
-            ("x^(1/2) + 4", None),
-            ("x/3", None),
-            ("sin(2x)", None),
-            ("{x, 2}", None),
-            ("[1, 2)", None),
-            ("[x, 2, 3]", None),
-            ("1 < x < 2", None),
-            ("x < 3", None),
-            ("5 m", None),
-            ("x = 3", None),
-            ("pi + 1", None),
-            ("a = 3; b = x", Some("a = 4; b = x")),
-            ("a = -9; b", Some("a = -10; b")),
-        ] {
-            let mutants = plan(&exact, key);
-            assert_eq!(rules(&mutants), ["plus-one"], "{key}");
-            assert_ne!(learners(&mutants), [key]);
-            if let Some(want) = want {
-                assert_eq!(learners(&mutants), [want]);
-            }
-        }
-        let too_long = "a = 999999999999999999999999999999999999999999; b";
-        let at_limit = "a = 170141183460469231731687303715884105727; b";
-        for key in ["pi", "-x", "a; b", too_long, at_limit] {
-            assert_eq!(plan(&exact, key), [], "{key}");
-        }
-    }
-
-    #[test]
-    fn none_kind_has_no_mutant() {
-        assert_eq!(
-            plan(&json!({"kind": "none"}), "See the solution, step 3."),
-            []
-        );
-    }
-
-    #[test]
-    fn function_2x_plain_key() {
-        assert_eq!(
-            function_2x("x/sqrt(x^2+9)", "x", false),
-            "2*(x/sqrt(x^2+9)) + x"
-        );
-    }
-
-    #[test]
-    fn function_2x_removes_the_leading_label() {
-        assert_eq!(function_2x("y = 3x^2 + 1", "x", false), "2*(3x^2 + 1) + x");
-    }
-
-    #[test]
-    fn function_2x_removes_one_trailing_constant_only_with_up_to_constant() {
-        assert_eq!(function_2x("y = x^2/2 + C", "x", true), "2*(x^2/2) + x");
-        for constant in ["+ c", "+K", "+  k"] {
-            let key = format!("x^2/2 {constant}");
-            assert_eq!(function_2x(&key, "x", true), "2*(x^2/2) + x", "{key}");
-        }
-        assert_eq!(function_2x("x^2/2 + C", "x", false), "2*(x^2/2 + C) + x");
-        assert_eq!(function_2x("x + 2c", "x", true), "2*(x + 2c) + x");
-        assert_eq!(function_2x("sin(t)", "t", true), "2*(sin(t)) + t");
-    }
-
-    #[test]
-    fn function_kind_reads_the_first_variable_and_the_constant_flag() {
-        let contract = json!({"kind": "function", "vars": ["t", "x"], "up_to_constant": true});
-        let mutants = plan(&contract, "s = t^2 + C");
-        assert_eq!(rules(&mutants), ["function-2x"]);
-        assert_eq!(learners(&mutants), ["2*(t^2) + t"]);
-        assert_eq!(plan(&json!({"kind": "function"}), "t^2"), []);
-    }
-
-    #[test]
-    fn label_other_gives_the_first_alias_of_each_other_option() {
-        let contract = json!({"kind": "label",
-            "options": [["Yes", "y"], ["No", "n"], ["Not  Defined", "undefined"], [], "bad"]});
-        let mutants = plan(&contract, " not defined ");
-        assert_eq!(rules(&mutants), ["label-other", "label-other"]);
-        assert_eq!(learners(&mutants), ["Yes", "No"]);
-        assert_eq!(learners(&plan(&contract, "N")), ["Yes", "Not  Defined"]);
-        assert_eq!(plan(&json!({"kind": "label"}), "Yes"), []);
-        assert_eq!(
-            plan(&json!({"kind": "label", "options": [[1], ["a"]]}), "a"),
-            []
-        );
-    }
-
-    #[test]
-    fn member_removed_drops_the_first_member() {
-        let set = plan(&json!({"kind": "set"}), "{2, 3}");
-        assert_eq!(rules(&set), ["member-removed"]);
-        assert_eq!(learners(&set), ["{3}"]);
-        let list = json!({"kind": "list", "ordered": true, "member": {"kind": "exact"}});
-        assert_eq!(learners(&plan(&list, "[1, 2, 3]")), ["[2, 3]"]);
-        assert_eq!(learners(&plan(&list, "1, 2")), ["2"]);
-        assert_eq!(learners(&plan(&list, "(1, 2), (3, 4)")), ["(3, 4)"]);
-        assert_eq!(learners(&plan(&list, "[1, 2], [3, 4]")), ["[3, 4]"]);
-        assert_eq!(learners(&plan(&list, "{1, 2}, {3}")), ["{3}"]);
-        assert_eq!(learners(&plan(&list, "{(1, 2), (3, 4)}")), ["{(3, 4)}"]);
-        assert_eq!(learners(&plan(&list, "[1, 2), 5")), ["5"]);
-    }
-
-    #[test]
-    fn member_removed_uses_plus_one_for_one_member() {
-        let mutants = plan(&json!({"kind": "set"}), "{4}");
-        assert_eq!(rules(&mutants), ["plus-one"]);
-        assert_eq!(learners(&mutants), ["{5}"]);
-    }
-
-    #[test]
-    fn multipart_gives_one_mutant_for_each_part() {
-        let contract = json!({"kind": "multipart", "parts": [
-            {"name": "verdict", "contract": {"kind": "label",
-                "options": [["converges"], ["diverges"], ["oscillates"]]}},
-            {"name": "L", "contract": {"kind": "exact"}},
-            {"name": "f", "contract": {"kind": "function", "vars": ["x"]}},
-            {"name": "note", "contract": {"kind": "none"}},
-            {"name": "absent", "contract": {"kind": "exact"}},
-            {"contract": {"kind": "exact"}}]});
-        let mutants = plan(
-            &contract,
-            "verdict = converges; L = 7; f = x^2; note = text 1; stray",
-        );
-        assert_eq!(
-            rules(&mutants),
-            [
-                "part:verdict:label-other",
-                "part:L:plus-one",
-                "part:f:function-2x"
-            ]
-        );
-        assert_eq!(
-            learners(&mutants),
-            [
-                "verdict = diverges; L = 7; f = x^2; note = text 1",
-                "verdict = converges; L = 8; f = x^2; note = text 1",
-                "verdict = converges; L = 7; f = 2*(x^2) + x; note = text 1"
-            ]
-        );
-        assert_eq!(plan(&json!({"kind": "multipart"}), "a = 1"), []);
-    }
-}
+#[path = "mutants_tests.rs"]
+mod tests;

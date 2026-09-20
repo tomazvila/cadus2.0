@@ -22,7 +22,13 @@ use output::Reply;
 const LATE: [&str; 5] = ["report", "row", "diff", "dump-kp", "selftest"];
 
 fn main() -> ExitCode {
-    let mut args: Vec<String> = std::env::args().skip(1).collect();
+    let args: Result<Vec<String>, _> = std::env::args_os()
+        .skip(1)
+        .map(std::ffi::OsString::into_string)
+        .collect();
+    let Ok(mut args) = args else {
+        return output::emit(&Reply::error("an argument is not valid UTF-8", 2), false);
+    };
     let pretty = cli::take_flag(&mut args, "--pretty");
     output::emit(&dispatch(&args), pretty)
 }
