@@ -307,10 +307,10 @@ fn diagnostic_state(curriculum: &Curriculum, topic_id: &str) -> DiagnosticState 
     let exemplar = curriculum
         .idx_of(topic_id)
         .and_then(|idx| curriculum.topic(idx))
-        .and_then(|topic| topic.diagnostic_exemplar.as_ref());
+        .and_then(|topic| Some((topic.diagnostic_exemplar.as_ref()?, topic.answer_kind)));
     match exemplar {
         None => DiagnosticState::Missing,
-        Some(item) if item.canonical_answer().is_ok() => DiagnosticState::Decidable,
+        Some((item, kind)) if item.verdict_policy(kind).is_ok() => DiagnosticState::Decidable,
         Some(_) => DiagnosticState::Undecidable,
     }
 }

@@ -18,6 +18,9 @@
 //! when `failed == 0` and 1 otherwise.
 
 mod mutate;
+mod policy;
+#[cfg(test)]
+mod tests;
 
 use std::collections::BTreeMap;
 use std::env;
@@ -25,11 +28,13 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use cadus_core::answer::{AnswerContract, Outcome, canonical_form, check, check_contract};
+use cadus_core::answer::{AnswerContract, Outcome, check, check_contract};
 use cadus_core::curriculum::{
     AnswerKind, Finding, KnowledgePoint, ParsedUnit, Topic, parse_curriculum,
 };
 use cadus_core::template::{Compiled, TemplateDoc, from_body};
+
+use policy::KeyPolicy;
 
 /// The environment variable that names the curriculum tree (C5 convention).
 const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
@@ -427,23 +432,21 @@ fn check_answer(
     item: &str,
     failures: &mut Vec<Failure>,
 ) -> Status {
-    if matches!(contract, Some(AnswerContract::None)) {
-        return Status::TeachOnly;
-    }
-    if contract.is_none() && !decidable(kind) {
-        return Status::TeachOnly;
-    }
-    // Rung 1: the authored answer parses under its policy.
-    if let Some(reason) = parse_refusal(answer, contract) {
-        failures.push(Failure {
-            at: at.clone(),
-            item: item.to_owned(),
-            reason: format!(
-                "authored answer does not parse under {}: {reason}",
-                policy_of(contract, kind)
-            ),
-        });
-        return Status::Failed;
+    // Rung 1: the one verdict rule decides, and the authored answer parses.
+    match policy::key_policy(answer, contract, kind) {
+        KeyPolicy::Verdict => {}
+        KeyPolicy::TeachOnly => return Status::TeachOnly,
+        KeyPolicy::BadKey(reason) => {
+            failures.push(Failure {
+                at: at.clone(),
+                item: item.to_owned(),
+                reason: format!(
+                    "authored answer does not parse under {}: {reason}",
+                    policy::policy_of(contract, kind)
+                ),
+            });
+            return Status::Failed;
+        }
     }
     // Rung 2: the grader returns CORRECT for the authored answer.
     match grade(answer, answer, contract, kind) {
@@ -507,17 +510,6 @@ fn mutant_status(
     }
 }
 
-/// Why one answer refuses to parse under its policy.
-fn parse_refusal(answer: &str, contract: Option<&AnswerContract>) -> Option<String> {
-    match contract {
-        Some(contract) => contract
-            .validate_expected(answer)
-            .err()
-            .map(|e| e.to_string()),
-        None => canonical_form(answer).err().map(|e| e.to_string()),
-    }
-}
-
 /// Grade one pair through the policy the runtime uses.
 fn grade(
     expected: &str,
@@ -550,19 +542,6 @@ fn label_mutant(expected: &str, contract: &AnswerContract) -> Option<String> {
             )
         })
         .cloned()
-}
-
-/// The policy name a failure line names.
-fn policy_of(contract: Option<&AnswerContract>, kind: AnswerKind) -> String {
-    match contract {
-        Some(_) => "its answer contract".to_owned(),
-        None => format!("kind '{kind}'"),
-    }
-}
-
-/// Whether the deterministic checker decides this answer kind at all.
-fn decidable(kind: AnswerKind) -> bool {
-    matches!(kind, AnswerKind::Numeric | AnswerKind::Expression)
 }
 
 // --------------------------------------------------------------------------
@@ -657,9 +636,7 @@ fn check_template(
         }
     };
     let contract = document.answer_contract.as_ref();
-    if matches!(contract, Some(AnswerContract::None))
-        || (contract.is_none() && !decidable(document.answer_kind))
-    {
+    if !policy::has_checker(contract, document.answer_kind) {
         record_event(
             bucket_of(per_course, Some(&at.course)),
             totals,

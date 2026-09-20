@@ -9,12 +9,12 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use crate::curriculum::{
-    Exemplar, KnowledgePoint, Topic, curriculum_hash, lint_curriculum, load_curriculum,
+    AnswerKind, Exemplar, KnowledgePoint, Topic, curriculum_hash, lint_curriculum, load_curriculum,
 };
 use serde_json::{Value, json};
 
-fn exemplar_row(exemplar: &Exemplar) -> Value {
-    let (decidable, reason) = match exemplar.canonical_answer() {
+fn exemplar_row(exemplar: &Exemplar, kind: AnswerKind) -> Value {
+    let (decidable, reason) = match exemplar.verdict_policy(kind) {
         Ok(_) => (true, None),
         Err(error) => (false, Some(error.reason)),
     };
@@ -29,7 +29,11 @@ fn exemplar_row(exemplar: &Exemplar) -> Value {
 }
 
 fn kp_row(topic: &Topic, kp: &KnowledgePoint) -> Value {
-    let exemplars: Vec<Value> = kp.exemplars.iter().map(exemplar_row).collect();
+    let exemplars: Vec<Value> = kp
+        .exemplars
+        .iter()
+        .map(|exemplar| exemplar_row(exemplar, topic.answer_kind))
+        .collect();
     json!({
         "constraints": kp.constraints,
         "exemplars": exemplars,
@@ -92,6 +96,36 @@ pub fn command() -> ExitCode {
         Err(error) => {
             eprintln!("content audit facts refused: {error}");
             ExitCode::from(2)
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The row of one exemplar reads `verdict_policy` with the topic kind.
+    #[test]
+    fn a_kp_row_reads_the_verdict_policy_with_the_topic_kind() {
+        for (kind, decidable) in [("numeric", true), ("proof", false)] {
+            let topic: Topic = serde_json::from_value(json!({
+                "id": "counting",
+                "name": "Counting",
+                "difficulty": 0.3,
+                "answer_kind": kind,
+                "expected_time_secs": 30,
+                "knowledge_points": [{
+                    "id": "kp1",
+                    "name": "kp1",
+                    "exemplars": [{"problem": "Give 7.", "answer": "7"}],
+                }],
+            }))
+            .unwrap();
+            let row = kp_row(&topic, &topic.knowledge_points[0]);
+            assert_eq!(row["kp_key"], "counting/kp1");
+            let exemplar = &row["exemplars"][0];
+            assert_eq!(exemplar["authored_answer_decidable"], decidable);
+            assert_eq!(exemplar["undecidable_reason"].is_null(), decidable);
         }
     }
 }
