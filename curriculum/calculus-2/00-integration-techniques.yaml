@@ -39,16 +39,28 @@ topics:
         name: Choosing u and dv (LIATE)
         key_prerequisites: [antiderivatives, product-rule]
         exemplars:
-          - problem: 'For $\int x \sin x \, dx$, state the choice of $u$ and $dv$, then evaluate.'
-            answer: '$u = x$, $dv = \sin x\,dx$; the integral is $-x \cos x + \sin x + C$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The algebraic factor differentiates to a constant: $u = x$, $dv = \sin x\,dx$ gives $-x\cos x + \int \cos x\,dx$.'
           - problem: 'Evaluate $\int x e^{-x} \, dx$.'
             answer: '$-(x + 1)e^{-x} + C$'
             solution_sketch: '$u = x$, $dv = e^{-x}\,dx$: $-xe^{-x} + \int e^{-x}\,dx = -xe^{-x} - e^{-x} + C$.'
           - problem: 'Evaluate $\int x \cos 2x \, dx$.'
             answer: '$\frac{x \sin 2x}{2} + \frac{\cos 2x}{4} + C$'
             solution_sketch: '$u = x$, $dv = \cos 2x\,dx$: $\frac{x\sin 2x}{2} - \frac{1}{2}\int \sin 2x\,dx = \frac{x\sin 2x}{2} + \frac{\cos 2x}{4} + C$.'
+          - problem: "Evaluate $\\int x \\sin x \\, dx$."
+            answer: "-x cos(x) + sin(x) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "For ∫ x sin(x) dx, LIATE orders the algebraic factor x before the trigonometric factor sin(x), so choose u = x and dv = sin(x) dx for integration by parts. Then du = dx by differentiation and v = -cos(x) by the antiderivative rule. Integration by parts gives ∫ x sin(x) dx = -x cos(x) - ∫ -cos(x) dx = -x cos(x) + ∫ cos(x) dx. The remaining integral is sin(x). The integral is -x cos(x) + sin(x) + C."
+          - problem: "Evaluate $\\int x e^{3x} \\, dx$."
+            answer: "x e^(3x)/3 - e^(3x)/9 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "For ∫ x e^(3x) dx, choose u = x and dv = e^(3x) dx by LIATE, because the algebraic factor x comes before the exponential. Then du = dx and v = e^(3x)/3. Integration by parts gives ∫ x e^(3x) dx = x e^(3x)/3 - ∫ e^(3x)/3 dx = x e^(3x)/3 - e^(3x)/9 + C. The integral is x e^(3x)/3 - e^(3x)/9 + C."
+          - problem: "Evaluate $\\int x \\cos 3x \\, dx$."
+            answer: "(x sin(3x))/3 + cos(3x)/9 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "For ∫ x cos(3x) dx, choose u = x and dv = cos(3x) dx by LIATE, since the algebraic factor x comes before cosine. Then du = dx and v = sin(3x)/3. Integration by parts gives ∫ x cos(3x) dx = x sin(3x)/3 - (1/3)∫ sin(3x) dx. The remaining integral is -cos(3x)/3, so the antiderivative is (x sin(3x))/3 + cos(3x)/9 + C. The integral is (x sin(3x))/3 + cos(3x)/9 + C."
+          - problem: "Evaluate $\\int_0^{\\pi/2} x \\sin x \\, dx$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For ∫_0^{π/2} x sin(x) dx, choose u = x and dv = sin(x) dx by LIATE. Then du = dx and v = -cos(x), so the antiderivative is -x cos(x) + sin(x). Evaluate at the limits: [-x cos(x) + sin(x)] from 0 to pi/2 = (0 + 1) - (0 + 0) = 1. The value of the definite integral is 1."
         constraints: "LIATE ordering decides u; integrands limited to one algebraic factor times one exponential/trig factor"
       - id: kp3
         name: Logarithmic and inverse-trig integrands
@@ -171,6 +183,22 @@ topics:
           - problem: 'Use the tabular method to evaluate $\int x^2 e^{-x} \, dx$.'
             answer: '$-(x^2 + 2x + 2)/e^x + C$'
             solution_sketch: 'Derivatives $x^2, 2x, 2, 0$ against integrals $-e^{-x}, e^{-x}, -e^{-x}$ with alternating signs gives $-x^2 e^{-x} - 2x e^{-x} - 2e^{-x} + C$, i.e. $-(x^2 + 2x + 2)/e^x + C$.'
+          - problem: "Use the tabular method to evaluate the integral of x^2 e^x dx. Give the antiderivative with + C."
+            answer: "(x^2-2x+2)e^x+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "For the integral of x^2 e^x dx, set the derivative column to x^2, 2x, 2, 0 and the integral column to e^x repeated. Apply the tabular integration by parts rule with alternating signs, giving x^2 e^x - 2x e^x + 2e^x + C. The antiderivative is (x^2-2x+2)e^x+C."
+          - problem: "Use the tabular method to evaluate the integral of x^3 e^(2x) dx. Give the antiderivative with + C."
+            answer: "(x^3/2-3x^2/4+3x/4-3/8)e^(2x)+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "For the integral of x^3 e^(2x) dx, build the derivative column x^3, 3x^2, 6x, 6, 0 and the integral column with e^(2x) factors. Apply the tabular integration by parts rule with alternating signs and divide by successive powers of 2, giving (x^3/2 - 3x^2/4 + 3x/4 - 3/8)e^(2x) + C. The antiderivative is (x^3/2-3x^2/4+3x/4-3/8)e^(2x)+C."
+          - problem: "Use the tabular method to evaluate the integral of x^2 e^(2x) dx. Give the antiderivative with + C."
+            answer: "(x^2/2-x/2+1/4)e^(2x)+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "For the integral of x^2 e^(2x) dx, list derivatives x^2, 2x, 2, 0 and repeated integrals of e^(2x). Apply the tabular integration by parts rule with alternating signs and the factor 1/2, giving (x^2/2 - x/2 + 1/4)e^(2x) + C. The antiderivative is (x^2/2-x/2+1/4)e^(2x)+C."
+          - problem: "Use the tabular method to evaluate the integral of x^3 e^(-x) dx. Give the antiderivative with + C."
+            answer: "-(x^3+3x^2+6x+6)/e^x+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "For the integral of x^3 e^(-x) dx, use derivative column x^3, 3x^2, 6x, 6, 0 and integral column of e^(-x). Apply the tabular integration by parts rule with alternating signs, which gives -(x^3+3x^2+6x+6)/e^x + C. The antiderivative is -(x^3+3x^2+6x+6)/e^x+C."
         constraints: "polynomial degree 2 or 3 times e^{ax} with a in {-1, 1, 2}; the derivative column must terminate at 0"
       - id: kp2
         name: Tabular method for polynomial times trig
@@ -222,6 +250,22 @@ topics:
           - problem: 'Evaluate $\int \cos^4 x \sin x \, dx$.'
             answer: '$-\frac{\cos^5 x}{5} + C$'
             solution_sketch: '$u = \cos x$, $du = -\sin x\,dx$: $-\int u^4\,du = -\frac{u^5}{5} + C$.'
+          - problem: "Evaluate the integral of sin(x)^3 cos(x) dx."
+            answer: "sin(x)^4/4 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Let u = sin(x), so du = cos(x) dx by the derivative of sine. The integral becomes the integral of u^3 du, and the power rule gives u^4/4 + C. Substitute back: sin(x)^4/4 + C."
+          - problem: "Evaluate the integral of cos(x)^2 sin(x) dx."
+            answer: "-cos(x)^3/3 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Let u = cos(x), so du = -sin(x) dx by the derivative of cosine. The integral becomes the integral of -u^2 du, and the power rule gives -u^3/3 + C. Substitute back: -cos(x)^3/3 + C."
+          - problem: "Evaluate the definite integral from 0 to pi/2 of sin(x)^4 cos(x) dx."
+            answer: "1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let u = sin(x), so du = cos(x) dx. The limits become u = 0 and u = 1. The integral becomes the integral from 0 to 1 of u^4 du, and the power rule gives u^5/5 from 0 to 1, so the value is 1/5."
+          - problem: "Evaluate the definite integral from 0 to pi/2 of cos(x)^3 sin(x) dx."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let u = cos(x), so du = -sin(x) dx. The limits become u = 1 and u = 0. The integral becomes the negative of the integral from 1 to 0 of u^3 du, which equals the integral from 0 to 1 of u^3 du, and the power rule gives 1/4."
         constraints: "integrand is sin^m x cos x or cos^n x sin x with m, n <= 4; single one-step u-substitution"
       - id: kp2
         name: Splitting off one factor from an odd power
@@ -233,9 +277,21 @@ topics:
           - problem: 'Evaluate $\int \cos^3 x \, dx$.'
             answer: '$\sin x - \frac{\sin^3 x}{3} + C$'
             solution_sketch: '$\cos^3 x = (1 - \sin^2 x)\cos x$; $u = \sin x$.'
+          - problem: "Evaluate $\\int \\sin x \\cos^3 x \\, dx$."
+            answer: "-cos(x)^4/4 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Start with $\\int \\sin x \\cos^3 x \\, dx$. The cosine power is odd, so split off one cosine factor and use $\\cos^2 x = 1 - \\sin^2 x$ on the remaining cosine square. Substitute $u = \\sin x$ with $du = \\cos x \\, dx$: $\\int u(1 - u^2) \\, du = u^2/2 - u^4/4 + C = \\sin^2 x/2 - \\sin^4 x/4 + C$. Since $-\\cos^4 x/4$ differs from this by a constant, the answer is -cos(x)^4/4 + C."
           - problem: 'Evaluate $\int \sin^3 x \cos^2 x \, dx$.'
             answer: '$\frac{\cos^5 x}{5} - \frac{\cos^3 x}{3} + C$'
             solution_sketch: '$\sin^3 x \cos^2 x = (1 - \cos^2 x)\cos^2 x \sin x$; $u = \cos x$ gives $\int (u^4 - u^2)\,du = \frac{u^5}{5} - \frac{u^3}{3} + C$.'
+          - problem: "Evaluate $\\int \\sin^3 x \\cos x \\, dx$."
+            answer: "sin(x)^4/4 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Start with $\\int \\sin^3 x \\cos x \\, dx$. The sine power is odd, so split off one sine factor and use $\\sin^2 x = 1 - \\cos^2 x$ on the remaining sine square. Substitute $u = \\cos x$ with $du = -\\sin x \\, dx$: $-\\int (1 - u^2)u \\, du = -u^2/2 + u^4/4 + C = -\\cos^2 x/2 + \\cos^4 x/4 + C$. This simplifies to $\\sin^4 x/4 + C$. The answer is sin(x)^4/4 + C."
+          - problem: "Evaluate $\\int_0^{\\pi/2} \\sin^3 x \\, \\cos^3 x \\, dx$."
+            answer: "1/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the definite integral from 0 to pi/2 of sin^3 x cos^3 x dx. Both powers are odd, so split off one cosine factor and convert cos^2 x to 1 - sin^2 x. Substitute u = sin x with du = cos x dx; the bounds x = 0 and x = pi/2 become u = 0 and u = 1. Compute the integral of u^3(1 - u^2) from 0 to 1: u^4/4 - u^6/6 evaluated at the bounds gives 1/4 - 1/6 = 1/12. The answer is 1/12."
         constraints: "sin^m x cos^n x with at least one of m, n odd and both <= 3; save one factor from the odd power, convert the rest via sin^2 + cos^2 = 1"
     diagnostic_exemplar:
       problem: 'Evaluate $\int \cos^3 x \sin^2 x \, dx$.'
