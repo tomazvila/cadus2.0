@@ -66,10 +66,9 @@ fn golden_row_proof_induction_passes() {
     assert_golden_pass("proof-induction", 0, (2, 1));
 }
 
-// FLOW: enable after B4b
+/// The chain-rule row: three `function` items of pack v9.
 #[test]
-#[ignore = "the `function` contract kind comes with lane B4b"]
-fn golden_row_calc_chain_rule_passes_after_b4b() {
+fn golden_row_calc_chain_rule_passes() {
     assert_golden_pass("calc-chain-rule", 3, (0, 0));
 }
 
