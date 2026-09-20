@@ -1,19 +1,18 @@
 //! The `function` contract: two formulas are equal if they agree at fixed points.
 //!
-//! This file is the one exception to rule D6 ("never a float"). It compares
-//! `f64` values at eight fixed sample points with the tolerance [`TOLERANCE`].
-//! It uses no random source and no clock, so one input gives one verdict.
+//! This file is the one exception to rule D6 ("never a float"): it compares f64
+//! values at eight fixed sample points with the tolerance [`TOLERANCE`], with no
+//! random source and no clock, so one input gives one verdict.
 
 use std::collections::{BTreeMap, BTreeSet};
 
 use num_traits::ToPrimitive;
 
-use crate::answer::{
-    Ast, Canon, Outcome, Undecidable, Verdict, canon, canonical_form, normalize, parse,
-};
-
-use crate::answer::evalf::free_vars;
 pub use crate::answer::evalf::{Env, eval};
+use crate::answer::{
+    Ast, Canon, Outcome, Undecidable, Verdict, canon, canonical_form, evalf::free_vars, normalize,
+    parse,
+};
 
 /// The position of each sample point in its interval, as `(numerator, denominator)`.
 pub const SAMPLE_FRACTIONS: [(u32, u32); 8] = [
@@ -34,6 +33,8 @@ pub const TOLERANCE: f64 = 1e-9;
 pub const CONSTANT_NAMES: [&str; 4] = ["C", "c", "K", "k"];
 /// The sample interval of a variable that has no `domain` entry.
 pub const DEFAULT_DOMAIN: (&str, &str) = ("1/4", "11/4");
+/// The symmetric interval that such a variable tries first (D45).
+const SYMMETRIC_DEFAULT: (f64, f64) = (-3.0, 3.0);
 
 const BAD_VARS: &str = "a function contract requires one to three distinct variable names";
 const BAD_DOMAIN: &str =
@@ -43,6 +44,11 @@ const POINT_NEAR_ZERO: &str =
 /// The smallest permitted distance of a variable sample value from 0.
 const MIN_SAMPLE_MAGNITUDE: f64 = 0.01;
 const NOT_ONE_EXPRESSION: &str = "a function answer must be one expression";
+const NOT_ADDITIVE: &str =
+    "the constant of the authored function is not additive; put it into vars";
+const UNTESTED_ABS: &str = "the domain of the authored function does not test its absolute value";
+const QUARTER_POINTS: &str =
+    "the domain of the authored function puts each sample point on a quarter";
 
 /// The checked form of a `function` contract. `domain[i]` belongs to `vars[i]`.
 #[derive(Debug, Clone, PartialEq)]
@@ -53,6 +59,8 @@ pub struct FunctionSpec {
     pub up_to_constant: bool,
     /// The sample interval `(low, high)` of each variable.
     pub domain: Vec<(f64, f64)>,
+    /// True when the interval of the variable came from a default (D45).
+    defaulted: Vec<bool>,
 }
 
 impl FunctionSpec {
@@ -76,6 +84,7 @@ impl FunctionSpec {
         if domain.keys().any(|name| !names.contains(name)) {
             return Err(Undecidable::new(BAD_DOMAIN));
         }
+        let defaulted = vars.iter().map(|name| !domain.contains_key(name)).collect();
         let domain = vars
             .iter()
             .map(|name| interval(domain.get(name)))
@@ -84,6 +93,7 @@ impl FunctionSpec {
             vars: vars.to_vec(),
             up_to_constant,
             domain,
+            defaulted,
         };
         // A point near 0 makes a key such as `(1 - cos(x))/x^2` lose its digits,
         // and an equal formula then gets "wrong".
@@ -97,10 +107,9 @@ impl FunctionSpec {
         Ok(spec)
     }
 
-    /// The eight sample points. Each point has a value for each variable.
-    ///
-    /// Point `j` gives variable `i` the fraction `(j * (2 * i + 1) + i) % 8` of
-    /// its interval, so no two variables have the same fraction at one point.
+    /// The eight sample points. Point `j` gives variable `i` the fraction
+    /// `(j * (2 * i + 1) + i) % 8` of its interval, so no two variables have
+    /// the same fraction at one point.
     #[must_use]
     pub fn sample_points(&self) -> Vec<Env> {
         self.points_with_constants(0.0)
@@ -138,6 +147,116 @@ impl FunctionSpec {
     fn permits_each_name(&self, tree: &Ast) -> bool {
         free_vars(tree).iter().all(|name| self.permits(name))
     }
+
+    /// The spec that a key is validated and graded on (D45): each variable
+    /// without an explicit domain tries the symmetric default first; the
+    /// positive default stays when the key is finite at fewer than
+    /// [`MIN_FINITE_POINTS`] of the 8 points. The choice reads the key only.
+    fn for_key(&self, key: &Ast) -> FunctionSpec {
+        let mut spec = self.clone();
+        for index in 0..spec.vars.len() {
+            if !spec.defaulted[index] {
+                continue;
+            }
+            let fallback = spec.domain[index];
+            spec.domain[index] = SYMMETRIC_DEFAULT;
+            if spec.finite_points(key) < MIN_FINITE_POINTS {
+                spec.domain[index] = fallback;
+            }
+        }
+        spec
+    }
+
+    /// The count of sample points where the key has a finite value.
+    fn finite_points(&self, key: &Ast) -> usize {
+        self.points_with_constants(0.0)
+            .iter()
+            .filter(|env| eval(key, env).is_some())
+            .count()
+    }
+
+    /// Whether `key(C = 1) - key(C = 0)` is one value over the sample points
+    /// (D44): the constant of the key is one additive term.
+    fn constant_is_additive(&self, key: &Ast) -> bool {
+        let mut pairs = Vec::new();
+        for (low, high) in self
+            .points_with_constants(0.0)
+            .iter()
+            .zip(self.points_with_constants(1.0))
+        {
+            if let (Some(value), Some(shifted)) = (eval(key, low), eval(key, &high)) {
+                pairs.push((value, shifted));
+            }
+        }
+        let Some(&(first_value, first_shifted)) = pairs.first() else {
+            return true;
+        };
+        pairs.iter().all(|(value, shifted)| {
+            let scale = value
+                .abs()
+                .max(first_value.abs())
+                .max(shifted.abs())
+                .max(1.0);
+            let scale = scale.max(first_shifted.abs());
+            ((shifted - value) - (first_shifted - first_value)).abs() <= TOLERANCE * scale
+        })
+    }
+
+    /// Whether the default domain keeps one `abs` argument of the key at one
+    /// sign (D45). The check reads only arguments on a variable of the
+    /// default; a written domain is the choice of the author.
+    fn hides_a_sign(&self, key: &Ast) -> bool {
+        if !self.defaulted.iter().any(|defaulted| *defaulted) {
+            return false;
+        }
+        let mut arguments = Vec::new();
+        collect_abs(key, &mut arguments);
+        arguments.into_iter().any(|argument| {
+            let on_default = free_vars(argument).iter().any(|name| {
+                self.vars
+                    .iter()
+                    .position(|listed| listed == name)
+                    .is_some_and(|index| self.defaulted[index])
+            });
+            on_default && self.keeps_one_sign(argument)
+        })
+    }
+
+    /// Whether the argument has one sign at each sample point, in both constant
+    /// environments. A value of 0 or one that is not finite does not refuse.
+    fn keeps_one_sign(&self, argument: &Ast) -> bool {
+        constant_values(self.up_to_constant)
+            .iter()
+            .all(|&constant| {
+                let mut seen_negative: Option<bool> = None;
+                for env in self.points_with_constants(constant) {
+                    let Some(value) = eval(argument, &env) else {
+                        return false;
+                    };
+                    if value == 0.0 {
+                        return false;
+                    }
+                    let negative = value < 0.0;
+                    if seen_negative.is_some_and(|seen| seen != negative) {
+                        return false;
+                    }
+                    seen_negative = Some(negative);
+                }
+                true
+            })
+    }
+
+    /// Whether each sample value of an author domain sits on a multiple of
+    /// 1/4 (D46): a multiple of `pi x` then has one value at each point. The
+    /// defaults never do, so only a written domain triggers the refusal.
+    fn quarter_points(&self) -> bool {
+        self.defaulted.iter().all(|defaulted| !defaulted)
+            && self.sample_points().iter().all(|env| {
+                self.vars
+                    .iter()
+                    .all(|name| env[name] * 4.0 == (env[name] * 4.0).trunc())
+            })
+    }
 }
 
 /// Whether the parser reads the name as one variable (`e` and `pi` are constants).
@@ -164,10 +283,11 @@ fn rational(text: &str) -> Option<f64> {
 ///
 /// # Errors
 ///
-/// Returns [`Undecidable`] if the parser refuses the key, if the key is not one
-/// expression, if it uses a name outside its variables, if it uses `log` or the
-/// e notation of a number (D28), or if it has a finite value at fewer than
-/// [`MIN_FINITE_POINTS`] sample points.
+/// Returns [`Undecidable`] for a key outside the rules: not one expression, a
+/// name outside its variables, `log` or the e notation (D28), a domain that
+/// puts each sample point on a quarter (D46), fewer than [`MIN_FINITE_POINTS`]
+/// finite points, a constant that is not additive (D44), or an `abs` argument
+/// that keeps one sign on the default domain (D45).
 pub fn expected(spec: &FunctionSpec, expected: &str) -> Result<Canon, Undecidable> {
     let normalized = normalize(expected);
     if let Some(reason) = ambiguous_notation(&normalized.source) {
@@ -185,12 +305,20 @@ pub fn expected(spec: &FunctionSpec, expected: &str) -> Result<Canon, Undecidabl
             "the authored function uses a name outside its variables",
         ));
     }
-    let points = spec.sample_points();
-    let finite = points.iter().filter_map(|env| eval(formula, env)).count();
-    if finite < MIN_FINITE_POINTS {
+    if spec.quarter_points() {
+        return Err(Undecidable::new(QUARTER_POINTS));
+    }
+    let spec = spec.for_key(formula);
+    if spec.finite_points(formula) < MIN_FINITE_POINTS {
         return Err(Undecidable::new(
             "the authored function has fewer than six finite sample points",
         ));
+    }
+    if spec.up_to_constant && !spec.constant_is_additive(formula) {
+        return Err(Undecidable::new(NOT_ADDITIVE));
+    }
+    if spec.hides_a_sign(formula) {
+        return Err(Undecidable::new(UNTESTED_ABS));
     }
     Ok(canon(&tree).unwrap_or(Canon::Label(normalized.string_key)))
 }
@@ -231,33 +359,34 @@ pub fn check(spec: &FunctionSpec, expected: &str, learner: &str) -> Outcome {
 ///
 /// The steps: (1) equal canonical forms are correct; (2) a learner name outside
 /// the variables is wrong; (3) a learner value that is not finite where the key
-/// is finite is wrong; (4) each difference must be in the tolerance; (5) with
-/// `up_to_constant`, the spread of the differences must be in the tolerance,
-/// with each constant name at 0 and again with each constant name at 1 (D34).
-/// A key with fewer than [`MIN_FINITE_POINTS`] finite points gives "wrong".
+/// is finite is wrong; (4) without `up_to_constant`, each difference is within
+/// `TOLERANCE * max(1, |key|)` (D43); (5) with `up_to_constant`, the change of
+/// the two formulas from the first point agrees (D42), with each constant name
+/// at 0 and again at 1 (D34).
 #[must_use]
 pub fn grade(expected: &Ast, learner: &Ast, spec: &FunctionSpec) -> Verdict {
     let (expected, learner) = (body(expected), body(learner));
+    let spec = spec.for_key(expected);
     let same_form =
         matches!((canon(expected), canon(learner)), (Ok(key), Ok(answer)) if key == answer);
     Verdict {
-        correct: same_form || (spec.permits_each_name(learner) && agrees(expected, learner, spec)),
+        correct: same_form || (spec.permits_each_name(learner) && agrees(expected, learner, &spec)),
         notation: false,
     }
 }
 
-/// Whether the two formulas agree. With `up_to_constant` the rule must hold
-/// with each constant name at 0 and again at 1 (D34): with 0 only, the learner
-/// term `C*x` has no effect and a wrong antiderivative gets "correct".
+/// Whether the two formulas agree. With `up_to_constant` the rule must hold with
+/// each constant name at 0 and again at 1 (D34): with 0 only, `C*x` gets "correct".
 fn agrees(expected: &Ast, learner: &Ast, spec: &FunctionSpec) -> bool {
-    let constants: &[f64] = if spec.up_to_constant {
-        &[0.0, 1.0]
-    } else {
-        &[0.0]
-    };
-    constants
+    constant_values(spec.up_to_constant)
         .iter()
         .all(|constant| agrees_at(expected, learner, spec, *constant))
+}
+
+/// The constant values that a grade reads: with `up_to_constant`, each constant
+/// name is graded at 0 and again at 1 (D34).
+fn constant_values(up_to_constant: bool) -> &'static [f64] {
+    if up_to_constant { &[0.0, 1.0] } else { &[0.0] }
 }
 
 fn agrees_at(expected: &Ast, learner: &Ast, spec: &FunctionSpec, constant: f64) -> bool {
@@ -275,7 +404,7 @@ fn agrees_at(expected: &Ast, learner: &Ast, spec: &FunctionSpec, constant: f64) 
         return false;
     }
     if spec.up_to_constant {
-        constant_difference(&pairs)
+        variation(&pairs)
     } else {
         pairs
             .iter()
@@ -283,18 +412,57 @@ fn agrees_at(expected: &Ast, learner: &Ast, spec: &FunctionSpec, constant: f64) 
     }
 }
 
-/// Whether `key - answer` is one constant across the points.
-fn constant_difference(pairs: &[(f64, f64)]) -> bool {
-    let scale = pairs
-        .iter()
-        .fold(1.0_f64, |scale, (key, _)| scale.max(key.abs()));
-    let (low, high) = pairs
-        .iter()
-        .map(|(key, answer)| key - answer)
-        .fold((f64::INFINITY, f64::NEG_INFINITY), |(low, high), value| {
-            (low.min(value), high.max(value))
-        });
-    high - low <= TOLERANCE * scale
+/// Whether the change of the two formulas from the first pair agrees at each
+/// point (D42): `|(k_j - k_0) - (l_j - l_0)| <= TOLERANCE * max(1, |k_j|,
+/// |k_0|)`. The scale reads key values only. The old spread rule made one
+/// large learner constant correct for every key.
+fn variation(pairs: &[(f64, f64)]) -> bool {
+    let (first_key, first_answer) = pairs[0];
+    pairs.iter().all(|(key, answer)| {
+        ((key - first_key) - (answer - first_answer)).abs()
+            <= TOLERANCE * key.abs().max(first_key.abs()).max(1.0)
+    })
+}
+
+/// Collect the argument of each `abs` node, in reading order.
+fn collect_abs<'a>(tree: &'a Ast, arguments: &mut Vec<&'a Ast>) {
+    match tree {
+        Ast::Func(name, items) => {
+            if name == "abs" && items.len() == 1 {
+                arguments.push(&items[0]);
+            }
+            for item in items {
+                collect_abs(item, arguments);
+            }
+        }
+        Ast::Sqrt(inner) | Ast::Neg(inner) => collect_abs(inner, arguments),
+        Ast::Pow(base, _) => collect_abs(base, arguments),
+        Ast::RationalPow { base, .. } => collect_abs(base, arguments),
+        Ast::Div(left, right) => {
+            collect_abs(left, arguments);
+            collect_abs(right, arguments);
+        }
+        Ast::Add(items)
+        | Ast::Mul(items)
+        | Ast::Tuple(items)
+        | Ast::Set(items)
+        | Ast::List(items) => {
+            items.iter().for_each(|item| collect_abs(item, arguments));
+        }
+        Ast::Interval { lo, hi, .. } | Ast::Chain { lo, hi, .. } => {
+            collect_abs(lo, arguments);
+            collect_abs(hi, arguments);
+        }
+        Ast::Ineq { bound, .. }
+        | Ast::Quantity { value: bound, .. }
+        | Ast::Assign { value: bound, .. } => collect_abs(bound, arguments),
+        Ast::Integer(_)
+        | Ast::Decimal { .. }
+        | Ast::Fraction { .. }
+        | Ast::Mixed { .. }
+        | Ast::Var(_)
+        | Ast::Const(_) => {}
+    }
 }
 
 /// The formula under one leading label, or the tree itself.

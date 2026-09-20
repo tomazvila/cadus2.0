@@ -16,7 +16,7 @@ use num_bigint::BigInt;
 
 use cadus_core::answer::ast::Ast;
 use cadus_core::answer::contract::function::CONSTANT_NAMES;
-use cadus_core::answer::{AnswerContract, normalize, parse};
+use cadus_core::answer::{AnswerContract, Outcome, check_contract, normalize, parse};
 use cadus_core::template::eval::write;
 
 /// Build one wrong variant of an authored answer, if any mutation applies.
@@ -34,15 +34,22 @@ pub fn mutate_plus_one(answer: &str) -> Option<String> {
 /// A `function` key gets `2*(E) + v`: `v` is the first variable, and `E` is the
 /// key with no leading `name =` label and, with `up_to_constant`, with no
 /// trailing constant term. The `+1` variant of a formula stays correct with
-/// `up_to_constant`, so it is not in use for this kind. Each other contract
-/// gets [`mutate_plus_one`].
+/// `up_to_constant`, so it is not in use for this kind. The frozen mutant is
+/// the key itself for `E = -v` (the keys `-x`, `-x + C`, `y = 5 - x + C`), so
+/// D47 grades the mutant first: when it grades correct, the mutant is
+/// `2*(E) + v^2`. When even that grades correct, no distinct mutant exists
+/// (`no-distinct-mutant`); the returned mutant then still grades correct, so
+/// the caller keeps the item on the failure list and the rule fails closed.
+/// Each other contract gets [`mutate_plus_one`].
 #[must_use]
 pub fn mutant_for(answer: &str, contract: Option<&AnswerContract>) -> Option<String> {
-    let Some(AnswerContract::Function {
-        vars,
-        up_to_constant,
-        ..
-    }) = contract
+    let Some(
+        contract @ AnswerContract::Function {
+            vars,
+            up_to_constant,
+            ..
+        },
+    ) = contract
     else {
         return mutate_plus_one(answer);
     };
@@ -55,8 +62,29 @@ pub fn mutant_for(answer: &str, contract: Option<&AnswerContract>) -> Option<Str
     } else {
         formula
     };
-    vars.first()
-        .map(|variable| format!("2*({formula}) + {variable}"))
+    let Some(variable) = vars.first() else {
+        return mutate_plus_one(answer);
+    };
+    let first = format!("2*({formula}) + {variable}");
+    if misses(answer, &first, contract) {
+        return Some(first);
+    }
+    let second = format!("2*({formula}) + {variable}^2");
+    if misses(answer, &second, contract) {
+        return Some(second);
+    }
+    // no-distinct-mutant: both frozen mutants grade correct. Returning the
+    // second one keeps the item on the failure list (D47 fails closed).
+    Some(second)
+}
+
+/// Whether one mutant of a `function` key does not grade correct: a verdict
+/// that is wrong or undecidable never accepts a learner answer.
+fn misses(key: &str, mutant: &str, contract: &AnswerContract) -> bool {
+    !matches!(
+        check_contract(key, mutant, contract.clone()),
+        Outcome::Decided(verdict) if verdict.correct
+    )
 }
 
 /// Remove one trailing `+ C`, `+ c`, `+ K` or `+ k` term.
@@ -194,6 +222,32 @@ mod tests {
             ("x - c", &constant, "2*(x - c) + x"),
         ] {
             assert_eq!(mutant_for(key, Some(contract)).as_deref(), Some(mutant));
+        }
+    }
+
+    #[test]
+    fn the_squared_mutant_serves_when_the_first_grades_correct() {
+        // D47: the first mutant is the key itself for `E = -v`.
+        let x: AnswerContract = serde_json::from_str(r#"{"kind":"function","vars":["x"]}"#)
+            .ok()
+            .unwrap_or(AnswerContract::None);
+        let constant: AnswerContract =
+            serde_json::from_str(r#"{"kind":"function","vars":["x"],"up_to_constant":true}"#)
+                .ok()
+                .unwrap_or(AnswerContract::None);
+        for (key, contract, mutant) in [
+            ("-x", &x, "2*(-x) + x^2"),
+            ("-x + C", &constant, "2*(-x) + x^2"),
+            ("y = 5 - x + C", &constant, "2*(5 - x) + x^2"),
+        ] {
+            assert_eq!(mutant_for(key, Some(contract)).as_deref(), Some(mutant));
+            assert!(
+                matches!(
+                    check_contract(key, mutant, contract.clone()),
+                    Outcome::Decided(verdict) if !verdict.correct
+                ),
+                "{key}: {mutant}"
+            );
         }
     }
 

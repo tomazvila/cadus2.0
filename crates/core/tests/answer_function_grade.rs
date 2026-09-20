@@ -10,6 +10,9 @@ const X_CONSTANT: &str = r#"{"kind":"function","vars":["x"],"up_to_constant":tru
 const XY: &str = r#"{"kind":"function","vars":["x","y"]}"#;
 const T: &str = r#"{"kind":"function","vars":["t"]}"#;
 const FEW_POINTS: &str = "the authored function has fewer than six finite sample points";
+/// A positive domain for the identities that hold on the positive numbers only
+/// (D45 makes the default domain symmetric, where `2 ln(x)` is not finite).
+const X_POSITIVE: &str = r#"{"kind":"function","vars":["x"],"domain":{"x":["1/4","11/4"]}}"#;
 
 fn contract(doc: &str) -> AnswerContract {
     serde_json::from_str(doc).unwrap()
@@ -39,7 +42,6 @@ fn equal_formulas_in_a_different_form_are_correct() {
         ("sec(x)^2", "1 + tan(x)^2"),
         ("(x+2)/(x+1)^2", "1/(x+1) + 1/(x+1)^2"),
         ("x+1", "(x^2-1)/(x-1)"),
-        ("ln(x^2)", "2 ln(x)"),
         ("ln(x+1)", "ln(abs(x+1))"),
         ("x/sqrt(x^2+9)", "x/sqrt(x^2+9)"),
         ("x/sqrt(x^2+9)", "x*(x^2+9)^(-1/2)"),
@@ -50,6 +52,10 @@ fn equal_formulas_in_a_different_form_are_correct() {
             "{expected} / {learner}"
         );
     }
+    // `ln(x^2)` needs a positive domain: the symmetric default of D45 makes
+    // `2 ln(x)` not finite at the negative points, and that is "wrong".
+    assert_eq!(verdict(X_POSITIVE, "ln(x^2)", "2 ln(x)"), Ok(true));
+    assert_eq!(verdict(X_POSITIVE, "ln(x^2)", "2*ln(abs(x))"), Ok(true));
     assert_eq!(verdict(T, "y = t*e^(-t)", "t e^(-t)"), Ok(true));
     assert_eq!(verdict(T, "y = t*e^(-t)", "y = t/e^t"), Ok(true));
     assert_eq!(verdict(T, "t*e^(-t)", "z = t/e^t"), Ok(true));
@@ -64,6 +70,9 @@ fn different_formulas_are_wrong() {
         ("x^2", "x^2 + C"),
         ("x/sqrt(x^2+9)", "2*(x/sqrt(x^2+9)) + x"),
         ("0.3679", "e^(-1)"),
+        // D43: the scale of rule (4) is the key value at that point only.
+        ("x", "x + 10^20"),
+        ("e^(10x)", "e^(10x) + x"),
     ] {
         assert_eq!(
             verdict(X, expected, learner),
