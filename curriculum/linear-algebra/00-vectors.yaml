@@ -56,6 +56,18 @@ topics:
           - problem: 'Write the vector from $P(1, 1)$ to $Q(4, 0)$ in $\mathbf{i}, \mathbf{j}$ notation.'
             answer: '$3i - j$'
             solution_sketch: 'Component form is $(3, -1)$, so $3i - j$.'
+          - problem: "A velocity vector has component form $(-3, 5)$. Which expression writes this velocity in $\\mathbf{i}, \\mathbf{j}$ notation?"
+            answer: "-3i + 5j"
+            answer_contract: {"kind": "label", "options": [["-3i + 5j"], ["-3i - 5j"], ["5i - 3j"], ["-5i + 3j"]]}
+            solution_sketch: "The full object is the velocity vector with component form (-3, 5), where the first entry is the horizontal component and the second entry is the vertical component. Step 1 (read components): the horizontal component is -3 and the vertical component is 5. Step 2 (standard basis rule): the horizontal component becomes the coefficient of i and the vertical component becomes the coefficient of j, so the vector is -3i + 5j. The option -3i - 5j flips the sign of the vertical component; the option 5i - 3j swaps the two components; the option -5i + 3j swaps the components and flips both signs. The answer is -3i + 5j."
+          - problem: "Let $A(1, -2, 4)$ and $B(-3, 0, -2)$ be points. Which expression gives the vector from $A$ to $B$ in $\\mathbf{i}, \\mathbf{j}, \\mathbf{k}$ notation?"
+            answer: "-4i + 2j - 6k"
+            answer_contract: {"kind": "label", "options": [["-4i + 2j - 6k"], ["4i - 2j + 6k"], ["-4i - 2j - 6k"], ["-4i + 2j + 6k"]]}
+            solution_sketch: "The full object is the vector from A(1, -2, 4) to B(-3, 0, -2), which is B minus A taken component by component. Step 1 (subtraction rule): -3 - 1 = -4, 0 - (-2) = 2, and -2 - 4 = -6, so the component form is (-4, 2, -6). Step 2 (standard basis rule): the three components are the coefficients of i, j, k in order, giving -4i + 2j - 6k. The option 4i - 2j + 6k subtracts in the reverse order A - B; the option -4i - 2j - 6k flips the sign of the j coefficient; the option -4i + 2j + 6k flips the sign of the k coefficient. The answer is -4i + 2j - 6k."
+          - problem: "The vector $\\mathbf{v} = -2\\mathbf{k} + \\mathbf{i} + 4\\mathbf{j}$ has its terms written out of the usual order. Give the component form of $\\mathbf{v}$ as (a, b, c)."
+            answer: "(1, 4, -2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The full object is the vector v = -2k + i + 4j, whose terms are listed out of the usual order. Step 1 (standard basis rule): the component form lists the coefficient of i first, then the coefficient of j, then the coefficient of k, and a unit vector written alone has coefficient 1. Step 2 (match coefficients): the coefficient of i is 1 because i appears alone, the coefficient of j is 4, and the coefficient of k is -2. The component form of v is (1, 4, -2)."
         constraints: "integer components in -9..9; dimensions 2 or 3"
     diagnostic_exemplar:
       problem: 'The vector from $P(-1, 3)$ to $Q(2, -2)$ is redrawn so that it starts at $R(1, 0)$. Write the vector from the origin to its new endpoint in $\mathbf{i}, \mathbf{j}$ notation.'
@@ -536,15 +548,27 @@ topics:
         name: Norm identities and comparisons
         key_prerequisites: [vector-norms-unit-vectors]
         exemplars:
-          - problem: 'Verify the triangle inequality $\|\mathbf{u} + \mathbf{v}\| \leq \|\mathbf{u}\| + \|\mathbf{v}\|$ for $\mathbf{u} = (3, 0)$, $\mathbf{v} = (0, 4)$.'
-            answer: "5 <= 7, so it holds"
-            answer_contract: {kind: none}
-            solution_sketch: '$\|\mathbf{u} + \mathbf{v}\| = \|(3, 4)\| = 5$ and $3 + 4 = 7$.'
           - problem: 'If $\|\mathbf{v}\| = 5$, what is $\|\mathbf{v}/5\|$?'
             answer: "1"
           - problem: 'Find all $k$ with $\|(k, 0)\| = 3$; give the answer as a set.'
             answer: '$\{-3, 3\}$'
             solution_sketch: '$\|(k, 0)\| = |k|$.'
+          - problem: "For $u = (3, 0)$ and $v = (0, 4)$, compute $\\|u\\| + \\|v\\| - \\|u + v\\|$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is $\\|u\\| + \\|v\\| - \\|u + v\\|$, the gap in the triangle inequality. Step 1, compute the norms by the norm definition: $\\|u\\| = 3$ and $\\|v\\| = 4$. Step 2, add the vectors: $u + v = (3, 4)$, so $\\|u + v\\| = 5$. Step 3, subtract: $3 + 4 - 5 = 2$. The difference is 2."
+          - problem: "For $v = (1, 2)$, compute $\\|3v\\|$ using the identity $\\|cv\\| = |c| \\, \\|v\\|$."
+            answer: "3sqrt(5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is $\\|3v\\|$ for $v = (1, 2)$. Step 1, compute the norm by the norm definition: $\\|v\\| = \\sqrt{1^2 + 2^2} = \\sqrt{5}$. Step 2, apply the scaling identity $\\|cv\\| = |c| \\, \\|v\\|$ with $c = 3$: $\\|3v\\| = 3\\sqrt{5}$. So the norm of $3v$ is 3sqrt(5)."
+          - problem: "For $u = (8, 15)$ and $v = (-16, -30)$, compute $\\|u\\| + \\|v\\| - \\|u + v\\|$."
+            answer: "34"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is $\\|u\\| + \\|v\\| - \\|u + v\\|$ for $u = (8, 15)$ and $v = (-16, -30)$. Step 1, compute the norms by the norm definition: $\\|u\\| = \\sqrt{64 + 225} = 17$ and $\\|v\\| = \\sqrt{256 + 900} = 34$, which also follows from the scaling identity since $v = -2u$. Step 2, add the vectors: $u + v = (-8, -15)$, so $\\|u + v\\| = 17$. Step 3, subtract: $17 + 34 - 17 = 34$. The triangle-inequality gap is 34."
+          - problem: "For $w = (3, 4)$, find the positive scalar $c$ with $\\|cw\\| = 6$; give the answer as a fraction."
+            answer: "6/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the positive scalar $c$ with $\\|cw\\| = 6$ for $w = (3, 4)$. Step 1, compute the norm by the norm definition: $\\|w\\| = \\sqrt{9 + 16} = 5$. Step 2, apply the scaling identity $\\|cw\\| = c \\, \\|w\\|$ for positive $c$: $5c = 6$. Step 3, solve the equation: $c = 6/5$. The scalar is 6/5."
         constraints: "clean integer norms; answers exact"
     diagnostic_exemplar:
       problem: 'Let $\mathbf{u} = (1, 1)$ and $\mathbf{v} = (5, 7)$. Using $\|c\mathbf{w}\| = |c|\,\|\mathbf{w}\|$, compute $\|\frac{1}{2}(\mathbf{u} + \mathbf{v})\|$, the distance from the origin to the midpoint of $\mathbf{u}$ and $\mathbf{v}$.'
@@ -583,6 +607,18 @@ topics:
             answer: "7"
           - problem: 'Compute $(1, 2, 2) \cdot (1, 2, 2)$.'
             answer: "9"
+          - problem: "Let $\\mathbf{u} = (6, 8)$. Compute $\\mathbf{u} \\cdot \\mathbf{u}$, then check that it equals $\\|\\mathbf{u}\\|^2$."
+            answer: "100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full object: $\\mathbf{u} = (6, 8)$. Rule: the dot product of a vector with itself is the sum of the squares of its components. Compute $6^2 + 8^2 = 36 + 64 = 100$. The length is $\\sqrt{100} = 10$, so $\\|\\mathbf{u}\\|^2 = 100$ checks. The answer is 100."
+          - problem: "Let $\\mathbf{v} = (2, 6, 9)$. Compute $\\mathbf{v} \\cdot \\mathbf{v}$."
+            answer: "121"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full object: $\\mathbf{v} = (2, 6, 9)$. Rule: a self-dot product in space adds the squares of the three components. Compute $2^2 + 6^2 + 9^2 = 4 + 36 + 81 = 121$. The answer is 121."
+          - problem: "If $\\|\\mathbf{w}\\| = 13$, find $\\mathbf{w} \\cdot \\mathbf{w}$."
+            answer: "169"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the identity $\\mathbf{w} \\cdot \\mathbf{w} = \\|\\mathbf{w}\\|^2$. Square the given length: $13^2 = 169$. Therefore $\\mathbf{w} \\cdot \\mathbf{w} = 169$. The answer is 169."
         constraints: "perfect-square self-products"
       - id: kp2
         name: Dot products in the plane
@@ -619,6 +655,18 @@ topics:
             solution_sketch: '$6 - 2 - 4 = 0$.'
           - problem: 'Compute $(1, 1, 1) \cdot (4, -2, 5)$.'
             answer: "7"
+          - problem: "Compute $(3, -4, 2) \\cdot (1, 5, -3)$."
+            answer: "-23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the dot product rule, multiply matching components and add: $(3)(1) + (-4)(5) + (2)(-3)$. The three products are $3$, $-20$, and $-6$. Their sum is $3 - 20 - 6 = -23$. The dot product is -23."
+          - problem: "Compute $(-2, 6, 1) \\cdot (4, -1, 3)$."
+            answer: "-11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the dot product rule, multiply matching components and add: $(-2)(4) + (6)(-1) + (1)(3)$. The products are $-8$, $-6$, and $3$. Their sum is $-8 - 6 + 3 = -11$. The dot product is -11."
+          - problem: "For the vectors $(2, k, -3)$ and $(4, 1, 2)$, the dot product is $5$. Find $k$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let $k$ be the missing component. By the dot product rule, $(2)(4) + (k)(1) + (-3)(2) = 5$. Simplify: $8 + k - 6 = 5$, so $k + 2 = 5$. Solve: $k = 3$. The value is 3."
         constraints: "integer components in -9..9; dimension 3"
     diagnostic_exemplar:
       problem: 'Compute $\mathbf{u} \cdot \mathbf{u}$ for $\mathbf{u} = (2, -3, 6)$.'
@@ -653,17 +701,29 @@ topics:
         name: Orthogonality
         key_prerequisites: [computing-dot-products]
         exemplars:
-          - problem: 'Are $(4, -2)$ and $(1, 2)$ orthogonal?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$(4)(1) + (-2)(2) = 4 - 4 = 0$; zero dot product means orthogonal.'
+          - problem: "For u = (4, -2) and v = (1, 2), compute the dot product and decide whether the vectors are perpendicular. Give verdict and d."
+            answer: "verdict = orthogonal; d = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["orthogonal"], ["nonorthogonal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Compute the dot product of (4, -2) and (1, 2) using the dot product rule: 4*1 + (-2)*2 = 0. A zero dot product makes the vectors orthogonal. The wrong option nonorthogonal would come from treating a zero dot product as a nonzero one. verdict = orthogonal; d = 0."
+          - problem: "For u = (1, 2, 3) and v = (2, 1, -1), compute the dot product and decide whether the vectors are perpendicular. Give verdict and d."
+            answer: "verdict = nonorthogonal; d = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["orthogonal"], ["nonorthogonal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Compute the dot product of (1, 2, 3) and (2, 1, -1) using the dot product rule: 1*2 + 2*1 + 3*(-1) = 1. A nonzero dot product means the vectors are not orthogonal. The wrong option orthogonal would come from treating a nonzero dot product as zero. verdict = nonorthogonal; d = 1."
           - problem: 'Find $k$ so that $(2, k)$ is orthogonal to $(3, -6)$.'
             answer: "k = 1"
             solution_sketch: '$6 - 6k = 0$ forces $k = 1$.'
-          - problem: 'Are $(1, 2, 3)$ and $(2, 1, -1)$ orthogonal?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$2 + 2 - 3 = 1 \neq 0$.'
+          - problem: "Find k so that (k, 2, 1) is orthogonal to (2, -1, 4)."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the dot product of (k, 2, 1) and (2, -1, 4) using the dot product rule: 2k - 2 + 4 = 2k + 2. Set the dot product to zero for orthogonality: 2k + 2 = 0. Solve to get k = -1. The value is -1."
+          - problem: "Find k so that (6, k) is orthogonal to (2, -3)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the dot product of (6, k) and (2, -3) using the dot product rule: 12 - 3k. Orthogonality needs a zero dot product, so set 12 - 3k = 0. Solve to get k = 4. The value is 4."
+          - problem: "Find k so that (2, k, 5) is orthogonal to (k, -1, 3)."
+            answer: "-15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the dot product of (2, k, 5) and (k, -1, 3) using the dot product rule: 2k - k + 15 = k + 15. Set the dot product to zero: k + 15 = 0. Solve to get k = -15. The value is -15."
         constraints: "integer components; solve-for-k problems must have integer k"
       - id: kp2
         name: Acute, right, or obtuse from the sign
@@ -686,17 +746,29 @@ topics:
         name: Angle between vectors
         key_prerequisites: [computing-dot-products, right-triangle-trig]
         exemplars:
-          - problem: 'Find the angle between $(1, 0)$ and $(1, 1)$.'
-            answer: "45 degrees"
-            answer_contract: {kind: none}
-            solution_sketch: '$\cos\theta = \frac{1}{1 \cdot \sqrt{2}} = \frac{1}{\sqrt{2}}$, so $\theta = 45^\circ$.'
-          - problem: 'Find the angle between $(2, 2)$ and $(0, 3)$.'
-            answer: "45 degrees"
-            answer_contract: {kind: none}
-            solution_sketch: '$\cos\theta = \frac{6}{2\sqrt{2} \cdot 3} = \frac{1}{\sqrt{2}}$.'
+          - problem: "Find the angle between (1, 0) and (0, 1) in degrees."
+            answer: "90"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the dot-product angle formula: cos(theta) = u.v / (|u| |v|). Vectors u = (1, 0) and v = (0, 1). Dot product: u.v = 1*0 + 0*1 = 0. Norms: |u| = 1 and |v| = 1. Cosine: cos(theta) = 0 / (1*1) = 0. The angle in 0 to 180 degrees with cosine 0 is 90. The angle is 90."
+          - problem: "Find the angle between (2, 2) and (-3, 0) in degrees."
+            answer: "135"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the dot-product angle formula: cos(theta) = u.v / (|u| |v|). Vectors u = (2, 2) and v = (-3, 0). Dot product: u.v = 2*(-3) + 2*0 = -6. Norms: |u| = sqrt(8) = 2sqrt(2) and |v| = 3. Cosine: cos(theta) = -6 / (2sqrt(2)*3) = -1/sqrt(2). The angle in 0 to 180 degrees with cosine -1/sqrt(2) is 135. The angle is 135."
           - problem: 'Find $\cos\theta$ for the angle $\theta$ between $(1, 2)$ and $(2, 1)$.'
             answer: "4/5"
             solution_sketch: '$\cos\theta = \frac{2 + 2}{\sqrt{5}\sqrt{5}} = \frac{4}{5}$.'
+          - problem: "Find the angle between (1, 1, 0) and (1, 0, 1) in degrees."
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the dot-product angle formula: cos(theta) = u.v / (|u| |v|). Vectors u = (1, 1, 0) and v = (1, 0, 1). Dot product: u.v = 1*1 + 1*0 + 0*1 = 1. Norms: |u| = sqrt(2) and |v| = sqrt(2). Cosine: cos(theta) = 1 / (sqrt(2)*sqrt(2)) = 1/2. The angle in 0 to 180 degrees with cosine 1/2 is 60. The angle is 60."
+          - problem: "Find the angle between (1, 1, 0) and (-1, 0, 1) in degrees."
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the dot-product angle formula: cos(theta) = u.v / (|u| |v|). Vectors u = (1, 1, 0) and v = (-1, 0, 1). Dot product: u.v = 1*(-1) + 1*0 + 0*1 = -1. Norms: |u| = sqrt(2) and |v| = sqrt(2). Cosine: cos(theta) = -1 / (sqrt(2)*sqrt(2)) = -1/2. The angle in 0 to 180 degrees with cosine -1/2 is 120. The angle is 120."
+          - problem: "Find the angle between (1, 2) and (-3, -6) in degrees."
+            answer: "180"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the dot-product angle formula: cos(theta) = u.v / (|u| |v|). Vectors u = (1, 2) and v = (-3, -6). Dot product: u.v = 1*(-3) + 2*(-6) = -3 - 12 = -15. Norms: |u| = sqrt(5) and |v| = sqrt(45) = 3sqrt(5). Cosine: cos(theta) = -15 / (sqrt(5)*3sqrt(5)) = -15/15 = -1. The angle in 0 to 180 degrees with cosine -1 is 180. The angle is 180."
         constraints: "rig the numbers so cos(theta) is one of 0, +-1/2, +-1/sqrt(2), +-sqrt(3)/2, +-1, or a clean rational; angles in degrees"
     diagnostic_exemplar:
       problem: 'Find the angle between $\mathbf{u} = (3, 3)$ and $\mathbf{v} = (0, -5)$.'
@@ -738,6 +810,18 @@ topics:
           - problem: 'Given $\mathbf{u} \cdot \mathbf{v} = 4$, compute $(2\mathbf{u}) \cdot \mathbf{v}$.'
             answer: "8"
             solution_sketch: 'Scalars pull out: $2(\mathbf{u} \cdot \mathbf{v})$.'
+          - problem: "Suppose $\\mathbf{u} \\cdot \\mathbf{v} = 5$. Compute $\\mathbf{v} \\cdot (3\\mathbf{u})$."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By symmetry, $\\mathbf{v} \\cdot (3\\mathbf{u}) = (3\\mathbf{u}) \\cdot \\mathbf{v}$. By the scalar rule, $(3\\mathbf{u}) \\cdot \\mathbf{v} = 3(\\mathbf{u} \\cdot \\mathbf{v})$. Substitute $5$: $3 \\cdot 5 = 15$. The answer is 15."
+          - problem: "Let $\\mathbf{u} \\cdot (\\mathbf{v} + \\mathbf{w}) = 9$ and $\\mathbf{u} \\cdot \\mathbf{v} = 4$. Find $\\mathbf{u} \\cdot \\mathbf{w}$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By distributivity, $\\mathbf{u} \\cdot (\\mathbf{v} + \\mathbf{w}) = \\mathbf{u} \\cdot \\mathbf{v} + \\mathbf{u} \\cdot \\mathbf{w}$. Substitute the known values: $9 = 4 + \\mathbf{u} \\cdot \\mathbf{w}$. Subtract $4$: $\\mathbf{u} \\cdot \\mathbf{w} = 5$. The answer is 5."
+          - problem: "Suppose $\\mathbf{u} \\cdot \\mathbf{v} = -2$. Compute $(3\\mathbf{u}) \\cdot (-2\\mathbf{v})$."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Pull out both scalars: $(3\\mathbf{u}) \\cdot (-2\\mathbf{v}) = 3(-2)(\\mathbf{u} \\cdot \\mathbf{v})$. This equals $-6(\\mathbf{u} \\cdot \\mathbf{v})$ by the scalar rule. Substitute $-2$: $-6 \\cdot -2 = 12$. The answer is 12."
         constraints: "symbolic data with small integer dot products"
       - id: kp2
         name: Expanding norms of sums
@@ -749,27 +833,51 @@ topics:
           - problem: 'Given $\|\mathbf{u}\| = 2$, $\|\mathbf{v}\| = 1$, and $\mathbf{u} \cdot \mathbf{v} = 1$, compute $\|\mathbf{u} + \mathbf{v}\|^2$.'
             answer: "7"
             solution_sketch: '$4 + 2 \cdot 1 + 1 = 7$.'
-          - problem: 'If $\|\mathbf{u}\| = \|\mathbf{v}\|$, show that $(\mathbf{u} + \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v}) = 0$.'
-            answer: "It expands to ||u||^2 - ||v||^2 = 0"
-            answer_contract: {kind: none}
-            solution_sketch: 'Expand: $\mathbf{u} \cdot \mathbf{u} - \mathbf{u} \cdot \mathbf{v} + \mathbf{v} \cdot \mathbf{u} - \mathbf{v} \cdot \mathbf{v} = \|\mathbf{u}\|^2 - \|\mathbf{v}\|^2$.'
+          - problem: "Given $\\|\\mathbf{u}\\| = \\|\\mathbf{v}\\| = 2$, compute $(\\mathbf{u} + \\mathbf{v}) \\cdot (\\mathbf{u} - \\mathbf{v})$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: expand by bilinearity of the dot product: (u+v)·(u-v) = u·u - u·v + v·u - v·v. Step 2: use symmetry u·v = v·u and the definition of norm to get ||u||^2 - ||v||^2. Step 3: substitute ||u|| = ||v|| = 2, giving 4 - 4 = 0. The value is 0."
+          - problem: "Given $\\|\\mathbf{u}\\| = 2$, $\\|\\mathbf{v}\\| = 5$, and $\\mathbf{u} \\cdot \\mathbf{v} = -3$, compute $\\|\\mathbf{u} + \\mathbf{v}\\|^2$."
+            answer: "23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the norm-sum identity ||u+v||^2 = ||u||^2 + 2u·v + ||v||^2. Step 2: substitute ||u|| = 2, ||v|| = 5, and u·v = -3 to get 4 + 2(-3) + 25. Step 3: simplify 4 - 6 + 25 = 23. The value is 23."
+          - problem: "Given $\\|\\mathbf{u}\\| = 6$, $\\|\\mathbf{v}\\| = 3$, and $\\mathbf{u} \\cdot \\mathbf{v} = 4$, compute $\\|\\mathbf{u} - \\mathbf{v}\\|^2$."
+            answer: "37"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the difference identity ||u-v||^2 = ||u||^2 - 2u·v + ||v||^2. Step 2: substitute ||u|| = 6, ||v|| = 3, and u·v = 4 to get 36 - 2(4) + 9. Step 3: simplify 36 - 8 + 9 = 37. The value is 37."
+          - problem: "Given $\\|\\mathbf{u}\\|^2 = 16$, $\\|\\mathbf{v}\\|^2 = 25$, and $\\|\\mathbf{u} + \\mathbf{v}\\|^2 = 49$, find $\\mathbf{u} \\cdot \\mathbf{v}$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the norm-sum identity ||u+v||^2 = ||u||^2 + 2u·v + ||v||^2. Step 2: substitute 49 = 16 + 2u·v + 25. Step 3: solve 49 - 41 = 2u·v, so u·v = 4. The value is 4."
         constraints: "use the identity ||u+v||^2 = ||u||^2 + 2 u.v + ||v||^2 with small integer data"
       - id: kp3
         name: Verifying identities numerically
         key_prerequisites: [computing-dot-products, dot-product]
         exemplars:
-          - problem: 'Verify $\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}$ for $\mathbf{u} = (1, 2)$, $\mathbf{v} = (3, -1)$, $\mathbf{w} = (0, 4)$.'
-            answer: "Both sides equal 9"
-            answer_contract: {kind: none}
-            solution_sketch: 'Left: $(1, 2) \cdot (3, 3) = 9$. Right: $1 + 8 = 9$.'
-          - problem: 'Verify $\|\mathbf{u} + \mathbf{v}\|^2 = \|\mathbf{u}\|^2 + 2\,\mathbf{u} \cdot \mathbf{v} + \|\mathbf{v}\|^2$ for $\mathbf{u} = (3, 0)$, $\mathbf{v} = (0, 4)$.'
-            answer: "Both sides equal 25"
-            answer_contract: {kind: none}
-            solution_sketch: '$\|(3, 4)\|^2 = 25$ and $9 + 0 + 16 = 25$.'
-          - problem: 'Check the Cauchy-Schwarz inequality $|\mathbf{u} \cdot \mathbf{v}| \leq \|\mathbf{u}\|\,\|\mathbf{v}\|$ for $\mathbf{u} = (1, 2)$, $\mathbf{v} = (2, 1)$.'
-            answer: "4 <= 5, so it holds"
-            answer_contract: {kind: none}
-            solution_sketch: '$|\mathbf{u} \cdot \mathbf{v}| = 4$; $\|\mathbf{u}\|\,\|\mathbf{v}\| = \sqrt{5}\sqrt{5} = 5$.'
+          - problem: "For u = (2, 1), v = (1, 3), w = (4, -2), evaluate both sides of u · (v + w) = u · v + u · w. Find the common value."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is u · (v + w) = u · v + u · w with u = (2, 1), v = (1, 3), w = (4, -2). First compute the left side by vector addition and the dot product rule: v + w = (5, 1), so u · (v + w) = 2*5 + 1*1 = 11. Next compute the right side by the distributive rule: u · v = 2*1 + 1*3 = 5 and u · w = 2*4 + 1*(-2) = 6, so the sum is 11. The common value is 11."
+          - problem: "For u = (1, 1), v = (3, 0), evaluate both sides of ||u + v||^2 = ||u||^2 + 2 u · v + ||v||^2. Give the common value."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is ||u + v||^2 = ||u||^2 + 2 u · v + ||v||^2 with u = (1, 1), v = (3, 0). First compute the left side by vector addition and the norm-squared rule: u + v = (4, 1), so ||u + v||^2 = 4^2 + 1^2 = 17. Next compute the right side by the norm-squared rule and the dot product rule: ||u||^2 = 1^2 + 1^2 = 2, u · v = 1*3 + 1*0 = 3, ||v||^2 = 3^2 + 0^2 = 9, so 2 + 2*3 + 9 = 17. The common value is 17."
+          - problem: "For u = (3, 1) and v = (1, 2), evaluate both sides of (u + v) · (u - v) = ||u||^2 - ||v||^2. Find the common value."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is (u + v) · (u - v) = ||u||^2 - ||v||^2 with u = (3, 1), v = (1, 2). First compute the left side by vector addition, subtraction, and the dot product rule: u + v = (4, 3) and u - v = (2, -1), so (u + v) · (u - v) = 4*2 + 3*(-1) = 5. Next compute the right side by the norm-squared rule: ||u||^2 = 3^2 + 1^2 = 10 and ||v||^2 = 1^2 + 2^2 = 5, so the difference is 5. The common value is 5."
+          - problem: "For c = 3, u = (1, 2), v = (2, -1), evaluate both sides of (c u) · v = c (u · v). Find the common value."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is (c u) · v = c (u · v) with c = 3, u = (1, 2), v = (2, -1). First compute the left side by scalar multiplication and the dot product rule: c u = (3, 6), so (c u) · v = 3*2 + 6*(-1) = 0. Next compute the right side by the dot product rule and scalar multiplication: u · v = 1*2 + 2*(-1) = 0, so c (u · v) = 3*0 = 0. The common value is 0."
+          - problem: "For u = (2, -1) and v = (3, 4), evaluate both sides of u · v = v · u. Give the common value."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is u · v = v · u with u = (2, -1), v = (3, 4). First compute the left side by the dot product rule: u · v = 2*3 + (-1)*4 = 2. Next compute the right side by the dot product rule: v · u = 3*2 + 4*(-1) = 2. The common value is 2."
+          - problem: "For u = (2, 1), v = (1, 3), w = (1, -1), evaluate both sides of (u + v) · w = u · w + v · w. Find the common value."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is (u + v) · w = u · w + v · w with u = (2, 1), v = (1, 3), w = (1, -1). First compute the left side by vector addition and the dot product rule: u + v = (3, 4), so (u + v) · w = 3*1 + 4*(-1) = -1. Next compute the right side by the distributive rule: u · w = 2*1 + 1*(-1) = 1 and v · w = 1*1 + 3*(-1) = -2, so the sum is -1. The common value is -1."
         constraints: "small integer vectors; both sides must evaluate to the same clean number"
     diagnostic_exemplar:
       problem: 'Given $\|\mathbf{u}\| = 5$, $\|\mathbf{v}\| = 2$, and $\mathbf{u} \cdot \mathbf{v} = 3$, compute $\|\mathbf{u} + \mathbf{v}\|^2$.'
@@ -810,6 +918,18 @@ topics:
           - problem: 'Compute $(2, 1, -1) \times (0, 3, 2)$.'
             answer: "(5, -4, 6)"
             solution_sketch: '$(1 \cdot 2 - (-1) \cdot 3,\; (-1) \cdot 0 - 2 \cdot 2,\; 2 \cdot 3 - 1 \cdot 0)$.'
+          - problem: "Compute (2, -1, 1) x (1, 2, -2). Give the answer as (x, y, z)."
+            answer: "(0, 5, 5)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Cross product formula: (a1,a2,a3) x (b1,b2,b3) = (a2b3-a3b2, a3b1-a1b3, a1b2-a2b1). For a = (2,-1,1) and b = (1,2,-2), the components are (-1)(-2) - (1)(2) = 0, (1)(1) - (2)(-2) = 5, and (2)(2) - (-1)(1) = 5. The cross product is (0, 5, 5)."
+          - problem: "Compute the cross product of u = (2, -2, 1) and v = (1, 1, -1). Give the answer as (x, y, z)."
+            answer: "(1, 3, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Cross product formula: for u = (u1,u2,u3) and v = (v1,v2,v3), u x v = (u2v3-u3v2, u3v1-u1v3, u1v2-u2v1). With u = (2,-2,1) and v = (1,1,-1), the components are (-2)(-1) - (1)(1) = 1, (1)(1) - (2)(-1) = 3, and (2)(1) - (-2)(1) = 4. The cross product is (1, 3, 4)."
+          - problem: "The cross product (a, 2, -1) x (3, -2, 1) is (0, -4, -8). Find a."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Cross product formula: (a,2,-1) x (3,-2,1) = (2*1 - (-1)*(-2), (-1)*3 - a*1, a*(-2) - 2*3) = (0, -3 - a, -2a - 6). The given second component is -4, so -3 - a = -4, which gives a = 1. The value is 1."
         constraints: "integer components in -6..6; only 3-dimensional vectors"
       - id: kp2
         name: Algebraic properties
@@ -824,6 +944,18 @@ topics:
           - problem: 'Verify that $(1, 2, 3) \times (4, 5, 6) = (-3, 6, -3)$ is orthogonal to $(1, 2, 3)$: compute $(-3, 6, -3) \cdot (1, 2, 3)$.'
             answer: "0"
             solution_sketch: '$-3 + 12 - 9 = 0$, so the cross product is orthogonal to the first factor.'
+          - problem: "Let u cross v = (2, -7, 4). Find v cross u as (x, y, z)."
+            answer: "(-2, 7, -4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Anticommutativity rule: v cross u = -(u cross v). The given u cross v is (2, -7, 4). Negating each component gives (-2, 7, -4). The answer is (-2, 7, -4)."
+          - problem: "Compute (4, -1, 5) cross (4, -1, 5). Give the answer as (x, y, z)."
+            answer: "(0, 0, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Self-cross rule: any vector crossed with itself gives the zero vector. The vector is (4, -1, 5), so (4, -1, 5) cross (4, -1, 5) = (0, 0, 0). The answer is (0, 0, 0)."
+          - problem: "Let u = (2, -1, 3) and v = (1, 4, -2). It is known that u cross v = (-10, 7, 9). Compute (-10, 7, 9) dot v."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Orthogonality property: the cross product u cross v is orthogonal to v. Check by computing the dot product: (-10)(1) + (7)(4) + (9)(-2) = -10 + 28 - 18. The answer is 0."
         constraints: "test anticommutativity, u x u = 0, and orthogonality of the result to both factors"
       - id: kp3
         name: Areas via cross products
@@ -838,6 +970,18 @@ topics:
           - problem: 'Find the area of the triangle with edge vectors $(2, 1, 0)$ and $(1, 3, 0)$.'
             answer: "5/2"
             solution_sketch: 'Cross product $(0, 0, 5)$; triangle area is half the parallelogram: $\frac{5}{2}$.'
+          - problem: "A triangle has edge vectors (2, 2, 1) and (2, -1, -2). Find its area."
+            answer: "9/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The edge vectors are (2, 2, 1) and (2, -1, -2), and their cross product is (-3, 6, -6). By the cross product rule the norm is sqrt(9 + 36 + 36) = 9. By the triangle rule the area is half of the parallelogram area, so the area is 9/2."
+          - problem: "A parallelogram has adjacent sides (1, 0, 0) and (0, 3, 4). Find its area."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The adjacent sides are (1, 0, 0) and (0, 3, 4), and their cross product is (0, -4, 3). By the cross product rule the norm is sqrt(0 + 16 + 9) = 5. By the parallelogram rule this norm is the area, so the area is 5."
+          - problem: "A triangle has vertices A = (0, 0, 0), B = (1, 0, 0), C = (0, 3, 4). Find its area."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The vertices give edge vectors (1, 0, 0) and (0, 3, 4), and their cross product is (0, -4, 3). By the cross product rule the norm is sqrt(0 + 16 + 9) = 5. By the triangle rule the area is half of 5, so the area is 5/2."
         constraints: "choose vectors so the cross product has a clean integer norm (e.g. norm-9 or norm-5 patterns); halve for triangles"
     diagnostic_exemplar:
       problem: 'Find the area of the parallelogram spanned by $(3, 0, 4)$ and $(0, 5, 0)$.'
@@ -878,6 +1022,22 @@ topics:
           - problem: 'Find the scalar projection of $\mathbf{u} = (4, 2)$ onto $\mathbf{v} = (3, 4)$.'
             answer: "4"
             solution_sketch: '$\mathbf{u} \cdot \mathbf{v} = 12 + 8 = 20$; $\|\mathbf{v}\| = 5$; $20/5 = 4$.'
+          - problem: "Find the scalar projection of u = (6, 8) onto v = (3, 4)."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the scalar projection formula: the scalar projection of u onto v is (u dot v) divided by the norm of v. Compute u dot v = 6*3 + 8*4 = 50 and the norm of v = sqrt(3^2 + 4^2) = 5. Divide 50 by 5 to get 10. The scalar projection is 10."
+          - problem: "Find the scalar projection of u = (1, 1, 1) onto v = (1, 2, 2)."
+            answer: "5/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the scalar projection formula: comp_v u = (u dot v) / norm of v. Compute u dot v = 1*1 + 1*2 + 1*2 = 5. The norm of v = sqrt(1 + 4 + 4) = 3. Divide 5 by 3. The scalar projection is 5/3."
+          - problem: "Find the scalar projection of u = (4, -2) onto v = (0, 1)."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the scalar projection formula and note that the norm of v = 1. Compute u dot v = 4*0 + (-2)*1 = -2. Divide by the norm of v = 1. The scalar projection is -2."
+          - problem: "The scalar projection of u = (x, 1) onto v = (3, 4) is 1. Find x."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the scalar projection formula to write (u dot v) / norm of v = (3x + 4)/5. The norm of v is 5, so set (3x + 4)/5 = 1. Multiply by 5 to get 3x + 4 = 5, so 3x = 1. The value of x is 1/3."
         constraints: "pick v with integer norm (multiples of (3,4), (1,0), (0,1), (1,2,2)); integer or simple fraction answers"
       - id: kp2
         name: Vector projection
