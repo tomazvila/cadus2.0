@@ -698,6 +698,18 @@ topics:
           - problem: 'Evaluate $\lim_{x \to 0} \frac{\frac{1}{x + 3} - \frac{1}{3}}{x}$.'
             answer: "-1/9"
             solution_sketch: 'Combine over $3(x+3)$: the quotient is $\frac{-1}{3(x+3)} \to -\frac{1}{9}$.'
+          - problem: "Evaluate $\\lim_{x \\to 1} \\frac{x^3 - 1}{x^2 - 1}$."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is $\\lim_{x \\to 1} \\frac{x^3 - 1}{x^2 - 1}$. Step 1: substitute $x=1$ to get $0/0$, so choose factoring. Step 2: factor the numerator as $(x-1)(x^2+x+1)$ and the denominator as $(x-1)(x+1)$, then cancel the common factor $x-1$. Step 3: evaluate the reduced quotient $\\frac{x^2+x+1}{x+1}$ at $x=1$ by direct substitution to get $\\frac{3}{2}$. The limit is 3/2."
+          - problem: "Evaluate $\\lim_{x \\to 3} \\frac{x^2 - x - 6}{x^2 - 9}$."
+            answer: "5/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is $\\lim_{x \\to 3} \\frac{x^2 - x - 6}{x^2 - 9}$. Step 1: substitute $x=3$ to get $0/0$, so choose factoring. Step 2: factor the numerator as $(x-3)(x+2)$ and the denominator as $(x-3)(x+3)$, then cancel $x-3$. Step 3: the reduced quotient is $\\frac{x+2}{x+3}$, and direct substitution gives $\\frac{5}{6}$. The limit is 5/6."
+          - problem: "Evaluate $\\lim_{x \\to 0} \\frac{\\sqrt{x + 25} - 5}{x}$."
+            answer: "1/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is $\\lim_{x \\to 0} \\frac{\\sqrt{x + 25} - 5}{x}$. Step 1: substitute $x=0$ to get $0/0$, so choose rationalizing the numerator. Step 2: multiply numerator and denominator by $\\sqrt{x+25}+5$; the numerator becomes $x$ and cancels with the denominator $x$. Step 3: evaluate $\\frac{1}{\\sqrt{x+25}+5}$ at $x=0$ by direct substitution to get $\\frac{1}{10}$. The limit is 1/10."
         constraints: "mixed 0/0 forms requiring factoring, expanding, rationalizing, or combining fractions; state exact answers"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to 0} \frac{\frac{1}{x + 4} - \frac{1}{4}}{x}$.'
@@ -852,31 +864,55 @@ topics:
         exemplars:
           - problem: 'Find the vertical asymptote of $f(x) = \frac{x + 1}{x - 3}$.'
             answer: "x = 3"
-          - problem: 'Does $f(x) = \frac{x^2 - 4}{x - 2}$ have a vertical asymptote at $x = 2$?'
-            answer: "no — the factor cancels, leaving a hole at (2, 4)"
-            answer_contract: {kind: none}
-            solution_sketch: '$f(x) = x + 2$ for $x \neq 2$: the limit at $2$ is finite, so the gap is a removable hole, not an asymptote.'
-          - problem: 'Find all vertical asymptotes and holes of $f(x) = \frac{x + 5}{x^2 - 25}$.'
-            answer: "vertical asymptote x = 5; hole at x = -5"
-            answer_contract: {kind: none}
-            solution_sketch: '$f(x) = \frac{1}{x - 5}$ for $x \neq -5$: the surviving zero of the denominator gives the asymptote, the canceled one a hole.'
+          - problem: "For $f(x) = \\frac{x^2 - 4}{x - 2}$, factor and cancel first. Find the $y$-coordinate of the hole."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full object $f(x) = \\frac{x^2 - 4}{x - 2}$. Factor the numerator: $x^2 - 4 = (x - 2)(x + 2)$. Cancel the common factor $x - 2$ by the excluded-value restriction, so the reduced function is $x + 2$ for $x$ not equal to $2$. The canceled denominator zero $x = 2$ gives a hole, not a vertical asymptote, and the reduced value there is $2 + 2 = 4$. The y-coordinate of the hole is 4."
+          - problem: "For $f(x) = \\frac{x + 5}{x^2 - 25}$, factor and cancel first. Find the $x$-coordinate of the hole."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full object $f(x) = \\frac{x + 5}{x^2 - 25}$. Factor the denominator: $x^2 - 25 = (x - 5)(x + 5)$. Cancel the common factor $x + 5$ by the excluded-value restriction, leaving $\\frac{1}{x - 5}$ for $x$ not equal to $-5$. The surviving zero $x = 5$ gives the vertical asymptote, so the canceled zero $x = -5$ gives the hole. The x-coordinate of the hole is -5."
+          - problem: "For $f(x) = \\frac{(x + 2)(x - 5)}{(x + 2)(x - 4)}$, reduce the quotient to lowest terms first. Which is true of the graph at $x = -2$ and at $x = 4$?"
+            answer: "hole at x = -2, vertical asymptote at x = 4"
+            answer_contract: {"kind": "label", "options": [["hole at x = -2, vertical asymptote at x = 4"], ["vertical asymptote at x = -2, hole at x = 4"], ["holes at both x = -2 and x = 4"], ["vertical asymptotes at both x = -2 and x = 4"]]}
+            solution_sketch: "Start from the full object $f(x) = \\frac{(x + 2)(x - 5)}{(x + 2)(x - 4)}$. By the excluded-value restriction, the matching factor $x + 2$ in the numerator and the denominator is removed, leaving $\\frac{x - 5}{x - 4}$ for $x$ not equal to $-2$. The removed denominator zero $x = -2$ gives a hole, while the surviving denominator zero $x = 4$ gives a vertical asymptote. The option 'vertical asymptote at x = -2, hole at x = 4' swaps the two roles of the zeros. The option 'holes at both x = -2 and x = 4' wrongly removes the factor $x - 4$ as well. The option 'vertical asymptotes at both x = -2 and x = 4' wrongly keeps the factor $x + 2$ in the reduced quotient. The correct choice is hole at x = -2, vertical asymptote at x = 4."
+          - problem: "For $f(x) = \\frac{x^2 - 4}{x^2 - x - 6}$, factor and cancel first. Find the $y$-coordinate of the hole."
+            answer: "4/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full object $f(x) = \\frac{x^2 - 4}{x^2 - x - 6}$. Factor the numerator $x^2 - 4 = (x - 2)(x + 2)$ by the difference of squares. Factor the denominator $x^2 - x - 6 = (x - 3)(x + 2)$ by grouping or the product-sum method. Cancel the common factor $x + 2$ by the excluded-value restriction, leaving $\\frac{x - 2}{x - 3}$. The canceled zero $x = -2$ is the hole; the surviving zero $x = 3$ is the vertical asymptote. At $x = -2$ the reduced value is $\\frac{-4}{-5} = \\frac{4}{5}$. The y-coordinate of the hole is 4/5."
+          - problem: "For $f(x) = \\frac{x^2 - 1}{x^2 - 3x + 2}$, factor and cancel first. Evaluate the one-sided limit of $f(x)$ as $x$ approaches $2$ from the right."
+            answer: "infinity"
+            answer_contract: {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}
+            solution_sketch: "Start from the full object $f(x) = \\frac{x^2 - 1}{x^2 - 3x + 2}$. Factor the numerator $x^2 - 1 = (x - 1)(x + 1)$ and the denominator $x^2 - 3x + 2 = (x - 1)(x - 2)$. Cancel the common factor $x - 1$ by the excluded-value restriction, leaving $\\frac{x + 1}{x - 2}$ for $x$ not equal to $1$; the surviving zero $x = 2$ is a vertical asymptote and $x = 1$ is only a hole. By the one-sided limit law, near $x = 2$ from the right the numerator $x + 1$ is near $3$ and the denominator $x - 2$ is positive and approaching $0$, so the quotient grows without bound in the positive direction. The option 'does not exist' wrongly treats $x = 2$ like the canceled zero $x = 1$. The option '-infinity' makes a sign error on the denominator, which is positive from the right. The option '0' wrongly assumes any denominator zero forces the limit to $0$. The limit is infinity."
         constraints: "factor and cancel first; distinguish surviving denominator zeros (asymptotes) from canceled ones (holes)"
       - id: kp3
         name: Complete asymptote and end-behavior analysis
         key_prerequisites: [limits-at-infinity-rational, one-sided-limits]
         exemplars:
-          - problem: 'Find all vertical and horizontal asymptotes of $f(x) = \frac{2x^2}{x^2 - 9}$.'
-            answer: "vertical: x = 3 and x = -3; horizontal: y = 2"
-            answer_contract: {kind: none}
-            solution_sketch: 'The denominator vanishes (without cancellation) at $x = \pm 3$; equal degrees give the horizontal asymptote $y = 2$.'
-          - problem: 'Find all vertical and horizontal asymptotes of $f(x) = \frac{x - 1}{x^2 + 1}$.'
-            answer: "no vertical asymptote; horizontal: y = 0"
-            answer_contract: {kind: none}
-            solution_sketch: "no vertical asymptote; horizontal: y = 0"
-          - problem: 'Evaluate $\lim_{x \to 1} \frac{1}{(x - 1)^2}$.'
-            answer: "∞"
-            answer_contract: {kind: none}
-            solution_sketch: 'Both one-sided limits are $+\infty$ (the square keeps the denominator positive), so the two-sided infinite limit is $\infty$.'
+          - problem: "For f(x) = 2x^2/(x^2 - 9), find the x-values of all vertical asymptotes. Give the answer as a list of the x-values from smallest to largest, separated by commas."
+            answer: "-3, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Start with the full function f(x) = 2x^2/(x^2 - 9). By the factoring rule, the denominator is (x - 3)(x + 3), so the excluded values are x = -3 and x = 3. By the cancellation check, the numerator 2x^2 is not zero at either excluded value, so no factor cancels and both are vertical asymptotes. Ordered from smallest to largest, the values are -3 and 3. The answer is -3, 3."
+          - problem: "For f(x) = (x - 1)/(x^2 + 1), find the horizontal asymptote value y. Give the answer as a number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full function f(x) = (x - 1)/(x^2 + 1). The denominator x^2 + 1 is positive for every real x, so it has no zeros and there is no vertical asymptote. By the degrees rule for limits at infinity, the denominator has degree 2 and the numerator has degree 1, so the denominator dominates and f(x) tends to 0 as x grows. The answer is 0."
+          - problem: "Let f(x) = 1/(x - 1)^2. Evaluate the two-sided limit L = lim_{x -> 1} f(x) and the reciprocal limit r = lim_{x -> 1} 1/f(x). Give the answer as L = verdict word; r = value."
+            answer: "L = infinity; r = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["infinity"], ["-infinity"], ["DNE"], ["0"]]}, "name": "L"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Start with the full function f(x) = 1/(x - 1)^2. By the one-sided limits rule, the denominator is a square, so it stays positive on both sides of x = 1 and tends to 0; both one-sided limits are +infinity, so the two-sided limit L is infinity. For the reciprocal, 1/f(x) = (x - 1)^2, and by direct substitution the reciprocal limit r is (1 - 1)^2 = 0. The wrong verdicts: -infinity ignores the square, DNE would require the two one-sided limits to disagree, and 0 treats the denominator as a finite nonzero value. The answer is L = infinity; r = 0."
+          - problem: "Let f(x) = (x + 3)/(2x - 4). Evaluate the two-sided limit v = lim_{x -> 2} f(x), and find h, the horizontal asymptote value of f. Give the answer as v = verdict word; h = value."
+            answer: "v = DNE; h = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE"], ["infinity"], ["-infinity"], ["0"]]}, "name": "v"}, {"contract": {"kind": "exact"}, "name": "h"}]}
+            solution_sketch: "Start with the full function f(x) = (x + 3)/(2x - 4). By the one-sided limits rule, as x approaches 2 from the right the denominator tends to 0 through positive values while the numerator tends to 5, so the right-hand limit is +infinity; from the left the denominator tends to 0 through negative values, so the left-hand limit is -infinity. The one-sided limits disagree, so the two-sided limit v is DNE. By the degrees rule for limits at infinity, the numerator and denominator both have degree 1, so the horizontal asymptote value h is the ratio 1/2 of the leading coefficients. The wrong verdicts: infinity ignores the left side, -infinity ignores the right side, and 0 treats the denominator as a finite nonzero value. The answer is v = DNE; h = 1/2."
+          - problem: "For f(x) = (3x^2 - 1)/(2x^2 + 5), find the horizontal asymptote value y. Give the answer as a fraction."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full function f(x) = (3x^2 - 1)/(2x^2 + 5). The numerator and denominator both have degree 2, so by the degrees rule the horizontal asymptote is the ratio of the leading coefficients. Dividing numerator and denominator by x^2 gives (3 - 1/x^2)/(2 + 5/x^2), and the small terms vanish as x grows. The ratio of leading coefficients is 3/2. The answer is 3/2."
+          - problem: "For f(x) = (x^2 - 1)/(x^2 + 3x + 2), find the x-value of the vertical asymptote. Give the answer as a number."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full function f(x) = (x^2 - 1)/(x^2 + 3x + 2). By the factoring rule, the numerator is (x - 1)(x + 1) and the denominator is (x + 1)(x + 2). The common factor x + 1 cancels, so x = -1 is a hole, not an asymptote. The remaining denominator zero at x = -2 has no cancellation, so the only vertical asymptote is x = -2. The answer is -2."
         constraints: "rational functions; report every vertical and horizontal asymptote, or a two-sided infinite limit"
     diagnostic_exemplar:
       problem: 'Find all vertical asymptotes, all holes, and the horizontal asymptote of $f(x) = \frac{x - 3}{x^2 - 9}$.'
@@ -1052,6 +1088,18 @@ topics:
           - problem: 'Evaluate $\lim_{x \to \infty} \frac{\sin x}{x}$.'
             answer: "0"
             solution_sketch: '$-\frac{1}{x} \leq \frac{\sin x}{x} \leq \frac{1}{x}$ for $x > 0$, and both bounds tend to $0$.'
+          - problem: "Consider $\\lim_{x \\to 0} x^2 \\cos\\left(\\frac{1}{x}\\right)$. Give the natural lower bound, the natural upper bound, and the limit value."
+            answer: "lower = -x^2; upper = x^2; limit = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "lower"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "upper"}, {"contract": {"kind": "exact"}, "name": "limit"}]}
+            solution_sketch: "The full object is $\\lim_{x \\to 0} x^2 \\cos(1/x)$. Bound the trig factor: $-1 \\leq \\cos(1/x) \\leq 1$. Multiply by $x^2 \\geq 0$ to get $-x^2 \\leq x^2 \\cos(1/x) \\leq x^2$. Both bounds tend to $0$ by the limit laws, so the squeeze theorem gives lower = -x^2; upper = x^2; limit = 0."
+          - problem: "Consider $\\lim_{x \\to \\infty} \\frac{\\cos(3x)}{x}$. Give the natural lower bound, the natural upper bound, and the limit value."
+            answer: "lower = -1/x; upper = 1/x; limit = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "lower"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "upper"}, {"contract": {"kind": "exact"}, "name": "limit"}]}
+            solution_sketch: "The full object is $\\lim_{x \\to \\infty} \\cos(3x)/x$. Bound the trig factor: $-1 \\leq \\cos(3x) \\leq 1$. For $x > 0$, divide by $x$ to get $-1/x \\leq \\cos(3x)/x \\leq 1/x$. Both bounds tend to $0$ by the limit laws, so the squeeze theorem gives lower = -1/x; upper = 1/x; limit = 0."
+          - problem: "For all $x$ near $1$, a function satisfies $|f(x)| \\leq 5$, and $\\lim_{x \\to 1} (x-1)^2 = 0$. Apply the squeeze theorem to $f(x)(x-1)^2$. Give the lower bound, the upper bound, and the limit value."
+            answer: "lower = -5(x-1)^2; upper = 5(x-1)^2; limit = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "lower"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "upper"}, {"contract": {"kind": "exact"}, "name": "limit"}]}
+            solution_sketch: "The full object is $\\lim_{x \\to 1} f(x)(x-1)^2$. From $|f(x)| \\leq 5$ we get $-5 \\leq f(x) \\leq 5$. Multiply by $(x-1)^2 \\geq 0$: $-5(x-1)^2 \\leq f(x)(x-1)^2 \\leq 5(x-1)^2$. Both bounds tend to $0$ by the limit laws, so the squeeze theorem gives lower = -5(x-1)^2; upper = 5(x-1)^2; limit = 0."
         constraints: "a factor bounded between -1 and 1 times a factor tending to 0; answer is always 0"
       - id: kp3
         name: Know when squeezing is needed (and when nothing works)
@@ -1280,6 +1328,22 @@ topics:
           - problem: 'With the same $f$, let $h(x) = 2 - x^2$. Find $\lim_{x \to 0} f(h(x))$.'
             answer: "1"
             solution_sketch: '$h(x) \to 2$ from below, so the composite follows the left-hand limit of $f$: $1$.'
+          - problem: "Suppose $\\lim_{u \\to 5^-} f(u) = 3$ and $\\lim_{u \\to 5^+} f(u) = 8$. Let $g(x) = 5 + (x - 2)^2$. Find $\\lim_{x \\to 2} f(g(x))$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $\\lim_{x \\to 2} f(g(x))$, the inner function is $g(x) = 5 + (x - 2)^2$. Step 1 (inner limit): $(x - 2)^2 > 0$ for $x \\neq 2$, so $g(x)$ approaches $5$ from values greater than $5$. Step 2 (one-sided outer limit): the composite follows the right-hand limit of $f$ at $5$. The limit is 8."
+          - problem: "Suppose $\\lim_{u \\to 1^-} f(u) = -2$ and $\\lim_{u \\to 1^+} f(u) = 4$. Let $h(x) = 1 - (x - 3)^2$. Find $\\lim_{x \\to 3} f(h(x))$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $\\lim_{x \\to 3} f(h(x))$, $h(x)=1-(x-3)^2$ satisfies $h(x)<1$ for $x \\neq 3$, so it approaches $1$ from values less than $1$. Step 1 (inner limit) gives this side. Step 2 (one-sided outer limit) uses the left-hand limit of $f$ at $1$, which is $-2$. The limit is -2."
+          - problem: "Let $f(u) = u + 5$ for $u < 0$ and $f(u) = u^2$ for $u \\geq 0$. Let $g(x) = -x^2$. Find $\\lim_{x \\to 0} f(g(x))$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $\\lim_{x \\to 0} f(g(x))$, $g(x)=-x^2$ is negative for $x \\neq 0$, so it approaches $0$ from values less than $0$. Step 1 (inner limit) gives the side. Step 2 (one-sided outer limit) uses the left branch $f(u)=u+5$ near $0$. As $u \\to 0^-$, $u+5 \\to 5$, so the limit is 5."
+          - problem: "Suppose $\\lim_{u \\to 3^-} f(u) = 2$ and $\\lim_{u \\to 3^+} f(u) = 9$. Let $g(x) = 3 + \\sqrt{x}$. Find $\\lim_{x \\to 0^+} f(g(x))$."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $\\lim_{x \\to 0^+} f(g(x))$, the inner function is $g(x) = 3 + \\sqrt{x}$. Step 1 (inner limit and side): as $x \\to 0^+$, $\\sqrt{x} \\to 0$ through positive values, so $g(x)$ approaches $3$ from values greater than $3$. Step 2 (one-sided outer limit): the composite follows the right-hand limit of $f$ at $3$, which is $9$. The limit is 9."
         constraints: "inner function approaches its limit from one definite side; outer function has a jump there"
     diagnostic_exemplar:
       problem: 'Suppose $\lim_{u \to 4^-} f(u) = 2$ and $\lim_{u \to 4^+} f(u) = 7$, and let $g(x) = 4 + (x - 1)^2$. Find $\lim_{x \to 1} f(g(x))$.'
@@ -1544,14 +1608,30 @@ topics:
         name: Verify the hypotheses and conclude a root exists
         key_prerequisites: [continuity, evaluating-functions]
         exemplars:
-          - problem: 'Show that $f(x) = x^3 + x - 3$ has a root in $(1, 2)$.'
-            answer: "f is continuous, f(1) = -1 < 0 and f(2) = 7 > 0, so the IVT gives a root in (1, 2)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Polynomials are continuous; the sign change plus the IVT forces $f(c) = 0$ for some $c$ in $(1, 2)$.'
-          - problem: 'Does $f(x) = x^2 - 2$ have a root in $(0, 2)$? Justify with the IVT.'
-            answer: "yes — f(0) = -2 < 0 < f(2) = 2 and f is continuous"
-            answer_contract: {kind: none}
-            solution_sketch: "yes — f(0) = -2 < 0 < f(2) = 2 and f is continuous"
+          - problem: "The polynomial f(x) = x^3 + x - 3 is continuous on the closed interval [1, 2]. Evaluate f at the two endpoints and decide whether the Intermediate Value Theorem guarantees a root in the open interval (1, 2). Give the verdict word and the left endpoint value in the form verdict = <word>; left = <number>."
+            answer: "verdict = holds; left = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "left"}]}
+            solution_sketch: "Step 1, continuity: f is a polynomial, so it is continuous on [1, 2]. Step 2, evaluate: f(1) = 1 + 1 - 3 = -1 and f(2) = 8 + 2 - 3 = 7. Step 3, sign change: f(1) is negative and f(2) is positive, so the endpoint values have opposite signs. Step 4, IVT: continuity plus the sign change gives a c in (1, 2) with f(c) = 0. The wrong option fails is the error of ignoring the sign change. The verdict = holds; left = -1."
+          - problem: "The quadratic g(x) = x^2 - 12 is continuous on the closed interval [3, 4]. Evaluate g at the two endpoints and decide whether the Intermediate Value Theorem guarantees a root of g in the open interval (3, 4). Give the verdict word and the left endpoint value in the form verdict = <word>; left = <number>."
+            answer: "verdict = holds; left = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "left"}]}
+            solution_sketch: "Step 1, continuity: g is a polynomial, hence continuous on the closed interval [3, 4]. Step 2, evaluate: g(3) = 9 - 12 = -3 and g(4) = 16 - 12 = 4. Step 3, sign change: the values -3 and 4 have opposite signs, so the Intermediate Value Theorem applies. Step 4, conclusion: some c in (3, 4) satisfies g(c) = 0, indeed c = sqrt(12) is about 3.46. The wrong option fails ignores the sign change of the endpoint values. The verdict = holds; left = -3."
+          - problem: "The continuous function f(x) = x^3 - 3x - 1 has endpoint values of opposite sign on [1, 2]. State the endpoint value that is negative."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Evaluate the two endpoint values of f. f(1) = 1 - 3 - 1 = -3 and f(2) = 8 - 6 - 1 = 1. The opposite signs are exactly the sign change the Intermediate Value Theorem needs. The negative endpoint value is -3."
+          - problem: "The continuous function g(x) = x^2 - 6 has endpoint values of opposite sign on [2, 3]. State the endpoint value that is positive."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Evaluate the endpoints of g. g(2) = 4 - 6 = -2 and g(3) = 9 - 6 = 3. The sign change from -2 to 3 lets the Intermediate Value Theorem give a root in (2, 3). The positive endpoint value is 3."
+          - problem: "A projectile's height in metres after t seconds is h(t) = t^2 - 5t + 4 on the closed interval [0, 2], a polynomial and therefore continuous. Determine whether the Intermediate Value Theorem guarantees a time in the open interval (0, 2) when the height is zero, and report h(0). Give the verdict word and h(0) in the form verdict = <word>; h0 = <number>."
+            answer: "verdict = holds; h0 = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "h0"}]}
+            solution_sketch: "Step 1, continuity: the height is a polynomial in t, so it is continuous on [0, 2]. Step 2, evaluate: h(0) = 4 and h(2) = 4 - 10 + 4 = -2. Step 3, sign change: 4 and -2 have opposite signs, so the Intermediate Value Theorem applies. Step 4, conclusion: some c in (0, 2) has h(c) = 0. The wrong option fails misses the sign change. The verdict = holds; h0 = 4."
+          - problem: "The polynomial p(x) = x^3 - 4x + 1 is continuous on the closed interval [0, 1]. Check the endpoint values and decide whether the Intermediate Value Theorem gives a solution of p(x) = 0 in the open interval (0, 1). Give the verdict word and p(1) in the form verdict = <word>; p1 = <number>."
+            answer: "verdict = holds; p1 = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p1"}]}
+            solution_sketch: "Step 1, continuity: p is a polynomial, so it is continuous on [0, 1]. Step 2, evaluate: p(0) = 1 and p(1) = 1 - 4 + 1 = -2. Step 3, sign change: the values 1 and -2 have opposite signs, so the Intermediate Value Theorem applies. Step 4, conclusion: p(c) = 0 for some c in (0, 1). The wrong option fails ignores the sign change. The verdict = holds; p1 = -2."
         constraints: "cubic or quadratic with integer endpoint values of opposite sign; cite continuity + sign change"
       - id: kp2
         name: Locate a root interval from values

@@ -507,12 +507,28 @@ topics:
         name: Sign and units of the derivative
         key_prerequisites: [derivative-at-a-point, average-instantaneous-rate]
         exemplars:
-          - problem: '$f$ is decreasing near $x = 5$. What is the sign of $f''(5)$?'
-            answer: "negative"
-            answer_contract: {kind: none}
-            solution_sketch: "negative"
           - problem: '$s(t)$ gives a car''s position in kilometres after $t$ hours, and $s''(2) = 60$. What is the car''s speed at $t = 2$? Give the value with units.'
             answer: "60 km/h"
+          - problem: "$f$ is decreasing near $x = 5$. What is the sign of $f'(5)$? Select the correct sign."
+            answer: "negative"
+            answer_contract: {"kind": "label", "options": [["positive"], ["negative"], ["constant"], ["undefined"]]}
+            solution_sketch: "The full object is the sign of f'(5). The derivative sign of a decreasing function is negative. Since f is decreasing, f'(5) < 0, so the sign is negative. A learner who picks positive confuses increasing with decreasing; a learner who picks constant thinks a decreasing function must be flat; a learner who picks undefined assumes a corner where none is stated. The answer is negative."
+          - problem: "Water drains from a tank, so the volume $V(t)$ in litres after $t$ minutes is decreasing. The tank drains at $8$ litres per minute. Find $V'(3)$ in litres per minute; give the number with its sign."
+            answer: "-8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the rate V'(3) with its units. The units of a derivative are output units over input units, so V' is measured in litres per minute. Draining means the volume decreases as t increases, so the rate of change is negative and V'(3) = -8 litres per minute. The answer is -8."
+          - problem: "$f$ is increasing near $x = 2$. Give the sign of $f'(2)$ as 1 for positive, -1 for negative, and 0 for zero."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sign code of f'(2). The sign of the derivative tells whether the function is increasing or decreasing. Since f is increasing, f'(2) > 0, so the sign code is 1. The answer is 1."
+          - problem: "$f$ is decreasing near $x = 4$. Give the sign of $f'(4)$ as 1 for positive, -1 for negative, and 0 for zero."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sign code of f'(4). The sign of the derivative tells whether the function is increasing or decreasing. Since f is decreasing, f'(4) < 0, so the sign code is -1. The answer is -1."
+          - problem: "A table shows $f(1) = 3$ and $f(3) = 1$. Give the sign of $f'(1)$ as 1 for positive, -1 for negative, and 0 for zero."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sign code of f'(1). The average rate of change over [1,3] is (1 - 3)/(3 - 1) = -1, so f is decreasing near x = 1. Since f is decreasing, f'(1) < 0, so the sign code is -1. The answer is -1."
         constraints: "connect increasing/decreasing to derivative sign; units of f' are (output units)/(input units)"
     diagnostic_exemplar:
       problem: 'A car''s position is $s(t)$ kilometres after $t$ hours, with $s(1.9) = 95.2$ and $s(2.1) = 105.6$. Estimate the car''s speed at $t = 2$, in km/h.'
@@ -686,18 +702,30 @@ topics:
         name: Spot non-differentiable points
         key_prerequisites: [derivative-definition, one-sided-limits]
         exemplars:
-          - problem: '$f(x) = x^{1/3}$ has a vertical tangent at $x = 0$. Is $f$ differentiable there?'
-            answer: "no — the difference quotient tends to +∞ (vertical tangent)"
-            answer_contract: {kind: none}
-            solution_sketch: "no — the difference quotient tends to +∞ (vertical tangent)"
-          - problem: 'List the three standard graph features where a continuous function fails to be differentiable.'
-            answer: "corners, cusps, and vertical tangents"
-            answer_contract: {kind: none}
-            solution_sketch: "corners, cusps, and vertical tangents"
-          - problem: 'Can a function be differentiable at a jump discontinuity?'
-            answer: "no — differentiability requires continuity"
-            answer_contract: {kind: none}
-            solution_sketch: "no — differentiability requires continuity"
+          - problem: "The function f(x) = x^(2/3) fails to be differentiable at exactly one input. Which feature occurs there?"
+            answer: "cusp point"
+            answer_contract: {"kind": "label", "options": [["cusp point"], ["corner point"], ["vertical tangent"], ["discontinuity"]]}
+            solution_sketch: "The full function is f(x) = x^(2/3). Step 1 uses the cusp test: the base x is zero at 0 and the exponent 2/3 lies between 0 and 1, so the graph comes to a sharp point there. Step 2 checks the sign of the one-sided slopes from the difference quotient: the left slope tends to -infinity and the right slope tends to +infinity, so the infinite slopes have opposite signs. A corner point has two different finite slopes, a vertical tangent has one-sided slopes with the same infinite sign, and a discontinuity fails continuity, but f is continuous at 0. The feature is cusp point."
+          - problem: "The function f(x) = abs(x - 4) fails to be differentiable at exactly one input. Which feature occurs there?"
+            answer: "corner point"
+            answer_contract: {"kind": "label", "options": [["corner point"], ["cusp point"], ["vertical tangent"], ["discontinuity"]]}
+            solution_sketch: "The full function is f(x) = abs(x - 4). Step 1 uses the definition of absolute value: the inside x - 4 changes sign at x = 4. Step 2 applies the corner test: the left slope is -1 and the right slope is +1, so the two one-sided slopes are finite but differ. A cusp point has infinite one-sided slopes of opposite signs, a vertical tangent has infinite one-sided slopes of the same sign, and a discontinuity fails continuity, but this function is continuous at 4. The feature is corner point."
+          - problem: "The function f(x) = 1/(x - 2) fails to be differentiable at one input. At what x does this happen? Give the x-coordinate."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is f(x) = 1/(x - 2). Step 1 uses continuity: the denominator is zero at x = 2, so the function is not defined there. Step 2 applies the differentiability-implies-continuity rule: a point of discontinuity cannot be differentiable. The x-coordinate is 2."
+          - problem: "The function f(x) = abs(x + 2) is not differentiable at one input. At what x does this happen? Give the x-coordinate."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is f(x) = abs(x + 2). Step 1 uses the definition of absolute value: the inside x + 2 is zero at x = -2. Step 2 applies the corner test: the left slope is -1 and the right slope is 1, so the one-sided slopes differ. The x-coordinate is -2."
+          - problem: "The function f(x) = (x - 1)^(2/3) is not differentiable at one input. At what x does this happen? Give the x-coordinate."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is f(x) = (x - 1)^(2/3). Step 1 uses the cusp test: the base x - 1 is zero at x = 1. Step 2 checks the one-sided slopes; they tend to opposite infinities, so the graph has a cusp. The x-coordinate is 1."
+          - problem: "The function f(x) = (x - 3)^(1/3) has a vertical tangent at one input. At what x does this happen? Give the x-coordinate."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is f(x) = (x - 3)^(1/3). Step 1 uses the vertical-tangent test: the base x - 3 is zero at x = 3. Step 2 checks the difference quotient; it tends to infinity on both sides, so the graph has a vertical tangent. The x-coordinate is 3."
         constraints: "classify by feature (corner / cusp / vertical tangent / discontinuity); no computation beyond sign checks"
       - id: kp3
         name: Piecewise differentiability checks
