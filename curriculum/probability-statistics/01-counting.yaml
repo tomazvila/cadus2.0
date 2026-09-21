@@ -813,6 +813,22 @@ topics:
           - problem: 'From $8$ people, choose a $3$-person committee (no roles). How many ways?'
             answer: "56"
             solution_sketch: 'No roles, so order is irrelevant: $\binom{8}{3} = 56$.'
+          - problem: "From 7 people, choose a president, a vice-president, and a treasurer. State which tool applies and give the number of ways."
+            answer: "tool = permutation; count = 210"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["permutation"], ["combination"]]}, "name": "tool"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Full object: P(7,3) = 7*6*5 = 210. Step 1 (order test): the three roles are distinct, so order matters and the tool is permutation. Step 2 (permutation count): multiply the three decreasing choices, 7*6*5 = 210. The wrong option combination would ignore the roles and divide by 3!, giving 35. The answer is tool = permutation; count = 210."
+          - problem: "From 9 people, choose a 4-person committee. State which tool applies and give the number of ways."
+            answer: "tool = combination; count = 126"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["permutation"], ["combination"]]}, "name": "tool"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Full object: C(9,4) = (9*8*7*6)/(4*3*2*1) = 126. Step 1 (order test): a committee has no roles, so order does not matter and the tool is combination. Step 2 (combination count): divide the ordered choices by 4!, giving 126. The wrong option permutation would count each committee 4! times and give 3024. The answer is tool = combination; count = 126."
+          - problem: "In a race with 10 runners, the top three finish in order. State which tool applies and give the number of ordered finish lists."
+            answer: "tool = permutation; count = 720"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["permutation"], ["combination"]]}, "name": "tool"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Full object: P(10,3) = 10*9*8 = 720. Step 1 (order test): a finish list is ordered, so order matters and the tool is permutation. Step 2 (permutation count): choose first, second, and third in order, giving 720. The wrong option combination would treat the podium as an unordered set and give 120. The answer is tool = permutation; count = 720."
+          - problem: "A book club chooses 5 books from a list of 12 to read together. State which tool applies and give the number of possible sets."
+            answer: "tool = combination; count = 792"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["permutation"], ["combination"]]}, "name": "tool"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Full object: C(12,5) = (12*11*10*9*8)/(5*4*3*2*1) = 792. Step 1 (order test): a set of books has no order, so the tool is combination. Step 2 (combination count): divide the ordered choices by 5!, giving 792. The wrong option permutation would treat the set as a list and give 95040. The answer is tool = combination; count = 792."
         constraints: "paired contexts (roles vs plain committee, ranked finish vs chosen set); ask which tool applies and for the count"
       - id: kp2
         name: "Mixed multi-part counts"
