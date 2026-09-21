@@ -460,13 +460,29 @@ topics:
         name: Comparison, bounds, and symmetry
         key_prerequisites: [definite-integrals-as-area, left-right-riemann-sums]
         exemplars:
-          - problem: 'If $2 \leq f(x) \leq 5$ for all $x$ in $[1, 4]$, what bounds does this give on $\int_1^4 f(x)\,dx$?'
-            answer: "6 ≤ ∫ ≤ 15"
-            answer_contract: {kind: none}
-            solution_sketch: '$m(b - a) \leq \int \leq M(b - a)$ with $b - a = 3$.'
           - problem: 'Evaluate $\int_{-3}^{3} x^3 \, dx$ using symmetry.'
             answer: "0"
             solution_sketch: '$x^3$ is odd: the signed areas on $[-3, 0]$ and $[0, 3]$ cancel.'
+          - problem: "Suppose 2 <= f(x) <= 6 for every x in [1, 4]. Give the lower and upper bounds on the integral from 1 to 4 of f(x) dx in the form lower = L; upper = U."
+            answer: "lower = 6; upper = 18"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lower"}, {"contract": {"kind": "exact"}, "name": "upper"}]}
+            solution_sketch: "The object is the integral from 1 to 4 of f(x) dx. The min-max bound rule gives m(b - a) <= integral <= M(b - a), with m = 2, M = 6 and b - a = 4 - 1 = 3. Multiply the endpoints: 2*3 = 6 gives the lower bound and 6*3 = 18 gives the upper bound, so 6 <= integral <= 18. The bounds are lower = 6; upper = 18."
+          - problem: "A function f is odd, and the integral from 0 to 6 of f(x) dx equals 10. Find the integral from -6 to 0 of f(x) dx."
+            answer: "-10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the integral from -6 to 0 of f(x) dx. The odd-function symmetry rule pairs the interval [-6, 0] with [0, 6] and gives the integral from -6 to 0 as the negative of the integral from 0 to 6. Since the integral from 0 to 6 equals 10, the integral from -6 to 0 is -10."
+          - problem: "For every x in [1, 6], the function f satisfies 2 <= f(x) <= 8. Find the greatest possible value of the integral from 1 to 6 of f(x) dx."
+            answer: "40"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the integral from 1 to 6 of f(x) dx. The max-min bound rule gives integral <= M(b - a), so the greatest possible value uses the maximum M = 8 and the interval length b - a = 6 - 1 = 5. Multiply: 8*5 = 40. The greatest possible value is 40."
+          - problem: "A function f is even, and the integral from -2 to 2 of f(x) dx equals 18. Find the integral from 0 to 2 of f(x) dx."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the integral from 0 to 2 of f(x) dx. The even-function symmetry rule gives the integral from -2 to 2 as twice the integral from 0 to 2. Therefore the integral from 0 to 2 is half of 18, which is 9."
+          - problem: "On the interval [2, 9] the function f satisfies 3 <= f(x) <= 7. What is the smallest possible value of the integral from 2 to 9 of f(x) dx?"
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the integral from 2 to 9 of f(x) dx. The max-min bound rule gives integral >= m(b - a), so the smallest possible value uses the minimum m = 3 and the interval length b - a = 9 - 2 = 7. Multiply: 3*7 = 21. The smallest possible value is 21."
         constraints: "max-min bounds with integer data; odd-function symmetry on symmetric intervals"
     diagnostic_exemplar:
       problem: 'Evaluate $\int_{-2}^{2} (x^3 + 3)\,dx$ using symmetry and linearity.'
@@ -686,6 +702,18 @@ topics:
           - problem: 'Evaluate $\int_0^{\pi} \sin x \, dx$.'
             answer: "2"
             solution_sketch: '$[-\cos x]_0^{\pi} = -(-1) - (-1) = 2$.'
+          - problem: "Evaluate $\\int_0^1 (4x + 1)\\,dx$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full integral $I = \\int_0^1 (4x + 1)\\,dx$. Step 1: find an antiderivative using the power rule, giving $2x^2 + x$. Step 2: apply FTC part 2 and substitute the limits: $[2x^2 + x]_0^1 = (2 + 1) - 0 = 3$. The value of the definite integral is 3."
+          - problem: "Evaluate $\\int_1^2 6x^2\\,dx$."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full integral $I = \\int_1^2 6x^2\\,dx$. Step 1: the power rule gives the antiderivative $2x^3$. Step 2: apply FTC part 2: $[2x^3]_1^2 = 16 - 2 = 14$. The value of the definite integral is 14."
+          - problem: "Evaluate $\\int_0^{\\pi/2} \\cos x\\,dx$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full integral $I = \\int_0^{\\pi/2} \\cos x\\,dx$. Step 1: the basic table gives the antiderivative $\\sin x$. Step 2: apply FTC part 2: $[\\sin x]_0^{\\pi/2} = 1 - 0 = 1$. The value of the definite integral is 1."
         constraints: "antiderivative from the basic table; integer or simple exact answers"
       - id: kp2
         name: Differentiate an accumulation function (FTC part 1)
@@ -698,6 +726,18 @@ topics:
             answer: "x^3 + 1"
           - problem: 'Find $\frac{d}{dx} \int_2^x \cos(t^2) \, dt$.'
             answer: "cos(x^2)"
+          - problem: "Find $g'(x)$ for $g(x) = \\int_3^x (t^2 + 4t) \\, dt$."
+            answer: "x^2 + 4x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The accumulation function is $g(x) = \\int_3^x (t^2 + 4t) \\, dt$ with variable upper limit $x$. By FTC part 1, the derivative equals the integrand evaluated at the upper limit. The integrand is $t^2 + 4t$, so replacing $t$ by $x$ gives $g'(x) = x^2 + 4x$."
+          - problem: "Find $\\frac{d}{dx} \\int_0^x e^{t^2} \\, dt$."
+            answer: "e^(x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The accumulation function is $A(x) = \\int_0^x e^{t^2} \\, dt$. By FTC part 1, its derivative is the integrand at the upper limit $x$. The integrand is $e^{t^2}$, so $A'(x) = e^{x^2}$."
+          - problem: "Find $g'(x)$ for $g(x) = \\int_5^x \\frac{1}{1 + t^2} \\, dt$."
+            answer: "1/(1+x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The accumulation function is $g(x) = \\int_5^x \\frac{1}{1 + t^2} \\, dt$ with variable upper limit $x$. By FTC part 1, the derivative is the integrand evaluated at $x$. The integrand is $\\frac{1}{1 + t^2}$, so replacing $t$ by $x$ gives $g'(x) = 1/(1+x^2)$."
         constraints: "variable upper limit x (no composite limits); answer is the integrand evaluated at x"
       - id: kp3
         name: Net change from a rate
@@ -772,6 +812,22 @@ topics:
           - problem: 'For the same $g$, compute $g(3)$.'
             answer: "-3"
             solution_sketch: '$\left[\frac{t^3}{3} - 4t\right]_0^3 = 9 - 12 = -3$.'
+          - problem: "Let $g(x)=\\int_0^x (t^2 - 16)\\,dt$. At which $x$ does $g$ have a local maximum? Find the x-value."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The accumulation function is $g(x)=\\int_0^x (t^2-16)\\,dt$. By the Fundamental Theorem of Calculus, $g'(x)=x^2-16$, so the critical points are $x=-4$ and $x=4$. The sign of $g'$ changes from positive to negative at $x=-4$, so $g$ has a local maximum there. The x-value of the local maximum is -4."
+          - problem: "Let $g(x)=\\int_2^x (t^2 - 5t + 6)\\,dt$. Find the interval on which $g$ is increasing. Give your answer as an inequality in x."
+            answer: "x < 2 or x > 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The accumulation function is $g(x)=\\int_2^x (t^2-5t+6)\\,dt$. By the Fundamental Theorem of Calculus, $g'(x)=x^2-5x+6=(x-2)(x-3)$. The derivative is positive when $x<2$ or $x>3$, so $g$ is increasing there. The interval of increase is x < 2 or x > 3."
+          - problem: "Let $g(x)=\\int_0^x (t^3 - 4t)\\,dt$. At which $x$ does $g$ have a local maximum? Find the x-value."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The accumulation function is $g(x)=\\int_0^x (t^3-4t)\\,dt$. By the Fundamental Theorem of Calculus, $g'(x)=x^3-4x=x(x-2)(x+2)$, so the critical points are $-2$, $0$, and $2$. The sign of $g'$ changes from positive to negative at $x=0$, so $g$ has a local maximum there. The local maximum occurs at x = 0."
+          - problem: "Let $g(x)=\\int_0^x \\sin t\\,dt$. At which $x$ in the interval $(0, 2\\pi)$ does $g$ have a local maximum? Give the x-value."
+            answer: "pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The accumulation function is $g(x)=\\int_0^x \\sin t\\,dt$. By the Fundamental Theorem of Calculus, $g'(x)=\\sin x$. On $(0,2\\pi)$, the critical point is $x=\\pi$, and $g'$ changes from positive to negative there. The local maximum occurs at x = pi."
         constraints: "g' is the integrand; extrema of g come from sign changes of the integrand"
     diagnostic_exemplar:
       problem: 'Find $\frac{d}{dx} \int_{x^2}^{5} \cos t \, dt$.'
@@ -809,6 +865,22 @@ topics:
           - problem: 'Find the average value of $f(x) = \cos x$ on $[0, \pi/6]$.'
             answer: "3/π"
             solution_sketch: '$\frac{6}{\pi}\int_0^{\pi/6} \cos x\,dx = \frac{6}{\pi}\cdot\frac{1}{2} = \frac{3}{\pi}$.'
+          - problem: "Find the average value of f(x) = x^3 on [0, 2]."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Average value formula: (1/(b-a)) times the integral from a to b of f(x) dx. For f(x) = x^3 on [0, 2], the integral is x^4/4 from 0 to 2 = 4 and b-a = 2. So the average is 4/2 = 2. The average value is 2."
+          - problem: "Find the average value of f(x) = sin x on [0, pi/2]."
+            answer: "2/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Average value formula: (1/(b-a)) times the integral from a to b of f(x) dx. For f(x) = sin x on [0, pi/2], the integral is -cos x from 0 to pi/2 = 1 and b-a = pi/2. So the average is (2/pi) times 1 = 2/pi. The average value is 2/pi."
+          - problem: "Find the average value of f(x) = x^2 on [1, 3] as a fraction."
+            answer: "13/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Average value formula: (1/(b-a)) times the integral from a to b of f(x) dx. For f(x) = x^2 on [1, 3], the integral is x^3/3 from 1 to 3 = 27/3 - 1/3 = 26/3 and b-a = 2. So the average is (26/3)/2 = 13/3. The average value is 13/3."
+          - problem: "Find the average value of f(x) = x^2 on [-1, 1] as a fraction."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Average value formula: (1/(b-a)) times the integral from a to b of f(x) dx. For f(x) = x^2 on [-1, 1], the integral is x^3/3 from -1 to 1 = 1/3 - (-1/3) = 2/3 and b-a = 2. So the average is (2/3)/2 = 1/3. The average value is 1/3."
         constraints: "table-integrable functions; exact answers (fractions, multiples of 1/π)"
       - id: kp2
         name: The Mean Value Theorem for integrals
@@ -872,6 +944,22 @@ topics:
           - problem: 'Find the area enclosed by $y = 4 - x^2$ and the x-axis.'
             answer: "32/3"
             solution_sketch: 'Roots $\pm 2$: $\int_{-2}^2 (4 - x^2)\,dx = 16 - \frac{16}{3} = \frac{32}{3}$.'
+          - problem: "Find the area under y = x^2 + 2 from x = 0 to x = 3."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up the area as the definite integral from 0 to 3 of x^2 + 2. By the Fundamental Theorem of Calculus, an antiderivative is x^3/3 + 2x. Evaluate at the endpoints: (27/3 + 6) - 0 = 9 + 6 = 15, so the area is 15."
+          - problem: "Find the area enclosed by y = 16 - x^2 and the x-axis."
+            answer: "256/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up the area as the definite integral from -4 to 4 of 16 - x^2. The roots of 16 - x^2 are x = -4 and x = 4, and the curve is nonnegative between them. By the Fundamental Theorem of Calculus, an antiderivative is 16x - x^3/3. Evaluate at the endpoints: (64 - 64/3) - (-64 + 64/3) = 128 - 128/3 = 256/3, so the area is 256/3."
+          - problem: "Find the area under y = 3x^2 from x = 1 to x = 3."
+            answer: "26"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up the area as the definite integral from 1 to 3 of 3x^2. By the Fundamental Theorem of Calculus, an antiderivative is x^3. Evaluate at the endpoints: 3^3 - 1^3 = 27 - 1 = 26, so the area is 26."
+          - problem: "Find the area under y = sqrt(x) from x = 0 to x = 9."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up the area as the definite integral from 0 to 9 of sqrt(x). By the Fundamental Theorem of Calculus, an antiderivative is (2/3)x^(3/2). Evaluate at the endpoints: (2/3)(9^(3/2)) - (2/3)(0^(3/2)) = (2/3)(27) = 18, so the area is 18."
         constraints: "nonnegative integrand on the interval; find the roots when the region is enclosed"
       - id: kp2
         name: Total area when f changes sign
@@ -880,23 +968,55 @@ topics:
           - problem: 'Find the total area between $y = x^2 - 1$ and the x-axis over $[0, 2]$.'
             answer: "2"
             solution_sketch: 'Split at the root $x = 1$: $\left|\int_0^1\right| + \int_1^2 = \frac{2}{3} + \frac{4}{3} = 2$.'
-          - problem: 'For $y = x^2 - 1$ on $[0, 2]$, compare the net signed area with the total area.'
-            answer: "net = 2/3; total = 2"
-            answer_contract: {kind: none}
-            solution_sketch: '$\int_0^2 (x^2 - 1)\,dx = \frac{8}{3} - 2 = \frac{2}{3}$, but the areas add to $2$.'
+          - problem: "Find the net signed area and the total area between $y = x^2 - 4$ and the x-axis over $[0, 3]$. Give the answer as net = value; total = value."
+            answer: "net = -3; total = 23/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "net"}, {"contract": {"kind": "exact"}, "name": "total"}]}
+            solution_sketch: "Split at the root x = 2 because x^2 - 4 = (x - 2)(x + 2). Net signed area is the integral from 0 to 3: [x^3/3 - 4x] from 0 to 3 equals 9 - 12 = -3. Total area adds the absolute pieces: integral 0 to 2 of 4 - x^2 gives 16/3, and integral 2 to 3 of x^2 - 4 gives 7/3, so the total is 23/3. The answer is net = -3; total = 23/3."
+          - problem: "Find the total area between $y = 4 - x^2$ and the x-axis over $[1, 4]$."
+            answer: "37/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve crosses the x-axis at x = 2, so split the interval there. The total area is the integral from 1 to 2 of 4 - x^2 plus the integral from 2 to 4 of x^2 - 4. The first integral evaluates to 5/3 and the second evaluates to 32/3. Their sum is 5/3 + 32/3 = 37/3. The answer is 37/3."
+          - problem: "Find the total area between $y = x^2 - x - 2$ and the x-axis over $[0, 3]$."
+            answer: "31/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor the quadratic as (x - 2)(x + 1), so the only sign change on the interval is at x = 2. Total area is the integral from 0 to 2 of -(x^2 - x - 2) plus the integral from 2 to 3 of x^2 - x - 2. The first integral gives 10/3 and the second gives 11/6. Their sum is 20/6 + 11/6 = 31/6. The answer is 31/6."
+          - problem: "A particle moves along a line with velocity $v(t) = t - 3$ meters per second for $0 \\le t \\le 5$. Find the total distance traveled in meters."
+            answer: "13/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The velocity changes sign at t = 3, so total distance is the integral of the absolute speed. Compute the integral from 0 to 3 of 3 - t, which gives 9/2. Compute the integral from 3 to 5 of t - 3, which gives 2. Add the two positive pieces: 9/2 + 2 = 13/2. The answer is 13/2."
+          - problem: "Find the total area between $y = x^2 - 9$ and the x-axis over $[0, 4]$."
+            answer: "64/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor x^2 - 9 as (x - 3)(x + 3), so the sign change on the interval is at x = 3. Total area is the integral from 0 to 3 of 9 - x^2 plus the integral from 3 to 4 of x^2 - 9. The first integral gives 18 and the second gives 10/3. Their sum is 54/3 + 10/3 = 64/3. The answer is 64/3."
         constraints: "one interior sign change at an integer or simple root; report both net and total when asked"
       - id: kp3
         name: Symmetry and the odd-function trap
         key_prerequisites: [definite-integrals-ftc, definite-integrals-as-area]
         exemplars:
-          - problem: 'Compute $\int_{-2}^{2} x^3\,dx$ and the total area between $y = x^3$ and the x-axis over $[-2, 2]$. Why do they differ?'
-            answer: "integral = 0; total area = 8 — the signed halves cancel in the integral but areas add"
-            answer_contract: {kind: none}
-            solution_sketch: 'By oddness the integral vanishes; area $= 2\int_0^2 x^3\,dx = 2 \cdot 4 = 8$.'
-          - problem: 'True or false: if $\int_a^b f(x)\,dx = 0$ then the region between $f$ and the axis on $[a, b]$ has zero area.'
-            answer: "false — equal areas above and below the axis cancel in the integral"
-            answer_contract: {kind: none}
-            solution_sketch: "false — equal areas above and below the axis cancel in the integral"
+          - problem: "For $y = x^5$ on $[-1, 1]$, compute the signed integral $\\int_{-1}^{1} x^5\\,dx$ and the total area between the curve and the x-axis. Give both values, integral first."
+            answer: "integral = 0; area = 1/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "integral"}, {"contract": {"kind": "exact"}, "name": "area"}]}
+            solution_sketch: "$y = x^5$ on $[-1, 1]$ is odd, so the graph is symmetric about the origin and the two halves of signed area cancel; by the FTC the integrated total is $\\int_{-1}^{1} x^5\\,dx = 0$. The geometric area never cancels: $\\int_0^1 x^5\\,dx = 1/6$, and the left half has the same area, so the total is $1/3$. The answer is integral = 0; area = 1/3."
+          - problem: "For $y = \\sin(x)$ on $[-\\pi/2, \\pi/2]$, find the signed integral $\\int_{-\\pi/2}^{\\pi/2} \\sin(x)\\,dx$ and the total area between the curve and the x-axis. Give both values, integral first."
+            answer: "integral = 0; area = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "integral"}, {"contract": {"kind": "exact"}, "name": "area"}]}
+            solution_sketch: "$y = \\sin(x)$ on $[-\\pi/2, \\pi/2]$ is odd, so by the FTC the signed integral is $[-\\cos(x)]$ evaluated from $-\\pi/2$ to $\\pi/2$, which is $0$. The geometric area doubles the right half: $\\int_0^{\\pi/2} \\sin(x)\\,dx = 1$, so the total area is $2$. The answer is integral = 0; area = 2."
+          - problem: "An odd function $f$ satisfies $\\int_0^3 f(x)\\,dx = 7$. Find the total area between the graph of $f$ and the x-axis over $[-3, 3]$."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An odd function has origin symmetry, so the geometric area on $[-3, 0]$ equals the area on $[0, 3]$, namely $7$. Its signed integral over $[-3, 0]$ is $-7$, so the signed integral over $[-3, 3]$ is $0$, while the area adds the two positive halves. The total area is $7 + 7 = 14$. The answer is 14."
+          - problem: "For $y = x^2 - 1$ on $[-2, 2]$, determine the signed integral $\\int_{-2}^{2} (x^2 - 1)\\,dx$ and the total area between the curve and the x-axis. Give both values, integral first."
+            answer: "integral = 4/3; area = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "integral"}, {"contract": {"kind": "exact"}, "name": "area"}]}
+            solution_sketch: "$y = x^2 - 1$ on $[-2, 2]$ is even, so by the FTC the signed integral is $2\\int_0^2 (x^2 - 1)\\,dx = 2(8/3 - 2) = 4/3$. The curve crosses the x-axis at $x = -1$ and $x = 1$ and lies below it between them, so the area adds three pieces: $4/3$ on $[-1, 1]$ and $4/3$ on each outer piece. The answer is integral = 4/3; area = 4."
+          - problem: "For $y = x^3$ on $[-1, 2]$, compute the signed integral $\\int_{-1}^{2} x^3\\,dx$ and the total area between the curve and the x-axis. Give both values, integral first."
+            answer: "integral = 15/4; area = 17/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "integral"}, {"contract": {"kind": "exact"}, "name": "area"}]}
+            solution_sketch: "By the FTC, $\\int_{-1}^{2} x^3\\,dx = [x^4/4]$ from $-1$ to $2$, which is $4 - 1/4 = 15/4$. The interval is not symmetric, so oddness gives no cancellation here. For the area, the curve is below the axis on $[-1, 0]$ with area $1/4$ and above it on $[0, 2]$ with area $4$, so the total is $17/4$. The answer is integral = 15/4; area = 17/4."
+          - problem: "For $y = \\sin(x)$ on $[0, 2\\pi]$, determine the signed integral $\\int_0^{2\\pi} \\sin(x)\\,dx$ and the total area between the curve and the x-axis. Give both values, integral first."
+            answer: "integral = 0; area = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "integral"}, {"contract": {"kind": "exact"}, "name": "area"}]}
+            solution_sketch: "By the FTC, $\\int_0^{2\\pi} \\sin(x)\\,dx = [-\\cos(x)]$ from $0$ to $2\\pi$, which is $-1 - (-1) = 0$. The curve lies above the axis on $[0, \\pi]$ and below it on $[\\pi, 2\\pi]$, and each hump has geometric area $2$, so the areas cancel in the signed integral but add to $4$ in the total area. The answer is integral = 0; area = 4."
         constraints: "odd functions on symmetric intervals; contrast signed integral with geometric area"
     diagnostic_exemplar:
       problem: 'Find the total area between $y = x$ and the x-axis over $[-1, 2]$.'
@@ -939,6 +1059,22 @@ topics:
           - problem: 'For the same particle, find the total distance traveled on $[0, 3]$.'
             answer: "23/3 m"
             solution_sketch: '$v$ changes sign at $t = 2$: $\left|-\frac{16}{3}\right| + \frac{7}{3} = \frac{23}{3}$.'
+          - problem: "A particle moves along a line with velocity v(t) = t - 1 meters per second for 0 <= t <= 3. Find its displacement and total distance traveled on [0, 3], and give the answer as (displacement, distance)."
+            answer: "(3/2, 5/2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: displacement = integral from 0 to 3 of (t - 1) dt and total distance = integral from 0 to 3 of abs(t - 1) dt. By the Fundamental Theorem of Calculus, the displacement is [t^2/2 - t] from 0 to 3 = 3/2. Since v changes sign at t = 1, split the distance integral into 0 to 1 and 1 to 3: 1/2 + 2 = 5/2. The answer is (3/2, 5/2)."
+          - problem: "A particle moves along a line with velocity v(t) = t^2 - 1 meters per second for 0 <= t <= 2. Find its displacement and total distance traveled on [0, 2], and give the answer as (displacement, distance)."
+            answer: "(2/3, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: displacement = integral from 0 to 2 of (t^2 - 1) dt and total distance = integral from 0 to 2 of abs(t^2 - 1) dt. The Fundamental Theorem gives displacement [t^3/3 - t] from 0 to 2 = 2/3. Since v changes sign at t = 1, the distance is the sum of the areas from 0 to 1 and 1 to 2: 2/3 + 4/3 = 2. The answer is (2/3, 2)."
+          - problem: "A particle moves along a line with velocity v(t) = 3t - 6 meters per second for 0 <= t <= 3. Find its displacement and total distance traveled on [0, 3], and give the answer as (displacement, distance)."
+            answer: "(-9/2, 15/2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: displacement = integral from 0 to 3 of (3t - 6) dt and total distance = integral from 0 to 3 of abs(3t - 6) dt. By the Fundamental Theorem, displacement = [3t^2/2 - 6t] from 0 to 3 = -9/2. The velocity changes sign at t = 2, so distance = area from 0 to 2 plus area from 2 to 3: 6 + 3/2 = 15/2. The answer is (-9/2, 15/2)."
+          - problem: "A particle moves along a line with velocity v(t) = t - 3 meters per second for 0 <= t <= 5. Find its displacement and total distance traveled on [0, 5], and give the answer as (displacement, distance)."
+            answer: "(-5/2, 13/2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: displacement = integral from 0 to 5 of (t - 3) dt and total distance = integral from 0 to 5 of abs(t - 3) dt. The Fundamental Theorem gives displacement [t^2/2 - 3t] from 0 to 5 = -5/2. Since v changes sign at t = 3, distance = area from 0 to 3 plus area from 3 to 5: 9/2 + 2 = 13/2. The answer is (-5/2, 13/2)."
         constraints: "v changes sign once at an integer time; displacement and distance both asked"
       - id: kp2
         name: Recover position from velocity
@@ -947,10 +1083,26 @@ topics:
           - problem: 'A particle has velocity $v(t) = 2t + 1$ and initial position $s(0) = 3$. Find $s(2)$.'
             answer: "9"
             solution_sketch: '$s(t) = t^2 + t + 3$; $s(2) = 4 + 2 + 3 = 9$.'
-          - problem: 'Given $v(t) = 3t^2 - 2$ and $s(1) = 0$, find $s(t)$.'
-            answer: "s(t) = t^3 - 2t + 1"
-            answer_contract: {kind: none}
-            solution_sketch: '$s(t) = t^3 - 2t + C$; $1 - 2 + C = 0$ gives $C = 1$.'
+          - problem: "A particle moves along a line with velocity $v(t) = 4t - 5$ and has position $s(2) = 1$. Find $s(t)$ as a function of $t$."
+            answer: "2t^2 - 5t + 3"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (antiderivative rule): position is the antiderivative of velocity, so $s(t) = \\int (4t - 5)\\,dt = 2t^2 - 5t + C$. Step 2 (initial condition pins down C): $s(2) = 8 - 10 + C = C - 2 = 1$ gives $C = 3$. Therefore the position function is $s(t) = 2t^2 - 5t + 3$, matching the answer 2t^2 - 5t + 3."
+          - problem: "A particle has velocity $v(t) = 4t + 3$ and initial position $s(0) = 2$. Find $s(3)$."
+            answer: "29"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (antiderivative rule): $s(t) = \\int (4t + 3)\\,dt = 2t^2 + 3t + C$. Step 2 (initial condition): $s(0) = C = 2$, so $s(t) = 2t^2 + 3t + 2$. Step 3 (evaluate at the given time): $s(3) = 18 + 9 + 2$, so the answer is 29."
+          - problem: "A ball is thrown straight up from a roof. Its height is $h(t)$ feet with velocity $v(t) = -32t + 64$ feet per second, and $h(0) = 10$. Find $h(3)$."
+            answer: "58"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (antiderivative rule): $h(t) = \\int (-32t + 64)\\,dt = -16t^2 + 64t + C$. Step 2 (initial condition): $h(0) = C = 10$, so $h(t) = -16t^2 + 64t + 10$. Step 3 (evaluate at $t = 3$): $-144 + 192 + 10$, so the height is 58 feet and the answer is 58."
+          - problem: "A particle has velocity $v(t) = 6t - 4$ and its position at time $t = 2$ is $s(2) = 10$. Find the initial position $s(0)$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (antiderivative rule): $s(t) = \\int (6t - 4)\\,dt = 3t^2 - 4t + C$. Step 2 (initial condition pins down C): $s(2) = 12 - 8 + C = 4 + C = 10$ gives $C = 6$. Step 3 (evaluate at $t = 0$): $s(0) = C$, so the initial position is 6."
+          - problem: "A particle has velocity $v(t) = t^2 - 6t + 8$ and initial position $s(0) = 4$. Find $s(5)$."
+            answer: "32/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (antiderivative rule): $s(t) = \\int (t^2 - 6t + 8)\\,dt = \\frac{t^3}{3} - 3t^2 + 8t + C$. Step 2 (initial condition): $s(0) = C = 4$, so $s(t) = \\frac{t^3}{3} - 3t^2 + 8t + 4$. Step 3 (evaluate at $t = 5$): $\\frac{125}{3} - 75 + 40 + 4 = \\frac{32}{3}$, so the answer is 32/3."
         constraints: "polynomial velocity; initial condition pins down C"
       - id: kp3
         name: Recover velocity from acceleration
