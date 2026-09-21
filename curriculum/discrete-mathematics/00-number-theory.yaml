@@ -382,6 +382,22 @@ topics:
           - problem: 'Compute $3^{53} \bmod 11$.'
             answer: "5"
             solution_sketch: 'By Fermat, $3^{10} \equiv 1 \pmod{11}$, and $53 = 10 \cdot 5 + 3$, so $3^{53} \equiv 3^3 = 27 = 2 \cdot 11 + 5 \equiv 5$.'
+          - problem: "Find the least nonnegative residue of $4^{129}$ modulo $17$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "We evaluate $4^{129}\\pmod{17}$. Step 1 (Fermat's little theorem): since 17 is prime and 17 does not divide 4, $4^{16}\\equiv1\\pmod{17}$. Step 2 (reduce the exponent modulo p-1): $129 = 16\\cdot8 + 1$, so $4^{129}\\equiv4^1\\pmod{17}$. The least nonnegative residue is 4."
+          - problem: "Find the remainder when $8^{333}$ is divided by $19$."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "We evaluate $8^{333}\\pmod{19}$. Step 1 (Fermat's little theorem): since 19 is prime and 19 does not divide 8, $8^{18}\\equiv1\\pmod{19}$. Step 2 (reduce the exponent modulo p-1): $333 = 18\\cdot18 + 9$, so $8^{333}\\equiv8^9\\pmod{19}$. Step 3 (repeated squaring): $8^2\\equiv7$, $8^4\\equiv11$, $8^8\\equiv7$; thus $8^9=8^8\\cdot8\\equiv7\\cdot8=56\\equiv18\\pmod{19}$. The remainder is 18."
+          - problem: "A device changes state on a $17$-hour cycle. Its state after $6^{430}$ hours is the remainder of $6^{430}$ modulo $17$. Find the remainder."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "We evaluate $6^{430}\\pmod{17}$. Step 1 (Fermat's little theorem): since 17 is prime and 17 does not divide 6, $6^{16}\\equiv1\\pmod{17}$. Step 2 (reduce the exponent modulo p-1): $430 = 16\\cdot26 + 14$, so $6^{430}\\equiv6^{14}\\pmod{17}$. Step 3 (repeated squaring): $6^2\\equiv2$, $6^4\\equiv4$, $6^8\\equiv16$; then $6^{14}=6^8\\cdot6^4\\cdot6^2\\equiv16\\cdot4\\cdot2=128\\equiv9\\pmod{17}$. The remainder is 9."
+          - problem: "For the prime $13$, an exponent $E$ satisfies $2^E \\equiv 6 \\pmod{13}$ and $50 \\le E \\le 1000$. Find the smallest such exponent $E$."
+            answer: "53"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "We need the smallest $E$ with $50 \\le E \\le 1000$ and $2^E \\equiv 6 \\pmod{13}$. Step 1 (Fermat's little theorem/order check): since 13 is prime, $2^{12}\\equiv1\\pmod{13}$; checking powers gives $2^5\\equiv6\\pmod{13}$, and the period for base 2 is exactly 12. Step 2 (reduce exponent condition): therefore $2^E\\equiv2^5$ if and only if $E\\equiv5\\pmod{12}$. Step 3 (smallest in range): the eligible exponents are $5,17,29,41,53,\\ldots$. The first one at least 50 is 53. The smallest such exponent is 53."
         constraints: "prime moduli <= 23, base not divisible by p, exponents 50-1000; reduce the exponent mod p-1"
       - id: kp2
         name: "Euler's phi function"

@@ -43,6 +43,22 @@ topics:
             answer: '[0,1,0;1,0,1;0,1,0]'
             answer_contract: {kind: matrix, rows: 3, cols: 3}
             solution_sketch: 'Edges $ab$ and $bc$ give symmetric $1$s; the diagonal is $0$ for a simple graph.'
+          - problem: "A simple undirected graph has vertices 1, 2, 3, 4 and edges 12, 23, 34. Find its adjacency matrix with vertices in the order 1, 2, 3, 4. Give the matrix as [a,b;c,d] with four rows of four entries."
+            answer: "[0,1,0,0;1,0,1,0;0,1,0,1;0,0,1,0]"
+            answer_contract: {"cols": 4, "kind": "matrix", "rows": 4}
+            solution_sketch: "Step 1: row 1 has a 1 only in column 2, because edge 12 is the only edge at vertex 1. Step 2: row 2 has 1s in columns 1 and 3, from edges 12 and 23. Step 3: row 3 has 1s in columns 2 and 4, and row 4 has a 1 only in column 3. The zero diagonal marks a simple graph, and the matrix is [0,1,0,0;1,0,1,0;0,1,0,1;0,0,1,0]."
+          - problem: "A simple undirected graph has vertex 1 adjacent to vertices 2, 3, and 4, and no other edges. Find its adjacency matrix with vertices in the order 1, 2, 3, 4. Give the matrix as [a,b;c,d] with four rows of four entries."
+            answer: "[0,1,1,1;1,0,0,0;1,0,0,0;1,0,0,0]"
+            answer_contract: {"cols": 4, "kind": "matrix", "rows": 4}
+            solution_sketch: "Step 1: vertex 1 is adjacent to 2, 3, and 4, so row 1 has 1s in columns 2, 3, 4. Step 2: each of vertices 2, 3, 4 is adjacent only to 1, so rows 2, 3, 4 each have a 1 only in column 1. Step 3: the matrix is symmetric with zero diagonal. The adjacency matrix is [0,1,1,1;1,0,0,0;1,0,0,0;1,0,0,0]."
+          - problem: "A simple undirected graph has vertices 1, 2, 3, 4 and edges 12, 23, 34, 41. Find its adjacency matrix with vertices in the order 1, 2, 3, 4. Give the matrix as [a,b;c,d] with four rows of four entries."
+            answer: "[0,1,0,1;1,0,1,0;0,1,0,1;1,0,1,0]"
+            answer_contract: {"cols": 4, "kind": "matrix", "rows": 4}
+            solution_sketch: "Step 1: vertex 1 is adjacent to 2 and 4, so row 1 has 1s in columns 2 and 4. Step 2: vertex 2 is adjacent to 1 and 3, so row 2 has 1s in columns 1 and 3. Step 3: vertex 3 is adjacent to 2 and 4, and vertex 4 is adjacent to 1 and 3. The adjacency matrix is [0,1,0,1;1,0,1,0;0,1,0,1;1,0,1,0]."
+          - problem: "A simple undirected graph on vertices 1, 2, 3, 4, 5 has edges 12, 13, 24, 25, and 35. Give the neighbors of vertex 2 in increasing order as a list."
+            answer: "1, 4, 5"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: find the edges incident to vertex 2; they are 12, 24, and 25. Step 2: take the other endpoint of each incident edge: 1, 4, and 5. Step 3: put these neighbors in increasing order. The neighbors of vertex 2 are 1, 4, 5."
         constraints: "graphs with <= 5 vertices; symmetric 0/1 matrices, zero diagonal"
     diagnostic_exemplar:
       problem: 'How many $1$s does the adjacency matrix of the complete graph $K_5$ contain?'
@@ -78,19 +94,51 @@ topics:
           - problem: 'A graph has $10$ edges and every vertex has degree $4$. How many vertices does it have?'
             answer: "5"
             solution_sketch: '$4n = 2 \cdot 10$ gives $n = 5$ (e.g. $K_5$).'
+          - problem: "A graph has degree sequence 5, 5, 4, 3, 3, 2. How many edges does it have?"
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the handshake lemma, the sum of all degrees equals twice the number of edges. Sum the degrees: 5 + 5 + 4 + 3 + 3 + 2 = 22. Then 22 = 2|E|, so |E| = 11."
+          - problem: "A graph has 12 edges and every vertex has degree 3. How many vertices does it have?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The handshake lemma says that the sum of all degrees equals twice the number of edges. Here the edge count is 12, so the degree sum is 24. Every vertex has degree 3, so 3n = 24 and n = 8."
+          - problem: "A graph has 9 vertices and every vertex has degree 4. How many edges does it have?"
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The handshake lemma gives total degree = 2|E|. With 9 vertices each of degree 4, the total degree is 9 times 4 = 36. Then 36 = 2|E|, so |E| = 18."
+          - problem: "A graph has 7 vertices and 11 edges. Six of its vertices have degree 3, and the remaining vertex has degree d. Find d."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The handshake lemma says the degree sum equals twice the edge count. With 11 edges, the degree sum is 22. Six vertices of degree 3 contribute 18, so the remaining degree is d = 4."
         constraints: "degree sums <= 40; regular-graph variants n*d = 2|E|"
       - id: kp2
         name: "Parity: the number of odd-degree vertices is even"
         key_prerequisites: [graphs-intro]
         exemplars:
-          - problem: 'Can a graph have exactly five vertices, each of degree $3$?'
-            answer: 'No'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'No: the degree sum would be $5 \\cdot 3 = 15$, which is odd. The degree sum is $2|E|$, always even; five odd degrees sum to an odd number.'
-          - problem: 'At a party, is it possible that exactly three people each shook hands an odd number of times?'
-            answer: 'No'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'No: exactly three odd-degree vertices is an odd count, and the number of odd-degree vertices must be even (handshake lemma parity corollary).'
+          - problem: "A graph has exactly five vertices and every vertex is supposed to have degree 3. Give the verdict first, then the number of odd-degree vertices in the proposed degree list."
+            answer: "verdict = invalid; odd = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "odd"}]}
+            solution_sketch: "The proposed degree list is 3, 3, 3, 3, 3. Step 1: count the odd entries; each 3 is odd, so there are 5 odd-degree vertices. Step 2: by the parity corollary the number of odd-degree vertices must be even. Step 3: 5 is odd, so the list is invalid. The wrong option valid would ignore that odd count. The answer is verdict = invalid; odd = 5."
+          - problem: "At a party, exactly three people are supposed to each have an odd number of handshakes. Give the verdict first, then the number of people with an odd handshake count in that scenario."
+            answer: "verdict = invalid; odd = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "odd"}]}
+            solution_sketch: "The handshake counts would make three people of odd degree. Step 1: count the odd-degree people; there are 3. Step 2: the parity corollary says the number of odd-degree vertices must be even. Step 3: 3 is odd, so the scenario is invalid. The wrong option valid would ignore that odd count. The answer is verdict = invalid; odd = 3."
+          - problem: "A graph has degree sequence 4, 3, 3, 2, 1, 1. How many vertices have odd degree?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The degree sequence is 4, 3, 3, 2, 1, 1. Step 1: mark the odd entries: 3, 3, 1, 1. Step 2: count them; the number of odd-degree vertices is 4. Step 3: this count is even, as the parity corollary requires. The answer is 4."
+          - problem: "At a small meeting, the handshake counts of six people are 5, 4, 2, 2, 1, 0. How many people have an odd handshake count?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The handshake counts are 5, 4, 2, 2, 1, 0. Step 1: mark the odd entries: 5 and 1. Step 2: count them; two people have odd handshake count. Step 3: this count is even, as the parity corollary requires. The answer is 2."
+          - problem: "A proposed degree sequence is 5, 5, 4, 3, 2, 1, 1, 1. How many of its entries are odd?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The proposed sequence is 5, 5, 4, 3, 2, 1, 1, 1. Step 1: mark the odd entries: 5, 5, 3, 1, 1, 1. Step 2: count them; there are 6 odd entries. Step 3: this count is even, as the parity corollary requires. The answer is 6."
+          - problem: "A network has degree list 7, 5, 5, 5, 3, 3, 1, 1. How many nodes have odd degree?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The degree list is 7, 5, 5, 5, 3, 3, 1, 1. Step 1: mark the odd entries; all eight entries are odd. Step 2: count them; there are 8 odd-degree nodes. Step 3: this count is even, as the parity corollary requires. The answer is 8."
         constraints: "yes/no with a parity justification; degree sequences of length <= 8"
     diagnostic_exemplar:
       problem: 'A graph has degree sequence $3, 3, 2, 2, 1, 1$. How many edges does it have — and can any graph have degree sequence $3, 3, 2, 1$?'
@@ -130,6 +178,22 @@ topics:
           - problem: 'A walk visits the vertices $a, b, c, b, d$ in order (each consecutive pair adjacent). How many distinct vertices does it visit?'
             answer: "4"
             solution_sketch: 'The sequence lists $5$ vertices but only $4$ distinct ones — $b$ repeats — so this is a walk and not a path (paths forbid repeated vertices).'
+          - problem: "The cycle C8 has vertices 1, 2, ..., 8 in order. What is the distance between vertices 1 and 3?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is the cycle C8, so its edges join i to i+1 and 8 to 1. Step 1 (distance definition): a shortest path from 1 to 3 can go 1-2-3, which has length 2. Step 2 (check the other way): the route 1-8-7-6-5-4-3 has length 6, so the minimum is 2. The distance is 2."
+          - problem: "A walk visits the vertices p, q, r, q, s, t, u in order, and each consecutive pair is adjacent. How many distinct vertices does it visit?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The walk is p, q, r, q, s, t, u with each consecutive pair adjacent. Step 1 (list the visits): the sequence contains p, q, r, q, s, t, u. Step 2 (remove repeats): q appears twice, so the distinct vertices are p, q, r, s, t, u. There are 6 distinct vertices."
+          - problem: "A graph has vertices 1 through 6. Its edges are 1-2, 2-3, 3-4, 4-5, 5-6, 6-1, and 1-4. What is the distance between vertices 2 and 5?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph has vertices 1 through 6 and edges 1-2, 2-3, 3-4, 4-5, 5-6, 6-1, 1-4. Step 1 (candidate shortest paths): paths 2-1-4-5 and 2-3-4-5 both have length 3. Step 2 (rule out shorter): 2 and 5 have no common neighbor, so no path of length 2 exists. The distance is 3."
+          - problem: "A walk visits the vertices a, b, a, c, d, a in order, and each consecutive pair is adjacent. What is the length of this walk?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The walk is a, b, a, c, d, a with each consecutive pair adjacent. Step 1 (walk length definition): the length counts the edges between consecutive vertices. Step 2 (count the edges): the moves a-b, b-a, a-c, c-d, d-a are 5 edges. The length of the walk is 5."
         constraints: "graphs with <= 8 vertices; distance = length of a shortest path; walk-vs-path items ask for a count (length or distinct vertices)"
       - id: kp2
         name: "Connected components and edge thresholds"

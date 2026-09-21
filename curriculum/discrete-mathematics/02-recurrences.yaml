@@ -360,6 +360,22 @@ topics:
           - problem: 'You may buy $0$-$2$ apples and $0$-$1$ bananas. Form the generating function whose $x^k$ coefficient counts fruit selections of size $k$, and give it fully expanded.'
             answer: '$1 + 2x + 2x^2 + x^3$'
             solution_sketch: 'The generating function is $(1 + x + x^2)(1 + x)$; multiplying out gives $1 + 2x + 2x^2 + x^3$ — e.g. selections of size $2$ are (2 apples) or (1 apple, 1 banana), coefficient $2$.'
+          - problem: "The coefficient of $x^3$ in $(1 + x + x^2 + x^3)(1 + x + x^2)$ counts the ways to choose $3$ items when the first type allows $0$ to $3$ and the second allows $0$ to $2$. What is that coefficient?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The product is $(1 + x + x^2 + x^3)(1 + x + x^2)$. Step 1, polynomial multiplication: the exponent pairs adding to 3 are (1,2), (2,1), and (3,0). Step 2, count the pairs: there are three pairs, so the coefficient is 3."
+          - problem: "You may buy $0$ or $1$ apple, $0$ to $2$ bananas, and $0$ or $1$ cherry. The $x^k$ coefficient of the product counts selections of $k$ fruits. Give the fully expanded generating function."
+            answer: "1+3x+4x^2+3x^3+x^4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full product is $(1+x)(1+x+x^2)(1+x)$. Step 1, polynomial multiplication: $(1+x)(1+x+x^2)=1+2x+2x^2+x^3$. Step 2, polynomial multiplication again: $(1+2x+2x^2+x^3)(1+x)=1+3x+4x^2+3x^3+x^4$. The fully expanded generating function is 1+3x+4x^2+3x^3+x^4."
+          - problem: "The coefficient of $x^4$ in $(1 + x + x^2)^3$ counts the selections of $4$ items from three types, each allowing $0$ to $2$ items. What is that coefficient?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full generating function is $(1+x+x^2)^3$. Step 1, polynomial multiplication: the triples of exponents from 0 to 2 adding to 4 are (0,2,2), (1,1,2), (1,2,1), (2,0,2), (2,1,1), and (2,2,0). Step 2, count the triples: there are six triples, so the coefficient is 6."
+          - problem: "A snack pack may have $0$ to $2$ crackers, $0$ or $1$ cheese, and $0$ to $3$ grapes. The $x^k$ coefficient of the product counts packs with $k$ items. Give the fully expanded generating function."
+            answer: "1+3x+5x^2+6x^3+5x^4+3x^5+x^6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full product is $(1+x+x^2)(1+x)(1+x+x^2+x^3)$. Step 1, polynomial multiplication: $(1+x+x^2)(1+x)=1+2x+2x^2+x^3$. Step 2, polynomial multiplication again: $(1+2x+2x^2+x^3)(1+x+x^2+x^3)=1+3x+5x^2+6x^3+5x^4+3x^5+x^6$. The fully expanded generating function is 1+3x+5x^2+6x^3+5x^4+3x^5+x^6."
         constraints: "2-3 factors, all polynomial (finite choices); interpret one coefficient combinatorially"
     diagnostic_exemplar:
       problem: 'You may buy $0$-$3$ apples and $0$-$2$ bananas. Form the generating function whose $x^k$ coefficient counts fruit selections of size $k$, and give it fully expanded.'
@@ -401,6 +417,22 @@ topics:
           - problem: 'Find the coefficient of $x^5$ in $\dfrac{x^2}{1 - x}$.'
             answer: "1"
             solution_sketch: '$x^2/(1-x) = x^2 + x^3 + x^4 + \dots$; every coefficient from $x^2$ on is $1$.'
+          - problem: "Find the coefficient of $x^5$ in $\\dfrac{x^2}{1 - 3x}$."
+            answer: "27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $x^2/(1 - 3x) = x^2 \\sum_{n \\ge 0} (3x)^n = \\sum_{n \\ge 0} 3^n x^{n+2}$. The coefficient of $x^5$ needs $n + 2 = 5$, so $n = 3$. The geometric series rule gives $3^3 = 27$."
+          - problem: "Find the coefficient of $x^4$ in $\\dfrac{x}{1 + 2x}$."
+            answer: "-8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $x/(1 + 2x) = x \\sum_{n \\ge 0} (-2x)^n = \\sum_{n \\ge 0} (-2)^n x^{n+1}$. The coefficient of $x^4$ needs $n + 1 = 4$, so $n = 3$. The geometric series rule gives $(-2)^3 = -8$."
+          - problem: "Find the coefficient of $x^3$ in $\\dfrac{1}{1 + 3x}$."
+            answer: "-27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $1/(1 + 3x) = \\sum_{n \\ge 0} (-3x)^n = \\sum_{n \\ge 0} (-3)^n x^n$. The coefficient of $x^3$ is the $n = 3$ term. The geometric series rule gives $(-3)^3 = -27$."
+          - problem: "Find the coefficient of $x^6$ in $\\dfrac{x^3}{1 - 2x}$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $x^3/(1 - 2x) = x^3 \\sum_{n \\ge 0} (2x)^n = \\sum_{n \\ge 0} 2^n x^{n+3}$. The coefficient of $x^6$ needs $n + 3 = 6$, so $n = 3$. The geometric series rule gives $2^3 = 8$."
         constraints: "1/(1-ax) with |a| <= 3, multiplied by a monomial shift x^k, k <= 3"
       - id: kp2
         name: "Negative binomial series 1/(1-x)^k"
@@ -412,6 +444,22 @@ topics:
           - problem: 'Find the coefficient of $x^5$ in $\dfrac{1}{(1 - x)^3}$.'
             answer: "21"
             solution_sketch: '$[x^n] (1-x)^{-k} = \binom{n + k - 1}{n}$: here $\binom{7}{5} = 21$. (This matches stars and bars: solutions of $a + b + c = 5$.)'
+          - problem: "Find the coefficient of x^7 in 1/(1 - x)^2."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the negative binomial series: 1/(1 - x)^2 = sum over n of (n + 1) x^n. Compare x^7 with x^n to get n = 7. The coefficient is n + 1 = 8."
+          - problem: "Find the coefficient of x^4 in 1/(1 - x)^3."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the negative binomial series: 1/(1 - x)^3 = sum over n of C(n + 2, n) x^n. Here n = 4, so the coefficient is C(4 + 2, 4). Compute C(6, 4) = 15, so the coefficient is 15."
+          - problem: "The coefficient of x^6 in 1/(1 - x)^3 counts the nonnegative integer solutions of a + b + c = 6. Find that coefficient."
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the negative binomial series: 1/(1 - x)^3 = sum over n of C(n + 2, n) x^n. The coefficient of x^6 is C(6 + 2, 6), which matches the stars-and-bars count. Compute C(8, 6) = 28, so the coefficient is 28."
+          - problem: "The coefficient of x^n in 1/(1 - x)^2 is 9. Find n."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the negative binomial series: 1/(1 - x)^2 = sum over n of (n + 1) x^n. Thus the coefficient of x^n is n + 1, so solve n + 1 = 9. This gives n = 8."
         constraints: "k = 2 or 3, n <= 8; formula C(n+k-1, n); connect to stars and bars"
     diagnostic_exemplar:
       problem: 'Find the coefficient of $x^4$ in $\dfrac{1}{(1 - x)^2}$.'

@@ -497,12 +497,34 @@ topics:
         name: "Committee-chair and subset-sum identities"
         key_prerequisites: [combinations, binomial-expansion]
         exemplars:
-          - problem: 'Give a combinatorial proof that $\sum_{k=0}^{n} \binom{n}{k} = 2^n$.'
-            answer: 'Both sides count subsets of an $n$-set: the right side by deciding in/out for each element, the left by grouping subsets by size $k$.'
-            solution_sketch: 'Each element contributes an independent binary choice ($2^n$); partitioning subsets by cardinality gives the sum of binomial coefficients.'
-          - problem: 'Give a combinatorial proof that $k\binom{n}{k} = n\binom{n-1}{k-1}$.'
-            answer: 'Both sides count committees of $k$ people with a chair, from $n$ people: choose the committee then its chair ($\binom{n}{k} \cdot k$), or choose the chair first then the other $k-1$ members ($n \cdot \binom{n-1}{k-1}$).'
-            solution_sketch: 'One set — (committee, chair) pairs — counted in two orders.'
+          - problem: "In the in-out proof that the sum of C(n,k) over k equals two to the n, each element of an n-set independently chooses in or out. Give the factor that one element contributes to the product."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the in-out rule, one element has two choices: in or out. The choices are independent, so each element contributes a factor of two. The answer is 2."
+          - problem: "In the committee-chair proof of k*C(n,k)=n*C(n-1,k-1), choose the chair before the other members. Give the number of chair choices as a function of n."
+            answer: "n"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "By the chair-first rule, the chair is chosen from all n people in the n-set. After that, the remaining k-1 members are chosen from the other n-1 people. The answer is n."
+          - problem: "In the in-out proof that the number of 2-subsets of an n-set splits by whether they contain a fixed element, fix one element. Give the number of choices for the second element as a function of n."
+            answer: "n-1"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "By the in-out rule, a 2-subset that contains the fixed element needs one more element. That second element is chosen from the remaining n-1 elements. The answer is n-1."
+          - problem: "In the committee-chair proof of k*C(n,k)=n*C(n-1,k-1), choose the committee first. For n=9 and k=3, compute the number of (committee, chair) pairs counted by this side."
+            answer: "252"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the committee-first rule, first choose a 3-person committee from 9 people: C(9,3)=84. Then choose its chair: 3 choices. Multiply: 84 times 3 equals 252. The answer is 252."
+          - problem: "Claim: C(n,k)=C(n-1,k)+C(n-1,k-1) for 1<=k<=n. Step 1: count k-subsets of an n-set. Step 2: split them by whether they contain a fixed element x. Step 3: if they contain x, there are C(n-1,k) ways; if not, C(n-1,k-1) ways. Step 4: add the two cases. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is not invalid: it correctly counts k-subsets. Step 2 is not invalid: it correctly splits by the fixed element. Step 4 is not invalid once Step 3 is corrected: it adds the two cases. Step 3 swaps the cases: a k-subset that contains x needs k-1 more elements, giving C(n-1,k-1) choices, while one that does not contain x gives C(n-1,k). The answer is Step 3."
+          - problem: "In the chair-first proof that the sum from k=0 to n of k*C(n,k) equals n times 2 to the power n-1, after choosing the chair, the line for the remaining choices is missing. Select the missing line."
+            answer: "2^(n-1)"
+            answer_contract: {"kind": "label", "options": [["2^(n-1)"], ["2^(n)"], ["C(n-1,k)"], ["n*2^(n-1)"]]}
+            solution_sketch: "By the chair-first rule, choose the chair in n ways. Each of the other n-1 people then independently chooses in or out, giving 2^(n-1) choices. Option 2^(n) forgets to remove the chair from the in-out choices. Option C(n-1,k) fixes the committee size instead of allowing every subset of the remaining people. Option n*2^(n-1) is the full sum, not the remaining factor. The answer is 2^(n-1)."
+          - problem: "Write the full proof: for all n >= 1, sum from k=1 to n of k*C(n,k) = n*2^(n-1). Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Count the set of pairs (S, c) where S is a subset of an n-set and c is an element of S. Step 2: Count by choosing the chair first. Choose c in n ways; then each of the other n-1 elements is either in or out, giving n*2^(n-1) pairs. Step 3: Count by committee size. For a fixed size k, choose the k-subset in C(n,k) ways and choose its chair in k ways, giving k*C(n,k) pairs. Step 4: Sum over k from 1 to n to get sum from k=1 to n of k*C(n,k). Both counts count the same set, so the two expressions are equal. This proves the identity."
         constraints: "identities provable by committee/chair or in-out arguments; n symbolic, no induction"
     diagnostic_exemplar:
       problem: 'Give a combinatorial proof that $\binom{2n}{2} = 2\binom{n}{2} + n^2$.'
