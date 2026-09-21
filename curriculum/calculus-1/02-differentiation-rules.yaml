@@ -31,6 +31,18 @@ topics:
           - problem: 'Differentiate $f(x) = \sqrt{x^2 + 9}$.'
             answer: "x/√(x^2 + 9)"
             solution_sketch: '$\frac{1}{2}(x^2+9)^{-1/2} \cdot 2x = \frac{x}{\sqrt{x^2+9}}$.'
+          - problem: "Find the derivative of $f(x) = (x^2 + 3)^4$ as a function of $x$."
+            answer: "8x(x^2+3)^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The outer function is the fourth power and the inner function is u = x^2 + 3, so the full object is f(x) = (x^2 + 3)^4. General power rule: the outer derivative 4(x^2 + 3)^3 times the inner derivative 2x. Multiply the two factors: 8x(x^2+3)^3."
+          - problem: "Find the derivative of $f(x) = (5x + 1)^3$ as a function of $x$."
+            answer: "15(5x+1)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The outer function is the cube and the inner function is u = 5x + 1, so the full object is f(x) = (5x + 1)^3. General power rule: the outer derivative 3(5x + 1)^2 times the inner derivative 5. Multiply the two factors: 15(5x+1)^2."
+          - problem: "Find the derivative of $f(x) = \\sqrt{4x + 1}$ as a function of $x$."
+            answer: "2/sqrt(4x+1)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the root as the one-half power of the inner function u = 4x + 1, so the full object is f(x) = sqrt(4x + 1). General power rule: the outer derivative (1/2)(4x + 1)^(-1/2) times the inner derivative 4. That product simplifies to 2/sqrt(4x+1)."
         constraints: "inner function linear or quadratic; outer power an integer or 1/2"
       - id: kp2
         name: Reciprocals and negative powers
@@ -41,6 +53,22 @@ topics:
             solution_sketch: '$f = (x^2+1)^{-1}$, so $f'' = -(x^2+1)^{-2} \cdot 2x$.'
           - problem: 'Differentiate $f(x) = (2x + 1)^{-3}$.'
             answer: "-6(2x + 1)^(-4)"
+          - problem: "Let f(x) = 1/(3x - 2)^2. Find f'(x) by rewriting the function as a negative power."
+            answer: "-6/(3x-2)^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write f(x) = (3x - 2)^(-2), a negative power. The general power rule gives f'(x) = -2(3x - 2)^(-3) times the derivative of the inner function 3x - 2. The inner derivative is 3, so f'(x) = -6/(3x-2)^3."
+          - problem: "Let f(x) = 1/(x^2 + 2x + 5). Find f'(x) by rewriting the function as a negative power."
+            answer: "-(2x+2)/(x^2+2x+5)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write f(x) = (x^2 + 2x + 5)^(-1). The general power rule gives f'(x) = -(x^2 + 2x + 5)^(-2) times the derivative of the inner function. The inner derivative is 2x + 2, so f'(x) = -(2x+2)/(x^2+2x+5)^2."
+          - problem: "Let g(x) = 1/(4 - 5x)^2. Find g'(x) by rewriting the function as a negative power."
+            answer: "10/(4-5x)^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write g(x) = (4 - 5x)^(-2). The general power rule gives g'(x) = -2(4 - 5x)^(-3) times the inner derivative. The inner derivative is -5, so g'(x) = 10/(4-5x)^3."
+          - problem: "Let h(x) = 1/(2x^2 + 3)^4. Find h'(x) by rewriting the function as a negative power."
+            answer: "-16x/(2x^2+3)^5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write h(x) = (2x^2 + 3)^(-4). The general power rule gives h'(x) = -4(2x^2 + 3)^(-5) times the derivative of the inner function. The inner derivative is 4x, so h'(x) = -16x/(2x^2+3)^5."
         constraints: "rewrite as a negative power; inner function linear or quadratic"
       - id: kp3
         name: Name the inner and outer functions
@@ -51,6 +79,22 @@ topics:
             solution_sketch: 'With $u = x^3 + 2x$: differentiate the outer power at $u$, then multiply by $u'' = 3x^2 + 2$.'
           - problem: 'Differentiate $f(x) = \sqrt{5x - 1}$.'
             answer: "5/(2√(5x - 1))"
+          - problem: "Let f(x) = (x^4 - 3x)^5. With u as the inner function, find f'(x) in factored form."
+            answer: "5(x^4 - 3x)^4 (4x^3 - 3)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let u = x^4 - 3x, so f(x) = u^5. The general power rule gives the outer derivative 5u^4, and the power rule gives the inner derivative u' = 4x^3 - 3. Multiply the two factors: f'(x) = 5(x^4 - 3x)^4 (4x^3 - 3)."
+          - problem: "For f(x) = (2x^2 + 1)^6, take u as the inside function, then determine f'(x) in factored form."
+            answer: "24x(2x^2+1)^5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let u = 2x^2 + 1, so f(x) = u^6. The general power rule gives 6u^5, and the power rule gives the inner derivative u' = 4x. Multiply: f'(x) = 24x(2x^2+1)^5."
+          - problem: "Differentiate f(x) = sqrt(4x^3 + 9), naming u first, and give f'(x) as a single fraction."
+            answer: "6x^2/sqrt(4x^3+9)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let u = 4x^3 + 9, so f(x) = sqrt(u), which is u^(1/2). The general power rule gives (1/2)u^(-1/2), and the power rule gives u' = 12x^2. Multiply and simplify: f'(x) = 6x^2/sqrt(4x^3+9)."
+          - problem: "Rewrite f(x) = 1/(x^2 + 2)^4 as a power of u, then find f'(x) in factored form."
+            answer: "-8x/(x^2+2)^5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write f(x) = (x^2 + 2)^(-4), so u = x^2 + 2 and f = u^(-4). The general power rule gives -4u^(-5), and the power rule gives u' = 2x. Multiply: f'(x) = -8x/(x^2+2)^5."
         constraints: "the student identifies u before differentiating; the answer is the factored derivative"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = \frac{1}{(x^2 + 4)^3}$ by writing it as a power first.'
@@ -90,9 +134,21 @@ topics:
             solution_sketch: '$h''(1) = f''(g(1)) \cdot g''(1) = f''(2) \cdot g''(1) = 5 \cdot 3 = 15$.'
           - problem: 'Let $h(x) = f(g(x))$ with $g(0) = 3$, $g''(0) = -4$, $f''(3) = 2$. Find $h''(0)$.'
             answer: "-8"
+          - problem: "Let $h(x) = f(g(x))$ with $g(2) = 7$, $g'(2) = 4$ and $h'(2) = 12$. Find $f'(7)$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Chain rule: $h'(2) = f'(g(2)) \\cdot g'(2) = f'(7) \\cdot 4$. Solve $12 = 4 f'(7)$: $f'(7) = 3$."
           - problem: 'With $y = u^5$ and $u = x^2 + 1$, use $\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}$ to find $\frac{dy}{dx}$.'
             answer: "10x(x^2 + 1)^4"
             solution_sketch: '$5u^4 \cdot 2x$ with $u = x^2 + 1$.'
+          - problem: "With $y = \\sqrt{u}$ and $u = x^2 + 9$, find $\\frac{dy}{dx}$ as a function of $x$."
+            answer: "x/sqrt(x^2+9)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Outer: $\\frac{1}{2}u^{-1/2}$ by the general power rule. Inner: $2x$. Product: $\\frac{2x}{2\\sqrt{x^2+9}} = \\frac{x}{\\sqrt{x^2+9}}$."
+          - problem: "With $y = \\frac{1}{u}$ and $u = 3x + 1$, find $\\frac{dy}{dx}$ as a function of $x$."
+            answer: "-3/(3x+1)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Outer: $y = u^{-1}$, so $\\frac{dy}{du} = -u^{-2}$. Inner: $3$. Product: $-\\frac{3}{(3x+1)^2}$."
         constraints: "table values are single digits; the Leibniz-form problem uses a named u"
       - id: kp2
         name: Nested compositions (chain rule twice)
@@ -104,6 +160,22 @@ topics:
           - problem: 'Differentiate $f(x) = \left(1 + (2x + 1)^3\right)^4$.'
             answer: "24(2x + 1)^2 (1 + (2x + 1)^3)^3"
             solution_sketch: 'Outer power: $4(1 + (2x+1)^3)^3$; inner derivative $3(2x+1)^2 \cdot 2$.'
+          - problem: "Differentiate f(x) = sqrt(1 + (2x + 1)^2). Find the derivative as a function of x."
+            answer: "2(2x+1)/sqrt(1+(2x+1)^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: f(x) = sqrt(1 + (2x + 1)^2). Outer step: the general power rule gives 1/(2 sqrt(1 + u^2)) with u = 2x + 1. Inner step: the chain rule gives u' = 2. Multiply: 1/(2 sqrt(1+(2x+1)^2)) * 2(2x+1) * 2 = 2(2x+1)/sqrt(1+(2x+1)^2). The derivative is 2(2x+1)/sqrt(1+(2x+1)^2)."
+          - problem: "Differentiate f(x) = (1 + sqrt(3x + 1))^3. Find the derivative in factored form."
+            answer: "9(1+sqrt(3x+1))^2/(2sqrt(3x+1))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: f(x) = (1 + sqrt(3x + 1))^3. Outer step: the general power rule gives 3(1 + sqrt(3x+1))^2. Inner step: the chain rule on sqrt(3x+1) gives 3/(2 sqrt(3x+1)). Multiply: 3(1+sqrt(3x+1))^2 * 3/(2 sqrt(3x+1)) = 9(1+sqrt(3x+1))^2/(2 sqrt(3x+1)). The derivative is 9(1+sqrt(3x+1))^2/(2sqrt(3x+1))."
+          - problem: "Differentiate f(x) = sin((x^2 + 1)^3). Find the derivative as a function of x."
+            answer: "6x(x^2+1)^2 cos((x^2+1)^3)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: f(x) = sin((x^2 + 1)^3). Outer step: the derivative of sin gives cos((x^2+1)^3). Inner step: the chain rule on (x^2+1)^3 gives 3(x^2+1)^2 * 2x = 6x(x^2+1)^2. Multiply: 6x(x^2+1)^2 cos((x^2+1)^3). The derivative is 6x(x^2+1)^2 cos((x^2+1)^3)."
+          - problem: "Differentiate f(x) = ln((1 + x^2)^3). Find the derivative in simplified form."
+            answer: "6x/(1+x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: f(x) = ln((1 + x^2)^3). Outer step: the derivative of ln gives 1/(1+x^2)^3. Inner step: the chain rule on (1+x^2)^3 gives 3(1+x^2)^2 * 2x = 6x(1+x^2)^2. Multiply: 6x(1+x^2)^2/(1+x^2)^3 = 6x/(1+x^2). The derivative is 6x/(1+x^2)."
         constraints: "exactly two chained layers; factors kept in factored form"
       - id: kp3
         name: Chain rule combined with product and quotient rules
@@ -115,6 +187,22 @@ topics:
           - problem: 'Differentiate $f(x) = \left(\frac{x + 1}{x - 1}\right)^2$.'
             answer: "-4(x + 1)/(x - 1)^3"
             solution_sketch: 'General power rule with inner quotient: $2 \cdot \frac{x+1}{x-1} \cdot \frac{-2}{(x-1)^2}$.'
+          - problem: "Differentiate f(x) = x(x^2 + 1)^3. Find f'(x)."
+            answer: "(x^2+1)^3 + 6x^2(x^2+1)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write f(x) = x(x^2+1)^3. Product rule: f'(x) = (1)(x^2+1)^3 + x times the derivative of (x^2+1)^3. Chain rule and general power rule give the second factor 3(x^2+1)^2(2x) = 6x(x^2+1)^2. Therefore the derivative is (x^2+1)^3 + 6x^2(x^2+1)^2."
+          - problem: "Differentiate f(x) = ((x + 2)/(x - 1))^3. Find f'(x)."
+            answer: "-9(x+2)^2/(x-1)^4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write f(x) = ((x+2)/(x-1))^3. General power rule with chain rule: f'(x) = 3((x+2)/(x-1))^2 times the derivative of (x+2)/(x-1). The quotient rule gives that inner derivative as ((x-1) - (x+2))/(x-1)^2 = -3/(x-1)^2. Multiply to get -9(x+2)^2/(x-1)^4."
+          - problem: "Differentiate f(x) = (x^2 + 1)^2 (x - 1)^3. Find f'(x)."
+            answer: "4x(x^2+1)(x-1)^3 + 3(x^2+1)^2(x-1)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write f(x) = (x^2+1)^2 (x-1)^3. Product rule: f'(x) = [2(x^2+1)(2x)](x-1)^3 + (x^2+1)^2[3(x-1)^2(1)]. The chain rule supplies the factors 2x and 1 inside the two derivatives. Simplify to 4x(x^2+1)(x-1)^3 + 3(x^2+1)^2(x-1)^2."
+          - problem: "Differentiate f(x) = (x^2 + 1)/(x - 2)^2. Find f'(x)."
+            answer: "-2(2x+1)/(x-2)^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write f(x) = (x^2+1)/(x-2)^2. Quotient rule with chain rule: f'(x) = [2x(x-2)^2 - (x^2+1)2(x-2)]/(x-2)^4. Factor (x-2) from the numerator: [2x(x-2) - 2(x^2+1)]/(x-2)^3 = (-4x-2)/(x-2)^3. So f'(x) = -2(2x+1)/(x-2)^3."
         constraints: "one product-with-chain and one quotient-inside-power problem; low-degree polynomials"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x^3(3x - 2)^2$.'
@@ -172,6 +260,18 @@ topics:
             solution_sketch: '$f''(x) = -\sin x$ and $\sin(\pi/6) = \frac{1}{2}$.'
           - problem: 'Find the slope of $y = 2\sin x$ at $x = 0$.'
             answer: "2"
+          - problem: "Let $f(x) = \\cos x$. Find $f'(\\pi/3)$."
+            answer: "-sqrt(3)/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate using the rule (cos x)' = -sin x, so f'(x) = -sin x. At x = pi/3, the unit circle gives sin(pi/3) = sqrt(3)/2. Therefore f'(pi/3) = -sqrt(3)/2."
+          - problem: "Let $f(x) = \\sin x$. Find $f'(\\pi/4)$."
+            answer: "sqrt(2)/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate using the rule (sin x)' = cos x, so f'(x) = cos x. At x = pi/4, the unit circle gives cos(pi/4) = sqrt(2)/2. Therefore f'(pi/4) = sqrt(2)/2."
+          - problem: "A curve is given by $y = 3\\cos x$. Find the slope of the curve at $x = \\pi/2$."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate y = 3 cos x using the constant multiple rule and (cos x)' = -sin x, so y' = -3 sin x. At x = pi/2, the unit circle gives sin(pi/2) = 1. Therefore the slope is -3."
         constraints: "evaluation angles from the unit circle (0, π/6, π/4, π/3, π/2); exact values only"
       - id: kp3
         name: Products of power and trig factors
@@ -288,6 +388,22 @@ topics:
             solution_sketch: '$f''(x) = 4x^3$, then $f''''(x) = 12x^2$.'
           - problem: 'Find $f''''(x)$ for $f(x) = 2x^3 - x^2 + 5$.'
             answer: "12x - 2"
+          - problem: "Let $f(x) = 3x^5 - 2x^3 + x$. Find $f''(x)$."
+            answer: "60x^3-12x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For f(x) = 3x^5 - 2x^3 + x, apply the power rule term by term to get f'(x) = 15x^4 - 6x^2 + 1. Apply the power rule again to each term to get f''(x) = 60x^3 - 12x. Thus f''(x) = 60x^3-12x."
+          - problem: "Let $f(x) = -x^4 + 6x^2 - 3x + 1$. Compute $f''(x)$."
+            answer: "-12x^2+12"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For f(x) = -x^4 + 6x^2 - 3x + 1, the power rule gives f'(x) = -4x^3 + 12x - 3. Differentiate term by term with the power rule again to obtain f''(x) = -12x^2 + 12. Thus f''(x) = -12x^2+12."
+          - problem: "Consider $f(x) = 5x^4 - 3x^3 + 2x - 7$. Determine $f''(x)$."
+            answer: "60x^2-18x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For f(x) = 5x^4 - 3x^3 + 2x - 7, the power rule gives f'(x) = 20x^3 - 9x^2 + 2. Apply the power rule a second time to obtain f''(x) = 60x^2 - 18x. Thus f''(x) = 60x^2-18x."
+          - problem: "Consider $f(x) = x^5 + 4x^3 - x^2 + 2x$. Give $f''(x)$."
+            answer: "20x^3+24x-2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For f(x) = x^5 + 4x^3 - x^2 + 2x, the power rule gives f'(x) = 5x^4 + 12x^2 - 2x + 2. Differentiate again with the power rule to get f''(x) = 20x^3 + 24x - 2. Thus f''(x) = 20x^3+24x-2."
         constraints: "polynomials of degree ≤ 5 with integer coefficients"
       - id: kp2
         name: Notation and evaluation
@@ -298,6 +414,22 @@ topics:
             solution_sketch: '$f''''(x) = 6x$, so $f''''(2) = 12$.'
           - problem: 'For $y = 5x^2 - x$, find $\frac{d^2y}{dx^2}$.'
             answer: "10"
+          - problem: "For f(x) = 3x^3 - 2x^2 + 5x, find f''(1)."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with f(x) = 3x^3 - 2x^2 + 5x. The first derivative by the power rule is f'(x) = 9x^2 - 4x + 5. The second derivative by the power rule is f''(x) = 18x - 4. At x = 1 this gives 18 - 4 = 14, so f''(1) = 14."
+          - problem: "For y = 2x^4 - 3x^2 + x, find d^2y/dx^2 at x = 2."
+            answer: "90"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with y = 2x^4 - 3x^2 + x. Differentiate once with the power rule: y' = 8x^3 - 6x + 1. Differentiate again with the power rule: y'' = 24x^2 - 6. At x = 2 this gives 24*4 - 6 = 90, so d^2y/dx^2 = 90."
+          - problem: "For g(x) = x^4 - 2x^3 + 4x, find g''(3)."
+            answer: "72"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with g(x) = x^4 - 2x^3 + 4x. The first derivative by the power rule is g'(x) = 4x^3 - 6x^2 + 4. The second derivative by the power rule is g''(x) = 12x^2 - 12x. At x = 3 this gives 108 - 36 = 72, so g''(3) = 72."
+          - problem: "For y = 5x^3 - x^2 + 6x, find d^2y/dx^2 at x = -1."
+            answer: "-32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with y = 5x^3 - x^2 + 6x. Differentiate once with the power rule: y' = 15x^2 - 2x + 6. Differentiate again with the power rule: y'' = 30x - 2. At x = -1 this gives -30 - 2 = -32, so d^2y/dx^2 = -32."
         constraints: "both prime and Leibniz notation; integer evaluations"
       - id: kp3
         name: Velocity and acceleration
@@ -346,6 +478,22 @@ topics:
             solution_sketch: '$5x^4 \to 20x^3 \to 60x^2$.'
           - problem: 'Find the fourth derivative of $f(x) = x^4$.'
             answer: "24"
+          - problem: "Find f'''(x) for f(x) = x^6."
+            answer: "120x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with f(x) = x^6. First derivative by the power rule: f'(x) = 6x^5. Second derivative by the power rule: f''(x) = 30x^4. Third derivative by the power rule: f'''(x) = 120x^3. The third derivative is 120x^3."
+          - problem: "Find the fourth derivative of f(x) = 3x^5."
+            answer: "360x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with f(x) = 3x^5. First derivative by the constant multiple and power rules: f'(x) = 15x^4. Second derivative by the power rule: f''(x) = 60x^3. Third derivative by the power rule: f'''(x) = 180x^2. Fourth derivative by the power rule: the fourth derivative is 360x. The fourth derivative is 360x."
+          - problem: "Find f'''(x) for f(x) = 2x^5 - 3x^3."
+            answer: "120x^2-18"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with f(x) = 2x^5 - 3x^3. First derivative term by term with the power rule: f'(x) = 10x^4 - 9x^2. Second derivative with the power rule: f''(x) = 40x^3 - 18x. Third derivative with the power rule: f'''(x) = 120x^2 - 18. The third derivative is 120x^2-18."
+          - problem: "Find the fifth derivative of f(x) = x^5 + 7x^3 + 2x."
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with f(x) = x^5 + 7x^3 + 2x. First derivative with the power rule: f'(x) = 5x^4 + 21x^2 + 2. Second derivative with the power rule: f''(x) = 20x^3 + 42x. Third derivative with the power rule: f'''(x) = 60x^2 + 42. Fourth derivative with the power rule: f''''(x) = 120x. Fifth derivative with the power rule: the fifth derivative is 120. The fifth derivative is 120."
         constraints: "up to the fifth derivative; integer coefficients"
       - id: kp2
         name: Patterns in repeated differentiation
@@ -357,10 +505,22 @@ topics:
           - problem: 'Find $f''''(x)$ for $f(x) = \frac{1}{x}$.'
             answer: "2/x^3"
             solution_sketch: '$-x^{-2} \to 2x^{-3}$.'
-          - problem: 'The $n$th derivative of $x^n$ equals...'
-            answer: "n!"
-            answer_contract: {kind: none}
-            solution_sketch: 'Each step peels off one factor: $n x^{n-1} \to n(n-1)x^{n-2} \to \cdots \to n!$.'
+          - problem: "Find the sixth derivative of f(x) = x^6."
+            answer: "720"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x) = x^6. By the power rule each differentiation multiplies by the current exponent and lowers it by one, giving 6x^5, 30x^4, 120x^3, 360x^2, 720x, and finally 720. The sixth derivative is 720."
+          - problem: "Find the third derivative of f(x) = 1/x."
+            answer: "-6/x^4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write f(x) = 1/x. The power rule gives f'(x) = -1/x^2, f''(x) = 2/x^3, and f'''(x) = -6/x^4. The third derivative is -6/x^4."
+          - problem: "Find the fourth derivative of f(x) = x^5 + x^3."
+            answer: "120x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = x^5 + x^3. Differentiate term by term with the power rule: f'(x) = 5x^4 + 3x^2, f''(x) = 20x^3 + 6x, f'''(x) = 60x^2 + 6, and f''''(x) = 120x. The fourth derivative is 120x."
+          - problem: "Find the fourth derivative of f(x) = 1/x^2."
+            answer: "120/x^6"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write f(x) = 1/x^2. The power rule gives f'(x) = -2/x^3, f''(x) = 6/x^4, f'''(x) = -24/x^5, and f''''(x) = 120/x^6. The fourth derivative is 120/x^6."
         constraints: "degree-drop and negative-power patterns; exploit structure instead of grinding"
       - id: kp3
         name: Repeated differentiation of trig functions
@@ -421,6 +581,18 @@ topics:
             answer: "5e^x + 3x^2"
           - problem: 'Find the slope of $y = e^x$ at $x = 0$.'
             answer: "1"
+          - problem: "Find the derivative of f(x) = 4e^x - 2x^5."
+            answer: "4e^x - 10x^4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 4e^x - 2x^5. The derivative of e^x is e^x by the rule that e^x is its own derivative, so the derivative of 4e^x is 4e^x by the constant multiple rule. The derivative of -2x^5 is -10x^4 by the power rule. Adding these gives f'(x) = 4e^x - 10x^4."
+          - problem: "Find the derivative of f(x) = 7e^x + x^4 - 5x."
+            answer: "7e^x + 4x^3 - 5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 7e^x + x^4 - 5x. First, 7e^x differentiates to 7e^x because e^x is its own derivative and constants multiply. Next, x^4 differentiates to 4x^3 by the power rule, and -5x differentiates to -5 by the power rule and constant rule. The sum rule combines them: f'(x) = 7e^x + 4x^3 - 5."
+          - problem: "Find the derivative of f(x) = e^x - 4x^3 + 2x^2."
+            answer: "e^x - 12x^2 + 4x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = e^x - 4x^3 + 2x^2. The term e^x gives e^x since e^x is its own derivative. The term -4x^3 gives -12x^2 by the power rule, and 2x^2 gives 4x by the power rule. Summing the pieces gives f'(x) = e^x - 12x^2 + 4x."
         constraints: "linear combinations of e^x and power terms; integer coefficients"
       - id: kp2
         name: e to a function, via the chain rule
@@ -428,11 +600,23 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = e^{3x}$.'
             answer: "3e^(3x)"
+          - problem: 'Differentiate $f(x) = e^{2x}$.'
+            answer: "2e^(2x)"
+          - problem: "Find the derivative of $f(x) = e^{x^2}$ as a function of $x$."
+            answer: "2x e^(x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let f(x) = e^(x^2). The outer function is e^u and the inner function is u = x^2. By the chain rule, f'(x) = e^(x^2) times the derivative of x^2. The derivative of x^2 is 2x, so f'(x) = 2x e^(x^2)."
           - problem: 'Differentiate $f(x) = e^{-x^2}$.'
             answer: "-2x e^(-x^2)"
             solution_sketch: 'Chain rule: $e^{-x^2} \cdot (-2x)$.'
-          - problem: 'Differentiate $f(x) = e^{2x}$.'
-            answer: "2e^(2x)"
+          - problem: "Compute the derivative of $g(x) = e^{-4x}$ as a function of $x$."
+            answer: "-4e^(-4x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let g(x) = e^(-4x). The outer function is e^u and the inner function is u = -4x. By the chain rule, g'(x) = e^(-4x) times the derivative of -4x. The derivative of -4x is -4, so g'(x) = -4e^(-4x)."
+          - problem: "Find the derivative of $y = e^{5x}$ as a function of $x$."
+            answer: "5e^(5x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let y = e^(5x). The outer function is e^u and the inner function is u = 5x. By the chain rule, dy/dx = e^(5x) times the derivative of 5x. The derivative of 5x is 5, so dy/dx = 5e^(5x)."
         constraints: "inner function bx, x^2, or -x^2; integer parameters"
       - id: kp3
         name: Products with e^x
@@ -444,6 +628,22 @@ topics:
           - problem: 'Differentiate $f(x) = x^2 e^{3x}$.'
             answer: "2x e^(3x) + 3x^2 e^(3x)"
             solution_sketch: 'Product rule with a chain factor: $2x e^{3x} + x^2 \cdot 3e^{3x}$; factored form $x e^{3x}(2 + 3x)$ also accepted.'
+          - problem: "Find the derivative of f(x) = x^3 e^(2x)."
+            answer: "3x^2 e^(2x) + 2x^3 e^(2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function f(x) = x^3 e^(2x) is a product of a power and an exponential. The product rule gives (3x^2)e^(2x) + x^3(2e^(2x)). The chain rule gives the factor 2 for the exponential term. The derivative is 3x^2 e^(2x) + 2x^3 e^(2x)."
+          - problem: "Find the derivative of g(x) = x^2 e^(-3x)."
+            answer: "2x e^(-3x) - 3x^2 e^(-3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function g(x) = x^2 e^(-3x) is a product of a power and an exponential. The product rule gives (2x)e^(-3x) + x^2(-3e^(-3x)). The chain rule gives the factor -3 for the exponential term. The derivative is 2x e^(-3x) - 3x^2 e^(-3x)."
+          - problem: "Find the derivative of h(x) = x^5 e^x."
+            answer: "5x^4 e^x + x^5 e^x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function h(x) = x^5 e^x is a product of a power and e^x. The product rule gives (5x^4)e^x + x^5(e^x). The derivative of e^x is e^x, so no extra chain factor appears. The derivative is 5x^4 e^x + x^5 e^x."
+          - problem: "The mass of a culture is M(t) = t^3 e^(4t) grams at time t hours. Find the rate of change M'(t) as a function of t."
+            answer: "3t^2 e^(4t) + 4t^3 e^(4t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The mass M(t) = t^3 e^(4t) is a product of t^3 and e^(4t). The product rule gives (3t^2)e^(4t) + t^3(4e^(4t)). The chain rule gives the factor 4 for the exponential term. The rate of change is 3t^2 e^(4t) + 4t^3 e^(4t)."
         constraints: "one power factor times e^(bx); factored or expanded answers accepted"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x e^{2x}$.'
@@ -482,8 +682,20 @@ topics:
             answer: "1/x"
           - problem: 'Differentiate $f(x) = 3\ln x + x^2$.'
             answer: "3/x + 2x"
+          - problem: "Find the derivative of g(x) = 4 ln(x) + x^3."
+            answer: "4/x + 3x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is g(x) = 4 ln(x) + x^3. The derivative of ln(x) is 1/x, so the term 4 ln(x) gives 4/x. The power rule gives the derivative of x^3 as 3x^2. The sum rule combines the two terms. The derivative is 4/x + 3x^2."
           - problem: 'Differentiate $f(x) = 5e^x - 2\ln x$.'
             answer: "5e^x - 2/x"
+          - problem: "Find the derivative of h(x) = 7e^x - 6 ln(x)."
+            answer: "7e^(x) - 6/x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is h(x) = 7e^x - 6 ln(x). The derivative of e^x is e^x, so the term 7e^x gives 7e^x. The derivative of ln(x) is 1/x, so the term -6 ln(x) gives -6/x. The sum rule combines the two terms. The derivative is 7e^(x) - 6/x."
+          - problem: "Find the derivative of p(x) = x^5 + 2 ln(x) - 3e^x."
+            answer: "5x^4 + 2/x - 3e^(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is p(x) = x^5 + 2 ln(x) - 3e^x. The power rule gives the derivative of x^5 as 5x^4. The derivative of ln(x) is 1/x, so 2 ln(x) gives 2/x. The derivative of e^x is e^x, so -3e^x gives -3e^x. The sum rule combines the three terms. The derivative is 5x^4 + 2/x - 3e^(x)."
         constraints: "linear combinations of ln x, e^x, and power terms with integer coefficients"
       - id: kp2
         name: ln of a function, via the chain rule
@@ -497,6 +709,18 @@ topics:
           - problem: 'Differentiate $f(x) = \ln(3x)$ and simplify.'
             answer: "1/x"
             solution_sketch: '$\frac{3}{3x} = \frac{1}{x}$ (or note $\ln 3x = \ln 3 + \ln x$).'
+          - problem: "Find the derivative of f(x) = ln(7x + 4)."
+            answer: "7/(7x+4)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the inner function u = 7x + 4 so that f(x) = ln(u). The chain rule for a logarithm gives f'(x) = (1/u) times u', and u' = 7 by the constant-multiple rule. Multiply: the derivative is 7/(7x + 4)."
+          - problem: "Find the derivative of f(x) = ln(x^2 + 9)."
+            answer: "2x/(x^2+9)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Set u = x^2 + 9, so f(x) = ln(u). By the chain rule, f'(x) = (1/u) times u'; the power rule gives u' = 2x. Therefore the derivative is 2x/(x^2 + 9)."
+          - problem: "With y = ln(u) and u = 6x - 5, find dy/dx as a function of x."
+            answer: "6/(6x-5)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use the pattern y = ln(u) with u = 6x - 5. The chain rule says dy/dx = (1/u) times du/dx, and du/dx = 6 by the constant-multiple rule. So dy/dx = 6/(6x - 5)."
         constraints: "inner function linear or x^2 + c; the general pattern u'/u"
       - id: kp3
         name: Simplify with log properties before differentiating
@@ -511,6 +735,18 @@ topics:
           - problem: 'Differentiate $f(x) = \ln\sqrt{x}$ for $x > 0$.'
             answer: "1/(2x)"
             solution_sketch: '$\ln\sqrt{x} = \frac{1}{2}\ln x$.'
+          - problem: "Find the derivative of $f(x) = \\ln(x^4(x + 2))$ for $x > 0$ after simplifying with log properties."
+            answer: "4/x+1/(x+2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with $f(x) = \\ln(x^4(x + 2))$. Use the product rule for logarithms and the power rule for logarithms: $\\ln(x^4(x + 2)) = 4\\ln x + \\ln(x + 2)$. Differentiate each term with the natural log derivative: $4/x + 1/(x + 2)$. The derivative is 4/x+1/(x+2)."
+          - problem: "Find the derivative of $f(x) = \\ln(x^2\\sqrt{x + 1})$ for $x > 0$ after simplifying with log properties."
+            answer: "2/x+1/(2x+2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with $f(x) = \\ln(x^2\\sqrt{x + 1})$. Use the product rule for logs and the power rule for logs: $\\ln(x^2\\sqrt{x + 1}) = 2\\ln x + \\frac{1}{2}\\ln(x + 1)$. Differentiate term by term with the natural log derivative and the chain rule: $2/x + 1/(2x + 2)$. The derivative is 2/x+1/(2x+2)."
+          - problem: "Find the derivative of $f(x) = \\ln\\left(\\frac{\\sqrt{x}}{x + 5}\\right)$ for $x > 0$ after simplifying with log properties."
+            answer: "1/(2x)-1/(x+5)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with $f(x) = \\ln(\\sqrt{x}/(x + 5))$. Use the quotient rule for logs and the power rule for logs: $\\ln(\\sqrt{x}/(x + 5)) = \\frac{1}{2}\\ln x - \\ln(x + 5)$. Differentiate each term with the natural log derivative and the chain rule: $1/(2x) - 1/(x + 5)$. The derivative is 1/(2x)-1/(x+5)."
         constraints: "products, powers, and roots inside the log; expand with log rules before differentiating"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = \ln\left(\frac{x^2}{x + 3}\right)$ for $x > 0$ (simplify with log properties first).'
@@ -547,18 +783,30 @@ topics:
         name: General exponential bases
         key_prerequisites: [derivatives-natural-exp]
         exemplars:
-          - problem: 'Differentiate $f(x) = 2^x$.'
-            answer: "2^x ln 2"
-            answer_contract: {kind: none}
-            solution_sketch: '$2^x = e^{x \ln 2}$, so the derivative is $e^{x \ln 2} \cdot \ln 2$.'
-          - problem: 'Differentiate $f(x) = 10^x$.'
-            answer: "10^x ln 10"
-            answer_contract: {kind: none}
-            solution_sketch: "10^x ln 10"
-          - problem: 'Differentiate $f(x) = 3^{2x}$.'
-            answer: "(2 ln 3) 3^(2x)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Chain rule on $e^{2x \ln 3}$: the factor is $2\ln 3$.'
+          - problem: "Differentiate f(x) = 2^x after expressing it with base e. Find the derivative as a function of x."
+            answer: "ln(2)e^(x ln(2))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 2^x. Step 1 rewrites the power with base e: 2^x = e^(x ln(2)). Step 2 applies the exponential rule and the chain rule, giving the factor ln(2). The derivative is ln(2)e^(x ln(2))."
+          - problem: "For f(x) = 10^x, rewrite the power with base e and differentiate. Give the derivative as a function of x."
+            answer: "ln(10)e^(x ln(10))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 10^x. Step 1 rewrites the power with base e: 10^x = e^(x ln(10)). Step 2 applies the exponential rule and the chain rule, giving the factor ln(10). The derivative is ln(10)e^(x ln(10))."
+          - problem: "Differentiate f(x) = 3^(2x) by writing the power with base e. Give the derivative as a function of x."
+            answer: "2ln(3)e^(2x ln(3))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 3^(2x). Step 1 rewrites the power with base e: 3^(2x) = e^(2x ln(3)). Step 2 applies the exponential rule and the chain rule, so the factor is 2 ln(3). The derivative is 2ln(3)e^(2x ln(3))."
+          - problem: "Find the derivative of f(x) = 5^(3x) by converting the base to e. Give the answer as a function of x."
+            answer: "3ln(5)e^(3x ln(5))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 5^(3x). Step 1 rewrites the power with base e: 5^(3x) = e^(3x ln(5)). Step 2 applies the exponential rule and the chain rule, so the factor is 3 ln(5). The derivative is 3ln(5)e^(3x ln(5))."
+          - problem: "Differentiate f(x) = 2^(4x). Give the result as a function of x."
+            answer: "4ln(2)e^(4x ln(2))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 2^(4x). Step 1 rewrites the power with base e: 2^(4x) = e^(4x ln(2)). Step 2 applies the exponential rule and the chain rule, so the factor is 4 ln(2). The derivative is 4ln(2)e^(4x ln(2))."
+          - problem: "Differentiate f(x) = 10^(x/2) after rewriting it with base e. Give the derivative as a function of x."
+            answer: "(ln(10)/2)e^(x ln(10)/2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 10^(x/2). Step 1 rewrites the power with base e: 10^(x/2) = e^((x/2) ln(10)). Step 2 applies the exponential rule and the chain rule, so the factor is ln(10)/2. The derivative is (ln(10)/2)e^(x ln(10)/2)."
         constraints: "bases 2, 3, 5, or 10; rewrite as e^(x ln a) or use the memorized a^x ln a"
       - id: kp2
         name: General logarithmic bases
@@ -627,6 +875,22 @@ topics:
           - problem: 'With the same $f$, find $f''(0)$.'
             answer: "0"
             solution_sketch: 'At $x = 0$ the $x^2$ branch applies: $f''(x) = 2x$, so $f''(0) = 0$.'
+          - problem: "Let f(x) = x^2 + 4x for x < 0 and f(x) = 3x - 1 for x >= 0. Find f'(-3)."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is piecewise with a quadratic branch for x < 0 and a linear branch for x >= 0. Step 1: apply the branch test; -3 < 0, so the quadratic branch applies. Step 2: differentiate x^2 + 4x by the power rule to get f'(x) = 2x + 4 on that branch. Step 3: evaluate at x = -3: 2(-3) + 4 = -2. Therefore f'(-3) = -2."
+          - problem: "Let f(x) = x^3 - x for x <= 2 and f(x) = 4x + 1 for x > 2. Find f'(0)."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is piecewise with a cubic branch for x <= 2 and a linear branch for x > 2. Step 1: apply the branch test; 0 <= 2, so the cubic branch applies. Step 2: differentiate x^3 - x by the power rule to get f'(x) = 3x^2 - 1 on that branch. Step 3: evaluate at x = 0: 3(0)^2 - 1 = -1. Therefore f'(0) = -1."
+          - problem: "Let f(x) = 2x + 5 for x < 1 and f(x) = x^2 - 3x for x >= 1. Find f'(5)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is piecewise with a linear branch for x < 1 and a quadratic branch for x >= 1. Step 1: apply the branch test; 5 >= 1, so the quadratic branch applies. Step 2: differentiate x^2 - 3x by the power rule to get f'(x) = 2x - 3 on that branch. Step 3: evaluate at x = 5: 2(5) - 3 = 7. Therefore f'(5) = 7."
+          - problem: "Let f(x) = x^3 + 2x for x > -2 and f(x) = 6x - 4 for x <= -2. Find f'(-1)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is piecewise with a cubic branch for x > -2 and a linear branch for x <= -2. Step 1: apply the branch test; -1 > -2, so the cubic branch applies. Step 2: differentiate x^3 + 2x by the power rule to get f'(x) = 3x^2 + 2 on that branch. Step 3: evaluate at x = -1: 3(-1)^2 + 2 = 5. Therefore f'(-1) = 5."
         constraints: "points strictly inside one branch; differentiate that branch only"
       - id: kp2
         name: Check differentiability at the seam

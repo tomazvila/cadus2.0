@@ -901,6 +901,18 @@ topics:
             answer: "-3x^(-4)"
           - problem: 'Differentiate $f(x) = \frac{5}{x}$.'
             answer: "-5/x^2"
+          - problem: "Let $f(x) = \\frac{2}{x^3}$. Find $f'(x)$."
+            answer: "-6/x^4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Rewrite the function as $f(x) = 2x^{-3}$. Apply the power rule: the exponent $-3$ multiplies the coefficient $2$ and decreases by one, giving $-6x^{-4}$. Rewrite with a positive exponent. The derivative is -6/x^4."
+          - problem: "Let $f(x) = \\frac{3}{x} + \\frac{1}{x^2}$. Find $f'(x)$."
+            answer: "-3/x^2 - 2/x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Rewrite each term as a negative power: $f(x) = 3x^{-1} + x^{-2}$. Apply the power rule term by term: the derivative of $3x^{-1}$ is $-3x^{-2}$, and the derivative of $x^{-2}$ is $-2x^{-3}$. Rewrite with positive exponents. The derivative is -3/x^2 - 2/x^3."
+          - problem: "Let $f(x) = \\frac{5}{x^2}$. Find $f'(x)$."
+            answer: "-10/x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Rewrite the function as $f(x) = 5x^{-2}$. Apply the power rule: multiply the coefficient $5$ by the exponent $-2$ to get $-10$, and decrease the exponent by one to get $-3$. Rewrite with a positive exponent. The derivative is -10/x^3."
         constraints: "rewrite reciprocals as negative powers first; exponents -1 to -3"
       - id: kp2
         name: Fractional exponents and radicals
@@ -911,8 +923,20 @@ topics:
             solution_sketch: '$x^{1/2} \mapsto \frac{1}{2}x^{-1/2}$.'
           - problem: 'Differentiate $f(x) = x^{2/3}$.'
             answer: "(2/3)x^(-1/3)"
+          - problem: "Let f(x) = x^(3/2). Find f'(x)."
+            answer: "(3/2)x^(1/2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1: identify the function f(x) = x^(3/2) as a power with exponent 3/2. Step 2: apply the power rule, multiplying by the exponent and subtracting one from it, so f'(x) = (3/2)x^(1/2). The derivative is (3/2)x^(1/2)."
           - problem: 'Differentiate $f(x) = \sqrt[3]{x}$.'
             answer: "(1/3)x^(-2/3)"
+          - problem: "Let g(x) = x^(4/3). Give g'(x)."
+            answer: "(4/3)x^(1/3)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1: the function g(x) = x^(4/3) is already a power with exponent 4/3. Step 2: use the power rule: bring down 4/3 and subtract 1 from the exponent, giving (4/3)x^(1/3). The derivative is (4/3)x^(1/3)."
+          - problem: "Let h(x) = x^(5/2). Compute h'(x)."
+            answer: "(5/2)x^(3/2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1: write h(x) = x^(5/2) as the power it is. Step 2: apply the power rule, multiplying by 5/2 and reducing the exponent by one, so h'(x) = (5/2)x^(3/2). The derivative is (5/2)x^(3/2)."
         constraints: "rewrite radicals as fractional powers first; exponents like 1/2, 1/3, 2/3"
       - id: kp3
         name: Rewrite before differentiating
@@ -927,6 +951,18 @@ topics:
           - problem: 'Differentiate $f(x) = x^2\sqrt{x}$ by rewriting it first.'
             answer: "(5/2)x^(3/2)"
             solution_sketch: '$f(x) = x^{5/2}$, so $f''(x) = \frac{5}{2}x^{3/2}$.'
+          - problem: "The function f(x) = (x^3 + 4x)/x^2 is a quotient that simplifies. Rewrite it as a sum of powers, then find f'(x)."
+            answer: "1 - 4/x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full expression is f(x) = (x^3 + 4x)/x^2. Rewrite each term as a power: f(x) = x + 4x^(-1). Apply the power rule term by term: the derivative of x is 1, and the derivative of 4x^(-1) is -4x^(-2). The derivative is 1 - 4/x^2."
+          - problem: "The function f(x) = sqrt(x)(x^3 + 2) is a product of powers. Rewrite it as a sum of powers, then find f'(x)."
+            answer: "(7/2)x^(5/2) + x^(-1/2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full expression is f(x) = sqrt(x)(x^3 + 2). Rewrite the root as a power and distribute: f(x) = x^(7/2) + 2x^(1/2). Apply the power rule to each term: (7/2)x^(5/2) + x^(-1/2). The derivative is (7/2)x^(5/2) + x^(-1/2)."
+          - problem: "The function f(x) = (5x^4 - 2x)/x^3 is a quotient of polynomials. Split it into separate powers, then find f'(x)."
+            answer: "5 + 4/x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full expression is f(x) = (5x^4 - 2x)/x^3. Split the quotient into separate powers: f(x) = 5x - 2x^(-2). Apply the power rule: the derivative of 5x is 5, and the derivative of -2x^(-2) is 4x^(-3). The derivative is 5 + 4/x^3."
         constraints: "quotients and products that collapse into single powers or sums of powers; no quotient rule"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = \frac{x^2 - 3}{\sqrt{x}}$ by rewriting it first.'
@@ -974,13 +1010,29 @@ topics:
         name: Verify against expansion
         key_prerequisites: [derivative-power-rule, polynomial-multiplication]
         exemplars:
-          - problem: 'Differentiate $f(x) = (x + 1)(x - 3)$ two ways: by the product rule and by expanding first. Confirm they agree.'
-            answer: "2x - 2 (both ways)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Product rule: $(x - 3) + (x + 1) = 2x - 2$; expansion $x^2 - 2x - 3$ differentiates to the same.'
           - problem: 'Differentiate $x^3 \cdot x^2$ by the product rule and confirm it matches $\frac{d}{dx} x^5$.'
             answer: "5x^4"
             solution_sketch: '$3x^2 \cdot x^2 + x^3 \cdot 2x = 5x^4 = \frac{d}{dx}x^5$.'
+          - problem: "Differentiate f(x) = (x + 1)(x - 3) by the product rule, then verify by expanding. Find the derivative as a function of x."
+            answer: "2x-2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = (x + 1)(x - 3). Product rule: f'(x) = 1(x - 3) + (x + 1)1 = 2x - 2. Expansion check: x^2 - 2x - 3 differentiates to 2x - 2. The derivative is 2x-2."
+          - problem: "Differentiate f(x) = (x + 2)(x + 5) by the product rule, then verify by expanding. Find the derivative as a function of x."
+            answer: "2x+7"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = (x + 2)(x + 5). Product rule: f'(x) = 1(x + 5) + (x + 2)1 = 2x + 7. Expansion check: x^2 + 7x + 10 differentiates to 2x + 7. The derivative is 2x+7."
+          - problem: "Differentiate f(x) = (2x + 1)(x - 5) by the product rule, then verify by expanding. Find the derivative as a function of x."
+            answer: "4x-9"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = (2x + 1)(x - 5). Product rule: f'(x) = 2(x - 5) + (2x + 1)1 = 4x - 9. Expansion check: 2x^2 - 9x - 5 differentiates to 4x - 9. The derivative is 4x-9."
+          - problem: "Differentiate f(x) = (x^2 + 1)(x + 2) by the product rule, then verify by expanding. Find the derivative as a function of x."
+            answer: "3x^2+4x+1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = (x^2 + 1)(x + 2). Product rule: f'(x) = 2x(x + 2) + (x^2 + 1)1 = 3x^2 + 4x + 1. Expansion check: x^3 + 2x^2 + x + 2 differentiates to 3x^2 + 4x + 1. The derivative is 3x^2+4x+1."
+          - problem: "Differentiate f(x) = (x^2 + 3)(x - 1) by the product rule, then verify by expanding. Find the derivative as a function of x."
+            answer: "3x^2-2x+3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = (x^2 + 3)(x - 1). Product rule: f'(x) = 2x(x - 1) + (x^2 + 3)1 = 3x^2 - 2x + 3. Expansion check: x^3 - x^2 + 3x - 3 differentiates to 3x^2 - 2x + 3. The derivative is 3x^2-2x+3."
         constraints: "products that expand easily; the point is that both routes agree"
       - id: kp3
         name: Product rule with table values
@@ -991,6 +1043,22 @@ topics:
             solution_sketch: '$f''g + fg'' = (-1)(5) + (3)(4) = 7$.'
           - problem: 'Given $f(1) = 2$, $f''(1) = 3$, $g(1) = -4$, $g''(1) = 1$, find $(fg)''(1)$.'
             answer: "-10"
+          - problem: "A table gives $f(3) = 2$, $f'(3) = 5$, $g(3) = 4$, and $g'(3) = 6$. Find $(fg)'(3)$."
+            answer: "32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The product rule gives $(fg)'(3) = f'(3)g(3) + f(3)g'(3)$. Substitute the table values: $(5)(4) + (2)(6) = 20 + 12 = 32$. So $(fg)'(3) = 32$."
+          - problem: "At $x = 4$, the functions $f$ and $g$ have $f(4) = -2$, $f'(4) = 3$, $g(4) = 5$, and $g'(4) = -1$. Compute $(fg)'(4)$."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The product rule gives $(fg)'(4) = f'(4)g(4) + f(4)g'(4)$. Substitute: $(3)(5) + (-2)(-1) = 15 + 2 = 17$. So $(fg)'(4) = 17$."
+          - problem: "The table gives $f(5) = 3$, $f'(5) = 4$, $g(5) = 2$, and $(fg)'(5) = 5$. Find $g'(5)$."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The product rule gives $(fg)'(5) = f'(5)g(5) + f(5)g'(5)$. Substitute the known values: $5 = (4)(2) + (3)g'(5) = 8 + 3g'(5)$. Solve: $3g'(5) = -3$, so $g'(5) = -1$."
+          - problem: "A company's revenue is $R = pq$, where price $p$ and quantity $q$ depend on time $t$. At $t = 5$, $p = 6$, $q = 3$, $p' = 2$, and $q' = -1$. Find $R'(5)$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The product rule gives $R'(5) = p'(5)q(5) + p(5)q'(5)$. Substitute the given rates and values: $(2)(3) + (6)(-1) = 6 - 6 = 0$. So $R'(5) = 0$."
         constraints: "single-digit table values; one application of f'g + fg'"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x^3(x^2 + 1)$.'
@@ -1034,6 +1102,18 @@ topics:
           - problem: 'Differentiate $f(x) = \frac{x^2}{x^2 + 1}$.'
             answer: "2x/(x^2 + 1)^2"
             solution_sketch: '$\frac{2x(x^2+1) - x^2 \cdot 2x}{(x^2+1)^2} = \frac{2x}{(x^2+1)^2}$.'
+          - problem: "Let f(x) = (3x + 2)/(x + 5). Find f'(x)."
+            answer: "13/(x + 5)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let f(x) = (3x + 2)/(x + 5). Apply the quotient rule: the numerator is (3)(x + 5) - (3x + 2)(1), and the denominator is (x + 5)^2. Simplify the numerator to 13. The derivative is 13/(x + 5)^2."
+          - problem: "Let f(x) = (x^2 + 1)/(x^2 + 4). Find f'(x)."
+            answer: "6x/(x^2 + 4)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let f(x) = (x^2 + 1)/(x^2 + 4). Use the quotient rule: the numerator is (2x)(x^2 + 4) - (x^2 + 1)(2x), and the denominator is (x^2 + 4)^2. Factor 2x to get 2x[(x^2 + 4) - (x^2 + 1)] = 6x. The derivative is 6x/(x^2 + 4)^2."
+          - problem: "Let f(x) = 3x/(x^2 + 2). Find f'(x)."
+            answer: "(6 - 3x^2)/(x^2 + 2)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let f(x) = 3x/(x^2 + 2). The quotient rule gives numerator 3(x^2 + 2) - (3x)(2x) over (x^2 + 2)^2. Simplify: 3x^2 + 6 - 6x^2 = 6 - 3x^2. The derivative is (6 - 3x^2)/(x^2 + 2)^2."
         constraints: "low-degree numerator and denominator; numerator of the result simplifies to one or two terms"
       - id: kp2
         name: Rewrite instead when the quotient rule is overkill
@@ -1045,6 +1125,22 @@ topics:
           - problem: 'Differentiate $f(x) = \frac{x^2 + 3x}{x}$ the efficient way.'
             answer: "1"
             solution_sketch: 'Simplify first: $f(x) = x + 3$ (for $x \neq 0$), so $f''(x) = 1$.'
+          - problem: "The function $f(x) = \\frac{7}{x^3}$ can be rewritten as a power of $x$. Find $f'(x)$."
+            answer: "-21/x^4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Rewrite f(x) = 7/x^3 as 7x^(-3) using the reciprocal power identity. The power rule gives f'(x) = -21x^(-4). In fraction form, f'(x) = -21/x^4."
+          - problem: "The quotient $f(x) = \\frac{x^3 - 5x^2}{x}$ simplifies before differentiating. Find $f'(x)$."
+            answer: "2x-5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Simplify f(x) = (x^3 - 5x^2)/x by dividing each term by x, giving f(x) = x^2 - 5x for x not 0. The power rule gives f'(x) = 2x-5. Therefore f'(x) = 2x-5."
+          - problem: "The function $f(x) = \\frac{9}{\\sqrt{x}}$ can be rewritten as a power of $x$. Find $f'(x)$."
+            answer: "-9/(2x sqrt(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Rewrite f(x) = 9/sqrt(x) as 9x^(-1/2), using the power form for a square root. The power rule gives f'(x) = -(9/2)x^(-3/2). In radical form, f'(x) = -9/(2x sqrt(x))."
+          - problem: "The quotient $f(x) = \\frac{4x^3 + 2x}{x}$ simplifies before differentiating. Find $f'(x)$."
+            answer: "8x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Simplify f(x) = (4x^3 + 2x)/x by dividing each term by x, giving f(x) = 4x^2 + 2 for x not 0. The power rule gives f'(x) = 8x. Hence f'(x) = 8x."
         constraints: "constant numerators or cancellable quotients; the student picks the shortcut"
       - id: kp3
         name: Quotient rule with table values
@@ -1056,6 +1152,22 @@ topics:
           - problem: 'Given $f(0) = 6$, $f''(0) = 2$, $g(0) = 3$, $g''(0) = 1$, find $\left(\frac{f}{g}\right)''(0)$.'
             answer: "0"
             solution_sketch: '$\frac{2 \cdot 3 - 6 \cdot 1}{9} = 0$.'
+          - problem: "At x = 4, the functions f and g have f(4) = 7, f'(4) = 2, g(4) = 5, and g'(4) = 3. Find (f/g)'(4) as a fraction."
+            answer: "-11/25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the quotient rule: (f/g)' = (f' g - f g')/g^2. At x = 4 this is (2 * 5 - 7 * 3)/5^2. The numerator is 10 - 21 = -11 and the denominator is 25. Thus (f/g)'(4) = -11/25."
+          - problem: "At x = 2, f(2) = 3, g(2) = 3, and g'(2) = 1. Also (f/g)'(2) = 2. Find f'(2)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the quotient rule in the form (f/g)' = (f' g - f g')/g^2. At x = 2, substitute the known values: 2 = (f'(2) * 3 - 3 * 1)/3^2. Multiply both sides by 9: 18 = 3 f'(2) - 3. Solve: 3 f'(2) = 21, so f'(2) = 7."
+          - problem: "The efficiency ratio of a device is E(t) = f(t)/g(t), where f and g are differentiable. At t = 2, f(2) = 6, f'(2) = 5, g(2) = 3, and g'(2) = 2. Find E'(2) as a fraction."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the quotient rule to E = f/g: E' = (f' g - f g')/g^2. At t = 2 this becomes (5 * 3 - 6 * 2)/3^2. The numerator is 15 - 12 = 3 and the denominator is 9. Thus E'(2) = 3/9 = 1/3."
+          - problem: "At x = 1, let h(x) = g(x)/f(x) with f(1) = 4, f'(1) = 3, g(1) = 7, and g'(1) = 2. Find h'(1) as a fraction."
+            answer: "-13/16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For h = g/f, the quotient rule gives h' = (g' f - g f')/f^2. At x = 1 this is (2 * 4 - 7 * 3)/4^2. The numerator is 8 - 21 = -13 and the denominator is 16. Therefore h'(1) = -13/16."
         constraints: "single-digit table values; g at the point is nonzero"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = \frac{x}{x + 3}$.'
@@ -1096,6 +1208,22 @@ topics:
           - problem: 'For $f(x) = \frac{x^2 - 1}{x + 2}$, find $f''(1)$.'
             answer: "2/3"
             solution_sketch: '$f''(x) = \frac{2x(x+2) - (x^2-1)}{(x+2)^2} = \frac{x^2 + 4x + 1}{(x+2)^2}$; $f''(1) = \frac{6}{9} = \frac{2}{3}$.'
+          - problem: "For $g(x) = x^2(x + 3)$, find $g'(-1)$."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand first: $g(x) = x^3 + 3x^2$. Differentiate with the power rule: $g'(x) = 3x^2 + 6x$. Evaluate at $x = -1$: $3 - 6 = -3$."
+          - problem: "For $f(x) = (x + 3)/(x - 1)$, find $f'(2)$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the quotient rule: $f'(x) = ((1)(x - 1) - (x + 3)(1))/(x - 1)^2 = -4/(x - 1)^2$. Substitute $x = 2$: $-4/1$. The value is -4."
+          - problem: "For $f(x) = (x + 1)/(x^2 + 1)$, find $f'(1)$ as a fraction."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the quotient rule: $f'(x) = ((1)(x^2 + 1) - (x + 1)(2x))/(x^2 + 1)^2 = (1 - x^2 - 2x)/(x^2 + 1)^2$. Substitute $x = 1$: $(1 - 1 - 2)/4 = -2/4$. The answer as a fraction is -1/2."
+          - problem: "For $r(x) = (x^2 - 2x)(x + 3)$, find $r'(-1)$."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the product: $r(x) = x^3 + x^2 - 6x$. Differentiate with the power rule: $r'(x) = 3x^2 + 2x - 6$. At $x = -1$: $3 - 2 - 6 = -5$."
         constraints: "evaluation point keeps arithmetic small; answers are integers or simple fractions"
       - id: kp2
         name: Combine product and quotient structures
@@ -1107,6 +1235,22 @@ topics:
           - problem: 'Differentiate $g(x) = (x^3 - 1)(2x + 5)$ and simplify.'
             answer: "8x^3 + 15x^2 - 2"
             solution_sketch: '$3x^2(2x+5) + 2(x^3-1) = 6x^3 + 15x^2 + 2x^3 - 2$.'
+          - problem: "Let f(x) = x(x + 3)/(x + 2). Find f'(x)."
+            answer: "(x^2+4x+6)/(x+2)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full function is f(x) = x(x + 3)/(x + 2). Expand the numerator to x^2 + 3x. Apply the quotient rule: numerator derivative (2x+3) times denominator (x+2) minus numerator times denominator derivative 1, all over (x+2)^2. This gives ((2x+3)(x+2) - (x^2+3x))/(x+2)^2 = (x^2+4x+6)/(x+2)^2. So f'(x) = (x^2+4x+6)/(x+2)^2."
+          - problem: "Let g(x) = (x^2 + 1)(3x - 4). Find g'(x) and simplify."
+            answer: "9x^2-8x+3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full product is (x^2 + 1)(3x - 4). Use the product rule: derivative of first times second plus first times derivative of second. This gives 2x(3x - 4) + 3(x^2 + 1). Expand: 6x^2 - 8x + 3x^2 + 3 = 9x^2 - 8x + 3. So g'(x) = 9x^2-8x+3."
+          - problem: "Let h(x) = x(2x + 1)/(x - 3). Find h'(x)."
+            answer: "(2x^2-12x-3)/(x-3)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full function is h(x) = x(2x + 1)/(x - 3). Expand the numerator to 2x^2 + x. Apply the quotient rule: ((4x+1)(x-3) - (2x^2+x))/(x-3)^2. Expand and simplify: (2x^2 -12x -3)/(x-3)^2. So h'(x) = (2x^2-12x-3)/(x-3)^2."
+          - problem: "Let k(x) = (2x^2 - 3)(x^2 + 5x). Find k'(x) and simplify."
+            answer: "8x^3+30x^2-6x-15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full product is (2x^2 - 3)(x^2 + 5x). Use the product rule: derivative of first times second plus first times derivative of second. This gives (4x)(x^2 + 5x) + (2x^2 - 3)(2x + 5). Expand: 4x^3 + 20x^2 + 4x^3 + 10x^2 - 6x - 15 = 8x^3 + 30x^2 - 6x - 15. So k'(x) = 8x^3+30x^2-6x-15."
         constraints: "one product-inside-quotient and one simplify-after-product problem; integer coefficients"
       - id: kp3
         name: Tangent lines to product and quotient curves
@@ -1118,6 +1262,22 @@ topics:
           - problem: 'Find the tangent line to $y = x^2(x - 3)$ at $x = 1$. Give the expression for $y$.'
             answer: "-3x + 1"
             solution_sketch: '$y = x^3 - 3x^2$, $y'' = 3x^2 - 6x$; slope $-3$ at $(1, -2)$: $y + 2 = -3(x - 1)$.'
+          - problem: "Find the tangent line to y = (x + 2)(x - 1) at x = 1. Give the expression for y."
+            answer: "3x - 3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The curve is y = (x + 2)(x - 1). By the product rule, y' = (x - 1) + (x + 2) = 2x + 1. At x = 1 the point is (1, 0) and the slope is 3. The tangent line is y - 0 = 3(x - 1). The slope-intercept expression is 3x - 3."
+          - problem: "Find the tangent line to y = (3x + 1)/(x + 2) at x = 0. Give the expression for y."
+            answer: "5x/4 + 1/2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The curve is y = (3x + 1)/(x + 2). By the quotient rule, y' = (3(x + 2) - (3x + 1))/(x + 2)^2 = 5/(x + 2)^2. At x = 0 the point is (0, 1/2) and the slope is 5/4. The tangent line is y - 1/2 = (5/4)(x - 0). The slope-intercept expression is 5x/4 + 1/2."
+          - problem: "Find the tangent line to y = (x^2 + x)/(x + 2) at x = 0. Give the expression for y."
+            answer: "x/2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The curve is y = (x^2 + x)/(x + 2). By the quotient rule, y' = ((2x + 1)(x + 2) - (x^2 + x))/(x + 2)^2. At x = 0 the point is (0, 0) and the slope is 1/2. The tangent line is y - 0 = (1/2)(x - 0). The slope-intercept expression is x/2."
+          - problem: "Find the tangent line to y = (x^2 + 2)/(x + 1) at x = 2. Give the expression for y."
+            answer: "2x/3 + 2/3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The curve is y = (x^2 + 2)/(x + 1). By the quotient rule, y' = (2x(x + 1) - (x^2 + 2))/(x + 1)^2. At x = 2 the point is (2, 2) and the slope is 2/3. The tangent line is y - 2 = (2/3)(x - 2). The slope-intercept expression is 2x/3 + 2/3."
         constraints: "tangent point coordinates and slopes are integers or simple fractions; the answer is the slope-intercept expression for y"
     diagnostic_exemplar:
       problem: 'Find the tangent line to $y = \frac{x(x + 2)}{x + 1}$ at $x = 1$. Give the expression for $y$.'
