@@ -37,26 +37,58 @@ topics:
         name: At rest and direction of motion
         key_prerequisites: [derivative-power-rule, quadratic-equations-factoring]
         exemplars:
-          - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, when is the particle at rest?'
-            answer: "t = 1 and t = 3"
-            answer_contract: {kind: none}
-            solution_sketch: '$v(t) = 3t^2 - 12t + 9 = 3(t-1)(t-3) = 0$.'
           - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, on what interval (for $t > 0$) is the particle moving left?'
             answer: "(1, 3)"
             solution_sketch: '$v = 3(t-1)(t-3) < 0$ exactly between the roots.'
+          - problem: "For s(t) = t^3 - 6t^2 + 9t, find the sum of the positive times when the particle is at rest."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Velocity is the derivative: v(t) = 3t^2 - 12t + 9. Factor by the quadratic factoring rule: v(t) = 3(t - 1)(t - 3), so the positive at-rest times are 1 and 3. The sum is 1 + 3 = 4."
+          - problem: "A particle moves along a line with velocity v(t) = 3t^2 - 18t + 15 for t >= 0. Find the larger positive time when the particle is at rest."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Velocity is given as v(t) = 3t^2 - 18t + 15. Factor by the quadratic factoring rule: v(t) = 3(t - 1)(t - 5). The positive at-rest times are 1 and 5, so the larger time is 5."
+          - problem: "A particle has position s(t) = 2t^3 - 24t^2 + 72t for t >= 0. On what interval is the particle moving left? Give the answer as an inequality in t."
+            answer: "2 < t < 6"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Velocity is the derivative: v(t) = 6t^2 - 48t + 72. Factor by the quadratic factoring rule: v(t) = 6(t - 2)(t - 6). The velocity is negative between the roots, so the particle moves left on 2 < t < 6."
+          - problem: "A particle moves along a line with velocity v(t) = -t^2 + 5t - 4 for t > 0. State the interval of positive time when the particle is moving right. Give the answer as an inequality in t."
+            answer: "1 < t < 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Velocity is given as v(t) = -t^2 + 5t - 4. Factor by the quadratic factoring rule: v(t) = -(t - 1)(t - 4). The velocity is positive between the roots, so for t > 0 the particle moves right on 1 < t < 4."
+          - problem: "A particle has position s(t) = 3t^3 - 36t^2 + 63t for t >= 0. Find the later positive time when the particle is at rest."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Velocity is the derivative: v(t) = 9t^2 - 72t + 63. Factor by the quadratic factoring rule: v(t) = 9(t - 1)(t - 7). The positive at-rest times are 1 and 7, so the later time is 7."
         constraints: "v(t) factors over the integers; at-rest times are positive integers"
       - id: kp3
         name: Speeding up or slowing down
         key_prerequisites: [higher-order-derivatives, derivative-power-rule]
         exemplars:
-          - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, is the particle speeding up or slowing down at $t = 4$?'
-            answer: "speeding up (v(4) = 9 > 0 and a(4) = 12 > 0 have the same sign)"
-            answer_contract: {kind: none}
-            solution_sketch: '$v(4) = 48 - 48 + 9 = 9$, $a(4) = 24 - 12 = 12$; same sign means speeding up.'
-          - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, is the particle speeding up or slowing down at $t = 0$?'
-            answer: "slowing down (v(0) = 9 > 0 but a(0) = -12 < 0)"
-            answer_contract: {kind: none}
-            solution_sketch: "slowing down (v(0) = 9 > 0 but a(0) = -12 < 0)"
+          - problem: "A particle moves along a line with position s(t) = t^3 - 3t^2 - 24t + 5 meters at time t seconds. Its velocity is v(t) = s'(t) and its acceleration is a(t) = s''(t). At t = 5, state whether the particle is speeding up or slowing down, and give the value of v(t) a(t)."
+            answer: "verdict = increasing; va = 504"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "va"}]}
+            solution_sketch: "The position is s(t) = t^3 - 3t^2 - 24t + 5. By the power rule, v(t) = 3t^2 - 6t - 24, and a second differentiation gives a(t) = 6t - 6. At t = 5, v(5) = 21 and a(5) = 24, so v(5) a(5) = 504. Both factors are positive, so the speed is increasing and the particle is speeding up; the wrong option decreasing would require velocity and acceleration to have opposite signs. So verdict = increasing; va = 504."
+          - problem: "A particle moves along a line with position s(t) = t^3 - 9t^2 + 15t meters at time t seconds. Its velocity is v(t) = s'(t) and its acceleration is a(t) = s''(t). At t = 4, state whether the particle is speeding up or slowing down, and give the value of v(t) a(t)."
+            answer: "verdict = decreasing; va = -54"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "va"}]}
+            solution_sketch: "The position is s(t) = t^3 - 9t^2 + 15t. By the power rule, v(t) = 3t^2 - 18t + 15, and differentiating again gives a(t) = 6t - 18. At t = 4, v(4) = -9 and a(4) = 6, so v(4) a(4) = -54. The signs are opposite, so the speed is decreasing and the particle is slowing down; the wrong option increasing would require same signs. So verdict = decreasing; va = -54."
+          - problem: "A particle travels on a straight line with position s(t) = t^3 + 3t^2 - 24t meters at time t seconds. Its velocity is v(t) = s'(t) and its acceleration is a(t) = s''(t). At t = 1, state whether the particle is speeding up or slowing down, and give the value of v(t) a(t)."
+            answer: "verdict = decreasing; va = -180"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "va"}]}
+            solution_sketch: "The position is s(t) = t^3 + 3t^2 - 24t. By the power rule, v(t) = 3t^2 + 6t - 24, and a second differentiation gives a(t) = 6t + 6. At t = 1, v(1) = -15 and a(1) = 12, so v(1) a(1) = -180. Opposite signs mean the particle is slowing down, that is, the speed is decreasing; the wrong option increasing would mean the signs agree. So verdict = decreasing; va = -180."
+          - problem: "A toy car moves along a straight track with position s(t) = t^3 - 6t^2 - 15t centimeters at time t seconds. Its velocity is v(t) = s'(t) and its acceleration is a(t) = s''(t). At t = 1, state whether the car is speeding up or slowing down, and give the value of v(t) a(t)."
+            answer: "verdict = increasing; va = 144"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "va"}]}
+            solution_sketch: "The position is s(t) = t^3 - 6t^2 - 15t. By the power rule, v(t) = 3t^2 - 12t - 15, and differentiating again gives a(t) = 6t - 12. At t = 1, v(1) = -24 and a(1) = -6, so v(1) a(1) = 144. Both factors are negative, so the speed is increasing and the car is speeding up; the wrong option decreasing would mean the signs disagree. So verdict = increasing; va = 144."
+          - problem: "A particle moves along a line with velocity v(t) = t^2 - 6t + 8 meters per second at time t seconds, and its acceleration is a(t) = v'(t). At t = 5, find the value of v(t) a(t)."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The velocity is v(t) = t^2 - 6t + 8. By the power rule, a(t) = v'(t) = 2t - 6. At t = 5, v(5) = 3 and a(5) = 4, so the product is 3 times 4. So v(t) a(t) = 12."
+          - problem: "Along a coordinate line, a particle has position s(t) = t^3 + 3t^2 - 45t meters at time t seconds. Its velocity is v(t) = s'(t) and its acceleration is a(t) = s''(t). At t = 2, find the value of v(t) a(t)."
+            answer: "-378"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The position is s(t) = t^3 + 3t^2 - 45t. By the power rule, v(t) = 3t^2 + 6t - 45, and a second differentiation gives a(t) = 6t + 6. At t = 2, v(2) = -21 and a(2) = 18, and the product of these two values is the requested quantity. So v(t) a(t) = -378."
         constraints: "test times where neither v nor a is zero"
     diagnostic_exemplar:
       problem: 'A particle has position $s(t) = t^3 - 9t^2 + 24t$ (meters, seconds). Is it speeding up or slowing down at $t = 1$?'
@@ -104,6 +136,22 @@ topics:
           - problem: 'The radius of a circle grows at $3$ cm/s. How fast is the circumference $C = 2\pi r$ growing?'
             answer: "6π cm/s"
             solution_sketch: '$\frac{dC}{dt} = 2\pi \frac{dr}{dt} = 6\pi$ — independent of $r$.'
+          - problem: "A circle's radius grows at 4 cm/s. Using A = πr^2, find how fast the area is growing when r = 6 cm, as an exact multiple of π in cm²/s."
+            answer: "48pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with A = πr^2. Differentiate with respect to t by the chain rule: dA/dt = 2πr dr/dt. Substitute r = 6 and dr/dt = 4: dA/dt = 2π(6)(4) = 48π. The area rate is 48pi."
+          - problem: "A circle's radius grows at 5 cm/s. Using C = 2πr, find the rate at which its circumference is growing, as an exact multiple of π in cm/s."
+            answer: "10pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with C = 2πr. Differentiate with respect to t by the chain rule: dC/dt = 2π dr/dt. Substitute dr/dt = 5: dC/dt = 2π(5) = 10π. The circumference rate is 10pi."
+          - problem: "A circle's circumference grows at 16π cm/s while its radius is 4 cm. Using A = πr^2 and C = 2πr, find how fast the area is growing, as an exact multiple of π in cm²/s."
+            answer: "64pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with C = 2πr and A = πr^2. Differentiate C by the chain rule: dC/dt = 2π dr/dt, so 16π = 2π dr/dt and dr/dt = 8. Differentiate A by the chain rule: dA/dt = 2πr dr/dt. Substitute r = 4 and dr/dt = 8: dA/dt = 2π(4)(8) = 64π. The area rate is 64pi."
+          - problem: "A circle's diameter grows at 6 cm/s. Using A = πr^2 and r = d/2, find how fast the area is growing when the radius is 4 cm, as an exact multiple of π in cm²/s."
+            answer: "24pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with A = πr^2 and the relation r = d/2, so dr/dt = (1/2) dd/dt = 3 by the chain rule. Differentiate A: dA/dt = 2πr dr/dt. Substitute r = 4 and dr/dt = 3: dA/dt = 2π(4)(3) = 24π. The area rate is 24pi."
         constraints: "give the geometric formula in the problem; integer rates and radii; answers as exact multiples of π with units"
       - id: kp2
         name: Growing spheres
@@ -201,13 +249,29 @@ topics:
         name: Sliding ladders and separating travelers (Pythagorean setups)
         key_prerequisites: [related-rates-setup, pythagorean-theorem]
         exemplars:
-          - problem: 'A $5$ m ladder leans against a wall. Its base slides away at $2$ m/s. How fast is the top sliding down when the base is $3$ m from the wall?'
-            answer: "3/2 m/s downward (dy/dt = -3/2)"
-            answer_contract: {kind: none}
-            solution_sketch: '$x^2 + y^2 = 25$ with $y = 4$; $2x\frac{dx}{dt} + 2y\frac{dy}{dt} = 0$ gives $\frac{dy}{dt} = -\frac{3 \cdot 2}{4} = -\frac{3}{2}$.'
           - problem: 'One car drives north at $60$ km/h, another east at $80$ km/h, both from the same point. How fast is the distance between them growing when the northbound car is $30$ km and the eastbound car $40$ km from the start?'
             answer: "100 km/h"
             solution_sketch: '$s^2 = x^2 + y^2$ with $s = 50$; $s\frac{ds}{dt} = x\frac{dx}{dt} + y\frac{dy}{dt} = 40 \cdot 80 + 30 \cdot 60 = 5000$, so $\frac{ds}{dt} = 100$.'
+          - problem: "A 13 m ladder leans against a vertical wall. Its base slides away from the wall at 3 m/s. Let x be the distance from the wall to the base and y the height of the top of the ladder, both in metres. Find dy/dt in m/s when x = 5 as a fraction."
+            answer: "-5/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up x^2 + y^2 = 13^2. Differentiate implicitly: 2x dx/dt + 2y dy/dt = 0. At x = 5, y = 12. Substitute 2(5)(3) + 2(12) dy/dt = 0, so 30 + 24 dy/dt = 0. Solve: dy/dt = -30/24 = -5/4. The rate is -5/4 m/s."
+          - problem: "Two cyclists start from the same point at the same time. One rides north at 6 m/s and the other east at 8 m/s. Let x be the distance east and y the distance north, both in metres. Find the rate at which the distance between them is increasing, in m/s, when x = 12 and y = 9."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set s^2 = x^2 + y^2 with x = 12 and y = 9, so s = 15. Differentiate: 2s ds/dt = 2x dx/dt + 2y dy/dt. Substitute: 2(15) ds/dt = 2(12)(8) + 2(9)(6) = 192 + 108 = 300. Then ds/dt = 300/30 = 10. The rate is 10 m/s."
+          - problem: "A 10 m ladder leans against a vertical wall. Its top slides down the wall at 2 m/s. Let x be the distance from the wall to the base and y the height of the top of the ladder, both in metres. Find dx/dt in m/s when x = 6 as a fraction."
+            answer: "8/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set x^2 + y^2 = 10^2. Differentiate: 2x dx/dt + 2y dy/dt = 0. At x = 6, y = 8. The top slides down, so dy/dt = -2. Substitute: 2(6) dx/dt + 2(8)(-2) = 0, so 12 dx/dt - 32 = 0. Solve: dx/dt = 32/12 = 8/3. The rate is 8/3 m/s."
+          - problem: "Two hikers leave a trailhead at the same time. One walks north at 4 km/h and the other walks east at 7 km/h. Let x be the distance east and y the distance north, both in km. Find the rate at which their straight-line distance is increasing, in km/h, when x = 20 and y = 15."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set s^2 = x^2 + y^2 with x = 20 and y = 15, so s = 25. Differentiate: 2s ds/dt = 2x dx/dt + 2y dy/dt. Substitute: 2(25) ds/dt = 2(20)(7) + 2(15)(4) = 280 + 120 = 400. Then ds/dt = 400/50 = 8. The rate is 8 km/h."
+          - problem: "Two people leave the same corner at the same time. One walks north at 5 km/h; the other walks east at an unknown constant speed v km/h. Their distance apart grows at 13 km/h when the northbound one is 3 km out and the eastbound one is 4 km out. Find v in km/h as a fraction."
+            answer: "25/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set s^2 = x^2 + y^2 with x = 4 and y = 3, so s = 5. Differentiate: 2s ds/dt = 2x dx/dt + 2y dy/dt. Substitute ds/dt = 13, dx/dt = v, dy/dt = 5: 2(5)(13) = 2(4)v + 2(3)(5). This gives 130 = 8v + 30, so 8v = 100. Solve: v = 100/8 = 25/2. The speed is 25/2 km/h."
         constraints: "Pythagorean triples so all distances are integers; rates are integers or simple fractions"
       - id: kp2
         name: Conical tanks (similar-triangle substitution)
@@ -630,29 +694,57 @@ topics:
         name: Find critical points where f' = 0
         key_prerequisites: [derivative-power-rule, quadratic-equations-factoring]
         exemplars:
-          - problem: 'Find the critical points of $f(x) = x^3 - 3x$.'
-            answer: "x = -1 and x = 1"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''(x) = 3x^2 - 3 = 3(x-1)(x+1) = 0$.'
-          - problem: 'Find the critical points of $f(x) = x^3 - 6x^2 + 9x$.'
-            answer: "x = 1 and x = 3"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''(x) = 3x^2 - 12x + 9 = 3(x-1)(x-3)$.'
           - problem: 'Find the critical point of $f(x) = x^2 - 4x + 1$.'
             answer: "x = 2"
+          - problem: "Consider $f(x) = x^3 - 12x$. Find its critical points, and give the smaller point as x1 and the larger point as x2."
+            answer: "x1 = -2; x2 = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "Differentiate with the power rule: for f(x) = x^3 - 12x the derivative is f'(x) = 3x^2 - 12. Set f'(x) = 0 and factor over the integers: 3(x - 2)(x + 2) = 0. By the zero-product rule the critical points are x = 2 and x = -2. Ordered from smaller to larger, the critical points are x1 = -2; x2 = 2."
+          - problem: "Consider $f(x) = x^3 + 3x^2 - 45x$. Find its critical points, and give the smaller point as x1 and the larger point as x2."
+            answer: "x1 = -5; x2 = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "Differentiate with the power rule: for f(x) = x^3 + 3x^2 - 45x the derivative is f'(x) = 3x^2 + 6x - 45. Set f'(x) = 0, divide by 3, and factor the quadratic: x^2 + 2x - 15 = (x + 5)(x - 3). By the zero-product rule the critical points are x = -5 and x = 3. Ordered from smaller to larger, the critical points are x1 = -5; x2 = 3."
+          - problem: "The quadratic $f(x) = x^2 + bx + 7$ has its critical point at $x = 3$. Find the value of $b$."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A critical point of a differentiable function is a point where f'(x) = 0. Differentiate f(x) = x^2 + bx + 7 with the power rule: f'(x) = 2x + b. At the critical point x = 3 this gives 2(3) + b = 0, so b = -6. The value of b is -6."
+          - problem: "Consider $f(x) = x^3 - 3x^2 + 3x - 1$. Find the critical point of $f$ where $f'(x) = 0$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate f(x) = x^3 - 3x^2 + 3x - 1 with the power rule: f'(x) = 3x^2 - 6x + 3. Factor the derivative over the integers: 3(x^2 - 2x + 1) = 3(x - 1)^2. Setting f'(x) = 0, the double root of the factored derivative gives the single critical point x = 1. The critical point is 1."
+          - problem: "The height of a roller coaster car in meters is $h(t) = t^3 - 15t^2 + 48t$, with $t$ in seconds. Find the critical times where $h'(t) = 0$, and give the smaller time as t1 and the larger time as t2."
+            answer: "t1 = 2; t2 = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t1"}, {"contract": {"kind": "exact"}, "name": "t2"}]}
+            solution_sketch: "Differentiate h(t) = t^3 - 15t^2 + 48t with the power rule: h'(t) = 3t^2 - 30t + 48. Set h'(t) = 0, divide by 3, and factor the quadratic: t^2 - 10t + 16 = (t - 2)(t - 8). By the zero-product rule the critical times are t = 2 and t = 8. Ordered from smaller to larger, the critical times are t1 = 2; t2 = 8."
         constraints: "cubics or quadratics whose derivative factors over the integers"
       - id: kp2
         name: Critical points where f' is undefined; domain care
         key_prerequisites: [derivative-power-rule, domain-range]
         exemplars:
-          - problem: 'Find the critical point of $f(x) = x^{2/3}$.'
-            answer: "x = 0 (f' does not exist there)"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''(x) = \frac{2}{3}x^{-1/3}$ is never $0$ but is undefined at $x = 0$, which is in the domain of $f$.'
-          - problem: 'Find the critical points of $f(x) = x + \frac{4}{x}$.'
-            answer: "x = -2 and x = 2 (x = 0 is NOT a critical point — it is not in the domain)"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''(x) = 1 - \frac{4}{x^2} = 0$ at $x = \pm 2$; $0$ is excluded from the domain of $f$.'
+          - problem: "Find the x-coordinate of the critical point of f(x) = x^(2/3) as a number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate f(x) = x^(2/3) with the power rule; f'(x) = (2/3)x^(-1/3). Step 2: Solve f'(x) = 0; the equation has no solution. Step 3: Find where f' is undefined; x = 0 makes the exponent -1/3 undefined, and x = 0 is in the domain of f. The critical x-coordinate is 0."
+          - problem: "Find the critical points of f(x) = x + 4/x. Give the smaller critical x-value as x1 and the larger as x2."
+            answer: "x1 = -2; x2 = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "The full result: the critical x-values are x1 = -2; x2 = 2. Step 1: Differentiate f(x) = x + 4/x with the power rule; f'(x) = 1 - 4/x^2. Step 2: Solve f'(x) = 0; x^2 = 4 gives x = -2 and x = 2. Step 3: Apply the domain rule; x = 0 is not in the domain of f, so it is not a critical point. The answer is x1 = -2; x2 = 2."
+          - problem: "Find the x-coordinate of the critical point of f(x) = (x - 1)^(2/3) as a number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate f(x) = (x - 1)^(2/3) with the power rule; f'(x) = (2/3)(x - 1)^(-1/3). Step 2: Solve f'(x) = 0; there is no solution. Step 3: Find where f' is undefined; x - 1 = 0 gives x = 1, which is in the domain of f. The critical x-coordinate is 1."
+          - problem: "Find the critical points of f(x) = 2x + 18/x. Give the smaller critical x-value as x1 and the larger as x2."
+            answer: "x1 = -3; x2 = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "The full result: the critical x-values are x1 = -3; x2 = 3. Step 1: Differentiate f(x) = 2x + 18/x with the power rule; f'(x) = 2 - 18/x^2. Step 2: Solve f'(x) = 0; x^2 = 9 gives x = -3 and x = 3. Step 3: Apply the domain rule; x = 0 is not in the domain of f, so it is not a critical point. The answer is x1 = -3; x2 = 3."
+          - problem: "How many critical points does f(x) = 3x + 12/x have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate f(x) = 3x + 12/x with the power rule; f'(x) = 3 - 12/x^2. Step 2: Solve f'(x) = 0; x^2 = 4 gives x = -2 and x = 2. Step 3: Apply the domain rule; x = 0 is not in the domain, so it is not a critical point. Thus there are 2 critical points."
+          - problem: "Find the x-coordinate of the critical point of f(x) = (x + 2)^(2/3) as a number."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate f(x) = (x + 2)^(2/3) with the power rule; f'(x) = (2/3)(x + 2)^(-1/3). Step 2: Solve f'(x) = 0; there is no solution. Step 3: Find where f' is undefined; x + 2 = 0 gives x = -2, which is in the domain of f. The critical x-coordinate is -2."
         constraints: "include one f'-undefined case and one domain trap; answers are small integers"
       - id: kp3
         name: Classify local extrema with a sign chart
@@ -810,6 +902,22 @@ topics:
           - problem: 'Find the $c$ in $(0, 3)$ guaranteed by the MVT for $f(x) = x^3$ on $[0, 3]$.'
             answer: "c = √3"
             solution_sketch: 'Average slope $\frac{27}{3} = 9$; $3c^2 = 9$ gives $c = \sqrt{3}$ (the positive root lies in the interval).'
+          - problem: "Find the c in (2, 5) guaranteed by the Mean Value Theorem for f(x) = x^2 on [2, 5]."
+            answer: "7/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x) = x^2 on [2, 5] with a = 2 and b = 5. The Mean Value Theorem gives f'(c) = (f(b) - f(a))/(b - a). The power rule gives f'(c) = 2c, and (25 - 4)/(5 - 2) = 7. Solve 2c = 7 to get c = 7/2, which lies in (2, 5). The answer is 7/2."
+          - problem: "Consider f(x) = x^3 on [0, 6]. Find the c in (0, 6) guaranteed by the Mean Value Theorem."
+            answer: "2sqrt(3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x) = x^3 on [0, 6]. The Mean Value Theorem sets f'(c) equal to (216 - 0)/(6 - 0) = 36. The power rule gives f'(c) = 3c^2. Solve 3c^2 = 36, so c^2 = 12 and c = 2sqrt(3), which is in (0, 6). The answer is 2sqrt(3)."
+          - problem: "Find the c in (1, 4) guaranteed by the Mean Value Theorem for f(x) = x^2 + 2x on [1, 4]."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x) = x^2 + 2x on [1, 4]. The Mean Value Theorem gives f'(c) = (24 - 3)/(4 - 1) = 7. The power rule gives f'(c) = 2c + 2. Solve 2c + 2 = 7, so 2c = 5 and c = 5/2, which lies in (1, 4). The answer is 5/2."
+          - problem: "Find the c in (0, 2) guaranteed by the Mean Value Theorem for f(x) = x^3 - 3x on [0, 2]."
+            answer: "2sqrt(3)/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x) = x^3 - 3x on [0, 2]. The Mean Value Theorem gives f'(c) = (2 - 0)/(2 - 0) = 1. The power rule gives f'(c) = 3c^2 - 3. Solve 3c^2 - 3 = 1, so 3c^2 = 4 and c = 2/sqrt(3) = 2sqrt(3)/3, which lies in (0, 2). The answer is 2sqrt(3)/3."
         constraints: "polynomials; f'(c) = (f(b)-f(a))/(b-a) solvable exactly with c inside the open interval"
       - id: kp2
         name: Check whether the MVT applies
@@ -831,10 +939,26 @@ topics:
           - problem: 'Suppose $f(1) = 3$ and $f''(x) \leq 2$ for all $x$. What is the largest possible value of $f(5)$?'
             answer: "11"
             solution_sketch: 'By the MVT, $f(5) - f(1) = f''(c) \cdot 4 \leq 8$, so $f(5) \leq 11$.'
-          - problem: 'If $f''(x) = 0$ for every $x$ in an interval, what does the MVT imply about $f$ on that interval?'
-            answer: "f is constant on the interval"
-            answer_contract: {kind: none}
-            solution_sketch: "f is constant on the interval"
+          - problem: "Suppose f is differentiable and f'(x) = 0 for every x. If f(1) = 7, what is f(11)?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "MVT on [1,11]: f(11) - f(1) = f'(c) * (11 - 1) for some c. Since f'(c) = 0, f(11) - f(1) = 0, so f(11) = f(1) = 7. A constant function with value 7 fits the data. The answer is 7."
+          - problem: "Suppose f(-1) = 4 and f'(x) <= 5 for every x. What is the largest possible value of f(3)?"
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "MVT on [-1,3]: f(3) - f(-1) = f'(c) * (3 - (-1)) for some c. This gives f(3) - 4 = 4 f'(c) <= 4 * 5 = 20. Hence f(3) <= 4 + 20 = 24, and a line with slope 5 attains it. The answer is 24."
+          - problem: "Suppose g(0) = 10 and g'(x) >= 3 for every x. What is the smallest possible value of g(4)?"
+            answer: "22"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "MVT on [0,4]: g(4) - g(0) = g'(c) * 4 for some c. Since g'(c) >= 3, g(4) - 10 >= 12. Hence g(4) >= 22, and a line with slope 3 attains this bound. The answer is 22."
+          - problem: "Suppose f is differentiable and 1 <= f'(x) <= 4 for every x. What is the largest possible value of f(7) - f(2)?"
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "MVT on [2,7]: f(7) - f(2) = f'(c) * (7 - 2) for some c. Since f'(c) <= 4, the difference is at most 4 * 5 = 20. A line with slope 4 attains this value. The answer is 20."
+          - problem: "Suppose f and g are differentiable on an interval and f'(x) = g'(x) for every x in that interval. Which conclusion does the Mean Value Theorem justify?"
+            answer: "difference is constant"
+            answer_contract: {"kind": "label", "options": [["difference is constant"], ["functions are equal"], ["difference is zero"], ["sum is constant"]]}
+            solution_sketch: "Apply MVT to h = f - g on the interval: h(b) - h(a) = h'(c) * (b - a) for some c. Since h'(c) = f'(c) - g'(c) = 0, h(b) = h(a) for every pair of points, so h is constant. The wrong options come from these errors: functions are equal and difference is zero require the constant to be 0; sum is constant confuses the difference with the sum. The answer is difference is constant."
         constraints: "bounded-derivative estimates with integer data; conceptual consequence questions"
     diagnostic_exemplar:
       problem: 'Suppose $f$ is differentiable with $f(2) = 5$ and $f''(x) \leq 3$ for all $x$. Using the Mean Value Theorem, what is the largest possible value of $f(6)$?'
