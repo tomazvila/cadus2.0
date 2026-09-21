@@ -130,18 +130,30 @@ topics:
         name: Verifying a solution by substitution
         key_prerequisites: [chain-rule, derivatives-exp-log]
         exemplars:
-          - problem: "Verify that $y = e^{3x}$ is a solution of $y' - 3y = 0$."
-            answer: "Yes: $y' = 3e^{3x} = 3y$, so $y' - 3y = 0$."
-            answer_contract: {kind: none}
-            solution_sketch: "Differentiate, substitute, and confirm the equation reduces to $0 = 0$."
-          - problem: "Is $y = x^2$ a solution of $xy' = 2y$ for $x > 0$?"
-            answer: "Yes: $xy' = x(2x) = 2x^2 = 2y$."
-            answer_contract: {kind: none}
-            solution_sketch: "Yes: $xy' = x(2x) = 2x^2 = 2y$."
-          - problem: 'Verify that $y = \sin 2x$ solves $y'''' + 4y = 0$.'
-            answer: 'Yes: $y'''' = -4\sin 2x$, so $y'''' + 4y = -4\sin 2x + 4\sin 2x = 0$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'By the chain rule $y'' = 2\cos 2x$ and $y'''' = -4\sin 2x$; substitute and cancel.'
+          - problem: "Verify by substitution that y = e^(3x) is a solution of y' - 3y = 0. Give y' and 3y as functions of x."
+            answer: "yp = 3e^(3x); rhs = 3e^(3x)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "yp"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "rhs"}]}
+            solution_sketch: "Start from the candidate y = e^(3x). Differentiate by the chain rule for exponentials: y' = 3e^(3x). Compute the right side: 3y = 3e^(3x). The two sides agree for every x, so the substitution closes to the identity y' - 3y = 0. The key is yp = 3e^(3x); rhs = 3e^(3x)."
+          - problem: "Show by substitution that y = x^2 satisfies x y' = 2y for x > 0. Give x y' and 2y as functions of x."
+            answer: "lhs = 2x^2; rhs = 2x^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "lhs"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "rhs"}]}
+            solution_sketch: "Start from the candidate y = x^2. Differentiate by the power rule: y' = 2x. Substitute into the left side: x y' = x(2x) = 2x^2. Compute the right side: 2y = 2x^2. Both sides match, so the equation holds as an identity for x > 0. The key is lhs = 2x^2; rhs = 2x^2."
+          - problem: "Verify by substitution that y = sin(2x) solves y'' + 4y = 0. Give y'' and 4y as functions of x."
+            answer: "ypp = -4sin(2x); fy = 4sin(2x)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "ypp"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "fy"}]}
+            solution_sketch: "Start from the candidate y = sin(2x). Differentiate twice by the chain rule: y' = 2cos(2x) and y'' = -4sin(2x). Compute 4y = 4sin(2x). Substitute: y'' + 4y = -4sin(2x) + 4sin(2x) = 0, an identity. The key is ypp = -4sin(2x); fy = 4sin(2x)."
+          - problem: "Verify by substitution that y = e^(2x) is a solution of y' - 2y = 0, then find the common value of y'(0) and 2y(0)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the candidate y = e^(2x). Differentiate by the chain rule: y' = 2e^(2x). Compute 2y = 2e^(2x); the two sides of y' - 2y agree, so the substitution closes to 0 = 0. Evaluate the common side at x = 0: 2e^(0) = 2. The key is 2."
+          - problem: "Verify that y = x^3 satisfies x y' = 3y, and give the common value of x y' and 3y at x = 2."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the candidate y = x^3. Differentiate by the power rule: y' = 3x^2. Substitute into the left side: x y' = 3x^3; the right side is 3y = 3x^3, so the identity holds. Evaluate at x = 2: 3(2)^3 = 24. The key is 24."
+          - problem: "Verify that y = cos(3x) solves y'' + 9y = 0. Give y' and y'' as functions of x."
+            answer: "yp = -3sin(3x); ypp = -9cos(3x)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "yp"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "ypp"}]}
+            solution_sketch: "Start from the candidate y = cos(3x). Differentiate by the chain rule: y' = -3sin(3x). Differentiate again: y'' = -9cos(3x). Substitute into y'' + 9y = -9cos(3x) + 9cos(3x) = 0, an identity. The key is yp = -3sin(3x); ypp = -9cos(3x)."
         constraints: "candidate solutions built from e^{kx}, sin/cos of kx, and polynomials; verification always closes to an identity"
       - id: kp2
         name: Verifying implicit solutions
