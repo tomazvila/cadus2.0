@@ -807,18 +807,30 @@ topics:
         name: "Identifying space curves"
         key_prerequisites: [parametric-equations, vectors-in-rn]
         exemplars:
-          - problem: 'Describe the curve $\mathbf{r}(t) = \langle 1 + 2t, 3t, 4 - t \rangle$.'
-            answer: 'A line through $(1, 0, 4)$ with direction $\langle 2, 3, -1 \rangle$.'
-            solution_sketch: 'Each component is affine in $t$, so the curve is the line through $(1,0,4)$ with direction $\langle 2,3,-1\rangle$.'
-            answer_contract: {kind: none}
-          - problem: 'Describe the curve $\mathbf{r}(t) = \langle \cos t, \sin t, 2 \rangle$.'
-            answer: 'A circle of radius $1$ in the plane $z = 2$, centered on the $z$-axis.'
-            solution_sketch: 'For all $t$, $x^2+y^2=\cos^2t+\sin^2t=1$ and $z=2$: a circle of radius $1$ in the plane $z=2$.'
-            answer_contract: {kind: none}
-          - problem: 'Show that the curve $\mathbf{r}(t) = \langle t \cos t, t \sin t, t \rangle$ lies on the cone $z^2 = x^2 + y^2$.'
-            answer: '$x^2 + y^2 = t^2 \cos^2 t + t^2 \sin^2 t = t^2 = z^2$.'
-            solution_sketch: 'Compute $x^2+y^2=t^2\cos^2t+t^2\sin^2t=t^2=z^2$, so every point lies on $z^2=x^2+y^2$.'
-            answer_contract: {kind: none}
+          - problem: "Select the type of the curve r(t) = <1 + 2t, 3t, 4 - t>."
+            answer: "line"
+            answer_contract: {"kind": "label", "options": [["line"], ["circle"], ["helix"], ["parabola"]]}
+            solution_sketch: "The curve has r(t) = <1 + 2t, 3t, 4 - t>. Each component is affine in t, so the point moves along one fixed direction vector <2, 3, -1>: this is a line. The option circle is wrong because no component of r(t) oscillates. The option helix is wrong because x and y do not oscillate while z grows. The option parabola is wrong because every component is linear in t, not quadratic. The answer is line."
+          - problem: "The curve r(t) = <cos t, sin t, 2> is a circle. Find its radius."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve has r(t) = <cos t, sin t, 2>. Use the Pythagorean identity: x^2 + y^2 = cos^2 t + sin^2 t = 1 for every t. A planar curve with x^2 + y^2 = 1 is a circle of radius sqrt(1) = 1; the constant z = 2 only fixes the plane. The radius is 1."
+          - problem: "For the curve r(t) = <t cos t, t sin t, t>, compute x^2 + y^2 - z^2."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve has r(t) = <t cos t, t sin t, t>. Use the Pythagorean identity on x^2 + y^2 = t^2 cos^2 t + t^2 sin^2 t = t^2. Since z = t, we get z^2 = t^2 as well, so x^2 + y^2 - z^2 = t^2 - t^2 = 0 and the curve lies on the cone z^2 = x^2 + y^2. The value is 0."
+          - problem: "Select the type of the curve r(t) = <2 cos t, 2 sin t, 3t>."
+            answer: "helix"
+            answer_contract: {"kind": "label", "options": [["line"], ["circle"], ["helix"], ["parabola"]]}
+            solution_sketch: "The curve has r(t) = <2 cos t, 2 sin t, 3t>. The x and y components satisfy x^2 + y^2 = 4 for all t while z = 3t grows linearly, so the curve winds around a cylinder: a helix. The option line is wrong because x and y are not affine in t. The option circle is wrong because z is not constant. The option parabola is wrong because x and y are periodic, not quadratic. The answer is helix."
+          - problem: "For the curve r(t) = <2 cos t, 2 sin t, 3t>, find x^2 + y^2."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve has r(t) = <2 cos t, 2 sin t, 3t>. Use the Pythagorean identity on x^2 + y^2 = 4 cos^2 t + 4 sin^2 t = 4(cos^2 t + sin^2 t) = 4. The z component 3t does not enter this sum, so the curve stays on the cylinder x^2 + y^2 = 4. The value is 4."
+          - problem: "For the curve r(t) = <t, t, 2t^2>, compute z - x^2 - y^2."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve has r(t) = <t, t, 2t^2>. First compute x^2 + y^2 = t^2 + t^2 = 2t^2 by substitution of the components. Since z = 2t^2, we get z - x^2 - y^2 = 2t^2 - 2t^2 = 0, so every point lies on the paraboloid z = x^2 + y^2. The value is 0."
         constraints: "curves are lines, circles, helices, or curves lying on a named quadric verified by substitution"
     diagnostic_exemplar:
       problem: 'Describe the curve $\mathbf{r}(t) = \langle 2\cos t,\; 2\sin t,\; \ln t \rangle$, including its domain.'
