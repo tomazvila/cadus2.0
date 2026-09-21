@@ -1700,14 +1700,30 @@ topics:
         name: Cost and material problems
         key_prerequisites: [basic-optimization, volume-prisms-cylinders]
         exemplars:
-          - problem: 'A rectangular field of area $800$ m² borders a straight river, so only three sides need fencing. Find the dimensions minimizing the total fence, and the minimum length.'
-            answer: "20 m (each side perpendicular to the river) × 40 m (parallel side); 80 m of fence"
-            answer_contract: {kind: none}
-            solution_sketch: '$F = 2x + \frac{800}{x}$; $F'' = 2 - \frac{800}{x^2} = 0$ at $x = 20$, parallel side $\frac{800}{20} = 40$.'
-          - problem: 'A closed cylindrical can must hold $250\pi$ cm³. Using $S = 2\pi r^2 + 2\pi r h$, find the radius and height minimizing the surface area.'
-            answer: "r = 5 cm, h = 10 cm"
-            answer_contract: {kind: none}
-            solution_sketch: '$h = \frac{250}{r^2}$, so $S = 2\pi r^2 + \frac{500\pi}{r}$; $S'' = 4\pi r - \frac{500\pi}{r^2} = 0$ at $r^3 = 125$.'
+          - problem: "A rectangular field of area 1800 square meters borders a straight river, so the three sides away from the river need fencing. Find the minimum total length of fence in meters."
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let x be each side perpendicular to the river and y the side parallel to it. The area constraint x*y = 1800 gives y = 1800/x, so the fence length is F = 2x + 1800/x. Differentiate with the power rule: F' = 2 - 1800/x^2. Put F' = 0: x^2 = 900, so x = 30 and y = 60. The minimum total length of fence is 2(30) + 60 = 120."
+          - problem: "A closed cylindrical can must hold 54 pi cubic centimeters. Its surface area is S = 2 pi r^2 + 2 pi r h. Find the radius r in centimeters that minimizes the surface area."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let r be the radius and h the height. The volume constraint pi r^2 h = 54 pi gives h = 54/r^2. Substitute into S = 2 pi r^2 + 2 pi r h to get S = 2 pi r^2 + 108 pi / r. Differentiate with the power rule: S' = 4 pi r - 108 pi / r^2. Put S' = 0: r^3 = 27, so r = 3. The radius that minimizes the surface area is 3."
+          - problem: "A container with a square base and no top must hold 256 cubic centimeters. Find the side length of the square base in centimeters that minimizes the material for the base and the four sides."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let x be the base side and h the height. The volume constraint x^2 h = 256 gives h = 256/x^2. The material is the base plus four sides: A = x^2 + 4xh = x^2 + 1024/x. Differentiate with the power rule: A' = 2x - 1024/x^2. Put A' = 0: x^3 = 512, so x = 8. The side length of the base that minimizes the material is 8."
+          - problem: "A rectangular garden of area 216 square meters is enclosed by fence. The side facing the street costs 12 dollars per meter and each of the other three sides costs 6 dollars per meter. Find the minimum total cost of the fence in dollars."
+            answer: "432"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let x be the length of the street side and y the length of each adjacent side. The area constraint xy = 216 gives y = 216/x. The cost is C = 12x + 6x + 6(2y) = 18x + 12y = 18x + 2592/x. Differentiate with the power rule: C' = 18 - 2592/x^2. Put C' = 0: x^2 = 144, so x = 12 and y = 18. The minimum total cost is 18(12) + 12(18) = 432."
+          - problem: "A closed rectangular box with a square base must hold 288 cubic centimeters. The material for the base and the top costs 4 dollars per square centimeter and the material for each of the four sides costs 3 dollars per square centimeter. Find the minimum total cost of the material in dollars."
+            answer: "864"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let x be the base side and h the height. The volume constraint x^2 h = 288 gives h = 288/x^2. The cost is 4(2x^2) for the base and top plus 3(4xh) for the sides: C = 8x^2 + 12xh = 8x^2 + 3456/x. Differentiate with the power rule: C' = 16x - 3456/x^2. Put C' = 0: x^3 = 216, so x = 6 and h = 8. The minimum total cost is 8(36) + 12(6)(8) = 864."
+          - problem: "A closed rectangular box with a square base has a volume of 125 cubic centimeters. Find the minimum surface area of the box in square centimeters."
+            answer: "150"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let x be the base side and h the height. The volume constraint x^2 h = 125 gives h = 125/x^2. The surface area of the closed box is S = 2x^2 + 4xh = 2x^2 + 500/x. Differentiate with the power rule: S' = 4x - 500/x^2. Put S' = 0: x^3 = 125, so x = 5 and h = 5. The minimum surface area is 2(25) + 4(5)(5) = 150."
         constraints: "area/volume constraint plus linear-or-quadratic objective; integer optimum"
       - id: kp3
         name: Distance problems
