@@ -337,14 +337,30 @@ topics:
         name: "Disjunction table"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: 'Give the truth values of $P \lor Q$ for all four combinations of $P, Q$.'
-            answer_contract: {kind: none}
-            answer: 'TT->T, TF->T, FT->T, FF->F.'
-            solution_sketch: 'A disjunction is false only when both disjuncts are false, and true otherwise.'
-          - problem: 'In which single row is $P \lor Q$ false?'
-            answer_contract: {kind: none}
-            answer: 'Only when $P$ and $Q$ are both false.'
-            solution_sketch: 'Inclusive or fails only with two false disjuncts.'
+          - problem: "Encode true as 1 and false as 0. Give the values of P or Q for all four combinations of (P, Q), in the order (1,1), (1,0), (0,1), (0,0), as a comma-separated list."
+            answer: "1, 1, 1, 0"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1 uses the disjunction rule: P or Q is false only when both parts are false, and true otherwise. Step 2 evaluates the full table row by row: (1,1) gives 1, (1,0) gives 1, (0,1) gives 1, and (0,0) gives 0. The answer is 1, 1, 1, 0."
+          - problem: "The truth table for P or Q has exactly one false row. Using 1 for true and 0 for false, give the combination of that row as (P, Q)."
+            answer: "(0, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 writes the full table: (1,1) gives 1, (1,0) gives 1, (0,1) gives 1, (0,0) gives 0. Step 2 applies the disjunction rule: the value is 0 only when both inputs are 0. So the single false row is the pair (0, 0)."
+          - problem: "How many of the four rows of the truth table for P or Q are true?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 builds the full table by the disjunction rule: (1,1) gives 1, (1,0) gives 1, (0,1) gives 1, (0,0) gives 0, since a disjunction fails only when both parts are false. Step 2 counts the rows with value 1: rows one, two and three. The answer is 3."
+          - problem: "Using 1 for true and 0 for false, find the value of P or Q in the row where P is false and Q is false."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 writes the full disjunction table: (1,1) gives 1, (1,0) gives 1, (0,1) gives 1, and (0,0) gives 0. Step 2 selects the row with P false and Q false, which is the pair (0,0). Step 3 applies the disjunction rule: a disjunction is false only when both parts are false. The answer is 0."
+          - problem: "Number the rows of the truth table for P or Q from 1 to 4 in the order (1,1), (1,0), (0,1), (0,0). Which row number is the only false row?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 evaluates all four numbered rows with the disjunction rule: row 1 gives 1, row 2 gives 1, row 3 gives 1, row 4 gives 0. Step 2 locates the single 0: it sits in the row where both inputs are 0, which is row 4. The answer is 4."
+          - problem: "How many rows of the truth table for P or Q are true when Q is true?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 selects the rows with Q equal to 1: the rows (1,1) and (0,1). Step 2 applies the disjunction rule to each: (1,1) gives 1 and (0,1) gives 1, since one true part makes the disjunction true. The other two rows have Q equal to 0 and do not count. The answer is 2."
         constraints: "single connective; emphasize the one false row of $\\lor$"
       - id: kp3
         name: "Reading off individual rows"
@@ -484,14 +500,30 @@ topics:
         name: "Conditional and biconditional tables"
         key_prerequisites: [propositional-logic]
         exemplars:
-          - problem: 'Give the truth values of $P \to Q$.'
-            answer_contract: {kind: none}
-            answer: 'TT->T, TF->F, FT->T, FF->T.'
-            solution_sketch: 'A conditional is false only when the hypothesis is true and the conclusion false; a false hypothesis makes it vacuously true.'
-          - problem: 'Give the truth values of $P \leftrightarrow Q$.'
-            answer_contract: {kind: none}
-            answer: 'T when $P$ and $Q$ agree (TT, FF); F otherwise.'
-            solution_sketch: 'The biconditional is true exactly when both sides have the same truth value.'
+          - problem: "The four rows of a conditional table can be listed as TT, TF, FT and FF. Give the number of these rows in which P -> Q takes the value true."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the full table for P -> Q: TT gives T, TF gives F, FT gives T, FF gives T. Step 2: Apply the conditional rule, which is false only for a true hypothesis with a false conclusion. Three of the rows give T, so the count is 3."
+          - problem: "A biconditional P <-> Q is built from two statements and has four table rows. Give the number of rows of its truth table in which P <-> Q takes the value true."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the full table for P <-> Q: TT gives T, TF gives F, FT gives F, FF gives T. Step 2: Apply the biconditional rule, which gives T exactly when the two sides agree. The agreeing rows are TT and FF, so the count is 2."
+          - problem: "In the truth table for the conditional P -> Q, look only at the rows whose hypothesis P is false. Give the number of those rows in which P -> Q itself is false."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the full table for P -> Q: TT gives T, TF gives F, FT gives T, FF gives T. Step 2: The rows with P false are FT and FF, and the conditional rule makes a false hypothesis give a true conditional in both. Neither of those rows is false, so the count is 0."
+          - problem: "A truth table for the conditional P -> Q has one row for each pairing of the two letters. Give the number of rows of that table in which the conditional takes the value false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the full table for P -> Q: TT gives T, TF gives F, FT gives T, FF gives T. Step 2: Apply the conditional rule, which is false only in the row with a true hypothesis and a false conclusion, namely TF. The count of false rows is 1."
+          - problem: "The conditional P -> Q has four table rows. State the value it takes in the row where P is false and Q is also false, and give the number of rows in which P is false and P -> Q is true. Give the value as a letter, then the number."
+            answer: "value = T; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["T"], ["F"]]}, "name": "value"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Step 1: Write the full table for P -> Q: TT gives T, TF gives F, FT gives T, FF gives T. Step 2: In the row FF the hypothesis is false, and the conditional rule makes a false hypothesis give a true conditional, so the value is T; answering F is the error of forgetting that rule. Step 3: The rows with P false are FT and FF, and P -> Q is true in both of them, so that count is 2. The result is value = T; count = 2."
+          - problem: "The biconditional P <-> Q compares the two letters in each table row. Give the number of rows of its truth table in which the biconditional takes the value false."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the full table for P <-> Q: TT gives T, TF gives F, FT gives F, FF gives T. Step 2: Apply the biconditional rule, which is false exactly in the rows where the two sides disagree, namely TF and FT. There are two such rows, so the count is 2."
         constraints: "emphasize the two easily-forgotten rows: $T\\to F$ is false, $F\\to$ anything is true"
       - id: kp2
         name: "Tables for compound formulas"
@@ -526,14 +558,30 @@ topics:
         name: "Three-variable tables and tautology spotting"
         key_prerequisites: [evaluating-compound-propositions]
         exemplars:
-          - problem: 'How many rows does the truth table of a formula with $3$ distinct variables have?'
-            answer_contract: {kind: none}
-            answer: '$2^3 = 8$'
-            solution_sketch: 'Each variable is independently true or false, so $n$ variables give $2^n$ rows.'
-          - problem: 'Build the truth table for $(P \land Q) \to P$ and state whether its column is all T.'
-            answer_contract: {kind: none}
-            answer: 'Yes; all four rows are T (a tautology).'
-            solution_sketch: 'Whenever $P \land Q$ is true, $P$ is true; when the hypothesis is false the conditional is vacuously true. Every row is T.'
+          - problem: "A formula uses exactly 3 distinct variables. How many rows are in its truth table? Give the number."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: count the variables: 3. Step 2: use the row rule 2^n, so 2^3 = 8. The truth table has 8 rows."
+          - problem: "For the formula (P or not P) or (Q and R), classify its final column and give how many of the 8 rows are T. State the classification and the count."
+            answer: "verdict = tautology; T = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["tautology"], ["contingent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "T"}]}
+            solution_sketch: "The formula is (P or not P) or (Q and R). Step 1: P or not P is true in every row, so the left disjunct is true in all 8 rows. Step 2: an OR with one true disjunct is true, so the final column is true in all 8 rows. The wrong option contingent would require at least one F row, but no row is F. The answer is verdict = tautology; T = 8."
+          - problem: "For the formula P and (Q or R), how many rows make the formula true? Give the number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The formula is P and (Q or R). Step 1: P must be true, which holds in 4 rows. Step 2: among those rows, Q or R is true in 3 of the 4 assignments to Q and R. Step 3: the rows with P true and Q or R true are 3. The number of true rows is 3."
+          - problem: "For the formula (P or not P) and (Q or not Q) and (R or not R), determine the type of its final column. Select the type."
+            answer: "allT"
+            answer_contract: {"kind": "label", "options": [["allT"], ["allF"], ["mixed"], ["other"]]}
+            solution_sketch: "The formula is (P or not P) and (Q or not Q) and (R or not R). Step 1: each disjunction P or not P, Q or not Q, and R or not R is true in every row. Step 2: an AND of true statements is true, so the final column is all T. The option allF is wrong because the column has no F row. The option mixed is wrong because there is no row with F. The option other is wrong because the column is exactly all T. The answer is allT."
+          - problem: "For the formula (P and not P) or (Q and not Q) or (R and not R), classify its final column and give how many of the 8 rows are T. State the classification and the count."
+            answer: "verdict = contradiction; T = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["contradiction"], ["contingent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "T"}]}
+            solution_sketch: "The formula is (P and not P) or (Q and not Q) or (R and not R). Step 1: each conjunction P and not P, Q and not Q, and R and not R is false in every row. Step 2: an OR of false statements is false, so the final column has no T row. The wrong option contingent would require at least one T row. The answer is verdict = contradiction; T = 0."
+          - problem: "For the formula (P or Q) and R, how many rows make the formula false? Give the number."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The formula is (P or Q) and R. Step 1: P or Q is false only when P and Q are both false, which gives 2 rows, and in those rows the conjunction is false. Step 2: when P or Q is true, there are 3 choices for P and Q, and R is false in those 3 rows, making those rows false. Step 3: add the false rows: 2 + 3 = 5. The number of false rows is 5."
         constraints: "up to 3 variables; identify all-T (tautology) and all-F (contradiction) columns"
     diagnostic_exemplar:
       problem: 'Construct the truth table for $(P \land Q) \to P$ and state whether it is a tautology.'
@@ -579,14 +627,30 @@ topics:
         name: "Famous implication tautologies"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: 'Show that $((P \to Q) \land P) \to Q$ is a tautology.'
-            answer_contract: {kind: none}
-            answer: 'All four rows are T; this is the modus ponens tautology.'
-            solution_sketch: 'The hypothesis $(P \to Q) \land P$ is true only in the row $P$ = T, $Q$ = T, where $Q$ holds; every other row is vacuously true.'
-          - problem: 'Verify that $(P \to Q) \lor (Q \to P)$ is a tautology.'
-            answer_contract: {kind: none}
-            answer: 'All rows are T.'
-            solution_sketch: 'The only way $P \to Q$ fails is $P$ = T, $Q$ = F — and in that row $Q \to P$ is true. So the disjunction never fails.'
+          - problem: "Use a truth table to verify that ((P -> Q) and P) -> Q is a tautology. Give the number of rows in which the hypothesis (P -> Q) and P is true."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is ((P -> Q) and P) -> Q. Step 1: list the four rows for P and Q and evaluate P -> Q by the truth table rule for implication. Step 2: evaluate the hypothesis (P -> Q) and P by the truth table rule for conjunction; it is true only in the row P = T, Q = T. Step 3: the main implication is true in all four rows, so the formula is a tautology. The number of rows in which the hypothesis is true is 1."
+          - problem: "Use a truth table to verify that (P -> Q) or (Q -> P) is a tautology. Give the number of rows in which P -> Q is true."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is (P -> Q) or (Q -> P). Step 1: list the four rows for P and Q. Step 2: evaluate P -> Q by the truth table rule for implication; it is false only in the row P = T, Q = F. Step 3: evaluate Q -> P by the same rule; it is true in that row, so the disjunction is true in all four rows. The number of rows in which P -> Q is true is 3."
+          - problem: "Use a truth table to verify that ((P -> Q) and (Q -> R)) -> (P -> R) is a tautology. Give the number of rows in which the hypothesis (P -> Q) and (Q -> R) is true."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is ((P -> Q) and (Q -> R)) -> (P -> R). Step 1: list the eight rows for P, Q, R. Step 2: evaluate P -> Q and Q -> R by the truth table rule for implication. Step 3: evaluate their conjunction by the truth table rule for conjunction; it is true in exactly four rows. Step 4: the main implication is true in all eight rows, so the formula is a tautology. The number of rows in which the hypothesis is true is 4."
+          - problem: "Use a truth table to verify that (P -> Q) -> ((not Q) -> (not P)) is a tautology. Give the number of rows in which P -> Q is true."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is (P -> Q) -> ((not Q) -> (not P)). Step 1: list the four rows for P and Q. Step 2: evaluate P -> Q by the truth table rule for implication; it is false only in the row P = T, Q = F. Step 3: evaluate (not Q) -> (not P) by the same rule; it is true in that row, so the main implication is true in all four rows. The number of rows in which P -> Q is true is 3."
+          - problem: "Use a truth table to verify that P -> (P or Q) is a tautology. Give the number of rows in which the hypothesis P is true."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is P -> (P or Q). Step 1: list the four rows for P and Q. Step 2: evaluate the hypothesis P by the truth table rule for a propositional variable; it is true in two rows. Step 3: evaluate P or Q by the truth table rule for disjunction; it is true in every row where P is true. Step 4: the main implication is true in all four rows, so the formula is a tautology. The number of rows in which the hypothesis is true is 2."
+          - problem: "Use a truth table to verify that ((P -> Q) and (R -> S) and (P or R)) -> (Q or S) is a tautology. Give the number of rows in which the hypothesis (P -> Q) and (R -> S) and (P or R) is true."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is ((P -> Q) and (R -> S) and (P or R)) -> (Q or S). Step 1: list the sixteen rows for P, Q, R, S. Step 2: evaluate P -> Q, R -> S, and P or R by the truth table rules for implication and disjunction. Step 3: evaluate their conjunction by the truth table rule for conjunction; it is true in exactly five rows. Step 4: the main implication is true in all sixteen rows, so the formula is a tautology. The number of rows in which the hypothesis is true is 5."
         constraints: "verify tautologyhood of classic conditional forms by table"
       - id: kp3
         name: "Contradictions and satisfiability"
