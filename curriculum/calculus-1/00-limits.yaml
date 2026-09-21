@@ -264,6 +264,18 @@ topics:
             solution_sketch: 'The quotient law applies since the denominator limit $-2 \neq 0$: $\frac{3}{-2} = -\frac{3}{2}$.'
           - problem: 'Given $\lim_{x \to a} f(x) = 4$, find $\lim_{x \to a} [f(x)]^2$.'
             answer: "16"
+          - problem: "Given $\\lim_{x \\to 3} f(x) = 2$ and $\\lim_{x \\to 3} g(x) = -1$, find $\\lim_{x \\to 3} \\frac{x^2 f(x)}{g(x)}$."
+            answer: "-18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full object: $\\lim_{x \\to 3} \\frac{x^2 f(x)}{g(x)}$. By the product law, $\\lim_{x \\to 3} x^2 f(x) = (\\lim_{x \\to 3} x^2)(\\lim_{x \\to 3} f(x)) = 9 \\cdot 2 = 18$. The denominator limit is $-1 \\neq 0$, so the quotient law gives $18/(-1) = -18$. The value of the limit is -18."
+          - problem: "Given $\\lim_{x \\to 5} f(x) = 2$ and $\\lim_{x \\to 5} g(x) = 3$, find $\\lim_{x \\to 5} \\frac{[x f(x)]^2}{g(x)}$."
+            answer: "100/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full object: $\\lim_{x \\to 5} \\frac{[x f(x)]^2}{g(x)}$. By the product law, $\\lim_{x \\to 5} x f(x) = 5 \\cdot 2 = 10$; squaring is the product law applied to equal factors, so $\\lim_{x \\to 5} [x f(x)]^2 = 10^2 = 100$. The denominator limit $3$ is nonzero, so the quotient law gives $100/3$. The value of the limit is 100/3."
+          - problem: "Given $\\lim_{x \\to -2} [x f(x) g(x)] = 20$ and $\\lim_{x \\to -2} f(x) = -1$, find $\\lim_{x \\to -2} [f(x) g(x)]$."
+            answer: "-10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full object: $\\lim_{x \\to -2} [f(x) g(x)]$. By the product law, $\\lim_{x \\to -2} [x f(x) g(x)] = (\\lim_{x \\to -2} x)(\\lim_{x \\to -2} f(x))(\\lim_{x \\to -2} g(x)) = (-2)(-1) \\cdot \\lim_{x \\to -2} g(x) = 2 \\lim_{x \\to -2} g(x)$. Solve $20 = 2 \\lim_{x \\to -2} g(x)$, so $\\lim_{x \\to -2} g(x) = 10$. Then by the product law $\\lim_{x \\to -2} [f(x) g(x)] = (-1) \\cdot 10 = -10$. The value of the limit is -10."
         constraints: "denominator limit nonzero for quotients; include a power via the product law"
       - id: kp3
         name: Direct substitution for polynomials and rational functions
@@ -417,13 +429,29 @@ topics:
         name: One-sided limits at a branch point
         key_prerequisites: [one-sided-limits, evaluating-functions]
         exemplars:
-          - problem: 'Let $f(x) = x + 1$ for $x < 2$ and $f(x) = x^2$ for $x \geq 2$. Find $\lim_{x \to 2^-} f(x)$, $\lim_{x \to 2^+} f(x)$, and $\lim_{x \to 2} f(x)$.'
-            answer: "left 3, right 4, two-sided DNE"
-            answer_contract: {kind: none}
-            solution_sketch: 'Use the $x < 2$ branch from the left ($2 + 1 = 3$) and the $x \geq 2$ branch from the right ($2^2 = 4$); they disagree, so the two-sided limit does not exist.'
+          - problem: "Let f(x) = x + 1 for x < 2 and f(x) = x^2 for x >= 2. Find the left-hand limit and the right-hand limit of f as x approaches 2."
+            answer: "left = 3; right = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
+            solution_sketch: "For f(x) = x + 1 for x < 2 and f(x) = x^2 for x >= 2, the left side uses the branch x + 1, so direct substitution by evaluating the polynomial gives 2 + 1 = 3. The right side uses the branch x^2, so direct substitution gives 2^2 = 4. The two one-sided limits disagree, so the two-sided limit does not exist. The values are left = 3; right = 4."
           - problem: 'Let $g(x) = 2x$ for $x < 3$ and $g(x) = 9 - x$ for $x \geq 3$. Find $\lim_{x \to 3} g(x)$.'
             answer: "6"
             solution_sketch: 'Left limit $2 \cdot 3 = 6$, right limit $9 - 3 = 6$; they agree, so the limit is $6$.'
+          - problem: "Let g(t) = t^2 for t < 1 and g(t) = 2t - 1 for t >= 1. Find the right-hand limit as t approaches 1 from the right."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For g(t) = t^2 for t < 1 and g(t) = 2t - 1 for t >= 1, the right branch is the t >= 1 branch, which is 2t - 1. Direct substitution at t = 1 gives 2(1) - 1 = 1 by evaluating the polynomial. The left branch gives 1^2 = 1, so the one-sided limits agree. The right-hand limit is 1."
+          - problem: "Let h(x) = 3x - 2 for x < 4 and h(x) = x^2 - 8 for x >= 4. Find the left-hand limit as x approaches 4 from the left."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For h(x) = 3x - 2 for x < 4 and h(x) = x^2 - 8 for x >= 4, the left branch is the x < 4 branch, which is 3x - 2. Direct substitution at x = 4 gives 3(4) - 2 = 10 by evaluating the polynomial. The right branch gives 4^2 - 8 = 8, so the one-sided limits disagree. The left-hand limit is 10."
+          - problem: "Let k(x) = x + 4 for x < 1 and k(x) = 5 for x >= 1. Find the right-hand limit as x approaches 1 from the right."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For k(x) = x + 4 for x < 1 and k(x) = 5 for x >= 1, the right branch is the x >= 1 branch, which is the constant 5. Direct evaluation at x = 1 gives 5. The left branch gives 1 + 4 = 5, so the one-sided limits agree. The right-hand limit is 5."
+          - problem: "Let p(x) = x^2 + 2 for x < 3 and p(x) = 3x + 2 for x >= 3. Find the left-hand limit as x approaches 3 from the left."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For p(x) = x^2 + 2 for x < 3 and p(x) = 3x + 2 for x >= 3, the left branch is the x < 3 branch, which is x^2 + 2. Direct substitution at x = 3 gives 3^2 + 2 = 11 by evaluating the polynomial. The right branch gives 3(3) + 2 = 11, so the one-sided limits agree. The left-hand limit is 11."
         constraints: "two-branch piecewise with polynomial branches; one matching and one mismatching case per problem set"
       - id: kp2
         name: Limits away from the branch point
