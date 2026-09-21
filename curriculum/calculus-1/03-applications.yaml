@@ -795,12 +795,28 @@ topics:
         name: Verify the hypotheses and find c
         key_prerequisites: [continuity, critical-points-extrema]
         exemplars:
-          - problem: 'Verify that $f(x) = x^2 - 4x + 3$ satisfies Rolle''s theorem on $[1, 3]$ and find the $c$ with $f''(c) = 0$.'
-            answer: "f(1) = f(3) = 0; c = 2"
-            answer_contract: {kind: none}
-            solution_sketch: 'Both endpoint values are $0$; $f''(x) = 2x - 4 = 0$ at $c = 2$.'
+          - problem: "Consider f(x) = x^2 - 6x + 10 on [2, 4]. Give the common endpoint value of f at x = 2 and x = 4, and find the c in (2, 4) with f'(c) = 0. Give the answer as fend = value; c = value."
+            answer: "fend = 2; c = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fend"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Step 1: the function is f(x) = x^2 - 6x + 10 on [2, 4]; it is a polynomial, so it is continuous on [2, 4] and differentiable on (2, 4). Step 2 (endpoint check): f(2) = 4 - 12 + 10 = 2 and f(4) = 16 - 24 + 10 = 2, so the endpoint values are equal and the hypotheses of Rolle's theorem hold. Step 3 (differentiate): f'(x) = 2x - 6 by the power rule. Step 4 (solve): 2x - 6 = 0 gives x = 3, and 3 lies in (2, 4), so this is the unique interior zero of f'. The answer is fend = 2; c = 3."
           - problem: 'Find the $c$ in $(0, \pi)$ where $f''(c) = 0$ for $f(x) = \sin x$ (note $\sin 0 = \sin \pi = 0$).'
             answer: "c = π/2"
+          - problem: "Consider f(x) = x^2 + 2x - 8 on [-4, 2]. Verify that the hypotheses of Rolle's theorem hold, and find c in (-4, 2) with f'(c) = 0."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x) = x^2 + 2x - 8 on [-4, 2]. It is a polynomial, so it is continuous and differentiable. Check endpoints: f(-4) = 0 and f(2) = 0, so the hypotheses hold. Differentiate: f'(x) = 2x + 2. Set 2x + 2 = 0, so x = -1, which lies in (-4, 2). The required value is -1."
+          - problem: "Consider f(x) = cos x on [0, 2pi]. Verify the hypotheses of Rolle's theorem, and find c in (0, 2pi) with f'(c) = 0."
+            answer: "pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x) = cos x on [0, 2pi]. It is continuous and differentiable. Check endpoints: cos 0 = 1 and cos 2pi = 1, so Rolle's theorem applies. Differentiate: f'(x) = -sin x. Set -sin x = 0, so x = pi, which lies in (0, 2pi). The required value is pi."
+          - problem: "Consider f(x) = sin x on [pi, 2pi]. Verify the hypotheses of Rolle's theorem, and find c in (pi, 2pi) with f'(c) = 0."
+            answer: "3pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x) = sin x on [pi, 2pi]. It is continuous and differentiable. Check endpoints: sin pi = 0 and sin 2pi = 0, so the hypotheses hold. Differentiate: f'(x) = cos x. Set cos x = 0, so x = 3pi/2, which lies in (pi, 2pi). The required value is 3pi/2."
+          - problem: "Consider f(x) = 2x^2 - 10x + 8 on [1, 4]. Verify the hypotheses of Rolle's theorem, and find c in (1, 4) with f'(c) = 0."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x) = 2x^2 - 10x + 8 on [1, 4]. It is a polynomial, so it is continuous and differentiable. Check endpoints: f(1) = 0 and f(4) = 0, so Rolle's theorem applies. Differentiate: f'(x) = 4x - 10. Set 4x - 10 = 0, so x = 5/2, which lies in (1, 4). The required value is 5/2."
         constraints: "equal endpoint values; unique interior zero of f'"
       - id: kp2
         name: Find c for cubics
@@ -923,14 +939,30 @@ topics:
         name: Check whether the MVT applies
         key_prerequisites: [continuity, rolles-theorem]
         exemplars:
-          - problem: 'Does the MVT apply to $f(x) = |x|$ on $[-1, 2]$? Why or why not?'
-            answer: "no — f is not differentiable at x = 0, which is inside (-1, 2)"
-            answer_contract: {kind: none}
-            solution_sketch: "no — f is not differentiable at x = 0, which is inside (-1, 2)"
-          - problem: 'Does the MVT apply to $f(x) = \frac{1}{x}$ on $[-1, 1]$? Why or why not?'
-            answer: "no — f is not continuous on [-1, 1] (undefined at x = 0)"
-            answer_contract: {kind: none}
-            solution_sketch: "no — f is not continuous on [-1, 1] (undefined at x = 0)"
+          - problem: "The function $f(x) = |x + 4|$ is examined on the closed interval $[-9, 1]$. A hypothesis of the Mean Value Theorem is violated at exactly one interior point; give the x-coordinate of that point."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is f(x) = |x + 4| on the closed interval [-9, 1]. Step 1: an absolute value is continuous at every real number, so the continuity hypothesis holds on [-9, 1]. Step 2: at x = -4 the graph has a corner, since the left slope is -1 and the right slope is 1, so the derivative does not exist there. Step 3: the point -4 lies inside (-9, 1), so the differentiability hypothesis fails at that single interior point. The answer is -4."
+          - problem: "The function $f(x) = \\frac{1}{x + 7}$ is examined on the closed interval $[-10, 3]$. Determine the x-coordinate of the interior point where a hypothesis of the Mean Value Theorem is violated."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is f(x) = 1/(x + 7) on the closed interval [-10, 3]. Step 1: the denominator is zero at x = -7, so the function has no value there. Step 2: a missing value breaks the continuity hypothesis at the interior point -7. Step 3: every other point of (-10, 3) is regular, so the unique violation is at -7. The answer is -7."
+          - problem: "A function is given by $f(x) = x$ for $x < 1$ and $f(x) = 3x - 2$ for $x \\ge 1$, on the interval $[0, 3]$. Select which hypothesis of the Mean Value Theorem is violated on this interval."
+            answer: "differentiability at an interior point"
+            answer_contract: {"kind": "label", "options": [["differentiability at an interior point"], ["continuity at an interior point"], ["continuity on the closed interval"], ["differentiability at an endpoint"]]}
+            solution_sketch: "The object is the piecewise function f(x) = x for x < 1 and f(x) = 3x - 2 for x >= 1 on [0, 3]. Step 1: at x = 1 the pieces agree, because the left value 1 equals the right value 1, so the function has no gap on [0, 3]. Step 2: the one-sided slopes at x = 1 are 1 and 3, so they disagree and the derivative does not exist at the interior point 1. The option continuity at an interior point is wrong because there is no break at 1, only a corner. The option continuity on the closed interval is wrong because the pieces meet at x = 1, so no gap and no jump occur. The option differentiability at an endpoint is wrong because the theorem asks only about the open interval, so endpoint slopes are never tested. The answer is differentiability at an interior point."
+          - problem: "The function $f(x) = x^{2/3}$ is examined on the closed interval $[-1, 8]$. A hypothesis of the Mean Value Theorem is violated at exactly one interior point; give the x-coordinate of that point."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is f(x) = x^(2/3) on the closed interval [-1, 8]. Step 1: the two-thirds power is defined for negative inputs, so the function is continuous on the whole interval. Step 2: the derivative is (2/3)x^(-1/3), which is undefined at x = 0. Step 3: the point 0 lies inside (-1, 8), so 0 is the single interior point where the differentiability hypothesis fails. The answer is 0."
+          - problem: "The function $f(x) = (x^2 - 25)/(x - 5)$ is examined on the closed interval $[0, 8]$. Determine the x-coordinate of the interior point where a hypothesis of the Mean Value Theorem is violated."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is f(x) = (x^2 - 25)/(x - 5) on the closed interval [0, 8]. Step 1: the numerator factors as (x - 5)(x + 5), so the quotient equals x + 5 at every point except x = 5. Step 2: at x = 5 the denominator is zero, so the function has no value and the continuity hypothesis fails. Step 3: the point 5 lies inside (0, 8), and no other interior point fails, so that point is unique. The answer is 5."
+          - problem: "A function is defined by $f(x) = x^2$ for $x < 2$ and $f(x) = 5x - 4$ for $x \\ge 2$, with domain $[0, 5]$. Find the x-value inside the interval at which a hypothesis of the Mean Value Theorem is violated."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the piecewise function f(x) = x^2 for x < 2 and f(x) = 5x - 4 for x >= 2 on [0, 5]. Step 1: the left limit at x = 2 is 4, while the right value is 6, so the two pieces do not meet. Step 2: the function is therefore not continuous at the interior point 2, and the continuity hypothesis fails there. Step 3: every other point of (0, 5) is fine, so the only failure point is 2. The answer is 2."
         constraints: "corner or discontinuity inside the interval; name the failed hypothesis"
       - id: kp3
         name: Consequences of the MVT
@@ -1006,14 +1038,30 @@ topics:
         name: The closed-interval method
         key_prerequisites: [critical-points-extrema, evaluating-functions]
         exemplars:
-          - problem: 'Find the absolute maximum and minimum of $f(x) = x^3 - 3x$ on $[0, 2]$.'
-            answer: "absolute max 2 at x = 2; absolute min -2 at x = 1"
-            answer_contract: {kind: none}
-            solution_sketch: 'Candidates: critical point $x = 1$ (value $-2$) and endpoints $f(0) = 0$, $f(2) = 2$.'
-          - problem: 'Find the absolute maximum and minimum of $f(x) = x^2 - 2x$ on $[0, 3]$.'
-            answer: "absolute max 3 at x = 3; absolute min -1 at x = 1"
-            answer_contract: {kind: none}
-            solution_sketch: "absolute max 3 at x = 3; absolute min -1 at x = 1"
+          - problem: "Find the absolute maximum value and the absolute minimum value of f(x) = x^3 - 3x on [0, 2]. Give it as max = value; min = value."
+            answer: "max = 2; min = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "min"}]}
+            solution_sketch: "The function is f(x) = x^3 - 3x on [0, 2]. Step 1, closed-interval method: solve f'(x) = 3x^2 - 3 = 0 to get the critical point x = 1. Step 2: evaluate f at the critical point and endpoints: f(0) = 0, f(1) = -2, f(2) = 2. Step 3: compare the values. Thus max = 2; min = -2."
+          - problem: "Find the absolute maximum value and the absolute minimum value of f(x) = x^2 - 2x on [0, 3]. Give it as max = value; min = value."
+            answer: "max = 3; min = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "min"}]}
+            solution_sketch: "The function is f(x) = x^2 - 2x on [0, 3]. Step 1, closed-interval method: solve f'(x) = 2x - 2 = 0 to get the critical point x = 1. Step 2: evaluate f at the critical point and endpoints: f(0) = 0, f(1) = -1, f(3) = 3. Step 3: compare the values. Thus max = 3; min = -1."
+          - problem: "Find the absolute maximum value and the absolute minimum value of f(x) = x^2 + 6x - 1 on [-5, 0]. Give it as max = value; min = value."
+            answer: "max = -1; min = -10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "min"}]}
+            solution_sketch: "The function is f(x) = x^2 + 6x - 1 on [-5, 0]. Step 1, closed-interval method: solve f'(x) = 2x + 6 = 0 to get the critical point x = -3. Step 2: evaluate f at the critical point and endpoints: f(-5) = -6, f(-3) = -10, f(0) = -1. Step 3: compare the values. Thus max = -1; min = -10."
+          - problem: "A weather station models the temperature in a town by T(t) = t^2 - 8t + 20 for 0 <= t <= 6. Find the absolute maximum value and the absolute minimum value of T on [0, 6]. Give it as max = value; min = value."
+            answer: "max = 20; min = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "min"}]}
+            solution_sketch: "The temperature function is T(t) = t^2 - 8t + 20 on [0, 6]. Step 1, closed-interval method: solve T'(t) = 2t - 8 = 0 to get the critical point t = 4. Step 2: evaluate T at the critical point and endpoints: T(0) = 20, T(4) = 4, T(6) = 8. Step 3: compare the values. Thus max = 20; min = 4."
+          - problem: "Find the x-value where the absolute maximum of f(x) = x^2 - 4x + 1 on [0, 5] occurs and the x-value where the absolute minimum occurs. Give them as xmax = value; xmin = value."
+            answer: "xmax = 5; xmin = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "xmax"}, {"contract": {"kind": "exact"}, "name": "xmin"}]}
+            solution_sketch: "The function is f(x) = x^2 - 4x + 1 on [0, 5]. Step 1, closed-interval method: solve f'(x) = 2x - 4 = 0 to get the critical point x = 2. Step 2: evaluate f at x = 0, 2, 5: f(0) = 1, f(2) = -3, f(5) = 6. Step 3: compare the values; the largest is 6 at x = 5 and the smallest is -3 at x = 2. Thus xmax = 5; xmin = 2."
+          - problem: "Find the absolute minimum value of f(x) = x^2 - 10x + 21 on [0, 7] and the x-value where it occurs. Give it as min = value; x = value."
+            answer: "min = -4; x = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "The function is f(x) = x^2 - 10x + 21 on [0, 7]. Step 1, closed-interval method: solve f'(x) = 2x - 10 = 0 to get the critical point x = 5. Step 2: evaluate f at x = 0, 5, 7: f(0) = 21, f(5) = -4, f(7) = 0. Step 3: compare the values; the smallest is -4 at x = 5. Thus min = -4; x = 5."
         constraints: "compare f at interior critical points and both endpoints; all values integers"
       - id: kp3
         name: Closed-interval method with several critical points
