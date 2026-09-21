@@ -41,6 +41,22 @@ topics:
           - problem: 'The Tower of Hanoi with $n$ disks takes $H_n$ moves, where $H_1 = 1$. Explain why $H_n = 2H_{n-1} + 1$ and compute $H_4$.'
             answer: "15"
             solution_sketch: 'Move $n-1$ disks aside, move the largest, move $n-1$ back, so $H_n = 2H_{n-1} + 1$: $H_2 = 3$, $H_3 = 7$, $H_4 = 15$.'
+          - problem: "You climb a staircase taking 1, 2, or 3 steps at a time. Let c_n count the ways to climb n stairs, with c_0 = 1. Use a first-choice argument to give a recurrence for c_n. Compute c_5."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full recurrence is c_n = c_(n-1) + c_(n-2) + c_(n-3) for n at least 3, with c_0 = 1, c_1 = 1, and c_2 = 2. A first step of size 1, 2, or 3 leaves the remaining climb, so condition on the first choice. Direct enumeration gives c_3 = 4, c_4 = 7, and c_5 = 13. So c_5 = 13."
+          - problem: "A 2 by n rectangle is tiled by 1 by 2 dominoes. Let T_n count the tilings, with T_1 = 1 and T_2 = 2. Use a first-choice argument on the left column to find a recurrence for T_n. Compute T_7."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full recurrence is T_n = T_(n-1) + T_(n-2) for n at least 3, with T_1 = 1 and T_2 = 2. If the left column has a vertical domino, the rest is a 2 by n-1 board; if it has two horizontal dominoes, the rest is a 2 by n-2 board. Direct enumeration gives T_3 = 3, T_4 = 5, T_5 = 8, T_6 = 13, and T_7 = 21. So T_7 = 21."
+          - problem: "A message is built by concatenating blocks of length 2 and length 3. Let m_n count the sequences of blocks with total length n, with m_0 = 1. Condition on the first block to give a recurrence for m_n. Compute m_8."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full recurrence is m_n = m_(n-2) + m_(n-3) for n at least 3, with m_0 = 1, m_1 = 0, and m_2 = 1. A first block of length 2 or length 3 leaves the remaining length, so condition on the first block. Direct enumeration gives m_3 = 1, m_4 = 1, m_5 = 2, m_6 = 2, m_7 = 3, and m_8 = 4. So m_8 = 4."
+          - problem: "You climb a staircase taking 1 or 3 steps at a time. Let s_n count the ways to climb n stairs, with s_0 = 1. Use a first-choice argument to give a recurrence for s_n. Compute s_7."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full recurrence is s_n = s_(n-1) + s_(n-3) for n at least 3, with s_0 = 1, s_1 = 1, and s_2 = 1. A first step of 1 or 3 leaves the remaining climb, so condition on the first choice. Direct enumeration gives s_3 = 2, s_4 = 3, s_5 = 4, s_6 = 6, and s_7 = 9. So s_7 = 9."
         constraints: "condition-on-the-first-choice arguments; verify small cases by direct enumeration"
       - id: kp3
         name: "Recurrences for strings with forbidden patterns"
@@ -88,10 +104,26 @@ topics:
             answer: '3n + 2'
             answer_contract: {kind: exact}
             solution_sketch: 'Each step adds $3$, so after $n$ steps $a_n = 2 + 3n$. Verify: $a_0 = 2$, and $3n + 2 = (3(n-1) + 2) + 3$.'
-          - problem: 'Solve $a_n = 2a_{n-1}$ with $a_0 = 5$.'
-            answer: '5 * 2^n'
-            answer_contract: {kind: none}
-            solution_sketch: 'Each step doubles: $a_n = 5 \cdot 2^n$; check $a_1 = 10$, $a_2 = 20$.'
+          - problem: "Solve a_n = a_{n-1} + 4 with a_0 = 1: give a closed formula in n for a_n."
+            answer: "4n+1"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Unrolling step: a_1 = a_0 + 4 = 5, a_2 = 9, and after n steps a_n = 1 + 4n. Verification step: put n = 1 in 1 + 4n to get 5, which matches a_1 = a_0 + 4. The closed formula is a_n = 4n+1."
+          - problem: "Solve a_n = a_{n-1} - 2 with a_0 = 9: give a closed formula in n for a_n."
+            answer: "-2n+9"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Unrolling step: each step subtracts 2, so after n steps a_n = 9 - 2n. Verification step: a_1 = 7 and -2(1)+9 = 7, so the recurrence holds. The closed formula is a_n = -2n+9."
+          - problem: "A sequence satisfies a_n = 2a_{n-1} with a_0 = 5. Find a_6."
+            answer: "320"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unrolling step: a_1 = 10, a_2 = 20, a_3 = 40, a_4 = 80, a_5 = 160, a_6 = 320. Verification step: a_5 = 160 and 2a_5 = 320, which matches a_6. Thus a_6 = 320."
+          - problem: "A sequence satisfies a_n = 3a_{n-1} with a_0 = 2. Find a_5."
+            answer: "486"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unrolling step: a_1 = 6, a_2 = 18, a_3 = 54, a_4 = 162, a_5 = 486. Verification step: a_4 = 162 and 3a_4 = 486, which matches a_5. Thus a_5 = 486."
+          - problem: "A sequence satisfies a_n = a_{n-1} + d with a_0 = 4. If a_5 = 19, find the integer d."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Unrolling step: a_5 = a_0 + 5d = 4 + 5d. Equation step: 19 = 4 + 5d, so 5d = 15. Verification step: with d = 3, a_1 = 7, a_2 = 10, a_3 = 13, a_4 = 16, a_5 = 19. Thus d = 3."
         constraints: "a_n = a_{n-1} + d or a_n = r a_{n-1}; integer parameters; always verify by substitution"
       - id: kp2
         name: "Telescoping variable-step recurrences"
@@ -217,14 +249,30 @@ topics:
         name: "Linear forcing terms"
         key_prerequisites: [linear-homogeneous-recurrences]
         exemplars:
-          - problem: 'Solve $a_n = 2a_{n-1} + n$ with $a_0 = 1$.'
-            answer: '3 * 2^n - n - 2'
-            answer_contract: {kind: none}
-            solution_sketch: 'Try $p_n = an + b$: $an + b = 2(a(n-1) + b) + n$ forces $a = -1$, $b = -2$. General: $A \cdot 2^n - n - 2$; $a_0 = 1$ gives $A = 3$. Check $a_1 = 3 = 6 - 3$, $a_2 = 8 = 12 - 4$.'
           - problem: 'Find a particular solution of $a_n = 3a_{n-1} + 4n$ (no initial condition needed).'
             answer: '-2n - 3'
             answer_contract: {kind: exact}
             solution_sketch: '$an + b = 3(a(n-1) + b) + 4n$ gives $a = 3a + 4$ so $a = -2$, and $b = 3b - 3a$ so $2b = 3a = -6$, $b = -3$. Check at $n = 1$: $-5 = 3(-3) + 4$.'
+          - problem: "For the recurrence a_n = 2a_{n-1} + n with a_0 = 1, write the solution as a_n = A*2^n + Bn + C. Find A, B, and C. Give the answer as A = ...; B = ...; C = ...."
+            answer: "A = 3; B = -1; C = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
+            solution_sketch: "The full solution is a_n = 3*2^n - n - 2. Step 1: Use undetermined coefficients with p_n = Bn + C. Substitute into a_n = 2a_{n-1} + n to get Bn + C = 2(B(n-1)+C) + n, which gives B = -1 and C = -2. Step 2: The homogeneous solution is A*2^n. Step 3: Apply a_0 = 1 to get A - 2 = 1, so A = 3. Therefore A = 3; B = -1; C = -2."
+          - problem: "Find a particular solution of a_n = 4a_{n-1} + 3n + 2."
+            answer: "-n - 2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full particular solution is -n - 2. Step 1: Use undetermined coefficients and try p_n = Bn + C. Step 2: Substitute into the recurrence: Bn + C = 4(B(n-1)+C) + 3n + 2. Matching n-coefficients gives B = 4B + 3, so B = -1. Matching constants gives C = -4B + 4C + 2, so 3C = 4B - 2 = -6 and C = -2. Step 3: The particular solution is -n - 2, and substitution checks it."
+          - problem: "For the recurrence a_n = 4a_{n-1} + 3n + 2 with a_0 = 5, the solution has the form a_n = C*4^n - n - 2. Find C."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full solution is a_n = 7*4^n - n - 2. Step 1: A particular solution is p_n = -n - 2 from undetermined coefficients. Step 2: The homogeneous part is C*4^n, so the general solution is a_n = C*4^n - n - 2. Step 3: Apply a_0 = 5: C - 2 = 5, so C = 7. The constant is 7."
+          - problem: "Which of these is a particular solution of a_n = 3a_{n-1} - 2n + 1?"
+            answer: "n+1"
+            answer_contract: {"kind": "label", "options": [["n+1"], ["-n+1"], ["n-1"], ["-n-1"]]}
+            solution_sketch: "The full particular solution is n+1. Step 1: Try p_n = Bn + C by undetermined coefficients. Step 2: Substitute: Bn + C = 3(B(n-1)+C) - 2n + 1. Matching n-terms gives B = 3B - 2, so B = 1. Matching constants gives C = -3B + 3C + 1, so C = 1. The particular solution is n+1. The option -n+1 has the wrong n-coefficient. The option n-1 has the wrong constant. The option -n-1 has both the wrong n-coefficient and the wrong constant. The correct option is n+1."
+          - problem: "For the recurrence a_n = 2a_{n-1} + 3n + 1 with a_0 = 4, find a_5 and a_6. Give the answer as a5 = ...; a6 = ...."
+            answer: "a5 = 330; a6 = 679"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a5"}, {"contract": {"kind": "exact"}, "name": "a6"}]}
+            solution_sketch: "The full solution is a_n = 11*2^n - 3n - 7. Step 1: Use undetermined coefficients with p_n = Bn + C. Substitution into a_n = 2a_{n-1} + 3n + 1 gives Bn + C = 2(B(n-1)+C) + 3n + 1, so B = -3 and C = -7. Step 2: The homogeneous part is C0*2^n, so a_n = C0*2^n - 3n - 7. Step 3: Apply a_0 = 4: C0 - 7 = 4, so C0 = 11. Step 4: Compute a_5 = 11*32 - 15 - 7 = 330 and a_6 = 11*64 - 18 - 7 = 679. The answer is a5 = 330; a6 = 679."
         constraints: "forcing an + b with integer particular solutions; method of undetermined coefficients; verify by substitution"
     diagnostic_exemplar:
       problem: 'Solve $a_n = 2a_{n-1} + n$ with $a_0 = 2$.'
