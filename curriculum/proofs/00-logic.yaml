@@ -350,14 +350,30 @@ topics:
         name: "Reading off individual rows"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: 'For $P$ false and $Q$ true, give the values of $P \land Q$ and $P \lor Q$.'
-            answer_contract: {kind: none}
-            answer: '$P \land Q$ is F; $P \lor Q$ is T.'
-            solution_sketch: 'Conjunction needs both true (fails); disjunction needs at least one true (holds).'
-          - problem: 'In which rows do $P \land Q$ and $P \lor Q$ differ?'
-            answer_contract: {kind: none}
-            answer: 'Exactly the rows where one of $P, Q$ is true and the other false (TF and FT).'
-            solution_sketch: 'They agree at TT (both T) and FF (both F); with exactly one true, $\land$ gives F while $\lor$ gives T.'
+          - problem: "Work with truth values as numbers: true is 1 and false is 0. Define AND(a, b) = min(a, b) and OR(a, b) = max(a, b). For P = 0 and Q = 1, compute AND(P, Q) and OR(P, Q). Give the answer as a list of two numbers, 1 for true and 0 for false, in the order AND(P, Q), OR(P, Q)."
+            answer: "0, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1 (conjunction rule): AND(P, Q) = min(P, Q); with P = 0 and Q = 1 this is min(0, 1) = 0. Step 2 (disjunction rule): OR(P, Q) = max(P, Q); with P = 0 and Q = 1 this is max(0, 1) = 1. Reading off the row gives the ordered list 0, 1."
+          - problem: "Work with truth values as numbers: true is 1 and false is 0, with AND(a, b) = min(a, b) and OR(a, b) = max(a, b). There are four assignments of values to P and Q. For how many of these assignments do AND(P, Q) and OR(P, Q) take the same value? Give the answer as a single number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (row enumeration): with AND(a, b) = min(a, b) and OR(a, b) = max(a, b), check each of the four assignments of values to P and Q. Step 2 (conjunction and disjunction rules): at (1, 1) both give 1, and at (0, 0) both give 0, so these two assignments agree. Step 3 (conjunction and disjunction rules): at (1, 0) the values are 0 and 1, and at (0, 1) the values are 0 and 1, so these two assignments differ. The number of assignments where AND(P, Q) and OR(P, Q) agree is 2."
+          - problem: "Work with truth values as numbers: true is 1 and false is 0, and define NOT(a) = 1 - a. For P = 0, compute NOT(P). Give the answer as a number, using 1 for true and 0 for false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (negation rule): NOT(a) = 1 - a flips the truth value of a. Step 2 (evaluation): with P = 0, NOT(P) = 1 - 0 = 1. The value of NOT(P) is 1."
+          - problem: "Work with truth values as numbers: true is 1 and false is 0, and define IMP(a, b) = max(1 - a, b). For P = 1 and Q = 0, compute IMP(P, Q). Give the answer as a number, using 1 for true and 0 for false."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (implication rule): IMP(a, b) = max(1 - a, b), which is 0 exactly when a = 1 and b = 0. Step 2 (evaluation): with P = 1 and Q = 0, IMP(P, Q) = max(1 - 1, 0) = max(0, 0) = 0. The value of IMP(P, Q) is 0."
+          - problem: "Work with truth values as numbers: true is 1 and false is 0, and define BIC(a, b) = 1 - abs(a - b). For P = 1 and Q = 0, compute BIC(P, Q). Give the answer as a number, using 1 for true and 0 for false."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (biconditional rule): BIC(a, b) = 1 - abs(a - b), which is 1 exactly when a and b have the same value. Step 2 (evaluation): with P = 1 and Q = 0, BIC(P, Q) = 1 - abs(1 - 0) = 1 - 1 = 0. The value of BIC(P, Q) is 0."
+          - problem: "Work with truth values as numbers: true is 1 and false is 0, with IMP(a, b) = max(1 - a, b). Which assignment of values to P and Q makes IMP(P, Q) equal to 0? Give the assignment as your choice."
+            answer: "P=1,Q=0"
+            answer_contract: {"kind": "label", "options": [["P=1,Q=1"], ["P=1,Q=0"], ["P=0,Q=1"], ["P=0,Q=0"]]}
+            solution_sketch: "Step 1 (implication rule): IMP(P, Q) = max(1 - P, Q) equals 0 only when 1 - P = 0 and Q = 0, that is P = 1 and Q = 0. Step 2 (checking wrong options): P=1,Q=1 gives max(0, 1) = 1, the error of thinking a true antecedent alone forces a false result; P=0,Q=1 gives max(1, 1) = 1, the error of ignoring that a false antecedent makes the implication true; P=0,Q=0 gives max(1, 0) = 1, the error of thinking both false forces a false result. The assignment that makes IMP(P, Q) equal to 0 is P=1,Q=0."
         constraints: "evaluate specific rows without writing the whole table"
     diagnostic_exemplar:
       problem: 'For $P$ true and $Q$ false, give the values of $P \land Q$, $P \lor Q$, and $\neg P$.'
@@ -390,14 +406,30 @@ topics:
         name: "Operator precedence"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: 'Insert parentheses to show how $\neg P \lor Q \land R$ is grouped by the standard precedence ($\neg$, then $\land$, then $\lor$).'
-            answer_contract: {kind: none}
-            answer: '$(\neg P) \lor (Q \land R)$'
-            solution_sketch: '$\neg$ binds tightest and applies only to $P$; $\land$ binds tighter than $\lor$, so $Q \land R$ groups before the disjunction.'
-          - problem: 'In $\neg P \lor Q \land R$, which connective is applied last?'
-            answer_contract: {kind: none}
-            answer: '$\lor$.'
-            solution_sketch: 'After grouping, the formula is a disjunction of $\neg P$ and $Q \land R$, so $\lor$ is the main connective.'
+          - problem: "In the formula $\\neg P \\lor Q \\land R$, the standard precedence is $\\neg$, then $\\land$, then $\\lor$. Count the connectives from the left starting at 1. Give the position number of the main connective."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is $\\neg P \\lor Q \\land R$. Step 1: by precedence, $\\neg$ applies only to $P$, so it is not main. Step 2: $\\land$ binds tighter than $\\lor$, so $Q \\land R$ groups before the disjunction. Step 3: the main connective is the $\\lor$ between $\\neg P$ and $Q \\land R$. Counting from the left, $\\neg$ is position 1 and $\\lor$ is position 2. The answer is 2."
+          - problem: "In the formula $\\neg P \\land Q \\lor R$, the standard precedence is $\\neg$, then $\\land$, then $\\lor$. Count the connectives from the left starting at 1. Give the position number of the main connective."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is $\\neg P \\land Q \\lor R$. Step 1: by precedence, $\\neg$ applies first and is not main. Step 2: $\\land$ binds tighter than $\\lor$, so $\\neg P \\land Q$ groups before the disjunction. Step 3: the remaining main connective is the $\\lor$ after $Q$. Counting from the left, $\\neg$ is 1, $\\land$ is 2, and $\\lor$ is 3. The answer is 3."
+          - problem: "In the formula $P \\lor Q \\land \\neg R$, the standard precedence is $\\neg$, then $\\land$, then $\\lor$. Count the connectives from the left starting at 1. Give the position number of the main connective."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is $P \\lor Q \\land \\neg R$. Step 1: by precedence, $\\neg$ applies first to $R$. Step 2: $\\land$ binds tighter than $\\lor$, so $Q \\land \\neg R$ groups. Step 3: the main connective is the $\\lor$ at the left. Counting from the left, $\\lor$ is position 1. The answer is 1."
+          - problem: "In the formula $\\neg P \\land \\neg Q \\lor R$, the standard precedence is $\\neg$, then $\\land$, then $\\lor$. Count the connectives from the left starting at 1. Give the position number of the main connective."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full formula is $\\neg P \\land \\neg Q \\lor R$. Step 1: both $\\neg$ connectives apply first. Step 2: $\\land$ binds tighter, so $\\neg P \\land \\neg Q$ groups. Step 3: the main connective is the $\\lor$ at the right. Counting from the left, the connectives are $\\neg$ at 1, $\\land$ at 2, $\\neg$ at 3, and $\\lor$ at 4. The answer is 4."
+          - problem: "In the formula $P \\land Q \\lor \\neg R$, with standard precedence $\\neg$, then $\\land$, then $\\lor$, which connective is the main connective?"
+            answer: "disjunction"
+            answer_contract: {"kind": "label", "options": [["negation"], ["conjunction"], ["disjunction"], ["conditional"]]}
+            solution_sketch: "The full formula is $P \\land Q \\lor \\neg R$. By precedence, $\\neg$ applies first, then $\\land$ groups $P \\land Q$, and the last connective is $\\lor$. The main connective is therefore disjunction. The option negation is wrong because negation is unary and applies only to $R$. The option conjunction is wrong because $\\land$ binds tighter and forms the left part. The option conditional is wrong because $\\lor$ is a disjunction, not a conditional. The main connective is disjunction."
+          - problem: "In the formula $P \\land \\neg Q \\lor R \\land S$, with standard precedence $\\neg$, then $\\land$, then $\\lor$, which connective is applied first?"
+            answer: "negation"
+            answer_contract: {"kind": "label", "options": [["negation"], ["conjunction"], ["disjunction"], ["conditional"]]}
+            solution_sketch: "The full formula is $P \\land \\neg Q \\lor R \\land S$. By precedence, $\\neg$ binds tightest, so the negation of $Q$ is applied first. The option conjunction is wrong because $\\land$ applies after all negations. The option disjunction is wrong because $\\lor$ applies last. The option conditional is wrong because the symbols are not a conditional. The first connective applied is negation."
         constraints: "precedence order $\\neg$, $\\land$, $\\lor$; identify the main connective"
       - id: kp2
         name: "Evaluating at given truth values"
@@ -465,14 +497,30 @@ topics:
         name: "Tables for compound formulas"
         key_prerequisites: [evaluating-compound-propositions]
         exemplars:
-          - problem: 'Build the truth table for $\neg P \lor Q$ and state when it is false.'
-            answer_contract: {kind: none}
-            answer: 'False only when $P$ is T and $Q$ is F; note this matches $P \to Q$.'
-            solution_sketch: '$\neg P$ is true when $P$ is false, so the disjunction fails only when $\neg P$ is false ($P$ true) and $Q$ is false. Same column as $P \to Q$.'
-          - problem: 'Build the truth table for $(P \lor Q) \land \neg P$ and state when it is true.'
-            answer_contract: {kind: none}
-            answer: 'True only when $P$ is F and $Q$ is T.'
-            solution_sketch: '$\neg P$ requires $P$ false; then $P \lor Q$ requires $Q$ true. The only true row is FT.'
+          - problem: "Build the truth table, including intermediate columns, for $\\neg P \\lor Q$. Use row numbers 1 to 4 in the order TT, TF, FT, FF. Find the number of rows in which the formula is true."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The formula is $\\neg P \\lor Q$, and the two variables are $P$ and $Q$. Step 1 (negation rule): the intermediate column for $\\neg P$ over rows TT, TF, FT, FF is F, F, T, T. Step 2 (disjunction rule): evaluating $\\neg P \\lor Q$ row by row gives T, F, T, T. The number of true rows is 3."
+          - problem: "Build the truth table, including intermediate columns, for $(P \\lor Q) \\land \\neg P$. Use row numbers 1 to 4 in the order TT, TF, FT, FF. Find the row number in which the formula is true."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The formula is $(P \\lor Q) \\land \\neg P$, with variables $P$ and $Q$. Step 1 (disjunction and negation rules): $P \\lor Q$ is T, T, T, F and $\\neg P$ is F, F, T, T over rows TT, TF, FT, FF. Step 2 (conjunction rule): the final column is F, F, T, F. The true row number is 3."
+          - problem: "Build the truth table, including intermediate columns, for $P \\leftrightarrow \\neg Q$. Use row numbers 1 to 4 in the order TT, TF, FT, FF. Find the number of rows in which the formula is true."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The formula is $P \\leftrightarrow \\neg Q$, with variables $P$ and $Q$. Step 1 (negation rule): the intermediate column for $\\neg Q$ over rows TT, TF, FT, FF is F, T, F, T. Step 2 (biconditional rule): compare $P$ with $\\neg Q$ row by row to get F, T, T, F. The number of true rows is 2."
+          - problem: "Build the truth table, including intermediate columns, for $(P \\land \\neg Q) \\lor (\\neg P \\land Q)$. Use row numbers 1 to 4 in the order TT, TF, FT, FF. Give the list of row numbers in which the formula is true."
+            answer: "2, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The formula is $(P \\land \\neg Q) \\lor (\\neg P \\land Q)$, with variables $P$ and $Q$. Step 1 (negation and conjunction rules): $P \\land \\neg Q$ is F, T, F, F and $\\neg P \\land Q$ is F, F, T, F over rows TT, TF, FT, FF. Step 2 (disjunction rule): the final column is F, T, T, F. The list of row numbers is 2, 3."
+          - problem: "Build the truth table, including intermediate columns, for $\\neg(P \\lor Q)$. Use row numbers 1 to 4 in the order TT, TF, FT, FF. Find the row number in which the formula is true."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The formula is $\\neg(P \\lor Q)$, with variables $P$ and $Q$. Step 1 (disjunction rule): the intermediate column for $P \\lor Q$ over rows TT, TF, FT, FF is T, T, T, F. Step 2 (negation rule): negating that column gives F, F, F, T. The true row number is 4."
+          - problem: "Build the truth table, including intermediate columns, for $(P \\to Q) \\land P$. Use row numbers 1 to 4 in the order TT, TF, FT, FF. Give the list of row numbers in which the formula is true."
+            answer: "1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The formula is $(P \\to Q) \\land P$, with variables $P$ and $Q$. Step 1 (implication rule): the intermediate column for $P \\to Q$ over rows TT, TF, FT, FF is T, F, T, T. Step 2 (conjunction rule): combining with $P$ gives T, F, F, F. The list of row numbers is 1."
         constraints: "two variables; build intermediate columns before the final column"
       - id: kp3
         name: "Three-variable tables and tautology spotting"
