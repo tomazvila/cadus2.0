@@ -214,14 +214,30 @@ topics:
         name: "Distinct characteristic roots"
         key_prerequisites: [recurrence-relations, quadratic-equations-factoring]
         exemplars:
-          - problem: 'Solve $a_n = a_{n-1} + 2a_{n-2}$ with $a_0 = 2$, $a_1 = 7$.'
-            answer: '3 * 2^n - (-1)^n'
-            answer_contract: {kind: none}
-            solution_sketch: 'Characteristic equation $r^2 = r + 2$, i.e. $(r-2)(r+1) = 0$: roots $2, -1$. Then $A + B = 2$ and $2A - B = 7$ give $A = 3$, $B = -1$. Check $a_2 = 7 + 4 = 11 = 3 \cdot 4 - 1$.'
-          - problem: 'Solve $a_n = 5a_{n-1} - 6a_{n-2}$ with $a_0 = 1$, $a_1 = 0$.'
-            answer: '3 * 2^n - 2 * 3^n'
-            answer_contract: {kind: none}
-            solution_sketch: '$r^2 - 5r + 6 = (r-2)(r-3)$: roots $2, 3$. $A + B = 1$, $2A + 3B = 0$ give $A = 3$, $B = -2$. Check $a_2 = -6 = 12 - 18$.'
+          - problem: "A sequence satisfies $a_n = a_{n-1} + 2a_{n-2}$ for $n \\ge 2$, with $a_0 = 2$ and $a_1 = 7$. Use the characteristic equation to solve the recurrence, then find $a_6$."
+            answer: "191"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (characteristic equation): $r^2 = r + 2$ factors over the integers as $(r-2)(r+1) = 0$, so the roots are $2$ and $-1$. Step 2 (initial conditions): the closed form $a_n = A \\cdot 2^n + B \\cdot (-1)^n$ with $a_0 = 2$ and $a_1 = 7$ gives $A + B = 2$ and $2A - B = 7$, so $A = 3$ and $B = -1$. Step 3 (verification of a later term): the recurrence gives $a_2 = 7 + 2 \\cdot 2 = 11$ and the closed form gives $3 \\cdot 4 - 1 = 11$, which verifies it. Step 4: $a_6 = 3 \\cdot 64 - 1 = 191$. The key is 191."
+          - problem: "For $n \\ge 2$ a sequence obeys $b_n = 5b_{n-1} - 6b_{n-2}$, with $b_0 = 1$ and $b_1 = 0$. Use the characteristic equation to solve the recurrence, then find $b_5$."
+            answer: "-390"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (characteristic equation): $r^2 - 5r + 6 = 0$ factors over the integers as $(r-2)(r-3) = 0$, so the roots are $2$ and $3$. Step 2 (initial conditions): the closed form $b_n = A \\cdot 2^n + B \\cdot 3^n$ with $b_0 = 1$ and $b_1 = 0$ gives $A + B = 1$ and $2A + 3B = 0$, so $A = 3$ and $B = -2$. Step 3 (verification of a later term): the recurrence gives $b_2 = 5 \\cdot 0 - 6 \\cdot 1 = -6$ and the closed form gives $12 - 18 = -6$, which verifies it. Step 4: $b_5 = 3 \\cdot 32 - 2 \\cdot 243 = -390$. The key is -390."
+          - problem: "The recurrence $c_n = 2c_{n-1} + 15c_{n-2}$ holds for $n \\ge 2$, with $c_0 = 2$ and $c_1 = 2$. Use the characteristic equation to solve the recurrence, then find $c_4$."
+            answer: "706"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (characteristic equation): $r^2 - 2r - 15 = 0$ factors over the integers as $(r-5)(r+3) = 0$, so the roots are $5$ and $-3$. Step 2 (initial conditions): the closed form $c_n = A \\cdot 5^n + B \\cdot (-3)^n$ with $c_0 = 2$ and $c_1 = 2$ gives $A + B = 2$ and $5A - 3B = 2$, so $A = 1$ and $B = 1$. Step 3 (verification of a later term): the recurrence gives $c_2 = 2 \\cdot 2 + 15 \\cdot 2 = 34$ and the closed form gives $25 + 9 = 34$, which verifies it. Step 4: $c_4 = 625 + 81 = 706$. The key is 706."
+          - problem: "A nature reserve records its deer population $p_n$, in hundreds, at year $n$. The counts satisfy $p_n = 2p_{n-1} + 3p_{n-2}$ for $n \\ge 2$, with $p_0 = 4$ and $p_1 = 4$. Use the characteristic equation to solve the recurrence, then find $p_5$."
+            answer: "484"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (characteristic equation): $r^2 - 2r - 3 = 0$ factors over the integers as $(r-3)(r+1) = 0$, so the roots are $3$ and $-1$. Step 2 (initial conditions): the closed form $p_n = A \\cdot 3^n + B \\cdot (-1)^n$ with $p_0 = 4$ and $p_1 = 4$ gives $A + B = 4$ and $3A - B = 4$, so $A = 2$ and $B = 2$. Step 3 (verification of a later term): the recurrence gives $p_2 = 2 \\cdot 4 + 3 \\cdot 4 = 20$ and the closed form gives $18 + 2 = 20$, which verifies it. Step 4: $p_5 = 2 \\cdot 243 - 2 = 484$. The key is 484."
+          - problem: "A sequence has $d_0 = 5$ and $d_1 = 9$, and for $n \\ge 2$ it obeys $d_n = 4d_{n-1} - 3d_{n-2}$. Use the characteristic equation to solve the recurrence, then find $d_6$."
+            answer: "1461"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (characteristic equation): $r^2 - 4r + 3 = 0$ factors over the integers as $(r-3)(r-1) = 0$, so the roots are $3$ and $1$. Step 2 (initial conditions): the closed form $d_n = A \\cdot 3^n + B \\cdot 1^n$ with $d_0 = 5$ and $d_1 = 9$ gives $A + B = 5$ and $3A + B = 9$, so $A = 2$ and $B = 3$. Step 3 (verification of a later term): the recurrence gives $d_2 = 4 \\cdot 9 - 3 \\cdot 5 = 21$ and the closed form gives $18 + 3 = 21$, which verifies it. Step 4: $d_6 = 2 \\cdot 729 + 3 = 1461$. The key is 1461."
+          - problem: "Let $f_n = 7f_{n-1} - 10f_{n-2}$ for $n \\ge 2$, with $f_0 = 3$ and $f_1 = 9$. Use the characteristic equation to solve the recurrence, then find $f_5$."
+            answer: "3189"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (characteristic equation): $r^2 - 7r + 10 = 0$ factors over the integers as $(r-5)(r-2) = 0$, so the roots are $5$ and $2$. Step 2 (initial conditions): the closed form $f_n = A \\cdot 5^n + B \\cdot 2^n$ with $f_0 = 3$ and $f_1 = 9$ gives $A + B = 3$ and $5A + 2B = 9$, so $A = 1$ and $B = 2$. Step 3 (verification of a later term): the recurrence gives $f_2 = 7 \\cdot 9 - 10 \\cdot 3 = 33$ and the closed form gives $25 + 8 = 33$, which verifies it. Step 4: $f_5 = 3125 + 2 \\cdot 32 = 3189$. The key is 3189."
         constraints: "characteristic quadratic factors over the integers; initial conditions give small integer coefficients; require a verification of one later term"
       - id: kp2
         name: "Repeated roots"
@@ -347,8 +363,20 @@ topics:
           - problem: 'What is the generating function of $a_n = 2^n$, i.e. $1, 2, 4, 8, \dots$?'
             answer: '$1/(1 - 2x)$'
             solution_sketch: '$\sum_{n \ge 0} (2x)^n = 1/(1 - 2x)$.'
+          - problem: "A sequence has $a_n = 5^n$ for $n = 0, 1, 2, \\dots$, so it begins $1, 5, 25, 125, \\dots$. Give the generating function $A(x) = \\sum_{n \\ge 0} a_n x^n$ in closed form as a function of $x$."
+            answer: "1/(1-5x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Definition step: the generating function is the formal sum $A(x) = \\sum_{n \\ge 0} 5^n x^n$, which expands as $1 + 5x + 25x^2 + 125x^3 + \\dots$. Geometric-series step: the summand is $(5x)^n$, so this is a geometric series in $5x$ and equals $1/(1 - 5x)$ as a formal power series. The generating function is 1/(1-5x)."
           - problem: 'What is the generating function of the finite sequence $1, 1, 1$ (and $0$ afterwards)?'
             answer: '$1 + x + x^2$'
+          - problem: "A finite sequence has terms 1, 1, 1, 1 and then 0 after that. Find its generating function."
+            answer: "1+x+x^2+x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Definition step: place each term at the corresponding power of x, so the terms 1, 1, 1, 1 give 1 + x + x^2 + x^3. Finiteness step: all later terms are 0, so the series stops at x^3. The generating function is 1+x+x^2+x^3."
+          - problem: "A finite sequence is 1, 0, 1, 0, 1 and then 0. Determine its generating function."
+            answer: "1+x^2+x^4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Definition step: the term at position k multiplies x^k, so the ones at positions 0, 2, and 4 give x^0 + x^2 + x^4. Zero-term step: the entries at positions 1 and 3 are 0 and add nothing. The generating function is 1+x^2+x^4."
         constraints: "geometric sequences a^n and finite 0/1 sequences; formal power series, no convergence discussion"
       - id: kp2
         name: "Products of generating functions count selections"

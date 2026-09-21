@@ -235,6 +235,22 @@ topics:
           - problem: 'Compute $3^4 \bmod 5$.'
             answer: "1"
             solution_sketch: '$3^2 = 9 \equiv 4 \equiv -1$, so $3^4 \equiv (-1)^2 = 1 \pmod 5$.'
+          - problem: "Find the remainder when $5^{11}$ is divided by $13$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 5^11 modulo 13. Use repeated squaring. Step 1: 5^2 = 25 and 25 mod 13 = 12, so 5^2 is congruent to -1 modulo 13. Step 2: split 5^11 as (5^2)^5 times 5, so 5^11 is congruent to (-1)^5 times 5 = -5 modulo 13. Step 3: reduce to a least nonnegative residue: -5 + 13 = 8. The answer is 8."
+          - problem: "What is the least nonnegative residue of $7^5$ modulo $11$?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 7^5 modulo 11. Use repeated squaring. Step 1: 7^2 = 49 and 49 mod 11 = 5. Step 2: square that: 7^4 is congruent to 5^2 = 25, and 25 mod 11 = 3. Step 3: multiply by 7 once more: 7^5 is congruent to 3 times 7 = 21, and 21 mod 11 = 10, which is -1 modulo 11. The answer is 10."
+          - problem: "Evaluate $6^7$ modulo $13$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 6^7 modulo 13. Use repeated squaring. Step 1: 6^3 = 216 and 216 mod 13 = 8. Step 2: square: 6^6 is congruent to 8^2 = 64, and 64 mod 13 = 12, so 6^6 is congruent to -1 modulo 13. Step 3: multiply by 6 once more: 6^7 is congruent to 12 times 6 = 72, and 72 mod 13 = 7. The answer is 7."
+          - problem: "Determine the value of $4^9$ modulo $11$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 4^9 modulo 11. Use repeated squaring. Step 1: 4^2 = 16 and 16 mod 11 = 5. Step 2: square: 4^4 is congruent to 5^2 = 25, and 25 mod 11 = 3. Step 3: 4^5 is congruent to 3 times 4 = 12, and 12 mod 11 = 1. Step 4: 4^9 is congruent to 1 times 3 = 3. The answer is 3."
         constraints: "exponents 3-20, moduli <= 15; solvable by spotting a small power congruent to 1 or -1"
     diagnostic_exemplar:
       problem: 'Compute $2^{20} \bmod 9$.'
@@ -273,6 +289,22 @@ topics:
           - problem: 'How many solutions mod $6$ does $4x \equiv 3 \pmod 6$ have?'
             answer: "0"
             solution_sketch: '$\gcd(4,6) = 2$ does not divide $3$, so the congruence is unsolvable.'
+          - problem: "Compute the number of solutions of the congruence 9x ≡ 6 (mod 15)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The congruence is 9x ≡ 6 (mod 15). Step 1 (solvability criterion): compute gcd(9,15) = 3 with the Euclidean algorithm. Step 2 (divisibility test): 3 divides 6, so the congruence is solvable. Step 3 (solution count): the number of solutions mod 15 equals gcd(9,15), which is 3. The final count is 3."
+          - problem: "Find the number of residues b mod 10 for which the congruence 6x ≡ b (mod 10) has a solution."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The congruence family is 6x ≡ b (mod 10). Step 1 (solvability criterion): compute gcd(6,10) = 2. Step 2 (divisibility test): a solution exists exactly when 2 divides b. Step 3 (counting): the even residues mod 10 are 0, 2, 4, 6, 8, so 5 residues work. The final count is 5."
+          - problem: "State how many solutions mod 18 the congruence 12x ≡ 8 (mod 18) has."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The congruence is 12x ≡ 8 (mod 18). Step 1 (solvability criterion): compute gcd(12,18) = 6 with the Euclidean algorithm. Step 2 (divisibility test): 6 does not divide 8, so the congruence has no solution mod 18. The number of solutions is 0."
+          - problem: "Determine the number of solutions of 8x ≡ 20 (mod 12)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The congruence is 8x ≡ 20 (mod 12). Step 1 (solvability criterion): compute gcd(8,12) = 4. Step 2 (divisibility test): 4 divides 20, so the congruence is solvable. Step 3 (solution count): the number of solutions mod 12 equals gcd(8,12) = 4. The final count is 4."
         constraints: "moduli <= 30; include both solvable and unsolvable cases; solution count = gcd(a,m) when it divides b, else 0"
       - id: kp2
         name: "Modular inverses via the extended Euclidean algorithm"
@@ -284,6 +316,22 @@ topics:
           - problem: 'Find the inverse of $5$ modulo $12$.'
             answer: "5"
             solution_sketch: '$5 \cdot 5 = 25 = 2 \cdot 12 + 1$, so $5$ is its own inverse mod $12$.'
+          - problem: "What number x satisfies 9x congruent to 1 modulo 26? Give x as the least positive residue."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Euclidean algorithm): 26 = 2*9 + 8 and 9 = 1*8 + 1. Step 2 (back-substitution): 1 = 9 - 8 = 9 - (26 - 2*9) = 3*9 - 26. Step 3 (least positive residue): the coefficient of 9 is 3, so x = 3. Step 4 (verification product): 9*3 = 27 = 1*26 + 1, so 9*3 is 1 modulo 26. The answer is 3."
+          - problem: "Find the least positive residue x with 17x congruent to 1 modulo 40."
+            answer: "33"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Euclidean algorithm): 40 = 2*17 + 6, 17 = 2*6 + 5, and 6 = 1*5 + 1. Step 2 (back-substitution): 1 = 6 - 5 = 6 - (17 - 2*6) = 3*6 - 17 = 3*(40 - 2*17) - 17 = 3*40 - 7*17. Step 3 (least positive residue): the coefficient of 17 is -7, and -7 is 33 modulo 40. Step 4 (verification product): 17*33 = 561 = 14*40 + 1, so 17*33 is 1 modulo 40. The answer is 33."
+          - problem: "In a check-digit scheme, a multiplier 23 is used modulo 31. Find its modular inverse as the least positive residue."
+            answer: "27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Euclidean algorithm): 31 = 1*23 + 8, 23 = 2*8 + 7, and 8 = 1*7 + 1. Step 2 (back-substitution): 1 = 8 - 7 = 8 - (23 - 2*8) = 3*8 - 23 = 3*(31 - 23) - 23 = 3*31 - 4*23. Step 3 (least positive residue): the coefficient of 23 is -4, and -4 is 27 modulo 31. Step 4 (verification product): 23*27 = 621 = 20*31 + 1, so 23*27 is 1 modulo 31. The answer is 27."
+          - problem: "Use the Euclidean algorithm to find the inverse of 13 modulo 37. Give the answer as the least positive residue."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Euclidean algorithm): 37 = 2*13 + 11, 13 = 1*11 + 2, and 11 = 5*2 + 1. Step 2 (back-substitution): 1 = 11 - 5*2 = 11 - 5*(13 - 11) = 6*11 - 5*13 = 6*(37 - 2*13) - 5*13 = 6*37 - 17*13. Step 3 (least positive residue): the coefficient of 13 is -17, and -17 is 20 modulo 37. Step 4 (verification product): 13*20 = 260 = 7*37 + 1, so 13*20 is 1 modulo 37. The answer is 20."
         constraints: "gcd(a,m) = 1 always; moduli 7-40; answer as least positive residue; require the verification product"
       - id: kp3
         name: "Solving by multiplying by the inverse"
@@ -330,6 +378,22 @@ topics:
           - problem: 'Find the smallest positive $x$ with $x \equiv 0 \pmod 7$ and $x \equiv 1 \pmod 4$.'
             answer: "21"
             solution_sketch: 'Check multiples of $7$ mod $4$: $7 \equiv 3$, $14 \equiv 2$, $21 \equiv 1$. So $x \equiv 21 \pmod{28}$.'
+          - problem: "Find the least nonnegative $x$ with $x \\equiv 1 \\pmod 5$ and $x \\equiv 2 \\pmod 7$."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $x = 5k + 1$ from the first congruence. Substitute into the second: $5k + 1 \\equiv 2 \\pmod 7$, so $5k \\equiv 1 \\pmod 7$. Multiply by the inverse $3$: $k \\equiv 3 \\pmod 7$. Thus $x = 5(3) + 1 = 16$. Check: $16 \\bmod 5 = 1$ and $16 \\bmod 7 = 2$. The least nonnegative solution is 16."
+          - problem: "Find the least nonnegative $x$ with $x \\equiv 3 \\pmod 4$ and $x \\equiv 4 \\pmod 9$."
+            answer: "31"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $x = 4k + 3$ from the first congruence. Substitute into the second: $4k + 3 \\equiv 4 \\pmod 9$, so $4k \\equiv 1 \\pmod 9$. The inverse of $4$ modulo $9$ is $7$, so $k \\equiv 7 \\pmod 9$. Then $x = 4(7) + 3 = 31$. Check: $31 \\bmod 4 = 3$ and $31 \\bmod 9 = 4$. The least nonnegative solution is 31."
+          - problem: "A number leaves remainder $2$ when divided by $5$ and remainder $4$ when divided by $7$. Find the smallest positive such number."
+            answer: "32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let $x$ be the number, so $x \\equiv 2 \\pmod 5$ and $x \\equiv 4 \\pmod 7$. Write $x = 5k + 2$. Substitute: $5k + 2 \\equiv 4 \\pmod 7$, so $5k \\equiv 2 \\pmod 7$. The inverse of $5$ modulo $7$ is $3$, so $k \\equiv 6 \\pmod 7$. Then $x = 5(6) + 2 = 32$. Check: $32 \\bmod 5 = 2$ and $32 \\bmod 7 = 4$. The smallest positive such number is 32."
+          - problem: "Find the least nonnegative $x$ with $x \\equiv 5 \\pmod 9$ and $x \\equiv 1 \\pmod{11}$."
+            answer: "23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $x = 9k + 5$ from the first congruence. Substitute into the second: $9k + 5 \\equiv 1 \\pmod{11}$, so $9k \\equiv 7 \\pmod{11}$. The inverse of $9$ modulo $11$ is $5$, so $k \\equiv 35 \\equiv 2 \\pmod{11}$. Then $x = 9(2) + 5 = 23$. Check: $23 \\bmod 9 = 5$ and $23 \\bmod{11} = 1$. The least nonnegative solution is 23."
         constraints: "pairwise coprime moduli, each <= 13; answer as the unique residue mod the product plus a verification"
       - id: kp2
         name: "Systems of congruences; uniqueness mod the product"
