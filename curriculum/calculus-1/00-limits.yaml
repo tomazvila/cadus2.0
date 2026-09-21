@@ -900,6 +900,18 @@ topics:
             solution_sketch: 'The conjugate gives $\frac{4}{\sqrt{x^2+4} + x} \to 0$.'
           - problem: 'Evaluate $\lim_{x \to \infty} \left(\sqrt{x^2 + 2x} - x\right)$.'
             answer: "1"
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\left(x - \\sqrt{x^2 - 10x}\\right)$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full object: L = lim_{x -> infinity} (x - sqrt(x^2 - 10x)). Step 1 (conjugate multiplication): multiply by (x + sqrt(x^2 - 10x))/(x + sqrt(x^2 - 10x)) to get 10x/(x + sqrt(x^2 - 10x)). Step 2 (divide by x): 10/(1 + sqrt(1 - 10/x)). Step 3 (limit of roots): as x -> infinity, sqrt(1 - 10/x) -> 1, so L = 10/(1 + 1) = 5. The answer is 5."
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\left(\\sqrt{x^2 + 14x} - \\sqrt{x^2 + 6x}\\right)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full object: L = lim_{x -> infinity} (sqrt(x^2 + 14x) - sqrt(x^2 + 6x)). Step 1 (conjugate multiplication): multiply by (sqrt(x^2 + 14x) + sqrt(x^2 + 6x))/(sqrt(x^2 + 14x) + sqrt(x^2 + 6x)). Step 2 (expand and simplify): the numerator becomes (x^2 + 14x) - (x^2 + 6x) = 8x. Step 3 (divide by x): L = 8/(sqrt(1 + 14/x) + sqrt(1 + 6/x)). Step 4 (limit of roots): both square roots tend to 1, so L = 8/(1 + 1) = 4. The answer is 4."
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\left(\\sqrt{x^2 + 25} - x\\right)$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full object: L = lim_{x -> infinity} (sqrt(x^2 + 25) - x). Step 1 (conjugate multiplication): multiply by (sqrt(x^2 + 25) + x)/(sqrt(x^2 + 25) + x). Step 2 (simplify numerator): the numerator is (x^2 + 25) - x^2 = 25. Step 3 (divide by x): L = 25/(x(sqrt(1 + 25/x^2) + 1)). Step 4 (limit): the denominator grows without bound, so L = 0. The answer is 0."
         constraints: "∞ - ∞ form; conjugate multiplication yields (linear or constant)/(two growing roots); answers are b/2 for x² + bx, 0 for x² + c"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to \infty} \left(\sqrt{x^2 + 8x} - x\right)$.'
@@ -939,6 +951,22 @@ topics:
           - problem: 'Suppose $2x \leq f(x) \leq x^2 + 1$ for all $x$ near $1$. Find $\lim_{x \to 1} f(x)$.'
             answer: "2"
             solution_sketch: 'At $x \to 1$ the lower bound tends to $2$ and the upper bound to $2$; squeezed between them, $f(x) \to 2$.'
+          - problem: "Suppose $7 - x^2 \\leq g(x) \\leq 7 + x^2$ for all $x$ near $0$. Find $\\lim_{x \\to 0} g(x)$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both bounds are $7 - x^2$ and $7 + x^2$. By limit laws, $7 - x^2 \\to 7$ and $7 + x^2 \\to 7$ as $x \\to 0$. Since $g(x)$ lies between them, the squeeze theorem gives $\\lim_{x \\to 0} g(x) = 7$."
+          - problem: "Suppose $5 - (x-2)^2 \\leq f(x) \\leq 5 + (x-2)^2$ for all $x$ near $2$. Find $\\lim_{x \\to 2} f(x)$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both bounds are $5 - (x-2)^2$ and $5 + (x-2)^2$. By limit laws, $(x-2)^2 \\to 0$ as $x \\to 2$, so both bounds tend to $5$. The squeeze theorem then gives $\\lim_{x \\to 2} f(x) = 5$."
+          - problem: "Suppose $-1 \\leq f(x) \\leq x^2 + 2x$ for all $x$ near $-1$. Find $\\lim_{x \\to -1} f(x)$."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both bounds are $-1$ and $x^2 + 2x$. The constant bound tends to $-1$. By limit laws, $x^2 + 2x \\to (-1)^2 + 2(-1) = -1$. Because $f(x)$ is squeezed between two functions with limit $-1$, the squeeze theorem gives $\\lim_{x \\to -1} f(x) = -1$."
+          - problem: "Suppose $0 \\leq f(x) \\leq (x-1)^2$ for all $x$ near $1$. Find $\\lim_{x \\to 1} f(x)$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both bounds are $0$ and $(x-1)^2$. The constant bound tends to $0$. By limit laws, $(x-1)^2 \\to 0$ as $x \\to 1$. Since $f(x)$ lies between them, the squeeze theorem gives $\\lim_{x \\to 1} f(x) = 0$."
         constraints: "both bounds have the same limit at the target point; bounds are polynomials"
       - id: kp2
         name: Bounded factor times a vanishing factor
@@ -957,12 +985,28 @@ topics:
         name: Know when squeezing is needed (and when nothing works)
         key_prerequisites: [limit-laws, trig-graphs-basic]
         exemplars:
-          - problem: 'Evaluate $\lim_{x \to 0} \sin\left(\frac{1}{x}\right)$, or answer DNE if it does not exist.'
-            answer: "DNE"
-            answer_contract: {kind: none}
-            solution_sketch: 'Without a vanishing factor there is no squeeze: the values keep hitting $\pm 1$ arbitrarily close to $0$.'
           - problem: 'Evaluate $\lim_{x \to 0} x^4 \cos\left(\frac{2}{x}\right)$.'
             answer: "0"
+          - problem: "Evaluate the limit lim_{x->0} cos(1/x), or state that it does not exist."
+            answer: "DNE"
+            answer_contract: {"kind": "label", "options": [["DNE"], ["0"], ["1"], ["-1"]]}
+            solution_sketch: "The object is lim cos(1/x) as x goes to 0. Near 0 the cosine takes values arbitrarily close to 1 and to -1, so no single limit exists. The option 0 would require a vanishing factor, but there is none. The options 1 and -1 are oscillation values, not the limit. Therefore the limit is DNE."
+          - problem: "Evaluate the limit lim_{x->0} x^5 sin(1/x)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is lim x^5 sin(1/x) as x goes to 0. Boundedness gives -1 <= sin(1/x) <= 1. Multiply by x^5: -x^5 <= x^5 sin(1/x) <= x^5. Squeeze theorem: both bounds tend to 0. So the limit is 0."
+          - problem: "Evaluate the limit lim_{x->0} (1 + x^2 cos(1/x))."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is lim (1 + x^2 cos(1/x)) as x goes to 0. Boundedness gives -1 <= cos(1/x) <= 1. Multiply by x^2: -x^2 <= x^2 cos(1/x) <= x^2. Add 1: 1 - x^2 <= 1 + x^2 cos(1/x) <= 1 + x^2. Squeeze theorem: both bounds tend to 1. So the limit is 1."
+          - problem: "Evaluate the limit lim_{x->0} (2 + x^3 sin(1/x))."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is lim (2 + x^3 sin(1/x)) as x goes to 0. Boundedness gives -1 <= sin(1/x) <= 1. Multiply by x^3: -x^3 <= x^3 sin(1/x) <= x^3. Add 2: 2 - x^3 <= 2 + x^3 sin(1/x) <= 2 + x^3. Squeeze theorem: both bounds tend to 2. So the limit is 2."
+          - problem: "Evaluate the limit lim_{x->0} (x^4 cos(1/x) - 1)."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is lim (x^4 cos(1/x) - 1) as x goes to 0. Boundedness gives -1 <= cos(1/x) <= 1. Multiply by x^4: -x^4 <= x^4 cos(1/x) <= x^4. Subtract 1: -1 - x^4 <= x^4 cos(1/x) - 1 <= -1 + x^4. Squeeze theorem: both bounds tend to -1. So the limit is -1."
         constraints: "contrast a bare oscillation (DNE) with a squeezed product (0)"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to 0} x^2 \sin\left(\frac{3}{x}\right)$.'
@@ -1006,6 +1050,18 @@ topics:
             solution_sketch: 'Multiply by $\frac{1 + \cos x}{1 + \cos x}$: $\frac{\sin^2 x}{x(1 + \cos x)} = \frac{\sin x}{x} \cdot \frac{\sin x}{1 + \cos x} \to 1 \cdot \frac{0}{2} = 0$.'
           - problem: 'Evaluate $\lim_{x \to 0} \frac{x}{\sin x}$.'
             answer: "1"
+          - problem: "Evaluate $\\lim_{x \\to 0} \\frac{\\sin x}{2x}$ with $x$ in radians. Give the answer as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the object as $L = \\lim_{x \\to 0} \\frac{\\sin x}{2x}$. Use the limit law for a constant multiple to write $L = \\frac{1}{2} \\lim_{x \\to 0} \\frac{\\sin x}{x}$. The fundamental limit gives $\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$. Therefore the limit is 1/2."
+          - problem: "Evaluate $\\lim_{x \\to 0} \\frac{2x}{\\sin x}$ with $x$ in radians."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the object as $L = \\lim_{x \\to 0} \\frac{2x}{\\sin x}$. Use the limit law for a constant multiple to write $L = 2 \\lim_{x \\to 0} \\frac{x}{\\sin x}$. The reciprocal of the fundamental limit gives $\\lim_{x \\to 0} \\frac{x}{\\sin x} = 1$. Therefore the limit is 2."
+          - problem: "Evaluate $\\lim_{x \\to 0} \\frac{\\sin x}{5x}$ with $x$ in radians. Give the answer as a fraction."
+            answer: "1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the object as $L = \\lim_{x \\to 0} \\frac{\\sin x}{5x}$. Use the limit law for a constant multiple to write $L = \\frac{1}{5} \\lim_{x \\to 0} \\frac{\\sin x}{x}$. The fundamental limit gives $\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$. Therefore the limit is 1/5."
         constraints: "radians only; the two memorized limits and their reciprocals"
       - id: kp2
         name: Rescale the argument
@@ -1019,6 +1075,18 @@ topics:
           - problem: 'Evaluate $\lim_{x \to 0} \frac{\sin(5x)}{\sin(2x)}$.'
             answer: "5/2"
             solution_sketch: '$\frac{\sin(5x)}{5x} \cdot \frac{2x}{\sin(2x)} \cdot \frac{5}{2} \to 1 \cdot 1 \cdot \frac{5}{2}$.'
+          - problem: "Evaluate $\\lim_{x \\to 0} \\frac{\\sin(7x)}{3x}$."
+            answer: "7/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full limit $\\lim_{x \\to 0} \\frac{\\sin(7x)}{3x}$. Rescale by writing $\\frac{7}{3}\\cdot\\frac{\\sin(7x)}{7x}$; this uses the constant-factor limit law. As $x \\to 0$, the argument $7x \\to 0$, so $\\frac{\\sin(7x)}{7x} \\to 1$ by the special sine limit. The product is 7/3, so the limit is 7/3."
+          - problem: "Evaluate $\\lim_{x \\to 0} \\frac{\\sin(5x)}{\\sin(9x)}$."
+            answer: "5/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full limit $\\lim_{x \\to 0} \\frac{\\sin(5x)}{\\sin(9x)}$. Rescale the numerator and denominator by writing $\\frac{5}{9}\\cdot\\frac{\\sin(5x)}{5x}\\cdot\\frac{9x}{\\sin(9x)}$; this uses multiplication by a form of 1. As $x \\to 0$, both $5x$ and $9x$ go to 0, so each special sine quotient tends to 1. The product is 5/9, so the limit is 5/9."
+          - problem: "Evaluate $\\lim_{x \\to 0} \\frac{\\tan(8x)}{4x}$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full limit $\\lim_{x \\to 0} \\frac{\\tan(8x)}{4x}$. Rescale by writing $\\frac{8}{4}\\cdot\\frac{\\tan(8x)}{8x}$; this uses the constant-factor limit law. As $x \\to 0$, $8x \\to 0$, so $\\frac{\\tan(8x)}{8x} \\to 1$ by the special tangent limit. The product is 2, so the limit is 2."
         constraints: "arguments ax with small integer a; answers are ratios of the coefficients"
       - id: kp3
         name: Combine with algebra and identities
@@ -1033,6 +1101,18 @@ topics:
           - problem: 'Evaluate $\lim_{x \to 0} \frac{1 - \cos x}{x^2}$.'
             answer: "1/2"
             solution_sketch: 'Conjugate trick: $\frac{\sin^2 x}{x^2(1 + \cos x)} = \left(\frac{\sin x}{x}\right)^2 \frac{1}{1 + \cos x} \to \frac{1}{2}$.'
+          - problem: "Evaluate lim_{x->0} (tan(5x))/(2x). Give the answer as a fraction."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (rewrite): The full limit is lim_{x->0} (tan(5x))/(2x). Write tan(5x) as sin(5x)/cos(5x), so the expression is (sin(5x)/(5x)) * (5/2) * (1/cos(5x)). Step 2 (fundamental limit): sin(5x)/(5x) tends to 1 as x tends to 0. Step 3 (limit laws): cos(5x) tends to 1, so the product tends to 1 * (5/2) * 1. The value is 5/2."
+          - problem: "Evaluate lim_{x->0} (sin(3x))/(x(2x+1))."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (factor): The full limit is lim_{x->0} (sin(3x))/(x(2x+1)). Factor x from the denominator to write (sin(3x))/(3x) times 3/(2x+1). Step 2 (fundamental limit): sin(3x)/(3x) tends to 1. Step 3 (limit laws): 3/(2x+1) tends to 3, so the product tends to 3. The value is 3."
+          - problem: "Evaluate lim_{x->0} (1 - cos(2x))/(x sin(3x)). Give the answer as a fraction."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (conjugate): The full limit is lim_{x->0} (1 - cos(2x))/(x sin(3x)). Multiply the numerator and denominator by 1 + cos(2x), giving sin^2(2x) / (x sin(3x) (1 + cos(2x))). Step 2 (fundamental limits): Rewrite this as [4x^2 (sin(2x)/(2x))^2] / [3x^2 (sin(3x)/(3x)) (1 + cos(2x))]. The factors sin(2x)/(2x) and sin(3x)/(3x) tend to 1. Step 3 (limit laws): The ratio tends to (4/3) * 1/(1 + 1). The value is 2/3."
         constraints: "reduce to the fundamental limits via factoring, tan = sin/cos, or the conjugate of 1 - cos"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to 0} \frac{\tan(3x)}{x}$.'
@@ -1075,6 +1155,22 @@ topics:
             solution_sketch: 'The inner limit is $9$ and $\sqrt{\cdot}$ is continuous there, so the answer is $\sqrt{9} = 3$.'
           - problem: 'Given $\lim_{x \to a} g(x) = 4$ and $f$ continuous with $f(4) = 7$, find $\lim_{x \to a} f(g(x))$.'
             answer: "7"
+          - problem: "Evaluate $\\lim_{x \\to 3} \\sqrt{x^2 + 7}$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inner function is $x^2 + 7$. By limit laws, its limit as $x \\to 3$ is $16$. The square root function is continuous at $16$, so pass the limit through: $\\sqrt{16}$. The limit is 4."
+          - problem: "Given $\\lim_{x \\to a} g(x) = 2$ and $f$ continuous with $f(2) = 5$, find $\\lim_{x \\to a} f(g(x))$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inner limit is $\\lim_{x \\to a} g(x) = 2$. Since $f$ is continuous at $2$, the limit of the composition is $f$ evaluated at the inner limit, $f(2)$. Given $f(2) = 5$, the limit is 5."
+          - problem: "Evaluate $\\lim_{x \\to 0} \\sin(x + \\pi/2)$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inner limit is $\\lim_{x \\to 0} (x + \\pi/2) = \\pi/2$. The sine function is continuous at $\\pi/2$, so pass the limit through: $\\sin(\\pi/2)$. Since $\\sin(\\pi/2) = 1$, the limit is 1."
+          - problem: "Evaluate $\\lim_{x \\to 0} e^{x + \\ln(6)}$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inner limit is $\\lim_{x \\to 0} (x + \\ln(6)) = \\ln(6)$. The exponential function is continuous at $\\ln(6)$, so pass the limit through: $e^{\\ln(6)}$. Since $e^{\\ln(6)} = 6$, the limit is 6."
         constraints: "outer function continuous at the inner limit; small integer values"
       - id: kp2
         name: Composite limits from tables and graphs
@@ -1085,6 +1181,22 @@ topics:
             solution_sketch: 'Only the inner LIMIT matters: $g(x) \to 3$, and $f$ is continuous at $3$, so the composite tends to $f(3) = 8$.'
           - problem: 'A table shows $g(x) \to -1$ as $x \to 0$, and $f$ is continuous with $f(-1) = 6$. Find $\lim_{x \to 0} f(g(x))$.'
             answer: "6"
+          - problem: "A table for g near x = 1 gives values that approach -2, while g(1) = 4. The function f is continuous with f(-2) = 7. Find lim_{x -> 1} f(g(x))."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The limit is lim_{x -> 1} f(g(x)). Step 1: Read the inner limit from the table; the values of g approach -2 as x approaches 1, while g(1)=4 is a decoy. Step 2: Use the composite limit rule; since f is continuous at -2, the composite limit is f(-2). Since f(-2)=7, the limit is 7."
+          - problem: "The graph of g shows that as x approaches 3, g(x) approaches 0, but the graph has a point at (3, 2). The function f is continuous with f(0) = 5. Find lim_{x -> 3} f(g(x))."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The limit is lim_{x -> 3} f(g(x)). Step 1: From the graph, the inner limit is 0 as x approaches 3, and the plotted point g(3)=2 is a decoy. Step 2: Apply the composite limit rule; because f is continuous at 0, the composite limit is f(0). Since f(0)=5, the limit is 5."
+          - problem: "Two tables are given. For g, as x approaches -2, the values approach 4, while g(-2) = 1. For f, the table shows f continuous at 4 with f(4) = -1. Find lim_{x -> -2} f(g(x))."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The limit is lim_{x -> -2} f(g(x)). Step 1: The g-table shows the inner limit is 4 as x approaches -2, while g(-2)=1 is a decoy. Step 2: Because f is continuous at 4, the composite limit rule gives f(4). From the f-table f(4)=-1, so the limit is -1."
+          - problem: "The graph of g approaches height 3 as x approaches 0 from either side, but the graph has a hole at (0, 9). The function f is continuous with f(3) = 11. Find lim_{x -> 0} f(g(x))."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The limit is lim_{x -> 0} f(g(x)). Step 1: The graph of g approaches height 3 as x approaches 0, and the hole value 9 at x=0 is a decoy. Step 2: Use the composite limit rule; since f is continuous at 3, the composite limit is f(3). Since f(3)=11, the limit is 11."
         constraints: "the value g(a) is a decoy differing from the inner limit; f continuous at the inner limit"
       - id: kp3
         name: One-sided care when the outer function jumps
@@ -1130,52 +1242,88 @@ topics:
         name: Check the three conditions
         key_prerequisites: [limits-piecewise-functions, limit-laws]
         exemplars:
-          - problem: 'Let $f(x) = \frac{x^2 - 1}{x - 1}$ for $x \neq 1$ and $f(1) = 2$. Is $f$ continuous at $x = 1$? (yes/no, with the limit)'
-            answer: "yes; the limit is 2 and equals f(1)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\lim_{x \to 1} f(x) = \lim_{x \to 1} (x + 1) = 2 = f(1)$: all three conditions hold.'
-          - problem: 'Let $g(x) = x^2$ for $x \leq 2$ and $g(x) = 3x - 2$ for $x > 2$. Is $g$ continuous at $x = 2$? (yes/no)'
-            answer: "yes"
-            answer_contract: {kind: none}
-            solution_sketch: 'Left limit $4$, right limit $3 \cdot 2 - 2 = 4$, and $g(2) = 4$: continuous.'
-          - problem: 'Let $f(x) = \frac{x^2 - 4}{x - 2}$ for $x \neq 2$ and $f(2) = 3$. Is $f$ continuous at $x = 2$?'
-            answer: "no — the limit is 4 but f(2) = 3"
-            answer_contract: {kind: none}
-            solution_sketch: "no — the limit is 4 but f(2) = 3"
+          - problem: "Let $f(x) = \\frac{x^2 - 4}{x - 2}$ for $x \\neq 2$ and $f(2) = 4$. State whether $f$ satisfies the three conditions at $x = 2$, and give the limit as $x$ approaches 2."
+            answer: "verdict = continuous; L = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["continuous"], ["discontinuous"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full object: $f(x) = \\frac{x^2-4}{x-2}$ for $x \\neq 2$, $f(2) = 4$. Step 1 (limit): factor $x^2 - 4 = (x-2)(x+2)$ and cancel, so $\\lim_{x \\to 2} f(x) = \\lim_{x \\to 2} (x+2) = 4$. Step 2 (value): $f(2) = 4$ is defined. Step 3 (compare): the limit equals $f(2)$, so all three conditions hold. The wrong option 'discontinuous' comes from the error of treating the hole in the formula as a break in the function. Answer: verdict = continuous; L = 4."
+          - problem: "Let $g(x) = x^2 + 1$ for $x \\leq 1$ and $g(x) = 3x - 1$ for $x > 1$. State whether $g$ satisfies the three conditions at $x = 1$, and give the limit as $x$ approaches 1."
+            answer: "verdict = continuous; L = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["continuous"], ["discontinuous"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full object: $g(x) = x^2+1$ on $x \\leq 1$ and $g(x) = 3x-1$ on $x > 1$. Step 1 (one-sided limits): from the left, $x^2+1 \\to 2$; from the right, $3x-1 \\to 2$, so the limit exists and is 2. Step 2 (value): $g(1) = 1^2+1 = 2$ is defined. Step 3 (compare): limit = $g(1)$, so all three conditions hold. The wrong option 'discontinuous' comes from the error of assuming a change of formula at the point forces a break. Answer: verdict = continuous; L = 2."
+          - problem: "Let $f(x) = \\frac{x^2 - 25}{x - 5}$ for $x \\neq 5$ and $f(5) = 3$. State whether $f$ satisfies the three conditions at $x = 5$, and give the limit as $x$ approaches 5."
+            answer: "verdict = discontinuous; L = 10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["continuous"], ["discontinuous"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full object: $f(x) = \\frac{x^2-25}{x-5}$ for $x \\neq 5$, $f(5) = 3$. Step 1 (limit): factor $x^2-25 = (x-5)(x+5)$ and cancel, so $\\lim_{x \\to 5} f(x) = \\lim_{x \\to 5} (x+5) = 10$. Step 2 (value): $f(5) = 3$ is defined. Step 3 (compare): the limit 10 is not equal to $f(5) = 3$, so the third condition fails. The wrong option 'continuous' comes from the error of checking only that $f(5)$ is defined and not comparing it with the limit. Answer: verdict = discontinuous; L = 10."
+          - problem: "Let $f(x) = x + 1$ for $x < 2$ and $f(x) = x^2 - 1$ for $x > 2$; $f(2)$ is not defined. State whether $f$ satisfies the three conditions at $x = 2$, and give the limit as $x$ approaches 2."
+            answer: "verdict = discontinuous; L = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["continuous"], ["discontinuous"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full object: $f(x) = x+1$ on $x < 2$, $f(x) = x^2-1$ on $x > 2$, with no value at $x = 2$. Step 1 (one-sided limits): from the left, $x+1 \\to 3$; from the right, $x^2-1 \\to 3$, so the limit exists and is 3. Step 2 (value): $f(2)$ is not defined, so the first condition fails. Step 3 (verdict): with $f(2)$ undefined, $f$ cannot satisfy all three conditions. The wrong option 'continuous' comes from the error of treating an existing limit as sufficient without a defined function value. Answer: verdict = discontinuous; L = 3."
+          - problem: "Let $f(x) = c x - 3$ for $x < 1$ and $f(x) = x^2$ for $x \\geq 1$. Find the value of $c$ that makes $f$ satisfy the three conditions at $x = 1$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $f(x) = cx-3$ on $x < 1$ and $f(x) = x^2$ on $x \\geq 1$. Step 1 (value and right limit): $f(1) = 1^2 = 1$, and from the right $x^2 \\to 1$, so the required limit is 1. Step 2 (left limit): from the left, $cx - 3 \\to c - 3$. Step 3 (continuity condition): the left limit must equal $f(1)$, so $c - 3 = 1$, giving $c = 4$. Answer: 4."
+          - problem: "Let $f(x) = x^2 + c$ for $x \\leq 3$ and $f(x) = 2x - 5$ for $x > 3$. Find the value of $c$ that makes $f$ satisfy the three conditions at $x = 3$."
+            answer: "-8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $f(x) = x^2+c$ on $x \\leq 3$ and $f(x) = 2x-5$ on $x > 3$. Step 1 (right limit): from the right, $2x-5 \\to 1$, so the required limit is 1. Step 2 (value and left limit): $f(3) = 9 + c$, and from the left $x^2 + c \\to 9 + c$. Step 3 (continuity condition): the limit must equal $f(3)$, so $9 + c = 1$, giving $c = -8$. Answer: -8."
         constraints: "verify f(a) defined, limit exists, limit = f(a); values are small integers; include one failing case"
       - id: kp2
         name: Identify which condition fails
         key_prerequisites: [limits-piecewise-functions, limit-laws]
         exemplars:
-          - problem: 'For $f(x) = \frac{1}{x - 3}$ at $x = 3$, which continuity condition fails first?'
-            answer: "f(3) is undefined (and the limit does not exist either)"
-            answer_contract: {kind: none}
-            solution_sketch: "f(3) is undefined (and the limit does not exist either)"
-          - problem: 'For $f(x) = \frac{|x|}{x}$ at $x = 0$, which continuity condition fails?'
-            answer: "the limit does not exist (left -1, right 1)"
-            answer_contract: {kind: none}
-            solution_sketch: "the limit does not exist (left -1, right 1)"
-          - problem: 'The graph of $g$ is a curve approaching height $2$ from both sides of $x = 1$, with a filled dot at $(1, 5)$. Which condition fails?'
-            answer: "the limit (2) does not equal g(1) = 5"
-            answer_contract: {kind: none}
-            solution_sketch: "the limit (2) does not equal g(1) = 5"
+          - problem: "For f(x) = (x^2 - 7x + 10)/(x - 2) at x = 2, identify the first continuity condition that fails. Use 1 for f(a) undefined, 2 for the limit does not exist, and 3 for the limit not equal to f(a). Give the condition number and the two-sided limit. Give the answer as condition = ..., limit = ..."
+            answer: "condition = 1; limit = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "condition"}, {"contract": {"kind": "exact"}, "name": "limit"}]}
+            solution_sketch: "Full object: f(x) = (x^2 - 7x + 10)/(x - 2) at x = 2. Condition 1 (f(a) defined) by the definition of continuity: the denominator is 0 at x = 2, so f(2) is undefined and condition 1 is the first to fail. Condition 2 (limit exists) by the limit laws: for x not equal to 2 the expression simplifies to x - 5, so the two-sided limit is -3. The first failing condition is 1 and the limit is -3, so condition = 1; limit = -3."
+          - problem: "For f(x) = abs(x - 3)/(x - 3) for x not equal to 3, and f(3) = 1, identify the first continuity condition that fails. Use 1 for f(a) undefined, 2 for the limit does not exist, and 3 for the limit not equal to f(a). Give the condition number and the jump (right-hand limit minus left-hand limit). Give the answer as condition = ..., jump = ..."
+            answer: "condition = 2; jump = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "condition"}, {"contract": {"kind": "exact"}, "name": "jump"}]}
+            solution_sketch: "Full object: f(x) = abs(x - 3)/(x - 3) for x not equal to 3, with f(3) = 1. Condition 1 (f(a) defined) by the definition of continuity: f(3) = 1 is defined. Condition 2 (limit exists) by one-sided limits: for x < 3 the quotient is -1 and for x > 3 it is 1, so the two-sided limit does not exist; the jump is 1 - (-1) = 2. The first failing condition is 2 and the jump is 2, so condition = 2; jump = 2."
+          - problem: "For f(x) = (x^2 - 3x - 4)/(x - 4) for x not equal to 4, and f(4) = 9, identify the first continuity condition that fails. Use 1 for f(a) undefined, 2 for the limit does not exist, and 3 for the limit not equal to f(a). Give the condition number and the gap f(4) minus the limit. Give the answer as condition = ..., gap = ..."
+            answer: "condition = 3; gap = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "condition"}, {"contract": {"kind": "exact"}, "name": "gap"}]}
+            solution_sketch: "Full object: f(x) = (x^2 - 3x - 4)/(x - 4) for x not equal to 4, with f(4) = 9. Condition 1 (f(a) defined) by the definition of continuity: f(4) = 9 is defined. Condition 2 (limit exists) by the limit laws: the factor (x - 4) cancels, leaving x + 1, so the limit is 5. Condition 3 (limit equals f(a)): 5 is not 9, so the first failing condition is 3 and the gap f(4) minus the limit is 4, so condition = 3; gap = 4."
+          - problem: "For f(x) = (x^3 - 27)/(x - 3) at x = 3, identify the first continuity condition that fails. Use 1 for f(a) undefined, 2 for the limit does not exist, and 3 for the limit not equal to f(a). Give the condition number and the two-sided limit. Give the answer as condition = ..., limit = ..."
+            answer: "condition = 1; limit = 27"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "condition"}, {"contract": {"kind": "exact"}, "name": "limit"}]}
+            solution_sketch: "Full object: f(x) = (x^3 - 27)/(x - 3) at x = 3. Condition 1 (f(a) defined) by the definition of continuity: the denominator is 0 at x = 3, so f(3) is undefined. Condition 2 (limit exists) by the limit laws: the difference of cubes factorization gives x^2 + 3x + 9, so the limit is 27. The first failing condition is 1 and the limit is 27, so condition = 1; limit = 27."
+          - problem: "For f(x) = 2x + 1 for x < 2, f(x) = 2x + 5 for x > 2, and f(2) = 3, identify the first continuity condition that fails. Use 1 for f(a) undefined, 2 for the limit does not exist, and 3 for the limit not equal to f(a). Give the condition number and the jump (right-hand limit minus left-hand limit). Give the answer as condition = ..., jump = ..."
+            answer: "condition = 2; jump = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "condition"}, {"contract": {"kind": "exact"}, "name": "jump"}]}
+            solution_sketch: "Full object: f(x) = 2x + 1 for x < 2, f(x) = 2x + 5 for x > 2, and f(2) = 3. Condition 1 (f(a) defined) by the definition of continuity: f(2) = 3 is defined. Condition 2 (limit exists) by one-sided limits of piecewise functions: the left limit is 5 and the right limit is 9, so the two-sided limit does not exist; the jump is 9 - 5 = 4. The first failing condition is 2 and the jump is 4, so condition = 2; jump = 4."
+          - problem: "For f(x) = (x^2 + 5x + 6)/(x + 2) for x not equal to -2, and f(-2) = 7, identify the first continuity condition that fails. Use 1 for f(a) undefined, 2 for the limit does not exist, and 3 for the limit not equal to f(a). Give the condition number and the gap f(-2) minus the limit. Give the answer as condition = ..., gap = ..."
+            answer: "condition = 3; gap = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "condition"}, {"contract": {"kind": "exact"}, "name": "gap"}]}
+            solution_sketch: "Full object: f(x) = (x^2 + 5x + 6)/(x + 2) for x not equal to -2, with f(-2) = 7. Condition 1 (f(a) defined) by the definition of continuity: f(-2) = 7 is defined. Condition 2 (limit exists) by the limit laws: the factor (x + 2) cancels, leaving x + 3, so the limit at -2 is 1. Condition 3 (limit equals f(a)): 1 is not 7, so the first failing condition is 3 and the gap f(-2) minus the limit is 6, so condition = 3; gap = 6."
         constraints: "one failing condition per problem; the student names it"
       - id: kp3
         name: Where standard functions are continuous
         key_prerequisites: [limit-laws, domain-range]
         exemplars:
-          - problem: 'At which points is $f(x) = \frac{x + 1}{x^2 - 9}$ continuous?'
-            answer: "all real x except x = 3 and x = -3"
-            answer_contract: {kind: none}
-            solution_sketch: "all real x except x = 3 and x = -3"
-          - problem: 'On what interval is $f(x) = \sqrt{x - 2}$ continuous?'
-            answer: "[2, ∞)"
-            answer_contract: {kind: none}
-            solution_sketch: "[2, ∞)"
-          - problem: 'At which points is the polynomial $p(x) = x^3 - 4x + 1$ continuous?'
-            answer: "everywhere (all polynomials are continuous on ℝ)"
-            answer_contract: {kind: none}
-            solution_sketch: "everywhere (all polynomials are continuous on ℝ)"
+          - problem: "At which points is f(x) = (x + 1)/(x^2 - 9) continuous? Give the answer as an inequality in x."
+            answer: "x < -3 or -3 < x < 3 or x > 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Factor the denominator: x^2 - 9 = (x - 3)(x + 3). A rational function is continuous at every point of its domain by the continuity of rational functions, so exclude x = 3 and x = -3. The full set is x < -3 or -3 < x < 3 or x > 3."
+          - problem: "On what interval is f(x) = sqrt(x - 2) continuous? Give the answer as an inequality in x."
+            answer: "x >= 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The square root function sqrt(t) is continuous for t >= 0. Set the inside nonnegative: x - 2 >= 0, so x >= 2. The full set is x >= 2."
+          - problem: "At which points is the polynomial p(x) = x^3 - 4x + 1 continuous? Select the set."
+            answer: "all real x"
+            answer_contract: {"kind": "label", "options": [["all real x"], ["x nonzero"], ["x at least 1"], ["x positive"]]}
+            solution_sketch: "p is a polynomial, so the polynomial continuity rule gives continuity at every real number. The option x nonzero fails because a polynomial is defined at 0. The option x at least 1 fails because continuity is not limited to x at least 1. The option x positive fails because negative numbers are also in the domain. The answer is all real x."
+          - problem: "Where is g(x) = (2x)/(x^2 - 4x) continuous? Give the answer as an inequality in x."
+            answer: "x < 0 or 0 < x < 4 or x > 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Factor the denominator: x^2 - 4x = x(x - 4). A rational function is continuous on its domain by the rational continuity rule, so exclude x = 0 and x = 4. The full set is x < 0 or 0 < x < 4 or x > 4."
+          - problem: "Find the set on which h(x) = sqrt(5 - x) is continuous. Give the answer as an inequality in x."
+            answer: "x <= 5"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The square root function is continuous on its domain. Set the inside nonnegative: 5 - x >= 0, so x <= 5. The full set is x <= 5."
+          - problem: "At which points is f(x) = (x - 1)/(x^2 + 1) continuous? Select the set."
+            answer: "every real x"
+            answer_contract: {"kind": "label", "options": [["every real x"], ["x not 1"], ["x at least 1"], ["x positive"]]}
+            solution_sketch: "The denominator x^2 + 1 is never zero, so the rational function is continuous at every real number by the rational continuity rule. The option x not 1 fails because x = 1 only makes the numerator zero, not the denominator. The option x at least 1 fails because continuity is not limited to x at least 1. The option x positive fails because negative numbers are also in the domain. The answer is every real x."
         constraints: "polynomials, rational functions, and square roots; answer with the set where continuity holds"
     diagnostic_exemplar:
       problem: 'Let $f(x) = \frac{x^2 - 9}{x - 3}$ for $x \neq 3$ and $f(3) = 5$. Is $f$ continuous at $x = 3$? If not, name the condition that fails.'
