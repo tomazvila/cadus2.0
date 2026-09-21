@@ -1251,18 +1251,30 @@ topics:
         name: The substitution mechanics
         key_prerequisites: [chain-rule, separable-equations]
         exemplars:
-          - problem: "Substitute $y = vx$ into $y' = 1 + \\dfrac{y}{x}$ and simplify."
-            answer: "$v + xv' = 1 + v$, so $xv' = 1$."
-            answer_contract: {kind: none}
-            solution_sketch: "Product rule: $y' = v + xv'$; the $v$ terms cancel, leaving a separable equation."
-          - problem: "Substitute $y = vx$ into $y' = \\dfrac{x^2 + y^2}{xy}$ and simplify."
-            answer: "$v + xv' = \\dfrac{1 + v^2}{v}$, so $xv' = \\dfrac{1}{v}$."
-            answer_contract: {kind: none}
-            solution_sketch: "$v + xv' = \\dfrac{1 + v^2}{v}$, so $xv' = \\dfrac{1}{v}$."
-          - problem: "Substitute $y = vx$ into $y' = \\dfrac{y^2 + 2xy}{x^2}$ and simplify."
-            answer: "$v + xv' = v^2 + 2v$, so $xv' = v^2 + v$."
-            answer_contract: {kind: none}
-            solution_sketch: "$v + xv' = v^2 + 2v$, so $xv' = v^2 + v$."
+          - problem: "Substitute y = vx and y' = v + x v' into y' = 1 + y/x. Simplify to an equation of the form x v' = c and find the value of c."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with y' = 1 + y/x and substitute y = vx, so y' = v + x v' by the product rule. This gives v + x v' = 1 + v. Subtract v from both sides: x v' = 1. The answer is 1."
+          - problem: "Substitute y = vx and y' = v + x v' into y' = (x^2 + y^2)/(xy). Simplify to an equation of the form x v' = R(v) and find R(v)."
+            answer: "1/v"
+            answer_contract: {"kind": "function", "vars": ["v"]}
+            solution_sketch: "Start with y' = (x^2 + y^2)/(xy). Put y = vx and y' = v + x v' by the product rule. Then v + x v' = (x^2 + v^2 x^2)/(x v x) = (1 + v^2)/v. Subtract v: x v' = 1/v. The answer is 1/v."
+          - problem: "Substitute y = vx and y' = v + x v' into y' = (y^2 + 2xy)/x^2. Simplify to an equation of the form x v' = R(v) and find R(v)."
+            answer: "v^2+v"
+            answer_contract: {"kind": "function", "vars": ["v"]}
+            solution_sketch: "Start with y' = (y^2 + 2xy)/x^2. Put y = vx and y' = v + x v' by the product rule. Then v + x v' = v^2 + 2v. Subtract v: x v' = v^2 + v. The answer is v^2+v."
+          - problem: "Substitute y = vx and y' = v + x v' into y' = (y - x)/x. Simplify to an equation of the form x v' = c and find the value of c."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with y' = (y - x)/x. Put y = vx and y' = v + x v' by the product rule. Then v + x v' = v - 1. Subtract v: x v' = -1. The answer is -1."
+          - problem: "Substitute y = vx and y' = v + x v' into y' = (x + y)/(x - y). Simplify to an equation of the form x v' = R(v) and find R(v)."
+            answer: "(1+v^2)/(1-v)"
+            answer_contract: {"kind": "function", "vars": ["v"]}
+            solution_sketch: "Start with y' = (x + y)/(x - y). Put y = vx and y' = v + x v' by the product rule. Then v + x v' = (1 + v)/(1 - v). Subtract v: x v' = (1 + v)/(1 - v) - v = (1 + v^2)/(1 - v). The answer is (1+v^2)/(1-v)."
+          - problem: "Substitute y = vx and y' = v + x v' into y' = (x^2 + 3y^2)/(2xy). Simplify to an equation of the form x v' = R(v) and find R(v)."
+            answer: "(1+v^2)/(2v)"
+            answer_contract: {"kind": "function", "vars": ["v"]}
+            solution_sketch: "Start with y' = (x^2 + 3y^2)/(2xy). Put y = vx and y' = v + x v' by the product rule. Then v + x v' = (x^2 + 3v^2 x^2)/(2x v x) = (1 + 3v^2)/(2v). Subtract v: x v' = (1 + 3v^2 - 2v^2)/(2v) = (1 + v^2)/(2v). The answer is (1+v^2)/(2v)."
         constraints: "always y = vx with y' = v + xv'; the result must be visibly separable in v and x"
       - id: kp3
         name: Complete solutions
