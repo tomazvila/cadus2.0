@@ -836,14 +836,30 @@ topics:
         name: Repeated linear factors
         key_prerequisites: [partial-fractions-linear-factors]
         exemplars:
-          - problem: 'Evaluate $\int \frac{2x + 3}{(x + 1)^2} \, dx$.'
-            answer: '$2\ln|x + 1| - \frac{1}{x + 1} + C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$2x + 3 = 2(x+1) + 1$, so the integrand is $\frac{2}{x+1} + \frac{1}{(x+1)^2}$.'
-          - problem: 'Evaluate $\int \frac{dx}{x^2(x + 1)}$.'
-            answer: '$-\ln|x| - \frac{1}{x} + \ln|x + 1| + C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{1}{x^2(x+1)} = \frac{-1}{x} + \frac{1}{x^2} + \frac{1}{x+1}$ (from $1 = Ax(x+1) + B(x+1) + Cx^2$ with $B = 1$, $C = 1$, $A = -1$).'
+          - problem: "Evaluate $\\int \\frac{2x + 3}{(x + 1)^2} \\, dx$. Give the antiderivative as a function of $x$."
+            answer: "2 ln(x+1) - 1/(x+1) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Start from the full integral of (2x + 3)/(x + 1)^2 dx. By the partial fraction decomposition for a repeated linear factor, write (2x + 3)/(x + 1)^2 = A/(x + 1) + B/(x + 1)^2, so 2x + 3 = A(x + 1) + B. Matching the x coefficient gives A = 2, and setting x = -1 gives B = 1. Integrating each term with the logarithm and power rules gives 2 ln(x+1) - 1/(x+1) + C. The key is 2 ln(x+1) - 1/(x+1) + C."
+          - problem: "Evaluate $\\int \\frac{1}{x^2 (x + 1)} \\, dx$. Give the antiderivative as a function of $x$."
+            answer: "-ln(x) - 1/x + ln(x+1) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Start from the full integral of 1/(x^2(x + 1)) dx. By the partial fraction decomposition with the repeated factor x^2, write 1/(x^2(x + 1)) = A/x + B/x^2 + D/(x + 1), so 1 = A x(x + 1) + B(x + 1) + D x^2. Setting x = 0 gives B = 1, setting x = -1 gives D = 1, and matching the x^2 coefficient gives A = -1. Integrating each term gives -ln(x) - 1/x + ln(x+1) + C. The key is -ln(x) - 1/x + ln(x+1) + C."
+          - problem: "Compute the indefinite integral $\\int \\frac{3x + 4}{(x + 2)^2} \\, dx$. Give the antiderivative as a function of $x$."
+            answer: "3 ln(x+2) + 2/(x+2) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Start from the full integral of (3x + 4)/(x + 2)^2 dx. By the partial fraction decomposition for the repeated linear factor (x + 2)^2, write (3x + 4)/(x + 2)^2 = A/(x + 2) + B/(x + 2)^2, so 3x + 4 = A(x + 2) + B. Matching the x coefficient by coefficient comparison gives A = 3, and setting x = -2 by root substitution gives B = -2. Integrating each term with the logarithm and power rules gives 3 ln(x+2) + 2/(x+2) + C. The key is 3 ln(x+2) + 2/(x+2) + C."
+          - problem: "Write $\\frac{5x + 6}{(x + 2)^2} = \\frac{A}{x + 2} + \\frac{B}{(x + 2)^2}$, where A and B are constants. Give A and B."
+            answer: "A = 5; B = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
+            solution_sketch: "Start from the full equation 5x + 6 = A(x + 2) + B, obtained by multiplying the decomposition (5x + 6)/(x + 2)^2 = A/(x + 2) + B/(x + 2)^2 by (x + 2)^2. Matching the x coefficient by the coefficient-comparison rule gives A = 5. Setting x = -2 by the root-substitution rule gives 5(-2) + 6 = -4, so B = -4. The key is A = 5; B = -4."
+          - problem: "Evaluate $\\int \\frac{2x + 1}{x (x + 1)^2} \\, dx$. Give the antiderivative as a function of $x$."
+            answer: "ln(x) - ln(x+1) - 1/(x+1) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Start from the full integral of (2x + 1)/(x(x + 1)^2) dx. By the partial fraction decomposition with the repeated factor (x + 1)^2, write (2x + 1)/(x(x + 1)^2) = A/x + B/(x + 1) + D/(x + 1)^2, so 2x + 1 = A(x + 1)^2 + B x(x + 1) + D x. Setting x = 0 gives A = 1, setting x = -1 gives D = 1, and matching the x^2 coefficient gives B = -1. Integrating each term gives ln(x) - ln(x+1) - 1/(x+1) + C. The key is ln(x) - ln(x+1) - 1/(x+1) + C."
+          - problem: "The fraction $(5x - 1)/(x - 3)^2$ has the form $A/(x - 3) + B/(x - 3)^2$. Find B."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the partial fraction setup: set (5x - 1)/(x - 3)^2 = A/(x - 3) + B/(x - 3)^2. Multiply by (x - 3)^2 to get 5x - 1 = A(x - 3) + B. Matching the x coefficient gives A = 5. Setting x = 3 by the root-substitution rule gives 14 = B. The value is 14."
         constraints: "one repeated linear factor of multiplicity 2; total denominator degree <= 3"
       - id: kp2
         name: Improper fractions (divide first)
