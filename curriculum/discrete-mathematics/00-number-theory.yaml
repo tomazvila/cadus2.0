@@ -95,6 +95,22 @@ topics:
           - problem: 'Two positive integers have product $864$ and gcd $6$. What is their lcm?'
             answer: "144"
             solution_sketch: '$\mathrm{lcm} = 864 / 6 = 144$.'
+          - problem: "Two positive integers are 48 and 180. Using the identity $\\gcd(a,b) \\cdot \\mathrm{lcm}(a,b) = ab$, compute $\\mathrm{lcm}(48, 180)$."
+            answer: "720"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, Euclidean algorithm: 180 = 3*48 + 36, 48 = 1*36 + 12, 36 = 3*12 + 0, so gcd(48, 180) = 12. Step 2, product identity: gcd(48, 180) * lcm(48, 180) = 48 * 180 = 8640. Step 3, division: lcm = 8640 / 12 = 720. The lcm of 48 and 180 is 720."
+          - problem: "Let $g = \\gcd(72, 120)$ and $l = \\mathrm{lcm}(72, 120)$. Compute both values, using the identity $g \\cdot l = 72 \\cdot 120$. Give the answer as g = value; l = value."
+            answer: "g = 24; l = 360"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "g"}, {"contract": {"kind": "exact"}, "name": "l"}]}
+            solution_sketch: "Step 1, Euclidean algorithm: 120 = 1*72 + 48, 72 = 1*48 + 24, 48 = 2*24 + 0, so g = gcd(72, 120) = 24. Step 2, product identity: g * l = 72 * 120 = 8640. Step 3, division: l = 8640 / 24 = 360. The results are g = 24; l = 360."
+          - problem: "One bell rings every 85 seconds and another rings every 119 seconds, and both just rang at the same moment. Using the identity $\\gcd(a,b) \\cdot \\mathrm{lcm}(a,b) = ab$, determine after how many seconds the two bells will next ring at the same time."
+            answer: "595"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, simultaneous ring: the first time that is a multiple of both 85 and 119 is lcm(85, 119). Step 2, Euclidean algorithm: 119 = 1*85 + 34, 85 = 2*34 + 17, 34 = 2*17 + 0, so gcd(85, 119) = 17. Step 3, product identity: lcm = 85 * 119 / 17 = 10115 / 17 = 595. The bells next ring together after 595 seconds."
+          - problem: "A student claims that $\\mathrm{lcm}(34, 48) = 1632$. Compute $\\gcd(34, 48)$ with the Euclidean algorithm, then use the identity $\\gcd(a,b) \\cdot \\mathrm{lcm}(a,b) = 34 \\cdot 48$ to check the claim. Give the verdict and the lcm in the form verdict = word; lcm = number."
+            answer: "verdict = incorrect; lcm = 816"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["correct"], ["incorrect"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "lcm"}]}
+            solution_sketch: "Step 1, Euclidean algorithm: 48 = 1*34 + 14, 34 = 2*14 + 6, 14 = 2*6 + 2, 6 = 3*2 + 0, so gcd(34, 48) = 2. Step 2, product identity: lcm(34, 48) = 34 * 48 / 2 = 1632 / 2 = 816. The wrong option correct comes from multiplying 34 by 48 and forgetting to divide by the gcd 2. Thus verdict = incorrect; lcm = 816."
         constraints: "use gcd(a,b) * lcm(a,b) = ab; numbers chosen so the division is exact"
       - id: kp3
         name: "Back-substitution: gcd as an integer combination"
@@ -277,6 +293,22 @@ topics:
           - problem: 'A number of soldiers leaves remainder $3$ when lined up in rows of $4$ and remainder $1$ in rows of $5$. What is the smallest possible positive count?'
             answer: "11"
             solution_sketch: '$x \equiv 3 \pmod 4$ and $x \equiv 1 \pmod 5$: candidates $1, 6, 11, \dots$; $11 \equiv 3 \pmod 4$. So $x \equiv 11 \pmod{20}$, smallest positive is $11$.'
+          - problem: "Solve the system $x \\equiv 1 \\pmod 3$, $x \\equiv 4 \\pmod 5$, $x \\equiv 3 \\pmod 7$. Give the least nonnegative solution."
+            answer: "94"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First combine $x \\equiv 1 \\pmod 3$ and $x \\equiv 4 \\pmod 5$: write $x = 1 + 3k$, then $3k \\equiv 3 \\pmod 5$, so $k \\equiv 1 \\pmod 5$ by modular inverse, giving $x \\equiv 4 \\pmod{15}$. Now combine with the third congruence: $x = 4 + 15m \\equiv 3 \\pmod 7$, so $15m \\equiv 6 \\pmod 7$; since $15 \\equiv 1 \\pmod 7$, $m \\equiv 6 \\pmod 7$. Thus $x = 4 + 15 \\cdot 6 = 94$ modulo $105$, and verification gives $94 \\equiv 1 \\pmod 3$, $4 \\pmod 5$, $3 \\pmod 7$. The least nonnegative solution is 94."
+          - problem: "Solve the system $x \\equiv 2 \\pmod 3$, $x \\equiv 3 \\pmod 4$, $x \\equiv 4 \\pmod 5$. Give the least positive integer solution."
+            answer: "59"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First combine $x \\equiv 2 \\pmod 3$ and $x \\equiv 3 \\pmod 4$: write $x = 2 + 3k$, then $3k \\equiv 1 \\pmod 4$, so $k \\equiv 3 \\pmod 4$ by modular inverse, giving $x \\equiv 11 \\pmod{12}$. Combine with $x \\equiv 4 \\pmod 5$: $x = 11 + 12m \\equiv 4 \\pmod 5$, so $12m \\equiv 3 \\pmod 5$; since $12 \\equiv 2 \\pmod 5$, $m \\equiv 4 \\pmod 5$. Thus $x = 11 + 12 \\cdot 4 = 59$ modulo 60, and $59 \\equiv 2 \\pmod 3$, $3 \\pmod 4$, $4 \\pmod 5$. The least positive solution is 59."
+          - problem: "A pile of stones has remainder 1 when grouped in pairs, remainder 2 when grouped in fives, and remainder 3 when grouped in sevens. What is the least positive number of stones?"
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Translate to congruences: $x \\equiv 1 \\pmod 2$, $x \\equiv 2 \\pmod 5$, $x \\equiv 3 \\pmod 7$. First combine $x \\equiv 1 \\pmod 2$ and $x \\equiv 2 \\pmod 5$: write $x = 1 + 2k$, then $2k \\equiv 1 \\pmod 5$, so $k \\equiv 3 \\pmod 5$, giving $x \\equiv 7 \\pmod{10}$. Combine with the third: $x = 7 + 10m \\equiv 3 \\pmod 7$, so $10m \\equiv 3 \\pmod 7$; since $10 \\equiv 3 \\pmod 7$, $3m \\equiv 3$, so $m \\equiv 1 \\pmod 7$. Thus $x = 7 + 10 \\cdot 1 = 17$ modulo 70, and $17 \\equiv 1 \\pmod 2$, $2 \\pmod 5$, $3 \\pmod 7$. The least positive number of stones is 17."
+          - problem: "Solve the system $x \\equiv 5 \\pmod 7$, $x \\equiv 8 \\pmod 9$. Give the least nonnegative solution."
+            answer: "26"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute $x = 5 + 7k$ into the second congruence: $5 + 7k \\equiv 8 \\pmod 9$, so $7k \\equiv 3 \\pmod 9$. The modular inverse of 7 modulo 9 is 4 because $7 \\cdot 4 = 28 \\equiv 1 \\pmod 9$, so $k \\equiv 12 \\equiv 3 \\pmod 9$. Then $x = 5 + 7 \\cdot 3 = 26$ modulo 63, and $26 \\equiv 5 \\pmod 7$, $8 \\pmod 9$. The least nonnegative solution is 26."
         constraints: "2-3 congruences, moduli pairwise coprime with product <= 120; solve iteratively (substitution), always verify"
     diagnostic_exemplar:
       problem: 'Solve the system $x \equiv 1 \pmod 3$, $x \equiv 2 \pmod 5$, $x \equiv 0 \pmod 4$: give the smallest positive solution.'
