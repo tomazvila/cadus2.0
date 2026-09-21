@@ -410,35 +410,59 @@ topics:
         name: Finding equilibria and drawing the phase line
         key_prerequisites: [factoring-trinomials]
         exemplars:
-          - problem: "Find the equilibrium solutions of $y' = y^2 - 5y + 6$."
-            answer: "$y = 2$ and $y = 3$."
-            answer_contract: {kind: none}
-            solution_sketch: "Solve $f(y) = (y-2)(y-3) = 0$."
-          - problem: "Find the equilibrium solutions of $y' = 4y - y^2$."
-            answer: "$y = 0$ and $y = 4$."
-            answer_contract: {kind: none}
-            solution_sketch: "$y = 0$ and $y = 4$."
-          - problem: "Describe the phase line of $y' = y(2 - y)$."
-            answer: "Equilibria at $0$ and $2$; arrows point down below $0$, up on $(0, 2)$, down above $2$."
-            answer_contract: {kind: none}
-            solution_sketch: "Sign chart of $f(y) = y(2-y)$: negative, positive, negative."
+          - problem: "Find the sum of the equilibrium solutions of $y' = y^2 - 5y + 6$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set f(y) = y^2 - 5y + 6. Factor the quadratic by finding two numbers that multiply to 6 and add to -5: f(y) = (y - 2)(y - 3). The zero-product property gives the equilibrium solutions y = 2 and y = 3. Their sum is 2 + 3 = 5."
+          - problem: "Find the product of the equilibrium solutions of $y' = 4y - y^2$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set f(y) = 4y - y^2. Factor out y: f(y) = y(4 - y). The zero-product property gives the equilibrium solutions y = 0 and y = 4. Their product is 0 * 4 = 0."
+          - problem: "For $y' = y(2 - y)$, find the intervals of $y$ where $f(y) = y(2 - y)$ is positive. Give the answer as an inequality in $y$."
+            answer: "0 < y < 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Set f(y) = y(2 - y). The zeros are y = 0 and y = 2. Test y = 1: f(1) = 1(1) = 1 > 0. Test y = -1: f(-1) = (-1)(3) = -3 < 0. Test y = 3: f(3) = 3(-1) = -3 < 0. Thus f(y) is positive exactly on the interval 0 < y < 2."
+          - problem: "Find the sum of the equilibrium solutions of $y' = y^2 - 1$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set f(y) = y^2 - 1. Factor the difference of squares: f(y) = (y - 1)(y + 1). The zero-product property gives the equilibrium solutions y = 1 and y = -1. Their sum is 1 + (-1) = 0."
+          - problem: "For $y' = y^2 - 4$, find the intervals of $y$ where $f(y) = y^2 - 4$ is positive. Give the answer as an inequality in $y$."
+            answer: "y < -2 or y > 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Set f(y) = y^2 - 4. Factor the difference of squares: f(y) = (y - 2)(y + 2), so the zeros are y = 2 and y = -2. Test y = 0: f(0) = -4 < 0. Test y = -3: f(-3) = 9 - 4 = 5 > 0. Test y = 3: f(3) = 9 - 4 = 5 > 0. Thus f(y) is positive on y < -2 or y > 2."
+          - problem: "Find the sum of the equilibrium solutions of $y' = y(y - 1)(y + 3)$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set f(y) = y(y - 1)(y + 3). The zero-product property gives the equilibrium solutions y = 0, y = 1, and y = -3. Their sum is 0 + 1 + (-3) = -2."
         constraints: "f(y) factorable with integer roots; phase line = equilibria plus arrow directions from the sign of f"
       - id: kp2
         name: Stability classification
         key_prerequisites: [factoring-trinomials]
         exemplars:
-          - problem: "Find the equilibrium solutions of $y' = y(2 - y)$ and classify their stability."
-            answer: "$y = 0$ unstable; $y = 2$ stable."
-            answer_contract: {kind: none}
-            solution_sketch: "$f(y) = y(2-y)$ is negative for $y < 0$, positive on $(0, 2)$, negative for $y > 2$: the flow points away from $0$ and toward $2$."
-          - problem: "Find and classify the equilibria of $y' = y^2 - 9$."
-            answer: "$y = -3$ stable; $y = 3$ unstable."
-            answer_contract: {kind: none}
-            solution_sketch: "$f > 0$ for $|y| > 3$ and $f < 0$ on $(-3, 3)$: solutions rise into $-3$ from below, fall into it from above, and flee $3$."
-          - problem: "Classify the equilibrium of $y' = (y - 1)^2$."
-            answer: "$y = 1$ is semistable: attracting from below, repelling from above."
-            answer_contract: {kind: none}
-            solution_sketch: "$f \\geq 0$ on both sides, so solutions increase toward $1$ from below and increase away from it above."
+          - problem: "For the autonomous equation y' = y(2 - y), find the value of the stable equilibrium solution."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: read f(y) = y(2 - y); its zeros are y = 0 and y = 2. Step 2: make a sign chart: f is negative for y < 0, positive on (0, 2), and negative for y > 2. Step 3: the flow is toward y = 2 from both sides, so y = 2 is stable. The stable equilibrium value is 2."
+          - problem: "For the autonomous equation y' = y^2 - 9, how many stable equilibrium solutions are there?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: factor f(y) = y^2 - 9 = (y - 3)(y + 3), so the equilibria are y = -3 and y = 3. Step 2: sign chart: f is positive for y < -3, negative on (-3, 3), and positive for y > 3. Step 3: y = -3 is stable and y = 3 is unstable, so exactly one stable equilibrium. The count is 1."
+          - problem: "For y' = (y - 1)^2, evaluate f(0) and classify the equilibrium at y = 1, then select the correct classification."
+            answer: "f0 = 1; stability = semistable"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "f0"}, {"contract": {"kind": "label", "options": [["stable"], ["unstable"], ["semistable"]]}, "name": "stability"}]}
+            solution_sketch: "Step 1: write f(y) = (y - 1)^2 and evaluate f(0) = 1. Step 2: sign chart: f is positive on both sides of y = 1, so below 1 the flow goes right toward 1 and above 1 it goes right away from 1. Step 3: the equilibrium is semistable. Therefore f0 = 1; stability = semistable."
+          - problem: "For the autonomous equation y' = y(3 - y), find the value of the stable equilibrium solution."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: read f(y) = y(3 - y), with zeros y = 0 and y = 3. Step 2: sign chart: f is negative for y < 0, positive on (0, 3), and negative for y > 3. Step 3: the flow is toward y = 3 from both sides, so y = 3 is stable. The stable equilibrium value is 3."
+          - problem: "For the autonomous equation y' = (y + 2)(y - 4), find the value of the stable equilibrium solution."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: factor f(y) = (y + 2)(y - 4), with zeros y = -2 and y = 4. Step 2: sign chart: f is positive for y < -2, negative on (-2, 4), and positive for y > 4. Step 3: the flow is toward y = -2 from both sides, so y = -2 is stable. The stable equilibrium value is -2."
+          - problem: "For y' = -(y - 2)^2, evaluate f(0) and classify the equilibrium at y = 2, then select the correct classification."
+            answer: "f0 = -4; stability = semistable"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "f0"}, {"contract": {"kind": "label", "options": [["stable"], ["unstable"], ["semistable"]]}, "name": "stability"}]}
+            solution_sketch: "Step 1: write f(y) = -(y - 2)^2 and evaluate f(0) = -4. Step 2: sign chart: f is negative on both sides of y = 2, so below 2 the flow goes left away from 2 and above 2 it goes left toward 2. Step 3: the equilibrium is semistable. Therefore f0 = -4; stability = semistable."
         constraints: "f(y) factorable with integer roots; classify via a sign chart of f, no derivative test needed"
       - id: kp3
         name: Long-run behavior from an initial condition
@@ -453,6 +477,18 @@ topics:
           - problem: "For $y' = -\\tfrac{1}{2}(y - 4)$ with $y(0) = 10$, find $\\lim_{t \\to \\infty} y(t)$."
             answer: "$4$"
             solution_sketch: "$f < 0$ for $y > 4$, so the solution decays monotonically to the equilibrium $4$."
+          - problem: "For y' = y(1 - y) with y(0) = 1/4, find the long-run value of y(t)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation y' = y(1 - y) with y(0) = 1/4 has equilibria 0 and 1. In the phase-line step, 1/4 lies in (0, 1), so y' is positive and y(t) increases toward 1. The long-run value is 1."
+          - problem: "For y' = y^2 - 4 with y(0) = 0, find the long-run value of y(t)."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation y' = y^2 - 4 with y(0) = 0 has equilibria -2 and 2. In the phase-line step, 0 lies in (-2, 2), so y' is negative and y(t) decreases toward -2. The long-run value is -2."
+          - problem: "For y' = (y - 1)(3 - y) with y(0) = 2, find the long-run value of y(t)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation y' = (y - 1)(3 - y) with y(0) = 2 has equilibria 1 and 3. In the phase-line step, 2 lies in (1, 3), so y' is positive and y(t) increases toward 3. The long-run value is 3."
         constraints: "initial value sits strictly between or beyond integer equilibria; the answer is the equilibrium the flow carries it to"
     diagnostic_exemplar:
       problem: "For $y' = y(y - 3)$: find all equilibria, classify their stability, and find $\\lim_{t \\to \\infty} y(t)$ for the solution with $y(0) = 1$."
@@ -508,6 +544,18 @@ topics:
           - problem: "For $y' = x^2$ with $y(0) = 0$ and $h = 1$, estimate $y(2)$ using two Euler steps."
             answer: "$1$"
             solution_sketch: "$y_1 = 0 + 1\\cdot 0 = 0$; the slope at $x = 1$ is $1$, so $y_2 = 0 + 1 = 1$."
+          - problem: "For $y' = x - y$ with $y(0) = 2$ and $h = 0.2$, estimate $y(0.4)$ using two Euler steps. Find the estimate."
+            answer: "1.32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Euler rule: y_{n+1} = y_n + h f(x_n, y_n), with f(x,y) = x - y. Start at (x_0, y_0) = (0, 2). Step 1: slope = 0 - 2 = -2, so y_1 = 2 + 0.2(-2) = 1.6 at x = 0.2. Step 2: slope = 0.2 - 1.6 = -1.4, so y_2 = 1.6 + 0.2(-1.4) = 1.32. The estimate is 1.32."
+          - problem: "For $y' = x y$ with $y(0) = 1$ and $h = 0.5$, estimate $y(1)$ using two Euler steps. Find the estimate."
+            answer: "1.25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Euler rule: y_{n+1} = y_n + h f(x_n, y_n), with f(x,y) = x y. Start at (x_0, y_0) = (0, 1). Step 1: slope = 0(1) = 0, so y_1 = 1 + 0.5(0) = 1 at x = 0.5. Step 2: slope = 0.5(1) = 0.5, so y_2 = 1 + 0.5(0.5) = 1.25. The estimate is 1.25."
+          - problem: "For $y' = 2x + 1$ with $y(0) = 0$ and $h = 1$, estimate $y(3)$ using three Euler steps. Find the estimate."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Euler rule: y_{n+1} = y_n + h f(x_n, y_n), with f(x,y) = 2x + 1. Start at (x_0, y_0) = (0, 0). Step 1: slope = 1, so y_1 = 0 + 1(1) = 1 at x = 1. Step 2: slope = 2(1) + 1 = 3, so y_2 = 1 + 1(3) = 4 at x = 2. Step 3: slope = 2(2) + 1 = 5, so y_3 = 4 + 1(5) = 9 at x = 3. The estimate is 9."
         constraints: "2-3 steps maximum; track (x_n, y_n) as a table; values chosen so no rounding is needed"
       - id: kp3
         name: Error behavior
@@ -571,34 +619,58 @@ topics:
         name: Separate and integrate
         key_prerequisites: [antiderivatives]
         exemplars:
-          - problem: 'Find the general solution of $\frac{dy}{dx} = \frac{x}{y}$.'
-            answer: "$y^2 = x^2 + C$"
-            answer_contract: {kind: none}
-            solution_sketch: 'Separate: $y\,dy = x\,dx$; integrate to $\frac{y^2}{2} = \frac{x^2}{2} + C$ and absorb the 2 into $C$.'
-          - problem: "Find the general solution of $y' = 3x^2 y^2$."
-            answer: "$y = -\\dfrac{1}{x^3 + C}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Separate to $y^{-2}dy = 3x^2\\,dx$; integrating gives $-1/y = x^3 + C$; solve for $y$."
-          - problem: 'Find the general solution of $\frac{dy}{dx} = \frac{x^2}{y^2}$.'
-            answer: "$y^3 = x^3 + C$"
-            answer_contract: {kind: none}
-            solution_sketch: '$y^2\,dy = x^2\,dx$ integrates to $\frac{y^3}{3} = \frac{x^3}{3} + C$; absorb the 3.'
+          - problem: "Separate and integrate dy/dx = x/y. After absorbing constants, the solution is written y^2 = (right side). Find the right side in terms of x and C."
+            answer: "x^2+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Write the equation in separated form y dy = x dx. Integrate both sides with the power rule: y^2/2 = x^2/2 + C0. Multiply by 2 and rename 2C0 as C to get y^2 = x^2 + C. The right side is x^2+C."
+          - problem: "Separate and integrate y' = 3x^2 y^2. After rearranging, the solution has the form -1/y = (right side). Find the right side in terms of x and C."
+            answer: "x^3+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Separate to y^(-2)dy = 3x^2 dx. Integrate with the power rule: -1/y = x^3 + C. The right side is x^3+C."
+          - problem: "Separate and integrate dy/dx = 2x/y^2. After absorbing constants, the solution is written y^3 = (right side). Find the right side in terms of x and C."
+            answer: "3x^2+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Separate to y^2 dy = 2x dx. Integrate with the power rule: y^3/3 = x^2 + C0. Multiply by 3 and rename 3C0 as C to get y^3 = 3x^2 + C. The right side is 3x^2+C."
+          - problem: "Separate and integrate dy/dx = 4x^3 y^2. After rearranging, the solution has the form -1/y = (right side). Find the right side in terms of x and C."
+            answer: "x^4+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Separate to y^(-2)dy = 4x^3 dx. Integrate with the power rule: -1/y = x^4 + C. The right side is x^4+C."
+          - problem: "Separate and integrate dy/dx = x^2/y. After absorbing constants, the solution is written 3y^2 = (right side). Find the right side in terms of x and C."
+            answer: "2x^3+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Separate to y dy = x^2 dx. Integrate with the power rule: y^2/2 = x^3/3 + C0. Multiply by 6 and rename 6C0 as C to get 3y^2 = 2x^3 + C. The right side is 2x^3+C."
+          - problem: "Separate and integrate dy/dx = 5x^3 y^2. After multiplying by 4, the solution has the form -4/y = (right side). Find the right side in terms of x and C."
+            answer: "5x^4+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Separate to y^(-2)dy = 5x^3 dx. Integrate with the power rule: -1/y = (5/4)x^4 + C0. Multiply by 4 and rename 4C0 as C to get -4/y = 5x^4 + C. The right side is 5x^4+C."
         constraints: "antiderivatives are powers only; general solutions carry an explicit C, absorbed constants renamed"
       - id: kp3
         name: Logarithmic integrations and absorbed constants
         key_prerequisites: [integration-substitution]
         exemplars:
-          - problem: 'Find the general solution of $\frac{dy}{dx} = \frac{y}{x}$ for $x > 0$.'
-            answer: "$y = Cx$"
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{dy}{y} = \frac{dx}{x}$ gives $\ln|y| = \ln x + C$; exponentiating and renaming $e^C$ yields $y = Cx$.'
-          - problem: 'Find the general solution of $\frac{dy}{dx} = xy$.'
-            answer: "$y = Ce^{x^2/2}$"
-            answer_contract: {kind: none}
-            solution_sketch: 'Separate: $\frac{dy}{y} = x\,dx$, so $\ln|y| = \frac{x^2}{2} + C$; exponentiate and rename the constant.'
           - problem: "Find the general solution of $(1 + x^2)\\,y' = xy$."
             answer: '$y = C\sqrt{1 + x^2}$'
             solution_sketch: '$\frac{dy}{y} = \frac{x}{1+x^2}dx$; substitution gives $\ln|y| = \frac{1}{2}\ln(1+x^2) + C$, so $y = C\sqrt{1+x^2}$.'
+          - problem: "Solve $\\frac{dy}{dx} = \\frac{3y}{x}$ for $x > 0$ with the initial condition $y(1) = 5$. Find the particular solution $y(x)$."
+            answer: "5x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Separate variables: $\\frac{dy}{y} = \\frac{3\\,dx}{x}$. Integrate both sides: $\\ln|y| = 3\\ln x + C$. Exponentiate and rename $e^C$ as $C$: $y = Cx^3$. Apply $y(1) = 5$: $C \\cdot 1 = 5$, so $C = 5$. The particular solution is 5x^3."
+          - problem: "Solve $\\frac{dy}{dx} = 4xy$ with the initial condition $y(0) = 7$. Find the particular solution $y(x)$."
+            answer: "7e^(2x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Separate variables: $\\frac{dy}{y} = 4x\\,dx$. Integrate both sides: $\\ln|y| = 2x^2 + C$. Exponentiate and rename $e^C$ as $C$: $y = Ce^{2x^2}$. Apply $y(0) = 7$: $C = 7$. The particular solution is 7e^(2x^2)."
+          - problem: "Solve $\\frac{dy}{dx} = \\frac{2y}{x+1}$ for $x > -1$ with the initial condition $y(0) = 9$. Find the particular solution $y(x)$."
+            answer: "9(x+1)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Separate variables: $\\frac{dy}{y} = \\frac{2\\,dx}{x+1}$. Integrate by substitution $u = x+1$: $\\ln|y| = 2\\ln(x+1) + C$. Exponentiate and rename $e^C$ as $C$: $y = C(x+1)^2$. Apply $y(0) = 9$: $C = 9$. The particular solution is 9(x+1)^2."
+          - problem: "Solve $\\frac{dy}{dx} = \\frac{y}{2x+1}$ for $x > -\\frac{1}{2}$ with the initial condition $y(0) = 8$. Find the particular solution $y(x)$."
+            answer: "8sqrt(2x+1)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Separate variables: $\\frac{dy}{y} = \\frac{dx}{2x+1}$. Integrate by substitution $u = 2x+1$: $\\ln|y| = \\frac{1}{2}\\ln(2x+1) + C$. Exponentiate and rename $e^C$ as $C$: $y = C\\sqrt{2x+1}$. Apply $y(0) = 8$: $C\\sqrt{1} = 8$, so $C = 8$. The particular solution is 8sqrt(2x+1)."
+          - problem: "A bacteria population grows at a rate proportional to its size: $\\frac{dP}{dt} = 3P$, with initial size $P(0) = 2$ (in thousands). Find the population $P(t)$ as a function of $t$."
+            answer: "2e^(3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separate variables: $\\frac{dP}{P} = 3\\,dt$. Integrate both sides: $\\ln|P| = 3t + C$. Exponentiate and rename $e^C$ as $C$: $P = Ce^{3t}$. Apply $P(0) = 2$: $C = 2$. The population is 2e^(3t)."
         constraints: "integrations produce logarithms; require exponentiating and renaming e^C as C"
     diagnostic_exemplar:
       problem: "Find the general solution of $y' = -2xy$."
@@ -649,33 +721,57 @@ topics:
         name: Implicit solutions and branch selection
         key_prerequisites: [separation-of-variables]
         exemplars:
-          - problem: "Find an implicit general solution of $y' = -\\dfrac{x}{y}$."
-            answer: "$x^2 + y^2 = C$"
-            answer_contract: {kind: none}
-            solution_sketch: '$y\,dy = -x\,dx$ integrates to $\frac{y^2}{2} = -\frac{x^2}{2} + C$; clear the fractions.'
           - problem: "Solve $y' = \\dfrac{2x + 1}{2y}$ with $y(0) = -1$."
             answer: '$y = -\sqrt{x^2 + x + 1}$'
             solution_sketch: '$2y\,dy = (2x+1)\,dx$ gives $y^2 = x^2 + x + C$; $y(0) = -1$ forces $C = 1$, and the negative initial value selects the negative root.'
           - problem: "Solve $y\\,y' = x$ with $y(1) = -2$."
             answer: '$y = -\sqrt{x^2 + 3}$'
             solution_sketch: '$y^2 = x^2 + C$ with $C = 3$; take the negative branch since $y(1) < 0$.'
+          - problem: "A separable equation is y' = -x/y. Find the left side F(x, y) of an implicit general solution written as F(x, y) = C."
+            answer: "x^2+y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Separate variables: y dy = -x dx. Integrate both sides: y^2/2 = -x^2/2 + K. Multiply by 2 and collect terms to write x^2 + y^2 = C. The left side F is x^2+y^2."
+          - problem: "Solve y' = (2x + 3)/(2y) with y(0) = 2. Give the explicit solution y as a function of x."
+            answer: "sqrt(x^2+3x+4)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Separate variables: 2y dy = (2x + 3) dx. Integrate: y^2 = x^2 + 3x + C. The condition y(0) = 2 gives 4 = C, so y^2 = x^2 + 3x + 4. Since the initial value is positive, select the positive branch: sqrt(x^2+3x+4)."
+          - problem: "A separable equation is y' = e^x/y. Find the left side F(x, y) of an implicit general solution written as F(x, y) = C."
+            answer: "y^2-2e^(x)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Separate variables: y dy = e^x dx. Integrate: y^2/2 = e^x + K. Multiply by 2 and collect terms to write y^2 - 2e^x = C. The left side F is y^2-2e^(x)."
+          - problem: "Solve y' = x^2/y with y(0) = -1. Give the explicit solution y as a function of x."
+            answer: "-sqrt(2x^3/3+1)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Separate variables: y dy = x^2 dx. Integrate: y^2/2 = x^3/3 + C. The condition y(0) = -1 gives 1/2 = C, so y^2 = 2x^3/3 + 1. The negative initial value selects the negative branch: -sqrt(2x^3/3+1)."
         constraints: "implicit solutions left as F(x,y) = C when no clean explicit form; when solving explicitly, the initial sign picks the branch"
       - id: kp3
         name: Constant solutions and intervals of validity
         key_prerequisites: [separation-of-variables]
         exemplars:
-          - problem: "Find all constant solutions of $y' = y^2 - 4$."
-            answer: "$y = 2$ and $y = -2$."
-            answer_contract: {kind: none}
-            solution_sketch: "Constant solutions are the zeros of the right side."
-          - problem: "Solve $y' = y^2$ with $y(0) = 1$ and give the interval of validity."
-            answer: '$y = \dfrac{1}{1 - x}$ on $(-\infty, 1)$.'
-            answer_contract: {kind: none}
-            solution_sketch: "$-1/y = x + C$ with $C = -1$; the solution blows up at $x = 1$, so the interval containing $x_0 = 0$ is $(-\\infty, 1)$."
-          - problem: "When solving $y' = y^2$ by dividing both sides by $y^2$, which solution is lost?"
-            answer: "The constant solution $y = 0$."
-            answer_contract: {kind: none}
-            solution_sketch: "The constant solution $y = 0$."
+          - problem: "Find the positive constant solution of y' = y^2 - 9. Give the y-value."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A constant solution has y' = 0, so set h(y) = y^2 - 9 equal to zero. Factor the difference of squares: (y - 3)(y + 3) = 0, so the integer zeros are y = 3 and y = -3. Each value makes the right side zero for every x, so both are constant solutions. The positive constant solution is 3."
+          - problem: "Solve y' = y^2 with y(0) = 1/2. Give the interval of validity as an inequality in x."
+            answer: "x < 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Separate variables: dy/y^2 = dx. Integrate both sides: -1/y = x + C. Apply the initial condition y(0) = 1/2: -2 = C, so -1/y = x - 2 and y = 1/(2 - x). The branch formula blows up where 2 - x = 0, that is at x = 2, so the maximal interval containing x0 = 0 is x < 2."
+          - problem: "When solving y' = y^2 - 4 by dividing both sides by y + 2, which constant solution is lost? Give the y-value."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The constant solutions of y' = y^2 - 4 are the integer zeros of h(y) = (y - 2)(y + 2), namely y = 2 and y = -2. Dividing both sides by y + 2 is legitimate only where y is not -2, so the constant branch y = -2 disappears from the separated equation. The lost constant solution is -2."
+          - problem: "Solve y' = y^2 with y(0) = 1/4 and find the blow-up point, the right endpoint of its interval of validity."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Separate variables: dy/y^2 = dx. Integrate: -1/y = x + C. Apply y(0) = 1/4: -4 = C, so -1/y = x - 4 and y = 1/(4 - x). The branch formula blows up where the denominator 4 - x = 0, so the blow-up point at the right end of the interval of validity is 4."
+          - problem: "Solve y' = 2 sqrt(y) with y(1) = 1. Give the interval of validity as an inequality in x."
+            answer: "0 <= x"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Separate variables: dy/(2 sqrt(y)) = dx. Integrate: sqrt(y) = x + C. Apply y(1) = 1: 1 = 1 + C, so C = 0 and the branch is y = x^2. The branch formula degenerates at x = 0, where y = 0 and the right side 2 sqrt(y) vanishes; for x < 0 the branch would need y' = 2x < 0 while 2 sqrt(y) > 0, which is impossible. The interval of validity is 0 <= x."
+          - problem: "Solve y' = e^y with y(0) = 0. Give the interval of validity as an inequality in x."
+            answer: "x < 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Separate variables: e^(-y) dy = dx. Integrate: -e^(-y) = x + C. Apply y(0) = 0: -1 = C, so e^(-y) = 1 - x and y = -ln(1 - x). The branch formula blows up where 1 - x = 0, that is at x = 1, so the maximal interval containing x0 = 0 is x < 1."
         constraints: "constant solutions are integer zeros of h(y); intervals of validity bounded by blow-up points or where the branch formula degenerates"
     diagnostic_exemplar:
       problem: 'Solve $y'' = -\dfrac{x}{y}$ with $y(0) = -3$, and state the interval of validity.'
@@ -729,18 +825,30 @@ topics:
         name: "Computing $\\mu = e^{\\int P\\,dx}$"
         key_prerequisites: [derivatives-exp-log, logarithm-properties]
         exemplars:
-          - problem: "Find an integrating factor for $y' + 2y = e^x$."
-            answer: "$\\mu = e^{2x}$"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mu = e^{\int 2\,dx} = e^{2x}$.'
-          - problem: "Find an integrating factor for $y' + \\dfrac{2}{x}y = x$ on $x > 0$."
-            answer: "$\\mu = x^2$"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mu = e^{\int (2/x)\,dx} = e^{2\ln x} = x^2$.'
-          - problem: 'Find an integrating factor for $y'' + (\cos x)\,y = \cos x$.'
-            answer: '$\mu = e^{\sin x}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mu = e^{\sin x}$'
+          - problem: "Find an integrating factor for y' + 3y = e^x."
+            answer: "e^(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with mu = e^(integral of P dx). Here P = 3, so mu = e^(integral of 3 dx). The constant-integral rule gives 3x. Exponentiating gives mu = e^(3x). The integrating factor is e^(3x)."
+          - problem: "Find an integrating factor for y' + (3/x)y = x on x > 0."
+            answer: "x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with mu = e^(integral of P dx). Here P = 3/x, so mu = e^(integral of 3/x dx). The reciprocal rule gives 3 ln(x). The exponent-log identity gives e^(3 ln(x)) = x^3. The integrating factor is x^3."
+          - problem: "Find an integrating factor for y' + cos(x) y = cos(x)."
+            answer: "e^(sin(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with mu = e^(integral of P dx). Here P = cos(x), so mu = e^(integral of cos(x) dx). The trigonometric integral rule gives sin(x). Exponentiating gives mu = e^(sin(x)). The integrating factor is e^(sin(x))."
+          - problem: "Find an integrating factor for y' - 4y = x."
+            answer: "e^(-4x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with mu = e^(integral of P dx). Here P = -4, so mu = e^(integral of -4 dx). The constant-integral rule gives -4x. Exponentiating gives mu = e^(-4x). The integrating factor is e^(-4x)."
+          - problem: "Find an integrating factor for y' + (4/x)y = x^2 on x > 0."
+            answer: "x^4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with mu = e^(integral of P dx). Here P = 4/x, so mu = e^(integral of 4/x dx). The reciprocal rule gives 4 ln(x). The exponent-log identity gives e^(4 ln(x)) = x^4. The integrating factor is x^4."
+          - problem: "Find an integrating factor for y' + 2x y = x."
+            answer: "e^(x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with mu = e^(integral of P dx). Here P = 2x, so mu = e^(integral of 2x dx). The power rule for integrals gives x^2. Exponentiating gives mu = e^(x^2). The integrating factor is e^(x^2)."
         constraints: "P(x) constant, k/x, or an easily integrated function; simplify e^{k ln x} to x^k"
       - id: kp3
         name: Verifying the product-rule collapse
