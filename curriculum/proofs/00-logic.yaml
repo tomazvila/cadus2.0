@@ -130,14 +130,30 @@ topics:
         name: "Negation"
         key_prerequisites: [propositions-and-truth-values]
         exemplars:
-          - problem: 'Write the negation of "$n$ is even".'
-            answer_contract: {kind: none}
-            answer: '"$n$ is not even" (equivalently, "$n$ is odd" for integers $n$).'
-            solution_sketch: 'The negation $\neg P$ is true exactly when $P$ is false; for integers, "not even" is the same as "odd".'
-          - problem: 'Write the negation of "$x = 3$" symbolically.'
-            answer_contract: {kind: none}
-            answer: '$x \ne 3$'
-            solution_sketch: 'Negating an equality gives the corresponding inequality $x \ne 3$.'
+          - problem: "Consider the proposition x > 6. Give its negation as an inequality in x."
+            answer: "x <= 6"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The proposition is x > 6. Negating a strict greater-than inequality reverses the relation and includes the endpoint, so x > 6 becomes x <= 6. The answer is x <= 6."
+          - problem: "Consider the proposition x < 4. Give its negation as an inequality in x."
+            answer: "x >= 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The proposition is x < 4. Negating a strict less-than inequality reverses the relation and includes the endpoint, so x < 4 becomes x >= 4. The answer is x >= 4."
+          - problem: "Consider the proposition x >= -2. Give its negation as an inequality in x."
+            answer: "x < -2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The proposition is x >= -2. Negating a greater-than-or-equal inequality reverses it to a strict less-than inequality, so x >= -2 becomes x < -2. The answer is x < -2."
+          - problem: "Consider the proposition x <= 5. Give its negation as an inequality in x."
+            answer: "x > 5"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The proposition is x <= 5. Negating a less-than-or-equal inequality reverses it to a strict greater-than inequality, so x <= 5 becomes x > 5. The answer is x > 5."
+          - problem: "Let P be the proposition 2x + 3 > 9. Using 1 for true and 0 for false, evaluate the truth value of not P when x = 1."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, evaluate the inner proposition: at x = 1 the statement 2x + 3 > 9 reads 5 > 9, which is false, so P is false. Step 2, negation flips the truth value of P, so not P is true, coded as 1. The answer is 1."
+          - problem: "Consider the proposition P: x lies in the closed interval [1, 4]. Give the negation of P as an inequality in x."
+            answer: "x < 1 or x > 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The proposition says x is between 1 and 4 inclusive. Its negation says x is outside the interval, so x must fall below 1 or above 4, giving x < 1 or x > 4. The answer is x < 1 or x > 4."
         constraints: "single-proposition negations; no quantifiers"
       - id: kp2
         name: "Conjunction and disjunction"
