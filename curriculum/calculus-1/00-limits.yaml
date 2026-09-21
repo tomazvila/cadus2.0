@@ -49,13 +49,29 @@ topics:
         name: Build the table yourself
         key_prerequisites: [evaluating-functions, function-notation]
         exemplars:
-          - problem: 'For $g(x) = 3x + 1$, compute $g(1.9)$, $g(1.99)$, $g(2.01)$, $g(2.1)$ and use them to estimate $\lim_{x \to 2} g(x)$.'
-            answer: "7 (the values are 6.7, 6.97, 7.03, 7.3)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Evaluate at inputs closing in on $2$ from each side; the outputs close in on $7$.'
+          - problem: "For f(x) = 4x - 3, compute f(0.9), f(0.99), f(1.01), f(1.1) and use them to estimate the limit as x approaches 1. Give the estimated limit."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: evaluate the function at each probe point by substitution: f(0.9)=0.6, f(0.99)=0.96, f(1.01)=1.04, f(1.1)=1.4. Step 2: compare the outputs as x gets closer to 1 from both sides; they approach 1. The estimated limit is 1."
+          - problem: "For f(x) = x^2 + 1, compute f(1.9), f(1.99), f(2.01), f(2.1) and use them to estimate the limit as x approaches 2. Give the estimated limit."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: evaluate the function at each probe point by substitution: f(1.9)=4.61, f(1.99)=4.9601, f(2.01)=5.0401, f(2.1)=5.41. Step 2: compare the outputs as x approaches 2 from both sides; they close in on 5. The estimated limit is 5."
           - problem: 'To probe $\lim_{x \to 5} f(x)$ numerically, which list of inputs is appropriate: (a) $4.9, 4.99, 5.01, 5.1$ or (b) $4, 4.5, 6, 7$? Answer (a) or (b).'
             answer: "(a)"
             solution_sketch: 'The inputs must close in on $5$ from both sides; list (b) never gets near $5$.'
+          - problem: "For h(x) = 2x^2 - 3x + 1, compute h(-1.1), h(-1.01), h(-0.99), h(-0.9) and use them to estimate the limit as x approaches -1. Give the estimated limit."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: evaluate the function at each probe point by substitution: h(-1.1)=6.72, h(-1.01)=6.0702, h(-0.99)=5.9302, h(-0.9)=5.32. Step 2: compare the outputs as x approaches -1 from both sides; they close in on 6. The estimated limit is 6."
+          - problem: "For f(x) = 2x^2 + 1, compute f(0.4), f(0.49), f(0.51), f(0.6) and use them to estimate the limit as x approaches 0.5. Give the estimated limit to one decimal."
+            answer: "1.5"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Step 1: evaluate the function at each probe point by substitution: f(0.4)=1.32, f(0.49)=1.4802, f(0.51)=1.5202, f(0.6)=1.72. Step 2: compare the outputs as x approaches 0.5 from both sides; they close in on 1.5. The estimated limit is 1.5."
+          - problem: "For f(x) = x^2 - 4x + 5, compute f(2.9), f(2.99), f(3.01), f(3.1) and use them to estimate the limit as x approaches 3. Give the estimated limit."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: evaluate the function at each probe point by substitution: f(2.9)=1.81, f(2.99)=1.9801, f(3.01)=2.0201, f(3.1)=2.21. Step 2: compare the outputs as x approaches 3 from both sides; they close in on 2. The estimated limit is 2."
         constraints: "linear or quadratic functions; probe points within 0.1 of the target"
       - id: kp3
         name: Read one-sided trends from a table
@@ -109,6 +125,22 @@ topics:
           - problem: 'The graph of $g$ is the parabola $y = x^2$ with a hole at $(1, 1)$ and no other marked point (so $g(1)$ is undefined). Find $\lim_{x \to 1} g(x)$.'
             answer: "1"
             solution_sketch: 'The parabola closes in on height $1$ from both sides; a limit does not require the function to be defined there.'
+          - problem: "The graph of f is the line y = 3x - 1 with a hole at (2, 5). Find lim_{x -> 2} f(x)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Direct evaluation of the base curve y = 3x - 1 at x = 2 gives 3*2 - 1 = 5. Step 2: A hole at (2, 5) removes the point but the curve approaches that height from both sides. The limit is 5."
+          - problem: "The graph of g is the parabola y = x^2 + 2 with a filled dot at (3, 11). Find lim_{x -> 3} g(x)."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Direct substitution into y = x^2 + 2 at x = 3 gives 3^2 + 2 = 11. Step 2: The filled dot at (3, 11) lies on the curve, so the height from both sides is 11. The limit is 11."
+          - problem: "The graph of h is y = x^3 - 4 for x < 1 and y = -3 for x > 1, with a filled dot at (1, -3). Find lim_{x -> 1} h(x)."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: For x < 1, the cubic y = x^3 - 4 approaches 1^3 - 4 = -3 as x goes to 1. Step 2: For x > 1, the horizontal line y = -3 is already at -3, and the filled dot is at (1, -3). Both sides agree, so the limit is -3."
+          - problem: "The graph of p is y = sqrt(x) with a hole at (4, 2). Find lim_{x -> 4} p(x)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Direct evaluation of the base curve y = sqrt(x) at x = 4 gives sqrt(4) = 2. Step 2: The hole at (4, 2) removes the point, but the curve approaches height 2 from the right. The limit is 2."
         constraints: "graphs described by a base curve plus open/filled dots; heights are small integers"
       - id: kp2
         name: The limit ignores the value at the point
@@ -119,6 +151,22 @@ topics:
             solution_sketch: 'Near (but not at) $x = 1$, $f(x) = x + 2 \to 3$; the value $f(1) = 5$ is irrelevant to the limit.'
           - problem: 'Let $g(x) = x^2$ for $x \neq 2$ and $g(2) = 0$. Find $\lim_{x \to 2} g(x)$.'
             answer: "4"
+          - problem: "Let $f(x) = 2x + 1$ for $x \\ne 3$, and let $f(3) = 0$. Find $\\lim_{x \\to 3} f(x)$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 uses the limit-ignores-point-value rule: for x near 3 but not at 3, f(x)=2x+1. Step 2 substitutes x=3 into that nearby formula: 2(3)+1 = 7. The assigned value f(3)=0 does not change the limit, so the limit is 7."
+          - problem: "Let $g(x) = x^2 - 2$ for $x \\ne 4$, and let $g(4) = 10$. Find $\\lim_{x \\to 4} g(x)$."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 applies the limit-ignores-point-value rule: for x near 4 but not at 4, g(x)=x^2-2. Step 2 substitutes x=4 into the nearby formula: 4^2-2 = 16-2 = 14. The point value g(4)=10 is ignored, so the limit is 14."
+          - problem: "Let $f(x) = (x^2 - 9)/(x - 3)$ for $x \\ne 3$, and let $f(3) = 100$. Find $\\lim_{x \\to 3} f(x)$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 applies the limit-ignores-point-value rule: for x near 3 but not at 3, f(x) = (x^2-9)/(x-3). Step 2 factors the numerator as (x-3)(x+3) and cancels the common factor x-3, leaving x+3. Step 3 substitutes x=3 into x+3 to get 6; the assigned value f(3)=100 is ignored, so the limit is 6."
+          - problem: "The graph of $f$ is $y = \\sqrt{x+4}$ for all $x \\ne 0$, and the graph has a filled point at $(0, 9)$. Find $\\lim_{x \\to 0} f(x)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 applies the limit-ignores-point-value rule: the graph near x=0 follows y=sqrt(x+4). Step 2 substitutes x=0 into that formula: sqrt(4)=2. The filled point at (0,9) is ignored by the limit, so the limit is 2."
         constraints: "piecewise redefinition at a single point; limit differs from the function value"
       - id: kp3
         name: Recognize when a limit does not exist
@@ -197,6 +245,18 @@ topics:
           - problem: 'Evaluate $\lim_{x \to 3} \frac{x + 1}{x - 1}$.'
             answer: "2"
             solution_sketch: 'The denominator is nonzero at $x = 3$, so substitute: $\frac{4}{2} = 2$.'
+          - problem: "Evaluate $\\lim_{x \\to 2} \\frac{x^2 - 1}{x + 3}$."
+            answer: "3/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is $\\frac{x^2 - 1}{x + 3}$. The denominator $x + 3$ at $x = 2$ is $5$, not zero, so the quotient law and direct substitution apply. The numerator is $2^2 - 1 = 3$ and the denominator is $5$, so the quotient is $\\frac{3}{5}$. The limit is 3/5."
+          - problem: "Evaluate $\\lim_{x \\to -2} (2x^2 + x - 3)$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is $2x^2 + x - 3$. A polynomial is continuous everywhere, so direct substitution applies. Substitute $x = -2$: $2(-2)^2 + (-2) - 3 = 8 - 2 - 3 = 3$. The limit is 3."
+          - problem: "Evaluate $\\lim_{x \\to 1} \\frac{x + 3}{2x + 1}$."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is $\\frac{x + 3}{2x + 1}$. At $x = 1$, the denominator $2x + 1$ is $3$, not zero, so the quotient law permits direct substitution. The numerator is $1 + 3 = 4$ and the denominator is $3$. Thus the limit is 4/3."
         constraints: "polynomial or rational function with nonzero denominator at the point; integer or simple fraction answers"
     diagnostic_exemplar:
       problem: 'Given $\lim_{x \to 3} f(x) = 2$, evaluate $\lim_{x \to 3} \frac{x^2 f(x) - 2}{x + 1}$.'
@@ -239,6 +299,18 @@ topics:
           - problem: 'Only one of $\lim_{x \to 2^-} \sqrt{x - 2}$ and $\lim_{x \to 2^+} \sqrt{x - 2}$ makes sense. Evaluate the one that does.'
             answer: "0"
             solution_sketch: 'For $x < 2$ the radicand is negative, so $\sqrt{x-2}$ has no values on the left and that one-sided limit is meaningless; from the right the radicand is small and positive, so the limit is $0$.'
+          - problem: "Evaluate $\\lim_{x \\to 5^+} \\left(\\sqrt{x - 5} + 4\\right)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The expression is $\\sqrt{x - 5} + 4$ for $x > 5$, so the square root is defined. As $x$ approaches $5$ from the right, $x - 5$ approaches $0$ through positive values, so $\\sqrt{x - 5}$ approaches $0$. Adding the constant gives $0 + 4 = 4$. The one-sided limit is 4."
+          - problem: "Evaluate $\\lim_{x \\to 3^+} \\left(2\\sqrt{x - 3} - 1\\right)$."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is $2\\sqrt{x - 3} - 1$, defined for $x > 3$. As $x$ approaches $3$ from the right, $x - 3$ approaches $0$ through positive values, so $\\sqrt{x - 3}$ approaches $0$. Twice that is $0$, and subtracting $1$ gives $0 - 1 = -1$. The one-sided limit is -1."
+          - problem: "Evaluate $\\lim_{x \\to 9^+} \\left(\\sqrt{x - 9} + x\\right)$."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The expression is $\\sqrt{x - 9} + x$ for $x > 9$. As $x$ approaches $9$ from the right, $x - 9$ tends to $0$ through positive numbers, so $\\sqrt{x - 9}$ tends to $0$. The $x$ term tends to $9$, so the sum tends to $0 + 9 = 9$. The one-sided limit is 9."
         constraints: "square-root expressions defined on one side of the point; limits are small integers"
       - id: kp2
         name: Absolute-value sign quotients
@@ -251,6 +323,18 @@ topics:
             answer: "2"
           - problem: 'Evaluate $\lim_{x \to -2^+} \frac{|x + 2|}{x + 2}$.'
             answer: "1"
+          - problem: "Evaluate $\\lim_{x \\to 3^-} \\frac{4|x - 3|}{x - 3}$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Sign rule: for $x < 3$, the expression $x - 3$ is negative, so $|x - 3| = -(x - 3)$. Substitute: $\\frac{4|x - 3|}{x - 3} = \\frac{4(-(x - 3))}{x - 3} = -4$. Limit rule: the quotient is the constant $-4$ for $x < 3$, so the left limit is -4."
+          - problem: "Evaluate $\\lim_{x \\to 1^+} \\frac{3|x - 1|}{x - 1}$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Sign rule: for $x > 1$, the expression $x - 1$ is positive, so $|x - 1| = x - 1$. Substitute: $\\frac{3|x - 1|}{x - 1} = \\frac{3(x - 1)}{x - 1} = 3$. Limit rule: the quotient is the constant $3$ for $x > 1$, so the right limit is 3."
+          - problem: "Evaluate $\\lim_{x \\to 6^-} \\frac{5|x - 6|}{x - 6}$."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Sign rule: for $x < 6$, the expression $x - 6$ is negative, so $|x - 6| = -(x - 6)$. Substitute: $\\frac{5|x - 6|}{x - 6} = \\frac{5(-(x - 6))}{x - 6} = -5$. Limit rule: the quotient is the constant $-5$ for $x < 6$, so the left limit is -5."
         constraints: "quotients of the form c|x - a|/(x - a); resolve the absolute value by the sign of the side"
       - id: kp3
         name: Two-sided limit exists iff the one-sided limits agree
@@ -318,6 +402,22 @@ topics:
             solution_sketch: 'Near $x = 1$ only the $x < 2$ branch matters: $x + 1 \to 2$.'
           - problem: 'Let $g(x) = 2x$ for $x < 3$ and $g(x) = 9 - x$ for $x \geq 3$. Find $\lim_{x \to 5} g(x)$.'
             answer: "4"
+          - problem: "Let $f(x) = x^2 + 2$ for $x < 3$ and $f(x) = 4x - 1$ for $x \\geq 3$. Find $\\lim_{x \\to 1} f(x)$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The piecewise rule is $f(x) = x^2 + 2$ for $x < 3$ and $f(x) = 4x - 1$ for $x \\geq 3$. The target $x = 1$ lies strictly inside the left branch, so only $f(x) = x^2 + 2$ governs the limit. Substitute $x = 1$: $1^2 + 2 = 3$. The limit is 3."
+          - problem: "Let $f(x) = 5 - 2x$ for $x < 4$ and $f(x) = \\sqrt{x + 5}$ for $x \\geq 4$. Find $\\lim_{x \\to 20} f(x)$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full rule is $f(x) = 5 - 2x$ for $x < 4$ and $f(x) = \\sqrt{x + 5}$ for $x \\geq 4$. The target $x = 20$ lies in the right branch, so substitute into $\\sqrt{x + 5}$. This gives $\\sqrt{20 + 5} = \\sqrt{25} = 5$. The limit is 5."
+          - problem: "Let $f(x) = \\frac{x + 1}{x - 2}$ for $x < 1$ and $f(x) = x^2 - 3$ for $x \\geq 1$. Find the limit $\\lim_{x \\to 0} f(x)$ as a fraction."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is $f(x) = \\frac{x + 1}{x - 2}$ for $x < 1$ and $f(x) = x^2 - 3$ for $x \\geq 1$. The target $x = 0$ is strictly inside the left branch, so use $\\frac{x + 1}{x - 2}$. Substitute $x = 0$: $\\frac{0 + 1}{0 - 2} = -\\frac{1}{2}$. The limit is -1/2."
+          - problem: "A parking fee is $f(t) = 2t + 1$ for $t < 6$ and $f(t) = 20 - t$ for $t \\geq 6$, where $t$ is hours. Find $\\lim_{t \\to 8} f(t)$."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The fee rule is $f(t) = 2t + 1$ for $t < 6$ and $f(t) = 20 - t$ for $t \\geq 6$. The target $t = 8$ is strictly inside the right branch, so only $20 - t$ applies. Substitute $t = 8$: $20 - 8 = 12$. The limit is 12."
         constraints: "the target point sits strictly inside one branch; substitute into that branch only"
       - id: kp3
         name: Branch points with a separately defined value
@@ -328,6 +428,22 @@ topics:
             solution_sketch: 'Left limit $-1 + 4 = 3$ and right limit $1 + 2 = 3$ agree; the lone value $f(-1) = 2$ does not affect the limit.'
           - problem: 'Let $h(x) = x^2$ for $x \neq 3$ and $h(3) = 0$. Find $\lim_{x \to 3} h(x)$.'
             answer: "9"
+          - problem: "Let $f(x) = x + 3$ for $x < 1$, $f(1) = 5$, and $f(x) = 4x$ for $x > 1$. Find $\\lim_{x \\to 1} f(x)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full function: f(x)=x+3 for x<1, f(1)=5, and f(x)=4x for x>1. The left-hand limit uses the first branch: as x approaches 1 from below, x+3 approaches 1+3=4. The right-hand limit uses the third branch: as x approaches 1 from above, 4x approaches 4. Both one-sided limits agree, so the two-sided limit is 4. The separate value f(1)=5 does not change the limit. The limit is 4."
+          - problem: "Let $g(x) = x^2 + 1$ for $x < 2$, $g(2) = 0$, and $g(x) = x + 3$ for $x > 2$. Find $\\lim_{x \\to 2} g(x)$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full function: g(x)=x^2+1 for x<2, g(2)=0, and g(x)=x+3 for x>2. The left-hand limit comes from the quadratic branch: x^2+1 at x=2 gives 4+1=5. The right-hand limit comes from the linear branch: x+3 at x=2 gives 5. Since both one-sided limits agree, the two-sided limit is 5. The value g(2)=0 is different but does not affect the limit. The limit is 5."
+          - problem: "Let $f(x) = x + k$ for $x < 1$, $f(1) = 9$, and $f(x) = 3x$ for $x > 1$. If $\\lim_{x \\to 1} f(x)$ exists, find the constant $k$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full function: f(x)=x+k for x<1, f(1)=9, and f(x)=3x for x>1. The right-hand limit is 3(1)=3. For the two-sided limit to exist, the left-hand limit must equal the right-hand limit, so 1+k=3. Solving gives k=2. The separate value f(1)=9 differs from the limit 3. Thus k = 2."
+          - problem: "A parking garage charges $C(t) = 2t$ dollars for $t < 3$ hours, charges a flat $C(3) = 20$ dollars at exactly 3 hours, and charges $C(t) = t + 3$ dollars for $t > 3$ hours. Find $\\lim_{t \\to 3} C(t)$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full cost function: C(t)=2t for t<3, C(3)=20, and C(t)=t+3 for t>3. The left-hand limit uses the first rule: 2t approaches 2(3)=6. The right-hand limit uses the third rule: t+3 approaches 3+3=6. Both one-sided limits agree, so the two-sided limit is 6. The separately charged value C(3)=20 does not affect the limit. The limit is 6."
         constraints: "the value at the branch point differs from the limit; both one-sided limits agree"
     diagnostic_exemplar:
       problem: 'Let $f(x) = 3x - 1$ for $x < 2$, $f(2) = 10$, and $f(x) = x + 3$ for $x > 2$. Find $\lim_{x \to 2} f(x)$.'
@@ -389,6 +505,18 @@ topics:
           - problem: 'Evaluate $\lim_{x \to 4} \frac{x - 4}{x^2 - 16}$.'
             answer: "1/8"
             solution_sketch: 'Factor the denominator: $\frac{x-4}{(x-4)(x+4)} = \frac{1}{x+4} \to \frac{1}{8}$.'
+          - problem: "Evaluate $\\lim_{x \\to 5} \\frac{x^2 - 25}{x - 5}$."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the limit (x^2 - 25)/(x - 5) as x goes to 5, the quotient has the 0/0 form, so factor the numerator by the difference of squares rule: (x^2 - 25)/(x - 5) = (x - 5)(x + 5)/(x - 5). Cancel the common factor x - 5 for x not equal to 5, leaving x + 5. By the limit laws, the limit is 5 + 5 = 10."
+          - problem: "Evaluate $\\lim_{x \\to -2} \\frac{x + 2}{x^2 - 4}$."
+            answer: "-1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the limit (x + 2)/(x^2 - 4) as x goes to -2, the quotient has the 0/0 form, so factor the denominator by the difference of squares rule: (x + 2)/(x^2 - 4) = (x + 2)/((x - 2)(x + 2)). Cancel the common factor x + 2 for x not equal to -2, leaving 1/(x - 2). By direct substitution in the limit laws, the limit is 1/(-2 - 2) = -1/4."
+          - problem: "Evaluate $\\lim_{x \\to 3/2} \\frac{4x^2 - 9}{2x - 3}$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the limit (4x^2 - 9)/(2x - 3) as x goes to 3/2, the quotient is 0/0, so factor the numerator as a difference of squares: 4x^2 - 9 = (2x - 3)(2x + 3). Then (4x^2 - 9)/(2x - 3) = (2x - 3)(2x + 3)/(2x - 3). Cancel the common factor 2x - 3 for x not equal to 3/2, leaving 2x + 3. By limit laws, the limit is 2(3/2) + 3 = 6."
         constraints: "0/0 form; difference of squares in numerator or denominator; integer or unit-fraction answers"
       - id: kp3
         name: Cancel a factored trinomial
@@ -402,6 +530,18 @@ topics:
           - problem: 'Evaluate $\lim_{x \to 2} \frac{x^2 - 5x + 6}{x^2 - 4}$.'
             answer: "-1/4"
             solution_sketch: '$\frac{(x-2)(x-3)}{(x-2)(x+2)} = \frac{x-3}{x+2} \to \frac{-1}{4}$.'
+          - problem: "Evaluate $\\lim_{x \\to 5} \\frac{x^2 - 3x - 10}{x - 5}$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is $\\lim_{x \\to 5} \\frac{x^2 - 3x - 10}{x - 5}$. Step 1: factor the numerator as $(x - 5)(x + 2)$ by factoring trinomials. Step 2: cancel the common factor $x - 5$ and evaluate $x + 2$ at $x = 5$ by limit laws. The limit is 7."
+          - problem: "Evaluate $\\lim_{x \\to -2} \\frac{x^2 - x - 6}{x + 2}$."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is $\\lim_{x \\to -2} \\frac{x^2 - x - 6}{x + 2}$. Step 1: factor the numerator as $(x + 2)(x - 3)$ by factoring trinomials. Step 2: cancel the common factor $x + 2$ and evaluate $x - 3$ at $x = -2$ by limit laws. The limit is -5."
+          - problem: "Evaluate $\\lim_{x \\to 1} \\frac{x^2 + 2x - 3}{x^2 - 3x + 2}$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is $\\lim_{x \\to 1} \\frac{x^2 + 2x - 3}{x^2 - 3x + 2}$. Step 1: factor the numerator as $(x - 1)(x + 3)$ and the denominator as $(x - 1)(x - 2)$ by factoring trinomials. Step 2: cancel the common factor $x - 1$ and evaluate $\\frac{x + 3}{x - 2}$ at $x = 1$ by limit laws. The limit is -4."
         constraints: "0/0 form; trinomials factor over the integers with (x - a) as the common factor"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to 4} \frac{x^2 - x - 12}{x - 4}$.'
@@ -446,6 +586,18 @@ topics:
             solution_sketch: '$x - 9 = (\sqrt{x}-3)(\sqrt{x}+3)$, so the fraction is $\frac{1}{\sqrt{x}+3} \to \frac{1}{6}$.'
           - problem: 'Evaluate $\lim_{x \to 0} \frac{\sqrt{x + 9} - 3}{x}$.'
             answer: "1/6"
+          - problem: "Evaluate $\\lim_{x \\to 4} \\frac{\\sqrt{x+12}-4}{x-4}$. Give the answer as a fraction."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the limit $\\lim_{x \\to 4} \\frac{\\sqrt{x+12}-4}{x-4}$. Step 1: conjugate multiplication by $\\sqrt{x+12}+4$. Step 2: difference of squares turns the numerator into $x-4$, so the fraction cancels to $\\frac{1}{\\sqrt{x+12}+4}$. Step 3: limit by substitution gives $1/(4+4) = 1/8$. The limit is 1/8."
+          - problem: "Evaluate $\\lim_{x \\to 25} \\frac{\\sqrt{x}-5}{x-25}$. Give the answer as a fraction."
+            answer: "1/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the limit $\\lim_{x \\to 25} \\frac{\\sqrt{x}-5}{x-25}$. Step 1: conjugate multiplication by $\\sqrt{x}+5$. Step 2: difference of squares factors $x-25$, so the fraction cancels to $\\frac{1}{\\sqrt{x}+5}$. Step 3: limit by substitution gives $1/(5+5) = 1/10$. The limit is 1/10."
+          - problem: "Evaluate $\\lim_{x \\to 30} \\frac{\\sqrt{x+6}-6}{x-30}$. Give the answer as a fraction."
+            answer: "1/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the limit $\\lim_{x \\to 30} \\frac{\\sqrt{x+6}-6}{x-30}$. Step 1: conjugate multiplication by $\\sqrt{x+6}+6$. Step 2: difference of squares turns the numerator into $x-30$, so the fraction cancels to $\\frac{1}{\\sqrt{x+6}+6}$. Step 3: limit by substitution gives $1/(6+6) = 1/12$. The limit is 1/12."
         constraints: "one square root; conjugate multiplication produces a clean cancellation; answers are unit fractions"
       - id: kp2
         name: Simplify complex fractions and difference quotients
@@ -517,6 +669,18 @@ topics:
             answer: "0"
           - problem: 'Evaluate $\lim_{x \to \infty} \frac{7x^3 + x}{2x^3 - 5}$.'
             answer: "7/2"
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\frac{4x^3 - 2x}{6x^3 + x + 5}$."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with $\\lim_{x \\to \\infty} \\frac{4x^3 - 2x}{6x^3 + x + 5}$. The highest power in both numerator and denominator is $x^3$. Divide top and bottom by $x^3$, by the limit laws, to get $\\frac{4 - 2/x^2}{6 + 1/x^2 + 5/x^3}$. As $x \\to \\infty$, each term with $x$ in the denominator goes to $0$. The limit is the leading-coefficient ratio $4/6 = 2/3$."
+          - problem: "Evaluate $\\lim_{x \\to -\\infty} \\frac{2x + 7}{3x^2 - x + 1}$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with $\\lim_{x \\to -\\infty} \\frac{2x + 7}{3x^2 - x + 1}$. The numerator degree is $1$ and the denominator degree is $2$. Divide top and bottom by $x^2$, by the limit laws, to get $\\frac{2/x + 7/x^2}{3 - 1/x + 1/x^2}$. As $x \\to -\\infty$, each term with $x$ in the denominator goes to $0$. Since the numerator degree is smaller, the limit is $0$."
+          - problem: "Evaluate $\\lim_{x \\to -\\infty} \\frac{5x^2 + 2}{4x^2 - 9}$."
+            answer: "5/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with $\\lim_{x \\to -\\infty} \\frac{5x^2 + 2}{4x^2 - 9}$. The highest power in both numerator and denominator is $x^2$. Divide top and bottom by $x^2$, by the limit laws, to get $\\frac{5 + 2/x^2}{4 - 9/x^2}$. As $x \\to -\\infty$, each term with $x$ in the denominator goes to $0$. The limit is the leading-coefficient ratio $5/4$."
         constraints: "rational functions; equal degrees give the leading-coefficient ratio, smaller numerator degree gives 0"
       - id: kp2
         name: Larger numerator degree gives an infinite limit
@@ -548,6 +712,18 @@ topics:
           - problem: 'The graph of $f(x) = \frac{4x}{x^2 + 1}$ has horizontal asymptote $y = c$. Find $c$.'
             answer: "0"
             solution_sketch: 'The denominator degree is larger, so the quotient tends to $0$ and the asymptote is $y = 0$.'
+          - problem: "Let f(x) = (5x^2 - 3x + 1)/(3x^2 + 2x). Evaluate the limit of f(x) as x goes to infinity. Give the answer as a fraction."
+            answer: "5/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x) = (5x^2 - 3x + 1)/(3x^2 + 2x). Step 1, degree comparison: the numerator and denominator both have degree 2. Step 2, leading-coefficient rule: for equal degrees the limit is the ratio of leading coefficients, 5/3. The limit is 5/3."
+          - problem: "Let f(x) = (7x + 2)/(2x^3 - x). Evaluate the limit of f(x) as x goes to infinity."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x) = (7x + 2)/(2x^3 - x). Step 1, degree comparison: the numerator has degree 1 and the denominator has degree 3. Step 2, larger-denominator rule: when the denominator degree is higher, the limit is 0. The limit is 0."
+          - problem: "The graph of f(x) = (6x^2 + 1)/(k x^2 - 5) has horizontal asymptote y = 3/4. Find k."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x) = (6x^2 + 1)/(k x^2 - 5). Step 1, degree comparison: both numerator and denominator have degree 2, so the horizontal asymptote is the ratio of leading coefficients, 6/k. Step 2, solve the ratio equation: 6/k = 3/4 gives 24 = 3k. The value is 8."
         constraints: "compare degrees (equal, or denominator higher); the answer is the leading-coefficient ratio, or 0"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to -\infty} \frac{2x^2 + 3}{x + 5}$.'
@@ -669,6 +845,22 @@ topics:
             solution_sketch: 'For $x > 0$, $\sqrt{4x^2 + 1} = x\sqrt{4 + 1/x^2}$, so the quotient tends to $\sqrt{4} = 2$.'
           - problem: 'Evaluate $\lim_{x \to \infty} \frac{\sqrt{9x^2 + x}}{2x}$.'
             answer: "3/2"
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\frac{\\sqrt{4x^2 + 7x}}{3x}$."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $x>0$, factor $x$ out of the square root: $\\sqrt{4x^2+7x}=x\\sqrt{4+7/x}$. Divide by $3x$ to get $\\frac{\\sqrt{4+7/x}}{3}$. Since $7/x\\to 0$, the limit is $\\sqrt{4}/3 = 2/3$."
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\frac{\\sqrt{9x^2 + 2x + 1}}{x + 3}$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $x>0$, $\\sqrt{9x^2+2x+1}=x\\sqrt{9+2/x+1/x^2}$ by factoring $x$ out of the square root. Divide numerator and denominator by $x$: $\\frac{\\sqrt{9+2/x+1/x^2}}{1+3/x}$. The inner terms tend to $0$, so the limit is $\\sqrt{9}=3$."
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\frac{\\sqrt{16x^2 + 5x + 2}}{4x}$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $x>0$, factor $x$ out of the square root: $\\sqrt{16x^2+5x+2}=x\\sqrt{16+5/x+2/x^2}$. Divide by $4x$ to get $\\frac{\\sqrt{16+5/x+2/x^2}}{4}$. The fraction inside the root tends to $0$, so the limit is $\\sqrt{16}/4 = 1$."
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\frac{\\sqrt{16x^2 + 8x + 1}}{x}$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $x>0$, $\\sqrt{16x^2+8x+1}=x\\sqrt{16+8/x+1/x^2}$. Dividing by $x$ gives $\\sqrt{16+8/x+1/x^2}$. The terms with $1/x$ vanish, so the limit is $\\sqrt{16}=4$."
         constraints: "leading coefficient under the root is a perfect square; x → +∞ only"
       - id: kp2
         name: The sign trap as x → -∞
