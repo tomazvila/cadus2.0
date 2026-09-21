@@ -37,13 +37,25 @@ topics:
           - problem: 'The vector $(3, -2)$ starts at $P(1, 4)$. Where does it end?'
             answer: "(4, 2)"
             solution_sketch: 'Add the vector to the initial point: $(1 + 3, 4 + (-2))$.'
-          - problem: 'Is the vector from $P(0, 0)$ to $Q(2, 3)$ equal to the vector from $R(5, 1)$ to $S(7, 4)$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Both have component form $(2, 3)$; vectors are equal when their components agree.'
+          - problem: "The vector from $A(-3, 2)$ to $B(4, -5)$ is equal to the vector from $C(2, 0)$ to $D$. Find $D$ as (x, y)."
+            answer: "(9, -7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (component form): the vector $AB$ is $(4 - (-3), -5 - 2) = (7, -7)$. Step 2 (equal vectors): the vector $CD$ is $D - C$ and must equal $(7, -7)$. Step 3 (solve for the endpoint): $D = C + (7, -7) = (2 + 7, 0 - 7)$. Thus $D$ is (9, -7)."
           - problem: 'The vector $(-1, 5)$ ends at $Q(2, 3)$. Where does it start?'
             answer: "(3, -2)"
             solution_sketch: 'Initial point is terminal minus vector: $(2 - (-1), 3 - 5)$.'
+          - problem: "The vector from $P(-2, 6)$ to $Q(3, -1)$ is equal to the vector from $R$ to $T(2, -6)$. Find $R$ as (x, y)."
+            answer: "(-3, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (component form): the vector $PQ$ is $(3 - (-2), -1 - 6) = (5, -7)$. Step 2 (equal vectors): the vector $RT$ is $T - R$ and must equal $(5, -7)$. Step 3 (solve for the start): $R = T - (5, -7) = (2 - 5, -6 - (-7))$. Thus $R$ is (-3, 1)."
+          - problem: "The vector from $M(-5, -3)$ to $N(4, 1)$ is redrawn so that it starts at $R(-2, 5)$. Find the new endpoint as (x, y)."
+            answer: "(7, 9)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (component form): the vector $MN$ is $(4 - (-5), 1 - (-3)) = (9, 4)$. Step 2 (translation): redrawing a vector keeps its components, so the new endpoint is $R + (9, 4)$. Step 3 (add the components): $(-2 + 9, 5 + 4) = (7, 9)$. Thus the new endpoint is (7, 9)."
+          - problem: "The vector from $P(2, -6)$ to $Q(-3, 4)$ is equal to the vector from $R(1, -2)$ to $S(x, y)$. Find $x - y$."
+            answer: "-12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (component form): the vector $PQ$ is $(-3 - 2, 4 - (-6)) = (-5, 10)$. Step 2 (equal vectors): $S = R + (-5, 10) = (1 - 5, -2 + 10) = (-4, 8)$. Step 3 (combine the coordinates): $x - y = -4 - 8$. Thus $x - y$ is -12."
         constraints: "integer coordinates in -9..9; dimension 2"
       - id: kp3
         name: Standard basis notation
@@ -729,18 +741,30 @@ topics:
         name: Acute, right, or obtuse from the sign
         key_prerequisites: [computing-dot-products, right-triangle-trig]
         exemplars:
-          - problem: 'Is the angle between $(2, 1)$ and $(1, -3)$ acute, right, or obtuse?'
-            answer: "Obtuse"
-            answer_contract: {kind: none}
-            solution_sketch: 'Dot product $2 - 3 = -1 < 0$, so the angle exceeds $90^\circ$.'
-          - problem: 'Is the angle between $(3, 1)$ and $(1, 2)$ acute, right, or obtuse?'
-            answer: "Acute"
-            answer_contract: {kind: none}
-            solution_sketch: 'Dot product $3 + 2 = 5 > 0$.'
-          - problem: 'Find all $k$ so that the angle between $(1, 0)$ and $(1, k)$ is $60^\circ$.'
-            answer: '$k = \sqrt{3}$ or $k = -\sqrt{3}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\cos 60^\circ = \frac{1}{\sqrt{1 + k^2}} = \frac{1}{2}$ gives $k^2 = 3$.'
+          - problem: "For u = (2, 1) and v = (1, -3), find the dot product and state whether the angle is acute or obtuse."
+            answer: "type = obtuse; dot = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["acute"], ["obtuse"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "dot"}]}
+            solution_sketch: "Compute the dot product: u dot v = (2)(1) + (1)(-3) = 2 - 3 = -1. A negative dot product means the angle is obtuse. The label acute would come from ignoring the negative sign. The answer is type = obtuse; dot = -1."
+          - problem: "For u = (3, 1) and v = (1, 2), find the dot product and state whether the angle is acute or obtuse."
+            answer: "type = acute; dot = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["acute"], ["obtuse"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "dot"}]}
+            solution_sketch: "Compute the dot product: u dot v = (3)(1) + (1)(2) = 3 + 2 = 5. A positive dot product means the angle is acute. The label obtuse would come from ignoring the positive sign. The answer is type = acute; dot = 5."
+          - problem: "Find the positive value of k so that the angle between u = (1, 0) and v = (1, k) is 60 degrees."
+            answer: "sqrt(3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use cos 60 = 1/2. The dot product is (1)(1) + (0)(k) = 1. The norms are |u| = 1 and |v| = sqrt(1 + k^2), so cos theta = 1 / sqrt(1 + k^2). Set 1 / sqrt(1 + k^2) = 1/2. Then sqrt(1 + k^2) = 2, so 1 + k^2 = 4 and k^2 = 3. The positive value is k = sqrt(3). The answer is sqrt(3)."
+          - problem: "Find the value of k so that the angle between u = (1, 1) and v = (1, k) is right."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A right angle means the dot product is zero. Compute u dot v = (1)(1) + (1)(k) = 1 + k. Set 1 + k = 0 and solve: k = -1. The answer is -1."
+          - problem: "Find the positive value of k so that the angle between u = (1, 0) and v = (k, 1) is 45 degrees."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use cos 45 = 1/sqrt(2). The dot product is (1)(k) + (0)(1) = k. The norms are |u| = 1 and |v| = sqrt(k^2 + 1), so cos theta = k / sqrt(k^2 + 1). Set k / sqrt(k^2 + 1) = 1/sqrt(2). Square both sides: k^2 / (k^2 + 1) = 1/2, so 2k^2 = k^2 + 1 and k^2 = 1. The positive value is k = 1. The answer is 1."
+          - problem: "Find all values of k so that the angle between u = (2, k) and v = (1, -3) is obtuse. Give the answer as an inequality in k."
+            answer: "k > 2/3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "An obtuse angle means the dot product is negative. Compute u dot v = (2)(1) + (k)(-3) = 2 - 3k. Set 2 - 3k < 0. Solve: 3k > 2, so k > 2/3. The answer is k > 2/3."
         constraints: "sign questions use small integers; exact-angle questions target 30/45/60 degrees"
       - id: kp3
         name: Angle between vectors
