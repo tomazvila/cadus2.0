@@ -42,10 +42,18 @@ topics:
         name: Collinear and coplanar points
         key_prerequisites: []
         exemplars:
-          - problem: 'Point $B$ lies between points $A$ and $C$ on a line. Are $A$, $B$, and $C$ collinear?'
-            answer: "yes"
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'All three points lie on one line, so they are collinear.'
+          - problem: "Four points are placed so that no three of them lie on one line. How many distinct lines contain at least two of these points?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the pairs of four points: AB, AC, AD, BC, BD, CD. Because no three points are collinear, each pair gives a different line. By the point-pair rule, each pair determines exactly one line. The number of distinct lines is 6."
+          - problem: "Four points are arranged so that no three are collinear and the four points do not all lie in one plane. How many distinct planes contain at least three of these points?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A plane is determined by any three noncollinear points. There are four ways to choose three points from four: ABC, ABD, ACD, BCD. Because the four points are not coplanar, these four planes are distinct. The number of distinct planes is 4."
+          - problem: "Three points are given, not all on one line. How many distinct lines contain at least two of these points?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The pairs of three points are AB, AC, and BC. Since the three points are not all on one line, each pair determines a different line. By the point-pair rule, each pair gives exactly one line. The number of distinct lines is 3."
           - problem: 'What is the maximum number of points in which two distinct lines can intersect?'
             answer: "1"
             solution_sketch: 'Two distinct lines share at most one point; sharing two would force them to be the same line.'
@@ -61,6 +69,10 @@ topics:
           - problem: 'How many distinct planes contain two distinct intersecting lines?'
             answer: "1"
             solution_sketch: 'Two intersecting lines determine exactly one plane.'
+          - problem: "Three points have coordinates A(1, 2), B(4, 8), and C(6, 12). State whether the three points are collinear, and if they are, give the slope m of the line through them."
+            answer: "verdict = yes; m = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Compute the slope between each pair of the given coordinate points: slope AB = (8 - 2)/(4 - 1) = 2 and slope BC = (12 - 8)/(6 - 4) = 2. Equal slopes mean all three points lie on one common line, so verdict = yes and the common slope is m = 2. The wrong option no would come from an arithmetic slip in one slope, for example using (12 - 2)/(6 - 1) = 2 for one pair but a different value for the other pair. The answer is verdict = yes; m = 2."
         constraints: "small configurations of 2-4 points/lines; ask collinear/coplanar or intersection counts"
       - id: kp3
         name: Intersections of lines and planes

@@ -21,22 +21,22 @@ topics:
         name: Classify by sides
         key_prerequisites: [measuring-segments-angles]
         exemplars:
-          - problem: 'A triangle has sides $7$, $7$, and $10$. Classify it by its sides as equilateral, isosceles, or scalene.'
-            answer: 'isosceles'
-            answer_contract: {kind: label, options: [[equilateral], [isosceles], [scalene]]}
-            solution_sketch: 'Exactly two sides are congruent ($7 = 7$), so the triangle is isosceles.'
-          - problem: 'A triangle has sides $6$, $6$, and $6$. Classify it by its sides as equilateral, isosceles, or scalene.'
-            answer: 'equilateral'
-            answer_contract: {kind: label, options: [[equilateral], [isosceles], [scalene]]}
-            solution_sketch: 'All three sides are congruent, so the triangle is equilateral.'
-          - problem: 'A triangle has sides $5$, $7$, and $9$. Classify it by its sides as equilateral, isosceles, or scalene.'
-            answer: 'scalene'
-            answer_contract: {kind: label, options: [[equilateral], [isosceles], [scalene]]}
-            solution_sketch: 'No two sides are congruent, so the triangle is scalene.'
-          - problem: 'A triangle has sides $9$, $9$, and $12$. Classify it by its sides as equilateral, isosceles, or scalene.'
-            answer: 'isosceles'
-            answer_contract: {kind: label, options: [[equilateral], [isosceles], [scalene]]}
-            solution_sketch: 'Exactly two sides are congruent ($9 = 9$), so the triangle is isosceles.'
+          - problem: "A triangle has sides 7, 7, and 10. Classify it by its sides and give its perimeter. Give the answer as type = the side classification; P = the perimeter."
+            answer: "type = isosceles; P = 24"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["scalene"], ["isosceles"], ["equilateral"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "P"}]}
+            solution_sketch: "The side lengths are 7, 7, and 10. Step 1 (side classification rule): compare the sides; 7 = 7 and 10 is different, so exactly two sides are congruent. Choosing scalene ignores the equal pair 7 = 7; choosing equilateral wrongly treats all three sides as equal. Step 2 (perimeter rule): add the three side lengths, 7 + 7 + 10 = 24. The answer is type = isosceles; P = 24."
+          - problem: "A triangle has sides 6, 6, and 6. Classify it by its sides and give its perimeter. Give the answer as type = the side classification; P = the perimeter."
+            answer: "type = equilateral; P = 18"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["scalene"], ["isosceles"], ["equilateral"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "P"}]}
+            solution_sketch: "The side lengths are 6, 6, and 6. Step 1 (side classification rule): all three sides are congruent, which is the defining property of an equilateral triangle. Choosing isosceles stops at two equal sides and misses the third; choosing scalene overlooks the equalities entirely. Step 2 (perimeter rule): add the three side lengths, 6 + 6 + 6 = 18. The answer is type = equilateral; P = 18."
+          - problem: "A triangular garden bed has side lengths 5 m, 7 m, and 9 m. Classify it by its sides and give its perimeter in meters. Give the answer as type = the side classification; P = the perimeter."
+            answer: "type = scalene; P = 21"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["scalene"], ["isosceles"], ["equilateral"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "P"}]}
+            solution_sketch: "The side lengths are 5, 7, and 9. Step 1 (side classification rule): no two of 5, 7, and 9 are congruent, so the triangle has no equal sides. Choosing isosceles invents an equal pair that is not there; choosing equilateral assumes all three sides match. Step 2 (perimeter rule): add the three side lengths, 5 + 7 + 9 = 21. The answer is type = scalene; P = 21."
+          - problem: "A triangular pennant has two sides of length 9 in and a third side of length 12 in. Classify it by its sides and give its perimeter in inches. Give the answer as type = the side classification; P = the perimeter."
+            answer: "type = isosceles; P = 30"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["scalene"], ["isosceles"], ["equilateral"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "P"}]}
+            solution_sketch: "The side lengths are 9, 9, and 12. Step 1 (side classification rule): exactly two sides are congruent (9 = 9) and the third differs, so the triangle is isosceles. Choosing scalene ignores the equal pair of 9s; choosing equilateral wrongly assumes 12 also equals 9. Step 2 (perimeter rule): add the three side lengths, 9 + 9 + 12 = 30. The answer is type = isosceles; P = 30."
         constraints: "side names: scalene/isosceles/equilateral; integer sides that satisfy the triangle inequality"
       - id: kp2
         name: Classify by angles
