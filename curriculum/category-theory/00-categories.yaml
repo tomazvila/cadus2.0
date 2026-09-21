@@ -341,12 +341,34 @@ topics:
         key_prerequisites: [groups-intro]
         constraints: "Small categories presented by explicit data: a group or monoid as a one-object category, or a poset with at most 3 objects; every claim is checked directly against the category axioms."
         exemplars:
-          - problem: "A group $G$ gives a one-object category $BG$. What special property do all its morphisms have?"
-            answer: "Every morphism is an isomorphism (invertible)."
-            solution_sketch: "$BG$ has one object $*$ with $\\mathrm{Hom}(*,*)=G$ and composition the group product. Each $g\\in G$ has a two-sided inverse $g^{-1}$, so $g$ is an isomorphism in $BG$. Thus $BG$ is a category in which every arrow is invertible, i.e. a groupoid with one object."
-          - problem: "Give the category $\\mathbf{2}$ with two objects $0,1$ and exactly one non-identity arrow $0\\to 1$. Why is it a category?"
-            answer: "It is the poset $0\\le 1$ viewed as a category; composition is forced and associative."
-            solution_sketch: "Objects $0,1$; morphisms $1_0,1_1$, and $u\\colon 0\\to 1$. The only composites involve an identity, so composition is determined and trivially associative. This is the preorder $0\\le 1$ as a thin category."
+          - problem: "Let G be the group of integers modulo 3 under addition, viewed as the one-object category BG. Give the number of morphisms of BG."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The category BG has one object * and Hom(*,*) = G, so each group element is one morphism. The group of integers modulo 3 has elements 0, 1, 2, hence three morphisms. Each morphism has an inverse by the group axiom. The number of morphisms of BG is 3."
+          - problem: "Let C be the poset category with objects 0 and 1 and exactly one arrow 0 -> 1. Give the total number of morphisms of C."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The objects are 0 and 1. The identity axioms give identity arrows id0: 0 -> 0 and id1: 1 -> 1, and the order relation 0 <= 1 gives one arrow 0 -> 1. No other arrows exist, so the total is 2 plus 1 equals 3. The total number of morphisms is 3."
+          - problem: "Let M be the monoid of integers modulo 6 under addition, viewed as a one-object category BM. Compose the arrow 2 with the arrow 4. Give the resulting arrow."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The one-object category BM has Hom(*,*) = M, and composition is the monoid operation. The operation is addition modulo 6, so the composite is 2 plus 4 modulo 6. This equals 0 modulo 6. The resulting arrow is 0."
+          - problem: "Let C be the poset category on objects 0, 1, 2 with the order 0 <= 1 <= 2. Give the total number of morphisms of C."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity arrows are id0, id1, id2, three morphisms. The non-identity order relations are 0 <= 1, 0 <= 2, and 1 <= 2, giving one arrow for each comparable pair. There are no other comparable pairs. Thus the total is 3 plus 3 equals 6. The total number of morphisms is 6."
+          - problem: "Let C be the poset category on objects 0, 1, 2 with exactly the order relation 0 <= 2, besides reflexivity. Give the total number of morphisms of C."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity arrows are id0, id1, id2, three morphisms. The only non-identity order relation is 0 <= 2, giving one arrow 0 -> 2. Reflexivity adds no non-identity arrows. Hence the total is 3 plus 1 equals 4. The total number of morphisms is 4."
+          - problem: "Consider one object * with morphisms e, a, b. The composition is given by e∘a=a, a∘e=a, e∘b=b, b∘e=b, a∘a=e, a∘b=a, b∘a=b, b∘b=a. A student argues: Step 1: e is a two-sided identity by the first four equations. Step 2: Composition is closed because every product is one of e, a, b. Step 3: Composition is associative because the table is symmetric. Step 4: Therefore this data is a category. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: the equations e∘a=a, a∘e=a, e∘b=b, b∘e=b make e a two-sided identity. Step 2 is correct: every listed product is e, a, or b, so composition is closed. Step 3 is false: compute (b∘b)∘a = a∘a = e, but b∘(b∘a) = b∘b = a, so associativity fails. Step 4 is not reached because the data is not a category. The first invalid step is Step 3."
+          - problem: "Write the full proof: every monoid M gives a one-object category BM with Hom(*,*)=M and composition the monoid product. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Objects. The proposed data BM has exactly one object, written *. Step 2: Morphisms. For the single pair of objects (*,*), set Hom(*,*)=M, so each element of M is a morphism from * to *. Step 3: Identities. Let e be the identity element of M. For the object *, define id_* = e. For any m in M, the monoid identity laws give e m = m and m e = m, so id_* is a two-sided identity. Step 4: Composition. For m and n in M, define the composite n after m to be the product n m in M, which is again a morphism from * to *. Step 5: Associativity. For m, n, p in M, (p after n) after m = (p n) m and p after (n after m) = p (n m). These are equal by associativity of M. Therefore BM satisfies all category axioms and is a one-object category."
       - id: kp3
         name: Categories built from other categories
         key_prerequisites: [category-definition]
