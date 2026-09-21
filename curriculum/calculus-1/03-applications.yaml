@@ -1492,14 +1492,30 @@ topics:
         name: Reconstruct features from f'
         key_prerequisites: [increasing-decreasing-intervals, second-derivative-test]
         exemplars:
-          - problem: 'Suppose $f''(x) = (x-1)^2(x-3)$. Find where $f$ has local extrema.'
-            answer: "local min at x = 3 only (f' does not change sign at x = 1)"
-            answer_contract: {kind: none}
-            solution_sketch: '$(x-1)^2 \geq 0$, so the sign of $f''$ is the sign of $x - 3$: no change at $1$, $-$ to $+$ at $3$.'
-          - problem: 'Suppose $f''(x) = x(x - 2)$. On what interval is $f$ decreasing, and where are its inflection points?'
-            answer: "decreasing on (0, 2); inflection of f at x = 1 (where f'' = 2x - 2 changes sign)"
-            answer_contract: {kind: none}
-            solution_sketch: "decreasing on (0, 2); inflection of f at x = 1 (where f'' = 2x - 2 changes sign)"
+          - problem: "The derivative of a differentiable function f is f'(x) = (x-2)^2(x-5). Find the x-coordinate of the local minimum of f."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The derivative in factored form is f'(x) = (x-2)^2(x-5). Step 1: the squared factor is never negative, so the sign of f' follows the sign of x-5. Step 2: f' changes from negative to positive at x = 5, and the first derivative test gives a local minimum there. The x-coordinate of the local minimum is 5."
+          - problem: "The derivative of a differentiable function f is f'(x) = x(x-3). Find the interval on which f is decreasing, and give the answer as an inequality in x."
+            answer: "0 < x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The derivative in factored form is f'(x) = x(x-3). Step 1: the sign line for f' is positive for x < 0, negative for 0 < x < 3, and positive for x > 3. Step 2: f is decreasing where f' is negative, so the decreasing interval is 0 < x < 3. The interval is 0 < x < 3."
+          - problem: "The derivative of a differentiable function f is f'(x) = (x+3)(x-1). Find the x-coordinate of the local maximum of f."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The derivative in factored form is f'(x) = (x+3)(x-1). Step 1: the sign line for f' is positive for x < -3, negative for -3 < x < 1, and positive for x > 1. Step 2: f' changes from positive to negative at x = -3, so the first derivative test gives a local maximum there. The x-coordinate of the local maximum is -3."
+          - problem: "The derivative of a differentiable function f is f'(x) = (x-1)(x-4). Find the intervals on which f is increasing, and give the answer as an inequality in x."
+            answer: "x < 1 or x > 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The derivative in factored form is f'(x) = (x-1)(x-4). Step 1: the sign line for f' is positive for x < 1, negative for 1 < x < 4, and positive for x > 4. Step 2: f is increasing where f' is positive, so the increasing intervals combine as x < 1 or x > 4. The interval is x < 1 or x > 4."
+          - problem: "The derivative of a differentiable function f is f'(x) = (x+1)(x-6). Find the x-coordinate of the inflection point of f as a fraction."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The derivative in factored form is f'(x) = (x+1)(x-6). Step 1: differentiate f' to get f'' = 2x - 5. Step 2: f'' changes sign at x = 5/2, so the concavity rule gives an inflection point of f there. The x-coordinate of the inflection point is 5/2."
+          - problem: "The derivative of a differentiable function f is f'(x) = (x+2)(x-4). At x = -2, state whether f has a local maximum or a local minimum, and give the x-coordinate of the inflection point of f."
+            answer: "verdict = maximum; x = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["maximum"], ["minimum"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "The derivative in factored form is f'(x) = (x+2)(x-4). Step 1: f' is positive for x < -2 and negative for -2 < x < 4, so the first derivative test gives a local maximum at x = -2; the wrong option minimum comes from reversing that sign change. Step 2: f'' = 2x - 2 changes sign at x = 1, so the concavity rule gives an inflection point of f there. Final answer: verdict = maximum; x = 1."
         constraints: "give f' in factored form; ask for features of f, not of f'"
     diagnostic_exemplar:
       problem: 'For $f(x) = x^3 - 12x$, give the local extrema and the inflection point.'
@@ -1536,40 +1552,88 @@ topics:
         name: Optimize over two numbers with a constraint
         key_prerequisites: [critical-points-extrema]
         exemplars:
-          - problem: 'Two positive numbers sum to $20$. Find the pair with the largest product.'
-            answer: "10 and 10 (product 100)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Maximize $P(x) = x(20 - x)$: $P''(x) = 20 - 2x = 0$ at $x = 10$.'
-          - problem: 'Two positive numbers have product $100$. Find the pair with the smallest sum.'
-            answer: "10 and 10 (sum 20)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Minimize $S(x) = x + \frac{100}{x}$: $S''(x) = 1 - \frac{100}{x^2} = 0$ at $x = 10$.'
+          - problem: "Two positive numbers sum to 30. Find the pair with the largest product as (x, y)."
+            answer: "(15, 15)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let x and y be the numbers, so y = 30 - x. The product is P(x) = x(30 - x) = 30x - x^2. Differentiate: P'(x) = 30 - 2x. Set P'(x) = 0: 30 - 2x = 0 gives x = 15, so y = 30 - 15 = 15. The pair is (15, 15)."
+          - problem: "Two positive numbers have product 196. Find the pair with the smallest sum as (x, y)."
+            answer: "(14, 14)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let x and y be positive numbers with xy = 196, so y = 196/x. The sum is S(x) = x + 196/x. Differentiate: S'(x) = 1 - 196/x^2. Set S'(x) = 0: 1 - 196/x^2 = 0, so x^2 = 196 and x = 14. Then y = 196/14 = 14. The pair is (14, 14)."
+          - problem: "Two positive numbers sum to 24. Find the pair that maximizes the quantity x^2 y as (x, y)."
+            answer: "(16, 8)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let x and y be positive with x + y = 24, so y = 24 - x. The quantity is Q(x) = x^2(24 - x) = 24x^2 - x^3. Differentiate: Q'(x) = 48x - 3x^2 = 3x(16 - x). Set Q'(x) = 0: x = 0 or x = 16; positivity gives x = 16, so y = 8. The pair is (16, 8)."
+          - problem: "Two positive numbers have product 64. Find the pair that minimizes x + 4y as (x, y)."
+            answer: "(16, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let x and y be positive with xy = 64, so y = 64/x. The expression is E(x) = x + 4(64/x) = x + 256/x. Differentiate: E'(x) = 1 - 256/x^2. Set E'(x) = 0: x^2 = 256, so x = 16 and y = 64/16 = 4. The pair is (16, 4)."
+          - problem: "Two positive numbers sum to 36. Find the largest possible value of their product."
+            answer: "324"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let x and y be positive with x + y = 36, so y = 36 - x. The product is P(x) = x(36 - x) = 36x - x^2. Differentiate: P'(x) = 36 - 2x. Set P'(x) = 0: 36 - 2x = 0 gives x = 18, so y = 18. The largest product is 324."
+          - problem: "Two positive numbers sum to 12. Find the pair that minimizes the sum of their squares as (x, y)."
+            answer: "(6, 6)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let x and y be positive with x + y = 12, so y = 12 - x. The sum of squares is F(x) = x^2 + (12 - x)^2 = 2x^2 - 24x + 144. Differentiate: F'(x) = 4x - 24. Set F'(x) = 0: x = 6, so y = 12 - 6 = 6. The pair is (6, 6)."
         constraints: "constraint eliminates one variable; optimum at integer values"
       - id: kp2
         name: Fencing and area problems
         key_prerequisites: [critical-points-extrema, area-triangles-quadrilaterals]
         exemplars:
-          - problem: 'A farmer has $400$ m of fence for a rectangular field. What dimensions maximize the area, and what is that area?'
-            answer: "100 m × 100 m; area 10000 m²"
-            answer_contract: {kind: none}
-            solution_sketch: '$A(x) = x(200 - x)$; $A''(x) = 200 - 2x = 0$ at $x = 100$.'
-          - problem: 'A rectangular pen uses a barn as one side, with $120$ m of fence for the other three sides. What dimensions maximize the area?'
-            answer: "30 m (each side perpendicular to the barn) × 60 m (parallel side); area 1800 m²"
-            answer_contract: {kind: none}
-            solution_sketch: '$A(x) = x(120 - 2x)$; $A''(x) = 120 - 4x = 0$ at $x = 30$, so the parallel side is $60$.'
+          - problem: "A gardener has 200 m of fence to enclose a rectangular vegetable plot. Find the dimensions that maximize the area, as (width, length)."
+            answer: "(50, 50)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let width be x and length be y. The perimeter constraint is 2x + 2y = 200, so y = 100 - x. The area is A(x) = x(100 - x) = 100x - x^2. Differentiate: A'(x) = 100 - 2x. Set A'(x) = 0: x = 50, so y = 50. The dimensions are (50, 50)."
+          - problem: "A rectangular pen uses a barn as one side and 80 m of fence for the other three sides. Find the length of the side parallel to the barn that maximizes the area."
+            answer: "40"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let x be each side perpendicular to the barn and y the side parallel to it. The fence constraint is 2x + y = 80, so y = 80 - 2x. The area is A(x) = x(80 - 2x) = 80x - 2x^2. Differentiate: A'(x) = 80 - 4x. Set A'(x) = 0: x = 20, so y = 40. The parallel side length is 40."
+          - problem: "A rectangular pen uses a wall as one side and 100 m of fence for the other three sides. Find the dimensions that maximize the area, as (side perpendicular to the wall, side parallel to the wall)."
+            answer: "(25, 50)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let x be each side perpendicular to the wall and y the side parallel to the wall. The fence constraint is 2x + y = 100, so y = 100 - 2x. The area is A(x) = x(100 - 2x) = 100x - 2x^2. Differentiate: A'(x) = 100 - 4x. Set A'(x) = 0: x = 25, so y = 50. The dimensions are (25, 50)."
+          - problem: "A rectangular field is divided into two equal parts by a fence parallel to one side. The total fence used for the perimeter and the divider is 600 m. Find the dimensions that maximize the total area, as (side perpendicular to the divider, side parallel to the divider)."
+            answer: "(150, 100)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let x be the side perpendicular to the divider and y the side parallel to the divider. The total fence is 2x + 3y = 600, so x = 300 - 1.5y. The area is A(y) = y(300 - 1.5y) = 300y - 1.5y^2. Differentiate: A'(y) = 300 - 3y. Set A'(y) = 0: y = 100, so x = 150. The dimensions are (150, 100)."
+          - problem: "A rectangular garden is divided into two equal plots by a fence parallel to one side. The total fence used for the perimeter and the divider is 240 m. Find the dimensions that maximize the total area, as (side perpendicular to the divider, side parallel to the divider)."
+            answer: "(60, 40)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let x be the side perpendicular to the divider and y the side parallel to the divider. The total fence is 2x + 3y = 240, so x = 120 - 1.5y. The area is A(y) = y(120 - 1.5y) = 120y - 1.5y^2. Differentiate: A'(y) = 120 - 3y. Set A'(y) = 0: y = 40, so x = 60. The dimensions are (60, 40)."
+          - problem: "A rectangular pen uses a barn as one side and 160 m of fence for the other three sides. Find the maximum area of the pen."
+            answer: "3200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let x be each side perpendicular to the barn and y the side parallel to it. The fence constraint is 2x + y = 160, so y = 160 - 2x. The area is A(x) = x(160 - 2x) = 160x - 2x^2. Differentiate: A'(x) = 160 - 4x. Set A'(x) = 0: x = 40, so y = 80. The maximum area is 3200."
         constraints: "perimeter-style constraint linear in the dimensions; integer optimum"
       - id: kp3
         name: Confirm the optimum
         key_prerequisites: [closed-interval-method, critical-points-extrema]
         exemplars:
-          - problem: 'In the sum-20 problem, $P(x) = x(20 - x)$ on $[0, 20]$ has critical point $x = 10$. Confirm $x = 10$ gives the absolute maximum.'
-            answer: "P(0) = P(20) = 0 while P(10) = 100 (or: P''(x) = -2 < 0 everywhere)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Closed-interval check or the second derivative — both confirm the interior critical point is the max.'
-          - problem: 'For $S(x) = x + \frac{100}{x}$ on $(0, \infty)$, confirm that $x = 10$ gives the absolute minimum.'
-            answer: "S''(x) = 200/x³ > 0 for all x > 0, so S is concave up and x = 10 is the global min"
-            answer_contract: {kind: none}
-            solution_sketch: "S''(x) = 200/x³ > 0 for all x > 0, so S is concave up and x = 10 is the global min"
+          - problem: "Let P(x) = x(24 - x) on [0, 24]. Its only critical point is x = 12. Find the absolute maximum value of P by comparing the critical value with the endpoint values."
+            answer: "144"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: P(x) = x(24 - x) on [0, 24] with critical point x = 12. Endpoint comparison: P(0) = 0 and P(24) = 0, while P(12) = 144, so the largest value is at x = 12. Second-derivative sign: P''(x) = -2, which is negative everywhere, so the critical point is a maximum. The maximum value is 144."
+          - problem: "Let S(x) = x + 64/x on the interval x > 0. Its only critical point is x = 8. Find the absolute minimum value of S by using the second-derivative sign."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: S(x) = x + 64/x on x > 0 with critical point x = 8. Second-derivative sign: S'(x) = 1 - 64/x^2, so S'(8) = 0, and S''(x) = 128/x^3 is positive for all x > 0. A positive second derivative means the critical point is a minimum, and S(8) = 8 + 8 = 16. The minimum value is 16."
+          - problem: "Let f(x) = x^3 - 3x on [0, 2]. The only critical point in the interval is x = 1. Find the absolute minimum value of f by comparing the critical value with the endpoint values."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = x^3 - 3x on [0, 2] with critical point x = 1. Endpoint comparison: f(0) = 0, f(1) = -2, and f(2) = 2, so the smallest value is at x = 1. The second-derivative sign f''(x) = 6x gives f''(1) = 6 > 0, which also confirms a minimum. The minimum value is -2."
+          - problem: "Let g(x) = x^4 - 8x^2 + 10 on [-3, 3]. Its critical points are x = -2, x = 0 and x = 2. Find the absolute minimum value of g by comparing the critical values with the endpoint values."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: g(x) = x^4 - 8x^2 + 10 on [-3, 3] with critical points x = -2, x = 0, and x = 2. Endpoint comparison: g(-3) = 19, g(-2) = -6, g(0) = 10, g(2) = -6, and g(3) = 19, so the smallest value is -6. The second-derivative sign at x = 2 is g''(2) = 40 > 0, which also confirms a minimum. The minimum value is -6."
+          - problem: "Let h(x) = 2x + 18/x on the interval x > 0. Its only critical point is x = 3. State whether x = 3 gives the absolute largest or smallest value, and give that extreme value."
+            answer: "verdict = minimum; value = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["maximum"], ["minimum"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Full object: h(x) = 2x + 18/x on x > 0 with critical point x = 3. Second-derivative sign: h'(x) = 2 - 18/x^2, so h'(3) = 0, and h''(x) = 36/x^3 is positive for all x > 0. A positive second derivative means the critical point is a minimum, and h(3) = 6 + 6 = 12. The option maximum is wrong because a positive second derivative rules out a maximum. The answer is verdict = minimum; value = 12."
+          - problem: "Let F(x) = x^3 - 12x on [-3, 3]. Its critical points are x = -2 and x = 2. State whether x = -2 gives the absolute largest or smallest value, and give that extreme value."
+            answer: "verdict = maximum; value = 16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["maximum"], ["minimum"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Full object: F(x) = x^3 - 12x on [-3, 3] with critical points x = -2 and x = 2. Endpoint comparison: F(-3) = 9, F(-2) = 16, F(2) = -16, and F(3) = -9, so the largest value is 16 at x = -2. The option minimum is wrong because F(-2) = 16 is larger than the endpoint and other critical values, so it is a maximum. The answer is verdict = maximum; value = 16."
         constraints: "justify via endpoint comparison or second-derivative sign; no unjustified answers"
     diagnostic_exemplar:
       problem: 'A rectangular pen uses a wall as one side, with $60$ m of fence for the other three sides. What dimensions maximize the area, and what is that area?'
@@ -1607,14 +1671,30 @@ topics:
         name: Volume and surface-area problems
         key_prerequisites: [basic-optimization, volume-prisms-cylinders]
         exemplars:
-          - problem: 'An open-top box is made from a $12 \times 12$ cm sheet by cutting equal squares of side $x$ from the corners and folding. Find the $x$ that maximizes the volume, and the volume.'
-            answer: "x = 2 cm; volume 128 cm³"
-            answer_contract: {kind: none}
-            solution_sketch: '$V = x(12 - 2x)^2$; $V'' = (12-2x)(12-6x) = 0$ at $x = 2$ or $x = 6$ (degenerate); $V(2) = 2 \cdot 64 = 128$.'
-          - problem: 'An open-top box has a square base and volume $32$ m³. Find the dimensions minimizing the material $S = x^2 + 4xh$.'
-            answer: "base 4 m × 4 m, height 2 m"
-            answer_contract: {kind: none}
-            solution_sketch: '$h = \frac{32}{x^2}$, so $S = x^2 + \frac{128}{x}$; $S'' = 2x - \frac{128}{x^2} = 0$ at $x^3 = 64$.'
+          - problem: "An open-top box is made from a 12 by 12 cm sheet by cutting equal squares of side x cm from the corners and folding up the sides. The volume is V = x(12 - 2x)^2. Find the side length x that maximizes the volume."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the volume V = x(12 - 2x)^2. Differentiate by the product rule: V' = (12 - 2x)^2 + x*2(12 - 2x)(-2) = (12 - 2x)(12 - 6x). Set V' = 0: x = 2 or x = 6. The value x = 6 gives zero volume, so the maximum is at x = 2. The maximizing side length is 2."
+          - problem: "An open-top box has a square base of side x m and volume 32 m^3. The height is h = 32/x^2, so the material surface area is S = x^2 + 4xh = x^2 + 128/x. Find the base side x that minimizes the surface area."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with S = x^2 + 128/x. Differentiate by the power rule: S' = 2x - 128/x^2. Set S' = 0: 2x = 128/x^2, so x^3 = 64. The positive solution is x = 4. The minimizing base side is 4."
+          - problem: "A closed cylindrical can has volume 54pi cm^3. Its radius is r and its height is h, with volume V = pi r^2 h and surface area S = 2pi r^2 + 2pi r h. Find the radius r that minimizes the surface area."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with V = pi r^2 h = 54pi, so h = 54/r^2. Substitute into S = 2pi r^2 + 2pi r h to get S = 2pi r^2 + 108pi/r. Differentiate: S' = 4pi r - 108pi/r^2. Set S' = 0: 4r^3 = 108, so r^3 = 27. The minimizing radius is 3."
+          - problem: "An open-top box has a square base of side x m and surface area 48 m^2. The height is h = (48 - x^2)/(4x), so the volume is V = x^2 h = (48x - x^3)/4. Find the maximum volume."
+            answer: "32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with V = (48x - x^3)/4. Differentiate by the power rule: V' = (48 - 3x^2)/4. Set V' = 0: 3x^2 = 48, so x^2 = 16 and x = 4. Then V = (48*4 - 4^3)/4 = (192 - 64)/4 = 32. The maximum volume is 32."
+          - problem: "A closed cylindrical can has surface area 54pi cm^2. Its radius is r and height is h, with surface area S = 2pi r^2 + 2pi r h and volume V = pi r^2 h. Find the height h that maximizes the volume."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with S = 2pi r^2 + 2pi r h = 54pi, so h = 27/r - r. Substitute into V = pi r^2 h to get V = pi(27r - r^3). Differentiate the bracket: 27 - 3r^2. Set it to 0: r^2 = 9, so r = 3. Then h = 27/3 - 3 = 6. The maximizing height is 6."
+          - problem: "An open-top box has a square base of side x m and volume 256 m^3. The height is h = 256/x^2, so the surface area is S = x^2 + 4xh = x^2 + 1024/x. Find the base side x that minimizes the surface area."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with S = x^2 + 1024/x. Differentiate: S' = 2x - 1024/x^2. Set S' = 0: 2x^3 = 1024, so x^3 = 512. The positive solution is x = 8. The minimizing base side is 8."
         constraints: "state the volume/surface formulas in the problem; optimum at small integers"
       - id: kp2
         name: Cost and material problems
@@ -1633,13 +1713,29 @@ topics:
         name: Distance problems
         key_prerequisites: [basic-optimization, distance-midpoint-formulas]
         exemplars:
-          - problem: 'Find the point on the curve $y = \sqrt{x}$ closest to $(3, 0)$.'
-            answer: "(5/2, √(5/2)) = (5/2, √10/2)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Minimize $d^2 = (x - 3)^2 + x$; derivative $2(x - 3) + 1 = 0$ gives $x = \frac{5}{2}$.'
+          - problem: "Find the point on the curve y = sqrt(x) closest to (3, 0), and give it as (x, y)."
+            answer: "(5/2, sqrt(10)/2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let the point be (x, sqrt(x)). Use the distance formula: the squared distance to (3, 0) is d^2 = (x - 3)^2 + x = x^2 - 5x + 9. Differentiate d^2 with the power rule: the derivative is 2x - 5. Set the derivative to zero and solve: x = 5/2. Compute the y-coordinate: sqrt(5/2) = sqrt(10)/2. The closest point is (5/2, sqrt(10)/2)."
           - problem: 'For the previous problem, what is the minimum distance itself?'
             answer: "√11/2"
             solution_sketch: '$d^2 = \left(-\frac{1}{2}\right)^2 + \frac{5}{2} = \frac{11}{4}$.'
+          - problem: "Find the point on the line y = 2x + 1 closest to (0, 0), and give it as (x, y)."
+            answer: "(-2/5, 1/5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "A point on the line is (x, 2x + 1). Use the distance formula: d^2 = x^2 + (2x + 1)^2 = 5x^2 + 4x + 1. Differentiate d^2 with the power rule: 10x + 4. Set the derivative to zero: x = -2/5. Substitute into the line: y = 2(-2/5) + 1 = 1/5. The closest point is (-2/5, 1/5)."
+          - problem: "Find the minimum distance from (0, 2) to the curve y = x^2."
+            answer: "sqrt(7)/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A point on the curve is (x, x^2). Use the distance formula: d^2 = x^2 + (x^2 - 2)^2 = x^4 - 3x^2 + 4. Differentiate d^2 with the power rule: 4x^3 - 6x = 2x(2x^2 - 3). Set the derivative to zero: x = 0 or x^2 = 3/2. Compare values: at x = 0, d^2 = 4; at x^2 = 3/2, d^2 = 7/4. The minimum distance is sqrt(7)/2."
+          - problem: "Find the minimum distance from (1, 1) to the line y = 3x + 2."
+            answer: "2sqrt(10)/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A point on the line is (x, 3x + 2). Use the distance formula: d^2 = (x - 1)^2 + (3x + 1)^2 = 10x^2 + 4x + 2. Differentiate d^2 with the power rule: 20x + 4. Set the derivative to zero: x = -1/5. Compute d^2 at this x: 10(1/25) + 4(-1/5) + 2 = 8/5. Since d = sqrt(8/5), the minimum distance is 2sqrt(10)/5."
+          - problem: "Find the point on the line y = -x + 4 closest to (0, 0), and give it as (x, y)."
+            answer: "(2, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "A point on the line is (x, -x + 4). Use the distance formula: d^2 = x^2 + (-x + 4)^2 = 2x^2 - 8x + 16. Differentiate d^2 with the power rule: 4x - 8. Set the derivative to zero: x = 2. Substitute into the line: y = -2 + 4 = 2. The closest point is (2, 2)."
         constraints: "minimize d² instead of d; squared distance is a polynomial in one variable"
     diagnostic_exemplar:
       problem: 'Find the point on the curve $y = \sqrt{x}$ closest to $(4, 0)$.'
