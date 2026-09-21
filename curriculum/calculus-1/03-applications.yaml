@@ -416,13 +416,29 @@ topics:
         name: Compute differentials
         key_prerequisites: [linearization, derivative-power-rule]
         exemplars:
-          - problem: 'For $y = x^3$, write $dy$ in terms of $x$ and $dx$ (give the expression that $dy$ equals).'
-            answer: "3x^2 dx"
-            answer_contract: {kind: none}
-            solution_sketch: "3x^2 dx"
           - problem: 'For $y = x^3$, compute $dy$ when $x = 2$ and $dx = 0.1$.'
             answer: "1.2"
             solution_sketch: '$dy = 3 \cdot 4 \cdot 0.1 = 1.2$.'
+          - problem: "For y = x^3 with dx = 0.1, find dy as a function of x."
+            answer: "3x^2/10"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The differential rule gives dy = f'(x) dx. The power rule gives f'(x) = 3x^2. With dx = 0.1, dy = 3x^2 * 0.1 = 3x^2/10. So dy = 3x^2/10."
+          - problem: "For y = x^4, compute dy when x = 1.5 and dx = 0.2. Give dy to 1 decimal."
+            answer: "2.7"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The differential rule gives dy = f'(x) dx. The power rule gives f'(x) = 4x^3. At x = 1.5, f'(1.5) = 4 * 3.375 = 13.5. Then dy = 13.5 * 0.2 = 2.7. So dy = 2.7."
+          - problem: "For y = sqrt(x), compute dy when x = 9 and dx = -0.2. Give the answer as a fraction."
+            answer: "-1/30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The differential rule gives dy = f'(x) dx. Rewrite y = sqrt(x) as x^(1/2); the power rule gives f'(x) = (1/2) x^(-1/2). At x = 9, f'(9) = 1/(2*3) = 1/6. Then dy = 1/6 * (-0.2) = -1/30. So dy = -1/30."
+          - problem: "For y = x^2, compute dy when x = 3.2 and dx = 0.5. Give dy to 1 decimal."
+            answer: "3.2"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The differential rule gives dy = f'(x) dx. The power rule gives f'(x) = 2x. At x = 3.2, f'(3.2) = 6.4. Then dy = 6.4 * 0.5 = 3.2. So dy = 3.2."
+          - problem: "For y = 1/x, compute dy when x = 2 and dx = 0.3. Give the answer as a fraction."
+            answer: "-3/40"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The differential rule gives dy = f'(x) dx. Rewrite y = 1/x as x^(-1); the power rule gives f'(x) = -x^(-2) = -1/x^2. At x = 2, f'(2) = -1/4. Then dy = -1/4 * 0.3 = -3/40. So dy = -3/40."
         constraints: "polynomial or power functions; dx one decimal place"
       - id: kp2
         name: Estimate propagated error
@@ -434,6 +450,22 @@ topics:
           - problem: 'A cube''s side is measured as $3$ m with possible error $0.02$ m. Estimate the possible error in the volume $V = x^3$.'
             answer: "0.54 m^3"
             solution_sketch: '$dV = 3x^2\,dx = 27 \cdot 0.02 = 0.54$.'
+          - problem: "A circle's radius is measured as 12 cm with possible error 0.06 cm. Use the differential of A = pi r^2 to estimate the possible error in the area. Give the answer as a multiple of pi."
+            answer: "36pi/25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The differential is dA = 2 pi r dr. This follows from the power rule on A = pi r^2. Substitute r = 12 and dr = 0.06: dA = 2 pi (12)(0.06) = 1.44 pi = 36pi/25. The estimated possible error in the area is 36pi/25."
+          - problem: "A cube's side is measured as 5 m with possible error 0.1 m. Use the differential of V = x^3 to estimate the possible error in the volume. Give the possible error in cubic meters."
+            answer: "15/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The differential is dV = 3x^2 dx. This follows from the power rule on V = x^3. Substitute x = 5 and dx = 0.1: dV = 3(25)(0.1) = 7.5 = 15/2. The estimated possible error in the volume is 15/2."
+          - problem: "A sphere's radius is measured as 6 cm with possible error 0.12 cm. Use the differential of V = (4/3) pi r^3 to estimate the possible error in the volume. Give the answer as a multiple of pi."
+            answer: "432pi/25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The differential is dV = 4 pi r^2 dr. This follows from the power rule on V = (4/3) pi r^3. Substitute r = 6 and dr = 0.12: dV = 4 pi (36)(0.12) = 17.28 pi = 432pi/25. The estimated possible error in the volume is 432pi/25."
+          - problem: "A circle's radius is measured as 25 cm with possible error 0.5 cm. Use the differential of C = 2 pi r to estimate the possible error in the circumference. Give the answer as a multiple of pi."
+            answer: "pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The differential is dC = 2 pi dr, since C = 2 pi r. This follows from the power rule on C = 2 pi r. Substitute dr = 0.5: dC = 2 pi (0.5) = pi. The estimated possible error in the circumference is pi."
         constraints: "state the geometric formula; measurement error at most a few percent"
       - id: kp3
         name: Relative and percentage error
@@ -445,6 +477,22 @@ topics:
           - problem: 'A square''s side is measured with a $0.5\%$ error. Estimate the percentage error in its area. Give just the number.'
             answer: "1"
             solution_sketch: '$\frac{dA}{A} = 2\frac{dx}{x}$.'
+          - problem: "A cube's side length is measured with a 3% error. Use V = s^3 to estimate the resulting percentage error in the cube's volume. Give the answer as a bare percent number."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (relative error rule for powers): V = s^3 gives dV/V = 3 ds/s. Step 2 (substitute): ds/s = 0.03, so dV/V = 3(0.03) = 0.09. Step 3 (convert to percent): 0.09 is 9."
+          - problem: "For a quantity y = x^4, the input x is measured with a 1.25% error. Estimate the percentage error in y. Give the answer as a bare percent number."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (relative error rule for powers): y = x^4 gives dy/y = 4 dx/x. Step 2 (substitute): dx/x = 0.0125, so dy/y = 4(0.0125) = 0.05. Step 3 (convert to percent): 0.05 is 5."
+          - problem: "The kinetic energy K = (1/2) m v^2 depends on speed v. If v is measured with a 3.5% error, estimate the percentage error in K. Give the answer as a bare percent number."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (relative error rule for powers): K = (1/2) m v^2 gives dK/K = 2 dv/v. Step 2 (substitute): dv/v = 0.035, so dK/K = 2(0.035) = 0.07. Step 3 (convert to percent): 0.07 is 7."
+          - problem: "The surface area of a sphere is S = 4 pi r^2. If the radius r is measured with a 4% error, estimate the percentage error in S. Give the answer as a bare percent number."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (relative error rule for powers): S = 4 pi r^2 gives dS/S = 2 dr/r. Step 2 (substitute): dr/r = 0.04, so dS/S = 2(0.04) = 0.08. Step 3 (convert to percent): 0.08 is 8."
         constraints: "power functions so relative error scales by the exponent; answers are the bare percent number"
     diagnostic_exemplar:
       problem: 'A sphere''s radius is measured with a $2\%$ error. Using $V = \frac{4}{3}\pi r^3$, estimate the resulting percentage error in the volume. Give just the number.'
@@ -479,27 +527,59 @@ topics:
         name: One Newton iteration
         key_prerequisites: [linearization, derivative-power-rule]
         exemplars:
-          - problem: 'Apply one step of Newton''s method to $f(x) = x^2 - 5$ starting at $x_0 = 2$.'
-            answer: "x₁ = 9/4 = 2.25"
-            answer_contract: {kind: none}
-            solution_sketch: '$x_1 = x_0 - \frac{f(x_0)}{f''(x_0)} = 2 - \frac{-1}{4} = \frac{9}{4}$.'
-          - problem: 'Apply one step of Newton''s method to $f(x) = x^3 - 2x - 5$ starting at $x_0 = 2$.'
-            answer: "x₁ = 2.1"
-            answer_contract: {kind: none}
-            solution_sketch: '$f(2) = -1$, $f''(2) = 10$; $x_1 = 2 + \frac{1}{10} = 2.1$.'
+          - problem: "Use Newton's method once on $f(x) = x^2 - 7$ with starting value $x_0 = 3$. Find the next estimate $x_1$, written as a fraction."
+            answer: "8/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 uses Newton's method formula: $x_1 = x_0 - f(x_0)/f'(x_0)$. Step 2 uses the power rule to get $f'(x) = 2x$, so $f'(3) = 6$, and $f(3) = 9 - 7 = 2$. Step 3 substitutes these values: $x_1 = 3 - 2/6 = 3 - 1/3 = 8/3$. The next estimate is 8/3."
+          - problem: "The function $f(x) = x^3 - 3x - 1$ is given. Starting from $x_0 = 2$, carry out a single Newton step. Give $x_1$ as a fraction."
+            answer: "17/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 writes Newton's method formula $x_1 = x_0 - f(x_0)/f'(x_0)$. Step 2 applies the power rule to $f(x) = x^3 - 3x - 1$, giving $f'(x) = 3x^2 - 3$, so $f'(2) = 9$, and $f(2) = 1$. Step 3 substitutes: $x_1 = 2 - 1/9 = 17/9$. The new estimate is 17/9."
+          - problem: "A calculator starts with $x_0 = 1$ for the equation $x^2 - 2 = 0$. Apply one Newton iteration. Give $x_1$ as a decimal to 1 decimal place."
+            answer: "1.5"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Step 1 recalls Newton's method formula $x_1 = x_0 - f(x_0)/f'(x_0)$. Step 2 uses the power rule: $f(x) = x^2 - 2$ gives $f'(x) = 2x$, so $f(1) = -1$ and $f'(1) = 2$. Step 3 substitutes: $x_1 = 1 - (-1)/2 = 1.5$. The estimate to 1 decimal place is 1.5."
+          - problem: "For the equation $x^2 + x - 1 = 0$, take $x_0 = 1$ and perform one iteration of Newton's method. State $x_1$ as a fraction."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 states Newton's method formula $x_1 = x_0 - f(x_0)/f'(x_0)$. Step 2 uses the power rule on $f(x) = x^2 + x - 1$: $f'(x) = 2x + 1$, so $f(1) = 1$ and $f'(1) = 3$. Step 3 substitutes: $x_1 = 1 - 1/3 = 2/3$. The estimate is 2/3."
+          - problem: "Let $f(x) = x^3 + x - 3$. Use the Newton update with initial guess $x_0 = 1$. Determine $x_1$ as a fraction."
+            answer: "5/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 writes Newton's method formula $x_1 = x_0 - f(x_0)/f'(x_0)$. Step 2 uses the power rule on $f(x) = x^3 + x - 3$: $f'(x) = 3x^2 + 1$, so $f(1) = -1$ and $f'(1) = 4$. Step 3 substitutes: $x_1 = 1 - (-1)/4 = 5/4$. The next value is 5/4."
+          - problem: "Consider $f(x) = x^3 - 4x + 1$. Make one Newton step from $x_0 = 2$. Give the new value $x_1$ as a fraction."
+            answer: "15/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 states Newton's method formula $x_1 = x_0 - f(x_0)/f'(x_0)$. Step 2 uses the power rule on $f(x) = x^3 - 4x + 1$: $f'(x) = 3x^2 - 4$, so $f(2) = 1$ and $f'(2) = 8$. Step 3 substitutes: $x_1 = 2 - 1/8 = 15/8$. The new value is 15/8."
         constraints: "f(x₀) and f'(x₀) are small integers; x₁ is a simple fraction or decimal"
       - id: kp2
         name: Iterate twice
         key_prerequisites: [linearization, evaluating-functions]
         exemplars:
-          - problem: 'Apply two steps of Newton''s method to $f(x) = x^2 - 2$ starting at $x_0 = 1$. Give $x_1$ and $x_2$ exactly.'
-            answer: "x₁ = 3/2; x₂ = 17/12"
-            answer_contract: {kind: none}
-            solution_sketch: '$x_1 = 1 - \frac{-1}{2} = \frac{3}{2}$; $x_2 = \frac{3}{2} - \frac{1/4}{3} = \frac{3}{2} - \frac{1}{12} = \frac{17}{12}$.'
-          - problem: 'For $f(x) = x^2 - 5$ with $x_1 = 9/4$, is $x_1$ closer to $\sqrt{5}$ than $x_0 = 2$ was? ($\sqrt{5} \approx 2.2361$)'
-            answer: "yes — |2.25 - 2.2361| ≈ 0.014 vs |2 - 2.2361| ≈ 0.236"
-            answer_contract: {kind: none}
-            solution_sketch: "yes — |2.25 - 2.2361| ≈ 0.014 vs |2 - 2.2361| ≈ 0.236"
+          - problem: "Carry out two iterations of Newton's method for f(x) = x^2 - 7 from the starting value x0 = 2. Find x1 and x2 as fractions."
+            answer: "x1 = 11/4; x2 = 233/88"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "Newton's method uses x_{n+1} = x_n - f(x_n)/f'(x_n). For f(x) = x^2 - 7, f'(x) = 2x. At x0 = 2, f(2) = -3 and f'(2) = 4, so x1 = 2 - (-3)/4 = 11/4. At x1 = 11/4, f(11/4) = 9/16 and f'(11/4) = 11/2, so x2 = 11/4 - (9/16)/(11/2) = 11/4 - 9/88 = 233/88. The answer is x1 = 11/4; x2 = 233/88."
+          - problem: "Use Newton's method twice on f(x) = x^2 - 11 starting at x0 = 3. Find x1 and x2 as fractions."
+            answer: "x1 = 10/3; x2 = 199/60"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "Newton's method uses x_{n+1} = x_n - f(x_n)/f'(x_n). For f(x) = x^2 - 11, f'(x) = 2x. At x0 = 3, f(3) = -2 and f'(3) = 6, so x1 = 3 - (-2)/6 = 10/3. At x1 = 10/3, f(10/3) = 1/9 and f'(10/3) = 20/3, so x2 = 10/3 - (1/9)/(20/3) = 10/3 - 1/60 = 199/60. The answer is x1 = 10/3; x2 = 199/60."
+          - problem: "Apply Newton's method twice to f(x) = x^3 - 2 starting at x0 = 1. Find x1 and x2 as fractions."
+            answer: "x1 = 4/3; x2 = 91/72"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "Newton's method uses x_{n+1} = x_n - f(x_n)/f'(x_n). For f(x) = x^3 - 2, f'(x) = 3x^2. At x0 = 1, f(1) = -1 and f'(1) = 3, so x1 = 1 - (-1)/3 = 4/3. At x1 = 4/3, f(4/3) = 10/27 and f'(4/3) = 16/3, so x2 = 4/3 - (10/27)/(16/3) = 4/3 - 5/72 = 91/72. The answer is x1 = 4/3; x2 = 91/72."
+          - problem: "Run two Newton iterations for f(x) = x^2 + x - 3 with x0 = 1. Find x1 and x2 as fractions."
+            answer: "x1 = 4/3; x2 = 43/33"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "Newton's method uses x_{n+1} = x_n - f(x_n)/f'(x_n). For f(x) = x^2 + x - 3, f'(x) = 2x + 1. At x0 = 1, f(1) = -1 and f'(1) = 3, so x1 = 1 - (-1)/3 = 4/3. At x1 = 4/3, f(4/3) = 1/9 and f'(4/3) = 11/3, so x2 = 4/3 - (1/9)/(11/3) = 4/3 - 1/33 = 43/33. The answer is x1 = 4/3; x2 = 43/33."
+          - problem: "Apply Newton's method twice to f(x) = x^2 - 13 starting at x0 = 3. Find x2 as a fraction."
+            answer: "119/33"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Newton's method uses x_{n+1} = x_n - f(x_n)/f'(x_n). For f(x) = x^2 - 13, f'(x) = 2x. At x0 = 3, f(3) = -4 and f'(3) = 6, so x1 = 3 - (-4)/6 = 11/3. At x1 = 11/3, f(11/3) = 4/9 and f'(11/3) = 22/3, so x2 = 11/3 - (4/9)/(22/3) = 11/3 - 2/33 = 119/33. The answer is 119/33."
+          - problem: "Use Newton's method to estimate the square root of 17 by solving f(x) = x^2 - 17. Start with x0 = 4. Find x1 and x2 as fractions."
+            answer: "x1 = 33/8; x2 = 2177/528"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "Newton's method uses x_{n+1} = x_n - f(x_n)/f'(x_n). For f(x) = x^2 - 17, f'(x) = 2x. At x0 = 4, f(4) = -1 and f'(4) = 8, so x1 = 4 - (-1)/8 = 33/8. At x1 = 33/8, f(33/8) = 1/64 and f'(33/8) = 33/4, so x2 = 33/8 - (1/64)/(33/4) = 33/8 - 1/528 = 2177/528. The answer is x1 = 33/8; x2 = 2177/528."
         constraints: "keep arithmetic exact (fractions); two iterations at most"
       - id: kp3
         name: Geometric meaning and failure modes
@@ -634,27 +714,59 @@ topics:
         name: Find c for cubics
         key_prerequisites: [critical-points-extrema, quadratic-equations-factoring]
         exemplars:
-          - problem: 'Verify that $f(x) = x^3 - 4x$ satisfies Rolle''s theorem on $[0, 2]$ and find the $c$ in $(0, 2)$ with $f''(c) = 0$.'
-            answer: "f(0) = f(2) = 0; c = 2/√3 = 2√3/3"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''(x) = 3x^2 - 4 = 0$ gives $c = \pm\frac{2}{\sqrt{3}}$; only the positive root lies in $(0, 2)$.'
-          - problem: 'Verify that $f(x) = x^3 - x$ satisfies Rolle''s theorem on $[-1, 1]$ and find all $c$ in $(-1, 1)$ with $f''(c) = 0$.'
-            answer: "f(-1) = f(1) = 0; c = ±1/√3 = ±√3/3"
-            answer_contract: {kind: none}
-            solution_sketch: "f(-1) = f(1) = 0; c = ±1/√3 = ±√3/3"
+          - problem: "The function f(x) = x^3 - 16x has equal endpoint values on [0, 4]. Find the value of c in (0, 4) with f'(c) = 0."
+            answer: "4sqrt(3)/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: check the endpoints. f(0) = 0 and f(4) = 64 - 64 = 0, so Rolle's theorem applies on [0, 4]. Step 2: differentiate using the power rule. f'(x) = 3x^2 - 16. Step 3: solve 3x^2 - 16 = 0 by isolating x^2, giving x = 4/sqrt(3) or x = -4/sqrt(3). Only the positive root lies in (0, 4), so the value is 4sqrt(3)/3."
+          - problem: "The function f(x) = x^3 - 25x has equal endpoint values on [0, 5]. Find the value of c in (0, 5) with f'(c) = 0."
+            answer: "5sqrt(3)/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: check the endpoints. f(0) = 0 and f(5) = 125 - 125 = 0, so Rolle's theorem applies on [0, 5]. Step 2: differentiate using the power rule. f'(x) = 3x^2 - 25. Step 3: solve 3x^2 - 25 = 0 by isolating x^2, giving x = 5/sqrt(3) or x = -5/sqrt(3). Only the positive root lies in (0, 5), so the value is 5sqrt(3)/3."
+          - problem: "The cubic f(x) = x^3 - 3x^2 + 2x has f(0) = f(2). Find the smaller value of c in (0, 2) with f'(c) = 0."
+            answer: "1 - sqrt(3)/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: check the endpoints. f(0) = 0 and f(2) = 8 - 12 + 4 = 0, so Rolle's theorem applies on [0, 2]. Step 2: differentiate term by term with the power rule. f'(x) = 3x^2 - 6x + 2. Step 3: solve 3x^2 - 6x + 2 = 0 with the quadratic formula, giving x = 1 - sqrt(3)/3 and x = 1 + sqrt(3)/3. The smaller value in (0, 2) is 1 - sqrt(3)/3."
+          - problem: "For the cubic f(x) = x^3 - 18x, the endpoints of the interval [0, 3sqrt(2)] have the same function value. Determine the number c in the open interval (0, 3sqrt(2)) at which f'(c) = 0."
+            answer: "sqrt(6)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: check the endpoints. f(0) = 0 and f(3sqrt(2)) = 54sqrt(2) - 54sqrt(2) = 0, so Rolle's theorem applies. Step 2: differentiate using the power rule. f'(x) = 3x^2 - 18. Step 3: solve 3x^2 - 18 = 0; this gives x^2 = 6, so x = sqrt(6) or x = -sqrt(6). The only root in the open interval is sqrt(6). The number is sqrt(6)."
+          - problem: "A particle moves along a line with position s(t) = t^3 - 24t for 0 <= t <= 2sqrt(6). Its positions at the endpoints are equal. Find the time c in the open interval (0, 2sqrt(6)) when its velocity is zero."
+            answer: "2sqrt(2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: check the endpoint positions. s(0) = 0 and s(2sqrt(6)) = 48sqrt(6) - 48sqrt(6) = 0, so Rolle's theorem applies. Step 2: differentiate position to get velocity; the power rule gives s'(t) = 3t^2 - 24. Step 3: solve 3t^2 - 24 = 0 by isolating t^2, which gives t = 2sqrt(2) or t = -2sqrt(2). Only the positive time lies in the open interval, so the time is 2sqrt(2)."
+          - problem: "The cubic f(x) = x^3 - 6x^2 + 8x has f(0) = f(2). Find the value of c in (0, 2) with f'(c) = 0."
+            answer: "2 - 2sqrt(3)/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: check the endpoints. f(0) = 0 and f(2) = 8 - 24 + 16 = 0, so Rolle's theorem applies on [0, 2]. Step 2: differentiate with the power rule. f'(x) = 3x^2 - 12x + 8. Step 3: solve 3x^2 - 12x + 8 = 0 with the quadratic formula, giving x = 2 - 2sqrt(3)/3 and x = 2 + 2sqrt(3)/3. Only x = 2 - 2sqrt(3)/3 lies in (0, 2), so the value is 2 - 2sqrt(3)/3."
         constraints: "endpoint values equal (usually both 0); c is an exact radical inside the interval"
       - id: kp3
         name: When the hypotheses fail and what Rolle guarantees
         key_prerequisites: [continuity]
         exemplars:
-          - problem: '$f(x) = |x|$ satisfies $f(-1) = f(1)$ but has no $c$ in $(-1, 1)$ with $f''(c) = 0$. Which hypothesis of Rolle''s theorem fails?'
-            answer: "differentiability — f is not differentiable at x = 0"
-            answer_contract: {kind: none}
-            solution_sketch: "differentiability — f is not differentiable at x = 0"
-          - problem: 'A differentiable function has $f(2) = f(7) = 4$. What does Rolle''s theorem guarantee?'
-            answer: "some c in (2, 7) with f'(c) = 0"
-            answer_contract: {kind: none}
-            solution_sketch: "some c in (2, 7) with f'(c) = 0"
+          - problem: "Let $f(x) = abs(x - 1)$ on the interval $[0, 2]$. The endpoint values are equal. Rolle's theorem does not apply. Which hypothesis fails?"
+            answer: "differentiability"
+            answer_contract: {"kind": "label", "options": [["continuity"], ["differentiability"], ["endpoint equality"], ["no failure"]]}
+            solution_sketch: "Check the hypotheses for f(x)=abs(x-1) on [0,2]. The option continuity is wrong because the absolute value function is continuous on [0,2]. The option endpoint equality is wrong because f(0)=1 and f(2)=1, so the endpoints do match. The option no failure is wrong because one hypothesis does fail. At x=1 the graph has a corner, so f is not differentiable there, and the differentiability hypothesis fails. The answer is differentiability."
+          - problem: "A function $f$ is continuous on $[1, 6]$, differentiable on $(1, 6)$, and $f(1) = f(6)$. Which statement does Rolle's theorem guarantee?"
+            answer: "a point c with f'(c)=0"
+            answer_contract: {"kind": "label", "options": [["a point c with f'(c)=0"], ["a point c with f(c)=0"], ["f is constant on [1, 6]"], ["f'(1) = f'(6)"]]}
+            solution_sketch: "List the hypotheses: f is continuous on [1,6], differentiable on (1,6), and f(1)=f(6). Rolle's theorem then gives at least one c in (1,6) with f'(c)=0. The option a point c with f(c)=0 is wrong because Rolle gives a zero of the derivative, not of the function. The option f is constant on [1, 6] is wrong because f need not be constant. The option f'(1) = f'(6) is wrong because endpoint derivatives need not be equal. The answer is a point c with f'(c)=0."
+          - problem: "Let $f(x) = x^2 - 4x$ on $[0, 4]$. Find the value $c$ in $(0, 4)$ with $f'(c) = 0$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Check that f(x)=x^2-4x is a polynomial, so it is continuous on [0,4] and differentiable on (0,4). Compute f(0)=0 and f(4)=0, so the endpoint hypothesis holds. Differentiate: f'(x)=2x-4. Set f'(x)=0: 2x-4=0, so x=2. The answer is 2."
+          - problem: "Let $f(x) = sin(x)$ on $[0, pi]$. Find the value $c$ in $(0, pi)$ with $f'(c) = 0$."
+            answer: "pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Check f(0)=0 and f(pi)=0, and sin(x) is continuous on [0,pi] and differentiable on (0,pi). Differentiate: f'(x)=cos(x). Set cos(x)=0: on (0,pi) the only solution is x=pi/2. The answer is pi/2."
+          - problem: "Let $f(x) = x^4 - 5x^2$ on $[-2, 2]$. Find the largest value $c$ in $(-2, 2)$ with $f'(c) = 0$."
+            answer: "sqrt(10)/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Check f(-2)=16-20=-4 and f(2)=16-20=-4, so the endpoints match. The function is a polynomial, so it is continuous and differentiable. Differentiate: f'(x)=4x^3-10x. Set f'(x)=0: 2x(2x^2-5)=0, so x=0 or x=sqrt(5/2) or x=-sqrt(5/2). On (-2,2), the largest value is sqrt(5/2)=sqrt(10)/2. The answer is sqrt(10)/2."
+          - problem: "Let $f(x) = x^3 - a x$ on $[0, 2]$. Find the value of $a$ that makes $f(0) = f(2)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For Rolle's theorem on [0,2], the polynomial f is continuous and differentiable, so the remaining hypothesis is f(0)=f(2). Compute f(0)=0 and f(2)=8-2a. Set 8-2a=0, so a=4. The answer is 4."
         constraints: "one hypothesis-failure example, one conceptual guarantee question"
     diagnostic_exemplar:
       problem: 'Verify that $f(x) = x^3 - 9x$ satisfies the hypotheses of Rolle''s theorem on $[0, 3]$ and find the $c$ in $(0, 3)$ with $f''(c) = 0$.'
