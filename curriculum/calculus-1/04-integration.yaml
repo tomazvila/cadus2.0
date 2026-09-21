@@ -28,6 +28,22 @@ topics:
           - problem: 'Find $\int x^5 \, dx$.'
             answer: "x^6/6 + C"
             solution_sketch: 'Raise the exponent by one and divide by the new exponent; check by differentiating.'
+          - problem: "Find the most general antiderivative of x^4."
+            answer: "x^5/5 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The object is the indefinite integral of x^4. The reverse power rule raises the exponent from 4 to 5 and divides by 5, giving x^5/5, then add the constant of integration. The answer is x^5/5 + C."
+          - problem: "Compute the indefinite integral of x^6."
+            answer: "x^7/7 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The object is the indefinite integral of x^6. The reverse power rule raises the exponent from 6 to 7 and divides by 7, giving x^7/7, then add the constant of integration. The answer is x^7/7 + C."
+          - problem: "The derivative of a function f is x^2. Find the general form of f(x)."
+            answer: "x^3/3 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The object is the antiderivative of x^2. The reverse power rule raises the exponent from 2 to 3 and divides by 3, giving x^3/3, then add the constant of integration. The answer is x^3/3 + C."
+          - problem: "Determine the most general antiderivative of x^7."
+            answer: "x^8/8 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The object is the indefinite integral of x^7. The reverse power rule raises the exponent from 7 to 8 and divides by 8, giving x^8/8, then add the constant of integration. The answer is x^8/8 + C."
         constraints: "positive integer exponents; always include + C"
       - id: kp2
         name: Antidifferentiate polynomials term by term
@@ -38,6 +54,22 @@ topics:
             solution_sketch: 'Antidifferentiate term by term; check by differentiating.'
           - problem: 'Find $\int (3x^2 + 2x) \, dx$.'
             answer: "x^3 + x^2 + C"
+          - problem: "Consider the polynomial $f(x) = 4x^3 - 6x^2 + 2$. Find the antiderivative of $f(x)$ with respect to $x$."
+            answer: "x^4 - 2x^3 + 2x + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The object is the integral of (4x^3 - 6x^2 + 2) dx. By the reverse power rule, 4x^3 integrates to x^4, -6x^2 integrates to -2x^3, and 2 integrates to 2x. Add the constant of integration: x^4 - 2x^3 + 2x + C."
+          - problem: "Find the antiderivative of $g(x) = 10x^4 + 9x^2 - 4$."
+            answer: "2x^5 + 3x^3 - 4x + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Start with the integral of (10x^4 + 9x^2 - 4) dx. The reverse power rule gives 10x^4 to 2x^5, 9x^2 to 3x^3, and -4 to -4x. Include the constant: 2x^5 + 3x^3 - 4x + C."
+          - problem: "Consider the polynomial $p(x) = 8x^3 - 12x$. Find its most general antiderivative."
+            answer: "2x^4 - 6x^2 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The integral to evaluate is the integral of (8x^3 - 12x) dx. Reverse power rule: 8x^3 gives 2x^4 and -12x gives -6x^2. Add C, so the antiderivative is 2x^4 - 6x^2 + C."
+          - problem: "Find the antiderivative of $q(x) = 12x^3 + 8x$."
+            answer: "3x^4 + 4x^2 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The full object is the integral of (12x^3 + 8x) dx. Apply the reverse power rule term by term: 12x^3 integrates to 3x^4 and 8x integrates to 4x^2. Therefore the antiderivative is 3x^4 + 4x^2 + C."
         constraints: "integer coefficients; results have integer coefficients"
       - id: kp3
         name: Rewrite radicals and negative powers first
@@ -49,9 +81,21 @@ topics:
           - problem: 'Find $\int \frac{1}{x^2} \, dx$.'
             answer: "-1/x + C"
             solution_sketch: '$x^{-2}$ antidifferentiates to $\frac{x^{-1}}{-1} = -\frac{1}{x}$.'
+          - problem: "Rewrite the integrand as a power of x and find $\\int 1/\\sqrt{x}\\,dx$."
+            answer: "2sqrt(x) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Rewrite the integrand: 1/sqrt(x) = x^(-1/2). Apply the reverse power rule: raise the exponent by one to 1/2 and divide by 1/2, so x^(1/2)/(1/2) = 2x^(1/2). The antiderivative is 2sqrt(x) + C."
           - problem: 'Find $\int x(x + 2) \, dx$.'
             answer: "x^3/3 + x^2 + C"
             solution_sketch: 'Expand first: $\int (x^2 + 2x)\,dx$.'
+          - problem: "Rewrite the integrand as a power of x and find $\\int 1/x^3\\,dx$."
+            answer: "-1/(2x^2) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Rewrite the integrand: 1/x^3 = x^(-3). Apply the reverse power rule: x^(-2)/(-2) = -1/(2x^2). The antiderivative is -1/(2x^2) + C."
+          - problem: "Rewrite each term as a power of x and find $\\int (3\\sqrt{x} - 4/x^2)\\,dx$."
+            answer: "2x^(3/2) + 4/x + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Rewrite each term: 3sqrt(x) = 3x^(1/2) and 4/x^2 = 4x^(-2). Apply the reverse power rule term by term: 3x^(3/2)/(3/2) = 2x^(3/2) and -4x^(-1)/(-1) = 4/x. The antiderivative is 2x^(3/2) + 4/x + C."
         constraints: "rewrite as powers before integrating; exponents ≠ -1"
     diagnostic_exemplar:
       problem: 'Find $\int \left(\sqrt{x} + \frac{3}{x^2}\right) dx$.'
@@ -163,6 +207,22 @@ topics:
           - problem: 'Approximate $\int_0^4 x \, dx$ with a right Riemann sum using $n = 4$.'
             answer: "10"
             solution_sketch: '$\Delta x = 1$; $1 + 2 + 3 + 4 = 10$.'
+          - problem: "Compute the right Riemann sum for $\\int_0^2 (x^2 + 1)\\,dx$ using $n = 4$ equal subintervals, and give the answer to 2 decimals."
+            answer: "5.75"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The right Riemann sum is $\\Delta x(f(0.5)+f(1)+f(1.5)+f(2))$ with $\\Delta x=0.5$. Step 1: choose the right endpoints 0.5, 1, 1.5, 2 by the right endpoint rule. Step 2: the values are 1.25, 2, 3.25, 5, so the sum is $0.5(11.5)$. The answer is 5.75."
+          - problem: "Compute the right Riemann sum for $\\int_1^3 (2x+1)\\,dx$ using $n = 4$ equal subintervals, and give the answer to 2 decimals."
+            answer: "11.00"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The right Riemann sum is $\\Delta x(f(1.5)+f(2)+f(2.5)+f(3))$ with $\\Delta x=0.5$. Step 1: choose the right endpoints 1.5, 2, 2.5, 3 by the right endpoint rule. Step 2: the values are 4, 5, 6, 7, so the sum is $0.5(22)$. The answer is 11.00."
+          - problem: "Compute the right Riemann sum for $\\int_0^3 x^2\\,dx$ using $n = 3$ equal subintervals, and give the answer to 2 decimals."
+            answer: "14.00"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The right Riemann sum is $\\Delta x(f(1)+f(2)+f(3))$ with $\\Delta x=1$. Step 1: choose the right endpoints 1, 2, 3 by the right endpoint rule. Step 2: the values are 1, 4, 9, so the sum is $1(14)$. The answer is 14.00."
+          - problem: "Compute the right Riemann sum for $\\int_0^2 (x^2 - x)\\,dx$ using $n = 4$ equal subintervals, and give the answer to 2 decimals."
+            answer: "1.25"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The right Riemann sum is $\\Delta x(f(0.5)+f(1)+f(1.5)+f(2))$ with $\\Delta x=0.5$. Step 1: choose the right endpoints 0.5, 1, 1.5, 2 by the right endpoint rule. Step 2: the values are -0.25, 0, 0.75, 2, so the sum is $0.5(2.5)$. The answer is 1.25."
         constraints: "n ≤ 5 equal subintervals; sample values give terminating decimals"
       - id: kp2
         name: Left Riemann sums
@@ -174,6 +234,22 @@ topics:
           - problem: 'Approximate $\int_0^4 x \, dx$ with a left Riemann sum using $n = 4$.'
             answer: "6"
             solution_sketch: '$0 + 1 + 2 + 3 = 6$.'
+          - problem: "Approximate $\\int_0^3 x^2 \\, dx$ with a left Riemann sum using $n = 3$. Give the sum."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The left Riemann sum rule is L = sum of f(left endpoint) times Delta x. Step 1: Delta x = (3 - 0)/3 = 1. Step 2: the left endpoints are 0, 1, and 2, so the heights are f(0)=0, f(1)=1, and f(2)=4. Step 3: L = 1*0 + 1*1 + 1*4 = 5. The left Riemann sum is 5."
+          - problem: "Approximate $\\int_0^4 x^2 \\, dx$ with a left Riemann sum using $n = 4$. Give the sum."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The left Riemann sum rule is L = sum of f(left endpoint) times Delta x. Step 1: Delta x = (4 - 0)/4 = 1. Step 2: the left endpoints are 0, 1, 2, and 3, so the heights are f(0)=0, f(1)=1, f(2)=4, and f(3)=9. Step 3: L = 1*0 + 1*1 + 1*4 + 1*9 = 14. The left Riemann sum is 14."
+          - problem: "Approximate $\\int_0^2 (x + 1) \\, dx$ with a left Riemann sum using $n = 2$. Give the sum."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The left Riemann sum rule is L = sum of f(left endpoint) times Delta x. Step 1: Delta x = (2 - 0)/2 = 1. Step 2: the left endpoints are 0 and 1, so the heights are f(0)=1 and f(1)=2. Step 3: L = 1*1 + 1*2 = 3. The left Riemann sum is 3."
+          - problem: "A car's velocity $v(t)$ in m/s is measured at $t = 0, 1, 2, 3$ seconds: $v(0)=4$, $v(1)=6$, $v(2)=5$, $v(3)=7$. Use a left Riemann sum with $n = 3$ subintervals on $[0,3]$ to estimate the distance. Give the estimate."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The left Riemann sum rule is L = sum of v(left time) times Delta t. Step 1: Delta t = (3 - 0)/3 = 1. Step 2: the left times are 0, 1, and 2, so the velocities are v(0)=4, v(1)=6, and v(2)=5. Step 3: L = 1*4 + 1*6 + 1*5 = 15. The distance estimate is 15."
         constraints: "same setups as right sums so the two can be compared"
       - id: kp3
         name: Overestimate or underestimate?

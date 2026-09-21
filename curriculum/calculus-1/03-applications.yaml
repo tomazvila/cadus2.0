@@ -2033,6 +2033,22 @@ topics:
           - problem: 'Evaluate $\lim_{x \to 0} (1 + x)^{1/x}$.'
             answer: "e"
             solution_sketch: '$\ln y = \frac{\ln(1 + x)}{x} \to 1$.'
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\left(1 + \\frac{5}{x}\\right)^{4x}$."
+            answer: "e^20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Let $y = (1 + 5/x)^{4x}$ and take ln, using the power property to get $\\ln y = 4x \\ln(1 + 5/x)$. Step 2: Write this as $4\\ln(1 + 5/x)/(1/x)$, a 0/0 form, and apply L'Hopital's rule; it gives 20. Step 3: Exponentiate both sides to undo the logarithm. The limit is e^20."
+          - problem: "Evaluate $\\lim_{x \\to 0} (1 + 7x)^{1/x}$."
+            answer: "e^7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Let $y = (1 + 7x)^{1/x}$ and take ln, so $\\ln y = \\ln(1 + 7x)/x$. Step 2: This is a 0/0 form, and L'Hopital's rule gives $7/(1 + 7x)$, which tends to 7. Step 3: Exponentiate both sides to remove the logarithm. The limit is e^7."
+          - problem: "Evaluate $\\lim_{x \\to 0} (1 - 4x)^{1/x}$."
+            answer: "e^(-4)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Let $y = (1 - 4x)^{1/x}$ and take ln, so $\\ln y = \\ln(1 - 4x)/x$. Step 2: This is a 0/0 form; L'Hopital's rule gives $-4/(1 - 4x)$, which tends to -4. Step 3: Exponentiate both sides to undo the logarithm. The limit is e^(-4)."
+          - problem: "Evaluate $\\lim_{x \\to \\infty} \\left(1 + \\frac{8}{x}\\right)^{3x}$."
+            answer: "e^24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Let $y = (1 + 8/x)^{3x}$ and take ln, using the power property to get $\\ln y = 3x \\ln(1 + 8/x)$. Step 2: Rewrite this as $3\\ln(1 + 8/x)/(1/x)$, a 0/0 form, and apply L'Hopital's rule; it gives 24. Step 3: Exponentiate both sides to undo the logarithm. The limit is e^24."
         constraints: "take ln, evaluate the resulting 0/0 or ∞/∞ limit, then exponentiate"
       - id: kp3
         name: 0^0 and ∞^0 forms
@@ -2044,6 +2060,22 @@ topics:
           - problem: 'Evaluate $\lim_{x \to \infty} x^{1/x}$.'
             answer: "1"
             solution_sketch: '$\ln y = \frac{\ln x}{x} \to 0$, so $y \to 1$.'
+          - problem: "Evaluate the limit as x approaches 0 from the right of x^(1/ln(x))."
+            answer: "e"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let y = x^(1/ln(x)). Step 1 (logarithm properties): ln(y) = (1/ln(x))(ln(x)) = 1. Step 2 (exponentiate at the end): since exp is continuous, the limit of y is e^1 = e."
+          - problem: "Evaluate the limit as x approaches 0 from the right of x^(2/ln(x))."
+            answer: "e^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let y = x^(2/ln(x)). Step 1 (logarithm properties): ln(y) = (2/ln(x))(ln(x)) = 2. Step 2 (exponentiate at the end): since exp is continuous, the limit of y is e^2."
+          - problem: "Evaluate the limit as x approaches infinity of x^(1/ln(x))."
+            answer: "e"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let y = x^(1/ln(x)). Step 1 (logarithm properties): ln(y) = (1/ln(x))(ln(x)) = 1 for x > 1. Step 2 (exponentiate at the end): the limit of y is e^1 = e."
+          - problem: "Evaluate the limit as x approaches infinity of x^(-1/ln(x))."
+            answer: "1/e"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let y = x^(-1/ln(x)). Step 1 (logarithm properties): ln(y) = (-1/ln(x))(ln(x)) = -1 for x > 1. Step 2 (exponentiate at the end): the limit of y is e^(-1) = 1/e."
         constraints: "answers are e^L for a clean L (often 0, giving 1); always exponentiate at the end"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to \infty} \left(1 + \frac{3}{x}\right)^x$.'
