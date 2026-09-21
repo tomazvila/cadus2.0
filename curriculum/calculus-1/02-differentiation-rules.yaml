@@ -1230,6 +1230,22 @@ topics:
             answer: "1/8"
           - problem: 'Given $g(-1) = 4$ and $g''(-1) = 3$, find $(g^{-1})''(4)$.'
             answer: "1/3"
+          - problem: "Given f(3) = 11 and f'(3) = 4, find (f^{-1})'(11)."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inverse derivative formula gives (f^{-1})'(11) = 1/f'(3). The table gives f(3) = 11, so the output 11 matches input 3, and f'(3) = 4. Therefore (f^{-1})'(11) = 1/4."
+          - problem: "Given g(5) = -2 and g'(5) = 6, find (g^{-1})'(-2)."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inverse derivative formula gives (g^{-1})'(-2) = 1/g'(5). The table gives g(5) = -2, so the output -2 matches input 5, and g'(5) = 6. Therefore (g^{-1})'(-2) = 1/6."
+          - problem: "Given h(5) = 1 and h'(5) = 2/3, find (h^{-1})'(1)."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inverse derivative formula gives (h^{-1})'(1) = 1/h'(5). The table gives h(5) = 1, so the output 1 matches input 5, and h'(5) = 2/3. The reciprocal of 2/3 is 3/2, so (h^{-1})'(1) = 3/2."
+          - problem: "Given k(4) = -6 and k'(4) = 7, find (k^{-1})'(-6)."
+            answer: "1/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inverse derivative formula gives (k^{-1})'(-6) = 1/k'(4). The table gives k(4) = -6, so the output -6 matches input 4, and k'(4) = 7. Therefore (k^{-1})'(-6) = 1/7."
         constraints: "table gives f and f' at one point; the student inverts through the OUTPUT value"
       - id: kp3
         name: Where the formula comes from
@@ -1243,6 +1259,18 @@ topics:
             solution_sketch: '$f^{-1}(8) = 2$ and $f''(2) = 12$.'
           - problem: 'Let $f(x) = x^3 + x$, so $f(2) = 10$. Find $(f^{-1})''(10)$.'
             answer: "1/13"
+          - problem: "Let f(x) = x^2 + 7 with x > 0. Find (f^{-1})'(16) as a fraction."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the inverse-function formula from the chain rule, (f^{-1})'(b) = 1/f'(a) where f(a) = b. Here f(3) = 16, so the pre-image is a = 3. The power rule gives f'(x) = 2x, hence f'(3) = 6. The reciprocal is 1/6."
+          - problem: "Let f(x) = x^3 + 2x. Find (f^{-1})'(12) as a fraction."
+            answer: "1/14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the inverse-function formula from the chain rule, (f^{-1})'(b) = 1/f'(a) when f(a) = b. Since f(2) = 12, the pre-image is a = 2. The sum and power rules give f'(x) = 3x^2 + 2, so f'(2) = 14. The reciprocal is 1/14."
+          - problem: "Let f(x) = x^5. Find (f^{-1})'(32) as a fraction."
+            answer: "1/80"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the inverse-function formula from the chain rule, (f^{-1})'(b) = 1/f'(a) when f(a) = b. Since f(2) = 32, the pre-image is a = 2. The power rule gives f'(x) = 5x^4, so f'(2) = 80. The reciprocal is 1/80."
         constraints: "evaluate at the correct pre-image; reciprocal answers are unit fractions"
     diagnostic_exemplar:
       problem: 'Let $f(x) = x^3$. Find $(f^{-1})''(27)$.'
@@ -1286,6 +1314,18 @@ topics:
             answer: "1/(1 + x^2)"
           - problem: 'Differentiate $f(x) = \arccos x$.'
             answer: "-1/√(1 - x^2)"
+          - problem: "Find the derivative of $f(x) = 5\\arctan x$."
+            answer: "5/(1+x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 5 arctan x. By the constant multiple rule, f'(x) = 5 times the derivative of arctan x. The standard arctan formula gives d/dx arctan x = 1/(1+x^2). Multiplying gives f'(x) = 5/(1+x^2)."
+          - problem: "Let $f(x) = \\arcsin x$. Find $f'(3/5)$ as a fraction."
+            answer: "5/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The arcsin derivative formula gives f'(x) = 1/sqrt(1-x^2). At x = 3/5 the inside is 1 - 9/25 = 16/25, whose square root is 4/5. So f'(3/5) = 1/(4/5), which is 5/4."
+          - problem: "A curve has equation $y = \\arctan x$. Find the slope of its tangent line at $x = 1$, as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The arctan derivative formula gives dy/dx = 1/(1+x^2). At x = 1 the slope is 1/(1+1). So the slope of the tangent line is 1/2."
         constraints: "the three standard formulas; arccos is the negative of arcsin's derivative"
       - id: kp2
         name: Inverse trig with the chain rule
@@ -1299,20 +1339,44 @@ topics:
           - problem: 'Differentiate $f(x) = \arctan(\sqrt{x})$.'
             answer: "1/(2√x (1 + x))"
             solution_sketch: '$\frac{1}{1 + x} \cdot \frac{1}{2\sqrt{x}}$.'
+          - problem: "Let $y = \\arctan(u)$ with $u = 6x$. Find $\\frac{dy}{dx}$ as a function of $x$."
+            answer: "6/(1+36x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: y = arctan(u) with inner u = 6x. Step 1, arctan rule: dy/du = 1/(1+u^2). Step 2, chain rule: multiply by the inner rate du/dx = 6, and the inner square lands inside the formula as (6x)^2 = 36x^2. The derivative is 6/(1+36x^2)."
+          - problem: "Let $g(x) = \\arctan(x^2)$. Find $g'(x)$ as a function of $x$."
+            answer: "2x/(1+x^4)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: g(x) = arctan(x^2) with inner u = x^2. Step 1, arctan rule: the outer rate is 1/(1+u^2) = 1/(1+(x^2)^2). Step 2, chain rule with the power rule for the inner rate: u' = 2x. Step 3, the inner square lands inside the formula: (x^2)^2 = x^4. The derivative is 2x/(1+x^4)."
+          - problem: "Let $f(x) = \\arcsin(3x)$. Its derivative has the form $f'(x) = \\frac{3}{\\sqrt{1 - kx^2}}$ for some constant $k$. Find $k$."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = arcsin(3x) with inner u = 3x. Step 1, arcsin rule with the chain rule: f'(x) = 3/sqrt(1-(3x)^2), where the inner square lands inside the formula. Step 2, expand the inner square: (3x)^2 = 9x^2, so f'(x) = 3/sqrt(1-9x^2). Step 3, compare with the given form 3/sqrt(1-kx^2): matching the constants gives k = 9. The constant is 9."
         constraints: "inner function bx, x^2, or √x; the inner square lands inside the formula"
       - id: kp3
         name: Products and evaluation
         key_prerequisites: [chain-rule, inverse-trig-functions]
         exemplars:
-          - problem: 'Differentiate $f(x) = x \arctan x$.'
-            answer: "arctan x + x/(1 + x^2)"
-            answer_contract: {kind: none}
-            solution_sketch: "arctan x + x/(1 + x^2)"
           - problem: 'For $f(x) = \arcsin x$, find $f''(1/2)$.'
             answer: "2√3/3"
             solution_sketch: '$\frac{1}{\sqrt{1 - 1/4}} = \frac{1}{\sqrt{3}/2} = \frac{2}{\sqrt{3}} = \frac{2\sqrt{3}}{3}$.'
           - problem: 'Find the slope of $y = \arctan x$ at $x = 1$.'
             answer: "1/2"
+          - problem: "Let f(x) = x atan(x). Find f'(x)."
+            answer: "atan(x)+x/(1+x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the full object f(x) = x atan(x). Step 1: the product rule gives f'(x) = 1*atan(x) + x*(derivative of atan(x)). Step 2: the inverse tangent rule gives derivative of atan(x) = 1/(1+x^2). Step 3: combine the terms to get f'(x) = atan(x) + x/(1+x^2). The final answer is atan(x)+x/(1+x^2)."
+          - problem: "Let f(x) = x^2 atan(x). Find f'(x)."
+            answer: "2x atan(x)+x^2/(1+x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the full object f(x) = x^2 atan(x). Step 1: the product rule gives f'(x) = 2x*atan(x) + x^2*(derivative of atan(x)). Step 2: the inverse tangent rule gives derivative of atan(x) = 1/(1+x^2). Step 3: combine the terms to get f'(x) = 2x atan(x) + x^2/(1+x^2). The final answer is 2x atan(x)+x^2/(1+x^2)."
+          - problem: "Let f(x) = x asin(x). Find f'(sqrt(2)/2). Give the answer as a rationalized exact value."
+            answer: "pi/4+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full object f(x) = x asin(x). Step 1: the product rule with the inverse sine rule gives f'(x) = asin(x) + x/sqrt(1-x^2). Step 2: at x = sqrt(2)/2 the value 1-x^2 equals 1/2, so sqrt(1-x^2) = sqrt(2)/2, and x/sqrt(1-x^2) = 1. Step 3: asin(sqrt(2)/2) = pi/4, so f'(sqrt(2)/2) = pi/4 + 1. The final answer is pi/4+1."
+          - problem: "Let f(x) = x acos(x). Find f'(1/2). Give the answer as a rationalized exact value."
+            answer: "pi/3-sqrt(3)/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full object f(x) = x acos(x). Step 1: the product rule with the inverse cosine rule gives f'(x) = acos(x) - x/sqrt(1-x^2). Step 2: at x = 1/2 the value 1-x^2 equals 3/4, so sqrt(1-x^2) = sqrt(3)/2, and x/sqrt(1-x^2) = (1/2)/(sqrt(3)/2) = sqrt(3)/3. Step 3: acos(1/2) = pi/3, so f'(1/2) = pi/3 - sqrt(3)/3. The final answer is pi/3-sqrt(3)/3."
         constraints: "evaluation points where 1 - x² or 1 + x² is a clean value; rationalized exact answers"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x \arctan(2x)$.'
@@ -1373,6 +1437,22 @@ topics:
           - problem: 'Use logarithmic differentiation on $y = x^2\sqrt{x + 1}$ (answer may be left in $y \cdot (\ldots)$ form).'
             answer: "x^2 √(x + 1) · (2/x + 1/(2(x + 1)))"
             solution_sketch: '$\ln y = 2\ln x + \frac{1}{2}\ln(x+1)$; differentiate and multiply by $y$.'
+          - problem: "Let y = x^4 (x + 4)^3. Use logarithmic differentiation to find its derivative. Give dy/dx as a function of x."
+            answer: "x^3(x+4)^2(7x+16)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let y = x^4 (x + 4)^3. Take logarithms: ln(y) = 4 ln(x) + 3 ln(x + 4) by log laws. Differentiate implicitly: y'/y = 4/x + 3/(x + 4) by the derivative of ln(x). Multiply by y and factor: y' = x^4 (x + 4)^3 (4/x + 3/(x + 4)) = x^3 (x + 4)^2 (7x + 16). The derivative is x^3(x+4)^2(7x+16)."
+          - problem: "Let y = sqrt(x) (x + 3)^2. Use logarithmic differentiation to find its derivative. Give dy/dx as a function of x."
+            answer: "(x+3)(5x+3)/(2sqrt(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let y = sqrt(x) (x + 3)^2. Take logarithms: ln(y) = (1/2) ln(x) + 2 ln(x + 3) by log laws. Differentiate implicitly: y'/y = 1/(2x) + 2/(x + 3) by the derivative of ln(x). Multiply by y: y' = sqrt(x)(x + 3)^2 (1/(2x) + 2/(x + 3)). Simplify to (x + 3)(5x + 3)/(2 sqrt(x)). The derivative is (x+3)(5x+3)/(2sqrt(x))."
+          - problem: "Let y = x^2 / sqrt(x + 2). Use logarithmic differentiation to find its derivative. Give dy/dx as a function of x."
+            answer: "x(3x+8)/(2(x+2)sqrt(x+2))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let y = x^2 / sqrt(x + 2). Take logarithms: ln(y) = 2 ln(x) - (1/2) ln(x + 2) by log laws. Differentiate implicitly: y'/y = 2/x - 1/(2(x + 2)) by the derivative of ln(x). Multiply by y and simplify: y' = x^2/sqrt(x + 2)*(2/x - 1/(2(x + 2))) = x(3x + 8)/(2(x + 2) sqrt(x + 2)). The derivative is x(3x+8)/(2(x+2)sqrt(x+2))."
+          - problem: "Let y = x^2 (x + 3)(x + 6)^3. Use logarithmic differentiation to find its derivative. Give dy/dx as a function of x."
+            answer: "3x(x+6)^2(2x+3)(x+4)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let y = x^2 (x + 3)(x + 6)^3. Take logarithms: ln(y) = 2 ln(x) + ln(x + 3) + 3 ln(x + 6) by log laws. Differentiate implicitly: y'/y = 2/x + 1/(x + 3) + 3/(x + 6) by the derivative of ln(x). Multiply by y and factor: y' = x^2(x + 3)(x + 6)^3(2/x + 1/(x + 3) + 3/(x + 6)) = 3x(x + 6)^2(2x + 3)(x + 4). The derivative is 3x(x+6)^2(2x+3)(x+4)."
         constraints: "2-3 factors with integer powers or square roots; sum-of-fractions form times y accepted"
       - id: kp3
         name: Choose the right tool
