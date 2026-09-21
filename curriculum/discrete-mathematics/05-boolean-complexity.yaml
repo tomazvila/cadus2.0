@@ -319,14 +319,30 @@ topics:
         name: "Omega, Theta, and the standard hierarchy"
         key_prerequisites: [big-o-notation]
         exemplars:
-          - problem: 'Is $n^2 + n$ in $\Theta(n^2)$? Justify with both bounds.'
-            answer: 'Yes'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'Yes: $n^2 \le n^2 + n \le 2n^2$ for $n \ge 1$, so it is both $\Omega(n^2)$ and $O(n^2)$ — sandwich between $1 \cdot n^2$ and $2 \cdot n^2$.'
-          - problem: 'Order by growth rate: $n \log n$, $2^n$, $n^2$, $\log n$, $n$.'
-            answer: '$\log n \prec n \prec n\log n \prec n^2 \prec 2^n$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Logs below polynomials below exponentials; $n \log n$ sits between $n$ and $n^2$.'
+          - problem: "Let f(n) = n^2 + 4n and g(n) = n^2. State whether f is Theta(g), and give the smallest integer C with f(n) <= C g(n) for every n >= 1."
+            answer: "verdict = theta; c = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["theta"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Write f(n) = n^2 + 4n and g(n) = n^2. Upper bound: f(n) <= C n^2 requires C >= 1 + 4/n, whose largest value occurs at n = 1, so the smallest integer is C = 5. Lower bound: n^2 <= n^2 + 4n for every n >= 1, so f is Omega(g) as well as O(g), which gives Theta(g). Both bounds hold, so verdict = theta; c = 5."
+          - problem: "Consider the five functions log n, n, n log n, n^2, and 2^n. Give the position of n log n when the five functions are ordered from slowest to fastest growth, where the slowest has position 1."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the five functions: log n, n, n log n, n^2, 2^n. Apply the standard hierarchy: the logarithm grows slowest, then the linear term, then n log n, then the polynomial n^2, and the exponential 2^n grows fastest. The slowest-to-fastest order is log n, n, n log n, n^2, 2^n, so n log n sits in position 3. The answer is 3."
+          - problem: "How many of the functions log n, sqrt(n), n log n, n^2, and 2^n grow strictly slower than n^2 when n is large?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compare each function with n^2 using the standard hierarchy. The functions log n, sqrt(n), and n log n all grow strictly slower than n^2, since roots and logarithmic factors stay below any positive power of n. The function n^2 itself is not strictly slower, and the exponential 2^n grows faster. So exactly 3 of the five functions grow strictly slower than n^2. The count is 3."
+          - problem: "Let f(n) = n^2 + sqrt(n) and g(n) = n^2. Determine whether f is Theta(g), and give the smallest integer C with f(n) <= C g(n) for every n >= 1."
+            answer: "verdict = theta; c = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["theta"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Write f(n) = n^2 + sqrt(n) and g(n) = n^2. Upper bound: f(n)/n^2 = 1 + 1/n^(3/2) is largest at n = 1, where it equals 2, so the smallest integer C is 2. Lower bound: n^2 <= n^2 + sqrt(n) for every n >= 1, so f is Omega(g) as well as O(g), hence Theta(g). Both bounds hold, so verdict = theta; c = 2."
+          - problem: "Which of the functions below is in Theta(n^2) for large n?"
+            answer: "n^2 + 3n"
+            answer_contract: {"kind": "label", "options": [["n^2 + 3n"], ["n^3"], ["n log n"], ["2^n"]]}
+            solution_sketch: "The class Theta(n^2) needs both an O(n^2) upper bound and an Omega(n^2) lower bound. The option n^3 fails O(n^2) because cubics outgrow quadratics. The option n log n has the O bound but fails Omega(n^2), because (n log n)/n^2 tends to 0. The option 2^n fails O(n^2), since exponentials outgrow polynomials. For n^2 + 3n we have n^2 <= n^2 + 3n <= 4n^2 for every n >= 1, so both bounds hold. The correct option is n^2 + 3n."
+          - problem: "How many of the functions n, n log n, n^3, 2^n, and n factorial grow strictly faster than 2^n when n is large? Give the count."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the five functions: n, n log n, n^3, 2^n, n!. By the standard hierarchy, n, n log n, and the polynomial n^3 all grow strictly slower than the exponential 2^n. The factorial n! outgrows every exponential, since n! = 1 * 2 * ... * n includes n factors each at least 2 in the tail. So only n! grows strictly faster than 2^n. The count is 1."
         constraints: "order 3-5 functions from {log n, sqrt(n), n, n log n, n^2, n^3, 2^n, n!}; Theta claims need both O and Omega"
       - id: kp2
         name: "Logarithm bases and exponential gaps"
