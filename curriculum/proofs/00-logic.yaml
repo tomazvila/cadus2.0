@@ -188,14 +188,30 @@ topics:
         name: "Mathematical or is inclusive"
         key_prerequisites: [propositions-and-truth-values]
         exemplars:
-          - problem: 'Is the proposition "$6$ is even or $6$ is divisible by $3$" true?'
-            answer_contract: {kind: none}
-            answer: 'Yes; both disjuncts are true, and mathematical "or" is inclusive.'
-            solution_sketch: '$P \lor Q$ is true when at least one disjunct holds — including when both do. Here both hold, so the disjunction is true.'
-          - problem: 'For $x = 0$, is "$x \ge 0$ or $x \le 0$" true?'
-            answer_contract: {kind: none}
-            answer: 'Yes; at $x = 0$ both parts are true, and inclusive or allows that.'
-            solution_sketch: 'Both $0 \ge 0$ and $0 \le 0$ hold; an inclusive disjunction with both sides true is true.'
+          - problem: "Let P be the statement '12 mod 5 = 2' and Q the statement '12 mod 4 = 0'. Determine the truth value of the disjunction P or Q, giving 1 for true and 0 for false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, inclusive-or rule: the disjunction P or Q is true when at least one disjunct is true, and it is still true when both are true. Step 2, check P: 12 mod 5 = 2, so P is true. Step 3, check Q: 12 mod 4 = 0, so Q is true as well. Both disjuncts are true, and the inclusive reading keeps the disjunction true. The truth value is 1."
+          - problem: "For the statements P: 15 mod 2 = 0 and Q: 15 mod 5 = 0, give the truth value of the disjunction P or Q as 1 for true and 0 for false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, inclusive-or rule: one true disjunct is enough to make P or Q true. Step 2, check P: 15 mod 2 = 1, so P is false. Step 3, check Q: 15 mod 5 = 0, so Q is true. Since at least one disjunct holds, the disjunction is true. The truth value is 1."
+          - problem: "Check the statements P: 7 mod 2 = 0 and Q: 7 mod 3 = 0. What is the truth value of the disjunction P or Q, written as 1 for true and 0 for false?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, inclusive-or rule: the disjunction is false only when both disjuncts are false. Step 2, check P: 7 mod 2 = 1, so P is false. Step 3, check Q: 7 mod 3 = 1, so Q is false. Neither disjunct holds, so the disjunction is false. The truth value is 0."
+          - problem: "Consider the truth table of the disjunction P or Q over the four rows T-T, T-F, F-T and F-F, counting the row where both P and Q are true as well. How many rows of this truth table have the value 1?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, inclusive-or rule: P or Q is true in every row with at least one true disjunct, including the row T-T where both hold. Step 2, mark the true rows: T-T gives 1, T-F gives 1, F-T gives 1, and only F-F gives 0. Step 3, count the rows of value 1: there are 3. The count of true rows is 3."
+          - problem: "Treat the or as inclusive, so a number satisfying both parts is counted once. How many of the integers from 1 to 10 make the statement 'n mod 2 = 0 or n mod 3 = 0' true?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, split by disjunct: the even numbers are 2, 4, 6, 8, 10, which gives 5 values, and the multiples of 3 are 3, 6, 9, which gives 3 values. Step 2, inclusive-or rule: the overlap, the number 6 that satisfies both disjuncts, is counted only once. Step 3, combine: 5 + 3 - 1 = 7 integers satisfy the disjunction. The count is 7."
+          - problem: "Treat the or as inclusive when you decide which numbers fail. How many of the integers from 1 to 12 make the statement 'n mod 2 = 0 or n mod 3 = 0' false?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, inclusive-or rule: the disjunction is false only when both disjuncts fail, that is, when n is odd and not a multiple of 3. Step 2, list the odd numbers from 1 to 12: 1, 3, 5, 7, 9, 11. Step 3, remove the multiples of 3 among them, namely 3 and 9, leaving 1, 5, 7, 11. Counting these failing values gives 4. The count is 4."
         constraints: "emphasize that both disjuncts true still makes the disjunction true"
     diagnostic_exemplar:
       problem: 'Let $P$: "$6$ is even", $Q$: "$6$ is divisible by $3$", $R$: "$6$ is prime". Give the truth values of $P \land Q$, $P \lor Q$ and $\neg R$, and say whether the truth of $P \lor Q$ depends on reading "or" inclusively.'
@@ -228,14 +244,30 @@ topics:
         name: "Conditional and biconditional"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: 'Translate "if $n$ is divisible by $4$ then $n$ is even" using $D$ and $V$.'
-            answer_contract: {kind: none}
-            answer: '$D \to V$'
-            solution_sketch: '"if ... then ..." is the conditional $\to$ with hypothesis $D$ and conclusion $V$: $D \to V$.'
-          - problem: 'Translate "$n$ is even if and only if $n$ is divisible by $2$" using $E$ and $T$.'
-            answer_contract: {kind: none}
-            answer: '$E \leftrightarrow T$'
-            solution_sketch: '"if and only if" is the biconditional $\leftrightarrow$, giving $E \leftrightarrow T$.'
+          - problem: "Let P be the statement 'n is divisible by 4' and Q be the statement 'n is divisible by 6'. Consider the conditional P -> Q. State the role of P in this conditional, and give how many of the values n = 4, 6, 8, 12 make the conditional true."
+            answer: "role = hypothesis; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["hypothesis"], ["conclusion"]]}, "name": "role"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The full object is the conditional P -> Q with P: n is divisible by 4 and Q: n is divisible by 6. Step 1: by the definition of the conditional, the part linked to 'if' is the hypothesis, so P has the role hypothesis; the option conclusion is wrong because it names the part linked to 'then'. Step 2: evaluate P -> Q for each n by the conditional truth table: n = 4 gives true implies false, so false; n = 6 gives false implies true, so true; n = 8 gives true implies false, so false; n = 12 gives true implies true, so true. Step 3: two of the four values make the conditional true. The answer is role = hypothesis; count = 2."
+          - problem: "For the formula E <-> D, how many rows of its truth table have value true? Give the number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the biconditional E <-> D. Step 1: list the four truth assignments for E and D. Step 2: by the truth table for the biconditional, E <-> D is true when E and D have the same truth value. Step 3: the matching rows are TT and FF, so there are 2 true rows. The answer is 2."
+          - problem: "Let P be the statement 'n is a multiple of 3' and Q be the statement 'n is a multiple of 6'. Consider the conditional P -> Q. State the role of Q in this conditional, and give how many of the values n = 6, 9, 12, 5 make the conditional true."
+            answer: "role = conclusion; count = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["hypothesis"], ["conclusion"]]}, "name": "role"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The full object is the conditional P -> Q with P: n is a multiple of 3 and Q: n is a multiple of 6. Step 1: by the definition of the conditional, the part linked to 'then' is the conclusion, so Q has the role conclusion; the option hypothesis is wrong because it names the part linked to 'if'. Step 2: evaluate P -> Q for each n by the conditional truth table: n = 6 gives true implies true, so true; n = 9 gives true implies false, so false; n = 12 gives true implies true, so true; n = 5 gives false implies false, so true. Step 3: three of the four values make the conditional true. The answer is role = conclusion; count = 3."
+          - problem: "For the formula P -> Q, how many rows of its truth table have value true? Give the number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the conditional P -> Q. Step 1: list the four truth assignments for P and Q. Step 2: by the truth table for the conditional, P -> Q is false only on the row P true and Q false. Step 3: the other three rows are true. The answer is 3."
+          - problem: "For the formula (P -> Q) <-> R, how many rows of its truth table have value true? Give the number."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is (P -> Q) <-> R. Step 1: build the inner conditional P -> Q by its truth table. Step 2: combine that column with R by the biconditional truth table. Step 3: the true rows are PQR = 001, 011, 100, and 111, so the count is 4. The answer is 4."
+          - problem: "For the formula P -> (Q <-> R), how many rows of its truth table have value true? Give the number."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is P -> (Q <-> R). Step 1: build the inner biconditional Q <-> R by its truth table. Step 2: use the conditional truth table for the outer arrow. Step 3: the only false rows are PQR = 101 and 110, so the count is 6. The answer is 6."
         constraints: "identify hypothesis and conclusion; distinguish $\\to$ from $\\leftrightarrow$"
       - id: kp2
         name: "Translating compound sentences into symbols"
