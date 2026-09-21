@@ -33,6 +33,14 @@ topics:
           - problem: 'A cafe offers $3$ sizes of coffee, and each comes with a choice of $2$ syrups. List the outcomes systematically; how many are there?'
             answer: "6"
             solution_sketch: 'Fix the size, run through the syrups: $3 \cdot 2 = 6$ outcomes.'
+          - problem: "A car comes in 3 colors and 3 trim levels. In the systematic list that fixes the color and runs through the trim levels, how many outcomes are there?"
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (systematic listing rule): fix the first color and list the 3 trim levels. Step 2: repeat this for the other 2 colors, giving 3 groups of 3 outcomes. Step 3: add the groups. The answer is 9."
+          - problem: "A spinner shows 1, 2, 3 and then a coin is flipped. In the systematic list that fixes the spinner result and runs through H then T, which outcome is fifth?"
+            answer: "3H"
+            answer_contract: {"kind": "label", "options": [["1H"], ["2T"], ["3H"], ["3T"]]}
+            solution_sketch: "Step 1 (systematic listing rule): fix spinner 1; the coin gives 1H, 1T at positions 1 and 2. Step 2: fix spinner 2; the coin gives 2H, 2T at positions 3 and 4. Step 3: fix spinner 3; the first coin outcome is 3H at position 5. The wrong options are 1H, the first outcome; 2T, the fourth outcome; and 3T, the sixth outcome. The answer is 3H."
         constraints: "2 stages with at most 4 options each so the full list stays under 12 outcomes"
       - id: kp2
         name: "Counting leaves of a tree diagram"
@@ -50,6 +58,14 @@ topics:
           - problem: 'A tree diagram has $4$ first-level branches, each splitting into $2$ branches, each of those splitting into $2$. How many leaves?'
             answer: "16"
             solution_sketch: '$4 \cdot 2 \cdot 2 = 16$.'
+          - problem: "A car can be ordered with $3$ exterior colors. Each color offers $2$ engine choices, and each engine offers $3$ interior styles. How many leaves does the tree diagram for these choices have?"
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiplication principle: multiply the branch counts at each level. The counts are $3$, $2$, and $3$, so $3 \\cdot 2 \\cdot 3 = 18$. The tree has 18 leaves."
+          - problem: "A cafe menu builds a drink in stages: $4$ cup sizes, then $3$ milk options, then $2$ syrup options. How many leaves does a tree diagram of the drink choices have?"
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiplication principle: multiply the branch counts at each level. The counts are $4$, $3$, and $2$, so $4 \\cdot 3 \\cdot 2 = 24$. The tree has 24 leaves."
         constraints: "2-3 levels; branch counts 2-4; leaves at most 24"
       - id: kp3
         name: "Outcomes of two dice"
@@ -67,6 +83,14 @@ topics:
           - problem: 'Two dice are rolled. How many outcomes have the two numbers equal?'
             answer: "6"
             solution_sketch: 'List them: $(1,1), (2,2), (3,3), (4,4), (5,5), (6,6)$.'
+          - problem: "Two dice are rolled with order recorded. How many outcomes give a total of 7?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List all ordered pairs with sum 7: (1,6), (2,5), (3,4), (4,3), (5,2), (6,1). That is six outcomes. The answer is 6."
+          - problem: "A red die and a blue die are rolled. How many outcomes have the two numbers adding to 3?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the ordered pairs that add to 3: (1,2) and (2,1). There are two such outcomes. The answer is 2."
         constraints: "standard six-sided dice; target sums between 3 and 7 so listing stays short"
     diagnostic_exemplar:
       problem: 'Two dice are rolled (order matters). How many outcomes have the numbers summing to $6$?'
@@ -111,6 +135,14 @@ topics:
           - problem: 'You can choose one of $8$ tops and one of $4$ skirts. How many outfits are possible?'
             answer: "32"
             solution_sketch: '$8 \times 4 = 32$ outfits.'
+          - problem: "A cafe has 6 types of bread and 8 fillings. How many different sandwiches with one bread and one filling can be made?"
+            answer: "48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the multiplication principle because the bread choice and the filling choice are independent. Step 2: Multiply the number of options: 6 times 8 = 48. The number of sandwiches is 48."
+          - problem: "A deli offers 6 types of bread and some cheeses. The total number of bread-cheese pairs is 42. How many cheeses are there?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the multiplication principle; the number of pairs is 6 times the number of cheeses. Step 2: Solve 6 * c = 42 by division, so c = 7. The number of cheeses is 7."
         constraints: "two independent stages with 2-9 options each"
       - id: kp2
         name: "Multi-stage choices and codes"
@@ -122,12 +154,20 @@ topics:
           - problem: 'How many $3$-digit numbers ($100$-$999$) have no repeated digit?'
             answer: "648"
             solution_sketch: 'First digit: $9$ choices ($1$-$9$); second: $9$ (anything but the first); third: $8$. $9 \cdot 9 \cdot 8 = 648$.'
+          - problem: "A code has 4 stages: first a letter from A-F, then three digits from 0-9. Repetition is allowed. How many different codes are possible?"
+            answer: "6000"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The code has four stages: one letter from A-F and three digits from 0-9, with repetition allowed. By the multiplication principle, multiply the choices: 6 * 10 * 10 * 10. Compute 6 * 1000 = 6000, so the answer is 6000."
           - problem: 'How many $3$-digit PINs are possible if each digit can be $0$-$9$?'
             answer: "1000"
             solution_sketch: '$10 \cdot 10 \cdot 10 = 10^3 = 1000$.'
           - problem: 'How many $2$-letter codes from A-Z are possible if letters may repeat?'
             answer: "676"
             solution_sketch: 'Repetitions allowed means $26$ choices in each slot: $26 \cdot 26 = 676$.'
+          - problem: "A password has 4 distinct letters chosen from A-H, and order matters. No letter may repeat. How many passwords are possible?"
+            answer: "1680"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The password has four stages with 8, 7, 6, and 5 choices because no letter may repeat. By the multiplication principle, multiply the choices: 8 * 7 * 6 * 5. Compute 8 * 7 = 56, 56 * 6 = 336, and 336 * 5 = 1680, so the answer is 1680."
         constraints: "3-4 stages; answers below 20000; repetition allowed or forbidden stated explicitly"
       - id: kp3
         name: "Counting with restrictions"
@@ -145,6 +185,14 @@ topics:
           - problem: 'How many $3$-digit numbers ($100$-$999$) have all even digits?'
             answer: "100"
             solution_sketch: 'First digit: $4$ choices ($2, 4, 6, 8$); each other digit: $5$ choices ($0, 2, 4, 6, 8$). $4 \cdot 5 \cdot 5 = 100$.'
+          - problem: "How many 3-digit odd numbers are there from 100 to 999?"
+            answer: "450"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Count the restricted units slot first: 5 choices (1, 3, 5, 7, 9). Then the hundreds slot has 9 choices (1 through 9), and the tens slot has 10 choices (0 through 9). By the multiplication principle, the total is 9 * 10 * 5 = 450. The answer is 450."
+          - problem: "How many 5-letter codes use the letters A, B, C, D, E, F with no letter repeated?"
+            answer: "720"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Count the first slot: 6 choices (A through F). Each next slot loses one letter, so the choices are 5, 4, 3, and 2. By the multiplication principle, the total is 6 * 5 * 4 * 3 * 2 = 720. The answer is 720."
         constraints: "one restriction (no repeats, or a fixed parity/position); count the restricted slot first"
     diagnostic_exemplar:
       problem: 'How many $3$-letter codes use the letters A-F with no letter repeated?'

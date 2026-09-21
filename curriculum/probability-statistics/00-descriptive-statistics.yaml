@@ -114,6 +114,14 @@ topics:
           - problem: 'A frequency table lists values $2, 4, 6, 8$ with frequencies $3, 5, 1, 6$. How many data values are there in total?'
             answer: "15"
             solution_sketch: 'Add the frequencies: $3 + 5 + 1 + 6 = 15$.'
+          - problem: "The data 3, 5, 3, 1, 5, 5, 3, 1 is tallied into a frequency table. What is the frequency of the value 5?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Tally the list by counting occurrences of each value: 3 appears 3 times, 5 appears 3 times, and 1 appears 2 times. Checking the value 5 specifically, it occurs at three positions in the list. The frequency of the value 5 is 3."
+          - problem: "A frequency table lists the values 1, 2, 3, 4 with frequencies 3, ?, 4, 6, and the total number of data values is 20. Find the missing frequency."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the sum rule for a frequency table: the total equals the sum of all row frequencies, so 3 + 4 + 6 = 13 for the known rows. Subtract this sum from the given total of 20 to get the missing frequency: 20 - 13 = 7. The missing frequency is 7."
         constraints: "raw lists of 6-12 small integers, or tables with 3-5 rows; frequencies are single digits"
       - id: kp2
         name: "Relative frequency"
@@ -220,6 +228,10 @@ topics:
           - problem: 'A stem-and-leaf plot with stems in tens has rows $3 \mid 1\ 4\ 8$, $4 \mid 2$. How many data values does it represent?'
             answer: "4"
             solution_sketch: 'Each leaf is one data value: $3 + 1 = 4$ leaves in total.'
+          - problem: "A stem-and-leaf plot with stems in tens has rows 2 | 0 5, 3 | 1 4 4 8, 4 | 2 7. How many data values are greater than 30?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Using place value, stem 3 gives 31, 34, 34, 38 and stem 4 gives 42, 47, all of which exceed 30. Stem 2 gives 20 and 25, which do not exceed 30. Counting the values above 30 gives 31, 34, 34, 38, 42, 47, which is 6 values. So the answer is 6."
         constraints: "stems are tens digits; 2-4 rows with 1-5 leaves each; leaves listed in increasing order"
       - id: kp3
         name: "Extracting features from a plot"
@@ -237,6 +249,14 @@ topics:
           - problem: 'In the same plot ($1 \mid 2\ 2\ 7$, $2 \mid 0\ 4$, $3 \mid 5$), how many data values lie between $10$ and $19$ inclusive?'
             answer: "3"
             solution_sketch: 'That is the number of leaves on stem $1$: $2, 2, 7$ — three leaves.'
+          - problem: "A stem-and-leaf plot has rows $1 \\mid 3\\ 5\\ 8$, $2 \\mid 0\\ 4$, $3 \\mid 2$. Find the minimum data value."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reading each stem-leaf pair gives the full data list 13, 15, 18, 20, 24, 32. The smallest stem is 1, and its smallest leaf is 3, so the smallest value is 13. The minimum data value is 13."
+          - problem: "A dot plot shows one dot per value: 5, 7, 7, 9, 10. Find the maximum value."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The dot plot corresponds to the data list 5, 7, 7, 9, 10. The rightmost dot on the number line is at 10, which is larger than every other listed value. The maximum value is 10."
         constraints: "questions ask for a count, the min/max, or the most frequent value; exactly one value repeats when the mode is asked"
     diagnostic_exemplar:
       problem: 'A stem-and-leaf plot (stems in tens) has rows $2 \mid 1\ 4$, $3 \mid 0\ 0\ 7$. List the data values in increasing order.'
@@ -314,20 +334,24 @@ topics:
             answer: 'It exaggerates the differences between the bars'
             answer_contract: {kind: label, options: [[It exaggerates the differences between the bars], [It makes the bars look more equal], [It reverses the order of the bars], [It has no effect on the bars]]}
             solution_sketch: 'Truncating the axis removes the common base, so small differences look large.'
-          - problem: 'Bars of heights $60$ and $63$ are drawn on an axis starting at $58$. Roughly how many times taller does the second bar look, and what is the true ratio?'
-            answer: 'It looks about $2.5$ times as tall; the true ratio is $63/60 = 1.05$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Drawn heights are $2$ and $5$ units above the cut axis, but the actual values differ by only $5\%$.'
-          - problem: 'A bar chart uses interval widths of $2$ for the first three bars and widths of $10$ for the rest. Which flaw does the chart have?'
-            answer: 'Unequal intervals'
-            answer_contract: {kind: label, options: [[Truncated vertical axis], [Unequal intervals], [Missing axis labels]]}
-            solution_sketch: 'Bars must span equal-width intervals so their heights can be compared fairly.'
           - problem: 'A bar chart''s vertical axis starts at $40$ instead of $0$. A bar represents a value of $52$. How many units tall is the drawn bar?'
             answer: "12"
             solution_sketch: 'The drawn height is the value above the cut axis: $52 - 40 = 12$ units.'
           - problem: 'Two bars represent values $60$ and $63$ on an axis that starts at $0$. What is the true ratio of the second bar''s height to the first, as a decimal?'
             answer: "1.05"
             solution_sketch: '$63/60 = 1.05$ — the bars differ by only $5\%$ when the axis starts at $0$.'
+          - problem: "A bar chart's vertical axis starts at 60 instead of 0. Two bars represent values 64 and 70. How many times taller does the 70 bar look than the 64 bar? Give the answer as a fraction."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The truncated axis starts at 60, and the bars represent 64 and 70. Step 1: subtract the axis start to get drawn heights: 70 minus 60 = 10 and 64 minus 60 = 4. Step 2: divide the drawn heights to get the apparent ratio: 10/4 = 5/2. The apparent ratio is 5/2."
+          - problem: "A histogram uses intervals 0-10, 10-20, and 20-50. The bar heights are 4, 5, and 5 observations per unit. How many times as many observations are in the 20-50 interval as in the 0-10 interval? Give the answer as a fraction."
+            answer: "15/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A histogram with intervals 0-10, 10-20, and 20-50 has heights 4, 5, and 5 observations per unit. Step 1: for 20-50 the width is 30, so its count is 5 times 30 = 150. Step 2: for 0-10 the width is 10, so its count is 4 times 10 = 40. Step 3: the ratio is 150/40 = 15/4. The ratio is 15/4."
+          - problem: "A bar chart shows revenue for four regions, but the scale has no numbers and no unit. Which flaw does this chart have?"
+            answer: "Missing axis labels"
+            answer_contract: {"kind": "label", "options": [["Missing axis labels"], ["Truncated vertical axis"], ["Unequal intervals"], ["Reversed order of bars"]]}
+            solution_sketch: "A bar chart has no numbers and no unit on its scale, so the values cannot be read. Step 1: check for a scale; a missing scale is the flaw class missing labels, so the correct option is Missing axis labels. Step 2: the wrong option Truncated vertical axis describes an axis that starts above zero, but here nothing is cut off. Step 3: the wrong option Unequal intervals needs bars of different widths, while all bars here span the same kind of category. Step 4: the wrong option Reversed order of bars needs bars out of order, but the order of the regions is not the issue. The flaw is Missing axis labels."
         constraints: "flaws limited to truncated axes, unequal intervals, or missing labels; one flaw per problem"
     diagnostic_exemplar:
       problem: 'A histogram of commute times has bar heights $9, 6, 3, 1$ over $0$-$14$, $15$-$29$, $30$-$44$, $45$-$59$ minutes. How many commutes are $30$ minutes or longer, and what is the shape of the distribution?'
@@ -373,6 +397,14 @@ topics:
           - problem: 'Find the mean of $2, 7, 11, 12$.'
             answer: "8"
             solution_sketch: 'Sum $= 32$; mean $= 32/4 = 8$.'
+          - problem: "A student scores 5, 7, 8, 10, and 5 on five quizzes. Find the mean quiz score."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (addition): the five quiz scores are 5, 7, 8, 10, and 5; their sum is 5 + 7 + 8 + 10 + 5 = 35. Step 2 (division): divide the sum by the number of scores, 35/5 = 7. The mean quiz score is 7."
+          - problem: "A delivery driver records 5, 8, 9, 11, and 12 stops on five days. Find the mean number of stops."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (addition): the five daily stop counts are 5, 8, 9, 11, and 12; their sum is 5 + 8 + 9 + 11 + 12 = 45. Step 2 (division): divide the sum by 5, 45/5 = 9. The mean number of stops is 9."
         constraints: "4-6 small positive integers; sum divides evenly by n"
       - id: kp2
         name: "Means with decimal results"
@@ -407,6 +439,14 @@ topics:
           - problem: 'Five test marks (out of $10$) have mean $8$. Four of them are $7, 9, 6, 10$. Find the fifth mark.'
             answer: "8"
             solution_sketch: 'Total needed $= 5 \cdot 8 = 40$; known marks sum to $32$; fifth $= 40 - 32 = 8$.'
+          - problem: "A basketball player scores a mean of 14 points in 5 games. How many points did the player score in total?"
+            answer: "70"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the total rule: total = mean * count. Step 2: Substitute mean = 14 and count = 5, so total = 14 * 5 = 70. The total is 70."
+          - problem: "The mean number of stamps in 4 boxes is 25. Three boxes contain 20, 30, and 22 stamps. Find the number in the fourth box."
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Required total = mean * count = 25 * 4 = 100. Step 2: Known sum = 20 + 30 + 22 = 72. Step 3: Fourth value = 100 - 72 = 28. The number in the fourth box is 28."
         constraints: "counts of 4-6; all totals and missing values are whole numbers"
     diagnostic_exemplar:
       problem: 'Four test marks (out of $10$) have mean $8$. Three of them are $9, 6, 10$. Find the fourth mark.'
@@ -451,6 +491,14 @@ topics:
           - problem: 'Find the median of $15, 3, 8$.'
             answer: "8"
             solution_sketch: 'Sorted: $3, 8, 15$; the middle value is $8$.'
+          - problem: "Find the median of $14, 3, 9, 21, 6, 12, 17$."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Sorting rule: the values in order are 3, 6, 9, 12, 14, 17, 21. Median definition: with seven values, an odd count, the median is the fourth value. The median is 12."
+          - problem: "On five quizzes a student scored $18, 7, 15, 11, 13$. Find the median quiz score."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Sorting rule: the scores in order are 7, 11, 13, 15, 18. Median definition: with five scores, an odd count, the third score is the median. The median quiz score is 13."
         constraints: "3-7 values given unsorted, odd count"
       - id: kp2
         name: "Median of an even-count list"
@@ -468,6 +516,14 @@ topics:
           - problem: 'Find the median of $12, 4, 9, 1, 6, 8$.'
             answer: "7"
             solution_sketch: 'Sorted: $1, 4, 6, 8, 9, 12$; median $= (6 + 8)/2 = 7$.'
+          - problem: "The data set is 11, 5, 9, 7. Find the median."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: sort the values: 5, 7, 9, 11. Step 2: use the even-count median rule and average the two middle values: (7 + 9)/2 = 8. The median is 8."
+          - problem: "The data set is 10, 2, 17, 8, 13, 5. Find the median."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: sort the values: 2, 5, 8, 10, 13, 17. Step 2: use the even-count median rule; the middle positions are 3 and 4, so average 8 and 10: (8 + 10)/2 = 9. The median is 9."
         constraints: "4-8 values given unsorted, even count; the two middle values average to an integer or a .5 value"
       - id: kp3
         name: "Mode (including no mode and two modes)"
@@ -488,6 +544,10 @@ topics:
           - problem: 'How many modes does the data $6, 2, 6, 8, 2, 5$ have?'
             answer: "2"
             solution_sketch: 'Both $6$ and $2$ appear twice, more than any other value — the data is bimodal, so it has $2$ modes.'
+          - problem: "A quality check records these seven counts: 8, 1, 8, 3, 5, 8, 2. Find the mode."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The data are 8, 1, 8, 3, 5, 8, 2. Step 1: count frequencies; 8 appears three times, while 1, 3, 5, and 2 appear once. Step 2: apply the mode rule, choosing the value with the greatest frequency, which gives 8. The mode is 8."
         constraints: "5-8 values; at most two modes; modes given as a set, or a count of 0 when nothing repeats"
     diagnostic_exemplar:
       problem: 'For the data $8, 3, 5, 3, 9, 2$: give (median, mode) as an ordered pair.'
@@ -535,6 +595,14 @@ topics:
           - problem: 'Two tests score $5$ each and three tests score $10$ each (out of $10$). What is the mean of the five marks?'
             answer: "8"
             solution_sketch: '$(2 \cdot 5 + 3 \cdot 10)/5 = (10 + 30)/5 = 40/5 = 8$.'
+          - problem: "A class has 5 students averaging 4, 5 students averaging 6, and 10 students averaging 5 (out of 10). Find the combined mean."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the weighted mean formula to total the weighted marks: 5 times 4 plus 5 times 6 plus 10 times 5 equals 20 + 30 + 50 = 100. Step 2: use the count sum for the denominator: 5 + 5 + 10 = 20. Step 3: finish the weighted mean formula by dividing total marks by total count: 100/20 = 5. The combined mean is 5."
+          - problem: "A quiz has 8 students averaging 1 (out of 10) and 12 students averaging 6. Find the combined mean."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: apply the weighted mean formula: 8 times 1 plus 12 times 6 equals 8 + 72 = 80. Step 2: use the count sum for the denominator: 8 + 12 = 20. Step 3: finish the weighted mean formula by dividing: 80/20 = 4. The combined mean is 4."
         constraints: "2-3 groups; group sizes and means are integers; the combined mean is an integer; marks on the 0-10 scale"
       - id: kp2
         name: "Weighted mean with percent weights"
@@ -552,6 +620,14 @@ topics:
           - problem: 'Marks $6, 10, 8$ (out of $10$) carry weights $0.4, 0.4, 0.2$. Compute the weighted average.'
             answer: "8"
             solution_sketch: '$0.4 \cdot 6 + 0.4 \cdot 10 + 0.2 \cdot 8 = 2.4 + 4 + 1.6 = 8$.'
+          - problem: "A project grade has three parts: planning counts 30%, build counts 50%, and report counts 20%. The marks out of 10 are planning 8, build 10, report 8. Find the weighted mean mark."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the weighted mean rule: 0.3 times 8 plus 0.5 times 10 plus 0.2 times 8. Multiply each mark by its weight: 2.4 + 5 + 1.6. Add the products: 9. The weighted mean mark is 9."
+          - problem: "A course mark uses coursework 70% and final exam 30%. The coursework mark is 10 and the final exam mark is 5 (out of 10). Determine the weighted mean mark to 1 decimal."
+            answer: "8.5"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Use the weighted mean rule: 0.7 times 10 plus 0.3 times 5. Multiply each mark by its weight: 7 + 1.5. Add the products: 8.5. The weighted mean mark is 8.5."
         constraints: "2-3 weights summing to 1 (or 100%); weights in steps of 0.1; marks on the 0-10 scale; results integers or ending in .5"
       - id: kp3
         name: "Solving for an unknown score"
@@ -569,6 +645,14 @@ topics:
           - problem: 'Three quizzes count equally and the project counts double (weights $1, 1, 2$). Quiz marks are $7, 9, 6$ (out of $10$). What project mark makes the weighted average $8$?'
             answer: "5"
             solution_sketch: '$(7 + 9 + 6 + 2p)/4 = 8$, so $22 + 2p = 32$ and $p = 5$.'
+          - problem: "Coursework counts 40% of the final mark and the exam counts 60%. The coursework mark is 5 out of 10. What exam mark gives an overall mark of 6.8?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Weighted-average rule: 0.4(5) + 0.6x = 6.8. Simplify: 2.0 + 0.6x = 6.8, so 0.6x = 4.8. Divide both sides by 0.6 to get x = 8."
+          - problem: "A course mark combines a quiz worth 1, a project worth 2, and an exam worth 3. The quiz mark is 6 and the project mark is 9 out of 10. What exam mark gives an overall weighted average of 7?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Weighted-average rule: (1(6) + 2(9) + 3x)/(1 + 2 + 3) = 7. Simplify the numerator and denominator: (6 + 18 + 3x)/6 = 7, so 24 + 3x = 42. Subtract 24 and divide by 3 to get x = 6."
         constraints: "one unknown; weights given as percents or small integer multiples; marks on the 0-10 scale; unknown comes out a whole number <= 10"
     diagnostic_exemplar:
       problem: 'A course mark is $20\%$ homework and $80\%$ exam. The homework average is $9$ (out of $10$). What exam mark gives an overall mark of $8.2$?'
@@ -619,6 +703,10 @@ topics:
           - problem: 'Values $0, 4, 8$ occur with frequencies $6, 2, 2$. What is the sum of all the data values?'
             answer: "24"
             solution_sketch: '$0 \cdot 6 + 4 \cdot 2 + 8 \cdot 2 = 0 + 8 + 16 = 24$.'
+          - problem: "A frequency table lists values 2, 4, 6, 8 with frequencies 3, 1, 4, 2. What is the sum of all the data values?"
+            answer: "50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, weighted-sum rule: multiply each value by its frequency to get 2*3 = 6, 4*1 = 4, 6*4 = 24, and 8*2 = 16. Step 2, sum rule: add those products to get 6 + 4 + 24 + 16 = 50. The sum of all the data values is 50."
         constraints: "3-4 rows; values 0-9, frequencies 1-9"
       - id: kp2
         name: "Mean from a frequency table"
@@ -700,27 +788,43 @@ topics:
           - problem: 'For the data $2, 3, 3, 6, 7, 9$: give the ordered triple (mean, median, mode).'
             answer: '$(5, 4.5, 3)$'
             solution_sketch: 'Sum $= 30$, mean $= 30/6 = 5$. Sorted: $2, 3, 3, 6, 7, 9$; median $= (3+6)/2 = 4.5$; mode $= 3$. Triple: $(5, 4.5, 3)$.'
+          - problem: "The daily rainfall in millimeters for six days is 2, 3, 3, 7, 8, 10. Give the ordered triple (mean, median, mode) as (mean, median, mode)."
+            answer: "(5.5, 5, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The data set is 2, 3, 3, 7, 8, 10. Mean rule: the sum is 33, and 33 divided by 6 gives 5.5. Median rule: the sorted list is 2, 3, 3, 7, 8, 10, so the middle pair is 3 and 7, and their average is 5. Mode rule: the value 3 appears twice and all other values appear once, so the mode is 3. The ordered triple (mean, median, mode) is (5.5, 5, 3)."
+          - problem: "The quiz scores of six students are 3, 5, 5, 6, 8, 9. Give the ordered triple (mean, median, mode) as (mean, median, mode)."
+            answer: "(6, 5.5, 5)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The data set is 3, 5, 5, 6, 8, 9. Mean rule: the sum is 36, and 36 divided by 6 gives 6. Median rule: the sorted list is 3, 5, 5, 6, 8, 9, so the middle pair is 5 and 6, and their average is 5.5. Mode rule: the value 5 appears twice and all other values appear once, so the mode is 5. The ordered triple (mean, median, mode) is (6, 5.5, 5)."
         constraints: "5-7 values with exactly one mode; mean an integer or ending in .5; answer is the ordered triple (mean, median, mode)"
       - id: kp2
         name: "Comparing mean and median"
         key_prerequisites: [mean-of-a-data-set, median-and-mode]
         exemplars:
-          - problem: 'The data $20, 22, 23, 25, 90$ contains one outlier. Which is larger, the mean or the median?'
-            answer: 'the mean'
-            answer_contract: {kind: label, options: [[the mean], [the median]]}
-            solution_sketch: 'The outlier $90$ pulls the mean up (mean $= 36$) while the median stays at $23$.'
-          - problem: 'Salaries at a shop are $30, 32, 35, 38, 200$ (thousands). Which measure better represents a typical salary?'
-            answer: 'the median'
-            answer_contract: {kind: label, options: [[the mean], [the median]]}
-            solution_sketch: 'The $200$ inflates the mean to $67$ thousand; the median $35$ thousand ignores the extreme value.'
-          - problem: 'The data $2, 4, 5, 6, 40$ contains one outlier. Which is larger, the mean or the median?'
-            answer: 'the mean'
-            answer_contract: {kind: label, options: [[the mean], [the median]]}
-            solution_sketch: 'Mean $= 57/5 = 11.4$, pulled above the median $5$ by the outlier $40$.'
-          - problem: 'For the data $8, 9, 10, 11, 12$, which is larger?'
-            answer: 'they are equal'
-            answer_contract: {kind: label, options: [[the mean], [the median], [they are equal]]}
-            solution_sketch: 'The data is symmetric about $10$: mean $= 50/5 = 10$ and median $= 10$.'
+          - problem: "For the data 20, 22, 23, 25, 90, find the mean minus the median. Give the answer as an integer."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The data set is 20, 22, 23, 25, 90. First compute the mean: (20+22+23+25+90)/5 = 36. The median is the middle value 23. The mean minus the median is 36 - 23 = 13."
+          - problem: "Salaries in a shop are 30, 32, 35, 38, 200 thousand. Find the mean minus the median in thousands. Give the answer as an integer."
+            answer: "32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The data set in thousands is 30, 32, 35, 38, 200. The mean is (30+32+35+38+200)/5 = 335/5 = 67. The median is the middle value 35. The difference is 67 - 35 = 32."
+          - problem: "For the data 2, 4, 5, 6, 40, find the median minus the mean. Give the answer as a fraction."
+            answer: "-32/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The data set is 2, 4, 5, 6, 40. The median is the middle value 5. The mean is (2+4+5+6+40)/5 = 57/5. The median minus the mean is 5 - 57/5 = 25/5 - 57/5 = -32/5."
+          - problem: "For the data 8, 9, 10, 11, 12, find the mean minus the median. Give the answer as an integer."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The data set is 8, 9, 10, 11, 12. The mean is (8+9+10+11+12)/5 = 50/5 = 10. The median is the middle value 10. The mean minus the median is 10 - 10 = 0."
+          - problem: "For the data 5, 7, 8, 9, 10, 100, find the mean minus the median. Give the answer as a fraction."
+            answer: "44/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The data set is 5, 7, 8, 9, 10, 100. The mean is (5+7+8+9+10+100)/6 = 139/6. The median is the average of the two middle values: (8+9)/2 = 17/2. The mean minus the median is 139/6 - 17/2 = 139/6 - 51/6 = 88/6 = 44/3."
+          - problem: "The data 10, 12, 13, 14, 90 contains one extreme value. Which measure of center is largest?"
+            answer: "the mean"
+            answer_contract: {"kind": "label", "options": [["the mean"], ["the median"], ["the mode"], ["they are equal"]]}
+            solution_sketch: "The data set is 10, 12, 13, 14, 90. The mean is (10+12+13+14+90)/5 = 139/5 = 27.8. The median is the middle value 13. The extreme value 90 pulls the mean upward, so the mean is largest. Choosing the median ignores the pull of the outlier. Choosing the mode mistakes the mode for a measure of center. Choosing they are equal assumes a symmetry that the data does not have. The answer is the mean."
         constraints: "one extreme value in a set of 5-6 (or a symmetric set for the equal case); the direction of the pull must be computable by inspection; comparison answers use the label contract (the mean / the median / they are equal)"
       - id: kp3
         name: "Updating the mean"
@@ -738,6 +842,14 @@ topics:
           - problem: 'The data $10, 20, 30, 40$ has mean $25$. The value $10$ is removed. What is the new mean?'
             answer: "30"
             solution_sketch: 'Total $= 4 \cdot 25 = 100$; new sum $= 100 - 10 = 90$; new mean $= 90/3 = 30$.'
+          - problem: "A basketball player scores a mean of 14 points over 5 games. She scores 20 points in the sixth game. What is her new mean score?"
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The stated mean is 14 over 5 games, so the total points are 5*14 = 70. Step 1: use total = mean * count. Step 2: add the new score, 70 + 20 = 90. Step 3: divide by the new count, 90/6 = 15. The new mean score is 15."
+          - problem: "The mean of 6 values is 12. One value 2 is removed. What is the new mean?"
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The stated mean is 12 over 6 values, so the total is 6*12 = 72. Step 1: use total = mean * count. Step 2: remove the value 2, so the new total is 72 - 2 = 70. Step 3: divide by the new count 5, so 70/5 = 14. The new mean is 14."
         constraints: "start from a stated mean over 3-6 values; one value added or removed; new mean is an integer"
     diagnostic_exemplar:
       problem: 'For the data $4, 8, 3, 8, 7$: find the mean, the median, and the mode. A sixth value $12$ is then added — find the new mean.'
@@ -765,41 +877,33 @@ topics:
         name: "Direction of an outlier's pull"
         key_prerequisites: [mean-median-mode]
         exemplars:
-          - problem: 'A large value is added to a data set. Which changes more, the mean or the median?'
-            answer: 'the mean'
-            answer_contract: {kind: label, options: [[the mean], [the median]]}
-            solution_sketch: 'A large value pulls the mean substantially, while the median moves at most to a neighboring value.'
-          - problem: 'The data $10, 11, 12, 13$ gains the value $2$. Does the mean increase or decrease, and what about the median?'
-            answer: 'The mean decreases; the median decreases only slightly (from $11.5$ to $11$).'
-            answer_contract: {kind: none}
-            solution_sketch: 'A low outlier drags the mean down; the sorted middle barely shifts.'
-          - problem: 'The data $2, 4, 6, 8$ gains the value $50$. Which is pulled further from its old value: the mean or the median?'
-            answer: 'the mean'
-            answer_contract: {kind: label, options: [[the mean], [the median]]}
-            solution_sketch: 'The mean jumps from $5$ to $14$ while the median moves only from $5$ to $6$.'
-          - problem: 'The data $3, 5, 7, 9$ gains the value $1$. Does the mean increase or decrease?'
-            answer: 'decrease'
-            answer_contract: {kind: label, options: [[increase], [decrease]]}
-            solution_sketch: 'The new value $1$ is below the old mean $6$, so it drags the mean down.'
           - problem: 'The mean of $4, 6, 8$ is $6$. The value $30$ is added. By how much does the mean increase?'
             answer: "4"
             solution_sketch: 'New mean $= (18 + 30)/4 = 12$, an increase of $12 - 6 = 4$.'
           - problem: 'The median of $1, 3, 5, 7$ is $4$. The value $3$ is added. What is the new median?'
             answer: "3"
             solution_sketch: 'Sorted: $1, 3, 3, 5, 7$; the middle value is $3$. The median barely moves.'
+          - problem: "A data set of clustered values gains one very large outlier. Which measure of center is pulled most strongly toward that outlier?"
+            answer: "mean"
+            answer_contract: {"kind": "label", "options": [["mean"], ["median"], ["mode"], ["neither"]]}
+            solution_sketch: "Rule (sum dependence): every value enters the sum, so a far value moves the average strongly, while the middle position shifts at most to a neighboring value. Step 1: the outlier lies far from the cluster, so it drags the average toward itself. Step 2: the middle value changes by at most one data position, so it barely moves. Wrong option median: the error of thinking the middle position tracks every value. Wrong option mode: the error of confusing the most frequent value with the center. Wrong option neither: the error of assuming no measure reacts to a far value. The answer is mean."
+          - problem: "The data 2, 4, 6, 8 gains the value 50. Does the mean rise or fall? Select the correct option."
+            answer: "increase"
+            answer_contract: {"kind": "label", "options": [["increase"], ["decrease"], ["unchanged"], ["cannot tell"]]}
+            solution_sketch: "Comparison rule: a new value above the old mean pulls the mean up. Step 1: the old mean of 2, 4, 6, 8 is 20/4 = 5. Step 2: the new value 50 lies far above 5, so the new mean is 54/5 = 10.8, well above the old mean. Wrong option decrease: the error of treating a high outlier like a low one. Wrong option unchanged: the error of forgetting that the new value enters the sum. Wrong option cannot tell: the error of not comparing the new value with the old mean. The answer is increase."
+          - problem: "The data 10, 11, 12, 13 gains the value 2. Find the new mean as a fraction."
+            answer: "48/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Sum rule: the old sum is 10 + 11 + 12 + 13 = 46. Mean formula: with the outlier 2 added, the new sum is 48 over five values, so the new mean is 48/5. Direction check: 48/5 = 9.6 is below the old mean 11.5, so the low outlier pulls the mean down. The answer is 48/5."
+          - problem: "A data set of five values has mean 12. The outlier 60 is added. By how many units does the mean change? Give the change as a positive number if the mean moves up."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Sum rule: the old sum is 5 times 12 = 60. Mean formula: with the outlier 60 added, the new mean is (60 + 60)/6 = 20. Change rule: 20 - 12 = 8, so the high outlier pulls the mean up by 8 units. The answer is 8."
         constraints: "one outlier added to 4-6 clustered values; ask for direction, not exact size, unless values are given"
       - id: kp2
         name: "Mean and median with and without the outlier"
         key_prerequisites: [mean-median-mode]
         exemplars:
-          - problem: 'For the data $5, 6, 7, 8, 34$: compute the mean with and without the outlier $34$.'
-            answer: 'With: $12$; without: $6.5$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'With: $60/5 = 12$. Without: $26/4 = 6.5$.'
-          - problem: 'For the same data $5, 6, 7, 8, 34$: compute the median with and without $34$.'
-            answer: 'With: $7$; without: $6.5$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Sorted with outlier the middle is $7$; without, median $= (6+7)/2 = 6.5$. The median barely moves.'
           - problem: 'For the data $4, 5, 6, 7, 48$, compute the mean with the outlier included.'
             answer: "14"
             solution_sketch: '$(4+5+6+7+48)/5 = 70/5 = 14$.'
@@ -812,6 +916,14 @@ topics:
           - problem: 'From the same data $10, 12, 14, 16, 60$, find the median after removing the outlier $60$.'
             answer: "13"
             solution_sketch: 'Median $= (12+14)/2 = 13$. The median moves only slightly when an outlier is removed.'
+          - problem: "For the data $2, 4, 6, 8, 40$, find how much the mean decreases when the outlier $40$ is removed."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full data set: 2, 4, 6, 8, 40. The mean rule is sum divided by count: with the outlier, (2+4+6+8+40)/5 = 60/5 = 12. Remove the outlier 40 and apply the mean rule again: (2+4+6+8)/4 = 20/4 = 5. The decrease is 12 - 5 = 7."
+          - problem: "For the data $3, 5, 9, 11, 47$, find how much the median decreases when the outlier $47$ is removed."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the sorted data set: 3, 5, 9, 11, 47. The median rule is the middle value of sorted data, so with the outlier the median is 9. Remove the outlier 47, leaving 3, 5, 9, 11; the median rule gives (5+9)/2 = 7. The decrease is 9 - 7 = 2."
         constraints: "4-6 clustered values plus one outlier; both means come out as integers or .5 values"
       - id: kp3
         name: "Recomputing a mean after removing a value"
@@ -969,6 +1081,14 @@ topics:
           - problem: 'A data set has minimum $12$ and maximum $30$. Find its range.'
             answer: "18"
             solution_sketch: 'Range $= 30 - 12 = 18$.'
+          - problem: "A data set has range 18 and minimum 12. Find its maximum."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The range rule says range equals maximum minus minimum. Substitute the known values into this rule: 18 = maximum - 12. Add 12 to both sides to get maximum = 30."
+          - problem: "A data set has range 24 and maximum 40. Find its minimum."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The range rule says range equals maximum minus minimum. Substitute the known values into this rule: 24 = 40 - minimum. Solve for the minimum by subtracting 40 and changing signs, so minimum = 16."
         constraints: "4-6 small positive integers, unsorted"
       - id: kp2
         name: "Quartiles and IQR"
@@ -989,6 +1109,10 @@ topics:
           - problem: 'For the sorted data $2, 3, 5, 8, 10, 13, 14$ (exclude the median from each half), find the IQR.'
             answer: "10"
             solution_sketch: 'Lower half $2, 3, 5$ gives $Q_1 = 3$; upper half $10, 13, 14$ gives $Q_3 = 13$; IQR $= 13 - 3 = 10$.'
+          - problem: "For the sorted data 3, 6, 7, 9, 12, 15, 18, 21 (exclude the median from each half), find Q1 as a fraction."
+            answer: "13/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The data has 8 values, so the median is the average of the 4th and 5th values: (9 + 12)/2 = 10.5. Excluding that median, the lower half is 3, 6, 7, 9. The middle of the lower half is the average of 6 and 7, which is 13/2. The answer is 13/2."
         constraints: "7-9 sorted values; use the median-exclusion convention for quartiles; quartiles land on values or clean halves"
       - id: kp3
         name: "Five-number summary and the 1.5-IQR outlier fence"
@@ -1009,10 +1133,10 @@ topics:
           - problem: 'A boxplot has $Q_1 = 20$ and $Q_3 = 30$. Compute the upper outlier fence.'
             answer: "45"
             solution_sketch: 'IQR $= 10$; fence $= 30 + 1.5 \cdot 10 = 30 + 15 = 45$.'
-          - problem: 'With $Q_1 = 10$ and $Q_3 = 18$, is the value $27$ an outlier by the $1.5 \cdot \text{IQR}$ rule: (a) yes; (b) no?'
-            answer: '(b)'
-            answer_contract: {kind: label, options: [[(a)], [(b)]]}
-            solution_sketch: 'The upper fence is $18 + 1.5 \cdot 8 = 30$, and $27 \le 30$.'
+          - problem: "For the sorted data -12, 3, 5, 7, 9, 11, 13, 15, 40 (exclude the median from each half when finding the quartiles), determine how many of the values are outliers by the 1.5*IQR rule."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, median rule: the 5th of the 9 sorted values gives median 9; excluding it, the halves are -12, 3, 5, 7 and 11, 13, 15, 40. Step 2, quartile rule: Q1 = (3+5)/2 = 4 and Q3 = (13+15)/2 = 14, so IQR = 14 - 4 = 10. Step 3, fence rule: 1.5*IQR = 15, so the lower fence is 4 - 15 = -11 and the upper fence is 14 + 15 = 29. Step 4, outlier rule: -12 < -11 and 40 > 29, while all other values lie between the fences, so exactly 2 values are outliers. The number of outliers is 2."
         constraints: "IQR a small even integer so 1.5*IQR is an integer; fences and candidate outliers are integers; five-number summaries given as an ordered quintuple"
     diagnostic_exemplar:
       problem: 'For the sorted data $2, 4, 6, 10, 12, 14, 18$ (exclude the median from each half), compute the upper outlier fence $Q_3 + 1.5 \cdot \text{IQR}$.'
@@ -1063,6 +1187,10 @@ topics:
           - problem: 'The data $1, 5, 9$ has mean $5$. How many of the deviations are negative?'
             answer: "2"
             solution_sketch: 'Deviations are $-4, 0, 4$; two of them are negative.'
+          - problem: "The data is 3, 5, 8, 12. Give the deviations from the mean, x_i - xbar, in the order of the data."
+            answer: "-4, -2, 1, 5"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "First find the mean of 3, 5, 8, 12 by the mean formula: (3+5+8+12)/4 = 28/4 = 7. Then apply the definition of a deviation and subtract the mean from each value: 3-7 = -4, 5-7 = -2, 8-7 = 1, 12-7 = 5. The deviations are -4, -2, 1, 5."
         constraints: "3-5 values with an integer mean; deviations are single-digit integers"
       - id: kp2
         name: "Squared deviations"
@@ -1080,6 +1208,14 @@ topics:
           - problem: 'The data $2, 2, 2, 10$ has mean $4$. Compute $\sum (x_i - \bar{x})^2$.'
             answer: "48"
             solution_sketch: 'Deviations $-2, -2, -2, 6$; squares $4 + 4 + 4 + 36 = 48$.'
+          - problem: "The data 0, 4, 8 has mean 4. Compute the sum of squared deviations."
+            answer: "32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full data set is 0, 4, 8 with mean 4. Step 1: the deviation rule subtracts the mean, giving -4, 0, 4. Step 2: the squaring rule gives 16, 0, 16. Step 3: the sum rule gives 16 + 0 + 16 = 32. The sum of squared deviations is 32."
+          - problem: "The data 1, 9, 4, x has mean 5. Compute the sum of squared deviations."
+            answer: "34"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full data set is 1, 9, 4, x with mean 5. Step 1: the mean formula gives (1 + 9 + 4 + x)/4 = 5, so x = 6. Step 2: the deviation rule subtracts the mean, giving -4, 4, -1, 1. Step 3: the squaring rule gives 16, 16, 1, 1. Step 4: the sum rule gives 16 + 16 + 1 + 1 = 34. The sum of squared deviations is 34."
         constraints: "3-5 values, integer mean; squared deviations sum below 100"
       - id: kp3
         name: "Population variance"
@@ -1161,6 +1297,14 @@ topics:
           - problem: 'Find the sample standard deviation $s$ of $1, 3, 5, 7, 9$.'
             answer: "sqrt(10)"
             solution_sketch: 'Mean $= 5$; squared deviations $16, 4, 0, 4, 16$ sum to $40$; $s^2 = 40/(5-1) = 10$, so $s = \sqrt{10}$.'
+          - problem: "Find the sample variance $s^2$ of $2, 4, 5, 6, 8$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full data set is 2, 4, 5, 6, 8. The mean is (2+4+5+6+8)/5 = 5. The squared deviations are 9, 1, 0, 1, 9 and their sum is 20. The sample variance divides by n - 1 = 4, so s^2 = 20/4 = 5. The sample variance is 5."
+          - problem: "A sample of 5 values has squared deviations summing to 16. Find the sample standard deviation $s$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full summary is n = 5 and sum of squared deviations = 16. The sample variance divides by n - 1 = 4, so s^2 = 16/4 = 4. The sample standard deviation is the square root of the variance: s = sqrt(4) = 2. The sample standard deviation is 2."
         constraints: "sum of squared deviations divisible by n-1; always say sample vs population explicitly"
       - id: kp3
         name: "Interpreting and transforming the standard deviation"
@@ -1178,6 +1322,14 @@ topics:
           - problem: 'A data set has $\sigma = 5$. Every value is tripled. What is the new $\sigma$?'
             answer: "15"
             solution_sketch: 'Scaling by $c$ scales deviations by $c$: $\sigma \to |c| \sigma = 3 \cdot 5 = 15$.'
+          - problem: "In a study, a variable has standard deviation 9. Every value is increased by 20. Find the new standard deviation."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Original standard deviation = 9. Rule: shifting every value by a constant shifts the mean by the same constant, so each deviation is unchanged. Thus new standard deviation = 9, and the answer is 9."
+          - problem: "A data set has standard deviation 7. Every value is multiplied by 5. Find the new standard deviation."
+            answer: "35"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Original standard deviation = 7. Rule: multiplying every value by a positive constant c multiplies each deviation by c, so the standard deviation is multiplied by c. With c = 5, new standard deviation = 5 * 7 = 35, so the answer is 35."
         constraints: "one transformation per problem (shift by a constant or scale by a positive integer); original sigma given or trivially 0"
     diagnostic_exemplar:
       problem: 'Find the sample standard deviation $s$ of $5, 7, 9, 11, 13$.'
@@ -1216,30 +1368,30 @@ topics:
         name: "Choosing a measure of center"
         key_prerequisites: [outliers-effect-on-center]
         exemplars:
-          - problem: 'House prices on a street are mostly near €300,000, with one €3,000,000 mansion. Which measure of center should a report use?'
-            answer: 'the median'
-            answer_contract: {kind: label, options: [[the mean], [the median], [the mode]]}
-            solution_sketch: 'The €3,000,000 mansion inflates the mean; the median resists the outlier.'
-          - problem: 'A survey records each student''s favorite color. Which measure of center applies?'
-            answer: 'the mode'
-            answer_contract: {kind: label, options: [[the mean], [the median], [the mode]]}
-            solution_sketch: 'Categorical data has no mean or median; only the mode applies.'
-          - problem: 'Quiz scores in a class are $2, 4, 5, 5, 6, 60$. Which measure of center best describes a typical score?'
-            answer: 'the median'
-            answer_contract: {kind: label, options: [[the mean], [the median], [the mode]]}
-            solution_sketch: 'The outlier $60$ inflates the mean; the median resists outliers.'
-          - problem: 'A store records the shoe sizes sold: $7, 8, 8, 9, 10$. Which measure of center reports the most common size?'
-            answer: 'the mode'
-            answer_contract: {kind: label, options: [[the mean], [the median], [the mode]]}
-            solution_sketch: 'The mode is the most frequent value — here $8$.'
-          - problem: 'Monthly rainfall over a year is roughly symmetric with no outliers. Which measure of center summarizes it best?'
-            answer: 'the mean'
-            answer_contract: {kind: label, options: [[the mean], [the median], [the mode]]}
-            solution_sketch: 'Symmetric data with no outliers: the mean uses every value and is the natural summary.'
-          - problem: 'A survey records each customer''s favorite genre: mystery, fantasy, mystery, romance. Which measure of center applies?'
-            answer: 'the mode'
-            answer_contract: {kind: label, options: [[the mean], [the median], [the mode]]}
-            solution_sketch: 'Categorical data has no mean or median; only the mode applies.'
+          - problem: "A street has 20 houses. Nineteen sell for values near 300000, and one sells for 3000000. A report should summarize a typical price. Which measure of center is appropriate?"
+            answer: "median"
+            answer_contract: {"kind": "label", "options": [["mean"], ["median"], ["mode"], ["midrange"]]}
+            solution_sketch: "Full data: nineteen prices near 300000 and one price 3000000. Step 1 (rule: outlier -> median): a single extreme value strongly pulls the mean, so mean is not typical. Step 2 (rule: categorical only -> mode): prices are numeric and not categorical, so mode is not the right center. Step 3 (rule: spread-sensitive midrange): the midrange uses the extreme maximum and is even more affected by the outlier. The median resists the outlier, so the appropriate measure is median."
+          - problem: "A survey records each student's favorite color: red, blue, red, green. The report needs a single typical value. Which measure of center applies?"
+            answer: "mode"
+            answer_contract: {"kind": "label", "options": [["mean"], ["median"], ["mode"], ["midrange"]]}
+            solution_sketch: "Full data: favorite colors are red, blue, red, green. Step 1 (rule: categorical -> mode): colors cannot be added or ordered, so mean and median have no meaning. Step 2 (rule: mean needs numeric values): the mean fails because arithmetic on color labels is invalid. Step 3 (rule: median needs ordered values): the median fails because colors have no natural order. Step 4 (rule: midrange needs numeric extremes): the midrange fails because there is no smallest or largest color. The mode is the only valid measure, so the appropriate measure is mode."
+          - problem: "Quiz scores are 2, 4, 5, 5, 6, 60. One score is much larger than the rest. Using the appropriate measure of center for these data, find its value."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full data: quiz scores 2, 4, 5, 5, 6, 60. Step 1 (rule: outlier/skew -> median): the score 60 is far from the rest, so the median is the appropriate center. Step 2 (rule: median of even list): sort the values and average the two middle entries. The two middle entries are 5 and 5, so the median is (5 + 5)/2 = 5. The answer is 5."
+          - problem: "Customers choose a genre: 1 for mystery, 2 for fantasy, 1 for mystery, 3 for romance, 1 for mystery. The store codes the choices as numbers. Using the appropriate measure of center, find its value."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full data: genre codes 1, 2, 1, 3, 1. Step 1 (rule: categorical -> mode): the numbers are labels for genres, so mean and median are meaningless. Step 2 (rule: mode is most frequent): count each code; code 1 appears three times, code 2 once, code 3 once. The most frequent code is 1, so the mode is 1. The answer is 1."
+          - problem: "Monthly rainfall totals in inches are 4, 6, 8, 10. The data are roughly symmetric with no outliers. Using the appropriate measure of center, find its value."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full data: rainfall totals 4, 6, 8, 10. Step 1 (rule: symmetric numeric -> mean): the values are roughly symmetric with no outlier. Step 2 (rule: mean of a list): add the values and divide by the count. The sum is 4 + 6 + 8 + 10 = 28, and 28/4 = 7. The answer is 7."
+          - problem: "Household incomes in thousands are 20, 22, 24, 26, 28, 200. One value is far larger than the others. Using the appropriate measure of center, find its value."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full data: incomes 20, 22, 24, 26, 28, 200 (thousands). Step 1 (rule: outlier/skew -> median): the value 200 is far larger than the rest, so the median is the appropriate center. Step 2 (rule: median of even list): sort the values and average the two middle entries. The two middle entries are 24 and 26, so the median is (24 + 26)/2 = 25. The answer is 25."
         constraints: "one clear driver per problem: outlier/skew -> median, symmetric numeric -> mean, categorical -> mode"
       - id: kp2
         name: "Choosing a measure of spread"
@@ -1274,30 +1426,30 @@ topics:
         name: "Inferring shape from mean vs median"
         key_prerequisites: [outliers-effect-on-center]
         exemplars:
-          - problem: 'A distribution has mean $58$ and median $45$. Is it more likely skewed left or right?'
-            answer: 'right-skewed'
-            answer_contract: {kind: label, options: [[left-skewed], [right-skewed], [symmetric]]}
-            solution_sketch: 'A long right tail pulls the mean above the median.'
-          - problem: 'For a roughly symmetric distribution, how do the mean and median compare?'
-            answer: 'they are approximately equal'
-            answer_contract: {kind: label, options: [[the mean is larger], [the median is larger], [they are approximately equal]]}
-            solution_sketch: 'In a symmetric distribution neither tail pulls either summary, so they are approximately equal.'
-          - problem: 'A distribution has mean $30$ and median $45$. Is it more likely skewed left or right?'
-            answer: 'left-skewed'
-            answer_contract: {kind: label, options: [[left-skewed], [right-skewed], [symmetric]]}
-            solution_sketch: 'The long left tail pulls the mean below the median.'
-          - problem: 'A distribution has mean $52$ and median $52$. What shape is it most consistent with?'
-            answer: 'symmetric'
-            answer_contract: {kind: label, options: [[left-skewed], [right-skewed], [symmetric]]}
-            solution_sketch: 'Equal mean and median indicate a symmetric shape.'
-          - problem: 'Salaries at a firm have mean $\$58{,}000$ and median $\$49{,}000$. Which skew does this suggest?'
-            answer: 'right-skewed'
-            answer_contract: {kind: label, options: [[left-skewed], [right-skewed], [symmetric]]}
-            solution_sketch: 'A few very high salaries pull the mean above the median — a long right tail.'
-          - problem: 'For a distribution whose mean and median are approximately equal, what is the likely shape?'
-            answer: 'symmetric'
-            answer_contract: {kind: label, options: [[left-skewed], [right-skewed], [symmetric]]}
-            solution_sketch: 'No tail is pulling either summary, so the shape is roughly symmetric.'
+          - problem: "Salaries at a firm have mean 58000 and median 49000. Give 1 if right-skewed, -1 if left-skewed, and 0 if symmetric."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The salaries have mean 58000 and median 49000. Rule: a mean greater than the median means right-skew. The code for right-skewed is 1. The answer is 1."
+          - problem: "Test scores in a class have mean 40 and median 55. Give 1 if right-skewed, -1 if left-skewed, and 0 if symmetric."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The test scores have mean 40 and median 55. Rule: a mean less than the median means left-skew. The code for left-skewed is -1. The answer is -1."
+          - problem: "A distribution has mean 58 and median 45. Give the shape and the difference mean minus median."
+            answer: "shape = right-skew; diff = 13"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["left-skew"], ["right-skew"], ["symmetric"]]}, "name": "shape"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The distribution has mean 58 and median 45. Rule: when the mean is greater than the median, the distribution is right-skewed. The difference mean minus median is 58 - 45 = 13. The answer is shape = right-skew; diff = 13."
+          - problem: "A sample has mean 70 and median 70. State the shape and the value of mean minus median."
+            answer: "shape = symmetric; diff = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["left-skew"], ["right-skew"], ["symmetric"]]}, "name": "shape"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The sample has mean 70 and median 70. Rule: when the mean and median are equal, the distribution is symmetric. The difference mean minus median is 70 - 70 = 0. The answer is shape = symmetric; diff = 0."
+          - problem: "For a data set, the mean is 30 and the median is 45. Determine the shape and the difference mean minus median."
+            answer: "shape = left-skew; diff = -15"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["left-skew"], ["right-skew"], ["symmetric"]]}, "name": "shape"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The data set has mean 30 and median 45. Rule: when the mean is less than the median, the distribution is left-skewed. The difference mean minus median is 30 - 45 = -15. The answer is shape = left-skew; diff = -15."
+          - problem: "Household incomes have mean 80 and median 60. Find the shape and the value of mean minus median."
+            answer: "shape = right-skew; diff = 20"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["left-skew"], ["right-skew"], ["symmetric"]]}, "name": "shape"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "Household incomes have mean 80 and median 60. Rule: a mean above the median indicates right-skew. The difference mean minus median is 80 - 60 = 20. The answer is shape = right-skew; diff = 20."
         constraints: "give mean and median (or a shape description); ask for the skew direction or the comparison"
     diagnostic_exemplar:
       problem: 'Household incomes in a city include a small number of extremely high earners. Which center-and-spread pair should a summary report, and why?'
@@ -1343,6 +1495,14 @@ topics:
           - problem: 'A temperature of $17$ degrees sits in a distribution with mean $20$ and standard deviation $4$. Find its z-score.'
             answer: "-0.75"
             solution_sketch: '$z = (17 - 20)/4 = -3/4 = -0.75$.'
+          - problem: "A runner's time of 75 seconds comes from a distribution with mean 70 seconds and standard deviation 10 seconds. Find the z-score."
+            answer: "0.5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the z-score rule: z = (x - mu)/sigma. Substitute x = 75, mu = 70, sigma = 10: z = (75 - 70)/10 = 5/10 = 0.5. The z-score is 0.5."
+          - problem: "A package weighs 23 grams; in this population the mean weight is 26 grams and the standard deviation is 2 grams. Find the z-score."
+            answer: "-1.5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the z-score rule: z = (x - mu)/sigma. Substitute x = 23, mu = 26, sigma = 2: z = (23 - 26)/2 = -3/2 = -1.5. The z-score is -1.5."
         constraints: "x - mu divisible by sigma or ending in .5; include negative z-scores"
       - id: kp2
         name: "Solving for x, mu, or sigma"
@@ -1360,6 +1520,14 @@ topics:
           - problem: 'A value of $19$ has $z = 2$ in a distribution with mean $15$. Find the standard deviation.'
             answer: "2"
             solution_sketch: '$2 = (19 - 15)/\sigma = 4/\sigma$, so $\sigma = 4/2 = 2$.'
+          - problem: "A value of 72 has z = 1.5 in a distribution with mean 60. Find the standard deviation."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the z-score formula z = (x - mu)/sigma. Substitute the known numbers: 1.5 = (72 - 60)/sigma, so 1.5 = 12/sigma. Solve for sigma: sigma = 12/1.5 = 8. The standard deviation is 8."
+          - problem: "A value of 23 has z = 1.5 in a distribution with standard deviation 4. Find the mean."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the z-score formula z = (x - mu)/sigma. Substitute the known numbers: 1.5 = (23 - mu)/4, so 6 = 23 - mu. Solve for mu: mu = 23 - 6 = 17. The mean is 17."
         constraints: "one unknown among x, mu, sigma; all quantities integers or ending in .5"
       - id: kp3
         name: "Comparing values across distributions"
@@ -1377,6 +1545,14 @@ topics:
           - problem: 'Which is more unusual: $z = 0.5$ or $z = -1.8$? Give that z-score.'
             answer: "-1.8"
             solution_sketch: 'Unusualness is measured by $|z|$, and $|-1.8| > |0.5|$.'
+          - problem: "Class 1 has mean 70 and standard deviation 8. Class 2 has mean 60 and standard deviation 10. A score of 82 in class 1 and a score of 74 in class 2. Which score is relatively higher within its own class? Give its z-score."
+            answer: "1.5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (z-score rule): class 1 z = (82 - 70)/8 = 12/8 = 1.5. Step 2 (z-score rule): class 2 z = (74 - 60)/10 = 14/10 = 1.4. Step 3 (comparison rule): 1.5 > 1.4, so the class 1 score is relatively higher. Its z-score is 1.5."
+          - problem: "Runner A has mean finish time 40 minutes and standard deviation 5 minutes. Runner B has mean finish time 50 minutes and standard deviation 4 minutes. One run by A took 35 minutes and one run by B took 44 minutes. Which run is relatively more unusual within its own distribution? Give its z-score."
+            answer: "-1.5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (z-score rule): runner A z = (35 - 40)/5 = -5/5 = -1. Step 2 (z-score rule): runner B z = (44 - 50)/4 = -6/4 = -1.5. Step 3 (unusualness rule): the absolute values are 1 and 1.5, and 1.5 is larger, so runner B's run is relatively more unusual. Its z-score is -1.5."
         constraints: "two distributions with different means and SDs; z-scores come out to clean values like 1, 1.5, 2"
     diagnostic_exemplar:
       problem: 'A mark of $84$ comes from a distribution with mean $72$ and standard deviation $6$; a mark of $55$ comes from a distribution with mean $40$ and standard deviation $10$. Which is relatively better? Give the z-score of the better one.'
