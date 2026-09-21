@@ -67,18 +67,30 @@ topics:
         name: Translating rate statements into ODEs
         key_prerequisites: []
         exemplars:
-          - problem: "A population $P$ grows at a rate proportional to its size. Write the differential equation."
-            answer: "$P' = kP$"
-            answer_contract: {kind: none}
-            solution_sketch: "$P' = kP$"
-          - problem: "A body's temperature $T$ changes at a rate proportional to the difference between $T$ and the ambient $20^{\\circ}$C. Write the differential equation."
-            answer: "$T' = -k(T - 20)$"
-            answer_contract: {kind: none}
-            solution_sketch: "The minus sign makes a hot body cool toward $20$."
-          - problem: "A quantity $y$ decreases at a rate proportional to the square of $y$. Write the differential equation."
-            answer: "$y' = -ky^2$"
-            answer_contract: {kind: none}
-            solution_sketch: "$y' = -ky^2$"
+          - problem: "A population p grows at a rate proportional to its size. Use a positive constant k. Give dp/dt as a function of p and k."
+            answer: "kp"
+            answer_contract: {"kind": "function", "vars": ["k", "p"]}
+            solution_sketch: "The proportionality statement gives the template dp/dt = kp with a positive constant k, so the full equation is dp/dt = kp. The sign rule: growth means p increases with time, so the sign matching the described behavior is positive; a minus sign would model decay. The right-hand side of the differential equation is kp."
+          - problem: "A body at temperature u cools in a room held at 20 degrees. Its rate of change is proportional to the difference u - 20. Use a positive constant k. Give du/dt as a function of u and k."
+            answer: "-k(u-20)"
+            answer_contract: {"kind": "function", "vars": ["k", "u"]}
+            solution_sketch: "The difference statement gives du/dt proportional to u - 20 with a positive constant k, so the template is du/dt = k(u - 20). The sign rule: cooling means u decreases while u is above 20, so the rate must be negative there and the matching sign is minus. The right-hand side of the differential equation is -k(u-20)."
+          - problem: "A pollutant concentration c decreases at a rate proportional to the square of c. Use a positive constant k. Give dc/dt as a function of c and k."
+            answer: "-kc^2"
+            answer_contract: {"kind": "function", "vars": ["k", "c"]}
+            solution_sketch: "Proportionality to the square of c gives the template dc/dt = kc^2 with a positive constant k, so the full equation is dc/dt = -kc^2 after the sign step. The sign rule: decrease means c shrinks with time, so the sign matching the behavior is negative. The right-hand side of the differential equation is -kc^2."
+          - problem: "A radioactive sample has mass m and decays at a rate proportional to m. Use a positive constant k. Give dm/dt as a function of m and k."
+            answer: "-km"
+            answer_contract: {"kind": "function", "vars": ["k", "m"]}
+            solution_sketch: "The decay statement gives the template dm/dt = km with a positive constant k, so the full equation is dm/dt = -km. The sign rule: decay means m decreases with time, so the sign matching the behavior is negative. The right-hand side of the differential equation is -km."
+          - problem: "A cold object at temperature u warms in a room held at 70 degrees. Its rate of change is proportional to the difference 70 - u. Use a positive constant k. Give du/dt as a function of u and k."
+            answer: "k(70-u)"
+            answer_contract: {"kind": "function", "vars": ["k", "u"]}
+            solution_sketch: "The difference statement gives du/dt proportional to 70 - u with a positive constant k, so the template is du/dt = k(70 - u). The sign rule: warming means u increases while u is below 70, so the rate is positive there and the matching sign is plus. The right-hand side of the differential equation is k(70-u)."
+          - problem: "A population p grows at a rate proportional to the square root of its size. Use a positive constant k. Give dp/dt as a function of p and k."
+            answer: "k sqrt(p)"
+            answer_contract: {"kind": "function", "vars": ["k", "p"]}
+            solution_sketch: "Proportionality to the square root of p gives the template dp/dt = k sqrt(p) with a positive constant k, so the full equation is dp/dt = k sqrt(p). The sign rule: growth means p increases with time, so the sign matching the behavior is positive. The right-hand side of the differential equation is k sqrt(p)."
         constraints: "proportionality statements with k > 0; always ask for the sign that matches the described behavior"
     diagnostic_exemplar:
       problem: 'A quantity $y$ decreases at a rate proportional to the square of $y$. Write the differential equation, and state its order and whether it is linear.'
@@ -135,18 +147,30 @@ topics:
         name: Verifying implicit solutions
         key_prerequisites: [implicit-differentiation]
         exemplars:
-          - problem: "Show that any function $y(x)$ satisfying $x^2 + y^2 = 9$ solves $y' = -x/y$."
-            answer: "Differentiating implicitly: $2x + 2y\\,y' = 0$, so $y' = -x/y$."
-            answer_contract: {kind: none}
-            solution_sketch: "Differentiating implicitly: $2x + 2y\\,y' = 0$, so $y' = -x/y$."
-          - problem: "Show that curves $x^3 + y^3 = 7$ satisfy $y' = -x^2/y^2$."
-            answer: "Implicit differentiation gives $3x^2 + 3y^2 y' = 0$, so $y' = -x^2/y^2$."
-            answer_contract: {kind: none}
-            solution_sketch: "Implicit differentiation gives $3x^2 + 3y^2 y' = 0$, so $y' = -x^2/y^2$."
-          - problem: "Verify that $xy = 4$ defines a solution of $xy' + y = 0$."
-            answer: "Differentiating $xy = 4$: $y + xy' = 0$, which is the equation."
-            answer_contract: {kind: none}
-            solution_sketch: "Product rule on the left of $xy = 4$; the result is exactly the ODE."
+          - problem: "The relation x^2 + y^2 = 25 defines y as a function of x. Find y' in terms of x and y."
+            answer: "-x/y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The full relation is x^2 + y^2 = 25. Differentiate both sides with implicit differentiation and the chain rule: 2x + 2y y' = 0. Solve for y': 2y y' = -2x, so y' = -x/y."
+          - problem: "The relation x^3 + y^3 = 64 defines y as a function of x. Find y' in terms of x and y."
+            answer: "-x^2/y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The full relation is x^3 + y^3 = 64. Differentiate both sides with implicit differentiation and the chain rule: 3x^2 + 3y^2 y' = 0. Solve for y': 3y^2 y' = -3x^2, so y' = -x^2/y^2."
+          - problem: "The relation xy = 12 defines y as a function of x. Find y' in terms of x and y."
+            answer: "-y/x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The full relation is xy = 12. Differentiate both sides with implicit differentiation and the product rule: y + x y' = 0. Solve for y': x y' = -y, so y' = -y/x."
+          - problem: "The relation x^2 - y^2 = 9 defines y as a function of x. Find y' in terms of x and y."
+            answer: "x/y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The full relation is x^2 - y^2 = 9. Differentiate both sides with implicit differentiation and the chain rule: 2x - 2y y' = 0. Solve for y': -2y y' = -2x, so y' = x/y."
+          - problem: "The relation xy + x^2 = 1 defines y as a function of x. Find y' in terms of x and y."
+            answer: "-(y+2x)/x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The full relation is xy + x^2 = 1. Differentiate both sides with implicit differentiation, the product rule, and the power rule: y + x y' + 2x = 0. Solve for y': x y' = -y - 2x, so y' = -(y+2x)/x."
+          - problem: "The relation y^3 + xy = 4 defines y as a function of x. Find y' in terms of x and y."
+            answer: "-y/(3y^2+x)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The full relation is y^3 + xy = 4. Differentiate both sides with implicit differentiation, the chain rule, and the product rule: 3y^2 y' + y + x y' = 0. Solve for y': (3y^2 + x) y' = -y, so y' = -y/(3y^2+x)."
         constraints: "implicit relations polynomial in x and y; one implicit differentiation closes the verification"
       - id: kp3
         name: Fitting constants and parameters
