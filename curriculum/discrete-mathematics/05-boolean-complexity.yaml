@@ -410,18 +410,30 @@ topics:
         name: "The critical exponent and the three cases"
         key_prerequisites: [growth-of-functions, logarithm-properties]
         exemplars:
-          - problem: 'For $T(n) = 9T(n/3) + n$, compute the critical exponent $\log_b a$, compare $f(n)$ with $n^{\log_b a}$, and give the growth order of $T(n)$.'
-            answer: '$\log_3 9 = 2$; $f(n) = n$ grows strictly slower than $n^2$, so $T(n) = \Theta(n^2)$ (leaves dominate, case 1).'
-            answer_contract: {kind: none}
-            solution_sketch: '$n^{\log_3 9} = n^2$. Since $f(n) = n \prec n^2$, the work at the leaves dominates: $T(n) = \Theta(n^{\log_b a}) = \Theta(n^2)$.'
-          - problem: 'Classify $T(n) = 2T(n/2) + n$.'
-            answer: '$\log_2 2 = 1$ and $f(n) = n$ matches $n^1$, so $T(n) = \Theta(n \log n)$ (balanced, case 2).'
-            answer_contract: {kind: none}
-            solution_sketch: 'When $f(n) = \Theta(n^{\log_b a})$, every one of the $\log_b n$ levels does the same order of work, so a $\log$ factor appears: $T(n) = \Theta(n \log n)$ — merge sort.'
-          - problem: 'Classify $T(n) = 2T(n/2) + n^{2}$.'
-            answer: '$f(n) = n^2$ grows strictly faster than $n^{\log_2 2} = n$, so $T(n) = \Theta(n^2)$ (root dominates, case 3).'
-            answer_contract: {kind: none}
-            solution_sketch: 'The top level already does $n^2$ work and the levels below shrink geometrically ($2 \cdot (n/2)^2 = n^2/2$), so the root dominates: $T(n) = \Theta(f(n)) = \Theta(n^2)$.'
+          - problem: "For the recurrence T(n) = 25T(n/5) + n^2, compute the critical exponent log_b a and determine the case number and the growth class of T(n) as a function of n."
+            answer: "case = 2; T = n^2*ln(n)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
+            solution_sketch: "Read off a = 25, b = 5, and f(n) = n^2. Step 1 (logarithm property): log_5 25 = 2, so the critical exponent is 2. Step 2 (case comparison): f(n) = n^2 matches n^2, so this is case 2. Step 3 (Master Theorem case 2): every level does the same order of work and a log factor appears, T(n) = Theta(n^2 ln n). The answer is case = 2; T = n^2*ln(n)."
+          - problem: "Classify the recurrence T(n) = 27T(n/3) + n by finding the critical exponent and comparing f(n) with n^(log_b a). What case applies, and what is the growth class of T(n)?"
+            answer: "case = 1; T = n^3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
+            solution_sketch: "Read off a = 27, b = 3, and f(n) = n. Step 1 (logarithm property): log_3 27 = 3, so the critical exponent is 3. Step 2 (case comparison): f(n) = n grows strictly slower than n^3, so the leaf work dominates: case 1. Step 3 (Master Theorem case 1): T(n) = Theta(n^(log_b a)) = Theta(n^3). The answer is case = 1; T = n^3."
+          - problem: "A divide-and-conquer algorithm solves 8 subproblems of size n/4 and spends n^3 time to split and combine each call, giving T(n) = 8T(n/4) + n^3. Determine the case number and the growth class of T(n)."
+            answer: "case = 3; T = n^3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
+            solution_sketch: "Read off a = 8, b = 4, and f(n) = n^3. Step 1 (logarithm property): log_4 8 = 3/2, so the critical exponent is 3/2. Step 2 (case comparison): f(n) = n^3 grows strictly faster than n^(3/2), so the root work dominates: case 3, and the regularity condition holds automatically for a monomial. Step 3 (Master Theorem case 3): T(n) = Theta(f(n)) = Theta(n^3). The answer is case = 3; T = n^3."
+          - problem: "The recurrence T(n) = aT(n/2) + n^2 with a a positive integer falls into case 2 of the Master Theorem, so f(n) matches n^(log_b a). Find the value of a."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Case 2 requires f(n) = n^(log_b a), so here n^2 = n^(log_2 a). Step 1 (logarithm property): log_2 a = 2, hence a = 2^2. Step 2: a = 4 is a small positive integer, so the recurrence T(n) = 4T(n/2) + n^2 is indeed balanced. The answer is 4."
+          - problem: "For T(n) = 64T(n/4) + n^3, find the critical exponent E = log_b a, the case number, and the growth class of T(n)."
+            answer: "E = 3; case = 2; T = n^3*ln(n)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "E"}, {"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
+            solution_sketch: "Read off a = 64, b = 4, and f(n) = n^3. Step 1 (logarithm property): E = log_4 64 = 3 since 4^3 = 64. Step 2 (case comparison): f(n) = n^3 matches n^E = n^3, so case 2 holds. Step 3 (Master Theorem case 2): each of the log_4 n levels does Theta(n^3) work, so T(n) = Theta(n^3 ln n). The answer is E = 3; case = 2; T = n^3*ln(n)."
+          - problem: "An algorithm recurses on 4 subproblems of half the size and does sqrt(n) work to split each call, so T(n) = 4T(n/2) + sqrt(n). State the case number and the growth class of T(n)."
+            answer: "case = 1; T = n^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "case"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "T"}]}
+            solution_sketch: "Read off a = 4, b = 2, and f(n) = sqrt(n) = n^(1/2). Step 1 (logarithm property): log_2 4 = 2, so the critical exponent is 2. Step 2 (case comparison): n^(1/2) grows strictly slower than n^2, so the leaf work dominates: case 1. Step 3 (Master Theorem case 1): T(n) = Theta(n^2). The answer is case = 1; T = n^2."
         constraints: "a, b small positive integers; f(n) a monomial so case comparison is by exponent and the case-3 regularity condition holds automatically; answers name the case and the Θ class"
       - id: kp3
         name: "Classifying classic algorithms"
