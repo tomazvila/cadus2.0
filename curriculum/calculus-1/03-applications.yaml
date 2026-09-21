@@ -136,13 +136,29 @@ topics:
         name: Filling tanks with constant cross-section
         key_prerequisites: [implicit-differentiation, volume-prisms-cylinders]
         exemplars:
-          - problem: 'Water pours into a cylindrical tank of radius $3$ m at $18$ m³/min. Using $V = \pi r^2 h$, how fast is the water level rising?'
-            answer: "2/π m/min"
-            answer_contract: {kind: none}
-            solution_sketch: '$V = 9\pi h$, so $\frac{dV}{dt} = 9\pi \frac{dh}{dt}$ and $\frac{dh}{dt} = \frac{18}{9\pi} = \frac{2}{\pi}$.'
           - problem: 'A rectangular pool with base $4$ m by $5$ m fills at $10$ m³/h. How fast does the depth rise?'
             answer: "1/2 m/h"
             solution_sketch: '$V = 20h$, so $\frac{dh}{dt} = \frac{10}{20} = \frac{1}{2}$.'
+          - problem: "Water pours into a cylindrical tank of radius $3$ m at $18\\pi$ m^3/min. Using $V = \\pi r^2 h$, find how fast the water level is rising in m/min."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the volume, V = pi r^2 h = 9pi h. Step 2: Differentiate with respect to time; the constant cross-section rule gives dV/dt = 9pi dh/dt. Step 3: Substitute dV/dt = 18pi and solve, so dh/dt = 2. The water level rises at 2 m/min."
+          - problem: "A rectangular aquarium is $6$ m long and $2$ m wide. Water flows in at $3$ m^3 per minute. Find the speed at which the water surface climbs, as a fraction in m/min."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The base area is A = 6*2 = 12 m^2, so V = 12h. Step 2: Differentiate using the constant cross-section rule: dV/dt = 12 dh/dt. Step 3: Substitute dV/dt = 3, giving 3 = 12 dh/dt, so dh/dt = 1/4. The water surface climbs at 1/4 m/min."
+          - problem: "A cylindrical rain barrel of radius $2$ m collects stormwater at $20\\pi$ m^3/h. Use $V = \\pi r^2 h$ to determine the rate at which the water level rises in m/h."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The volume is V = pi r^2 h = 4pi h. Step 2: Differentiate with respect to t; the constant cross-section relation is dV/dt = 4pi dh/dt. Step 3: Put dV/dt = 20pi, so 20pi = 4pi dh/dt and dh/dt = 5. The water level rises at 5 m/h."
+          - problem: "A concrete form has a flat rectangular base measuring $3$ m by $7$ m. A pump adds water at $14$ m^3/min. Determine how fast the water depth increases in m/min, as a fraction."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The base area is A = 3*7 = 21 m^2, so V = 21h. Step 2: Differentiate using the constant cross-section rule: dV/dt = 21 dh/dt. Step 3: Set dV/dt = 14, so 14 = 21 dh/dt and dh/dt = 2/3. The water depth increases at 2/3 m/min."
+          - problem: "A cylindrical tank of radius $2$ m must have its water level rise at $3$ m/min. Using $V = \\pi r^2 h$, find the volume inflow rate in m^3/min, as a multiple of pi."
+            answer: "12pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: For radius 2 the volume is V = pi r^2 h = 4pi h. Step 2: Differentiate with respect to time; the constant cross-section rule gives dV/dt = 4pi dh/dt. Step 3: Substitute dh/dt = 3, so dV/dt = 4pi*3 = 12pi. The volume inflow rate is 12pi m^3/min."
         constraints: "constant cross-section (cylinder or prism) so dV/dt = (base area)·dh/dt; exact answers"
     diagnostic_exemplar:
       problem: 'Water pours into a cylindrical tank of radius $2$ m at $12$ m³/min. Using $V = \pi r^2 h$, how fast is the water level rising?'
@@ -197,14 +213,30 @@ topics:
         name: Conical tanks (similar-triangle substitution)
         key_prerequisites: [related-rates-setup, similar-triangles, volume-pyramids-cones-spheres]
         exemplars:
-          - problem: 'Water pours at $2$ m³/min into an inverted cone of height $10$ m and top radius $5$ m (so $r = h/2$ at depth $h$). How fast is the depth rising when $h = 4$ m?'
-            answer: "1/(2π) m/min"
-            answer_contract: {kind: none}
-            solution_sketch: '$V = \frac{\pi}{3}\left(\frac{h}{2}\right)^2 h = \frac{\pi h^3}{12}$; $\frac{dV}{dt} = \frac{\pi h^2}{4}\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{2}{4\pi} = \frac{1}{2\pi}$.'
-          - problem: 'An inverted conical tank has height $6$ m and top radius $3$ m. Water enters at $9$ m³/min. How fast is the depth rising when $h = 2$ m?'
-            answer: "9/π m/min"
-            answer_contract: {kind: none}
-            solution_sketch: '$r = h/2$ gives $V = \frac{\pi h^3}{12}$; $\frac{dV}{dt} = \frac{\pi h^2}{4}\frac{dh}{dt} = \pi \frac{dh}{dt}$ at $h = 2$.'
+          - problem: "Water flows into an inverted conical tank at 6 m^3/min. The tank is 10 m deep and has top radius 5 m. Find how fast the water depth is rising when the depth is 2 m."
+            answer: "6/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The cone gives r = h/2 by similar triangles, so V = (pi/3)(h/2)^2 h = pi h^3/12. Differentiate with respect to time: dV/dt = (pi h^2/4) dh/dt. Substitute dV/dt = 6 and h = 2: 6 = pi dh/dt. The rate is 6/pi."
+          - problem: "A pump delivers water at 12 m^3/min to a cone that is 6 m high with top radius 3 m. Compute the rate at which the water level climbs when the water is 2 m deep."
+            answer: "12/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By similar triangles r = h/2, hence V = pi h^3/12. Differentiate: dV/dt = (pi h^2/4) dh/dt. At h = 2 this gives 12 = pi dh/dt, so dh/dt = 12/pi. The water level climbs at 12/pi."
+          - problem: "An inverted cone is 8 m tall and has top radius 4 m. Water enters at 4 m^3/min. Find the rate at which the radius of the water surface is growing when the depth is 2 m."
+            answer: "2/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Similar triangles give r = h/2, and the volume is V = pi h^3/12. Differentiate: dV/dt = (pi h^2/4) dh/dt; with dV/dt = 4 and h = 2, dh/dt = 4/pi. Since r = h/2, dr/dt = (1/2) dh/dt. The radius grows at 2/pi."
+          - problem: "A conical tank has height 12 m and top radius 6 m. Water depth increases at 1/(3pi) m/min. Find the volume rate of water entering the tank when the depth is 3 m as a fraction."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "With r = h/2, the volume is V = pi h^3/12. Differentiate to get dV/dt = (pi h^2/4) dh/dt. Substitute h = 3 and dh/dt = 1/(3pi): dV/dt = (pi*9/4)*(1/(3pi)) = 3/4. The volume rate is 3/4."
+          - problem: "A cone-shaped vessel has depth 9 m and top radius 3 m. Liquid is poured in at 5 m^3/min. Determine the speed at which the liquid level rises when the liquid is 3 m deep."
+            answer: "5/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Similar triangles give r = h/3, so V = (pi/3)(h/3)^2 h = pi h^3/27. Differentiate: dV/dt = (pi h^2/9) dh/dt. At h = 3, 5 = pi dh/dt, so dh/dt = 5/pi. The liquid level rises at 5/pi."
+          - problem: "An inverted cone is 10 m high and its top radius is 5 m. Water enters at 3 m^3/min. Find the rate at which the depth increases when the depth is 5 m, and give the answer to 2 decimals."
+            answer: "0.15"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The cone has r = h/2 by similar triangles, so V = pi h^3/12. Differentiate: dV/dt = (pi h^2/4) dh/dt. Substitute dV/dt = 3 and h = 5: dh/dt = 12/(25pi), which is about 0.1528. Rounded to 2 decimals, the depth rate is 0.15."
         constraints: "cone dimensions give a simple ratio r = kh; eliminate r via similar triangles before differentiating"
       - id: kp3
         name: Shadows and multi-quantity setups
@@ -213,10 +245,26 @@ topics:
           - problem: 'A $2$ m person walks away from a $5$ m lamppost at $2$ m/s. How fast is the tip of the shadow moving?'
             answer: "10/3 m/s"
             solution_sketch: 'Similar triangles: $\frac{s}{2} = \frac{x + s}{5}$ gives $s = \frac{2}{3}x$; tip $= x + s = \frac{5}{3}x$, so tip speed $= \frac{5}{3} \cdot 2 = \frac{10}{3}$.'
-          - problem: 'A rectangle''s length grows at $3$ cm/s while its width shrinks at $2$ cm/s. How fast is the area changing when the length is $10$ cm and the width $6$ cm?'
-            answer: "-2 cm²/s (shrinking at 2 cm²/s)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Product rule: $\frac{dA}{dt} = \frac{dl}{dt}w + l\frac{dw}{dt} = 3 \cdot 6 + 10 \cdot (-2) = -2$.'
+          - problem: "A rectangular panel changes shape. Its length increases at 4 cm per second and its width decreases at 3 cm per second. At the moment the panel is 12 cm long and 5 cm wide, find the rate of change of its area in square centimeters per second."
+            answer: "-16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the area as A = l w. Differentiate with the product rule: dA/dt = (dl/dt) w + l (dw/dt). Substitute the values: (4)(5) + (12)(-3) = 20 - 36 = -16. The area is changing at -16 square centimeters per second."
+          - problem: "A 3 m tall person walks straight away from an 8 m tall lamppost at 2 m per second. Find how fast the person's shadow length is growing in meters per second."
+            answer: "6/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Similar triangles give s/3 = (x + s)/8, where x is the distance from the lamppost and s is the shadow length. Cross multiply: 8s = 3x + 3s, so 5s = 3x and s = (3/5)x. Differentiate: ds/dt = (3/5)(dx/dt). Since dx/dt = 2, ds/dt = 6/5. The shadow length is growing at 6/5 meters per second."
+          - problem: "A 4 m tall person walks away from a 10 m tall lamppost at 3 m per second. Find the speed of the tip of the person's shadow in meters per second."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Similar triangles give s/4 = (x + s)/10, with x the person's distance from the post and s the shadow length. Cross multiply: 10s = 4x + 4s, so 6s = 4x and s = (2/3)x. The tip position is x + s = (5/3)x, so its speed is (5/3)(3) = 5. The shadow tip moves at 5 meters per second."
+          - problem: "A rectangular box has constant height 5 cm. Its length grows at 2 cm per second and its width shrinks at 1 cm per second. At the instant the length is 3 cm and the width is 4 cm, find how fast the volume is changing in cubic centimeters per second."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the volume as V = l w h with h = 5. Differentiate: dV/dt = (dl/dt) w h + l (dw/dt) h. Substitute: (2)(4)(5) + (3)(-1)(5) = 40 - 15 = 25. The volume is changing at 25 cubic centimeters per second."
+          - problem: "A rectangle's length grows at 5 cm per second and its width grows at 4 cm per second. When the length is 6 cm and the width is 7 cm, find the rate at which the area is growing in square centimeters per second."
+            answer: "59"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the area as A = l w. The product rule gives dA/dt = (dl/dt) w + l (dw/dt). Substitute: (5)(7) + (6)(4) = 35 + 24 = 59. The area is growing at 59 square centimeters per second."
         constraints: "two changing quantities; similar-triangle or product-rule relationships; integer data"
     diagnostic_exemplar:
       problem: 'Water pours at $3$ m³/min into an inverted cone of height $8$ m and top radius $4$ m (so $r = h/2$ at depth $h$). How fast is the depth rising when $h = 4$ m?'
@@ -264,6 +312,22 @@ topics:
           - problem: 'Find the linearization of $f(x) = x^2$ at $a = 3$. Give the expression for $L(x)$.'
             answer: "9 + 6(x - 3)"
             solution_sketch: '$f(3) = 9$ and $f''(3) = 6$, so $L(x) = 9 + 6(x - 3)$, i.e. $6x - 9$.'
+          - problem: "Find the linearization of $f(x) = \\\\sqrt{x}$ at $a = 9$. Give the expression for $L(x)$."
+            answer: "3 + (x-9)/6"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For $f(x) = \\\\sqrt{x}$, the base point is $a = 9$. The value is $f(9) = 3$ by the square root. The derivative is $f'(x) = 1/(2\\\\sqrt{x})$ by the power rule, so $f'(9) = 1/6$. The linearization formula gives $L(x) = f(9) + f'(9)(x - 9) = 3 + (1/6)(x - 9)$. The answer is 3 + (x-9)/6."
+          - problem: "Find the linearization of $f(x) = x^3$ at $a = 2$. Give the expression for $L(x)$."
+            answer: "8 + 12(x - 2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For $f(x) = x^3$, the base point is $a = 2$. The value is $f(2) = 8$ by the cube. The derivative is $f'(x) = 3x^2$ by the power rule, so $f'(2) = 12$. The linearization formula gives $L(x) = f(2) + f'(2)(x - 2) = 8 + 12(x - 2)$. The answer is 8 + 12(x - 2)."
+          - problem: "Find the linearization of $f(x) = 1/x$ at $a = 16$. Give the expression for $L(x)$."
+            answer: "1/16 - (x - 16)/256"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For $f(x) = 1/x$, the base point is $a = 16$. The value is $f(16) = 1/16$ by substitution. The derivative is $f'(x) = -1/x^2$ by the power rule, so $f'(16) = -1/256$. The linearization formula gives $L(x) = f(16) + f'(16)(x - 16) = 1/16 - (1/256)(x - 16) = 1/16 - (x - 16)/256$. The answer is 1/16 - (x - 16)/256."
+          - problem: "Find the linearization of $f(x) = \\\\ln(x)$ at $a = 1$. Give the expression for $L(x)$."
+            answer: "x - 1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For $f(x) = \\\\ln(x)$, the base point is $a = 1$. The value is $f(1) = 0$ by the natural log at one. The derivative is $f'(x) = 1/x$ by the derivative of ln, so $f'(1) = 1$. The linearization formula gives $L(x) = f(1) + f'(1)(x - 1) = 0 + 1(x - 1) = x - 1$. The answer is x - 1."
         constraints: "base point where f and f' are exact and simple (perfect squares/cubes); the answer is the expression for L(x)"
       - id: kp2
         name: Approximate values with the linearization
@@ -278,6 +342,18 @@ topics:
           - problem: 'Use the linearization of $\sqrt[3]{x}$ at $8$ to approximate $\sqrt[3]{8.12}$.'
             answer: "2.01"
             solution_sketch: '$f''(x) = \frac{1}{3}x^{-2/3}$, $f''(8) = \frac{1}{12}$; $2 + \frac{0.12}{12} = 2.01$.'
+          - problem: "Use the linearization of $x^4$ at $2$ to approximate $(2.01)^4$. Give the answer to 2 decimals."
+            answer: "16.32"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The full object is $L(x)=f(2)+f'(2)(x-2)$ for $f(x)=x^4$. By the power rule, $f'(x)=4x^3$, so $f(2)=16$ and $f'(2)=32$. Thus $L(x)=16+32(x-2)$. Evaluate at $x=2.01$: $L(2.01)=16+32(0.01)=16.32$. The answer is 16.32."
+          - problem: "Use the linearization of $\\sqrt{x}$ at $9$ to approximate $\\sqrt{9.03}$. Give the answer to 3 decimals."
+            answer: "3.005"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "The full object is $L(x)=f(9)+f'(9)(x-9)$ for $f(x)=\\sqrt{x}$. By the power rule, $f'(x)=\\frac{1}{2\\sqrt{x}}$, so $f(9)=3$ and $f'(9)=\\frac{1}{6}$. Thus $L(x)=3+\\frac{x-9}{6}$. Evaluate at $x=9.03$: $L(9.03)=3+\\frac{0.03}{6}=3.005$. The answer is 3.005."
+          - problem: "Use the linearization of $\\ln(x)$ at $1$ to approximate $\\ln(1.02)$. Give the answer to 2 decimals."
+            answer: "0.02"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The full object is $L(x)=f(1)+f'(1)(x-1)$ for $f(x)=\\ln(x)$. By the derivative rule for $\\ln$, $f'(x)=\\frac{1}{x}$, so $f(1)=0$ and $f'(1)=1$. Thus $L(x)=0+1(x-1)=x-1$. Evaluate at $x=1.02$: $L(1.02)=1.02-1=0.02$. The answer is 0.02."
         constraints: "input a small offset from the base point; the decimal answer terminates"
       - id: kp3
         name: Standard small-input approximations
@@ -292,6 +368,18 @@ topics:
           - problem: 'Find the linearization of $e^x$ at $a = 0$ and use it to approximate $e^{0.03}$. (Give the approximation.)'
             answer: "1.03"
             solution_sketch: '$e^0 = 1$ and the derivative at $0$ is $1$, so $L(x) = 1 + x$ and $L(0.03) = 1.03$.'
+          - problem: "Find the linearization of f(x) = sin(x) at a = 0 and use it to approximate sin(0.2). Give the approximation as a decimal to 1 decimal place."
+            answer: "0.2"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Step 1 (linearization formula): f(x) = sin(x) has f(0) = 0 and f'(x) = cos(x), so f'(0) = 1 and L(x) = 0 + 1(x - 0) = x. Step 2 (substitute the input): L(0.2) = 0.2. The approximation is 0.2."
+          - problem: "Find the linearization of f(x) = ln(x) at a = 1 and use it to approximate ln(1.02). Give the approximation as a decimal to 2 decimal places."
+            answer: "0.02"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1 (linearization formula): f(x) = ln(x) has f(1) = 0 and f'(x) = 1/x, so f'(1) = 1 and L(x) = 0 + 1(x - 1) = x - 1. Step 2 (substitute the input): L(1.02) = 0.02. The approximation is 0.02."
+          - problem: "Find the linearization of f(x) = sqrt(1+x) at a = 0 and use it to approximate sqrt(1.04). Give the approximation as a decimal to 2 decimal places."
+            answer: "1.02"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1 (linearization formula): f(x) = sqrt(1+x) has f(0) = 1 and f'(x) = 1/(2*sqrt(1+x)), so f'(0) = 1/2 and L(x) = 1 + (1/2)x. Step 2 (substitute the input): L(0.04) = 1 + 0.02 = 1.02. The approximation is 1.02."
         constraints: "base points 0 or 1 where the function and derivative are exact; the answer is the numeric approximation"
     diagnostic_exemplar:
       problem: 'Find the linearization of $f(x) = \sqrt[3]{x}$ at $a = 8$ and use it to approximate $\sqrt[3]{8.24}$. (Give the approximation.)'
