@@ -57,6 +57,22 @@ topics:
           - problem: 'The midpoint of $\overline{AB}$ is $M(3, 1, 2)$ and $A = (1, -1, 0)$. Find $B$.'
             answer: '$(5, 3, 4)$'
             solution_sketch: '$B = 2M - A = (6-1, 2+1, 4-0)$.'
+          - problem: "Find the midpoint of the segment from (-2, 5, 1) to (6, -3, 9). Give the answer as (x, y, z)."
+            answer: "(2, 1, 5)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Let M = (a, b, c). Step 1, midpoint rule: each coordinate of M is the average of the matching endpoint coordinates, so a = (-2+6)/2, b = (5+(-3))/2, c = (1+9)/2. Step 2, evaluate each average: a = 2, b = 1, c = 5. The midpoint is M = (2, 1, 5)."
+          - problem: "The midpoint of segment AB is M(-1, 3, 4) and A = (3, -5, 2). Find endpoint B. Give the answer as (x, y, z)."
+            answer: "(-5, 11, 6)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Let B = (x, y, z). Step 1, midpoint rule: set up (3+x)/2 = -1, (-5+y)/2 = 3, (2+z)/2 = 4. Step 2, solve each linear equation: x = -2 - 3, y = 6 + 5, z = 8 - 2, so x = -5, y = 11, z = 6. The endpoint is B = (-5, 11, 6)."
+          - problem: "Two satellites orbit at (14, -8, 6) and (-2, 4, 10). A control station computes the point halfway between them. Find that point. Give the answer as (x, y, z)."
+            answer: "(6, -2, 8)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Let the halfway point be (a, b, c). Step 1, midpoint rule: each coordinate is the average of the two satellite coordinates, so a = (14+(-2))/2, b = (-8+4)/2, c = (6+10)/2. Step 2, evaluate: a = 6, b = -2, c = 8. The halfway point is (6, -2, 8)."
+          - problem: "A rectangular box in space has one corner at P(1, 2, -3). The center of the box, which is the midpoint of the diagonal from P to the opposite corner Q, is C(4, 3, 0). Find the opposite corner Q. Give the answer as (x, y, z)."
+            answer: "(7, 4, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Let Q = (x, y, z). Step 1, midpoint rule: the center C is the midpoint of the diagonal, so set up (1+x)/2 = 4, (2+y)/2 = 3, (-3+z)/2 = 0. Step 2, solve each linear equation: x = 8 - 1, y = 6 - 2, z = 0 + 3, giving x = 7, y = 4, z = 3. The opposite corner is Q = (7, 4, 3)."
         constraints: "even coordinate sums so midpoints have integer coordinates"
     diagnostic_exemplar:
       problem: 'The midpoint of the segment $\overline{AB}$ is $M(3, 1, 5)$ and $A = (2, -1, 3)$. Find the distance from $A$ to $B$.'
@@ -92,44 +108,88 @@ topics:
         name: "Standard form of a sphere"
         key_prerequisites: [three-dimensional-coordinates, equations-of-circles]
         exemplars:
-          - problem: 'Write an equation of the sphere with center $(2, -1, 0)$ and radius $5$.'
-            answer: '$(x-2)^2 + (y+1)^2 + z^2 = 25$'
-            solution_sketch: 'The standard form is $(x-a)^2+(y-b)^2+(z-c)^2=r^2$ with center $(2,-1,0)$ and $r^2=25$.'
-            answer_contract: {kind: none}
-          - problem: 'Write an equation of the sphere with center $(0, 3, -4)$ and radius $\sqrt{7}$.'
-            answer: '$x^2 + (y-3)^2 + (z+4)^2 = 7$'
-            solution_sketch: 'Center $(0,3,-4)$ and radius $\sqrt{7}$ give $x^2+(y-3)^2+(z+4)^2=7$.'
-            answer_contract: {kind: none}
-          - problem: 'Does the point $(3, 1, 2)$ lie on the sphere $x^2 + y^2 + z^2 = 14$?'
-            answer: 'Yes: $9 + 1 + 4 = 14$.'
-            solution_sketch: 'Substituting $(3,1,2)$ gives $9+1+4=14$, which equals the right side, so the point lies on the sphere.'
-            answer_contract: {kind: none}
+          - problem: "A sphere has center (2, -1, 0) and radius 5. Give the left side of its equation in standard form, that is the expression in x, y and z before the equals sign."
+            answer: "(x-2)^2+(y+1)^2+z^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "The standard form of a sphere is (x-a)^2+(y-b)^2+(z-c)^2=r^2 with center (a,b,c). The full equation here would be (x-2)^2+(y+1)^2+z^2=25. Its left side is (x-2)^2+(y+1)^2+z^2."
+          - problem: "A sphere has center (0, 3, -4) and radius sqrt(7). Give the left side of its equation in standard form, that is the expression in x, y and z before the equals sign."
+            answer: "x^2+(y-3)^2+(z+4)^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "The standard form is (x-a)^2+(y-b)^2+(z-c)^2=r^2 with center (a,b,c). With center (0,3,-4) the full equation is x^2+(y-3)^2+(z+4)^2=7. The left side is x^2+(y-3)^2+(z+4)^2."
+          - problem: "The point (3, k, 2) with k > 0 lies on the sphere x^2 + y^2 + z^2 = 18. Find k."
+            answer: "sqrt(5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitution step: a point lies on the sphere when its coordinates satisfy the equation, so put (3, k, 2) into x^2 + y^2 + z^2 = 18 to get 9 + k^2 + 4 = 18. Simplify step: k^2 = 18 - 13 = 5. Square-root step: since k > 0, take the positive root, k = sqrt(5). The value of k is sqrt(5)."
+          - problem: "A sphere has equation (x-5)^2 + y^2 + (z+2)^2 = 17. Give its radius."
+            answer: "sqrt(17)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In standard form (x-a)^2+(y-b)^2+(z-c)^2=r^2 the right side equals r^2, and here r^2 = 17. The radius is the positive square root by the square-root step, so r = sqrt(17). The radius is sqrt(17)."
+          - problem: "A sphere has center (-1, 2, 0) and passes through the point (2, 4, 1). Give the left side of its equation in standard form, that is the expression in x, y and z before the equals sign."
+            answer: "(x+1)^2+(y-2)^2+z^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "Radius step by the distance formula: r^2 = (2-(-1))^2 + (4-2)^2 + (1-0)^2 = 9 + 4 + 1 = 14. Standard form step: the equation is (x+1)^2+(y-2)^2+z^2=14. Its left side is (x+1)^2+(y-2)^2+z^2."
+          - problem: "A point (0, t, 0) with t > 2 lies on the sphere (x-1)^2 + (y-2)^2 + z^2 = 11. Find t."
+            answer: "2+sqrt(10)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitution step: putting (0, t, 0) into (x-1)^2+(y-2)^2+z^2=11 gives 1 + (t-2)^2 + 0 = 11. Simplify step: (t-2)^2 = 10. Square-root step: since t > 2, take t-2 = sqrt(10), not -sqrt(10). Hence t = 2+sqrt(10), so the value of t is 2+sqrt(10)."
         constraints: "integer centers; radius an integer or the square root of an integer under 30"
       - id: kp2
         name: "Completing the square"
         key_prerequisites: [completing-the-square]
         exemplars:
-          - problem: 'Find the center and radius of the sphere $x^2 + y^2 + z^2 - 2x + 4y - 6z + 5 = 0$.'
-            answer: 'Center $(1, -2, 3)$, radius $3$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Complete the square in each variable: $(x-1)^2 + (y+2)^2 + (z-3)^2 = 1 + 4 + 9 - 5 = 9$.'
-          - problem: 'Find the center and radius of the sphere $x^2 + y^2 + z^2 + 6x - 8z = 0$.'
-            answer: 'Center $(-3, 0, 4)$, radius $5$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$(x+3)^2 + y^2 + (z-4)^2 = 9 + 16 = 25$.'
+          - problem: "Find the center and radius of the sphere x^2 + y^2 + z^2 - 4y + 6z - 12 = 0. Give the center as (x, y, z) and the radius."
+            answer: "center = (0, 2, -3); radius = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "radius"}]}
+            solution_sketch: "Start with x^2 + y^2 + z^2 - 4y + 6z - 12 = 0. Complete the square: x^2 + (y-2)^2 + (z+3)^2 = 4 + 9 + 12 = 25. Read the center and radius. So center = (0, 2, -3); radius = 5."
+          - problem: "Find the center and radius of the sphere x^2 + y^2 + z^2 - 4x + 8y - 6z + 13 = 0. Give the center as (x, y, z) and the radius."
+            answer: "center = (2, -4, 3); radius = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "radius"}]}
+            solution_sketch: "Start with x^2 + y^2 + z^2 - 4x + 8y - 6z + 13 = 0. Complete the square: (x-2)^2 + (y+4)^2 + (z-3)^2 = 4 + 16 + 9 - 13 = 16. Read the center and radius. So center = (2, -4, 3); radius = 4."
+          - problem: "Find the sum of the coordinates of the center of the sphere x^2 + y^2 + z^2 - 6x + 4y - 8z - 7 = 0."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with x^2 + y^2 + z^2 - 6x + 4y - 8z - 7 = 0. Complete the square: (x-3)^2 + (y+2)^2 + (z-4)^2 = 9 + 4 + 16 + 7 = 36. The center is (3, -2, 4). The sum of its coordinates is 3 - 2 + 4 = 5. So the sum is 5."
+          - problem: "Find the radius of the sphere x^2 + y^2 + z^2 - 8x + 4y - 6z + 4 = 0."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with x^2 + y^2 + z^2 - 8x + 4y - 6z + 4 = 0. Complete the square: (x-4)^2 + (y+2)^2 + (z-3)^2 = 16 + 4 + 9 - 4 = 25. The radius is sqrt(25) = 5. So the radius is 5."
+          - problem: "Find the center of the sphere x^2 + y^2 + z^2 + 6x - 8y + 4z - 7 = 0. Give the answer as (x, y, z)."
+            answer: "(-3, 4, -2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Start with x^2 + y^2 + z^2 + 6x - 8y + 4z - 7 = 0. Complete the square: (x+3)^2 + (y-4)^2 + (z+2)^2 = 9 + 16 + 4 + 7 = 36. The center is (-3, 4, -2). So the center is (-3, 4, -2)."
+          - problem: "Find the center and radius of the sphere x^2 + y^2 + z^2 + 6x - 4y - 8z + 4 = 0. Give the center as (x, y, z) and the radius."
+            answer: "center = (-3, 2, 4); radius = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "radius"}]}
+            solution_sketch: "Start with x^2 + y^2 + z^2 + 6x - 4y - 8z + 4 = 0. Complete the square: (x+3)^2 + (y-2)^2 + (z-4)^2 = 9 + 4 + 16 - 4 = 25. Read the center and radius. So center = (-3, 2, 4); radius = 5."
         constraints: "even linear coefficients; completed squares yield integer radii"
       - id: kp3
         name: "Spheres from geometric data"
         key_prerequisites: [three-dimensional-coordinates]
         exemplars:
-          - problem: 'Find an equation of the sphere with diameter endpoints $(1, 2, 3)$ and $(3, 6, 5)$.'
-            answer: '$(x-2)^2 + (y-4)^2 + (z-4)^2 = 6$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Center is the midpoint $(2, 4, 4)$; the diameter has length $\sqrt{4 + 16 + 4} = 2\sqrt{6}$, so $r^2 = 6$.'
-          - problem: 'Find an equation of the sphere centered at $(1, 2, 2)$ that passes through the origin.'
-            answer: '$(x-1)^2 + (y-2)^2 + (z-2)^2 = 9$'
-            answer_contract: {kind: none}
-            solution_sketch: '$r^2 = 1 + 4 + 4 = 9$.'
+          - problem: "The points (1, 2, 3) and (3, 6, 5) are endpoints of a diameter of a sphere. Find the center and the squared radius, giving the center as (x, y, z)."
+            answer: "center = (2, 4, 4); r2 = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "r2"}]}
+            solution_sketch: "The sphere has a diameter with endpoints (1, 2, 3) and (3, 6, 5). Midpoint rule: center = ((1+3)/2, (2+6)/2, (3+5)/2) = (2, 4, 4). Distance rule: squared diameter = (3-1)^2 + (6-2)^2 + (5-3)^2 = 4 + 16 + 4 = 24, so r2 = 24/4 = 6. The answer is center = (2, 4, 4); r2 = 6."
+          - problem: "A sphere is centered at (1, 2, 2) and passes through the origin. Find the other point where the sphere meets the z-axis, giving the answer as (x, y, z)."
+            answer: "(0, 0, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The sphere has center (1, 2, 2) and passes through (0, 0, 0), so by the distance rule r2 = 1^2 + 2^2 + 2^2 = 9. A point on the z-axis has the form (0, 0, z); the distance rule gives 1^2 + 2^2 + (z-2)^2 = 9, so (z-2)^2 = 4 and z = 0 or z = 4. The value z = 0 is the origin, so the other meeting point is (0, 0, 4). The answer is (0, 0, 4)."
+          - problem: "The points (2, 1, 4) and (4, 5, 2) are opposite ends of a diameter of a sphere. Find the center and the squared radius, giving the center as (x, y, z)."
+            answer: "center = (3, 3, 3); r2 = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "r2"}]}
+            solution_sketch: "The sphere has a diameter with opposite ends (2, 1, 4) and (4, 5, 2). Midpoint rule: center = ((2+4)/2, (1+5)/2, (4+2)/2) = (3, 3, 3). Distance rule: squared diameter = (4-2)^2 + (5-1)^2 + (2-4)^2 = 4 + 16 + 4 = 24, so r2 = 24/4 = 6. The answer is center = (3, 3, 3); r2 = 6."
+          - problem: "A sphere centered at (a, 1, 2) has squared radius 34 and passes through (3, 4, 5). Find the larger possible value of a."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sphere has center (a, 1, 2), squared radius 34, and passes through (3, 4, 5). Distance rule: (3-a)^2 + (4-1)^2 + (5-2)^2 = 34, so (a-3)^2 + 18 = 34 and (a-3)^2 = 16. Solving gives a = 7 or a = -1. The larger possible value of a is 7. The answer is 7."
+          - problem: "The points (1, 2, 3) and (5, y, 7) are the endpoints of a diameter of a sphere with squared radius 9. Find the larger possible value of y."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The diameter runs from (1, 2, 3) to (5, y, 7). Distance rule: squared diameter = (5-1)^2 + (y-2)^2 + (7-3)^2 = 32 + (y-2)^2. Diameter rule: the squared radius is one quarter of the squared diameter, so (32 + (y-2)^2)/4 = 9, giving (y-2)^2 = 4 and y = 0 or y = 4. The larger possible value of y is 4. The answer is 4."
+          - problem: "A sphere has a diameter whose endpoints are (0, 1, 2) and (4, 5, 8). Find the center and the squared radius, giving the center as (x, y, z)."
+            answer: "center = (2, 3, 5); r2 = 17"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "r2"}]}
+            solution_sketch: "The sphere has a diameter whose endpoints are (0, 1, 2) and (4, 5, 8). Midpoint rule: center = ((0+4)/2, (1+5)/2, (2+8)/2) = (2, 3, 5). Distance rule: squared diameter = (4-0)^2 + (5-1)^2 + (8-2)^2 = 16 + 16 + 36 = 68, so r2 = 68/4 = 17. The answer is center = (2, 3, 5); r2 = 17."
         constraints: "midpoints and squared radii are integers; pass-through points use Pythagorean quadruples"
     diagnostic_exemplar:
       problem: 'Find an equation of the sphere that is concentric with $x^2 + y^2 + z^2 - 2x + 4y - 4z = 3$ and passes through the origin.'
@@ -195,18 +255,30 @@ topics:
         name: "Traces of surfaces"
         key_prerequisites: [three-dimensional-coordinates, ellipses]
         exemplars:
-          - problem: 'Find the trace of the surface $z = x^2 - y^2$ in the plane $y = 0$.'
-            answer: 'The parabola $z = x^2$ (in the $xz$-plane).'
-            solution_sketch: 'Setting $y=0$ in $z=x^2-y^2$ gives $z=x^2$, a parabola in the $xz$-plane.'
-            answer_contract: {kind: none}
-          - problem: 'Find the trace of $x^2 + \frac{y^2}{4} + \frac{z^2}{9} = 1$ in the plane $z = 0$.'
-            answer: 'The ellipse $x^2 + \frac{y^2}{4} = 1$ (semi-axes $1$ and $2$) in the $xy$-plane.'
-            solution_sketch: 'Setting $z=0$ gives the ellipse $x^2+\frac{y^2}{4}=1$ in the $xy$-plane.'
-            answer_contract: {kind: none}
-          - problem: 'Find the trace of the surface $z = x^2 + y^2$ in the plane $z = 4$.'
-            answer: 'The circle $x^2 + y^2 = 4$ of radius $2$ at height $z = 4$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Set $z = 4$: $x^2 + y^2 = 4$.'
+          - problem: "Consider the surface $z = x^2 - y^2$. Its trace in the plane $y = 0$ is a parabola in the $xz$-plane. Find the positive $x$-coordinate where this trace meets the line $z = 9$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Trace rule: set y = 0 in z = x^2 - y^2, giving z = x^2. Solve rule: set z = 9, so x^2 = 9. The positive x-coordinate is 3."
+          - problem: "Consider the ellipsoid $x^2 + y^2/4 + z^2/9 = 1$. Its trace in the plane $z = 0$ is a conic in the $xy$-plane. Find the positive $y$-coordinate where this trace crosses the $y$-axis."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Trace rule: set z = 0 in the ellipsoid equation, giving x^2 + y^2/4 = 1. Axis rule: on the y-axis x = 0, so y^2/4 = 1. The positive y-coordinate is 2."
+          - problem: "Consider the surface $z = x^2 + y^2$. Its trace in the plane $z = 4$ is a circle. Give the center of this trace as (x, y, z)."
+            answer: "(0, 0, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Trace rule: set z = 4 in z = x^2 + y^2, giving x^2 + y^2 = 4. Circle rule: this circle lies in the plane z = 4 and is centered on the z-axis. The center is (0, 0, 4)."
+          - problem: "Consider the circular cylinder $x^2 + z^2 = 16$. Find the radius of this trace in the plane $y = 5$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Trace rule: set y = 5 in x^2 + z^2 = 16, giving x^2 + z^2 = 16. Circle rule: the radius is sqrt(16). The radius is 4."
+          - problem: "Consider the elliptic paraboloid $z = x^2 + 4y^2$. Its trace in the plane $z = 4$ is a conic. Find the positive $y$-coordinate where this trace meets the line $x = 0$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Trace rule: set z = 4 in z = x^2 + 4y^2, giving x^2 + 4y^2 = 4. Axis rule: set x = 0, so 4y^2 = 4. The positive y-coordinate is 1."
+          - problem: "Consider the circular cylinder $x^2 + y^2 = 25$. Find the radius of this trace in the plane $z = 7$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Trace rule: set z = 7 in x^2 + y^2 = 25, giving x^2 + y^2 = 25. Circle rule: the radius is sqrt(25). The radius is 5."
         constraints: "traces in coordinate planes or planes parallel to them; resulting conics have integer or simple radical parameters"
     diagnostic_exemplar:
       problem: 'Find the trace of the surface $x^2 + z^2 = 9$ in the plane $y = 4$, and say what that trace tells you about the whole surface.'
@@ -272,31 +344,59 @@ topics:
         name: "Hyperboloids and cones"
         key_prerequisites: [cylinders-and-traces, hyperbolas]
         exemplars:
-          - problem: 'Identify the surface $x^2 + y^2 - z^2 = 1$.'
-            answer: 'A hyperboloid of one sheet with axis the $z$-axis.'
-            answer_contract: {kind: none}
-            solution_sketch: 'One negative sign and $= 1$: one sheet. Traces $z = k$ are circles $x^2 + y^2 = 1 + k^2$, never empty.'
-          - problem: 'Identify the surface $z^2 - x^2 - y^2 = 1$.'
-            answer: 'A hyperboloid of two sheets with axis the $z$-axis.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Two negative signs: $z^2 = 1 + x^2 + y^2 \ge 1$ forces $|z| \ge 1$, so the surface splits into two sheets.'
-          - problem: 'Identify the surface $z^2 = x^2 + y^2$.'
-            answer: 'A (double) circular cone with axis the $z$-axis.'
-            solution_sketch: 'The equation $z^2=x^2+y^2$ is a double cone opening along the $z$-axis, with vertex at the origin.'
-            answer_contract: {kind: none}
+          - problem: "Identify the surface x^2 + y^2 - z^2 = 1. Select the correct type."
+            answer: "one sheet"
+            answer_contract: {"kind": "label", "options": [["one sheet"], ["two sheets"], ["cone"], ["cylinder"]]}
+            solution_sketch: "Step 1: Apply the signature rule: one minus sign with constant 1 gives a hyperboloid of one sheet. Step 2: The option two sheets is wrong because two minus signs give two sheets. The option cone is wrong because a cone needs constant 0. The option cylinder is wrong because a cylinder would miss the z squared term. The correct type is one sheet."
+          - problem: "Identify the surface z^2 - x^2 - y^2 = 1. Select the correct type."
+            answer: "two sheets"
+            answer_contract: {"kind": "label", "options": [["two sheets"], ["one sheet"], ["cone"], ["cylinder"]]}
+            solution_sketch: "Step 1: Apply the signature rule: two minus signs with constant 1 give a hyperboloid of two sheets. Step 2: The option one sheet is wrong because one minus sign gives one sheet. The option cone is wrong because a cone needs constant 0. The option cylinder is wrong because a cylinder would miss the z squared term. The correct type is two sheets."
+          - problem: "Find the value of k so that x^2 + y^2 - z^2 = k is a cone."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Apply the signature rule: a cone needs constant 0, as in z^2 = x^2 + y^2. Step 2: Set k = 0. The answer is 0."
+          - problem: "The surface z^2 - x^2 - y^2 = 1 is a hyperboloid. How many sheets does it have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Count the minus signs: there are two minus signs with constant 1. Step 2: The signature rule says this gives a hyperboloid of two sheets. The number of sheets is 2."
+          - problem: "The surface 4x^2 + y^2 - z^2 = 4 is a hyperboloid. How many sheets does it have?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Divide by 4 to get x^2 + y^2/4 - z^2/4 = 1. Step 2: There is one minus sign with constant 1, so the signature rule gives a hyperboloid of one sheet. The number of sheets is 1."
+          - problem: "The cone 4z^2 = x^2 + y^2 has a horizontal trace in the plane z = 3. Find the radius of that trace circle."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Substitute z = 3 into the full equation 4z^2 = x^2 + y^2 to get x^2 + y^2 = 4 * 3^2 = 36. Step 2: The trace is the circle x^2 + y^2 = 36, and a circle x^2 + y^2 = r^2 has radius r. Step 3: The radius is sqrt(36) = 6. The radius of the trace circle is 6."
         constraints: "signature determines the type: one minus sign with =1 gives one sheet, two minus signs give two sheets, =0 gives a cone"
       - id: kp3
         name: "Axis and orientation from the equation"
         key_prerequisites: [spheres-in-space, cylinders-and-traces]
         exemplars:
-          - problem: 'Identify the surface $y = x^2 + z^2$ and state its axis.'
-            answer: 'A circular paraboloid opening along the positive $y$-axis.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The degree-1 variable is $y$, so the paraboloid opens along the $y$-axis.'
-          - problem: 'Identify the surface $\frac{x^2}{9} - y^2 - z^2 = 1$ and state its axis.'
-            answer: 'A hyperboloid of two sheets with axis the $x$-axis.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Two minus signs; $\frac{x^2}{9} \ge 1$ forces $|x| \ge 3$, so the sheets open along the $x$-axis.'
+          - problem: "Consider the surface y = x^2/4 + z^2/9, a paraboloid with axis the degree-1 variable. In the plane y = 16 the trace is an ellipse. Give the point of that trace with z = 0 and x > 0 as (x, y, z)."
+            answer: "(8, 16, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The surface y = x^2/4 + z^2/9 is a paraboloid; by the odd-variable rule the degree-1 variable y is the axis. The trace in the plane y = 16 satisfies x^2/4 + z^2/9 = 16. Setting z = 0 gives x^2/4 = 16, so x = 8 for x > 0. The point is (8, 16, 0)."
+          - problem: "Consider the surface x^2/16 - y^2 - z^2/4 = 1, a hyperboloid of two sheets whose axis is the positive term. Give its vertex in the positive x direction as (x, y, z)."
+            answer: "(4, 0, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The surface x^2/16 - y^2 - z^2/4 = 1 has one positive term, x^2, so by the odd-variable rule the axis is the x-axis. The vertices lie on the axis, where y = z = 0, so x^2/16 = 1 and x = 4 in the positive direction. The vertex is (4, 0, 0)."
+          - problem: "Consider the surface x^2/9 - y^2/4 - z^2 = 1, a hyperboloid of two sheets. Find the distance between its two vertices."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation x^2/9 - y^2/4 - z^2 = 1 has one positive term, x^2, so by the odd-variable rule it is a two-sheet hyperboloid with axis the x-axis. The vertices lie on the axis at y = z = 0, where x^2 = 9, so they are (3, 0, 0) and (-3, 0, 0). The distance between the vertices is 6."
+          - problem: "Consider the surface x^2/4 + y^2 - z^2/9 = 1. Select the description that states its type and orientation."
+            answer: "one-sheet hyperboloid with axis the z-axis"
+            answer_contract: {"kind": "label", "options": [["one-sheet hyperboloid with axis the z-axis"], ["two-sheet hyperboloid with axis the z-axis"], ["elliptic paraboloid opening along the z-axis"], ["cone with axis the z-axis"]]}
+            solution_sketch: "The equation x^2/4 + y^2 - z^2/9 = 1 has two positive terms and one negative term, so it is a one-sheet hyperboloid; the odd term z^2 gives the axis z. The option two-sheet hyperboloid with axis the z-axis is the sign-count error, which needs only one positive term. The option elliptic paraboloid opening along the z-axis is wrong because a paraboloid needs a linear term. The option cone with axis the z-axis is wrong because a cone has zero on the right side. The correct description is one-sheet hyperboloid with axis the z-axis."
+          - problem: "Consider the paraboloid y = -x^2/9 - z^2/4. Determine whether it opens in the +y or the -y direction, and find the x-intercept with x > 0 of its trace in the plane y = -9. Give the verdict and the intercept."
+            answer: "verdict = negative; x = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "The paraboloid y = -x^2/9 - z^2/4 has degree-1 variable y, and the right side -x^2/9 - z^2/4 is negative for every point, so the surface opens toward negative y: verdict = negative. The trace in the plane y = -9 satisfies x^2/9 + z^2/4 = 9; at z = 0 this gives x^2 = 81, so the intercept with x > 0 is x = 9. The answer is verdict = negative; x = 9."
+          - problem: "Consider the cone z^2 = x^2/4 + y^2/9, whose axis is the isolated positive term. In the plane y = 0 the cone meets the plane along two lines. Give the point on the cone in that plane with z = 6 and x > 0 as (x, y, z)."
+            answer: "(12, 0, 6)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The equation z^2 = x^2/4 + y^2/9 is a cone; the isolated positive term z^2 shows by the odd-variable rule that the axis is the z-axis. In the plane y = 0 the cone is z^2 = x^2/4, so at z = 6 we get 36 = x^2/4 and x = 12 for x > 0. The point is (12, 0, 6)."
         constraints: "axis is the odd variable out: the degree-1 variable (paraboloid) or the positive term (hyperboloids/cones)"
     diagnostic_exemplar:
       problem: 'Identify the surface $4x^2 - y^2 - 4z^2 = 4$ and state its axis.'
@@ -333,40 +433,88 @@ topics:
         name: "Parametric equations of lines"
         key_prerequisites: [vectors-in-rn]
         exemplars:
-          - problem: 'Write parametric equations for the line through $(1, 0, 2)$ with direction vector $\langle 3, -1, 4 \rangle$.'
-            answer: '$x = 1 + 3t,\; y = -t,\; z = 2 + 4t$'
-            solution_sketch: 'Through $(1,0,2)$ with direction $\langle 3,-1,4\rangle$: $x=1+3t$, $y=-t$, $z=2+4t$.'
-            answer_contract: {kind: none}
-          - problem: 'Write parametric equations for the line through $P(1, 2, 3)$ and $Q(4, 0, 5)$.'
-            answer: '$x = 1 + 3t,\; y = 2 - 2t,\; z = 3 + 2t$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Direction $\vec{PQ} = \langle 3, -2, 2 \rangle$; base point $P$.'
+          - problem: "A line passes through the point (1, 0, 2) with direction vector <3, -1, 4>. Find the point where the line crosses the plane z = 14. Give the answer as (x, y, z)."
+            answer: "(10, -3, 14)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: Write the parametric equations for the line through (1, 0, 2) with direction <3, -1, 4>: x = 1 + 3t, y = -t, z = 2 + 4t (rule: parametric line from point and direction). Step 2: Set the z-coordinate equal to 14: 2 + 4t = 14, so 4t = 12 and t = 3 (rule: solving a linear equation for the parameter). Step 3: Substitute t = 3 into x and y: x = 1 + 9 = 10, y = -3 (rule: substitution). The point is (10, -3, 14)."
+          - problem: "A line passes through P(1, 2, 3) and Q(4, 0, 5). Its direction vector is the vector from P to Q. Find the point on the line at t = 2. Give the answer as (x, y, z)."
+            answer: "(7, -2, 7)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: The direction vector is Q - P = (4 - 1, 0 - 2, 5 - 3) = (3, -2, 2) (rule: vector between points). Step 2: Parametric equations with base P(1, 2, 3) are x = 1 + 3t, y = 2 - 2t, z = 3 + 2t (rule: parametric line). Step 3: At t = 2, x = 1 + 6 = 7, y = 2 - 4 = -2, z = 3 + 4 = 7 (rule: substitution). The point is (7, -2, 7)."
+          - problem: "A line has parametric equations x = 1 + 2t, y = -1 + 4t, z = 6 - 3t. Find the point where the line crosses the plane z = 0. Give the answer as (x, y, z)."
+            answer: "(5, 7, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: The parametric equations are x = 1 + 2t, y = -1 + 4t, z = 6 - 3t (rule: parametric line). Step 2: Set z = 0: 6 - 3t = 0, so t = 2 (rule: solving for t). Step 3: Substitute t = 2 into x and y: x = 1 + 4 = 5, y = -1 + 8 = 7 (rule: substitution). The point is (5, 7, 0)."
+          - problem: "A line passes through the point (2, -1, 4) with direction vector <1, 3, -2>. Find the point where the line crosses the plane y = 0. Give the answer as (x, y, z)."
+            answer: "(7/3, 0, 10/3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: Write the parametric equations for the line through (2, -1, 4) with direction <1, 3, -2>: x = 2 + t, y = -1 + 3t, z = 4 - 2t (rule: parametric line from point and direction). Step 2: Set the y-coordinate equal to 0: -1 + 3t = 0, so t = 1/3 (rule: solving a linear equation for the parameter). Step 3: Substitute t = 1/3 into x and z: x = 2 + 1/3 = 7/3, z = 4 - 2/3 = 10/3 (rule: substitution). The point is (7/3, 0, 10/3)."
+          - problem: "A line has parametric equations x = 1 + 2t, y = 3 - t, z = 2 + t. Find the value of t at which the line has x-coordinate 9. Give the answer as an integer."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The x-coordinate equation is x = 1 + 2t (rule: parametric line). Step 2: Set 1 + 2t = 9 and solve: 2t = 8, so t = 4 (rule: solving a linear equation). The value of t is 4."
+          - problem: "Find the point on the line through (0, 2, 1) and (4, 2, -3) at t = 1/2, using (0, 2, 1) as the base point. Give the answer as (x, y, z)."
+            answer: "(2, 2, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: The direction vector is (4 - 0, 2 - 2, -3 - 1) = (4, 0, -4) (rule: vector between points). Step 2: Parametric equations with base (0, 2, 1) are x = 4t, y = 2, z = 1 - 4t (rule: parametric line). Step 3: At t = 1/2, x = 4(1/2) = 2, y = 2, z = 1 - 4(1/2) = -1 (rule: substitution). The point is (2, 2, -1)."
         constraints: "integer points and direction vectors; accept any valid parametrization"
       - id: kp2
         name: "Symmetric equations and points on a line"
         key_prerequisites: [vectors-in-rn, three-dimensional-coordinates]
         exemplars:
-          - problem: 'Write symmetric equations for the line through $(2, 1, 3)$ with direction $\langle 4, 5, -2 \rangle$.'
-            answer: '$\dfrac{x-2}{4} = \dfrac{y-1}{5} = \dfrac{z-3}{-2}$'
-            solution_sketch: 'Equate each coordinate offset to the corresponding direction component: $\frac{x-2}{4}=\frac{y-1}{5}=\frac{z-3}{-2}$.'
-            answer_contract: {kind: none}
-          - problem: 'Does the point $(7, -2, 10)$ lie on the line $x = 1 + 3t$, $y = -t$, $z = 2 + 4t$?'
-            answer: 'Yes: $t = 2$ gives $(7, -2, 10)$ in all three equations.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Solve $1 + 3t = 7$ for $t = 2$, then check $y$ and $z$.'
+          - problem: "The symmetric equations of a line are (x - 2)/4 = (y - 1)/5 = (z - 3)/(-2). Find the point on the line where each fraction equals 1. Give the answer as (x, y, z)."
+            answer: "(6, 6, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Symmetric equations rule: each fraction equals the same parameter, so set (x - 2)/4 = (y - 1)/5 = (z - 3)/(-2) = 1. Solve each coordinate: x = 2 + 4 = 6, y = 1 + 5 = 6, and z = 3 - 2 = 1. The point is (6, 6, 1)."
+          - problem: "Determine whether the point (7, -2, 10) lies on the line x = 1 + 3t, y = -t, z = 2 + 4t. If the point lies on the line, give the value of t; if it does not, give 0. Give the verdict and t as name = value."
+            answer: "verdict = contains; t = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["contains"], ["excludes"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Membership rule: substitute the point coordinates into the parametric equations. From x = 7, 7 = 1 + 3t gives t = 2. Then y = -t = -2 and z = 2 + 4t = 10, so all three equations hold. The option excludes is wrong because a single t satisfies every coordinate equation. verdict = contains; t = 2."
+          - problem: "The symmetric equations of a line are (x - 5)/2 = (y + 1)/3 = (z - 4)/(-6). Find the direction vector of the line. Give the answer as (a, b, c)."
+            answer: "(2, 3, -6)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Symmetric equations rule: the denominators in the symmetric form are the direction components. The denominators are 2, 3, and -6, so the direction vector is (2, 3, -6). The answer is (2, 3, -6)."
+          - problem: "The line with symmetric equations (x - 1)/3 = (y - 2)/(-4) = (z + 5)/2 passes through a point with x = 7. Find the z-coordinate of that point. Give the answer as an exact number."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Symmetric equations rule: set the common value equal to (7 - 1)/3 = 2. Then (z + 5)/2 = 2, so z + 5 = 4 and z = -1. The z-coordinate is -1."
+          - problem: "The line has symmetric equations (x + 2)/5 = (y - 4)/2 = (z - 1)/(-3). Find the point on the line where the common value is -1. Give the answer as (x, y, z)."
+            answer: "(-7, 2, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Symmetric equations rule: set each fraction equal to -1. Solve x + 2 = -5, y - 4 = -2, and z - 1 = 3. This gives (-7, 2, 4)."
+          - problem: "The line with symmetric equations (x - 3)/2 = (y + 1)/4 = (z - 6)/(-5) passes through a point with y = 7. Find the x-coordinate of that point. Give the answer as an exact number."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Symmetric equations rule: the common value is (7 + 1)/4 = 2. Then (x - 3)/2 = 2, so x - 3 = 4 and x = 7. The x-coordinate is 7."
         constraints: "all direction components nonzero for symmetric form; membership checks resolve with one integer t"
       - id: kp3
         name: "Parallel, intersecting, and skew lines"
         key_prerequisites: [vectors-in-rn]
         exemplars:
-          - problem: 'Are the lines with direction vectors $\langle 2, -4, 6 \rangle$ and $\langle -1, 2, -3 \rangle$ parallel?'
-            answer: 'Yes: $\langle 2, -4, 6 \rangle = -2\langle -1, 2, -3 \rangle$.'
-            solution_sketch: 'Since $\langle 2,-4,6\rangle=-2\langle -1,2,-3\rangle$, the direction vectors are parallel, hence so are the lines.'
-            answer_contract: {kind: none}
-          - problem: 'Show that $L_1$: $x = 1 + t$, $y = t$, $z = 0$ and $L_2$: $x = 0$, $y = 1 + s$, $z = s$ are skew.'
-            answer: 'Directions $\langle 1,1,0 \rangle$ and $\langle 0,1,1 \rangle$ are not parallel; equating coordinates gives $t = -1$, $s = 0$ from $x$ and $z$, but then $y$: $-1 \ne 1$. No intersection, so the lines are skew.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Not parallel and no common solution of the three coordinate equations.'
+          - problem: "The lines L1 and L2 have direction vectors <2, -4, 6> and <-1, 2, -3>. State whether the direction vectors are scalar multiples and give the scalar k with <2, -4, 6> = k<-1, 2, -3>; if they are not scalar multiples, give k = 0."
+            answer: "verdict = proportional; k = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["proportional"], ["other"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "Compare the direction vectors component by component. The x-components give 2 = k(-1), so k = -2. Check y: -4 = -2(2) = -4, and z: 6 = -2(-3) = 6, so the vectors are scalar multiples. The option other would mean the vectors are not scalar multiples, but all three components share the same k. So verdict = proportional; k = -2."
+          - problem: "The lines L1: x = 1 + t, y = t, z = 0 and L2: x = 0, y = 1 + s, z = s are given. Determine the relationship between the lines and give the value of t from the x- and z-equations."
+            answer: "verdict = skew; t = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["skew"], ["other"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Solve the x-equation 1 + t = 0, which gives t = -1. The z-equation 0 = s gives s = 0; then the y-equation gives -1 on L1 and 1 on L2, so the lines do not meet. The direction vectors <1, 1, 0> and <0, 1, 1> are not scalar multiples, so the lines are skew. The option other would mean the lines are not skew, but they are neither parallel nor intersecting. Thus verdict = skew; t = -1."
+          - problem: "The lines L1: x = 2 + t, y = 2 - t, z = 3 + 2t and L2: x = 3, y = -1 + s, z = 3 + s are given. Find their point of intersection. Give the result as (x, y, z)."
+            answer: "(3, 1, 5)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Set the x-coordinates equal: 2 + t = 3, so t = 1. Set the y-coordinates equal: 2 - t = -1 + s; with t = 1 this gives 1 = -1 + s, so s = 2. Check the z-coordinates: 3 + 2t = 5 and 3 + s = 5, so the intersection point is (3, 1, 5)."
+          - problem: "The lines L1: x = 2 + t, y = 4 - t, z = 1 + 3t and L2: x = 2 + 2s, y = 2, z = 8 - s are given. Find the value of t at their point of intersection."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the y-coordinates first: 4 - t = 2, so t = 2. Then the x-coordinate of L1 is 2 + 2 = 4; the x-coordinate of L2 is 2 + 2s, so s = 1. The z-coordinates are 1 + 3(2) = 7 and 8 - 1 = 7, so the lines meet at t = 2."
+          - problem: "The lines L1 and L2 have direction vectors <6, -12, 18> and <2, -4, 6>. Find the scalar k with <6, -12, 18> = k<2, -4, 6>."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the x-components: 6 = k(2), so k = 3. Check the y-components: -12 = 3(-4) = -12, and the z-components: 18 = 3(6) = 18. Thus the scalar is 3."
+          - problem: "The lines L1: x = 1 + t, y = 2 + t, z = 3 + t and L2: x = 2 + s, y = 1 + 2s, z = s are given. Determine the relationship between the lines and give the value of t from the x- and y-equations."
+            answer: "verdict = skew; t = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["skew"], ["other"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Solve the x-equation 1 + t = 2 + s and the y-equation 2 + t = 1 + 2s. Subtract to get s = 2, then t = 3. Check z: L1 gives 3 + 3 = 6, while L2 gives s = 2, so the z-equations disagree. The direction vectors <1, 1, 1> and <1, 2, 1> are not scalar multiples, so the lines are skew. The option other would mean the lines are not skew, but they are neither parallel nor intersecting. Thus verdict = skew; t = 3."
         constraints: "systems resolve with small integer parameters; skew examples must fail exactly one coordinate equation"
     diagnostic_exemplar:
       problem: 'The line $L_1$ has parametric equations $x = 1 + 2t$, $y = 3 - t$, $z = 2 + t$, and $L_2$ passes through $(3, 2, 4)$ with direction vector $\langle 1, 1, 0 \rangle$. Are $L_1$ and $L_2$ parallel, intersecting, or skew?'
@@ -403,40 +551,88 @@ topics:
         name: "Point-normal form"
         key_prerequisites: [dot-product]
         exemplars:
-          - problem: 'Find an equation of the plane through $(1, 2, 3)$ with normal vector $\langle 2, -1, 4 \rangle$.'
-            answer: '$2x - y + 4z = 12$'
-            answer_contract: {kind: none}
-            solution_sketch: '$2(x-1) - (y-2) + 4(z-3) = 0$, i.e. $2x - y + 4z = 2 - 2 + 12 = 12$.'
-          - problem: 'Find an equation of the plane through the origin perpendicular to $\langle 3, 1, -2 \rangle$.'
-            answer: '$3x + y - 2z = 0$'
-            solution_sketch: 'A plane through the origin with normal $\langle 3,1,-2\rangle$ is $3x+y-2z=0$.'
-            answer_contract: {kind: none}
+          - problem: "A plane passes through the point (2, 1, 5) with normal vector (3, -2, 1). Give the coefficients A, B, C, and D of the equation Ax + By + Cz = D, using the given normal vector as (A, B, C)."
+            answer: "A = 3; B = -2; C = 1; D = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "Point-normal form: a plane through (x0, y0, z0) with normal (A, B, C) satisfies A(x - x0) + B(y - y0) + C(z - z0) = 0. Substitute the point (2, 1, 5) and the normal (3, -2, 1): 3(x - 2) - 2(y - 1) + 1(z - 5) = 0. Expanding gives 3x - 2y + z = 6 - 2 + 5 = 9. The coefficients are A = 3; B = -2; C = 1; D = 9."
+          - problem: "A plane passes through the origin with normal vector (2, 5, -3). Give the coefficients A, B, C, and D of the equation Ax + By + Cz = D, using the given normal vector as (A, B, C)."
+            answer: "A = 2; B = 5; C = -3; D = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "Point-normal form with the origin (0, 0, 0) gives A(x - 0) + B(y - 0) + C(z - 0) = 0, that is Ax + By + Cz = 0 with (A, B, C) the normal vector. With normal (2, 5, -3) the equation is 2x + 5y - 3z = 0, and D = 2(0) + 5(0) - 3(0) = 0. The coefficients are A = 2; B = 5; C = -3; D = 0."
+          - problem: "A line has direction vector (2, -1, 3). A plane is perpendicular to this line and passes through the point (-1, 3, 2). Give the coefficients A, B, C, and D of the equation Ax + By + Cz = D, using the direction vector of the line as the normal (A, B, C)."
+            answer: "A = 2; B = -1; C = 3; D = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "A plane perpendicular to a line has the direction vector of the line as its normal vector, so (A, B, C) = (2, -1, 3) by the point-normal form. The constant is the dot product of the normal with the point (-1, 3, 2): D = 2(-1) + (-1)(3) + 3(2) = -2 - 3 + 6 = 1. The equation is 2x - y + 3z = 1, so A = 2; B = -1; C = 3; D = 1."
+          - problem: "A plane has normal vector (-1, 4, 2) and passes through the point (3, 0, -2), so its equation is -x + 4y + 2z = D. Find the value of D."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In the point-normal form Ax + By + Cz = D, the constant D equals the dot product of the normal (A, B, C) with the point (x0, y0, z0). Here D = (-1)(3) + 4(0) + 2(-2) = -3 + 0 - 4. The value of D is -7."
+          - problem: "A point of the plane 4x + y - 2z = 6 has x = 1 and y = 0. Find its z-coordinate."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A point (x, y, z) lies in the plane exactly when its coordinates satisfy the equation 4x + y - 2z = 6. Substitute x = 1 and y = 0: 4(1) + 0 - 2z = 6, so -2z = 2 and z = -1. The z-coordinate is -1."
+          - problem: "A plane passes through the point (1, 0, 2) and is perpendicular to the line through P(3, -1, 4) and Q(1, 1, 0). Give the coefficients A, B, C, and D of the equation Ax + By + Cz = D, using the direction vector Q - P as the normal (A, B, C)."
+            answer: "A = -2; B = 2; C = -4; D = -10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "The direction vector of the line is Q - P = (1 - 3, 1 - (-1), 0 - 4) = (-2, 2, -4); a plane perpendicular to the line has this vector as its normal by the point-normal form. The constant is the dot product with the point (1, 0, 2): D = (-2)(1) + 2(0) + (-4)(2) = -2 - 8 = -10. The coefficients are A = -2; B = 2; C = -4; D = -10."
         constraints: "integer normals and points; right-hand sides are small integers"
       - id: kp2
         name: "Plane through three points"
         key_prerequisites: [cross-product]
         exemplars:
-          - problem: 'Find an equation of the plane through $A(1,0,0)$, $B(0,2,0)$, $C(0,0,3)$.'
-            answer: '$6x + 3y + 2z = 6$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\vec{AB} = \langle -1, 2, 0 \rangle$, $\vec{AC} = \langle -1, 0, 3 \rangle$; normal $\vec{AB} \times \vec{AC} = \langle 6, 3, 2 \rangle$. Point $A$ gives $6x + 3y + 2z = 6$; check $B$ and $C$ satisfy it.'
-          - problem: 'Find a normal vector to the plane through $P(0,0,0)$, $Q(1,1,0)$, $R(0,1,1)$.'
-            answer: '$\langle 1, -1, 1 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\vec{PQ} \times \vec{PR} = \langle 1,1,0 \rangle \times \langle 0,1,1 \rangle = \langle 1, -1, 1 \rangle$.'
+          - problem: "Find the plane through A(1,0,0), B(0,2,0), and C(0,0,3), and give z as an expression in x and y."
+            answer: "3 - 3x - 3y/2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Vectors: AB = (-1,2,0) and AC = (-1,0,3). Cross product rule: n = AB x AC = (6,3,2). Plane through A: 6x + 3y + 2z = 6; check B: 6*0 + 3*2 + 0 = 6 and C: 0 + 0 + 2*3 = 6, so all three points satisfy it. Solve for z: 2z = 6 - 6x - 3y, so z = 3 - 3x - 3y/2. The answer is 3 - 3x - 3y/2."
+          - problem: "Find a normal vector to the plane through P(0,0,0), Q(1,1,0), and R(0,1,1), and give the answer as (a, b, c)."
+            answer: "(1, -1, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Vectors: PQ = (1,1,0) and PR = (0,1,1). Cross product rule: n = PQ x PR = (1*1 - 0*1, 0*0 - 1*1, 1*1 - 1*0) = (1,-1,1). Check: (1,-1,1) dot (1,1,0) = 0 and dot (0,1,1) = 0, so it is perpendicular to both in-plane vectors. The answer is (1, -1, 1)."
+          - problem: "Find the plane through A(1,2,0), B(0,1,2), and C(2,0,1), and give z as an expression in x and y."
+            answer: "3 - x - y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Vectors: AB = (-1,-1,2) and AC = (1,-2,1). Cross product rule: n = AB x AC = (3,3,3). Plane through A: 3x + 3y + 3z = 9, which is x + y + z = 3; check B: 0 + 1 + 2 = 3 and C: 2 + 0 + 1 = 3, so all three points satisfy it. Solve for z: z = 3 - x - y. The answer is 3 - x - y."
+          - problem: "Points A(1,0,2), B(0,1,1), C(3,2,k), and D(1,1,0) are given. Find the value of k so that all four points lie in one plane."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Vectors: AB = (-1,1,-1), AC = (2,2,k-2), and AD = (0,1,-2). Cross product rule: AB x AC = (k, k-4, -4). Four points are coplanar when this normal is perpendicular to AD: 0*k + 1*(k-4) + (-2)*(-4) = k + 4 = 0, so k = -4. With k = -4 the plane is x + 2y + z = 3; check A: 1 + 0 + 2 = 3, B: 0 + 2 + 1 = 3, C: 3 + 4 - 4 = 3, and D: 1 + 2 + 0 = 3. The answer is -4."
+          - problem: "A straight ramp rises from the ground and passes through the points (0,0,0), (4,0,1), and (0,3,1). Give the height z of the ramp as an expression in x and y."
+            answer: "x/4 + y/3"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Vectors: OP = (4,0,1) and OQ = (0,3,1). Cross product rule: n = OP x OQ = (0*1 - 1*3, 1*0 - 4*1, 4*3 - 0*0) = (-3,-4,12). Plane through the origin: -3x - 4y + 12z = 0; check (4,0,1): -12 + 12 = 0 and (0,3,1): -12 + 12 = 0, so all three points satisfy it. Solve for z: 12z = 3x + 4y, so z = x/4 + y/3. The answer is x/4 + y/3."
+          - problem: "Consider the plane through A(1,0,2), B(2,1,0), and C(0,1,3). Decide whether D(2,2,0) lies on this plane, and give the value of 3x + y + 2z at D."
+            answer: "verdict = no; value = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Vectors: AB = (1,1,-2) and AC = (-1,1,1). Cross product rule: n = AB x AC = (3,1,2). Plane through A: 3(x-1) + y + 2(z-2) = 0, which is 3x + y + 2z = 7; check B: 6 + 1 + 0 = 7 and C: 0 + 1 + 6 = 7, so all three points satisfy it. At D(2,2,0) the left side is 3*2 + 2 + 2*0 = 8, which is not 7, so the verdict is no; the wrong verdict yes would come from skipping the comparison of 8 with 7. The answer is verdict = no; value = 8."
         constraints: "integer points with small integer cross products; always verify all three points satisfy the final equation"
       - id: kp3
         name: "Parallel and perpendicular planes"
         key_prerequisites: [dot-product]
         exemplars:
-          - problem: 'Find an equation of the plane through $(1, 1, 1)$ parallel to the plane $3x - y + 2z = 5$.'
-            answer: '$3x - y + 2z = 4$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Parallel planes share the normal $\langle 3, -1, 2 \rangle$; evaluate at $(1,1,1)$: $3 - 1 + 2 = 4$.'
-          - problem: 'Are the planes $x + 2y - z = 3$ and $2x + y + 4z = 1$ perpendicular?'
-            answer: 'Yes: the normals satisfy $\langle 1,2,-1 \rangle \cdot \langle 2,1,4 \rangle = 2 + 2 - 4 = 0$.'
-            solution_sketch: 'The normals have dot product $2+2-4=0$, so the planes are perpendicular.'
-            answer_contract: {kind: none}
+          - problem: "Consider the planes 2x - y + 2z = 3 and 4x - 2y + 4z = 7. Decide whether they are parallel, perpendicular, or neither; the scalar t is defined by <4, -2, 4> = t<2, -1, 2>, and it is 0 if the planes are perpendicular. Give the verdict and the value of t."
+            answer: "verdict = parallel; t = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["parallel"], ["perpendicular"], ["neither"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1: Read the normal vectors from the plane equations: n1 = <2, -1, 2> and n2 = <4, -2, 4>. Step 2: Apply the parallel test for planes: the normals must be scalar multiples, and indeed 4 = 2*2, -2 = 2*(-1), 4 = 2*2, so n2 = 2 n1. Step 3: The perpendicular test fails because the dot product n1 . n2 = 8 + 2 + 8 = 18 is not zero, so the planes are parallel with scalar t = 2. The answer is verdict = parallel; t = 2."
+          - problem: "For the planes x + 2y - z = 3 and 2x + y + 4z = 1, compute the dot product of their normal vectors."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The normal of x + 2y - z = 3 is <1, 2, -1>. Step 2: The normal of 2x + y + 4z = 1 is <2, 1, 4>. Step 3: Dot product: 1*2 + 2*1 + (-1)*4 = 2 + 2 - 4 = 0. The dot product is 0."
+          - problem: "The planes 2x + ky + 3z = 1 and 4x + 6y + 6z = 5 are parallel. Find k."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Parallel planes have proportional normals. Step 2: Compare <2, k, 3> and <4, 6, 6>; the ratio 4/2 = 2 and 6/3 = 2, so the second normal is twice the first. Step 3: Then 6 = 2k, so k = 3."
+          - problem: "The planes x + 2y - z = 4 and 3x - y + kz = 2 are perpendicular. Find k."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Perpendicular planes have normals with dot product zero. Step 2: The normals are <1, 2, -1> and <3, -1, k>. Step 3: Their dot product is 1*3 + 2*(-1) + (-1)*k = 1 - k. Step 4: Set 1 - k = 0, so k = 1."
+          - problem: "The normal vectors <2, -3, 4> and <-6, 9, c> are parallel. Find c."
+            answer: "-12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Parallel normals are scalar multiples. Step 2: Compare <-6, 9, c> with <2, -3, 4>; the first two components show multiplier -3: -6 = -3(2) and 9 = -3(-3). Step 3: Then c = -3(4) = -12."
+          - problem: "For the planes x + y + z = 2 and x + 2y + 3z = 4, compute the dot product of their normal vectors."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The normal of x + y + z = 2 is <1, 1, 1>. Step 2: The normal of x + 2y + 3z = 4 is <1, 2, 3>. Step 3: Dot product: 1*1 + 1*2 + 1*3 = 1 + 2 + 3 = 6. The dot product is 6."
         constraints: "parallel/perpendicular tests reduce to scalar-multiple or zero-dot-product checks on integer normals"
     diagnostic_exemplar:
       problem: 'Find an equation of the plane through $(1, 2, 3)$ that is perpendicular to both of the planes $x + y - z = 1$ and $2x - y + z = 4$.'
@@ -479,10 +675,22 @@ topics:
           - problem: 'Find the point where the line $x = 1 + 2t$, $y = -t$, $z = t$ meets the plane $2x + y + z = 10$.'
             answer: '$(5, -2, 2)$'
             solution_sketch: '$2(1+2t) - t + t = 2 + 4t = 10$, so $t = 2$.'
-          - problem: 'Show that the line $x = t$, $y = 1 - t$, $z = 2$ does not meet the plane $x + y + z = 5$.'
-            answer: 'Substituting gives $t + (1 - t) + 2 = 3 \ne 5$ for every $t$: the line is parallel to the plane and off it.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The direction $\langle 1, -1, 0 \rangle$ is orthogonal to the normal $\langle 1,1,1 \rangle$, and one point check fails.'
+          - problem: "Consider the line x = t, y = 1 - t, z = 2 and the plane x + y + z = 5. Determine whether the line is disjoint from the plane or cuts it, and give the constant value after substituting and simplifying the plane equation."
+            answer: "verdict = parallel; c = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["parallel"], ["intersects"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Substitute the line into the plane: t + (1 - t) + 2 = 3. The direction vector is <1, -1, 0>, and its dot product with the normal <1, 1, 1> is 0, so the line is parallel to the plane. The substitution gives the constant 3, not 5, so there is no intersection; the wrong option intersects comes from treating the constant 3 as equal to 5. The answer is verdict = parallel; c = 3."
+          - problem: "The line x = 2 + 3t, y = 1 - t, z = -4 + 2t meets the plane x - y + 2z = 1. Find the value of t at the intersection."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the line into the plane: (2 + 3t) - (1 - t) + 2(-4 + 2t) = 8t - 7. Set 8t - 7 = 1 and solve: 8t = 8, so t = 1. The answer is 1."
+          - problem: "The line with equations (x - 1)/2 = (y + 2)/(-1) = z/3 meets the plane x + y + z = 7. Find the point of intersection as (x, y, z)."
+            answer: "(5, -4, 6)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Write the line in parameter form: x = 1 + 2t, y = -2 - t, z = 3t. Substitute into x + y + z = 7: (1 + 2t) + (-2 - t) + 3t = 4t - 1. Solve 4t - 1 = 7, so t = 2. The point is (1 + 4, -2 - 2, 6) = (5, -4, 6)."
+          - problem: "The line through (1, 0, 2) and (3, 1, 0) meets the plane x + y + z = 5. Find the point of intersection as (x, y, z)."
+            answer: "(5, 2, -2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Parametrize the line through (1, 0, 2) and (3, 1, 0): direction (2, 1, -2), so x = 1 + 2t, y = t, z = 2 - 2t. Substitute into x + y + z = 5: (1 + 2t) + t + (2 - 2t) = t + 3. Solve t + 3 = 5, so t = 2. The point is (1 + 4, 2, 2 - 4) = (5, 2, -2)."
         constraints: "substitution yields a linear equation with integer solution t, or a contradiction in the parallel case"
       - id: kp2
         name: "Distances to planes and lines"
@@ -497,6 +705,18 @@ topics:
           - problem: 'Find the distance from the point $Q(1, 2, 3)$ to the line through $P(1, 0, 1)$ with direction $\mathbf{v} = \langle 0, 1, 0 \rangle$.'
             answer: "2"
             solution_sketch: '$\vec{PQ} = \langle 0, 2, 2 \rangle$; $d = \frac{|\vec{PQ} \times \mathbf{v}|}{|\mathbf{v}|} = \frac{|\langle -2, 0, 0 \rangle|}{1} = 2$.'
+          - problem: "Find the distance from the point (1, 1, 1) to the plane 2x + 2y + z = 9."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Point-plane distance formula: d = |2(1)+2(1)+1(1)-9| / sqrt(2^2+2^2+1^2). The numerator is |-4| = 4 and the denominator is sqrt(9) = 3. The distance is 4/3."
+          - problem: "Find the distance between the parallel planes 3x + 4y = 2 and 3x + 4y = 7."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Distance between parallel planes formula: pick a point on the first plane, for example (2, -1, 0), because 3(2)+4(-1)=2. Then d = |2-7| / sqrt(3^2+4^2). The numerator is 5 and the denominator is 5. The distance is 1."
+          - problem: "Find the distance from the point Q(2, 3, 4) to the line through P(0, 0, 0) with direction v = <1, 0, 0>."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Point-line distance formula: d = |PQ x v| / |v| with PQ = <2,3,4> and v = <1,0,0>. The cross product is <0,4,-3>, whose length is 5, and |v| = 1. The distance is 5."
         constraints: "normal magnitudes are integers (e.g. components 1-2-2, 2-1-2); answers are integers or simple fractions"
       - id: kp3
         name: "Line of intersection of two planes"
@@ -558,14 +778,30 @@ topics:
         name: "Limits of vector functions"
         key_prerequisites: [parametric-equations]
         exemplars:
-          - problem: 'Compute $\lim_{t \to 0} \left\langle \dfrac{\sin t}{t},\; t^2 + 1,\; e^t \right\rangle$.'
-            answer: '$\langle 1, 1, 1 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Take the limit componentwise; $\frac{\sin t}{t} \to 1$.'
-          - problem: 'Compute $\lim_{t \to 1} \left\langle \dfrac{t^2 - 1}{t - 1},\; t^3,\; 2 \right\rangle$.'
-            answer: '$\langle 2, 1, 2 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Factor: $\frac{t^2-1}{t-1} = t + 1 \to 2$.'
+          - problem: "Compute the limit as t -> 0 of <sin(3t)/t, t^2 + 4, e^(2t)> componentwise. Give the answer as (a, b, c)."
+            answer: "(3, 4, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The full vector limit is the limit as t goes to 0 of <sin(3t)/t, t^2 + 4, e^(2t)>. Step 1: use the sin ratio rule, sin(3t)/t = 3 sin(3t)/(3t), so the first component tends to 3. Step 2: use the polynomial limit rule and direct substitution for the second component, t^2 + 4 tends to 4. Step 3: use continuity of exp for the third component, e^(2t) tends to 1. The limit vector is (3, 4, 1)."
+          - problem: "Compute the limit as t -> 2 of <(t^2 - 4)/(t - 2), t^3, 5> componentwise. Give the answer as (a, b, c)."
+            answer: "(4, 8, 5)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The full vector limit is the limit as t goes to 2 of <(t^2 - 4)/(t - 2), t^3, 5>. Step 1: use the factoring rule, t^2 - 4 = (t - 2)(t + 2), so the first component simplifies to t + 2 and tends to 4. Step 2: use the polynomial limit rule, t^3 tends to 8. Step 3: use the constant limit rule, the third component stays 5. The limit vector is (4, 8, 5)."
+          - problem: "Compute the limit as t -> 0 of <sin(4t)/(2t), (t^2 + 5t)/t, 3t + 2> componentwise. Give the answer as (a, b, c)."
+            answer: "(2, 5, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The full vector limit is the limit as t goes to 0 of <sin(4t)/(2t), (t^2 + 5t)/t, 3t + 2>. Step 1: use the sin ratio rule, sin(4t)/(2t) = 2 sin(4t)/(4t), so the first component tends to 2. Step 2: use the factoring rule, (t^2 + 5t)/t = t + 5 for t not zero, so the second component tends to 5. Step 3: use direct substitution, 3t + 2 tends to 2. The limit vector is (2, 5, 2)."
+          - problem: "Compute the limit as t -> 3 of <(t^2 - 9)/(t - 3), (t^2 - t - 6)/(t - 3), sqrt(t + 1)> componentwise. Give the answer as (a, b, c)."
+            answer: "(6, 5, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The full vector limit is the limit as t goes to 3 of <(t^2 - 9)/(t - 3), (t^2 - t - 6)/(t - 3), sqrt(t + 1)>. Step 1: use the factoring rule, t^2 - 9 = (t - 3)(t + 3), so the first component tends to 6. Step 2: use the factoring rule again, t^2 - t - 6 = (t - 3)(t + 2), so the second component tends to 5. Step 3: use continuity of sqrt at 4, so sqrt(t + 1) tends to 2. The limit vector is (6, 5, 2)."
+          - problem: "Compute the limit as t -> 0 of <sin(5t)/(5t), (t^2 - 4t)/t, cos(t)> componentwise. Give the answer as (a, b, c)."
+            answer: "(1, -4, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The full vector limit is the limit as t goes to 0 of <sin(5t)/(5t), (t^2 - 4t)/t, cos(t)>. Step 1: use the sin ratio rule, sin(5t)/(5t) tends to 1. Step 2: use the factoring rule, (t^2 - 4t)/t = t - 4 for t not zero, so the second component tends to -4. Step 3: use continuity of cos, cos(t) tends to 1. The limit vector is (1, -4, 1)."
+          - problem: "Compute the limit as t -> 1 of <(t^3 - 1)/(t - 1), (t^2 + t - 2)/(t - 1), sqrt(t + 3)> componentwise. Give the answer as (a, b, c)."
+            answer: "(3, 3, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The full vector limit is the limit as t goes to 1 of <(t^3 - 1)/(t - 1), (t^2 + t - 2)/(t - 1), sqrt(t + 3)>. Step 1: use the factoring rule, t^3 - 1 = (t - 1)(t^2 + t + 1), so the first component tends to 3. Step 2: use the factoring rule again, t^2 + t - 2 = (t - 1)(t + 2), so the second component tends to 3. Step 3: use continuity of sqrt at 4, so sqrt(t + 3) tends to 2. The limit vector is (3, 3, 2)."
         constraints: "componentwise limits solvable by standard single-variable techniques (factoring, sin t / t)"
       - id: kp3
         name: "Identifying space curves"
@@ -622,27 +858,59 @@ topics:
         name: "Derivatives of vector functions"
         key_prerequisites: [vector-functions-basics, derivatives-trig]
         exemplars:
-          - problem: 'Let $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$. Find $\mathbf{r}''(t)$.'
-            answer: '$\langle -\sin t, \cos t, 1 \rangle$'
-            solution_sketch: 'Differentiate componentwise: $\mathbf{r}''(t) = \langle -\sin t, \cos t, 1 \rangle$.'
-            answer_contract: {kind: none}
-          - problem: 'Let $\mathbf{r}(t) = \langle t^2, e^{2t}, \ln t \rangle$. Find $\mathbf{r}''(t)$.'
-            answer: '$\langle 2t, 2e^{2t}, \frac{1}{t} \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Differentiate componentwise; each component is a single-variable derivative.'
+          - problem: "Let r(t) = <sin(t), cos(t), t^3>. Find r'(t), with the answer in the form x = ..., y = ..., z = ...."
+            answer: "x = cos(t); y = -sin(t); z = 3t^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Step 1: Use componentwise differentiation, because the derivative of a vector function is the vector of its component derivatives. Step 2: The derivative of sin(t) is cos(t), the derivative of cos(t) is -sin(t), and the derivative of t^3 is 3t^2. The derivative is x = cos(t); y = -sin(t); z = 3t^2."
+          - problem: "Let r(t) = <t^3, e^(3t), ln(t)>. Find r'(t), with the answer in the form x = ..., y = ..., z = ...."
+            answer: "x = 3t^2; y = 3e^(3t); z = 1/t"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Step 1: Split the vector function into its three components and differentiate each one componentwise. Step 2: The derivative of t^3 is 3t^2, the derivative of e^(3t) is 3e^(3t), and the derivative of ln(t) is 1/t. The derivative is x = 3t^2; y = 3e^(3t); z = 1/t."
+          - problem: "Let r(t) = <t^2 + 2t, sin(t), e^(-t)>. Find r'(t), with the answer in the form x = ..., y = ..., z = ...."
+            answer: "x = 2t+2; y = cos(t); z = -e^(-t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Step 1: Apply componentwise differentiation, treating each entry as an ordinary single-variable derivative. Step 2: The derivative of t^2 + 2t is 2t+2, the derivative of sin(t) is cos(t), and the derivative of e^(-t) is -e^(-t). The derivative is x = 2t+2; y = cos(t); z = -e^(-t)."
+          - problem: "Let r(t) = <ln(t), t^4, cos(t)>. Find r'(t), with the answer in the form x = ..., y = ..., z = ...."
+            answer: "x = 1/t; y = 4t^3; z = -sin(t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Step 1: Differentiate the vector function componentwise. Step 2: The derivative of ln(t) is 1/t, the derivative of t^4 is 4t^3, and the derivative of cos(t) is -sin(t). The derivative is x = 1/t; y = 4t^3; z = -sin(t)."
+          - problem: "Let r(t) = <e^(2t), sin(t), t^2 + 1>. Find r'(t), with the answer in the form x = ..., y = ..., z = ...."
+            answer: "x = 2e^(2t); y = cos(t); z = 2t"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Step 1: Use componentwise differentiation on the three entries. Step 2: The derivative of e^(2t) is 2e^(2t), the derivative of sin(t) is cos(t), and the derivative of t^2 + 1 is 2t. The derivative is x = 2e^(2t); y = cos(t); z = 2t."
+          - problem: "Let r(t) = <t, cos(t), e^(4t)>. Find r'(t), with the answer in the form x = ..., y = ..., z = ...."
+            answer: "x = 1; y = -sin(t); z = 4e^(4t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Step 1: Differentiate each component separately, since vector differentiation is componentwise. Step 2: The derivative of t is 1, the derivative of cos(t) is -sin(t), and the derivative of e^(4t) is 4e^(4t). The derivative is x = 1; y = -sin(t); z = 4e^(4t)."
         constraints: "components drawn from polynomials, sin/cos, e^{kt}, ln t; differentiate componentwise only"
       - id: kp2
         name: "Tangent vectors and tangent lines"
         key_prerequisites: [vector-functions-basics]
         exemplars:
-          - problem: 'Find parametric equations for the tangent line to $\mathbf{r}(t) = \langle t^2, t^3, t \rangle$ at $t = 1$.'
-            answer: '$x = 1 + 2s,\; y = 1 + 3s,\; z = 1 + s$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Point $\mathbf{r}(1) = (1, 1, 1)$; direction $\mathbf{r}''(1) = \langle 2, 3, 1 \rangle$.'
-          - problem: 'Find parametric equations for the tangent line to $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$ at $t = 0$.'
-            answer: '$x = 1,\; y = s,\; z = s$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Point $(1, 0, 0)$; direction $\mathbf{r}''(0) = \langle 0, 1, 1 \rangle$.'
+          - problem: "For the curve r(t) = (t^2, t^3, t) at t = 1, find the tangent vector as (x, y, z)."
+            answer: "(2,3,1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(t) = (t^2, t^3, t), differentiate componentwise by the power rule: r'(t) = (2t, 3t^2, 1). Evaluate at t = 1: r'(1) = (2, 3, 1). The tangent vector is (2,3,1)."
+          - problem: "For the curve r(t) = (cos t, sin t, t) at t = 0, find the tangent vector as (x, y, z)."
+            answer: "(0,1,1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(t) = (cos t, sin t, t), differentiate componentwise with the trigonometric derivative rules: r'(t) = (-sin t, cos t, 1). Evaluate at t = 0: r'(0) = (0, 1, 1). The tangent vector is (0,1,1)."
+          - problem: "Find the base point P and direction vector v of the tangent line to r(t) = (t^3, t^2, 2t) at t = 1. Give P and v as (x, y, z)."
+            answer: "P = (1,1,2); v = (3,2,2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "P"}, {"contract": {"arity": 3, "kind": "coordinates"}, "name": "v"}]}
+            solution_sketch: "For r(t) = (t^3, t^2, 2t), the base point is r(1) = (1, 1, 2) by substitution. Differentiate componentwise with the power rule: r'(t) = (3t^2, 2t, 2), so the direction is r'(1) = (3, 2, 2). Thus P = (1,1,2); v = (3,2,2)."
+          - problem: "Find the base point P and direction vector v of the tangent line to r(t) = (t, e^t, t^2) at t = 0. Give P and v as (x, y, z)."
+            answer: "P = (0,1,0); v = (1,1,0)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "P"}, {"contract": {"arity": 3, "kind": "coordinates"}, "name": "v"}]}
+            solution_sketch: "For r(t) = (t, e^t, t^2), the base point is r(0) = (0, 1, 0) by substitution. Differentiate componentwise with the power and exponential rules: r'(t) = (1, e^t, 2t), so the direction is r'(0) = (1, 1, 0). Thus P = (0,1,0); v = (1,1,0)."
+          - problem: "For r(t) = (t^3, 2t^2, 4t), find the value of t > 0 at which the tangent vector is (12, 8, 4)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For r(t) = (t^3, 2t^2, 4t), differentiate componentwise by the power rule: r'(t) = (3t^2, 4t, 4). Set the components of r'(t) equal to (12, 8, 4): 4t = 8 gives t = 2, and the other components agree. The value is 2."
+          - problem: "For r(t) = (t^2, 2t, t^4), find the direction vector of the tangent line at t = -1 as (x, y, z)."
+            answer: "(-2,2,-4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(t) = (t^2, 2t, t^4), differentiate componentwise by the power rule: r'(t) = (2t, 2, 4t^3). Evaluate at t = -1: r'(-1) = (-2, 2, -4). The direction vector is (-2,2,-4)."
         constraints: "tangent-line base points and directions are integer vectors after evaluation"
       - id: kp3
         name: "Integrals of vector functions"
