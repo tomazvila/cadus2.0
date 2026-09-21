@@ -898,18 +898,30 @@ topics:
         name: Solving via the product-rule collapse
         key_prerequisites: [integrating-factor-computation]
         exemplars:
-          - problem: "Find the general solution of $y' + 2y = e^x$."
-            answer: "$y = \\dfrac{e^x}{3} + Ce^{-2x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Multiply by $e^{2x}$: $(e^{2x}y)' = e^{3x}$, so $e^{2x}y = \\dfrac{e^{3x}}{3} + C$."
-          - problem: "Find the general solution of $y' + \\dfrac{1}{x}y = x$ on $x > 0$."
-            answer: "$y = \\dfrac{x^2}{3} + \\dfrac{C}{x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "With $\\mu = x$: $(xy)' = x^2$, so $xy = \\dfrac{x^3}{3} + C$."
-          - problem: "Find the general solution of $y' + 3y = 6$."
-            answer: "$y = 2 + Ce^{-3x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$(e^{3x}y)' = 6e^{3x}$, so $e^{3x}y = 2e^{3x} + C$."
+          - problem: "Find the general solution of y' + 2y = e^x. Give the answer as a formula in x with an arbitrary constant c."
+            answer: "e^x/3 + c e^(-2x)"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (integrating factor): integrate the coefficient 2 to get mu = e^(2x). Step 2 (product-rule collapse): multiply both sides by mu so the left side is the derivative (e^(2x) y)' = e^(3x). Step 3 (integrate): e^(2x) y = e^(3x)/3 + c. Step 4 (solve for y): divide by e^(2x). The general solution is y = e^x/3 + c e^(-2x)."
+          - problem: "On x > 0, find the general solution of y' + y/x = x. Give the answer as a formula in x with an arbitrary constant c."
+            answer: "x^2/3 + c/x"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (integrating factor): on x > 0, integrating 1/x gives mu = x. Step 2 (product-rule collapse): multiply both sides by x so the left side is (x y)' = x^2. Step 3 (integrate): x y = x^3/3 + c. Step 4 (solve for y): divide by x. The general solution is y = x^2/3 + c/x."
+          - problem: "Find the general solution of y' + 3y = 6. Give the answer as a formula in x with an arbitrary constant c."
+            answer: "2 + c e^(-3x)"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (integrating factor): integrate the constant 3 to get mu = e^(3x). Step 2 (product-rule collapse): multiply both sides by mu so (e^(3x) y)' = 6 e^(3x). Step 3 (integrate): e^(3x) y = 2 e^(3x) + c. Step 4 (solve for y): divide by e^(3x). The general solution is y = 2 + c e^(-3x)."
+          - problem: "Find the general solution of y' + y = e^(2x). Give the answer as a formula in x with an arbitrary constant c."
+            answer: "e^(2x)/3 + c e^(-x)"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (integrating factor): integrate the coefficient 1 to get mu = e^x. Step 2 (product-rule collapse): multiply both sides by mu so (e^x y)' = e^(3x). Step 3 (integrate): e^x y = e^(3x)/3 + c. Step 4 (solve for y): divide by e^x. The general solution is y = e^(2x)/3 + c e^(-x)."
+          - problem: "Find the general solution of y' - 2y = e^(3x). Give the answer as a formula in x with an arbitrary constant c."
+            answer: "e^(3x) + c e^(2x)"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (integrating factor): integrate the coefficient -2 to get mu = e^(-2x). Step 2 (product-rule collapse): multiply both sides by mu so (e^(-2x) y)' = e^x. Step 3 (integrate): e^(-2x) y = e^x + c. Step 4 (solve for y): multiply by e^(2x). The general solution is y = e^(3x) + c e^(2x)."
+          - problem: "On x > 0, find the general solution of y' + y/x = x^2. Give the answer as a formula in x with an arbitrary constant c."
+            answer: "x^3/4 + c/x"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (integrating factor): on x > 0, integrating 1/x gives mu = x. Step 2 (product-rule collapse): multiply both sides by x so (x y)' = x^3. Step 3 (integrate): x y = x^4/4 + c. Step 4 (solve for y): divide by x. The general solution is y = x^3/4 + c/x."
         constraints: "right side polynomial or e^{kx} integrating in one step; answers carry an explicit C"
       - id: kp2
         name: Forcing that needs integration by parts
@@ -1054,18 +1066,30 @@ topics:
         name: Recognizing homogeneous equations
         key_prerequisites: [separable-equations]
         exemplars:
-          - problem: "Can $y' = \\dfrac{x + y}{x}$ be written as a function of $v = y/x$ alone?"
-            answer: "Yes: $y' = 1 + \\dfrac{y}{x} = 1 + v$."
-            answer_contract: {kind: none}
-            solution_sketch: "Yes: $y' = 1 + \\dfrac{y}{x} = 1 + v$."
-          - problem: "Can $y' = \\dfrac{x^2 + y^2}{xy}$ be written as a function of $y/x$ alone?"
-            answer: "Yes: dividing top and bottom by $x^2$ gives $y' = \\dfrac{1 + v^2}{v}$."
-            answer_contract: {kind: none}
-            solution_sketch: "Yes: dividing top and bottom by $x^2$ gives $y' = \\dfrac{1 + v^2}{v}$."
-          - problem: "Is $y' = x + y^2$ homogeneous?"
-            answer: "No: $x + y^2$ is not a function of $y/x$ alone."
-            answer_contract: {kind: none}
-            solution_sketch: "No: $x + y^2$ is not a function of $y/x$ alone."
+          - problem: "For the equation y' = (x + y)/x, write the right side as a function of v = y/x. Give the answer as a function of v."
+            answer: "1+v"
+            answer_contract: {"kind": "function", "vars": ["v"]}
+            solution_sketch: "Start with the right side (x + y)/x. Step 1: divide numerator and denominator by x, using algebra. Step 2: substitute v = y/x, using the definition of v. The result is 1+v."
+          - problem: "For the equation y' = (x^2 + y^2)/(x y), write the right side as a function of v = y/x. Give the answer as a function of v."
+            answer: "(1+v^2)/v"
+            answer_contract: {"kind": "function", "vars": ["v"]}
+            solution_sketch: "Start with the right side (x^2 + y^2)/(x y). Step 1: divide top and bottom by x^2, using algebra. Step 2: substitute v = y/x, using the definition of v. The result is (1+v^2)/v."
+          - problem: "For the equation y' = (x^2 + y^2)/x, decide whether the right side depends only on v = y/x, and give d, the degree of the numerator minus the degree of the denominator. Give the answer as verdict = label; d = value."
+            answer: "verdict = nonhomogeneous; d = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["homogeneous"], ["nonhomogeneous"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Start with y' = (x^2 + y^2)/x. Step 1: read the degree of the numerator as 2. Step 2: read the degree of the denominator as 1. Step 3: subtract degrees to get d = 2 - 1 = 1. A nonzero mismatch means the right side is not a function of v alone. Choosing homogeneous is wrong because the remaining factor 1/x cannot be written with v only. verdict = nonhomogeneous; d = 1."
+          - problem: "For the equation y' = (x^2 + y^2)/x^3, decide whether the right side depends only on v = y/x, and give d, the degree of the numerator minus the degree of the denominator. Give the answer as verdict = label; d = value."
+            answer: "verdict = nonhomogeneous; d = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["homogeneous"], ["nonhomogeneous"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Start with y' = (x^2 + y^2)/x^3. Step 1: read the degree of the numerator as 2. Step 2: read the degree of the denominator as 3. Step 3: subtract degrees to get d = 2 - 3 = -1. A nonzero mismatch means the right side is not a function of v alone. Choosing homogeneous is wrong because the remaining factor 1/x remains after dividing. verdict = nonhomogeneous; d = -1."
+          - problem: "For the equation y' = (x^3 + y^3)/(x y^2), write the right side as a function of v = y/x. Give the answer as a function of v."
+            answer: "(1+v^3)/v^2"
+            answer_contract: {"kind": "function", "vars": ["v"]}
+            solution_sketch: "Start with the right side (x^3 + y^3)/(x y^2). Step 1: divide top and bottom by x^3, using algebra. Step 2: rewrite y^2/x^2 as v^2. Step 3: substitute v = y/x. The result is (1+v^3)/v^2."
+          - problem: "For the equation y' = (x^2 - y^2)/(x y), write the right side as a function of v = y/x. Give the answer as a function of v."
+            answer: "(1-v^2)/v"
+            answer_contract: {"kind": "function", "vars": ["v"]}
+            solution_sketch: "Start with the right side (x^2 - y^2)/(x y). Step 1: divide top and bottom by x^2, using algebra. Step 2: substitute v = y/x, using the definition of v. The result is (1-v^2)/v."
         constraints: "right sides are ratios of degree-matched polynomials (homogeneous) or degree-mismatched foils"
       - id: kp2
         name: The substitution mechanics
@@ -1088,17 +1112,29 @@ topics:
         name: Complete solutions
         key_prerequisites: [separable-equations]
         exemplars:
-          - problem: "Solve $xy' = x + y$ for $x > 0$."
-            answer: "$y = x\\ln x + Cx$"
-            answer_contract: {kind: none}
-            solution_sketch: "$v = y/x$ gives $xv' = 1$, so $v = \\ln x + C$; multiply back by $x$."
-          - problem: "Find the general solution of $y' = \\dfrac{x^2 + y^2}{xy}$ for $x > 0$."
-            answer: "$y^2 = x^2(2\\ln x + C)$"
-            answer_contract: {kind: none}
-            solution_sketch: "$xv' = 1/v$ separates to $v\\,dv = \\dfrac{dx}{x}$, so $\\dfrac{v^2}{2} = \\ln x + C$; substitute $v = y/x$."
+          - problem: "Solve xy' = x + y for x > 0 with y(1) = 2. Give y explicitly as a function of x."
+            answer: "x ln(x) + 2x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Substitute v = y/x, so y = xv and y' = v + xv'. The equation xy' = x + y becomes x^2 v' = x, hence v' = 1/x by separation. Integrate to get v = ln(x) + C. The initial condition y(1) = 2 gives v(1) = 2, so C = 2. Back-substitute to obtain y = x ln(x) + 2x."
+          - problem: "Solve y' = (x^2 + y^2)/(xy) for x > 0 with y(1) = 1. Give y explicitly as a function of x."
+            answer: "x sqrt(2 ln(x) + 1)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Substitute v = y/x, so y' = v + xv'. Then y' = (x^2 + y^2)/(xy) becomes x v' = 1/v. Separate and integrate: v^2/2 = ln(x) + C. The initial condition y(1) = 1 gives v(1) = 1, so the constant is 1. The positive branch is y = x sqrt(2 ln(x) + 1)."
           - problem: "Solve $y' = \\dfrac{x^2 + y^2}{xy}$ with $y(1) = 2$."
             answer: "$y = x\\sqrt{2\\ln x + 4}$"
             solution_sketch: "From $y^2 = x^2(2\\ln x + C)$, the condition $y(1) = 2$ gives $C = 4$; take the positive root."
+          - problem: "Solve xy' = y - x for x > 0 with y(1) = 1. Give y explicitly as a function of x."
+            answer: "x - x ln(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Substitute v = y/x to write y' = v + xv'. The equation xy' = y - x becomes x^2 v' = -x, so v' = -1/x. Integrate to find v = -ln(x) + C. The condition y(1) = 1 forces C = 1, because v(1) = 1. Back-substitute to get y = x - x ln(x)."
+          - problem: "Solve y' = (y^2 + xy)/x^2 for x > 0 with y(1) = 1. Give y explicitly as a function of x."
+            answer: "x/(1 - ln(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Substitute v = y/x, so y' = v + xv'. The equation y' = (y^2 + xy)/x^2 becomes x v' = v^2. Separate to dv/v^2 = dx/x and integrate, giving -1/v = ln(x) + C. The initial condition y(1) = 1 gives v(1) = 1, so C = -1. Solving for v and back-substituting yields y = x/(1 - ln(x))."
+          - problem: "Solve y' = (y^2 - x^2)/(xy) for x > 0 with y(1) = 2. Give y explicitly as a function of x."
+            answer: "x sqrt(4 - 2 ln(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Substitute v = y/x, so y' = v + xv'. The equation y' = (y^2 - x^2)/(xy) becomes x v' = -1/v. Separate and integrate: v^2/2 = -ln(x) + C. The initial condition y(1) = 2 gives v(1) = 2, so C = 2. The positive branch is y = x sqrt(4 - 2 ln(x))."
         constraints: "v-integrations produce ln x or powers of v; back-substitute v = y/x and state y explicitly when a branch is determined"
     diagnostic_exemplar:
       problem: "Solve $xy' = y + x$ ($x > 0$) with $y(1) = 3$."
@@ -1134,47 +1170,87 @@ topics:
         name: Testing exactness
         key_prerequisites: [partial-derivatives]
         exemplars:
-          - problem: "Is $(2xy + 3)\\,dx + (x^2 - 1)\\,dy = 0$ exact?"
-            answer: "Yes: $M_y = 2x = N_x$."
-            answer_contract: {kind: none}
-            solution_sketch: "Compute $\\partial M/\\partial y = 2x$ and $\\partial N/\\partial x = 2x$; they agree."
-          - problem: "Is $y^2\\,dx + x\\,dy = 0$ exact?"
-            answer: "No: $M_y = 2y$ but $N_x = 1$."
-            answer_contract: {kind: none}
-            solution_sketch: "No: $M_y = 2y$ but $N_x = 1$."
+          - problem: "For the differential equation (2xy + 3) dx + (x^2 - 1) dy = 0, determine whether My = Nx, and give the common value of My and Nx at (1,2)."
+            answer: "verdict = equal; value = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["differ"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Identify M = 2xy + 3 and N = x^2 - 1 from the equation. Compute the partial derivatives by the power rule: My = 2x and Nx = 2x, so they are equal. At (1,2), the common value is 2(1) = 2. The option 'differ' would come from missing that both partials are 2x. The answer is verdict = equal; value = 2."
+          - problem: "For the differential equation y^2 dx + x dy = 0, determine whether My = Nx, and give My - Nx at (1,2)."
+            answer: "verdict = differ; value = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["differ"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Identify M = y^2 and N = x from the equation. Compute the partial derivatives by the power rule: My = 2y and Nx = 1, so they differ. At (1,2), My - Nx = 2(2) - 1 = 3. The option 'equal' would come from treating 2y as 1. The answer is verdict = differ; value = 3."
           - problem: "For which constant $b$ is $(ye^x + 2x)\\,dx + be^x\\,dy = 0$ exact?"
             answer: "$b = 1$"
             solution_sketch: "$M_y = e^x$ and $N_x = be^x$; exactness forces $b = 1$."
+          - problem: "For which constant a is (x^2 y + a y^2) dx + ((1/3)x^3 + 6 x y) dy = 0 exact?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Identify M = x^2 y + a y^2 and N = (1/3)x^3 + 6 x y from the equation. The exactness test requires My = Nx. Compute My = x^2 + 2a y and Nx = x^2 + 6 y. Equate coefficients of y: 2a = 6, so a = 3. The answer is 3."
+          - problem: "For which constant c is (e^x sin(y) + c x y) dx + (e^x cos(y) + 3 x^2) dy = 0 exact?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Identify M = e^x sin(y) + c x y and N = e^x cos(y) + 3 x^2 from the equation. The exactness test requires My = Nx. Compute My = e^x cos(y) + c x and Nx = e^x cos(y) + 6 x. Equate coefficients of x: c = 6. The answer is 6."
+          - problem: "For which constant b is (2 x y + b y^2) dx + (x^2 + 8 x y) dy = 0 exact?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Identify M = 2xy + b y^2 and N = x^2 + 8xy from the equation. The exactness test requires My = Nx. Compute My = 2x + 2b y and Nx = 2x + 8y. Equate coefficients of y: 2b = 8, so b = 4. The answer is 4."
         constraints: "M, N polynomial/exponential/trig in x and y; the test is a two-partial-derivative computation"
       - id: kp2
         name: Reconstructing the potential function
         key_prerequisites: [partial-derivatives, implicit-differentiation]
         exemplars:
-          - problem: "Solve $(2xy + 3)\\,dx + (x^2 - 1)\\,dy = 0$."
-            answer: "$x^2 y + 3x - y = C$"
-            answer_contract: {kind: none}
-            solution_sketch: "Integrate $M$ in $x$: $F = x^2 y + 3x + h(y)$; then $F_y = x^2 + h'(y) = x^2 - 1$ gives $h(y) = -y$."
-          - problem: "Solve $(2x + y)\\,dx + (x + 2y)\\,dy = 0$."
-            answer: "$x^2 + xy + y^2 = C$"
-            answer_contract: {kind: none}
-            solution_sketch: "$F = x^2 + xy + h(y)$; $F_y = x + h'(y) = x + 2y$ gives $h(y) = y^2$."
-          - problem: 'Solve $(\cos x + y)\,dx + (x + e^y)\,dy = 0$.'
-            answer: '$\sin x + xy + e^y = C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$M_y = 1 = N_x$, so exact. $F = \sin x + xy + h(y)$; $F_y = x + h''(y) = x + e^y$ gives $h(y) = e^y$.'
+          - problem: "The equation (2xy + 3) dx + (x^2 - 1) dy = 0 is exact. Find the potential function F(x,y) such that F(x,y) = C is the general solution."
+            answer: "x^2 y + 3x - y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "For (2xy + 3) dx + (x^2 - 1) dy = 0, check exactness: M_y = 2x and N_x = 2x, so exact. Integrate M in x: F = x^2 y + 3x + h(y). Match F_y = x^2 + h'(y) to N = x^2 - 1, so h'(y) = -1 and h(y) = -y. The potential function is x^2 y + 3x - y."
+          - problem: "The equation (2x + y) dx + (x + 2y) dy = 0 is exact. Find the potential function F(x,y) for this equation."
+            answer: "x^2 + xy + y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "For (2x + y) dx + (x + 2y) dy = 0, check exactness: M_y = 1 and N_x = 1, so exact. Integrate M in x: F = x^2 + xy + h(y). Match F_y = x + h'(y) to N = x + 2y, so h'(y) = 2y and h(y) = y^2. The potential function is x^2 + xy + y^2."
+          - problem: "The equation (cos(x) + y) dx + (x + e^y) dy = 0 is exact. Find the potential function F(x,y) for this equation."
+            answer: "sin(x) + xy + e^y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "For (cos(x) + y) dx + (x + e^y) dy = 0, check exactness: M_y = 1 and N_x = 1, so exact. Integrate M in x: F = sin(x) + xy + h(y). Match F_y = x + h'(y) to N = x + e^y, so h'(y) = e^y and h(y) = e^y. The potential function is sin(x) + xy + e^y."
+          - problem: "The equation (y cos(x) + 2x) dx + (sin(x) + 2y) dy = 0 is exact. Find the potential function F(x,y) for this equation."
+            answer: "y sin(x) + x^2 + y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "For (y cos(x) + 2x) dx + (sin(x) + 2y) dy = 0, check exactness: M_y = cos(x) and N_x = cos(x), so exact. Integrate M in x: F = y sin(x) + x^2 + h(y). Match F_y = sin(x) + h'(y) to N = sin(x) + 2y, so h'(y) = 2y and h(y) = y^2. The potential function is y sin(x) + x^2 + y^2."
+          - problem: "The equation (2xy + e^x) dx + (x^2 + 3y^2) dy = 0 is exact. Find the potential function F(x,y) for this equation."
+            answer: "x^2 y + e^x + y^3"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "For (2xy + e^x) dx + (x^2 + 3y^2) dy = 0, check exactness: M_y = 2x and N_x = 2x, so exact. Integrate M in x: F = x^2 y + e^x + h(y). Match F_y = x^2 + h'(y) to N = x^2 + 3y^2, so h'(y) = 3y^2 and h(y) = y^3. The potential function is x^2 y + e^x + y^3."
+          - problem: "The equation (y cosh(x) + 3x^2) dx + (sinh(x) + 4y^3) dy = 0 is exact. Find the potential function F(x,y) for this equation."
+            answer: "y sinh(x) + x^3 + y^4"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "For (y cosh(x) + 3x^2) dx + (sinh(x) + 4y^3) dy = 0, check exactness: M_y = cosh(x) and N_x = cosh(x), so exact. Integrate M in x: F = y sinh(x) + x^3 + h(y). Match F_y = sinh(x) + h'(y) to N = sinh(x) + 4y^3, so h'(y) = 4y^3 and h(y) = y^4. The potential function is y sinh(x) + x^3 + y^4."
         constraints: "always verify exactness first; F recoverable with one integration in x plus matching h(y); leave the answer implicit as F(x,y) = C"
       - id: kp3
         name: Exact IVPs
         key_prerequisites: [partial-derivatives]
         exemplars:
-          - problem: "Solve $(3x^2 + 2y)\\,dx + (2x + 2y)\\,dy = 0$ with $y(1) = 1$."
-            answer: "$x^3 + 2xy + y^2 = 4$"
-            answer_contract: {kind: none}
-            solution_sketch: "$M_y = 2 = N_x$; $F = x^3 + 2xy + y^2$. Evaluating at $(1,1)$: $1 + 2 + 1 = 4$."
-          - problem: 'Solve $(y\cos x + 1)\,dx + \sin x\,dy = 0$ with $y(\pi/2) = 3$.'
-            answer: '$y\sin x + x = 3 + \dfrac{\pi}{2}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$M_y = \cos x = N_x$; $F = y\sin x + x$. At $(\pi/2,\,3)$: $3 + \pi/2$.'
+          - problem: "Consider the exact equation (3x^2 + 2y) dx + (2x + 2y) dy = 0 with y(1) = 1. Find the constant C in the implicit solution F(x, y) = C."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The potential is F = x^3 + 2xy + y^2. First check exactness: the mixed partials are both 2, so the equation is exact. Integrate M with respect to x to get F = x^3 + 2xy + g(y). Compare with N to find g'(y) = 2y, so g(y) = y^2. Evaluate F at (1, 1): 1 + 2 + 1 = 4. The constant is C = 4."
+          - problem: "Consider the exact equation (y cos(x) + 1) dx + sin(x) dy = 0 with y(pi/2) = 3. Find the constant C in the implicit solution F(x, y) = C."
+            answer: "3+pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The potential is F = y sin(x) + x. First check exactness: the mixed partials are both cos(x), so the equation is exact. Integrate M with respect to x to get F = y sin(x) + x + g(y). Compare with N to find g'(y) = 0, so g(y) = 0. Evaluate F at (pi/2, 3): 3 sin(pi/2) + pi/2 = 3 + pi/2. The constant is C = 3+pi/2."
+          - problem: "Consider the exact equation (2x + y) dx + (x + 2y) dy = 0 with y(0) = 1. Find the constant C in the implicit solution F(x, y) = C."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The potential is F = x^2 + xy + y^2. First check exactness: the mixed partials are both 1, so the equation is exact. Integrate M with respect to x to get F = x^2 + xy + g(y). Compare with N to find g'(y) = 2y, so g(y) = y^2. Evaluate F at (0, 1): 0 + 0 + 1 = 1. The constant is C = 1."
+          - problem: "Consider the exact equation (2xy + 3x^2) dx + (x^2 + 4y) dy = 0 with y(1) = 2. Find the constant C in the implicit solution F(x, y) = C."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The potential is F = x^2 y + x^3 + 2y^2. First check exactness: the mixed partials are both 2x, so the equation is exact. Integrate M with respect to x to get F = x^2 y + x^3 + g(y). Compare with N to find g'(y) = 4y, so g(y) = 2y^2. Evaluate F at (1, 2): 2 + 1 + 8 = 11. The constant is C = 11."
+          - problem: "Consider the exact equation (2x - y) dx + (2y - x) dy = 0 with y(2) = 1. Find the constant C in the implicit solution F(x, y) = C."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The potential is F = x^2 - xy + y^2. First check exactness: the mixed partials are both -1, so the equation is exact. Integrate M with respect to x to get F = x^2 - xy + g(y). Compare with N to find g'(y) = 2y, so g(y) = y^2. Evaluate F at (2, 1): 4 - 2 + 1 = 3. The constant is C = 3."
+          - problem: "Consider the exact equation (y e^(x) + 2x) dx + (e^(x) + 2y) dy = 0 with y(0) = 1. Find the constant C in the implicit solution F(x, y) = C."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The potential is F = y e^(x) + x^2 + y^2. First check exactness: the mixed partials are both e^(x), so the equation is exact. Integrate M with respect to x to get F = y e^(x) + x^2 + g(y). Compare with N to find g'(y) = 2y, so g(y) = y^2. Evaluate F at (0, 1): 1 + 0 + 1 = 2. The constant is C = 2."
         constraints: "leave answers implicit; the constant is fixed by evaluating F at the initial point"
     diagnostic_exemplar:
       problem: 'Solve $(2xy - 3x^2)\,dx + (x^2 + 2y)\,dy = 0$ with $y(1) = 2$.'
@@ -1208,31 +1284,59 @@ topics:
         name: "Finding $\\mu(x)$"
         key_prerequisites: [exact-equations, integrating-factor-computation]
         exemplars:
-          - problem: "The equation $(3xy + y^2)\\,dx + (x^2 + xy)\\,dy = 0$ is not exact. Find an integrating factor $\\mu(x)$."
-            answer: "$\\mu = x$"
-            answer_contract: {kind: none}
-            solution_sketch: "$\\dfrac{M_y - N_x}{N} = \\dfrac{(3x + 2y) - (2x + y)}{x^2 + xy} = \\dfrac{x + y}{x(x + y)} = \\dfrac{1}{x}$, so $\\mu = e^{\\int dx/x} = x$."
-          - problem: "Find an integrating factor $\\mu(x)$ for $2y\\,dx + x\\,dy = 0$."
-            answer: "$\\mu = x$"
-            answer_contract: {kind: none}
-            solution_sketch: "$\\dfrac{M_y - N_x}{N} = \\dfrac{2 - 1}{x} = \\dfrac{1}{x}$."
-          - problem: "For an equation with $\\dfrac{M_y - N_x}{N} = \\dfrac{3}{x}$, find $\\mu(x)$."
-            answer: "$\\mu = x^3$"
-            answer_contract: {kind: none}
-            solution_sketch: "$\\mu = x^3$"
+          - problem: "The equation (3xy + y^2) dx + (x^2 + xy) dy = 0 is not exact. Find an integrating factor mu(x) as a function of x."
+            answer: "x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The equation is (3xy + y^2) dx + (x^2 + xy) dy = 0, so M = 3xy + y^2 and N = x^2 + xy. Step 1 (exactness test): M_y = 3x + 2y and N_x = 2x + y, so (M_y - N_x)/N = (x + y)/(x(x + y)) = 1/x. Step 2 (integrating factor formula): mu = e^(integral of 1/x dx) = x. The integrating factor is x."
+          - problem: "The equation 2y dx + x dy = 0 is not exact. Find an integrating factor mu(x) as a function of x."
+            answer: "x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The equation is 2y dx + x dy = 0, so M = 2y and N = x. Step 1 (exactness test): M_y = 2 and N_x = 1, so (M_y - N_x)/N = (2 - 1)/x = 1/x. Step 2 (integrating factor formula): mu = e^(integral of 1/x dx) = x. The integrating factor is x."
+          - problem: "For a differential equation, (M_y - N_x)/N = 3/x. Find an integrating factor mu(x) as a function of x."
+            answer: "x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The quantity (M_y - N_x)/N is 3/x, which depends on x alone. Step 1 (exactness test): the equation is not exact because the ratio is nonzero. Step 2 (integrating factor formula): mu = e^(integral of 3/x dx) = e^(3 ln(abs(x))) = x^3. The integrating factor is x^3."
+          - problem: "The equation (3y + x) dx + x dy = 0 is not exact. Find an integrating factor mu(x) as a function of x."
+            answer: "x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The equation is (3y + x) dx + x dy = 0, so M = 3y + x and N = x. Step 1 (exactness test): M_y = 3 and N_x = 1, so (M_y - N_x)/N = (3 - 1)/x = 2/x. Step 2 (integrating factor formula): mu = e^(integral of 2/x dx) = x^2. The integrating factor is x^2."
+          - problem: "The equation (2y + x) dx + dy = 0 is not exact. Find an integrating factor mu(x) as a function of x."
+            answer: "e^(2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The equation is (2y + x) dx + dy = 0, so M = 2y + x and N = 1. Step 1 (exactness test): M_y = 2 and N_x = 0, so (M_y - N_x)/N = 2. Step 2 (integrating factor formula): mu = e^(integral of 2 dx) = e^(2x). The integrating factor is e^(2x)."
+          - problem: "The equation (-y + x) dx + dy = 0 is not exact. Find an integrating factor mu(x) as a function of x."
+            answer: "e^(-x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The equation is (-y + x) dx + dy = 0, so M = -y + x and N = 1. Step 1 (exactness test): M_y = -1 and N_x = 0, so (M_y - N_x)/N = -1. Step 2 (integrating factor formula): mu = e^(integral of -1 dx) = e^(-x). The integrating factor is e^(-x)."
         constraints: "(M_y - N_x)/N must simplify to a function of x alone (typically k/x); mu = e^{integral}"
       - id: kp2
         name: "Finding $\\mu(y)$"
         key_prerequisites: [exact-equations]
         exemplars:
-          - problem: "The equation $y\\,dx + (2x - ye^y)\\,dy = 0$ is not exact. Find an integrating factor $\\mu(y)$."
-            answer: "$\\mu = y$"
-            answer_contract: {kind: none}
-            solution_sketch: "$\\dfrac{N_x - M_y}{M} = \\dfrac{2 - 1}{y} = \\dfrac{1}{y}$, so $\\mu = e^{\\int dy/y} = y$."
-          - problem: "Find an integrating factor $\\mu(y)$ for $y\\,dx + 3x\\,dy = 0$."
-            answer: "$\\mu = y^2$"
-            answer_contract: {kind: none}
-            solution_sketch: "$\\dfrac{N_x - M_y}{M} = \\dfrac{3 - 1}{y} = \\dfrac{2}{y}$, so $\\mu = e^{2\\ln y} = y^2$."
+          - problem: "The equation y dx + (2x + y^2) dy = 0 is not exact. Find the integrating factor mu as a function of y."
+            answer: "y"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "For y dx + (2x + y^2) dy = 0, compute N_x = 2 and M_y = 1. Exactness test: (N_x - M_y)/M = (2 - 1)/y = 1/y, a function of y alone. Integrating factor formula gives mu = e^(integral of 1/y dy) = e^(ln y) = y. The integrating factor is y."
+          - problem: "The equation y dx + (3x + y) dy = 0 is not exact. Find the integrating factor mu as a function of y."
+            answer: "y^2"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "For y dx + (3x + y) dy = 0, compute N_x = 3 and M_y = 1. Exactness test: (N_x - M_y)/M = (3 - 1)/y = 2/y, a function of y alone. Integrating factor formula gives mu = e^(integral of 2/y dy) = e^(2 ln y) = y^2. The integrating factor is y^2."
+          - problem: "The equation y dx + (5x + y^3) dy = 0 is not exact. Find the integrating factor mu as a function of y."
+            answer: "y^4"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "For y dx + (5x + y^3) dy = 0, compute N_x = 5 and M_y = 1. Exactness test: (N_x - M_y)/M = (5 - 1)/y = 4/y, a function of y alone. Integrating factor formula gives mu = e^(integral of 4/y dy) = e^(4 ln y) = y^4. The integrating factor is y^4."
+          - problem: "The equation y^2 dx + (5xy + y^3) dy = 0 is not exact. Find the integrating factor mu as a function of y."
+            answer: "y^3"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "For y^2 dx + (5xy + y^3) dy = 0, compute N_x = 5y and M_y = 2y. Exactness test: (N_x - M_y)/M = (5y - 2y)/y^2 = 3/y, a function of y alone. Integrating factor formula gives mu = e^(integral of 3/y dy) = e^(3 ln y) = y^3. The integrating factor is y^3."
+          - problem: "The equation 2y dx + (12x + y^3) dy = 0 is not exact. Find the integrating factor mu as a function of y."
+            answer: "y^5"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "For 2y dx + (12x + y^3) dy = 0, compute N_x = 12 and M_y = 2. Exactness test: (N_x - M_y)/M = (12 - 2)/(2y) = 5/y, a function of y alone. Integrating factor formula gives mu = e^(integral of 5/y dy) = e^(5 ln y) = y^5. The integrating factor is y^5."
+          - problem: "The equation y^2 dx + (8xy + 1) dy = 0 is not exact. Find the integrating factor mu as a function of y."
+            answer: "y^6"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "For y^2 dx + (8xy + 1) dy = 0, compute N_x = 8y and M_y = 2y. Exactness test: (N_x - M_y)/M = (8y - 2y)/y^2 = 6/y, a function of y alone. Integrating factor formula gives mu = e^(integral of 6/y dy) = e^(6 ln y) = y^6. The integrating factor is y^6."
         constraints: "(N_x - M_y)/M must simplify to a function of y alone (typically k/y)"
       - id: kp3
         name: Completing the solution
@@ -1308,17 +1412,29 @@ topics:
         name: Time-to-reach questions
         key_prerequisites: [logarithm-properties]
         exemplars:
-          - problem: "A substance decays exponentially with half-life $8$ days. How long until only $25\\%$ of it remains?"
-            answer: "$16$ days"
-            answer_contract: {kind: none}
-            solution_sketch: "$25\\% = (1/2)^2$: exactly two half-lives."
-          - problem: "A bacteria culture doubles every $3$ hours and starts at $100$ cells. When does it reach $800$ cells?"
-            answer: "$9$ hours"
-            answer_contract: {kind: none}
-            solution_sketch: "$800/100 = 8 = 2^3$: three doubling times."
+          - problem: "A radioactive substance decays exponentially with a half-life of 8 days. Find the time in days until only 25% of the substance remains."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The remaining fraction is 25% = 1/4. Since 1/4 = (1/2)^2, the time is two half-lives. Two half-lives of 8 days each give 16 days. The answer is 16."
+          - problem: "A bacteria culture doubles every 3 hours and starts with 100 cells. Find the time in hours for the culture to reach 800 cells."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The ratio of final to initial cells is 800/100 = 8. Since 8 = 2^3, the time is three doubling periods. Three periods of 3 hours each give 9 hours. The answer is 9."
           - problem: "Solve for the time at which $P(t) = 200e^{0.05t}$ reaches $1000$."
             answer: "$t = 20\\ln 5$"
             solution_sketch: "$e^{0.05t} = 5$ gives $0.05t = \\ln 5$."
+          - problem: "A population grows exponentially and doubles every 12 years. The initial population is 500. Find the time in years for the population to reach 4000."
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The ratio of final to initial population is 4000/500 = 8. Since 8 = 2^3, the time is three doubling periods. Three periods of 12 years each give 36 years. The answer is 36."
+          - problem: "An investment grows exponentially and doubles every 7 years. Find the time in years for the investment to become 4 times its original value."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The final value is 4 times the original value, so the ratio is 4. Since 4 = 2^2, the time is two doubling periods. Two periods of 7 years each give 14 years. The answer is 14."
+          - problem: "A radioactive isotope decays exponentially with a half-life of 5 hours. Find the time in hours until only 1/8 of the isotope remains."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The remaining fraction is 1/8. Since 1/8 = (1/2)^3, the time is three half-lives. Three half-lives of 5 hours each give 15 hours. The answer is 15."
         constraints: "target ratios are powers of 2 (clean) or give single-log exact answers"
       - id: kp3
         name: "Determining $k$ and $P_0$ from data"
@@ -1381,13 +1497,29 @@ topics:
         name: "Finding $k$ from data"
         key_prerequisites: [natural-growth-decay-models]
         exemplars:
-          - problem: 'A body cools by Newton''s law $T'' = -k(T - 20)$ in a $20^{\circ}$C room. If $T(0) = 100$ and $T(10) = 60$, find $T(t)$.'
-            answer: '$T(t) = 20 + 80e^{-(\ln 2/10)\,t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$T = 20 + Ce^{-kt}$ with $C = 80$; $T(10) = 60$ gives $e^{-10k} = \frac{40}{80} = \frac{1}{2}$, so $k = \frac{\ln 2}{10}$.'
+          - problem: "A body cools by Newton's law T' = -k(T - 20) in a 20 degrees C room. Its initial temperature is 100 C and after 10 minutes it is 60 C. Find the constant k. Give the answer to 4 decimals."
+            answer: "0.0693"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Newton's law gives the full object T = 20 + 80e^(-kt). At t = 10, 60 = 20 + 80e^(-10k), so e^(-10k) = 40/80 = 1/2. Take natural logs: -10k = -ln(2), so k = ln(2)/10. The value to 4 decimals is 0.0693."
           - problem: "A cold drink at $5^{\\circ}$C warms in a $25^{\\circ}$C room, reaching $15^{\\circ}$C after $4$ minutes. Find $T(t)$."
             answer: '$T = 25 - 20e^{-(\ln 2/4)\,t}$'
             solution_sketch: "$T = 25 - 20e^{-kt}$; $T(4) = 15$ gives $e^{-4k} = \\dfrac{10}{20} = \\dfrac{1}{2}$, so $k = \\dfrac{\\ln 2}{4}$."
+          - problem: "A metal bar cools in a 15 degrees C room. Its initial temperature is 95 C and after 6 minutes it is 55 C. Find the cooling constant k. Give the answer to 4 decimals."
+            answer: "0.1155"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Newton's law gives the full object T = 15 + 80e^(-kt). At t = 6, 55 = 15 + 80e^(-6k), so e^(-6k) = 40/80 = 1/2. Take natural logs: -6k = -ln(2), so k = ln(2)/6. The value to 4 decimals is 0.1155."
+          - problem: "A cold drink at 5 C warms in a 25 C room. After 4 minutes its temperature is 15 C. Find the warming constant k. Give the answer to 4 decimals."
+            answer: "0.1733"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Newton's law gives the full object T = 25 - 20e^(-kt), so the coefficient C is negative for warming. At t = 4, 15 = 25 - 20e^(-4k), so e^(-4k) = 10/20 = 1/2. Take natural logs: -4k = -ln(2), so k = ln(2)/4. The value to 4 decimals is 0.1733."
+          - problem: "A pie cools in a 30 C room. Its temperature is 90 C at the start and 60 C after 20 minutes. Find the cooling constant k. Give the answer to 4 decimals."
+            answer: "0.0347"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Newton's law gives the full object T = 30 + 60e^(-kt). At t = 20, 60 = 30 + 60e^(-20k), so e^(-20k) = 30/60 = 1/2. Take natural logs: -20k = -ln(2), so k = ln(2)/20. The value to 4 decimals is 0.0347."
+          - problem: "A metal block at 10 C warms in a 30 C room. After 8 minutes its temperature is 20 C. Find the warming constant k. Give the answer to 4 decimals."
+            answer: "0.0866"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Newton's law gives the full object T = 30 - 20e^(-kt), so the coefficient C is negative for warming. At t = 8, 20 = 30 - 20e^(-8k), so e^(-8k) = 10/20 = 1/2. Take natural logs: -8k = -ln(2), so k = ln(2)/8. The value to 4 decimals is 0.0866."
         constraints: "the measured gap ratio is a power of 1/2 so k is a clean multiple of ln 2; warming problems flip the sign of C"
       - id: kp3
         name: Time questions
