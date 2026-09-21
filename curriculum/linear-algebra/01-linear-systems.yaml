@@ -630,6 +630,22 @@ topics:
             solution_sketch: 'Row by row: $1 \cdot 5 + 2 \cdot 6 = 17$; $3 \cdot 5 + 4 \cdot 6 = 39$.'
           - problem: 'Compute $A\mathbf{x}$ for $A = \begin{pmatrix}2&-1\\0&3\end{pmatrix}$, $\mathbf{x} = (1, 4)$.'
             answer: "(-2, 12)"
+          - problem: "Compute A x for A = [[2,0,-1],[1,3,2],[0,4,1]] and x = (3, -1, 2). Give the answer as (a, b, c)."
+            answer: "(4, 4, -2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Write the rows of A: r1 = (2,0,-1), r2 = (1,3,2), r3 = (0,4,1), and x = (3,-1,2). Dot product rule: r1 dot x = 2*3 + 0*(-1) + (-1)*2 = 4. r2 dot x = 1*3 + 3*(-1) + 2*2 = 4. r3 dot x = 0*3 + 4*(-1) + 1*2 = -2. The product is (4, 4, -2)."
+          - problem: "For A = [[-2,3],[4,-1]] and x = (2,5), evaluate the product A x. Give the answer as (a, b)."
+            answer: "(11, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write A = [[-2,3],[4,-1]] and x = (2,5). Dot product rule: row1 dot x = -2*2 + 3*5 = 11. row2 dot x = 4*2 + (-1)*5 = 3. The product is (11, 3)."
+          - problem: "A network has adjacency matrix A = [[1,-2,3],[0,4,-1],[2,1,0]] and a signal vector x = (2, -1, 3). Find the transformed signal A x. Give the answer as (a, b, c)."
+            answer: "(13, -7, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Write the rows of A: r1 = (1,-2,3), r2 = (0,4,-1), r3 = (2,1,0), and x = (2,-1,3). Dot product rule: r1 dot x = 1*2 + (-2)*(-1) + 3*3 = 13. r2 dot x = 0*2 + 4*(-1) + (-1)*3 = -7. r3 dot x = 2*2 + 1*(-1) + 0*3 = 3. The product is (13, -7, 3)."
+          - problem: "A transformation sends vector x = (-2, 4) to A x, where A = [[3,2],[-1,5]]. Find the transformed vector A x. Give the answer as (a, b)."
+            answer: "(2, 22)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write A = [[3,2],[-1,5]] and x = (-2,4). Dot product rule: row1 dot x = 3*(-2) + 2*4 = 2. row2 dot x = -1*(-2) + 5*4 = 22. The product is (2, 22)."
         constraints: "integer entries in -5..6; sizes 2x2 and 3x3"
       - id: kp2
         name: Rectangular matrix-vector products
@@ -645,13 +661,29 @@ topics:
         name: Ax as a combination of columns
         key_prerequisites: [computing-dot-products, vector-arithmetic]
         exemplars:
-          - problem: 'Write $A\mathbf{x}$ as a combination of the columns $a_1, a_2$ of $A$ when $\mathbf{x} = (3, -1)$.'
-            answer: '$3a_1 - a_2$'
-            answer_contract: {kind: none}
-            solution_sketch: '$A\mathbf{x} = x_1 a_1 + x_2 a_2 = 3a_1 + (-1)a_2 = 3a_1 - a_2$.'
+          - problem: "For A = [2,1;1,3] and x = (3,-1), compute Ax by forming 3a1 - a2 from the columns a1 and a2 of A. Give the answer as (u, v)."
+            answer: "(5, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: Read the columns of A: a1 = (2,1) and a2 = (1,3). Step 2: Use the column combination rule Ax = x1 a1 + x2 a2, which gives 3a1 - a2. Step 3: Compute 3(2,1) - (1,3) = (6,3) - (1,3) = (5,0). The answer is (5, 0)."
           - problem: 'For $A = \begin{pmatrix}1&2\\0&1\end{pmatrix}$ and $\mathbf{x} = (2, 3)$, compute $A\mathbf{x}$ both row-by-row and as $2\mathbf{a}_1 + 3\mathbf{a}_2$.'
             answer: "(8, 3)"
             solution_sketch: '$2(1, 0) + 3(2, 1) = (8, 3)$; rows give $2 + 6 = 8$ and $3$.'
+          - problem: "For A = [3,0;1,2] and x = (2,5), compute Ax by forming 2a1 + 5a2 from the columns a1 and a2. Give the answer as (u, v)."
+            answer: "(6, 12)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: The columns are a1 = (3,1) and a2 = (0,2). Step 2: Use Ax = x1 a1 + x2 a2, so Ax = 2a1 + 5a2. Step 3: 2(3,1) + 5(0,2) = (6,2) + (0,10) = (6,12). The answer is (6, 12)."
+          - problem: "For A = [1,-1;2,4] and x = (-3,2), compute Ax by forming -3a1 + 2a2 from the columns a1 and a2. Give the answer as (u, v)."
+            answer: "(-5, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: The columns are a1 = (1,2) and a2 = (-1,4). Step 2: Use the column combination rule Ax = x1 a1 + x2 a2, which is -3a1 + 2a2. Step 3: -3(1,2) + 2(-1,4) = (-3,-6) + (-2,8) = (-5,2). The answer is (-5, 2)."
+          - problem: "Let A have columns a1 = (2,1) and a2 = (0,3). For x = (4,-2), compute Ax as 4a1 - 2a2. Give the answer as (u, v)."
+            answer: "(8, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: The columns are a1 = (2,1) and a2 = (0,3). Step 2: Use the column view Ax = x1 a1 + x2 a2, so Ax = 4a1 - 2a2. Step 3: 4(2,1) - 2(0,3) = (8,4) - (0,6) = (8,-2). The answer is (8, -2)."
+          - problem: "For A = [0,2;3,1] and x = (5,-4), compute Ax by forming 5a1 - 4a2 from the columns a1 and a2. Give the answer as (u, v)."
+            answer: "(-8, 11)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: The columns are a1 = (0,3) and a2 = (2,1). Step 2: Use the column combination rule Ax = x1 a1 + x2 a2, so Ax = 5a1 - 4a2. Step 3: 5(0,3) - 4(2,1) = (0,15) - (8,4) = (-8,11). The answer is (-8, 11)."
         constraints: "verify the column view numerically on 2x2 matrices"
     diagnostic_exemplar:
       problem: 'Compute $A\mathbf{x}$ for $A = \begin{pmatrix}2&1&0\\1&0&3\end{pmatrix}$ and $\mathbf{x} = (4, -1, 2)$, and check the result against $4\mathbf{a}_1 - \mathbf{a}_2 + 2\mathbf{a}_3$.'
@@ -686,27 +718,59 @@ topics:
         name: Systems as Ax = b and as vector equations
         key_prerequisites: [computing-matrix-vector-products, row-reduction-echelon-forms]
         exemplars:
-          - problem: 'Write the system $x + 2y = 5$, $3x + 4y = 11$ in the form $A\mathbf{x} = \mathbf{b}$.'
-            answer: '$A = \begin{pmatrix}1&2\\3&4\end{pmatrix}$, $\mathbf{b} = (5, 11)$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The coefficient matrix is $A = \begin{pmatrix}1&2\\3&4\end{pmatrix}$, the unknown is $\mathbf{x} = (x, y)$, and $\mathbf{b} = (5, 11)$.'
-          - problem: 'Express $\mathbf{b} = (5, 11)$ as a linear combination $c_1\mathbf{a}_1 + c_2\mathbf{a}_2$ of $\mathbf{a}_1 = (1, 3)$ and $\mathbf{a}_2 = (2, 4)$.'
-            answer: "b = 1a1 + 2a2 (c1 = 1, c2 = 2)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Solve $c_1 + 2c_2 = 5$, $3c_1 + 4c_2 = 11$: elimination gives $c_2 = 2$, $c_1 = 1$.'
+          - problem: "Consider the system 2x + 3y = 7, x - y = 1. Give the coefficient matrix A as [a,b;c,d]."
+            answer: "[2,3;1,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (matrix form): put x terms in the first column and y terms in the second column. Row 1 has coefficients 2 and 3; row 2 has coefficients 1 and -1. The coefficient matrix is [2,3;1,-1]."
+          - problem: "Express b = (4, 5) as a linear combination of a1 = (1, 2) and a2 = (2, 1). Give the coefficients as (c1, c2)."
+            answer: "(2, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (linear combination): write c1(1, 2) + c2(2, 1) = (4, 5). Step 2 (elimination): the equations c1 + 2c2 = 4 and 2c1 + c2 = 5 give c2 = 1 and c1 = 2. The coefficients are (2, 1)."
+          - problem: "The system x + 2y = 3, 4x + 5y = 6 is equivalent to x a1 + y a2 = b. Give a1 + a2 as (p, q)."
+            answer: "(3, 9)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (vector equation): the columns of the coefficient matrix are a1 = (1, 4) and a2 = (2, 5). Step 2 (vector addition): add the corresponding components, 1 + 2 = 3 and 4 + 5 = 9. The sum a1 + a2 is (3, 9)."
+          - problem: "The system 3x + y = 4, x + 2y = 5 is equivalent to x a1 + y a2 = b. Give a1 + a2 as (p, q)."
+            answer: "(4, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (vector equation): the columns of the coefficient matrix are a1 = (3, 1) and a2 = (1, 2). Step 2 (vector addition): add components, 3 + 1 = 4 and 1 + 2 = 3. The sum a1 + a2 is (4, 3)."
+          - problem: "Express b = (3, -1) as a linear combination of a1 = (1, 1) and a2 = (1, -1). Give the coefficients as (c1, c2)."
+            answer: "(1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (linear combination): set c1(1, 1) + c2(1, -1) = (3, -1). Step 2 (elimination): the equations c1 + c2 = 3 and c1 - c2 = -1 give c1 = 1 and c2 = 2. The coefficients are (1, 2)."
+          - problem: "The vector equation x(2, 1) + y(1, 3) = (5, 7) is equivalent to A x = b. Give a1 - a2 as (p, q), where a1 and a2 are the columns of A."
+            answer: "(1, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (vector equation): the columns are a1 = (2, 1) and a2 = (1, 3). Step 2 (vector subtraction): subtract components, 2 - 1 = 1 and 1 - 3 = -2. The vector a1 - a2 is (1, -2)."
         constraints: "integer coefficient vectors; combination coefficients in -3..3"
       - id: kp2
         name: Membership in a span via a system
         key_prerequisites: [computing-matrix-vector-products, row-reduction-echelon-forms]
         exemplars:
-          - problem: 'Is $(1, 2, 3)$ a linear combination of $(1, 0, 1)$ and $(0, 1, 1)$?'
-            answer: "Yes: 1(1,0,1) + 2(0,1,1) = (1,2,3)"
-            answer_contract: {kind: none}
-            solution_sketch: 'First two components force $c_1 = 1$, $c_2 = 2$; the third checks: $1 + 2 = 3$.'
-          - problem: 'Is $(2, 1, 4)$ a linear combination of $(1, 0, 1)$ and $(0, 1, 1)$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$c_1 = 2$, $c_2 = 1$ are forced, but $c_1 + c_2 = 3 \neq 4$.'
+          - problem: "Let a1 = (1, 0, 1) and a2 = (0, 1, 1). State whether b = (1, 2, 3) lies in the span of a1 and a2, and give the coefficient c1 of a1. Give the verdict and c1."
+            answer: "verdict = in; c1 = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c1"}]}
+            solution_sketch: "Full equation: c1(1,0,1) + c2(0,1,1) = (1,2,3). Step 1: equate the first two coordinates; this forces c1 = 1 and c2 = 2. Step 2: check the third coordinate: 1 + 2 = 3, so the equation is consistent. The out option is wrong because the third coordinate matches. The answer is verdict = in; c1 = 1."
+          - problem: "Let a1 = (1, 0, 1) and a2 = (0, 1, 1). State whether b = (2, 1, 4) lies in the span of a1 and a2, and give the coefficient c1 of a1. Give the verdict and c1."
+            answer: "verdict = out; c1 = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c1"}]}
+            solution_sketch: "Full equation: c1(1,0,1) + c2(0,1,1) = (2,1,4). Step 1: equate the first two coordinates; this forces c1 = 2 and c2 = 1. Step 2: check the third coordinate: 2 + 1 = 3, which is not 4, so the system is inconsistent. The in option is wrong because the third coordinate does not match. The answer is verdict = out; c1 = 2."
+          - problem: "Let a1 = (1, 0, 2) and a2 = (0, 1, 3). State whether b = (2, -1, 1) lies in the span of a1 and a2, and give the coefficient c2 of a2. Give the verdict and c2."
+            answer: "verdict = in; c2 = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Full equation: c1(1,0,2) + c2(0,1,3) = (2,-1,1). Step 1: equate the first two coordinates; this forces c1 = 2 and c2 = -1. Step 2: check the third coordinate: 2*2 + 3*(-1) = 1, so the equation is consistent. The out option is wrong because the third coordinate matches. The answer is verdict = in; c2 = -1."
+          - problem: "Let a1 = (1, 0, -1) and a2 = (0, 1, 4). State whether b = (3, -2, 5) lies in the span of a1 and a2, and give the coefficient c1 of a1. Give the verdict and c1."
+            answer: "verdict = out; c1 = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c1"}]}
+            solution_sketch: "Full equation: c1(1,0,-1) + c2(0,1,4) = (3,-2,5). Step 1: equate the first two coordinates; this forces c1 = 3 and c2 = -2. Step 2: check the third coordinate: -3 + 4*(-2) = -11, which is not 5, so the system is inconsistent. The in option is wrong because the third coordinate does not match. The answer is verdict = out; c1 = 3."
+          - problem: "Let a1 = (1, 0, 4) and a2 = (0, 1, -1). The vector b = (3, 2, 10) lies in the span of a1 and a2. Find the coefficients c1 and c2 in c1 a1 + c2 a2 = b. Give the answer as (c1, c2)."
+            answer: "(3, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full equation: c1(1,0,4) + c2(0,1,-1) = (3,2,10). Step 1: equate the first two coordinates; this gives c1 = 3 and c2 = 2. Step 2: check the third coordinate: 4*3 + (-1)*2 = 10, so the coefficient pair is consistent. The answer is (3, 2)."
+          - problem: "Let a1 = (1, 0, -2) and a2 = (0, 1, 5). The vector b = (4, -3, -23) lies in the span of a1 and a2. Find the coefficients c1 and c2 in c1 a1 + c2 a2 = b. Give the answer as (c1, c2)."
+            answer: "(4, -3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full equation: c1(1,0,-2) + c2(0,1,5) = (4,-3,-23). Step 1: equate the first two coordinates; this gives c1 = 4 and c2 = -3. Step 2: check the third coordinate: -2*4 + 5*(-3) = -23, so the coefficient pair is consistent. The answer is (4, -3)."
         constraints: "2 vectors in R^3 with the first two components forcing the coefficients; answer verifiable in one line"
       - id: kp3
         name: Solving Ax = b by row reduction
@@ -718,6 +782,22 @@ topics:
           - problem: 'Solve $\begin{pmatrix}1&2\\2&3\end{pmatrix}\mathbf{x} = (4, 7)$.'
             answer: "x = (2, 1)"
             solution_sketch: '$R_2 - 2R_1$ gives $-y = -1$; then $x = 4 - 2 = 2$.'
+          - problem: "Solve the system 2x + y = 5, x + 3y = 10. Give the answer as (x, y)."
+            answer: "(1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The augmented matrix is [2,1,5; 1,3,10]. Row reduction: replace R1 by R1 - 2R2 to get [0,-5,-15; 1,3,10], so -5y = -15 and y = 3. Back-substitution: x + 3(3) = 10 gives x = 1. The solution is (1, 3)."
+          - problem: "Solve the matrix equation A x = b with A = [[1,2],[3,-1]] and b = (6,-10). Give the answer as (x, y)."
+            answer: "(-2, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The augmented matrix is [1,2,6; 3,-1,-10]. Row reduction: R2 - 3R1 gives [1,2,6; 0,-7,-28], so -7y = -28 and y = 4. Back-substitution: x + 2(4) = 6 gives x = -2. The solution is (-2, 4)."
+          - problem: "Solve the system 3x + y = 11, 2x - 2y = 10. Give the answer as (x, y)."
+            answer: "(4, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The augmented matrix is [3,1,11; 2,-2,10]. Row reduction: divide R2 by 2 to get [1,-1,5], then replace R1 by R1 - 3R2 to get [0,4,-4], so 4y = -4 and y = -1. Back-substitution: x - (-1) = 5 gives x = 4. The solution is (4, -1)."
+          - problem: "Solve the system x + y + z = 2, 2x - y + z = 7, x + 2y - z = -6. Give the answer as (x, y, z)."
+            answer: "(1, -2, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The augmented matrix is [1,1,1,2; 2,-1,1,7; 1,2,-1,-6]. Row reduction: R2 - 2R1 gives [0,-3,-1,3] and R3 - R1 gives [0,1,-2,-8]; swapping R2 and R3 gives [0,1,-2,-8], then R3 + 3R2 gives [0,0,-7,-21], so -7z = -21 and z = 3. Back-substitution: y - 2(3) = -8 gives y = -2, and x + (-2) + 3 = 2 gives x = 1. The solution is (1, -2, 3)."
         constraints: "unique integer solutions in -5..5"
     diagnostic_exemplar:
       problem: 'Express $\mathbf{b} = (3, 5)$ as a linear combination of $\mathbf{a}_1 = (1, 1)$ and $\mathbf{a}_2 = (1, -1)$.'
@@ -750,14 +830,30 @@ topics:
         name: The trivial solution
         key_prerequisites: [solution-sets-free-variables]
         exemplars:
-          - problem: 'Does the system $x + 2y = 0$, $3x - y = 0$ have a solution? If so, how many?'
-            answer: "Yes; only the trivial solution x = 0, y = 0"
-            answer_contract: {kind: none}
-            solution_sketch: '$R_2 - 3R_1$ gives $-7y = 0$, so $y = 0$ and then $x = 0$.'
-          - problem: 'Why is every homogeneous system $A\mathbf{x} = \mathbf{0}$ consistent?'
-            answer: "x = 0 is always a solution"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{x} = \mathbf{0}$ always satisfies $A\mathbf{0} = \mathbf{0}$, so a solution always exists.'
+          - problem: "Solve the homogeneous system 2x + y = 0, x - 3y = 0. Give the answer as (x, y)."
+            answer: "(0,0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Rule: a homogeneous system always has the trivial solution x = 0, y = 0, since 0 always works. Row reduce: R2 - (1/2)R1 gives -(7/2)y = 0, so y = 0, and the first equation then gives x = 0. Check: 2(0) + 0 = 0 and 0 - 3(0) = 0. The solution is (0,0)."
+          - problem: "The homogeneous system 5x + 2y = 0, x - y = 0 always has the trivial solution. Find the value of x in that solution."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the trivial solution x = 0, y = 0 works in every homogeneous system because each left side becomes 0. Check: 5(0) + 2(0) = 0 and 0 - 0 = 0. The value of x is 0."
+          - problem: "A solution of a homogeneous 2x2 system is (0, 0). Which term names this solution?"
+            answer: "trivial"
+            answer_contract: {"kind": "label", "options": [["trivial"], ["nontrivial"], ["inconsistent"], ["free"]]}
+            solution_sketch: "Rule: x = 0, y = 0 always satisfies every equation of a homogeneous system. Option 'nontrivial' is wrong because nontrivial means a solution other than (0, 0). Option 'inconsistent' is wrong because a homogeneous system always has at least one solution. Option 'free' is wrong because free describes a variable, not a solution. The correct option is trivial."
+          - problem: "The homogeneous system 3x - y = 0, 2x + 4y = 0 has the trivial solution. How many solutions does the system have?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the trivial solution x = 0, y = 0 always works, so at least one solution exists. Row reduce: R2 + (2/3)R1 gives (10/3)y = 0, so y = 0 and then x = 0; there is no free variable. The solution set holds exactly one pair, so the system has 1 solution."
+          - problem: "For the homogeneous system x + 7y = 0, 4x + y = 0, how many of the variables x and y equal 0 in the trivial solution?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the trivial solution sets every variable to 0, since 0 always works in a homogeneous system. Check: 0 + 7(0) = 0 and 4(0) + 0 = 0. Both variables equal 0, so the count is 2."
+          - problem: "The homogeneous system 6x + y = 0, x + 5y = 0 has the trivial solution. Find the value of y in that solution."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the trivial solution of a homogeneous system is x = 0, y = 0, because 0 always works. Check: 6(0) + 0 = 0 and 0 + 5(0) = 0. The value of y is 0."
         constraints: "2x2 systems; emphasize that 0 always works"
       - id: kp2
         name: Nontrivial solutions in parametric form
@@ -828,6 +924,22 @@ topics:
           - problem: 'Find the line $y = ax + b$ through $(1, 4)$ and $(3, 8)$.'
             answer: "y = 2x + 2"
             solution_sketch: '$a + b = 4$, $3a + b = 8$; subtracting gives $2a = 4$.'
+          - problem: "Find the line y = ax + b through (1, 1) and (2, 4). Give the answer as an expression in x."
+            answer: "3x-2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Form the linear system from y = ax + b: 1 = a + b and 4 = 2a + b. Solve by elimination: subtract to get 3 = a. Substitute a = 3 into 1 = a + b to get b = -2. The line is 3x-2."
+          - problem: "Find the line y = ax + b through (0, 3) and (1, 1). Give the answer as (a, b)."
+            answer: "(-2, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Form the linear system from y = ax + b: 3 = b and 1 = a + b. Solve by substitution: b = 3, so 1 = a + 3. Then a = -2, and the coefficient pair is (-2, 3)."
+          - problem: "A line y = ax + b passes through (-1, 4) and (1, -2). Find the slope a."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the two point conditions for y = ax + b: 4 = -a + b and -2 = a + b. Solve by elimination: subtract to get -6 = 2a, so a = -3. The slope a is -3."
+          - problem: "Find the line y = ax + b through (0, 1) and (1, 4). Give the answer as an expression in x."
+            answer: "3x+1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Form the linear system from y = ax + b: 1 = b and 4 = a + b. Solve by substitution: b = 1, so 4 = a + 1. Then a = 3, and the line is 3x+1."
         constraints: "integer sample points; a and b integers in -3..3"
       - id: kp2
         name: Parabolas through three points
