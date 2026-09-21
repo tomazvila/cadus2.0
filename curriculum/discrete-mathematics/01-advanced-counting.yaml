@@ -294,6 +294,14 @@ topics:
         name: "Small derangement numbers"
         key_prerequisites: [inclusion-exclusion, permutations]
         exemplars:
+          - problem: "A derangement of a set with one element is a permutation that moves no element to its original place. How many such permutations exist?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The derangement number D_1 counts permutations of one object with no fixed point. By inclusion-exclusion, D_1 = 1! (1 - 1/1!) = 0. The answer is 0."
+          - problem: "How many derangements does a 2-element set have?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The derangement number D_2 counts permutations of two objects with no fixed point. By inclusion-exclusion, D_2 = 2! (1 - 1/1! + 1/2!) = 2 * (1/2) = 1. The answer is 1."
           - problem: 'Compute $D_3$, the number of derangements of $3$ objects.'
             answer: "2"
             solution_sketch: 'Of the $6$ permutations of $\{1,2,3\}$, only $231$ and $312$ move every element. Or $D_3 = 3!(1 - 1 + \tfrac12 - \tfrac16) = 2$.'
@@ -303,6 +311,10 @@ topics:
           - problem: 'Compute $D_5$.'
             answer: "44"
             solution_sketch: '$D_5 = 5 \cdot D_4 - 1 = 44$ via $D_n = n D_{n-1} + (-1)^n$, or the alternating-sum formula.'
+          - problem: "Use the inclusion-exclusion formula for derangements. Compute the number of permutations of six objects that fix no object."
+            answer: "265"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The derangement number D_6 counts permutations of six objects with no fixed point. By inclusion-exclusion, D_6 = 6! (1 - 1/1! + 1/2! - 1/3! + 1/4! - 1/5! + 1/6!). Compute 720 * (1 - 1 + 1/2 - 1/6 + 1/24 - 1/120 + 1/720) = 720 - 720 + 360 - 120 + 30 - 6 + 1 = 265. The answer is 265."
         constraints: "n <= 6; use the inclusion-exclusion formula or the recurrence"
       - id: kp2
         name: "Derangement applications and probability"
@@ -452,12 +464,34 @@ topics:
         name: "Counting one set two ways: symmetry and Pascal"
         key_prerequisites: [combinations]
         exemplars:
-          - problem: 'Give a combinatorial proof that $\binom{n}{k} = \binom{n}{n-k}$.'
-            answer: 'Choosing which $k$ elements to include is the same as choosing which $n-k$ to exclude; both sides count $k$-subsets of an $n$-set.'
-            solution_sketch: 'Exhibit the bijection $S \mapsto S^c$ between $k$-subsets and $(n-k)$-subsets.'
-          - problem: 'Give a combinatorial proof of Pascal''s identity $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$.'
-            answer: 'Fix an element $x$: the $k$-subsets containing $x$ number $\binom{n-1}{k-1}$, those avoiding $x$ number $\binom{n-1}{k}$; together they count all $\binom{n}{k}$.'
-            solution_sketch: 'Split the $k$-subsets of an $n$-set by whether they contain a distinguished element; the two cases are disjoint and exhaustive.'
+          - problem: "In the bijection S -> S^c for an n-set, a k-subset maps to an (n-k)-subset. For n = 8 and k = 3, how many image subsets are there?"
+            answer: "56"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the complement bijection between 3-subsets and 5-subsets of an 8-set. Step 1 (bijection): each 3-subset has exactly one 5-element complement. Step 2 (count): the number of 5-subsets of an 8-set is C(8,5) = 56. The answer is 56."
+          - problem: "In Pascal's identity, split k-subsets of an n-set by whether they contain a fixed element x. For n = 7 and k = 3, how many 3-subsets contain x?"
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the split of 3-subsets of a 7-set by a fixed element x. Step 1 (split): a 3-subset containing x is completed by choosing 2 elements from the other 6. Step 2 (count): C(6,2) = 15. The answer is 15."
+          - problem: "For Pascal's identity, split k-subsets of an n-set by whether they contain a fixed element x. For n = 7 and k = 3, how many 3-subsets avoid x?"
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the split of 3-subsets of a 7-set by a fixed element x. Step 1 (split): a 3-subset avoiding x is a 3-subset of the other 6 elements. Step 2 (count): C(6,3) = 20. The answer is 20."
+          - problem: "A combinatorial proof of symmetry pairs each k-subset of an n-set with its complement. For n = 10 and k = 7, how many elements are in the complement of each such subset?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the complement bijection for symmetry. Step 1 (bijection): a k-subset maps to an (n-k)-subset. Step 2 (subtract): 10 - 7 = 3. The answer is 3."
+          - problem: "Claim: the complement map S -> S^c gives a bijection between k-subsets and (n-k)-subsets of an n-set. Step 1: Let S be the set of k-subsets. Step 2: Map each S to its complement. Step 3: The map is not injective because two different k-subsets can have the same complement. Step 4: Therefore the two counts are equal. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly defines the set of k-subsets. Step 2 correctly defines the complement map. Step 3 is false: the complement map is injective, since equal complements imply equal subsets. Step 4 is the conclusion that follows after Step 3 is corrected. The answer is Step 3."
+          - problem: "In Pascal's identity proof, the containing and avoiding cases together count all k-subsets. For n = 9 and k = 4, how many 4-subsets are there in total?"
+            answer: "126"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the set of all 4-subsets of a 9-set. Step 1 (split): the containing and avoiding cases partition all 4-subsets. Step 2 (count): the total is C(9,4) = 126. The answer is 126."
+          - problem: "Write the full proof: for n >= 1 and 1 <= k <= n, C(n,k) = C(n-1,k-1) + C(n-1,k). Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (define set): Let X be an n-element set and fix an element x in X. Let S be the collection of all k-element subsets of X. Step 2 (count one way): By the definition of combinations, the size of S is C(n,k). Step 3 (split): Every k-subset either contains x or avoids x, and these two cases are disjoint and exhaustive. Step 4 (count containing): A k-subset containing x is formed by choosing the remaining k-1 elements from the other n-1 elements, giving C(n-1,k-1). Step 5 (count avoiding): A k-subset avoiding x is a k-subset of the other n-1 elements, giving C(n-1,k). Step 6 (conclude): Adding the two disjoint cases gives C(n,k) = C(n-1,k-1) + C(n-1,k). The proof is complete. See the solution."
         constraints: "proofs must identify one set counted two ways or an explicit bijection; no algebraic manipulation of factorials"
       - id: kp2
         name: "Committee-chair and subset-sum identities"
