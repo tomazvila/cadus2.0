@@ -1157,14 +1157,30 @@ topics:
         name: Monotonicity with products and exponentials
         key_prerequisites: [product-quotient-rules, derivatives-exp-log]
         exemplars:
-          - problem: 'Find the intervals of increase and decrease of $f(x) = x e^{-x}$.'
-            answer: "increasing on (-∞, 1); decreasing on (1, ∞)"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''(x) = e^{-x}(1 - x)$; $e^{-x} > 0$ always, so the sign is the sign of $1 - x$.'
-          - problem: 'Where does $f(x) = x e^{-x}$ attain its local maximum, and what is the value?'
-            answer: "x = 1; f(1) = 1/e"
-            answer_contract: {kind: none}
-            solution_sketch: "x = 1; f(1) = 1/e"
+          - problem: "Find the interval where $f(x) = x e^{-2x}$ is increasing, and give the answer as an inequality in x."
+            answer: "x < 1/2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1, product rule: f'(x) = e^{-2x} + x(-2e^{-2x}) = e^{-2x}(1 - 2x). Step 2, sign analysis: e^{-2x} > 0 for all x, so f' has the sign of 1 - 2x. Step 3, solve 1 - 2x > 0, which gives x < 1/2. The interval of increase is x < 1/2."
+          - problem: "Find the x-coordinate of the local minimum of $f(x) = x e^{3x}$ as a fraction."
+            answer: "-1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, product rule: f'(x) = e^{3x} + 3x e^{3x} = e^{3x}(1 + 3x). Step 2, sign analysis: e^{3x} > 0, so the sign of f' is the sign of 1 + 3x. Step 3, f' changes from negative to positive at x = -1/3, so that point is a local minimum. The local minimum has x-coordinate -1/3."
+          - problem: "Find the interval where $f(x) = (x^2 - 3)e^{-x}$ is increasing, and give the answer as an inequality in x."
+            answer: "-1 < x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1, product rule: f'(x) = 2x e^{-x} - (x^2 - 3)e^{-x} = e^{-x}(-x^2 + 2x + 3). Step 2, factor the polynomial: -x^2 + 2x + 3 = -(x - 3)(x + 1). Step 3, e^{-x} > 0, so f' > 0 when (x - 3)(x + 1) < 0, which is -1 < x < 3. The interval of increase is -1 < x < 3."
+          - problem: "Find the interval where $f(x) = (x^2 - 7x + 13)e^{x}$ is decreasing, and give the answer as an inequality in x."
+            answer: "2 < x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1, product rule: f'(x) = (2x - 7)e^{x} + (x^2 - 7x + 13)e^{x} = e^{x}(x^2 - 5x + 6). Step 2, factor: x^2 - 5x + 6 = (x - 2)(x - 3). Step 3, e^{x} > 0, so f' < 0 when (x - 2)(x - 3) < 0, which is 2 < x < 3. The interval of decrease is 2 < x < 3."
+          - problem: "Find the x-coordinate of the local minimum of $f(x) = (2x - 3)e^{x}$ as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, product rule: f'(x) = 2e^{x} + (2x - 3)e^{x} = e^{x}(2x - 1). Step 2, e^{x} > 0, so f' has the sign of 2x - 1. Step 3, f' changes from negative to positive at x = 1/2, so that point is a local minimum. The local minimum has x-coordinate 1/2."
+          - problem: "Find the interval where $f(x) = (1 - 4x)e^{-x}$ is increasing, and give the answer as an inequality in x."
+            answer: "x > 5/4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1, product rule: f'(x) = -4e^{-x} - (1 - 4x)e^{-x} = e^{-x}(4x - 5). Step 2, e^{-x} > 0 for all x, so f' has the sign of 4x - 5. Step 3, solve 4x - 5 > 0, which gives x > 5/4. The interval of increase is x > 5/4."
         constraints: "the exponential factor is always positive — sign comes from the polynomial factor"
     diagnostic_exemplar:
       problem: 'Find the intervals of increase and decrease of $f(x) = x^2 e^{-x}$.'
@@ -1199,27 +1215,59 @@ topics:
         name: Intervals of concavity
         key_prerequisites: [higher-order-derivatives]
         exemplars:
-          - problem: 'Find the intervals of concavity of $f(x) = x^3 - 3x$.'
-            answer: "concave down on (-∞, 0); concave up on (0, ∞)"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''''(x) = 6x$: negative for $x < 0$, positive for $x > 0$.'
-          - problem: 'Where is $f(x) = x^3 + 3x^2$ concave up?'
-            answer: "(-1, ∞)"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''''(x) = 6x + 6 > 0$ when $x > -1$.'
+          - problem: "Let f(x) = x^3 - 3x. Find the open interval where f is concave up, and give the answer as an inequality in x."
+            answer: "x > 0"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "For f(x) = x^3 - 3x, use higher-order derivatives to get f''(x) = 6x. The concavity test says f''(x) > 0 means concave up, so solve 6x > 0. The answer is x > 0."
+          - problem: "Let f(x) = x^3 + 3x^2. Find the open interval where f is concave up, and give the answer as an inequality in x."
+            answer: "x > -1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "For f(x) = x^3 + 3x^2, use higher-order derivatives to get f''(x) = 6x + 6. The concavity test says f''(x) > 0 means concave up, so solve 6x + 6 > 0. The answer is x > -1."
+          - problem: "Let f(x) = x^3 - 3x^2 - 9x + 5. Find the open interval where f is concave up, and give the answer as an inequality in x."
+            answer: "x > 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "For f(x) = x^3 - 3x^2 - 9x + 5, use higher-order derivatives to get f''(x) = 6x - 6. The concavity test says f''(x) > 0 means concave up, so solve 6x - 6 > 0. The answer is x > 1."
+          - problem: "Let f(x) = x^4 - 6x^2. Find the open intervals where f is concave up, and give the answer as an inequality in x."
+            answer: "x < -1 or x > 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "For f(x) = x^4 - 6x^2, use higher-order derivatives to get f''(x) = 12x^2 - 12. Factor f''(x) = 12(x - 1)(x + 1). The concavity test says f''(x) > 0 means concave up, and this happens for x < -1 or x > 1. The answer is x < -1 or x > 1."
+          - problem: "Let f(x) = x^4 - 8x^3. Find the open interval where f is concave down, and give the answer as an inequality in x."
+            answer: "0 < x < 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "For f(x) = x^4 - 8x^3, use higher-order derivatives to get f''(x) = 12x^2 - 48x. Factor f''(x) = 12x(x - 4). The concavity test says f''(x) < 0 means concave down, and this happens for 0 < x < 4. The answer is 0 < x < 4."
+          - problem: "Let f(x) = 2x^3 - 9x^2 + 12x. Find the open interval where f is concave up, and give the answer as an inequality in x."
+            answer: "x > 3/2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "For f(x) = 2x^3 - 9x^2 + 12x, use higher-order derivatives to get f''(x) = 12x - 18. The concavity test says f''(x) > 0 means concave up, so solve 12x - 18 > 0. The answer is x > 3/2."
         constraints: "second derivative factors cleanly; report open intervals"
       - id: kp2
         name: Find inflection points (verify the sign change)
         key_prerequisites: [higher-order-derivatives]
         exemplars:
-          - problem: 'Find the inflection points of $f(x) = x^4 - 6x^2$.'
-            answer: "x = -1 and x = 1"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''''(x) = 12x^2 - 12 = 12(x-1)(x+1)$ changes sign at both roots.'
-          - problem: 'Does $f(x) = x^4$ have an inflection point at $x = 0$?'
-            answer: "no — f''(x) = 12x² is ≥ 0 on both sides (no sign change)"
-            answer_contract: {kind: none}
-            solution_sketch: "no — f''(x) = 12x² is ≥ 0 on both sides (no sign change)"
+          - problem: "Let f(x) = x^4 - 24x^2. Find the x-coordinates of all inflection points of f, and give the answer as a set such as {1, 2}."
+            answer: "{-2, 2}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The full object is f(x) = x^4 - 24x^2. Step 1, use higher-order derivatives: f'(x) = 4x^3 - 48x, so f''(x) = 12x^2 - 48 = 12(x - 2)(x + 2). Step 2, solve f''(x) = 0: the candidate x-values are -2 and 2. Step 3, verify the sign change: each root is simple, so f'' changes sign at both and both are inflection points. The answer is {-2, 2}."
+          - problem: "Let f(x) = x^5 - 5x^4. Find the x-coordinates of all inflection points of f, and give your answer as a set of x-values."
+            answer: "{3}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The full object is f(x) = x^5 - 5x^4. Step 1, use higher-order derivatives: f'(x) = 5x^4 - 20x^3, so f''(x) = 20x^3 - 60x^2 = 20x^2(x - 3). Step 2, solve f''(x) = 0: the candidates are x = 0 and x = 3. Step 3, verify the sign change: the factor x^2 is positive on both sides of 0, so f'' keeps the same sign at 0 and that candidate fails; the factor (x - 3) is negative just left of 3 and positive just right of 3, so f'' changes sign there. The only inflection point is at x = 3, so the answer is {3}."
+          - problem: "Let f(x) = x^3 - 6x^2 + 5. Find the inflection point of the graph of f as an ordered pair, and give the answer as (x, y)."
+            answer: "(2, -11)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full object is f(x) = x^3 - 6x^2 + 5. Step 1, use higher-order derivatives: f'(x) = 3x^2 - 12x, so f''(x) = 6x - 12. Step 2, solve f''(x) = 0: 6x - 12 = 0 gives x = 2. Step 3, verify the sign change: this linear second derivative is negative for x < 2 and positive for x > 2, so concavity changes at x = 2. Step 4, find the height: f(2) = 8 - 24 + 5 = -11. The answer is (2, -11)."
+          - problem: "A function f has second derivative f''(x) = 6x + 12 for every real x. Find the x-coordinate of the inflection point of the graph of f."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f''(x) = 6x + 12 for every x. Step 1, solve f''(x) = 0: 6x + 12 = 0 gives x = -2. Step 2, verify the sign change: this linear second derivative is negative before -2 and positive after -2, so concavity changes there and x = -2 is the inflection point. The answer is -2."
+          - problem: "Let f(x) = sin(x). Find the x-value in the open interval (0, 2pi) at which the graph of f changes concavity."
+            answer: "pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x) = sin(x). Step 1, use higher-order derivatives: f'(x) = cos(x) and f''(x) = -sin(x). Step 2, solve f''(x) = 0 on (0, 2pi): the only solution inside the interval is x = pi. Step 3, verify the sign change: f'' = -sin(x) is negative just before pi and positive just after pi, so concavity changes at pi. The answer is pi."
+          - problem: "Let f(x) = 2x^3 - 18x^2 + 5x - 1. Find the x-coordinate of the inflection point of the graph of f."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x) = 2x^3 - 18x^2 + 5x - 1. Step 1, use higher-order derivatives: f'(x) = 6x^2 - 36x + 5, so f''(x) = 12x - 36. Step 2, solve f''(x) = 0: 12x - 36 = 0 gives x = 3. Step 3, verify the sign change: f'' is negative before 3 and positive after 3, so concavity changes at x = 3. The answer is 3."
         constraints: "include one f'' = 0 without sign change trap"
       - id: kp3
         name: Concavity and the graph
