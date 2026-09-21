@@ -1525,14 +1525,30 @@ topics:
         name: Time questions
         key_prerequisites: [natural-growth-decay-models]
         exemplars:
-          - problem: 'With $T(t) = 20 + 80e^{-(\ln 2/10)t}$, when does the body reach $30^{\circ}$C?'
-            answer: "$t = 30$ minutes"
-            answer_contract: {kind: none}
-            solution_sketch: "$80e^{-kt} = 10$ means the gap has halved three times: $3 \\times 10 = 30$."
-          - problem: 'With $T = 25 - 20e^{-(\ln 2/4)t}$, when does the drink reach $20^{\circ}$C?'
-            answer: "$t = 8$ minutes"
-            answer_contract: {kind: none}
-            solution_sketch: "$20e^{-kt} = 5$: the gap quarters, i.e. two halvings of $4$ minutes each."
+          - problem: "A body in a room at 20 C has temperature T(t) = 20 + 80 e^(-(ln(2)/10)t), where t is in minutes. Find the time when the body reaches 30 C. Give the time in minutes."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full Newton's law of cooling model is T(t) = 20 + 80 e^(-(ln(2)/10)t). Set the target and subtract the room temperature: 20 + 80 e^(-(ln(2)/10)t) = 30, so the gap to the room is 80 e^(-(ln(2)/10)t) = 10. The gap rule says the gap starts at 80 and halves every 10 minutes. Since 80 / 2^3 = 10, three halvings are needed. Three halvings take 3 * 10 = 30 minutes. The answer is 30."
+          - problem: "A drink in a room at 25 C has temperature T(t) = 25 - 20 e^(-(ln(2)/4)t), where t is in minutes. Find the time when the drink reaches 20 C. Give the time in minutes."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full Newton's law of cooling model is T(t) = 25 - 20 e^(-(ln(2)/4)t). Set the target: 25 - 20 e^(-(ln(2)/4)t) = 20, so the gap to the room is 20 e^(-(ln(2)/4)t) = 5. The gap rule says the gap starts at 20 and halves every 4 minutes. Since 20 / 2^2 = 5, two halvings are needed. Two halvings take 2 * 4 = 8 minutes. The answer is 8."
+          - problem: "A metal bar at 210 C is placed in a room at 10 C. The difference between the bar temperature and the room temperature halves every 6 minutes. Find the time when the bar reaches 60 C. Give the time in minutes."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full Newton's law of cooling gap model is G(t) = 200 e^(-(ln(2)/6)t). The initial gap is 210 - 10 = 200, and the target gap is 60 - 10 = 50. Set G(t) = 50: 200 e^(-(ln(2)/6)t) = 50. The gap rule gives 200 / 2^2 = 50, so two halvings are needed. Each halving takes 6 minutes, so t = 2 * 6 = 12 minutes. The answer is 12."
+          - problem: "A cup of coffee at 90 C sits in a room at 20 C. The difference between the coffee temperature and the room temperature halves every 3 minutes. Find the time when the coffee reaches 55 C. Give the time in minutes."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full Newton's law of cooling gap model is G(t) = 70 e^(-(ln(2)/3)t). The initial gap is 90 - 20 = 70, and the target gap is 55 - 20 = 35. Set G(t) = 35: 70 e^(-(ln(2)/3)t) = 35. The gap rule gives 70 / 2^1 = 35, so one halving is needed. One halving takes 3 minutes, so t = 3 minutes. The answer is 3."
+          - problem: "A thermometer at 5 C is brought into a room at 25 C. The difference between the room temperature and the thermometer temperature halves every 8 minutes. Find the time when the thermometer reads 20 C. Give the time in minutes."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full Newton's law of cooling gap model is G(t) = 20 e^(-(ln(2)/8)t). The initial gap is 25 - 5 = 20, and the target gap is 25 - 20 = 5. Set G(t) = 5: 20 e^(-(ln(2)/8)t) = 5. The gap rule gives 20 / 2^2 = 5, so two halvings are needed. Each halving takes 8 minutes, so t = 2 * 8 = 16 minutes. The answer is 16."
+          - problem: "A cake at 160 C is put in a room at 20 C. The difference between the cake temperature and the room temperature halves every 5 minutes. Find the time when the cake reaches 55 C. Give the time in minutes."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full Newton's law of cooling gap model is G(t) = 140 e^(-(ln(2)/5)t). The initial gap is 160 - 20 = 140, and the target gap is 55 - 20 = 35. Set G(t) = 35: 140 e^(-(ln(2)/5)t) = 35. The gap rule gives 140 / 2^2 = 35, so two halvings are needed. Each halving takes 5 minutes, so t = 2 * 5 = 10 minutes. The answer is 10."
         constraints: "target gaps are the initial gap divided by a power of 2, so times are integer multiples of the halving time"
     diagnostic_exemplar:
       problem: "A body in a $20^{\\circ}$C room cools from $100^{\\circ}$C to $60^{\\circ}$C in $10$ minutes. When does it reach $25^{\\circ}$C?"
@@ -1583,18 +1599,30 @@ topics:
         name: Solving the model
         key_prerequisites: [linear-first-order-integrating-factor]
         exemplars:
-          - problem: "Solve $A' = 10 - \\dfrac{A}{20}$ with $A(0) = 0$."
-            answer: "$A(t) = 200(1 - e^{-t/20})$"
-            answer_contract: {kind: none}
-            solution_sketch: "Equilibrium $200$; $A = 200 + Ce^{-t/20}$ with $C = -200$."
-          - problem: "Solve $A' = 2 - \\dfrac{A}{25}$ with $A(0) = 10$."
-            answer: "$A(t) = 50 - 40e^{-t/25}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Equilibrium $50$; $A(0) = 10$ gives $C = -40$."
-          - problem: "Solve $A' = -\\dfrac{A}{50}$ with $A(0) = 30$."
-            answer: "$A(t) = 30e^{-t/50}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$A(t) = 30e^{-t/50}$"
+          - problem: "Solve A' = 8 - A/20 with A(0) = 0. Give A(t) as a function of t."
+            answer: "160-160e^(-t/20)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Set A' = 0 in the linear first-order equation A' = 8 - A/20 to find the equilibrium A = 160. The general solution form is A = 160 + C e^(-t/20). Use the initial amount A(0) = 0 to get 0 = 160 + C, so C = -160. The solution is A(t) = 160-160e^(-t/20)."
+          - problem: "Solve A' = 5 - A/10 with A(0) = 20. Give A(t) as a function of t."
+            answer: "50-30e^(-t/10)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Set A' = 0 in the linear first-order equation A' = 5 - A/10 to find the equilibrium A = 50. The general solution form is A = 50 + C e^(-t/10). Use the initial amount A(0) = 20 to get 20 = 50 + C, so C = -30. The solution is A(t) = 50-30e^(-t/10)."
+          - problem: "Solve A' = -A/40 with A(0) = 12. Give A(t) as a function of t."
+            answer: "12e^(-t/40)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "For the linear first-order equation A' = -A/40, the equilibrium is 0 and the decay constant is 40. The general solution form is A = C e^(-t/40). Use the initial amount A(0) = 12 to get C = 12. The solution is A(t) = 12e^(-t/40)."
+          - problem: "A 200 L tank holds water with 30 g of salt. Brine with 0.5 g/L flows in at 4 L/min and the well-mixed solution leaves at 4 L/min. Solve for the amount A(t) of salt in grams. Give A(t) as a function of t."
+            answer: "100-70e^(-t/50)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The inflow adds 0.5 times 4 = 2 g/min, and the outflow removes A/200 times 4 = A/50 g/min, so the model is A' = 2 - A/50. Set A' = 0 to get equilibrium A = 100. The linear first-order form gives A = 100 + C e^(-t/50). Use A(0) = 30 to get 30 = 100 + C, so C = -70. The solution is A(t) = 100-70e^(-t/50)."
+          - problem: "A 60 L tank holds water with 100 g of salt. Brine with 1 g/L flows in at 4 L/min and the well-mixed solution leaves at 4 L/min. Solve for the amount A(t) of salt in grams. Give A(t) as a function of t."
+            answer: "60+40e^(-t/15)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The inflow adds 1 times 4 = 4 g/min, and the outflow removes A/60 times 4 = A/15 g/min, so the model is A' = 4 - A/15. Set A' = 0 to get equilibrium A = 60. The linear first-order form gives A = 60 + C e^(-t/15). Use A(0) = 100 to get 100 = 60 + C, so C = 40. The solution is A(t) = 60+40e^(-t/15)."
+          - problem: "A 1000 L tank holds water with 50 g of dye. A solution with 0.2 g/L of dye flows in at 10 L/min and the well-mixed solution leaves at 10 L/min. Solve for the amount A(t) of dye in grams. Give A(t) as a function of t."
+            answer: "200-150e^(-t/100)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The inflow adds 0.2 times 10 = 2 g/min, and the outflow removes A/1000 times 10 = A/100 g/min, so the model is A' = 2 - A/100. Set A' = 0 to get equilibrium A = 200. The linear first-order form gives A = 200 + C e^(-t/100). Use A(0) = 50 to get 50 = 200 + C, so C = -150. The solution is A(t) = 200-150e^(-t/100)."
         constraints: "solutions have the shape (limit) + C e^{-t/tau}; C fixed by the initial amount"
       - id: kp3
         name: Long-run behavior and timing
