@@ -440,6 +440,22 @@ topics:
             solution_sketch: '$v(t) = s''(t) = 3t^2$ and $a(t) = v''(t) = 6t$, so $a(2) = 12$ m/s².'
           - problem: 'For $s(t) = t^2 - 4t$, what is the (constant) acceleration?'
             answer: "2"
+          - problem: "A particle's position is s(t) = 2t^2 + 3t - 1 metres at time t seconds. Find its acceleration at t = 4."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate position once: v(t) = s'(t) = 4t + 3 by the power rule. Differentiate velocity: a(t) = v'(t) = 4 by the power rule. At t = 4 the acceleration is 4."
+          - problem: "A particle moves along a line with position s(t) = t^3 - 6t^2 + 5t metres at time t seconds. Find its acceleration as a function of t."
+            answer: "6t - 12"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Differentiate position once: v(t) = s'(t) = 3t^2 - 12t + 5 by the power rule. Differentiate velocity: a(t) = v'(t) = 6t - 12 by the power rule. The acceleration function is 6t - 12."
+          - problem: "A cart's position is s(t) = 5t^2 - 3t + 7 metres at time t seconds. Find its acceleration at t = 3."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate position once: v(t) = s'(t) = 10t - 3 by the power rule. Differentiate velocity: a(t) = v'(t) = 10 by the power rule. At t = 3 the acceleration is 10."
+          - problem: "An object moves with position s(t) = t^4 - 2t^3 + t metres at time t seconds. Find its acceleration as a function of t."
+            answer: "12t^2 - 12t"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Differentiate position once: v(t) = s'(t) = 4t^3 - 6t^2 + 1 by the power rule. Differentiate velocity: a(t) = v'(t) = 12t^2 - 12t by the power rule. The acceleration function is 12t^2 - 12t."
         constraints: "polynomial position functions; acceleration is the second derivative"
     diagnostic_exemplar:
       problem: 'A particle''s position is $s(t) = t^3 + 2t^2$ metres at time $t$ seconds. Find its acceleration at $t = 2$ (in m/s²).'
@@ -965,14 +981,30 @@ topics:
         name: Differentiate y-terms with the chain rule
         key_prerequisites: [chain-rule]
         exemplars:
-          - problem: 'If $y$ is a function of $x$, what is $\frac{d}{dx}\left[y^4\right]$?'
-            answer: "4y^3 · dy/dx"
-            answer_contract: {kind: none}
-            solution_sketch: "4y^3 · dy/dx"
-          - problem: 'If $y$ is a function of $x$, what is $\frac{d}{dx}\left[y^2 + x^3\right]$?'
-            answer: "2y · dy/dx + 3x^2"
-            answer_contract: {kind: none}
-            solution_sketch: "2y · dy/dx + 3x^2"
+          - problem: "If y is a function of x, let u = dy/dx. Find d/dx[y^6]."
+            answer: "6y^5 u"
+            answer_contract: {"kind": "function", "vars": ["y", "u"]}
+            solution_sketch: "The full object is d/dx[y^6]. Step 1: the chain rule on the single y-power y^6 gives 6y^5 times the derivative of y, which is u. Step 2: no other terms appear. The derivative is 6y^5 u."
+          - problem: "If y is a function of x, let u = dy/dx. Find d/dx[y^3 + x^5]."
+            answer: "3y^2 u + 5x^4"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "u"]}
+            solution_sketch: "The full object is d/dx[y^3 + x^5]. Step 1: the chain rule on y^3 gives 3y^2 u. Step 2: the power rule on x^5 gives 5x^4. Step 3: add the two terms. The derivative is 3y^2 u + 5x^4."
+          - problem: "If y is a function of x, let u = dy/dx. Find d/dx[x^4 + y^7 + 2x]."
+            answer: "7y^6 u + 4x^3 + 2"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "u"]}
+            solution_sketch: "The full object is d/dx[x^4 + y^7 + 2x]. Step 1: the power rule on x^4 gives 4x^3. Step 2: the chain rule on y^7 gives 7y^6 u. Step 3: the power rule on 2x gives 2. The derivative is 7y^6 u + 4x^3 + 2."
+          - problem: "If y is a function of x, let u = dy/dx. Find d/dx[5y^2 - 3x]."
+            answer: "10y u - 3"
+            answer_contract: {"kind": "function", "vars": ["y", "u"]}
+            solution_sketch: "The full object is d/dx[5y^2 - 3x]. Step 1: the chain rule on 5y^2 gives 10y u. Step 2: the power rule on -3x gives -3. The derivative is 10y u - 3."
+          - problem: "If y is a function of x, let u = dy/dx. Find the coefficient of u in d/dx[x^3 + 9y^4]."
+            answer: "36y^3"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "The full object is d/dx[x^3 + 9y^4]. Step 1: the power rule on x^3 gives 3x^2, which has no u. Step 2: the chain rule on 9y^4 gives 36y^3 u, so the coefficient of u is 36y^3. The coefficient is 36y^3."
+          - problem: "If y is a function of x, let u = dy/dx. Find d/dx[y^8 - x^2]."
+            answer: "8y^7 u - 2x"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "u"]}
+            solution_sketch: "The full object is d/dx[y^8 - x^2]. Step 1: the chain rule on y^8 gives 8y^7 u. Step 2: the power rule on -x^2 gives -2x. The derivative is 8y^7 u - 2x."
         constraints: "single y-power terms; every y-term picks up a dy/dx factor"
       - id: kp2
         name: Solve for dy/dx (powers of x and y only)
@@ -986,6 +1018,18 @@ topics:
           - problem: 'Find $\frac{dy}{dx}$ for $2x^2 + 3y^2 = 12$.'
             answer: "-2x/(3y)"
             solution_sketch: '$4x + 6y \frac{dy}{dx} = 0$.'
+          - problem: "Find $\\frac{dy}{dx}$ for $x^2 + 4y^2 = 8$."
+            answer: "-x/(4y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with $x^2 + 4y^2 = 8$. Differentiate both sides with respect to $x$ using the chain rule: $2x + 8y \\frac{dy}{dx} = 0$. Isolate $\\frac{dy}{dx}$ by literal equation steps: $8y \\frac{dy}{dx} = -2x$, so $\\frac{dy}{dx} = -\\frac{x}{4y}$. The derivative is -x/(4y)."
+          - problem: "Find $\\frac{dy}{dx}$ for $5x^3 + 2y^2 = 14$."
+            answer: "-15x^2/(4y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with $5x^3 + 2y^2 = 14$. Differentiate both sides with respect to $x$ using the chain rule: $15x^2 + 4y \\frac{dy}{dx} = 0$. Isolate by literal equation steps: $4y \\frac{dy}{dx} = -15x^2$, so $\\frac{dy}{dx} = -\\frac{15x^2}{4y}$. The derivative is -15x^2/(4y)."
+          - problem: "Find $\\frac{dy}{dx}$ for $3x^2 - y^3 = 7$."
+            answer: "2x/y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with $3x^2 - y^3 = 7$. Differentiate both sides with respect to $x$ using the chain rule: $6x - 3y^2 \\frac{dy}{dx} = 0$. Isolate $\\frac{dy}{dx}$: $3y^2 \\frac{dy}{dx} = 6x$, so $\\frac{dy}{dx} = \\frac{2x}{y^2}$. The derivative is 2x/y^2."
         constraints: "powers of x and y only, no mixed terms; isolate dy/dx"
       - id: kp3
         name: Evaluate the slope at a point
@@ -997,6 +1041,22 @@ topics:
           - problem: 'Find the slope of the tangent to $y^2 = 4x$ at $(1, 2)$.'
             answer: "1"
             solution_sketch: '$2y \frac{dy}{dx} = 4$ gives $\frac{dy}{dx} = \frac{2}{y} = 1$ at $y = 2$.'
+          - problem: "Find the slope of the tangent line to x^2 + y^2 = 169 at (5, 12)."
+            answer: "-5/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use implicit differentiation with the chain rule: 2x + 2y dy/dx = 0, so dy/dx = -x/y. Substitute the point (5, 12): dy/dx = -5/12. The slope is -5/12."
+          - problem: "Determine the slope of the tangent line to y^2 = 6x at (6, 6)."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use implicit differentiation: 2y dy/dx = 6, so dy/dx = 3/y. Substitute y = 6: dy/dx = 3/6 = 1/2. The slope is 1/2."
+          - problem: "Compute the slope of the tangent line to x^3 + y^3 = 9 at (1, 2)."
+            answer: "-1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use implicit differentiation with the power rule and chain rule: 3x^2 + 3y^2 dy/dx = 0, so dy/dx = -x^2/y^2. At (1, 2), dy/dx = -1/4. The slope is -1/4."
+          - problem: "Evaluate the slope of the tangent line to x^3 + y^2 = 10 at (1, 3)."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use implicit differentiation: 3x^2 + 2y dy/dx = 0, so dy/dx = -3x^2/(2y). At (1, 3), dy/dx = -3/(6) = -1/2. The slope is -1/2."
         constraints: "the given point must satisfy the equation; slopes are integers or simple fractions"
     diagnostic_exemplar:
       problem: 'Find $\frac{dy}{dx}$ for $x^2 + y^2 = 9$.'
