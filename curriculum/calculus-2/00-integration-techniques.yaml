@@ -1003,10 +1003,26 @@ topics:
           - problem: 'Evaluate $\int_1^{\infty} \frac{dx}{x^2}$ or state that it diverges.'
             answer: "1"
             solution_sketch: '$\lim_{b\to\infty} [-\frac{1}{x}]_1^b = \lim_{b\to\infty} (1 - \frac{1}{b}) = 1$.'
-          - problem: 'Evaluate $\int_1^{\infty} \frac{dx}{x}$ or state that it diverges.'
-            answer: 'diverges'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lim_{b\to\infty} \ln b = \infty$.'
+          - problem: "Evaluate the improper integral $\\int_1^{\\infty} \\frac{dx}{x}$. Select the correct outcome."
+            answer: "infinity"
+            answer_contract: {"kind": "label", "options": [["infinity", "inf", "oo"], ["DNE", "does not exist"], ["-infinity", "-inf", "-oo"], ["0"]]}
+            solution_sketch: "Write the improper integral as a limit: $\\int_1^{\\infty} \\frac{dx}{x} = \\lim_{b\\to\\infty} \\int_1^b \\frac{dx}{x}$. By the Fundamental Theorem of Calculus, $\\lim_{b\\to\\infty} [\\ln(x)]_1^b = \\lim_{b\\to\\infty} \\ln(b)$, and this limit is infinity. A choice of DNE would mistake an infinite limit for a nonexistent limit, -infinity would come from a sign error, and 0 would confuse the growth of $\\ln(b)$ with the decay of $1/b$. The answer is infinity."
+          - problem: "Evaluate the improper integral $\\int_2^{\\infty} x^{-3}\\,dx$ or state that it diverges. Give the answer as a fraction."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the improper integral as a limit: $\\int_2^{\\infty} x^{-3}\\,dx = \\lim_{b\\to\\infty} \\int_2^b x^{-3}\\,dx$. By the power rule for antiderivatives, the antiderivative is $-1/(2x^2)$, so the limit is $\\lim_{b\\to\\infty} (-1/(2b^2) + 1/8)$. Since $-1/(2b^2)$ tends to 0, the value is $1/8$. The answer is 1/8."
+          - problem: "Evaluate the improper integral $\\int_3^{\\infty} \\frac{dx}{x^2}$ or state that it diverges. Give the answer as a fraction."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the improper integral as a limit: $\\int_3^{\\infty} \\frac{dx}{x^2} = \\lim_{b\\to\\infty} \\int_3^b x^{-2}\\,dx$. By the power rule for antiderivatives, the antiderivative is $-1/x$, so the limit is $\\lim_{b\\to\\infty} (-1/b + 1/3)$. Since $-1/b$ tends to 0, the value is $1/3$. The answer is 1/3."
+          - problem: "Evaluate the improper integral $\\int_1^{\\infty} \\frac{2}{x^4}\\,dx$ or state that it diverges. Give the answer as a fraction."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the improper integral as a limit: $\\int_1^{\\infty} \\frac{2}{x^4}\\,dx = \\lim_{b\\to\\infty} \\int_1^b 2x^{-4}\\,dx$. By the power rule for antiderivatives, the antiderivative is $-2/(3x^3)$, so the limit is $\\lim_{b\\to\\infty} (-2/(3b^3) + 2/3)$. Since $-2/(3b^3)$ tends to 0, the value is $2/3$. The answer is 2/3."
+          - problem: "Evaluate the improper integral $\\int_{-\\infty}^{-2} \\frac{dx}{x^2}$ or state that it diverges. Give the answer as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the improper integral as a limit: $\\int_{-\\infty}^{-2} \\frac{dx}{x^2} = \\lim_{a\\to-\\infty} \\int_a^{-2} x^{-2}\\,dx$. By the power rule for antiderivatives, the antiderivative is $-1/x$, so the limit is $\\lim_{a\\to-\\infty} (-1/(-2) + 1/a) = 1/2 + 0$. The value is $1/2$. The answer is 1/2."
         constraints: "one infinite endpoint; power-function integrands; always write the limit explicitly"
       - id: kp2
         name: Exponential and arctangent integrands
@@ -1021,6 +1037,18 @@ topics:
           - problem: 'Evaluate $\int_0^{\infty} \frac{dx}{1 + x^2}$.'
             answer: '$\pi/2$'
             solution_sketch: '$\lim_{b\to\infty} \arctan b - \arctan 0 = \frac{\pi}{2}$.'
+          - problem: "Evaluate $\\int_0^{\\infty} e^{-3x} \\, dx$."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of an improper integral: write it as $\\lim_{b\\to\\infty} \\int_0^b e^{-3x}\\,dx$. The exponential antiderivative rule gives $\\int e^{-3x}\\,dx = -\\frac{1}{3}e^{-3x}$. The Fundamental Theorem of Calculus gives $[-\\frac{1}{3}e^{-3x}]_0^b = -\\frac{1}{3}e^{-3b} + \\frac{1}{3}$. The limit at infinity of $e^{-3b}$ is $0$, so the value is 1/3."
+          - problem: "Evaluate $\\int_0^{\\infty} \\frac{dx}{4 + x^2}$."
+            answer: "pi/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of an improper integral: write it as $\\lim_{b\\to\\infty} \\int_0^b \\frac{dx}{4+x^2}$. The arctangent antiderivative rule with $a=2$ gives $\\int \\frac{dx}{a^2+x^2} = \\frac{1}{a}\\arctan(x/a)$, so here it is $\\frac{1}{2}\\arctan(x/2)$. The Fundamental Theorem of Calculus gives $[\\frac{1}{2}\\arctan(x/2)]_0^b = \\frac{1}{2}\\arctan(b/2) - 0$. The limit at infinity of $\\arctan(b/2)$ is $\\pi/2$, so the value is pi/4."
+          - problem: "Evaluate $\\int_2^{\\infty} e^{-x} \\, dx$."
+            answer: "e^(-2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of an improper integral: write it as $\\lim_{b\\to\\infty} \\int_2^b e^{-x}\\,dx$. The exponential antiderivative rule gives $\\int e^{-x}\\,dx = -e^{-x}$. The Fundamental Theorem of Calculus gives $[-e^{-x}]_2^b = -e^{-b} + e^{-2}$. The limit at infinity of $e^{-b}$ is $0$, so the value is e^(-2)."
         constraints: "antiderivative is e^{-ax} or arctan; a in {1, 2, 3}"
       - id: kp3
         name: Doubly infinite intervals and divergence by oscillation
@@ -1070,13 +1098,25 @@ topics:
           - problem: 'Evaluate $\int_0^1 \frac{dx}{\sqrt{x}}$ or state that it diverges.'
             answer: "2"
             solution_sketch: '$\lim_{a\to 0^+} [2\sqrt{x}]_a^1 = 2 - 0 = 2$.'
-          - problem: 'Evaluate $\int_0^1 \frac{dx}{x^2}$ or state that it diverges.'
-            answer: 'diverges'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lim_{a\to 0^+} [-\frac{1}{x}]_a^1 = \lim_{a\to 0^+} (\frac{1}{a} - 1) = \infty$.'
+          - problem: "Evaluate $\\int_0^1 x^{-2}\\,dx$. Select the correct statement."
+            answer: "diverges"
+            answer_contract: {"kind": "label", "options": [["diverges"], ["converges to 1"], ["converges to 2"], ["converges to 3"]]}
+            solution_sketch: "The improper integral is $\\int_0^1 x^{-2}\\,dx$. Step 1: find the antiderivative: $\\int x^{-2}\\,dx = -x^{-1}$ by the power rule. Step 2: replace the lower limit with $a$ and take the limit: $\\lim_{a\\to 0^+}[-x^{-1}]_a^1 = \\lim_{a\\to 0^+}(1/a - 1) = \\infty$. The option 'converges to 1' is wrong because it uses only the upper-limit value; 'converges to 2' is wrong because it confuses the exponent with $1/2$; 'converges to 3' is wrong because it reverses the exponent. The integral diverges."
           - problem: 'Evaluate $\int_0^4 \frac{dx}{\sqrt{x}}$.'
             answer: "4"
             solution_sketch: '$\lim_{a\to 0^+} [2\sqrt{x}]_a^4 = 4$.'
+          - problem: "Evaluate $\\int_0^1 x^{-1/3}\\,dx$. Give the answer as a fraction."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The improper integral is $\\int_0^1 x^{-1/3}\\,dx$. Step 1: find the antiderivative: $\\int x^{-1/3}\\,dx = \\frac{3}{2}x^{2/3}$ by the power rule. Step 2: replace the lower limit with $a$ and take the limit: $\\lim_{a\\to 0^+} \\left[\\frac{3}{2}x^{2/3}\\right]_a^1 = \\frac{3}{2} - 0 = \\frac{3}{2}$. The answer is 3/2."
+          - problem: "Evaluate $\\int_0^8 x^{-2/3}\\,dx$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The improper integral is $\\int_0^8 x^{-2/3}\\,dx$. Step 1: find the antiderivative: $\\int x^{-2/3}\\,dx = 3x^{1/3}$ by the power rule. Step 2: replace the lower limit with $a$ and take the limit: $\\lim_{a\\to 0^+} \\left[3x^{1/3}\\right]_a^8 = 3 \\cdot 2 - 0 = 6$. The answer is 6."
+          - problem: "Evaluate $\\int_0^{16} x^{-3/4}\\,dx$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The improper integral is $\\int_0^{16} x^{-3/4}\\,dx$. Step 1: find the antiderivative: $\\int x^{-3/4}\\,dx = 4x^{1/4}$ by the power rule. Step 2: replace the lower limit with $a$ and take the limit: $\\lim_{a\\to 0^+} \\left[4x^{1/4}\\right]_a^{16} = 4 \\cdot 2 - 0 = 8$. The answer is 8."
         constraints: "single vertical asymptote at an endpoint of the interval; integrand of the form x^{-p}"
       - id: kp2
         name: Asymptotes at the upper endpoint
@@ -1137,13 +1177,29 @@ topics:
         name: The p-test at infinity and at zero
         key_prerequisites: [improper-integrals-infinite-limits, improper-integrals-discontinuous]
         exemplars:
-          - problem: 'For which $p$ does $\int_1^{\infty} \frac{dx}{x^p}$ converge, and what is $\int_1^{\infty} \frac{dx}{x^{3/2}}$?'
-            answer: 'converges iff $p > 1$; the integral equals $2$'
-            answer_contract: {kind: none}
-            solution_sketch: 'For $p \neq 1$ the antiderivative is $\frac{x^{1-p}}{1-p}$, finite at $\infty$ iff $p > 1$. With $p = 3/2$: $[-2x^{-1/2}]_1^{\infty} = 2$.'
           - problem: 'For which $p$ does $\int_0^1 \frac{dx}{x^p}$ converge?'
             answer: '$p < 1$'
             solution_sketch: 'Near $0$ the antiderivative $\frac{x^{1-p}}{1-p}$ has a finite limit iff $1 - p > 0$; the two p-tests are mirror images.'
+          - problem: "For the integral $\\int_1^{\\infty} \\frac{dx}{x^{3/2}}$, state whether it has a finite value and give that value."
+            answer: "verdict = converges; value = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The integral is $\\int_1^{\\infty} x^{-3/2}\\,dx$. First apply the p-test at infinity: $\\int_1^{\\infty} x^{-p}\\,dx$ converges exactly when $p > 1$. Here $p = 3/2 > 1$, so the integral converges. Then compute it: the antiderivative is $\\frac{x^{1-p}}{1-p} = -2x^{-1/2}$, and the limit at infinity is $0$ while the value at $1$ is $-2$. Thus the integral is $0 - (-2) = 2$. The option diverges is the error of using the zero-limit p-test at infinity. The verdict is converges and the value is 2, so verdict = converges; value = 2."
+          - problem: "Evaluate $\\int_1^{\\infty} \\frac{dx}{x^2}$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is $\\int_1^{\\infty} x^{-2}\\,dx$. Apply the p-test at infinity with $p=2$, so the integral converges. The antiderivative is $-1/x$. Evaluate at the limits: $\\lim_{b\\to\\infty}(-1/b) - (-1/1) = 0 + 1 = 1$. The integral equals 1."
+          - problem: "Evaluate $\\int_0^1 \\frac{dx}{x^{1/2}}$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is $\\int_0^1 x^{-1/2}\\,dx$. This is a p-test at zero with $p=1/2 < 1$, so it converges. The antiderivative is $2x^{1/2}$. Take the limit $a\\to 0^+$: $2\\sqrt{1} - 2\\sqrt{a} \\to 2$. The integral equals 2."
+          - problem: "For which $p$ does $\\int_1^{\\infty} \\frac{dx}{x^p}$ converge? Give the answer as an inequality in $p$."
+            answer: "p > 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The condition asked is for the integral $\\int_1^{\\infty} x^{-p}\\,dx$. This is the p-test at infinity. For $p \\neq 1$, the antiderivative is $\\frac{x^{1-p}}{1-p}$; it has a finite limit at infinity exactly when $1-p < 0$. For $p=1$ the integral is $\\int_1^{\\infty} dx/x = \\lim_{b\\to\\infty}\\ln b$, which diverges. The convergence condition is p > 1."
+          - problem: "Evaluate $\\int_1^{\\infty} \\frac{dx}{x^3}$."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is $\\int_1^{\\infty} x^{-3}\\,dx$. Apply the p-test at infinity with $p=3 > 1$, so it converges. The antiderivative is $-1/(2x^2)$. The limit at infinity is $0$, and the value at $1$ is $-1/2$, so the integral is $0 - (-1/2) = 1/2$. The integral equals 1/2."
         constraints: "p in {1/2, 1, 3/2, 2, 3}; contrast the two p-tests explicitly"
       - id: kp2
         name: Substitution and partial fractions in improper integrals
@@ -1155,6 +1211,22 @@ topics:
           - problem: 'Evaluate $\int_1^{\infty} \frac{dx}{x(x + 1)}$.'
             answer: '$\ln 2$'
             solution_sketch: 'Partial fractions: $[\ln\frac{x}{x+1}]_1^{\infty} = 0 - \ln\frac{1}{2} = \ln 2$.'
+          - problem: "Evaluate $\\int_0^{\\infty} x e^{-2x^2} \\, dx$."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let $u = 2x^2$, so $du = 4x\\,dx$ and $x\\,dx = du/4$. Substitution gives $\\frac14 \\int_0^{\\infty} e^{-u}\\,du$. The antiderivative is $-\\frac14 e^{-u}$, and the limit gives $\\frac14(0 + 1) = 1/4$. The answer is 1/4."
+          - problem: "Evaluate $\\int_2^{\\infty} \\frac{dx}{x(x+2)}$. Give the answer to 4 decimals."
+            answer: "0.3466"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Partial fractions with distinct linear factors give $\\frac{1}{x(x+2)} = \\frac12\\left(\\frac1x - \\frac{1}{x+2}\\right)$. Integrate: $\\frac12\\left[\\ln\\frac{x}{x+2}\\right]_2^{\\infty}$. As $x\\to\\infty$, $\\frac{x}{x+2}\\to 1$, so $\\ln\\frac{x}{x+2}\\to 0$; at $x=2$ the log is $\\ln\\frac{2}{4} = -\\ln 2$. The value is $\\frac12(0 + \\ln 2) = \\frac{\\ln 2}{2} = 0.3466$. The answer is 0.3466."
+          - problem: "Evaluate $\\int_0^{\\infty} \\frac{x}{(x^2+3)^2} \\, dx$."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let $u = x^2+3$, so $du = 2x\\,dx$ and $x\\,dx = du/2$. Substitution gives $\\frac12\\int_3^{\\infty} u^{-2}\\,du$. The antiderivative is $-\\frac12 u^{-1}$, so the value is $\\frac12\\left(0 + \\frac13\\right) = 1/6$. The answer is 1/6."
+          - problem: "Evaluate $\\int_1^{\\infty} \\frac{dx}{x(x+3)}$. Give the answer to 4 decimals."
+            answer: "0.4621"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Partial fractions with distinct linear factors give $\\frac{1}{x(x+3)} = \\frac13\\left(\\frac1x - \\frac{1}{x+3}\\right)$. Integrate: $\\frac13\\left[\\ln\\frac{x}{x+3}\\right]_1^{\\infty}$. As $x\\to\\infty$, $\\frac{x}{x+3}\\to 1$, so $\\ln\\frac{x}{x+3}\\to 0$; at $x=1$ the log is $\\ln\\frac14 = -\\ln 4$. The value is $\\frac13(0 + \\ln 4) = \\frac{\\ln 4}{3} = 0.4621$. The answer is 0.4621."
         constraints: "substitutions limited to one step; partial-fraction cases with distinct linear factors; the limit at infinity of ln(x/(x+1)) must be justified"
       - id: kp3
         name: The direct comparison test
@@ -1231,6 +1303,22 @@ topics:
           - problem: 'Evaluate $\int x^3 \sqrt{x^2 + 1} \, dx$.'
             answer: '$\frac{(x^2 + 1)^{5/2}}{5} - \frac{(x^2 + 1)^{3/2}}{3} + C$'
             solution_sketch: '$u = x^2 + 1$: $\frac{1}{2}\int (u - 1)\sqrt{u}\,du = \frac{u^{5/2}}{5} - \frac{u^{3/2}}{3} + C$ — no trig substitution needed.'
+          - problem: "Evaluate $\\int x^3 e^{x^2} \\, dx$."
+            answer: "1/2(x^2 - 1)e^(x^2) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The integral is $\\int x^3 e^{x^2}\\,dx$. Use the substitution $u=x^2$, so $du=2x\\,dx$ and $x^3\\,dx = x^2 \\cdot x\\,dx = u\\,du/2$. This gives $\\frac{1}{2}\\int u e^u\\,du$. Apply integration by parts with $a=u$ and $db=e^u\\,du$: $\\int u e^u\\,du = (u-1)e^u$. Back-substitute $u=x^2$ to get $\\frac{1}{2}(x^2-1)e^{x^2}+C$. The final answer is 1/2(x^2 - 1)e^(x^2) + C."
+          - problem: "Evaluate $\\int \\frac{x^3}{\\sqrt{x^2+1}} \\, dx$."
+            answer: "sqrt(x^2+1)(x^2 - 2)/3 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The integral is $\\int x^3/\\sqrt{x^2+1}\\,dx$. Use the substitution $u=x^2+1$, so $du=2x\\,dx$ and $x^2=u-1$. Then $x^3\\,dx = x^2 \\cdot x\\,dx = (u-1)\\,du/2$, giving $\\frac{1}{2}\\int (u-1)u^{-1/2}\\,du$. Apply the power rule: $\\frac{1}{2}\\int (u^{1/2}-u^{-1/2})\\,du = \\frac{1}{3}u^{3/2}-u^{1/2}$. Back-substitute $u=x^2+1$ and factor to get $\\sqrt{x^2+1}(x^2-2)/3+C$. The final answer is sqrt(x^2+1)(x^2 - 2)/3 + C."
+          - problem: "Evaluate $\\int x^3 \\cos(x^2) \\, dx$."
+            answer: "1/2(x^2 sin(x^2) + cos(x^2)) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The integral is $\\int x^3\\cos(x^2)\\,dx$. Use the substitution $u=x^2$, so $du=2x\\,dx$ and $x^3\\,dx = x^2 \\cdot x\\,dx = u\\,du/2$. This gives $\\frac{1}{2}\\int u\\cos u\\,du$. Apply integration by parts with $a=u$ and $db=\\cos u\\,du$: $\\int u\\cos u\\,du = u\\sin u+\\cos u$. Back-substitute $u=x^2$ to get $\\frac{1}{2}(x^2\\sin(x^2)+\\cos(x^2))+C$. The final answer is 1/2(x^2 sin(x^2) + cos(x^2)) + C."
+          - problem: "Evaluate $\\int x^5 \\sqrt{x^3+1} \\, dx$."
+            answer: "2(x^3+1)^(3/2)(3x^3 - 2)/45 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The integral is $\\int x^5\\sqrt{x^3+1}\\,dx$. Use the substitution $u=x^3+1$, so $du=3x^2\\,dx$ and $x^3=u-1$. Then $x^5\\,dx = x^3 \\cdot x^2\\,dx = (u-1)\\,du/3$, giving $\\frac{1}{3}\\int (u-1)\\sqrt{u}\\,du$. Apply the power rule: $\\frac{1}{3}\\int (u^{3/2}-u^{1/2})\\,du = \\frac{2}{15}u^{5/2}-\\frac{2}{9}u^{3/2}$. Back-substitute and factor to get $2(x^3+1)^{3/2}(3x^3-2)/45+C$. The final answer is 2(x^3+1)^(3/2)(3x^3 - 2)/45 + C."
         constraints: "a preliminary algebraic substitution converts the integral to a parts or power-rule form; two-stage solutions only"
       - id: kp3
         name: Combining parts with other techniques

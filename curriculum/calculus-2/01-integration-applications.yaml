@@ -29,6 +29,22 @@ topics:
           - problem: 'Find the area between $y = x^2 + 1$ and $y = x$ for $0 \le x \le 2$.'
             answer: '$8/3$'
             solution_sketch: '$x^2 + 1 > x$ everywhere: $\int_0^2 (x^2 - x + 1)\,dx = \frac{8}{3} - 2 + 2 = \frac{8}{3}$.'
+          - problem: "Find the area between y = 2x and y = x^2 for 0 <= x <= 2."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compare the curves: on [0,2], 2x - x^2 = x(2-x) >= 0, so y = 2x is the top curve. Set up the area integral int_0^2 (2x - x^2) dx. Use the power rule for antiderivatives: [x^2 - x^3/3] from 0 to 2. By the Fundamental Theorem of Calculus, evaluate at 2 and 0: (4 - 8/3) - 0 = 4/3. The area is 4/3."
+          - problem: "Find the area between y = x^2 + 2 and y = 3x for 0 <= x <= 1."
+            answer: "5/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First check the top curve: x^2 + 2 - 3x = (x - 1)(x - 2), and this is positive on [0,1], so y = x^2 + 2 is on top. Form the integral int_0^1 (x^2 + 2 - 3x) dx. Find an antiderivative with the power rule: x^3/3 + 2x - 3x^2/2. Apply the Fundamental Theorem of Calculus: at x = 1 the value is 1/3 + 2 - 3/2 = 5/6, and at x = 0 it is 0. The area is 5/6."
+          - problem: "Find the area between y = x^2 + 1 and y = 2x^2 for 0 <= x <= 1."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compare the curves: (x^2 + 1) - 2x^2 = 1 - x^2, which is nonnegative on [0,1], so y = x^2 + 1 is the top curve. Write the area as int_0^1 (1 - x^2) dx. An antiderivative by the power rule is x - x^3/3. The Fundamental Theorem of Calculus gives (1 - 1/3) - 0 = 2/3. The area is 2/3."
+          - problem: "Find the area between y = x^2 + 4 and y = 4x for 0 <= x <= 1."
+            answer: "7/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Check the top curve: (x^2 + 4) - 4x = (x - 2)^2, which is positive on [0,1], so y = x^2 + 4 is on top. Set up the area integral int_0^1 (x^2 - 4x + 4) dx. Use the power rule to get x^3/3 - 2x^2 + 4x. Evaluate with the Fundamental Theorem of Calculus: at x = 1, 1/3 - 2 + 4 = 7/3; at x = 0, 0. The area is 7/3."
         constraints: "interval given explicitly; top curve does not change on the interval; polynomial integrands with small integer coefficients"
       - id: kp2
         name: Exponential and trig curves
@@ -43,6 +59,18 @@ topics:
           - problem: 'Find the area between $y = \sin x$ and the $x$-axis for $0 \le x \le \pi$.'
             answer: "2"
             solution_sketch: '$\int_0^{\pi} \sin x\,dx = [-\cos x]_0^{\pi} = 2$.'
+          - problem: "Find the area between y = cos x and the x-axis for 0 <= x <= pi/2."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the area as the integral from 0 to pi/2 of cos x minus 0. An antiderivative of cos x is sin x, by the basic trig antiderivative rule. Evaluate by FTC: sin(pi/2) - sin(0) = 1 - 0 = 1."
+          - problem: "Find the area between y = e^(2x) and y = 1 for 0 <= x <= 1."
+            answer: "(e^2 - 3)/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The area is the integral from 0 to 1 of (e^(2x) - 1) dx. An antiderivative of e^(2x) is e^(2x)/2, and of 1 is x. Evaluate by FTC at 1 and 0: (e^2/2 - 1) - (1/2 - 0) = (e^2 - 3)/2."
+          - problem: "Find the area between y = sin x and y = cos x for 0 <= x <= pi/4."
+            answer: "sqrt(2) - 1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The area is the integral from 0 to pi/4 of (cos x - sin x) dx, because cos x is greater than or equal to sin x on this interval. Antiderivatives: sin x for cos x and -cos x for sin x, so an antiderivative is sin x + cos x. FTC gives (sqrt(2)/2 + sqrt(2)/2) - (0 + 1) = sqrt(2) - 1."
         constraints: "integrands limited to e^{ax}, sin x, cos x; the ordering of the curves must not change on the interval"
     diagnostic_exemplar:
       problem: 'Find the area between $y = e^x$ and $y = x$ for $0 \le x \le 1$.'
@@ -85,6 +113,18 @@ topics:
           - problem: 'Find the area of the region enclosed by $y = x^2$ and $y = 2x$.'
             answer: '$4/3$'
             solution_sketch: 'Intersections at $x = 0, 2$; $\int_0^2 (2x - x^2)\,dx = 4 - \frac{8}{3} = \frac{4}{3}$.'
+          - problem: "Find the area of the region enclosed by $y = x^2$ and $y = 4x$."
+            answer: "32/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set x^2 = 4x and factor x(x - 4) = 0, so the curves meet at x = 0 and x = 4. On 0 < x < 4 the line y = 4x is above the parabola y = x^2. By the Fundamental Theorem of Calculus, the area is integral_0^4 (4x - x^2) dx = [2x^2 - x^3/3]_0^4. Evaluate: 32 - 64/3 = 32/3. The area is 32/3."
+          - problem: "Find the area of the region enclosed by $y = x^2$ and $y = 6 - x$."
+            answer: "125/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set x^2 = 6 - x and factor x^2 + x - 6 = (x + 3)(x - 2) = 0, so the intersections are x = -3 and x = 2. On -3 < x < 2 the line y = 6 - x is above the parabola y = x^2. By the Fundamental Theorem of Calculus, the area is integral_{-3}^{2} (6 - x - x^2) dx = [6x - x^2/2 - x^3/3]_{-3}^{2}. Evaluate: 22/3 - (-27/2) = 125/6. The area is 125/6."
+          - problem: "Find the area of the region enclosed by $y = x^2$ and $y = 2x + 8$."
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set x^2 = 2x + 8 and factor x^2 - 2x - 8 = (x - 4)(x + 2) = 0, so the intersections are x = -2 and x = 4. On -2 < x < 4 the line y = 2x + 8 is above the parabola y = x^2. By the Fundamental Theorem of Calculus, the area is integral_{-2}^{4} (2x + 8 - x^2) dx = [x^2 + 8x - x^3/3]_{-2}^{4}. Evaluate: 80/3 - (-28/3) = 108/3 = 36. The area is 36."
         constraints: "intersections solvable by factoring a quadratic with integer roots (or x = 0, 1 for root curves)"
       - id: kp2
         name: Crossing curves (split at the crossing)
@@ -107,6 +147,22 @@ topics:
           - problem: 'Find the area of the region enclosed by $x = y^2$ and $x = 2 - y^2$.'
             answer: '$8/3$'
             solution_sketch: '$y^2 = 2 - y^2$ at $y = \pm 1$; $\int_{-1}^{1} (2 - 2y^2)\,dy = 4 - \frac{4}{3} = \frac{8}{3}$.'
+          - problem: "A region is enclosed by $x = y^2$ and $x = y + 12$. Find the area of the region as a fraction."
+            answer: "343/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: find the intersection y-values by setting the x-expressions equal: y^2 = y + 12, so y^2 - y - 12 = 0 and (y - 4)(y + 3) = 0, giving y = -3 and y = 4. Step 2: use the y-integration area rule with the right boundary x = y + 12, so the integral from -3 to 4 of (y + 12 - y^2) dy. An antiderivative is y^2/2 + 12y - y^3/3. Step 3: evaluate it at y = 4 and y = -3 by the Fundamental Theorem of Calculus; the difference is 343/6. The area is 343/6."
+          - problem: "A region is enclosed by $x = y^2$ and $x = 8 - y^2$. Find the area of the region as a fraction."
+            answer: "64/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: set the x-expressions equal to find the y-limits: y^2 = 8 - y^2 gives 2y^2 = 8, so y = -2 and y = 2. Step 2: use the y-integration area rule with the right boundary x = 8 - y^2, so the integral from -2 to 2 of (8 - 2y^2) dy. An antiderivative is 8y - 2y^3/3. Step 3: evaluate it at y = 2 and y = -2 by the Fundamental Theorem of Calculus; the difference is 64/3. The area is 64/3."
+          - problem: "A region is enclosed by $x = y^2 + 4$ and $x = 2y + 7$. Find the area of the region as a fraction."
+            answer: "32/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: set the x-expressions equal: y^2 + 4 = 2y + 7 becomes y^2 - 2y - 3 = 0, which factors as (y - 3)(y + 1) = 0, so y = -1 and y = 3. Step 2: use the y-integration area rule with the right boundary x = 2y + 7, so the integral from -1 to 3 of (2y + 7 - (y^2 + 4)) dy = the integral from -1 to 3 of (-y^2 + 2y + 3) dy. An antiderivative is -y^3/3 + y^2 + 3y. Step 3: evaluate it at y = 3 and y = -1 by the Fundamental Theorem of Calculus; the value is 32/3. The area is 32/3."
+          - problem: "A region is enclosed by $x = y^2 - 2$ and $x = y + 4$. Find the area of the region as a fraction."
+            answer: "125/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: set the x-expressions equal: y^2 - 2 = y + 4 becomes y^2 - y - 6 = 0, which factors as (y - 3)(y + 2) = 0, so y = -2 and y = 3. Step 2: use the y-integration area rule with the right boundary x = y + 4, so the integral from -2 to 3 of (y + 4 - (y^2 - 2)) dy = the integral from -2 to 3 of (-y^2 + y + 6) dy. An antiderivative is -y^3/3 + y^2/2 + 6y. Step 3: evaluate it at y = 3 and y = -2 by the Fundamental Theorem of Calculus; the difference is 125/6. The area is 125/6."
         constraints: "y-integration regions bounded by parabolas opening sideways and lines; intersections have integer y-coordinates"
     diagnostic_exemplar:
       problem: 'Find the area of the region enclosed by $x = y^2$ and $x = y + 6$.'
@@ -147,6 +203,22 @@ topics:
           - problem: 'The demand curve is $p = 30 - q$. At market price $p = 10$, find the consumer surplus.'
             answer: "200"
             solution_sketch: '$q^* = 20$; $CS = \int_0^{20} (20 - q)\,dq = 400 - 200 = 200$.'
+          - problem: "A demand curve is p = 80 - 2q. At market price p = 20, find the consumer surplus."
+            answer: "900"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The consumer surplus is the area between demand and price from 0 to q*, where q* solves 80 - 2q = 20, so q* = 30. The integral is from 0 to 30 of (80 - 2q - 20) dq = from 0 to 30 of (60 - 2q) dq. By the Fundamental Theorem of Calculus, evaluate 60q - q^2 at 30 to get 1800 - 900 = 900. The consumer surplus is 900."
+          - problem: "The demand curve is p = 40 - q. At market price p = 16, find the consumer surplus."
+            answer: "288"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The consumer surplus is the area between demand and price from 0 to q*, where q* solves 40 - q = 16, so q* = 24. The integral is from 0 to 24 of (40 - q - 16) dq = from 0 to 24 of (24 - q) dq. By the Fundamental Theorem of Calculus, evaluate 24q - q^2/2 at 24 to get 576 - 288 = 288. The consumer surplus is 288."
+          - problem: "A demand curve is p = 36 - q^2. At market price p = 11, find the consumer surplus as a fraction."
+            answer: "250/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The consumer surplus is the area between demand and price from 0 to q*, where q* solves 36 - q^2 = 11, so q^2 = 25 and q* = 5. The integral is from 0 to 5 of (36 - q^2 - 11) dq = from 0 to 5 of (25 - q^2) dq. By the Fundamental Theorem of Calculus, evaluate 25q - q^3/3 at 5 to get 125 - 125/3 = 250/3. The consumer surplus is 250/3."
+          - problem: "The demand curve is p = 64 - q^2. Find the market price p at which the consumer surplus is 144."
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "At a market price p, the quantity is q = sqrt(64 - p) and the consumer surplus is the area integral from 0 to q of (64 - x^2 - p) dx. Since p = 64 - q^2, the integrand becomes q^2 - x^2. By the Fundamental Theorem of Calculus, the integral is q^3 - q^3/3 = 2q^3/3. Set 2q^3/3 = 144, so q^3 = 216 and q = 6. Then p = 64 - 36 = 28. The market price is 28."
         constraints: "linear or quadratic demand with integer intercepts; market quantity solves to an integer"
       - id: kp2
         name: Producer surplus at a given price
@@ -155,22 +227,54 @@ topics:
           - problem: 'The supply curve is $p = 2q$. At market price $p = 20$, find the producer surplus.'
             answer: "100"
             solution_sketch: '$q^* = 10$; $PS = \int_0^{10} (20 - 2q)\,dq = 200 - 100 = 100$.'
-          - problem: 'Explain what producer surplus measures geometrically.'
-            answer: 'the area between the market-price line and the supply curve from $q = 0$ to the market quantity'
-            answer_contract: {kind: none}
-            solution_sketch: 'Producers willing to sell below the market price gain the gap; summing the gaps over all units is the area $\int_0^{q^*}(p^* - s(q))\,dq$.'
+          - problem: "The supply curve is p = 4q. At market price p = 24, find the producer surplus."
+            answer: "72"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Solve the supply equation 24 = 4q, so q = 6. Step 2: Apply the area-between-curves formula for producer surplus: integral from 0 to 6 of (24 - 4q) dq. Step 3: Use the Fundamental Theorem of Calculus to get [24q - 2q^2] from 0 to 6 = 144 - 72 = 72. The producer surplus is 72."
+          - problem: "The supply curve is p = 3q + 6. At market price p = 30, find the producer surplus."
+            answer: "96"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Solve the supply equation 30 = 3q + 6, so q = 8. Step 2: Apply the area-between-curves formula: integral from 0 to 8 of (30 - (3q + 6)) dq = integral from 0 to 8 of (24 - 3q) dq. Step 3: Use the Fundamental Theorem of Calculus to get [24q - 3q^2/2] from 0 to 8 = 192 - 96 = 96. The producer surplus is 96."
+          - problem: "The supply curve is p = q + 5. At market price p = 25, find the producer surplus."
+            answer: "200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Solve 25 = q + 5, so q = 20. Step 2: Apply the area-between-curves formula: integral from 0 to 20 of (25 - (q + 5)) dq = integral from 0 to 20 of (20 - q) dq. Step 3: Use the Fundamental Theorem of Calculus to get [20q - q^2/2] from 0 to 20 = 400 - 200 = 200. The producer surplus is 200."
+          - problem: "The supply curve is p = 2q + 4. The producer surplus at the market price p is 36. Find p."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Let q be the market quantity at price p; solve p = 2q + 4 to get q = (p - 4)/2. Step 2: Apply the area-between-curves formula: producer surplus = integral from 0 to (p - 4)/2 of (p - (2q + 4)) dq. Step 3: Use the Fundamental Theorem of Calculus: the integral equals (p - 4)^2/4. Step 4: Set (p - 4)^2/4 = 36, so (p - 4)^2 = 144. A positive market price gives p = 16."
+          - problem: "A supply curve rises from the origin and the market price is horizontal. Which region gives the producer surplus? Select the correct description."
+            answer: "area between price and supply"
+            answer_contract: {"kind": "label", "options": [["area between price and supply"], ["area below supply only"], ["area above price only"], ["area between demand and supply"]]}
+            solution_sketch: "Producer surplus is the area between the horizontal market price line and the supply curve from q = 0 to the market quantity. The option area below supply only is wrong because it ignores the market price line. The option area above price only is wrong because surplus lies below the market price. The option area between demand and supply is wrong because demand is not used for producer surplus. The correct description is area between price and supply."
         constraints: "linear supply through small integer coefficients; one conceptual identification exemplar allowed"
       - id: kp3
         name: Equilibrium, then both surpluses
         key_prerequisites: [systems-substitution, definite-integrals-ftc]
         exemplars:
-          - problem: 'Demand is $p = 48 - q^2$ and supply is $p = 2q^2$. Find the equilibrium point and the consumer surplus.'
-            answer: '$q^* = 4$, $p^* = 32$; $CS = 128/3$'
-            answer_contract: {kind: none}
-            solution_sketch: '$48 - q^2 = 2q^2$ gives $q^* = 4$, $p^* = 32$. $CS = \int_0^4 (48 - q^2 - 32)\,dq = 64 - \frac{64}{3} = \frac{128}{3}$.'
           - problem: 'With demand $p = 48 - q^2$ and supply $p = 2q^2$ (equilibrium $q^* = 4$, $p^* = 32$), find the producer surplus.'
             answer: '$256/3$'
             solution_sketch: '$PS = \int_0^4 (32 - 2q^2)\,dq = 128 - \frac{128}{3} = \frac{256}{3}$.'
+          - problem: "Demand is p = 48 - q^2 and supply is p = 2q^2. Find the equilibrium point as (q, p) and the consumer surplus."
+            answer: "eq = (4, 32); CS = 128/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "eq"}, {"contract": {"kind": "exact"}, "name": "CS"}]}
+            solution_sketch: "Step 1: set demand equal to supply. 48 - q^2 = 2q^2 gives 3q^2 = 48, so q^2 = 16 and q* = 4. Step 2: substitute q* = 4 into supply to get p* = 2(4)^2 = 32. Step 3: consumer surplus is the integral of demand minus equilibrium price from 0 to q*. The integral from 0 to 4 of (48 - q^2 - 32) dq is the integral from 0 to 4 of (16 - q^2) dq, which equals 16q - q^3/3 from 0 to 4 = 64 - 64/3 = 128/3. The answer is eq = (4, 32); CS = 128/3."
+          - problem: "Demand is p = 32 - q^2 and supply is p = q^2. Find the equilibrium point as (q, p)."
+            answer: "(4, 16)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set demand equal to supply: 32 - q^2 = q^2. Add q^2 to both sides to get 32 = 2q^2, so q^2 = 16 and q* = 4. Substitute q* = 4 into supply: p* = 4^2 = 16. The answer is (4, 16)."
+          - problem: "Demand is p = 32 - q^2 and supply is p = q^2, with equilibrium q* = 4 and p* = 16. Find the producer surplus."
+            answer: "128/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The producer surplus is the integral of equilibrium price minus supply from 0 to q*. Here that integral is the integral from 0 to 4 of (16 - q^2) dq. By the Fundamental Theorem of Calculus, 16q - q^3/3 from 0 to 4 equals 64 - 64/3 = 128/3. The answer is 128/3."
+          - problem: "Demand is p = 75 - q^2 and supply is p = 2q^2, with equilibrium q* = 5 and p* = 50. Find the consumer surplus."
+            answer: "250/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Consumer surplus is the integral of demand minus equilibrium price from 0 to q*. Here that integral is the integral from 0 to 5 of (75 - q^2 - 50) dq, which simplifies to the integral from 0 to 5 of (25 - q^2) dq. By the Fundamental Theorem of Calculus, 25q - q^3/3 from 0 to 5 equals 125 - 125/3 = 250/3. The answer is 250/3."
+          - problem: "Demand is p = 75 - q^2 and supply is p = 2q^2, with equilibrium q* = 5 and p* = 50. Find the producer surplus."
+            answer: "500/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Producer surplus is the integral of equilibrium price minus supply from 0 to q*. Here that integral is the integral from 0 to 5 of (50 - 2q^2) dq. By the Fundamental Theorem of Calculus, 50q - 2q^3/3 from 0 to 5 equals 250 - 250/3 = 500/3. The answer is 500/3."
         constraints: "equilibrium solvable by setting demand = supply and factoring; quantities and prices come out as integers"
     diagnostic_exemplar:
       problem: 'Demand is $p = 27 - q^2$ and supply is $p = 2q^2$. Find the equilibrium point and the consumer surplus.'
@@ -214,6 +318,22 @@ topics:
           - problem: 'The base of a solid is the region between $y = 1 - x^2$ and the $x$-axis. Cross sections perpendicular to the $x$-axis are squares. Find the volume.'
             answer: '$16/15$'
             solution_sketch: '$V = \int_{-1}^{1} (1 - x^2)^2\,dx = 2\left(1 - \frac{2}{3} + \frac{1}{5}\right) = \frac{16}{15}$.'
+          - problem: "The base of a solid is the region under y = x^2 for 0 <= x <= 3. Cross sections perpendicular to the x-axis are squares with side running from the x-axis to the curve. Find the volume."
+            answer: "243/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The side length of each square is the height of the base region, so s(x) = x^2. Square-area rule: A(x) = (x^2)^2 = x^4. Fundamental Theorem of Calculus: V = ∫_0^3 x^4 dx = [x^5/5]_0^3 = 243/5. The volume is 243/5."
+          - problem: "The base of a solid is the region between y = x and y = x^2 for 0 <= x <= 1. Cross sections perpendicular to the x-axis are squares. Find the volume."
+            answer: "1/30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The height of the base region is s(x) = x - x^2 because y = x is above y = x^2 on [0,1]. Square-area rule: A(x) = (x - x^2)^2 = x^2 - 2x^3 + x^4. Fundamental Theorem of Calculus: V = ∫_0^1 (x^2 - 2x^3 + x^4) dx = 1/3 - 1/2 + 1/5 = 1/30. The volume is 1/30."
+          - problem: "The base of a solid is the region between y = 3x and y = x^2 for 0 <= x <= 3. Cross sections perpendicular to the x-axis are squares. Find the volume."
+            answer: "81/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The height of the base region is s(x) = 3x - x^2 because y = 3x is above y = x^2 on [0,3]. Square-area rule: A(x) = (3x - x^2)^2 = 9x^2 - 6x^3 + x^4. Fundamental Theorem of Calculus: V = ∫_0^3 (9x^2 - 6x^3 + x^4) dx = 81 - 243/2 + 243/5 = 81/10. The volume is 81/10."
+          - problem: "The base of a solid is the region under y = x^3 for 0 <= x <= 2. Cross sections perpendicular to the x-axis are squares with side running from the x-axis to the curve. Find the volume."
+            answer: "128/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The side length of each square is the height of the base region, so s(x) = x^3. Square-area rule: A(x) = (x^3)^2 = x^6. Fundamental Theorem of Calculus: V = ∫_0^2 x^6 dx = [x^7/7]_0^2 = 128/7. The volume is 128/7."
         constraints: "side length equals the height of the base region; (side)^2 integrates as a polynomial"
       - id: kp2
         name: Semicircular and triangular cross sections
