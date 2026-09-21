@@ -92,10 +92,26 @@ topics:
           - problem: 'How many minterms does the full DNF of a Boolean function on $3$ variables with exactly $5$ true rows contain?'
             answer: "5"
             solution_sketch: 'One minterm per row where the function is $1$.'
-          - problem: 'Write $f(x,y) = 1$ exactly when $x = y = 1$ in CNF (product of clauses).'
-            answer: '$x \cdot y$ — equivalently the clauses $(x)(y)$'
-            answer_contract: {kind: none}
-            solution_sketch: 'AND of the two single-literal clauses forces both variables true; here CNF and the function coincide.'
+          - problem: "For two variables x and y, a Boolean function g is 1 exactly when x = y = 1. Rows are numbered 0 to 3 in binary order (00, 01, 10, 11). Give the maxterm indices whose clauses form the full CNF of g, in increasing order, as a comma-separated list."
+            answer: "0, 1, 2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The function g is true only on row 3, since x=y=1. Rows 0, 1, and 2 are the false rows. The full CNF uses one maxterm for each false row, so the maxterm indices are 0, 1, and 2. The answer is 0, 1, 2."
+          - problem: "A Boolean function f(x,y,z) is 1 exactly on rows 0, 2, 5, and 7 (rows numbered 0 to 7 in binary order). Give the minterm indices in its full DNF, in increasing order, as a comma-separated list."
+            answer: "0, 2, 5, 7"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "A full DNF uses one minterm for each row where f is 1. The true rows are 0, 2, 5, and 7. Therefore the minterm indices are 0, 2, 5, and 7. The answer is 0, 2, 5, 7."
+          - problem: "A Boolean function on two variables is f = (NOT x AND NOT y) OR (x AND y). Rows are numbered 0 to 3 in binary order. Give its truth table as a comma-separated list of 4 output bits for rows 0 to 3."
+            answer: "1, 0, 0, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Evaluate f row by row. Row 0 (x=0,y=0) matches NOT x AND NOT y, so f=1. Row 1 gives 0, row 2 gives 0, and row 3 matches x AND y, so f=1. The output list is 1, 0, 0, 1. The answer is 1, 0, 0, 1."
+          - problem: "A Boolean function on three variables has full CNF with maxterms M0, M2, M5, and M7. How many rows of its truth table have value 1?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A full CNF on three variables has 8 rows. The maxterms listed are the false rows, and there are 4 of them. The number of true rows is 8 - 4. The answer is 4."
+          - problem: "A Boolean function on two variables is given in CNF by (x OR y) AND (NOT x OR y). Rows are numbered 0 to 3 in binary order. Give the minterm indices in its full DNF, in increasing order, as a comma-separated list."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Evaluate the CNF row by row. Row 0 makes x OR y false, so f=0. Row 1 gives true; row 2 gives false; row 3 gives true. The true rows are 1 and 3, so the minterm indices are 1 and 3. The answer is 1, 3."
         constraints: "2-3 variables; translate between truth table, DNF, and simple CNF"
     diagnostic_exemplar:
       problem: 'A function on $x, y, z$ equals $1$ exactly when exactly one of the inputs is $1$. Give its disjunctive normal form, and state how many clauses its full conjunctive normal form has.'
@@ -136,6 +152,22 @@ topics:
             answer: 'first = 1; second = 0'
             answer_contract: {kind: multipart, parts: [{name: first, contract: {kind: exact}}, {name: second, contract: {kind: exact}}]}
             solution_sketch: 'On inputs $1, 0$ the XOR outputs $1$; on inputs $1, 1$ it outputs $0$ — XOR is $1$ exactly when the inputs differ.'
+          - problem: "Find the output of an AND gate for inputs 0 and 0, then for inputs 1 and 1, and give the results in order as a list."
+            answer: "0, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The AND rule gives 1 only when both inputs are 1. For inputs 0 and 0 the output is 0. For inputs 1 and 1 the output is 1. The outputs in order are 0, 1."
+          - problem: "Find the output of an OR gate for inputs 0 and 0, then for inputs 0 and 1, and give the results in order as a list."
+            answer: "0, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The OR rule gives 1 when at least one input is 1. For inputs 0 and 0 the output is 0. For inputs 0 and 1 the output is 1. The outputs in order are 0, 1."
+          - problem: "A NOT gate has one input. Find its output for input 0, then for input 1, and give the results in order as a list."
+            answer: "1, 0"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The NOT rule gives the opposite of its single input. For input 0 the output is 1. For input 1 the output is 0. The outputs in order are 1, 0."
+          - problem: "Find the output of a NOR gate for inputs 0 and 0, then for inputs 1 and 0, and give the results in order as a list."
+            answer: "1, 0"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The NOR rule is the opposite of OR. For inputs 0 and 0, OR is 0, so NOR is 1. For inputs 1 and 0, OR is 1, so NOR is 0. The outputs in order are 1, 0."
         constraints: "gates AND, OR, NOT, NAND, NOR, XOR; single-gate evaluations"
       - id: kp2
         name: "Circuits as expressions"
@@ -144,10 +176,26 @@ topics:
           - problem: 'A circuit computes (($x$ AND $y$) OR (NOT $z$)). What is its output at $x = 1$, $y = 0$, $z = 0$?'
             answer: "1"
             solution_sketch: '$xy = 0$, $\bar{z} = 1$, and $0 + 1 = 1$.'
-          - problem: 'Using only AND, OR, NOT gates, give an expression that computes XOR of $x$ and $y$. How many of these gates does your expression use?'
-            answer: '$x\bar{y} + \bar{x}y$: $5$ gates ($2$ NOT, $2$ AND, $1$ OR)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Two inverters feed two AND gates whose outputs meet in one OR gate.'
+          - problem: "A circuit computes (x AND y) OR (y AND z). What is its output at x = 0, y = 1, z = 0?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First, x AND y = 0 AND 1 = 0 by the AND rule. Next, y AND z = 1 AND 0 = 0 by the AND rule. Then the OR gate gives 0 OR 0 = 0 by the OR rule. The output is 0."
+          - problem: "A circuit computes ((x OR y) AND (NOT z)) AND y. What is its output at x = 1, y = 1, z = 0?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First, x OR y = 1 OR 1 = 1 by the OR rule. Next, NOT z = NOT 0 = 1 by the NOT rule. Then the first AND gate gives 1 AND 1 = 1. Finally, the second AND gate gives 1 AND y = 1 AND 1 = 1. The output is 1."
+          - problem: "Using only AND, OR, NOT gates, find the least number of gates needed to compute the XOR of x and y."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First, XOR is true when exactly one input is 1. A standard AND-OR-NOT expression is (x OR y) AND NOT(x AND y). This uses one OR gate, one AND gate, one NOT gate, and a final AND gate, so 4 gates. No expression with three or fewer gates can match XOR. The least number of gates is 4."
+          - problem: "A logic expression is NOT((x AND y) OR z). How many gates does this expression use?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First, x AND y uses one AND gate. Next, the OR with z adds one OR gate. Finally, the outer NOT adds one NOT gate. The expression uses 3 gates."
+          - problem: "A circuit computes ((x AND y) OR (NOT z)) AND (NOT y). How many gates does the circuit use?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First, x AND y is one AND gate. Next, NOT z is one NOT gate. Then the OR gate combines those two signals, making three gates so far. Also NOT y is a fourth gate. Finally, the outer AND gate is the fifth gate. The circuit uses 5 gates."
         constraints: "circuits of 2-5 gates on 2-3 inputs; evaluate at given inputs or translate circuit <-> expression"
     diagnostic_exemplar:
       problem: 'Using only AND, OR, NOT gates, give an expression that computes XNOR of $x$ and $y$ (output $1$ exactly when $x = y$), and evaluate it at $x = 0$, $y = 0$.'

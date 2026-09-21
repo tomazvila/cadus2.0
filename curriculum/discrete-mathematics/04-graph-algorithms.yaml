@@ -114,6 +114,22 @@ topics:
           - problem: 'Vertices $A, B, C, D$; weights $AB = 7$, $AC = 3$, $CD = 2$, $DB = 1$. Give the final distances from $A$ as the ordered triple $(d(B), d(C), d(D))$.'
             answer: '$(6, 3, 5)$'
             solution_sketch: 'Settle $A(0)$, $C(3)$, $D(3+2=5)$, then $B$ via $D$ ($5 + 1 = 6 < 7$).'
+          - problem: "Vertices A, B, C, D. Edge weights: A-B = 5, A-C = 2, C-B = 2, B-D = 4, C-D = 6. Run Dijkstra from A. Give the final distances as (d(B), d(C), d(D))."
+            answer: "(4, 2, 8)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full graph: A-B = 5, A-C = 2, C-B = 2, B-D = 4, C-D = 6. Dijkstra settles A at 0, then C at 2. Relaxing C-B gives B = min(5, 2+2) = 4. Settle B at 4, then relax B-D to get D = 4+4 = 8. The distance triple is (4, 2, 8)."
+          - problem: "A greedy run marks B with tentative distance 6, coming from edge AB = 6. The same graph contains AC = 7 together with a negative edge CB = -3. Find the actual shortest distance from A to B."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full graph: AB has weight 6, AC has weight 7, and CB has weight -3. Greedy Dijkstra settles B at 6 using AB. The path A-C-B costs 7 + (-3) = 4, which is smaller, so the negative edge breaks the settle step. The true distance is 4."
+          - problem: "A network has nodes A, B, C, D. Link costs: A-B = 10, A-C = 2, C-B = 3, B-D = 1, C-D = 7. Starting at A, give the settled distances to B, C, and D as (d(B), d(C), d(D))."
+            answer: "(5, 2, 6)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full graph: A-B = 10, A-C = 2, C-B = 3, B-D = 1, C-D = 7. Settle A at 0, then C at 2. Relaxing C-B gives B = min(10, 2+3) = 5. Settle B, then D = min(2+7, 5+1) = 6. The settled distance triple is (5, 2, 6)."
+          - problem: "The greedy algorithm settles B at 3 through edge AB = 3. Another route is A to C with weight 4, then C to B with a negative weight -2. What is the shortest distance from A to B?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full graph: AB has weight 3, AC has weight 4, and CB has weight -2. The greedy step settles B at 3 using AB. The path A-C-B costs 4 + (-2) = 2, which is shorter, so the negative edge breaks the greedy settle. The actual shortest distance is 2."
         constraints: "ask for the distance triple, or for a small counterexample showing a negative edge breaks the greedy settle; graphs small enough to trace by hand"
     diagnostic_exemplar:
       problem: 'Vertices $A, B, C, D$; weights $AB = 7$, $AC = 3$, $CD = 2$, $DB = 1$. What is the distance from $A$ to $B$?'
@@ -155,6 +171,22 @@ topics:
           - problem: 'Give $(\chi(C_6), \chi(K_5))$ as an ordered pair.'
             answer: '$(2, 5)$'
             solution_sketch: 'Even cycles alternate two colors; in $K_5$ all vertices are mutually adjacent, forcing five distinct colors.'
+          - problem: "The cycle $C_7$ is a ring of seven vertices. Find the chromatic number of $C_7$, and give both a coloring and a lower-bound argument."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is $C_7$, an odd cycle. The lower bound uses the odd-cycle fact: two colors would alternate around the cycle and fail to close, so at least 3 colors are needed. A 3-coloring exists as 1,2,1,2,1,2,3 around the ring. So the chromatic number is 3."
+          - problem: "In the complete graph $K_6$, every two distinct vertices are joined by an edge. Find the chromatic number of $K_6$, and give both a coloring and a lower-bound argument."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is $K_6$, a clique of size 6. The lower bound follows because every pair of vertices is adjacent, so no color can be reused at all, forcing at least 6 colors. Assign a different color to each of the six vertices to get a proper coloring. Thus the chromatic number is 6."
+          - problem: "The wheel $W_6$ consists of a hub joined to every vertex of a 5-cycle rim. Find the chromatic number of $W_6$, and give both a coloring and a lower-bound argument."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is $W_6$, with a 5-cycle rim and a hub adjacent to all rim vertices. The lower bound comes from the rim: a 5-cycle is an odd cycle, so it needs 3 colors, and the hub touches all rim vertices, so it needs a fourth color. A 4-coloring uses 1,2,1,2,3 on the rim and 4 on the hub. Therefore the chromatic number is 4."
+          - problem: "A tree $T$ has 8 vertices and is connected with no cycles. Find the chromatic number of $T$, and give both a coloring and a lower-bound argument."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is a tree $T$ on 8 vertices. The lower bound is 2 because the tree has edges, so one color cannot work. A 2-coloring follows by bipartitioning the tree: place the root in color 1, its neighbors in color 2, and continue alternating by distance from the root. Hence the chromatic number is 2."
         constraints: "cycles, complete graphs, trees, wheels with <= 8 vertices; require both a coloring and a lower-bound argument"
       - id: kp2
         name: "Scheduling via coloring; the Delta + 1 bound"
@@ -166,6 +198,22 @@ topics:
           - problem: 'A graph has maximum degree $\Delta = 4$. What upper bound does greedy coloring guarantee for $\chi$?'
             answer: "5"
             solution_sketch: 'Greedy always finds a free color among $\Delta + 1$, since a vertex has at most $\Delta$ colored neighbors.'
+          - problem: "A district schedules six committee meetings A, B, C, D, E, F. Two meetings clash when they share a member, and the clashes are AB, BC, CD, DE, EF, FA. Find the minimum number of time slots needed so that no two clashing meetings run at the same time."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The clash graph has vertices A, B, C, D, E, F with the six listed edges, which form a cycle through all vertices. Lower bound: the edge AB joins two clashing meetings, so one slot cannot work and at least 2 slots are needed. Upper bound: assign slot 1 to A, C, E and slot 2 to B, D, F; then every listed clash joins meetings in different slots, so 2 slots suffice. Since 2 slots are enough and fewer fail, the minimum number of time slots is 2."
+          - problem: "Five exams P, Q, R, S, T have conflicts PQ, PR, PS, QR, QS, RS, RT, ST. What is the minimum number of exam slots so that no student sits conflicting exams at the same time?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Exams P, Q, R, S form a K4 because every pair among them conflicts, so at least 4 slots are needed. Upper bound: color P=1, Q=2, R=3, S=4, and T=1, which is proper because T conflicts only with R and S. The minimum number of slots is 4."
+          - problem: "A project has seven tasks A, B, C, D, E, F, G. Tasks cannot run in the same slot if they share a worker. The conflicts are AB, AC, BC, CD, DE, EF, FG, GA. What is the minimum number of time slots needed?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The tasks A, B, C form a triangle because all three pairs conflict, so at least 3 slots are needed. Upper bound: the coloring A=1, B=2, C=3, D=1, E=2, F=3, G=2 is proper because each listed conflict joins different colors. Thus the minimum number of time slots is 3."
+          - problem: "Five exams A, B, C, D, E have conflicts AB, AC, AD, BC, BD, CD. What is the minimum number of exam slots so that no student sits conflicting exams at the same time?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The four exams A, B, C, D form a K4 because every pair among them conflicts, so at least 4 slots are needed. Upper bound: color A=1, B=2, C=3, D=4, and E=1, which is proper since E has no conflicts. The minimum number of slots is 4."
         constraints: "conflict graphs with 4-7 items; lower bound from a clique, upper bound from an explicit coloring"
     diagnostic_exemplar:
       problem: 'Exams $M, P, C, S$ have conflicts $MP$, $PC$, $MC$, $CS$, $MS$. What is the minimum number of exam slots so that no student sits conflicting exams simultaneously?'
@@ -207,6 +255,22 @@ topics:
           - problem: 'A connected planar drawing has $10$ vertices and $7$ faces. How many edges does it have?'
             answer: "15"
             solution_sketch: '$e = v + f - 2 = 10 + 7 - 2 = 15$.'
+          - problem: "A connected planar drawing has 11 edges and 5 faces. How many vertices does the graph have?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Euler's formula for a connected planar graph is v - e + f = 2. Substitute e = 11 and f = 5: v - 11 + 5 = 2, so v = 8. The number of vertices is 8."
+          - problem: "A connected planar drawing has 12 vertices and 17 edges. How many faces (including the outer face) does the drawing have?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Euler's formula for a connected planar graph is v - e + f = 2. Substitute v = 12 and e = 17: 12 - 17 + f = 2, so f = 7. The number of faces is 7."
+          - problem: "A connected planar drawing has 6 vertices and 8 faces. How many edges does the drawing have?"
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Euler's formula for a connected planar graph is v - e + f = 2. Substitute v = 6 and f = 8: 6 - e + 8 = 2, so e = 12. The number of edges is 12."
+          - problem: "A planar embedding of a connected graph has 15 vertices and 20 edges. Determine the number of faces (including the outer face)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Euler's formula for a connected planar graph is v - e + f = 2. Substitute v = 15 and e = 20: 15 - 20 + f = 2, so f = 7. The number of faces is 7."
         constraints: "connected planar graphs; solve v - e + f = 2 for the missing quantity; values <= 30"
       - id: kp2
         name: "Edge bounds and proving nonplanarity"
@@ -218,6 +282,22 @@ topics:
           - problem: '$K_{3,3}$ has $9$ edges and $6$ vertices, and $9 \le 3 \cdot 6 - 6 = 12$, so that bound says nothing. $K_{3,3}$ is triangle-free, so the sharper bound $e \le 2v - 4$ applies: compute it for $v = 6$.'
             answer: "8"
             solution_sketch: 'Bipartite graphs have no $3$-cycles, so every face needs $\ge 4$ edges, giving $e \le 2v - 4 = 8$; since $9 > 8$, $K_{3,3}$ is not planar.'
+          - problem: "The complete graph K6 has 6 vertices, 15 edges, and contains cycles of length 3. Bound A is e <= 3v - 6. Bound B is e <= 2v - 4 and is available only when the graph has no cycle of length 3. State which bound applies to K6 and give its value."
+            answer: "which = A; bound = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The graph is K6 with v = 6 and e = 15, and it contains cycles of length 3. Step 1: Because a 3-cycle is present, the sharper bound for graphs without triangles is unavailable, so the general Euler bound e <= 3v - 6 applies. Step 2: Substitute v = 6 into e <= 3v - 6: 3(6) - 6 = 12. Step 3: The value of the applicable bound is 12. The answer is which = A; bound = 12."
+          - problem: "The complete bipartite graph K3,4 has 7 vertices and 12 edges. It has no cycle of length 3. Bound A is e <= 3v - 6. Bound B is e <= 2v - 4 and is available only when the graph has no cycle of length 3. State which bound applies to K3,4 and give its value."
+            answer: "which = B; bound = 10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The graph is K3,4 with v = 7 and e = 12, and it has no cycle of length 3. Step 1: Because no 3-cycle is present, the sharper bound for graphs without triangles applies: e <= 2v - 4. Step 2: Substitute v = 7 into e <= 2v - 4: 2(7) - 4 = 10. Step 3: The value of the applicable bound is 10. The answer is which = B; bound = 10."
+          - problem: "The complete bipartite graph K3,5 has 8 vertices and 15 edges. It has no cycle of length 3. Bound A is e <= 3v - 6. Bound B is e <= 2v - 4 and is available only when the graph has no cycle of length 3. Determine which bound applies to K3,5 and compute its value."
+            answer: "which = B; bound = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The graph is K3,5 with v = 8 and e = 15, and it has no cycle of length 3. Step 1: Because no 3-cycle is present, the sharper bound for graphs without triangles applies: e <= 2v - 4. Step 2: Substitute v = 8 into e <= 2v - 4: 2(8) - 4 = 12. Step 3: The value of the applicable bound is 12. The answer is which = B; bound = 12."
+          - problem: "The wheel graph W6 has a center vertex joined to each of 6 cycle vertices, so it has 7 vertices and 12 edges, and it contains cycles of length 3. Bound A is e <= 3v - 6. Bound B is e <= 2v - 4 and is available only when the graph has no cycle of length 3. State which bound applies to W6 and compute its value."
+            answer: "which = A; bound = 15"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The graph is W6 with v = 7 and e = 12, and it contains cycles of length 3. Step 1: Because a 3-cycle is present, the sharper bound for graphs without triangles is unavailable, so the general Euler bound e <= 3v - 6 applies. Step 2: Substitute v = 7 into e <= 3v - 6: 3(7) - 6 = 15. Step 3: The value of the applicable bound is 15. The answer is which = A; bound = 15."
         constraints: "apply e <= 3v-6 or e <= 2v-4 (triangle-free); state which bound applies and why, and compute its value"
     diagnostic_exemplar:
       problem: 'A connected planar drawing of a simple graph has $9$ vertices and $14$ edges. Give (the number of faces of the drawing, the maximum number of edges the bound $e \le 3v - 6$ permits on $9$ vertices) as an ordered pair.'
@@ -268,10 +348,26 @@ topics:
           - problem: 'What is the size of a maximum matching in $K_{3,5}$?'
             answer: "3"
             solution_sketch: 'A matching uses each left vertex at most once, so at most $3$ edges; pairing each left vertex with a distinct right vertex achieves it.'
-          - problem: 'Workers $1, 2, 3$ can do jobs: $W_1\!: \{a\}$, $W_2\!: \{a, b\}$, $W_3\!: \{b\}$. Can every worker get a distinct job? Verify with Hall''s condition.'
-            answer: 'No'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'No: the set $\\{W_1, W_2, W_3\\}$ has neighborhood $\\{a, b\\}$ of size $2 < 3$, violating Hall''s condition. Hall: a perfect matching of the left side exists iff every subset $S$ satisfies $|N(S)| \ge |S|$; here the whole set fails.'
+          - problem: "Four workers each take one task. Every worker is able to do task p, and every worker is also able to do task q. Find the size of a maximum matching."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: build the bipartite graph; the four workers form one side and the tasks p and q the other side, with an edge from each worker to p and to q. Step 2: apply Hall's condition; the set of all four workers has neighborhood {p, q} of size 2, which is less than 4, so no matching of size 3 or 4 exists. Step 3: a matching of size 2 does exist, for example worker A with task p and worker B with task q. Therefore the maximum matching size is 2."
+          - problem: "Students A, B, C, D can take projects: A: {p, q}, B: {q, r}, C: {r, s}, D: {s, p}. Find the size of a maximum matching."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The bipartite graph has left side {A, B, C, D} and right side {p, q, r, s}. The edges are A-p, A-q, B-q, B-r, C-r, C-s, D-s, D-p. A perfect matching of size 4 is A-p, B-q, C-r, D-s, so Hall's condition is satisfied for this graph. Therefore the maximum matching size is 4."
+          - problem: "Servers S1, S2, S3 can handle only task t. Find the size of a maximum matching."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The bipartite graph has left side {S1, S2, S3} and right side {t}. Every edge joins a server to the same task t. A matching can use at most one edge because task t can be matched once, and one edge does exist. Therefore the maximum matching size is 1."
+          - problem: "A bipartite graph has left vertices L1, L2, L3, L4 with neighborhoods: L1: {a}, L2: {b}, L3: {a, b}, L4: {c}. Find the size of a maximum matching."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The bipartite graph has left side {L1, L2, L3, L4} and right side {a, b, c}. The edges are L1-a, L2-b, L3-a, L3-b, L4-c. A matching of size 3 is L1-a, L2-b, L4-c. No matching of size 4 exists because the set {L1, L2, L3} has neighborhood {a, b} of size 2, so Hall's condition fails. Therefore the maximum matching size is 3."
+          - problem: "Employees E1, E2, E3, E4, E5 can do tasks: E1: {t1, t2}, E2: {t2, t3}, E3: {t3, t4}, E4: {t4, t5}, E5: {t5, t1}. Find the size of a maximum matching."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The bipartite graph has left side {E1, E2, E3, E4, E5} and right side {t1, t2, t3, t4, t5}. The edges form a 10-cycle: E1-t1, E1-t2, E2-t2, E2-t3, E3-t3, E3-t4, E4-t4, E4-t5, E5-t5, E5-t1. A perfect matching of size 5 is E1-t1, E2-t2, E3-t3, E4-t4, E5-t5. Therefore the maximum matching size is 5."
         constraints: "bipartite sides <= 5; either compute a maximum matching size or exhibit a violating set S"
     diagnostic_exemplar:
       problem: 'Workers $1, 2, 3, 4$ can do jobs: $W_1\!: \{a, b\}$, $W_2\!: \{b\}$, $W_3\!: \{b, c\}$, $W_4\!: \{b\}$. Can every worker get a distinct job? Verify with Hall''s condition.'

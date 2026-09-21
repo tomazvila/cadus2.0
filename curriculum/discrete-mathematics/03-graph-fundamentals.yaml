@@ -485,6 +485,22 @@ topics:
           - problem: 'How many distinct Hamilton cycles does $K_5$ have?'
             answer: "12"
             solution_sketch: '$(5-1)!/2 = 24/2 = 12$.'
+          - problem: "A complete graph on $6$ vertices has an edge between every pair of vertices. How many distinct Hamilton cycles does it have, if cycles that differ only by their starting point or their direction are counted as one cycle?"
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Model the graph as $K_6$: a Hamilton cycle is a cyclic ordering of all 6 vertices. Rotations give the same cycle, so a fixed starting point leaves $5! = 120$ orderings, and each cycle equals its own reverse, so divide by 2: $120/2 = 60$. This matches the formula $(n-1)!/2 = (6-1)!/2 = 60$. The answer is 60."
+          - problem: "Six friends sit around a round table. Seating arrangements that differ only by rotation or by reflection are considered the same. How many distinct seating arrangements are there?"
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Model the six friends as vertices of the complete graph $K_6$, and each seating as a Hamilton cycle. A rotation gives the same cyclic order, so fix the starting point, and a reflection identifies a cycle with its reverse. The formula for $K_n$ is $(n-1)!/2$. Substituting $n = 6$ gives $(6-1)!/2 = 120/2 = 60$. The answer is 60."
+          - problem: "Five friends sit around a round table. Arrangements that differ only by a rotation are considered the same, but a seating and its mirror image are considered different arrangements. How many distinct seating arrangements are there?"
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Fix one friend's seat to remove the effect of rotations, then arrange the remaining 4 friends in the other seats: $4! = 24$. Mirror images are declared different here, so unlike the usual round-table count there is no division by 2. The answer is 24."
+          - problem: "In the complete graph $K_6$, a Hamilton cycle and the same cycle traveled in the opposite direction are counted as two different cycles; the starting point is still irrelevant. How many distinct Hamilton cycles does $K_6$ have under this counting?"
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Fix one vertex of $K_6$ as the starting point to remove rotations, then order the remaining 5 vertices in $5! = 120$ ways. Each such ordering is one directed Hamilton cycle, and opposite directions are counted separately, so no division by 2 is made. This equals $(n-1)! = (6-1)! = 120$. The answer is 120."
         constraints: "complete graphs n <= 6; formula (n-1)!/2; or exhibit a Hamilton cycle in a small graph"
       - id: kp2
         name: "Dirac's sufficient condition"
@@ -580,14 +596,30 @@ topics:
         name: "Degree constraints and leaves"
         key_prerequisites: [walks-paths-connectivity, degree-handshake]
         exemplars:
-          - problem: 'Can a tree on $7$ vertices have degree sequence $4, 2, 2, 1, 1, 1, 1$?'
-            answer: 'Yes'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'Yes: the degree sum is $12 = 2(n-1)$, and such a tree exists — a center of degree $4$ joined to two leaves and to two paths of length $2$. For a tree the degree sum must equal $2(n-1)$; any positive sequence meeting that is realizable by a tree.'
-          - problem: 'Show that every tree with $n \ge 2$ vertices has at least $2$ leaves, using the degree sum.'
-            answer: 'If at most one vertex had degree $1$, the degree sum would be $\ge 1 + 2(n-1) = 2n - 1 > 2n - 2 = 2|E|$, a contradiction.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Degrees are $\ge 1$; a tree''s degree sum is exactly $2(n-1)$, forcing at least two $1$s.'
+          - problem: "A tree on 6 vertices is proposed with degree sequence 3, 3, 2, 1, 1, 1. Determine whether this sequence can be realized by a tree, and give the degree sum as S."
+            answer: "verdict = impossible; S = 11"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["possible"], ["impossible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "S"}]}
+            solution_sketch: "The proposed object is the degree sequence 3, 3, 2, 1, 1, 1 on n = 6 vertices. Step 1 (degree-sum rule): a tree on n vertices has degree sum 2(n-1) = 2(6-1) = 10. Step 2 (compute the given sum): 3+3+2+1+1+1 = 11, so S = 11. Step 3 (compare): 11 does not equal the required 10, so the sequence fails the necessary condition and cannot be realized by a tree. Step 4 (name the error): choosing possible would overlook that the sum 11 exceeds the value 2(n-1) = 10 that every tree must have. The sequence is not realizable: verdict = impossible; S = 11."
+          - problem: "Every tree with at least 2 vertices has a minimum possible number of leaves. For a tree with 10 vertices, what is the smallest possible number of leaves? Give the answer as a whole number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is any tree on n = 10 vertices. Step 1 (degree-sum rule): the degree sum is 2(n-1) = 18. Step 2 (leaf lower bound): if there were 0 or 1 leaves, all other vertices would have degree at least 2, giving degree sum at least 1 + 2*9 = 19, which exceeds 18. Step 3 (attainment): a path on 10 vertices has exactly 2 leaves. The smallest possible number of leaves is 2."
+          - problem: "A tree has 8 vertices. Find the sum of the degrees of all its vertices."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a tree with n = 8 vertices. Step 1 (degree-sum rule): the sum of degrees is 2(n-1). Step 2 (substitute): 2(8-1) = 14. The sum of the degrees is 14."
+          - problem: "A tree has degree sum 18. How many vertices does the tree have?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a tree whose degree sum is 18. Step 1 (degree-sum rule): the sum is 2(n-1). Step 2 (solve): 2(n-1) = 18, so n-1 = 9 and n = 10. The tree has 10 vertices."
+          - problem: "A tree on 9 vertices has one vertex of degree 4, two vertices of degree 3, and all remaining vertices are leaves. How many leaves does the tree have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a tree on n = 9 vertices with one degree 4 vertex and two degree 3 vertices. Step 1 (degree-sum rule): total degree sum is 2(9-1) = 16. Step 2 (known degrees): the non-leaf degrees sum to 4+3+3 = 10. Step 3 (leaves): if there are L leaves, each of degree 1, then 10 + L = 16, so L = 6. The tree has 6 leaves."
+          - problem: "A tree on 10 vertices has one vertex of degree 5 and two vertices of degree 3, and all remaining vertices are leaves. How many leaves does the tree have?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a tree on n = 10 vertices with one degree 5 vertex and two degree 3 vertices. Step 1 (degree-sum rule): total degree sum is 2(10-1) = 18. Step 2 (known degrees): the non-leaf degrees sum to 5+3+3 = 11. Step 3 (leaves): if there are L leaves, each of degree 1, then 11 + L = 18, so L = 7. The tree has 7 leaves."
         constraints: "degree sums checked against 2(n-1); n <= 10"
     diagnostic_exemplar:
       problem: 'Can a tree on $8$ vertices have degree sequence $3, 3, 2, 2, 1, 1, 1, 1$? Check the degree sum against what a tree requires, and exhibit such a tree or rule it out.'
