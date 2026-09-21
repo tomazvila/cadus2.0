@@ -240,6 +240,10 @@ topics:
           - problem: 'A shop rents $3$ bikes, $5$ scooters, and $2$ skates. How many ways can you rent one item?'
             answer: "10"
             solution_sketch: 'Three disjoint categories: $3 + 5 + 2 = 10$.'
+          - problem: "A closet has $9$ shirts and $7$ pairs of pants. How many ways can you choose one item of clothing?"
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full count: 9 shirts and 7 pairs of pants. By the addition principle, the two disjoint categories add. Compute 9 + 7 = 16. The answer is 16."
         constraints: "two or three clearly disjoint categories; single-selection questions"
       - id: kp2
         name: "Combining the addition and multiplication principles"
@@ -257,6 +261,14 @@ topics:
           - problem: 'From A to B you can take $1$ train or $2$ buses; from B to C, one of $3$ ferries. How many trips from A to C?'
             answer: "9"
             solution_sketch: 'A to B: $1 + 2 = 3$ options; then $3 \cdot 3 = 9$.'
+          - problem: "A lunch is one of 2 sandwiches (each with 3 sides) or one of 6 soups. How many lunch choices are there?"
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full count is 2 * 3 + 6. By the multiplication principle the sandwiches give 6 choices, and by the addition principle the soups add 6 more, so the total is 6 + 6 = 12."
+          - problem: "A ticket is for one of 4 museums (each with 3 tour times) or one of 3 parks. How many ticket choices are there?"
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full count is 4 * 3 + 3. By the multiplication principle the museums give 12 choices, and by the addition principle the parks add 3 more, so the total is 12 + 3 = 15."
         constraints: "one addition step and one multiplication step per problem; answers below 100"
       - id: kp3
         name: "Splitting a count into cases"
@@ -274,6 +286,14 @@ topics:
           - problem: 'How many integers from $1$ to $40$ are multiples of $9$ or multiples of $13$?'
             answer: "7"
             solution_sketch: 'Multiples of $9$: $9, 18, 27, 36$ ($4$); of $13$: $13, 26, 39$ ($3$). No overlap below $9 \cdot 13 = 117$, so $4 + 3 = 7$.'
+          - problem: "To travel from town A to town C, a driver can go through town B or take a direct road. There are 3 roads from A to B and 2 roads from B to C, and 4 direct roads from A to C. How many routes from A to C are there?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Case 1: routes through B. Choose a road from A to B (3 ways) and a road from B to C (2 ways); the multiplication principle gives 3*2 = 6 routes. Case 2: direct routes from A to C, which gives 4 routes. The two cases are disjoint, so the addition principle gives 6 + 4 = 10."
+          - problem: "A locker code is two letters from A to D followed by one digit from 1 to 3, or one digit from 1 to 3 followed by two letters from A to D. How many locker codes are there?"
+            answer: "96"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Case 1: two letters then one digit. Choose the first letter (4 ways), the second letter (4 ways), and the digit (3 ways); the multiplication principle gives 4*4*3 = 48 codes. Case 2: one digit then two letters. Choose the digit (3 ways) and the two letters (4*4 ways); this gives 3*4*4 = 48 codes. The two cases are disjoint, so the addition principle gives 48 + 48 = 96."
         constraints: "cases must be genuinely disjoint (no inclusion-exclusion); 2-3 cases per problem"
     diagnostic_exemplar:
       problem: 'A meal is one of $2$ soups (each offered with a choice of $3$ breads) or one of $5$ salads. How many meal choices are there?'
@@ -399,6 +419,14 @@ topics:
           - problem: 'In how many ways can $6$ people line up for a photo?'
             answer: "720"
             solution_sketch: '$6! = 720$.'
+          - problem: "A shelf holds a trophy, a medal, and a ribbon, all different. In how many orders can the three items be placed on the shelf?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is an arrangement of the three distinct items: trophy, medal, ribbon. By the multiplication principle, the first position has 3 choices, the second has 2, and the third has 1. Multiply these choices: 3 x 2 x 1 = 6. The number of orders is 6."
+          - problem: "How many arrangements of these letters are possible: G, H, O, S, T?"
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is an arrangement of the five distinct letters G, H, O, S, T. Using factorial notation, the number of arrangements is 5!. Compute 5! = 5 x 4 x 3 x 2 x 1 = 120. The number of arrangements is 120."
         constraints: "n between 3 and 6; all objects distinct"
       - id: kp2
         name: "Permutations of n objects taken k at a time"
@@ -416,6 +444,14 @@ topics:
           - problem: 'Compute $P(9, 2)$, the number of ways to arrange $2$ objects chosen from $9$.'
             answer: "72"
             solution_sketch: '$P(9,2) = 9 \cdot 8 = 72$.'
+          - problem: "In a race with $12$ runners, how many ways can the first three places be filled?"
+            answer: "1320"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The count is $P(12, 3) = 12 \\cdot 11 \\cdot 10$. By the multiplication principle, first place has $12$ choices, second has $11$, and third has $10$. Multiplying the choices gives $1320$, so the number of ways is 1320."
+          - problem: "A shelf holds $11$ distinct books. How many ways can $2$ of them be arranged in a row?"
+            answer: "110"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The count is $P(11, 2) = 11 \\cdot 10$. By the multiplication principle, the first position has $11$ choices and the second position has $10$. Multiplying gives $110$, so the number of arrangements is 110."
         constraints: "n <= 12, k <= 4; answers below 2000"
       - id: kp3
         name: "The factorial formula for P(n, k)"
@@ -433,6 +469,14 @@ topics:
           - problem: 'How many $3$-letter arrangements use $3$ of the $8$ letters A-H with no repeats?'
             answer: "336"
             solution_sketch: '$P(8,3) = 8 \cdot 7 \cdot 6 = 336$.'
+          - problem: "Use the formula $P(n,k) = \\frac{n!}{(n-k)!}$ to find $n$ when $P(n,3) = 336$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The factorial formula gives $P(n,3)=\\frac{n!}{(n-3)!}=n(n-1)(n-2)$. Substitute the given value: $n(n-1)(n-2)=336$. The product $8\\cdot7\\cdot6$ equals $336$, so $n=8$. The value is 8."
+          - problem: "Seven distinct trophies are arranged in a row. Use the formula $P(n,k) = \\frac{n!}{(n-k)!}$ to find how many arrangements are possible."
+            answer: "5040"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The factorial formula gives $P(7,7)=\\frac{7!}{0!}=7!$. The $k=n$ edge case reduces the formula to $n!$. Compute $7! = 5040$. The number of arrangements is 5040."
         constraints: "n <= 8; emphasize the n!/(n-k)! form and the k = n edge case"
     diagnostic_exemplar:
       problem: 'Gold and silver medals are awarded among $8$ sprinters. In how many ways?'
@@ -474,6 +518,14 @@ topics:
           - problem: 'In how many ways can A, B, C, D, E stand in a line with C first?'
             answer: "24"
             solution_sketch: 'C is fixed; $4! = 24$ orders for the rest.'
+          - problem: "At a photo shoot, $n$ people stand in a line. One particular person must stand at the left end. The number of possible orders is $24$. Find $n$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Fix the particular person at the left end. By the permutations rule, the remaining n - 1 people can be arranged in (n - 1)! orders. So (n - 1)! = 24. Since 4! = 24, n - 1 = 4, and the value of n is 5."
+          - problem: "A club has $n$ members who line up for a photo. One particular member must stand at the right end. The number of lineups is $6$. Find $n$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Fix the particular member at the right end. The remaining n - 1 members can be ordered in (n - 1)! ways by the permutations rule. Set (n - 1)! = 6. Since 3! = 6, n - 1 = 3, so the value of n is 4."
         constraints: "n between 4 and 6; exactly one object pinned to one position"
       - id: kp2
         name: "Items that must be together (block method)"
@@ -491,6 +543,14 @@ topics:
           - problem: 'Six books are shelved; two specific books must sit next to each other. How many arrangements?'
             answer: "240"
             solution_sketch: 'Block plus $4$ others: $5! = 120$; times $2!$ inside the block: $120 \cdot 2 = 240$.'
+          - problem: "A line of people is arranged so that two particular people stand together. This condition allows 48 different orders. How many people are in the line?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let n be the number of people. The block method gives (n-1)! times 2! arrangements. Solve (n-1)! * 2 = 48, so (n-1)! = 24. Since 4! = 24, n - 1 = 4 and n = 5. The number of people is 5."
+          - problem: "Six runners line up for a photo. Two particular runners must stand together, and a third particular runner must stand at one of the two ends. How many lineups are possible?"
+            answer: "96"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Treat the two particular runners as one block. The block, the third particular runner, and the other three runners make five units. The third runner occupies one of two ends, so place that unit in 2 ways; the remaining four units arrange in 4! = 24 ways. The block orders internally in 2! = 2 ways. Multiply: 2 * 24 * 2 = 96. The number of lineups is 96."
         constraints: "one block of exactly 2 items; total items 4-6"
       - id: kp3
         name: "Items that must be apart, and alternating arrangements"
@@ -502,12 +562,21 @@ topics:
           - problem: 'In how many ways can $3$ boys and $3$ girls stand in a line, alternating boy-girl?'
             answer: "72"
             solution_sketch: 'Two patterns (BGBGBG or GBGBGB); each fills in $3! \cdot 3!= 36$ ways: $2 \cdot 36 = 72$.'
-          - problem: 'In how many ways can $5$ people stand in a line if two particular people must NOT be adjacent?'
-            answer: "72"
-            solution_sketch: 'Total $5! = 120$ minus the together-count $4! \cdot 2 = 48$: $120 - 48 = 72$.'
+          - problem: "Seven runners finish a race. In how many orders can they finish if two particular runners must NOT finish next to each other?"
+            answer: "3600"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the total-minus-together method. Total orders: 7! = 5040. Together orders: treat the two particular runners as one block, giving 6! block orders and 2 internal orders, so 6! * 2 = 1440. Subtract: 5040 - 1440 = 3600. The number of orders with the two runners apart is 3600."
           - problem: 'In how many ways can $6$ people stand in a line if two particular people must NOT be adjacent?'
             answer: "480"
             solution_sketch: 'Total $6! = 720$; together (block method) $5! \cdot 2 = 240$; apart $720 - 240 = 480$.'
+          - problem: "In how many ways can 3 men and 3 women stand in a line so that the genders alternate?"
+            answer: "72"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the alternating-pattern method. The two patterns are MWMWMW and WMWMWM. In each pattern, the 3 men can be arranged in 3! = 6 ways and the 3 women in 3! = 6 ways, so each pattern gives 6 * 6 = 36 arrangements. The two patterns give 2 * 36 = 72. The number of alternating arrangements is 72."
+          - problem: "In how many ways can 3 boys and 3 girls stand in a line so that they alternate and the first person in the line is a boy?"
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the alternating-pattern method. Since the first person is a boy, the only pattern is BGBGBG. The 3 boys can be arranged in 3! = 6 ways and the 3 girls in 3! = 6 ways. Multiply: 6 * 6 = 36. The number of such alternating arrangements is 36."
         constraints: "\"apart\" solved as total minus together; alternating uses equal group sizes of 3"
     diagnostic_exemplar:
       problem: 'In how many ways can $5$ people stand in a line if two particular people must NOT be adjacent?'
@@ -549,6 +618,14 @@ topics:
           - problem: 'In how many ways can $3$ keys be arranged on a circular ring if rotations are considered the same (reflections distinct)?'
             answer: "2"
             solution_sketch: '$(3-1)! = 2! = 2$.'
+          - problem: "In how many ways can 7 people sit around a round table? Rotations count as the same seating and reflections are distinct. Find the number of seatings."
+            answer: "720"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The circular seating count for n people is (n-1)!. Fix one person to remove the rotations. The other 6 people can be arranged in 6! = 720 ways. The answer is 720."
+          - problem: "The number of ways to seat n people around a round table, with rotations the same and reflections distinct, is 720. Find n."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The circular seating count is (n-1)!. Set (n-1)! = 720. Since 6! = 720, n-1 = 6, so n = 7. The answer is 7."
         constraints: "n between 3 and 7; rotations equivalent, reflections distinct (state this)"
       - id: kp2
         name: "Row versus circle"
@@ -569,6 +646,10 @@ topics:
           - problem: '$6$ beads are arranged around a circular bracelet (rotations identical). How many arrangements are there?'
             answer: "120"
             solution_sketch: '$(6-1)! = 5! = 120$.'
+          - problem: "Five people sit around a round table. Rotations only are considered the same, so the clockwise order is what counts. How many distinct circular arrangements are there?"
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the row count for five people is 5! = 120. Step 2: use the row-versus-circle rule; each circular order matches 5 row orders, because the circle can be rotated to 5 starting points. Divide the row count by 5: 120/5 = 24."
         constraints: "always state that rotations (only) are identified; n between 4 and 6"
       - id: kp3
         name: "Circular arrangements with a restriction"
@@ -586,6 +667,14 @@ topics:
           - problem: '$4$ people sit around a round table, and Bob is pinned to a particular seat. In how many ways can the remaining people be seated?'
             answer: "6"
             solution_sketch: 'With one seat pinned, the remaining $3$ people arrange freely: $3! = 6$.'
+          - problem: "Five people sit around a round table. Carol is fixed in a particular seat. Rotations are considered the same. How many ways can the remaining people be seated?"
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: five people around a round table with Carol fixed at one seat. Pin step: fixing Carol removes the rotational symmetry, so the remaining four people fill the four open seats. Multiplication rule: the remaining people can be ordered in 4! = 24 ways. The answer is 24."
+          - problem: "Six friends sit around a circular campfire. Two particular friends, Ana and Ben, must sit next to each other. Rotations of the circle are considered the same. How many circular seatings are possible?"
+            answer: "48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: six people around a circle with Ana and Ben adjacent. Glue step: treat Ana and Ben as one block, giving five units around the circle. Circular permutation rule: five units around a circle give (5-1)! = 24 arrangements. Pair-order step: Ana and Ben can swap in 2! = 2 ways. Product: 24 * 2 = 48, so the answer is 48."
         constraints: "one restriction: a glued pair or one pinned person; n between 4 and 6"
     diagnostic_exemplar:
       problem: '$6$ people sit around a round table (rotations identical); two particular people insist on sitting together. How many seatings are there?'
@@ -650,6 +739,14 @@ topics:
           - problem: 'How many ways can a coach choose $3$ starters from $8$ players?'
             answer: "56"
             solution_sketch: '$\binom{8}{3} = \frac{8 \cdot 7 \cdot 6}{6} = 56$.'
+          - problem: "A hand of 4 cards is chosen from a set of 8 distinct cards. How many different hands are possible?"
+            answer: "70"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the combinations rule because the order of cards in a hand does not matter. Compute C(8,4) = (8*7*6*5)/(4*3*2*1) = 1680/24 = 70. Thus the number of different hands is 70."
+          - problem: "A club has 9 members and needs to form a 3-person committee. How many different committees are possible?"
+            answer: "84"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the combinations rule because the order within a committee does not matter. Compute C(9,3) = (9*8*7)/(3*2*1) = 504/6 = 84. Thus the number of different committees is 84."
         constraints: "contexts where order clearly does not matter (committees, hands, toppings); answers below 300"
       - id: kp3
         name: "Symmetry and multi-group selections"
@@ -667,6 +764,14 @@ topics:
           - problem: 'A gift bag uses $2$ of $4$ chocolates and $3$ of $5$ candies. How many different bags are possible?'
             answer: "60"
             solution_sketch: '$\binom{4}{2} \cdot \binom{5}{3} = 6 \cdot 10 = 60$; independent choices multiply.'
+          - problem: "A deli offers 5 types of bread and 4 types of cheese. A sandwich uses 2 breads and 3 cheeses. How many different sandwiches are possible?"
+            answer: "40"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First group: 5 choose 2 = 10. Second group: 4 choose 3 = 4. Independent choices multiply: 10 * 4 = 40. The answer is 40."
+          - problem: "A school picks 2 of 6 violinists and 3 of 5 cellists for an ensemble. How many ensembles are possible?"
+            answer: "150"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First group: 6 choose 2 = 15. Second group: 5 choose 3 = 10. Independent groups multiply: 15 * 10 = 150. The answer is 150."
         constraints: "two independent groups at most; each binomial coefficient at most C(10,3)"
     diagnostic_exemplar:
       problem: 'A committee needs $2$ of $6$ teachers and $2$ of $5$ students. How many committees are possible?'
@@ -719,6 +824,22 @@ topics:
           - problem: 'A playlist takes $2$ of $6$ rock songs (unordered) and then arranges $3$ of $4$ jazz songs in order. How many playlists?'
             answer: "360"
             solution_sketch: '$\binom{6}{2} \cdot P(4,3) = 15 \cdot 24 = 360$.'
+          - problem: "From 6 runners, award first place and second place in order, then choose 2 of the remaining 4 runners for a photo. How many outcomes are possible?"
+            answer: "180"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full count is the product of one ordered stage and one unordered stage. Step 1: Use the permutation rule for the ordered first and second places: P(6,2)=6*5=30. Step 2: Use the combination rule for the unordered photo pair: C(4,2)=6. Step 3: Multiply the stage counts with the multiplication principle: 30*6=180. The answer is 180."
+          - problem: "A code uses an ordered pair of two distinct letters chosen from A, B, C, D, E, then an unordered pair of two distinct digits chosen from 1, 2, 3, 4. How many codes are possible?"
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full code count is the product of an ordered letter pair and an unordered digit pair. Step 1: Use the permutation rule for the ordered letters: P(5,2)=5*4=20. Step 2: Use the combination rule for the unordered digits: C(4,2)=6. Step 3: Multiply the stages with the multiplication principle: 20*6=120. The answer is 120."
+          - problem: "A display shelf has 7 distinct novels and 5 distinct biographies. Arrange 2 of the 7 novels in order on the shelf, then choose 3 of the 5 biographies for a box. How many outcomes are possible?"
+            answer: "420"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full count is the product of an ordered stage and an unordered stage. Step 1: Use the permutation rule for the ordered novels: P(7,2)=7*6=42. Step 2: Use the combination rule for the unordered biographies: C(5,3)=10. Step 3: Multiply the stages with the multiplication principle: 42*10=420. The answer is 420."
+          - problem: "A board has 7 members. Elect a treasurer from the 7 members, then choose a 4-person planning group from the remaining 6 members. How many ways are possible?"
+            answer: "105"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full count is the product of one ordered stage and one unordered stage. Step 1: Use the permutation rule for the ordered treasurer choice: P(7,1)=7. Step 2: Use the combination rule for the unordered planning group: C(6,4)=15. Step 3: Multiply the stage counts with the multiplication principle: 7*15=105. The answer is 105."
         constraints: "exactly one ordered stage and one unordered stage; multiply stage counts; answers below 1000"
       - id: kp3
         name: "The relationship P(n,k) = C(n,k) * k!"
@@ -730,6 +851,22 @@ topics:
           - problem: 'Given $P(8, 3) = 336$, compute $\binom{8}{3}$.'
             answer: "56"
             solution_sketch: '$\binom{8}{3} = P(8,3)/3! = 336/6 = 56$.'
+          - problem: "Given C(7, 3) = 35, compute P(7, 3)."
+            answer: "210"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation is P(n,k) = C(n,k) * k!. Here n = 7 and k = 3, so k! = 3! = 6. Multiply: 35 * 6 = 210. The value is 210."
+          - problem: "Given P(6, 4) = 360, compute C(6, 4)."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation rearranges to C(n,k) = P(n,k)/k!. Here n = 6 and k = 4, so k! = 4! = 24. Divide: 360/24 = 15. The value is 15."
+          - problem: "A race has 5 runners. The number of ordered medal placements is P(5, 3) = 60. Find the number of unordered 3-runner podium sets C(5, 3)."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation is P(n,k) = C(n,k) * k!, so C(n,k) = P(n,k)/k!. With n = 5 and k = 3, k! = 6. Thus C(5,3) = 60/6 = 10. The value is 10."
+          - problem: "Given C(8, 4) = 70, compute P(8, 4)."
+            answer: "1680"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation is P(n,k) = C(n,k) * k!. Here n = 8 and k = 4, so k! = 4! = 24. Multiply: 70 * 24 = 1680. The value is 1680."
         constraints: "give one of P or C and ask for the other; k <= 4"
     diagnostic_exemplar:
       problem: 'From $9$ people, choose a chairperson and then a $2$-person committee from the remaining $8$. In how many ways?'
