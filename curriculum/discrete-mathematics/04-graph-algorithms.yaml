@@ -24,6 +24,22 @@ topics:
           - problem: 'How many spanning trees does the cycle $C_4$ have?'
             answer: "4"
             solution_sketch: 'Deleting any one of the $4$ edges leaves a spanning path; a cycle on $n$ vertices has exactly $n$ spanning trees.'
+          - problem: "How many spanning trees does the cycle C6 have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: edge deletion from a cycle. A spanning tree of a cycle on n vertices is obtained by deleting exactly one edge. The cycle C6 has 6 edges, and deleting any one of them leaves a spanning path. So the number of spanning trees is 6."
+          - problem: "A connected graph consists of a 5-cycle with one pendant edge attached at one vertex. How many spanning trees does it have?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: forced tree edge plus cycle edge deletion. The pendant edge must be in every spanning tree, because deleting it isolates its leaf. The remaining 5-cycle needs exactly one edge deleted. There are 5 choices for that edge, so the number of spanning trees is 5."
+          - problem: "A connected graph consists of a 7-cycle with a pendant path of length 2 attached at one vertex. How many spanning trees does it have?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: forced path edges plus cycle edge deletion. The two edges of the pendant path must be in every spanning tree, because deleting either one disconnects the leaf. The remaining 7-cycle needs exactly one edge deleted. There are 7 choices for that edge, so the number of spanning trees is 7."
+          - problem: "A connected graph consists of an 8-cycle with a pendant edge attached at each of two adjacent vertices. How many spanning trees does it have?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: forced pendant edges plus cycle edge deletion. Both pendant edges must be in every spanning tree, because deleting either one isolates its leaf. The remaining 8-cycle needs exactly one edge deleted. There are 8 choices for that edge, so the number of spanning trees is 8."
         constraints: "cycles and near-trees where spanning trees can be counted by edge deletion; <= 12 vertices"
       - id: kp2
         name: "Kruskal and Prim on small weighted graphs"
@@ -32,10 +48,26 @@ topics:
           - problem: 'Vertices $A, B, C, D$; edge weights $AB = 1$, $BC = 2$, $CD = 3$, $AD = 4$, $AC = 5$. Find the total weight of a minimum spanning tree.'
             answer: "6"
             solution_sketch: 'Kruskal: take $AB$ ($1$), $BC$ ($2$), $CD$ ($3$) — no cycles formed, all vertices covered. Weight $1 + 2 + 3 = 6$.'
-          - problem: 'Vertices $A, B, C, D$; weights $AB = 2$, $AC = 3$, $BC = 4$, $BD = 1$, $CD = 5$. Give the edge set of the minimum spanning tree.'
-            answer: '$\{AB, AC, BD\}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Kruskal sorts $BD(1), AB(2), AC(3), BC(4), CD(5)$; the first three join all four vertices without a cycle: $1 + 2 + 3 = 6$.'
+          - problem: "Vertices A, B, C, D have edge weights AB = 2, AC = 1, BC = 3, BD = 4, CD = 5. Find the total weight of a minimum spanning tree."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is AB = 2, AC = 1, BC = 3, BD = 4, CD = 5. Kruskal sorts the edges as AC = 1, AB = 2, BC = 3, BD = 4, CD = 5. It takes AC and AB, skips BC because it closes a cycle, and takes BD to join D. The rule is Kruskal's algorithm with a cycle check. The total weight is 1 + 2 + 4 = 7."
+          - problem: "Vertices A, B, C, D, E have edge weights AB = 1, BC = 2, CD = 3, DE = 4, AC = 5, BD = 6, CE = 7. Find the total weight of a minimum spanning tree."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is AB = 1, BC = 2, CD = 3, DE = 4, AC = 5, BD = 6, CE = 7. Kruskal sorts the edges as AB = 1, BC = 2, CD = 3, DE = 4, AC = 5, BD = 6, CE = 7. It takes AB, BC, CD, DE; the edges AC, BD, CE are skipped because each closes a cycle. The rule is Kruskal's algorithm with a cycle check. The total weight is 1 + 2 + 3 + 4 = 10."
+          - problem: "Vertices A, B, C, D, E have edge weights AB = 3, BC = 1, CD = 5, DE = 2, AC = 4, BD = 6, CE = 7. Find the total weight of a minimum spanning tree."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is AB = 3, BC = 1, CD = 5, DE = 2, AC = 4, BD = 6, CE = 7. Kruskal sorts the edges as BC = 1, DE = 2, AB = 3, AC = 4, CD = 5, BD = 6, CE = 7. It takes BC, DE, AB; AC is skipped as a cycle; it takes CD to join the two components. The rule is Kruskal's algorithm with a cycle check. The total weight is 1 + 2 + 3 + 5 = 11."
+          - problem: "Vertices A, B, C, D, E have edge weights AC = 3, AB = 1, BC = 2, CD = 4, DE = 5, BD = 6, CE = 7. Find the total weight of a minimum spanning tree."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is AC = 3, AB = 1, BC = 2, CD = 4, DE = 5, BD = 6, CE = 7. Kruskal sorts the edges as AB = 1, BC = 2, AC = 3, CD = 4, DE = 5, BD = 6, CE = 7. It takes AB, BC, CD, DE; AC, BD, CE are skipped as cycles. The rule is Kruskal's algorithm with a cycle check. The total weight is 1 + 2 + 4 + 5 = 12."
+          - problem: "Vertices A, B, C, D have edge weights AB = 2, BC = 3, CD = 4, AC = 5, BD = 6. Find the total weight of a minimum spanning tree."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is AB = 2, BC = 3, CD = 4, AC = 5, BD = 6. Kruskal sorts the edges as AB = 2, BC = 3, CD = 4, AC = 5, BD = 6. It takes AB, BC, CD; AC and BD are skipped because they close cycles. The rule is Kruskal's algorithm with a cycle check. The total weight is 2 + 3 + 4 = 9."
         constraints: "4-6 vertices, 5-8 edges, distinct small integer weights so the MST is unique; ask for total weight and/or edge list"
     diagnostic_exemplar:
       problem: 'Vertices $P, Q, R, S$; weights $PQ = 3$, $QR = 1$, $RS = 2$, $PS = 4$, $PR = 6$. What is the MST weight?'

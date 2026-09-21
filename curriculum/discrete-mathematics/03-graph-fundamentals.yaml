@@ -27,10 +27,26 @@ topics:
           - problem: 'How many edges does the complete graph $K_5$ have?'
             answer: "10"
             solution_sketch: 'Every pair of the $5$ vertices is joined: $\binom{5}{2} = 10$.'
-          - problem: 'A simple graph has vertex set $\{a, b, c, d\}$ and edge set $\{ab, ac, cd\}$. List the vertices adjacent to $c$, and state the number of edges.'
-            answer: 'Adjacent to $c$: $a$ and $d$; $3$ edges.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Edges $ac$ and $cd$ touch $c$, so its neighbors are $a$ and $d$; the edge list has $3$ edges.'
+          - problem: "A simple graph has vertex set {a, b, c, d} and edge set {ab, ac, cd}. Find the degree of vertex c."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph has vertex set {a, b, c, d} and edge set {ab, ac, cd}. By the definition of degree, vertex c is incident with the edges ac and cd, so its degree is 2. The answer is 2."
+          - problem: "Every vertex of a cycle graph has degree 2. Consider the cycle graph C_8. Find the sum of the degrees of all vertices of C_8."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The cycle graph C_8 has 8 vertices, listed around one cycle. By the degree rule for a cycle graph, each vertex meets exactly 2 edges, so its degree is 2. The sum of the degrees of all vertices is 8 times 2, which is 16. The answer is 16."
+          - problem: "How many edges does the path graph P_5 have?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The path graph P_5 has 5 vertices in a line. By the definition of a path graph, consecutive vertices are joined by an edge, so the number of edges is 5 - 1 = 4. The answer is 4."
+          - problem: "A complete graph K_n has 21 edges. Find n."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A complete graph K_n has 21 edges. By the combination formula, C(n,2) = 21. So n(n-1)/2 = 21, and n(n-1) = 42. Since 7*6 = 42, n = 7. The answer is 7."
+          - problem: "How many edges does the complete graph K_6 have?"
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The complete graph K_6 has 6 vertices. By the definition of a complete graph, every pair of distinct vertices is joined by an edge. Using the combination formula, C(6,2) = 6*5/2 = 15. The answer is 15."
         constraints: "simple undirected graphs, <= 8 vertices; K_n, C_n, P_n vocabulary; C(n,2) edge counts"
       - id: kp2
         name: "Adjacency matrices and lists"
@@ -259,40 +275,88 @@ topics:
         name: "Non-isomorphism via basic invariants"
         key_prerequisites: [graphs-intro, degree-handshake]
         exemplars:
-          - problem: 'Graph $G$ has $6$ vertices and $7$ edges; graph $H$ has $6$ vertices and $8$ edges. Can $G$ and $H$ be isomorphic?'
-            answer: 'No'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'No: isomorphic graphs have the same number of edges, and $7 \\neq 8$. An isomorphism is an adjacency-preserving bijection, so it matches edges one-to-one; vertex and edge counts are invariants.'
-          - problem: 'Graphs $G$ and $H$ each have $5$ vertices and $6$ edges. $G$ has degree sequence $3, 3, 2, 2, 2$ and $H$ has degree sequence $4, 2, 2, 2, 2$. Are they isomorphic?'
-            answer: 'No'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'No: isomorphic graphs have identical degree sequences, and $H$ has a degree-$4$ vertex while $G$ does not. A bijection preserving adjacency sends each vertex to a vertex of the same degree, so the sorted degree sequence is an invariant — even when vertex and edge counts agree.'
+          - problem: "Graph G has 6 vertices and 7 edges. Graph H has 6 vertices and 8 edges. Both graphs are simple. The two graphs have the same number of vertices, so the separating invariant must come from the other data. Which invariant proves that the graphs are not isomorphic?"
+            answer: "edge count"
+            answer_contract: {"kind": "label", "options": [["vertex count"], ["edge count"], ["degree sequence"], ["vertex labels"]]}
+            solution_sketch: "The data are the counts: G has 6 vertices and 7 edges, H has 6 vertices and 8 edges. Step 1, compare the vertex totals: both graphs have 6 vertices, so that invariant agrees. Step 2, compare the edge totals: 7 against 8, so the edge total is the invariant that differs. Step 3, any isomorphism preserves the edge total, so the graphs are not isomorphic. The option vertex count is wrong because both graphs have 6 vertices; the option degree sequence is wrong because no degree list is given here; the option vertex labels is wrong because an isomorphism may rename the vertices. The answer is edge count."
+          - problem: "Graphs G and H each have 5 vertices and 6 edges. The vertex degrees of G are 3, 3, 2, 2, 2, and the vertex degrees of H are 4, 2, 2, 2, 2. Both graphs are simple. Which invariant proves that the two graphs are not isomorphic?"
+            answer: "degree sequence"
+            answer_contract: {"kind": "label", "options": [["vertex count"], ["edge count"], ["degree sequence"], ["vertex labels"]]}
+            solution_sketch: "The data give 5 vertices and 6 edges for each graph, so both totals agree. Step 1, list the degrees of G: 3, 3, 2, 2, 2, and those of H: 4, 2, 2, 2, 2. Step 2, apply the degree-list invariant: a relabeling sends each vertex to a vertex of the same degree, so the two lists must match, and they do not because H has a vertex of degree 4 while the largest degree in G is 3. Step 3, conclude that the graphs are not isomorphic. The option vertex count is wrong because both graphs have 5 vertices; the option edge count is wrong because both graphs have 6 edges; the option vertex labels is wrong because an isomorphism may rename the vertices. The answer is degree sequence."
+          - problem: "Graphs G and H are isomorphic. Graph G has 6 vertices with degrees 4, 3, 3, 2, 2, 2. Find the number of edges of H."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "G has 6 vertices with degrees 4, 3, 3, 2, 2, 2, and H is isomorphic to G. Step 1, apply the degree-list invariant: isomorphic graphs have the same degree list, so the degrees of H are also 4, 3, 3, 2, 2, 2. Step 2, add those degrees: 4 + 3 + 3 + 2 + 2 + 2 = 16. Step 3, use the handshake lemma: the degree sum equals twice the number of edges, so H has 16/2 = 8 edges. The answer is 8."
+          - problem: "Graph G has 5 vertices and 6 edges. Graph H has 5 vertices and 8 edges. Find the number of edges that must be removed from H so that the two graphs have the same number of edges."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "G has 5 vertices and 6 edges, and H has 5 vertices and 8 edges. Step 1, apply the edge-total invariant: isomorphic graphs must have equal edge totals, and 6 is not 8, so the graphs as given are not isomorphic. Step 2, subtract to find the gap: 8 - 6 = 2. Step 3, removing 2 edges from H leaves 6 edges, which matches G. The answer is 2."
+          - problem: "Graph G has 6 vertices whose degrees are 4, 4, 4, 4, 2, 2, and graph H has 6 vertices whose degrees are 5, 5, 3, 3, 3, 3. The two degree lists differ, so the graphs are not isomorphic. Give the degrees that occur in H but not in G, from smallest to largest, separated by commas."
+            answer: "3, 5"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The degrees of G are 4, 4, 4, 4, 2, 2 and the degrees of H are 5, 5, 3, 3, 3, 3. Step 1, collect the degree values that occur in G: 2 and 4. Step 2, collect the degree values that occur in H: 3 and 5. Step 3, keep the values from the second collection that are missing from the first, in increasing order: 3 and 5. The answer is 3, 5."
+          - problem: "Graphs G and H are isomorphic. Graph G has 7 vertices and 10 edges. Find the sum of the degrees of H."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "G has 7 vertices and 10 edges, and H is isomorphic to G. Step 1, apply the edge-total invariant: isomorphic graphs have the same edge total, so H also has 10 edges. Step 2, use the handshake lemma: the sum of the degrees of a graph equals twice its number of edges. Step 3, compute 2 times 10 = 20. The answer is 20."
         constraints: "graphs with <= 8 vertices given by counts, edge lists, or degree sequences; yes/no answers must name the violated invariant (vertex count, edge count, degree sequence); degree sums even"
       - id: kp2
         name: "Exhibiting an isomorphism"
         key_prerequisites: [graphs-intro, functions-injective-surjective]
         exemplars:
-          - problem: '$G$ has vertices $\{1, 2, 3, 4\}$ and edges $\{12, 23, 34, 14\}$; $H$ has vertices $\{a, b, c, d\}$ and edges $\{ac, cb, bd, da\}$. Give an isomorphism $G \to H$ as a mapping table.'
-            answer: '$1 \to a$, $2 \to c$, $3 \to b$, $4 \to d$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Both are $4$-cycles; follow $G$''s cycle $1\!-\!2\!-\!3\!-\!4\!-\!1$ around $H$''s cycle $a\!-\!c\!-\!b\!-\!d\!-\!a$. Check every edge: $12 \to ac$, $23 \to cb$, $34 \to bd$, $14 \to ad$ — all edges of $H$.'
-          - problem: '$G$ has vertices $\{1, 2, 3, 4\}$ and edges $\{12, 23, 24\}$; $H$ has vertices $\{w, x, y, z\}$ and edges $\{wx, wy, wz\}$. Give an isomorphism $G \to H$.'
-            answer: '$2 \to w$, $1 \to x$, $3 \to y$, $4 \to z$ (the degree-$3$ vertices must correspond; the three leaves may be matched in any order).'
-            answer_contract: {kind: none}
-            solution_sketch: 'Match degrees first: $2$ and $w$ are the unique degree-$3$ vertices, so any isomorphism sends $2 \to w$; each edge of $G$ then maps to an edge of $H$ for any assignment of the leaves.'
+          - problem: "G has vertices 1, 2, 3, 4 and edges 12, 23, 34, 14. H has vertices 1, 2, 3, 4 and edges 13, 32, 24, 41. Find the lexicographically smallest isomorphism from G to H as the sequence f(1), f(2), f(3), f(4)."
+            answer: "1, 3, 2, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "G is the 4-cycle 1-2-3-4-1 and H is the 4-cycle 1-3-2-4-1. Step 1: use the cycle structure and choose the smallest image for vertex 1, which is 1. Step 2: its neighbor 2 must map to a neighbor of 1; choose the smaller neighbor 3. Step 3: follow the cycle: 3 maps to 2 and 4 maps to 4. The lexicographically smallest sequence is 1, 3, 2, 4."
+          - problem: "G has vertices 1, 2, 3, 4 and edges 12, 13, 14. H has vertices 1, 2, 3, 4 and edges 21, 23, 24. Find the lexicographically smallest isomorphism from G to H as the sequence f(1), f(2), f(3), f(4)."
+            answer: "2, 1, 3, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "G is the star with center 1 and leaves 2, 3, 4. H is the star with center 2 and leaves 1, 3, 4. Step 1: the unique degree-3 vertex 1 must map to the unique degree-3 vertex 2. Step 2: the leaves may permute; to be lexicographically smallest, map 2 to 1, 3 to 3, and 4 to 4. The answer is 2, 1, 3, 4."
+          - problem: "G has vertices 1, 2, 3, 4, 5 and edges 12, 23, 34, 45, 15. H has vertices 1, 2, 3, 4, 5 and edges 13, 32, 24, 45, 51. Find the lexicographically smallest isomorphism from G to H as the sequence f(1), f(2), f(3), f(4), f(5)."
+            answer: "1, 3, 2, 4, 5"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "G is the 5-cycle 1-2-3-4-5-1 and H is the 5-cycle 1-3-2-4-5-1. Step 1: choose the smallest image for 1, which is 1. Step 2: its neighbor 2 must map to a neighbor of 1; choose 3. Step 3: follow the cycle to get 3 maps to 2, 4 maps to 4, and 5 maps to 5. The lexicographically smallest sequence is 1, 3, 2, 4, 5."
+          - problem: "G has vertices 1, 2, 3, 4, 5 and edges 12, 23, 34, 45. H has vertices 1, 2, 3, 4, 5 and edges 12, 13, 34, 45. Find the lexicographically smallest isomorphism from G to H as the sequence f(1), f(2), f(3), f(4), f(5)."
+            answer: "2, 1, 3, 4, 5"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "G is the path 1-2-3-4-5 and H is the path 2-1-3-4-5. Step 1: endpoints must match; choose the smallest endpoint image for 1, which is 2. Step 2: then 2 must map to 1, and the path is forced: 3 to 3, 4 to 4, 5 to 5. The answer is 2, 1, 3, 4, 5."
+          - problem: "G has vertices 1, 2, 3, 4, 5, 6 and edges 12, 13, 14, 24, 25, 26, 34, 35, 46. H has vertices 1, 2, 3, 4, 5, 6 and edges 13, 15, 23, 24, 25, 35, 36, 45, 46. Find the lexicographically smallest isomorphism from G to H as the sequence f(1), f(2), f(3), f(4), f(5), f(6)."
+            answer: "2, 3, 4, 5, 6, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "G has edges 12,13,14,24,25,26,34,35,46 and H has edges 13,15,23,24,25,35,36,45,46. Step 1: G is asymmetric, so the isomorphism is unique. Step 2: match the unique degree-4 vertex 2 in G to the degree-4 vertex 3 in H, and vertex 4 in G to the degree-4 vertex 5 in H. Step 3: the remaining edges force 1 to 2, 3 to 4, 5 to 6, and 6 to 1. The answer is 2, 3, 4, 5, 6, 1."
+          - problem: "G has vertices 1, 2, 3, 4, 5, 6 and edges 12, 13, 14, 24, 25, 26, 34, 46. H has vertices 1, 2, 3, 4, 5, 6 and edges 12, 13, 14, 16, 23, 24, 25, 35. Find the lexicographically smallest isomorphism from G to H as the sequence f(1), f(2), f(3), f(4), f(5), f(6)."
+            answer: "3, 1, 5, 2, 6, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "G has edges 12,13,14,24,25,26,34,46 and H has edges 12,13,14,16,23,24,25,35. Step 1: G is asymmetric, so the isomorphism is unique. Step 2: the unique degree-1 vertex 5 in G must map to the unique degree-1 vertex 6 in H. Step 3: following the edges gives 1 to 3, 2 to 1, 3 to 5, 4 to 2, and 6 to 4. The answer is 3, 1, 5, 2, 6, 4."
         constraints: "graphs with 4-6 vertices given as edge lists; the answer is a vertex bijection (mapping table); degree matching should guide the construction, and every edge must map to an edge"
       - id: kp3
         name: "Same degree sequence, still not isomorphic"
         key_prerequisites: [degree-handshake, walks-paths-connectivity]
         exemplars:
-          - problem: '$G$ is the cycle $C_6$; $H$ consists of two disjoint triangles ($\{ab, bc, ca\}$ and $\{de, ef, fd\}$). Both are $2$-regular with $6$ vertices and $6$ edges. Are they isomorphic?'
-            answer: 'No'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'No: $G$ is connected ($1$ component) while $H$ has $2$ components, and the number of components is an invariant. Equal degree sequences do not force isomorphism; an isomorphism maps walks to walks, so it preserves connectivity and component counts.'
-          - problem: '$G$ has vertices $\{1, \dots, 5\}$ and edges $\{12, 23, 34, 45, 52\}$; $H$ has vertices $\{a, \dots, e\}$ and edges $\{ab, bc, ca, cd, de\}$. Both are connected with degree sequence $3, 2, 2, 2, 1$. Are they isomorphic?'
-            answer: 'No'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'No: $H$ contains a $3$-cycle ($a\!-\!b\!-\!c$), while the only cycle in $G$ is the $4$-cycle $2\!-\!3\!-\!4\!-\!5$; isomorphisms preserve cycle lengths. The multiset of cycle lengths is an invariant that separates graphs sharing vertex count, edge count, degree sequence, and connectivity.'
+          - problem: "Graph G is the 8-cycle 1-2-3-4-5-6-7-8-1. Graph H has vertices a,b,c,d,e,f,g,h and edges ab, bc, ca, de, ef, fg, gh, hd. Both graphs have 8 vertices, 8 edges, and every vertex of degree 2. State whether G and H can be relabeled to match and give the number of components of H."
+            answer: "verdict = nonisomorphic; components = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["isomorphic"], ["nonisomorphic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "components"}]}
+            solution_sketch: "Full objects: G is one 8-cycle, while H is the disjoint union of a triangle and a 5-cycle. Step 1: compare component counts, because the number of connected components is invariant under relabeling. G has one component and H has two. Step 2: a difference in an invariant proves that no relabeling can match the edges. The option isomorphic is wrong because it ignores the second component. The answer is verdict = nonisomorphic; components = 2."
+          - problem: "Graph G has vertices 1,2,3,4,5 and edges 12, 23, 34, 45, 52. Graph H has vertices a,b,c,d,e and edges ab, bc, ca, cd, de. Both graphs have 5 vertices, 5 edges, and degree sequence 3,2,2,2,1. State whether G and H can be relabeled to match and give the length of the shortest cycle in H."
+            answer: "verdict = notisomorphic; girth = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["isomorphic"], ["notisomorphic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "girth"}]}
+            solution_sketch: "Full objects: G is a 4-cycle 2-3-4-5-2 with leaf 1 attached to 2, while H is a triangle abc with path c-d-e attached at c. Step 1: compare shortest cycle lengths, because cycle length is preserved by relabeling. H has a 3-cycle; G has no 3-cycle because its only cycle is 2-3-4-5-2 of length 4. Step 2: the different shortest cycle lengths separate the graphs. The option isomorphic is wrong because equal degree sequences do not force equal cycles. The answer is verdict = notisomorphic; girth = 3."
+          - problem: "Graph G has vertices 1,2,3,4,5,6 and edges 12, 23, 34, 45, 51, 16. Graph H has vertices a,b,c,d,e,f and edges ab, bc, ca, cd, de, ef. Both graphs have 6 vertices, 6 edges, and degree sequence 3,2,2,2,2,1. State whether G and H can be relabeled to match and give the length of the shortest cycle in G."
+            answer: "verdict = unequal; girth = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["isomorphic"], ["unequal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "girth"}]}
+            solution_sketch: "Full objects: G is a 5-cycle 1-2-3-4-5-1 with leaf 6 attached to 1, while H is a triangle abc with path c-d-e-f attached at c. Step 1: compare shortest cycle lengths, because cycle length is invariant under relabeling. G has a 5-cycle and no triangle, so its shortest cycle has length 5. H has a 3-cycle. Step 2: the different shortest cycle lengths separate the graphs. The option isomorphic is wrong because it assumes the shared degree sequence forces the same short cycles. The answer is verdict = unequal; girth = 5."
+          - problem: "Graph G is the path 1-2-3-4-5-6. Graph H consists of the 4-cycle a-b-c-d-a together with the separate edge e-f. Both graphs have 6 vertices, 5 edges, and degree sequence 2,2,2,2,1,1. State whether G and H can be relabeled to match and give the number of components of G."
+            answer: "verdict = distinct; components = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["isomorphic"], ["distinct"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "components"}]}
+            solution_sketch: "Full objects: G is the path 1-2-3-4-5-6, while H is a 4-cycle a-b-c-d-a plus the separate edge e-f. Step 1: compare component counts, because the number of connected components is invariant under relabeling. G is connected with 1 component, while H has 2 components. Step 2: a difference in an invariant proves that no relabeling can match the edges. The option isomorphic is wrong because it ignores that H is disconnected. The answer is verdict = distinct; components = 1."
+          - problem: "Graph G is the 4-cycle 1-2-3-4-1 with vertex 5 attached to 1 and vertex 6 attached to 3. Graph H is the triangle a-b-c-a with vertex d attached to a, vertex e attached to d, and vertex f attached to c. Both graphs have 6 vertices, 6 edges, and degree sequence 3,3,2,2,1,1. Find the length of the shortest cycle in G."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full objects: G is the 4-cycle 1-2-3-4-1 with leaves 5 at 1 and 6 at 3, while H is a triangle with a longer tail. Step 1: find a cycle in G; the 4-cycle 1-2-3-4-1 has length 4, so the shortest cycle is at most 4. Step 2: check for shorter cycles; G has no triangle because vertices 5 and 6 have degree 1 and cannot lie on a cycle, and the square has no diagonal. Thus the shortest cycle has length exactly 4. The answer is 4."
+          - problem: "Graph G is the triangle 1-2-3-1 together with the edge 4-5 and the isolated vertex 6. Graph H is the path 1-2-3-4-5 together with the isolated vertex 6. Both graphs have 6 vertices, 4 edges, and degree sequence 2,2,2,1,1,0. Find the number of components of G."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full objects: G is a triangle 1-2-3-1, an edge 4-5, and an isolated vertex 6. Step 1: identify the connected pieces; the triangle is one component, the edge is a second component, and vertex 6 is a third component. Step 2: add the component counts, because components are disjoint. The total is 1 + 1 + 1 = 3 components. The answer is 3."
         constraints: "pairs with <= 8 vertices agreeing on vertex count, edge count, and degree sequence; distinguish via component counts or cycle lengths; yes/no answers must name the distinguishing invariant"
     diagnostic_exemplar:
       problem: '$G$ is the cycle $C_8$; $H$ consists of two disjoint $4$-cycles. Both are $2$-regular with $8$ vertices and $8$ edges. Decide whether $G$ and $H$ are isomorphic: give an isomorphism, or name an invariant that differs.'
@@ -329,27 +393,59 @@ topics:
         name: "Existence criteria from degree parity"
         key_prerequisites: [walks-paths-connectivity, degree-handshake]
         exemplars:
-          - problem: 'Does $K_5$ have an Euler circuit? Justify via degrees.'
-            answer: 'Yes'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'Yes: $K_5$ is connected and every vertex has even degree $4$. Euler circuit iff connected (ignoring isolated vertices) and all degrees even.'
-          - problem: 'Does $K_4$ have an Euler circuit or an Euler trail?'
-            answer: 'Neither'
-            answer_contract: {"kind":"label","options":[["Euler circuit"],["Euler trail"],["Neither"]]}
-            solution_sketch: 'Neither: all four vertices have odd degree $3$ — four odd vertices exceed the allowed zero (circuit) or two (trail).'
+          - problem: "A connected graph has degree sequence 2, 2, 2, 4, 4, 2. State the strongest Euler route that exists and give the number of odd-degree vertices. Give the route and the odd count."
+            answer: "route = circuit; odd = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["circuit"], ["trail"]]}, "name": "route"}, {"contract": {"kind": "exact"}, "name": "odd"}]}
+            solution_sketch: "First count degrees: the sequence has no odd values, so the number of odd-degree vertices is 0. The option trail is wrong because a connected graph with 0 odd vertices has an Euler circuit, which is stronger than a trail. By the Euler circuit criterion, 0 odd vertices gives an Euler circuit. The answer is route = circuit; odd = 0."
+          - problem: "Every vertex of a connected graph on 6 vertices has degree 3. State the strongest Euler route that exists and give the number of odd-degree vertices. Give the route and the odd count."
+            answer: "verdict = neither; odd = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["circuit"], ["trail"], ["neither"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "odd"}]}
+            solution_sketch: "Step 1: count the degrees. Every one of the 6 vertices has degree 3, which is odd, so the graph has 6 odd-degree vertices. Step 2: the option circuit is wrong because an Euler circuit requires 0 odd-degree vertices, not 6. Step 3: the option trail is wrong because an Euler trail requires exactly 2 odd-degree vertices, not 6. Step 4: by the Euler criteria, a connected graph with more than 2 odd-degree vertices has neither route. The answer is verdict = neither; odd = 6."
+          - problem: "A connected graph has an Euler trail but no Euler circuit. How many odd-degree vertices does it have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the Euler trail criterion, a connected graph has an Euler trail exactly when it has 0 or 2 odd-degree vertices. The case with no Euler circuit rules out 0 odd vertices, because 0 odd vertices gives a circuit. The only remaining possibility is 2 odd-degree vertices. The answer is 2."
+          - problem: "A connected graph has neither an Euler circuit nor an Euler trail. What is the smallest possible number of odd-degree vertices it can have?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Euler criteria say a circuit needs 0 odd vertices and a trail needs 0 or 2 odd vertices. To have neither, the graph must have more than 2 odd vertices. The number of odd-degree vertices in any graph is even by the handshake lemma, so the smallest number greater than 2 is 4. The answer is 4."
+          - problem: "A connected graph has degree sequence 1, 2, 2, 3, 2, 2. State the strongest Euler route that exists and give the number of odd-degree vertices. Give the route and the odd count."
+            answer: "route = trail; odd = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["circuit"], ["trail"]]}, "name": "route"}, {"contract": {"kind": "exact"}, "name": "odd"}]}
+            solution_sketch: "Count odd degrees: degree 1 appears once and degree 3 appears once, so there are 2 odd-degree vertices. The option circuit is wrong because a connected graph with 2 odd vertices has no Euler circuit. A connected graph with exactly 2 odd vertices has an Euler trail. The answer is route = trail; odd = 2."
+          - problem: "A connected graph has an Euler circuit. How many odd-degree vertices does it have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the Euler circuit criterion, a connected graph has an Euler circuit exactly when every vertex has even degree. Even degree means no vertex has odd degree. The answer is 0."
         constraints: "connected graphs <= 8 vertices; answer must cite the odd-degree count (0, 2, or more)"
       - id: kp2
         name: "Bridges of Konigsberg and route problems"
         key_prerequisites: [walks-paths-connectivity, degree-handshake]
         exemplars:
-          - problem: 'The Konigsberg multigraph has degree sequence $5, 3, 3, 3$. Explain why no walk crosses every bridge exactly once.'
-            answer: 'It has four odd-degree vertices; an Euler trail allows at most two.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Each pass through a vertex uses two edge-ends, so intermediate vertices need even degree; only the two endpoints may be odd.'
-          - problem: 'For which $n \ge 3$ does $K_n$ have an Euler circuit?'
-            answer: 'Odd $n$: each degree $n - 1$ must be even.'
-            answer_contract: {kind: none}
-            solution_sketch: '$K_n$ is connected; all degrees are $n-1$, even exactly when $n$ is odd.'
+          - problem: "A connected multigraph has degree sequence 5, 3, 3, 3. How many vertices of odd degree does it have?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: List the vertex degrees in order: 5, 3, 3, 3. Step 2: Apply the parity test for an Euler trail: a connected graph has an Euler trail only when at most two vertices have odd degree. Step 3: Count the odd entries: 5, 3, 3 and 3 are all odd, so the count is 4. The answer is 4."
+          - problem: "For the complete graphs K_3, K_4, K_5 and K_6, how many have an Euler circuit?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: K_n has an Euler circuit exactly when every degree n - 1 is even, so n must be odd. Step 2: Among 3, 4, 5, 6, the odd values are 3 and 5. Step 3: That gives two graphs, so the count is 2. The answer is 2."
+          - problem: "A delivery route uses a connected multigraph with vertices 1, 2, 3, 4. Their degrees are 3, 2, 4, 1. How many vertices have odd degree?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Read the degree of each vertex: vertex 1 has 3, vertex 2 has 2, vertex 3 has 4, vertex 4 has 1. Step 2: The odd degrees are 3 and 1, so vertices 1 and 4 are odd. Step 3: There are two odd-degree vertices. The answer is 2."
+          - problem: "A connected multigraph has all even vertex degrees. Select the type of Euler route it has, and give the number of odd-degree vertices."
+            answer: "route = circuit; odd = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["circuit"], ["trail"]]}, "name": "route"}, {"contract": {"kind": "exact"}, "name": "odd"}]}
+            solution_sketch: "Step 1: Use the parity test: an Euler circuit needs every degree even. Step 2: The option trail is wrong because a trail need not return to the start, while an all-even graph always allows a closed circuit. Step 3: Because all degrees are even, the graph has a circuit and zero odd vertices. The answer is route = circuit; odd = 0."
+          - problem: "A connected graph has 6 vertices of odd degree. Find the minimum number of trails needed to cover every edge exactly once."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: An Euler trail can have at most two odd-degree vertices, its endpoints. Step 2: Each trail can cover at most two odd vertices, so 6 odd vertices need at least 6 / 2 = 3 trails. Step 3: Three trails are enough because the graph is connected. The answer is 3."
+          - problem: "A bridge network has vertices 1, 2, 3, 4, 5. Their degrees are 2, 2, 2, 2, 4. How many vertices have odd degree?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Read the degrees: 2, 2, 2, 2 and 4. Step 2: Every degree is even, so no vertex has odd degree. Step 3: The count of odd-degree vertices is zero. The answer is 0."
         constraints: "route/bridge framings; multigraphs allowed; justification through degree parity required"
     diagnostic_exemplar:
       problem: 'For which $n \ge 3$ does the complete graph $K_n$ have an Euler circuit? Justify your answer with the degrees.'
@@ -394,14 +490,30 @@ topics:
         name: "Dirac's sufficient condition"
         key_prerequisites: [walks-paths-connectivity]
         exemplars:
-          - problem: 'A graph has $8$ vertices, each of degree at least $4$. Must it have a Hamilton cycle?'
-            answer: 'Yes'
-            answer_contract: {"kind":"label","options":[["Yes"],["No"]]}
-            solution_sketch: 'Yes, by Dirac''s theorem: every degree $\ge n/2 = 4$. Dirac: $n \ge 3$ and minimum degree $\ge n/2$ suffice.'
-          - problem: 'A graph has $6$ vertices with minimum degree $2$. Does Dirac''s theorem apply? Can the graph still be Hamiltonian?'
-            answer: 'Dirac does not apply ($2 < 3$), but the graph may still be Hamiltonian — e.g. the cycle $C_6$ itself.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Dirac is sufficient, not necessary.'
+          - problem: "A graph has 8 vertices and every vertex has degree at least 4. State whether Dirac's condition is met, and give the smallest degree threshold n/2 that Dirac's theorem uses."
+            answer: "dirac = holds; threshold = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "dirac"}, {"contract": {"kind": "exact"}, "name": "threshold"}]}
+            solution_sketch: "Step 1 (Dirac's theorem): the theorem needs n >= 3 and minimum degree at least n/2. Step 2 (threshold computation): here n = 8, so n/2 = 4. Step 3 (comparison): the minimum degree is at least 4, so the condition is met; the option fails would be wrong because 4 is not below the threshold. Dirac's condition is sufficient, not necessary, for a Hamilton cycle. Answer: dirac = holds; threshold = 4."
+          - problem: "A graph has 6 vertices and its minimum degree is 2. State whether Dirac's theorem applies, and give the threshold n/2 it would require."
+            answer: "condition = notmet; threshold = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["met"], ["notmet"]]}, "name": "condition"}, {"contract": {"kind": "exact"}, "name": "threshold"}]}
+            solution_sketch: "Step 1 (Dirac's theorem): the theorem needs n >= 3 and minimum degree at least n/2. Step 2 (threshold computation): here n = 6, so n/2 = 3. Step 3 (comparison): the minimum degree is 2, which is less than 3, so the condition is not met; the option met would be wrong because 2 is below the threshold. Dirac's condition is sufficient, not necessary, so the graph may still have a Hamilton cycle. Answer: condition = notmet; threshold = 3."
+          - problem: "For a graph on 10 vertices, Dirac's theorem guarantees a Hamilton cycle when every vertex has degree at least n/2. Find the smallest integer degree bound that satisfies this condition."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Dirac's theorem): the bound is n/2 with n >= 3. Step 2 (substitution): for n = 10, n/2 = 5. Step 3 (integer degree): the smallest integer degree bound that satisfies the condition is 5. Answer: 5."
+          - problem: "A graph on 8 vertices satisfies Dirac's condition. Find the smallest integer minimum degree it can have."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Dirac's theorem): the minimum degree must be at least n/2. Step 2 (substitution): for n = 8, n/2 = 4. Step 3 (integer degree): since degrees are integers, the smallest possible minimum degree is 4. Dirac's condition is sufficient, not necessary. Answer: 4."
+          - problem: "A network graph has 7 vertices and minimum degree 4. State whether Dirac's condition is met, and give n/2 as a fraction."
+            answer: "condition = met; threshold = 7/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["met"], ["notmet"]]}, "name": "condition"}, {"contract": {"kind": "exact"}, "name": "threshold"}]}
+            solution_sketch: "Step 1 (Dirac's theorem): the theorem needs n >= 3 and minimum degree at least n/2. Step 2 (threshold computation): here n = 7, so n/2 = 7/2. Step 3 (comparison): the minimum degree is 4, and 4 is greater than 7/2, so the condition is met; the option notmet would be wrong because 4 is not below 7/2. Answer: condition = met; threshold = 7/2."
+          - problem: "A connected graph has 9 vertices, every vertex has even degree, and minimum degree 4. Dirac's condition is sufficient for a Hamilton cycle but not necessary. State whether Dirac's condition is met, and give n/2."
+            answer: "condition = notmet; threshold = 9/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["met"], ["notmet"]]}, "name": "condition"}, {"contract": {"kind": "exact"}, "name": "threshold"}]}
+            solution_sketch: "Step 1 (Euler contrast): the even-degree fact is the Euler criterion, not Dirac's condition. Step 2 (threshold computation): Dirac's condition requires minimum degree at least n/2; here n = 9, so n/2 = 9/2. Step 3 (comparison): the minimum degree is 4, which is less than 9/2, so the condition is not met; the option met would be wrong because 4 is below the threshold. Answer: condition = notmet; threshold = 9/2."
         constraints: "n <= 10; must distinguish sufficient from necessary; contrast with Euler criteria"
     diagnostic_exemplar:
       problem: 'A graph has $10$ vertices, each of degree at least $5$. Must it have a Hamilton cycle? Name the theorem that applies — and is the condition also necessary?'
@@ -447,6 +559,22 @@ topics:
           - problem: 'A forest has $20$ vertices and $3$ components. How many edges does it have?'
             answer: "17"
             solution_sketch: 'Each tree component with $n_i$ vertices has $n_i - 1$ edges; total $20 - 3 = 17$.'
+          - problem: "A tree has 23 vertices. How many edges does it have?"
+            answer: "22"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For any tree on n vertices, the number of edges is n - 1. Here n = 23, so the edge count is 23 - 1 = 22. The answer is 22."
+          - problem: "A forest has 24 vertices and 4 components. How many edges does it have?"
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A forest with c components satisfies the relation |E| = |V| - c. Here |V| = 24 and c = 4, so |E| = 24 - 4 = 20. The answer is 20."
+          - problem: "A forest has 9 edges and 5 components. How many vertices does it have?"
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a forest, the edge count relation |E| = |V| - c rearranges to |V| = |E| + c. With |E| = 9 and c = 5, this gives |V| = 9 + 5 = 14. The answer is 14."
+          - problem: "A tree has 30 vertices. Two distinct vertices are chosen. How many simple paths between them does the tree have?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A tree is connected and has no cycles, so the simple path between any two distinct vertices is unique. Therefore the chosen pair has exactly 1 simple path. The answer is 1."
         constraints: "trees/forests <= 30 vertices; use |E| = |V| - c"
       - id: kp2
         name: "Degree constraints and leaves"
