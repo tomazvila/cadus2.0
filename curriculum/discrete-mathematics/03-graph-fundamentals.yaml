@@ -205,6 +205,22 @@ topics:
           - problem: 'What is the minimum number of edges a connected graph on $8$ vertices can have?'
             answer: "7"
             solution_sketch: 'A connected graph on $n$ vertices needs at least $n - 1$ edges (achieved exactly by trees).'
+          - problem: "The graph on vertices $\\{1, \\dots, 8\\}$ has edges $\\{12, 23, 34, 56, 67, 78\\}$. How many connected components does it have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph has vertices 1 through 8 and edges 12, 23, 34, 56, 67, 78. Step 1: apply the component tracing rule by following edges from vertex 1; edges 12, 23, 34 connect vertices 1, 2, 3, 4 into one component. Step 2: follow the edges from vertex 5; edges 56, 67, 78 connect vertices 5, 6, 7, 8 into a second component. Step 3: no edge joins these two sets, so the connected components are {1,2,3,4} and {5,6,7,8}. The number of connected components is 2."
+          - problem: "A network has $8$ nodes and is split into $5$ separate connected parts. What is the smallest possible number of links between nodes?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The network has 8 nodes and 5 separate connected parts. Step 1: use the edge lower bound for components: a part with v nodes needs at least v - 1 links. Step 2: sum over all parts, giving at least n - c = 8 - 5 = 3 links. Step 3: this bound is reached when one part is a path on 4 nodes and the other four parts are single nodes. The smallest possible number of links is 3."
+          - problem: "The graph on vertices $\\{a, b, c, d, e, f\\}$ has edges $\\{ab, bc, de, ef\\}$. How many connected components does it have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph has vertices a, b, c, d, e, f and edges ab, bc, de, ef. Step 1: apply the component tracing rule by following edges from a; edges ab and bc connect a, b, c into one component. Step 2: follow the edges from d; edges de and ef connect d, e, f into a second component. Step 3: no edge joins the two sets, so the connected components are {a,b,c} and {d,e,f}. The number of connected components is 2."
+          - problem: "A connected graph has $7$ vertices. What is the minimum number of edges it can have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The connected graph has 7 vertices. Step 1: use the connected-graph edge lower bound n - 1. Step 2: compute n - 1 = 7 - 1 = 6. Step 3: a tree on 7 vertices reaches this bound. The minimum number of edges is 6."
         constraints: "<= 8 vertices; component counting from an edge list; n-1 and n-c edge bounds"
     diagnostic_exemplar:
       problem: 'A graph has $9$ vertices and $3$ connected components. What is the minimum possible number of edges?'
