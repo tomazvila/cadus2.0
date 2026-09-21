@@ -912,14 +912,30 @@ topics:
         name: Check differentiability at the seam
         key_prerequisites: [differentiability, derivatives-of-polynomials]
         exemplars:
-          - problem: 'Let $f(x) = x^2$ for $x < 1$ and $f(x) = 2x - 1$ for $x \geq 1$. Is $f$ differentiable at $x = 1$, and if so what is $f''(1)$?'
-            answer: "yes; f'(1) = 2"
-            answer_contract: {kind: none}
-            solution_sketch: 'Values match ($1 = 1$) and one-sided slopes match ($2 \cdot 1 = 2$), so $f''(1) = 2$.'
-          - problem: 'Let $g(x) = x^2$ for $x < 2$ and $g(x) = 4x - 3$ for $x \geq 2$. Is $g$ differentiable at $x = 2$?'
-            answer: "no — g is not even continuous there (4 ≠ 5)"
-            answer_contract: {kind: none}
-            solution_sketch: "no — g is not even continuous there (4 ≠ 5)"
+          - problem: "Let f(x) = x^2 for x < 3 and f(x) = 6x - 9 for x >= 3. Check continuity first, then one-sided derivatives at x = 3, and find f'(3)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full function: f(x) = x^2 for x < 3 and f(x) = 6x - 9 for x >= 3. Continuity check: left value 3^2 = 9 and right value 6*3 - 9 = 9, so f is continuous at 3. One-sided derivative check: the left branch x^2 has derivative 2x, which at x = 3 gives 6; the right branch 6x - 9 has derivative 6. The slopes match, so f is differentiable and f'(3) = 6."
+          - problem: "Let g(x) = x^2 for x < 1 and g(x) = 3x - 1 for x >= 1. Check continuity first, then one-sided derivatives at x = 1. Give the verdict and the left-hand slope."
+            answer: "verdict = jump; leftslope = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["smooth"], ["kink"], ["jump"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "leftslope"}]}
+            solution_sketch: "Full function: g(x) = x^2 for x < 1 and g(x) = 3x - 1 for x >= 1. Continuity check: left value 1^2 = 1 and right value 3*1 - 1 = 2, so g is not continuous at 1. One-sided derivative check: the left branch x^2 has derivative 2x, which at x = 1 gives 2. Since the graph has a jump, g is not differentiable at 1. The option smooth ignores the jump; the option kink would fit only a continuous seam where the two one-sided slopes differ. Therefore verdict = jump; leftslope = 2."
+          - problem: "Let f(x) = x^2 + 2x for x < 1 and f(x) = 4x - 1 for x >= 1. Check continuity first, then one-sided derivatives at x = 1, and find f'(1)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full function: f(x) = x^2 + 2x for x < 1 and f(x) = 4x - 1 for x >= 1. Continuity check: left value 1^2 + 2*1 = 3 and right value 4*1 - 1 = 3, so f is continuous at 1. One-sided derivative check: the left branch x^2 + 2x has derivative 2x + 2, which at x = 1 gives 4; the right branch 4x - 1 has derivative 4. The slopes match, so f is differentiable and f'(1) = 4."
+          - problem: "Let h(x) = x^3 for x < 2 and h(x) = 6x - 4 for x >= 2. Check continuity first, then one-sided derivatives at x = 2. Give the verdict and the right-hand slope."
+            answer: "verdict = kink; rightslope = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["smooth"], ["kink"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "rightslope"}]}
+            solution_sketch: "Full function: h(x) = x^3 for x < 2 and h(x) = 6x - 4 for x >= 2. Continuity check: left value 2^3 = 8 and right value 6*2 - 4 = 8, so h is continuous at 2. One-sided derivative check: the left branch x^3 has derivative 3x^2, which at x = 2 gives 12; the right branch 6x - 4 has derivative 6. The slopes differ, so h is not differentiable; the verdict is kink and the right-hand slope is 6. Therefore verdict = kink; rightslope = 6."
+          - problem: "Let p(x) = x^2 + 3x - 2 for x < 1 and p(x) = 5x - 3 for x >= 1. Check continuity first, then one-sided derivatives at x = 1, and find p'(1)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full function: p(x) = x^2 + 3x - 2 for x < 1 and p(x) = 5x - 3 for x >= 1. Continuity check: left value 1^2 + 3*1 - 2 = 2 and right value 5*1 - 3 = 2, so p is continuous at 1. One-sided derivative check: the left branch x^2 + 3x - 2 has derivative 2x + 3, which at x = 1 gives 5; the right branch 5x - 3 has derivative 5. The slopes match, so p is differentiable and p'(1) = 5."
+          - problem: "Let q(x) = x^2 + 1 for x < 3 and q(x) = 5x - 4 for x >= 3. Check continuity first, then one-sided derivatives at x = 3. Give the verdict and the right-hand slope."
+            answer: "verdict = gap; rightslope = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["linked"], ["gap"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "rightslope"}]}
+            solution_sketch: "Full function: q(x) = x^2 + 1 for x < 3 and q(x) = 5x - 4 for x >= 3. Continuity check: left value 3^2 + 1 = 10 and right value 5*3 - 4 = 11, so q is not continuous at 3. One-sided derivative check: the right branch 5x - 4 has derivative 5. Since the function is not continuous, it is not differentiable, so the verdict is gap and the right-hand slope is 5. Therefore verdict = gap; rightslope = 5."
         constraints: "check continuity first, then one-sided derivatives; polynomial branches"
       - id: kp3
         name: Choose constants to make a piecewise function differentiable
@@ -1100,6 +1116,18 @@ topics:
           - problem: 'Find $\frac{dy}{dx}$ for $x^2 y + y^2 = 5$.'
             answer: "-2xy/(x^2 + 2y)"
             solution_sketch: '$2xy + x^2 y'' + 2y y'' = 0$; collect: $y''(x^2 + 2y) = -2xy$.'
+          - problem: "Find $\\frac{dy}{dx}$ in terms of $x$ and $y$ for the curve $xy + y^2 = 9$."
+            answer: "-y/(x+2y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1 (product rule and power rule): differentiate $xy + y^2 = 9$ term by term with respect to $x$, getting $y + x\\frac{dy}{dx} + 2y\\frac{dy}{dx} = 0$. Step 2 (collect and solve): collect the $\\frac{dy}{dx}$ terms on one side as $(x+2y)\\frac{dy}{dx} = -y$. Therefore $\\frac{dy}{dx} = -y/(x+2y)$."
+          - problem: "Find $\\frac{dy}{dx}$ in terms of $x$ and $y$ for the curve $x^2y + y^3 = 10$."
+            answer: "-2xy/(x^2+3y^2)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1 (product rule and power rule): differentiate $x^2y + y^3 = 10$ with respect to $x$, getting $2xy + x^2\\frac{dy}{dx} + 3y^2\\frac{dy}{dx} = 0$. Step 2 (collect): group the $\\frac{dy}{dx}$ terms as $(x^2+3y^2)\\frac{dy}{dx} = -2xy$. Thus $\\frac{dy}{dx} = -2xy/(x^2+3y^2)$."
+          - problem: "Find $\\frac{dy}{dx}$ in terms of $x$ and $y$ for the curve $x^2y + 4y^2 = 15$."
+            answer: "-2xy/(x^2+8y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1 (product rule and power rule): differentiate $x^2y + 4y^2 = 15$ with respect to $x$, getting $2xy + x^2\\frac{dy}{dx} + 8y\\frac{dy}{dx} = 0$. Step 2 (collect and solve): collect the $\\frac{dy}{dx}$ terms as $(x^2+8y)\\frac{dy}{dx} = -2xy$. Therefore $\\frac{dy}{dx} = -2xy/(x^2+8y)$."
         constraints: "one xy or x²y term; collect the dy/dx terms on one side before solving"
       - id: kp2
         name: Tangent lines to implicit curves
@@ -1114,6 +1142,18 @@ topics:
           - problem: 'Find the tangent line to $x^2 + y^2 = 25$ at $(3, 4)$. Give the expression for $y$.'
             answer: "-3x/4 + 25/4"
             solution_sketch: 'Slope $-\frac{x}{y} = -\frac{3}{4}$; point-slope through $(3, 4)$ gives $y = -\frac{3x}{4} + \frac{25}{4}$.'
+          - problem: "Find the slope of the tangent to x^2 + xy + y^2 = 19 at (2, 3)."
+            answer: "-7/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate x^2 + xy + y^2 = 19 implicitly: 2x + y + x dy/dx + 2y dy/dx = 0 by the product rule and power rule. Solve for dy/dx: dy/dx = -(2x + y)/(x + 2y). At (2, 3): -(4 + 3)/(2 + 6) = -7/8. The slope is -7/8."
+          - problem: "Give the tangent line to x^2 + xy = 6 at (2, 1) as an expression for y."
+            answer: "-5x/2 + 6"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Differentiate x^2 + xy = 6 implicitly: 2x + y + x dy/dx = 0 by the product rule and power rule. Solve for dy/dx: dy/dx = -(2x + y)/x. At (2, 1) the slope is -(4 + 1)/2 = -5/2. Point-slope through (2, 1): y - 1 = -5/2 (x - 2), so y = -5x/2 + 6. The tangent line is -5x/2 + 6."
+          - problem: "For x^2 + y^2 = 25, find the y-intercept of the tangent line at (4, 3)."
+            answer: "25/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate x^2 + y^2 = 25 implicitly: 2x + 2y dy/dx = 0, so dy/dx = -x/y by implicit differentiation. At (4, 3), the slope is -4/3. The tangent line is y - 3 = -4/3 (x - 4), so y = -4x/3 + 25/3. The y-intercept is 25/3."
         constraints: "the given point must satisfy the equation; slopes are simple fractions"
       - id: kp3
         name: Second derivatives implicitly
@@ -1165,6 +1205,22 @@ topics:
           - problem: 'Let $f(x) = x^5 + x + 1$, so $f(1) = 3$. Find $(f^{-1})''(3)$.'
             answer: "1/6"
             solution_sketch: '$f''(x) = 5x^4 + 1$, so $f''(1) = 6$.'
+          - problem: "The function f(x) = x^7 + 1 has f(1) = 2. Find the derivative of the inverse function of f at 2."
+            answer: "1/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The inverse-derivative formula gives (f^-1)'(2) = 1/f'(1) because f(1) = 2. Step 2: Differentiate f(x) = x^7 + 1 by the power rule to get f'(x) = 7x^6, so f'(1) = 7. Step 3: Substitute to get 1/7. The answer is 1/7."
+          - problem: "The function f(x) = e^x + 3 has f(0) = 4. Find the derivative of the inverse function of f at 4."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The inverse-derivative formula gives (f^-1)'(4) = 1/f'(0) because f(0) = 4. Step 2: Differentiate f(x) = e^x + 3 by the exponential derivative rule to get f'(x) = e^x, so f'(0) = 1. Step 3: Substitute to get 1. The answer is 1."
+          - problem: "The function f(x) = x^5 + 4x + 1 has f(1) = 6. Find the derivative of the inverse function of f at 6."
+            answer: "1/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The inverse-derivative formula gives (f^-1)'(6) = 1/f'(1) because f(1) = 6. Step 2: Differentiate f(x) = x^5 + 4x + 1 by the power rule to get f'(x) = 5x^4 + 4, so f'(1) = 9. Step 3: Substitute to get 1/9. The answer is 1/9."
+          - problem: "A function satisfies f(x) = x^3 + 5x + 2, and f(1) = 8. Compute the derivative of its inverse at 8."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The inverse-derivative formula gives (f^-1)'(8) = 1/f'(1) because f(1) = 8. Step 2: Differentiate f(x) = x^3 + 5x + 2 by the power rule to get f'(x) = 3x^2 + 5, so f'(1) = 8. Step 3: Substitute to get 1/8. The answer is 1/8."
         constraints: "f(a) given or trivially computed; f'(a) is a small integer"
       - id: kp2
         name: Inverse derivatives from tables
