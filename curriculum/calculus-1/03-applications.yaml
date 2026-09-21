@@ -1144,14 +1144,30 @@ topics:
         name: The first derivative test
         key_prerequisites: [critical-points-extrema]
         exemplars:
-          - problem: 'Use the first derivative test to classify the critical points of $f(x) = x^3 - 6x^2 + 9x$ and give the function values there.'
-            answer: "local max f(1) = 4; local min f(3) = 0"
-            answer_contract: {kind: none}
-            solution_sketch: '$f'' = 3(x-1)(x-3)$ is $+, -, +$, so max at $1$ and min at $3$; $f(1) = 4$, $f(3) = 0$.'
-          - problem: '$f''(x) = x^2(x - 2)$. Does $f$ have a local extremum at $x = 0$?'
-            answer: "no — f' does not change sign at 0 (negative on both sides)"
-            answer_contract: {kind: none}
-            solution_sketch: "no — f' does not change sign at 0 (negative on both sides)"
+          - problem: "For f(x) = x^3 - 3x^2 - 9x + 5, the derivative is f'(x) = 3(x + 1)(x - 3). Use the first derivative test and find fmax, the local maximum value, and fmin, the local minimum value."
+            answer: "fmax = 10; fmin = -22"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fmax"}, {"contract": {"kind": "exact"}, "name": "fmin"}]}
+            solution_sketch: "For f(x) = x^3 - 3x^2 - 9x + 5 the derivative f'(x) = 3(x + 1)(x - 3) has sign pattern positive, negative, positive, so by the first derivative test the local maximum is at x = -1 and the local minimum is at x = 3. Evaluate f(-1) = -1 - 3 + 9 + 5 = 10 and f(3) = 27 - 27 - 27 + 5 = -22. The full result is fmax = 10; fmin = -22."
+          - problem: "A differentiable function has f'(x) = (x + 1)^2(x - 3). At the critical number x = -1, select the correct classification of the point."
+            answer: "neither"
+            answer_contract: {"kind": "label", "options": [["maximum"], ["minimum"], ["neither"], ["unknown"]]}
+            solution_sketch: "Around x = -1 the factor (x + 1)^2 is positive on both sides and (x - 3) is negative, so f' is negative on both sides and the first derivative test gives no extremum; x = 3 is a separate critical number and is not the point asked. The option maximum is wrong because f' never changes from positive to negative at x = -1; the option minimum is wrong because f' never changes from negative to positive; the option unknown is wrong because the sign behavior on both sides is fully known. The classification is neither."
+          - problem: "For f(x) = x^3 - 12x + 1, the derivative is f'(x) = 3(x - 2)(x + 2). Use the first derivative test at x = -2 and give verdict, the type of extremum, and fval, the value of f there."
+            answer: "verdict = maximum; fval = 17"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["maximum"], ["minimum"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fval"}]}
+            solution_sketch: "For f(x) = x^3 - 12x + 1, left of x = -2 both factors of f'(x) = 3(x - 2)(x + 2) are negative so f' is positive, and right of x = -2 the sign changes from positive to negative, so the first derivative test gives a maximum. The option minimum is wrong because the sign change goes from positive to negative, not from negative to positive. Evaluate f(-2) = -8 + 24 + 1 = 17. The result is verdict = maximum; fval = 17."
+          - problem: "For f(x) = 2x^3 + 3x^2 - 36x + 5, the derivative is f'(x) = 6(x + 3)(x - 2). Find the local maximum value of f."
+            answer: "86"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For f(x) = 2x^3 + 3x^2 - 36x + 5 the derivative f'(x) = 6(x + 3)(x - 2) is positive, negative, positive in that order, so by the first derivative test the local maximum occurs at x = -3. Evaluate f(-3) = 2(-27) + 3(9) + 108 + 5 = 86. The local maximum value is 86."
+          - problem: "For f(x) = x^3 - 6x^2 - 15x + 8, the derivative is f'(x) = 3(x - 5)(x + 1). Find the local minimum value of f."
+            answer: "-92"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For f(x) = x^3 - 6x^2 - 15x + 8 the derivative f'(x) = 3(x - 5)(x + 1) is positive, negative, positive, so by the first derivative test the local minimum occurs at x = 5. Evaluate f(5) = 125 - 150 - 75 + 8 = -92. The local minimum value is -92."
+          - problem: "Use the first derivative test on f(x) = 2x^3 - 3x^2 - 12x + 5, whose derivative is f'(x) = 6(x - 2)(x + 1). Give fhi, the local maximum value, and flo, the local minimum value."
+            answer: "fhi = 12; flo = -15"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fhi"}, {"contract": {"kind": "exact"}, "name": "flo"}]}
+            solution_sketch: "For f(x) = 2x^3 - 3x^2 - 12x + 5 the derivative f'(x) = 6(x - 2)(x + 1) has sign pattern positive, negative, positive, so the first derivative test gives a local maximum at x = -1 and a local minimum at x = 2. Evaluate f(-1) = -2 - 3 + 12 + 5 = 12 and f(2) = 16 - 12 - 24 + 5 = -15. The full result is fhi = 12; flo = -15."
         constraints: "include one no-sign-change trap; function values are integers"
       - id: kp3
         name: Monotonicity with products and exponentials
@@ -1273,13 +1289,29 @@ topics:
         name: Concavity and the graph
         key_prerequisites: [higher-order-derivatives, increasing-decreasing-intervals]
         exemplars:
-          - problem: 'A function has $f''(x) > 0$ and $f''''(x) < 0$ on an interval. Describe the shape of its graph there.'
-            answer: "increasing but bending downward (rising at a decreasing rate)"
-            answer_contract: {kind: none}
-            solution_sketch: "increasing but bending downward (rising at a decreasing rate)"
           - problem: 'For $f(x) = x^3 - 3x$, give the inflection point as an ordered pair.'
             answer: "(0, 0)"
             solution_sketch: '$f''''$ changes sign at $x = 0$ and $f(0) = 0$.'
+          - problem: "On an interval, a function has f'(x) > 0 and f''(x) < 0. Select the description of its graph on that interval."
+            answer: "increasing concave down"
+            answer_contract: {"kind": "label", "options": [["increasing concave down"], ["increasing concave up"], ["decreasing concave down"], ["decreasing concave up"]]}
+            solution_sketch: "The first derivative sign gives increasing because f'(x) > 0 means the graph rises left to right. The second derivative sign gives concave down because f''(x) < 0 means the slope decreases. The option increasing concave up is wrong because positive f'' gives concave up; decreasing concave down is wrong because positive f' gives increasing; decreasing concave up is wrong on both signs. The description is increasing concave down."
+          - problem: "Let f(x) = x^3 - 6x^2 + 5. Give the inflection point as (x, y)."
+            answer: "(2, -11)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let f(x) = x^3 - 6x^2 + 5. Compute f''(x) = 6x - 12 by the power rule. Set f''(x) = 0: 6x - 12 = 0 gives x = 2. Compute f(2) = 8 - 24 + 5 = -11. The inflection point is (2, -11)."
+          - problem: "Let f(x) = x^3 - 12x. Give the interval where f is increasing and concave up as an inequality in x."
+            answer: "x > 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Let f(x) = x^3 - 12x. First derivative f'(x) = 3x^2 - 12 = 3(x-2)(x+2). Increasing where f'(x) > 0: x < -2 or x > 2. Second derivative f''(x) = 6x. Concave up where f''(x) > 0: x > 0. The overlap is x > 2."
+          - problem: "Let f(x) = x^3 - 3x^2 + 4. Give the inflection point as (x, y)."
+            answer: "(1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let f(x) = x^3 - 3x^2 + 4. Compute f''(x) = 6x - 6. Set f''(x) = 0: 6x - 6 = 0 gives x = 1. Compute f(1) = 1 - 3 + 4 = 2. The inflection point is (1, 2)."
+          - problem: "Let f(x) = x^3 - 6x^2 + 9x. Find the x-coordinate of the inflection point."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let f(x) = x^3 - 6x^2 + 9x. Compute f''(x) = 6x - 12. Set f''(x) = 0: 6x - 12 = 0. Solve to get x = 2. The x-coordinate is 2."
         constraints: "combine first- and second-derivative sign information verbally or as ordered pairs"
     diagnostic_exemplar:
       problem: 'Find the intervals of concavity of $f(x) = x^3 - 6x^2$ and give its inflection point as an ordered pair.'
@@ -1328,27 +1360,59 @@ topics:
         name: When the test is inconclusive
         key_prerequisites: [concavity-inflection-points, increasing-decreasing-intervals]
         exemplars:
-          - problem: '$f(x) = x^4$ has a critical point at $x = 0$ with $f''''(0) = 0$. What does the second derivative test say, and how do you classify the point?'
-            answer: "the test is inconclusive; the first derivative test (f' = 4x³ changes - to +) shows a local min"
-            answer_contract: {kind: none}
-            solution_sketch: "the test is inconclusive; the first derivative test (f' = 4x³ changes - to +) shows a local min"
-          - problem: '$f(x) = x^3$ has a critical point at $x = 0$ with $f''''(0) = 0$. Classify it.'
-            answer: "neither a max nor a min — f' = 3x² does not change sign"
-            answer_contract: {kind: none}
-            solution_sketch: "neither a max nor a min — f' = 3x² does not change sign"
+          - problem: "The function $f(x) = (x - 1)^4 + 5$ has a critical point at $x = 1$ with $f''(1) = 0$, so the second derivative test is inconclusive. Fall back to the first derivative test: check the sign of $f'(x) = 4(x - 1)^3$ on both sides of $x = 1$. What is the verdict, and what is the value of $f(1)$?"
+            answer: "verdict = min; value = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["min"], ["max"], ["neither"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Full object: $f(x) = (x - 1)^4 + 5$ with critical point $x = 1$. Step 1 (second derivative test): $f''(x) = 12(x - 1)^2$, so $f''(1) = 0$ and the test gives no verdict. Step 2 (first derivative test): $f'(x) = 4(x - 1)^3$ is negative for $x < 1$ and positive for $x > 1$, so the point is a local minimum. Step 3 (evaluation): $f(1) = 5$. So verdict = min; value = 5."
+          - problem: "Let $f(x) = (x + 2)^3$. The only critical point is $x = -2$, where $f''(-2) = 0$, so the second derivative test is inconclusive. Fall back to the first derivative test: check the sign of $f'(x) = 3(x + 2)^2$ on both sides of $x = -2$. What is the verdict, and what is the value of $f(-2)$?"
+            answer: "verdict = neither; value = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["min"], ["max"], ["neither"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Full object: $f(x) = (x + 2)^3$ with critical point $x = -2$. Step 1 (second derivative test): $f''(x) = 6(x + 2)$, so $f''(-2) = 0$ and the test is inconclusive. Step 2 (first derivative test): $f'(x) = 3(x + 2)^2$ is nonnegative on both sides of $x = -2$, so $f'$ does not change sign and the point is neither. Step 3 (evaluation): $f(-2) = 0$. So verdict = neither; value = 0."
+          - problem: "Consider $f(x) = 5 - (x + 1)^4$. The point $x = -1$ is critical and satisfies $f''(-1) = 0$, so the second derivative test is inconclusive. Study the sign of $f'$ on both sides of $x = -1$. Which class does the critical point fall into?"
+            answer: "local maximum"
+            answer_contract: {"kind": "label", "options": [["local maximum"], ["local minimum"], ["neither a maximum nor a minimum"], ["undetermined"]]}
+            solution_sketch: "Full object: $f(x) = 5 - (x + 1)^4$ with critical point $x = -1$. Step 1 (second derivative test): $f''(x) = -12(x + 1)^2$, so $f''(-1) = 0$ and the test is inconclusive. Step 2 (first derivative test): $f'(x) = -4(x + 1)^3$ is positive for $x < -1$ and negative for $x > -1$, so $f$ rises and then falls. The option local minimum reads the signs backwards; the option neither a maximum nor a minimum copies the cubic case; the option undetermined wrongly assumes that $f'' = 0$ always blocks a classification. The key is local maximum."
+          - problem: "Let $f(x) = x^6$. The critical point $x = 0$ has $f''(0) = 0$, so the second derivative test fails. Use the sign of $f'(x) = 6x^5$ instead, and give, as an inequality in x, the set on which $f$ is decreasing."
+            answer: "x < 0"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Full object: $f(x) = x^6$ with critical point $x = 0$. Step 1 (second derivative test): $f''(x) = 30x^4$, so $f''(0) = 0$ and the test fails. Step 2 (first derivative test): $f'(x) = 6x^5$ is negative for $x < 0$ and positive for $x > 0$, so $f$ falls on the left of $0$ and rises on the right. Step 3 (interval form): the decreasing set is all $x$ with $x$ below $0$. The key is x < 0."
+          - problem: "A cable between two poles hangs with height $h(x) = 2 + (x - 3)^4$ meters over the road, measured at position $x$. At $x = 3$ we have $h''(3) = 0$, so the second derivative test is inconclusive. Use the sign of $h'(x) = 4(x - 3)^3$ to classify the critical point. Give the extremum point of $h$ as (x, y)."
+            answer: "(3, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: $h(x) = 2 + (x - 3)^4$ with critical point $x = 3$. Step 1 (second derivative test): $h''(x) = 12(x - 3)^2$, so $h''(3) = 0$ and the test is inconclusive. Step 2 (first derivative test): $h'(x) = 4(x - 3)^3$ is negative for $x < 3$ and positive for $x > 3$, so the point is a minimum. Step 3 (evaluation): $h(3) = 2$. The extremum point as (x, y) is (3, 2)."
+          - problem: "For $f(x) = x^n$ with a positive integer $n$, the point $x = 0$ is critical and $f''(0) = 0$, so the second derivative test is inconclusive, yet the first derivative test shows a local minimum at $x = 0$. Find the smallest positive integer $n$ with this behavior."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $f(x) = x^n$ at the critical point $x = 0$. Step 1 (second derivative test): $f''(x) = n(n - 1)x^(n - 2)$ vanishes at $0$ for every $n \\ge 3$, so the test is inconclusive for $n \\ge 3$ and conclusive for $n = 2$. Step 2 (candidate check): for $n = 3$, $f'(x) = 3x^2$ does not change sign, so the point is neither, which fails the condition. Step 3 (first derivative test): for $n = 4$, $f'(x) = 4x^3$ changes from negative to positive, a local minimum. The smallest such $n$ is 4."
         constraints: "f''(c) = 0 cases; fall back to the first derivative test"
       - id: kp3
         name: Choose the right test
         key_prerequisites: [critical-points-extrema, concavity-inflection-points]
         exemplars:
-          - problem: 'Classify the critical points of $f(x) = x^4 - 4x^3$ (use whichever test works at each point).'
-            answer: "x = 3 is a local min (f''(3) = 36 > 0); x = 0 is not an extremum (f' = 4x²(x-3) keeps the same sign around 0)"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''(x) = 4x^3 - 12x^2 = 4x^2(x - 3)$; $f''''(x) = 12x^2 - 24x$, $f''''(0) = 0$ forces the sign-chart fallback at $0$.'
-          - problem: 'For a critical point $c$ with $f''''(c) < 0$, what can you conclude?'
-            answer: "f has a local maximum at c"
-            answer_contract: {kind: none}
-            solution_sketch: "f has a local maximum at c"
+          - problem: "Consider the function f(x) = x^4 - 8x^3. Find the x-coordinate of its local minimum."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let f(x) = x^4 - 8x^3. Then f'(x) = 4x^3 - 24x^2 = 4x^2(x - 6), so the critical points are x = 0 and x = 6. The second derivative is f''(x) = 12x^2 - 48x, and f''(6) = 432 - 288 = 144 > 0, so the second derivative test gives a local minimum at x = 6 with a positive justifying sign. At x = 0 the value f''(0) = 0 makes that test fail, and the sign chart of f' shows f' < 0 on both sides of 0, so x = 0 is not an extremum. The x-coordinate of the local minimum is 6."
+          - problem: "Consider the function g(x) = x^3 - 3x^2 - 9x + 5. It has a critical point at x = -1; apply the second derivative test there. Give the classification of that point and the value of g''(-1)."
+            answer: "verdict = maximum; d2 = -12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["maximum"], ["minimum"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d2"}]}
+            solution_sketch: "Let g(x) = x^3 - 3x^2 - 9x + 5. Then g'(x) = 3x^2 - 6x - 9 = 3(x - 3)(x + 1), so x = -1 and x = 3 are the critical points. The second derivative is g''(x) = 6x - 6, so g''(-1) = -12. The justifying sign is negative, and the second derivative test with g'' < 0 gives a local maximum. Choosing minimum is the error of reading that negative sign as positive. The final key is verdict = maximum; d2 = -12."
+          - problem: "Consider the function h(x) = 3x^4 - 4x^3. Find the value of h at its local minimum."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let h(x) = 3x^4 - 4x^3. Then h'(x) = 12x^3 - 12x^2 = 12x^2(x - 1), so the critical points are x = 0 and x = 1. The second derivative is h''(x) = 36x^2 - 24x, and h''(1) = 12 > 0, so the second derivative test gives a local minimum at x = 1 with a positive justifying sign. At x = 0 the value h''(0) = 0 makes that test fail, and the sign chart of h' shows h' < 0 on both sides of 0, so x = 0 is not an extremum. The local minimum value is h(1) = 3 - 4 = -1."
+          - problem: "Consider the function s(x) = x^4 - 8x^3 + 24x^2 - 32x + 16, which has a stationary point at x = 2. Use whichever test works at that point. Give the classification and the value of s''(2)."
+            answer: "verdict = minimum; d2 = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["minimum"], ["maximum"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d2"}]}
+            solution_sketch: "Let s(x) = x^4 - 8x^3 + 24x^2 - 32x + 16, which equals (x - 2)^4. Then s'(x) = 4(x - 2)^3, so x = 2 is the only stationary point. The second derivative is s''(x) = 12(x - 2)^2, so s''(2) = 0 and the second derivative test fails. The sign chart of s' shows s' < 0 for x < 2 and s' > 0 for x > 2, so the first derivative test gives a local minimum with a negative to positive sign change. Choosing maximum is the error of reading that sign change backwards. The final key is verdict = minimum; d2 = 0."
+          - problem: "Consider the function F(x) = -x^4 + 4x^3. Determine its local maximum value."
+            answer: "27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let F(x) = -x^4 + 4x^3. Then F'(x) = -4x^3 + 12x^2 = -4x^2(x - 3), so the critical points are x = 0 and x = 3. The second derivative is F''(x) = -12x^2 + 24x, and F''(3) = -36 < 0, so the second derivative test gives a local maximum at x = 3 with a negative justifying sign. At x = 0 the value F''(0) = 0 makes that test fail, and the sign chart of F' shows F' > 0 on both sides of 0, so x = 0 is not an extremum. The local maximum value is F(3) = -81 + 108 = 27."
+          - problem: "Consider the function q(x) = x^5 - 5x^4. How many local extrema does q have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let q(x) = x^5 - 5x^4. Then q'(x) = 5x^4 - 20x^3 = 5x^3(x - 4), so the stationary points are x = 0 and x = 4. The second derivative is q''(x) = 20x^3 - 60x^2; q''(4) = 320 > 0, so the second derivative test gives a local minimum at x = 4. At x = 0 the value q''(0) = 0 makes that test fail, and the sign chart of q' shows q' > 0 for x < 0 and q' < 0 for 0 < x < 4, so x = 0 is a local maximum by the first derivative test. Therefore q has 2 local extrema."
         constraints: "one mixed problem needing both tests; conclusions stated with the justifying sign"
     diagnostic_exemplar:
       problem: 'The function $f(x) = x^4 + 4x^3$ has critical points $x = 0$ and $x = -3$. Classify each (use whichever test works at each point).'
@@ -1399,14 +1463,30 @@ topics:
         name: Full feature analysis of a quartic
         key_prerequisites: [increasing-decreasing-intervals, concavity-inflection-points, second-derivative-test]
         exemplars:
-          - problem: 'For $f(x) = x^4 - 6x^2$, find the local extrema and inflection points.'
-            answer: "local min f(±√3) = -9 at x = ±√3; local max f(0) = 0; inflection points at x = ±1 (value -5)"
-            answer_contract: {kind: none}
-            solution_sketch: '$f'' = 4x(x^2 - 3)$, $f'''' = 12x^2 - 12$; the sign of $f''$ is $-, +, -, +$.'
-          - problem: 'For $f(x) = x^4 - 2x^2$, how many local extrema and how many inflection points does it have?'
-            answer: "3 local extrema (min at ±1, max at 0); 2 inflection points (x = ±1/√3)"
-            answer_contract: {kind: none}
-            solution_sketch: "3 local extrema (min at ±1, max at 0); 2 inflection points (x = ±1/√3)"
+          - problem: "For f(x) = x^4 - 6x^2, find the local minimum value and the positive x-coordinate of the inflection point."
+            answer: "min = -9; x = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "For f(x) = x^4 - 6x^2, compute f'(x) = 4x^3 - 12x = 4x(x^2 - 3) by the power rule. Critical points are x = 0 and x = ±sqrt(3); the second derivative test gives local minimum value f(sqrt(3)) = 9 - 18 = -9. Compute f''(x) = 12x^2 - 12, so inflection points solve 12x^2 - 12 = 0, giving x = ±1; the positive one is x = 1. The answer is min = -9; x = 1."
+          - problem: "For f(x) = x^4 - 2x^2, find the local maximum value and the positive x-coordinate of the inflection point."
+            answer: "max = 0; x = sqrt(3)/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "For f(x) = x^4 - 2x^2, compute f'(x) = 4x^3 - 4x = 4x(x^2 - 1) by the power rule. Critical points are x = 0 and x = ±1; the second derivative test gives local maximum value f(0) = 0 because f''(0) = -4 < 0. Compute f''(x) = 12x^2 - 4, so inflection points solve 12x^2 - 4 = 0, giving x = ±sqrt(1/3) = ±sqrt(3)/3; the positive one is sqrt(3)/3. The answer is max = 0; x = sqrt(3)/3."
+          - problem: "For f(x) = x^4 - 4x^2 + 1, find the local minimum point, the local maximum point, and the positive x-coordinate of the inflection point. Give the points as (x, y) pairs."
+            answer: "minpt = (sqrt(2), -3); maxpt = (0, 1); infx = sqrt(6)/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "minpt"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "maxpt"}, {"contract": {"kind": "exact"}, "name": "infx"}]}
+            solution_sketch: "For f(x) = x^4 - 4x^2 + 1, compute f'(x) = 4x^3 - 8x = 4x(x^2 - 2) by the power rule. Critical points are x = 0 and x = ±sqrt(2); the second derivative test gives a local minimum at x = sqrt(2) and a local maximum at x = 0. Evaluate f(sqrt(2)) = 4 - 8 + 1 = -3 and f(0) = 1, so the points are (sqrt(2), -3) and (0, 1). Compute f''(x) = 12x^2 - 8, so inflection points solve 12x^2 - 8 = 0, giving x = ±sqrt(2/3) = ±sqrt(6)/3; the positive one is sqrt(6)/3. The answer is minpt = (sqrt(2), -3); maxpt = (0, 1); infx = sqrt(6)/3."
+          - problem: "For f(x) = x^4 - 5x^2 + 4, find the local minimum value and both x-coordinates of the inflection points."
+            answer: "min = -9/4; x1 = -sqrt(5/6); x2 = sqrt(5/6)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"kind": "exact"}, "name": "x1"}, {"contract": {"kind": "exact"}, "name": "x2"}]}
+            solution_sketch: "For f(x) = x^4 - 5x^2 + 4, compute f'(x) = 4x^3 - 10x = 2x(2x^2 - 5) by the power rule. Critical points are x = 0 and x = ±sqrt(5/2); the second derivative test gives local minimum value f(sqrt(5/2)) = 25/4 - 25/2 + 4 = -9/4. Compute f''(x) = 12x^2 - 10, so inflection points solve 12x^2 - 10 = 0, giving x = ±sqrt(5/6). The answer is min = -9/4; x1 = -sqrt(5/6); x2 = sqrt(5/6)."
+          - problem: "For f(x) = x^4 - 8x^2, find the local maximum point and the positive x-coordinate of the inflection point. Give the point as (x, y)."
+            answer: "maxpt = (0, 0); infx = 2sqrt(3)/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "maxpt"}, {"contract": {"kind": "exact"}, "name": "infx"}]}
+            solution_sketch: "For f(x) = x^4 - 8x^2, compute f'(x) = 4x^3 - 16x = 4x(x^2 - 4) by the power rule. Critical points are x = 0 and x = ±2; the second derivative test gives a local maximum at x = 0 because f''(0) = -16 < 0. Evaluate f(0) = 0, so the local maximum point is (0, 0). Compute f''(x) = 12x^2 - 16, so inflection points solve 12x^2 - 16 = 0, giving x = ±sqrt(4/3) = ±2sqrt(3)/3; the positive one is 2sqrt(3)/3. The answer is maxpt = (0, 0); infx = 2sqrt(3)/3."
+          - problem: "For f(x) = x^4 - 3x^2 + 2, find the local minimum value and the positive x-coordinate of the inflection point. Give the x-coordinate to 3 decimals."
+            answer: "min = -1/4; x = 0.707"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"decimals": 3, "kind": "approx"}, "name": "x"}]}
+            solution_sketch: "For f(x) = x^4 - 3x^2 + 2, compute f'(x) = 4x^3 - 6x = 2x(2x^2 - 3) by the power rule. Critical points are x = 0 and x = ±sqrt(3/2); the second derivative test gives local minimum value f(sqrt(3/2)) = 9/4 - 9/2 + 2 = -1/4. Compute f''(x) = 12x^2 - 6, so inflection points solve 12x^2 - 6 = 0, giving x = ±sqrt(1/2) = ±sqrt(2)/2; the positive one is about 0.7071, which rounds to 0.707. The answer is min = -1/4; x = 0.707."
         constraints: "even quartics with symmetric features; radical critical points allowed"
       - id: kp3
         name: Reconstruct features from f'
