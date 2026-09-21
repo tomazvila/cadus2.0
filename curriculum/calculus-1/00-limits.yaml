@@ -79,10 +79,26 @@ topics:
         exemplars:
           - problem: 'A table gives $h(0.9) = 2.71$, $h(0.99) = 2.9701$, $h(0.999) = 2.997$. What value does $h(x)$ approach as $x \to 1^-$?'
             answer: "3"
-          - problem: 'A table gives $f(3.9) = 2$, $f(3.99) = 2$, $f(4.01) = 7$, $f(4.1) = 7$. Do the two sides of the table suggest the same limiting value at $x = 4$?'
-            answer: "no — the left side suggests 2, the right side 7"
-            answer_contract: {kind: none}
-            solution_sketch: "no — the left side suggests 2, the right side 7"
+          - problem: "A table gives f(3.9) = 2, f(3.99) = 2, f(4.01) = 7, f(4.1) = 7. What value does f(x) approach as x approaches 4 from the right?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (right-side table read): the full table gives f(3.9) = 2, f(3.99) = 2 on the left of 4 and f(4.01) = 7, f(4.1) = 7 on the right of 4. Step 2 (trend of the right side): the right-side inputs 4.01 and 4.1 both give the output 7, so the values stay at 7. The right-hand limit is 7."
+          - problem: "A table gives g(4.9) = 2.8, g(4.99) = 3.16, g(4.999) = 3.2. Find the left-hand limit of g(x) as x approaches 4."
+            answer: "3.2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (left-side table read): the table gives g(4.9) = 2.8, g(4.99) = 3.16, g(4.999) = 3.2. Step 2 (trend): as the inputs approach 4 from below, the outputs rise and settle at the value 3.2. The left-hand limit is 3.2."
+          - problem: "A table gives p(-1.1) = 5, p(-1.01) = 5, p(-0.99) = 9, p(-0.9) = 9. State whether the two sides of the table agree on one limiting value at x = -1, and give the value suggested from the left."
+            answer: "verdict = different; left = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["same"], ["different"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "left"}]}
+            solution_sketch: "Step 1 (left-side read): the inputs -1.1 and -1.01 lie left of -1 and both give the output 5, so the left side suggests 5. Step 2 (right-side read): the inputs -0.99 and -0.9 lie right of -1 and both give the output 9, so the right side suggests 9. Step 3 (compare the sides): 5 differs from 9, so the sides point to different values, and the left value is 5. The result is verdict = different; left = 5."
+          - problem: "A table gives h(0.1) = -1.1, h(0.01) = -1.46, h(0.001) = -1.5. Find the right-hand limit of h(x) as x approaches 0."
+            answer: "-1.5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (right-side table read): the table gives h(0.1) = -1.1, h(0.01) = -1.46, h(0.001) = -1.5. Step 2 (trend): as the inputs approach 0 from above, the outputs fall toward the stable value -1.5. The right-hand limit is -1.5."
+          - problem: "A probe logs its reading R at times 10.9, 10.99 and 10.999 seconds: R(10.9) = 52, R(10.99) = 49.3, R(10.999) = 48.5. Find the right-hand limit of R(t) as t approaches 10."
+            answer: "48.5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (table read from the right): the times 10.9, 10.99 and 10.999 are all greater than 10, and the readings are R(10.9) = 52, R(10.99) = 49.3, R(10.999) = 48.5. Step 2 (trend): as the time approaches 10 from greater times, the readings fall and settle at 48.5. The right-hand limit is 48.5."
         constraints: "one-sided reads only; no limit-existence theory beyond comparing the two sides"
     diagnostic_exemplar:
       problem: 'For $g(x) = 2x + 1$, compute $g(2.9)$, $g(2.99)$, $g(3.01)$, $g(3.1)$ and use them to estimate $\lim_{x \to 3} g(x)$.'
@@ -220,6 +236,22 @@ topics:
           - problem: 'Given $\lim_{x \to a} f(x) = 3$ and $\lim_{x \to a} g(x) = -2$, find $\lim_{x \to a} [2f(x) - g(x)]$.'
             answer: "8"
             solution_sketch: '$2 \cdot 3 - (-2) = 8$ by the constant-multiple and difference laws.'
+          - problem: "Given $\\lim_{x \\to a} f(x) = 3$ and $\\lim_{x \\to a} [4f(x) + 3g(x)] = 18$, find $\\lim_{x \\to a} g(x)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\lim_{x \\to a} g(x)$. By the constant-multiple law and the sum law, $\\lim_{x \\to a} [4f(x) + 3g(x)] = 4\\lim_{x \\to a} f(x) + 3\\lim_{x \\to a} g(x)$. Substituting the given limits gives $4 \\cdot 3 + 3\\lim_{x \\to a} g(x) = 18$, so $3\\lim_{x \\to a} g(x) = 6$. The answer is 2."
+          - problem: "Given $\\lim_{x \\to a} g(x) = 4$ and $\\lim_{x \\to a} [7f(x) - 3g(x)] = 30$, find $\\lim_{x \\to a} f(x)$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\lim_{x \\to a} f(x)$. By the constant-multiple law and the difference law, $\\lim_{x \\to a} [7f(x) - 3g(x)] = 7\\lim_{x \\to a} f(x) - 3\\lim_{x \\to a} g(x)$. Substituting the given limit of $g$ gives $7\\lim_{x \\to a} f(x) - 12 = 30$, so $7\\lim_{x \\to a} f(x) = 42$. The answer is 6."
+          - problem: "Given $\\lim_{x \\to a} [f(x) + g(x)] = 11$ and $\\lim_{x \\to a} [f(x) - g(x)] = 3$, find $\\lim_{x \\to a} [2f(x) + g(x)]$."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\lim_{x \\to a} [2f(x) + g(x)]$. Adding the two given limits and using the sum law gives $2\\lim_{x \\to a} f(x) = 14$, so $\\lim_{x \\to a} f(x) = 7$. Then the difference law gives $\\lim_{x \\to a} g(x) = 11 - 7 = 4$. By the sum and constant-multiple laws, $\\lim_{x \\to a} [2f(x) + g(x)] = 2 \\cdot 7 + 4$. The answer is 18."
+          - problem: "Given $\\lim_{x \\to a} f(x) = 5$, $\\lim_{x \\to a} g(x) = 4$, and $\\lim_{x \\to a} [c f(x) - g(x)] = 11$, find the constant $c$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the equation $\\lim_{x \\to a} [c f(x) - g(x)] = 11$. By the constant-multiple law and the difference law, this limit equals $c\\lim_{x \\to a} f(x) - \\lim_{x \\to a} g(x)$. Substituting the given limits gives $5c - 4 = 11$, so $5c = 15$. The answer is 3."
         constraints: "given limits are small integers; combine with sum/difference/constant-multiple laws only"
       - id: kp2
         name: Product and quotient laws
