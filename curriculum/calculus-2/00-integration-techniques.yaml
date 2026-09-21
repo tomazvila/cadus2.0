@@ -328,22 +328,30 @@ topics:
         name: The basic tan, cot, sec, and csc integrals
         key_prerequisites: [integration-substitution, derivatives-trig]
         exemplars:
-          - problem: 'Evaluate $\int \tan x \, dx$.'
-            answer: '$\ln|\sec x| + C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\int \frac{\sin x}{\cos x}\,dx$ with $u = \cos x$ gives $-\ln|\cos x| + C = \ln|\sec x| + C$.'
-          - problem: 'Evaluate $\int \cot x \, dx$.'
-            answer: '$\ln|\sin x| + C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\int \frac{\cos x}{\sin x}\,dx$ with $u = \sin x$.'
-          - problem: 'Evaluate $\int \sec x \, dx$.'
-            answer: '$\ln|\sec x + \tan x| + C$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiply by $\frac{\sec x + \tan x}{\sec x + \tan x}$; the numerator is the derivative of the denominator.'
-          - problem: 'Evaluate $\int \csc x \, dx$.'
-            answer: '$\ln|\csc x - \cot x| + C$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiply by $\frac{\csc x - \cot x}{\csc x - \cot x}$; the numerator $\csc x\cot x - \csc^2 x$ is the derivative of the denominator. Equivalently $-\ln|\csc x + \cot x| + C$.'
+          - problem: "Evaluate the definite integral of tan(x) with respect to x, taken from x = 0 to x = pi/4. Give the answer to 4 decimals."
+            answer: "0.3466"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The full object is the definite integral of tan(x) dx from 0 to pi/4. Use the basic tangent integral: write tan(x) = sin(x)/cos(x) and substitute u = cos(x), so an antiderivative is -ln(abs(cos(x))) = ln(abs(sec(x))). Evaluate at the bounds by the Fundamental Theorem: ln(sec(pi/4)) - ln(sec(0)) = ln(sqrt(2)) - 0 = ln(2)/2, about 0.346573. Rounded to four decimals, the value of the integral is 0.3466."
+          - problem: "Evaluate the definite integral of cot(x) with respect to x, taken from x = pi/6 to x = pi/3. Give the answer to 4 decimals."
+            answer: "0.5493"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The full object is the definite integral of cot(x) dx from pi/6 to pi/3. Use the basic cotangent integral: write cot(x) = cos(x)/sin(x) and substitute u = sin(x), so an antiderivative is ln(abs(sin(x))). Evaluate at the bounds by the Fundamental Theorem: ln(sin(pi/3)) - ln(sin(pi/6)) = ln(sqrt(3)/2) - ln(1/2) = ln(sqrt(3)), about 0.549306. Rounded to four decimals, the value of the integral is 0.5493."
+          - problem: "Evaluate the definite integral of sec(x) with respect to x, taken from x = 0 to x = pi/4. Give the answer to 4 decimals."
+            answer: "0.8814"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The full object is the definite integral of sec(x) dx from 0 to pi/4. Use the basic secant integral: multiply sec(x) by (sec(x)+tan(x))/(sec(x)+tan(x)); since the numerator becomes the derivative of the denominator, an antiderivative is ln(abs(sec(x)+tan(x))). Evaluate at the bounds by the Fundamental Theorem: ln(sqrt(2)+1) - ln(1+0) = ln(1+sqrt(2)), about 0.881374. Rounded to four decimals, the value of the integral is 0.8814."
+          - problem: "Evaluate the definite integral of csc(x) with respect to x, taken from x = pi/6 to x = pi/2. Give the answer to 4 decimals."
+            answer: "1.3170"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The full object is the definite integral of csc(x) dx from pi/6 to pi/2. Use the basic cosecant integral: multiply csc(x) by (csc(x)-cot(x))/(csc(x)-cot(x)); since the numerator becomes the derivative of the denominator, an antiderivative is ln(abs(csc(x)-cot(x))). Evaluate at the bounds by the Fundamental Theorem: ln(1-0) - ln(2-sqrt(3)) = -ln(2-sqrt(3)) = ln(2+sqrt(3)), about 1.316958. Rounded to four decimals, the value of the integral is 1.3170."
+          - problem: "Evaluate the definite integral of tan(2x) with respect to x, taken from x = 0 to x = pi/8. Give the answer to 4 decimals."
+            answer: "0.1733"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The full object is the definite integral of tan(2x) dx from 0 to pi/8. Use the basic tangent integral together with the substitution u = 2x, so du = 2 dx and the integral becomes one half of the integral of tan(u) du. An antiderivative is (1/2) ln(abs(sec(u))) = (1/2) ln(abs(sec(2x))). Evaluate at the bounds by the Fundamental Theorem: (1/2)(ln(sec(pi/4)) - ln(sec(0))) = (1/2) ln(sqrt(2)) = ln(2)/4, about 0.173287. Rounded to four decimals, the value of the integral is 0.1733."
+          - problem: "The definite integral of sec(x) with respect to x, taken from x = 0 to x = b with 0 < b < pi/2, has the value ln(2 + sqrt(3)). Find b as an exact multiple of pi."
+            answer: "pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the equation stating that the definite integral of sec(x) dx from 0 to b equals ln(2 + sqrt(3)). Use the basic secant integral: an antiderivative of sec(x) is ln(abs(sec(x)+tan(x))), so the integral equals ln(sec(b)+tan(b)) - ln(1+0). Set sec(b) + tan(b) = 2 + sqrt(3). Recognize the special values sec(pi/3) = 2 and tan(pi/3) = sqrt(3), whose sum is 2 + sqrt(3). The bound is b = pi/3."
         constraints: "the four basic quotient integrals (tan, cot, sec, csc); answers as logarithms with absolute values"
       - id: kp2
         name: Powers via sec^2 = 1 + tan^2
@@ -495,18 +503,30 @@ topics:
         name: Arctangent forms
         key_prerequisites: [completing-the-square, derivatives-inverse-trig]
         exemplars:
-          - problem: 'Evaluate $\int \frac{dx}{x^2 + 2x + 5}$.'
-            answer: '$\frac{1}{2}\arctan\left(\frac{x + 1}{2}\right) + C$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Complete the square: $x^2 + 2x + 5 = (x+1)^2 + 4$; substitute $u = x + 1$ and use $\int \frac{du}{u^2 + a^2} = \frac{1}{a}\arctan\frac{u}{a}$.'
-          - problem: 'Evaluate $\int \frac{dx}{x^2 - 4x + 13}$.'
-            answer: '$\frac{1}{3}\arctan\left(\frac{x - 2}{3}\right) + C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$x^2 - 4x + 13 = (x-2)^2 + 9$; the $a = 3$ arctangent pattern.'
-          - problem: 'Evaluate $\int \frac{dx}{x^2 + 6x + 10}$.'
-            answer: '$\arctan(x + 3) + C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$x^2 + 6x + 10 = (x+3)^2 + 1$.'
+          - problem: "Evaluate the indefinite integral of 1/(x^2 + 2x + 5) dx."
+            answer: "atan((x+1)/2)/2 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The integral is the indefinite integral of 1/(x^2 + 2x + 5) dx. Complete the square in the denominator: x^2 + 2x + 5 = (x+1)^2 + 4. Substitute u = x + 1 and use the arctangent pattern with a = 2, so the antiderivative is atan((x+1)/2)/2 + C. The answer is atan((x+1)/2)/2 + C."
+          - problem: "Evaluate the indefinite integral of 1/(x^2 - 4x + 13) dx."
+            answer: "atan((x-2)/3)/3 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The integral is the indefinite integral of 1/(x^2 - 4x + 13) dx. Complete the square: x^2 - 4x + 13 = (x-2)^2 + 9. Substitute u = x - 2 and use the arctangent pattern with a = 3, so the antiderivative is atan((x-2)/3)/3 + C. The answer is atan((x-2)/3)/3 + C."
+          - problem: "Evaluate the indefinite integral of 1/(x^2 + 6x + 10) dx."
+            answer: "atan(x+3) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The integral is the indefinite integral of 1/(x^2 + 6x + 10) dx. Complete the square: x^2 + 6x + 10 = (x+3)^2 + 1. Substitute u = x + 3 and use the arctangent pattern with a = 1, so the antiderivative is atan(x+3) + C. The answer is atan(x+3) + C."
+          - problem: "Evaluate the definite integral of 1/(x^2 - 2x + 5) dx from x = 1 to x = 3. Give the answer exactly, as a multiple of pi."
+            answer: "pi/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Complete the square in the denominator: x^2 - 2x + 5 = (x - 1)^2 + 4. Substitute u = x - 1, so u runs from 0 to 2, and apply the arctangent pattern with a = 2: the integral becomes (1/2)atan(u/2) evaluated from 0 to 2. That equals (1/2)(atan(1) - atan(0)) = (1/2)(pi/4 - 0). The answer is pi/8."
+          - problem: "An antiderivative of 1/q(x) is (1/3)atan((x - 1)/3) + C, where q(x) is a monic quadratic with integer coefficients. Find q(x)."
+            answer: "x^2-2x+10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compare the given antiderivative with the arctangent pattern (1/a)atan((x - h)/a) + C: here a = 3 and the center is h = 1. The completed-square denominator is therefore (x - 1)^2 + 9. Expanding (x - 1)^2 + 9 gives x^2 - 2x + 10, and differentiating the antiderivative confirms 1/(x^2 - 2x + 10). The answer is x^2-2x+10."
+          - problem: "Evaluate the indefinite integral of 1/(x^2 - 6x + 10) dx."
+            answer: "atan(x-3) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The integral is the indefinite integral of 1/(x^2 - 6x + 10) dx. Complete the square: x^2 - 6x + 10 = (x-3)^2 + 1. Substitute u = x - 3 and use the arctangent pattern with a = 1, so the antiderivative is atan(x-3) + C. The answer is atan(x-3) + C."
         constraints: "irreducible quadratic with integer center and radius; a in {1, 2, 3}"
       - id: kp2
         name: Arcsine forms
