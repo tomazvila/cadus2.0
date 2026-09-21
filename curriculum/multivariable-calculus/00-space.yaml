@@ -928,14 +928,30 @@ topics:
         name: "Integrals of vector functions"
         key_prerequisites: [vector-functions-basics, definite-integrals-ftc]
         exemplars:
-          - problem: 'Compute $\int_0^1 \langle 2t, 3t^2, 4t^3 \rangle \, dt$.'
-            answer: '$\langle 1, 1, 1 \rangle$'
-            solution_sketch: 'Integrate componentwise: $\langle t^2,t^3,t^4\rangle\big|_0^1=\langle 1,1,1\rangle$.'
-            answer_contract: {kind: none}
-          - problem: 'Find $\mathbf{r}(t)$ given $\mathbf{r}''(t) = \langle 3t^2, 2, 4t^3 \rangle$ and $\mathbf{r}(0) = \langle 0, 5, 1 \rangle$.'
-            answer: '$\langle t^3, 2t + 5, t^4 + 1 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Antidifferentiate componentwise to get $\langle t^3, 2t, t^4 \rangle + \mathbf{C}$; setting $t = 0$ forces $\mathbf{C} = \langle 0, 5, 1 \rangle$.'
+          - problem: "Compute $\\int_0^1 \\langle 2t, 6t^2, 12t^3 \\rangle \\, dt$. Give the answer as (x, y, z)."
+            answer: "(1, 2, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Use componentwise integration, by the Fundamental Theorem of Calculus: integrate 2t to t^2, 6t^2 to 2t^3, and 12t^3 to 3t^4. Evaluate each from 0 to 1 to get 1, 2 and 3. The answer is (1, 2, 3)."
+          - problem: "Let $\\mathbf{r}'(t) = \\langle 2t, 4t^3, 6t^5 \\rangle$ and $\\mathbf{r}(0) = \\langle 1, -1, 2 \\rangle$. Find $\\mathbf{r}(1)$. Give the answer as (x, y, z)."
+            answer: "(2, 0, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Antidifferentiate each component by the Fundamental Theorem of Calculus: x(t) = t^2 + C1, y(t) = t^4 + C2, z(t) = t^6 + C3. The initial condition r(0) = <1, -1, 2> forces C1 = 1, C2 = -1, C3 = 2, so r(t) = <t^2 + 1, t^4 - 1, t^6 + 2>. Evaluating at t = 1 gives r(1) = (2, 0, 3). The answer is (2, 0, 3)."
+          - problem: "Evaluate $\\int_1^2 \\langle 2t, 3t^2, 4t^3 \\rangle \\, dt$. Give the answer as (x, y, z)."
+            answer: "(3, 7, 15)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Integrate componentwise: 2t gives t^2, 3t^2 gives t^3, 4t^3 gives t^4. Evaluate from 1 to 2: 4-1=3, 8-1=7, 16-1=15. The answer is (3, 7, 15)."
+          - problem: "A position vector satisfies $\\mathbf{r}'(t) = \\langle 6t, 3t^2, 2t \\rangle$ and $\\mathbf{r}(1) = \\langle 2, 1, 3 \\rangle$. Write $\\mathbf{r}(t) = \\mathbf{R}(t) + \\mathbf{C}$, where $\\mathbf{R}$ is an antiderivative of $\\mathbf{r}'$ and $\\mathbf{C}$ is a constant vector. Find $\\mathbf{C}$. Give the answer as (x, y, z)."
+            answer: "(-1, 0, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Integrate componentwise to get the antiderivative R(t) = <3t^2, t^3, t^2>. Evaluate it at t = 1: R(1) = <3, 1, 1>. The initial condition gives C = r(1) - R(1) = <2, 1, 3> - <3, 1, 1> = <-1, 0, 2>. The answer is (-1, 0, 2)."
+          - problem: "Compute $\\int_0^2 \\langle t, t^2, t^3 \\rangle \\, dt$. Give the answer as (x, y, z)."
+            answer: "(2, 8/3, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Integrate componentwise: t gives t^2/2, t^2 gives t^3/3, t^3 gives t^4/4. Evaluate from 0 to 2: 2, 8/3, 4. The answer is (2, 8/3, 4)."
+          - problem: "Let $\\mathbf{r}'(t) = \\langle 2t, 3t^2, 4t^3 \\rangle$ and $\\mathbf{r}(0) = \\langle 1, 2, 3 \\rangle$. Find the x-component of $\\mathbf{r}(2)$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Integrate the x-component: x(t) = t^2 + C. The initial condition x(0) = 1 gives C = 1, so x(t) = t^2 + 1. At t = 2, x = 5. The answer is 5."
         constraints: "polynomial components; initial conditions with small integers"
     diagnostic_exemplar:
       problem: 'Given $\mathbf{r}''(t) = \langle 2t,\; 1,\; 3t^2 \rangle$ and $\mathbf{r}(0) = \langle 0, 1, 0 \rangle$, find parametric equations for the tangent line to the curve $\mathbf{r}$ at $t = 1$.'
@@ -969,39 +985,87 @@ topics:
         name: "Velocity, speed, and acceleration"
         key_prerequisites: [vector-valued-functions]
         exemplars:
-          - problem: 'A particle has position $\mathbf{r}(t) = \langle \cos 2t, \sin 2t, t \rangle$. Find its velocity, speed, and acceleration.'
-            answer: '$\mathbf{v} = \langle -2\sin 2t, 2\cos 2t, 1 \rangle$; speed $\sqrt{5}$; $\mathbf{a} = \langle -4\cos 2t, -4\sin 2t, 0 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$|\mathbf{v}| = \sqrt{4\sin^2 2t + 4\cos^2 2t + 1} = \sqrt{5}$, constant.'
           - problem: 'For $\mathbf{r}(t) = \langle t^2, 2t, \ln t \rangle$, find the speed at $t = 1$.'
             answer: "3"
             solution_sketch: '$\mathbf{v} = \langle 2t, 2, 1/t \rangle$; at $t = 1$, $|\mathbf{v}| = \sqrt{4 + 4 + 1} = 3$.'
+          - problem: "A particle has position r(t) = <cos(2t), sin(2t), t>. Find its speed at t = 0."
+            answer: "sqrt(5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate each component with the vector derivative rule: v(t) = r'(t) = <-2sin(2t), 2cos(2t), 1>. At t = 0 this is <0, 2, 1>. Compute the magnitude with the speed formula: |v(0)| = sqrt(0^2 + 2^2 + 1^2) = sqrt(5). The speed is sqrt(5)."
+          - problem: "For r(t) = <t^2, 2t, t^3>, find the velocity vector at t = 2. Give the answer as (x, y, z)."
+            answer: "(4, 2, 12)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Differentiate each component with the vector derivative rule: v(t) = r'(t) = <2t, 2, 3t^2>. Evaluate at t = 2 to get <4, 2, 12>. The velocity vector at t = 2 is (4, 2, 12)."
+          - problem: "A particle has position r(t) = <e^t, t^2, sin(t)>. Find its acceleration vector at t = 0. Give the answer as (x, y, z)."
+            answer: "(1, 2, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Differentiate once with the vector derivative rule to get v(t) = <e^t, 2t, cos(t)>. Differentiate again with the vector derivative rule to get a(t) = <e^t, 2, -sin(t)>. At t = 0 this is (1, 2, 0). The acceleration vector is (1, 2, 0)."
+          - problem: "For r(t) = <t^2, t^3, t>, find the speed at t = 1."
+            answer: "sqrt(14)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate each component with the vector derivative rule: v(t) = <2t, 3t^2, 1>. At t = 1 this is <2, 3, 1>. The speed is the magnitude: sqrt(2^2 + 3^2 + 1^2) = sqrt(14). The speed is sqrt(14)."
+          - problem: "A particle has position r(t) = <sin(3t), t^2, e^(2t)>. Find its velocity vector as a function of t. Give vx, vy, and vz."
+            answer: "vx = 3cos(3t); vy = 2t; vz = 2e^(2t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "vx"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "vy"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "vz"}]}
+            solution_sketch: "Differentiate each component with the vector derivative rule: vx = 3cos(3t), vy = 2t, and vz = 2e^(2t). The velocity vector as a function of t is vx = 3cos(3t); vy = 2t; vz = 2e^(2t)."
         constraints: "speeds at the requested instant are integers or single clean radicals"
       - id: kp2
         name: "Recovering velocity and position"
         key_prerequisites: [vector-valued-functions, definite-integrals-ftc]
         exemplars:
-          - problem: 'A particle has velocity $\mathbf{v}(t) = \langle 2t, 3t^2, 1 \rangle$ and initial position $\mathbf{r}(0) = \langle 1, 0, 2 \rangle$. Find $\mathbf{r}(t)$.'
-            answer: '$\langle t^2 + 1, t^3, t + 2 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Antidifferentiate componentwise and fix constants with $\mathbf{r}(0)$.'
-          - problem: 'A particle has acceleration $\mathbf{a}(t) = \langle 0, 2, 6t \rangle$, $\mathbf{v}(0) = \langle 1, 0, 0 \rangle$, and $\mathbf{r}(0) = \langle 0, 0, 0 \rangle$. Find $\mathbf{r}(t)$.'
-            answer: '$\langle t, t^2, t^3 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Integrate twice: $\mathbf{v}(t) = \langle 1, 2t, 3t^2 \rangle$, then $\mathbf{r}(t) = \langle t, t^2, t^3 \rangle$.'
+          - problem: "A particle has velocity v(t) = <4t, 2t, 3> and initial position r(0) = <2, 1, 0>. Find x(t), y(t) and z(t), and give the answer as x = ..., y = ..., z = ..."
+            answer: "x = 2t^2 + 2; y = t^2 + 1; z = 3t"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Start with v(t) = <4t, 2t, 3> and r(0) = <2, 1, 0>. Antidifferentiate each component using the power rule: r(t) = <2t^2 + C1, t^2 + C2, 3t + C3>. Apply the initial condition to get C1 = 2, C2 = 1, and C3 = 0. The position is x = 2t^2 + 2; y = t^2 + 1; z = 3t."
+          - problem: "A particle has acceleration a(t) = <0, 4, 6t>, initial velocity v(0) = <2, 1, 0>, and initial position r(0) = <0, 1, 0>. Find x(t), y(t) and z(t), and give the answer as x = ..., y = ..., z = ..."
+            answer: "x = 2t; y = 2t^2 + t + 1; z = t^3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Start with a(t) = <0, 4, 6t>, v(0) = <2, 1, 0>, and r(0) = <0, 1, 0>. Integrate acceleration using the power rule: v(t) = <C1, 4t + C2, 3t^2 + C3>. Use v(0) to get C1 = 2, C2 = 1, C3 = 0, so v(t) = <2, 4t + 1, 3t^2>. Integrate again using the power rule: r(t) = <2t + K1, 2t^2 + t + K2, t^3 + K3>. Use r(0) to get K1 = 0, K2 = 1, K3 = 0. The position is x = 2t; y = 2t^2 + t + 1; z = t^3."
+          - problem: "A particle has velocity v(t) = <3t^2, 2, 4t> and initial position r(0) = <0, 1, 2>. Find x(t), y(t) and z(t), and give the answer as x = ..., y = ..., z = ..."
+            answer: "x = t^3; y = 2t + 1; z = 2t^2 + 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Start with v(t) = <3t^2, 2, 4t> and r(0) = <0, 1, 2>. Antidifferentiate each component using the power rule: r(t) = <t^3 + C1, 2t + C2, 2t^2 + C3>. Apply the initial condition to get C1 = 0, C2 = 1, and C3 = 2. The position is x = t^3; y = 2t + 1; z = 2t^2 + 2."
+          - problem: "A particle has acceleration a(t) = <6t, 6, 0>, initial velocity v(0) = <1, 0, 2>, and initial position r(0) = <0, 0, 0>. Find x(t), y(t) and z(t), and give the answer as x = ..., y = ..., z = ..."
+            answer: "x = t^3 + t; y = 3t^2; z = 2t"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "z"}]}
+            solution_sketch: "Start with a(t) = <6t, 6, 0>, v(0) = <1, 0, 2>, and r(0) = <0, 0, 0>. Integrate acceleration using the power rule: v(t) = <3t^2 + C1, 6t + C2, C3>. Use v(0) to get C1 = 1, C2 = 0, C3 = 2. Integrate again using the power rule: r(t) = <t^3 + t + K1, 3t^2 + K2, 2t + K3>. Use r(0) to get K1 = 0, K2 = 0, K3 = 0. The position is x = t^3 + t; y = 3t^2; z = 2t."
+          - problem: "A particle has acceleration a(t) = <4, 2t, 6t^2> and initial velocity v(0) = <1, 0, 2>. Find the velocity components vx(t), vy(t) and vz(t), and give the answer as vx = ..., vy = ..., vz = ..."
+            answer: "vx = 4t + 1; vy = t^2; vz = 2t^3 + 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "vx"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "vy"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "vz"}]}
+            solution_sketch: "Start with a(t) = <4, 2t, 6t^2> and v(0) = <1, 0, 2>. Integrate each component using the power rule: v(t) = <4t + C1, t^2 + C2, 2t^3 + C3>. Apply the initial condition to get C1 = 1, C2 = 0, and C3 = 2. The velocity is vx = 4t + 1; vy = t^2; vz = 2t^3 + 2."
+          - problem: "A particle has velocity v(t) = <2t, 4t, 6t^2> and initial position r(0) = <1, 2, 3>. Find the position at t = 2, as (x, y, z)."
+            answer: "(5, 10, 19)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Start with v(t) = <2t, 4t, 6t^2> and r(0) = <1, 2, 3>. Antidifferentiate using the power rule: r(t) = <t^2 + C1, 2t^2 + C2, 2t^3 + C3>. Apply the initial condition to get C1 = 1, C2 = 2, and C3 = 3. Substitute t = 2: at t = 2 the position is (5, 10, 19)."
         constraints: "polynomial accelerations; integer initial conditions so all constants are clean"
       - id: kp3
         name: "Projectile motion"
         key_prerequisites: [vector-valued-functions, definite-integrals-ftc]
         exemplars:
-          - problem: 'A projectile is fired from the origin with initial velocity $\langle 30, 0, 40 \rangle$ m/s under acceleration $\langle 0, 0, -10 \rangle$ m/s$^2$. When does it land ($z = 0$), and how far has it traveled horizontally?'
-            answer: 'Lands at $t = 8$ s, after $240$ m horizontally.'
-            answer_contract: {kind: none}
-            solution_sketch: '$z(t) = 40t - 5t^2 = 5t(8 - t) = 0$ at $t = 8$; $x(8) = 30 \cdot 8 = 240$.'
-          - problem: 'For the same projectile ($z(t) = 40t - 5t^2$), find the maximum height.'
-            answer: '$80$ m'
-            answer_contract: {kind: none}
-            solution_sketch: '$z''(t) = 40 - 10t = 0$ at $t = 4$; $z(4) = 160 - 80 = 80$.'
+          - problem: "A projectile is fired from the origin with initial velocity $\\langle 20, 0, 40 \\rangle$ m/s under acceleration $\\langle 0, 0, -10 \\rangle$ m/s$^2$. Find the time in seconds when it returns to $z = 0$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the vertical motion formula z(t) = 40t - 5t^2. Set z(t) = 0 and factor: 5t(8 - t) = 0 by the zero product property. The landing time is 8."
+          - problem: "A projectile is fired from the origin with initial velocity $\\langle 30, 0, 30 \\rangle$ m/s under acceleration $\\langle 0, 0, -10 \\rangle$ m/s$^2$. Find its maximum height in meters."
+            answer: "45"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the vertical motion formula z(t) = 30t - 5t^2. The maximum height occurs when z'(t) = 30 - 10t = 0, so t = 3 by the zero derivative rule. Then z(3) = 30(3) - 5(9) = 45. The maximum height is 45."
+          - problem: "A projectile is fired from the origin with initial velocity $\\langle 15, 0, 20 \\rangle$ m/s under acceleration $\\langle 0, 0, -10 \\rangle$ m/s$^2$. Find the horizontal distance in meters it travels before returning to $z = 0$."
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the vertical motion formula z(t) = 20t - 5t^2. Set z(t) = 0: 5t(4 - t) = 0, so t = 4 by the zero product property. The horizontal motion is x(t) = 15t. At t = 4, x(4) = 60. The horizontal distance is 60."
+          - problem: "A projectile is fired from the origin and lands after 10 seconds at a horizontal distance of 100 meters. Its acceleration is $\\langle 0, 0, -10 \\rangle$ m/s$^2$. Find the initial horizontal speed in m/s."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the horizontal motion formula x(t) = vx t, so 100 = vx(10). Divide both sides by 10: vx = 10 by the division property of equality. The initial horizontal speed is 10."
+          - problem: "A projectile is fired from the origin with initial velocity $\\langle 20, 0, v \\rangle$ m/s under acceleration $\\langle 0, 0, -10 \\rangle$ m/s$^2$. It reaches a maximum height of 45 meters. Find the initial vertical speed v in m/s."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the vertical motion formula z(t) = v t - 5t^2. The maximum height is v^2/20 by the vertex formula for a quadratic. Set v^2/20 = 45: v^2 = 900, so v = 30 by taking the positive square root. The initial vertical speed is 30."
+          - problem: "A projectile is fired from the origin with initial velocity $\\langle 35, 0, 20 \\rangle$ m/s under acceleration $\\langle 0, 0, -10 \\rangle$ m/s$^2$. Find the horizontal distance in meters it travels before returning to $z = 0$."
+            answer: "140"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the vertical motion formula z(t) = 20t - 5t^2. Set z(t) = 0: 5t(4 - t) = 0, so t = 4 by the zero product property. The horizontal motion is x(t) = 35t. At t = 4, x(4) = 140. The horizontal distance is 140."
         constraints: "use g = 10 m/s^2; launch speeds chosen so landing times and heights are integers"
     diagnostic_exemplar:
       problem: 'A projectile leaves the origin with initial velocity $\langle 20, 0, 30 \rangle$ m/s and has constant acceleration $\langle 0, 0, -10 \rangle$ m/s$^2$. How far does it travel horizontally before returning to $z = 0$?'
@@ -1047,6 +1111,22 @@ topics:
           - problem: 'Find the length of $\mathbf{r}(t) = \langle 3t, 4t, 5 \rangle$ for $0 \le t \le 2$.'
             answer: "10"
             solution_sketch: '$\mathbf{r}''(t) = \langle 3, 4, 0 \rangle$, speed $5$; $L = 5 \cdot 2 = 10$.'
+          - problem: "Find the length of the helix r(t) = <2 cos t, 2 sin t, t> for 0 <= t <= 2pi."
+            answer: "2pi*sqrt(5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is r(t) = <2 cos t, 2 sin t, t>. Differentiate componentwise: r'(t) = <-2 sin t, 2 cos t, 1>. Its speed is sqrt(4 sin^2 t + 4 cos^2 t + 1) = sqrt(5), using the Pythagorean identity. The arc length formula for constant speed gives L = sqrt(5) * 2pi. The length is 2pi*sqrt(5)."
+          - problem: "Find the length of the line segment r(t) = <t, 2t, 2t> for 0 <= t <= 4."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is r(t) = <t, 2t, 2t>. Differentiate componentwise: r'(t) = <1, 2, 2>. Its speed is sqrt(1 + 4 + 4) = 3. The arc length is speed times the interval length: 3 * 4 = 12. The length is 12."
+          - problem: "Find the length of the helix r(t) = <3 cos t, 3 sin t, 4t> for 0 <= t <= pi/2."
+            answer: "5pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is r(t) = <3 cos t, 3 sin t, 4t>. Differentiate componentwise: r'(t) = <-3 sin t, 3 cos t, 4>. Its speed is sqrt(9 sin^2 t + 9 cos^2 t + 16) = sqrt(25) = 5, using the Pythagorean identity. The interval length is pi/2, so L = 5 * pi/2. The length is 5pi/2."
+          - problem: "Find the length of r(t) = <2t, -t, 2t> for 1 <= t <= 3."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is r(t) = <2t, -t, 2t>. Differentiate componentwise: r'(t) = <2, -1, 2>. Its speed is sqrt(4 + 1 + 4) = 3. The interval length is 3 - 1 = 2, so L = 3 * 2 = 6. The length is 6."
         constraints: "speed is constant (helices, lines): |r'| a clean radical or integer"
       - id: kp2
         name: "Arc length with perfect-square speeds"
@@ -1058,6 +1138,22 @@ topics:
           - problem: 'Find the length of $\mathbf{r}(t) = \langle e^t \cos t, e^t \sin t, e^t \rangle$ for $0 \le t \le 1$.'
             answer: '$\sqrt{3}\,(e - 1)$'
             solution_sketch: 'Each derivative carries a factor $e^t$; $|\mathbf{r}''(t)|^2 = e^{2t}\left[(\cos t - \sin t)^2 + (\sin t + \cos t)^2 + 1\right] = 3e^{2t}$. So $L = \sqrt{3}\int_0^1 e^t\,dt = \sqrt{3}(e-1)$.'
+          - problem: "Find the length of $\\mathbf{r}(t) = \\langle \\frac{2}{3}t^3,\\; t,\\; t^2 \\rangle$ for $0 \\le t \\le 1$."
+            answer: "5/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is $\\mathbf{r}(t) = \\langle \\frac{2}{3}t^3, t, t^2 \\rangle$, so $\\mathbf{r}'(t) = \\langle 2t^2, 1, 2t \\rangle$. Step 1: add the squares of the components; the speed squared is $4t^4 + 4t^2 + 1 = (2t^2 + 1)^2$, a perfect square. Step 2: the speed is $2t^2 + 1$, so the arc length formula gives $\\int_0^1 (2t^2 + 1)\\,dt$. Step 3: the power rule gives the antiderivative $\\frac{2}{3}t^3 + t$, and the Fundamental Theorem of Calculus evaluates it to the arc length 5/3."
+          - problem: "Find the length of $\\mathbf{r}(t) = \\langle 2e^t,\\; e^t \\sin t,\\; e^t \\cos t \\rangle$ for $0 \\le t \\le 1$."
+            answer: "sqrt(6)(e - 1)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is $\\mathbf{r}(t) = \\langle 2e^t, e^t \\sin t, e^t \\cos t \\rangle$, so $\\mathbf{r}'(t) = \\langle 2e^t, e^t(\\sin t + \\cos t), e^t(\\cos t - \\sin t) \\rangle$. Step 1: every component carries the factor $e^t$, and the bracket reduces to $4 + (\\sin t + \\cos t)^2 + (\\cos t - \\sin t)^2 = 4 + 2 = 6$, so the speed squared is $6e^{2t}$. Step 2: the speed is $\\sqrt{6}e^t$, so the length is $\\sqrt{6}\\int_0^1 e^t\\,dt$. Step 3: the antiderivative of $e^t$ is $e^t$, and evaluating from 0 to 1 gives the arc length sqrt(6)(e - 1)."
+          - problem: "A curve is given by $\\mathbf{r}(t) = \\langle t^3,\\; 3t^2,\\; 6t \\rangle$ for $t \\ge 0$. Its arc length from $t = 0$ to $t = b$ is 20. Find the value of $b$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is $\\mathbf{r}(t) = \\langle t^3, 3t^2, 6t \\rangle$, so $\\mathbf{r}'(t) = \\langle 3t^2, 6t, 6 \\rangle$. Step 1: the speed squared is $9t^4 + 36t^2 + 36 = 9(t^2 + 2)^2$, a perfect square, so the speed is $3t^2 + 6$. Step 2: the arc length formula gives $\\int_0^b (3t^2 + 6)\\,dt = b^3 + 6b$ by the power rule. Step 3: set $b^3 + 6b = 20$; since $8 + 12 = 20$ holds, the value is 2."
+          - problem: "Find the length of $\\mathbf{r}(t) = \\langle e^{2t} \\cos t,\\; e^{2t} \\sin t,\\; e^{2t} \\rangle$ for $0 \\le t \\le 1$."
+            answer: "(3/2)(e^2 - 1)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is $\\mathbf{r}(t) = \\langle e^{2t} \\cos t, e^{2t} \\sin t, e^{2t} \\rangle$, so $\\mathbf{r}'(t) = \\langle e^{2t}(2\\cos t - \\sin t), e^{2t}(2\\sin t + \\cos t), 2e^{2t} \\rangle$. Step 1: the squared length of this vector is $e^{4t}[(2\\cos t - \\sin t)^2 + (2\\sin t + \\cos t)^2 + 4] = 9e^{4t}$, since the two squares add to $5(\\cos^2 t + \\sin^2 t) = 5$. Step 2: the speed is $3e^{2t}$, so the length is $3\\int_0^1 e^{2t}\\,dt$. Step 3: substitution gives $\\frac{1}{2}e^{2t}$ as the antiderivative, so the arc length is (3/2)(e^2 - 1)."
         constraints: "the squared speed must factor as a perfect square or a constant times e^{2t}; exact answers with ln and e"
       - id: kp3
         name: "Speed and arc length parametrization"
@@ -1119,27 +1215,59 @@ topics:
         name: "The principal unit normal vector"
         key_prerequisites: [vector-valued-functions, derivatives-trig]
         exemplars:
-          - problem: 'Find $\mathbf{N}(t)$ for the circle $\mathbf{r}(t) = \langle 2\cos t, 2\sin t, 0 \rangle$.'
-            answer: '$\langle -\cos t, -\sin t, 0 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{T} = \langle -\sin t, \cos t, 0 \rangle$; $\mathbf{T}'' = \langle -\cos t, -\sin t, 0 \rangle$ already has length $1$. $\mathbf{N}$ points toward the center.'
-          - problem: 'Find $\mathbf{N}(t)$ for the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$.'
-            answer: '$\langle -\cos t, -\sin t, 0 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{T} = \frac{1}{\sqrt{2}}\langle -\sin t, \cos t, 1 \rangle$, so $\mathbf{T}'' = \frac{1}{\sqrt{2}}\langle -\cos t, -\sin t, 0 \rangle$ with $|\mathbf{T}''| = \frac{1}{\sqrt{2}}$.'
+          - problem: "Find the principal unit normal vector N(t) for the circle r(t) = <2 cos(t), 2 sin(t), 0> and give the components as Nx, Ny, Nz."
+            answer: "Nx = -cos(t); Ny = -sin(t); Nz = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "Nx"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Ny"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Nz"}]}
+            solution_sketch: "Step 1: Compute r'(t) = <-2 sin(t), 2 cos(t), 0> and its speed 2, so T(t) = <-sin(t), cos(t), 0> by the vector-function rule. Step 2: Differentiate T(t) with trigonometric derivative rules to get T'(t) = <-cos(t), -sin(t), 0>. Step 3: Since |T'| = 1, divide by the constant speed to get N(t) = <-cos(t), -sin(t), 0>. The principal unit normal vector is Nx = -cos(t); Ny = -sin(t); Nz = 0."
+          - problem: "Find the principal unit normal vector N(t) for the helix r(t) = <t, cos(t), sin(t)> and give the components as Nx, Ny, Nz."
+            answer: "Nx = 0; Ny = -cos(t); Nz = -sin(t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "Nx"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Ny"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Nz"}]}
+            solution_sketch: "Step 1: Compute r'(t) = <1, -sin(t), cos(t)> and its speed sqrt(2), so T(t) = <1/sqrt(2), -sin(t)/sqrt(2), cos(t)/sqrt(2)> by the vector-function rule. Step 2: Differentiate T(t) with trigonometric derivative rules to get T'(t) = <0, -cos(t)/sqrt(2), -sin(t)/sqrt(2)>. Step 3: Since |T'| = 1/sqrt(2), divide T' by |T'| to get N(t) = <0, -cos(t), -sin(t)>. The principal unit normal vector is Nx = 0; Ny = -cos(t); Nz = -sin(t)."
+          - problem: "Find the principal unit normal vector N(t) for the circle r(t) = <cos(t), 0, sin(t)> and give the components as Nx, Ny, Nz."
+            answer: "Nx = -cos(t); Ny = 0; Nz = -sin(t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "Nx"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Ny"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Nz"}]}
+            solution_sketch: "Step 1: Compute r'(t) = <-sin(t), 0, cos(t)> and its speed 1, so T(t) = <-sin(t), 0, cos(t)> by the vector-function rule. Step 2: Differentiate T(t) with trigonometric derivative rules to get T'(t) = <-cos(t), 0, -sin(t)>. Step 3: Since |T'| = 1, divide by the constant speed to get N(t) = <-cos(t), 0, -sin(t)>. The principal unit normal vector is Nx = -cos(t); Ny = 0; Nz = -sin(t)."
+          - problem: "Find the principal unit normal vector N(t) for the circle r(t) = <cos(t), -sin(t), 0> and give the components as Nx, Ny, Nz."
+            answer: "Nx = -cos(t); Ny = sin(t); Nz = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "Nx"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Ny"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Nz"}]}
+            solution_sketch: "Step 1: Compute r'(t) = <-sin(t), -cos(t), 0> and its speed 1, so T(t) = <-sin(t), -cos(t), 0> by the vector-function rule. Step 2: Differentiate T(t) with trigonometric derivative rules to get T'(t) = <-cos(t), sin(t), 0>. Step 3: Since |T'| = 1, divide by the constant speed to get N(t) = <-cos(t), sin(t), 0>. The principal unit normal vector is Nx = -cos(t); Ny = sin(t); Nz = 0."
+          - problem: "Find the principal unit normal vector N(t) for the circle r(t) = <sin(t), cos(t), 0> and give the components as Nx, Ny, Nz."
+            answer: "Nx = -sin(t); Ny = -cos(t); Nz = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "Nx"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Ny"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Nz"}]}
+            solution_sketch: "Step 1: Compute r'(t) = <cos(t), -sin(t), 0> and its speed 1, so T(t) = <cos(t), -sin(t), 0> by the vector-function rule. Step 2: Differentiate T(t) with trigonometric derivative rules to get T'(t) = <-sin(t), -cos(t), 0>. Step 3: Since |T'| = 1, divide by the constant speed to get N(t) = <-sin(t), -cos(t), 0>. The principal unit normal vector is Nx = -sin(t); Ny = -cos(t); Nz = 0."
+          - problem: "Find the principal unit normal vector N(t) for the circle r(t) = <cos(t/2), sin(t/2), 0> and give the components as Nx, Ny, Nz."
+            answer: "Nx = -cos(t/2); Ny = -sin(t/2); Nz = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "Nx"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Ny"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "Nz"}]}
+            solution_sketch: "Step 1: Compute r'(t) = <-1/2 sin(t/2), 1/2 cos(t/2), 0> and its speed 1/2, so T(t) = <-sin(t/2), cos(t/2), 0> by the vector-function rule. Step 2: Differentiate T(t) with trigonometric derivative rules to get T'(t) = <-1/2 cos(t/2), -1/2 sin(t/2), 0>. Step 3: Since |T'| = 1/2, divide T' by |T'| to get N(t) = <-cos(t/2), -sin(t/2), 0>. The principal unit normal vector is Nx = -cos(t/2); Ny = -sin(t/2); Nz = 0."
         constraints: "circles and helices (constant speed) so |T'| is constant and N is exact"
       - id: kp3
         name: "Evaluating T, N, and the binormal at a point"
         key_prerequisites: [vector-valued-functions]
         exemplars:
-          - problem: 'For the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$, evaluate $\mathbf{T}$ and $\mathbf{N}$ at $t = \pi/2$.'
-            answer: '$\mathbf{T}(\pi/2) = \frac{1}{\sqrt{2}}\langle -1, 0, 1 \rangle$, $\;\mathbf{N}(\pi/2) = \langle 0, -1, 0 \rangle$'
-            solution_sketch: '$\mathbf{T}=\frac1{\sqrt2}\langle -\sin t,\cos t,1\rangle$ and $\mathbf{N}=\langle -\cos t,-\sin t,0\rangle$; at $t=\pi/2$ these are $\frac1{\sqrt2}\langle -1,0,1\rangle$ and $\langle 0,-1,0\rangle$.'
-            answer_contract: {kind: none}
-          - problem: 'For the same helix, compute the binormal $\mathbf{B} = \mathbf{T} \times \mathbf{N}$ at $t = 0$.'
-            answer: '$\frac{1}{\sqrt{2}}\langle 0, -1, 1 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{T}(0) = \frac{1}{\sqrt{2}}\langle 0, 1, 1 \rangle$, $\mathbf{N}(0) = \langle -1, 0, 0 \rangle$; $\langle 0,1,1 \rangle \times \langle -1,0,0 \rangle = \langle 0, -1, 1 \rangle$.'
+          - problem: "For the curve r(t) = (3cos t, 3sin t, 4t), find the unit tangent vector T at t = pi/2. Give the answer as (x, y, z)."
+            answer: "(-3/5, 0, 4/5)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The curve is r(t) = (3cos t, 3sin t, 4t) with velocity r'(t) = (-3sin t, 3cos t, 4). The speed is |r'(t)| = 5, so the unit tangent rule gives T(t) = (-3sin t, 3cos t, 4)/5. Evaluating at t = pi/2 uses sin t = 1 and cos t = 0, so T(pi/2) = (-3/5, 0, 4/5)."
+          - problem: "For the curve r(t) = (5cos t, 5sin t, 12t), find the binormal vector B at t = 0. Give the answer as (x, y, z)."
+            answer: "(0, -12/13, 5/13)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(t) = (5cos t, 5sin t, 12t) the speed is 13, so T(t) = (-5sin t, 5cos t, 12)/13 and the unit normal rule gives N(t) = (-cos t, -sin t, 0). The binormal rule gives B(t) = T(t) x N(t) = (12sin t, -12cos t, 5)/13. At t = 0, sin t = 0 and cos t = 1, so B(0) = (0, -12/13, 5/13)."
+          - problem: "For the curve r(t) = (3cos t, 3sin t, 4t), find the unit normal vector N at t = 0. Give the answer as (x, y, z)."
+            answer: "(-1, 0, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(t) = (3cos t, 3sin t, 4t) the unit tangent is T(t) = (-3sin t, 3cos t, 4)/5. Differentiating T and dividing by its length gives N(t) = (-cos t, -sin t, 0) by the unit normal rule. At t = 0, cos t = 1 and sin t = 0, so N(0) = (-1, 0, 0)."
+          - problem: "For the curve r(t) = (t, cos t, sin t), find the unit tangent vector T at t = 0. Give the answer as (x, y, z)."
+            answer: "(1/sqrt(2), 0, 1/sqrt(2))"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(t) = (t, cos t, sin t) the velocity is (1, -sin t, cos t), whose length is sqrt(2). The unit tangent rule gives T(t) = (1, -sin t, cos t)/sqrt(2). At t = 0, sin t = 0 and cos t = 1, so T(0) = (1/sqrt(2), 0, 1/sqrt(2))."
+          - problem: "For the curve r(t) = (cos t, sin t, t), find the unit normal vector N at t = pi/2. Give the answer as (x, y, z)."
+            answer: "(0, -1, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(t) = (cos t, sin t, t) the speed is sqrt(2), so the unit tangent is T(t) = (-sin t, cos t, 1)/sqrt(2). Differentiating T and dividing by its length gives N(t) = (-cos t, -sin t, 0) by the unit normal rule. At t = pi/2, cos t = 0 and sin t = 1, so N(pi/2) = (0, -1, 0)."
+          - problem: "For the curve r(t) = (t, cos t, sin t), find the unit normal vector N at t = pi/2. Give the answer as (x, y, z)."
+            answer: "(0, 0, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(t) = (t, cos t, sin t) the unit tangent is T(t) = (1, -sin t, cos t)/sqrt(2). The unit normal rule gives N(t) = (0, -cos t, -sin t) after dividing the derivative of T by its length. At t = pi/2, cos t = 0 and sin t = 1, so N(pi/2) = (0, 0, -1)."
         constraints: "evaluate at multiples of pi/2 so sines and cosines are 0 or +-1"
     diagnostic_exemplar:
       problem: 'For $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$, find $\mathbf{T}(0)$ and $\mathbf{N}(0)$.'
@@ -1193,23 +1321,55 @@ topics:
           - problem: 'Use $\kappa = \dfrac{|\mathbf{r}'' \times \mathbf{r}''''|}{|\mathbf{r}''|^3}$ to find the curvature of the twisted cubic $\mathbf{r}(t) = \langle t, t^2, t^3 \rangle$ at $t = 0$.'
             answer: "2"
             solution_sketch: 'At $t=0$: $\mathbf{r}'' = \langle 1, 0, 0 \rangle$, $\mathbf{r}'''' = \langle 0, 2, 0 \rangle$; cross product $\langle 0, 0, 2 \rangle$, so $\kappa = 2/1 = 2$.'
-          - problem: 'Find the curvature of $y = x^2$ at the point $(1, 1)$.'
-            answer: '$\dfrac{2}{5\sqrt{5}} = \dfrac{2\sqrt{5}}{25}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Plane-curve formula $\kappa = \frac{|y''''|}{(1 + y''^2)^{3/2}}$ with $y'' = 2$, $y'''' = 2$: $\kappa = \frac{2}{5^{3/2}}$.'
+          - problem: "Find the exact curvature of the plane curve y = x^2 at the point (1, 1)."
+            answer: "2sqrt(5)/25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Plane-curve curvature formula: kappa = abs(y'')/(1 + (y')^2)^(3/2). For y = x^2, y' = 2x and y'' = 2. At x = 1, y' = 2, so kappa = 2/(1 + 4)^(3/2) = 2/(5sqrt(5)) = 2sqrt(5)/25. The curvature is 2sqrt(5)/25."
+          - problem: "Find the curvature of the helix r(t) = <cos(t), sin(t), t> at t = 0. Give the answer as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Cross-product formula: kappa = abs(r' x r'')/abs(r')^3. Here r'(t) = <-sin(t), cos(t), 1> and r''(t) = <-cos(t), -sin(t), 0>. At t = 0: r' = <0, 1, 1>, r'' = <-1, 0, 0>, and r' x r'' = <0, -1, 1> with norm sqrt(2). Also abs(r') = sqrt(2), so abs(r')^3 = 2sqrt(2). Then kappa = sqrt(2)/(2sqrt(2)) = 1/2. The curvature is 1/2."
+          - problem: "Find the curvature of r(t) = <3t, t^2, t^3> at t = 0. Give the answer as a fraction."
+            answer: "2/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Cross-product formula: kappa = abs(r' x r'')/abs(r')^3. For r(t) = <3t, t^2, t^3>, r'(t) = <3, 2t, 3t^2> and r''(t) = <0, 2, 6t>. At t = 0: r' = <3, 0, 0>, r'' = <0, 2, 0>, and r' x r'' = <0, 0, 6> with norm 6. Also abs(r') = 3, so abs(r')^3 = 27. Then kappa = 6/27 = 2/9. The curvature is 2/9."
+          - problem: "Find the curvature of r(t) = <t, 3t^2, t^3> at t = 0."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Cross-product formula: kappa = abs(r' x r'')/abs(r')^3. For r(t) = <t, 3t^2, t^3>, r'(t) = <1, 6t, 3t^2> and r''(t) = <0, 6, 6t>. At t = 0: r' = <1, 0, 0>, r'' = <0, 6, 0>, and r' x r'' = <0, 0, 6> with norm 6. Also abs(r') = 1, so abs(r')^3 = 1. Then kappa = 6/1 = 6. The curvature is 6."
+          - problem: "Find the curvature of r(t) = <cos(t), sin(t), 2t> at t = 0. Give the answer as a fraction."
+            answer: "1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Cross-product formula: kappa = abs(r' x r'')/abs(r')^3. Here r'(t) = <-sin(t), cos(t), 2> and r''(t) = <-cos(t), -sin(t), 0>. At t = 0: r' = <0, 1, 2>, r'' = <-1, 0, 0>, and r' x r'' = <0, -2, 1> with norm sqrt(5). Also abs(r') = sqrt(5), so abs(r')^3 = 5sqrt(5). Then kappa = sqrt(5)/(5sqrt(5)) = 1/5. The curvature is 1/5."
         constraints: "evaluate at a specific t so cross products have small integer components; plane curves use the |y''| formula"
       - id: kp3
         name: "Interpreting curvature"
         key_prerequisites: [unit-tangent-normal-vectors]
         exemplars:
-          - problem: 'What is the curvature of a straight line?'
-            answer: '$0$ (the unit tangent never turns).'
-            solution_sketch: 'A straight line has constant unit tangent, so $\kappa=\|\mathbf{T}''\|/\|\mathbf{r}''\|=0$.'
-            answer_contract: {kind: none}
-          - problem: 'Where is the curvature of the parabola $y = x^2$ largest, and what is its radius of curvature there?'
-            answer: 'At the vertex $(0,0)$, where $\kappa = 2$; the radius of curvature is $1/\kappa = \frac{1}{2}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\kappa(x) = \frac{2}{(1+4x^2)^{3/2}}$ is maximized at $x = 0$.'
+          - problem: "A particle moves along the straight line y = 3x - 2 in the xy-plane. Find the curvature of the path."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The path is a straight line, so its unit tangent vector is constant. A constant unit tangent has derivative zero, so the curvature is 0. The curvature is 0."
+          - problem: "For the parabola y = x^2 in the xy-plane, find the point where the curvature is largest. Give the answer as (x, y)."
+            answer: "(0, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "For y = x^2, the curvature is k(x) = 2/(1+4x^2)^(3/2). The denominator is smallest at x = 0, so the curvature is largest there, and y = 0. The point is (0, 0)."
+          - problem: "For the parabola y = x^2, find the radius of curvature at the point where the curvature is largest. Give the answer as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "At the vertex (0, 0), the curvature of y = x^2 is k = 2. The radius of curvature is 1/k, so it is 1/2. The radius of curvature is 1/2."
+          - problem: "A circle has radius 6. Find its curvature. Give the answer as a fraction."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A circle of radius R has curvature k = 1/R. With R = 6, the curvature is 1/6. The curvature is 1/6."
+          - problem: "For y = x^2, find the maximum value of the curvature."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curvature is k(x) = 2/(1+4x^2)^(3/2). The denominator is at least 1, so the maximum occurs at x = 0, where k(0) = 2. The maximum curvature is 2."
+          - problem: "For a circle, how does the curvature change when the radius grows? State the direction and the curvature when the radius is 2, giving the curvature as a fraction."
+            answer: "verdict = decreases; k = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increases"], ["decreases"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "For a circle the curvature is k = 1/R, so as R grows the curvature gets smaller. At R = 2, k = 1/2. The direction is decreases and the curvature is 1/2, so verdict = decreases; k = 1/2."
         constraints: "conceptual: lines, circles, and locating maximum curvature of a parabola"
     diagnostic_exemplar:
       problem: 'Find the curvature of $\mathbf{r}(t) = \langle 2t,\; t^2,\; t^3 \rangle$ at $t = 0$, and state the radius of curvature there.'

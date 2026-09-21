@@ -31,23 +31,47 @@ topics:
             solution_sketch: '$4 \cdot (-1) - 3(-1) = -4 + 3 = -1$.'
           - problem: 'Let $f(x, y, z) = xyz + z^2$. Compute $f(2, 3, 1)$.'
             answer: "7"
+          - problem: "Let f(x, y) = (x + 2y)/(x - y). Compute f(3, 1)."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the inputs into the formula: f(3, 1) = (3 + 2*1)/(3 - 1). Simplify the numerator and the denominator by arithmetic: 5/2. The answer is 5/2."
+          - problem: "Let h(x, y, z) = x^2 + yz - z. Compute h(2, 1, 3)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the inputs into the formula: h(2, 1, 3) = 2^2 + 1*3 - 3. Simplify each term by arithmetic: 4 + 3 - 3 = 4. The answer is 4."
+          - problem: "A flat plate has temperature T(x, y) = (2x - y)/(x + y) at the point (x, y). Compute T(3, 2)."
+            answer: "4/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the point into the temperature formula: T(3, 2) = (2*3 - 2)/(3 + 2). Simplify the numerator and the denominator by arithmetic: 4/5. The answer is 4/5."
         constraints: "small integer inputs; rational outputs with single-digit numerators and denominators"
       - id: kp2
         name: "Domains"
         key_prerequisites: [domain-range, logarithm-basics]
         exemplars:
-          - problem: 'Find the domain of $f(x, y) = \sqrt{9 - x^2 - y^2}$.'
-            answer: 'The closed disk $x^2 + y^2 \le 9$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The radicand must be nonnegative: $9 - x^2 - y^2 \ge 0$.'
-          - problem: 'Let $f(x, y) = \ln(x + y - 1)$. Compute $f(2, 3)$ and state the domain.'
-            answer: '$f(2, 3) = \ln 4$; domain $x + y > 1$.'
-            solution_sketch: '$f(2,3)=\ln(2+3-1)=\ln 4$; the log requires $x+y-1>0$, i.e. $x+y>1$.'
-            answer_contract: {kind: none}
-          - problem: 'Find the domain of $f(x, y) = \dfrac{x + y}{x - y}$.'
-            answer: 'All $(x, y)$ with $x \ne y$.'
-            solution_sketch: 'The denominator $x-y$ must be nonzero, so the domain is all $(x,y)$ with $x\ne y$.'
-            answer_contract: {kind: none}
+          - problem: "Let $f(x, y) = \\sqrt{16 - x^2 - y^2}$. Find the radius of the domain of $f$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (square-root rule): the radicand must be nonnegative, so $16 - x^2 - y^2 \\ge 0$. Step 2 (disk rule): this inequality is $x^2 + y^2 \\le 16$, which describes a closed disk of radius $\\sqrt{16}$. The answer is 4."
+          - problem: "Let $f(x, y) = \\ln(2x + y - 5)$. Find the smallest integer $k$ such that the point $(k, 0)$ lies in the domain of $f$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (log rule): the argument of the logarithm must be positive, so $2x + y - 5 > 0$. Step 2 (substitute the point): at $(k, 0)$ the condition is $2k - 5 > 0$, that is $k > 2.5$. Step 3 (integer choice): the smallest integer strictly greater than $2.5$ is $3$. The answer is 3."
+          - problem: "Let $f(x, y) = \\dfrac{x + y}{x - 2y}$. Find the slope of the line excluded from the domain of $f$."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (denominator rule): $x - 2y$ cannot be zero, so the domain excludes the line $x - 2y = 0$. Step 2 (line rule): solving $x - 2y = 0$ for $y$ gives $y = \\frac{x}{2}$, a line through the origin of slope $\\frac{1}{2}$. The answer is 1/2."
+          - problem: "Let $f(x, y) = \\sqrt{36 - (x - 1)^2 - y^2}$. Find the radius of the domain of $f$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (square-root rule): the radicand must be nonnegative, so $36 - (x - 1)^2 - y^2 \\ge 0$. Step 2 (disk rule): this is $(x - 1)^2 + y^2 \\le 36$, a disk centered at $(1, 0)$ with radius $\\sqrt{36}$. The answer is 6."
+          - problem: "Let $f(x, y) = \\ln(3x + 2y - 6)$. The boundary of the domain is a line. Find the x-intercept of this line."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (log rule): the argument must be positive, so $3x + 2y - 6 > 0$. Step 2 (line rule): the boundary line is $3x + 2y = 6$. Step 3 (intercept): setting $y = 0$ gives $3x = 6$, so the intercept is $x = 2$. The answer is 2."
+          - problem: "Let $f(x, y) = \\dfrac{x + y}{2x - 5y}$. The domain is the plane with one line removed. Find the slope of that line."
+            answer: "2/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (denominator rule): $2x - 5y$ cannot be zero, so the domain is the plane minus the line $2x - 5y = 0$. Step 2 (line rule): solving $2x - 5y = 0$ for $y$ gives $y = \\frac{2x}{5}$, so the slope of the removed line is $\\frac{2}{5}$. The answer is 2/5."
         constraints: "domains defined by one square root, log, or nonzero denominator; regions are disks, half-planes, or the plane minus a line"
       - id: kp3
         name: "Ranges of simple functions"
@@ -56,10 +80,26 @@ topics:
           - problem: 'Find the range of $f(x, y) = \sqrt{9 - x^2 - y^2}$.'
             answer: '$[0, 3]$'
             solution_sketch: 'The radicand runs from $0$ (on the boundary circle) to $9$ (at the origin).'
-          - problem: 'Find the range of $f(x, y) = x^2 + y^2$.'
-            answer: '$[0, \infty)$'
-            solution_sketch: 'Since $x^2+y^2\ge 0$ and every nonnegative value is attained, the range is $[0,\infty)$.'
-            answer_contract: {kind: none}
+          - problem: "Let f(x, y) = x^2 + y^2. Give the range of f as an inequality in z."
+            answer: "z >= 0"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The function is f(x, y) = x^2 + y^2. Step 1 (square bounds): x^2 is at least 0 and y^2 is at least 0, so x^2 + y^2 is at least 0. Step 2 (attainment): the value z = 0 occurs at (0, 0), so every value z >= 0 is possible. The range is z >= 0."
+          - problem: "Let f(x, y) = sqrt(16 - x^2 - y^2). Give the range of f as an inequality in z."
+            answer: "0 <= z <= 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The function is f(x, y) = sqrt(16 - x^2 - y^2). Step 1 (radicand bounds): the expression 16 - x^2 - y^2 runs from 0 on the circle x^2 + y^2 = 16 up to 16 at the origin. Step 2 (square root): taking sqrt gives z from 0 to 4, so the range is 0 <= z <= 4."
+          - problem: "Let f(x, y) = x^2 + y^2 + 2. Give the range of f as an inequality in z."
+            answer: "z >= 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The function is f(x, y) = x^2 + y^2 + 2. Step 1 (square bounds): x^2 + y^2 is at least 0. Step 2 (add the constant): adding 2 gives z at least 2, and z = 2 occurs at (0, 0). The range is z >= 2."
+          - problem: "Let f(x, y) = sqrt(36 - x^2 - y^2). Give the range of f as an inequality in z."
+            answer: "0 <= z <= 6"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The function is f(x, y) = sqrt(36 - x^2 - y^2). Step 1 (radicand bounds): 36 - x^2 - y^2 runs from 0 on x^2 + y^2 = 36 to 36 at the origin. Step 2 (square root): sqrt of the radicand runs from 0 to 6, so the range is 0 <= z <= 6."
+          - problem: "Let f(x, y) = x^2 + y^2 - 3. Give the range of f as an inequality in z."
+            answer: "z >= -3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The function is f(x, y) = x^2 + y^2 - 3. Step 1 (square bounds): x^2 + y^2 is at least 0. Step 2 (subtract the constant): subtracting 3 gives z at least -3, and z = -3 occurs at (0, 0). The range is z >= -3."
         constraints: "ranges of sums of squares or a root of one; closed-form interval answers"
     diagnostic_exemplar:
       problem: 'Let $f(x, y) = \sqrt{25 - x^2 - y^2}$. Compute $f(3, 0)$ and state the domain and the range of $f$.'
@@ -93,34 +133,58 @@ topics:
         name: "Level curves"
         key_prerequisites: [evaluating-multivariable-functions]
         exemplars:
-          - problem: 'Describe the level curves of $f(x, y) = x^2 + y^2$.'
-            answer: 'Concentric circles $x^2 + y^2 = k$ of radius $\sqrt{k}$ for $k > 0$ (and the single point at the origin for $k = 0$).'
-            solution_sketch: 'Setting $f=k$ gives $x^2+y^2=k$: circles of radius $\sqrt{k}$ for $k>0$, and the origin for $k=0$.'
-            answer_contract: {kind: none}
+          - problem: "For $f(x, y) = x^2 + y^2$, find the value of $k$ for the level curve that passes through $(3, 4)$."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the level curve condition f = k. Evaluate f(3, 4) = 3^2 + 4^2 = 25. The level curve x^2 + y^2 = 25 has k = 25. The value of k is 25."
           - problem: 'Find an equation of the level curve of $f(x, y) = y - x^2$ passing through $(1, 3)$.'
             answer: '$y = x^2 + 2$'
             solution_sketch: '$f(1, 3) = 3 - 1 = 2$, so the level curve is $y - x^2 = 2$.'
-          - problem: 'Describe the level curves of $f(x, y) = xy$.'
-            answer: 'Hyperbolas $xy = k$ for $k \ne 0$; the two coordinate axes for $k = 0$.'
-            solution_sketch: 'Setting $f=k$ gives $xy=k$: hyperbolas in the first and third quadrants for $k>0$, in the second and fourth for $k<0$, and the two axes for $k=0$.'
-            answer_contract: {kind: none}
+          - problem: "For $f(x, y) = xy$, consider the level set $f(x, y) = 6$. What type of curve is this level set?"
+            answer: "hyperbola"
+            answer_contract: {"kind": "label", "options": [["hyperbola"], ["circle"], ["line"], ["parabola"]]}
+            solution_sketch: "Use the level set condition f = k: xy = 6. A circle would need both variables squared with the same sign, not a product. A line would be a first-degree equation such as x + y = c, not xy = c. A parabola would have one squared variable, not a product equal to a constant. The product xy = 6 is a hyperbola, so the answer is hyperbola."
+          - problem: "For $f(x, y) = 2x + 3y$, find the value of $k$ for the level curve that passes through $(1, 2)$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the level curve condition f = k. Evaluate f(1, 2) = 2(1) + 3(2) = 8. The level curve 2x + 3y = 8 has k = 8. The value of k is 8."
+          - problem: "For $f(x, y) = x^2 + y^2$, the level curve $f(x, y) = k$ is a circle of radius 7. Find $k$."
+            answer: "49"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the level curve condition f = k. A circle of radius 7 has equation x^2 + y^2 = 49. So k = 49. The value of k is 49."
+          - problem: "For $f(x, y) = x^2 + y$, find an equation of the level curve passing through $(2, 3)$ in the form $y = \\ldots$."
+            answer: "7-x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use the level curve condition f = k. Evaluate f(2, 3) = 2^2 + 3 = 7, so the level curve is x^2 + y = 7. Solve for y: y = 7 - x^2. The right side is 7-x^2."
         constraints: "level sets are circles, lines, parabolas, or hyperbolas; k values keep radii and intercepts exact"
       - id: kp2
         name: "Reading contour maps"
         key_prerequisites: [evaluating-multivariable-functions, coordinates-surfaces-3d]
         exemplars:
-          - problem: 'For $f(x, y) = x^2 + y^2$, the contours $k = 1, 4, 9$ are circles of radii $1, 2, 3$: equal radius steps for larger and larger jumps in level. What does this say about the surface $z = f(x, y)$?'
-            answer: 'The surface steepens away from the origin: each unit step outward raises the height by more than the last (jumps of $3$, then $5$).'
-            answer_contract: {kind: none}
-            solution_sketch: 'Equal horizontal steps ($\Delta r = 1$) produce growing height gains $\Delta k = 3, 5, \dots$, so the paraboloid gets steeper outward.'
-          - problem: 'The level curves of a function $f(x, y)$ are evenly spaced parallel lines. What kind of function is $f$?'
-            answer: 'A linear function $f(x, y) = ax + by + c$; its graph is a plane.'
-            solution_sketch: 'Evenly spaced parallel level curves mean the value changes at a constant rate in a fixed direction: a linear function $f(x,y)=ax+by+c$, whose graph is a plane.'
-            answer_contract: {kind: none}
-          - problem: 'On a contour map, what does it mean when level curves crowd close together?'
-            answer: 'The function changes rapidly there — the graph is steep.'
-            solution_sketch: 'Closely spaced level curves mean the function changes rapidly over a short distance, so the graph is steep there.'
-            answer_contract: {kind: none}
+          - problem: "For $f(x, y) = x^2 + y^2$, the contours $k = 1, 4, 9$ are circles of radii $1, 2, 3$. Find the increase in the level value when the radius moves from $2$ to $3$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the contour levels at the two radii: radius 2 lies on k = 4, radius 3 lies on k = 9. Subtract the levels: 9 - 4 = 5. The increase in the level value is 5."
+          - problem: "The level curves of a function $f(x, y)$ are evenly spaced parallel lines. Moving $4$ units perpendicular to the lines changes $f$ by $16$. Find the constant rate of change of $f$ per unit distance in that direction."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Evenly spaced parallel level curves mean a constant rate of change. Rate equals change in f divided by distance moved: 16 / 4 = 4. The constant rate of change is 4."
+          - problem: "On a contour map, two adjacent level curves labeled $30$ and $50$ are $2$ units apart. Compute the average rate of change of $f$ per unit distance perpendicular to the curves."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The level change is 50 - 30 = 20. The distance is 2 units. Rate equals level change divided by distance: 20 / 2 = 10. The average rate of change is 10."
+          - problem: "A function $f(x, y)$ has straight parallel level curves. Along the $x$-axis, $f$ increases by $6$ per unit $x$. Along the $y$-axis, $f$ does not change. Find $f(3, 2) - f(0, 0)$."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parallel level curves mean the rate is constant in each axis direction. Moving 3 units in x adds 6 * 3 = 18. Moving 2 units in y adds 0. The total change is 18, so f(3, 2) - f(0, 0) = 18."
+          - problem: "On a contour map, level curves $k = 0$ and $k = 10$ are $5$ units apart, while $k = 10$ and $k = 20$ are $2$ units apart. Find the average rate of change of $f$ per unit distance in the interval where the contour lines are closer together."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Closer contour lines mean a steeper change. The closer interval is between k = 10 and k = 20, with level change 10 and distance 2. Rate equals 10 / 2 = 5. The average rate of change is 5."
+          - problem: "The level curves of $f$ are evenly spaced parallel lines. Moving $10$ units perpendicular to the lines changes $f$ by $25$. Determine the shape of the graph and the rate of change per unit distance. Give the rate as a fraction."
+            answer: "shape = flat; rate = 5/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["flat"], ["curved"]]}, "name": "shape"}, {"contract": {"kind": "exact"}, "name": "rate"}]}
+            solution_sketch: "Evenly spaced parallel level curves mean the graph is flat, a plane. The rate is change in f divided by distance: 25 / 10 = 5/2. The option curved is wrong because a plane has straight parallel level curves, not a curved surface. Thus shape = flat; rate = 5/2."
         constraints: "qualitative reading of contour maps: spacing vs steepness, parallel lines vs planes"
       - id: kp3
         name: "Graphs of two-variable functions"
@@ -167,14 +231,30 @@ topics:
         name: "Level surfaces of f(x, y, z)"
         key_prerequisites: [functions-several-variables]
         exemplars:
-          - problem: 'Describe the level surfaces of $f(x, y, z) = x^2 + y^2 + z^2$.'
-            answer: 'Concentric spheres of radius $\sqrt{k}$ centered at the origin for $k > 0$ (the origin itself for $k = 0$).'
-            solution_sketch: 'Setting $f=k$ gives $x^2+y^2+z^2=k$: spheres of radius $\sqrt{k}$ for $k>0$, and the origin for $k=0$.'
-            answer_contract: {kind: none}
-          - problem: 'Find the level surface of $f(x, y, z) = x^2 + y^2 - z$ passing through the origin.'
-            answer: 'The paraboloid $z = x^2 + y^2$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$f(0,0,0) = 0$, so the surface is $x^2 + y^2 - z = 0$.'
+          - problem: "Let f(x, y, z) = x^2 + y^2 + z^2. The level surface f(x, y, z) = k passes through the point (1, 2, 2). Find k."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The level surface f(x,y,z)=k contains the point (1,2,2). Step 1: evaluate f at the point: 1^2 + 2^2 + 2^2 = 1 + 4 + 4 = 9. Step 2: set k equal to this value, so k = 9."
+          - problem: "Let f(x, y, z) = x^2 + y^2 - z. The level surface f(x, y, z) = k passes through the origin (0, 0, 0). Find k."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The level surface f(x,y,z)=k contains (0,0,0). Step 1: substitute the point: 0^2 + 0^2 - 0 = 0. Step 2: the level values satisfy k = 0, so k = 0."
+          - problem: "Let f(x, y, z) = 2x^2 + y^2 + 3z^2. The level surface f(x, y, z) = k passes through (1, -1, 2). Find k."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the point into the function. Step 1: compute 2(1)^2 + (-1)^2 + 3(2)^2 = 2 + 1 + 12 = 15. Step 2: the level surface through the point has k = 15."
+          - problem: "Let f(x, y, z) = 2x - y + 4z. The level surface f(x, y, z) = k passes through (3, 1, -2). Find k."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Evaluate f at the given point. Step 1: substitute (3,1,-2) into f: 2(3) - 1 + 4(-2) = 6 - 1 - 8 = -3. Step 2: the level constant is k = -3."
+          - problem: "Let f(x, y, z) = x^2 - y^2 + z^2. The level surface f(x, y, z) = k passes through (1, 2, 3). Find k."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The level surface contains the point (1,2,3). Step 1: evaluate f at the point: 1^2 - 2^2 + 3^2 = 1 - 4 + 9 = 6. Step 2: set k equal to the value, so k = 6."
+          - problem: "Let f(x, y, z) = 3x + y - 2z. The level surface f(x, y, z) = k passes through (1, 2, 3). Find k."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the point into the linear function. Step 1: compute 3(1) + 2 - 2(3) = 3 + 2 - 6 = -1. Step 2: the level surface has k = -1."
         constraints: "f is a quadratic or linear polynomial; the required level passes through a given small-integer point"
       - id: kp2
         name: "Identifying the surface"
