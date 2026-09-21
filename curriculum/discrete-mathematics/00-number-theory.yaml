@@ -124,6 +124,22 @@ topics:
             answer: 'x = 3; y = -4'
             answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
             solution_sketch: '$42 = 1 \cdot 30 + 12$; $30 = 2 \cdot 12 + 6$. Back-substitute: $6 = 30 - 2 \cdot 12 = 30 - 2(42 - 30) = 3 \cdot 30 - 2 \cdot 42$; equivalently $42 \cdot 3 + 30 \cdot (-4) = 126 - 120 = 6$. Any pair satisfying the equation is correct.'
+          - problem: "Use the Euclidean algorithm on 56 and 15, then back-substitute to express gcd(56, 15) = 1 as 56x + 15y. Give integers x and y as x = ...; y = ..."
+            answer: "x = -4; y = 15"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "y"}]}
+            solution_sketch: "Euclidean algorithm: 56 = 3*15 + 11, 15 = 1*11 + 4, 11 = 2*4 + 3, 4 = 1*3 + 1, so the last nonzero remainder is 1. Back-substitution: 1 = 4 - 1*3 = 4 - (11 - 2*4) = 3*4 - 11 = 3*(15 - 11) - 11 = 3*15 - 4*11 = 3*15 - 4*(56 - 3*15) = 15*15 - 4*56. Verification: 56*(-4) + 15*15 = -224 + 225 = 1, so x = -4; y = 15."
+          - problem: "Express gcd(50, 18) = 2 in the form 50x + 18y using back-substitution from the Euclidean algorithm. Give integers x and y as x = ...; y = ..."
+            answer: "x = 4; y = -11"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "y"}]}
+            solution_sketch: "Euclidean algorithm: 50 = 2*18 + 14, 18 = 1*14 + 4, 14 = 3*4 + 2, so the last nonzero remainder is 2. Back-substitution: 2 = 14 - 3*4 = 14 - 3*(18 - 14) = 4*14 - 3*18 = 4*(50 - 2*18) - 3*18 = 4*50 - 11*18. Verification: 50*4 + 18*(-11) = 200 - 198 = 2, so x = 4; y = -11."
+          - problem: "Find the integer x with 0 <= x < 6 such that 23x + 6y = 1 for some integer y."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Euclidean algorithm: 23 = 3*6 + 5, 6 = 1*5 + 1, so gcd(23, 6) = 1. Back-substitution: 1 = 6 - 1*5 = 6 - (23 - 3*6) = 4*6 - 23, giving a base solution x = -1, y = 4. General solutions are x = -1 + 6k, y = 4 - 23k. The condition 0 <= x < 6 forces k = 1, so x = 5."
+          - problem: "Find integers x and y with 40x + 17y = 1, using the Euclidean algorithm and back-substitution."
+            answer: "x = 3; y = -7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "y"}]}
+            solution_sketch: "Euclidean algorithm: 40 = 2*17 + 6, 17 = 2*6 + 5, 6 = 1*5 + 1, so the last nonzero remainder is 1. Back-substitution: 1 = 6 - 1*5 = 6 - (17 - 2*6) = 3*6 - 17 = 3*(40 - 2*17) - 17 = 3*40 - 7*17. Verification: 40*3 + 17*(-7) = 120 - 119 = 1, so x = 3; y = -7."
         constraints: "operands small enough for 2-3 back-substitution steps; accept any valid Bezout pair, require a verification check"
     diagnostic_exemplar:
       problem: 'Run the Euclidean algorithm on $25$ and $7$, then back-substitute to find integers $x, y$ with $25x + 7y = 1$.'
