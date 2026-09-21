@@ -95,14 +95,30 @@ topics:
         name: "Conjunction and disjunction"
         key_prerequisites: [propositions-and-truth-values]
         exemplars:
-          - problem: 'Let $P$: "it is raining", $Q$: "it is cold". Translate $\neg P \land Q$ into English.'
-            answer_contract: {kind: none}
-            answer: 'It is not raining and it is cold.'
-            solution_sketch: '$\neg P$ negates $P$ and $\land$ is conjunction, giving "it is not raining, and it is cold."'
-          - problem: 'Write "either $5$ is even or $5$ is odd" symbolically using $E$ and $O$.'
-            answer_contract: {kind: none}
-            answer: '$E \lor O$'
-            solution_sketch: '"either ... or ..." is inclusive disjunction $\lor$, so $E \lor O$ (true here since $O$ holds).'
+          - problem: "Let P and Q be propositions. Determine how many rows of the truth table for $\\neg P \\land Q$ have the value true."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the formula $\\neg P \\land Q$. List the four rows for $(P,Q)$: TT, TF, FT, FF. Apply negation to P and conjunction with Q: only FT makes $\\neg P$ true and Q true. The number of true rows is 1."
+          - problem: "Let P and Q be propositions. Determine how many rows of the truth table for $P \\lor \\neg Q$ have the value true."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the formula $P \\lor \\neg Q$. The four rows are TT, TF, FT, FF. By the disjunction rule, $P \\lor \\neg Q$ is false only on the row where P is false and Q is true (FT), so three rows are true. The number of true rows is 3."
+          - problem: "Let P and Q be propositions. Determine how many rows of the truth table for $(P \\land Q) \\lor (\\neg P \\land \\neg Q)$ have the value true."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $(P \\land Q) \\lor (\\neg P \\land \\neg Q)$. The four rows are TT, TF, FT, FF. The conjunction $P \\land Q$ holds on TT and $\\neg P \\land \\neg Q$ holds on FF, so the disjunction is true on two rows. The number of true rows is 2."
+          - problem: "Let P and Q be propositions. Determine how many rows of the truth table for $(P \\lor \\neg P) \\land (Q \\lor \\neg Q)$ have the value true."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $(P \\lor \\neg P) \\land (Q \\lor \\neg Q)$. In every row, one of $P$ and $\\neg P$ is true, and one of $Q$ and $\\neg Q$ is true. The conjunction of two true disjunctions is true in all four rows. The number of true rows is 4."
+          - problem: "Let P and Q be propositions. Determine how many rows of the truth table for $P \\land Q \\land \\neg P$ have the value true."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $P \\land Q \\land \\neg P$. For the conjunction to be true, $P$, $Q$, and $\\neg P$ must all be true. No row can make both $P$ and $\\neg P$ true, so the formula is false in all four rows. The number of true rows is 0."
+          - problem: "Let P and Q be propositions. Determine how many rows of the truth table for $\\neg P \\lor Q$ have the value true."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\neg P \\lor Q$. The four rows are TT, TF, FT, FF. By the disjunction rule, $\\neg P \\lor Q$ is false only on the row where P is true and Q is false (TF), so three rows are true. The number of true rows is 3."
         constraints: "connectives limited to negation, conjunction, disjunction; two atomic propositions"
       - id: kp3
         name: "Mathematical or is inclusive"
