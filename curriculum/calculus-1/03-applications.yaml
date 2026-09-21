@@ -1770,40 +1770,88 @@ topics:
         name: Marginal cost and revenue as derivatives
         key_prerequisites: [derivative-power-rule]
         exemplars:
-          - problem: 'The cost of producing $x$ items is $C(x) = \frac{x^2}{10} + 40x + 1000$ euros. Find the marginal cost at $x = 50$.'
-            answer: "€50 per item"
-            answer_contract: {kind: none}
-            solution_sketch: '$C''(x) = \frac{x}{5} + 40$; $C''(50) = 10 + 40 = 50$.'
-          - problem: 'Revenue is $R(x) = 500x - \frac{x^2}{2}$. Find the marginal revenue at $x = 200$.'
-            answer: "€300 per item"
-            answer_contract: {kind: none}
-            solution_sketch: '$R''(x) = 500 - x$; $R''(200) = 300$.'
+          - problem: "The cost of producing x items is C(x) = x^2/10 + 40x + 1000 euros. Find the marginal cost at x = 50, in euros per item."
+            answer: "50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Cost function: C(x) = x^2/10 + 40x + 1000. Apply the power rule to get C'(x) = x/5 + 40. Evaluate at x = 50: C'(50) = 50/5 + 40 = 10 + 40 = 50. The marginal cost is 50."
+          - problem: "Revenue from selling x items is R(x) = 500x - x^2/2 euros. Find the marginal revenue at x = 200, in euros per item."
+            answer: "300"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Revenue function: R(x) = 500x - x^2/2. Differentiate with the power rule: R'(x) = 500 - x. Evaluate at x = 200: R'(200) = 500 - 200 = 300. The marginal revenue is 300."
+          - problem: "The cost of producing x items is C(x) = 3x^2 + 20x + 500 euros. Find the marginal cost at x = 10, in euros per item."
+            answer: "80"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Cost function: C(x) = 3x^2 + 20x + 500. Differentiate by the power rule: C'(x) = 6x + 20. Evaluate at x = 10: C'(10) = 60 + 20 = 80. The marginal cost is 80."
+          - problem: "Revenue from selling x items is R(x) = 200x - x^2/5 euros. Find the marginal revenue at x = 50, in euros per item."
+            answer: "180"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Revenue function: R(x) = 200x - x^2/5. Differentiate by the power rule: R'(x) = 200 - 2x/5. Evaluate at x = 50: R'(50) = 200 - 100/5 = 200 - 20 = 180. The marginal revenue is 180."
+          - problem: "Revenue from selling x items is R(x) = 80x - x^2/4 euros. Find the production level x at which the marginal revenue is 50 euros per item."
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Revenue function: R(x) = 80x - x^2/4. Differentiate by the power rule: R'(x) = 80 - x/2. Set the marginal revenue equal to 50: 80 - x/2 = 50. Solve: x/2 = 30, so x = 60. The production level is 60."
+          - problem: "Revenue from selling x items is R(x) = 600x - 2x^2 euros. Find the marginal revenue at x = 100, in euros per item."
+            answer: "200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Revenue function: R(x) = 600x - 2x^2. Differentiate by the power rule: R'(x) = 600 - 4x. Evaluate at x = 100: R'(100) = 600 - 400 = 200. The marginal revenue is 200."
         constraints: "quadratic cost/revenue with integer marginal values; state units"
       - id: kp2
         name: Marginal value vs actual change
         key_prerequisites: [derivative-power-rule, average-instantaneous-rate]
         exemplars:
-          - problem: 'For $C(x) = \frac{x^2}{10} + 40x + 1000$, compare the marginal cost $C''(50)$ with the actual cost of the 51st item, $C(51) - C(50)$.'
-            answer: "C'(50) = 50; C(51) - C(50) = 50.1 — the marginal cost approximates the next item's cost"
-            answer_contract: {kind: none}
-            solution_sketch: '$C(51) - C(50) = \frac{2601 - 2500}{10} + 40 = 10.1 + 40 = 50.1$.'
-          - problem: 'Why is $C''(x)$ a good estimate of the cost of item $x + 1$?'
-            answer: "it is the linearization estimate: C(x+1) - C(x) ≈ C'(x)·1"
-            answer_contract: {kind: none}
-            solution_sketch: "it is the linearization estimate: C(x+1) - C(x) ≈ C'(x)·1"
+          - problem: "Let C(x) = x^2/20 + 15x + 400. Find the difference, as a fraction, between the actual cost of the 41st item, C(41) - C(40), and the marginal cost C'(40)."
+            answer: "1/20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "C(x) = x^2/20 + 15x + 400. Step 1: Power rule gives C'(x) = x/10 + 15, so C'(40) = 19. Step 2: Evaluate C(41) - C(40) = (41^2 - 40^2)/20 + 15 = 81/20 + 15 = 381/20. Step 3: Subtract the marginal value: 381/20 - 19 = 381/20 - 380/20 = 1/20. The difference is 1/20."
+          - problem: "Let R(x) = 150x - x^2/5 be a revenue function. Compute the actual revenue from the 31st unit, R(31) - R(30), minus the marginal revenue R'(30), as a fraction."
+            answer: "-1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "R(x) = 150x - x^2/5. Step 1: The power rule gives R'(x) = 150 - 2x/5, so R'(30) = 150 - 12 = 138. Step 2: Evaluate the actual change R(31) - R(30) = 150 - (31^2 - 30^2)/5 = 150 - 61/5 = 689/5. Step 3: Subtract the marginal value from the actual change: 689/5 - 138 = 689/5 - 690/5 = -1/5. The requested quantity is -1/5."
+          - problem: "Let C(x) = x^2/2 + 5x + 100. State whether the actual cost of the 11th item, C(11) - C(10), is larger or smaller than the marginal cost C'(10), and give the amount of the difference as a fraction."
+            answer: "verdict = larger; amount = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["larger"], ["smaller"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "amount"}]}
+            solution_sketch: "C(x) = x^2/2 + 5x + 100. Step 1: Power rule gives C'(x) = x + 5, so C'(10) = 15. Step 2: Evaluate C(11) - C(10) = (121 - 100)/2 + 5 = 21/2 + 5 = 31/2. Step 3: Compare: 31/2 > 15, so actual is larger, and the difference is 31/2 - 15 = 1/2. So verdict = larger; amount = 1/2."
+          - problem: "Let C(x) = x^2/25 + 10x + 250. Find the actual cost of the 26th item, C(26) - C(25), and the marginal cost C'(25), as exact fractions or integers."
+            answer: "actual = 301/25; marginal = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "actual"}, {"contract": {"kind": "exact"}, "name": "marginal"}]}
+            solution_sketch: "C(x) = x^2/25 + 10x + 250. Step 1: Power rule gives C'(x) = 2x/25 + 10, so C'(25) = 12. Step 2: Evaluate C(26) - C(25) = (676 - 625)/25 + 10 = 51/25 + 10 = 301/25. So actual = 301/25; marginal = 12."
+          - problem: "Let C(x) = 0.01x^3 + 0.5x^2 + 20x + 100. Find the difference, as a fraction, between the actual cost of the 11th item, C(11) - C(10), and the marginal cost C'(10)."
+            answer: "81/100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "C(x) = 0.01x^3 + 0.5x^2 + 20x + 100. Step 1: Power rule gives C'(x) = 0.03x^2 + x + 20, so C'(10) = 33. Step 2: Evaluate C(11) - C(10) = 0.01(1331 - 1000) + 0.5(121 - 100) + 20 = 3.31 + 10.5 + 20 = 3381/100. Step 3: Difference = 3381/100 - 33 = 3381/100 - 3300/100 = 81/100. The difference is 81/100."
+          - problem: "Let P(x) = -0.03x^2 + 50x - 200 be a profit function. Compute the actual profit change P(101) - P(100) minus the marginal profit P'(100), as a fraction."
+            answer: "-3/100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "P(x) = -0.03x^2 + 50x - 200. Step 1: The power rule gives P'(x) = -0.06x + 50, so P'(100) = -6 + 50 = 44. Step 2: Evaluate the actual change P(101) - P(100) = -0.03(101^2 - 100^2) + 50 = -6.03 + 50 = 43.97 = 4397/100. Step 3: Subtract the marginal value from the actual change: 4397/100 - 44 = 4397/100 - 4400/100 = -3/100. The requested quantity is -3/100."
         constraints: "actual and marginal values differ by a small terminating decimal"
       - id: kp3
         name: Maximize profit with marginals
         key_prerequisites: [derivative-power-rule, evaluating-polynomials]
         exemplars:
-          - problem: 'Revenue is $R(x) = 200x$ and cost is $C(x) = x^2 + 40x + 1000$, both in euros. How many items maximize the profit $P = R - C$, and what is the maximum profit?'
-            answer: "x = 80 items; profit €5400"
-            answer_contract: {kind: none}
-            solution_sketch: '$P(x) = -x^2 + 160x - 1000$; $P''(x) = -2x + 160 = 0$ at $x = 80$; $P(80) = 5400$.'
-          - problem: 'At the profit-maximizing quantity, how are marginal revenue and marginal cost related?'
-            answer: "they are equal: R'(x) = C'(x)"
-            answer_contract: {kind: none}
-            solution_sketch: "they are equal: R'(x) = C'(x)"
+          - problem: "A firm sells a product at a constant price, so revenue is R(x) = 240x dollars. The cost is C(x) = x^2 + 60x + 1500 dollars. Profit is P = R - C. Give the profit-maximizing quantity x and the maximum profit P as x = value; P = value."
+            answer: "x = 90; P = 6600"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "P"}]}
+            solution_sketch: "First write the profit: P(x) = 240x - (x^2 + 60x + 1500) = -x^2 + 180x - 1500. Differentiate with the power rule: P'(x) = -2x + 180. Set P'(x) = 0: -2x + 180 = 0, so x = 90. Since P''(x) = -2 < 0, this critical point is the maximum. Evaluate: P(90) = -8100 + 16200 - 1500 = 6600. The answer is x = 90; P = 6600."
+          - problem: "A firm has revenue R(x) = 500x and cost C(x) = x^2 + 80x + 2000, in dollars. Profit is P = R - C. At what quantity x is marginal revenue equal to marginal cost, and what is the maximum profit P? Give the answer as x = value; P = value."
+            answer: "x = 210; P = 42100"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "P"}]}
+            solution_sketch: "First write the profit: P(x) = 500x - (x^2 + 80x + 2000) = -x^2 + 420x - 2000. Marginal revenue is R'(x) = 500 and marginal cost is C'(x) = 2x + 80. Set them equal: 500 = 2x + 80, so 420 = 2x and x = 210. Since P''(x) = -2 < 0, this is the maximum. Evaluate: P(210) = -44100 + 88200 - 2000 = 42100. The answer is x = 210; P = 42100."
+          - problem: "The profit from selling x lamps is P(x) = -2x^2 + 200x - 1800 dollars. Find the quantity x that maximizes profit and the maximum profit P, and give the answer as x = value; P = value."
+            answer: "x = 50; P = 3200"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "P"}]}
+            solution_sketch: "The profit function is P(x) = -2x^2 + 200x - 1800. Differentiate with the power rule: P'(x) = -4x + 200. Set P'(x) = 0: -4x + 200 = 0, so x = 50. Since P''(x) = -4 < 0, this critical point is the maximum. Evaluate: P(50) = -2(2500) + 200(50) - 1800 = 3200. The answer is x = 50; P = 3200."
+          - problem: "A company has revenue R(x) = 180x and cost C(x) = x^2 + 40x + 900, in dollars. Profit is P = R - C. Find the maximum profit P."
+            answer: "4000"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the profit: P(x) = 180x - (x^2 + 40x + 900) = -x^2 + 140x - 900. Differentiate with the power rule: P'(x) = -2x + 140. Set P'(x) = 0: x = 70. Since P''(x) = -2 < 0, this is the maximum. Evaluate: P(70) = -4900 + 9800 - 900 = 4000. The answer is 4000."
+          - problem: "A firm has revenue R(x) = 300x and cost C(x) = 2x^2 + 60x + 1200, in dollars. Profit is P = R - C. Find the quantity x that maximizes profit."
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the profit: P(x) = 300x - (2x^2 + 60x + 1200) = -2x^2 + 240x - 1200. Differentiate with the power rule: P'(x) = -4x + 240. Set P'(x) = 0: -4x + 240 = 0, so x = 60. Since P''(x) = -4 < 0, this is the maximum. The answer is 60."
+          - problem: "A bakery's profit from x cakes is P(x) = -x^2 + 120x - 2000 dollars. Give the number of cakes x that maximizes profit and the maximum profit P as x = value; P = value."
+            answer: "x = 60; P = 1600"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x"}, {"contract": {"kind": "exact"}, "name": "P"}]}
+            solution_sketch: "The profit function is P(x) = -x^2 + 120x - 2000. Differentiate with the power rule: P'(x) = -2x + 120. Set P'(x) = 0: -2x + 120 = 0, so x = 60. Since P''(x) = -2 < 0, this critical point is the maximum. Evaluate: P(60) = -3600 + 7200 - 2000 = 1600. The answer is x = 60; P = 1600."
         constraints: "quadratic profit with integer vertex; P'' < 0 so the critical point is the max"
     diagnostic_exemplar:
       problem: 'Revenue is $R(x) = 120x$ and cost is $C(x) = x^2 + 20x + 800$, both in euros. How many items maximize the profit $P = R - C$, and what is the maximum profit?'
@@ -1852,6 +1900,18 @@ topics:
           - problem: 'Evaluate $\lim_{x \to 0} \frac{e^x - 1 - x}{x^2}$.'
             answer: "1/2"
             solution_sketch: '$\frac{0}{0}$ form; apply twice: $\frac{e^x - 1}{2x} \to \frac{e^x}{2} \to \frac{1}{2}$.'
+          - problem: "Consider the limit $\\lim_{x \\to 0} \\frac{\\sin(5x)}{x}$. First check that the quotient has the 0/0 form, then evaluate."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The limit is $\\lim_{x \\to 0} \\frac{\\sin(5x)}{x}$. At $x = 0$, both $\\sin(5x)$ and $x$ equal 0, so the quotient has the 0/0 form. L'Hopital's rule gives the limit of the quotient of derivatives, $(5\\cos(5x))/1$. At $x = 0$ this is $5\\cos(0)$, which equals 5. The limit is 5."
+          - problem: "Consider the limit $\\lim_{x \\to 0} \\frac{1 - \\cos(3x)}{x^2}$. First check that the quotient has the 0/0 form, then evaluate."
+            answer: "9/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The limit is $\\lim_{x \\to 0} \\frac{1 - \\cos(3x)}{x^2}$. At $x = 0$, $1 - \\cos(3x) = 0$ and $x^2 = 0$, so the quotient has the 0/0 form. Apply L'Hopital's rule once to get $\\frac{3\\sin(3x)}{2x}$, which is still 0/0 at $x = 0$. Apply L'Hopital's rule a second time to get $\\frac{9\\cos(3x)}{2}$. At $x = 0$ this is 9/2. The limit is 9/2."
+          - problem: "Consider the limit $\\lim_{x \\to 0} \\frac{e^{2x} - 1 - 2x}{x^2}$. First check that the quotient has the 0/0 form, then evaluate."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The limit is $\\lim_{x \\to 0} \\frac{e^{2x} - 1 - 2x}{x^2}$. At $x = 0$, $e^{2x} - 1 - 2x = 0$ and $x^2 = 0$, so the quotient has the 0/0 form. Apply L'Hopital's rule once to get $\\frac{2e^{2x} - 2}{2x} = \\frac{e^{2x} - 1}{x}$, which is still 0/0 at $x = 0$. Apply L'Hopital's rule a second time to get $\\frac{2e^{2x}}{1}$. At $x = 0$ this is 2. The limit is 2."
         constraints: "verify the 0/0 form before differentiating; at most two applications"
       - id: kp2
         name: ∞/∞ forms
@@ -1863,6 +1923,22 @@ topics:
           - problem: 'Evaluate $\lim_{x \to \infty} \frac{x^2}{e^x}$.'
             answer: "0"
             solution_sketch: 'Apply twice: $\frac{2x}{e^x} \to \frac{2}{e^x} \to 0$.'
+          - problem: "Evaluate the limit as x grows without bound of ln(x)/x. State the limit type and the number of applications of L'Hôpital's rule needed."
+            answer: "verdict = 0; steps = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "steps"}]}
+            solution_sketch: "Original limit: lim x→∞ ln(x)/x. The form is ∞/∞, so L'Hôpital's rule applies. Differentiate numerator and denominator: (1/x)/1 = 1/x. As x→∞, 1/x→0, so the limit is 0 and one application suffices. Wrong options: DNE assumes the limit fails when the ratio tends to 0; infinity assumes the logarithm dominates the linear term; -infinity comes from a sign error. The answer is verdict = 0; steps = 1."
+          - problem: "Evaluate the limit as x grows without bound of x^2/e^x. State the limit type and the number of applications of L'Hôpital's rule needed."
+            answer: "verdict = 0; steps = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "steps"}]}
+            solution_sketch: "Original limit: lim x→∞ x^2/e^x. The form is ∞/∞, so apply L'Hôpital's rule. First application gives 2x/e^x, still ∞/∞. Second application gives 2/e^x, which tends to 0. So the limit is 0 and two applications are needed. Wrong options: DNE treats the limit as undefined; infinity assumes the polynomial beats the exponential; -infinity is a sign error. The answer is verdict = 0; steps = 2."
+          - problem: "Evaluate the limit as x grows without bound of e^x/x^3. State the limit type and the number of applications of L'Hôpital's rule needed."
+            answer: "verdict = infinity; steps = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "steps"}]}
+            solution_sketch: "Original limit: lim x→∞ e^x/x^3. The form is ∞/∞, so apply L'Hôpital's rule. First application gives e^x/(3x^2). Second gives e^x/(6x). Third gives e^x/6, which tends to infinity. So the limit is infinity and three applications are needed. Wrong options: DNE assumes the limit fails; 0 reverses the growth hierarchy; -infinity is a sign error. The answer is verdict = infinity; steps = 3."
+          - problem: "Evaluate the limit as x grows without bound of x/ln(x). State the limit type and the number of applications of L'Hôpital's rule needed."
+            answer: "verdict = infinity; steps = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "steps"}]}
+            solution_sketch: "Original limit: lim x→∞ x/ln(x). The form is ∞/∞, so apply L'Hôpital's rule. One application gives 1/(1/x) = x, which tends to infinity. So the limit is infinity and one application suffices. Wrong options: DNE assumes the limit fails; 0 assumes the logarithm dominates; -infinity is a sign error. The answer is verdict = infinity; steps = 1."
         constraints: "growth-hierarchy results (log ≪ polynomial ≪ exponential); limits are 0 or ∞"
       - id: kp3
         name: Check the form first; rewrite 0·∞
@@ -1874,6 +1950,22 @@ topics:
           - problem: 'Evaluate $\lim_{x \to 0^+} x \ln x$.'
             answer: "0"
             solution_sketch: 'Rewrite the $0 \cdot (-\infty)$ form as $\frac{\ln x}{1/x}$; L''Hôpital gives $\frac{1/x}{-1/x^2} = -x \to 0$.'
+          - problem: "Consider the limit of sqrt(x) ln(x) as x approaches 0 from the right. Evaluate."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is lim_{x->0+} sqrt(x) ln(x). Rewrite the 0·∞ form as ln(x)/x^(-1/2). L'Hôpital's rule gives (1/x)/(-1/2 x^(-3/2)), which simplifies to -2 sqrt(x). As x approaches 0 from the right, -2 sqrt(x) approaches 0. The value of the limit is 0."
+          - problem: "Consider the limit of x cot(3x) as x approaches 0. Evaluate."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is lim_{x->0} x cot(3x). Rewrite cot(3x) as cos(3x)/sin(3x), giving x cos(3x)/sin(3x), a 0/0 form. L'Hôpital's rule gives (cos(3x) - 3x sin(3x))/(3 cos(3x)), which at x = 0 is 1/3. The value of the limit is 1/3."
+          - problem: "Consider the limit of sin(2x) cot(x) as x approaches 0. Evaluate."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is lim_{x->0} sin(2x) cot(x). Rewrite cot(x) as cos(x)/sin(x), so the expression is sin(2x) cos(x)/sin(x), a 0/0 form. L'Hôpital's rule gives the quotient of derivatives: the numerator derivative is 2 cos(2x) cos(x) - sin(2x) sin(x) and the denominator derivative is cos(x). At x = 0 the quotient is 2. The value of the limit is 2."
+          - problem: "Consider the limit of x e^(-x) as x approaches infinity. Evaluate."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full limit is lim_{x->∞} x e^(-x). Rewrite the ∞·0 form as x/e^x, which is ∞/∞. L'Hôpital's rule gives 1/e^x. As x approaches infinity, 1/e^x approaches 0. The value of the limit is 0."
         constraints: "one trap problem (non-indeterminate form) and one 0·∞ rewrite"
     diagnostic_exemplar:
       problem: 'Evaluate $\lim_{x \to 0^+} x^2 \ln x$.'
@@ -1914,6 +2006,22 @@ topics:
           - problem: 'Evaluate $\lim_{x \to \infty} x\left(e^{1/x} - 1\right)$.'
             answer: "1"
             solution_sketch: 'Rewrite as $\frac{e^{1/x} - 1}{1/x}$; with $t = 1/x \to 0^+$ this is $\frac{e^t - 1}{t} \to 1$.'
+          - problem: "Evaluate the limit as x goes to infinity of (sqrt(x^2 + 4x) - x)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full limit: lim as x->infinity of (sqrt(x^2 + 4x) - x). Step 1: multiply by the conjugate sqrt(x^2 + 4x) + x over itself, a legal rewrite of the difference. Step 2: the numerator becomes 4x and the denominator is sqrt(x^2 + 4x) + x. Step 3: divide top and bottom by x and let 1/x go to 0; the quotient tends to 4/(1 + 1). The limit is 2."
+          - problem: "Evaluate the limit as x goes to infinity of x times (e^(3/x) - 1)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full limit: lim as x->infinity of x(e^(3/x) - 1). Step 1: rewrite the product as the quotient (e^(3/x) - 1)/(1/x), turning a product form into a quotient. Step 2: let t = 3/x, so the quotient is 3(e^t - 1)/t and t tends to 0. Step 3: the standard exponential limit gives 3. The limit is 3."
+          - problem: "Evaluate the limit as x goes to infinity of (x - sqrt(x^2 - 3x))."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full limit: lim as x->infinity of (x - sqrt(x^2 - 3x)). Step 1: multiply by the conjugate x + sqrt(x^2 - 3x) over itself. Step 2: the numerator becomes 3x and the denominator is x + sqrt(x^2 - 3x). Step 3: divide top and bottom by x; the quotient tends to 3/(1 + 1). The limit is 3/2."
+          - problem: "Evaluate the limit as x goes to 0 from the right of x times ln(x)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full limit: lim as x->0+ of x ln(x). Step 1: rewrite the product as the quotient ln(x)/(1/x). Step 2: apply L'Hopital's rule to this quotient form; the derivative of ln(x) is 1/x and the derivative of 1/x is -1/x^2. Step 3: the quotient becomes (1/x)/(-1/x^2) = -x, which tends to 0. The limit is 0."
         constraints: "rewrite to a quotient (conjugate or reciprocal) before any L'Hôpital step"
       - id: kp2
         name: 1^∞ forms via logarithms
