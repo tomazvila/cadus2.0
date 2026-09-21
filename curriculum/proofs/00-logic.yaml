@@ -869,14 +869,30 @@ topics:
         name: "Unless, and necessary-and-sufficient"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'Rewrite "$n^2$ is odd unless $n$ is even" as a conditional.'
-            answer_contract: {kind: none}
-            answer: 'If $n$ is not even then $n^2$ is odd.'
-            solution_sketch: '"$P$ unless $Q$" translates as $\neg Q \to P$: in the absence of the exception $Q$, $P$ holds.'
-          - problem: 'Express "divisibility by $6$ is necessary and sufficient for divisibility by both $2$ and $3$" symbolically.'
-            answer_contract: {kind: none}
-            answer: '$6 \mid n \leftrightarrow (2 \mid n \land 3 \mid n)$'
-            solution_sketch: 'Necessary and sufficient together assert both directions, i.e. a biconditional.'
+          - problem: "Consider the statement: the picnic happens unless it rains. Which option gives the correct conditional translation? Select the correct translation."
+            answer: "If it does not rain then the picnic happens."
+            answer_contract: {"kind": "label", "options": [["If it does not rain then the picnic happens."], ["If it rains then the picnic happens."], ["If the picnic happens then it rains."], ["If it does not rain then the picnic does not happen."]]}
+            solution_sketch: "Translate 'P unless Q' by the unless rule: it means not Q implies P. Here P is 'the picnic happens' and Q is 'it rains', so the full conditional is: If it does not rain then the picnic happens. The option 'If it rains then the picnic happens' uses Q as the antecedent instead of not Q. The option 'If the picnic happens then it rains' is the converse, not the unless translation. The option 'If it does not rain then the picnic does not happen' negates P instead of keeping it. Therefore the correct option is If it does not rain then the picnic happens."
+          - problem: "Consider the statement: divisibility by 12 is necessary and sufficient for divisibility by both 3 and 4. Which option expresses it as a biconditional? Select the correct expression."
+            answer: "12 | n <-> (3 | n and 4 | n)"
+            answer_contract: {"kind": "label", "options": [["12 | n <-> (3 | n and 4 | n)"], ["12 | n -> (3 | n and 4 | n)"], ["(3 | n and 4 | n) -> 12 | n"], ["12 | n or (3 | n and 4 | n)"]]}
+            solution_sketch: "Necessary and sufficient together assert both directions, so the full statement is the biconditional 12 | n <-> (3 | n and 4 | n). The option '12 | n -> (3 | n and 4 | n)' gives only the necessary direction. The option '(3 | n and 4 | n) -> 12 | n' gives only the sufficient direction. The option '12 | n or (3 | n and 4 | n)' uses disjunction instead of a biconditional. Therefore the correct option is 12 | n <-> (3 | n and 4 | n)."
+          - problem: "For statements P and Q, the statement 'P unless Q' translates as not Q implies P. Encode true as 1 and false as 0. Find the truth values (P, Q) that make 'P unless Q' false. Give the answer as (x, y)."
+            answer: "(0, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "By the unless rule, 'P unless Q' means not Q implies P. A conditional is false only when its antecedent is true and its consequent is false, so not Q is true and P is false. Thus Q is false and P is false, which is (0, 0) with 1 for true and 0 for false. The answer is (0, 0)."
+          - problem: "For statements P and Q, the statement 'P unless Q' translates as not Q implies P. How many of the four possible truth assignments make 'P unless Q' true? Give the answer as an integer."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Translate 'P unless Q' as not Q implies P. The conditional not Q implies P is false only when Q is false and P is false. The other three assignments (P,Q) = (1,1), (1,0), (0,1) make it true. Therefore the number of true assignments is 3."
+          - problem: "For statements P and Q, 'P is necessary and sufficient for Q' is the biconditional P <-> Q. How many of the four possible truth assignments make this biconditional false? Give the answer as an integer."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A biconditional P <-> Q is true when P and Q have the same truth value. It is false when they differ: (P,Q) = (1,0) and (0,1). That is two assignments. Therefore the number of false assignments is 2."
+          - problem: "For statements P and Q, 'P is necessary for Q' translates as Q implies P. Encode true as 1 and false as 0. Find the truth values (P, Q) that make 'P is necessary for Q' false. Give the answer as (x, y)."
+            answer: "(0, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "By the necessary condition rule, 'P is necessary for Q' means Q implies P. A conditional is false only when its antecedent is true and its consequent is false, so Q is true and P is false. Thus the false assignment is (P,Q) = (0,1). The answer is (0, 1)."
         constraints: "translate unless as $\\neg Q \\to P$; necessary-and-sufficient as $\\leftrightarrow$"
     diagnostic_exemplar:
       problem: 'Express "divisibility by $10$ is necessary and sufficient for divisibility by both $2$ and $5$" as a symbolic biconditional, and rewrite "$n^2$ is odd unless $n$ is even" as a conditional.'
