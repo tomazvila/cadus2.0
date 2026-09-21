@@ -30,6 +30,22 @@ topics:
           - problem: 'How many integers in $\{1, \dots, 100\}$ are divisible by $2$ or by $5$?'
             answer: "60"
             solution_sketch: '$\lfloor 100/2 \rfloor + \lfloor 100/5 \rfloor - \lfloor 100/10 \rfloor = 50 + 20 - 10 = 60$.'
+          - problem: "A survey of a group finds that $42$ people like tea, $31$ like coffee, and $12$ like both. How many people like at least one of the two drinks?"
+            answer: "61"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Inclusion-exclusion rule for two sets: $|T \\cup C| = |T| + |C| - |T \\cap C|$. Substitute the survey numbers: $42 + 31 - 12$. Arithmetic step: $73 - 12 = 61$. The answer is 61."
+          - problem: "How many integers in $\\{1, \\dots, 150\\}$ are divisible by $3$ or by $7$?"
+            answer: "64"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Inclusion-exclusion rule for divisibility: count multiples of $3$, add multiples of $7$, subtract multiples of $21$. Multiples of $3$: $\\lfloor 150/3 \\rfloor = 50$; multiples of $7$: $\\lfloor 150/7 \\rfloor = 21$; multiples of $21$: $\\lfloor 150/21 \\rfloor = 7$. Arithmetic step: $50 + 21 - 7 = 64$. The answer is 64."
+          - problem: "In a group, $80$ students play soccer, $65$ play basketball, and $110$ play at least one of the two sports. Find the number of students who play both sports."
+            answer: "35"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Inclusion-exclusion rule for two sets: $|S \\cup B| = |S| + |B| - |S \\cap B|$. Put the known values in the formula: $110 = 80 + 65 - |S \\cap B|$. Algebra step: $|S \\cap B| = 80 + 65 - 110 = 35$. The answer is 35."
+          - problem: "A set $A$ has $85$ elements, $A \\cup B$ has $135$ elements, and $A \\cap B$ has $20$ elements. Find $|B|$."
+            answer: "70"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Inclusion-exclusion rule for two sets: $|A \\cup B| = |A| + |B| - |A \\cap B|$. Rearrange for $|B|$: $|B| = |A \\cup B| - |A| + |A \\cap B|$. Substitute: $|B| = 135 - 85 + 20 = 70$. The answer is 70."
         constraints: "two sets; counts <= 200; divisibility counts use floor(N/d)"
       - id: kp2
         name: "Three sets"
@@ -41,6 +57,22 @@ topics:
           - problem: 'Among $100$ students: $40$ like tea, $35$ like coffee, $30$ like juice, $15$ tea and coffee, $10$ tea and juice, $12$ coffee and juice, $5$ all three. How many like at least one drink?'
             answer: "73"
             solution_sketch: '$40 + 35 + 30 - 15 - 10 - 12 + 5 = 73$.'
+          - problem: "How many integers in $\\{1, \\dots, 1000\\}$ are divisible by $2$, $3$, or $7$?"
+            answer: "714"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inclusion-exclusion count is 500 + 333 + 142 - 166 - 71 - 47 + 23. Start with the three single-set counts, subtract the three pairwise intersections, and add the triple intersection. The values are floor(1000/2)=500, floor(1000/3)=333, floor(1000/7)=142, floor(1000/6)=166, floor(1000/14)=71, floor(1000/21)=47, and floor(1000/42)=23. The number is 714."
+          - problem: "Among $100$ students: $45$ like tea, $40$ like coffee, $35$ like juice, $15$ like tea and coffee, $12$ like tea and juice, $10$ like coffee and juice, and $4$ like all three. How many students like at least one of the three drinks?"
+            answer: "87"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inclusion-exclusion count is 45 + 40 + 35 - 15 - 12 - 10 + 4. Add the three single-drink counts, subtract the three pairwise overlaps, and add the triple overlap. Compute 120 - 37 + 4 = 87. The number is 87."
+          - problem: "A survey has $100$ people. The counts are $|A| = 50$, $|B| = 40$, $|C| = 30$, $|A \\cap B| = 20$, $|A \\cap C| = 15$, $|B \\cap C| = 10$, and $|A \\cup B \\cup C| = 90$. Find $|A \\cap B \\cap C|$."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inclusion-exclusion equation is 90 = 50 + 40 + 30 - 20 - 15 - 10 + t. Combine the single-set counts and the pairwise intersections: 90 = 120 - 45 + t. Solve 90 = 75 + t, so t = 15. The number is 15."
+          - problem: "A company has $120$ employees. There are $70$ in team A, $60$ in team B, $50$ in team C, $30$ in teams A and B, $25$ in teams A and C, $20$ in teams B and C, and $10$ in all three teams. How many employees are in at least one of the three teams?"
+            answer: "115"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inclusion-exclusion count is 70 + 60 + 50 - 30 - 25 - 20 + 10. Add the single-team counts, subtract the pairwise overlaps, and add the triple overlap. Compute 180 - 75 + 10 = 115. The number is 115."
         constraints: "three sets; alternate signs by intersection size; totals <= 1000"
       - id: kp3
         name: "Counting the complement"
@@ -52,6 +84,22 @@ topics:
           - problem: 'How many integers in $\{1, \dots, 60\}$ are coprime to $60$? (Hint: $60 = 2^2 \cdot 3 \cdot 5$; count numbers divisible by none of $2, 3, 5$.)'
             answer: "16"
             solution_sketch: 'By inclusion-exclusion, $60 - (30 + 20 + 12) + (10 + 6 + 4) - 2 = 16$; this equals $\varphi(60)$.'
+          - problem: "How many integers in {1, ..., 120} are divisible by neither 5 nor 7?"
+            answer: "82"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is {1, ..., 120}, with 120 elements. Use inclusion-exclusion to count the union: multiples of 5 give 24, multiples of 7 give 17, and common multiples of 35 give 3, so the union has 24 + 17 - 3 = 38 elements. Then use the complement rule and subtract the union from the total: 120 - 38 = 82. The answer is 82."
+          - problem: "How many integers in {1, ..., 200} are divisible by neither 3 nor 5 nor 7?"
+            answer: "92"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is {1, ..., 200}, with 200 elements. Use inclusion-exclusion for three sets: multiples of 3 give 66, of 5 give 40, of 7 give 28; pair overlaps are 13, 9, and 5, and the triple overlap is 1, so the union has 66 + 40 + 28 - 13 - 9 - 5 + 1 = 108 elements. Then use the complement rule and subtract the union from the total: 200 - 108 = 92. The answer is 92."
+          - problem: "How many positive integers less than 100 are divisible by neither 3 nor 4?"
+            answer: "50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is {1, ..., 99}, with 99 elements. Use inclusion-exclusion: multiples of 3 give 33, multiples of 4 give 24, and common multiples of 12 give 8, so the union has 33 + 24 - 8 = 49 elements. Then use the complement rule and subtract the union from the total: 99 - 49 = 50. The answer is 50."
+          - problem: "A box contains balls numbered 1 through 150. How many balls have a number divisible by neither 6 nor 10?"
+            answer: "115"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is the numbers 1 through 150, with 150 elements. Use inclusion-exclusion: multiples of 6 give 25, multiples of 10 give 15, and common multiples of 30 give 5, so the union has 25 + 15 - 5 = 35 elements. Then use the complement rule and subtract the union from the total: 150 - 35 = 115. The answer is 115."
         constraints: "phrase as 'neither...nor'; require the subtract-from-total step"
     diagnostic_exemplar:
       problem: 'How many integers in $\{1, \dots, 100\}$ are divisible by none of $2$, $3$, or $5$?'
@@ -90,6 +138,22 @@ topics:
           - problem: 'How many ways can $8$ identical candies be distributed among $3$ children (a child may get none)?'
             answer: "45"
             solution_sketch: '$\binom{8 + 2}{2} = \binom{10}{2} = 45$.'
+          - problem: "How many solutions in nonnegative integers does the equation $x_1 + x_2 + x_3 + x_4 = 7$ have?"
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use stars and bars for nonnegative solutions. With 4 variables and total 7, the count is the binomial coefficient 10 choose 3. That binomial coefficient equals 120. The number of solutions is 120."
+          - problem: "How many ways can 5 identical balls be placed into 4 distinct boxes if boxes may be empty?"
+            answer: "56"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use stars and bars because the balls are identical and boxes may be empty. With 5 objects and 4 boxes, the count is the binomial coefficient 8 choose 3. That value is 56. The number of distributions is 56."
+          - problem: "How many solutions in nonnegative integers does the equation $x_1 + x_2 + x_3 + x_4 + x_5 = 6$ have?"
+            answer: "210"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the stars and bars formula for nonnegative solutions. With 5 variables and total 6, the count is the binomial coefficient 10 choose 4. That value is 210. The number of solutions is 210."
+          - problem: "For a certain positive integer $n$, the equation $x_1 + x_2 + x_3 = n$ has 28 solutions in nonnegative integers. Find $n$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use stars and bars with 3 variables, so the count is the binomial coefficient (n+2) choose 2. The given count gives (n+2) choose 2 equal to 28. Testing n = 6 gives the binomial coefficient 8 choose 2 equal to 28. The value of n is 6."
         constraints: "n <= 20 objects, k <= 5 variables; formula C(n+k-1, k-1)"
       - id: kp2
         name: "Positive solutions and lower bounds via substitution"
@@ -101,6 +165,22 @@ topics:
           - problem: 'How many solutions in integers with each $x_i \ge 2$ does $x_1 + x_2 + x_3 = 15$ have?'
             answer: "55"
             solution_sketch: '$y_i = x_i - 2$: $y_1 + y_2 + y_3 = 9$, so $\binom{9 + 2}{2} = \binom{11}{2} = 55$.'
+          - problem: "How many solutions in positive integers does x1 + x2 + x3 + x4 + x5 = 12 have?"
+            answer: "330"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the positive-integer equation x1 + x2 + x3 + x4 + x5 = 12. Substitution step: set yi = xi - 1, so each yi >= 0 and y1 + y2 + y3 + y4 + y5 = 7. Stars-and-bars rule: the number of nonnegative solutions is C(7 + 5 - 1, 5 - 1) = C(11,4). Combination evaluation step: C(11,4) = 330, so the number of solutions is 330."
+          - problem: "How many solutions in positive integers does x1 + x2 + x3 = 16 have?"
+            answer: "105"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write x1 + x2 + x3 = 16 with each xi >= 1. Substitution step: set yi = xi - 1, so each yi >= 0 and y1 + y2 + y3 = 13. Stars-and-bars rule: the number of nonnegative solutions is C(13 + 3 - 1, 3 - 1) = C(15,2). Combination evaluation step: C(15,2) = 105, so the number of solutions is 105."
+          - problem: "State the number of solutions in integers with each xi >= 3 for x1 + x2 + x3 = 20."
+            answer: "78"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write x1 + x2 + x3 = 20 with each xi >= 3. Substitution step: set yi = xi - 3, so each yi >= 0 and y1 + y2 + y3 = 11. Stars-and-bars rule: the number of nonnegative solutions is C(11 + 3 - 1, 3 - 1) = C(13,2). Combination evaluation step: C(13,2) = 78, so the number of solutions is 78."
+          - problem: "How many integer solutions does x1 + x2 + x3 + x4 = 18 have if x1 >= 1, x2 >= 2, x3 >= 3, and x4 >= 1?"
+            answer: "364"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write x1 + x2 + x3 + x4 = 18 with x1 >= 1, x2 >= 2, x3 >= 3, and x4 >= 1. Substitution step: set y1 = x1 - 1, y2 = x2 - 2, y3 = x3 - 3, and y4 = x4 - 1, so each yi >= 0 and y1 + y2 + y3 + y4 = 18 - 7 = 11. Stars-and-bars rule: the number of nonnegative solutions is C(11 + 4 - 1, 4 - 1) = C(14,3). Combination evaluation step: C(14,3) = 364, so the number of solutions is 364."
         constraints: "lower bounds 1-3 per variable; require the substitution step; remaining total >= 0"
     diagnostic_exemplar:
       problem: 'How many ways can $12$ identical pencils be shared among $4$ students if every student must get at least one?'
@@ -139,6 +219,22 @@ topics:
           - problem: 'How many distinct arrangements does the word MISSISSIPPI have?'
             answer: "34650"
             solution_sketch: '$11!/(4! \, 4! \, 2!) = 39916800/1152 = 34650$ (four I''s, four S''s, two P''s).'
+          - problem: "How many distinct arrangements does the word BANANA have?"
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The word B A N A N A has 6 letters: A appears 3 times, N appears 2 times, and B appears once. The multiset permutation rule gives 6!/(3! 2! 1!) = 720/(6 * 2) = 60. The number of distinct arrangements is 60."
+          - problem: "How many distinct arrangements does the word SUCCESS have?"
+            answer: "420"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The word S U C C E S S has 7 letters: S appears 3 times, C appears 2 times, and U and E each appear once. The multiset permutation rule gives 7!/(3! 2! 1! 1!) = 5040/(6 * 2) = 420. The number of distinct arrangements is 420."
+          - problem: "A string is formed from all the letters of STATISTICS, each used once. How many distinct strings can be formed?"
+            answer: "50400"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The word S T A T I S T I C S has 10 letters: S appears 3 times, T appears 3 times, I appears 2 times, and A and C each appear once. The multiset permutation rule gives 10!/(3! 3! 2! 1! 1!) = 3628800/(6 * 6 * 2) = 50400. The number of distinct strings is 50400."
+          - problem: "How many distinct arrangements does the word BOOKKEEPER have?"
+            answer: "151200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The word B O O K K E E P E R has 10 letters: E appears 3 times, O appears 2 times, K appears 2 times, and B, P, R each appear once. The multiset permutation rule gives 10!/(3! 2! 2! 1! 1! 1!) = 3628800/(6 * 2 * 2) = 151200. The number of distinct arrangements is 151200."
         constraints: "words of length 5-11 with 2-3 repeated letter groups"
       - id: kp2
         name: "Lattice paths as multiset arrangements"
@@ -150,6 +246,22 @@ topics:
           - problem: 'How many lattice paths run from $(0,0)$ to $(5,5)$ using only right and up steps?'
             answer: "252"
             solution_sketch: '$\binom{10}{5} = 252$.'
+          - problem: "A robot moves on a grid. How many lattice paths run from (0,0) to (6,2) using only unit steps right and up?"
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The path from (0,0) to (6,2) has 6 right steps and 2 up steps, so it is an arrangement of the multiset with six R's and two U's. By the multiset arrangement rule, the count is (6+2)!/(6!2!), which is the binomial coefficient C(8,2). Evaluate C(8,2) = 28, so the answer is 28."
+          - problem: "An editor lists all strings of 5 letters R and 3 letters U. How many different strings can be formed?"
+            answer: "56"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the multiset with five R's and three U's. By the multiset arrangement rule, the count is (5+3)!/(5!3!) = C(8,3). Evaluate C(8,3) = 56, so the answer is 56."
+          - problem: "A courier starts at (1,1) and travels to (6,5) using only unit steps right and up. How many lattice paths can the courier take?"
+            answer: "126"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The displacement is 5 right steps and 4 up steps, so each route is an arrangement of five R's and four U's. By the multiset arrangement rule, the count is (5+4)!/(5!4!) = C(9,4). Evaluate C(9,4) = 126, so the answer is 126."
+          - problem: "A game board is 8 columns wide and 2 rows tall. A token moves from (0,0) to (8,2) by unit steps right and up. How many shortest paths are there?"
+            answer: "45"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The shortest path has 8 right steps and 2 up steps, so it is an arrangement of the multiset with eight R's and two U's. By the multiset arrangement rule, the count is (8+2)!/(8!2!) = C(10,2). Evaluate C(10,2) = 45, so the answer is 45."
         constraints: "grid dimensions <= 8 x 8; answer C(m+n, n)"
     diagnostic_exemplar:
       problem: 'How many lattice paths run from $(0,0)$ to $(5,3)$ using only unit steps right and up?'

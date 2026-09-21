@@ -181,6 +181,22 @@ topics:
           - problem: 'Compute $-13 \bmod 7$ (answer in $\{0, 1, \dots, 6\}$).'
             answer: "1"
             solution_sketch: '$-13 = 7 \cdot (-2) + 1$, so the least nonnegative residue is $1$.'
+          - problem: "Compute -34 mod 26 and give the least nonnegative residue."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (division algorithm): write the full statement -34 = 26q + r with 0 <= r < 26. Step 2 (choose the quotient): take q = -2, so 26 * (-2) = -52, and then r = -34 + 52 = 18, which satisfies 0 <= 18 < 26. The least nonnegative residue is 18."
+          - problem: "Compute (-5)^3 mod 23 and give the least nonnegative residue."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (integer exponents): the full value is (-5)^3 = -125. Step 2 (division algorithm): write -125 = 23q + r with 0 <= r < 23. Step 3 (choose the quotient): take q = -6, so 23 * (-6) = -138 and r = -125 + 138 = 13, with 0 <= 13 < 23. The least nonnegative residue is 13."
+          - problem: "Compute the least nonnegative residue of -(7^2) modulo 15."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (integer exponents): the full value is -(7^2) = -49. Step 2 (division algorithm): write -49 = 15q + r with 0 <= r < 15. Step 3 (choose the quotient): take q = -4, so 15 * (-4) = -60 and r = -49 + 60 = 11, with 0 <= 11 < 15. The least nonnegative residue is 11."
+          - problem: "A modulus m with 2 <= m <= 26 satisfies: the least nonnegative residue of 90 modulo m is 18. Find m."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (division algorithm): the condition 90 mod m = 18 means 90 = mq + 18 for some integer q, so m divides 90 - 18 = 72, and since the remainder is 18 we need m > 18. Step 2 (divisibility): the divisors of 72 are 1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72; the only one with 18 < m <= 26 is 24. Step 3 (check): 90 = 24 * 3 + 18, and 0 <= 18 < 24. The answer is 24."
         constraints: "moduli 2-26; include negative arguments; answers are least nonnegative residues"
       - id: kp2
         name: "Adding and multiplying residues"
@@ -391,6 +407,22 @@ topics:
           - problem: 'Find the last two digits of $7^{42}$.'
             answer: "49"
             solution_sketch: '$7^{40} \equiv 1 \pmod{100}$, so $7^{42} \equiv 7^2 = 49$.'
+          - problem: "Compute $11^{43} \\bmod 100$."
+            answer: "31"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First check coprimality with math.gcd(11, 100) = 1, so Euler's theorem applies with phi(100) = 40. Reduce the exponent: 43 = 40 + 3, so 11^43 is congruent to 11^3 modulo 100. Compute: 11^2 = 121 leaves remainder 21, and 21 * 11 = 231 leaves remainder 31; a check with pow(11, 43, 100) confirms 31. The answer is 31."
+          - problem: "Find the last two digits of $19^{45}$."
+            answer: "99"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Since math.gcd(19, 100) = 1 and phi(100) = 40, Euler's theorem gives 19^40 congruent to 1 modulo 100. Reduce the exponent: 45 = 40 + 5, so 19^45 is congruent to 19^5 modulo 100. Compute: 19^2 = 361 leaves 61, 61^2 = 3721 leaves 21, and 21 * 19 = 399 leaves 99; the check pow(19, 45, 100) = 99 agrees. The answer is 99."
+          - problem: "Find the last digit of $3^{101}$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Here math.gcd(3, 10) = 1 and phi(10) = 4, so Euler's theorem gives 3^4 congruent to 1 modulo 10. Write the exponent as 101 = 100 + 1 where 100 = 25 * 4 is a multiple of phi(10), so 3^101 is congruent to 3^1 modulo 10. The check pow(3, 101, 10) returns 3. The answer is 3."
+          - problem: "Determine the remainder when $9^{44}$ is divided by $100$."
+            answer: "61"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Because math.gcd(9, 100) = 1 and phi(100) = 40, Euler's theorem gives 9^40 congruent to 1 modulo 100. Reduce the exponent: 44 = 40 + 4, so 9^44 is congruent to 9^4 modulo 100. Compute: 9^2 = 81 and 81^2 = 6561 leaves remainder 61; the check pow(9, 44, 100) = 61 confirms it. The answer is 61."
         constraints: "modulus 10 or 100; base coprime to the modulus; exponent within 5 of a multiple of phi"
     diagnostic_exemplar:
       problem: 'Find the last two digits of $3^{43}$.'
@@ -433,6 +465,22 @@ topics:
           - problem: 'RSA with $p = 5$, $q = 11$, $e = 3$. Find $d$.'
             answer: '27'
             solution_sketch: '$\varphi(55) = 4 \cdot 10 = 40$ and $3 \cdot 27 = 81 = 2 \cdot 40 + 1$, so $d = 27$.'
+          - problem: "RSA with $p = 5$, $q = 7$, $e = 5$. Compute $n$, $\\varphi(n)$, and the private exponent $d$."
+            answer: "n = 35; phi = 24; d = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "phi"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Step 1 (n = p q): $n = 5 \\cdot 7 = 35$. Step 2 (phi = (p-1)(q-1)): $\\varphi(n) = 4 \\cdot 6 = 24$. Step 3 (inverse by extended Euclid): solve $5d \\equiv 1 \\pmod{24}$; $5 \\cdot 5 = 25 \\equiv 1 \\pmod{24}$, so $d = 5$. The key is n = 35; phi = 24; d = 5."
+          - problem: "RSA with $p = 7$, $q = 11$, $e = 13$. Find $\\varphi(n)$ and the private exponent $d$."
+            answer: "phi = 60; d = 37"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "phi"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Step 1 (phi = (p-1)(q-1)): $\\varphi(n) = 6 \\cdot 10 = 60$. Step 2 (inverse by extended Euclid): solve $13d \\equiv 1 \\pmod{60}$; $13 \\cdot 37 = 481 = 8 \\cdot 60 + 1$, so $d = 37$. The result is phi = 60; d = 37."
+          - problem: "RSA with $p = 11$, $q = 13$, $e = 7$. Find the private exponent $d$ as the least positive residue modulo $\\varphi(n)$."
+            answer: "103"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (phi = (p-1)(q-1)): $\\varphi(n) = 10 \\cdot 12 = 120$. Step 2 (inverse by extended Euclid): solve $7d \\equiv 1 \\pmod{120}$; $7 \\cdot 103 = 721 = 6 \\cdot 120 + 1$, so $d = 103$. The private exponent is 103."
+          - problem: "An RSA public key has $n = 91$ and $e = 5$. Find the private exponent $d$ as the least positive residue modulo $\\varphi(n)$."
+            answer: "29"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (factor n and phi = (p-1)(q-1)): $n = 91 = 7 \\cdot 13$, so $\\varphi(n) = 6 \\cdot 12 = 72$. Step 2 (inverse by extended Euclid): solve $5d \\equiv 1 \\pmod{72}$; $5 \\cdot 29 = 145 = 2 \\cdot 72 + 1$, so $d = 29$. The private exponent is 29."
         constraints: "primes from {3,5,7,11,13}; e coprime to phi; d found via extended Euclid, stated as least positive residue"
       - id: kp2
         name: "Encrypting and decrypting small messages"
@@ -444,6 +492,22 @@ topics:
           - problem: 'With $n = 33$, $d = 7$, decrypt the ciphertext $c = 8$.'
             answer: "2"
             solution_sketch: '$m = c^d \bmod n = 8^7 \bmod 33$. $8^2 = 64 \equiv 31 \equiv -2$; $8^4 \equiv 4$; $8^7 = 8^4 \cdot 8^2 \cdot 8 \equiv 4 \cdot (-2) \cdot 8 = -64 \equiv 2 \pmod{33}$. (Check: $2^3 = 8$.)'
+          - problem: "A public RSA key is n = 35, e = 5. Encrypt the message m = 3. Find the ciphertext."
+            answer: "33"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The ciphertext is c = m^e mod n = 3^5 mod 35. Step 1 (repeated squaring): 3^2 = 9 and 3^4 = 81 = 11 mod 35. Step 2 (multiply residues): 3^5 = 3^4 * 3 = 11 * 3 = 33 mod 35. The ciphertext is 33."
+          - problem: "With the private key n = 33, d = 7, decrypt the ciphertext c = 26. State the original message."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The plaintext is m = c^d mod n = 26^7 mod 33. Step 1 (repeated squaring): 26^2 = 676 = 16 mod 33 and 26^4 = 16^2 = 256 = 25 mod 33. Step 2 (combine powers): 26^7 = 26^4 * 26^2 * 26 = 25 * 16 * 26 = 4 * 26 = 104 = 5 mod 33. The original message is 5."
+          - problem: "An RSA system has p = 5, q = 7, e = 5. Decrypt the ciphertext c = 33. State the message."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The modulus is n = 35 and phi = (5 - 1)(7 - 1) = 24. Step 1 (modular inverse): d = 5^(-1) mod 24 = 5 because 5 * 5 = 25 = 1 mod 24. Step 2 (repeated squaring): 33 = -2 mod 35, so 33^5 = (-2)^5 = -32 = 3 mod 35. The decrypted message is 3."
+          - problem: "Use the RSA public key n = 33, e = 3 to encrypt the message m = 8. Determine the ciphertext."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The ciphertext is c = m^e mod n = 8^3 mod 33. Step 1 (power): 8^2 = 64 = 31 = -2 mod 33. Step 2 (multiply): 8^3 = 8^2 * 8 = 31 * 8 = 248 = 248 - 231 = 17 mod 33. The ciphertext is 17."
         constraints: "n <= 60, messages 2-20 coprime to n; exponentiation by repeated squaring; verify round-trip when feasible"
     diagnostic_exemplar:
       problem: 'RSA with $p = 3$, $q = 11$, $e = 3$: encrypt $m = 2$, then state the private exponent $d$.'
