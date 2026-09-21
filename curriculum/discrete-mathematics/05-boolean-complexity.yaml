@@ -486,6 +486,22 @@ topics:
           - problem: 'A triple of nested loops each runs $1..n$ with one operation innermost. Exact count for $n = 5$?'
             answer: "125"
             solution_sketch: '$n^3 = 125$ operations.'
+          - problem: "A procedure has an outer loop i = 1..n and an inner loop j = 1..i; the inner body performs one comparison per pass. How many comparisons are made when n = 15?"
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full count is the total of the inner lengths 1, 2, ..., n, one length for each i. Step 1: for a fixed i the inner loop j = 1..i makes i passes, so the count is 1 + 2 + ... + n. Step 2: the arithmetic-series formula gives n(n + 1)/2; with n = 15 that is 15*16/2 = 120. The count has big-O class O(n^2). The exact number of comparisons is 120."
+          - problem: "A procedure has an outer loop i = 1..n and an inner loop j = i..n; each inner pass performs two additions. How many additions are made when n = 13?"
+            answer: "182"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full count is S = 2 times sum from i = 1 to n of (n - i + 1). Step 1: the inner loop has sum from i = 1 to n of (n - i + 1) = n(n + 1)/2 passes by the arithmetic-series formula. Step 2: multiply by 2 for the two additions per pass, so S = n(n + 1). Step 3: substitute n = 13 to get 13*14 = 182. The count has big-O class O(n^2). The exact number of additions is 182."
+          - problem: "A procedure has three nested loops: i = 1..n, j = 1..n, and k = i..n; the innermost body performs one operation. How many operations are made when n = 6?"
+            answer: "126"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full count is S = sum from i = 1 to n of sum from j = 1 to n of sum from k = i to n of 1. Step 1: the j loop gives n choices, and the k loop gives n - i + 1 choices, so S = sum from i = 1 to n of n(n - i + 1). Step 2: factor n and use the arithmetic-series formula sum from m = 1 to n of m = n(n + 1)/2, giving S = n * n(n + 1)/2 = n^2(n + 1)/2. Step 3: substitute n = 6 to get 36*7/2 = 126. The count has big-O class O(n^3). The exact number of operations is 126."
+          - problem: "A procedure has a double loop with i = 1..n and j = 1..n; the innermost body performs one multiplication. How many multiplications are made when n = 14?"
+            answer: "196"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full count is S = sum from i = 1 to n of sum from j = 1 to n of 1. Step 1: the inner loop has n passes, so S = sum from i = 1 to n of n = n^2. Step 2: substitute n = 14 to get 196. The count has big-O class O(n^2). The exact number of multiplications is 196."
         constraints: "1-3 nested loops with bounds n or i..n; exact count via sum formulas, naming the big-O class in the reasoning"
       - id: kp2
         name: "Halving: binary search and logarithmic counts"
@@ -497,6 +513,22 @@ topics:
           - problem: 'Binary search on a sorted array of $10^6$ elements: at most how many comparisons (one per probe)?'
             answer: "20"
             solution_sketch: '$\lceil \log_2 10^6 \rceil = 20$ since $2^{19} = 524288 < 10^6 \le 2^{20} = 1048576$ — each probe halves the range, so the answer is the smallest integer $k$ with $2^{k} \ge 10^{6}$, which is exactly $\lceil \log_2 10^6 \rceil$.'
+          - problem: "A sorted array has $4096$ elements. Binary search halves the range at each probe. Find the maximum number of probes needed."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: binary search halves the range at each probe. The array size is 4096 = 2^12. The number of probes is the smallest integer k with 2^k >= 4096, so k = 12. The answer is 12."
+          - problem: "A list has $512$ entries. A linear search checks entries one by one until it finds the target. Find the maximum number of checks the linear search can make."
+            answer: "512"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: linear search checks entries one by one. The list has 512 entries, so in the worst case every entry is checked once. The maximum number of checks is 512. The answer is 512."
+          - problem: "Start with the number $256$. Replace it by its half, repeatedly, until the value is $1$. Find how many halvings this takes."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: each halving removes one factor of 2. Start with 256, which is 2^8. After 8 halvings the value is 1. The answer is 8."
+          - problem: "A binary search on a sorted array uses at most $15$ probes. The array size is a power of $2$. Find the largest possible array size."
+            answer: "32768"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: k probes can handle up to 2^k elements. With at most 15 probes, the largest power-of-two array size is 2^15. Since 2^15 = 32768, the answer is 32768."
         constraints: "powers of 2 up to 2^20; answers are ceil(log2 N) — the smallest integer k with 2^k >= N; contrast with linear search N"
     diagnostic_exemplar:
       problem: 'Give (the exact number of comparisons when every pair among $10$ items is compared once, the number of halvings needed to get from $4096$ down to $1$) as an ordered pair.'
