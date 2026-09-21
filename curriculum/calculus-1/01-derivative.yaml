@@ -35,6 +35,18 @@ topics:
           - problem: 'Find the average rate of change of $f(x) = x^3$ on $[1, 3]$.'
             answer: "13"
             solution_sketch: '$\frac{f(3) - f(1)}{3 - 1} = \frac{27 - 1}{2} = 13$.'
+          - problem: "Find the average rate of change of $f(x) = x^2 + 3x$ on $[0, 4]$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the function and the interval: f(x) = x^2 + 3x on [0, 4]. Step 2: Apply the average rate of change rule: (f(4) - f(0))/(4 - 0) = (28 - 0)/4. Step 3: Simplify the quotient: 28/4 = 7. The average rate of change is 7."
+          - problem: "Find the average rate of change of $f(x) = x^3 - x$ on $[1, 3]$."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the function and the interval: f(x) = x^3 - x on [1, 3]. Step 2: Apply the average rate of change rule: (f(3) - f(1))/(3 - 1) = (24 - 0)/2. Step 3: Simplify the quotient: 24/2 = 12. The average rate of change is 12."
+          - problem: "The average rate of change of $f(x) = x^2$ on $[1, b]$ is $5$. Find $b$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the function and the interval: f(x) = x^2 on [1, b]. Step 2: Apply the average rate of change rule: (f(b) - f(1))/(b - 1) = (b^2 - 1)/(b - 1). Step 3: Simplify the quotient to b + 1, then solve b + 1 = 5. Thus b = 4, so the endpoint is 4."
         constraints: "polynomial functions with integer coefficients; interval endpoints and answers are small integers"
       - id: kp2
         name: Secant slopes and units in context
@@ -43,12 +55,24 @@ topics:
           - problem: 'For $f(x) = x^2$, find the slope of the secant line through $(1, f(1))$ and $(3, f(3))$.'
             answer: "4"
             solution_sketch: 'The secant slope IS the average rate of change: $\frac{9 - 1}{2} = 4$.'
-          - problem: 'A tank holds $V(t) = t^2$ litres after $t$ minutes. Compute the average rate of change of $V$ on $[2, 5]$ and give its units.'
-            answer: "7 L/min"
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{25 - 4}{3} = 7$; volume per time gives L/min.'
+          - problem: "A tank holds $V(t) = t^2$ litres after $t$ minutes. Find the average rate of change of $V$ on $[2, 5]$ in litres per minute."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the average rate of change formula, which is the secant slope $(V(5)-V(2))/(5-2)$. Step 2: $V(5)=25$ and $V(2)=4$, so the difference is $21$ over $3$ minutes. The average rate of change is 7."
           - problem: 'A particle at position $s(t) = 2t^2$ meters: find its average velocity on $[0, 3]$.'
             answer: "6 m/s"
+          - problem: "A ball is dropped from a tower. Its height is $h(t) = 100 - 5t^2$ meters after $t$ seconds. Find the average rate of change of $h$ on $[1, 3]$ in meters per second."
+            answer: "-20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Apply the average rate of change formula $(h(3)-h(1))/(3-1)$. Step 2: $h(3)=100-45=55$ and $h(1)=100-5=95$, so the difference is $-40$ over $2$ seconds. The average rate of change is -20."
+          - problem: "A particle has position $s(t) = t^2$ meters at time $t$ seconds. Its average velocity on the time interval $[1, b]$ is $5$ meters per second. Find the time $b$ in seconds."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Average velocity is the secant slope $(s(b)-s(1))/(b-1)$. Step 2: $s(b)=b^2$ and $s(1)=1$, so $(b^2-1)/(b-1)=b+1$ for $b$ not 1. Set $b+1=5$ and solve: $b=4$. The time is 4."
+          - problem: "The volume of a cube with side length $x$ cm is $V(x) = x^3$ cubic cm. Find the average rate of change of $V$ as $x$ changes from $2$ cm to $3$ cm, in cubic cm per cm."
+            answer: "19"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The average rate of change is $(V(3)-V(2))/(3-2)$. Step 2: $V(3)=27$ and $V(2)=8$, so the difference is $19$ over $1$ cm. The average rate of change is 19."
         constraints: "applied contexts (height, volume, position); the answer states the number with correct units"
       - id: kp3
         name: Instantaneous rate as a limit of average rates
@@ -59,6 +83,22 @@ topics:
             solution_sketch: 'The average rates approach $6$ as the interval shrinks, so the instantaneous rate is $6$.'
           - problem: 'For $f(x) = x^2$, evaluate $\lim_{h \to 0} \frac{f(2 + h) - f(2)}{h}$ using the simplified quotient $4 + h$.'
             answer: "4"
+          - problem: "For $s(t) = t^3$, the average rates of change on $[2, 2.1]$, $[2, 2.01]$, $[2, 2.001]$ are $12.61$, $12.0601$, $12.006001$. What is the instantaneous rate of change at $t = 2$?"
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (shrinking-interval table): read the average rates $12.61$, $12.0601$, and $12.006001$. Step 2 (limit of average rates): as the interval length goes to zero, these values approach $12$, so the limit is $12$. The instantaneous rate of change at $t = 2$ is 12."
+          - problem: "For $f(x) = x^3$, use the pre-simplified difference quotient $3 + 3h + h^2$ to evaluate $\\lim_{h \\to 0} \\frac{f(1 + h) - f(1)}{h}$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (substitute simplified quotient): replace the difference quotient by $3 + 3h + h^2$, so the limit is $\\lim_{h \\to 0} (3 + 3h + h^2)$. Step 2 (take the limit): as $h$ goes to zero, the terms $3h$ and $h^2$ vanish. The limit is 3."
+          - problem: "A cart moves so that its position is $s(t) = t^2 + 2t$ meters after $t$ seconds. The average velocities on $[4, 4.1]$ and $[4, 4.01]$ are $10.1$ and $10.01$. Find the instantaneous velocity at $t = 4$ seconds."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (average rates): the average velocities $10.1$ and $10.01$ are average rates of change on shrinking intervals. Step 2 (limit of average rates): these values approach $10$ as the interval shrinks toward $t = 4$. The instantaneous velocity at $t = 4$ is 10."
+          - problem: "For $f(x) = x^2$, the average rate of change on $[a, a + h]$ simplifies to $2a + h$. If the instantaneous rate of change at $x = a$ is $14$, find $a$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (limit of average rate): the instantaneous rate is the limit as $h$ goes to zero, so $\\lim_{h \\to 0} (2a + h) = 2a$. Step 2 (solve the equation): set $2a = 14$ and solve. The value of $a$ is 7."
         constraints: "shrinking-interval tables or a pre-simplified difference quotient; integer limits"
     diagnostic_exemplar:
       problem: 'For $f(x) = x^2$, evaluate $\lim_{h \to 0} \frac{f(3 + h) - f(3)}{h}$ by first simplifying the quotient.'
@@ -100,6 +140,22 @@ topics:
             solution_sketch: '$(2 + h)^2 + 1 = 4 + 4h + h^2 + 1$.'
           - problem: 'For $f(x) = 3x - 2$, simplify $f(x + h)$.'
             answer: "3x + 3h - 2"
+          - problem: "For $f(x) = x^2 - 3x$, find $f(4 + h)$ in expanded form."
+            answer: "h^2 + 5h + 4"
+            answer_contract: {"kind": "function", "vars": ["h"]}
+            solution_sketch: "Substitute first: f(4 + h) = (4 + h)^2 - 3(4 + h). Expand the square by polynomial multiplication: (4 + h)^2 = h^2 + 8h + 16. Distribute -3: -12 - 3h. Combine like terms: h^2 + (8h - 3h) + (16 - 12). The answer is h^2 + 5h + 4."
+          - problem: "For $f(x) = 2x^2 + x$, find $f(x + h)$ in expanded form."
+            answer: "2x^2 + 4xh + 2h^2 + x + h"
+            answer_contract: {"kind": "function", "vars": ["x", "h"]}
+            solution_sketch: "Substitute first: f(x + h) = 2(x + h)^2 + (x + h). Expand the square by polynomial multiplication: (x + h)^2 = x^2 + 2xh + h^2. Distribute 2: 2x^2 + 4xh + 2h^2. Add the remaining x + h. The answer is 2x^2 + 4xh + 2h^2 + x + h."
+          - problem: "For $f(x) = x^2$, find $f(-1 + h)$ in expanded form."
+            answer: "h^2 - 2h + 1"
+            answer_contract: {"kind": "function", "vars": ["h"]}
+            solution_sketch: "Substitute first: f(-1 + h) = (-1 + h)^2. Expand the square by polynomial multiplication: (-1 + h)^2 = (-1)^2 + 2(-1)h + h^2. This gives 1 - 2h + h^2. The answer is h^2 - 2h + 1."
+          - problem: "For $f(x) = -x^2 + 4x$, find $f(3 + h)$ in expanded form."
+            answer: "-h^2 - 2h + 3"
+            answer_contract: {"kind": "function", "vars": ["h"]}
+            solution_sketch: "Substitute first: f(3 + h) = -(3 + h)^2 + 4(3 + h). Expand the square by polynomial multiplication: (3 + h)^2 = 9 + 6h + h^2. The negative gives -9 - 6h - h^2, and 4(3 + h) gives 12 + 4h. Combine like terms: -h^2 - 2h + 3. The answer is -h^2 - 2h + 3."
         constraints: "linear or quadratic f; substitute a + h or x + h and expand fully"
       - id: kp2
         name: Simplify polynomial difference quotients
@@ -113,6 +169,18 @@ topics:
           - problem: 'For $f(x) = x^2 - 4x$, simplify $\frac{f(x + h) - f(x)}{h}$.'
             answer: "2x + h - 4"
             solution_sketch: '$\frac{(x+h)^2 - 4(x+h) - x^2 + 4x}{h} = \frac{2xh + h^2 - 4h}{h} = 2x + h - 4$.'
+          - problem: "For $f(x) = x^2 + 5x$, consider the difference quotient $\\frac{f(x+h)-f(x)}{h}$. Find its simplified form."
+            answer: "2x + h + 5"
+            answer_contract: {"kind": "function", "vars": ["x", "h"]}
+            solution_sketch: "Start with the full quotient $\\frac{(x+h)^2 + 5(x+h) - x^2 - 5x}{h}$. Expand $(x+h)^2$ by polynomial multiplication and distribute: $x^2 + 2xh + h^2 + 5x + 5h - x^2 - 5x$. Combine like terms to get $2xh + h^2 + 5h$. Divide each term by $h$, and the h cancels completely. The simplified difference quotient is 2x + h + 5."
+          - problem: "For $f(x) = x^2 - 6x + 2$, consider the difference quotient $\\frac{f(x+h)-f(x)}{h}$. Find its simplified form."
+            answer: "2x + h - 6"
+            answer_contract: {"kind": "function", "vars": ["x", "h"]}
+            solution_sketch: "Start with the full quotient $\\frac{(x+h)^2 - 6(x+h) + 2 - x^2 + 6x - 2}{h}$. Expand $(x+h)^2$ by polynomial multiplication and distribute: $x^2 + 2xh + h^2 - 6x - 6h + 2 - x^2 + 6x - 2$. Combine like terms to get $2xh + h^2 - 6h$. Divide each term by $h$, and the h cancels completely. The simplified difference quotient is 2x + h - 6."
+          - problem: "For $f(x) = 3x^2 + x$, consider the difference quotient $\\frac{f(x+h)-f(x)}{h}$. Find its simplified form."
+            answer: "6x + 3h + 1"
+            answer_contract: {"kind": "function", "vars": ["x", "h"]}
+            solution_sketch: "Start with the full quotient $\\frac{3(x+h)^2 + (x+h) - 3x^2 - x}{h}$. Expand $(x+h)^2$ by polynomial multiplication and distribute: $3x^2 + 6xh + 3h^2 + x + h - 3x^2 - x$. Combine like terms to get $6xh + 3h^2 + h$. Divide each term by $h$, and the h cancels completely. The simplified difference quotient is 6x + 3h + 1."
         constraints: "linear or quadratic f; the h in the denominator must cancel completely"
       - id: kp3
         name: Difference quotients of rational functions
@@ -123,6 +191,22 @@ topics:
             solution_sketch: '$\frac{\frac{1}{x+h} - \frac{1}{x}}{h} = \frac{x - (x+h)}{h \, x(x+h)} = \frac{-1}{x(x+h)}$.'
           - problem: 'For $f(x) = \frac{2}{x}$, simplify $\frac{f(x + h) - f(x)}{h}$.'
             answer: "-2/(x(x + h))"
+          - problem: "For $f(t) = \\frac{4}{t}$, simplify $\\frac{f(t + h) - f(t)}{h}$. Give the answer as a function of $t$ and $h$."
+            answer: "-4/(t(t+h))"
+            answer_contract: {"kind": "function", "vars": ["t", "h"]}
+            solution_sketch: "Start with the difference quotient (f(t+h)-f(t))/h = (4/(t+h) - 4/t)/h. Step 1: combine over the common denominator t(t+h): (4t - 4(t+h))/(h t(t+h)) = (-4h)/(h t(t+h)). Step 2: cancel h: -4/(t(t+h)). The answer is -4/(t(t+h))."
+          - problem: "For $f(s) = \\frac{5}{s}$, simplify $\\frac{f(s + h) - f(s)}{h}$. Give the answer as a function of $s$ and $h$."
+            answer: "-5/(s(s+h))"
+            answer_contract: {"kind": "function", "vars": ["s", "h"]}
+            solution_sketch: "Start with the difference quotient (f(s+h)-f(s))/h = (5/(s+h) - 5/s)/h. Step 1: combine over the common denominator s(s+h): (5s - 5(s+h))/(h s(s+h)) = (-5h)/(h s(s+h)). Step 2: cancel h: -5/(s(s+h)). The answer is -5/(s(s+h))."
+          - problem: "For $f(u) = \\frac{6}{u}$, simplify $\\frac{f(u + h) - f(u)}{h}$. Give the answer as a function of $u$ and $h$."
+            answer: "-6/(u(u+h))"
+            answer_contract: {"kind": "function", "vars": ["u", "h"]}
+            solution_sketch: "Start with the difference quotient (f(u+h)-f(u))/h = (6/(u+h) - 6/u)/h. Step 1: combine over the common denominator u(u+h): (6u - 6(u+h))/(h u(u+h)) = (-6h)/(h u(u+h)). Step 2: cancel h: -6/(u(u+h)). The answer is -6/(u(u+h))."
+          - problem: "For $f(x) = \\frac{7}{x}$, simplify $\\frac{f(2 + h) - f(2)}{h}$. Give the answer as a function of $h$."
+            answer: "-7/(2(2+h))"
+            answer_contract: {"kind": "function", "vars": ["h"]}
+            solution_sketch: "Start with the difference quotient (f(2+h)-f(2))/h = (7/(2+h) - 7/2)/h. Step 1: combine over the common denominator 2(2+h): (14 - 7(2+h))/(h * 2(2+h)) = (-7h)/(h * 2(2+h)). Step 2: cancel h: -7/(2(2+h)). The answer is -7/(2(2+h))."
         constraints: "f = c/x with small integer c; combine over a common denominator before canceling h"
     diagnostic_exemplar:
       problem: 'For $f(x) = \frac{3}{x}$, simplify $\frac{f(x + h) - f(x)}{h}$.'
@@ -166,6 +250,18 @@ topics:
           - problem: 'Use the definition to find $f''(2)$ for $f(x) = x^2 - 5x$.'
             answer: "-1"
             solution_sketch: '$\frac{(2+h)^2 - 5(2+h) - (-6)}{h} = \frac{-h + h^2}{h} = -1 + h \to -1$.'
+          - problem: "Use the definition f'(a) = lim_{h -> 0} (f(a+h) - f(a))/h to find f'(1) for f(x) = x^2 + 2x."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the difference quotient for f(x) = x^2 + 2x at a = 1: ((1+h)^2 + 2(1+h) - 3)/h. Expand the numerator by algebra: (1 + 2h + h^2 + 2 + 2h - 3)/h = (4h + h^2)/h. Cancel the factor h and take the limit as h goes to 0 using the definition of the derivative: f'(1) = 4."
+          - problem: "Use the definition f'(a) = lim_{h -> 0} (f(a+h) - f(a))/h to find f'(2) for f(x) = 2x^2 - 3x."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the difference quotient for f(x) = 2x^2 - 3x at a = 2: (2(2+h)^2 - 3(2+h) - 2)/h. Expand and simplify the numerator: (8 + 8h + 2h^2 - 6 - 3h - 2)/h = (5h + 2h^2)/h. Cancel h and let h go to 0 using the derivative definition: f'(2) = 5."
+          - problem: "A toy car moves along a line. Its position in metres after t seconds is s(t) = 6t - 3t^2. Use the definition s'(a) = lim_{h -> 0} (s(a+h) - s(a))/h to find the instantaneous velocity at t = 2."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the difference quotient for s(t) = 6t - 3t^2 at a = 2: (6(2+h) - 3(2+h)^2 - 0)/h. Expand the numerator: 12 + 6h - 12 - 12h - 3h^2 = -6h - 3h^2, so the quotient is (-6h - 3h^2)/h. Cancel h and take the limit as h goes to 0 using the definition of the derivative: s'(2) = -6."
         constraints: "quadratic f with small integer coefficients; the difference quotient must cancel cleanly"
       - id: kp2
         name: The alternative form lim_{x → a}
@@ -177,6 +273,22 @@ topics:
           - problem: 'Use the alternative form to find $f''(1)$ for $f(x) = x^3$.'
             answer: "3"
             solution_sketch: '$\frac{x^3 - 1}{x - 1} = x^2 + x + 1 \to 3$.'
+          - problem: "Use f'(a) = lim_{x -> a} (f(x) - f(a))/(x - a). Find f'(3) for f(x) = x^2 + 4x."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the alternative form f'(3) = lim_{x -> 3} (f(x) - f(3))/(x - 3). For f(x) = x^2 + 4x, f(3) = 21, so the quotient is (x^2 + 4x - 21)/(x - 3). Factor the numerator as (x - 3)(x + 7) by factoring limits, cancel x - 3, and evaluate x + 7 at x = 3. The limit is 10, so f'(3) = 10."
+          - problem: "Use f'(a) = lim_{x -> a} (f(x) - f(a))/(x - a). Find f'(2) for f(x) = x^3."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from f'(2) = lim_{x -> 2} (f(x) - f(2))/(x - 2). For f(x) = x^3, f(2) = 8, so the quotient is (x^3 - 8)/(x - 2). Factor the difference of cubes as (x - 2)(x^2 + 2x + 4), cancel x - 2, and evaluate at x = 2. The limit is 12, so f'(2) = 12."
+          - problem: "A particle's position is s(t) = t^2 + 2t metres at time t seconds. Use s'(3) = lim_{t -> 3} (s(t) - s(3))/(t - 3). Find its instantaneous velocity at t = 3, in m/s."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the alternative form for the position: s'(3) = lim_{t -> 3} (s(t) - s(3))/(t - 3). With s(t) = t^2 + 2t, s(3) = 15, so the quotient is (t^2 + 2t - 15)/(t - 3). Factor the numerator as (t - 3)(t + 5) by factoring limits, cancel t - 3, and evaluate t + 5 at t = 3. The limit is 8, so the instantaneous velocity is 8 m/s."
+          - problem: "For f(x) = x^2, use the alternative form f'(a) = lim_{x -> a} (f(x) - f(a))/(x - a). Find f'(-3)."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use f'(-3) = lim_{x -> -3} (f(x) - f(-3))/(x + 3) because a = -3. For f(x) = x^2, f(-3) = 9, so the quotient is (x^2 - 9)/(x + 3). Factor the difference of squares as (x - 3)(x + 3), cancel x + 3, and evaluate x - 3 at x = -3. The limit is -6, so f'(-3) = -6."
         constraints: "factorable numerators (difference of squares/cubes); integer answers"
       - id: kp3
         name: Interpret f'(a)
@@ -186,6 +298,22 @@ topics:
             answer: "12"
           - problem: 'A particle''s position is $s(t) = t^2$ meters after $t$ seconds, and $s''(3) = 6$. What is the particle''s instantaneous velocity at $t = 3$? Give the value with units.'
             answer: "6 m/s"
+          - problem: "The graph of $y = f(x)$ has a tangent line at $x = 3$ whose slope is $7$. What is $f'(3)$?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Definition of the derivative at a point: f'(3) is the slope of the tangent line to y = f(x) at x = 3. Step 2: The given tangent line has slope 7. Therefore f'(3) = 7."
+          - problem: "A particle moves along a line, and $s(t)$ is its position in meters at time $t$ in seconds. The limit $\\lim_{h \\to 0} \\frac{s(5 + h) - s(5)}{h} = -4$. What is the particle's instantaneous velocity at $t = 5$?"
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Definition of the derivative at a point: s'(5) is the limit of the difference quotient as h approaches 0. Step 2: The limit equals -4, so s'(5) = -4. Step 3: Instantaneous velocity is the derivative of position, so the velocity at t = 5 is -4."
+          - problem: "The volume $V(t)$ of water in a tank, in liters, depends on the time $t$ in minutes. At $t = 8$, $V'(8) = -3$. Give the instantaneous rate of change of the volume at $t = 8$."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The derivative V'(8) is the instantaneous rate of change of volume with respect to time. Step 2: The problem gives V'(8) = -3. Therefore the instantaneous rate of change of volume at t = 8 is -3."
+          - problem: "The line $y = 4x - 1$ is tangent to the graph of $y = g(x)$ at $x = 2$. Find $g'(2)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Definition of the derivative at a point: g'(2) is the slope of the tangent line to y = g(x) at x = 2. Step 2: The tangent line y = 4x - 1 has slope 4. Therefore g'(2) = 4."
         constraints: "tie the derivative value to tangent slope or instantaneous rate with units"
     diagnostic_exemplar:
       problem: 'A particle''s position is $s(t) = t^2 - 5t$ metres at time $t$ seconds. Use the limit definition of the derivative to find its instantaneous velocity at $t = 4$, in m/s.'
@@ -229,6 +357,18 @@ topics:
           - problem: 'Use the definition to find $f''(x)$ for $f(x) = 2x^2 - 3x$.'
             answer: "4x - 3"
             solution_sketch: '$\frac{2(x+h)^2 - 3(x+h) - 2x^2 + 3x}{h} = \frac{4xh + 2h^2 - 3h}{h} = 4x + 2h - 3 \to 4x - 3$.'
+          - problem: "Use the limit definition to compute f'(x) for f(x) = x^2 + 5x. Find f'(x)."
+            answer: "2x+5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1: Write the difference quotient for f(x) = x^2 + 5x: ((x+h)^2 + 5(x+h) - (x^2 + 5x))/h. Step 2: Expand the numerator: x^2 + 2xh + h^2 + 5x + 5h - x^2 - 5x = 2xh + h^2 + 5h. Step 3: Divide by h: 2x + h + 5. Step 4: Take the limit as h goes to 0 using limit laws: the derivative is 2x+5."
+          - problem: "Use the limit definition to compute f'(x) for f(x) = 3x^2 + 2x - 1. Find f'(x)."
+            answer: "6x+2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1: Write the difference quotient for f(x) = 3x^2 + 2x - 1: (3(x+h)^2 + 2(x+h) - 1 - (3x^2 + 2x - 1))/h. Step 2: Expand the numerator: 3x^2 + 6xh + 3h^2 + 2x + 2h - 1 - 3x^2 - 2x + 1 = 6xh + 3h^2 + 2h. Step 3: Divide by h: 6x + 3h + 2. Step 4: Take the limit as h goes to 0 using limit laws: the derivative is 6x+2."
+          - problem: "Use the limit definition to compute f'(x) for f(x) = x^3 - x. Find f'(x)."
+            answer: "3x^2-1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1: Write the difference quotient for f(x) = x^3 - x: ((x+h)^3 - (x+h) - (x^3 - x))/h. Step 2: Expand the numerator: x^3 + 3x^2h + 3xh^2 + h^3 - x - h - x^3 + x = 3x^2h + 3xh^2 + h^3 - h. Step 3: Divide by h: 3x^2 + 3xh + h^2 - 1. Step 4: Take the limit as h goes to 0 using limit laws: the derivative is 3x^2-1."
         constraints: "degree ≤ 3 with small integer coefficients; require the full limit computation, not a rule"
       - id: kp2
         name: Derive f'(x) for rational and radical functions
@@ -243,6 +383,18 @@ topics:
           - problem: 'Use the definition to find $f''(x)$ for $f(x) = \frac{1}{x + 1}$.'
             answer: "-1/(x + 1)^2"
             solution_sketch: 'Combine: $\frac{\frac{1}{x+h+1} - \frac{1}{x+1}}{h} = \frac{-1}{(x+h+1)(x+1)} \to -\frac{1}{(x+1)^2}$.'
+          - problem: "Let f(x) = 1/(x + 3). Use the limit definition to find f'(x)."
+            answer: "-1/(x+3)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1, write the difference quotient for f(x) = 1/(x + 3): (1/(x + h + 3) - 1/(x + 3))/h. Step 2, combine the fractions: the numerator is -h/((x + h + 3)(x + 3)), so the quotient is -1/((x + h + 3)(x + 3)). Step 3, apply the limit law and let h tend to 0: the denominator tends to (x + 3)^2, giving the derivative -1/(x + 3)^2. The derivative is -1/(x+3)^2."
+          - problem: "Let f(x) = 1/(x - 4). Use the definition of the derivative to find f'(x)."
+            answer: "-1/(x-4)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1, write the difference quotient for f(x) = 1/(x - 4): (1/(x + h - 4) - 1/(x - 4))/h. Step 2, combine the fractions: the numerator is -h/((x + h - 4)(x - 4)), so the quotient is -1/((x + h - 4)(x - 4)). Step 3, take the limit as h tends to 0: the denominator approaches (x - 4)^2, so the derivative is -1/(x - 4)^2. The derivative is -1/(x-4)^2."
+          - problem: "Let f(t) = sqrt(t). Use the limit definition to find f'(t)."
+            answer: "1/(2sqrt(t))"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1, write the difference quotient for f(t) = sqrt(t): (sqrt(t + h) - sqrt(t))/h. Step 2, rationalize: multiply numerator and denominator by sqrt(t + h) + sqrt(t) to get h/(h(sqrt(t + h) + sqrt(t))), which simplifies to 1/(sqrt(t + h) + sqrt(t)). Step 3, let h tend to 0 and apply the limit law: the denominator tends to 2sqrt(t), giving 1/(2sqrt(t)). The derivative is 1/(2sqrt(t))."
         constraints: "f is 1/x, 1/(x + c), or √x; combine fractions or rationalize before letting h → 0"
       - id: kp3
         name: Use the derived derivative function
@@ -253,6 +405,22 @@ topics:
           - problem: 'For $f(x) = x^2 - 6x$ (so $f''(x) = 2x - 6$), at which $x$ is the tangent line horizontal?'
             answer: "3"
             solution_sketch: 'Set $f''(x) = 0$: $2x - 6 = 0$.'
+          - problem: "For f(x) = x^2 (so f'(x) = 2x), find the slope of the tangent line at x = 4."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (derivative function): the given derivative is f'(x) = 2x. Step 2 (evaluate at a point): substitute x = 4 to get f'(4) = 2(4) = 8. The slope of the tangent line is 8."
+          - problem: "For f(x) = x^2 - 10x (so f'(x) = 2x - 10), find the x-value at which the tangent line is horizontal."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (derivative function): the given derivative is f'(x) = 2x - 10. Step 2 (horizontal tangent condition): set f'(x) = 0 to get 2x - 10 = 0. Step 3 (solve the linear equation): add 10 and divide by 2, so x = 5. The value of x is 5."
+          - problem: "For f(x) = x^3 (so f'(x) = 3x^2), find the slope of the tangent line at x = -2."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (derivative function): the given derivative is f'(x) = 3x^2. Step 2 (evaluate at a point): substitute x = -2 to get 3(-2)^2 = 3(4) = 12. The tangent slope is 12."
+          - problem: "For f(x) = x^2 + 3x (so f'(x) = 2x + 3), find the x-value at which the derivative equals 7."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (derivative function): the given derivative is f'(x) = 2x + 3. Step 2 (set the derivative equal to the given value): solve 2x + 3 = 7. Step 3 (solve the linear equation): subtract 3 and divide by 2 to get x = 2. The value of x is 2."
         constraints: "evaluate or solve with a derivative already derived in this lesson; integer answers"
     diagnostic_exemplar:
       problem: 'Use the limit definition to find $f''(x)$ for $f(x) = \frac{1}{x + 2}$.'
@@ -292,6 +460,22 @@ topics:
             solution_sketch: '$\frac{4.41 - 3.61}{2.1 - 1.9} = \frac{0.8}{0.2} = 4$.'
           - problem: 'A table gives $f(2.9) = 8.41$ and $f(3.1) = 9.61$. Estimate $f''(3)$.'
             answer: "6"
+          - problem: "A table gives f(1.9) = 2.25 and f(2.1) = 3.25. Compute an estimate of f'(2)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full estimate is (3.25 - 2.25)/(2.1 - 1.9). Step 1: use the symmetric difference quotient rule, dividing the change in f by the change in x. Step 2: compute the change in f as 1.00 and the change in x as 0.20. The quotient is 5, so f'(2) is approximately 5."
+          - problem: "A population table gives P(4.9) = 20.4 and P(5.1) = 21.0, in thousands. Compute the rate P'(5) in thousands per year."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full estimate is (21.0 - 20.4)/(5.1 - 4.9). Step 1: use the symmetric difference quotient rule for a rate. Step 2: the change in P is 0.6 thousand and the time change is 0.2 years. The quotient is 3, so P'(5) is approximately 3 thousand per year."
+          - problem: "A table gives f(3.9) = 20 and f(4.1) is unknown. The symmetric difference estimate of f'(4) is 5. Find f(4.1)."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full relation is (f(4.1) - 20)/(4.1 - 3.9) = 5. Step 1: use the symmetric difference quotient rule. Step 2: multiply both sides by 0.2 to get f(4.1) - 20 = 1. Step 3: add 20 to both sides. Thus f(4.1) = 21."
+          - problem: "A table gives T(6.9) = 70.0 and T(7.1) = 70.4, in degrees. Compute the rate T'(7) in degrees per hour."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full estimate is (70.4 - 70.0)/(7.1 - 6.9). Step 1: use the symmetric difference quotient rule for the rate of change. Step 2: the temperature change is 0.4 degrees over 0.2 hours. The quotient is 2, so T'(7) is approximately 2 degrees per hour."
         constraints: "symmetric points a ± 0.1; the difference quotient comes out to a small integer"
       - id: kp2
         name: Estimate the derivative from a graph
@@ -302,6 +486,22 @@ topics:
             solution_sketch: 'The tangent''s slope is $\frac{8 - 2}{3 - 1} = 3$.'
           - problem: 'At a point where the graph of $f$ has a horizontal tangent, what is $f''$ there?'
             answer: "0"
+          - problem: "A line tangent to the graph of $y = f(x)$ at $x = 1$ passes through $(0, 1)$ and $(2, 5)$. Find $f'(1)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The tangent line at $x = 1$ passes through $(0, 1)$ and $(2, 5)$. Rule: the derivative $f'(1)$ is the slope of the tangent line at that point. Rule: slope is the change in $y$ divided by the change in $x$, so the slope is $(5 - 1)/(2 - 0) = 4/2 = 2$. Therefore $f'(1) = 2$."
+          - problem: "At $x = 5$, the graph of $y = f(x)$ has a horizontal tangent line. Find $f'(5)$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The tangent line at $x = 5$ is horizontal. Rule: the derivative $f'(5)$ equals the slope of the tangent line at $x = 5$. Rule: a horizontal line has slope $0$. Therefore $f'(5) = 0$."
+          - problem: "The tangent to $y = f(x)$ at $x = -1$ goes through $(-2, 7)$ and $(0, -1)$. Determine $f'(-1)$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The tangent line at $x = -1$ goes through $(-2, 7)$ and $(0, -1)$. Rule: the derivative $f'(-1)$ is the slope of the tangent line at $x = -1$. Rule: slope is $(y_2 - y_1)/(x_2 - x_1)$, so the slope is $(-1 - 7)/(0 - (-2)) = -8/2 = -4$. Thus $f'(-1) = -4$."
+          - problem: "The line tangent to $y = f(x)$ at $x = 3$ passes through $(2, 6)$ and $(4, 2)$. What is $f'(3)$?"
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The tangent line at $x = 3$ passes through $(2, 6)$ and $(4, 2)$. Rule: the derivative $f'(3)$ is the slope of the tangent line at $x = 3$. Rule: the slope is $(2 - 6)/(4 - 2) = -4/2 = -2$. Therefore $f'(3) = -2$."
         constraints: "tangent line through two lattice points, or a horizontal tangent; integer slopes"
       - id: kp3
         name: Sign and units of the derivative
@@ -353,6 +553,22 @@ topics:
           - problem: 'Find the tangent line to $f(x) = x^2 - 3x$ at $x = 2$, given $f''(x) = 2x - 3$. Give the expression for $y$.'
             answer: "x - 4"
             solution_sketch: 'Slope $f''(2) = 1$ through $(2, -2)$: $y + 2 = x - 2$, i.e. $y = x - 4$.'
+          - problem: "Find the tangent line to $y = x^2$ at $x = 3$ (its derivative is $2x$). Give the expression for $y$."
+            answer: "6x - 9"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The curve is y = x^2 with derivative 2x. At x = 3, the point is (3, 9). The slope is 2 * 3 = 6. Point-slope gives y - 9 = 6(x - 3), which simplifies to y = 6x - 9, so the expression for y is 6x - 9."
+          - problem: "Find the tangent line to $f(x) = x^2 - 5x + 1$ at $x = 4$, given $f'(x) = 2x - 5$. Give the expression for $y$."
+            answer: "3x - 15"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = x^2 - 5x + 1 with derivative f'(x) = 2x - 5. At x = 4, f(4) = 16 - 20 + 1 = -3. The slope is f'(4) = 8 - 5 = 3. Point-slope gives y + 3 = 3(x - 4), which simplifies to y = 3x - 15, so the expression for y is 3x - 15."
+          - problem: "A curve has derivative $f'(x) = 4x - 1$ and passes through the point $(2, 5)$. Find the tangent line at $x = 2$. Give the expression for $y$."
+            answer: "7x - 9"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The derivative is f'(x) = 4x - 1 and the point is (2, 5). The slope is f'(2) = 4 * 2 - 1 = 7. Point-slope gives y - 5 = 7(x - 2), which simplifies to y = 7x - 9, so the expression for y is 7x - 9."
+          - problem: "Find the tangent line to $f(x) = 2x^2 - 3x + 1$ at $x = 2$, given $f'(x) = 4x - 3$. Give the expression for $y$."
+            answer: "5x - 7"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 2x^2 - 3x + 1 with derivative f'(x) = 4x - 3. At x = 2, f(2) = 8 - 6 + 1 = 3. The slope is f'(2) = 8 - 3 = 5. Point-slope gives y - 3 = 5(x - 2), which simplifies to y = 5x - 7, so the expression for y is 5x - 7."
         constraints: "quadratics with integer coefficients; tangent point and slope are integers; the answer is the slope-intercept expression for y"
       - id: kp2
         name: Compute the derivative, then the tangent line
@@ -364,6 +580,22 @@ topics:
           - problem: 'Find the tangent line to $f(x) = \frac{1}{x}$ at $x = 1$ (use $f''(x) = -1/x^2$). Give the expression for $y$.'
             answer: "-x + 2"
             solution_sketch: 'Slope $-1$ through $(1, 1)$: $y - 1 = -(x - 1)$, i.e. $y = -x + 2$.'
+          - problem: "Find the tangent line to f(x) = x^2 at x = -2. Give the expression for y."
+            answer: "-4x - 4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: f(x) = x^2 at x = -2. Step 1, power rule: f'(x) = 2x, so the slope is f'(-2) = -4. Step 2, point-slope form: the point is (-2, 4), so y - 4 = -4(x + 2). Step 3, simplify: y = -4x - 4. The expression for y is -4x - 4."
+          - problem: "Find the tangent line to f(x) = x^3 at x = 1. Give the expression for y."
+            answer: "3x - 2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: f(x) = x^3 at x = 1. Step 1, power rule: f'(x) = 3x^2, so the slope is f'(1) = 3. Step 2, point-slope form: the point is (1, 1), so y - 1 = 3(x - 1). Step 3, simplify: y = 3x - 2. The expression for y is 3x - 2."
+          - problem: "Find the tangent line to f(x) = x^3 - 2x at x = 2. Give the expression for y."
+            answer: "10x - 16"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: f(x) = x^3 - 2x at x = 2. Step 1, power rule: f'(x) = 3x^2 - 2, so the slope is f'(2) = 10. Step 2, point-slope form: the point is (2, 4), so y - 4 = 10(x - 2). Step 3, simplify: y = 10x - 16. The expression for y is 10x - 16."
+          - problem: "For f(x) = x^2, find the tangent line at the point where the slope is 8. Give the expression for y."
+            answer: "8x - 16"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: f(x) = x^2 with tangent slope 8. Step 1, power rule: f'(x) = 2x. Step 2, solve 2x = 8, so x = 4. Step 3, point-slope form: f(4) = 16, so y - 16 = 8(x - 4). Step 4, simplify: y = 8x - 16. The expression for y is 8x - 16."
         constraints: "derivatives derivable by the limit definition covered earlier; clean integer slopes and intercepts; the answer is the slope-intercept expression for y"
       - id: kp3
         name: Normal lines and horizontal tangents
@@ -375,6 +607,22 @@ topics:
           - problem: 'At which point does $y = x^2 - 4x$ have a horizontal tangent line?'
             answer: "(2, -4)"
             solution_sketch: '$y'' = 2x - 4 = 0$ at $x = 2$; the point is $(2, -4)$.'
+          - problem: "Find the normal line to y = x^2 + 2x at x = 1. Give the expression for y."
+            answer: "-x/4 + 13/4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The point is (1, 3) because y = 1 + 2 = 3. The derivative of x^2 + 2x is 2x + 2 by the general power rule, so the tangent slope at x = 1 is 4. The normal slope is the negative reciprocal, -1/4. Point-slope form gives y - 3 = -1/4 (x - 1), which simplifies to y = -x/4 + 13/4. The answer is -x/4 + 13/4."
+          - problem: "Find the normal line to y = x^3 at the point (1, 1). Give the expression for y."
+            answer: "-x/3 + 4/3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The point is (1, 1). The derivative of x^3 is 3x^2 by the general power rule, so the tangent slope at x = 1 is 3. The normal slope is the negative reciprocal, -1/3. Point-slope form gives y - 1 = -1/3 (x - 1), which simplifies to y = -x/3 + 4/3. The answer is -x/3 + 4/3."
+          - problem: "Find the x-coordinates of all points where y = x + 4/x has a horizontal tangent line. Give the answer as a set of x-values."
+            answer: "{-2, 2}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The function is y = x + 4/x. Its derivative is 1 - 4/x^2 by the general power rule. A horizontal tangent means the derivative is zero, so 1 - 4/x^2 = 0. Solving gives x^2 = 4, so x = -2 or x = 2. The answer is {-2, 2}."
+          - problem: "Find the normal line to y = sqrt(x) at x = 4. Give the expression for y."
+            answer: "-4x + 18"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The point is (4, 2) because sqrt(4) = 2. The derivative of sqrt(x) is 1/(2 sqrt(x)), so the tangent slope at x = 4 is 1/4. The normal slope is the negative reciprocal, -4. Point-slope form gives y - 2 = -4(x - 4), which simplifies to y = -4x + 18. The answer is -4x + 18."
         constraints: "normal slope is the negative reciprocal; horizontal tangents where the derivative vanishes"
     diagnostic_exemplar:
       problem: 'Find the normal line to $y = x^2$ at $x = 2$. Give the expression for $y$.'
@@ -409,14 +657,30 @@ topics:
         name: Differentiable implies continuous (converse fails)
         key_prerequisites: [derivative-definition, continuity]
         exemplars:
-          - problem: 'Is $f(x) = |x|$ differentiable at $x = 0$? Explain using one-sided difference quotients.'
-            answer: "no — the left quotient gives -1, the right gives 1 (a corner)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{|h|}{h}$ is $-1$ for $h < 0$ and $1$ for $h > 0$; the defining limit does not exist.'
-          - problem: 'If $f$ is differentiable at $a$, must $f$ be continuous at $a$? If $f$ is continuous at $a$, must it be differentiable there?'
-            answer: "yes; no (|x| at 0 is the standard counterexample)"
-            answer_contract: {kind: none}
-            solution_sketch: "yes; no (|x| at 0 is the standard counterexample)"
+          - problem: "For f(x) = |x - 1|, find f'(1)."
+            answer: "DNE"
+            answer_contract: {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}
+            solution_sketch: "For f(x) = |x - 1| at x = 1, write the difference quotient (|1+h-1| - 0)/h = |h|/h. Step 1: use the limit definition of the derivative. Step 2: evaluate the left-hand limit: for h < 0, |h|/h = -1. Step 3: evaluate the right-hand limit: for h > 0, |h|/h = 1. The two one-sided limits differ, so the derivative does not exist; this is the failed converse, since f is continuous at 1. The option infinity is wrong because the quotient does not grow without bound; -infinity is wrong for the same reason; 0 is wrong because the one-sided quotients are -1 and 1, not 0. The derivative is DNE."
+          - problem: "Differentiable implies continuous. Suppose f is differentiable at x = 4 and f(4) = 7. Find lim_{x -> 4} f(x)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: cite the implication: differentiability at 4 implies continuity at 4. Step 2: use the definition of continuity: if f is continuous at 4, then lim_{x -> 4} f(x) = f(4). Step 3: substitute the given value f(4) = 7. The limit is 7."
+          - problem: "For f(x) = |x - 5|, compute the left-hand derivative at x = 5."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the difference quotient for h < 0: (|5+h-5| - |5-5|)/h = |h|/h. Step 2: simplify for h < 0: |h| = -h, so the quotient is -1. Step 3: take the left-hand limit: the left-hand derivative is -1. The left-hand derivative is -1."
+          - problem: "For f(x) = |x - 5|, compute the right-hand derivative at x = 5."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the difference quotient for h > 0: (|5+h-5| - |5-5|)/h = |h|/h. Step 2: simplify for h > 0: |h| = h, so the quotient is 1. Step 3: take the right-hand limit: the right-hand derivative is 1. The right-hand derivative is 1."
+          - problem: "For f(x) = 3|x + 2|, compute the left-hand derivative at x = -2."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the difference quotient for h < 0: (3|-2+h+2| - 3|-2+2|)/h = 3|h|/h. Step 2: simplify for h < 0: |h| = -h, so the quotient is -3. Step 3: take the left-hand limit: the left-hand derivative is -3. The left-hand derivative is -3."
+          - problem: "For f(x) = 3|x + 2|, compute the right-hand derivative at x = -2."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the difference quotient for h > 0: (3|-2+h+2| - 3|-2+2|)/h = 3|h|/h. Step 2: simplify for h > 0: |h| = h, so the quotient is 3. Step 3: take the right-hand limit: the right-hand derivative is 3. The right-hand derivative is 3."
         constraints: "corner examples built from |x - a|; cite the implication and its failed converse"
       - id: kp2
         name: Spot non-differentiable points
@@ -439,14 +703,30 @@ topics:
         name: Piecewise differentiability checks
         key_prerequisites: [derivative-definition, continuity, one-sided-limits]
         exemplars:
-          - problem: 'Let $f(x) = x^2$ for $x \leq 1$ and $f(x) = 2x - 1$ for $x > 1$. Is $f$ differentiable at $x = 1$?'
-            answer: "yes — f is continuous there (both branches give 1) and both one-sided slopes equal 2"
-            answer_contract: {kind: none}
-            solution_sketch: 'Values: $1 = 1$. Slopes: $2x |_{x=1} = 2$ and $2$. Both match, so $f''(1) = 2$.'
-          - problem: 'Let $g(x) = x^2$ for $x \leq 1$ and $g(x) = 3x - 2$ for $x > 1$. Is $g$ differentiable at $x = 1$?'
-            answer: "no — g is continuous (1 = 1) but the one-sided slopes are 2 and 3"
-            answer_contract: {kind: none}
-            solution_sketch: "no — g is continuous (1 = 1) but the one-sided slopes are 2 and 3"
+          - problem: "Let $f(x) = x^2$ for $x \\le 1$ and $f(x) = 2x - 1$ for $x > 1$. Check the branch values and the one-sided slopes at $x = 1$. Find $f'(1)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (value match): the left branch gives $1^2 = 1$ and the right branch gives $2(1) - 1 = 1$, so the values match and f is continuous at $x = 1$. Step 2 (one-sided slopes): the left slope is $2x$ at $x = 1$, which is $2$, and the right slope is $2$. The slopes match, so f is differentiable at $x = 1$ and the answer is $f'(1) = 2$."
+          - problem: "Let $g(x) = x^2$ for $x \\le 1$ and $g(x) = 3x - 2$ for $x > 1$. Check the branch values and the one-sided slopes at $x = 1$. Find the difference of the one-sided slopes (right minus left)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (value match): the left branch gives $1^2 = 1$ and the right branch gives $3(1) - 2 = 1$, so the values match. Step 2 (one-sided slopes): the left slope is $2x$ at $x = 1$, which is $2$, and the right slope is $3$. The difference right minus left is $3 - 2 = 1$."
+          - problem: "Let $f(x) = x^2$ for $x \\le 1$ and $f(x) = ax - 1$ for $x > 1$. Find the value of $a$ that makes $f$ differentiable at $x = 1$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (value match): the left branch gives $1^2 = 1$ and the right branch gives $a(1) - 1 = a - 1$; matching gives $a - 1 = 1$, so $a = 2$. Step 2 (one-sided slopes): the left slope is $2x$ at $x = 1$, which is $2$, and the right slope is $a$; matching also gives $a = 2$. The answer is $a = 2$."
+          - problem: "Let $f(x) = x^2 + 2x$ for $x \\le 1$ and $f(x) = 4x + c$ for $x > 1$. Find the value of $c$ that makes $f$ differentiable at $x = 1$."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (value match): the left branch gives $1^2 + 2(1) = 3$ and the right branch gives $4(1) + c = 4 + c$; matching gives $4 + c = 3$, so $c = -1$. Step 2 (one-sided slopes): the left slope is $2x + 2$ at $x = 1$, which is $4$, and the right slope is $4$, so the slopes match. The answer is $c = -1$."
+          - problem: "Let $f(x) = x^2$ for $x \\le 2$ and $f(x) = x^3 - 4$ for $x > 2$. Check the branch values and the one-sided slopes at $x = 2$. State $f'(2)$."
+            answer: "DNE"
+            answer_contract: {"kind": "label", "options": [["DNE", "does not exist"], ["4"], ["12"], ["0"]]}
+            solution_sketch: "Step 1 (value match): the left branch gives $2^2 = 4$ and the right branch gives $2^3 - 4 = 4$, so the values match and f is continuous at $x = 2$. Step 2 (one-sided slopes): the left slope is $2x$ at $x = 2$, which is $4$, and the right slope is $3x^2$ at $x = 2$, which is $12$. The slopes differ, so f is not differentiable at $x = 2$. The option 4 uses only the left slope, the option 12 uses only the right slope, and the option 0 assumes the slopes already match. The answer is DNE."
+          - problem: "Let $f(x) = x^2 + bx$ for $x \\le 1$ and $f(x) = 3x - 1$ for $x > 1$. Find the value of $b$ that makes $f$ differentiable at $x = 1$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (value match): the left branch gives $1^2 + b(1) = 1 + b$ and the right branch gives $3(1) - 1 = 2$; matching gives $1 + b = 2$, so $b = 1$. Step 2 (one-sided slopes): the left slope is $2x + b$ at $x = 1$, which is $2 + b$, and the right slope is $3$; with $b = 1$ the left slope is $3$, so the slopes match too. The answer is $b = 1$."
         constraints: "two-branch polynomials; check value match first, then one-sided slopes"
     diagnostic_exemplar:
       problem: 'Let $f(x) = x^2$ for $x \leq 2$ and $f(x) = 4x - 4$ for $x > 2$. Is $f$ differentiable at $x = 2$?'
@@ -485,6 +765,22 @@ topics:
             answer: "5x^4"
           - problem: 'Differentiate $f(x) = x^7$.'
             answer: "7x^6"
+          - problem: "The position of a particle at time t is s(t) = t^4. Find its velocity function v(t)."
+            answer: "4t^3"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The position is s(t) = t^4. By the power rule, the derivative of t^4 is 4 t^(4-1). Therefore the velocity function is 4t^3."
+          - problem: "A square tile has side length x. Its area is A(x) = x^2. Find dA/dx."
+            answer: "2x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The area is A(x) = x^2. By the power rule, dA/dx = 2 x^(2-1). Therefore dA/dx = 2x."
+          - problem: "Find the derivative of f(u) = u^8."
+            answer: "8u^7"
+            answer_contract: {"kind": "function", "vars": ["u"]}
+            solution_sketch: "The function is f(u) = u^8. By the power rule, f'(u) = 8 u^(8-1) = 8u^7. The derivative is 8u^7."
+          - problem: "Given y = t^2, find dy/dt."
+            answer: "2t"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The function is y = t^2. By the power rule, dy/dt = 2 t^(2-1) = 2t. Therefore dy/dt = 2t."
         constraints: "single power terms with exponents 2-8"
       - id: kp2
         name: Sums, constant multiples, and constants
@@ -494,8 +790,20 @@ topics:
             answer: "12x^3 - 4x"
           - problem: 'Differentiate $f(x) = 2x^3 - 5x + 4$.'
             answer: "6x^2 - 5"
+          - problem: "Let f(x) = 5x^3 + 2x^2 - 9x + 4. Find f'(x)."
+            answer: "15x^2 + 4x - 9"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = 5x^3 + 2x^2 - 9x + 4. The sum rule splits the derivative into separate terms, and the constant-multiple rule keeps each coefficient. The power rule gives 15x^2 + 4x - 9, while the constant rule gives 0 for the constant 4. The answer is 15x^2 + 4x - 9."
           - problem: 'Differentiate $f(x) = 9$.'
             answer: "0"
+          - problem: "Let g(x) = -4x^5 + 6x^3 - x. Find g'(x)."
+            answer: "-20x^4 + 18x^2 - 1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is g(x) = -4x^5 + 6x^3 - x. The sum rule and constant-multiple rule let each term differentiate on its own. The power rule gives -20x^4 + 18x^2 - 1, because the derivative of x is 1. The answer is -20x^4 + 18x^2 - 1."
+          - problem: "Let h(x) = 7x^6 - 3x^4 + 8x^2 - 11. Find h'(x)."
+            answer: "42x^5 - 12x^3 + 16x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is h(x) = 7x^6 - 3x^4 + 8x^2 - 11. The sum rule, constant-multiple rule, and constant rule apply term by term. The power rule gives 42x^5 - 12x^3 + 16x, and the constant -11 gives 0. The answer is 42x^5 - 12x^3 + 16x."
         constraints: "integer coefficients and exponents 1-6; constants differentiate to 0"
       - id: kp3
         name: Evaluate polynomial derivatives at a point

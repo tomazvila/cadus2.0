@@ -1361,18 +1361,30 @@ topics:
         name: Classify discontinuities
         key_prerequisites: [continuity-at-a-point, one-sided-infinite-limits]
         exemplars:
-          - problem: 'Classify the discontinuity of $f(x) = \frac{x^2 - 9}{x - 3}$ at $x = 3$ (removable / jump / infinite).'
-            answer: "removable"
-            answer_contract: {kind: none}
-            solution_sketch: 'The limit exists ($= 6$) but $f(3)$ is undefined; redefining $f(3) = 6$ removes the hole.'
-          - problem: 'Classify the discontinuity of $f(x) = \frac{|x|}{x}$ at $x = 0$.'
-            answer: "jump"
-            answer_contract: {kind: none}
-            solution_sketch: "jump"
-          - problem: 'Classify the discontinuity of $f(x) = \frac{1}{(x - 2)^2}$ at $x = 2$.'
-            answer: "infinite"
-            answer_contract: {kind: none}
-            solution_sketch: "infinite"
+          - problem: "Let f(x) = (x^2 - 9)/(x - 3), which has a discontinuity at x = 3. Determine the type of this discontinuity and the limit of f(x) as x approaches 3. Give the answer as verdict = ...; L = ..."
+            answer: "verdict = removable; L = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["removable"], ["jump"], ["infinite"], ["continuous"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full object: f(x) = (x^2 - 9)/(x - 3) at x = 3. Factor with the difference of squares: f(x) = (x - 3)(x + 3)/(x - 3) = x + 3 for x not equal to 3. By the limit laws, the two-sided limit as x approaches 3 exists and equals 6, but f(3) is undefined. A finite limit with a missing value is the removable case; it is not jump because the one-sided limits agree, not infinite because f stays bounded near 3, and not continuous because f(3) does not exist. The answer is verdict = removable; L = 6."
+          - problem: "Let f(x) = abs(x)/x, which has a discontinuity at x = 0. Determine the type of this discontinuity and the right-hand limit of f(x) as x approaches 0. Give the answer as verdict = ...; R = ..."
+            answer: "verdict = jump; R = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["removable"], ["jump"], ["infinite"], ["continuous"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "R"}]}
+            solution_sketch: "Full object: f(x) = abs(x)/x at x = 0. For x < 0, abs(x) = -x, so f(x) = -1 and the left-hand limit is -1. For x > 0, abs(x) = x, so f(x) = 1 and the right-hand limit is 1. Both one-sided limits are finite and unequal, which by definition is the jump case; it is not removable because the two-sided limit does not exist, not infinite because both sides stay finite, and not continuous because the one-sided limits disagree. The answer is verdict = jump; R = 1."
+          - problem: "Let f(x) = 3/(x - 2)^2, which has a discontinuity at x = 2. Determine the type of this discontinuity and the limit of 1/f(x) as x approaches 2. Give the answer as verdict = ...; L = ..."
+            answer: "verdict = infinite; L = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["removable"], ["jump"], ["infinite"], ["continuous"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full object: f(x) = 3/(x - 2)^2 at x = 2. As x approaches 2 from either side, the denominator (x - 2)^2 approaches 0 through positive values, so f grows without bound and both one-sided limits are +infinity: the infinite case. It is not removable because no finite limit exists, not jump because both sides blow up in the same direction, and not continuous because f is unbounded near 2. The reciprocal is 1/f(x) = (x - 2)^2/3, and by the limit laws its limit at 2 is 0/3 = 0. The answer is verdict = infinite; L = 0."
+          - problem: "Let f(x) = (x^2 - 25)/(x - 5). The graph of f has a hole at x = 5. Find the limit of f(x) as x approaches 5, which is the y-value that fills the hole."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = (x^2 - 25)/(x - 5) at x = 5. Factor with the difference of squares: f(x) = (x - 5)(x + 5)/(x - 5) = x + 5 for x not equal to 5. By the limit laws, the limit as x approaches 5 exists and equals 5 + 5 = 10, while f(5) is undefined, so the missing point sits at height 10. The answer is 10."
+          - problem: "Let f(x) = x + 1 for x < 2 and f(x) = 3x - 1 for x >= 2. Find the difference between the right-hand limit and the left-hand limit of f at x = 2."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = x + 1 for x < 2 and f(x) = 3x - 1 for x >= 2. By direct substitution in each branch, the left-hand limit at 2 is 2 + 1 = 3 and the right-hand limit is 3(2) - 1 = 5. The two one-sided limits are finite and unequal, so the discontinuity at x = 2 is a jump. The difference is 5 - 3 = 2. The answer is 2."
+          - problem: "Let f(x) = (x^2 - 4)/(x - 2). The graph of f has a hole. Find the coordinates of the hole. Give the answer as (x, y)."
+            answer: "(2, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: f(x) = (x^2 - 4)/(x - 2) at x = 2. Factor with the difference of squares: f(x) = (x - 2)(x + 2)/(x - 2) = x + 2 for x not equal to 2. By the limit laws, the limit as x approaches 2 exists and equals 4, while f(2) is undefined, so the missing point sits above x = 2 at height 4. The answer is (2, 4)."
         constraints: "one discontinuity per problem; answer names the type"
       - id: kp2
         name: Choose a constant to make a function continuous
@@ -1386,6 +1398,18 @@ topics:
           - problem: 'Find $c$ so that $f(x) = \frac{x^2 - 25}{x - 5}$ for $x \neq 5$ and $f(5) = c$ is continuous at $x = 5$.'
             answer: "10"
             solution_sketch: 'The limit at $5$ is $\lim (x + 5) = 10$; set $f(5)$ equal to it.'
+          - problem: "Find $c$ so that $f(x) = x^2 + c$ for $x < 3$ and $f(x) = 2x + 1$ for $x \\geq 3$ is continuous at $x = 3$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For continuity at $x = 3$, the one-sided limits must match. Left limit: $3^2 + c = 9 + c$. Right limit: $2 \\cdot 3 + 1 = 7$. Set $9 + c = 7$, which gives $c = -2$."
+          - problem: "Find $c$ so that $f(x) = \\frac{x^2 - x - 6}{x - 3}$ for $x \\neq 3$ and $f(3) = c$ is continuous at $x = 3$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For continuity at $x = 3$, the limit must equal $f(3)$. Factor the numerator: $x^2 - x - 6 = (x - 3)(x + 2)$. Cancel the common factor: the limit is $\\lim_{x \\to 3} (x + 2) = 5$. Set $c = 5$."
+          - problem: "Find $c$ so that $f(x) = c x + 1$ for $x < 2$ and $f(x) = x^2 - 1$ for $x \\geq 2$ is continuous at $x = 2$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For continuity at $x = 2$, the one-sided limits must match. Left limit: $2c + 1$. Right limit: $2^2 - 1 = 3$. Set $2c + 1 = 3$, so $c = 1$."
         constraints: "one unknown constant; matching one-sided limits (or filling a removable hole) yields an integer"
       - id: kp3
         name: Continuity on intervals and of combinations
@@ -1396,10 +1420,22 @@ topics:
             solution_sketch: 'The root needs $x \geq 2$ and the denominator vanishes at $x = 5$, so $f$ is continuous exactly on $[2, 5)$ and $(5, \infty)$.'
           - problem: 'On which interval is $f(x) = \sqrt{9 - x^2}$ continuous?'
             answer: "[-3, 3]"
-          - problem: 'If $f$ and $g$ are continuous everywhere, must $f \circ g$ be continuous everywhere?'
-            answer: "yes — compositions of continuous functions are continuous"
-            answer_contract: {kind: none}
-            solution_sketch: "yes — compositions of continuous functions are continuous"
+          - problem: "The function f(x) = sqrt(x + 3)/(x - 1) is continuous at every point where it is defined. Give the interval of continuity as an inequality in x."
+            answer: "-3 <= x < 1 or x > 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The function is f(x) = sqrt(x + 3)/(x - 1). The root rule needs x + 3 >= 0, so x >= -3. The denominator rule needs x - 1 != 0, so x != 1. A quotient of continuous functions is continuous where both are defined and the denominator is not zero. The interval of continuity is -3 <= x < 1 or x > 1."
+          - problem: "Find the interval of continuity of f(x) = 1/sqrt(4 - x^2) as an inequality in x."
+            answer: "-2 < x < 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The function is f(x) = 1/sqrt(4 - x^2). The square-root rule needs the inside positive because it is in the denominator, so 4 - x^2 > 0. Solve 4 - x^2 > 0 to get -2 < x < 2. A quotient of continuous functions is continuous on this set. The interval of continuity is -2 < x < 2."
+          - problem: "Let f(x) = sqrt(x) and g(x) = x^2 - 9. The composition f(g(x)) is continuous where it is defined. Give the interval of continuity as an inequality in x."
+            answer: "x <= -3 or x >= 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The composition is f(g(x)) = sqrt(x^2 - 9). The square-root rule needs x^2 - 9 >= 0. Solve x^2 >= 9 to get x <= -3 or x >= 3. A composition of continuous functions is continuous where the inner value stays in the outer domain. The interval of continuity is x <= -3 or x >= 3."
+          - problem: "The function f(x) = sqrt(x - 2)/(x^2 - 9) is continuous on its domain. Give the interval of continuity as an inequality in x."
+            answer: "2 <= x < 3 or x > 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The function is f(x) = sqrt(x - 2)/(x^2 - 9). The root rule needs x - 2 >= 0, so x >= 2. The denominator rule needs x^2 - 9 != 0, so x != 3 and x != -3; only x = 3 is in the root domain. A quotient of continuous functions is continuous where both are defined and the denominator is not zero. The interval of continuity is 2 <= x < 3 or x > 3."
         constraints: "domains determined by roots and denominators; interval answers in interval notation"
     diagnostic_exemplar:
       problem: 'Find $c$ so that $f(x) = x + c$ for $x < 1$ and $f(x) = 4x$ for $x \geq 1$ is continuous at $x = 1$.'
@@ -1451,23 +1487,55 @@ topics:
         exemplars:
           - problem: 'A continuous function has $f(1) = -2$, $f(2) = 1$, $f(3) = 4$. Which interval must contain a root?'
             answer: "(1, 2)"
-          - problem: 'A continuous $f$ has $f(0) = 3$ and $f(4) = -5$. What does the IVT guarantee?'
-            answer: "some c in (0, 4) with f(c) = 0"
-            answer_contract: {kind: none}
-            solution_sketch: "some c in (0, 4) with f(c) = 0"
+          - problem: "A continuous function has f(0) = 3 and f(4) = -5. Give the interval that the Intermediate Value Theorem guarantees contains a root as an inequality in x."
+            answer: "0 < x < 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The given values are f(0) = 3 and f(4) = -5. Step 1 notes the sign change between x = 0 and x = 4. Step 2 applies continuity and the Intermediate Value Theorem to guarantee a root in that interval. The guaranteed interval is 0 < x < 4."
+          - problem: "For a continuous function, a table gives f(0) = -1, f(1) = -3, f(2) = -4, f(3) = 2, f(4) = 5. Give the interval that must contain a root as an inequality in x."
+            answer: "2 < x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The table gives f(0) = -1, f(1) = -3, f(2) = -4, f(3) = 2, f(4) = 5. Step 1 compares adjacent values and finds the only sign change between x = 2 and x = 3. Step 2 applies the Intermediate Value Theorem because f is continuous. The bracketing interval is 2 < x < 3."
+          - problem: "The values of a continuous function are f(-2) = 5, f(-1) = 2, f(0) = -1, f(1) = -4. Give the interval that must contain a root as an inequality in x."
+            answer: "-1 < x < 0"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The table gives f(-2) = 5, f(-1) = 2, f(0) = -1, f(1) = -4. Step 1 finds the only sign change between x = -1 and x = 0. Step 2 uses continuity and the Intermediate Value Theorem to locate a root there. The bracketing interval is -1 < x < 0."
+          - problem: "The table of a continuous function shows f(1) = 7, f(2) = 4, f(3) = 1, f(4) = -2, f(5) = -5. Give the interval that must contain a root as an inequality in x."
+            answer: "3 < x < 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The table gives f(1) = 7, f(2) = 4, f(3) = 1, f(4) = -2, f(5) = -5. Step 1 checks adjacent values and finds the only sign change between x = 3 and x = 4. Step 2 uses the Intermediate Value Theorem on this continuous function. The bracketing interval is 3 < x < 4."
+          - problem: "A continuous function has three sampled values f(0) = 2, f(1) = -3, f(2) = -4. Give the interval that must contain a root as an inequality in x."
+            answer: "0 < x < 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The table gives f(0) = 2, f(1) = -3, f(2) = -4. Step 1 sees the only sign change between x = 0 and x = 1. Step 2 applies continuity and the Intermediate Value Theorem to guarantee a root in that interval. The bracketing interval is 0 < x < 1."
         constraints: "table of integer values with exactly one sign change; identify the bracketing interval"
       - id: kp3
         name: Intermediate values other than zero, and why continuity is essential
         key_prerequisites: [continuity]
         exemplars:
-          - problem: '$f$ is continuous on $[1, 3]$ with $f(1) = 4$ and $f(3) = 10$. Must $f$ take the value $7$ somewhere in $(1, 3)$?'
-            answer: "yes — 7 lies between 4 and 10, so the IVT applies"
-            answer_contract: {kind: none}
-            solution_sketch: "yes — 7 lies between 4 and 10, so the IVT applies"
-          - problem: '$g(x) = \frac{1}{x}$ satisfies $g(-1) = -1 < 0 < g(1) = 1$ yet has no root in $(-1, 1)$. Why does this not contradict the IVT?'
-            answer: "g is not continuous on [-1, 1] (it is undefined at 0), so the IVT does not apply"
-            answer_contract: {kind: none}
-            solution_sketch: "g is not continuous on [-1, 1] (it is undefined at 0), so the IVT does not apply"
+          - problem: "$f$ is continuous on $[1, 3]$ with $f(1) = 3$ and $f(3) = 9$. How many integers $N$ with $3 < N < 9$ must $f$ attain somewhere in $(1, 3)$?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the Intermediate Value Theorem, a function continuous on $[1,3]$ takes every value between $f(1)=3$ and $f(3)=9$. The integers strictly between 3 and 9 are 4, 5, 6, 7, 8. Counting them gives 5 integers. So the number of such integers is 5."
+          - problem: "The function $g(x) = 1/x$ satisfies $g(-1) = -1$ and $g(1) = 1$, but $g$ has no zero in $(-1, 1)$. Which hypothesis of the Intermediate Value Theorem fails on $[-1, 1]$?"
+            answer: "continuity"
+            answer_contract: {"kind": "label", "options": [["continuity"], ["differentiability"], ["monotonicity"], ["boundedness"]]}
+            solution_sketch: "The IVT requires the function to be continuous on the whole closed interval $[-1,1]$. The function $g(x)=1/x$ is undefined at $x=0$, so it is not continuous on $[-1,1]$. The option differentiability is wrong because the IVT never needs a derivative; monotonicity is wrong because the IVT does not require the function to be increasing or decreasing; boundedness is wrong because the IVT does not list boundedness as a hypothesis. So the failed hypothesis is continuity."
+          - problem: "Let $f(x) = x^2 + 1$ on $[1, 2]$. Does the Intermediate Value Theorem guarantee that $f$ takes the value $4$ somewhere in $(1, 2)$? Give the verdict and the value $f(2)$."
+            answer: "verdict = holds; value = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "First evaluate the endpoints: $f(1) = 1 + 1 = 2$ and $f(2) = 4 + 1 = 5$. The target value 4 lies between 2 and 5, and $f$ is continuous on $[1,2]$, so the IVT gives a $c$ in $(1,2)$ with $f(c) = 4$. The verdict is holds and the endpoint value $f(2)$ is 5. So verdict = holds; value = 5."
+          - problem: "Let $f$ be continuous on $[2, 5]$ with $f(2) = 1$ and $f(5) = 5$. Give the list of all integers $N$ with $1 < N < 5$ that $f$ must attain, in increasing order."
+            answer: "2, 3, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "By the Intermediate Value Theorem, $f$ takes every value between $f(2)=1$ and $f(5)=5$ somewhere in $(2,5)$. The integers strictly between 1 and 5 are 2, 3, and 4, and each must be attained. Writing them in increasing order gives 2, 3, 4. So the list is 2, 3, 4."
+          - problem: "Let $g(x) = 1/x$ on $[-1, 1]$. Does the continuity hypothesis of the Intermediate Value Theorem hold on $[-1, 1]$? Give the verdict and the $x$-value in $[-1, 1]$ where continuity breaks."
+            answer: "verdict = fails; x = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "The IVT needs $g$ continuous on the whole closed interval $[-1,1]$. The function $g(x)=1/x$ is undefined at $x=0$, which lies inside the interval, so $g$ is not continuous there. Therefore the continuity hypothesis fails, and the break happens at $x = 0$. So verdict = fails; x = 0."
+          - problem: "$f(x) = x^3 + 2x$ is continuous on $[1, 2]$. Find the smallest positive integer $N$ that $f$ must attain somewhere in $(1, 2)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Evaluate the endpoints: $f(1) = 1 + 2 = 3$ and $f(2) = 8 + 4 = 12$. By the Intermediate Value Theorem, $f$ takes every value strictly between 3 and 12 in $(1,2)$. The smallest positive integer strictly greater than 3 is 4, and 4 < 12, so it is attained. So the smallest such integer is 4."
         constraints: "one intermediate-value application with N ≠ 0 and one broken-hypothesis example"
     diagnostic_exemplar:
       problem: 'Use the Intermediate Value Theorem to show that $f(x) = x^3 + x$ takes the value $5$ somewhere in $(1, 2)$.'
