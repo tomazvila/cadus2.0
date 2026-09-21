@@ -909,14 +909,30 @@ topics:
         name: Choose constants to make a piecewise function differentiable
         key_prerequisites: [differentiability, derivatives-of-polynomials]
         exemplars:
-          - problem: 'Find $a$ and $b$ so that $f(x) = x^2$ for $x \leq 2$ and $f(x) = ax + b$ for $x > 2$ is differentiable at $x = 2$.'
-            answer: "a = 4, b = -4"
-            answer_contract: {kind: none}
-            solution_sketch: 'Slopes: $2 \cdot 2 = a$. Continuity: $4 = 2a + b = 8 + b$, so $b = -4$.'
-          - problem: 'Find $a$ and $b$ so that $f(x) = ax^3$ for $x \leq 1$ and $f(x) = 3x + b$ for $x > 1$ is differentiable at $x = 1$.'
-            answer: "a = 1, b = -2"
-            answer_contract: {kind: none}
-            solution_sketch: 'Slopes: $3a = 3$ gives $a = 1$. Continuity: $1 = 3 + b$ gives $b = -2$.'
+          - problem: "Find a and b so that f(x) = x^2 for x <= 4 and f(x) = a x + b for x > 4 is differentiable at x = 4."
+            answer: "a = 8; b = -16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "The function is x^2 on the left and a x + b on the right. At x = 4 the left derivative is 2x = 8, and the right derivative is a, so the slope equation gives a = 8. Continuity gives 16 = 4a + b = 32 + b, so b = -16. The answer is a = 8; b = -16."
+          - problem: "Find a and b so that f(x) = a x^3 for x <= 2 and f(x) = 24x + b for x > 2 is differentiable at x = 2."
+            answer: "a = 2; b = -32"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "The function is a x^3 on the left and 24x + b on the right. At x = 2 the left derivative is 3a x^2 = 12a, and the right derivative is 24, so 12a = 24 gives a = 2. Continuity gives 8a = 16 = 48 + b, so b = -32. The answer is a = 2; b = -32."
+          - problem: "Find a and b so that f(x) = a x + b for x <= 1 and f(x) = x^3 for x > 1 is differentiable at x = 1."
+            answer: "a = 3; b = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "The function is a x + b on the left and x^3 on the right. At x = 1 the left derivative is a and the right derivative is 3x^2 = 3, so a = 3. Continuity gives a + b = 3 + b = 1, so b = -2. The answer is a = 3; b = -2."
+          - problem: "Find a and b so that f(x) = x^2 + a for x <= 2 and f(x) = b x + 3 for x > 2 is differentiable at x = 2."
+            answer: "a = 7; b = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "The function is x^2 + a on the left and b x + 3 on the right. At x = 2 the left derivative is 2x = 4 and the right derivative is b, so b = 4. Continuity gives 4 + a = 2b + 3 = 11, so a = 7. The answer is a = 7; b = 4."
+          - problem: "Find a and b so that f(x) = x^2 + a for x <= 1 and f(x) = b x + 2 for x > 1 is differentiable at x = 1."
+            answer: "a = 3; b = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "The function is x^2 + a on the left and b x + 2 on the right. At x = 1 the left derivative is 2x = 2 and the right derivative is b, so b = 2. Continuity gives 1 + a = b + 2 = 4, so a = 3. The answer is a = 3; b = 2."
+          - problem: "Find a and b so that f(x) = a x^2 + 4x for x <= 2 and f(x) = x^3 + b for x > 2 is differentiable at x = 2."
+            answer: "a = 2; b = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "The function is a x^2 + 4x on the left and x^3 + b on the right. At x = 2 the left derivative is 2a x + 4 = 4a + 4, and the right derivative is 3x^2 = 12, so 4a + 4 = 12 gives a = 2. Continuity gives 4a + 8 = 8 + b = 16, so b = 8. The answer is a = 2; b = 8."
         constraints: "two unknowns; the slope equation and the continuity equation each yield an integer"
     diagnostic_exemplar:
       problem: 'Find $a$ and $b$ so that $f(x) = x^2$ for $x \leq 3$ and $f(x) = ax + b$ for $x > 3$ is differentiable at $x = 3$.'
