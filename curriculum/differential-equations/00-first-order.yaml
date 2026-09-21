@@ -179,10 +179,26 @@ topics:
           - problem: "The general solution of $y' + 2y = 0$ is $y = Ce^{-2x}$. Find $C$ so that $y(0) = 5$."
             answer: "$C = 5$"
             solution_sketch: "$y(0) = Ce^0 = C = 5$."
-          - problem: "For which values of $r$ is $y = e^{rx}$ a solution of $y'' - y' - 6y = 0$?"
-            answer: "$r = 3$ or $r = -2$"
-            answer_contract: {kind: none}
-            solution_sketch: "Substituting gives $(r^2 - r - 6)e^{rx} = 0$, so $r^2 - r - 6 = (r-3)(r+2) = 0$."
+          - problem: "Find the smaller value of r for which $y = e^{rx}$ is a solution of $y'' - y' - 6y = 0$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the derivative rule for exponentials: y = e^(rx), y' = r e^(rx), y'' = r^2 e^(rx). Substitute these into y'' - y' - 6y = 0 to get (r^2 - r - 6)e^(rx) = 0. Since e^(rx) is never zero, solve r^2 - r - 6 = (r - 3)(r + 2) = 0. The roots are 3 and -2, so the smaller value is -2."
+          - problem: "Find the constant $a$ so that $y = e^{2x}$ is a solution of $y'' + a y' - 6y = 0$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the derivative rule for exponentials: y = e^(2x), y' = 2e^(2x), y'' = 4e^(2x). Substitute into y'' + a y' - 6y = 0 to get 4e^(2x) + 2a e^(2x) - 6e^(2x) = 0. Factor e^(2x): (4 + 2a - 6)e^(2x) = 0, so 2a - 2 = 0. Solve the linear equation to get a = 1. The value is 1."
+          - problem: "The general solution of $y' = 3y$ is $y = Ce^{3x}$. Find $C$ so that $y(0) = -4$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the general solution y = C e^(3x). The condition y(0) = -4 gives C e^(0) = C = -4. Since e^0 = 1, the constant is determined directly. The value is -4."
+          - problem: "Find the larger value of r for which $y = e^{rx}$ is a solution of $y'' - 5y' + 6y = 0$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the derivative rule for exponentials: y = e^(rx), y' = r e^(rx), y'' = r^2 e^(rx). Substitute into y'' - 5y' + 6y = 0 to get (r^2 - 5r + 6)e^(rx) = 0. Since e^(rx) is never zero, solve r^2 - 5r + 6 = (r - 2)(r - 3) = 0. The roots are 2 and 3, so the larger value is 3."
+          - problem: "Find the constant $k$ so that $y = e^{-x}$ is a solution of $y'' + k y' + 6y = 0$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the derivative rule for exponentials: y = e^(-x), y' = -e^(-x), y'' = e^(-x). Substitute into y'' + k y' + 6y = 0 to get e^(-x) - k e^(-x) + 6e^(-x) = 0. Factor e^(-x): (7 - k)e^(-x) = 0, so 7 - k = 0. Solve the linear equation to get k = 7. The value is 7."
         constraints: "one unknown constant or exponent parameter; the resulting algebraic equation is linear or a factorable quadratic"
     diagnostic_exemplar:
       problem: 'Show that $y^2 = x^2 + C$ defines a solution of $y\,y'' = x$, and find the value of $C$ for which the solution passes through $(1, 3)$.'
@@ -219,18 +235,30 @@ topics:
         name: Applying the existence-uniqueness theorem
         key_prerequisites: [continuity, partial-derivatives]
         exemplars:
-          - problem: "Does $y' = x - y$ with $y(0) = 1$ have a unique solution near $x = 0$?"
-            answer: 'Yes: $f = x - y$ and $\partial f/\partial y = -1$ are continuous everywhere.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Picard''s theorem: continuity of $f$ and $f_y$ on a rectangle around $(0, 1)$ guarantees a unique local solution.'
-          - problem: 'Does $y'' = \sqrt{y}$ with $y(1) = 4$ have a unique solution near $x = 1$?'
-            answer: 'Yes: $f = \sqrt{y}$ and $f_y = \dfrac{1}{2\sqrt{y}}$ are continuous near $y = 4 > 0$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Yes: $f = \sqrt{y}$ and $f_y = \dfrac{1}{2\sqrt{y}}$ are continuous near $y = 4 > 0$.'
-          - problem: "Does $y' = y/x$ with $y(2) = 1$ have a unique solution near $x = 2$?"
-            answer: "Yes: $f = y/x$ and $f_y = 1/x$ are continuous near $(2, 1)$, away from $x = 0$."
-            answer_contract: {kind: none}
-            solution_sketch: "Yes: $f = y/x$ and $f_y = 1/x$ are continuous near $(2, 1)$, away from $x = 0$."
+          - problem: "Consider the initial value problem y' = x - y with y(0) = 1. Determine whether the theorem guarantees a single solution near the initial point, and give the value of the partial derivative f_y at that point as an exact value."
+            answer: "verdict = unique; fy = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["unique"], ["nonunique"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fy"}]}
+            solution_sketch: "Picard's theorem: first write f = x - y and f_y = -1. Step 1: f and f_y are continuous on a rectangle around (0,1), so the verdict is unique. Step 2: evaluate f_y at (0,1): f_y = -1. The option nonunique would come from missing that f_y is continuous. Answer: verdict = unique; fy = -1."
+          - problem: "Consider the initial value problem y' = sqrt(y) with y(1) = 4. Determine whether the theorem guarantees a single solution near the initial point, and give the value of the partial derivative f_y at that point as an exact value."
+            answer: "verdict = unique; fy = 1/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["unique"], ["nonunique"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fy"}]}
+            solution_sketch: "Picard's theorem: first write f = sqrt(y) and f_y = 1/(2sqrt(y)). Step 1: f and f_y are continuous on a rectangle around (1,4) because y = 4 is greater than 0, so the verdict is unique. Step 2: evaluate f_y at y = 4: f_y = 1/(2sqrt(4)) = 1/4. The option nonunique would come from missing the continuity of f_y near y = 4. Answer: verdict = unique; fy = 1/4."
+          - problem: "Consider the initial value problem y' = y/x with y(2) = 1. Determine whether the theorem guarantees a single solution near the initial point, and give the value of the partial derivative f_y at that point as an exact value."
+            answer: "verdict = unique; fy = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["unique"], ["nonunique"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fy"}]}
+            solution_sketch: "Picard's theorem: first write f = y/x and f_y = 1/x. Step 1: f and f_y are continuous on a rectangle around (2,1) because x = 2 is away from x = 0, so the verdict is unique. Step 2: evaluate f_y at x = 2: f_y = 1/2. The option nonunique would come from missing that x = 0 is not near the initial point. Answer: verdict = unique; fy = 1/2."
+          - problem: "Consider the initial value problem y' = x^2 + y^2 with y(1) = 2. Determine whether the theorem guarantees a single solution near the initial point, and give the value of the partial derivative f_y at that point as an exact value."
+            answer: "verdict = unique; fy = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["unique"], ["nonunique"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fy"}]}
+            solution_sketch: "Picard's theorem: first write f = x^2 + y^2 and f_y = 2y. Step 1: f and f_y are continuous on a rectangle around (1,2), so the verdict is unique. Step 2: evaluate f_y at y = 2: f_y = 2*2 = 4. The option nonunique would come from missing that f_y is continuous. Answer: verdict = unique; fy = 4."
+          - problem: "The existence-uniqueness theorem needs f and its partial derivative f_y to be continuous near the initial point. For y' = y^2 + x with y(0) = 3, find the value of f_y at the initial point."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: identify f = y^2 + x, so the partial derivative is f_y = 2y. Step 2: f_y is continuous everywhere, so the theorem's condition holds. Step 3: evaluate at y = 3: f_y = 2*3 = 6. Answer: 6."
+          - problem: "The existence-uniqueness theorem needs f and its partial derivative f_y to be continuous near the initial point. For y' = cos(x) + y^3 with y(0) = 2, find the value of f_y at the initial point."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: identify f = cos(x) + y^3, so the partial derivative is f_y = 3y^2. Step 2: f_y is continuous everywhere, so the theorem's condition holds. Step 3: evaluate at y = 2: f_y = 3*2^2 = 12. Answer: 12."
         constraints: "check continuity of f and f_y on a rectangle around the initial point; initial data placed safely away from any trouble spots"
       - id: kp2
         name: Where the guarantee fails
