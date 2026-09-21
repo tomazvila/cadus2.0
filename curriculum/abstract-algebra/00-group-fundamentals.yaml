@@ -116,12 +116,34 @@ topics:
         name: "Uniqueness of identity and inverses"
         key_prerequisites: [groups-intro, direct-proof]
         exemplars:
-          - problem: 'Prove that a group $G$ has exactly one identity element.'
-            answer: 'If $e$ and $e''$ are both identities, then $e = e e'' = e''$.'
-            solution_sketch: 'Evaluate $e e''$ two ways: treating $e''$ as an identity gives $e$; treating $e$ as an identity gives $e''$. Hence $e = e''$.'
-          - problem: 'Prove that each $a \in G$ has exactly one inverse.'
-            answer: 'If $b, c$ both invert $a$, then $b = b(ac) = (ba)c = c$.'
-            solution_sketch: 'Use associativity: $b = be = b(ac) = (ba)c = ec = c$.'
+          - problem: "In the additive group Z_2 x Z_3, an identity element e must satisfy e + (1,2) = (1,2) and e + (1,0) = (1,0). The uniqueness proof shows two such elements would have to be equal, so there is exactly one. Find e. Give the answer as (a, b)."
+            answer: "(0,0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full object is the additive group Z_2 x Z_3 with componentwise addition. Step 1 (identity property): the identity e = (a, b) must satisfy e + (1,2) = (1,2), which splits into a + 1 = 1 in Z_2 and b + 2 = 2 in Z_3. Step 2 (solve each component): a = 0 in Z_2 and b = 0 in Z_3. Step 3 (check the second equation): (0,0) + (1,0) = (1,0), so e works for every element, and the two-line argument shows two identities would be equal. The answer is (0,0)."
+          - problem: "In the multiplicative group of units modulo 11, the inverse-uniqueness argument b = b(a c) = (b a) c shows that the element 4 is inverted by exactly one unit. Find the inverse of 4 in this group."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the group of units modulo 11 under multiplication. Step 1 (definition of inverse): find u with 4u = 1 and u4 = 1 modulo 11. Step 2 (compute): 4 times 3 is 12, which is 1 mod 11; testing u = 1 and u = 2 gives 4 and 8, so u = 3 is the only candidate. Step 3 (uniqueness argument): if b and c both invert 4, then b = b(4c) = (b4)c = c by associativity, so the inverse is unique. The answer is 3."
+          - problem: "In the additive group of the rational numbers, every element has a unique inverse. Find the inverse of 5/7. Give the answer as a fraction."
+            answer: "-5/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the additive group Q of rational numbers with identity 0. Step 1 (definition of inverse): the inverse x of 5/7 must satisfy 5/7 + x = 0 and x + 5/7 = 0. Step 2 (compute): x = -5/7, since 5/7 + (-5/7) = 0. Step 3 (uniqueness argument): if b and c both invert 5/7, then b = b + (5/7 + c) = (b + 5/7) + c = c by associativity, so the inverse is unique. The answer is -5/7."
+          - problem: "In the two-line inverse-uniqueness argument b = b(a c) = (b a) c = c, work in the group of units modulo 7 with a = 4, where b and c both equal the unit u with 4u = 1. Compute (b a) c in this group; give the value modulo 7."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the group of units modulo 7 with a = 4. Step 1 (find the common inverse): 4 times 2 is 8, which is 1 mod 7, so b = c = 2. Step 2 (associativity): the expression b(a c) regroups to (b a) c by the associative law, the cited step of the two-line argument. Step 3 (compute): (b a) c = (2 times 4) times 2 = 8 times 2 = 1 times 2 = 2 in Z_7, matching e c = c. The answer is 2."
+          - problem: "In the group of units modulo 9, the identity is unique and each element has a unique inverse. Find the order of the element 2, that is, the smallest positive k with 2^k = 1 modulo 9. Give k."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the group of units modulo 9 with identity 1. Step 1 (definition of order): the order of 2 is the smallest positive k with 2^k = 1 mod 9. Step 2 (compute powers): 2^1 = 2, 2^2 = 4, 2^3 = 8, 2^4 = 16 = 7, 2^5 = 14 = 5, and 2^6 = 2 times 5 = 10 = 1 mod 9. Step 3 (minimality): no k from 1 to 5 gives 1, so the order is 6. The answer is 6."
+          - problem: "A student claims that in the group of units modulo 16, every element is its own inverse, that is, a times a equals 1 for every unit a. The case a = 1 holds. Determine the smallest unit a with a > 1 for which the claim fails."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the group of units modulo 16, the residues 1, 3, 5, 7, 9, 11, 13, 15 under multiplication. Step 1 (base case): a = 1 gives 1 times 1 = 1, so the claim holds at the base. Step 2 (test the next units in order): a = 3 gives 3 times 3 = 9, and 9 differs from 1 modulo 16. Step 3 (conclusion): the claim fails first at a = 3, and one counterexample refutes a universal claim. The answer is 3."
+          - problem: "Write the full proof: in a group G, the identity element is unique, and every element of G has a unique inverse. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Part 1 (identity). Suppose e and e' are both identity elements of G. Compute the product e e' in two ways. Reading e' as an identity gives e e' = e; reading e as an identity gives e e' = e'. Hence e = e', so the identity of G is unique. Part 2 (inverses). Let a be an element of G and suppose b and c both invert a, so a b = b a = e and a c = c a = e. Start from b = b e, which holds by the identity property. Replace e by a c, giving b = b (a c). By associativity, b (a c) = (b a) c; this is the explicitly cited regrouping step. Since b a = e, the product (b a) c equals e c, and by the identity property e c = c. Hence b = c, so each element of G has exactly one inverse. Both parts are two-line arguments: each uses only the identity property, the hypothesis that two candidates exist, associativity, and the identity property again."
         constraints: "two-line uniqueness arguments; cite associativity explicitly"
       - id: kp2
         name: "Cancellation and solving equations in groups"
@@ -272,23 +294,67 @@ topics:
         name: "One-step and finite subgroup tests"
         key_prerequisites: [elementary-group-properties]
         exemplars:
-          - problem: 'State the one-step subgroup test.'
-            answer: 'A nonempty subset $H$ of a group $G$ is a subgroup iff $ab^{-1} \in H$ for all $a, b \in H$.'
-            solution_sketch: 'Nonempty plus closure under $ab^{-1}$ yields identity ($aa^{-1}$), inverses ($ea^{-1}$), and closure ($a(b^{-1})^{-1}$).'
-          - problem: 'Let $H$ be a nonempty finite subset of a group, closed under the group operation. Prove $H$ is a subgroup.'
-            answer: 'For $a \in H$ the powers $a, a^2, \dots$ stay in $H$ and must repeat, giving $a^m = e \in H$ and $a^{-1} = a^{m-1} \in H$.'
-            solution_sketch: 'Finiteness forces $a^i = a^j$ ($i < j$), so $a^{j-i} = e$; then $e \in H$ and $a^{-1} = a^{j-i-1} \in H$.'
+          - problem: "Let $H$ be a nonempty subset of the group of units modulo 17 under multiplication, and take $a = 5$ and $b = 8$. The one-step subgroup test checks whether $a b^{-1}$ lies in $H$. Compute $a b^{-1} \\bmod 17$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (inverse in the one-step test): find $b^{-1}$ modulo 17 by solving $8x \\equiv 1 \\pmod{17}$; since $8 \\cdot 15 = 120 = 7 \\cdot 17 + 1$, we get $b^{-1} = 15$. Step 2: multiply $a = 5$ by $b^{-1} = 15$ to get $75 = 4 \\cdot 17 + 7$, so $a b^{-1} \\equiv 7 \\pmod{17}$. The answer is 7."
+          - problem: "Let $G$ be the group of units modulo 13 under multiplication and let $a = 5$. The set $H = \\{a^k : k \\ge 1\\}$ is a nonempty finite subset of $G$ closed under the operation, so the finite subgroup test applies and $H$ is a subgroup. Give the number of elements of $H$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (finite subgroup test): list the powers of $a = 5$ modulo 13: $5^1 = 5$, $5^2 = 25 = 12$, $5^3 = 60 = 8$, $5^4 = 40 = 1$. Step 2: the first power equal to the identity is the fourth, and $5, 12, 8, 1$ are four distinct elements, so $H = \\{5, 12, 8, 1\\}$ has order 4. The answer is 4."
+          - problem: "Let $H = \\{1, 3, 7, 9\\}$ inside the group of units modulo 20 under multiplication. To apply the two-step subgroup test one checks closure under the operation and closure under inverses. Compute the inverse of $7$ modulo 20, which must lie in $H$ for the test to pass."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (two-step test, inverse closure): solve $7x \\equiv 1 \\pmod{20}$. Step 2: $7 \\cdot 3 = 21 = 1 + 20$, so $x = 3$ is the inverse of $7$ modulo 20, and $3$ lies in $H = \\{1, 3, 7, 9\\}$. The answer is 3."
+          - problem: "Let $H = \\{2, 4, 8\\}$ inside the group of units modulo 15 under multiplication. To apply the two-step subgroup test, check closure: compute the product $4 \\cdot 4$ modulo 15 and decide whether $H$ passes the closure check. Give verdict and value."
+            answer: "verdict = fails; value = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["passes"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1 (two-step subgroup test, closure): compute $4 \\cdot 4 = 16 \\equiv 1 \\pmod{15}$. Step 2: compare with $H = \\{2, 4, 8\\}$; the residue $1$ is not an element of $H$, so closure under the operation fails and $H$ is not a subgroup. The answer is verdict = fails; value = 1."
+          - problem: "Claim: $H = \\{0, 2, 4, 6\\}$ in $\\mathbb{Z}/9$ under addition is a subgroup. Step 1: $H$ is nonempty since $0 \\in H$. Step 2: for $a = 2$ and $b = 6$, $a - b = -4 \\equiv 5 \\pmod 9$, and $5 \\in H$. Step 3: for $a = 2$ and $b = 4$, $a - b = -2 \\equiv 7 \\pmod 9$, and $7 \\in H$. Step 4: all required differences lie in $H$, so $H$ is a subgroup. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: $0$ lies in $H$, so $H$ is nonempty. Step 2 fails: $2 - 6 = -4 \\equiv 5 \\pmod 9$, and $5$ is not in $H = \\{0, 2, 4, 6\\}$. Step 3 also contains the same kind of error, since $2 - 4 \\equiv 7 \\pmod 9$ is not in $H$, but Step 2 comes first. Step 4 would follow only if every difference stayed in $H$. The answer is Step 2."
+          - problem: "In the proof that a nonempty finite subset $H$ of a group, closed under the operation, is a subgroup, the powers $a, a^2, \\dots$ repeat, so $a^i = a^j$ with $i < j$, and cancellation gives $a^m = e$ for $m = j - i$. The line that gives the inverse of $a$ is missing. Select the line that is true and that gives the inverse of $a$ from $a^m = e$."
+            answer: "a^(-1) = a^(m-1)"
+            answer_contract: {"kind": "label", "options": [["a^(-1) = a^(m-1)"], ["a^(-1) = a^(m+1)"], ["a^(-1) = a^m"], ["a^(-1) = a^(1-m)"]]}
+            solution_sketch: "From $a^m = e$ we get $a \\cdot a^{m-1} = a^m = e$, so the inverse of $a$ is $a^{m-1}$, which lies in $H$ because $H$ is closed under the operation. The option $a^{m+1}$ is the error of overshooting the exponent by two. The option $a^m$ confuses the inverse with the identity $e$. The option $a^{1-m}$ is the error of a sign flip, since $a^{1-m} = (a^{m-1})^{-1}$. The answer is a^(-1) = a^(m-1)."
+          - problem: "Write the full proof: Let $H$ be a nonempty subset of a group $G$ that is closed under the operation and under inverses. Prove that $H$ is a subgroup of $G$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (identity): since $H$ is nonempty, pick $a \\in H$. Closure under inverses gives $a^{-1} \\in H$, and closure under the operation gives $a a^{-1} = e \\in H$. Step 2 (inverses): closure under inverses is exactly the hypothesis, so every $a \\in H$ has $a^{-1} \\in H$. Step 3 (closure): closure of $H$ under the operation is the second hypothesis. Step 4 (associativity): the operation on $H$ is the restriction of the associative operation of $G$, so it is associative on $H$. All subgroup axioms hold, hence $H$ is a subgroup of $G$. This proves the two-step subgroup test. (The finite subgroup test follows by the same scheme: for $a \\in H$ the powers $a, a^2, \\dots$ all lie in the finite set $H$, so $a^i = a^j$ with $i < j$; cancellation gives $a^{j-i} = e \\in H$ and $a^{-1} = a^{j-i-1} \\in H$, reducing to the two-step situation just proved.)"
         constraints: "prove or apply the one-step / two-step / finite subgroup tests"
       - id: kp3
         name: "Centers and centralizers"
         key_prerequisites: [elementary-group-properties]
         exemplars:
-          - problem: 'Define the center $Z(G)$ and prove it is a subgroup of $G$.'
-            answer: '$Z(G) = \{z : zg = gz \ \forall g\}$; it contains $e$, and for $z, w \in Z(G)$, $(zw^{-1})g = g(zw^{-1})$, so the one-step test applies.'
-            solution_sketch: '$e$ commutes with everything. If $z, w$ are central then $w^{-1}$ is central (conjugate the relation $wg = gw$), and products of central elements are central.'
-          - problem: 'What is the center of an abelian group $G$?'
-            answer: '$Z(G) = G$'
-            solution_sketch: 'Every element commutes with every other, so all of $G$ is central.'
+          - problem: "Let $G$ be a group and let $z$ be an element of the center $Z(G)$ with order 12. Because $z$ is central, every power of $z$ is again central and lies in $Z(G)$. Give the order of $z^8$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a central element $z$ of order 12, so $z^8$ lies in $Z(G)$. The order of a power obeys the rule that the order of $z^k$ equals $n$ divided by the greatest common divisor of $n$ and $k$, where $n$ is the order of $z$. Here the greatest common divisor of 12 and 8 is 4, so the order of $z^8$ is $12/4$. The answer is 3."
+          - problem: "Let $G$ be an abelian group, so every element of $G$ lies in the center $Z(G)$. Let $z$ be an element of $G$ with order 10. Give the order of $z^4$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Since $G$ is abelian, $z$ is a central element, and so is its power $z^4$. The order-of-a-power rule gives the order of $z^k$ as $n$ divided by the greatest common divisor of $n$ and $k$, with $n = 10$. The greatest common divisor of 10 and 4 is 2, so the order of $z^4$ is $10/2$. The answer is 5."
+          - problem: "Let $a$ be an element of a group $G$ and let $g$ lie in the centralizer $C(a)$, so $ga = ag$. To prove that $g^{-1}$ also lies in $C(a)$, the proof writes $g^{-1}$ as a power $g^k$ of $g$. If $g$ has order 7, give the exponent $k$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is an element $g$ of order 7 in the centralizer $C(a)$. By the order rule, $g^7 = e$, and the inverse is the power with exponent one less than the order: $g \\cdot g^6 = g^7 = e$, so $g^{-1} = g^6$. This is the exponent the subgroup-test proof uses to move the inverse past $a$. The answer is 6."
+          - problem: "Let $z$ and $w$ be elements of the center $Z(G)$ of a group $G$, with orders 4 and 9. Since $z$ and $w$ commute and their orders are coprime, the order of the product $z w^{-1}$ is a fixed number. Give the order of $z w^{-1}$."
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the product $z w^{-1}$ of two central elements. Since both are central, they commute, so $(z w^{-1})^k = z^k w^{-k}$ for every $k$. If $(z w^{-1})^k = e$ then $z^k = w^k$ lies in the intersection of subgroups of coprime orders 4 and 9, which is trivial, so $z^k = e$ and $w^k = e$; hence the order is the least common multiple of 4 and 9. The answer is 36."
+          - problem: "Claim: for a group $G$ and a fixed element $a$, the centralizer $C(a) = \\{g : ga = ag\\}$ is a subgroup of $G$. Step 1: $e$ lies in $C(a)$ because $ea = ae$. Step 2: let $g$ and $h$ lie in $C(a)$. Step 3: $(gh)a = g(ha) = g(ah) = (ga)h = (ag)h = a(gh)$, so $gh$ lies in $C(a)$. Step 4: from $ga = ag$, divide both sides by $g$ to get $a = a$, so $g^{-1}$ lies in $C(a)$. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct base check: $ea = ae$ holds in every group. Step 2 is a correct hypothesis naming two elements of $C(a)$. Step 3 is valid closure: it uses associativity twice and the commuting relations $ha = ah$ and $ga = ag$. Step 4 is the error of dividing by a group element, which is not a defined operation; the correct step multiplies $ga = ag$ by $g^{-1}$ on the left and on the right to get $a g^{-1} = g^{-1} a$. The answer is Step 4."
+          - problem: "To prove that the centralizer $C(a) = \\{g : ga = ag\\}$ is a subgroup via the one-step test, a proof expands $(g h^{-1}) a$ for $g, h \\in C(a)$. It applies associativity and then commutes $h^{-1}$ past $a$, which is allowed because $h$ lies in $C(a)$. Select the expression that the chain gives immediately after that commutation step."
+            answer: "$g(a h^{-1})$"
+            answer_contract: {"kind": "label", "options": [["$g(a h^{-1})$"], ["$g(h a)$"], ["$g(h^{-1} a)$"], ["$(a g) h^{-1}$"]]}
+            solution_sketch: "The chain starts at $(g h^{-1}) a = g(h^{-1} a)$ by associativity, and the commutation $h^{-1} a = a h^{-1}$ from $ha = ah$ turns this into $g(a h^{-1})$. The option $g(h a)$ is the error of dropping the inverse of $h$. The option $g(h^{-1} a)$ is the error of skipping the commutation step entirely. The option $(a g) h^{-1}$ is a later line of the chain, reached only after additionally commuting $g$ past $a$. The answer is $g(a h^{-1})$."
+          - problem: "Write the full proof: for any group $G$, the center $Z(G)$ is a subgroup of $G$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Use the one-step subgroup test. Step 1: the identity $e$ lies in $Z(G)$ because $eg = g = ge$ for every $g$ in $G$. Step 2: let $z$ and $w$ be elements of $Z(G)$. Step 3: for any $g$ in $G$, start from $(z w^{-1}) g$ and apply associativity to get $z (w^{-1} g)$. Since $w$ is central, $w^{-1}$ is central, so $w^{-1} g = g w^{-1}$, giving $z (g w^{-1})$. Then associativity and centrality of $z$ give $(z g) w^{-1} = (g z) w^{-1} = g (z w^{-1})$. Step 4: this shows $z w^{-1}$ commutes with every $g$, so $z w^{-1}$ lies in $Z(G)$. By the one-step subgroup test, $Z(G)$ is a subgroup of $G$."
         constraints: "center and centralizer of a single element; proofs via the subgroup tests"
     diagnostic_exemplar:
       problem: 'Let $G$ be a group and $a \in G$. Prove that the centralizer $C(a) = \{g \in G : ga = ag\}$ is a subgroup of $G$.'
@@ -456,6 +522,22 @@ topics:
           - problem: 'How many elements of order $6$ does $\mathbb{Z}_6$ have?'
             answer: "2"
             solution_sketch: '$\varphi(6) = 2$: the generators $1$ and $5$.'
+          - problem: "In the cyclic group of order 16, how many elements are generators of the whole group? Find the number."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full group is the cyclic group of order 16. Rule: in a cyclic group of order n, the elements of order d number phi(d) when d divides n. Here d=16 and n=16, so the count is phi(16)=8. The answer is 8."
+          - problem: "In the cyclic group of order 18, determine how many elements have order exactly 18. Give the count."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full group is the cyclic group of order 18. Rule: in a cyclic group of order n, the elements of order d number phi(d) when d divides n. With d=18 and n=18, the count is phi(18)=6. The answer is 6."
+          - problem: "In the cyclic group of order 39, how many elements have order 13? State the count."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full group is the cyclic group of order 39. Rule: in a cyclic group of order n, the elements of order d number phi(d) when d divides n. Since 13 divides 39, the count is phi(13)=12. The answer is 12."
+          - problem: "In the cyclic group of order 11, how many elements have order 11? Determine the count."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full group is the cyclic group of order 11. Rule: in a cyclic group of order n, the elements of order d number phi(d) when d divides n. With d=11 and n=11, the count is phi(11)=10. The answer is 10."
         constraints: "phi(d) counts for d | n; n <= 40"
     diagnostic_exemplar:
       problem: 'How many elements of order $9$ does $\mathbb{Z}_{18}$ have?'
@@ -497,6 +579,22 @@ topics:
           - problem: 'How many rotations (including the identity) does $D_8$ contain?'
             answer: "8"
             solution_sketch: '$D_n$ contains the $n$ rotations by multiples of $360^\circ/n$.'
+          - problem: "For n = 12, the symmetry group D_12 of a regular 12-gon has rotations and reflections. Find the total number of symmetries in D_12."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full group D_12 consists of all rotations and all reflections of the regular 12-gon. It has 12 rotations, including the identity, and 12 reflections. By the count rule |D_n| = 2n, the total is 12 + 12 = 24."
+          - problem: "How many rotations (including the identity) does the dihedral group D_11 contain?"
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For D_11, the rotations are the 11 turns by multiples of 360/11 degrees. These are the identity and the ten nontrivial rotations. Therefore D_11 contains 11 rotations."
+          - problem: "How many reflections does the dihedral group D_7 of a regular 7-gon contain?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A regular n-gon has n lines of symmetry. For n = 7, each line of symmetry gives one reflection in D_7. Thus D_7 contains 7 reflections."
+          - problem: "A dihedral group D_n has exactly 18 elements. Find n."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group D_n contains n rotations and n reflections. Therefore its total order is |D_n| = 2n. Solving 2n = 18 gives the value 9."
         constraints: "n between 3 and 12; counts of rotations, reflections, total order"
       - id: kp2
         name: "Computing with r and s: the relation sr = r^{-1}s"
