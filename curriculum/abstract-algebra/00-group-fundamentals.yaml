@@ -49,6 +49,22 @@ topics:
           - problem: 'In the Cayley table of a group of order $6$, how many times does the identity $e$ appear in a single row?'
             answer: "1"
             solution_sketch: 'Each element appears exactly once in every row and column (the Sudoku/cancellation property): if $ax = ay$ then multiplying by $a^{-1}$ gives $x = y$, so no row can repeat an entry.'
+          - problem: "In the Cayley table of Z_5 under addition mod 5, row 2 already shows entries 2, 3, 4, and 0 in four columns. Use the once-per-row-and-column property to find the missing entry."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full row 2 of the Z_5 addition table is 2, 3, 4, 0, 1. The once-per-row-and-column property says each group element appears once in each row. The listed entries 2, 3, 4, 0 leave only 1 missing. The missing entry is 1."
+          - problem: "In the Cayley table of Z_4 under addition mod 4, column 1 already shows entries 1, 2, and 3 in three rows. Use the once-per-row-and-column property to find the missing entry."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full column 1 of the Z_4 addition table is 1, 2, 3, 0. The once-per-row-and-column property says each group element appears once in each column. The listed entries 1, 2, 3 leave only 0 missing. The missing entry is 0."
+          - problem: "In the Cayley table of U(8) = {1,3,5,7} under multiplication mod 8, row 3 has the entry 5 in one column. Which column label gives that entry?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The row 3 entries of U(8) under columns 1, 3, 5, 7 are 3, 1, 7, 5. The table entry 5 appears under column 7. The column label is 7."
+          - problem: "In the Cayley table of U(7) = {1,2,3,4,5,6} under multiplication mod 7, row 2 shows entries 2, 4, 6, 1, and 3 in five columns. Use the once-per-row-and-column property to find the missing entry."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full row 2 of the U(7) multiplication table is 2, 4, 6, 1, 3, 5. The once-per-row-and-column property says each group element appears once in each row. The listed entries 2, 4, 6, 1, 3 leave only 5 missing. The missing entry is 5."
         constraints: "tables of order at most 6; use the once-per-row-and-column property"
       - id: kp3
         name: "Abelian or not; checking inverses in context"
@@ -180,6 +196,22 @@ topics:
           - problem: 'Find the order of $10$ in $\mathbb{Z}_{25}$.'
             answer: "5"
             solution_sketch: '$25/\gcd(10,25) = 25/5 = 5$.'
+          - problem: "In the additive group Z_30, determine the order of the element 9."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the additive-order shortcut: the order of a in Z_n is n divided by gcd(a,n). Compute gcd(9,30)=3. Then 30/3=10, so the order is 10."
+          - problem: "The additive group Z_60 contains the element 21. Compute the order of 21 in this group."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the shortcut order = n/gcd(a,n) for additive groups. Here gcd(21,60)=3. Therefore the order is 60/3=20."
+          - problem: "What is the order of the element 40 in the additive group Z_56?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The order in Z_n is n/gcd(a,n). First gcd(40,56)=8. Then 56/8=7, so the order is 7."
+          - problem: "In the additive group Z_45, state the order of the element 25."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the additive-order formula order = n/gcd(a,n). Compute gcd(25,45)=5. Then 45/5=9, so the order is 9."
         constraints: "additive groups Z_n, n <= 60; expect the n/gcd(a,n) shortcut"
       - id: kp3
         name: "Order facts: powers, inverses, finiteness"
@@ -318,6 +350,22 @@ topics:
           - problem: 'If $g$ generates a cyclic group of order $10$, which powers $g^k$ ($1 \le k \le 10$) also generate it?'
             answer: '$g^1, g^3, g^7, g^9$'
             solution_sketch: '$g^k$ generates iff $\gcd(k, 10) = 1$, i.e. $k \in \{1,3,7,9\}$.'
+          - problem: "How many generators does the additive group $\\mathbb{Z}_{16}$ have? Give the answer as an integer."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the gcd criterion: $k$ generates $\\mathbb{Z}_n$ exactly when $\\gcd(k,n)=1$. Step 2: For $n=16$, the residues coprime to $16$ are the odd numbers $1,3,5,7,9,11,13,15$. Step 3: Euler's phi counts them as $\\phi(16)=8$. The answer is 8."
+          - problem: "Find all generators of $\\mathbb{Z}_{18}$. Give the answer as an increasing comma-separated list."
+            answer: "1, 5, 7, 11, 13, 17"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: The gcd criterion says $k$ generates $\\mathbb{Z}_{18}$ iff $\\gcd(k,18)=1$. Step 2: The residues from $1$ to $18$ coprime to $18$ are $1,5,7,11,13,17$. Step 3: Therefore the complete list of generators in increasing order is 1, 5, 7, 11, 13, 17."
+          - problem: "A cyclic group $G$ has order $24$. How many elements of $G$ generate $G$? Give the answer as an integer."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: In a cyclic group of order $n$, an element $g^k$ generates iff $\\gcd(k,n)=1$. Step 2: So the number of generators is Euler's phi $\\phi(n)$. Step 3: Since $24=2^3\\cdot 3$, $\\phi(24)=24(1/2)(2/3)=8$. The answer is 8."
+          - problem: "Find all generators of the additive group $\\mathbb{Z}_{14}$. Give the answer as an increasing comma-separated list."
+            answer: "1, 3, 5, 9, 11, 13"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: Use the gcd criterion: $k$ generates $\\mathbb{Z}_{14}$ exactly when $\\gcd(k,14)=1$. Step 2: The residues from $1$ to $14$ coprime to $14$ are $1,3,5,9,11,13$. Step 3: Hence the complete list of generators in increasing order is 1, 3, 5, 9, 11, 13."
         constraints: "counts and lists of generators; expect the gcd criterion and Euler phi counts"
       - id: kp3
         name: "Structural facts about cyclic groups"
@@ -370,6 +418,22 @@ topics:
           - problem: 'List the orders of all subgroups of a cyclic group of order $30$.'
             answer: '$1, 2, 3, 5, 6, 10, 15, 30$'
             solution_sketch: 'Subgroup orders are exactly the divisors of $30$.'
+          - problem: "A cyclic group has one subgroup for each divisor of its order. How many subgroups does Z_36 have?"
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the fundamental theorem of cyclic groups, the number of subgroups equals the number of divisors of the order. Step 1: list the divisors of 36: 1, 2, 3, 4, 6, 9, 12, 18, 36. Step 2: count them: there are 9 divisors, so Z_36 has one subgroup per divisor. Therefore Z_36 has 9 subgroups."
+          - problem: "A cyclic group has order 45. Find the set of orders of all its subgroups."
+            answer: "{1,3,5,9,15,45}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The fundamental theorem of cyclic groups gives exactly one subgroup per divisor, with that divisor as its order. Step 1: find the divisors of 45: 1, 3, 5, 9, 15, 45. Step 2: the subgroup orders are precisely these divisors. Therefore the set of subgroup orders is {1,3,5,9,15,45}."
+          - problem: "A cyclic group has one subgroup for each divisor of its order. How many proper nontrivial subgroups does Z_24 have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: list the divisors of 24: 1, 2, 3, 4, 6, 8, 12, 24, so Z_24 has 8 subgroups in total. Step 2: a proper nontrivial subgroup excludes the trivial subgroup of order 1 and the whole group of order 24, leaving 8 - 2 = 6. Therefore Z_24 has 6 proper nontrivial subgroups."
+          - problem: "A cyclic group has one subgroup for each divisor of its order. For a cyclic group of order 50, what is the order of the largest proper subgroup?"
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: list the divisors of 50: 1, 2, 5, 10, 25, 50; these are exactly the possible subgroup orders. Step 2: a proper subgroup cannot have order 50, so among the remaining divisors the largest is 25. Therefore the order of the largest proper subgroup is 25."
         constraints: "n <= 60; one subgroup per divisor, all cyclic"
       - id: kp2
         name: "Finding the subgroup of a given order"
