@@ -173,12 +173,28 @@ topics:
         key_prerequisites: [remainder-factor-theorems]
         constraints: "factored polynomials of degree 3-5"
         exemplars:
-          - problem: 'State the roots of $p(x) = (x - 2)^3 (x + 1)^2$ with their multiplicities, and the degree of $p$.'
-            answer: "x = 2 (multiplicity 3), x = -1 (multiplicity 2); degree 5"
-            answer_contract: {kind: none}
-            solution_sketch: '$(x - 2)^3$ gives root $2$ with multiplicity $3$; $(x + 1)^2$ gives root $-1$ with multiplicity $2$; the degree is $3 + 2 = 5$.'
+          - problem: "The polynomial p(x) = (x - 2)^3 (x + 1)^2 is fully factored. Find the multiplicity of the root x = 2."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor theorem: each factor x - r gives a root r. Multiplicity rule: the exponent on x - 2 is 3. The multiplicity is 3."
           - problem: 'Counting multiplicity, how many roots does a degree-$7$ polynomial have (over the complex numbers)?'
             answer: "7"
+          - problem: "The polynomial p(x) = (x + 4)(x - 1)^2 (x - 3)^2 is fully factored. Find the degree of p."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Degree rule: the degree of a product of linear factors is the sum of the exponents. Multiplicity sum: 1 + 2 + 2 = 5. The degree is 5."
+          - problem: "The polynomial p(x) = (2x - 6)^4 (x + 5) is fully factored. Find the multiplicity of the root x = 3."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor theorem: 2x - 6 = 2(x - 3), so x = 3 is a root. Multiplicity rule: the exponent on the factor x - 3 is 4. The multiplicity is 4."
+          - problem: "The polynomial p(x) = (x - 1)^2 (x + 2)^3 (x - 4) is fully factored. Find the multiplicity of the root x = -2."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Factor theorem: x + 2 = x - (-2) gives the root -2. Multiplicity rule: the exponent on x + 2 is 3. The multiplicity is 3."
+          - problem: "The polynomial p(x) = (x - 5)^2 (x + 1)^3 (x - 2)^4 is fully factored. Find the smallest multiplicity among its roots."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiplicity list: the exponents give multiplicities 2, 3, and 4. Smallest value rule: compare the numbers 2, 3, and 4. The smallest multiplicity is 2."
       - id: kp2
         name: Crossing versus touching at a repeated root
         key_prerequisites: [quadratic-equations-factoring]
@@ -187,9 +203,26 @@ topics:
           - problem: 'For $p(x) = (x - 1)^2 (x + 3)$, at which zero does the graph touch without crossing?'
             answer: "x = 1"
             solution_sketch: 'Even multiplicity touches; odd multiplicity crosses.'
-          - problem: 'Does the graph of $p(x) = (x + 2)^3$ cross or touch the $x$-axis at $x = -2$?'
-            answer: "crosses"
-            answer_contract: {kind: label, options: [[crosses], [touches]]}
+          - problem: "The polynomial is p(x) = (x + 2)^3. Find the multiplicity of the zero at x = -2."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: by the definition of multiplicity, the factor (x + 2) appears with exponent 3, so the zero x = -2 has multiplicity 3. Step 2: by the parity rule, an odd multiplicity means the graph crosses the x-axis at this zero, consistent with the repeated factor. The answer is 3."
+          - problem: "The polynomial is p(x) = (x + 1)^3 (x - 2)^2. Find the x-coordinate of the zero where the graph touches the x-axis without crossing."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the factors show zeros at x = -1 with multiplicity 3 and x = 2 with multiplicity 2. Step 2: by the parity rule, an odd multiplicity crosses and an even multiplicity touches without crossing. The touching zero is x = 2, so the answer is 2."
+          - problem: "The polynomial is p(x) = x^2 (x - 3)^3 (x + 1)^4. Find the sum of the x-coordinates of the zeros where the graph touches the x-axis without crossing."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the factors show zeros at x = 0 with multiplicity 2, x = 3 with multiplicity 3, and x = -1 with multiplicity 4. Step 2: by the parity rule, even multiplicities touch without crossing, so the touching zeros are x = 0 and x = -1. Step 3: their sum is 0 + (-1) = -1, so the answer is -1."
+          - problem: "A polynomial p(x) has a zero at x = 5 where its graph touches the x-axis without crossing. Find the smallest possible multiplicity of this zero."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: by the parity rule, a zero where the graph touches the x-axis without crossing has an even multiplicity. Step 2: the smallest positive even integer is 2, so a double root is the least possibility. The answer is 2."
+          - problem: "The polynomial is p(x) = (x - 2)^2 (x + 5)^3. Find the x-coordinate of the zero where the graph crosses the x-axis."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the factors show zeros at x = 2 with multiplicity 2 and x = -5 with multiplicity 3. Step 2: by the parity rule, an odd multiplicity crosses the x-axis while an even multiplicity only touches it. The crossing zero is x = -5, so the answer is -5."
       - id: kp3
         name: Build a polynomial from given roots
         key_prerequisites: [polynomial-multiplication]
@@ -200,6 +233,22 @@ topics:
             solution_sketch: '$(x-2)^2(x+5) = (x^2 - 4x + 4)(x + 5) = x^3 + x^2 - 16x + 20$.'
           - problem: 'Write, in factored form, a degree-$4$ polynomial with roots $0$, $3$ (double), and $-1$, leading coefficient $1$.'
             answer: "x(x - 3)^2 (x + 1)"
+          - problem: "Write a degree-3 polynomial with leading coefficient 1, a double root at x = 3, and a simple root at x = -2. Give the expanded polynomial."
+            answer: "x^3 - 4x^2 - 3x + 18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the roots: a double root at 3 gives (x - 3)^2, and a simple root at -2 gives (x + 2), so the full object is (x - 3)^2 (x + 2). Expand the square by polynomial multiplication: (x - 3)^2 = x^2 - 6x + 9. Multiply by x + 2: (x^2 - 6x + 9)(x + 2) = x^3 - 4x^2 - 3x + 18. The expanded polynomial is x^3 - 4x^2 - 3x + 18."
+          - problem: "Write a degree-4 polynomial with leading coefficient 1, roots -1 and 4, and a double root at x = 2. Give the expanded polynomial."
+            answer: "x^4 - 7x^3 + 12x^2 + 4x - 16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The roots give the factors: (x + 1), (x - 2)^2 for the double root, and (x - 4). The full object is (x + 1)(x - 2)^2 (x - 4). Expand (x - 2)^2 = x^2 - 4x + 4. Multiply (x + 1)(x - 4) = x^2 - 3x - 4, then multiply by x^2 - 4x + 4 to get x^4 - 7x^3 + 12x^2 + 4x - 16. The expanded polynomial is x^4 - 7x^3 + 12x^2 + 4x - 16."
+          - problem: "Write a degree-3 polynomial with leading coefficient 1 and roots 0, -3, and 2. Give the polynomial in factored form, without expanding."
+            answer: "x(x + 3)(x - 2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The roots 0, -3, and 2 give the factors x, (x + 3), and (x - 2). The leading coefficient is 1, so the full object is x(x + 3)(x - 2). This is already factored, so no expansion is needed. The polynomial in factored form is x(x + 3)(x - 2)."
+          - problem: "Write a degree-4 polynomial with leading coefficient 1 and roots 1, -1, 2, and -2. Give the expanded polynomial."
+            answer: "x^4 - 5x^2 + 4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The four roots 1, -1, 2, and -2 give the factors (x - 1), (x + 1), (x - 2), and (x + 2). The full object is (x - 1)(x + 1)(x - 2)(x + 2). Pair the factors: (x - 1)(x + 1) = x^2 - 1 and (x - 2)(x + 2) = x^2 - 4. Multiply: (x^2 - 1)(x^2 - 4) = x^4 - 5x^2 + 4. The expanded polynomial is x^4 - 5x^2 + 4."
     diagnostic_exemplar:
       problem: 'Write the degree-$3$ polynomial with leading coefficient $1$ having a double root at $x = 1$ and a root at $x = -3$, expand it, and state at which zero its graph touches the $x$-axis without crossing.'
       answer: 'x^3 + x^2 - 5x + 3; the graph touches without crossing at x = 1 (even multiplicity)'
