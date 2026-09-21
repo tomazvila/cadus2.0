@@ -18,40 +18,88 @@ topics:
         name: "Propositions vs. non-propositions"
         key_prerequisites: []
         exemplars:
-          - problem: 'Which of the following are propositions? (a) "$7$ is prime." (b) "Close the door." (c) "$x > 3$." (d) "$2 + 2 = 5$."'
-            answer_contract: {kind: none}
-            answer: '(a) and (d); (b) is a command, (c) is an open sentence.'
-            solution_sketch: 'A proposition is a declarative statement with a definite truth value. (a) is true and (d) is false; (b) is imperative (no truth value); (c) depends on $x$, so it is a predicate, not a proposition.'
-          - problem: 'Is "This sentence is false." a proposition?'
-            answer_contract: {kind: none}
-            answer: 'No; it has no consistent truth value (a paradox).'
-            solution_sketch: 'Assuming it is true makes it false and vice versa, so it cannot be assigned a definite truth value; it is not a proposition.'
+          - problem: "Classify the statement \"9 is a prime number.\" Which category fits it?"
+            answer: "proposition"
+            answer_contract: {"kind": "label", "options": [["proposition"], ["open sentence"], ["command"], ["paradox"]]}
+            solution_sketch: "Step 1: Apply the definition — a proposition is a declarative statement that is either true or false. The statement that 9 is a prime number is declarative, and it is false since 9 equals 3 times 3, so it still has a truth value. Step 2: Rule out the other categories. It is not an open sentence because it contains no variable; it is not a command because it tells no one to act; it is not a paradox because it makes no claim about itself. The correct category is proposition."
+          - problem: "Classify the statement \"This statement is false.\" What category does it fall into?"
+            answer: "paradox"
+            answer_contract: {"kind": "label", "options": [["proposition"], ["open sentence"], ["command"], ["paradox"]]}
+            solution_sketch: "Step 1: Test both truth values. If the statement is true, then what it says holds, so it must be false — a contradiction. If it is false, then what it says fails, so it must be true — again a contradiction. Step 2: Since no consistent truth value can be assigned, it is not a proposition; it is not an open sentence because it has no variable, and it is not a command because it tells no one to act. The correct category is paradox."
+          - problem: "Here are four items: (a) 3 + 4 = 7. (b) y > 10. (c) Close the window. (d) 15 is a prime number. How many of these items are propositions?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Apply the definition of a proposition, a declarative statement with a truth value. Item (a), 3 + 4 = 7, is declarative and true, so it is a proposition. Item (b), y > 10, contains the variable y, so it is an open sentence. Item (c), Close the window, tells someone to act, so it is a command. Item (d), 15 is a prime number, is declarative and false, so it is a proposition. Step 2: Count the propositions: items (a) and (d) qualify, so the answer is 2."
+          - problem: "A list has four entries: (a) 5 is an odd number. (b) n is even. (c) Be quiet. (d) 7 > 2. How many entries in the list are open sentences?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Apply the definition of an open sentence, a statement whose truth depends on the value of a variable. Entry (a), 5 is an odd number, is declarative and true, so it is a proposition. Entry (b), n is even, depends on the variable n, so it is an open sentence. Entry (c), Be quiet, tells someone to act, so it is a command. Entry (d), 7 > 2, is declarative and true, so it is a proposition. Step 2: Count the open sentences: only entry (b) qualifies, so the answer is 1."
+          - problem: "Four statements appear on a quiz: (a) Solve the equation. (b) Please sit down. (c) Turn off your phone. (d) 2 + 2 = 5. How many of these statements are commands?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Apply the definition of a command, a statement that tells someone to do something and has no truth value. Statement (a), Solve the equation, is an order, so it is a command. Statement (b), Please sit down, is an order, so it is a command. Statement (c), Turn off your phone, is an order, so it is a command. Statement (d), 2 + 2 = 5, is declarative and false, so it is a proposition. Step 2: Count the commands: statements (a), (b), and (c) qualify, so the answer is 3."
+          - problem: "A teacher shows four statements: (a) This statement is false. (b) 9 + 5 = 14. (c) Sit down. (d) t is a prime number. How many of these statements are not propositions?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Classify each statement. Statement (a), This statement is false, refers to itself: if it is true it is false, and if it is false it is true, so it is a paradox. Statement (b), 9 + 5 = 14, is declarative and false, so it is a proposition. Statement (c), Sit down, is an order, so it is a command. Statement (d), t is a prime number, depends on the variable t, so it is an open sentence. Step 2: Count the non-propositions: they come from statements (a), (c), and (d), so the answer is 3."
         constraints: "classify statements as proposition / open sentence / command / paradox"
       - id: kp2
         name: "Truth values of concrete statements"
         key_prerequisites: []
         exemplars:
-          - problem: 'State the truth value of each proposition: (a) "$17$ is prime." (b) "$3 + 4 = 8$."'
-            answer_contract: {kind: none}
-            answer: '(a) true; (b) false.'
-            solution_sketch: '$17$ has no divisors other than $1$ and $17$, so (a) is true; $3 + 4 = 7 \ne 8$, so (b) is false.'
-          - problem: 'True or false: "$\sqrt{2} > 1.5$".'
-            answer_contract: {kind: none}
-            answer: 'False.'
-            solution_sketch: '$1.5^2 = 2.25 > 2$, so $\sqrt{2} < 1.5$; the proposition is false (but it is still a proposition).'
+          - problem: "Consider the statement \"$5/6 + 3/8 = 3/4$\". State its truth value and give the correct value of the left side as a fraction."
+            answer: "verdict = fails; value = 29/24"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The statement is $5/6 + 3/8 = 3/4$. Step 1 (common denominator 24): $5/6 = 20/24$ and $3/8 = 9/24$. Step 2 (add the fractions): $20/24 + 9/24 = 29/24$. Step 3 (compare the sides): $3/4 = 18/24$, and $29/24$ differs from $18/24$, so the statement fails. The option holds is wrong because the left side is $29/24$, not $3/4$. The answer is verdict = fails; value = 29/24."
+          - problem: "Consider the statement \"$\\sqrt{2} > 1.4$\". State its truth value and give the value of $\\sqrt{2}$ to 2 decimals as a decimal."
+            answer: "verdict = valid; value = 1.41"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"decimals": 2, "kind": "approx"}, "name": "value"}]}
+            solution_sketch: "The statement is $\\sqrt{2} > 1.4$. Step 1 (bound the radical): $1.41^2 = 1.9881 < 2$ and $1.42^2 = 2.0164 > 2$, so $\\sqrt{2}$ lies between $1.41$ and $1.42$. Step 2 (round): $\\sqrt{2} \\approx 1.4142$, which is $1.41$ to 2 decimals. Step 3 (compare): $1.41 > 1.4$, so the statement is valid. The option invalid is wrong because $\\sqrt{2}$ is about $1.41$, which exceeds $1.4$. The answer is verdict = valid; value = 1.41."
+          - problem: "Consider the statement \"$2^{10} = 999 + 25$\". State its truth value and give the value of $2^{10}$."
+            answer: "verdict = correct; value = 1024"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["correct"], ["incorrect"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The statement is $2^{10} = 999 + 25$. Step 1 (evaluate the power by doubling): $2^5 = 32$ and $32 \\cdot 32 = 1024$, so $2^{10} = 1024$. Step 2 (evaluate the sum): $999 + 25 = 1024$. Step 3 (compare the sides): both sides equal $1024$, so the statement is correct. The option incorrect is wrong because $2^{10} = 1024$ and $999 + 25 = 1024$. The answer is verdict = correct; value = 1024."
+          - problem: "Consider the statement \"$2 + 3 \\cdot 4^2 = 100$\". State its truth value and give the value of the left side."
+            answer: "verdict = differs; value = 50"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["matches"], ["differs"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The statement is $2 + 3 \\cdot 4^2 = 100$. Step 1 (exponents first): $4^2 = 16$. Step 2 (multiplication before addition): $3 \\cdot 16 = 48$. Step 3 (addition last): $2 + 48 = 50$. Step 4 (compare the sides): $50$ differs from $100$, so the statement is false. The option matches is wrong because the order of operations gives $50$, not $100$. The answer is verdict = differs; value = 50."
+          - problem: "A card shows the statement \"$\\sqrt{80} < 9$\". Compute the left side to decide whether the statement is true, and give the value of $\\sqrt{80}$ to 2 decimals as a decimal."
+            answer: "8.94"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Full object: the left side of $\\sqrt{80} < 9$ is $8.94$, so the statement is true. Step 1 (bound the radical): $8.9^2 = 79.21 < 80$ and $8.95^2 = 80.1025 > 80$, so $\\sqrt{80}$ lies between $8.9$ and $8.95$. Step 2 (round): $\\sqrt{80} \\approx 8.9443$, which is $8.94$ to 2 decimals. Step 3 (decide): $8.94 < 9$, so the statement on the card is true. The answer is 8.94."
+          - problem: "A card shows the statement \"$3/8 + 1/4 > 0.6$\". Compute the left side to decide whether the statement is true, and give the value of $3/8 + 1/4$ to 3 decimals as a decimal."
+            answer: "0.625"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Full object: the left side of $3/8 + 1/4 > 0.6$ is $0.625$, so the statement is true. Step 1 (common denominator 8): $1/4 = 2/8$. Step 2 (add the fractions): $3/8 + 2/8 = 5/8$. Step 3 (decimal form): $5/8 = 0.625$ to 3 decimals. Step 4 (decide): $0.625 > 0.6$, so the statement on the card is true. The answer is 0.625."
         constraints: "concrete arithmetic statements; the learner must compute the truth value"
       - id: kp3
         name: "Open sentences become propositions by substitution"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: 'The open sentence "$x > 3$" is not a proposition. What proposition results from substituting $x = 5$, and what is its truth value?'
-            answer_contract: {kind: none}
-            answer: '"$5 > 3$", which is true.'
-            solution_sketch: 'Substituting a value for the variable turns an open sentence into a proposition; $5 > 3$ is true.'
-          - problem: 'Substitute $x = -3$ into "$x^2 = 9$" and give the truth value.'
-            answer_contract: {kind: none}
-            answer: '"$(-3)^2 = 9$", which is true.'
-            solution_sketch: '$(-3)^2 = 9$, so the resulting proposition is true even though $x = -3$ is negative.'
+          - problem: "The open sentence 3x - 2 > 7 is not a proposition. Substitute x = 4. Give the truth value of the resulting proposition and the value of its left side, in the form verdict = a; L = b."
+            answer: "verdict = true; L = 10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["true"], ["false"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1 (substitution rule): substitute x = 4 into the open sentence 3x - 2 > 7 to get the proposition 3(4) - 2 > 7. Step 2 (order of operations): the left side is 12 - 2 = 10. Step 3 (comparison): 10 > 7 holds, so the verdict is true and the left side is 10; the wrong verdict false comes from reading the inequality backwards. The answer is verdict = true; L = 10."
+          - problem: "The open sentence x^2 = 5 is not a proposition. Substitute x = -3. Give the truth value of the resulting proposition and the value of its left side, in the form verdict = a; L = b."
+            answer: "verdict = false; L = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["true"], ["false"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1 (substitution rule): substitute x = -3 into the open sentence x^2 = 5 to get the proposition (-3)^2 = 5. Step 2 (power evaluation): the left side is (-3)^2 = 9. Step 3 (comparison): 9 does not equal 5, so the verdict is false; the wrong verdict true comes from squaring the 5 as well. The answer is verdict = false; L = 9."
+          - problem: "The open sentence x/2 = 3 is not a proposition. Substitute x = 7. Give the truth value of the resulting proposition and the value of its left side, in the form verdict = a; L = b."
+            answer: "verdict = false; L = 7/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["true"], ["false"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1 (substitution rule): substitute x = 7 into the open sentence x/2 = 3 to get the proposition 7/2 = 3. Step 2 (evaluation of the quotient): the left side is 7/2. Step 3 (comparison): 7/2 is not 3, so the verdict is false. The answer is verdict = false; L = 7/2."
+          - problem: "The open sentence 2x^2 - x = 12 is not a proposition. Substitute x = 3 and evaluate the left side of the resulting proposition. Find its value."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (substitution rule): substitute x = 3 into the open sentence 2x^2 - x = 12 to get the proposition 2(3)^2 - 3 = 12. Step 2 (order of operations): the left side is 18 - 3 = 15. Step 3 (comparison): the left side is 15, which does not equal the right side 12. The answer is 15."
+          - problem: "The open sentence x^2 + x = 22 is not a proposition. Substitute x = 4 and evaluate the left side of the resulting proposition. Find its value."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (substitution rule): substitute x = 4 into the open sentence x^2 + x = 22 to get the proposition 4^2 + 4 = 22. Step 2 (order of operations): the left side is 16 + 4 = 20. Step 3 (comparison): the left side is 20, which does not equal the right side 22. The answer is 20."
+          - problem: "The open sentence x^2 = 5x - 6 is not a proposition. Substitute each of the values 1, 2, 3, 4, 5 in turn and give the set of values for which the resulting proposition is true."
+            answer: "{2, 3}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (substitution rule): substitute each candidate into the open sentence x^2 = 5x - 6 and evaluate both sides. Step 2 (evaluation): x = 1 gives 1 and -1; x = 2 gives 4 and 4; x = 3 gives 9 and 9; x = 4 gives 16 and 14; x = 5 gives 25 and 19. Step 3 (comparison): the proposition is true exactly for x = 2 and x = 3. The answer is {2, 3}."
         constraints: "one-variable open sentences; substitute a specific value and evaluate"
     diagnostic_exemplar:
       problem: 'Classify each as a proposition (with truth value), open sentence, or neither: (a) "$5 < 7$" (b) "$x + 2 = 9$" (c) "Study hard." (d) "$91$ is prime."'
