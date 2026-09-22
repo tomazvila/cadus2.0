@@ -484,18 +484,30 @@ topics:
         name: The resonance modification
         key_prerequisites: [undetermined-coefficients-basic]
         exemplars:
-          - problem: "Find a particular solution of $y'' - y = e^x$."
-            answer: "$y_p = \\dfrac{x e^x}{2}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$e^x$ solves the homogeneous equation, so try $y_p = Axe^x$: substituting gives $2Ae^x = e^x$, so $A = \\tfrac{1}{2}$."
-          - problem: 'What trial form should be used for a particular solution of $y'''' + 4y = \cos 2x$, and why?'
-            answer: '$y_p = x(A\cos 2x + B\sin 2x)$, because $\cos 2x$ and $\sin 2x$ already solve the homogeneous equation.'
-            answer_contract: {kind: none}
-            solution_sketch: '$y_p = x(A\cos 2x + B\sin 2x)$, because $\cos 2x$ and $\sin 2x$ already solve the homogeneous equation.'
-          - problem: 'Find the general solution of $y'''' + 4y = \cos 2x$.'
-            answer: '$y = c_1 \cos 2x + c_2 \sin 2x + \dfrac{x \sin 2x}{4}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'With $y_p = x(A\cos 2x + B\sin 2x)$, substitution gives $-4A\sin 2x + 4B\cos 2x = \cos 2x$, so $A = 0$, $B = \tfrac{1}{4}$.'
+          - problem: "For y'' - y = 6e^x, the forcing e^x already solves the homogeneous equation. Use the trial y_p = A x e^x. Find A."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Homogeneous solutions are e^x and e^(-x), so the forcing e^x is already present. The trial is y_p = A x e^x. Differentiate: y_p' = A e^x(1 + x) and y_p'' = A e^x(2 + x). Substitute into y'' - y: A e^x(2 + x) - A x e^x = 2A e^x. Set 2A e^x = 6e^x, so A = 3."
+          - problem: "For y'' + 4y = cos 2x, the forcing cos 2x already solves the homogeneous equation. Use the trial y_p = x(A cos 2x + B sin 2x). Find B."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Homogeneous solutions are cos 2x and sin 2x, so the forcing cos 2x is already present. The trial is y_p = x(A cos 2x + B sin 2x). Substitution gives -4A sin 2x + 4B cos 2x = cos 2x. Matching coefficients gives A = 0 and B = 1/4."
+          - problem: "For y'' + 4y = 3 cos 2x, the forcing duplicates a homogeneous solution. Find a particular solution as a function of x."
+            answer: "3x sin(2x)/4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Homogeneous solutions are cos 2x and sin 2x, so the forcing 3 cos 2x duplicates one of them. The trial is y_p = x(A cos 2x + B sin 2x). Substitution gives -4A sin 2x + 4B cos 2x = 3 cos 2x, so A = 0 and B = 3/4. Thus y_p = 3x sin(2x)/4."
+          - problem: "For y'' + y = sin x, the forcing sin x already solves the homogeneous equation. Use the trial y_p = x(A cos x + B sin x). Find A."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Homogeneous solutions are cos x and sin x, so the forcing sin x is already present. The trial is y_p = x(A cos x + B sin x). Substitution gives 2B cos x - 2A sin x = sin x, so B = 0 and -2A = 1. Thus A = -1/2."
+          - problem: "For y'' - 4y = 8e^(2x), the forcing e^(2x) already solves the homogeneous equation. Use the trial y_p = A x e^(2x). Find A."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Homogeneous solutions are e^(2x) and e^(-2x), so the forcing e^(2x) is already present. The trial is y_p = A x e^(2x). Differentiate: y_p' = A e^(2x)(1 + 2x) and y_p'' = 4A e^(2x)(1 + x). Substitute into y'' - 4y: 4A e^(2x)(1 + x) - 4A x e^(2x) = 4A e^(2x). Set 4A e^(2x) = 8e^(2x), so A = 2."
+          - problem: "For y'' + y = 6 sin x, the forcing duplicates a homogeneous solution. Find a particular solution as a function of x."
+            answer: "-3x cos(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Homogeneous solutions are cos x and sin x, so the forcing 6 sin x duplicates one of them. The trial is y_p = x(A cos x + B sin x). Substitution gives 2B cos x - 2A sin x = 6 sin x, so B = 0 and A = -3. Thus y_p = -3x cos(x)."
         constraints: "forcing duplicates exactly one homogeneous solution; multiply the trial by x (never x^2 here)"
       - id: kp3
         name: Products and superposition of forcings
