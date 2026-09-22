@@ -924,6 +924,22 @@ topics:
           - problem: 'How many $2$-letter codes from A-Z (repeats allowed) are NOT double letters like AA?'
             answer: "650"
             solution_sketch: 'Total $26^2 = 676$; doubles $26$; $676 - 26 = 650$.'
+          - problem: "A security code is a string of three digits chosen from 0 to 9, and repeated digits are allowed. How many such codes are not all digits equal?"
+            answer: "990"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is all three-digit strings, counted by the multiplication principle as 10 * 10 * 10 = 1000. The unwanted codes are the ten constant strings 000 through 999, counted by the addition principle as 10. Apply total minus unwanted: 1000 - 10 = 990. The number of security codes is 990."
+          - problem: "A code is a string of three letters chosen from A, B, C, D, E, and repeated letters are allowed. How many such codes are not made only of the vowels A and E?"
+            answer: "117"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is all three-letter strings from A through E, counted by the multiplication principle as 5 * 5 * 5 = 125. The unwanted strings use only A or E, counted by the multiplication principle as 2 * 2 * 2 = 8. Apply total minus unwanted: 125 - 8 = 117. The number of codes is 117."
+          - problem: "An 8-bit string is a sequence of eight bits, each 0 or 1. How many 8-bit strings are not all zeros and not all ones?"
+            answer: "254"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is all 8-bit strings, counted by the multiplication principle as 2^8 = 256. The unwanted strings are 00000000 and 11111111, two strings counted by the addition principle. Apply total minus unwanted: 256 - 2 = 254. The number of strings is 254."
+          - problem: "A four-digit number runs from 1000 to 9999. How many such numbers are not made only of even digits?"
+            answer: "8500"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is all four-digit numbers from 1000 to 9999, counted by the multiplication principle as 9 * 10^3 = 9000. The unwanted numbers use only even digits: the first digit has 4 choices and each later digit has 5 choices, giving 4 * 5^3 = 500. Apply total minus unwanted: 9000 - 500 = 8500. The number is 8500."
         constraints: "the complement must be strictly easier to count than the direct set; totals below 10^4"
       - id: kp2
         name: "At least one, via the complement"
