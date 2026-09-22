@@ -380,12 +380,34 @@ topics:
         name: "Divisibility and linear combinations"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: for all integers $a, b, c, x, y$, if $a \mid b$ and $a \mid c$ then $a \mid (bx + cy)$.'
-            answer: '$b = ak$, $c = al$ give $bx + cy = a(kx + ly)$.'
-            solution_sketch: 'Write $b = ak$ and $c = al$. Then $bx + cy = akx + aly = a(kx + ly)$ with $kx + ly \in \mathbb{Z}$, so $a \mid (bx + cy)$; taking $x = y = 1$ gives $a \mid (b + c)$. $\square$'
-          - problem: 'Prove: for all integers $a, b$, if $a \mid b$ then $a \mid b^2$.'
-            answer: '$b = ak$ gives $b^2 = a(ak^2)$.'
-            solution_sketch: 'Write $b = ak$. Then $b^2 = a^2 k^2 = a(a k^2)$ with $a k^2 \in \mathbb{Z}$, so $a \mid b^2$. $\square$'
+          - problem: "Suppose a | b and a | c, so b = a k and c = a l for integers k and l. Write 2b - c = a q. Give q as an expression in k and l."
+            answer: "2k-l"
+            answer_contract: {"kind": "function", "vars": ["k", "l"]}
+            solution_sketch: "Start from b = a k and c = a l, which is the definition of divides. Substitute: 2b - c = 2ak - al (substitution). Factor a: 2b - c = a(2k - l) with 2k - l an integer (factoring and closure). The answer is 2k-l."
+          - problem: "Suppose a | b, so b = a k for an integer k. Write b^2 = a q. Give q as a polynomial in a and k."
+            answer: "ak^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write b = a k (definition of divides). Square: b^2 = a^2 k^2 (arithmetic). Factor a: b^2 = a(a k^2) with a k^2 an integer (factoring and closure). The answer is ak^2."
+          - problem: "Suppose a | b and a | c, so b = a k and c = a l for integers k and l. Write b + c = a q. Give q as an expression in k and l."
+            answer: "k+l"
+            answer_contract: {"kind": "function", "vars": ["k", "l"]}
+            solution_sketch: "Write b = a k and c = a l (definition of divides). Add: b + c = a k + a l (substitution). Factor a: b + c = a(k + l) with k + l an integer (factoring and closure). The answer is k+l."
+          - problem: "Suppose a | b, so b = a k for an integer k. Write b^3 = a q. Give q as a polynomial in a and k."
+            answer: "a^2k^3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write b = a k (definition of divides). Cube: b^3 = a^3 k^3 (arithmetic). Factor a: b^3 = a(a^2 k^3) with a^2 k^3 an integer (factoring and closure). The answer is a^2k^3."
+          - problem: "Claim: for all integers a, b, c, if a | b and a | c then a | (b + c + 1). Step 1: assume a | b and a | c, so b = a k and c = a l. Step 2: then b + c + 1 = a k + a l + 1 = a(k + l) + 1. Step 3: since a divides a(k + l), and a divides 1, a divides the sum. Step 4: therefore a | (b + c + 1). Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the definition of divides and is correct. Step 2 substitutes and factors correctly. Step 3 is the first invalid step: a need not divide 1, for example a = 2 does not divide 1. Step 4 only restates Step 3, so its error is inherited. The answer is Step 3."
+          - problem: "Consider the claim: for all integers a, b, c, if a divides b and a divides c then a divides b + c + 1. This claim is false. Give the smallest positive integer a for which integers b and c exist that make the claim false."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a = 1 the claim is true because 1 divides every integer (definition of divides). For a = 2, take b = 2 and c = 4: 2 divides 2 and 2 divides 4, but 2 does not divide 2 + 4 + 1 = 7 (counterexample). Thus the smallest is 2 (least counterexample). The answer is 2."
+          - problem: "Write the full proof: for all integers a, b, c, x, y, if a | b and a | c then a | (b x + c y). Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (hypothesis): let a, b, c, x, y be integers with a | b and a | c. Step 2 (definition of divides): there are integers k and l with b = a k and c = a l. Step 3 (substitution): b x + c y = a k x + a l y. Step 4 (factoring): b x + c y = a(k x + l y). Step 5 (closure of integers): k x + l y is an integer, since products and sums of integers are integers. Step 6 (definition of divides): a | (b x + c y). Step 7 (conclusion): since the integers a, b, c, x, y were arbitrary, the statement holds for all integers. This completes the proof."
         constraints: "prove divisibility of linear combinations from the definition of divides"
       - id: kp2
         name: "Parity arguments"
@@ -728,23 +750,67 @@ topics:
         name: "Contrapositive proofs about integers"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: for integers $a, b$, if $ab$ is odd then both $a$ and $b$ are odd.'
-            answer: 'Contrapositive: if $a$ or $b$ is even, $ab$ is even.'
-            solution_sketch: 'Contrapositive: if $a$ or $b$ is even, say $a = 2k$, then $ab = 2(kb)$ is even. Hence if $ab$ is odd, both $a$ and $b$ are odd. $\square$'
-          - problem: 'Prove: for integers $n$, if $n^2 - 6n + 5$ is even then $n$ is odd.'
-            answer: 'Contrapositive: $n$ even implies $n^2 - 6n + 5$ odd.'
-            solution_sketch: 'Contrapositive: if $n = 2k$, then $n^2 - 6n + 5 = 4k^2 - 12k + 5 = 2(2k^2 - 6k + 2) + 1$, odd. So if $n^2 - 6n + 5$ is even, $n$ is odd. $\square$'
+          - problem: "To prove: for integers a and b, if ab is odd, then a is odd and b is odd, use the contrapositive: if a is even or b is even, then ab is even. In the case a is even, take a = 6 and b = 7. Give q so that ab = 2q."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The contrapositive negates the conjunction conclusion: if a is even or b is even, then ab is even. Case a is even: write a = 2k, so ab = (2k)b = 2(kb), which is even for every b. With a = 6 and b = 7: ab = 42 = 2(21). The answer is 21."
+          - problem: "To prove: for integers n, if n^2 - 6n + 5 is even, then n is odd, use the contrapositive: if n is even, then n^2 - 6n + 5 is odd. Take the even value n = 8. Give m so that n^2 - 6n + 5 = 2m + 1."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The contrapositive is: if n is even, then n^2 - 6n + 5 is odd. Take n = 8, which is n = 2k with k = 4. Then n^2 - 6n + 5 = 64 - 48 + 5 = 21 = 2(10) + 1, an odd number, as the contrapositive requires. The answer is 10."
+          - problem: "To prove: for integers a and b, if a^2 b is odd, then a is odd and b is odd, use the contrapositive: if a is even or b is even, then a^2 b is even. In the case b is even, take b = 4 and a = 5. Give q so that a^2 b = 2q."
+            answer: "50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The contrapositive is: if a is even or b is even, then a^2 b is even. Case b is even: write b = 2m, so a^2 b = 2(a^2 m), which is even. With b = 4 and a = 5: a^2 b = 25 * 4 = 100 = 2(50). The answer is 50."
+          - problem: "To prove: for integers a and b, if a + b is odd, then a is odd and b is even or a is even and b is odd, use the contrapositive: if a and b have the same parity, then a + b is even. In the case both are odd, take a = 7 and b = 3. Give q so that a + b = 2q."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The contrapositive assumes the negation of the disjunction conclusion: a and b have the same parity. Case both odd: write a = 2k + 1 and b = 2m + 1, so a + b = 2k + 2m + 2 = 2(k + m + 1), even. With a = 7 and b = 3: a + b = 10 = 2(5). The answer is 5."
+          - problem: "Claim: for integers a and b, if ab is odd, then a is odd and b is odd. A student offers a proof. Step 1: the contrapositive is: if a is odd or b is odd, then ab is odd. Step 2: in the case a is odd, write a = 2k + 1. Step 3: then ab = (2k + 1)b = 2kb + b. Step 4: this is odd in every case, so the claim holds. Which step is the first step that is not valid?"
+            answer: "Step 1"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the first invalid step: it states the inverse instead of the contrapositive, because the negation of the conclusion a is odd and b is odd is a is even or b is even. Step 2 is a correct write of the case a is odd as a = 2k + 1, valid algebra under the wrong Step 1. Step 3 expands correctly: (2k + 1)b = 2kb + b. Step 4 fails since 2kb + b need not be odd, but its failure goes back to Step 1. The answer is Step 1."
+          - problem: "Claim: for integers a and b, if ab is odd, then a is odd and b is odd. In the contrapositive proof, the case a is even begins with a = 2k. The line that shows ab is even is missing. Select the line that is true and completes this case."
+            answer: "ab = 2(kb)"
+            answer_contract: {"kind": "label", "options": [["ab = 2(kb)"], ["ab = 2(k + b)"], ["ab = 2k + b"], ["ab = kb"]]}
+            solution_sketch: "The contrapositive is: if a is even or b is even, then ab is even. Case a is even: write a = 2k, so ab = (2k)b = 2(kb). The option ab = 2(k + b) is the error of distributing the factor 2 over a sum. The option ab = 2k + b leaves b outside the factor 2. The option ab = kb drops the factor 2 entirely. The answer is ab = 2(kb)."
+          - problem: "Write the full proof: for integers a and b, if ab is odd, then a is odd and b is odd. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: for integers a and b, if ab is odd, then a is odd and b is odd. Step 1: state the contrapositive: if a is even or b is even, then ab is even; this negates the conjunction a is odd and b is odd by De Morgan. Step 2: case one, a is even: write a = 2k for some integer k, so ab = (2k)b = 2(kb), which is even. Step 3: case two, b is even: write b = 2m for some integer m, so ab = a(2m) = 2(am), which is even. Step 4: both cases of the disjunction give ab even, so the contrapositive holds in every case. Step 5: a statement and its contrapositive are logically equivalent, so the original claim holds for all integers a and b. The proof is complete."
         constraints: "negate a conjunction conclusion; handle the resulting disjunction"
       - id: kp3
         name: "Contrapositive with real numbers"
         key_prerequisites: [negating-statements]
         exemplars:
-          - problem: 'Prove: for real $x$, if $x^2$ is irrational then $x$ is irrational.'
-            answer: 'Contrapositive: $x$ rational implies $x^2$ rational.'
-            solution_sketch: 'Contrapositive: if $x$ is rational, $x = p/q$, then $x^2 = p^2/q^2$ is rational. Hence $x^2$ irrational implies $x$ irrational. $\square$'
-          - problem: 'Prove: for real $x$, if $x^3 + 1$ is irrational then $x$ is irrational.'
-            answer: 'Contrapositive: $x$ rational implies $x^3 + 1$ rational.'
-            solution_sketch: 'Contrapositive: if $x$ is rational, then $x^3 + 1$ is a sum and product of rationals, hence rational. So $x^3 + 1$ irrational implies $x$ irrational. $\square$'
+          - problem: "To prove: for real x, if x^2 is irrational then x is irrational. For the contrapositive, assume x = p/q is rational. With p = 3 and q = 4, compute x^2 as a fraction."
+            answer: "9/16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (contrapositive equivalence): the claim is equivalent to: if x is rational then x^2 is rational. Step 2 (definition of rational): write x = p/q; with p = 3 and q = 4 this gives x = 3/4. Step 3 (algebra): x^2 = 3^2/4^2 = 9/16, a quotient of integers, hence rational. The value is 9/16."
+          - problem: "Claim: for real x, if x^3 + 1 is irrational then x is irrational. The proof is by contrapositive, so take x = p/q to be rational. With p = 2 and q = 3, compute x^3 + 1 as a fraction."
+            answer: "35/27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (contrapositive equivalence): the claim is equivalent to: if x is rational then x^3 + 1 is rational. Step 2 (definition of rational): write x = p/q; with p = 2 and q = 3 this gives x = 2/3. Step 3 (algebra): x^3 + 1 = 8/27 + 27/27 = 35/27, a quotient of integers, hence rational. The value is 35/27."
+          - problem: "Claim: for real x, if 4x - 3 is irrational then x is irrational. Its contrapositive says: if x is rational then 4x - 3 is rational. Take the rational value x = 1/6. Compute 4x - 3 as a fraction."
+            answer: "-7/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (contrapositive equivalence): prove instead that x rational forces 4x - 3 rational. Step 2 (definition of rational): x = 1/6 is a quotient of integers. Step 3 (algebra): 4x - 3 = 4/6 - 3 = 2/3 - 9/3 = -7/3, a quotient of integers with nonzero denominator, hence rational. The value is -7/3."
+          - problem: "Claim: for real x, if x^2 + 1 is irrational then x is irrational. Step 1: prove the contrapositive: if x is rational then x^2 + 1 is rational. Step 2: write x = p/q with integers p and q and q not 0. Step 3: x^2 + 1 = p^2/q^2 + q^2/q^2 = (p^2 + q^2)/q^2. Step 4: this is a quotient of two integers, so it is an integer; hence x^2 + 1 is rational. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 states the contrapositive correctly, so it is valid. Step 2 applies the definition of rational, so it is valid. Step 3 is correct algebra because 1 is written as q^2/q^2. Step 4 is the first invalid step: a quotient of two integers is rational but need not be an integer, for example 1/2, so the conclusion is drawn from a false assertion. The first invalid step is Step 4."
+          - problem: "In the contrapositive proof of: for real x, if 3x + 2 is irrational then x is irrational, assume x = p/q is rational. The line that rewrites 3x + 2 in terms of p and q is missing. Select the line that follows from x = p/q."
+            answer: "(3p+2q)/q"
+            answer_contract: {"kind": "label", "options": [["(3p+2q)/q"], ["(3p+2)/q"], ["(3p-2q)/q"], ["3(p+2)/q"]]}
+            solution_sketch: "Step 1 (definition of rational): x = p/q with integers p and q and q not 0. Step 2 (algebra): 3x + 2 = 3p/q + 2 = 3p/q + 2q/q = (3p+2q)/q. The option (3p+2)/q forgets to write 2 over the denominator q. The option (3p-2q)/q has a sign error on the term 2q. The option 3(p+2)/q wrongly factors 3x + 2 as 3(x + 2). The correct line is (3p+2q)/q."
+          - problem: "Claim: for real x, if 2 - x^2 is irrational then x is irrational. Step 1: prove the contrapositive: if x is rational then 2 - x^2 is rational. Step 2: write x = p/q with integers p and q and q not 0. Step 3: 2 - x^2 = 2 - p^2/q^2 = (2 - p^2)/q^2. Step 4: this is a quotient of two integers, so 2 - x^2 is rational. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly identifies the contrapositive, so it is valid. Step 2 applies the definition of rational, so it is valid. Step 3 is the first invalid step: 2 must be written as 2q^2/q^2, giving (2q^2 - p^2)/q^2, not (2 - p^2)/q^2. Step 4 would be valid after that correction, since the corrected form is a quotient of integers. The first invalid step is Step 3."
+          - problem: "Write the full proof: for every real x, if 3x + 4 is irrational then x is irrational. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (contrapositive equivalence): the statement 'if 3x + 4 is irrational then x is irrational' is logically equivalent to its contrapositive: if x is rational then 3x + 4 is rational. Step 2 (definition of rational): assume x is rational, so x = p/q for some integers p and q with q not 0. Step 3 (algebra): then 3x + 4 = 3p/q + 4 = 3p/q + 4q/q = (3p + 4q)/q. Step 4 (closure): 3p + 4q is an integer and q is a nonzero integer, so (3p + 4q)/q is a quotient of two integers and therefore rational. Step 5 (conclusion): therefore 3x + 4 is rational whenever x is rational; since this contrapositive is equivalent to the original implication, if 3x + 4 is irrational then x is irrational. This proves the claim."
         constraints: "identify and prove the contrapositive; use the definition of rational"
     diagnostic_exemplar:
       problem: 'Prove: for every real $x$, if $x^2 + 2x$ is irrational then $x$ is irrational.'
@@ -820,12 +886,34 @@ topics:
         name: "Equivalence chains"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: for real $x$, $x^2 = 1$ if and only if $x = 1$ or $x = -1$.'
-            answer: '$x^2 = 1 \Leftrightarrow x^2 - 1 = 0 \Leftrightarrow (x-1)(x+1) = 0 \Leftrightarrow x = 1$ or $x = -1$.'
-            solution_sketch: 'Chain of equivalences: subtracting $1$ and factoring are reversible, and a product of reals is zero iff a factor is zero. Each link is an iff, so the ends are equivalent. $\square$'
-          - problem: 'Prove: integers $a$ and $b$ have the same parity if and only if $a - b$ is even.'
-            answer: 'Same parity $\Leftrightarrow a - b$ is a difference of two evens or two odds $\Leftrightarrow a - b$ even; conversely $a - b = 2k$ forces equal parities.'
-            solution_sketch: 'If both even, $a - b = 2(j - k)$; if both odd, $a - b = 2(j - k)$. Conversely if $a - b = 2k$ and $b$ is even then $a = 2k + b$ is even, and if $b$ is odd then $a$ is odd — parities agree. $\square$'
+          - problem: "In the equivalence chain for real x, x^2 + 6x + 5 = 0 iff ? = 0 iff x = -1 or x = -5. Give the missing factored expression."
+            answer: "(x+1)(x+5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the equivalence chain: x^2 + 6x + 5 = 0 iff (x + 1)(x + 5) = 0. Factor the quadratic by the product-sum rule: the numbers 1 and 5 multiply to 5 and add to 6. This factoring step is reversible. The missing factored expression is (x+1)(x+5)."
+          - problem: "For integers a and b, a and b have the same parity iff a - b is even. In the both-odd case write a = 2j+1 and b = 2k+1. Give a - b as a multiple of 2."
+            answer: "2(j-k)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the both-odd case: a = 2j + 1 and b = 2k + 1. Subtract: a - b = 2j + 1 - 2k - 1 = 2j - 2k. Factor 2: a - b = 2(j - k). The answer is 2(j-k)."
+          - problem: "In the equivalence chain for an integer n, n is even iff n = 2k for some integer k iff n^2 = ?. Give n^2 as an expression in k."
+            answer: "4k^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with n even, so n = 2k for some integer k. Square both sides: n^2 = (2k)^2. Simplify the square: (2k)^2 = 4k^2. The answer is 4k^2."
+          - problem: "A student claims that for every positive integer n, 4 divides n if and only if 4 divides n^2. Give the smallest positive integer n for which this biconditional fails."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test n = 1: 4 does not divide 1, and 4 does not divide 1^2 = 1, so both sides are false and the biconditional holds there. Test n = 2: 4 does not divide 2, but 4 does divide 2^2 = 4, so the converse link fails while the forward link stays true. That shows one link of the claimed chain is only an implication, not an equivalence. The smallest positive integer is 2."
+          - problem: "In the equivalence chain for integers n, n is odd iff n = 2k+1 for some integer k iff n^2 = (2k+1)^2 iff n^2 = 4k^2+4k+1, the line n^2 - 1 = ? is missing. Select the expression that completes the equivalence."
+            answer: "4k(k+1)"
+            answer_contract: {"kind": "label", "options": [["4k(k+1)"], ["4k(k-1)"], ["2k(k+1)"], ["4k^2+1"]]}
+            solution_sketch: "Expand the square: n^2 = (2k+1)^2 = 4k^2 + 4k + 1. Subtract 1: n^2 - 1 = 4k^2 + 4k. Factor 4k: n^2 - 1 = 4k(k+1). The option 4k(k-1) is a sign error. The option 2k(k+1) loses a factor 2. The option 4k^2+1 adds 1 instead of subtracting. The answer is 4k(k+1)."
+          - problem: "Which fact justifies the last equivalence in the chain x^2 = 2x iff x^2 - 2x = 0 iff x(x - 2) = 0 iff x = 0 or x = 2?"
+            answer: "zero product"
+            answer_contract: {"kind": "label", "options": [["zero product"], ["square root"], ["factor theorem"], ["difference of squares"]]}
+            solution_sketch: "The chain is x^2 = 2x iff x^2 - 2x = 0 by subtracting 2x, and then x^2 - 2x = x(x - 2) by factoring. The last equivalence from x(x - 2) = 0 to x = 0 or x = 2 uses the zero-product property. The option square root applies to x^2 = c, not to a product. The option factor theorem states a root gives a factor, not a product gives roots. The option difference of squares applies to a^2 - b^2, not here. The answer is zero product."
+          - problem: "Write the full proof: for real x, x^2 - 5x + 6 = 0 if and only if x = 2 or x = 3. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: for real x, x^2 - 5x + 6 = 0 iff x = 2 or x = 3. Step 1: the equation x^2 - 5x + 6 = 0 is equivalent to itself by identity. Step 2: factor x^2 - 5x + 6 = (x - 2)(x - 3); this factoring is reversible. Step 3: (x - 2)(x - 3) = 0 iff x - 2 = 0 or x - 3 = 0 by the zero-product property for real numbers. Step 4: x - 2 = 0 iff x = 2, and x - 3 = 0 iff x = 3, by adding 2 or 3 to both sides. Step 5: combine the reversible links, so x^2 - 5x + 6 = 0 iff x = 2 or x = 3. Each link is a genuine equivalence, so the biconditional holds."
         constraints: "each chain link must be a genuine equivalence, not just an implication"
     diagnostic_exemplar:
       problem: 'Prove: an integer $n$ is odd if and only if $n^2 + 2n$ is odd.'
@@ -924,12 +1012,34 @@ topics:
         name: "Simple impossibility arguments"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: the sum of a rational number and an irrational number is irrational.'
-            answer: 'Assume $r + s = t$ rational with $r$ rational; then $s = t - r$ is rational, a contradiction.'
-            solution_sketch: 'Let $r$ be rational, $s$ irrational, and suppose $r + s$ is rational. Then $s = (r + s) - r$ is a difference of rationals, hence rational — contradicting irrationality of $s$. $\square$'
-          - problem: 'Prove: there are no integers $m, n$ with $2m + 4n = 7$.'
-            answer: 'The left side is even and $7$ is odd — contradiction.'
-            solution_sketch: 'Suppose such $m, n$ exist. Then $7 = 2(m + 2n)$ is even, contradicting that $7$ is odd. $\square$'
+          - problem: "Assume $r$ is rational and $s$ is irrational. To prove $r + s$ is irrational, suppose $r + s = t$ with $t$ rational. Give $s$ in terms of $r$ and $t$."
+            answer: "t-r"
+            answer_contract: {"kind": "function", "vars": ["r", "t"]}
+            solution_sketch: "Assume r + s = t. Subtract r from both sides: s = t - r. This is the full object. Since t and r are rational, their difference t - r is rational by closure of rationals under subtraction, contradicting that s is irrational. The expression for s is t-r."
+          - problem: "Suppose integers $m$ and $n$ satisfy $2m + 4n = 7$. Divide both sides by 2. Give the value of $m + 2n$."
+            answer: "7/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume integers m and n satisfy 2m + 4n = 7. Factor the left side: 2(m + 2n) = 7. Divide both sides by 2: m + 2n = 7/2. The left side m + 2n is an integer, but 7/2 is not an integer, a contradiction. The value is 7/2."
+          - problem: "Suppose integers $a$ and $b$ satisfy $6a + 9b = 14$. The left side is divisible by 3. Give the remainder when 14 is divided by 3."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume integers a and b satisfy 6a + 9b = 14. Factor the left side: 3(2a + 3b) = 14. The left side is divisible by 3. Divide 14 by 3: 3 times 4 is 12 and the remainder is 2. The remainder is 2."
+          - problem: "Suppose $\\sqrt{2} = p/q$ with integers $p$ and $q$ in lowest terms. Squaring gives $p^2 = 2q^2$, so $p$ is even; write $p = 2k$. Give $q^2$ in terms of $k$."
+            answer: "2k^2"
+            answer_contract: {"kind": "function", "vars": ["k"]}
+            solution_sketch: "Assume sqrt(2) = p/q with p and q integers in lowest terms. Squaring gives p^2 = 2q^2, so p is even; write p = 2k. Substitute: (2k)^2 = 2q^2, so 4k^2 = 2q^2. Divide by 2: q^2 = 2k^2. Then q is even too, contradicting lowest terms. The expression is 2k^2."
+          - problem: "A student argues that $x^2$ is irrational whenever $x$ is irrational. Step 1: let $x$ be irrational and assume $x^2$ is rational. Step 2: write $x^2 = r$ with $r$ rational. Step 3: then $x = \\sqrt{r}$, and since $r$ is rational, $\\sqrt{r}$ is rational. Step 4: so $x$ is rational, contradicting the assumption. Which step is the first invalid step?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 states the assumption for contradiction, which is allowed. Step 2 only renames the assumption as x^2 = r, a restatement with no content. Step 3 is the first error: a square root of a rational number need not be rational, for example sqrt(2), so the inference that x is rational is unjustified. Step 4 would be a valid contradiction only if Step 3 were repaired. The first invalid step is Step 3."
+          - problem: "Suppose $2m + 4n = 7$. Since the left side is $2(m + 2n)$, the equation forces 7 to have which property? Select the property that contradicts the known fact."
+            answer: "even"
+            answer_contract: {"kind": "label", "options": [["even"], ["odd"], ["zero"], ["negative"]]}
+            solution_sketch: "The equation 2m + 4n = 7 factors as 2(m + 2n) = 7. The left side is a multiple of 2, so 7 would have to be even. That contradicts the known fact that 7 is odd. The option odd is the actual parity, so it does not follow from the equation; zero and negative are not forced by the factor 2. The answer is even."
+          - problem: "Write the full proof: there are no integers $m$ and $n$ with $2m + 4n = 7$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: assume for contradiction that there are integers m and n with 2m + 4n = 7. Step 2: factor the left side to get 2(m + 2n) = 7. Step 3: divide both sides by 2, giving m + 2n = 7/2. Step 4: the left side m + 2n is an integer because m and n are integers, but the right side 7/2 is not an integer. Step 5: this is an explicit contradiction between an integer and a non-integer. Step 6: therefore the assumption is false, so no integers m and n satisfy 2m + 4n = 7."
         constraints: "reach an explicit contradiction (odd = even, rational = irrational, etc.) and say what it contradicts"
     diagnostic_exemplar:
       problem: 'Prove by contradiction: there is no smallest integer.'
@@ -968,12 +1078,34 @@ topics:
         name: "Parity and divisibility contradictions"
         key_prerequisites: [contradiction-template]
         exemplars:
-          - problem: 'Prove: there are no integers $a, b$ with $a^2 - 4b = 2$.'
-            answer: 'Assume such $a, b$; then $a^2 \equiv 2 \pmod 4$, but squares are $\equiv 0$ or $1 \pmod 4$.'
-            solution_sketch: 'Suppose $a^2 - 4b = 2$. Then $a^2 = 4b + 2 \equiv 2 \pmod 4$. But every square is $0$ or $1 \pmod 4$ (cases on parity of $a$) — contradiction. $\square$'
-          - problem: 'Prove: the equation $6a + 9b = 104$ has no integer solutions.'
-            answer: 'Assume a solution; $3 \mid (6a + 9b)$ but $104 = 3 \cdot 34 + 2$, contradiction.'
-            solution_sketch: 'Suppose integers $a, b$ satisfy the equation. The left side is $3(2a + 3b)$, divisible by $3$; but $104$ leaves remainder $2$ on division by $3$ — contradiction. $\square$'
+          - problem: "Suppose integers a and b satisfy a^2 - 4b = 2. Rearrange to a^2 = 4b + 2. What remainder does a^2 leave on division by 4? Give the remainder as a whole number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (assumption): suppose integers a and b satisfy a^2 - 4b = 2. Step 2 (rearrange): then a^2 = 4b + 2, so a^2 leaves remainder 2 when divided by 4. Step 3 (residue rule): every square leaves remainder 0 or 1 when divided by 4. The answer is 2."
+          - problem: "Suppose integers a and b satisfy 6a + 9b = 104. The left side factors as d(2a + 3b) for an integer d. Give the integer d."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (assumption): suppose integers a and b satisfy 6a + 9b = 104. Step 2 (factor): the left side is 6a + 9b = 3(2a + 3b), so d = 3. Step 3 (remainder check): 104 = 3 * 34 + 2, so 104 is not divisible by 3. The answer is 3."
+          - problem: "Suppose an integer n satisfies n^2 + n = 1. Then n^2 + n = n(n+1). What is n(n+1) congruent to modulo 2? Give the residue as a whole number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (assumption): suppose an integer n satisfies n^2 + n = 1. Step 2 (factor): n^2 + n = n(n+1), a product of consecutive integers. Step 3 (parity rule): one of n and n+1 is even, so n(n+1) is even. The answer is 0."
+          - problem: "Suppose integers a and b satisfy 8a + 12b = 50. The left side is divisible by 4. What is the remainder when 50 is divided by 4? Give the remainder as a whole number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (assumption): suppose integers a and b satisfy 8a + 12b = 50. Step 2 (factor): the left side is 8a + 12b = 4(2a + 3b), so it is divisible by 4. Step 3 (remainder): 50 = 4 * 12 + 2, so the remainder is 2. The answer is 2."
+          - problem: "Claim: there are no integers a and b with 4a + 6b = 15. Step 1: suppose integers a and b satisfy 4a + 6b = 15. Step 2: the left side is 2(2a + 3b), so it is a multiple of 2. Step 3: 15 = 2 * 7 + 1, so 15 is a multiple of 2. Step 4: this is a contradiction, so no such integers exist. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 (assumption): supposing integers a and b satisfy 4a + 6b = 15 is the correct contradiction setup. Step 2 (factor): 4a + 6b = 2(2a + 3b), so the left side is a multiple of 2; this is correct. Step 3 (check): 15 = 2 * 7 + 1 leaves remainder 1 on division by 2, so 15 is not a multiple of 2; the claim that 15 is a multiple of 2 is false and does not follow from the assumption. Step 4 (conclusion): with Step 3 corrected to the true fact that 15 leaves remainder 1 while a multiple of 2 cannot, the contradiction is valid. Wrong options: Step 1 is a correct assumption, Step 2 is a correct factoring step, and Step 4 is a correct conclusion. The answer is Step 3."
+          - problem: "In a contradiction proof for the claim that no integer n satisfies n^2 = 4k + 2, the line 'Since n^2 = 4k + 2, n^2 is congruent to 2 modulo 4. But ___' is missing. Select the missing line that creates the contradiction."
+            answer: "a square is 0 or 1 modulo 4"
+            answer_contract: {"kind": "label", "options": [["a square is 0 or 1 modulo 4"], ["a square is 0 or 2 modulo 4"], ["a square is 1 or 2 modulo 4"], ["a square is 0 or 3 modulo 4"]]}
+            solution_sketch: "Step 1 (assumption): in a contradiction proof for n^2 = 4k + 2, suppose such an integer n exists. Step 2 (residue): then n^2 is congruent to 2 modulo 4. Step 3 (square residues): checking even n gives remainder 0, and odd n gives remainder 1, so a square is 0 or 1 modulo 4. Step 4 (wrong options): 'a square is 0 or 2 modulo 4' wrongly includes 2; 'a square is 1 or 2 modulo 4' includes 2 and omits 0; 'a square is 0 or 3 modulo 4' wrongly includes 3. The answer is a square is 0 or 1 modulo 4."
+          - problem: "Write the full proof: there are no integers a and b with a^2 - 4b = 3. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (assumption): suppose for contradiction that integers a and b satisfy a^2 - 4b = 3. Step 2 (rearrange): then a^2 = 4b + 3, so a^2 leaves remainder 3 on division by 4. Step 3 (residue rule): every integer a is even or odd. If a = 2m, then a^2 = 4m^2 leaves remainder 0. If a = 2m + 1, then a^2 = 4(m^2 + m) + 1 leaves remainder 1. So a square modulo 4 is 0 or 1, never 3. Step 4 (contradiction): the assumption forces remainder 3, but the residue rule forces 0 or 1; this clash is impossible. Step 5 (conclusion): therefore no integers a and b satisfy a^2 - 4b = 3."
         constraints: "derive a divisibility or residue clash from the assumed solution"
       - id: kp2
         name: "Irrationality proofs"
