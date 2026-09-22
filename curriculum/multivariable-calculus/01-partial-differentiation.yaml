@@ -730,18 +730,30 @@ topics:
         name: "Interpretation and signs from contour maps"
         key_prerequisites: [first-order-partial-derivatives, functions-several-variables]
         exemplars:
-          - problem: 'Let $T(x, t)$ be the temperature at position $x$ and time $t$. What does $T_t(5, 30)$ measure?'
-            answer: 'The instantaneous rate of change of temperature with respect to time at position $x = 5$, at time $t = 30$ (position held fixed).'
-            solution_sketch: '$T_t(5,30)$ is the rate of change of temperature in time at the fixed position $x=5$ and time $t=30$.'
-            answer_contract: {kind: none}
-          - problem: 'On a contour map of $f$, moving right (in the $+x$ direction) from a point $P$ you cross from the level curve $f = 40$ to the level curve $f = 30$. What is the sign of $f_x(P)$?'
-            answer: 'Negative: $f$ decreases in the $+x$ direction.'
-            solution_sketch: 'Crossing from the higher level $f=40$ to the lower level $f=30$ as $x$ increases means $f$ decreases in the $+x$ direction, so $f_x(P)<0$.'
-            answer_contract: {kind: none}
-          - problem: 'Along the horizontal line through $P$, the contour $f = 10$ crosses at $x = 2$ and the contour $f = 20$ crosses at $x = 3$. Estimate $f_x$ near $P$.'
-            answer: '$f_x \approx \dfrac{20 - 10}{3 - 2} = 10$'
-            solution_sketch: '$f_x\approx\frac{20-10}{3-2}=10$.'
-            answer_contract: {kind: none}
+          - problem: "On a contour map of f, moving right from P you cross the level curve f = 20 at x = 1 and the level curve f = 50 at x = 4. State which variable is held fixed in f_x(P), and estimate f_x(P)."
+            answer: "fixed = y; fx = 10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["y"], ["x"]]}, "name": "fixed"}, {"contract": {"kind": "exact"}, "name": "fx"}]}
+            solution_sketch: "By the definition of the partial derivative, f_x holds y fixed, so the fixed variable is y. The difference quotient along the horizontal line gives (50 - 20)/(4 - 1) = 10. The wrong option x confuses the variable that changes with the variable held fixed. The answer is fixed = y; fx = 10."
+          - problem: "On a contour map of f, moving right from P you cross f = 40 at x = 2 and f = 10 at x = 5. State the sign of f_x(P), and estimate f_x(P)."
+            answer: "sign = negative; fx = -10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["negative"], ["positive"]]}, "name": "sign"}, {"contract": {"kind": "exact"}, "name": "fx"}]}
+            solution_sketch: "The sign of f_x is the sign of the change in f as x increases while y is fixed. The difference quotient gives (10 - 40)/(5 - 2) = -10, so the sign is negative. The wrong option positive ignores that f drops from 40 to 10 as x increases. The answer is sign = negative; fx = -10."
+          - problem: "Along the horizontal line through P, the contour f = 30 crosses at x = 1 and the contour f = 50 crosses at x = 5. Find f_x near P."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The partial derivative f_x is estimated by the change in f divided by the change in x along a horizontal line, where y is fixed. The difference quotient is (50 - 30)/(5 - 1) = 5. The answer is 5."
+          - problem: "Along the vertical line through P, the contour f = 20 crosses at y = 0 and the contour f = 50 crosses at y = 5. Find f_y near P."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The partial derivative f_y is estimated by the change in f divided by the change in y along a vertical line, where x is fixed. The difference quotient is (50 - 20)/(5 - 0) = 6. The answer is 6."
+          - problem: "On a contour map of f, moving upward from P you cross f = 70 at y = 1 and f = 40 at y = 4. State the sign of f_y(P), and estimate f_y(P)."
+            answer: "sign = negative; fy = -10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["negative"], ["positive"]]}, "name": "sign"}, {"contract": {"kind": "exact"}, "name": "fy"}]}
+            solution_sketch: "The sign of f_y is the sign of the change in f as y increases while x is fixed. The difference quotient gives (40 - 70)/(4 - 1) = -10, so the sign is negative. The wrong option positive ignores that f drops from 70 to 40 as y increases. The answer is sign = negative; fy = -10."
+          - problem: "On a contour map of temperature T, moving upward from Q you cross the level curve T = 60 at y = 2 and the level curve T = 44 at y = 4. State which variable is held fixed in T_y(Q), and estimate T_y(Q)."
+            answer: "fixed = x; Ty = -8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["x"], ["y"]]}, "name": "fixed"}, {"contract": {"kind": "exact"}, "name": "Ty"}]}
+            solution_sketch: "By the definition of the partial derivative, T_y holds x fixed, so the fixed variable is x. The difference quotient along the vertical line gives (44 - 60)/(4 - 2) = -8. The wrong option y confuses the variable that changes with the variable held fixed. The answer is fixed = x; Ty = -8."
         constraints: "contour levels differ by round numbers; interpretation answers must name the fixed variable"
     diagnostic_exemplar:
       problem: 'On a contour map of $f$, the level curve $f = 30$ crosses the horizontal line through $P$ at $x = 4$ and the level curve $f = 24$ crosses it at $x = 6$. Estimate $f_x$ near $P$, and say what its sign means.'
@@ -781,14 +793,30 @@ topics:
         name: "Exponentials and logarithms"
         key_prerequisites: [chain-rule, derivatives-exp-log]
         exemplars:
-          - problem: 'Let $f(x, y) = e^{xy}$. Find $f_x$ and $f_y$.'
-            answer: '$f_x = y e^{xy}$, $\; f_y = x e^{xy}$'
-            solution_sketch: 'Holding $y$ fixed, $f_x=y e^{xy}$; holding $x$ fixed, $f_y=x e^{xy}$.'
-            answer_contract: {kind: none}
-          - problem: 'Let $f(x, y) = \ln(x^2 + y^2)$. Find $f_x$.'
-            answer: '$\dfrac{2x}{x^2 + y^2}$'
-            solution_sketch: '$f_x=\frac{1}{x^2+y^2}\cdot 2x=\frac{2x}{x^2+y^2}$.'
-            answer_contract: {kind: none}
+          - problem: "Let f(x, y) = e^(xy). Find f_x(2, 3)."
+            answer: "3e^6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x, y) = e^(xy). Holding y fixed, the chain rule gives f_x = y e^(xy). At (2, 3), f_x = 3 e^(6) = 3e^6."
+          - problem: "Let f(x, y) = ln(x^2 + y^2). Find f_x(1, 2)."
+            answer: "2/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x, y) = ln(x^2 + y^2). The chain rule gives f_x = (1/(x^2 + y^2)) * 2x. At (1, 2), f_x = 2/5."
+          - problem: "Let f(x, y) = e^(x^2 y). Find f_y(1, 3)."
+            answer: "e^3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x, y) = e^(x^2 y). Holding x fixed, the chain rule gives f_y = x^2 e^(x^2 y). At (1, 3), f_y = e^3."
+          - problem: "Let f(x, y) = ln(x + y^2). Find f_y(3, 1)."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x, y) = ln(x + y^2). Holding x fixed, the chain rule gives f_y = 2y/(x + y^2). At (3, 1), f_y = 1/2."
+          - problem: "Let f(x, y) = e^(2x + 3y). Find f_x(0, 1)."
+            answer: "2e^3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x, y) = e^(2x + 3y). Holding y fixed, the chain rule gives f_x = 2 e^(2x + 3y). At (0, 1), f_x = 2e^3."
+          - problem: "Let f(x, y) = ln(x^2 + y). Find f_x(2, 1)."
+            answer: "4/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write f(x, y) = ln(x^2 + y). The chain rule gives f_x = 2x/(x^2 + y). At (2, 1), f_x = 4/5."
         constraints: "one composition layer; inner functions polynomial in x, y"
       - id: kp2
         name: "Trigonometric compositions"
@@ -800,6 +828,22 @@ topics:
           - problem: 'Let $f(x, y) = \cos(x y^2)$. Find $f_y$.'
             answer: '$-2xy \sin(x y^2)$'
             solution_sketch: '$-\sin(xy^2) \cdot \frac{\partial}{\partial y}(xy^2) = -\sin(xy^2) \cdot 2xy$.'
+          - problem: "Let f(x, y) = sin(x^3 y). Find f_x."
+            answer: "3x^2 y cos(x^3 y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Use the chain rule for a trigonometric composition: f_x = cos(x^3 y) times the x-derivative of the inner monomial x^3 y. The inner x-derivative is 3x^2 y. Multiplying gives f_x = 3x^2 y cos(x^3 y)."
+          - problem: "Let f(x, y) = cos(x y^3). Find f_y."
+            answer: "-3x y^2 sin(x y^3)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Use the chain rule for a cosine composition: f_y = -sin(x y^3) times the y-derivative of the inner monomial x y^3. The inner y-derivative is 3x y^2. Multiplying gives f_y = -3x y^2 sin(x y^3)."
+          - problem: "Let f(x, y) = sin(x^2 y^2). Find f_y."
+            answer: "2x^2 y cos(x^2 y^2)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Use the chain rule for a sine composition: f_y = cos(x^2 y^2) times the y-derivative of the inner monomial x^2 y^2. The inner y-derivative is 2x^2 y. Multiplying gives f_y = 2x^2 y cos(x^2 y^2)."
+          - problem: "Let f(x, y) = cos(x^3 y^2). Find f_x."
+            answer: "-3x^2 y^2 sin(x^3 y^2)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Use the chain rule for a cosine composition: f_x = -sin(x^3 y^2) times the x-derivative of the inner monomial x^3 y^2. The inner x-derivative is 3x^2 y^2. Multiplying gives f_x = -3x^2 y^2 sin(x^3 y^2)."
         constraints: "sin or cos of a monomial in x, y; one chain-rule layer"
       - id: kp3
         name: "Combined forms and evaluation"
@@ -810,6 +854,22 @@ topics:
             solution_sketch: '$f_x = 2xy e^{x^2}$; at $(1, 2)$: $2 \cdot 1 \cdot 2 \cdot e = 4e$.'
           - problem: 'Let $f(x, y) = e^{2x} \cos(3y)$. Find $f_y$.'
             answer: '$-3e^{2x} \sin(3y)$'
+          - problem: "Let f(x, y) = e^x sin(2y). Compute f_y(1, pi/6)."
+            answer: "e"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x, y) = e^x sin(2y). Differentiate with respect to y, holding x fixed: f_y = 2 e^x cos(2y). Substitute x = 1 and y = pi/6: f_y = 2 e cos(pi/3) = 2 e * (1/2) = e."
+          - problem: "Let f(x, y) = e^y sin(3x). Compute f_x(0, 1)."
+            answer: "3e"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x, y) = e^y sin(3x). Differentiate with respect to x, holding y fixed: f_x = 3 e^y cos(3x). Substitute x = 0 and y = 1: f_x = 3 e cos(0) = 3e."
+          - problem: "Let f(x, y) = x e^(2y) cos(x). Find f_y as a function of x and y."
+            answer: "2x e^(2y) cos(x)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The function is f(x, y) = x e^(2y) cos(x). Differentiate with respect to y, holding x fixed: the factor x cos(x) is constant, and the derivative of e^(2y) is 2 e^(2y). Multiply: f_y = 2x e^(2y) cos(x)."
+          - problem: "Let f(x, y) = e^x sin(3y). Compute f_y(1, pi/3)."
+            answer: "-3e"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x, y) = e^x sin(3y). Differentiate with respect to y, holding x fixed: f_y = 3 e^x cos(3y). Substitute x = 1 and y = pi/3: f_y = 3 e cos(pi) = 3e(-1) = -3e."
         constraints: "products of an exponential and a trig or polynomial factor; evaluations at points giving exact multiples of e"
     diagnostic_exemplar:
       problem: 'Let $f(x, y) = e^{2x}\sin(3y)$. Compute $f_y(1, 0)$.'
