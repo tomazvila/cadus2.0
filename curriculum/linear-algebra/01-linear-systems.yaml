@@ -872,18 +872,30 @@ topics:
         name: When nontrivial solutions exist
         key_prerequisites: [solution-sets-free-variables, matrix-vector-equations]
         exemplars:
-          - problem: 'A homogeneous system has $2$ equations and $3$ unknowns. Must it have nonzero solutions?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'At most $2$ pivots for $3$ variables leaves at least one free variable.'
-          - problem: 'If $A$ is $3 \times 3$ with $3$ pivots, what are the solutions of $A\mathbf{x} = \mathbf{0}$?'
-            answer: "Only the trivial solution x = 0"
-            answer_contract: {kind: none}
-            solution_sketch: 'Three pivots in a 3x3 system leave no free variables, so the only solution is the trivial one $\mathbf{x} = \mathbf{0}$.'
-          - problem: '$A\mathbf{x} = \mathbf{0}$ has a free variable. How many solutions are there?'
-            answer: "Infinitely many"
-            answer_contract: {kind: none}
-            solution_sketch: 'A free variable can take any real value, and each choice gives a distinct solution, so there are infinitely many.'
+          - problem: "A homogeneous system has 4 equations, 7 unknowns, and its coefficient matrix has 4 pivots. State whether it has a nonzero solution other than the trivial one, and give the number of free variables."
+            answer: "verdict = yes; free = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "free"}]}
+            solution_sketch: "The system has 4 equations, 7 unknowns, and a coefficient matrix with 4 pivots. Use the pivot-count rule: free variables = unknowns - pivots = 7 - 4 = 3. Since 3 free variables exist, a nonzero solution is guaranteed. The answer is verdict = yes; free = 3."
+          - problem: "A homogeneous system has 3 equations, 3 unknowns, and its coefficient matrix has 3 pivots. How many free variables does it have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The system has 3 equations, 3 unknowns, and the matrix has 3 pivots. Use the pivot-count rule: free variables = unknowns - pivots = 3 - 3 = 0. The number of free variables is 0."
+          - problem: "A homogeneous system has 5 unknowns and its coefficient matrix has 2 pivots. How many free variables does it have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The system has 5 unknowns and the matrix has 2 pivots. Use the pivot-count rule: free variables = unknowns - pivots = 5 - 2 = 3. The number of free variables is 3."
+          - problem: "A homogeneous system has 4 equations and 6 unknowns. Find the minimum number of free variables."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The system has 4 equations and 6 unknowns. Use the pivot-count rule: at most 4 pivots, so free variables = 6 - pivots >= 6 - 4 = 2. The minimum number of free variables is 2."
+          - problem: "A homogeneous system has 4 equations and 3 unknowns. State whether a nonzero solution is guaranteed, and give the minimum number of free variables."
+            answer: "verdict = no; free = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "free"}]}
+            solution_sketch: "The system has 4 equations and 3 unknowns. Use the pivot-count rule: at most 3 pivots, so free variables = 3 - pivots can be 0 with 3 pivots. A nonzero solution is not guaranteed. The answer is verdict = no; free = 0."
+          - problem: "A homogeneous system has 3 equations and 5 unknowns. State whether a nonzero solution is guaranteed, and give the minimum number of free variables."
+            answer: "verdict = yes; free = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "free"}]}
+            solution_sketch: "The system has 3 equations and 5 unknowns. Use the pivot-count rule: at most 3 pivots, so free variables = 5 - pivots >= 5 - 3 = 2. At least 2 free variables guarantee a nonzero solution. The answer is verdict = yes; free = 2."
         constraints: "reason from pivot counts; no computation beyond counting"
     diagnostic_exemplar:
       problem: 'A homogeneous system in $x, y, z$ consists of the single equation $x + 3y - z = 0$. Must it have nonzero solutions? Give all solutions, taking $y = s$ and $z = t$.'
@@ -951,6 +963,22 @@ topics:
           - problem: 'Find the parabola $y = ax^2 + bx + c$ through $(1, 0)$, $(2, 3)$, $(3, 8)$.'
             answer: "y = x^2 - 1"
             solution_sketch: 'Differences of the three equations give $3a + b = 3$ and $5a + b = 5$, so $a = 1$, $b = 0$, $c = -1$.'
+          - problem: "Find the parabola $y = ax^2 + bx + c$ through $(0, 2)$, $(1, 6)$, and $(2, 14)$. Give the answer as a polynomial in x."
+            answer: "2x^2+2x+2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 (substitute points): the system is $c = 2$, $a + b + c = 6$, and $4a + 2b + c = 14$. Step 2 (eliminate c): subtract to get $a + b = 4$ and $2a + b = 6$. Step 3 (row reduce): subtract gives $a = 2$, then $b = 2$, and $c = 2$. The fitted polynomial is 2x^2+2x+2."
+          - problem: "Find the parabola $y = ax^2 + bx + c$ through $(0, -1)$, $(1, 1)$, and $(2, 7)$. Give the answer as a polynomial in x."
+            answer: "2x^2-1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 (substitute points): the system is $c = -1$, $a + b + c = 1$, and $4a + 2b + c = 7$. Step 2 (eliminate c): subtract to get $a + b = 2$ and $2a + b = 4$. Step 3 (row reduce): subtract gives $a = 2$, then $b = 0$, and $c = -1$. The fitted polynomial is 2x^2-1."
+          - problem: "A projectile follows $y = ax^2 + bx + c$. It is at $(0, 1)$, $(1, 2)$, and $(2, 7)$. Find the polynomial that fits these points. Give the answer as a polynomial in x."
+            answer: "2x^2-x+1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 (substitute data points): the system is $c = 1$, $a + b + c = 2$, and $4a + 2b + c = 7$. Step 2 (eliminate c): subtract to get $a + b = 1$ and $2a + b = 3$. Step 3 (row reduce): subtract gives $a = 2$, then $b = -1$, and $c = 1$. The fitted polynomial is 2x^2-x+1."
+          - problem: "Find the parabola $y = ax^2 + bx + c$ through $(0, -2)$, $(1, -3)$, and $(2, -2)$. Give the answer as a polynomial in x."
+            answer: "x^2-2x-2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 (substitute points): the system is $c = -2$, $a + b + c = -3$, and $4a + 2b + c = -2$. Step 2 (eliminate c): subtract to get $a + b = -1$ and $2a + b = 0$. Step 3 (row reduce): subtract gives $a = 1$, then $b = -2$, and $c = -2$. The fitted polynomial is x^2-2x-2."
         constraints: "integer sample points; coefficients a, b, c integers in -3..3; include x = 0 among the points when possible"
       - id: kp3
         name: Fitting from mixed conditions
@@ -962,6 +990,22 @@ topics:
           - problem: 'Find $y = ax^2 + bx + c$ with $y(0) = 0$, $y(2) = 6$, $y(-1) = 3$.'
             answer: "y = 2x^2 - x"
             solution_sketch: '$c = 0$; $4a + 2b = 6$ and $a - b = 3$; so $2a + b = 3$ and $a - b = 3$, giving $a = 2$, $b = -1$.'
+          - problem: "A quadratic y = ax^2 + bx + c has y(1) = 4, y(2) = 9 and y(3) = 18. Find the polynomial as an expression in x."
+            answer: "2x^2-x+3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the model as y = ax^2 + bx + c. Substitution gives a+b+c=4, 4a+2b+c=9, and 9a+3b+c=18. Subtract the first two equations to get 3a+b=5, and the last two to get 5a+b=9; elimination gives a=2 and b=-1. Then c=3 from the first equation. The polynomial is 2x^2-x+3."
+          - problem: "Find y = ax^2 + bx + c with y(0) = 5, y(2) = 3 and y(3) = 8. Give the polynomial as an expression in x."
+            answer: "2x^2-5x+5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the model as y = ax^2 + bx + c. The condition y(0)=5 gives c=5. Substitute the other two values: 4a+2b+5=3 and 9a+3b+5=8, so 2a+b=-1 and 3a+b=1. Elimination gives a=2 and b=-5. The polynomial is 2x^2-5x+5."
+          - problem: "Find the quadratic y = ax^2 + bx + c with y(1) = 0, y(-1) = 6 and y(2) = 0. Give the polynomial as an expression in x."
+            answer: "x^2-3x+2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the model as y = ax^2 + bx + c. The conditions give a+b+c=0, a-b+c=6, and 4a+2b+c=0. Subtract the first two equations to get 2b=-6, so b=-3. The first and third equations then give a=1 and c=2 by elimination. The polynomial is x^2-3x+2."
+          - problem: "A quadratic revenue model R = ax^2 + bx + c has R(0) = 0, R(1) = 40 and R(3) = 60. Find the revenue model as an expression in x."
+            answer: "-10x^2+50x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the model as R = ax^2 + bx + c. The condition R(0)=0 gives c=0. The values R(1)=40 and R(3)=60 give a+b=40 and 9a+3b=60, which simplifies to 3a+b=20. Elimination gives a=-10 and b=50. The revenue model is -10x^2+50x."
         constraints: "conditions given as function values; integer coefficients"
     diagnostic_exemplar:
       problem: 'Find the parabola $y = ax^2 + bx + c$ through $(0, 3)$, $(1, 2)$, and $(2, 5)$.'
@@ -993,14 +1037,30 @@ topics:
         name: Network flow
         key_prerequisites: [solution-sets-free-variables]
         exemplars:
-          - problem: 'At junction $A$, $100$ cars/hour enter and split into flows $x_1$ and $x_2$. At junction $B$, flow $x_1$ plus $30$ cars/hour enter, and $80$ cars/hour leave. Find $x_1$ and $x_2$.'
-            answer: "x1 = 50, x2 = 50"
-            answer_contract: {kind: none}
-            solution_sketch: 'Junction $B$: $x_1 + 30 = 80$, so $x_1 = 50$; junction $A$: $x_1 + x_2 = 100$.'
-          - problem: 'A network has conservation equations $x_1 + x_2 = 60$ and $x_2 + x_3 = 40$. With $x_3 = t$ free, describe all flows.'
-            answer: "x1 = 20 + t, x2 = 40 - t, x3 = t"
-            answer_contract: {kind: none}
-            solution_sketch: '$x_2 = 40 - t$; then $x_1 = 60 - x_2 = 20 + t$.'
+          - problem: "At junction A, 120 cars/hour enter and split into flows x1 and x2. At junction B, flow x1 plus 40 cars/hour enter, and 90 cars/hour leave. Find x1 and x2 as (x1, x2)."
+            answer: "(50, 70)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The conservation equations are x1 + x2 = 120 and x1 + 40 = 90. From the second, x1 = 50; then the first gives x2 = 70. The flows are (50, 70)."
+          - problem: "A network has conservation equations x1 + x2 = 80 and x2 + x3 = 50. If x3 = 20, find x1 and x2 as (x1, x2)."
+            answer: "(50, 30)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The conservation equations are x1 + x2 = 80 and x2 + x3 = 50 with x3 = 20. From the second, x2 = 30; then the first gives x1 = 50. The flows are (50, 30)."
+          - problem: "At junction A, 150 liters/min enter and split into flows x1 and x2. At junction B, flow x1 plus y liters/min enter, and 100 liters/min leave. If x1 = 60 and x2 = 90, find y."
+            answer: "40"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The conservation equations are x1 + x2 = 150 and x1 + y = 100 with x1 = 60, x2 = 90. The first checks 60 + 90 = 150; the second gives 60 + y = 100. Therefore y = 40."
+          - problem: "At junction A, 100 liters/s enter and split into flows x1 and x2. At junction B, flow x1 plus 30 liters/s enter, and flow x3 leaves. At junction C, flows x2 and x3 enter, and 130 liters/s leave. If x1 = 40, find x2 and x3 as (x2, x3)."
+            answer: "(60, 70)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The conservation equations are x1 + x2 = 100, x3 = x1 + 30, and x2 + x3 = 130 with x1 = 40. The first gives x2 = 60; the second gives x3 = 70. Thus (x2, x3) = (60, 70)."
+          - problem: "At a junction, 90 units/h enter and split into flows x1 and x2 with x2 = 2 x1. Find x1 and x2 as (x1, x2)."
+            answer: "(30, 60)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The conservation equation is x1 + x2 = 90 with x2 = 2 x1. Substitute to get 3 x1 = 90, so x1 = 30 and x2 = 60. The flows are (30, 60)."
+          - problem: "At junction A, T cars/h enter and split into flows x1 and x2. At junction B, flow x1 plus 25 cars/h enter, and 75 cars/h leave. If x2 = 40, find T and x1 as (T, x1)."
+            answer: "(90, 50)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The conservation equations are T = x1 + x2 and x1 + 25 = 75 with x2 = 40. The second gives x1 = 50; the first gives T = 90. Thus (T, x1) = (90, 50)."
         constraints: "flow-in = flow-out at each node; totals in 20..200, integer solutions"
       - id: kp2
         name: Word problems with three unknowns
