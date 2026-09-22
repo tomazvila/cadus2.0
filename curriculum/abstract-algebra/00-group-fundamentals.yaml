@@ -38,6 +38,22 @@ topics:
           - problem: 'In the additive group $\mathbb{Z}_{12}$, compute $9 + 7$.'
             answer: "4"
             solution_sketch: '$9 + 7 = 16 \equiv 4 \pmod{12}$.'
+          - problem: "In $U(14)$, the group of units modulo 14 under multiplication, find the inverse of the element 9."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An inverse of 9 in U(14) is a residue b with 9b ≡ 1 mod 14, by the definition of inverse in a unit group. Run the Euclid algorithm: 14 = 9 + 5, 9 = 5 + 4, 5 = 4 + 1, so 1 = 5 - 4 = 2*5 - 9 = 2*14 - 3*9. Hence 9*(-3) ≡ 1 mod 14, and -3 + 14 = 11, so 9*11 = 99 = 7*14 + 1 ≡ 1 mod 14. The inverse of 9 in U(14) is 11."
+          - problem: "In the group $U(15)$ of units modulo 15 under multiplication, find the order of the element 4."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group U(15) consists of the residues coprime to 15: 1, 2, 4, 7, 8, 11, 13, 14. The order of an element a in a group is the least positive k with a^k = e; here the identity is 1. Compute powers of 4 modulo 15: 4^1 = 4 and 4^2 = 16 = 1 mod 15, so the first return to 1 is at k = 2. The order of 4 in U(15) is 2."
+          - problem: "In the additive group $\\mathbb{Z}_{20}$, find the order of the element 8."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The order of a in the additive group Z_n is the least positive k with k*a ≡ 0 mod n, and it equals n/gcd(n,a). Compute gcd(20,8) = 4, so the order is 20/4 = 5. Verify by adding: 8+8 = 16, 16+8 = 24 ≡ 4, 4+8 = 12, 12+8 = 20 ≡ 0 mod 20, and no smaller count gives 0. The order of 8 in Z_20 is 5."
+          - problem: "In $U(7)$, the group of units modulo 7 under multiplication, find the order of the element 3."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The order of an element of U(7) is the least positive k with 3^k ≡ 1 mod 7. Reduce each power modulo 7: 3^2 = 9 ≡ 2, 3^3 ≡ 3*2 = 6, 3^4 ≡ 3*6 = 18 ≡ 4, 3^5 ≡ 3*4 = 12 ≡ 5, 3^6 ≡ 3*5 = 15 ≡ 1 mod 7. The first power equal to the identity 1 is 6. The order of 3 in U(7) is 6."
         constraints: "groups drawn from Z_n (n <= 20), U(n) (n <= 15), and symmetry descriptions; no abstract axioms yet"
       - id: kp2
         name: "Reading and completing Cayley tables"
@@ -76,6 +92,22 @@ topics:
           - problem: 'Find the inverse of $3$ in $U(8)$.'
             answer: "3"
             solution_sketch: '$3 \cdot 3 = 9 \equiv 1 \pmod 8$, so $3$ is its own inverse.'
+          - problem: "The additive group Z_18 has addition modulo 18 as its operation. Find the inverse of 13 in this group as an element of Z_18."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Additive inverses in Z_18 are fixed by the inverse axiom of a group, which asks for x with 13 + x equal to the identity 0 modulo 18. Step 1: 13 + x is 0 modulo 18 exactly when x is 18 - 13, since 13 + (18 - 13) = 18. Step 2: 18 - 13 = 5, and 13 + 5 = 18, which is 0 modulo 18, so uniqueness of inverses confirms this value. The inverse of 13 is 5."
+          - problem: "The set U(16) consists of the units modulo 16 under multiplication modulo 16. Find the inverse of 7 in this group as an element of U(16)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A unit modulo 16 is an element coprime to 16, and its inverse is the element x with 7x equal to 1 modulo 16. Step 1: 7 is coprime to 16, so an inverse exists by the definition of U(16). Step 2: 7 times 7 = 49 = 3 times 16 + 1, so 7 times 7 is 1 modulo 16. The inverse of 7 is 7."
+          - problem: "In the group U(9), decide whether the operation is commutative and find the inverse of 4, giving the answer as verdict = value; inv = value."
+            answer: "verdict = abelian; inv = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["abelian"], ["nonabelian"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "inv"}]}
+            solution_sketch: "U(9) is the set 1, 2, 4, 5, 7, 8 under multiplication modulo 9. Step 1: multiplication modulo 9 is commutative, because the product of two residues does not depend on the order of the factors, so the group is abelian; the option nonabelian is wrong because it misreads the order of the factors as mattering. Step 2: the inverse of 4 solves 4x equal to 1 modulo 9, and 4 times 7 = 28 = 3 times 9 + 1. The answer is verdict = abelian; inv = 7."
+          - problem: "In the additive group Z_16, some elements satisfy the equation x + x = 0. Find every such element of Z_16. Give the answer as a set."
+            answer: "{0, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "An element x of Z_16 satisfies x + x = 0 modulo 16 exactly when 2x is a multiple of 16. Step 1: 2x being a multiple of 16 means x is a multiple of 8, by the divisibility rule for 2 and 16. Step 2: the multiples of 8 inside Z_16 are 0 and 8. Step 3: 0 + 0 = 0 and 8 + 8 = 16, which is 0 modulo 16, while the other residues give 2, 4, 6, 10, 12 or 14 and fail the equation. The set of such elements is {0, 8}."
         constraints: "inverses in Z_n (additive) and U(n) (multiplicative), n <= 20; occasionally ask whether the group is abelian"
     diagnostic_exemplar:
       problem: 'Give the inverse of $7$ in $U(10)$, the group of units modulo $10$.'
@@ -437,14 +469,30 @@ topics:
         name: "Structural facts about cyclic groups"
         key_prerequisites: [order-of-an-element, subgroups-subgroup-tests]
         exemplars:
-          - problem: 'Prove that every cyclic group is abelian.'
-            answer: 'Any two elements are $g^i$ and $g^j$, and $g^i g^j = g^{i+j} = g^j g^i$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Powers of a single generator commute because integer addition commutes.'
-          - problem: 'Is $U(8)$ cyclic?'
-            answer: 'No: every non-identity element has order $2$, but a cyclic group of order $4$ needs an element of order $4$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$3^2 = 5^2 = 7^2 = 1$ mod $8$, so no element has order $4 = |U(8)|$.'
+          - problem: "The group Z_15 = {0, 1, ..., 14} under addition mod 15 is generated by the element 1, so every element is a multiple i of 1. Determine whether ia + ja = ja + ia for all elements, and find the order of the element 10. Give the verdict and the order of 10."
+            answer: "verdict = abelian; m = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["abelian"], ["nonabelian"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Every element of Z_15 is a multiple i of the generator 1, and (i + j) mod 15 = (j + i) mod 15 because integer addition commutes, so the whole group is abelian. For the order of 10: 10 is not 0 mod 15, and 2 * 10 = 20 = 5 mod 15 is not 0, while 3 * 10 = 30 = 0 mod 15, so the order of 10 is 3. The option nonabelian is wrong: it would need two elements with ia + ja different from ja + ia, which never happens here. The verdict is abelian and the order of 10 is 3, so verdict = abelian; m = 3."
+          - problem: "The group U(8) = {1, 3, 5, 7} under multiplication mod 8 has 4 elements. Compute the order of each of 3, 5, 7 and decide whether one element generates the whole group. Give the verdict and the largest element order."
+            answer: "verdict = noncyclic; m = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cyclic"], ["noncyclic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Compute the squares of the nonidentity elements mod 8: 3^2 = 9 = 1, 5^2 = 25 = 1, and 7^2 = 49 = 1, so every nonidentity element has order 2. No element has order 4 = |U(8)|, so no single element generates the whole group. The option cyclic is wrong: it would require an element of order 4, but the largest order found is 2. The verdict is noncyclic and the largest order is 2, so verdict = noncyclic; m = 2."
+          - problem: "In Z_9 = {0, 1, ..., 8} under addition mod 9, an element a generates the whole group when the multiples a, 2a, 3a, ..., 8a mod 9 give all 8 nonzero elements. Test each element of Z_9 this way. How many elements of Z_9 generate the whole group?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test each element a of Z_9 by listing its multiples mod 9. For a = 1: 1, 2, 3, 4, 5, 6, 7, 8 covers all nonzero elements, so 1 is a generator. For a = 2: 2, 4, 6, 8, 1, 3, 5, 7 also covers all, so 2 is a generator. For a = 3: 3, 6, 0, 3, 6, 0, 3, 6 repeats and misses 1, 2, 4, 5, 7, 8, so 3 is not a generator. Checking the rest the same way, the generators are 1, 2, 4, 5, 7, 8 while 0, 3, 6 fail. The number of generators is 6."
+          - problem: "In the group U(7) = {1, 2, 3, 4, 5, 6} under multiplication mod 7, find the order of the element 2. Give the order."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute successive powers of 2 mod 7: 2^1 = 2, 2^2 = 4, and 2^3 = 8 = 1 mod 7. The identity 1 first appears at the third power, and no smaller positive power gives 1, so the order of 2 is 3. The order of 2 in U(7) is 3."
+          - problem: "In Z_20 = {0, 1, ..., 19} under addition mod 20, consider the subgroup generated by the element 4, that is, the set of all multiples 4k mod 20. List the distinct elements of this subgroup. How many elements does the subgroup contain?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the multiples of 4 mod 20 in order: 4, 8, 12, 16, 0, and then 4 repeats, so the list cycles. The distinct elements are 0, 4, 8, 12, 16, and no other element of Z_20 appears. The subgroup contains 5 elements, so the count is 5."
+          - problem: "The group U(9) = {1, 2, 4, 5, 7, 8} under multiplication mod 9 has 6 elements. Compute the powers of 2 mod 9 to find the order of 2, and decide whether the element 2 alone generates the whole group. Give the verdict and the order of 2."
+            answer: "verdict = cyclic; m = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cyclic"], ["noncyclic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Compute the powers of 2 mod 9: 2^1 = 2, 2^2 = 4, 2^3 = 8, 2^4 = 16 = 7, 2^5 = 14 = 5, and 2^6 = 10 = 1 mod 9. The powers 2, 4, 8, 7, 5, 1 give all 6 elements of U(9), so the order of 2 is 6 and 2 generates the whole group. The option noncyclic is wrong: it would require the order of 2 to be less than 6, but the computation gives order 6. The verdict is cyclic and the order of 2 is 6, so verdict = cyclic; m = 6."
         constraints: "short proofs or cyclic/non-cyclic verdicts with an order-based reason"
     diagnostic_exemplar:
       problem: 'How many generators does $\mathbb{Z}_{20}$ have, and is $U(8)$ cyclic?'
