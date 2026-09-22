@@ -405,18 +405,30 @@ topics:
         key_prerequisites: [trig-graphs-midline, function-transformations-shifts]
         constraints: "B in {1, 2, 3, 1/2}; C a multiple of π/6 or π/4; include one unfactored argument Bx - φ that must be factored before reading the shift"
         exemplars:
-          - problem: 'State the amplitude, period, phase shift, and midline of $y = 3\sin\left(2\left(x - \frac{\pi}{4}\right)\right) + 1$.'
-            answer: "amplitude 3, period π, phase shift π/4 right, midline y = 1"
-            answer_contract: {kind: none}
-            solution_sketch: 'Amplitude $|A| = 3$; period $2\pi/B = \pi$; the argument $2(x - \pi/4)$ shifts right $\pi/4$; midline $y = D = 1$.'
-          - problem: 'State the phase shift of $y = \cos\left(x + \frac{\pi}{6}\right)$.'
-            answer: "π/6 left"
-            answer_contract: {kind: none}
-            solution_sketch: '$x + \frac{\pi}{6} = x - \left(-\frac{\pi}{6}\right)$, so $C = -\frac{\pi}{6}$: a shift left.'
-          - problem: 'State the period and phase shift of $y = \sin\left(2x - \frac{\pi}{3}\right)$.'
-            answer: "period π, phase shift π/6 right"
-            answer_contract: {kind: none}
-            solution_sketch: 'Factor first: $\sin\left(2\left(x - \frac{\pi}{6}\right)\right)$. The shift is $\frac{\pi}{3} \div 2$, not $\frac{\pi}{3}$.'
+          - problem: "A sinusoid has equation y = 5 sin(2(x - pi/3)) - 4. Give its amplitude, its period, its signed phase shift in radians (positive means a shift to the right), and its midline value, in that order, as amp, per, sh, mid."
+            answer: "amp = 5; per = pi; sh = pi/3; mid = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "amp"}, {"contract": {"kind": "exact"}, "name": "per"}, {"contract": {"kind": "exact"}, "name": "sh"}, {"contract": {"kind": "exact"}, "name": "mid"}]}
+            solution_sketch: "The full object is y = 5 sin(2(x - pi/3)) - 4. Amplitude rule: the amplitude is the absolute value of the leading coefficient, so 5. Period rule: the period is 2pi/B with B = 2, giving pi. Phase shift rule: the argument is already factored as 2(x - pi/3), so the signed shift is pi/3, positive because the constant is subtracted. Midline rule: the midline is the vertical shift D = -4. Answer: amp = 5; per = pi; sh = pi/3; mid = -4."
+          - problem: "A sinusoid has equation y = cos(x + pi/3). Give its signed phase shift in radians, where a positive value means a shift to the right and a negative value means a shift to the left is not needed for the sign."
+            answer: "-pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is y = cos(x + pi/3). Rewrite rule: write the argument as x - (-pi/3), so the shift constant is C = -pi/3. Sign rule: a negative shift constant means the graph moves in the negative horizontal direction, and the signed answer keeps that minus sign. Answer: -pi/3."
+          - problem: "A sinusoid has equation y = sin(3x - 3pi/4). Factor the argument first, then give the period and the signed phase shift in radians (positive means a shift to the right), in that order, as per and sh."
+            answer: "per = 2pi/3; sh = pi/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "per"}, {"contract": {"kind": "exact"}, "name": "sh"}]}
+            solution_sketch: "The full object is y = sin(3x - 3pi/4). Factoring rule: 3x - 3pi/4 = 3(x - pi/4), so the shift is read from pi/4 and not from the unfactored constant 3pi/4. Period rule: the period is 2pi/B with B = 3, giving 2pi/3. Shift rule: the factored constant is subtracted, so the signed shift is pi/4. Answer: per = 2pi/3; sh = pi/4."
+          - problem: "A sinusoid has equation y = -3 cos(x/2 + pi/4) + 2. Give its amplitude and its midline value, in that order, as amp and mid."
+            answer: "amp = 3; mid = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "amp"}, {"contract": {"kind": "exact"}, "name": "mid"}]}
+            solution_sketch: "The full object is y = -3 cos(x/2 + pi/4) + 2. Amplitude rule: the amplitude is the absolute value of the leading coefficient, |-3| = 3; the minus sign only reflects the graph across the midline. Midline rule: the midline is the constant vertical shift D = 2. Answer: amp = 3; mid = 2."
+          - problem: "A sinusoid has equation y = 4 cos(x/2 + pi/6) - 1. Give its period and its signed phase shift in radians (positive means a shift to the right), in that order, as per and sh."
+            answer: "per = 4pi; sh = -pi/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "per"}, {"contract": {"kind": "exact"}, "name": "sh"}]}
+            solution_sketch: "The full object is y = 4 cos(x/2 + pi/6) - 1. Factoring rule: x/2 + pi/6 = (1/2)(x + pi/3), so the signed shift is -pi/3; dividing the constant pi/6 by B = 1/2 gives the size pi/3, and the plus sign makes it negative. Period rule: the period is 2pi/B = 2pi/(1/2) = 4pi. Answer: per = 4pi; sh = -pi/3."
+          - problem: "A sinusoid has equation y = 2 cos(3x + 3pi/4) + 4. Factor the argument first, then state the direction of the phase shift and give its magnitude in radians, as dir and sh."
+            answer: "dir = left; sh = pi/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["left"]]}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "sh"}]}
+            solution_sketch: "The full object is y = 2 cos(3x + 3pi/4) + 4. Factoring rule: 3x + 3pi/4 = 3(x + pi/4), so the shift is read from pi/4 and not from the unfactored constant 3pi/4. Direction rule: the factored constant is added, so the graph moves in the negative horizontal direction. The wrong option right is the error of keeping the sign of the added constant instead of negating it. Answer: dir = left; sh = pi/4."
       - id: kp2
         name: Write the equation from features or a graph
         key_prerequisites: [trig-graphs-midline, function-transformations-shifts]
