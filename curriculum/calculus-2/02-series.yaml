@@ -257,16 +257,28 @@ topics:
         name: Partial sums and the definition of convergence
         key_prerequisites: [sequences-convergence, summation-notation]
         exemplars:
-          - problem: 'For $\sum_{n=1}^{\infty} \frac{1}{2^n}$, compute $S_1, S_2, S_3, S_4$ and conjecture the sum.'
-            answer: '$\frac{1}{2}, \frac{3}{4}, \frac{7}{8}, \frac{15}{16}$; the sum is $1$'
-            answer_contract: {kind: none}
-            solution_sketch: '$S_N = 1 - \frac{1}{2^N} \to 1$.'
           - problem: 'A series has partial sums $S_N = \frac{2N}{N+1}$. Find its sum.'
             answer: "2"
             solution_sketch: 'The sum is $\lim_{N\to\infty} S_N = 2$.'
           - problem: 'A series has partial sums $S_N = \frac{2N}{N+1}$. Find $a_3$.'
             answer: '$1/6$'
             solution_sketch: '$a_3 = S_3 - S_2 = \frac{3}{2} - \frac{4}{3} = \frac{1}{6}$.'
+          - problem: "A series has partial sums S_N = (6N+1)/(2N+3). Find its sum."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sum of a series is the limit of its partial sums, by the definition of convergence. The given object is S_N = (6N+1)/(2N+3). Divide numerator and denominator by N: S_N = (6 + 1/N)/(2 + 3/N). As N grows without bound, 1/N and 3/N go to 0. The limit is 6/2, so the sum is 3."
+          - problem: "A series has partial sums S_N = (5N)/(N+3). Find a_4."
+            answer: "5/14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The term rule is a_n = S_n - S_(n-1), from the definition of partial sums. The given object is S_N = (5N)/(N+3). First S_4 = 20/7 and S_3 = 15/6 = 5/2. Then a_4 = 20/7 - 5/2 = 40/14 - 35/14. This gives 5/14, so a_4 is 5/14."
+          - problem: "A series has partial sums S_N = (3N+2)/(N+2). Find a_3."
+            answer: "1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The term rule is a_n = S_n - S_(n-1), from the definition of partial sums. The given object is S_N = (3N+2)/(N+2). First S_3 = 11/5 and S_2 = 8/4 = 2. Then a_3 = 11/5 - 2 = 11/5 - 10/5. This gives 1/5, so a_3 is 1/5."
+          - problem: "A series has partial sums S_N = (2N+1)/(N+3). Find a_2."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The term rule is a_n = S_n - S_(n-1), from the definition of partial sums. The given object is S_N = (2N+1)/(N+3). First S_2 = 5/5 = 1 and S_1 = 3/4. Then a_2 = 1 - 3/4. This gives 1/4, so a_2 is 1/4."
         constraints: "closed-form S_N given as a rational expression in N; recover terms via a_n = S_n - S_(n-1)"
       - id: kp3
         name: Divergence seen through partial sums
@@ -327,6 +339,18 @@ topics:
           - problem: 'Evaluate $\sum_{n=0}^{\infty} \left(-\frac{1}{2}\right)^n$.'
             answer: '$2/3$'
             solution_sketch: '$\frac{1}{1 - (-1/2)} = \frac{2}{3}$.'
+          - problem: "Evaluate the infinite series $\\sum_{n=0}^{\\infty} 4\\left(\\frac{1}{5}\\right)^n$. Find the sum."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series sum from n=0 to infinity of 4*(1/5)^n is geometric with first term a = 4 and common ratio r = 1/5. Step 1: identify a and r. Step 2: apply the infinite geometric sum rule a/(1 - r), valid because |r| < 1. Then 4/(1 - 1/5) = 4/(4/5) = 5, so the sum is 5."
+          - problem: "Evaluate the infinite series $\\sum_{n=2}^{\\infty} \\left(\\frac{1}{4}\\right)^n$. Find the sum as a fraction."
+            answer: "1/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series sum from n=2 to infinity of (1/4)^n is geometric; its first term at n = 2 is a = 1/16 and its common ratio is r = 1/4. Step 1: identify a and r. Step 2: use the geometric sum rule a/(1 - r) since |r| < 1. Then (1/16)/(1 - 1/4) = (1/16)/(3/4) = 1/12, so the sum is 1/12."
+          - problem: "Evaluate the infinite series $\\sum_{n=1}^{\\infty} 7\\left(\\frac{1}{6}\\right)^n$. Find the sum as a fraction."
+            answer: "7/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series sum from n=1 to infinity of 7*(1/6)^n is geometric with first term a = 7/6 and common ratio r = 1/6. Step 1: identify a and r. Step 2: apply the infinite geometric sum formula a/(1 - r), valid because |r| < 1. Then (7/6)/(1 - 1/6) = (7/6)/(5/6) = 7/5, so the sum is 7/5."
         constraints: "ratios are simple fractions with |r| < 1; watch the starting index (n = 0 vs n = 1)"
       - id: kp2
         name: The convergence condition
@@ -356,6 +380,18 @@ topics:
           - problem: 'Write $0.\overline{45}$ as a fraction in lowest terms.'
             answer: '$5/11$'
             solution_sketch: '$\frac{45}{99} = \frac{5}{11}$.'
+          - problem: "A calculator displays 0.8888..., where the digit 8 repeats forever. Use a geometric series to find this number as a fraction in lowest terms."
+            answer: "8/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write 0.8888... as a geometric series: the first term is a = 8/10 and each later term is divided by 10, so the ratio is r = 1/10. Apply the geometric sum rule: S = a/(1 - r) = (8/10)/(9/10) = 8/9. Since gcd(8, 9) = 1, the fraction in lowest terms is 8/9."
+          - problem: "A sensor reading repeats the two-digit block 57 forever: 0.575757... . Determine the value of this repeating decimal as a fraction in lowest terms."
+            answer: "19/33"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write 0.575757... = 57/100 + 57/10000 + 57/1000000 + ...; this is a geometric series with first term a = 57/100 and ratio r = 1/100. Apply the geometric sum rule: S = a/(1 - r) = (57/100)/(99/100) = 57/99. Reduce by the common factor 3: the fraction in lowest terms is 19/33."
+          - problem: "A repeating decimal starts 0.1666..., where the digit 6 repeats forever after the leading digit 1. Compute this number as a fraction in lowest terms using a geometric series."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Split the decimal into 0.1666... = 1/10 + (6/100 + 6/1000 + 6/10000 + ...). The tail is geometric with first term a = 6/100 and ratio r = 1/10, so by the geometric sum rule it equals (6/100)/(9/10) = 6/90 = 1/15. Add the leading term: 1/10 + 1/15 = 3/30 + 2/30 = 5/30. Reducing, the value in lowest terms is 1/6."
         constraints: "repeating blocks of 1-2 digits; answers in lowest terms"
     diagnostic_exemplar:
       problem: 'Write $0.\overline{36}$ as a fraction in lowest terms using a geometric series.'
@@ -406,10 +442,22 @@ topics:
           - problem: 'Evaluate $\sum_{n=1}^{\infty} \frac{1}{(n+1)(n+2)}$.'
             answer: '$1/2$'
             solution_sketch: '$\frac{1}{n+1} - \frac{1}{n+2}$ telescopes to $\frac{1}{2} - \frac{1}{N+2} \to \frac{1}{2}$.'
-          - problem: 'Does $\sum_{n=1}^{\infty} \ln\left(\frac{n+1}{n}\right)$ converge? If so give its sum; otherwise state that it diverges.'
-            answer: 'diverges'
-            answer_contract: {kind: none}
-            solution_sketch: '$\ln(n+1) - \ln n$ telescopes to $\ln(N+1)$, which diverges.'
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\ln\\left(\\frac{n+1}{n}\\right)$. Select the long-term behavior of its partial sums."
+            answer: "diverges"
+            answer_contract: {"kind": "label", "options": [["diverges"], ["converges"], ["oscillates"], ["undefined"]]}
+            solution_sketch: "Write the Nth partial sum: $S_N = \\sum_{n=1}^{N} (\\ln(n+1) - \\ln n)$. This telescopes to $S_N = \\ln(N+1) - \\ln 1 = \\ln(N+1)$. As $N$ grows, $\\ln(N+1)$ grows without bound, so the partial sums do not settle on a finite limit. The option converges is wrong because the partial sums grow without bound instead of approaching a finite value; oscillates is wrong because the partial sums increase monotonically; undefined is wrong because each term $\\ln((n+1)/n)$ is defined for $n \\ge 1$. The correct behavior is diverges."
+          - problem: "Evaluate $\\sum_{n=1}^{\\infty} \\frac{1}{(2n+1)(2n+3)}$."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the Nth partial sum using partial fractions: $\\frac{1}{(2n+1)(2n+3)} = \\frac12\\left(\\frac{1}{2n+1} - \\frac{1}{2n+3}\\right)$. Then $S_N = \\frac12\\left(\\frac13 - \\frac{1}{2N+3}\\right)$. Take the limit as $N \\to \\infty$; the second term vanishes. The sum is 1/6."
+          - problem: "Evaluate $\\sum_{n=1}^{\\infty} \\frac{3}{(n+1)(n+2)}$."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use partial fractions: $\\frac{3}{(n+1)(n+2)} = 3\\left(\\frac{1}{n+1} - \\frac{1}{n+2}\\right)$. The Nth partial sum collapses to $S_N = 3\\left(\\frac12 - \\frac{1}{N+2}\\right)$. As $N \\to \\infty$, $\\frac{1}{N+2} \\to 0$. The sum is 3/2."
+          - problem: "Evaluate $\\sum_{n=1}^{\\infty} \\left(\\frac{1}{2n+1} - \\frac{1}{2n+3}\\right)$."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the Nth partial sum of the difference: $S_N = \\left(\\frac13 - \\frac15\\right) + \\left(\\frac15 - \\frac17\\right) + \\cdots + \\left(\\frac{1}{2N+1} - \\frac{1}{2N+3}\\right)$. All interior terms cancel, leaving $S_N = \\frac13 - \\frac{1}{2N+3}$. Take the limit as $N \\to \\infty$; the last term vanishes. The sum is 1/3."
         constraints: "require writing the Nth partial sum before taking the limit; include one divergent telescope"
       - id: kp3
         name: Telescoping with gaps
@@ -421,6 +469,22 @@ topics:
           - problem: 'Evaluate $\sum_{n=2}^{\infty} \frac{1}{n^2 - 1}$.'
             answer: '$3/4$'
             solution_sketch: '$\frac{1}{n^2-1} = \frac{1}{2}\left(\frac{1}{n-1} - \frac{1}{n+1}\right)$; from $n = 2$ the surviving terms give $\frac{1}{2}\left(1 + \frac{1}{2}\right) = \frac{3}{4}$.'
+          - problem: "Consider the series $\\sum_{n=3}^{\\infty} \\frac{1}{n(n+2)}$. Evaluate the sum."
+            answer: "7/24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the series sum from n=3 to infinity of 1/(n(n+2)). Partial fractions give 1/(n(n+2)) = 1/2(1/n - 1/(n+2)). In the partial sum, the terms with n=3 and n=4 survive: 1/2(1/3 + 1/4). The limit is 7/24."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\frac{1}{(n+1)(n+3)}$. Evaluate the sum."
+            answer: "5/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sum from n=1 to infinity of 1/((n+1)(n+3)). Partial fractions give 1/2(1/(n+1) - 1/(n+3)). The surviving terms are n=1 and n=2: 1/2(1/2 + 1/3). The value of the sum is 5/12."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\left(\\frac{1}{n} - \\frac{1}{n+2}\\right)$. Evaluate the sum."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sum from n=1 to infinity of 1/n - 1/(n+2). Write a partial sum and cancel terms: the positive terms 1 and 1/2 survive, and the negative tail goes to zero. The value of the sum is 3/2."
+          - problem: "Consider the finite sum $\\sum_{n=1}^{5} \\frac{1}{n(n+2)}$. Evaluate the sum."
+            answer: "25/42"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the finite sum from n=1 to n=5 of 1/(n(n+2)). Partial fractions give 1/2(1/n - 1/(n+2)). The surviving positive terms are 1 and 1/2, and the surviving negative terms are 1/6 and 1/7. The sum equals 1/2(1 + 1/2 - 1/6 - 1/7) = 25/42."
         constraints: "gaps of 2 in the telescoping factors; two leading terms survive"
     diagnostic_exemplar:
       problem: 'Evaluate $\sum_{n=3}^{\infty} \frac{1}{n^2 - 4}$.'
@@ -462,6 +526,18 @@ topics:
           - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{2^n + 3^n}{6^n}$.'
             answer: '$7/2$'
             solution_sketch: 'Split: $\sum \left(\frac{1}{3}\right)^n + \sum \left(\frac{1}{2}\right)^n = \frac{3}{2} + 2 = \frac{7}{2}$.'
+          - problem: "Evaluate $\\sum_{n=3}^{\\infty} \\left(\\frac{1}{4}\\right)^n$."
+            answer: "1/48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series in standard geometric form by factoring the first term: $\\sum_{n=3}^{\\infty} (1/4)^n = (1/4)^3 \\sum_{k=0}^{\\infty} (1/4)^k$. The geometric-series formula applies because the ratio is $1/4$ with $|1/4| < 1$. The first term is $(1/4)^3 = 1/64$, so the sum is $(1/64)/(1 - 1/4) = (1/64)/(3/4) = 1/48$. The value of the series is 1/48."
+          - problem: "Evaluate $\\sum_{n=0}^{\\infty} \\frac{2^{n+1}}{5^n}$."
+            answer: "10/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rewrite the term to expose the geometric ratio: $2^{n+1}/5^n = 2(2/5)^n$. The geometric-series formula applies because the ratio is $2/5$ and $|2/5| < 1$. The first term is $2$, so the sum is $2/(1 - 2/5) = 2/(3/5) = 10/3$. The value of the series is 10/3."
+          - problem: "Evaluate $\\sum_{n=0}^{\\infty} \\frac{3^n + 4^n}{12^n}$."
+            answer: "17/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Split the sum by the sum rule for convergent series: $\\sum (3^n + 4^n)/12^n = \\sum (1/4)^n + \\sum (1/3)^n$. Each is a geometric series: the first has ratio $1/4$ and sum $1/(1 - 1/4) = 4/3$; the second has ratio $1/3$ and sum $1/(1 - 1/3) = 3/2$. Add the two values: $4/3 + 3/2 = 8/6 + 9/6 = 17/6$. The value of the series is 17/6."
         constraints: "shifted starting indices, split numerators, and mixed bases reducible to standard geometric form"
       - id: kp2
         name: Choosing and combining techniques
@@ -473,6 +549,22 @@ topics:
           - problem: 'Evaluate $\sum_{n=1}^{\infty} \frac{2n+1}{n^2(n+1)^2}$.'
             answer: "1"
             solution_sketch: 'Recognize $\frac{2n+1}{n^2(n+1)^2} = \frac{1}{n^2} - \frac{1}{(n+1)^2}$; telescopes to $1 - \frac{1}{(N+1)^2} \to 1$.'
+          - problem: "Evaluate the series $\\sum_{n=1}^{\\infty} \\left[\\left(\\frac{1}{3}\\right)^n + \\frac{1}{n(n+2)}\\right]$. Give the exact sum as a fraction."
+            answer: "5/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is $\\sum_{n=1}^{\\infty} \\left[\\left(\\frac{1}{3}\\right)^n + \\frac{1}{n(n+2)}\\right]$. The geometric part has first term $1/3$ and ratio $1/3$, so by the geometric series rule it sums to $(1/3)/(1-1/3) = 1/2$. For the telescoping part use partial fractions: $1/(n(n+2)) = 1/2(1/n - 1/(n+2))$, so the partial sum is $1/2(1 + 1/2 - 1/(N+1) - 1/(N+2))$ and it tends to $3/4$. Add the two limits: $1/2 + 3/4 = 5/4$."
+          - problem: "Evaluate the series $\\sum_{n=1}^{\\infty} \\left[\\left(\\frac{1}{3}\\right)^{n+1} + \\frac{1}{n(n+2)}\\right]$. Give the exact sum as a fraction."
+            answer: "11/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is $\\sum_{n=1}^{\\infty} \\left[\\left(\\frac{1}{3}\\right)^{n+1} + \\frac{1}{n(n+2)}\\right]$. The geometric part starts with first term $1/9$ and ratio $1/3$, so by the geometric series formula it sums to $(1/9)/(1-1/3) = 1/6$. For the telescoping part use partial fractions: $1/(n(n+2)) = 1/2(1/n - 1/(n+2))$, so its partial sum tends to $1/2(1 + 1/2) = 3/4$. Add the limits: $1/6 + 3/4 = 11/12$."
+          - problem: "Evaluate the series $\\sum_{n=1}^{\\infty} \\left[\\left(\\frac{2}{5}\\right)^n + \\frac{1}{n^2+3n+2}\\right]$. Give the exact sum as a fraction."
+            answer: "7/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is $\\sum_{n=1}^{\\infty} \\left[\\left(\\frac{2}{5}\\right)^n + \\frac{1}{n^2+3n+2}\\right]$. The geometric part has first term $2/5$ and ratio $2/5$, so by the geometric series formula it sums to $(2/5)/(1-2/5) = 2/3$. For the telescoping part factor $n^2+3n+2 = (n+1)(n+2)$, so $1/(n^2+3n+2) = 1/(n+1) - 1/(n+2)$. Its partial sum is $1/2 - 1/(N+2)$ and it tends to $1/2$. Add the two limits: $2/3 + 1/2 = 7/6$."
+          - problem: "Evaluate the series $\\sum_{n=1}^{\\infty} \\frac{1}{n^2+5n+6}$. Give the exact sum as a fraction."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is $\\sum_{n=1}^{\\infty} 1/(n^2+5n+6)$. Factor the denominator as $n^2+5n+6 = (n+2)(n+3)$, so each term is a disguised telescoping term. Use partial fractions: $1/((n+2)(n+3)) = 1/(n+2) - 1/(n+3)$. The partial sum is $1/3 - 1/(N+3)$, which tends to $1/3$. The exact sum is $1/3$."
         constraints: "each problem is a sum of a geometric and a telescoping piece, or a disguised telescope"
       - id: kp3
         name: Capstone applications
@@ -517,18 +609,30 @@ topics:
         name: Applying the divergence test
         key_prerequisites: [series-partial-sums, limits-of-sequences]
         exemplars:
-          - problem: 'Does $\sum_{n=1}^{\infty} \frac{n}{n+1}$ converge?'
-            answer: 'no; the terms tend to $1 \ne 0$'
-            answer_contract: {kind: none}
-            solution_sketch: 'If $a_n \not\to 0$, the series diverges.'
-          - problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{2n+1}$ converge?'
-            answer: 'no; the terms oscillate toward $\pm\frac{1}{2}$, so $a_n \not\to 0$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{n}{2n+1} \to \frac{1}{2}$, and the signs alternate, so the terms have no limit at all.'
-          - problem: 'Does $\sum_{n=1}^{\infty} n \sin\left(\frac{1}{n}\right)$ converge?'
-            answer: 'no; $n\sin\left(\frac{1}{n}\right) \to 1 \ne 0$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{\sin(1/n)}{1/n} \to 1$, so the terms tend to $1$.'
+          - problem: "Use the divergence test on the series $\\sum_{n=1}^{\\infty} \\frac{2n+3}{4n+1}$. Give the verdict and the limit of the terms."
+            answer: "verdict = diverges; L = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["converges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} \\frac{2n+3}{4n+1}$. Divergence test: if the limit of the terms is not zero, the series diverges. Rational-sequence rule: divide numerator and denominator by n, giving (2 + 3/n)/(4 + 1/n), which tends to 2/4 = 1/2. The limit is not zero, so the verdict is diverges. The option converges is wrong because a nonzero limit forces divergence. The answer is verdict = diverges; L = 1/2."
+          - problem: "Use the divergence test on the series $\\sum_{n=1}^{\\infty} \\frac{3n^2+5}{n^2+2}$. Give the verdict and the limit of the terms."
+            answer: "verdict = diverges; L = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["converges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} \\frac{3n^2+5}{n^2+2}$. Divergence test: if the limit of the terms is not zero, the series diverges. Rational-sequence rule: divide numerator and denominator by n^2, giving (3 + 5/n^2)/(1 + 2/n^2), which tends to 3/1 = 3. The limit is not zero, so the verdict is diverges. The option converges is wrong because a nonzero limit forces divergence. The answer is verdict = diverges; L = 3."
+          - problem: "Use the divergence test on the series $\\sum_{n=1}^{\\infty} n \\sin\\left(\\frac{1}{3n}\\right)$. Give the verdict and the limit of the terms."
+            answer: "verdict = diverges; L = 1/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["converges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} n \\sin\\left(\\frac{1}{3n}\\right)$. Divergence test: if the limit of the terms is not zero, the series diverges. Standard sin limit: sin(u)/u tends to 1 as u tends to 0. Rewrite n sin(1/(3n)) as (1/3) times sin(1/(3n))/(1/(3n)), so the limit is 1/3. The limit is not zero, so the verdict is diverges. The option converges is wrong because a nonzero limit forces divergence. The answer is verdict = diverges; L = 1/3."
+          - problem: "Use the divergence test on the series $\\sum_{n=1}^{\\infty} \\frac{4n^3+2n}{2n^3-1}$. Give the verdict and the limit of the terms."
+            answer: "verdict = diverges; L = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["converges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} \\frac{4n^3+2n}{2n^3-1}$. Divergence test: if the limit of the terms is not zero, the series diverges. Rational-sequence rule: divide numerator and denominator by n^3, giving (4 + 2/n^2)/(2 - 1/n^3), which tends to 4/2 = 2. The limit is not zero, so the verdict is diverges. The option converges is wrong because a nonzero limit forces divergence. The answer is verdict = diverges; L = 2."
+          - problem: "Use the divergence test on the series $\\sum_{n=1}^{\\infty} \\frac{5n+2}{2n+7}$. Find the limit of the terms."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} \\frac{5n+2}{2n+7}$. The divergence test needs the limit of the terms. Rational-sequence rule: divide numerator and denominator by n, giving (5 + 2/n)/(2 + 7/n), which tends to 5/2. Since this limit is not zero, the divergence test would conclude divergence. The limit of the terms is 5/2."
+          - problem: "Use the divergence test on the series $\\sum_{n=1}^{\\infty} 2n \\sin\\left(\\frac{1}{n}\\right)$. Find the limit of the terms."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} 2n \\sin\\left(\\frac{1}{n}\\right)$. The divergence test needs the limit of the terms. Standard sin limit: sin(u)/u tends to 1 as u tends to 0. Rewrite 2n sin(1/n) as 2 times sin(1/n)/(1/n), so the limit is 2. Since this limit is not zero, the divergence test would conclude divergence. The limit of the terms is 2."
         constraints: "term limits computable by rational-sequence rules or the standard sin(1/n) limit"
       - id: kp2
         name: What the test cannot conclude
