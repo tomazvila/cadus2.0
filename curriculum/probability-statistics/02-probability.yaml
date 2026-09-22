@@ -268,6 +268,14 @@ topics:
           - problem: 'A batter collects $12$ hits in $48$ at-bats. Write the experimental probability of a hit as a decimal.'
             answer: "0.25"
             solution_sketch: '$12/48 = 1/4 = 0.25$.'
+          - problem: "A quality inspector tests 80 parts and finds 12 defective. Find the experimental probability that a part is defective, in lowest terms."
+            answer: "3/20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the relative frequency rule: experimental probability equals successes over trials. Compute 12/80. Reduce by the common factor 4: 12/80 = 3/20. The experimental probability is 3/20."
+          - problem: "A soccer player takes 75 penalty kicks and scores 39. Give the experimental probability that a kick is a miss as a decimal."
+            answer: "0.48"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Use the relative frequency rule: experimental probability equals successes over trials. The number of misses is 75 - 39 = 36. Compute 36/75 = 12/25 = 0.48. The experimental probability is 0.48."
         constraints: "trial counts <= 100; fractions reduce cleanly or convert to exact decimals"
       - id: kp3
         name: "Expected counts"
@@ -279,6 +287,14 @@ topics:
           - problem: 'A machine produces defective parts with probability $3/50$. In a batch of $200$ parts, how many defectives are expected?'
             answer: "12"
             solution_sketch: '$200 \cdot \frac{3}{50} = 12$.'
+          - problem: "A bag holds 5 red and 3 blue marbles. A marble is drawn at random, recorded, and put back, and this is done 64 times. How many red draws are expected?"
+            answer: "40"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The theoretical probability of red is 5/8. The expected count rule multiplies n by p: 64 times 5/8 = 40. The expected number of red draws is 40."
+          - problem: "A biased coin lands heads with probability 3/10. The coin is flipped 80 times. How many heads are expected?"
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The theoretical probability of heads is 3/10. The expected count rule multiplies n by p: 80 times 3/10 = 24. The expected number of heads is 24."
           - problem: 'A fair coin is flipped $250$ times. About how many heads should be expected?'
             answer: "125"
             solution_sketch: '$250 \cdot \frac{1}{2} = 125$.'
@@ -314,21 +330,59 @@ topics:
         name: "Designing digit assignments"
         key_prerequisites: [experimental-theoretical-probability]
         exemplars:
-          - problem: 'Rain falls on a given day with probability $3/10$. Explain how to simulate one day using a single random digit $0$-$9$.'
-            answer: 'Let $3$ of the $10$ digits (e.g. $\{0, 1, 2\}$) mean rain and the other $7$ mean no rain.'
-            solution_sketch: '$3/10$ of the equally likely digits must represent the event.'
-          - problem: 'A free throw succeeds with probability $2/5$. Give a digit assignment (digits $0$-$9$) that simulates one shot.'
-            answer: 'Since $2/5 = 4/10$, let $4$ digits (e.g. $\{0, 1, 2, 3\}$) mean a make and $\{4, \dots, 9\}$ mean a miss.'
+          - problem: "Rain falls on a given day with probability 6/10. Simulate one day with one random digit from 0 to 9, using the smallest digits to mean rain. Give the set of digits that mean rain."
+            answer: "{0, 1, 2, 3, 4, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The probability 6/10 means exactly 6 of the 10 equally likely digits must represent rain. Using the smallest digits, the digits 0, 1, 2, 3, 4, 5 mean rain and the digits 6, 7, 8, 9 mean no rain. The set is {0, 1, 2, 3, 4, 5}."
+          - problem: "A basketball player makes a free throw with probability 2/5. Simulate one shot with one random digit from 0 to 9, using the smallest digits to mean a make. Give the set of digits that mean a make."
+            answer: "{0, 1, 2, 3}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Convert the probability to tenths: 2/5 = 4/10, so exactly 4 of the 10 equally likely digits must represent a make. Using the smallest digits, 0, 1, 2, 3 mean a make and 4 through 9 mean a miss. The set is {0, 1, 2, 3}."
+          - problem: "A machine works correctly with probability 7/10. Simulate one check with one random digit from 0 to 9, using the smallest digits to mean failure. Give the set of digits that mean failure."
+            answer: "{0, 1, 2}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The failure probability is the complement: 1 - 7/10 = 3/10, so exactly 3 of the 10 equally likely digits must represent failure. Using the smallest digits, 0, 1, and 2 mean failure and 3 through 9 mean the machine works. The set is {0, 1, 2}."
+          - problem: "A bus arrives on time with probability 3/10. Simulate one arrival with one random digit from 0 to 9, using the largest digits to mean on time. Give the set of digits that mean on time."
+            answer: "{7, 8, 9}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The probability 3/10 means exactly 3 of the 10 equally likely digits must represent on time. Using the largest digits, 7, 8, and 9 mean on time and 0 through 6 mean late. The set is {7, 8, 9}."
+          - problem: "A spinner lands on green with probability 25/100. To simulate one spin, use a two-digit random outcome from 00 to 99, where each outcome is equally likely. How many of the 100 two-digit outcomes should mean green?"
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Two-digit outcomes 00 through 99 form 100 equally likely results, so the simulated probability is the count of green outcomes divided by 100. The probability must match 25/100 exactly, so the count of green outcomes is 25. The number of pairs is 25."
+          - problem: "A student simulates a hockey goalie saving a shot with one random digit from 0 to 9. In the assignment, the digits 0, 1, 2, 3, 4, 5, 6 mean a save and the remaining digits mean a goal. What probability of a save does this assignment simulate? Give the answer as a fraction."
+            answer: "7/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Count the digits assigned to a save: 0, 1, 2, 3, 4, 5, 6 gives 7 digits out of the 10 equally likely digits 0 through 9. The simulated probability is the count over 10. The assignment simulates a save probability of 7/10."
         constraints: "probabilities with denominator dividing 10 (or 100 for digit pairs); assignment must match the probability exactly"
       - id: kp2
         name: "Reading simulation results"
         key_prerequisites: [experimental-theoretical-probability]
         exemplars:
-          - problem: 'Digits $0$-$2$ represent rain ($P = 3/10$). The digits $5\ 8\ 1\ 0\ 7\ 4\ 2\ 9\ 3\ 1$ simulate $10$ days. Estimate the probability of rain from this simulation.'
-            answer: "2/5"
-            solution_sketch: 'Rain digits: $1, 0, 2, 1$ — that is $4$ of $10$ trials, so $4/10 = 2/5$.'
-          - problem: 'A simulation of $20$ trials produced the target event $7$ times. Give the estimated probability.'
-            answer: "7/20"
+          - problem: "A weather simulation uses digits 0 through 4 for a rainy day. The run 3 7 0 9 4 1 6 2 8 5 0 3 covers 12 days. Give the estimated probability of rain as a fraction in lowest terms."
+            answer: "7/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, count the hits: the rain digits are 0, 1, 2, 3, 4, and the run 3 7 0 9 4 1 6 2 8 5 0 3 contains 7 of them. Step 2, form the estimate: divide hits by trials, 7/12, which is already in lowest terms. The estimated probability of rain is 7/12."
+          - problem: "A game uses digits 0 through 9, and the digits 7, 8 and 9 count as a win. The run 4 8 7 1 9 2 6 9 8 0 5 9 7 4 1 8 2 6 9 3 covers 20 rounds. Give the estimated probability of a win as a fraction in lowest terms."
+            answer: "9/20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, count the hits: the win digits are 7, 8 and 9, and the run 4 8 7 1 9 2 6 9 8 0 5 9 7 4 1 8 2 6 9 3 contains 9 of them. Step 2, form the estimate: divide hits by trials, 9/20, already in lowest terms. The estimated probability of a win is 9/20."
+          - problem: "A spinner has 10 equal sectors, and digits 0, 1 and 2 stand for red. The run 4 0 2 7 1 9 5 2 0 8 3 1 6 2 4 covers 15 spins. Give the estimated probability of red as a fraction in lowest terms."
+            answer: "7/15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, count the hits: the red digits are 0, 1 and 2, and the run 4 0 2 7 1 9 5 2 0 8 3 1 6 2 4 contains 7 of them. Step 2, form the estimate: divide hits by trials, 7/15, already in lowest terms. The estimated probability of red is 7/15."
+          - problem: "A factory marks a part defective when its digit is 0 or 1. The run 5 0 3 1 8 2 2 1 7 4 0 6 9 1 2 4 5 3 covers 18 parts. Give the estimated probability that a part is defective as a fraction in lowest terms."
+            answer: "5/18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, count the hits: a defective part has digit 0 or 1, and the run 5 0 3 1 8 2 2 1 7 4 0 6 9 1 2 4 5 3 contains 5 of them. Step 2, form the estimate: divide hits by trials, 5/18, already in lowest terms. The estimated probability that a part is defective is 5/18."
+          - problem: "A simulation uses digits 0 through 3 for the target event. The run 7 2 0 5 3 1 9 0 4 3 6 1 8 0 2 5 3 7 1 4 9 0 covers 22 trials. How many trials hit the target event?"
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, read the target rule: the target event uses the digits 0, 1, 2 and 3. Step 2, count the hits in the run 7 2 0 5 3 1 9 0 4 3 6 1 8 0 2 5 3 7 1 4 9 0 and get 12. The number of trials that hit the target event is 12."
+          - problem: "A coin simulation uses digits 0 through 4 for heads. The run 6 1 8 4 0 9 2 7 3 5 8 1 9 4 6 0 2 7 5 3 covers 20 tosses. Give the estimated probability of heads as a fraction in lowest terms."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, count the hits: heads use the digits 0, 1, 2, 3 and 4, and the run 6 1 8 4 0 9 2 7 3 5 8 1 9 4 6 0 2 7 5 3 contains 10 of them. Step 2, form the estimate: divide hits by trials, 10/20, and reduce to 1/2. The estimated probability of heads is 1/2."
         constraints: "10-25 listed trials; estimates as exact fractions in lowest terms"
       - id: kp3
         name: "Reliability of estimates"
@@ -382,6 +436,14 @@ topics:
           - problem: 'A point is chosen at random on the interval from $0$ to $9$. Find $P(\text{point lies in } [6, 9])$.'
             answer: "1/3"
             solution_sketch: 'The sub-interval $[6,9]$ has length $3$ of the total $9$: $3/9 = 1/3$.'
+          - problem: "A point is chosen at random on a road segment from kilometer 2 to kilometer 17. A construction zone covers the part from kilometer 5 to kilometer 11. Find the probability the point lands in the construction zone."
+            answer: "2/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The road segment from kilometer 2 to kilometer 17 has total length 15. The construction zone from kilometer 5 to kilometer 11 has favorable length 6. The length model gives probability equal to favorable length over total length, 6/15, and this simplifies to 2/5."
+          - problem: "A point is chosen at random on a footpath of length 18. A closed section of the footpath has length 7. Find the probability the point lands in the closed section."
+            answer: "7/18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The footpath has total length 18 and the closed section has length 7. The length model gives probability equal to favorable length over total length, which is 7/18. The probability is 7/18."
         constraints: "segment lengths <= 20; answers exact fractions in lowest terms"
       - id: kp2
         name: "Area models"
