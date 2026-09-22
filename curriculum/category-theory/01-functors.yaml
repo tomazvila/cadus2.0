@@ -44,12 +44,34 @@ topics:
         key_prerequisites: [composition-associativity-identity]
         constraints: "Verify both laws separately; underlying-map arguments must say why the underlying map of a composite is the composite."
         exemplars:
-          - problem: "State the two functor laws and verify them for the forgetful functor $U\\colon\\mathbf{Mon}\\to\\mathbf{Set}$."
-            answer: "$F(1_A)=1_{FA}$ and $F(g\\circ f)=Fg\\circ Ff$; $U$ satisfies both because it returns underlying maps."
-            solution_sketch: "The laws are $F(1_A)=1_{FA}$ (identities to identities) and $F(g\\circ f)=Fg\\circ Ff$ (composites to composites). Let $U$ send a monoid $(M,\\cdot,e)$ to the set $M$ and a homomorphism to its underlying function. The underlying function of $1_M$ is the identity function on $M$, so $U(1_M)=1_{UM}$. The underlying function of $g\\circ f$ is the composite of the underlying functions, so $U(g\\circ f)=Ug\\circ Uf$. Both laws hold, so $U$ is a functor."
-          - problem: "Show the direct-image power-set assignment $P\\colon\\mathbf{Set}\\to\\mathbf{Set}$, $P(A)=\\mathcal{P}(A)$ and $P(f)(S)=f[S]$, is a functor."
-            answer: "Direct image preserves identities and composition."
-            solution_sketch: "Types first: $P(f)\\colon\\mathcal{P}(A)\\to\\mathcal{P}(B)$ for $f\\colon A\\to B$, since $f[S]\\subseteq B$. Identity law: $P(1_A)(S)=1_A[S]=S$, so $P(1_A)=1_{\\mathcal{P}(A)}$. Composition law: $P(g\\circ f)(S)=(g\\circ f)[S]=\\{g(f(x)):x\\in S\\}=g[f[S]]=P(g)(P(f)(S))$. Both laws hold, so $P$ is a covariant functor."
+          - problem: "Let U be the forgetful functor from Mon to Set. Take the monoid M = ({0,1,2}, + mod 3, 0), the homomorphism f: M -> M with f(x) = 2x mod 3, and the zero homomorphism g: M -> M with g(x) = 0. Use the composition law to compute U(g∘f)(1)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: U(g∘f) is the underlying function of the composite g∘f. Step 1 (composition law): U(g∘f) = U(g)∘U(f), because the underlying map of a composite homomorphism is the composite of the underlying maps. Step 2 (evaluate): f(1) = 2*1 mod 3 = 2, then g(2) = 0. Thus U(g∘f)(1) = 0. The answer is 0."
+          - problem: "Let P be the direct-image power-set functor from Set to Set. Take f: {1,2} -> {3,4} with f(1)=3 and f(2)=4, and g: {3,4} -> {5,6} with g(3)=5 and g(4)=6. Compute the sum of the elements of P(g∘f)({1,2})."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: P(g∘f)({1,2}) = (g∘f)[{1,2}] = {g(f(1)), g(f(2))}. Step 1 (composition law): P(g∘f) = P(g)∘P(f), so apply f then g. Step 2: f(1)=3 and f(2)=4, so g(f(1))=g(3)=5 and g(f(2))=g(4)=6. The set is {5,6}, whose sum is 11. The answer is 11."
+          - problem: "Let P be the direct-image power-set functor from Set to Set. On the set A = {1,2,3}, use the identity law to compute the largest element of P(1_A)({1,3})."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: P(1_A) is the identity function on the power set of A. Step 1 (identity law): P(1_A) = 1_{P(A)}, so P(1_A)(S) = S for every subset S. Step 2: with S = {1,3}, the image is {1,3}. Its largest element is 3. The answer is 3."
+          - problem: "Let U be the forgetful functor from Mon to Set. Take the monoid M = ({0,1,2}, + mod 3, 0). Use the identity law to compute U(1_M)(2)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: U(1_M) is the underlying function of the identity homomorphism on M. Step 1 (identity law): U(1_M) = 1_{UM}, so it fixes every element of the underlying set. Step 2: the element 2 is fixed, so U(1_M)(2) = 2. The answer is 2."
+          - problem: "Let C be the category with objects A, B, C and arrows f: A -> B, g: B -> C, h = g∘f: A -> C, plus identities. Let F: C -> Set have F(A)={1,2}, F(B)={3,4}, F(C)={5,6}, F(f)(1)=3, F(f)(2)=4, F(g)(3)=5, F(g)(4)=6. Use the composition law to compute F(h)(1)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: F(h) must equal F(g∘f). Step 1 (composition law): F(g∘f) = F(g)∘F(f), so F(h)(1) = F(g)(F(f)(1)). Step 2: F(f)(1)=3 and F(g)(3)=5. Thus F(h)(1)=5. The answer is 5."
+          - problem: "Let C be the category with objects A, B, C and arrows f: A -> B, g: B -> C, h = g∘f: A -> C, plus identities. Let F: C -> Set have F(A)={1,2}, F(B)={3,4}, F(C)={5,6}, F(f)(1)=3, F(f)(2)=4, F(g)(3)=5, F(g)(4)=6. Use the identity law to compute F(1_A)(1)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: F(1_A) is the image of the identity arrow on A. Step 1 (identity law): F(1_A) = 1_{F(A)}, so it fixes every element of F(A). Step 2: the element 1 is in F(A), so F(1_A)(1)=1. The answer is 1."
+          - problem: "Write the full proof: the forgetful functor U from Mon to Set satisfies both functor laws. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Full object: U sends a monoid (M, ·, e) to its underlying set M and a monoid homomorphism to its underlying function. Identity law step: the underlying function of the identity homomorphism 1_M is the identity function on M, so U(1_M) = 1_{UM}; this verifies the identity law. Composition law step: for homomorphisms f: A -> B and g: B -> C, the underlying function of g∘f sends x to (g∘f)(x) = g(f(x)), which is exactly (Ug∘Uf)(x). Hence U(g∘f) = Ug∘Uf, because the underlying map of a composite homomorphism is the composite of the underlying maps. Both laws hold separately, so U is a functor."
       - id: kp3
         name: Recognizing assignments that are not functors
         key_prerequisites: [examples-of-categories, abelian-groups]

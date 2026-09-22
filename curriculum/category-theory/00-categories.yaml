@@ -1632,12 +1632,34 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Produce the dual of a given notion by systematically reversing arrows and justify the translation; dual pairs limited to mono/epi, initial/terminal, product/coproduct, section/retraction."
         exemplars:
-          - problem: "Explain the duality principle and use it to derive the notion dual to a monomorphism."
-            answer: "Any theorem yields its dual by reversing arrows; the dual of mono is epi."
-            solution_sketch: "A statement holds in all categories iff its arrow-reversed statement holds in all categories (apply the original to $\\mathcal{C}^{op}$). A monomorphism in $\\mathcal{C}$ is a morphism that is left-cancellable; reversing all arrows turns left-cancellation into right-cancellation, i.e. an epimorphism. So 'epi' is dual to 'mono', and every theorem about monos has a mirror theorem about epis obtained by reversing arrows."
-          - problem: "What is the dual notion of an initial object, and why?"
-            answer: "A terminal object."
-            solution_sketch: "Initial means 'unique arrow out to every object'; reversing arrows gives 'unique arrow in from every object', which is terminal. Thus terminal is dual to initial, so any theorem about initial objects dualizes to one about terminal objects (e.g. uniqueness up to unique iso)."
+          - problem: "In any category, a monomorphism is a morphism f such that f g = f h implies g = h for all composites where these make sense. Reverse every arrow and every side in this definition. Which notion is dual to a monomorphism?"
+            answer: "epimorphism"
+            answer_contract: {"kind": "label", "options": [["epimorphism"], ["isomorphism"], ["section"], ["retraction"]]}
+            solution_sketch: "Step 1 (definition): a monomorphism is left-cancellable, since f g = f h forces g = h. Step 2 (reversal): reversing every arrow turns f g = f h into g f = h f, so the dual property is right-cancellation. Step 3 (identification): a right-cancellable morphism is an epimorphism. The answer is epimorphism. Wrong options: isomorphism wrongly adds a two-sided inverse, which the cancellation definition never asserts; section wrongly reads the dual as a split condition with a left inverse, which is strictly stronger than cancellation; retraction wrongly uses a right inverse, also a stronger split condition and not the arrow-reversed cancellation property."
+          - problem: "Duality reverses every arrow in a definition. An initial object has exactly one morphism from itself to each object. Which notion is the dual of an initial object?"
+            answer: "terminal object"
+            answer_contract: {"kind": "label", "options": [["terminal object"], ["product"], ["coproduct"], ["zero object"]]}
+            solution_sketch: "Step 1 (definition): an initial object I has exactly one morphism I -> X for every object X. Step 2 (reversal): reversing all arrows gives exactly one morphism X -> I for every object X. Step 3 (identification): an object that receives a unique morphism from every object is a terminal object. The answer is terminal object. Wrong options: product wrongly dualizes a limit notion of a diagram instead of reversing the single arrow 'unique arrow out'; coproduct is the dual of product, not the dual of initial; zero object is both initial and terminal, so its own dual is again a zero object, and it does not name the dual of initial alone."
+          - problem: "Let C be the category given by the poset 1 < 2 < 3 < 4, so there is exactly one morphism a -> b whenever a <= b. In the opposite category C^op, how many morphisms have source 3?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (reversal): a morphism with source 3 in C^op is exactly a morphism with target 3 in C, since C^op shares the objects of C and reverses each arrow. Step 2 (count): in the poset C, the morphisms with target 3 are the unique arrows 1 -> 3, 2 -> 3, and 3 -> 3. Step 3 (total): there are three such morphisms. The answer is 3."
+          - problem: "A category C has objects A, B, C and exactly these non-identity morphisms: f: A -> B, g: B -> C, and their composite g f: A -> C, plus all identities. In the opposite category C^op, how many morphisms have source B?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (reversal): a morphism with source B in C^op is a morphism with target B in C, because opposite categories keep the same objects and reverse every arrow. Step 2 (count): the morphisms of C with target B are id_B and f: A -> B. Step 3 (total): the count is two. The answer is 2."
+          - problem: "In the category given by the poset 1 < 2 < 3, reversing all arrows turns the product of two elements into their coproduct. Compute the coproduct of the elements 2 and 3 in this poset, that is, their least upper bound."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (duality): the dual of the product, a cone with a unique map in, is the coproduct, a cocone with a unique map out; in a poset a product is a greatest lower bound and its dual is a least upper bound. Step 2 (bound): the least upper bound of 2 and 3 in the chain 1 < 2 < 3 is 3, since 2 <= 3. Step 3 (value): the coproduct of 2 and 3 is 3. The answer is 3."
+          - problem: "A morphism f: A -> B has a morphism g: B -> A with g f = id_A. Reverse every arrow and every side of this equation, working in the opposite category. What is f^op called?"
+            answer: "retraction"
+            answer_contract: {"kind": "label", "options": [["retraction"], ["isomorphism"], ["epimorphism"], ["monomorphism"]]}
+            solution_sketch: "Step 1 (reversal): reverse each arrow to get f^op: B -> A and g^op: A -> B, and the equation g f = id_A in C becomes f^op g^op = id_A in C^op. Step 2 (identification): f^op has the right inverse g^op, and a morphism with a right inverse is a retraction. The answer is retraction. Wrong options: isomorphism wrongly demands that the opposite composite g^op f^op also be an identity, which the single equation does not give; epimorphism wrongly replaces the inverse equation by right-cancellation, a weaker property; monomorphism is the dual of an epimorphism and does not describe a morphism with a right inverse."
+          - problem: "Write the full proof: the duality principle, namely that if a statement holds in every category, then its arrow-reversed dual statement also holds in every category. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): let S be a statement about categories, arrows, and composites that holds in every category. Step 2 (dual statement): define S^op to be the statement obtained from S by reversing the source and target of every arrow and the order in every composite, while keeping the object and morphism quantifiers. Step 3 (opposite is a category): for any category C, the opposite category C^op has the same objects, an arrow f^op: Y -> X for each arrow f: X -> Y of C, and composition defined by f^op g^op = (g f)^op; associativity and the identities of C make C^op a category. Step 4 (apply S to C^op): since S holds in every category, S holds in C^op. Step 5 (translate back): reading the arrows of C^op as reversed arrows of C, the statement S holds in C^op exactly when the arrow-reversed statement S^op holds in C; this translation is bijective on statements, since (f^op)^op = f. Step 6 (conclusion): therefore S^op holds in every category C, which proves the duality principle. As a sample use: the dual of the definition of a monomorphism, left-cancellation, is right-cancellation, so 'epi' is dual to 'mono', and every theorem about monos yields a mirror theorem about epis."
       - id: kp3
         name: Using duality to halve the work
         key_prerequisites: [initial-terminal-objects]
@@ -1684,23 +1706,67 @@ topics:
         key_prerequisites: [commutative-diagrams]
         constraints: "Define $\\mathcal{C}/C$ and verify closure of composition via pasted commuting triangles; concrete slices only in $\\mathbf{Set}$ over a set of at most 2 elements."
         exemplars:
-          - problem: "Fix an object $C$ of $\\mathcal{C}$. Define the slice category $\\mathcal{C}/C$ and verify composition is well defined."
-            answer: "Objects: arrows $f\\colon X\\to C$; morphisms $f\\to g$: maps $h\\colon X\\to Y$ with $g\\circ h=f$."
-            solution_sketch: "An object of $\\mathcal{C}/C$ is a morphism $f\\colon X\\to C$. A morphism from $f\\colon X\\to C$ to $g\\colon Y\\to C$ is $h\\colon X\\to Y$ with $g\\circ h=f$ (the triangle over $C$ commutes). If also $k\\colon Y\\to Z$ satisfies $p\\circ k=g$ (where $p\\colon Z\\to C$), then $p\\circ(k\\circ h)=(p\\circ k)\\circ h=g\\circ h=f$, so $k\\circ h$ is again a morphism over $C$; identities are the underlying identities. Hence $\\mathcal{C}/C$ is a category."
-          - problem: "Describe the slice category $\\mathbf{Set}/\\{0,1\\}$ concretely: what is an object and what is a morphism?"
-            answer: "An object is a set split into two fibers; a morphism is a fiber-preserving function."
-            solution_sketch: "An object is a function $f\\colon X\\to\\{0,1\\}$, equivalently a set $X$ partitioned into the fibers $f^{-1}(0)$ and $f^{-1}(1)$. A morphism from $f\\colon X\\to\\{0,1\\}$ to $g\\colon Y\\to\\{0,1\\}$ is a function $h\\colon X\\to Y$ with $g\\circ h=f$, i.e. $h$ carries $f^{-1}(0)$ into $g^{-1}(0)$ and $f^{-1}(1)$ into $g^{-1}(1)$. Thus $\\mathbf{Set}/\\{0,1\\}$ is the category of $\\{0,1\\}$-indexed pairs of sets and fiberwise maps."
+          - problem: "In the slice C/C, let f:X->C, g:Y->C and p:Z->C be objects. Let h:f->g and k:g->p be morphisms. Which equation must the composite k h satisfy to be a morphism from f to p?"
+            answer: "p k h = f"
+            answer_contract: {"kind": "label", "options": [["p k h = f"], ["f k h = p"], ["p h k = f"], ["g k h = f"]]}
+            solution_sketch: "A morphism h:f->g satisfies g h = f, and k:g->p satisfies p k = g. The composite k h goes from X to Z, so it is a morphism f->p exactly when p (k h) = f. By associativity, p (k h) = (p k) h = g h = f. The option f k h = p swaps the source and target. The option p h k = f composes in the wrong order. The option g k h = f uses g where p is needed. The answer is p k h = f."
+          - problem: "In Set/{0,1}, let f:X->{0,1} with X={a,b,c}, f(a)=0, f(b)=0 and f(c)=1. Let g:Y->{0,1} with Y={u,v,w}, g(u)=0, g(v)=1 and g(w)=1. How many morphisms from f to g are there in Set/{0,1}?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An object is a function to {0,1}, and a morphism h from f to g must satisfy g h = f. Thus h sends the fiber f^{-1}(0)={a,b} into g^{-1}(0)={u}, so h(a)=h(b)=u. It sends f^{-1}(1)={c} into g^{-1}(1)={v,w}, so h(c) is v or w. There are 2 choices. The answer is 2."
+          - problem: "In Set/{0,1}, let f:X->{0,1} with X={a,b}, f(a)=0 and f(b)=0. How many morphisms from f to f are there in Set/{0,1}?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A morphism h from f to f must satisfy f h = f, so it preserves each fiber. The fiber f^{-1}(0) is all of X={a,b}, so h(a) and h(b) may each be a or b. That gives 2 times 2 = 4 functions. Every such function is a morphism over {0,1}. The answer is 4."
+          - problem: "In Set/{0,1}, let X={a,b,c}. How many objects f:X->{0,1} are there for which both fibers f^{-1}(0) and f^{-1}(1) are nonempty?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An object is a function f from X to {0,1}. There are 2 choices for each of the 3 elements, so 2^3 = 8 functions in all. The two constant functions, all 0 and all 1, have an empty fiber, so they are excluded. That leaves 8 - 2 = 6 functions. The answer is 6."
+          - problem: "Claim: if h is a morphism f->g in C/C and k is a morphism g->p, then k h is a morphism f->p. Step 1: h satisfies g h = f and k satisfies p k = g. Step 2: the composite k h is an arrow Z->X. Step 3: p (k h) = (p k) h = g h = f. Step 4: hence k h is a morphism f->p. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: these are the two commuting triangles that define h and k. Step 2 is false: h goes X->Y and k goes Y->Z, so the composite k h goes X->Z, not Z->X. Step 3 is correct: associativity gives p (k h) = (p k) h = g h = f. Step 4 correctly concludes from the corrected Step 2 and Step 3. The answer is Step 2."
+          - problem: "In Set/{0,1}, let f:X->{0,1} with X={a,b,c}, f(a)=0, f(b)=0 and f(c)=1. Let g:Y->{0,1} with Y={u,v,w}, g(u)=0, g(v)=0 and g(w)=1. How many morphisms from f to g are there?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A morphism h from f to g must satisfy g h = f, so it maps each fiber of f into the matching fiber of g. The fiber f^{-1}(0)={a,b} maps into g^{-1}(0)={u,v}, giving 2 choices for h(a) and 2 choices for h(b). The fiber f^{-1}(1)={c} maps into g^{-1}(1)={w}, giving 1 choice for h(c). Multiply: 2 times 2 times 1 = 4. The answer is 4."
+          - problem: "Write the full proof: fix an object C of C. Define the slice category C/C and verify that composition is well defined. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: an object of C/C is a morphism f:X->C. Step 2: a morphism from f:X->C to g:Y->C is an arrow h:X->Y with g h = f, so the triangle over C commutes. Step 3: for composable morphisms h:f->g and k:g->p, we have g h = f and p k = g. Associativity gives p (k h) = (p k) h = g h = f, so k h is an arrow X->Z with the required triangle. Thus the composite k h is a morphism f->p. Step 4: the identity 1_X satisfies f 1_X = f, so it is the identity on f. Composition is associative and unital because it is inherited from C. Therefore C/C is a category and composition is well defined."
       - id: kp2
         name: Terminal objects in slices; coslices by duality
         key_prerequisites: [initial-terminal-objects]
         constraints: "Identify the terminal object of a slice (or, dually, the initial object of a coslice); the forcing argument '$h=f$ is the only candidate' must be given explicitly."
         exemplars:
-          - problem: "Identify the terminal object of $\\mathcal{C}/C$."
-            answer: "The identity $1_C\\colon C\\to C$."
-            solution_sketch: "For any object $f\\colon X\\to C$, a morphism to $1_C$ is $h\\colon X\\to C$ with $1_C\\circ h=f$, i.e. $h=f$; so there is exactly one, namely $f$ itself. Hence $1_C$ is terminal in $\\mathcal{C}/C$."
-          - problem: "Define the coslice category $C/\\mathcal{C}$ as a dual and give its initial object."
-            answer: "$C/\\mathcal{C}=(\\mathcal{C}^{op}/C)^{op}$; objects are maps $C\\to X$; initial object is $1_C$."
-            solution_sketch: "Objects of $C/\\mathcal{C}$ are arrows $C\\to X$, morphisms $(C\\to X)\\to(C\\to Y)$ are $h\\colon X\\to Y$ commuting under $C$. Dually to the slice, $1_C\\colon C\\to C$ is the initial object. It arises from $\\mathcal{C}/C$ by reversing arrows, i.e. working in $\\mathcal{C}^{op}$."
+          - problem: "In the slice category over a set C = {1,2,3,4}, the terminal object is the identity 1_C. Let f: {1,2} -> C satisfy f(1)=1 and f(2)=3. For the unique morphism h from f to 1_C, find h(2)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The slice object is f: {1,2} -> C with f(1)=1 and f(2)=3. A morphism to the terminal object 1_C: C -> C is a function h: {1,2} -> C with 1_C after h = f. The identity law forces h = f, so h(2) = f(2) = 3. The answer is 3."
+          - problem: "In the coslice category under a set C = {1,2,3}, the initial object is 1_C. Let g: C -> {1,2,3,4} satisfy g(1)=4, g(2)=2, g(3)=1. For the unique morphism k from 1_C to g, find k(1)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coslice object is g: C -> {1,2,3,4} with g(1)=4, g(2)=2, g(3)=1. By duality, the initial object is 1_C: C -> C. A morphism from 1_C to g is k: C -> {1,2,3,4} with k after 1_C = g. The identity law forces k = g, so k(1) = g(1) = 4. The answer is 4."
+          - problem: "In any slice category C/C, for a fixed object f: X -> C, how many morphisms are there from f to the terminal object 1_C?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The slice object is f: X -> C. A morphism from f to the terminal object 1_C: C -> C is h: X -> C with 1_C after h = f. The identity law forces h = f, so exactly one candidate exists and it is a morphism. The answer is 1."
+          - problem: "Claim: in a slice category C/C, the identity 1_C is the initial object. Step 1: an object of C/C is an arrow f: X -> C. Step 2: a morphism from f to 1_C is h: X -> C with 1_C after h = f. Step 3: this equation forces h = f, so 1_C is terminal. Step 4: therefore 1_C is initial. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly defines an object of C/C. Step 2 correctly states the morphism condition 1_C after h = f. Step 3 correctly forces h = f and derives that 1_C is terminal. Step 4 is invalid because terminal does not imply initial; the correct dual statement would reverse the arrows. The answer is Step 4."
+          - problem: "In the proof that 1_C is terminal in C/C, the forcing step uses the morphism condition to conclude the only candidate for h. Which equation does that step yield?"
+            answer: "h = f"
+            answer_contract: {"kind": "label", "options": [["h = f"], ["h = 1_C"], ["f = 1_C"], ["h = g"]]}
+            solution_sketch: "A morphism h from f to 1_C must satisfy 1_C after h = f by the definition of slice morphism. The wrong option h = 1_C wrongly equates the mediating arrow with the terminal object itself. The wrong option f = 1_C wrongly identifies the object arrow f with the identity. The wrong option h = g brings in an unrelated map g that plays no role. Only h = f follows from the identity law. The answer is h = f."
+          - problem: "In the proof that 1_C is terminal in C/C, the line 'a morphism h from f to 1_C must satisfy ?' is missing. Select the condition that makes the diagram commute."
+            answer: "1_C after h = f"
+            answer_contract: {"kind": "label", "options": [["1_C after h = f"], ["h after 1_C = f"], ["f after h = 1_C"], ["h after f = 1_C"]]}
+            solution_sketch: "For f: X -> C and the terminal object 1_C: C -> C, a morphism h: X -> C must make the triangle commute. The wrong option h after 1_C = f composes in the wrong order, since h has domain X so 1_C cannot precede h. The wrong option f after h = 1_C reverses the direction and would make h a morphism out of 1_C. The wrong option h after f = 1_C confuses the slice object f with the mediating arrow and composes in the wrong direction. Only 1_C after h = f states the commuting condition. The answer is 1_C after h = f."
+          - problem: "Write the full proof: the identity 1_C is terminal in the slice category C/C, and dually it is initial in the coslice category C/C. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: an object of C/C is an arrow f: X -> C. Step 2: a morphism from f to 1_C is an arrow h: X -> C with 1_C after h = f. Step 3: the identity law simplifies this to h = f, so the only candidate is f itself. Step 4: hence every object has exactly one morphism to 1_C, and 1_C is terminal in C/C. Step 5: by duality, reverse all arrows; in the coslice C/C the objects are arrows C -> X. Step 6: the same forcing argument shows 1_C is initial in C/C. The full proof is complete."
     diagnostic_exemplar:
       problem: "Prove that the identity $1_C\\colon C\\to C$ is a terminal object of the slice category $\\mathcal{C}/C$."
       answer: "Let $f\\colon X\\to C$ be any object of $\\mathcal{C}/C$. A morphism $f\\to 1_C$ is a map $h\\colon X\\to C$ with $1_C\\circ h=f$, i.e. $h=f$. So exactly one morphism $f\\to 1_C$ exists (namely $f$ itself), which is the definition of $1_C$ being terminal."
