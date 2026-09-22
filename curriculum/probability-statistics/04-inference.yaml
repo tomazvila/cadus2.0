@@ -45,22 +45,22 @@ topics:
         name: "Parameter versus statistic"
         key_prerequisites: [mean-median-mode]
         exemplars:
-          - problem: 'The mean height of the $200$ sampled residents is $171$ cm. Is this number a parameter or a statistic?'
-            answer: 'a statistic'
-            answer_contract: {kind: label, options: [[a parameter], [a statistic]]}
-            solution_sketch: 'It is computed from the sample of $200$, so it is a statistic.'
-          - problem: 'The symbols $\mu$ and $\sigma$ describe a ___, while $\bar{x}$ and $s$ describe a ___.'
-            answer: 'Population; sample.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mu$ and $\sigma$ are population parameters; $\bar{x}$ and $s$ are sample statistics.'
-          - problem: 'The average height of ALL $500$ students at a school is $162$ cm. Is $162$ a parameter or a statistic?'
-            answer: 'a parameter'
-            answer_contract: {kind: label, options: [[a parameter], [a statistic]]}
-            solution_sketch: 'It describes the whole population, so it is a parameter.'
-          - problem: 'The mean of the $30$ sampled bolts is $8.2$ mm. Is $8.2$ a parameter or a statistic?'
-            answer: 'a statistic'
-            answer_contract: {kind: label, options: [[a parameter], [a statistic]]}
-            solution_sketch: 'It is computed from a sample, so it is a statistic.'
+          - problem: "A sample of 4 students has heights 150, 154, 158, 162 cm. Find the sample mean and state whether it is a parameter or a statistic."
+            answer: "verdict = statistic; mean = 156"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["parameter"], ["statistic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "mean"}]}
+            solution_sketch: "The sample data are 150, 154, 158, 162. Step 1: sum the values: 150+154+158+162 = 624. Step 2: divide by the sample size 4: 624/4 = 156, so the sample mean is 156. Step 3: a mean computed from a sample is a statistic. The answer is verdict = statistic; mean = 156."
+          - problem: "The symbol xbar denotes the sample mean. For the sample 5, 7, 9, find xbar and state whether xbar is a parameter or a statistic."
+            answer: "verdict = statistic; mean = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["parameter"], ["statistic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "mean"}]}
+            solution_sketch: "The sample data are 5, 7, 9. Step 1: sum: 5+7+9 = 21. Step 2: divide by 3: 21/3 = 7, so xbar = 7. Step 3: xbar is computed from a sample, so it is a statistic. The answer is verdict = statistic; mean = 7."
+          - problem: "The population salaries 4, 6, 8, 10 have mean mu. Find mu and state whether it is a parameter or a statistic."
+            answer: "verdict = parameter; mean = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["parameter"], ["statistic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "mean"}]}
+            solution_sketch: "The population data are 4, 6, 8, 10. Step 1: sum: 4+6+8+10 = 28. Step 2: divide by 4: 28/4 = 7, so mu = 7. Step 3: mu describes the whole population, so it is a parameter. The answer is verdict = parameter; mean = 7."
+          - problem: "A sample of 5 bolts has diameters 7, 8, 9, 8, 8 mm. Find the sample mean and state whether it is a parameter or a statistic."
+            answer: "verdict = statistic; mean = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["parameter"], ["statistic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "mean"}]}
+            solution_sketch: "The sample data are 7, 8, 9, 8, 8. Step 1: sum: 7+8+9+8+8 = 40. Step 2: divide by 5: 40/5 = 8, so the sample mean is 8. Step 3: the mean is from a sample, so it is a statistic. The answer is verdict = statistic; mean = 8."
           - problem: 'The population $2, 4, 6$ has mean $\mu$. Compute $\mu$.'
             answer: "4"
             solution_sketch: '$\mu = (2+4+6)/3 = 12/3 = 4$ — a parameter, since it describes the whole population.'
@@ -72,28 +72,28 @@ topics:
         name: "Why sample at all"
         key_prerequisites: []
         exemplars:
-          - problem: 'Give two reasons to survey a sample rather than take a census.'
-            answer: 'A sample is cheaper and faster; a census may be impractical or impossible.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Sampling saves cost and time, and some censuses are impractical or destructive.'
-          - problem: 'A factory wants the average lifetime of its lightbulbs. Why is a census a bad idea?'
-            answer: 'Lifetime testing destroys the bulb — a census would destroy every product.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Lifetime testing is destructive, so a census would destroy the entire production run.'
+          - problem: "A city plans a census of 4000 households, and each interview costs 12 dollars. A sample of 400 households is interviewed at the same cost per household. Find the number of dollars the sample saves."
+            answer: "43200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, census cost: 4000 times 12 equals 48000 dollars. Step 2, sample cost: 400 times 12 equals 4800 dollars. Step 3, subtraction: 48000 minus 4800 gives 43200 dollars. The sample saves 43200 dollars."
+          - problem: "A team tests the breaking strength of 25 concrete beams taken from a batch of 500, loading each beam until it fails. State whether this testing ruins the tested beams, and give the number of beams in the batch that stay unbroken."
+            answer: "verdict = destructive; intact = 475"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["destructive"], ["non-destructive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "intact"}]}
+            solution_sketch: "The full result has two parts: verdict = destructive and intact = 475. Step 1, classification: loading a beam until it fails leaves that unit broken, so the test is destructive and a census of all 500 would ruin the whole batch. Step 2, subtraction: only the 25 tested beams are ruined, so 500 minus 25 gives 475. The answer is verdict = destructive; intact = 475."
           - problem: 'A factory tests the lifetime of $50$ of the $5000$ bulbs it produced. How many bulbs escape destruction?'
             answer: "4950"
             solution_sketch: '$5000 - 50 = 4950$ bulbs are never tested — sampling spares the rest of the production run.'
-          - problem: 'Which is cheaper to carry out: a census of $2000$ households or a sample of $200$ households?'
-            answer: 'the sample'
-            answer_contract: {kind: label, options: [[the census], [the sample]]}
-            solution_sketch: 'Measuring $200$ households costs about a tenth of measuring all $2000$.'
+          - problem: "A city wants the mean commute of all 50000 downtown workers, but the report is due tomorrow and only 200 interviews can be finished before then. Which single reason forces the use of a sample?"
+            answer: "time"
+            answer_contract: {"kind": "label", "options": [["time"], ["cost"], ["destruction"], ["precision"]]}
+            solution_sketch: "The full scenario is a deadline: only 200 of the 50000 interviews fit before the report is due. Step 1, identify the binding limit: the deadline is what stops the census, so the class is time. Step 2, test each other option against the scenario. The option cost is wrong because no budget limit is given. The option destruction is wrong because an interview does not ruin the person interviewed. The option precision is wrong because a deadline does not control how exact one answer is. The answer is time."
           - problem: 'A fishery has $10000$ cod and a team can measure $100$ of them. The sample is what fraction of the population? Give a fraction in lowest terms.'
             answer: "1/100"
             solution_sketch: '$100/10000 = 1/100$ — a tiny sample suffices to estimate the population mean.'
-          - problem: 'To estimate the average commute of commuters in a city, which takes less time?'
-            answer: 'surveying 500 commuters'
-            answer_contract: {kind: label, options: [[surveying 500 commuters], [surveying every commuter]]}
-            solution_sketch: 'A sample of $500$ is far faster than a census of every commuter.'
+          - problem: "Checking every one of 3000 households takes 8 minutes per household, while checking a sample of 300 takes the same 8 minutes each. Find the number of hours saved by using the sample."
+            answer: "360"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, census time: 3000 times 8 equals 24000 minutes. Step 2, sample time: 300 times 8 equals 2400 minutes. Step 3, difference and unit change: 24000 minus 2400 equals 21600 minutes, and 21600 divided by 60 gives 360 hours. The number of hours saved is 360."
         constraints: "scenarios where cost, time, or destructive testing forces sampling"
     diagnostic_exemplar:
       problem: 'An inspector tests $50$ of the $5000$ batteries produced in a day; the mean life of the $50$ is $21$ hours. Identify the population, the sample, and whether $21$ hours is a parameter or a statistic.'
@@ -195,10 +195,30 @@ topics:
         name: "Confounding and causation"
         key_prerequisites: [sampling-methods-bias]
         exemplars:
-          - problem: 'Ice cream sales and drownings rise together. Name a plausible confounding variable.'
-            answer: 'Summer weather — heat increases both swimming and ice cream sales.'
-          - problem: 'Which design can support a cause-and-effect conclusion: a randomized experiment or an observational study?'
-            answer: 'A randomized experiment; random assignment balances lurking variables.'
+          - problem: "A gym chain reports that branches with more personal trainers also sell more protein shakes. Candidates: (1) branch size, (2) trainer salary, (3) local interest in fitness, (4) shake flavor. Give the numbers of the candidates that plausibly drive both the trainer count and the shake sales, in increasing order."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The candidates are branch size, trainer salary, local interest in fitness, and shake flavor. A confounder rule: the variable must plausibly drive both the trainer count and the shake sales. Branch size drives both counts, and local fitness interest drives both; trainer salary and shake flavor each drive only one side. The answer is 1, 3."
+          - problem: "A company wants to claim that a new safety training reduces workplace injuries. Which design can support that claim?"
+            answer: "Randomized"
+            answer_contract: {"kind": "label", "options": [["Randomized"], ["Observational"], ["Before-and-after"], ["Case study"]]}
+            solution_sketch: "The four designs are Randomized, Observational, Before-and-after, and Case study. Causation rule: only random assignment balances lurking variables, so a causal claim needs a Randomized design. Observational is wrong because workers who choose the training may already be safer (selection bias); Before-and-after is wrong because injury rates can shift with season or reporting rules and there is no control group; Case study is wrong because one workplace cannot support a general claim. The answer is Randomized."
+          - problem: "A hospital compares patients who chose a new drug with patients who chose the usual care and finds faster recovery in the drug group. Candidates: (a) illness severity, (b) age, (c) room number, (d) curtain color. State whether a causal claim is supported, and give the number of candidates that are plausible confounders."
+            answer: "verdict = unsupported; n = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["supported"], ["unsupported"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
+            solution_sketch: "The candidates are illness severity, age, room number, and curtain color. A confounder must plausibly drive both which drug a patient chose and how fast that patient recovered. Illness severity and age drive both, while room number and curtain color drive neither. With no random assignment, the causal claim is not supported, so the answer is verdict = unsupported; n = 2."
+          - problem: "A health study reports that adults who drink diet soda weigh more. Candidates: (1) soda brand logo, (2) age, (3) bottle size, (4) amount of other sugary food eaten. Give the numbers of the candidates that plausibly drive both diet-soda drinking and body weight, in increasing order."
+            answer: "2, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The candidates are soda brand logo, age, bottle size, and amount of other sugary food eaten. A confounder must plausibly drive both diet-soda drinking and body weight. Age drives both, and eating more other sugary food raises weight while going with diet-soda drinking; the logo and bottle size drive neither. The answer is 2, 4."
+          - problem: "A store finds that shoppers who carry a loyalty card spend more. The store randomly assigns 240 new shoppers in equal groups; half receive a card and half do not. State whether a causal claim is warranted, and give the number of shoppers who do not receive a card."
+            answer: "claim = warranted; n = 120"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["warranted"], ["unwarranted"]]}, "name": "claim"}, {"contract": {"kind": "exact"}, "name": "n"}]}
+            solution_sketch: "The store randomly assigns 240 shoppers in equal groups, half to the loyalty card and half to no card. Random assignment balances lurking variables in expectation, so a causal claim is warranted, unlike a comparison of shoppers who chose cards themselves. Half of 240 is 120, so the answer is claim = warranted; n = 120."
+          - problem: "A grocery chain tests a new store layout. It randomly assigns 60 stores, with twice as many stores keeping the current layout as switching to the new one. Give the numbers of stores in each group as (new layout, current layout)."
+            answer: "(20, 40)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The object asked for is the pair of store counts written as (new layout, current layout). Let the number of new-layout stores be t, so the current-layout stores number 2t, and 3t = 60 gives t = 20. The answer is (20, 40)."
         constraints: "confounders must plausibly drive both variables; causation claims only from randomized experiments"
     diagnostic_exemplar:
       problem: 'To test a study app, $100$ volunteers are randomly split: $50$ use the app, $50$ do not, and exam scores are compared. Identify the treatment and control groups, and state why random assignment matters.'
@@ -243,6 +263,14 @@ topics:
           - problem: 'For a normal distribution, what proportion of values lie within $3$ standard deviations of the mean? Give a decimal.'
             answer: "0.997"
             solution_sketch: 'The empirical rule gives about $99.7\%$, i.e. $0.997$.'
+          - problem: "A normal distribution has mean 50. The middle 95% of its values lie between 30 and 70. Find the standard deviation."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Empirical rule: the middle 95% of a normal distribution spans mean minus 2 standard deviations to mean plus 2 standard deviations. The given interval 30 to 70 has half-width (70 - 30)/2 = 20. So 2 standard deviations = 20 and the standard deviation is 10."
+          - problem: "A normal distribution has standard deviation 4. The middle 99.7% of its values lie between 38 and 62. Find the mean."
+            answer: "50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Empirical rule: the middle 99.7% of a normal distribution spans mean minus 3 standard deviations to mean plus 3 standard deviations. Here 3 standard deviations = 3 times 4 = 12, so the interval is mean minus 12 to mean plus 12. The midpoint of 38 and 62 is (38 + 62)/2 = 50, so the mean is 50."
         constraints: "intervals land exactly on mu +/- 1, 2, or 3 sigma; area answers are decimal proportions"
       - id: kp2
         name: "Translating to raw intervals"
@@ -283,6 +311,14 @@ topics:
           - problem: 'For a normal distribution, what proportion of values lie more than $3$ standard deviations from the mean? Give a decimal.'
             answer: "0.003"
             solution_sketch: '$1 - 0.997 = 0.003$.'
+          - problem: "For a normal distribution, a symmetric interval about the mean leaves proportion 0.05 of the values outside it. How many standard deviations from the mean does this interval extend?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Complement rule: the area inside the interval is 1 - 0.05 = 0.95. Empirical rule: the interval that holds 0.95 of the values extends 2 standard deviations from the mean. The interval extends 2 standard deviations from the mean, so the answer is 2."
+          - problem: "Battery lifetimes are normal with mean 250 hours and standard deviation 4 hours. A symmetric interval about the mean leaves proportion 0.003 of lifetimes outside it. Give this interval as (low, high)."
+            answer: "(238, 262)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Complement rule: the area inside is 1 - 0.003 = 0.997, so the interval is the 99.7 percent interval of the empirical rule, which extends 3 standard deviations each way. Empirical rule applied to the mean and SD: 250 - 3*4 = 238 and 250 + 3*4 = 262. The interval is (238, 262)."
         constraints: "complements of the 68/95/99.7 intervals only; no tail-splitting yet; area answers are decimal proportions"
     diagnostic_exemplar:
       problem: 'Times are normal with mean $60$ and SD $5$. What proportion of times lie outside the interval $(50, 70)$? Give a decimal.'
@@ -343,6 +379,22 @@ topics:
           - problem: 'A value sits at $\mu + 2\sigma$ in a normal distribution. Approximately what percentile is it? Give the percentile number.'
             answer: "97.5"
             solution_sketch: '$50\% + 47.5\% = 97.5\%$ of values lie below $\mu + 2\sigma$.'
+          - problem: "Distribution A has mean 20 and standard deviation 4. Distribution B has mean 50 and standard deviation 8. The value 28 comes from A and the value 74 comes from B. Which value is more exceptional relative to its own distribution? Give the z-score of the more exceptional value."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Convert the first value with the z-score rule: z = (28 - 20)/4 = 2. Step 2: Convert the second value: z = (74 - 50)/8 = 3. Step 3: Compare absolute z-scores; 3 is larger, so the value from B is more exceptional. The answer is 3."
+          - problem: "A value of 84 belongs to a normal distribution with mean 75 and standard deviation 6. A value of 60 belongs to a normal distribution with mean 50 and standard deviation 5. Which value has the larger absolute z-score? Give that absolute z-score."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the z-score rule for the first value: z = (84 - 75)/6 = 1.5. Step 2: Use the z-score rule for the second value: z = (60 - 50)/5 = 2. Step 3: The absolute z-scores are 1.5 and 2; the larger is 2. The answer is 2."
+          - problem: "In distribution A the mean is 40 and the standard deviation is 8. A value of 52 in A has z-score 1.5. In distribution B the mean is 70 and the standard deviation is 6. What value in B has the same z-score as 52 in A? Give the value."
+            answer: "79"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Check the z-score of 52 in A: z = (52 - 40)/8 = 1.5. Step 2: Use the same z-score in B: value = mean + z * SD = 70 + 1.5 * 6. Step 3: Compute 70 + 9 = 79. The answer is 79."
+          - problem: "A value has z-score 2 in distribution A. Another value has z-score 3 in distribution B. Using the empirical rule, find the percentile of the value with the higher z-score. Give the answer to 2 decimals."
+            answer: "99.85"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1: Apply the empirical rule: z = 2 gives about 97.5% below. Step 2: Apply the empirical rule: z = 3 gives about 99.85% below. Step 3: The value with z = 3 has the higher percentile. The answer is 99.85."
         constraints: "z-scores are halves or whole numbers; comparisons decided by the larger |z|"
     diagnostic_exemplar:
       problem: 'Marks (out of $10$) are normal with mean $6.5$ and SD $1$. What proportion of marks fall between $4.5$ and $7.5$? Give a decimal.'

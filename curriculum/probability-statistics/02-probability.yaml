@@ -1239,6 +1239,22 @@ topics:
           - problem: 'A spinner lands on red with probability $1/4$ on each spin, independently. Find $P(\text{at least one red in } 3 \text{ spins})$.'
             answer: "37/64"
             solution_sketch: '$P(\text{no red}) = \left(\frac{3}{4}\right)^3 = \frac{27}{64}$, so $P = 1 - \frac{27}{64} = \frac{37}{64}$.'
+          - problem: "Three fair coins are flipped independently. Give the probability that at least one coin shows heads as a fraction."
+            answer: "7/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Event: at least one head in three independent fair-coin flips. Independence gives P(no heads) = (1/2)^3 = 1/8. The complement rule gives P(at least one head) = 1 - 1/8 = 7/8. The answer is 7/8."
+          - problem: "A factory produces parts; each part is defective with probability 1/5 independently. A sample of four parts is checked. Give the probability that at least one part is defective as a fraction."
+            answer: "369/625"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Event: at least one defective part in four independent checks. Independence gives P(no defective parts) = (4/5)^4 = 256/625. The complement rule gives P(at least one defective) = 1 - 256/625 = 369/625. The answer is 369/625."
+          - problem: "A basketball player makes a free throw with probability 3/4 independently. Give the probability that she makes at least one free throw in four attempts as a fraction."
+            answer: "255/256"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Event: at least one made free throw in four independent attempts. Independence gives P(no makes) = (1/4)^4 = 1/256. The complement rule gives P(at least one make) = 1 - 1/256 = 255/256. The answer is 255/256."
+          - problem: "A biased coin lands heads with probability 1/6 on each flip, independently. The coin is flipped three times. Give the probability that at least one flip shows heads as a fraction."
+            answer: "91/216"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Event: at least one head in three independent flips of a biased coin. Independence gives P(no heads) = (5/6)^3 = 125/216. The complement rule gives P(at least one head) = 1 - 125/216 = 91/216. The answer is 91/216."
         constraints: "2-4 independent trials; force the complement route (direct enumeration would be tedious)"
     diagnostic_exemplar:
       problem: 'A spinner lands on red with probability $1/3$ on each spin, independently. Find $P(\text{at least one red in } 3 \text{ spins})$.'
@@ -1328,6 +1344,22 @@ topics:
           - problem: 'A bag holds $3$ red and $2$ blue marbles. Two are drawn without replacement. Find $P(\text{second draw is red})$.'
             answer: "3/5"
             solution_sketch: 'Paths RR and BR: $\frac{3}{5} \cdot \frac{2}{4} + \frac{2}{5} \cdot \frac{3}{4} = \frac{6}{20} + \frac{6}{20} = \frac{3}{5}$ — the same as $P(\text{first red})$.'
+          - problem: "A jar holds 5 red and 3 blue marbles. Two are drawn without replacement. Find the probability that at least one marble is blue, as a fraction."
+            answer: "9/14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full tree has 5 red and 3 blue out of 8 at the first draw. No blue means red then red, and the multiplication rule gives 5/8 * 4/7 = 20/56 = 5/14. The complement rule gives 1 - 5/14 = 9/14. The answer is 9/14."
+          - problem: "A box holds 4 red and 3 blue balls. Two are drawn without replacement. Find the probability that the second ball drawn is blue, as a fraction."
+            answer: "3/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full tree has 4 red and 3 blue out of 7 at the first draw. A blue second draw comes from red then blue or blue then blue. The multiplication rule gives 4/7 * 3/6 + 3/7 * 2/6 = 12/42 + 6/42 = 18/42. Simplify to 3/7. The answer is 3/7."
+          - problem: "A bag holds 5 red and 2 blue counters. Two are drawn without replacement. Find the probability that exactly one counter is blue, as a fraction."
+            answer: "10/21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full tree has 5 red and 2 blue out of 7 at the first draw. Exactly one blue comes from red then blue or blue then red. The multiplication rule gives 5/7 * 2/6 + 2/7 * 5/6 = 10/42 + 10/42 = 20/42. Simplify to 10/21. The answer is 10/21."
+          - problem: "A sack holds 6 red and 2 blue tokens. Two are drawn without replacement. Find the probability that at least one token is red, as a fraction."
+            answer: "27/28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full tree has 6 red and 2 blue out of 8 at the first draw. No red means blue then blue, and the multiplication rule gives 2/8 * 1/7 = 2/56 = 1/28. The complement rule gives 1 - 1/28 = 27/28. The answer is 27/28."
         constraints: "combine complements or sum 2-3 paths over a full two-stage tree; bag sizes <= 8"
     diagnostic_exemplar:
       problem: 'A bag holds $2$ red and $3$ blue marbles. Two are drawn without replacement. Find $P(\text{the second marble drawn is red})$.'
