@@ -1135,31 +1135,59 @@ topics:
         name: "The substitution $v = y^{1-n}$"
         key_prerequisites: [chain-rule, linear-first-order-integrating-factor]
         exemplars:
-          - problem: "For $y' + y = y^2$, identify $n$, the substitution, and the resulting linear equation."
-            answer: "$n = 2$; $v = y^{-1}$ gives $v' - v = -1$."
-            answer_contract: {kind: none}
-            solution_sketch: "Divide by $y^2$: $y^{-2}y' + y^{-1} = 1$; with $v = y^{-1}$, $v' = -y^{-2}y'$, so $-v' + v = 1$."
-          - problem: "For $y' - y = xy^3$, find the substitution and the resulting linear equation."
-            answer: "$v = y^{-2}$ gives $v' + 2v = -2x$."
-            answer_contract: {kind: none}
-            solution_sketch: "Divide by $y^3$: $y^{-3}y' - y^{-2} = x$; since $v' = -2y^{-3}y'$, this is $-\\tfrac{1}{2}v' - v = x$."
-          - problem: 'What substitution turns $y'' + \dfrac{y}{x} = \sqrt{y}$ into a linear equation, and what equation results?'
-            answer: '$v = \sqrt{y}$ gives $v'' + \dfrac{v}{2x} = \dfrac{1}{2}$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Here $n = \tfrac{1}{2}$, so $v = y^{1/2}$; writing $y = v^2$, $y'' = 2vv''$ and dividing by $2v$ gives the linear equation.'
+          - problem: "For y' + 2y = y^2, use the Bernoulli substitution v = y^(1-n). After the substitution the equation takes the standard linear form v' + P v = Q. Give the value of P."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The right side y^2 shows n = 2, so v = y^(-1). Divide the whole equation by y^2 (Bernoulli standard form step): y^(-2) y' + 2 y^(-1) = 1. The chain rule on v = y^(-1) gives v' = -y^(-2) y'. Substituting: -v' + 2v = 1, and multiplying by -1 gives the standard linear form v' - 2v = -1. Comparing with v' + P v = Q, P = -2. The answer is -2."
+          - problem: "For y' - y = x y^3, use the Bernoulli substitution v = y^(1-n). After the substitution the equation takes the standard linear form v' + P v = Q x. Give the value of Q."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The right side x y^3 shows n = 3, so v = y^(-2). Divide the whole equation by y^3 (Bernoulli standard form step): y^(-3) y' - y^(-2) = x. The chain rule on v = y^(-2) gives v' = -2 y^(-3) y', so y^(-3) y' = -v'/2. Substituting: -v'/2 - v = x, and multiplying by -2 gives the standard linear form v' + 2v = -2x. Comparing with v' + P v = Q x, Q = -2. The answer is -2."
+          - problem: "For y' + y/x = sqrt(y), use the Bernoulli substitution v = y^(1-n). After the substitution the equation takes the standard linear form v' + (A/x) v = B. Give the value of A."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The right side sqrt(y) = y^(1/2) shows n = 1/2, so v = y^(1/2). Write y = v^2; by the chain rule y' = 2 v v'. Substituting: 2 v v' + v^2/x = v. Divide by v (Bernoulli standard form step): 2v' + v/x = 1, then divide by 2 for the standard linear form v' + v/(2x) = 1/2. Comparing with v' + (A/x) v = B, A = 1/2. The answer is 1/2."
+          - problem: "For y' + y = x y^2, use the Bernoulli substitution v = y^(1-n). After the substitution the equation takes the standard linear form v' + P v = Q x. Give the value of Q."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The right side x y^2 shows n = 2, so v = y^(-1). Divide the whole equation by y^2 (Bernoulli standard form step): y^(-2) y' + y^(-1) = x. The chain rule on v = y^(-1) gives v' = -y^(-2) y'. Substituting: -v' + v = x, and multiplying by -1 gives the standard linear form v' - v = -x. Comparing with v' + P v = Q x, Q = -1. The answer is -1."
+          - problem: "For y' - y/x = x^2 y^3, use the Bernoulli substitution v = y^(1-n). After the substitution the equation takes the standard linear form v' + (A/x) v = B x^2. Give the value of A."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The right side x^2 y^3 shows n = 3, so v = y^(-2). Divide the whole equation by y^3 (Bernoulli standard form step): y^(-3) y' - (1/x) y^(-2) = x^2. The chain rule on v = y^(-2) gives v' = -2 y^(-3) y'. Substituting: -v'/2 - (1/x) v = x^2, and multiplying by -2 gives the standard linear form v' + (2/x) v = -2x^2. Comparing with v' + (A/x) v = B x^2, A = 2. The answer is 2."
+          - problem: "For y' - y = sqrt(y), use the Bernoulli substitution v = y^(1-n). After the substitution the equation takes the standard linear form v' + P v = Q. Give the value of Q."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The right side sqrt(y) = y^(1/2) shows n = 1/2, so v = y^(1/2). Write y = v^2; by the chain rule y' = 2 v v'. Substituting: 2 v v' - v^2 = v. Divide by v (Bernoulli standard form step): 2v' - v = 1, then divide by 2 for the standard linear form v' - v/2 = 1/2. Comparing with v' + P v = Q, Q = 1/2. The answer is 1/2."
         constraints: "n in {2, 3, 1/2}; the transformed equation must be stated in standard linear form"
       - id: kp2
         name: Complete solutions
         key_prerequisites: [linear-first-order-integrating-factor]
         exemplars:
-          - problem: "Find the general solution of $y' + y = y^2$."
-            answer: "$y = \\dfrac{1}{1 + Ce^{x}}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$v = y^{-1}$ gives $v' - v = -1$, so $v = 1 + Ce^x$; invert."
-          - problem: "Find the general solution of $y' + \\dfrac{y}{x} = y^2$ on $x > 0$."
-            answer: "$y = \\dfrac{1}{x(C - \\ln x)}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$v = y^{-1}$ gives $v' - \\dfrac{v}{x} = -1$; with $\\mu = 1/x$, $(v/x)' = -1/x$, so $v = x(C - \\ln x)$."
+          - problem: "Find the general solution of y' + y = y^2. Give y explicitly as a function of x, using c for the arbitrary constant."
+            answer: "1/(1+e^(x)c)"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (Bernoulli substitution): set v = 1/y, so y' = -v'/v^2, and the full equation y' + y = y^2 becomes the linear equation v' - v = -1. Step 2 (linear first-order equation): the integrating factor is e^(-x), so (v e^(-x))' = -e^(-x), which integrates to v e^(-x) = e^(-x) + c, hence v = 1 + c e^(x). Step 3 (back-substitution): inverting v gives the explicit solution y = 1/(1+e^(x)c)."
+          - problem: "Find the general solution of y' + y/x = y^2 for x > 0. Give y explicitly as a function of x, using c for the arbitrary constant."
+            answer: "1/(x(c-ln(x)))"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (Bernoulli substitution): set v = 1/y, so y' + y/x = y^2 becomes v' - v/x = -1. Step 2 (linear first-order equation, integrating factor 1/x): (v/x)' = -1/x, so v/x = -ln(x) + c and v = x(c - ln(x)). Step 3 (back-substitution, explicit y): invert v to get y = 1/(x(c-ln(x)))."
+          - problem: "Solve the differential equation y' + 2y = 2y^2; give the general solution with y explicit in x, using c for the arbitrary constant."
+            answer: "1/(1+e^(2x)c)"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (Bernoulli substitution): set v = 1/y, so y' = -v'/v^2, and the full equation y' + 2y = 2y^2 becomes v' - 2v = -2. Step 2 (linear first-order equation): with integrating factor e^(-2x), (v e^(-2x))' = -2e^(-2x), so v e^(-2x) = e^(-2x) + c and v = 1 + c e^(2x). Step 3 (back-substitution): inverting v gives y = 1/(1+e^(2x)c)."
+          - problem: "Find the general solution of y' - y = y^2; give y explicitly as a function of x, using c for the arbitrary constant."
+            answer: "1/(e^(-x)c-1)"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (Bernoulli substitution): set v = 1/y, so y' = -v'/v^2, and the full equation y' - y = y^2 becomes v' + v = -1. Step 2 (linear first-order equation): with integrating factor e^(x), (v e^(x))' = -e^(x), so v e^(x) = -e^(x) + c and v = -1 + c e^(-x). Step 3 (back-substitution): inverting v gives y = 1/(e^(-x)c-1)."
+          - problem: "Find the general solution of y' + y/x = y^2/x for x > 0. Give y explicitly as a function of x, using c for the arbitrary constant."
+            answer: "1/(1+cx)"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (Bernoulli substitution): set v = 1/y, so y' + y/x = y^2/x becomes v' - v/x = -1/x. Step 2 (linear first-order equation, integrating factor 1/x): (v/x)' = -1/x^2, so v/x = 1/x + c and v = 1 + cx. Step 3 (back-substitution, explicit y): invert v to get y = 1/(1+cx)."
+          - problem: "Find the general solution of y' + 3y = 6y^2. Give y explicitly as a function of x, using c for the arbitrary constant."
+            answer: "1/(2+e^(3x)c)"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (Bernoulli substitution): set v = 1/y, so y' = -v'/v^2, and the full equation y' + 3y = 6y^2 becomes v' - 3v = -6. Step 2 (linear first-order equation): with integrating factor e^(-3x), (v e^(-3x))' = -6e^(-3x), so v e^(-3x) = 2e^(-3x) + c and v = 2 + c e^(3x). Step 3 (back-substitution): inverting v gives y = 1/(2+e^(3x)c)."
         constraints: "coefficients constant or k/x; the linear stage solves with one integrating factor; present y explicitly"
       - id: kp3
         name: Bernoulli IVPs
@@ -1510,18 +1538,30 @@ topics:
         name: Completing the solution
         key_prerequisites: [exact-equations]
         exemplars:
-          - problem: "Solve $2y\\,dx + x\\,dy = 0$ using the integrating factor $\\mu = x$."
-            answer: "$x^2 y = C$"
-            answer_contract: {kind: none}
-            solution_sketch: "Multiplying gives $2xy\\,dx + x^2\\,dy = d(x^2 y)$."
-          - problem: "Solve $(3xy + y^2)\\,dx + (x^2 + xy)\\,dy = 0$ using $\\mu = x$."
-            answer: "$2x^3 y + x^2 y^2 = C$"
-            answer_contract: {kind: none}
-            solution_sketch: "After multiplying, $F = x^3 y + \\dfrac{x^2 y^2}{2}$ satisfies $F_x = 3x^2y + xy^2$, $F_y = x^3 + x^2 y$; clear the fraction."
-          - problem: "Solve $y\\,dx + (2x - ye^y)\\,dy = 0$ using $\\mu = y$."
-            answer: "$xy^2 - (y^2 - 2y + 2)e^y = C$"
-            answer_contract: {kind: none}
-            solution_sketch: "After multiplying, $F = xy^2 + h(y)$ with $h'(y) = -y^2 e^y$; integrating by parts twice, $h = -(y^2 - 2y + 2)e^y$."
+          - problem: "Use the integrating factor mu = x. Multiply 2y dx + x dy = 0 by mu, check that the new equation is exact, and find F(x,y) so that dF is the left side of the new equation. Give F as a function of x and y."
+            answer: "x^2*y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1 (integrating factor): multiply by mu = x to get 2xy dx + x^2 dy = 0. Step 2 (exactness test): the y-derivative of 2xy is 2x and the x-derivative of x^2 is 2x, so the equation is exact. Step 3 (reconstruct F): integrate 2xy with respect to x to get x^2*y, and integrate x^2 with respect to y to get x^2*y. The answer is x^2*y."
+          - problem: "Use the integrating factor mu = x. Multiply (3xy + y^2) dx + (x^2 + xy) dy = 0 by mu, check that the new equation is exact, and find F(x,y) so that dF is the left side. Give F as a function of x and y."
+            answer: "x^3*y + x^2*y^2/2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1 (integrating factor): multiply by mu = x to get (3x^2*y + x*y^2) dx + (x^3 + x^2*y) dy = 0. Step 2 (exactness test): the y-derivative of the dx coefficient is 3x^2 + 2xy and the x-derivative of the dy coefficient is 3x^2 + 2xy, so it is exact. Step 3 (reconstruct F): integrate 3x^2*y + x*y^2 with respect to x to get x^3*y + x^2*y^2/2, and the y-integration adds no new term. The answer is x^3*y + x^2*y^2/2."
+          - problem: "Use the integrating factor mu = y. Multiply y dx + (2x - e^y) dy = 0 by mu, check that the new equation is exact, and find F(x,y) so that dF is the left side of the new equation. Give F as a function of x and y."
+            answer: "x*y^2 - (y - 1)*e^y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1 (integrating factor): multiplying y dx + (2x - e^y) dy = 0 by mu = y gives y^2 dx + (2xy - y e^y) dy = 0. Step 2 (exactness test): the y-derivative of y^2 is 2y and the x-derivative of 2xy - y e^y is 2y, so the new equation is exact. Step 3 (reconstruct F): integrate y^2 with respect to x to get x*y^2, then h'(y) = -y e^y gives h = -(y - 1)*e^y by integration by parts. The answer is x*y^2 - (y - 1)*e^y."
+          - problem: "Use the integrating factor mu = y^3. Multiply y dx + 4x dy = 0 by mu, check that the new equation is exact, and find F(x,y) so that dF is the left side. Give F as a function of x and y."
+            answer: "x*y^4"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1 (integrating factor): multiply by mu = y^3 to get y^4 dx + 4xy^3 dy = 0. Step 2 (exactness test): the y-derivative of y^4 is 4y^3 and the x-derivative of 4xy^3 is 4y^3, so the equation is exact. Step 3 (reconstruct F): integrate y^4 with respect to x to get x*y^4, and integrate 4xy^3 with respect to y to get x*y^4. The answer is x*y^4."
+          - problem: "Use the integrating factor mu = x^2. Multiply 3y^2 dx + 2xy dy = 0 by mu, check that the new equation is exact, and find F(x,y) so that dF is the left side. Give F as a function of x and y."
+            answer: "x^3*y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1 (integrating factor): multiply by mu = x^2 to get 3x^2*y^2 dx + 2x^3*y dy = 0. Step 2 (exactness test): the y-derivative of 3x^2*y^2 is 6x^2*y and the x-derivative of 2x^3*y is 6x^2*y, so the equation is exact. Step 3 (reconstruct F): integrate 3x^2*y^2 with respect to x to get x^3*y^2, and integrate 2x^3*y with respect to y to get x^3*y^2. The answer is x^3*y^2."
+          - problem: "Use the integrating factor mu = e^x. Multiply y dx + dy = 0 by mu, check that the new equation is exact, and find F(x,y) so that dF is the left side. Give F as a function of x and y."
+            answer: "e^x*y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1 (integrating factor): multiply by mu = e^x to get e^x*y dx + e^x dy = 0. Step 2 (exactness test): the y-derivative of e^x*y is e^x and the x-derivative of e^x is e^x, so the equation is exact. Step 3 (reconstruct F): integrate e^x*y with respect to x to get e^x*y, and integrate e^x with respect to y to get e^x*y. The answer is e^x*y."
         constraints: "after multiplying by mu the equation must pass the exactness test; reconstruct F as in exact equations"
     diagnostic_exemplar:
       problem: "Solve $y\\,dx + 3x\\,dy = 0$ by finding an integrating factor."
@@ -1563,18 +1603,30 @@ topics:
         name: "Setting up and solving $P' = kP$"
         key_prerequisites: [separable-equations, exponential-growth-decay]
         exemplars:
-          - problem: "A population obeys $P' = kP$ and doubles every $10$ hours. Find $k$ exactly."
-            answer: '$k = \dfrac{\ln 2}{10}$ per hour'
-            answer_contract: {kind: none}
-            solution_sketch: '$P = P_0 e^{kt}$ and $P(10) = 2P_0$ give $e^{10k} = 2$, so $k = \frac{\ln 2}{10}$.'
-          - problem: "A radioactive isotope has half-life $5730$ years. Find its decay constant $k$ in $N' = -kN$."
-            answer: '$k = \dfrac{\ln 2}{5730}$ per year'
-            answer_contract: {kind: none}
-            solution_sketch: '$N = N_0 e^{-kt}$ with $N(5730) = N_0/2$ gives $e^{-5730k} = \frac{1}{2}$.'
-          - problem: "Solve $P' = 0.02P$ with $P(0) = 500$."
-            answer: "$P(t) = 500e^{0.02t}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$P(t) = 500e^{0.02t}$"
+          - problem: "A colony of bacteria obeys P' = kP and doubles every 12 hours. Find the growth constant k exactly, using natural logarithms."
+            answer: "ln(2)/12"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separation of variables applied to P' = kP gives the general solution P(t) = P0 e^(kt). The doubling condition gives P(12) = 2P0, so e^(12k) = 2. Taking natural logarithms of both sides gives 12k = ln(2). Therefore the growth constant is ln(2)/12."
+          - problem: "A radioactive isotope decays according to N' = -kN and has a half-life of 80 years. Find the decay constant k exactly, using natural logarithms."
+            answer: "ln(2)/80"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separation of variables applied to N' = -kN gives the decay model N(t) = N0 e^(-kt). The half-life condition gives N(80) = N0/2, so e^(-80k) = 1/2. Taking natural logarithms gives -80k = -ln(2), hence 80k = ln(2). Therefore the decay constant is ln(2)/80."
+          - problem: "A population grows according to P' = 0.05P with P(0) = 200. Find P(t) as a function of t."
+            answer: "200e^(0.05t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separation of variables gives dP/P = 0.05 dt, so the general solution is P(t) = C e^(0.05t). Applying the initial condition P(0) = 200 gives C = 200. Therefore P(t) = 200e^(0.05t)."
+          - problem: "A sample of a radioactive substance has mass M(t) with M' = -0.1M and M(0) = 60 grams. Find M(t) as a function of t."
+            answer: "60e^(-0.1t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separation of variables gives dM/M = -0.1 dt, so the general solution is M(t) = C e^(-0.1t). Applying the initial condition M(0) = 60 gives C = 60. Therefore M(t) = 60e^(-0.1t)."
+          - problem: "A bank account grows continuously according to B' = kB, and the balance doubles every 15 years. The initial balance is B(0) = 800 dollars. Find B(t) as a function of t, with t in years."
+            answer: "800e^(t ln(2)/15)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separation of variables applied to B' = kB gives the general solution B(t) = B0 e^(kt). The doubling condition gives B(15) = 2B0, so e^(15k) = 2, and taking natural logarithms gives k = ln(2)/15. Substituting k = ln(2)/15 and B0 = 800 gives the full solution. Therefore B(t) = 800e^(t ln(2)/15)."
+          - problem: "The concentration of a drug in the bloodstream satisfies C' = -kC and drops to half every 4 hours. The initial concentration is C(0) = 20 milligrams per liter. Find C(t) as a function of t, with t in hours."
+            answer: "20e^(-t ln(2)/4)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separation of variables applied to C' = -kC gives the decay model C(t) = C0 e^(-kt). The half-life condition gives C(4) = C0/2, so e^(-4k) = 1/2, and taking natural logarithms gives k = ln(2)/4. Substituting k = ln(2)/4 and C0 = 20 gives the full solution. Therefore C(t) = 20e^(-t ln(2)/4)."
         constraints: "doubling times and half-lives are clean integers; express rate constants exactly with ln"
       - id: kp2
         name: Time-to-reach questions
@@ -1608,14 +1660,30 @@ topics:
         name: "Determining $k$ and $P_0$ from data"
         key_prerequisites: [logarithm-properties, separable-equations]
         exemplars:
-          - problem: "A population satisfies $P' = kP$ with $P(2) = 300$ and $P(5) = 2400$. Find $k$ and $P(0)$ exactly."
-            answer: "$k = \\ln 2$; $P(0) = 75$."
-            answer_contract: {kind: none}
-            solution_sketch: "$\\dfrac{P(5)}{P(2)} = e^{3k} = 8$ gives $k = \\ln 2$; then $P(0) = 300e^{-2\\ln 2} = 300/4 = 75$."
-          - problem: "A sample decays from $800$ g to $100$ g in $6$ hours. Find its half-life."
-            answer: "$2$ hours"
-            answer_contract: {kind: none}
-            solution_sketch: "$100/800 = (1/2)^3$: three half-lives in $6$ hours."
+          - problem: "A population satisfies P' = kP with P(2) = 300 and P(5) = 2400. Find P(0)."
+            answer: "75"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Model: P(t) = P0 e^(kt). Ratio step: P(5)/P(2) = e^(3k) = 2400/300 = 8, so 3k = ln(8) = 3 ln(2) and k = ln(2). Back-substitute: P(0) = P(2) e^(-2k) = 300 e^(-2 ln(2)) = 300/4. The value is 75."
+          - problem: "A sample decays from 800 g to 100 g in 6 hours. Find its half-life in hours."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Decay model: P(t) = P0 e^(kt). Ratio step: 100/800 = 1/8 = (1/2)^3, so the elapsed 6 hours is 3 half-lives. Division step: half-life = 6/3. The half-life is 2."
+          - problem: "A population satisfies P' = kP with P(0) = 50 and P(2) = 800. The rate constant is k = c ln(2). Find c."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Model: P(t) = P0 e^(kt). Ratio step: P(2)/P(0) = e^(2k) = 800/50 = 16, so 2k = ln(16) = 4 ln(2) and k = 2 ln(2). Compare with k = c ln(2): c = 2. The value is 2."
+          - problem: "A colony grows from 120 to 7680 in 2 hours under P' = kP. The rate constant is k = c ln(2). Find c."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Model: P(t) = P0 e^(kt). Ratio step: P(2)/P(0) = e^(2k) = 7680/120 = 64, so 2k = ln(64) = 6 ln(2) and k = 3 ln(2). Compare with k = c ln(2): c = 3. The value is 3."
+          - problem: "A population satisfies P' = kP with P(1) = 100 and P(4) = 800. Find P(0)."
+            answer: "50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Model: P(t) = P0 e^(kt). Ratio step: P(4)/P(1) = e^(3k) = 800/100 = 8, so 3k = ln(8) = 3 ln(2) and k = ln(2). Back-substitute: P(0) = P(1) e^(-k) = 100 e^(-ln(2)) = 100/2. The value is 50."
+          - problem: "A sample decays from 800 g to 50 g in 1 hour. The rate constant is k = -c ln(2). Find c."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Decay model: P(t) = P0 e^(kt). Ratio step: P(1)/P(0) = e^(k) = 50/800 = 1/16, so k = ln(1/16) = -4 ln(2). Compare with k = -c ln(2): c = 4. The value is 4."
         constraints: "data ratios are powers of 2 so k and the half-life come out as clean multiples of ln 2"
     diagnostic_exemplar:
       problem: 'A population satisfies $P'' = kP$ with $P(2) = 500$ and $P(6) = 8000$. Find $k$ and $P(0)$ exactly.'
