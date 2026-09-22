@@ -31,6 +31,22 @@ topics:
           - problem: '$X$ is Poisson with mean $2$. Using $e^{-2} \approx 0.1353$, find $P(X = 1)$ to four decimal places.'
             answer: "0.2706"
             solution_sketch: '$P(X = 1) = e^{-2} \dfrac{2^1}{1!} = 2 \cdot 0.1353 = 0.2706$.'
+          - problem: "A help desk receives on average 3 emails per minute, and the number of emails in a minute is Poisson with rate lambda = 3. Using e^-3 = 0.0498, find P(X = 1) to four decimal places."
+            answer: "0.1494"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The Poisson probability formula is P(X = k) = e^(-lambda) lambda^k / k!. For lambda = 3 and k = 1, the factor lambda^k / k! equals 3. Multiply the supplied value e^-3 = 0.0498 by 3. This product is 0.1494, so P(X = 1) = 0.1494."
+          - problem: "A Geiger counter detects on average 4 particles per second, and the count in a second is Poisson with rate lambda = 4. Using e^-4 = 0.0183, find P(X = 2) to four decimal places."
+            answer: "0.1464"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The Poisson probability formula is P(X = k) = e^(-lambda) lambda^k / k!. For lambda = 4 and k = 2, the factor lambda^k / k! is 16 / 2 = 8. Multiply the supplied value e^-4 = 0.0183 by 8. The product is 0.1464, so P(X = 2) = 0.1464."
+          - problem: "A bike shop has on average 4 customers per hour, and the number of customers in an hour is Poisson with rate lambda = 4. Using e^-4 = 0.0183, find P(X = 1) to four decimal places."
+            answer: "0.0732"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The Poisson probability formula is P(X = k) = e^(-lambda) lambda^k / k!. For lambda = 4 and k = 1, the factor lambda^k / k! equals 4. Multiply the supplied value e^-4 = 0.0183 by 4. The product is 0.0732, so P(X = 1) = 0.0732."
+          - problem: "A server logs on average 3 errors per minute, and the number of errors in a minute is Poisson with rate lambda = 3. Using e^-3 = 0.0498, find P(X = 2) to four decimal places."
+            answer: "0.2241"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The Poisson probability formula is P(X = k) = e^(-lambda) lambda^k / k!. For lambda = 3 and k = 2, the factor lambda^k / k! is 9 / 2 = 4.5. Multiply the supplied value e^-3 = 0.0498 by 4.5. The product is 0.2241, so P(X = 2) = 0.2241."
         constraints: "lambda in {1, 2, 3, 4}; k <= 4; the needed value of e^{-lambda} is always supplied in the problem to 4 decimal places; products chosen so the answer terminates at 4 decimal places"
       - id: kp2
         name: "Mean and variance are both lambda"
@@ -100,6 +116,18 @@ topics:
           - problem: '$X$ is a continuous random variable, uniform on $[0, 8]$. Find $P(X = 5)$ exactly.'
             answer: "0"
             solution_sketch: 'A single point has zero width, hence zero area: $P(X = c) = 0$ for any continuous variable.'
+          - problem: "A random variable $X$ is uniform on $[0, 10]$, so its density is constant on that interval and $0$ elsewhere. Find $P(2 \\le X \\le 5)$ as a fraction."
+            answer: "3/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The density is constant, so the probability is a rectangle area. The rectangle has width $5 - 2 = 3$ and height $1/10$, so the area is $3 \\cdot 1/10 = 3/10$. The probability is 3/10."
+          - problem: "A continuous random variable $Y$ has a constant density on the interval $[0, 6]$ and is $0$ outside it. Find the height of the density as a fraction."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The density is constant on $[0, 6]$ and $0$ elsewhere, so the total area is a rectangle. The width is $6$ and the height is $h$, so the total area is $6h$. Setting $6h = 1$ gives $h = 1/6$. The height must be 1/6."
+          - problem: "$X$ is a continuous random variable with a constant density on $[0, 12]$ and $0$ elsewhere. Find $P(X = 4)$ exactly."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A single point has zero width, so it covers zero area under the density curve. For any continuous random variable, $P(X = c) = 0$ at every constant $c$. Therefore $P(X = 4) = 0$."
         constraints: "constant densities on integer intervals; total-area-1 and single-point items; answers exact fractions or 0"
       - id: kp2
         name: "Triangular densities"
@@ -111,6 +139,22 @@ topics:
           - problem: '$X$ has density $f(x) = \frac{x}{2}$ on $[0, 2]$ and $0$ elsewhere. Find $P(X \ge 1)$ as a fraction.'
             answer: "3/4"
             solution_sketch: '$P(X \le 1) = \frac{1}{2} \cdot 1 \cdot \frac{1}{2} = \frac{1}{4}$, so $P(X \ge 1) = 1 - \frac{1}{4} = \frac{3}{4}$.'
+          - problem: "X has density f(x) = x/18 on [0, 6] and 0 elsewhere. Find P(X <= 2) as a fraction."
+            answer: "1/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The density is f(x) = x/18 on [0, 6], so its graph is a line from (0, 0) to (6, 1/3). The event X <= 2 is a triangle with base 2 and height f(2) = 2/18 = 1/9. By the triangle-area rule, the area is (1/2) * 2 * (1/9) = 1/9, so P(X <= 2) = 1/9."
+          - problem: "X has density f(x) = x/32 on [0, 8] and 0 elsewhere. Find P(X >= 5) as a fraction."
+            answer: "39/64"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The density is f(x) = x/32 on [0, 8]. The event X <= 5 is a triangle with base 5 and height f(5) = 5/32. By the triangle-area rule, its area is (1/2) * 5 * (5/32) = 25/64. By the complement rule, 1 - 25/64 = 39/64, so P(X >= 5) = 39/64."
+          - problem: "X has density f(x) = x/50 on [0, 10] and 0 elsewhere. Find P(X >= 6) as a fraction."
+            answer: "16/25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The density is f(x) = x/50 on [0, 10]. The event X <= 6 is a triangle with base 6 and height f(6) = 6/50 = 3/25. By the triangle-area rule, its area is (1/2) * 6 * (3/25) = 9/25. By the complement rule, 1 - 9/25 = 16/25, so P(X >= 6) = 16/25."
+          - problem: "X has density f(x) = x/72 on [0, 12] and 0 elsewhere. Find P(6 <= X <= 9) as a fraction."
+            answer: "5/16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The density is f(x) = x/72 on [0, 12]. The event X <= 9 is a triangle with base 9 and height f(9) = 9/72 = 1/8. By the triangle-area rule, its area is (1/2) * 9 * (1/8) = 9/16. The event X <= 6 is a triangle with base 6 and height f(6) = 6/72 = 1/12; by the triangle-area rule its area is (1/2) * 6 * (1/12) = 1/4. By subtraction of cumulative areas, 9/16 - 1/4 = 5/16, so P(6 <= X <= 9) = 5/16."
         constraints: "linear densities f(x) = x/c on [0, b] with c = b^2/2 so the total area is 1; probabilities are triangle or complement areas; exact fractions"
       - id: kp3
         name: "The cumulative distribution function"
@@ -125,6 +169,18 @@ topics:
           - problem: 'A continuous variable has $F(2) = 0.3$ and $F(5) = 0.8$. Find $P(2 < X \le 5)$.'
             answer: "0.5"
             solution_sketch: '$P(2 < X \le 5) = F(5) - F(2) = 0.8 - 0.3 = 0.5$.'
+          - problem: "X has cdf F(x) = x^2/25 for 0 <= x <= 5. Find F(3) as a fraction."
+            answer: "9/25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The cdf is F(x) = x^2/25 on [0, 5]. Step 1 (cdf substitution): F(3) = 3^2/25. Step 2 (fraction simplification): 3^2 = 9, so F(3) = 9/25. The value is 9/25."
+          - problem: "X is uniform on [4, 16] with cdf F(x) = (x - 4)/12 for 4 <= x <= 16. Find the value c with F(c) = 3/4."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The cdf is F(x) = (x - 4)/12 on [4, 16]. Step 1 (set cdf equal to target): (c - 4)/12 = 3/4. Step 2 (multiply by 12): c - 4 = 9. Step 3 (solve linear equation): c = 13. The value is 13."
+          - problem: "A continuous random variable has F(1) = 0.2 and F(7) = 0.9. Find P(1 < X <= 7)."
+            answer: "0.7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The cdf values are F(1) = 0.2 and F(7) = 0.9. Step 1 (cdf difference rule): P(1 < X <= 7) = F(7) - F(1). Step 2 (subtraction): 0.9 - 0.2 = 0.7. The probability is 0.7."
         constraints: "cdf given explicitly or by two table values; probabilities as F-differences; medians and percent points from F(c) = target with integer solutions"
     diagnostic_exemplar:
       problem: '$X$ has density $f(x) = \frac{x}{8}$ on $[0, 4]$ and $0$ elsewhere, with cumulative distribution function $F(x) = \frac{x^2}{16}$ on $[0, 4]$. Use the cdf to find $P(1 < X \le 3)$ as a fraction.'
@@ -184,6 +240,18 @@ topics:
           - problem: '$X$ is exponential with rate $\lambda = 0.5$. Using $\ln 2 \approx 0.6931$, find the median of $X$ to four decimal places.'
             answer: "1.3862"
             solution_sketch: 'Solve $e^{-\lambda m} = \frac{1}{2}$: $m = \frac{\ln 2}{\lambda} = \frac{0.6931}{0.5} = 1.3862$.'
+          - problem: "The lifetime of a bulb is exponential with rate λ = 0.125 per year. Find the mean lifetime in years."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (mean rule for the exponential): the mean is the reciprocal of the rate, so E[X] = 1/λ. Step 2 (division): E[X] = 1/0.125 = 8. The mean lifetime is 8 years, so the mean is 8."
+          - problem: "The service time X at a counter is exponential with mean 2.5 minutes. Find the rate λ per minute."
+            answer: "0.4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (rate rule for the exponential): the rate is the reciprocal of the mean, so λ = 1/E[X]. Step 2 (division): λ = 1/2.5 = 0.4. The rate is 0.4 per minute."
+          - problem: "At a help desk, the waiting time X in minutes is exponential with rate λ = 0.2. Using ln(2) ≈ 0.6931, find the median of X to four decimal places."
+            answer: "3.4655"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Step 1 (setup): X has density f(t) = 0.2 e^(-0.2t), so P(X > t) = e^(-0.2t). Step 2 (median equation): the median m solves e^(-0.2m) = 1/2, which gives m = ln(2)/0.2. Step 3 (arithmetic with the given value): m = 0.6931/0.2 = 3.4655. The median is 3.4655."
         constraints: "rates are reciprocals of integers or nice decimals; median items supply ln 2 to 4 decimal places"
       - id: kp3
         name: "Memorylessness and the Poisson connection"

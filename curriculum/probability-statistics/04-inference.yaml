@@ -462,6 +462,10 @@ topics:
           - problem: 'A population has $\sigma = 9$. Find the standard error of the mean of $81$ observations.'
             answer: "1"
             solution_sketch: '$\operatorname{SE} = 9/\sqrt{81} = 9/9 = 1$.'
+          - problem: "A machine produces parts with a standard deviation of $30$ grams. For a sample of $25$ parts, find the standard error of the sample mean in grams."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the standard error formula $\\operatorname{SE} = \\sigma/\\sqrt{n}$. Step 2: Substitute the values, so $\\operatorname{SE} = 30/\\sqrt{25}$. Step 3: Since $\\sqrt{25} = 5$, this gives $30/5 = 6$. The standard error is 6."
         constraints: "one computation and one shrink-factor item; n a perfect square"
       - id: kp3
         name: "How sample size changes the SE"
@@ -479,6 +483,14 @@ topics:
           - problem: 'The standard error of $\bar{x}$ at sample size $n$ is $2$. By what factor must the sample size be multiplied to make the standard error equal to $1$?'
             answer: "4"
             solution_sketch: 'Halving the SE requires $\sqrt{n}$ to double, so $n$ is multiplied by $2^2 = 4$.'
+          - problem: "The standard error of the sample mean at sample size n is 8. What is the standard error at sample size 16n?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the rule SE = sigma/sqrt(n). The full object at sample size n is SE = sigma/sqrt(n). At sample size 16n it is sigma/sqrt(16n) = sigma/(4 sqrt(n)) = SE/4. With SE = 8, the new standard error is 8/4 = 2."
+          - problem: "For a population with standard deviation 45, what sample size gives a standard error of 5?"
+            answer: "81"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the standard error formula SE = sigma/sqrt(n). The full object is SE = 45/sqrt(n). Set this equal to 5: 45/sqrt(n) = 5. Then sqrt(n) = 45/5 = 9, so n = 81."
         constraints: "n and target SE chosen so sqrt(n) is a whole number"
     diagnostic_exemplar:
       problem: 'A population has $\sigma = 18$. What sample size makes the standard error of the sample mean equal to $3$?'
@@ -574,6 +586,22 @@ topics:
           - problem: 'If the true support level is $p = 3/5$, what is the mean of the sampling distribution of $\hat{p}$?'
             answer: "3/5"
             solution_sketch: '$E[\hat{p}] = p$ — the sample proportion is unbiased.'
+          - problem: "In a survey of 80 customers, 20 prefer a new design. Compute the sample proportion p-hat as a fraction."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sample proportion is p-hat = successes / n. Rule: divide the number of successes by the sample size. With 20 successes in 80 customers, p-hat = 20/80 = 1/4."
+          - problem: "The true proportion of left-handed people in a population is p = 2/5. Find the mean of the sampling distribution of the sample proportion as a fraction."
+            answer: "2/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The mean of the sampling distribution is E[p-hat] = p. Rule: the sample proportion is unbiased, so its mean equals the population proportion. Since p = 2/5, the mean is 2/5."
+          - problem: "A sample has 120 observations and sample proportion p-hat = 5/6. How many successes were observed in the sample?"
+            answer: "100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The number of successes is n times p-hat. Rule: p-hat = successes / n, so successes = n p-hat. With n = 120 and p-hat = 5/6, successes = 120 * 5/6 = 100."
+          - problem: "In a sample of 200 registered voters, the sample proportion supporting a proposal is 3/20. How many supporters are in the sample?"
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The number of supporters is n times p-hat. Rule: p-hat = supporters / n, so supporters = n p-hat. With n = 200 and p-hat = 3/20, supporters = 200 * 3/20 = 30."
         constraints: "counts divide evenly; p a simple fraction"
       - id: kp2
         name: "Standard error of p-hat"
@@ -632,6 +660,22 @@ topics:
             answer: '$(57, 67)$'
           - problem: 'A poll reports $46\%$ support with a margin of error of $3$ percentage points. State the interval as an ordered pair of percentage-point values.'
             answer: '$(43, 49)$'
+          - problem: "A health survey reports a mean wait of 34 minutes, with a margin of error of 6 minutes. State the interval for the mean wait as (low, high)."
+            answer: "(28, 40)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The rule is that the interval runs from the estimate minus the margin of error to the estimate plus the margin of error. The estimate is 34 and the margin of error is 6. Lower endpoint: 34 - 6 = 28. Upper endpoint: 34 + 6 = 40. The interval is (28, 40)."
+          - problem: "A sample mean is 250, and the reported interval is (238, 262). Find the margin of error."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rule is that the margin of error is half the width of the interval. The interval width is 262 - 238 = 24. Half of 24 is 12. The margin of error is 12."
+          - problem: "A quality check gives an interval of (96, 112) for the mean fill. The margin of error is 8. Find the sample mean."
+            answer: "104"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rule is that the sample mean is the center of the interval. The center is (96 + 112) / 2 = 104. The sample mean is 104."
+          - problem: "An estimate is 210 and the margin of error is 15. Find the width of the interval."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rule is that the interval width is twice the margin of error. The margin of error is 15, so twice it is 30. The width of the interval is 30."
         constraints: "integer estimates and MEs; interval endpoints computed exactly"
       - id: kp2
         name: "ME = 2 SE for 95% confidence"
@@ -643,6 +687,22 @@ topics:
           - problem: 'A population has $\sigma = 12$; $n = 16$. Using $z^* = 2$, find the margin of error.'
             answer: "6"
             solution_sketch: '$\operatorname{SE} = 12/4 = 3$; $\text{ME} = 2 \cdot 3 = 6$.'
+          - problem: "A clinic measures a biomarker. The population standard deviation is 10 units. A sample of 16 patients is taken. Using z* = 2, find the margin of error for estimating the population mean."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Standard error rule: SE = sigma/sqrt(n) = 10/sqrt(16) = 2.5. Margin of error rule: ME = 2*SE = 2*2.5 = 5. The margin of error is 5."
+          - problem: "A factory ships bolts. The population standard deviation of lengths is 20 mm. A sample of 25 bolts is taken. Using z* = 2, find the margin of error for estimating the mean length."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Standard error rule: SE = 20/sqrt(25) = 20/5 = 4. Margin of error rule: ME = 2*SE = 2*4 = 8. The margin of error is 8."
+          - problem: "A study uses a sample of size 4 and z* = 2. The margin of error is 3. Find the population standard deviation."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Margin of error rule: ME = 2*sigma/sqrt(n). Substitute the known values: 3 = 2*sigma/sqrt(4) = 2*sigma/2 = sigma. The population standard deviation is 3."
+          - problem: "A population has standard deviation 15. A sample of size 9 is taken. Using z* = 2, find the margin of error."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Standard error rule: SE = 15/sqrt(9) = 15/3 = 5. Margin of error rule: ME = 2*SE = 2*5 = 10. The margin of error is 10."
         constraints: "use z* = 2 (empirical-rule value); n a perfect square; ME an integer"
       - id: kp3
         name: "What the ME does and does not cover"
@@ -654,6 +714,22 @@ topics:
           - problem: 'A margin of error is $6$ at sample size $n$. What is it at sample size $9n$ (same $\sigma$ and $z^*$)?'
             answer: "2"
             solution_sketch: 'ME $\propto 1/\sqrt{n}$; multiplying $n$ by $9$ divides the ME by $3$.'
+          - problem: "A poll at sample size 300 has a margin of error of 8 points. The same population and the same confidence level are used at sample size 1200. Find the new margin of error in points."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The margin of error scales as 1/sqrt(n). Step 1: the sample size is multiplied by 4. Step 2: sqrt(4) = 2, so the margin is divided by 2. The new margin of error is 8/2 = 4."
+          - problem: "A population has standard deviation 20. Use z* = 2. A sample of size 64 is drawn from this population. Find the margin of error. Give the answer to 2 decimals."
+            answer: "5.00"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Standard error = 20/sqrt(64) = 20/8 = 2.5. Margin of error = z* times the standard error = 2 * 2.5 = 5. The margin of error is 5.00."
+          - problem: "A website invites readers to rate a service, and 5000 readers respond on their own. The reported margin of error is 1.5 points. How many points of that margin correct for the self-selection bias?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The margin of error covers only random sampling variability. Self-selection is a bias, and a larger sample does not remove it. The margin of error corrects for that bias by 0 points."
+          - problem: "A researcher wants to shrink a margin of error to one third of its current size, keeping the same population and the same confidence level. Find the factor by which the sample size must be multiplied."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The margin of error is proportional to 1/sqrt(n). To divide the margin by 3, sqrt(n) must grow by a factor of 3. So sqrt(k) = 3 and k = 9. The sample size must be multiplied by 9."
         constraints: "quantitative items: the ME's zero correction for bias, and its 1/sqrt(n) scaling"
     diagnostic_exemplar:
       problem: 'A population has $\sigma = 10$; use $z^* = 2$. Give (the margin of error at $n = 25$, the margin of error at $n = 100$) as an ordered pair.'
@@ -695,6 +771,22 @@ topics:
           - problem: 'A sample of $n = 16$ has $\bar{x} = 80$; $\sigma = 12$. Using $z^* = 2$, give the 95% confidence interval.'
             answer: '$(74, 86)$'
             solution_sketch: '$\operatorname{SE} = 12/4 = 3$; margin $= 6$; interval $80 \pm 6$.'
+          - problem: "A sample of n = 49 has xbar = 200; sigma = 21. Use z* = 2. Give the 95% confidence interval for mu as (low, high)."
+            answer: "(194, 206)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full result is the 95% confidence interval for mu. Standard error formula: sigma/sqrt(n) = 21/sqrt(49) = 21/7 = 3. Margin of error formula: z* times SE = 2 * 3 = 6. Confidence interval formula: 200 plus or minus 6, which is (194, 206). The 95% confidence interval is (194, 206)."
+          - problem: "A machine fills boxes. A sample of n = 100 boxes has mean mass 75 g; sigma = 20 g. Use z* = 2. Give the 95% confidence interval for the mean mass in grams as (low, high)."
+            answer: "(71, 79)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full result is the 95% confidence interval for the mean mass. Standard error formula: sigma/sqrt(n) = 20/sqrt(100) = 20/10 = 2. Margin of error formula: z* times SE = 2 * 2 = 4. Confidence interval formula: 75 plus or minus 4, which is (71, 79). The 95% confidence interval is (71, 79)."
+          - problem: "A 95% confidence interval from a sample of n = 36, built with z* = 2, is (158, 170). Find the population standard deviation sigma."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full result is the population standard deviation sigma. Margin of error formula: half of (170 - 158) = 6. Standard error formula: margin / z* = 6 / 2 = 3. Since n = 36, sqrt(n) = 6, so sigma = 3 * 6 = 18. The population standard deviation is 18."
+          - problem: "A sample of n = 81 has xbar = 42; sigma = 27. Use z* = 2. Find the width of the 95% confidence interval for mu."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full result is the width of the 95% confidence interval. Standard error formula: sigma/sqrt(n) = 27/sqrt(81) = 27/9 = 3. Margin of error formula: z* times SE = 2 * 3 = 6. Confidence interval formula: 42 plus or minus 6, which is (36, 48). The width is 12."
         constraints: "use z* = 2 for 95% (empirical-rule value); n a perfect square; endpoints integers"
       - id: kp2
         name: "Interpreting the confidence level"
@@ -717,6 +809,22 @@ topics:
           - problem: 'To cut a margin of error from $8$ to $4$ (same $\sigma$ and $z^*$), multiply the sample size by what factor?'
             answer: "4"
             solution_sketch: 'ME $\propto 1/\sqrt{n}$; halving the ME requires $4$ times the sample size.'
+          - problem: "A health survey plans a 95% confidence interval for a mean. The population standard deviation is 18 and z* = 2. The target margin of error is 4. Find the required sample size."
+            answer: "81"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the sample-size formula n = (z* sigma / ME)^2. Substitute z* = 2, sigma = 18, and ME = 4 to get n = (2 * 18 / 4)^2. The inner quotient is 9, so n = 9^2 = 81. The required sample size is 81."
+          - problem: "A factory measures bolt lengths and plans a 95% confidence interval for the mean. The population standard deviation is 20 and z* = 2. The team wants a margin of error of 5. Find the sample size needed."
+            answer: "64"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the sample-size formula n = (z* sigma / ME)^2. Insert z* = 2, sigma = 20, and ME = 5, giving n = (2 * 20 / 5)^2. The quotient is 8, so n = 8^2 = 64. The sample size needed is 64."
+          - problem: "A study wants a 95% confidence interval for a mean with total width 10. Past data give a population standard deviation of 25, and z* = 2. Find the sample size needed."
+            answer: "100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the sample-size formula n = (z* sigma / ME)^2 after finding the margin of error. The total interval width is 10, so the margin is 10/2 = 5. With z* = 2 and sigma = 25, n = (2 * 25 / 5)^2 = 10^2 = 100. The sample size needed is 100."
+          - problem: "A polling organization plans a 95% confidence interval for the mean voter age. The population standard deviation is 18 and z* = 2. The allowed margin of error is 3. Find the required sample size."
+            answer: "144"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the sample-size formula n = (z* sigma / ME)^2. Put z* = 2, sigma = 18, and ME = 3 to obtain n = (2 * 18 / 3)^2. The quotient is 12, so n = 12^2 = 144. The required sample size is 144."
         constraints: "z* sigma / ME a whole number so n is a perfect square"
     diagnostic_exemplar:
       problem: 'With $\sigma = 15$ and $z^* = 2$, what sample size is needed for a 95% confidence interval with margin of error $3$?'
@@ -902,6 +1010,10 @@ topics:
           - problem: 'With slope $b = 0.5$, $\bar{x} = 10$, $\bar{y} = 9$, find the intercept.'
             answer: "4"
             solution_sketch: '$a = 9 - 0.5 \cdot 10 = 4$.'
+          - problem: "For a least-squares line, the sample means are xbar = 2 and ybar = 3. The slope is b = 4. Find the y-intercept a."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line has slope b = 4 and passes through the point (xbar, ybar) = (2, 3). The intercept formula is a = ybar - b xbar. Substitute the values: a = 3 - 4*2 = 3 - 8 = -5. The y-intercept is -5."
         constraints: "means small integers; a comes out to an integer"
       - id: kp3
         name: "Assembling the full equation"
@@ -960,6 +1072,22 @@ topics:
           - problem: 'The regression line is $\hat{y} = 30 - 2x$. Predict $y$ at $x = 8$.'
             answer: "14"
             solution_sketch: '$30 - 16 = 14$.'
+          - problem: "The regression line is $\\hat{y} = 7 - 4x$. Find the predicted value at $x = 3$."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full line is $\\hat{y} = 7 - 4x$. Substitute $x = 3$: $\\hat{y} = 7 - 4(3) = 7 - 12 = -5$. The predicted value is -5."
+          - problem: "The regression line is $\\hat{y} = 12 + 5x$. Find the x-value for which the predicted value is $47$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full line $\\hat{y} = 12 + 5x$. Set $\\hat{y} = 47$ and solve: $47 = 12 + 5x$, so $5x = 35$, giving $x = 7$. The x-value is 7."
+          - problem: "A least-squares line for test score $y$ on study hours $x$ is $\\hat{y} = 62 + 4x$. Find the predicted score for 7 study hours."
+            answer: "90"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full line is $\\hat{y} = 62 + 4x$. Substitute $x = 7$: $\\hat{y} = 62 + 4(7) = 62 + 28 = 90$. The predicted score is 90."
+          - problem: "A regression line has slope $6$ and passes through the point $(2, 20)$. Find the predicted value at $x = 9$."
+            answer: "62"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the point to find the intercept: $20 = 6(2) + b$, so $b = 8$. The full line is $\\hat{y} = 6x + 8$. At $x = 9$, $\\hat{y} = 6(9) + 8 = 62$. The predicted value is 62."
         constraints: "integer coefficients and x-values; predictions integers"
       - id: kp2
         name: "Residuals"
@@ -971,6 +1099,22 @@ topics:
           - problem: 'A point has observed $y = 25$ and predicted $\hat{y} = 22$. Find the residual.'
             answer: "3"
             solution_sketch: 'Residual $= 25 - 22 = 3 > 0$, so the point sits above the line.'
+          - problem: "At x = 4 the observed value is y = 23 and the line yhat = 3 + 4x predicts 19. Find the residual."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line gives yhat = 3 + 4(4) = 19. The residual rule is residual = observed - predicted, so r = 23 - 19 = 4. The answer is 4."
+          - problem: "At x = 6 the observed value is y = 20 and the line yhat = 50 - 4x predicts 26. Find the residual."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line gives yhat = 50 - 4(6) = 26. The residual rule is r = observed - predicted, so r = 20 - 26 = -6. The answer is -6."
+          - problem: "A least-squares line is yhat = 6 + 4x. At x = 3 the observed value is y = 27. Find the residual."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line gives yhat = 6 + 4(3) = 18. The residual rule is r = observed - predicted, so r = 27 - 18 = 9. The answer is 9."
+          - problem: "A point has observed y = 10; the line yhat = 1 + 3x predicts 7 at x = 2. State the sign of the residual and give its value."
+            answer: "sign = positive; r = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"]]}, "name": "sign"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "The line gives yhat = 1 + 3(2) = 7. The residual rule is r = observed - predicted, so r = 10 - 7 = 3. Since 3 is greater than 0, the sign is positive; the label negative would come from reversing the subtraction as predicted minus observed. The answer is sign = positive; r = 3."
         constraints: "residual = observed minus predicted; a positive residual means the point lies above the line"
       - id: kp3
         name: "Extrapolation caution"
@@ -1025,6 +1169,22 @@ topics:
           - problem: 'Same model. What height, in cm, does it predict at $x = 0$ weeks?'
             answer: "12"
             solution_sketch: 'The intercept is the predicted $y$ at $x = 0$.'
+          - problem: "A service plan has a fixed monthly fee and a charge for each device. The least-squares model predicted cost = 30 + 4x gives predicted monthly cost in dollars from x devices. By how many dollars does each additional device raise the predicted cost?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: identify the slope in predicted cost = 30 + 4x; it is 4. Step 2: use the rule that the slope is the predicted change in y per one-unit increase in x, an association not a cause. So each additional device raises predicted cost by 4 dollars, and the per-unit change is 4."
+          - problem: "A repair shop estimates wait time from the number of jobs in the queue. The model predicted wait = 18 - 5x gives predicted wait in minutes when x jobs are in the queue. What wait time, in minutes, does the model predict when x = 0?"
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the model is predicted wait = 18 - 5x. Step 2: the intercept 18 is the predicted y when x = 0 by the intercept rule, an association not a cause. So the predicted wait at x = 0 is 18 minutes, and the value is 18."
+          - problem: "A company models the resale value of a machine. The least-squares line predicted value = 20000 - 1500x gives predicted resale value in dollars after x years. Find the predicted change in resale value, in dollars, for each additional year."
+            answer: "-1500"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the model is predicted value = 20000 - 1500x, so the slope is -1500. Step 2: the slope rule says the slope is the predicted change in y per one-unit increase in x, an association not a cause. So the predicted change in resale value is -1500 dollars per year, and the per-unit change is -1500."
+          - problem: "A taxi fare has a base charge and a charge per mile. The model predicted fare = 2 + (3/4)x gives predicted fare in dollars for x miles. Find the predicted change in fare in dollars for each additional mile, as a fraction."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the model predicted fare = 2 + (3/4)x has slope 3/4. Step 2: the slope rule says the slope is the predicted change in y for one more mile, an association not a cause. So the predicted change in fare is 3/4 dollar per mile, and the per-unit change is 3/4."
         constraints: "contexts with stated units; ask for the per-unit change or the value at x = 0; the reasoning must say predicted/associated, not caused"
       - id: kp2
         name: "r-squared and causation cautions"
@@ -1039,6 +1199,18 @@ topics:
           - problem: 'Children''s shoe size and reading level correlate strongly. Which explains this: (a) a bigger shoe size causes better reading; (b) age is a lurking variable driving both?'
             answer: '(b)'
             solution_sketch: 'Older children have both a bigger shoe size and stronger reading; correlation does not establish causation.'
+          - problem: "In a study of plant height and daily sunlight, the correlation is r = 0.9. Find the coefficient of determination as a fraction."
+            answer: "81/100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coefficient of determination rule is r^2. The full object is r^2 = (0.9)^2. Step 1: square the correlation: 0.9 times 0.9 = 0.81. Step 2: write 0.81 as the fraction 81/100. The fraction is 81/100."
+          - problem: "A regression line for study hours and test score has r^2 = 0.36 and a positive slope. Find the correlation coefficient r as a fraction."
+            answer: "3/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coefficient of determination rule is r^2 = 0.36. Step 1: take the square root: sqrt(0.36) = 0.6. Step 2: the slope is positive, so r has the positive sign; 0.6 = 3/5. The correlation coefficient is 3/5."
+          - problem: "For a regression of gas mileage on car weight, r = -0.8. Find the fraction of the variation in gas mileage that the line does not explain."
+            answer: "9/25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rule is that the line explains r^2 of the variation. Step 1: square the correlation: (-0.8)^2 = 0.64. Step 2: subtract from 1: 1 - 0.64 = 0.36 = 9/25. The unexplained fraction is 9/25."
         constraints: "r values with exact squares; one causation-caution item per set"
       - id: kp3
         name: "From summary statistics to prediction"
@@ -1050,6 +1222,22 @@ topics:
           - problem: 'Continuing: the observed value at $x = 8$ is $y = 40$. Find the residual.'
             answer: "-2"
             solution_sketch: '$40 - 42 = -2$.'
+          - problem: "A sample gives xbar = 10, ybar = 50, sx = 3, sy = 12, and r = 0.75. Find the least-squares prediction at x = 14."
+            answer: "62"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The least-squares line is yhat = 20 + 3x. Slope rule: b = r*sy/sx = 0.75*12/3 = 3. Intercept rule: a = ybar - b*xbar = 50 - 3*10 = 20. Prediction rule: yhat = 20 + 3*14 = 62. The predicted value is 62."
+          - problem: "For a data set, the summary values are xbar = 7, ybar = 41, sx = 2, sy = 5, r = 0.8. Give the fitted value when x = 10."
+            answer: "47"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The least-squares line is yhat = 27 + 2x. Slope rule: b = r*sy/sx = 0.8*5/2 = 2. Intercept rule: a = ybar - b*xbar = 41 - 2*7 = 27. Prediction rule: yhat = 27 + 2*10 = 47. The fitted value is 47."
+          - problem: "The summary statistics are xbar = 4, ybar = 20, sx = 2, sy = 5, r = 0.4. At x = 7 the observed y is 26. Find the residual."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The least-squares line is yhat = 16 + x. Slope rule: b = r*sy/sx = 0.4*5/2 = 1. Intercept rule: a = ybar - b*xbar = 20 - 1*4 = 16. Prediction rule: predicted y at x = 7 is 16 + 7 = 23. Residual rule: 26 - 23 = 3. The residual is 3."
+          - problem: "A study has xbar = 12, ybar = 60, sx = 4, sy = 10, r = 0.8. Compute the predicted y at x = 15."
+            answer: "66"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The least-squares line is yhat = 36 + 2x. Slope rule: b = r*sy/sx = 0.8*10/4 = 2. Intercept rule: a = ybar - b*xbar = 60 - 2*12 = 36. Prediction rule: yhat = 36 + 2*15 = 66. The predicted y is 66."
         constraints: "summary stats give integer slopes and intercepts; finish with a prediction or residual"
     diagnostic_exemplar:
       problem: 'Summary statistics: $\bar{x} = 6$, $\bar{y} = 20$, $s_x = 2$, $s_y = 8$, $r = 0.5$. Give (the least-squares prediction at $x = 10$, the fraction of the variation in $y$ explained by the line) as an ordered pair.'
