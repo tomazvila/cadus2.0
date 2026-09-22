@@ -57,12 +57,34 @@ topics:
         name: "Properties preserved by isomorphisms"
         key_prerequisites: [homomorphisms-intro]
         exemplars:
-          - problem: 'Prove that an isomorphism $\varphi: G \to H$ sends the identity to the identity.'
-            answer: '$\varphi(e)\varphi(e) = \varphi(ee) = \varphi(e)$; cancel to get $\varphi(e) = e_H$.'
-            solution_sketch: 'Apply the homomorphism law to $e \cdot e = e$ and cancel.'
-          - problem: 'Prove that isomorphisms preserve element orders: $|\varphi(g)| = |g|$.'
-            answer: '$\varphi(g)^k = \varphi(g^k)$, and injectivity gives $\varphi(g^k) = e_H \iff g^k = e$; the same exponents kill both.'
-            solution_sketch: 'Powers commute with $\varphi$; injectivity transfers "equals identity" both ways, so the minimal exponents agree.'
+          - problem: "Let phi: Z_6 -> Z_2 x Z_3 be the isomorphism given by phi(k) = (k mod 2, k mod 3). Give phi(0) as (x, y)."
+            answer: "(0, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "By the identity preservation lemma, an isomorphism sends the identity of Z_6 to the identity of Z_2 x Z_3. The identity of Z_2 x Z_3 is (0, 0). The answer is (0, 0)."
+          - problem: "Let phi: Z_6 -> Z_2 x Z_3 be the isomorphism phi(k) = (k mod 2, k mod 3). Find the order of phi(2)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of phi, phi(2) = (2 mod 2, 2 mod 3) = (0, 2). In Z_2 x Z_3, the first coordinate has order 1 and the second has order 3, so the pair has order 3. The answer is 3."
+          - problem: "Let phi: Z_6 -> Z_2 x Z_3 be the isomorphism phi(k) = (k mod 2, k mod 3). Suppose a = 4 in Z_6. Give phi(-a) as (x, y)."
+            answer: "(0, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "By inverse preservation, phi(-a) is the inverse of phi(a). Compute phi(4) = (4 mod 2, 4 mod 3) = (0, 1). The inverse of (0, 1) in Z_2 x Z_3 is (0, 2). The answer is (0, 2)."
+          - problem: "Let phi: Z_6 -> Z_2 x Z_3 be the isomorphism phi(k) = (k mod 2, k mod 3). The element 1 generates Z_6. Give a generator of Z_2 x Z_3 that equals phi(1) as (x, y)."
+            answer: "(1, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "By cyclicity preservation, the image of a generator is a generator. Compute phi(1) = (1 mod 2, 1 mod 3) = (1, 1). In Z_2 x Z_3, (1, 1) has order 6, so it generates the product. The answer is (1, 1)."
+          - problem: "In the proof that an isomorphism phi: G -> H sends inverses to inverses, after phi(a * a^-1) = phi(e_G), the next line is missing. Select the line that completes the proof that phi(a^-1) = phi(a)^-1."
+            answer: "phi(a) * phi(a^-1) = e_H"
+            answer_contract: {"kind": "label", "options": [["phi(a) * phi(a^-1) = e_H"], ["phi(a) + phi(a^-1) = e_H"], ["phi(a^-1) * phi(a) = phi(e_G)"], ["phi(a) * phi(a^-1) = phi(a)"]]}
+            solution_sketch: "Start with the group identity a * a^-1 = e_G. Apply phi to both sides: phi(a * a^-1) = phi(e_G). By the homomorphism law, phi(a) * phi(a^-1) = phi(e_G). By identity preservation, phi(e_G) = e_H, so phi(a) * phi(a^-1) = e_H. The option phi(a) + phi(a^-1) = e_H uses addition in a group. The option phi(a^-1) * phi(a) = phi(e_G) stops before using identity preservation. The option phi(a) * phi(a^-1) = phi(a) has the wrong right side. The answer is phi(a) * phi(a^-1) = e_H."
+          - problem: "Claim: if phi: G -> H is an isomorphism and G is abelian, then H is abelian. Step 1: let x, y be in H. Step 2: since phi is onto, choose a, b in G with phi(a)=x and phi(b)=y. Step 3: since G is abelian, ab=ba. Step 4: apply phi to get phi(a)+phi(b)=phi(b)+phi(a). Step 5: therefore xy=yx, so H is abelian. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is the setup and Step 2 uses that phi is onto, both valid. Step 3 uses that G is abelian, valid. Step 4 is invalid: phi is a homomorphism, so it preserves the group operation as multiplication, giving phi(a)phi(b)=phi(b)phi(a), not a sum. Step 5 would follow from the corrected Step 4. The answer is Step 4."
+          - problem: "Write the full proof: if phi: G -> H is an isomorphism and G is cyclic, then H is cyclic. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let G be cyclic with generator g, so every element of G is g^n for some integer n. Let h be any element of H. Since phi is onto, h = phi(x) for some x in G. Write x = g^n. By the homomorphism law, phi(g^n) = phi(g)^n. Thus h = phi(g)^n, so every element of H is a power of phi(g). Therefore H is cyclic with generator phi(g). This proves that isomorphisms preserve cyclicity."
         constraints: "standard preservation lemmas: identity, inverses, orders, abelian-ness, cyclicity"
       - id: kp3
         name: "Isomorphism as an equivalence; automorphisms"
