@@ -262,6 +262,22 @@ topics:
           - problem: 'A €20 warranty pays for a €300 replacement with probability $1/20$. Find the seller''s expected profit per warranty, in euros.'
             answer: "5"
             solution_sketch: '$20 - 300 \cdot \frac{1}{20} = 20 - 15 = 5$.'
+          - problem: "An insurer charges €72 for a policy that pays €1440 with probability 1/24. Find the insurer's expected profit per policy, in euros."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expected payout rule: multiply the payout by its probability: 1440 · (1/24) = 60. Profit rule: subtract the expected payout from the premium: 72 − 60 = 12. The expected profit per policy is 12."
+          - problem: "A warranty costs the buyer €18 and pays for a €900 replacement with probability 1/50. Find the seller's expected profit per warranty, in euros."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expected payout rule: 900 · (1/50) = 18. Profit rule: subtract the expected payout from the price: 18 − 18 = 0, so the seller just breaks even. The expected profit per warranty is 0."
+          - problem: "An insurer wants an expected profit of €15 per policy. A policy pays €2400 with probability 1/30. What premium in euros should the insurer charge?"
+            answer: "95"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expected payout rule: the expected payout is 2400 · (1/30) = 80. Premium rule: premium = expected payout + target profit = 80 + 15 = 95. The insurer should charge a premium of 95."
+          - problem: "A policy costs €45 and pays a claim with probability 1/35. The insurer earns an expected profit of €25 per policy. Find the claim payout in euros."
+            answer: "700"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Profit rule: profit = premium − payout · probability, so 25 = 45 − payout/35. Solve for the payout: payout/35 = 20, so the claim payout is 700."
         constraints: "claim probabilities are unit fractions; expected payouts come out to whole euros; answers are bare euro amounts"
       - id: kp3
         name: "Comparing options by expected value"
@@ -593,6 +609,22 @@ topics:
           - problem: 'Taxi journeys have length $X$ km with mean $6$ and SD $2$. The fare in euros is $Y = 1.5X + 4$. Give the mean and SD of $Y$ as the ordered pair (mean, SD).'
             answer: '$(13, 3)$'
             solution_sketch: 'Mean: $1.5 \cdot 6 + 4 = 13$; SD: $1.5 \cdot 2 = 3$ (the $+4$ does not affect spread).'
+          - problem: "Given $\\operatorname{Var}(X) = 5$, find $\\operatorname{Var}(4X + 1)$."
+            answer: "80"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\operatorname{Var}(4X + 1)$. Shift rule: adding the constant $1$ does not change the variance. Scale rule: multiplying $X$ by $4$ multiplies the variance by $4^2 = 16$. So $\\operatorname{Var}(4X + 1) = 16 \\cdot 5 = 80$; the answer is 80."
+          - problem: "A workshop cuts wire into pieces of length $X$ cm with mean $5$ and SD $2$. The price in euros of one piece is $Y = 3X + 1$. Give the mean and SD of $Y$ as (mean, SD)."
+            answer: "(16, 6)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: $Y = 3X + 1$ with $E[X] = 5$ and $\\operatorname{SD}(X) = 2$. Shift rule for the mean: $E[Y] = 3 \\cdot 5 + 1 = 16$. Scale rule for spread: $\\operatorname{SD}(Y) = 3 \\cdot 2 = 6$, since the $+1$ does not affect spread. The answer is (16, 6)."
+          - problem: "Given $\\operatorname{Var}(5X + 8) = 75$, find $\\operatorname{Var}(X)$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $\\operatorname{Var}(5X + 8) = 75$. Scale rule: $\\operatorname{Var}(5X + 8) = 5^2 \\cdot \\operatorname{Var}(X) = 25 \\operatorname{Var}(X)$; the shift $+8$ does not matter. Solve $25 \\operatorname{Var}(X) = 75$, so $\\operatorname{Var}(X) = 3$; the answer is 3."
+          - problem: "A shop sells gift boxes at a price in euros of $Y = 2X + 6$, where $X$ is the cost of the contents. You know $E[Y] = 20$ and $\\operatorname{SD}(Y) = 8$. Give $E[X]$ and $\\operatorname{SD}(X)$."
+            answer: "mean = 7; sd = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "mean"}, {"contract": {"kind": "exact"}, "name": "sd"}]}
+            solution_sketch: "Full object: $Y = 2X + 6$ with $E[Y] = 20$ and $\\operatorname{SD}(Y) = 8$. Shift rule reversed for the mean: $E[X] = (E[Y] - 6)/2 = (20 - 6)/2 = 7$. Scale rule reversed for the spread: $\\operatorname{SD}(X) = \\operatorname{SD}(Y)/2 = 8/2 = 4$. The answer is mean = 7; sd = 4."
         constraints: "a, b small constants (integers or one-decimal rates); answers whole numbers"
     diagnostic_exemplar:
       problem: 'Given $E[X] = 10$ and $\operatorname{SD}(X) = 4$, let $Y = 2X + 3$. Give $(E[Y], \operatorname{SD}(Y))$ as an ordered pair.'
@@ -748,6 +780,22 @@ topics:
           - problem: 'Five cards are drawn without replacement and the number of hearts is counted. Is this binomial: (a) yes; (b) no?'
             answer: '(b)'
             solution_sketch: 'Without replacement the trials are not independent and $p$ changes from draw to draw.'
+          - problem: "A basketball player attempts 9 free throws. Setting (a): count the number of made free throws; the attempts are independent and each attempt succeeds with the same 0.7 chance. Setting (b): count the number of attempts until his first miss. The binomial conditions are: 1 a fixed number of trials, 2 two outcomes on each trial, 3 the same chance of success on each trial, 4 independent trials. Which setting is binomial, and which numbered condition does the other setting fail?"
+            answer: "verdict = a; failed = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["a"], ["b"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "failed"}]}
+            solution_sketch: "Step 1 (binomial conditions): list the four conditions and test each setting against them. Step 2: setting (a) has 9 fixed trials, made or missed on each attempt, the same 0.7 chance on every attempt, and independent attempts, so (a) is binomial. Step 3: setting (b) stops at the first miss, so the number of trials is not fixed in advance; the option b fails condition 1. The binomial setting is a and the failed condition is 1, so verdict = a; failed = 1."
+          - problem: "Two quizzes each have 12 questions, and a student guesses on every question. Setting (a): the questions get harder as the quiz goes on, so the chance of a correct guess drops from question to question; the guesses are independent and each answer is right or wrong. Setting (b): the questions are equally hard, the guesses are independent, and each guess is correct with the same 0.3 chance. The binomial conditions are: 1 a fixed number of trials, 2 two outcomes on each trial, 3 the same chance of success on each trial, 4 independent trials. State which setting is binomial and give the number of the condition the other setting fails."
+            answer: "verdict = b; failed = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["a"], ["b"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "failed"}]}
+            solution_sketch: "Step 1 (binomial conditions): test the four conditions on each quiz. Step 2: setting (b) has a fixed 12 questions, right or wrong on each, the same 0.3 chance on every guess, and independent guesses, so (b) is binomial. Step 3: setting (a) has fixed trials and two outcomes, but its chance of success falls from question to question, so the option a fails condition 3, the constant-probability condition. The binomial setting is b and the failed condition is 3, so verdict = b; failed = 3."
+          - problem: "A die is rolled 7 times. Setting (a): count the total number of pips showing across the 7 rolls. Setting (b): count the number of rolls that show an even number; the rolls are independent. The binomial conditions are: 1 a fixed number of trials, 2 two outcomes on each trial, 3 the same chance of success on each trial, 4 independent trials. Determine which setting is binomial and which numbered condition the other setting fails."
+            answer: "verdict = b; failed = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["a"], ["b"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "failed"}]}
+            solution_sketch: "Step 1 (binomial conditions): test the four conditions on each setting. Step 2: setting (b) has 7 fixed independent rolls, two outcomes on each roll (even or odd), and the same chance 1/2 on every roll, so (b) is binomial. Step 3: setting (a) records pips, so each trial has six outcomes and the recorded value is not a success or failure; the option a fails condition 2. The binomial setting is b and the failed condition is 2, so verdict = b; failed = 2."
+          - problem: "An athlete takes 10 attempts at two sports. Setting (a): 10 independent serves in tennis, where each serve is an ace with the same 0.2 chance. Setting (b): 10 independent penalty kicks in soccer, where the chance of a goal is 0.8 for the first 5 kicks and 0.5 for the last 5. The binomial conditions are: 1 a fixed number of trials, 2 two outcomes on each trial, 3 the same chance of success on each trial, 4 independent trials. Give the binomial setting and the number of the condition the other setting fails."
+            answer: "verdict = a; failed = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["a"], ["b"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "failed"}]}
+            solution_sketch: "Step 1 (binomial conditions): test the four conditions on each sport. Step 2: setting (a) has 10 fixed independent trials, ace or not on each serve, and the same 0.2 chance on every serve, so (a) is binomial. Step 3: setting (b) has fixed trials and two outcomes, but the chance of success changes from 0.8 to 0.5 partway through, so the option b fails condition 3. The binomial setting is a and the failed condition is 3, so verdict = a; failed = 3."
         constraints: "one valid and one invalid setting per set; the answer labels the option, the reasoning names the failed condition"
       - id: kp2
         name: "P(X = k) with p = 1/2"
@@ -863,23 +911,59 @@ topics:
         name: "Mean and variance: np and np(1-p)"
         key_prerequisites: [binomial-probability, discrete-random-variables]
         exemplars:
-          - problem: '$X$ is binomial with $n = 20$, $p = 1/4$. Find $E[X]$ and $\operatorname{Var}(X)$.'
-            answer: '$E[X] = 5$, $\operatorname{Var}(X) = 15/4$'
-            solution_sketch: '$E[X] = np = 5$; $\operatorname{Var}(X) = np(1-p) = 20 \cdot \frac{1}{4} \cdot \frac{3}{4} = \frac{15}{4}$.'
-          - problem: '$X$ is binomial with $n = 10$, $p = 1/2$. Find $E[X]$ and $\operatorname{Var}(X)$.'
-            answer: '$E[X] = 5$, $\operatorname{Var}(X) = 5/2$'
-            solution_sketch: '$np = 5$; $np(1-p) = 10 \cdot \frac{1}{2} \cdot \frac{1}{2} = \frac{5}{2}$.'
+          - problem: "$X$ is binomial with $n = 12$ and $p = 1/3$. Find $E[X]$ and $\\operatorname{Var}(X)$."
+            answer: "mean = 4; variance = 8/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "mean"}, {"contract": {"kind": "exact"}, "name": "variance"}]}
+            solution_sketch: "Mean rule: $E[X] = np = 12 \\cdot \\frac{1}{3} = 4$. Variance rule: $\\operatorname{Var}(X) = np(1-p) = 12 \\cdot \\frac{1}{3} \\cdot \\frac{2}{3} = \\frac{8}{3}$. The answers are mean = 4; variance = 8/3."
+          - problem: "$X$ is binomial with $n = 16$ and $p = 3/4$. Find $E[X]$ and $\\operatorname{Var}(X)$."
+            answer: "mean = 12; variance = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "mean"}, {"contract": {"kind": "exact"}, "name": "variance"}]}
+            solution_sketch: "Mean rule: $E[X] = np = 16 \\cdot \\frac{3}{4} = 12$. Variance rule: $\\operatorname{Var}(X) = np(1-p) = 16 \\cdot \\frac{3}{4} \\cdot \\frac{1}{4} = 3$. The answers are mean = 12; variance = 3."
+          - problem: "A basketball player makes each free throw with probability $2/5$, and shoots $10$ times; $X$ counts the makes. Give the mean and variance of $X$ as a fraction or whole number."
+            answer: "mean = 4; variance = 12/5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "mean"}, {"contract": {"kind": "exact"}, "name": "variance"}]}
+            solution_sketch: "The count of makes is binomial with $n = 10$ and $p = 2/5$. Mean rule: $E[X] = np = 10 \\cdot \\frac{2}{5} = 4$. Variance rule: $\\operatorname{Var}(X) = np(1-p) = 10 \\cdot \\frac{2}{5} \\cdot \\frac{3}{5} = \\frac{12}{5}$. The answers are mean = 4; variance = 12/5."
+          - problem: "$X$ is binomial with $n = 25$ and $p = 1/5$. Compute the standard deviation of $X$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Variance rule: $\\operatorname{Var}(X) = np(1-p) = 25 \\cdot \\frac{1}{5} \\cdot \\frac{4}{5} = 4$. The standard deviation is the square root of the variance: $\\sqrt{4} = 2$. The standard deviation is 2."
+          - problem: "$X$ is binomial with $n = 14$, and it is known that $E[X] = 7$ and $\\operatorname{Var}(X) = 7/2$. Determine the success probability $p$ as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Ratio of the two rules: $\\frac{\\operatorname{Var}(X)}{E[X]} = \\frac{np(1-p)}{np} = 1 - p$, so $1 - p = \\frac{7/2}{7} = \\frac{1}{2}$. Hence $p = \\frac{1}{2}$, consistent with $np = 14 \\cdot \\frac{1}{2} = 7$. The probability is p = 1/2."
+          - problem: "$X$ is a binomial random variable with $E[X] = 12$ and $\\operatorname{Var}(X) = 4$. Find $p$ and $n$."
+            answer: "p = 2/3; n = 18"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "n"}]}
+            solution_sketch: "Ratio rule: $\\frac{\\operatorname{Var}(X)}{E[X]} = 1 - p = \\frac{4}{12} = \\frac{1}{3}$, so $p = \\frac{2}{3}$. Mean rule: $n = \\frac{E[X]}{p} = \\frac{12}{2/3} = 18$, and $np = 12$ is an integer. The answers are p = 2/3; n = 18."
         constraints: "np an integer or half-integer; p a simple fraction"
       - id: kp3
         name: "Building the full distribution"
         key_prerequisites: [binomial-probability]
         exemplars:
-          - problem: 'A fair coin is flipped $4$ times; $X$ counts heads. Find $P(X \ge 3)$.'
-            answer: "5/16"
-            solution_sketch: '$P(X=3) + P(X=4) = \frac{4}{16} + \frac{1}{16} = \frac{5}{16}$.'
-          - problem: '$X$ is binomial with $n = 3$, $p = 1/3$. Give the full distribution of $X$.'
-            answer: '$P(X=0) = 8/27$, $P(X=1) = 4/9$, $P(X=2) = 2/9$, $P(X=3) = 1/27$.'
-            solution_sketch: '$\left(\frac{2}{3}\right)^3 = \frac{8}{27}$; $3 \cdot \frac{1}{3} \cdot \frac{4}{9} = \frac{12}{27}$; $3 \cdot \frac{1}{9} \cdot \frac{2}{3} = \frac{6}{27}$; $\frac{1}{27}$ — and they sum to $1$.'
+          - problem: "A biased coin lands heads with probability $1/4$. It is flipped $4$ times and $X$ counts the heads. Find $P(X \\ge 3)$ as a fraction."
+            answer: "13/256"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Binomial probability rule: $P(X=k) = \\binom{4}{k} (1/4)^k (3/4)^{4-k}$. Tail-sum rule: $P(X \\ge 3) = P(X=3) + P(X=4)$, a sum of two binomial terms. Now $P(X=3) = 4 \\cdot (1/64) \\cdot (3/4) = 12/256$ and $P(X=4) = (1/4)^4 = 1/256$. The sum of the two terms is 13/256."
+          - problem: "$X$ is binomial with $n = 3$ trials and success probability $p = 1/4$. Give the full distribution of $X$ as the four values $P(X=0), P(X=1), P(X=2), P(X=3)$, each as a fraction."
+            answer: "a0 = 27/64; a1 = 27/64; a2 = 9/64; a3 = 1/64"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a0"}, {"contract": {"kind": "exact"}, "name": "a1"}, {"contract": {"kind": "exact"}, "name": "a2"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
+            solution_sketch: "Binomial formula: $P(X=k) = \\binom{3}{k} (1/4)^k (3/4)^{3-k}$. Row $k=0$: $(3/4)^3 = 27/64$. Row $k=1$: $3 \\cdot (1/4)(9/16) = 27/64$. Row $k=2$: $3 \\cdot (1/16)(3/4) = 9/64$. Row $k=3$: $(1/4)^3 = 1/64$. Sum check: $27/64 + 27/64 + 9/64 + 1/64 = 64/64 = 1$, so the table is complete. The full table is a0 = 27/64; a1 = 27/64; a2 = 9/64; a3 = 1/64."
+          - problem: "A basketball player makes each free throw with probability $2/3$. She shoots $3$ free throws and $X$ counts the makes. Find $P(X \\le 1)$ as a fraction."
+            answer: "7/27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Binomial probability rule: $P(X=k) = \\binom{3}{k} (2/3)^k (1/3)^{3-k}$. Lower tail: $P(X \\le 1) = P(X=0) + P(X=1)$, a sum of two binomial terms. $P(X=0) = (1/3)^3 = 1/27$ and $P(X=1) = 3 \\cdot (2/3)(1/9) = 6/27$. The sum of the two terms is 7/27."
+          - problem: "$X$ is binomial with $n = 3$ and $p = 2/5$. A partial table lists $P(X=0) = 27/125$, $P(X=1) = 54/125$ and $P(X=2) = 36/125$, and the full table must sum to $1$. Find the missing entry $P(X=3)$."
+            answer: "8/125"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Sum-to-one rule: the four entries of a distribution table add to $1$. So $P(X=3) = 1 - (27/125 + 54/125 + 36/125) = 1 - 117/125 = 8/125$. Binomial check: $\\binom{3}{3}(2/5)^3 = 8/125$, which confirms the entry and that the table sums to $1$. The missing entry is 8/125."
+          - problem: "A production line makes defective chips with probability $1/5$. An inspector checks $4$ chips and $X$ counts the defective ones. Compute $P(X \\ge 3)$ as a fraction."
+            answer: "17/625"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Binomial probability rule: $P(X=k) = \\binom{4}{k} (1/5)^k (4/5)^{4-k}$. Tail sum: $P(X \\ge 3) = P(X=3) + P(X=4)$, a sum of two binomial terms. $P(X=3) = 4 \\cdot (1/125)(4/5) = 16/625$ and $P(X=4) = (1/5)^4 = 1/625$. The two terms add to 17/625."
+          - problem: "A quiz has $4$ true/false questions and a student guesses on every question, so each answer is correct with probability $1/2$. Let $X$ count the correct guesses. Find $P(1 \\le X \\le 2)$ as a fraction."
+            answer: "5/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Binomial probability with $p = 1/2$: each entry is $\\binom{4}{k} (1/2)^4$. Two-term interior sum: $P(X=1) = 4/16$ and $P(X=2) = 6/16$, so $P(1 \\le X \\le 2) = 4/16 + 6/16 = 10/16$. The probability equals 5/8."
         constraints: "n <= 4; sums of two binomial terms or full 4-row tables; verify the table sums to 1"
     diagnostic_exemplar:
       problem: 'A fair coin is flipped $4$ times; $X$ counts heads. Find $P(X \ge 3)$ and $E[X]$.'

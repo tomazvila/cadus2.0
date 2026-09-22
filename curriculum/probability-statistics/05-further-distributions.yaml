@@ -263,6 +263,22 @@ topics:
           - problem: 'Buses arrive as a Poisson process at rate $3$ per hour, so the waiting time between buses is exponential. Find its mean, in minutes.'
             answer: "20"
             solution_sketch: 'Mean waiting time $= \frac{1}{\lambda} = \frac{1}{3}$ hour $= 20$ minutes.'
+          - problem: "A machine part has an exponential lifetime with rate 0.8 per year, and it has already lasted 2 years. Find the probability it lasts at least 1 more year. Give the answer to four decimals."
+            answer: "0.4493"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The lifetime X is exponential with rate 0.8 per year. By memorylessness, the past 2 years are discarded, so the conditional probability is P(X > 1) = e^(-0.8*1). Compute e^(-0.8) = 0.449328... and round to four decimals. The probability is 0.4493."
+          - problem: "A server's time until failure is exponential with rate 0.6 per month, and it has already run for 7 months. What is the probability it runs at least 1.5 more months? Give the answer to four decimals."
+            answer: "0.4066"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Let X be the failure time, exponential with rate 0.6 per month. Memorylessness discards the 7 months already survived, so P(X > 7 + 1.5 | X > 7) = P(X > 1.5). This equals e^(-0.6*1.5) = e^(-0.9) = 0.406569... . The probability is 0.4066."
+          - problem: "Emails arrive as a Poisson process at rate 4 per hour. Find the mean waiting time between two emails, in minutes."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a Poisson process the interarrival times are exponential with rate 4 per hour. The mean wait is 1/4 hour. Convert to minutes: (1/4)*60 = 15. The mean waiting time is 15 minutes."
+          - problem: "Calls arrive at a Poisson rate of 5 per hour. Find the mean wait in minutes between consecutive calls."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The waiting time between calls is exponential with mean 1/5 hour. Convert the rate to minutes: (1/5)*60 = 12. The mean wait is 12 minutes."
         constraints: "memoryless items state the past survival explicitly and expect it to be discarded; Poisson-connection items convert a rate per hour to a mean wait in minutes"
     diagnostic_exemplar:
       problem: 'A component''s lifetime is exponential with rate $\lambda = 0.25$ per hour, and it has already survived $6$ hours. Using $e^{-1} \approx 0.3679$, find the probability it survives at least $4$ more hours, to four decimal places.'
@@ -307,6 +323,22 @@ topics:
           - problem: 'With the completed table ($P(0,0) = 0.2$, $P(0,1) = 0.3$, $P(1,0) = 0.1$, $P(1,1) = 0.4$), find $P(X = Y)$.'
             answer: "0.6"
             solution_sketch: '$P(X = Y) = P(0,0) + P(1,1) = 0.2 + 0.4 = 0.6$.'
+          - problem: "A joint table for X and Y has P(0,0) = 0.15, P(0,1) = 0.25, P(1,0) = 0.35, and P(1,1) = 0.25. Find P(X = 1 or Y = 0)."
+            answer: "0.75"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the union of disjoint cells rule. The event X = 1 or Y = 0 is the union of cells (0,0), (1,0), and (1,1). Step 2: Add their probabilities: 0.15 + 0.35 + 0.25 = 0.75. The probability is 0.75."
+          - problem: "A joint table for X and Y has P(0,0) = 0.40, P(0,1) = 0.10, P(1,0) = 0.20, and P(1,1) = 0.30. Find P(X + Y = 1)."
+            answer: "0.30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the union of disjoint cells rule. The event X + Y = 1 is the union of cells (0,1) and (1,0). Step 2: Add their probabilities: 0.10 + 0.20 = 0.30. The probability is 0.30."
+          - problem: "A joint table for X in {0,1} and Y in {0,1,2} has P(0,0)=0.12, P(0,1)=0.08, P(0,2)=0.10, P(1,0)=0.18, P(1,1)=0.22, and P(1,2)=0.30. Find P(X = 0 or Y = 1)."
+            answer: "0.52"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the union of disjoint cells rule. The event X = 0 or Y = 1 is the union of cells (0,0), (0,1), (0,2), and (1,1). Step 2: Add their probabilities: 0.12 + 0.08 + 0.10 + 0.22 = 0.52. The probability is 0.52."
+          - problem: "A joint table for X and Y has P(0,0) = 0.22, P(0,1) = 0.28, P(1,0) = 0.18, and P(1,1) = 0.32. Find P(X + Y <= 1)."
+            answer: "0.68"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the union of disjoint cells rule. The event X + Y <= 1 is the union of cells (0,0), (0,1), and (1,0). Step 2: Add their probabilities: 0.22 + 0.28 + 0.18 = 0.68. The probability is 0.68."
         constraints: "2x2 or 2x3 tables; entries in hundredths summing to 1; one missing-entry item per set; events described as unions of cells"
       - id: kp2
         name: "Marginal distributions"
@@ -318,6 +350,22 @@ topics:
           - problem: 'Same table, where $Y$ takes values $0$ and $1$. Find $E[Y]$.'
             answer: "0.7"
             solution_sketch: 'Marginal: $P(Y = 1) = 0.3 + 0.4 = 0.7$, so $E[Y] = 0 \cdot 0.3 + 1 \cdot 0.7 = 0.7$.'
+          - problem: "A joint table has P(X = 0, Y = 0) = 0.1, P(X = 0, Y = 1) = 0.2, P(X = 0, Y = 2) = 0.1, P(X = 1, Y = 0) = 0.2, P(X = 1, Y = 1) = 0.3 and P(X = 1, Y = 2) = 0.1. Find the marginal probability P(Y = 2). Give the answer to 1 decimal."
+            answer: "0.2"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The marginal distribution of Y uses the column-sum rule: add the entries with Y = 2 over all values of X. The Y = 2 column has 0.1 and 0.1, so P(Y = 2) = 0.1 + 0.1 = 0.2. The marginal probability is 0.2."
+          - problem: "A joint table has P(X = 0, Y = 0) = 0.2, P(X = 0, Y = 1) = 0.1, P(X = 1, Y = 0) = 0.1, P(X = 1, Y = 1) = 0.2, P(X = 2, Y = 0) = 0.2 and P(X = 2, Y = 1) = 0.2. Find the expected value E[X] from the marginal distribution of X. Give the answer to 1 decimal."
+            answer: "1.1"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The row-sum rule gives the marginal of X: P(X = 0) = 0.3, P(X = 1) = 0.3 and P(X = 2) = 0.4. The expected-value rule then gives E[X] = 0(0.3) + 1(0.3) + 2(0.4) = 1.1. The expected value is 1.1."
+          - problem: "A joint table has P(X = 0, Y = 0) = 0.05, P(X = 0, Y = 1) = 0.15, P(X = 0, Y = 2) = 0.2, P(X = 0, Y = 3) = 0.1, P(X = 1, Y = 0) = 0.05, P(X = 1, Y = 1) = 0.1, P(X = 1, Y = 2) = 0.1 and P(X = 1, Y = 3) = 0.25. Find the marginal probability P(Y = 3). Give the answer to 2 decimals."
+            answer: "0.35"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The column-sum rule adds the Y = 3 entries over all values of X. The Y = 3 column has 0.1 and 0.25, so P(Y = 3) = 0.1 + 0.25 = 0.35. The marginal probability is 0.35."
+          - problem: "A joint table has P(X = 0, Y = 0) = 0.1, P(X = 0, Y = 1) = 0.2, P(X = 1, Y = 0) = 0.2, P(X = 1, Y = 1) = 0.1, P(X = 2, Y = 0) = 0.1 and P(X = 2, Y = 1) = 0.3. Find the expected value E[Y] from the marginal distribution of Y. Give the answer to 1 decimal."
+            answer: "0.6"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The column-sum rule gives the marginal of Y: P(Y = 0) = 0.4 and P(Y = 1) = 0.6. The expected-value rule then gives E[Y] = 0(0.4) + 1(0.6) = 0.6. The expected value is 0.6."
         constraints: "marginals are row or column sums; expected values from marginals with values 0..3; answers exact decimals"
       - id: kp3
         name: "Independence and conditionals in joint form"
@@ -332,6 +380,18 @@ topics:
           - problem: 'Same table. To check independence at the cell $(1,1)$: compute the product $P(X = 1) \cdot P(Y = 1)$.'
             answer: "0.35"
             solution_sketch: '$P(X = 1) = 0.5$, $P(Y = 1) = 0.7$; product $= 0.35 \ne P(1,1) = 0.4$, so $X$ and $Y$ are not independent.'
+          - problem: "$X$ and $Y$ are independent with $P(X = 2, Y = 4) = 0.2$ and $P(X = 2) = 0.5$. Find $P(Y = 4)$."
+            answer: "0.4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The independence rule says every joint cell is the product of its two marginal probabilities: $P(X = 2, Y = 4) = P(X = 2) \\cdot P(Y = 4)$. Substitute the known values: $0.2 = 0.5 \\cdot P(Y = 4)$. Divide both sides by $0.5$: $P(Y = 4) = 0.4$. The answer is 0.4."
+          - problem: "A joint distribution has $P(0,0) = 0.05$, $P(0,1) = 0.25$, $P(1,0) = 0.15$, $P(1,1) = 0.55$. Find $P(X = 0 \\mid Y = 1)$ as a fraction."
+            answer: "5/16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The conditional rule is joint over marginal: $P(X = 0 \\mid Y = 1) = P(X = 0, Y = 1) / P(Y = 1)$. The marginal is $P(Y = 1) = P(0,1) + P(1,1) = 0.25 + 0.55 = 0.80$. Thus the conditional is $0.25 / 0.80 = 25/80 = 5/16$. The answer is 5/16."
+          - problem: "Joint table: $P(0,0) = 0.14$, $P(0,1) = 0.06$, $P(1,0) = 0.21$, $P(1,1) = 0.59$. State the dependence status of $X$ and $Y$, and give the product $P(X = 1) P(Y = 1)$."
+            answer: "verdict = dependent; prod = 0.52"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["independent"], ["dependent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "prod"}]}
+            solution_sketch: "The joint table is $P(0,0) = 0.14$, $P(0,1) = 0.06$, $P(1,0) = 0.21$, $P(1,1) = 0.59$. The marginal rule gives $P(X = 1) = 0.21 + 0.59 = 0.80$ and $P(Y = 1) = 0.06 + 0.59 = 0.65$. The independence-check rule multiplies the marginals: $0.80 \\cdot 0.65 = 0.52$. Since this product does not equal the joint cell $P(1,1) = 0.59$, the status is dependent. The wrong option independent would arise by assuming the product equals the joint cell or by not comparing at all. The answer is verdict = dependent; prod = 0.52."
         constraints: "independence used to build joint cells or checked cellwise via the product of marginals; conditionals as joint over marginal; exact decimals or fractions"
     diagnostic_exemplar:
       problem: 'Joint table: $P(0,0) = 0.1$, $P(0,1) = 0.3$, $P(1,0) = 0.2$, $P(1,1) = 0.4$. Give $(P(X = 0),\ P(Y = 1 \mid X = 0))$ as an ordered pair of fractions.'
@@ -398,6 +458,18 @@ topics:
           - problem: '$\operatorname{Var}(X) = 4$, $\operatorname{Var}(Y) = 9$, $\operatorname{Cov}(X, Y) = 3$. Find the correlation $\rho = \dfrac{\operatorname{Cov}(X, Y)}{\sigma_X \sigma_Y}$ as a fraction.'
             answer: "1/2"
             solution_sketch: '$\sigma_X = 2$, $\sigma_Y = 3$; $\rho = \frac{3}{6} = \frac{1}{2}$.'
+          - problem: "The variance of X is 25, the variance of Y is 16, and the covariance of X and Y is 6. Find the variance of X + Y."
+            answer: "53"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the variance-of-a-sum rule: the variance of X + Y equals the variance of X plus the variance of Y plus twice the covariance of X and Y. Substitute the given values: 25 + 16 + 2(6) = 53. The answer is 53."
+          - problem: "The variance of X is 81, the variance of Y is 16, and the covariance of X and Y is -18. Compute the variance of X + Y."
+            answer: "61"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the variance-of-a-sum rule: the variance of X + Y equals the variance of X plus the variance of Y plus twice the covariance of X and Y. Substitute the values: 81 + 16 + 2(-18) = 61. The answer is 61."
+          - problem: "The variance of X is 16, the variance of Y is 81, and the covariance of X and Y is 24. Determine the correlation coefficient rho as a fraction."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the correlation formula: rho equals the covariance of X and Y divided by the product of the standard deviations. The standard deviations are 4 and 9, so rho = 24 / (4 * 9) = 24/36 = 2/3. The answer is 2/3."
         constraints: "variances perfect squares; correlation denominators divide evenly; include one negative-covariance case"
     diagnostic_exemplar:
       problem: '$X$ and $Y$ each take the values $0$ and $1$, with $P(0,0) = 0.4$, $P(0,1) = 0.1$, $P(1,0) = 0.1$, $P(1,1) = 0.4$, and $\operatorname{Var}(X) = \operatorname{Var}(Y) = 0.25$. Give $(\operatorname{Cov}(X, Y),\ \operatorname{Var}(X + Y))$ as an ordered pair.'

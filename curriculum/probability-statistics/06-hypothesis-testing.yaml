@@ -83,19 +83,59 @@ topics:
         name: "Naming the two errors"
         key_prerequisites: [hypothesis-tests-logic]
         exemplars:
-          - problem: 'A smoke alarm sounds when there is no fire. Taking $H_0$: "there is no fire", which error type is this?'
-            answer: 'Type I — rejecting a true $H_0$ (a false alarm).'
-          - problem: 'A screening test fails to flag a disease that is present. Taking $H_0$: "no disease", which error type is this?'
-            answer: 'Type II — failing to reject a false $H_0$ (a miss).'
+          - problem: "A smoke alarm rings even though there is no fire. The alarm runs a test with H0: \"there is no fire\". What kind of outcome is this?"
+            answer: "Type I (rejecting an H0 that holds)"
+            answer_contract: {"kind": "label", "options": [["Type I (rejecting an H0 that holds)"], ["Type II (keeping an H0 that is wrong)"], ["correct call (rejecting an H0 that is wrong)"], ["correct call (keeping an H0 that holds)"]]}
+            solution_sketch: "Step 1 (definition of Type I): rejecting an H0 that holds is a Type I error. Step 2: the ringing alarm discards H0, and since there is no fire, H0 holds, so a true H0 was rejected. The wrong option \"Type II (keeping an H0 that is wrong)\" swaps the two errors, since H0 is not wrong here; \"correct call (rejecting an H0 that is wrong)\" fails because H0 holds; \"correct call (keeping an H0 that holds)\" fails because the alarm did not keep H0. The answer is Type I (rejecting an H0 that holds)."
+          - problem: "A lab screening returns a negative result for a patient who in fact has the illness. The screening uses H0: \"the patient is free of the illness\". What kind of outcome is this?"
+            answer: "Type II (keeping an H0 that is wrong)"
+            answer_contract: {"kind": "label", "options": [["Type I (rejecting an H0 that holds)"], ["Type II (keeping an H0 that is wrong)"], ["correct call (rejecting an H0 that is wrong)"], ["correct call (keeping an H0 that holds)"]]}
+            solution_sketch: "Step 1 (definition of Type II): keeping an H0 that is wrong is a Type II error. Step 2: the negative result keeps H0, and since the patient has the illness, H0 is wrong, so a false H0 was kept. The wrong option \"Type I (rejecting an H0 that holds)\" swaps the two errors, since H0 was not rejected; \"correct call (rejecting an H0 that is wrong)\" fails because nothing was rejected; \"correct call (keeping an H0 that holds)\" fails because H0 does not hold. The answer is Type II (keeping an H0 that is wrong)."
+          - problem: "A factory checks each batch with H0: \"the batch meets the specification\". Four outcomes: (a) the batch is cleared and it meets the specification; (b) the batch is cleared but it falls short; (c) the batch is scrapped and it falls short; (d) the batch is scrapped though it meets the specification. A Type I error rejects an H0 that is in fact true. How many of the four outcomes are Type I errors?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: a Type I error rejects an H0 that is in fact true. Step 1: outcomes (a) and (b) keep H0, so they cannot be Type I errors. Step 2: outcome (c) rejects H0 while H0 is false, which is a correct call. Step 3: outcome (d) rejects H0 while H0 is true. Only (d) is a Type I error. The answer is 1."
+          - problem: "A spam filter examines every message with H0: \"the message is legitimate\". Five outcomes: (a) the message is delivered and it is legitimate; (b) the message is delivered but it is spam; (c) the message is blocked and it is spam; (d) the message is blocked though it is legitimate; (e) the message is delivered even though it is spam. A Type II error fails to reject an H0 that is in fact false. How many of the five outcomes are Type II errors?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: a Type II error fails to reject an H0 that is in fact false. Step 1: outcomes (a) and (d) involve a legitimate message, so H0 is true there; (a) keeps H0 and (d) rejects it, so neither is Type II. Step 2: outcome (c) rejects a false H0, which is a correct call. Step 3: outcomes (b) and (e) keep a false H0, since spam was delivered. The answer is 2."
+          - problem: "A scanner at an airport checkpoint screens bags with H0: \"the bag contains no banned item\". Five outcomes: (a) the bag passes and it contains no banned item; (b) the bag passes but it contains a banned item; (c) the bag is searched and it contains a banned item; (d) the bag is searched though it contains no banned item; (e) the bag passes although it hides a banned knife. A Type I error rejects an H0 that is in fact true, and a Type II error fails to reject an H0 that is in fact false. How many of the five outcomes are errors?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: an error is any mismatch between the decision and the facts; Type I rejects a true H0 and Type II keeps a false H0. Step 1: outcome (a) keeps a true H0, so it is correct. Step 2: outcome (b) keeps a false H0, a Type II error, and outcome (e) also keeps a false H0, a Type II error. Step 3: outcome (c) rejects a false H0, which is correct, while outcome (d) rejects a true H0, a Type I error. The errors are (b), (d) and (e). The answer is 3."
+          - problem: "A casino tests its dice with H0: \"the die is fair\". Five outcomes: (a) the die is declared fair and it is fair; (b) the die is declared fair but it is loaded; (c) the die is declared loaded and it is loaded; (d) the die is declared loaded though it is fair; (e) the die is declared crooked although it is fair. A Type I error rejects an H0 that is in fact true. How many of the five outcomes are Type I errors?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: a Type I error rejects an H0 that is in fact true. Step 1: outcomes (a) and (b) keep H0, so they cannot be Type I errors. Step 2: outcome (c) rejects H0 while H0 is false, which is a correct call. Step 3: outcomes (d) and (e) each reject H0 while the die is fair, so both are Type I errors. The answer is 2."
         constraints: "H0 is always stated explicitly in the scenario; answers name the type and phrase it as reject-true or fail-to-reject-false"
       - id: kp2
         name: "The significance level is P(Type I)"
         key_prerequisites: [hypothesis-tests-logic, conditional-probability]
         exemplars:
-          - problem: 'A test uses $\alpha = 0.05$. If $H_0$ is in fact true, what is the probability the test wrongly rejects it?'
-            answer: '$0.05$ — the significance level is exactly the Type I error probability.'
-          - problem: 'To make Type I errors rarer, should $\alpha$ be raised or lowered — and what does that do to Type II errors?'
-            answer: 'Lower $\alpha$; the test then rejects less readily, so Type II errors (missed effects) become more likely.'
+          - problem: "Under $H_0$, a test statistic $X$ takes values 1, 2, 3 with probabilities 0.90, 0.05, 0.05. The test rejects $H_0$ when $X$ is 2 or 3. If $H_0$ is true, find the probability of a Type I error."
+            answer: "0.10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: A Type I error is rejecting $H_0$ when $H_0$ is true. Step 2: The rejection region is $X = 2$ or $X = 3$. Step 3: Under $H_0$, $P(X=2) + P(X=3) = 0.05 + 0.05 = 0.10$. The probability of a Type I error is 0.10."
+          - problem: "A test currently uses $\\alpha = 0.10$. To reduce the chance of a Type I error, the researcher halves $\\alpha$. State the effect on the chance of a Type II error, and give the new probability of a Type I error."
+            answer: "effect = larger; alpha = 0.05"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["larger"], ["smaller"]]}, "name": "effect"}, {"contract": {"kind": "exact"}, "name": "alpha"}]}
+            solution_sketch: "Step 1: The significance level is the Type I error probability, initially 0.10. Step 2: Halving alpha makes the new Type I error probability 0.05. Step 3: A smaller alpha means the test rejects less often, so it misses true effects more often; the Type II error probability becomes larger. Thus effect = larger; alpha = 0.05."
+          - problem: "Under $H_0$, a test statistic $Y$ takes values 0, 1, 2 with probabilities 0.99, 0.005, 0.005. The test rejects $H_0$ when $Y$ is 1 or 2. If $H_0$ is true, find the probability of a Type I error."
+            answer: "0.01"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: A Type I error is rejecting $H_0$ when $H_0$ is true. Step 2: The rejection region is $Y = 1$ or $Y = 2$. Step 3: Under $H_0$, $P(Y=1) + P(Y=2) = 0.005 + 0.005 = 0.01$. The probability of a Type I error is 0.01."
+          - problem: "A test has a 5% chance of rejecting $H_0$ when $H_0$ is true. Give the significance level as a decimal."
+            answer: "0.05"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The significance level equals the probability of a Type I error, which is rejecting $H_0$ when $H_0$ is true. Step 2: That probability is given as 5%. Step 3: Convert 5% to a decimal, which is 0.05. So the significance level is 0.05."
+          - problem: "Under $H_0$, a test statistic $Z$ takes values 0, 1, 2, 3 with probabilities 0.85, 0.10, 0.03, 0.02. The test rejects $H_0$ when $Z$ is 2 or 3. If $H_0$ is true and the test rejects, state the error type and give its probability."
+            answer: "error = I; probability = 0.05"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["I"], ["II"]]}, "name": "error"}, {"contract": {"kind": "exact"}, "name": "probability"}]}
+            solution_sketch: "Step 1: Rejecting a true $H_0$ is a Type I error. Step 2: The rejection region is $Z = 2$ or $Z = 3$. Step 3: Under $H_0$, $P(Z=2) + P(Z=3) = 0.03 + 0.02 = 0.05$. Thus error = I; probability = 0.05."
+          - problem: "A test uses $\\alpha = 0.05$. To make Type II errors less likely, the researcher increases $\\alpha$ by $0.05$. State the effect on the Type I error probability, and give the new probability."
+            answer: "effect = larger; alpha = 0.10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["larger"], ["smaller"]]}, "name": "effect"}, {"contract": {"kind": "exact"}, "name": "alpha"}]}
+            solution_sketch: "Step 1: Raising alpha makes the test reject more often, which increases the Type I error probability. Step 2: The new significance level is $0.05 + 0.05 = 0.10$. Step 3: Thus the effect on the Type I error probability is larger, and the new probability is 0.10. So effect = larger; alpha = 0.10."
         constraints: "alpha in {0.01, 0.05, 0.10}; trade-off items must state the effect on the other error type"
       - id: kp3
         name: "Power and the cost of each error"
@@ -148,10 +188,30 @@ topics:
         name: "Computing the z statistic"
         key_prerequisites: [standard-error, hypothesis-tests-logic]
         exemplars:
-          - problem: 'Test $H_0: \mu = 500$ with known $\sigma = 12$. A sample of $n = 36$ gives $\bar{x} = 505$. Compute the test statistic $z$.'
-            answer: '$\operatorname{SE} = 12/\sqrt{36} = 2$; $z = \dfrac{505 - 500}{2} = 2.5$.'
-          - problem: 'Test $H_0: \mu = 80$ with $\sigma = 10$, $n = 25$, $\bar{x} = 76$. Compute $z$.'
-            answer: '$\operatorname{SE} = 10/5 = 2$; $z = \dfrac{76 - 80}{2} = -2$.'
+          - problem: "A test has null mean 40 and known population standard deviation 15. A sample of n = 25 has mean 46. Compute the z statistic for the test."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the one-sample z formula: z = (sample mean - null mean) / standard error. The standard error is 15 / sqrt(25) = 3. Substitute: z = (46 - 40) / 3 = 2. The z statistic is 2."
+          - problem: "A quality check tests null mean 120 with known population standard deviation 18. A sample of n = 36 has mean 111. Compute the test statistic z."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the one-sample z formula: z = (sample mean - null mean) / standard error. The standard error is 18 / sqrt(36) = 3. Substitute: z = (111 - 120) / 3 = -3. The test statistic is -3."
+          - problem: "A bottling plant tests null mean 250 mL with known population standard deviation 20 mL. A sample of n = 100 bottles has mean 252 mL. Compute the z statistic."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the one-sample z formula: z = (sample mean - null mean) / standard error. The standard error is 20 / sqrt(100) = 2. Substitute: z = (252 - 250) / 2 = 1. The z statistic is 1."
+          - problem: "A cereal box check tests null mean 64 g and known population standard deviation 21 g. A sample of n = 49 boxes has mean 58 g. Compute the z statistic."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the one-sample z formula: z = (sample mean - null mean) / standard error. The standard error is 21 / sqrt(49) = 3. Substitute: z = (58 - 64) / 3 = -2. The z statistic is -2."
+          - problem: "A lab tests null mean 300 units with known population standard deviation 25 units. A sample of n = 25 has mean 315 units. Compute the z statistic."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the one-sample z formula: z = (sample mean - null mean) / standard error. The standard error is 25 / sqrt(25) = 5. Substitute: z = (315 - 300) / 5 = 3. The z statistic is 3."
+          - problem: "A reaction-time study tests null mean 45 ms with known population standard deviation 16 ms. A sample of n = 64 has mean 43 ms. Compute the z statistic."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the one-sample z formula: z = (sample mean - null mean) / standard error. The standard error is 16 / sqrt(64) = 2. Substitute: z = (43 - 45) / 2 = -1. The z statistic is -1."
         constraints: "sigma known and stated; n a perfect square; z comes out to halves or whole numbers"
       - id: kp2
         name: "Decision by critical value"
@@ -168,10 +228,30 @@ topics:
         name: "The full test with conclusion in context"
         key_prerequisites: [hypothesis-tests-logic, standard-error, type-i-ii-errors]
         exemplars:
-          - problem: 'Flour bags are labelled $250$ g and the filling process has $\sigma = 6$ g. A sample of $n = 36$ bags has $\bar{x} = 247$ g. Test $H_0: \mu = 250$ against $H_1: \mu < 250$ at $\alpha = 0.05$ with $z^* = -1.645$ (given), and conclude in context.'
-            answer: '$\operatorname{SE} = 1$; $z = -3 < -1.645$: reject $H_0$ — strong evidence the bags are underfilled ($p \approx 0.003/2$, well under $\alpha$).'
-          - problem: 'A drinks machine should dispense $330$ ml with $\sigma = 4$ ml. A sample of $n = 16$ cans has $\bar{x} = 331.5$ ml. Two-sided test at $\alpha = 0.05$ with $z^* = 2$. Conclude in context.'
-            answer: '$\operatorname{SE} = 1$; $z = 1.5$, and $|1.5| < 2$: fail to reject $H_0$ — no convincing evidence the mean differs from $330$ ml.'
+          - problem: "Boxes of cereal are labelled $500$ g and the filling line has $\\sigma = 8$ g. A sample of $n = 64$ boxes has mean fill $\\bar{x} = 498$ g. Test $H_0: \\mu = 500$ against $H_1: \\mu < 500$ at $\\alpha = 0.05$ with the given critical value $z^* = -1.645$. Give the value of $z$ and the decision."
+            answer: "verdict = reject; z = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "z"}]}
+            solution_sketch: "Step 1 (standard error rule): $\\sigma/\\sqrt{n} = 8/\\sqrt{64} = 1$ g. Step 2 (z statistic rule): $z = (498 - 500)/1 = -2$. Step 3 (decision rule with the given $z^* = -1.645$): $-2 < -1.645$, so reject $H_0$. Step 4 (empirical-rule p and context): at $|z| = 2$ the two-sided empirical p is about 0.05, so the one-sided p is about 0.025, well under $\\alpha = 0.05$; the boxes are being underfilled. A learner who answers retain has compared the statistic with the wrong tail or ignored the given critical value. The decision is verdict = reject; z = -2."
+          - problem: "Concrete blocks are moulded to a target mass of $20$ kg and the process has $\\sigma = 0.5$ kg. A sample of $n = 25$ blocks has mean mass $\\bar{x} = 20.3$ kg. Carry out a two-sided test of $H_0: \\mu = 20$ at $\\alpha = 0.05$ using $z^* = 2$. Find $z$ and state the decision."
+            answer: "verdict = reject; z = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "z"}]}
+            solution_sketch: "Step 1 (standard error rule): $0.5/\\sqrt{25} = 0.1$ kg. Step 2 (z rule): $z = (20.3 - 20)/0.1 = 3$. Step 3 (decision rule with $z^* = 2$): $|3| > 2$, so reject $H_0$. Step 4 (empirical-rule p and context): at $|z| = 3$ the two-sided empirical p is about 0.003, far below $\\alpha = 0.05$, so the mean block mass is not the target 20 kg. Answering retain is the error of comparing the statistic with a critical value of 3 instead of the given 2. The decision is verdict = reject; z = 3."
+          - problem: "Batteries are advertised to run for $40$ hours and the production line has $\\sigma = 6$ hours. A sample of $n = 36$ batteries runs for a mean of $\\bar{x} = 41$ hours. Test $H_0: \\mu = 40$ against $H_1: \\mu > 40$ at $\\alpha = 0.05$ with $z^* = 1.645$. Give $z$ and the decision."
+            answer: "verdict = retain; z = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "z"}]}
+            solution_sketch: "Step 1 (standard error rule): $6/\\sqrt{36} = 1$ hour. Step 2 (z statistic rule): $z = (41 - 40)/1 = 1$. Step 3 (decision rule with $z^* = 1.645$): $1 < 1.645$, so retain $H_0$. Step 4 (empirical-rule p and context): at $|z| = 1$ the two-sided empirical p is about 0.32, so the one-sided p is about 0.16, above $\\alpha = 0.05$; the sample does not show that the batteries run longer than advertised. Answering reject is the error of using the two-sided cut of 2 on a one-sided test. The decision is verdict = retain; z = 1."
+          - problem: "A bottling plant claims each bottle holds $750$ ml and the filler has $\\sigma = 5$ ml. A sample of $n = 100$ bottles is tested, and the one-sample z statistic for $H_0: \\mu = 750$ against $H_1: \\mu < 750$ is $z = -2$. Using the critical value $z^* = -1.645$ at $\\alpha = 0.05$, find the sample mean and state the decision."
+            answer: "verdict = reject; xbar = 749"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "xbar"}]}
+            solution_sketch: "Step 1 (standard error rule): $5/\\sqrt{100} = 0.5$ ml. Step 2 (invert the z rule): $z = (\\bar{x} - 750)/0.5 = -2$, so $\\bar{x} = 750 - 1 = 749$ ml. Step 3 (decision rule with $z^* = -1.645$): $-2 < -1.645$, so reject $H_0$. Step 4 (empirical-rule p and context): at $|z| = 2$ the two-sided empirical p is about 0.05, so the one-sided p is about 0.025; the bottles are underfilled. Answering retain is the error of reading the sign of z as support for the claim. The result is verdict = reject; xbar = 749."
+          - problem: "A two-sided z-test of $H_0: \\mu = 250$ g at $\\alpha = 0.05$ uses $z^* = 2$, with $\\sigma = 6$ g and $n = 36$. Find the sample mean that lies exactly on the upper boundary of the decision, where $z = 2$."
+            answer: "252"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (standard error rule): $\\sigma/\\sqrt{n} = 6/\\sqrt{36} = 1$ g. Step 2 (z rule at the boundary): $2 = (\\bar{x} - 250)/1$, so $\\bar{x} = 252$ g. Step 3 (decision rule check): at $|z| = 2$ the two-sided empirical p is about 0.05, exactly the $\\alpha = 0.05$ cut, so a mean of 252 g sits on the edge of the rejection region. A mean of 248 g would be the lower boundary, the error of using the wrong sign. The upper boundary sample mean is 252."
+          - problem: "A sample of $n = 25$ rods has mean length $\\bar{x} = 74.3$ cm, and the two-sided test of $H_0: \\mu = 75$ at $\\alpha = 0.05$ with $z^* = 2$ gives $z = -1$. Find the population standard deviation $\\sigma$ as a fraction."
+            answer: "7/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (z rule): $z = (74.3 - 75)/(\\sigma/\\sqrt{25}) = -0.7/(\\sigma/5) = -3.5/\\sigma$. Step 2 (solve for sigma): $-3.5/\\sigma = -1$, so $\\sigma = 3.5$, that is 7/2 cm. Step 3 (decision check): $|z| = 1 < 2$, so the test retains $H_0$, and the two-sided empirical p at $|z| = 1$ is about 0.32, above $\\alpha = 0.05$. The population standard deviation is 7/2."
         constraints: "metric contexts; conclusions restate the decision in the scenario's units; empirical-rule p-values (0.32, 0.05, 0.003) quoted when |z| lands on 1, 2, or 3"
     diagnostic_exemplar:
       problem: 'Cement sacks are labelled $25$ kg and the process has $\sigma = 0.4$ kg. A sample of $n = 16$ sacks has $\bar{x} = 24.7$ kg. Test $H_0: \mu = 25$ against $H_1: \mu \ne 25$ at $\alpha = 0.05$ ($z^* = 2$). Give $z$, the decision, and a conclusion in context.'
