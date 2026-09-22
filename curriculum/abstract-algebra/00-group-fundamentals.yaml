@@ -239,6 +239,22 @@ topics:
           - problem: 'Find the order of $9$ in $U(10)$.'
             answer: "2"
             solution_sketch: '$9^2 = 81 \equiv 1 \pmod{10}$, and $9 \neq 1$, so the order is $2$.'
+          - problem: "Compute the order of the element 3 in the group U(11)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (direct powering): the powers of 3 modulo 11 are 3^1 = 3, 3^2 = 9, 3^3 = 27 = 5, 3^4 = 5*3 = 15 = 4, 3^5 = 4*3 = 12 = 1. Step 2 (smallest exponent): the earlier powers 3, 9, 5, 4 are not 1, so the smallest positive exponent giving 1 is 5. The order of 3 in U(11) is 5."
+          - problem: "Find the smallest positive exponent k in U(9) such that 2^k = 1 (mod 9)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (direct powering): the powers of 2 modulo 9 are 2^1 = 2, 2^2 = 4, 2^3 = 8, 2^4 = 16 = 7, 2^5 = 7*2 = 14 = 5, 2^6 = 5*2 = 10 = 1. Step 2 (smallest exponent): none of 2, 4, 8, 7, 5 is 1, so the smallest positive exponent with 2^k = 1 is 6. The answer is 6."
+          - problem: "Determine the order of 8 in U(13)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (direct powering): the powers of 8 modulo 13 are 8^1 = 8, 8^2 = 64 = 12, 8^3 = 12*8 = 96 = 5, 8^4 = 5*8 = 40 = 1. Step 2 (smallest exponent): 8, 12, 5 are not 1, so the smallest positive exponent giving 1 is 4. The order of 8 in U(13) is 4."
+          - problem: "Compute the multiplicative order of 9 modulo 13, that is, the least positive exponent k with 9^k = 1 (mod 13)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (direct powering): the powers of 9 modulo 13 are 9^1 = 9, 9^2 = 81 = 3, 9^3 = 3*9 = 27 = 1. Step 2 (smallest exponent): 9 and 3 are not 1, so the smallest positive exponent with 9^k = 1 is 3. The multiplicative order of 9 modulo 13 is 3."
         constraints: "multiplicative orders in U(n), n <= 13; answer is the smallest positive exponent giving 1"
       - id: kp2
         name: "Additive orders via n/gcd(a, n)"
@@ -773,6 +789,22 @@ topics:
           - problem: 'What is the order of the group $S_4$?'
             answer: "24"
             solution_sketch: '$|S_n| = n!$; $4! = 24$.'
+          - problem: "In S_5, compute the product (1 2 4)(2 5 3), composing right to left. Which cycle is the product?"
+            answer: "(1,2,5,3,4)"
+            answer_contract: {"kind": "label", "options": [["(1,2,5,3,4)"], ["(1,2,4,5,3)"], ["(1,3,4,2,5)"], ["(1,5,3,2,4)"]]}
+            solution_sketch: "Apply the rightmost cycle (2 5 3) first, then (1 2 4); tracing 1 gives 2, 2 gives 5, 3 gives 4, 4 gives 1, and 5 gives 3. The option (1,2,4,5,3) comes from composing left to right. The option (1,3,4,2,5) comes from sending 2 to 1 instead of 2 to 5. The option (1,5,3,2,4) comes from applying the cycles in the order written. Therefore the product is (1,2,5,3,4)."
+          - problem: "In S_7, compose (1 6 2)(3 4 7)(2 6) right to left. Give the images of 1, 2, 3, 4, 5, 6, 7 as a comma-separated list."
+            answer: "6, 2, 4, 7, 5, 1, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Right-to-left order: apply (2 6) first, then (3 4 7), then (1 6 2). Tracing each input gives 1 to 6, 2 to 2, 3 to 4, 4 to 7, 5 to 5, 6 to 1, and 7 to 3; for example 6 goes to 2 by (2 6), then 2 goes to 1 by (1 6 2). The image list is 6, 2, 4, 7, 5, 1, 3."
+          - problem: "How many elements does the symmetric group S_5 have? Give the answer as an integer."
+            answer: "120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group S_n is the set of all bijections from an n-element set to itself. Its size is n factorial. For n = 5, 5! = 120. The number of elements is 120."
+          - problem: "In S_5, compute the product (1 3 5)(1 2)(2 4), composing right to left. Which cycle is the product?"
+            answer: "(1,2,4,3,5)"
+            answer_contract: {"kind": "label", "options": [["(1,2,4,3,5)"], ["(1,3,5,4,2)"], ["(1,2,3,5,4)"], ["(1,4,2,3,5)"]]}
+            solution_sketch: "Apply the rightmost cycle (2 4) first, then (1 2), then (1 3 5); tracing 1 gives 2, 2 gives 4, 3 gives 5, 4 gives 3, and 5 gives 1. The option (1,3,5,4,2) comes from composing left to right. The option (1,2,3,5,4) comes from swapping the images of 3 and 4. The option (1,4,2,3,5) comes from applying (2 4) after (1 2) instead of before. Therefore the product is (1,2,4,3,5)."
         constraints: "S_n for n <= 7; state the right-to-left composition convention in every product problem"
       - id: kp2
         name: "Inverses and disjoint cycle decomposition"
@@ -832,14 +864,30 @@ topics:
         name: "Transposition decompositions and parity"
         key_prerequisites: [permutations-cycle-notation]
         exemplars:
-          - problem: 'Write the cycle $(1\,2\,3\,4)$ as a product of transpositions and state its parity.'
-            answer: '$(1\,4)(1\,3)(1\,2)$ — three transpositions, so odd.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A $k$-cycle equals $k-1$ transpositions; $4 - 1 = 3$ is odd.'
-          - problem: 'Is the permutation $(1\,4\,6)(2\,5)(3\,7)$ even or odd?'
-            answer: 'Even.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Transposition counts: $2 + 1 + 1 = 4$, an even total.'
+          - problem: "For the cycle $(1\\,2\\,3\\,5)$ in $S_5$, determine its parity and the number of transpositions in the standard decomposition that writes the cycle as $k-1$ transpositions. Give the answer as parity = a word; count = a number."
+            answer: "parity = odd; count = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["even"], ["odd"]]}, "name": "parity"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The permutation is the 4-cycle (1 2 3 5). A k-cycle is a product of k-1 transpositions, so this 4-cycle uses 4-1 = 3 transpositions; for example (1 2 3 5) = (1 5)(1 3)(1 2). The count 3 is odd, so the permutation is odd. The wrong option even would come from using k transpositions instead of k-1. Answer: parity = odd; count = 3."
+          - problem: "For the permutation $(1\\,6\\,2)(3\\,5\\,7)(4\\,8)$ in $S_8$, determine its parity and the number of transpositions in the standard decomposition that writes each $k$-cycle as $k-1$ transpositions. Give the answer as parity = a word; count = a number."
+            answer: "parity = odd; count = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["even"], ["odd"]]}, "name": "parity"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The permutation is (1 6 2)(3 5 7)(4 8). Each 3-cycle uses k-1 = 2 transpositions, and the 2-cycle is itself 1 transposition, so the standard total is 2+2+1 = 5. A total of 5 transpositions is odd, so the permutation is odd. The wrong option even would come from counting one transposition per cycle, giving 3, or from writing a 3-cycle as 3 transpositions. Answer: parity = odd; count = 5."
+          - problem: "For the permutation $(1\\,3\\,5\\,7\\,9)(2\\,4)(6\\,8)$ in $S_9$, find the total number of transpositions in the standard decomposition obtained by writing each cycle as $k-1$ transpositions."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The permutation is (1 3 5 7 9)(2 4)(6 8). A 5-cycle uses 4 transpositions, and each 2-cycle uses 1, so the standard total is 4+1+1 = 6. This total is even, so the permutation is even, but the requested count is 6. Answer: 6."
+          - problem: "For the permutation $(1\\,2\\,3\\,4\\,5\\,6)(7\\,8)$ in $S_8$, determine its parity and the number of transpositions in the standard decomposition obtained by writing each cycle as $k-1$ transpositions. Give the answer as parity = a word; count = a number."
+            answer: "parity = even; count = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["even"], ["odd"]]}, "name": "parity"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The permutation is (1 2 3 4 5 6)(7 8). The 6-cycle uses 6-1 = 5 transpositions, and the 2-cycle uses 1, so the total is 5+1 = 6. A total of 6 transpositions is even, so the permutation is even. The wrong option odd would come from using 6 transpositions for the 6-cycle. Answer: parity = even; count = 6."
+          - problem: "For the permutation $(1\\,2)(3\\,4\\,5)(6\\,7\\,8\\,9)$ in $S_9$, find its sign: 1 if even, -1 if odd."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The permutation is (1 2)(3 4 5)(6 7 8 9). The 2-cycle uses 1 transposition, the 3-cycle uses 2, and the 4-cycle uses 3, so the total is 1+2+3 = 6. A total of 6 transpositions is even, so the sign is 1. Answer: 1."
+          - problem: "For the cycle $(1\\,2\\,3\\,4\\,5)$ in $S_5$, find the number of transpositions in its standard decomposition that writes a $k$-cycle as $k-1$ transpositions."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The permutation is the 5-cycle (1 2 3 4 5). A k-cycle is a product of k-1 transpositions, so this 5-cycle uses 5-1 = 4 transpositions; for example (1 2 3 4 5) = (1 5)(1 4)(1 3)(1 2). The requested number is 4. Answer: 4."
         constraints: "parity of products of disjoint cycles in S_n, n <= 9; k-cycle is even iff k is odd"
       - id: kp2
         name: "The alternating group A_n"
@@ -857,14 +905,30 @@ topics:
         name: "Parity under products and inverses"
         key_prerequisites: [permutations-cycle-notation]
         exemplars:
-          - problem: 'The product of two odd permutations is even or odd?'
-            answer: 'Even.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Parities add mod $2$: odd + odd = even.'
-          - problem: 'Can $(1\,2)$ be written as a product of $4$ transpositions?'
-            answer: 'No: $(1\,2)$ is odd, and any product of $4$ transpositions is even; parity is well-defined.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The parity of the number of transpositions is an invariant of the permutation.'
+          - problem: "Let s and t be odd permutations. Give the signs of s, t, and the product of s and t as a comma-separated list."
+            answer: "-1, -1, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: An odd permutation has sign -1, so sign(s) = -1 and sign(t) = -1. Step 2: The sign of a product is the product of signs, so sign(st) = (-1)(-1) = 1. The answer is -1, -1, 1."
+          - problem: "A permutation r is a product of 4 transpositions. Give the signs of r and of the inverse of r as a comma-separated list."
+            answer: "1, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: Each transposition has sign -1, so the sign of a product of 4 transpositions is (-1)^4 = 1. Step 2: The inverse of a permutation has the same sign as the permutation, so sign(r^(-1)) = 1. The answer is 1, 1."
+          - problem: "Let s be an even permutation and t be an odd permutation. Give the signs of s, t, and the product st as a comma-separated list."
+            answer: "1, -1, -1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: An even permutation has sign 1 and an odd permutation has sign -1, so sign(s) = 1 and sign(t) = -1. Step 2: The sign of a product is the product of signs, so sign(st) = (1)(-1) = -1. The answer is 1, -1, -1."
+          - problem: "Let s be an odd permutation. Give the signs of s, the inverse of s, and s squared as a comma-separated list."
+            answer: "-1, -1, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: An odd permutation has sign -1, so sign(s) = -1. Step 2: The inverse has the same sign, so sign(s^(-1)) = -1. Step 3: The sign of a square is the square of the sign, so sign(s^2) = (-1)^2 = 1. The answer is -1, -1, 1."
+          - problem: "Let s be an even permutation. Give the signs of s, the inverse of s, and s cubed as a comma-separated list."
+            answer: "1, 1, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: An even permutation has sign 1, so sign(s) = 1. Step 2: The inverse has the same sign, so sign(s^(-1)) = 1. Step 3: The sign of a cube is the cube of the sign, so sign(s^3) = 1^3 = 1. The answer is 1, 1, 1."
+          - problem: "Let s and t be odd permutations. Give the signs of s, t, and the inverse of st as a comma-separated list."
+            answer: "-1, -1, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: An odd permutation has sign -1, so sign(s) = -1 and sign(t) = -1. Step 2: The sign of st is (-1)(-1) = 1. Step 3: The inverse has the same sign as st, so sign((st)^(-1)) = 1. The answer is -1, -1, 1."
         constraints: "parity algebra; well-definedness facts, no full proof of invariance required"
     diagnostic_exemplar:
       problem: 'Determine the parity of $\sigma = (1\,3\,5)(2\,4)(6\,7)$ in $S_7$, and state $|A_7|$.'
@@ -920,13 +984,29 @@ topics:
         name: "Computing in GL_2(R): products, inverses, orders"
         key_prerequisites: [matrix-inverses, elementary-group-properties]
         exemplars:
-          - problem: 'In $GL_2(\mathbb{R})$, let $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ and $B = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$. Compute $AB$ and $BA$. Is $GL_2(\mathbb{R})$ abelian?'
-            answer: '$AB = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}$ but $BA = \begin{pmatrix} 1 & 1 \\ 1 & 2 \end{pmatrix}$ — so $GL_2(\mathbb{R})$ is not abelian.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiply both ways; one non-commuting pair refutes commutativity.'
+          - problem: "In GL_2(R), let A = [[1,1],[0,1]] and B = [[1,0],[1,1]]. Compute BA - AB. Give the answer as [a,b;c,d]."
+            answer: "[-1,0;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrices are A = [[1,1],[0,1]] and B = [[1,0],[1,1]]. First compute BA = [[1,1],[1,2]] by row-column multiplication. Then compute AB = [[2,1],[1,1]] by row-column multiplication. Subtract entrywise: BA - AB = [[-1,0],[0,1]]. The difference is [-1,0;0,1]."
           - problem: 'Find the order of $R = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$ in $GL_2(\mathbb{R})$.'
             answer: "4"
             solution_sketch: '$R^2 = -I$ and $R^4 = I$, with $R, R^2, R^3 \neq I$: $R$ is rotation by $90^\circ$, of order $4$.'
+          - problem: "Find the inverse of A = [[2,1],[1,1]] in GL_2(R). Give the answer as [a,b;c,d]."
+            answer: "[1,-1;-1,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix is A = [[2,1],[1,1]]. The determinant is 2*1 - 1*1 = 1, so A is in GL_2(R). The 2x2 inverse formula gives (1/det(A))[[d,-b],[-c,a]] = [[1,-1],[-1,2]]. The inverse is [1,-1;-1,2]."
+          - problem: "Compute the product AB for A = [[1,1],[1,0]] and B = [[0,1],[1,1]]. Give the answer as [a,b;c,d]."
+            answer: "[1,2;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrices are A = [[1,1],[1,0]] and B = [[0,1],[1,1]]. Row 1 of A times columns of B gives entries 1 and 2. Row 2 gives entries 0 and 1. The product is [1,2;0,1]."
+          - problem: "Find the order of A = [[0,-1],[1,-1]] in GL_2(R)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is A = [[0,-1],[1,-1]]. Compute A^2 = [[-1,1],[-1,0]] by matrix multiplication. Then A^3 = A^2 A = I, while A and A^2 are not I. The order is 3."
+          - problem: "Let A = [[1,2],[3,4]] in GL_2(R). Compute det(A^(-1)) as a fraction."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is A = [[1,2],[3,4]]. First compute det(A) = 1*4 - 2*3 = -2. Since det(A^(-1)) = 1/det(A) by the determinant property, it equals -1/2. The value is -1/2."
         constraints: "2x2 integer matrices, entries |a_ij| <= 3; inverses via the 2x2 formula; element orders <= 6"
       - id: kp3
         name: "Subgroups: SL_n and finite general linear groups"
