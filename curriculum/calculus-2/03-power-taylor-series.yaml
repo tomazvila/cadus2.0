@@ -704,27 +704,59 @@ topics:
         name: Taylor polynomials at general centers
         key_prerequisites: [standard-maclaurin-series, higher-order-derivatives]
         exemplars:
-          - problem: 'Find the second-degree Taylor polynomial of $f(x) = \sqrt{x}$ at $a = 4$.'
-            answer: '$T_2(x) = 2 + \frac{x - 4}{4} - \frac{(x - 4)^2}{64}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f(4) = 2$, $f''(4) = \frac{1}{4}$, $f''''(4) = -\frac{1}{32}$; divide the second derivative by $2!$.'
-          - problem: 'Find $T_2(x)$ for $f(x) = \ln x$ at $a = 1$.'
-            answer: '$T_2(x) = (x - 1) - \frac{(x - 1)^2}{2}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f(1) = 0$, $f''(1) = 1$, $f''''(1) = -1$.'
+          - problem: "Find the second-degree Taylor polynomial of f(x) = 1/x at a = 2 as a polynomial in x."
+            answer: "1/2-(x-2)/4+(x-2)^2/8"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The Taylor polynomial formula is T_2(x) = f(a) + f'(a)(x-a) + f''(a)(x-a)^2/2!. Compute f(2)=1/2, f'(2)=-1/4, and f''(2)=1/4. Substitute: T_2(x) = 1/2 - (x-2)/4 + (x-2)^2/8. The answer is 1/2-(x-2)/4+(x-2)^2/8."
+          - problem: "Find the third-degree Taylor polynomial of f(x) = x^3 - 3x at a = 1 as a polynomial in x."
+            answer: "-2+3(x-1)^2+(x-1)^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use T_3(x) = f(1) + f'(1)(x-1) + f''(1)(x-1)^2/2! + f'''(1)(x-1)^3/3!. Compute f(1)=-2, f'(1)=0, f''(1)=6, and f'''(1)=6. The divided values are -2, 0, 3, and 1, so T_3(x) = -2+3(x-1)^2+(x-1)^3. The answer is -2+3(x-1)^2+(x-1)^3."
+          - problem: "Find the second-degree Taylor polynomial of f(x) = sqrt(x) at a = 16 as a polynomial in x."
+            answer: "4+(x-16)/8-(x-16)^2/512"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use T_2(x) = f(16) + f'(16)(x-16) + f''(16)(x-16)^2/2!. Compute f(16)=4, f'(16)=1/8, and f''(16)=-1/256. Then f''(16)/2 = -1/512, so T_2(x) = 4 + (x-16)/8 - (x-16)^2/512. The answer is 4+(x-16)/8-(x-16)^2/512."
+          - problem: "Find the second-degree Taylor polynomial of f(x) = 1/(x+2) at a = 1 as a polynomial in x."
+            answer: "1/3-(x-1)/9+(x-1)^2/27"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use T_2(x) = f(1) + f'(1)(x-1) + f''(1)(x-1)^2/2!. Compute f(1)=1/3, f'(1)=-1/9, and f''(1)=2/27. Divide f''(1) by 2 to get 1/27, so T_2(x) = 1/3 - (x-1)/9 + (x-1)^2/27. The answer is 1/3-(x-1)/9+(x-1)^2/27."
+          - problem: "Find the third-degree Taylor polynomial of f(x) = x^4 at a = 1 as a polynomial in x."
+            answer: "1+4(x-1)+6(x-1)^2+4(x-1)^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use T_3(x) = f(1) + f'(1)(x-1) + f''(1)(x-1)^2/2! + f'''(1)(x-1)^3/3!. Compute f(1)=1, f'(1)=4, f''(1)=12, and f'''(1)=24. The divided values are 1, 4, 6, and 4, so T_3(x) = 1+4(x-1)+6(x-1)^2+4(x-1)^3. The answer is 1+4(x-1)+6(x-1)^2+4(x-1)^3."
+          - problem: "Find the second-degree Taylor polynomial of f(x) = 1/sqrt(x) at a = 1 as a polynomial in x."
+            answer: "1-(x-1)/2+3(x-1)^2/8"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use T_2(x) = f(1) + f'(1)(x-1) + f''(1)(x-1)^2/2!. Compute f(1)=1, f'(1)=-1/2, and f''(1)=3/4. Divide f''(1) by 2 to get 3/8, so T_2(x) = 1 - (x-1)/2 + 3(x-1)^2/8. The answer is 1-(x-1)/2+3(x-1)^2/8."
         constraints: "degree <= 3; centers where f and derivatives evaluate to clean rationals"
       - id: kp3
         name: Approximating values with Taylor polynomials
         key_prerequisites: [standard-maclaurin-series]
         exemplars:
-          - problem: 'Use $T_2$ for $\sqrt{x}$ at $a = 4$ to approximate $\sqrt{4.2}$. Give an exact fraction.'
-            answer: '$\frac{3279}{1600} = 2.049375$'
-            answer_contract: {kind: none}
-            solution_sketch: '$2 + \frac{0.2}{4} - \frac{0.04}{64} = 2 + \frac{1}{20} - \frac{1}{1600}$.'
-          - problem: 'Use $T_2$ for $\ln x$ at $a = 1$ to approximate $\ln 1.2$. Give an exact fraction.'
-            answer: '$\frac{9}{50} = 0.18$'
-            answer_contract: {kind: none}
-            solution_sketch: '$0.2 - \frac{(0.2)^2}{2} = 0.2 - 0.02$.'
+          - problem: "Use the Taylor polynomial T_2 for f(x) = sqrt(x) at a = 16 to approximate sqrt(16.2). Give an exact fraction."
+            answer: "51519/12800"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Taylor polynomial formula: T_2(x) = f(16) + f'(16)(x - 16) + f''(16)(x - 16)^2/2. For f(x) = sqrt(x), f(16) = 4, f'(16) = 1/8, and f''(16) = -1/256. Substitute x - 16 = 1/5: 4 + (1/8)(1/5) - (1/512)(1/25) = 51519/12800. The approximation is 51519/12800."
+          - problem: "Use the Taylor polynomial T_2 for f(x) = ln(x) at a = 1 to approximate ln(1.1). Give an exact fraction."
+            answer: "19/200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Taylor polynomial formula at a = 1: T_2(x) = f(1) + f'(1)(x - 1) + f''(1)(x - 1)^2/2. For f(x) = ln(x), f(1) = 0, f'(1) = 1, and f''(1) = -1. Substitute x - 1 = 1/10: 0 + 1/10 - (1/2)(1/100) = 19/200. The approximation is 19/200."
+          - problem: "Use the Taylor polynomial T_2 for f(x) = e^x at a = 0 to approximate e^(0.1). Give an exact fraction."
+            answer: "221/200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Taylor polynomial formula at a = 0: T_2(x) = f(0) + f'(0)x + f''(0)x^2/2. For f(x) = e^x, f(0) = f'(0) = f''(0) = 1, so T_2(x) = 1 + x + x^2/2. Substitute x = 1/10: 1 + 1/10 + 1/200 = 221/200. The approximation is 221/200."
+          - problem: "Use the Taylor polynomial T_2 for f(x) = cos(x) at a = 0 to approximate cos(0.2). Give an exact fraction."
+            answer: "49/50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Taylor polynomial formula at a = 0: T_2(x) = f(0) + f'(0)x + f''(0)x^2/2. For f(x) = cos(x), f(0) = 1, f'(0) = 0, and f''(0) = -1, so T_2(x) = 1 - x^2/2. Substitute x = 1/5: 1 - 1/50 = 49/50. The approximation is 49/50."
+          - problem: "Use the Taylor polynomial T_3 for f(x) = sin(x) at a = 0 to approximate sin(0.2). Give an exact fraction."
+            answer: "149/750"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Taylor polynomial formula at a = 0: T_3(x) = f(0) + f'(0)x + f''(0)x^2/2 + f'''(0)x^3/6. For f(x) = sin(x), f(0) = 0, f'(0) = 1, f''(0) = 0, and f'''(0) = -1, so T_3(x) = x - x^3/6. Substitute x = 1/5: 1/5 - 1/750 = 149/750. The approximation is 149/750."
+          - problem: "Use the Taylor polynomial T_2 for f(x) = 1/(1 - x) at a = 0 to approximate 1/(1 - 0.1). Give an exact fraction."
+            answer: "111/100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Taylor polynomial formula at a = 0: T_2(x) = f(0) + f'(0)x + f''(0)x^2/2. For f(x) = 1/(1 - x), f(0) = 1, f'(0) = 1, and f''(0) = 2, so T_2(x) = 1 + x + x^2. Substitute x = 1/10: 1 + 1/10 + 1/100 = 111/100. The approximation is 111/100."
         constraints: "evaluation points within 0.2 of the center; answers as exact fractions"
     diagnostic_exemplar:
       problem: 'Find $T_2(x)$ for $f(x) = \sqrt{x}$ at $a = 9$, and use it to approximate $\sqrt{9.6}$ as an exact fraction.'
@@ -760,40 +792,88 @@ topics:
         name: The Lagrange remainder
         key_prerequisites: [taylor-polynomials]
         exemplars:
-          - problem: '$\sin x$ is approximated by $T_3(x) = x - \frac{x^3}{6}$ on $|x| \le \frac{1}{2}$. Bound the error with the Lagrange remainder.'
-            answer: '$|R_3| \le \frac{(1/2)^4}{4!} = \frac{1}{384}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$|f^{(4)}| = |\sin x| \le 1$, so $|R_3(x)| \le \frac{|x|^4}{4!}$.'
-          - problem: '$e^x$ is approximated by $T_2(x)$ on $|x| \le 1$. Bound the error with the Lagrange remainder, using $M = 3$.'
-            answer: '$|R_2| \le \frac{3 \cdot 1^3}{3!} = \frac{1}{2}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$|f^{(3)}(x)| = e^x \le e < 3$ on $[-1, 1]$; apply $|R_2| \le \frac{M |x|^3}{3!}$.'
+          - problem: "Use T_3(x) = x - x^3/6 to approximate sin x for |x| <= 1/3. Bound the absolute error with the Lagrange remainder, using M = 1 on this interval. Give the bound as a fraction."
+            answer: "1/1944"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The remainder after T_3 is R_3(x) = sin x - T_3(x). The Lagrange remainder rule gives |R_3(x)| <= M |x|^4 / 4!; with M = 1 and |x| <= 1/3 this becomes (1/3)^4 / 24. Compute (1/3)^4 = 1/81, and 81 times 24 is 1944. The bound is 1/1944."
+          - problem: "e^x is approximated by T_2(x) = 1 + x + x^2/2 for |x| <= 1/2. Bound the absolute error with the Lagrange remainder, using M = 3 on this interval. Give the bound as a fraction."
+            answer: "1/16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The remainder after T_2 is R_2(x) = e^x - T_2(x). The Lagrange remainder rule gives |R_2(x)| <= M |x|^3 / 3!; with M = 3 and |x| <= 1/2 this is 3(1/2)^3 / 6. Compute (1/2)^3 = 1/8, so 3/8 divided by 6 is 1/16. The bound is 1/16."
+          - problem: "cos x is approximated by T_2(x) = 1 - x^2/2 for |x| <= 1/2. Use the Lagrange remainder with M = 1 to bound the absolute error. Give the bound as a fraction."
+            answer: "1/48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The remainder after T_2 is R_2(x) = cos x - T_2(x). The Lagrange remainder rule gives |R_2(x)| <= M |x|^3 / 3!; with M = 1 and |x| <= 1/2 this is (1/2)^3 / 6. Compute (1/2)^3 = 1/8, and 8 times 6 is 48. The bound is 1/48."
+          - problem: "sin x is approximated by T_4(x) = x - x^3/6 + x^5/120 for |x| <= 1/3. Use the Lagrange remainder with M = 1 to bound the absolute error. Give the bound as a fraction."
+            answer: "1/29160"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The remainder after T_4 is R_4(x) = sin x - T_4(x). The Lagrange remainder rule gives |R_4(x)| <= M |x|^5 / 5!; with M = 1 and |x| <= 1/3 this is (1/3)^5 / 120. Compute 3^5 = 243, and 243 times 120 is 29160. The bound is 1/29160."
+          - problem: "e^x is approximated by T_3(x) = 1 + x + x^2/2 + x^3/6 for |x| <= 1/2. Use the Lagrange remainder with M = 3 to bound the absolute error. Give the bound as a fraction."
+            answer: "1/128"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The remainder after T_3 is R_3(x) = e^x - T_3(x). The Lagrange remainder rule gives |R_3(x)| <= M |x|^4 / 4!; with M = 3 and |x| <= 1/2 this is 3(1/2)^4 / 24. Compute (1/2)^4 = 1/16, so 3/16 divided by 24 is 1/128. The bound is 1/128."
+          - problem: "e^x is approximated by T_1(x) = 1 + x for |x| <= 1/2. Use the Lagrange remainder with M = 3 to bound the absolute error. Give the bound as a fraction."
+            answer: "3/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The remainder after T_1 is R_1(x) = e^x - T_1(x). The Lagrange remainder rule gives |R_1(x)| <= M |x|^2 / 2!; with M = 3 and |x| <= 1/2 this is 3(1/2)^2 / 2. Compute (1/2)^2 = 1/4, so 3/4 divided by 2 is 3/8. The bound is 3/8."
         constraints: "Lagrange bounds use M = 1 for sin/cos and M = 3 for e^x on [-1, 1]"
       - id: kp2
         name: The alternating error bound for series values
         key_prerequisites: [alternating-series-estimation, taylor-maclaurin-series]
         exemplars:
-          - problem: '$\cos 1$ is approximated by $1 - \frac{1}{2} + \frac{1}{24}$. Bound the error using the alternating series bound.'
-            answer: 'error $\le \frac{1}{720}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The series $\sum \frac{(-1)^n}{(2n)!}$ alternates with decreasing terms; the first omitted term is $\frac{1}{6!} = \frac{1}{720}$.'
-          - problem: 'How far must the series $\frac{1}{e} = \sum_{n=0}^{\infty} \frac{(-1)^n}{n!}$ be summed to guarantee an error below $\frac{1}{1000}$?'
-            answer: 'through $n = 6$ (first omitted term $\frac{1}{7!} = \frac{1}{5040} < \frac{1}{1000}$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Need $\frac{1}{(n+1)!} < 10^{-3}$: $7! = 5040$ is the first factorial past $1000$.'
+          - problem: "The value cos(0.5) is approximated by 1 - (0.5)^2/2 + (0.5)^4/24. Find a bound on the error as a fraction using the alternating series bound."
+            answer: "1/46080"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series: cos(0.5) = 1 - (0.5)^2/2 + (0.5)^4/24 - (0.5)^6/720 + ... . The terms alternate and decrease in size, so the alternating series bound applies. The first omitted term is (0.5)^6/720 = 1/46080, so the error is at most 1/46080."
+          - problem: "The alternating series 1/e = 1 - 1 + 1/2 - 1/6 + 1/24 - ... converges. Find the least index N such that summing through n = N guarantees an error below 1/10000."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series: 1/e = 1 - 1 + 1/2 - 1/6 + 1/24 - ... . The alternating series bound says the error after summing through n = N is at most the first omitted term 1/(N+1)!. Require 1/(N+1)! below 1/10000. Since 7! = 5040 is below 10000 and 8! = 40320 is above, the least N is 7. The answer is 7."
+          - problem: "The value e^(-1/2) is approximated by 1 - 1/2 + (1/2)^2/2. Find a bound on the error as a fraction using the alternating series bound."
+            answer: "1/48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series: e^(-1/2) = 1 - 1/2 + (1/2)^2/2 - (1/2)^3/6 + ... . The terms alternate and decrease in size, so the alternating series bound applies. The first omitted term is (1/2)^3/6 = 1/48, so the error is at most 1/48."
+          - problem: "The alternating series 1 - 1/3 + 1/5 - 1/7 + ... converges to pi/4, with index n starting at 0. Find the least index N such that summing through n = N guarantees an error below 1/100."
+            answer: "49"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series: pi/4 = 1 - 1/3 + 1/5 - 1/7 + ... . The alternating series bound says the error after summing through n = N is at most the first omitted term 1/(2N+3). Require 1/(2N+3) below 1/100. This needs 2N+3 > 100, so N is at least 49. The answer is 49."
+          - problem: "The value sin(1) is approximated by 1 - 1/6 + 1/120. Find a bound on the error as a fraction using the alternating series bound."
+            answer: "1/5040"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series: sin(1) = 1 - 1/6 + 1/120 - 1/5040 + ... . The alternating series bound applies because the terms alternate and decrease. The first omitted term is 1/5040, so the error is at most 1/5040."
+          - problem: "The alternating series 1 - 1/2 + 1/3 - 1/4 + ... converges to ln(2), with index n starting at 1. Find the least index N such that summing through n = N guarantees an error below 1/10^2."
+            answer: "100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series: ln(2) = 1 - 1/2 + 1/3 - 1/4 + ... . The alternating series bound says the error after summing through n = N is at most the first omitted term 1/(N+1). Require 1/(N+1) below 1/10^2. This needs N+1 > 100, so the least N is 100. The answer is 100."
         constraints: "alternating bounds cite the first omitted term; thresholds are powers of 10"
       - id: kp3
         name: Choosing the degree for a target accuracy
         key_prerequisites: [taylor-polynomials, alternating-series-estimation]
         exemplars:
-          - problem: 'What degree $n$ guarantees $|\sin x - T_n(x)| \le \frac{1}{5040}$ for all $|x| \le 1$ (using $M = 1$)?'
-            answer: '$n = 6$ ($|R_n| \le \frac{1}{(n+1)!}$ and $7! = 5040$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Need $\frac{1}{(n+1)!} \le \frac{1}{5040}$, i.e. $(n+1)! \ge 5040 = 7!$.'
-          - problem: 'What degree $n$ guarantees $|e^x - T_n(x)| \le \frac{1}{100}$ for all $|x| \le 1$, using $M = 3$?'
-            answer: '$n = 5$ ($\frac{3}{6!} = \frac{1}{240} \le \frac{1}{100}$, while $\frac{3}{5!} = \frac{1}{40}$ is too big)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Need $\frac{3}{(n+1)!} \le \frac{1}{100}$, i.e. $(n+1)! \ge 300$: first satisfied by $6! = 720$.'
+          - problem: "For f(x) = sin x on the interval |x| <= 1, the Lagrange error bound uses M = 1. Find the least degree n of the Taylor polynomial at 0 that makes the error at most 1/120, and include the deciding inequality in your work."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The Lagrange error bound bounds the remainder by M times the (n+1)-st power of |x| divided by (n+1)!. Step 2: With M = 1 and |x| <= 1, the requirement is 1/(n+1)! <= 1/120. Step 3: This needs (n+1)! >= 120 = 5!, so n+1 >= 5 and n >= 4. The least degree is 4."
+          - problem: "For f(x) = e^x on the interval |x| <= 1, use the derivative bound M = 3. Find the least degree n of the Taylor polynomial at 0 that makes the error at most 1/500, and include the deciding inequality in your work."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The Lagrange error bound bounds the remainder by M times the (n+1)-st power of |x| divided by (n+1)!. Step 2: With M = 3 and |x| <= 1, need 3/(n+1)! <= 1/500. Step 3: Multiply by 500 to get (n+1)! >= 1500. Since 6! = 720 < 1500 and 7! = 5040 >= 1500, n+1 = 7. The least degree is 6."
+          - problem: "For f(x) = cos x on |x| <= 1, the Lagrange error bound uses M = 1. Find the least degree n of the Taylor polynomial at 0 that makes the error at most 1/720, and include the deciding inequality in your work."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The Lagrange error bound bounds the remainder by M times the (n+1)-st power of |x| divided by (n+1)!. Step 2: With M = 1 and |x| <= 1, need 1/(n+1)! <= 1/720. Step 3: This needs (n+1)! >= 720 = 6!, so n+1 >= 6. The least degree is 5."
+          - problem: "A calculator approximates e^x on |x| <= 1 by its Taylor polynomial at 0. The derivative bound is M = 5. Find the least degree n that makes the error at most 1/5000, and include the deciding inequality in your work."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The Lagrange error bound bounds the remainder by M times the (n+1)-st power of |x| divided by (n+1)!. Step 2: With M = 5 and |x| <= 1, need 5/(n+1)! <= 1/5000. Step 3: Multiply by 5000 to get (n+1)! >= 25000. Since 7! = 5040 < 25000 and 8! = 40320 >= 25000, n+1 = 8. The least degree is 7."
+          - problem: "For f(x) = sin x on |x| <= 1, the Lagrange error bound uses M = 1. Find the least degree n of the Taylor polynomial at 0 that makes the error at most 1/24, and include the deciding inequality in your work."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The Lagrange error bound bounds the remainder by M times the (n+1)-st power of |x| divided by (n+1)!. Step 2: With M = 1 and |x| <= 1, need 1/(n+1)! <= 1/24. Step 3: This needs (n+1)! >= 24 = 4!, so n+1 >= 4. The least degree is 3."
+          - problem: "The function f(x) = e^x is approximated on |x| <= 1 by a Taylor polynomial at 0. Use the bound M = 2 for the derivatives. Find the least degree n that makes the error at most 1/50000, and include the deciding inequality in your work."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The Lagrange error bound bounds the remainder by M times the (n+1)-st power of |x| divided by (n+1)!. Step 2: With M = 2 and |x| <= 1, need 2/(n+1)! <= 1/50000. Step 3: Multiply by 50000 to get (n+1)! >= 100000. Since 8! = 40320 < 100000 and 9! = 362880 >= 100000, n+1 = 9. The least degree is 8."
         constraints: "factorial thresholds solvable by listing factorials; state the deciding inequality"
     diagnostic_exemplar:
       problem: 'What degree $n$ guarantees $|\cos x - T_n(x)| \le \frac{1}{1000}$ for all $|x| \le 1$ (using $M = 1$)?'
@@ -860,6 +940,22 @@ topics:
           - problem: 'Evaluate $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$ by recognizing a standard series at an endpoint.'
             answer: '$\ln 2$'
             solution_sketch: 'The $\ln(1+x)$ series at $x = 1$.'
+          - problem: "Evaluate the sum over n from 0 to infinity of (-1)^n divided by (3^n times (2n+1)) by recognizing the arctan series at a simple argument."
+            answer: "pi sqrt(3)/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: recall arctan(x) = sum from n = 0 to infinity of (-1)^n x^(2n+1)/(2n+1). Step 2: put x = 1/sqrt(3). Then x^(2n+1) = 1/(sqrt(3) 3^n), so the given series equals sqrt(3) arctan(1/sqrt(3)) = sqrt(3) pi/6. The value of the series is pi sqrt(3)/6."
+          - problem: "Evaluate the sum over n from 1 to infinity of (-1)^(n+1) divided by (n times 2^n) by recognizing the ln(1+x) series at a simple argument. Give the answer to 4 decimals."
+            answer: "0.4055"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Step 1: recall ln(1+x) = sum from n = 1 to infinity of (-1)^(n+1) x^n/n. Step 2: put x = 1/2, so the series becomes ln(3/2). Step 3: compute ln(3/2) = 0.405465... Rounded to 4 decimals, the answer is 0.4055."
+          - problem: "Evaluate the sum over n from 0 to infinity of (-1)^n divided by n factorial by recognizing the exponential series at a simple argument."
+            answer: "e^(-1)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: recall the exponential series e^x = sum from n = 0 to infinity of x^n divided by n factorial. Step 2: put x = -1, so each term becomes (-1)^n divided by n factorial, exactly the given series. The series converges to e^(-1). Evaluate the sum: the value is e^(-1)."
+          - problem: "Evaluate the sum over n from 0 to infinity of 1 divided by (n factorial times 2^n) by recognizing the exponential series at a simple argument."
+            answer: "sqrt(e)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: recall the exponential series e^x = sum from n = 0 to infinity of x^n divided by n factorial. Step 2: rewrite each term 1 divided by (n factorial times 2^n) as (1/2)^n divided by n factorial, so the series is the exponential series at x = 1/2. Evaluate the sum: it equals e^(1/2), which is sqrt(e). The value is sqrt(e)."
         constraints: "sums matching arctan, ln(1+x), or e^x at simple arguments"
     diagnostic_exemplar:
       problem: 'Estimate $\int_0^1 \sin(x^2)\,dx$ with error less than $\frac{1}{100}$, giving the estimate as an exact fraction.'
