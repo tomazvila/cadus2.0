@@ -769,10 +769,10 @@ topics:
         name: Comparing and locating mixed numbers
         key_prerequisites: [fraction-basics]
         exemplars:
-          - problem: 'Are $\frac{9}{4}$ and $2\frac{1}{4}$ equal? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$2\frac{1}{4} = \frac{2 \times 4 + 1}{4} = \frac{9}{4}$.'
+          - problem: "Compare $9/4$ and $2\\frac{1}{4}$. State the verdict and give the coordinate they share as an improper fraction, or if they do not share a coordinate, give the larger coordinate as an improper fraction."
+            answer: "verdict = same; value = 9/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["same"], ["different"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1 (mixed-to-improper rule): write $2\\frac{1}{4}$ as $(2 \\times 4 + 1)/4 = 9/4$. Step 2 (comparison rule): both numbers become $9/4$, so they name the same point. The wrong option 'different' comes from treating the mixed number as $2 + 1/4 = 2.25$ but not converting it. The answer is verdict = same; value = 9/4."
           - problem: '$3\frac{2}{5}$ lies between two consecutive whole numbers. What is the smaller one?'
             answer: "3"
             solution_sketch: 'The whole part is $3$, and $\frac{2}{5} < 1$, so it sits between $3$ and $4$.'
@@ -1149,22 +1149,22 @@ topics:
         name: Trailing zeros
         key_prerequisites: [decimal-place-value]
         exemplars:
-          - problem: 'Are $0.5$ and $0.50$ equal? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Trailing zeros after the decimal point do not change the value.'
-          - problem: 'Compare $0.080$ and $0.08$: is the first larger, smaller, or equal?'
-            answer: "equal"
-            answer_contract: {"kind":"label","options":[["larger"],["smaller"],["equal"]]}
-            solution_sketch: 'Trailing zeros after the decimal point do not change the value.'
-          - problem: 'A ruler marks one point as $1.20$ m and another as $1.2$ m. Do the marks coincide? Answer yes or no.'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$1.20=1+2/10+0/100=1.2$, so both marks have the same coordinate.'
-          - problem: 'A scale changes its display from $0.400$ kg to $0.4$ kg when precision is reduced. Is the represented mass larger, smaller, or equal?'
-            answer: "equal"
-            answer_contract: {"kind":"label","options":[["larger"],["smaller"],["equal"]]}
-            solution_sketch: '$400/1000=4/10=0.4$. Removing the two trailing zeros preserves the mass.'
+          - problem: "The decimals 0.5 and 0.50 differ only by a trailing zero, so they name the same value. Give the answer to 1 decimal."
+            answer: "0.5"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The full object is the pair 0.5 and 0.50. Step 1: read place values; 0.5 is five tenths, and 0.50 is five tenths and zero hundredths. Step 2: apply the trailing-zero rule; the zero in the hundredths place adds nothing, so 0.50 equals 0.5. The common value to 1 decimal is 0.5."
+          - problem: "The decimals 0.080 and 0.08 differ only by trailing zeros, so they name the same value. Give the answer to 2 decimals."
+            answer: "0.08"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The full object is the pair 0.080 and 0.08. Step 1: write place values; 0.080 has eight hundredths and no thousandths, while 0.08 has eight hundredths. Step 2: apply the trailing-zero rule; the final zero in 0.080 does not change the value, so 0.080 equals 0.08. The common value to 2 decimals is 0.08."
+          - problem: "A ruler marks 1.20 m and 1.2 m. The two decimals differ only by a trailing zero, so they name the same length. Give the answer to 1 decimal."
+            answer: "1.2"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The full object is the pair 1.20 m and 1.2 m. Step 1: align place values; 1.20 is one and two tenths and zero hundredths, and 1.2 is one and two tenths. Step 2: apply the trailing-zero rule; the zero in the hundredths place adds no length, so 1.20 equals 1.2. The common length to 1 decimal is 1.2."
+          - problem: "A scale shows 0.400 kg and then 0.4 kg. The two decimals differ only by trailing zeros, so they name the same mass. Give the answer to 1 decimal."
+            answer: "0.4"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The full object is the pair 0.400 kg and 0.4 kg. Step 1: write place values; 0.400 is four tenths with zeros in the hundredths and thousandths places, and 0.4 is four tenths. Step 2: apply the trailing-zero rule; the trailing zeros in 0.400 do not change the mass, so 0.400 equals 0.4. The common mass to 1 decimal is 0.4."
         constraints: "pairs differing only by trailing zeros"
       - id: kp3
         name: Ordering lists of decimals
@@ -1798,10 +1798,6 @@ topics:
         name: Choosing the right computation
         key_prerequisites: [percent-of-a-number]
         exemplars:
-          - problem: 'Which is larger: $25\%$ of $80$ or $30\%$ of $60$?'
-            answer: "25% of 80"
-            answer_contract: {"kind":"label","options":[["25% of 80"],["30% of 60"]]}
-            solution_sketch: '$0.25 \times 80 = 20$ versus $0.30 \times 60 = 18$.'
           - problem: 'To pass a $30$-question quiz you need $80\%$ correct. How many questions is that?'
             answer: "24"
             answer_contract: {"kind":"exact"}
@@ -1814,6 +1810,10 @@ topics:
             answer: "60"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The part is $15$ and the whole is $25$: $(15/25)\times100=60$.'
+          - problem: "Compare 25% of 80 and 30% of 60. Find the smaller value."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute each part by the percent-of-a-number rule: 25% of 80 is 0.25 times 80 = 20, and 30% of 60 is 0.30 times 60 = 18. Then compare by the comparison step: 18 is less than 20. The smaller value is 18."
         constraints: "mix of find-the-part and find-the-percent forms"
     diagnostic_exemplar:
       problem: 'To pass a $40$-question test you need $85\%$ correct. How many questions must you answer correctly?'
@@ -2049,22 +2049,22 @@ topics:
         name: Comparing ratios
         key_prerequisites: [understanding-ratios]
         exemplars:
-          - problem: 'Class A has $12$ girls and $18$ boys; Class B has $10$ girls and $15$ boys. Do the classes have the same girl-to-boy ratio? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Both simplify to $2:3$.'
-          - problem: 'Which mix is stronger: $2$ scoops of cocoa per $3$ cups of milk, or $3$ scoops per $5$ cups?'
-            answer: "2 scoops per 3 cups"
-            answer_contract: {"kind":"label","options":[["2 scoops per 3 cups"],["3 scoops per 5 cups"]]}
-            solution_sketch: 'Compare $\frac{2}{3} = \frac{10}{15}$ with $\frac{3}{5} = \frac{9}{15}$.'
           - problem: 'Mix A uses $9$ cups of concentrate with $15$ cups of water. Mix B uses $12$ with $20$. Give the common concentrate amount when both are scaled to $60$ cups of water.'
             answer: "36"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Scale A by $4$ to $36:60$ and B by $3$ to $36:60$. Both use $36$ cups of concentrate.'
-          - problem: 'Paint A uses $3$ scoops of pigment per $8$ cups of base; paint B uses $5$ per $12$. Which uses fewer scoops when both are scaled to $24$ cups of base? Answer A or B.'
-            answer: "A"
-            answer_contract: {"kind":"label","options":[["A"],["B"]]}
-            solution_sketch: 'A scales to $9:24$ and B to $10:24$. Since $9<10$, A uses fewer scoops.'
+          - problem: "Class A has 12 girls and 18 boys; Class B has 10 girls and 15 boys. Scale both classes to 30 boys. Give the common number of girls."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (scale to a common part): Class A is 12 to 18, so scaling to 30 boys gives 12 times 30/18, which is 20 girls. Class B is 10 to 15, so scaling to 30 boys gives 10 times 2, which is 20 girls. Step 2 (compare the common part): both scaled forms have 20 girls for 30 boys. The common number of girls is 20."
+          - problem: "Mix A uses 2 scoops of cocoa per 3 cups of milk. Mix B uses 3 scoops per 5 cups of milk. Rewrite both mixes with 15 cups of milk. Find the positive difference in scoops of cocoa."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (rewrite with a common part): Mix A is 2 to 3, and multiplying both parts by 5 gives 10 scoops per 15 cups. Mix B is 3 to 5, and multiplying both parts by 3 gives 9 scoops per 15 cups. Step 2 (compare): subtract the smaller amount from the larger amount, 10 minus 9, which is 1. The positive difference in scoops is 1."
+          - problem: "Paint A uses 4 scoops of pigment per 5 cups of base. Paint B uses 6 scoops per 8 cups of base. Rewrite both paints with 40 cups of base. Find the positive difference in pigment scoops."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (rewrite with a common part): Paint A is 4 to 5, and multiplying both parts by 8 gives 32 scoops per 40 cups. Paint B is 6 to 8, and multiplying both parts by 5 gives 30 scoops per 40 cups. Step 2 (compare): subtract the smaller amount from the larger amount, 32 minus 30, which is 2. The positive difference in pigment scoops is 2."
         constraints: "compare after rewriting with a common part"
     diagnostic_exemplar:
       problem: 'Which mix is stronger: $3$ scoops of cocoa per $4$ cups of milk, or $4$ scoops per $6$ cups?'
@@ -2116,22 +2116,30 @@ topics:
         name: Unit prices and better buys
         key_prerequisites: [decimal-operations]
         exemplars:
-          - problem: 'A $300$ g jar costs €3.60 and a $400$ g jar costs €4.00. Which is the better buy (lower cost per $100$ g)?'
-            answer: "the 400 g jar"
-            answer_contract: {"kind":"label","options":[["the 400 g jar"],["the 300 g jar"]]}
-            solution_sketch: '$3.60 \div 3 = 1.20$ per $100$ g versus $4.00 \div 4 = 1.00$ per $100$ g.'
+          - problem: "Jar A holds 300 g and costs 3.60 euros. Jar B holds 400 g and costs 4.00 euros. Determine the better buy by cost per 100 g. Give the answer as verdict = the label of the better jar; price = the cost per 100 g of the better buy in cents."
+            answer: "verdict = B; price = 100"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "price"}]}
+            solution_sketch: "Step 1 (unit price for A): 3.60 divided by 3 gives 1.20 euros per 100 g, which is 120 cents. Step 2 (unit price for B): 4.00 divided by 4 gives 1.00 euro per 100 g, which is 100 cents. Step 3 (compare): the wrong option A has the higher cost of 120 cents, so it is not the better buy; B is cheaper, so verdict = B; price = 100."
           - problem: 'Six eggs cost €2.40. What is the cost per egg in cents?'
             answer: "40"
             answer_contract: {"kind":"exact"}
             solution_sketch: '$2.40 \div 6 = 0.4$ euros, which is $40$ cents.'
-          - problem: 'A $250$ g bag costs €2.00 and a $500$ g bag costs €4.50. Which is the better buy (lower cost per $100$ g)?'
-            answer: "the 250 g bag"
-            answer_contract: {"kind":"label","options":[["the 250 g bag"],["the 500 g bag"]]}
-            solution_sketch: '$2.00 \div 2.5 = 0.8$ per $100$ g versus $4.50 \div 5 = 0.9$ per $100$ g.'
+          - problem: "Bag A holds 250 g and costs 2.00 euros. Bag B holds 500 g and costs 4.50 euros. Determine the better buy by cost per 100 g. Give the answer as verdict = the label of the better bag; price = the cost per 100 g of the better buy in cents."
+            answer: "verdict = A; price = 80"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "price"}]}
+            solution_sketch: "Step 1 (unit price for A): 2.00 divided by 2.5 gives 0.80 euros per 100 g, which is 80 cents. Step 2 (unit price for B): 4.50 divided by 5 gives 0.90 euros per 100 g, which is 90 cents. Step 3 (compare): the wrong option B has the higher cost of 90 cents, so it is not the better buy; A is cheaper, so verdict = A; price = 80."
           - problem: 'Four notebooks cost €5.00. What is the cost per notebook in cents?'
             answer: "125"
             answer_contract: {"kind":"exact"}
             solution_sketch: '$5.00 \div 4 = 1.25$ euros, which is $125$ cents.'
+          - problem: "A pack of 8 batteries costs 6.40 euros. Find the cost per battery in cents."
+            answer: "80"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (unit price): divide 6.40 by 8 to get 0.80 euros per battery. Step 2 (convert to cents): 0.80 euros is 80 cents, so the answer is 80."
+          - problem: "A 3 kg bag of flour costs 4.50 euros. Find the cost per kilogram in cents."
+            answer: "150"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (unit price): divide 4.50 by 3 to get 1.50 euros per kilogram. Step 2 (convert to cents): 1.50 euros is 150 cents, so the answer is 150."
         constraints: "money per unit; 2-decimal answers or cents"
       - id: kp3
         name: Using a rate to scale up
