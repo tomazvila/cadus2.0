@@ -135,17 +135,25 @@ topics:
           - problem: 'What fraction with denominator $3$ lands exactly on $2$?'
             answer: "6/3"
             solution_sketch: '$2 = \frac{2 \times 3}{3} = \frac{6}{3}$.'
-          - problem: 'Is $\frac{9}{9}$ less than, equal to, or greater than $1$?'
-            answer: "equal"
-            answer_contract: {"kind":"label","options":[["less"],["equal"],["greater"]]}
-            solution_sketch: '$\frac{9}{9} = 1$.'
           - problem: 'A number line has five equal steps per unit. How many fifth-sized steps from $0$ reach $3$?'
             answer: "15"
             solution_sketch: 'Each of the three units contains five steps, so $3\times5=15$ steps.'
-          - problem: 'Is $\frac{8}{4}$ less than, equal to, or greater than $1$?'
-            answer: "greater"
-            answer_contract: {"kind":"label","options":[["less"],["equal"],["greater"]]}
-            solution_sketch: '$\frac{8}{4} > 1$.'
+          - problem: "The fraction 21/7 labels a point on the number line. Give the whole number at that point."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The denominator 7 tells how many equal parts make one whole unit. Divide 21 by 7, which gives 3, so the labeled point is 3. The answer is 3."
+          - problem: "What fraction with denominator 8 lands exactly on 5?"
+            answer: "40/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A whole number n written with denominator 8 is n times 8 over 8. Multiply 5 by 8 to get 40, so the fraction is 40/8. The answer is 40/8."
+          - problem: "A jug is filled with quarter-cup scoops. How many scoops fill 3 cups?"
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Each cup holds 4 quarter-cup scoops. Multiply 3 cups by 4 scoops per cup to reach 12 scoops. The answer is 12."
+          - problem: "Give 4 as a fraction with denominator 9."
+            answer: "36/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A whole number n written over denominator 9 is n times 9 over 9. Multiply 4 by 9 to get 36, so the fraction is 36/9. The answer is 36/9."
         constraints: "denominators 2-10"
     diagnostic_exemplar:
       problem: 'A number line from $0$ to $3$ is divided into thirds. What fraction sits at the seventh tick mark after $0$?'
@@ -214,17 +222,17 @@ topics:
           - problem: 'Simplify $\frac{24}{36}$.'
             answer: "2/3"
             solution_sketch: '$\text{GCF}(24, 36) = 12$; $\frac{24}{36} = \frac{2}{3}$.'
-          - problem: 'Are $\frac{4}{6}$ and $\frac{6}{9}$ equivalent? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Both simplify to $\frac{2}{3}$.'
           - problem: 'Reduce $45/60$ by cancelling its shared prime factors. Give the lowest-terms fraction.'
             answer: "3/4"
             solution_sketch: 'Write $45=3\times3\times5$ and $60=2\times2\times3\times5$. Cancel $3\times5$ to obtain $3/4$.'
-          - problem: 'A bar with $8$ of $12$ cells shaded is regrouped into triples of equal-sized bars. Is its shaded fraction equal to $10/15$? Compare after reducing both. Answer yes or no.'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$8/12=2/3$ after division by $4$; $10/15=2/3$ after division by $5$. Both represent the same share.'
+          - problem: "In the equivalent fraction statement 18/24 = ?/36, find the missing numerator."
+            answer: "27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement is 18/24 = ?/36. Step 1: Reduce 18/24 by the greatest common factor 6 to get 3/4. Step 2: Since 3/4 = ?/36, multiply the numerator and denominator of 3/4 by 9 to make the denominator 36, giving 27/36. The missing numerator is 27."
+          - problem: "In the equivalent fraction statement 24/36 = 20/?, find the missing denominator."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement is 24/36 = 20/?. Step 1: Reduce 24/36 by the greatest common factor 12 to get 2/3. Step 2: Since 2/3 = 20/?, multiply the numerator and denominator of 2/3 by 10 to make the numerator 20, giving 20/30. The missing denominator is 30."
         constraints: "values up to 60"
     diagnostic_exemplar:
       problem: 'Write $\frac{36}{54}$ as an equivalent fraction with denominator $9$.'
@@ -296,17 +304,17 @@ topics:
           - problem: 'Order from least to greatest: $\frac{1}{2}$, $\frac{3}{8}$, $\frac{5}{8}$.'
             answer: "3/8, 1/2, 5/8"
             solution_sketch: 'Over $8$: $\frac{3}{8} < \frac{4}{8} < \frac{5}{8}$.'
-          - problem: 'Is $\frac{5}{9}$ more or less than $\frac{1}{2}$?'
-            answer: "more"
-            answer_contract: {"kind":"label","options":[["more"],["less"]]}
-            solution_sketch: '$2 \times 5 = 10 > 9$, so $\frac{5}{9} > \frac{1}{2}$.'
+          - problem: "Compare 5/9 with 1/2 by cross-multiplying: multiply the numerator of 5/9 by the denominator of 1/2. State the comparison and give that product."
+            answer: "verdict = greater; product = 10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["greater"], ["less"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "product"}]}
+            solution_sketch: "The full answer is verdict = greater; product = 10. Cross-multiply: 5 times 2 = 10, and the other denominator is 9. Since 10 > 9, 5/9 is greater than 1/2. The wrong option less would reverse that comparison. So verdict = greater; product = 10."
           - problem: 'Three markers are at $1/3$, $5/12$, and $1/4$ on a number line. Give the middle marker as a fraction.'
             answer: "1/3"
             solution_sketch: 'In twelfths the positions are $4/12$, $5/12$, and $3/12$. The middle position is $4/12=1/3$.'
-          - problem: 'A tank is $4/7$ full. Is its filled part more or less than its empty part? Answer more or less.'
-            answer: "more"
-            answer_contract: {"kind":"label","options":[["more"],["less"]]}
-            solution_sketch: 'The empty part is $1-4/7=3/7$; $4/7>3/7$, so the filled part is more.'
+          - problem: "A tank is 4/7 full. Compare the full part and the rest with the benchmark 1/2, then find the fraction by which the full part exceeds the rest."
+            answer: "1/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full answer is 1/7. The rest is 1 - 4/7 = 3/7. Compare with 1/2: 4/7 > 1/2 and 3/7 < 1/2, so the full part exceeds the rest. Subtract: 4/7 - 3/7 = 1/7. So the answer is 1/7."
         constraints: "3 fractions or a benchmark of 1/2 or 1"
     diagnostic_exemplar:
       problem: 'Order from least to greatest: $\frac{2}{3}$, $\frac{5}{8}$, $\frac{3}{4}$.'

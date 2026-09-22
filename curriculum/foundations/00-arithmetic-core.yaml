@@ -1828,22 +1828,22 @@ topics:
         name: Classifying numbers as prime or composite
         key_prerequisites: [factors-and-multiples]
         exemplars:
-          - problem: 'Is $17$ prime or composite?'
-            answer: "prime"
-            answer_contract: {"kind":"label","options":[["prime"],["composite"]]}
-            solution_sketch: '$17$ has no factors besides $1$ and itself.'
-          - problem: 'Is $21$ prime or composite?'
-            answer: "composite"
-            answer_contract: {"kind":"label","options":[["prime"],["composite"]]}
-            solution_sketch: '$21 = 3 \times 7$, so it has factors other than $1$ and itself.'
-          - problem: 'Classify $33$: prime or composite?'
-            answer: "composite"
-            answer_contract: {"kind":"label","options":[["prime"],["composite"]]}
-            solution_sketch: '$33 = 3 \times 11$, so it has factors other than $1$ and itself.'
-          - problem: 'Classify $29$: prime or composite?'
-            answer: "prime"
-            answer_contract: {"kind":"label","options":[["prime"],["composite"]]}
-            solution_sketch: '$29$ has no factors besides $1$ and itself.'
+          - problem: "Determine whether 13 has exactly two factors or more than two factors, and give its number of factors."
+            answer: "verdict = prime; factors = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "factors"}]}
+            solution_sketch: "Step 1: list all factors of 13; they are 1 and 13. Step 2: apply the definition of prime numbers, which says a prime has exactly two factors. Step 3: count the factors to get 2. Calling 13 composite would wrongly assume it has more than two factors. The answer is verdict = prime; factors = 2."
+          - problem: "Give the number of factors of 12 and state whether it has exactly two factors or more than two factors."
+            answer: "factors = 6; verdict = composite"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "factors"}, {"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}]}
+            solution_sketch: "Step 1: list all factors of 12: 1, 2, 3, 4, 6, 12. Step 2: count them to get 6 factors. Step 3: apply the definition of composite numbers, which says a composite has more than two factors. Calling 12 prime would wrongly assume it has exactly two factors. The answer is factors = 6; verdict = composite."
+          - problem: "A number is 16. Determine its number of factors and whether it has exactly two factors or more than two factors."
+            answer: "verdict = composite; factors = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "factors"}]}
+            solution_sketch: "Step 1: list all factors of 16: 1, 2, 4, 8, 16. Step 2: count them to get 5 factors. Step 3: apply the definition; since there are more than two factors, 16 is composite. Calling 16 prime would wrongly assume it has exactly two factors. The answer is verdict = composite; factors = 5."
+          - problem: "How many factors does 25 have, and does it have exactly two factors or more than two factors?"
+            answer: "factors = 3; verdict = composite"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "factors"}, {"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}]}
+            solution_sketch: "Step 1: list all factors of 25: 1, 5, 25. Step 2: count them to get 3 factors. Step 3: apply the definition; since there are more than two factors, 25 is composite. Calling 25 prime would wrongly assume it has exactly two factors. The answer is factors = 3; verdict = composite."
         constraints: "numbers 2-50"
       - id: kp2
         name: Knowing the small primes
@@ -2298,17 +2298,17 @@ topics:
           - problem: 'Without computing exactly, is $297 + 304$ closer to $600$ or to $700$?'
             answer: "600"
             solution_sketch: '$297 \approx 300$ and $304 \approx 300$; the exact sum is $601$.'
-          - problem: 'Ellie estimates $42 \times 19$ as $42 \times 20 = 840$. Is the exact product larger or smaller than $840$?'
-            answer: "smaller"
-            answer_contract: {"kind":"label","options":[["larger"],["smaller"]]}
-            solution_sketch: 'She rounded a factor up, so $840$ is an overestimate ($42 \times 19 = 798$).'
+          - problem: "Ellie estimates $42 \\times 19$ as $42 \\times 20 = 840$. Compare the exact product with $840$. Give the verdict and the difference."
+            answer: "verdict = smaller; difference = 42"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["larger"], ["smaller"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "difference"}]}
+            solution_sketch: "Step 1 (estimate): the estimate is $42 \\times 20 = 840$. Step 2 (multiplication): the exact product is $42 \\times 19 = 798$. Step 3 (comparison): $798$ is less than $840$, so the verdict is smaller. Step 4 (subtraction): the difference is $840 - 798 = 42$. The wrong option larger is wrong because rounding $19$ up makes the estimate too big. So the answer is verdict = smaller; difference = 42."
           - problem: 'Without finding the exact sum, is $198 + 305$ closer to $500$ or to $600$?'
             answer: "500"
             solution_sketch: '$198 \approx 200$ and $305 \approx 300$; the exact sum is $503$.'
-          - problem: 'Maya estimates $58 \times 21$ as $60 \times 20 = 1200$. Is the exact product larger or smaller than $1200$?'
-            answer: "larger"
-            answer_contract: {"kind":"label","options":[["larger"],["smaller"]]}
-            solution_sketch: 'The exact product is $58 \times 21 = 1218$, which is larger than $1200$.'
+          - problem: "Maya estimates $58 \\times 21$ as $60 \\times 20 = 1200$. Compare the exact product with $1200$. Give the verdict and the difference."
+            answer: "verdict = larger; difference = 18"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["larger"], ["smaller"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "difference"}]}
+            solution_sketch: "Step 1 (estimate): the estimate is $60 \\times 20 = 1200$. Step 2 (multiplication): the exact product is $58 \\times 21 = 1218$. Step 3 (comparison): $1218$ is greater than $1200$, so the verdict is larger. Step 4 (subtraction): the difference is $1218 - 1200 = 18$. The wrong option smaller is wrong because rounding $58$ up and $21$ down makes the estimate too low. So the answer is verdict = larger; difference = 18."
         constraints: "answer chooses between options or over/under"
     diagnostic_exemplar:
       problem: 'Estimate $62 \times 38$ by rounding each factor to the nearest ten.'
