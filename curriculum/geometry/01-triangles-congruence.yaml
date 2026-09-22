@@ -421,22 +421,22 @@ topics:
         name: Recognize SAS and the included angle
         key_prerequisites: [triangle-angle-sum]
         exemplars:
-          - problem: 'Two triangles have two pairs of congruent sides, and the angles between those sides are congruent. Which congruence criterion applies: SSS or SAS?'
-            answer: 'SAS'
-            answer_contract: {kind: label, options: [[SSS], [SAS]]}
-            solution_sketch: 'Side-Angle-Side: the congruent angle is included between the two congruent sides.'
-          - problem: 'In $\triangle ABC$, sides $\overline{AB}$ and $\overline{BC}$ are marked. Is $\angle A$ the included angle for these two sides?'
-            answer: 'No'
-            answer_contract: {kind: label, options: [[Yes], [No]]}
-            solution_sketch: 'The included angle is $\angle B$, the angle between $\overline{AB}$ and $\overline{BC}$ at their common endpoint.'
-          - problem: 'In $\triangle ABC$, sides $\overline{AB}$ and $\overline{AC}$ are marked. Which angle is included between these two sides: $\angle A$, $\angle B$, or $\angle C$?'
-            answer: 'A'
-            answer_contract: {kind: label, options: [[A], [B], [C]]}
-            solution_sketch: 'The included angle sits at the common endpoint of the two marked sides, which is vertex $A$.'
-          - problem: 'Two triangles have two pairs of congruent sides and one pair of congruent angles, but the congruent angle in each triangle is NOT between the marked sides. Do these markings prove the triangles congruent by SAS?'
-            answer: 'No'
-            answer_contract: {kind: label, options: [[Yes], [No]]}
-            solution_sketch: 'SAS requires the congruent angle to be included between the two pairs of congruent sides; a non-included angle is not enough.'
+          - problem: "In triangles ABC and XYZ, sides AB and BC are marked congruent to sides XY and YZ. Angle B is marked congruent to angle Y. The marked angle B lies between the marked sides AB and BC. Decide whether the markings prove the triangles congruent by SAS, and give the number of the included angle for sides AB and BC: 1 for angle A, 2 for angle B, 3 for angle C. State the verdict and the included-angle number."
+            answer: "verdict = SAS; angle = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["SAS"], ["SSA"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
+            solution_sketch: "The marked sides AB and BC share endpoint B, so angle B is the included angle; its number is 2. The markings match two sides and the included angle, so the SAS criterion applies. Choosing SSA is the error of treating a non-included angle as included. The answer is verdict = SAS; angle = 2."
+          - problem: "In triangles ABC and XYZ, sides AB and BC are marked congruent to sides XY and YZ. Angle A is marked congruent to angle X. The marked angle A is not between the marked sides AB and BC. Decide whether the markings prove the triangles congruent by SAS, and give the number of the included angle for sides AB and BC: 1 for angle A, 2 for angle B, 3 for angle C. State the verdict and the included-angle number."
+            answer: "verdict = SSA; angle = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["SAS"], ["SSA"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
+            solution_sketch: "The marked sides AB and BC share endpoint B, so the included angle is B, numbered 2. The marked angle A is outside the pair AB and BC, so the markings do not give SAS; they are SSA. Choosing SAS is the error of using a non-included angle as the included angle. The answer is verdict = SSA; angle = 2."
+          - problem: "In triangles ABC and XYZ, sides AB and AC are marked congruent to sides XY and XZ. Angle A is marked congruent to angle X. The marked angle A lies between the marked sides AB and AC. Decide whether the markings prove the triangles congruent by SAS, and give the number of the included angle for sides AB and AC: 1 for angle A, 2 for angle B, 3 for angle C. State the verdict and the included-angle number."
+            answer: "verdict = SAS; angle = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["SAS"], ["SSA"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
+            solution_sketch: "The marked sides AB and AC share endpoint A, so angle A is the included angle; its number is 1. The markings match two sides and the included angle, so the SAS criterion applies. Choosing SSA is the error of treating a non-included angle as included. The answer is verdict = SAS; angle = 1."
+          - problem: "In triangles ABC and XYZ, sides BC and CA are marked congruent to sides YZ and ZX. Angle B is marked congruent to angle Y. The marked angle B is not between the marked sides BC and CA. Decide whether the markings prove the triangles congruent by SAS, and give the number of the included angle for sides BC and CA: 1 for angle A, 2 for angle B, 3 for angle C. State the verdict and the included-angle number."
+            answer: "verdict = SSA; angle = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["SAS"], ["SSA"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
+            solution_sketch: "The marked sides BC and CA share endpoint C, so the included angle is C, numbered 3. The marked angle B is not between BC and CA, so the markings do not give SAS; they are SSA. Choosing SAS is the error of using a non-included angle as the included angle. The answer is verdict = SSA; angle = 3."
         constraints: "the included/non-included distinction is the point; two sides and one angle marked"
       - id: kp3
         name: Solve for marked values under SSS or SAS
