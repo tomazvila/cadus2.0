@@ -918,6 +918,22 @@ topics:
           - problem: 'Let $f(x, y) = y \ln x$. Compute $f_{xy}$.'
             answer: '$1/x$'
             solution_sketch: '$f_x = \frac{y}{x}$, so $f_{xy} = \frac{1}{x}$; equivalently $f_y = \ln x$ gives $f_{yx} = \frac{1}{x}$.'
+          - problem: "Let f(x, y) = x^3 y^4. Compute f_xy and f_yx, and give both results."
+            answer: "fxy = 12x^2 y^3; fyx = 12x^2 y^3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fxy"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fyx"}]}
+            solution_sketch: "First compute f_x = 3x^2 y^4 by the power rule in x. Then f_xy = 12x^2 y^3 by the power rule in y. Compute f_y = 4x^3 y^3 by the power rule in y, so f_yx = 12x^2 y^3 by the power rule in x. Clairaut's theorem applies because the function is smooth, so the mixed partials agree. The common value is fxy = 12x^2 y^3; fyx = 12x^2 y^3."
+          - problem: "Let f(x, y) = e^(x) sin(y). Compute f_xy and f_yx, and give both results."
+            answer: "fxy = e^(x) cos(y); fyx = e^(x) cos(y)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fxy"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fyx"}]}
+            solution_sketch: "First compute f_x = e^(x) sin(y) by the exponential rule in x. Then f_xy = e^(x) cos(y) by the derivative of sin(y). Compute f_y = e^(x) cos(y) by the derivative of sin(y), so f_yx = e^(x) cos(y) by the exponential rule in x. Clairaut's theorem applies because the function is smooth, so the mixed partials agree. The common value is fxy = e^(x) cos(y); fyx = e^(x) cos(y)."
+          - problem: "Let f(x, y) = x^2 cos(y). Compute f_xy and f_yx, and give both results."
+            answer: "fxy = -2x sin(y); fyx = -2x sin(y)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fxy"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fyx"}]}
+            solution_sketch: "First compute f_x = 2x cos(y) by the power rule in x. Then f_xy = -2x sin(y) by the derivative of cos(y). Compute f_y = -x^2 sin(y) by the derivative of cos(y), so f_yx = -2x sin(y) by the power rule in x. Clairaut's theorem applies because the function is smooth, so the mixed partials agree. The common value is fxy = -2x sin(y); fyx = -2x sin(y)."
+          - problem: "Let f(x, y) = x^2 e^(y). Compute f_xy and f_yx, and give both results."
+            answer: "fxy = 2x e^y; fyx = 2x e^y"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fxy"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fyx"}]}
+            solution_sketch: "First compute f_x = 2x e^y by the power rule in x. Then f_xy = 2x e^y by the exponential rule in y. Compute f_y = x^2 e^y by the exponential rule in y, so f_yx = 2x e^y by the power rule in x. Clairaut's theorem applies because the function is smooth, so the mixed partials agree. The common value is fxy = 2x e^y; fyx = 2x e^y."
         constraints: "smooth functions where mixed partials agree; always confirm both orders"
       - id: kp3
         name: "Third-order partials and verifying PDEs"
@@ -932,6 +948,18 @@ topics:
           - problem: 'Verify that $u(x, t) = e^{-t} \sin x$ satisfies the heat equation $u_t = u_{xx}$ by computing $u_t - u_{xx}$.'
             answer: "0"
             solution_sketch: '$u_t = -e^{-t}\sin x$ and $u_{xx} = -e^{-t}\sin x$, so $u_t - u_{xx} = 0$ and the heat equation holds.'
+          - problem: "Let $f(x, y) = x^3 y^3$. Compute $f_{xyy}$."
+            answer: "18x^2y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with f(x, y) = x^3 y^3. Differentiate in x by the power rule: f_x = 3x^2 y^3. Differentiate in y by the power rule: f_xy = 9x^2 y^2. Differentiate in y again by the power rule: f_xyy = 18x^2 y. The answer is 18x^2y."
+          - problem: "Let $f(x, y) = x^2 y^4$. Compute $f_{yyx}$."
+            answer: "24xy^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with f(x, y) = x^2 y^4. Differentiate in y by the power rule: f_y = 4x^2 y^3. Differentiate in y again by the power rule: f_yy = 12x^2 y^2. Differentiate in x by the power rule: f_yyx = 24x y^2. The answer is 24xy^2."
+          - problem: "Let $f(x, y) = e^{2x} cos(2y)$. State which class $f$ belongs to and give $f_{xx} + f_{yy}$."
+            answer: "verdict = harmonic; value = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["harmonic"], ["nonharmonic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Start with f(x, y) = e^{2x} cos(2y). The x-partials: f_x = 2e^{2x} cos(2y) and f_xx = 4e^{2x} cos(2y) by the chain rule. The y-partials: f_y = -2e^{2x} sin(2y) and f_yy = -4e^{2x} cos(2y) by the chain rule. The sum f_xx + f_yy = 4e^{2x} cos(2y) - 4e^{2x} cos(2y) = 0, so f is harmonic. The wrong option nonharmonic comes from missing the negative sign in f_yy. The answer is verdict = harmonic; value = 0."
         constraints: "at most third order; PDE checks limited to the Laplace and heat equations with single-term solutions"
     diagnostic_exemplar:
       problem: 'Let $f(x, y) = x^4 y^3$. Compute $f_{xxy}$.'
@@ -978,14 +1006,30 @@ topics:
         name: "Linearization and estimates"
         key_prerequisites: [partial-derivatives]
         exemplars:
-          - problem: 'Find the linearization $L(x, y)$ of $f(x, y) = \sqrt{x^2 + y^2}$ at $(3, 4)$ and use it to estimate $f(3.1, 3.9)$.'
-            answer: '$L(x,y) = 5 + \frac{3}{5}(x - 3) + \frac{4}{5}(y - 4)$; $\;f(3.1, 3.9) \approx 4.98$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f(3,4) = 5$, $f_x = \frac{x}{\sqrt{x^2+y^2}} = \frac{3}{5}$, $f_y = \frac{4}{5}$. Then $L(3.1, 3.9) = 5 + 0.6(0.1) + 0.8(-0.1) = 4.98$.'
-          - problem: 'Find the linearization of $f(x, y) = x^2 y$ at $(1, 2)$ and estimate $f(1.1, 1.9)$.'
-            answer: '$L(x,y) = 2 + 4(x - 1) + (y - 2)$; $\;f(1.1, 1.9) \approx 2.3$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f(1,2) = 2$, $f_x = 2xy = 4$, $f_y = x^2 = 1$; $L(1.1, 1.9) = 2 + 0.4 - 0.1 = 2.3$ (true value $2.299$).'
+          - problem: "Use the linearization of f(x, y) = sqrt(x^2 + y^2) at (5, 12) to estimate f(5.1, 11.9). Give the answer to 3 decimals."
+            answer: "12.946"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "By partial differentiation, for f(x, y) = sqrt(x^2 + y^2), fx = x / sqrt(x^2 + y^2) and fy = y / sqrt(x^2 + y^2). At (5, 12), f = 13, fx = 5/13, and fy = 12/13, so the linearization formula gives L(x, y) = 13 + (5/13)(x - 5) + (12/13)(y - 12). At (5.1, 11.9), L = 13 + (5/13)(0.1) + (12/13)(-0.1) = 12.946153..., which rounds to 12.946."
+          - problem: "Use the linearization of f(x, y) = x y^2 at (1, 2) to estimate f(1.1, 1.9). Give the answer to 3 decimals."
+            answer: "4.000"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "By partial differentiation, for f(x, y) = x y^2, fx = y^2 and fy = 2xy. At (1, 2), f = 4, fx = 4, and fy = 4, so the linearization formula gives L(x, y) = 4 + 4(x - 1) + 4(y - 2). At (1.1, 1.9), L = 4 + 4(0.1) + 4(-0.1) = 4.000."
+          - problem: "Use the linearization of f(x, y) = e^(x + 2y) at (0, 0) to estimate f(0.02, -0.01). Give the answer to 2 decimals."
+            answer: "1.00"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "By partial differentiation, for f(x, y) = e^(x + 2y), fx = e^(x + 2y) and fy = 2e^(x + 2y). At (0, 0), f = 1, fx = 1, and fy = 2, so the linearization formula gives L(x, y) = 1 + x + 2y. At (0.02, -0.01), L = 1 + 0.02 + 2(-0.01) = 1.00."
+          - problem: "The area of a rectangle is A(x, y) = x y. Use the linearization of A at (10, 20) to estimate A(10.1, 19.8). Give the answer to 2 decimals."
+            answer: "200.00"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "By partial differentiation, for A(x, y) = x y, Ax = y and Ay = x. At (10, 20), A = 200, Ax = 20, and Ay = 10, so the linearization formula gives L(x, y) = 200 + 20(x - 10) + 10(y - 20). At (10.1, 19.8), L = 200 + 20(0.1) + 10(-0.2) = 200.00."
+          - problem: "Use the linearization of f(x, y) = x^3 y at (1, 2) to estimate f(1.02, 2.03). Give the answer to 2 decimals."
+            answer: "2.15"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "By partial differentiation, for f(x, y) = x^3 y, fx = 3x^2 y and fy = x^3. At (1, 2), f = 2, fx = 6, and fy = 1, so the linearization formula gives L(x, y) = 2 + 6(x - 1) + (y - 2). At (1.02, 2.03), L = 2 + 6(0.02) + 1(0.03) = 2.15."
+          - problem: "Use the linearization of f(x, y) = x / y at (2, 1) to estimate f(2.1, 0.9). Give the estimate as a fraction."
+            answer: "23/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By partial differentiation, for f(x, y) = x / y, fx = 1 / y and fy = -x / y^2. At (2, 1), f = 2, fx = 1, and fy = -2, so the linearization formula gives L(x, y) = 2 + (x - 2) - 2(y - 1). At (2.1, 0.9), L = 2 + (0.1) - 2(-0.1) = 2.3 = 23/10."
         constraints: "base points where f and its partials are exact rationals; estimates stay within 0.05 of the true value"
     diagnostic_exemplar:
       problem: 'Use the linearization of $f(x, y) = x^2 y$ at $(2, 3)$ to estimate $f(2.1, 2.9)$.'
@@ -1018,14 +1062,30 @@ topics:
         name: "The total differential"
         key_prerequisites: [tangent-planes-linear-approximation]
         exemplars:
-          - problem: 'Find the total differential $dz$ of $z = x^2 y^3$, and evaluate it at $(1, 1)$ with $dx = 0.1$, $dy = -0.2$.'
-            answer: '$dz = 2xy^3\, dx + 3x^2 y^2\, dy$; at the given values $dz = 0.2 - 0.6 = -0.4$'
-            solution_sketch: '$dz=2xy^3\,dx+3x^2y^2\,dy$; at $(1,1)$ with $dx=0.1$, $dy=-0.2$ this is $0.2-0.6=-0.4$.'
-            answer_contract: {kind: none}
-          - problem: 'Find the total differential of $w = x^2 + y^2 + z^2$.'
-            answer: '$dw = 2x\,dx + 2y\,dy + 2z\,dz$'
-            solution_sketch: '$dw=2x\,dx+2y\,dy+2z\,dz$.'
-            answer_contract: {kind: none}
+          - problem: "For z = x^2 y^3, use the total differential to estimate the change dz when x changes from 2 to 2.1 and y changes from 1 to 0.9. Give the answer to 1 decimal."
+            answer: "-0.8"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Step 1: Write the total differential: dz = 2xy^3 dx + 3x^2 y^2 dy. Step 2: At (2, 1), the coefficients are 4 and 12. Step 3: Substitute dx = 0.1 and dy = -0.1: dz = 4(0.1) + 12(-0.1) = 0.4 - 1.2. The value is -0.8."
+          - problem: "For w = x^2 + y^2 + z^2, find the total differential dw at (2, 1, 1) when dx = 0.1, dy = -0.1, and dz = 0.1. Give the answer to 1 decimal."
+            answer: "0.4"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Step 1: Write the total differential: dw = 2x dx + 2y dy + 2z dz. Step 2: At (2, 1, 1), the coefficients are 4, 2, and 2. Step 3: Substitute dx = 0.1, dy = -0.1, and dz = 0.1: dw = 4(0.1) + 2(-0.1) + 2(0.1). The value is 0.4."
+          - problem: "For r = sqrt(x^2 + y^2), use the total differential to estimate dr at (3, 4) when dx = 0.1 and dy = 0.1. Give the answer to 2 decimals."
+            answer: "0.14"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1: Write the total differential: dr = (x/r) dx + (y/r) dy with r = sqrt(x^2 + y^2). Step 2: At (3, 4), r = 5, so the coefficients are 3/5 and 4/5. Step 3: Substitute dx = 0.1 and dy = 0.1: dr = 0.6(0.1) + 0.8(0.1). The value is 0.14."
+          - problem: "A quantity is modeled by z = x^2 y. Find the total differential dz at (2, 3) when dx = 0.1 and dy = -0.1. Give the answer to 1 decimal."
+            answer: "0.8"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Step 1: Write the total differential: dz = 2xy dx + x^2 dy. Step 2: At (2, 3), the coefficients are 12 and 4. Step 3: Substitute dx = 0.1 and dy = -0.1: dz = 12(0.1) + 4(-0.1). The value is 0.8."
+          - problem: "For f(x, y) = x^3 + y^3, the total differential at (2, 1) is df = A dx + B dy. Find A + B."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the total differential: df = 3x^2 dx + 3y^2 dy. Step 2: At (2, 1), A = 12 and B = 3. Step 3: Add the coefficients: 12 + 3 = 15. The value is 15."
+          - problem: "For s = sqrt(x + y), find the total differential ds at (3, 1) when dx = 0.2 and dy = 0.1. Give the answer to 2 decimals."
+            answer: "0.08"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1: Write the total differential: ds = (1/(2 sqrt(x + y))) dx + (1/(2 sqrt(x + y))) dy. Step 2: At (3, 1), sqrt(4) = 2, so each coefficient is 1/4. Step 3: Substitute dx = 0.2 and dy = 0.1: ds = 0.25(0.2) + 0.25(0.1) = 0.05 + 0.025. The value is 0.08."
         constraints: "polynomial or single-radical functions; numeric evaluations use one-decimal increments"
       - id: kp2
         name: "Error estimation"
@@ -1086,14 +1146,30 @@ topics:
         name: "Rates along a moving point"
         key_prerequisites: [partial-derivatives, chain-rule]
         exemplars:
-          - problem: 'Let $z = x^2 + y^2$ with $x = \cos t$, $y = \sin t$. Compute $\frac{dz}{dt}$ and explain the answer.'
-            answer: '$\frac{dz}{dt} = 2x(-\sin t) + 2y\cos t = 0$: the point moves along the unit circle, a level curve of $z$.'
-            solution_sketch: '$\frac{dz}{dt}=2x(-\sin t)+2y(\cos t)=-2\cos t\sin t+2\sin t\cos t=0$, since $(x,y)$ moves along the level curve $x^2+y^2=1$.'
-            answer_contract: {kind: none}
-          - problem: 'The temperature at $(x, y)$ is $T(x, y) = x^2 y$. A bug at $(2, 1)$ moves with $\frac{dx}{dt} = 3$ and $\frac{dy}{dt} = -1$. How fast is the temperature changing at the bug''s location?'
-            answer: '$\frac{dT}{dt} = 2xy \cdot 3 + x^2 \cdot (-1) = 12 - 4 = 8$'
-            solution_sketch: '$\frac{dT}{dt}=T_x x''+T_y y''=(2xy)(3)+(x^2)(-1)=12-4=8$ at $(2,1)$.'
-            answer_contract: {kind: none}
+          - problem: "Let z = x^2 + y^2. At the point (3, 4) a particle has dx/dt = 4 and dy/dt = -3. Find dz/dt at that instant."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The chain rule gives dz/dt = z_x dx/dt + z_y dy/dt. At (3, 4), z_x = 2x = 6 and z_y = 2y = 8. The velocity (4, -3) is tangent to the level curve x^2 + y^2 = 25, so dz/dt = (6)(4) + (8)(-3) = 0. The rate is 0."
+          - problem: "The temperature at (x, y) is T = x y^2. A bug at (2, 3) moves with dx/dt = -1 and dy/dt = 4. Find the rate of change of the temperature at that instant."
+            answer: "39"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The chain rule gives dT/dt = T_x dx/dt + T_y dy/dt. At (2, 3), T_x = y^2 = 9 and T_y = 2xy = 12. Substitute the velocities: dT/dt = (9)(-1) + (12)(4) = -9 + 48. The rate of change of the temperature is 39."
+          - problem: "Let z = x^3 y. A moving point at (2, 1) has dx/dt = 1 and dy/dt = 2. Find dz/dt at that instant."
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The chain rule gives dz/dt = z_x dx/dt + z_y dy/dt. At (2, 1), z_x = 3x^2 y = 12 and z_y = x^3 = 8. Substitute the velocities: dz/dt = (12)(1) + (8)(2) = 12 + 16. The value of dz/dt is 28."
+          - problem: "Let z = e^(x) sin(y). At the point (0, pi/2) the velocity is dx/dt = 2 and dy/dt = 3. Find dz/dt there."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The chain rule gives dz/dt = z_x dx/dt + z_y dy/dt. At (0, pi/2), z_x = e^(x) sin(y) = 1 and z_y = e^(x) cos(y) = 0. Substitute the velocities: dz/dt = (1)(2) + (0)(3) = 2. The rate is 2."
+          - problem: "Let z = x^2 - y^2. A point at (3, -2) has dx/dt = 2 and dy/dt = 3. Find dz/dt at that instant."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The chain rule gives dz/dt = z_x dx/dt + z_y dy/dt. At (3, -2), z_x = 2x = 6 and z_y = -2y = 4. Substitute the velocities: dz/dt = (6)(2) + (4)(3) = 12 + 12. The value of dz/dt is 24."
+          - problem: "Let z = x y. At the point (2, 3) a particle moves with dx/dt = 3 and dy/dt = -2. Find dz/dt at that instant."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The chain rule gives dz/dt = z_x dx/dt + z_y dy/dt. At (2, 3), z_x = y = 3 and z_y = x = 2. Substitute the velocities: dz/dt = (3)(3) + (2)(-2) = 9 - 4. The rate is 5."
         constraints: "evaluation at a specific instant with integer partials and velocities; include one level-curve (zero-rate) case"
     diagnostic_exemplar:
       problem: 'The temperature at $(x, y)$ is $T(x, y) = x^2 y$. A particle passing through $(3, 2)$ has $\frac{dx}{dt} = -1$ and $\frac{dy}{dt} = 4$. How fast is the temperature at the particle changing?'
@@ -1136,6 +1212,22 @@ topics:
           - problem: 'Let $z = e^x \sin y$ with $x = st^2$, $y = s^2 t$. Find $\frac{\partial z}{\partial t}$.'
             answer: '$e^{st^2}\left(2st \sin(s^2 t) + s^2 \cos(s^2 t)\right)$'
             solution_sketch: '$\frac{\partial z}{\partial t} = e^x \sin y \cdot 2st + e^x \cos y \cdot s^2$; substitute $x = st^2$, $y = s^2 t$.'
+          - problem: "Let z = x^2 y + y^2 with x = 3s + t and y = s - 2t. Find ∂z/∂s at (s, t) = (1, 2)."
+            answer: "-71"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Chain rule for two intermediates: ∂z/∂s = ∂z/∂x ∂x/∂s + ∂z/∂y ∂y/∂s. The partial derivatives are ∂z/∂x = 2xy, ∂z/∂y = x^2 + 2y, ∂x/∂s = 3, and ∂y/∂s = 1. At (s, t) = (1, 2), x = 5 and y = -3. Substitute: 6(5)(-3) + (25 + 2(-3)) = -90 + 19 = -71. The value is -71."
+          - problem: "Let z = x^3 + x y^2 with x = s - t and y = 2s + t. Find ∂z/∂t at (s, t) = (1, 1)."
+            answer: "-9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Chain rule: ∂z/∂t = ∂z/∂x ∂x/∂t + ∂z/∂y ∂y/∂t. The partial derivatives are ∂z/∂x = 3x^2 + y^2 and ∂z/∂y = 2xy, while ∂x/∂t = -1 and ∂y/∂t = 1. At (s, t) = (1, 1), x = 0 and y = 3. Substitute: (0 + 9)(-1) + (0)(1) = -9. The value is -9."
+          - problem: "Let z = x^2 y with x = s t and y = s^2 + t. Find ∂z/∂s as a function of s and t."
+            answer: "4s^3t^2+2st^3"
+            answer_contract: {"kind": "function", "vars": ["s", "t"]}
+            solution_sketch: "Chain rule: ∂z/∂s = ∂z/∂x ∂x/∂s + ∂z/∂y ∂y/∂s. The partial derivatives are ∂z/∂x = 2xy and ∂z/∂y = x^2, with ∂x/∂s = t and ∂y/∂s = 2s. Substitute x = st and y = s^2 + t: 2(st)(s^2 + t)t + (s^2 t^2)(2s). Simplify to 4s^3t^2 + 2s t^3. So ∂z/∂s = 4s^3t^2+2st^3."
+          - problem: "Let z = x^3 y^2 + x with x = s + 2t and y = 2s - t. Find ∂z/∂t at (s, t) = (2, 1)."
+            answer: "482"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Chain rule: ∂z/∂t = ∂z/∂x ∂x/∂t + ∂z/∂y ∂y/∂t. The partial derivatives are ∂z/∂x = 3x^2 y^2 + 1 and ∂z/∂y = 2x^3 y, while ∂x/∂t = 2 and ∂y/∂t = -1. At (s, t) = (2, 1), x = 4 and y = 3. Substitute: (3(16)(9) + 1)(2) + (2(64)(3))(-1) = 866 - 384 = 482. The value is 482."
         constraints: "two intermediate and two independent variables; draw or imply the dependency tree"
       - id: kp2
         name: "Tree diagrams and the general version"
@@ -1144,10 +1236,26 @@ topics:
           - problem: 'Let $u = x^2 y^3$ with $x = s t^2$, $y = s^2 t$. Find $\frac{\partial u}{\partial s}$, and verify by substituting first.'
             answer: '$8 s^7 t^7$'
             solution_sketch: '$\frac{\partial u}{\partial s} = 2xy^3 \cdot t^2 + 3x^2y^2 \cdot 2st$; with $x = st^2$, $y = s^2t$ both terms combine to $2s^7t^7 + 6s^7t^7$. Check: $u = s^8 t^7$.'
-          - problem: 'Suppose $z = f(x, y)$ with $x = g(s, t)$, $y = h(s, t)$, and at $(s, t) = (1, 2)$: $g(1,2) = 3$, $h(1,2) = 4$, $g_s(1,2) = -1$, $h_s(1,2) = 6$, $f_x(3,4) = 5$, $f_y(3,4) = 2$. Find $\frac{\partial z}{\partial s}$ at $(1, 2)$.'
-            answer: '$5(-1) + 2(6) = 7$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Follow both branches of the tree: $z_s = f_x g_s + f_y h_s$, evaluated at the matching points.'
+          - problem: "Let z = f(x, y) with x = g(s, t), y = h(s, t). At (s, t) = (1, 2), g(1, 2) = 3, h(1, 2) = 4, g_s(1, 2) = -1, h_s(1, 2) = 6, f_x(3, 4) = 5, f_y(3, 4) = 2. Find the value of z_s at (1, 2)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the multivariable chain rule, z_s = f_x g_s + f_y h_s along the tree with branches x and y. At (s, t) = (1, 2), the inner values are x = 3 and y = 4, so f_x = 5 and f_y = 2, while g_s = -1 and h_s = 6. Each branch is one product: the x branch gives 5(-1) = -5 and the y branch gives 2(6) = 12. Add the branch products: -5 + 12 = 7."
+          - problem: "Let u = x^2 y with x = r cos(theta) and y = r sin(theta). Find the partial derivative u_r as a function of r and theta."
+            answer: "3r^2 cos(theta)^2 sin(theta)"
+            answer_contract: {"kind": "function", "vars": ["r", "theta"]}
+            solution_sketch: "By the multivariable chain rule, u_r = u_x x_r + u_y y_r. The outer partials are u_x = 2xy and u_y = x^2. The inner rates are x_r = cos(theta) and y_r = sin(theta). Substitute x = r cos(theta) and y = r sin(theta): 2xy cos(theta) + x^2 sin(theta) = 2 r^2 cos(theta) sin(theta) cos(theta) + r^2 cos^2(theta) sin(theta). Combine the two products to get 3r^2 cos(theta)^2 sin(theta)."
+          - problem: "Let w = f(x, y, z) with x = g(t), y = h(t), z = k(t). At t = 0, g(0) = 2, h(0) = -1, k(0) = 3, g'(0) = 4, h'(0) = -2, k'(0) = 5, f_x(2, -1, 3) = 1, f_y(2, -1, 3) = 3, f_z(2, -1, 3) = -2. Find dw/dt at t = 0."
+            answer: "-12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The multivariable chain rule gives dw/dt = f_x g'(0) + f_y h'(0) + f_z k'(0), one product per branch of the tree. Each branch contributes one product: f_x g'(0) = 1(4) = 4, f_y h'(0) = 3(-2) = -6, and f_z k'(0) = -2(5) = -10. Add the three branch products: 4 - 6 - 10 = -12."
+          - problem: "Let u = x^2 y with x = s + t and y = s - t. Find the partial derivative u_t as a function of s and t."
+            answer: "s^2 - 2st - 3t^2"
+            answer_contract: {"kind": "function", "vars": ["s", "t"]}
+            solution_sketch: "By the multivariable chain rule, u_t = u_x x_t + u_y y_t. The outer partials are u_x = 2xy and u_y = x^2. The inner rates are x_t = 1 and y_t = -1. Substitute x = s + t and y = s - t: 2(s + t)(s - t)(1) + (s + t)^2(-1). Expand: 2(s^2 - t^2) - (s^2 + 2st + t^2) = s^2 - 2st - 3t^2."
+          - problem: "The temperature at a point (x, y) is T(x, y). A bug walks so that x = g(t) and y = h(t). At t = 1, g(1) = 2, h(1) = 3, g'(1) = -1, h'(1) = 4, T_x(2, 3) = 5, and T_y(2, 3) = -2. Find the rate of change of temperature dT/dt at t = 1."
+            answer: "-13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the multivariable chain rule, dT/dt = T_x g'(1) + T_y h'(1), one product for each branch. The x branch gives 5(-1) = -5 and the y branch gives (-2)(4) = -8. Add the branch products: -5 + (-8) = -13."
         constraints: "one symbolic and one numeric (table-values) exemplar; every branch of the tree contributes exactly one product"
       - id: kp3
         name: "Implicit differentiation via partials"
