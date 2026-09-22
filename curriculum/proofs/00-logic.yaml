@@ -1238,14 +1238,30 @@ topics:
         name: "Universal statements"
         key_prerequisites: [predicates-and-domains]
         exemplars:
-          - problem: 'Is $\forall x \in \mathbb{R},\ x^2 > 0$ true?'
-            answer_contract: {kind: none}
-            answer: 'No; $x = 0$ gives $x^2 = 0$, not $> 0$.'
-            solution_sketch: 'The single value $x = 0$ has $x^2 = 0$, so the universal statement fails; one counterexample suffices to refute a $\forall$.'
-          - problem: 'Is $\forall n \in \{1, 2, 3\},\ n^2 \le 9$ true?'
-            answer_contract: {kind: none}
-            answer: 'Yes; check all three: $1, 4, 9 \le 9$.'
-            solution_sketch: 'Over a finite domain a universal statement is verified by checking every element.'
+          - problem: "For every x in {-2,-1,0,1,2}, x^2 > 0. Find the number of counterexamples."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full statement: for every x in {-2,-1,0,1,2}, x^2 > 0. Step 1, universal-statement rule: a counterexample is an element where the predicate is false. Step 2, exhaustive check: x=-2 gives 4 > 0 true, x=-1 gives 1 > 0 true, x=0 gives 0 > 0 false, x=1 gives 1 > 0 true, x=2 gives 4 > 0 true. Only x=0 fails. The answer is 1."
+          - problem: "For every n in {1,2,3,4}, n^2 <= 16. Find the number of counterexamples."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full statement: for every n in {1,2,3,4}, n^2 <= 16. Step 1, universal-statement rule: a counterexample is an element where the predicate is false. Step 2, exhaustive check: n=1 gives 1 <= 16 true, n=2 gives 4 <= 16 true, n=3 gives 9 <= 16 true, n=4 gives 16 <= 16 true. No element fails. The answer is 0."
+          - problem: "For every x in {-2,-1,0,1,2}, x^2 < 4. Find the number of counterexamples."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full statement: for every x in {-2,-1,0,1,2}, x^2 < 4. Step 1, universal-statement rule: a counterexample is an element where the predicate is false. Step 2, exhaustive check: x=-2 gives 4 < 4 false, x=-1 gives 1 < 4 true, x=0 gives 0 < 4 true, x=1 gives 1 < 4 true, x=2 gives 4 < 4 false. The elements -2 and 2 fail. The answer is 2."
+          - problem: "For every n in {1,2,3,4,5}, n^2 > 10. Find the number of counterexamples."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full statement: for every n in {1,2,3,4,5}, n^2 > 10. Step 1, universal-statement rule: a counterexample is an element where the predicate is false. Step 2, exhaustive check: n=1 gives 1 > 10 false, n=2 gives 4 > 10 false, n=3 gives 9 > 10 false, n=4 gives 16 > 10 true, n=5 gives 25 > 10 true. The elements 1, 2, and 3 fail. The answer is 3."
+          - problem: "For every n in {2,4,6}, n is even. Find the number of counterexamples."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full statement: for every n in {2,4,6}, n is even. Step 1, universal-statement rule: a counterexample is an element where the predicate is false. Step 2, exhaustive check: n=2 is even, n=4 is even, and n=6 is even. No element fails. The answer is 0."
+          - problem: "For every n in {1,2,3,4,5,6}, n^2 <= 30. Find the number of counterexamples."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full statement: for every n in {1,2,3,4,5,6}, n^2 <= 30. Step 1, universal-statement rule: a counterexample is an element where the predicate is false. Step 2, exhaustive check: n=1 gives 1 <= 30 true, n=2 gives 4 <= 30 true, n=3 gives 9 <= 30 true, n=4 gives 16 <= 30 true, n=5 gives 25 <= 30 true, n=6 gives 36 <= 30 false. The only failing element is 6. The answer is 1."
         constraints: "one quantifier; stated domain; finite domains checked exhaustively"
       - id: kp2
         name: "Existential statements"
@@ -1264,14 +1280,30 @@ topics:
         name: "Translating single-quantifier English"
         key_prerequisites: [predicates-and-domains]
         exemplars:
-          - problem: 'Translate "every multiple of $4$ is even" using quantifiers.'
-            answer_contract: {kind: none}
-            answer: '$\forall n \in \mathbb{Z},\ (4 \mid n \to 2 \mid n)$'
-            solution_sketch: 'A universal claim about multiples of $4$ becomes a $\forall$ guarded by the conditional "if $4 \mid n$ then ...".'
-          - problem: 'Translate "some prime is even" using quantifiers, and give its truth value.'
-            answer_contract: {kind: none}
-            answer: '$\exists p\,(p \text{ prime} \land p \text{ even})$; true, witnessed by $p = 2$.'
-            solution_sketch: 'Existence claims pair $\exists$ with a conjunction; $2$ is an even prime, so the statement is true.'
+          - problem: "A student must translate the sentence 'every multiple of 4 is even', about integers, into a formula with one quantifier. Which connective guards the claim about evenness inside the correct translation?"
+            answer: "implication"
+            answer_contract: {"kind": "label", "options": [["implication"], ["conjunction"], ["disjunction"], ["negation"]]}
+            solution_sketch: "The full translation of a claim of the form 'every A is B' is: for all n, if n satisfies A, then n satisfies B. Here that reads: for all integers n, if 4 divides n, then 2 divides n, so the guard is the conditional. The option conjunction would wrongly force every integer to be a multiple of 4 and even; disjunction would only claim every integer is a multiple of 4 or even; negation would deny evenness altogether instead of guarding it. The answer is implication."
+          - problem: "The sentence 'some prime is even' is about integers and uses one existential quantifier. State the connective that joins the two conditions inside its translation, and give the smallest integer that makes the sentence true."
+            answer: "connective = and; witness = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["and"], ["or"], ["not"], ["if"]]}, "name": "connective"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
+            solution_sketch: "The full translation of 'some A is B' is: there exists p with (p is prime) and (p is even); an existential quantifier pairs with a conjunction of the two conditions. Checking small integers, 2 is prime and even, so it is the smallest witness. The option or would only say p is prime or even without needing both, not would deny one of the conditions, and if would turn the sentence into a conditional instead of a witness claim. The answer is connective = and; witness = 2."
+          - problem: "Over the set {2, 5, 8}, a universal statement reads: for every n in the set, the square of n is even. Decide whether the statement is true, and give the number of elements n of the set whose square is odd."
+            answer: "verdict = fails; count = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The statement translates as: for all n, if n is one of 2, 5, 8, then the square of n is even; a universal claim pairs the quantifier with a conditional. Check each element: 2 squared is 4, 5 squared is 25, and 8 squared is 64; only 25 is odd. The conditional fails exactly at n = 5, so the opposite verdict holds would be wrong because 25 is not even. The answer is verdict = fails; count = 1."
+          - problem: "The sentence 'there is an integer n with 1 <= n <= 30 such that n is prime and n + 6 is also prime' pairs an existential quantifier with a conjunction. How many integers n in that range satisfy both conditions at once?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sentence translates as: there exists n with (n is prime) and (n + 6 is prime); since the existential pairs with a conjunction, both parts must hold for the same n. Test the primes up to 30: 5 and 11, 7 and 13, 11 and 17, 13 and 19, 17 and 23, and 23 and 29 all work, while 2, 3, 19 and 29 have composite partners. Six integers witness the sentence. The answer is 6."
+          - problem: "The universal sentence 'every integer n with 1 <= n <= 20 makes n^2 + n + 11 prime' translates as: for all n, if 1 <= n <= 20, then n^2 + n + 11 is prime. Find the smallest n in that range for which the claim fails."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A universal claim over a bounded domain reads: for all n, if n lies in the range, then the predicate holds; it fails exactly where the hypothesis is true and the conclusion is false. Compute n^2 + n + 11 for n = 1 to 9: the values are 13, 17, 23, 31, 41, 53, 67, 83 and 101, all prime. At n = 10 the value is 121, which equals 11 times 11 and is not prime, so the conditional fails there first. The answer is 10."
+          - problem: "Consider four sentences about integers. (1) Some integer is even and greater than 10. (2) Every integer greater than 10 is even. (3) Some prime is greater than 10. (4) Some multiple of 5 is odd. How many of them translate with an existential quantifier whose conditions are joined by a conjunction?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An 'every A is B' sentence takes a universal quantifier with a conditional, so sentence (2) does not have the existential shape. Each of (1), (3) and (4) says that one object has two properties at once, which is exactly an existential quantifier with a conjunction: (1) is even and greater than 10, (3) is prime and greater than 10, and (4) is a multiple of 5 and odd. Three sentences have the existential-with-conjunction shape. The answer is 3."
         constraints: "universal claims use $\\to$; existential claims use $\\land$"
     diagnostic_exemplar:
       problem: 'Translate "some perfect square is odd" using quantifiers and give its truth value; then decide whether "for every $n \in \{2, 4, 6\}$, $n^2 + 1$ is prime" is true.'
