@@ -541,6 +541,22 @@ topics:
           - problem: 'Approximate $\int_0^2 x^2 \, dx$ with a midpoint sum using $n = 4$.'
             answer: "2.625"
             solution_sketch: '$\Delta x = 0.5$; midpoints $0.25, 0.75, 1.25, 1.75$: $0.5(0.0625 + 0.5625 + 1.5625 + 3.0625) = 2.625$.'
+          - problem: "Approximate $\\int_0^2 (x^2 + 1) \\, dx$ with a midpoint sum using $n = 2$. Give the answer as a fraction."
+            answer: "9/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the midpoint sum with $\\Delta x = (2-0)/2 = 1$. The midpoints are $0.5$ and $1.5$, and $f(0.5)=1.25$, $f(1.5)=3.25$. The sum is $1 \\cdot (1.25 + 3.25) = 4.5 = 9/2$."
+          - problem: "Approximate $\\int_0^1 (x^3 + x) \\, dx$ with a midpoint sum using $n = 2$. Give the answer as a fraction."
+            answer: "23/32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The midpoint sum has $\\Delta x = (1-0)/2 = 0.5$. The midpoints are $0.25$ and $0.75$; the function values are $0.265625$ and $1.171875$, whose sum is $1.4375$. Multiply by $\\Delta x = 0.5$ to get $0.71875 = 23/32$."
+          - problem: "Approximate $\\int_0^2 (x^2 + 1) \\, dx$ with a midpoint sum using $n = 4$. Give the answer as a fraction."
+            answer: "37/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For four subintervals, $\\Delta x = (2-0)/4 = 0.5$. The midpoints are $0.25, 0.75, 1.25, 1.75$; the function values $1.0625, 1.5625, 2.5625, 4.0625$ sum to $9.25$. The midpoint sum is $0.5 \\cdot 9.25 = 4.625 = 37/8$."
+          - problem: "Approximate $\\int_0^3 (2x + 1) \\, dx$ with a midpoint sum using $n = 3$. Give the answer as an integer."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The midpoint sum uses $\\Delta x = (3-0)/3 = 1$. The midpoints are $0.5, 1.5, 2.5$, and the function values are $2, 4, 6$, which sum to $12$. Multiply by $\\Delta x = 1$ to get the midpoint sum 12."
         constraints: "n ≤ 4; midpoint values give terminating decimals"
       - id: kp2
         name: Trapezoid sums
@@ -1281,6 +1297,22 @@ topics:
           - problem: 'Evaluate $\int_0^3 x\sqrt{x + 1} \, dx$.'
             answer: "116/15"
             solution_sketch: '$u$ runs $1$ to $4$: $\left[\frac{2}{5}u^{5/2} - \frac{2}{3}u^{3/2}\right]_1^4 = \left(\frac{64}{5} - \frac{16}{3}\right) - \left(\frac{2}{5} - \frac{2}{3}\right) = \frac{116}{15}$.'
+          - problem: "Find $\\int x\\sqrt{x + 2} \\, dx$."
+            answer: "(2/5)(x+2)^(5/2) - (4/3)(x+2)^(3/2) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Use the substitution $u = x + 2$, which is linear, so $x = u - 2$ and $du = dx$. The leftover factor $x$ becomes $u - 2$: the integral is $\\int (u - 2)u^{1/2}\\,du = \\int (u^{3/2} - 2u^{1/2})\\,du$. By the power rule for antiderivatives this equals $\\frac{2}{5}u^{5/2} - \\frac{4}{3}u^{3/2} + C$. Back-substituting $u = x + 2$ gives (2/5)(x+2)^(5/2) - (4/3)(x+2)^(3/2) + C."
+          - problem: "Evaluate $\\int_2^7 x\\sqrt{x + 2} \\, dx$."
+            answer: "886/15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute $u = x + 2$; then $x = u - 2$ and $u$ runs from $4$ to $9$. The integral becomes $\\int_4^9 (u - 2)u^{1/2}\\,du = \\int_4^9 (u^{3/2} - 2u^{1/2})\\,du$. By the power rule an antiderivative is $\\frac{2}{5}u^{5/2} - \\frac{4}{3}u^{3/2}$. By the Fundamental Theorem of Calculus the value is $\\left(\\frac{486}{5} - 36\\right) - \\left(\\frac{64}{5} - \\frac{32}{3}\\right) = \\frac{886}{15}$. The value of the integral is 886/15."
+          - problem: "Find $\\int \\frac{x}{(x + 1)^3} \\, dx$."
+            answer: "-1/(x+1) + 1/(2(x+1)^2) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Set $u = x + 1$, a linear substitution, so $x = u - 1$ and $du = dx$. The leftover factor $x$ becomes $u - 1$: the integral is $\\int (u - 1)u^{-3}\\,du = \\int (u^{-2} - u^{-3})\\,du$. By the power rule for antiderivatives this is $-u^{-1} + \\frac{1}{2}u^{-2} + C$. Back-substituting $u = x + 1$ gives -1/(x+1) + 1/(2(x+1)^2) + C."
+          - problem: "Water flows into a tank at a rate of $r(t) = t\\sqrt{t + 9}$ liters per minute. Find the total volume of water that enters the tank from $t = 0$ to $t = 7$ minutes."
+            answer: "452/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The volume is the definite integral $\\int_0^7 t\\sqrt{t + 9}\\,dt$. Substitute $u = t + 9$, so $t = u - 9$ and $u$ runs from $9$ to $16$: the integral becomes $\\int_9^{16} (u^{3/2} - 9u^{1/2})\\,du$. By the power rule an antiderivative is $\\frac{2}{5}u^{5/2} - 6u^{3/2}$. By the Fundamental Theorem of Calculus the value is $\\left(\\frac{2048}{5} - 384\\right) - \\left(\\frac{486}{5} - 162\\right) = \\frac{452}{5}$. The total volume is 452/5 liters."
         constraints: "u linear so x = u - b is exact; express leftover x in terms of u"
     diagnostic_exemplar:
       problem: 'Evaluate $\int_0^5 \frac{x}{\sqrt{x + 4}} \, dx$.'

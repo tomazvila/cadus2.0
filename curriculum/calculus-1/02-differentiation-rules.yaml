@@ -1458,14 +1458,30 @@ topics:
         name: Choose the right tool
         key_prerequisites: [derivatives-natural-log, derivatives-exp-log]
         exemplars:
-          - problem: 'Which of $2^x$, $x^2$, and $x^x$ REQUIRES logarithmic differentiation (rather than a standard rule)?'
-            answer: "x^x"
-            answer_contract: {kind: none}
-            solution_sketch: 'Only $x^x$ has a varying base AND a varying exponent; $2^x$ uses $a^x \ln a$ and $x^2$ the power rule.'
-          - problem: 'Differentiate $y = x^x$ by first rewriting it as $e^{x \ln x}$.'
-            answer: "x^x (ln x + 1)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{d}{dx} e^{x \ln x} = e^{x \ln x}(\ln x + 1)$ — the same result as taking logs.'
+          - problem: "For the function $f(x) = x^x$ with $x > 0$, which case describes why logarithmic differentiation is required? Select the case."
+            answer: "variable-variable"
+            answer_contract: {"kind": "label", "options": [["variable-variable"], ["constant-base"], ["constant-exponent"], ["composite"]]}
+            solution_sketch: "The function x^x has a base that changes with x and an exponent that also changes with x, so logarithmic differentiation is the right tool. The constant-base option fails because a^x has a fixed base, and the constant-exponent option fails because x^n has a fixed exponent. The composite option fails because the key issue is not an outer function of an inner x-expression. The case is variable-variable."
+          - problem: "Let $y = x^x$ with $x > 0$. Taking natural logs of both sides gives $\\ln y = x \\ln x$. Treat $y$ as a function of $x$ and differentiate both sides implicitly with respect to $x$. Give $y'/y$ as a function of $x$."
+            answer: "ln(x)+1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function x^x has a varying base and a varying exponent, so logarithmic differentiation applies. Step 1: take logs of both sides to get ln y = x ln x. Step 2: differentiate implicitly; the left side yields y'/y by the rule for the derivative of ln, and the product rule on the right yields ln x + 1/x times x plus ln x. Step 3: simplify the right side and equate the two sides. The value of y'/y is ln(x)+1."
+          - problem: "Differentiate $y = 5^x$. Give the derivative as a function of $x$ in exponential form with base $e$."
+            answer: "e^(x*ln(5))*ln(5)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Rewrite 5^x as e^(x ln 5). Use the chain rule: the outer derivative e^u times the inner derivative ln 5. The derivative is e^(x*ln(5))*ln(5)."
+          - problem: "Differentiate $y = x^8$. Give the derivative as a function of $x$."
+            answer: "8x^7"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Apply the general power rule to x^8. Bring the exponent down and subtract one from the exponent to get 8x^7. The derivative is 8x^7."
+          - problem: "For the function $f(x) = 3^x$, which case describes the roles of the base and the exponent? Select the case."
+            answer: "constant-base"
+            answer_contract: {"kind": "label", "options": [["constant-base"], ["constant-exponent"], ["variable-variable"], ["composite"]]}
+            solution_sketch: "For 3^x the base is constant and the exponent is the variable, so the exponential rule applies. The constant-exponent option fails because the exponent changes, the variable-variable option fails because the base is fixed, and the composite option fails because there is no outer function. The case is constant-base."
+          - problem: "Differentiate $y = x^{\\sin x}$ for $x > 0$. Give the derivative as a function of $x$ in exponential form with base $e$."
+            answer: "e^(sin(x)*ln(x))*(cos(x)*ln(x)+sin(x)/x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Take logarithms: ln y = sin x ln x. Differentiate implicitly: (1/y)y' = cos x ln x + sin x / x. Multiply by y = x^(sin x) and rewrite it as e^(sin x ln x). The derivative is e^(sin(x)*ln(x))*(cos(x)*ln(x)+sin(x)/x)."
         constraints: "contrast constant-base, constant-exponent, and variable-variable cases"
     diagnostic_exemplar:
       problem: 'Differentiate $y = x^{\ln x}$ for $x > 0$.'
