@@ -1158,27 +1158,59 @@ topics:
         name: Work lifting cables and chains
         key_prerequisites: [work-springs, definite-integrals-ftc]
         exemplars:
-          - problem: 'A $10$ m cable of linear density $2$ kg/m hangs from a winch. Find the work to wind in the whole cable ($g = 9.8$ m/s$^2$).'
-            answer: '$980$ J'
-            answer_contract: {kind: none}
-            solution_sketch: 'A slice at distance $x$ below the top weighs $2(9.8)\,dx$ and rises $x$: $W = \int_0^{10} 19.6x\,dx = 19.6 \cdot 50 = 980$ J.'
-          - problem: 'A $20$ m chain of linear density $3$ kg/m hangs from a crane. Find the work to lift the entire chain to the top ($g = 9.8$ m/s$^2$).'
-            answer: '$5880$ J'
-            answer_contract: {kind: none}
-            solution_sketch: '$W = \int_0^{20} 3(9.8)x\,dx = 29.4 \cdot 200 = 5880$ J.'
+          - problem: "A 12 m cable of uniform linear density 2.5 kg/m hangs from a winch. Take g = 9.8 m/s^2 and measure each slice from the winch. Find the work to wind in the whole cable in joules."
+            answer: "1764"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up a vertical coordinate x downward from the winch. A slice of length dx at x has weight 2.5(9.8) dx and is lifted a distance x, so dW = 24.5 x dx by the work-slicing rule. Integrate from x = 0 to x = 12 using the Fundamental Theorem of Calculus: W = 24.5 x^2/2 evaluated from 0 to 12 = 1764. The answer is 1764."
+          - problem: "A 15 m chain of uniform linear density 4 kg/m hangs from a crane. Take g = 9.8 m/s^2 and measure distance downward from the crane. Find the work to lift the entire chain to the top in joules."
+            answer: "4410"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Coordinate x downward from the crane. A slice at x has weight 4(9.8) dx and rises x, so dW = 39.2 x dx by the work-slicing rule. Integrate from 0 to 15 using the Fundamental Theorem of Calculus: W = 39.2 x^2/2 = 4410. The answer is 4410."
+          - problem: "A 10 m uniform chain hangs from a crane. The work to lift the whole chain to the top is 2450 J. Take g = 9.8 m/s^2. Find the linear density of the chain in kg/m."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a hanging chain of density rho and length L, the work is W = integral_0^L rho g x dx = rho g L^2/2 by the work-slicing rule. Here 2450 = rho(9.8)(100)/2 = 490 rho. Solve using the Fundamental Theorem of Calculus result: rho = 5. The answer is 5."
+          - problem: "A 6 m chain of uniform linear density 5 kg/m lies on the ground. Take g = 9.8 m/s^2 and measure distance from the final top position. Find the work to lift one end until the chain hangs straight in joules."
+            answer: "882"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let x be the final distance of a slice from the top. A slice at x has weight 5(9.8) dx and is raised x, so dW = 49 x dx by the work-slicing rule. Integrate from 0 to 6 using the Fundamental Theorem of Calculus: W = 49 x^2/2 = 882. The answer is 882."
+          - problem: "A 12 m cable of uniform linear density 5 kg/m hangs from a winch. Take g = 9.8 m/s^2 and measure distance downward from the winch. Find the work to wind in the top 4 m of cable in joules."
+            answer: "1960"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Slices at depth x, for 0 to 4, are wound in and rise x, so their work is 5(9.8)x dx by the work-slicing rule, giving 49 x^2/2 from 0 to 4 = 392 by the Fundamental Theorem of Calculus. Winding in 4 m shortens the cable, so the remaining 8 m also rises 4 m; by the work-slicing rule that adds 5(9.8)(8)(4) = 1568. Total W = 392 + 1568 = 1960. The answer is 1960."
+          - problem: "A uniform chain of linear density 5 kg/m is lifted from the ground until it hangs straight. The work done is 1568 J. Take g = 9.8 m/s^2. Find the length of the chain in meters."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a chain lifted from the ground, the work is W = integral_0^L 5(9.8) x dx = 24.5 L^2 by the work-slicing rule. Set 1568 = 24.5 L^2. Solve using the Fundamental Theorem of Calculus result: L^2 = 64, so L = 8. The answer is 8."
         constraints: "uniform cables/chains only; distances measured from the lift destination; g = 9.8"
       - id: kp3
         name: Work pumping liquids
         key_prerequisites: [work-springs, definite-integrals-ftc]
         exemplars:
-          - problem: 'A cylindrical tank of radius $1$ m and height $2$ m is full of water (weight density $9800$ N/m$^3$). Find the work to pump all the water over the top rim.'
-            answer: '$19600\pi$ J'
-            answer_contract: {kind: none}
-            solution_sketch: 'A slice at depth $x$ below the rim has volume $\pi(1)^2\,dx$ and rises $x$: $W = 9800\pi\int_0^2 x\,dx = 19600\pi$ J.'
-          - problem: 'The same tank (radius $1$ m, height $2$ m) is only half full: water occupies depths $1$ to $2$ below the rim. Find the work to pump it all over the rim.'
-            answer: '$14700\pi$ J'
-            answer_contract: {kind: none}
-            solution_sketch: '$W = 9800\pi\int_1^2 x\,dx = 9800\pi \cdot \frac{3}{2} = 14700\pi$ J.'
+          - problem: "A cylindrical tank of radius 1 m and height 4 m is full of water with weight density 9800 N/m^3. Find the work to pump all the water over the top rim as a multiple of pi."
+            answer: "78400pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: put a slice at depth x below the rim. Its volume is pi*1^2 dx and it must rise x, so dW = 9800*pi*x dx by the slice-work rule. Step 2: integrate from 0 to 4 with the Fundamental Theorem of Calculus. W = 9800*pi*[x^2/2] from 0 to 4 = 9800*pi*8. The work is 78400pi."
+          - problem: "A cylindrical tank of radius 2 m and height 2 m is half full: water occupies depths 1 m to 2 m below the rim. The water has weight density 9800 N/m^3. Find the work to pump all this water over the top rim as a multiple of pi."
+            answer: "58800pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: put a slice at depth x below the rim. Its volume is pi*2^2 dx = 4pi dx and it must rise x, so dW = 9800*4pi*x dx by the slice-work rule. Step 2: integrate from 1 to 2 with the Fundamental Theorem of Calculus. W = 39200pi*[x^2/2] from 1 to 2 = 39200pi*(2 - 0.5) = 58800pi. The work is 58800pi."
+          - problem: "A cylindrical tank of radius 3 m and height 2 m is full of water with weight density 9800 N/m^3. Find the work to pump all the water over the top rim as a multiple of pi."
+            answer: "176400pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: put a slice at depth x below the rim. Its volume is pi*3^2 dx = 9pi dx and it must rise x, so dW = 9800*9pi*x dx by the slice-work rule. Step 2: integrate from 0 to 2 with the Fundamental Theorem of Calculus. W = 88200pi*[x^2/2] from 0 to 2 = 88200pi*2 = 176400pi. The work is 176400pi."
+          - problem: "A tall cylindrical tank of radius 1 m and height 3 m is full of water with weight density 9800 N/m^3. Find the work to pump all the water over the top rim as a multiple of pi."
+            answer: "44100pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: put a slice at depth x below the rim. Its volume is pi*1^2 dx and it must rise x, so dW = 9800*pi*x dx by the slice-work rule. Step 2: integrate from 0 to 3 with the Fundamental Theorem of Calculus. W = 9800*pi*[x^2/2] from 0 to 3 = 9800*pi*4.5 = 44100pi. The work is 44100pi."
+          - problem: "A cylindrical tank of radius 1 m and height 3 m holds water from depth 1 m to depth 3 m below the rim with weight density 9800 N/m^3. Find the work to pump all this water over the top rim as a multiple of pi."
+            answer: "39200pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: put a slice at depth x below the rim. Its volume is pi*1^2 dx and it must rise x, so dW = 9800*pi*x dx by the slice-work rule. Step 2: integrate from 1 to 3 with the Fundamental Theorem of Calculus. W = 9800*pi*[x^2/2] from 1 to 3 = 9800*pi*(4.5 - 0.5) = 39200pi. The work is 39200pi."
+          - problem: "A cylindrical tank of radius 2 m and height 5 m holds water from depth 2 m to depth 5 m below the rim with weight density 9800 N/m^3. Find the work to pump all this water over the top rim as a multiple of pi."
+            answer: "411600pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: put a slice at depth x below the rim. Its volume is pi*2^2 dx = 4pi dx and it must rise x, so dW = 9800*4pi*x dx by the slice-work rule. Step 2: integrate from 2 to 5 with the Fundamental Theorem of Calculus. W = 39200pi*[x^2/2] from 2 to 5 = 39200pi*(12.5 - 2) = 411600pi. The work is 411600pi."
         constraints: "cylindrical tanks only; slices indexed by depth below the rim; weight density 9800 N/m^3"
     diagnostic_exemplar:
       problem: 'A cylindrical tank of radius $2$ m and height $3$ m is full of water (weight density $9800$ N/m$^3$). Find the work to pump all the water over the top rim.'
@@ -1227,14 +1259,30 @@ topics:
         name: Force on vertical rectangular plates
         key_prerequisites: [average-value-work, definite-integrals-ftc]
         exemplars:
-          - problem: 'A rectangular plate $2$ m wide is submerged vertically with its top edge $1$ m and bottom edge $3$ m below the surface. Find the fluid force on one side ($9800$ N/m$^3$).'
-            answer: '$78400$ N'
-            answer_contract: {kind: none}
-            solution_sketch: 'A strip at depth $y$ has area $2\,dy$ and pressure $9800y$: $F = 9800\int_1^3 2y\,dy = 9800 \cdot 8 = 78400$ N.'
-          - problem: 'A dam gate is a rectangle $3$ m wide whose top edge lies at the water surface and whose bottom edge is $2$ m deep. Find the force on the gate.'
-            answer: '$58800$ N'
-            answer_contract: {kind: none}
-            solution_sketch: '$F = 9800\int_0^2 3y\,dy = 9800 \cdot 6 = 58800$ N.'
+          - problem: "A rectangular plate 2 m wide is submerged vertically with its top edge 1 m and its bottom edge 3 m below the water surface. The water has weight density 9800 N/m^3. Find the fluid force on one side in newtons."
+            answer: "78400"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is F = 9800 times the integral from 1 to 3 of 2y dy. Step 1: The hydrostatic pressure rule gives pressure = 9800 y at depth y. Step 2: A horizontal strip has area 2 dy, so the force integral is F = 9800 times the integral from 1 to 3 of 2y dy. Step 3: The fundamental theorem gives F = 9800 (9 - 1) = 78400. The force is 78400."
+          - problem: "A dam gate is a rectangle 3 m wide. Its top edge lies at the water surface and its bottom edge is 2 m deep. Use weight density 9800 N/m^3. Find the force on the gate in newtons."
+            answer: "58800"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is F = 9800 times the integral from 0 to 2 of 3y dy. Step 1: The hydrostatic pressure rule gives pressure = 9800 y at depth y. Step 2: A strip has area 3 dy, so F = 9800 times the integral from 0 to 2 of 3y dy. Step 3: Evaluate by the fundamental theorem: F = 9800 (6) = 58800. The force is 58800."
+          - problem: "A rectangular plate 4 m wide is submerged vertically with its top edge 1 m and its bottom edge 4 m below the water surface. The weight density is 9800 N/m^3. Compute the fluid force on one side in newtons."
+            answer: "294000"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is F = 9800 times the integral from 1 to 4 of 4y dy. Step 1: The hydrostatic pressure rule gives pressure = 9800 y at depth y. Step 2: A strip has area 4 dy, so F = 9800 times the integral from 1 to 4 of 4y dy. Step 3: Evaluate: F = 9800 (32 - 2) = 294000. The force is 294000."
+          - problem: "A rectangular plate 5 m wide is submerged vertically with its top edge 2 m and its bottom edge 5 m below the water surface. Use weight density 9800 N/m^3. Determine the fluid force on one side in newtons."
+            answer: "514500"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is F = 9800 times the integral from 2 to 5 of 5y dy. Step 1: The hydrostatic pressure rule gives pressure = 9800 y at depth y. Step 2: A strip has area 5 dy, so F = 9800 times the integral from 2 to 5 of 5y dy. Step 3: Evaluate: F = 9800 (62.5 - 10) = 514500. The force is 514500."
+          - problem: "A rectangular plate 2 m wide is submerged vertically with its top edge 1 m below the water surface. The fluid force on one side is 147000 N when the weight density is 9800 N/m^3. Find the depth of its bottom edge in meters."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is F = 9800 times the integral from 1 to b of 2y dy. Step 1: The hydrostatic pressure rule gives pressure = 9800 y at depth y. Step 2: A strip has area 2 dy, so F = 9800 times the integral from 1 to b of 2y dy. Step 3: The integral gives F = 9800 (b^2 - 1). Step 4: Set 9800 (b^2 - 1) = 147000, so b^2 - 1 = 15 and b^2 = 16. The positive depth is 4."
+          - problem: "A rectangular plate is submerged vertically from depth 2 m to depth 4 m. The fluid force on one side is 117600 N and the weight density is 9800 N/m^3. Find its width in meters."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is F = 9800 times the integral from 2 to 4 of w y dy. Step 1: The hydrostatic pressure rule gives pressure = 9800 y at depth y. Step 2: A strip has area w dy, so F = 9800 times the integral from 2 to 4 of w y dy. Step 3: The integral gives F = 9800 w (8 - 2) = 58800 w. Step 4: Set 58800 w = 117600, so w = 2. The width is 2."
         constraints: "strips indexed by depth y; width constant; depths are small integers"
       - id: kp3
         name: Plates with varying width
