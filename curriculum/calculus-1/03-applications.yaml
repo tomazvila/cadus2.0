@@ -25,13 +25,29 @@ topics:
         name: Velocity and acceleration from position
         key_prerequisites: [derivative-power-rule, higher-order-derivatives]
         exemplars:
-          - problem: 'A particle has position $s(t) = t^3 - 6t^2 + 9t$ (meters, seconds). Find the velocity $v(t)$ and acceleration $a(t)$.'
-            answer: "v(t) = 3t^2 - 12t + 9; a(t) = 6t - 12"
-            answer_contract: {kind: none}
-            solution_sketch: '$v = s''$, $a = v'' = s''''$.'
           - problem: 'For $s(t) = t^2 - 4t + 3$, find $v(2)$.'
             answer: "0"
             solution_sketch: '$v(t) = 2t - 4$; $v(2) = 0$.'
+          - problem: "A particle moves along a line with position s(t) = 3t^3 - 2t^2 + 5t - 1 (meters, seconds). Find the velocity v(t) and the acceleration a(t) as functions of t."
+            answer: "v = 9t^2-4t+5; a = 18t-4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "v"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "a"}]}
+            solution_sketch: "The position is s(t) = 3t^3 - 2t^2 + 5t - 1. Differentiate term by term with the power rule to get the velocity: v(t) = 9t^2 - 4t + 5. Differentiate again with the power rule to get the acceleration: a(t) = 18t - 4. The answer is v = 9t^2-4t+5; a = 18t-4."
+          - problem: "A particle moves along a line with position s(t) = t^3 - 2t^2 + t (meters, seconds). Find its velocity at t = 3."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The position is s(t) = t^3 - 2t^2 + t. Differentiate by the power rule: v(t) = 3t^2 - 4t + 1. Substitute t = 3: v(3) = 16."
+          - problem: "A particle moves along a line with position s(t) = 2t^3 - 5t^2 + 4t - 1 (meters, seconds). Find its acceleration at t = 2."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The position is s(t) = 2t^3 - 5t^2 + 4t - 1. Differentiate twice by the power rule: v(t) = 6t^2 - 10t + 4 and a(t) = 12t - 10. Substitute t = 2: a(2) = 14."
+          - problem: "A particle moves along a line with position s(t) = 3t^4 - 2t^2 + 7t (meters, seconds). Find the velocity v(t) as a function of t."
+            answer: "12t^3-4t+7"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The position is s(t) = 3t^4 - 2t^2 + 7t. Differentiate by the power rule and sum rule: v(t) = 12t^3 - 4t + 7. The velocity is 12t^3 - 4t + 7."
+          - problem: "A particle moves along a line with position s(t) = t^4 - 6t^2 + 2t (meters, seconds). Find the acceleration a(t) as a function of t."
+            answer: "12t^2-12"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The position is s(t) = t^4 - 6t^2 + 2t. Differentiate twice by the power rule: v(t) = 4t^3 - 12t + 2 and a(t) = 12t^2 - 12. The acceleration is 12t^2 - 12."
         constraints: "polynomial position functions with integer coefficients"
       - id: kp2
         name: At rest and direction of motion
@@ -649,14 +665,30 @@ topics:
         name: Geometric meaning and failure modes
         key_prerequisites: [linearization]
         exemplars:
-          - problem: 'Geometrically, Newton''s method replaces the curve $y = f(x)$ at $x_n$ by what, and takes $x_{n+1}$ to be what?'
-            answer: "the tangent line at (xₙ, f(xₙ)); its x-intercept"
-            answer_contract: {kind: none}
-            solution_sketch: "the tangent line at (xₙ, f(xₙ)); its x-intercept"
-          - problem: 'Why does Newton''s method fail for $f(x) = x^2 - 5$ if you start at $x_0 = 0$?'
-            answer: "f'(0) = 0 — the tangent is horizontal and never crosses the x-axis"
-            answer_contract: {kind: none}
-            solution_sketch: "f'(0) = 0 — the tangent is horizontal and never crosses the x-axis"
+          - problem: "For f(x) = x^2 - 2, one Newton step from x0 = 3 uses the tangent line at (3, 7). Find the next iterate x1 as a fraction."
+            answer: "11/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = x^2 - 2 with x0 = 3. Step 1 uses the tangent-line rule: f(3) = 7 and f'(x) = 2x, so f'(3) = 6. Step 2 uses the Newton update x1 = x0 - f(x0)/f'(x0) = 3 - 7/6. This gives x1 = 11/6."
+          - problem: "For f(x) = x^2 - 5, Newton's method from x0 = 0 cannot take a step because it would divide by f'(0). Evaluate f'(0)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = x^2 - 5 with x0 = 0. Step 1 uses the power rule: f'(x) = 2x. Step 2 evaluates at 0: f'(0) = 2*0 = 0. The division in the Newton update is therefore by 0, and the value is 0."
+          - problem: "For f(x) = x^3 - 8 with start x0 = 0, decide whether the first Newton step can be taken, and give f'(0)."
+            answer: "verdict = stalls; fprime = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["proceeds"], ["stalls"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fprime"}]}
+            solution_sketch: "Full object: f(x) = x^3 - 8 with start x0 = 0. Step 1 uses the power rule: f'(x) = 3x^2, so f'(0) = 3*0^2 = 0. Step 2 applies the failure test: the Newton update x1 = x0 - f(x0)/f'(x0) needs division by f'(0), which is division by 0, so the first step cannot be taken. The option proceeds is wrong because a step with zero derivative is undefined. The verdict is stalls and f'(0) = 0, so the answer is verdict = stalls; fprime = 0."
+          - problem: "A single Newton step at a point on a curve uses one straight line to obtain the next iterate. Which line is it?"
+            answer: "tangent"
+            answer_contract: {"kind": "label", "options": [["tangent"], ["secant"], ["normal"], ["chord"]]}
+            solution_sketch: "Full object: one Newton step at a point on a curve. Step 1 uses the geometric meaning: the method replaces the curve by the tangent line at the current point. Step 2 takes the next iterate as the x-intercept of that line. The option secant is wrong because it uses two points; normal is wrong because it is perpendicular; chord is wrong because it joins two curve points. The correct line is tangent."
+          - problem: "Newton's method needs a nonzero derivative at the current iterate. For f(x) = x^2 + 4x + 7, find the start x where f'(x) = 0 and the method cannot take a step. Find that x."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = x^2 + 4x + 7. Step 1 uses the power rule: f'(x) = 2x + 4. Step 2 sets the derivative to zero for a horizontal tangent: 2x + 4 = 0. Solving gives x = -2. The start where the method fails is -2."
+          - problem: "For f(x) = x^3 - 3x + 1, a Newton step is impossible at a start where the derivative is zero. On the interval 0 < x < 2, find the x-value of such a start."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = x^3 - 3x + 1 on 0 < x < 2. Step 1 uses the power rule: f'(x) = 3x^2 - 3. Step 2 sets the derivative to zero: 3x^2 - 3 = 0, so x^2 = 1. In the interval 0 < x < 2 the value is x = 1."
         constraints: "conceptual questions; failure cases where f'(xₙ) = 0"
     diagnostic_exemplar:
       problem: 'Apply two steps of Newton''s method to $f(x) = x^2 - 3$ starting at $x_0 = 2$. Give $x_1$ and $x_2$ exactly.'
@@ -750,14 +782,30 @@ topics:
         name: Classify local extrema with a sign chart
         key_prerequisites: [derivative-power-rule]
         exemplars:
-          - problem: 'For $f(x) = x^3 - 3x$, classify each critical point as a local max or local min and give the function value there.'
-            answer: "local max f(-1) = 2; local min f(1) = -2"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''$ is $+, -, +$ on the three intervals, so $x = -1$ is a max and $x = 1$ a min; $f(-1) = 2$, $f(1) = -2$.'
-          - problem: 'For $f(x) = x^2 - 4x + 1$, is the critical point $x = 2$ a local max or min?'
-            answer: "local min (f' changes - to +)"
-            answer_contract: {kind: none}
-            solution_sketch: "local min (f' changes - to +)"
+          - problem: "Let $f(x) = x^3 - 12x$. Its derivative has critical points $x = -2$ and $x = 2$. At the critical point $x = -2$, determine whether $f$ has a local maximum or a local minimum, and give the value $f(-2)$."
+            answer: "verdict = maximum; value = 16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["maximum"], ["minimum"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1: by the power rule $f'(x) = 3x^2 - 12 = 3(x - 2)(x + 2)$, so $x = -2$ is a critical point. Step 2: the sign chart of $f'$ is positive for $x < -2$ and negative for $-2 < x < 2$, so $f'$ changes from positive to negative at $x = -2$ and the point is a local maximum. Step 3: $f(-2) = (-2)^3 - 12(-2) = -8 + 24 = 16$. The wrong option minimum comes from misreading the sign change, which is positive to negative here, not negative to positive. The answer is verdict = maximum; value = 16."
+          - problem: "Let $f(x) = x^2 - 6x + 5$. Its derivative has the single critical point $x = 3$. At $x = 3$, determine whether $f$ has a local maximum or a local minimum, and give the value $f(3)$."
+            answer: "verdict = minimum; value = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["maximum"], ["minimum"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1: by the power rule $f'(x) = 2x - 6$, which is zero at $x = 3$. Step 2: $f'$ is negative for $x < 3$ and positive for $x > 3$, so the sign chart changes from negative to positive and $x = 3$ is a local minimum. Step 3: $f(3) = 9 - 18 + 5 = -4$. The wrong option maximum would come from reading the sign change backward, from positive to negative, which does not hold here. The answer is verdict = minimum; value = -4."
+          - problem: "Find the local maximum value of $f(x) = x^3 - 27x$."
+            answer: "54"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: $f'(x) = 3x^2 - 27 = 3(x - 3)(x + 3)$ by the power rule, so critical points are $-3$ and $3$. Step 2: a sign chart gives $+, -, +$, so $x = -3$ is the local maximum. Step 3: $f(-3) = -27 + 81 = 54$. The local maximum value is 54."
+          - problem: "Find the local minimum value of $f(x) = x^3 - 3x^2 - 9x$."
+            answer: "-27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: $f'(x) = 3x^2 - 6x - 9 = 3(x - 3)(x + 1)$ by the power rule, so critical points are $-1$ and $3$. Step 2: a sign chart gives $+, -, +$, so $x = 3$ is the local minimum. Step 3: $f(3) = 27 - 27 - 27 = -27$. The local minimum value is -27."
+          - problem: "Find the $x$-coordinate of the local maximum of $f(x) = x^4 - 8x^2$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: $f'(x) = 4x^3 - 16x = 4x(x - 2)(x + 2)$ by the power rule, so critical points are $-2$, $0$, and $2$. Step 2: a sign chart gives $-, +, -, +$, so $x = 0$ is the local maximum. The $x$-coordinate of the local maximum is 0."
+          - problem: "Find the local minimum value of $f(x) = x^3 + 6x^2 + 9x$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: $f'(x) = 3x^2 + 12x + 9 = 3(x + 1)(x + 3)$ by the power rule, so critical points are $-3$ and $-1$. Step 2: a sign chart gives $+, -, +$, so $x = -1$ is the local minimum. Step 3: $f(-1) = -1 + 6 - 9 = -4$. The local minimum value is -4."
         constraints: "derivative sign changes cleanly at each critical point; function values are integers"
     diagnostic_exemplar:
       problem: 'For $f(x) = x + \frac{9}{x}$, find the critical points and classify each as a local maximum or minimum.'
@@ -1347,14 +1395,30 @@ topics:
         name: Apply the second derivative test
         key_prerequisites: [critical-points-extrema, concavity-inflection-points]
         exemplars:
-          - problem: 'Use the second derivative test to classify the critical points $x = 1$ and $x = 3$ of $f(x) = x^3 - 6x^2 + 9x$.'
-            answer: "local max at x = 1 (f''(1) = -6 < 0); local min at x = 3 (f''(3) = 6 > 0)"
-            answer_contract: {kind: none}
-            solution_sketch: '$f''''(x) = 6x - 12$; negative at $1$, positive at $3$.'
-          - problem: 'Use the second derivative test on the critical point $x = 0$ of $f(x) = x^2 + 1$.'
-            answer: "local min (f''(0) = 2 > 0)"
-            answer_contract: {kind: none}
-            solution_sketch: "local min (f''(0) = 2 > 0)"
+          - problem: "The function f(x) = 2x^3 + 3x^2 - 36x + 5 has critical points x = -3 and x = 2. Use the second derivative test. Find the value of f'' at the local maximum."
+            answer: "-30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the second derivative of f(x) = 2x^3 + 3x^2 - 36x + 5 by the power rule: f''(x) = 12x + 6. At x = -3, f''(-3) = -30 < 0, so the second derivative test makes x = -3 the local maximum; at x = 2, f''(2) = 30 > 0, a local minimum. The value of f'' at the local maximum is -30."
+          - problem: "The function f(x) = 4x^2 - 8x + 7 has one critical point at x = 1. Use the second derivative test. Find the value of f at the local minimum."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the second derivative of f(x) = 4x^2 - 8x + 7 by the power rule: f''(x) = 8. Since f''(1) = 8 > 0, the second derivative test makes x = 1 a local minimum. The value of f at that local minimum is f(1) = 4 - 8 + 7 = 3."
+          - problem: "The function f(x) = x^3 - 6x^2 - 36x + 10 has critical points x = -2 and x = 6. Use the second derivative test. Find the value of f'' at the local minimum."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the second derivative of f(x) = x^3 - 6x^2 - 36x + 10 by the power rule: f''(x) = 6x - 12. At x = -2, f''(-2) = -24 < 0, a local maximum; at x = 6, f''(6) = 24 > 0, so the second derivative test makes x = 6 the local minimum. The value of f'' at the local minimum is 24."
+          - problem: "The function f(x) = x^4 - 8x^2 + 9 has critical points x = -2, x = 0, and x = 2. Use the second derivative test. Find the value of f'' at the local maximum."
+            answer: "-16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the second derivative of f(x) = x^4 - 8x^2 + 9 by the power rule: f''(x) = 12x^2 - 16. At x = 0, f''(0) = -16 < 0, so the second derivative test makes x = 0 the local maximum; at x = 2 and x = -2, f'' = 32 > 0, local minima. The value of f'' at the local maximum is -16."
+          - problem: "The function f(x) = 2x + 18/x has critical points x = -3 and x = 3. Use the second derivative test. Find the value of f'' at the local minimum."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the second derivative of f(x) = 2x + 18x^(-1) by the power rule: f''(x) = 36x^(-3), that is 36/x^3. At x = 3, f''(3) = 4/3 > 0, so the second derivative test makes x = 3 the local minimum; at x = -3, f''(-3) = -4/3 < 0, a local maximum. The value of f'' at the local minimum is 4/3."
+          - problem: "The function f(x) = 3x^4 - 4x^3 - 12x^2 + 5 has critical points x = -1, x = 0, and x = 2. Use the second derivative test. Find the value of f'' at the local maximum."
+            answer: "-24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the second derivative of f(x) = 3x^4 - 4x^3 - 12x^2 + 5 by the power rule: f''(x) = 36x^2 - 24x - 24. At x = 0, f''(0) = -24 < 0, so the second derivative test makes x = 0 the local maximum; at x = -1, f''(-1) = 36 > 0, and at x = 2, f''(2) = 72 > 0, local minima. The value of f'' at the local maximum is -24."
         constraints: "f'' nonzero at each tested critical point (test is conclusive)"
       - id: kp2
         name: When the test is inconclusive

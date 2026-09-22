@@ -637,6 +637,22 @@ topics:
           - problem: 'Using the same table, estimate $\int_0^6 v(t)\,dt$ with a right Riemann sum.'
             answer: "58"
             solution_sketch: '$2(7 + 10 + 12) = 58$.'
+          - problem: "A table gives v(0) = 4, v(1) = 6, v(2) = 9, v(3) = 11. Give the left Riemann sum estimate of the integral from 0 to 3 of v(t) dt."
+            answer: "19"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: a left Riemann sum uses the left endpoint value of each subinterval times the spacing. The spacing is 1 and the left values are 4, 6 and 9. Step 2: multiply and add: 1*(4 + 6 + 9) = 19. The estimate is 19."
+          - problem: "A table gives v(0) = 3, v(2) = 5, v(4) = 8, v(6) = 10, v(8) = 12. Find the right Riemann sum estimate of the integral from 0 to 8 of v(t) dt."
+            answer: "70"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: a right Riemann sum uses the right endpoint value of each subinterval times the spacing. The spacing is 2 and the right values are 5, 8, 10 and 12. Step 2: multiply and add: 2*(5 + 8 + 10 + 12) = 70. The estimate is 70."
+          - problem: "A table gives v(1) = 7, v(2) = 5, v(3) = 4, v(4) = 2, v(5) = 1. Compute the left Riemann sum estimate of the integral from 1 to 5 of v(t) dt."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: a left Riemann sum uses the left endpoint value of each subinterval times the spacing. The spacing is 1 and the left values are 7, 5, 4 and 2. Step 2: multiply and add: 1*(7 + 5 + 4 + 2) = 18. The estimate is 18."
+          - problem: "A table gives v(0) = 2, v(1) = 6, v(2) = 6, v(3) = 9, v(4) = 10. Determine the right Riemann sum estimate of the integral from 0 to 4 of v(t) dt."
+            answer: "31"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: a right Riemann sum uses the right endpoint value of each subinterval times the spacing. The spacing is 1 and the right values are 6, 6, 9 and 10. Step 2: multiply and add: 1*(6 + 6 + 9 + 10) = 31. The estimate is 31."
         constraints: "evenly spaced table; 3-4 subintervals; integer values"
       - id: kp2
         name: Trapezoid sums from a table (uneven spacing allowed)
@@ -781,6 +797,22 @@ topics:
           - problem: 'Water flows into a tank at $r(t) = 2t$ liters per minute. How much water enters during the first $5$ minutes?'
             answer: "25 L"
             solution_sketch: '$\int_0^5 2t\,dt = [t^2]_0^5 = 25$.'
+          - problem: "A car moves along a straight road with velocity v(t) = 3t^2 + 4t metres per second. Find its displacement over the interval [1, 3] in metres."
+            answer: "42"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the Fundamental Theorem of Calculus, the displacement is the integral of v(t) = 3t^2 + 4t from 1 to 3. An antiderivative by the power rule is t^3 + 2t^2. Evaluate at the bounds: (27 + 18) - (1 + 2) = 45 - 3 = 42, so the displacement is 42."
+          - problem: "Water flows into a tank at the rate r(t) = 4t + 1 litres per minute. How many litres enter during the first 2 minutes?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the Fundamental Theorem of Calculus, the amount of water is the integral of r(t) = 4t + 1 from 0 to 2. An antiderivative by the power rule is 2t^2 + t. Evaluate at the bounds: (8 + 2) - (0 + 0) = 10, so the amount is 10."
+          - problem: "A particle moves with velocity v(t) = 3t^2 metres per second. Its displacement over the interval [0, T] is 64 metres. Find the time T in seconds."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the Fundamental Theorem of Calculus, the displacement over [0, T] is the integral of v(t) = 3t^2 from 0 to T. An antiderivative by the power rule is t^3, so T^3 - 0 = 64. Solve T^3 = 64 by taking cube roots, which gives T = 4, so the time is 4."
+          - problem: "A particle moves with velocity v(t) = 2t - 6 metres per second. Find its displacement over the interval [1, 4] in metres."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the Fundamental Theorem of Calculus, the displacement is the integral of v(t) = 2t - 6 from 1 to 4. An antiderivative by the power rule is t^2 - 6t. Evaluate at the bounds: (16 - 24) - (1 - 6) = -8 + 5 = -3, so the displacement is -3."
         constraints: "polynomial rates; state units in the answer"
     diagnostic_exemplar:
       problem: 'Water flows into a tank at the rate $r(t) = 3t^2 + 2$ litres per minute. How many litres enter during the first $3$ minutes?'
@@ -924,18 +956,50 @@ topics:
           - problem: 'For $f(x) = 4x$ on $[1, 3]$, find the $c$ guaranteed by the Mean Value Theorem for integrals (the $c$ with $f(c)$ equal to the average value).'
             answer: "2"
             solution_sketch: 'Average value $= \frac{1}{2}\int_1^3 4x\,dx = \frac{16}{2} = 8$; solve $4c = 8$ to get $c = 2$, which lies in $[1, 3]$.'
+          - problem: "For $f(x) = 4x + 2$ on $[0, 3]$, find the value $c$ guaranteed by the Mean Value Theorem for integrals, where $f(c)$ equals the average value of $f$ on the interval. Give the answer exactly."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Average value: (1/(3-0))∫_0^3 (4x+2) dx = (1/3)(2x^2+2x)|_0^3 = (1/3)(18+6) = 8 by the Fundamental Theorem of Calculus. The Mean Value Theorem for integrals gives a c in [0, 3] with f(c) = 8. Solve 4c + 2 = 8 by algebra to get c = 3/2, which lies in [0, 3]. The answer is 3/2."
+          - problem: "For $f(x) = x^2$ on $[0, 6]$, find the $c$ in the interval with $f(c)$ equal to the average value of $f$. Give the answer exactly."
+            answer: "2sqrt(3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Average value: (1/(6-0))∫_0^6 x^2 dx = (1/6)(6^3/3) = 12 by the Fundamental Theorem of Calculus. The Mean Value Theorem for integrals gives a c in [0, 6] with f(c) = 12. Solve c^2 = 12 by algebra; the positive root c = 2sqrt(3) lies in [0, 6]. The answer is 2sqrt(3)."
+          - problem: "For $f(x) = x^3$ on $[-2, 2]$, find the value $c$ in the interval promised by the Mean Value Theorem for integrals, where $f(c)$ is the average value. Give the answer exactly."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Average value: (1/(2-(-2)))∫_{-2}^2 x^3 dx = (1/4)(0) = 0 by the Fundamental Theorem of Calculus, since x^3 is odd over a symmetric interval. The Mean Value Theorem for integrals gives a c in [-2, 2] with f(c) = 0. Solve c^3 = 0 by algebra to get c = 0, which lies in [-2, 2]. The answer is 0."
+          - problem: "For $f(x) = sqrt(x)$ on $[0, 4]$, find the $c$ in $[0, 4]$ with $f(c)$ equal to the average value of $f$. Give the answer exactly."
+            answer: "16/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Average value: (1/(4-0))∫_0^4 sqrt(x) dx = (1/4)(2/3)(4^(3/2)) = (1/4)(16/3) = 4/3 by the Fundamental Theorem of Calculus. The Mean Value Theorem for integrals gives a c in [0, 4] with f(c) = 4/3. Solve sqrt(c) = 4/3 by algebra to get c = (4/3)^2 = 16/9, which lies in [0, 4]. The answer is 16/9."
         constraints: "f continuous; c solvable exactly and inside the interval"
       - id: kp3
         name: Applied average values
         key_prerequisites: [definite-integrals-ftc]
         exemplars:
-          - problem: 'The temperature is $T(t) = 12 + 2t$ degrees Celsius, $t$ in hours. Find the average temperature over $[0, 6]$.'
-            answer: "18 degrees Celsius"
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{1}{6}\int_0^6 (12 + 2t)\,dt = \frac{1}{6}(72 + 36) = 18$.'
           - problem: 'A car''s velocity is $v(t) = 3t^2$ m/s. Find its average velocity over $[0, 2]$.'
             answer: "4 m/s"
             solution_sketch: '$\frac{1}{2}\int_0^2 3t^2\,dt = \frac{8}{2} = 4$.'
+          - problem: "A tank warms at rate R(t) = 5 + 3t liters per hour, t in hours. Find the average rate over [0, 4]."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rate is R(t) = 5 + 3t on [0, 4]. The average value formula gives (1/(4-0)) times the integral from 0 to 4 of (5 + 3t) dt. That integral is 20 + 24 = 44, so the average is 44/4 = 11. The average rate is 11."
+          - problem: "A pump moves water at rate r(t) = 2t + 1 gallons per minute, t in minutes. Find the average rate over [0, 5]."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rate is r(t) = 2t + 1 on [0, 5]. The average value formula gives (1/(5-0)) times the integral from 0 to 5 of (2t + 1) dt. That integral is 25 + 5 = 30, so the average is 30/5 = 6. The average rate is 6."
+          - problem: "A particle's velocity is v(t) = 6t^2 meters per second, t in seconds. Find its average velocity over [0, 3]."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The velocity is v(t) = 6t^2 on [0, 3]. The average value formula gives (1/(3-0)) times the integral from 0 to 3 of 6t^2 dt. That integral is 6 times 27/3 = 54, so the average is 54/3 = 18. The average velocity is 18."
+          - problem: "The power output of a generator is P(t) = 4t + 10 kilowatts, t in hours. Find the average power over [0, 5]."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The power is P(t) = 4t + 10 on [0, 5]. The average value formula gives (1/(5-0)) times the integral from 0 to 5 of (4t + 10) dt. That integral is 50 + 50 = 100, so the average is 100/5 = 20. The average power is 20."
+          - problem: "Water flows into a tank at rate f(t) = 3t^2 + 1 liters per minute, t in minutes. Find the average flow rate over [0, 2]."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The flow rate is f(t) = 3t^2 + 1 on [0, 2]. The average value formula gives (1/(2-0)) times the integral from 0 to 2 of (3t^2 + 1) dt. That integral is 8 + 2 = 10, so the average is 10/2 = 5. The average flow rate is 5."
         constraints: "linear or quadratic rates; integer average with units"
     diagnostic_exemplar:
       problem: 'For $f(x) = 3x^2$ on $[0, 2]$, find the $c$ guaranteed by the Mean Value Theorem for integrals (the $c$ in $[0, 2]$ with $f(c)$ equal to the average value of $f$).'
