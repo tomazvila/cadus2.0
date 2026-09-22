@@ -1412,14 +1412,30 @@ topics:
         name: "Evaluating nested statements over given domains"
         key_prerequisites: [universal-existential-statements]
         exemplars:
-          - problem: 'Over the domain $\{1, 2\}$ for both variables, is $\forall x\ \exists y,\ x + y = 3$ true? Is $\exists y\ \forall x,\ x + y = 3$ true?'
-            answer_contract: {kind: none}
-            answer: 'The first is true ($y = 3 - x$ works: $1 + 2 = 3$, $2 + 1 = 3$); the second is false.'
-            solution_sketch: 'For each $x$ the other element works. But a single $y$ would need $1 + y = 3$ and $2 + y = 3$ simultaneously, forcing $y = 2$ and $y = 1$ — impossible.'
-          - problem: 'Is $\forall x \in \mathbb{R}\ \exists y \in \mathbb{R},\ y^3 = x$ true? What about $\forall x \in \mathbb{R}\ \exists y \in \mathbb{R},\ y^2 = x$?'
-            answer_contract: {kind: none}
-            answer: 'The first is true (real cube roots always exist); the second is false ($x = -1$ has no real square root).'
-            solution_sketch: 'Cubing is onto $\mathbb{R}$, so $y = \sqrt[3]{x}$ always works. Squares are never negative, so $x = -1$ is a counterexample to the second.'
+          - problem: "Over the domain {1, 2}, the statement ∃y ∀x, x*y = x is true. Find the value of y in the domain that witnesses this statement."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (test the witness y=1): for every x in {1,2}, 1*x = x, so the inner universal claim holds. Step 2 (check uniqueness): y=2 fails at x=1 because 2*1 = 2, not 1. The answer is 1."
+          - problem: "Over the real numbers, the statement ∀x ∃y, x*y = 1 is false. Give the real number x that is a counterexample."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (negate the universal): a counterexample is a real x for which no real y satisfies x*y = 1. Step 2 (test each candidate): for x not equal to 0, y = 1/x is a real witness, so only x = 0 can fail. Step 3 (verify x = 0): 0*y = 0 for every real y, never 1, so no witness exists. The answer is 0."
+          - problem: "Over the domain {1, 2, 3}, the statement ∀x ∃y, x + y = 4 is true. Find the value of y that works when x = 1."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (inner existential): solve y = 4 - x for the given x. Step 2 (substitute x=1): y = 4 - 1 = 3, and 3 is in the domain {1,2,3}. The answer is 3."
+          - problem: "Over the integers, the statement ∀x ∃y, x = 2y is false. Give an integer x that is a counterexample."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (negate the universal): a counterexample is an integer x for which x = 2y has no integer solution y. Step 2 (test x=1): the equation 1 = 2y gives y = 1/2, not an integer. The answer is 1."
+          - problem: "Over the real numbers, the statement ∀x ∃y, x + y = 0 is true. Give the value of y that witnesses the inner statement when x = 7."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (inner existential): solve the equation x + y = 0 for y, giving y = -x. Step 2 (substitute x=7): y = -7, and -7 is a real number. The answer is -7."
+          - problem: "Over the domain {0, 1, 2, 3}, the statement ∀x ∃y, y^2 = x is false. Give a counterexample x in the domain."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (negate the universal): a counterexample is an x with no y in {0,1,2,3} whose square is x. Step 2 (test x=2): the squares 0^2=0, 1^2=1, 2^2=4, and 3^2=9 skip 2. The answer is 2."
         constraints: "nested quantifiers over small finite domains or $\\mathbb{R}$/$\\mathbb{Z}$; require a witness or counterexample"
     diagnostic_exemplar:
       problem: 'Is $\exists x \in \mathbb{N},\ \forall y \in \mathbb{N},\ x \le y$ true? Identify such an $x$ if so.'
@@ -1455,40 +1471,88 @@ topics:
         name: "Negating quantified statements"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Negate $\forall x \in \mathbb{R},\ x^2 \ge 0$.'
-            answer_contract: {kind: none}
-            answer: '$\exists x \in \mathbb{R},\ x^2 < 0$.'
-            solution_sketch: '$\neg\forall x\, P(x) \equiv \exists x\, \neg P(x)$; the negation of $x^2 \ge 0$ is $x^2 < 0$.'
-          - problem: 'Negate $\exists n \in \mathbb{N},\ n^2 = 3$.'
-            answer_contract: {kind: none}
-            answer: '$\forall n \in \mathbb{N},\ n^2 \ne 3$.'
-            solution_sketch: '$\neg\exists n\, P(n) \equiv \forall n\, \neg P(n)$; negate $n^2 = 3$ to $n^2 \ne 3$.'
+          - problem: "The statement begins with the universal quantifier over x in {1, 2, 3, 4}: x^2 < 10. Select the quantifier of its negation and give a value of x in the set for which the negated predicate holds."
+            answer: "quantifier = exists; witness = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["forall"]]}, "name": "quantifier"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
+            solution_sketch: "The full negation is exists x in {1, 2, 3, 4}, x^2 >= 10. Step 1 (negate predicate): x^2 < 10 becomes x^2 >= 10. Step 2 (change quantifier): universal becomes existential. Testing the domain, only x = 4 satisfies x^2 >= 10. Therefore quantifier = exists; witness = 4."
+          - problem: "The statement begins with the existential quantifier over n in {1, 2, 3, 4, 5}: n^2 = 4. Select the quantifier of its negation and give the value of n in the set for which the original predicate holds."
+            answer: "quantifier = forall; witness = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["forall"]]}, "name": "quantifier"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
+            solution_sketch: "The full negation is for all n in {1, 2, 3, 4, 5}, n^2 != 4. Step 1 (negate predicate): n^2 = 4 becomes n^2 != 4. Step 2 (change quantifier): existential becomes universal. Step 3 (witness check): n = 2 gives 2^2 = 4, so the original predicate holds there. Therefore quantifier = forall; witness = 2."
+          - problem: "The statement begins with the universal quantifier over x in {1, 2, 3, 4, 5}: x + 2 < 7. Select the quantifier of its negation and give a value of x in the set for which the negated predicate holds."
+            answer: "quantifier = exists; witness = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["forall"]]}, "name": "quantifier"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
+            solution_sketch: "The full negation is exists x in {1, 2, 3, 4, 5}, x + 2 >= 7. Step 1 (negate predicate): x + 2 < 7 becomes x + 2 >= 7. Step 2 (change quantifier): universal becomes existential. In the domain, x = 5 gives 5 + 2 = 7, so x = 5 satisfies the negated predicate. Therefore quantifier = exists; witness = 5."
+          - problem: "The statement begins with the existential quantifier over m in {2, 4, 6, 8}: m/2 = 3. Select the quantifier of its negation and give the value of m in the set for which the original predicate holds."
+            answer: "quantifier = forall; witness = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["forall"]]}, "name": "quantifier"}, {"contract": {"kind": "exact"}, "name": "witness"}]}
+            solution_sketch: "The full negation is for all m in {2, 4, 6, 8}, m/2 != 3. Step 1 (negate predicate): m/2 = 3 becomes m/2 != 3. Step 2 (change quantifier): existential becomes universal. Step 3 (witness check): m = 6 gives 6/2 = 3, so the original predicate holds there. Therefore quantifier = forall; witness = 6."
+          - problem: "The statement begins with the universal quantifier over x in {1, 2, 3, 4, 5, 6}: x^2 > 20. Give all x in the domain for which the negated predicate holds, as a list in increasing order."
+            answer: "1, 2, 3, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The full negation is exists x in {1, 2, 3, 4, 5, 6}, x^2 <= 20. Step 1 (negate predicate): x^2 > 20 becomes x^2 <= 20. Step 2 (collect truth set): check each domain value. The values 1, 2, 3, 4 satisfy x^2 <= 20; 5^2 = 25 and 6^2 = 36 do not. The list in increasing order is 1, 2, 3, 4."
+          - problem: "The statement begins with the existential quantifier over k in {1, 2, 3, 4, 5}: k^2 = 9. Give all k in the domain for which the negated predicate holds, as a list in increasing order."
+            answer: "1, 2, 4, 5"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The full negation is for all k in {1, 2, 3, 4, 5}, k^2 != 9. Step 1 (negate predicate): k^2 = 9 becomes k^2 != 9. Step 2 (collect truth set): check each domain value. The value k = 3 gives 3^2 = 9, so it is excluded; the others are 1, 2, 4, 5. The list in increasing order is 1, 2, 4, 5."
         constraints: "push the negation inside a single quantifier and negate the predicate"
       - id: kp2
         name: "Negating conditionals and compounds"
         key_prerequisites: [logical-equivalence]
         exemplars:
-          - problem: 'Negate "if $n$ is prime then $n$ is odd".'
-            answer_contract: {kind: none}
-            answer: '$n$ is prime and $n$ is not odd (there is an even prime).'
-            solution_sketch: 'The negation of $P \to Q$ is $P \land \neg Q$.'
-          - problem: 'Negate "$x > 0$ and $x < 1$".'
-            answer_contract: {kind: none}
-            answer: '$x \le 0$ or $x \ge 1$.'
-            solution_sketch: 'By De Morgan, $\neg(P \land Q) \equiv \neg P \lor \neg Q$: negate each part and switch $\land$ to $\lor$.'
+          - problem: "Negate the statement: if a number is a multiple of 6 then it is even. Which option gives the negation?"
+            answer: "multiple of 6 and not even"
+            answer_contract: {"kind": "label", "options": [["multiple of 6 and not even"], ["not a multiple of 6 and even"], ["not a multiple of 6 and not even"], ["multiple of 6 or not even"]]}
+            solution_sketch: "The negation of P -> Q is P and not Q. Here P is a multiple of 6 and Q is even, so the negation is multiple of 6 and not even. The option 'not a multiple of 6 and even' negates the wrong part. The option 'not a multiple of 6 and not even' negates both parts. The option 'multiple of 6 or not even' keeps a disjunction. The answer is multiple of 6 and not even."
+          - problem: "Negate: x > 3 and x <= 7. Give the answer as an inequality in x."
+            answer: "x <= 3 or x > 7"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "By De Morgan, the negation of an and is an or with each part negated. The negation of x > 3 is x <= 3. The negation of x <= 7 is x > 7. Combining these gives x <= 3 or x > 7. The answer is x <= 3 or x > 7."
+          - problem: "Negate: x < -2 or x >= 5. Give the answer as an inequality in x."
+            answer: "-2 <= x < 5"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "By De Morgan, the negation of an or is an and with each part negated. The negation of x < -2 is x >= -2. The negation of x >= 5 is x < 5. Together they give -2 <= x < 5. The answer is -2 <= x < 5."
+          - problem: "Negate: x <= 1 or x > 4. Give the answer as an inequality in x."
+            answer: "1 < x <= 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "By De Morgan, the negation of an or is an and with each part negated. The negation of x <= 1 is x > 1. The negation of x > 4 is x <= 4. Combined, they give 1 < x <= 4. The answer is 1 < x <= 4."
+          - problem: "Negate: x >= 0 and x < 10. Give the answer as an inequality in x."
+            answer: "x < 0 or x >= 10"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "By De Morgan, the negation of an and is an or with each part negated. The negation of x >= 0 is x < 0. The negation of x < 10 is x >= 10. Combined, they give x < 0 or x >= 10. The answer is x < 0 or x >= 10."
+          - problem: "Negate the statement: if x > 2 then x^2 > 4. Which option gives the negation?"
+            answer: "x > 2 and x^2 <= 4"
+            answer_contract: {"kind": "label", "options": [["x > 2 and x^2 <= 4"], ["x <= 2 and x^2 > 4"], ["x <= 2 and x^2 <= 4"], ["x > 2 or x^2 <= 4"]]}
+            solution_sketch: "The negation of P -> Q is P and not Q. Here P is x > 2 and Q is x^2 > 4, so the negation is x > 2 and x^2 <= 4. The option 'x <= 2 and x^2 > 4' negates the wrong part. The option 'x <= 2 and x^2 <= 4' negates both parts. The option 'x > 2 or x^2 <= 4' keeps a disjunction. The answer is x > 2 and x^2 <= 4."
         constraints: "negate implications via $P \\land \\neg Q$; negate $\\land$ / $\\lor$ via De Morgan"
       - id: kp3
         name: "Negating nested quantifier statements"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Negate $\forall \epsilon > 0\ \exists \delta > 0,\ (|x - a| < \delta \to |f(x) - L| < \epsilon)$.'
-            answer_contract: {kind: none}
-            answer: '$\exists \epsilon > 0\ \forall \delta > 0,\ (|x - a| < \delta \land |f(x) - L| \ge \epsilon)$.'
-            solution_sketch: 'Flip each quantifier ($\forall \leftrightarrow \exists$) and negate the inner conditional $P \to Q$ to $P \land \neg Q$.'
-          - problem: 'Negate "$\forall x \in \mathbb{R}\ \exists n \in \mathbb{N},\ n > x$" (the Archimedean property).'
-            answer_contract: {kind: none}
-            answer: '$\exists x \in \mathbb{R}\ \forall n \in \mathbb{N},\ n \le x$.'
-            solution_sketch: 'Flip $\forall$ to $\exists$ and $\exists$ to $\forall$, and negate $n > x$ to $n \le x$.'
+          - problem: "Let S be the statement: for every epsilon > 0 there exists delta > 0 such that for all x, if |x - a| < delta then |f(x) - L| < epsilon. Here f is a function, a is a point and L is a value. Negate S by flipping every quantifier and negating the inner conditional. How many existential quantifiers does the negation of S contain?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full statement is: for every epsilon > 0 there exists delta > 0 such that for all x, if |x - a| < delta then |f(x) - L| < epsilon. Step 1, quantifier negation rule: flip each quantifier, so every becomes exists, exists becomes for all, and for all becomes exists. Step 2, conditional negation rule: not (P implies Q) is P and not Q. The negation reads: there exists epsilon > 0 such that for every delta > 0 there is an x with |x - a| < delta and |f(x) - L| >= epsilon. It has exactly two existential quantifiers, over epsilon and over x, so the answer is 2."
+          - problem: "Let S be the statement: for every x in the set {1, 2, 3, 4} there exists n in the set {1, 2, 3, 4} with n > x. The statement S is false, so its negation is true. Negate S by flipping each quantifier and negating the inequality at the end. Find the value of x that witnesses the negation."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full statement is: for every x in {1, 2, 3, 4} there exists n in {1, 2, 3, 4} with n > x. Step 1, quantifier negation rule: flip each quantifier. Step 2, matrix negation rule: n > x becomes n <= x. The negation reads: there exists x in {1, 2, 3, 4} such that for every n in {1, 2, 3, 4}, n <= x. Checking the candidates, x = 1, 2, 3 fail since n = 4 is bigger than each, while x = 4 has every n at most 4, so the witness is 4."
+          - problem: "Let S be the statement: for every epsilon > 0 there exists n in the set {1, 2, 3, 4, 5} such that 1/n < epsilon. The statement S is false, so its negation is true. Negate S by flipping each quantifier and negating the inequality at the end. Find the largest value of epsilon > 0 that can serve as the witness in the negation of S."
+            answer: "1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full statement is: for every epsilon > 0 there exists n in {1, 2, 3, 4, 5} such that 1/n < epsilon. Step 1, quantifier negation rule: flip each quantifier. Step 2, matrix negation rule: 1/n < epsilon becomes 1/n >= epsilon. The negation reads: there exists epsilon > 0 such that for every n in {1, 2, 3, 4, 5}, 1/n >= epsilon. The smallest value of 1/n on the set is 1/5, so epsilon can be at most 1/5, and the largest witness is 1/5."
+          - problem: "A statement has the shape: for every epsilon > 0 there exists delta > 0 such that for all x, if P(x) then Q(x), where P(x) and Q(x) are inequalities that involve x. Negating it flips every quantifier and pushes the negation onto the inner part. What logical form does that inner part take?"
+            answer: "a conjunction"
+            answer_contract: {"kind": "label", "options": [["a conjunction"], ["a disjunction"], ["a conditional"], ["a biconditional"]]}
+            solution_sketch: "The full statement is: for every epsilon > 0 there exists delta > 0 such that for all x, if P(x) then Q(x). Step 1, quantifier negation rule: flip every quantifier, giving exists epsilon, then for all delta, then there is an x. Step 2, conditional negation rule: not (P implies Q) is equivalent to P and not Q. The option 'a conditional' is the error of keeping an if-then shape such as P implies not Q; 'a disjunction' is the De Morgan slip P or not Q; 'a biconditional' confuses this with negating an iff. The inner part becomes a conjunction."
+          - problem: "Let S be the statement: for every x in the set {1, 2, 3, 4, 5} there exists y in the set {1, 2, 3, 4, 5} such that x + y = 9. The statement S is false, so its negation is true. How many values of x in the set make the negation of S true?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full statement is: for every x in {1, 2, 3, 4, 5} there exists y in {1, 2, 3, 4, 5} such that x + y = 9. Step 1, quantifier negation rule: flip each quantifier. Step 2, matrix negation rule: x + y = 9 becomes x + y is not 9. The negation reads: there exists x in the set such that for every y in the set, x + y is not 9. For x = 1, 2, 3 the sums run from x + 1 to x + 5 and never reach 9, while x = 4 pairs with y = 5 and x = 5 pairs with y = 4 to give 9. Exactly three values work, so the answer is 3."
+          - problem: "Let f be the function with f(x) = 0 for x < 3 and f(x) = 6 for x >= 3. Let S be the statement: for every epsilon > 0 there exists delta > 0 such that for all x, if |x - 3| < delta then |f(x) - 6| < epsilon. The statement S is false, so its negation is true. Find the largest value of epsilon > 0 that can serve as the witness in the negation of S."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full statement is: for every epsilon > 0 there exists delta > 0 such that for all x, if |x - 3| < delta then |f(x) - 6| < epsilon. Step 1, quantifier negation rule: flip each quantifier. Step 2, conditional negation rule: not (P implies Q) is P and not Q. The negation reads: there exists epsilon > 0 such that for every delta > 0 there is an x with |x - 3| < delta and |f(x) - 6| >= epsilon. For any delta, an x just below 3 lies within delta of 3 and has f(x) = 0, so |f(x) - 6| = 6, and no x gives a larger gap. The largest epsilon that works is 6."
         constraints: "epsilon-delta style; flip every quantifier and negate the matrix"
     diagnostic_exemplar:
       problem: 'Negate, pushing the negation all the way in: "$\forall \epsilon > 0\ \exists n \in \mathbb{N}$, if $n > 10$ then $1/n < \epsilon$".'
