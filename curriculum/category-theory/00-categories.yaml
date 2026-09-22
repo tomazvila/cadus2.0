@@ -25,34 +25,100 @@ topics:
         key_prerequisites: [computing-compositions]
         constraints: "One exemplar is abstract — state the composability condition $B=C$ and the resulting domain/codomain; concrete instances use affine or quadratic integer functions whose composites stay hand-computable."
         exemplars:
-          - problem: "For $f\\colon A\\to B$ and $g\\colon C\\to D$, exactly when is the composite $g\\circ f$ defined, and what are its domain and codomain?"
-            answer: "Defined iff $B=C$; then $g\\circ f\\colon A\\to D$."
-            solution_sketch: "Composition feeds outputs of $f$ into $g$, so the codomain of $f$ must equal the domain of $g$. When $B=C$, the composite $g\\circ f$ sends $A$ into $D$: first apply $f$, then $g$."
-          - problem: "Let $f(x)=2x+1$ and $g(x)=x^2$ on $\\mathbb Z$. Compute $(g\\circ f)(x)$ and $(f\\circ g)(x)$, and decide whether they are equal."
-            answer: "$(g\\circ f)(x)=4x^2+4x+1$ and $(f\\circ g)(x)=2x^2+1$; not equal."
-            solution_sketch: "$(g\\circ f)(x)=g(2x+1)=(2x+1)^2=4x^2+4x+1$, while $(f\\circ g)(x)=f(x^2)=2x^2+1$. At $x=1$ they give $9$ and $3$, so composition is not commutative."
+          - problem: "Let f: A -> B and g: C -> D be functions between the sets A = {1, 2, 3}, B = {4, 5}, C = {4, 5}, D = {6, 7}, with f(1)=4, f(2)=5, f(3)=4 and g(4)=6, g(5)=7. Determine whether the composite g o f exists, and give the value (g o f)(3)."
+            answer: "verdict = defined; gf3 = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["defined"], ["undefined"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "gf3"}]}
+            solution_sketch: "Full object: f: A -> B with A = {1, 2, 3} and B = {4, 5}, and g: C -> D with C = {4, 5} and D = {6, 7}; the composite g o f feeds each output of f into g. Step 1, composability rule: g o f exists exactly when the codomain of f equals the domain of g, that is B = C; here both sets are {4, 5}, so the composite exists and runs from A to D. Step 2, compute the value: (g o f)(3) = g(f(3)) = g(4) = 6. Option undefined is the error of not checking that the codomain of f and the domain of g are the same set. The answer is verdict = defined; gf3 = 6."
+          - problem: "Let f(x)=2x+1 and g(x)=x^2 on Z. Give the composites (g o f)(x) and (f o g)(x) as functions of x."
+            answer: "gf = 4x^2+4x+1; fg = 2x^2+1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "gf"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "fg"}]}
+            solution_sketch: "Full object: (g o f)(x)=g(f(x)) and (f o g)(x)=f(g(x)). Step 1, substitute f into g: g(2x+1)=(2x+1)^2=4x^2+4x+1. Step 2, substitute g into f: f(x^2)=2x^2+1. The answer is gf = 4x^2+4x+1; fg = 2x^2+1."
+          - problem: "Let f(x)=3x-2 and g(x)=x^2 on Z. Compare the composites g o f and f o g. Give the verdict and the value (g o f)(2)."
+            answer: "verdict = differ; gf2 = 16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["differ"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "gf2"}]}
+            solution_sketch: "Full object: (g o f)(x)=g(3x-2)=(3x-2)^2=9x^2-12x+4, and (f o g)(x)=f(x^2)=3x^2-2. Step 1, evaluate at x = 2: (g o f)(2) = (6-2)^2 = 16 and (f o g)(2) = 12-2 = 10, so the composites differ. Step 2, record the value: (g o f)(2) = 16. Option equal is the error of assuming that composition of functions commutes. The answer is verdict = differ; gf2 = 16."
+          - problem: "Let f(x)=x-2 and g(x)=4x on Z. Compute (f o g)(3)."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = x-2 and g(x) = 4x, so (f o g)(x) = f(g(x)) = 4x-2. Step 1, apply the inner function g at 3: g(3) = 12. Step 2, apply the outer function f at 12: f(12) = 10. The answer is 10."
+          - problem: "Let f(x)=x^2 and g(x)=2x-1 on Z. Compute (g o f)(-3)."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: f(x) = x^2 and g(x) = 2x-1, so (g o f)(x) = g(x^2) = 2x^2-1. Step 1, apply the inner function f at -3: f(-3) = 9. Step 2, apply the outer function g at 9: g(9) = 17. The answer is 17."
+          - problem: "A student claims that for f(x)=1-x and g(x)=x^2 on Z, the composites g o f and f o g agree for every integer n >= 1. Give the smallest integer n >= 1 for which the claim is false."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: (g o f)(n) = g(1-n) = (1-n)^2 and (f o g)(n) = f(n^2) = 1-n^2. Step 1, test n = 1: (g o f)(1) = (1-1)^2 = 0 and (f o g)(1) = 1-1 = 0, so the claim holds at n = 1. Step 2, test n = 2: (g o f)(2) = (1-2)^2 = 1 and (f o g)(2) = 1-4 = -3, which differ. Step 3, smallest counterexample: n = 2. The answer is 2."
+          - problem: "Write the full proof: let f: A -> B and g: B -> C be functions. Prove that the composite g o f: A -> C is a well-defined function. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let f: A -> B and g: B -> C be functions. Step 1: for each a in A, f(a) is a single element of B, because f is a function. Step 2: since B is the domain of g, the value g(f(a)) is a single element of C, because g is a function. Step 3: define g o f by (g o f)(a) = g(f(a)); this rule sends each a in A to exactly one element of C, so it is a candidate function from A to C. Step 4: if a1 = a2 in A, then f(a1) = f(a2) since f is a function, and then g(f(a1)) = g(f(a2)) since g is a function, so the rule is well-defined. Conclusion: the composite g o f is a well-defined function from A to C."
       - id: kp2
         name: Associativity of composition
         key_prerequisites: [function-composition]
         constraints: "Either prove associativity abstractly by evaluating both bracketings at an arbitrary point, or check it on linear integer functions with small coefficients; always compare both bracketings."
         exemplars:
-          - problem: "Prove that composition of functions is associative: $(h\\circ g)\\circ f=h\\circ(g\\circ f)$."
-            answer: "Both sides send $x\\mapsto h(g(f(x)))$."
-            solution_sketch: "Evaluate at an arbitrary $x$: $((h\\circ g)\\circ f)(x)=(h\\circ g)(f(x))=h(g(f(x)))$, and $(h\\circ(g\\circ f))(x)=h((g\\circ f)(x))=h(g(f(x)))$. The two functions agree pointwise, hence are equal."
-          - problem: "For $f(x)=x+1$, $g(x)=3x$, $h(x)=x-2$ on $\\mathbb Z$, compute $(h\\circ g)\\circ f$ and $h\\circ(g\\circ f)$ explicitly."
-            answer: "Both equal $x\\mapsto 3x+1$."
-            solution_sketch: "$(g\\circ f)(x)=3(x+1)=3x+3$, so $h\\circ(g\\circ f)$ gives $3x+3-2=3x+1$. Also $(h\\circ g)(x)=3x-2$, so $(h\\circ g)\\circ f$ gives $3(x+1)-2=3x+1$. The bracketings agree, as associativity predicts."
+          - problem: "In the pointwise proof that $(h \\circ g) \\circ f = h \\circ (g \\circ f)$, the line $((h \\circ g) \\circ f)(x) = ?$ is missing. Select the line that is true and that follows from the definition of composition."
+            answer: "$h(g(f(x)))$"
+            answer_contract: {"kind": "label", "options": [["$h(g(f(x)))$"], ["$g(h(f(x)))$"], ["$h(f(g(x)))$"], ["$(h \\circ g)(x)$"]]}
+            solution_sketch: "Full object: the left bracketing $((h \\circ g) \\circ f)(x)$ evaluated at an arbitrary $x$. Step 1 (definition of composition): $((h \\circ g) \\circ f)(x) = (h \\circ g)(f(x))$. Step 2 (definition of composition): $(h \\circ g)(f(x)) = h(g(f(x)))$. Option $g(h(f(x)))$ reverses the order of $h$ and $g$. Option $h(f(g(x)))$ swaps the roles of $f$ and $g$. Option $(h \\circ g)(x)$ forgets to apply $f$ first. The answer is $h(g(f(x)))$."
+          - problem: "For $f(x) = 2x + 1$, $g(x) = x + 3$, and $h(x) = 5x$ on the integers, evaluate both bracketings $((h \\circ g) \\circ f)(1)$ and $(h \\circ (g \\circ f))(1)$. Give left and right."
+            answer: "left = 30; right = 30"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
+            solution_sketch: "Full object: the two bracketings of the composition of $f$, $g$, $h$ evaluated at $1$. First bracketing: $(h \\circ g)(x) = 5(x + 3) = 5x + 15$ by the definition of composition, so $((h \\circ g) \\circ f)(1) = 5(3) + 15 = 30$. Second bracketing: $(g \\circ f)(x) = 2x + 4$, so $(h \\circ (g \\circ f))(1) = h(6) = 30$. Both bracketings agree at $1$, as associativity of composition guarantees. The answer is left = 30; right = 30."
+          - problem: "For $f(x) = x + 2$, $g(x) = 4x$, and $h(x) = x - 3$ on the integers, check that both bracketings $((h \\circ g) \\circ f)(1)$ and $(h \\circ (g \\circ f))(1)$ agree. Find their common value."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the composite $h \\circ g \\circ f$ evaluated at $1$. Left bracketing: $f(1) = 3$, then $g(3) = 12$, then $h(12) = 9$, each step by the definition of composition. Right bracketing: $(g \\circ f)(1) = g(3) = 12$, then $h(12) = 9$. Both bracketings give $9$ at $1$, so they agree. The answer is 9."
+          - problem: "For $f(x) = 2x$, $g(x) = x + 5$, and $h(x) = 3x$ on the integers, both bracketings $(h \\circ g) \\circ f$ and $h \\circ (g \\circ f)$ give the same linear function $ax + b$. Check both bracketings and find $a + b$."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the two bracketings of the composition as linear functions. Left: $(h \\circ g)(x) = 3(x + 5) = 3x + 15$ by the definition of composition, so $((h \\circ g) \\circ f)(x) = 3(2x) + 15 = 6x + 15$. Right: $(g \\circ f)(x) = 2x + 5$, so $(h \\circ (g \\circ f))(x) = 3(2x + 5) = 6x + 15$. Both bracketings give $6x + 15$, so $a = 6$ and $b = 15$, and $a + b = 21$. The answer is 21."
+          - problem: "For $f(x) = x + 1$, $g(x) = 2x$, and $h(x) = x - 1$ on the integers, the two bracketings $(h \\circ g) \\circ f$ and $h \\circ (g \\circ f)$ agree at every $x$. Determine the input $x$ at which both bracketings take the value $11$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the common composite $h \\circ g \\circ f$ as a function of $x$. Compute it once: $(g \\circ f)(x) = 2x + 2$ by the definition of composition, so $h((g \\circ f)(x)) = 2x + 2 - 1 = 2x + 1$; the other bracketing gives the same function by associativity. Set $2x + 1 = 11$ and solve the linear equation: $x = 5$. Check: $f(5) = 6$, $g(6) = 12$, $h(12) = 11$. The answer is 5."
+          - problem: "A student proves that composition is associative in four steps. Step 1: $((h \\circ g) \\circ f)(x) = (h \\circ g)(f(x))$. Step 2: $(h \\circ g)(f(x)) = h(g(f(x)))$. Step 3: $(h \\circ (g \\circ f))(x) = h(f(g(x)))$. Step 4: the two sides agree at every $x$, so $(h \\circ g) \\circ f = h \\circ (g \\circ f)$. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Full object: the four-step argument for associativity of composition. Step 1 is valid: it applies the definition of composition to the outer bracketing. Step 2 is valid: it unwraps $h \\circ g$ at the point $f(x)$. Step 3 is invalid: $g \\circ f$ sends $x$ to $g(f(x))$, so the right side must be $h(g(f(x)))$, not $h(f(g(x)))$; the error reverses the order of $f$ and $g$. Step 4 would be valid only after Step 3 is corrected. The first invalid step is Step 3."
+          - problem: "Write the full proof: for all functions $f$, $g$, $h$ with matching domains and codomains, $(h \\circ g) \\circ f = h \\circ (g \\circ f)$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Full object: the two composites $(h \\circ g) \\circ f$ and $h \\circ (g \\circ f)$. Step 1 (definition of composition): evaluate the left bracketing at an arbitrary $x$ in the domain of $f$: $((h \\circ g) \\circ f)(x) = (h \\circ g)(f(x)) = h(g(f(x)))$. Step 2 (definition of composition): evaluate the right bracketing at the same $x$: $(h \\circ (g \\circ f))(x) = h((g \\circ f)(x)) = h(g(f(x)))$. Step 3 (equality of functions): the two bracketings take the same value $h(g(f(x)))$ at every $x$, so they are the same function. Step 4 (conclusion): therefore $(h \\circ g) \\circ f = h \\circ (g \\circ f)$; the proof uses only the definition of composition, applied once to each bracketing. The answer is See the solution."
       - id: kp3
         name: Identities as two-sided units
         key_prerequisites: [function-composition-inverse]
         constraints: "State which unit law is applied at each step."
         exemplars:
-          - problem: "Prove that the identity function is a two-sided unit: for $f\\colon A\\to B$, $1_B\\circ f=f=f\\circ 1_A$."
-            answer: "All three functions send $x\\mapsto f(x)$."
-            solution_sketch: "$(1_B\\circ f)(x)=1_B(f(x))=f(x)$ and $(f\\circ 1_A)(x)=f(1_A(x))=f(x)$ for every $x\\in A$, so both composites equal $f$ pointwise."
-          - problem: "Suppose $e,e'\\colon A\\to A$ are both two-sided units for composition (i.e. $e\\circ u=u$ and $v\\circ e=v$ for all composable $u,v$, and likewise for $e'$). Prove $e=e'$."
-            answer: "$e=e\\circ e'=e'$."
-            solution_sketch: "Use $e'$ as a right unit with $v=e$: $e\\circ e'=e$. Use $e$ as a left unit with $u=e'$: $e\\circ e'=e'$. Hence $e=e\\circ e'=e'$: a two-sided unit is unique."
+          - problem: "Let $f(x)=x+1$ and $g(x)=x^2$ be functions on the real numbers, and let $1$ denote the identity function. The composite $1\\circ(g\\circ f)$ simplifies by the left unit law $1\\circ h=h$. Compute $(1\\circ(g\\circ f))(x)$ as a polynomial in $x$."
+            answer: "x^2+2x+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the composite with the definition of composition: $(1\\circ(g\\circ f))(x)=1(g(f(x)))$. Apply the left unit law $1\\circ h=h$ with $h=g\\circ f$, so the composite equals $(g\\circ f)(x)$. Compute the inner function first: $f(x)=x+1$, then $g(f(x))=(x+1)^2=x^2+2x+1$. The answer is x^2+2x+1."
+          - problem: "Let $f(x)=2x$ and $g(x)=x+3$ be functions on the real numbers, and let $1$ be the identity function. The factor $f\\circ 1$ simplifies by the right unit law $f\\circ 1=f$. Compute $((f\\circ 1)\\circ g)(x)$ as a polynomial in $x$."
+            answer: "2x+6"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "By the right unit law $f\\circ 1=f$, the factor $f\\circ 1$ equals $f$, so $((f\\circ 1)\\circ g)(x)=(f\\circ g)(x)$. By the definition of composition, $(f\\circ g)(x)=f(g(x))$. Compute the inner function first: $g(x)=x+3$, then $f(g(x))=2(x+3)=2x+6$. The answer is 2x+6."
+          - problem: "On $A=\\{1,2,3\\}$, let $t$ be the function with $t(1)=2$, $t(2)=3$, $t(3)=1$. Suppose $e\\colon A\\to A$ satisfies $e\\circ t=t$. Find $e(1)$, $e(2)$ and $e(3)$, and give the answer as (e(1), e(2), e(3))."
+            answer: "(1,2,3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The condition $e\\circ t=t$ means $e(t(x))=t(x)$ for $x=1,2,3$, by the definition of composition; this is the left unit condition applied to the single function $t$. Since $t(1)=2$, $t(2)=3$, $t(3)=1$, and $t$ takes every value in $A$, it forces $e(2)=2$, $e(3)=3$ and $e(1)=1$. So $e$ is the identity function, and the answer is (1,2,3)."
+          - problem: "On $A=\\{1,2,3\\}$, call $e\\colon A\\to A$ a two-sided unit for composition if $e\\circ f=f$ and $f\\circ e=f$ for every one of the 27 functions $f\\colon A\\to A$. How many two-sided units are there? Give the number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A two-sided unit must satisfy the left unit law $e\\circ f=f$ and the right unit law $f\\circ e=f$ for all 27 endofunctions $f$. The left law applied to the constant function with value $a$ forces $e(a)=a$ for each $a\\in A$, so $e$ must be the identity function, and the identity passes both laws. Exactly one function qualifies, so the two-sided unit is unique. The answer is 1."
+          - problem: "On $A=\\{1,2,3\\}$ let $c$ be the constant function with $c(1)=c(2)=c(3)=2$. Call $e$ a left unit for the family $\\{c\\}$ if $e\\circ c=c$, and a right unit if $c\\circ e=c$. Determine how many left units and how many right units the family has, and give them as left = a; right = b."
+            answer: "left = 9; right = 27"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
+            solution_sketch: "A left unit $e$ needs $(e\\circ c)(x)=c(x)=2$ for all $x$, i.e. $e(2)=2$; the values $e(1)$ and $e(3)$ are free, giving $3\\cdot 3=9$ left units. A right unit needs $(c\\circ e)(x)=c(e(x))=2$, which holds for every function $e$ since $c$ is constant, giving 27 right units. The answer is left = 9; right = 27."
+          - problem: "On $A=\\{1,2,3\\}$ let $c_1$ and $c_2$ be the constant functions with values 1 and 2. Call $e$ a two-sided unit for the family $\\{c_1,c_2\\}$ if $e\\circ c_i=c_i$ and $c_i\\circ e=c_i$ for $i=1,2$. Determine whether a two-sided unit for the family exists, and give the verdict and the number of two-sided units."
+            answer: "verdict = present; count = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["present"], ["absent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "A two-sided unit $e$ must satisfy $e\\circ c_1=c_1$ and $e\\circ c_2=c_2$, i.e. $e(1)=1$ and $e(2)=2$, by the left unit condition. The right-hand conditions $c_i\\circ e=c_i$ hold automatically because $c_1$ and $c_2$ are constant. The value $e(3)$ is free, so a unit is present and there are 3 two-sided units. The answer is verdict = present; count = 3."
+          - problem: "Write the full proof: in a category, if $e$ and $e'$ are two-sided units at an object $A$, then $e=e'$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (right unit law): since $e'$ is a right unit, apply the law $v\\circ e'=v$ to the morphism $e\\colon A\\to A$; this gives $e\\circ e'=e$. Step 2 (left unit law): since $e$ is a left unit, apply the law $e\\circ u=u$ to the morphism $e'\\colon A\\to A$; this gives $e\\circ e'=e'$. Step 3 (transitivity of equality): combine the two displayed identities to obtain $e=e\\circ e'=e'$. Conclusion: any two two-sided units $e$ and $e'$ at the object $A$ are equal, so the two-sided unit at an object is unique; in particular $1_A$ is the unique two-sided unit at $A$. Each step used exactly one unit law, as the constraint requires. See the solution."
     diagnostic_exemplar:
       problem: "For $f(x)=x+2$, $g(x)=3x$, and $h(x)=x-1$ on $\\mathbb Z$, compute $(h\\circ g)\\circ f$ and $h\\circ(g\\circ f)$ explicitly, and state which axiom guarantees the results agree."
       answer: "$(g\\circ f)(x)=3x+6$, so $h\\circ(g\\circ f)$ sends $x\\mapsto 3x+5$; $(h\\circ g)(x)=3x-1$, so $(h\\circ g)\\circ f$ sends $x\\mapsto 3(x+2)-1=3x+5$. Both bracketings give $x\\mapsto 3x+5$, as the associativity axiom guarantees."
