@@ -90,12 +90,34 @@ topics:
         name: "Isomorphism as an equivalence; automorphisms"
         key_prerequisites: [homomorphisms-intro, functions-injective-surjective]
         exemplars:
-          - problem: 'Prove that if $\varphi : G \to H$ is an isomorphism, so is $\varphi^{-1} : H \to G$.'
-            answer: 'For $h_1 = \varphi(g_1), h_2 = \varphi(g_2)$: $\varphi^{-1}(h_1h_2) = \varphi^{-1}(\varphi(g_1g_2)) = g_1g_2 = \varphi^{-1}(h_1)\varphi^{-1}(h_2)$.'
-            solution_sketch: 'Surjectivity lets you write arbitrary elements of $H$ as images; then unwind.'
-          - problem: 'Show that $\varphi(x) = -x$ is an automorphism of $(\mathbb{Z}, +)$.'
-            answer: '$-(x + y) = (-x) + (-y)$, and the map is its own inverse, hence bijective.'
-            solution_sketch: 'Negation respects addition and is an involution.'
+          - problem: "Let phi be the isomorphism phi(x) = 3x mod 10 from Z_10 to itself. To prove that the inverse map is an isomorphism, first find its formula: phi inverse sends y to c y mod 10, where c is the number that this step of the proof produces. Give c as a residue modulo 10."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (inverse-map rule): the inverse condition is phi(c y) = y for every y, that is 3c = 1 modulo 10. Step 2 (modular inverse): since 3 times 7 = 21 = 1 modulo 10, the coefficient is c = 7, so phi inverse is y -> 7y mod 10. Step 3 (closure under inverse): phi inverse is bijective as the inverse of a bijection and it is a homomorphism, so it is an isomorphism. The answer is 7."
+          - problem: "For the additive group Z, any automorphism must send 1 to a generator of Z, and that one value determines the whole map. How many automorphisms does the additive group Z have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (homomorphism rule): a homomorphism f of Z satisfies f(n) = n f(1), so f is determined by f(1). Step 2 (cyclic-generator rule): surjectivity forces f(1) to generate Z, and the only generators of Z are 1 and -1. Step 3 (bijection check): n -> n is the identity and n -> -n is the negation map, and both are bijective homomorphisms. The answer is 2."
+          - problem: "Let phi(x) = 2x mod 11 and psi(x) = 3x mod 11 be automorphisms of the additive group Z_11, and let rho be the composition psi after phi, which sends x to c x mod 11 for the coefficient c that this proof step produces. Give the order of rho in the group of automorphisms."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (composition rule): rho(x) = psi(phi(x)) = 3(2x) = 6x mod 11, so the coefficient this step produces is c = 6. Step 2 (closure under composition): 6 is a unit modulo 11, so rho is again an automorphism. Step 3 (element-order rule): the k-th power of rho is multiplication by 6^k, and the least positive k with 6^k = 1 modulo 11 is 10, since the powers 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 stay distinct until the tenth. The answer is 10."
+          - problem: "The map phi(x) = 5x mod 12 is an automorphism of the additive group Z_12. To prove that phi has finite order in the automorphism group, compute the powers of 5 modulo 12 until you reach 1. Give the order of phi."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (element-order rule): the order of phi is the least positive k with phi applied k times equal to the identity, that is 5^k = 1 modulo 12. Step 2 (modular arithmetic): 5^1 = 5 and 5^2 = 25 = 1 modulo 12. Step 3: the least such k is 2, so the order of phi is 2. The answer is 2."
+          - problem: "A student claims that for every positive integer k, the map x -> kx mod 9 is an automorphism of the additive group Z_9. Give the smallest k for which the claim is false."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (automorphism rule for Z_n): the map x -> kx mod 9 is an automorphism exactly when k is a unit modulo 9, that is gcd(k, 9) = 1. Step 2 (test small cases): k = 1 and k = 2 are units, but gcd(3, 9) = 3, and 3 times 3 = 0 equals 3 times 0, so the map is not injective. Step 3 (smallest counterexample): the smallest failing k is 3. The answer is 3."
+          - problem: "Claim: if phi: G -> H is an isomorphism, then the inverse map phi inverse: H -> G is an isomorphism. Step 1: phi is bijective, so the inverse function phi inverse exists. Step 2: take h1 and h2 in H; since phi is surjective, h1 = phi(g1) and h2 = phi(g2) for some g1, g2 in G. Step 3: h1 h2 = phi(g1 g2), so phi inverse(h1 h2) = g1 g2 = phi inverse(h1) phi inverse(h2). Step 4: therefore phi inverse(h1 h2) = phi inverse(h2) phi inverse(h1), which equals phi inverse(h1) phi inverse(h2) in every group. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: an isomorphism is bijective, so the inverse function exists, and this option has no error. Step 2 is valid: surjectivity of phi produces preimages g1 and g2, so this option has no error. Step 3 is valid: the homomorphism property gives phi(g1) phi(g2) = phi(g1 g2), and applying phi inverse gives g1 g2, so this option has no error. Step 4 is the error: it claims phi inverse(h2) phi inverse(h1) equals phi inverse(h1) phi inverse(h2) in every group, which fails when G is nonabelian; the correct line is phi inverse(h1 h2) = phi inverse(h1) phi inverse(h2). The answer is Step 4."
+          - problem: "Write the full proof: the set of automorphisms of a group G forms a group under composition. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (closure): let phi and psi be automorphisms of G. The composite sends ab to psi(phi(ab)) = psi(phi(a) phi(b)) = psi(phi(a)) psi(phi(b)), so the composite is a homomorphism, and a composition of bijections is bijective, so the composite is an automorphism. Step 2 (associativity): composition of functions is associative, so this holds for automorphisms in particular. Step 3 (identity): the identity map id(x) = x is a bijective homomorphism, hence an automorphism, and id after phi = phi after id = phi for every automorphism phi. Step 4 (inverses): each automorphism phi is bijective, so it has an inverse function phi inverse; for h1 = phi(g1) and h2 = phi(g2) we get phi inverse(h1 h2) = phi inverse(phi(g1 g2)) = g1 g2 = phi inverse(h1) phi inverse(h2), so phi inverse is a homomorphism, and being bijective it is an automorphism with phi after phi inverse = phi inverse after phi = id. Conclusion: closure, associativity, identity, and inverses all hold, so the automorphisms of G form a group under composition."
         constraints: "closure of isomorphisms under inverse and composition; simple automorphisms of Z, Z_n"
     diagnostic_exemplar:
       problem: 'Exhibit an isomorphism $U(10) \to \mathbb{Z}_4$ and justify briefly.'
