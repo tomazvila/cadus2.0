@@ -79,14 +79,30 @@ topics:
         name: "Gradients in three variables"
         key_prerequisites: [partial-derivatives, vectors-in-rn]
         exemplars:
-          - problem: 'Let $f(x, y, z) = xyz$. Evaluate $\nabla f(1, 2, 3)$.'
-            answer: '$\langle 6, 3, 2 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla f = \langle yz, xz, xy \rangle = \langle 2 \cdot 3, 1 \cdot 3, 1 \cdot 2 \rangle$.'
-          - problem: 'Let $f(x, y, z) = x^2 + y^2 + z^2$. Evaluate $\nabla f(1, -2, 2)$.'
-            answer: '$\langle 2, -4, 4 \rangle$'
-            solution_sketch: '$\nabla f=\langle 2x,2y,2z\rangle$; at $(1,-2,2)$ this is $\langle 2,-4,4\rangle$.'
-            answer_contract: {kind: none}
+          - problem: "Let f(x, y, z) = xyz. Evaluate the gradient of f at the point (2, 1, 4). Give the answer as (fx, fy, fz)."
+            answer: "(4, 8, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For f(x, y, z) = xyz, the gradient is (yz, xz, xy). Use the product rule for each partial derivative. At (2, 1, 4): yz = 1*4 = 4, xz = 2*4 = 8, xy = 2*1 = 2. The gradient is (4, 8, 2)."
+          - problem: "Let f(x, y, z) = x^2 + y^2 + z^2. Evaluate the gradient of f at (3, -1, 2). Give the answer as (fx, fy, fz)."
+            answer: "(6, -2, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For f(x, y, z) = x^2 + y^2 + z^2, the gradient is (2x, 2y, 2z). Use the power rule on each term. At (3, -1, 2): 2x = 6, 2y = -2, 2z = 4. The gradient is (6, -2, 4)."
+          - problem: "Let f(x, y, z) = x^2 y + z^3. Evaluate the gradient of f at (2, 3, -1). Give the answer as (fx, fy, fz)."
+            answer: "(12, 4, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For f(x, y, z) = x^2 y + z^3, the gradient is (2xy, x^2, 3z^2). Use the power and product rules on the partial derivatives. At (2, 3, -1): 2xy = 2*2*3 = 12, x^2 = 4, 3z^2 = 3*1 = 3. The gradient is (12, 4, 3)."
+          - problem: "Let f(x, y, z) = xyz + x^2 + y^2 + z^2. Evaluate the gradient of f at (1, 2, -1). Give the answer as (fx, fy, fz)."
+            answer: "(0, 3, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For f(x, y, z) = xyz + x^2 + y^2 + z^2, the gradient is (yz + 2x, xz + 2y, xy + 2z). Differentiate each term with the product and power rules. At (1, 2, -1): yz + 2x = -2 + 2 = 0, xz + 2y = -1 + 4 = 3, xy + 2z = 2 - 2 = 0. The gradient is (0, 3, 0)."
+          - problem: "Let f(x, y, z) = x^3 + y^3 + z^3. Evaluate the gradient of f at (-1, 2, -2). Give the answer as (fx, fy, fz)."
+            answer: "(3, 12, 12)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For f(x, y, z) = x^3 + y^3 + z^3, the gradient is (3x^2, 3y^2, 3z^2). Use the power rule on each term. At (-1, 2, -2): 3x^2 = 3, 3y^2 = 12, 3z^2 = 12. The gradient is (3, 12, 12)."
+          - problem: "Let f(x, y, z) = xy + yz + zx. Evaluate the gradient of f at (2, -3, 4). Give the answer as (fx, fy, fz)."
+            answer: "(1, 6, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For f(x, y, z) = xy + yz + zx, the gradient is (y + z, x + z, x + y). Use the sum and product rules on the partial derivatives. At (2, -3, 4): y + z = 1, x + z = 6, x + y = -1. The gradient is (1, 6, -1)."
         constraints: "three-variable polynomials of degree at most 3; integer evaluation points"
     diagnostic_exemplar:
       problem: 'Let $f(x, y, z) = x^2 y e^{z}$. Evaluate $\nabla f(1, 2, 0)$.'
@@ -180,14 +196,30 @@ topics:
         name: "Extreme and zero values of the directional derivative"
         key_prerequisites: [computing-the-gradient, dot-product]
         exemplars:
-          - problem: 'Find the unit vectors $\mathbf{u}$ for which $D_{\mathbf{u}} f = 0$ at $(1, 2)$, where $f(x, y) = x^2 y$.'
-            answer: '$\pm\frac{1}{\sqrt{17}}\langle 1, -4 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla f(1,2) = \langle 4, 1 \rangle$; zero change happens perpendicular to the gradient, and $\langle 1, -4 \rangle \cdot \langle 4, 1 \rangle = 0$.'
-          - problem: 'If $|\nabla f(P)| = 6$, what are the largest and smallest possible values of $D_{\mathbf{u}} f(P)$ over all unit vectors $\mathbf{u}$?'
-            answer: '$6$ and $-6$'
-            answer_contract: {kind: none}
-            solution_sketch: '$D_{\mathbf{u}} f = |\nabla f| \cos\theta$ ranges over $[-|\nabla f|, |\nabla f|]$.'
+          - problem: "For f(x, y) = x y^2, the directions of zero change at the point (2, 1) are the unit vectors (a, 1)/sqrt(a^2 + 1) with integer a. Find a."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (gradient): the partial derivatives of f(x, y) = x y^2 are f_x = y^2 and f_y = 2xy, so at (2, 1) the gradient is (1, 4). Step 2 (zero condition): a direction gives zero change exactly when it is perpendicular to the gradient, so (1, 4) dot (a, 1) = a + 4 = 0. Solving gives a = -4, so the answer is -4."
+          - problem: "At a point P, the gradient of f has length 7. Over all unit vectors u, find the largest and the smallest possible values of the directional derivative of f at P."
+            answer: "max = 7; min = -7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "min"}]}
+            solution_sketch: "Step 1 (dot product form): for any unit vector u the directional derivative is the gradient dotted with u, so D_u f = |grad f| cos(theta). Step 2 (extremes): cosine ranges from -1 to 1, so D_u f ranges over [-7, 7]. The largest value is 7 and the smallest value is -7, so the answer is max = 7; min = -7."
+          - problem: "For f(x, y) = x^2 + y^2, find the maximum possible value of the directional derivative at the point (1, 2)."
+            answer: "2sqrt(5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (gradient): the partial derivatives are f_x = 2x and f_y = 2y, so at (1, 2) the gradient is (2, 4). Step 2 (maximum): the maximum directional derivative equals the length of the gradient, sqrt(2^2 + 4^2) = sqrt(20). Simplifying the radical gives 2sqrt(5). The answer is 2sqrt(5)."
+          - problem: "For f(x, y) = x^2 + x y, the directions of zero change at the point (2, 0) are the unit vectors (1, b)/sqrt(b^2 + 1) with integer b. Find b."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (gradient): the partial derivatives of f(x, y) = x^2 + x y are f_x = 2x + y and f_y = x, so at (2, 0) the gradient is (4, 2). Step 2 (zero condition): zero change requires the direction to be perpendicular to the gradient, so (4, 2) dot (1, b) = 4 + 2b = 0. Solving gives b = -2, so the answer is -2."
+          - problem: "For f(x, y) = x^3 - y^2, find the minimum possible value of the directional derivative at the point (1, 2)."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (gradient): the partial derivatives of f(x, y) = x^3 - y^2 are f_x = 3x^2 and f_y = -2y, so at (1, 2) the gradient is (3, -4). Step 2 (minimum): the minimum directional derivative is the negative of the gradient length, and sqrt(9 + 16) = 5. Thus the minimum is -5. The answer is -5."
+          - problem: "For f(x, y, z) = x^2 + y^2 + z^2, find the maximum possible value of the directional derivative at the point (1, 1, 2)."
+            answer: "2sqrt(6)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (gradient): the gradient of f(x, y, z) = x^2 + y^2 + z^2 is (2x, 2y, 2z), which at (1, 1, 2) is (2, 2, 4). Step 2 (maximum): the maximum directional derivative equals the gradient length, sqrt(4 + 4 + 16) = sqrt(24). Simplifying the radical gives 2sqrt(6). The answer is 2sqrt(6)."
         constraints: "gradients with small integer components; zero-change directions have integer components before normalizing"
     diagnostic_exemplar:
       problem: 'In which direction does $f(x, y) = x^2 y$ increase fastest at $(1, 2)$, and what is that maximal rate of increase?'

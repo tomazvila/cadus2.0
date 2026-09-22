@@ -1001,6 +1001,18 @@ topics:
           - problem: 'Find the tangent plane to $z = y e^x$ at the point $(0, 2, 2)$.'
             answer: '$z = 2x + y$'
             solution_sketch: '$f_x = y e^x = 2$ and $f_y = e^x = 1$ at $(0,2)$; $z = 2 + 2x + (y - 2)$.'
+          - problem: "Find the tangent plane to z = x^2 + 3y^2 at the point (2, 1, 7). Give the answer as an expression for z in the form ax + by + c."
+            answer: "4x+6y-7"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The surface is z = x^2 + 3y^2 and f(2,1) = 7. By the partial derivative rule, fx = 2x so fx(2,1) = 4, and fy = 6y so fy(2,1) = 6. The tangent plane formula gives z = 7 + 4(x - 2) + 6(y - 1), which simplifies to 4x + 6y - 7."
+          - problem: "Find the tangent plane to z = 2x^2 - y^2 at the point (2, 1, 7). Give the answer as an expression for z in the form ax + by + c."
+            answer: "8x-2y-7"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The surface is z = 2x^2 - y^2 and f(2,1) = 7. By the partial derivative rule, fx = 4x so fx(2,1) = 8, and fy = -2y so fy(2,1) = -2. The tangent plane formula gives z = 7 + 8(x - 2) - 2(y - 1), which simplifies to 8x - 2y - 7."
+          - problem: "Find the tangent plane to z = x e^y at the point (2, 0, 2). Give the answer as an expression for z in the form ax + by + c."
+            answer: "x+2y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "The surface is z = x e^y and f(2,0) = 2. By the partial derivative rule, fx = e^y so fx(2,0) = 1, and fy = x e^y so fy(2,0) = 2. The tangent plane formula gives z = 2 + 1(x - 2) + 2(y - 0), which simplifies to x + 2y."
         constraints: "integer base points; partials evaluate to small integers"
       - id: kp2
         name: "Linearization and estimates"
@@ -1261,14 +1273,30 @@ topics:
         name: "Implicit differentiation via partials"
         key_prerequisites: [chain-rule-one-parameter]
         exemplars:
-          - problem: 'Use $\frac{dy}{dx} = -F_x / F_y$ to find $\frac{dy}{dx}$ for the folium $x^3 + y^3 = 6xy$.'
-            answer: '$\dfrac{dy}{dx} = \dfrac{2y - x^2}{y^2 - 2x}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$F = x^3 + y^3 - 6xy$; $F_x = 3x^2 - 6y$, $F_y = 3y^2 - 6x$; $-F_x/F_y = \frac{6y - 3x^2}{3y^2 - 6x} = \frac{2y - x^2}{y^2 - 2x}$.'
-          - problem: 'For the sphere $x^2 + y^2 + z^2 = 9$, find $\frac{\partial z}{\partial x}$.'
-            answer: '$-\dfrac{x}{z}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{\partial z}{\partial x} = -F_x/F_z = -\frac{2x}{2z}$.'
+          - problem: "Use the formula dy/dx = -Fx/Fy to find dy/dx for the curve x^3 + y^3 = 12xy. Give dy/dx as a function of x and y."
+            answer: "(4y-x^2)/(y^2-4x)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1: write the curve as F = x^3 + y^3 - 12xy = 0. Step 2: compute the partials Fx = 3x^2 - 12y and Fy = 3y^2 - 12x. Step 3: use the implicit partials formula dy/dx = -Fx/Fy, then cancel the common factor 3 and rearrange. The derivative is (4y-x^2)/(y^2-4x)."
+          - problem: "For the surface x^2 + y^2 + z^2 = 16, find the partial derivative of z with respect to x using the formula for implicit differentiation via partials. Give the answer as a function of x and z."
+            answer: "-x/z"
+            answer_contract: {"kind": "function", "vars": ["x", "z"]}
+            solution_sketch: "Step 1: write the surface as F = x^2 + y^2 + z^2 - 16 = 0. Step 2: compute Fx = 2x and Fz = 2z by partial differentiation. Step 3: apply the implicit partials formula partial z partial x = -Fx/Fz and cancel 2. The final answer is -x/z."
+          - problem: "A curve is given by x^2y + y^3 = 5. Use dy/dx = -Fx/Fy to find its slope formula dy/dx. Give dy/dx as a function of x and y."
+            answer: "-2xy/(x^2+3y^2)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1: put the curve in the form F = x^2 y + y^3 - 5 = 0. Step 2: find Fx = 2xy and Fy = x^2 + 3y^2. Step 3: use dy/dx = -Fx/Fy; there is no common factor to cancel. The slope formula is -2xy/(x^2+3y^2)."
+          - problem: "Use the partials formula to find dy/dx for the curve x^4 + y^4 = 8xy. Give dy/dx as a function of x and y."
+            answer: "(2y-x^3)/(y^3-2x)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1: write F = x^4 + y^4 - 8xy = 0. Step 2: compute Fx = 4x^3 - 8y and Fy = 4y^3 - 8x. Step 3: apply dy/dx = -Fx/Fy and cancel the common factor 4. The derivative is (2y-x^3)/(y^3-2x)."
+          - problem: "For the curve x^2 + xy + y^2 = 7, use implicit differentiation via partials to find dy/dx. Give dy/dx as a function of x and y."
+            answer: "-(2x+y)/(x+2y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Step 1: write F = x^2 + xy + y^2 - 7 = 0. Step 2: compute Fx = 2x + y and Fy = x + 2y. Step 3: use the implicit partials formula dy/dx = -Fx/Fy. The derivative is -(2x+y)/(x+2y)."
+          - problem: "For the surface x^2y + yz + z^2 = 3, find the partial derivative of z with respect to y using the formula for implicit differentiation via partials. Give the answer as a function of x, y, and z."
+            answer: "-(x^2+z)/(y+2z)"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "Step 1: write the surface as F = x^2 y + yz + z^2 - 3 = 0. Step 2: compute Fy = x^2 + z and Fz = y + 2z. Step 3: apply the implicit partials formula partial z partial y = -Fy/Fz. The partial derivative is -(x^2+z)/(y+2z)."
         constraints: "F polynomial with integer coefficients; answers simplified by canceling common factors"
     diagnostic_exemplar:
       problem: 'Use $\frac{dy}{dx} = -F_x / F_y$ to find $\frac{dy}{dx}$ for the curve $x^3 + y^3 = 9xy$.'
