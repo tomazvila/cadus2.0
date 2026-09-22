@@ -1992,13 +1992,29 @@ topics:
         name: Reading the solution form
         key_prerequisites: [separable-equations]
         exemplars:
-          - problem: "A population follows $P(t) = \\dfrac{1000}{1 + 9e^{-t}}$. Find $P(0)$ and the carrying capacity."
-            answer: "$P(0) = 100$; carrying capacity $1000$."
-            answer_contract: {kind: none}
-            solution_sketch: "$P(0) = 1000/(1+9) = 100$; as $t \\to \\infty$ the denominator tends to $1$."
           - problem: "For $P(t) = \\dfrac{1000}{1 + 9e^{-t}}$, when does $P = 500$?"
             answer: "$t = \\ln 9$"
             solution_sketch: "$1 + 9e^{-t} = 2$ gives $e^{-t} = \\tfrac{1}{9}$."
+          - problem: "A population follows $P(t) = \\dfrac{4500}{1 + 14e^{-0.5t}}$. Find the initial population $P(0)$ and the carrying capacity $K$."
+            answer: "P0 = 300; K = 4500"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "P0"}, {"contract": {"kind": "exact"}, "name": "K"}]}
+            solution_sketch: "Full object: $P(t) = \\dfrac{4500}{1 + 14e^{-0.5t}}$, which has the logistic form $K/(1 + C e^{-rt})$. Step 1 (read carrying capacity): as $t\\to\\infty$, $e^{-0.5t}\\to 0$, so $K = 4500$. Step 2 (read initial population): $P(0) = 4500/(1+14) = 4500/15 = 300$. So P0 = 300; K = 4500."
+          - problem: "A population follows $P(t) = \\dfrac{3000}{1 + 19e^{-2t}}$. Find the initial population $P(0)$."
+            answer: "150"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $P(t) = \\dfrac{3000}{1 + 19e^{-2t}}$, so $K = 3000$ and $C = 19$. Step 1 (substitute $t=0$): $e^0=1$, so $P(0)=3000/(1+19)$. Step 2 (simplify): $P(0)=3000/20=150$. The initial population is 150."
+          - problem: "A population follows $P(t) = \\dfrac{1800}{1 + C e^{-0.5t}}$ and has initial population $120$. Find the constant $C$."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $P(t) = 1800/(1 + C e^{-0.5t})$. Step 1 (set $t=0$): $P(0)=1800/(1+C)=120$. Step 2 (solve for $C$): $1+C=1800/120=15$, so $C=14$. The constant is 14."
+          - problem: "For the solution $P(t) = \\dfrac{800}{1 + 15e^{-t}}$, find the time $t$ at which the population reaches half the carrying capacity. Give the answer to 4 decimals."
+            answer: "2.7081"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Full object: $P(t) = 800/(1 + 15e^{-t})$, so $K=800$ and half the carrying capacity is $400$. Step 1 (set $P=400$): $800/(1+15e^{-t})=400$, so $1+15e^{-t}=2$. Step 2 (solve for $t$): $e^{-t}=1/15$, so $-t=\\ln(1/15)=-\\ln 15$, hence $t=\\ln 15$. Step 3 (decimal): $\\ln 15 \\approx 2.708050$, so to 4 decimals $2.7081$. The half-capacity time is 2.7081."
+          - problem: "A population follows $P(t) = \\dfrac{2500}{1 + 4e^{-0.3t}}$. State which describes the long-term behavior of the population, and give the limiting population."
+            answer: "verdict = finite; K = 2500"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["finite"], ["unbounded"], ["zero"], ["oscillating"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "K"}]}
+            solution_sketch: "Full object: $P(t)=2500/(1+4e^{-0.3t})$, so $K=2500$. Step 1 (long-term behavior): as $t\\to\\infty$, $e^{-0.3t}\\to 0$, so the denominator tends to $1$ and the population approaches $K$, a finite limit. Step 2 (limiting value): the limiting population is $2500$. Wrong option unbounded would require the denominator to tend to $0$, which it does not. Wrong option zero would require the numerator to vanish, which it does not. Wrong option oscillating would require a periodic term, which is absent. So verdict = finite; K = 2500."
         constraints: "P0 and K read off directly; half-capacity time is a clean logarithm ln C"
     diagnostic_exemplar:
       problem: 'Solve $P'' = 2P\left(1 - \dfrac{P}{600}\right)$ with $P(0) = 200$, and state the carrying capacity.'

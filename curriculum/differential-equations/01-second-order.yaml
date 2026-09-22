@@ -24,35 +24,59 @@ topics:
         name: Deriving the characteristic equation
         key_prerequisites: [derivatives-exp-log]
         exemplars:
-          - problem: "Substitute $y = e^{rx}$ into $y'' - y' - 6y = 0$ and state the resulting equation for $r$."
-            answer: "$r^2 - r - 6 = 0$"
-            answer_contract: {kind: none}
-            solution_sketch: "$y' = re^{rx}$, $y'' = r^2 e^{rx}$; factoring out $e^{rx} \\neq 0$ leaves the quadratic."
-          - problem: "Write the characteristic equation of $y'' + 5y' + 6y = 0$."
-            answer: "$r^2 + 5r + 6 = 0$"
-            answer_contract: {kind: none}
-            solution_sketch: "$r^2 + 5r + 6 = 0$"
-          - problem: "For which values of $r$ is $y = e^{rx}$ a solution of $y'' - 9y = 0$?"
-            answer: "$r = 3$ or $r = -3$"
-            answer_contract: {kind: none}
-            solution_sketch: "$r^2 - 9 = 0$."
+          - problem: "In the equation y'' - y' - 6y = 0, substitute y = e^(rx). Give the nonzero factor that multiplies e^(rx) after cancellation, as a polynomial in r."
+            answer: "r^2-r-6"
+            answer_contract: {"kind": "function", "vars": ["r"]}
+            solution_sketch: "Start with y = e^(rx), so y' = r e^(rx) and y'' = r^2 e^(rx) by the exponential derivative rule. Substitute these into y'' - y' - 6y = 0 to get (r^2 - r - 6)e^(rx) = 0. Since e^(rx) is never zero, cancel it and the characteristic polynomial is r^2-r-6."
+          - problem: "Consider y'' + 5y' + 6y = 0. Give its characteristic polynomial in r."
+            answer: "r^2+5r+6"
+            answer_contract: {"kind": "function", "vars": ["r"]}
+            solution_sketch: "Write y = e^(rx), then y' = r e^(rx) and y'' = r^2 e^(rx) by the exponential derivative rule. Substitute into y'' + 5y' + 6y = 0 to obtain (r^2 + 5r + 6)e^(rx) = 0. Factor out the nonzero exponential and the characteristic polynomial is r^2+5r+6."
+          - problem: "Consider y'' - 9y = 0. Give its characteristic polynomial in r."
+            answer: "r^2-9"
+            answer_contract: {"kind": "function", "vars": ["r"]}
+            solution_sketch: "Set y = e^(rx), so y' = r e^(rx) and y'' = r^2 e^(rx) by the exponential derivative rule. There is no y' term, so substituting into y'' - 9y = 0 gives (r^2 - 9)e^(rx) = 0. Cancel e^(rx) and the characteristic polynomial is r^2-9."
+          - problem: "Consider 2y'' - 5y' + 3y = 0. Give its characteristic polynomial in r."
+            answer: "2r^2-5r+3"
+            answer_contract: {"kind": "function", "vars": ["r"]}
+            solution_sketch: "Take y = e^(rx), with y' = r e^(rx) and y'' = r^2 e^(rx) by the exponential derivative rule. Substitute into 2y'' - 5y' + 3y = 0 to get (2r^2 - 5r + 3)e^(rx) = 0. Divide by e^(rx), which is nonzero, so the characteristic polynomial is 2r^2-5r+3."
+          - problem: "Consider y'' - 16y = 0. Give its characteristic polynomial in r."
+            answer: "r^2-16"
+            answer_contract: {"kind": "function", "vars": ["r"]}
+            solution_sketch: "Use y = e^(rx), so y' = r e^(rx) and y'' = r^2 e^(rx) by the exponential derivative rule. The y' coefficient is zero, and substitution into y'' - 16y = 0 gives (r^2 - 16)e^(rx) = 0. Since e^(rx) is nonzero, the characteristic polynomial is r^2-16."
+          - problem: "Consider y'' + 7y' + 12y = 0. Give the coefficients (a, b, c) of its characteristic polynomial as (a, b, c)."
+            answer: "(1, 7, 12)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Read coefficients straight from y'' + 7y' + 12y = 0: a = 1, b = 7, c = 12. The characteristic polynomial is ar^2 + br + c, so the coefficient vector is (1, 7, 12)."
         constraints: "read coefficients straight into ar^2 + br + c = 0; quadratics factor over the integers"
       - id: kp2
         name: Distinct real roots
         key_prerequisites: [quadratic-formula]
         exemplars:
-          - problem: "Find the general solution of $y'' - y' - 6y = 0$."
-            answer: "$y = c_1 e^{3x} + c_2 e^{-2x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Characteristic equation $r^2 - r - 6 = (r-3)(r+2) = 0$, roots $3$ and $-2$."
-          - problem: "Find the general solution of $y'' - 4y = 0$."
-            answer: "$y = c_1 e^{2x} + c_2 e^{-2x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$r^2 - 4 = 0$ gives $r = \\pm 2$."
-          - problem: "Find the general solution of $y'' + 5y' + 6y = 0$."
-            answer: "$y = c_1 e^{-2x} + c_2 e^{-3x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$r^2 + 5r + 6 = (r+2)(r+3) = 0$."
+          - problem: "For the equation y'' - y' - 6y = 0, the general solution has the form y = c1 e^(r1 x) + c2 e^(r2 x). Find r1 and r2, taking r1 as the larger root."
+            answer: "r1 = 3; r2 = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "r1"}, {"contract": {"kind": "exact"}, "name": "r2"}]}
+            solution_sketch: "Substitute y = e^(rx) into y'' - y' - 6y = 0 and divide by e^(rx) to form the characteristic equation r^2 - r - 6 = 0. Factor the quadratic over the integers: (r - 3)(r + 2) = 0, so the distinct real roots are 3 and -2. With r1 the larger root and r2 the smaller, the general solution is y = c1 e^(3x) + c2 e^(-2x). The answer is r1 = 3; r2 = -2."
+          - problem: "Find the two exponents r1 and r2 in the general solution y = c1 e^(r1 x) + c2 e^(r2 x) of y'' - 25y = 0, taking r1 as the larger root."
+            answer: "r1 = 5; r2 = -5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "r1"}, {"contract": {"kind": "exact"}, "name": "r2"}]}
+            solution_sketch: "Substituting y = e^(rx) in y'' - 25y = 0 gives the characteristic equation r^2 - 25 = 0 by the characteristic-equation substitution. Factoring as a difference of squares: (r - 5)(r + 5) = 0, so the distinct real roots are 5 and -5. Taking r1 as the larger root, the general solution is y = c1 e^(5x) + c2 e^(-5x). The answer is r1 = 5; r2 = -5."
+          - problem: "Consider y'' + 5y' + 6y = 0, whose general solution is y = c1 e^(r1 x) + c2 e^(r2 x). Determine r1 and r2, taking r1 as the larger root."
+            answer: "r1 = -2; r2 = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "r1"}, {"contract": {"kind": "exact"}, "name": "r2"}]}
+            solution_sketch: "Substituting y = e^(rx) into y'' + 5y' + 6y = 0 gives the characteristic equation r^2 + 5r + 6 = 0. Factoring over the integers: (r + 2)(r + 3) = 0, so the roots are -2 and -3. With r1 the larger root and r2 the smaller, the general solution is y = c1 e^(-2x) + c2 e^(-3x). The answer is r1 = -2; r2 = -3."
+          - problem: "The general solution of an equation y'' + a y' + b y = 0 is y = c1 e^(4x) + c2 e^(-x). Find a and b."
+            answer: "a = -3; b = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "The exponents 4 and -1 are the roots of the characteristic equation r^2 + a r + b = 0. By the root-sum and root-product relations, the sum 4 + (-1) = 3 equals -a, so a = -3, and the product 4(-1) = -4 equals b, so b = -4. Checking the factoring, r^2 - 3r - 4 = (r - 4)(r + 1), whose roots are 4 and -1. The answer is a = -3; b = -4."
+          - problem: "The function y = e^(5x) is a solution of y'' + p y' - 10y = 0. Find the other root r2 of the characteristic equation and the value of p."
+            answer: "r2 = -2; p = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "r2"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Because y = e^(5x) solves the equation, r = 5 is a root of the characteristic equation r^2 + p r - 10 = 0 by the characteristic-equation substitution. Substituting r = 5 gives 25 + 5p - 10 = 0, so p = -3. The equation r^2 - 3r - 10 = 0 factors as (r - 5)(r + 2) = 0, so the other root is r2 = -2. The answer is r2 = -2; p = -3."
+          - problem: "A second-order homogeneous linear equation with constant coefficients has general solution y = c1 e^(2x) + c2 e^(-5x). Which equation has this general solution?"
+            answer: "y'' + 3y' - 10y = 0"
+            answer_contract: {"kind": "label", "options": [["y'' + 3y' - 10y = 0"], ["y'' - 3y' - 10y = 0"], ["y'' + 3y' + 10y = 0"], ["y'' - 10y' - 3y = 0"]]}
+            solution_sketch: "The exponents 2 and -5 are the roots of the characteristic equation, so the sum 2 + (-5) = -3 equals -a and the product -10 equals b by the root relations. This gives a = 3 and b = -10, hence y'' + 3y' - 10y = 0. The option y'' - 3y' - 10y = 0 comes from flipping the sign of a, which swaps the exponents to 5 and -2; the option y'' + 3y' + 10y = 0 comes from flipping the sign of b, which gives no real roots; the option y'' - 10y' - 3y = 0 comes from interchanging the sum and the product of the roots. The answer is y'' + 3y' - 10y = 0."
         constraints: "characteristic quadratic factors over the integers; write both exponentials with c_1, c_2"
       - id: kp3
         name: IVPs with distinct real roots
@@ -115,17 +139,29 @@ topics:
         name: Repeated roots
         key_prerequisites: [characteristic-equation-real-roots]
         exemplars:
-          - problem: "Find the general solution of $y'' - 6y' + 9y = 0$."
-            answer: "$y = (c_1 + c_2 x)e^{3x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$r^2 - 6r + 9 = (r-3)^2$: double root $3$, so the second solution picks up a factor of $x$."
-          - problem: "Find the general solution of $y'' + 4y' + 4y = 0$."
-            answer: "$y = (c_1 + c_2 x)e^{-2x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$(r+2)^2 = 0$: double root $-2$."
+          - problem: "One solution of y'' - 6y' + 9y = 0 is e^(3x). Find a second solution that is linearly independent of it."
+            answer: "x*e^(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The characteristic polynomial r^2 - 6r + 9 factors as (r - 3)^2, so the characteristic-equation step gives the double root r = 3. The repeated-root rule builds the two independent solutions e^(3x) and x e^(3x), where the second one carries the extra power of x. The required second solution is x*e^(3x)."
+          - problem: "Find the general solution of y'' + 4y' + 4y = 0, using a and b for the two arbitrary constants."
+            answer: "a*e^(-2x)+b*x*e^(-2x)"
+            answer_contract: {"kind": "function", "vars": ["x", "a", "b"]}
+            solution_sketch: "Factor the characteristic polynomial: r^2 + 4r + 4 = (r + 2)^2, so the characteristic-equation step gives the double root r = -2. The repeated-root rule gives the two independent solutions e^(-2x) and x e^(-2x), so the family is a e^(-2x) + b x e^(-2x). The general solution is a*e^(-2x)+b*x*e^(-2x)."
           - problem: "Solve $y'' - 2y' + y = 0$ with $y(0) = 1$, $y'(0) = 0$."
             answer: "$y = (1 - x)e^x$"
             solution_sketch: "$(r-1)^2 = 0$ gives $y = (c_1 + c_2 x)e^x$; $y(0) = c_1 = 1$ and $y'(0) = c_1 + c_2 = 0$ give $c_2 = -1$."
+          - problem: "The functions e^(2x) and x e^(2x) both solve the equation y'' + b y' + c y = 0 for constants b and c. Find the values of b and c."
+            answer: "b = -4; c = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "The pair e^(2x) and x e^(2x) is the repeated-root form for the double root r = 2, so by the repeated-root rule the characteristic polynomial is (r - 2)^2. Expanding, (r - 2)^2 = r^2 - 4r + 4. The characteristic equation of y'' + b y' + c y = 0 is r^2 + b r + c = 0, so matching coefficients gives b = -4 and c = 4. The answer is b = -4; c = 4."
+          - problem: "A mass on a spring obeys y'' - 4y' + 4y = 0 with y(0) = 0 and y'(0) = 1. Find the displacement at x = 1, and give the answer to 3 decimals."
+            answer: "7.389"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "The characteristic polynomial r^2 - 4r + 4 factors as (r - 2)^2, so the characteristic-equation step gives the double root r = 2. The repeated-root rule gives y = (c1 + c2 x)e^(2x); y(0) = 0 forces c1 = 0, and y'(0) = c2 = 1. So y = x e^(2x) and y(1) = e^2, which to three decimals is 7.389."
+          - problem: "Solve y'' - 10y' + 25y = 0 with y(0) = 1 and y'(0) = 0. Give the solution as a function of x."
+            answer: "(1-5x)*e^(5x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The characteristic polynomial r^2 - 10r + 25 is the perfect square (r - 5)^2, so the characteristic-equation step gives the double root r = 5. The repeated-root rule gives y = (c1 + c2 x)e^(5x); y(0) = 1 gives c1 = 1, and y'(0) = c2 + 5 = 0 gives c2 = -5. The solution is (1-5x)*e^(5x)."
         constraints: "perfect-square characteristic polynomials; the x-factor on the second solution is the point"
       - id: kp2
         name: Complex roots
@@ -159,17 +195,29 @@ topics:
         name: Choosing the case
         key_prerequisites: [characteristic-equation-real-roots, complex-numbers]
         exemplars:
-          - problem: "Classify the roots of $y'' + 2y' + y = 0$ and solve."
-            answer: "Double root $r = -1$: $y = (c_1 + c_2 x)e^{-x}$."
-            answer_contract: {kind: none}
-            solution_sketch: "Discriminant $4 - 4 = 0$."
-          - problem: "Classify the roots of $y'' - 2y' + 5y = 0$ and solve."
-            answer: "Complex roots $1 \\pm 2i$: $y = e^{x}(c_1 \\cos 2x + c_2 \\sin 2x)$."
-            answer_contract: {kind: none}
-            solution_sketch: "Discriminant $4 - 20 < 0$."
+          - problem: "$y'' + 6y' + 9y = 0$ is a constant-coefficient equation. Use a and b for the constants. State the root case as one word and give the general solution."
+            answer: "case = repeated; y = (a + b x) e^(-3x)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["distinct"], ["repeated"], ["complex"]]}, "name": "case"}, {"contract": {"kind": "function", "vars": ["a", "b", "x"]}, "name": "y"}]}
+            solution_sketch: "The characteristic equation of $y'' + 6y' + 9y = 0$ is $r^2 + 6r + 9 = 0$ with discriminant $36 - 36 = 0$ (discriminant step). A zero discriminant gives one repeated root $r = -3$, so the case is repeated (case step). The repeated-root form is $(a + bx)e^{rx}$, so the general solution is $y = (a + b x)e^{-3x}$ (general solution step). Choosing distinct would need a nonzero discriminant and choosing complex would need a negative one, so both of those options misread the zero discriminant. Final answer: case = repeated; y = (a + b x) e^(-3x)."
+          - problem: "$y'' + 4y' + 13y = 0$ is a constant-coefficient equation. Use a and b for the constants. Determine the root case as one word and give the general solution as a formula in x."
+            answer: "case = complex; y = e^(-2x)(a cos(3x) + b sin(3x))"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["distinct"], ["repeated"], ["complex"]]}, "name": "case"}, {"contract": {"kind": "function", "vars": ["a", "b", "x"]}, "name": "y"}]}
+            solution_sketch: "The characteristic equation of $y'' + 4y' + 13y = 0$ is $r^2 + 4r + 13 = 0$ with discriminant $16 - 52 = -36 < 0$ (discriminant step). A negative discriminant gives the conjugate pair $-2 \\pm 3i$, so the case is complex (case step). The complex form is $e^{\\alpha x}(a\\cos(\\beta x) + b\\sin(\\beta x))$ with $\\alpha = -2$ and $\\beta = 3$ (general solution step). Calling the case distinct ignores the sign of the discriminant, and calling it repeated assumes a zero discriminant. Final answer: case = complex; y = e^(-2x)(a cos(3x) + b sin(3x))."
           - problem: "Solve $y'' + 4y' + 5y = 0$ with $y(0) = 1$, $y'(0) = -2$."
             answer: "$y = e^{-2x}\\cos x$"
             solution_sketch: "$r = -2 \\pm i$; $y = e^{-2x}(c_1\\cos x + c_2 \\sin x)$ with $c_1 = 1$ and $y'(0) = -2c_1 + c_2 = -2$ giving $c_2 = 0$."
+          - problem: "$y'' - 5y' + 6y = 0$ is a constant-coefficient equation. Use a and b for the constants. Find the general solution as a formula in x."
+            answer: "a e^(2x) + b e^(3x)"
+            answer_contract: {"kind": "function", "vars": ["a", "b", "x"]}
+            solution_sketch: "The characteristic equation of $y'' - 5y' + 6y = 0$ is $r^2 - 5r + 6 = 0$, which factors as $(r - 2)(r - 3) = 0$ (factor step). The discriminant $25 - 24 = 1$ is positive, so the roots $2$ and $3$ are real and different, the distinct-real case (case step). The distinct-real form is $a e^{r_1 x} + b e^{r_2 x}$ with $r_1 = 2$ and $r_2 = 3$ (general solution step). Final answer: a e^(2x) + b e^(3x)."
+          - problem: "$y'' - 6y' + 13y = 0$ with $y(0) = 1$ and $y'(0) = 0$. Find the solution as a formula in x."
+            answer: "e^(3x)(cos(2x) - (3/2) sin(2x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The characteristic equation of $y'' - 6y' + 13y = 0$ is $r^2 - 6r + 13 = 0$ with discriminant $36 - 52 = -16 < 0$ (discriminant step). The roots are $3 \\pm 2i$, the complex case, so the general solution is $e^{3x}(a\\cos(2x) + b\\sin(2x))$ (case step). The value $y(0) = 1$ gives $a = 1$, and differentiating gives $y'(0) = 3a + 2b = 0$, so $b = -3/2$ (initial value step). Final answer: e^(3x)(cos(2x) - (3/2) sin(2x))."
+          - problem: "$y = a e^{2x} + b e^{-4x}$ is the general solution of $y'' + p y' + q y = 0$. Find the numbers p and q."
+            answer: "p = 2; q = -8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "q"}]}
+            solution_sketch: "The general solution $y = a e^{2x} + b e^{-4x}$ shows the characteristic roots $r_1 = 2$ and $r_2 = -4$, the distinct-real case (roots step). The characteristic polynomial is $(r - 2)(r + 4) = r^2 + 2r - 8$ (expand step). Matching the coefficients in $y'' + p y' + q y = 0$ gives $p = 2$ and $q = -8$ (coefficient step). Final answer: p = 2; q = -8."
         constraints: "one equation from each root case may appear; the solver must pick the case from the discriminant"
     diagnostic_exemplar:
       problem: 'Solve $y'''' + 6y'' + 13y = 0$ with $y(0) = 2$, $y''(0) = -6$.'
@@ -305,14 +353,30 @@ topics:
         name: "The substitution $y = v\\,y_1$"
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: "Given that $y_1 = e^{3x}$ solves $y'' - 6y' + 9y = 0$, substitute $y = ve^{3x}$ and find the equation for $v$."
-            answer: "$v'' = 0$, so $v = x$ gives the second solution $y_2 = xe^{3x}$."
-            answer_contract: {kind: none}
-            solution_sketch: "$y' = (v' + 3v)e^{3x}$, $y'' = (v'' + 6v' + 9v)e^{3x}$; substituting, every $v$ and $v'$ term cancels."
-          - problem: "Why does a double root $r$ of the characteristic equation produce the second solution $xe^{rx}$?"
-            answer: "Reduction of order with $y_1 = e^{rx}$ gives $v'' = 0$, so $v = x$ (the constant solution just reproduces $y_1$)."
-            answer_contract: {kind: none}
-            solution_sketch: "Reduction of order with $y_1 = e^{rx}$ gives $v'' = 0$, so $v = x$ (the constant solution just reproduces $y_1$)."
+          - problem: "Given that $y_1 = e^{4x}$ solves $y'' - 8y' + 16y = 0$, use the substitution $y = v e^{4x}$ to find a second solution $y_2$ that is independent of $y_1$. Give $y_2$ as a function of $x$."
+            answer: "x e^(4x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let $y = v e^{4x}$. Then $y' = (v' + 4v)e^{4x}$ and $y'' = (v'' + 8v' + 16v)e^{4x}$. Substitute into $y'' - 8y' + 16y = 0$: $(v'' + 8v' + 16v - 8v' - 32v + 16v)e^{4x} = v'' e^{4x} = 0$. All $v$ and $v'$ terms cancel, leaving $v'' = 0$. Integrate twice: $v = c_1 + c_2 x$. The constant part repeats $y_1$, so take $v = x$. The second solution is $x e^{4x}$."
+          - problem: "Substitute $y = v e^{-3x}$ into $y'' + 6y' + c y = 0$. The $v$ and $v'$ terms cancel and the equation for $v$ becomes $v'' = 0$. Find the value of $c$."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let $y = v e^{-3x}$. Then $y' = (v' - 3v)e^{-3x}$ and $y'' = (v'' - 6v' + 9v)e^{-3x}$. Substitute into $y'' + 6y' + c y = 0$: $(v'' - 6v' + 9v + 6v' - 18v + c v)e^{-3x} = (v'' + (c - 9)v)e^{-3x} = 0$. The $v'$ terms cancel, and for the $v$ terms to cancel and leave $v'' = 0$ we need $c - 9 = 0$. Thus $c = 9$. The value is 9."
+          - problem: "The equation $y'' - 4y' + 4y = 0$ has $y_1 = e^{2x}$ and $y_2 = x e^{2x}$ as independent solutions. Find the solution with $y(0) = 3$ and $y'(0) = 1$, and give it as a function of $x$."
+            answer: "(3 - 5x) e^(2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The general solution is $y = (c_1 + c_2 x) e^{2x}$. The first condition $y(0) = 3$ gives $c_1 = 3$. Differentiate: $y' = (c_2 + 2c_1 + 2c_2 x) e^{2x}$. The second condition $y'(0) = 1$ gives $c_2 + 2(3) = 1$, so $c_2 = -5$. Therefore $y = (3 - 5x) e^{2x}$."
+          - problem: "For the repeated-root equation with $y_1 = e^{5x}$ and $y_2 = x e^{5x}$, find the value of the Wronskian $W(y_1, y_2)$ at $x = 0$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use $W = y_1 y_2' - y_1' y_2$. Here $y_1 = e^{5x}$ and $y_2 = x e^{5x}$, so $y_1' = 5e^{5x}$ and $y_2' = (1 + 5x)e^{5x}$. Then $W = e^{5x}(1 + 5x)e^{5x} - 5e^{5x} x e^{5x} = e^{10x}(1 + 5x - 5x) = e^{10x}$. At $x = 0$, $W = e^0 = 1$. The value is 1."
+          - problem: "A constant-coefficient equation $y'' + b y' + c y = 0$ has second solution $y_2 = x e^{-2x}$ produced by reduction of order from $y_1 = e^{-2x}$. Find the value of $b$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reduction of order with $y_1 = e^{rx}$ gives $y_2 = x e^{rx}$ exactly when $r$ is a repeated root, so here $r = -2$. For a repeated root the characteristic polynomial is $(\\lambda - r)^2 = \\lambda^2 - 2r\\lambda + r^2$, so $b = -2r = -2(-2) = 4$. Check by substitution $y = v e^{-2x}$: $y'' + 4y' + 4y = (v'' - 4v' + 4v + 4v' - 8v + 4v)e^{-2x} = v'' e^{-2x} = 0$, so the $v$ and $v'$ terms cancel. The value is 4."
+          - problem: "Substitute $y = v e^{6x}$ into $y'' + b y' + 36y = 0$. The $v$ and $v'$ terms cancel and the equation for $v$ becomes $v'' = 0$. Find the value of $b$."
+            answer: "-12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let $y = v e^{6x}$. Then $y' = (v' + 6v)e^{6x}$ and $y'' = (v'' + 12v' + 36v)e^{6x}$. Substitute into $y'' + b y' + 36y = 0$: $(v'' + 12v' + 36v + b v' + 6b v + 36v)e^{6x} = (v'' + (12 + b)v' + (72 + 6b)v)e^{6x} = 0$. For the $v'$ and $v$ terms to cancel and leave $v'' = 0$, we need $12 + b = 0$, so $b = -12$. The value is -12."
         constraints: "constant-coefficient repeated-root cases; all v', v terms must visibly cancel"
       - id: kp2
         name: Variable-coefficient equations with a known solution
@@ -404,14 +468,30 @@ topics:
         name: "The structure $y = y_h + y_p$"
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: "Given that $y_p = 2$ is a particular solution of $y'' - 3y' + 2y = 4$, write the general solution."
-            answer: "$y = c_1 e^{x} + c_2 e^{2x} + 2$"
-            answer_contract: {kind: none}
-            solution_sketch: "Homogeneous roots $1, 2$; add $y_p$ to the homogeneous family."
-          - problem: "Verify that $y_p = 2x^2 - 1$ is a particular solution of $y'' + 4y = 8x^2$."
-            answer: "Yes: $y_p'' + 4y_p = 4 + 8x^2 - 4 = 8x^2$."
-            answer_contract: {kind: none}
-            solution_sketch: "Yes: $y_p'' + 4y_p = 4 + 8x^2 - 4 = 8x^2$."
+          - problem: "For y'' - 3y' + 2y = 4, a particular solution is y_p = 2. Write y = c1 e^x + c2 e^(2x) + 2. Given y(0) = 7 and y'(0) = 6, find c1 and c2."
+            answer: "c1 = 4; c2 = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "The general solution is y = c1 e^x + c2 e^(2x) + 2. Step 1: verify y_p = 2 by substitution: y_p'' - 3y_p' + 2y_p = 0 - 0 + 4 = 4, so the equation holds. Step 2: y(0) = 7 gives c1 + c2 + 2 = 7, so c1 + c2 = 5. Step 3: y' = c1 e^x + 2c2 e^(2x), and y'(0) = 6 gives c1 + 2c2 = 6. Step 4: subtract the first equation from the second: c2 = 1, then c1 = 4. The constants are c1 = 4; c2 = 1."
+          - problem: "The equation y'' - 5y' + 6y = 6 has characteristic roots 2 and 3, and y_p = 1 is a particular solution. Write y = c1 e^(2x) + c2 e^(3x) + 1. With y(0) = 6 and y'(0) = 7, determine c1 and c2."
+            answer: "c1 = 8; c2 = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "The general solution is y = c1 e^(2x) + c2 e^(3x) + 1. Step 1: verify y_p = 1 by substitution: y_p'' - 5y_p' + 6y_p = 0 - 0 + 6 = 6, so the equation holds. Step 2: y(0) = 6 gives c1 + c2 + 1 = 6, so c1 + c2 = 5. Step 3: y' = 2c1 e^(2x) + 3c2 e^(3x), and y'(0) = 7 gives 2c1 + 3c2 = 7. Step 4: subtract twice the first equation from the second: c2 = -3, then c1 = 8. The constants are c1 = 8; c2 = -3."
+          - problem: "The equation y'' + 3y' + 2y = 6 has complementary function c1 e^(-x) + c2 e^(-2x) and particular solution y_p = 3. Write y = c1 e^(-x) + c2 e^(-2x) + 3. If y(0) = 2 and y'(0) = 3, find c1 and c2."
+            answer: "c1 = 1; c2 = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "The general solution is y = c1 e^(-x) + c2 e^(-2x) + 3. Step 1: check y_p = 3 by substitution: y_p'' + 3y_p' + 2y_p = 0 + 0 + 6 = 6. Step 2: y(0) = 2 gives c1 + c2 + 3 = 2, so c1 + c2 = -1. Step 3: y' = -c1 e^(-x) - 2c2 e^(-2x), and y'(0) = 3 gives -c1 - 2c2 = 3. Step 4: from c1 = -1 - c2, substitute to get 1 + c2 - 2c2 = 3, so c2 = -2 and c1 = 1. The constants are c1 = 1; c2 = -2."
+          - problem: "Consider y'' + 2y' - 3y = 6 with particular solution y_p = -2. The homogeneous part is c1 e^x + c2 e^(-3x), so y = c1 e^x + c2 e^(-3x) - 2. Under y(0) = 1 and y'(0) = -13, compute c1 and c2."
+            answer: "c1 = -1; c2 = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "The general solution is y = c1 e^x + c2 e^(-3x) - 2. Step 1: verify y_p = -2: y_p'' + 2y_p' - 3y_p = 0 + 0 + 6 = 6, so it fits. Step 2: y(0) = 1 gives c1 + c2 - 2 = 1, so c1 + c2 = 3. Step 3: y' = c1 e^x - 3c2 e^(-3x), and y'(0) = -13 gives c1 - 3c2 = -13. Step 4: subtract equations to get 4c2 = 16, so c2 = 4, and then c1 = -1. The constants are c1 = -1; c2 = 4."
+          - problem: "For y'' - 4y = -4, the homogeneous family is c1 e^(2x) + c2 e^(-2x), and y_p = 1 is a particular solution. Thus y = c1 e^(2x) + c2 e^(-2x) + 1. With y(0) = 3 and y'(0) = 8, find c1 and c2."
+            answer: "c1 = 3; c2 = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "The general solution is y = c1 e^(2x) + c2 e^(-2x) + 1. Step 1: check y_p = 1: y_p'' - 4y_p = 0 - 4 = -4, so the ODE holds. Step 2: y(0) = 3 gives c1 + c2 + 1 = 3, so c1 + c2 = 2. Step 3: y' = 2c1 e^(2x) - 2c2 e^(-2x), and y'(0) = 8 gives 2c1 - 2c2 = 8, or c1 - c2 = 4. Step 4: add c1 + c2 = 2 and c1 - c2 = 4 to get 2c1 = 6, so c1 = 3 and c2 = -1. The constants are c1 = 3; c2 = -1."
+          - problem: "The equation y'' - 5y' + 4y = -4 has y_p = -1 as one particular solution. Its general solution is y = c1 e^x + c2 e^(4x) - 1. Given y(0) = 2 and y'(0) = -3, select c1 and c2."
+            answer: "c1 = 5; c2 = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "The general solution is y = c1 e^x + c2 e^(4x) - 1. Step 1: verify y_p = -1: y_p'' - 5y_p' + 4y_p = 0 - 0 - 4 = -4, so it is a particular solution. Step 2: y(0) = 2 gives c1 + c2 - 1 = 2, so c1 + c2 = 3. Step 3: y' = c1 e^x + 4c2 e^(4x), and y'(0) = -3 gives c1 + 4c2 = -3. Step 4: subtract to get 3c2 = -6, so c2 = -2 and c1 = 5. The constants are c1 = 5; c2 = -2."
         constraints: "the general solution is always y_h plus one particular solution; verify by substitution"
       - id: kp2
         name: Polynomial forcing
@@ -430,14 +510,30 @@ topics:
         name: Exponential forcing
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: "Find the general solution of $y'' + 3y' + 2y = 6e^{x}$."
-            answer: "$y = c_1 e^{-x} + c_2 e^{-2x} + e^{x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Try $y_p = Ae^x$: $(1 + 3 + 2)Ae^x = 6e^x$ gives $A = 1$."
-          - problem: "Find a particular solution of $y'' + y = 5e^{2x}$."
-            answer: "$y_p = e^{2x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Try $y_p = Ae^{2x}$: $(4 + 1)A = 5$ gives $A = 1$."
+          - problem: "For y'' + 3y' + 2y = 6e^{x}, a particular solution has the form y_p = A e^{x}. Find the constant A."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The characteristic polynomial is r^2 + 3r + 2. At r = 1 its value is 1 + 3 + 2 = 6. The undetermined-coefficient rule gives A = 6/6 = 1. The constant A is 1."
+          - problem: "Find a particular solution of y'' + y = 5e^{2x} in the form y_p = A e^{2x}."
+            answer: "e^(2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Put y_p = A e^{2x}. Then y_p'' + y_p = (4 + 1) A e^{2x} = 5 A e^{2x}. Matching 5e^{2x} gives A = 1. The particular solution is e^(2x)."
+          - problem: "For y'' - y' - 2y = 12e^{3x}, a particular solution has the form y_p = A e^{3x}. Find A."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The characteristic polynomial is r^2 - r - 2. At r = 3 its value is 9 - 3 - 2 = 4. The coefficient rule gives A = 12/4 = 3. The value of A is 3."
+          - problem: "For y'' - 4y = 9e^{x}, a particular solution has the form y_p = A e^{x}. Find A."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The characteristic polynomial is r^2 - 4. At r = 1 its value is 1 - 4 = -3. The coefficient rule gives A = 9/(-3) = -3. The value of A is -3."
+          - problem: "Find a particular solution of y'' + 2y' + 5y = 20e^{-x} in the form y_p = A e^{-x}."
+            answer: "5e^(-x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Put y_p = A e^{-x}. Then y_p'' + 2y_p' + 5y_p = (1 - 2 + 5) A e^{-x} = 4 A e^{-x}. Matching 20e^{-x} gives A = 5. The particular solution is 5e^(-x)."
+          - problem: "For y'' - 3y' + 2y = 8e^{4x}, a particular solution has the form y_p = A e^{4x}. Find A as a fraction."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The characteristic polynomial is r^2 - 3r + 2. At r = 4 its value is 16 - 12 + 2 = 6. The coefficient rule gives A = 8/6 = 4/3. The value of A is 4/3."
         constraints: "single e^{kx} forcing; k never a characteristic root here; A = (forcing coeff)/(char. polynomial at k)"
     diagnostic_exemplar:
       problem: 'Find the general solution of $y'''' + 3y'' + 2y = 20e^{3x}$.'
@@ -471,14 +567,30 @@ topics:
         name: Sinusoidal forcing
         key_prerequisites: [undetermined-coefficients-basic, derivatives-trig]
         exemplars:
-          - problem: 'Find a particular solution of $y'''' + 2y'' + y = 10\sin x$.'
-            answer: '$y_p = -5\cos x$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Try $y_p = a\cos x + b\sin x$; substituting gives $2b\cos x - 2a\sin x = 10\sin x$, so $b = 0$, $a = -5$.'
-          - problem: 'Find a particular solution of $y'''' - y = 2\sin x$.'
-            answer: '$y_p = -\sin x$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Try $y_p = a\sin x$ (no $y''$ term to mix in cosine): $-a\sin x - a\sin x = 2\sin x$ gives $a = -1$.'
+          - problem: "Find a particular solution of $y'' + 2y' + 7y = 25\\sin(2x)$."
+            answer: "-4cos(2x)+3sin(2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use undetermined coefficients: try $y_p = A\\cos(2x) + B\\sin(2x)$ because the forcing is a sine and the equation has a $y'$ term. Compute $y_p' = -2A\\sin(2x) + 2B\\cos(2x)$ and $y_p'' = -4A\\cos(2x) - 4B\\sin(2x)$. Substitute into the differential equation and collect like terms. The $\\cos(2x)$ coefficient gives $3A + 4B = 0$ and the $\\sin(2x)$ coefficient gives $-4A + 3B = 25$. Solving yields $A = -4$ and $B = 3$. Therefore y_p = -4cos(2x)+3sin(2x)."
+          - problem: "Find a particular solution of $y'' + 4y = 10 sin(3x)$."
+            answer: "-2sin(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use undetermined coefficients: since the equation has no y' term, try y_p = B sin(3x) with only a sine term. Then y_p'' = -9B sin(3x). Substitution gives -9B sin(3x) + 4B sin(3x) = -5B sin(3x), which must equal 10 sin(3x). Thus -5B = 10, so B = -2. The particular solution is y_p = -2sin(3x)."
+          - problem: "Find a particular solution of $y'' + 2y' + 7y = 25\\cos(2x)$."
+            answer: "3cos(2x)+4sin(2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use undetermined coefficients: try $y_p = A\\cos(2x) + B\\sin(2x)$ because the forcing is a cosine and the equation has a $y'$ term. Compute $y_p' = -2A\\sin(2x) + 2B\\cos(2x)$ and $y_p'' = -4A\\cos(2x) - 4B\\sin(2x)$. Substitute and collect terms. The $\\cos(2x)$ coefficient gives $3A + 4B = 25$ and the $\\sin(2x)$ coefficient gives $-4A + 3B = 0$. Solving yields $A = 3$ and $B = 4$. Therefore y_p = 3cos(2x)+4sin(2x)."
+          - problem: "Find a particular solution of $y'' + 5y = 12\\cos(3x)$."
+            answer: "-3cos(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use undetermined coefficients: since there is no $y'$ term, try $y_p = A\\cos(3x)$. Then $y_p'' = -9A\\cos(3x)$. Substituting gives $-9A\\cos(3x) + 5A\\cos(3x) = -4A\\cos(3x)$, which must equal $12\\cos(3x)$. Thus $-4A = 12$ and $A = -3$. Therefore y_p = -3cos(3x)."
+          - problem: "Find a particular solution of $y'' + y' + y = 13\\sin(2x)$."
+            answer: "-2cos(2x)-3sin(2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use undetermined coefficients: try $y_p = A\\cos(2x) + B\\sin(2x)$ since the forcing is a sine and the equation has a $y'$ term. Compute $y_p' = -2A\\sin(2x) + 2B\\cos(2x)$ and $y_p'' = -4A\\cos(2x) - 4B\\sin(2x)$. Substitute and collect terms. The $\\cos(2x)$ coefficient gives $-3A + 2B = 0$ and the $\\sin(2x)$ coefficient gives $-2A - 3B = 13$. Solving yields $A = -2$ and $B = -3$. Therefore y_p = -2cos(2x)-3sin(2x)."
+          - problem: "Find a particular solution of $y'' + 4y' + 14y = 169\\cos(3x)$."
+            answer: "5cos(3x)+12sin(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use undetermined coefficients: try $y_p = A\\cos(3x) + B\\sin(3x)$ because the forcing is a cosine and the equation has a $y'$ term. Compute $y_p' = -3A\\sin(3x) + 3B\\cos(3x)$ and $y_p'' = -9A\\cos(3x) - 9B\\sin(3x)$. Substitute and collect terms. The $\\cos(3x)$ coefficient gives $5A + 12B = 169$ and the $\\sin(3x)$ coefficient gives $-12A + 5B = 0$. Solving yields $A = 5$ and $B = 12$. Therefore y_p = 5cos(3x)+12sin(3x)."
         constraints: "forcing k sin(omega x) or k cos(omega x) with integer omega; always try both cos and sin when a y' term is present"
       - id: kp2
         name: The resonance modification
