@@ -32,19 +32,51 @@ topics:
           - problem: 'Find the remainder when $p(x) = x^3 - 4x + 1$ is divided by $x + 1$.'
             answer: "4"
             solution_sketch: '$p(-1) = -1 + 4 + 1 = 4$.'
+          - problem: "Find the remainder when p(x) = x^3 - 2x^2 + 4x - 7 is divided by x - 3."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Remainder theorem: for divisor x - c, the remainder is p(c), so here p(3) must be found. Substitute: p(3) = 27 - 18 + 12 - 7. Simplify to 14. The remainder is 14."
+          - problem: "Find the remainder when p(x) = 2x^3 + x^2 - 5x + 1 is divided by x + 2."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Remainder theorem: divide by x + 2, so c = -2, and the remainder is p(-2). Compute p(-2) = 2(-8) + 4 + 10 + 1. This simplifies to -1. The remainder is -1."
+          - problem: "Find the remainder when p(x) = x^2 - 9 is divided by x - 1."
+            answer: "-8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Remainder theorem: with divisor x - 1, the remainder equals p(1). Substitute: p(1) = 1^2 - 9 = 1 - 9. This is -8. The remainder is -8."
+          - problem: "Find the remainder when p(x) = -x^3 + 2x^2 - 3x + 8 is divided by x + 3."
+            answer: "62"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Remainder theorem: divisor x + 3 means c = -3, so the remainder is p(-3). Substitute: p(-3) = -(-27) + 2(9) - 3(-3) + 8. This becomes 27 + 18 + 9 + 8, which simplifies to 62. The remainder is 62."
       - id: kp2
         name: Factor theorem
         key_prerequisites: [polynomial-division]
         constraints: "yes/no factor checks on cubics with integer coefficients; divisor x - c with |c| <= 3; decided by evaluating p(c), never by long division"
         exemplars:
-          - problem: 'Is $x - 3$ a factor of $x^3 - 2x^2 - 9$?'
-            answer: "yes"
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$p(3) = 27 - 18 - 9 = 0$, so $x - 3$ is a factor.'
-          - problem: 'Is $x + 2$ a factor of $x^3 + 8$?'
-            answer: "yes"
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$p(-2) = -8 + 8 = 0$.'
+          - problem: "Consider p(x) = x^3 - 2x^2 - 9. Exactly one of four candidate divisors of the form x - c is a factor of p(x). Which of the following is a factor of p(x)? Select the correct option."
+            answer: "x - 3"
+            answer_contract: {"kind": "label", "options": [["x - 3"], ["x + 3"], ["x - 1"], ["x + 1"]]}
+            solution_sketch: "Write the full polynomial p(x) = x^3 - 2x^2 - 9 and test each candidate with the factor theorem by evaluating p(c). The evaluation gives p(3) = 27 - 18 - 9 = 0, so x - 3 is a factor. Each wrong option fails the same test: x + 3 gives p(-3) = -54 (wrong sign of the root), x - 1 gives p(1) = -10 (tested c = 1 instead of c = 3), and x + 1 gives p(-1) = -10 (tested c = -1 instead of c = 3). The answer is x - 3."
+          - problem: "Consider p(x) = x^3 + 8. Exactly one of four candidate divisors of the form x - c is a factor of p(x). Which of the following is a factor of p(x)? Select the correct option."
+            answer: "x + 2"
+            answer_contract: {"kind": "label", "options": [["x + 2"], ["x - 2"], ["x + 1"], ["x - 1"]]}
+            solution_sketch: "Write p(x) = x^3 + 8 and apply the factor theorem, which decides a factor x - c by the value of p(c). The needed evaluation is p(-2) = (-2)^3 + 8 = -8 + 8 = 0, so x + 2 is a factor. Every wrong option fails: x - 2 gives p(2) = 16 (wrong sign of the root), x + 1 gives p(-1) = 7 (tested c = -1 instead of c = -2), and x - 1 gives p(1) = 9 (tested c = 1 instead of c = -2). The answer is x + 2."
+          - problem: "To decide whether x + 1 is a factor of p(x) = x^3 + 2x^2 - 5x + 1, the factor theorem evaluates the polynomial at c = -1. Find p(-1)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full object p(x) = x^3 + 2x^2 - 5x + 1 and note that the divisor x + 1 corresponds to c = -1. By the factor theorem, substitute c = -1 into the polynomial: p(-1) = (-1)^3 + 2(-1)^2 - 5(-1) + 1 = -1 + 2 + 5 + 1 = 7. Since p(-1) is not 0, x + 1 would not be a factor, but the requested test value is 7. The answer is 7."
+          - problem: "Exactly one of x - 1, x - 2, x - 3 is a factor of p(x) = x^3 - 6x^2 + 3x + 2. Test each candidate with the factor theorem by evaluating p(c). Give your answer as the value of c in that factor x - c."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write p(x) = x^3 - 6x^2 + 3x + 2 and evaluate p(c) for each listed candidate, as the factor theorem requires. First, p(1) = 1 - 6 + 3 + 2 = 0, so x - 1 is a factor. The other candidates fail the test: p(2) = 8 - 24 + 6 + 2 = -8 and p(3) = 27 - 54 + 9 + 2 = -16, so neither x - 2 nor x - 3 is a factor. The answer is 1."
+          - problem: "How many of the divisors x + 1, x - 2, x + 2 are factors of p(x) = x^3 - 3x - 2? Decide each one with the factor theorem and give the number of factors as your answer."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full polynomial p(x) = x^3 - 3x - 2 and evaluate p(c) for each candidate divisor, as the factor theorem directs. The evaluations are p(-1) = -1 + 3 - 2 = 0, p(2) = 8 - 6 - 2 = 0, and p(-2) = -8 + 6 - 2 = -4. So x + 1 and x - 2 are factors while x + 2 is not, giving a count of 2. The answer is 2."
+          - problem: "Test every integer c with |c| <= 3 in p(x) = x^3 - 6x^2 + 11x - 6 to find all divisors x - c that are factors. Find the sum of all such values of c."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write p(x) = x^3 - 6x^2 + 11x - 6 and evaluate p(c) at all six candidates c = 1, 2, 3, -1, -2, -3, as the factor theorem requires. The values are p(1) = 0, p(2) = 0, p(3) = 0, and p(-1) = -24, p(-2) = -60, p(-3) = -120. So the divisors of the required form are x - 1, x - 2, and x - 3, corresponding to c = 1, 2, 3. Their sum is 1 + 2 + 3 = 6. The answer is 6."
       - id: kp3
         name: Solve for an unknown coefficient
         key_prerequisites: [evaluating-expressions]
@@ -127,6 +159,22 @@ topics:
           - problem: 'Find the rational root of $2x^3 - x^2 + 2x - 1$.'
             answer: "1/2"
             solution_sketch: '$p(1/2) = \frac{1}{4} - \frac{1}{4} + 1 - 1 = 0$.'
+          - problem: "Find one rational root of x^3 - 2x^2 + 3x - 6."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write p(x) = x^3 - 2x^2 + 3x - 6. The rational root theorem lists candidate 2. Evaluate p(2) = 8 - 8 + 6 - 6 = 0. By the factor theorem, 2 is a root, so the rational root is 2."
+          - problem: "Find one rational root of x^3 + 2x^2 + 3x + 2."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write p(x) = x^3 + 2x^2 + 3x + 2. The rational root theorem lists candidate -1. Evaluate p(-1) = -1 + 2 - 3 + 2 = 0. By the factor theorem, -1 is a root, so the rational root is -1."
+          - problem: "Find the rational root of 2x^3 + x^2 + 2x + 1."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write p(x) = 2x^3 + x^2 + 2x + 1. The rational root theorem lists candidate -1/2. Evaluate p(-1/2) = 2(-1/8) + 1/4 + 2(-1/2) + 1 = 0. By the factor theorem, -1/2 is a root, so the rational root is -1/2."
+          - problem: "Find the rational root of x^3 - 3x^2 + x - 3."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write p(x) = x^3 - 3x^2 + x - 3. The rational root theorem lists candidate 3. Evaluate p(3) = 27 - 27 + 3 - 3 = 0. By the factor theorem, 3 is a root, so the rational root is 3."
       - id: kp3
         name: Factor completely after finding a root
         key_prerequisites: [polynomial-division, quadratic-equations-factoring]
