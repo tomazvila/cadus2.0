@@ -1264,6 +1264,22 @@ topics:
           - problem: 'Find $\int (2x + 1)^3 \, dx$.'
             answer: "(2x + 1)^4/8 + C"
             solution_sketch: '$u = 2x + 1$: $\frac{1}{2} \cdot \frac{u^4}{4} + C$; check: $\frac{4(2x+1)^3 \cdot 2}{8} = (2x+1)^3$.'
+          - problem: "Find $\\int 4x^3 (x^4 + 2)^6 \\, dx$."
+            answer: "(x^4+2)^7/7 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Take $u = x^4 + 2$, so $du = 4x^3\\,dx$ by the power rule, exactly the factor outside the power. The integral becomes $\\int u^6\\,du = u^7/7 + C$ by the power rule for antiderivatives. Verify by differentiating: $\\frac{d}{dx}\\left[\\frac{(x^4+2)^7}{7}\\right] = (x^4+2)^6 \\cdot 4x^3$. Substitute back $u = x^4 + 2$ and the answer is (x^4+2)^7/7 + C."
+          - problem: "Find $\\int 6x^2 e^{2x^3} \\, dx$."
+            answer: "e^(2x^3) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Let $u = 2x^3$, so $du = 6x^2\\,dx$ by the power rule, which is exactly the remaining factor of the integrand. The integral becomes $\\int e^u\\,du = e^u + C$ by the exponential antiderivative rule. Verify by differentiating: $\\frac{d}{dx}\\left[e^{2x^3}\\right] = e^{2x^3} \\cdot 6x^2$. Substitute back $u = 2x^3$ and the answer is e^(2x^3) + C."
+          - problem: "Find $\\int 3x^2 \\sec^2(x^3) \\, dx$."
+            answer: "tan(x^3) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Let $u = x^3$, so $du = 3x^2\\,dx$ by the power rule, the exact factor multiplying the secant. The integral becomes $\\int \\sec^2(u)\\,du = \\tan(u) + C$ by the antiderivative rule for secant. Verify by differentiating: $\\frac{d}{dx}\\left[\\tan(x^3)\\right] = \\sec^2(x^3) \\cdot 3x^2$. Substitute back $u = x^3$ and the answer is tan(x^3) + C."
+          - problem: "Find $\\int \\cos^2(x) \\sin(x) \\, dx$."
+            answer: "-cos(x)^3/3 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Let $u = \\cos(x)$, so $du = -\\sin(x)\\,dx$ by the derivative rule for cosine. Then $\\sin(x)\\,dx = -du$, and the integral becomes $-\\int u^2\\,du = -u^3/3 + C$ by the power rule for antiderivatives. Verify by differentiating: $\\frac{d}{dx}\\left[-\\frac{\\cos(x)^3}{3}\\right] = -\\cos(x)^2 \\cdot (-\\sin(x)) = \\cos^2(x)\\sin(x)$. Substitute back $u = \\cos(x)$ and the answer is -cos(x)^3/3 + C."
         constraints: "du present up to a constant factor; verify every answer by differentiating"
       - id: kp2
         name: Adjust constant factors
@@ -1350,6 +1366,18 @@ topics:
           - problem: 'Evaluate $\int_1^e \frac{\ln x}{x} \, dx$.'
             answer: "1/2"
             solution_sketch: '$u = \ln x$ runs from $0$ to $1$: $\left[\frac{u^2}{2}\right]_0^1$.'
+          - problem: "Evaluate $\\int_0^2 3x^2(x^3+1)^2\\,dx$."
+            answer: "728/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is $\\int_0^2 3x^2(x^3+1)^2\\,dx$. Substitute $u = x^3 + 1$, so $du = 3x^2\\,dx$ by the power rule. Change the limits: $x=0$ gives $u=1$, and $x=2$ gives $u=9$. The integral becomes $\\int_1^9 u^2\\,du$. Evaluate by the power rule: $\\left[\\frac{u^3}{3}\\right]_1^9 = \\frac{729-1}{3}$. The value is 728/3."
+          - problem: "Evaluate $\\int_0^{\\pi/2} \\sin^3 x \\cos x\\,dx$."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is $\\int_0^{\\pi/2} \\sin^3 x \\cos x\\,dx$. Substitute $u = \\sin x$, so $du = \\cos x\\,dx$. Change the limits: $x=0$ gives $u=0$, and $x=\\pi/2$ gives $u=1$. The integral becomes $\\int_0^1 u^3\\,du$. Evaluate by the power rule: $\\left[\\frac{u^4}{4}\\right]_0^1 = \\frac{1}{4}$. The value is 1/4."
+          - problem: "Evaluate $\\int_0^1 \\frac{2x+1}{(x^2+x+3)^2}\\,dx$."
+            answer: "2/15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is $\\int_0^1 \\frac{2x+1}{(x^2+x+3)^2}\\,dx$. Substitute $u = x^2 + x + 3$, so $du = (2x+1)\\,dx$. Change the limits: $x=0$ gives $u=3$, and $x=1$ gives $u=5$. The integral becomes $\\int_3^5 u^{-2}\\,du$. Evaluate with the power rule: $\\left[-\\frac{1}{u}\\right]_3^5 = -\\frac{1}{5} + \\frac{1}{3}$. The value is 2/15."
         constraints: "change the limits along with the variable; exact fraction answers"
       - id: kp3
         name: Back-substitution when du is incomplete

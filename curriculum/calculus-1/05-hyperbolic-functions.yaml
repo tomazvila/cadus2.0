@@ -37,6 +37,18 @@ topics:
           - problem: 'Evaluate $\sinh(\ln 2)$ exactly.'
             answer: "3/4"
             solution_sketch: '$e^{\ln 2} = 2$ and $e^{-\ln 2} = \frac{1}{2}$, so $\sinh(\ln 2) = \frac{2 - \frac{1}{2}}{2} = \frac{3}{4}$.'
+          - problem: "Using tanh x = (e^x - e^{-x})/(e^x + e^{-x}), evaluate tanh(ln 5) exactly. Give the answer as a fraction."
+            answer: "12/13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the definition tanh x = (e^x - e^{-x})/(e^x + e^{-x}). Since e^(ln 5) = 5 and e^(-ln 5) = 1/5, substitute to get (5 - 1/5)/(5 + 1/5). Simplify the numerator and denominator: (24/5)/(26/5) = 24/26 = 12/13. The exact value is 12/13."
+          - problem: "Using cosh x = (e^x + e^{-x})/2, evaluate cosh(-ln 4) exactly. Give the answer as a fraction."
+            answer: "17/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the definition cosh x = (e^x + e^{-x})/2. For x = -ln 4, e^x = 1/4 and e^{-x} = 4. Substitute: (1/4 + 4)/2 = (17/4)/2 = 17/8. The exact value is 17/8."
+          - problem: "Using sech x = 2/(e^x + e^{-x}), evaluate sech(ln 6) exactly. Give the answer as a fraction."
+            answer: "12/37"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the definition sech x = 2/(e^x + e^{-x}). Since e^(ln 6) = 6 and e^(-ln 6) = 1/6, the denominator is 6 + 1/6 = 37/6. Therefore sech(ln 6) = 2/(37/6) = 12/37. The exact value is 12/37."
         constraints: "arguments 0, ±1, or ± ln k with k a small integer, so e^x collapses to exact values; state the e^x definitions in the stem until the anki cards have had time to stick"
       - id: kp2
         name: The identity cosh^2 - sinh^2 = 1 and parity
@@ -65,6 +77,18 @@ topics:
           - problem: 'For large $x$ the term $e^{-x}$ is negligible, so $\cosh x \approx \frac{e^x}{2}$. Using $e^3 \approx 20.09$, estimate $\cosh 3$ to one decimal place.'
             answer: "10.0"
             solution_sketch: '$\cosh 3 \approx \frac{20.09}{2} = 10.045 \approx 10.0$ (the exact value is $10.07$ — the discarded $e^{-3}/2$ is under $0.03$).'
+          - problem: "The curve y = sinh(x) is odd, so its height at a negative input is the negative of its height at the matching positive input. Compute the height at x = -ln(5) and give it as a fraction."
+            answer: "-12/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is y = sinh(x), with definition sinh(u) = (e^u - e^(-u))/2. Step 1: use the definition at u = -ln(5), so e^u = 1/5 and e^(-u) = 5. Step 2: subtract and halve, giving ((1/5) - 5)/2 = (-24/5)/2 = -12/5. The height is -12/5."
+          - problem: "The catenary y = cosh(x) is even, so its height at x = -ln(4) equals its height at x = ln(4). Find the height at x = -ln(4) as a fraction."
+            answer: "17/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is y = cosh(x), and cosh is even, so cosh(-ln(4)) = cosh(ln(4)). Step 1: use the definition cosh(u) = (e^u + e^(-u))/2. Step 2: at u = ln(4), e^u = 4 and e^(-u) = 1/4, so cosh(ln(4)) = (4 + 1/4)/2 = (17/4)/2 = 17/8. The height is 17/8."
+          - problem: "For large positive x the term e^(-x) is negligible, so sinh(x) is about e^x/2. Give an estimate of sinh(4) to one decimal place, using e^4 about 54.60."
+            answer: "27.3"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The full object is y = sinh(x). Step 1: for large x, e^(-x) is negligible, so use the estimate sinh(x) about e^x/2. Step 2: with e^4 about 54.60, compute sinh(4) about 54.60/2 = 27.30. Step 3: round to one decimal place, which gives 27.3. The estimate is 27.3."
         constraints: "heights at ± ln k for exact fractions; large-x estimates supply the needed e-power and state the rounding; only y = cosh x and y = sinh x, no shifts or stretches"
     diagnostic_exemplar:
       problem: 'Evaluate $\sinh(\ln 3)$ exactly from the definition $\sinh x = \frac{e^x - e^{-x}}{2}$, and confirm with $\cosh^2 x - \sinh^2 x = 1$ that $\cosh(\ln 3) = \frac{5}{3}$.'

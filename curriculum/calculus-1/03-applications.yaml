@@ -1073,14 +1073,30 @@ topics:
         name: Absolute vs local extrema and the Extreme Value Theorem
         key_prerequisites: [continuity, critical-points-extrema]
         exemplars:
-          - problem: 'What does the Extreme Value Theorem guarantee for a continuous function $f$ on a closed interval $[a, b]$?'
-            answer: "f attains an absolute maximum and an absolute minimum on [a, b]"
-            answer_contract: {kind: none}
-            solution_sketch: "f attains an absolute maximum and an absolute minimum on [a, b]"
-          - problem: 'Does $f(x) = \frac{1}{x}$ attain an absolute maximum on the open interval $(0, 1)$?'
-            answer: "no — f is unbounded as x → 0⁺ (the EVT needs a closed interval and continuity)"
-            answer_contract: {kind: none}
-            solution_sketch: "no — f is unbounded as x → 0⁺ (the EVT needs a closed interval and continuity)"
+          - problem: "A function f is continuous on the closed interval [-2, 5]. Which statement does the Extreme Value Theorem guarantee?"
+            answer: "f attains an absolute maximum and an absolute minimum"
+            answer_contract: {"kind": "label", "options": [["f attains an absolute maximum and an absolute minimum"], ["f attains an absolute maximum but no absolute minimum"], ["f must be differentiable on the interval's interior"], ["f must have a critical point inside the interval"]]}
+            solution_sketch: "The Extreme Value Theorem has two hypotheses: the function is continuous and the domain is a closed bounded interval, and f meets both. The conclusion is that f attains an absolute maximum value and an absolute minimum value somewhere on that interval. The option f must be differentiable on the interval's interior is the error of adding a differentiability hypothesis that the theorem never needs. The option f must have a critical point inside the interval is the error of assuming the extrema must sit at interior critical points. The option f attains an absolute maximum but no absolute minimum is the error of keeping only half of the guarantee. The answer is f attains an absolute maximum and an absolute minimum."
+          - problem: "Let f(x) = 1/(x - 3) on the closed interval [1, 5]. State whether f attains an absolute maximum on [1, 5], and give the value of x where f is not continuous."
+            answer: "verdict = no; x = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "The full object is f(x) = 1/(x - 3) on the closed interval [1, 5]. The domain is closed and bounded, but f is not continuous at x = 3, where the denominator is zero and the values grow without bound. Because f is unbounded near x = 3, it never attains an absolute maximum on [1, 5]. The option yes is the error of applying the Extreme Value Theorem without first checking that f is continuous. The answer is verdict = no; x = 3."
+          - problem: "The function f(x) = x^3 - 12x + 3 is defined for all real numbers. Find the value of its local maximum."
+            answer: "19"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x) = x^3 - 12x + 3. Differentiate with the power rule: f'(x) = 3x^2 - 12 = 3(x - 2)(x + 2), so the critical points are x = -2 and x = 2. The first-derivative test shows f' changes from positive to negative at x = -2, so f has a local maximum there. Evaluate with the function rule: f(-2) = -8 + 24 + 3 = 19. The local maximum value is 19."
+          - problem: "The function f(x) = x^2 + 8x + 10 is defined for all real numbers. Find its absolute minimum value."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x) = x^2 + 8x + 10. Complete the square: f(x) = (x + 4)^2 - 6. A square is never negative, so the least value of f is -6, reached at x = -4, and no value of x gives a smaller output. The answer is -6."
+          - problem: "The function f(x) = x^2 - 10x + 21 is defined for all real numbers. Find the point where f attains its absolute minimum, and give the answer as (x, y)."
+            answer: "(5, -4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full object is f(x) = x^2 - 10x + 21. Complete the square: f(x) = (x - 5)^2 - 4, so the vertex is at x = 5 and the least value of f is -4. The absolute minimum point is (5, -4)."
+          - problem: "The function f(x) = x^3 - 3x^2 + 1 is defined for all real numbers. Find the value of its local minimum."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x) = x^3 - 3x^2 + 1. Differentiate with the power rule: f'(x) = 3x^2 - 6x = 3x(x - 2), so the critical points are x = 0 and x = 2. The first-derivative test shows f' changes from negative to positive at x = 2, so f has a local minimum there. Evaluate with the function rule: f(2) = 8 - 12 + 1 = -3. The local minimum value is -3."
         constraints: "one guarantee question, one counterexample on an open interval or with a discontinuity"
       - id: kp2
         name: The closed-interval method
