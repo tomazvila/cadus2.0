@@ -202,6 +202,22 @@ topics:
             answer: "left_intercept = (-1, 0); right_intercept = (1, 0); y_intercept = (0, 1/4)"
             answer_contract: {kind: multipart, parts: [{name: left_intercept, contract: {kind: coordinates, arity: 2}}, {name: right_intercept, contract: {kind: coordinates, arity: 2}}, {name: y_intercept, contract: {kind: coordinates, arity: 2}}]}
             solution_sketch: '$f(0) = \frac{-1}{-4} = \frac{1}{4}$.'
+          - problem: "For f(x) = (x - 5)/(x + 2), find the x-intercept. Give the answer as (x, y)."
+            answer: "(5, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set the numerator x - 5 equal to 0 by the zero-product rule, so x = 5. Check the denominator at x = 5: x + 2 = 7, which is not 0, so the point is valid. The x-intercept is (5, 0)."
+          - problem: "For f(x) = (x^2 - 4)/(x - 3), find the y-intercept. Give the answer as (x, y)."
+            answer: "(0, 4/3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Substitute x = 0 into the function: f(0) = (0^2 - 4)/(0 - 3). Simplify the fraction to get (-4)/(-3) = 4/3. The y-intercept is (0, 4/3)."
+          - problem: "For f(x) = (x^2 - 16)/(x^2 + 4), find the positive x-intercept. Give the answer as (x, y)."
+            answer: "(4, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set the numerator x^2 - 16 equal to 0 by factoring as (x - 4)(x + 4), so x = 4 or x = -4. The positive root is x = 4; the denominator x^2 + 4 = 20 is not 0. The positive x-intercept is (4, 0)."
+          - problem: "For f(x) = (2x + 1)/(x^2 + 3), find the y-intercept. Give the answer as (x, y)."
+            answer: "(0, 1/3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Substitute x = 0 into the function: f(0) = (2*0 + 1)/(0^2 + 3). Simplify the fraction to 1/3. The y-intercept is (0, 1/3)."
       - id: kp2
         name: Behavior near a vertical asymptote
         key_prerequisites: [vertical-horizontal-asymptotes]
@@ -236,14 +252,30 @@ topics:
         key_prerequisites: [vertical-horizontal-asymptotes, slant-asymptotes]
         constraints: "degrees <= 2 with integer zeros and poles; list vertical asymptote(s), horizontal asymptote, and intercepts in one answer"
         exemplars:
-          - problem: 'For $f(x) = \frac{x^2 - 1}{x^2 - 4}$, list the vertical asymptotes, horizontal asymptote, and intercepts.'
-            answer: "VA: x = 2, x = -2; HA: y = 1; x-intercepts (±1, 0); y-intercept (0, 1/4)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Vertical asymptotes $x = \pm 2$; equal degrees give $y = 1$; intercepts $(\pm 1, 0)$ and $(0, 1/4)$.'
-          - problem: 'For $f(x) = \frac{2x}{x + 3}$, list the asymptotes and intercepts.'
-            answer: "VA: x = -3; HA: y = 2; intercept (0, 0)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Vertical asymptote $x = -3$; equal degrees give $y = 2$; the origin is both intercepts.'
+          - problem: "Consider f(x) = (x^2 - 1)/(x^2 - 4). State the vertical asymptotes, horizontal asymptote, and intercepts."
+            answer: "va1 = -2; va2 = 2; ha = 1; xi1 = -1; xi2 = 1; yi = 1/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "va1"}, {"contract": {"kind": "exact"}, "name": "va2"}, {"contract": {"kind": "exact"}, "name": "ha"}, {"contract": {"kind": "exact"}, "name": "xi1"}, {"contract": {"kind": "exact"}, "name": "xi2"}, {"contract": {"kind": "exact"}, "name": "yi"}]}
+            solution_sketch: "The function is f(x) = (x^2 - 1)/(x^2 - 4). Factor numerator as (x - 1)(x + 1) and denominator as (x - 2)(x + 2). Set denominator zero: vertical asymptotes x = -2 and x = 2. Equal degrees give horizontal asymptote y = 1. Set numerator zero: x-intercepts x = -1 and x = 1. Evaluate at x = 0: y-intercept y = 1/4. The full answer is va1 = -2; va2 = 2; ha = 1; xi1 = -1; xi2 = 1; yi = 1/4."
+          - problem: "The rational function f(x) = 2x/(x + 3) is given. Give the vertical asymptote, horizontal asymptote, and intercepts."
+            answer: "va = -3; ha = 2; xi = 0; yi = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "va"}, {"contract": {"kind": "exact"}, "name": "ha"}, {"contract": {"kind": "exact"}, "name": "xi"}, {"contract": {"kind": "exact"}, "name": "yi"}]}
+            solution_sketch: "The function is f(x) = 2x/(x + 3). Set denominator zero: vertical asymptote x = -3. Equal degrees give horizontal asymptote y = 2. Set numerator zero: x-intercept x = 0. Evaluate at x = 0: y-intercept y = 0. The full answer is va = -3; ha = 2; xi = 0; yi = 0."
+          - problem: "Let f(x) = (x + 1)/(x^2 - 9). Determine the vertical asymptotes, horizontal asymptote, and intercepts."
+            answer: "va1 = -3; va2 = 3; ha = 0; xi = -1; yi = -1/9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "va1"}, {"contract": {"kind": "exact"}, "name": "va2"}, {"contract": {"kind": "exact"}, "name": "ha"}, {"contract": {"kind": "exact"}, "name": "xi"}, {"contract": {"kind": "exact"}, "name": "yi"}]}
+            solution_sketch: "The function is f(x) = (x + 1)/(x^2 - 9). Factor denominator as (x - 3)(x + 3), so vertical asymptotes are x = -3 and x = 3. Denominator degree 2 is larger than numerator degree 1, so horizontal asymptote y = 0. Set numerator zero: x-intercept x = -1. Evaluate at x = 0: y-intercept y = -1/9. The full answer is va1 = -3; va2 = 3; ha = 0; xi = -1; yi = -1/9."
+          - problem: "For the function f(x) = (x^2 - 4)/(x^2 - 2x + 1), find the vertical asymptote, horizontal asymptote, and intercepts."
+            answer: "va = 1; ha = 1; xi1 = -2; xi2 = 2; yi = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "va"}, {"contract": {"kind": "exact"}, "name": "ha"}, {"contract": {"kind": "exact"}, "name": "xi1"}, {"contract": {"kind": "exact"}, "name": "xi2"}, {"contract": {"kind": "exact"}, "name": "yi"}]}
+            solution_sketch: "The function is f(x) = (x^2 - 4)/(x^2 - 2x + 1). Factor denominator as (x - 1)^2, so the vertical asymptote is x = 1. Equal degrees give horizontal asymptote y = 1. Factor numerator as (x - 2)(x + 2), so x-intercepts are x = -2 and x = 2. Evaluate at x = 0: y-intercept y = -4. The full answer is va = 1; ha = 1; xi1 = -2; xi2 = 2; yi = -4."
+          - problem: "A rational function is f(x) = (x - 1)/(x^2 - x - 2). State the vertical asymptotes, horizontal asymptote, and intercepts."
+            answer: "va1 = -1; va2 = 2; ha = 0; xi = 1; yi = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "va1"}, {"contract": {"kind": "exact"}, "name": "va2"}, {"contract": {"kind": "exact"}, "name": "ha"}, {"contract": {"kind": "exact"}, "name": "xi"}, {"contract": {"kind": "exact"}, "name": "yi"}]}
+            solution_sketch: "The function is f(x) = (x - 1)/(x^2 - x - 2). Factor denominator as (x - 2)(x + 1), so vertical asymptotes are x = -1 and x = 2. Denominator degree 2 is larger than numerator degree 1, so horizontal asymptote y = 0. Set numerator zero: x-intercept x = 1. Evaluate at x = 0: y-intercept y = 1/2. The full answer is va1 = -1; va2 = 2; ha = 0; xi = 1; yi = 1/2."
+          - problem: "Given f(x) = (x^2 - 9)/(x^2 + 3x + 2), find the vertical asymptotes, horizontal asymptote, and intercepts."
+            answer: "va1 = -2; va2 = -1; ha = 1; xi1 = -3; xi2 = 3; yi = -9/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "va1"}, {"contract": {"kind": "exact"}, "name": "va2"}, {"contract": {"kind": "exact"}, "name": "ha"}, {"contract": {"kind": "exact"}, "name": "xi1"}, {"contract": {"kind": "exact"}, "name": "xi2"}, {"contract": {"kind": "exact"}, "name": "yi"}]}
+            solution_sketch: "The function is f(x) = (x^2 - 9)/(x^2 + 3x + 2). Factor denominator as (x + 1)(x + 2), so vertical asymptotes are x = -2 and x = -1. Equal degrees give horizontal asymptote y = 1. Factor numerator as (x - 3)(x + 3), so x-intercepts are x = -3 and x = 3. Evaluate at x = 0: y-intercept y = -9/2. The full answer is va1 = -2; va2 = -1; ha = 1; xi1 = -3; xi2 = 3; yi = -9/2."
     diagnostic_exemplar:
       problem: 'For $f(x) = \frac{x + 3}{x - 1}$, state the vertical asymptote, the horizontal asymptote, both intercepts, and whether $f(x) \to +\infty$ or $-\infty$ as $x \to 1^+$.'
       answer: 'VA: x = 1; HA: y = 1; x-intercept (-3, 0); y-intercept (0, -3); f(x) → +∞ as x → 1⁺'
@@ -287,6 +319,22 @@ topics:
             solution_sketch: 'Critical points $-1$ and $2$; the ratio is positive outside them.'
           - problem: 'Solve $\frac{x + 5}{x - 3} < 0$.'
             answer: "-5 < x < 3"
+          - problem: "Solve the inequality $\\frac{2x - 6}{x + 1} > 0$ by using a sign chart; give the answer as an inequality in x."
+            answer: "x < -1 or x > 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The inequality is $\\frac{2x - 6}{x + 1} > 0$. Step 1: find critical points by setting numerator and denominator to zero: $2x - 6 = 0$ gives $x = 3$, and $x + 1 = 0$ gives $x = -1$. Step 2: test intervals with a sign chart. For $x < -1$, numerator and denominator are both negative, so the ratio is positive. For $-1 < x < 3$, numerator is negative and denominator is positive, so the ratio is negative. For $x > 3$, both are positive, so the ratio is positive. Step 3: choose intervals where the ratio is greater than zero. The solution is x < -1 or x > 3."
+          - problem: "Solve the inequality $\\frac{x + 6}{2x - 4} < 0$; give the answer as an inequality in x."
+            answer: "-6 < x < 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The inequality is $\\frac{x + 6}{2x - 4} < 0$. Step 1: find critical points: $x + 6 = 0$ gives $x = -6$, and $2x - 4 = 0$ gives $x = 2$. Step 2: test intervals. For $x < -6$, numerator and denominator are both negative, so the ratio is positive. For $-6 < x < 2$, numerator is positive and denominator is negative, so the ratio is negative. For $x > 2$, both are positive, so the ratio is positive. Step 3: choose the interval where the ratio is less than zero. The solution is -6 < x < 2."
+          - problem: "A concentration ratio is modeled by $\\frac{3x + 3}{x - 5}$ for $x$ hours after a dose. Solve the inequality $\\frac{3x + 3}{x - 5} < 0$; give the answer as an inequality in x."
+            answer: "-1 < x < 5"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The inequality is $\\frac{3x + 3}{x - 5} < 0$. Step 1: find critical points: $3x + 3 = 0$ gives $x = -1$, and $x - 5 = 0$ gives $x = 5$. Step 2: test intervals. For $x < -1$, numerator and denominator are both negative, so the ratio is positive. For $-1 < x < 5$, numerator is positive and denominator is negative, so the ratio is negative. For $x > 5$, both are positive, so the ratio is positive. Step 3: choose the interval where the ratio is less than zero. The solution is -1 < x < 5."
+          - problem: "Solve the inequality $\\frac{x - 4}{2x + 8} > 0$; give the answer as an inequality in x."
+            answer: "x < -4 or x > 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The inequality is $\\frac{x - 4}{2x + 8} > 0$. Step 1: find critical points: $x - 4 = 0$ gives $x = 4$, and $2x + 8 = 0$ gives $x = -4$. Step 2: test intervals. For $x < -4$, numerator and denominator are both negative, so the ratio is positive. For $-4 < x < 4$, numerator is negative and denominator is positive, so the ratio is negative. For $x > 4$, both are positive, so the ratio is positive. Step 3: choose intervals where the ratio is greater than zero. The solution is x < -4 or x > 4."
       - id: kp2
         name: Move everything to one side first
         key_prerequisites: [rational-equations, polynomial-inequalities]
@@ -299,6 +347,22 @@ topics:
           - problem: 'Solve $\frac{2}{x} \ge 1$ for $x \ne 0$.'
             answer: "0 < x ≤ 2"
             solution_sketch: '$\frac{2 - x}{x} \ge 0$: both parts positive exactly on $(0, 2]$.'
+          - problem: "Solve the inequality 3/(x + 2) <= 1. Move every term to the left side first; do not multiply both sides by x + 2. Give the answer as an inequality in x."
+            answer: "x < -2 or x >= 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1 (move everything to one side): subtract 1 to get 3/(x + 2) - 1 = (1 - x)/(x + 2). We never multiply by x + 2, whose sign is unknown. Step 2 (critical points): the numerator is zero at x = 1 and the denominator is zero at x = -2. Step 3 (sign chart): the quotient (1 - x)/(x + 2) is negative on x < -2, positive on -2 < x < 1, and negative on x > 1. The solution is x < -2 or x >= 1."
+          - problem: "Find all x with (x - 5)/(x + 1) <= 0. Do not clear the denominator x + 1, whose sign is unknown. Give the answer as an inequality in x."
+            answer: "-1 < x <= 5"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1 (move everything to one side): the inequality is already one fraction, (x - 5)/(x + 1) <= 0, so no multiplication by x + 1 is needed. Step 2 (critical points): the numerator is zero at x = 5 and the denominator is zero at x = -1. Step 3 (sign chart): the quotient is positive on x < -1, negative on -1 < x < 5, and positive on x > 5. The solution is -1 < x <= 5."
+          - problem: "Solve the inequality 4/(x - 1) > 2 by moving all terms to one side. Give the answer as an inequality in x."
+            answer: "1 < x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1 (move everything to one side): subtract 2 to get 4/(x - 1) - 2 = (6 - 2x)/(x - 1). We avoid multiplying by x - 1 because its sign is unknown. Step 2 (critical points): the numerator is zero at x = 3 and the denominator is zero at x = 1. Step 3 (sign chart): the quotient is negative on x < 1, positive on 1 < x < 3, and negative on x > 3. The solution is 1 < x < 3."
+          - problem: "Solve the inequality (2x + 1)/(x - 3) <= 1. Bring every term to the left side before building a sign chart. Give the answer as an inequality in x."
+            answer: "-4 <= x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1 (move everything to one side): subtract 1 to get (2x + 1)/(x - 3) - 1 = (x + 4)/(x - 3). Do not multiply by x - 3, whose sign is unknown. Step 2 (critical points): the numerator is zero at x = -4 and the denominator is zero at x = 3. Step 3 (sign chart): the quotient is positive on x < -4, negative on -4 < x < 3, and positive on x > 3. The solution is -4 <= x < 3."
       - id: kp3
         name: Endpoints at zeros versus undefined points
         key_prerequisites: [polynomial-inequalities]
@@ -311,6 +375,22 @@ topics:
           - problem: 'In $\frac{x - 4}{x + 3} \le 0$, which endpoint is included: $4$ or $-3$?'
             answer: "4"
             solution_sketch: 'The numerator zero $4$ is included; the denominator zero $-3$ is excluded: solution $-3 < x \le 4$.'
+          - problem: "Solve the inequality (x - 3)/(x + 1) >= 0. Give the answer as an inequality in x."
+            answer: "x < -1 or x >= 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "First find the zeros of the rational expression: the numerator zero is x = 3 and the denominator zero is x = -1. The endpoint rule says the denominator zero x = -1 is excluded, while the numerator zero x = 3 is included because the inequality is non-strict. A sign test on the intervals shows the expression is nonnegative for x < -1 and for x > 3. The solution is x < -1 or x >= 3."
+          - problem: "Solve the inequality (x + 4)/(x - 2) <= 0. Give the answer as an inequality in x."
+            answer: "-4 <= x < 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "First find the zeros: numerator zero x = -4 and denominator zero x = 2. The endpoint rule excludes denominator zero 2 and includes numerator zero -4 because the inequality is non-strict. A sign test shows the expression is nonpositive between -4 and 2, with -4 included and 2 excluded. The solution is -4 <= x < 2."
+          - problem: "Solve the inequality (3 - x)/(x - 1) >= 0. Give the answer as an inequality in x."
+            answer: "1 < x <= 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "First find the zeros: numerator 3 - x is zero at x = 3, and denominator x - 1 is zero at x = 1. The endpoint rule includes the numerator zero 3 and excludes the denominator zero 1 because the inequality is non-strict. A sign test shows the expression is nonnegative for 1 < x <= 3. The solution is 1 < x <= 3."
+          - problem: "Solve the inequality (2x - 8)/(x + 5) <= 0. Give the answer as an inequality in x."
+            answer: "-5 < x <= 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "First find the zeros: numerator 2x - 8 is zero at x = 4, and denominator x + 5 is zero at x = -5. The endpoint rule includes numerator zero 4 and excludes denominator zero -5 because the inequality is non-strict. A sign test shows the expression is nonpositive for -5 < x <= 4. The solution is -5 < x <= 4."
     diagnostic_exemplar:
       problem: 'Solve $\frac{x}{x - 2} \le 3$.'
       answer: "x < 2 or x ≥ 3"
