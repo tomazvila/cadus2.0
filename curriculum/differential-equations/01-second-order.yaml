@@ -625,18 +625,30 @@ topics:
         name: Products and superposition of forcings
         key_prerequisites: [undetermined-coefficients-basic]
         exemplars:
-          - problem: "Find a particular solution of $y'' - 3y' + 2y = 4x + 6e^{3x}$."
-            answer: "$y_p = 2x + 3 + 3e^{3x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Superposition: the $4x$ part gives $y_p = 2x + 3$; for the $6e^{3x}$ part, $(9 - 9 + 2)A = 2A = 6$ gives $A = 3$. Add the two."
-          - problem: 'Find a particular solution of $y'''' + 2y'' + y = xe^{x}$.'
-            answer: '$y_p = \dfrac{(x - 1)e^x}{4}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Try $y_p = (Ax + B)e^x$: substitution gives $(4Ax + 4A + 4B)e^x = xe^x$, so $A = \tfrac{1}{4}$, $B = -\tfrac{1}{4}$.'
-          - problem: 'State the trial form for a particular solution of $y'''' + 4y = x\sin 2x$.'
-            answer: '$y_p = x\left[(Ax + B)\cos 2x + (Cx + D)\sin 2x\right]$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Polynomial-times-sinusoid forcing at the resonant frequency: full degree-1 polynomials on both cos and sin, times the extra $x$.'
+          - problem: "Find a particular solution of y'' - 3y' + 2y = 4x + 2 e^(3x)."
+            answer: "2x + 3 + e^(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Superposition splits the forcing into 4x and 2 e^(3x). The polynomial trial y_p = ax + b gives a = 2 and b = 3, so this part is 2x + 3. The exponential trial y_p = c e^(3x) gives (9 - 9 + 2)c = 2, so c = 1. Adding the two parts gives 2x + 3 + e^(3x)."
+          - problem: "Find a particular solution of y'' + 2y' + y = x e^(x)."
+            answer: "(x-1)e^(x)/4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The product forcing x e^(x) needs the polynomial-coefficient trial y_p = (Ax + B)e^(x). Substitute: y'' + 2y' + y = (4Ax + 4A + 4B)e^(x). Matching x e^(x) gives 4A = 1 and 4A + 4B = 0, so A = 1/4 and B = -1/4. The particular solution is (x-1)e^(x)/4."
+          - problem: "Find a particular solution of y'' + 4y = x sin(2x)."
+            answer: "(x sin(2x))/16 - (x^2 cos(2x))/8"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The resonant product forcing x sin(2x) needs the full trial y_p = x[(Ax + B)cos(2x) + (Cx + D)sin(2x)]. Substitution gives the cos factor -x^2/8 and the sin factor x/16. Thus y_p = -x^2 cos(2x)/8 + x sin(2x)/16. The particular solution is (x sin(2x))/16 - (x^2 cos(2x))/8."
+          - problem: "For y'' + y' - 6y = (2x + 1)e^(x), use the trial y_p = (Ax + B)e^(x). Find A and B."
+            answer: "A = -1/2; B = -5/8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
+            solution_sketch: "The forcing is a polynomial times e^(x), and e^(x) is not a root of the homogeneous equation, so the polynomial-coefficient trial y_p = (Ax + B)e^(x) is right. Substitution gives y'' + y' - 6y = (-4Ax + 3A - 4B)e^(x). Match (2x + 1)e^(x): -4A = 2 and 3A - 4B = 1. Solving gives A = -1/2; B = -5/8."
+          - problem: "For y'' + 4y = x cos x, use the trial y_p = (Ax + B)cos x + (Cx + D)sin x. Find A, B, C, and D."
+            answer: "A = 1/3; B = 0; C = 0; D = 2/9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "Since cos x is not a root of the homogeneous equation, the coefficient trial y_p = (Ax + B)cos x + (Cx + D)sin x applies. Substitution gives y'' + 4y = (3Ax + 2C + 3B)cos x + (3Cx - 2A + 3D)sin x. Match x cos x: 3A = 1, 2C + 3B = 0, 3C = 0, and -2A + 3D = 0. Solving gives A = 1/3; B = 0; C = 0; D = 2/9."
+          - problem: "Find a particular solution of y'' - y = 6 cos(2x) + 2 e^(3x)."
+            answer: "-6/5 cos(2x) + e^(3x)/4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Superposition splits 6 cos(2x) and 2 e^(3x). For the cosine part the trial y_1 = A cos(2x) + B sin(2x) gives -5A cos(2x) - 5B sin(2x) = 6 cos(2x), so A = -6/5 and B = 0. For the exponential part y_2 = C e^(3x) gives 8C e^(3x) = 2 e^(3x), so C = 1/4. Adding the parts gives -6/5 cos(2x) + e^(3x)/4."
         constraints: "sums of forcings split by superposition; products take polynomial-coefficient trials; state trial forms fully"
     diagnostic_exemplar:
       problem: 'Find a particular solution of $y'''' - y = 4e^{x} + 3$.'
@@ -679,14 +691,30 @@ topics:
         name: Setting up the formulas
         key_prerequisites: [linear-independence-wronskian]
         exemplars:
-          - problem: 'For $y'''' + y = \sec x$, write the variation-of-parameters equations for $u_1''$ and $u_2''$ using $y_1 = \cos x$, $y_2 = \sin x$.'
-            answer: '$u_1'' = -\dfrac{y_2 g}{W} = -\sin x \sec x = -\tan x$; $u_2'' = \dfrac{y_1 g}{W} = \cos x \sec x = 1$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$W = 1$ and $g(x) = \sec x$; plug into $u_1'' = -y_2 g/W$, $u_2'' = y_1 g/W$.'
-          - problem: "For $y'' - 2y' + y = \\dfrac{e^x}{x}$ ($x > 0$), with $y_1 = e^x$, $y_2 = xe^x$, find $u_1'$ and $u_2'$."
-            answer: "$u_1' = -1$; $u_2' = \\dfrac{1}{x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$W = e^{2x}$; $u_1' = -xe^x \\cdot \\dfrac{e^x/x}{e^{2x}} = -1$ and $u_2' = e^x \\cdot \\dfrac{e^x/x}{e^{2x}} = \\dfrac{1}{x}$."
+          - problem: "For $y'' + y = \\csc x$, use $y_1 = \\cos x$ and $y_2 = \\sin x$. Find $u_1'$ and $u_2'$."
+            answer: "u1 = -1; u2 = cot(x)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "u1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "u2"}]}
+            solution_sketch: "Step 1 (Wronskian): W = y1 y2' - y1' y2 = cos(x)cos(x) - (-sin(x))sin(x) = 1. Step 2 (forcing): g(x) = csc(x) = 1/sin(x). Step 3 (variation-of-parameters formulas): u1' = -y2 g/W = -sin(x)(1/sin(x))/1 = -1, and u2' = y1 g/W = cos(x)(1/sin(x))/1 = cot(x). The functions are u1 = -1 and u2 = cot(x)."
+          - problem: "For $y'' - 2y' + y = e^x \\ln x$ with $x > 0$, use $y_1 = e^x$ and $y_2 = x e^x$. Find $u_1'$ and $u_2'$."
+            answer: "u1 = -x ln(x); u2 = ln(x)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "u1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "u2"}]}
+            solution_sketch: "Step 1 (Wronskian): W = e^x(e^x + x e^x) - e^x(x e^x) = e^(2x). Step 2 (forcing): g(x) = e^x ln(x). Step 3 (variation-of-parameters formulas): u1' = -y2 g/W = -x e^x e^x ln(x)/e^(2x) = -x ln(x), and u2' = y1 g/W = e^x e^x ln(x)/e^(2x) = ln(x). So u1 = -x ln(x) and u2 = ln(x)."
+          - problem: "For $y'' - y = e^{2x}$, use $y_1 = e^x$ and $y_2 = e^{-x}$. Find $u_1'$ and $u_2'$."
+            answer: "u1 = e^x/2; u2 = -e^(3x)/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "u1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "u2"}]}
+            solution_sketch: "Step 1 (Wronskian): W = e^x(-e^{-x}) - e^x(e^{-x}) = -2. Step 2 (forcing): g(x) = e^(2x). Step 3 (variation-of-parameters formulas): u1' = -y2 g/W = -e^{-x}e^(2x)/(-2) = e^x/2, and u2' = y1 g/W = e^x e^(2x)/(-2) = -e^(3x)/2. So u1 = e^x/2 and u2 = -e^(3x)/2."
+          - problem: "For $y'' + 4y = 8$, use $y_1 = \\cos(2x)$ and $y_2 = \\sin(2x)$. Find $u_1'$ and $u_2'$."
+            answer: "u1 = -4 sin(2x); u2 = 4 cos(2x)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "u1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "u2"}]}
+            solution_sketch: "Step 1 (Wronskian): W = cos(2x) 2cos(2x) - (-2 sin(2x)) sin(2x) = 2. Step 2 (forcing): g(x) = 8. Step 3 (variation-of-parameters formulas): u1' = -y2 g/W = -sin(2x)*8/2 = -4 sin(2x), and u2' = y1 g/W = cos(2x)*8/2 = 4 cos(2x). So u1 = -4 sin(2x) and u2 = 4 cos(2x)."
+          - problem: "For $y'' - 3y' + 2y = e^{3x}$, use $y_1 = e^x$ and $y_2 = e^{2x}$. Find $u_1'$ and $u_2'$."
+            answer: "u1 = -e^(2x); u2 = e^x"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "u1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "u2"}]}
+            solution_sketch: "Step 1 (Wronskian): W = e^x(2e^{2x}) - e^x(e^{2x}) = e^{3x}. Step 2 (forcing): g(x) = e^{3x}. Step 3 (variation-of-parameters formulas): u1' = -y2 g/W = -e^{2x}e^{3x}/e^{3x} = -e^(2x), and u2' = y1 g/W = e^x e^{3x}/e^{3x} = e^x. So u1 = -e^(2x) and u2 = e^x."
+          - problem: "For $y'' + y = x$, use $y_1 = \\cos x$ and $y_2 = \\sin x$. Find $u_1'$ and $u_2'$."
+            answer: "u1 = -x sin(x); u2 = x cos(x)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "u1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "u2"}]}
+            solution_sketch: "Step 1 (Wronskian): W = cos(x)cos(x) - (-sin(x))sin(x) = 1. Step 2 (forcing): g(x) = x. Step 3 (variation-of-parameters formulas): u1' = -y2 g/W = -sin(x)*x = -x sin(x), and u2' = y1 g/W = cos(x)*x = x cos(x). So u1 = -x sin(x) and u2 = x cos(x)."
         constraints: "equation already in standard form (leading coefficient 1); the u' expressions simplify before integrating"
       - id: kp2
         name: Trigonometric forcing
@@ -709,14 +737,30 @@ topics:
         name: Rational and exponential forcing
         key_prerequisites: [linear-independence-wronskian, integration-by-parts]
         exemplars:
-          - problem: "Solve $y'' - 2y' + y = \\dfrac{e^x}{x}$ for $x > 0$."
-            answer: "$y = c_1 e^x + c_2 xe^x + xe^x \\ln x$"
-            answer_contract: {kind: none}
-            solution_sketch: "$u_1 = -x$ and $u_2 = \\ln x$, so $y_p = -xe^x + xe^x \\ln x$; the $-xe^x$ term is absorbed into $c_2 xe^x$."
-          - problem: "Use variation of parameters to find a particular solution of $y'' - y = e^x$."
-            answer: "$y_p = \\dfrac{xe^x}{2}$ (after absorbing a multiple of $e^x$)"
-            answer_contract: {kind: none}
-            solution_sketch: "$W = -2$; $u_1' = \\tfrac{1}{2}$, $u_2' = -\\tfrac{e^{2x}}{2}$ give $u_1 = \\tfrac{x}{2}$, $u_2 = -\\tfrac{e^{2x}}{4}$; $y_p = \\tfrac{x}{2}e^x - \\tfrac{e^x}{4}$."
+          - problem: "Consider the equation y'' - 2y' + y = e^x/x for x > 0. Use variation of parameters to find a particular solution, absorbing any homogeneous terms into the constants. Give the particular solution as a function of x."
+            answer: "x e^(x) ln(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Homogeneous solutions are y1 = e^(x) and y2 = x e^(x), so the Wronskian is W = e^(2x). For g = e^(x)/x, variation of parameters gives u1' = -1 and u2' = 1/x. Integrate: u1 = -x and u2 = ln(x), so y_p = -x e^(x) + x e^(x) ln(x). Absorbing the homogeneous term -x e^(x) into c2 x e^(x) leaves the particular solution x e^(x) ln(x)."
+          - problem: "Consider y'' - y = e^{-x}. Use variation of parameters to find a particular solution, absorbing any homogeneous terms into the constants. Give the particular solution as a function of x."
+            answer: "-x e^(-x)/2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Homogeneous solutions are y1 = e^(x) and y2 = e^(-x), so W = -2. For g = e^(-x), variation of parameters gives u1' = e^(-2x)/2 and u2' = -1/2. Integrate: u1 = -e^(-2x)/4 and u2 = -x/2, so y_p = -e^(-x)/4 - x e^(-x)/2. Absorbing the homogeneous term -e^(-x)/4 into c2 e^(-x) leaves the particular solution -x e^(-x)/2."
+          - problem: "For y'' - 4y' + 4y = e^{2x}/x with x > 0, find a particular solution using variation of parameters. Absorb homogeneous terms into the constants and give the result as a function of x."
+            answer: "x e^(2x) ln(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Homogeneous solutions are y1 = e^(2x) and y2 = x e^(2x), so W = e^(4x). For g = e^(2x)/x, variation of parameters gives u1' = -1 and u2' = 1/x. Integrate: u1 = -x and u2 = ln(x), so y_p = -x e^(2x) + x e^(2x) ln(x). Absorbing the homogeneous term -x e^(2x) into c2 x e^(2x) leaves the particular solution x e^(2x) ln(x)."
+          - problem: "Consider y'' - 4y = e^{2x}. Use variation of parameters to find a particular solution and then evaluate it at x = 1/2. Give the exact value."
+            answer: "e/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Homogeneous solutions are y1 = e^(2x) and y2 = e^(-2x), so W = -4. For g = e^(2x), variation of parameters gives u1' = 1/4 and u2' = -e^(4x)/4. Integrate: u1 = x/4 and u2 = -e^(4x)/16, so y_p = x e^(2x)/4 - e^(2x)/16. Absorbing the homogeneous term -e^(2x)/16 into c1 e^(2x) leaves y_p = x e^(2x)/4. At x = 1/2, the particular solution equals e/8."
+          - problem: "For y'' + 2y' + y = e^{-x}/x with x > 0, find a particular solution using variation of parameters. Absorb homogeneous terms into the constants and give the result as a function of x."
+            answer: "x e^(-x) ln(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Homogeneous solutions are y1 = e^(-x) and y2 = x e^(-x), so W = e^(-2x). For g = e^(-x)/x, variation of parameters gives u1' = -1 and u2' = 1/x. Integrate: u1 = -x and u2 = ln(x), so y_p = -x e^(-x) + x e^(-x) ln(x). Absorbing the homogeneous term -x e^(-x) into c2 x e^(-x) leaves the particular solution x e^(-x) ln(x)."
+          - problem: "Consider y'' - 9y = e^{3x}. Use variation of parameters to find a particular solution and then evaluate it at x = 1/3. Give the exact value."
+            answer: "e/18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Homogeneous solutions are y1 = e^(3x) and y2 = e^(-3x), so W = -6. For g = e^(3x), variation of parameters gives u1' = 1/6 and u2' = -e^(6x)/6. Integrate: u1 = x/6 and u2 = -e^(6x)/36, so y_p = x e^(3x)/6 - e^(3x)/36. Absorbing the homogeneous term -e^(3x)/36 into c1 e^(3x) leaves y_p = x e^(3x)/6. At x = 1/3, the particular solution equals e/18."
         constraints: "forcing e^{kx}/x or duplicating exponentials; absorb any homogeneous-solution terms into the constants"
     diagnostic_exemplar:
       problem: 'Use variation of parameters to solve $y'''' - 2y'' + y = \dfrac{e^x}{x^2}$ for $x > 0$.'
@@ -750,43 +794,87 @@ topics:
         name: "The $x^r$ substitution"
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: "Write the indicial equation for $x^2y'' - 4xy' + 6y = 0$ and solve the ODE for $x > 0$."
-            answer: "$r(r-1) - 4r + 6 = r^2 - 5r + 6 = 0$: $y = c_1 x^2 + c_2 x^3$."
-            answer_contract: {kind: none}
-            solution_sketch: "Substituting $y = x^r$ turns each term $x^k y^{(k)}$ into a multiple of $x^r$."
-          - problem: "Find the general solution of $x^2y'' + 2xy' - 6y = 0$ for $x > 0$."
-            answer: "$y = c_1 x^2 + \\dfrac{c_2}{x^3}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$r(r-1) + 2r - 6 = r^2 + r - 6 = (r+3)(r-2) = 0$."
-          - problem: "Find the general solution of $x^2y'' - 2y = 0$ for $x > 0$."
-            answer: "$y = c_1 x^2 + \\dfrac{c_2}{x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$r(r-1) - 2 = (r-2)(r+1) = 0$."
+          - problem: "Use the substitution y = x^r to solve x^2 y'' - 4x y' + 6y = 0 for x > 0. Give the two exponents r1 and r2 in the general solution y = c1 x^r1 + c2 x^r2 with r1 < r2."
+            answer: "r1 = 2; r2 = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "r1"}, {"contract": {"kind": "exact"}, "name": "r2"}]}
+            solution_sketch: "Step 1: substitute y = x^r into x^2 y'' - 4x y' + 6y = 0, so the indicial equation is r(r-1) - 4r + 6 = 0. Step 2: simplify to r^2 - 5r + 6 = (r - 2)(r - 3) = 0, so the roots are 2 and 3. The exponents are r1 = 2; r2 = 3."
+          - problem: "Use the substitution y = x^r to solve x^2 y'' + 2x y' - 6y = 0 for x > 0. Find the larger of the two exponents in the general solution."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: substitute y = x^r into x^2 y'' + 2x y' - 6y = 0, so the indicial equation is r(r-1) + 2r - 6 = 0. Step 2: simplify to r^2 + r - 6 = (r + 3)(r - 2) = 0, so the roots are -3 and 2. The larger exponent is 2."
+          - problem: "Use the substitution y = x^r to solve x^2 y'' - 2y = 0 for x > 0. Find the smaller of the two exponents in the general solution."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: substitute y = x^r into x^2 y'' - 2y = 0, so the indicial equation is r(r-1) - 2 = 0. Step 2: simplify to r^2 - r - 2 = (r - 2)(r + 1) = 0, so the roots are 2 and -1. The smaller exponent is -1."
+          - problem: "Use the substitution y = x^r to solve x^2 y'' + 2x y' - 12y = 0 for x > 0. Give the two exponents r1 and r2 in the general solution y = c1 x^r1 + c2 x^r2 with r1 > r2."
+            answer: "r1 = 3; r2 = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "r1"}, {"contract": {"kind": "exact"}, "name": "r2"}]}
+            solution_sketch: "Step 1: substitute y = x^r into x^2 y'' + 2x y' - 12y = 0, so the indicial equation is r(r-1) + 2r - 12 = 0. Step 2: simplify to r^2 + r - 12 = (r + 4)(r - 3) = 0, so the roots are -4 and 3. The exponents are r1 = 3; r2 = -4."
+          - problem: "Use the substitution y = x^r to solve x^2 y'' - 5x y' + 5y = 0 for x > 0. Find the sum of the two exponents in the general solution."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: substitute y = x^r into x^2 y'' - 5x y' + 5y = 0, so the indicial equation is r(r-1) - 5r + 5 = 0. Step 2: simplify to r^2 - 6r + 5 = (r - 1)(r - 5) = 0, so the roots are 1 and 5. The sum of the exponents is 6."
+          - problem: "Use the substitution y = x^r to solve x^2 y'' + 10x y' + 20y = 0 for x > 0. Find the product of the two exponents in the general solution."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: substitute y = x^r into x^2 y'' + 10x y' + 20y = 0, so the indicial equation is r(r-1) + 10r + 20 = 0. Step 2: simplify to r^2 + 9r + 20 = (r + 4)(r + 5) = 0, so the roots are -4 and -5. The product of the exponents is 20."
         constraints: "indicial equation r(r-1) + ar + b = 0 factors over the integers; solutions are power functions on x > 0"
       - id: kp2
         name: Repeated and complex roots
         key_prerequisites: [homogeneous-constant-coefficients, logarithm-properties]
         exemplars:
-          - problem: "Find the general solution of $x^2y'' - 3xy' + 4y = 0$ for $x > 0$."
-            answer: "$y = (c_1 + c_2 \\ln x)x^2$"
-            answer_contract: {kind: none}
-            solution_sketch: "$r(r-1) - 3r + 4 = (r-2)^2 = 0$: double root $2$; the second solution gains a $\\ln x$ factor."
-          - problem: "Find the general solution of $x^2y'' + xy' + y = 0$ for $x > 0$."
-            answer: '$y = c_1 \cos(\ln x) + c_2 \sin(\ln x)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$r(r-1) + r + 1 = r^2 + 1 = 0$: roots $\pm i$, giving $\cos(\beta\ln x)$, $\sin(\beta\ln x)$ with $\beta = 1$.'
+          - problem: "One solution of x^2 y'' - 7x y' + 16y = 0 for x > 0 is y1 = x^4. Find the second solution y2 that is linearly independent of y1 and has no arbitrary constant."
+            answer: "x^4 ln(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The indicial equation is r(r-1) - 7r + 16 = r^2 - 8r + 16 = (r-4)^2, so the double root is r = 4. The first solution is y1 = x^4; for a double root the second solution gains a ln(x) factor. The second solution is x^4 ln(x)."
+          - problem: "For x > 0, give the two real fundamental solutions y1 and y2 of x^2 y'' - 5x y' + 13y = 0."
+            answer: "y1 = x^3 cos(2 ln(x)); y2 = x^3 sin(2 ln(x))"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
+            solution_sketch: "The indicial equation is r(r-1) - 5r + 13 = r^2 - 6r + 13 = (r-3)^2 + 4, so the complex roots are 3 +/- 2i. For complex roots alpha +/- beta i, the real fundamental solutions are x^alpha cos(beta ln x) and x^alpha sin(beta ln x). With alpha = 3 and beta = 2, the two real fundamental solutions are y1 = x^3 cos(2 ln(x)); y2 = x^3 sin(2 ln(x))."
+          - problem: "Find the double root r of the characteristic equation for x^2 y'' - 11x y' + 36y = 0."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The characteristic equation is r(r-1) - 11r + 36 = r^2 - 12r + 36. Factoring the quadratic gives (r - 6)^2 = 0. The double root is 6."
+          - problem: "For x > 0, the equation x^2 y'' + 3x y' + 10y = 0 has characteristic roots alpha +/- beta i. Find alpha and beta and give the answer as (alpha, beta)."
+            answer: "(-1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Divide by x^2 and use y = x^r to get the indicial equation r(r-1) + 3r + 10 = 0. This simplifies to r^2 + 2r + 10 = (r+1)^2 + 9 = 0, so the roots are -1 +/- 3i. The pair is (-1, 3)."
+          - problem: "One solution of x^2 y'' + 5x y' + 4y = 0 for x > 0 is y1 = x^(-2). Find a second solution y2 that is linearly independent of y1 and has no arbitrary constant."
+            answer: "ln(x)/x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The indicial equation is r(r-1) + 5r + 4 = r^2 + 4r + 4 = (r+2)^2, so the double root is -2. The first solution is y1 = x^(-2); for a double root the second solution gains a ln(x) factor. The second solution is ln(x)/x^2."
+          - problem: "For x > 0, find the two real fundamental solutions y1 and y2 of x^2 y'' - x y' + 5y = 0."
+            answer: "y1 = x cos(2 ln(x)); y2 = x sin(2 ln(x))"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
+            solution_sketch: "The indicial equation is r(r-1) - r + 5 = r^2 - 2r + 5 = (r-1)^2 + 4, so the roots are 1 +/- 2i. For complex roots alpha +/- beta i the real fundamental solutions are x^alpha cos(beta ln x) and x^alpha sin(beta ln x). With alpha = 1 and beta = 2, the two real fundamental solutions are y1 = x cos(2 ln(x)); y2 = x sin(2 ln(x))."
         constraints: "double roots gain ln x; complex roots alpha +/- beta i give x^alpha cos(beta ln x), x^alpha sin(beta ln x)"
       - id: kp3
         name: Cauchy-Euler IVPs
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: "Solve $x^2y'' - 2y = 0$ for $x > 0$ with $y(1) = 3$, $y'(1) = 0$."
-            answer: "$y = x^2 + \\dfrac{2}{x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$y = c_1x^2 + c_2/x$; $c_1 + c_2 = 3$ and $2c_1 - c_2 = 0$ give $c_1 = 1$, $c_2 = 2$."
+          - problem: "Solve x^2 y'' - 2y = 0 for x > 0 with y(1) = 3 and y'(1) = 0. Give the solution as a function of x."
+            answer: "x^2+2/x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The Cauchy-Euler substitution gives the indicial equation r(r-1)-2=0, so r^2-r-2=(r-2)(r+1). The roots 2 and -1 give the general solution y=c1x^2+c2/x. Apply y(1)=3 and y'(1)=0 to get c1+c2=3 and 2c1-c2=0, so c1=1 and c2=2. The particular solution is x^2+2/x."
           - problem: "Solve $x^2y'' - 4xy' + 6y = 0$ for $x > 0$ with $y(1) = 1$, $y'(1) = 2$."
             answer: "$y = x^2$"
             solution_sketch: "$y = c_1x^2 + c_2x^3$; $c_1 + c_2 = 1$ and $2c_1 + 3c_2 = 2$ give $c_1 = 1$, $c_2 = 0$."
+          - problem: "Solve x^2 y'' - 5x y' + 9y = 0 for x > 0 with y(1) = 2 and y'(1) = 7. Give the solution as a function of x."
+            answer: "2x^3+x^3ln(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The indicial equation is r(r-1)-5r+9=0, which simplifies to (r-3)^2=0. The repeated root 3 gives the general solution y=c1x^3+c2x^3ln(x). Apply y(1)=2 and y'(1)=7 to get c1=2 and 3c1+c2=7, so c2=1. The particular solution is 2x^3+x^3ln(x)."
+          - problem: "Let y be the solution of x^2 y'' - 4x y' + 4y = 0 for x > 0 with y(1) = 3 and y'(1) = 6. Find y(e)."
+            answer: "2e+e^4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Cauchy-Euler substitution y = x^r gives the indicial equation r(r-1) - 4r + 4 = 0, which factors as (r-1)(r-4) = 0, so the roots are 1 and 4 (indicial-equation rule). The general solution is y = c1 x + c2 x^4. Applying y(1) = 3 gives c1 + c2 = 3, and y'(1) = 6 gives c1 + 4c2 = 6 (initial-condition system). Subtracting yields c2 = 1 and c1 = 2, so the solution of the IVP is y = 2x + x^4. Evaluating this solution at x = e gives y(e) = 2e+e^4."
+          - problem: "Solve x^2 y'' - 2x y' - 4y = 0 for x > 0 with y(1) = 3 and y'(1) = 2. Give the solution as a function of x."
+            answer: "x^4+2/x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The indicial equation is r(r-1)-2r-4=0, which factors as (r-4)(r+1)=0. The roots 4 and -1 give the general solution y=c1x^4+c2/x. Apply y(1)=3 and y'(1)=2 to get c1+c2=3 and 4c1-c2=2, so c1=1 and c2=2. The particular solution is x^4+2/x."
+          - problem: "Solve x^2 y'' - 3x y' + 3y = 0 for x > 0 with y(1) = 3 and y'(1) = 5. Give the solution as a function of x."
+            answer: "x^3+2x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The indicial equation is r(r-1)-3r+3=0, which factors as (r-1)(r-3)=0. The roots 1 and 3 give the general solution y=c1x+c2x^3. Apply y(1)=3 and y'(1)=5 to get c1+c2=3 and c1+3c2=5, so c1=2 and c2=1. The particular solution is x^3+2x."
         constraints: "initial conditions at x = 1 so the 2x2 system has small integer solutions; state the domain x > 0"
     diagnostic_exemplar:
       problem: 'Solve $x^2 y'''' - 3xy'' + 4y = 0$ for $x > 0$ with $y(1) = 2$, $y''(1) = 5$.'
@@ -826,18 +914,30 @@ topics:
         name: The equation of motion
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: "A $2$ kg mass hangs on a spring with stiffness $k = 32$ N/m, no damping. Write the equation of motion and its general solution."
-            answer: "$x'' + 16x = 0$; $x = c_1 \\cos 4t + c_2 \\sin 4t$ (natural frequency $\\omega = 4$ rad/s)."
-            answer_contract: {kind: none}
-            solution_sketch: "$mx'' + kx = 0$ gives $x'' + (k/m)x = 0$ with $\\omega = \\sqrt{k/m} = \\sqrt{16} = 4$."
-          - problem: "For $x'' + 25x = 0$, state the natural frequency and the period."
-            answer: '$\omega = 5$ rad/s; period $\dfrac{2\pi}{5}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\omega = 5$ rad/s; period $\dfrac{2\pi}{5}$.'
-          - problem: "A $1$ kg mass on a spring with $k = 9$ N/m oscillates freely. What is the period?"
-            answer: '$\dfrac{2\pi}{3}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\omega = \sqrt{9/1} = 3$; $T = 2\pi/\omega$.'
+          - problem: "A 2 kg mass hangs on a spring with stiffness k = 32 N/m and no damping. The equation of motion is x'' + (k/m)x = 0. Find the natural frequency omega in rad/s."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The rule for the equation x'' + (k/m)x = 0 is omega = sqrt(k/m). First compute k/m = 32/2 = 16, a perfect square. Then omega = sqrt(16) = 4 rad/s, and the period is T = 2pi/omega = pi/2 s. Thus omega = 4 rad/s, so the answer is 4."
+          - problem: "A free undamped oscillator satisfies x'' + 81x = 0. Determine the natural frequency omega in rad/s."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Comparing x'' + 81x = 0 with x'' + omega^2 x = 0 gives omega^2 = 81. The rule omega = sqrt(omega^2) then gives omega = 9 rad/s. The period would be T = 2pi/omega = 2pi/9 s. Therefore omega = 9."
+          - problem: "A spring of stiffness k = 9 N/m holds a 1 kg mass, with no damping, so the motion is a free undamped oscillation. How many complete oscillations does the mass make in 2pi seconds?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute omega = sqrt(k/m) = sqrt(9/1) = 3 rad/s. The period rule gives T = 2pi/omega = 2pi/3 s. The count of oscillations in 2pi seconds is 2pi divided by T: 2pi / (2pi/3) = 3. The number of complete oscillations is 3."
+          - problem: "A 4 kg mass on a spring has no damping and a natural frequency of 6 rad/s. The equation of motion is x'' + (k/m)x = 0. Find the spring stiffness k in N/m."
+            answer: "144"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full result is k = 144. Since omega^2 = k/m, we have k = m omega^2. Substitute m = 4 and omega = 6: k = 4 * 36 = 144. Thus k = 144 N/m."
+          - problem: "A 2 kg mass is attached to a spring with stiffness k = 72 N/m and no damping. The period of the motion is T = pi/3 s. Find the natural frequency omega in rad/s."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full result is omega = 6. The period formula is T = 2pi/omega, so omega = 2pi/T. Substitute T = pi/3: omega = 2pi/(pi/3) = 6. Thus omega = 6 rad/s."
+          - problem: "A 3 kg mass on a spring with no damping satisfies x'' + 49x = 0. Find the spring stiffness k in N/m."
+            answer: "147"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full result is k = 147. In x'' + 49x = 0, omega^2 = 49, so omega = 7 rad/s. Then k = m omega^2 = 3 * 49 = 147. Thus k = 147 N/m."
         constraints: "k/m a perfect square; report omega = sqrt(k/m) and period 2 pi / omega"
       - id: kp2
         name: Oscillation IVPs
@@ -852,6 +952,18 @@ topics:
           - problem: "Solve $x'' + 9x = 0$ with $x(0) = 2$, $x'(0) = -3$."
             answer: "$x = 2\\cos 3t - \\sin 3t$"
             solution_sketch: "$c_1 = 2$; $x'(0) = 3c_2 = -3$ gives $c_2 = -1$."
+          - problem: "A mass on a spring has displacement y(t) with y''(t) + 25y(t) = 0, y(0) = -1 and y'(0) = 10. Give y(t) as a function of t."
+            answer: "-cos(5t) + 2sin(5t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (homogeneous constant-coefficients rule): the characteristic equation is r^2 + 25 = 0, so r = 5i and r = -5i. Step 2: the general solution is y = c1 cos(5t) + c2 sin(5t). Step 3 (initial condition y(0)): y(0) = c1 = -1. Step 4: differentiate, y'(t) = -5c1 sin(5t) + 5c2 cos(5t), and y'(0) = 5c2 = 10 gives c2 = 2. The solution is -cos(5t) + 2sin(5t)."
+          - problem: "The displacement y(t) of an oscillator satisfies y''(t) + 36y(t) = 0 with y(0) = 4 and y'(0) = 12. Find y(t)."
+            answer: "4cos(6t) + 2sin(6t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (homogeneous constant-coefficients rule): the characteristic equation is r^2 + 36 = 0, so r = 6i and r = -6i. Step 2: the general solution is y = c1 cos(6t) + c2 sin(6t). Step 3 (initial condition y(0)): y(0) = c1 = 4. Step 4: differentiate, y'(t) = -6c1 sin(6t) + 6c2 cos(6t), and y'(0) = 6c2 = 12 gives c2 = 2. The solution is 4cos(6t) + 2sin(6t)."
+          - problem: "An oscillator moves with position y(t) obeying y''(t) + 49y(t) = 0, y(0) = -2 and y'(0) = -21. State y(t)."
+            answer: "-2cos(7t) - 3sin(7t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (homogeneous constant-coefficients rule): the characteristic equation is r^2 + 49 = 0, so r = 7i and r = -7i. Step 2: the general solution is y = c1 cos(7t) + c2 sin(7t). Step 3 (initial condition y(0)): y(0) = c1 = -2. Step 4: differentiate, y'(t) = -7c1 sin(7t) + 7c2 cos(7t), and y'(0) = 7c2 = -21 gives c2 = -3. The solution is -2cos(7t) - 3sin(7t)."
         constraints: "initial data chosen so c_1, c_2 are small integers; x'(0) fixes c_2 through the factor omega"
       - id: kp3
         name: Amplitude and phase
@@ -860,12 +972,24 @@ topics:
           - problem: 'A mass oscillates as $x = 3\cos 2t + 4\sin 2t$. Find the amplitude of the motion.'
             answer: '$5$'
             solution_sketch: '$R = \sqrt{a^2 + b^2} = \sqrt{9 + 16} = 5$.'
-          - problem: 'Write $x = \cos t + \sqrt{3}\sin t$ in the form $R\cos(t - \varphi)$.'
-            answer: '$x = 2\cos\left(t - \dfrac{\pi}{3}\right)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$R = \sqrt{1 + 3} = 2$; $\tan\varphi = \dfrac{b}{a} = \sqrt{3}$ with $a, b > 0$ gives $\varphi = \pi/3$.'
           - problem: 'Find the amplitude of $x = 6\cos t + 8\sin t$.'
             answer: '$10$'
+          - problem: "A mass oscillates as x = cos t + sqrt(3) sin t. Write x in the form R cos(t - phi) with R > 0 and 0 <= phi < 2pi. Find the expression in t."
+            answer: "2cos(t-pi/3)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The coefficients are a = 1 and b = sqrt(3). The amplitude is R = sqrt(1^2 + (sqrt(3))^2) = sqrt(4) = 2. The phase satisfies tan(phi) = b/a = sqrt(3) with a, b > 0, so phi = pi/3. The expression is 2cos(t-pi/3)."
+          - problem: "A mass oscillates as x = -3 cos 5t + 4 sin 5t. Find the amplitude of the motion."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write a = -3 and b = 4. The amplitude is R = sqrt(a^2 + b^2) = sqrt(9 + 16) = sqrt(25) = 5. The amplitude is 5."
+          - problem: "A mass oscillates as x = 6 cos 3t - 8 sin 3t. Find the amplitude of the motion."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write a = 6 and b = -8. The amplitude is R = sqrt(6^2 + (-8)^2) = sqrt(36 + 64) = sqrt(100) = 10. The amplitude is 10."
+          - problem: "A mass oscillates as x = sqrt(3) cos t + sin t. It can be written as R cos(t - phi) with R > 0 and 0 <= phi < 2pi. Find the phase angle phi."
+            answer: "pi/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Here a = sqrt(3) and b = 1. The amplitude is R = sqrt(3 + 1) = 2. The phase satisfies tan(phi) = b/a = 1/sqrt(3), and with a, b > 0, phi = pi/6. The phase angle is pi/6."
         constraints: "amplitudes from Pythagorean pairs (3,4,5), (6,8,10), (1,sqrt3,2); phase angles at standard unit-circle values"
     diagnostic_exemplar:
       problem: 'A mass satisfies $x'''' + 9x = 0$ with $x(0) = 3$ and $x''(0) = -12$. Solve the initial value problem and find the amplitude of the motion.'
@@ -902,18 +1026,30 @@ topics:
         name: Damped motion classification
         key_prerequisites: [free-undamped-oscillations]
         exemplars:
-          - problem: "Classify the motion $x'' + 6x' + 9x = 0$ as underdamped, critically damped, or overdamped."
-            answer: "Critically damped: the characteristic equation has the double root $r = -3$."
-            answer_contract: {kind: none}
-            solution_sketch: "$r^2 + 6r + 9 = (r+3)^2$: discriminant zero."
-          - problem: 'Classify $x'''' + 2x'' + 10x = 0$ and give the general solution.'
-            answer: 'Underdamped: $x = e^{-t}(c_1 \cos 3t + c_2 \sin 3t)$, quasi-frequency $3$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$r = -1 \pm 3i$ from $r^2 + 2r + 10 = 0$: complex roots mean oscillation inside a decaying envelope.'
-          - problem: "Classify $x'' + 5x' + 4x = 0$."
-            answer: "Overdamped: distinct real roots $r = -1$ and $r = -4$, no oscillation."
-            answer_contract: {kind: none}
-            solution_sketch: "$r^2 + 5r + 4 = (r+1)(r+4)$: positive discriminant."
+          - problem: "A mass-spring system obeys x'' + 8x' + 15x = 0. Find the damping type and the larger characteristic root."
+            answer: "type = over; r = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["under"], ["critical"], ["over"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Characteristic equation: r^2 + 8r + 15 = 0. Factor: (r+3)(r+5) = 0, giving distinct real roots. Distinct real roots mean overdamped motion, so type = over. The larger root is -3. The 'under' option would need a negative discriminant; the 'critical' option would need a zero discriminant. The answer is type = over; r = -3."
+          - problem: "A mass-spring system obeys x'' + 6x' + 13x = 0. The solution can be written as e^(-alpha t)(c1 cos(beta t) + c2 sin(beta t)). Find the damping type and beta."
+            answer: "type = under; beta = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["under"], ["critical"], ["over"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "beta"}]}
+            solution_sketch: "Characteristic equation: r^2 + 6r + 13 = 0. Discriminant: 36 - 52 = -16, so the roots are r = -3 plus or minus 2i. A negative discriminant gives underdamped motion, so type = under. The quasi-frequency is beta = 2. The 'critical' option would need a zero discriminant; the 'over' option would need a positive discriminant. The answer is type = under; beta = 2."
+          - problem: "A mass-spring system obeys x'' + 7x' + 12x = 0. Find the damping type and the discriminant D of the characteristic equation."
+            answer: "type = over; D = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["under"], ["critical"], ["over"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "Characteristic equation: r^2 + 7r + 12 = 0. Discriminant: D = 7^2 - 4*12 = 49 - 48 = 1. A positive discriminant gives distinct real roots and overdamped motion, so type = over. The 'under' option would need a negative discriminant; the 'critical' option would need a zero discriminant. The answer is type = over; D = 1."
+          - problem: "A mass-spring system obeys x'' + 10x' + 25x = 0. Find the damping type and the repeated characteristic root."
+            answer: "type = critical; r = -5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["under"], ["critical"], ["over"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Characteristic equation: r^2 + 10r + 25 = 0. Factor: (r+5)^2 = 0, so the double root is -5. A zero discriminant gives critically damped motion, so type = critical. The 'under' option would need a negative discriminant; the 'over' option would need a positive discriminant. The answer is type = critical; r = -5."
+          - problem: "Use code 1 for underdamped, code 2 for critical, and code 3 for overdamped. Find the code for the damping type of x'' + 14x' + 49x = 0."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Characteristic equation: r^2 + 14r + 49 = 0. Factor: (r+7)^2 = 0, so the double root is -7. A double root gives critical damping, which is code 2. The answer is 2."
+          - problem: "For x'' + 9x' + 20x = 0, use code 1 for underdamped, code 2 for critical, and code 3 for overdamped. Find the damping type code."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Characteristic equation: r^2 + 9r + 20 = 0. Factor: (r+4)(r+5) = 0, so the roots are distinct real numbers. Distinct real roots give overdamped motion, which is code 3. The answer is 3."
         constraints: "classification by the discriminant of r^2 + (c/m)r + k/m; integer roots or integer alpha, beta"
       - id: kp2
         name: Damped IVPs
@@ -925,19 +1061,51 @@ topics:
           - problem: "Solve $x'' + 2x' + 5x = 0$ with $x(0) = 1$, $x'(0) = -1$."
             answer: "$x = e^{-t}\\cos 2t$"
             solution_sketch: "$r = -1 \\pm 2i$: $x = e^{-t}(c_1\\cos 2t + c_2\\sin 2t)$; $c_1 = 1$ and $x'(0) = -c_1 + 2c_2 = -1$ give $c_2 = 0$."
+          - problem: "Solve x'' + 5x' + 4x = 0 with x(0) = 1 and x'(0) = 2. Give x as a function of t."
+            answer: "2e^(-t) - e^(-4t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The characteristic equation r^2 + 5r + 4 = 0 factors as (r + 1)(r + 4) = 0, giving overdamped roots -1 and -4. The general solution is x = c1 e^(-t) + c2 e^(-4t). Using x(0) = 1 gives c1 + c2 = 1, and x'(0) = 2 gives -c1 - 4c2 = 2. Solving these gives c1 = 2 and c2 = -1. The solution is 2e^(-t) - e^(-4t)."
+          - problem: "Solve x'' + 6x' + 13x = 0 with x(0) = 1 and x'(0) = -1. Give x as a function of t."
+            answer: "e^(-3t)cos(2t) + e^(-3t)sin(2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The characteristic equation r^2 + 6r + 13 = 0 has discriminant 36 - 52 = -16, giving roots -3 + 2i and -3 - 2i, so the system is underdamped. The general solution is x = e^(-3t)(c1 cos(2t) + c2 sin(2t)). From x(0) = 1 we get c1 = 1. The derivative at zero is -3c1 + 2c2 = -1, so c2 = 1. The solution is e^(-3t)cos(2t) + e^(-3t)sin(2t)."
+          - problem: "Solve x'' + 6x' + 8x = 0 with x(0) = 3 and x'(0) = -10. Give x as a function of t."
+            answer: "e^(-2t) + 2e^(-4t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The characteristic equation r^2 + 6r + 8 = 0 factors as (r + 2)(r + 4) = 0, giving roots -2 and -4. The general solution is x = c1 e^(-2t) + c2 e^(-4t). Using x(0) = 3 gives c1 + c2 = 3, and x'(0) = -10 gives -2c1 - 4c2 = -10. Solving these gives c1 = 1 and c2 = 2. The solution is e^(-2t) + 2e^(-4t)."
+          - problem: "Solve x'' + 4x' + 4x = 0 with x(0) = 1 and x'(0) = 3. Give x as a function of t."
+            answer: "(1+5t)e^(-2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The characteristic equation r^2 + 4r + 4 = 0 gives the repeated root -2, so the system is critically damped. The general solution is x = (c1 + c2 t)e^(-2t). From x(0) = 1 we get c1 = 1. The derivative at zero is c2 - 2c1 = 3, so c2 = 5. The solution is (1+5t)e^(-2t)."
         constraints: "roots integer or integer alpha, beta; initial data chosen so constants are small integers"
       - id: kp3
         name: Forced motion and resonance
         key_prerequisites: [free-undamped-oscillations, undetermined-coefficients]
         exemplars:
-          - problem: 'Does $x'''' + 25x = 10\cos 5t$ exhibit resonance? Find a particular solution.'
-            answer: 'Yes: the forcing frequency $5$ equals the natural frequency. $x_p = t\sin 5t$, whose amplitude grows without bound.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Try $x_p = t(A\cos 5t + B\sin 5t)$; substitution gives $10B\cos 5t - 10A \sin 5t = 10\cos 5t$, so $A = 0$, $B = 1$.'
-          - problem: 'Find a particular solution of $x'''' + 4x = 3\cos t$.'
-            answer: '$x_p = \cos t$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Try $x_p = A\cos t$: $(-1 + 4)A = 3$ gives $A = 1$; no resonance since $1 \neq 2$.'
+          - problem: "An undamped forced oscillator obeys x'' + 36x = 12 cos(6t). State whether resonance occurs, and give a particular solution as a function of t."
+            answer: "verdict = resonant; xp = t sin(6t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["resonant"], ["nonresonant"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "xp"}]}
+            solution_sketch: "The equation x'' + 36x = 12 cos(6t) has natural frequency sqrt(36) = 6, which equals the forcing frequency 6, so resonance occurs. Rule: resonance test. Try xp = t(A cos(6t) + B sin(6t)). Substitute and match: xp'' + 36xp = 12B cos(6t) - 12A sin(6t) = 12 cos(6t), so B = 1 and A = 0. The nonresonant option is wrong because the frequencies match. The particular solution is t sin(6t), so verdict = resonant; xp = t sin(6t)."
+          - problem: "An undamped forced oscillator obeys x'' + 25x = 18 cos(3t). Find a particular solution as a function of t."
+            answer: "9 cos(3t)/8"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The equation x'' + 25x = 18 cos(3t) has natural frequency sqrt(25) = 5, while the forcing frequency is 3, so there is no resonance. Rule: undetermined coefficients for a nonresonant cosine forcing. Try xp = A cos(3t); then xp'' = -9A cos(3t). Substitute: (-9 + 25)A = 16A = 18, so A = 9/8. Thus xp = 9 cos(3t)/8."
+          - problem: "An undamped forced oscillator obeys x'' + 49x = 20 cos(3t). Determine a particular solution as a function of t."
+            answer: "cos(3t)/2"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The equation x'' + 49x = 20 cos(3t) has natural frequency sqrt(49) = 7, which differs from the forcing frequency 3, so there is no resonance. Rule: undetermined coefficients with a cosine trial. Try xp = A cos(3t); xp'' = -9A cos(3t). Then (-9 + 49)A = 40A = 20, so A = 1/2. The particular solution is cos(3t)/2."
+          - problem: "An undamped forced oscillator obeys x'' + 4x = 8 cos(3t) + 6 sin(3t). Find a particular solution as a function of t."
+            answer: "-(8 cos(3t) + 6 sin(3t))/5"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The equation x'' + 4x = 8 cos(3t) + 6 sin(3t) has natural frequency sqrt(4) = 2, which differs from the forcing frequency 3, so there is no resonance. Rule: undetermined coefficients by superposition, one trial per forcing term. For xp = A cos(3t) + B sin(3t), xp'' = -9(A cos(3t) + B sin(3t)), so xp'' + 4xp = -5A cos(3t) - 5B sin(3t). Matching gives -5A = 8 and -5B = 6, hence A = -8/5 and B = -6/5. The particular solution is -(8 cos(3t) + 6 sin(3t))/5."
+          - problem: "An undamped forced oscillator obeys x'' + 16x = 8 sin(3t). Determine a particular solution as a function of t."
+            answer: "8 sin(3t)/7"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The equation x'' + 16x = 8 sin(3t) has natural frequency sqrt(16) = 4, which differs from the forcing frequency 3, so there is no resonance. Rule: undetermined coefficients with a sine trial. Try xp = B sin(3t); xp'' = -9B sin(3t). Substitute: (-9 + 16)B = 7B = 8, so B = 8/7. The particular solution is 8 sin(3t)/7."
+          - problem: "An undamped forced oscillator obeys x'' + 64x = F cos(wt). Find the positive forcing frequency w that produces resonance."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For x'' + 64x = F cos(wt), the natural frequency is sqrt(64) = 8. Rule: resonance occurs exactly when the forcing frequency equals the natural frequency. Set w = sqrt(k/m) = 8. The positive forcing frequency that produces resonance is 8."
         constraints: "undamped forced oscillators only; resonance iff forcing frequency equals sqrt(k/m)"
     diagnostic_exemplar:
       problem: 'Does $x'''' + 16x = 8\cos 4t$ exhibit resonance? Find a particular solution.'
@@ -971,18 +1139,30 @@ topics:
         name: The circuit equation and the mechanical analogy
         key_prerequisites: [spring-mass-oscillations]
         exemplars:
-          - problem: "A series circuit has inductance $L = 1$ H, no resistance, capacitance $C = \\tfrac{1}{16}$ F, and no source. Write the ODE for the charge $Q(t)$ and its general solution."
-            answer: "$Q'' + 16Q = 0$; $Q = c_1\\cos 4t + c_2 \\sin 4t$."
-            answer_contract: {kind: none}
-            solution_sketch: "$LQ'' + RQ' + \\dfrac{Q}{C} = E(t)$ with $L = 1$, $R = 0$, $1/C = 16$, $E = 0$."
-          - problem: "In the mechanical analogy for $LQ'' + RQ' + Q/C = E$, which mechanical quantities correspond to $L$, $R$, and $1/C$?"
-            answer: "$L \\leftrightarrow$ mass $m$, $R \\leftrightarrow$ damping $c$, $1/C \\leftrightarrow$ stiffness $k$ (and $E \\leftrightarrow$ external force)."
-            answer_contract: {kind: none}
-            solution_sketch: "$L \\leftrightarrow$ mass $m$, $R \\leftrightarrow$ damping $c$, $1/C \\leftrightarrow$ stiffness $k$ (and $E \\leftrightarrow$ external force)."
-          - problem: "For $L = 2$, $R = 8$, $C = \\tfrac{1}{8}$, $E = 0$, write the charge ODE in standard form and classify the response."
-            answer: "$Q'' + 4Q' + 4Q = 0$: critically damped (double root $-2$)."
-            answer_contract: {kind: none}
-            solution_sketch: "$2Q'' + 8Q' + 8Q = 0$; divide by $2$; $(r+2)^2 = 0$."
+          - problem: "In the mechanical analogy for a series RLC circuit, L is mass, R is damping, and 1/C is stiffness. A circuit has L = 3 H, R = 6 ohms, C = 1/12 F and no source. Find the coefficient a in the standard form Q'' + aQ' + bQ = 0."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, standard form: divide LQ'' + RQ' + Q/C = 0 by L to get Q'' + (R/L)Q' + Q/(LC) = 0. Step 2, read the coefficient: a = R/L = 6/3. The coefficient a is 2."
+          - problem: "In the mechanical analogy for a series RLC circuit, L is mass, R is damping, and 1/C is stiffness. A circuit has L = 4 H, R = 8 ohms, C = 1/32 F and no source. Find the coefficient b in the standard form Q'' + aQ' + bQ = 0."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, standard form: divide LQ'' + RQ' + Q/C = 0 by L, giving Q'' + (R/L)Q' + Q/(LC) = 0. Step 2, read the constant coefficient: b = 1/(LC) = 1/(4 * 1/32) = 1/(1/8). The coefficient b is 8."
+          - problem: "In the mechanical analogy for a series RLC circuit, L is mass, R is damping, and 1/C is stiffness. For a capacitor with C = 1/25 F, find the numerical value of the stiffness k in the analogous mass-spring system."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, analogy: the stiffness k matches 1/C. Step 2, substitute the capacitance: k = 1/(1/25). The stiffness k is 25."
+          - problem: "In the mechanical analogy for a series RLC circuit, L is mass, R is damping, and 1/C is stiffness. A circuit has L = 2 H, R = 8 ohms, C = 1/8 F and no source. Its standard form is Q'' + aQ' + bQ = 0. Find the discriminant a^2 - 4b."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, standard form: divide 2Q'' + 8Q' + 8Q = 0 by 2, so a = 4 and b = 1/(LC) = 1/(2 * 1/8) = 4. Step 2, characteristic discriminant: a^2 - 4b = 4^2 - 4*4 = 16 - 16. The discriminant is 0."
+          - problem: "In the mechanical analogy for a series RLC circuit, L is mass, R is damping, and 1/C is stiffness. A circuit has standard form Q'' + 3Q' + 2Q = 0, and L = 1 H. Find the capacitance C."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, identify coefficients: a = R/L = 3 and b = 1/(LC) = 2. Step 2, solve for C with L = 1: 1/C = 2, so C = 1/2. The capacitance C is 1/2."
+          - problem: "A mechanical analog has mass m = 2, damping c = 6, and stiffness k = 18. In the analogy for a series RLC circuit, L is mass, R is damping, and 1/C is stiffness. Find the capacitance C in farads."
+            answer: "1/18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, match the analogy: L = m = 2 and 1/C = k = 18. Step 2, solve for C: 1/C = 18, so C = 1/18. The capacitance C is 1/18."
         constraints: "L, R, 1/C chosen so the standard-form coefficients are small integers; always state the analogy explicitly"
       - id: kp2
         name: Free circuit response
@@ -991,10 +1171,26 @@ topics:
           - problem: "Solve $Q'' + 2Q' + 5Q = 0$ with $Q(0) = 3$, $Q'(0) = -3$."
             answer: "$Q = 3e^{-t}\\cos 2t$"
             solution_sketch: "$r = -1 \\pm 2i$; $c_1 = 3$ and $Q'(0) = -c_1 + 2c_2 = -3$ give $c_2 = 0$."
-          - problem: "A circuit has $L = 1$, $R = 6$, $C = \\tfrac{1}{9}$, $E = 0$. Classify the response."
-            answer: "$Q'' + 6Q' + 9Q = 0$: critically damped."
-            answer_contract: {kind: none}
-            solution_sketch: "$(r + 3)^2 = 0$."
+          - problem: "A series circuit has L = 1 H, R = 5 ohms, C = 1/4 F, and no source. Select the type of free response."
+            answer: "overdamped"
+            answer_contract: {"kind": "label", "options": [["overdamped"], ["critically damped"], ["underdamped"], ["undamped"]]}
+            solution_sketch: "Use the RLC free-response characteristic equation Lr^2 + Rr + 1/C = 0. With L = 1, R = 5, C = 1/4, it is r^2 + 5r + 4 = 0. The discriminant is 25 - 16 = 9 > 0, which gives distinct real roots, so the response is overdamped. The option critically damped is wrong: it needs discriminant zero. The option underdamped is wrong: it needs a negative discriminant. The option undamped is wrong: it needs R = 0. The correct option is overdamped."
+          - problem: "For a free circuit, solve Q'' + 4Q' + 13Q = 0 with Q(0) = 2, Q'(0) = -4. Find Q(t) as a function of t."
+            answer: "2e^(-2t) cos(3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write the characteristic equation r^2 + 4r + 13 = 0. Its roots are r = -2 + 3i and r = -2 - 3i, so the underdamped form is Q = e^(-2t)(c1 cos(3t) + c2 sin(3t)). Use Q(0) = 2 to get c1 = 2. Differentiate and use Q'(0) = -4: the derivative at 0 is -2c1 + 3c2 = -4, so -4 + 3c2 = -4 and c2 = 0. The solution is Q = 2e^(-2t) cos(3t)."
+          - problem: "For a free circuit, solve Q'' + 5Q' + 4Q = 0 with Q(0) = 3, Q'(0) = 0. Find Q(t) as a function of t."
+            answer: "4e^(-t) - e^(-4t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write the characteristic equation r^2 + 5r + 4 = 0. Its roots are r = -1 and r = -4, so the overdamped form is Q = c1 e^(-t) + c2 e^(-4t). Use Q(0) = 3 to get c1 + c2 = 3. Differentiate and use Q'(0) = 0: -c1 - 4c2 = 0, so c1 = 4 and c2 = -1. The solution is Q = 4e^(-t) - e^(-4t)."
+          - problem: "For a free circuit, the charge is Q(t) = 2e^(-t) cos(3t). Using I = Q', find the current I(t) as a function of t."
+            answer: "-2e^(-t) cos(3t) - 6e^(-t) sin(3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Start from the full object Q(t) = 2e^(-t) cos(3t). Apply the product rule: the derivative of 2e^(-t) is -2e^(-t) and the derivative of cos(3t) is -3 sin(3t). So Q' = -2e^(-t) cos(3t) - 6e^(-t) sin(3t). Since the current is I = Q', the current is I = -2e^(-t) cos(3t) - 6e^(-t) sin(3t)."
+          - problem: "A series circuit has L = 1 H, R = 4 ohms, C = 1/8 F, and no source. Select the type of free response."
+            answer: "underdamped"
+            answer_contract: {"kind": "label", "options": [["overdamped"], ["critically damped"], ["underdamped"], ["undamped"]]}
+            solution_sketch: "Use the RLC free-response characteristic equation Lr^2 + Rr + 1/C = 0. With L = 1, R = 4, C = 1/8, it is r^2 + 4r + 8 = 0. The discriminant is 16 - 32 = -16 < 0, which gives complex roots, so the response is underdamped. The option overdamped is wrong: it needs a positive discriminant. The option critically damped is wrong: it needs discriminant zero. The option undamped is wrong: it needs R = 0. The correct option is underdamped."
         constraints: "same classification machinery as damped springs; the current is I = Q'"
       - id: kp3
         name: Driven circuits and steady state
@@ -1046,6 +1242,22 @@ topics:
           - problem: "Solve $y'' + y = 0$ with $y(0) = 0$, $y(\\pi/2) = 5$."
             answer: "$y = 5\\sin x$"
             solution_sketch: "$y = c_1\\cos x + c_2\\sin x$; $y(0) = 0$ forces $c_1 = 0$ and $y(\\pi/2) = c_2 = 5$."
+          - problem: "Solve y'' + y = 0 with y(0) = 2 and y(pi/2) = 3. Find y as a function of x."
+            answer: "2cos(x)+3sin(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the general solution of y'' + y = 0: y = c1 cos(x) + c2 sin(x) from the characteristic equation r^2 + 1 = 0. Apply y(0) = 2 to get c1 = 2. Apply y(pi/2) = 3 to get c2 = 3. The solution is 2cos(x)+3sin(x)."
+          - problem: "Solve y'' = 0 with y(0) = 1 and y(pi) = 3pi + 1. Find y as a function of x."
+            answer: "3x+1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the general solution of y'' = 0: y = ax + b. Apply y(0) = 1 to get b = 1. Apply y(pi) = 3pi + 1 to get a*pi + 1 = 3pi + 1, so a = 3. The solution is 3x+1."
+          - problem: "Solve y'' + 4y = 0 with y(0) = 2 and y(pi/4) = 1. Find y as a function of x."
+            answer: "2cos(2x)+sin(2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the general solution of y'' + 4y = 0: y = c1 cos(2x) + c2 sin(2x) from the characteristic equation r^2 + 4 = 0. Apply y(0) = 2 to get c1 = 2. Apply y(pi/4) = 1 to get c2 = 1 because cos(pi/2)=0 and sin(pi/2)=1. The solution is 2cos(2x)+sin(2x)."
+          - problem: "Solve y'' + 9y = 0 with y(0) = 0 and y(pi/6) = 4. Find y as a function of x."
+            answer: "4sin(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the general solution of y'' + 9y = 0: y = c1 cos(3x) + c2 sin(3x) from the characteristic equation r^2 + 9 = 0. Apply y(0) = 0 to get c1 = 0. Apply y(pi/6) = 4 to get c2 = 4 because sin(pi/2)=1. The solution is 4sin(3x)."
         constraints: "conditions at two different points; endpoints at 0 and rational multiples of pi where sin/cos take clean values"
       - id: kp2
         name: "Existence outcomes: unique, none, or infinitely many"
@@ -1068,16 +1280,28 @@ topics:
         name: Eigenvalue problems
         key_prerequisites: [homogeneous-constant-coefficients, unit-circle]
         exemplars:
-          - problem: "Find all $\\lambda > 0$ for which $y'' + \\lambda y = 0$, $y(0) = y(\\pi) = 0$ has nonzero solutions."
-            answer: "$\\lambda = n^2$ for $n = 1, 2, 3, \\ldots$, with $y = \\sin nx$."
-            answer_contract: {kind: none}
-            solution_sketch: "$y = \\sin(\\sqrt{\\lambda}\\,x)$ needs $\\sin(\\sqrt{\\lambda}\\,\\pi) = 0$, i.e. $\\sqrt{\\lambda} = n$."
-          - problem: "State the eigenvalues of $y'' + \\lambda y = 0$, $y(0) = y(L) = 0$."
-            answer: '$\lambda_n = \dfrac{n^2\pi^2}{L^2}$, with eigenfunctions $\sin\dfrac{n\pi x}{L}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda_n = \dfrac{n^2\pi^2}{L^2}$, with eigenfunctions $\sin\dfrac{n\pi x}{L}$.'
           - problem: "What is the smallest positive eigenvalue of $y'' + \\lambda y = 0$, $y(0) = y(1) = 0$?"
             answer: '$\pi^2$'
+          - problem: "On the interval 0 < x < pi, the function y satisfies y'' + lambda y = 0 with y(0) = 0 and y(pi) = 0. Determine the nth positive eigenvalue as a function of n."
+            answer: "n^2"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "The boundary value problem is y'' + mu y = 0 with y(0) = 0 and y(pi) = 0. By the homogeneous constant-coefficient rule, the nontrivial solution with y(0) = 0 is y = sin(sqrt(mu) x). The boundary condition y(pi) = 0 gives sin(sqrt(mu) pi) = 0, so sqrt(mu) pi = n pi and mu = n^2. The nth positive eigenvalue is n^2."
+          - problem: "A rod of length 2 is pinned at both ends, so y(0) = 0 and y(2) = 0. Its modes solve y'' + lambda y = 0. Compute the nth positive eigenvalue as a function of n."
+            answer: "n^2*pi^2/4"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "The boundary value problem is y'' + mu y = 0 with y(0) = 0 and y(2) = 0. By the homogeneous constant-coefficient rule, the nontrivial solution is y = sin(sqrt(mu) x). The boundary condition y(2) = 0 gives sqrt(mu)*2 = n pi, so mu = n^2*pi^2/4. The nth positive eigenvalue is n^2*pi^2/4."
+          - problem: "A vibrating string of length 1 is fixed at both ends, so y(0) = 0 and y(1) = 0. Its modes satisfy y'' + lambda y = 0. Find the third positive eigenvalue."
+            answer: "9pi^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The boundary value problem is y'' + mu y = 0 with y(0) = 0 and y(1) = 0. The boundary conditions give sqrt(mu) = n pi, so mu = n^2 pi^2 for n = 1, 2, 3, ... (eigenvalue formula for L = 1). Setting n = 3 gives mu = 9 pi^2. The third positive eigenvalue is 9pi^2."
+          - problem: "The eigenvalue problem y'' + lambda y = 0 on 0 < x < pi has y(0) = 0 and y(pi) = 0. Give the fourth positive eigenvalue."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The boundary value problem is y'' + mu y = 0 with y(0) = 0 and y(pi) = 0. The boundary conditions force sqrt(mu) pi = n pi, so mu = n^2 for n = 1, 2, 3, ... (eigenvalue formula for L = pi). Setting n = 4 gives mu = 16. The fourth positive eigenvalue is 16."
+          - problem: "A system obeys y'' + lambda y = 0 with y(0) = 0 and y(2) = 0. What is the smallest positive eigenvalue?"
+            answer: "pi^2/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The boundary value problem is y'' + mu y = 0 with y(0) = 0 and y(2) = 0. The boundary conditions give sqrt(mu)*2 = n pi, so mu = n^2*pi^2/4 (eigenvalue formula for L = 2). The smallest positive eigenvalue uses n = 1, giving mu = pi^2/4. The smallest positive eigenvalue is pi^2/4."
         constraints: "Dirichlet conditions only; eigenvalues (n pi / L)^2 with L in {1, pi, 2}"
     diagnostic_exemplar:
       problem: 'Find all values $\lambda > 0$ for which $y'''' + \lambda y = 0$ with $y(0) = y(2) = 0$ has nonzero solutions, and give those solutions.'
