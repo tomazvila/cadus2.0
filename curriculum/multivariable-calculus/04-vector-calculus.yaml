@@ -396,6 +396,22 @@ topics:
           - problem: 'Evaluate $\oint_C x^2\, dy$ counterclockwise around the unit square $[0,1]^2$.'
             answer: "1"
             solution_sketch: 'Only the vertical edges contribute: right edge ($x = 1$, $dy > 0$) gives $1$; left edge ($x = 0$) gives $0$; horizontal edges have $dy = 0$.'
+          - problem: "Evaluate $\\int_C (x\\,dy - y\\,dx)$ along $\\mathbf{r}(t) = \\langle t, t^2, t^3 \\rangle$, $0 \\le t \\le 1$."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize the curve: x = t and y = t^2. Then dx = dt and dy = 2t dt. Substitute: x dy - y dx = t(2t) - t^2 = t^2. Integrate: \\int_0^1 t^2 dt = 1/3. The value of the line integral is 1/3."
+          - problem: "Evaluate $\\oint_C (x\\,dy - y\\,dx)$ counterclockwise around the triangle with vertices $(0,0)$, $(2,0)$, and $(0,2)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Break the closed path into three edges. On the first and third edges the integrand is zero. On the second edge, write x = 2 - 2t and y = 2t, so dx = -2 dt and dy = 2 dt. Then x dy - y dx = 4, and integrating from t = 0 to 1 gives 4. The value of the line integral is 4."
+          - problem: "Evaluate $\\int_C (x\\,dy - y\\,dx)$ along $\\mathbf{r}(t) = \\langle t^2, t, t^3 \\rangle$, $0 \\le t \\le 1$."
+            answer: "-1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Here x = t^2 and y = t, so dx = 2t dt and dy = dt. Substitute: x dy - y dx = t^2(1) - t(2t) = -t^2. Integrate: \\int_0^1 -t^2 dt = -1/3. The value of the line integral is -1/3."
+          - problem: "Evaluate $\\oint_C (x\\,dy - y\\,dx)$ counterclockwise around the square with vertices $(0,0)$, $(2,0)$, $(2,2)$, and $(0,2)$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Break the closed square into four edges. Bottom edge: y = 0, so -y dx = 0 and x dy has dy = 0. Right edge: x = 2, y = t, dy = dt with t from 0 to 2, so x dy = 2 dt and the integral is \\int_0^2 2 dt = 4. Top edge from (2,2) to (0,2): x = 2 - t, y = 2, dx = -dt with t from 0 to 2, so -y dx = -2(-dt) = 2 dt and the integral is \\int_0^2 2 dt = 4. Left edge: x = 0, so x dy = 0. Sum of the edges: 4 + 4 = 8. The value of the line integral is 8."
         constraints: "3D curves polynomial in t; closed squares/triangles traversed counterclockwise; answers small rationals"
     diagnostic_exemplar:
       problem: 'Evaluate $\oint_C x^2\,dy - y\,dx$ counterclockwise around the triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$.'
@@ -429,18 +445,30 @@ topics:
         name: "Testing for conservativity"
         key_prerequisites: [line-integrals, gradient-directional-derivatives]
         exemplars:
-          - problem: 'Is $\mathbf{F} = \langle 2xy, x^2 \rangle$ conservative on $\mathbb{R}^2$?'
-            answer: 'Yes: $\frac{\partial}{\partial y}(2xy) = 2x = \frac{\partial}{\partial x}(x^2)$.'
-            solution_sketch: '$P_y=2x$ and $Q_x=2x$, so the field is conservative on $\mathbb{R}^2$.'
-            answer_contract: {kind: none}
-          - problem: 'Is $\mathbf{F} = \langle y, -x \rangle$ conservative?'
-            answer: 'No: $P_y = 1 \ne -1 = Q_x$.'
-            solution_sketch: '$P_y=1$ and $Q_x=-1$ differ, so the field is not conservative.'
-            answer_contract: {kind: none}
-          - problem: 'Is $\mathbf{F} = \langle y^2 + 2x, 2xy + 3 \rangle$ conservative on $\mathbb{R}^2$?'
-            answer: 'Yes: $P_y = 2y = Q_x$.'
-            solution_sketch: '$P_y=2y$ and $Q_x=2y$, so the field is conservative on $\mathbb{R}^2$.'
-            answer_contract: {kind: none}
+          - problem: "Let F = (6xy^2, 6x^2y + 5). State whether a potential function exists on R^2, and give the value of P_y at (1, 2)."
+            answer: "verdict = conservative; p = 24"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["conservative"], ["nonconservative"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Let P = 6xy^2 and Q = 6x^2y + 5. Step 1: compute P_y by partial differentiation; P_y = 12xy. Step 2: compute Q_x; Q_x = 12xy. Step 3: compare P_y and Q_x; they are equal on all of R^2, so a potential function exists. The option nonconservative is wrong because P_y and Q_x are equal. Step 4: evaluate P_y at (1,2); P_y(1,2) = 12*1*2 = 24. The answer is verdict = conservative; p = 24."
+          - problem: "Let F = (2y + x^2, -2x + 3y^2). State whether a potential function exists on R^2, and give the value of P_y at (1, 2)."
+            answer: "verdict = nonconservative; p = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["conservative"], ["nonconservative"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Let P = 2y + x^2 and Q = -2x + 3y^2. Step 1: compute P_y by partial differentiation; P_y = 2. Step 2: compute Q_x; Q_x = -2. Step 3: compare P_y and Q_x; they differ, so no potential function exists on R^2. The option conservative is wrong because P_y and Q_x differ. Step 4: evaluate P_y at (1,2); P_y(1,2) = 2. The answer is verdict = nonconservative; p = 2."
+          - problem: "Let F = (3y^2 + 4x, 6xy + 7). State whether a potential function exists on R^2, and give the value of P_y at (1, 2)."
+            answer: "verdict = conservative; p = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["conservative"], ["nonconservative"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Let P = 3y^2 + 4x and Q = 6xy + 7. Step 1: compute P_y by partial differentiation; P_y = 6y. Step 2: compute Q_x; Q_x = 6y. Step 3: compare P_y and Q_x; they are equal on all of R^2, so a potential function exists. The option nonconservative is wrong because P_y and Q_x are equal. Step 4: evaluate P_y at (1,2); P_y(1,2) = 6*2 = 12. The answer is verdict = conservative; p = 12."
+          - problem: "Let F = (5x^2y, 3xy^2). State whether a potential function exists on R^2, and give the value of P_y at (1, 2)."
+            answer: "verdict = nonconservative; p = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["conservative"], ["nonconservative"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Let P = 5x^2y and Q = 3xy^2. Step 1: compute P_y by partial differentiation; P_y = 5x^2. Step 2: compute Q_x; Q_x = 3y^2. Step 3: compare P_y and Q_x; they differ, so no potential function exists on R^2. The option conservative is wrong because P_y and Q_x differ. Step 4: evaluate P_y at (1,2); P_y(1,2) = 5*1^2 = 5. The answer is verdict = nonconservative; p = 5."
+          - problem: "Let F = (x^2y + 3x, 2xy^2 + 4y). Find P_y - Q_x as a function of x and y."
+            answer: "x^2 - 2y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Let P = x^2y + 3x and Q = 2xy^2 + 4y. Step 1: compute P_y by partial differentiation; P_y = x^2. Step 2: compute Q_x; Q_x = 2y^2. Step 3: subtract Q_x from P_y; P_y - Q_x = x^2 - 2y^2. The answer is x^2 - 2y^2."
+          - problem: "Let F = (4x^3 + y, 2x + 5y^4). Find P_y - Q_x."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let P = 4x^3 + y and Q = 2x + 5y^4. Step 1: compute P_y by partial differentiation; P_y = 1. Step 2: compute Q_x; Q_x = 2. Step 3: subtract Q_x from P_y; P_y - Q_x = 1 - 2 = -1. The answer is -1."
         constraints: "fields polynomial on all of R^2 (simply connected, so P_y = Q_x is decisive)"
       - id: kp2
         name: "Finding potential functions"
@@ -609,14 +637,30 @@ topics:
         name: "Curl"
         key_prerequisites: [vector-fields, cross-product]
         exemplars:
-          - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle y, z, x \rangle$.'
-            answer: '$\langle -1, -1, -1 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla \times \mathbf{F} = \langle \partial_y x - \partial_z z,\; \partial_z y - \partial_x x,\; \partial_x z - \partial_y y \rangle = \langle -1, -1, -1 \rangle$.'
-          - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle xy, yz, xz \rangle$.'
-            answer: '$\langle -y, -z, -x \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: 'First component: $\partial_y(xz) - \partial_z(yz) = -y$; the others follow the same cyclic pattern.'
+          - problem: "For the vector field F = <y z, 2 z x, 3 x y>, compute its curl. Find the curl and give fx, fy, fz."
+            answer: "fx = x; fy = -2y; fz = z"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fy"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fz"}]}
+            solution_sketch: "For F = <y z, 2 z x, 3 x y>, write the curl as the symbolic determinant with i, j, k. Step 2: take the needed partial derivatives, such as d/dy(3xy) = 3x and d/dz(2zx) = 2x. Step 3: subtract and simplify each component. The answer is fx = x; fy = -2y; fz = z."
+          - problem: "For the vector field F = <x y z, y z, x z>, compute its curl. Find the curl and give fx, fy, fz."
+            answer: "fx = -y; fy = xy - z; fz = -xz"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fy"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fz"}]}
+            solution_sketch: "For F = <x y z, y z, x z>, write the curl as the symbolic determinant with i, j, k. Step 2: the second component needs d/dz(xyz) = xy and d/dx(xz) = z, so fy = xy - z. Step 3: the first component is d/dy(xz) - d/dz(yz) = -y, and the third is d/dx(yz) - d/dy(xyz) = -xz. The answer is fx = -y; fy = xy - z; fz = -xz."
+          - problem: "For the vector field F = <x^2 y, y^2 z, z^2 x>, compute its curl. Find the curl and give fx, fy, fz."
+            answer: "fx = -y^2; fy = -z^2; fz = -x^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fy"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fz"}]}
+            solution_sketch: "For F = <x^2 y, y^2 z, z^2 x>, set up the determinant formula for curl. Step 2: differentiate each component in the required variable. Step 3: simplify to get the three components. The answer is fx = -y^2; fy = -z^2; fz = -x^2."
+          - problem: "For the vector field F = <x^2 z, y^2 x, z^2 y>, compute its curl. Find the curl and give fx, fy, fz."
+            answer: "fx = z^2; fy = x^2; fz = y^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fy"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fz"}]}
+            solution_sketch: "For F = <x^2 z, y^2 x, z^2 y>, use the symbolic determinant for curl. Step 2: take the partial derivatives, noting that each component depends on two variables. Step 3: form the differences. The answer is fx = z^2; fy = x^2; fz = y^2."
+          - problem: "For the vector field F = <x y, y z, z x>, find curl F at the point (1, 2, 3). Give the answer as (a, b, c)."
+            answer: "(-2, -3, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For F = <x y, y z, z x>, compute curl F using the determinant formula with i, j, k. Step 2: the components are -y, -z, -x. Step 3: evaluate at (1, 2, 3), giving (-2, -3, -1). The answer is (-2, -3, -1)."
+          - problem: "For the vector field F = <x y^2, y z^2, z x^2>, compute its curl. Find the curl and give fx, fy, fz."
+            answer: "fx = -2yz; fy = -2zx; fz = -2xy"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fy"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "fz"}]}
+            solution_sketch: "For F = <x y^2, y z^2, z x^2>, write the curl determinant with i, j, k. Step 2: differentiate the components, using the power rule on the squared factors. Step 3: simplify each difference. The answer is fx = -2yz; fy = -2zx; fz = -2xy."
         constraints: "components are monomials in x, y, z; compute via the symbolic determinant with i, j, k"
       - id: kp3
         name: "The identities curl grad = 0 and div curl = 0"
@@ -695,14 +739,30 @@ topics:
         name: "Finding 3D potential functions"
         key_prerequisites: [conservative-fields-potential-functions, computing-div-curl]
         exemplars:
-          - problem: 'Find a potential function for $\mathbf{F} = \langle yz, xz, xy \rangle$.'
-            answer: '$f(x, y, z) = xyz$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f = xyz + g(y,z)$ from $f_x = yz$; matching $f_y = xz$ and $f_z = xy$ forces $g$ constant.'
-          - problem: 'Find a potential function for $\mathbf{F} = \langle y + z, x + z, x + y \rangle$.'
-            answer: '$f(x, y, z) = xy + yz + zx$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Integrate $f_x = y + z$: $f = xy + xz + g(y,z)$; then $f_y = x + g_y = x + z$ gives $g = yz$, and $f_z$ checks out.'
+          - problem: "Find a potential function $f$ for $\\mathbf{F} = \\langle 2xz, z, x^2+y \\rangle$ with $f(0,0,0)=0$."
+            answer: "x^2*z + y*z"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "The field is $\\mathbf{F} = \\langle 2xz, z, x^2+y \\rangle$. Step 1: integrate $f_x = 2xz$ with respect to $x$ to get $f = x^2 z + g(y,z)$. Step 2: $f_y = g_y$ must equal $z$, so $g = yz + h(z)$. Step 3: $f_z = x^2 + y + h'(z)$ must equal $x^2+y$, so $h'(z)=0$. The condition $f(0,0,0)=0$ sets the constant to zero. So $f = x^2*z + y*z$."
+          - problem: "Find a potential function $f$ for $\\mathbf{F} = \\langle 2x+y, x+2z, 2y+3z^2 \\rangle$ with $f(0,0,0)=0$."
+            answer: "x^2 + x*y + 2*y*z + z^3"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "The field is $\\mathbf{F} = \\langle 2x+y, x+2z, 2y+3z^2 \\rangle$. Step 1: integrate $f_x = 2x+y$ with respect to $x$ to get $f = x^2 + xy + g(y,z)$. Step 2: $f_y = x + g_y$ must equal $x+2z$, so $g_y = 2z$ and $g = 2yz + h(z)$. Step 3: $f_z = 2y + h'(z)$ must equal $2y+3z^2$, so $h' = 3z^2$ and $h = z^3$. The condition $f(0,0,0)=0$ sets the constant to zero. So $f = x^2 + x*y + 2*y*z + z^3$."
+          - problem: "Find a potential function $f$ for $\\mathbf{F} = \\langle 2xy, x^2+2yz, y^2+3z^2 \\rangle$ with $f(0,0,0)=0$."
+            answer: "x^2*y + y^2*z + z^3"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "The field is $\\mathbf{F} = \\langle 2xy, x^2+2yz, y^2+3z^2 \\rangle$. Step 1: integrate $f_x = 2xy$ with respect to $x$ to get $f = x^2 y + g(y,z)$. Step 2: $f_y = x^2 + g_y$ must equal $x^2+2yz$, so $g_y = 2yz$ and $g = y^2 z + h(z)$. Step 3: $f_z = y^2 + h'(z)$ must equal $y^2+3z^2$, so $h' = 3z^2$ and $h = z^3$. The condition $f(0,0,0)=0$ sets the constant to zero. So $f = x^2*y + y^2*z + z^3$."
+          - problem: "Find a potential function $f$ for $\\mathbf{F} = \\langle yz+2x, xz+2y, xy+2z \\rangle$ with $f(0,0,0)=0$."
+            answer: "x*y*z + x^2 + y^2 + z^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "The field is $\\mathbf{F} = \\langle yz+2x, xz+2y, xy+2z \\rangle$. Step 1: integrate $f_x = yz+2x$ with respect to $x$ to get $f = xyz + x^2 + g(y,z)$. Step 2: $f_y = xz + g_y$ must equal $xz+2y$, so $g_y = 2y$ and $g = y^2 + h(z)$. Step 3: $f_z = xy + h'(z)$ must equal $xy+2z$, so $h' = 2z$ and $h = z^2$. The condition $f(0,0,0)=0$ sets the constant to zero. So $f = x*y*z + x^2 + y^2 + z^2$."
+          - problem: "Find a potential function $f$ for $\\mathbf{F} = \\langle 2xy, x^2+z^2, 2yz \\rangle$ with $f(0,0,0)=0$."
+            answer: "x^2*y + y*z^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "The field is $\\mathbf{F} = \\langle 2xy, x^2+z^2, 2yz \\rangle$. Step 1: integrate $f_x = 2xy$ with respect to $x$ to get $f = x^2 y + g(y,z)$. Step 2: $f_y = x^2 + g_y$ must equal $x^2+z^2$, so $g_y = z^2$ and $g = yz^2 + h(z)$. Step 3: $f_z = 2yz + h'(z)$ must equal $2yz$, so $h'=0$. The condition $f(0,0,0)=0$ fixes the constant at zero. So $f = x^2*y + y*z^2$."
+          - problem: "Find a potential function $f$ for $\\mathbf{F} = \\langle 3x^2+yz, xz, xy \\rangle$ with $f(0,0,0)=0$."
+            answer: "x^3 + x*y*z"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "The field is $\\mathbf{F} = \\langle 3x^2+yz, xz, xy \\rangle$. Step 1: integrate $f_x = 3x^2+yz$ with respect to $x$ to get $f = x^3 + xyz + g(y,z)$. Step 2: $f_y = xz + g_y$ must equal $xz$, so $g_y = 0$ and $g$ is constant in $y$ and $z$. Step 3: $f_z = xy$ matches $F_z = xy$, so no term is missing. The condition $f(0,0,0)=0$ sets the constant to zero. So $f = x^3 + x*y*z$."
         constraints: "potentials are sums of degree-2 or -3 monomials; successive integration in x, then y, then z"
       - id: kp3
         name: "Path-independent integrals in space"
@@ -777,6 +837,18 @@ topics:
           - problem: 'Use Green''s theorem to evaluate $\oint_C y^2\, dx + 3xy\, dy$ where $C$ bounds the upper half of the unit disk, counterclockwise.'
             answer: '$\frac{2}{3}$'
             solution_sketch: '$Q_x - P_y = 3y - 2y = y$; in polar, $\int_0^\pi \int_0^1 r\sin\theta \cdot r\, dr\, d\theta = \frac{1}{3} \cdot 2 = \frac{2}{3}$.'
+          - problem: "Use Green's theorem to evaluate $\\oint_C -x^2 y\\, dx$, where $C$ is the circle $x^2 + y^2 = 4$ traversed counterclockwise. Give the exact value."
+            answer: "4pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the integrand as $P\\,dx + Q\\,dy$ with $P = -x^2 y$ and $Q = 0$. Green's theorem converts the circulation integral to the double integral over the disk $D$ of radius 2 of $(Q_x - P_y)\\,dA$, and $Q_x - P_y = 0 - (-x^2) = x^2$. In polar coordinates $x = r\\cos\\theta$ and $dA = r\\,dr\\,d\\theta$, so the double integral factors as $\\int_0^{2\\pi}\\int_0^2 r^2\\cos^2\\theta \\cdot r\\,dr\\,d\\theta = \\left(\\int_0^2 r^3\\,dr\\right)\\left(\\int_0^{2\\pi}\\cos^2\\theta\\,d\\theta\\right) = 4 \\cdot \\pi$. The value of the line integral is 4pi."
+          - problem: "C is the boundary of the square 0 <= x <= 2, 0 <= y <= 2, traversed counterclockwise. Evaluate the circulation integral of x y^2 with respect to y along C by Green's theorem and give the exact value."
+            answer: "16/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line integral is the circulation integral of P dx + Q dy with P = 0 and Q = x y^2. Green's theorem gives the double integral over D of (Q_x - P_y) dA; Q_x = y^2 and P_y = 0, so the integrand is y^2. D is the square 0 <= x <= 2, 0 <= y <= 2. The iterated integral is integral_0^2 integral_0^2 y^2 dy dx = 2 * (8/3) = 16/3."
+          - problem: "C bounds the upper half of the disk x^2 + y^2 <= 4, traversed counterclockwise. Evaluate the circulation integral of x y^3 with respect to y along C by Green's theorem and give the exact value."
+            answer: "128/15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line integral is the circulation integral of P dx + Q dy with P = 0 and Q = x y^3. Green's theorem gives the double integral over D of (Q_x - P_y) dA; Q_x = y^3 and P_y = 0, so the integrand is y^3. D is the upper half of the disk of radius 2. In polar coordinates y = r sin(theta), dA = r dr dtheta, and theta runs from 0 to pi, so the integral is integral_0^pi integral_0^2 r^3 sin^3(theta) r dr dtheta = (32/5)*(4/3) = 128/15."
         constraints: "C is a circle, square, or half-disk, always counterclockwise; Q_x - P_y is a monomial"
       - id: kp2
         name: "Area via Green's theorem"
@@ -921,14 +993,30 @@ topics:
         name: "Normal vectors r_u x r_v"
         key_prerequisites: [vector-valued-functions, cross-product]
         exemplars:
-          - problem: 'For the plane $\mathbf{r}(u, v) = \langle u, v, 1 - u - v \rangle$, compute $\mathbf{r}_u \times \mathbf{r}_v$.'
-            answer: '$\langle 1, 1, 1 \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{r}_u = \langle 1, 0, -1 \rangle$, $\mathbf{r}_v = \langle 0, 1, -1 \rangle$; the cross product is $\langle 1, 1, 1 \rangle$.'
-          - problem: 'For the cylinder $\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z \rangle$, compute $\mathbf{r}_\theta \times \mathbf{r}_z$.'
-            answer: '$\langle 2\cos\theta, 2\sin\theta, 0 \rangle$ — the outward radial direction, with magnitude $2$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{r}_\theta = \langle -2\sin\theta, 2\cos\theta, 0 \rangle$, $\mathbf{r}_z = \langle 0, 0, 1 \rangle$; cross out the determinant.'
+          - problem: "For the plane r(u, v) = <u, v, 3 - 2u - v>, compute r_u x r_v. Give the answer as (x, y, z)."
+            answer: "(2, 1, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(u,v) = <u, v, 3 - 2u - v>, compute r_u = <1, 0, -2> and r_v = <0, 1, -1>. The cross product is (0*(-1) - (-2)*1, (-2)*0 - 1*(-1), 1*1 - 0*0) = (2, 1, 1). The normal points upward. The normal is (2, 1, 1)."
+          - problem: "For the cylinder r(theta, z) = <3cos(theta), 3sin(theta), z>, compute r_theta x r_z. Give the components as a, b, c."
+            answer: "a = 3cos(theta); b = 3sin(theta); c = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["theta"]}, "name": "a"}, {"contract": {"kind": "function", "vars": ["theta"]}, "name": "b"}, {"contract": {"kind": "function", "vars": ["theta"]}, "name": "c"}]}
+            solution_sketch: "For r(theta,z) = <3cos(theta), 3sin(theta), z>, compute r_theta = <-3sin(theta), 3cos(theta), 0> and r_z = <0, 0, 1>. The cross product is (3cos(theta), 3sin(theta), 0), which points radially outward. The normal vector is a = 3cos(theta); b = 3sin(theta); c = 0."
+          - problem: "For the plane r(u, v) = <2u, v, 4 - u - v>, compute r_u x r_v. Give the answer as (x, y, z)."
+            answer: "(1, 2, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(u,v) = <2u, v, 4 - u - v>, compute r_u = <2, 0, -1> and r_v = <0, 1, -1>. The cross product is (0*(-1) - (-1)*1, (-1)*0 - 2*(-1), 2*1 - 0*0) = (1, 2, 2). The normal points upward. The normal is (1, 2, 2)."
+          - problem: "For the cylinder r(theta, z) = <5cos(theta), 5sin(theta), 2z>, compute r_theta x r_z. Give the components as a, b, c."
+            answer: "a = 10cos(theta); b = 10sin(theta); c = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["theta"]}, "name": "a"}, {"contract": {"kind": "function", "vars": ["theta"]}, "name": "b"}, {"contract": {"kind": "function", "vars": ["theta"]}, "name": "c"}]}
+            solution_sketch: "For r(theta,z) = <5cos(theta), 5sin(theta), 2z>, compute r_theta = <-5sin(theta), 5cos(theta), 0> and r_z = <0, 0, 2>. The cross product is (10cos(theta), 10sin(theta), 0), which points radially outward. The normal vector is a = 10cos(theta); b = 10sin(theta); c = 0."
+          - problem: "For the cylinder r(theta, z) = <4cos(theta), 4sin(theta), z>, compute r_theta x r_z at theta = pi/2. Give the answer as (x, y, z)."
+            answer: "(0, 4, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(theta,z) = <4cos(theta), 4sin(theta), z>, compute r_theta = <-4sin(theta), 4cos(theta), 0> and r_z = <0, 0, 1>. At theta = pi/2, r_theta = <-4, 0, 0>, and the cross product with r_z is (0, 4, 0). The normal vector is (0, 4, 0)."
+          - problem: "For the plane r(u, v) = <u, v, u + v>, compute r_u x r_v. Give the answer as (x, y, z)."
+            answer: "(-1, -1, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "For r(u,v) = <u, v, u + v>, compute r_u = <1, 0, 1> and r_v = <0, 1, 1>. The cross product is (0*1 - 1*1, 1*0 - 1*1, 1*1 - 0*0) = (-1, -1, 1). The normal points upward. The normal is (-1, -1, 1)."
         constraints: "planes and cylinders; cross products have clean components; note the geometric direction of the normal"
       - id: kp3
         name: "The surface-area element"
@@ -1011,6 +1099,18 @@ topics:
           - problem: 'Find the outward flux of $\mathbf{F} = \langle x, y, 0 \rangle$ through the lateral surface of the cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$.'
             answer: '$4\pi$'
             solution_sketch: 'On the cylinder $\mathbf{n} = \langle x, y, 0 \rangle$ and $\mathbf{F} \cdot \mathbf{n} = x^2 + y^2 = 1$; flux $=$ lateral area $= 2\pi \cdot 1 \cdot 2$.'
+          - problem: "A constant field F = <0, 0, 5> crosses the disk x^2 + y^2 <= 9 in the plane z = 2. Find the upward flux."
+            answer: "45pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The plane z = 2 has upward unit normal n = <0, 0, 1>, so the constant normal-component rule gives F.n = 5. Step 2: The disk has radius 3, so its area is pi(3^2) = 9pi. Step 3: Flux is the normal component times area: 5(9pi) = 45pi. The flux is 45pi."
+          - problem: "A radial field F = <x, y, z> flows through the sphere x^2 + y^2 + z^2 = 9. Find its outward flux."
+            answer: "108pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: On the sphere x^2 + y^2 + z^2 = 9 the outward unit normal is n = <x, y, z>/3. Step 2: The radial normal-component rule gives F.n = <x, y, z> . <x, y, z>/3 = (x^2 + y^2 + z^2)/3 = 9/3 = 3. Step 3: The sphere area is 4pi(3^2) = 36pi, so flux = 3(36pi) = 108pi. The flux is 108pi."
+          - problem: "A radial field F = <x, y, 0> flows through the lateral surface of the cylinder x^2 + y^2 = 4 with 0 <= z <= 3. Find its outward flux."
+            answer: "24pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: On the cylinder x^2 + y^2 = 4 the outward unit normal is n = <x, y, 0>/2. Step 2: The radial normal-component rule gives F.n = <x, y, 0> . <x, y, 0>/2 = (x^2 + y^2)/2 = 4/2 = 2. Step 3: The lateral area is 2pi(2)(3) = 12pi, so flux = 2(12pi) = 24pi. The flux is 24pi."
         constraints: "surfaces where F.n is constant (radial fields on spheres/cylinders, constant fields on flat disks)"
       - id: kp3
         name: "Flux through graphs z = g(x, y)"
@@ -1022,6 +1122,22 @@ topics:
           - problem: 'Find the upward flux of $\mathbf{F} = \langle 0, 0, x \rangle$ through the part of the plane $z = x + y$ over $[0,1]^2$.'
             answer: '$\frac{1}{2}$'
             solution_sketch: '$\mathbf{N} = \langle -1, -1, 1 \rangle$: $\mathbf{F} \cdot \mathbf{N} = x$; $\iint_{[0,1]^2} x\, dA = \frac{1}{2}$.'
+          - problem: "Find the upward flux of F = (0, 0, z) through the part of the plane z = x + y over the triangle x >= 0, y >= 0, x + y <= 1."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The surface is z = x + y over the triangle with vertices (0,0), (1,0), (0,1). The upward normal for a graph is (-g_x, -g_y, 1) = (-1, -1, 1), so F dot N = z = x + y. Integrating x + y over that triangle gives 1/3. The upward flux is 1/3."
+          - problem: "Find the upward flux of F = (0, 0, xy) through the part of the plane z = x + y over the square 0 <= x <= 1, 0 <= y <= 1."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The surface is z = x + y over the unit square. The upward normal for a graph is (-g_x, -g_y, 1) = (-1, -1, 1), so F dot N = xy. The integral of xy over the square is (1/2)(1/2) = 1/4. The upward flux is 1/4."
+          - problem: "Find the upward flux of F = (0, 0, xy) through the part of the plane z = x + y over the triangle x >= 0, y >= 0, x + y <= 1."
+            answer: "1/24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The surface is z = x + y over the triangle with vertices (0,0), (1,0), (0,1). The upward normal for a graph is (-g_x, -g_y, 1) = (-1, -1, 1), so F dot N = xy. Integrating xy over that triangle gives 1/24. The upward flux is 1/24."
+          - problem: "Find the upward flux of F = (0, 0, y^2) through the part of the plane z = x + y over the triangle x >= 0, y >= 0, x + y <= 1."
+            answer: "1/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The surface is z = x + y over the triangle with vertices (0,0), (1,0), (0,1). The upward normal for a graph is (-g_x, -g_y, 1) = (-1, -1, 1), so F dot N = y^2. Integrating y^2 over that triangle gives 1/12. The upward flux is 1/12."
         constraints: "flux formula F . <-g_x, -g_y, 1> dA over triangles/squares; integrands collapse to constants or single monomials"
     diagnostic_exemplar:
       problem: 'Find the upward flux of $\mathbf{F} = \langle x,\; y,\; z \rangle$ through the part of the plane $z = 2 - x - y$ lying over the triangle $x \ge 0$, $y \ge 0$, $x + y \le 2$.'
@@ -1057,18 +1173,30 @@ topics:
         name: "Interpreting divergence and curl"
         key_prerequisites: [computing-div-curl]
         exemplars:
-          - problem: 'For $\mathbf{F} = \langle x, y \rangle$, compute $\operatorname{div}\mathbf{F}$ and interpret it.'
-            answer: '$\operatorname{div}\mathbf{F} = 2 > 0$: the field is expanding — every point acts as a source.'
-            solution_sketch: '$\operatorname{div}\mathbf{F}=1+1=2>0$, so the field has positive divergence and expands: every point is a source.'
-            answer_contract: {kind: none}
-          - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle -y, x, 0 \rangle$ and interpret it.'
-            answer: '$\langle 0, 0, 2 \rangle$: the field rotates counterclockwise about the $z$-axis, with constant angular tendency.'
-            solution_sketch: '$\operatorname{curl}\langle -y,x,0\rangle=\langle 0,0,2\rangle$, a constant rotation about the $z$-axis.'
-            answer_contract: {kind: none}
-          - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle yz, xz, xy \rangle$. What does the result say about $\mathbf{F}$?'
-            answer: '$\mathbf{0}$; the field is irrotational, and indeed $\mathbf{F} = \nabla(xyz)$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Each component of the curl cancels, e.g. $\partial_y(xy) - \partial_z(xz) = x - x = 0$.'
+          - problem: "For the field F = <x, y>, compute the divergence. Give the verdict as source or sink and the value of div."
+            answer: "verdict = source; div = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["source"], ["sink"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "div"}]}
+            solution_sketch: "Compute P = x and Q = y. The divergence rule gives div F = 1 + 1 = 2. Because 2 is positive, the field is a source; the wrong option sink comes from reversing the sign. The answer is verdict = source; div = 2."
+          - problem: "For the field F = <-y, x, 0>, compute the z-component of the curl. Give the sense of rotation about the z-axis as counterclockwise or clockwise and the value of cz."
+            answer: "sense = counterclockwise; cz = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["counterclockwise"], ["clockwise"]]}, "name": "sense"}, {"contract": {"kind": "exact"}, "name": "cz"}]}
+            solution_sketch: "Compute P = -y, Q = x, R = 0. The curl formula gives the z-component as dQ/dx - dP/dy = 1 - (-1) = 2. A positive z-component means counterclockwise rotation about the z-axis; the wrong option clockwise comes from reversing the sign. The answer is sense = counterclockwise; cz = 2."
+          - problem: "For the field F = <yz, xz, xy>, compute the z-component of the curl. Give the type as irrotational or rotational and the value of cz."
+            answer: "type = irrotational; cz = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["irrotational"], ["rotational"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "cz"}]}
+            solution_sketch: "For F = <yz, xz, xy>, compute the z-component of curl as dQ/dx - dP/dy = z - z = 0. All curl components are zero, so the field is irrotational; the wrong option rotational comes from assuming a nonzero spin. The answer is type = irrotational; cz = 0."
+          - problem: "For the field F = <-x, -y>, compute the divergence. Give the verdict as source or sink and the value of div."
+            answer: "verdict = sink; div = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["source"], ["sink"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "div"}]}
+            solution_sketch: "For F = <-x, -y>, P = -x and Q = -y. The divergence rule gives div F = -1 + (-1) = -2. A negative divergence means a sink; the wrong option source comes from dropping the negative sign. The answer is verdict = sink; div = -2."
+          - problem: "For the field F = <0, x, 0>, find the curl. Give the answer as (a, b, c)."
+            answer: "(0, 0, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Write F = <0, x, 0> with P = 0, Q = x, R = 0. The curl formula gives (dR/dy - dQ/dz, dP/dz - dR/dx, dQ/dx - dP/dy) = (0, 0, 1). The answer is (0, 0, 1)."
+          - problem: "For the field F = <x, y, z>, find the divergence."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For F = <x, y, z>, the divergence is dx/dx + dy/dy + dz/dz. Each derivative is 1, so the sum is 3. The answer is 3."
         constraints: "radial vs rotational model fields; interpretation must name source/sink or axis and sense of rotation"
       - id: kp2
         name: "The divergence theorem"
@@ -1083,6 +1211,18 @@ topics:
           - problem: 'Find the outward flux of $\mathbf{F} = \langle x, y, z \rangle$ through the sphere of radius $2$.'
             answer: '$32\pi$'
             solution_sketch: '$\operatorname{div}\mathbf{F} = 3$ times the ball volume $\frac{32\pi}{3}$.'
+          - problem: "Use the divergence theorem to find the outward flux of F = <2x, 3y, 4z> through the boundary of the box [0,2] by [0,1] by [0,1]. Give the answer as an integer."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The field is F = <2x, 3y, 4z>. Step 1: compute divergence, div F = 2 + 3 + 4 = 9. Step 2: the box volume is 2 * 1 * 1 = 2. Step 3: divergence theorem gives flux = 9 * 2. The answer is 18."
+          - problem: "Use the divergence theorem to find the outward flux of F = <2x, 2y, 2z> through the sphere of radius 3 centered at the origin. Give the answer as a multiple of pi."
+            answer: "216pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The field is F = <2x, 2y, 2z>. Step 1: compute divergence, div F = 2 + 2 + 2 = 6. Step 2: the ball volume is (4/3) pi * 3^3 = 36pi. Step 3: divergence theorem gives flux = 6 * 36pi. The answer is 216pi."
+          - problem: "Use the divergence theorem to find the outward flux of F = <x^2, 2y, 3z> through the boundary of the unit cube [0,1]^3. Give the answer as an integer."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The field is F = <x^2, 2y, 3z>. Step 1: compute divergence, div F = 2x + 2 + 3 = 2x + 5. Step 2: integrate over the unit cube: the integral of 2x is 1 and the integral of 5 is 5, so the total is 6. Step 3: divergence theorem gives flux 6. The answer is 6."
         constraints: "div F constant or linear; solids are balls and boxes with known volumes"
       - id: kp3
         name: "Stokes' theorem"
@@ -1094,6 +1234,22 @@ topics:
           - problem: 'Use Stokes'' theorem to evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle -y, x, z^2 \rangle$ around the circle $x^2 + y^2 = 4$ in the plane $z = 0$, counterclockwise from above.'
             answer: '$8\pi$'
             solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle 0, 0, 2 \rangle$; flux through the disk of radius $2$ is $2 \cdot 4\pi = 8\pi$ (the $z^2$ component does not affect the curl''s $z$-part).'
+          - problem: "Use Stokes' theorem to evaluate the circulation of F = <-3y, 3x, 0> along the circle x^2 + y^2 = 4 in the plane z = 1, counterclockwise viewed from the positive z-axis, with upward normal on the disk. Give the answer as a multiple of pi."
+            answer: "24pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curl of F = <-3y, 3x, 0> is <0, 0, 6> by the curl formula. Stokes' theorem says the circulation equals the flux of curl F through the disk. The disk x^2 + y^2 = 4 has area 4pi, so the flux is 6 times 4pi = 24pi. The circulation is 24pi."
+          - problem: "Use Stokes' theorem to evaluate the circulation of F = <2y, -2x, 0> around the circle x^2 + y^2 = 16 in the plane z = 0, counterclockwise viewed from the positive z-axis, with upward normal on the disk. Give the answer as a multiple of pi."
+            answer: "-64pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curl of F = <2y, -2x, 0> is <0, 0, -4> by the curl formula. Stokes' theorem converts the circulation to the flux of curl F through the disk. The disk x^2 + y^2 = 16 has area 16pi, so the flux is -4 times 16pi = -64pi. The circulation is -64pi."
+          - problem: "Use Stokes' theorem to find the radius of the disk for F = <-5y, 5x, 0> if its circulation around the boundary circle, counterclockwise viewed from the positive z-axis, with upward normal, is 160pi. The disk lies in the xy-plane. Give the radius."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curl of F = <-5y, 5x, 0> is <0, 0, 10> by the curl formula. Stokes' theorem gives circulation = 10 times the disk area. Set 160pi = 10 times area, so area = 16pi. A disk with area 16pi has radius 4. The radius is 4."
+          - problem: "Use Stokes' theorem to compute the flux of curl F through the disk x^2 + y^2 = 36 in the plane z = 2 with upward normal, where F = <-y, x, 0>. Give the answer as a multiple of pi."
+            answer: "72pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curl of F = <-y, x, 0> is <0, 0, 2> by the curl formula. Stokes' theorem says this flux equals the circulation of F around the boundary circle. The disk x^2 + y^2 = 36 has area 36pi, so the flux is 2 times 36pi = 72pi. The flux is 72pi."
         constraints: "constant-curl fields over flat disks; orientation counterclockwise from above with upward normal"
     diagnostic_exemplar:
       problem: 'Use Stokes'' theorem to evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle -y,\; x,\; z^2 \rangle$, where $C$ is the circle $x^2 + y^2 = 9$ in the plane $z = 0$, counterclockwise seen from above.'
@@ -1138,6 +1294,22 @@ topics:
           - problem: 'Find the outward flux of $\mathbf{F} = \langle 0, 0, z \rangle$ through the unit sphere.'
             answer: '$\frac{4\pi}{3}$'
             solution_sketch: 'In spherical parameters the outward normal is $\mathbf{N} = \sin\varphi\, \langle \sin\varphi\cos\theta, \sin\varphi\sin\theta, \cos\varphi \rangle$, so $\mathbf{F} \cdot \mathbf{N} = \cos\varphi \cdot \sin\varphi\cos\varphi = \sin\varphi\cos^2\varphi$. Then $\int_0^{2\pi}\int_0^\pi \sin\varphi\cos^2\varphi\, d\varphi\, d\theta = 2\pi \left[-\frac{\cos^3\varphi}{3}\right]_0^\pi = \frac{4\pi}{3}$ (equal to the volume of the ball — a fact the divergence theorem will explain).'
+          - problem: "Find the outward flux of $\\mathbf{F} = \\langle xz, yz, 0 \\rangle$ across the lateral surface of the cylinder $x^2 + y^2 = 4$, $0 \\le z \\le 3$."
+            answer: "36pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize the lateral surface as $\\mathbf{r}(\\theta,z) = \\langle 2\\cos\\theta, 2\\sin\\theta, z \\rangle$. Compute the outward normal with the cross product: $\\mathbf{r}_\\theta \\times \\mathbf{r}_z = \\langle 2\\cos\\theta, 2\\sin\\theta, 0 \\rangle$. Form the dot product: $\\mathbf{F} \\cdot \\mathbf{N} = (2\\cos\\theta z)(2\\cos\\theta) + (2\\sin\\theta z)(2\\sin\\theta) = 4z$. Integrate the nonconstant integrand over $0 \\le \\theta \\le 2\\pi$ and $0 \\le z \\le 3$: the flux is $4 \\cdot (9/2) \\cdot 2\\pi = 36\\pi$. The flux is 36pi."
+          - problem: "Find the outward flux of $\\mathbf{F} = \\langle 0, 0, z \\rangle$ through the sphere of radius 2 centered at the origin."
+            answer: "32pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use spherical parameters $\\mathbf{r}(\\varphi,\\theta) = \\langle 2\\sin\\varphi\\cos\\theta, 2\\sin\\varphi\\sin\\theta, 2\\cos\\varphi \\rangle$. The outward normal from the cross product is $\\mathbf{N} = 4\\sin\\varphi \\langle \\sin\\varphi\\cos\\theta, \\sin\\varphi\\sin\\theta, \\cos\\varphi \\rangle$. The dot product is $\\mathbf{F} \\cdot \\mathbf{N} = (2\\cos\\varphi) \\cdot 4\\sin\\varphi\\cos\\varphi = 8\\sin\\varphi\\cos^2\\varphi$. Integrate: $2\\pi$ times 8 times the integral of $\\sin\\varphi\\cos^2\\varphi$ from 0 to $\\pi$, which is $8 \\cdot 2\\pi \\cdot (2/3) = 32\\pi/3$. The flux is 32pi/3."
+          - problem: "Find the outward flux of $\\mathbf{F} = \\langle xz, 0, 0 \\rangle$ across the lateral surface of the cylinder $x^2 + y^2 = 4$, $0 \\le z \\le 3$."
+            answer: "18pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize as $\\mathbf{r}(\\theta,z) = \\langle 2\\cos\\theta, 2\\sin\\theta, z \\rangle$. The outward normal is $\\mathbf{r}_\\theta \\times \\mathbf{r}_z = \\langle 2\\cos\\theta, 2\\sin\\theta, 0 \\rangle$. Then $\\mathbf{F} \\cdot \\mathbf{N} = (2\\cos\\theta z)(2\\cos\\theta) = 4z\\cos^2\\theta$. Integrate the nonconstant product: the $z$ integral from 0 to 3 is $9/2$, and the $\\theta$ integral of $4\\cos^2\\theta$ from 0 to $2\\pi$ is $4\\pi$. Their product is $(9/2)(4\\pi) = 18\\pi$. The flux is 18pi."
+          - problem: "Find the outward flux of $\\mathbf{F} = \\langle 0, 0, z^3 \\rangle$ through the sphere of radius 2 centered at the origin."
+            answer: "128pi/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use $\\mathbf{r}(\\varphi,\\theta) = \\langle 2\\sin\\varphi\\cos\\theta, 2\\sin\\varphi\\sin\\theta, 2\\cos\\varphi \\rangle$. The outward normal is $\\mathbf{N} = 4\\sin\\varphi \\langle \\sin\\varphi\\cos\\theta, \\sin\\varphi\\sin\\theta, \\cos\\varphi \\rangle$. The dot product is $\\mathbf{F} \\cdot \\mathbf{N} = (8\\cos^3\\varphi) \\cdot 4\\sin\\varphi\\cos\\varphi = 32\\sin\\varphi\\cos^4\\varphi$. Integrate: the $\\theta$ integral gives $2\\pi$, and the $\\varphi$ integral of $32\\sin\\varphi\\cos^4\\varphi$ from 0 to $\\pi$ is $32 \\cdot (2/5) = 64/5$. The product is $2\\pi \\cdot 64/5 = 128\\pi/5$. The flux is 128pi/5."
         constraints: "cylinders and spheres with small integer radii; F . N is a product like z, z cos^2(theta), or sin(phi) cos^2(phi) requiring one genuine iterated integral (u-substitution at worst); answers exact multiples of pi"
       - id: kp2
         name: "Flux through graphs with polar conversion"
@@ -1149,6 +1321,22 @@ topics:
           - problem: 'Find the upward flux of $\mathbf{F} = \langle y, -x, z \rangle$ through the paraboloid $z = 1 - x^2 - y^2$, $z \ge 0$.'
             answer: '$\frac{\pi}{2}$'
             solution_sketch: '$\mathbf{N} = \langle 2x, 2y, 1 \rangle$: $\mathbf{F} \cdot \mathbf{N} = 2xy - 2xy + (1 - x^2 - y^2) = 1 - r^2$. $\int_0^{2\pi}\int_0^1 (1 - r^2)\, r\, dr\, d\theta = 2\pi\left(\frac{1}{2} - \frac{1}{4}\right) = \frac{\pi}{2}$.'
+          - problem: "Let F = <x, y, z>. Find the upward flux of F through the part of the plane z = 3 + 2x - y over the disk x^2 + y^2 <= 4."
+            answer: "12pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is z = g(x,y) = 3 + 2x - y, so g_x = 2 and g_y = -1. An upward normal is N = <-g_x, -g_y, 1> = <-2, 1, 1>. Then F dot N = -2x + y + z = -2x + y + 3 + 2x - y = 3. The flux is the double integral of 3 over the disk of radius 2, so it is 3 times the area 4pi. The flux is 12pi."
+          - problem: "Let F = <0, 0, z>. Find the upward flux of F through the paraboloid z = 9 - x^2 - y^2 with z >= 0."
+            answer: "81pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is z = g(x,y) = 9 - x^2 - y^2, so N = <-g_x, -g_y, 1> = <2x, 2y, 1>. Then F dot N = z = 9 - x^2 - y^2 = 9 - r^2. In polar coordinates over r <= 3, the flux is integral 0 to 2pi integral 0 to 3 of (9 - r^2) r dr dtheta. The inner integral gives 81/4, so the flux is 2pi times 81/4. The flux is 81pi/2."
+          - problem: "Let F = <x^2, y^2, z>. Find the upward flux of F through the paraboloid z = 3 - x^2 - y^2 with z >= 0."
+            answer: "9pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For z = g(x,y) = 3 - x^2 - y^2, an upward normal is N = <2x, 2y, 1>. Then F dot N = 2x^3 + 2y^3 + z. Over the disk the odd terms 2x^3 and 2y^3 integrate to zero, so only z remains. With z = 3 - r^2 and r <= sqrt(3), the flux is integral 0 to 2pi integral 0 to sqrt(3) of (3 - r^2) r dr dtheta. The inner integral gives 9/4, so the flux is 2pi times 9/4. The flux is 9pi/2."
+          - problem: "Let F = <0, 0, 1 + x^2 + y^2>. Find the upward flux of F through the part of the plane z = 1 + x + 2y over the disk x^2 + y^2 <= 1."
+            answer: "3pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph is z = g(x,y) = 1 + x + 2y, so g_x = 1 and g_y = 2. An upward normal is N = <-1, -2, 1>. Then F dot N = 1 + x^2 + y^2 = 1 + r^2. In polar coordinates over r <= 1, the flux is integral 0 to 2pi integral 0 to 1 of (1 + r^2) r dr dtheta. The inner integral gives 3/4, so the flux is 2pi times 3/4. The flux is 3pi/2."
         constraints: "surfaces are paraboloids z = a - x^2 - y^2 or planes over disks; F . <-g_x, -g_y, 1> reduces to a polynomial in r after polar conversion; answers exact multiples of pi or small rational multiples of pi"
       - id: kp3
         name: "Closed surfaces piece by piece"
@@ -1160,6 +1348,22 @@ topics:
           - problem: 'Find the total outward flux of $\mathbf{F} = \langle x^2, 0, 0 \rangle$ through the boundary of the unit cube $[0,1]^3$, face by face.'
             answer: "1"
             solution_sketch: 'Only the faces $x = 1$ and $x = 0$ see the field: at $x = 1$, $\mathbf{F} \cdot \mathbf{n} = 1$ giving $1$; at $x = 0$, $\mathbf{F} \cdot \mathbf{n} = -x^2 = 0$. The four remaining faces have $\mathbf{F} \perp \mathbf{n}$. Total $1$.'
+          - problem: "The field is F = <0, y, z> on the closed cylinder x^2 + y^2 = 4, 0 <= z <= 3, with outward normals n = <x/2, y/2, 0> on the lateral surface, n = <0, 0, 1> on the top cap, and n = <0, 0, -1> on the bottom cap. Find the total outward flux through the closed surface, computing the lateral surface and both caps as separate pieces."
+            answer: "24pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: F = <0, y, z> on the closed cylinder x^2 + y^2 = 4, 0 <= z <= 3. Step 1 (lateral piece): with outward normal n = <x/2, y/2, 0> and dS = 2 dtheta dz, F dot n = y^2/2 = 2 sin^2(theta), giving 12pi. Step 2 (top cap): n = <0, 0, 1>, F dot n = z = 3, giving 12pi. Step 3 (bottom cap): n = <0, 0, -1>, F dot n = -z = 0, giving 0. The total outward flux is 24pi."
+          - problem: "The field is F = <x, 2y, 3z> on the closed box 0 <= x <= 1, 0 <= y <= 2, 0 <= z <= 3, with outward normals n = <1, 0, 0> on face x = 1, n = <-1, 0, 0> on face x = 0, n = <0, 1, 0> on face y = 2, n = <0, -1, 0> on face y = 0, n = <0, 0, 1> on face z = 3, and n = <0, 0, -1> on face z = 0. Find the total outward flux through the closed surface, computing each face separately."
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: F = <x, 2y, 3z> through the boundary of the box 0 <= x <= 1, 0 <= y <= 2, 0 <= z <= 3. Step 1 (x-faces): at x = 1, n = <1, 0, 0>, F dot n = 1, area 6, contribution 6; at x = 0 the contribution is 0. Step 2 (y-faces): at y = 2, n = <0, 1, 0>, F dot n = 4, area 3, contribution 12; at y = 0 the contribution is 0. Step 3 (z-faces): at z = 3, n = <0, 0, 1>, F dot n = 9, area 2, contribution 18; at z = 0 the contribution is 0. The total outward flux is 36."
+          - problem: "The field is F = <x, y, z> on the closed cylinder x^2 + y^2 = 1, 0 <= z <= 2, with outward normals n = <x, y, 0> on the lateral surface, n = <0, 0, 1> on the top cap, and n = <0, 0, -1> on the bottom cap. Find the total outward flux through the closed surface, computing the lateral surface and both caps as separate pieces."
+            answer: "6pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: F = <x, y, z> on the closed cylinder x^2 + y^2 = 1, 0 <= z <= 2. Step 1 (lateral piece): with outward normal n = <x, y, 0> and dS = dtheta dz, F dot n = x^2 + y^2 = 1, giving the lateral area 4pi. Step 2 (top cap): n = <0, 0, 1>, F dot n = z = 2, giving 2pi. Step 3 (bottom cap): n = <0, 0, -1>, F dot n = -z = 0, giving 0. The total outward flux is 6pi."
+          - problem: "The field is F = <x^2, 0, 0> on the closed box 0 <= x <= 2, 0 <= y <= 1, 0 <= z <= 1, with outward normals n = <1, 0, 0> on face x = 2, n = <-1, 0, 0> on face x = 0, n = <0, 1, 0> on face y = 1, n = <0, -1, 0> on face y = 0, n = <0, 0, 1> on face z = 1, and n = <0, 0, -1> on face z = 0. Find the total outward flux through the closed surface, computing each face separately."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: F = <x^2, 0, 0> through the boundary of the box 0 <= x <= 2, 0 <= y <= 1, 0 <= z <= 1. Step 1 (x-faces): at x = 2, n = <1, 0, 0>, F dot n = x^2 = 4, giving 4; at x = 0, n = <-1, 0, 0>, F dot n = -x^2 = 0. Step 2 (y-faces): n = <0, 1, 0> and n = <0, -1, 0>, but F has zero y-component, so each contribution is 0. Step 3 (z-faces): n = <0, 0, 1> and n = <0, 0, -1>, but F has zero z-component, so each contribution is 0. The total outward flux is 4."
         constraints: "closed cylinders and boxes assembled from 2-6 pieces; each piece is a flat cap, box face, or lateral surface whose contribution is a one-line integral; always state the outward normal of each piece"
     diagnostic_exemplar:
       problem: 'Find the total outward flux of $\mathbf{F} = \langle x,\; y,\; z^2 \rangle$ through the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$ (lateral surface plus both caps), computing each piece separately.'
