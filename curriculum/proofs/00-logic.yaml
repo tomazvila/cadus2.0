@@ -1267,14 +1267,30 @@ topics:
         name: "Existential statements"
         key_prerequisites: [predicates-and-domains]
         exemplars:
-          - problem: 'Is $\forall x \in \mathbb{Z},\ x^2 \ge 0$ true? Is $\exists x \in \mathbb{Z},\ x^2 = 2$ true?'
-            answer_contract: {kind: none}
-            answer: 'The first is true; the second is false.'
-            solution_sketch: 'Every integer squared is $\ge 0$, so the universal holds. No integer squares to $2$ ($1^2 = 1$, $2^2 = 4$), so the existential fails.'
-          - problem: 'Is $\exists n \in \{1, 2, 3\},\ n^2 = 5$ true?'
-            answer_contract: {kind: none}
-            answer: 'No; the squares are $1, 4, 9$.'
-            solution_sketch: 'An existential over a finite domain fails only when every element fails; none of $1, 4, 9$ equals $5$.'
+          - problem: "Consider the statement: there exists an integer x with x^2 = 9. If the statement is true, give the smallest positive witness x; if it is false, give 0. Find the required value."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement is existential over the integers with the predicate x^2 = 9. By the existential witness rule, a single witness in the domain makes the statement true. Test positive integers in order: 1^2 = 1, 2^2 = 4, and 3^2 = 9, so x = 3 is a witness and no smaller positive integer is. The answer is 3."
+          - problem: "Consider the statement: there exists n in the set {1, 2, 3} with n^2 = 6. Count the elements of the domain that satisfy the predicate. How many witnesses are there?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement is existential over the finite domain {1, 2, 3} with the predicate n^2 = 6. By the existential rule, the statement is true only if some element of the domain satisfies the predicate. Compute the squares of all elements: 1, 4, and 9; none equals 6, so the statement is false and there are no witnesses. The answer is 0."
+          - problem: "Consider the statement: there exists an integer x with 3x - 4 = 8. If such an integer exists, find the smallest witness x; otherwise give 0."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement is existential over the integers with the predicate 3x - 4 = 8. By the existential witness rule, solve the equation and check that the solution lies in the domain. Solving gives 3x = 12, so x = 4, which is an integer witness. The answer is 4."
+          - problem: "Check the statement: there exists an integer n whose square is 25. Give the smallest witness n if one exists, or 0 if none does."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement is existential over the integers with the predicate n^2 = 25. By the existential witness rule, solve n^2 = 25 to find the candidate witnesses. The solutions are n = -5 and n = 5, and both are integers, so the smallest witness is -5. The answer is -5."
+          - problem: "Decide by witness search whether some integer x satisfies x^2 = -1. Give the smallest witness if one exists, and 0 if there is no witness."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement is existential over the integers with the predicate x^2 = -1. By the existential witness rule, a witness would be an integer whose square is negative. Every integer square is nonnegative, so no integer satisfies the predicate and the statement is false. The answer is 0."
+          - problem: "The claim is that some integer x solves x^2 + x = 6. Determine the smallest witness x, or answer 0 if the claim fails."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement is existential over the integers with the predicate x^2 + x = 6. By the existential witness rule, solve the equation to find the candidates. Factoring gives (x - 2)(x + 3) = 0, so x = 2 or x = -3, and both are integers. The smallest witness is -3, so the answer is -3."
         constraints: "determine the truth value of a singly-quantified statement over a stated domain"
       - id: kp3
         name: "Translating single-quantifier English"
@@ -1367,14 +1383,30 @@ topics:
         name: "Translating mathematical statements"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'Translate "every even integer greater than $2$ is a sum of two primes" using quantifiers.'
-            answer_contract: {kind: none}
-            answer: '$\forall n\, ((n \text{ even} \land n > 2) \to \exists p, q \text{ prime},\ n = p + q)$.'
-            solution_sketch: 'A universal over $n$ guarded by a conditional, then an existential over primes $p, q$.'
-          - problem: 'Translate "every real number has an additive inverse" using quantifiers.'
-            answer_contract: {kind: none}
-            answer: '$\forall x \in \mathbb{R}\ \exists y \in \mathbb{R},\ x + y = 0$.'
-            solution_sketch: 'A universal over $x$ followed by an existential asserting a $y$ that sums to $0$ with $x$.'
+          - problem: "Which formula translates 'every even integer greater than 2 is a sum of two primes' with a guarding conditional? Select the correct formula."
+            answer: "forall n ((n even and n > 2) -> exists p, q prime, n = p + q)"
+            answer_contract: {"kind": "label", "options": [["forall n ((n even and n > 2) -> exists p, q prime, n = p + q)"], ["exists n ((n even and n > 2) -> forall p, q prime, n = p + q)"], ["forall n ((n even and n > 2) and exists p, q prime, n = p + q)"], ["forall n ((n even and n > 2) -> forall p, q prime, n = p + q)"]]}
+            solution_sketch: "Full translation: forall n ((n even and n > 2) -> exists p, q prime, n = p + q). Step 1: The statement is universal over integers, so start with forall n. Step 2: The guard n even and n > 2 goes before an implication. Step 3: The claim is existential over primes p and q with n = p + q. The option exists n ... forall ... swaps the quantifiers. The option ... and exists ... uses conjunction instead of implication. The option ... forall p, q ... uses a universal inner quantifier. The answer is forall n ((n even and n > 2) -> exists p, q prime, n = p + q)."
+          - problem: "Which formula translates 'every nonzero real number has a multiplicative inverse' with a guarding conditional? Select the correct formula."
+            answer: "forall x in R (x != 0 -> exists y in R, x*y = 1)"
+            answer_contract: {"kind": "label", "options": [["forall x in R (x != 0 -> exists y in R, x*y = 1)"], ["exists x in R (x != 0 -> forall y in R, x*y = 1)"], ["forall x in R (x != 0 and exists y in R, x*y = 1)"], ["forall x in R (x = 0 -> exists y in R, x*y = 1)"]]}
+            solution_sketch: "Full translation: forall x in R (x != 0 -> exists y in R, x*y = 1). Step 1: The statement is universal over nonzero reals, so start with forall x in R. Step 2: The guard x != 0 goes before an implication. Step 3: The claim is existential over y with x*y = 1. The option exists x ... forall y ... swaps the quantifiers. The option ... and exists ... uses conjunction instead of implication. The option x = 0 ... uses the wrong guard. The answer is forall x in R (x != 0 -> exists y in R, x*y = 1)."
+          - problem: "Translate 'every integer greater than 1 has a prime divisor' into a quantifier formula. Find the number of quantifiers in the translation."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full translation: forall n (n > 1 -> exists p (p prime and p divides n)). Step 1: The universal over n is guarded by n > 1. Step 2: The existential over p states p is prime and p divides n. Step 3: Count the quantifiers: one forall and one exists. The answer is 2."
+          - problem: "Translate 'every continuous function on [0,1] attains a maximum' into a quantifier formula. Find the number of quantifiers in the translation."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full translation: forall f (f continuous on [0,1] -> exists x in [0,1] forall y in [0,1], f(y) <= f(x)). Step 1: The universal over f is guarded by continuity on [0,1]. Step 2: The existential over x in [0,1] gives a maximum. Step 3: The universal over y states every y in [0,1] satisfies f(y) <= f(x). Count the quantifiers: forall f, exists x, forall y. The answer is 3."
+          - problem: "Translate 'every positive real number has a positive real number greater than it, and every negative real number has a negative real number less than it' into a quantifier formula. Find the number of quantifiers in the translation."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full translation: forall x (x > 0 -> exists y (y > 0 and y > x)) and forall x (x < 0 -> exists y (y < 0 and y < x)). Step 1: The first universal over x is guarded by x > 0. Step 2: The first existential over y states y > 0 and y > x. Step 3: The second universal over x is guarded by x < 0, and the second existential over y states y < 0 and y < x. Count the quantifiers: forall x, exists y, forall x, exists y. The answer is 4."
+          - problem: "Translate 'every positive real number has a positive square root' into a quantifier formula. Find the number of quantifiers in the translation."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full translation: forall x (x > 0 -> exists y (y > 0 and y^2 = x)). Step 1: The universal over x is guarded by x > 0. Step 2: The existential over y states y > 0 and y^2 = x. Step 3: Count the quantifiers: one forall and one exists. The answer is 2."
         constraints: "combine quantifiers with a guarding conditional"
       - id: kp3
         name: "Evaluating nested statements over given domains"
