@@ -24,12 +24,34 @@ topics:
         name: "Definition and verifying isomorphisms"
         key_prerequisites: [homomorphisms-intro, functions-injective-surjective]
         exemplars:
-          - problem: 'Show that $\varphi : (\mathbb{R}, +) \to (\mathbb{R}^{+}, \cdot)$, $\varphi(x) = 2^x$, is an isomorphism.'
-            answer: '$\varphi(x+y) = 2^{x+y} = 2^x 2^y$; it is a bijection with inverse $\log_2$, hence an isomorphism.'
-            solution_sketch: 'Check the homomorphism law via the exponent rule, then exhibit the two-sided inverse $\log_2$.'
-          - problem: 'Show that $\varphi : \mathbb{Z}_4 \to \langle i \rangle \subseteq \mathbb{C}^*$, $\varphi(k) = i^k$, is an isomorphism.'
-            answer: '$\varphi(j + k) = i^{j+k} = i^j i^k$ (well defined since $i^4 = 1$); it hits all of $\{1, i, -1, -i\}$ injectively.'
-            solution_sketch: 'Well-definedness uses $i^4 = 1$; the four powers are distinct, so bijective.'
+          - problem: "Consider phi: (R, +) -> (R+, .), phi(x) = 3^x. To verify the homomorphism law, one checks that phi(a+b) = phi(a)phi(b). Give the value of phi(1)phi(2) as an integer."
+            answer: "27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (homomorphism law): an isomorphism candidate must satisfy phi(a+b) = phi(a)phi(b). Step 2 (evaluate): phi(1) = 3^1 = 3 and phi(2) = 3^2 = 9. Step 3 (multiply): the check value is 3 times 9 = 27, which equals phi(3), confirming the law. The answer is 27."
+          - problem: "The map phi: Z4 -> U(5), phi(k) = 2^k mod 5, is well defined because the order of 2 divides 4. Give the order of 2 in U(5), that is, the smallest positive m with 2^m = 1 mod 5."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of order): the order of 2 in U(5) is the smallest m with 2^m = 1 mod 5. Step 2 (compute powers): 2^1 = 2, 2^2 = 4, 2^3 = 8 = 3, 2^4 = 16 = 1 mod 5. Step 3 (conclude): the order is 4, so phi(k+4) = 2^(k+4) = 2^k mod 5 and phi is well defined; the four values 1, 2, 3, 4 are distinct, so phi is bijective. The answer is 4."
+          - problem: "A student claims that phi: Z6 -> Z6, phi(k) = 2k mod 6, is an isomorphism. Give the smallest positive k with phi(k) = 0, the value that refutes the claim."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (kernel condition): phi(k) = 0 means 2k = 0 mod 6, that is, 6 divides 2k. Step 2 (solve): this holds exactly when 3 divides k, giving k = 3, 6, 9, and so on. Step 3 (conclude): the smallest positive such k is 3; a nonzero kernel element means phi is not injective, so the claim fails. The answer is 3."
+          - problem: "The map phi: Z7 -> Z7, phi(k) = 3k mod 7, is an isomorphism, so its inverse has the form psi(m) = a m mod 7. Find the multiplier a."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (homomorphism check): phi(j+k) = 3(j+k) = 3j + 3k = phi(j) + phi(k) mod 7. Step 2 (inverse condition): psi(phi(k)) = a(3k) must equal k mod 7, so 3a = 1 mod 7. Step 3 (solve): 3 times 5 = 15 = 2 times 7 + 1, so a = 5 and psi(m) = 5m mod 7 inverts phi. The answer is 5."
+          - problem: "Claim: phi: Z5 -> Z5, phi(k) = k^2 mod 5, is an isomorphism. Step 1: phi(a+b) = (a+b)^2 mod 5. Step 2: phi(a) + phi(b) = a^2 + b^2 mod 5. Step 3: since (a+b)^2 = a^2 + b^2 for all a, b in Z5, phi is a homomorphism. Step 4: phi is injective, hence an isomorphism. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct evaluation of phi at a+b. Step 2 is a correct evaluation of phi(a) + phi(b). Step 3 is false: (a+b)^2 = a^2 + 2ab + b^2, and 2ab is not always 0 mod 5 (a = b = 1 gives 4 versus 2), so phi is not a homomorphism. Step 4 would also fail, since phi(1) = phi(4) = 1, but it depends on the false Step 3. The answer is Step 3."
+          - problem: "To prove that phi: Z8 -> Z8, phi(k) = 3k mod 8, is injective, suppose 3j and 3k give the same remainder on division by 8. Then 8 divides 3(j-k), and the proof continues: since gcd(3, 8) = 1, ___, so j = k in Z8. Select the missing line."
+            answer: "8 divides j-k"
+            answer_contract: {"kind": "label", "options": [["8 divides j-k"], ["8 divides j+k"], ["3 divides j-k"], ["3 divides 8"]]}
+            solution_sketch: "From 3j = 3k mod 8 we get 8 divides 3(j-k). Because gcd(3, 8) = 1, the factor 3 contributes nothing, so 8 divides j-k and j = k in Z8; this is the missing line. The option 8 divides j+k is a sign error. The option 3 divides j-k cancels with the wrong modulus. The option 3 divides 8 is a false divisibility claim. The answer is 8 divides j-k."
+          - problem: "Write the full proof: the map phi: (R, +) -> (R+, .), phi(x) = 5^x, is an isomorphism. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (homomorphism): for all real x, y, phi(x+y) = 5^(x+y) = 5^x times 5^y = phi(x)phi(y), so phi preserves the group operation. Step 2 (injective): if phi(x) = phi(y), then 5^x = 5^y; taking the natural logarithm gives x ln 5 = y ln 5, and since ln 5 is not zero, x = y. Step 3 (surjective): for any y > 0, set x = ln(y)/ln(5), which is a real number, and phi(x) = 5^x = e^(ln y) = y. Step 4 (conclusion): phi is a bijective homomorphism, with two-sided inverse psi(y) = ln(y)/ln(5), hence phi is an isomorphism. This completes the full verification of the homomorphism law, injectivity, and surjectivity."
         constraints: "explicit maps between groups of order <= 8 or classic infinite examples (exp/log); full verification expected"
       - id: kp2
         name: "Properties preserved by isomorphisms"
