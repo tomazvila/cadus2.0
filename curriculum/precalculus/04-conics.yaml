@@ -291,6 +291,22 @@ topics:
           - problem: 'Write the equation of the hyperbola with vertices $(0, \pm 3)$ and foci $(0, \pm 5)$.'
             answer: "y^2/9 - x^2/16 = 1"
             answer_contract: {kind: polynomial_relation}
+          - problem: "A hyperbola centered at the origin has vertices (3, 0) and (-3, 0) and foci (5, 0) and (-5, 0). Its equation can be written as x^2/A - y^2/B = 1 with integers A and B. Give A and B."
+            answer: "A = 9; B = 16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
+            solution_sketch: "The full standard form for a horizontal hyperbola is x^2/A - y^2/B = 1. Step 1, the vertex rule: the vertices (+/-3, 0) give a = 3, so A = a^2 = 9. Step 2, the focus rule: the foci (+/-5, 0) give c = 5, and the relation B = c^2 - a^2 gives B = 25 - 9 = 16. Therefore the answer is A = 9; B = 16."
+          - problem: "A hyperbola centered at the origin has vertices (0, 4) and (0, -4) and foci (0, 5) and (0, -5). Its equation can be written as y^2/A - x^2/B = 1 with integers A and B. Find A and B."
+            answer: "A = 16; B = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
+            solution_sketch: "The full standard form for a vertical hyperbola is y^2/A - x^2/B = 1. Step 1, the vertex rule: the vertices (0, +/-4) give a = 4, so A = a^2 = 16. Step 2, the focus rule: the foci (0, +/-5) give c = 5, and B = c^2 - a^2 = 25 - 16 = 9. Therefore the answer is A = 16; B = 9."
+          - problem: "A hyperbola centered at the origin opens left and right. Its vertices are (6, 0) and (-6, 0), and its two foci on the x-axis are 20 units apart. Its equation can be written as x^2/A - y^2/B = 1 with integers A and B. Give A and B."
+            answer: "A = 36; B = 64"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
+            solution_sketch: "The full standard form for a hyperbola opening left and right is x^2/A - y^2/B = 1. Step 1, the vertex rule: the vertices (+/-6, 0) give a = 6, so A = a^2 = 36. Step 2, the focus separation rule: foci 20 units apart give 2c = 20, so c = 10, and B = c^2 - a^2 = 100 - 36 = 64. Therefore the answer is A = 36; B = 64."
+          - problem: "A hyperbola centered at the origin opens up and down. Its vertices are (0, 8) and (0, -8), and its foci are (0, 10) and (0, -10). Its equation can be written as y^2/A - x^2/B = 1 with integers A and B. Determine A and B."
+            answer: "A = 64; B = 36"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
+            solution_sketch: "The full standard form for a hyperbola opening up and down is y^2/A - x^2/B = 1. Step 1, the vertex rule: the vertices (0, +/-8) give a = 8, so A = a^2 = 64. Step 2, the focus rule: the foci (0, +/-10) give c = 10, and B = c^2 - a^2 = 100 - 64 = 36. Therefore the answer is A = 64; B = 36."
     diagnostic_exemplar:
       problem: 'Write the equation of the hyperbola with vertices $(0, \pm 2)$ and foci $(0, \pm 4)$, and give the equations of its asymptotes.'
       answer: 'y^2/4 - x^2/12 = 1; asymptotes y = ±(√3/3)x'
@@ -345,14 +361,30 @@ topics:
         key_prerequisites: [completing-the-square]
         constraints: "integer centres; complete the square in one or both variables; circle radii are integers, ellipse denominators perfect squares"
         exemplars:
-          - problem: 'Write $x^2 + y^2 - 6x + 4y - 3 = 0$ in standard form and state the center and radius.'
-            answer: "(x - 3)^2 + (y + 2)^2 = 16; center (3, -2), radius 4"
-            answer_contract: {kind: none}
-            solution_sketch: 'Complete both squares: $3 + 9 + 4 = 16$.'
+          - problem: "Complete the square for x^2 + y^2 - 6x + 4y - 3 = 0. Give the center as (x, y) and the radius."
+            answer: "center = (3, -2); radius = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "radius"}]}
+            solution_sketch: "The circle equation is x^2 + y^2 - 6x + 4y - 3 = 0. Step 1: group x and y terms and complete the square for x: x^2 - 6x = (x - 3)^2 - 9. Step 2: complete the square for y: y^2 + 4y = (y + 2)^2 - 4. Step 3: substitute and simplify to (x - 3)^2 + (y + 2)^2 = 16. The final result is center = (3, -2); radius = 4."
           - problem: 'Write $4x^2 + y^2 - 8x = 0$ in standard form.'
             answer: "(x - 1)^2/1 + y^2/4 = 1"
             answer_contract: {kind: polynomial_relation}
             solution_sketch: '$4(x - 1)^2 + y^2 = 4$; divide by $4$.'
+          - problem: "Complete the square for x^2 + y^2 + 8x - 2y - 8 = 0. Give the center as (x, y) and the radius."
+            answer: "center = (-4, 1); radius = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "exact"}, "name": "radius"}]}
+            solution_sketch: "The circle equation is x^2 + y^2 + 8x - 2y - 8 = 0. Step 1: complete the square for x: x^2 + 8x = (x + 4)^2 - 16. Step 2: complete the square for y: y^2 - 2y = (y - 1)^2 - 1. Step 3: substitute and simplify to (x + 4)^2 + (y - 1)^2 = 25. The final result is center = (-4, 1); radius = 5."
+          - problem: "Complete the square for 9x^2 + 4y^2 - 18x + 16y - 11 = 0. Give the center as (x, y) and the two denominators in x then y order."
+            answer: "center = (1, -2); denoms = 4, 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "list", "member": {"kind": "exact"}, "ordered": true}, "name": "denoms"}]}
+            solution_sketch: "The ellipse equation is 9x^2 + 4y^2 - 18x + 16y - 11 = 0. Step 1: factor 9 from x terms and 4 from y terms: 9(x^2 - 2x) + 4(y^2 + 4y) = 11. Step 2: complete each square: 9((x - 1)^2 - 1) + 4((y + 2)^2 - 4) = 11. Step 3: simplify to 9(x - 1)^2 + 4(y + 2)^2 = 36 and divide by 36. The final result is center = (1, -2); denoms = 4, 9."
+          - problem: "Complete the square for 4x^2 + 9y^2 - 16x + 18y - 11 = 0. Give the center as (x, y) and the two denominators in x then y order."
+            answer: "center = (2, -1); denoms = 9, 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "list", "member": {"kind": "exact"}, "ordered": true}, "name": "denoms"}]}
+            solution_sketch: "The ellipse equation is 4x^2 + 9y^2 - 16x + 18y - 11 = 0. Step 1: factor 4 from x terms and 9 from y terms: 4(x^2 - 4x) + 9(y^2 + 2y) = 11. Step 2: complete each square: 4((x - 2)^2 - 4) + 9((y + 1)^2 - 1) = 11. Step 3: simplify to 4(x - 2)^2 + 9(y + 1)^2 = 36 and divide by 36. The final result is center = (2, -1); denoms = 9, 4."
+          - problem: "The equation 25x^2 + 16y^2 + 150x - 64y - 111 = 0 is an ellipse. After completing the square, give the center as (x, y) and the two denominators in x then y order."
+            answer: "center = (-3, 2); denoms = 16, 25"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "center"}, {"contract": {"kind": "list", "member": {"kind": "exact"}, "ordered": true}, "name": "denoms"}]}
+            solution_sketch: "The ellipse equation is 25x^2 + 16y^2 + 150x - 64y - 111 = 0. Step 1: factor 25 from x terms and 16 from y terms: 25(x^2 + 6x) + 16(y^2 - 4y) = 111. Step 2: complete each square: 25((x + 3)^2 - 9) + 16((y - 2)^2 - 4) = 111. Step 3: simplify to 25(x + 3)^2 + 16(y - 2)^2 = 400 and divide by 400. The final result is center = (-3, 2); denoms = 16, 25."
       - id: kp3
         name: Hyperbola to standard form
         key_prerequisites: [completing-the-square, hyperbolas]
@@ -365,6 +397,22 @@ topics:
           - problem: 'Find the center of the conic $x^2 - y^2 - 2x - 4y = 4$.'
             answer: "(1, -2)"
             solution_sketch: '$(x - 1)^2 - (y + 2)^2 = 4 + 1 - 4 = 1$.'
+          - problem: "The conic $x^2 - 9y^2 + 4x + 18y = 14$ is a hyperbola. Find its center as (x, y)."
+            answer: "(-2, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start with the conic $x^2 - 9y^2 + 4x + 18y = 14$. Complete the square in $x$: $x^2 + 4x = (x + 2)^2 - 4$. Complete the square in $y$: $-9y^2 + 18y = -9[(y - 1)^2 - 1]$. Substitute: $(x + 2)^2 - 9(y - 1)^2 = 9$, so the center is (-2, 1)."
+          - problem: "The conic $x^2 - 4y^2 - 6x + 8y = 11$ is a hyperbola. Find the value of $a^2$ in its standard form."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the conic $x^2 - 4y^2 - 6x + 8y = 11$. Complete the square in $x$: $x^2 - 6x = (x - 3)^2 - 9$. Complete the square in $y$: $-4y^2 + 8y = -4[(y - 1)^2 - 1]$. Substitute: $(x - 3)^2 - 4(y - 1)^2 = 16$, so the standard form has a^2 = 16."
+          - problem: "The conic $16x^2 - 9y^2 - 64x - 18y = 89$ is a hyperbola. Find the right vertex as (x, y)."
+            answer: "(5, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start with the conic $16x^2 - 9y^2 - 64x - 18y = 89$. Complete the square in $x$: $16x^2 - 64x = 16[(x - 2)^2 - 4]$. Complete the square in $y$: $-9y^2 - 18y = -9[(y + 1)^2 - 1]$. Substitute: $16(x - 2)^2 - 9(y + 1)^2 = 144$, so $(x - 2)^2/9 - (y + 1)^2/16 = 1$. The right vertex is at (2 + 3, -1) = (5, -1)."
+          - problem: "The conic $-25x^2 + 16y^2 - 100x - 96y = 356$ is a hyperbola. Find $c^2$ for its standard form."
+            answer: "41"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the conic $-25x^2 + 16y^2 - 100x - 96y = 356$. Complete the square in $x$: $-25x^2 - 100x = -25[(x + 2)^2 - 4]$. Complete the square in $y$: $16y^2 - 96y = 16[(y - 3)^2 - 9]$. Substitute: $-25(x + 2)^2 + 16(y - 3)^2 = 400$, so $(y - 3)^2/25 - (x + 2)^2/16 = 1$. Then $a^2 = 25$ and $b^2 = 16$, so c^2 = 25 + 16 = 41."
     diagnostic_exemplar:
       problem: 'Write $9x^2 - 4y^2 - 18x - 16y = 43$ in standard form.'
       answer: "(x - 1)^2/4 - (y + 2)^2/9 = 1"
