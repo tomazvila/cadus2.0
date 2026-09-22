@@ -30,6 +30,22 @@ topics:
             answer: "(4, 17)"
           - problem: 'For the sequence $20, 14, 8, \ldots$, give the ordered pair (common difference, next term).'
             answer: "(-6, 2)"
+          - problem: "The terms of an arithmetic sequence are $12, 19, 26, \\ldots$. Give the common difference and the next term as (common difference, next term)."
+            answer: "(7, 33)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Subtract consecutive terms: $19 - 12 = 7$, so the common difference is $7$. Add the difference to the last listed term: $26 + 7 = 33$. The ordered pair (common difference, next term) is (7, 33)."
+          - problem: "An arithmetic sequence lists $55, 47, 39, \\ldots$. Give the common difference and the next term as (common difference, next term)."
+            answer: "(-8, 31)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Subtract consecutive terms: $47 - 55 = -8$, so the common difference is $-8$ and the sequence is decreasing. Add the difference to the last listed term: $39 + (-8) = 31$. The ordered pair (common difference, next term) is (-8, 31)."
+          - problem: "A parking garage holds $40$ cars on level 1, $34$ on level 2, and $28$ on level 3, and the pattern continues. Give the common difference and the level 4 count as (common difference, level 4 count)."
+            answer: "(-6, 22)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The level counts $40, 34, 28$ form an arithmetic sequence. The common difference is $34 - 40 = -6$. Adding $-6$ to the level 3 count gives $28 + (-6) = 22$ cars on level 4. The ordered pair (common difference, level 4 count) is (-6, 22)."
+          - problem: "An arithmetic sequence has first term $-3$ and common difference $-5$. Give the second and third terms as (second term, third term)."
+            answer: "(-8, -13)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start from $a_1 = -3$ and add the common difference once for each new term. Second term: $-3 + (-5) = -8$. Third term: $-8 + (-5) = -13$. The ordered pair (second term, third term) is (-8, -13)."
       - id: kp2
         name: The explicit formula
         key_prerequisites: [evaluating-expressions, function-notation]
@@ -148,6 +164,22 @@ topics:
           - problem: 'Find the sum of the first $15$ terms of $2, 4, 6, \ldots$'
             answer: "240"
             solution_sketch: '$S = \frac{15}{2}(4 + 14 \cdot 2) = \frac{15 \cdot 32}{2}$.'
+          - problem: "Find the sum of the first 18 terms of the arithmetic sequence whose first three terms are 7, 11, and 15."
+            answer: "738"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the arithmetic series formula S_n = n(2a_1 + (n-1)d)/2. Here n = 18, a_1 = 7, and d = 4. Substitute and compute: S = 18/2(2*7 + 17*4) = 9(14 + 68) = 9*82 = 738. The sum is 738."
+          - problem: "A theater has 24 rows of seats. The first row has 12 seats, and each later row has 3 more seats than the row before it. Find the total number of seats in the theater."
+            answer: "1116"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use S_n = n(2a_1 + (n-1)d)/2 with n = 24, a_1 = 12, and d = 3. Compute S = 24/2(2*12 + 23*3) = 12(24 + 69) = 12*93 = 1116. The total number of seats is 1116."
+          - problem: "An arithmetic series has first term 3 and common difference 4. The sum of the first n terms is 300. Find n."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use S_n = n(2a_1 + (n-1)d)/2 with a_1 = 3 and d = 4. Set S = 300 = n/2(2*3 + (n-1)*4) = n/2(4n + 2). Multiply by 2: 600 = 4n^2 + 2n, so 2n^2 + n - 300 = 0. Factor: (n - 12)(2n + 25) = 0, so n = 12. The number of terms is n = 12."
+          - problem: "An arithmetic series has first term 10 and 8 terms. Its sum is 276. Find the common difference."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use S_n = n(2a_1 + (n-1)d)/2 with a_1 = 10, n = 8, and S = 276. Substitute: 276 = 8/2(2*10 + 7d) = 4(20 + 7d). Divide by 4: 69 = 20 + 7d, so 7d = 49. Thus d = 7. The common difference is 7."
       - id: kp3
         name: Sums in sigma notation
         key_prerequisites: [summation-notation, arithmetic-sequences]
@@ -159,6 +191,22 @@ topics:
           - problem: 'Evaluate $\sum_{k=1}^{10} (3k - 2)$.'
             answer: "145"
             solution_sketch: '$3 \cdot 55 - 20 = 145$.'
+          - problem: "Find the value of $\\sum_{k=1}^{20} (3k + 2)$."
+            answer: "670"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sum from k=1 to 20 of (3k + 2). Step 1: apply the distributive property to write it as 3 times the sum of k plus 2 times the sum of 1. Step 2: use the sum of the first n integers, n(n+1)/2, and the sum of n ones. Substitute n=20: 3(20*21/2) + 2(20) = 630 + 40 = 670. The value of the sum is 670."
+          - problem: "Compute $\\sum_{j=1}^{18} (5j - 4)$."
+            answer: "783"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sum from j=1 to 18 of (5j - 4). Step 1: use the distributive property to split the sum into 5 times the sum of j minus 4 times the sum of 1. Step 2: apply the formulas sum j = n(n+1)/2 and sum 1 = n. With n=18: 5(18*19/2) - 4(18) = 855 - 72 = 783. The value of the sum is 783."
+          - problem: "Determine the sum $\\sum_{m=1}^{14} (6m + 3)$."
+            answer: "672"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sum from m=1 to 14 of (6m + 3). Step 1: separate the sum using the distributive property into 6 times the sum of m plus 3 times the sum of 1. Step 2: use the arithmetic series formulas sum m = n(n+1)/2 and sum 1 = n. Substitute n=14: 6(14*15/2) + 3(14) = 630 + 42 = 672. The value of the sum is 672."
+          - problem: "What is the total of the arithmetic series $\\sum_{t=1}^{16} (7t - 5)$?"
+            answer: "872"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sum from t=1 to 16 of (7t - 5). Step 1: apply the distributive property to write it as 7 times the sum of t minus 5 times the sum of 1. Step 2: use the formulas for the sum of the first n integers and the sum of n ones. With n=16: 7(16*17/2) - 5(16) = 952 - 80 = 872. The value of the sum is 872."
     diagnostic_exemplar:
       problem: 'Evaluate $\sum_{k=1}^{12} (4k + 1)$.'
       answer: "324"
@@ -198,6 +246,18 @@ topics:
             answer: "(1/3, 3)"
           - problem: 'For the sequence $2, -6, 18, \ldots$, give the ordered pair (common ratio, next term).'
             answer: "(-3, -54)"
+          - problem: "The terms 5, 15, and 45 form a geometric sequence. Find the common ratio and the term after 45, and give the ordered pair as (ratio, next term)."
+            answer: "(3, 135)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: divide a term by the term before it. Here 15/5 = 3, so the common ratio is 3. Step 2: multiply the last shown term by the common ratio. Here 45 * 3 = 135, so the ordered pair is (3, 135)."
+          - problem: "Each term of 64, -32, 16, ... is found by multiplying the term before it by the same number. Find the common ratio and the following term, and give the ordered pair as (ratio, next term)."
+            answer: "(-1/2, -8)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: divide a term by the term before it. Here -32/64 = -1/2, so the common ratio is -1/2. Step 2: multiply the last shown term by the ratio. Here 16 * (-1/2) = -8, so the ordered pair is (-1/2, -8)."
+          - problem: "A sample of sand loses the same fraction of its mass each day. Its recorded masses for three days are 100, 20, and 4 grams. Find the common ratio and the next mass, and give the ordered pair as (ratio, next mass)."
+            answer: "(1/5, 4/5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: divide a term by the term before it. Here 20/100 = 1/5, so the common ratio is 1/5. Step 2: multiply the last mass by the ratio. Here 4 * (1/5) = 4/5, so the ordered pair is (1/5, 4/5)."
       - id: kp2
         name: The explicit formula
         key_prerequisites: [exponent-product-quotient-rules]
@@ -209,6 +269,22 @@ topics:
           - problem: 'Find the 5th term of $4, 12, 36, \ldots$'
             answer: "324"
             solution_sketch: '$a_5 = 4 \cdot 3^4$.'
+          - problem: "The geometric sequence has $a_1 = 3$ and $r = 2$. Find the 7th term."
+            answer: "192"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the explicit formula for a geometric sequence: a_n = a_1 * r^(n-1). Substitute a_1 = 3, r = 2 and n = 7 to get a_7 = 3 * 2^6 = 3 * 64. The 7th term is 192."
+          - problem: "The geometric sequence begins $2, 10, 50, ...$ Find its 4th term."
+            answer: "250"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the explicit formula a_n = a_1 * r^(n-1). The ratio is r = 10/2 = 5 and a_1 = 2, so a_4 = 2 * 5^3 = 2 * 125. The 4th term is 250."
+          - problem: "A geometric sequence has ratio $r = 2$ and 5th term $a_5 = 48$. Find its first term."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the explicit formula a_n = a_1 * r^(n-1). Substitute a_5 = 48, r = 2 and n = 5: 48 = a_1 * 2^4 = 16a_1. Solve to get a_1 = 3, so the first term is 3."
+          - problem: "The geometric sequence $3, 9, 27, ...$ has a term equal to $729$. Which term number is it?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the explicit formula a_n = a_1 * r^(n-1). The sequence has a_1 = 3 and r = 3, and we need a_n = 729. Solve 3 * 3^(n-1) = 729, so 3^n = 729 = 3^6 and n = 6. The term number is 6."
       - id: kp3
         name: Recover the ratio from two terms
         key_prerequisites: [exponent-product-quotient-rules]
@@ -220,6 +296,22 @@ topics:
           - problem: 'A geometric sequence has $a_3 = 20$ and $a_5 = 80$. Give the two possible values of $r$ as the ordered pair (positive, negative).'
             answer: "(2, -2)"
             solution_sketch: '$r^2 = 4$ — remember both signs.'
+          - problem: "A geometric sequence has $a_2 = 7$ and $a_5 = 56$. Find $r$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use a5/a2 = r^3 for a geometric sequence. The quotient is 56/7 = 8, so r^3 = 8 and r = 2."
+          - problem: "A geometric sequence has $a_1 = 5$ and $a_3 = 45$. Give the two possible values of $r$ as (positive, negative)."
+            answer: "(3, -3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Use a3 = a1 r^2 for a geometric sequence: 45 = 5 r^2, so r^2 = 9. The two signs give r = 3 and r = -3, and the ordered pair positive then negative is (3, -3)."
+          - problem: "A geometric sequence has $a_3 = 5$ and $a_6 = -40$. Determine $r$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use a6/a3 = r^3 for a geometric sequence. The quotient is -40/5 = -8, so r^3 = -8 and r = -2."
+          - problem: "A geometric sequence has $a_3 = 7$ and $a_6 = -189$. Determine $r$."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use a6/a3 = r^3 for a geometric sequence. The quotient is -189/7 = -27, so r^3 = -27 and r = -3."
     diagnostic_exemplar:
       problem: 'A geometric sequence has $a_1 = 3$ and $a_4 = 81$. Find $r$.'
       answer: "3"
@@ -270,10 +362,22 @@ topics:
           - problem: 'Compute $9 - 3 + 1 - \frac{1}{3} + \cdots$'
             answer: "27/4"
             solution_sketch: '$r = -\frac{1}{3}$; $S = \frac{9}{1 + 1/3} = \frac{9}{4/3}$.'
-          - problem: 'Does $1 + 2 + 4 + 8 + \cdots$ have a finite sum? Answer yes or no.'
-            answer: "no"
-            answer_contract: {kind: label, options: [[no], [yes]]}
-            solution_sketch: 'Here $|r| = 2 \ge 1$, so the series diverges.'
+          - problem: "Consider the infinite geometric series 5 + 5/3 + 5/9 + 5/27 + ... State whether the series has a finite sum, and give that sum as a fraction."
+            answer: "verdict = converges; sum = 15/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sum"}]}
+            solution_sketch: "The infinite geometric series 5 + 5/3 + 5/9 + ... has first term a = 5 and common ratio r = 1/3. Because |r| < 1, it converges, so the choice diverges would come from treating |r| as at least 1. The infinite sum formula gives S = a/(1-r) = 5/(1 - 1/3) = 5/(2/3) = 15/2. Thus verdict = converges; sum = 15/2."
+          - problem: "An infinite geometric series begins with the terms 10, 2, 2/5, and 2/25. What is the sum of this series as a fraction?"
+            answer: "25/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is geometric with first term a = 10 and common ratio r = 1/5, since each term is one fifth of the one before. Since |r| < 1, use the infinite geometric sum formula S = a/(1-r). This gives S = 10/(1 - 1/5) = 10/(4/5) = 25/2. The sum is 25/2."
+          - problem: "An alternating infinite geometric series starts with the terms 6, -2, 2/3, and -2/9. What is its sum, given as a fraction?"
+            answer: "9/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "This series has first term a = 6 and common ratio r = -1/3, because each term is -1/3 times the previous one. Because |r| < 1, the infinite sum formula S = a/(1-r) applies. Substitute: S = 6/(1 - (-1/3)) = 6/(4/3) = 9/2. The sum is 9/2."
+          - problem: "An infinite geometric series has first term 18 and common ratio 2/3. Find its sum."
+            answer: "54"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series has a = 18 and r = 2/3. Since |r| < 1, the infinite geometric sum formula S = a/(1-r) applies. Compute S = 18/(1 - 2/3) = 18/(1/3) = 54. The sum is 54."
       - id: kp3
         name: Repeating decimals as geometric series
         key_prerequisites: [geometric-sequences]
@@ -285,6 +389,22 @@ topics:
           - problem: 'Write $0.\overline{36}$ as a fraction in lowest terms.'
             answer: "4/11"
             solution_sketch: '$\frac{36/100}{1 - 1/100} = \frac{36}{99}$.'
+          - problem: "Find the fraction in lowest terms equal to 0.\\overline{5} by treating it as a geometric series."
+            answer: "5/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (repeating decimal as a series): 0.\\overline{5} = 5/10 + 5/100 + 5/1000 + ... . Step 2 (geometric series formula): the first term is a = 5/10 and the ratio is r = 1/10, so S = a/(1 - r) = (5/10)/(1 - 1/10). Step 3 (simplify): (5/10)/(9/10) = 5/9. The fraction in lowest terms is 5/9."
+          - problem: "Find the fraction in lowest terms equal to 0.\\overline{12} by using a geometric series."
+            answer: "4/33"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (repeating decimal as a series): 0.\\overline{12} = 12/100 + 12/10000 + 12/1000000 + ... . Step 2 (geometric series formula): the first term is a = 12/100 and the ratio is r = 1/100, so S = a/(1 - r) = (12/100)/(1 - 1/100). Step 3 (simplify): (12/100)/(99/100) = 12/99 = 4/33. The fraction in lowest terms is 4/33."
+          - problem: "A calculator shows the repeating decimal 0.\\overline{27}. Find its exact value as a fraction in lowest terms by using a geometric series."
+            answer: "3/11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (repeating decimal as a series): 0.\\overline{27} = 27/100 + 27/10000 + 27/1000000 + ... . Step 2 (geometric series formula): the first term is a = 27/100 and the ratio is r = 1/100, so S = a/(1 - r) = (27/100)/(1 - 1/100). Step 3 (simplify): (27/100)/(99/100) = 27/99 = 3/11. The exact value in lowest terms is 3/11."
+          - problem: "The repeating decimal 0.\\overline{81} can be written as the sum 81/100 + 81/10000 + 81/1000000 + ... . Find its value as a fraction in lowest terms."
+            answer: "9/11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (identify the series): the sum is geometric with first term a = 81/100 and ratio r = 1/100. Step 2 (geometric series formula): S = a/(1 - r) = (81/100)/(1 - 1/100). Step 3 (simplify): (81/100)/(99/100) = 81/99 = 9/11. The fraction in lowest terms is 9/11."
     diagnostic_exemplar:
       problem: 'Write $0.\overline{45}$ as a fraction in lowest terms using a geometric series.'
       answer: "5/11"
@@ -327,6 +447,22 @@ topics:
           - problem: 'Let $a_1 = 1$ and $a_n = 2a_{n-1} + 1$. Find $a_4$.'
             answer: "15"
             solution_sketch: '$1, 3, 7, 15$.'
+          - problem: "Let $a_1 = 3$ and $a_n = a_{n-1} + 4$ for n = 2, 3, 4, ... Find $a_5$."
+            answer: "19"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the initial term a_1 = 3. Apply the one-term recursion a_n = a_{n-1} + 4: a_2 = 7, a_3 = 11, a_4 = 15, and a_5 = 19. The answer is 19."
+          - problem: "Let $a_1 = 5$ and $a_n = 2a_{n-1} - 1$ for n = 2, 3, 4, ... Find $a_5$."
+            answer: "65"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the initial term a_1 = 5. Use the one-term recursion a_n = 2a_{n-1} - 1: a_2 = 9, a_3 = 17, a_4 = 33, and a_5 = 65. The answer is 65."
+          - problem: "Let $a_1 = 4$ and $a_n = 3a_{n-1} + 2$ for n = 2, 3, 4, ... Find $a_4$."
+            answer: "134"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Begin at the initial term a_1 = 4. Apply the one-term recursion a_n = 3a_{n-1} + 2: a_2 = 14, a_3 = 44, and a_4 = 134. The answer is 134."
+          - problem: "Let $a_1 = 10$ and $a_n = a_{n-1} - 6$ for n = 2, 3, 4, ... Find $a_5$."
+            answer: "-14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set the initial term a_1 = 10. Use the one-term recursion a_n = a_{n-1} - 6: a_2 = 4, a_3 = -2, a_4 = -8, and a_5 = -14. The answer is -14."
       - id: kp2
         name: Two-term recursions
         key_prerequisites: [evaluating-expressions]
@@ -338,6 +474,22 @@ topics:
           - problem: 'Let $a_1 = 3$, $a_2 = 1$, and $a_n = a_{n-1} - a_{n-2}$. Find $a_5$.'
             answer: "-1"
             solution_sketch: '$a_3 = 1 - 3 = -2$, $a_4 = -2 - 1 = -3$, $a_5 = -3 - (-2) = -1$.'
+          - problem: "Let $a_1 = 2$, $a_2 = 5$, and $a_n = a_{n-1} + a_{n-2}$. Find $a_6$."
+            answer: "31"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the two-term addition rule to build the terms from the seeds: $2, 5, 7, 12, 19, 31$. Each new term is the sum of the two terms before it. The sixth term is 31."
+          - problem: "Let $a_1 = 5$, $a_2 = 2$, and $a_n = a_{n-1} - a_{n-2}$. Find $a_6$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the two-term subtraction rule in order: $a_3 = 2 - 5 = -3$, $a_4 = -3 - 2 = -5$, $a_5 = -5 - (-3) = -2$, and $a_6 = -2 - (-5) = 3$. The listed terms are $5, 2, -3, -5, -2, 3$. The sixth term is 3."
+          - problem: "Let $a_1 = 1$, $a_2 = 3$, and $a_n = -a_{n-1} + a_{n-2}$. Find $a_5$."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the mixed-sign two-term rule: $a_3 = -3 + 1 = -2$, $a_4 = -(-2) + 3 = 5$, and $a_5 = -5 + (-2) = -7$. The first five terms are $1, 3, -2, 5, -7$. The fifth term is -7."
+          - problem: "A sequence starts with first term 4 and second term 1. Each term after that is the sum of the two preceding terms. Find the sixth term."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Translate the words into the two-term recursion $a_1 = 4$, $a_2 = 1$, and $a_n = a_{n-1} + a_{n-2}$. The terms are $4, 1, 5, 6, 11, 17$. The sixth term is 17."
       - id: kp3
         name: Translate between recursive and explicit forms
         key_prerequisites: [arithmetic-sequences, geometric-sequences]
@@ -346,10 +498,26 @@ topics:
           - problem: 'The sequence $5, 8, 11, 14, \ldots$ has a recursive definition of the form $a_1 = p$, $a_n = a_{n-1} + q$. Give the ordered pair $(p, q)$.'
             answer: "(5, 3)"
             solution_sketch: 'The first term is $5$ and each term adds $3$.'
-          - problem: 'The sequence defined by $a_1 = 3$ and $a_n = 2a_{n-1}$ has explicit formula $a_n = \ldots$. Give the expression in $n$.'
-            answer: "3*2^(n-1)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Each step doubles: $a_n = 3 \cdot 2^{n-1}$.'
+          - problem: "The geometric sequence 4, 12, 36, 108, ... has a recursive definition a_1 = p and a_n = r a_{n-1} for n >= 2. Give the ordered pair as (p, r)."
+            answer: "(4, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The sequence 4, 12, 36, 108, ... has first term p = 4. The common ratio is r = 3 because each term is three times the previous term. The ordered pair is (4, 3)."
+          - problem: "The arithmetic sequence is defined by a_1 = 4 and a_n = a_{n-1} + 7 for n >= 2. Give the explicit formula for a_n as an expression in n."
+            answer: "7n - 3"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "The recursive rule a_n = a_{n-1} + 7 means the common difference is 7. With a_1 = 4, the explicit formula is a_n = 7n - 3. The explicit formula is 7n - 3."
+          - problem: "The geometric sequence has explicit formula a_n = 6 * 4^(n-1) for n >= 1. Give the ordered pair as (a_1, r)."
+            answer: "(6, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The explicit formula a_n = 6 * 4^(n-1) has first term a_1 = 6. The common ratio is r = 4. The ordered pair is (6, 4)."
+          - problem: "The arithmetic sequence has explicit formula a_n = 5n + 1 for n >= 1. Give the ordered pair as (a_1, d), where d is the common difference."
+            answer: "(6, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The explicit formula a_n = 5n + 1 gives a_1 = 6. The common difference is d = 5. The ordered pair is (6, 5)."
+          - problem: "A geometric sequence has a_2 = 10 and a_4 = 40, and its common ratio is positive. Give the ordered pair as (a_1, r)."
+            answer: "(5, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The terms satisfy a_2 = a_1 r = 10 and a_4 = a_1 r^3 = 40. Dividing gives r^2 = 4, so r = 2 because the ratio is positive. Then a_1 = 10/2 = 5. The ordered pair is (5, 2)."
     diagnostic_exemplar:
       problem: 'Let $a_1 = 2$, $a_2 = 3$, and $a_n = a_{n-1} + a_{n-2}$. Find $a_6$.'
       answer: "21"
