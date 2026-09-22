@@ -151,26 +151,58 @@ topics:
         name: "Ruling out subgroup orders"
         key_prerequisites: [cosets]
         exemplars:
-          - problem: 'Can a group of order $20$ have a subgroup of order $8$?'
-            answer: 'No: $8 \nmid 20$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Lagrange forces subgroup orders to divide the group order.'
           - problem: 'List all possible orders of subgroups of a group of order $21$.'
             answer: '$1, 3, 7, 21$'
             solution_sketch: 'Exactly the divisors of $21$ are candidates (Lagrange); which occur depends on the group, but no other order is possible.'
+          - problem: "A group $G$ has order $20$. Can $G$ have a subgroup of order $8$? Give a verdict (possible or impossible) and give the remainder when $20$ is divided by $8$."
+            answer: "verdict = impossible; r = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["possible"], ["impossible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "By Lagrange's theorem, the order of a subgroup must divide the order of the group. Apply the division algorithm to the full pair: 20 = 2*8 + 4, so 8 does not divide 20. The option possible is wrong because it ignores the divisibility test that Lagrange forces. Lagrange gives only necessity, so non-divisibility rules out the order in every group of order 20. So verdict = impossible; r = 4."
+          - problem: "A group $G$ has order $30$. Lagrange's theorem restricts which integers can occur as the order of a subgroup of $G$. How many integers from $1$ to $30$ pass this restriction? Give the count."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By Lagrange's theorem, a subgroup order must divide 30. Apply the divisor test to the full range 1 to 30: the divisors of 30 are 1, 2, 3, 5, 6, 10, 15, and 30, so exactly 8 integers pass. Lagrange gives only necessity, so some of these candidate orders may fail to occur in a particular group of order 30. The count of integers that pass the restriction is 8."
+          - problem: "Can a group $G$ of order $45$ contain a subgroup of order $6$? Give a verdict (possible or impossible) and give the remainder when $45$ is divided by $6$."
+            answer: "verdict = impossible; r = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["possible"], ["impossible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Lagrange's theorem forces every subgroup order to divide the group order. Apply the division algorithm to the full pair: 45 = 7*6 + 3, so 6 does not divide 45 and the order 6 is ruled out. The option possible is wrong because it treats any size below 45 as allowed. So verdict = impossible; r = 3."
+          - problem: "A group $G$ has order $36$. Find the largest integer that can be the order of a proper subgroup of $G$ according to Lagrange's theorem."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By Lagrange's theorem, the order of a proper subgroup of $G$ must divide 36 and be strictly less than 36. Apply the divisor test to the full number: the divisors of 36 are 1, 2, 3, 4, 6, 9, 12, 18, and 36, and the largest one below 36 is 18. Lagrange gives only necessity, so a subgroup of order 18 need not exist, but no larger proper subgroup is possible. The largest integer allowed by Lagrange's theorem is 18."
+          - problem: "In a group $G$ of order $12$, how many integers $m$ with $1 \\le m \\le 11$ cannot be the order of a subgroup of $G$? Give the count."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By Lagrange's theorem, a subgroup order must divide 12. Apply the divisor test to the full range 1 to 11: the divisors of 12 in this range are 1, 2, 3, 4, and 6. The remaining integers 5, 7, 8, 9, 10, and 11 fail the test and are ruled out, and Lagrange gives only necessity, so nothing more can be said about the passing orders. The count of ruled-out integers is 6."
         constraints: "divisibility verdicts; |G| <= 100; emphasize Lagrange gives necessity only"
       - id: kp3
         name: "The converse fails"
         key_prerequisites: [cosets]
         exemplars:
-          - problem: 'Does every group of order $12$ have a subgroup of order $6$? Give a counterexample or proof.'
-            answer: 'No: $A_4$ has order $12$ but no subgroup of order $6$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$A_4$ is the standard counterexample to the converse of Lagrange; a subgroup of index $2$ would contain every 3-cycle, forcing it to be all of $A_4$.'
-          - problem: 'True or false: if $d$ divides $|G|$, then $G$ has an element of order $d$.'
-            answer: 'False — e.g. $U(8)$ has order $4$ but no element of order $4$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Element orders divide $|G|$, but not every divisor is realized; $U(8)$ is a Klein-four counterexample.'
+          - problem: "The alternating group A_4 has order 12, and the numbers alone allow a subgroup of order 6. How many subgroups of order 6 does A_4 actually have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Lagrange's theorem): a subgroup of order 6 in A_4 would have index 2, hence would be normal. Step 2 (conjugacy classes): the class sizes in A_4 are 1, 3, 4, 4, and a normal subgroup is a union of classes that contains the identity. Step 3 (arithmetic): the possible class sums 1, 4, 5, 8, 9 and 12 never equal 6, so no such normal subgroup exists. The number of subgroups of order 6 in A_4 is 0."
+          - problem: "The group U(8) consists of the units modulo 8, namely 1, 3, 5 and 7, under multiplication modulo 8. Find the order of the element 3."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition): the order of 3 in U(8) is the least positive k with 3^k congruent to 1 modulo 8. Step 2 (compute powers): 3^1 = 3 and 3^2 = 9, which is 1 modulo 8. Step 3 (least k): no smaller positive exponent works, so the least such k is 2. The order of the element 3 in U(8) is 2."
+          - problem: "The alternating group A_4 has 12 elements: the identity, three double transpositions, and eight 3-cycles. How many elements of A_4 have order 3?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (structure): each 3-cycle of A_4 has order 3, while the identity and the double transpositions have order 1 or 2. Step 2 (count the 3-cycles): choose the fixed point in 4 ways and then the direction of the cycle in 2 ways. Step 3 (multiply): 4 times 2 = 8 such cycles. The number of elements of order 3 in A_4 is 8."
+          - problem: "The Klein four group has four elements and every non-identity element squares to the identity. How many elements of this group have order exactly 2?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (structure): write the Klein four group as e, a, b, ab with a^2 = b^2 = (ab)^2 = e. Step 2 (orders): the identity e has order 1, and each of a, b and ab has order 2. Step 3 (count): the elements of order 2 are a, b and ab. The number of elements of order 2 in the Klein four group is 3."
+          - problem: "The group U(8) consists of the units modulo 8, namely 1, 3, 5 and 7, under multiplication modulo 8. Give the set of all orders of elements of U(8)."
+            answer: "{1, 2}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (individual orders): in U(8) the identity 1 has order 1. Step 2 (the other elements): 3^2 = 9 = 1, 5^2 = 25 = 1 and 7^2 = 49 = 1 modulo 8, so 3, 5 and 7 each have order 2 and none has order 4. Step 3 (collect): the orders that occur are 1 and 2. The set of all orders of elements of U(8) is {1, 2}."
+          - problem: "In the alternating group A_4 every subgroup of order 3 is generated by a 3-cycle. How many subgroups of order 3 does A_4 have?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (structure): a subgroup of order 3 in A_4 has the form {e, g, g^2} for a 3-cycle g. Step 2 (pair the cycles): the eight 3-cycles fall into four pairs of the form {g, g^2}, and each pair gives exactly one subgroup of order 3. Step 3 (count): four pairs give four subgroups. The number of subgroups of order 3 in A_4 is 4."
         constraints: "counterexample recall: A_4 (subgroups), U(8) or Klein four (element orders)"
     diagnostic_exemplar:
       problem: 'A group $G$ has order $12$ and a subgroup $H$ with $[G : H] = 3$. Find $|H|$, and decide whether every group of order $12$ must contain a subgroup of order $6$.'
@@ -229,12 +261,34 @@ topics:
         name: "Fermat's little theorem and Euler's theorem, group-theoretically"
         key_prerequisites: [lagranges-theorem]
         exemplars:
-          - problem: 'Use the group $U(11)$ to compute $2^{10} \bmod 11$.'
+          - problem: "Use the group U(11) to compute 3^10 mod 11. Give the remainder."
             answer: "1"
-            solution_sketch: '$|U(11)| = 10$, so $g^{10} = 1$ for every $g \in U(11)$ — Fermat''s little theorem.'
-          - problem: 'Compute $3^{100} \bmod 7$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First note that U(11) has order 10. By Lagrange's theorem, every element g of U(11) satisfies g^10 = 1 mod 11. Since 3 is coprime to 11, the class of 3 lies in U(11). Therefore 3^10 = 1 mod 11. The answer is 1."
+          - problem: "Compute 3^100 mod 7 by reducing the exponent with the order of U(7). Give the remainder."
             answer: "4"
-            solution_sketch: '$3^6 \equiv 1 \pmod 7$; $100 = 6 \cdot 16 + 4$, so $3^{100} \equiv 3^4 = 81 \equiv 4$.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the group order: U(7) has 6 elements. By Fermat's little theorem, 3^6 = 1 mod 7. Divide the exponent: 100 = 6*16 + 4. Therefore 3^100 = 3^4 = 81 = 4 mod 7. The answer is 4."
+          - problem: "Use the group U(10) to compute 7^22 mod 10. Give the remainder."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First note that U(10) has order 4. By Lagrange's theorem, every unit modulo 10 satisfies a^4 = 1 mod 10. Since 7 is a unit, reduce the exponent: 22 = 4*5 + 2. Then 7^22 = 7^2 = 49 = 9 mod 10. The answer is 9."
+          - problem: "In the group U(20), find the order of the element 3."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First note that U(20) has order 8, so Lagrange's theorem says the order of 3 divides 8. Compute powers: 3^2 = 9, 3^3 = 27 = 7 mod 20, and 3^4 = 81 = 1 mod 20. No smaller positive power gives 1, so the order is 4. The answer is 4."
+          - problem: "Claim: For every unit a modulo 7, a^6 = 1 mod 7. Step 1: U(7) has 6 elements. Step 2: By Lagrange's theorem, the order of a divides 6. Step 3: Therefore a^3 = 1 mod 7. Step 4: Hence a^6 = 1 mod 7. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid because U(7) has 6 elements. Step 2 is valid by Lagrange's theorem: the order of a divides 6. Step 3 is false: an order that divides 6 need not divide 3; for a = 3 the order is 6. Step 4 would follow from Step 3 but is not the first invalid step. The answer is Step 3."
+          - problem: "In the proof that a^(|U(n)|) = 1 mod n, let d be the order of a in U(n) and write |U(n)| = d·m for a positive integer m. The line a^(|U(n)|) = ? is missing. Select the line that is true and that uses the hypothesis a^d = 1 mod n."
+            answer: "(a^d)^m"
+            answer_contract: {"kind": "label", "options": [["(a^d)^m"], ["a^d + a^m"], ["(ad)^m"], ["a^(dm) - 1"]]}
+            solution_sketch: "The order of a in U(n) is d, so a^d = 1 mod n. Write |U(n)| = d·m. Then a^(|U(n)|) = a^(d·m) = (a^d)^m = 1^m = 1 mod n. The option a^d + a^m confuses a product of exponents with a sum. The option (ad)^m multiplies the base by the order instead of raising a to the power d. The option a^(dm) - 1 is off by one. The answer is (a^d)^m."
+          - problem: "Write the full proof: Let n be a positive integer and let a be an integer coprime to n. Prove a^(|U(n)|) = 1 mod n. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: U(n) is the set of residue classes modulo n that have inverses, and it is a group under multiplication modulo n. Step 2: The class of a lies in U(n) because gcd(a,n) = 1. Step 3: Let d be the order of this class in U(n). By Lagrange's theorem, d divides |U(n)|. Step 4: Write |U(n)| = d m for some positive integer m. Then a^(|U(n)|) = (a^d)^m = 1^m = 1 mod n. Therefore the claim holds."
         constraints: "modular exponentiation with moduli <= 30, reduced via g^{|U(n)|} = 1"
     diagnostic_exemplar:
       problem: 'Let $G$ be a group with $|G| = 35$ and $g \in G$ with $g \neq e$. What are the possible orders of $g$? Then compute $7^{222} \bmod 11$.'
@@ -278,23 +332,67 @@ topics:
         name: "Definition and the conjugation test"
         key_prerequisites: [cosets]
         exemplars:
-          - problem: 'Give two equivalent definitions of a normal subgroup $N \trianglelefteq G$.'
-            answer: '$gN = Ng$ for all $g \in G$; equivalently $gng^{-1} \in N$ for all $g \in G, n \in N$.'
-            solution_sketch: 'Left cosets coincide with right cosets iff $N$ is closed under conjugation by every group element.'
-          - problem: 'Prove that every subgroup of an abelian group is normal.'
-            answer: '$gng^{-1} = ngg^{-1} = n \in N$.'
-            solution_sketch: 'Conjugation is trivial when elements commute.'
+          - problem: "In the additive group $Z_{12}$, take the subgroup $N = \\{0, 6\\}$. The conjugation test says $N$ is normal in $Z_{12}$ exactly when $g + n - g$ lies in $N$ for every $g$ and $n$. For $g = 5$ and $n = 4$, compute $g + n - g$ in $Z_{12}$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the full expression $g + n - g$ with $g = 5$ and $n = 4$. Step 2: in the additive group $Z_{12}$ addition is commutative, so the two copies of $g$ cancel: $5 + 4 - 5 = 4 + (5 - 5) = 4$. Step 3: the expression equals $n$ for every $g$, which is the abelian special case of the conjugation test, and $4$ is in $Z_{12}$. The value of $g + n - g$ is 4."
+          - problem: "A subgroup of the additive group $Z_9$ is normal exactly when $g + n - g$ lies in the subgroup for every element $g$ of $Z_9$ and every $n$ of the subgroup. Take $N = \\{0, 3, 6\\}$ with $g = 2$ and $n = 6$. Compute $g + n - g$ in $Z_9$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the conjugation test in an additive group uses the expression $g + n - g$. Step 2: substitute $g = 2$ and $n = 6$ to get $2 + 6 - 2 = 6$. Step 3: reduce modulo $9$: the value is $6$, which lies in $N = \\{0, 3, 6\\}$, so this instance of the test passes. The computed value is 6."
+          - problem: "In the dihedral group $D_4$, let $r$ be a quarter turn and $s$ a reflection, with the relation $s r s^{-1} = r^{-1}$. Write $s r^3 s^{-1}$ in the form $r^k$ with $0 \\le k \\le 3$. Give $k$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the full object is $s r^3 s^{-1}$, a conjugate of a power of the rotation. Step 2: conjugation respects powers, so $s r^3 s^{-1} = (s r s^{-1})^3 = (r^{-1})^3 = r^{-3}$. Step 3: reduce the exponent modulo $4$: $r^{-3} = r^{4-3} = r$, so $k = 1$. The exponent is k = 1."
+          - problem: "In $S_3$, conjugate the transposition $(1\\,3)$ by $g = (1\\,2)$: the conjugate is the permutation $(1\\,2)(1\\,3)(1\\,2)$, composed right to left. Give the image of $2$ under this conjugate."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the full object is the permutation $(1\\,2)(1\\,3)(1\\,2)$, applied right to left. Step 2: track the element $2$: the rightmost $(1\\,2)$ sends $2$ to $1$, then $(1\\,3)$ sends $1$ to $3$, then the leftmost $(1\\,2)$ fixes $3$. Step 3: the conjugate sends $2$ to $3$, so it is $(2\\,3)$, which is not the original transposition; conjugation moves elements. The image of 2 is 3."
+          - problem: "Claim: every subgroup $N$ of an abelian group $G$ is normal. Step 1: let $g$ be in $G$ and $n$ be in $N$. Step 2: since $G$ is abelian, $g n g^{-1} = n g g^{-1} = n$. Step 3: the element $n g$ lies in $N$ because $n$ is in $N$ and $G$ is abelian. Step 4: hence $g n g^{-1}$ is in $N$ for all $g$ and $n$, so $N$ is normal. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct setup. Step 2 is a valid computation: commutativity gives $n g g^{-1} = n$. Step 3 is false: the closure of the subgroup $N$ applies only to products of two elements of $N$, and $g$ is an arbitrary element of $G$ that need not lie in $N$, so $n g$ belongs to the coset $Ng$, not necessarily to $N$. Step 4 would follow from the corrected Step 3. The first invalid step is Step 3."
+          - problem: "In the dihedral group $D_4$, let $r$ be a quarter turn and $s$ a reflection, with $s r s^{-1} = r^{-1}$. Let $N = \\{e, r^2\\}$. Compute $s r s^{-1}$ as $r^k$ with $0 \\le k \\le 3$, and decide whether $r^k$ lies in $N$. Give $k$ and the verdict."
+            answer: "verdict = no; k = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "Step 1: the full object is $s r s^{-1}$ with $N = \\{e, r^2\\}$. Step 2: the relation $s r s^{-1} = r^{-1}$ gives the conjugate directly. Step 3: reduce the exponent modulo $4$: $r^{-1} = r^3$, so $k = 3$. Step 4: check membership in $N$: $r^3$ is neither $e$ nor $r^2$, so the conjugate does not lie in $N$. So verdict = no; k = 3."
+          - problem: "Write the full proof: a subgroup $N$ of $G$ satisfies $gN = Ng$ for every $g$ in $G$ exactly when $g n g^{-1}$ lies in $N$ for every $g$ in $G$ and $n$ in $N$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (forward): assume $gN = Ng$ for every $g$ in $G$. Take $n$ in $N$. Then $g n$ lies in $gN$, and since $gN = Ng$, there is $m$ in $N$ with $g n = m g$. Multiply on the right by $g^{-1}$: $g n g^{-1} = m$, which lies in $N$. Step 2 (reverse): assume $g n g^{-1}$ lies in $N$ for every $g$ in $G$ and $n$ in $N$. Take $x$ in $gN$, so $x = g n$ for some $n$ in $N$. Rewrite $x = (g n g^{-1}) g$. By the assumption the first factor lies in $N$, so $x$ lies in $Ng$; hence $gN$ is contained in $Ng$. Step 3 (symmetry): applying the same argument with $g^{-1}$ in place of $g$ gives $Ng$ contained in $gN$. Therefore $gN = Ng$ for every $g$ in $G$, which is exactly the definition of a normal subgroup. The proof is complete."
         constraints: "definition unwinding; conjugation test gng^{-1} in N"
       - id: kp2
         name: "Testing normality in S_3, D_4, A_n"
         key_prerequisites: [cosets, even-odd-permutations]
         exemplars:
-          - problem: 'Is $H = \{e, (1\,2)\}$ normal in $S_3$? (Compose right to left.)'
-            answer: 'No: $(1\,3)(1\,2)(1\,3) = (2\,3) \notin H$.'
-            solution_sketch: 'Conjugating $(1\,2)$ by $(1\,3)$ relabels the moved points, giving $(2\,3)$, which is outside $H$.'
-          - problem: 'Prove that $A_n$ is normal in $S_n$.'
-            answer: 'Conjugation preserves parity: $\sigma \tau \sigma^{-1}$ is even when $\tau$ is even. (Alternatively: index $2$.)'
-            solution_sketch: 'Either compute the parity of $\sigma\tau\sigma^{-1}$, or use that any subgroup of index $2$ is normal.'
+          - problem: "In S3, let h be the transposition swapping 1 and 2, and let s be the transposition swapping 1 and 3. Compute s h s^(-1)."
+            answer: "(2 3)"
+            answer_contract: {"kind": "label", "options": [["(2 3)"], ["(1 2)"], ["(1 3)"], ["(1 2 3)"]]}
+            solution_sketch: "Conjugation relabels the points moved by h by the permutation s. The transposition h swaps 1 and 2, so its conjugate swaps the images 3 and 2, giving (2 3). Option (1 2) leaves h unchanged, the error of ignoring the conjugation. Option (1 3) is just s, the error of using s in place of the conjugate. Option (1 2 3) is a 3-cycle, the error of composing as a product rather than a conjugate. The answer is (2 3)."
+          - problem: "For every permutation s, the sign of s t s^(-1) equals the sign of t. If t is an even permutation, give the sign of its conjugate s t s^(-1) as 1 or -1."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sign is multiplicative, so sign(s t s^(-1)) = sign(s) sign(t) sign(s^(-1)). Since sign(s^(-1)) = sign(s), the outer factors cancel, leaving sign(t). An even t has sign 1, so the conjugate is even and its sign is 1. The answer is 1."
+          - problem: "In D4, let r be rotation by 90 degrees and let s be a reflection, with the relation s r = r^(-1) s. Compute r s r^(-1) and write the result in the form r^k or r^k s."
+            answer: "r^2 s"
+            answer_contract: {"kind": "label", "options": [["r^2 s"], ["r^3 s"], ["r s"], ["r^2"]]}
+            solution_sketch: "Use the relation to move r past s. Since s r = r^(-1) s, we have r s = s r^(-1). Then r s r^(-1) = s r^(-1) r^(-1) = s r^(-2) = s r^2. Because r^(-2) = r^2 in D4 and r^2 commutes with s, this is r^2 s. Option r^3 s uses r^(-1) in place of r^(-2), the error of conjugating by r only once. Option r s moves r past s without inverting it, the error of dropping the minus sign in the relation. Option r^2 omits the reflection s, the error of forgetting that r does not normalize s alone. The answer is r^2 s."
+          - problem: "In S4, conjugate the 3-cycle moving 1 to 2 to 3 by the transposition swapping 1 and 4. Compute the resulting cycle."
+            answer: "(2 3 4)"
+            answer_contract: {"kind": "label", "options": [["(2 3 4)"], ["(1 2 3)"], ["(1 3 4)"], ["(1 2 4)"]]}
+            solution_sketch: "Conjugation by a permutation relabels each entry of the cycle by that permutation. The transposition swaps 1 and 4, so 1 stays fixed in the relabeled cycle, 2 becomes 3, 3 becomes 4, and 4 becomes 2, giving (2 3 4). Option (1 2 3) ignores the conjugation, the error of returning the original cycle. Option (1 3 4) applies only part of the relabeling. Option (1 2 4) reverses the direction of the last two images. The answer is (2 3 4)."
+          - problem: "In D4 with rotation r, give the order of the central element r^2."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element r^2 is a half-turn. Its square is r^4 = e, and r^2 is not e, so its order is 2. Because r^2 commutes with r and with every reflection, it lies in the center. The answer is 2."
+          - problem: "In S3, how many elements are conjugate to the transposition swapping 1 and 2?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Conjugates of a transposition are transpositions: conjugation relabels the two moved points. In S3 there are exactly three transpositions, and all are conjugate to the one swapping 1 and 2. The answer is 3."
+          - problem: "Write the full proof: A_n is normal in S_n. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Let s be any permutation in S_n and let t be any element of A_n. Step 2: The sign is multiplicative, so sign(s t s^(-1)) = sign(s) sign(t) sign(s^(-1)). Step 3: Since sign(s^(-1)) = sign(s), the outer factors cancel, and sign(s t s^(-1)) = sign(t). Step 4: Because t is even, sign(t) = 1, so s t s^(-1) is also even and lies in A_n. Step 5: Thus s A_n s^(-1) is contained in A_n for every s. Step 6: Conjugation is a bijection on the finite set S_n, so the sets have the same size, and therefore s A_n s^(-1) = A_n. Hence A_n is normal in S_n."
         constraints: "concrete conjugation checks in S_3, D_4; standard normal examples A_n, rotation subgroup of D_n, Z(G)"
       - id: kp3
         name: "Index 2 forces normality"
@@ -338,14 +436,30 @@ topics:
         name: "Well-defined coset multiplication"
         key_prerequisites: [normal-subgroups]
         exemplars:
-          - problem: 'In $G/N$, cosets multiply by $(aN)(bN) = abN$. Why is normality of $N$ needed for this to be well defined?'
-            answer: 'Changing representatives $a \to an_1$, $b \to bn_2$ must not change $abN$; this requires $Nb = bN$, i.e. normality.'
-            answer_contract: {kind: none}
-            solution_sketch: '$(an_1)(bn_2) = ab(b^{-1}n_1b)n_2$, which lies in $abN$ exactly when $b^{-1}n_1b \in N$ — the conjugation test.'
-          - problem: 'What are the identity and the inverse of $aN$ in $G/N$?'
-            answer: 'Identity $eN = N$; inverse $(aN)^{-1} = a^{-1}N$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Direct check from the coset product formula.'
+          - problem: "In the quotient group G/N, cosets multiply by (aN)(bN) = abN. Which condition on the subgroup N makes this multiplication independent of the chosen representatives? Select the condition."
+            answer: "normal"
+            answer_contract: {"kind": "label", "options": [["normal"], ["abelian"], ["cyclic"], ["finite"]]}
+            solution_sketch: "The full answer is the condition that N be normal. The normality criterion says coset multiplication is independent of representatives exactly when aN = Na for every a. The option abelian is a stronger condition than needed, since non-abelian groups with normal subgroups also give quotients. The option cyclic is wrong because a cyclic subgroup need not be normal in a non-abelian group. The option finite is wrong because finiteness does not imply normality. The correct option is normal."
+          - problem: "In the quotient group G/N, what is the inverse of the coset aN? Select the coset."
+            answer: "a^-1 N"
+            answer_contract: {"kind": "label", "options": [["a^-1 N"], ["a N"], ["e N"], ["a^-1"]]}
+            solution_sketch: "The full object is the inverse coset in G/N. The inverse of aN is a^-1 N because (aN)(a^-1 N) = aa^-1 N = N. The option a N is the original coset; e N is the identity coset; a^-1 is an element, not a coset. The correct option is a^-1 N."
+          - problem: "In the symmetric group S3, a subgroup N gives a well-defined coset product on S3/N exactly when N is normal. How many subgroups N of S3 are normal?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set of normal subgroups of S3 is {e}, A3, and S3. By the normality criterion for well-defined coset multiplication, a subgroup N gives a valid quotient exactly when it is normal. Counting the normal subgroups gives three. The answer is 3."
+          - problem: "In the cyclic group Z_10, how many subgroups N give a well-defined coset product on Z_10/N?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full list of subgroups of Z_10 is the subgroups of orders 1, 2, 5, and 10. Since Z_10 is cyclic, it is abelian, so every subgroup is normal and gives a well-defined coset product. Counting these subgroups gives four. The answer is 4."
+          - problem: "A cyclic group has order 7. How many subgroups N of this group give a well-defined coset product on the quotient?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A cyclic group of order 7 has only the subgroup of order 1 and the whole group of order 7. Every subgroup of an abelian group is normal, so both give a well-defined coset product. Thus the number of such subgroups is two. The answer is 2."
+          - problem: "In the cyclic group Z_18, how many subgroups N give a well-defined coset product on Z_18/N?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The subgroups of Z_18 correspond to the divisors 1, 2, 3, 6, 9, and 18. Since Z_18 is cyclic, it is abelian, so every subgroup is normal and gives a well-defined quotient. Counting these gives six. The answer is 6."
         constraints: "definition-level questions on the quotient construction"
       - id: kp2
         name: "Computing in Z_n/H and Z/nZ"
@@ -364,14 +478,30 @@ topics:
         name: "Quotients of non-abelian groups"
         key_prerequisites: [normal-subgroups]
         exemplars:
-          - problem: 'Identify $S_3 / A_3$ up to isomorphism.'
-            answer: '$\mathbb{Z}_2$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The quotient has order $6/3 = 2$, and the only group of order $2$ is $\mathbb{Z}_2$.'
-          - problem: 'True or false: every quotient of a cyclic group is cyclic.'
-            answer: 'True: if $G = \langle g \rangle$ then $G/N = \langle gN \rangle$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The image of a generator generates the quotient.'
+          - problem: "The alternating subgroup A3 is normal in the symmetric group S3. Select the group isomorphic to the quotient S3/A3."
+            answer: "Z2"
+            answer_contract: {"kind": "label", "options": [["Z2"], ["Z3"], ["S3"], ["Z6"]]}
+            solution_sketch: "The quotient S3/A3 has order 6/3 = 2 by Lagrange's theorem. A group of order 2 is cyclic, so it is isomorphic to Z2. The option Z3 has order 3, the option S3 has order 6, and the option Z6 has order 6, so each fails the order test. The quotient S3/A3 is isomorphic to Z2."
+          - problem: "In the dihedral group D8 of order 8, the center Z has order 2. How many elements of order 2 are there in the quotient D8/Z?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The quotient D8/Z has order 8/2 = 4 by Lagrange's theorem. Its nonidentity cosets are rZ, sZ, and rsZ. Each of these squares to Z, so each has order 2. Thus the quotient has 3 elements of order 2."
+          - problem: "In the quaternion group Q8 of order 8, the center Z has order 2. Find the order of the quotient group Q8/Z."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The quaternion group Q8 has order 8, and its center Z has order 2. By Lagrange's theorem, the quotient Q8/Z has order 8/2 = 4. The order of the quotient group Q8/Z is 4."
+          - problem: "In the dihedral group D12 of order 12, the center Z has order 2. How many elements of order 3 are there in the quotient D12/Z?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The quotient D12/Z has order 12/2 = 6 by Lagrange's theorem. Its cosets rZ and r^2Z have order 3 because r^3 lies in Z, while sZ, rsZ, and r^2sZ have order 2. Therefore the number of elements of order 3 is 2."
+          - problem: "In the dihedral group D8 of order 8, the center Z has order 2. Select the group isomorphic to the quotient D8/Z."
+            answer: "V4"
+            answer_contract: {"kind": "label", "options": [["Z2"], ["Z4"], ["V4"], ["D8"]]}
+            solution_sketch: "The quotient D8/Z has order 8/2 = 4 by Lagrange's theorem. Every nonidentity coset has order 2, so the quotient is the Klein four group V4. The option Z2 has order 2, the option Z4 is cyclic of order 4, and the option D8 has order 8, so each is wrong. The quotient D8/Z is isomorphic to V4."
+          - problem: "In the alternating group A4, the Klein four subgroup V4 is normal. Find the order of the coset (123)V4 in the quotient A4/V4."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The quotient A4/V4 has order 12/4 = 3 by Lagrange's theorem. The coset (123)V4 is not the identity coset, so its order divides 3. Since (123)^3 is the identity, the coset has order 3. Thus the order of (123)V4 is 3."
         constraints: "quotient orders <= 8; identify small quotients by order and element orders"
     diagnostic_exemplar:
       problem: 'In $\mathbb{Z}_{12}/\langle 4 \rangle$, find the order of the coset $3 + \langle 4 \rangle$.'
