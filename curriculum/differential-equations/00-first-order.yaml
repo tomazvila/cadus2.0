@@ -1963,14 +1963,30 @@ topics:
         name: Solving via partial fractions
         key_prerequisites: [partial-fractions-integration, separable-equations]
         exemplars:
-          - problem: "Solve the logistic equation $y' = y(1 - y)$ with $y(0) = \\tfrac{1}{2}$."
-            answer: "$y = \\dfrac{1}{1 + e^{-t}}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Partial fractions on $\\dfrac{dy}{y(1-y)}$ give the general solution $y = \\dfrac{1}{1 + Ce^{-t}}$; $y(0) = \\tfrac{1}{2}$ forces $C = 1$."
-          - problem: "Solve $P' = 2P\\left(1 - \\dfrac{P}{1000}\\right)$ with $P(0) = 100$."
-            answer: "$P = \\dfrac{1000}{1 + 9e^{-2t}}$"
-            answer_contract: {kind: none}
-            solution_sketch: "The general solution is $P = \\dfrac{K}{1 + Ce^{-rt}}$ with $K = 1000$, $r = 2$; $P(0) = 100$ gives $C = 9$."
+          - problem: "Solve $y' = 3y(1 - y/50)$ with $y(0) = 10$. Give the solution as a function of $t$."
+            answer: "50/(1+4e^(-3t))"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separate variables and use partial fractions: $dy/(y(1-y/50)) = 3\\,dt$ becomes $(1/y + (1/50)/(1-y/50))\\,dy = 3\\,dt$. Integrating gives $\\ln|y| - \\ln|1-y/50| = 3t + c$, so the general solution is $y = 50/(1 + C e^{-3t})$. The initial condition $y(0)=10$ gives $10 = 50/(1+C)$, so $C=4$. The solution is 50/(1+4e^(-3t))."
+          - problem: "Solve $P' = 4P(1 - P/300)$ with $P(0) = 60$. Give the solution as a function of $t$."
+            answer: "300/(1+4e^(-4t))"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separate variables and apply partial fractions to $dP/(P(1-P/300))$. Integration gives the general solution $P = 300/(1 + C e^{-4t})$. The initial condition $P(0)=60$ gives $60 = 300/(1+C)$, so $C=4$. The solution is 300/(1+4e^(-4t))."
+          - problem: "A yeast culture grows logistically. Its mass $M(t)$ in grams satisfies $M' = 2M(1 - M/100)$ and $M(0) = 20$. Solve for $M(t)$ and give the solution as a function of $t$."
+            answer: "100/(1+4e^(-2t))"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separate variables and use partial fractions on $1/(M(1-M/100)) = 1/M + (1/100)/(1-M/100)$. Integration gives $M = 100/(1 + C e^{-2t})$. The initial condition $M(0)=20$ gives $20 = 100/(1+C)$, so $C=4$. The solution is 100/(1+4e^(-2t))."
+          - problem: "A fish population $N(t)$ follows $N' = 3N(1 - N/600)$ with $N(0) = 150$. Find the population formula $N(t)$ as a function of $t$."
+            answer: "600/(1+3e^(-3t))"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separate variables and decompose $1/(N(1-N/600))$ by partial fractions. Integrating gives $N = 600/(1 + C e^{-3t})$. The initial condition $N(0)=150$ gives $150 = 600/(1+C)$, so $C=3$. The solution is 600/(1+3e^(-3t))."
+          - problem: "A rumor spreads through a town of 800 people. The number of informed people $I(t)$ satisfies $I' = 5I(1 - I/800)$ and $I(0) = 100$. Solve for $I(t)$ as a function of $t$."
+            answer: "800/(1+7e^(-5t))"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separate variables and apply partial fractions to $1/(I(1-I/800))$. Integrating yields $I = 800/(1 + C e^{-5t})$. The initial condition $I(0)=100$ gives $100 = 800/(1+C)$, so $C=7$. The solution is 800/(1+7e^(-5t))."
+          - problem: "A bacteria colony has population $B(t)$ satisfying $B' = 6B(1 - B/400)$ and $B(0) = 80$. Give the solution $B(t)$ as a function of $t$."
+            answer: "400/(1+4e^(-6t))"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Separate variables and use partial fractions on $1/(B(1-B/400))$. Integration gives $B = 400/(1 + C e^{-6t})$. The initial condition $B(0)=80$ gives $80 = 400/(1+C)$, so $C=4$. The solution is 400/(1+4e^(-6t))."
         constraints: "K and r integers; C = (K - P0)/P0 comes out an integer"
       - id: kp3
         name: Reading the solution form
@@ -2025,14 +2041,26 @@ topics:
           - problem: "A fish population grows at relative rate $0.5$/year but is harvested at $100$ fish/year: $P' = 0.5P - 100$. Find the equilibrium population."
             answer: "$200$"
             solution_sketch: "Set $P' = 0$: $0.5P = 100$."
-          - problem: "Solve $P' = 0.5P - 100$ with $P(0) = 300$ and describe the long-run behavior."
-            answer: "$P = 200 + 100e^{t/2}$: the population grows without bound."
-            answer_contract: {kind: none}
-            solution_sketch: "$P - 200$ satisfies natural growth; starting above the (unstable) equilibrium, the population runs away upward."
-          - problem: "Solve $P' = 0.5P - 100$ with $P(0) = 100$. When does the population die out?"
-            answer: "$P = 200 - 100e^{t/2}$; extinction at $t = 2\\ln 2$ years."
-            answer_contract: {kind: none}
-            solution_sketch: "Below the equilibrium the gap grows: $200 - 100e^{t/2} = 0$ gives $e^{t/2} = 2$."
+          - problem: "A fish population grows at relative rate 0.5 per year and is harvested at 100 fish per year, so P' = 0.5P - 100. The initial population is P(0) = 300. Find the time when the population reaches 500. Give the answer as a decimal to 2 places."
+            answer: "2.20"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The ODE is P' = 0.5P - 100 with equilibrium h/k = 100/0.5 = 200. Solve by separation: P(t) = 200 + (300 - 200)exp(0.5t) = 200 + 100exp(0.5t). Set P = 500: 100exp(0.5t) = 300, so exp(0.5t) = 3 and t = 2 ln(3). To 2 decimals, t = 2.20 years."
+          - problem: "A fish population follows P' = 0.5P - 100 with P(0) = 100. Find the time at which the population reaches zero. Give the answer as a decimal to 3 places."
+            answer: "1.386"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "The equilibrium is h/k = 100/0.5 = 200. Solve by separation: P(t) = 200 + (100 - 200)exp(0.5t) = 200 - 100exp(0.5t). Set P = 0: 100exp(0.5t) = 200, so exp(0.5t) = 2 and t = 2 ln(2). To 3 decimals, t = 1.386 years."
+          - problem: "A fish population grows at relative rate 0.3 per year and is harvested at a constant rate h fish per year, so P' = 0.3P - h. Its equilibrium population is 150 fish. Find h."
+            answer: "45"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equilibrium of P' = 0.3P - h is h/0.3. Set h/0.3 = 150. Multiply both sides by 0.3: h = 45. The harvest rate is 45 fish per year."
+          - problem: "A fish population follows P' = 0.25P - 50 with P(0) = 100. Find the time at which the population reaches zero. Give the answer as a decimal to 2 places."
+            answer: "2.77"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The equilibrium is h/k = 50/0.25 = 200. Solve by separation: P(t) = 200 + (100 - 200)exp(0.25t) = 200 - 100exp(0.25t). Set P = 0: 100exp(0.25t) = 200, so exp(0.25t) = 2 and t = 4 ln(2). To 2 decimals, t = 2.77 years."
+          - problem: "A fish population follows P' = 0.2P - 30 with P(0) = 200. Find P(5) as an exact expression."
+            answer: "150+50e"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equilibrium is h/k = 30/0.2 = 150. Solve by separation: P(t) = 150 + (200 - 150)exp(0.2t) = 150 + 50exp(0.2t). At t = 5, P(5) = 150 + 50exp(1) = 150 + 50e. The exact value is 150+50e."
         constraints: "P' = kP - h with clean equilibrium h/k; the equilibrium is unstable — solutions diverge on both sides"
       - id: kp2
         name: Linear models across domains
@@ -2095,44 +2123,88 @@ topics:
         name: The ODE of a family of curves
         key_prerequisites: [implicit-differentiation]
         exemplars:
-          - problem: "Find the differential equation satisfied by the family $y = Cx^2$."
-            answer: "$y' = \\dfrac{2y}{x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$y' = 2Cx$ and $C = y/x^2$, so $y' = 2(y/x^2)x = 2y/x$."
-          - problem: "Find the differential equation of the circles $x^2 + y^2 = C$."
-            answer: "$y' = -\\dfrac{x}{y}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Differentiate implicitly: $2x + 2yy' = 0$."
-          - problem: "Find the differential equation of the lines $y = Cx$."
-            answer: "$y' = \\dfrac{y}{x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$y' = \\dfrac{y}{x}$"
+          - problem: "Consider the one-parameter family y = C x^2. Eliminate the parameter C. Find y' as an expression in x and y."
+            answer: "2y/x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Differentiate the family y = C x^2 with respect to x: y' = 2 C x. Solve the family for C: C = y/x^2. Substitute this C into the derivative: y' = 2 (y/x^2) x = 2y/x. The answer is 2y/x."
+          - problem: "The family of circles centered at the origin is x^2 + y^2 = C. Eliminate C by implicit differentiation. Find y' as an expression in x and y."
+            answer: "-x/y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Differentiate the circle equation x^2 + y^2 = C implicitly with respect to x: 2x + 2y y' = 0. The constant C is already eliminated because its derivative is zero. Solve for y': y' = -x/y. The answer is -x/y."
+          - problem: "For the straight-line family y = C x, eliminate the parameter C. Give y' as an expression in x and y."
+            answer: "y/x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Differentiate the line family y = C x with respect to x: y' = C. Solve the family for C: C = y/x. Substitute C into the derivative: y' = y/x. The answer is y/x."
+          - problem: "For the one-parameter family x y = C, eliminate C. Find y' as an expression in x and y."
+            answer: "-y/x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Differentiate the family x y = C implicitly with respect to x: y + x y' = 0. The constant C disappears after differentiation, so it is eliminated. Solve for y': y' = -y/x. The answer is -y/x."
+          - problem: "For the one-parameter family y = C e^(2x), eliminate C. Find y' as an expression in y."
+            answer: "2y"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Differentiate the family y = C e^(2x) with respect to x: y' = 2 C e^(2x). Solve the family for C e^(2x): C e^(2x) = y. Substitute this into the derivative: y' = 2y. The answer is 2y."
+          - problem: "For the one-parameter family y = C x^2 + 1, eliminate C. Find y' as an expression in x and y."
+            answer: "2(y-1)/x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Differentiate the family y = C x^2 + 1 with respect to x: y' = 2 C x. Solve the family for C: C = (y - 1)/x^2. Substitute this C into the derivative: y' = 2 ((y - 1)/x^2) x = 2(y - 1)/x. The answer is 2(y-1)/x."
         constraints: "one-parameter families; eliminate C between the equation and its derivative"
       - id: kp2
         name: The orthogonality condition
         key_prerequisites: [implicit-differentiation]
         exemplars:
-          - problem: "The family $y = Cx^2$ satisfies $y' = 2y/x$. What ODE do its orthogonal trajectories satisfy?"
-            answer: "$y' = -\\dfrac{x}{2y}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Replace $y'$ by $-1/y'$: perpendicular slopes are negative reciprocals."
-          - problem: "The circles $x^2 + y^2 = C$ satisfy $y' = -x/y$. What ODE do their orthogonal trajectories satisfy?"
-            answer: "$y' = \\dfrac{y}{x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$y' = \\dfrac{y}{x}$"
+          - problem: "The family y = Cx^2 has slope y' = 2y/x. Use the orthogonality condition to form the ODE of the orthogonal trajectories. Give the right side of the orthogonal ODE as a function of x and y."
+            answer: "-x/(2y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Given y' = 2y/x. Step 1, orthogonality condition: replace y' by -1/y' to get -1/y' = 2y/x. Step 2, solve for y': y' = -x/(2y). The right side is -x/(2y)."
+          - problem: "The circles x^2 + y^2 = C have slope y' = -x/y. Apply the orthogonality condition to obtain the ODE of the orthogonal trajectories. Give the right side of the orthogonal ODE as a function of x and y."
+            answer: "y/x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Given y' = -x/y. Step 1, orthogonality condition: replace y' by -1/y' so -1/y' = -x/y. Step 2, solve for y': y' = y/x. The right side is y/x."
+          - problem: "The lines y = Cx have slope y' = y/x. Apply the orthogonality condition to obtain the ODE of the orthogonal trajectories. Give the right side of the orthogonal ODE as a function of x and y."
+            answer: "-x/y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Given y' = y/x. Step 1, orthogonality condition: replace y' by -1/y' to get -1/y' = y/x. Step 2, solve for y': y' = -x/y. The right side is -x/y."
+          - problem: "The hyperbolas xy = C have slope y' = -y/x. Apply the orthogonality condition to obtain the ODE of the orthogonal trajectories. Give the right side of the orthogonal ODE as a function of x and y."
+            answer: "x/y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Given y' = -y/x. Step 1, orthogonality condition: replace y' by -1/y' so -1/y' = -y/x. Step 2, solve for y': y' = x/y. The right side is x/y."
+          - problem: "The parabolas y^2 = Cx have slope y' = y/(2x). Apply the orthogonality condition to obtain the ODE of the orthogonal trajectories. Give the right side of the orthogonal ODE as a function of x and y."
+            answer: "-2x/y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Given y' = y/(2x). Step 1, orthogonality condition: replace y' by -1/y' so -1/y' = y/(2x). Step 2, solve for y': y' = -2x/y. The right side is -2x/y."
+          - problem: "The hyperbolas x^2 - y^2 = C have slope y' = x/y. Apply the orthogonality condition to obtain the ODE of the orthogonal trajectories. Give the right side of the orthogonal ODE as a function of x and y."
+            answer: "-y/x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Given y' = x/y. Step 1, orthogonality condition: replace y' by -1/y' so -1/y' = x/y. Step 2, solve for y': y' = -y/x. The right side is -y/x."
         constraints: "pure slope-swap step: y' -> -1/y'; simplify the resulting right side"
       - id: kp3
         name: Solving for the trajectories
         key_prerequisites: [separable-equations, implicit-differentiation]
         exemplars:
-          - problem: "Find the orthogonal trajectories of the parabolas $y = Cx^2$."
-            answer: "The ellipses $x^2 + 2y^2 = C$."
-            answer_contract: {kind: none}
-            solution_sketch: "Solve $y' = -\\dfrac{x}{2y}$: $2y\\,dy = -x\\,dx$ gives $y^2 = -\\dfrac{x^2}{2} + C$."
-          - problem: "Find the orthogonal trajectories of the circles $x^2 + y^2 = C$."
-            answer: "The lines $y = Cx$."
-            answer_contract: {kind: none}
-            solution_sketch: "Solve $y' = y/x$: separable, $\\ln|y| = \\ln|x| + C$."
+          - problem: "A family of curves is y = A x^2. Its orthogonal trajectories satisfy x^2 + 2y^2 = C. Find the value of C for the trajectory through (1, 2)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate y = A x^2 implicitly: y' = 2A x = 2y/x. Step 2: The orthogonal slope is -x/(2y), so 2y dy = -x dx and integration gives x^2 + 2y^2 = C. Step 3: Substitute (1,2): 1 + 8 = 9, so C = 9. The value of C is 9."
+          - problem: "A family of curves is x^2 + y^2 = A. Its orthogonal trajectories are the lines y = C x. Find the value of C as a fraction for the trajectory through (2, 5)."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate x^2 + y^2 = A implicitly: 2x + 2y y' = 0, so y' = -x/y. Step 2: The orthogonal slope is y/x, and dy/dx = y/x separates to ln|y| = ln|x| + c, so y = C x. Step 3: Substitute (2,5): 5 = C · 2, so C = 5/2. The value of C is 5/2."
+          - problem: "A family of curves is y = A/x. Its orthogonal trajectories satisfy y^2 - x^2 = C. Find the value of C for the trajectory through (1, 2)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate y = A/x: y' = -A/x^2 = -y/x. Step 2: The orthogonal slope is x/y, so y dy = x dx and integration gives y^2 - x^2 = C. Step 3: Substitute (1,2): 4 - 1 = 3, so C = 3. The value of C is 3."
+          - problem: "A family of curves is y = A x^3. Its orthogonal trajectories satisfy x^2 + 3y^2 = C. Find the value of C for the trajectory through (2, 1)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate y = A x^3: y' = 3A x^2 = 3y/x. Step 2: The orthogonal slope is -x/(3y), so 3y dy = -x dx and integration gives x^2 + 3y^2 = C. Step 3: Substitute (2,1): 4 + 3 = 7, so C = 7. The value of C is 7."
+          - problem: "A family of curves is y = A/x^2. Its orthogonal trajectories satisfy x^2 - 2y^2 = C. Find the value of C for the trajectory through (4, 1)."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate y = A/x^2: y' = -2A/x^3 = -2y/x. Step 2: The orthogonal slope is x/(2y), so 2y dy = x dx and integration gives x^2 - 2y^2 = C. Step 3: Substitute (4,1): 16 - 2 = 14, so C = 14. The value of C is 14."
+          - problem: "A family of curves is y^2 = A x. Its orthogonal trajectories satisfy 2x^2 + y^2 = C. Find the value of C for the trajectory through (1, 3)."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate y^2 = A x: 2y y' = A = y^2/x, so y' = y/(2x). Step 2: The orthogonal slope is -2x/y, so y dy = -2x dx and integration gives y^2 + 2x^2 = C. Step 3: Substitute (1,3): 9 + 2 = 11, so C = 11. The value of C is 11."
         constraints: "trajectory ODEs are separable with power/log integrals; present the orthogonal family with its own constant C"
     diagnostic_exemplar:
       problem: "Find the orthogonal trajectories of the lines $y = Cx$."
