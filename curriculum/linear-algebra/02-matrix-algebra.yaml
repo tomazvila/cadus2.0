@@ -300,14 +300,30 @@ topics:
         name: Zero products from nonzero factors
         key_prerequisites: [matrix-multiplication]
         exemplars:
-          - problem: 'Compute $AB$ for $A = \begin{pmatrix}0&1\\0&0\end{pmatrix}$, $B = \begin{pmatrix}1&0\\0&0\end{pmatrix}$. What does the result show?'
-            answer: "AB = O even though A and B are nonzero"
-            answer_contract: {kind: none}
-            solution_sketch: 'Every row-column product hits a zero: $AB = \begin{pmatrix}0&0\\0&0\end{pmatrix}$.'
-          - problem: 'If $AB = O$, must $A = O$ or $B = O$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Matrix multiplication has zero divisors, unlike multiplication of numbers.'
+          - problem: "Let A = [0,1;0,0] and B = [1,1;0,0]. Compute the product AB and give the matrix as [a,b;c,d]."
+            answer: "[0,0;0,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (matrix multiplication rule): write the product AB with A = [0,1;0,0] and B = [1,1;0,0]. Step 2: row 1 of A is (0,1) and each column of B is (1,0) or (0,0), so the row-column products are 0*1 + 1*0 = 0 and 0*1 + 1*0 = 0; row 2 of A is (0,0). Step 3: both factors are nonzero matrices, yet every entry of the product is 0, a zero product from nonzero factors. The answer is AB = [0,0;0,0]."
+          - problem: "A student claims: if AB = O for 2x2 matrices, then A = O or B = O. Take A = [0,0;1,0] and B = [0,0;1,1]. State whether the claim is correct for this pair, and give the entry in row 2, column 1 of BA."
+            answer: "verdict = fails; ba21 = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "ba21"}]}
+            solution_sketch: "Step 1 (zero-product check by matrix multiplication): with A = [0,0;1,0] and B = [0,0;1,1], row 1 of A is (0,0) and row 2 is (1,0), which meets columns (0,1) and (0,1) of B in 0, so AB = [0,0;0,0]. Step 2: both factors are nonzero, so the claim is wrong for matrices; matrices have zero divisors, unlike numbers, so the option 'holds' is the number-multiplication assumption. Step 3 (reversed order): rows of B are (0,0) and (1,1), columns of A are (0,1) and (0,0), giving BA = [0,0;1,0] with entry (2,1) equal to 1. The answer is verdict = fails; ba21 = 1."
+          - problem: "For A = [0,1;0,1] and B = [1,0;0,0], the product AB is the zero matrix even though A and B are not. Compute BA and give the matrix as [a,b;c,d]."
+            answer: "[0,1;0,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (check the given zero product): rows of A = [0,1;0,1] are (0,1) and (0,1); columns of B = [1,0;0,0] are (1,0) and (0,0); every row-column product is 0, so AB = [0,0;0,0]. Step 2 (matrix multiplication in the reversed order): rows of B are (1,0) and (0,0), columns of A are (0,0) and (1,1); entry (1,2) is 1*1 + 0*1 = 1. Step 3: reversing a zero product need not give a zero product, and BA = [0,1;0,0]. The answer is BA = [0,1;0,0]."
+          - problem: "Let E = [0,0;1,0], and note that E is not the zero matrix. Find the smallest positive whole number k such that E^k is the zero matrix."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (matrix multiplication): compute E^2 = E*E with E = [0,0;1,0]; the rows are (0,0) and (1,0) and the columns are (0,1) and (0,0). Step 2: every row-column product is 0, so E^2 = [0,0;0,0], while E itself is not the zero matrix, so k = 1 does not work. Step 3: the smallest positive whole number k with E^k equal to the zero matrix is 2. The answer is 2."
+          - problem: "Let A = [0,1;0,0]. A matrix B has all four entries equal to 0 or 1 and satisfies AB = O, where O is the 2x2 zero matrix. How many such matrices B are not the zero matrix?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (set up the unknown): write B = [a,b;c,d] where each entry is 0 or 1. Step 2 (matrix multiplication with A = [0,1;0,0]): AB = [c,d;0,0], so AB = O forces c = 0 and d = 0, while a and b remain free. Step 3: there are 2*2 = 4 choices for (a,b), and excluding the zero matrix B = [0,0;0,0] leaves 3 nonzero matrices. The answer is 3."
+          - problem: "Let O be the 2x2 matrix whose entries are all 0. For A = [1,0;1,0] and B = [0,1;0,1], state whether AB equals O, and give the number of entries of AB that are not 0."
+            answer: "verdict = nonzero; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["zero"], ["nonzero"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Step 1 (matrix multiplication rule): the rows of A = [1,0;1,0] are (1,0) and (1,0); the columns of B = [0,1;0,1] are (0,0) and (1,1). Step 2: entry (1,2) is 1*1 + 0*1 = 1, so AB = [0,1;0,1], which is not O; the wrong 'zero' verdict comes from forgetting the second column of B when multiplying. Step 3: AB has exactly 2 entries that are not 0; a count of 0 or 4 would misread the product. The answer is verdict = nonzero; count = 2."
         constraints: "2x2 counterexamples with entries 0 and 1"
     diagnostic_exemplar:
       problem: 'Compute $AB$ for $A = \begin{pmatrix}1&0\\0&0\end{pmatrix}$ and $B = \begin{pmatrix}0&0\\3&1\end{pmatrix}$. What does the result show?'
@@ -364,6 +380,22 @@ topics:
             answer: "[3,6;9,12]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: 'The scalar matrix $3I$ acts exactly like the scalar $3$.'
+          - problem: "Compute $\\begin{pmatrix}2&0\\\\0&5\\end{pmatrix}\\begin{pmatrix}1&3\\\\4&6\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[2,6;20,30]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Row rule: a diagonal matrix on the left scales each row. Row 1 is $2$ times $(1,3)$, row 2 is $5$ times $(4,6)$. The full object is $\\begin{pmatrix}2&6\\\\20&30\\end{pmatrix}$, so the answer is [2,6;20,30]."
+          - problem: "Compute $\\begin{pmatrix}2&-1\\\\3&1\\end{pmatrix}\\begin{pmatrix}4&0\\\\0&-1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[8,1;12,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Column rule: a diagonal matrix on the right scales each column. Column 1 is $4$ times $(2,3)$, column 2 is $-1$ times $(-1,1)$. The full object is $\\begin{pmatrix}8&1\\\\12&-1\\end{pmatrix}$, so the answer is [8,1;12,-1]."
+          - problem: "Compute $\\begin{pmatrix}-2&0\\\\0&-2\\end{pmatrix}\\begin{pmatrix}3&0\\\\0&7\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[-6,0;0,-14]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "A scalar matrix acts like the scalar: $-2I$ multiplies every diagonal entry of the other diagonal matrix. The products are $-2 \\cdot 3 = -6$ and $-2 \\cdot 7 = -14$. The result is a scalar-type diagonal matrix [-6,0;0,-14]."
+          - problem: "A matrix $A$ satisfies $A\\begin{pmatrix}4&0\\\\0&5\\end{pmatrix} = \\begin{pmatrix}8&15\\\\12&20\\end{pmatrix}$. Find $A$. Give the matrix as [a,b;c,d]."
+            answer: "[2,3;3,4]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "A diagonal matrix on the right scales columns, so divide each entry of the product by the diagonal entry of its column. Column 1: $8/4 = 2$, $12/4 = 3$; column 2: $15/5 = 3$, $20/5 = 4$. The answer is [2,3;3,4]."
         constraints: "small integer diagonals; include one scalar-matrix example"
       - id: kp3
         name: Products of triangular matrices
