@@ -129,40 +129,88 @@ topics:
         name: "Type I descriptions (vertical slices)"
         key_prerequisites: [area-between-curves]
         exemplars:
-          - problem: 'Describe the region bounded by $y = x^2$ and $y = x$ as a type I region.'
-            answer: '$0 \le x \le 1$, $\;x^2 \le y \le x$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The curves meet at $(0,0)$ and $(1,1)$, and $x \ge x^2$ on $[0,1]$.'
-          - problem: 'Describe the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$ as a type I region.'
-            answer: '$0 \le x \le 1$, $\;0 \le y \le x$'
-            solution_sketch: 'The triangle has $0\le x\le 1$ with $y$ from the bottom edge $y=0$ to the top edge $y=x$.'
-            answer_contract: {kind: none}
+          - problem: "Describe the region bounded by y = x^2 and y = 2x as a type I region. Give the bounds as xlow = a; xhigh = b; ylow = g(x); yhigh = h(x)."
+            answer: "xlow = 0; xhigh = 2; ylow = x^2; yhigh = 2x"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "xlow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "xhigh"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "ylow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "yhigh"}]}
+            solution_sketch: "Step 1: solve the intersection equation x^2 = 2x by factoring, giving x = 0 and x = 2. Step 2: test x = 1 to see that y = 2x is the upper curve and y = x^2 is the lower curve. Step 3: write the vertical-slice bounds. So the type I description is xlow = 0; xhigh = 2; ylow = x^2; yhigh = 2x."
+          - problem: "Describe the triangle with vertices (0,0), (4,0), (4,4) as a type I region. Give the bounds as xlow = a; xhigh = b; ylow = g(x); yhigh = h(x)."
+            answer: "xlow = 0; xhigh = 4; ylow = 0; yhigh = x"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "xlow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "xhigh"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "ylow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "yhigh"}]}
+            solution_sketch: "Step 1: note the left edge is x = 0 and the right edge is x = 4. Step 2: the bottom edge is y = 0 and the top edge is the diagonal y = x. Step 3: combine the vertical slices. So the type I description is xlow = 0; xhigh = 4; ylow = 0; yhigh = x."
+          - problem: "Describe the region bounded by y = x^2 and y = 4 as a type I region. Give the bounds as xlow = a; xhigh = b; ylow = g(x); yhigh = h(x)."
+            answer: "xlow = -2; xhigh = 2; ylow = x^2; yhigh = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "xlow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "xhigh"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "ylow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "yhigh"}]}
+            solution_sketch: "Step 1: solve x^2 = 4 by taking square roots, giving x = -2 and x = 2. Step 2: test x = 0 to see that y = 4 is the upper curve and y = x^2 is the lower curve. Step 3: write the vertical-slice bounds. So the type I description is xlow = -2; xhigh = 2; ylow = x^2; yhigh = 4."
+          - problem: "Describe the region bounded by y = x^2 and y = x + 2 as a type I region. Give the bounds as xlow = a; xhigh = b; ylow = g(x); yhigh = h(x)."
+            answer: "xlow = -1; xhigh = 2; ylow = x^2; yhigh = x + 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "xlow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "xhigh"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "ylow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "yhigh"}]}
+            solution_sketch: "Step 1: solve x^2 = x + 2 by factoring x^2 - x - 2 = 0, giving x = -1 and x = 2. Step 2: test x = 0 to see that y = x + 2 is the upper curve and y = x^2 is the lower curve. Step 3: write the vertical-slice bounds. So the type I description is xlow = -1; xhigh = 2; ylow = x^2; yhigh = x + 2."
+          - problem: "Describe the region bounded by y = x^2 and y = 2 - x as a type I region. Give the bounds as xlow = a; xhigh = b; ylow = g(x); yhigh = h(x)."
+            answer: "xlow = -2; xhigh = 1; ylow = x^2; yhigh = 2 - x"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "xlow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "xhigh"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "ylow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "yhigh"}]}
+            solution_sketch: "Step 1: solve x^2 = 2 - x by factoring x^2 + x - 2 = 0, giving x = -2 and x = 1. Step 2: test x = 0 to see that y = 2 - x is the upper curve and y = x^2 is the lower curve. Step 3: write the vertical-slice bounds. So the type I description is xlow = -2; xhigh = 1; ylow = x^2; yhigh = 2 - x."
+          - problem: "Describe the region bounded by y = x^2 and y = 3x - 2 as a type I region. Give the bounds as xlow = a; xhigh = b; ylow = g(x); yhigh = h(x)."
+            answer: "xlow = 1; xhigh = 2; ylow = x^2; yhigh = 3x - 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "xlow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "xhigh"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "ylow"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "yhigh"}]}
+            solution_sketch: "Step 1: solve x^2 = 3x - 2 by factoring x^2 - 3x + 2 = 0, giving x = 1 and x = 2. Step 2: test x = 1.5 to see that y = 3x - 2 is the upper curve and y = x^2 is the lower curve. Step 3: write the vertical-slice bounds. So the type I description is xlow = 1; xhigh = 2; ylow = x^2; yhigh = 3x - 2."
         constraints: "regions bounded by lines and one parabola; intersection points at integer coordinates"
       - id: kp2
         name: "Type II descriptions (horizontal slices)"
         key_prerequisites: [area-between-curves]
         exemplars:
-          - problem: 'Describe the region bounded by $y = x^2$ and $y = x$ as a type II region.'
-            answer: '$0 \le y \le 1$, $\;y \le x \le \sqrt{y}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Solve each boundary for $x$: the line $y = x$ gives $x = y$ (left edge), the parabola $y = x^2$ gives $x = \sqrt{y}$ (right edge); on $[0, 1]$, $y \le \sqrt{y}$.'
-          - problem: 'Describe the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$ as a type II region.'
-            answer: '$0 \le y \le 1$, $\;y \le x \le 1$'
-            solution_sketch: 'For fixed $y\in[0,1]$, $x$ runs from the edge $x=y$ to the edge $x=1$.'
-            answer_contract: {kind: none}
+          - problem: "The region R is bounded by the curve y = e^x, the horizontal line y = e, and the vertical line x = 0. Describe R as a type II region using horizontal slices. Give the four bounds as ymin = ..., ymax = ..., xleft = ..., xright = ...."
+            answer: "ymin = 1; ymax = e; xleft = 0; xright = ln(y)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "ymin"}, {"contract": {"kind": "exact"}, "name": "ymax"}, {"contract": {"kind": "exact"}, "name": "xleft"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "xright"}]}
+            solution_sketch: "Step 1 (find the y range): the curve y = e^x meets the line y = e at x = 1, and the vertical edge x = 0 meets the curve at y = 1, so y runs from 1 to e. Step 2 (solve the curved boundary for x): y = e^x gives x = ln(y) by taking the natural logarithm of both sides. Step 3 (order the bounds): for each y between 1 and e, x starts at the vertical edge x = 0 and ends at x = ln(y). The type II bounds are ymin = 1; ymax = e; xleft = 0; xright = ln(y)."
+          - problem: "The triangle R has vertices (0, 0), (1, 0) and (1, 1). Describe R as a type II region with horizontal slices. Give the four bounds as ymin = ..., ymax = ..., xleft = ..., xright = ...."
+            answer: "ymin = 0; ymax = 1; xleft = y; xright = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "ymin"}, {"contract": {"kind": "exact"}, "name": "ymax"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "xleft"}, {"contract": {"kind": "exact"}, "name": "xright"}]}
+            solution_sketch: "Step 1 (inspect a fixed y): for a fixed y in the triangle, x runs from the diagonal edge to the vertical edge. Step 2 (solve boundaries for x): the diagonal through (0,0) and (1,1) is x = y, and the vertical edge is x = 1. Step 3 (find y range): the y values run from 0 at the bottom edge to 1 at the top vertex. The type II bounds are ymin = 0; ymax = 1; xleft = y; xright = 1."
+          - problem: "The region R is bounded by the parabola y = x^2 and the horizontal line y = 4. Describe R as a type II region using horizontal slices. Give the four bounds as ymin = ..., ymax = ..., xleft = ..., xright = ...."
+            answer: "ymin = 0; ymax = 4; xleft = -sqrt(y); xright = sqrt(y)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "ymin"}, {"contract": {"kind": "exact"}, "name": "ymax"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "xleft"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "xright"}]}
+            solution_sketch: "Step 1 (solve for x): y = x^2 gives x = sqrt(y) and x = -sqrt(y). Step 2 (find y range): the parabola meets y = 4 at x = -2 and x = 2, so y runs from 0 to 4. Step 3 (choose left and right): for each y between 0 and 4, the left boundary is x = -sqrt(y) and the right boundary is x = sqrt(y). The type II bounds are ymin = 0; ymax = 4; xleft = -sqrt(y); xright = sqrt(y)."
+          - problem: "The region R is bounded by the sideways parabola x = y^2 and the line x = y + 2. Describe R as a type II region. Give the four bounds as ymin = ..., ymax = ..., xleft = ..., xright = ...."
+            answer: "ymin = -1; ymax = 2; xleft = y^2; xright = y+2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "ymin"}, {"contract": {"kind": "exact"}, "name": "ymax"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "xleft"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "xright"}]}
+            solution_sketch: "Step 1 (intersect boundaries): set y^2 = y + 2, so (y - 2)(y + 1) = 0 and y = -1 or y = 2. Step 2 (compare x values): for a fixed y between -1 and 2, the parabola x = y^2 is the left boundary and the line x = y + 2 is the right boundary. Step 3 (read the y range): the y values run from -1 to 2. The type II bounds are ymin = -1; ymax = 2; xleft = y^2; xright = y+2."
+          - problem: "The triangle R has vertices (0, 1), (0, 3) and (2, 3). Describe R as a type II region using horizontal slices. Give the four bounds as ymin = ..., ymax = ..., xleft = ..., xright = ...."
+            answer: "ymin = 1; ymax = 3; xleft = 0; xright = y-1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "ymin"}, {"contract": {"kind": "exact"}, "name": "ymax"}, {"contract": {"kind": "exact"}, "name": "xleft"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "xright"}]}
+            solution_sketch: "Step 1 (identify vertical edge): the left edge is the segment from (0,1) to (0,3), so x = 0. Step 2 (solve slanted edge for x): the edge through (0,1) and (2,3) has equation y = x + 1, so x = y - 1. Step 3 (find y range): the triangle lies between y = 1 and y = 3. The type II bounds are ymin = 1; ymax = 3; xleft = 0; xright = y-1."
+          - problem: "The region R is bounded by the leftward parabola x = 4 - y^2 and the line x = y - 2. Describe R as a type II region using horizontal slices. Give the four bounds as ymin = ..., ymax = ..., xleft = ..., xright = ...."
+            answer: "ymin = -3; ymax = 2; xleft = y-2; xright = 4-y^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "ymin"}, {"contract": {"kind": "exact"}, "name": "ymax"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "xleft"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "xright"}]}
+            solution_sketch: "Step 1 (intersect boundaries): set 4 - y^2 = y - 2, so y^2 + y - 6 = 0 and (y + 3)(y - 2) = 0, giving y = -3 and y = 2. Step 2 (compare x values): at y = 0 the parabola gives x = 4 and the line gives x = -2, so the parabola x = 4 - y^2 is the right boundary and the line x = y - 2 is the left boundary. Step 3 (read the y range): y runs from -3 to 2. The type II bounds are ymin = -3; ymax = 2; xleft = y-2; xright = 4-y^2."
         constraints: "same regions as kp1 re-sliced horizontally; boundaries solved for x in terms of y"
       - id: kp3
         name: "Reading the region from an iterated integral"
         key_prerequisites: [area-between-curves]
         exemplars:
-          - problem: 'Sketch/describe the region of $\int_0^1 \int_y^1 f(x,y) \, dx \, dy$ and rewrite the integral with the order reversed.'
-            answer: 'The triangle $0 \le y \le x \le 1$; reversed: $\int_0^1 \int_0^x f(x,y)\, dy\, dx$.'
-            solution_sketch: 'The inner integral has $x\ge y$, $0\le y\le 1$, so the region is the triangle $0\le y\le x\le 1$; reversing gives $\int_0^1\int_0^x f\,dy\,dx$.'
-            answer_contract: {kind: none}
-          - problem: 'The first-quadrant region under $y = 4 - x^2$ is $0 \le x \le 2$, $0 \le y \le 4 - x^2$. Describe it as a type II region.'
-            answer: '$0 \le y \le 4$, $\;0 \le x \le \sqrt{4 - y}$'
-            solution_sketch: 'For fixed $y\in[0,4]$ the region runs from $x=0$ to $x=\sqrt{4-y}$.'
-            answer_contract: {kind: none}
+          - problem: "The integral $\\int_0^3 \\int_x^3 f(x,y)\\,dy\\,dx$ describes a triangular region. Rewrite it with the order of integration reversed. Give the four bounds as x_lo, x_hi, y_lo, y_hi."
+            answer: "x_lo = 0; x_hi = y; y_lo = 0; y_hi = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x_lo"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "x_hi"}, {"contract": {"kind": "exact"}, "name": "y_lo"}, {"contract": {"kind": "exact"}, "name": "y_hi"}]}
+            solution_sketch: "The integral is $\\int_0^3 \\int_x^3 f(x,y)\\,dy\\,dx$. Step 1: read the region from the inner bounds. The inner integral has $y$ from $x$ to $3$, and $x$ runs from $0$ to $3$, so the region is $0 \\le x \\le 3$ and $x \\le y \\le 3$. Step 2: reverse the bounds. For fixed $y$ in $[0,3]$, $x$ runs from $0$ to $y$. The reversed bounds are x_lo = 0; x_hi = y; y_lo = 0; y_hi = 3."
+          - problem: "The integral $\\int_0^3 \\int_0^{9-x^2} f(x,y)\\,dy\\,dx$ describes a region under a parabola. Rewrite it with the order of integration reversed. Give the four bounds as x_lo, x_hi, y_lo, y_hi."
+            answer: "x_lo = 0; x_hi = sqrt(9-y); y_lo = 0; y_hi = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x_lo"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "x_hi"}, {"contract": {"kind": "exact"}, "name": "y_lo"}, {"contract": {"kind": "exact"}, "name": "y_hi"}]}
+            solution_sketch: "The integral is $\\int_0^3 \\int_0^{9-x^2} f(x,y)\\,dy\\,dx$. Step 1: read the region. The inner integral has $y$ from $0$ to $9-x^2$, and $x$ runs from $0$ to $3$, so the region is $0 \\le x \\le 3$ and $0 \\le y \\le 9-x^2$. Step 2: reverse the bounds. For fixed $y$ in $[0,9]$, the left edge is $x=0$ and the right edge is $x=\\sqrt{9-y}$. The reversed bounds are x_lo = 0; x_hi = sqrt(9-y); y_lo = 0; y_hi = 9."
+          - problem: "The integral $\\int_0^5 \\int_0^{y} f(x,y)\\,dx\\,dy$ describes a triangular region. Rewrite it with the order of integration reversed. Give the four bounds as x_lo, x_hi, y_lo, y_hi."
+            answer: "x_lo = 0; x_hi = 5; y_lo = x; y_hi = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x_lo"}, {"contract": {"kind": "exact"}, "name": "x_hi"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y_lo"}, {"contract": {"kind": "exact"}, "name": "y_hi"}]}
+            solution_sketch: "The integral is $\\int_0^5 \\int_0^{y} f(x,y)\\,dx\\,dy$. Step 1: read the region. The inner integral has $x$ from $0$ to $y$, and $y$ runs from $0$ to $5$, so the region is $0 \\le y \\le 5$ and $0 \\le x \\le y$. Step 2: reverse the bounds. For fixed $x$ in $[0,5]$, $y$ runs from $x$ to $5$. The reversed bounds are x_lo = 0; x_hi = 5; y_lo = x; y_hi = 5."
+          - problem: "The integral $\\int_0^4 \\int_y^4 f(x,y)\\,dx\\,dy$ describes a triangular region. Rewrite it with the order of integration reversed. Give the four bounds as x_lo, x_hi, y_lo, y_hi."
+            answer: "x_lo = 0; x_hi = 4; y_lo = 0; y_hi = x"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x_lo"}, {"contract": {"kind": "exact"}, "name": "x_hi"}, {"contract": {"kind": "exact"}, "name": "y_lo"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y_hi"}]}
+            solution_sketch: "The integral is $\\int_0^4 \\int_y^4 f(x,y)\\,dx\\,dy$. Step 1: read the region. The inner integral has $x$ from $y$ to $4$, and $y$ runs from $0$ to $4$, so the region is $0 \\le y \\le 4$ and $y \\le x \\le 4$. Step 2: reverse the bounds. For fixed $x$ in $[0,4]$, $y$ runs from $0$ to $x$. The reversed bounds are x_lo = 0; x_hi = 4; y_lo = 0; y_hi = x."
+          - problem: "The integral $\\int_0^2 \\int_0^{4-x^2} f(x,y)\\,dy\\,dx$ covers a region bounded by a parabola. Rewrite it with the order of integration reversed. Give the four bounds as x_lo, x_hi, y_lo, y_hi."
+            answer: "x_lo = 0; x_hi = sqrt(4-y); y_lo = 0; y_hi = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x_lo"}, {"contract": {"kind": "function", "vars": ["y"]}, "name": "x_hi"}, {"contract": {"kind": "exact"}, "name": "y_lo"}, {"contract": {"kind": "exact"}, "name": "y_hi"}]}
+            solution_sketch: "The integral is $\\int_0^2 \\int_0^{4-x^2} f(x,y)\\,dy\\,dx$. Step 1: read the region. The inner integral has $y$ from $0$ to $4-x^2$, and $x$ runs from $0$ to $2$, so the region is $0 \\le x \\le 2$ and $0 \\le y \\le 4-x^2$. Step 2: reverse the bounds. For fixed $y$ in $[0,4]$, the left edge is $x=0$ and the right edge is $x=\\sqrt{4-y}$. The reversed bounds are x_lo = 0; x_hi = sqrt(4-y); y_lo = 0; y_hi = 4."
+          - problem: "The integral $\\int_0^2 \\int_0^{y/2} f(x,y)\\,dx\\,dy$ describes a triangular region. Rewrite it with the order of integration reversed. Give the four bounds as x_lo, x_hi, y_lo, y_hi."
+            answer: "x_lo = 0; x_hi = 1; y_lo = 2x; y_hi = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "x_lo"}, {"contract": {"kind": "exact"}, "name": "x_hi"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y_lo"}, {"contract": {"kind": "exact"}, "name": "y_hi"}]}
+            solution_sketch: "The integral is $\\int_0^2 \\int_0^{y/2} f(x,y)\\,dx\\,dy$. Step 1: read the region. The inner integral has $x$ from $0$ to $y/2$, and $y$ runs from $0$ to $2$, so the region is $0 \\le y \\le 2$ and $0 \\le x \\le y/2$. Step 2: reverse the bounds. The inequality $x \\le y/2$ gives $y \\ge 2x$, and $x$ runs from $0$ to $1$. The reversed bounds are x_lo = 0; x_hi = 1; y_lo = 2x; y_hi = 2."
         constraints: "regions are triangles or parabola-bounded; both orders must be written with exact bounds"
     diagnostic_exemplar:
       problem: 'Describe the region of $\int_0^2 \int_x^2 f(x, y)\,dy\,dx$, and rewrite the integral with the order of integration reversed.'
@@ -341,6 +389,22 @@ topics:
           - problem: 'Find the average value of $f(x, y) = y$ over the triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$.'
             answer: '$\frac{1}{3}$'
             solution_sketch: 'Area $= \frac{1}{2}$; $\iint y\, dA = \int_0^1 \frac{(1-x)^2}{2}\, dx = \frac{1}{6}$; average $= \frac{1/6}{1/2} = \frac{1}{3}$.'
+          - problem: "Find the average value of $f(x, y) = x^2$ over the triangle with vertices $(0,0)$, $(2,0)$, $(0,2)$ as a fraction."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The region is the triangle with vertices (0,0), (2,0), (0,2), and its area is 2. The average-value formula says the average is the double integral divided by the area. Evaluate the double integral: integrate x^2 in y from 0 to 2 - x, then in x from 0 to 2, which gives 4/3. Divide by the area: (4/3)/2 = 2/3. The average value is 2/3."
+          - problem: "Find the average value of $f(x, y) = x + y$ over the triangle with vertices $(0,0)$, $(4,0)$, $(0,2)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The region is the triangle with vertices (0,0), (4,0), (0,2), and its area is (1/2)(4)(2) = 4. The average-value formula says to divide the double integral by this area. For f = x + y, integrate y from 0 to 2 - x/2 and x from 0 to 4; the inner integral simplifies to x + 2 - 3x^2/8, and the outer integral gives 8. Then 8/4 = 2. The average value is 2."
+          - problem: "Find the average value of $f(x, y) = xy$ over the triangle with vertices $(0,0)$, $(3,0)$, $(0,2)$ as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The region is the triangle with vertices (0,0), (3,0), (0,2), and its area is (1/2)(3)(2) = 3. Use the average-value formula, the double integral divided by the area. For f = xy, integrate y from 0 to 2 - 2x/3 and x from 0 to 3; the inner integral gives 2x - 4x^2/3 + 2x^3/9, and the outer integral gives 3/2. Then (3/2)/3 = 1/2. The average value is 1/2."
+          - problem: "Find the average value of $f(x, y) = x^2 y$ over the triangle with vertices $(0,0)$, $(3,0)$, $(0,2)$ as a fraction."
+            answer: "3/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The region is the triangle with vertices (0,0), (3,0), (0,2), and its area is (1/2)(3)(2) = 3. Use the average-value formula: divide the double integral by the area. For f = x^2 y, integrate y from 0 to 2 - 2x/3 and x from 0 to 3; the inner integral gives 2x^2 - 4x^3/3 + 2x^4/9, and the outer integral gives 9/5. Then (9/5)/3 = 3/5. The average value is 3/5."
         constraints: "triangular regions with integer vertices; remember to divide by the AREA, not by a side length"
     diagnostic_exemplar:
       problem: 'Find the average value of $f(x, y) = x + y$ over the triangle with vertices $(0,0)$, $(2,0)$, $(0,2)$.'
@@ -606,6 +670,22 @@ topics:
           - problem: 'Find the area of the part of the cone $z = \sqrt{x^2 + y^2}$ with $0 \le z \le 2$.'
             answer: '$4\sqrt{2}\,\pi$'
             solution_sketch: 'For the cone $\sqrt{1 + f_x^2 + f_y^2} = \sqrt{2}$ at every point off the axis, so the area is $\sqrt{2}$ times the area of the disk $r \le 2$, i.e. $\sqrt{2} \cdot 4\pi$. (Note: $f_x, f_y$ are undefined at the apex $(0,0)$, so this is technically an improper integral; the integrand is the constant $\sqrt{2}$ on the punctured disk and the single missing point has measure zero, so the integral converges to the stated value.)'
+          - problem: "Find the area of the part of the paraboloid z = 2x^2 + 2y^2 below the plane z = 8 as an exact value."
+            answer: "pi*(65sqrt(65)-1)/24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Surface area formula first: A = double integral over the disk r <= 2 of sqrt(1 + z_x^2 + z_y^2) dA, with z = 2x^2 + 2y^2. In polar coordinates z_x^2 + z_y^2 = 16r^2, so the integrand is sqrt(1 + 16r^2) and dA = r dr dtheta. Substitute u = 1 + 16r^2, du = 32r dr; the theta integral gives 2pi, so A = 2pi * (1/32) * integral_1^65 u^(1/2) du = 2pi * (1/48)(65sqrt(65) - 1). Therefore the area is pi*(65sqrt(65)-1)/24."
+          - problem: "Find the area of the part of the paraboloid z = 4x^2 + 4y^2 inside the cylinder x^2 + y^2 = 4."
+            answer: "pi*(257sqrt(257)-1)/96"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Surface area formula first: for z = 4x^2 + 4y^2 the element is sqrt(1 + z_x^2 + z_y^2) dA over r <= 2. In polar coordinates z_x^2 + z_y^2 = 64r^2, so the area is 2pi times integral_0^2 sqrt(1 + 64r^2) r dr. Substitute u = 1 + 64r^2, du = 128r dr, giving (2pi/128)*(2/3)(257sqrt(257) - 1). Therefore the area is pi*(257sqrt(257)-1)/96."
+          - problem: "Find the area of the part of the cone z = 3sqrt(x^2 + y^2) between z = 0 and z = 6."
+            answer: "4*sqrt(10)*pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the cone z = 3sqrt(x^2 + y^2), partial derivatives give z_x^2 + z_y^2 = 9 away from the apex, so sqrt(1 + z_x^2 + z_y^2) = sqrt(10). The projection is the disk r <= 2, hence the area is sqrt(10) times the disk area pi(2^2). Thus the area is 4*sqrt(10)*pi."
+          - problem: "Find the area of the part of the sphere z = sqrt(9 - x^2 - y^2) over the disk x^2 + y^2 <= 4."
+            answer: "6*pi*(3-sqrt(5))"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Surface area formula first: for z = sqrt(9 - x^2 - y^2), z_x = -x/z and z_y = -y/z, so 1 + z_x^2 + z_y^2 = 9/(9 - r^2). The projection is the disk r <= 2, and in polar coordinates the area is 2pi times integral_0^2 3r/sqrt(9 - r^2) dr. Substitute u = 9 - r^2, du = -2r dr; evaluating from u = 9 to u = 5 gives 2pi*3*(3 - sqrt(5)). Therefore the area is 6*pi*(3-sqrt(5))."
         constraints: "radially symmetric surfaces; the substitution u = 1 + 4r^2 (or a constant factor) finishes the integral; answers exact"
     diagnostic_exemplar:
       problem: 'Find the area of the part of the paraboloid $z = x^2 + y^2$ lying below the plane $z = 4$.'
@@ -683,6 +763,22 @@ topics:
           - problem: 'Evaluate $\iiint_E z \, dV$ where $E = \{(x,y,z) : 0 \le x \le 1,\; 0 \le y \le 1,\; 0 \le z \le x + y\}$.'
             answer: '$\frac{7}{12}$'
             solution_sketch: 'Inner: $\int_0^{x+y} z\, dz = \frac{(x+y)^2}{2}$; then $\frac{1}{2}\iint (x^2 + 2xy + y^2)\, dA = \frac{1}{2}\left(\frac{1}{3} + \frac{1}{2} + \frac{1}{3}\right) = \frac{7}{12}$.'
+          - problem: "Find the volume of the solid $E = \\{(x,y,z) : 0 \\le x \\le 1,\\ 0 \\le y \\le 1,\\ 0 \\le z \\le x + 2y^2\\}$."
+            answer: "7/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $V = \\int_0^1 \\int_0^1 \\int_0^{x+2y^2} 1\\, dz\\, dy\\, dx$. Inner integral rule: $\\int_0^{x+2y^2} dz = x + 2y^2$. Double integral rule over the unit square: $\\int_0^1 (x + 2/3)\\, dx = 1/2 + 2/3 = 7/6$. The volume is 7/6."
+          - problem: "Find the volume of the solid between the plane $z = 0$ and the parabolic cylinder $z = 1 - x^2$ over the rectangle $0 \\le x \\le 1$, $0 \\le y \\le 2$."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $V = \\int_0^2 \\int_0^1 \\int_0^{1-x^2} 1\\, dz\\, dx\\, dy$. Inner integral rule: $\\int_0^{1-x^2} dz = 1 - x^2$. Double integral rule: $\\int_0^1 (1 - x^2)\\, dx = 1 - 1/3 = 2/3$; the $y$-factor gives $2 \\cdot 2/3 = 4/3$. The volume is 4/3."
+          - problem: "Evaluate $\\iiint_E z\\, dV$ where $E = \\{(x,y,z) : 0 \\le x \\le 1,\\ 0 \\le y \\le 1,\\ 0 \\le z \\le x^2 + y\\}$."
+            answer: "13/30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full integral: $\\int_0^1 \\int_0^1 \\int_0^{x^2+y} z\\, dz\\, dy\\, dx$. Inner integral rule: $\\int_0^{x^2+y} z\\, dz = \\frac{(x^2+y)^2}{2}$. Double integral rule over the unit square: $\\frac{1}{2}\\left(\\frac{1}{5} + \\frac{1}{3} + \\frac{1}{3}\\right) = \\frac{13}{30}$. The value is 13/30."
+          - problem: "The volume of the solid $E = \\{(x,y,z) : 0 \\le x \\le 1,\\ 0 \\le y \\le 1,\\ 0 \\le z \\le x^2 + cy\\}$ equals $\\frac{1}{2}$. Find the constant $c$."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $V(c) = \\int_0^1 \\int_0^1 \\int_0^{x^2+cy} 1\\, dz\\, dy\\, dx$. Inner integral rule gives $x^2 + cy$; the double integral rule over the unit square gives $1/3 + c/2$. Solve the linear equation $1/3 + c/2 = 1/2$: $c/2 = 1/6$, so $c = 1/3$. The constant is 1/3."
         constraints: "z-bounds are polynomial surfaces; after the inner integral the problem reduces to an earlier double integral"
     diagnostic_exemplar:
       problem: 'Evaluate $\iiint_E x\,dV$ where $E$ is the tetrahedron bounded by the coordinate planes and the plane $x + 2y + z = 2$.'
@@ -842,6 +938,22 @@ topics:
           - problem: 'Evaluate $\iiint_E (x^2 + y^2) \, dV$ where $E$ is the cylinder $x^2 + y^2 \le 4$, $0 \le z \le 1$.'
             answer: '$8\pi$'
             solution_sketch: '$\int_0^{2\pi}\int_0^2\int_0^1 r^2 \cdot r\, dz\, dr\, d\theta = 2\pi \cdot \frac{16}{4} = 8\pi$.'
+          - problem: "Find the volume of the solid bounded by the paraboloid z = 25 - x^2 - y^2 and the plane z = 0."
+            answer: "625pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the solid as 0 <= r <= 5, 0 <= theta <= 2pi, 0 <= z <= 25 - r^2 because the paraboloid meets z = 0 at r = 5. Set up the cylindrical volume integral V = integral from 0 to 2pi, integral from 0 to 5, integral from 0 to 25 - r^2 of r dz dr dtheta. Integrate z first to get integral from 0 to 2pi, integral from 0 to 5 (25r - r^3) dr dtheta. The r-integral is 625/4, so V = 2pi times 625/4 = 625pi/2. The volume is 625pi/2."
+          - problem: "A solid lies inside the cylinder x^2 + y^2 <= 16, between the plane z = 0 and the paraboloid z = x^2 + y^2. Find its volume."
+            answer: "128pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Describe the solid in cylindrical coordinates: 0 <= r <= 4, 0 <= theta <= 2pi, and 0 <= z <= r^2. Use the cylindrical volume element dV = r dz dr dtheta. Compute V = integral from 0 to 2pi, integral from 0 to 4, integral from 0 to r^2 of r dz dr dtheta. Integrate z first and then r: integral from 0 to 4 r^3 dr = 64, so V = 2pi times 64 = 128pi. The volume is 128pi."
+          - problem: "Find the volume of the solid between the paraboloids z = x^2 + y^2 + 2 and z = 10 - x^2 - y^2."
+            answer: "16pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Find the intersection circle by setting r^2 + 2 = 10 - r^2, so 2r^2 = 8 and r = 2. The solid is 0 <= r <= 2 with height (10 - r^2) - (r^2 + 2) = 8 - 2r^2. The cylindrical volume integral is V = integral from 0 to 2pi, integral from 0 to 2, integral from r^2+2 to 10-r^2 of r dz dr dtheta. Integrating over z and r gives 2pi times [4r^2 - r^4/2] from 0 to 2 = 2pi times 8 = 16pi. The volume is 16pi."
+          - problem: "Find the volume of the solid inside the cylinder x^2 + y^2 <= 9 that lies between the plane z = 0 and the paraboloid z = 18 - 2x^2 - 2y^2."
+            answer: "81pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use cylindrical coordinates with 0 <= r <= 3, 0 <= theta <= 2pi, and 0 <= z <= 18 - 2r^2. The cylindrical volume element is dV = r dz dr dtheta. Set up V = integral from 0 to 2pi, integral from 0 to 3, integral from 0 to 18 - 2r^2 of r dz dr dtheta. After integrating z and r, the inner integral is [9r^2 - r^4/2] from 0 to 3 = 81/2, so V = 2pi times 81/2 = 81pi. The volume is 81pi."
         constraints: "paraboloids and cylinders with small integer radii; answers exact multiples of pi"
     diagnostic_exemplar:
       problem: 'Use cylindrical coordinates to find the volume of the solid bounded above by the paraboloid $z = 12 - x^2 - y^2$ and below by the cone $z = \sqrt{x^2 + y^2}$.'
