@@ -130,6 +130,22 @@ topics:
           - problem: 'Evaluate $\int_C x^2 \, ds$ where $C$ is the circle of radius $2$ centered at the origin.'
             answer: '$8\pi$'
             solution_sketch: '$\mathbf{r}(t) = \langle 2\cos t, 2\sin t \rangle$, $ds = 2\,dt$: $\int_0^{2\pi} 4\cos^2 t \cdot 2\, dt = 8 \cdot \pi$.'
+          - problem: "Evaluate the line integral of f(x,y) = x^2 with respect to arc length along C, where C is the circle of radius 3 centered at the origin."
+            answer: "27pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is the scalar line integral of x^2 ds over C, the circle of radius 3. Parameterize C by r(t) = (3 cos t, 3 sin t) for 0 <= t <= 2pi, using the circle parameterization rule. The speed rule gives |r'(t)| = 3, so ds = 3 dt, and x^2 = 9 cos^2 t. Substitute into the integral: int_0^(2pi) 27 cos^2 t dt. The half-angle identity shows the full-period average of cos^2 t is 1/2, so the integral is 27 pi. The value is 27pi."
+          - problem: "Evaluate the line integral of f(x,y) = y^2 with respect to arc length along C, where C is the circle of radius 4 centered at the origin."
+            answer: "64pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is the scalar line integral of y^2 ds over C, the circle of radius 4. Parameterize C by r(t) = (4 cos t, 4 sin t), and the speed rule gives ds = 4 dt. Then y^2 = 16 sin^2 t, so the integral becomes int_0^(2pi) 64 sin^2 t dt. The full-period average of sin^2 t is 1/2, so the value is 64 pi. The value is 64pi."
+          - problem: "Evaluate the line integral of f(x,y) = x^2 - y^2 with respect to arc length along C, where C is the circle of radius 2 centered at the origin."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is the scalar line integral of (x^2 - y^2) ds over the circle of radius 2. Parameterize C by r(t) = (2 cos t, 2 sin t) with ds = 2 dt. Then x^2 - y^2 = 4(cos^2 t - sin^2 t) = 4 cos(2t). Substitute and integrate: int_0^(2pi) 8 cos(2t) dt = 0, because a full period of cos(2t) has zero signed area. The value is 0."
+          - problem: "Evaluate the line integral of f(x,y) = x^2 y^2 with respect to arc length along C, where C is the unit circle."
+            answer: "pi/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is the scalar line integral of x^2 y^2 ds over the unit circle. Parameterize C by r(t) = (cos t, sin t) with ds = dt. Then x^2 y^2 = cos^2 t sin^2 t, and the product-to-sum identity gives cos^2 t sin^2 t = (1/8)(1 - cos(4t)). Integrate over a full period: (1/8)(2pi) = pi/4. The value is pi/4."
         constraints: "circles centered at the origin with small integer radii; use cos^2 integrals over full periods"
       - id: kp3
         name: "Mass of a wire and 3D curves"
@@ -141,6 +157,22 @@ topics:
           - problem: 'Evaluate $\int_C z \, ds$ where $C$ is the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$, $0 \le t \le 2\pi$.'
             answer: '$2\sqrt{2}\,\pi^2$'
             solution_sketch: '$|\mathbf{r}''(t)| = \sqrt{2}$: $\int_0^{2\pi} t \sqrt{2}\, dt = \sqrt{2} \cdot 2\pi^2$.'
+          - problem: "A wire follows the quarter unit circle in the first quadrant and has density rho(x,y) = y. Find its mass."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parameterize C by r(t) = <cos(t), sin(t)> for 0 <= t <= pi/2. The arc length rule gives ds = |r'(t)| dt = 1 dt. The scalar line integral formula gives mass = integral from 0 to pi/2 of y ds = integral from 0 to pi/2 of sin(t) dt. The FTC evaluates this as -cos(t) from 0 to pi/2 = 1. The mass is 1."
+          - problem: "A wire follows the helix r(t) = <2cos(t), 2sin(t), 5t> for 0 <= t <= pi/3 and has density rho(x,y,z) = z. Find its mass."
+            answer: "5sqrt(29)pi^2/18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parameterize C by r(t) = <2cos(t), 2sin(t), 5t> for 0 <= t <= pi/3. The arc length rule gives speed |r'(t)| = sqrt(4 + 25) = sqrt(29), so ds = sqrt(29) dt. The scalar line integral formula gives mass = integral from 0 to pi/3 of z ds = integral from 0 to pi/3 of 5t sqrt(29) dt. Factor the constants and use the FTC: 5sqrt(29) times t^2/2 from 0 to pi/3 = 5sqrt(29) pi^2/18. The mass is 5sqrt(29)pi^2/18."
+          - problem: "A wire follows the helix r(t) = <2cos(t), 2sin(t), 2t> for 0 <= t <= pi and has density rho(x,y,z) = y. Find its mass."
+            answer: "8sqrt(2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parameterize C by r(t) = <2cos(t), 2sin(t), 2t> for 0 <= t <= pi. The arc length rule gives speed |r'(t)| = sqrt(4 + 4) = 2sqrt(2), so ds = 2sqrt(2) dt. The scalar line integral formula gives mass = integral from 0 to pi of y ds = integral from 0 to pi of 2sin(t) 2sqrt(2) dt. The FTC gives 4sqrt(2) times -cos(t) from 0 to pi = 4sqrt(2) times 2 = 8sqrt(2). The mass is 8sqrt(2)."
+          - problem: "A wire follows the helix r(t) = <4cos(t), 4sin(t), 3t> for 0 <= t <= pi/2 and has density rho(x,y,z) = x. Find its mass."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parameterize C by r(t) = <4cos(t), 4sin(t), 3t> for 0 <= t <= pi/2. The arc length rule gives speed |r'(t)| = sqrt(16 + 9) = 5, so ds = 5 dt. The scalar line integral formula gives mass = integral from 0 to pi/2 of x ds = integral from 0 to pi/2 of 4cos(t) 5 dt. The FTC evaluates 20 sin(t) from 0 to pi/2 = 20. The mass is 20."
         constraints: "curves with constant speed (circles, helices); densities linear in one coordinate; answers exact"
     diagnostic_exemplar:
       problem: 'A wire follows the helix $\mathbf{r}(t) = \langle 3\cos t,\; 3\sin t,\; 4t \rangle$ for $0 \le t \le \pi$ and has density $\rho(x, y, z) = z$. Find its mass.'
@@ -182,6 +214,22 @@ topics:
           - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle y, z, x \rangle$ along $\mathbf{r}(t) = \langle t, t, t \rangle$, $0 \le t \le 1$.'
             answer: '$\frac{3}{2}$'
             solution_sketch: '$\mathbf{F}(\mathbf{r}(t)) = \langle t, t, t \rangle$, $\mathbf{r}''(t) = \langle 1, 1, 1 \rangle$; integrand $3t$, integral $\frac{3}{2}$.'
+          - problem: "Let F = <2x, 3y> and let r(t) = <2t, t> for 0 <= t <= 1. Evaluate the line integral of F dot dr along this curve."
+            answer: "11/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize by r(t) = <2t, t> and find r'(t) = <2, 1> using the component derivative rule. Substitute to get F(r(t)) = <4t, 3t>, then apply the dot product rule: F(r(t)) dot r'(t) = 8t + 3t = 11t. Integrate with the power rule: the integral from 0 to 1 of 11t dt is 11/2, so the answer is 11/2."
+          - problem: "Let F = <x, y^2> and let r(t) = <t, 3t^2> for 0 <= t <= 1. Evaluate the line integral of F dot dr along this curve."
+            answer: "19/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize by r(t) = <t, 3t^2> and find r'(t) = <1, 6t> by the component derivative rule. Substitute to get F(r(t)) = <t, 9t^4>, so the dot product rule gives F(r(t)) dot r'(t) = t + 54t^5. Integrate with the power rule: 1/2 + 9 = 19/2, so the answer is 19/2."
+          - problem: "Let F = <y + z, x + z, x + y> and let r(t) = <t, 2t, 3t> for 0 <= t <= 1. Evaluate the line integral of F dot dr along this curve."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize by r(t) = <t, 2t, 3t> and find r'(t) = <1, 2, 3> with the component derivative rule. Substitute into F to get F(r(t)) = <5t, 4t, 3t>, then the dot product rule gives F(r(t)) dot r'(t) = 5t + 8t + 9t = 22t. Integrate with the power rule: the integral from 0 to 1 of 22t dt is 11, so the answer is 11."
+          - problem: "Let F = <y, x^2> and let r(t) = <2t^2, t> for 0 <= t <= 1. Evaluate the line integral of F dot dr along this curve."
+            answer: "32/15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize by r(t) = <2t^2, t> and find r'(t) = <4t, 1> using the component derivative rule. Substitute to get F(r(t)) = <t, 4t^4>, then the dot product rule gives F(r(t)) dot r'(t) = 4t^2 + 4t^4. Integrate with the power rule: 4/3 + 4/5 = 32/15, so the answer is 32/15."
         constraints: "curves are lines or parabolas; F polynomial; integrands reduce to single-variable polynomials"
       - id: kp2
         name: "Circulation around closed curves"
@@ -193,6 +241,22 @@ topics:
           - problem: 'Evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle -y, x \rangle$ around the circle of radius $2$, counterclockwise.'
             answer: '$8\pi$'
             solution_sketch: '$\mathbf{r} = \langle 2\cos t, 2\sin t \rangle$: $\mathbf{F}\cdot\mathbf{r}'' = 4\sin^2 t + 4\cos^2 t = 4$; $\int_0^{2\pi} 4\, dt = 8\pi$.'
+          - problem: "Evaluate the circulation of $\\mathbf{F} = \\langle 2y, -2x \\rangle$ around the unit circle centered at the origin, traversed counterclockwise."
+            answer: "-4pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The circulation is $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r}$ with $\\mathbf{F}=\\langle 2y,-2x\\rangle$ on the unit circle. Parameterize the circle by $\\mathbf{r}(t) = \\langle \\cos t, \\sin t \\rangle$ for $0 \\le t \\le 2\\pi$, so $\\mathbf{F}=\\langle 2\\sin t,-2\\cos t\\rangle$ and $\\mathbf{r}'(t)=\\langle -\\sin t,\\cos t\\rangle$. The dot product is $-2\\sin^2 t -2\\cos^2 t = -2(\\sin^2 t+\\cos^2 t)=-2$ by the Pythagorean identity. Integrate the constant over $[0,2\\pi]$: $-2(2\\pi)=-4\\pi$. The circulation is -4pi."
+          - problem: "Evaluate $\\oint_C \\mathbf{F} \\cdot d\\mathbf{r}$ for $\\mathbf{F} = \\langle -y, 2x \\rangle$ around the circle of radius $2$ centered at the origin, counterclockwise."
+            answer: "12pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line integral is $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r}$ with $\\mathbf{F}=\\langle -y,2x\\rangle$. Parameterize the radius-2 circle by $\\mathbf{r}(t)=\\langle 2\\cos t,2\\sin t\\rangle$, $0 \\le t \\le 2\\pi$. Then $\\mathbf{F}=\\langle -2\\sin t,4\\cos t\\rangle$ and $\\mathbf{r}'(t)=\\langle -2\\sin t,2\\cos t\\rangle$. The dot product is $4\\sin^2 t + 8\\cos^2 t = 4(\\sin^2 t+\\cos^2 t) + 4\\cos^2 t = 4 + 4\\cos^2 t$. Integrate termwise: $\\int_0^{2\\pi} 4\\,dt = 8\\pi$ and $\\int_0^{2\\pi} 4\\cos^2 t\\,dt = 4\\pi$. The sum is $12\\pi$, so the circulation is 12pi."
+          - problem: "Evaluate the line integral $\\oint_C \\mathbf{F} \\cdot d\\mathbf{r}$ for $\\mathbf{F} = \\langle y, 3x \\rangle$ around the unit circle centered at the origin, traversed counterclockwise."
+            answer: "2pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line integral is $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r}$ with $\\mathbf{F}=\\langle y,3x\\rangle$. Parameterize the unit circle by $\\mathbf{r}(t)=\\langle \\cos t,\\sin t\\rangle$, $0 \\le t \\le 2\\pi$. On $C$, $\\mathbf{F}=\\langle \\sin t,3\\cos t\\rangle$ and $\\mathbf{r}'(t)=\\langle -\\sin t,\\cos t\\rangle$. The dot product is $-\\sin^2 t + 3\\cos^2 t = -1 + 4\\cos^2 t$ by the identity $\\sin^2 t+\\cos^2 t=1$. Integrate: $\\int_0^{2\\pi} -1\\,dt = -2\\pi$ and $\\int_0^{2\\pi} 4\\cos^2 t\\,dt = 4\\pi$. The total is $2\\pi$, so the line integral is 2pi."
+          - problem: "Evaluate $\\oint_C \\mathbf{F} \\cdot d\\mathbf{r}$ for $\\mathbf{F} = \\langle 2y, -x \\rangle$ around the circle of radius $3$ centered at the origin, traversed counterclockwise."
+            answer: "-27pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line integral is $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r}$ with $\\mathbf{F}=\\langle 2y,-x\\rangle$. Parameterize the radius-3 circle by $\\mathbf{r}(t)=\\langle 3\\cos t,3\\sin t\\rangle$, $0 \\le t \\le 2\\pi$. Then $\\mathbf{F}=\\langle 6\\sin t,-3\\cos t\\rangle$ and $\\mathbf{r}'(t)=\\langle -3\\sin t,3\\cos t\\rangle$. The dot product is $-18\\sin^2 t - 9\\cos^2 t = -9(\\sin^2 t+\\cos^2 t) - 9\\sin^2 t = -9 - 9\\sin^2 t$. Integrate: $\\int_0^{2\\pi} -9\\,dt = -18\\pi$ and $\\int_0^{2\\pi} -9\\sin^2 t\\,dt = -9\\pi$. The total is $-27\\pi$, so the circulation is -27pi."
         constraints: "circles centered at the origin; the integrand collapses via sin^2 + cos^2 = 1"
       - id: kp3
         name: "Work and orientation"
@@ -204,6 +268,22 @@ topics:
           - problem: 'If $\int_C \mathbf{F} \cdot d\mathbf{r} = 7$, what is the integral along the same curve traversed in the opposite direction?'
             answer: '$-7$'
             solution_sketch: 'Reversing orientation reverses $d\mathbf{r}$, so a vector line integral changes sign.'
+          - problem: "Find the work done by F = <2x, y> on a particle moving along the segment from (1, 0) to (3, 4)."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize the segment: r(t) = <1+2t, 4t> for 0 <= t <= 1, so r'(t) = <2, 4>. The field on the path is F(r(t)) = <2+4t, 4t>, so the dot product is (2+4t)2 + (4t)4 = 4 + 24t. Integrate from 0 to 1: 4 + 12 = 16, so the work is 16."
+          - problem: "The work done by F along a curve C from A to B is -5. Find the work done by F along the same curve traversed from B to A."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a vector line integral, reversing the orientation changes dr to -dr, so the sign of the work reverses. The original work is -5, so the reversed work is -(-5) = 5."
+          - problem: "Find the work done by F = <-y, x> along the quarter circle from (1, 0) to (0, 1) traversed counterclockwise."
+            answer: "pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize the quarter circle counterclockwise as r(t) = <cos t, sin t> for 0 <= t <= pi/2, so r'(t) = <-sin t, cos t>. The field is F = <-y, x> = <-sin t, cos t>; the dot product is sin^2 t + cos^2 t = 1. Integrate from 0 to pi/2: the work is pi/2."
+          - problem: "Find the work done by F = <z, x, y> along the straight segment from (0, 0, 0) to (1, 2, 3)."
+            answer: "11/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize the segment as r(t) = <t, 2t, 3t> for 0 <= t <= 1, so r'(t) = <1, 2, 3>. The field on the path is F = <3t, t, 2t>; the dot product with r' is 3t + 2t + 6t = 11t. Integrate: 11/2, so the work is 11/2."
         constraints: "work = line integral of F; always state orientation; sign-flip questions use given integer values"
     diagnostic_exemplar:
       problem: 'Evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle y, -x \rangle$ around the circle of radius $3$ centred at the origin, traversed counterclockwise.'
@@ -245,18 +325,50 @@ topics:
           - problem: 'Evaluate $\int_C y\, dx + x\, dy$ along $\mathbf{r}(t) = \langle t, t^2 \rangle$, $0 \le t \le 1$.'
             answer: "1"
             solution_sketch: '$dx = dt$, $dy = 2t\, dt$: $\int_0^1 (t^2 + 2t^2)\, dt = 1$. (Same as $\mathbf{F} = \langle y, x \rangle$ in vector form.)'
+          - problem: "The curve C is the segment from (0,0) to (2,1). Evaluate ∫_C (2x+y) dx + x dy."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line integral is ∫_C (2x+y) dx + x dy on the segment from (0,0) to (2,1). Step 1, use the segment parametrization: x=2t and y=t for 0 ≤ t ≤ 1, so dx=2 dt and dy=dt. Step 2, substitute into the differential form: 2x+y = 5t and x=2t, giving (5t)(2 dt)+(2t)(dt)=12t dt. Step 3, evaluate the t-integral: ∫_0^1 12t dt = 6t^2 from 0 to 1 = 6. The value of the line integral is 6."
+          - problem: "The curve C is the parabola y=x^2 from (0,0) to (1,1). Evaluate ∫_C -y dx + x dy."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line integral is ∫_C -y dx + x dy along the parabola y=x^2 from (0,0) to (1,1). Step 1, use the parabola parametrization: x=t and y=t^2 for 0 ≤ t ≤ 1, so dx=dt and dy=2t dt. Step 2, substitute: -y dx + x dy = -t^2 dt + t(2t dt) = t^2 dt. Step 3, integrate: ∫_0^1 t^2 dt = 1/3. The value of the line integral is 1/3."
+          - problem: "The curve C is the segment from (0,0) to (1,2). Evaluate ∫_C (2x-y) dx + (x+y) dy."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line integral is ∫_C (2x-y) dx + (x+y) dy on the segment from (0,0) to (1,2). Step 1, parametrize the segment: x=t and y=2t for 0 ≤ t ≤ 1, so dx=dt and dy=2 dt. Step 2, substitute: 2x-y=0 and x+y=3t, so the form becomes 0 dt + (3t)(2 dt) = 6t dt. Step 3, integrate: ∫_0^1 6t dt = 3t^2 from 0 to 1 = 3. The value of the line integral is 3."
+          - problem: "The curve C is the parabola y=x^2 from (0,0) to (2,4). Evaluate ∫_C (3x+y) dx + (2x+y) dy."
+            answer: "82/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The line integral is ∫_C (3x+y) dx + (2x+y) dy along the parabola y=x^2 from (0,0) to (2,4). Step 1, use x=t and y=t^2 for 0 ≤ t ≤ 2, so dx=dt and dy=2t dt. Step 2, substitute: 3x+y=3t+t^2 and 2x+y=2t+t^2, giving (3t+t^2) dt + (2t+t^2)(2t dt) = (3t+5t^2+2t^3) dt. Step 3, integrate term by term: ∫_0^2 (3t+5t^2+2t^3) dt = 6 + 40/3 + 8 = 82/3. The value of the line integral is 82/3."
         constraints: "P dx + Q dy with polynomial P, Q; curves are segments or parabolas"
       - id: kp2
         name: "Piecewise paths and path dependence"
         key_prerequisites: [vector-line-integrals]
         exemplars:
-          - problem: 'Evaluate $\int_C y^2\, dx + x\, dy$ along the two-segment path $(0,0) \to (1,0) \to (1,1)$. Compare with the value $\frac{5}{6}$ along the straight segment to $(1,1)$.'
-            answer: '$1$ — different from $\frac{5}{6}$, so this integral is path-dependent.'
-            answer_contract: {kind: none}
-            solution_sketch: 'On $(0,0) \to (1,0)$: $y = 0$, $dy = 0$, contribution $0$. On $(1,0) \to (1,1)$: $dx = 0$, $\int_0^1 1\, dy = 1$.'
+          - problem: "Let C be the path (0,0) to (1,0) to (1,1). Evaluate the line integral along C of y^2 dx + x dy. The straight segment from (0,0) to (1,1) gives 5/6 for the same integrand. Find the value along C and the path behavior, written as verdict = depends or fixed; I = value."
+            answer: "verdict = depends; I = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["depends"], ["fixed"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "I"}]}
+            solution_sketch: "The integral is y^2 dx + x dy along the path (0,0) to (1,0) to (1,1). Step 1: on (0,0) to (1,0), y = 0 and dy = 0, so the contribution is 0. Step 2: on (1,0) to (1,1), dx = 0 and x = 1, so the contribution is the integral from 0 to 1 of 1 dy = 1. Step 3: the straight-segment value is 5/6, which differs from 1, so the path behavior is depends. So verdict = depends; I = 1."
           - problem: 'Evaluate $\oint_C x\, dy - y\, dx$ counterclockwise around the triangle $(0,0)$, $(1,0)$, $(0,1)$.'
             answer: "1"
             solution_sketch: 'The legs along the axes contribute $0$; on the hypotenuse $x = 1-t$, $y = t$: $\int_0^1 \left((1-t) + t\right) dt = 1$. (This equals twice the enclosed area.)'
+          - problem: "Let C be the path (0,0) to (2,0) to (2,1) to (3,3). Evaluate the line integral along C of (x+y) dx + (x-y) dy. Give the answer as an integer."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is (x+y) dx + (x-y) dy along (0,0) to (2,0) to (2,1) to (3,3). Step 1: on (0,0) to (2,0), y=0 and dy=0, so the integral of x dx from 0 to 2 is 2. Step 2: on (2,0) to (2,1), x=2 and dx=0, so the integral of (2-y) dy from 0 to 1 is 3/2. Step 3: on (2,1) to (3,3), use x=2+t and y=1+2t, so the integral of (5+t) dt from 0 to 1 is 11/2. The sum is 2 + 3/2 + 11/2 = 9."
+          - problem: "Let C be the path (0,0) to (0,2) to (3,2) to (4,0). Evaluate the line integral along C of (x+y) dx + (x-y) dy. Give the answer as an integer."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is (x+y) dx + (x-y) dy along (0,0) to (0,2) to (3,2) to (4,0). Step 1: on (0,0) to (0,2), x=0 and dx=0, so the integral of -y dy from 0 to 2 is -2. Step 2: on (0,2) to (3,2), y=2 and dy=0, so the integral of (x+2) dx from 0 to 3 is 21/2. Step 3: on (3,2) to (4,0), use x=3+t and y=2-2t, so the integral of (3-7t) dt from 0 to 1 is -1/2. The sum is -2 + 21/2 - 1/2 = 8."
+          - problem: "Let C be the path (0,0) to (1,0) to (1,1) to (2,2). Evaluate the line integral along C of y dx + x dy. Give the answer as an integer."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is y dx + x dy along (0,0) to (1,0) to (1,1) to (2,2). Step 1: on (0,0) to (1,0), y=0 and dy=0, so the contribution is 0. Step 2: on (1,0) to (1,1), x=1 and dx=0, so the integral of 1 dy from 0 to 1 is 1. Step 3: on (1,1) to (2,2), y=x and dy=dx, so the integral of 2x dx from 1 to 2 is 3. The sum is 0+1+3=4."
+          - problem: "Let C be the path (0,0) to (1,0) to (1,2) to (3,4). Evaluate the line integral along C of 2x dx + y dy. Give the answer as an integer."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is 2x dx + y dy along (0,0) to (1,0) to (1,2) to (3,4). Step 1: on (0,0) to (1,0), y=0 and dy=0, so the integral of 2x dx from 0 to 1 is 1. Step 2: on (1,0) to (1,2), x=1 and dx=0, so the integral of y dy from 0 to 2 is 2. Step 3: on (1,2) to (3,4), use x=1+2t and y=2+2t, so the integral of (8+12t) dt from 0 to 1 is 14. The sum is 1+2+14=17."
         constraints: "paths of 2-3 segments parallel to axes plus one slanted edge; each piece contributes a one-line integral"
       - id: kp3
         name: "Three-dimensional and closed-curve capstones"
@@ -385,6 +497,18 @@ topics:
           - problem: 'What is $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for a conservative field $\mathbf{F}$ around any closed curve?'
             answer: "0"
             solution_sketch: 'Endpoints coincide, so $f(\text{end}) - f(\text{start}) = 0$.'
+          - problem: "Let f(x, y) = x^2 + 2y^2. Evaluate the line integral of grad f along any path from (1, 1) to (2, 2)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The vector field is grad f, so the fundamental theorem for line integrals applies. Step 2: The theorem gives the integral as f(end) minus f(start). Step 3: f(2, 2) = 4 + 8 = 12 and f(1, 1) = 1 + 2 = 3. Step 4: Subtract endpoint values: 12 - 3 = 9. The value of the line integral is 9."
+          - problem: "Let f(x, y) = xy + y^2. Find the value of the line integral of grad f from (1, 2) to (3, 1)."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Because the integrand is grad f, the fundamental theorem for line integrals replaces the integral with endpoint values. Step 2: f(3, 1) = 3*1 + 1^2 = 4 and f(1, 2) = 1*2 + 2^2 = 6. Step 3: Subtract: 4 - 6 = -2. The value of the line integral is -2."
+          - problem: "Let f(x, y, z) = x^2 + y^2 + z^2. Compute the line integral of grad f along any curve from (1, 0, 2) to (2, 1, 1)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The vector field is grad f, so the fundamental theorem for line integrals applies. Step 2: The integral equals f(2, 1, 1) - f(1, 0, 2). Step 3: f(2, 1, 1) = 4 + 1 + 1 = 6 and f(1, 0, 2) = 1 + 0 + 4 = 5. Step 4: 6 - 5 = 1. The value of the line integral is 1."
         constraints: "endpoints at small integer points; potential values exact integers"
       - id: kp2
         name: "Find the potential, then evaluate"
@@ -396,6 +520,22 @@ topics:
           - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle e^y, x e^y \rangle$ along any path from $(1, 0)$ to $(2, \ln 2)$.'
             answer: "3"
             solution_sketch: 'Potential $f = x e^y$: $f(2, \ln 2) - f(1, 0) = 4 - 1 = 3$.'
+          - problem: "Let F = <3x^2 + 2y, 2x>. Find the value of the line integral of F along any path from (0, 0) to (2, 1)."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The field is F = <3x^2 + 2y, 2x> and the path runs from (0, 0) to (2, 1). Step 1 (potential function): integrate the first component 3x^2 + 2y with respect to x to get f = x^3 + 2xy plus a function of y; the second component 2x confirms f = x^3 + 2xy. Step 2 (fundamental theorem for line integrals): the integral equals f(2, 1) - f(0, 0) = (8 + 4) - 0 = 12. The value of the line integral is 12."
+          - problem: "Let F = <2x + 3y^2, 6xy>. Evaluate the line integral of F along any path from (1, 1) to (2, 3)."
+            answer: "54"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The field is F = <2x + 3y^2, 6xy> with endpoints (1, 1) and (2, 3). Step 1 (potential function): integrate 2x + 3y^2 with respect to x to get f = x^2 + 3xy^2 plus a function of y; the second component 6xy confirms f = x^2 + 3xy^2. Step 2 (fundamental theorem for line integrals): the integral equals f(2, 3) - f(1, 1) = (4 + 54) - (1 + 3) = 58 - 4 = 54. The value of the line integral is 54."
+          - problem: "Let F = <y cos(xy), x cos(xy)>. Evaluate the line integral of F along any path from (0, 0) to (pi/2, 1)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The field is F = <y cos(xy), x cos(xy)> and the path runs from (0, 0) to (pi/2, 1). Step 1 (potential function): integrate y cos(xy) with respect to x to get f = sin(xy) plus a function of y; the second component x cos(xy) confirms f = sin(xy). Step 2 (fundamental theorem for line integrals): the integral equals f(pi/2, 1) - f(0, 0) = sin(pi/2) - sin(0) = 1 - 0 = 1. The value of the line integral is 1."
+          - problem: "Let F = <2xy^3, 3x^2 y^2>. Determine the value of the line integral of F along any path from (1, 1) to (2, 2)."
+            answer: "31"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The field is F = <2xy^3, 3x^2 y^2> with endpoints (1, 1) and (2, 2). Step 1 (potential function): integrate 2xy^3 with respect to x to get f = x^2 y^3 plus a function of y; the second component 3x^2 y^2 confirms f = x^2 y^3. Step 2 (fundamental theorem for line integrals): the integral equals f(2, 2) - f(1, 1) = 32 - 1 = 31. The value of the line integral is 31."
         constraints: "field given without its potential; endpoints chosen so f evaluates to integers"
     diagnostic_exemplar:
       problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle 2xy,\; x^2 + 3y^2 \rangle$ along any path from $(0, 0)$ to $(2, 1)$.'
@@ -498,14 +638,30 @@ topics:
         name: "The curl test"
         key_prerequisites: [conservative-fields-potential-functions, computing-div-curl]
         exemplars:
-          - problem: 'Is $\mathbf{F} = \langle yz, xz, xy \rangle$ conservative on $\mathbb{R}^3$?'
-            answer: 'Yes: $\operatorname{curl}\mathbf{F} = \mathbf{0}$ (e.g. the first component is $\partial_y(xy) - \partial_z(xz) = x - x = 0$).'
-            solution_sketch: 'Each component of $\operatorname{curl}\mathbf{F}$ vanishes (e.g. $\partial_y(xy)-\partial_z(xz)=x-x=0$), so $\mathbf{F}$ is conservative on $\mathbb{R}^3$.'
-            answer_contract: {kind: none}
-          - problem: 'Is $\mathbf{F} = \langle y, -x, 0 \rangle$ conservative on $\mathbb{R}^3$?'
-            answer: 'No: $\operatorname{curl}\mathbf{F} = \langle 0, 0, -2 \rangle \ne \mathbf{0}$.'
-            solution_sketch: 'The curl is $\langle 0,0,-2\rangle\ne\mathbf{0}$, so the field is not conservative.'
-            answer_contract: {kind: none}
+          - problem: "Let F = <2xy + z, x^2 + 3z, x + 3y>. Let c be the value of the nonzero component of curl F, or 0 if curl F is the zero vector. Find c."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write F = <2xy + z, x^2 + 3z, x + 3y> and compute curl F = <R_y - Q_z, P_z - R_x, Q_x - P_y>. Here R_y = 3 and Q_z = 3, P_z = 1 and R_x = 1, Q_x = 2x and P_y = 2x, so every component is zero. By the curl test on all of R^3, a vanishing curl means F is conservative, so the nonzero component value is c = 0. The final answer is 0."
+          - problem: "Let F = <3y, 5x, 0>. Let c be the value of the nonzero component of curl F, or 0 if curl F is the zero vector. Compute c."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write F = <3y, 5x, 0> and compute curl F = <R_y - Q_z, P_z - R_x, Q_x - P_y>. Here R_y = 0 and Q_z = 0, P_z = 0 and R_x = 0, Q_x = 5 and P_y = 3, so curl F = <0, 0, 2>. The constant nonzero z-component is 2, so c = 2. The final answer is 2."
+          - problem: "Let F = <0, 7z, 4y>. Let c be the value of the nonzero component of curl F, or 0 if curl F is the zero vector. Determine c."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write F = <0, 7z, 4y> and compute curl F = <R_y - Q_z, P_z - R_x, Q_x - P_y>. Here R_y = 4 and Q_z = 7, P_z = 0 and R_x = 0, Q_x = 0 and P_y = 0, so curl F = <-3, 0, 0>. The only nonzero component is -3, so c = -3. The final answer is -3."
+          - problem: "Let F = <2y, 3x, 0>. Let c be the value of the nonzero component of curl F, or 0 if curl F is the zero vector. Evaluate c."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write F = <2y, 3x, 0> and compute curl F = <R_y - Q_z, P_z - R_x, Q_x - P_y>. Here R_y = 0 and Q_z = 0, P_z = 0 and R_x = 0, Q_x = 3 and P_y = 2, so curl F = <0, 0, 1>. The constant nonzero z-component is 1, so c = 1. The final answer is 1."
+          - problem: "Let F = <0, 6z, 5y>. Let c be the value of the nonzero component of curl F, or 0 if curl F is the zero vector. Give c."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write F = <0, 6z, 5y> and compute curl F = <R_y - Q_z, P_z - R_x, Q_x - P_y>. Here R_y = 5 and Q_z = 6, P_z = 0 and R_x = 0, Q_x = 0 and P_y = 0, so curl F = <-1, 0, 0>. The only nonzero component is -1, so c = -1. The final answer is -1."
+          - problem: "Let F = <y + z, x + z, x + y>. Let c be the value of the nonzero component of curl F, or 0 if curl F is the zero vector. State c."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write F = <y + z, x + z, x + y> and compute curl F = <R_y - Q_z, P_z - R_x, Q_x - P_y>. Here R_y = 1 and Q_z = 1, P_z = 1 and R_x = 1, Q_x = 1 and P_y = 1, so every component is zero. By the curl test on all of R^3, a vanishing curl means F is conservative, so c = 0. The final answer is 0."
         constraints: "polynomial fields on all of R^3; the curl either vanishes identically or has a constant nonzero component"
       - id: kp2
         name: "Finding 3D potential functions"

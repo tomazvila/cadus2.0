@@ -937,14 +937,30 @@ topics:
         name: "The Lagrange condition"
         key_prerequisites: [gradient-directional-derivatives, multivariable-critical-points]
         exemplars:
-          - problem: 'Write down (do not solve) the Lagrange system for extremizing $f(x, y) = x^2 y$ subject to $x^2 + y^2 = 1$.'
-            answer: '$2xy = 2\lambda x$, $\;x^2 = 2\lambda y$, $\;x^2 + y^2 = 1$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla f = \lambda \nabla g$ componentwise, plus the constraint itself.'
-          - problem: 'Find the extreme values of $f(x, y) = x + y$ on the circle $x^2 + y^2 = 2$.'
-            answer: 'Maximum $2$ at $(1, 1)$; minimum $-2$ at $(-1, -1)$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$1 = 2\lambda x$ and $1 = 2\lambda y$ force $x = y$; the constraint gives $x = \pm 1$.'
+          - problem: "Use Lagrange multipliers for $f(x,y)=x+2y$ subject to $x^2+2y^2=12$. Find the value of $\\lambda$ at the point $(2,2)$."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Lagrange condition is grad f = lambda grad g, with f = x + 2y and g = x^2 + 2y^2. Step 1: compute grad f = (1, 2) and grad g = (2x, 4y). Step 2: at (2, 2), grad g = (4, 8), so (1, 2) = lambda (4, 8). Step 3: solve 1 = 4 lambda to get lambda = 1/4. The value is 1/4."
+          - problem: "Use Lagrange multipliers to maximize $f(x,y)=x+3y$ subject to $x^2+3y^2=16$. Find the maximum value."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Lagrange condition is grad f = lambda grad g, with f = x + 3y and g = x^2 + 3y^2. Step 1: write 1 = 2 lambda x and 3 = 6 lambda y. Step 2: both equations give lambda = 1/(2x) and lambda = 1/(2y), so x = y. Step 3: the constraint becomes 4x^2 = 16, so x = 2 or x = -2. Step 4: f = x + 3y = 4x, whose largest value is 8. The maximum value is 8."
+          - problem: "Use Lagrange multipliers to maximize $f(x,y)=2x+3y$ subject to $2x^2+3y^2=20$. Find the maximum value."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Lagrange condition is grad f = lambda grad g, with f = 2x + 3y and g = 2x^2 + 3y^2. Step 1: write 2 = 4 lambda x and 3 = 6 lambda y. Step 2: these give lambda = 1/(2x) and lambda = 1/(2y), so x = y. Step 3: the constraint becomes 5x^2 = 20, so x = 2 or x = -2. Step 4: f = 2x + 3y = 5x, whose largest value is 10. The maximum value is 10."
+          - problem: "Use Lagrange multipliers to maximize $f(x,y)=3x+4y$ subject to $3x^2+4y^2=28$. Give the point where the maximum occurs as (x, y)."
+            answer: "(2, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The Lagrange condition is grad f = lambda grad g, with f = 3x + 4y and g = 3x^2 + 4y^2. Step 1: write 3 = 6 lambda x and 4 = 8 lambda y. Step 2: these give lambda = 1/(2x) and lambda = 1/(2y), so x = y. Step 3: the constraint becomes 7x^2 = 28, so x = 2 or x = -2. Step 4: f = 3x + 4y = 7x, which is largest at x = 2, y = 2. The maximum occurs at the point (2, 2)."
+          - problem: "Use Lagrange multipliers to maximize $f(x,y)=x+4y$ subject to $x^2+4y^2=45$. Find the maximum value."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Lagrange condition is grad f = lambda grad g, with f = x + 4y and g = x^2 + 4y^2. Step 1: write 1 = 2 lambda x and 4 = 8 lambda y. Step 2: these give lambda = 1/(2x) and lambda = 1/(2y), so x = y. Step 3: the constraint becomes 5x^2 = 45, so x = 3 or x = -3. Step 4: f = x + 4y = 5x, whose largest value is 15. The maximum value is 15."
+          - problem: "Use Lagrange multipliers to maximize $f(x,y)=2x+5y$ subject to $2x^2+5y^2=63$. Find the maximum value."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Lagrange condition is grad f = lambda grad g, with f = 2x + 5y and g = 2x^2 + 5y^2. Step 1: write 2 = 4 lambda x and 5 = 10 lambda y. Step 2: these give lambda = 1/(2x) and lambda = 1/(2y), so x = y. Step 3: the constraint becomes 7x^2 = 63, so x = 3 or x = -3. Step 4: f = 2x + 5y = 7x, whose largest value is 21. The maximum value is 21."
         constraints: "systems written from grad f = lambda grad g; when solving, symmetry gives x = y and integer points"
       - id: kp2
         name: "Linear constraints"
@@ -979,14 +995,30 @@ topics:
         name: "Circle constraints"
         key_prerequisites: [gradient-directional-derivatives, multivariable-critical-points]
         exemplars:
-          - problem: 'Find the extreme values of $f(x, y) = xy$ on the circle $x^2 + y^2 = 2$.'
-            answer: 'Maximum $1$ at $(1, 1)$ and $(-1, -1)$; minimum $-1$ at $(1, -1)$ and $(-1, 1)$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$y = 2\lambda x$, $x = 2\lambda y$ force $x^2 = y^2$; with $x^2 + y^2 = 2$, the four points $(\pm 1, \pm 1)$ result.'
-          - problem: 'Find the extreme values of $f(x, y) = 3x + 4y$ on the circle $x^2 + y^2 = 25$.'
-            answer: 'Maximum $25$ at $(3, 4)$; minimum $-25$ at $(-3, -4)$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$3 = 2\lambda x$, $4 = 2\lambda y$ give $\frac{x}{3} = \frac{y}{4}$; substituting into the constraint yields $\lambda = \pm\frac{1}{2}$ and the points $\pm(3, 4)$.'
+          - problem: "Let $f(x, y) = xy$. Use Lagrange multipliers to find the maximum and minimum values of $f$ on the circle $x^2 + y^2 = 8$, and give the point where each extreme occurs with a positive x-coordinate."
+            answer: "max = 4; min = -4; pmax = (2, 2); pmin = (2, -2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "pmax"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "pmin"}]}
+            solution_sketch: "Set up the Lagrange system for $f(x,y)=xy$ on $x^2+y^2=8$: the equations $y=2\\lambda x$ and $x=2\\lambda y$, divided by each other, force $x^2=y^2$ by the substitution rule. The constraint then gives $x^2=4$, so $x=\\pm 2$ and $y=\\pm 2$, giving four candidate points. Evaluate $f$ at each: $f(2,2)=4$ and $f(-2,-2)=4$ are the largest values, while $f(2,-2)=-4$ and $f(-2,2)=-4$ are the smallest. Taking the candidate points with positive x-coordinate, the answer is max = 4; min = -4; pmax = (2, 2); pmin = (2, -2)."
+          - problem: "Let $f(x, y) = 5x + 12y$. Use Lagrange multipliers to find the maximum and minimum values of $f$ on the circle $x^2 + y^2 = 169$, and give the point where each extreme occurs."
+            answer: "max = 169; min = -169; pmax = (5, 12); pmin = (-5, -12)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "pmax"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "pmin"}]}
+            solution_sketch: "Write the Lagrange system for $f(x,y)=5x+12y$ on $x^2+y^2=169$: $5=2\\lambda x$, $12=2\\lambda y$, and the constraint. Dividing the two gradient equations gives $x/5=y/12$, so set $x=5t$ and $y=12t$ by substitution. The constraint gives $169t^2=169$, so $t=1$ or $t=-1$. Evaluate: $f(5,12)=25+144=169$ and $f(-5,-12)=-169$. The answer is max = 169; min = -169; pmax = (5, 12); pmin = (-5, -12)."
+          - problem: "Let $f(x, y) = x^2 + xy + y^2$. Use Lagrange multipliers to find the maximum and minimum values of $f$ on the circle $x^2 + y^2 = 18$, and give the point where each extreme occurs with a positive y-coordinate."
+            answer: "max = 27; min = 9; pmax = (3, 3); pmin = (-3, 3)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "pmax"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "pmin"}]}
+            solution_sketch: "Write the Lagrange system for $f(x,y)=x^2+xy+y^2$ on $x^2+y^2=18$: $2x+y=2\\lambda x$ and $x+2y=2\\lambda y$. A nonzero solution of this linear system requires $(2-2\\lambda)^2=1$, so $\\lambda=1/2$ or $\\lambda=3/2$. For $\\lambda=3/2$ the equations force $y=x$, giving $(3,3)$ and $(-3,-3)$ with $f=27$; for $\\lambda=1/2$ they force $y=-x$, giving $(3,-3)$ and $(-3,3)$ with $f=9$. Taking the points with positive y-coordinate, the answer is max = 27; min = 9; pmax = (3, 3); pmin = (-3, 3)."
+          - problem: "The function $f(x, y) = 6x + 8y$ attains a maximum value of $60$ on the circle $x^2 + y^2 = r^2$. Use Lagrange multipliers to find $r^2$."
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Lagrange equations for $f(x,y)=6x+8y$ on $x^2+y^2=r^2$ are $6=2\\lambda x$ and $8=2\\lambda y$, so $x=3/\\lambda$ and $y=4/\\lambda$ by substitution. The constraint gives $25/\\lambda^2=r^2$, so $\\lambda=\\pm 5/r$, and the extreme values are $f=50/\\lambda=\\pm 10r$. The maximum is therefore $10r$, and $10r=60$ gives $r=6$. The answer is 36."
+          - problem: "Let $f(x, y) = 7x + 24y$ on the circle $x^2 + y^2 = 625$. Use Lagrange multipliers to find the value of the multiplier $\\lambda$ at the point where $f$ attains its minimum."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the Lagrange equations for $f(x,y)=7x+24y$ on $x^2+y^2=625$: $7=2\\lambda x$ and $24=2\\lambda y$, so $x=7/(2\\lambda)$ and $y=12/\\lambda$. Substituting into the constraint gives $625/(4\\lambda^2)=625$, so $4\\lambda^2=1$ and $\\lambda=\\pm 1/2$. At the minimum the point is $(-7,-24)$, where $7=2\\lambda(-7)$ forces $\\lambda=-1/2$. The answer is -1/2."
+          - problem: "Let $f(x, y) = xy$. Use Lagrange multipliers to find the maximum and minimum values of $f$ on the circle $x^2 + y^2 = 32$, and give the point in quadrant II where the minimum occurs."
+            answer: "max = 16; min = -16; pmin = (-4, 4)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "pmin"}]}
+            solution_sketch: "Set up the Lagrange system for $f(x,y)=xy$ on $x^2+y^2=32$: the equations $y=2\\lambda x$ and $x=2\\lambda y$ force $x^2=y^2$ by the substitution rule. The constraint then gives $x^2=16$, so the candidates are $(\\pm 4, \\pm 4)$. Evaluate: $f(4,4)=16$ and $f(-4,-4)=16$ are the maxima, while $f(4,-4)=-16$ and $f(-4,4)=-16$ are the minima. The quadrant II minimum point is (-4, 4), so the answer is max = 16; min = -16; pmin = (-4, 4)."
         constraints: "circle radius chosen so critical points are integer or half-integer; report BOTH max and min with locations"
     diagnostic_exemplar:
       problem: 'Use Lagrange multipliers to find the maximum value of $f(x, y) = x + 2y$ on the circle $x^2 + y^2 = 20$.'
