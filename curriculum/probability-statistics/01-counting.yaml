@@ -978,6 +978,22 @@ topics:
           - problem: 'Choose $2$ books from $4$ novels and $3$ biographies. How many selections include at least one biography?'
             answer: "15"
             solution_sketch: 'Total $\binom{7}{2} = 21$; all-novel $\binom{4}{2} = 6$; $21 - 6 = 15$.'
+          - problem: "A committee of 4 people is chosen from 6 men and 5 women. How many committees include at least one woman?"
+            answer: "315"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "All committees: \\binom{11}{4} = 330. All-male committees: \\binom{6}{4} = 15. Complement rule: 330 - 15 = 315. The count of committees with at least one woman is 315."
+          - problem: "A bouquet of 2 flowers is chosen from 8 roses and 5 tulips. How many bouquets include at least one tulip?"
+            answer: "50"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "All bouquets: \\binom{13}{2} = 78. All-rose bouquets: \\binom{8}{2} = 28. Complement rule: 78 - 28 = 50. The number of bouquets with at least one tulip is 50."
+          - problem: "A team of 3 students is chosen from 8 seniors and 4 juniors. How many teams include at least one junior?"
+            answer: "164"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "All teams: \\binom{12}{3} = 220. All-senior teams: \\binom{8}{3} = 56. Complement rule: 220 - 56 = 164. The number of teams with at least one junior is 164."
+          - problem: "A dessert box of 4 items is chosen from 7 cakes and 6 pies. How many boxes include at least one pie?"
+            answer: "680"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "All boxes: \\binom{13}{4} = 715. All-cake boxes: \\binom{7}{4} = 35. Complement rule: 715 - 35 = 680. The number of boxes with at least one pie is 680."
         constraints: "two groups; committee size 2-4; the complement is a single all-one-group count"
     diagnostic_exemplar:
       problem: 'Choose $3$ books from $5$ novels and $3$ biographies. How many selections include at least one biography?'
@@ -1013,6 +1029,22 @@ topics:
           - problem: 'Row $5$ of Pascal''s triangle is?'
             answer: '$1, 5, 10, 10, 5, 1$'
             solution_sketch: 'Add adjacent entries of row $4$: $1, 1+4, 4+6, 6+4, 4+1, 1$.'
+          - problem: "Start with row 0, which is 1. Use the addition rule to build each next row. Give row 6."
+            answer: "1, 6, 15, 20, 15, 6, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Start with row 0: 1. By the addition rule, row 5 is 1, 5, 10, 10, 5, 1. Adding adjacent entries of row 5 gives 1, 6, 15, 20, 15, 6, 1. So row 6 is 1, 6, 15, 20, 15, 6, 1."
+          - problem: "Start with row 0, which is 1. Use the addition rule to build each next row. Give row 7."
+            answer: "1, 7, 21, 35, 35, 21, 7, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Start with row 0: 1. By the addition rule, row 6 is 1, 6, 15, 20, 15, 6, 1. Adding adjacent entries of row 6 gives 1, 7, 21, 35, 35, 21, 7, 1. So row 7 is 1, 7, 21, 35, 35, 21, 7, 1."
+          - problem: "In row 6, the entries in positions 2 and 3 are 15 and 20. Find the entry in position 3 of row 7 using the addition rule, with positions numbered from 0."
+            answer: "35"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the addition rule, the entry in position 3 of row 7 is the sum of the entries in positions 2 and 3 of row 6. Those entries are 15 and 20, so the sum is 15 + 20 = 35. The entry is 35."
+          - problem: "In row 5, the entries in positions 2 and 3 are 10 and 10. Find the entry in position 3 of row 6 using the addition rule, with positions numbered from 0."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the addition rule, the entry in position 3 of row 6 is the sum of the entries in positions 2 and 3 of row 5. Those entries are 10 and 10, so the sum is 10 + 10 = 20. The entry is 20."
         constraints: "rows 0 through 7 only"
       - id: kp2
         name: "Entries as binomial coefficients"
@@ -1024,6 +1056,22 @@ topics:
           - problem: 'Entry $k$ of row $n$ of Pascal''s triangle is $\binom{n}{k}$. What is the value of the entry in row $7$, position $3$ (positions numbered from $0$)?'
             answer: "35"
             solution_sketch: 'Entry $k$ of row $n$ is $\binom{n}{k}$; $\binom{7}{3} = \frac{7 \cdot 6 \cdot 5}{6} = 35$.'
+          - problem: "Row 8 of Pascal's triangle is built from the rule that position k of row n equals C(n,k), with positions numbered from 0. Find the entry in position 4 of row 8."
+            answer: "70"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The entry is the binomial coefficient C(8,4), by the Pascal entry rule that position k of row n equals C(n,k). Expand C(8,4) as (8*7*6*5)/(4*3*2*1). The product is 1680/24 = 70. The entry in position 4 of row 8 is 70."
+          - problem: "In Pascal's triangle, the entry in row 5 at position 3 equals the number of ways to choose 3 items from 5. Compute that entry value."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The entry is C(5,3), from the rule that position k of row n equals C(n,k). Expand C(5,3) as (5*4*3)/(3*2*1). The product is 60/6 = 10. The entry value is 10."
+          - problem: "The number at position k of row n of Pascal's triangle is C(n,k). Compute the value of C(8,2)."
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is C(8,2), by the rule that position k of row n is C(n,k). Expand C(8,2) as (8*7)/(2*1). The product is 56/2 = 28. The value of C(8,2) is 28."
+          - problem: "For Pascal's triangle, the entry at row 6 and position 3 is a binomial coefficient. Give its value, with positions counted from 0."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The entry is C(6,3), by the Pascal entry rule. Expand C(6,3) as (6*5*4)/(3*2*1). The product is 120/6 = 20. The entry at row 6, position 3 is 20."
         constraints: "rows 0-8; identify entry k of row n as C(n,k)"
       - id: kp3
         name: "Row sums and symmetry"
@@ -1035,6 +1083,22 @@ topics:
           - problem: 'Row $6$ reads $1, 6, 15, 20, 15, 6, 1$ — a palindrome. Use the symmetry $\binom{n}{k} = \binom{n}{n-k}$ to give $\binom{6}{4}$.'
             answer: "15"
             solution_sketch: '$\binom{6}{4} = \binom{6}{2} = 15$ — the third entry of the row, read from either end.'
+          - problem: "Row 4 of Pascal's triangle is 1, 4, 6, 4, 1. What is the sum of the entries in row 4?"
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full row for n=4 is 1, 4, 6, 4, 1. By the row-sum rule, row n sums to 2^n. Since 2^4 = 16, the answer is 16."
+          - problem: "Use the symmetry identity C(n,k) = C(n,n-k). Find the value of C(7,5)."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full row for n=7 is 1, 7, 21, 35, 35, 21, 7, 1. By the symmetry identity C(n,k)=C(n,n-k), C(7,5)=C(7,2). The third entry from the left is 21, so the answer is 21."
+          - problem: "A row of Pascal's triangle has 9 entries and the row index is 8. Determine the sum of the entries in that row."
+            answer: "256"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full row for n=8 is 1, 8, 28, 56, 70, 56, 28, 8, 1. By the row-sum rule, row n sums to 2^n. Since 2^8 = 256, the answer is 256."
+          - problem: "Use the symmetry identity C(n,k) = C(n,n-k). Evaluate C(8,6)."
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full row for n=8 is 1, 8, 28, 56, 70, 56, 28, 8, 1. By the symmetry identity C(n,k)=C(n,n-k), C(8,6)=C(8,2). The third entry from the left is 28, so the answer is 28."
         constraints: "row sums for rows 3-8; symmetry applied via the C(n,k) = C(n,n-k) identity"
     diagnostic_exemplar:
       problem: 'Give (the entry of Pascal''s triangle in row $7$, position $2$, positions numbered from $0$; the sum of all entries in row $7$) as an ordered pair.'
