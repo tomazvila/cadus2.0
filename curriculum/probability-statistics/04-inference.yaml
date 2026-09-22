@@ -244,10 +244,30 @@ topics:
         name: "Treatments, control, and random assignment"
         key_prerequisites: [sampling-methods-bias]
         exemplars:
-          - problem: 'Sixty plants are randomly split: half get a new fertilizer, half get none. Identify the treatment group and the control group.'
-            answer: 'Treatment: the fertilized half; control: the unfertilized half.'
-          - problem: 'What is the purpose of giving the control group a placebo?'
-            answer: 'To keep the groups'' expectations equal, so any difference is due to the treatment itself.'
+          - problem: "A gardener tests a new liquid plant food on pepper seedlings. Forty seedlings are split by a coin flip into two groups of equal size. The seedlings in Group A get the plant food, and the seedlings in Group B get water only. Which group is the treatment group, and how many seedlings are in it?"
+            answer: "treatment = A; count = 20"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "treatment"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Two-group design: a coin flip randomly assigns 40 seedlings into two equal groups, with Group A on the plant food and Group B on water only. Role rule: the group that receives the imposed condition is the treatment group, and Group B is the control because it gets no plant food, so the wrong option B swaps the roles. Equal-split rule: each group holds 40/2 = 20 seedlings. The answer is treatment = A; count = 20."
+          - problem: "A pharmacy trial tests a new migraine tablet. Eighty volunteers are randomly split into two groups. One group takes the new tablet, and the other takes an identical-looking sugar tablet that has no medicine. Select the main purpose of giving the sugar tablet to the second group."
+            answer: "To keep what subjects expect the same"
+            answer_contract: {"kind": "label", "options": [["To keep what subjects expect the same"], ["To raise the count of participants"], ["To make the new drug act faster"], ["To cut the cost of running the study"]]}
+            solution_sketch: "Placebo rule: an inert look-alike keeps beliefs and expectations the same in both groups, so any difference in outcomes points to the active tablet itself, and the sugar tablet carries no medicine. The wrong option 'To make the new drug act faster' is false because an inert tablet cannot change chemistry; 'To raise the count of participants' is false because a look-alike tablet does not recruit anyone; 'To cut the cost of running the study' is false because preparing an extra tablet adds work, not savings. The answer is To keep what subjects expect the same."
+          - problem: "A soccer coach tests a new warm-up routine. Thirty players volunteer, and the coach lets each player choose: 14 players pick the new routine and 16 players stay with the usual routine. How many of these three design elements are present: a treatment group, a control group, and random assignment?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Two-group design with self-selection: the 14 players on the new routine and the 16 players on the usual routine form the two compared groups. Role rule: the group receiving the imposed routine is the treatment group, and the group kept on the usual routine is the control group, so both elements are present. Random assignment rule: the groups must be formed by a chance mechanism, but each player chose freely, so that element is absent. Two elements are present. The answer is 2."
+          - problem: "A trainer tests a new protein bar against a new protein shake. 25 athletes get the bar and 25 athletes get the shake, assigned by the alphabetical order of their names. How many of these three design elements are present: a treatment group, a control group, and random assignment?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Two-group design: 25 athletes take the bar and 25 athletes take the shake, split by the alphabetical order of names. Treatment rule: the bar group receives an imposed condition, so a treatment group is present. Control rule: a control group stays on the standard condition or gets no product, but both groups get a new product, so no control group exists. Random assignment rule: alphabetical order is a fixed rule, not a chance mechanism, so random assignment is absent. Only one element is present. The answer is 1."
+          - problem: "A swim coach tests a new recovery drink with her 20 swimmers. She puts her 12 favorite swimmers on the new drink, and the rest drink plain water. State how the two groups were formed, and give the number of swimmers in the control group."
+            answer: "formation = choice; control = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["chance"], ["choice"]]}, "name": "formation"}, {"contract": {"kind": "exact"}, "name": "control"}]}
+            solution_sketch: "Two-group design: 12 favorite swimmers take the new drink and the remaining swimmers drink plain water. Random assignment rule: the groups must be formed by a chance mechanism such as a coin flip or a lottery; picking favorites is a deliberate act, so the formation is choice and the option 'chance' names the wrong mechanism. Control rule: the control group is the group without the new drink, and it holds 20 - 12 = 8 swimmers. The answer is formation = choice; control = 8."
+          - problem: "In a supplement trial, 60 mice are split by a coin flip: 30 mice get the new supplement and 30 mice get standard feed. Judge these claims. Claim one: the supplement group is the treatment group. Claim two: the standard-feed group is the control group. Claim three: the coin flip guarantees that the two groups match exactly on every lurking variable. How many of the claims are correct?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Two-group design: a coin flip randomly assigns 60 mice, 30 to the new supplement and 30 to standard feed. Role rule: the group receiving the supplement is the treatment group, and the group kept on the standard feed is the control group, so claims one and two are correct. Random assignment rule: chance balances lurking variables on average but never guarantees an exact match, so claim three is false. Correct claims: claims one and two, which is 2 claims. The answer is 2."
         constraints: "two-group designs; identify roles or justify a design element"
       - id: kp3
         name: "Confounding and causation"
@@ -415,6 +435,22 @@ topics:
           - problem: 'Marks (out of $10$) are normal with mean $6.5$ and SD $1$. What proportion fall below $5.5$? Give a decimal.'
             answer: "0.16"
             solution_sketch: '$5.5 = \mu - 1\sigma$; the area outside $\pm 1\sigma$ is $0.32$, so $0.16$ in the lower tail.'
+          - problem: "Daily high temperatures in a town in July are normal with mean 28 degrees and standard deviation 2 degrees. What proportion of days have a high below 30 degrees? Give the answer to 2 decimals as a decimal proportion."
+            answer: "0.84"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The cutoff 30 is one standard deviation above the mean: 28 + 2 = 30. Empirical rule: the area within one standard deviation of the mean is 0.68, so the area outside is 0.32. Symmetry: the outside area splits evenly, so the lower tail is 0.16. Complement rule: the area below 30 is the lower tail plus the central area, 0.16 + 0.68 = 0.84. The answer is 0.84."
+          - problem: "The waiting time at a walk-in clinic is normal with mean 40 minutes and standard deviation 6 minutes. What proportion of patients wait more than 46 minutes? Give the answer to 2 decimals as a decimal proportion."
+            answer: "0.16"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The cutoff 46 is one standard deviation above the mean: 40 + 6 = 46. Empirical rule: the area within one standard deviation of the mean is 0.68, so the area outside is 0.32. Symmetry: the outside area splits evenly into two tails, so the upper tail is 0.16. The area above 46 is that upper tail. The answer is 0.16."
+          - problem: "A rice company fills bags with a normal fill weight, mean 1000 g and standard deviation 25 g. What proportion of bags weigh more than 950 g? Give the answer to 2 decimals as a decimal proportion."
+            answer: "0.98"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The cutoff 950 is two standard deviations below the mean: 1000 - 2*25 = 950. Empirical rule: the area within two standard deviations of the mean is 0.95, so the area outside is 0.05. Symmetry: the outside area splits evenly, so the lower tail is 0.025. Complement rule: the area above 950 is 1 - 0.025 = 0.975, which to 2 decimals is 0.98. The answer is 0.98."
+          - problem: "The number of charge cycles of a phone battery is normal with mean 500 cycles and standard deviation 20 cycles. What proportion of batteries survive more than 440 cycles? Give the answer to 3 decimals as a decimal proportion."
+            answer: "0.999"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "The cutoff 440 is three standard deviations below the mean: 500 - 3*20 = 440. Empirical rule: the area within three standard deviations of the mean is 0.997, so the area outside is 0.003. Symmetry: the outside area splits evenly, so the lower tail is 0.0015. Complement rule: the area above 440 is 1 - 0.0015 = 0.9985, which to 3 decimals is 0.999. The answer is 0.999."
         constraints: "cut points at whole-sigma marks; use symmetry to halve tail areas; area answers are decimal proportions"
       - id: kp2
         name: "Combining regions and percentiles"
@@ -597,21 +633,59 @@ topics:
         name: "The Central Limit Theorem"
         key_prerequisites: [normal-distribution]
         exemplars:
-          - problem: 'A population is skewed. What does the CLT say about the shape of the distribution of $\bar{x}$ for large $n$?'
-            answer: 'It is approximately normal.'
-          - problem: 'When can the distribution of $\bar{x}$ be treated as normal?'
-            answer: 'When the population itself is normal, or when $n$ is large (roughly $n \ge 30$).'
+          - problem: "A population has a long right tail. A researcher takes a sample of n = 100. State the shape the central limit theorem predicts for the distribution of the sample mean, and give the number of observations by which this sample size exceeds the usual rule-of-thumb threshold."
+            answer: "shape = normal; extra = 70"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["normal"], ["skewed"]]}, "name": "shape"}, {"contract": {"kind": "exact"}, "name": "extra"}]}
+            solution_sketch: "Step 1 (CLT shape rule): the population is not a bell curve, but n = 100 is at least the usual threshold of 30, so the distribution of the sample mean is approximately normal. Step 2 (threshold gap): 100 - 30 = 70 observations beyond the threshold. The wrong option skewed is wrong because the large sample size brings the central limit theorem into force. The answer is shape = normal; extra = 70."
+          - problem: "A population follows an exact bell curve with mean 50 and standard deviation 8. A sample of n = 16 is taken. State the shape of the distribution of the sample mean, and give its standard error."
+            answer: "shape = normal; se = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["normal"], ["skewed"]]}, "name": "shape"}, {"contract": {"kind": "exact"}, "name": "se"}]}
+            solution_sketch: "Step 1 (normal population case): because the population itself is an exact bell curve, the distribution of the sample mean is exactly normal for every sample size, so no large-n condition is needed. Step 2 (standard error): SE = 8/sqrt(16) = 8/4 = 2. The wrong option skewed is wrong because the population shape carries over exactly, whatever the sample size. The answer is shape = normal; se = 2."
+          - problem: "A population of waiting times has a long right tail. A student takes a sample of only n = 18. State the shape the central limit theorem predicts for the distribution of the sample mean at this size, and give the number of observations by which the sample falls short of the usual rule-of-thumb threshold."
+            answer: "shape = skewed; short = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["normal"], ["skewed"]]}, "name": "shape"}, {"contract": {"kind": "exact"}, "name": "short"}]}
+            solution_sketch: "Step 1 (CLT condition): n = 18 is below the usual threshold of 30 and the population is not a bell curve, so the theorem does not yet force an approximately normal shape; the mean's distribution mirrors the long-tailed population. Step 2 (shortfall): 30 - 18 = 12 observations below the threshold. The wrong option normal is wrong because the sample is too small for the theorem to apply. The answer is shape = skewed; short = 12."
+          - problem: "A population has an unknown, irregular histogram. An analyst takes a sample of n = 52. State whether the usual rule-of-thumb condition for the central limit theorem is satisfied, and give the number of observations by which the sample clears the threshold."
+            answer: "verdict = met; margin = 22"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["met"], ["unmet"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "margin"}]}
+            solution_sketch: "Step 1 (rule-of-thumb condition): the population shape is unknown and not a bell curve, so the sample must reach the usual threshold n = 30. Step 2 (check and margin): n = 52 is at least 30, so the condition is met, and 52 - 30 = 22 observations clear it. The wrong option unmet comes from confusing the unknown population shape with the sample size condition. The answer is verdict = met; margin = 22."
+          - problem: "A population of invoice amounts has a long right tail. A manager wants the sample to clear the usual rule-of-thumb size of 30 by at least 12 observations. Find the smallest sample size the manager can take."
+            answer: "42"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (threshold rule): the usual rule-of-thumb sample size for the central limit theorem is 30 when the population is not a bell curve. Step 2 (smallest size with spare): the manager wants at least 12 observations beyond 30, so the smallest size is 30 + 12. The answer is 42."
+          - problem: "A population of commute distances has a long right tail with mean 45 and standard deviation 27. A sample of n = 81 is taken, and the central limit theorem lets the distribution of the sample mean be treated as a bell curve at this size. Give the number of observations by which the sample size exceeds the usual rule-of-thumb threshold, and give the standard error of the sample mean."
+            answer: "over = 51; se = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "over"}, {"contract": {"kind": "exact"}, "name": "se"}]}
+            solution_sketch: "Full result: over = 51; se = 3. Step 1 (threshold gap): the usual rule-of-thumb size is 30, and 81 - 30 = 51 observations beyond it, so the central limit theorem applies. Step 2 (standard error): SE = 27/sqrt(81) = 27/9 = 3. The answer is over = 51; se = 3."
         constraints: "conceptual items; answers name the shape and the conditions"
       - id: kp2
         name: "Probabilities for the sample mean"
         key_prerequisites: [normal-distribution, standard-error]
         exemplars:
-          - problem: 'A population has $\mu = 50$, $\sigma = 8$. For $n = 16$, find $P(48 \le \bar{x} \le 52)$ using the empirical rule.'
-            answer: "68%"
-            solution_sketch: '$\operatorname{SE} = 8/4 = 2$, so $48$ to $52$ is $\mu \pm 1$ SE: about $68\%$.'
-          - problem: 'Same population, $n = 16$. Find $P(\bar{x} > 54)$.'
-            answer: "2.5%"
-            solution_sketch: '$54 = \mu + 2 \cdot \operatorname{SE}$; the area above $+2$ SE is about $2.5\%$.'
+          - problem: "A population has mean 100 and standard deviation 15. For random samples of size 25, give the probability that the sample mean is between 97 and 103 as a decimal rounded to 2 decimals."
+            answer: "0.68"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Full object: mean 100, standard deviation 15, sample size 25. Step 1 standard error rule: SE = 15/sqrt(25) = 3. Step 2 empirical rule: 97 to 103 is mean plus or minus 1 SE, which covers about 68%. The probability is 0.68."
+          - problem: "A dairy fills bottles with mean volume 250 mL and standard deviation 20 mL. For random samples of 25 bottles, give the probability that the sample mean is less than 258 mL as a decimal rounded to 2 decimals."
+            answer: "0.98"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Full object: mean 250, standard deviation 20, sample size 25. Step 1 standard error rule: SE = 20/sqrt(25) = 4. Step 2 empirical rule: 258 is 250 plus 2 SE, and the area below mean plus 2 SE is 50% plus 47.5%, which is 97.5%. The probability is 0.98."
+          - problem: "A population has mean 150 and standard deviation 10. For random samples of size 25, give the probability that the sample mean is less than 148 as a decimal rounded to 2 decimals."
+            answer: "0.16"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Full object: mean 150, standard deviation 10, sample size 25. Step 1 standard error rule: SE = 10/sqrt(25) = 2. Step 2 empirical rule: 148 is mean minus 1 SE, and the left tail beyond 1 SE below the mean is about 16%. The probability is 0.16."
+          - problem: "A population has mean 400 and standard deviation 30. For random samples of 100 observations, give the probability that the sample mean is between 394 and 406 as a decimal rounded to 2 decimals."
+            answer: "0.95"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Full object: mean 400, standard deviation 30, sample size 100. Step 1 standard error rule: SE = 30/sqrt(100) = 3. Step 2 empirical rule: 394 to 406 is mean plus or minus 2 SE, which covers about 95%. The probability is 0.95."
+          - problem: "A population has mean 75 and standard deviation 27. For random samples of size 81, give the probability that the sample mean is either less than 66 or greater than 84, as a decimal rounded to 3 decimals."
+            answer: "0.003"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Full object: mean 75, standard deviation 27, sample size 81. Step 1 standard error rule: SE = 27/sqrt(81) = 3. Step 2 empirical rule: 66 and 84 are 3 SE from the mean in each direction, and values outside mean plus or minus 3 SE have total probability about 0.3%. The probability is 0.003."
+          - problem: "A population has mean 120 and standard deviation 18. For random samples of size 9, give the probability that the sample mean is less than 126 as a decimal rounded to 2 decimals."
+            answer: "0.84"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Full object: mean 120, standard deviation 18, sample size 9. Step 1 standard error rule: SE = 18/sqrt(9) = 6. Step 2 empirical rule: 126 is mean plus 1 SE, and the area below mean plus 1 SE is 50% plus 34%, about 84%. The probability is 0.84."
         constraints: "cut points at whole multiples of the SE; empirical-rule answers only"
       - id: kp3
         name: "Is a sample mean surprising?"
@@ -706,6 +780,22 @@ topics:
           - problem: 'With $p = 1/5$ and $n = 100$, find the standard error of $\hat{p}$.'
             answer: "1/25"
             solution_sketch: '$\sqrt{\frac{(1/5)(4/5)}{100}} = \sqrt{\frac{4/25}{100}} = \frac{2/5}{10} = \frac{1}{25}$.'
+          - problem: "A factory produces light bulbs, and $3/4$ of them pass inspection. A quality inspector tests $12$ bulbs and records the proportion that pass. Compute the standard error of the sample proportion, as a fraction."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, standard error rule: $\\operatorname{SE} = \\sqrt{p(1-p)/n}$. Step 2, substitute the full object $p = 3/4$, $n = 12$: $p(1-p) = (3/4)(1/4) = 3/16$, and $(3/16)/12 = 3/192 = 1/64$. Step 3, take the square root: $\\sqrt{1/64} = 1/8$. The standard error is 1/8."
+          - problem: "A fair coin is flipped $36$ times and the proportion of heads is recorded. Find the standard error of the sample proportion, as a fraction."
+            answer: "1/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, standard error rule: $\\operatorname{SE} = \\sqrt{p(1-p)/n}$ with $p = 1/2$ for a fair coin. Step 2, substitute the full object $p = 1/2$, $n = 36$: $p(1-p) = 1/4$, and $(1/4)/36 = 1/144$. Step 3, $\\sqrt{1/144} = 1/12$. The standard error is 1/12."
+          - problem: "A pollster studies a population with proportion $p = 1/3$ and wants the sample proportion to have a standard error of $1/18$. Find the sample size $n$ that achieves this."
+            answer: "72"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, set up the standard error equation: $\\sqrt{p(1-p)/n} = 1/18$ with $p = 1/3$, so $p(1-p) = 2/9$. Step 2, square both sides: $(2/9)/n = 1/324$, so $n = 2 \\cdot 324/9 = 72$. Step 3, check: $(2/9)/72 = 1/324$, whose square root is $1/18$. The sample size is 72."
+          - problem: "A sample of $18$ draws from a population with unknown proportion $p$ has standard error $1/9$ for the sample proportion, and $p$ is greater than $1/2$. Find $p$, as a fraction."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, set up the standard error equation: $\\sqrt{p(1-p)/18} = 1/9$. Step 2, square both sides: $p(1-p)/18 = 1/81$, so $p(1-p) = 18/81 = 2/9$. Step 3, solve $9p^2 - 9p + 2 = 0$, which factors as $(3p-1)(3p-2) = 0$, giving $p = 1/3$ or $p = 2/3$. Step 4, since $p > 1/2$, take the larger root. The value is 2/3."
         constraints: "p(1-p)/n is a perfect square of a fraction; answers exact fractions"
       - id: kp3
         name: "Empirical rule for p-hat"
