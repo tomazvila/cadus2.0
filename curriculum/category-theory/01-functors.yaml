@@ -519,12 +519,34 @@ topics:
         key_prerequisites: [functors]
         constraints: "Prove the variance of a composite by expanding the composition law symbolically — the two orders of reversal must be tracked step by step, never asserted."
         exemplars:
-          - problem: "Show that the composite of two contravariant functors is covariant."
-            answer: "Two order reversals cancel."
-            solution_sketch: "Let $F,G$ be contravariant, so $G(g\\circ f)=Gf\\circ Gg$ and $F$ reverses order too. Then $FG(g\\circ f)=F(Gf\\circ Gg)=F(Gg)\\circ F(Gf)=FG(g)\\circ FG(f)$, which is the covariant composition law; identities are preserved, so $F\\circ G$ is covariant."
-          - problem: "If $F$ is covariant and $G$ contravariant, what is the variance of $F\\circ G$?"
-            answer: "Contravariant."
-            solution_sketch: "$FG(g\\circ f)=F(Gf\\circ Gg)=F(Gf)\\circ F(Gg)=FG(f)\\circ FG(g)$, reversing order — contravariant. Covariant $\\circ$ contravariant $=$ contravariant."
+          - problem: "Let $F$ and $G$ be contravariant functors. In the expansion of $(F\\circ G)(g\\circ f)$, after applying $G$ to $g\\circ f$, the composite becomes $Gf\\circ Gg$. How many order reversals have occurred at this intermediate step?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: apply $G$. Since $G$ is contravariant, $G(g\\circ f)=Gf\\circ Gg$; the order of $f$ and $g$ has reversed once. Step 2: count reversals up to this point. The original order is $g\\circ f$; the intermediate order is $Gf\\circ Gg$, so one reversal. The answer is 1."
+          - problem: "Let $F$ preserve the order of composition and $G$ reverse it. Expand $(F\\circ G)(g\\circ f)$ and determine the variance of $F\\circ G$. Select the variance."
+            answer: "contravariant"
+            answer_contract: {"kind": "label", "options": [["covariant"], ["contravariant"], ["mixed"], ["undefined"]]}
+            solution_sketch: "Step 1: apply $G$. Since $G$ reverses order, $G(g\\circ f)=Gf\\circ Gg$. Step 2: apply $F$. Since $F$ preserves order, $F(Gf\\circ Gg)=F(Gf)\\circ F(Gg)$, so $(F\\circ G)(g\\circ f)=FG(f)\\circ FG(g)$. The option covariant is the error of forgetting that the single reversal by $G$ still stands after $F$ preserves order. The option mixed is the error of thinking a composite can carry two variances at once. The option undefined is the error of thinking functors of mixed variance do not compose. Exactly one reversal remains, so the answer is contravariant."
+          - problem: "Let $F$, $G$, and $H$ be contravariant functors. In the full expansion of $(F\\circ G\\circ H)(g\\circ f)$, how many order reversals occur in total?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: apply $H$. Since $H$ is contravariant, $H(g\\circ f)=Hf\\circ Hg$, one reversal. Step 2: apply $G$. Since $G$ is contravariant, $G(Hf\\circ Hg)=G(Hg)\\circ G(Hf)$, a second reversal. Step 3: apply $F$. Since $F$ is contravariant, $F(G(Hg)\\circ G(Hf))=F(G(Hf))\\circ F(G(Hg))$, a third reversal. The answer is 3."
+          - problem: "Let $F$ be contravariant, $G$ covariant, and $H$ contravariant. In the expansion of $(F\\circ G\\circ H)(g\\circ f)$, how many order reversals occur in total?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: apply $H$. Since $H$ is contravariant, $H(g\\circ f)=Hf\\circ Hg$, one reversal. Step 2: apply $G$. Since $G$ is covariant, $G(Hf\\circ Hg)=G(Hf)\\circ G(Hg)$, no new reversal. Step 3: apply $F$. Since $F$ is contravariant, $F(G(Hf)\\circ G(Hg))=F(G(Hg))\\circ F(G(Hf))$, a second reversal. The answer is 2."
+          - problem: "Let $F$, $G$, $H$, and $K$ be contravariant functors. In the full expansion of $(F\\circ G\\circ H\\circ K)(g\\circ f)$, how many order reversals occur in total?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: apply $K$. Since $K$ is contravariant, $K(g\\circ f)=Kf\\circ Kg$, one reversal. Step 2: apply $H$, giving a second reversal. Step 3: apply $G$, giving a third reversal. Step 4: apply $F$, giving a fourth reversal. The answer is 4."
+          - problem: "Claim: the composite of two order-reversing functors is order-reversing. Step 1: Let $F$ and $G$ be order-reversing. Step 2: $G(g\\circ f)=Gf\\circ Gg$. Step 3: $F(Gf\\circ Gg)=F(Gf)\\circ F(Gg)$. Step 4: Therefore $(F\\circ G)(g\\circ f)=FG(f)\\circ FG(g)$, so $F\\circ G$ is order-reversing. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The option Step 1 is wrong because setting the hypotheses is valid. The option Step 2 is wrong because an order-reversing functor does send $g\\circ f$ to $Gf\\circ Gg$. Step 3 is false: since $F$ is order-reversing, $F(Gf\\circ Gg)=F(Gg)\\circ F(Gf)$, not $F(Gf)\\circ F(Gg)$. The option Step 4 would follow from the corrected Step 3, so it is not the first failure. The answer is Step 3."
+          - problem: "Write the full proof: the composite of three contravariant functors is contravariant. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let $F$, $G$, and $H$ be contravariant functors. Step 1: expand the composite on a composable pair $f: A\\to B$ and $g: B\\to C$. Step 2: apply $H$ first. Since $H$ is contravariant, $H(g\\circ f)=Hf\\circ Hg$. Step 3: apply $G$. Since $G$ is contravariant, $G(Hf\\circ Hg)=G(Hg)\\circ G(Hf)$. Step 4: apply $F$. Since $F$ is contravariant, $F(G(Hg)\\circ G(Hf))=F(G(Hf))\\circ F(G(Hg))$. Step 5: rewrite this as $(F\\circ G\\circ H)(f)\\circ (F\\circ G\\circ H)(g)$. This reverses the order, so the composite is contravariant. Identities are preserved because each functor preserves identities. Therefore $F\\circ G\\circ H$ is contravariant."
       - id: kp3
         name: Reading off variance in examples
         key_prerequisites: [functors]
