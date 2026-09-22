@@ -126,14 +126,30 @@ topics:
         key_prerequisites: [vertical-horizontal-asymptotes]
         constraints: "slant iff numerator degree = denominator degree + 1"
         exemplars:
-          - problem: 'Does $f(x) = \frac{x^2 + 1}{x - 1}$ have a slant asymptote?'
-            answer: "yes"
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Numerator degree is exactly one more than denominator degree.'
-          - problem: 'Does $f(x) = \frac{x^3}{x - 1}$ have a slant asymptote?'
-            answer: "no"
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'The degree gap is $2$, so the quotient is quadratic, not linear.'
+          - problem: "Consider f(x) = (x^2 + 3x + 5)/(x - 2). State whether its graph has a slant asymptote, and give the degree gap (numerator degree minus denominator degree)."
+            answer: "verdict = present; gap = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["present"], ["absent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "gap"}]}
+            solution_sketch: "Step 1: The numerator x^2 + 3x + 5 has degree 2. Step 2: The denominator x - 2 has degree 1. Step 3: Apply the slant-asymptote degree rule: a slant asymptote exists exactly when numerator degree = denominator degree + 1, so the gap is 2 - 1 = 1. The option absent would be wrong because the gap is exactly 1. The verdict is present and the gap is 1. verdict = present; gap = 1."
+          - problem: "Consider f(x) = (x^4 + 3)/(x^2 + 1). State whether its graph has a slant asymptote, and give the degree gap (numerator degree minus denominator degree)."
+            answer: "verdict = absent; gap = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["present"], ["absent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "gap"}]}
+            solution_sketch: "Step 1: The numerator x^4 + 3 has degree 4. Step 2: The denominator x^2 + 1 has degree 2. Step 3: Apply the slant-asymptote degree rule; the gap is 4 - 2 = 2, which is not 1, so the quotient would be quadratic, not linear. The option present would be wrong because the gap is 2, not 1. The verdict is absent and the gap is 2. verdict = absent; gap = 2."
+          - problem: "For f(x) = (x^5 + 2x)/(x^n + 1), find the integer n that makes the graph have a slant asymptote."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The numerator x^5 + 2x has degree 5. Step 2: Apply the slant-asymptote degree rule: the denominator degree must be exactly one less than the numerator degree. Step 3: Solve n = 5 - 1 = 4. The answer is 4."
+          - problem: "A company models cost by C(x) = (2x^3 + x)/(x^2 - 1) thousand dollars for x thousand units. State whether the graph of C has a slant asymptote, and give the degree gap (numerator degree minus denominator degree)."
+            answer: "verdict = present; gap = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["present"], ["absent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "gap"}]}
+            solution_sketch: "Step 1: The numerator 2x^3 + x has degree 3. Step 2: The denominator x^2 - 1 has degree 2. Step 3: Apply the slant-asymptote degree rule; the gap is 3 - 2 = 1, so a slant asymptote exists. The option absent would be wrong because the gap is exactly 1. The verdict is present and the gap is 1. verdict = present; gap = 1."
+          - problem: "Consider f(x) = (3x^2 + 1)/(x^3 + x). State whether its graph has a slant asymptote, and give the degree gap (numerator degree minus denominator degree)."
+            answer: "verdict = absent; gap = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["present"], ["absent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "gap"}]}
+            solution_sketch: "Step 1: The numerator 3x^2 + 1 has degree 2. Step 2: The denominator x^3 + x has degree 3. Step 3: Apply the slant-asymptote degree rule; the gap is 2 - 3 = -1, so the numerator degree is smaller and the graph has a horizontal asymptote instead. The option present would be wrong because the gap is -1, not 1. The verdict is absent and the gap is -1. verdict = absent; gap = -1."
+          - problem: "A rational function has numerator degree 9, and its graph has a slant asymptote. Find the degree of its denominator."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Apply the slant-asymptote degree rule: numerator degree = denominator degree + 1. Step 2: Substitute the given numerator degree: 9 = d + 1. Step 3: Solve for d: d = 8. The answer is 8."
       - id: kp2
         name: Find the slant asymptote by division
         key_prerequisites: [polynomial-division]
