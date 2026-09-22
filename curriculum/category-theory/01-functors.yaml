@@ -183,23 +183,67 @@ topics:
         key_prerequisites: [function-composition-inverse]
         constraints: "Endofunctors of $\\mathbf{Set}$ built from products with a fixed set or squaring; verification is elementwise, checking both laws on an arbitrary element."
         exemplars:
-          - problem: "Fix a set $A$. Show $(-)\\times A\\colon\\mathbf{Set}\\to\\mathbf{Set}$, $f\\mapsto f\\times 1_A$, is a functor."
-            answer: "It preserves identities and composition componentwise."
-            solution_sketch: "On objects $X\\mapsto X\\times A$; on $f\\colon X\\to Y$, $(f\\times 1_A)(x,a)=(f(x),a)$. Then $1_X\\times 1_A=1_{X\\times A}$ and $(g\\circ f)\\times 1_A$ sends $(x,a)\\mapsto(g(f(x)),a)=(g\\times 1_A)\\big((f\\times 1_A)(x,a)\\big)$, so composition is preserved. Hence $(-)\\times A$ is a functor."
-          - problem: "Is $X\\mapsto X\\times X$, $f\\mapsto f\\times f$, a functor $\\mathbf{Set}\\to\\mathbf{Set}$?"
-            answer: "Yes."
-            solution_sketch: "$(f\\times f)(x,y)=(f(x),f(y))$ preserves identities and, coordinatewise, composition: $(g\\circ f)\\times(g\\circ f)=(g\\times g)\\circ(f\\times f)$. So it is a functor."
+          - problem: "Let F be the endofunctor (-) x A with A = {0, 1}: on objects F(X) = X x A, and on a function f: X -> Y it acts by F(f)(x, a) = (f(x), a). In the elementwise check of the composition law for f: X -> Y and g: Y -> Z, evaluate both sides at the element (2, 1) of X x A, where f(2) = 5 and g(5) = 8. Give the first coordinate of F(g after f)(2, 1)."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (functor rule): F sends f to f paired with the identity on A, so F(g after f)(2, 1) = (g(f(2)), 1). Step 2 (composite rule): g(f(2)) = g(5) = 8, so the left side is (8, 1). Step 3 (elementwise comparison): (F(g) after F(f))(2, 1) = F(g)(5, 1) = (8, 1), the same pair, so the law holds at this element. The first coordinate is 8."
+          - problem: "Let F be the squaring endofunctor: F(X) = X x X on objects and F(f)(x, y) = (f(x), f(y)) on a function f. In the elementwise check of the composition law, take f(1) = 4, f(2) = 3, g(3) = 7 and g(4) = 6, and evaluate the right side (F(g) after F(f)) at the element (1, 2) of X x X. Give the second coordinate of (F(g) after F(f))(1, 2)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (element rule): F(f)(1, 2) = (f(1), f(2)) = (4, 3). Step 2 (apply g): F(g)(4, 3) = (g(4), g(3)) = (6, 7). Step 3 (comparison): F(g after f)(1, 2) = (g(f(1)), g(f(2))) = (6, 7), the same pair, so the two sides agree at this element. The second coordinate is 7."
+          - problem: "A student proposes an assignment F on Set: on objects F(X) = X x X, and on a function f it acts by F(f)(x, y) = (f(x), f(x)). Check both functor laws elementwise on an arbitrary element (x, y) of X x X. How many of the two functor laws does this F satisfy?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (identity law): F(1_X)(x, y) = (x, x), which differs from (x, y) whenever x and y differ, for example at (1, 2); the identity law fails. Step 2 (composition law): F(g after f)(x, y) = (g(f(x)), g(f(x))), and (F(g) after F(f))(x, y) = F(g)(f(x), f(x)) = (g(f(x)), g(f(x))); the two sides are equal, so composition is preserved. Step 3 (count): exactly one of the two laws holds. The answer is 1."
+          - problem: "Let G be the endofunctor A x (-) with A = {0, 1}: on objects G(X) = A x X, and on a function f: X -> Y it acts by G(f)(a, x) = (a, f(x)). In the elementwise check of the composition law for f: X -> Y and g: Y -> Z, evaluate both sides at the element (1, 2) of A x X, where f(2) = 6 and g(6) = 9. Give the second coordinate of G(g after f)(1, 2)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (functor rule): G sends f to the identity on A paired with f, so G(g after f)(1, 2) = (1, g(f(2))). Step 2 (composite rule): g(f(2)) = g(6) = 9, so the left side is (1, 9). Step 3 (elementwise comparison): (G(g) after G(f))(1, 2) = G(g)(1, 6) = (1, 9), the same pair. The second coordinate is 9."
+          - problem: "Claim: the squaring assignment F, with F(X) = X x X and F(f)(x, y) = (f(x), f(y)), is a functor. Proof attempt: Step 1: for the identity 1_X, F(1_X)(x, y) = (1_X(x), 1_X(y)) = (x, y), so F(1_X) is the identity on X x X. Step 2: let f: X -> Y and g: Y -> Z, and take an arbitrary element (x, y) of X x X. Step 3: F(g after f)(x, y) = (g(f(x)), f(y)). Step 4: (F(g) after F(f))(x, y) = (g(f(x)), g(f(y))), and the two sides agree, so composition holds. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the correct elementwise identity check. Step 2 only sets up the comparison and is valid. Step 3 is the first invalid step: the second coordinate must also be composed, giving F(g after f)(x, y) = (g(f(x)), g(f(y))), not (g(f(x)), f(y)). Step 4 computes the right side correctly, but it builds on the wrong Step 3. The answer is Step 3."
+          - problem: "To verify the identity law for the endofunctor F = (-) x A elementwise, the proof must evaluate F(1_X) at an arbitrary element (x, a) of X x A, but the line F(1_X)(x, a) = ? is missing. Select the line that is true and completes the check."
+            answer: "(1_X(x), a) = (x, a)"
+            answer_contract: {"kind": "label", "options": [["(1_X(x), a) = (x, a)"], ["(1_X(a), x) = (a, x)"], ["(1_X(x), 1_X(a))"], ["(a, 1_X(x))"]]}
+            solution_sketch: "The functor acts by F(f)(x, a) = (f(x), a), so at the identity the correct line is (1_X(x), a) = (x, a). The option (1_X(a), x) swaps the roles of x and a, treating a as an element of X. The option (1_X(x), 1_X(a)) wrongly applies 1_X to a, which need not lie in X. The option (a, 1_X(x)) writes the two coordinates in the wrong order. The answer is (1_X(x), a) = (x, a)."
+          - problem: "Write the full proof: for each fixed set A, the assignment that sends an object X to X x A and a function f: X -> Y to f paired with the identity on A, acting by (x, a) maps to (f(x), a), is an endofunctor of Set, verifying both laws elementwise. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (objects): define F on objects by F(X) = X x A. Step 2 (morphisms): define F on f: X -> Y by F(f)(x, a) = (f(x), a) for every element (x, a) of X x A. Step 3 (identity law): for the identity 1_X, F(1_X)(x, a) = (1_X(x), a) = (x, a), which is exactly the value of the identity function on X x A at (x, a); hence F(1_X) is the identity on F(X) = X x A. Step 4 (composition law): for f: X -> Y and g: Y -> Z, compute F(g after f)(x, a) = (g(f(x)), a). On the other side, (F(g) after F(f))(x, a) = F(g)(F(f)(x, a)) = F(g)(f(x), a) = (g(f(x)), a). The two sides agree at every element (x, a), so F(g after f) = F(g) after F(f). Step 5 (conclusion): F preserves identities and composition, so it is an endofunctor of Set."
       - id: kp3
         name: Functors preserve isomorphisms and commuting diagrams
         key_prerequisites: [functor-definition-laws]
         constraints: "Every step must cite one of the two functor laws; never assume $F$ is injective on morphisms."
         exemplars:
-          - problem: "Prove that a functor $F$ carries isomorphisms to isomorphisms, with $(Ff)^{-1}=F(f^{-1})$."
-            answer: "$F(f^{-1})$ is a two-sided inverse of $Ff$."
-            solution_sketch: "Let $f\\colon A\\to B$ be an isomorphism with inverse $f^{-1}$. Applying $F$ to $f^{-1}\\circ f=1_A$ and using both functor laws gives $F(f^{-1})\\circ Ff=F(f^{-1}\\circ f)=F(1_A)=1_{FA}$. Symmetrically $Ff\\circ F(f^{-1})=F(1_B)=1_{FB}$. So $Ff$ is an isomorphism and, inverses being unique, $(Ff)^{-1}=F(f^{-1})$. Consequently $A\\cong B$ implies $FA\\cong FB$: no functor can distinguish isomorphic objects."
-          - problem: "Prove that a functor sends commuting diagrams to commuting diagrams, and use this to show $A\\cong B$ implies $FA\\cong FB$ for every functor $F$."
-            answer: "Any equation of composites is preserved by $F$; applying this to the two inverse equations transports the isomorphism."
-            solution_sketch: "A diagram commutes exactly when certain composites are equal. If $h=g\\circ f$ in $\\mathcal{C}$, then $Fh=F(g\\circ f)=Fg\\circ Ff$, so the image diagram commutes; the same argument applies to any equation between composites, since $F$ turns each composite into the composite of the images. Now if $A\\cong B$ via $f$ with inverse $g$, the two commuting triangles $g\\circ f=1_A$ and $f\\circ g=1_B$ are carried to $Fg\\circ Ff=1_{FA}$ and $Ff\\circ Fg=1_{FB}$, exhibiting $FA\\cong FB$."
+          - problem: "Let C be the one-object category whose morphisms are 0, 1, 2, 3, with composition given by addition modulo 4, so the identity morphism is 0. A functor F from C to C satisfies F(1) = 3. Give the value of F(3)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both functor laws govern the computation. Step 1, composition law: F(3) = F(1 + 1 + 1) = F(1) after F(1) after F(1), and composition here is addition modulo 4. Step 2: F(2) = 3 + 3 = 6 = 2, and F(3) = F(2) after F(1) gives 2 + 3 = 5 = 1. Step 3, identity law: F(0) = F(id) = id = 0, which checks the functor is well defined. The value of F(3) is 1."
+          - problem: "Let C be the category with objects 0, 1, 2; morphisms f: 0 -> 1, g: 1 -> 2, h: 0 -> 2 and the identities; the only defining equation is h = g after f. A functor F to sets has F(0) = {1, 2, 3}, F(1) = {4, 5}, F(2) = {6}, with F(f) sending 1 to 4, 2 to 5, 3 to 4, and F(g) sending 4 to 6 and 5 to 6. Give the value of F(h)(3)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, composition law: F(h) = F(g after f) = F(g) after F(f). Step 2: F(f) sends the element 3 to the element 4. Step 3: F(g) sends the element 4 to the element 6. So F(h)(3) = F(g)(F(f)(3)) = F(g)(4) = 6. The value of F(h)(3) is 6."
+          - problem: "Let C be the category with two objects A and B, morphisms f: A -> B and g: B -> A besides the identities, and defining equations g after f = id_A and f after g = id_B. Let D be the one-object category whose morphisms are 0, 1, 2, 3, 4 under addition modulo 5, identity 0. A functor F sends both objects to the single object of D, with F(f) = 2 and F(g) = 3. Give the value of F(f) after F(g)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, composition law: F(f) after F(g) = F(f after g). Step 2: f after g = id_B by the defining equation of C, so F(f after g) = F(id_B). Step 3, identity law: F(id_B) is the identity morphism of D, which is 0. Indeed 2 + 3 = 5 = 0 modulo 5. The value of F(f) after F(g) is 0."
+          - problem: "Let C be the category with objects A, B, C, D; morphisms f: A -> B, g: B -> D, h: A -> C, k: C -> D and the identities; the only defining equation is k after h = g after f, so the square commutes. Let the target be the one-object category with morphisms 0 to 6 under addition modulo 7, identity 0. A functor F has F(f) = 5, F(g) = 6 and F(h) = 2. Give the value of F(k)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, composition law: F(k after h) = F(k) after F(h), so F(k) + F(h) = F(g after f) = F(g) + F(f) modulo 7. Step 2: the right side is 6 + 5 = 11 = 4 modulo 7, and F(h) = 2. Step 3: solving F(k) + 2 = 4 gives F(k) = 2. The value of F(k) is 2."
+          - problem: "Claim: every functor F sends a commuting triangle to a commuting triangle. Step 1: the triangle commutes, so h = g after f. Step 2: apply F to both sides, giving F(g after f) = F(h). Step 3: by the composition law, F(g) after F(f) = F(h), so the image triangle commutes. Step 4: this works only because F is injective on morphisms. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 restates the hypothesis of the claim, so Step 1 is valid. Step 2 applies F to an equation between morphisms, which is always possible, so Step 2 is valid. Step 3 follows from the composition law alone, so Step 3 is valid. Step 4 is the first invalid step: it invokes injectivity of F on morphisms, which is not one of the two functor laws and is not needed, since the image equation of Step 3 already shows commutativity. The first invalid step is Step 4."
+          - problem: "A functor F carries an isomorphism f from A to B to an isomorphism. To prove that the inverse of F(f) is F applied to the inverse of f, the line ? = id_FA is missing from the proof. Select the line that the two functor laws give."
+            answer: "F(f^-1) after F(f)"
+            answer_contract: {"kind": "label", "options": [["F(f^-1) after F(f)"], ["F(f) after F(f^-1)"], ["F(f^-1) after F(f^-1)"], ["F(f) after F(f)"]]}
+            solution_sketch: "Step 1, composition law: applying F to the equation g after f = id_A, where g is the inverse of f, gives F(g) after F(f) = F(id_A). Step 2, identity law: F(id_A) = id_FA, so the missing left side is F(f^-1) after F(f). The option F(f) after F(f^-1) is the other inverse equation and yields id_FB, the identity on the wrong object. The option F(f^-1) after F(f^-1) composes the image of the inverse with itself, which no functor law produces here. The option F(f) after F(f) composes the image of f with itself and is also not an equation of the proof. The missing line is F(f^-1) after F(f)."
+          - problem: "Write the full proof: for every functor F, if f is an isomorphism in the source category then F(f) is an isomorphism with inverse F applied to the inverse of f, and F sends commuting diagrams to commuting diagrams. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: let f: A -> B be an isomorphism with inverse g, so g after f = id_A and f after g = id_B. Step 2, composition law and identity law: applying F to the first equation gives F(g) after F(f) = F(g after f) = F(id_A) = id_FA. Step 3, the same two laws on the second equation give F(f) after F(g) = F(f after g) = F(id_B) = id_FB. Step 4: the two displayed equations exhibit F(g) as a two-sided inverse of F(f), so F(f) is an isomorphism with inverse F(g); no injectivity of F on morphisms is assumed or needed, since both equations follow from the two functor laws. Step 5: a diagram commutes exactly when certain composites are equal; for each such equation h = g after f, the composition law gives F(h) = F(g after f) = F(g) after F(f), so the image equation holds and the image diagram commutes. Both claims are proved, using only the composition law and the identity law."
     diagnostic_exemplar:
       problem: "Prove that every functor $F$ carries isomorphisms to isomorphisms, and that $(Ff)^{-1}=F(f^{-1})$."
       answer: "Let $f\\colon A\\to B$ have inverse $f^{-1}$. Applying $F$ to $f^{-1}\\circ f=1_A$ and using both functor laws: $F(f^{-1})\\circ Ff=F(f^{-1}\\circ f)=F(1_A)=1_{FA}$. Symmetrically, applying $F$ to $f\\circ f^{-1}=1_B$ gives $Ff\\circ F(f^{-1})=1_{FB}$. So $F(f^{-1})$ is a two-sided inverse of $Ff$; hence $Ff$ is an isomorphism and, inverses being unique, $(Ff)^{-1}=F(f^{-1})$."
@@ -241,12 +285,34 @@ topics:
         key_prerequisites: [functors]
         constraints: "Check the object part, the morphism part, and both laws separately."
         exemplars:
-          - problem: "Given functors $F\\colon\\mathcal{B}\\to\\mathcal{C}$ and $G\\colon\\mathcal{C}\\to\\mathcal{D}$, prove that $GF$ (defined by $(GF)A=G(FA)$ and $(GF)f=G(Ff)$) is a functor."
-            answer: "Both laws follow by applying the laws for $F$ and then for $G$."
-            solution_sketch: "Types: for $f\\colon A\\to B$ in $\\mathcal{B}$, $Ff\\colon FA\\to FB$ and so $G(Ff)\\colon GFA\\to GFB$, as required. Identities: $(GF)(1_A)=G(F1_A)=G(1_{FA})=1_{GFA}$. Composites: $(GF)(g\\circ f)=G(F(g\\circ f))=G(Fg\\circ Ff)=G(Fg)\\circ G(Ff)=(GF)g\\circ(GF)f$. Both laws hold, so $GF\\colon\\mathcal{B}\\to\\mathcal{D}$ is a functor."
-          - problem: "Define the identity functor $1_{\\mathcal{C}}$ and prove $1_{\\mathcal{D}}\\circ F=F=F\\circ 1_{\\mathcal{C}}$ for every $F\\colon\\mathcal{C}\\to\\mathcal{D}$."
-            answer: "$1_{\\mathcal{C}}$ fixes objects and morphisms; the two composites agree with $F$ on all data."
-            solution_sketch: "Define $1_{\\mathcal{C}}(A)=A$ and $1_{\\mathcal{C}}(f)=f$; the functor laws are immediate. For $F\\colon\\mathcal{C}\\to\\mathcal{D}$: $(1_{\\mathcal{D}}\\circ F)(A)=1_{\\mathcal{D}}(FA)=FA$ and $(1_{\\mathcal{D}}\\circ F)(f)=Ff$, so $1_{\\mathcal{D}}\\circ F=F$. Likewise $(F\\circ 1_{\\mathcal{C}})(A)=F(A)$ and $(F\\circ 1_{\\mathcal{C}})(f)=Ff$, so $F\\circ 1_{\\mathcal{C}}=F$. Two functors are equal exactly when their object and morphism parts agree, which is what we checked."
+          - problem: "Let P be the poset 0 < 1 < 2 viewed as a category. Functors F and G from P to P are given by F(0)=1, F(1)=2, F(2)=2 and G(0)=0, G(1)=1, G(2)=1. Find (G∘F)(0)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object part of a composite is the composite of the object parts. First apply F: F(0)=1. Then apply G: G(1)=1. The value is 1."
+          - problem: "Let P be the poset 0 < 1 < 2 viewed as a category, and let F: P -> P satisfy F(0)=1, F(1)=2, F(2)=2. Let I be the identity functor on P. Find (I∘F)(2)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity functor fixes every object and every morphism. So (I∘F)(2) = I(F(2)) = I(2) = 2. The answer is 2."
+          - problem: "Let P be the poset 0 < 1 < 2 viewed as a category. Functors F and G from P to P are given by F(0)=1, F(1)=2, F(2)=2 and G(0)=0, G(1)=1, G(2)=1. Find the image of the morphism 0 -> 1 under G∘F. Give the answer as (x, y)."
+            answer: "(1,1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The composite H = G∘F has object part H(0)=G(F(0))=G(1)=1 and H(1)=G(F(1))=G(2)=1. A functor maps the morphism 0≤1 to the morphism H(0)≤H(1), which is 1≤1. So the image is (1,1)."
+          - problem: "Let P be the poset 0 < 1 < 2 viewed as a category, and let F: P -> P satisfy F(0)=1, F(1)=2, F(2)=2. Let I be the identity functor on P. Find (F∘I)(2) - (I∘F)(2)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity functor does nothing, so (F∘I)(2) = F(I(2)) = F(2) = 2, and (I∘F)(2) = I(F(2)) = I(2) = 2. The difference is 2 - 2 = 0. The answer is 0."
+          - problem: "Define H: P -> P by H(0)=2, H(1)=0, H(2)=0, where P is the poset 0 < 1 < 2. Consider the proof that H is a functor. Step 1: H(0)=2, so the identity on 0 maps to the identity on 2. Step 2: The morphism 0 -> 1 maps to a morphism from H(0)=2 to H(1)=0. Step 3: The morphism 1 -> 2 maps to a morphism from H(1)=0 to H(2)=0. Step 4: Therefore H preserves identities and composites, so H is a functor. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid because the identity on 0 maps to the identity on 2. Step 2 is invalid: there is no morphism from 2 to 0 in P, since 2≤0 is false. Step 3 is valid because 0≤0 holds. Step 4 is wrong because Step 2 fails. The answer is Step 2."
+          - problem: "Consider the proof that for any functor F: P -> P the composite I∘F equals F, where I is the identity functor. Step 1: Let x be an object of P. Step 2: (I∘F)(x) = I(F(x)). Step 3: Since I is the identity functor, I(F(x)) = x. Step 4: Therefore (I∘F)(x) = F(x), so I∘F = F. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a valid setup. Step 2 is the definition of composite. Step 3 is false because I(F(x))=F(x), not x. Step 4 would be correct if Step 3 were replaced. The answer is Step 3."
+          - problem: "Write the full proof: for any functors F: B -> C and G: C -> D, the composite G∘F is a functor, and the identity functor is a two-sided identity for composition. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (types): For an object A of B, (G∘F)(A)=G(FA) is an object of D. For a morphism f: A -> B in B, Ff: FA -> FB, so G(Ff): GFA -> GFB, which is a morphism of D. Step 2 (identities): (G∘F)(1_A)=G(F(1_A))=G(1_{FA})=1_{GFA}=1_{(G∘F)A}. Step 3 (composites): For composable g and f, (G∘F)(g∘f)=G(F(g∘f))=G(Fg∘Ff)=G(Fg)∘G(Ff)=(G∘F)g∘(G∘F)f. Step 4 (identity functor): Define 1_C(A)=A and 1_C(f)=f. Then (1_D∘F)(A)=1_D(FA)=FA and (1_D∘F)(f)=Ff, so 1_D∘F=F. Likewise (F∘1_C)(A)=F(A) and (F∘1_C)(f)=Ff, so F∘1_C=F. Since functors are equal when their object and morphism parts agree, the identity laws hold."
       - id: kp2
         name: The category Cat and isomorphisms of categories
         key_prerequisites: [category-definition]
@@ -311,37 +377,100 @@ topics:
         key_prerequisites: [functors]
         constraints: "Forgetful functors out of $\\mathbf{Grp}$, $\\mathbf{Mon}$, or $\\mathbf{Top}$; the verification must reduce both laws to 'the underlying map of a composite is the composite'."
         exemplars:
-          - problem: "Describe the forgetful functors $\\mathbf{Grp}\\to\\mathbf{Set}$ and $\\mathbf{Grp}\\to\\mathbf{Mon}$ and confirm functoriality."
-            answer: "They forget some/all structure; the assigned morphism is the underlying map, so the laws hold automatically."
-            solution_sketch: "$U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$ sends a group to its underlying set and a homomorphism to its underlying function; $V\\colon\\mathbf{Grp}\\to\\mathbf{Mon}$ forgets only inverses. In each case $F(1)=1$ and $F(g\\circ f)=Fg\\circ Ff$ because the underlying map of a composite is the composite of the underlying maps."
-          - problem: "Verify the forgetful functor $U\\colon\\mathbf{Top}\\to\\mathbf{Set}$ (forget the topology) is a functor."
-            answer: "It returns underlying point-sets and underlying functions, so the laws hold automatically."
-            solution_sketch: "$U$ sends a topological space $(X,\\tau)$ to the set $X$ and a continuous map $f\\colon X\\to Y$ to the same underlying function. The underlying function of $1_X$ is $1_X$ and of $g\\circ f$ is $g\\circ f$, so $U(1_X)=1_{UX}$ and $U(g\\circ f)=Ug\\circ Uf$. Hence $U$ is a functor."
+          - problem: "Let U: Grp to Set be the forgetful functor. Let f: Z/3 to Z/6 be the homomorphism with f(1) = 2, and let g: Z/6 to Z/6 be the homomorphism with g(x) = 5x (mod 6). The composition law of the functor says U(g∘f) = U(g)∘U(f). Compute the value U(g∘f)(1)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the forgetful functor sends a homomorphism to its underlying function, so U(g∘f) is the composite function g∘f. First compute f(1) = 2 from the definition of f. Next compute g(2) = 5 times 2 = 10, and 10 mod 6 = 4. The answer is 4."
+          - problem: "Let U: Top to Set be the forgetful functor. Let X = {0,1,2} with the discrete topology, Y = {0,1} with the indiscrete topology, and Z = {0,1,2} with the discrete topology. Let f: X to Y send 0,1,2 to 1,0,1, and let g: Y to Z send both points of Y to 2. Every such map is continuous. Compute the value U(g∘f)(2)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: U sends a continuous map to its underlying function, so U(g∘f) is the composite function g∘f. First compute f(2) = 1 from the definition of f. Then compute g(1) = 2, since g is constant with value 2. The answer is 2."
+          - problem: "Let U: Mon to Set be the forgetful functor. Let M be the monoid of nonzero residues {1,2,3,4,5,6} under multiplication modulo 7. Let f: M to M be the map f(x) = x^2 (mod 7) and g: M to M the map g(x) = x^3 (mod 7); both are monoid homomorphisms. Compute the value U(g∘f)(2)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: U sends a monoid homomorphism to its underlying function, so U(g∘f) is the composite function g∘f. First compute f(2) = 2^2 = 4 modulo 7. Next compute g(4) = 4^3 = 64 = 63 + 1, which is 1 modulo 7. The answer is 1."
+          - problem: "A student checks the forgetful functor from Mon to Set. Step 1: a monoid is sent to the collection of its elements. Step 2: a monoid homomorphism is sent to the same function between those collections. Step 3: the unit element is sent to the unit element. Step 4: for homomorphisms h from L to M and k from M to N, the composite sends an element x to h(k(x)). Step 5: both functor laws hold, so the assignment is a functor. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Rule: the forgetful functor sends a monoid to its underlying collection and a homomorphism to the same function. Step 1 is correct, since the object part keeps the elements. Step 2 is correct, since the morphism part keeps the same function. Step 3 is correct, since a monoid homomorphism preserves the unit. Step 4 is false: the composite applies h first, so x is sent to k(h(x)), not to h(k(x)). Step 5 would follow only after that order is corrected. The answer is Step 4."
+          - problem: "To verify the composition law U(g∘f) = U(g)∘U(f) for the forgetful functor U: Top to Set, let f: X to Y and g: Y to Z be continuous maps and let x be a point of X. In the check, the line U(g∘f)(x) = ? is missing. Select the line that is true by the definition of U."
+            answer: "g(f(x))"
+            answer_contract: {"kind": "label", "options": [["g(f(x))"], ["f(g(x))"], ["g(x) + f(x)"], ["f(x) g(x)"]]}
+            solution_sketch: "Rule: U sends a continuous map to its underlying function, and the composite g∘f applies f first, sending x to g(f(x)). The option f(g(x)) reverses the order of composition. The option g(x) + f(x) adds point values, which arbitrary spaces need not carry. The option f(x) g(x) multiplies values in the wrong order and misreads the composite as a product. The answer is g(f(x))."
+          - problem: "Let U: Mon to Set be the forgetful functor, and let M be the monoid of integers modulo 4 under addition. To verify the identity law U(1_M) = 1_{U(M)}, note that 1_M is the identity homomorphism of M. Compute the value U(1_M)(3). Give the answer as an integer."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the forgetful functor sends a homomorphism to its underlying function, and the identity homomorphism 1_M is the identity function on M. Therefore U(1_M) is the identity function on U(M). Evaluate the identity function at the element 3, which returns 3 unchanged. The answer is 3."
+          - problem: "Write the full proof: the forgetful functor from Mon to Set is a functor. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Objects: send each monoid (M, *, e) to its underlying set M. Morphisms: send each monoid homomorphism h: M to N to the same function h, viewed as a function from U(M) to U(N). Identity law: the identity homomorphism 1_M is the identity function on M, so U(1_M) = 1_{U(M)}. Composition law: for homomorphisms f: L to M and g: M to N, the composite g∘f is a homomorphism, and its underlying map is the composite of the underlying maps, so U(g∘f) = U(g)∘U(f). Both laws reduce to the single fact that the underlying map of a composite is the composite of the underlying maps. Hence U preserves identities and composition, and U: Mon to Set is a functor."
       - id: kp2
         name: Free functors
         key_prerequisites: [monoids]
         constraints: "Free constructions on a set: words $X^*$, pointed sets $X_+$, or the free vector space $k^{(X)}$; show the morphism part preserves the structure, then check both functor laws on generators/letters."
         exemplars:
-          - problem: "Show the free-monoid construction $X\\mapsto X^*$ (finite words under concatenation) extends to a functor $\\mathbf{Set}\\to\\mathbf{Mon}$."
-            answer: "$f^*$ applies $f$ letterwise; it is a homomorphism, and the assignment is functorial."
-            solution_sketch: "$X^*$ is the monoid of finite words with concatenation and empty word $\\varepsilon$. For $f\\colon X\\to Y$ set $f^*(x_1\\cdots x_n)=f(x_1)\\cdots f(x_n)$ and $f^*(\\varepsilon)=\\varepsilon$; this preserves concatenation, so $f^*$ is a monoid homomorphism. Since $1_X^*=1_{X^*}$ and $(g\\circ f)^*=g^*\\circ f^*$ (letterwise), $(-)^*$ is a functor."
-          - problem: "A pointed set is a pair $(A,a_0)$ with $a_0\\in A$, and a morphism $(A,a_0)\\to(B,b_0)$ is a function $g$ with $g(a_0)=b_0$; these form $\\mathbf{Set}_*$. Show the free pointed set $X\\mapsto X_+:=X\\sqcup\\{*\\}$ (adjoin one new element) extends to a functor $\\mathbf{Set}\\to\\mathbf{Set}_*$."
-            answer: "$f_+$ acts as $f$ on $X$ and fixes $*$; it preserves the basepoint, and the assignment is functorial."
-            solution_sketch: "Give $X_+=X\\sqcup\\{*\\}$ the basepoint $*$. For $f\\colon X\\to Y$ define $f_+(x)=f(x)$ for $x\\in X$ and $f_+(*)=*$; since $f_+$ sends the basepoint to the basepoint it is a morphism of pointed sets. Then $(1_X)_+=1_{X_+}$, and $(g\\circ f)_+$ and $g_+\\circ f_+$ agree everywhere (both are $g\\circ f$ on $X$ and fix $*$), so $(-)_+$ is a functor. It is free in the same sense as $X\\mapsto X^*$: it adds exactly the missing structure — one basepoint — and imposes no relations, so a function $X\\to B$ extends uniquely to a basepoint-preserving map $X_+\\to(B,b_0)$."
-          - problem: "Show the free vector space construction $X\\mapsto k^{(X)}$ (formal finite $k$-linear combinations of elements of $X$) extends to a functor $\\mathbf{Set}\\to\\mathbf{Vect}_k$."
-            answer: "Extend a function linearly on basis elements; the assignment preserves identities and composition."
-            solution_sketch: "$k^{(X)}$ is the vector space with basis $X$. For $f\\colon X\\to Y$ let $F(f)\\colon k^{(X)}\\to k^{(Y)}$ be the linear map sending each basis vector $x$ to $f(x)$. A linear map is determined by its values on a basis, so $F(1_X)=1_{k^{(X)}}$, and $F(g\\circ f)$ and $F(g)\\circ F(f)$ agree on every basis vector ($x\\mapsto g(f(x))$), hence are equal. Thus $F$ is a functor."
+          - problem: "Let X = {1, 2} and Y = {3, 7}, with f(1) = 7 and f(2) = 3. In the free monoid functor, the morphism part f^* sends a word to the word of images of its letters, and fixes the empty word. Give the last letter of f^*(2121)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The free monoid on X is the set of finite words with concatenation and the empty word as unit. The morphism part applies f letterwise: f^*(x1...xn) = f(x1)...f(xn). Apply f letterwise to 2121: f(2)=3, f(1)=7, f(2)=3, f(1)=7, so f^*(2121) = 3737. The last letter is 7."
+          - problem: "Let X = {2, 3} and Y = {4, 9}, with f(2) = 9 and f(3) = 4. The free pointed set functor sends X to X+ = X union {*}, with basepoint *. Its morphism part f+ acts as f on X and fixes *. Give f+(3)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The free pointed set on X is X+ = X union {*}, with basepoint *. For f: X -> Y, the morphism part is f+(x) = f(x) for x in X and f+(*) = *. Since 3 is an element of X, f+(3) = f(3) = 4. The value is 4."
+          - problem: "Let X = {1, 2, 3} and Y = {4, 6}, with f(1) = 4, f(2) = 6, f(3) = 6. The free vector space functor sends X to k^(X) with basis X, and its morphism part is the linear map sending each basis vector x to f(x). Write v = 2*[1] + 5*[2] + 3*[3] in k^(X). Give the coefficient of the basis element 6 in F(f)(v)."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The free vector space k^(X) has basis X, and F(f) is the linear map with F(f)(x) = f(x) on basis vectors. By linearity, F(f)(v) = 2*F(f)(1) + 5*F(f)(2) + 3*F(f)(3) = 2*[4] + 5*[6] + 3*[6] = 2*[4] + 8*[6]. The coefficient of the basis element 6 is 8."
+          - problem: "Let X = {1, 2}, Y = {3, 4}, Z = {5, 6}, with f(1) = 3, f(2) = 4 and g(3) = 5, g(4) = 6. The composition law of the free monoid functor gives (g o f)* = g* o f*, so on a one-letter input the two sides agree with the composite function. Give the value of (g o f)(2)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The free monoid functor sends a set X to the monoid of finite words over X and a function f to the letterwise monoid map f*. Its composition law gives (g o f)* = g* o f*, so on a one-letter input both sides act as the composite function. Evaluate in order: f(2) = 4, and then g(4) = 6. The value is 6."
+          - problem: "Claim: for any function f: X -> Y, the map f+ on free pointed sets is a morphism of pointed sets. Step 1: the basepoint of X+ is the added element *. Step 2: f+ acts as f on X and fixes *. Step 3: f+ sends the basepoint of X+ to f(*), an element of Y. Step 4: therefore f+ sends the basepoint to the basepoint, so it is a morphism of pointed sets. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: the basepoint of X+ is the newly adjoined point. Step 2 is the correct definition of the morphism part. Step 3 is the first invalid step: the point * is not an element of X, so f(*) is undefined, and in fact f+ sends the basepoint * to the basepoint * of Y+. Step 4 is wrong only because it relies on the false Step 3. The first invalid step is Step 3."
+          - problem: "In the proof that the free vector space construction is functorial, the line computing the composite on a basis vector x is missing. Select the line that correctly computes F(g o f)(x)."
+            answer: "F(g)(F(f)(x))"
+            answer_contract: {"kind": "label", "options": [["F(g)(F(f)(x))"], ["F(f)(F(g)(x))"], ["F(g)(F(g)(x))"], ["F(f)(F(f)(x))"]]}
+            solution_sketch: "Both F(g o f) and F(g) o F(f) are linear maps, so it suffices to compare them on the basis vector x. The option F(f)(F(g)(x)) reverses the order of composition. The option F(g)(F(g)(x)) applies g twice and drops f. The option F(f)(F(f)(x)) applies f twice and drops g. The correct line is F(g)(F(f)(x)) = g(f(x)), which agrees with (g o f)(x). The answer is F(g)(F(f)(x))."
+          - problem: "Write the full proof: Show the free monoid construction X -> X* (finite words under concatenation) extends to a functor Set -> Mon. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1. Object part: for a set X, let X* be the set of finite words with letters in X, together with the empty word; concatenation is associative and the empty word is its unit, so X* is a monoid. Step 2. Morphism part: for a function f: X -> Y define f^*: X* -> Y* by f^*(x1...xn) = f(x1)...f(xn) on nonempty words and f^*(empty word) = empty word. Step 3. Homomorphism check: for words u and v, the letters of uv are the letters of u followed by the letters of v, so f^*(uv) = f^*(u) f^*(v), and the empty word is fixed; hence f^* is a monoid homomorphism. Step 4. Identity law: for the identity function 1_X, the map (1_X)^* fixes every letter and the empty word, so (1_X)^* is the identity homomorphism on X*. Step 5. Composition law: for f: X -> Y and g: Y -> Z, both (g o f)^* and g^* o f^* send each letter x to g(f(x)) and fix the empty word, so they agree on every one-letter word and on the empty word; since both are homomorphisms and every word is a concatenation of single letters, they agree on all words, giving (g o f)^* = g^* o f^*. Step 6. Both functor laws hold on the generators (single letters and the empty word), and the homomorphism property propagates them to all words; therefore X -> X* with f -> f^* is a functor Set -> Mon."
       - id: kp3
         name: Constant and diagonal functors
         key_prerequisites: [functors]
         constraints: "Only $\\Delta_D$ (constant at an object) and $\\Delta\\colon\\mathcal C\\to\\mathcal C\\times\\mathcal C$; verification is a one-line check of each law."
         exemplars:
-          - problem: "Define the constant functor $\\Delta_D\\colon\\mathcal{C}\\to\\mathcal{D}$ at an object $D$ and verify functoriality."
-            answer: "Send every object to $D$ and every morphism to $1_D$."
-            solution_sketch: "$\\Delta_D(C)=D$ and $\\Delta_D(f)=1_D$ for all $C,f$. Then $\\Delta_D(1_C)=1_D$ and $\\Delta_D(g\\circ f)=1_D=1_D\\circ 1_D=\\Delta_D(g)\\circ\\Delta_D(f)$, so $\\Delta_D$ is a functor."
-          - problem: "Describe the diagonal functor $\\Delta\\colon\\mathcal C\\to\\mathcal C\\times\\mathcal C$."
-            answer: "$C\\mapsto(C,C)$ and $f\\mapsto(f,f)$."
-            solution_sketch: "Sending objects and morphisms to their diagonal pairs preserves identities and composition in each coordinate, so $\\Delta$ is a functor."
+          - problem: "Let D be the category with objects 0 and 1 and three morphisms: the two identities and one arrow from 0 to 1. The constant functor Delta_1: C -> D at the object 1 sends every object of C to 1 and every morphism of C to the identity of 1. The category C has 6 morphisms. Compute how many distinct morphisms of D occur as values of Delta_1 on morphisms of C."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of the constant functor on morphisms): Delta_1 sends every one of the 6 morphisms of C to the single morphism id_1 of D, so the full map on morphisms takes all 6 morphisms to the same value. Step 2 (count distinct values): a map whose 6 values are all the same morphism has exactly 1 distinct value, namely id_1. The answer is 1."
+          - problem: "The diagonal functor Delta: C -> C x C sends each object x of C to the pair (x, x). The category C is the poset with objects a, b, c and order a < b < c, so C has 3 objects. Compute the number of distinct objects of C x C that occur as values of Delta on objects of C."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of the diagonal functor on objects): Delta sends the object a to the pair (a, a), the object b to (b, b), and the object c to (c, c). Step 2 (count distinct values): these three pairs are distinct objects of C x C, and every value of Delta on objects is one of them, so there are exactly 3 distinct values. The answer is 3."
+          - problem: "The diagonal functor Delta: C -> C x C sends each morphism m of C to the pair (m, m). The category C is the poset with objects a, b, c and order a < b < c, so C has 6 morphisms: 3 identities and 3 order arrows. Compute the number of distinct morphisms of C x C that occur as values of Delta on morphisms of C."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of the diagonal functor on morphisms): each of the 6 morphisms of C is sent to its diagonal pair, giving 6 values (m, m) in C x C. Step 2 (injectivity of the image): two diagonal pairs (m, m) and (n, n) are equal only when m = n, so distinct morphisms of C give distinct values, and all 6 values are distinct. The answer is 6."
+          - problem: "In the product category C x C a morphism is a pair (u, v) of morphisms of C, and the image of the diagonal functor Delta: C -> C x C on morphisms is exactly the set of pairs (m, m) whose two entries are equal. The poset C with objects a, b, c has 6 morphisms. Compute the number of morphisms of C x C that are not in the image of Delta on morphisms."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (count the product): a morphism of C x C is a pair (u, v) with u and v chosen among the 6 morphisms of C, so C x C has 6 times 6 = 36 morphisms. Step 2 (subtract the image of Delta): the image of Delta on morphisms consists of the 6 diagonal pairs found by the definition of Delta, so the complement has 36 - 6 = 30 morphisms. The answer is 30."
+          - problem: "Claim: the diagonal functor Delta: C -> C x C preserves composition, where C is the poset a < b < c. Step 1: Delta sends the arrow a <= b to the pair (a <= b, a <= b). Step 2: in C x C, the pair (b <= c, b <= c) composed with the pair (a <= b, a <= b) equals the pair (a <= c, a <= c). Step 3: Delta sends the arrow a <= c to the pair (a <= c, a <= b). Step 4: therefore Delta(b <= c) composed with Delta(a <= b) equals Delta(a <= c). Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct by the definition of Delta on morphisms: every arrow is sent to its diagonal pair. Step 2 is correct: composition in C x C is coordinatewise, and in the poset the arrow b <= c composed after a <= b is a <= c, so both coordinates give a <= c. Step 3 is the first invalid step: the definition of Delta forces Delta(a <= c) = (a <= c, a <= c), so writing the second coordinate as a <= b is the error of copying the codomain of the first arrow into the second slot. Step 4 states the true composition law and becomes valid once Step 3 is corrected. The answer is Step 3."
+          - problem: "To check that the constant functor Delta_1: C -> D preserves composition, one rewrites the value of Delta_1 on a composite of two morphisms of C as the identity of 1 composed with the identity of 1. Which property of Delta_1 justifies this rewrite? Select the fact."
+            answer: "Delta_1 sends every morphism of C to the identity of the fixed object 1"
+            answer_contract: {"kind": "label", "options": [["Delta_1 sends every morphism of C to the identity of the fixed object 1"], ["Delta_1 sends every morphism of C to the identity of its own target"], ["Delta_1 sends every object of C to the identity of the fixed object 1"], ["composition of any two morphisms of C is again an identity"]]}
+            solution_sketch: "The definition of the constant functor on morphisms sends every morphism of C to the identity of the fixed object 1, so the value on any composite is id_1, which factors as id_1 composed with id_1. The option about the identity of its own target is the error of confusing Delta_1 with a target-respecting map; Delta_1 ignores the morphism completely. The option about every object going to the identity of 1 mixes up the action on objects, which gives the object 1 itself, with the action on morphisms. The option that a composite in C is an identity is a false property of C that the composition law never uses. The answer is: Delta_1 sends every morphism of C to the identity of the fixed object 1."
+          - problem: "Write the full proof: the diagonal functor Delta: C -> C x C is a functor. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: define Delta on objects by Delta(C) = (C, C) for every object C of C. Step 2: define Delta on morphisms by Delta(f) = (f, f) for every morphism f from C to C-prime of C; the pair (f, f) is a morphism from (C, C) to (C-prime, C-prime) in the product category, since each coordinate is such a morphism. Step 3: identity law: Delta(1_C) = (1_C, 1_C), and the identity morphism of the object (C, C) in C x C is exactly the pair (1_C, 1_C), so Delta preserves identities. Step 4: composition law: for composable morphisms f from C to C-prime and g from C-prime to C-double-prime, Delta(g composed with f) = (g composed with f, g composed with f), while Delta(g) composed with Delta(f) = (g, g) composed with (f, f), which equals (g composed with f, g composed with f) by coordinatewise composition in the product category. The two sides agree. Step 5: both functor laws hold, so Delta: C -> C x C is a functor."
     diagnostic_exemplar:
       problem: "For a function $f\\colon X\\to Y$ define $f^*\\colon X^*\\to Y^*$ on the free monoids of finite words by $f^*(x_1\\cdots x_n)=f(x_1)\\cdots f(x_n)$ and $f^*(\\varepsilon)=\\varepsilon$. Show that $f^*$ is a monoid homomorphism and that $(-)^*$ is a functor $\\mathbf{Set}\\to\\mathbf{Mon}$."
       answer: "Homomorphism: $f^*$ sends the unit $\\varepsilon$ to $\\varepsilon$ and preserves concatenation, since applying $f$ letterwise to $uv$ gives $f^*(u)f^*(v)$. Functor laws: $1_X^*$ applies $1_X$ letterwise, so $1_X^*=1_{X^*}$; and $(g\\circ f)^*$ applies $g\\circ f$ letterwise, which is the same as applying $f$ letterwise then $g$ letterwise, so $(g\\circ f)^*=g^*\\circ f^*$. Hence $(-)^*$ is a functor."
