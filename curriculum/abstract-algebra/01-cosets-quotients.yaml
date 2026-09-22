@@ -24,27 +24,59 @@ topics:
         name: "Computing cosets in abelian groups"
         key_prerequisites: [subgroups-subgroup-tests, equivalence-classes-partitions]
         exemplars:
-          - problem: 'List all distinct cosets of $H = \{0, 4, 8\}$ in $\mathbb{Z}_{12}$.'
-            answer: '$H = \{0,4,8\}$, $1+H = \{1,5,9\}$, $2+H = \{2,6,10\}$, $3+H = \{3,7,11\}$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Add representatives $0,1,2,3$ to $H$; after that the cosets repeat. They partition $\mathbb{Z}_{12}$ into $4$ blocks of size $3$.'
-          - problem: 'In $(\mathbb{Z}, +)$, describe the cosets of $5\mathbb{Z}$.'
-            answer: 'The five residue classes $5\mathbb{Z},\ 1+5\mathbb{Z},\ 2+5\mathbb{Z},\ 3+5\mathbb{Z},\ 4+5\mathbb{Z}$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Two integers lie in the same coset iff they differ by a multiple of $5$ — exactly congruence mod $5$.'
+          - problem: "In Z_12, let H = {0, 4, 8}. The coset 7+H consists of 7+h reduced modulo 12 for each h in H. Find the smallest element of the coset 7+H."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of a coset, 7+H = {7+0, 7+4, 7+8} reduced modulo 12. Reducing each element mod 12 gives 7, 11, 3, so the coset is {3, 7, 11}. The smallest element of 7+H is 3."
+          - problem: "In (Z, +), the cosets of 5Z are the residue classes modulo 5. Find the least nonnegative representative of the coset 17+5Z."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Cosets of 5Z in Z are the residue classes modulo 5, and an integer x lies in 17+5Z exactly when x is congruent to 17 mod 5. By the division algorithm, 17 = 3 times 5 plus 2. The least nonnegative representative of the coset 17+5Z is 2."
+          - problem: "In Z_18, let H = {0, 6, 12}. The number of distinct cosets of H equals 18 divided by the size of H. How many distinct cosets of H are there?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The index formula counts cosets: the number of distinct cosets equals the order of the group divided by the order of the subgroup. Here Z_18 has 18 elements and H = {0, 6, 12} has 3 elements. The cosets are H, 1+H, 2+H, 3+H, 4+H, 5+H, and 18/3 = 6, so the count is 6."
+          - problem: "In Z_12, let H = {0, 3, 6, 9}. Two elements lie in the same coset of H exactly when their difference belongs to H. Determine whether the elements 5 and 10 lie in the same coset of H, and give the smallest element of the coset 5+H."
+            answer: "verdict = different; rep = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["same"], ["different"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "rep"}]}
+            solution_sketch: "Coset equality criterion: a and b lie in the same coset of H exactly when a minus b is in H. Here 10 - 5 = 5, and 5 is not in H = {0, 3, 6, 9}, so the verdict is different. By the definition of a coset, 5+H = {5, 8, 11, 2}, and its smallest element is 2. So verdict = different; rep = 2."
+          - problem: "In Z_6, let H = {0, 3}. The coset 1+H consists of 1+h reduced modulo 6 for each h in H. Find the sum of the elements in the coset 1+H."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of a coset, add the representative 1 to each element of H = {0, 3}: 1+0 = 1 and 1+3 = 4, so 1+H = {1, 4}. Adding the elements of the coset gives 1+4 = 5. The sum of the elements in the coset 1+H is 5."
+          - problem: "In Z_20, let H = {0, 5, 10, 15}. The coset 13+H consists of 13+h reduced modulo 20 for each h in H. Find the smallest element of the coset 13+H."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of a coset, add the representative 13 to each element of H = {0, 5, 10, 15} and reduce mod 20: 13, 18, 3, 8. Thus 13+H = {3, 8, 13, 18}. The smallest element of the coset 13+H is 3."
         constraints: "subgroups of Z_n (n <= 24) or nZ in Z; answers as explicit sets or residue classes"
       - id: kp2
         name: "Left vs right cosets in non-abelian groups"
         key_prerequisites: [subgroups-subgroup-tests, permutations-cycle-notation]
         exemplars:
-          - problem: 'In $S_3$ with $H = \{e, (1\,2)\}$, compute the left coset $(1\,3)H$ and the right coset $H(1\,3)$ (composition right to left).'
-            answer: '$(1\,3)H = \{(1\,3), (1\,2\,3)\}$ but $H(1\,3) = \{(1\,3), (1\,3\,2)\}$; they differ.'
-            answer_contract: {kind: none}
-            solution_sketch: '$(1\,3)(1\,2) = (1\,2\,3)$ while $(1\,2)(1\,3) = (1\,3\,2)$, so left and right cosets of $H$ at $(1\,3)$ are different sets.'
-          - problem: 'When is $aH = H$?'
-            answer: 'Exactly when $a \in H$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'If $aH = H$ then $a = ae \in H$; conversely $a \in H$ makes $aH \subseteq H$ and equal by cancellation.'
+          - problem: "In S3, cycle notation, let H = {e, (1 2)}. Use composition right to left. How many elements lie in both the left coset (1 3)H and the right coset H(1 3)?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of a left coset, (1 3)H = {(1 3)e, (1 3)(1 2)} = {(1 3), (1 2 3)} with right-to-left composition. By the definition of a right coset, H(1 3) = {e(1 3), (1 2)(1 3)} = {(1 3), (1 3 2)}. Comparing the two sets, the only common element is (1 3). The number of elements in both cosets is 1."
+          - problem: "In S3, cycle notation, let H = {e, (1 2)}. Use composition right to left. How many elements a of S3 satisfy aH = H?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of a left coset, aH = {ah : h in H}. The equality aH = H holds exactly when a is in H, since a = ae must be in aH = H and every a in H gives aH = H. The elements of H are e and (1 2). Hence the number of elements a with aH = H is 2."
+          - problem: "In D4 with r^4 = e, s^2 = e and s r = r^3 s, use composition right to left. Let H = {e, s}. How many elements lie in rH or Hr?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of a left coset, rH = {r e, r s} = {r, r s}. By the definition of a right coset and the relation s r = r^3 s, Hr = {e r, s r} = {r, r^3 s}. The union is {r, r s, r^3 s}. The number of elements in the union is 3."
+          - problem: "In D4 with r^4 = e, s^2 = e and s r = r^3 s, use composition right to left. Let H = {e, s}. How many elements a of D4 satisfy aH = Ha?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of left and right cosets, compute aH and Ha for all a. The equality holds for a = e, r^2, s, and r^2 s, because r^2 commutes with s and sH = Hs. For a = r and a = r^3, rH = {r, r s} differs from Hr = {r, r^3 s}; for a = r s and a = r^3 s the sets also differ. Hence the number of elements a with aH = Ha is 4."
+          - problem: "In S3, cycle notation, let H = {e, (1 2 3), (1 3 2)}. Use composition right to left. How many left cosets aH have a different corresponding right coset Ha?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of coset, H = A3 is the set of even permutations. For any a in S3, aH and Ha are both the set of permutations with the same parity as a, because H is normal. For example, (1 2)H = {(1 2), (1 3), (2 3)} and H(1 2) is the same set. Therefore no left coset differs from its corresponding right coset, so the number is 0."
+          - problem: "In S3, cycle notation, let H = {e, (1 2)}. Use composition right to left. What is the order of the permutation that lies in (1 3)H but not in H(1 3)?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of left coset, (1 3)H = {(1 3), (1 2 3)}. By the definition of right coset, H(1 3) = {(1 3), (1 3 2)}. The element that lies only in the left coset is (1 2 3). The order of a 3-cycle is 3, so the order is 3."
         constraints: "H of order 2 or 3 in S_3 or D_4; always state the composition convention"
       - id: kp3
         name: "Coset equality and the partition property"
@@ -91,13 +123,29 @@ topics:
         name: "Statement, proof idea, and the index"
         key_prerequisites: [cosets]
         exemplars:
-          - problem: 'State Lagrange''s theorem and define the index $[G : H]$.'
-            answer: 'If $H \le G$ with $G$ finite, then $|H|$ divides $|G|$; the index $[G:H] = |G|/|H|$ is the number of left cosets.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The cosets of $H$ partition $G$ and each biject with $H$ (via $h \mapsto ah$), so $|G| = [G:H]\,|H|$.'
           - problem: 'A group $G$ has order $20$ and $H \le G$ has order $5$. Compute $[G : H]$.'
             answer: "4"
             solution_sketch: '$[G:H] = |G|/|H| = 20/5 = 4$.'
+          - problem: "Let G be a finite group and H a subgroup of G. Select the equation that expresses Lagrange's theorem and the index [G : H]."
+            answer: "|G| = [G:H]|H|"
+            answer_contract: {"kind": "label", "options": [["|G| = [G:H]|H|"], ["|H| = [G:H]|G|"], ["[G:H] = |G|+|H|"], ["[G:H] = |H|/|G|"]]}
+            solution_sketch: "Lagrange's theorem says the left cosets of H partition G, and each coset has |H| elements, so |G| = [G:H]|H|. The index [G:H] is the number of left cosets. The option |H| = [G:H]|G| solves for the wrong factor. The option [G:H] = |G|+|H| adds sizes instead of counting cosets. The option [G:H] = |H|/|G| inverts the correct ratio. The correct equation is |G| = [G:H]|H|."
+          - problem: "A group G has order 48 and a subgroup H has order 8. Compute the index [G : H]."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Lagrange's theorem gives |G| = [G:H]|H|. Substitute the known values: 48 = [G:H] * 8. Solve by division: [G:H] = 48/8 = 6. The index is 6."
+          - problem: "A group G has order 84 and a subgroup H has index 12. Find the order of H."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Lagrange's theorem gives |G| = [G:H]|H|. Substitute 84 = 12 * |H|. Solve by division: |H| = 84/12 = 7. The order of H is 7."
+          - problem: "A subgroup H of a group G has 9 left cosets, and each left coset has 5 elements. Find the order of G."
+            answer: "45"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The left cosets of H partition G, and each coset has |H| = 5 elements by the coset bijection. The number of cosets is the index, so [G:H] = 9. Thus |G| = [G:H]|H| = 9 * 5 = 45. The order of G is 45."
+          - problem: "A group G has order 100 and a subgroup H has order 20. How many left cosets of H are there in G?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The number of left cosets is the index [G:H]. Lagrange's theorem gives |G| = [G:H]|H|. Substitute 100 = [G:H] * 20. Solve by division: [G:H] = 100/20 = 5. There are 5 left cosets."
         constraints: "index computations and the counting argument; |G| <= 100"
       - id: kp2
         name: "Ruling out subgroup orders"

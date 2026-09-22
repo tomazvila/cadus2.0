@@ -896,10 +896,26 @@ topics:
           - problem: 'What is the order of $A_4$?'
             answer: "12"
             solution_sketch: 'Exactly half of $S_n$ is even for $n \ge 2$: $|A_4| = 4!/2 = 12$.'
-          - problem: 'Is $(1\,2\,3)$ an element of $A_5$?'
-            answer: 'Yes: a 3-cycle is even ($2$ transpositions).'
-            answer_contract: {kind: none}
-            solution_sketch: '3-cycles decompose into two transpositions, hence are even and lie in $A_n$.'
+          - problem: "In $S_5$, let $\\sigma = (1\\,2\\,3)$. Write each cycle $(a_1\\,a_2\\,\\dots\\,a_m)$ as $(a_1\\,a_m)(a_1\\,a_{m-1})\\cdots(a_1\\,a_2)$, and let $k$ be the total number of transpositions that this rule uses to write $\\sigma$. Determine whether $\\sigma$ lies in $A_5$, and give $k$."
+            answer: "verdict = in; k = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "First write the 3-cycle with the stated rule: $(1\\,2\\,3) = (1\\,3)(1\\,2)$, which uses 2 transpositions, so $k = 2$. Step 2: an even number of transpositions makes $\\sigma$ even, so $\\sigma$ lies in $A_5$. The wrong verdict out would treat a 3-cycle as odd. The answer is verdict = in; k = 2."
+          - problem: "How many elements does the alternating group $A_8$ contain?"
+            answer: "20160"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the order of the symmetric group: $|S_8| = 8! = 40320$. Step 1: use the fact that exactly half of the elements of $S_n$ are even for $n \\ge 2$. Step 2: compute $|A_8| = 8!/2 = 40320/2$. The answer is 20160."
+          - problem: "In $S_7$, let $\\sigma = (1\\,2\\,3\\,4)$. Write each cycle $(a_1\\,a_2\\,\\dots\\,a_m)$ as $(a_1\\,a_m)(a_1\\,a_{m-1})\\cdots(a_1\\,a_2)$, and let $k$ be the total number of transpositions that this rule uses to write $\\sigma$. Determine whether $\\sigma$ lies in $A_7$, and give $k$."
+            answer: "verdict = out; k = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "First write the 4-cycle with the stated rule: $(1\\,2\\,3\\,4) = (1\\,4)(1\\,3)(1\\,2)$, which uses 3 transpositions, so $k = 3$. Step 2: an odd number of transpositions makes $\\sigma$ odd, so $\\sigma$ does not lie in $A_7$. The wrong verdict in would treat a 4-cycle as even. The answer is verdict = out; k = 3."
+          - problem: "The alternating group $A_n$ has order $60$. Find $n$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the order formula: $|A_n| = n!/2$. Step 1: set $n!/2 = 60$, so $n! = 120$. Step 2: since $120 = 5!$, the value is $n = 5$. The answer is 5."
+          - problem: "In $S_8$, let $\\sigma = (1\\,2\\,3\\,4\\,5\\,6)$. Write each cycle $(a_1\\,a_2\\,\\dots\\,a_m)$ as $(a_1\\,a_m)(a_1\\,a_{m-1})\\cdots(a_1\\,a_2)$, and let $k$ be the total number of transpositions that this rule uses to write $\\sigma$. Determine whether $\\sigma$ lies in $A_8$, and give $k$."
+            answer: "verdict = out; k = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "First write the 6-cycle with the stated rule: $(1\\,2\\,3\\,4\\,5\\,6) = (1\\,6)(1\\,5)(1\\,4)(1\\,3)(1\\,2)$, which uses 5 transpositions, so $k = 5$. Step 2: an odd number of transpositions makes $\\sigma$ odd, so $\\sigma$ does not lie in $A_8$. The wrong verdict in would treat a 6-cycle as even. The answer is verdict = out; k = 5."
         constraints: "membership in A_n and |A_n| = n!/2; n <= 8"
       - id: kp3
         name: "Parity under products and inverses"
@@ -1012,13 +1028,29 @@ topics:
         name: "Subgroups: SL_n and finite general linear groups"
         key_prerequisites: [determinants-2x2, subgroups-subgroup-tests]
         exemplars:
-          - problem: 'Prove that $SL_2(\mathbb{R}) = \{A \in GL_2(\mathbb{R}) : \det A = 1\}$ is a subgroup of $GL_2(\mathbb{R})$.'
-            answer: 'It is nonempty ($I \in SL_2$), and for $\det A = \det B = 1$ we get $\det(AB^{-1}) = \det A / \det B = 1$ — the one-step subgroup test.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Determinant multiplicativity plus $\det(B^{-1}) = 1/\det B$ feed the one-step test.'
+          - problem: "For A and B in SL_2(R), which value of det(A B^{-1}) completes the one-step subgroup test? Select it."
+            answer: "1"
+            answer_contract: {"kind": "label", "options": [["1"], ["0"], ["-1"], ["2"]]}
+            solution_sketch: "Step 1: det A = 1 and det B = 1 by the definition of SL_2(R). Step 2: use det(B^{-1}) = 1/det B = 1, a determinant property. Step 3: multiply, det(A B^{-1}) = det A * det(B^{-1}) = 1 * 1 = 1. The wrong option 0 comes from treating the determinant as additive; -1 comes from using det(B) without the inverse; 2 comes from adding the two determinants. The answer is 1."
           - problem: 'Compute $|GL_2(\mathbb{Z}_2)|$, the number of invertible $2 \times 2$ matrices over $\mathbb{Z}_2$.'
             answer: "6"
             solution_sketch: 'The first column is any nonzero vector ($2^2 - 1 = 3$ choices); the second is anything outside the span of the first ($2^2 - 2 = 2$ choices): $3 \cdot 2 = 6$. (In fact $GL_2(\mathbb{Z}_2) \cong S_3$.)'
+          - problem: "A code uses 2x2 matrices over Z_3 as keys. How many of the 81 possible matrices are invertible?"
+            answer: "48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First column choices: any nonzero vector in Z_3^2, so 3^2 - 1 = 8. Second column choices: any vector outside the span of the first, so 3^2 - 3 = 6. Multiply these independent choices: 8 * 6 = 48. The answer is 48."
+          - problem: "For an invertible 2x2 matrix over Z_3, how many choices are there for the first column?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The first column must be a nonzero vector in Z_3^2. There are 3^2 = 9 vectors total and one zero vector. So 9 - 1 = 8 choices remain. The answer is 8."
+          - problem: "For an invertible 2x2 matrix over Z_3, the second column must lie outside the span of the first. How many vectors are outside that span?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A nonzero first column v spans the three vectors 0, v, and 2v in Z_3^2. The whole space has 3^2 = 9 vectors. Thus 9 - 3 = 6 vectors lie outside the span. The answer is 6."
+          - problem: "Over Z_2 the only nonzero determinant is 1. How many matrices in GL_2(Z_2) also lie in the special linear group SL_2(Z_2)?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The column-counting argument gives |GL_2(Z_2)| = (2^2 - 1)(2^2 - 2) = 3 * 2 = 6. In Z_2 the only nonzero determinant is 1, so every invertible matrix has determinant 1 and lies in SL_2(Z_2). Therefore the number is 6. The answer is 6."
         constraints: "SL_n via the one-step test; counts |GL_2(Z_p)| = (p^2 - 1)(p^2 - p) for p in {2, 3} with the column-counting argument"
     diagnostic_exemplar:
       problem: 'Show that $SL_2(\mathbb{Z}_5) = \{A \in GL_2(\mathbb{Z}_5) : \det A = 1\}$ is a subgroup of $GL_2(\mathbb{Z}_5)$, and find the order of $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ in it.'
