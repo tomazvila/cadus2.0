@@ -190,14 +190,30 @@ topics:
         name: "Operations on described sets"
         key_prerequisites: [propositional-logic]
         exemplars:
-          - problem: 'Let $E$ be the even integers and $T$ the multiples of $3$. Describe $E \cap T$.'
-            answer_contract: {kind: none}
-            answer: 'The multiples of $6$.'
-            solution_sketch: 'An integer lies in both sets iff it is divisible by $2$ and by $3$, i.e. by $6$.'
-          - problem: 'Let $E$ be the even integers and $O$ the odd integers. Find $E \cup O$ and $E \cap O$.'
-            answer_contract: {kind: none}
-            answer: '$E \cup O = \mathbb{Z}$ and $E \cap O = \varnothing$.'
-            solution_sketch: 'Every integer is even or odd, and no integer is both.'
+          - problem: "Let $A$ be the set of integers divisible by $3$ and $B$ the set of integers divisible by $5$. Select the correct description of the intersection $A \\cap B$."
+            answer: "the multiples of 15"
+            answer_contract: {"kind": "label", "options": [["the multiples of 15"], ["the multiples of 8"], ["the multiples of 5"], ["the odd multiples of 15"]]}
+            solution_sketch: "Take the full sets first: A is the set of all integers divisible by 3 and B is the set of all integers divisible by 5. A number lies in the intersection exactly when both defining properties hold at once, so it must be divisible by 3 and by 5, and a number divisible by two coprime numbers is divisible by their product 15 (intersection rule). The option 'the multiples of 8' comes from adding 3 and 5 instead of multiplying them; the option 'the multiples of 5' drops the condition that comes from A; the option 'the odd multiples of 15' adds a parity condition that neither set carries. The correct description of $A \\cap B$ is the multiples of 15."
+          - problem: "Let $O$ be the set of odd integers and $N$ the set of negative integers. Select the correct description of the intersection $O \\cap N$."
+            answer: "the negative odd integers"
+            answer_contract: {"kind": "label", "options": [["the negative odd integers"], ["the negative even integers"], ["the positive odd integers"], ["all odd integers"]]}
+            solution_sketch: "The full sets are $O = \\{$odd integers$\\}$ and $N = \\{$negative integers$\\}$. Membership in $O \\cap N$ requires both defining properties at once: odd and negative (intersection rule). The option 'the negative even integers' replaces odd with even; the option 'the positive odd integers' flips the sign condition; the option 'all odd integers' drops the condition coming from $N$. The correct description of $O \\cap N$ is the negative odd integers."
+          - problem: "Let $A = \\{x \\in \\mathbb{R} : x > -2\\}$ and $B = \\{x \\in \\mathbb{R} : x \\le 3\\}$. Find $A \\cap B$ and give the answer as an inequality in $x$."
+            answer: "-2 < x <= 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full sets are $A = \\{x : x > -2\\}$ and $B = \\{x : x \\le 3\\}$. The intersection applies both defining properties at the same time: $x > -2$ and $x \\le 3$ (intersection rule). Chaining the two bounds into one compound inequality combines them. The description of $A \\cap B$ as an inequality in x is -2 < x <= 3."
+          - problem: "Let $A = \\{x \\in \\mathbb{R} : x \\ge 1\\}$ and $B = \\{x \\in \\mathbb{R} : x < 5\\}$. Find $A \\setminus B$ and give the answer as an inequality in $x$."
+            answer: "x >= 5"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full sets are $A = \\{x : x \\ge 1\\}$ and $B = \\{x : x < 5\\}$. The difference keeps the elements of $A$ whose $x$ fails the defining property of $B$: $x \\ge 1$ and not ($x < 5$), which reduces to $x \\ge 5$ (set difference rule). Only one bound survives because the second condition already implies the first. The description of $A \\setminus B$ as an inequality in x is x >= 5."
+          - problem: "Let $A = \\{x \\in \\mathbb{R} : x \\le 0\\}$ and $B = \\{x \\in \\mathbb{R} : x > 2\\}$. Find $A \\cup B$ and give the answer as an inequality in $x$."
+            answer: "x <= 0 or x > 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full sets are $A = \\{x : x \\le 0\\}$ and $B = \\{x : x > 2\\}$. The union keeps every $x$ that satisfies at least one of the two defining properties (union rule). The open gap from 0 to 2 belongs to neither set, so the result is two pieces joined by 'or'. The description of $A \\cup B$ as an inequality in x is x <= 0 or x > 2."
+          - problem: "Let $A = \\{x \\in \\mathbb{R} : x^2 < 9\\}$ and $B = \\{x \\in \\mathbb{R} : x \\ge 1\\}$. Find $A \\setminus B$ and give the answer as an inequality in $x$."
+            answer: "-3 < x < 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full sets are $A = \\{x : x^2 < 9\\}$ and $B = \\{x : x \\ge 1\\}$. Solving $x^2 < 9$ by the square-root sign-split rule gives $-3 < x < 3$. The difference keeps those $x$ that also fail the defining property of $B$, that is $x < 1$ (set difference rule), which cuts the upper bound down to 1. The description of $A \\setminus B$ as an inequality in x is -3 < x < 1."
         constraints: "operate on sets given by a defining property; answer with a description"
     diagnostic_exemplar:
       problem: 'Let $E$ be the set of even integers and $T$ the set of multiples of $3$. Describe $E \cup T$, $E \cap T$ and $E \setminus T$.'
@@ -450,6 +466,22 @@ topics:
           - problem: 'With $A = \{1,2,3\}$, $B = \{2,3,4\}$, $C = \{1,4\}$, find $(A \cap B) \cup C$.'
             answer: '$\{1, 2, 3, 4\}$'
             solution_sketch: '$A \cap B = \{2, 3\}$; union with $C = \{1, 4\}$ gives $\{1, 2, 3, 4\}$.'
+          - problem: "With $A = \\{1,2,3,4\\}$, $B = \\{3,4,5\\}$ and $C = \\{2,4,6\\}$, compute $(A \\cup B) \\cap C$."
+            answer: "{2, 4}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (parentheses first): the union $A \\cup B = \\{1,2,3,4,5\\}$. Step 2: intersect this with $C = \\{2,4,6\\}$; the elements common to both sets are 2 and 4. The answer is {2, 4}."
+          - problem: "With $A = \\{2,3,4,5\\}$, $B = \\{1,2,3\\}$ and $C = \\{3,5,7\\}$, compute $(A \\cap B) \\cup C$."
+            answer: "{2, 3, 5, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (parentheses first): the intersection $A \\cap B = \\{2,3\\}$. Step 2: take the union with $C = \\{3,5,7\\}$; merging and removing the repeat 3 gives 2, 3, 5, 7. The answer is {2, 3, 5, 7}."
+          - problem: "With $A = \\{1,2,3,4,5\\}$, $B = \\{2,3,5\\}$ and $C = \\{3,4,5\\}$, compute $A \\setminus (B \\cap C)$."
+            answer: "{1, 2, 4}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (parentheses first): the intersection $B \\cap C = \\{3,5\\}$. Step 2 (set difference): remove 3 and 5 from $A = \\{1,2,3,4,5\\}$, which leaves 1, 2 and 4. The answer is {1, 2, 4}."
+          - problem: "With $A = \\{1,2,3,4\\}$, $B = \\{2,4,5\\}$ and $C = \\{3,4,5\\}$, compute $(A \\cap B) \\cup C$ and $A \\setminus (B \\cup C)$. Give first and second."
+            answer: "first = {2, 3, 4, 5}; second = {1}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "first"}, {"contract": {"kind": "set"}, "name": "second"}]}
+            solution_sketch: "Step 1 (parentheses first): the intersection $A \\cap B = \\{2,4\\}$. Step 2 (union): $(A \\cap B) \\cup C = \\{2,4\\} \\cup \\{3,4,5\\} = \\{2,3,4,5\\}$. Step 3 (set difference): $B \\cup C = \\{2,3,4,5\\}$, so removing those elements from $A$ leaves only 1, giving $A \\setminus (B \\cup C) = \\{1\\}$. The answers are first = {2, 3, 4, 5}; second = {1}."
         constraints: "respect operation order; parentheses first"
       - id: kp2
         name: "Operations with complements"

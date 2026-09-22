@@ -324,14 +324,30 @@ topics:
         name: "Negation and conjunction tables"
         key_prerequisites: [logical-connectives]
         exemplars:
-          - problem: 'Give the truth table of $\neg P$.'
-            answer_contract: {kind: none}
-            answer: 'T->F, F->T.'
-            solution_sketch: 'Negation flips the truth value.'
-          - problem: 'Give the truth values of $P \land Q$.'
-            answer_contract: {kind: none}
-            answer: 'TT->T, TF->F, FT->F, FF->F.'
-            solution_sketch: 'A conjunction is true only when both conjuncts are true.'
+          - problem: "For the connective negation, complete the truth table for not P. Use the row order P = T then P = F. Write 1 for true and 0 for false. Give the answer as a comma-separated list."
+            answer: "0, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: The rule for negation is that it flips the truth value of its input. For P = T, the rule gives not T = F, which is 0. For P = F, the rule gives not F = T, which is 1. The full table in the order T then F is 0, 1."
+          - problem: "For the connective conjunction, complete the truth table for P and Q. Use the row order P,Q = TT, TF, FT, FF. Write 1 for true and 0 for false. Give the answer as a comma-separated list."
+            answer: "1, 0, 0, 0"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: The rule for conjunction is that P and Q is true only when both P and Q are true. For rows TT, TF, FT, FF, the conjunction values are T, F, F, F. With 1 for true and 0 for false, the list is 1, 0, 0, 0."
+          - problem: "For the connective negation, complete the truth table for not Q. Use the row order Q = F then Q = T. Write 1 for true and 0 for false. Give the answer as a comma-separated list."
+            answer: "1, 0"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: The negation rule flips the truth value. For Q = F, not Q is T, which is 1. For Q = T, not Q is F, which is 0. In the order F then T, the list is 1, 0."
+          - problem: "For the connective conjunction, complete the truth table for P and Q. Use the row order P,Q = TF, FF, TT, FT. Write 1 for true and 0 for false. Give the answer as a comma-separated list."
+            answer: "0, 0, 1, 0"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: The conjunction rule makes P and Q true only in the row where both are true. The row TT is the third row in the order TF, FF, TT, FT. The values are F, F, T, F, so with 1 for true the list is 0, 0, 1, 0."
+          - problem: "For the connective conjunction, complete the truth table for P and Q. Use the row order P,Q = FF, TF, FT, TT. Write 1 for true and 0 for false. Give the answer as a comma-separated list."
+            answer: "0, 0, 0, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: Use the conjunction rule that P and Q is true only for TT. The order FF, TF, FT, TT has TT last. The values are F, F, F, T, which is 0, 0, 0, 1."
+          - problem: "For the connective conjunction, complete the truth table for P and Q. Use the row order P,Q = FT, TT, TF, FF. Write 1 for true and 0 for false. Give the answer as a comma-separated list."
+            answer: "0, 1, 0, 0"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: Use the conjunction rule; the only true row is TT. In the order FT, TT, TF, FF, TT is the second row. The values are F, T, F, F, which is 0, 1, 0, 0."
         constraints: "single connective; enumerate every row"
       - id: kp2
         name: "Disjunction table"
