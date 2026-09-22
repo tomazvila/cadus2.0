@@ -589,14 +589,30 @@ topics:
         name: Error direction from concavity
         key_prerequisites: [left-right-riemann-sums, concavity-inflection-points]
         exemplars:
-          - problem: '$\int_0^2 x^2\,dx = \frac{8}{3} \approx 2.667$, and the $n = 4$ trapezoid estimate is $2.75$. Since $x^2$ is concave up, does the trapezoid rule over- or underestimate here?'
-            answer: "overestimate"
-            answer_contract: {kind: none}
-            solution_sketch: 'Chords lie above a concave-up curve, so the trapezoid rule overestimates (and the midpoint rule, using tangent-trapezoids below the curve, underestimates: $2.625$).'
-          - problem: 'If $f$ is concave down on $[a, b]$, does the trapezoid rule over- or underestimate $\int_a^b f\,dx$?'
-            answer: "underestimate — chords lie below a concave-down curve"
-            answer_contract: {kind: none}
-            solution_sketch: "underestimate — chords lie below a concave-down curve"
+          - problem: "The trapezoid rule with n = 2 gives the estimate 5 for the integral of f(x) = x^2 + 1 from 0 to 2. The graph of f is concave up on this interval, and v denotes the exact value of the integral. Give an inequality in v that compares v with 5."
+            answer: "v < 5"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full object is the trapezoid estimate 5 for the integral of x^2 + 1 on [0, 2], where f''(x) = 2 > 0, so the graph is concave up on the whole interval. Rule: chords lie higher than a concave-up curve, so the trapezoid rule overestimates and 5 sits past the exact value v. Therefore the exact value satisfies v < 5."
+          - problem: "The trapezoid rule with n = 4 gives the estimate 42 for the integral of f(x) = 8x - x^2 from 0 to 4. The graph of f is concave down on this interval, and v denotes the exact value of the integral. Give an inequality in v that compares v with 42."
+            answer: "v > 42"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full object is the trapezoid estimate 42 for the integral of 8x - x^2 on [0, 4], where f''(x) = -2 < 0, so the graph is concave down on the whole interval. Rule: chords lie lower than a concave-down curve, so the trapezoid rule underestimates and 42 sits under the exact value v. Therefore the exact value satisfies v > 42."
+          - problem: "Let T be the trapezoid estimate and M the midpoint estimate, both with n = 6, for the integral of f(x) = x^4 from 0 to 2, and let I be the exact value of this integral. The graph of f is concave up on this interval. Select the correct comparison of T and M with I."
+            answer: "T > I, M < I"
+            answer_contract: {"kind": "label", "options": [["T > I, M < I"], ["T < I, M > I"], ["T > I, M > I"], ["T < I, M < I"]]}
+            solution_sketch: "The full objects are the n = 6 trapezoid estimate T and the midpoint estimate M for the integral of x^4 on [0, 2], where f''(x) = 12x^2 >= 0 makes the graph concave up. Rule: for a concave-up curve, chords lie higher than the curve, so T > I, while the midpoint tangent trapezoids lie lower, so M < I. The option 'T < I, M > I' reverses the chord and tangent roles, 'T > I, M > I' wrongly lifts the midpoint estimate past the curve, and 'T < I, M < I' wrongly drops the chord under the curve. The answer is T > I, M < I."
+          - problem: "Let T be the trapezoid estimate and M the midpoint estimate, both with n = 8, for the integral of f(x) = sin(x) from 0 to pi, and let I be the exact value of this integral. The graph of f is concave down on this interval. Select the correct comparison of T and M with I."
+            answer: "T < I, M > I"
+            answer_contract: {"kind": "label", "options": [["T > I, M < I"], ["T < I, M > I"], ["T > I, M > I"], ["T < I, M < I"]]}
+            solution_sketch: "The full objects are the n = 8 trapezoid estimate T and the midpoint estimate M for the integral of sin(x) on [0, pi], where f''(x) = -sin(x) < 0 on the open interval makes the graph concave down. Rule: for a concave-down curve, chords lie lower than the curve, so T < I, while the midpoint tangent trapezoids lie higher, so M > I. The option 'T > I, M < I' swaps the two rules, and 'T > I, M > I' and 'T < I, M < I' both ignore that the two rules err in opposite directions. The answer is T < I, M > I."
+          - problem: "Take the integrals of four functions, each with one fixed concavity on its interval: f(x) = x^2 on [0, 3]; f(x) = sin(x) on [1, 2]; f(x) = sqrt(x) on [1, 4]; f(x) = e^x on [0, 1]. How many of the four integrals does the trapezoid rule overestimate?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full objects are the integrals of x^2 on [0, 3], sin(x) on [1, 2], sqrt(x) on [1, 4], and e^x on [0, 1]. Concavity test: x^2 and e^x are concave up, while sin(x) on [1, 2] and sqrt(x) are concave down. Rule: the trapezoid rule overestimates exactly when the integrand is concave up, so it overestimates the x^2 and e^x integrals. The answer is 2."
+          - problem: "Take the integrals of four functions, each with one fixed concavity on its interval: f(x) = x^2 + 3 on [1, 4]; f(x) = 1/x on [1, 2]; f(x) = e^(2x) on [0, 1]; f(x) = ln(1 + x) on [0, 5]. How many of the four integrals does the midpoint rule underestimate?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full objects are the integrals of x^2 + 3 on [1, 4], 1/x on [1, 2], e^(2x) on [0, 1], and ln(1 + x) on [0, 5]. Concavity test: x^2 + 3, 1/x, and e^(2x) are concave up, while ln(1 + x) is concave down. Rule: the midpoint rule underestimates exactly when the integrand is concave up, so it underestimates three of the four integrals. The answer is 3."
         constraints: "integrand with fixed concavity on the interval; ask only for the direction"
     diagnostic_exemplar:
       problem: 'Approximate $\int_0^4 x^2\,dx$ with the trapezoid rule using $n = 2$, then report the difference (your estimate minus the exact value $\frac{64}{3}$).'
