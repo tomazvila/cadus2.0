@@ -671,12 +671,34 @@ topics:
         key_prerequisites: [functions-injective-surjective]
         constraints: "Each judgment needs a witness: a non-homomorphism function for 'not full', a collapsed pair of morphisms for 'not faithful'; standard sources are forgetful functors and functors into $\\mathbf 1$."
         exemplars:
-          - problem: "Show the forgetful functor $U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$ is faithful but not full."
-            answer: "Distinct homomorphisms have distinct underlying functions; not every function is a homomorphism."
-            solution_sketch: "Faithful: if $U\\phi=U\\psi$ as functions then $\\phi=\\psi$ as homomorphisms, so $U_{G,H}$ is injective. Not full: take $G=H=\\mathbb Z$; the set function $n\\mapsto n+1$ lies in $\\mathrm{Hom}_{\\mathbf{Set}}(\\mathbb Z,\\mathbb Z)$ but is not a group homomorphism (it does not fix $0$), so $U_{G,H}$ is not surjective."
-          - problem: "Give a functor that is full but not faithful, and explain why the unique functor $\\mathcal C\\to\\mathbf 1$ is not full for every $\\mathcal C$."
-            answer: "Take $F\\colon BM\\to\\mathbf 1$ for a monoid $M$ with $|M|\\ge 2$ (say $M=\\mathbb Z/2$); in general $\\mathcal C\\to\\mathbf 1$ is full only when no hom-set of $\\mathcal C$ is empty."
-            solution_sketch: "Let $\\mathbf 1$ have one object $*$ and only its identity, and let $F\\colon\\mathcal C\\to\\mathbf 1$ be the unique functor. Fullness asks each $F_{A,B}\\colon\\mathrm{Hom}_{\\mathcal C}(A,B)\\to\\mathrm{Hom}_{\\mathbf 1}(*,*)=\\{1_*\\}$ to be surjective, which holds exactly when $\\mathrm{Hom}_{\\mathcal C}(A,B)\\neq\\varnothing$ — so $F$ fails to be full whenever some hom-set of $\\mathcal C$ is empty (e.g. a discrete category on two objects). Choose instead $\\mathcal C=BM$, the one-object category of a monoid $M$ with $|M|\\ge 2$, such as $M=\\mathbb Z/2$. It has a single object, so its only hom-set is $\\mathrm{Hom}(*,*)=M\\neq\\varnothing$ and $F_{*,*}$ is surjective: $F$ is full. But $|M|\\ge 2$ gives distinct parallel morphisms $m\\neq n$ in $\\mathrm{Hom}(*,*)$ with $Fm=1_*=Fn$, so $F_{*,*}$ is not injective and $F$ is not faithful."
+          - problem: "Let U: Grp -> Set be the forgetful functor and consider the group Z/2 with elements 0 and 1. The hom-map of U sends each group homomorphism Z/2 -> Z/2 to its underlying function on the set {0,1}. There are four functions from {0,1} to {0,1}. How many of these four functions are group homomorphisms Z/2 -> Z/2?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity element of Z/2 is 0, and a group homomorphism must send 0 to 0. Test the four set functions one by one. The identity function and the constant-zero function send 0 to 0 and preserve addition, so they are homomorphisms. The swap function sends 0 to 1, and the constant-one function sends 0 to 1, so neither preserves the identity and both fail to be homomorphisms. Hence exactly two of the four set functions lie in the image of the hom-map of U. The hom-map is not surjective, so U is not full on this hom-set. The answer is 2."
+          - problem: "Let C be the one-object category whose morphisms are the two elements of Z/2 under addition. Let F: C -> 1 be the unique functor to the terminal category. How many distinct morphisms of C does F send to the identity morphism of 1?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The category C has exactly two morphisms, the elements 0 and 1 of Z/2. The terminal category 1 has one object with only its identity morphism. The functor F must send every morphism of C to that identity. Therefore both distinct morphisms of C have the same image, so by the definition of a faithful functor F is not faithful. The answer is 2."
+          - problem: "Let C be the category with objects A and B, two parallel morphisms f and g from A to B, and only the required identity morphisms. Let D be the category with objects A and B, one morphism h from A to B, and only the required identity morphisms. Define F by F(A)=A, F(B)=B, and F(f)=F(g)=h. Give the number of unordered pairs of distinct morphisms of C that have the same image under F."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The only distinct morphisms of C outside the identities are f and g, which are parallel arrows A to B. Both are sent by F to the single morphism h. No other pair of distinct morphisms has the same image. Thus there is exactly one such pair, so F is not faithful. The answer is 1."
+          - problem: "Let C be the poset category with objects 0 and 1 and exactly one non-identity morphism 0 -> 1. Let D be the same poset category. Define F on objects by F(0)=0 and F(1)=0, and send the non-identity morphism of C to the identity at 0. How many morphisms are in Hom_D(F(1),F(0))?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In D the object 0 has only its identity morphism. Since F(1)=0 and F(0)=0, the hom-set Hom_D(F(1),F(0)) is Hom_D(0,0), which contains exactly the identity. Thus it has one morphism. The hom-set Hom_C(1,0) is empty, so the induced map on this hom-set is not surjective and F is not full. The answer is 1."
+          - problem: "Let C be the one-object category whose morphisms are the three elements of Z/3 under addition. Let F: C -> 1 be the unique functor to the terminal category. Give the number of unordered pairs of distinct morphisms of C that have the same image under F."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The category C has three morphisms, the elements 0, 1, and 2 of Z/3. The terminal category 1 has a single identity morphism. The functor F sends all three morphisms to that identity. The number of unordered pairs of distinct morphisms is the number of 2-element subsets of a 3-element set, which is 3. The answer is 3."
+          - problem: "Consider the functor F from the one-object category of Z/2 to the terminal category 1. A student argues: Step 1: C has exactly two morphisms. Step 2: F sends both morphisms to the identity of 1. Step 3: A functor is faithful when each hom-map is injective. Step 4: The hom-map sends two morphisms to one, so it is injective. Step 5: Therefore F is faithful. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is true because Z/2 has two elements. Step 2 is true because the terminal category has only its identity. Step 3 is the definition of a faithful functor. Step 5 is a correct conclusion only if Step 4 were true. Step 4 is false because a map that sends two distinct morphisms to one morphism is not injective. The answer is Step 4."
+          - problem: "Write the full proof: the forgetful functor U: Grp -> Set is faithful but not full. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let U send each group to its underlying set and each homomorphism to its underlying function. Faithful: for groups G and H, suppose U(phi) = U(psi) as functions. Then phi(g)=psi(g) for every g in G, so phi=psi as homomorphisms. Thus each hom-map of U is injective, which is the definition of faithful. Not full: take G=H=Z. The function f: Z -> Z with f(n)=n+1 is an ordinary set function, but it is not a group homomorphism because f(0)=1 and a homomorphism must send 0 to 0. Hence f lies in Hom_Set(UZ,UZ) but not in the image of U_{Z,Z}. Therefore U_{Z,Z} is not surjective, so U is not full. This proves U is faithful but not full."
       - id: kp3
         name: Fully faithful functors reflect isomorphisms
         key_prerequisites: [functors]
