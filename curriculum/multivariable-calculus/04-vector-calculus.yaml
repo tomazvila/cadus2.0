@@ -503,14 +503,30 @@ topics:
         name: "Harder potentials"
         key_prerequisites: [line-integrals, gradient-directional-derivatives]
         exemplars:
-          - problem: 'Find a potential function for $\mathbf{F} = \langle 2xy + y^3, x^2 + 3xy^2 \rangle$.'
-            answer: '$f(x, y) = x^2 y + x y^3$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Check $P_y = 2x + 3y^2 = Q_x$; integrate $f_x$: $f = x^2 y + x y^3 + g(y)$; matching $f_y$ forces $g'' = 0$.'
-          - problem: 'Find a potential function for $\mathbf{F} = \langle 3x^2 + 2xy, x^2 + 2y \rangle$.'
-            answer: '$f(x, y) = x^3 + x^2 y + y^2$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f = x^3 + x^2 y + g(y)$ from $f_x$; then $g''(y) = 2y$.'
+          - problem: "Consider the field $\\mathbf{F} = \\langle 2xy + y^3,\\; x^2 + 3xy^2 \\rangle$. Use the component test to check that it is conservative, then find a potential function $f(x, y)$ for it, as a function of $x$ and $y$."
+            answer: "x^2 y + x y^3"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full field: $\\mathbf{F} = \\langle 2xy + y^3,\\; x^2 + 3xy^2 \\rangle$. Step 1 (component test): $P_y = 2x + 3y^2$ and $Q_x = 2x + 3y^2$, so the field is conservative. Step 2 (integrate $P$ with respect to $x$): $f = x^2 y + x y^3 + g(y)$. Step 3 (match $f_y$ with $Q$): $g'(y) = 0$, so $g$ is constant. The potential function is x^2 y + x y^3."
+          - problem: "Consider the field $\\mathbf{F} = \\langle 3x^2 + 2xy,\\; x^2 + 2y \\rangle$. First verify with the component test that $P_y = Q_x$, then find a potential function $f(x, y)$ for this field."
+            answer: "x^3 + x^2 y + y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full field: $\\mathbf{F} = \\langle 3x^2 + 2xy,\\; x^2 + 2y \\rangle$. Step 1 (component test): $P_y = 2x$ and $Q_x = 2x$, so the field is conservative. Step 2 (integrate $P$ with respect to $x$): $f = x^3 + x^2 y + g(y)$. Step 3 (match $f_y$ with $Q$): $g'(y) = 2y$, so $g = y^2$. The potential function is x^3 + x^2 y + y^2."
+          - problem: "A vector field has components $P = 2xy^2 + 3x^2$ and $Q = 2x^2 y + 2y$. The component test gives $P_y = Q_x$, so the field is conservative. Find a function $f(x, y)$ whose gradient equals this field."
+            answer: "x^2 y^2 + x^3 + y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full field: $\\langle 2xy^2 + 3x^2,\\; 2x^2 y + 2y \\rangle$. Step 1 (component test): $P_y = 4xy = Q_x$, so a potential exists. Step 2 (integrate $P$ with respect to $x$): $f = x^2 y^2 + x^3 + g(y)$. Step 3 (match $f_y = 2x^2 y + g'(y)$ with $Q$): $g'(y) = 2y$, so $g = y^2$. The function whose gradient is the field is x^2 y^2 + x^3 + y^2."
+          - problem: "A particle moves in the field $\\mathbf{F} = \\langle y^3 + 2xy + 3x^2,\\; 3xy^2 + x^2 \\rangle$, which passes the component test. Find a potential function $f(x, y)$ whose gradient equals this field."
+            answer: "x y^3 + x^2 y + x^3"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full field: $\\mathbf{F} = \\langle y^3 + 2xy + 3x^2,\\; 3xy^2 + x^2 \\rangle$. Step 1 (component test): $P_y = 3y^2 + 2x$ and $Q_x = 3y^2 + 2x$, so the field is conservative. Step 2 (integrate $P$ with respect to $x$): $f = x y^3 + x^2 y + x^3 + g(y)$. Step 3 (match $f_y = 3xy^2 + x^2 + g'(y)$ with $Q$): $g'(y) = 0$, so $g$ is constant. The potential function is x y^3 + x^2 y + x^3."
+          - problem: "The conservative field $\\mathbf{F} = \\langle 2xyz,\\; x^2 z + 3y^2,\\; x^2 y + 2z \\rangle$ passes the component test in all three pairs of components. Find a potential function $f(x, y, z)$ for this field."
+            answer: "x^2 y z + y^3 + z^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "Full field: $\\mathbf{F} = \\langle 2xyz,\\; x^2 z + 3y^2,\\; x^2 y + 2z \\rangle$. Step 1 (component test): $P_y = 2xz = Q_x$, $P_z = 2xy = R_x$, and $Q_z = x^2 = R_y$, so the field is conservative. Step 2 (integrate $P$ with respect to $x$): $f = x^2 y z + g(y, z)$. Step 3 (match $f_y$ with $Q$): $g_y = 3y^2$, so $g = y^3 + h(z)$. Step 4 (match $f_z$ with $R$): $h'(z) = 2z$, so $h = z^2$. The potential function is x^2 y z + y^3 + z^2."
+          - problem: "The field $\\mathbf{F} = \\langle 3x^2 y + 2xy^2,\\; x^3 + 2x^2 y \\rangle$ is conservative by the component test. Find the potential function $f(x, y)$ of this field that satisfies the condition $f(0, 0) = 5$."
+            answer: "x^3 y + x^2 y^2 + 5"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full field: $\\mathbf{F} = \\langle 3x^2 y + 2xy^2,\\; x^3 + 2x^2 y \\rangle$. Step 1 (component test): $P_y = 3x^2 + 4xy = Q_x$, so the field is conservative. Step 2 (integrate $P$ with respect to $x$): $f = x^3 y + x^2 y^2 + g(y)$. Step 3 (match $f_y$ with $Q$): $g'(y) = 0$. Step 4 (apply the condition $f(0,0) = 5$): the constant is $5$. The potential function is x^3 y + x^2 y^2 + 5."
         constraints: "every mixed term appears in BOTH components; degree at most 4; always verify with the component test first"
     diagnostic_exemplar:
       problem: 'Show that $\mathbf{F} = \langle 3x^2 + 2xy^3,\; 3x^2y^2 + 4y \rangle$ is conservative and find a potential function.'
