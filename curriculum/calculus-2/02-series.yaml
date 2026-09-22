@@ -1399,18 +1399,30 @@ topics:
         name: The three-way classification
         key_prerequisites: [alternating-series-test, comparison-tests]
         exemplars:
-          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$.'
-            answer: 'conditionally convergent (converges by AST, but $\sum \frac{1}{n}$ diverges)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The series converges while its absolute version, the harmonic series, does not.'
-          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n}{\sqrt{n}}$.'
-            answer: 'conditionally convergent (AST applies; $\sum n^{-1/2}$ diverges, $p = \frac{1}{2}$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{1}{\sqrt{n}}$ decreases to $0$, but the absolute series is a divergent $p$-series.'
-          - problem: 'Classify $\sum_{n=1}^{\infty} (-1)^n \left(\frac{2}{3}\right)^n$.'
-            answer: 'absolutely convergent ($\sum (2/3)^n$ is a convergent geometric series)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The absolute series has ratio $\frac{2}{3} < 1$.'
+          - problem: "For the series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n}$, classify it using 1 for absolutely convergent, 2 for conditionally convergent, and 3 for divergent. Give the code and the exponent p of the p-series formed by its terms."
+            answer: "code = 2; p = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "code"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: Write the full series as sum (-1)^{n+1}/n. Step 2: Apply the alternating series test: 1/n decreases to 0, so the series converges. Step 3: Apply the p-series test to the absolute series sum 1/n, a p-series with p = 1, which diverges because p <= 1. Step 4: Convergent but not absolutely convergent means conditionally convergent, so the code is 2. The answer is code = 2; p = 1."
+          - problem: "For the series $\\sum_{n=1}^{\\infty} \\frac{(-1)^n}{\\sqrt{n}}$, classify it using 1 for absolutely convergent, 2 for conditionally convergent, and 3 for divergent. Give the code and the exponent p of the p-series formed by its terms."
+            answer: "code = 2; p = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "code"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: Write the full series as sum (-1)^n n^{-1/2}. Step 2: The alternating series test applies because n^{-1/2} decreases to 0, so the series converges. Step 3: Apply the p-series test to the absolute series sum n^{-1/2}: it has p = 1/2 <= 1, so it diverges. Step 4: Convergent but not absolutely gives conditionally convergent, code 2. The answer is code = 2; p = 1/2."
+          - problem: "For the series $\\sum_{n=1}^{\\infty} (-1)^n \\left(\\frac{2}{3}\\right)^n$, classify it using 1 for absolutely convergent, 2 for conditionally convergent, and 3 for divergent. Give the code and the positive ratio r of the geometric series formed from the absolute values of the terms."
+            answer: "code = 1; r = 2/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "code"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1: Write the full series as sum (-1)^n (2/3)^n. Step 2: Take absolute values of the terms: they form the geometric series sum (2/3)^n with positive ratio r = 2/3. Step 3: The geometric series test gives convergence because |r| < 1. Step 4: The absolute series converges, so the series is absolutely convergent and the code is 1. The answer is code = 1; r = 2/3."
+          - problem: "For the series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n^3}$, classify it using 1 for absolutely convergent, 2 for conditionally convergent, and 3 for divergent. Give the code and the exponent p of the p-series formed by its terms."
+            answer: "code = 1; p = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "code"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: Write the full series as sum (-1)^{n+1} n^{-3}. Step 2: Apply the p-series test to the absolute series sum 1/n^3: p = 3 > 1, so the absolute series converges. Step 3: An alternating series whose absolute series converges is absolutely convergent, so the code is 1. The answer is code = 1; p = 3."
+          - problem: "For the series $\\sum_{n=1}^{\\infty} (-1)^n 3^n$, classify it using 1 for absolutely convergent, 2 for conditionally convergent, and 3 for divergent. Give the code and the positive ratio r of the geometric series formed from the absolute values of the terms."
+            answer: "code = 3; r = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "code"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1: Write the full series as sum (-1)^n 3^n. Step 2: The term sizes 3^n grow without bound, so the terms do not approach 0, and the divergence test gives divergence. Step 3: The absolute series is the geometric series sum 3^n with positive ratio r = 3 >= 1, so it also diverges. Step 4: The three-way classification is divergent, so the code is 3. The answer is code = 3; r = 3."
+          - problem: "For the series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n^{1/4}}$, classify it using 1 for absolutely convergent, 2 for conditionally convergent, and 3 for divergent. Give the code and the exponent p of the p-series formed by its terms."
+            answer: "code = 2; p = 1/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "code"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: Write the full series as sum (-1)^{n+1} n^{-1/4}. Step 2: The alternating series test applies because n^{-1/4} decreases to 0, so the series converges. Step 3: Apply the p-series test to the absolute series sum n^{-1/4}: p = 1/4 <= 1, so it diverges. Step 4: Convergent but not absolutely gives conditionally convergent, code 2. The answer is code = 2; p = 1/4."
         constraints: "absolute series is always a p-series or geometric series; require the three-way classification"
       - id: kp3
         name: Harder classifications

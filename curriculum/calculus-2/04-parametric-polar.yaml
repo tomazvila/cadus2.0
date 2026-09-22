@@ -150,6 +150,22 @@ topics:
           - problem: 'For $x = \cos t$, $y = \sin t$, find $\frac{dy}{dx}$ at $t = \frac{\pi}{4}$.'
             answer: '$-1$'
             solution_sketch: '$\frac{dy}{dx} = \frac{\cos t}{-\sin t} = -\cot t$; at $t = \frac{\pi}{4}$: $-1$.'
+          - problem: "For $x = t^3$ and $y = t^2$, find $\\frac{dy}{dx}$ at $t = 2$."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is x = t^3, y = t^2. First, dx/dt = 3t^2 and dy/dt = 2t by the power rule. Next, dy/dx = (dy/dt)/(dx/dt) = 2t/(3t^2) = 2/(3t) by the parametric slope rule. At t = 2, the slope is 2/(3*2) = 1/3. The slope is 1/3."
+          - problem: "For $x = \\sin t$ and $y = \\cos t$, find $\\frac{dy}{dx}$ at $t = \\frac{\\pi}{3}$."
+            answer: "-sqrt(3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is x = sin t, y = cos t. First, dx/dt = cos t and dy/dt = -sin t by the trig derivative rule. Next, dy/dx = (dy/dt)/(dx/dt) = -sin t/cos t = -tan t by the parametric slope rule. At t = pi/3, the slope is -tan(pi/3) = -sqrt(3). The slope is -sqrt(3)."
+          - problem: "For $x = t^2 + 3t$ and $y = t^3$, find $\\frac{dy}{dx}$ at $t = 1$."
+            answer: "3/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is x = t^2 + 3t, y = t^3. First, dx/dt = 2t + 3 and dy/dt = 3t^2 by the power rule. Next, dy/dx = (dy/dt)/(dx/dt) = 3t^2/(2t + 3) by the parametric slope rule. At t = 1, the slope is 3*1^2/(2*1 + 3) = 3/5. The slope is 3/5."
+          - problem: "A particle moves with $x = t^2$ and $y = t^5$. Find the slope $\\frac{dy}{dx}$ of its path at $t = -1$."
+            answer: "-5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The path is x = t^2, y = t^5. First, dx/dt = 2t and dy/dt = 5t^4 by the power rule. Next, dy/dx = (dy/dt)/(dx/dt) = 5t^4/(2t) = (5/2)t^3 by the parametric slope rule. At t = -1, the slope is (5/2)*(-1)^3 = -5/2. The slope is -5/2."
         constraints: "dy/dt and dx/dt polynomial or single trig; evaluation points are small integers or special angles"
       - id: kp2
         name: Tangent lines and horizontal tangents
@@ -302,6 +318,22 @@ topics:
           - problem: 'Find the area under the curve $x = t^2$, $y = t$ for $0 \le t \le 2$ (i.e. $\int y\,dx$).'
             answer: '$16/3$'
             solution_sketch: '$\int y\,dx = \int_0^2 t \cdot 2t\,dt = \frac{2 \cdot 8}{3}$.'
+          - problem: "Find the length of $x = e^{3t/4}\\cos t$, $y = e^{3t/4}\\sin t$ for $0 \\le t \\le \\frac{4}{3}\\ln 3$."
+            answer: "10/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (parametric speed identity): for the curve x = e^(3t/4) cos t, y = e^(3t/4) sin t, differentiate to get dx/dt = e^(3t/4)((3/4)cos t - sin t) and dy/dt = e^(3t/4)((3/4)sin t + cos t). Then (dx/dt)^2 + (dy/dt)^2 = (9/16 + 1)e^(3t/2) = (25/16)e^(3t/2), so the speed is (5/4)e^(3t/4). Step 2 (arc length formula): L = integral from 0 to (4/3)ln 3 of (5/4)e^(3t/4) dt = (5/4)(4/3)(e^(ln 3) - 1) = (5/3)(3 - 1) = 10/3. The length is 10/3."
+          - problem: "Find the area under the curve $x = t^3$, $y = t$ for $0 \\le t \\le 2$, using area = $\\int y\\,dx$."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (parametric area formula): A = integral of y dx = integral of y(t) x'(t) dt. For x = t^3 and y = t, the derivative is x'(t) = 3t^2, so the integrand is t * 3t^2 = 3t^3. Step 2 (FTC): A = integral from 0 to 2 of 3t^3 dt = 3t^4/4 evaluated from 0 to 2 = 3*16/4 = 12. The area is 12."
+          - problem: "A curve is given by $x = 3t^2$, $y = t + 1$ for $0 \\le t \\le 2$. Find the area under the curve, using area = $\\int y\\,dx$."
+            answer: "28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (parametric area formula): A = integral of y(t) x'(t) dt. For x = 3t^2 and y = t + 1, the derivative is x'(t) = 6t, so the integrand is (t + 1)*6t = 6t^2 + 6t. Step 2 (FTC): A = integral from 0 to 2 of (6t^2 + 6t) dt = 2t^3 + 3t^2 evaluated from 0 to 2 = 16 + 12 = 28. The area is 28."
+          - problem: "The area under the curve $x = t^2$, $y = kt$ for $0 \\le t \\le 3$, computed as $\\int y\\,dx$, equals $54$. Find the value of $k$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (parametric area formula): A = integral of y(t) x'(t) dt. For x = t^2 and y = kt, the derivative is x'(t) = 2t, so A = integral from 0 to 3 of kt*2t dt = 2k * t^3/3 evaluated from 0 to 3 = 18k. Step 2 (solve the linear equation): set 18k = 54, so k = 54/18 = 3. The value of k is 3."
         constraints: "exponential-trig spirals with perfect-square speed; area via int y(t) x'(t) dt with polynomial integrand"
     diagnostic_exemplar:
       problem: 'Find the length of the curve $x = 3t^2$, $y = 2t^3$ for $0 \le t \le 2$, and the speed at $t = 2$.'
@@ -482,6 +514,22 @@ topics:
           - problem: 'Convert $(r, \theta) = \left(4, \frac{3\pi}{2}\right)$ to rectangular coordinates.'
             answer: '$(0, -4)$'
             solution_sketch: '$\cos\frac{3\pi}{2} = 0$, $\sin\frac{3\pi}{2} = -1$.'
+          - problem: "Convert the polar point (r, theta) = (2, pi/4) to rectangular coordinates. Give the rectangular coordinates as (x, y)."
+            answer: "(sqrt(2), sqrt(2))"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The polar point is (r, theta) = (2, pi/4). Apply x = r cos(theta): x = 2 cos(pi/4) = 2 times sqrt(2)/2 = sqrt(2). Apply y = r sin(theta): y = 2 sin(pi/4) = 2 times sqrt(2)/2 = sqrt(2). The rectangular coordinates are (sqrt(2), sqrt(2))."
+          - problem: "A point is given in polar form as (r, theta) = (6, 5pi/3). Find its rectangular coordinates as (x, y)."
+            answer: "(3, -3sqrt(3))"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The polar point is (r, theta) = (6, 5pi/3). Compute x = r cos(theta): x = 6 cos(5pi/3) = 6 times 1/2 = 3. Compute y = r sin(theta): y = 6 sin(5pi/3) = 6 times (-sqrt(3)/2) = -3sqrt(3). The rectangular coordinates are (3, -3sqrt(3))."
+          - problem: "The polar point (r, theta) = (4, pi) lies on an axis. Determine its rectangular coordinates as (x, y)."
+            answer: "(-4, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The polar point is (r, theta) = (4, pi). Use x = r cos(theta): x = 4 cos(pi) = 4 times (-1) = -4. Use y = r sin(theta): y = 4 sin(pi) = 4 times 0 = 0. The rectangular coordinates are (-4, 0)."
+          - problem: "A point in the plane has polar coordinates (r, theta) = (10, 3pi/4). What are its rectangular coordinates, given as (x, y)?"
+            answer: "(-5sqrt(2), 5sqrt(2))"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The polar point is (r, theta) = (10, 3pi/4). Evaluate x = r cos(theta): x = 10 cos(3pi/4) = 10 times (-sqrt(2)/2) = -5sqrt(2). Evaluate y = r sin(theta): y = 10 sin(3pi/4) = 10 times sqrt(2)/2 = 5sqrt(2). The rectangular coordinates are (-5sqrt(2), 5sqrt(2))."
         constraints: "theta on the unit-circle special angles; exact radical answers"
       - id: kp3
         name: Rectangular to polar
@@ -584,14 +632,30 @@ topics:
         name: Identifying curves from polar equations
         key_prerequisites: [plotting-polar-points, completing-the-square]
         exemplars:
-          - problem: 'Convert $r = 2$ and $\theta = \frac{\pi}{4}$ to rectangular equations.'
-            answer: '$x^2 + y^2 = 4$; $y = x$ (a ray/line through the origin)'
-            answer_contract: {kind: none}
-            solution_sketch: '$r = 2$ is a circle of radius $2$; constant $\theta$ is the line of slope $\tan\frac{\pi}{4} = 1$.'
-          - problem: 'Identify the curve $r = -4\sin\theta$.'
-            answer: '$x^2 + (y + 2)^2 = 4$: a circle of radius $2$ centered at $(0, -2)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$r^2 = -4r\sin\theta$ gives $x^2 + y^2 = -4y$; complete the square.'
+          - problem: "The polar equation r = 10 cos theta describes a circle through the origin. Give the center of this circle as (x, y)."
+            answer: "(5, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (multiply by r): r^2 = 10r cos theta. Step 2 (polar-rectangular conversion): use r^2 = x^2 + y^2 and r cos theta = x to get x^2 + y^2 = 10x. Step 3 (completing the square): (x - 5)^2 + y^2 = 25, a circle through the origin. The center is (5, 0)."
+          - problem: "The polar equation r = -6 sin theta describes a circle through the origin. Find its radius."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (multiply by r): r^2 = -6r sin theta, so x^2 + y^2 = -6y. Step 2 (completing the square): x^2 + (y + 3)^2 = 9. Step 3 (read off the radius): this is a circle of radius 3. The radius is 3."
+          - problem: "The polar equation r = 7 describes a curve in the plane. Give the center of this curve as (x, y)."
+            answer: "(0, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (identify the form): a constant r means every point of the curve is 7 units from the origin. Step 2 (polar-rectangular conversion): r^2 = 49 gives x^2 + y^2 = 49, a circle centered at the origin. The center is (0, 0)."
+          - problem: "The polar equation theta = 2pi/3 describes a line through the origin. Find the slope of this line."
+            answer: "-sqrt(3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (constant-theta line rule): a constant theta gives the line y = x tan(theta) through the origin. Step 2 (evaluate the trig function): tan(2pi/3) = -sqrt(3). The slope is -sqrt(3)."
+          - problem: "The polar equation r = 12 sin theta describes a circle through the origin. Give the center of this circle as (x, y)."
+            answer: "(0, 6)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (multiply by r): r^2 = 12r sin theta, so x^2 + y^2 = 12y. Step 2 (completing the square): x^2 + (y - 6)^2 = 36, a circle through the origin on the y-axis. The center is (0, 6)."
+          - problem: "The line y = -x passes through the origin. Give its polar angle theta, taking 0 <= theta < pi."
+            answer: "3pi/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (slope to angle): the line y = -x has slope -1, and a constant-theta line has slope tan(theta). Step 2 (solve tan(theta) = -1 on 0 <= theta < pi): tan(3pi/4) = -1. The angle is 3pi/4."
         constraints: "circles through the origin (r = 2a cos theta or 2a sin theta), constant-r circles, and lines only"
     diagnostic_exemplar:
       problem: 'Convert the circle $x^2 + y^2 = 6y$ to a polar equation, and identify the curve.'
@@ -735,6 +799,22 @@ topics:
           - problem: 'Find the slope of the spiral $r = \theta$ at $\theta = \frac{\pi}{2}$.'
             answer: '$-\frac{2}{\pi}$'
             solution_sketch: '$x = \theta\cos\theta$, $y = \theta\sin\theta$: at $\frac{\pi}{2}$, $\frac{dy}{d\theta} = 1$ and $\frac{dx}{d\theta} = -\frac{\pi}{2}$.'
+          - problem: "Find the slope of the polar curve $r = 4\\cos\\theta$ at $\\theta = \\frac{\\pi}{6}$ as a number."
+            answer: "-sqrt(3)/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Treat theta as the parameter and write the full parametric form $x = r\\cos\\theta$, $y = r\\sin\\theta$ with $r = 4\\cos\\theta$, so $r' = -4\\sin\\theta$. The parametric derivative rule gives $\\frac{dy}{d\\theta} = r'\\sin\\theta + r\\cos\\theta$ and $\\frac{dx}{d\\theta} = r'\\cos\\theta - r\\sin\\theta$. At $\\theta = \\frac{\\pi}{6}$: $r = 2\\sqrt{3}$, $r' = -2$, $\\sin\\theta = \\frac{1}{2}$, $\\cos\\theta = \\frac{\\sqrt{3}}{2}$, so $\\frac{dy}{d\\theta} = (-2)\\cdot\\frac{1}{2} + 2\\sqrt{3}\\cdot\\frac{\\sqrt{3}}{2} = 2$ and $\\frac{dx}{d\\theta} = (-2)\\cdot\\frac{\\sqrt{3}}{2} - 2\\sqrt{3}\\cdot\\frac{1}{2} = -2\\sqrt{3}$. Dividing, the slope is $\\frac{2}{-2\\sqrt{3}} = -\\frac{1}{\\sqrt{3}}$, which is -sqrt(3)/3."
+          - problem: "Find the slope of the polar curve $r = 1 + \\sin\\theta$ at $\\theta = \\frac{\\pi}{4}$ as a number."
+            answer: "-1-sqrt(2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the full parametric form $x = (1+\\sin\\theta)\\cos\\theta$, $y = (1+\\sin\\theta)\\sin\\theta$, with $r' = \\cos\\theta$. The parametric derivative rule gives $\\frac{dy}{d\\theta} = r'\\sin\\theta + r\\cos\\theta$ and $\\frac{dx}{d\\theta} = r'\\cos\\theta - r\\sin\\theta$. At $\\theta = \\frac{\\pi}{4}$: $r = 1 + \\frac{\\sqrt{2}}{2}$, $r' = \\frac{\\sqrt{2}}{2}$, $\\sin\\theta = \\cos\\theta = \\frac{\\sqrt{2}}{2}$. Then $\\frac{dy}{d\\theta} = \\frac{1}{2} + \\left(1+\\frac{\\sqrt{2}}{2}\\right)\\frac{\\sqrt{2}}{2} = 1 + \\frac{\\sqrt{2}}{2}$ and $\\frac{dx}{d\\theta} = \\frac{1}{2} - \\left(1+\\frac{\\sqrt{2}}{2}\\right)\\frac{\\sqrt{2}}{2} = -\\frac{\\sqrt{2}}{2}$. The slope is $-\\left(1+\\frac{\\sqrt{2}}{2}\\right)\\Big/\\frac{\\sqrt{2}}{2} = -(\\sqrt{2}+1)$, that is -1-sqrt(2)."
+          - problem: "Find the slope of the polar curve $r = 3 + 2\\sin\\theta$ at $\\theta = \\pi$ as a number."
+            answer: "-3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the limacon $r = 3 + 2\\sin\\theta$ the derivative is $r' = 2\\cos\\theta$. Write the full parametric form $x = r\\cos\\theta$, $y = r\\sin\\theta$; the parametric derivative rule gives $\\frac{dy}{d\\theta} = r'\\sin\\theta + r\\cos\\theta$ and $\\frac{dx}{d\\theta} = r'\\cos\\theta - r\\sin\\theta$. At $\\theta = \\pi$: $r = 3$, $r' = -2$, $\\sin\\theta = 0$, $\\cos\\theta = -1$. Hence $\\frac{dy}{d\\theta} = 0 + 3(-1) = -3$ and $\\frac{dx}{d\\theta} = (-2)(-1) - 0 = 2$. The slope is $\\frac{-3}{2}$, so the answer is -3/2."
+          - problem: "Find the slope of the polar curve $r = 2\\cos(2\\theta)$ at $\\theta = \\frac{\\pi}{6}$ as a number."
+            answer: "sqrt(3)/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the rose $r = 2\\cos(2\\theta)$, the chain rule on the trig derivative gives $r' = -4\\sin(2\\theta)$. With $x = r\\cos\\theta$, $y = r\\sin\\theta$, the parametric derivative rule gives the slope $\\frac{r'\\sin\\theta + r\\cos\\theta}{r'\\cos\\theta - r\\sin\\theta}$. At $\\theta = \\frac{\\pi}{6}$: $r = 2\\cos\\frac{\\pi}{3} = 1$, $r' = -4\\sin\\frac{\\pi}{3} = -2\\sqrt{3}$, $\\sin\\theta = \\frac{1}{2}$, $\\cos\\theta = \\frac{\\sqrt{3}}{2}$. Then $\\frac{dy}{d\\theta} = (-2\\sqrt{3})\\cdot\\frac{1}{2} + 1\\cdot\\frac{\\sqrt{3}}{2} = -\\frac{\\sqrt{3}}{2}$ and $\\frac{dx}{d\\theta} = (-2\\sqrt{3})\\cdot\\frac{\\sqrt{3}}{2} - 1\\cdot\\frac{1}{2} = -\\frac{7}{2}$. The slope is $\\left(-\\frac{\\sqrt{3}}{2}\\right)\\Big/\\left(-\\frac{7}{2}\\right) = \\frac{\\sqrt{3}}{7}$, which is sqrt(3)/7."
         constraints: "treat theta as the parameter in x = r cos theta, y = r sin theta; evaluation at special angles"
       - id: kp2
         name: Horizontal and vertical tangents
