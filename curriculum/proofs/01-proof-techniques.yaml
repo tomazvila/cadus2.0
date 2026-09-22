@@ -150,12 +150,34 @@ topics:
         name: "Vacuous proofs"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: 'Prove: every real solution of $x^2 + 1 = 0$ is greater than $10$.'
-            answer: 'Vacuously true: $x^2 + 1 \ge 1 > 0$, so there are no real solutions.'
-            solution_sketch: 'The claim is $\forall x\,(x^2 + 1 = 0 \to x > 10)$. For every real $x$, $x^2 + 1 \ge 1$, so the hypothesis is never true and the conditional holds vacuously. $\square$'
-          - problem: 'Prove: if $n$ is an even prime greater than $5$, then $n^2 < 0$.'
-            answer: 'Vacuously true: the only even prime is $2$, so no even prime exceeds $5$.'
-            solution_sketch: 'Any even integer greater than $2$ is divisible by $2$ and hence composite, so the hypothesis is never satisfied; a conditional with an unsatisfiable hypothesis is vacuously true. $\square$'
+          - problem: "A proof of 'for every real x, if x^2+1=0 then x>10' begins by bounding the hypothesis. Find the least value of x^2+1 over all real x."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: bound the square: for every real x, x^2 >= 0. Step 2: add 1: x^2+1 >= 1. The full object is the inequality x^2+1 >= 1. Hence the hypothesis x^2+1=0 can never be true, so the conditional is vacuous. The answer is 1."
+          - problem: "A proof that no even prime exceeds 5 uses the only even prime. Determine the only even prime."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: an even integer greater than 2 has the factor 2 and a second factor greater than 1, so it is composite. Step 2: the only even integer that is prime is 2 itself. The full object is the set of even primes {2}. Since no even prime is greater than 5, the hypothesis is unsatisfiable and the conditional is vacuously true. The answer is 2."
+          - problem: "For all real x, if x^2+x+1=0 then x>100. Complete the square for the hypothesis expression: x^2+x+1 = (x+1/2)^2 + k. Give k."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: complete the square: x^2+x+1 = (x+1/2)^2 + 3/4. Step 2: use the square bound (x+1/2)^2 >= 0, so the expression is at least 3/4. The full object is the identity x^2+x+1 = (x+1/2)^2 + 3/4. Thus the hypothesis x^2+x+1=0 is impossible, and the conditional is vacuous. The answer is 3/4."
+          - problem: "For all integers n, if n^2+1=0 then n=7. How many integer solutions does the hypothesis n^2+1=0 have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the square bound: for every integer n, n^2 >= 0, so n^2+1 >= 1. Step 2: compare with 0: the expression n^2+1 is never 0. The full object is the inequality n^2+1 >= 1. The hypothesis has no integer solutions, so the conditional is vacuously true. The answer is 0."
+          - problem: "Claim: for every real x, if x^2+1=0 then x>10. Step 1: assume x^2+1=0 for a real x. Step 2: then x^2=-1. Step 3: but x^2>=0 and -1<0, a contradiction. Step 4: hence the hypothesis is true for some x. Step 5: therefore x>10. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is valid: it assumes the hypothesis for an arbitrary real x. Step 2 is valid: subtracting 1 gives x^2=-1. Step 3 is valid: squares are nonnegative and -1 is negative. Step 4 is the first invalid step: the contradiction shows the hypothesis is false for every real x, not true for some x. Step 5 does not follow from the contradiction. The answer is Step 4."
+          - problem: "Claim: for every real x, if x^4 + 1 = 0 then x > 5. A vacuous proof needs the line that shows the hypothesis is unsatisfiable for every real x. Select that line."
+            answer: "x^4+1 > 0"
+            answer_contract: {"kind": "label", "options": [["x^4+1 > 0"], ["x^4+1 = 0"], ["x^4-1 > 0"], ["x^4+1 < 0"]]}
+            solution_sketch: "Step 1: use the fourth-power bound: for every real x, x^4 >= 0. Step 2: add 1: x^4+1 >= 1, and in particular x^4+1 > 0. The full object is the inequality x^4+1 > 0, so the hypothesis x^4+1 = 0 is never true and the conditional is vacuously true. The option x^4+1 = 0 merely restates the hypothesis and proves nothing; the option x^4-1 > 0 fails at x = 0, so it does not hold for every x; the option x^4+1 < 0 is never true for any real x, so it cannot be the demonstrated line. The answer is x^4+1 > 0."
+          - problem: "Write the full proof: for all real x, if x^2 + 2x + 5 = 0 then x < 0. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: for all real x, if x^2+2x+5=0 then x<0. Step 1: complete the square: x^2+2x+5 = (x+1)^2+4. Step 2: for every real x, (x+1)^2 >= 0, so (x+1)^2+4 >= 4. Step 3: hence x^2+2x+5 >= 4 > 0 for every real x. The full object is the inequality x^2+2x+5 >= 4. Step 4: therefore the hypothesis x^2+2x+5=0 is false for every real x, so there is no real x to check against the conclusion x<0. Step 5: a conditional with an unsatisfiable hypothesis is vacuously true, so the claim holds."
         constraints: "the hypothesis must be shown unsatisfiable; conclusion may be absurd"
       - id: kp2
         name: "Trivial proofs"
@@ -194,12 +216,34 @@ topics:
         name: "Recognizing which template applies"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: 'Classify the proof strategy: "if $2 + 2 = 5$, then $7$ is prime". Vacuous, trivial, or both available?'
-            answer: 'Both: the hypothesis is false (vacuous route) and the conclusion is true (trivial route).'
-            solution_sketch: '$2 + 2 = 5$ is false, so the conditional is vacuously true; independently, $7$ is prime, so it is also trivially true. Either observation is a complete proof.'
-          - problem: 'For the claim "every negative real number that is a perfect square is prime", which template applies?'
-            answer: 'Vacuous: no negative real is the square of a real number, so the hypothesis is unsatisfiable.'
-            solution_sketch: 'Squares of reals are $\ge 0$, so nothing satisfies the hypothesis; the universal conditional is vacuously true.'
+          - problem: "Consider the claim: if 4 + 1 = 6, then 13 is prime. Check the hypothesis and the conclusion of this claim, then decide which proof strategies are available. Which option is correct?"
+            answer: "Two routes"
+            answer_contract: {"kind": "label", "options": [["Only vacuous"], ["Only trivial"], ["Two routes"], ["Neither route"]]}
+            solution_sketch: "Step 1: check the hypothesis: 4 + 1 = 6 is false, and a false hypothesis gives the vacuous route. Step 2: check the conclusion: 13 is prime is true, and a true conclusion gives the trivial route. Step 3: each observation alone is a complete proof, so both strategies work. The option Only vacuous ignores the true conclusion; the option Only trivial ignores the false hypothesis; the option Neither route is wrong because both routes work. The answer is Two routes."
+          - problem: "Consider the claim: every real number x that satisfies x^2 = -4 and x > 10 is a prime number. Which proof strategy applies?"
+            answer: "Only vacuous"
+            answer_contract: {"kind": "label", "options": [["Only vacuous"], ["Only trivial"], ["Two routes"], ["Neither route"]]}
+            solution_sketch: "Step 1: the full claim is: every real x with x^2 = -4 and x > 10 is prime. Step 2: the square rule: a square of a real number is at least 0, so x^2 = -4 has no real solution. Step 3: the hypothesis is unsatisfiable, so the claim is vacuously true. Step 4: the trivial route needs the conclusion true for every real x, and most reals are not prime, so it fails. The option Only trivial needs an always-true conclusion; the option Two routes adds the impossible trivial route; the option Neither route ignores the vacuous route. The answer is Only vacuous."
+          - problem: "For the claim: for every integer n, if n is a multiple of 4, then n^2 + 7 > 0. To test the conclusion-always-true route, find the smallest value of n^2 + 7 over all integers n. Give that value."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the full conclusion is n^2 + 7 > 0 for every integer n. Step 2: the bound rule: n^2 is at least 0 for every integer, with minimum 0 at n = 0. Step 3: adding 7 gives the smallest value 7, and 7 > 0. Step 4: the conclusion holds for all integers, so the trivial route applies and the hypothesis is never used. The answer is 7."
+          - problem: "For the claim: for every real x, if x^2 = -9, then x = 5. The vacuous route starts by checking the hypothesis equation over the reals. Give the number of real solutions of x^2 = -9."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the hypothesis equation is x^2 = -9. Step 2: the square rule: the square of a real number is at least 0, so no real x satisfies x^2 = -9. Step 3: counting real solutions gives the count 0. Step 4: an unsatisfiable hypothesis makes the conditional vacuously true. The answer is 0."
+          - problem: "For the claim: for every real x, if x^2 + 2x + 5 = 0, then x > 100. One step of the hypothesis check computes the discriminant b^2 - 4ac of the quadratic. Give the discriminant of x^2 + 2x + 5."
+            answer: "-16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the hypothesis quadratic is x^2 + 2x + 5 = 0 with a = 1, b = 2, c = 5. Step 2: the discriminant rule gives b^2 - 4ac = 4 - 20. Step 3: the discriminant is -16, which is negative, so the equation has no real solution. Step 4: the hypothesis is unsatisfiable, so the conditional is vacuously true. The answer is -16."
+          - problem: "Consider the claim: for every real x, if x > 3, then x^2 + 1 > 0. Which proof strategy applies?"
+            answer: "Only trivial"
+            answer_contract: {"kind": "label", "options": [["Only vacuous"], ["Only trivial"], ["Two routes"], ["Neither route"]]}
+            solution_sketch: "Step 1: the full conditional is: for every real x, if x > 3, then x^2 + 1 > 0. Step 2: the bound rule: x^2 is at least 0 for every real x, so x^2 + 1 is at least 1 > 0, and the conclusion is always true. Step 3: the hypothesis x > 3 is satisfiable, for example x = 4, so the vacuous route is not available. Step 4: the option Only vacuous needs an unsatisfiable hypothesis; the option Two routes adds the impossible vacuous route; the option Neither route ignores the trivial route. The answer is Only trivial."
+          - problem: "Write the full proof: for every integer n, if n is even, then n^2 + 5 > 0. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Let n be an arbitrary integer. Step 2: The hypothesis that n is even will not be needed, so we test whether the conclusion holds for every integer; this is the trivial template. Step 3: Bound rule: for every integer n, n^2 is at least 0. Step 4: Adding 5 gives n^2 + 5, which is at least 5. Step 5: Since 5 > 0, the conclusion n^2 + 5 > 0 holds for every integer n, whatever the hypothesis says, so the conditional is true. Step 6: Template check: the hypothesis is satisfiable, for example n = 2, so the proof is not vacuous; it is a trivial proof. Step 7: Therefore, for every integer n, if n is even then n^2 + 5 > 0. The answer is See the solution."
         constraints: "decide vacuous vs trivial by checking hypothesis-unsatisfiable vs conclusion-always-true"
     diagnostic_exemplar:
       problem: 'Prove each, naming the template used (vacuous or trivial): (a) for every real $x$, if $x^2 < 0$ then $x = 7$; (b) for every integer $n$, if $n$ is prime then $n^2 \ge 0$.'
