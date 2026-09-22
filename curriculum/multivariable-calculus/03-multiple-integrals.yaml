@@ -205,6 +205,22 @@ topics:
           - problem: 'Evaluate $\iint_D xy \, dA$ where $D$ is the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$.'
             answer: '$\frac{1}{8}$'
             solution_sketch: 'Type I: $0 \le x \le 1$, $0 \le y \le x$: $\int_0^1 x \cdot \frac{x^2}{2}\, dx = \frac{1}{2}\cdot\frac{1}{4} = \frac{1}{8}$.'
+          - problem: "Evaluate $\\iint_D y \\, dA$ where $D$ is bounded by $y = x^2$ and $y = 4$."
+            answer: "128/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\iint_D y \\, dA$ over the region between $y = x^2$ and $y = 4$. First use a type I setup: the curves meet at $x = -2$ and $x = 2$, so $\\int_{-2}^{2} \\int_{x^2}^{4} y \\, dy \\, dx$. The inner integral by the power rule is $(16 - x^4)/2$. The outer integral is $\\frac{1}{2}\\int_{-2}^{2}(16 - x^4)\\,dx = \\frac{1}{2}(32 - 64/5)$. The value is 128/5."
+          - problem: "Evaluate $\\iint_D x \\, dA$ where $D$ is bounded by $y = x^2$ and $y = 2x$."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\iint_D x \\, dA$ over the region between $y = x^2$ and $y = 2x$. Set up a type I integral: the intersections are $x = 0$ and $x = 2$, and $2x \\ge x^2$ on that interval, so $\\int_0^2 \\int_{x^2}^{2x} x \\, dy \\, dx$. The inner integral gives $x(2x - x^2) = 2x^2 - x^3$. The outer integral by the power rule is $\\int_0^2 (2x^2 - x^3)\\,dx = 16/3 - 4$. The value is 4/3."
+          - problem: "Evaluate $\\iint_D 1 \\, dA$ where $D$ is bounded by $x = y^2$ and $x = 4$."
+            answer: "32/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\iint_D 1 \\, dA$ over the region between $x = y^2$ and $x = 4$. Use a type II setup: the intersections are $y = -2$ and $y = 2$, so $\\int_{-2}^{2} \\int_{y^2}^{4} 1 \\, dx \\, dy$. The inner integral gives $4 - y^2$. The outer integral by the power rule is $\\int_{-2}^{2}(4 - y^2)\\,dy = [4y - y^3/3]_{-2}^{2}$. The value is 32/3."
+          - problem: "Evaluate $\\iint_D xy \\, dA$ where $D$ is bounded by $y = x^2$, $y = 0$, and $x = 2$."
+            answer: "16/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\iint_D xy \\, dA$ over the region bounded by $y = x^2$, $y = 0$, and $x = 2$. Use a type I setup: $0 \\le x \\le 2$ and $0 \\le y \\le x^2$, so $\\int_0^2 \\int_0^{x^2} xy \\, dy \\, dx$. The inner integral by the power rule is $x(x^4)/2 = x^5/2$. The outer integral is $\\frac{1}{2}\\int_0^2 x^5\\,dx = \\frac{1}{2}(64/6)$. The value is 16/3."
         constraints: "regions bounded by lines and one parabola; intersection points at integer coordinates"
       - id: kp2
         name: "Volumes and harder regions"
@@ -216,6 +232,22 @@ topics:
           - problem: 'Evaluate $\iint_D (2x + y) \, dA$ where $D$ is bounded by $y = x^2$ and $y = 4$.'
             answer: '$\frac{128}{5}$'
             solution_sketch: '$\int_{-2}^2 \int_{x^2}^4 (2x + y)\, dy\, dx$: the $2x$ part integrates to zero by symmetry, leaving $\int_{-2}^2 \frac{16 - x^4}{2}\, dx = 32 - \frac{32}{5} = \frac{128}{5}$.'
+          - problem: "Find the volume under z = x + y + 2 over the triangle x >= 0, y >= 0, x + y <= 1."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The volume is V = double integral over D of (x + y + 2) dA, where D is x >= 0, y >= 0, x + y <= 1. Step 1 (describe the region): set up the iterated integral with y from 0 to 1 - x and x from 0 to 1. Step 2 (iterated integration): integrate (x + y + 2) in y to get x(1 - x) + (1 - x)^2/2 + 2(1 - x). Step 3 (integrate in x): the x integral gives 1/6 + 1/6 + 1 = 4/3. The volume is 4/3."
+          - problem: "Evaluate the double integral of 3x + 2y over D, where D is the region between y = x^2 and y = 4."
+            answer: "256/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The double integral is I = double integral over D of (3x + 2y) dA, with D between y = x^2 and y = 4. Step 1 (symmetry): D is symmetric about the y-axis and 3x is odd in x, so that term vanishes. Step 2 (iterated integration): integrate 2y in y from x^2 to 4 to get 16 - x^4. Step 3 (integrate in x): integrate 16 - x^4 from -2 to 2 to get 256/5. The value of the integral is 256/5."
+          - problem: "Evaluate the double integral of x + y over D, where D is the triangle with vertices (0,0), (2,2), and (0,2)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The double integral is I = double integral over D of (x + y) dA, where D is the triangle with vertices (0,0), (2,2), and (0,2). Step 1 (describe the region): write D as 0 <= x <= 2 and x <= y <= 2. Step 2 (iterated integration): integrate x + y in y to get x(2 - x) + (4 - x^2)/2. Step 3 (integrate in x): integrate 2 + 2x - (3/2)x^2 from 0 to 2 to get 4. The value of the integral is 4."
+          - problem: "Find the volume under z = x^3 + y over the region between y = x^2 and y = 1."
+            answer: "4/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The volume is V = double integral over D of (x^3 + y) dA, where D is the region between y = x^2 and y = 1. Step 1 (symmetry): D is symmetric about the y-axis and x^3 is odd, so that term vanishes. Step 2 (iterated integration): integrate y in y from x^2 to 1 to get (1 - x^4)/2. Step 3 (integrate in x): integrate (1 - x^4)/2 from -1 to 1 to get 4/5. The volume is 4/5."
         constraints: "volume interpretation z = f(x,y) >= 0; symmetric regions where odd terms vanish; answers exact rationals"
       - id: kp3
         name: "Reversing the order of integration"
@@ -227,6 +259,22 @@ topics:
           - problem: 'Evaluate $\int_0^1 \int_x^1 \sin(y^2) \, dy \, dx$ by reversing the order of integration.'
             answer: '$\frac{1 - \cos 1}{2}$'
             solution_sketch: 'Region $0 \le x \le y \le 1$; reversed: $\int_0^1 y \sin(y^2)\, dy = \left[-\frac{\cos(y^2)}{2}\right]_0^1$.'
+          - problem: "Evaluate $\\int_0^2 \\int_{y/2}^{1} e^{x^2} \\, dx \\, dy$ by reversing the order of integration."
+            answer: "e-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Region: 0 <= y <= 2 and y/2 <= x <= 1 becomes 0 <= x <= 1 and 0 <= y <= 2x. Reversed integral: $\\int_0^1 \\int_0^{2x} e^{x^2} \\, dy \\, dx = \\int_0^1 2x e^{x^2} \\, dx$. Use substitution $u = x^2$, $du = 2x\\,dx$, to get $\\int_0^1 e^u \\, du = e - 1$. The value is e-1."
+          - problem: "Evaluate $\\int_0^2 \\int_y^2 e^{x^2} \\, dx \\, dy$ by reversing the order of integration."
+            answer: "(e^4-1)/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Region: 0 <= y <= 2 and y <= x <= 2 becomes 0 <= x <= 2 and 0 <= y <= x. Reversed integral: $\\int_0^2 \\int_0^x e^{x^2} \\, dy \\, dx = \\int_0^2 x e^{x^2} \\, dx$. Use substitution $u = x^2$, $du = 2x\\,dx$, to get $\\frac{1}{2}(e^4 - 1)$. The value is (e^4-1)/2."
+          - problem: "Evaluate $\\int_0^{1/2} \\int_{2x}^{1} e^{y^2} \\, dy \\, dx$ by reversing the order of integration."
+            answer: "(e-1)/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Region: 0 <= x <= 1/2 and 2x <= y <= 1 becomes 0 <= y <= 1 and 0 <= x <= y/2. Reversed integral: $\\int_0^1 \\int_0^{y/2} e^{y^2} \\, dx \\, dy = \\int_0^1 (y/2) e^{y^2} \\, dy$. Use substitution $u = y^2$, $du = 2y\\,dy$, to get $\\frac{1}{4}(e - 1)$. The value is (e-1)/4."
+          - problem: "Evaluate $\\int_0^{1/2} \\int_{2x}^{1} \\sin(y^2) \\, dy \\, dx$ by reversing the order of integration. Give the answer to 4 decimals."
+            answer: "0.1149"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Region: 0 <= x <= 1/2 and 2x <= y <= 1 becomes 0 <= y <= 1 and 0 <= x <= y/2. Reversed integral: $\\int_0^1 \\int_0^{y/2} \\sin(y^2) \\, dx \\, dy = \\int_0^1 (y/2) \\sin(y^2) \\, dy$. Use substitution $u = y^2$, $du = 2y\\,dy$, to get $\\frac{1}{4}(1 - \\cos 1)$. Numerically this is 0.1149 to 4 decimals. The answer is 0.1149."
         constraints: "inner integrand has no elementary antiderivative in the given order (e^{x^2}, sin(y^2)); reversal makes it a u-substitution"
     diagnostic_exemplar:
       problem: 'Evaluate $\int_0^1 \int_{3y}^{3} e^{x^2}\,dx\,dy$ by reversing the order of integration.'
@@ -266,6 +314,22 @@ topics:
           - problem: 'Find the average value of $f(x, y) = x^2$ over $R = [0,3] \times [0,1]$.'
             answer: "3"
             solution_sketch: '$\frac{1}{3}\int_0^3 x^2\, dx \cdot \int_0^1 dy = \frac{1}{3} \cdot 9 = 3$.'
+          - problem: "Find the average value of f(x, y) = x y^2 over the rectangle R = [0,1] x [0,2]. Give the answer as a fraction."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The average value formula is \\bar f = (1/Area(R)) \\iint_R f(x,y) dA. The rectangle area is (1-0)(2-0)=2, and by separability the integral is (\\int_0^1 x dx)(\\int_0^2 y^2 dy) = (1/2)(8/3)=4/3. Divide by the area: (4/3)/2 = 2/3. The average value is 2/3."
+          - problem: "Find the average value of f(x, y) = x^2 y^2 over the rectangle R = [0,1] x [0,2]. Give the answer as a fraction."
+            answer: "4/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The average value formula is \\bar f = (1/Area(R)) \\iint_R f(x,y) dA. The area is 2. Separability gives the integral (\\int_0^1 x^2 dx)(\\int_0^2 y^2 dy) = (1/3)(8/3)=8/9. The average is (8/9)/2 = 4/9. The average value is 4/9."
+          - problem: "Compute the average value of f(x, y) = y^3 over the rectangle R = [0,2] x [0,1]. Give the answer as a fraction."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The average value formula is \\bar f = (1/Area(R)) \\iint_R f(x,y) dA. The area is 2. Since f does not depend on x, the integral factors as (\\int_0^2 1 dx)(\\int_0^1 y^3 dy) = (2)(1/4)=1/2. Divide by the area: (1/2)/2 = 1/4. The average value is 1/4."
+          - problem: "The temperature at a point (x, y) on a rectangular plate is T(x, y) = x^2 y, where R = [0,1] x [0,3]. Find the average temperature over the plate as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The average temperature is the average value formula \\bar T = (1/Area(R)) \\iint_R T(x,y) dA. The plate area is (1)(3)=3. Separability gives the integral (\\int_0^1 x^2 dx)(\\int_0^3 y dy) = (1/3)(9/2)=3/2. Divide by the area: (3/2)/3 = 1/2. The average temperature is 1/2."
         constraints: "separable integrands over small-integer rectangles; averages are integers or simple fractions"
       - id: kp2
         name: "Average value over general regions"
@@ -316,18 +380,50 @@ topics:
           - problem: 'Find the mass of the triangular lamina with vertices $(0,0)$, $(1,0)$, $(1,1)$ and density $\rho(x, y) = 2xy$.'
             answer: '$\frac{1}{4}$'
             solution_sketch: '$m = \int_0^1 \int_0^x 2xy\, dy\, dx = \int_0^1 x \cdot x^2\, dx = \frac{1}{4}$.'
+          - problem: "Find the mass of the lamina occupying $[0,1] \\times [0,2]$ with density $\\rho(x, y) = 3x + y$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The mass is $m = \\iint_R (3x + y)\\, dA$ over $R = [0,1] \\times [0,2]$. Set up the iterated integral by the definition of mass: $m = \\int_0^1 \\int_0^2 (3x + y)\\, dy\\, dx$. Evaluate the inner integral by the power rule: $6x + 2$. Evaluate the outer integral by the power rule: $\\int_0^1 (6x + 2)\\, dx = 3 + 2 = 5$. The mass is 5."
+          - problem: "Find the mass of the triangular lamina with vertices $(0,0)$, $(2,0)$, $(0,1)$ and density $\\rho(x, y) = 2x + y$ as a fraction."
+            answer: "5/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The mass is $m = \\iint_T (2x + y)\\, dA$ over the triangle $0 \\le x \\le 2$, $0 \\le y \\le 1 - x/2$. Set up the iterated integral by the definition of mass: $m = \\int_0^2 \\int_0^{1 - x/2} (2x + y)\\, dy\\, dx$. Evaluate the inner integral by the power rule: $(3/2)x + 1/2 - (7/8)x^2$. Evaluate the outer integral by the power rule: $\\int_0^2 ((3/2)x + 1/2 - (7/8)x^2)\\, dx = 5/3$. The mass is 5/3."
+          - problem: "Find the mass of the lamina occupying $[0,1] \\times [0,3]$ with density $\\rho(x, y) = x^2 + y$ as a fraction."
+            answer: "11/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The mass is $m = \\iint_R (x^2 + y)\\, dA$ over $R = [0,1] \\times [0,3]$. Set up the iterated integral by the definition of mass: $m = \\int_0^1 \\int_0^3 (x^2 + y)\\, dy\\, dx$. Evaluate the inner integral by the power rule: $3x^2 + 9/2$. Evaluate the outer integral by the power rule: $\\int_0^1 (3x^2 + 9/2)\\, dx = 1 + 9/2 = 11/2$. The mass is 11/2."
+          - problem: "Find the mass of the triangular lamina with vertices $(0,0)$, $(3,0)$, $(0,2)$ and density $\\rho(x, y) = xy$ as a fraction."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The mass is $m = \\iint_T xy\\, dA$ over the triangle $0 \\le x \\le 3$, $0 \\le y \\le 2 - 2x/3$. Set up the iterated integral by the definition of mass: $m = \\int_0^3 \\int_0^{2 - 2x/3} xy\\, dy\\, dx$. Evaluate the inner integral by the power rule: $2x - 4x^2/3 + 2x^3/9$. Evaluate the outer integral by the power rule: $\\int_0^3 (2x - 4x^2/3 + 2x^3/9)\\, dx = 3/2$. The mass is 3/2."
         constraints: "density polynomial of degree at most 2; rectangles or triangles with integer vertices; masses exact rationals"
       - id: kp2
         name: "Moments about the axes"
         key_prerequisites: [double-integrals]
         exemplars:
-          - problem: 'For the uniform lamina ($\rho = 1$) on $[0,2] \times [0,1]$, compute the moments $M_y = \iint x\, dA$ and $M_x = \iint y\, dA$.'
-            answer: '$M_y = 2$; $M_x = 1$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$M_y = \int_0^2 x\, dx \cdot 1 = 2$; $M_x = 2 \cdot \int_0^1 y\, dy = 1$.'
           - problem: 'For the lamina on $[0,1]^2$ with density $\rho = y$, compute the moment $M_x = \iint y \rho \, dA$.'
             answer: '$\frac{1}{3}$'
             solution_sketch: '$M_x = \iint y^2\, dA = \int_0^1 y^2\, dy = \frac{1}{3}$.'
+          - problem: "For the uniform lamina with density 1 on the rectangle [0,3] x [0,2], compute the moments about the coordinate axes. Use M_y = double integral of x rho dA and M_x = double integral of y rho dA. Give the answer as My = value; Mx = value with exact values."
+            answer: "My = 9; Mx = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "My"}, {"contract": {"kind": "exact"}, "name": "Mx"}]}
+            solution_sketch: "Use the moment formulas M_y = double integral of x rho dA and M_x = double integral of y rho dA on the rectangle [0,3] x [0,2] with rho = 1. For M_y, separate the rectangle integral into (integral x dx from 0 to 3)(integral 1 dy from 0 to 2), which is (9/2)(2) = 9. For M_x, separate into (integral 1 dx from 0 to 3)(integral y dy from 0 to 2), which is (3)(2) = 6, so My = 9; Mx = 6."
+          - problem: "A flat plate occupies the rectangle [0,4] x [0,1] and has constant density 1. Find its two moments about the axes: M_y = double integral x rho dA and M_x = double integral y rho dA. Give the answer as My = value; Mx = value."
+            answer: "My = 8; Mx = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "My"}, {"contract": {"kind": "exact"}, "name": "Mx"}]}
+            solution_sketch: "Use M_y = double integral of x rho dA and M_x = double integral of y rho dA on [0,4] x [0,1] with rho = 1. M_y separates as (integral x dx from 0 to 4)(integral 1 dy from 0 to 1) = (8)(1) = 8. M_x separates as (integral 1 dx from 0 to 4)(integral y dy from 0 to 1) = (4)(1/2) = 2, so My = 8; Mx = 2."
+          - problem: "A lamina occupies the rectangle [0,2] x [0,3]. Its density is rho(x, y) = x. Compute the moment about the x-axis, M_x = double integral of y rho dA. Give the answer as an exact fraction or integer."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the moment formula M_x = double integral of y rho dA with rho = x on [0,2] x [0,3]. Separate the rectangle integral: (integral x dx from 0 to 2)(integral y dy from 0 to 3) = (2)(9/2) = 9. The moment about the x-axis is 9."
+          - problem: "A lamina occupies the square [0,1] x [0,1]. Its density is rho(x, y) = x + y. Compute the moment about the y-axis, M_y = double integral of x rho dA. Give the answer as an exact fraction."
+            answer: "7/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the moment formula M_y = double integral of x rho dA with rho = x + y on [0,1] x [0,1]. Expand x(x + y) = x^2 + xy and integrate over the square: 1/3 + (1/2)(1/2) = 1/3 + 1/4 = 7/12. The moment about the y-axis is 7/12."
+          - problem: "A lamina occupies the rectangle [0,1] x [0,2]. Its density is rho(x, y) = x + y. Compute the moments about both axes, with M_y = double integral of x rho dA and M_x = double integral of y rho dA. Give the answer as My = value; Mx = value with exact fractions."
+            answer: "My = 5/3; Mx = 11/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "My"}, {"contract": {"kind": "exact"}, "name": "Mx"}]}
+            solution_sketch: "Use M_y = double integral of x rho dA and M_x = double integral of y rho dA with rho = x + y on [0,1] x [0,2]. For M_y integrate x^2 + xy over the rectangle: inner dx gives 1/3 + y/2, and the outer dy gives 2/3 + 1 = 5/3. For M_x integrate xy + y^2: inner dx gives y/2 + y^2, and the outer dy gives 1 + 8/3 = 11/3, so My = 5/3; Mx = 11/3."
         constraints: "M_y integrates x*rho, M_x integrates y*rho; rectangles only; answers exact rationals"
       - id: kp3
         name: "Center of mass and centroids"
@@ -342,6 +438,18 @@ topics:
           - problem: 'Find the center of mass of the lamina on $[0,1]^2$ with density $\rho(x, y) = y$.'
             answer: '$\left(\frac{1}{2}, \frac{2}{3}\right)$'
             solution_sketch: '$m = \frac{1}{2}$; $\bar{x} = \frac{1}{m}\iint x y\, dA = 2 \cdot \frac{1}{4} = \frac{1}{2}$; $\bar{y} = \frac{1}{m}\iint y^2\, dA = 2 \cdot \frac{1}{3} = \frac{2}{3}$.'
+          - problem: "Find the centroid of the triangle with vertices (0,0), (3,0), and (0,2). Give the answer as (x, y)."
+            answer: "(1, 2/3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The triangle has vertices (0,0), (3,0), and (0,2), and the centroid formula averages the vertices. The x-coordinate is (0 + 3 + 0)/3 = 1. The y-coordinate is (0 + 0 + 2)/3 = 2/3. The centroid is (1, 2/3)."
+          - problem: "Find the center of mass of the lamina on the rectangle [0,3] x [0,2] whose density is equal to the x-coordinate. Give the answer as (x, y)."
+            answer: "(2, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The lamina is the rectangle [0,3] x [0,2] with density x. The mass is the double integral of density: m = integral from 0 to 3 integral from 0 to 2 of x dy dx = 9. The x-moment is integral from 0 to 3 integral from 0 to 2 of x^2 dy dx = 18, so xbar = 18/9 = 2. By symmetry in y, ybar = 1. The center of mass is (2, 1)."
+          - problem: "Find the center of mass of the lamina on the unit square [0,1] x [0,1] whose density is x + y. Give the answer as (x, y)."
+            answer: "(7/12, 7/12)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The lamina is the unit square [0,1] x [0,1] with density x + y. The mass is the double integral of density: m = integral from 0 to 1 integral from 0 to 1 of (x + y) dy dx = 1. The x-moment is integral from 0 to 1 integral from 0 to 1 of x(x + y) dy dx = 7/12. By symmetry in x and y, ybar = 7/12. The center of mass is (7/12, 7/12)."
         constraints: "use symmetry when available; centroids/centers have small rational coordinates"
     diagnostic_exemplar:
       problem: 'Find the centre of mass of the lamina occupying $[0, 2] \times [0, 1]$ with density $\rho(x, y) = x$.'
@@ -387,6 +495,22 @@ topics:
           - problem: 'Evaluate $\iint_D e^{-x^2 - y^2}\, dA$ where $D$ is the unit disk.'
             answer: '$\pi\left(1 - \frac{1}{e}\right)$'
             solution_sketch: '$\int_0^{2\pi} \int_0^1 e^{-r^2} r \, dr\, d\theta = 2\pi \cdot \frac{1 - e^{-1}}{2}$; the extra $r$ makes the substitution $u = r^2$ work.'
+          - problem: "Evaluate $\\iint_D (x^2+y^2)^2\\, dA$ where $D$ is the unit disk."
+            answer: "pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Convert to polar coordinates: x^2+y^2 = r^2 and dA = r dr dtheta. The integrand becomes (r^2)^2 = r^4, so the integral is \\int_0^{2\\pi}\\int_0^1 r^5\\, dr\\, d\\theta. Integrate with the power rule: \\int_0^1 r^5\\, dr = 1/6 and \\int_0^{2\\pi} d\\theta = 2\\pi, so the value is pi/3."
+          - problem: "Evaluate $\\iint_D (x^2+y^2)\\, dA$ where $D$ is the annulus $1 \\le x^2+y^2 \\le 4$."
+            answer: "15pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use polar coordinates: the annulus is 1 <= r <= 2 and dA = r dr dtheta. The integrand x^2+y^2 becomes r^2, so the integral is \\int_0^{2\\pi}\\int_1^2 r^3\\, dr\\, d\\theta. The inner integral is [r^4/4]_1^2 = 15/4 by the power rule, and multiplying by 2\\pi gives 15pi/2."
+          - problem: "Evaluate $\\iint_D e^{-(x^2+y^2)/4}\\, dA$ where $D$ is the disk $x^2+y^2 \\le 4$."
+            answer: "4pi(1 - e^(-1))"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Convert to polar coordinates: x^2+y^2 = r^2 and dA = r dr dtheta. The integral is \\int_0^{2\\pi}\\int_0^2 e^{-r^2/4} r\\, dr\\, d\\theta. Let u = r^2/4, so du = r/2 dr and r dr = 2 du; the inner integral becomes 2\\int_0^1 e^{-u} du = 2(1 - e^{-1}) by the exponential rule. Multiply by 2\\pi to get 4pi(1 - e^(-1))."
+          - problem: "Evaluate $\\iint_D (x^2+y^2)^3\\, dA$ where $D$ is the disk $x^2+y^2 \\le 4$."
+            answer: "64pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Polar conversion gives x^2+y^2 = r^2 and dA = r dr dtheta. The integrand becomes r^6, so the integral is \\int_0^{2\\pi}\\int_0^2 r^7\\, dr\\, d\\theta. The inner integral is [r^8/8]_0^2 = 32 by the power rule, and multiplying by 2\\pi gives 64pi."
         constraints: "integrands are functions of x^2+y^2; disks or annuli centered at the origin; radii small integers"
       - id: kp2
         name: "Areas and volumes via polar"
@@ -398,6 +522,22 @@ topics:
           - problem: 'Find the volume of the solid under $z = 4 - x^2 - y^2$ and above the $xy$-plane.'
             answer: '$8\pi$'
             solution_sketch: 'The paraboloid meets $z = 0$ at $r = 2$: $\int_0^{2\pi} \int_0^2 (4 - r^2) r \, dr\, d\theta = 2\pi\left[2r^2 - \frac{r^4}{4}\right]_0^2 = 2\pi(8 - 4) = 8\pi$.'
+          - problem: "A region in the plane is enclosed by the polar curve $r = 4\\sin\\theta$. Find the area of the region."
+            answer: "4pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The polar area integral is $A = \\frac{1}{2}\\int_0^{\\pi} (4\\sin\\theta)^2\\,d\\theta$ because the circle is traced for $0 \\le \\theta \\le \\pi$. Expanding gives $A = 8\\int_0^{\\pi} \\sin^2\\theta\\,d\\theta$. Since $\\int_0^{\\pi} \\sin^2\\theta\\,d\\theta = \\pi/2$, the area is $8(\\pi/2) = 4\\pi$. The area is 4pi."
+          - problem: "A region is enclosed by the cardioid $r = 4 + 4\\sin\\theta$. Find the area of the region."
+            answer: "24pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The polar area formula gives $A = \\frac{1}{2}\\int_0^{2\\pi} (4 + 4\\sin\\theta)^2\\,d\\theta$. The square expands to $16 + 32\\sin\\theta + 16\\sin^2\\theta$. The constant term contributes $32\\pi$, the sine term contributes $0$, and the $\\sin^2$ term contributes $16\\pi$. Thus $A = \\frac{1}{2}(32\\pi + 16\\pi) = 24\\pi$. The area is 24pi."
+          - problem: "The solid lies under the paraboloid $z = 8 - x^2 - y^2$ and over the $xy$-plane. Find the volume of the solid."
+            answer: "32pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The projection is the disk $r \\le 2\\sqrt{2}$, since $z = 0$ gives $r^2 = 8$. In polar coordinates the volume is $V = \\int_0^{2\\pi}\\int_0^{2\\sqrt{2}} (8 - r^2)r\\,dr\\,d\\theta$. The inner integral is $[4r^2 - r^4/4]_0^{2\\sqrt{2}} = 32 - 16 = 16$. Multiplying by the angular integral $2\\pi$ gives $32\\pi$. The volume is 32pi."
+          - problem: "The solid lies under the paraboloid $z = 20 - 5x^2 - 5y^2$ and over the $xy$-plane. Find the volume of the solid."
+            answer: "40pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The projection is the disk $r \\le 2$, since $z = 0$ gives $r^2 = 4$. In polar coordinates the volume is $V = \\int_0^{2\\pi}\\int_0^2 (20 - 5r^2)r\\,dr\\,d\\theta$. The inner integral is $[10r^2 - 5r^4/4]_0^2 = 40 - 20 = 20$. Multiplying by the angular integral $2\\pi$ gives $40\\pi$. The volume is 40pi."
         constraints: "cardioids/circles for area; paraboloid caps for volume; answers exact multiples of pi"
     diagnostic_exemplar:
       problem: 'Find the volume of the solid lying under the paraboloid $z = 16 - x^2 - y^2$ and above the $xy$-plane.'
@@ -439,6 +579,22 @@ topics:
           - problem: 'Find the area of the part of the plane $z = 3 - x - y$ over the triangle $x, y \ge 0$, $x + y \le 1$.'
             answer: '$\frac{\sqrt{3}}{2}$'
             solution_sketch: '$\sqrt{1 + 1 + 1} = \sqrt{3}$ times the base area $\frac{1}{2}$.'
+          - problem: "Consider the part of the plane z = x + 2y that lies over the rectangle 0 <= x <= 2, 0 <= y <= 3. Find the surface area of this part of the plane."
+            answer: "6sqrt(6)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the surface-area formula gives dS = sqrt(1 + zx^2 + zy^2) dA. Step 2: for z = x + 2y, zx = 1 and zy = 2, so the factor is sqrt(1 + 1 + 4) = sqrt(6). Step 3: the base rectangle has area 6, so the surface area is 6sqrt(6)."
+          - problem: "Consider the part of the plane z = 5 - 2x + y that lies over the triangle x >= 0, y >= 0, x + y <= 2. Find the surface area of this part of the plane."
+            answer: "2sqrt(6)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the surface-area formula gives dS = sqrt(1 + zx^2 + zy^2) dA. Step 2: for z = 5 - 2x + y, zx = -2 and zy = 1, so the factor is sqrt(1 + 4 + 1) = sqrt(6). Step 3: the base triangle has area 2, so the surface area is 2sqrt(6)."
+          - problem: "Consider the part of the plane z = 4 - x that lies over the rectangle 0 <= x <= 4, 0 <= y <= 1. Find the surface area of this part of the plane."
+            answer: "4sqrt(2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the surface-area formula gives dS = sqrt(1 + zx^2 + zy^2) dA. Step 2: for z = 4 - x, zx = -1 and zy = 0, so the factor is sqrt(1 + 1 + 0) = sqrt(2). Step 3: the base rectangle has area 4, so the surface area is 4sqrt(2)."
+          - problem: "Consider the part of the plane z = 2x - 3y + 6 over the triangle with vertices (0,0), (3,0), and (0,2). Find the surface area of this part of the plane."
+            answer: "3sqrt(14)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the surface-area formula gives dS = sqrt(1 + zx^2 + zy^2) dA. Step 2: for z = 2x - 3y + 6, zx = 2 and zy = -3, so the factor is sqrt(1 + 4 + 9) = sqrt(14). Step 3: the base triangle has area 3, so the surface area is 3sqrt(14)."
         constraints: "planes with integer coefficients so sqrt(1+fx^2+fy^2) is constant; base regions with simple areas"
       - id: kp2
         name: "Curved surfaces via polar coordinates"
