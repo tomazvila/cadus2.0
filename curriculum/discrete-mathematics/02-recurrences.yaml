@@ -84,6 +84,22 @@ topics:
           - problem: 'With $b_n$ as above, compute $b_4$.'
             answer: "8"
             solution_sketch: '$b_3 = b_2 + b_1 = 5$, $b_4 = b_3 + b_2 = 8$. Direct check: of the $16$ strings of length $4$, exactly $8$ avoid $00$.'
+          - problem: "Let f(n) be the number of binary sequences of length n in which no two ones are adjacent. Group the valid sequences by their last symbol to obtain a recurrence for f(n), and then compute f(7)."
+            answer: "34"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f(n) gives the number of binary sequences of length n with no two adjacent ones. Step 1 (classify by the last symbol): a valid sequence ending in zero can follow any valid sequence of length n-1, giving f(n-1) options; a valid sequence ending in one must have a zero before it, so its first n-2 symbols form any valid sequence, giving f(n-2) options. Step 2 (recurrence): f(n) = f(n-1) + f(n-2) with f(1) = 2 and f(2) = 3. Step 3 (iterate): f(3) = 5, f(4) = 8, f(5) = 13, f(6) = 21, f(7) = 34. The answer is f(7) = 34."
+          - problem: "Let g(n) be the number of binary sequences of length n in which no zero comes immediately before a one. Group the valid sequences by their last symbol to obtain a recurrence for g(n), and then give (g(3), g(4)) as (x, y)."
+            answer: "(4, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The function g(n) gives the number of binary sequences of length n in which no zero is immediately followed by a one. Step 1 (classify by the last symbol): a valid sequence ending in zero can follow any valid sequence of length n-1, giving g(n-1) options; a valid sequence ending in one must have every earlier symbol equal to one as well, and exactly one sequence of that shape exists. Step 2 (recurrence): g(n) = g(n-1) + 1 with g(1) = 2. Step 3 (iterate): g(2) = 3, g(3) = 4, g(4) = 5. The ordered pair is (4, 5)."
+          - problem: "Let h(n) be the number of binary sequences of length n in which no one comes immediately before a zero. Group the valid sequences by their last symbol to obtain a recurrence for h(n), and then compute h(9)."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function h(n) gives the number of binary sequences of length n in which no one is immediately followed by a zero. Step 1 (classify by the last symbol): a valid sequence ending in one can follow any valid sequence of length n-1, giving h(n-1) options; a valid sequence ending in zero must have every earlier symbol equal to zero as well, and exactly one sequence of that shape exists. Step 2 (recurrence): h(n) = h(n-1) + 1 with h(1) = 2. Step 3 (iterate): h(2) = 3, h(3) = 4, h(4) = 5, h(5) = 6, h(6) = 7, h(7) = 8, h(8) = 9, h(9) = 10. The answer is h(9) = 10."
+          - problem: "Let w(n) be the number of binary sequences of length n in which no two zeros are adjacent. Group the valid sequences by their last symbol to obtain a recurrence for w(n), and determine the value of n for which w(n) equals 21."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function w(n) gives the number of binary sequences of length n with no two adjacent zeros. Step 1 (classify by the last symbol): a valid sequence ending in one can follow any valid sequence of length n-1, giving w(n-1) options; a valid sequence ending in zero must have a one before it, so its first n-2 symbols form any valid sequence, giving w(n-2) options. Step 2 (recurrence): w(n) = w(n-1) + w(n-2) with w(1) = 2 and w(2) = 3. Step 3 (iterate): w(3) = 5, w(4) = 8, w(5) = 13, w(6) = 21, w(7) = 34. The value w(6) equals 21, so the answer is 6."
         constraints: "binary strings, forbidden block of length 2; classify by the last character(s)"
     diagnostic_exemplar:
       problem: 'Let $b_n$ count bit strings of length $n$ with no two consecutive $1$s (classify by the last character to find a recurrence). Compute $b_5$.'
@@ -243,14 +259,30 @@ topics:
         name: "Repeated roots"
         key_prerequisites: [recurrence-relations, perfect-square-trinomials]
         exemplars:
-          - problem: 'Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 4$.'
-            answer: '(1 + n) * 2^n'
-            answer_contract: {kind: none}
-            solution_sketch: '$r^2 - 4r + 4 = (r - 2)^2$: double root $2$, so $a_n = (A + Bn)2^n$. $A = 1$; $(1 + B) \cdot 2 = 4$ gives $B = 1$. Check $a_2 = 16 - 4 = 12 = 3 \cdot 4$.'
-          - problem: 'Solve $a_n = 6a_{n-1} - 9a_{n-2}$ with $a_0 = 2$, $a_1 = 3$.'
-            answer: '(2 - n) * 3^n'
-            answer_contract: {kind: none}
-            solution_sketch: '$(r - 3)^2 = 0$: $a_n = (A + Bn)3^n$ with $A = 2$ and $(2 + B) \cdot 3 = 3$, so $B = -1$. Check $a_2 = 18 - 18 = 0 = (2-2) \cdot 9$.'
+          - problem: "Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$ and $a_1 = 4$. The general solution has the form $a_n = (A + Bn)r^n$. Find $A$ and $B$."
+            answer: "A = 1; B = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
+            solution_sketch: "The full solution is $a_n = (1 + n)2^n$. Step 1: factor the characteristic polynomial $r^2 - 4r + 4$ as the perfect square $(r - 2)^2$, so the repeated root is $r = 2$. Step 2: a repeated root gives the form $a_n = (A + Bn)2^n$. Step 3: the initial condition $a_0 = 1$ gives $A = 1$. Step 4: $a_1 = 4$ gives $2(1 + B) = 4$, so $B = 1$. Thus A = 1; B = 1."
+          - problem: "Solve the recurrence $a_n = 6a_{n-1} - 9a_{n-2}$ with $a_0 = 2$ and $a_1 = 3$. The general solution has the form $a_n = (A + Bn)r^n$. Find $a_4$ and $a_5$."
+            answer: "a4 = -162; a5 = -729"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a4"}, {"contract": {"kind": "exact"}, "name": "a5"}]}
+            solution_sketch: "The full solution is $a_n = (2 - n)3^n$. Step 1: factor the characteristic polynomial $r^2 - 6r + 9$ as the perfect square $(r - 3)^2$, so the repeated root is $r = 3$. Step 2: a repeated root gives the form $a_n = (A + Bn)3^n$. Step 3: $a_0 = 2$ gives $A = 2$, and $a_1 = 3$ gives $3(2 + B) = 3$, so $B = -1$. Step 4: evaluate $a_4 = (2 - 4)(81) = -162$ and $a_5 = (2 - 5)(243) = -729$. Thus a4 = -162; a5 = -729."
+          - problem: "A damped signal has sample values satisfying $a_n = -6a_{n-1} - 9a_{n-2}$ for $n >= 2$, with $a_0 = 2$ and $a_1 = 3$. Find $a_4$."
+            answer: "-810"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full solution is $a_n = (2 - 3n)(-3)^n$, so $a_4 = -810$. Step 1: factor the characteristic polynomial $r^2 + 6r + 9$ as the perfect square $(r + 3)^2$, giving the repeated root $r = -3$. Step 2: a repeated root gives the form $a_n = (A + Bn)(-3)^n$. Step 3: $a_0 = 2$ gives $A = 2$, and $a_1 = 3$ gives $-3(2 + B) = 3$, so $B = -3$. Step 4: evaluate $a_4 = (2 - 12)(-3)^4 = (-10)(81) = -810$."
+          - problem: "A plant population is modeled by $a_n = 10a_{n-1} - 25a_{n-2}$ for $n >= 2$, with $a_0 = 2$ and $a_1 = 15$. The model has a closed form of the repeated-root type $a_n = (A + Bn)r^n$. Find $a_5$."
+            answer: "21875"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full solution is $a_n = (2 + n)5^n$. Step 1: factor the characteristic polynomial $r^2 - 10r + 25$ as the perfect square $(r - 5)^2$, giving the repeated root $r = 5$. Step 2: a repeated root gives the form $a_n = (A + Bn)5^n$. Step 3: $a_0 = 2$ gives $A = 2$, and $a_1 = 15$ gives $5(2 + B) = 15$, so $B = 1$. Step 4: evaluate $a_5 = (2 + 5)(3125) = 21875$. The value of $a_5$ is 21875."
+          - problem: "The recurrence $a_n = -8a_{n-1} - 16a_{n-2}$ with $a_0 = 1$ and $a_1 = 12$ has a double characteristic root. State the repeated root $r$ and give the value of $a_3$."
+            answer: "r = -4; a3 = 704"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "r"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
+            solution_sketch: "The full solution is $a_n = (1 - 4n)(-4)^n$. Step 1: factor the characteristic polynomial $r^2 + 8r + 16$ as the perfect square $(r + 4)^2$, giving the repeated root $r = -4$. Step 2: a repeated root gives the form $a_n = (A + Bn)(-4)^n$. Step 3: $a_0 = 1$ gives $A = 1$, and $a_1 = 12$ gives $-4(1 + B) = 12$, so $B = -4$. Step 4: evaluate $a_3 = (1 - 12)(-4)^3 = (-11)(-64) = 704$. Thus r = -4; a3 = 704."
+          - problem: "A sequence satisfies $a_n = 12a_{n-1} - 36a_{n-2}$ for $n >= 2$, with $a_0 = 5$ and $a_1 = 24$. Determine the smallest index $n >= 1$ for which $a_n = 0$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full solution is $a_n = (5 - n)6^n$. Step 1: factor the characteristic polynomial $r^2 - 12r + 36$ as the perfect square $(r - 6)^2$, giving the repeated root $r = 6$. Step 2: a repeated root gives the form $a_n = (A + Bn)6^n$. Step 3: $a_0 = 5$ gives $A = 5$, and $a_1 = 24$ gives $6(5 + B) = 24$, so $B = -1$. Step 4: the factor $5 - n$ vanishes only at $n = 5$, and every earlier term is positive, so the smallest index with $a_n = 0$ is 5. The answer is 5."
         constraints: "perfect-square characteristic polynomial; general solution (A + Bn) r^n"
     diagnostic_exemplar:
       problem: 'Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 6$.'
