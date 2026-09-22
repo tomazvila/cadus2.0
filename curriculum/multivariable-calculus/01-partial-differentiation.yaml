@@ -907,6 +907,22 @@ topics:
             solution_sketch: '$f_x = 3x^2y^2 \Rightarrow f_{xx} = 6xy^2$; $f_y = 2x^3 y \Rightarrow f_{yy} = 2x^3$.'
           - problem: 'Let $f(x, y) = x^4 - 3x^2 y^3$. Compute $f_{xx}$ and $f_{yy}$; state the pair $(f_{xx}, f_{yy})$.'
             answer: '$(12x^2 - 6y^3,\ -18x^2 y)$'
+          - problem: "Let f(x, y) = 2x^4 y + 3x y^5. Find f_xx as a function of x and y."
+            answer: "24*x^2*y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with f(x, y) = 2x^4 y + 3x y^5. Differentiate in x once using the power rule: f_x = 8x^3 y + 3y^5. Differentiate in x again: f_xx = 24*x^2*y. The answer is 24*x^2*y."
+          - problem: "Let f(x, y) = x^6 - 2x^2 y^4. Find f_yy as a function of x and y."
+            answer: "-24*x^2*y^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with f(x, y) = x^6 - 2x^2 y^4. Differentiate in y once using the power rule: f_y = -8x^2 y^3. Differentiate in y again: f_yy = -24*x^2*y^2. The answer is -24*x^2*y^2."
+          - problem: "Let f(x, y) = 4x^5 y - x^2 y^4. Give f_xx and f_yy as functions of x and y."
+            answer: "fxx = 80*x^3*y - 2*y^4; fyy = -12*x^2*y^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fxx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fyy"}]}
+            solution_sketch: "Start with f(x, y) = 4x^5 y - x^2 y^4. Differentiate in x once: f_x = 20x^4 y - 2x y^4 by the power rule. Differentiate in x again: f_xx = 80*x^3*y - 2*y^4. Differentiate in y once: f_y = 4x^5 - 4x^2 y^3. Differentiate in y again: f_yy = -12*x^2*y^2. The answer is fxx = 80*x^3*y - 2*y^4; fyy = -12*x^2*y^2."
+          - problem: "Let f(x, y) = 5x^2 y^4 - 2x^4 y^2 + 7. Find f_yy as a function of x and y."
+            answer: "60*x^2*y^2 - 4*x^4"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with f(x, y) = 5x^2 y^4 - 2x^4 y^2 + 7. Differentiate in y once: f_y = 20x^2 y^3 - 4x^4 y by the power rule. Differentiate in y again: f_yy = 60*x^2*y^2 - 4*x^4. The answer is 60*x^2*y^2 - 4*x^4."
         constraints: "polynomials of total degree at most 6; differentiate twice in the same variable"
       - id: kp2
         name: "Mixed partials and Clairaut''s theorem"
@@ -1153,6 +1169,22 @@ topics:
           - problem: 'Let $w = xy + z^2$ with $x = e^t$, $y = e^{-t}$, $z = t$. Find $\frac{dw}{dt}$.'
             answer: '$2t$'
             solution_sketch: '$\frac{dw}{dt} = y e^t + x(-e^{-t}) + 2z = 1 - 1 + 2t = 2t$. Check: $w = 1 + t^2$.'
+          - problem: "Let $z = x y^2$ with $x = t$ and $y = t^2$. Find $\\frac{dz}{dt}$ as a function of $t$ using the chain rule, and simplify."
+            answer: "5t^4"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write the chain rule: $\\frac{dz}{dt} = \\frac{\\partial z}{\\partial x}\\frac{dx}{dt} + \\frac{\\partial z}{\\partial y}\\frac{dy}{dt}$. Here $\\frac{\\partial z}{\\partial x} = y^2$ and $\\frac{\\partial z}{\\partial y} = 2xy$. The inner rates are $\\frac{dx}{dt} = 1$ and $\\frac{dy}{dt} = 2t$. Multiply and add: $y^2 \\cdot 1 + 2xy \\cdot 2t = t^4 + 4t^4 = 5t^4$. The derivative is 5t^4."
+          - problem: "Let $z = x^2 + 2xy$ with $x = t^2$ and $y = t$. Find $\\frac{dz}{dt}$ when $t = 2$ using the chain rule."
+            answer: "56"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Chain rule: $\\frac{dz}{dt} = (2x + 2y)\\frac{dx}{dt} + (2x)\\frac{dy}{dt}$. With $x = t^2$ and $y = t$, $\\frac{dx}{dt} = 2t$ and $\\frac{dy}{dt} = 1$. So $\\frac{dz}{dt} = (2t^2 + 2t)(2t) + (2t^2)(1) = 4t^3 + 6t^2$. At $t = 2$: $4(8) + 6(4) = 32 + 24 = 56$. The value is 56."
+          - problem: "Let $z = x^2 + y^2$ with $x = t^2$ and $y = 3t$. Find $\\frac{dz}{dt}$ as a function of $t$ using the chain rule."
+            answer: "4t^3+18t"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Chain rule: $\\frac{dz}{dt} = 2x\\frac{dx}{dt} + 2y\\frac{dy}{dt}$. The inner rates are $\\frac{dx}{dt} = 2t$ and $\\frac{dy}{dt} = 3$. Substitute $x = t^2$, $y = 3t$: $2t^2 \\cdot 2t + 2(3t) \\cdot 3 = 4t^3 + 18t$. The derivative is 4t^3+18t."
+          - problem: "Let $z = x \\sin(y)$ with $x = t^3$ and $y = t$. Find $\\frac{dz}{dt}$ as a function of $t$ using the chain rule."
+            answer: "3t^2 sin(t)+t^3 cos(t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write $z = x\\sin(y)$. The chain rule gives $\\frac{dz}{dt} = \\sin(y)\\frac{dx}{dt} + x\\cos(y)\\frac{dy}{dt}$. Here $x = t^3$, $y = t$, so $\\frac{dx}{dt} = 3t^2$ and $\\frac{dy}{dt} = 1$. Substitute: $\\sin(t) \\cdot 3t^2 + t^3\\cos(t) \\cdot 1 = 3t^2\\sin(t) + t^3\\cos(t)$. The derivative is 3t^2 sin(t)+t^3 cos(t)."
         constraints: "compositions collapse to a clean single-variable check; require the chain-rule computation, not just substitution"
       - id: kp2
         name: "Rates along a moving point"
