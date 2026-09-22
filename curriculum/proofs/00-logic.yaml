@@ -940,27 +940,59 @@ topics:
         name: "De Morgan's laws"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: 'Use De Morgan to rewrite $\neg(P \land Q)$.'
-            answer_contract: {kind: none}
-            answer: '$\neg P \lor \neg Q$'
-            solution_sketch: 'De Morgan: the negation of a conjunction is the disjunction of the negations.'
-          - problem: 'Simplify $\neg(\neg P \lor Q)$.'
-            answer_contract: {kind: none}
-            answer: '$P \land \neg Q$'
-            solution_sketch: 'De Morgan gives $\neg\neg P \land \neg Q$; double negation $\neg\neg P \equiv P$, so $P \land \neg Q$.'
+          - problem: "Simplify not (P and Q) using De Morgan. Select the equivalent simplified expression."
+            answer: "not P or not Q"
+            answer_contract: {"kind": "label", "options": [["not P or not Q"], ["not P and not Q"], ["P or Q"], ["not P or Q"]]}
+            solution_sketch: "The expression is not (P and Q). De Morgan's law says the negation of a conjunction is the disjunction of the negations, so it becomes not P or not Q. The option not P and not Q is wrong because it keeps the conjunction instead of changing it to a disjunction. The option P or Q is wrong because it drops the negations. The option not P or Q is wrong because it negates only P and leaves Q unnegated. The simplified expression is not P or not Q."
+          - problem: "Simplify not (not P or Q) using De Morgan and double negation. Give the number of negation symbols in the simplified expression."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The expression is not (not P or Q). Step 1: De Morgan's law gives not not P and not Q. Step 2: double negation gives P and not Q. The only negation symbol is on Q, so the count is 1."
+          - problem: "Simplify not (P or not Q) using De Morgan and double negation. Give the number of literals in the simplified expression."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The expression is not (P or not Q). Step 1: De Morgan's law gives not P and not not Q. Step 2: double negation gives not P and Q. The literals are not P and Q, so there are 2."
+          - problem: "Simplify not (not P and not Q) using De Morgan and double negation. Give the number of negation symbols in the simplified expression."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The expression is not (not P and not Q). Step 1: De Morgan's law gives not not P or not not Q. Step 2: double negation gives P or Q. There are no negation symbols, so the count is 0."
+          - problem: "Simplify not (P or Q) using De Morgan. Give the number of negation symbols in the simplified expression."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The expression is not (P or Q). Step 1: De Morgan's law gives not P and not Q. Both variables are negated, so the number of negation symbols is 2."
+          - problem: "Simplify not (P and not Q) using De Morgan and double negation. Give the number of symbols in the simplified expression."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The expression is not (P and not Q). Step 1: De Morgan's law gives not P or not not Q. Step 2: double negation gives not P or Q. The symbols are not, P, or, Q, so the count is 4."
         constraints: "apply De Morgan and double negation to simplify"
       - id: kp3
         name: "Nested applications"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: 'Push the negation inward: $\neg(P \land (Q \lor R))$.'
-            answer_contract: {kind: none}
-            answer: '$\neg P \lor (\neg Q \land \neg R)$'
-            solution_sketch: 'De Morgan on the conjunction gives $\neg P \lor \neg(Q \lor R)$; De Morgan again on the inner disjunction gives $\neg Q \land \neg R$.'
-          - problem: 'Push the negation inward: $\neg((P \lor Q) \land \neg R)$.'
-            answer_contract: {kind: none}
-            answer: '$(\neg P \land \neg Q) \lor R$'
-            solution_sketch: 'De Morgan gives $\neg(P \lor Q) \lor \neg\neg R$; the first part becomes $\neg P \land \neg Q$ and double negation gives $R$.'
+          - problem: "Push the negation inward: $\\neg(P \\land (Q \\lor R))$. Select the fully simplified equivalent."
+            answer: "~P | (~Q & ~R)"
+            answer_contract: {"kind": "label", "options": [["~P | (~Q & ~R)"], ["~P | ~(Q | R)"], ["~P & (~Q | ~R)"], ["P & (Q | R)"]]}
+            solution_sketch: "Start with the full formula: ~P | (~Q & ~R). Step 1: apply De Morgan to the outer conjunction to get ~P | ~(Q | R). Step 2: apply De Morgan to the inner disjunction to get ~Q & ~R. The option ~P | ~(Q | R) stops after one De Morgan step. The option ~P & (~Q | ~R) uses AND instead of OR at the outer connective. The option P & (Q | R) forgets to negate the variables. The correct answer is ~P | (~Q & ~R)."
+          - problem: "Push the negation inward: $\\neg((P \\lor Q) \\land \\neg R)$. Select the fully simplified equivalent."
+            answer: "(~P & ~Q) | R"
+            answer_contract: {"kind": "label", "options": [["(~P & ~Q) | R"], ["(~P | ~Q) & R"], ["~(P | Q) & R"], ["(P & Q) | ~R"]]}
+            solution_sketch: "Start with the full formula: (~P & ~Q) | R. Step 1: apply De Morgan to the outer conjunction to get ~(P | Q) | ~~R. Step 2: apply De Morgan to the inner disjunction and double negation to get (~P & ~Q) | R. The option (~P | ~Q) & R swaps AND and OR in the two connectives. The option ~(P | Q) & R stops after one De Morgan step and keeps a negation outside. The option (P & Q) | ~R drops the negations on P and Q and negates R instead. The correct answer is (~P & ~Q) | R."
+          - problem: "Simplify by pushing the negation inward: $\\neg((P \\land Q) \\lor (P \\land R))$. How many of the 8 truth assignments to $P, Q, R$ make the simplified statement true?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full simplified formula: (~P | ~Q) & (~P | ~R). Step 1: apply De Morgan to the outer disjunction to get ~(P & Q) & ~(P & R). Step 2: apply De Morgan to each inner conjunction to get (~P | ~Q) & (~P | ~R). Step 3: this formula is false when P is true and at least one of Q or R is true, which gives 3 assignments. Subtract from 8 to get 8 - 3 = 5. The answer is 5."
+          - problem: "Simplify by pushing the negation inward: $\\neg((P \\land Q) \\lor R)$. How many of the 8 truth assignments to $P, Q, R$ make the simplified statement true?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full simplified formula: (~P | ~Q) & ~R. Step 1: apply De Morgan to the outer disjunction to get ~(P & Q) & ~R. Step 2: apply De Morgan to the inner conjunction to get (~P | ~Q) & ~R. Step 3: the formula is true when R is false and not both P and Q are true. Among the 4 assignments with R false, only P true and Q true makes the second part false, so 3 assignments remain. The answer is 3."
+          - problem: "Simplify by pushing the negation inward: $\\neg(P \\land (Q \\land R))$. How many of the 8 truth assignments to $P, Q, R$ make the simplified statement true?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full simplified formula: ~P | ~Q | ~R. Step 1: apply De Morgan to the outer conjunction to get ~P | ~(Q & R). Step 2: apply De Morgan to the inner conjunction to get ~P | ~Q | ~R. Step 3: the formula is false only when P, Q, and R are all true, so 7 of the 8 assignments make it true. The answer is 7."
+          - problem: "Simplify by pushing the negation inward: $\\neg(P \\lor (Q \\lor R))$. How many of the 8 truth assignments to $P, Q, R$ make the simplified statement true?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full simplified formula: ~P & ~Q & ~R. Step 1: apply De Morgan to the outer disjunction to get ~P & ~(Q | R). Step 2: apply De Morgan to the inner disjunction to get ~P & ~Q & ~R. Step 3: the formula is true only when P, Q, and R are all false, so exactly 1 of the 8 assignments makes it true. The answer is 1."
         constraints: "two nested De Morgan steps; all negations end on atomic variables"
     diagnostic_exemplar:
       problem: 'Push the negation all the way inward and simplify: $\neg(\neg P \land (Q \lor \neg R))$.'
@@ -996,14 +1028,30 @@ topics:
         name: "Verifying equivalence with truth tables"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: 'Show that $P \to Q$ and $\neg P \lor Q$ are logically equivalent.'
-            answer_contract: {kind: none}
-            answer: 'Equivalent; both are false only in the row $P$ true, $Q$ false.'
-            solution_sketch: 'Build both tables: $P \to Q$ is false only at $(T,F)$; $\neg P \lor Q$ is false only when $\neg P$ is false and $Q$ is false, i.e. $(T,F)$. Columns match, so they are equivalent.'
-          - problem: 'Are $P \land (P \lor Q)$ and $P$ logically equivalent?'
-            answer_contract: {kind: none}
-            answer: 'Yes (absorption).'
-            solution_sketch: 'When $P$ is true, $P \lor Q$ is true so the conjunction is true; when $P$ is false the conjunction is false. The column equals that of $P$, so they are equivalent.'
+          - problem: "Build full truth tables for $P \\to Q$ and $\\neg P \\lor Q$. How many of the four rows have two columns that differ?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (truth-table rows): List the four rows (T,T), (T,F), (F,T), (F,F). Step 2 (conditional evaluation): For P -> Q the column is T, F, T, T; for not P or Q the column is T, F, T, T. Step 3 (column comparison): Compare the two columns entry by entry. They are the same in every row, so the number of rows where the columns differ is 0."
+          - problem: "Build full truth tables for $P$ and $P \\land (P \\lor Q)$. How many of the four rows have two columns that agree?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (truth-table rows): List the four rows (T,T), (T,F), (F,T), (F,F). Step 2 (conjunction and disjunction evaluation): The column for P is T, T, F, F; the column for P and (P or Q) is T, T, F, F. Step 3 (column comparison): Compare the two columns entry by entry. They agree in all four rows, so the number of rows where they agree is 4."
+          - problem: "Build full truth tables for $P$ and $P \\lor Q$. How many of the four rows have two columns that differ?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (truth-table rows): List the four rows (T,T), (T,F), (F,T), (F,F). Step 2 (disjunction evaluation): The column for P is T, T, F, F; the column for P or Q is T, T, T, F. Step 3 (column comparison): Compare the columns; they differ only at (F,T). Thus the number of rows where the columns differ is 1."
+          - problem: "Build full truth tables for $P \\to Q$ and $Q \\to P$. Decide whether the two truth-value columns are identical, and count the rows where they are not identical. Give the verdict and the count."
+            answer: "verdict = mismatch; D = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["match"], ["mismatch"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "Step 1 (truth-table rows): List the four rows (T,T), (T,F), (F,T), (F,F). Step 2 (conditional evaluation): The column for P -> Q is T, F, T, T; the column for Q -> P is T, T, F, T. Step 3 (column comparison): The columns differ at (T,F) and (F,T), so they are not identical; the differing-row count is 2. Choosing match would ignore those two rows. So the answer is verdict = mismatch; D = 2."
+          - problem: "Build full truth tables for $P \\leftrightarrow Q$ and $P \\lor Q$. How many of the four rows have two columns that differ?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (truth-table rows): List the four rows (T,T), (T,F), (F,T), (F,F). Step 2 (biconditional and disjunction evaluation): The column for P <-> Q is T, F, F, T; the column for P or Q is T, T, T, F. Step 3 (column comparison): The columns differ at (T,F), (F,T), and (F,F). Thus the number of rows where the columns differ is 3."
+          - problem: "Build full truth tables for $P$ and $\\neg P$. How many of the four rows have two columns that differ?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (truth-table rows): List the four rows (T,T), (T,F), (F,T), (F,F). Step 2 (negation evaluation): The column for P is T, T, F, F; the column for not P is F, F, T, T. Step 3 (column comparison): Every row has opposite truth values. Thus the number of rows where the columns differ is 4."
         constraints: "prove equivalence by matching full truth-table columns"
       - id: kp2
         name: "Rewriting implications"
