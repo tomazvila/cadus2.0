@@ -64,6 +64,18 @@ topics:
             answer: "cosh(x)"
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Swapping $x \to -x$ swaps $e^x$ and $e^{-x}$, which leaves their sum unchanged: $\cosh$ is even (and $\sinh$, built on the difference, is odd).'
+          - problem: "Given $\\sinh x = \\frac{5}{12}$ with $x > 0$, find $\\cosh x$ as a fraction."
+            answer: "13/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Object: the identity $\\cosh^2 x - \\sinh^2 x = 1$. Step 1 (substitute the given value): $\\cosh^2 x = 1 + \\sinh^2 x = 1 + \\frac{25}{144} = \\frac{169}{144}$. Step 2 (take the positive root): $\\cosh x$ is never negative for a real $x$, so $\\cosh x = \\frac{13}{12}$. The answer is 13/12."
+          - problem: "Let $f(x) = \\sinh(x)\\cosh(x)$. State the parity of $f$, and give $f(-\\ln 2)$ as a fraction."
+            answer: "verdict = odd; value = -15/16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["even"], ["odd"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Object: $f(x) = \\sinh(x)\\cosh(x)$. Step 1 (parity): $\\sinh$ is odd and $\\cosh$ is even, so $f(-x) = (-\\sinh x)\\cosh x = -f(x)$ and $f$ is odd; the wrong option even is the error of treating the even factor $\\cosh$ as making the product even. Step 2 (value): $\\cosh(\\ln 2) = \\frac{5}{4}$ and $\\sinh(\\ln 2) = \\frac{3}{4}$, so $f(-\\ln 2) = -\\frac{3}{4} \\cdot \\frac{5}{4} = -\\frac{15}{16}$. The answer is verdict = odd; value = -15/16."
+          - problem: "Given $\\cosh x - \\sinh x = \\frac{2}{3}$, find $\\cosh x + \\sinh x$ as a fraction."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Object: the identity $(\\cosh x - \\sinh x)(\\cosh x + \\sinh x) = \\cosh^2 x - \\sinh^2 x = 1$. Step 1 (apply the identity): the product of the two factors equals 1. Step 2 (solve for the needed factor): $\\cosh x + \\sinh x = \\frac{1}{2/3} = \\frac{3}{2}$. The answer is 3/2."
         constraints: "identity values from the pairs (cosh, sinh) = (5/4, 3/4) or (13/12, 5/12); state x > 0 so the sign of sinh is determined; parity questions offer the two candidate answers"
       - id: kp3
         name: Graphs and the catenary
