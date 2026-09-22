@@ -758,14 +758,30 @@ topics:
         name: Applying the integral test
         key_prerequisites: [improper-integrals]
         exemplars:
-          - problem: 'Use the integral test to decide whether $\sum_{n=2}^{\infty} \frac{1}{n \ln n}$ converges.'
-            answer: 'diverges ($\int_2^{\infty} \frac{dx}{x\ln x} = \lim_{b\to\infty} \ln(\ln b) - \ln(\ln 2) = \infty$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$u = \ln x$ turns the integral into $\int \frac{du}{u}$, which diverges.'
-          - problem: 'Use the integral test to decide whether $\sum_{n=1}^{\infty} n e^{-n^2}$ converges.'
-            answer: 'converges ($\int_1^{\infty} x e^{-x^2} dx = \frac{1}{2e}$, finite)'
-            answer_contract: {kind: none}
-            solution_sketch: '$u = x^2$: the integral equals $\frac{1}{2}e^{-1}$; a finite integral means the series converges.'
+          - problem: "Use the integral test on the series $\\sum_{n=1}^{\\infty} \\frac{n}{(n^2+1)^2}$. Decide whether the series has a finite sum. Give the value of the improper integral and state the verdict."
+            answer: "verdict = converges; L = 1/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full object: the series sum_{n=1}^{infinity} n/(n^2+1)^2 and the improper integral of f(x)=x/(x^2+1)^2 from 1 to infinity. Step 1: f is positive, continuous, and decreasing on [1, infinity). Step 2: substitute u=x^2+1, so du=2x dx and the integral becomes 1/2 times the integral from 2 to infinity of u^(-2) du. Step 3: evaluate the power integral to get 1/2 times 1/2 = 1/4, a finite value, so the series has a finite sum. The option diverges is wrong because the integral is finite. verdict = converges; L = 1/4."
+          - problem: "Use the integral test on the series $\\sum_{n=1}^{\\infty} \\frac{n^2}{(n^3+1)^2}$. Decide whether the series has a finite sum. Give the value of the improper integral and state the verdict."
+            answer: "verdict = converges; L = 1/6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Full object: the series sum_{n=1}^{infinity} n^2/(n^3+1)^2 and the improper integral of f(x)=x^2/(x^3+1)^2 from 1 to infinity. Step 1: f is positive, continuous, and decreasing on [1, infinity). Step 2: substitute u=x^3+1, so du=3x^2 dx and the bounds become 2 and infinity. Step 3: the integral equals 1/3 times 1/2 = 1/6, a finite value, so the series has a finite sum. The option diverges is wrong because the integral is finite. verdict = converges; L = 1/6."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\frac{n}{(n^2+1)^{3/2}}$. Use the integral test to set up the improper integral and give its value."
+            answer: "1/sqrt(2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the series sum_{n=1}^{infinity} n/(n^2+1)^{3/2} and the improper integral of f(x)=x/(x^2+1)^{3/2} from 1 to infinity. Step 1: f is positive, continuous, and decreasing on [1, infinity). Step 2: substitute u=x^2+1, so du=2x dx and the bounds become 2 and infinity. Step 3: the integral equals 1/2 times the integral from 2 to infinity of u^(-3/2) du, which is 1/2 times 2/sqrt(2) = 1/sqrt(2). The value is 1/sqrt(2)."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\frac{n^3}{(n^4+1)^2}$. Use the integral test to set up the improper integral and give its value."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the series sum_{n=1}^{infinity} n^3/(n^4+1)^2 and the improper integral of f(x)=x^3/(x^4+1)^2 from 1 to infinity. Step 1: f is positive, continuous, and decreasing on [1, infinity). Step 2: substitute u=x^4+1, so du=4x^3 dx and the bounds become 2 and infinity. Step 3: the integral equals 1/4 times 1/2 = 1/8. The value is 1/8."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\frac{n+1}{((n+1)^2+1)^2}$. Use the integral test to set up the improper integral and give its value."
+            answer: "1/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the series sum_{n=1}^{infinity} (n+1)/(((n+1)^2+1)^2) and the improper integral of f(x)=(x+1)/(((x+1)^2+1)^2) from 1 to infinity. Step 1: f is positive, continuous, and decreasing on [1, infinity). Step 2: substitute u=(x+1)^2+1, so du=2(x+1) dx and the bounds become 5 and infinity. Step 3: the integral equals 1/2 times 1/5 = 1/10. The value is 1/10."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\frac{n}{(n^2+4)^3}$. Use the integral test to set up the improper integral and give its value."
+            answer: "1/100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the series sum_{n=1}^{infinity} n/(n^2+4)^3 and the improper integral of f(x)=x/(x^2+4)^3 from 1 to infinity. Step 1: f is positive, continuous, and decreasing on [1, infinity). Step 2: substitute u=x^2+4, so du=2x dx and the bounds become 5 and infinity. Step 3: the integral equals 1/2 times 1/(2*25) = 1/100. The value is 1/100."
         constraints: "integrand must be positive, continuous, decreasing on the tail; integral solvable by one substitution"
       - id: kp3
         name: Hypotheses and remainder estimates
@@ -962,18 +978,30 @@ topics:
         name: Choosing a comparator by dominant terms
         key_prerequisites: [direct-comparison-test, integral-p-series-tests]
         exemplars:
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{\sqrt{n}}{n^2 + 1}$ converges.'
-            answer: 'converges (behaves like $\sum n^{-3/2}$; limit comparison gives $L = 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Keep dominant powers: $\frac{n^{1/2}}{n^2} = n^{-3/2}$, a convergent $p$-series.'
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2^n}{3^n - n}$ converges.'
-            answer: 'converges (limit comparison with $\sum (2/3)^n$: $L = 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The $n$ is negligible against $3^n$; $\frac{2^n/(3^n - n)}{(2/3)^n} = \frac{3^n}{3^n - n} \to 1$.'
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n + 3}{n^3 - n + 1}$ converges.'
-            answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Dominant terms give $\frac{n}{n^3} = \frac{1}{n^2}$.'
+          - problem: "The series has terms sqrt(n)/(n^2 + 5) for integers n >= 1. State whether it converges or diverges, and give the exponent p of its p-series comparator as a fraction."
+            answer: "verdict = converges; p = 3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "The full series has terms sqrt(n)/(n^2 + 5). Step 1, dominant-term rule: the numerator behaves like n^(1/2) and the denominator behaves like n^2, so the comparator is n^(1/2)/n^2 = 1/n^(3/2), giving p = 3/2. Step 2, p-series rule: a p-series converges when p > 1, so this series converges, and the option diverges is wrong because p = 3/2 is greater than 1. The answer is verdict = converges; p = 3/2."
+          - problem: "The series has terms 2^n/(5^n + n) for integers n >= 1. Give the common ratio r of its geometric comparator r^n as a fraction."
+            answer: "2/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series has terms 2^n/(5^n + n). Step 1, dominant-term rule: the added term n is negligible against 5^n, so the terms behave like 2^n/5^n = (2/5)^n. Step 2, geometric-series rule: the geometric comparator is r^n with r = 2/5. The answer is 2/5."
+          - problem: "The series has terms (7n + 5)/(n^3 + 4n) for integers n >= 1. Give the exponent p of the p-series comparator 1/n^p, as a whole number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series has terms (7n + 5)/(n^3 + 4n). Step 1, dominant-term rule: the numerator behaves like 7n and the denominator behaves like n^3, so the terms behave like 7n/n^3 = 7/n^2. Step 2, p-series rule: the comparator is 1/n^p with p = 2. The answer is 2."
+          - problem: "The series has terms (4n + 1)/sqrt(n^3 + 2) for integers n >= 1. Give the exponent p of its p-series comparator 1/n^p, as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series has terms (4n + 1)/sqrt(n^3 + 2). Step 1, dominant-term rule: the numerator behaves like 4n and the denominator behaves like n^(3/2), so the terms behave like 4n/n^(3/2) = 4/n^(1/2). Step 2, p-series rule: the comparator is 1/n^p with p = 1/2. The answer is 1/2."
+          - problem: "The series has terms (9n^2 + 4)/(3n^7 + 1) for integers n >= 1. Give its p-series comparator in the form 1/n^p, as a function of n."
+            answer: "1/n^5"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "The full series has terms (9n^2 + 4)/(3n^7 + 1). Step 1, dominant-term rule: the numerator behaves like 9n^2 and the denominator behaves like 3n^7, so the terms behave like 9n^2/(3n^7) = 3/n^5. Step 2, p-series rule: the comparator is 1/n^5, a function of n. The answer is 1/n^5."
+          - problem: "The series has terms (3^n + n)/(2^n + 1) for integers n >= 1. State whether it converges or diverges, and give the common ratio r of its geometric comparator r^n as a fraction."
+            answer: "verdict = diverges; r = 3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "The full series has terms (3^n + n)/(2^n + 1). Step 1, dominant-term rule: the terms n and 1 are negligible against the exponentials, so the terms behave like 3^n/2^n = (3/2)^n. Step 2, geometric-series rule: a geometric series diverges when the common ratio has absolute value greater than 1, and r = 3/2 is greater than 1, so the option converges is wrong. The answer is verdict = diverges; r = 3/2."
         constraints: "comparator read off from dominant numerator/denominator terms; mixed polynomial-exponential allowed"
       - id: kp3
         name: Direct vs. limit comparison strategy
@@ -1057,14 +1085,26 @@ topics:
           - problem: 'Simplify $\frac{(n+1)!}{(n-1)!}$.'
             answer: '$n(n+1)$'
             solution_sketch: '$(n+1)! = (n+1) \cdot n \cdot (n-1)!$.'
-          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{3^n}{n \cdot 2^n}$.'
-            answer: 'diverges ($L = \lim \frac{3}{2} \cdot \frac{n}{n+1} = \frac{3}{2} > 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{3}{2}\cdot\frac{n}{n+1} \to \frac{3}{2}$.'
-          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n!}{n^n}$.'
-            answer: 'converges ($L = \lim \left(\frac{n}{n+1}\right)^n = \frac{1}{e} < 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{(n+1)\, n^n}{(n+1)^{n+1}} = \left(\frac{n}{n+1}\right)^n \to e^{-1}$.'
+          - problem: "Use the ratio test on $\\sum_{n=1}^{\\infty} \\frac{3^n}{n\\,2^n}$. Give the convergence verdict and the limit $L$ of the ratio $a_{n+1}/a_n$."
+            answer: "verdict = diverges; L = 3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The ratio is $\\frac{a_{n+1}}{a_n} = \\frac{3^{n+1}}{(n+1)2^{n+1}} \\cdot \\frac{n 2^n}{3^n} = \\frac{3}{2} \\cdot \\frac{n}{n+1}$. Cancel the powers of 3 and 2 to get the simplified ratio. Then $L = \\lim_{n\\to\\infty} \\frac{3}{2} \\cdot \\frac{n}{n+1} = \\frac{3}{2}$. Since $L > 1$, the series diverges. The answer is verdict = diverges; L = 3/2."
+          - problem: "Use the ratio test on $\\sum_{n=1}^{\\infty} \\frac{n!}{n^n}$. Give the convergence verdict and the limit $L$ of the ratio $a_{n+1}/a_n$."
+            answer: "verdict = converges; L = 1/e"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The ratio is $\\frac{a_{n+1}}{a_n} = \\frac{(n+1)!}{(n+1)^{n+1}} \\cdot \\frac{n^n}{n!} = \\frac{(n+1)n^n}{(n+1)^{n+1}} = \\left(\\frac{n}{n+1}\\right)^n$. Cancel the factorials to get the simplified ratio. Then $L = \\lim_{n\\to\\infty} \\left(\\frac{n}{n+1}\\right)^n = e^{-1}$. Since $L < 1$, the series converges. The answer is verdict = converges; L = 1/e."
+          - problem: "Use the ratio test on $\\sum_{n=1}^{\\infty} \\frac{n^2}{2^n}$. Find the limit $L$ of the ratio $a_{n+1}/a_n$."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The ratio is $\\frac{a_{n+1}}{a_n} = \\frac{(n+1)^2}{2^{n+1}} \\cdot \\frac{2^n}{n^2} = \\frac{1}{2} \\cdot \\frac{(n+1)^2}{n^2}$. Cancel the powers of 2. Then $L = \\lim_{n\\to\\infty} \\frac{1}{2} \\left(1+\\frac{1}{n}\\right)^2 = \\frac{1}{2}$. The answer is 1/2."
+          - problem: "Use the ratio test on $\\sum_{n=1}^{\\infty} \\frac{n^3}{3^n}$. Find the limit $L$ of the ratio $a_{n+1}/a_n$."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The ratio is $\\frac{a_{n+1}}{a_n} = \\frac{(n+1)^3}{3^{n+1}} \\cdot \\frac{3^n}{n^3} = \\frac{1}{3} \\cdot \\frac{(n+1)^3}{n^3}$. Cancel the powers of 3. Then $L = \\lim_{n\\to\\infty} \\frac{1}{3} \\left(1+\\frac{1}{n}\\right)^3 = \\frac{1}{3}$. The answer is 1/3."
+          - problem: "Use the ratio test on $\\sum_{n=1}^{\\infty} \\frac{4^n}{n^2\\,3^n}$. Give the convergence verdict and the limit $L$ of the ratio $a_{n+1}/a_n$."
+            answer: "verdict = diverges; L = 4/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The ratio is $\\frac{a_{n+1}}{a_n} = \\frac{4^{n+1}}{(n+1)^2 3^{n+1}} \\cdot \\frac{n^2 3^n}{4^n} = \\frac{4}{3} \\cdot \\frac{n^2}{(n+1)^2}$. Cancel the powers of 4 and 3. Then $L = \\lim_{n\\to\\infty} \\frac{4}{3} \\left(\\frac{n}{n+1}\\right)^2 = \\frac{4}{3}$. Since $L > 1$, the series diverges. The answer is verdict = diverges; L = 4/3."
         constraints: "cancel factorials and exponentials fully before taking the limit; L may involve e"
       - id: kp3
         name: Mixed products

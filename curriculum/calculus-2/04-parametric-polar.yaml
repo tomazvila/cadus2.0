@@ -334,14 +334,30 @@ topics:
         name: Velocity components and speed
         key_prerequisites: [parametric-equations, motion-along-a-line]
         exemplars:
-          - problem: 'A particle moves along $x = t^2 - 4t$, $y = t^3 - 3t$. Find its velocity components and speed at $t = 1$.'
-            answer: 'velocity $\langle -2, 0 \rangle$; speed $2$'
-            answer_contract: {kind: none}
-            solution_sketch: '$x''(t) = 2t - 4$, $y''(t) = 3t^2 - 3$; at $t = 1$: $\langle -2, 0 \rangle$, speed $\sqrt{4 + 0} = 2$.'
-          - problem: 'For the same particle, is there a time when it is at rest?'
-            answer: 'no; $x''(t) = 0$ only at $t = 2$, $y''(t) = 0$ only at $t = \pm 1$, never simultaneously'
-            answer_contract: {kind: none}
-            solution_sketch: 'At rest requires both components zero at the same time.'
+          - problem: "A particle moves along x = t^3 - 6t, y = t^2 + t. Find its velocity components as (vx, vy) and its speed at t = 2."
+            answer: "v = (6, 5); speed = sqrt(61)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "v"}, {"contract": {"kind": "exact"}, "name": "speed"}]}
+            solution_sketch: "Differentiate each component by the power rule: x'(t) = 3t^2 - 6 and y'(t) = 2t + 1. At t = 2, x'(2) = 6 and y'(2) = 5. The speed is sqrt(6^2 + 5^2) = sqrt(61). So v = (6, 5); speed = sqrt(61)."
+          - problem: "A particle moves along x = t^3 - 3t^2 + 1, y = t^2 - 4t + 5. Find the time at which the particle is at rest."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate by the power rule: x'(t) = 3t^2 - 6t = 3t(t - 2), and y'(t) = 2t - 4 = 2(t - 2). At rest both components must be zero, so solve 3t(t - 2) = 0 and 2(t - 2) = 0. The common solution is t = 2. So 2."
+          - problem: "A particle moves so that x = t^2 + 3t and y = 2t^3 - t. Give its velocity vector at t = 1 as (x', y')."
+            answer: "(5, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Differentiate each component by the power rule: x'(t) = 2t + 3, and y'(t) = 6t^2 - 1. At t = 1, x'(1) = 5 and y'(1) = 5. So (5, 5)."
+          - problem: "A particle moves along x = t^3 - 2t, y = t^2 + 4. Find its speed at t = 0."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate by the power rule: x'(t) = 3t^2 - 2, and y'(t) = 2t. At t = 0, x'(0) = -2 and y'(0) = 0. The speed is sqrt((-2)^2 + 0^2) = 2. So 2."
+          - problem: "A particle moves along x = 4t - t^3, y = t^2 + 3t. Find its velocity vector as (vx, vy) and its speed at t = 2."
+            answer: "v = (-8, 7); speed = sqrt(113)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "v"}, {"contract": {"kind": "exact"}, "name": "speed"}]}
+            solution_sketch: "Differentiate by the power rule: x'(t) = 4 - 3t^2, and y'(t) = 2t + 3. At t = 2, x'(2) = -8 and y'(2) = 7. The speed is sqrt((-8)^2 + 7^2) = sqrt(113). So v = (-8, 7); speed = sqrt(113)."
+          - problem: "A particle moves along x = t^3 - 3t^2 - 9t, y = t^2 - 6t. Find the time at which the particle is at rest."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Differentiate by the power rule: x'(t) = 3t^2 - 6t - 9 = 3(t - 3)(t + 1), and y'(t) = 2t - 6 = 2(t - 3). At rest both components must be zero, so solve 3(t - 3)(t + 1) = 0 and 2(t - 3) = 0. The common solution is t = 3. So 3."
         constraints: "polynomial components of degree <= 3; rest requires both derivatives to vanish together"
       - id: kp2
         name: Direction of motion
@@ -350,22 +366,54 @@ topics:
           - problem: 'For $x = t^2 - 4t$, $y = t^3 - 3t$, when is the particle moving left?'
             answer: '$t < 2$'
             solution_sketch: 'Moving left means $x''(t) = 2t - 4 < 0$.'
-          - problem: 'For the same particle, when is it moving up?'
-            answer: '$t < -1$ or $t > 1$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Moving up means $y''(t) = 3t^2 - 3 > 0$, i.e. $|t| > 1$.'
+          - problem: "For x = t^2 - 4t and y = t^3 - 3t, determine when the particle is moving up, and give the answer as an inequality in t."
+            answer: "t < -1 or t > 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full object is x = t^2 - 4t and y = t^3 - 3t. Step 1, vertical velocity rule: upward motion means y'(t) > 0. Step 2, power rule: y'(t) = 3t^2 - 3 = 3(t - 1)(t + 1). Step 3, sign analysis: 3(t - 1)(t + 1) > 0 for t < -1 or t > 1. The particle moves up for t < -1 or t > 1."
+          - problem: "A particle has coordinates x = t^2 - 6t and y = t^2 - 2t; determine when the particle is moving right and upward, and give the answer as an inequality in t."
+            answer: "t > 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full motion is x = t^2 - 6t and y = t^2 - 2t. Step 1, velocity sign rule: right and upward means x'(t) > 0 and y'(t) > 0. Step 2, power rule: x'(t) = 2t - 6 and y'(t) = 2t - 2. Step 3, solve both: x'(t) > 0 gives t > 3, and y'(t) > 0 gives t > 1. Step 4, intersection: both hold for t > 3. The particle moves right and upward for t > 3."
+          - problem: "A particle follows x = t^3 - 3t^2 and y = t^2 - 5t; find when the particle is moving left and downward, and give the answer as an inequality in t."
+            answer: "0 < t < 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full motion is x = t^3 - 3t^2 and y = t^2 - 5t. Step 1, velocity sign rule: left and downward means x'(t) < 0 and y'(t) < 0. Step 2, power rule: x'(t) = 3t^2 - 6t = 3t(t - 2) and y'(t) = 2t - 5. Step 3, sign analysis: x'(t) < 0 on 0 < t < 2, and y'(t) < 0 on t < 5/2. Step 4, intersection: both hold on 0 < t < 2. The particle moves left and downward for 0 < t < 2."
+          - problem: "A particle has position x = t^2 - 2t and y = t^3 - 3t; determine when the particle is moving left and upward, and give the answer as an inequality in t."
+            answer: "t < -1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full motion is x = t^2 - 2t and y = t^3 - 3t. Step 1, velocity sign rule: left and upward means x'(t) < 0 and y'(t) > 0. Step 2, power rule: x'(t) = 2t - 2 and y'(t) = 3t^2 - 3 = 3(t - 1)(t + 1). Step 3, solve x'(t) < 0 gives t < 1; y'(t) > 0 gives t < -1 or t > 1. Step 4, intersection: both hold for t < -1. The particle moves left and upward for t < -1."
+          - problem: "A particle traces x = t^3 - 12t and y = t^2 - 4t; find when the particle is moving right and downward, and give the answer as an inequality in t."
+            answer: "t < -2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The full motion is x = t^3 - 12t and y = t^2 - 4t. Step 1, velocity sign rule: right and downward means x'(t) > 0 and y'(t) < 0. Step 2, power rule: x'(t) = 3t^2 - 12 = 3(t - 2)(t + 2) and y'(t) = 2t - 4. Step 3, sign analysis: x'(t) > 0 for t < -2 or t > 2; y'(t) < 0 for t < 2. Step 4, intersection: both hold for t < -2. The particle moves right and downward for t < -2."
         constraints: "sign analysis of x'(t) and y'(t); answers as t-intervals"
       - id: kp3
         name: Distance traveled vs. displacement
         key_prerequisites: [parametric-equations]
         exemplars:
-          - problem: 'A particle traces $x = \cos t$, $y = \sin t$ for $0 \le t \le \pi$. Find the distance traveled and the magnitude of the displacement.'
-            answer: 'distance $\pi$; displacement $2$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Half the unit circle has length $\pi$; the endpoints $(1, 0)$ and $(-1, 0)$ are $2$ apart.'
           - problem: 'Find the distance traveled along $x = t^2$, $y = \frac{2}{3}t^3$ for $0 \le t \le 1$.'
             answer: '$\frac{2}{3}(2\sqrt{2} - 1)$'
             solution_sketch: 'Speed $= \sqrt{4t^2 + 4t^4} = 2t\sqrt{1 + t^2}$; $\int_0^1 2t\sqrt{1+t^2}\,dt = \frac{2}{3}\left[(1+t^2)^{3/2}\right]_0^1$.'
+          - problem: "A particle moves along x = cos(t), y = sin(t) for 0 <= t <= pi/2. Report the two results under the names distance and displacement. Find the distance traveled and the magnitude of the displacement."
+            answer: "distance = pi/2; displacement = sqrt(2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "distance"}, {"contract": {"kind": "exact"}, "name": "displacement"}]}
+            solution_sketch: "Step 1: Differentiate with the derivatives of sine and cosine: dx/dt = -sin(t) and dy/dt = cos(t), so the speed is sqrt(sin(t)^2 + cos(t)^2) = 1 by the Pythagorean identity. Step 2: The distance traveled is the speed integral from 0 to pi/2, which equals pi/2. Step 3: The particle goes from (1, 0) to (0, 1), so the displacement magnitude is sqrt(1 + 1) = sqrt(2) by the distance formula. The answer is distance = pi/2; displacement = sqrt(2)."
+          - problem: "A particle moves along x = t, y = (2/3)t^(3/2) for 0 <= t <= 3. Find the distance traveled."
+            answer: "14/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate with the power rule: dx/dt = 1 and dy/dt = sqrt(t), so the speed is sqrt(1 + t). Step 2: The distance traveled is the speed integral of sqrt(1 + t) from 0 to 3. Step 3: Use the substitution u = 1 + t: the integral is (2/3)(1 + t)^(3/2) from 0 to 3, which is (2/3)(8 - 1) = 14/3. The distance traveled is 14/3."
+          - problem: "A particle moves along x = t^2, y = (2/3)t^3 for 0 <= t <= 2. Report the two results under the names distance and displacement. Find the distance traveled and the magnitude of the displacement."
+            answer: "distance = (2/3)(5sqrt(5) - 1); displacement = 20/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "distance"}, {"contract": {"kind": "exact"}, "name": "displacement"}]}
+            solution_sketch: "Step 1: Differentiate with the power rule: dx/dt = 2t and dy/dt = 2t^2, so the speed is sqrt(4t^2 + 4t^4) = 2t sqrt(1 + t^2). Step 2: In the speed integral from 0 to 2 substitute u = 1 + t^2: the distance is (2/3)(1 + t^2)^(3/2) from 0 to 2, which is (2/3)(5sqrt(5) - 1). Step 3: The endpoints are (0, 0) and (4, 16/3), so the displacement magnitude is sqrt(16 + 256/9) = 20/3 by the distance formula. The answer is distance = (2/3)(5sqrt(5) - 1); displacement = 20/3."
+          - problem: "A particle moves along x = 3t^2, y = t^3 for 0 <= t <= 1. Report the two results under the names verdict and distance. Determine whether the distance traveled equals the magnitude of the displacement, and find the distance traveled."
+            answer: "verdict = no; distance = 5sqrt(5) - 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "distance"}]}
+            solution_sketch: "Step 1: Differentiate with the power rule: dx/dt = 6t and dy/dt = 3t^2, so the speed is sqrt(36t^2 + 9t^4) = 3t sqrt(4 + t^2). Step 2: In the speed integral from 0 to 1 substitute u = 4 + t^2: the distance is (4 + t^2)^(3/2) from 0 to 1, which is 5sqrt(5) - 8. Step 3: The endpoints are (0, 0) and (3, 1), so the displacement magnitude is sqrt(10). Since 5sqrt(5) - 8 does not equal sqrt(10), the verdict is no; the option yes is wrong because distance equals displacement only for straight-line motion. The answer is verdict = no; distance = 5sqrt(5) - 8."
+          - problem: "A particle moves along x = t^2, y = (2/3)(t^2 + 3)^(3/2) for 0 <= t <= 2. Find the distance traveled."
+            answer: "(2/3)(16sqrt(2) - 8)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Differentiate with the chain rule: dx/dt = 2t and dy/dt = 2t sqrt(t^2 + 3), so the speed is sqrt(4t^2 + 4t^2(t^2 + 3)) = 2t sqrt(t^2 + 4). Step 2: In the speed integral from 0 to 2 substitute u = t^2 + 4: the distance is the integral of sqrt(u) from 4 to 8, which is (2/3)(8^(3/2) - 4^(3/2)). Step 3: Evaluate: (2/3)(16sqrt(2) - 8). The distance traveled is (2/3)(16sqrt(2) - 8)."
         constraints: "distance via the speed integral; displacement via endpoints; integrals fall to one u-substitution"
     diagnostic_exemplar:
       problem: 'A particle traces $x = t^2 - 4t$, $y = t^2$ for $0 \le t \le 4$. When is it moving left, and what is the magnitude of its displacement over the interval?'
@@ -400,13 +448,29 @@ topics:
         name: Plotting and multiple representations
         key_prerequisites: [unit-circle]
         exemplars:
-          - problem: 'In which quadrant does the polar point $\left(2, \frac{2\pi}{3}\right)$ lie?'
-            answer: 'quadrant II'
-            answer_contract: {kind: none}
-            solution_sketch: 'The ray $\theta = \frac{2\pi}{3}$ points into quadrant II and $r > 0$.'
+          - problem: "The polar point (4, 2pi/3) is plotted. Find the quadrant number (1, 2, 3, or 4) of the ray on which it lies."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The angle 2pi/3 is between pi/2 and pi, so its ray lies in quadrant II by the unit-circle angle rule. Since r = 4 is positive, the point is on that ray. The quadrant number is 2."
           - problem: 'Give a representation of the polar point $\left(2, \frac{\pi}{4}\right)$ with $r < 0$.'
             answer: '$(-2, 5\pi/4)$'
             solution_sketch: 'Negative $r$ points the opposite way: add $\pi$ to the angle and negate $r$.'
+          - problem: "The polar point (3, 3pi/4) has r > 0. Find another representation with r < 0 as (r, theta), using 0 <= theta < 2pi."
+            answer: "(-3, 7pi/4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start with the given polar point (3, 3pi/4). By the negative-r representation rule, negate r and add pi to the angle: r = -3 and theta = 3pi/4 + pi = 7pi/4. The representation is (-3, 7pi/4)."
+          - problem: "The polar point (5, pi/6) is plotted. Find an equivalent representation with r > 0 and -2pi <= theta < 0 as (r, theta)."
+            answer: "(5, -11pi/6)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start with the given polar point (5, pi/6). By the coterminal-angle rule, subtract one full turn 2pi from the angle: pi/6 - 2pi = -11pi/6. Keep r = 5. The representation is (5, -11pi/6)."
+          - problem: "The polar point (-3, pi/3) is plotted. Find the quadrant number (1, 2, 3, or 4) of the point."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The angle pi/3 points into quadrant I by the unit-circle angle rule. A negative r reflects the point through the origin, so the point lies in the opposite quadrant, quadrant III. The quadrant number is 3."
+          - problem: "A polar point with positive r lies on the ray opposite to the ray theta = pi/4. Find an angle theta in [0, 2pi) for the point's ray."
+            answer: "5pi/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the given ray theta = pi/4. The opposite-ray rule adds pi to the angle: pi/4 + pi = 5pi/4. The angle 5pi/4 lies in [0, 2pi). The angle is 5pi/4."
         constraints: "angles on the unit-circle special angles; include one negative-r representation"
       - id: kp2
         name: Polar to rectangular
@@ -432,6 +496,18 @@ topics:
           - problem: 'Convert $(-3, 0)$ to polar coordinates with $r > 0$ and $0 \le \theta < 2\pi$.'
             answer: '$(3, \pi)$'
             solution_sketch: 'The point lies on the negative $x$-axis at distance $3$.'
+          - problem: "Give the polar coordinates of (0, -2) with r > 0 and 0 <= theta < 2pi as (r, theta)."
+            answer: "(2, 3pi/2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The point (0, -2) has x = 0 and y = -2. Use the Pythagorean theorem r = sqrt(x^2 + y^2): r = sqrt(0 + 4) = 2. The point lies on the negative y-axis, so the angle is theta = 3pi/2. The polar coordinates are (2, 3pi/2)."
+          - problem: "Give the polar coordinates of (-2, -2) with r > 0 and 0 <= theta < 2pi as (r, theta)."
+            answer: "(2sqrt(2), 5pi/4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The point (-2, -2) lies in quadrant III because both coordinates are negative. Use r = sqrt(x^2 + y^2): r = sqrt(4 + 4) = sqrt(8) = 2sqrt(2). The reference angle has tan(theta_ref) = 1, so theta_ref = pi/4; the quadrant III angle is pi + pi/4 = 5pi/4. The polar coordinates are (2sqrt(2), 5pi/4)."
+          - problem: "Give the polar coordinates of (1, -sqrt(3)) with r > 0 and 0 <= theta < 2pi as (r, theta)."
+            answer: "(2, 5pi/3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The point (1, -sqrt(3)) has x = 1 and y = -sqrt(3). Use r = sqrt(x^2 + y^2): r = sqrt(1 + 3) = 2. The reference angle has tan(theta_ref) = sqrt(3), so theta_ref = pi/3; the quadrant IV angle is 2pi - pi/3 = 5pi/3. The polar coordinates are (2, 5pi/3)."
         constraints: "points landing on special angles; mind the quadrant when reading arctan"
     diagnostic_exemplar:
       problem: 'Convert $(-3, 3\sqrt{3})$ to polar coordinates with $r > 0$ and $0 \le \theta < 2\pi$.'
@@ -465,18 +541,30 @@ topics:
         name: Polar equations to rectangular equations
         key_prerequisites: [plotting-polar-points, completing-the-square]
         exemplars:
-          - problem: 'Convert $r = 4\cos\theta$ to a rectangular equation and identify the curve.'
-            answer: '$x^2 + y^2 = 4x$, i.e. $(x - 2)^2 + y^2 = 4$: a circle of radius $2$ centered at $(2, 0)$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiply by $r$: $r^2 = 4r\cos\theta$, so $x^2 + y^2 = 4x$; complete the square.'
-          - problem: 'Convert $r = 6\cos\theta$ to a rectangular equation and identify the curve.'
-            answer: '$(x - 3)^2 + y^2 = 9$: a circle of radius $3$ centered at $(3, 0)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$r^2 = 6r\cos\theta$ gives $x^2 + y^2 = 6x$; complete the square.'
-          - problem: 'Convert $\theta = \frac{\pi}{4}$ to a rectangular equation.'
-            answer: '$y = x$ (a line through the origin)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Constant $\theta$ is the line of slope $\tan\frac{\pi}{4} = 1$.'
+          - problem: "Convert r = 8 cos(theta) to a rectangular equation. The result has the form x^2 + y^2 = a x and its graph is a circle with center (h, 0). Find a and h."
+            answer: "a = 8; h = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "h"}]}
+            solution_sketch: "Multiply both sides by r to get r^2 = 8 r cos(theta). Use the identities r^2 = x^2 + y^2 and r cos(theta) = x, giving x^2 + y^2 = 8x. Complete the square to get (x - 4)^2 + y^2 = 16, so the center is (4, 0). The answer is a = 8; h = 4."
+          - problem: "Convert r = 10 sin(theta) to a rectangular equation. The result has the form x^2 + y^2 = a y and its graph is a circle with center (0, k). Find a and k."
+            answer: "a = 10; k = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "Multiply by r: r^2 = 10 r sin(theta). Use r^2 = x^2 + y^2 and r sin(theta) = y to write x^2 + y^2 = 10y. Complete the square: x^2 + (y - 5)^2 = 25, so the center is (0, 5). The answer is a = 10; k = 5."
+          - problem: "Convert theta = pi/3 to a rectangular equation of the form y = m x. Find the slope m."
+            answer: "sqrt(3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Constant theta gives the line y = x tan(theta). Here tan(pi/3) = sqrt(3). So the rectangular equation is y = sqrt(3) x. The answer is sqrt(3)."
+          - problem: "Convert r = -6 cos(theta) to a rectangular equation. The graph is a circle with center (h, 0) and radius rad. Find h and rad."
+            answer: "h = -3; rad = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "h"}, {"contract": {"kind": "exact"}, "name": "rad"}]}
+            solution_sketch: "Multiply by r: r^2 = -6 r cos(theta). Use r^2 = x^2 + y^2 and r cos(theta) = x to get x^2 + y^2 = -6x. Complete the square: (x + 3)^2 + y^2 = 9, so the center is (-3, 0) and the radius is 3. The answer is h = -3; rad = 3."
+          - problem: "Convert r = 4 cos(theta) + 4 sin(theta) to a rectangular equation. The graph is a circle with center (h, k). Find h and k."
+            answer: "h = 2; k = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "h"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "Multiply by r: r^2 = 4 r cos(theta) + 4 r sin(theta). Use r^2 = x^2 + y^2, r cos(theta) = x, and r sin(theta) = y to get x^2 + y^2 = 4x + 4y. Complete the square: (x - 2)^2 + (y - 2)^2 = 8, so the center is (2, 2). The answer is h = 2; k = 2."
+          - problem: "Convert r = 12 sin(theta) to a rectangular equation. The result has the form x^2 + y^2 = a y and its graph is a circle with radius rad. Find a and rad."
+            answer: "a = 12; rad = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "rad"}]}
+            solution_sketch: "Multiply by r: r^2 = 12 r sin(theta). Use r^2 = x^2 + y^2 and r sin(theta) = y to write x^2 + y^2 = 12y. Complete the square: x^2 + (y - 6)^2 = 36, so the radius is 6. The answer is a = 12; rad = 6."
         constraints: "multiply through by r when needed; complete the square to identify circles"
       - id: kp2
         name: Rectangular equations to polar equations
@@ -553,25 +641,57 @@ topics:
         name: Rose curves and petal counts
         key_prerequisites: [polar-coordinates, trig-graphs-basic]
         exemplars:
-          - problem: 'How many petals does $r = 2\sin 3\theta$ have? And $r = \cos 2\theta$?'
-            answer: '$3$ petals; $4$ petals'
-            answer_contract: {kind: none}
-            solution_sketch: '$r = a\sin(n\theta)$ or $a\cos(n\theta)$ gives $n$ petals for odd $n$ and $2n$ petals for even $n$.'
           - problem: 'At which angles $\theta$ in $[0, 2\pi)$ do the petal tips of $r = 2\sin 3\theta$ occur?'
             answer: '$\theta = \frac{\pi}{6}, \frac{5\pi}{6}, \frac{3\pi}{2}$'
             solution_sketch: 'Tips where $\sin 3\theta = 1$: $3\theta = \frac{\pi}{2} + 2\pi k$.'
+          - problem: "Two polar curves are r = 2 sin 3theta and r = cos 2theta. State the two petal counts in that order as a comma-separated list."
+            answer: "3, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1, the petal count rule for r = a sin(n theta) gives n petals when n is odd, so r = 2 sin 3theta has 3 petals. Step 2, the petal count rule for r = a cos(n theta) gives 2n petals when n is even, so r = cos 2theta has 4 petals. The two petal counts in that order are 3, 4."
+          - problem: "A polar curve is given by r = 3 cos 5theta. Find the number of petals of its graph."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, apply the petal count rule for r = a cos(n theta) with n odd. Step 2, because n = 5 is odd, the number of petals is n = 5. The graph of r = 3 cos 5theta has 5 petals, so the answer is 5."
+          - problem: "A polar curve is given by r = 5 sin 4theta. Find the number of petals of its graph."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, apply the petal count rule for r = a sin(n theta) with n even. Step 2, because n = 4 is even, the number of petals is 2n = 8. The graph of r = 5 sin 4theta has 8 petals, so the answer is 8."
+          - problem: "A polar curve is given by r = 3 cos 2theta. Give the tip angles for theta in [0, 2pi) in increasing order as a comma-separated list."
+            answer: "0, pi/2, pi, 3pi/2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1, solve the tip-angle equation cos 2theta = 1 and cos 2theta = -1 for an even rose. Step 2, 2theta = k pi gives theta = k pi/2 for k = 0, 1, 2, 3. The tip angles in increasing order are 0, pi/2, pi, 3pi/2."
+          - problem: "A polar curve is given by r = 4 sin 5theta. Give the tip angles for theta in [0, 2pi) in increasing order as a comma-separated list."
+            answer: "pi/10, pi/2, 9pi/10, 13pi/10, 17pi/10"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1, solve the tip-angle equation sin 5theta = 1 for an odd rose. Step 2, 5theta = pi/2 + 2pi k gives theta = pi/10 + 2pi k/5. Step 3, take k = 0, 1, 2, 3, 4 in [0, 2pi). The tip angles in increasing order are pi/10, pi/2, 9pi/10, 13pi/10, 17pi/10."
         constraints: "n in {2, 3, 4, 5}; ask for petal counts and tip angles"
       - id: kp3
         name: Symmetry and zeros of r
         key_prerequisites: [polar-coordinates]
         exemplars:
-          - problem: 'About which line is $r = 1 + \cos\theta$ symmetric, and where does it touch the pole?'
-            answer: 'symmetric about the polar axis ($x$-axis); touches the pole at $\theta = \pi$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\cos\theta$ is even, giving polar-axis symmetry; $r = 0$ when $\cos\theta = -1$.'
+          - problem: "For $r = 1 + \\cos\\theta$, find the line of symmetry and the angle in $[0, 2\\pi)$ where $r = 0$. Give the symmetry line as one word and the zero angle as a multiple of $\\pi$."
+            answer: "line = horizontal; theta = pi"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["horizontal"], ["vertical"]]}, "name": "line"}, {"contract": {"kind": "exact"}, "name": "theta"}]}
+            solution_sketch: "Because cosine is even, $r(-\\theta) = r(\\theta)$, so the graph is symmetric about the polar axis, the horizontal line. Set $r = 0$: $1 + \\cos\\theta = 0$ gives $\\cos\\theta = -1$, so $\\theta = \\pi$ on $[0, 2\\pi)$. The vertical option fails because replacing $\\theta$ by $\\pi - \\theta$ does not preserve $r$. Thus line = horizontal; theta = pi."
           - problem: 'Find all $\theta$ in $[0, 2\pi)$ with $r = 0$ for the rose $r = \sin 2\theta$.'
             answer: '$\theta = 0, \frac{\pi}{2}, \pi, \frac{3\pi}{2}$'
             solution_sketch: '$\sin 2\theta = 0$ at multiples of $\frac{\pi}{2}$; these angles bound the petals.'
+          - problem: "Find all $\\theta$ in $[0, \\pi)$ at which $r = 0$ for the rose $r = \\cos 3\\theta$. Give the answer as a comma-separated list of increasing values."
+            answer: "pi/6, pi/2, 5pi/6"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Set $r = 0$: $\\cos 3\\theta = 0$. Then $3\\theta = \\frac{\\pi}{2} + k\\pi$, so $\\theta = \\frac{\\pi}{6} + k\\frac{\\pi}{3}$. The values in $[0, \\pi)$ are $\\frac{\\pi}{6}$, $\\frac{\\pi}{2}$, and $\\frac{5\\pi}{6}$. The list is pi/6, pi/2, 5pi/6."
+          - problem: "Determine the line of symmetry of the graph of $r = 2 + 2\\sin\\theta$. Select one."
+            answer: "vertical"
+            answer_contract: {"kind": "label", "options": [["vertical"], ["horizontal"], ["origin"], ["diagonal"]]}
+            solution_sketch: "Because $\\sin(\\pi - \\theta) = \\sin\\theta$, $r$ is unchanged when $\\theta$ is replaced by $\\pi - \\theta$, so the symmetry line is vertical, $\\theta = \\frac{\\pi}{2}$. The horizontal option fails because replacing $\\theta$ by $-\\theta$ changes $r$. The origin option fails because adding $\\pi$ changes $r$. The diagonal option fails because no reflection across it preserves $r$. The symmetry line is vertical."
+          - problem: "For the rose $r = 2\\cos 4\\theta$, how many values of $\\theta$ in $[0, 2\\pi)$ make $r = 0$? Give the count."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set $r = 0$: $2\\cos 4\\theta = 0$, so $\\cos 4\\theta = 0$. Then $4\\theta = \\frac{\\pi}{2} + k\\pi$, giving $\\theta = \\frac{\\pi}{8} + k\\frac{\\pi}{4}$. The values $k = 0, 1, \\dots, 7$ lie in $[0, 2\\pi)$, which is eight values. The count is 8."
+          - problem: "At what angle $\\theta$ in $[0, 2\\pi)$ does $r = 3 - 3\\cos\\theta$ reach the pole? Give the angle as a multiple of $\\pi$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set $r = 0$: $3 - 3\\cos\\theta = 0$, so $\\cos\\theta = 1$. On $[0, 2\\pi)$, $\\theta = 0$ is the only solution. The angle is 0."
         constraints: "symmetry via even/odd trig; zeros of r locate petal boundaries and cusps"
     diagnostic_exemplar:
       problem: 'For $r = 4\cos 3\theta$, how many petals does the graph have, and at which $\theta$ in $[0, \pi)$ does the curve pass through the pole?'
