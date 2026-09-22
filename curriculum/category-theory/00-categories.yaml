@@ -234,12 +234,34 @@ topics:
         key_prerequisites: [relations-equivalence]
         constraints: "Non-example must fail exactly one axiom; name which axiom fails."
         exemplars:
-          - problem: "Objects are points of the plane, with a single arrow $p\\to q$ whenever $d(p,q)\\le 1$. Is this a category? Justify."
-            answer: "No: composites need not exist, so composition is not total."
-            solution_sketch: "Identities exist since $d(p,p)=0\\le 1$. But composition requires: if $p\\to q$ and $q\\to r$ then $p\\to r$. Take $p=(0,0),q=(1,0),r=(2,0)$: $d(p,q)=d(q,r)=1$ yet $d(p,r)=2>1$, so the composite arrow is missing. The relation is not transitive, composition is undefined, and the axioms fail."
-          - problem: "Do sets with morphisms taken to be only the surjective functions (plus identities) form a category?"
-            answer: "Yes."
-            solution_sketch: "Identity functions are surjective, and a composite of two surjections is a surjection, so composition is total and lands among the chosen morphisms; associativity and unit laws are inherited from $\\mathbf{Set}$. This is a (non-full) subcategory of $\\mathbf{Set}$."
+          - problem: "Objects are the points of the plane, with a single arrow p -> q whenever the distance from p to q is at most 1, and there are no other arrows. Each point has a loop to itself, and exactly one axiom fails. Which axiom fails?"
+            answer: "composition total"
+            answer_contract: {"kind": "label", "options": [["composition total"], ["associativity"], ["identity arrows"], ["identity laws"]]}
+            solution_sketch: "Step 1 (identity check): for any point p, the distance from p to p is 0, so the loop p -> p exists. Step 2 (composition check): take p = (0,0), q = (1,0), and r = (2,0); the arrows p -> q and q -> r exist, but the distance from p to r is 2, so the composite p -> r does not exist. Step 3 (remaining axioms): with at most one arrow between any two points, every defined composite is unique, so the unit laws and associativity hold for all composites that exist. Step 4 (wrong options): associativity is wrong because defined composites are unique and associate; identity arrows is wrong because every loop exists; identity laws is wrong because unique composites satisfy the unit laws. The answer is composition total."
+          - problem: "Objects are 1, 2, 4. There is a single arrow a -> b whenever a divides b, except that the arrow 1 -> 4 is removed, and there are no other arrows. The loops give the identities, and exactly one axiom fails. What fraction of the composable pairs of arrows have no composite? Give the answer as a fraction."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (list the arrows): the arrows are 1 -> 1, 2 -> 2, 4 -> 4, 1 -> 2, and 2 -> 4; the loops give the identities. Step 2 (count composable pairs): a composable pair is two arrows f: a -> b and g: b -> c with the same middle object b; counting by middle object gives 2 + 4 + 2 = 8 pairs. Step 3 (find the failure): the pair 1 -> 2 then 2 -> 4 needs the composite 1 -> 4, which was removed; every other pair has its composite. Step 4 (fraction): 1 of the 8 composable pairs has no composite, and 1/8 is already in lowest terms. The answer is 1/8."
+          - problem: "Objects are 0, 1, 2, 3, 4, 5, with a single arrow a -> b whenever |a - b| <= 2, and there are no other arrows. A composable pair means two arrows a -> b and b -> c with the same middle object b. The loops give the identities, and exactly one axiom fails. How many composable pairs of arrows have no composite?"
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (structure): the arrows join objects at distance at most 2, so a composable pair a -> b, b -> c has endpoints at distance at most 4, and the composite a -> c exists exactly when that distance is at most 2. Step 2 (missing endpoints): a composite is missing exactly for endpoint pairs at distance 3 or 4. Step 3 (count distance 3): the ordered endpoint pairs at distance 3 are (0,3), (3,0), (1,4), (4,1), (2,5), (5,2), and each has 2 middle objects, giving 6 * 2 = 12. Step 4 (count distance 4): the ordered endpoint pairs at distance 4 are (0,4), (4,0), (1,5), (5,1), and each has 1 middle object, giving 4. Step 5 (total): 12 + 4 = 16 composable pairs have no composite. The answer is 16."
+          - problem: "Objects are 0, 1, 2, 3, 4, with a single arrow a -> b whenever a is at most b + 1, and there are no other arrows. Each object has a loop to itself, and exactly one axiom fails. How many composable pairs of arrows have no composite?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The structure has objects 0, 1, 2, 3, 4 and one arrow a -> b exactly when a is at most b + 1. First, the identity check: a is at most a + 1, so every loop a -> a exists. Second, the composition check: for a middle object b the arrows into b are counted by the objects a with a at most b + 1, and the arrows out of b are counted by the objects c with c at least b - 1; counting composable pairs by middle object gives 10 + 15 + 16 + 15 + 10 = 66 pairs. Third, the failure rule: the composite of a -> b and b -> c exists exactly when a is at most c + 1, so a failure needs a at least c + 2; with a at most b + 1 and b at most c + 1 this forces a = c + 2 and b = c + 1, giving the triples (2, 1, 0), (3, 2, 1), and (4, 3, 2). Fourth, the other axioms hold because there is at most one arrow between any two objects, so every defined composite is unique and the unit laws and associativity hold. The answer is 3."
+          - problem: "Objects are 0, 1, 2, 3, 4, with a single arrow a -> b whenever |a - b| <= 1, and there are no other arrows. Determine whether this is a category, and give the number of composable pairs of arrows that have no composite."
+            answer: "verdict = no; missing = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "missing"}]}
+            solution_sketch: "Step 1 (identities): each of 0, 1, 2, 3, 4 has a loop to itself, so identity arrows exist. Step 2 (composition): for a composable pair a -> b then b -> c, the composite a -> c exists exactly when |a - c| <= 1, so a composite is missing exactly when the endpoints are at distance 2. Step 3 (count): the ordered endpoint pairs at distance 2 are (0,2), (2,0), (1,3), (3,1), (2,4), (4,2), and each has the single middle object between them, giving 6 composable pairs with no composite. Step 4 (verdict): composition is not total, so the structure is not a category; the option yes is wrong because it ignores the missing composites. The answer is verdict = no; missing = 6."
+          - problem: "Objects are 0, 1, 2, with a single arrow a -> b whenever |a - b| <= 1, and there are no other arrows. Exactly one axiom fails. Arrows may be added, one at a time, until the structure is a category. How many arrows must be added?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (list the arrows): the arrows are 0 -> 0, 1 -> 1, 2 -> 2, 0 -> 1, 1 -> 0, 1 -> 2, and 2 -> 1. Step 2 (find the gaps): the composable pair 0 -> 1 then 1 -> 2 needs 0 -> 2, and the pair 2 -> 1 then 1 -> 0 needs 2 -> 0; both are absent, and these are the only failures. Step 3 (repair and check): adding the two arrows 0 -> 2 and 2 -> 0 joins every pair of objects, and then any composable pair has endpoints at distance at most 2, so its composite exists. The answer is 2."
+          - problem: "Write the full proof: Let the objects be 0, 1, 2, 3, with a single arrow a -> b whenever |a - b| <= 1 and no other arrows. Show that exactly one axiom fails, and name that axiom. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (identity arrows): for each object a in {0, 1, 2, 3}, the distance from a to a is 0, which is at most 1, so the loop a -> a exists and identities are present. Step 2 (identity laws): whenever a composite of arrows is defined, it is the unique arrow between its endpoints, so composing with an identity loop returns the same arrow, and both unit laws hold. Step 3 (associativity): with at most one arrow between any two objects, any two defined composites with the same endpoints are equal, so associativity holds for every triple for which both sides are defined. Step 4 (composition totality): the arrows 0 -> 1 and 1 -> 2 are composable, and their composite would have to be 0 -> 2; but the distance from 0 to 2 is 2, which is greater than 1, so 0 -> 2 is not an arrow and the composite does not exist. Conclusion: exactly one axiom, the requirement that composition be total, fails, so the structure is not a category."
       - id: kp4
         name: A preorder as a thin category
         key_prerequisites: [partial-orders]
@@ -334,23 +356,67 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Always name which category the morphism lives in before deciding invertibility."
         exemplars:
-          - problem: "In the one-object category $BM$ of a monoid $M$, characterize the isomorphisms, and say when $BM$ is a groupoid."
-            answer: "The isomorphisms are exactly the units (invertible elements) of $M$; $BM$ is a groupoid iff $M$ is a group."
-            solution_sketch: "A morphism of $BM$ is an element $m\\in M$, and an inverse for it in the categorical sense is $n$ with $nm=e=mn$ — precisely a two-sided inverse in $M$. So the isomorphisms of $BM$ are the units of $M$. Every morphism is invertible exactly when every element of $M$ is a unit, i.e. when $M$ is a group; then $BM$ is a one-object groupoid."
-          - problem: "Let $(P,\\le)$ be a preorder viewed as a thin category. Characterize the isomorphisms, and specialize to a poset."
-            answer: "$x\\cong y$ iff $x\\le y$ and $y\\le x$; if $\\le$ is antisymmetric (a poset) this forces $x=y$."
-            solution_sketch: "An isomorphism $x\\to y$ needs arrows both ways, i.e. $x\\le y$ and $y\\le x$; conversely if both hold, the two arrows compose to arrows $x\\to x$ and $y\\to y$, which must be $1_x$ and $1_y$ since hom-sets have at most one element. So $x\\cong y\\iff x\\le y\\le x$. In a poset antisymmetry turns this into $x=y$: a poset category has no isomorphisms other than identities."
+          - problem: "View the monoid of residues modulo 12 under multiplication as the one-object category $BM$, where each residue $k$ gives a morphism $[k]$. How many of the morphisms of $BM$ are isomorphisms?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 uses the definition of isomorphism in a one-object category: the morphisms of $BM$ are the elements of the monoid, and $[k]$ is an isomorphism exactly when $k$ is a unit. Step 2 uses the gcd criterion for units: $k$ is invertible modulo 12 exactly when $\\gcd(k, 12) = 1$. Step 3 computes: $k = 1, 5, 7, 11$ are the units, while $0, 2, 3, 4, 6, 8, 9, 10$ share a factor with 12. The answer is 4."
+          - problem: "Let $Q$ be the preorder on $\\{1, 2, 3\\}$ with $1 \\le 2$, $2 \\le 1$, and $x \\le x$ for each $x$, viewed as a thin category. How many isomorphism arrows does the category $Q$ have?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 uses the characterization of isomorphisms in a thin category: $x$ and $y$ are isomorphic exactly when $x \\le y$ and $y \\le x$, and then each of the two arrows is an isomorphism. Step 2 lists the pairs with arrows in both directions: $(1,1)$, $(2,2)$, $(3,3)$, $(1,2)$, $(2,1)$. Step 3 observes that antisymmetry fails for 1 and 2, so the arrows $1 \\to 2$ and $2 \\to 1$ are non-identity isomorphisms, giving three identities plus two more. The answer is 5."
+          - problem: "In the one-object category $BM$ of the monoid of residues modulo 10 under multiplication, composition of morphisms is multiplication of residues and the identity morphism is $[1]$. Give the residue from 0 to 9 of the inverse morphism of $[3]$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 names the category and its dictionary: the morphisms of $BM$ are the residues modulo 10, composition is multiplication of residues, and $[1]$ is the identity morphism. Step 2 uses the characterization of isomorphisms in $BM$: $[3]$ is invertible exactly when some $[x]$ satisfies $3x \\equiv 1 \\pmod{10}$, and $\\gcd(3, 10) = 1$ says such an $x$ exists. Step 3 finds that residue: $3 \\cdot 7 = 21 \\equiv 1 \\pmod{10}$, so $[7]$ is the inverse morphism and 7 is its representative. The answer is 7."
+          - problem: "A student claims that in the one-object category $BM$ of the monoid of residues modulo 6 under multiplication, every morphism is an isomorphism. Give the smallest positive $k$ such that the morphism $[k]$ of $BM$ is not an isomorphism."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 uses the units criterion: $[k]$ is an isomorphism of $BM$ exactly when $k$ is a unit of the monoid, that is $\\gcd(k, 6) = 1$. Step 2 checks $k = 1$, which is a unit, then $k = 2$: $\\gcd(2, 6) = 2$, and $2x \\bmod 6$ is never 1, so $[2]$ has no inverse. Step 3 concludes the smallest counterexample to the student's claim. The answer is 2."
+          - problem: "An argument claims that in the category of any poset $(P, \\le)$, two distinct objects are never isomorphic. Step 1: if $x$ is isomorphic to $y$, there are arrows $x \\to y$ and $y \\to x$. Step 2: an arrow $x \\to y$ in a poset category means $x \\le y$. Step 3: in a poset, $x \\le y$ implies $x = y$. Step 4: hence $x = y$, so two distinct objects are never isomorphic. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: an isomorphism in any category gives arrows in both directions. Step 2 is valid: the arrows of a poset category are exactly the instances of the order relation. Step 3 is the first invalid step, and its error is dropping the second inequality: $x \\le y$ alone does not force $x = y$ in a poset; only $x \\le y$ together with $y \\le x$ does. Step 4 follows once Step 3 is corrected to use both inequalities. The answer is Step 3."
+          - problem: "In the one-object category $BM$ of a monoid $M$, one proves that a morphism $m$ is an isomorphism only if $m$ is a unit of $M$. The proof reads: assume $m$ is an isomorphism; then there is a morphism $n$ with $mn = e$ and $nm = e$; [missing line]; hence $m$ is a unit of $M$. Select the missing line."
+            answer: "mn = e and nm = e make n a two-sided inverse of m in M"
+            answer_contract: {"kind": "label", "options": [["mn = e and nm = e make n a two-sided inverse of m in M"], ["mn = e alone makes n a two-sided inverse of m in M"], ["the equations say that m is the identity morphism of BM"], ["mn = e gives a left inverse, which is enough in a monoid"]]}
+            solution_sketch: "Step 1 uses the definition of isomorphism: $m$ has a morphism $n$ with $mn = e$ and $nm = e$ in $BM$. Step 2 uses the dictionary between composition and multiplication: composition in $BM$ is the monoid product, so the two equations say exactly that $n$ is a two-sided inverse of $m$ in $M$. The option using only $mn = e$ commits the one-sided-inverse error, since a left inverse in a monoid need not be two-sided. The option saying $m$ is the identity morphism confuses being invertible with being the identity element. The option calling a left inverse sufficient repeats the one-sided error. The answer is mn = e and nm = e make n a two-sided inverse of m in M."
+          - problem: "Write the full proof: in the category of a poset $(P, \\le)$, the only isomorphisms are the identity arrows. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (the category of a poset). The objects are the elements of $P$, there is one arrow $x \\to y$ exactly when $x \\le y$, identities are $1_x$, and composition is forced because each hom-set has at most one element. Step 2 (isomorphism gives two arrows). Let $f: x \\to y$ be an isomorphism with inverse $g: y \\to x$; then $x \\le y$ and $y \\le x$. Step 3 (antisymmetry). Since $\\le$ is antisymmetric, $x \\le y$ and $y \\le x$ imply $x = y$. Step 4 (arrows to self). In a thin category the endomorphism set of $x$ has at most one element, so the arrow $x \\to x$ must be $1_x$; hence $f = 1_x$. Step 5 (conclusion). Every isomorphism of the poset category is an identity arrow, and conversely each identity arrow is an isomorphism, so the isomorphisms are exactly the identities; in particular, if the order is only a preorder, the isomorphisms are the pairs with $x \\le y$ and $y \\le x$, and antisymmetry collapses these to the identities."
       - id: kp3
         name: The two dictionaries, read in both directions
         key_prerequisites: [category-definition]
         constraints: "Both exemplars are abstract equivalence proofs: give both directions of the translation and match every category axiom against the corresponding monoid or order axiom; no numerical instances."
         exemplars:
-          - problem: "Prove that a category with exactly one object is the same thing as a monoid, in both directions."
-            answer: "$\\mathcal{C}\\mapsto\\mathrm{Hom}(*,*)$ and $M\\mapsto BM$ are mutually inverse translations."
-            solution_sketch: "Let $\\mathcal{C}$ have one object $*$ and put $M=\\mathrm{Hom}(*,*)$. Every pair of morphisms is composable, so composition is a binary operation on $M$; it is associative by the category axiom and $1_*$ is a two-sided unit by the unit axiom, so $(M,\\circ,1_*)$ is a monoid. Conversely, given a monoid $M$, let $BM$ have one object $*$, $\\mathrm{Hom}(*,*)=M$, composition the monoid product and $1_*=e$; the category axioms are exactly the monoid axioms. The two constructions undo each other, so one-object categories and monoids are the same data."
-          - problem: "Prove that a category in which every hom-set has at most one element (a thin category) is the same thing as a preorder on its objects."
-            answer: "Define $x\\le y$ iff $\\mathrm{Hom}(x,y)\\neq\\varnothing$; reflexivity is identities and transitivity is composition."
-            solution_sketch: "Given a thin category, set $x\\le y$ iff there is a (necessarily unique) arrow $x\\to y$. Reflexivity holds because $1_x$ exists; transitivity holds because $x\\to y$ and $y\\to z$ compose to $x\\to z$. So $\\le$ is a preorder. Conversely, from a preorder $(P,\\le)$ build the category with $\\mathrm{Hom}(x,y)=\\{*\\}$ when $x\\le y$ and $\\varnothing$ otherwise; composition exists by transitivity, identities by reflexivity, and associativity and the unit laws are automatic because each hom-set has at most one element. The two constructions are mutually inverse."
+          - problem: "Let M be a monoid, and let BM be the one-object category with one object * and Hom(*,*)=M. For elements m and n of M, the composite of the morphisms m and n in BM is an element of M. Give the formula for this composite in terms of m and n."
+            answer: "mn"
+            answer_contract: {"kind": "function", "vars": ["m", "n"]}
+            solution_sketch: "In BM, the only object is *, so every pair of morphisms is composable. The dictionary from monoids to categories sets the composite of m followed by n to be the monoid product of m and n. Thus the composite is the monoid product mn. The answer is mn."
+          - problem: "Let P be a preorder, viewed as a thin category. Suppose x <= y and y <= z, and let f: x -> y and g: y -> z be the unique morphisms. The composite g after f has source x. Give its target."
+            answer: "z"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "In the thin category, there is at most one morphism between any two objects. Transitivity of the preorder gives x <= z, so the composite of f and g is the unique morphism from x to z. That morphism has target z. The answer is z."
+          - problem: "Take the preorder on the elements a, b, c, d with relations a <= b, a <= c, b <= d, c <= d, and x <= x for every element; the relation is reflexive and transitive. Build the thin category of this preorder: one arrow for each pair with x <= y. How many morphisms does this category have in total?"
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The dictionary from preorders to thin categories puts one arrow for each pair x <= y. The full list of arrows: identities a->a, b->b, c->c, d->d; covering arrows a->b, b->d, a->c, c->d; plus a->d, forced by transitivity from a <= b <= d. Count them: 4 identities plus 4 covering arrows plus 1 arrow from transitivity. The answer is 9."
+          - problem: "A thin category C has objects w, x, y, z. Its nonempty hom-sets are exactly Hom(w,w), Hom(w,x), Hom(x,x), Hom(x,y), Hom(y,y), Hom(w,y), and Hom(z,z); every other hom-set is empty. The dictionary defines a preorder by u <= v exactly when Hom(u,v) is nonempty. How many ordered pairs (u,v) satisfy u <= v?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The dictionary from thin categories to preorders sets u <= v exactly when Hom(u,v) is nonempty. The nonempty hom-sets in full: Hom(w,w), Hom(w,x), Hom(x,x), Hom(x,y), Hom(y,y), Hom(w,y), Hom(z,z). Counting the corresponding ordered pairs gives 4 identity pairs and 3 arrow pairs. The answer is 7."
+          - problem: "Let M be a monoid with unit e, and let BM be the one-object category built from M. Give the composite of the morphism m followed by the identity morphism on the unique object, as an element of M."
+            answer: "m"
+            answer_contract: {"kind": "function", "vars": ["m"]}
+            solution_sketch: "In BM the identity morphism on the unique object * is the unit e of the monoid M. The composite of m followed by the identity is the monoid product m e. By the unit axiom of the monoid, which matches the unit law of the category, m e = m. The answer is m."
+          - problem: "Let P be a preorder, viewed as a thin category. Suppose x <= y and y <= z, and let f: x -> y and g: y -> z be the unique morphisms. The composite g after f has target z. Give its source."
+            answer: "x"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "The composition rule of a category says that g after f has the source of f and the target of g. Here f has source x and g has target z. The source of the composite is x. The answer is x."
+          - problem: "Write the full proof: a category with exactly one object is the same thing as a monoid, in both directions. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Let C be a category with exactly one object * and set M = Hom(*,*). Step 2: Composition is a binary operation on M because every pair of morphisms has source and target *. Step 3: Associativity in C gives associativity of the operation on M. Step 4: The identity morphism 1_* is a two-sided unit, so M is a monoid. Step 5: Conversely, given a monoid M, define BM with one object *, hom-set M, composition the monoid product, and identity the monoid unit. Step 6: The category axioms for BM are exactly the monoid axioms. Step 7: The two constructions are mutually inverse, so one-object categories and monoids are the same data."
     diagnostic_exemplar:
       problem: "Let $M$ be a monoid, viewed as the one-object category $BM$. Prove that the isomorphisms of $BM$ are exactly the units of $M$, and deduce that $BM$ is a groupoid iff $M$ is a group."
       answer: "A morphism of $BM$ is an element $m\\in M$ with composition the monoid product, so a two-sided categorical inverse for $m$ is exactly $n$ with $nm=e=mn$ — a two-sided inverse in $M$. Hence the isomorphisms are the units of $M$; every morphism is invertible iff every element of $M$ is a unit, i.e. iff $M$ is a group, which is exactly when $BM$ is a groupoid."
@@ -392,12 +458,34 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Work with an arbitrary set $S$ and give morphism counts as a formula in $|S|$ (identities included); any concrete instance uses a set of size at most 4."
         exemplars:
-          - problem: "Define the discrete category $\\mathrm{disc}(S)$ on a set $S$, verify it is a category, and count its morphisms."
-            answer: "Objects $S$, morphisms only the identities; it has exactly $|S|$ morphisms."
-            solution_sketch: "Take the objects to be the elements of $S$, with $\\mathrm{Hom}(x,x)=\\{1_x\\}$ and $\\mathrm{Hom}(x,y)=\\varnothing$ for $x\\neq y$. The only composable pairs are $1_x\\circ 1_x=1_x$, so composition is total, associative and unital: $\\mathrm{disc}(S)$ is a category. Its morphisms are exactly the $|S|$ identities. As a preorder it is the equality relation, and every morphism is invertible, so it is also a groupoid."
-          - problem: "Show that a functor $\\mathrm{disc}(S)\\to\\mathcal{C}$ is the same thing as an $S$-indexed family of objects of $\\mathcal{C}$."
-            answer: "The object part is an arbitrary family $(C_x)_{x\\in S}$; the morphism part is forced to send $1_x\\mapsto 1_{C_x}$."
-            solution_sketch: "A functor $D$ assigns an object $Dx$ to each $x\\in S$, and to each morphism a morphism. The only morphisms of $\\mathrm{disc}(S)$ are the identities, and functoriality forces $D(1_x)=1_{Dx}$, so the morphism part carries no information and the functor laws impose no condition. Hence functors $\\mathrm{disc}(S)\\to\\mathcal{C}$ correspond bijectively to families $(Dx)_{x\\in S}$ of objects — this is why a diagram of discrete shape is just a family of objects."
+          - problem: "Let S be a set with n elements. In the discrete category disc(S), every morphism is an identity. Give the total number of morphisms of disc(S) as a formula in n."
+            answer: "n"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "The discrete category disc(S) has object set S and, for each object x, exactly one morphism 1_x from x to x; for x not equal to y there is no morphism from x to y. The identity morphisms give one morphism for each of the n elements of S, so the total number of morphisms is n."
+          - problem: "Let S be a set and C a category. For a functor F from disc(S) to C and an object x of S, what is F(1_x) forced to be by functoriality?"
+            answer: "the identity arrow of F x"
+            answer_contract: {"kind": "label", "options": [["the identity arrow of F x"], ["an arbitrary endomorphism of F x"], ["an arrow with source F y"], ["there is no such arrow"]]}
+            solution_sketch: "A functor sends identities to identities, so F(1_x) must be the identity arrow of F x. The option 'an arbitrary endomorphism of F x' forgets that functoriality fixes it to the identity. The option 'an arrow with source F y' has the wrong object: 1_x lives over x, so its image must live over F x. The option 'there is no such arrow' forgets that every object has an identity morphism. The answer is the identity arrow of F x."
+          - problem: "Let S be a set with 4 elements. How many morphisms does the discrete category disc(S) have?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The objects of disc(S) are the four elements of S. In a discrete category the only morphisms are the identities, one for each object. Thus the total number of morphisms is 4."
+          - problem: "Let S be a set with 3 elements. In disc(S), how many composable pairs (f, g) of morphisms are there, where the composite f after g is defined?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The only morphisms in disc(S) are the identities 1_x for the three objects x. A composable pair (f, g) has source of f equal to target of g; this happens exactly for the pairs (1_x, 1_x). There are 3 such pairs, so the answer is 3."
+          - problem: "Let S be a set with 4 elements. In the discrete category disc(S), how many morphisms are not identities?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By definition, disc(S) has only the identity morphism 1_x at each object x. With 4 objects there are 4 morphisms in total, all of them identities. Therefore the number of non-identity morphisms is 0."
+          - problem: "Let S be a set with 2 elements. In disc(S), how many morphisms have the same source and target?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The discrete category disc(S) has one identity morphism at each of its two objects. Every identity has the same source and target, and there are no other morphisms. Hence the number of such morphisms is 2."
+          - problem: "Write the full proof: for an arbitrary set S, the discrete category disc(S) is a category, and its number of morphisms is |S|. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Define disc(S) to have object set S; for each x in S put Hom(x,x) = {1_x}, and for x not equal to y put Hom(x,y) empty. Step 2: Composition is defined only on pairs (1_x, 1_x), and we set 1_x after 1_x = 1_x. This operation is total on composable pairs. Step 3: Associativity holds because every composable triple is (1_x, 1_x, 1_x) and both ways of composing give 1_x. Step 4: Each 1_x is an identity: for any morphism f, the only cases are f = 1_x, and 1_x after 1_x = 1_x. Step 5: Thus disc(S) satisfies the axioms of a category. Step 6: Its morphisms are exactly the identities 1_x for x in S, so there are exactly |S| morphisms. This proves the claim."
       - id: kp2
         name: The indiscrete category
         key_prerequisites: [poset-monoid-categories]
@@ -556,23 +644,67 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Proofs use only the two inverse equations plus associativity, citing each; $\\mathbf{Set}$ arguments must address both directions (bijection implies iso and iso implies bijection)."
         exemplars:
-          - problem: "Define what it means for $f\\colon A\\to B$ to be an isomorphism in a category, and prove the inverse is unique."
-            answer: "There is $g\\colon B\\to A$ with $g\\circ f=1_A$ and $f\\circ g=1_B$; such $g$ is unique."
-            solution_sketch: "$f$ is an isomorphism if some $g$ satisfies $g\\circ f=1_A$ and $f\\circ g=1_B$. If $g'$ also works, then $g' = g'\\circ 1_B = g'\\circ(f\\circ g) = (g'\\circ f)\\circ g = 1_A\\circ g = g$, using associativity and both inverse equations. Hence the inverse is unique and we write $g=f^{-1}$."
-          - problem: "Show that in $\\mathbf{Set}$ the isomorphisms are exactly the bijections."
-            answer: "A function has a two-sided inverse iff it is a bijection."
-            solution_sketch: "If $f$ is a bijection it has a set-theoretic inverse $g$ with $g\\circ f=1_A$, $f\\circ g=1_B$, so it is an iso. Conversely a two-sided inverse forces $f$ injective (from $g\\circ f=1_A$) and surjective (from $f\\circ g=1_B$), hence bijective."
+          - problem: "Consider the one-object category whose morphisms are the numbers 0, 1, 2, 3, with composition given by addition mod 4 and with identity 0. Find the two-sided inverse of the morphism 1. Give the inverse as a number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The morphisms are 0, 1, 2, 3, the composite of two of them is their sum mod 4, and the identity is 0. Rule of the definition: the morphism f is an isomorphism exactly when some g satisfies the two inverse equations g circ f = 0 and f circ g = 0. Test g = 3 for f = 1: the composites are 3 + 1 = 0 and 1 + 3 = 0 mod 4, so both equations hold. Hence the inverse of the morphism 1 is 3."
+          - problem: "In Set, let f: {1,2,3,4} to {1,2,3,4} be given by f(1) = 4, f(2) = 2, f(3) = 1, f(4) = 3. In Set a function is an isomorphism exactly when it is a bijection, and then its two-sided inverse sends each b back to the unique a with f(a) = b. Find the value of the two-sided inverse at 4. Give the value as a number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f is the table f(1) = 4, f(2) = 2, f(3) = 1, f(4) = 3, a bijection of the four-element set. Rule: in Set a function is an isomorphism exactly when it is a bijection, and its inverse g then satisfies the two inverse equations g circ f = 1 and f circ g = 1. From the table entry f(1) = 4, the equation g(f(1)) = 1 gives g(4) = 1, and f(g(4)) = f(1) = 4 confirms the second equation. Hence the inverse value at 4 is 1."
+          - problem: "Consider the one-object category with object X = {1,2,3} whose morphisms are all functions from X to X, composed as functions. How many isomorphisms does this category have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The morphisms are the nine functions from X to X, and composition is ordinary function composition. Rule: a morphism f is an isomorphism exactly when some g satisfies the two inverse equations g circ f = 1 and f circ g = 1. A function on a finite set has such a two-sided inverse exactly when it is a bijection, and the bijections of a three-element set number 3! = 6. Hence the number of isomorphisms is 6."
+          - problem: "A category has objects A and B and exactly four morphisms: 1_A: A to A, 1_B: B to B, f: A to B, and h: B to B, with h circ h = 1_B and h circ f = f. How many isomorphisms does this category have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The category has objects A and B and the four morphisms 1_A, 1_B, f: A to B and h: B to B, with h circ h = 1_B and h circ f = f. Rule: a morphism u is an isomorphism exactly when some g satisfies the two inverse equations g circ u = 1 and u circ g = 1. The identities 1_A and 1_B are their own inverses, and h is its own inverse because h circ h = 1_B holds in both orders. No morphism from B to A exists for the equation f circ g = 1_A, so f is not an isomorphism. Hence the number of isomorphisms is 3."
+          - problem: "In Set, let f: Z to Z be the function f(n) = n + 3. Find the value at 10 of the two-sided inverse of f. Give the value as a number."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function adds 3 to each integer, so f(n) = n + 3 for every integer n. Rule: in Set a function is an isomorphism exactly when it is a bijection, and its inverse g satisfies g circ f = 1 and f circ g = 1, the two inverse equations. Subtract 3 to undo the shift: g(m) = m - 3 gives g(f(n)) = n and f(g(m)) = m for all n and m. Evaluate at 10: g(10) = 10 - 3 = 7. Hence the inverse value is 7."
+          - problem: "Claim: if g and g' are both two-sided inverses of f: A to B, then g = g'. Step 1: assume g circ f = 1_A, f circ g = 1_B, g' circ f = 1_A and f circ g' = 1_B. Step 2: g' = g' circ 1_B. Step 3: g' circ 1_B = g' circ (f circ g). Step 4: g' circ (f circ g) = (g' circ f) circ g. Step 5: (g' circ f) circ g = 1_B circ g = g. Which step is the first step that is not valid?"
+            answer: "Step 5"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 lists both hypotheses and both pairs of inverse equations, and it is correct. Step 2 applies the identity law g' = g' circ 1_B, which is valid. Step 3 substitutes the true equation f circ g = 1_B, which is valid. Step 4 applies associativity, which is valid. Step 5 is the first invalid step: it substitutes g' circ f = 1_B, but the hypothesis gives g' circ f = 1_A, so the line should read (g' circ f) circ g = 1_A circ g = g. Hence the first invalid step is Step 5."
+          - problem: "Write the full proof: let f: A to B be an isomorphism with inverse g: B to A; prove that g is an isomorphism with inverse f. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: by hypothesis f: A to B is an isomorphism with inverse g: B to A, so by the definition the two inverse equations hold, g circ f = 1_A and f circ g = 1_B. Step 2: to show that g is an isomorphism with inverse f we must exhibit a morphism h with h circ g = 1_B and g circ h = 1_A, and the candidate is h = f. Step 3: the required equation f circ g = 1_B is exactly the second equation cited in Step 1, and the required equation g circ f = 1_A is exactly the first equation cited in Step 1. Step 4: both inverse equations for g hold, so g is an isomorphism and f is its inverse, which also shows that isomorphism is a symmetric relation. The argument used only the definition of isomorphism and the two inverse equations, so the inverse of g is f."
       - id: kp2
         name: Isomorphism is coarser than equality
         key_prerequisites: [relations-equivalence]
         constraints: "Short equational proofs from two-sided inverses (equivalence-relation properties, inverse of a composite); concrete examples use sets of at most 3 elements."
         exemplars:
-          - problem: "Explain why $\\{0,1\\}$ and $\\{a,b\\}$ are isomorphic in $\\mathbf{Set}$ but not equal, and why 'isomorphic' is an equivalence relation on objects."
-            answer: "Any bijection witnesses iso; the objects differ as sets; iso is reflexive, symmetric, transitive."
-            solution_sketch: "The bijection $0\\mapsto a,1\\mapsto b$ is an isomorphism, yet $\\{0,1\\}\\ne\\{a,b\\}$ as sets. Isomorphism is reflexive ($1_A$), symmetric (invert $f$), and transitive (compose isos: if $g,f$ are isos then $g\\circ f$ has inverse $f^{-1}\\circ g^{-1}$). So it is an equivalence relation coarser than equality."
-          - problem: "Prove that if $f$ and $g$ are composable isomorphisms then $g\\circ f$ is an isomorphism with $(g\\circ f)^{-1}=f^{-1}\\circ g^{-1}$."
-            answer: "$f^{-1}\\circ g^{-1}$ is a two-sided inverse of $g\\circ f$."
-            solution_sketch: "$(f^{-1}\\circ g^{-1})\\circ(g\\circ f)=f^{-1}\\circ(g^{-1}\\circ g)\\circ f=f^{-1}\\circ 1\\circ f=1_A$, and symmetrically $(g\\circ f)\\circ(f^{-1}\\circ g^{-1})=1_C$. So $g\\circ f$ is an isomorphism with the stated inverse (note the reversed order)."
+          - problem: "In Set, let A = {0,1} and B = {a,b}. How many isomorphisms are there from A to B?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition): in Set an isomorphism is exactly a bijection, so each isomorphism from A to B is a bijection. Step 2 (count bijections): send 0 to a or b, and then 1 must go to the remaining element, giving two bijections. The objects are not equal because their elements differ, but they are isomorphic. The answer is 2."
+          - problem: "Let f: A -> B and g: B -> C be isomorphisms in a category. Which expression is the inverse of the composite map from A to C? Select the correct expression."
+            answer: "f^-1 after g^-1"
+            answer_contract: {"kind": "label", "options": [["f^-1 after g^-1"], ["g^-1 after f^-1"], ["f after g"], ["g after f"]]}
+            solution_sketch: "Step 1 (definition): the inverse of a composite reverses the order. Step 2 (check): (g after f) after (f^-1 after g^-1) cancels f then g and gives the identity on C, and the other order gives the identity on A. Option g^-1 after f^-1 keeps the original order; option f after g uses the maps instead of inverses; option g after f is the original composite. The answer is f^-1 after g^-1."
+          - problem: "In Set, let A = {0,1,2} and B = {a,b,c}. How many isomorphisms are there from A to B?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition): isomorphisms in Set are bijections. Step 2 (count): there are 3 choices for the image of 0, 2 remaining choices for the image of 1, and 1 choice for the image of 2, so 3 times 2 times 1 bijections. The answer is 6."
+          - problem: "In Set, the relation 'is isomorphic to' is an equivalence relation on objects. The set A = {0,1} is isomorphic to how many of the following sets: {0,1}, {a,b}, {a,b,c}, {0,1,2}?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition): two sets in Set are isomorphic exactly when a bijection exists, which happens exactly when they have the same number of elements. Step 2 (compare): A has two elements, so it is isomorphic to the two-element sets {0,1} and {a,b}, and not to the three-element sets. The answer is 2."
+          - problem: "Claim: if f: A -> B and g: B -> C are isomorphisms, then g after f has inverse f^-1 after g^-1. Step 1: f^-1 exists because f is an isomorphism. Step 2: g^-1 exists because g is an isomorphism. Step 3: (g after f) after (f^-1 after g^-1) = g after (f after f^-1) after g^-1 = g after 1_B after g^-1 = 1_C. Step 4: (f^-1 after g^-1) after (g after f) = 1_A by the same cancellation. Step 5: therefore the inverse is g^-1 after f^-1. Which step is the first step that is not valid?"
+            answer: "Step 5"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is valid by the definition of isomorphism. Step 2 is valid for the same reason. Step 3 uses associativity and the inverse law for f, then for g, and is valid. Step 4 is the symmetric cancellation and is valid. Step 5 reverses the order: the correct inverse is f^-1 after g^-1. The answer is Step 5."
+          - problem: "Compare the relation 'is isomorphic to' with equality on objects in Set. Give the verdict and the number of isomorphisms from {0,1} to {a,b}."
+            answer: "verdict = coarser; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["coarser"], ["finer"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Step 1 (definition): equality implies isomorphism because the identity is an isomorphism, but isomorphism does not imply equality, for example {0,1} and {a,b} are isomorphic and not equal. Step 2 (count): a bijection from {0,1} to {a,b} is determined by the image of 0, so there are 2 isomorphisms. The relation is therefore coarser than equality. The answer is verdict = coarser; count = 2."
+          - problem: "Write the full proof: in any category, the relation 'is isomorphic to' on objects is an equivalence relation. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (reflexivity): for every object A, the identity morphism 1_A: A -> A satisfies 1_A after 1_A = 1_A, so it is a two-sided inverse of itself and A is isomorphic to A. Step 2 (symmetry): if f: A -> B is an isomorphism, then by definition there is g: B -> A with g after f = 1_A and f after g = 1_B; the same equations show that g is an isomorphism from B to A, so B is isomorphic to A. Step 3 (transitivity): if f: A -> B and h: B -> C are isomorphisms, with inverses f^-1 and h^-1, then the composite h after f: A -> C has inverse f^-1 after h^-1, because the two composites cancel in either order by associativity and the inverse laws. Thus A is isomorphic to C. The three properties show that 'is isomorphic to' is reflexive, symmetric, and transitive, hence an equivalence relation on objects."
       - id: kp3
         name: Universal properties determine objects up to unique isomorphism
         key_prerequisites: [category-definition]
@@ -617,12 +749,34 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Triangles and squares only, with all arrows named in the stem; the answer is a single composition equation in the given labels."
         exemplars:
-          - problem: "A triangle has arrows $f\\colon A\\to B$, $g\\colon B\\to C$, $h\\colon A\\to C$. What equation does 'the triangle commutes' assert?"
-            answer: "$g\\circ f = h$."
-            solution_sketch: "Commutativity means every directed path with the same source and target composes to the same morphism. The two paths $A\\to C$ are $h$ (direct) and $g\\circ f$ (via $B$), so the triangle commutes iff $g\\circ f=h$."
-          - problem: "A square has $f\\colon A\\to B$, $g\\colon A\\to C$, $h\\colon B\\to D$, $k\\colon C\\to D$. Write the commutativity condition."
-            answer: "$h\\circ f = k\\circ g$."
-            solution_sketch: "The two paths $A\\to D$ are $h\\circ f$ (top-right) and $k\\circ g$ (left-bottom); commutativity equates them."
+          - problem: "A commuting triangle has f: A -> B, g: B -> C, h: A -> C. On elements f(x) = x + 1 and g(y) = 3y. Find h(x)."
+            answer: "3x+3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The triangle has arrows f: A -> B, g: B -> C, h: A -> C. Step 1 (R3): commutativity gives h(x) = g(f(x)). Step 2 (R3): substitute f and g to get g(f(x)) = 3(x+1). Step 3 (R3): simplify to h(x) = 3x+3. The answer is 3x+3."
+          - problem: "A commuting square has f: A -> B, g: A -> C, h: B -> D, k: C -> D. On elements, f(x) = x + 3, g(x) = 2x, and h(u) = 4u. Find k(t) as a function of t, where t is an element of C."
+            answer: "2t+12"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The square has arrows f: A -> B, g: A -> C, h: B -> D, k: C -> D. Step 1 (R3): commutativity of the square gives h(f(x)) = k(g(x)) for every x in A. Step 2 (R3): substitute the given formulas: h(f(x)) = 4(x + 3) = 4x + 12, and g(x) = 2x, so k(2x) = 4x + 12. Step 3 (R3): write t = 2x, so x = t/2, and k(t) = 4(t/2) + 12 = 2t + 12. The answer is 2t+12."
+          - problem: "A commuting triangle has f: A -> B, g: B -> C, h: A -> C. At an element a, f(a) = 4 and g(4) = 7. Find h(a)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The triangle has arrows f: A -> B, g: B -> C, h: A -> C. Step 1 (R1): commutativity gives h(a) = g(f(a)). Step 2 (R1): f(a) = 4, so h(a) = g(4) = 7. The answer is 7."
+          - problem: "A square has f: A -> B, g: A -> C, h: B -> D, k: C -> D. For x in A, which line states that the square commutes?"
+            answer: "h(f(x)) = k(g(x))"
+            answer_contract: {"kind": "label", "options": [["h(f(x)) = k(g(x))"], ["h(g(x)) = k(f(x))"], ["f(h(x)) = g(k(x))"], ["f(k(x)) = g(h(x))"]]}
+            solution_sketch: "The square has arrows f: A -> B, g: A -> C, h: B -> D, k: C -> D. Step 1 (R15): a square commutes when the two paths from A to D agree. Step 2 (R15): the path through B is h after f, and the path through C is k after g, so the line is h(f(x)) = k(g(x)). The option h(g(x)) = k(f(x)) pairs the wrong arrows. The option f(h(x)) = g(k(x)) reverses the order and mismatches domains. The option f(k(x)) = g(h(x)) reverses both paths. The answer is h(f(x)) = k(g(x))."
+          - problem: "Claim: if a triangle f: A -> B, g: B -> C, h: A -> C commutes, then f(g(x)) = h(x). Step 1: assume the triangle commutes. Step 2: then h(x) = g(f(x)). Step 3: rearrange to f(g(x)) = h(x). Step 4: so the triangle also gives f(g(x)) = h(x). Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The triangle has arrows f: A -> B, g: B -> C, h: A -> C. Step 1 (R15): the hypothesis is that the triangle commutes. Step 2 (R15): this correctly gives h(x) = g(f(x)). Step 3 (R15) is not valid because f(g(x)) is not defined: the codomain of g is C, not the domain A of f, and composition does not commute. Step 4 follows only from the invalid Step 3. The answer is Step 3."
+          - problem: "A triangle has f: A -> B, g: B -> C, h: A -> C. Which equation states that the triangle commutes?"
+            answer: "h(x) = g(f(x))"
+            answer_contract: {"kind": "label", "options": [["h(x) = g(f(x))"], ["h(x) = f(g(x))"], ["g(x) = h(f(x))"], ["f(x) = h(g(x))"]]}
+            solution_sketch: "The triangle has arrows f: A -> B, g: B -> C, h: A -> C. Step 1 (R15): commutativity means the two paths from A to C agree. Step 2 (R15): the direct path is h, and the path through B is g after f, so the equation is h(x) = g(f(x)). The option h(x) = f(g(x)) reverses the order of f and g. The option g(x) = h(f(x)) uses g as an A-to-C arrow, but g is B-to-C. The option f(x) = h(g(x)) uses f as a C-to-A arrow and reverses the order. The answer is h(x) = g(f(x))."
+          - problem: "Write the full proof: a triangle with arrows f: A -> B, g: B -> C, h: A -> C commutes if and only if h(x) = g(f(x)) for every x in A. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "A diagram is a directed graph of objects and arrows. A path is a finite sequence of composable arrows; its composite is read right to left. Step 1: The triangle has two paths from A to C: the direct path h, and the path through B, whose composite is g after f. Step 2: By definition, the triangle commutes exactly when every pair of paths with the same source and target has the same composite. Step 3: The only nontrivial pair here is h and g after f, so commutativity is equivalent to h(x) = g(f(x)) for every x in A. Step 4: Conversely, if h(x) = g(f(x)) for every x, then the two A-to-C paths agree, so the triangle commutes. This proves the equivalence."
       - id: kp2
         name: Pasting diagrams
         key_prerequisites: [function-composition]
