@@ -1311,14 +1311,30 @@ topics:
         name: Checking the hypotheses
         key_prerequisites: [nth-term-divergence-test, sequences-convergence]
         exemplars:
-          - problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{n + 1}$ converge?'
-            answer: 'no (terms do not tend to $0$; divergence by the term test)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{n}{n+1} \to 1 \ne 0$, so the series diverges regardless of the alternating signs.'
-          - problem: 'Verify that the AST applies to $\sum_{n=3}^{\infty} \frac{(-1)^n \ln n}{n}$ and give the verdict.'
-            answer: 'converges ($\frac{\ln n}{n}$ is decreasing for $n \ge 3$ and tends to $0$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{d}{dx}\frac{\ln x}{x} = \frac{1 - \ln x}{x^2} < 0$ for $x > e$; and $\frac{\ln n}{n} \to 0$.'
+          - problem: "Consider the alternating series $\\sum_{n=1}^{\\infty} (-1)^n \\frac{4n+1}{4n+5}$ and write $b_n = \\frac{4n+1}{4n+5}$. Check both AST hypotheses: whether $b_n$ decreases and whether $b_n$ tends to $0$. Find $L = \\lim_{n \\to \\infty} b_n$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $b_n = (4n+1)/(4n+5)$ and check the two hypotheses of the alternating series test. Decreasing check by the derivative rule: $d/dx\\,(4x+1)/(4x+5) = 16/(4x+5)^2 > 0$, so $b_n$ increases and the decreasing hypothesis fails. Limit check by dividing numerator and denominator by $n$: $b_n = 1 - 4/(4n+5) \\to 1 \\ne 0$, so the nth-term divergence test shows divergence and the AST cannot be used. The answer is 1."
+          - problem: "Consider the alternating series $\\sum_{n=1}^{\\infty} (-1)^n \\frac{3}{2n+1}$ with $b_n = \\frac{3}{2n+1}$. Check both AST hypotheses: whether $b_n$ decreases and whether $b_n$ tends to $0$. Find $L = \\lim_{n \\to \\infty} b_n$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $b_n = 3/(2n+1)$. Decreasing check by the derivative rule: $d/dx\\, 3/(2x+1) = -6/(2x+1)^2 < 0$, so $b_n$ decreases for every $n$. Limit check: $3/(2n+1)$ tends to $0$ as $n$ grows. Both hypotheses of the alternating series test hold, so the series converges by the AST. The answer is 0."
+          - problem: "The alternating series $\\sum_{n=1}^{\\infty} (-1)^n \\frac{3n+2}{4n+3}$ has term sizes $b_n = \\frac{3n+2}{4n+3}$. Check both AST hypotheses: whether $b_n$ decreases and whether $b_n$ tends to $0$. Find $L = \\lim_{n \\to \\infty} b_n$."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $b_n = (3n+2)/(4n+3)$. Decreasing check by the quotient rule: $d/dx\\,(3x+2)/(4x+3) = 1/(4x+3)^2 > 0$, so $b_n$ increases and the decreasing hypothesis fails. Limit check by dividing numerator and denominator by $n$: the terms tend to $3/4$, which is not $0$, so the nth-term divergence test applies. The answer is 3/4."
+          - problem: "The alternating series $\\sum_{n=1}^{\\infty} (-1)^n \\frac{n}{n^2+9}$ has $b_n = \\frac{n}{n^2+9}$, and $b_n$ tends to $0$. Check the decreasing hypothesis with the derivative of $\\frac{x}{x^2+9}$. Find the smallest integer $N$ such that $b_n$ decreases for all $n \\ge N$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $b_n = n/(n^2+9)$ the limit hypothesis holds, so only the decreasing hypothesis is in question. Derivative check: $d/dx\\, x/(x^2+9) = (9 - x^2)/(x^2+9)^2$, which is positive for $x < 3$ and negative for $x > 3$. Value check: $b_2 = 2/13 \\approx 0.154$ and $b_3 = 3/18 \\approx 0.167$, so the sequence still rises between $n = 2$ and $n = 3$, while $b_3 > b_4 = 4/25$ and it falls from $n = 3$ on. The answer is 3."
+          - problem: "The alternating series $\\sum_{n=2}^{\\infty} (-1)^n \\frac{\\ln n}{n^2}$ has $b_n = \\frac{\\ln n}{n^2}$. Check the decreasing hypothesis with the derivative of $\\frac{\\ln x}{x^2}$. Find the smallest integer $N$ such that $b_n$ decreases for all $n \\ge N$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For $b_n = \\ln(n)/n^2$ use the derivative rule for $\\ln$: $d/dx\\, \\ln(x)/x^2 = (1 - 2\\ln x)/x^3$, which is negative once $\\ln x > 1/2$, that is for $x > \\sqrt{e} \\approx 1.65$. Value check: $b_1 = 0 < b_2 = \\ln 2/4$, so the sequence does not decrease from $n = 1$, while $b_2 > b_3 = \\ln 3/9$ and the sequence falls from $n = 2$ on. The limit hypothesis also holds since $\\ln(n)/n^2 \\to 0$. The answer is 2."
+          - problem: "Consider the alternating series $\\sum_{n=1}^{\\infty} (-1)^n \\frac{2^n}{2^n+7}$ and write $b_n = \\frac{2^n}{2^n+7}$. Check both AST hypotheses: whether $b_n$ decreases and whether $b_n$ tends to $0$. Find $L = \\lim_{n \\to \\infty} b_n$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write $b_n = 2^n/(2^n+7)$. Limit check by dividing numerator and denominator by $2^n$: $b_n = 1/(1 + 7/2^n) \\to 1$, which is not $0$, so the nth-term divergence test shows divergence. Decreasing check by the derivative rule: $d/dx\\, 2^x/(2^x+7) = 7 \\ln(2)\\, 2^x/(2^x+7)^2 > 0$, so $b_n$ increases and the decreasing hypothesis also fails. The answer is 1."
         constraints: "check both AST hypotheses explicitly; include a term-test failure case"
     diagnostic_exemplar:
       problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{2n + 1}$ converge? Name the test that decides it.'
