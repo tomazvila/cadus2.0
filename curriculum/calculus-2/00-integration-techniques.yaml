@@ -1125,22 +1125,54 @@ topics:
           - problem: 'Evaluate $\int_0^1 \frac{dx}{\sqrt[3]{1 - x}}$ or state that it diverges.'
             answer: '$3/2$'
             solution_sketch: '$\lim_{b\to 1^-} [-\frac{3}{2}(1-x)^{2/3}]_0^b = 0 + \frac{3}{2} = \frac{3}{2}$.'
-          - problem: 'Evaluate $\int_0^1 \frac{dx}{1 - x}$ or state that it diverges.'
-            answer: 'diverges'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lim_{b\to 1^-} [-\ln(1-x)]_0^b = \infty$.'
+          - problem: "The improper integral $\\int_0^1 \\frac{dx}{1 - x}$ has an asymptote at its upper endpoint. Which of these describes the value of the integral?"
+            answer: "infinity"
+            answer_contract: {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}
+            solution_sketch: "The full object is $\\int_0^1 \\frac{dx}{1 - x}$, whose integrand has an asymptote at x = 1. Step 1 (definition of an improper integral with a discontinuous integrand): write it as $\\lim_{b \\to 1^-} \\int_0^b \\frac{dx}{1 - x}$. Step 2 (Fundamental Theorem of Calculus): an antiderivative is $-\\ln(1 - x)$, so the truncated value is $-\\ln(1 - b) + \\ln(1) = -\\ln(1 - b)$. Step 3 (one-sided limit): as b tends to 1 from the left, $-\\ln(1 - b)$ grows without bound, so there is no finite value and the integral diverges to infinity. The option -infinity comes from dropping the minus sign in the antiderivative; the option DNE comes from assuming a signed limit cannot exist; the option 0 comes from treating the truncated values as shrinking toward zero. The answer is infinity."
+          - problem: "Evaluate $\\int_0^4 \\frac{dx}{\\sqrt{4 - x}}$ or state that it diverges."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\int_0^4 \\frac{dx}{\\sqrt{4 - x}}$, with an asymptote at the upper endpoint x = 4. Step 1 (definition for a discontinuous integrand): replace the endpoint by b and write $\\lim_{b \\to 4^-} \\int_0^b (4 - x)^{-1/2} dx$. Step 2 (Fundamental Theorem of Calculus with the power rule): an antiderivative is $-2(4 - x)^{1/2}$, so the truncated value is $-2\\sqrt{4 - b} + 2\\sqrt{4}$. Step 3 (one-sided limit): as b tends to 4 from the left the term $-2\\sqrt{4 - b}$ vanishes and $2\\sqrt{4} = 4$ remains. The answer is 4."
+          - problem: "The integrand of $\\int_1^9 \\frac{dx}{\\sqrt{9 - x}}$ blows up at the upper endpoint. Find the value of the integral, or state that it diverges."
+            answer: "4sqrt(2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\int_1^9 \\frac{dx}{\\sqrt{9 - x}}$, whose integrand blows up at x = 9. Step 1 (improper integral definition): write it as $\\lim_{b \\to 9^-} \\int_1^b (9 - x)^{-1/2} dx$. Step 2 (Fundamental Theorem of Calculus): the antiderivative $-2\\sqrt{9 - x}$ gives the truncated value $-2\\sqrt{9 - b} + 2\\sqrt{8}$. Step 3 (one-sided limit): as b tends to 9 from the left the first term vanishes and $2\\sqrt{8} = 4\\sqrt{2}$. The answer is 4sqrt(2)."
+          - problem: "Evaluate $\\int_0^8 \\frac{dx}{(8 - x)^{1/3}}$ or state that it diverges."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $\\int_0^8 \\frac{dx}{(8 - x)^{1/3}}$, which has an asymptote at the upper endpoint x = 8. Step 1 (improper integral definition): write $\\lim_{b \\to 8^-} \\int_0^b (8 - x)^{-1/3} dx$. Step 2 (Fundamental Theorem of Calculus with the power rule): an antiderivative is $-(3/2)(8 - x)^{2/3}$, so the truncated value is $-(3/2)(8 - b)^{2/3} + (3/2)8^{2/3}$. Step 3 (one-sided limit): as b tends to 8 from the left the first term vanishes, and $(3/2)8^{2/3} = (3/2)(4) = 6$. The answer is 6."
+          - problem: "The integrand of $\\int_0^1 \\frac{dx}{(1 - x)^2}$ blows up at the upper endpoint. Which of these is the value of the integral?"
+            answer: "diverges"
+            answer_contract: {"kind": "label", "options": [["diverges"], ["converges to 0"], ["converges to 1"], ["converges to 2"]]}
+            solution_sketch: "The full object is $\\int_0^1 \\frac{dx}{(1 - x)^2}$, whose integrand blows up at x = 1. Step 1 (improper integral definition): write it as $\\lim_{b \\to 1^-} \\int_0^b (1 - x)^{-2} dx$. Step 2 (Fundamental Theorem of Calculus with the power rule): an antiderivative is $1/(1 - x)$, so the truncated value is $1/(1 - b) - 1$. Step 3 (one-sided limit): as b tends to 1 from the left, $1/(1 - b) - 1$ grows without bound, so no finite value exists. The option converges to 0 comes from assuming the truncated values fall toward zero; the option converges to 1 comes from evaluating the truncated integral at b = 1/2; the option converges to 2 comes from substituting b = 1/2 into the antiderivative instead of taking the limit. The answer is diverges."
         constraints: "asymptote at the upper endpoint; integrand (b - x)^{-p} with p in {1/3, 1/2, 1, 2}"
       - id: kp3
         name: Interior discontinuities (split the integral)
         key_prerequisites: [definite-integrals-ftc, one-sided-limits]
         exemplars:
-          - problem: 'Applying the FTC directly to $\int_{-1}^{1} \frac{dx}{x^2}$ gives $-2$, which cannot be right for a positive integrand. State the correct verdict: converges or diverges?'
-            answer: 'diverges'
-            answer_contract: {kind: none}
-            solution_sketch: 'The FTC requires continuity on the whole interval, but the integrand blows up at $x = 0$ inside it. Split there: $\lim_{a\to 0^+}\int_a^1 \frac{dx}{x^2} = \infty$, so each half diverges and so does the whole. A negative value for a positive integrand is the tell-tale sign the FTC was misapplied.'
           - problem: 'Evaluate $\int_0^3 \frac{dx}{(x - 1)^{2/3}}$ or state that it diverges.'
             answer: '3 + 3*2^(1/3)'
             solution_sketch: 'Split at $x = 1$: $[3(x-1)^{1/3}]$ gives $3$ on $[0,1]$ and $3\sqrt[3]{2}$ on $[1,3]$; both one-sided limits exist.'
+          - problem: "A student applies the FTC directly to ∫_{-1}^{1} dx/x^2 and gets -2, but the integrand blows up at x = 0. Which classification of the integral is correct?"
+            answer: "diverges to infinity"
+            answer_contract: {"kind": "label", "options": [["diverges to infinity"], ["converges to -2"], ["converges to 2"], ["converges to 0"]]}
+            solution_sketch: "The full object is the integral ∫_{-1}^{1} dx/x^2, which has an interior discontinuity at x = 0. Step 1: split the integral at the discontinuity, as the method requires. Step 2: evaluate the right one-sided limit, lim_{a→0+} ∫_a^1 dx/x^2 = lim_{a→0+} (1/a - 1) = infinity. Step 3: a divergent half makes the whole integral divergent. The wrong option converges to -2 comes from applying the FTC across the discontinuity; the wrong option converges to 2 comes from treating the singularity as integrable; the wrong option converges to 0 comes from cancelling the two positive halves. The correct classification is diverges to infinity."
+          - problem: "The integrand of ∫_0^4 dx/(x - 2)^{2/3} blows up at x = 2. Split the integral at x = 2 and evaluate it, or state that it diverges. Give the exact value."
+            answer: "6*2^(1/3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is ∫_0^4 dx/(x - 2)^{2/3} with an interior discontinuity at x = 2. Step 1: split at x = 2. Step 2: left one-sided limit, lim_{b→2-} ∫_0^b (2 - x)^{-2/3} dx = lim_{b→2-} [ -3(2 - x)^{1/3} ]_0^b = 3*2^(1/3). Step 3: right one-sided limit, lim_{a→2+} ∫_a^4 (x - 2)^{-2/3} dx = lim_{a→2+} [ 3(x - 2)^{1/3} ]_a^4 = 3*2^(1/3). Step 4: add the two finite limits to get 6*2^(1/3). The value is 6*2^(1/3)."
+          - problem: "The integral ∫_{-4}^{4} dx/sqrt(abs(x)) has an interior discontinuity at x = 0. Split the integral at x = 0 and evaluate each one-sided limit. State the verdict and the value."
+            answer: "verdict = converges; L = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The full object is ∫_{-4}^{4} dx/sqrt(abs(x)), with an interior discontinuity at x = 0. Step 1: split at x = 0. Step 2: left one-sided limit, lim_{b→0-} ∫_{-4}^{b} (-x)^{-1/2} dx = lim_{b→0-} [ -2(-x)^{1/2} ]_{-4}^{b} = 0 - (-4) = 4. Step 3: right one-sided limit, lim_{a→0+} ∫_{a}^{4} x^{-1/2} dx = lim_{a→0+} [ 2sqrt(x) ]_{a}^{4} = 4 - 0 = 4. Step 4: both one-sided limits are finite, so the integral converges to 4 + 4 = 8. The result is verdict = converges; L = 8."
+          - problem: "Evaluate ∫_0^3 dx/(x - 1)^{1/3}, which has an interior discontinuity at x = 1. Split at x = 1 and evaluate each one-sided limit. Give the exact value."
+            answer: "3/2*2^(2/3) - 3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is ∫_0^3 dx/(x - 1)^{1/3}, with an interior discontinuity at x = 1. Step 1: split at x = 1. Step 2: left one-sided limit, lim_{b→1-} ∫_0^b (x - 1)^{-1/3} dx = lim_{b→1-} [ (3/2)(1 - x)^{2/3} ]_0^b = -3/2. Step 3: right one-sided limit, lim_{a→1+} ∫_a^3 (x - 1)^{-1/3} dx = lim_{a→1+} [ (3/2)(x - 1)^{2/3} ]_a^3 = (3/2)*2^(2/3). Step 4: add the limits to get 3/2*2^(2/3) - 3/2. The value is 3/2*2^(2/3) - 3/2."
+          - problem: "Evaluate ∫_0^4 dx/(x - 2)^{1/3}. The integrand is discontinuous at x = 2 inside the interval. Split at x = 2 and evaluate the two one-sided limits. Give the exact value."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is ∫_0^4 dx/(x - 2)^{1/3}, with an interior discontinuity at x = 2. Step 1: split at x = 2. Step 2: left one-sided limit, lim_{b→2-} ∫_0^b (x - 2)^{-1/3} dx = lim_{b→2-} [ (3/2)(2 - x)^{2/3} ]_0^b = -(3/2)*2^(2/3). Step 3: right one-sided limit, lim_{a→2+} ∫_a^4 (x - 2)^{-1/3} dx = lim_{a→2+} [ (3/2)(x - 2)^{2/3} ]_a^4 = (3/2)*2^(2/3). Step 4: add the limits to get 0. The value is 0."
         constraints: "one interior discontinuity; always split there and evaluate each one-sided limit; include the classic false-FTC trap"
     diagnostic_exemplar:
       problem: 'Evaluate $\int_0^2 \frac{dx}{(x - 1)^{2/3}}$ or state that it diverges.'
@@ -1232,18 +1264,30 @@ topics:
         name: The direct comparison test
         key_prerequisites: [improper-integrals-infinite-limits]
         exemplars:
-          - problem: 'Does $\int_1^{\infty} \frac{dx}{x^3 + 1}$ converge?'
-            answer: 'yes — $0 \le \frac{1}{x^3 + 1} \le \frac{1}{x^3}$ and $\int_1^{\infty} x^{-3}\,dx$ converges'
-            answer_contract: {kind: none}
-            solution_sketch: 'Compare with the convergent $p = 3$ integral; smaller positive integrand converges.'
-          - problem: 'Does $\int_1^{\infty} \frac{2 + \sin x}{x} \, dx$ converge?'
-            answer: 'no — $\frac{2 + \sin x}{x} \ge \frac{1}{x}$ and $\int_1^{\infty} \frac{dx}{x}$ diverges'
-            answer_contract: {kind: none}
-            solution_sketch: '$2 + \sin x \ge 1$, so the integrand dominates the divergent $p = 1$ integral.'
-          - problem: 'Show that $\int_1^{\infty} e^{-x^2} \, dx$ converges.'
-            answer: 'for $x \ge 1$, $e^{-x^2} \le e^{-x}$, and $\int_1^{\infty} e^{-x}\,dx = e^{-1}$ converges'
-            answer_contract: {kind: none}
-            solution_sketch: '$x^2 \ge x$ on $[1, \infty)$ makes $e^{-x^2} \le e^{-x}$; comparison with a convergent exponential.'
+          - problem: "Consider the improper integral of 1/(x^3 + 1) from 1 to infinity. Use the direct comparison test. Give a comparison function g(x) and select the correct outcome."
+            answer: "verdict = converges; g = 1/x^3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "g"}]}
+            solution_sketch: "The integral is 1/(x^3 + 1) from 1 to infinity. For x >= 1, x^3 + 1 >= x^3, so 0 <= 1/(x^3 + 1) <= 1/x^3. Thus g(x) = 1/x^3. Since p = 3 > 1, the comparison integral 1/x^3 from 1 to infinity converges. By the direct comparison test, the original integral converges. The wrong outcome diverges would come from thinking the comparison integral diverges. verdict = converges; g = 1/x^3."
+          - problem: "Consider the improper integral of (2 + sin x)/x from 1 to infinity. Use the direct comparison test. Give a comparison function g(x) and select the correct outcome."
+            answer: "verdict = diverges; g = 1/x"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "g"}]}
+            solution_sketch: "The integral is (2 + sin x)/x from 1 to infinity. For x >= 1, 2 + sin x >= 1, so (2 + sin x)/x >= 1/x > 0. Thus g(x) = 1/x. Since p = 1, the comparison integral 1/x from 1 to infinity diverges. By the direct comparison test, the original integral diverges. The wrong outcome converges would come from ignoring that the integrand dominates a divergent integral. verdict = diverges; g = 1/x."
+          - problem: "Consider the improper integral of e^(-x^2) from 1 to infinity. Use the direct comparison test. Give a comparison function g(x) and select the correct outcome."
+            answer: "verdict = converges; g = e^(-x)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "g"}]}
+            solution_sketch: "The integral is e^(-x^2) from 1 to infinity. For x >= 1, x^2 >= x, so e^(-x^2) <= e^(-x), and both are positive. Thus g(x) = e^(-x). The comparison integral e^(-x) from 1 to infinity evaluates to 1/e, so it converges. By the direct comparison test, the original integral converges. The wrong outcome diverges would come from thinking e^(-x) diverges. verdict = converges; g = e^(-x)."
+          - problem: "The improper integral of 1/(x^2 + 5) from 1 to infinity is known to converge. Give a comparison function g(x) that proves convergence with the direct comparison test."
+            answer: "1/x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The integral is 1/(x^2 + 5) from 1 to infinity. For x >= 1, x^2 + 5 >= x^2, so 0 <= 1/(x^2 + 5) <= 1/x^2. Thus g(x) = 1/x^2. Since p = 2 > 1, the comparison integral 1/x^2 from 1 to infinity converges. By the direct comparison test, the original integral converges. The answer is 1/x^2."
+          - problem: "The improper integral of 1/(sqrt(x) - 1) from 4 to infinity is known to diverge. Give a comparison function g(x) that proves divergence with the direct comparison test."
+            answer: "1/sqrt(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The integral is 1/(sqrt(x) - 1) from 4 to infinity. For x >= 4 we have sqrt(x) >= 1, so sqrt(x) - 1 <= sqrt(x), and hence 0 < 1/sqrt(x) <= 1/(sqrt(x) - 1); this inequality holds on the whole interval. Thus g(x) = 1/sqrt(x). The comparison integral of 1/sqrt(x) from 4 to infinity is a p-integral with p = 1/2 <= 1, so it diverges. By the direct comparison test, the original integral diverges. The answer is 1/sqrt(x)."
+          - problem: "Consider the improper integral of 1/(x^4 + x) from 1 to infinity. Use the direct comparison test. Give a comparison function g(x) and select the correct outcome."
+            answer: "verdict = converges; g = 1/x^4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "g"}]}
+            solution_sketch: "The integral is 1/(x^4 + x) from 1 to infinity. For x >= 1, x^4 + x >= x^4, so 0 <= 1/(x^4 + x) <= 1/x^4. Thus g(x) = 1/x^4. Since p = 4 > 1, the comparison integral 1/x^4 from 1 to infinity converges. By the direct comparison test, the original integral converges. The wrong outcome diverges would come from thinking the comparison integral diverges. verdict = converges; g = 1/x^4."
         constraints: "comparisons against p-integrals or e^{-x}; the inequality must hold on the whole interval and be stated"
     diagnostic_exemplar:
       problem: 'Determine whether $\int_1^{\infty} \frac{dx}{\sqrt{x^6 + 1}}$ converges.'
