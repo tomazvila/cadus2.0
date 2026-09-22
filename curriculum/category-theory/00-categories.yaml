@@ -491,23 +491,67 @@ topics:
         key_prerequisites: [poset-monoid-categories]
         constraints: "Work with an arbitrary set $S$, giving counts as a formula in $|S|$; justify uniqueness of each arrow before composing, and any concrete instance uses a set of size at most 4."
         exemplars:
-          - problem: "Define the indiscrete category $\\mathrm{indisc}(S)$ (exactly one morphism between each ordered pair of objects), verify it is a category, and count its morphisms."
-            answer: "Objects $S$, one arrow for each ordered pair; it has $|S|^2$ morphisms."
-            solution_sketch: "Set $\\mathrm{Hom}(x,y)=\\{*\\}$ for all $x,y\\in S$. Composition is forced (there is only one candidate arrow $x\\to z$), and associativity and the unit laws hold automatically because each hom-set has one element; the unique arrow $x\\to x$ must be $1_x$. So $\\mathrm{indisc}(S)$ is a category with one morphism per ordered pair, i.e. $|S|^2$ morphisms in total."
-          - problem: "Prove that $\\mathrm{indisc}(S)$ is a groupoid, and identify the preorder it corresponds to."
-            answer: "Every arrow is invertible; the preorder is the total relation $x\\le y$ for all $x,y$."
-            solution_sketch: "Let $u\\colon x\\to y$ and $v\\colon y\\to x$ be the unique arrows. Then $v\\circ u\\colon x\\to x$ and $u\\circ v\\colon y\\to y$ are the unique arrows there, namely $1_x$ and $1_y$. So $u$ is an isomorphism and $\\mathrm{indisc}(S)$ is a groupoid. It is thin, and its associated preorder has $x\\le y$ for every pair — the total preorder, in which all objects are isomorphic."
+          - problem: "Let S be a set with |S| = n. In the indiscrete category indisc(S) there is exactly one morphism between each ordered pair of objects, and this uniqueness is fixed before composing. Give the total number of morphisms as a formula in n."
+            answer: "n*n"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Step 1 (definition): the objects of indisc(S) are the elements of S, and for each ordered pair of objects the definition gives exactly one morphism; this uniqueness is established before any composition. Step 2 (counting): choose the source in n ways and the target in n ways, so the number of ordered pairs is n times n. Step 3 (answer): the total number of morphisms is n*n."
+          - problem: "Let S be a set with |S| = n. In indisc(S) every arrow between distinct objects is a non-identity isomorphism, its inverse being the unique arrow in the other direction. Give the number of arrows x -> y with x and y distinct as a formula in n."
+            answer: "n*(n-1)"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Step 1 (uniqueness first): for each ordered pair x, y of distinct objects there is exactly one arrow, so counting pairs counts arrows. Step 2 (counting): pick the source x in n ways, then the target y in n-1 ways since y must differ from x. Step 3 (answer): the number of such arrows is n*(n-1)."
+          - problem: "Let S = {1, 2, 3}. In indisc(S) exactly one morphism connects each ordered pair of objects, and each such morphism is fixed before composing. Give the total number of morphisms."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition): indisc({1, 2, 3}) has 3 objects and one morphism per ordered pair, with uniqueness fixed first. Step 2 (counting): the ordered pairs are 3 times 3 = 9 in number. Step 3 (answer): the total number of morphisms is 9."
+          - problem: "Let S = {1, 2, 3, 4}. In indisc(S) there is exactly one arrow from the object 2 to each object of S, and uniqueness holds before composing. Give the number of arrows with source 2."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (uniqueness): the arrow 2 -> y exists and is unique for every target y in S. Step 2 (counting): the possible targets are 1, 2, 3, 4, giving 4 arrows with source 2. Step 3 (answer): the number of arrows with source 2 is 4."
+          - problem: "Take the indiscrete category whose objects are 1, 2 and 3, in which each ordered pair of objects has exactly one arrow from the first object to the second. Give the number of ordered pairs of arrows f then g for which g starts at the object where f ends."
+            answer: "27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The indiscrete category on the objects 1, 2 and 3 has exactly one arrow for each ordered pair of objects, and this uniqueness is fixed before any composition. A composable ordered pair is determined by the three objects x, y, z: the unique arrow from x to y followed by the unique arrow from y to z. Counting all triples gives 3 times 3 times 3. The number of composable ordered pairs of arrows is 27."
+          - problem: "To prove that indisc(S) is a groupoid, let u be the unique arrow x -> y and v the unique arrow y -> x. One line is missing from the argument that u is an isomorphism. Select the missing line."
+            answer: "v after u is 1_x and u after v is 1_y"
+            answer_contract: {"kind": "label", "options": [["v after u is 1_x and u after v is 1_y"], ["v after u is an arrow x to y"], ["u and v are the same arrow"], ["v after u equals v"]]}
+            solution_sketch: "The missing line must check both unit laws using uniqueness: the composite v after u is an arrow x -> x, and since the arrow x -> x is unique it must be 1_x; likewise u after v is 1_y. The option claiming v after u is an arrow x to y confuses the direction of the composite. The option saying u and v are the same arrow wrongly assumes x equals y. The option v after u equals v wrongly treats u as an identity. The answer is v after u is 1_x and u after v is 1_y."
+          - problem: "Write the full proof: in indisc(S), the composite of the unique arrow x -> y with the unique arrow y -> z is the unique arrow x -> z, and every morphism is an isomorphism. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (uniqueness): let S be any set and write u_{x,y} for the unique arrow x -> y of indisc(S); this uniqueness is fixed before composing. Step 2 (composition): given u: x -> y and v: y -> z, the composite is an arrow x -> z, and since u_{x,z} is the only arrow x -> z, the composite equals u_{x,z}. Step 3 (units): u_{x,x} is the only arrow x -> x, so the unit laws force u_{x,x} = 1_x, and identities exist for every object. Step 4 (associativity): both bracketings of three composable arrows are arrows x -> w, and there is only one such arrow, so they agree; hence indisc(S) is a category. Step 5 (invertibility): for u: x -> y take the unique v: y -> x; then v after u is an arrow x -> x, so it equals the unique arrow 1_x, and u after v is an arrow y -> y, so it equals 1_y. Step 6 (conclusion): every morphism is an isomorphism, so indisc(S) is a groupoid, and it has |S|^2 morphisms since each ordered pair of objects contributes exactly one arrow."
       - id: kp3
         name: Shape categories for diagrams
         key_prerequisites: [commutative-diagrams]
         constraints: "Shape categories with at most three objects; state the functor's data explicitly."
         exemplars:
-          - problem: "Describe what a functor $\\mathcal{J}\\to\\mathcal{C}$ is for each shape $\\mathcal{J}=\\mathbf{0}$ (empty), $\\mathbf{1}$ (one object), and $\\mathbf{2}=(0\\to 1)$."
-            answer: "No data at all; a single object; a single morphism of $\\mathcal{C}$."
-            solution_sketch: "For $\\mathbf{0}$ there are no objects or morphisms to send anywhere, so there is exactly one functor $\\mathbf{0}\\to\\mathcal{C}$ and it carries no data — the empty diagram. For $\\mathbf{1}$ (one object and its identity) a functor is determined by the image object, since the identity must go to an identity. For $\\mathbf{2}$, a functor picks objects $F0,F1$ and a morphism $F0\\to F1$, with identities forced; so a functor $\\mathbf{2}\\to\\mathcal{C}$ is exactly an arrow of $\\mathcal{C}$."
-          - problem: "Describe a functor out of the parallel-pair shape ($\\bullet\\rightrightarrows\\bullet$) and out of the cospan shape ($\\bullet\\to\\bullet\\leftarrow\\bullet$)."
-            answer: "A parallel pair $f,g\\colon A\\to B$ in $\\mathcal{C}$; a pair of morphisms $A\\to C\\leftarrow B$ with common codomain."
-            solution_sketch: "The parallel-pair shape has objects $0,1$ and two distinct non-identity arrows $0\\rightrightarrows 1$ (there are no other composites to specify), so a functor to $\\mathcal{C}$ chooses objects $A=F0$, $B=F1$ and two morphisms $f,g\\colon A\\to B$. The cospan shape has three objects $0,2,1$ with arrows $0\\to 2\\leftarrow 1$, so a functor chooses $A\\to C\\leftarrow B$. These are exactly the shapes whose universal cones are the equalizer and the pullback."
+          - problem: "Let D be the discrete category on the set {0,1}. A functor from the arrow shape 2=(0->1) to D consists of objects F0,F1 of D and a morphism F(0->1): F0->F1. How many such functors are there? Give the answer as an integer."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Functor data: F sends object 0 to F0 and object 1 to F1 in the discrete category D, and sends the arrow 0->1 to a morphism F0->F1. Step 1 (shape data): the only non-identity arrow must be assigned a morphism between the chosen objects. Step 2 (discrete category): the only morphisms of D are identities, so F0->F1 must be an identity and therefore F0=F1. Step 3 (count): F0=F1 can be 0 or 1, giving two functors. The answer is 2."
+          - problem: "Let C be the category with objects A,B and exactly two non-identity morphisms f,g: A->B. A functor from the parallel-pair shape (objects 0,1 and two non-identity arrows 0->1) to C is determined by objects F0,F1 and two morphisms F0->F1. How many such functors are there? Give the answer as an integer."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Functor data: F chooses F0,F1 in {A,B} and sends the two parallel arrows to morphisms F0->F1. Step 1 (object choices): the pairs are (A,A), (A,B), (B,A), (B,B). Step 2 (hom sets): Hom(A,A) has only id_A, Hom(B,B) only id_B, Hom(A,B) has f,g, and Hom(B,A) is empty. Step 3 (count): (A,A) gives 1, (B,B) gives 1, (A,B) gives 2^2=4 choices for the two arrows, and (B,A) gives 0. The total is 1+1+4+0=6. The answer is 6."
+          - problem: "Let I be the indiscrete category on the two-element set {0,1}; between every ordered pair of objects there is exactly one morphism. Let J be the discrete shape on two objects (only identity arrows). How many functors J->I are there? Give the answer as an integer."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Functor data: J has objects 0,1 and only identities, so a functor J->I is determined by the images F0 and F1 in I. Step 1 (shape data): there are no non-identity arrows in J to assign. Step 2 (count): each of F0 and F1 can be 0 or 1 independently, so there are 2*2=4 choices. Step 3 (functoriality): identities and composites are preserved automatically. The answer is 4."
+          - problem: "Let I be the indiscrete category on the two-element set {0,1}; between every ordered pair of objects there is exactly one morphism. A functor from the arrow shape 2=(0->1) to I consists of objects F0,F1 and a morphism F0->F1. How many such functors are there? Give the answer as an integer."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Functor data: F chooses F0,F1 in {0,1} and sends the arrow 0->1 to the unique morphism F0->F1 in I. Step 1 (object choices): there are 2 choices for F0 and 2 choices for F1. Step 2 (arrow forced): for each ordered pair (F0,F1) the indiscrete category has exactly one morphism, so the arrow image is forced. Step 3 (count): the number of functors equals 2*2=4. The answer is 4."
+          - problem: "Claim: There is no functor from the parallel-pair shape to the category C with objects A,B and exactly one non-identity morphism u: A->B. Step 1: The parallel-pair shape has two distinct non-identity arrows 0->1. Step 2: A functor must send those two arrows to two distinct morphisms F0->F1. Step 3: In C, the only morphism A->B is u, so two distinct morphisms cannot both be sent there. Step 4: Therefore no such functor exists. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "A functor is not required to be injective on morphisms. Step 1 correctly counts the two shape arrows. Step 2 is false: both shape arrows may be sent to the same morphism u. Step 3 is true only after accepting the false Step 2. Step 4 does not follow. The answer is Step 2."
+          - problem: "Let C be the category with objects A,B and exactly one non-identity morphism u: A->B. How many functors from the parallel-pair shape (objects 0,1 and two non-identity arrows 0->1) to C are there? Give the answer as an integer."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Functor data: F chooses F0,F1 in {A,B} and sends the two parallel arrows to morphisms F0->F1. Step 1 (object choices): the pairs are (A,A), (A,B), (B,A), (B,B). Step 2 (hom sets): Hom(A,A) has only id_A, Hom(B,B) only id_B, Hom(A,B) has only u, and Hom(B,A) is empty. Step 3 (count): (A,A) gives 1, (B,B) gives 1, (A,B) forces both arrows to u and gives 1, and (B,A) gives 0. The total is 1+1+1+0=3. The answer is 3."
+          - problem: "Write the full proof: for any category C, functors from the arrow shape 2=(0->1) to C are in bijection with morphisms of C. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Statement: A functor F: 2 -> C consists of objects F0, F1 and a morphism F(0->1): F0 -> F1, with identities forced. Step 1 (construction from a functor): given F, record the morphism F(0->1): F0 -> F1 in C. Step 2 (construction from a morphism): given a morphism f: A -> B in C, define F0=A, F1=B, and send the non-identity arrow 0->1 to f; identities are sent to identities. Step 3 (functoriality): the shape 2 has no composable non-identity arrows, so the only composition conditions are identity laws, which hold. Step 4 (inverse): these two constructions are inverse. The first sends F to F(0->1) and the second sends f to the functor with that arrow. Step 5 (conclusion): the bijection is natural and the proof is complete."
     diagnostic_exemplar:
       problem: "In the indiscrete category $\\mathrm{indisc}(S)$ (exactly one arrow between each ordered pair of objects of $S$), prove that every morphism is an isomorphism."
       answer: "Let $u\\colon x\\to y$ be the unique arrow and $v\\colon y\\to x$ the unique arrow back. Then $v\\circ u$ is an arrow $x\\to x$; since $\\mathrm{Hom}(x,x)$ has exactly one element, which must be $1_x$, we get $v\\circ u=1_x$. Likewise $u\\circ v=1_y$. So $u$ has a two-sided inverse and is an isomorphism."
@@ -710,12 +754,34 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Conceptual contrast questions; any example uses two-element sets or terminal objects, and the phrase 'unique isomorphism' must be justified by counting the connecting arrows, not merely asserted."
         exemplars:
-          - problem: "State the sense in which category theory speaks of objects 'up to isomorphism' rather than up to equality, and why this is the natural notion."
-            answer: "Categorical constructions are defined by universal properties, which pin objects down only up to a unique isomorphism."
-            solution_sketch: "Morphisms cannot detect the internal identity of an object, only how it maps to and from others. Anything characterized by a universal property (products, terminal objects, etc.) is determined uniquely up to a unique isomorphism compatible with the property; asking for equality of such objects is not invariant under isomorphism of categories and is the wrong question."
-          - problem: "The two-element sets $\\{0,1\\}$ and $\\{a,b\\}$ admit two different isomorphisms in $\\mathbf{Set}$. Contrast this with a terminal object, where any two are related by a unique isomorphism, and explain the difference."
-            answer: "Between generic isomorphic objects there may be many isomorphisms; a universal property forces a unique one, so universally-defined objects are determined up to unique iso."
-            solution_sketch: "There are two bijections $\\{0,1\\}\\to\\{a,b\\}$, namely $0\\mapsto a,1\\mapsto b$ and the swap $0\\mapsto b,1\\mapsto a$, so these sets are isomorphic in more than one way. By contrast, if $1$ and $1'$ are terminal there is exactly one arrow $1\\to 1'$ and exactly one $1'\\to 1$, and these compose to identities, so the comparison isomorphism is unique. A universal property therefore yields not merely an iso but a canonical one, which is the content of 'up to unique isomorphism'."
+          - problem: "In Set, let T = {*} and T' = {#} be one-element sets, so both are terminal objects. How many functions are there from T to T'?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (terminal property): T' is terminal, so every object has exactly one arrow into T'. Step 2 (apply to T): the object T has exactly one arrow to T', the function sending * to #. Step 3 (count): the single element * has only one possible image, so no other function exists. The answer is 1."
+          - problem: "In Set, let A = {0,1} and B = {a,b}. These two-element sets are isomorphic, but not uniquely. How many isomorphisms are there from A to B?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (isomorphisms in Set): a function between these sets is an isomorphism exactly when it is a bijection. Step 2 (enumerate): 0 may map to a while 1 maps to b, or 0 may map to b while 1 maps to a, and each choice is a bijection with an inverse. Step 3 (count): both choices are isomorphisms, so isomorphic objects can be connected in more than one way. The answer is 2."
+          - problem: "In Set, let T = {*} be a terminal object and let A = {0,1} be a two-element set. The terminal property controls arrows into T, not arrows out of T. How many functions are there from T to A?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of function): a function from T = {*} to A picks one element of A as the image of *. Step 2 (enumerate): the choices are * maps to 0 and * maps to 1, so exactly 2 functions exist. Step 3 (contrast): uniqueness holds for arrows into a terminal object, while arrows out of it can be many and need not be bijections. The answer is 2."
+          - problem: "View the poset with elements 0, 1, 2, 3 and order relations 0 < 1 < 3 and 0 < 2 < 3, where 1 and 2 are incomparable, as a category. How many terminal objects does this poset have?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (poset as category): there is exactly one morphism x to y exactly when x is at most y. Step 2 (terminal test): an object t is terminal when every object x satisfies x at most t; only 3 passes, since 1 and 2 are incomparable and 0 lies below 3. Step 3 (count): the greatest element 3 is the single terminal object, and two terminal objects of a poset would need a unique arrow each way. The answer is 1."
+          - problem: "Claim: if T and T' are terminal objects of a category, then T = T'. Step 1: T' is terminal, so there is exactly one arrow T to T'. Step 2: T is terminal, so there is exactly one arrow T' to T. Step 3: since each direction has exactly one arrow, the objects T and T' are equal. Step 4: hence terminal objects are equal and not merely isomorphic. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 (base use of the terminal property): T' is terminal, so the arrow T to T' is unique; option Step 1 makes no error. Step 2 (symmetry): T is terminal, so the arrow T' to T is unique; option Step 2 makes no error. Step 3 (first invalid step): unique arrows each way give an isomorphism, not an equality of objects, so option Step 3 holds the error. Step 4 (inherited error): it merely repeats the equality claim of Step 3, so option Step 4 fails too. The answer is Step 3."
+          - problem: "Regard the two-element set {0,1} with the order 0 < 1 as a small category, with one arrow for each ordered pair that is ordered. Objects 0 and 1 are not isomorphic. How many isomorphisms are there from 0 to 1?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (arrows in a poset category): the arrow from 0 to 1 exists because 0 is at most 1, and it is unique. Step 2 (isomorphism test): an isomorphism needs an arrow from 1 back to 0, but 1 is not at most 0, so no inverse arrow exists. Step 3 (count): with no inverse there is no isomorphism, so the count is zero. The answer is 0."
+          - problem: "Write the full proof: if T and T' are terminal objects in a category, then there is a unique isomorphism from T to T'. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (existence): since T' is terminal, every object has exactly one arrow into T', so there is exactly one arrow f from T to T'. Step 2 (existence, reverse): since T is terminal, there is exactly one arrow g from T' to T. Step 3 (identity on T): the composite of g after f is an arrow from T to T, and because T is terminal the only such arrow is the identity, so that composite equals id_T. Step 4 (identity on T'): symmetrically the composite of f after g is an arrow from T' to T', and since T' is terminal it must equal id of T', so f is an isomorphism with inverse g. Step 5 (uniqueness): any isomorphism from T to T' is in particular an arrow from T to T', and the terminal property of T' leaves exactly one such arrow, so the isomorphism is unique. Counting the connecting arrows, one each way and one endo-arrow on each object, justifies the phrase unique isomorphism: terminal objects are determined up to a unique isomorphism, never up to equality."
     diagnostic_exemplar:
       problem: "Let $f\\colon A\\to B$ and $g\\colon B\\to C$ be isomorphisms in a category. Prove that $g\\circ f$ is an isomorphism and identify its inverse."
       answer: "$(f^{-1}\\circ g^{-1})\\circ(g\\circ f)=f^{-1}\\circ(g^{-1}\\circ g)\\circ f=f^{-1}\\circ 1_B\\circ f=1_A$, and $(g\\circ f)\\circ(f^{-1}\\circ g^{-1})=g\\circ(f\\circ f^{-1})\\circ g^{-1}=g\\circ 1_B\\circ g^{-1}=1_C$. So $g\\circ f$ has the two-sided inverse $f^{-1}\\circ g^{-1}$ (note the reversed order) and is an isomorphism."
@@ -782,12 +848,34 @@ topics:
         key_prerequisites: [function-composition]
         constraints: "At most two cells pasted; every step of the derivation cites either associativity or one cell's commuting equation."
         exemplars:
-          - problem: "If two squares share an edge and each commutes, show the outer rectangle commutes."
-            answer: "Compose the two square equations."
-            solution_sketch: "Place the two squares side by side sharing the middle edge $h$, so the left square gives $h\\circ f=k\\circ g$ and the right square gives $\\ell\\circ p=q\\circ h$. Then the outer rectangle's two paths satisfy $\\ell\\circ(p\\circ f)=(\\ell\\circ p)\\circ f=(q\\circ h)\\circ f=q\\circ(h\\circ f)=q\\circ(k\\circ g)$, using associativity and the two commuting squares; so the rectangle commutes."
-          - problem: "In a commuting diagram, why can any two directed paths with equal endpoints be equated?"
-            answer: "Because each elementary cell commutes and composites paste."
-            solution_sketch: "Any path equals another obtained by replacing one cell's boundary using that cell's commuting equation; a finite sequence of such replacements (each valid by associativity) turns one path into the other, so all paths with the same endpoints are equal."
+          - problem: "Two squares share the edge s. The left square commutes: s∘f = t∘g. The right square commutes: v∘s = u∘p. The values are f(1) = 2, g(1) = 3, t(3) = 7, p(2) = 6, u(6) = 9. Find (v∘t∘g)(1)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: evaluate the inner part of the route: g(1) = 3 and t(3) = 7, so t∘g sends 1 to 7. Step 2: the left square's commuting equation s∘f = t∘g gives s(f(1)) = s(2) = t(g(1)) = 7. Step 3: the right square's commuting equation v∘s = u∘p gives v(s(2)) = u(p(2)) = u(6) = 9. Hence (v∘t∘g)(1) = v(7) = 9."
+          - problem: "A triangle commutes: m∘n = l, where n goes from X to Y, m goes from Y to Z, and l goes from X to Z. A further arrow r goes from Z to W. The values are n(2) = 3, m(3) = 5, r(5) = 11. Find (r∘l)(2)."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the triangle's commuting equation m∘n = l rewrites the direct arrow at the input: l(2) = m(n(2)). Step 2: evaluate n(2) = 3 and m(3) = 5, so l(2) = 5; this step cites the triangle's commuting equation. Step 3: apply the further arrow r to get r(l(2)) = r(5) = 11. The value of (r∘l)(2) is 11."
+          - problem: "A left square commutes: s∘f = t∘g, but the right square v∘s = u∘p does not. The functions are: f sends 1 to 1, 2 to 2, 3 to 2; g sends 1 to 1, 2 to 2, 3 to 2; s sends 1 to 1, 2 to 2; t sends 1 to 1, 2 to 2; p sends 1 to 1, 2 to 2, 3 to 1; u sends 1 to 1, 2 to 2; v sends 1 to 1, 2 to 3. A student claims the outer routes (v∘t∘g)(x) and (u∘p∘f)(x) agree for every x. Give the smallest x where the claim fails."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: check the left square's commuting equation s∘f = t∘g on all inputs; it holds, since both composites send 1, 2, 3 to 1, 2, 2. Step 2: compute the route v∘t∘g: the values at x = 1, 2, 3 are 1, 3, 3, because v sends 2 to 3. Step 3: compute the route u∘p∘f: the values are 1, 2, 2, because u sends 2 to 2. Step 4: the routes first disagree at x = 2, since v(2) = 3 but u(2) = 2. The smallest counterexample is x = 2."
+          - problem: "One square commutes: w∘c = d∘b, where b goes from A to B, c goes from A to C, d goes from B to D, and w goes from C to D. A further arrow a goes from X to A. The values are a(0) = 1, b(1) = 3, c(1) = 2, w(2) = 4. Find (d∘b∘a)(0)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: evaluate the C-route: a(0) = 1, c(1) = 2, w(2) = 4, so (w∘c∘a)(0) = 4. Step 2: by associativity the commuting equation w∘c = d∘b can be composed with a, giving (d∘b)∘a = (w∘c)∘a; this step cites the square's commuting equation and associativity. Step 3: therefore (d∘b∘a)(0) = d(b(a(0))) = d(b(1)) = d(3) = 4. The value of (d∘b∘a)(0) is 4."
+          - problem: "Two squares share the edge s: the left square commutes by s∘f = t∘g and the right square commutes by v∘s = u∘p. The values are f(1) = 1, g(1) = 2, t(2) = 5, p(1) = 3, u(3) = 7. Find v(5)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the left square's commuting equation s∘f = t∘g at input 1 gives s(1) = t(g(1)) = t(2) = 5. Step 2: the right square's commuting equation v∘s = u∘p at input 1 gives v(s(1)) = u(p(1)) = u(3) = 7. Step 3: substitute s(1) = 5 from step 1; associativity keeps the three-arrow composite v∘s∘f associated so the equation applies. The value is v(5) = 7."
+          - problem: "A triangle commutes: m∘n = l, with n from A to B, m from B to C, and l from A to C. A square commutes: r∘l = q∘k, with r from C to E and k from A to D; the two cells share the edge l. The values are n(1) = 2, m(2) = 4, r(4) = 9, k(1) = 3. Find q(3)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the triangle's commuting equation m∘n = l gives l(1) = m(n(1)) = m(2) = 4. Step 2: the square's commuting equation r∘l = q∘k gives q(k(1)) = r(l(1)); by associativity the pasted composite r∘m∘n is associated so the equation applies. Step 3: r(l(1)) = r(4) = 9, and k(1) = 3, so q(3) = 9. The value of q(3) is 9."
+          - problem: "Write the full proof: pasting two commuting squares that share an edge gives a commuting outer rectangle. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: let the left square have edges f from A to B, g from A to D, and the shared edge s from B to C, with commuting equation s∘f = t∘g where t goes from D to C. Step 2: let the right square have the shared edge s from B to C, an edge p from B to E, and an edge u from E to F, with commuting equation v∘s = u∘p where v goes from C to F. Step 3: the two outer routes from A to F are v∘t∘g and u∘p∘f. Step 4: by associativity, u∘p∘f = u∘(p∘f) is the right square's commuting equation v∘s = u∘p composed with f, so u∘p∘f = v∘s∘f. Step 5: by the left square's commuting equation s∘f = t∘g, we get v∘s∘f = v∘(s∘f) = v∘t∘g. Step 6: hence u∘p∘f = v∘t∘g, so the outer rectangle commutes; every step cited associativity or one cell's commuting equation, and at most two cells were pasted."
     diagnostic_exemplar:
       problem: "A triangle $f\\colon A\\to B$, $g\\colon B\\to C$, $h\\colon A\\to C$ commutes, and $k\\colon C\\to D$ is a further arrow. Write the equation saying the two routes $A\\to D$ agree, and justify it."
       answer: "$k\\circ g\\circ f = k\\circ h$, by post-composing the triangle's equation $g\\circ f = h$ with $k$."
@@ -821,23 +909,67 @@ topics:
         key_prerequisites: [commutative-diagrams]
         constraints: "Chases of at most three composable steps; each rewrite cites a hypothesis equation or mono/epi cancellation, and the typing of every composite must stay valid."
         exemplars:
-          - problem: "Let $f,p\\colon A\\to B$, $q,g\\colon B\\to D$ and $r,h\\colon D\\to E$ be morphisms satisfying $q\\circ f=g\\circ p$ and $r\\circ g=h\\circ q$. Chase these hypotheses to simplify $r\\circ g\\circ f$."
-            answer: "$r\\circ g\\circ f = h\\circ g\\circ p$."
-            solution_sketch: "The typing makes every composite below a morphism $A\\to E$. Compose the second hypothesis $r\\circ g=h\\circ q$ on the right with $f\\colon A\\to B$: $r\\circ g\\circ f=h\\circ q\\circ f$. Now substitute the first hypothesis inside: $h\\circ(q\\circ f)=h\\circ(g\\circ p)$. Dropping brackets by associativity gives $r\\circ g\\circ f=h\\circ g\\circ p$. Each step only replaces a composite by an equal one, which is all a diagram chase ever does."
-          - problem: "If $g\\circ f = g\\circ f'$ and $g$ is a monomorphism, chase the diagram to conclude $f=f'$."
-            answer: "$f = f'$ by left-cancelling $g$."
-            solution_sketch: "A monomorphism $g$ satisfies: $g\\circ f=g\\circ f'\\Rightarrow f=f'$. That hypothesis is exactly given, so cancel $g$ on the left to get $f=f'$."
+          - problem: "Let A = {0}, B = {0,1}, D = {0,1,2}, E = {0,1,2}. Define f: A -> B by f(0) = 0 and p: A -> B by p(0) = 1. Define q: B -> D by q(0) = 2, q(1) = 0 and g: B -> D by g(0) = 1, g(1) = 2. Define r: D -> E by r(0) = 0, r(1) = 2, r(2) = 1 and h: D -> E by h(0) = 1, h(1) = 0, h(2) = 2. These functions satisfy q∘f = g∘p and r∘g = h∘q. Chase the diagram to find (r∘g∘f)(0)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Type the composite: f: A -> B, g: B -> D, r: D -> E, so r∘g∘f is a morphism A -> E. Use the second hypothesis r∘g = h∘q and compose on the right with f to get r∘g∘f = h∘q∘f. Use the first hypothesis q∘f = g∘p to replace q∘f by g∘p, giving r∘g∘f = h∘g∘p. Evaluate at 0: f(0) = 0, then g(0) = 1, then r(1) = 2. The answer is 2."
+          - problem: "Let A = {0,1}, B = {0,1}, D = {0,1}. Let g: B -> D be the monomorphism of sets with g(0) = 0 and g(1) = 1. Let f: A -> B be the function with f(0) = 1 and f(1) = 0. Let f': A -> B be a function with g∘f = g∘f'. Use the monomorphism property of g to find f'(0)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Type the composites: g∘f and g∘f' are morphisms A -> D. The monomorphism g cancels on the left: g∘f = g∘f' implies f = f'. Therefore f'(0) = f(0). From the definition of f, f(0) = 1. The answer is 1."
+          - problem: "Let A = {0,1}, B = {0,1}, D = {0,1}. Let q: B -> D be the epimorphism of sets with q(0) = 1 and q(1) = 0. Let f: A -> B satisfy f(0) = 0 and f(1) = 1. Let f': A -> B be a function with q∘f = q∘f'. Use the epimorphism property of q to find f'(0)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Type the composites: q∘f and q∘f' are morphisms A -> D. The epimorphism q cancels on the right: q∘f = q∘f' implies f = f'. Hence f'(0) = f(0). The given f has f(0) = 0. The answer is 0."
+          - problem: "Claim: if q∘f = g∘p and r∘g = h∘q, then r∘g∘f = h∘g∘p. Step 1: q∘f = g∘p by the first hypothesis. Step 2: compose with r on the left to get r∘q∘f = r∘g∘p. Step 3: since r∘g = h∘q, cancel g on the right to get r∘q = h∘q. Step 4: therefore r∘g∘f = h∘g∘p. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the first hypothesis, so it is valid. Step 2 composes that equation with r on the left, which keeps both sides typed as morphisms A -> E. Step 3 is not valid: r∘g = h∘q does not let you cancel g on the right, because g need not be an epimorphism. Step 4 is also invalid, but it comes after the first invalid step. The answer is Step 3."
+          - problem: "Let A = {0}, B = {0,1,2}, D = {0,1,2,3}, E = {0,1,2,3,4}. Define f: A -> B by f(0) = 0 and p: A -> B by p(0) = 1. Define g: B -> D by g(0) = 0, g(1) = 2, g(2) = 3 and q: B -> D by q(0) = 2, q(1) = 1, q(2) = 0. Define r: D -> E by r(0) = 4, r(1) = 0, r(2) = 0, r(3) = 1 and h: D -> E by h(0) = 1, h(1) = 0, h(2) = 4, h(3) = 0. These functions satisfy q∘f = g∘p and r∘g = h∘q. Chase the diagram to find (r∘g∘f)(0)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Type the chase: f: A -> B, g: B -> D, r: D -> E, so r∘g∘f: A -> E. Compose r∘g = h∘q with f on the right: r∘g∘f = h∘q∘f. Substitute q∘f = g∘p: h∘q∘f = h∘g∘p. Evaluate at 0: f(0) = 0, then g(0) = 0, then r(0) = 4. The answer is 4."
+          - problem: "Let A = {0,1}, B = {0,1,2}, D = {0,1,2,3}, E = {0,1,2,3}. Define f: A -> B by f(0) = 1, f(1) = 2 and p: A -> B by p(0) = 0, p(1) = 1. Define q: B -> D by q(0) = 0, q(1) = 1, q(2) = 2 and g: B -> D by g(0) = 1, g(1) = 2, g(2) = 0. Define r: D -> E by r(0) = 3, r(1) = 1, r(2) = 2, r(3) = 0 and h: D -> E by h(0) = 1, h(1) = 2, h(2) = 3, h(3) = 0. These functions satisfy q∘f = g∘p and r∘g = h∘q. Chase the diagram to find (r∘g∘f)(1)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Type the chase: f: A -> B, g: B -> D, r: D -> E, so r∘g∘f: A -> E. Compose r∘g = h∘q with f on the right: r∘g∘f = h∘q∘f. Substitute q∘f = g∘p: h∘q∘f = h∘g∘p. Evaluate at 1: f(1) = 2, then g(2) = 0, then r(0) = 3. The answer is 3."
+          - problem: "Write the full proof: Let f,p: A -> B, q,g: B -> D, r,h: D -> E satisfy q∘f = g∘p and r∘g = h∘q. Prove r∘g∘f = h∘g∘p. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): the morphisms f,p: A -> B, q,g: B -> D, r,h: D -> E make every composite below a morphism A -> E, so the typing stays valid. Step 2 (hypotheses): we are given q∘f = g∘p and r∘g = h∘q. Step 3 (compose second on right with f): from r∘g = h∘q, compose on the right with f to get r∘g∘f = h∘q∘f, using associativity. Step 4 (substitute first): replace q∘f by g∘p to get h∘q∘f = h∘(q∘f) = h∘(g∘p) = h∘g∘p. Step 5 (conclusion): therefore r∘g∘f = h∘g∘p, since each rewrite replaces a composite by an equal one. This completes the chase."
       - id: kp2
         name: Uniqueness arguments via commuting constraints
         key_prerequisites: [commutative-diagrams]
         constraints: "Uniqueness arguments only: conclude two candidate morphisms are equal, either from a universal property's uniqueness clause or by cancelling a monomorphism; name which mechanism is used."
         exemplars:
-          - problem: "Two morphisms $u,v\\colon X\\to P$ both make the same diagram into $P$ commute, and $P$'s defining property forces at most one such map. Conclude and name the technique."
-            answer: "$u=v$; this is a uniqueness-from-a-universal-property argument."
-            solution_sketch: "The defining (universal) property of $P$ says: for the given cone/data there is at most one morphism $X\\to P$ making all triangles commute. Since $u$ and $v$ both do, uniqueness forces $u=v$. This pattern — 'exhibit a map, then use uniqueness to identify two candidates' — recurs throughout limit and adjunction proofs."
-          - problem: "Let $m\\colon P\\to A$ be a monomorphism. Prove that any morphism $f\\colon X\\to A$ factors through $m$ in at most one way: there is at most one $u\\colon X\\to P$ with $m\\circ u=f$."
-            answer: "At most one such $u$; two candidates agree by cancelling the mono $m$."
-            solution_sketch: "Suppose $m\\circ u=f=m\\circ u'$ for $u,u'\\colon X\\to P$. Then $m\\circ u=m\\circ u'$, and since $m$ is a monomorphism (left-cancellable) we get $u=u'$. Hence a factorization through a mono, when it exists, is unique; here the uniqueness comes from the cancellation property rather than from a universal property."
+          - problem: "In the category of finite sets, let X = {1,2}, A = {1,2}, B = {3,4}. Define f: X -> A by f(1)=1, f(2)=2, and g: X -> B by g(1)=3, g(2)=4. The product A x B has projections p and q. By the universal property, there is a unique morphism u: X -> A x B with p u = f and q u = g. Give the answer as (x, y)."
+            answer: "(1,3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: The universal property of the product A x B gives a unique morphism u: X -> A x B with p u = f and q u = g. Step 2: Evaluate at 1: p(u(1)) = f(1) = 1, so the first coordinate is 1. Step 3: q(u(1)) = g(1) = 3, so the second coordinate is 3. Thus u(1) = (1,3)."
+          - problem: "Let P = {1,2}, A = {1,2,3}. Let m: P -> A be the inclusion m(1)=1, m(2)=2. Let X = {1,2} and f: X -> A be f(1)=2, f(2)=1. It is known that f factors through m in at most one way. Find the value u(1) of the unique morphism u: X -> P with m u = f."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The factorization condition is m(u(1)) = f(1) = 2. Step 2: Since m is a monomorphism, hence injective for sets, the only preimage of 2 under m is 2 itself. Thus u(1) = 2."
+          - problem: "In the category of finite sets, let X = {1,2}, A = {1,2}, B = {3,4}, C = {5,6}. Define f: X -> A by f(1)=1, f(2)=2, g: X -> B by g(1)=3, g(2)=4, and h: X -> C by h(1)=5, h(2)=6. The triple product A x B x C has projections p, q, r. By the universal property, there is a unique morphism u: X -> A x B x C with p u = f, q u = g, r u = h. Give the answer as (x, y, z)."
+            answer: "(1,3,5)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: The universal property of the triple product gives a unique u: X -> A x B x C with the three projections matching f, g, h. Step 2: At 1, p(u(1)) = f(1) = 1, q(u(1)) = g(1) = 3, r(u(1)) = h(1) = 5. Thus u(1) = (1,3,5)."
+          - problem: "Let P = {1,2,3}, A = {1,2,3,4,5}. Let m: P -> A be the inclusion m(1)=1, m(2)=2, m(3)=3. Let X = {1,2} and f: X -> A be f(1)=3, f(2)=1. It is known that f factors through m in at most one way. Find the value u(1) of the unique morphism u: X -> P with m u = f."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The condition is m(u(1)) = f(1) = 3. Step 2: Since m is the inclusion of {1,2,3} into {1,2,3,4,5}, the only element mapping to 3 is 3. Thus u(1) = 3."
+          - problem: "Claim: if m u = m v then u = v. Step 1: m u = m v. Step 2: Cancel m to get u = v. Step 3: Therefore u = v. If m is not a monomorphism, which step is the first that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["No invalid step"]]}
+            solution_sketch: "Step 1 is the given equation, so it is valid. Step 2 is invalid because cancellation of m requires m to be a monomorphism. Step 3 is only valid if Step 2 is valid. The option 'No invalid step' is wrong because Step 2 is invalid. The first invalid step is Step 2."
+          - problem: "In the category of sets, a function m: {1,2,3} -> {1,2,3} is defined by m(1)=1, m(2)=2, m(3)=2. This m is not a monomorphism. Find the smallest n such that there exist two different morphisms u,v: {1,...,n} -> {1,2,3} with m u = m v."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Since m(2) = 2 and m(3) = 2, m is not injective. Step 2: Take n = 1. Let u(1) = 2 and v(1) = 3. Then m u = m v = 2 but u ≠ v. No smaller positive n exists. The smallest n is 1."
+          - problem: "Write the full proof: Let P be a product of A and B with projections p and q. Let u, v: X -> P be two morphisms such that p u = p v and q u = q v. Prove that u = v. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: The universal property of the product P says that for any object X and morphisms f: X -> A and g: X -> B, there exists a unique morphism w: X -> P with p w = f and q w = g. Step 2: Apply this to f = p u and g = q u. Then u itself satisfies p u = f and q u = g, so by uniqueness u is the unique such morphism. Step 3: Similarly, v satisfies p v = f and q v = g, so v is the same unique morphism. Step 4: Therefore u = v. This is a uniqueness-from-a-universal-property argument."
     diagnostic_exemplar:
       problem: "Let $m\\colon P\\to A$ be a monomorphism and $f\\colon X\\to A$ any morphism. Prove that $f$ factors through $m$ in at most one way: there is at most one $u\\colon X\\to P$ with $m\\circ u=f$."
       answer: "Suppose $m\\circ u=f=m\\circ u'$ for $u,u'\\colon X\\to P$. Then $m\\circ u=m\\circ u'$, and since $m$ is a monomorphism (left-cancellable) this forces $u=u'$. Hence a factorization through $m$, if it exists, is unique."
@@ -872,34 +1004,100 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "State the left-cancellation definition, then either a $\\mathbf{Set}$ proof (monos = injections, both directions, using maps from a singleton) or a composite/cancellation argument of at most three lines."
         exemplars:
-          - problem: "Define a monomorphism and prove that in $\\mathbf{Set}$ monos are exactly the injections."
-            answer: "$m$ is mono if $m\\circ f=m\\circ g\\Rightarrow f=g$; in $\\mathbf{Set}$ this is injectivity."
-            solution_sketch: "Definition: $m\\colon A\\to B$ is mono if it is left-cancellable. ($\\Leftarrow$) If $m$ is injective and $m\\circ f=m\\circ g$ then $m(f(x))=m(g(x))$ gives $f(x)=g(x)$ for all $x$, so $f=g$. ($\\Rightarrow$) If $m(a)=m(a')$ apply the definition to the two maps $\\{*\\}\\to A$ picking $a,a'$; left-cancelling gives $a=a'$. Hence mono $\\Leftrightarrow$ injective in $\\mathbf{Set}$."
-          - problem: "Prove that a composite of two monomorphisms is a monomorphism."
-            answer: "Left-cancel the outer then the inner mono."
-            solution_sketch: "Let $m,n$ be mono and suppose $(n\\circ m)\\circ f=(n\\circ m)\\circ g$, i.e. $n\\circ(m\\circ f)=n\\circ(m\\circ g)$. Cancel $n$ (mono) to get $m\\circ f=m\\circ g$, then cancel $m$ (mono) to get $f=g$. So $n\\circ m$ is mono."
+          - problem: "In Set, let m: {1,2,3} -> {a,b,c} be the map with m(1)=a, m(2)=b, m(3)=b. To show that m is not left-cancellable, find two distinct domain elements that m sends to the same value. Give the two elements as a list."
+            answer: "2, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Full object: the map m sends 1 to a, 2 to b, and 3 to b. Step 1: a left-cancellable map must send distinct inputs to distinct outputs, so equal outputs force equal inputs. Step 2: compare the outputs m(2)=b and m(3)=b; the inputs 2 and 3 are distinct. The answer is 2, 3."
+          - problem: "Let m: {1,2} -> {3,4} be m(1)=3, m(2)=4, and let n: {3,4} -> {5,6} be n(3)=5, n(4)=6. Both m and n are left-cancellable. Suppose maps f,g: {*} -> {1,2} satisfy (n∘m)∘f = (n∘m)∘g. If f(*)=1, give g(*)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: m sends 1 to 3 and 2 to 4, while n sends 3 to 5 and 4 to 6. Step 1: the composite n∘m sends 1 to 5 and 2 to 6, so it is left-cancellable as a composite of left-cancellable maps. Step 2: from (n∘m)∘f=(n∘m)∘g and f(*)=1, cancellation gives g(*)=f(*)=1. The answer is 1."
+          - problem: "In Set, a map m: {1,2} -> {1,2,3} is left-cancellable when m∘f = m∘g implies f = g for all maps f, g: {*} -> {1,2}, and this holds exactly when the two inputs get two distinct outputs. How many such left-cancellable maps are there?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: a left-cancellable map m: {1,2} -> {1,2,3} must send 1 and 2 to two distinct elements of {1,2,3}. Step 1: pick the image of 1, three choices. Step 2: pick the image of 2, any element different from the first image, two choices. Step 3: multiply the independent choices, 3 times 2. The answer is 6."
+          - problem: "In Set, let m: {1,2,3} -> {4,5,6,7} be m(1)=4, m(2)=6, m(3)=5. The map m is left-cancellable. If f: {*} -> {1,2,3} satisfies m(f(*))=6, give f(*)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the map m sends 1 to 4, 2 to 6, and 3 to 5. Step 1: left-cancellable in Set means injective, so each output has at most one input. Step 2: the output 6 comes only from the input 2, so m(f(*))=6 forces f(*)=2. The answer is 2."
+          - problem: "In Set, let m: {1,2,3} -> {4,5,6} be m(1)=4, m(2)=5, m(3)=6. Suppose maps f,g: {*} -> {1,2,3} satisfy m∘f=m∘g. If f(*)=3, give g(*)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the map m sends 1 to 4, 2 to 5, and 3 to 6. Step 1: m is left-cancellable, so m∘f=m∘g implies f=g. Step 2: with f(*)=3, the equality f=g gives g(*)=3. The answer is 3."
+          - problem: "Claim: In Set, the map m: {1,2} -> {3} with m(1)=m(2)=3 is a monomorphism. Step 1: A map m is mono if m∘f=m∘g implies f=g for all f,g. Step 2: Take f,g: {*} -> {1,2} with f(*)=1 and g(*)=2. Step 3: Then m(f(*))=3=m(g(*)), so m∘f=m∘g. Step 4: Since m is mono, f=g, hence 1=2. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly states the definition of a monomorphism. Step 2 correctly chooses f(*)=1 and g(*)=2. Step 3 correctly computes that both composites give the sole value 3, so m∘f=m∘g. Step 4 is the first invalid step: it applies the mono property to m even though m is not injective and the claim that m is mono is false. The answer is Step 4."
+          - problem: "Write the full proof: In Set, a map m: A -> B is a monomorphism if and only if m is injective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: state the definition. A map m: A -> B is left-cancellable if for all maps f,g: C -> A, m∘f=m∘g implies f=g. Step 2: assume m is injective. Let f,g: C -> A satisfy m∘f=m∘g. For every c in C, m(f(c))=m(g(c)), so injectivity gives f(c)=g(c); hence f=g. Step 3: assume m is left-cancellable. Take a,a' in A with m(a)=m(a'). Let f,g: {*} -> A be f(*)=a and g(*)=a'. Then m∘f=m∘g, so cancellation gives f=g and therefore a=a'. Thus m is injective. Therefore in Set, monomorphisms are exactly the injective maps."
       - id: kp2
         name: Epimorphisms as right-cancellable maps
         key_prerequisites: [functions-injective-surjective]
         constraints: "Work in $\\mathbf{Set}$ or $\\mathbf{Ring}$ only; a non-surjective epi must be the inclusion $\\mathbb{Z}\\hookrightarrow\\mathbb{Q}$ (or an analogous determination argument), justified by showing maps out of the larger object are determined on the smaller."
         exemplars:
-          - problem: "Define an epimorphism and show surjections in $\\mathbf{Set}$ are epi."
-            answer: "$e$ is epi if $f\\circ e=g\\circ e\\Rightarrow f=g$; surjections satisfy this."
-            solution_sketch: "Definition: $e$ is right-cancellable. If $e$ is surjective and $f\\circ e=g\\circ e$, then for any $b$ pick $a$ with $e(a)=b$; $f(b)=f(e(a))=g(e(a))=g(b)$, so $f=g$. Thus surjections are epi. (In $\\mathbf{Set}$ the converse also holds.)"
-          - problem: "Show that the inclusion $\\mathbb{Z}\\hookrightarrow\\mathbb{Q}$ is an epimorphism in $\\mathbf{Ring}$ though it is not surjective."
-            answer: "A ring map out of $\\mathbb{Q}$ is determined by its values on $\\mathbb{Z}$, so the inclusion is epi but not onto."
-            solution_sketch: "If $f,g\\colon\\mathbb{Q}\\to R$ agree on $\\mathbb{Z}$, then for $m/n$ we have $f(m/n)=f(m)f(n)^{-1}=g(m)g(n)^{-1}=g(m/n)$ since ring maps preserve inverses of units; so $f=g$, i.e. the inclusion is epi. It is not surjective. This shows epi $\\ne$ surjective in general."
+          - problem: "In Set, let s from {1,2,3,4} to {a,b,c,d} be s(1)=a, s(2)=a, s(3)=b, s(4)=b. How many elements of the codomain are not in the image of s?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The image of s is {a,b}, since s(1)=a, s(2)=a, s(3)=b, s(4)=b. The codomain is {a,b,c,d}, so the elements not in the image are c and d. That gives 2 missing elements. The answer is 2."
+          - problem: "In Ring, the inclusion of Z into Q is an epimorphism. If f and g are ring maps from Q to R that agree on every integer, then f(3/4) is determined. For f(1)=1, find f(3/4)."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A ring map preserves addition and multiplication, so f(m/n)=f(m)f(n)^(-1) for n nonzero. Since f and g agree on Z, f(3)=3 and f(4)=4 when f(1)=1. Thus f(3/4)=3 times the inverse of 4, which is 3/4. The answer is 3/4."
+          - problem: "In Set, which function s from {1,2,3} to {a,b,c} is an epimorphism?"
+            answer: "s(1)=a, s(2)=b, s(3)=c"
+            answer_contract: {"kind": "label", "options": [["s(1)=a, s(2)=b, s(3)=c"], ["s(1)=a, s(2)=a, s(3)=c"], ["s(1)=a, s(2)=b, s(3)=b"], ["s(1)=c, s(2)=c, s(3)=c"]]}
+            solution_sketch: "In Set, a function is an epimorphism exactly when it is surjective. The option s(1)=a, s(2)=b, s(3)=c hits all of a, b, and c, so it is surjective and hence epi. The option s(1)=a, s(2)=a, s(3)=c misses b. The option s(1)=a, s(2)=b, s(3)=b misses c. The option s(1)=c, s(2)=c, s(3)=c misses a and b. The answer is s(1)=a, s(2)=b, s(3)=c."
+          - problem: "In Set, let s from {1,2,3,4} to {a,b,c} be s(1)=a, s(2)=b, s(3)=b, s(4)=c. How many elements of the codomain have exactly one preimage?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The image of s is {a,b,c}. The preimage of a is {1}, the preimage of b is {2,3}, and the preimage of c is {4}. The elements with exactly one preimage are a and c, so the count is 2. The answer is 2."
+          - problem: "Claim: the inclusion of Z into Q is an epimorphism in Ring. Step 1: Let f and g be ring maps from Q to R with f composed with i equal to g composed with i. Step 2: Then f(n)=g(n) for every integer n. Step 3: For m/n in Q, f(m/n)=f(m)+f(n) because f is additive. Step 4: Thus f(m/n)=g(m/n), so f=g. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the correct set-up for right cancellation. Step 2 correctly restricts agreement to the integers. Step 3 is invalid because a ring map satisfies f(m/n)=f(m)f(n)^(-1), not f(m)+f(n). Step 4 would follow from the corrected formula, so the first invalid step is Step 3. The answer is Step 3."
+          - problem: "In Set, let s from {1,2,3,4} to {a,b,c} be s(1)=a, s(2)=b, s(3)=b, s(4)=c. How many elements of the codomain are in the image of s?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The values of s are a, b, b, c, so the image is {a,b,c}. The codomain is {a,b,c}, so all 3 elements are in the image. The answer is 3."
+          - problem: "Write the full proof: in Ring, the inclusion of Z into Q is an epimorphism but not surjective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Let i: Z -> Q be the inclusion. To show i is an epimorphism, let f,g: Q -> R be ring maps with f composed with i equal to g composed with i. Step 2: Then f(n)=g(n) for every integer n, so f and g agree on the image of i. Step 3: For any m/n in Q with n nonzero, f(m/n)=f(m)f(n)^(-1). Since f(m)=g(m) and f(n)=g(n), this equals g(m)g(n)^(-1)=g(m/n). Step 4: Thus f=g, so i is right-cancellable and hence epi. Step 5: The map i is not surjective because 1/2 is not an integer. Therefore the inclusion Z -> Q is an epimorphism but not a surjection, so epi does not imply surjective in Ring."
       - id: kp3
         name: Iso implies mono and epi; the converse can fail
         key_prerequisites: [isomorphism-vs-equality]
         constraints: "The positive direction is a two-line cancellation with the two-sided inverse; the counterexample is $\\mathbb{Z}\\hookrightarrow\\mathbb{Q}$ in $\\mathbf{Ring}$ or a non-identity arrow of a poset category — always name the ambient category."
         exemplars:
-          - problem: "Prove every isomorphism is both a monomorphism and an epimorphism."
-            answer: "Cancel using the two-sided inverse."
-            solution_sketch: "Let $f$ be iso with inverse $f^{-1}$. If $f\\circ a=f\\circ b$, apply $f^{-1}$ on the left: $a=b$, so $f$ is mono. If $c\\circ f=d\\circ f$, apply $f^{-1}$ on the right: $c=d$, so $f$ is epi."
-          - problem: "Give an example of a morphism that is both mono and epi but not an isomorphism."
-            answer: "The inclusion $\\mathbb{Z}\\hookrightarrow\\mathbb{Q}$ in $\\mathbf{Ring}$."
-            solution_sketch: "It is mono (injective ring map) and epi (shown above), but has no inverse ring map $\\mathbb{Q}\\to\\mathbb{Z}$ since $1/2\\notin\\mathbb{Z}$. Hence mono $+$ epi does not imply iso outside special categories like $\\mathbf{Set}$."
+          - problem: "In Set, let f: {1,2} -> {1,2} swap 1 and 2, and let g be its inverse. Let a: {1} -> {1,2} send 1 to 1. Compute g(f(a(1)))."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The map a sends 1 to 1, so f(a(1)) = f(1) = 2. The map g is the inverse of f, so g(2) = 1. Thus g(f(a(1))) = 1. The answer is 1."
+          - problem: "In the category Ring, the inclusion i: Z -> Q is a monomorphism and an epimorphism. Give one rational number that is not in the image of i, as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The image of i is the set of integers inside Q. A rational number is outside the image when its denominator is not 1. The number 1/2 has denominator 2, so it is not an integer. The answer is 1/2."
+          - problem: "In the poset category on the set {0,1,2} with the usual order, how many isomorphisms are there? Give the answer as a whole number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In a poset category, an arrow x->y is an isomorphism only when x=y. The only such arrows are the three identities 0->0, 1->1, and 2->2. No arrow between distinct objects has an inverse because the reverse inequality fails. The answer is 3."
+          - problem: "In the poset category on the set {0,1,2,3} with the usual order, how many non-identity morphisms are both monomorphisms and epimorphisms but not isomorphisms? Give the answer as a whole number."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In a poset category every arrow is a monomorphism and an epimorphism because each hom-set has at most one arrow. An arrow between distinct objects is not an isomorphism since the reverse arrow does not exist. The number of non-identity arrows among four objects is the number of pairs 0<=x<y<=3, which is 6. The answer is 6."
+          - problem: "In Set, let f: {1,2,3} -> {1,2,3,4,5} be the inclusion map. How many elements of the codomain lie outside the image of f? Give the answer as a whole number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The image of the inclusion is the subset {1,2,3}. The codomain is {1,2,3,4,5}. The elements outside the image are 4 and 5. There are two such elements, so the answer is 2."
+          - problem: "In the poset category on the set {0,1,2} with the usual order, which of the following arrows is an isomorphism?"
+            answer: "0->0"
+            answer_contract: {"kind": "label", "options": [["0->0"], ["0->1"], ["1->2"], ["2->1"]]}
+            solution_sketch: "An arrow in a poset category is an isomorphism only when its source and target are equal. The arrow 0->1 has no inverse 1->0. The arrow 1->2 has no inverse 2->1. The pair 2->1 is not a morphism because 2 is not less than or equal to 1. Thus only 0->0 is an isomorphism. The answer is 0->0."
+          - problem: "Write the full proof: every isomorphism is both a monomorphism and an epimorphism, and the inclusion of Z into Q in Ring is mono and epi but not iso. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1. Let f: A -> B be an isomorphism with inverse g: B -> A. By definition of isomorphism, g composed with f is id_A and f composed with g is id_B. Step 2. To prove f is a monomorphism, suppose f composed with a equals f composed with b for arrows a,b: C -> A. Compose with g on the left: g composed with (f composed with a) equals g composed with (f composed with b). Associativity gives (g composed with f) composed with a equals (g composed with f) composed with b. Since g composed with f is id_A, the identity law gives a = b. Thus f is mono. Step 3. To prove f is an epimorphism, suppose c composed with f equals d composed with f for arrows c,d: B -> D. Compose with g on the right: (c composed with f) composed with g equals (d composed with f) composed with g. Associativity gives c composed with (f composed with g) equals d composed with (f composed with g). Since f composed with g is id_B, the identity law gives c = d. Thus f is epi. Step 4. In Ring, let i: Z -> Q be the inclusion. It is mono because if two ring maps agree after i, they agree on every integer. It is epi: if c composed with i equals d composed with i, then c(n)=d(n) for all integers n, and for m/n in Q we have c(m/n)=c(m)c(n)^{-1}=d(m)d(n)^{-1}=d(m/n), so c=d. Step 5. It is not an isomorphism because an inverse ring map Q -> Z would send 1/2 to an integer k with 2k=1, which is impossible. Therefore i is mono and epi but not iso. This completes the proof."
     diagnostic_exemplar:
       problem: "In $\\mathbf{Set}$, show that the inclusion $m\\colon\\{1,2\\}\\hookrightarrow\\{1,2,3\\}$ is a monomorphism but not an epimorphism."
       answer: "Mono: if $m\\circ f=m\\circ g$ for $f,g\\colon X\\to\\{1,2\\}$, then $f(x)=m(f(x))=m(g(x))=g(x)$ for every $x$, so $f=g$. Not epi: define $f,g\\colon\\{1,2,3\\}\\to\\{0,1\\}$ by $f\\equiv 0$ and $g(1)=g(2)=0$, $g(3)=1$; then $f\\circ m=g\\circ m$ (both vanish on $1,2$) but $f\\ne g$, so $m$ is not right-cancellable."
