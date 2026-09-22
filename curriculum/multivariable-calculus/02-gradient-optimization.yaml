@@ -21,27 +21,59 @@ topics:
         name: "Gradients of two-variable functions"
         key_prerequisites: [partial-derivatives]
         exemplars:
-          - problem: 'Let $f(x, y) = 3x^2 + 2y^3$. Find $\nabla f$ and evaluate $\nabla f(1, 2)$.'
-            answer: '$\nabla f = \langle 6x, 6y^2 \rangle$; $\;\nabla f(1, 2) = \langle 6, 24 \rangle$'
-            solution_sketch: '$\nabla f=\langle 6x,6y^2\rangle$; at $(1,2)$, $\nabla f=\langle 6,24\rangle$.'
-            answer_contract: {kind: none}
-          - problem: 'Let $f(x, y) = x^2 y^3$. Find $\nabla f$ and evaluate $\nabla f(2, 1)$.'
-            answer: '$\nabla f = \langle 2xy^3, 3x^2 y^2 \rangle$; $\;\nabla f(2, 1) = \langle 4, 12 \rangle$'
-            solution_sketch: '$\nabla f=\langle 2xy^3,3x^2y^2\rangle$; at $(2,1)$, $\nabla f=\langle 4,12\rangle$.'
-            answer_contract: {kind: none}
+          - problem: "Let f(x, y) = 4x^2 + 3y^2. Evaluate the gradient at the point (2, 1) and give the answer as (fx, fy)."
+            answer: "(16, 6)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The gradient is the vector of partial derivatives. First, fx = 8x by the power rule, and fy = 6y by the power rule. At (2, 1), fx = 8*2 = 16 and fy = 6*1 = 6. So the gradient is (16, 6)."
+          - problem: "Let f(x, y) = x^3 y^2. Evaluate the gradient at (1, 2) and give the answer as (fx, fy)."
+            answer: "(12, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The gradient is the vector of partial derivatives. First, fx = 3x^2 y^2 by the power rule because y is constant, and fy = 2x^3 y by the power rule because x is constant. At (1, 2), fx = 3*1*4 = 12 and fy = 2*1*2 = 4. So the gradient is (12, 4)."
+          - problem: "Let f(x, y) = 5x^2 y + y^3. Find fx and fy."
+            answer: "fx = 10xy; fy = 5x^2+3y^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fy"}]}
+            solution_sketch: "Write the gradient as the pair of partial derivatives. For fx, treat y as a constant: the derivative of 5x^2 y is 10xy, and y^3 has derivative 0, so fx = 10xy. For fy, treat x as a constant: the derivative of 5x^2 y is 5x^2, and the derivative of y^3 is 3y^2, so fy = 5x^2+3y^2. Thus fx = 10xy; fy = 5x^2+3y^2."
+          - problem: "Let f(x, y) = x^2 + 6xy - y^2. Give fx and fy."
+            answer: "fx = 2x+6y; fy = 6x-2y"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fy"}]}
+            solution_sketch: "Compute each partial derivative by treating the other variable as a constant. For fx, x^2 gives 2x, 6xy gives 6y, and -y^2 gives 0, so fx = 2x+6y. For fy, x^2 gives 0, 6xy gives 6x, and -y^2 gives -2y, so fy = 6x-2y. The gradient is fx = 2x+6y; fy = 6x-2y."
+          - problem: "Let f(x, y) = 2x^3 - 4xy + y^2. Evaluate the gradient at (1, 3) and give the answer as (fx, fy)."
+            answer: "(-6, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Find the partial derivatives first. fx = 6x^2 - 4y by the power rule, and fy = -4x + 2y by the power rule. At (1, 3), fx = 6 - 12 = -6 and fy = -4 + 6 = 2. The gradient at (1, 3) is (-6, 2)."
+          - problem: "Let f(x, y) = x^2 y^2 - 3x. Evaluate the gradient at (2, 1) and give the answer as (fx, fy)."
+            answer: "(1, 8)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Compute the partial derivatives first. fx = 2x y^2 - 3, and fy = 2x^2 y. At (2, 1), fx = 2*2*1 - 3 = 1 and fy = 2*4*1 = 8. The gradient at (2, 1) is (1, 8)."
         constraints: "polynomial integrands; evaluation points give small integer components"
       - id: kp2
         name: "Gradients requiring the product, quotient, or chain rule"
         key_prerequisites: [partial-derivatives]
         exemplars:
-          - problem: 'Let $f(x, y) = \ln(x^2 + y^2)$. Find $\nabla f$.'
-            answer: '$\left\langle \dfrac{2x}{x^2 + y^2}, \dfrac{2y}{x^2 + y^2} \right\rangle$'
-            solution_sketch: '$\nabla f=\left\langle\frac{2x}{x^2+y^2},\frac{2y}{x^2+y^2}\right\rangle$.'
-            answer_contract: {kind: none}
-          - problem: 'Let $f(x, y) = x e^{xy}$. Find $\nabla f$.'
-            answer: '$\langle (1 + xy)e^{xy}, x^2 e^{xy} \rangle$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f_x = e^{xy} + x \cdot y e^{xy}$ by the product rule; $f_y = x \cdot x e^{xy}$.'
+          - problem: "Let f(x, y) = ln(x^2+y^2). Find the gradient, and give fx and fy."
+            answer: "fx = 2x/(x^2+y^2); fy = 2y/(x^2+y^2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fy"}]}
+            solution_sketch: "Start with f(x, y) = ln(x^2+y^2). The chain rule gives f_x = (1/(x^2+y^2)) * 2x = 2x/(x^2+y^2). The same chain rule gives f_y = (1/(x^2+y^2)) * 2y = 2y/(x^2+y^2). Therefore fx = 2x/(x^2+y^2); fy = 2y/(x^2+y^2)."
+          - problem: "Let f(x, y) = x e^(xy). Find the gradient, and give fx and fy."
+            answer: "fx = (1+xy)e^(xy); fy = x^2e^(xy)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fy"}]}
+            solution_sketch: "Start with f(x, y) = x e^(xy). By the product rule with a chain-rule factor, f_x = e^(xy) + x*y e^(xy) = (1+xy)e^(xy). Because the derivative of the exponent xy in y is x, f_y = x*x e^(xy) = x^2e^(xy). Thus fx = (1+xy)e^(xy); fy = x^2e^(xy)."
+          - problem: "Let f(x, y) = sqrt(x^2+y^2). Find the gradient, and give fx and fy."
+            answer: "fx = x/sqrt(x^2+y^2); fy = y/sqrt(x^2+y^2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fy"}]}
+            solution_sketch: "Start with f(x, y) = sqrt(x^2+y^2). The chain rule with the outer square root gives f_x = (1/(2sqrt(x^2+y^2)))*2x = x/sqrt(x^2+y^2). Symmetry gives f_y = y/sqrt(x^2+y^2). Therefore fx = x/sqrt(x^2+y^2); fy = y/sqrt(x^2+y^2)."
+          - problem: "Let f(x, y) = x/(x^2+y^2). Find the gradient, and give fx and fy."
+            answer: "fx = (y^2-x^2)/(x^2+y^2)^2; fy = -2xy/(x^2+y^2)^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fy"}]}
+            solution_sketch: "Start with f(x, y) = x/(x^2+y^2). The quotient rule in x gives f_x = ((x^2+y^2) - x(2x))/(x^2+y^2)^2 = (y^2-x^2)/(x^2+y^2)^2. The quotient rule in y gives f_y = (0 - x(2y))/(x^2+y^2)^2 = -2xy/(x^2+y^2)^2. Therefore fx = (y^2-x^2)/(x^2+y^2)^2; fy = -2xy/(x^2+y^2)^2."
+          - problem: "Let f(x, y) = e^(x^2+y^2). Find the gradient, and give fx and fy."
+            answer: "fx = 2x e^(x^2+y^2); fy = 2y e^(x^2+y^2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fy"}]}
+            solution_sketch: "Start with f(x, y) = e^(x^2+y^2). The chain rule in x gives f_x = e^(x^2+y^2)*2x = 2x e^(x^2+y^2). The chain rule in y gives f_y = e^(x^2+y^2)*2y = 2y e^(x^2+y^2). Thus fx = 2x e^(x^2+y^2); fy = 2y e^(x^2+y^2)."
+          - problem: "Let f(x, y) = x ln(y^2+1). Find the gradient, and give fx and fy."
+            answer: "fx = ln(y^2+1); fy = 2xy/(y^2+1)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fy"}]}
+            solution_sketch: "Start with f(x, y) = x ln(y^2+1). The product rule in x gives f_x = ln(y^2+1). The product rule in y with the chain rule gives f_y = x*(2y/(y^2+1)) = 2xy/(y^2+1). Thus fx = ln(y^2+1); fy = 2xy/(y^2+1)."
         constraints: "one composite or product structure per function (e^{xy}, ln(x^2+y^2), sqrt); results factor cleanly"
       - id: kp3
         name: "Gradients in three variables"
@@ -94,23 +126,55 @@ topics:
           - problem: 'Find the directional derivative of $f(x, y) = x^2 + y^2$ at $(1, 2)$ in the direction of $\mathbf{v} = \langle 3, 4 \rangle$.'
             answer: '$\frac{22}{5}$'
             solution_sketch: '$\nabla f(1,2) = \langle 2, 4 \rangle$; unit vector $\mathbf{u} = \langle \frac{3}{5}, \frac{4}{5} \rangle$; $D_{\mathbf{u}} f = \frac{6}{5} + \frac{16}{5} = \frac{22}{5}$.'
-          - problem: 'Find the directional derivative of $f(x, y) = xy$ at $(2, -1)$ in the direction $\mathbf{u} = \langle \frac{1}{\sqrt{2}}, \frac{1}{\sqrt{2}} \rangle$.'
-            answer: '$\frac{1}{\sqrt{2}}$ (i.e. $\frac{\sqrt{2}}{2}$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla f(2, -1) = \langle -1, 2 \rangle$; $D_{\mathbf{u}} f = \frac{-1 + 2}{\sqrt{2}}$.'
+          - problem: "Find the directional derivative of f(x, y) = x y^2 at (2, 1) in the direction of v = <3, 4> as a fraction."
+            answer: "19/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, gradient: for f(x, y) = x y^2, grad f = <y^2, 2xy>, so grad f(2, 1) = <1, 4>. Step 2, unit direction: the length of <3, 4> is 5, so u = <3/5, 4/5>. Step 3, dot product: <1, 4> dot <3/5, 4/5> = 3/5 + 16/5 = 19/5. The directional derivative is 19/5."
+          - problem: "Find the directional derivative of f(x, y) = x^2 + 3xy at (1, 2) in the direction of v = <5, 12> as a fraction."
+            answer: "76/13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, gradient: for f(x, y) = x^2 + 3xy, grad f = <2x + 3y, 3x>, so grad f(1, 2) = <8, 3>. Step 2, unit direction: the length of <5, 12> is 13, so u = <5/13, 12/13>. Step 3, dot product: <8, 3> dot <5/13, 12/13> = 40/13 + 36/13 = 76/13. The directional derivative is 76/13."
+          - problem: "Find the directional derivative of f(x, y) = x^2 - y^2 at (3, 1) in the direction of the unit vector v = <1/sqrt(2), -1/sqrt(2)> as an exact value."
+            answer: "4sqrt(2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, gradient: for f(x, y) = x^2 - y^2, grad f = <2x, -2y>, so grad f(3, 1) = <6, -2>. Step 2, direction: the vector <1/sqrt(2), -1/sqrt(2)> is already unit. Step 3, dot product: <6, -2> dot <1/sqrt(2), -1/sqrt(2)> = 8/sqrt(2) = 4sqrt(2). The directional derivative is 4sqrt(2)."
+          - problem: "Find the directional derivative of f(x, y, z) = x y + y z at (1, 2, 3) in the direction of v = <1, 2, 2> as a fraction."
+            answer: "14/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, gradient: for f(x, y, z) = x y + y z, grad f = <y, x + z, y>, so grad f(1, 2, 3) = <2, 4, 2>. Step 2, unit direction: the length of <1, 2, 2> is 3, so u = <1/3, 2/3, 2/3>. Step 3, dot product: <2, 4, 2> dot <1/3, 2/3, 2/3> = 2/3 + 8/3 + 4/3 = 14/3. The directional derivative is 14/3."
+          - problem: "Find the directional derivative of f(x, y) = x^3 + y^2 at (1, -1) in the direction of v = <4, 3> as a fraction."
+            answer: "6/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, gradient: for f(x, y) = x^3 + y^2, grad f = <3x^2, 2y>, so grad f(1, -1) = <3, -2>. Step 2, unit direction: the length of <4, 3> is 5, so u = <4/5, 3/5>. Step 3, dot product: <3, -2> dot <4/5, 3/5> = 12/5 - 6/5 = 6/5. The directional derivative is 6/5."
         constraints: "direction vectors are Pythagorean-triple multiples or unit diagonals; ALWAYS require normalization when |v| != 1"
       - id: kp2
         name: "Steepest ascent and descent"
         key_prerequisites: [computing-the-gradient, dot-product]
         exemplars:
-          - problem: 'In which direction does $f(x, y) = x^2 y$ increase fastest at $(2, 3)$, and what is that maximal rate?'
-            answer: 'Direction $\frac{1}{\sqrt{10}}\langle 3, 1 \rangle$; maximal rate $4\sqrt{10}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla f(2,3) = \langle 12, 4 \rangle$; the max rate is $|\nabla f| = \sqrt{160} = 4\sqrt{10}$, in the direction of $\nabla f$, which normalizes to $\langle 3, 1 \rangle / \sqrt{10}$.'
-          - problem: 'In which direction does $f(x, y) = x^2 + 3y^2$ decrease fastest at $(2, 1)$, and what is the directional derivative in that direction?'
-            answer: 'Direction $-\frac{1}{\sqrt{13}}\langle 2, 3 \rangle$; directional derivative $-2\sqrt{13}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla f(2,1) = \langle 4, 6 \rangle$; steepest descent is $-\nabla f$ normalized, and the rate there is $-|\nabla f| = -\sqrt{52} = -2\sqrt{13}$.'
+          - problem: "A hill has height $f(x, y) = x^2 + 2y^2$ metres. A hiker is at the point $(3, 1)$. Find the unit vector in the direction of steepest ascent and the rate of change in that direction, giving the direction as (a, b)."
+            answer: "dir = (3/sqrt(13), 2/sqrt(13)); rate = 2sqrt(13)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "rate"}]}
+            solution_sketch: "The full result is dir = (3/sqrt(13), 2/sqrt(13)); rate = 2sqrt(13). Step 1 (partial derivatives): f_x = 2x and f_y = 4y, so the gradient at (3, 1) is (6, 4). Step 2 (steepest ascent): the gradient points in the direction of fastest increase. Step 3 (normalize): its magnitude is sqrt(52) = 2sqrt(13), so dividing the gradient by that magnitude gives the unit direction. The asked result is dir = (3/sqrt(13), 2/sqrt(13)); rate = 2sqrt(13)."
+          - problem: "The temperature on a flat plate is $f(x, y) = 2x^2 + y^2$ degrees at the point $(x, y)$. A probe is placed at $(1, 2)$. Find the unit vector in the direction of steepest descent and the rate of change in that direction, giving the direction as (a, b)."
+            answer: "dir = (-1/sqrt(2), -1/sqrt(2)); rate = -4sqrt(2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "rate"}]}
+            solution_sketch: "The full result is dir = (-1/sqrt(2), -1/sqrt(2)); rate = -4sqrt(2). Step 1 (partial derivatives): f_x = 4x and f_y = 2y, so the gradient at (1, 2) is (4, 4). Step 2 (steepest descent): the direction of fastest decrease is the opposite of the gradient vector. Step 3 (normalize): the magnitude is sqrt(32) = 4sqrt(2), so the unit direction is (-1/sqrt(2), -1/sqrt(2)) and the rate there is negative. The asked result is dir = (-1/sqrt(2), -1/sqrt(2)); rate = -4sqrt(2)."
+          - problem: "The depth of a lake is $f(x, y) = x^2 y$ metres at the point $(x, y)$. A boat is at $(2, 2)$. Find the unit vector in the direction of steepest ascent and the rate of change in that direction, giving the direction as (a, b)."
+            answer: "dir = (2/sqrt(5), 1/sqrt(5)); rate = 4sqrt(5)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "rate"}]}
+            solution_sketch: "The full result is dir = (2/sqrt(5), 1/sqrt(5)); rate = 4sqrt(5). Step 1 (partial derivatives): f_x = 2xy and f_y = x^2, so the gradient at (2, 2) is (8, 4). Step 2 (steepest ascent): the gradient gives the uphill direction. Step 3 (normalize): the magnitude is sqrt(80) = 4sqrt(5), so dividing the gradient by it gives the unit direction. The asked result is dir = (2/sqrt(5), 1/sqrt(5)); rate = 4sqrt(5)."
+          - problem: "The square of the distance from the origin is $f(x, y, z) = x^2 + y^2 + z^2$ at the point $(x, y, z)$. A particle sits at $(1, 1, 2)$. Find the unit vector in the direction of steepest ascent and the rate of change in that direction, giving the direction as (a, b, c)."
+            answer: "dir = (1/sqrt(6), 1/sqrt(6), 2/sqrt(6)); rate = 2sqrt(6)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "rate"}]}
+            solution_sketch: "The full result is dir = (1/sqrt(6), 1/sqrt(6), 2/sqrt(6)); rate = 2sqrt(6). Step 1 (partial derivatives): f_x = 2x, f_y = 2y and f_z = 2z, so the gradient at (1, 1, 2) is (2, 2, 4). Step 2 (steepest ascent): the gradient points toward fastest increase. Step 3 (normalize): its length is sqrt(24) = 2sqrt(6), so dividing gives the unit vector. The asked result is dir = (1/sqrt(6), 1/sqrt(6), 2/sqrt(6)); rate = 2sqrt(6)."
+          - problem: "A pressure field on a surface is $f(x, y) = xy$ units at the point $(x, y)$. A sensor is at $(1, 3)$. Find the unit vector in the direction of steepest descent and the rate of change in that direction, giving the direction as (a, b)."
+            answer: "dir = (-3/sqrt(10), -1/sqrt(10)); rate = -sqrt(10)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "rate"}]}
+            solution_sketch: "The full result is dir = (-3/sqrt(10), -1/sqrt(10)); rate = -sqrt(10). Step 1 (partial derivatives): f_x = y and f_y = x, so the gradient at (1, 3) is (3, 1). Step 2 (steepest descent): the downhill direction is the negative of the gradient. Step 3 (normalize): the magnitude is sqrt(10), so the unit direction is (-3/sqrt(10), -1/sqrt(10)) and the rate there is -sqrt(10). The asked result is dir = (-3/sqrt(10), -1/sqrt(10)); rate = -sqrt(10)."
+          - problem: "A saddle surface has height $f(x, y) = x^2 - y^2$. A marble is at the point $(2, 1)$. Find the unit vector in the direction of steepest descent and the rate of change in that direction, giving the direction as (a, b)."
+            answer: "dir = (-2/sqrt(5), 1/sqrt(5)); rate = -2sqrt(5)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "rate"}]}
+            solution_sketch: "The full result is dir = (-2/sqrt(5), 1/sqrt(5)); rate = -2sqrt(5). Step 1 (partial derivatives): f_x = 2x and f_y = -2y, so the gradient at (2, 1) is (4, -2). Step 2 (steepest descent): the direction of fastest decrease is the negative of the gradient. Step 3 (normalize): the magnitude is sqrt(20) = 2sqrt(5), so the unit vector is (-2/sqrt(5), 1/sqrt(5)). The asked result is dir = (-2/sqrt(5), 1/sqrt(5)); rate = -2sqrt(5)."
         constraints: "gradient magnitudes simplify to k*sqrt(m) with small squarefree m; ask for ascent or descent explicitly"
       - id: kp3
         name: "Extreme and zero values of the directional derivative"
