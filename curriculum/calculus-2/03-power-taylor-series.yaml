@@ -235,22 +235,50 @@ topics:
           - problem: 'Find the interval of convergence of $\sum_{n=1}^{\infty} \frac{(x + 1)^n}{\sqrt{n} \, 2^n}$.'
             answer: '$[-3, 1)$'
             solution_sketch: '$R = 2$ about center $-1$. At $x = 1$: $\sum \frac{1}{\sqrt{n}}$ diverges; at $x = -3$: $\sum \frac{(-1)^n}{\sqrt{n}}$ converges by the AST.'
+          - problem: "Find the interval of convergence of $\\sum_{n=1}^{\\infty} \\frac{(x - 1)^n}{n \\, 2^n}$, and state the answer as an inequality in $x$."
+            answer: "-1 <= x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} \\frac{(x - 1)^n}{n \\, 2^n}$. Ratio test: $\\frac{|x - 1|}{2} < 1$, so the center is $1$, the radius is $2$, and $-1 < x < 3$. At $x = 3$ the series is $\\sum \\frac{1}{n}$, a divergent p-series. At $x = -1$ it is $\\sum \\frac{(-1)^n}{n}$, which converges by the alternating series test. The interval of convergence is -1 <= x < 3."
+          - problem: "Find the interval of convergence of $\\sum_{n=1}^{\\infty} \\frac{(x + 3)^n}{n^2 \\, 4^n}$, and state the answer as an inequality in $x$."
+            answer: "-7 <= x <= 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} \\frac{(x + 3)^n}{n^2 \\, 4^n}$. Ratio test: $\\frac{|x + 3|}{4} < 1$, so the center is $-3$, the radius is $4$, and $-7 < x < 1$. At $x = 1$ the series is $\\sum \\frac{1}{n^2}$, a convergent p-series with $p = 2$. At $x = -7$ it is $\\sum \\frac{(-1)^n}{n^2}$, which converges absolutely. The interval of convergence is -7 <= x <= 1."
+          - problem: "Find the interval of convergence of $\\sum_{n=1}^{\\infty} \\frac{(x - 4)^n}{2^n}$, and state the answer as an inequality in $x$."
+            answer: "2 < x < 6"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} \\frac{(x - 4)^n}{2^n}$. Ratio test: $\\frac{|x - 4|}{2} < 1$, so the center is $4$, the radius is $2$, and $2 < x < 6$. At $x = 6$ the series is $\\sum 1$, which diverges. At $x = 2$ it is $\\sum (-1)^n$, which also diverges. The interval of convergence is 2 < x < 6."
+          - problem: "Find the interval of convergence of $\\sum_{n=1}^{\\infty} \\frac{(x + 2)^n}{3^n \\sqrt{n}}$, and state the answer as an inequality in $x$."
+            answer: "-5 <= x < 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} \\frac{(x + 2)^n}{3^n \\sqrt{n}}$. Ratio test: $\\frac{|x + 2|}{3} < 1$, so the center is $-2$, the radius is $3$, and $-5 < x < 1$. At $x = 1$ the series is $\\sum \\frac{1}{\\sqrt{n}}$, a divergent p-series with $p = 1/2$. At $x = -5$ it is $\\sum \\frac{(-1)^n}{\\sqrt{n}}$, which converges by the alternating series test. The interval of convergence is -5 <= x < 1."
         constraints: "centers are small integers; endpoint series must reduce to p-series, alternating p-series, or geometric"
       - id: kp3
         name: Degenerate and open cases
         key_prerequisites: [radius-of-convergence]
         exemplars:
-          - problem: 'Find the interval of convergence of $\sum_{n=0}^{\infty} n! \, (x - 1)^n$.'
-            answer: 'the single point $x = 1$'
-            answer_contract: {kind: none}
-            solution_sketch: '$R = 0$: the ratio $(n+1)|x-1|$ blows up for any $x \ne 1$.'
-          - problem: 'Find the interval of convergence of $\sum_{n=0}^{\infty} \frac{x^n}{n!}$.'
-            answer: '$(-\infty, \infty)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$R = \infty$.'
+          - problem: "Consider the series sum over n >= 0 of n factorial times (x - 1)^n. Find the radius of convergence R."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is sum over n >= 0 of n factorial times (x - 1)^n. Apply the ratio test: the ratio of successive term sizes is (n+1)|x-1|, which grows without bound for every x different from 1. The only point where the series converges is x = 1, so no open interval survives. The radius of convergence is 0."
+          - problem: "Consider the series sum over n >= 0 of x^n divided by n factorial. Find the radius of convergence R."
+            answer: "infinity"
+            answer_contract: {"kind": "label", "options": [["infinity", "inf", "oo"], ["0"], ["DNE", "does not exist"], ["-infinity", "-inf", "-oo"]]}
+            solution_sketch: "The series is sum over n >= 0 of x^n divided by n factorial. Apply the ratio test: the limit of the ratio of successive term sizes is |x|/(n+1), which tends to 0 for every x, so the series converges for all real x. The option 0 is the error of confusing this with a factorial-coefficient series that forces a single point. The option DNE is the error of thinking the ratio limit fails to exist, and -infinity is a sign error in the ratio. The radius of convergence is infinity."
           - problem: 'Find the interval of convergence of $\sum_{n=1}^{\infty} n x^n$.'
             answer: '$(-1, 1)$'
             solution_sketch: '$R = 1$; at $x = \pm 1$ the terms $\pm n$ do not tend to $0$, so both endpoints fail the term test.'
+          - problem: "Consider the series sum over n >= 0 of (n+1)(x-2)^n. Find the interval of convergence, and give the answer as an inequality in x."
+            answer: "1 < x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The series is sum over n >= 0 of (n+1)(x-2)^n. Apply the ratio test: the limit of the ratio of successive term sizes is |x-2|, so the radius is 1 and the open interval is 1 < x < 3. At x=1 the terms are (n+1)(-1)^n and at x=3 they are n+1; neither tends to 0, so both endpoints fail the term test. The interval of convergence is 1 < x < 3."
+          - problem: "Consider the series sum over n >= 1 of (x-1)^n/n. Find the interval of convergence, and give the answer as an inequality in x."
+            answer: "0 <= x < 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The series is sum over n >= 1 of (x-1)^n/n. Apply the ratio test: the limit of the ratio of successive term sizes is |x-1|, so the radius is 1 and the open interval is 0 < x < 2. At x=0 the series is the alternating harmonic series, which converges by the alternating series test; at x=2 it is the harmonic series, which diverges. The interval of convergence is 0 <= x < 2."
+          - problem: "Consider the series sum over n >= 1 of n^2 (x+1)^n. Find the interval of convergence, and give the answer as an inequality in x."
+            answer: "-2 < x < 0"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The series is sum over n >= 1 of n^2 (x+1)^n. Apply the ratio test: the limit of the ratio of successive term sizes is |x+1|, so the radius is 1 and the open interval is -2 < x < 0. At x=-2 the terms are n^2 (-1)^n and at x=0 they are n^2; neither tends to 0, so both endpoints fail the term test. The interval of convergence is -2 < x < 0."
         constraints: "include R = 0, R = infinity, and both-endpoints-diverge cases"
     diagnostic_exemplar:
       problem: 'Find the interval of convergence of $\sum_{n=1}^{\infty} \frac{x^n}{n \, 2^n}$.'
@@ -356,25 +384,57 @@ topics:
         name: The coefficient formula
         key_prerequisites: [power-series, derivatives-exp-log, higher-order-derivatives]
         exemplars:
-          - problem: 'Derive the Maclaurin series of $e^x$ from the definition $c_n = \frac{f^{(n)}(0)}{n!}$.'
-            answer: '$\sum_{n=0}^{\infty} \frac{x^n}{n!}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Every derivative of $e^x$ is $e^x$, so $f^{(n)}(0) = 1$ for all $n$.'
+          - problem: "For f(x) = e^x, the Maclaurin coefficient formula is c_n = f^(n)(0)/n!. Find c_5."
+            answer: "1/120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coefficient formula is c_n = f^(n)(0)/n!. Every derivative of f(x) = e^x equals e^x, so f^(5)(0) = 1. Divide by 5! = 120: c_5 = 1/120. The coefficient c_5 is 1/120."
           - problem: 'Find the Maclaurin series of $e^{2x}$ through the $x^3$ term.'
             answer: '$1 + 2x + 2x^2 + \frac{4}{3}x^3$'
             solution_sketch: '$f^{(n)}(0) = 2^n$: coefficients $\frac{2^n}{n!}$ give $1, 2, 2, \frac{8}{6} = \frac{4}{3}$.'
+          - problem: "For f(x) = e^(3x), find the coefficient of x^4 in its Maclaurin series."
+            answer: "27/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coefficient formula gives c_n = f^(n)(0)/n!. For f(x) = e^(3x), each derivative multiplies by 3, so f^(4)(0) = 3^4 = 81. Divide by 4! = 24: c_4 = 81/24 = 27/8. The coefficient of x^4 is 27/8."
+          - problem: "The coefficient of x^2 in the Maclaurin series of e^(ax) is 8. Find the positive integer a."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coefficient formula gives c_2 = a^2/2! for e^(ax). Set the known coefficient equal to 8: a^2/2 = 8. Multiply by 2 to get a^2 = 16, so the positive integer a is 4. The positive integer a is 4."
+          - problem: "Find the Maclaurin polynomial of e^(4x) through the x^2 term."
+            answer: "1+4x+8x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The coefficient formula gives c_n = f^(n)(0)/n! for n = 0, 1, 2. For f(x) = e^(4x), the derivative values at 0 are f(0) = 1, f'(0) = 4, and f''(0) = 16. The coefficients are c_0 = 1, c_1 = 4, and c_2 = 16/2 = 8. The polynomial through the x^2 term is 1+4x+8x^2."
+          - problem: "Find the coefficient of x^3 in the Maclaurin series of e^(-x)."
+            answer: "-1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coefficient formula is c_n = f^(n)(0)/n!. For f(x) = e^(-x), the third derivative is f'''(x) = -e^(-x), so f'''(0) = -1. Divide by 3! = 6: c_3 = -1/6. The coefficient of x^3 is -1/6."
         constraints: "functions with a clean derivative pattern (e^{ax}); at most 4 terms when truncated"
       - id: kp2
         name: Sine and cosine from the derivative cycle
         key_prerequisites: [power-series, derivatives-trig, higher-order-derivatives]
         exemplars:
-          - problem: 'Derive the Maclaurin series of $\sin x$ from the definition.'
-            answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{(2n+1)!}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The derivatives cycle $\sin, \cos, -\sin, -\cos$; at $0$ they give $0, 1, 0, -1$, so only odd powers survive with alternating signs.'
           - problem: 'Find the Maclaurin series of $\cos x$ through the $x^4$ term.'
             answer: '$1 - \frac{x^2}{2} + \frac{x^4}{24}$'
             solution_sketch: 'Even derivatives at $0$ alternate $1, -1, 1$; divide by $(2n)!$.'
+          - problem: "Use the four-step derivative cycle for sin x. State the parity of the surviving powers in its Maclaurin series and give the coefficient of x^7 as a fraction."
+            answer: "parity = odd; c = -1/5040"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["odd"], ["even"]]}, "name": "parity"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Step 1 (derivative cycle): f(x) = sin x gives f'(x) = cos x, f''(x) = -sin x, f'''(x) = -cos x, and f''''(x) = sin x, so the cycle repeats every four derivatives. Step 2 (values at zero): the even derivatives are 0 at x = 0, so the even coefficients vanish and only odd powers survive; the parity is odd. Step 3 (coefficient formula): the coefficient of x^7 is f^(7)(0)/7!, and f^(7)(0) = -cos(0) = -1, so the coefficient is -1/5040. The answer is parity = odd; c = -1/5040."
+          - problem: "Use the four-step derivative cycle for cos x. Find the coefficient of x^6 in its Maclaurin series and give it as a fraction."
+            answer: "-1/720"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (derivative cycle): f(x) = cos x gives f'(x) = -sin x, f''(x) = -cos x, f'''(x) = sin x, and f''''(x) = cos x, so the cycle repeats every four derivatives. Step 2 (values at zero): the odd derivatives are 0 at x = 0, so the odd coefficients vanish; only even powers survive. Step 3 (coefficient formula): the coefficient of x^6 is f^(6)(0)/6!, and f^(6)(0) = -cos(0) = -1, so the coefficient is -1/720. The coefficient is -1/720."
+          - problem: "The derivatives of sin x repeat every four steps. Determine the fifth derivative of sin x at x = 0 and give the answer as an integer."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (derivative cycle): f(x) = sin x gives f'(x) = cos x, f''(x) = -sin x, f'''(x) = -cos x, f''''(x) = sin x, and f^(5)(x) = cos x. Step 2 (evaluate at zero): substitute x = 0 into cos x, giving cos(0) = 1. The value is 1."
+          - problem: "Use the derivative cycle for sin x. Find the coefficient of x^4 in its Maclaurin series and give it as an integer."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (derivative cycle): f(x) = sin x gives f'(x) = cos x, f''(x) = -sin x, f'''(x) = -cos x, and f''''(x) = sin x. Step 2 (values at zero): f''''(0) = sin(0) = 0, and every even derivative of sin x is 0 at x = 0, so even powers have coefficient 0. The coefficient is 0."
+          - problem: "Use the four-step derivative cycle for cos x. Find the coefficient of x^2 in its Maclaurin series and give it as a fraction."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (derivative cycle): f(x) = cos x gives f'(x) = -sin x and f''(x) = -cos x, so the second derivative at zero is -1. Step 2 (coefficient formula): the coefficient of x^2 is f''(0)/2! = -1/2. The coefficient is -1/2."
         constraints: "use the four-step derivative cycle; state which coefficients vanish and why"
       - id: kp3
         name: Taylor series at other centers
@@ -448,6 +508,22 @@ topics:
           - problem: 'Find the first three nonzero terms of the Maclaurin series of $e^x \sin x$.'
             answer: '$x + x^2 + \frac{x^3}{3}$'
             solution_sketch: 'Multiply $\left(1 + x + \frac{x^2}{2} + \frac{x^3}{6}\right)\left(x - \frac{x^3}{6}\right)$ and collect through $x^3$: the cubic coefficient is $\frac{1}{2} - \frac{1}{6} = \frac{1}{3}$.'
+          - problem: "Find the Maclaurin series of sin x times sin x through the x^4 term."
+            answer: "x^2 - x^4/3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the sine series sin x = x - x^3/6 through the x^3 term. Multiply the two sine series and collect like powers through x^4 using the product rule for series. The x^2 coefficient is 1 and the x^4 coefficient is -1/3, so the series is x^2 - x^4/3."
+          - problem: "Find the Maclaurin series of e^x cos x through the x^3 term."
+            answer: "1 + x - x^3/3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the two standard series e^x = 1 + x + x^2/2 + x^3/6 and cos x = 1 - x^2/2. Multiply the series and collect like powers through x^3 using the product rule for series. The constant and x^2 terms cancel partly, and the result is 1 + x - x^3/3."
+          - problem: "Find the Maclaurin series of sin 3x cos x through the x^4 term."
+            answer: "3x - 6x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use the product-to-sum identity sin 3x cos x = (1/2)(sin 4x + sin 2x). Insert the standard sine series sin 4x = 4x - 32x^3/3 and sin 2x = 2x - 4x^3/3. Add the two series and halve the terms, so the series is 3x - 6x^3."
+          - problem: "Find the Maclaurin series of e^x sin 2x through the x^3 term."
+            answer: "2x + 2x^2 - x^3/3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the series e^x = 1 + x + x^2/2 + x^3/6 and sin 2x = 2x - 4x^3/3. Multiply the two series and collect like powers through x^3 using the product rule for series. The x, x^2 and x^3 coefficients are 2, 2 and -1/3, so the series is 2x + 2x^2 - x^3/3."
         constraints: "identities or products of two standard series; collect terms through degree at most 4"
       - id: kp3
         name: Series for limits and numerical sums
@@ -462,6 +538,18 @@ topics:
           - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{2^n}{n!}$ by recognizing a standard series.'
             answer: '$e^2$'
             solution_sketch: 'This is the $e^x$ series at $x = 2$.'
+          - problem: "Use Maclaurin series to evaluate the limit as x goes to 0 of (1 - cos(2x))/x^2. Find the limit."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the Maclaurin series for cos u: cos u = 1 - u^2/2 + u^4/24 - ... . Replace u by 2x: cos(2x) = 1 - 2x^2 + (2/3)x^4 - ... . Then 1 - cos(2x) = 2x^2 - (2/3)x^4 + ... . Divide by x^2: 2 - (2/3)x^2 + ... . Let x go to 0: the limit is 2."
+          - problem: "Use Maclaurin series to evaluate the limit as x goes to 0 of (ln(1+x) - x)/x^2. Find the limit."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the Maclaurin series for ln(1+x): ln(1+x) = x - x^2/2 + x^3/3 - ... . Then ln(1+x) - x = -x^2/2 + x^3/3 - ... . Divide by x^2: -1/2 + x/3 - ... . Let x go to 0: the limit is -1/2."
+          - problem: "The series sum from n=0 to infinity of 2^n/(n+1)! can be evaluated by recognizing a standard series. Evaluate the sum."
+            answer: "(e^2-1)/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the standard series e^u = 1 + u + u^2/2! + u^3/3! + ... = sum over k of u^k/k!. Put u = 2: e^2 = 1 + 2 + 2^2/2! + 2^3/3! + ... . Subtract the k = 0 term: e^2 - 1 = 2 + 2^2/2! + 2^3/3! + ... . Divide by 2: (e^2-1)/2 = 2/2 + 2^2/(2*2!) + 2^3/(2*3!) + ... = sum from n=0 to infinity of 2^n/(n+1)!. The sum is (e^2-1)/2."
         constraints: "term-by-term operations on the standard series; limits requiring at most two nonzero terms"
     diagnostic_exemplar:
       problem: 'Use Maclaurin series to evaluate $\lim_{x \to 0} \frac{e^x \sin x - x}{x^2}$.'
@@ -496,10 +584,26 @@ topics:
           - problem: 'Find the Maclaurin series of $(1 + x)^{1/2}$ through the $x^2$ term.'
             answer: '$1 + \frac{x}{2} - \frac{x^2}{8}$'
             solution_sketch: '$\binom{1/2}{1} = \frac{1}{2}$, $\binom{1/2}{2} = \frac{(1/2)(-1/2)}{2} = -\frac{1}{8}$.'
-          - problem: 'Show that $(1 + x)^{-2} = \sum_{n=0}^{\infty} (-1)^n (n + 1) x^n$ for $|x| < 1$.'
-            answer: '$\binom{-2}{n} = (-1)^n (n+1)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\binom{-2}{n} = \frac{(-2)(-3)\cdots(-2-n+1)}{n!} = (-1)^n \frac{(n+1)!}{n!} = (-1)^n (n+1)$.'
+          - problem: "Find the Maclaurin series of (1 + x)^(-2) through the x^2 term."
+            answer: "1 - 2x + 3x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full object is the binomial series for (1 + x)^k. Use the binomial coefficient rule: C(-2,0)=1, C(-2,1)=-2, and C(-2,2)=(-2)(-3)/2=3. Substitute these coefficients into 1 + C(k,1)x + C(k,2)x^2. The series through x^2 is 1 - 2x + 3x^2."
+          - problem: "Find the coefficient of x^2 in the Maclaurin series of (1 + x)^(-1/2)."
+            answer: "3/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the binomial coefficient C(k,2) for k = -1/2. Use the binomial coefficient rule: C(-1/2,2) = (-1/2)(-3/2)/2. Compute the product: (3/4)/2 = 3/8. The coefficient of x^2 is 3/8."
+          - problem: "Find the coefficient of x^2 in the Maclaurin series of (1 + x)^(1/3)."
+            answer: "-1/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the binomial coefficient C(k,2) for k = 1/3. Use the binomial coefficient rule: C(1/3,2) = (1/3)(-2/3)/2. Compute the product: (-2/9)/2 = -1/9. The coefficient of x^2 is -1/9."
+          - problem: "Find the sum of the first three coefficients (degrees 0, 1, 2) in the Maclaurin series of (1 + x)^(-1/2)."
+            answer: "7/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sum C(-1/2,0)+C(-1/2,1)+C(-1/2,2). Use the binomial coefficient rule: C(-1/2,0)=1, C(-1/2,1)=-1/2, and C(-1/2,2)=3/8. Add the three values: 1 - 1/2 + 3/8 = 7/8. The sum of the first three coefficients is 7/8."
+          - problem: "Find the sum of the first three coefficients (degrees 0, 1, 2) in the Maclaurin series of (1 + x)^(1/3)."
+            answer: "11/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the sum C(1/3,0)+C(1/3,1)+C(1/3,2). Use the binomial coefficient rule: C(1/3,0)=1, C(1/3,1)=1/3, and C(1/3,2)=-1/9. Add the three values: 1 + 1/3 - 1/9 = 11/9. The sum of the first three coefficients is 11/9."
         constraints: "exponents k in {1/2, -1/2, 1/3, -2}; truncate at degree 2 unless the pattern is closed-form"
       - id: kp2
         name: Substitution into the binomial series
@@ -511,18 +615,50 @@ topics:
           - problem: 'Find the Maclaurin series of $\sqrt[3]{1 + x}$ through the $x^2$ term.'
             answer: '$1 + \frac{x}{3} - \frac{x^2}{9}$'
             solution_sketch: '$\binom{1/3}{2} = \frac{(1/3)(-2/3)}{2} = -\frac{1}{9}$.'
+          - problem: "In the binomial series $(1+t)^{1/2} = 1 + t/2 - t^2/8 + \\cdots$, take $t = 2x$. Find the Maclaurin series of $(1 + 2x)^{1/2}$ through the $x^2$ term."
+            answer: "1 + x - x^2/2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 uses the binomial series with exponent 1/2, written as (1 + t)^(1/2) = 1 + t/2 - t^2/8 + ... . Step 2 substitutes t = 2x into that expansion, which gives 1 + (2x)/2 - (2x)^2/8. Step 3 simplifies each term by algebra: 1 + x - x^2/2. So the Maclaurin series through the x^2 term is 1 + x - x^2/2."
+          - problem: "In the binomial series $(1+t)^{-1/2} = 1 - t/2 + 3t^2/8 - \\cdots$, take $t = x^2$. Find the Maclaurin series of $(1 + x^2)^{-1/2}$ through the $x^4$ term."
+            answer: "1 - x^2/2 + 3x^4/8"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 uses the binomial series with exponent -1/2: (1 + t)^(-1/2) = 1 - t/2 + 3t^2/8 - ... . Step 2 substitutes t = x^2, which turns the terms into 1 - x^2/2 + 3x^4/8. Step 3 keeps every term through x^4 and drops the higher powers. So the Maclaurin series through the x^4 term is 1 - x^2/2 + 3x^4/8."
+          - problem: "The substitution $t = -x^2$ in a binomial series with exponent $1/2$ produces a Maclaurin series whose $x^4$ term carries a coefficient. Find the coefficient of $x^4$ in the Maclaurin series of $(1 - x^2)^{1/2}$."
+            answer: "-1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 uses the binomial series with exponent 1/2: (1 + t)^(1/2) = 1 + t/2 - t^2/8 + ... . Step 2 substitutes t = -x^2, which gives 1 - x^2/2 - x^4/8 + ... . Step 3 reads the coefficient of x^4 from the third term of that expansion. The coefficient of x^4 is -1/8."
+          - problem: "In the binomial series $(1+t)^{-1/2} = 1 - t/2 + 3t^2/8 - \\cdots$, take $t = -2x$. Find the Maclaurin series of $(1 - 2x)^{-1/2}$ through the $x^2$ term."
+            answer: "1 + x + 3x^2/2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 uses the binomial series with exponent -1/2: (1 + t)^(-1/2) = 1 - t/2 + 3t^2/8 - ... . Step 2 substitutes t = -2x, which gives 1 + x + 3(4x^2)/8. Step 3 simplifies the x^2 term: 3(4x^2)/8 = 3x^2/2. So the Maclaurin series through the x^2 term is 1 + x + 3x^2/2."
         constraints: "substitutions are ±x^2 or ax into a binomial series with fractional exponent"
       - id: kp3
         name: Applications of the binomial series
         key_prerequisites: [taylor-maclaurin-series]
         exemplars:
-          - problem: 'Use the series $1 + \frac{x}{2} - \frac{x^2}{8}$ to approximate $\sqrt{1.1}$.'
-            answer: '$\frac{839}{800} = 1.04875$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Set $x = 0.1$: $1 + 0.05 - 0.00125 = 1.04875$; the true value is $1.0488\ldots$.'
+          - problem: "Use the first three terms of the binomial series for $(1+x)^{1/2}$ to approximate $\\sqrt{1.2}$. Give the answer as a fraction."
+            answer: "219/200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Binomial series: $(1+x)^{1/2} = 1 + x/2 - x^2/8 + \\cdots$. Substitute $x = 0.2 = 1/5$ into the three terms. Compute $1 + (1/5)/2 - (1/5)^2/8 = 1 + 1/10 - 1/200 = 219/200$. The approximation is 219/200."
+          - problem: "Use the first three terms of the binomial series for $(1+x)^{1/3}$ to approximate the cube root of $1.1$. Give the answer as a fraction."
+            answer: "929/900"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Binomial series: $(1+x)^{1/3} = 1 + x/3 - x^2/9 + \\cdots$. Substitute $x = 0.1 = 1/10$ into the three terms. Compute $1 + (1/10)/3 - (1/10)^2/9 = 1 + 1/30 - 1/900 = 929/900$. The approximation is 929/900."
+          - problem: "Use the first three terms of the binomial series for $(1-x)^{-1/2}$ to approximate $1/\\sqrt{0.8}$. Give the answer as a fraction."
+            answer: "223/200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Binomial series: $(1-x)^{-1/2} = 1 + x/2 + 3x^2/8 + \\cdots$. Substitute $x = 0.2 = 1/5$ into the three terms. Compute $1 + (1/5)/2 + 3(1/5)^2/8 = 1 + 1/10 + 3/200 = 223/200$. The approximation is 223/200."
           - problem: 'Integrate the series for $\frac{1}{\sqrt{1 - x^2}}$ to find the Maclaurin series of $\arcsin x$ through the $x^5$ term.'
             answer: '$x + \frac{x^3}{6} + \frac{3x^5}{40}$'
             solution_sketch: 'Integrate $1 + \frac{x^2}{2} + \frac{3x^4}{8}$ term by term; the constant is $\arcsin 0 = 0$.'
+          - problem: "Use the first three terms of the binomial series for $(1-x)^{1/2}$ to approximate $\\sqrt{0.98}$. Give the answer as a fraction."
+            answer: "19799/20000"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Binomial series: $(1-x)^{1/2} = 1 - x/2 - x^2/8 + \\cdots$. Substitute $x = 0.02 = 1/50$ into the three terms. Compute $1 - (1/50)/2 - (1/50)^2/8 = 1 - 1/100 - 1/20000 = 19799/20000$. The approximation is 19799/20000."
+          - problem: "Use the first three terms of the binomial series for $(1+x)^{-1/2}$ to approximate $\\int_0^{0.1} \\frac{1}{\\sqrt{1+x}}\\,dx$. Give the answer as a fraction."
+            answer: "781/8000"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Binomial series: $(1+x)^{-1/2} = 1 - x/2 + 3x^2/8 + \\cdots$. Integrate the three terms from $0$ to $0.1 = 1/10$ to get $x - x^2/4 + x^3/8$. Evaluate at $x = 1/10$: $1/10 - 1/400 + 1/8000 = 781/8000$. The approximation is 781/8000."
         constraints: "numerical approximations at |x| <= 0.2 with exact fractional answers stated"
     diagnostic_exemplar:
       problem: 'Find the Maclaurin series of $\sqrt{1 + x^2}$ through the $x^4$ term, then use it to approximate $\sqrt{1.04}$ as an exact fraction.'

@@ -356,16 +356,28 @@ topics:
         name: The convergence condition
         key_prerequisites: [sequences-convergence, series-partial-sums]
         exemplars:
-          - problem: 'Does $\sum_{n=0}^{\infty} \left(\frac{3}{2}\right)^n$ converge? If so give its sum; otherwise state that it diverges.'
-            answer: 'diverges'
-            answer_contract: {kind: none}
-            solution_sketch: 'A geometric series converges iff $|r| < 1$; here $|r| = \frac{3}{2} \ge 1$, so it diverges.'
           - problem: 'Does $\sum_{n=0}^{\infty} (0.99)^n$ converge? If so, give its sum.'
             answer: "100"
             solution_sketch: '$\frac{1}{1 - 0.99} = 100$; convergence can be slow but $|r| < 1$ settles it.'
           - problem: 'The series $\sum_{n=0}^{\infty} \left(\frac{x}{2}\right)^n$ converges exactly when $|x| < R$. Find $R$.'
             answer: '2'
             solution_sketch: 'Need $\left|\frac{x}{2}\right| < 1$.'
+          - problem: "Does the geometric series $\\sum_{n=0}^{\\infty} \\left(-\\frac{4}{3}\\right)^n$ converge? Give the verdict and the value of $|r|$ as a fraction."
+            answer: "verdict = diverges; rabs = 4/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "rabs"}]}
+            solution_sketch: "First identify the ratio of the geometric series: $r = -\\frac{4}{3}$. Apply the convergence condition: a geometric series converges exactly when $|r| < 1$. Here $|r| = \\frac{4}{3} \\ge 1$, so the series diverges. The answer is verdict = diverges; rabs = 4/3."
+          - problem: "Does the geometric series $\\sum_{n=0}^{\\infty} \\left(-\\frac{1}{3}\\right)^n$ converge? Give the verdict and its sum as a fraction."
+            answer: "verdict = converges; S = 3/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "S"}]}
+            solution_sketch: "The ratio of the geometric series is $r = -\\frac{1}{3}$, so $|r| = \\frac{1}{3} < 1$ and the convergence condition holds. The sum of a convergent geometric series starting at $n = 0$ is $\\frac{a}{1 - r} = \\frac{1}{1 + 1/3} = \\frac{3}{4}$. The answer is verdict = converges; S = 3/4."
+          - problem: "The series $\\sum_{n=0}^{\\infty} \\left(\\frac{x}{3}\\right)^n$ is geometric with ratio depending on $x$. Give the answer as an inequality in $x$ describing all values of $x$ for which the series converges."
+            answer: "-3 < x < 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The series is geometric with ratio $r = \\frac{x}{3}$. The convergence condition for a geometric series is $|r| < 1$, so we need $\\left|\\frac{x}{3}\\right| < 1$. Multiplying by 3 gives $|x| < 3$, which as an inequality in $x$ is $-3 < x < 3$. The answer is -3 < x < 3."
+          - problem: "Does the geometric series $\\sum_{n=0}^{\\infty} (-1)^n$ converge? Give the verdict and the value of $|r|$."
+            answer: "verdict = diverges; rabs = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "rabs"}]}
+            solution_sketch: "The series is geometric with first term $1$ and ratio $r = -1$. The convergence condition requires $|r| < 1$, but here $|r| = 1$, and since $|r| \\ge 1$ the series diverges; its partial sums only alternate between 1 and 0. The answer is verdict = diverges; rabs = 1."
         constraints: "divergence verdicts must cite |r| >= 1; include one parameter question solving |r| < 1"
       - id: kp3
         name: Repeating decimals and applications
@@ -592,6 +604,22 @@ topics:
           - problem: 'Find $c > 0$ such that $\sum_{n=1}^{\infty} (1 + c)^{-n} = 2$.'
             answer: '$1/2$'
             solution_sketch: 'With $r = \frac{1}{1+c}$, the sum is $\frac{r}{1-r} = \frac{1}{c}$; set $\frac{1}{c} = 2$.'
+          - problem: "A patient takes a $12$ mg dose of a medicine every $8$ hours. Just before each new dose, only one fifth of the medicine from the previous dose remains in the body. Find the long-run maximum amount of medicine in the body, in mg."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The contributions of the successive doses to a peak form $12 + 12(1/5) + 12(1/5)^2 + \\cdots$, a geometric series with first term $12$ and ratio $1/5$. By the geometric sum formula the peak amount is $P = 12/(1 - 1/5) = 12/(4/5) = 15$. The long-run maximum amount is $15$ mg."
+          - problem: "Let $S = \\sum_{n=0}^{\\infty} 5r^n$. Find the value of $r$ with $0 < r < 1$ for which $S = 20$. Give the answer as a fraction."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is $S = 5 + 5r + 5r^2 + \\cdots$, geometric with first term $5$ and ratio $r$. For $|r| < 1$ the geometric sum formula gives $S = 5/(1 - r)$. Setting $5/(1-r) = 20$ gives $1 - r = 1/4$, hence $r = 3/4$."
+          - problem: "An orchard yields $3000$ kg of fruit in its first season. Each later season the yield is $94\\%$ of the yield of the season before. Find the total yield over all seasons, in kg."
+            answer: "50000"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The total is $3000 + 3000(0.94) + 3000(0.94)^2 + \\cdots$, a geometric series with first term $3000$ and ratio $0.94$. By the geometric sum formula the total is $3000/(1 - 0.94) = 3000/0.06 = 50000$. The total yield over all seasons is $50000$ kg."
+          - problem: "A charity collected $6000$ dollars in its first fundraising drive. Each later drive collected the same fixed fraction of the previous drive's amount, and the drives together raised $18000$ dollars in total. Find the common ratio $r$ between the amounts of successive drives."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The collections form $6000 + 6000r + 6000r^2 + \\cdots$, a geometric series with first term $6000$ and ratio $r$. Its sum is $6000/(1 - r)$ by the geometric sum formula, so $6000/(1-r) = 18000$, giving $1 - r = 1/3$. Solving gives $r = 2/3$."
         constraints: "word problems reducible to one geometric series; parameter problems with clean rational answers"
     diagnostic_exemplar:
       problem: 'Evaluate $\sum_{n=1}^{\infty} \left[\left(\frac{2}{3}\right)^n - \frac{1}{n(n+1)}\right]$.'
@@ -1316,14 +1344,30 @@ topics:
         name: Harder classifications
         key_prerequisites: [alternating-series-test, comparison-tests]
         exemplars:
-          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n n}{n^2 + 1}$.'
-            answer: 'conditionally convergent (AST applies; the absolute series behaves like $\sum \frac{1}{n}$, $L = 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{n}{n^2+1}$ decreases to $0$ for $n \ge 1$; limit comparison of the absolute series with the harmonic series gives $L = 1$.'
-          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n (n + 1)}{n}$.'
-            answer: 'divergent (the terms do not tend to $0$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{n+1}{n} \to 1$; the term test settles it before any AST reasoning.'
+          - problem: "Consider the alternating series sum from n=1 to infinity of (-1)^n n/(n^2+1). State its convergence classification."
+            answer: "conditionally convergent"
+            answer_contract: {"kind": "label", "options": [["absolutely convergent"], ["conditionally convergent"], ["divergent to infinity"], ["oscillates without limit"]]}
+            solution_sketch: "Write the series as sum (-1)^n n/(n^2+1). The alternating series test applies because n/(n^2+1) decreases to 0, so the series converges. For the absolute series, use limit comparison with 1/n; the ratio n^2/(n^2+1) tends to 1, so the absolute series diverges like the harmonic series. The option absolutely convergent is the error of skipping the limit comparison and assuming the quadratic denominator forces convergence. The option divergent to infinity is the error of applying the term test to the positive part and confusing divergence of the absolute series with divergence of the original series. The option oscillates without limit is the error of treating the alternating signs as nonvanishing oscillation even though the terms tend to 0 and the alternating series test gives convergence. Therefore the series is conditionally convergent."
+          - problem: "For the alternating series sum from n=1 to infinity of (-1)^n (n+1)/n, determine its convergence status and give the limit L of the absolute term as n tends to infinity."
+            answer: "verdict = diverges; L = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Write the series as sum (-1)^n (n+1)/n. Apply the term test: the absolute term (n+1)/n tends to 1, not 0, so the series diverges. The limit L of the absolute term is 1. Therefore verdict = diverges; L = 1."
+          - problem: "For the series sum from n=1 to infinity of (-1)^n/(2n^2+3), determine the convergence status of its absolute series and give the limit L from limit comparison with 1/n^2."
+            answer: "verdict = converges; L = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Write the series as sum (-1)^n/(2n^2+3). Use limit comparison of the absolute series with 1/n^2; the ratio n^2/(2n^2+3) tends to 1/2, so L = 1/2. The absolute series converges, so the verdict is converges. Therefore verdict = converges; L = 1/2."
+          - problem: "For the series sum from n=1 to infinity of (-1)^n/(3n^2+1), use limit comparison of its absolute series with 1/n^2 and give the limit L."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series as sum (-1)^n/(3n^2+1). Use limit comparison of the absolute series with 1/n^2; the ratio n^2/(3n^2+1) tends to 1/3. Therefore the limit is 1/3."
+          - problem: "For the series sum from n=1 to infinity of (-1)^n n/(2n^2+1), use limit comparison of its absolute series with 1/n and give the limit L."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series as sum (-1)^n n/(2n^2+1). Use limit comparison of the absolute series with 1/n; the ratio n^2/(2n^2+1) tends to 1/2. Therefore the limit is 1/2."
+          - problem: "For the series sum from n=1 to infinity of (-1)^n/(n^2+n), use limit comparison of its absolute series with 1/n^2 and give the limit L."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the series as sum (-1)^n/(n^2+n). Use limit comparison of the absolute series with 1/n^2; the ratio n^2/(n^2+n) tends to 1. Therefore the limit is 1."
         constraints: "absolute series needs a limit comparison; include one term-test divergence disguised as an AST problem"
     diagnostic_exemplar:
       problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n n}{n^2 + 4}$ as absolutely convergent, conditionally convergent, or divergent.'
