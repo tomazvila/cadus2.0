@@ -171,14 +171,30 @@ topics:
         name: "Abelian-ness, cyclicity, and other structural invariants"
         key_prerequisites: [group-isomorphisms]
         exemplars:
-          - problem: 'Prove that $S_3 \not\cong \mathbb{Z}_6$.'
-            answer: '$\mathbb{Z}_6$ is abelian; $S_3$ is not ($(1\,2)(1\,3) \neq (1\,3)(1\,2)$).'
-            answer_contract: {kind: none}
-            solution_sketch: 'Abelian-ness transfers across isomorphisms; exhibit one non-commuting pair.'
-          - problem: 'Prove that $(\mathbb{Q}, +) \not\cong (\mathbb{Z}, +)$.'
-            answer: '$\mathbb{Z}$ is cyclic; $\mathbb{Q}$ is not (no single rational generates all of $\mathbb{Q}$: $q/2 \notin \langle q \rangle$).'
-            answer_contract: {kind: none}
-            solution_sketch: 'Cyclicity is invariant; any candidate generator fails to reach half of itself.'
+          - problem: "A student must prove that $S_3$ and $\\mathbb{Z}_6$ are not isomorphic. Both groups have order $6$, and each has exactly two elements of order $3$. Which invariant separates the two groups?"
+            answer: "abelian-ness"
+            answer_contract: {"kind": "label", "options": [["abelian-ness"], ["group-order"], ["order-3-elements"], ["identity"]]}
+            solution_sketch: "Step 1 (compute the invariant on each group): Z6 is abelian, while S3 is not, because (1 2)(1 3) and (1 3)(1 2) differ. Step 2 (rule out each wrong option): group-order fails because both groups have order 6; order-3-elements fails because each group has exactly two elements of order 3; identity fails because every group has an identity, so it never separates two groups. Abelian-ness transfers across isomorphisms, so it is the invariant that proves the groups non-isomorphic. The answer is abelian-ness."
+          - problem: "The groups $\\mathbb{Z}_4$ and $\\mathbb{Z}_2 \\times \\mathbb{Z}_2$ have the same order and are both abelian, so a subtler invariant is needed. Counting the elements of order 2 is such an invariant. How many elements of order 2 does $\\mathbb{Z}_2 \\times \\mathbb{Z}_2$ have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (state the full object): the group Z2 x Z2 has elements (0,0), (1,0), (0,1), (1,1) under componentwise addition mod 2. Step 2 (apply the order rule): each of the three non-identity elements satisfies 2g = (0,0) and is nonzero, so each has order 2. Step 3 (count and compare): the count is 3, while Z4 has only the element 2 of order 2, so the invariant separates the two groups. The answer is 3."
+          - problem: "To test $\\mathbb{Z}_{12}$ against $\\mathbb{Z}_6 \\times \\mathbb{Z}_2$, use the invariant that counts the elements which generate the whole group. How many elements of $\\mathbb{Z}_{12}$ generate the whole group?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (state the full object): in Z12 an element generates the whole group exactly when its order is 12. Step 2 (apply the order rule): the order of a is 12 divided by the largest common factor of a and 12, which is 12 exactly for a equal to 1, 5, 7, 11. Step 3 (count and compare): the count is 4, while every element of Z6 x Z2 has order at most 6, so its count is 0, and the two counts separate the groups. The answer is 4."
+          - problem: "In $\\mathbb{Z}_9$, exactly two elements have order 3. To test $\\mathbb{Z}_9$ against $\\mathbb{Z}_3 \\times \\mathbb{Z}_3$, count the elements of order 3 in $\\mathbb{Z}_3 \\times \\mathbb{Z}_3$. How many such elements does $\\mathbb{Z}_3 \\times \\mathbb{Z}_3$ have?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (state the full object): Z3 x Z3 has 9 elements under componentwise addition mod 3. Step 2 (apply the order rule): every element except (0,0) satisfies 3g = (0,0) and is nonzero, so every one of the 8 non-identity elements has order 3. Step 3 (count and compare): the count is 8, while Z9 has exactly 2 elements of order 3, so the counts differ and the groups are not isomorphic. The answer is 8."
+          - problem: "A commuting count is an invariant: in $\\mathbb{Z}_6$, all six elements commute with any fixed element. In $S_3$, an element $g$ commutes with $(1\\,3)$ exactly when $g(1\\,3) = (1\\,3)g$. What is the count of elements of $S_3$ with this property?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (state the full object): S3 has the six elements e, (1 2), (1 3), (2 3), (1 2 3), (1 3 2). Step 2 (apply the commutativity check): g(1 3) = (1 3)g holds for g = e and g = (1 3) only, since each of the four remaining elements conjugates (1 3) to a different transposition. Step 3 (count and compare): the count is 2, while in Z6 the count is 6, so the counts separate the groups. The answer is 2."
+          - problem: "Work in the additive group $(\\mathbb{Q},+)$ of rational numbers, an infinite group. The first answer says whether some single element of this group generates the entire group; the second counts the elements that generate the entire group. Give the verdict and the value of $k$."
+            answer: "verdict = not-cyclic; k = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cyclic"], ["not-cyclic"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "Step 1 (state the generator test for the full object (Q,+)): the group is generated by one element q exactly when every rational number is an integer multiple of q. Step 2 (run the test): for any nonzero rational q, the number q/2 is not an integer multiple of q, and q = 0 generates only the one-element group, so no element generates the group. Step 3 (count): the number of generating elements is 0 and the single-generator test fails, so the group is not cyclic while Z is cyclic. The answer is verdict = not-cyclic; k = 0."
         constraints: "one clean invariant per problem; include one infinite-group example per set"
       - id: kp3
         name: "Full comparisons of small groups"
@@ -225,14 +241,30 @@ topics:
         name: "Computing kernels and images"
         key_prerequisites: [homomorphisms-intro]
         exemplars:
-          - problem: 'Let $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_{12}$, $\varphi(x) = 3x \bmod 12$. Find $\ker \varphi$ and $\mathrm{im}\, \varphi$.'
-            answer: '$\ker \varphi = \{0, 4, 8\}$; $\mathrm{im}\, \varphi = \{0, 3, 6, 9\}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$3x \equiv 0 \pmod{12}$ iff $x \equiv 0 \pmod 4$. The image is the multiples of $3$.'
-          - problem: 'Find the kernel of the sign homomorphism $\mathrm{sgn} : S_4 \to \{\pm 1\}$.'
-            answer: '$A_4$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The even permutations are exactly those with sign $+1$.'
+          - problem: "Let $\\varphi : \\mathbb{Z}_{12} \\to \\mathbb{Z}_{12}$ be given by $\\varphi(x) = 8x \\bmod 12$. Find $\\ker \\varphi$ and $\\mathrm{im}\\,\\varphi$, giving each as an explicit set."
+            answer: "ker = {0, 3, 6, 9}; im = {0, 4, 8}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "ker"}, {"contract": {"kind": "set"}, "name": "im"}]}
+            solution_sketch: "Kernel step (kernel test): solve 8x ≡ 0 mod 12, which reduces to 2x ≡ 0 mod 3, so x ≡ 0 mod 3, giving ker φ = {0, 3, 6, 9}. Image step (image of a multiply map): the values 8x mod 12 are exactly the multiples of gcd(8, 12) = 4, giving im φ = {0, 4, 8}. The answer is ker = {0, 3, 6, 9}; im = {0, 4, 8}."
+          - problem: "The sign homomorphism sends each permutation of four letters to +1 when the permutation is even and to -1 when it is odd. Which subgroup of $S_4$ is the kernel of the sign map?"
+            answer: "A4"
+            answer_contract: {"kind": "label", "options": [["A4"], ["D4"], ["V4"], ["Z4"]]}
+            solution_sketch: "Kernel step (kernel as preimage of the identity): the kernel collects exactly the permutations sent to +1, that is the even permutations, which form the alternating group A4. D4 is the error of taking the eight symmetries of a square inside S4, V4 is the error of keeping only the three double transpositions, and Z4 is the error of taking the cyclic group generated by a 4-cycle. The kernel is A4."
+          - problem: "Let $\\varphi : \\mathbb{Z}_{10} \\to \\mathbb{Z}_{10}$, $\\varphi(x) = 4x \\bmod 10$. Find $\\ker \\varphi$, giving it as an explicit set."
+            answer: "{0, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Kernel step (kernel test): 4x ≡ 0 mod 10 is equivalent to 2x ≡ 0 mod 5, hence x ≡ 0 mod 5. Check step: testing the residues of Z_10 leaves only x = 0 and x = 5, since 4·5 = 20 ≡ 0 mod 10. The kernel is {0, 5}."
+          - problem: "Let $\\varphi : \\mathbb{Z} \\to \\mathbb{Z}_6$ be the reduction map $\\varphi(x) = x \\bmod 6$. Find $\\mathrm{im}\\,\\varphi$, giving it as an explicit set."
+            answer: "{0, 1, 2, 3, 4, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Image step (image of a reduction map): each residue r of Z_6 is hit by the integer x = r, so no residue is missed. The image is the whole codomain, not a proper subgroup. The image is {0, 1, 2, 3, 4, 5}."
+          - problem: "Consider the sign homomorphism $\\mathrm{sgn} : S_3 \\to \\{\\pm 1\\}$. How many elements are in $\\ker \\mathrm{sgn}$?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Kernel step (kernel as preimage of the identity): the kernel is the set of permutations of S3 with sign +1, that is the even permutations. Count step: the even permutations are the identity and the two 3-cycles, forming A3. So ker sgn has 3 elements."
+          - problem: "The map $\\varphi : \\mathbb{Z}_{10} \\to \\mathbb{Z}_{10}$ with $\\varphi(x) = ax \\bmod 10$ has kernel $\\{0, 5\\}$. Find the smallest positive value of $a$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Condition step (kernel test read backwards): x = 5 must satisfy 5a ≡ 0 mod 10, so a is even. Exclusion step: x = 2 must fail, so 2a is not divisible by 10, meaning a is not a multiple of 5, and the admissible values are a = 2, 4, 6, 8. The smallest positive value of a is 2."
         constraints: "maps k -> ak on Z_n, sign map, reduction maps Z -> Z_n; answers as explicit sets or named subgroups"
       - id: kp2
         name: "Kernels are normal; injectivity criterion"
