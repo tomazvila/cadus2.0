@@ -768,40 +768,88 @@ topics:
         name: Detecting defective matrices
         key_prerequisites: [linear-systems-eigenvalues]
         exemplars:
-          - problem: 'Find the eigenvalues and eigenvectors of $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$. Is the matrix defective?'
-            answer: '$\lambda = 1$ (double) with eigenvectors spanned by $\binom{1}{0}$ only: defective.'
-            answer_contract: {kind: none}
-            solution_sketch: '$(A - I)\mathbf{v} = 0$ reads $v_2 = 0$: a single independent eigenvector for a double eigenvalue.'
-          - problem: 'The matrix $\begin{pmatrix} 3 & 0 \\ 0 & 3 \end{pmatrix}$ has double eigenvalue $3$. Is it defective?'
-            answer: 'No: $A = 3I$, so every nonzero vector is an eigenvector and two independent ones exist.'
-            answer_contract: {kind: none}
-            solution_sketch: 'No: $A = 3I$, so every nonzero vector is an eigenvector and two independent ones exist.'
+          - problem: "The matrix [2,5;0,2] has a double eigenvalue. Select the correct classification and give its eigenvalue."
+            answer: "verdict = defective; lambda = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["defective"], ["diagonal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "lambda"}]}
+            solution_sketch: "The full matrix is A = [2,5;0,2]. Its trace is 4 and its determinant is 4, so the characteristic polynomial has the double root lambda = 2. Solve (A - 2I)v = 0: the system is 5 v2 = 0, so v2 = 0 and the eigenspace has dimension 1. Because the eigenspace dimension is 1, the matrix is defective; calling it diagonal would wrongly require A = 2I. The answer is verdict = defective; lambda = 2."
+          - problem: "The matrix [-1,0;0,-1] has a double eigenvalue. Select the correct classification and give its eigenvalue."
+            answer: "verdict = diagonal; lambda = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["defective"], ["diagonal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "lambda"}]}
+            solution_sketch: "The full matrix is A = [-1,0;0,-1] = -I. The double eigenvalue is lambda = -1, and every nonzero vector is an eigenvector, so the eigenspace has dimension 2. Because A = -I, the matrix is diagonal; calling it defective would wrongly require only one independent eigenvector. The answer is verdict = diagonal; lambda = -1."
+          - problem: "The matrix [3,1;0,3] has a double eigenvalue. The eigenspace dimension decides whether the matrix is defective or diagonal. Find the eigenvalue and the dimension of the eigenspace."
+            answer: "lambda = 3; dim = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lambda"}, {"contract": {"kind": "exact"}, "name": "dim"}]}
+            solution_sketch: "The full matrix is A = [3,1;0,3]. Its trace is 6 and its determinant is 9, so the characteristic polynomial has the double root lambda = 3. Solve (A - 3I)v = 0: the equation is v2 = 0, so the eigenspace has dimension 1. The answer is lambda = 3; dim = 1."
+          - problem: "For the matrix [4,0;0,4], the characteristic polynomial has one repeated root. The eigenspace dimension decides whether the matrix is defective or diagonal. Find that root and the dimension of the eigenspace."
+            answer: "lambda = 4; dim = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lambda"}, {"contract": {"kind": "exact"}, "name": "dim"}]}
+            solution_sketch: "The full matrix is A = [4,0;0,4] = 4I. The characteristic polynomial has the double root lambda = 4, and every nonzero vector is an eigenvector, so the eigenspace has dimension 2. The answer is lambda = 4; dim = 2."
+          - problem: "A matrix has the form [-2,1;-1,-4]. It has a double eigenvalue. The eigenspace dimension decides whether it is defective or diagonal. Determine its eigenvalue and the dimension of the eigenspace."
+            answer: "lambda = -3; dim = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lambda"}, {"contract": {"kind": "exact"}, "name": "dim"}]}
+            solution_sketch: "The full matrix is A = [-2,1;-1,-4]. Its trace is -6 and its determinant is 9, so the characteristic polynomial has the double root lambda = -3. Solve (A + 3I)v = 0: the system is v1 + v2 = 0, so the eigenspace has dimension 1. The answer is lambda = -3; dim = 1."
+          - problem: "The matrix [0,1;-1,2] has a repeated eigenvalue. The eigenspace dimension decides whether it is defective or diagonal. Find that eigenvalue and the dimension of the eigenspace."
+            answer: "lambda = 1; dim = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lambda"}, {"contract": {"kind": "exact"}, "name": "dim"}]}
+            solution_sketch: "The full matrix is A = [0,1;-1,2]. Its trace is 2 and its determinant is 1, so the characteristic polynomial has the double root lambda = 1. Solve (A - I)v = 0: the system is -v1 + v2 = 0, so the eigenspace has dimension 1. The answer is lambda = 1; dim = 1."
         constraints: "2x2 matrices with an integer double eigenvalue; decide defective vs diagonal"
       - id: kp2
         name: Generalized eigenvectors and the second solution
         key_prerequisites: [linear-systems-eigenvalues]
         exemplars:
-          - problem: 'Find the general solution of $\mathbf{X}'' = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}\mathbf{X}$.'
-            answer: '$\mathbf{X} = c_1 e^{t}\binom{1}{0} + c_2 e^{t}\left[t\binom{1}{0} + \binom{0}{1}\right]$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda = 1$ (double) with the single eigenvector $\binom{1}{0}$; solve $(A - I)\mathbf{w} = \binom{1}{0}$ to get $\mathbf{w} = \binom{0}{1}$.'
-          - problem: 'Find the general solution of $\mathbf{X}'' = \begin{pmatrix} 3 & 1 \\ -1 & 1 \end{pmatrix}\mathbf{X}$.'
-            answer: '$\mathbf{X} = c_1 e^{2t}\binom{1}{-1} + c_2 e^{2t}\left[t\binom{1}{-1} + \binom{1}{0}\right]$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda^2 - 4\lambda + 4 = (\lambda - 2)^2$; eigenvector $\binom{1}{-1}$, and $(A - 2I)\mathbf{w} = \binom{1}{-1}$ gives $w_1 + w_2 = 1$, e.g. $\mathbf{w} = \binom{1}{0}$.'
+          - problem: "The matrix A = [[1,1],[0,1]] has the repeated eigenvalue 1 with eigenvector v = (1,0). Find the generalized eigenvector w with first component 0 that satisfies (A - I)w = v. Give the answer as (w1, w2)."
+            answer: "(0,1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "First compute A - I = [[0,1],[0,0]]. Solve the generalized eigenvector equation [[0,1],[0,0]] w = (1,0), which gives w2 = 1. Impose the first component w1 = 0, so w = (0,1). The answer is (0,1)."
+          - problem: "The matrix A = [[3,1],[-1,1]] has the repeated eigenvalue 2 with eigenvector v = (1,-1). Find the generalized eigenvector w with second component 0 that satisfies (A - 2I)w = v. Give the answer as (w1, w2)."
+            answer: "(1,0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "First compute A - 2I = [[1,1],[-1,-1]]. Solve the generalized eigenvector equation [[1,1],[-1,-1]] w = (1,-1), which reduces to w1 + w2 = 1. Impose the second component w2 = 0, so w1 = 1 and w = (1,0). The answer is (1,0)."
+          - problem: "The matrix A = [[4,-1],[1,2]] has the repeated eigenvalue 3 with eigenvector v = (1,1). Find the generalized eigenvector w with first component 0 that satisfies (A - 3I)w = v. Give the answer as (w1, w2)."
+            answer: "(0,-1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "First compute A - 3I = [[1,-1],[1,-1]]. Solve the generalized eigenvector equation [[1,-1],[1,-1]] w = (1,1), which reduces to w1 - w2 = 1. Impose the first component w1 = 0, so -w2 = 1 and w2 = -1, giving w = (0,-1). The answer is (0,-1)."
+          - problem: "The matrix A = [[4,1],[-4,0]] has the repeated eigenvalue 2 with eigenvector v = (1,-2). Find the generalized eigenvector w with first component 1 that satisfies (A - 2I)w = v. Give the answer as (w1, w2)."
+            answer: "(1,-1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "First compute A - 2I = [[2,1],[-4,-2]]. Solve the generalized eigenvector equation [[2,1],[-4,-2]] w = (1,-2), which reduces to 2w1 + w2 = 1. Impose the first component w1 = 1, so 2 + w2 = 1 and w2 = -1, giving w = (1,-1). The answer is (1,-1)."
+          - problem: "The matrix A = [[1,-1],[1,-1]] has repeated eigenvalue 0 with eigenvector v = (1,1). Using the generalized eigenvector w with second component 0, find the value at t = 1 of the second solution e^(λt)(t v + w). Give the answer as (x, y)."
+            answer: "(2,1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "First compute A - 0I = [[1,-1],[1,-1]]. Solve the generalized eigenvector equation [[1,-1],[1,-1]] w = (1,1), which reduces to w1 - w2 = 1. Impose the second component w2 = 0, so w1 = 1 and w = (1,0). The second solution at t = 1 is e^(0)(1 v + w) = (1,1) + (1,0) = (2,1). The answer is (2,1)."
+          - problem: "The matrix A = [[4,4],[-1,0]] has the repeated eigenvalue 2 with eigenvector v = (2,-1). Find the generalized eigenvector w with second component 1 that satisfies (A - 2I)w = v. Give the answer as (w1, w2)."
+            answer: "(-1,1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "First compute A - 2I = [[2,4],[-1,-2]]. Solve the generalized eigenvector equation [[2,4],[-1,-2]] w = (2,-1), which reduces to w1 + 2w2 = 1. Impose the second component w2 = 1, so w1 = -1 and w = (-1,1). The answer is (-1,1)."
         constraints: "2x2 defective matrices with an integer double eigenvalue; second solution e^{lt}(t v + w) with (A - lI)w = v"
       - id: kp3
         name: IVPs and long-run behavior
         key_prerequisites: [linear-systems-eigenvalues, complex-eigenvalue-systems]
         exemplars:
-          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{2}{3}$.'
-            answer: '$\mathbf{X} = e^{t}\binom{2 + 3t}{3}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'General solution $c_1 e^t\binom{1}{0} + c_2 e^t[t\binom{1}{0} + \binom{0}{1}]$; $\mathbf{X}(0) = \binom{c_1}{c_2}$ forces $c_1 = 2$, $c_2 = 3$.'
-          - problem: 'For $\mathbf{X}'' = \begin{pmatrix} 3 & 1 \\ -1 & 1 \end{pmatrix}\mathbf{X}$, do trajectories approach the origin as $t \to \infty$?'
-            answer: 'No: the double eigenvalue $2$ is positive, so $e^{2t}$ (and $te^{2t}$) grow and the origin is an unstable degenerate node.'
-            answer_contract: {kind: none}
-            solution_sketch: 'No: the double eigenvalue $2$ is positive, so $e^{2t}$ (and $te^{2t}$) grow and the origin is an unstable degenerate node.'
+          - problem: "Solve $\\mathbf{X}' = \\begin{pmatrix} 4 & 1 \\\\ 0 & 4 \\end{pmatrix}\\mathbf{X}$ with $\\mathbf{X}(0) = \\binom{5}{-2}$. Give $x(t)$ and $y(t)$.\""
+            answer: "x = (5-2t)e^(4t); y = -2e^(4t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "The matrix is upper Jordan with double eigenvalue 4 and eigenvector (1,0). A generalized eigenvector is (0,1), so the general solution is X = c1 e^(4t)(1,0) + c2 e^(4t)[t(1,0)+(0,1)]. The initial vector (5,-2) gives c1=5 and c2=-2. Therefore x = (5-2t)e^(4t); y = -2e^(4t)."
+          - problem: "For $\\mathbf{X}' = \\begin{pmatrix} -1 & 1 \\\\ 0 & -1 \\end{pmatrix}\\mathbf{X}$, state whether trajectories move toward the origin as $t \\to \\infty$, and give the double eigenvalue."
+            answer: "verdict = approaches; lambda = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["approaches"], ["departs"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "lambda"}]}
+            solution_sketch: "The matrix is upper Jordan with double eigenvalue -1 and one eigenvector (1,0). The general solution contains e^(-t) and t e^(-t), and both decay to zero as t grows. The wrong option departs would come from taking the eigenvalue as positive. The verdict is approaches and the double eigenvalue is -1, so verdict = approaches; lambda = -1."
+          - problem: "Solve the system $\\mathbf{X}' = [3,0;1,3]\\mathbf{X}$ with $\\mathbf{X}(0) = \\binom{2}{7}$. Find the solution components $x(t)$ and $y(t)$.\""
+            answer: "x = 2e^(3t); y = (7+2t)e^(3t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "The matrix is lower Jordan with double eigenvalue 3 and eigenvector (0,1). A generalized eigenvector is (1,0), so the general solution is X = c1 e^(3t)(0,1) + c2 e^(3t)[t(0,1)+(1,0)]. The initial vector (2,7) gives c1=7 and c2=2. Therefore x = 2e^(3t); y = (7+2t)e^(3t)."
+          - problem: "For $\\mathbf{X}' = [5,1;0,5]\\mathbf{X}$, determine the long-run fate of trajectories as $t \\to \\infty$, and give the repeated eigenvalue."
+            answer: "verdict = repelling; lambda = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["attracting"], ["repelling"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "lambda"}]}
+            solution_sketch: "The matrix is upper Jordan with double eigenvalue 5 and one eigenvector (1,0). The general solution contains e^(5t) and t e^(5t), both of which grow without bound as t grows. The wrong option attracting would come from taking the eigenvalue as negative. The verdict is repelling and the repeated eigenvalue is 5, so verdict = repelling; lambda = 5."
+          - problem: "Solve $\\mathbf{X}' = \\begin{pmatrix} 2 & 1 \\\\ -1 & 4 \\end{pmatrix}\\mathbf{X}$ with $\\mathbf{X}(0) = \\binom{1}{2}$. Give the trajectory coordinates $x(t)$ and $y(t)$.\""
+            answer: "x = (1+t)e^(3t); y = (2+t)e^(3t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "The matrix has trace 6 and determinant 9, so the repeated eigenvalue is 3. An eigenvector is (1,1) and a generalized eigenvector is (0,1), so the general solution is X = c1 e^(3t)(1,1) + c2 e^(3t)[t(1,1)+(0,1)]. The initial vector (1,2) gives c1=1 and c2=1. Therefore x = (1+t)e^(3t); y = (2+t)e^(3t)."
+          - problem: "Solve $\\mathbf{X}' = [-2,1;0,-2]\\mathbf{X}$ with $\\mathbf{X}(0) = \\binom{-1}{4}$. Determine $x(t)$ and $y(t)$.\""
+            answer: "x = (-1+4t)e^(-2t); y = 4e^(-2t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "The matrix is upper Jordan with double eigenvalue -2 and eigenvector (1,0). A generalized eigenvector is (0,1), so the general solution is X = c1 e^(-2t)(1,0) + c2 e^(-2t)[t(1,0)+(0,1)]. The initial vector (-1,4) gives c1=-1 and c2=4. Therefore x = (-1+4t)e^(-2t); y = 4e^(-2t)."
         constraints: "initial conditions with integer c_1, c_2; stability read from the sign of the double eigenvalue"
     diagnostic_exemplar:
       problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{1}{3}$, and say whether the trajectory approaches the origin as $t \to \infty$.'
@@ -838,14 +886,30 @@ topics:
         name: Structure of solutions
         key_prerequisites: [linear-systems-eigenvalues]
         exemplars:
-          - problem: 'If $\mathbf{X}_h$ is the general solution of $\mathbf{X}'' = A\mathbf{X}$ and $\mathbf{X}_p$ one particular solution of $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$, what is the general solution of the nonhomogeneous system?'
-            answer: '$\mathbf{X} = \mathbf{X}_h + \mathbf{X}_p$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The difference of two nonhomogeneous solutions solves the homogeneous system, exactly as for scalar equations.'
-          - problem: 'Verify that the constant vector $\mathbf{X}_p = \binom{2}{-1}$ is a particular solution of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{0}{-3}$.'
-            answer: '$\mathbf{X}_p'' = \mathbf{0}$ and $A\binom{2}{-1} + \binom{0}{-3} = \binom{0}{3} + \binom{0}{-3} = \mathbf{0}$: it checks.'
-            answer_contract: {kind: none}
-            solution_sketch: '$A\binom{2}{-1} = \binom{2 - 2}{4 - 1} = \binom{0}{3}$.'
+          - problem: "For X' = [[2,1],[1,3]]X + (-3,-5), test X_p = (2,1) by computing AX_p + b. Give the result as (x, y)."
+            answer: "(2, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: multiply A X_p = (2*2 + 1*1, 1*2 + 3*1) = (5, 5). Step 2: add b = (-3, -5) to get (5 - 3, 5 - 5) = (2, 0). The result is (2, 0)."
+          - problem: "For X' = [[0,1],[2,1]]X + (4,2), let X_p = (-3,-2). Find the first component of AX_p + b."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: compute A X_p = (0*(-3) + 1*(-2), 2*(-3) + 1*(-2)) = (-2, -8). Step 2: add b = (4, 2) to get (2, -6). The first component is 2."
+          - problem: "For X' = [[1,2],[3,4]]X + (5,6), test X_p = (1,0) by computing AX_p + b. Find the first component of the result."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: multiply A X_p = (1*1 + 2*0, 3*1 + 4*0) = (1, 3). Step 2: add b = (5, 6) to get (6, 9). The first component is 6."
+          - problem: "For X' = [[2,1],[1,2]]X + (-3,-3), test X_p = (1,1) by computing AX_p + b. Give the result as (x, y)."
+            answer: "(0, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: multiply A X_p = (2*1 + 1*1, 1*1 + 2*1) = (3, 3). Step 2: add b = (-3, -3) to get (0, 0). The result is (0, 0)."
+          - problem: "For X' = [[3,1],[1,3]]X + (-4,-4), let X_p = (1,1). Find the second component of AX_p + b."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: compute A X_p = (3*1 + 1*1, 1*1 + 3*1) = (4, 4). Step 2: add b = (-4, -4) to get (0, 0). The second component is 0."
+          - problem: "For X' = [[1,0],[1,1]]X + (0,0), test X_p = (1,2) by computing AX_p + b. Give the result as (x, y)."
+            answer: "(1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: compute A X_p = (1*1 + 0*2, 1*1 + 1*2) = (1, 3). Step 2: add b = (0, 0) to get (1, 3). The result is (1, 3)."
         constraints: "verification by one matrix-vector product; constant forcing vectors"
       - id: kp2
         name: Constant forcing
@@ -914,18 +978,30 @@ topics:
         name: Equilibria of nonlinear systems
         key_prerequisites: [slope-fields-equilibria]
         exemplars:
-          - problem: 'Find all equilibrium points of the system $x'' = y - x^2$, $y'' = x - y$.'
-            answer: '$(0, 0)$ and $(1, 1)$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Set both right-hand sides to zero: $y = x^2$ and $y = x$, so $x^2 = x$ gives $x = 0$ or $x = 1$.'
-          - problem: 'Find all equilibrium points of $x'' = x(2 - y)$, $y'' = y(x - 3)$.'
-            answer: '$(0, 0)$ and $(3, 2)$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The first equation forces $x = 0$ or $y = 2$; the second forces $y = 0$ or $x = 3$. The consistent combinations are $(0,0)$ and $(3,2)$.'
-          - problem: 'Find all equilibrium points of $x'' = x - y$, $y'' = x^2 - 4$.'
-            answer: '$(2, 2)$ and $(-2, -2)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$x^2 = 4$ gives $x = \pm 2$, and $y = x$ pairs each with itself.'
+          - problem: "Find all equilibrium points of the system x' = y - x^2, y' = x - y. Give the answer as (x1, y1, x2, y2) with the point with smaller x first."
+            answer: "(0, 0, 1, 1)"
+            answer_contract: {"arity": 4, "kind": "coordinates"}
+            solution_sketch: "Set both right-hand sides to zero: y = x^2 and y = x. Substitute y = x into y = x^2 to get x^2 = x, which factors as x(x - 1) = 0, so x = 0 or x = 1. The corresponding y-values are y = 0 and y = 1. The equilibria are (0, 0) and (1, 1). With the smaller x first, the answer is (0, 0, 1, 1)."
+          - problem: "Find all equilibrium points of the system x' = x(2 - y), y' = y(x - 3). Give the answer as (x1, y1, x2, y2) with the point with smaller x first."
+            answer: "(0, 0, 3, 2)"
+            answer_contract: {"arity": 4, "kind": "coordinates"}
+            solution_sketch: "Set x(2 - y) = 0 and y(x - 3) = 0. The first equation gives x = 0 or y = 2. The second gives y = 0 or x = 3. Check the combinations: only (0,0) and (3,2) satisfy both equations. With smaller x first, the answer is (0, 0, 3, 2)."
+          - problem: "Find all equilibrium points of the system x' = x - y, y' = x^2 - 4. Give the answer as (x1, y1, x2, y2) with the point with smaller x first."
+            answer: "(-2, -2, 2, 2)"
+            answer_contract: {"arity": 4, "kind": "coordinates"}
+            solution_sketch: "Set x - y = 0 and x^2 - 4 = 0. The second equation gives x = 2 or x = -2. The first equation gives y = x, so the corresponding y-values are y = 2 and y = -2. The equilibria are (-2, -2) and (2, 2). With smaller x first, the answer is (-2, -2, 2, 2)."
+          - problem: "Find all equilibrium points of the system x' = x - 1, y' = y - x^2. Give the answer as (x, y)."
+            answer: "(1, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set x - 1 = 0 and y - x^2 = 0. The first equation gives x = 1. Substitute into the second: y - 1 = 0, so y = 1. The only equilibrium is (1, 1). The answer is (1, 1)."
+          - problem: "Find all equilibrium points of the system x' = x^2 - 1, y' = y - x. Give the answer as (x1, y1, x2, y2) with the point with smaller x first."
+            answer: "(-1, -1, 1, 1)"
+            answer_contract: {"arity": 4, "kind": "coordinates"}
+            solution_sketch: "Set x^2 - 1 = 0 and y - x = 0. The first equation gives x = 1 or x = -1. The second gives y = x. The equilibria are (-1, -1) and (1, 1). With smaller x first, the answer is (-1, -1, 1, 1)."
+          - problem: "Find all equilibrium points of the system x' = x^2 - y, y' = y - 1. Give the answer as (x1, y1, x2, y2) with the point with smaller x first."
+            answer: "(-1, 1, 1, 1)"
+            answer_contract: {"arity": 4, "kind": "coordinates"}
+            solution_sketch: "Set x^2 - y = 0 and y - 1 = 0. The second equation gives y = 1. Substitute into the first: x^2 - 1 = 0, so x = 1 or x = -1. The equilibria are (-1, 1) and (1, 1). With smaller x first, the answer is (-1, 1, 1, 1)."
         constraints: "polynomial right-hand sides solvable by factoring or substitution; integer equilibrium coordinates; ALL equilibria must be reported, including the origin when present"
       - id: kp2
         name: The Jacobian and classification at an equilibrium
@@ -948,18 +1024,30 @@ topics:
         name: Predator-prey and competing species
         key_prerequisites: [phase-plane-stability, equilibrium-classification-eigenvalues]
         exemplars:
-          - problem: 'For the predator-prey system $x'' = x(2 - y)$, $y'' = y(x - 3)$ (prey $x$, predators $y$), linearize at both equilibria and interpret.'
-            answer: 'At $(0,0)$: $J = \begin{pmatrix} 2 & 0 \\ 0 & -3 \end{pmatrix}$, eigenvalues $2, -3$: saddle — the extinction state is unstable. At $(3,2)$: $J = \begin{pmatrix} 0 & -3 \\ 2 & 0 \end{pmatrix}$, $T = 0$, $D = 6$: linear center ($\lambda = \pm i\sqrt{6}$) — the linearization predicts populations cycling around coexistence (and for Lotka-Volterra the true orbits are indeed closed).'
-            answer_contract: {kind: none}
-            solution_sketch: '$J(x,y) = \begin{pmatrix} 2 - y & -x \\ y & x - 3 \end{pmatrix}$; evaluate at each equilibrium and read off the trace-determinant verdict.'
-          - problem: 'For the competing-species system $x'' = x(3 - x - 2y)$, $y'' = y(2 - x - y)$, find all four equilibria and classify the coexistence equilibrium.'
-            answer: 'Equilibria: $(0,0)$, $(3,0)$, $(0,2)$, $(1,1)$. At $(1,1)$: $J = \begin{pmatrix} -1 & -2 \\ -1 & -1 \end{pmatrix}$ with $\det J = -1 < 0$: saddle — coexistence is unstable (competitive exclusion).'
-            answer_contract: {kind: none}
-            solution_sketch: 'Each factor gives $x = 0$ or $3 - x - 2y = 0$ and $y = 0$ or $2 - x - y = 0$; the interior pair solves to $(1,1)$. $J(x,y) = \begin{pmatrix} 3 - 2x - 2y & -2x \\ -y & 2 - x - 2y \end{pmatrix}$.'
-          - problem: 'In the same competing-species system, classify the equilibrium $(3, 0)$ and interpret it.'
-            answer: 'Stable node: $J(3,0) = \begin{pmatrix} -3 & -6 \\ 0 & -1 \end{pmatrix}$ has eigenvalues $-3, -1$. Species $x$ wins: nearby populations tend to $x = 3$, $y = 0$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The Jacobian is triangular, so the eigenvalues are the diagonal entries; both negative means an attracting state.'
+          - problem: "For the predator-prey system x' = x(3 - y), y' = y(x - 5) (prey x, predators y), use linearization at the coexistence equilibrium. Find the determinant of the Jacobian matrix there."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The system is x' = x(3 - y), y' = y(x - 5). The Jacobian is J = [[3-y, -x],[y, x-5]]. Equilibrium step: set the factors to zero to get the coexistence equilibrium (5,3). Jacobian step: evaluate J at (5,3), giving [[0,-5],[3,0]]. Determinant step: the determinant is (0)(0) - (-5)(3) = 15. Since the trace is 0 and the determinant is positive, the linearization predicts a center, so the populations cycle near coexistence. The determinant is 15."
+          - problem: "For the competing-species system x' = x(5 - x - 2y), y' = y(4 - x - y), use linearization at the coexistence equilibrium. Find the trace of the Jacobian matrix there."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The system is x' = x(5 - x - 2y), y' = y(4 - x - y). The Jacobian is J = [[5-2x-2y, -2x],[-y, 4-x-2y]]. Equilibrium step: solve x + 2y = 5 and x + y = 4 to get (3,1). Jacobian step: evaluate J at (3,1), giving [[-3,-6],[-1,-1]]. Trace step: the trace is -3 + (-1) = -4. The determinant is (-3)(-1) - (-6)(-1) = -3, so the coexistence state is a saddle and competitive exclusion is predicted. The trace is -4."
+          - problem: "For the competing-species system x' = x(6 - 2x - y), y' = y(5 - x - y), use linearization at the coexistence equilibrium. Find the trace of the Jacobian matrix there."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The system is x' = x(6 - 2x - y), y' = y(5 - x - y). The Jacobian is J = [[6-4x-y, -x],[-y, 5-x-2y]]. Equilibrium step: solve 2x + y = 6 and x + y = 5 to get (1,4). Jacobian step: evaluate J at (1,4), giving [[-2,-1],[-4,-4]]. Trace step: the trace is -2 + (-4) = -6. The determinant is 4 and the eigenvalues are -3 plus or minus sqrt(5), so the coexistence state is a stable node. The trace is -6."
+          - problem: "For the predator-prey system x' = x(4 - 2y), y' = y(x - 3) (prey x, predators y), use linearization at the coexistence equilibrium. State the classification."
+            answer: "center"
+            answer_contract: {"kind": "label", "options": [["center"], ["saddle"], ["node"], ["spiral"]]}
+            solution_sketch: "The system is x' = x(4 - 2y), y' = y(x - 3). The Jacobian is J = [[4-2y, -2x],[y, x-3]]. Equilibrium step: solve 4 - 2y = 0 and x - 3 = 0 to get (3,2). Jacobian step: evaluate J at (3,2), giving [[0,-6],[2,0]]. Verdict step: the trace is 0 and the determinant is 12, so the linearization predicts a center. The wrong option saddle would need a negative determinant; the wrong option node would need two real eigenvalues of the same sign; the wrong option spiral would need complex eigenvalues with a nonzero real part. The populations cycle near coexistence. The classification is center."
+          - problem: "For the competing-species system x' = x(8 - x - 2y), y' = y(5 - x - y), use linearization at the coexistence equilibrium. State the classification."
+            answer: "saddle"
+            answer_contract: {"kind": "label", "options": [["center"], ["saddle"], ["node"], ["spiral"]]}
+            solution_sketch: "The system is x' = x(8 - x - 2y), y' = y(5 - x - y). The Jacobian is J = [[8-2x-2y, -2x],[-y, 5-x-2y]]. Equilibrium step: solve x + 2y = 8 and x + y = 5 to get (2,3). Jacobian step: evaluate J at (2,3), giving [[-2,-4],[-3,-3]]. Verdict step: the trace is -5 and the determinant is -6, so the linearization predicts a saddle. The wrong option center would need a zero trace and a positive determinant; the wrong option node would need two real eigenvalues of the same sign; the wrong option spiral would need complex eigenvalues with a nonzero real part. Coexistence is unstable. The classification is saddle."
+          - problem: "For the competing-species system x' = x(7 - 2x - y), y' = y(6 - x - y), use linearization at the coexistence equilibrium. Find the determinant of the Jacobian matrix there."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The system is x' = x(7 - 2x - y), y' = y(6 - x - y). The Jacobian is J = [[7-4x-y, -x],[-y, 6-x-2y]]. Equilibrium step: solve 2x + y = 7 and x + y = 6 to get (1,5). Jacobian step: evaluate J at (1,5), giving [[-2,-1],[-5,-5]]. Determinant step: the determinant is (-2)(-5) - (-1)(-5) = 5. The trace is -7 and the determinant is positive, so the coexistence state is a stable node. The determinant is 5."
         constraints: "Lotka-Volterra and competing-species models with integer parameters and integer equilibrium coordinates; every classification carries a one-line population interpretation; the Lotka-Volterra interior center is stated as the linearization's verdict"
     diagnostic_exemplar:
       problem: 'For the predator-prey system $x'' = x(4 - y)$, $y'' = y(x - 2)$ (prey $x$, predators $y$), find the coexistence equilibrium and classify it by linearization.'

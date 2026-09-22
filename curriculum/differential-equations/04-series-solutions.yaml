@@ -30,35 +30,59 @@ topics:
         name: Shifting the index of summation
         key_prerequisites: [differentiating-integrating-power-series]
         exemplars:
-          - problem: 'Rewrite $\sum_{n=1}^{\infty} n a_n x^{n-1}$ as a series in powers $x^k$ starting at $k = 0$.'
-            answer: '$\sum_{k=0}^{\infty} (k+1)a_{k+1}x^k$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Set $k = n - 1$, so $n = k + 1$; the lower limit $n = 1$ becomes $k = 0$.'
-          - problem: 'Rewrite $\sum_{n=2}^{\infty} n(n-1)a_n x^{n-2}$ as a series in powers $x^k$.'
-            answer: '$\sum_{k=0}^{\infty} (k+2)(k+1)a_{k+2}x^k$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Substitute $k = n - 2$: each coefficient index moves up by $2$.'
-          - problem: 'Combine $\sum_{k=0}^{\infty} (k+1)a_{k+1}x^k - \sum_{k=0}^{\infty} a_k x^k$ into a single series.'
-            answer: '$\sum_{k=0}^{\infty} \left[(k+1)a_{k+1} - a_k\right]x^k$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Both series run over the same powers, so subtract coefficients termwise.'
+          - problem: "Consider the series $\\sum_{n=3}^{\\infty} n a_n x^{n-1}$. Put $k = n - 1$ to rewrite it in powers of $x^k$. Give the starting value of $k$ and the factor multiplying $a_{k+1}$ as start = ...; factor = ..."
+            answer: "start = 2; factor = k+1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
+            solution_sketch: "The full series is $\\sum_{n=3}^{\\infty} n a_n x^{n-1}$. Step 1: the shift is $k = n - 1$, so $n = k + 1$. Step 2: the lower limit $n = 3$ becomes $k = 2$, and the coefficient becomes $(k+1)a_{k+1}$. The shifted series is $\\sum_{k=2}^{\\infty} (k+1)a_{k+1}x^k$, so start = 2; factor = k+1."
+          - problem: "Consider the series $\\sum_{n=4}^{\\infty} n(n-1) a_n x^{n-2}$. Put $k = n - 2$ to rewrite it in powers of $x^k$. Give the starting value of $k$ and the factor multiplying $a_{k+2}$ as start = ...; factor = ..."
+            answer: "start = 2; factor = k^2+3k+2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
+            solution_sketch: "The full series is $\\sum_{n=4}^{\\infty} n(n-1) a_n x^{n-2}$. Step 1: the shift is $k = n - 2$, so $n = k + 2$. Step 2: the lower limit $n = 4$ becomes $k = 2$, and the coefficient becomes $(k+2)(k+1)a_{k+2}= (k^2+3k+2)a_{k+2}$. The shifted series is $\\sum_{k=2}^{\\infty} (k^2+3k+2)a_{k+2}x^k$, so start = 2; factor = k^2+3k+2."
+          - problem: "Combine the two series $\\sum_{k=2}^{\\infty} (k+1) a_{k+1} x^k$ and $-\\sum_{k=2}^{\\infty} a_{k+1} x^k$ into one series. Give the starting index and the factor multiplying $a_{k+1}$ as start = ...; factor = ..."
+            answer: "start = 2; factor = k"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
+            solution_sketch: "The full combination is $\\sum_{k=2}^{\\infty} (k+1) a_{k+1} x^k - \\sum_{k=2}^{\\infty} a_{k+1} x^k$. Step 1: both series already run over $x^k$ and start at $k = 2$, so no shift is needed. Step 2: subtract the coefficients termwise: $(k+1)a_{k+1} - a_{k+1} = k a_{k+1}$. The combined series is $\\sum_{k=2}^{\\infty} k a_{k+1}x^k$, so start = 2; factor = k."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} n a_n x^{n+2}$. Put $k = n + 2$ to rewrite it in powers of $x^k$. Give the starting value of $k$ and the factor multiplying $a_{k-2}$ as start = ...; factor = ..."
+            answer: "start = 3; factor = k-2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
+            solution_sketch: "The full series is $\\sum_{n=1}^{\\infty} n a_n x^{n+2}$. Step 1: the shift is $k = n + 2$, so $n = k - 2$. Step 2: the lower limit $n = 1$ becomes $k = 3$, and the coefficient becomes $(k-2)a_{k-2}$. The shifted series is $\\sum_{k=3}^{\\infty} (k-2)a_{k-2}x^k$, so start = 3; factor = k-2."
+          - problem: "Combine the two series $\\sum_{k=1}^{\\infty} (k+3) a_{k+3} x^k$ and $-2\\sum_{k=1}^{\\infty} a_k x^k$ into one series. Give the factor multiplying $a_{k+3}$ and the factor multiplying $a_k$ as coef3 = ...; coef0 = ..."
+            answer: "coef3 = k+3; coef0 = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["k"]}, "name": "coef3"}, {"contract": {"kind": "exact"}, "name": "coef0"}]}
+            solution_sketch: "The full combination is $\\sum_{k=1}^{\\infty} (k+3) a_{k+3} x^k - 2\\sum_{k=1}^{\\infty} a_k x^k$. Step 1: both series run over $x^k$ and start at $k = 1$, so no shift is needed. Step 2: combine coefficients termwise: $(k+3)a_{k+3} - 2a_k$. The combined series is $\\sum_{k=1}^{\\infty} [(k+3)a_{k+3} - 2a_k]x^k$, so coef3 = k+3; coef0 = -2."
+          - problem: "Consider the series $\\sum_{n=5}^{\\infty} n^2 a_n x^{n-2}$. Put $k = n - 2$ to rewrite it in powers of $x^k$. Give the starting value of $k$ and the factor multiplying $a_{k+2}$ as start = ...; factor = ..."
+            answer: "start = 3; factor = k^2+4k+4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "start"}, {"contract": {"kind": "function", "vars": ["k"]}, "name": "factor"}]}
+            solution_sketch: "The full series is $\\sum_{n=5}^{\\infty} n^2 a_n x^{n-2}$. Step 1: the shift is $k = n - 2$, so $n = k + 2$. Step 2: the lower limit $n = 5$ becomes $k = 3$, and the coefficient becomes $(k+2)^2 a_{k+2}= (k^2+4k+4)a_{k+2}$. The shifted series is $\\sum_{k=3}^{\\infty} (k^2+4k+4)a_{k+2}x^k$, so start = 3; factor = k^2+4k+4."
         constraints: "index shifts by 1 or 2 only; coefficients stay symbolic a_n; when combining, series must already share the same starting index"
       - id: kp2
         name: First-order equations by power series
         key_prerequisites: [power-series, standard-maclaurin-series]
         exemplars:
-          - problem: "Substitute $y = \\sum a_n x^n$ into $y' - y = 0$ with $y(0) = 1$. Find the recurrence, the coefficients, and identify the solution."
-            answer: '$a_{n+1} = \dfrac{a_n}{n+1}$, so $a_n = \dfrac{1}{n!}$ and $y = e^x$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Matching coefficients of $x^n$ gives $(n+1)a_{n+1} = a_n$; iterating from $a_0 = 1$ yields $1/n!$, the Maclaurin series of $e^x$.'
-          - problem: "Solve $y' + 2y = 0$, $y(0) = 3$, by power series and identify the solution in closed form."
-            answer: '$a_n = \dfrac{3(-2)^n}{n!}$, so $y = 3e^{-2x}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$(n+1)a_{n+1} = -2a_n$ gives $a_{n+1} = \frac{-2a_n}{n+1}$; iterate from $a_0 = 3$.'
-          - problem: "Solve $y' = 2xy$, $y(0) = 1$, by power series: give the recurrence and the first three nonzero terms."
-            answer: '$a_1 = 0$ and $a_{k+1} = \dfrac{2a_{k-1}}{k+1}$; $y = 1 + x^2 + \dfrac{x^4}{2} + \cdots$ (this is $e^{x^2}$).'
-            answer_contract: {kind: none}
-            solution_sketch: 'The right side shifts powers up by one, so odd coefficients vanish and $a_{2m} = 1/m!$.'
+          - problem: "Use the power series method to solve $y' = 3y$ with $y(0) = 2$. Give the closed-form solution $y(x)$."
+            answer: "2e^(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The equation is y' = 3y with y(0) = 2. Assume y = sum a_n x^n. Matching coefficients gives (n+1)a_{n+1} = 3a_n by the power series method. With a_0 = 2, the recurrence gives a_n = 2 * 3^n / n!. The series is 2 sum (3x)^n / n!, which is the Maclaurin series of 2e^(3x). The answer is 2e^(3x)."
+          - problem: "Use the power series method to solve $y' + 4y = 0$ with $y(0) = 5$. Give the closed-form solution $y(x)$."
+            answer: "5e^(-4x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Rewrite the equation as y' = -4y with y(0) = 5. Assume y = sum a_n x^n. Matching coefficients gives (n+1)a_{n+1} = -4a_n. With a_0 = 5, the recurrence gives a_n = 5 * (-4)^n / n!. The series is 5 sum (-4x)^n / n!, which is the Maclaurin series of 5e^(-4x). The answer is 5e^(-4x)."
+          - problem: "Use the power series method to solve $y' = -2xy$ with $y(0) = 3$. Give the closed-form solution $y(x)$."
+            answer: "3e^(-x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The equation is y' = -2xy with y(0) = 3. Assume y = sum a_n x^n. Then y' = sum (n+1)a_{n+1} x^n and -2xy = sum -2 a_{n-1} x^n. Matching coefficients gives (n+1)a_{n+1} = -2a_{n-1}. With a_0 = 3 and a_1 = 0, odd coefficients vanish. For even n = 2m, a_{2m} = 3(-1)^m / m!. This is the Maclaurin series of 3e^(-x^2). The answer is 3e^(-x^2)."
+          - problem: "For the equation $y' = 4y$ with $y(0) = 3$, use the power series method to find the coefficients $a_2$ and $a_3$. Give the answer as a2 = value; a3 = value."
+            answer: "a2 = 24; a3 = 32"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a2"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
+            solution_sketch: "The equation is y' = 4y with y(0) = 3. Assume y = sum a_n x^n. Matching coefficients gives (n+1)a_{n+1} = 4a_n. With a_0 = 3, the recurrence gives a_1 = 12, a_2 = 4 * 12 / 2 = 24, and a_3 = 4 * 24 / 3 = 32. The answer is a2 = 24; a3 = 32."
+          - problem: "For the equation $y' = 2xy$ with $y(0) = 1$, use the power series method to find the coefficients $a_4$ and $a_6$. Give the answer as a4 = value; a6 = value."
+            answer: "a4 = 1/2; a6 = 1/6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a4"}, {"contract": {"kind": "exact"}, "name": "a6"}]}
+            solution_sketch: "The equation is y' = 2xy with y(0) = 1. Assume y = sum a_n x^n. Then (n+1)a_{n+1} = 2a_{n-1}. With a_0 = 1 and a_1 = 0, odd coefficients vanish and a_2 = 1. Then a_4 = a_2/2 = 1/2 and a_6 = a_4/3 = 1/6. The answer is a4 = 1/2; a6 = 1/6."
+          - problem: "For the equation $y' = -3y$ with $y(0) = 2$, use the power series method to find the coefficients $a_2$ and $a_3$. Give the answer as a2 = value; a3 = value."
+            answer: "a2 = 9; a3 = -9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a2"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
+            solution_sketch: "The equation is y' = -3y with y(0) = 2. Assume y = sum a_n x^n. Matching coefficients gives (n+1)a_{n+1} = -3a_n. With a_0 = 2, the recurrence gives a_1 = -6, a_2 = 9, and a_3 = -9. The answer is a2 = 9; a3 = -9."
         constraints: "equations y' = cy or y' = cxy with small integer c; solutions must be recognizable standard Maclaurin series (e^{cx}, e^{x^2}-type)"
       - id: kp3
         name: Deriving the recurrence for second-order equations
