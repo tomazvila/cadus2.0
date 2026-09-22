@@ -75,14 +75,30 @@ topics:
         name: Size compatibility and solving for a matrix
         key_prerequisites: [vector-arithmetic]
         exemplars:
-          - problem: 'Can you add a $2 \times 3$ matrix and a $3 \times 2$ matrix?'
-            answer: "No; addition requires identical sizes"
-            answer_contract: {kind: none}
-            solution_sketch: 'Matrix addition is defined only when the two matrices have the same size; 2x3 and 3x2 do not match.'
           - problem: 'Solve for $X$: $X + \begin{pmatrix}1&2\\3&4\end{pmatrix} = \begin{pmatrix}2&2\\3&5\end{pmatrix}$.'
             answer: "[1,0;0,1]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: 'Subtract entrywise: $X = \begin{pmatrix}2-1&2-2\\3-3&5-4\end{pmatrix}$.'
+          - problem: "A is a 2x3 matrix and B is a 3x2 matrix. State whether A+B can be formed and give the number of rows in A+B when it can be formed, or 0 when it cannot. Give both values."
+            answer: "verdict = undefined; r = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["defined"], ["undefined"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1: check the sizes. A has 2 rows and 3 columns, while B has 3 rows and 2 columns. Step 2: apply the addition size rule. Matrix addition needs the same number of rows and the same number of columns, and these two matrices differ in both, so A+B cannot be formed. The wrong option 'defined' would mean the sizes match, but they do not. Step 3: the label is undefined, and the fallback row count is 0. The answer is verdict = undefined; r = 0."
+          - problem: "Solve for X: X - [[4,1],[0,3]] = [[1,2],[5,5]]. Give the matrix as [a,b;c,d]."
+            answer: "[5,3;5,8]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: isolate X by adding the left matrix to both sides. This uses only addition, so X = [[1,2],[5,5]] + [[4,1],[0,3]]. Step 2: add entrywise. The result is [[5,3],[5,8]]. The answer is [5,3;5,8]."
+          - problem: "Solve for X: [[7,2],[1,6]] - X = [[2,2],[1,1]]. Give the matrix as [a,b;c,d]."
+            answer: "[5,0;0,5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: move X to the other side by adding X to both sides and subtracting the right matrix. This gives X = [[7,2],[1,6]] - [[2,2],[1,1]]. Step 2: subtract entrywise. The result is [[5,0],[0,5]]. The answer is [5,0;0,5]."
+          - problem: "A is a 2x2 matrix and B is a 2x2 matrix. State whether A+B can be formed and give the number of entries in A+B when it can be formed. Give both values."
+            answer: "verdict = defined; entries = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["defined"], ["undefined"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "entries"}]}
+            solution_sketch: "Step 1: check the sizes. Both A and B have 2 rows and 2 columns, so their sizes agree. Step 2: apply the addition size rule. A+B can be formed because the sizes match. The wrong option 'undefined' would mean the sizes differ, but they do not. Step 3: count entries in the result. A 2x2 matrix has 4 entries, so the answer is verdict = defined; entries = 4."
+          - problem: "Solve for X: X + [[2,1],[0,1]] - [[1,1],[1,0]] = [[3,2],[2,2]]. Give the matrix as [a,b;c,d]."
+            answer: "[2,2;3,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: isolate X by subtracting the first matrix and adding the second matrix to both sides. This uses only addition and subtraction, so X = [[3,2],[2,2]] + [[1,1],[1,0]] - [[2,1],[0,1]]. Step 2: combine the first two matrices: [[4,3],[3,2]], then subtract the third: [[2,2],[3,1]]. The answer is [2,2;3,1]."
         constraints: "solve-for-X problems use only addition and subtraction"
     diagnostic_exemplar:
       problem: 'Solve for $X$: $2X + \begin{pmatrix}1&-1\\0&2\end{pmatrix} = \begin{pmatrix}5&3\\4&0\end{pmatrix}$.'
@@ -148,10 +164,26 @@ topics:
             answer: "[3,4;4,1]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: 'Row 1: $1 + 0 + 2 = 3$, $2 + 0 + 2 = 4$; row 2: $0 + 3 + 1 = 4$, $0 + 0 + 1 = 1$.'
-          - problem: 'If $A$ is $2 \times 3$ and $B$ is $3 \times 4$, what is the size of $AB$? Is $BA$ defined?'
-            answer: "AB is 2x4; BA is not defined"
-            answer_contract: {kind: none}
-            solution_sketch: 'Inner dimensions must match: $(2 \times 3)(3 \times 4) \to 2 \times 4$; $(3 \times 4)(2 \times 3)$ has $4 \neq 2$.'
+          - problem: "A is a 2 by 3 matrix and B is a 3 by 4 matrix. State the compatibility of BA, and give the size of AB as (rows, cols)."
+            answer: "compatibility = incompatible; size = (2,4)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["compatible"], ["incompatible"]]}, "name": "compatibility"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "size"}]}
+            solution_sketch: "A is 2 by 3 and B is 3 by 4. Step 1: For BA, the inner dimensions are 4 and 2, which do not match, so BA is incompatible. Step 2: For AB, the outer dimensions give a 2 by 4 size. The option compatible is wrong because the inner dimensions of BA do not match. The final answer is compatibility = incompatible; size = (2,4)."
+          - problem: "Compute the product AB for A = [2,1,0;1,3,1] and B = [1,2;0,1;4,0]. Give the matrix as [a,b;c,d]."
+            answer: "[2,5;5,5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The full product AB is [2,5;5,5]. Step 1: row 1 of A times the columns of B gives 2*1 + 1*0 + 0*4 = 2 and 2*2 + 1*1 + 0*0 = 5. Step 2: row 2 of A gives 1*1 + 3*0 + 1*4 = 5 and 1*2 + 3*1 + 1*0 = 5. The product is [2,5;5,5]."
+          - problem: "Compute the product AB for A = [1,-2,3;0,1,-1] and B = [2,0;-1,3;4,1]. Give the matrix as [a,b;c,d]."
+            answer: "[16,-3;-5,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The full product AB is [16,-3;-5,2]. Step 1: row 1 of A times the columns of B gives 1*2 + (-2)*(-1) + 3*4 = 16 and 1*0 + (-2)*3 + 3*1 = -3. Step 2: row 2 of A gives 0*2 + 1*(-1) + (-1)*4 = -5 and 0*0 + 1*3 + (-1)*1 = 2. The product is [16,-3;-5,2]."
+          - problem: "A is a 4 by 5 matrix and B is a 5 by 3 matrix. Give the size of AB as (rows, cols)."
+            answer: "(4,3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full size of AB is determined by the outer dimensions. Step 1: A has 4 rows, so AB has 4 rows. Step 2: B has 3 columns, so AB has 3 columns. The size of AB is (4,3)."
+          - problem: "A is a 4 by 3 matrix and B is a 2 by 5 matrix. State the compatibility of AB, and give the inner dimensions as (columns of A, rows of B)."
+            answer: "compatibility = incompatible; inner = (3,2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["compatible"], ["incompatible"]]}, "name": "compatibility"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "inner"}]}
+            solution_sketch: "A is 4 by 3 and B is 2 by 5. Step 1: The inner dimensions are the columns of A, 3, and the rows of B, 2. Step 2: These inner dimensions do not match, so AB is incompatible. The option compatible is wrong because the inner dimensions do not match. The final answer is compatibility = incompatible; inner = (3,2)."
         constraints: "2x3 times 3x2 numerics; size questions up to 4x5"
       - id: kp3
         name: Columns of a product
@@ -247,6 +279,22 @@ topics:
           - problem: 'Compute $\begin{pmatrix}1&2\\3&4\end{pmatrix}\begin{pmatrix}0&0\\0&0\end{pmatrix}$.'
             answer: "[0,0;0,0]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
+          - problem: "Compute A + O for A = [2,-3;5,1] and O the 2 x 2 zero matrix. Give the matrix as [a,b;c,d]."
+            answer: "[2,-3;5,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Write A as [2,-3;5,1] and O as [0,0;0,0]. Rule: the zero matrix is the additive identity, so each entry of A + O equals the matching entry of A. Adding gives [2,-3;5,1]. The answer is [2,-3;5,1]."
+          - problem: "Compute O + B for B = [-1,4;2,0] and O the 2 x 2 zero matrix. Give the matrix as [a,b;c,d]."
+            answer: "[-1,4;2,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Write O as [0,0;0,0] and B as [-1,4;2,0]. Rule: adding the zero matrix on the left leaves every entry of B unchanged. Hence O + B = [-1,4;2,0]. The answer is [-1,4;2,0]."
+          - problem: "Compute A(B + O) for A = [1,2;3,4], B = [0,1;1,0], and O the 2 x 2 zero matrix. Give the matrix as [a,b;c,d]."
+            answer: "[2,1;4,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Write A as [1,2;3,4], B as [0,1;1,0], and O as [0,0;0,0]. Rule: B + O = B because the zero matrix is the additive identity. Multiply A B by row-column products to get [2,1;4,3]. The answer is [2,1;4,3]."
+          - problem: "Compute (O + A)B for A = [2,0;1,3], B = [1,-1;2,4], and O the 2 x 2 zero matrix. Give the matrix as [a,b;c,d]."
+            answer: "[2,-2;7,11]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Write A as [2,0;1,3], B as [1,-1;2,4], and O as [0,0;0,0]. Rule: O + A = A by the additive identity property of the zero matrix. Multiply A B by row-column products: [2,-2;7,11]. The answer is [2,-2;7,11]."
         constraints: "identity/zero behavior stated and verified numerically"
       - id: kp3
         name: Zero products from nonzero factors

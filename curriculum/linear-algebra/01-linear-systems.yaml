@@ -1094,14 +1094,30 @@ topics:
         name: Mixture and allocation problems
         key_prerequisites: [row-reduction-echelon-forms, systems-word-problems]
         exemplars:
-          - problem: 'A chemist mixes $10\%$, $30\%$, and $50\%$ acid solutions to make $12$ L of $35\%$ acid, using twice as much $50\%$ solution as $10\%$ solution. How many liters of each?'
-            answer: "3 L of 10%, 3 L of 30%, 6 L of 50%"
-            answer_contract: {kind: none}
-            solution_sketch: '$x + y + z = 12$, $0.1x + 0.3y + 0.5z = 4.2$, $z = 2x$. Substituting $y = 12 - 3x$ gives $3.6 + 0.2x = 4.2$, so $x = 3$.'
-          - problem: '€5000 is split across accounts paying $2\%$, $3\%$, and $4\%$. The $4\%$ account holds as much as the other two combined, and total interest is €155. Find the three amounts.'
-            answer: "€2000 at 2%, €500 at 3%, €2500 at 4%"
-            answer_contract: {kind: none}
-            solution_sketch: '$z = x + y$ with $x + y + z = 5000$ gives $z = 2500$. Interest: $0.02x + 0.03y + 100 = 155$, so $2x + 3y = 5500$; with $x + y = 2500$ this gives $y = 500$, $x = 2000$.'
+          - problem: "A chemist needs 12 L of a 35% acid solution by mixing 10%, 30%, and 50% acid solutions. The amount of 50% solution used is twice the amount of 10% solution. Give the liters of the 10%, 30%, and 50% solutions in that order as (x, y, z)."
+            answer: "(3, 3, 6)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: Let x, y, z be the liters of 10%, 30%, and 50% solution. The volume equation gives x + y + z = 12, and the concentration equation gives 0.1x + 0.3y + 0.5z = 4.2 because 35% of 12 L is 4.2 L. Step 2: The relation z = 2x turns the system into x + y + 2x = 12 and 0.1x + 0.3y + 1.0x = 4.2; substituting y = 12 - 3x gives 3.6 + 0.2x = 4.2, so x = 3, y = 3, and z = 6. The solution is (3, 3, 6)."
+          - problem: "An investor splits 5000 euros among three accounts that pay 2%, 3%, and 4% yearly interest. The amount in the 4% account equals the sum of the amounts in the other two accounts. After one year the total interest is 155 euros. Give the amounts in the 2%, 3%, and 4% accounts in euros as (x, y, z)."
+            answer: "(2000, 500, 2500)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: Let x, y, z be the euros in the 2%, 3%, and 4% accounts. The total equation is x + y + z = 5000, the interest equation is 0.02x + 0.03y + 0.04z = 155, and the relation is z = x + y. Step 2: The relation and the total equation give 2(x + y) = 5000, so z = 2500 and x + y = 2500. Substituting into the interest equation gives 0.02x + 0.03y + 100 = 155, or 2x + 3y = 5500 after multiplying by 100. With x = 2500 - y, this is 5000 + y = 5500, so y = 500 and x = 2000. The solution is (2000, 500, 2500)."
+          - problem: "A juice maker blends three concentrates that are 20%, 30%, and 60% real fruit to make 20 L of a 40% real-fruit drink. The amount of 60% concentrate is twice the amount of 20% concentrate. Give the liters of the 20%, 30%, and 60% concentrates in that order as (x, y, z)."
+            answer: "(4, 8, 8)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: Let x, y, z be the liters of 20%, 30%, and 60% concentrate. The volume equation is x + y + z = 20, the concentration equation is 0.2x + 0.3y + 0.6z = 8, and the relation is z = 2x. Step 2: Using z = 2x, the volume equation gives y = 20 - 3x. The concentration equation becomes 0.2x + 0.3(20 - 3x) + 1.2x = 8, so 6 + 0.5x = 8 and x = 4; then y = 8 and z = 8. The solution is (4, 8, 8)."
+          - problem: "A cinema sells adult tickets for 8 euros, student tickets for 5 euros, and child tickets for 3 euros. One evening 30 tickets were sold and the receipts were 175 euros. Twice as many child tickets as student tickets were sold. Give the numbers of adult, student, and child tickets as (x, y, z)."
+            answer: "(15, 5, 10)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: Let x, y, z be the numbers of adult, student, and child tickets. The ticket-count equation is x + y + z = 30, the receipts equation is 8x + 5y + 3z = 175, and the relation is z = 2y. Step 2: Substituting z = 2y gives x = 30 - 3y. The receipts equation becomes 8(30 - 3y) + 5y + 6y = 175, so 240 - 13y = 175 and y = 5; then z = 10 and x = 15. The solution is (15, 5, 10)."
+          - problem: "A cash box contains 40 coins made of 10-cent, 20-cent, and 50-cent pieces. Their total value is 11.00 euros, and there are twice as many 20-cent coins as 10-cent coins. Give the numbers of 10-cent, 20-cent, and 50-cent coins as (x, y, z)."
+            answer: "(9, 18, 13)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: Let x, y, z be the numbers of 10-cent, 20-cent, and 50-cent coins. The coin-count equation is x + y + z = 40, the value equation is 0.1x + 0.2y + 0.5z = 11, and the relation is y = 2x. Step 2: Substituting y = 2x gives z = 40 - 3x. The value equation becomes 0.1x + 0.4x + 0.5(40 - 3x) = 11, so 20 - x = 11 and x = 9; then y = 18 and z = 13. The solution is (9, 18, 13)."
+          - problem: "A lab mixes 5%, 15%, and 40% saline solutions to make 24 L of a 25% saline solution. The amount of 40% solution used equals the sum of the amounts of the other two solutions. Give the liters of the 5%, 15%, and 40% solutions in that order as (x, y, z)."
+            answer: "(6, 6, 12)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: Let x, y, z be the liters of 5%, 15%, and 40% saline solution. The volume equation is x + y + z = 24, the salt equation is 0.05x + 0.15y + 0.40z = 6, and the relation is z = x + y. Step 2: The relation gives z = 12 and x + y = 12. Then 0.05x + 0.15y + 4.8 = 6, so 0.05x + 0.15y = 1.2; with y = 12 - x this becomes 1.8 - 0.10x = 1.2, so x = 6 and y = 6. The solution is (6, 6, 12)."
         constraints: "3 unknowns; percentages in easy decimals; integer answers"
     diagnostic_exemplar:
       problem: 'Tickets cost €12 (adult), €7 (student), and €5 (child). $24$ tickets were sold for €244, and three times as many student tickets as child tickets were sold. How many of each were sold?'
