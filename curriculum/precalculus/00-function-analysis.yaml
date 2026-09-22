@@ -186,6 +186,22 @@ topics:
           - problem: 'Describe $y = -2(x - 1)^2$ as transformations of $y = x^2$.'
             answer: "shift right 1, stretch vertically by 2, reflect across the x-axis"
             answer_contract: {kind: label, options: [["shift right 1, stretch vertically by 2, reflect across the x-axis"], ["shift left 1, stretch vertically by 2, reflect across the x-axis"], ["shift right 1, compress vertically by 2, reflect across the x-axis"], ["shift right 1, stretch vertically by 2, reflect across the y-axis"]]}
+          - problem: "The point (2, 3) lies on y = f(x). What point lies on y = 4f(x) - 5? Give the answer as (x, y)."
+            answer: "(2, 7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start from the transformation y = 4f(x) - 5 and the point (2, 3) on y = f(x). The vertical stretch rule multiplies the y-coordinate by 4: 4*3 = 12. The vertical shift rule subtracts 5: 12 - 5 = 7, and the x-coordinate stays 2. The image point is (2, 7)."
+          - problem: "The point (3, 4) lies on y = f(x). What point lies on y = -2f(x + 1) + 6? Give the answer as (x, y)."
+            answer: "(2, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start from y = -2f(x + 1) + 6 and the point (3, 4) on y = f(x). The horizontal shift rule solves x + 1 = 3, so x = 2. The reflection and stretch rule multiplies the y-coordinate by -2: -2*4 = -8. The vertical shift rule adds 6: -8 + 6 = -2. The image point is (2, -2)."
+          - problem: "The graph of y = -3f(x - 2) + 5 comes from the graph of y = f(x), and it contains the point (4, -1). What point of y = f(x) gives the point (4, -1)? Give the answer as (x, y)."
+            answer: "(2, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start from the transformed point (4, -1) on y = -3f(x - 2) + 5. The horizontal shift rule gives the original x: x - 2 = 4, so x = 2. The stretch and reflection rule divides by -3, and the shift rule subtracts 5: (-1 - 5)/(-3) = 2, so f(2) = 2. Undoing the transformations, the original point is (2, 2)."
+          - problem: "The point (1, 4) lies on y = f(x). The point (1, -16) lies on the graph of y = -a f(x) + 4, where a is a positive number. Find a."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from y = -a f(x) + 4 with f(1) = 4, and the image point (1, -16). The stretch and reflection rule substitutes: -a*4 + 4 = -16, so -4a = -20. The shift rule already added 4 on each side. Solve the equation: a = 5. The stretch factor is 5."
     diagnostic_exemplar:
       problem: 'The point $(3, 5)$ lies on $y = f(x)$. What point lies on $y = -2f(x) + 1$?'
       answer: "(3, -9)"
@@ -296,6 +312,22 @@ topics:
           - problem: 'Let $f(x) = 2x$ for $x < 1$ and $f(x) = 5$ for $x \ge 1$. Find $f(1)$.'
             answer: "5"
             solution_sketch: '$x = 1$ satisfies $x \ge 1$, so use the second piece.'
+          - problem: "Let $f(x) = 3x - 2$ for $x < 1$ and $f(x) = x + 4$ for $x \\ge 1$. Find $f(-2)$."
+            answer: "-8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is f(x)=3x-2 for x<1 and f(x)=x+4 for x>=1. Step 1: test the input against the breakpoint: -2 < 1, so use the first piece. Step 2: substitute x=-2 into 3x-2: 3(-2)-2 = -8. The value is -8."
+          - problem: "Let $f(x) = x^2 + 1$ for $x < 0$ and $f(x) = 2x + 3$ for $x \\ge 0$. Find $f(2)$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function is f(x)=x^2+1 for x<0 and f(x)=2x+3 for x>=0. Step 1: compare the input to the breakpoint: 2 >= 0, so use the second piece. Step 2: substitute x=2 into 2x+3: 2(2)+3 = 7. The value is 7."
+          - problem: "Let $f(x) = x + 1$ for $x < -1$, $f(x) = x^2$ for $-1 \\le x < 2$, and $f(x) = 5 - x$ for $x \\ge 2$. Find $f(0)$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full function has three pieces: x+1 for x<-1, x^2 for -1<=x<2, and 5-x for x>=2. Step 1: locate the interval that contains 0: -1 <= 0 < 2, so the middle piece applies. Step 2: evaluate x^2 at x=0: 0^2 = 0. The value is 0."
+          - problem: "A gym charges $25 for $x < 10$ visits and $25 + 3(x - 10)$ for $x \\ge 10$ visits. Find the charge in dollars for 14 visits."
+            answer: "37"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full rule is 25 for x<10 and 25+3(x-10) for x>=10. Step 1: test the input against the breakpoint: 14 >= 10, so use the second piece. Step 2: substitute x=14 into 25+3(x-10): 25+3(4) = 37. The charge is 37."
       - id: kp2
         name: Absolute value as a piecewise rule
         key_prerequisites: [absolute-value, function-transformations-shifts]
