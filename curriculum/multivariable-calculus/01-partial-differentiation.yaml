@@ -623,6 +623,22 @@ topics:
           - problem: 'Let $f(x, y) = x y^2$. Use the limit definition of $f_y$ (not the power rule) to compute $f_y(2, 1)$.'
             answer: "4"
             solution_sketch: '$\frac{f(2,\,1+h) - f(2,\,1)}{h} = \frac{2(1+h)^2 - 2}{h} = \frac{4h + 2h^2}{h} = 4 + 2h \to 4$. Check: $f_y = 2xy = 4$ at $(2, 1)$.'
+          - problem: "Let f(x, y) = 3x^2 - xy + y^2. Find ∂f/∂x as a function of x and y using the limit definition."
+            answer: "6x - y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with f(x, y) = 3x^2 - xy + y^2. Step 1: write the limit definition of the partial derivative with respect to x: f_x = lim h->0 [f(x+h, y) - f(x, y)]/h. Step 2: expand f(x+h, y) = 3(x+h)^2 - (x+h)y + y^2 = 3x^2 + 6xh + 3h^2 - xy - hy + y^2. Step 3: subtract f(x, y) and divide by h: [6xh + 3h^2 - hy]/h = 6x + 3h - y. Step 4: take the limit as h goes to 0, which gives 6x - y. The answer is 6x - y."
+          - problem: "Let f(x, y) = x^2 + 5xy + y^2. Compute f_y(1, 2) using the limit definition of f_y."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with f(x, y) = x^2 + 5xy + y^2. Step 1: write the limit definition in y: f_y(1, 2) = lim h->0 [f(1, 2+h) - f(1, 2)]/h. Step 2: compute f(1, 2) = 1 + 10 + 4 = 15 and f(1, 2+h) = 1 + 5(2+h) + (2+h)^2 = 15 + 9h + h^2. Step 3: form the difference quotient [15 + 9h + h^2 - 15]/h = 9 + h. Step 4: take the limit as h goes to 0 to get 9. The answer is 9."
+          - problem: "Let z = 2x^2 + 3y^2 - xy. Find ∂z/∂y as a function of x and y using the limit definition."
+            answer: "6y - x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Start with z = 2x^2 + 3y^2 - xy. Step 1: write the limit definition of ∂z/∂y: z_y = lim h->0 [z(x, y+h) - z(x, y)]/h. Step 2: expand z(x, y+h) = 2x^2 + 3(y+h)^2 - x(y+h) = 2x^2 + 3y^2 + 6yh + 3h^2 - xy - xh. Step 3: subtract z(x, y) and divide by h: [6yh + 3h^2 - xh]/h = 6y + 3h - x. Step 4: take the limit as h goes to 0 to get 6y - x. The answer is 6y - x."
+          - problem: "Let f(x, y) = x^2 - 3xy + 2y^2. Compute f_x(-1, 2) using the limit definition."
+            answer: "-8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with f(x, y) = x^2 - 3xy + 2y^2. Step 1: write the limit definition in x at (-1, 2): f_x(-1, 2) = lim h->0 [f(-1+h, 2) - f(-1, 2)]/h. Step 2: compute f(-1, 2) = 1 + 6 + 8 = 15 and f(-1+h, 2) = (-1+h)^2 - 3(-1+h)(2) + 8 = 15 - 8h + h^2. Step 3: form the difference quotient [15 - 8h + h^2 - 15]/h = -8 + h. Step 4: take the limit as h goes to 0 to get -8. The answer is -8."
         constraints: "quadratic f so the difference quotient simplifies by cancellation; also test the equivalent notations for the partial derivative (∂z/∂x, ∂f/∂x, f_x) — never the straight-d dz/dx of one-variable calculus"
       - id: kp3
         name: "Products, quotients, and three variables"
@@ -634,6 +650,22 @@ topics:
           - problem: 'Let $f(x, y, z) = x^2 y + y z^3$. Find $f_z$.'
             answer: '$3yz^2$'
             solution_sketch: 'Both $x$ and $y$ are held constant; only the $yz^3$ term involves $z$.'
+          - problem: "Let f(x, y) = x^2 y / (x + y). Find f_y."
+            answer: "x^3/(x+y)^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Write the function: f(x, y) = x^2 y / (x + y). Hold x constant and apply the quotient rule in y: f_y = x^2 * ((1)(x + y) - y(1)) / (x + y)^2. Simplify the numerator: x^2 * x / (x + y)^2. The derivative is x^3/(x+y)^2."
+          - problem: "Let f(x, y, z) = x^2 y z^2 + y^3 z. Find f_y."
+            answer: "x^2 z^2 + 3 y^2 z"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "Write the function: f(x, y, z) = x^2 y z^2 + y^3 z. Hold x and z constant and differentiate each term in y using the power rule. The first term gives x^2 z^2, and the second gives 3 y^2 z. The derivative is x^2 z^2 + 3 y^2 z."
+          - problem: "Let f(x, y) = x^2 e^y + y^3. Find f_x."
+            answer: "2x e^y"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Write the function: f(x, y) = x^2 e^y + y^3. Hold y constant; e^y is a constant factor. Apply the power rule in x to x^2 and the constant rule to y^3. The derivative is 2x e^y."
+          - problem: "Let f(x, y) = (x^2 + y^2) / (x + y). Find f_x."
+            answer: "(x^2+2xy-y^2)/(x+y)^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Write the function: f(x, y) = (x^2 + y^2) / (x + y). Hold y constant and apply the quotient rule in x: numerator derivative 2x times (x + y) minus (x^2 + y^2) times 1. Simplify: (2x^2 + 2xy - x^2 - y^2)/(x + y)^2 = (x^2 + 2xy - y^2)/(x + y)^2. The derivative is (x^2+2xy-y^2)/(x+y)^2."
         constraints: "one quotient-rule layer at most; three-variable examples are polynomial"
     diagnostic_exemplar:
       problem: 'Let $f(x, y, z) = \dfrac{xy}{x + z}$. Find $f_x$.'
@@ -669,14 +701,30 @@ topics:
         name: "Estimating partials from tables"
         key_prerequisites: [first-order-partial-derivatives, estimating-derivatives]
         exemplars:
-          - problem: 'A table gives $f(2, 1) = 10$ and $f(2.5, 1) = 12$. Estimate $f_x(2, 1)$.'
-            answer: '$f_x(2, 1) \approx \dfrac{12 - 10}{0.5} = 4$'
-            solution_sketch: '$f_x(2,1)\approx\frac{f(2.5,1)-f(2,1)}{0.5}=\frac{12-10}{0.5}=4$.'
-            answer_contract: {kind: none}
-          - problem: 'A table gives $f(1.9, 3) = 7.2$ and $f(2.1, 3) = 7.8$. Use a central difference to estimate $f_x(2, 3)$.'
-            answer: '$f_x(2, 3) \approx \dfrac{7.8 - 7.2}{0.2} = 3$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Central difference: $\frac{f(2.1,3) - f(1.9,3)}{2(0.1)}$.'
+          - problem: "A table of values gives f(1, 2) = 5 and f(1.4, 2) = 7. Find the estimate of f_x(1, 2) as an integer."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use a forward difference quotient with y fixed at 2. The estimate is f_x(1,2) approximately (7 - 5)/(1.4 - 1) = 2/0.4 = 5. The estimate is 5."
+          - problem: "A table gives f(2.8, 4) = 6.2 and f(3.2, 4) = 7.0. Find the central-difference estimate of f_x(3, 4)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use a central difference quotient with y fixed at 4. The estimate is f_x(3,4) approximately (7.0 - 6.2)/(3.2 - 2.8) = 0.8/0.4 = 2. The estimate is 2."
+          - problem: "A table of a function g gives g(5, 1) = 12.0 and g(5, 1.5) = 13.5. Find the estimate of g_y(5, 1) and give it as a decimal to one decimal place."
+            answer: "3.0"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Use a forward difference quotient with x fixed at 5. The estimate is g_y(5,1) approximately (13.5 - 12.0)/(1.5 - 1) = 1.5/0.5 = 3.0. The estimate is 3.0."
+          - problem: "A table gives h(3, 7) = 9 and h(3, 6) = 11. Find the estimate of h_y(3, 7) from these entries."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use a backward difference quotient with x fixed at 3. The estimate is h_y(3,7) approximately (9 - 11)/(7 - 6) = -2/1 = -2. The estimate is -2."
+          - problem: "A table gives p(2, 5) = 8. The forward-difference estimate of p_x(2, 5) using p(2.2, 5) is 15. Find p(2.2, 5)."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set the forward difference quotient equal to 15 with y fixed at 5. Solve 15 = (p(2.2,5) - 8)/(2.2 - 2) = (p(2.2,5) - 8)/0.2. Then p(2.2,5) - 8 = 3, so p(2.2,5) = 11. The value is 11."
+          - problem: "The temperature T in a room is measured at two nearby points: T(3, 4) = 21.4 and T(3.5, 4) = 23.4. Find the estimate of T_x(3, 4) and give it as a decimal to one decimal place."
+            answer: "4.0"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Use a forward difference quotient with y fixed at 4. The estimate is T_x(3,4) approximately (23.4 - 21.4)/(3.5 - 3) = 2.0/0.5 = 4.0. The estimate is 4.0."
         constraints: "one variable changes at a time; difference quotients evaluate to one-decimal or integer answers"
       - id: kp2
         name: "Interpretation and signs from contour maps"
