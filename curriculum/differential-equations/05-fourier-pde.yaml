@@ -64,17 +64,29 @@ topics:
         name: Convergence and the value at a jump
         key_prerequisites: [unit-circle, piecewise-absolute-value-graphs]
         exemplars:
-          - problem: 'The square wave ($0$ on $(-\pi,0)$, $1$ on $(0,\pi)$) has a jump at $x = 0$. To what value does its Fourier series converge there?'
-            answer: '$\dfrac{1}{2}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'At a jump the series converges to the midpoint of the one-sided limits: $(0 + 1)/2$.'
-          - problem: 'The Fourier series of $f(x) = x$ on $(-\pi,\pi)$ is $\sum_{n\ge 1} \frac{2(-1)^{n+1}}{n}\sin nx$. Evaluate both sides at $x = \pi/2$ to sum $1 - \frac{1}{3} + \frac{1}{5} - \cdots$.'
-            answer: '$1 - \dfrac{1}{3} + \dfrac{1}{5} - \cdots = \dfrac{\pi}{4}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\sin(n\pi/2)$ vanishes for even $n$ and alternates for odd $n$; the identity $\frac{\pi}{2} = 2(1 - \frac{1}{3} + \frac{1}{5} - \cdots)$ follows.'
           - problem: 'To what value does the Fourier series of $f(x) = x$ on $(-\pi, \pi)$ converge at the endpoint $x = \pi$?'
             answer: "0"
             solution_sketch: 'The periodic extension jumps from $\pi$ to $-\pi$ there; the series converges to the midpoint $0$.'
+          - problem: "A square wave equals 0 on (-pi, 0) and 4 on (0, pi). Its periodic extension has a jump at x = 0. Find the value to which the Fourier series of the wave converges at x = 0."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Fourier convergence theorem says that at a jump discontinuity the series converges to the average of the one-sided limits. Step 1: identify the jump of the periodic extension at x = 0. Step 2: the left limit is 0 and the right limit is 4, so the average is (0 + 4)/2 = 2. The Fourier series converges to 2 at x = 0."
+          - problem: "The Fourier series of f(x) = x on (-pi, pi) has terms 2(-1)^(n+1) sin(nx)/n. Setting x = pi/2 turns the series into the alternating sum S = 1 - 1/3 + 1/5 - 1/7 + .... Compute S."
+            answer: "pi/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (convergence theorem): the periodic extension of f(x) = x is continuous at x = pi/2, so the series value there equals f(pi/2) = pi/2. Step 2 (unit-circle values): sin(n pi/2) is 0 for even n and alternates 1, -1 for odd n, so the series at x = pi/2 reads 2(1 - 1/3 + 1/5 - ...) = 2S. Solving 2S = pi/2 gives S = pi/4. The sum equals pi/4."
+          - problem: "Let f(x) = cos(2x) on (-pi, pi). State the value to which its Fourier series converges at x = pi/2."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (convergence theorem): where the periodic extension is continuous, the Fourier series converges to the function value itself. Step 2: f(x) = cos(2x) is continuous at x = pi/2, and cos(2 * pi/2) = cos(pi) = -1. The Fourier series converges to -1 at x = pi/2."
+          - problem: "A piecewise-smooth function has f(x) = 3 on (-pi, pi/2) and f(x) = 7 on (pi/2, pi). Determine the value to which its Fourier series converges at the jump x = pi/2."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (convergence theorem): at a jump the Fourier series converges to the midpoint of the one-sided limits. Step 2: the left limit at x = pi/2 is 3 and the right limit is 7, and (3 + 7)/2 = 5. The Fourier series converges to 5 at the jump."
+          - problem: "The function f(x) = x^2 + x on (-pi, pi) is extended periodically with period 2pi, and the extension jumps at x = pi. Compute the value to which the Fourier series of the extension converges at x = pi."
+            answer: "pi^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (periodic extension): extending f(x) = x^2 + x with period 2pi, the left limit at x = pi is pi^2 + pi and the right limit is pi^2 - pi, so the extension jumps there. Step 2 (convergence theorem): the series at a jump converges to the average (pi^2 + pi + pi^2 - pi)/2 = pi^2. The Fourier series converges to pi^2 at x = pi."
         constraints: "piecewise-smooth f only; evaluation points are jumps or clean multiples of pi/2 where sin/cos values are exact"
     diagnostic_exemplar:
       problem: 'Find the Fourier coefficients $b_n$ of $f(x) = x$ on $(-\pi, \pi)$, and state the value to which its Fourier series converges at $x = \pi$.'
@@ -115,31 +127,59 @@ topics:
         name: Even and odd shortcuts
         key_prerequisites: [even-odd-functions, fourier-series]
         exemplars:
-          - problem: 'Which Fourier coefficients of $f(x) = x^3$ on $(-\pi, \pi)$ vanish, and why?'
-            answer: 'All $a_n$ (including $a_0$): $f$ is odd, so its series is a pure sine series.'
-            answer_contract: {kind: none}
-            solution_sketch: 'All $a_n$ (including $a_0$): $f$ is odd, so its series is a pure sine series.'
-          - problem: 'Which Fourier coefficients of $f(x) = x^2$ on $(-\pi, \pi)$ vanish?'
-            answer: 'All $b_n$: $f$ is even, so its series is a pure cosine series.'
-            answer_contract: {kind: none}
-            solution_sketch: 'All $b_n$: $f$ is even, so its series is a pure cosine series.'
-          - problem: 'For an even function $f$ on $(-\pi,\pi)$, rewrite $a_n = \frac{1}{\pi}\int_{-\pi}^{\pi} f\cos nx\,dx$ as an integral over $(0, \pi)$.'
-            answer: '$a_n = \dfrac{2}{\pi}\int_0^{\pi} f(x)\cos nx\,dx$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The integrand $f\cos nx$ is even, so the integral doubles over the half-interval.'
+          - problem: "For f(x) = x^3 on (-pi, pi), use the odd symmetry shortcut to find b_1."
+            answer: "2pi^2-12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f(x) = x^3 is odd. Step 1, parity rule: every a_n is 0 because f cos(nx) is odd. Step 2, odd half-interval formula: b_n = (2/pi) times the integral from 0 to pi of x^3 sin(nx) dx. Step 3, integration by parts for n = 1 gives the integral from 0 to pi of x^3 sin(x) dx = pi^3 - 6pi. Step 4, multiply by 2/pi. The value is 2pi^2-12."
+          - problem: "For f(x) = x^2 on (-pi, pi), use the even symmetry shortcut to find a_2."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f(x) = x^2 is even. Step 1, parity rule: every b_n is 0 because f sin(nx) is odd. Step 2, even half-interval formula: a_n = (2/pi) times the integral from 0 to pi of x^2 cos(nx) dx. Step 3, for n = 2, integration by parts gives the integral from 0 to pi of x^2 cos(2x) dx = pi/2. Step 4, multiply by 2/pi. The value is 1."
+          - problem: "For f(x) = |x| on (-pi, pi), use the even symmetry shortcut to find a_0."
+            answer: "pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f(x) = |x| is even, so every b_n is 0 by the parity rule. Step 1, even half-interval formula: a_0 = (2/pi) times the integral from 0 to pi of f(x) dx, and on the half interval |x| = x. Step 2, integrate: the integral from 0 to pi of x dx equals pi^2/2. Step 3, multiply by the factor 2/pi, which gives a_0 = (2/pi)(pi^2/2). The value is pi."
+          - problem: "For f(x) = x cos(x) on (-pi, pi), use the odd symmetry shortcut to find b_1."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f(x) = x cos(x) is odd, because x is odd and cos(x) is even. Step 1, parity rule: every a_n is 0. Step 2, odd half-interval formula: b_n = (2/pi) times the integral from 0 to pi of x cos(x) sin(nx) dx. Step 3, for n = 1 use sin(x)cos(x) = sin(2x)/2 and integration by parts; the integral from 0 to pi of x cos(x) sin(x) dx = -pi/4. Step 4, multiply by 2/pi. The value is -1/2."
+          - problem: "For f(x) = x sin(x) on (-pi, pi), use the even symmetry shortcut to find a_0."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f(x) = x sin(x) is even, because x is odd and sin(x) is odd. Step 1, parity rule: every b_n is 0. Step 2, even half-interval formula: a_0 = (2/pi) times the integral from 0 to pi of x sin(x) dx. Step 3, integration by parts gives the integral from 0 to pi of x sin(x) dx = pi. Step 4, multiply by 2/pi. The value is 2."
+          - problem: "For an odd function f on (-pi, pi), select the half-interval form of b_n."
+            answer: "2/pi integral_0^pi f(x) sin(nx) dx"
+            answer_contract: {"kind": "label", "options": [["2/pi integral_0^pi f(x) sin(nx) dx"], ["2/pi integral_0^pi f(x) cos(nx) dx"], ["1/pi integral_0^pi f(x) sin(nx) dx"], ["1/pi integral_0^pi f(x) cos(nx) dx"]]}
+            solution_sketch: "For odd f, the product f(x) sin(nx) is even, so the full integral for b_n is twice the half-interval integral. Step 1, start with b_n = (1/pi) integral from -pi to pi of f(x) sin(nx) dx. Step 2, double the integral over 0 to pi: b_n = (2/pi) integral from 0 to pi of f(x) sin(nx) dx. The wrong option 2/pi integral_0^pi f(x) cos(nx) dx uses the wrong trigonometric factor. The wrong option 1/pi integral_0^pi f(x) sin(nx) dx forgets the factor 2. The wrong option 1/pi integral_0^pi f(x) cos(nx) dx has both errors. The correct option is 2/pi integral_0^pi f(x) sin(nx) dx."
         constraints: "f a power of x, |x|, or a product of one power and one sine/cosine — or an unspecified f known only to be even or odd, for half-interval rewrites of the coefficient formulas; justification must name even/odd parity"
       - id: kp2
         name: "Half-range sine expansions on $[0, L]$"
         key_prerequisites: [fourier-series, integration-by-parts]
         exemplars:
-          - problem: 'Expand $f(x) = 1$ on $(0, \pi)$ in a sine series: compute $b_n = \frac{2}{\pi}\int_0^{\pi}\sin nx\,dx$ and write the first two nonzero terms.'
-            answer: '$b_n = \dfrac{2(1 - (-1)^n)}{n\pi}$; $\quad f \sim \dfrac{4}{\pi}\sin x + \dfrac{4}{3\pi}\sin 3x + \cdots$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\int_0^{\pi}\sin nx\,dx = \frac{1 - \cos n\pi}{n}$; even $n$ vanish, odd $n$ give $4/(n\pi)$.'
-          - problem: 'Expand $f(x) = x$ on $(0, 1)$ in a sine series with $L = 1$: $b_n = 2\int_0^1 x\sin(n\pi x)\,dx$.'
-            answer: '$b_n = \dfrac{2(-1)^{n+1}}{n\pi}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'By parts: $2\left[\frac{-x\cos n\pi x}{n\pi}\right]_0^1 + \frac{2}{n\pi}\int_0^1 \cos n\pi x\,dx = \frac{-2\cos n\pi}{n\pi}$.'
+          - problem: "For a half-range sine expansion on $(0, L)$, the coefficient is $b_n = \\frac{2}{L}\\int_0^L f(x)\\sin\\left(\\frac{n\\pi x}{L}\\right)\\,dx$. For $f(x) = 1$ on $(0, \\pi)$, find the exact value of $b_3$."
+            answer: "4/(3pi)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the half-range sine coefficient formula: $b_n = \\frac{2}{\\pi}\\int_0^{\\pi} 1\\cdot\\sin(nx)\\,dx$ because $L=\\pi$ and $f=1$. Integrate: $\\int_0^{\\pi}\\sin(3x)\\,dx = \\left[-\\cos(3x)/3\\right]_0^{\\pi} = (1 - \\cos 3\\pi)/3 = 2/3$. Multiply by $2/\\pi$: $b_3 = (2/\\pi)(2/3) = 4/(3\\pi)$. The value is 4/(3pi)."
+          - problem: "For a half-range sine expansion on $(0, L)$, the coefficient is $b_n = \\frac{2}{L}\\int_0^L f(x)\\sin\\left(\\frac{n\\pi x}{L}\\right)\\,dx$. For $f(x) = x$ on $(0, 1)$, find the exact value of $b_2$."
+            answer: "-1/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the half-range sine coefficient formula with $L=1$: $b_n = 2\\int_0^1 x\\sin(n\\pi x)\\,dx$. Integrate by parts for $n=2$: $\\int_0^1 x\\sin(2\\pi x)\\,dx = \\left[-x\\cos(2\\pi x)/(2\\pi)\\right]_0^1 + \\int_0^1 \\cos(2\\pi x)/(2\\pi)\\,dx = -1/(2\\pi)$. Multiply by 2: $b_2 = -1/\\pi$. The coefficient is -1/pi."
+          - problem: "For a half-range sine expansion on $(0, L)$, the coefficient is $b_n = \\frac{2}{L}\\int_0^L f(x)\\sin\\left(\\frac{n\\pi x}{L}\\right)\\,dx$. For $f(x) = 2$ on $(0, 1)$, find the exact value of $b_1$."
+            answer: "8/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "With $L=1$ and $f=2$, the formula gives $b_n = 2\\int_0^1 2\\sin(n\\pi x)\\,dx = 4\\int_0^1 \\sin(n\\pi x)\\,dx$. For $n=1$, integrate: $4\\left[-\\cos(\\pi x)/\\pi\\right]_0^1 = 4(1/\\pi + 1/\\pi) = 8/\\pi$. The coefficient is 8/pi."
+          - problem: "For a half-range sine expansion on $(0, L)$, the coefficient is $b_n = \\frac{2}{L}\\int_0^L f(x)\\sin\\left(\\frac{n\\pi x}{L}\\right)\\,dx$. For $f(x) = x$ on $(0, \\pi)$, find the exact value of $b_1$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "With $L=\\pi$, the coefficient is $b_n = \\frac{2}{\\pi}\\int_0^{\\pi} x\\sin(nx)\\,dx$. For $n=1$, integrate by parts: $\\int_0^{\\pi} x\\sin x\\,dx = \\left[-x\\cos x + \\sin x\\right]_0^{\\pi} = \\pi$. Multiply by $2/\\pi$: $b_1 = 2$. The coefficient is 2."
+          - problem: "For a half-range sine expansion on $(0, L)$, the coefficient is $b_n = \\frac{2}{L}\\int_0^L f(x)\\sin\\left(\\frac{n\\pi x}{L}\\right)\\,dx$. For $f(x) = x$ on $(0, \\pi)$, find the exact value of $b_2$."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "With $L=\\pi$, $b_n = \\frac{2}{\\pi}\\int_0^{\\pi} x\\sin(nx)\\,dx$. For $n=2$, integrate by parts: $\\int_0^{\\pi} x\\sin(2x)\\,dx = \\left[-x\\cos(2x)/2 + \\sin(2x)/4\\right]_0^{\\pi} = -\\pi/2$. Multiply by $2/\\pi$: $b_2 = -1$. The coefficient is -1."
+          - problem: "For a half-range sine expansion on $(0, L)$, the coefficient is $b_n = \\frac{2}{L}\\int_0^L f(x)\\sin\\left(\\frac{n\\pi x}{L}\\right)\\,dx$. For $f(x) = x$ on $(0, 1)$, give the first two nonzero sine terms as a function of $x$."
+            answer: "2 sin(pi x)/pi - sin(2pi x)/pi"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "With $L=1$, the coefficient is $b_n = 2\\int_0^1 x\\sin(n\\pi x)\\,dx$. Integration by parts gives $b_1 = 2/\\pi$ and $b_2 = -1/\\pi$. Therefore the first two terms are $(2/\\pi)\\sin(\\pi x) - (1/\\pi)\\sin(2\\pi x)$, which is 2 sin(pi x)/pi - sin(2pi x)/pi."
         constraints: "L in {1, pi}; f constant or linear; the general-L formula b_n = (2/L) integral of f sin(n pi x / L) must be quoted before use"
       - id: kp3
         name: "Half-range cosine expansions on $[0, L]$"
@@ -194,35 +234,59 @@ topics:
         name: "Separating $u(x,t) = X(x)T(t)$"
         key_prerequisites: [partial-derivatives, boundary-value-problems-intro]
         exemplars:
-          - problem: 'Substitute $u(x,t) = X(x)T(t)$ into the heat equation $u_t = k\,u_{xx}$ and derive the two ordinary differential equations.'
-            answer: '$X'''' + \lambda X = 0$ and $T'' + \lambda k T = 0$, where $\lambda$ is the separation constant.'
-            answer_contract: {kind: none}
-            solution_sketch: '$XT'' = kX''''T$ gives $\dfrac{T''}{kT} = \dfrac{X''''}{X}$; a function of $t$ equals a function of $x$ only if both are a constant $-\lambda$.'
-          - problem: 'Why must $\frac{T''(t)}{kT(t)} = \frac{X''''(x)}{X(x)}$ be constant?'
-            answer: "The left side depends only on $t$ and the right only on $x$; a function of $t$ can equal a function of $x$ for all $t, x$ only if both are the same constant."
-            answer_contract: {kind: none}
-            solution_sketch: "The left side depends only on $t$ and the right only on $x$; a function of $t$ can equal a function of $x$ for all $t, x$ only if both are the same constant."
-          - problem: 'For $u_t = u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$, state the eigenvalues and the product solutions $u_n$.'
-            answer: '$\lambda_n = n^2$ with $u_n(x,t) = e^{-n^2 t}\sin nx$, for $n = 1, 2, 3, \ldots$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The boundary conditions force $X(0) = X(\pi) = 0$ — the eigenvalue problem $X'''' + \lambda X = 0$ from boundary value problems; then $T'' = -n^2 T$ gives $T = e^{-n^2 t}$.'
+          - problem: "Separating u(x,t) = X(x)T(t) in the heat equation u_t = k u_xx writes the ratio T'/(k T) = X''/X as the constant -lambda. Select the pair of ordinary differential equations that follows."
+            answer: "X'' + lambda X = 0 and T' + lambda k T = 0"
+            answer_contract: {"kind": "label", "options": [["X'' + lambda X = 0 and T' + lambda k T = 0"], ["X'' - lambda X = 0 and T' - lambda k T = 0"], ["X'' + lambda X = 0 and T' - lambda k T = 0"], ["X'' + lambda k X = 0 and T' + lambda T = 0"]]}
+            solution_sketch: "Step 1, separation of variables: put u = X(x)T(t) into u_t = k u_xx to get X T' = k X'' T, so T'/(k T) = X''/X. Step 2, the constant argument: the side in t equals the side in x for all x and t only if both are the same constant, written -lambda, so X'' + lambda X = 0 and T' + lambda k T = 0. The option X'' - lambda X = 0 and T' - lambda k T = 0 has the wrong sign on both constants, the option X'' + lambda X = 0 and T' - lambda k T = 0 has the wrong sign on the T equation, and the option X'' + lambda k X = 0 and T' + lambda T = 0 puts the factor k in the wrong equation. The correct pair is X'' + lambda X = 0 and T' + lambda k T = 0."
+          - problem: "Substitute u(x,t) = X(x)T(t) into the heat equation u_t = k u_xx on the interval (0, 6) with Dirichlet conditions u(0,t) = u(6,t) = 0, and write the separation constant as -lambda. Find the first eigenvalue lambda_1 of the resulting X-problem."
+            answer: "pi^2/36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, separation of variables: u = X(x)T(t) in u_t = k u_xx gives X''/X = T'/(k T) = -lambda, so X'' + lambda X = 0 together with X(0) = X(6) = 0. Step 2, eigenvalue problem: this X-problem is the eigenvalue problem from the boundary value problems lesson, with X_n = sin(n pi x/6) and lambda_n = n^2 pi^2/36. The first eigenvalue is lambda_1 = pi^2/36."
+          - problem: "On the interval (0, pi) with u(0,t) = u(pi,t) = 0, the product solution u(x,t) = e^(-12t) sin(2x) solves u_t = k u_xx, where -lambda is the separation constant. Find the value of k."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, separation of variables: u = X(x)T(t) in u_t = k u_xx gives X'' + lambda X = 0 and T' + lambda k T = 0 with the constant -lambda. Step 2, the X-problem: on (0, pi) with X(0) = X(pi) = 0, the eigenfunction sin(2x) has eigenvalue lambda = 4, matching the eigenvalue problem of the boundary value problems lesson. Step 3, the T-equation: T' = -4 k T, so T = e^(-4 k t), and comparing with e^(-12t) gives -4k = -12; hence k = 3."
+          - problem: "A rod whose ends are held at zero temperature leads to the X-problem X'' + lambda X = 0 on (0, L) with X(0) = X(L) = 0, where -lambda is the separation constant. Its first eigenvalue is pi^2/25. Find the length L."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, separation of variables: X'' + lambda X = 0 on (0, L) with X(0) = X(L) = 0 is the eigenvalue problem from the boundary value problems lesson, and its eigenvalues are lambda_n = n^2 pi^2/L^2. Step 2, first eigenvalue: lambda_1 = pi^2/L^2, and the problem states pi^2/L^2 = pi^2/25. Step 3, solve: L^2 = 25, so the length is L = 5."
+          - problem: "The X-problem X'' + lambda X = 0 on (0, pi) with X(0) = X(pi) = 0 comes from separating the heat equation u_t = k u_xx, where -lambda is the separation constant. How many eigenvalues lambda_n are less than 60?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, separation of variables: the X-problem from the boundary value problems lesson has eigenfunctions sin(nx) and eigenvalues lambda_n = n^2 for n = 1, 2, 3, .... Step 2, count: the condition n^2 less than 60 holds for n = 1 through 7, because 7^2 = 49 and 8^2 = 64. So 7 eigenvalues are less than 60."
+          - problem: "Separating u_t = k u_xx on (0, L) with Dirichlet conditions gives the X-problem X'' + lambda X = 0 with the separation constant -lambda, and its third eigenvalue is 4 pi^2. Find the length L."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, separation of variables: the X-problem X'' + lambda X = 0 with X(0) = X(L) = 0 is the eigenvalue problem from the boundary value problems lesson, with eigenvalues lambda_n = n^2 pi^2/L^2. Step 2, third eigenvalue: lambda_3 = 9 pi^2/L^2, and the problem states 9 pi^2/L^2 = 4 pi^2. Step 3, solve: L^2 = 9/4, so the length is L = 3/2."
         constraints: "Dirichlet boundary conditions only; separation constant written -lambda; the X-equation must be identified as the eigenvalue problem from boundary-value-problems-intro"
       - id: kp2
         name: Initial data that is already a sine combination
         key_prerequisites: [boundary-value-problems-intro, fourier-sine-cosine-series]
         exemplars:
-          - problem: 'Solve $u_t = u_{xx}$ on $(0,\pi)$, $u(0,t) = u(\pi,t) = 0$, $u(x,0) = 3\sin x - \sin 2x$.'
-            answer: '$u(x,t) = 3e^{-t}\sin x - e^{-4t}\sin 2x$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Each mode $\sin nx$ evolves independently with factor $e^{-n^2 t}$.'
-          - problem: 'Solve $u_t = 2u_{xx}$ on $(0,1)$, $u(0,t) = u(1,t) = 0$, $u(x,0) = 5\sin 3\pi x$.'
-            answer: '$u(x,t) = 5e^{-18\pi^2 t}\sin 3\pi x$'
-            answer_contract: {kind: none}
-            solution_sketch: 'With $L = 1$ and $k = 2$ the mode $n = 3$ decays at rate $k(n\pi/L)^2 = 18\pi^2$.'
-          - problem: 'In the solution above, which mode of a general initial temperature dies out fastest, and what is the limit of $u$ as $t \to \infty$?'
-            answer: 'High modes die fastest (rate $kn^2\pi^2/L^2$ grows with $n$); $u \to 0$, the steady state with both ends held at $0$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'High modes die fastest (rate $kn^2\pi^2/L^2$ grows with $n$); $u \to 0$, the steady state with both ends held at $0$.'
+          - problem: "Solve u_t = u_xx on (0, pi), u(0,t) = u(pi,t) = 0, u(x,0) = 2 sin x + 5 sin 3x. Give the solution as u(x, t)."
+            answer: "2e^(-t)sin(x)+5e^(-9t)sin(3x)"
+            answer_contract: {"kind": "function", "vars": ["x", "t"]}
+            solution_sketch: "Separation of variables gives the full solution u(x,t) = 2e^(-t)sin(x)+5e^(-9t)sin(3x). Each sine mode sin(nx) in the initial data decays with factor e^(-n^2 t) for k=1 and L=pi. The n=1 mode has rate 1, and the n=3 mode has rate 9. The solution is 2e^(-t)sin(x)+5e^(-9t)sin(3x)."
+          - problem: "Solve u_t = 2u_xx on (0, pi), u(0,t) = u(pi,t) = 0, u(x,0) = 7 sin 2x. Give the solution as u(x, t)."
+            answer: "7e^(-8t)sin(2x)"
+            answer_contract: {"kind": "function", "vars": ["x", "t"]}
+            solution_sketch: "Separation of variables gives the single mode u(x,t) = 7e^(-8t)sin(2x). For k=2 and L=pi, the decay rate of sin(nx) is k n^2, so n=2 gives rate 8. The solution is 7e^(-8t)sin(2x)."
+          - problem: "For u_t = 3u_xx on (0, pi) with u(0,t) = u(pi,t) = 0, the initial data is u(x,0) = 4 sin 2x - sin 5x. Find the decay rate, the coefficient of t in the exponent, of the slower-decaying mode."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Separation of variables gives rates k n^2 for L=pi. With k=3, the n=2 mode has rate 3*4 = 12 and the n=5 mode has rate 3*25 = 75. The slower-decaying mode has decay rate 12."
+          - problem: "For u_t = 2u_xx on (0, pi), u(0,t) = u(pi,t) = 0, u(x,0) = 5 sin 2x + 3 sin 5x, find the coefficient of sin 2x in u(x,t) when t = 1. Give the coefficient as a decimal to 3 decimals."
+            answer: "0.002"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Separation of variables gives u(x,t) = 5e^(-8t)sin(2x)+3e^(-50t)sin(5x). At t=1 the coefficient of sin 2x is 5e^(-8). Numerically 5e^(-8) = 0.001677..., so to 3 decimals the coefficient is 0.002."
+          - problem: "Solve u_t = 5u_xx on (0, pi), u(0,t) = u(pi,t) = 0, u(x,0) = 2 sin x - 6 sin 3x. Give the solution as u(x, t)."
+            answer: "2e^(-5t)sin(x)-6e^(-45t)sin(3x)"
+            answer_contract: {"kind": "function", "vars": ["x", "t"]}
+            solution_sketch: "Separation of variables gives the full solution u(x,t) = 2e^(-5t)sin(x)-6e^(-45t)sin(3x). For k=5 and L=pi, the n=1 mode decays at rate 5 and the n=3 mode decays at rate 45. The solution is 2e^(-5t)sin(x)-6e^(-45t)sin(3x)."
+          - problem: "For u_t = 4u_xx on (0, 1), u(0,t) = u(1,t) = 0, and u(x,0) = sin(2 pi x) + 3 sin(5 pi x), find the ratio of the decay rate of the sin(5 pi x) mode to the decay rate of the sin(2 pi x) mode."
+            answer: "25/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Separation of variables gives decay rates k(n pi/L)^2. With k=4 and L=1, the n=2 rate is 4(2pi)^2 = 16pi^2 and the n=5 rate is 4(5pi)^2 = 100pi^2. The ratio is 100pi^2/16pi^2 = 25/4."
         constraints: "initial data a combination of at most two sine modes; k and L chosen so decay rates are clean multiples of 1 or pi^2"
       - id: kp3
         name: General initial data via sine series
