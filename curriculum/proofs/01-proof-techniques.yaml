@@ -1330,27 +1330,59 @@ topics:
         name: "Proof by example"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Criticize this "proof" that $n^2 - n + 11$ is prime for all positive integers $n$: "it holds for $n = 1, 2, 3, 4, 5$."'
-            answer_contract: {kind: none}
-            answer: 'Checking examples never proves a universal claim; indeed $n = 11$ gives $121 = 11^2$, composite.'
-            solution_sketch: 'A universal statement needs an argument for arbitrary $n$; finitely many verified cases prove nothing beyond themselves, and here the pattern actually fails at $n = 11$.'
-          - problem: 'A student proves "the sum of two even integers is even" by computing $4 + 6 = 10$. What is missing?'
-            answer_contract: {kind: none}
-            answer: 'The argument must take arbitrary even integers $2a, 2b$ and show $2a + 2b = 2(a+b)$; one instance is not a proof.'
-            solution_sketch: 'The claim quantifies over all pairs; the proof must use arbitrary representatives, not specific numbers.'
+          - problem: "Consider the claim that n^2 - n + 11 is prime for every positive integer n. The values n = 1, 2, 3, 4, 5 all give primes. Find the smallest positive integer n for which the claim fails."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The claim is that f(n) = n^2 - n + 11 is prime for every positive integer n. Step 1: test successive values using the definition of prime; f(6) = 41, f(7) = 53, f(8) = 67, f(9) = 83, f(10) = 101 are all prime. Step 2: test n = 11; f(11) = 121, and 121 = 11*11 is composite. The smallest positive integer that makes the claim fail is 11."
+          - problem: "A proof that the sum of two even integers is even must use arbitrary even integers. If the two even integers are 2a and 2b, give their sum as an expanded expression in a and b."
+            answer: "2a+2b"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The claim is that the sum of two even integers is even. Step 1: write arbitrary even integers as 2a and 2b, using the definition of even. Step 2: add them; 2a + 2b = 2(a+b), which is twice an integer, so it is even. The expanded sum is 2a+2b."
+          - problem: "A student claims n^2 + n + 17 is prime for every positive integer n. The claim holds for n = 1 through 15. Find the smallest positive integer n for which the claim fails."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The claim is that g(n) = n^2 + n + 17 is prime for every positive integer n. Step 1: check the given range; the values from n = 1 to n = 15 are prime. Step 2: evaluate n = 16; g(16) = 256 + 16 + 17 = 289, and 289 = 17*17. The claim fails first at n = 16."
+          - problem: "A student claims every prime number is odd. Which number is a counterexample?"
+            answer: "2"
+            answer_contract: {"kind": "label", "options": [["2"], ["3"], ["5"], ["7"]]}
+            solution_sketch: "A counterexample to the claim that every prime number is odd must be a prime that is not odd. Step 1: check the options; 2 is prime and is even, so it is a counterexample. Step 2: the numbers 3, 5 and 7 are odd primes, so they do not show the claim false. The correct counterexample is 2."
+          - problem: "A student argues that every odd number greater than 1 is prime, checking 3, 5 and 7. Find the smallest odd number greater than 1 that shows the argument is incomplete."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The claim is that every odd number greater than 1 is prime. Step 1: test the checked values 3, 5 and 7; they are prime. Step 2: test the next odd number 9; 9 = 3*3, so it is composite. The smallest odd number greater than 1 that shows the argument is incomplete is 9."
+          - problem: "To prove that the product of two odd integers is odd, a student checks 3*5 = 15. The proof must use arbitrary odd integers 2a+1 and 2b+1. Give the product as an expanded expression in a and b."
+            answer: "4ab+2a+2b+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The claim is that the product of two odd integers is odd. Step 1: write arbitrary odd integers as 2a+1 and 2b+1. Step 2: multiply them; (2a+1)(2b+1) = 4ab+2a+2b+1 = 2(2ab+a+b)+1, which is odd. The expanded product is 4ab+2a+2b+1."
         constraints: "the flawed argument verifies instances; the fix is an arbitrary-element proof or a counterexample"
       - id: kp2
         name: "Circular reasoning and converse errors"
         key_prerequisites: [rules-of-inference]
         exemplars:
-          - problem: 'Find the flaw: "To prove that if $n$ is even then $n^2$ is even, note that $n^2$ even implies $n$ even, so the statement holds."'
-            answer_contract: {kind: none}
-            answer: 'The argument proves (asserts) the converse instead of the claim — a converse error.'
-            solution_sketch: '$Q \to P$ is not $P \to Q$; citing the converse establishes nothing about the original conditional.'
-          - problem: 'Find the flaw: a "proof" of $\tfrac{a+b}{2} \ge \sqrt{ab}$ (for $a, b \ge 0$) that starts from $\tfrac{a+b}{2} \ge \sqrt{ab}$, squares both sides, and ends at $(a - b)^2 \ge 0$, concluding "true".'
-            answer_contract: {kind: none}
-            answer: 'It assumes what is to be proved and derives a truth from it; the logic must run from $(a-b)^2 \ge 0$ back to the claim, with each step reversible.'
-            solution_sketch: 'Deriving a true statement from $S$ does not prove $S$ ($F \to T$ is true). The repair: start from $(a - b)^2 \ge 0$ and reverse the (reversible, nonnegativity-respecting) steps to reach the claim.'
+          - problem: "A flawed proof of the claim that if n squared is divisible by three then n is divisible by three has five steps. Step one supposes n squared is divisible by three. Step two writes n squared equals three m. Step three cites the implication 'if n is divisible by three then n squared is divisible by three' and calls the case consistent. Step four concludes that n is divisible by three. Step five states the claim. Give the number of the first step that argues from the conclusion of the claim rather than from its hypothesis."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the proof has step one supposing the hypothesis, step two writing n squared equals three m, step three citing the implication from n to n squared, step four concluding n is divisible by three. Rule for step one: check that it starts from the hypothesis, which it does. Rule for step two: check that it is valid algebra, which it is. Rule for step three: compare its direction with the claim; it runs from the conclusion back to the hypothesis, which is the converse error of arguing from the conclusion. The first step that argues from the conclusion of the claim is step three. The answer is 3."
+          - problem: "A flawed proof of the claim that the arithmetic mean of two nonnegative numbers a and b is at least their geometric mean has four steps. In the first step it assumes the claim. In the second step it squares both sides. In the third step it rearranges to a perfect square inequality. In the fourth step it concludes the claim. Give the number of the first step that assumes what is to be proved."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: first step assumes the claim; second step squares both sides; third step rearranges to a perfect square; fourth step concludes. Rule for the first step: identify the assumption. Rule for the second step: check reversibility. The first step that assumes what is to be proved is the first step. The answer is 1."
+          - problem: "A proof of the claim 'if n is prime then n is odd' says that every odd integer greater than two is prime. Find the smallest odd composite that shows this step is invalid."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the step claims every odd n greater than two is prime. Rule for testing the step: find an odd n that is not prime. Test three, five, seven, then nine equals three times three, composite. The smallest odd composite is nine. The answer is 9."
+          - problem: "A flawed proof of 'if n is even then n squared is even' has four steps. In the first step it writes n = two k. In the second step it expands n squared to four k squared. In the third step it says 'since n squared is even, four k squared is even'. In the fourth step it concludes n squared is even. Give the number of the first step that assumes the conclusion."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: first step sets n = two k; second step expands; third step uses the conclusion n squared is even; fourth step repeats the conclusion. Rule for the first step: set up the hypothesis. Rule for the second step: compute. Rule for the third step: check for circular reasoning. The first step that assumes the conclusion is the third step. The answer is 3."
+          - problem: "A proof of 'if x squared equals four then x equals two' squares both sides and keeps only the positive root. Find the other real value of x that satisfies x squared equals four but not x equals two."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the equation x squared equals four has two real solutions. Rule for solving x squared equals four: take square roots, so x equals two or x equals negative two. Rule for the flaw: the step from x squared equals four to x equals two is not reversible. The other real value is negative two. The answer is -2."
+          - problem: "A proof of 'if n is a multiple of nine then n is a multiple of six' uses the converse 'if n is a multiple of six then n is a multiple of nine'. Find the smallest positive multiple of six greater than six that is not a multiple of nine."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the converse claims every multiple of six is a multiple of nine. Rule for testing the converse: list positive multiples of six. Six is not a multiple of nine, twelve is not a multiple of nine, but the smallest greater than six is twelve. The answer is 12."
         constraints: "flag arguing-from-the-conclusion; require reversibility or a rewritten forward proof"
       - id: kp3
         name: "Illegal algebraic steps"
