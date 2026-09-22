@@ -1066,13 +1066,29 @@ topics:
         name: Word problems with three unknowns
         key_prerequisites: [row-reduction-echelon-forms, systems-word-problems]
         exemplars:
-          - problem: 'Tickets cost €10 (adult), €6 (student), €4 (child). $20$ tickets were sold for €158, with twice as many student tickets as child tickets. How many of each were sold?'
-            answer: "11 adult, 6 student, 3 child"
-            answer_contract: {kind: none}
-            solution_sketch: '$a + s + c = 20$, $10a + 6s + 4c = 158$, $s = 2c$. Substituting $a = 20 - 3c$ gives $200 - 14c = 158$, so $c = 3$.'
+          - problem: "A cinema sells adult tickets for 9 euros, student tickets for 6 euros, and child tickets for 3 euros. It sold 18 tickets for a total of 102 euros. It sold twice as many student tickets as child tickets. How many of each type were sold? Give the answer as (adult, student, child)."
+            answer: "(3, 10, 5)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Set up: let a, s, c be the numbers of adult, student, and child tickets. The total-count equation is a + s + c = 18, the value equation is 9a + 6s + 3c = 102, and the relation is s = 2c. Substitute s = 2c and a = 18 - 3c into the value equation: 9(18 - 3c) + 6(2c) + 3c = 102, which simplifies to 162 - 12c = 102. Solve to get c = 5, then s = 10 and a = 3. The ticket counts are (3, 10, 5)."
           - problem: 'Three numbers sum to $12$; the second is twice the first; the third exceeds the first by $4$. Find them.'
             answer: "2, 4, 6"
             solution_sketch: '$x + 2x + (x + 4) = 12$ gives $x = 2$.'
+          - problem: "A collection of 14 coins consists of quarters, dimes, and nickels. The total value is 190 cents. There are twice as many dimes as quarters. How many of each coin are there? Give the answer as (quarters, dimes, nickels)."
+            answer: "(4, 8, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Let q, d, n be quarters, dimes, and nickels. The equations are q + d + n = 14, 25q + 10d + 5n = 190, and d = 2q. Substitute d = 2q and n = 14 - 3q into the value equation: 25q + 20q + 5(14 - 3q) = 190, so 30q + 70 = 190. Solve q = 4, d = 8, n = 2. The coin counts are (4, 8, 2)."
+          - problem: "A farm has chickens, ducks, and geese. There are 18 animals in all. The number of chickens is twice the number of geese, and the number of ducks is 2 more than the number of geese. How many of each animal are there? Give the answer as (chickens, ducks, geese)."
+            answer: "(8, 6, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Let c, d, g be chickens, ducks, and geese. The equations are c + d + g = 18, c = 2g, and d = g + 2. Substitute: 2g + (g + 2) + g = 18, so 4g + 2 = 18. Solve g = 4, c = 8, d = 6. The animal counts are (8, 6, 4)."
+          - problem: "Ana, Ben, and Cara are siblings. Their ages add to 30. Ben is twice as old as Ana, and Cara is 6 years older than Ana. How old is each? Give the answer as (Ana, Ben, Cara)."
+            answer: "(6, 12, 12)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Let a, b, c be Ana, Ben, and Cara's ages. The equations are a + b + c = 30, b = 2a, and c = a + 6. Substitute: a + 2a + (a + 6) = 30, so 4a + 6 = 30. Solve a = 6, b = 12, c = 12. The ages are (6, 12, 12)."
+          - problem: "A team scored 44 points on 25 scoring shots: 2-point goals, 3-point goals, and 1-point free throws. It made twice as many free throws as 3-point goals. How many of each type did it make? Give the answer as (2-point, 3-point, free throws)."
+            answer: "(7, 6, 12)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Let x, y, z be 2-point goals, 3-point goals, and free throws. The equations are x + y + z = 25, 2x + 3y + z = 44, and z = 2y. Substitute: x = 25 - 3y, then 2(25 - 3y) + 3y + 2y = 44, so 50 - y = 44. Solve y = 6, x = 7, z = 12. The scoring counts are (7, 6, 12)."
         constraints: "3 unknowns, integer answers, quantities positive and small"
       - id: kp3
         name: Mixture and allocation problems

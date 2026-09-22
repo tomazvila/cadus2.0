@@ -38,6 +38,22 @@ topics:
             answer: "[0,-2;-1,5]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: 'Scale entrywise to $\begin{pmatrix}2&-2\\0&6\end{pmatrix}$, then subtract entrywise.'
+          - problem: "Compute $-2\\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[-2,-4;0,-2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The object is -2 times the matrix [1,2;0,1]. Apply the scalar multiplication rule to each entry: -2*1=-2, -2*2=-4, -2*0=0, -2*1=-2. The answer is [-2,-4;0,-2]."
+          - problem: "Compute $2\\begin{pmatrix}1&1\\\\-1&0\\end{pmatrix} + 3\\begin{pmatrix}0&-1\\\\2&1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[2,-1;4,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The object is 2 times [1,1;-1,0] plus 3 times [0,-1;2,1]. Apply scalar multiplication: 2[1,1;-1,0] = [2,2;-2,0] and 3[0,-1;2,1] = [0,-3;6,3]. Add entrywise: [2+0,2-3;-2+6,0+3] = [2,-1;4,3]. The answer is [2,-1;4,3]."
+          - problem: "Compute $2\\begin{pmatrix}1&-2\\\\0&1\\end{pmatrix} - 3\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[2,-1;-3,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The object is 2 times [1,-2;0,1] minus 3 times [0,-1;1,0]. Apply scalar multiplication: 2[1,-2;0,1] = [2,-4;0,2] and 3[0,-1;1,0] = [0,-3;3,0]. Subtract entrywise: [2-0,-4-(-3);0-3,2-0] = [2,-1;-3,2]. The answer is [2,-1;-3,2]."
+          - problem: "Compute $2\\begin{pmatrix}1&0\\\\-1&2\\end{pmatrix} + 3\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix} - \\begin{pmatrix}1&1\\\\1&1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[1,-4;0,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The object is 2[1,0;-1,2] + 3[0,-1;1,0] - [1,1;1,1]. Apply scalar multiplication: [2,0;-2,4] and [0,-3;3,0]. Combine entrywise: [2+0-1,0-3-1;-2+3-1,4+0-1] = [1,-4;0,3]. The answer is [1,-4;0,3]."
         constraints: "scalars in -3..3; integer entries in -5..5"
       - id: kp3
         name: Size compatibility and solving for a matrix
@@ -91,6 +107,22 @@ topics:
             answer: "[2,8;7,1]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: 'Row 2: $1 \cdot 1 + 3 \cdot 2 = 7$ and $1 \cdot 4 + 3 \cdot (-1) = 1$.'
+          - problem: "Compute $\\begin{pmatrix}3&1\\\\2&4\\end{pmatrix}\\begin{pmatrix}-1&2\\\\5&0\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[2,6;18,4]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (row-column dot product): the top-left entry is 3*(-1) + 1*5 = 2. Step 2 (repeat for each entry): the top-right entry is 3*2 + 1*0 = 6, the bottom-left entry is 2*(-1) + 4*5 = 18, and the bottom-right entry is 2*2 + 4*0 = 4. The product is [2,6;18,4]."
+          - problem: "Compute $\\begin{pmatrix}0&3\\\\4&-2\\end{pmatrix}\\begin{pmatrix}2&-1\\\\1&5\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[3,15;6,-14]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (row-column dot product): the top-left entry is 0*2 + 3*1 = 3. Step 2 (assemble all four entries): the top-right entry is 0*(-1) + 3*5 = 15, the bottom-left entry is 4*2 + (-2)*1 = 6, and the bottom-right entry is 4*(-1) + (-2)*5 = -14. The product is [3,15;6,-14]."
+          - problem: "Compute the square $A^2$ for $A = \\begin{pmatrix}1&2\\\\-1&3\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[-1,8;-4,7]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (row-column dot product for a square): the top-left entry is 1*1 + 2*(-1) = -1. Step 2 (complete the product): the top-right entry is 1*2 + 2*3 = 8, the bottom-left entry is -1*1 + 3*(-1) = -4, and the bottom-right entry is -1*2 + 3*3 = 7. The square is [-1,8;-4,7]."
+          - problem: "For $A = \\begin{pmatrix}2&-3\\\\1&4\\end{pmatrix}$ and $B = \\begin{pmatrix}5&1\\\\-2&3\\end{pmatrix}$, find the bottom-right entry of $AB$. Give the answer as an integer."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (row-column dot product): the full product AB is [16,-7;-3,13]. Step 2 (select the bottom-right entry): that entry is 1*1 + 4*3 = 13. The bottom-right entry is 13."
         constraints: "2x2 times 2x2; entries in -4..8"
       - id: kp2
         name: Rectangular products and sizes
@@ -113,10 +145,26 @@ topics:
             answer: "[3,3;2,6]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$A(2, 1) = (3, 2)$ and $A(0, 3) = (3, 6)$.'
-          - problem: 'The $j$-th column of $AB$ equals $A$ times which vector?'
-            answer: "The j-th column of B"
-            answer_contract: {kind: none}
-            solution_sketch: 'By the definition of matrix multiplication, column $j$ of $AB$ is $A$ times column $j$ of $B$.'
+          - problem: "For A = [[2,1],[3,0]] and B = [[1,4],[2,5]], compute the second column of AB by multiplying A with the second column of B. Give the answer as (x, y)."
+            answer: "(13, 12)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Column view of matrix multiplication: the second column of AB is A times the second column of B, so the vector is A(4,5). Row 1: 2*4 + 1*5 = 13. Row 2: 3*4 + 0*5 = 12. The answer is (13, 12)."
+          - problem: "For A = [[2,3],[1,4]] and B = [[1,2],[0,1]], compute AB column by column. Give the matrix as [a,b;c,d]."
+            answer: "[2,7;1,6]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Column view: the first column of AB is A times the first column of B, so it is A(1,0) = (2,1). The second column is A(2,1) = (7,6). Row-column check: row 1 of A times column 1 of B is 2, and row 1 times column 2 is 7. The product is [2,7;1,6]."
+          - problem: "For A = [[3,1],[2,4]] and B = [[2,5],[1,3]], find the first column of AB by computing A times the first column of B. Give the answer as (x, y)."
+            answer: "(7, 8)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Column view: the first column of AB is A times the first column of B, so it is A(2,1). Row 1: 3*2 + 1*1 = 7. Row 2: 2*2 + 4*1 = 8. The answer is (7, 8)."
+          - problem: "For A = [[1,2],[3,4]] and B = [[0,1],[2,3]], compute AB by the column view and confirm the (2,1) entry with the row-column rule. Give the matrix as [a,b;c,d]."
+            answer: "[4,7;8,15]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Column view: first column of AB is A(0,2) = (4,8). Second column is A(1,3) = (7,15). Row-column check for entry (2,1): row 2 of A, (3,4), times column 1 of B, (0,2), is 3*0 + 4*2 = 8. The product is [4,7;8,15]."
+          - problem: "For A = [[4,1],[2,3]] and B = [[1,2],[3,4]], find the second column of AB by computing A times the second column of B. Give the answer as (x, y)."
+            answer: "(12, 16)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Column view: the second column of AB is A times the second column of B, so it is A(2,4). Row 1: 4*2 + 1*4 = 12. Row 2: 2*2 + 3*4 = 16. The answer is (12, 16)."
         constraints: "verify the column view against the row-column rule on 2x2 matrices"
     diagnostic_exemplar:
       problem: 'Compute $\begin{pmatrix}1&0&2\\3&1&0\end{pmatrix}\begin{pmatrix}2&1\\0&4\\1&3\end{pmatrix}$, and state the size of the product.'
