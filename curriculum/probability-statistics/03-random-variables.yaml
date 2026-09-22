@@ -1137,6 +1137,22 @@ topics:
           - problem: '$X$ is geometric with $p = 1/4$. Find $P(X > 3)$.'
             answer: "27/64"
             solution_sketch: 'Three straight failures: $\left(\frac{3}{4}\right)^3 = \frac{27}{64}$.'
+          - problem: "A basketball player makes each free throw with probability p = 1/5. Let X be the number of attempts until the first success. Find P(X > 3) as a fraction."
+            answer: "64/125"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The geometric tail rule is P(X > k) = (1-p)^k. Here p = 1/5 and k = 3, so P(X > 3) = (4/5)^3 = 64/125. The answer is 64/125."
+          - problem: "A spinner lands on red with probability p = 1/2. Let X be the number of spins until the first red. Find P(X <= 2) as a fraction."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a geometric variable, P(X <= k) = 1 - (1-p)^k. With p = 1/2 and k = 2, P(X <= 2) = 1 - (1/2)^2 = 1 - 1/4 = 3/4. The answer is 3/4."
+          - problem: "A telemarketer reaches a person with probability p = 2/5 on each call. Let X be the number of calls until the first success. Find P(X < 3) as a fraction."
+            answer: "16/25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The event X < 3 means the first success is on call 1 or call 2, so P(X < 3) = P(X <= 2). The geometric cumulative rule gives P(X <= 2) = 1 - (1-p)^2. With p = 2/5, this is 1 - (3/5)^2 = 1 - 9/25 = 16/25. The answer is 16/25."
+          - problem: "The number of tries X until a machine succeeds is geometric, and P(X > 2) = 49/64. Find the success probability p as a fraction."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the geometric tail rule states P(X > k) = (1-p)^k. Step 2: with k = 2 and P(X > 2) = 49/64, this gives (1-p)^2 = 49/64. Step 3: take the positive square root, so 1 - p = 7/8, and therefore p = 1 - 7/8 = 1/8. The answer is 1/8."
         constraints: "k <= 3; use P(X > k) = (1-p)^k; answers exact fractions"
       - id: kp3
         name: "Expected number of trials: 1/p"

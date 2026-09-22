@@ -18,28 +18,28 @@ topics:
         name: "Population versus sample"
         key_prerequisites: []
         exemplars:
-          - problem: 'A researcher surveys $200$ of a city''s $40{,}000$ residents. Identify the population and the sample.'
-            answer: 'Population: all $40{,}000$ residents; sample: the $200$ surveyed.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The population is the entire group of $40{,}000$ residents about whom conclusions are drawn; the sample is the $200$ actually surveyed.'
-          - problem: 'What is the difference between a census and a sample?'
-            answer: 'A census measures every member of the population; a sample measures only part of it.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A census covers the whole population; a sample covers only the part actually measured.'
+          - problem: "A health team surveys 150 of a city's 25,000 adults about sleep habits. Which statement correctly names the population and the sample?"
+            answer: "population: all 25,000 adults; sample: the 150 surveyed"
+            answer_contract: {"kind": "label", "options": [["population: all 25,000 adults; sample: the 150 surveyed"], ["population: the 150 surveyed; sample: all 25,000 adults"], ["population: all adults in the country; sample: the 150 surveyed"], ["population: all 25,000 adults; sample: all 25,000 adults"]]}
+            solution_sketch: "Step 1 (population rule): the population is the whole group of interest, all 25,000 adults in the city. Step 2 (sample rule): the sample is the part actually surveyed, the 150 adults. Step 3 (option check): 'population: the 150 surveyed; sample: all 25,000 adults' swaps the groups; 'population: all adults in the country; sample: the 150 surveyed' makes the population too broad; 'population: all 25,000 adults; sample: all 25,000 adults' wrongly makes the sample the whole population. population: all 25,000 adults; sample: the 150 surveyed"
+          - problem: "A factory produces 8000 parts each day. An inspector checks 80 of them. Give the population size and the sample size."
+            answer: "population = 8000; sample = 80"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "population"}, {"contract": {"kind": "exact"}, "name": "sample"}]}
+            solution_sketch: "Step 1 (population rule): the population is the full set of interest, the 8000 parts produced that day. Step 2 (sample rule): the sample is the subset inspected, the 80 parts checked. Step 3 (count rule): write the two counts with the group names. population = 8000; sample = 80"
           - problem: 'A researcher surveys $25$ of the $120$ teachers at a school. How many teachers are not in the sample?'
             answer: "95"
             solution_sketch: '$120 - 25 = 95$ teachers are left out of the sample.'
           - problem: 'A town conducts a census of its $4000$ residents. How many residents are measured?'
             answer: "4000"
             solution_sketch: 'A census measures every member of the population, so all $4000$.'
-          - problem: 'A quality inspector tests $40$ of the $1000$ bulbs produced today. Which group is the population?'
-            answer: 'all 1000 bulbs'
-            answer_contract: {kind: label, options: [[all 1000 bulbs], [the 40 tested bulbs]]}
-            solution_sketch: 'The population is the whole group about which conclusions are drawn; the $40$ tested are the sample.'
-          - problem: 'A marine biologist measures the length of $30$ of the $2000$ fish in a lake. Which is larger, the population or the sample?'
-            answer: 'the population'
-            answer_contract: {kind: label, options: [[the population], [the sample]]}
-            solution_sketch: 'The population (all $2000$ fish) contains the sample (the $30$ measured), so it is larger.'
+          - problem: "A quality inspector tests 40 of the 1000 bulbs produced today. Which statement correctly names the population and the sample?"
+            answer: "population: all 1000 bulbs made today; sample: the 40 tested"
+            answer_contract: {"kind": "label", "options": [["population: all 1000 bulbs made today; sample: the 40 tested"], ["population: the 40 tested bulbs; sample: all 1000 bulbs made today"], ["population: all bulbs made this year; sample: the 40 tested"], ["population: all 1000 bulbs made today; sample: all 1000 bulbs made today"]]}
+            solution_sketch: "Step 1 (population rule): the population is all 1000 bulbs produced today, the whole group of interest. Step 2 (sample rule): the sample is the 40 bulbs actually tested. Step 3 (option check): 'population: the 40 tested bulbs; sample: all 1000 bulbs made today' swaps the groups; 'population: all bulbs made this year; sample: the 40 tested' widens the population wrongly; 'population: all 1000 bulbs made today; sample: all 1000 bulbs made today' treats the sample as the whole population. population: all 1000 bulbs made today; sample: the 40 tested"
+          - problem: "A marine biologist measures the length of 30 of the 2000 fish in a lake. Give the population size and the sample size."
+            answer: "population = 2000; sample = 30"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "population"}, {"contract": {"kind": "exact"}, "name": "sample"}]}
+            solution_sketch: "Step 1 (population rule): the population is all 2000 fish in the lake, the whole group of interest. Step 2 (sample rule): the sample is the 30 fish whose lengths are measured. Step 3 (count rule): write the two counts with the group names. population = 2000; sample = 30"
         constraints: "concrete scenarios; the answer names both groups explicitly"
       - id: kp2
         name: "Parameter versus statistic"
@@ -124,21 +124,59 @@ topics:
         name: "Simple random samples"
         key_prerequisites: [populations-samples]
         exemplars:
-          - problem: 'What makes a sample of size $n$ a simple random sample?'
-            answer: 'Every group of $n$ members of the population is equally likely to be chosen.'
-          - problem: 'All $30$ class names go in a hat and $5$ are drawn. Is this an SRS?'
-            answer: 'Yes; every set of $5$ names is equally likely.'
+          - problem: "A student says that a sample of 4 members from a population of 40 is a simple random sample as long as every single member has the same chance of being included. State whether this condition alone is enough for a simple random sample, and give the chance that one named member is included when 4 of the 40 members are drawn. Give the chance as a fraction."
+            answer: "verdict = no; chance = 1/10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["no"], ["yes"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "chance"}]}
+            solution_sketch: "A simple random sample of size 4 needs every group of 4 members to have the same chance; the weaker rule of equal chance for each single member is not enough, and choosing yes would ignore that some procedures give each member the same chance without giving every group the same chance. Inclusion chance rule: when 4 of 40 members are drawn, each member has chance 4/40 = 1/10. The answer is verdict = no; chance = 1/10."
+          - problem: "A school club places the names of all 18 of its members on identical slips in a bowl, mixes the slips well, and draws 3 slips without replacement to form the sample. State whether this procedure gives every group of 3 members the same chance of being the sample, and give the chance that one named member is among the 3 drawn. Give the chance as a fraction."
+            answer: "verdict = yes; chance = 1/6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "chance"}]}
+            solution_sketch: "Rule of the hat draw: identical slips that are mixed well and drawn without replacement give every group of 3 of the 18 members the same chance, which is the defining property of a simple random sample; saying no would wrongly treat a fair physical draw as unfair. Inclusion chance rule: one named member has chance 3/18 = 1/6. The answer is verdict = yes; chance = 1/6."
+          - problem: "A teacher lists the 26 students in a class in alphabetical order and takes the first 6 names on the list as the sample. State whether this gives a simple random sample of 6 students, and give the number of students who were not chosen."
+            answer: "verdict = no; notchosen = 20"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["no"], ["yes"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "notchosen"}]}
+            solution_sketch: "Rule of a simple random sample: a random mechanism must give every group of 6 students the same chance. Taking the first 6 names in alphabetical order involves no chance at all, so exactly one group is possible and the equal-chance rule fails; saying yes would ignore that a fixed position on a list is not a random draw. Count of students not chosen: 26 - 6 = 20. The answer is verdict = no; notchosen = 20."
+          - problem: "A coach draws a slip bearing one of the 12 player names from a box, records the name, puts the slip back, mixes the slips, and repeats this until 4 names are recorded. State whether the recorded list is a simple random sample of 4 different players, and give the greatest number of times the same name could be recorded."
+            answer: "verdict = no; repeats = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["no"], ["yes"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "repeats"}]}
+            solution_sketch: "Rule of a simple random sample: it is drawn without replacement, so each group of 4 different players has the same chance; drawing with replacement lets one name appear twice, and saying yes would ignore that a repeated name makes some groups of 4 different players impossible to record. Worst case: the same slip can come up on all 4 draws, so the greatest number of recordings of one name is 4. The answer is verdict = no; repeats = 4."
+          - problem: "A town has 6000 households. To select a simple random sample, each household is numbered from 0000 to 5999, and the planner reads four-digit strings from a random number table; any string from 6000 to 9999 is thrown away and the next string is read. Find how many of the 10000 possible four-digit strings are thrown away."
+            answer: "4000"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule of the random number table: four-digit strings run from 0000 to 9999, so there are 10000 possible strings. Counting rule: only the 6000 strings from 0000 to 5999 match a household, so the strings thrown away number 10000 - 6000 = 4000, which keeps every household equally likely to be picked. The answer is 4000."
+          - problem: "A simple random sample of 60 members is drawn without replacement from the 480 members of a gym. Find the chance that one named member of the gym is not in the sample. Give the answer as a fraction."
+            answer: "7/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule of equal inclusion chances: in a simple random sample of 60 from 480, each member has chance 60/480 = 1/8 of being in the sample. Complement rule: the chance of not being in the sample is 1 - 1/8 = 7/8. The answer is 7/8."
         constraints: "definitions and yes/no judgments with a stated reason"
       - id: kp2
         name: "Identifying sampling methods"
         key_prerequisites: [populations-samples]
         exemplars:
-          - problem: 'A store surveys every $20$th customer. Name the sampling method.'
-            answer: 'Systematic sampling.'
-          - problem: 'A school randomly selects $10$ students from each year group. Name the method.'
-            answer: 'Stratified sampling (the year groups are strata).'
-          - problem: 'A district randomly picks $3$ classrooms and surveys everyone in them. Name the method.'
-            answer: 'Cluster sampling.'
+          - problem: "A grocery store numbers its loyalty cards from 1 to 900. The manager draws one random number between 1 and 30, surveys that card holder, and then surveys every 30th card holder after that. Which sampling method is this?"
+            answer: "systematic"
+            answer_contract: {"kind": "label", "options": [["systematic"], ["stratified"], ["cluster"], ["convenience"]]}
+            solution_sketch: "The full design: 900 numbered cards, one random start between 1 and 30, then a fixed step of 30 along the ordered list. Step 1 (random-start-and-fixed-step rule): a random start plus a fixed step selects every 30th card holder in order, the defining mechanism of this method. Step 2 (wrong options): stratified fails because the list was never split into groups with a draw from each group; cluster fails because no whole groups were chosen and fully surveyed; convenience fails because the start is random, not whoever is easiest to reach. The answer is systematic."
+          - problem: "A school splits its 800 students into four year groups of 200 each. It randomly picks 25 students from every year group for a survey about lunch options. State the sampling method used, and give the number of students surveyed."
+            answer: "method = stratified; count = 100"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["stratified"], ["cluster"]]}, "name": "method"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The full design: 800 students in four year groups of 200, with 25 students drawn at random from every group. Step 1 (identify the design): members are sampled from every group rather than whole groups being taken, which is the rule of stratified sampling; the wrong option cluster would instead select entire year groups and survey all 200 students in each. Step 2 (multiplication rule): 4 groups times 25 students per group gives 100. The answer is method = stratified; count = 100."
+          - problem: "A district has 50 classrooms with 22 students each. An inspector randomly picks 7 classrooms and surveys every student in those classrooms. State the sampling method used, and find how many students are surveyed."
+            answer: "method = cluster; count = 154"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cluster"], ["stratified"]]}, "name": "method"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The full design: 50 classrooms of 22 students, with 7 classrooms drawn at random and every student inside them surveyed. Step 1 (identify the design): whole groups are chosen and fully surveyed, the rule of cluster sampling; the wrong option stratified would instead draw a few students from every one of the 50 classrooms. Step 2 (multiplication rule): 7 classrooms times 22 students each gives 154. The answer is method = cluster; count = 154."
+          - problem: "A clinic lists its 616 patients of the day in arrival order. The staff draw a random number from 1 to 11, survey that patient, and then survey every 11th patient after that one. How many patients are surveyed in total?"
+            answer: "56"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full design: 616 patients in arrival order, a random start between 1 and 11, then a fixed step of 11. Step 1 (random-start-and-fixed-step rule): one surveyed patient falls in each block of 11 patients along the list. Step 2 (division rule): 616 divided by 11 is exactly 56 complete blocks, so 56 patients are surveyed no matter which of the first 11 starts is drawn. The answer is 56."
+          - problem: "A firm has 240 junior staff members, 160 senior staff members and 80 managers. The firm draws a random sample of 60 employees, with the number drawn from each group proportional to the size of the group. How many senior staff members are in the sample?"
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full design: 480 employees in three groups (240 junior, 160 senior, 80 managers) with a sample of 60 split by group size. Step 1 (proportional-allocation rule): each group contributes its share of the total, since the draw happens within every group. Step 2 (share rule): senior staff are 160 of 480 employees, which is one third. Step 3 (multiply): one third of 60 is 20. The answer is 20."
+          - problem: "A valley has 16 sheep farms. A researcher randomly picks 6 of the farms and weighs every sheep on each picked farm. Each farm has exactly 37 sheep. How many sheep are weighed?"
+            answer: "222"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full design: 16 farms, 6 drawn at random, and every animal on each selected farm is measured. Step 1 (whole-group rule): the selection picks entire farms and measures everything inside them, so the total is the number of picked farms times the farm size. Step 2 (multiplication rule): 6 farms times 37 sheep gives 222. The answer is 222."
         constraints: "one scenario per method; the scenario names the selection mechanism precisely"
       - id: kp3
         name: "Recognizing bias"
@@ -177,10 +215,30 @@ topics:
         name: "Observational study versus experiment"
         key_prerequisites: [sampling-methods-bias]
         exemplars:
-          - problem: 'Researchers track the health of people who already chose their own diets. Observational study or experiment?'
-            answer: 'Observational study; no treatment is imposed.'
-          - problem: 'Researchers randomly assign volunteers to a supplement or a placebo. Observational study or experiment?'
-            answer: 'Experiment; the researchers impose the treatment.'
+          - problem: "Researchers track the health of people who already chose their own diets over ten years. State the study type and the number of treatments imposed by the researchers."
+            answer: "verdict = observational; treatments = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["experiment"], ["observational"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "treatments"}]}
+            solution_sketch: "Step 1: apply the deciding question: a treatment is imposed only when the researchers assign it. Step 2: people chose their own diets, so no treatment is imposed, which makes the study observational. Step 3: the number of imposed treatments is 0. The wrong option experiment would mean the researchers assigned the diets, which they did not do. Final answer: verdict = observational; treatments = 0."
+          - problem: "Researchers randomly assign volunteers to one of three different sleep programs for a month. State the study type and the number of treatments imposed by the researchers."
+            answer: "verdict = experiment; treatments = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["experiment"], ["observational"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "treatments"}]}
+            solution_sketch: "Step 1: apply the deciding question: an imposed treatment makes the study an experiment. Step 2: the researchers assign each volunteer a sleep program, so a treatment is imposed and the study is an experiment. Step 3: the three sleep programs are three imposed treatments, so the count is 3. The wrong option observational would mean the volunteers chose their own programs, which the random assignment rules out. Final answer: verdict = experiment; treatments = 3."
+          - problem: "For each description, decide if it is an experiment. (1) A company randomly assigns employees to one of three training programs. (2) A manager records the productivity of employees who chose their own break times. (3) A researcher randomly assigns patients to a new drug or a placebo. (4) A pollster questions people who call in to a radio show. How many of the four descriptions are experiments?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: apply the deciding question: a description is an experiment only if a treatment is imposed by the researchers. Step 2: description (1) imposes a training program and description (3) imposes a drug, so both are experiments; descriptions (2) and (4) involve no imposed treatment and are observational. Step 3: count the experiments, which gives 2. The answer is 2."
+          - problem: "For each description, decide if it is an observational study. (1) A scientist records the growth of plants that were randomly assigned to different fertilizers. (2) A doctor reviews records of patients who chose their own exercise routines. (3) A researcher measures the heart rates of volunteers who selected their own meditation times. (4) A team randomly assigns plots of land to a new seed or an old seed. (5) A pollster questions people who respond to an online ad. How many of the five descriptions are observational studies?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the deciding question: an observational study has no treatment imposed by the researchers. Step 2: descriptions (2), (3), and (5) have no imposed treatment, so they are observational; descriptions (1) and (4) use random assignment of a treatment and are experiments. Step 3: count the observational studies, which gives 3. The answer is 3."
+          - problem: "For each description, decide if it is an experiment. (1) A farmer randomly assigns fields to two irrigation methods. (2) A researcher observes shoppers who choose their own brands. (3) A teacher randomly assigns students to a new app or no app. (4) A company randomly assigns customers to three prices. (5) A scientist randomly assigns mice to a high-fat or low-fat diet. How many of the five descriptions are experiments?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: apply the deciding question: a description is an experiment only if a treatment is imposed by the researchers. Step 2: descriptions (1), (3), (4), and (5) involve random assignment of a treatment, so they are experiments; description (2) has no imposed treatment and is observational. Step 3: count the experiments, which gives 4. The answer is 4."
+          - problem: "For each description, decide if it is an observational study. (1) A researcher surveys people who chose their own diets. (2) A doctor reviews records of patients who selected their own medications. (3) A scientist measures the heights of volunteers who picked their own exercise. (4) A pollster questions people who call in to a show. (5) A team observes workers who chose their own shifts. How many of the five descriptions are observational studies?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: apply the deciding question: an observational study has no treatment imposed by the researchers. Step 2: all five descriptions involve people or sites that were not assigned a treatment by the researchers, so each is observational. Step 3: count the observational studies, which gives 5. The answer is 5."
         constraints: "the deciding question is always whether a treatment is imposed"
       - id: kp2
         name: "Treatments, control, and random assignment"
@@ -559,11 +617,30 @@ topics:
         name: "Is a sample mean surprising?"
         key_prerequisites: [normal-distribution, standard-error]
         exemplars:
-          - problem: 'A population has $\mu = 50$, $\sigma = 8$; $n = 16$, so $\operatorname{SE} = 2$. A sample gives $\bar{x} = 57$. Is this surprising?'
-            answer: 'Yes; $\bar{x}$ is $3.5$ SEs above $\mu$, beyond the $99.7\%$ range.'
-            solution_sketch: '$(57 - 50)/2 = 3.5$; values beyond $3$ SEs occur less than $0.3\%$ of the time.'
-          - problem: 'Same setup, but $\bar{x} = 51$. Surprising?'
-            answer: 'No; $0.5$ SE above the mean is entirely ordinary.'
+          - problem: "A population has mean 200 and standard deviation 30. A sample of n = 36 gives a sample mean of 212. Treat a sample mean as exceptional when it lies more than 2 standard errors from the population mean. State whether this sample mean is exceptional, and give its distance from the population mean in standard errors."
+            answer: "verdict = outlier; z = 12/5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["outlier"], ["common"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "z"}]}
+            solution_sketch: "First compute the standard error: SE = 30/sqrt(36) = 5. Next compute the signed distance in standard errors: z = (212 - 200)/5 = 12/5 = 2.4. Since 2.4 is more than the 2-SE threshold, the sample mean is an outlier; the wrong option common would ignore the threshold. The answer is verdict = outlier; z = 12/5."
+          - problem: "A population has mean 150 and standard deviation 20. A sample of n = 25 gives a sample mean of 142. Treat a sample mean as exceptional when it lies more than 2 standard errors from the population mean. State whether this sample mean is exceptional, and give its distance from the population mean in standard errors."
+            answer: "verdict = common; z = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["outlier"], ["common"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "z"}]}
+            solution_sketch: "Compute the standard error: SE = 20/sqrt(25) = 4. Compute the signed distance in standard errors: z = (142 - 150)/4 = -2. Because -2 is not more than 2 standard errors from the mean, the sample mean is common; the wrong option outlier would treat exactly 2 SEs as beyond the threshold. The answer is verdict = common; z = -2."
+          - problem: "A factory fills bottles with a mean volume of 400 milliliters; the standard deviation of the fill is 16 milliliters. A sample of n = 100 bottles has a mean fill of 406 milliliters. The plant flags a sample mean only when it sits more than 3 standard errors from the population mean. State whether this mean fill is flagged, and give its distance from the population mean in standard errors."
+            answer: "verdict = outlier; z = 15/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["outlier"], ["common"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "z"}]}
+            solution_sketch: "Compute the standard error: SE = 16/sqrt(100) = 1.6. Compute the signed distance in standard errors: z = (406 - 400)/1.6 = 6/1.6 = 15/4 = 3.75. Since 3.75 is more than the 3-SE threshold, the sample mean is an outlier; the wrong option common would apply the 2-SE threshold or round the distance down to 3. The answer is verdict = outlier; z = 15/4."
+          - problem: "An exam has mean score 72 and standard deviation 9. A random sample of 36 students has a mean score of 70.2. A result counts as surprising when it lies more than 2 standard errors below the population mean. State whether this sample mean is surprising, and give its distance from the population mean in standard errors."
+            answer: "verdict = common; z = -6/5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["outlier"], ["common"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "z"}]}
+            solution_sketch: "Compute the standard error: SE = 9/sqrt(36) = 1.5. Compute the signed distance in standard errors: z = (70.2 - 72)/1.5 = -1.8/1.5 = -6/5 = -1.2. Since -1.2 is within 2 standard errors below the mean, the sample mean is common; the wrong option outlier would call any below-mean distance exceptional. The answer is verdict = common; z = -6/5."
+          - problem: "A population has mean 120 and standard deviation 18. A sample of n = 36 is taken. Treat a sample mean as exceptional when it lies more than 2 standard errors from the population mean. Find the value that lies exactly 2 standard errors from the population mean in the positive direction."
+            answer: "126"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the standard error: SE = 18/sqrt(36) = 3. Two standard errors are 2*3 = 6. The value 2 SEs from the mean in the positive direction is 120 + 6, which is 126. The value is 126."
+          - problem: "A population has mean 64 and standard deviation 10. A sample of n = 25 gives a sample mean of 69.2. Find the signed distance of the sample mean from the population mean in standard errors, as a fraction."
+            answer: "13/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the standard error: SE = 10/sqrt(25) = 2. Compute the signed distance in standard errors: z = (69.2 - 64)/2 = 5.2/2 = 13/5. The signed distance in standard errors is 13/5."
         constraints: "judgments quoted in SEs from the mean; thresholds at 2 and 3 SEs"
     diagnostic_exemplar:
       problem: 'A population has $\mu = 80$, $\sigma = 12$. A sample of $n = 9$ gives $\bar{x} = 89$. Compute the SE, state how many SEs above $\mu$ this is, and say whether the result is surprising.'
