@@ -1717,17 +1717,29 @@ topics:
         name: Setting up and the general solution
         key_prerequisites: [natural-growth-decay-models]
         exemplars:
-          - problem: "A body cools in a $20^{\\circ}$C room. Write the cooling ODE and its general solution."
-            answer: "$T' = -k(T - 20)$; $T = 20 + Ce^{-kt}$."
-            answer_contract: {kind: none}
-            solution_sketch: "The shifted variable $u = T - 20$ satisfies $u' = -ku$."
           - problem: "A cup of coffee at $90^{\\circ}$C sits in a $25^{\\circ}$C room. Write $T(t)$ with $k$ undetermined."
             answer: "$T = 25 + 65e^{-kt}$"
             solution_sketch: "$C = T(0) - 25 = 65$."
-          - problem: "For $T = 15 + 40e^{-2t}$, identify the ambient temperature and the initial temperature."
-            answer: "Ambient $15^{\\circ}$; $T(0) = 55^{\\circ}$."
-            answer_contract: {kind: none}
-            solution_sketch: "Ambient $15^{\\circ}$; $T(0) = 55^{\\circ}$."
+          - problem: "A pie leaves the oven at 95 degrees C and cools on a rack in a kitchen at 25 degrees C. Give its temperature function T(t) in the form A + Ce^(-kt), with k undetermined."
+            answer: "25+70e^(-kt)"
+            answer_contract: {"kind": "function", "vars": ["t", "k"]}
+            solution_sketch: "Step 1 (Newton's law of cooling): the solution has the form T = A + Ce^(-kt), where A is the ambient temperature. Step 2 (ambient value): the kitchen is at 25 degrees, so A = 25. Step 3 (initial condition): T(0) = 95 gives C = 95 - 25 = 70. The temperature function is 25+70e^(-kt)."
+          - problem: "A body cools in a room at 15 degrees C, and its temperature has the form T = 15 + Ce^(-kt) for some constant C. At time t = 0 the body is at 55 degrees C. Give T(t) with the constant C determined, in the form A + Ce^(-kt)."
+            answer: "15+40e^(-kt)"
+            answer_contract: {"kind": "function", "vars": ["t", "k"]}
+            solution_sketch: "Step 1 (solution form): the cooling solution is T = A + Ce^(-kt) with A the room temperature, here A = 15. Step 2 (initial condition): the exponential term equals 1 at t = 0, so T(0) = 15 + C = 55. Step 3 (solve for C): C = 55 - 15 = 40. The temperature function is 15+40e^(-kt)."
+          - problem: "A metal bar at 90 degrees C is placed in a room at 10 degrees C. Let u(t) = T(t) - 10 be the difference between the bar temperature and the room temperature, so Newton's law gives u' = -ku. Give u(t) in the form Ce^(-kt)."
+            answer: "80e^(-kt)"
+            answer_contract: {"kind": "function", "vars": ["t", "k"]}
+            solution_sketch: "Step 1 (shift of variable): setting u = T - 10 turns the cooling law into the decay equation u' = -ku. Step 2 (initial value): u(0) = 90 - 10 = 80. Step 3 (decay model): the solution of u' = -ku is u(t) = u(0)e^(-kt), so T(t) = 10 + 80e^(-kt). The difference is u(t) = 80e^(-kt)."
+          - problem: "A roast at 25 degrees C is placed in an oven at 180 degrees C. Its temperature satisfies T' = -k(T - 180) with k > 0, and T(0) = 25. Give T(t) in the form A + Ce^(-kt)."
+            answer: "180-155e^(-kt)"
+            answer_contract: {"kind": "function", "vars": ["t", "k"]}
+            solution_sketch: "Step 1 (solution form): T = A + Ce^(-kt) with A the ambient temperature, here the oven value A = 180. Step 2 (initial condition): T(0) = 25 gives C = 25 - 180 = -155. Step 3 (sign check): the negative coefficient makes T rise toward 180. The temperature function is 180-155e^(-kt)."
+          - problem: "A cold drink warms in a room kept at 30 degrees C, so its temperature satisfies T' = -k(T - 30) with k > 0. Select the general solution for T(t), where C is an arbitrary constant."
+            answer: "T = 30 + Ce^(-kt)"
+            answer_contract: {"kind": "label", "options": [["T = 30 + Ce^(-kt)"], ["T = Ce^(-kt)"], ["T = 30 + Ce^(kt)"], ["T = 30 + kt + C"]]}
+            solution_sketch: "Step 1 (shift of variable): u = T - 30 satisfies the decay equation u' = -ku, whose solutions are u = Ce^(-kt). Step 2 (add back the ambient value): T = 30 + Ce^(-kt). The option T = Ce^(-kt) omits the ambient term, so the temperature would go to 0 instead of 30. The option T = 30 + Ce^(kt) has the exponent sign wrong, so the temperature would grow away from 30. The option T = 30 + kt + C is linear, but a constant rate does not solve the decay equation. The general solution is T = 30 + Ce^(-kt)."
         constraints: "ambient temperatures and initial temperatures are integers; solution always in the form A + Ce^{-kt}"
       - id: kp2
         name: "Finding $k$ from data"
@@ -1818,18 +1830,30 @@ topics:
         name: Setting up the balance equation
         key_prerequisites: [linear-first-order-integrating-factor]
         exemplars:
-          - problem: "A $100$ L tank starts with pure water. Brine at $2$ g/L flows in at $5$ L/min; the well-mixed solution leaves at $5$ L/min. Write the ODE for the salt $A(t)$."
-            answer: "$A' = 10 - \\dfrac{A}{20}$, $A(0) = 0$."
-            answer_contract: {kind: none}
-            solution_sketch: "Rate in $= 2 \\cdot 5 = 10$ g/min; rate out $= 5 \\cdot \\dfrac{A}{100} = \\dfrac{A}{20}$."
-          - problem: "A $50$ L tank holds $10$ g of salt. Brine at $1$ g/L flows in at $2$ L/min, and the mixture leaves at $2$ L/min. Write the ODE."
-            answer: "$A' = 2 - \\dfrac{A}{25}$, $A(0) = 10$."
-            answer_contract: {kind: none}
-            solution_sketch: "$A' = 2 - \\dfrac{A}{25}$, $A(0) = 10$."
-          - problem: "Pure water flows at $4$ L/min into a $200$ L tank of brine, and the mixture drains at $4$ L/min. Write the ODE for the salt $A(t)$."
-            answer: "$A' = -\\dfrac{A}{50}$"
-            answer_contract: {kind: none}
-            solution_sketch: "Rate in is $0$; rate out is $4 \\cdot \\dfrac{A}{200}$."
+          - problem: "A 100 L tank starts with pure water. Brine with 2 g/L of salt flows in at 5 L/min, and the well-mixed solution leaves at 5 L/min. Let x(t) be the amount of salt in the tank in grams. The balance equation has the form x' = f(x). Find f(x) as a function of x."
+            answer: "10 - x/20"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 (rate in): salt enters at the concentration 2 g/L times the flow 5 L/min, giving 10 g/min. Step 2 (rate out): the volume stays 100 L because inflow equals outflow, so the mixing rule rate out = flow times x/V gives 5 times x/100 = x/20 g/min. Step 3 (balance): the balance equation sets x' equal to rate in minus rate out, so x' = 10 - x/20 and the pure-water start fixes only x(0) = 0. The final result is f(x) = 10 - x/20."
+          - problem: "A 50 L tank holds 10 g of salt dissolved in its brine. Brine with 1 g/L of salt flows in at 2 L/min, and the well-mixed solution leaves at 2 L/min. Let x(t) be the amount of salt in the tank in grams. The balance equation has the form x' = f(x). Find f(x) as a function of x."
+            answer: "2 - x/25"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 (rate in): the inflow carries 1 g/L times 2 L/min = 2 g/min of salt. Step 2 (rate out): the volume stays 50 L since the flows match, so rate out = flow times x/V gives 2 times x/50 = x/25 g/min. Step 3 (balance): x' = 2 - x/25; the 10 g already in the tank sets x(0) = 10 but does not appear in f. The final result is f(x) = 2 - x/25."
+          - problem: "Pure water flows at 4 L/min into a 200 L tank of well-mixed brine, and the mixture drains at 4 L/min. Let x(t) be the amount of salt in the tank in grams. The balance equation has the form x' = f(x). Find f(x) as a function of x."
+            answer: "-x/50"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 (rate in): pure water carries no salt, so the input rate is 0 g/min. Step 2 (rate out): the volume is constant at 200 L, and rate out = flow times x/V gives 4 times x/200 = x/50 g/min. Step 3 (balance): x' = 0 - x/50, which is pure decay of the salt. The final result is f(x) = -x/50."
+          - problem: "A 50 L tank holds well-mixed brine. Brine with 3 g/L of salt flows in at 5 L/min, and the solution leaves at 5 L/min. Let c(t) be the salt concentration in the tank in g/L. The balance equation has the form c' = f(c). Find f(c) as a function of c."
+            answer: "3/10 - c/10"
+            answer_contract: {"kind": "function", "vars": ["c"]}
+            solution_sketch: "Step 1 (rate in): salt enters at 3 times 5 = 15 g/min, which raises the concentration at 15/50 = 3/10 g/(L min). Step 2 (rate out): the outflow removes concentration c at 5 L/min from 50 L, that is 5c/50 = c/10 per minute. Step 3 (balance): c' = 3/10 - c/10. The final result is f(c) = 3/10 - c/10."
+          - problem: "A 100 L tank holds well-mixed brine. Brine with inflow concentration c g/L flows in at 5 L/min, and the solution leaves at 5 L/min. Let x(t) be the amount of salt in the tank in grams, and treat the inflow concentration c as a parameter. The balance equation has the form x' = f(x, c). Find f as a function of x and c."
+            answer: "5c - x/20"
+            answer_contract: {"kind": "function", "vars": ["x", "c"]}
+            solution_sketch: "Step 1 (rate in): the inflow carries c g/L at 5 L/min, so salt enters at 5c g/min. Step 2 (rate out): the volume stays 100 L, and rate out = flow times x/V gives 5 times x/100 = x/20 g/min. Step 3 (balance): x' = 5c - x/20, valid for any inflow concentration c. The final result is f = 5c - x/20."
+          - problem: "A 100 L tank holds well-mixed brine. One stream with 2 g/L of salt flows in at 3 L/min, and a second stream with 1 g/L flows in at 2 L/min. The solution leaves at 5 L/min, so the volume stays 100 L. Let x(t) be the amount of salt in grams. The balance equation has the form x' = f(x). Find f(x) as a function of x."
+            answer: "8 - x/20"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Step 1 (rate in): the two streams bring 2 times 3 = 6 and 1 times 2 = 2 g/min, a total of 8 g/min. Step 2 (rate out): with equal total flow the volume stays 100 L, so rate out = flow times x/V gives 5 times x/100 = x/20 g/min. Step 3 (balance): x' = 8 - x/20. The final result is f(x) = 8 - x/20."
         constraints: "constant volume (equal flow rates); rate out = (outflow rate) x A/V; integer concentrations and flows"
       - id: kp2
         name: Solving the model
