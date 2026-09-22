@@ -391,6 +391,22 @@ topics:
           - problem: 'Solve $5x \equiv 7 \pmod{12}$; give $x$ as the least nonnegative residue.'
             answer: "11"
             solution_sketch: '$5^{-1} \equiv 5$, so $x \equiv 5 \cdot 7 = 35 \equiv 11 \pmod{12}$. Check: $55 = 4 \cdot 12 + 7$.'
+          - problem: "A linear congruence says that 87x is congruent to 14 modulo 163, that is 87x - 14 = 163k for some integer k. Find the least nonnegative residue x."
+            answer: "47"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: solve 87x congruent to 14 modulo 163. Step 1 (Euclidean algorithm): 163 = 1*87 + 76, 87 = 1*76 + 11, 76 = 6*11 + 10, 11 = 1*10 + 1; back-substitution gives 1 = 15*87 - 8*163, so the inverse of 87 modulo 163 is 15. Step 2 (multiply by the inverse): x = 15*14 = 210 = 163 + 47, so x = 47. Check: 87*47 = 4089 = 25*163 + 14. The least nonnegative residue is 47."
+          - problem: "A cipher works modulo 251: it replaces a message number t with the remainder of 144t on division by 251. One message turned into 97. Find the original number t as the least nonnegative residue."
+            answer: "107"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Decryption solves 144t congruent to 97 modulo 251; gcd(144, 251) = 1, so 144 is invertible. Step 1 (Euclidean algorithm): 251 = 1*144 + 107, 144 = 1*107 + 37, 107 = 2*37 + 33, 37 = 1*33 + 4, 33 = 8*4 + 1; back-substitution gives 1 = 35*251 - 61*144, so the inverse of 144 modulo 251 is 190. Step 2 (multiply by the inverse): t = 190*97 = 18430 = 73*251 + 107. Check: 144*107 = 15408 = 61*251 + 97. The least nonnegative residue is 107."
+          - problem: "The modular inverse of 205 modulo 306 is the least nonnegative a with 205a congruent to 1 modulo 306, that is 205a - 1 = 306k for some integer k. Find a."
+            answer: "103"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: solve 205a congruent to 1 modulo 306. Step 1 (Euclidean algorithm and Bezout): 306 = 1*205 + 101, 205 = 2*101 + 3, 101 = 33*3 + 2, 3 = 1*2 + 1; back-substitution gives 1 = 103*205 - 69*306. Step 2 (read off the inverse): the coefficient of 205 is the inverse, so a = 103. Check: 205*103 = 21115 = 69*306 + 1. The least nonnegative residue is 103."
+          - problem: "Find the least nonnegative integer x with 178x congruent to 50 modulo 397; in other words, 397 divides 178x - 50. Give x as the least nonnegative residue."
+            answer: "259"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: solve 178x congruent to 50 modulo 397. Step 1 (Euclidean algorithm): 397 = 2*178 + 41, 178 = 4*41 + 14, 41 = 2*14 + 13, 14 = 1*13 + 1; back-substitution gives 1 = 29*178 - 13*397, so the inverse of 178 modulo 397 is 29. Step 2 (multiply by the inverse): x = 29*50 = 1450 = 3*397 + 259, so x = 259. Check: 178*259 = 46102 = 116*397 + 50. The least nonnegative residue is 259."
         constraints: "coefficient invertible mod m; unique answer as least nonnegative residue with a check"
     diagnostic_exemplar:
       problem: 'Solve $3x \equiv 4 \pmod 7$; give $x$ as the least nonnegative residue.'
