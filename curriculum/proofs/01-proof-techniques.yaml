@@ -275,12 +275,34 @@ topics:
         name: "Sums and products of rationals"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: the sum of two rational numbers is rational.'
-            answer: '$\frac{a}{b} + \frac{c}{d} = \frac{ad + bc}{bd}$ with integer numerator and nonzero integer denominator.'
-            solution_sketch: 'Let $r = a/b$ and $s = c/d$ with $a, b, c, d \in \mathbb{Z}$, $b, d \ne 0$. Then $r + s = (ad + bc)/(bd)$, a quotient of integers with $bd \ne 0$, hence rational. $\square$'
-          - problem: 'Prove: the product of two rational numbers is rational.'
-            answer: '$\frac{a}{b} \cdot \frac{c}{d} = \frac{ac}{bd}$, a ratio of integers with nonzero denominator.'
-            solution_sketch: 'With $r = a/b$, $s = c/d$ as above, $rs = ac/bd$; $ac, bd \in \mathbb{Z}$ and $bd \ne 0$, so $rs$ is rational. $\square$'
+          - problem: "In a direct proof that the sum of two rational numbers is rational, the combining step takes r = 3/5 and s = 7/4, writes both fractions over the common denominator 20, and produces one single fraction N/20 after checking that 20 is not 0. Give the numerator N that this step produces."
+            answer: "47"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The step uses the common-denominator rule of the sum proof: with r = a/b and s = c/d, write r + s = (ad + bc)/(bd) and verify that the denominator bd is not 0. Here the full object is 3/5 + 7/4 over the denominator 5*4 = 20, which is not 0. The numerator is 3*4 + 7*5 = 12 + 35 = 47, so the step produces the fraction 47/20. The numerator that the step produces is 47."
+          - problem: "In a direct proof that the product of two rational numbers is rational, the key step takes r = 5/6 and s = 2/7 and produces the product as one single fraction with denominator 42, after checking that 42 is not 0. Give the numerator of the fraction that the step produces."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The step uses the product rule for fractions from the proof: rs = (a/b)(c/d) = ac/(bd), a quotient of integers. With r = 5/6 and s = 2/7 the full object is the fraction with denominator 6*7 = 42, which is not 0. The numerator is 5*2, so the step produces the fraction 10/42. The numerator that the step produces is 10."
+          - problem: "A student claims that twice every rational number is an integer, and tests r = 1/n for positive integers n, finding the claim true for n = 1 and n = 2. Give the smallest counterexample n, that is, the smallest positive integer n for which the claim is false."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the definition of a rational number: r = 1/n is rational for every positive integer n. Test the claim that the double 2/n is an integer, case by case. For n = 1 the double is 2, an integer; for n = 2 the double is 1, an integer. For n = 3 the double is 2/3, which is not an integer, so the claim fails there. The smallest counterexample is n = 3."
+          - problem: "A student claims that a/b times c/d equals (a + c)/(b + d), and checks the case a = 1, c = 1, b = 1, d = 1, where the claim happens to hold. Give the smallest counterexample b for which the claim is false, still with a = 1, c = 1, and d = 1."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compare the student's claim (a + c)/(b + d) with the correct product rule ac/(bd) from the definition-based proof. With a = 1, c = 1, d = 1 the claim gives 2/(b + 1) while the true product is 1/b. For b = 1 both sides equal 1, so the claim holds there. For b = 2 the claim gives 2/3 but the true product is 1/2, so the claim fails. The smallest counterexample is b = 2."
+          - problem: "Claim: the sum of two rational numbers is rational. Step 1: Let r = a/b and s = c/d with a, b, c, d integers and b, d not 0. Step 2: Then r + s = (ad + bc)/(bd). Step 3: Since ad + bc and bd are integers, r + s is rational. Step 4: Also bd is not 0 because b and d are not 0. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a valid setup: it writes both numbers as quotients of integers with nonzero denominators. Step 2 is valid: it adds the fractions over the common denominator bd. Step 3 is the first invalid step: it concludes that r + s is rational from integrality alone, before the check that bd is not 0, but the definition of rational needs a nonzero denominator. Step 4 performs the needed check, but only after the conclusion has already been drawn. The answer is Step 3."
+          - problem: "In a direct proof that the product of two rational numbers is rational, the key step produces rs = ac/(bd), and one closing line is missing. Select the closing line that completes the proof by the definition of a rational number."
+            answer: "ac is an integer and bd is a nonzero integer"
+            answer_contract: {"kind": "label", "options": [["ac is an integer and bd is a nonzero integer"], ["ac is an integer and bd is an integer"], ["ac is not 0 and bd is not 0"], ["b + d is a nonzero integer"]]}
+            solution_sketch: "By the definition of rational, the closing line must show that rs = ac/(bd) is a quotient of an integer by a nonzero integer. The correct missing line is: ac is an integer and bd is a nonzero integer. The option ac is an integer and bd is an integer forgets the nonzero requirement on the denominator. The option ac is not 0 and bd is not 0 wrongly also demands a nonzero numerator, which the definition does not need. The option b + d is a nonzero integer checks a sum instead of the denominator bd. The answer is: ac is an integer and bd is a nonzero integer."
+          - problem: "Write the full proof: the sum of two rational numbers is rational. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): Let r and s be rational numbers. By the definition of rational, r = a/b and s = c/d with a, b, c, d integers and b, d not 0. Step 2 (combine): Add the fractions over the common denominator bd using the fraction-addition rule: r + s = (ad + bc)/(bd). Step 3 (numerator): ad + bc is an integer, because products and sums of integers are integers. Step 4 (denominator check): bd is an integer, and bd is not 0, because a product of two nonzero integers is not 0; this verifies the nonzero denominator that the definition requires. Step 5 (conclusion): r + s is a quotient of an integer by a nonzero integer, so r + s is rational by the definition of rational. The sum of two rational numbers is rational, as claimed."
         constraints: "use the definition rational = integer/nonzero-integer; verify the denominator is nonzero"
       - id: kp2
         name: "Differences and quotients"
@@ -297,12 +319,34 @@ topics:
         name: "Averages and density"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: the average of two rationals is rational.'
-            answer: '$(r + s)/2$ is a rational divided by the nonzero rational $2$, hence rational.'
-            solution_sketch: '$r + s$ is rational (closure under addition) and dividing by the nonzero rational $2$ keeps it rational. $\square$'
-          - problem: 'Prove: between any two distinct rationals $r < s$ there is another rational.'
-            answer: 'The midpoint $(r + s)/2$ is rational and satisfies $r < (r+s)/2 < s$.'
-            solution_sketch: 'The midpoint is rational by closure. From $r < s$: adding $r$ or $s$ to both sides of $r < s$ and halving gives $r < (r+s)/2 < s$. $\square$'
+          - problem: "A proof that the average of two rationals is rational contains the step: form (r + s)/2 for the given rationals r = 2/3 and s = 3/4. Give the number this step produces, as a fraction."
+            answer: "17/24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: closure under addition gives r + s = 2/3 + 3/4 = 8/12 + 9/12 = 17/12, which is rational. Step 2: 2 is a nonzero rational, so closure under division by a nonzero rational gives (r + s)/2 = (17/12)/2 = 17/24. The average produced by the proof step is 17/24."
+          - problem: "In a proof that between any two distinct rationals r < s there is another rational, a step forms the midpoint (r + s)/2 with r = -1/4 and s = 1/2. Give the number this step produces, as a fraction."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: closure under addition gives r + s = -1/4 + 1/2 = -1/4 + 2/4 = 1/4. Step 2: dividing by the nonzero rational 2 keeps the value rational, so the midpoint is (1/4)/2 = 1/8. Step 3: since r < s, adding r or s to both sides and halving justifies r < midpoint < s. The midpoint produced by the density step is 1/8."
+          - problem: "A proof that r < (r + s)/2 for rationals r < s justifies the ordering by checking the difference (r + s)/2 - r. For r = 2/5 and s = 7/10, give this difference, as a fraction."
+            answer: "3/20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the midpoint is rational by closure under addition and division by 2: (2/5 + 7/10)/2 = (11/10)/2 = 11/20. Step 2: to justify the lower inequality, form (r + s)/2 - r = (s - r)/2 = (7/10 - 2/5)/2 = (3/10)/2 = 3/20. A positive difference proves r < (r + s)/2. The step value is 3/20."
+          - problem: "A proof that (2r + s)/3 < s for rationals r < s justifies the ordering by checking the difference s - (2r + s)/3. For r = 1/3 and s = 1, give this difference, as a fraction."
+            answer: "4/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: (2r + s)/3 is rational by closure under multiplication, addition, and division by the nonzero rational 3: (2/3 + 1)/3 = (5/3)/3 = 5/9. Step 2: to justify the upper inequality, form s - (2r + s)/3 = (2s - 2r)/3 = 2(1 - 1/3)/3 = 4/9. A positive difference proves (2r + s)/3 < s. The step value is 4/9."
+          - problem: "A student proves: if r and s are rational with r < s, then (2r + s)/3 lies strictly between r and s. Step 1: r and s are rational by hypothesis. Step 2: 2r is rational by closure under multiplication, 2r + s is rational by closure under addition, and division by the nonzero rational 3 keeps it rational. Step 3: adding 2r to both sides of r < s gives 2r + s < 3r, hence (2r + s)/3 < r. Step 4: adding 2s to both sides of r < s gives 2r + s < 3s, hence (2r + s)/3 < s, so the point lies between r and s. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 restates the hypothesis and is valid. Step 2 correctly applies closure under multiplication by the integer 2, addition, and division by the nonzero rational 3. Step 3 is invalid: adding 2r to both sides of r < s gives 3r < 2r + s, hence r < (2r + s)/3; the student reversed the inequality direction. Step 4 is valid arithmetic on its own but supports the full ordering only together with the corrected Step 3. The answer is Step 3."
+          - problem: "In a proof that the number (r + 2s)/3 lies strictly between the distinct rationals r and s, one line of the ordering argument is missing. The line before it reads: start from r < s and add 2s to both sides. Select the line that completes the proof."
+            answer: "r + 2s < 3s, so (r + 2s)/3 < s"
+            answer_contract: {"kind": "label", "options": [["r + 2s < 3s, so (r + 2s)/3 < s"], ["r + 2s < 3s, so (r + 2s)/3 > s"], ["2r + s < 3r, so (2r + s)/3 < r"], ["r + 2s > 3s, so (r + 2s)/3 > s"]]}
+            solution_sketch: "Adding 2s to both sides of r < s gives r + 2s < s + 2s = 3s, and dividing by the positive rational 3 gives (r + 2s)/3 < s, which is the needed upper bound. The option with > s divides correctly but reverses the inequality direction. The option with 2r + s < 3r adds 2r instead of 2s and bounds a different expression. The option r + 2s > 3s flips the inequality when adding 2s. The answer is r + 2s < 3s, so (r + 2s)/3 < s."
+          - problem: "Write the full proof: for any two distinct rational numbers r < s, the number (r + 2s)/3 is rational and lies strictly between r and s. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (hypothesis): let r and s be rational numbers with r < s. Step 2 (closure under multiplication and addition): 2s is rational by closure under multiplication by the integer 2, and r + 2s is rational by closure under addition. Step 3 (closure under division): 3 is a nonzero rational, so (r + 2s)/3 is rational by closure under division by a nonzero rational; this combines the closure facts proved earlier. Step 4 (lower bound): add 2r to both sides of r < s to get 3r < r + 2s, hence r < (r + 2s)/3. Step 5 (upper bound): add 2s to both sides of r < s to get r + 2s < 3s, hence (r + 2s)/3 < s. Step 6 (conclusion): r < (r + 2s)/3 < s, so (r + 2s)/3 is a rational number strictly between r and s, which proves the claim."
         constraints: "combine closure facts already proved; justify the ordering inequalities"
     diagnostic_exemplar:
       problem: 'Prove: if $r$ is rational and $r < 5$, then there is a rational number $t$ with $r < t < 5$.'
@@ -347,23 +391,67 @@ topics:
         name: "Parity arguments"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: for every integer $n$, exactly one of $n$ and $n + 1$ is even.'
-            answer: 'If $n = 2k$ then $n + 1$ is odd; if $n = 2k + 1$ then $n + 1$ is even.'
-            solution_sketch: 'If $n = 2k$ (even) then $n + 1 = 2k + 1$ is odd; if $n = 2k + 1$ (odd) then $n + 1 = 2(k + 1)$ is even. In each situation exactly one is even. $\square$'
-          - problem: 'Prove: the sum of an even integer and an odd integer is odd.'
-            answer: '$2a + (2b + 1) = 2(a + b) + 1$.'
-            solution_sketch: 'Let the even integer be $2a$ and the odd one $2b + 1$. Their sum is $2a + 2b + 1 = 2(a + b) + 1$, which is odd. $\square$'
+          - problem: "For n = 2k + 1, write n + 1 in the form 2m with integer m. Give m as a formula in k."
+            answer: "k+1"
+            answer_contract: {"kind": "function", "vars": ["k"]}
+            solution_sketch: "Start from n = 2k + 1, the odd parity form. Add 1: n + 1 = 2k + 2. Factor 2: n + 1 = 2(k + 1). Thus m = k + 1. The answer is k+1."
+          - problem: "Let a = 2r be even and b = 2s + 1 be odd. Write a + b in the form 2t + 1. Give t."
+            answer: "r+s"
+            answer_contract: {"kind": "function", "vars": ["r", "s"]}
+            solution_sketch: "Use the even parity form a = 2r and the odd parity form b = 2s + 1. Add: a + b = 2r + 2s + 1. Factor 2 from the even part: a + b = 2(r + s) + 1. Thus t = r + s. The answer is r+s."
+          - problem: "For odd n = 2k + 1, write n + (n + 1) as 2m + 1. Give m."
+            answer: "2k+1"
+            answer_contract: {"kind": "function", "vars": ["k"]}
+            solution_sketch: "Use n = 2k + 1, the odd parity form. The next integer is n + 1 = 2k + 2. Add them: n + (n + 1) = 4k + 3. Write 4k + 3 = 2(2k + 1) + 1. Thus m = 2k + 1. The answer is 2k+1."
+          - problem: "Let a = 2r be even and b = 2s + 1 be odd. Write b - a as 2d + 1. Give d."
+            answer: "s-r"
+            answer_contract: {"kind": "function", "vars": ["r", "s"]}
+            solution_sketch: "Use b = 2s + 1 for the odd integer and a = 2r for the even integer. Subtract: b - a = 2s + 1 - 2r. Group: b - a = 2(s - r) + 1. Thus d = s - r. The answer is s-r."
+          - problem: "Claim: if n is odd, then n + 1 is even. Step 1: write n = 2k + 1 for an integer k. Step 2: then n + 1 = 2k + 2. Step 3: factor n + 1 = 2(k + 1). Step 4: since k + 1 can be odd, n + 1 is odd. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 uses the correct odd parity form n = 2k + 1. Step 2 adds 1 correctly to get n + 1 = 2k + 2. Step 3 factors out 2 correctly to get n + 1 = 2(k + 1). Step 4 is the first invalid step because k + 1 is an integer, so 2(k + 1) is even, not odd. The answer is Step 4."
+          - problem: "In a proof that the sum of two odd integers is even, let n = 2a + 1 and m = 2b + 1. The line n + m = ___ is missing. Select the line that completes the proof."
+            answer: "2(a+b+1)"
+            answer_contract: {"kind": "label", "options": [["2(a+b)+1"], ["2(a+b+1)"], ["2(ab+1)"], ["2(a+b-1)"]]}
+            solution_sketch: "Start with n = 2a + 1 and m = 2b + 1. Add: n + m = 2a + 2b + 2. Factor 2: n + m = 2(a + b + 1), so the sum is even. The option 2(a+b)+1 is odd and misses one +1; 2(ab+1) multiplies a and b instead of adding them; 2(a+b-1) subtracts 1 instead of adding 1. The answer is 2(a+b+1)."
+          - problem: "Write the full proof: for all integers a and b, if a is even and b is odd, then a + b + 1 is even. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: let a be even, so a = 2r for some integer r. Step 2: let b be odd, so b = 2s + 1 for some integer s. Step 3: add the expressions: a + b + 1 = 2r + (2s + 1) + 1. Step 4: simplify the right side: 2r + 2s + 2 = 2(r + s + 1). Step 5: r + s + 1 is an integer, so the result is 2 times an integer. Therefore a + b + 1 is even, completing the proof."
         constraints: "argue from the two parity forms of an integer"
       - id: kp3
         name: "Parity of squares and products"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: for every integer $n$, $n^2$ is even if and only if $n$ is even.'
-            answer: '$n$ even gives $n^2$ even; contrapositive gives the converse.'
-            solution_sketch: 'If $n = 2k$ then $n^2 = 2(2k^2)$ is even. Conversely, if $n$ is odd, $n = 2k + 1$ gives $n^2 = 2(2k^2 + 2k) + 1$, odd; contrapositively, $n^2$ even forces $n$ even. $\square$'
-          - problem: 'Prove: for every integer $n$, $n^2$ is odd if and only if $n$ is odd.'
-            answer: '$n$ odd gives $n^2$ odd; contrapositive gives the converse.'
-            solution_sketch: 'If $n = 2k + 1$ then $n^2 = 2(2k^2 + 2k) + 1$ is odd. Conversely, if $n$ is even, $n = 2k$ gives $n^2 = 2(2k^2)$ even; contrapositively, $n^2$ odd forces $n$ odd. $\square$'
+          - problem: "For an odd integer n = 2k + 1, its square can be written n^2 = 2q + 1. Give q."
+            answer: "2k^2+2k"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the square: (2k + 1)^2 = 4k^2 + 4k + 1. Factor 2 from the first two terms: 2(2k^2 + 2k) + 1. The answer is 2k^2+2k."
+          - problem: "For an even integer n = 2k, its square can be written n^2 = 2q. Give q."
+            answer: "2k^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the square: (2k)^2 = 4k^2. Factor 2: 2(2k^2). The answer is 2k^2."
+          - problem: "For odd integers m = 2a + 1 and n = 2b + 1, their product can be written mn = 2q + 1. Give q."
+            answer: "2ab+a+b"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the product: (2a + 1)(2b + 1) = 4ab + 2a + 2b + 1. Factor 2 from the first three terms: 2(2ab + a + b) + 1. The answer is 2ab+a+b."
+          - problem: "Claim: for every integer n, n^2 is odd if and only if n is odd. Step 1: if n is odd, write n = 2k + 1. Step 2: then n^2 = 2(2k^2 + 2k) + 1, so n^2 is odd. Step 3: conversely, assume n^2 is odd and write n^2 = 2k + 1, so n = sqrt(2k + 1), which is odd. Step 4: therefore n is odd. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid because an odd integer has the form 2k + 1. Step 2 is valid because squaring gives 2(2k^2 + 2k) + 1. Step 3 is invalid because n^2 = 2k + 1 does not imply n = sqrt(2k + 1) is an integer, let alone odd. Step 4 only follows from a correct converse. The answer is Step 3."
+          - problem: "In a direct proof that the product of two odd integers is odd, the line after expanding (2a + 1)(2b + 1) is missing. Select the line that shows the product as twice an integer plus one."
+            answer: "2(2ab+a+b)+1"
+            answer_contract: {"kind": "label", "options": [["2(2ab+a+b)+1"], ["2(2ab+a+b)"], ["2(ab+a+b)+1"], ["4ab+2a+2b"]]}
+            solution_sketch: "Expand: (2a + 1)(2b + 1) = 4ab + 2a + 2b + 1. Factor 2 from the first three terms: 2(2ab + a + b) + 1. The option 2(2ab+a+b) drops the final +1; 2(ab+a+b)+1 has a wrong expansion; 4ab+2a+2b drops the final +1. The answer is 2(2ab+a+b)+1."
+          - problem: "For integers m and n with m = 2a, their product can be written mn = 2q. Give q in terms of a and n."
+            answer: "an"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let m = 2a. Multiply: mn = 2a n. Factor 2: the quotient is a n. The answer is an."
+          - problem: "Write the full proof: for every integer n, n^2 is even if and only if n is even. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (forward): assume n is even, so n = 2k for an integer k. Then n^2 = 4k^2 = 2(2k^2), so n^2 is even. Step 2 (converse): prove the contrapositive; assume n is odd, so n = 2k + 1. Then n^2 = (2k + 1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1, which is odd. Thus if n^2 is even, n cannot be odd, so n is even. Step 3 (conclusion): both directions hold, so n^2 is even if and only if n is even."
         constraints: "iff proof; handle both directions"
     diagnostic_exemplar:
       problem: 'Prove: for all integers $m, n$, if $m$ and $n$ are both odd then $4 \mid (m^2 + n^2 - 2)$.'
@@ -399,12 +487,34 @@ topics:
         name: "Exhaustive cases on parity"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: for every integer $n$, $n^2 + n$ is even, using cases on the parity of $n$.'
-            answer: 'Even and odd cases both yield an even value.'
-            solution_sketch: 'If $n = 2k$, then $n^2 + n = 2k(2k + 1)$ is even. If $n = 2k + 1$, then $n^2 + n = (2k+1)(2k+2) = 2(2k+1)(k+1)$ is even. Both exhaustive cases give even. $\square$'
-          - problem: 'Prove: for every integer $n$, $3n^2 + n$ is even, using cases on the parity of $n$.'
-            answer: 'Even and odd cases both give an even value.'
-            solution_sketch: 'If $n = 2k$, $3n^2 + n = 12k^2 + 2k = 2(6k^2 + k)$, even. If $n = 2k + 1$, $3n^2 + n = 12k^2 + 14k + 4 = 2(6k^2 + 7k + 2)$, even. $\square$'
+          - problem: "In the proof that $n^2 + n$ is even, the even case writes $n = 2k$, and then $n^2 + n = 2\\,q(k)$. Give $q(k)$."
+            answer: "2k^2+k"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the even case $n = 2k$ (case hypothesis). Expand by the distributive law: $n^2 + n = 4k^2 + 2k$. Factor the common factor $2$ from both terms: $4k^2 + 2k = 2(2k^2 + k)$, so the even case concludes with an even value. The quotient is $q(k) = 2k^2+k$."
+          - problem: "In the proof that $3n^2 + n$ is even, the odd case writes $n = 2k + 1$, and then $3n^2 + n = 2\\,q(k)$. Give $q(k)$."
+            answer: "6k^2+7k+2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the odd case $n = 2k + 1$ (case hypothesis). Expand by the distributive law: $3(4k^2 + 4k + 1) + 2k + 1 = 12k^2 + 14k + 4$. Factor the common factor $2$: $2(6k^2 + 7k + 2)$, so the odd case concludes with an even value. The quotient is $q(k) = 6k^2+7k+2$."
+          - problem: "In the proof that $n^2 + 5n$ is even, the even case writes $n = 2k$, and then $n^2 + 5n = 2\\,q(k)$. Give $q(k)$."
+            answer: "2k^2+5k"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the even case $n = 2k$ (case hypothesis). Expand by the distributive law: $n^2 + 5n = 4k^2 + 10k$. Factor the common factor $2$ from both terms: $4k^2 + 10k = 2(2k^2 + 5k)$, so the even case concludes with an even value. The quotient is $q(k) = 2k^2+5k$."
+          - problem: "A student claims that $4$ divides $n^2 + n + 2$ for every integer $n$ at least $1$ and checks only $n = 1$. Give the smallest $n$ at least $1$ for which the claim is false."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test the claim in order of $n$ (direct check of each case). At $n = 1$ the value $n^2 + n + 2$ is $4$, a multiple of $4$. At $n = 2$ the value is $8$, a multiple of $4$. At $n = 3$ the value is $14$, which leaves remainder $2$ on division by $4$. The smallest counterexample is $n = 3$."
+          - problem: "Claim: $n^2 + n + 1$ is even for every integer $n$. Step 1: if $n$ is even, write $n = 2k$; then $n^2 + n + 1 = 4k^2 + 2k + 1 = 2(2k^2 + k) + 1$, an odd number. Step 2: if $n$ is odd, write $n = 2k + 1$; then $n^2 + n + 1 = 4k^2 + 6k + 3 = 2(2k^2 + 3k) + 3$. Step 3: the number $2(2k^2 + 3k)$ is even, so the number $2(2k^2 + 3k) + 3$ is even. Step 4: both cases give an even value, so $n^2 + n + 1$ is even for every integer $n$. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: with $n = 2k$ the value is $2(2k^2 + k) + 1$, and the step correctly finds it odd. Step 2 is valid: with $n = 2k + 1$ the value is $(2k+1)^2 + (2k+1) + 1 = 4k^2 + 6k + 3 = 2(2k^2 + 3k) + 3$. Step 3 is false: an even number plus $3$, an odd number, is odd, not even. Step 4 would follow from Steps 1 to 3, but it carries the error of Step 3 and ignores the odd result of Step 1. The answer is Step 3."
+          - problem: "In the odd case of a proof that $n^2 + 3n$ is even, the line after the substitution $n = 2k + 1$ is missing. Select the completed line that is equal to $n^2 + 3n$."
+            answer: "2(2k^2+5k+2)"
+            answer_contract: {"kind": "label", "options": [["2(2k^2+5k+2)"], ["2(2k^2+5k+3)"], ["2(2k^2+3k+2)"], ["(2k^2+5k+2)"]]}
+            solution_sketch: "With $n = 2k + 1$ the substitution rule gives $(2k+1)^2 + 3(2k+1) = 4k^2 + 4k + 1 + 6k + 3 = 4k^2 + 10k + 4$. Factoring the common $2$ gives $2(2k^2 + 5k + 2)$. The option $2(2k^2+5k+3)$ comes from an arithmetic slip in the constant term, since $1 + 3 = 4$ and $4/2 = 2$. The option $2(2k^2+3k+2)$ miscollects the linear terms, dropping the contribution of $3n$. The option $(2k^2+5k+2)$ drops the factor $2$ and is not equal to the original value. The answer is 2(2k^2+5k+2)."
+          - problem: "Write the full proof: for every integer $n$, $n^3 + 5n$ is even. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (case split): every integer $n$ is even or odd, so the two cases $n = 2k$ and $n = 2k + 1$ are exhaustive. Step 2 (even case): write $n = 2k$. Then $n^3 + 5n = 8k^3 + 10k = 2(4k^3 + 5k)$, a multiple of $2$, so it is even; the even case concludes. Step 3 (odd case): write $n = 2k + 1$. Then $n^3 + 5n = (8k^3 + 12k^2 + 6k + 1) + (10k + 5) = 8k^3 + 12k^2 + 16k + 6 = 2(4k^3 + 6k^2 + 8k + 3)$, a multiple of $2$, so it is even; the odd case concludes. Step 4 (conclusion): both exhaustive cases give an even value, so $n^3 + 5n$ is even for every integer $n$."
         constraints: "cases must be exhaustive; conclude in each case"
       - id: kp2
         name: "Cases from sign or absolute value"
