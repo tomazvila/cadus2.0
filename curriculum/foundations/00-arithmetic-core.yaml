@@ -1691,22 +1691,22 @@ topics:
         name: Factor or multiple?
         key_prerequisites: [division-facts]
         exemplars:
-          - problem: 'Is $7$ a factor of $84$? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$84 = 7 \times 12$.'
-          - problem: 'Is $51$ a multiple of $3$? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$3 \times 17 = 51$.'
-          - problem: 'Does $9$ divide evenly into $63$? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$63 = 9 \times 7$.'
-          - problem: 'Is $40$ a multiple of $6$? (yes/no)'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$40 \div 6$ gives $6$ remainder $4$; a nonzero remainder means $40$ is not a multiple of $6$.'
+          - problem: "For the numbers 7 and 84, use F if 7 is a factor of 84, and M if 7 is a multiple of 84. Also compute 84 divided by 7. What are the relation code and the quotient?"
+            answer: "relation = F; quotient = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["F"], ["M"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "quotient"}]}
+            solution_sketch: "The full result is relation = F; quotient = 12. Step 1: divide 84 by 7 using division facts; 84 divided by 7 is 12 with remainder 0. Step 2: a whole-number quotient means 7 is a factor of 84, so the code is F. The wrong option M would mean 7 is a multiple of 84, but 84 is the multiple because 84 = 7 times 12. The quotient is 12. The final answer is relation = F; quotient = 12."
+          - problem: "For the numbers 51 and 3, use M if 51 is a multiple of 3, and F if 51 is a factor of 3. Also compute 51 divided by 3. What are the relation code and the quotient?"
+            answer: "relation = M; quotient = 17"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["M"], ["F"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "quotient"}]}
+            solution_sketch: "The full result is relation = M; quotient = 17. Step 1: divide 51 by 3 using division facts; 51 divided by 3 is 17 with remainder 0. Step 2: a whole-number quotient means 51 is a multiple of 3, so the code is M. The wrong option F would mean 51 is a factor of 3, but the factors of 3 are only 1 and 3. The quotient is 17. The final answer is relation = M; quotient = 17."
+          - problem: "For the numbers 9 and 63, decide if 9 is a factor of 63 or a multiple of 63. Write F for factor and M for multiple. Also compute 63 divided by 9. What are the relation code and the quotient?"
+            answer: "relation = F; quotient = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["F"], ["M"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "quotient"}]}
+            solution_sketch: "The full result is relation = F; quotient = 7. Step 1: divide 63 by 9 using division facts; 63 divided by 9 is 7 with remainder 0. Step 2: a whole-number quotient means 9 is a factor of 63, so the code is F. The wrong option M would mean 9 is a multiple of 63, but a multiple of 63 must be at least 63, and 9 is smaller. The quotient is 7. The final answer is relation = F; quotient = 7."
+          - problem: "For the numbers 40 and 6, use M if 40 is a multiple of 6, and N if it is not a multiple of 6. Also compute the remainder when 40 is divided by 6. What are the relation code and the remainder?"
+            answer: "relation = N; remainder = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["M"], ["N"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "remainder"}]}
+            solution_sketch: "The full result is relation = N; remainder = 4. Step 1: divide 40 by 6 using division facts; 40 divided by 6 is 6 with remainder 4. Step 2: a nonzero remainder means 40 is not a multiple of 6, so the code is N. The wrong option M would mean 40 is a multiple of 6, but 6 times 6 is 36 and 6 times 7 is 42, so 40 lies between multiples. The remainder is 4. The final answer is relation = N; remainder = 4."
         constraints: "numbers up to 100"
     diagnostic_exemplar:
       problem: 'List all the factors of $20$ that are also multiples of $4$.'
@@ -1737,22 +1737,22 @@ topics:
         name: Rules for 2, 5, and 10
         key_prerequisites: [factors-and-multiples]
         exemplars:
-          - problem: 'Is $470$ divisible by $5$? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'It ends in $0$, so it is divisible by $5$ (and by $10$).'
-          - problem: 'Does $2$ divide evenly into $384$? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'It ends in an even digit ($4$), so it is divisible by $2$.'
-          - problem: 'Check whether $625$ is divisible by $5$. (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'It ends in $5$, so it is divisible by $5$.'
-          - problem: 'Is $340$ a multiple of $10$? (yes/no)'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'It ends in $0$, so it is divisible by $10$.'
+          - problem: "A 3-digit number has hundreds digit 6 and tens digit 3. Its units digit is not known. The number is divisible by 5. Find the greatest possible value of its units digit."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The rule for 5 says a number is divisible by 5 exactly when its units digit is 0 or 5. Step 2: The number is 63d, so d must be 0 or 5. Step 3: The greatest of these possible digits is 5. The answer is 5."
+          - problem: "A 3-digit number has hundreds digit 5 and tens digit 1. Its units digit is unknown. The number is divisible by 2. Find the greatest possible value of its units digit."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The rule for 2 says the units digit must be even. Step 2: The number is 51d, and d must be one of 0, 2, 4, 6, 8. Step 3: The greatest even digit is 8. The answer is 8."
+          - problem: "A 3-digit number has hundreds digit 7 and tens digit 4. Its units digit is unknown. The number is divisible by 5. Find the smallest possible value of its units digit."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The rule for 5 says the units digit must be 0 or 5. Step 2: The number is 74d, so d is 0 or 5. Step 3: The smallest of these possible digits is 0. The answer is 0."
+          - problem: "A 3-digit number has hundreds digit 2 and tens digit 8. Its units digit is unknown. The number is divisible by 2 but not by 10. Find the smallest possible value of its units digit."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The rule for 2 says the units digit must be even. Step 2: The rule for 10 says a multiple of 10 must end in 0, so the units digit cannot be 0. Step 3: The number is 28d, and d is an even digit that is not 0; the smallest such digit is 2. The answer is 2."
         constraints: "3-digit numbers"
       - id: kp2
         name: Rules for 3 and 9 (digit sums)
