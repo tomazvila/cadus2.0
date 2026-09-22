@@ -115,22 +115,22 @@ topics:
         name: Can three lengths form a triangle?
         key_prerequisites: [linear-inequalities]
         exemplars:
-          - problem: 'Can segments of length $4$, $5$, and $10$ form a triangle? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Each pair of sides must sum to more than the third; $4 + 5 = 9 < 10$ fails.'
-          - problem: 'Can segments of length $6$, $8$, and $12$ form a triangle? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Check the tightest case: $6 + 8 = 14 > 12$, so every pair sums to more than the third.'
-          - problem: 'Can segments of length $10$, $10$, and $21$ form a triangle? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'The tightest case fails: $10 + 10 = 20 < 21$.'
-          - problem: 'Can segments of length $7$, $9$, and $12$ form a triangle? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'The tightest case holds: $7 + 9 = 16 > 12$, so every pair sums to more than the third.'
+          - problem: "Three segments have lengths $4$, $5$, and $10$. Can they form a triangle? State the verdict and the sum of the two smallest lengths as s."
+            answer: "verdict = no; s = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "s"}]}
+            solution_sketch: "List the lengths in order: 4, 5, 10. By the triangle inequality, only the two smallest lengths need checking, so compute 4 + 5 = 9. Since 9 is not greater than 10, the verdict is no and the sum is 9. The wrong option yes comes from not comparing 9 with 10. The answer is verdict = no; s = 9."
+          - problem: "A triangle is proposed with side lengths $6$, $8$, and $12$. Does it satisfy the triangle inequality? State the verdict and the sum of the two smallest lengths as s."
+            answer: "verdict = yes; s = 14"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "s"}]}
+            solution_sketch: "List the lengths in order: 6, 8, 12. By the triangle inequality, check the two smallest: 6 + 8 = 14. Since 14 is greater than 12, the verdict is yes and the sum is 14. The wrong option no comes from ignoring that 14 is greater than 12. The answer is verdict = yes; s = 14."
+          - problem: "Three rods measure $10$, $10$, and $21$. Can a triangle be made from them? State the verdict and the sum of the two smallest lengths as s."
+            answer: "verdict = no; s = 20"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "s"}]}
+            solution_sketch: "List the lengths in order: 10, 10, 21. By the triangle inequality, check the two smallest: 10 + 10 = 20. Since 20 is not greater than 21, the verdict is no and the sum is 20. The wrong option yes comes from not checking that 20 is less than 21. The answer is verdict = no; s = 20."
+          - problem: "A set of three segments has lengths $7$, $9$, and $12$. Is a triangle possible? State the verdict and the sum of the two smallest lengths as s."
+            answer: "verdict = yes; s = 16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "s"}]}
+            solution_sketch: "List the lengths in order: 7, 9, 12. By the triangle inequality, check the two smallest: 7 + 9 = 16. Since 16 is greater than 12, the verdict is yes and the sum is 16. The wrong option no comes from missing that 16 is greater than 12. The answer is verdict = yes; s = 16."
         constraints: "integer side lengths 1-30; only the smallest-two sum needs checking; answered yes or no"
       - id: kp2
         name: Range of the third side
@@ -147,10 +147,10 @@ topics:
           - problem: 'Two sides of a triangle measure $8$ and $3$. What is the least whole-number length possible for the third side?'
             answer: "6"
             solution_sketch: '$8 - 3 < x < 8 + 3$ gives $5 < x < 11$, so the least whole number is $6$.'
-          - problem: 'Two sides of a triangle measure $10$ and $6$. Can the third side have length $17$? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$10 - 6 < x < 10 + 6$ gives $4 < x < 16$, and $17$ falls outside that range.'
+          - problem: "Two sides of a triangle measure 10 and 6. A third side of length 17 is proposed. Give the verdict and the greatest whole-number length the third side can have."
+            answer: "verdict = no; x = 15"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "The triangle inequality rule says the third side x must satisfy 10 - 6 < x < 10 + 6, so the full range is 4 < x < 16. The option yes is wrong because 17 is outside this range, so the verdict is no. The greatest whole-number length inside the range is 15. The answer is verdict = no; x = 15."
           - problem: 'Two sides of a triangle measure $12$ and $4$. What is the greatest whole-number length possible for the third side?'
             answer: "15"
             solution_sketch: '$12 - 4 < x < 12 + 4$ gives $8 < x < 16$, so the greatest whole number is $15$.'
@@ -159,22 +159,22 @@ topics:
         name: Order sides and angles
         key_prerequisites: [classifying-triangles]
         exemplars:
-          - problem: 'In $\triangle ABC$, $AB = 7$, $BC = 9$, and $CA = 12$. Which angle is largest: $\angle A$, $\angle B$, or $\angle C$?'
-            answer: 'B'
-            answer_contract: {kind: label, options: [[A], [B], [C]]}
-            solution_sketch: 'The largest angle sits opposite the longest side $CA = 12$, and the angle opposite $\overline{CA}$ is $\angle B$.'
-          - problem: 'In $\triangle DEF$, $m\angle D = 50^\circ$, $m\angle E = 60^\circ$, and $m\angle F = 70^\circ$. Which side is longest: $\overline{DE}$, $\overline{EF}$, or $\overline{FD}$?'
-            answer: 'DE'
-            answer_contract: {kind: label, options: [[DE], [EF], [FD]]}
-            solution_sketch: 'The longest side sits opposite the largest angle $\angle F$, which is $\overline{DE}$.'
-          - problem: 'In $\triangle PQR$, $PQ = 6$, $QR = 11$, and $RP = 8$. Which angle is smallest: $\angle P$, $\angle Q$, or $\angle R$?'
-            answer: 'R'
-            answer_contract: {kind: label, options: [[P], [Q], [R]]}
-            solution_sketch: 'The smallest angle sits opposite the shortest side $PQ = 6$, and the angle opposite $\overline{PQ}$ is $\angle R$.'
-          - problem: 'In $\triangle XYZ$, $m\angle X = 40^\circ$, $m\angle Y = 95^\circ$, and $m\angle Z = 45^\circ$. Which side is shortest: $\overline{XY}$, $\overline{YZ}$, or $\overline{ZX}$?'
-            answer: 'YZ'
-            answer_contract: {kind: label, options: [[XY], [YZ], [ZX]]}
-            solution_sketch: 'The shortest side sits opposite the smallest angle $\angle X = 40^\circ$, which is $\overline{YZ}$.'
+          - problem: "In triangle ABC, the side lengths are AB = 7, BC = 9, and CA = 12. Angle A is known not to be the largest angle. Give the answer as verdict = ...; L = ..., where verdict names the largest angle and L is the length of the longest side. Find verdict and L."
+            answer: "verdict = B; L = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["B"], ["C"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The full object is the pair (largest angle, longest side length) for triangle ABC with sides AB = 7, BC = 9, CA = 12. Step 1 (order the sides): 7 < 9 < 12, so CA is the longest side, of length 12. Step 2 (opposite rule): the largest angle lies opposite the longest side, so angle B, which faces CA, is the largest; the wrong option C names an endpoint of CA instead of the vertex opposite it. Step 3 (read the value): the longest side CA has length 12. So verdict = B; L = 12."
+          - problem: "In triangle DEF, angle D measures 50 degrees, angle E measures 60 degrees, and angle F measures 70 degrees. Side EF is known not to be the longest side. Give the answer as verdict = ...; A = ..., where verdict names the longest side and A is the measure of the largest angle. Find verdict and A."
+            answer: "verdict = DE; A = 70"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DE"], ["FD"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "A"}]}
+            solution_sketch: "The full object is the pair (longest side, largest angle measure) for triangle DEF with angles 50, 60, 70 degrees. Step 1 (order the angles): 50 < 60 < 70, so angle F is the largest, measuring 70 degrees. Step 2 (opposite rule): the longest side lies opposite the largest angle, so side DE, which faces angle F, is the longest; the wrong option FD shares endpoint F with the largest angle instead of facing it. Step 3 (read the value): the largest angle F measures 70. So verdict = DE; A = 70."
+          - problem: "In triangle PQR, the side lengths are PQ = 6, QR = 11, and RP = 8. Angle P is known not to be the smallest angle. Give the answer as verdict = ...; L = ..., where verdict names the smallest angle and L is the length of the shortest side. Find verdict and L."
+            answer: "verdict = R; L = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["Q"], ["R"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The full object is the pair (smallest angle, shortest side length) for triangle PQR with sides PQ = 6, QR = 11, RP = 8. Step 1 (order the sides): 6 < 8 < 11, so PQ is the shortest side, of length 6. Step 2 (opposite rule): the smallest angle lies opposite the shortest side, so angle R, which faces PQ, is the smallest; the wrong option Q names an endpoint of PQ instead of the vertex opposite it. Step 3 (read the value): the shortest side PQ has length 6. So verdict = R; L = 6."
+          - problem: "In triangle XYZ, angle X measures 40 degrees, angle Y measures 95 degrees, and angle Z measures 45 degrees. Side XY is known not to be the shortest side. Give the answer as verdict = ...; A = ..., where verdict names the shortest side and A is the measure of the smallest angle. Find verdict and A."
+            answer: "verdict = YZ; A = 40"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["YZ"], ["ZX"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "A"}]}
+            solution_sketch: "The full object is the pair (shortest side, smallest angle measure) for triangle XYZ with angles 40, 95, 45 degrees. Step 1 (order the angles): 40 < 45 < 95, so angle X is the smallest, measuring 40 degrees. Step 2 (opposite rule): the shortest side lies opposite the smallest angle, so side YZ, which faces angle X, is the shortest; the wrong option ZX touches vertex X instead of facing it. Step 3 (read the value): the smallest angle X measures 40. So verdict = YZ; A = 40."
         constraints: "distinct side lengths / angle measures; ask for largest or smallest only; the answer names the vertex letter or the two-letter segment"
     diagnostic_exemplar:
       problem: 'Two sides of a triangle measure $8$ and $3$. List all possible integer lengths for the third side.'
@@ -251,14 +251,14 @@ topics:
         name: Feasible isosceles side sets
         key_prerequisites: [triangle-inequality-classification]
         exemplars:
-          - problem: 'Can an isosceles triangle have sides $4$, $4$, and $10$?'
-            answer: 'No'
-            answer_contract: {kind: label, options: [[Yes], [No]]}
-            solution_sketch: 'The two legs would give $4 + 4 = 8 < 10$, violating the triangle inequality.'
-          - problem: 'An isosceles triangle has perimeter $20$ and one side of length $8$. Find all possible side sets.'
-            answer: '$\{8, 8, 4\}$ and $\{6, 6, 8\}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Legs $8$: base $20 - 16 = 4$ (valid, $8+4>8$). Base $8$: legs $6$ each (valid, $6+6>8$). Both pass the triangle inequality.'
+          - problem: "An isosceles triangle has legs 4 and base b. Find the greatest whole-number value of b for which the triangle inequality holds."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Check the legs-given case: the sides are 4, 4, and b. The triangle inequality for the base gives 4 + 4 > b, so b < 8. The other two inequalities, b + 4 > 4, hold for every positive b. The greatest whole-number b is 7."
+          - problem: "An isosceles triangle has perimeter 20 and one side of length 8. Find the sum of the two possible base lengths."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List both cases. Legs-given: if the side of length 8 is a leg, the base is 20 - 8 - 8 = 4, and 8 + 4 > 8 holds. Base-given: if the side of length 8 is the base, each leg is (20 - 8)/2 = 6, and 6 + 6 > 8 holds. The possible base lengths are 4 and 8, so their sum is 12."
           - problem: 'An isosceles triangle has perimeter $20$ and one side of length $8$. How many distinct side sets are possible?'
             answer: "2"
             solution_sketch: 'Legs $8$: base $20 - 16 = 4$ (valid, $8 + 4 > 8$). Base $8$: legs $6$ each (valid, $6 + 6 > 8$). Both work: $2$ sets.'
@@ -344,10 +344,10 @@ topics:
         name: Congruence via rigid motions
         key_prerequisites: [segment-angle-addition, coordinate-plane]
         exemplars:
-          - problem: 'A rotation maps $\triangle ABC$ exactly onto $\triangle DEF$. Are the triangles congruent?'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'A rigid motion mapping one figure onto another is exactly what congruence means.'
+          - problem: "A rotation maps triangle ABC exactly onto triangle DEF. If the measure of angle A is 37 degrees, find the measure of angle D, in degrees."
+            answer: "37"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A rotation is a rigid motion, so it preserves angle measures. Vertex A corresponds to vertex D, so the measure of angle D equals the measure of angle A, which is 37 degrees. The answer is 37."
           - problem: 'A translation maps $\triangle ABC$ to $\triangle DEF$ with $A \mapsto D$, $B \mapsto E$. If $AB = 9$, find $DE$.'
             answer: "9"
             solution_sketch: 'Rigid motions preserve lengths.'
@@ -360,10 +360,10 @@ topics:
           - problem: 'A rigid motion maps $\overline{PQ}$ onto $\overline{XY}$. If $PQ = 7$, find $XY$.'
             answer: "7"
             solution_sketch: 'Rigid motions preserve segment lengths.'
-          - problem: 'A translation maps $\triangle ABC$ exactly onto $\triangle DEF$. Are the triangles congruent? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'A translation is a rigid motion, and a rigid motion mapping one figure onto the other is exactly congruence.'
+          - problem: "A reflection maps triangle ABC exactly onto triangle DEF. If BC = 15, find EF."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A reflection is a rigid motion, so it preserves segment lengths. Side BC corresponds to side EF, so EF = BC = 15. The answer is 15."
         constraints: "single rigid motion; read off preserved lengths or angles"
     diagnostic_exemplar:
       problem: 'A reflection across the $y$-axis maps $\triangle ABC$ onto $\triangle DEF$, with vertex $A(-6, 2)$ mapping to $D$. Give the coordinates of $D$, and state whether $\triangle ABC \cong \triangle DEF$ and why.'
@@ -400,22 +400,22 @@ topics:
         name: Recognize SSS
         key_prerequisites: [triangle-inequality-classification]
         exemplars:
-          - problem: 'Two triangles have all three pairs of corresponding sides congruent. Which congruence criterion applies: SSS or SAS?'
-            answer: 'SSS'
-            answer_contract: {kind: label, options: [[SSS], [SAS]]}
-            solution_sketch: 'Three congruent side pairs with no angle information: Side-Side-Side.'
-          - problem: 'Given $\overline{AB} \cong \overline{DE}$, $\overline{BC} \cong \overline{EF}$, and $\overline{CA} \cong \overline{FD}$, which criterion shows $\triangle ABC \cong \triangle DEF$?'
-            answer: 'SSS'
-            answer_contract: {kind: label, options: [[SSS], [SAS]]}
-            solution_sketch: 'All three corresponding side pairs are marked congruent, so the criterion is SSS.'
-          - problem: 'Triangle 1 has side lengths $7$, $9$, and $12$; triangle 2 has side lengths $12$, $7$, and $9$. Which criterion shows them congruent: SSS or SAS?'
-            answer: 'SSS'
-            answer_contract: {kind: label, options: [[SSS], [SAS]]}
-            solution_sketch: 'The three side lengths match pairwise ($7$--$7$, $9$--$9$, $12$--$12$) and no angle is used, so SSS applies.'
-          - problem: 'Two triangles each have sides of lengths $6$, $8$, and $10$. Which criterion shows them congruent: SSS or SAS?'
-            answer: 'SSS'
-            answer_contract: {kind: label, options: [[SSS], [SAS]]}
-            solution_sketch: 'Matching all three side lengths pins down the triangles completely, with no angle information: SSS.'
+          - problem: "Triangle ABC has side lengths AB = 5, BC = 7, and CA = 9. Triangle DEF has side lengths DE = 5, EF = 7, and FD = 9. All three pairs of corresponding sides are marked congruent, and no angle information is given. Which congruence criterion applies?"
+            answer: "SSS"
+            answer_contract: {"kind": "label", "options": [["SSS"], ["SAS"], ["ASA"], ["AAS"]]}
+            solution_sketch: "Step 1: list the full data. The side pairs AB and DE, BC and EF, and CA and FD are all congruent, and no angles are given. Step 2 (SSS criterion): three side pairs with no angle information give SSS. The option SAS is wrong because it needs an included angle. The option ASA is wrong because it needs two angles and a side. The option AAS is wrong because it needs two angles and a non-included side. Final answer: SSS."
+          - problem: "Triangle PQR has sides PQ = 6, QR = 8, and RP = 10. Triangle STU has sides ST = 6, TU = 8, and US = 10. The diagram marks all three pairs of corresponding sides as congruent and marks no angles. Which congruence criterion is shown?"
+            answer: "Side-Side-Side"
+            answer_contract: {"kind": "label", "options": [["Side-Side-Side"], ["Side-Angle-Side"], ["Angle-Side-Angle"], ["Angle-Angle-Side"]]}
+            solution_sketch: "Step 1: list the full data. The side pairs PQ and ST, QR and TU, and RP and US are all congruent, and no angles are marked. Step 2 (SSS criterion): three side pairs with no angles give the side-side-side criterion. The option Side-Angle-Side is wrong because it needs an included angle. The option Angle-Side-Angle is wrong because it needs two angles and a side. The option Angle-Angle-Side is wrong because it needs two angles and a non-included side. Final answer: Side-Side-Side."
+          - problem: "Two triangles have all three pairs of corresponding sides marked congruent. No angle measures are marked. How many angle measures are needed to conclude the triangles are congruent?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: list the full data. Two triangles have all three pairs of corresponding sides marked congruent, and no angle measures are marked. Step 2 (SSS criterion): three side pairs are enough, so no angle measures are required. Final answer: 0."
+          - problem: "Two triangles have all three pairs of corresponding sides marked congruent. No angle measures are marked. How many congruence criteria use exactly three pairs of corresponding sides and no angles?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: list the full data. Two triangles have all three pairs of corresponding sides marked congruent, and no angle measures are marked. Step 2 (SSS criterion): the side-side-side criterion is the one criterion that uses exactly three side pairs and no angles. Final answer: 1."
         constraints: "three side pairs marked; no angle information given"
       - id: kp2
         name: Recognize SAS and the included angle
