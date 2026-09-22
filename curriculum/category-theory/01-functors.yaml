@@ -704,12 +704,34 @@ topics:
         key_prerequisites: [functors]
         constraints: "The proof pattern is fixed: lift via fullness, verify via faithfulness; each application of fullness or faithfulness must be named where used."
         exemplars:
-          - problem: "Prove that a fully faithful functor $F$ reflects isomorphisms: if $Ff$ is an isomorphism, so is $f$."
-            answer: "Pull the inverse of $Ff$ back through fullness, then apply faithfulness."
-            solution_sketch: "Suppose $Ff\\colon FA\\to FB$ has inverse $g\\colon FB\\to FA$. By fullness $g=Fh$ for some $h\\colon B\\to A$. Then $F(h\\circ f)=Fh\\circ Ff=g\\circ Ff=1_{FA}=F(1_A)$; faithfulness gives $h\\circ f=1_A$. Symmetrically $F(f\\circ h)=Ff\\circ Fh=1_{FB}=F(1_B)$ gives $f\\circ h=1_B$. So $f$ is an isomorphism with inverse $h$."
-          - problem: "Prove that if $F$ is fully faithful and $FA\\cong FB$, then $A\\cong B$."
-            answer: "Lift the iso and its inverse through fullness; faithfulness makes them mutually inverse."
-            solution_sketch: "Let $\\alpha\\colon FA\\to FB$ be an isomorphism with inverse $\\beta\\colon FB\\to FA$. By fullness $\\alpha=Ff$ and $\\beta=Fg$ for some $f\\colon A\\to B$ and $g\\colon B\\to A$. Then $F(g\\circ f)=Fg\\circ Ff=\\beta\\circ\\alpha=1_{FA}=F(1_A)$, and faithfulness gives $g\\circ f=1_A$; symmetrically $f\\circ g=1_B$. So $f$ is an isomorphism $A\\cong B$."
+          - problem: "Let F be the automorphism of the additive monoid Z/5 given by F(x) = 2x mod 5. In the proof that F reflects isomorphisms, suppose Ff is an isomorphism with inverse g. By fullness, g = Fh for some h. If f = 4, what is h?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Setup: F is the automorphism of the additive monoid Z/5 with F(x) = 2x mod 5. Compute Ff: with f = 4, Ff = 2*4 = 8 = 3 mod 5. The inverse of 3 is g = 2 in Z/5. Fullness gives h with Fh = g, so 2h = 2 mod 5. Solving gives h = 1. The answer is 1."
+          - problem: "In the additive group Z/7, let the automorphism F be F(x) = 3x mod 7. In the reflection proof, Ff is an isomorphism with inverse g, and fullness gives g = Fh. If f = 5, give h."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Setup: F is the automorphism of Z/7 with F(x) = 3x mod 7. Compute Ff = 3*5 = 15 = 1 mod 7. The additive inverse of 1 in Z/7 is g = 6, since 1 + 6 = 0. Fullness gives h with Fh = g, so 3h = 6 mod 7, and h = 2 because 3*2 = 6. The answer is 2."
+          - problem: "Work in the additive group Z/8, with the automorphism F given by F(x) = 3x mod 8. In the proof that F reflects isomorphisms, suppose f = 5 and fullness gives h with Fh = g, where g is the inverse of Ff. Give the additive order of h in Z/8."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Setup: F is the automorphism of Z/8 with F(x) = 3x mod 8. Compute Ff = 3*5 = 15 = 7 mod 8. The inverse of 7 is g = 1 because 7 + 1 = 0 mod 8. Fullness gives h with 3h = 1 mod 8, so h = 3 because 3*3 = 9 = 1. The additive multiples of 3 are 3, 6, 1, 4, 7, 2, 5, 0, which returns to 0 only after 8 steps. The answer is 8."
+          - problem: "Claim: a fully faithful functor F reflects isomorphisms. Step 1: Suppose Ff is an isomorphism with inverse g. Step 2: By faithfulness, there is h with g = Fh. Step 3: Then F(h f) = Fh Ff = g Ff = 1. Step 4: By faithfulness, h f = 1. Step 5: Similarly F(f h) = 1, so f h = 1 and f is an isomorphism. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 assumes Ff is an isomorphism with inverse g, which is the hypothesis and is valid. Step 2 says faithfulness gives h with g = Fh; that is invalid because fullness gives existence, while faithfulness gives uniqueness. Step 3 computes F(h f) = 1 correctly. Step 4 correctly uses faithfulness to cancel F. Step 5 is the symmetric argument. The answer is Step 2."
+          - problem: "In the reflection proof, Step 1 supposes Ff is an isomorphism with inverse g. Step 2 uses the fact that every morphism FB to FA of D equals Fh for some h: B to A, giving g = Fh. Step 3 computes F(h f) = Fh Ff = g Ff = 1 = F(1_A). Step 4 concludes h f = 1_A. Which property of F does Step 4 use to reach its conclusion?"
+            answer: "faithfulness"
+            answer_contract: {"kind": "label", "options": [["fullness"], ["faithfulness"], ["functoriality"], ["injectivity"], ["surjectivity"]]}
+            solution_sketch: "Step 4 cancels F from both sides of F(h f) = F(1_A), which is exactly the injectivity on hom-sets that faithfulness states. Wrong option fullness: it is the existence property used in Step 2 to obtain h, not the cancellation in Step 4. Wrong option functoriality: it gives the composition rule F(h f) = Fh Ff of Step 3, not the conclusion of Step 4. Wrong option injectivity: it names a property of a plain function, not the stated hypothesis of the functor. Wrong option surjectivity: also a plain-function property, and it gives existence, not cancellation. The answer is faithfulness."
+          - problem: "Let C be the one-object category of the additive monoid Z/4. Let F from C to Set have FA = {1,2} and F(n) the map sending x to x + n mod 2. Count how many functions from FA to FA are not equal to F(n) for any n. Give that count."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The set FA = {1,2} has two elements, so there are 2^2 = 4 functions from FA to FA. F(0) and F(2) send every x to x, the identity map. F(1) and F(3) send x to x + 1 mod 2, a swap. So the image of F contains 2 functions, which shows F is not full. The remaining 4 - 2 = 2 functions are not in the image. The answer is 2."
+          - problem: "Write the full proof: if F from C to D is a fully faithful functor and f: A -> B is a morphism of C for which Ff is an isomorphism, then f is an isomorphism. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Suppose F: C -> D is fully faithful and Ff: FA -> FB is an isomorphism with inverse g: FB -> FA. By fullness, since g is a morphism FB -> FA, there is h: B -> A with g = Fh. Consider F(h f) = Fh Ff = g Ff = 1_{FA}. Since F(1_A) = 1_{FA}, faithfulness gives h f = 1_A. Similarly, F(f h) = Ff Fh = Ff g = 1_{FB} = F(1_B), so faithfulness gives f h = 1_B. Therefore f is an isomorphism with inverse h."
     diagnostic_exemplar:
       problem: "Prove that a fully faithful functor $F$ reflects isomorphisms: if $Ff$ is an isomorphism, then $f$ is an isomorphism."
       answer: "Let $Ff\\colon FA\\to FB$ have inverse $g\\colon FB\\to FA$. By fullness $g=Fh$ for some $h\\colon B\\to A$. Then $F(h\\circ f)=Fh\\circ Ff=g\\circ Ff=1_{FA}=F(1_A)$, so faithfulness gives $h\\circ f=1_A$. Symmetrically $F(f\\circ h)=Ff\\circ Fh=1_{FB}=F(1_B)$ gives $f\\circ h=1_B$. Hence $h$ is a two-sided inverse and $f$ is an isomorphism."
