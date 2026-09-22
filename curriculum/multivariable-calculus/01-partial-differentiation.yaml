@@ -412,6 +412,22 @@ topics:
           - problem: 'Compute $\lim_{(x,y) \to (0,0)} \dfrac{x^2 - y^2}{x - y}$ (taken over points with $x \ne y$).'
             answer: "0"
             solution_sketch: 'For $x \ne y$, $\frac{x^2 - y^2}{x - y} = x + y$, which tends to $0$.'
+          - problem: "Compute the limit as (x,y) goes to (2,-1) of x^2 + xy - y^2."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the limit of x^2 + xy - y^2 as (x,y) goes to (2,-1), the function is a polynomial, so it is continuous by the limit laws. Substitute x = 2 and y = -1: 4 + (2)(-1) - 1 = 1. The limit is 1."
+          - problem: "Compute the limit as (x,y) goes to (1,-1) of (x^2 - y^2)/(x + y), taken over points with x + y not equal to 0."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the limit of (x^2 - y^2)/(x + y) as (x,y) goes to (1,-1), factor the numerator as (x - y)(x + y). Cancel the common factor x + y on the domain x + y not equal to 0, giving x - y. Substitute (1,-1): 1 - (-1) = 2. The limit is 2."
+          - problem: "Compute the limit as (x,y) goes to (1,2) of (x^2 + y^2)/(x + y)."
+            answer: "5/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the limit of (x^2 + y^2)/(x + y) as (x,y) goes to (1,2), the function is rational and continuous where the denominator is not zero. Substitute x = 1 and y = 2: (1 + 4)/(1 + 2) = 5/3. The limit is 5/3."
+          - problem: "Compute the limit as (x,y) goes to (3,1) of (x^2 - 9)/(xy - 3y), taken over points with y(x - 3) not equal to 0."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the limit of (x^2 - 9)/(xy - 3y) as (x,y) goes to (3,1), factor the numerator as (x - 3)(x + 3) and the denominator as y(x - 3). Cancel the common factor x - 3 on the domain y(x - 3) not equal to 0, giving (x + 3)/y. Substitute (3,1): (3 + 3)/1 = 6. The limit is 6."
         constraints: "continuous functions or a single factor cancellation; answers are small exact numbers"
       - id: kp2
         name: "Squeeze arguments"
@@ -423,23 +439,51 @@ topics:
           - problem: 'Compute $\lim_{(x,y) \to (0,0)} \dfrac{x^3}{x^2 + y^2}$.'
             answer: "0"
             solution_sketch: '$\left|\frac{x^3}{x^2 + y^2}\right| = |x| \cdot \frac{x^2}{x^2 + y^2} \le |x| \to 0$.'
+          - problem: "Compute $\\lim_{(x,y)\\to(0,0)} \\left(3 + \\dfrac{x^2 y}{x^2+y^2}\\right)$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Limit laws split the sum: the limit of 3 plus the limit of x^2 y/(x^2+y^2) as (x,y) tends to (0,0). For the fraction, x^2 <= x^2+y^2 gives |x^2 y/(x^2+y^2)| <= |y|, and |y| tends to 0, so the squeeze rule gives that fraction a limit of 0. Therefore the sum has limit 3 + 0 = 3."
+          - problem: "Compute $\\lim_{(x,y)\\to(0,0)} \\left(-1 + \\dfrac{x^3}{x^2+y^2}\\right)$."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Limit laws split the sum: the limit of -1 plus the limit of x^3/(x^2+y^2) as (x,y) tends to (0,0). For the fraction, x^2 <= x^2+y^2 gives |x^3/(x^2+y^2)| = |x| * x^2/(x^2+y^2) <= |x|, and |x| tends to 0, so the squeeze rule gives that fraction a limit of 0. Therefore the sum has limit -1 + 0 = -1."
+          - problem: "Compute $\\lim_{(x,y)\\to(0,0)} \\left(5 + \\dfrac{x^2 y}{2x^2+3y^2}\\right)$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Limit laws split the sum: the limit of 5 plus the limit of x^2 y/(2x^2+3y^2) as (x,y) tends to (0,0). Since 2x^2 <= 2x^2+3y^2, we get |x^2 y/(2x^2+3y^2)| <= |y|/2, and |y|/2 tends to 0, so the squeeze rule gives the fraction a limit of 0. Therefore the sum has limit 5 + 0 = 5."
+          - problem: "Compute $\\lim_{(x,y)\\to(0,0)} \\left(7 + \\dfrac{x^3}{x^2+4y^2}\\right)$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Limit laws split the sum: the limit of 7 plus the limit of x^3/(x^2+4y^2) as (x,y) tends to (0,0). Since x^2 <= x^2+4y^2, we get |x^3/(x^2+4y^2)| = |x| * x^2/(x^2+4y^2) <= |x|, and |x| tends to 0, so the squeeze rule gives the fraction a limit of 0. Therefore the sum has limit 7 + 0 = 7."
         constraints: "numerator degree strictly exceeds denominator degree; the bounding factor is |x| or |y|"
       - id: kp3
         name: "Continuity and deciding existence"
         key_prerequisites: [continuity, limits-along-paths]
         exemplars:
-          - problem: 'Where is $f(x, y) = \dfrac{1}{x^2 + y^2 - 1}$ continuous?'
-            answer: 'Everywhere except on the circle $x^2 + y^2 = 1$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A quotient of continuous functions is continuous wherever the denominator is nonzero.'
-          - problem: 'Where is $f(x, y) = \ln(x + y)$ continuous?'
-            answer: 'On the open half-plane $x + y > 0$.'
-            solution_sketch: 'The logarithm is continuous where its argument is positive, so $f$ is continuous on the open half-plane $x+y>0$.'
-            answer_contract: {kind: none}
-          - problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{x^2 y^2}{x^2 + y^2}$ exists, and find it if so.'
-            answer: 'Yes; the limit is $0$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{x^2 y^2}{x^2 + y^2} \le y^2 \cdot \frac{x^2}{x^2+y^2} \le y^2 \to 0$: squeeze. (Paths only suggest the value; the bound proves it.)'
+          - problem: "The function f(x,y) = 1/(x^2 + y^2 - 1) is continuous everywhere except on one circle. Find the radius of that circle."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For f(x,y)=1/(x^2+y^2-1), a quotient of continuous functions is continuous where the denominator is nonzero. The denominator fails at x^2+y^2-1=0, which is the circle x^2+y^2=1. Its radius is 1."
+          - problem: "The function f(x,y) = ln(x + y) is continuous on the half-plane x + y > c. Find c."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For f(x,y)=ln(x+y), the logarithm is continuous where its argument is positive. The boundary of x+y>0 is x+y=0, so c=0. The answer is 0."
+          - problem: "Let f(x, y) = (x^2 + y^2)/sin(2(x^2 + y^2)). Consider the limit of f as (x, y) goes to (0, 0). State whether the limit exists, and give the value of the limit."
+            answer: "verdict = exists; L = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["absent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "For f(x,y)=(x^2+y^2)/sin(2(x^2+y^2)), set t = x^2+y^2; as (x,y) goes to (0,0), t goes to 0 through positive values (composition, limit laws). For t > 0 the sine bounds 2t cos(2t) <= sin(2t) <= 2t hold, and dividing by 2 sin(2t) gives 1/2 <= t/sin(2t) <= 1/(2 cos(2t)). Both bounds tend to 1/2, so the squeeze theorem forces the limit to equal 1/2. The option absent is the verdict for a function whose path limits disagree; here the two-sided squeeze bound proves one single limit value, so absent is wrong. So verdict = exists; L = 1/2."
+          - problem: "The function f(x,y) = 1/(x^2 - y) is continuous everywhere except on the curve y = x^2. Find the value of y on this curve when x = 2."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For f(x,y)=1/(x^2-y), the quotient is continuous where the denominator x^2-y is nonzero. The failure curve is y=x^2. At x=2, y=2^2=4. The value is 4."
+          - problem: "The function f(x,y) = sqrt(x - y^2) is continuous where its argument is nonnegative. Find the boundary value of x when y = 3."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For f(x,y)=sqrt(x-y^2), the square root is continuous where x-y^2 >= 0. The boundary is x=y^2. At y=3, x=3^2=9. The boundary value is 9."
+          - problem: "Consider the limit of x^2 y/(x^4 + y^2) as (x,y) goes to (0,0). What is the limit? Select the correct value."
+            answer: "DNE"
+            answer_contract: {"kind": "label", "options": [["0"], ["1/2"], ["DNE", "does not exist"], ["1"]]}
+            solution_sketch: "For f(x,y)=x^2 y/(x^4+y^2), along y=0 the limit is 0, so option 0 is the path value on the x-axis. Along y=x^2 the function becomes x^4/(x^4+x^4)=1/2, so option 1/2 is the path value on that parabola. The value 1 is not approached on these paths and is a distractor. Since two paths give different limits, the limit does not exist. The answer is DNE."
         constraints: "continuity questions reduce to where a denominator or log/root argument fails; existence decisions need an explicit squeeze bound"
     diagnostic_exemplar:
       problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{x y^3}{x^2 + y^2}$ exists, and find it if so.'
@@ -485,19 +529,47 @@ topics:
           - problem: 'Use polar coordinates to compute $\lim_{(x,y) \to (0,0)} (x^2 + y^2)\ln(x^2 + y^2)$.'
             answer: "0"
             solution_sketch: 'The expression is $r^2 \ln r^2 = 2r^2 \ln r \to 0$ as $r \to 0^+$ (independent of $\theta$; the one-variable limit is the $0 \cdot \infty$ form $\lim_{r \to 0^+} r^2\ln r$, rewritten as $\frac{\ln r}{r^{-2}}$ and evaluated by l''Hôpital).'
+          - problem: "Substitute $x = r\\cos\\theta$ and $y = r\\sin\\theta$ into $f(x,y) = \\dfrac{x^2 y}{x^2 + y^2}$. The result has the form $r^k g(\\theta)$, where $g$ depends on $\\theta$ alone. Find $k$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule of polar substitution: $x = r\\cos\\theta$, $y = r\\sin\\theta$, and $x^2 + y^2 = r^2$. The numerator is $x^2 y = r^3 \\cos^2\\theta \\sin\\theta$, so the quotient is $r\\cos^2\\theta \\sin\\theta$. This is $r^k g(\\theta)$ with $g(\\theta) = \\cos^2\\theta \\sin\\theta$, a function of $\\theta$ alone. The power is $k = 1$."
+          - problem: "Substitute $x = r\\cos\\theta$ and $y = r\\sin\\theta$ into $f(x,y) = \\dfrac{x^4}{x^2 + y^2}$. The result has the form $r^k g(\\theta)$, where $g$ depends on $\\theta$ alone. Find $k$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule of polar substitution: $x = r\\cos\\theta$, $y = r\\sin\\theta$, and $x^2 + y^2 = r^2$. The numerator is $x^4 = r^4 \\cos^4\\theta$, so the quotient is $r^2\\cos^4\\theta$. This is $r^k g(\\theta)$ with $g(\\theta) = \\cos^4\\theta$, a function of $\\theta$ alone. The power is $k = 2$."
+          - problem: "Use polar coordinates to decide whether the limit of $f(x,y) = \\dfrac{x^3 + y^3}{x^2 + y^2}$ as $(x,y) \\to (0,0)$ is a single number. Give the answer as verdict = ...; L = ..., where L is the limit when it is a single number."
+            answer: "verdict = exists; L = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["exists"], ["DNE"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Rule of polar substitution: $x = r\\cos\\theta$, $y = r\\sin\\theta$, and $x^2 + y^2 = r^2$. The quotient becomes $\\frac{r^3\\cos^3\\theta + r^3\\sin^3\\theta}{r^2} = r(\\cos^3\\theta + \\sin^3\\theta)$. Bounding rule: $|\\cos^3\\theta + \\sin^3\\theta| \\le 2$ for every $\\theta$, so $|f| \\le 2r$, and $2r \\to 0$ as $r \\to 0$ no matter what $\\theta$ is. The wrong verdict DNE comes from stopping at the angle-dependent factor $\\cos^3\\theta + \\sin^3\\theta$ and ignoring the factor $r$ that drives the product to $0$ for every $\\theta$. The limit is the single number $0$, so the answer is verdict = exists; L = 0."
         constraints: "after substitution the expression is bounded by a function of r alone tending to 0; that bounding function may itself require a one-variable limit (e.g. r^2 ln r -> 0), which must then be evaluated explicitly"
       - id: kp2
         name: "Detecting angle dependence"
         key_prerequisites: [multivariable-limits-continuity, polar-coordinates]
         exemplars:
-          - problem: 'Write $\dfrac{x^2 - y^2}{x^2 + y^2}$ in polar coordinates and conclude whether its limit at the origin exists.'
-            answer: 'It equals $\cos 2\theta$: the value depends on the approach angle and is independent of $r$, so the limit does not exist.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{r^2\cos^2\theta - r^2\sin^2\theta}{r^2} = \cos 2\theta$.'
-          - problem: 'Write $\dfrac{xy}{x^2 + y^2}$ in polar coordinates and conclude whether its limit at the origin exists.'
-            answer: 'It equals $\cos\theta \sin\theta = \frac{1}{2}\sin 2\theta$, which depends on $\theta$: no limit.'
-            solution_sketch: 'With $x=r\cos\theta$, $y=r\sin\theta$, the quotient is $\cos\theta\sin\theta=\tfrac12\sin 2\theta$, which depends on $\theta$; hence the limit does not exist.'
-            answer_contract: {kind: none}
+          - problem: "Let t = theta. Write the polar form of (x^2 - y^2)/(x^2 + y^2) as a function of t, and decide whether the limit at the origin exists. Give the answer as verdict = word; polar = the polar form."
+            answer: "verdict = DNE; polar = cos(2t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE"], ["finite"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "polar"}]}
+            solution_sketch: "Step 1 (polar substitution): put x = r cos(t) and y = r sin(t) with t = theta. The quotient becomes r^2(cos(t)^2 - sin(t)^2)/r^2, which simplifies to cos(t)^2 - sin(t)^2. Step 2 (double-angle identity): this equals cos(2t), which depends on t. The wrong option finite would mean independence of t, but the polar form is not constant. The answer is verdict = DNE; polar = cos(2t)."
+          - problem: "Let t = theta. Write the polar form of xy/(x^2 + y^2) as a function of t, and decide whether the limit at the origin exists. Give the answer as verdict = word; polar = the polar form."
+            answer: "verdict = DNE; polar = sin(2t)/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE"], ["finite"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "polar"}]}
+            solution_sketch: "Step 1 (polar substitution): put x = r cos(t) and y = r sin(t) with t = theta. The quotient becomes r^2 cos(t) sin(t)/r^2 = cos(t) sin(t). Step 2 (double-angle identity): cos(t) sin(t) = sin(2t)/2, which depends on t. The wrong option finite would mean independence of t, but this polar form is not constant. The answer is verdict = DNE; polar = sin(2t)/2."
+          - problem: "Let t = theta. Write the polar form of (x^2 + y^2)/(x^2 + 2y^2) as a function of t. Give the answer as a function of t."
+            answer: "1/(1+sin(t)^2)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (polar substitution): put x = r cos(t) and y = r sin(t) with t = theta. The numerator is r^2 and the denominator is r^2(cos(t)^2 + 2 sin(t)^2). Step 2 (simplify): cancel r^2 and use cos(t)^2 + sin(t)^2 = 1 to get 1/(1 + sin(t)^2). This depends on t, so the limit does not exist. The answer is 1/(1+sin(t)^2)."
+          - problem: "Let t = theta. Write the polar form of (x^2 - 2xy - y^2)/(x^2 + y^2) as a function of t. Give the answer as a function of t."
+            answer: "cos(2t)-sin(2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (polar substitution): put x = r cos(t) and y = r sin(t) with t = theta. The quotient becomes cos(t)^2 - 2 cos(t) sin(t) - sin(t)^2. Step 2 (double-angle identity): cos(t)^2 - sin(t)^2 = cos(2t) and 2 cos(t) sin(t) = sin(2t), so the polar form is cos(2t) - sin(2t). This depends on t, so the limit does not exist. The answer is cos(2t)-sin(2t)."
+          - problem: "Let t = theta. Write the polar form of (2x^2 + 2y^2)/(x^2 + y^2) as a function of t, and decide whether the limit at the origin exists. Give the answer as verdict = word; value = the limit when it exists."
+            answer: "verdict = finite; value = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE"], ["finite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1 (polar substitution): put x = r cos(t) and y = r sin(t) with t = theta. The quotient becomes (2r^2)/(r^2) = 2, which is independent of t. Step 2 (conclusion): a polar form independent of t gives the limit, so the limit is 2. The wrong option DNE would mean angle dependence, but the polar form is the constant 2. The answer is verdict = finite; value = 2."
+          - problem: "Let t = theta. Write the polar form of (x^2 + 4xy + y^2)/(x^2 + y^2) as a function of t. Give the answer as a function of t."
+            answer: "1+2sin(2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1 (polar substitution): put x = r cos(t) and y = r sin(t) with t = theta. The quotient becomes cos(t)^2 + 4 cos(t) sin(t) + sin(t)^2. Step 2 (simplify): cos(t)^2 + sin(t)^2 = 1 and 4 cos(t) sin(t) = 2 sin(2t), so the polar form is 1 + 2 sin(2t). This depends on t, so the limit does not exist. The answer is 1+2sin(2t)."
         constraints: "homogeneous degree-0 quotients whose polar form is a pure function of theta"
     diagnostic_exemplar:
       problem: 'Use polar coordinates to decide whether $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + 2y^2}$ exists.'
