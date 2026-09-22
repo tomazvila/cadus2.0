@@ -431,6 +431,22 @@ topics:
           - problem: 'Decompose $\frac{2}{(2n-1)(2n+1)}$ into partial fractions.'
             answer: '$1/(2n-1) - 1/(2n+1)$'
             solution_sketch: 'The numerator $2$ is the difference of the factors: $(2n+1) - (2n-1)$.'
+          - problem: "Give the partial fraction decomposition of 3/(n(n+3))."
+            answer: "1/n - 1/(n+3)"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Use partial fractions with distinct linear factors. Write 3/(n(n+3)) = A/n + B/(n+3). Multiply by n(n+3) to get 3 = A(n+3) + Bn. Compare coefficients: A = 1 and B = -1. The decomposition is 1/n - 1/(n+3)."
+          - problem: "Give the partial fraction decomposition of 5/(n(n+5))."
+            answer: "1/n - 1/(n+5)"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Use partial fractions with distinct linear factors. Write 5/(n(n+5)) = A/n + B/(n+5). Multiply by n(n+5) to get 5 = A(n+5) + Bn. Compare coefficients: A = 1 and B = -1. The decomposition is 1/n - 1/(n+5)."
+          - problem: "Give the partial fraction decomposition of 4/((n+1)(n+5))."
+            answer: "1/(n+1) - 1/(n+5)"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Use partial fractions with distinct linear factors. Write 4/((n+1)(n+5)) = A/(n+1) + B/(n+5). Multiply by (n+1)(n+5) to get 4 = A(n+5) + B(n+1). Compare coefficients: A = 1 and B = -1. The decomposition is 1/(n+1) - 1/(n+5)."
+          - problem: "Give the partial fraction decomposition of 7/((3n+1)(3n+8))."
+            answer: "1/(3n+1) - 1/(3n+8)"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Use partial fractions with distinct linear factors. Write 7/((3n+1)(3n+8)) = A/(3n+1) + B/(3n+8). Multiply by (3n+1)(3n+8) to get 7 = A(3n+8) + B(3n+1). Compare coefficients: A = 1 and B = -1. The decomposition is 1/(3n+1) - 1/(3n+8)."
         constraints: "two distinct linear factors; integer coefficients"
       - id: kp2
         name: Collapsing partial sums
@@ -1198,18 +1214,30 @@ topics:
         name: Applying the alternating series test
         key_prerequisites: [nth-term-divergence-test, sequences-convergence]
         exemplars:
-          - problem: 'Does $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$ converge?'
-            answer: 'yes (alternating series test: $\frac{1}{n}$ is decreasing with limit $0$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$b_n = \frac{1}{n}$ is positive, decreasing, and $\to 0$.'
-          - problem: 'Does $\sum_{n=1}^{\infty} \frac{(-1)^n}{\sqrt{n}}$ converge?'
-            answer: 'yes (AST: $\frac{1}{\sqrt{n}}$ decreases to $0$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Both hypotheses of the alternating series test hold.'
-          - problem: 'Does $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{2n + 1}$ converge?'
-            answer: 'yes (AST: $\frac{1}{2n+1}$ decreases to $0$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Positive, decreasing, limit $0$.'
+          - problem: "For the alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n}$, let $b_n = \\frac{1}{n}$. State the behavior of the series, and give the limit of $b_n$."
+            answer: "verdict = converges; L = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} (-1)^{n+1}/n$ with $b_n = 1/n$. Step 1: $b_n > 0$ for all $n$, so the first hypothesis holds. Step 2: $b_{n+1} = 1/(n+1) < 1/n = b_n$, so the sequence decreases. Step 3: the limit of $b_n$ is $0$. The alternating series test applies, so the series converges. The wrong option diverges comes from ignoring that the terms decrease to zero. The answer is verdict = converges; L = 0."
+          - problem: "For the alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^n}{\\sqrt{n}}$, let $b_n = \\frac{1}{\\sqrt{n}}$. State the behavior of the series, and give the limit of $b_n$."
+            answer: "behavior = converges; limit = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "behavior"}, {"contract": {"kind": "exact"}, "name": "limit"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} (-1)^n/\\sqrt{n}$ with $b_n = 1/\\sqrt{n}$. Step 1: $b_n > 0$. Step 2: $b_n$ decreases because $\\sqrt{n}$ increases. Step 3: $1/\\sqrt{n} \\to 0$. The alternating series test gives convergence. The wrong option diverges would ignore the decreasing limit. The answer is behavior = converges; limit = 0."
+          - problem: "For the alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{2n+1}$, let $b_n = \\frac{1}{2n+1}$. State the behavior of the series, and give the limit of $b_n$."
+            answer: "result = converges; lim = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "result"}, {"contract": {"kind": "exact"}, "name": "lim"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} (-1)^{n+1}/(2n+1)$ with $b_n = 1/(2n+1)$. Step 1: $b_n > 0$. Step 2: $2n+1$ increases, so $b_n$ decreases. Step 3: $b_n \\to 0$. By the alternating series test the series converges. The wrong option diverges comes from missing the limit zero. The answer is result = converges; lim = 0."
+          - problem: "For the alternating series $\\sum_{n=1}^{\\infty} (-1)^{n+1} \\left(1 + \\frac{1}{n}\\right)$, let $b_n = 1 + \\frac{1}{n}$. State the behavior of the series, and give the limit of $b_n$."
+            answer: "verdict = diverges; L = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} (-1)^{n+1}(1 + 1/n)$ with $b_n = 1 + 1/n$. Step 1: $b_n > 0$. Step 2: $b_n$ decreases to $1$. Step 3: the limit of $b_n$ is $1$, not $0$, so the alternating series test fails. The nth-term divergence test then gives divergence. The wrong option converges would ignore the nonzero limit. The answer is verdict = diverges; L = 1."
+          - problem: "For the alternating series $\\sum_{n=1}^{\\infty} (-1)^n \\frac{n+1}{2n+1}$, let $b_n = \\frac{n+1}{2n+1}$. Find the limit of $b_n$."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} (-1)^n (n+1)/(2n+1)$ with $b_n = (n+1)/(2n+1)$. Step 1: $b_n > 0$ for all $n$. Step 2: $b_n$ decreases to $1/2$ because the ratio of leading coefficients is $1/2$. Step 3: the limit of $b_n$ is $1/2$. The answer is 1/2."
+          - problem: "For the alternating series $\\sum_{n=1}^{\\infty} (-1)^{n+1} \\left(2 + \\frac{1}{n}\\right)$, let $b_n = 2 + \\frac{1}{n}$. Find the limit of $b_n$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} (-1)^{n+1}(2 + 1/n)$ with $b_n = 2 + 1/n$. Step 1: $b_n > 0$. Step 2: $b_n$ decreases to $2$ as $1/n \\to 0$. Step 3: the limit of $b_n$ is $2$. The answer is 2."
         constraints: "b_n is a simple decreasing rational or radical expression; cite both hypotheses"
       - id: kp2
         name: Checking the hypotheses
@@ -1328,14 +1356,30 @@ topics:
         name: The first-omitted-term bound
         key_prerequisites: [alternating-series-test]
         exemplars:
-          - problem: 'The alternating harmonic series is approximated by its first $4$ terms. Bound the error.'
-            answer: '$|R_4| \le b_5 = \frac{1}{5}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'For an alternating series meeting the AST hypotheses, the error is at most the first omitted term.'
-          - problem: '$\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ is approximated by its first $6$ terms. Bound the error.'
-            answer: '$|R_6| \le b_7 = \frac{1}{49}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'First omitted term: $\frac{1}{7^2}$.'
+          - problem: "The alternating harmonic series sum from n=1 to infinity of (-1)^(n+1)/n is approximated by its first 5 terms. Find the error bound as a fraction."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series meets the Alternating Series Test because the term size 1/n decreases to 0. The first-omitted-term bound gives the error at most the first omitted term, which is 1/6. The error bound is 1/6."
+          - problem: "The series sum from n=1 to infinity of (-1)^(n+1)/n^2 is approximated by its first 5 terms. Find the error bound as a fraction."
+            answer: "1/36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Alternating Series Test applies since the term size 1/n^2 decreases to 0. The first omitted term is 1/6^2 = 1/36. The error bound is 1/36."
+          - problem: "The series sum from n=1 to infinity of (-1)^(n+1)/n! is approximated by its first 4 terms. Give the error bound as a fraction."
+            answer: "1/120"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Alternating Series Test applies because the term size 1/n! decreases to 0. The first omitted term is 1/5! = 1/120. The error bound is 1/120."
+          - problem: "The series sum from n=2 to infinity of (-1)^n/n is approximated by its first 3 terms, starting at n=2. Determine the error bound as a fraction."
+            answer: "1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series meets the Alternating Series Test with term size 1/n decreasing to 0. The first omitted term is 1/5. The error bound is 1/5."
+          - problem: "For the series sum from n=1 to infinity of (-1)^(n+1)/n^2 approximated by its first 3 terms, the first-omitted-term bound equals 1/k. Find k."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the first-omitted-term bound, the first omitted term is 1/4^2 = 1/16. The bound equals 1/k, so 1/k = 1/16 and k = 16. The value is 16."
+          - problem: "The series sum from n=1 to infinity of (-1)^(n+1)/n! is approximated by its first 7 terms. Compute the error bound as a fraction."
+            answer: "1/40320"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Alternating Series Test applies since the term size 1/n! decreases to 0. The first omitted term is 1/8! = 1/40320. The error bound is 1/40320."
         constraints: "error bounds use the first omitted term; b_n is 1/n, 1/n^2, or 1/n!"
       - id: kp2
         name: Terms needed for a target accuracy
@@ -1354,14 +1398,30 @@ topics:
         name: Estimating alternating sums
         key_prerequisites: [alternating-series-test]
         exemplars:
-          - problem: 'Approximate $\sum_{n=0}^{\infty} \frac{(-1)^n}{n!}$ using terms through $n = 4$, and bound the error.'
-            answer: '$\frac{3}{8}$, with error $\le \frac{1}{120}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$1 - 1 + \frac{1}{2} - \frac{1}{6} + \frac{1}{24} = \frac{9}{24} = \frac{3}{8}$; the first omitted term is $\frac{1}{5!}$.'
-          - problem: 'Approximate $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ using its first $3$ terms, and bound the error.'
-            answer: '$\frac{31}{36}$, with error $\le \frac{1}{16}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$1 - \frac{1}{4} + \frac{1}{9} = \frac{31}{36}$; first omitted term $\frac{1}{4^2}$.'
+          - problem: "Use the first 3 terms of the alternating series sum from n=1 to infinity of (-1)^(n+1)/n! to estimate the sum, and bound the error. Give the estimate and the bound as fractions."
+            answer: "estimate = 2/3; bound = 1/24"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "estimate"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The series is sum from n=1 to infinity of (-1)^(n+1)/n!. The first 3 terms give 1 - 1/2 + 1/6 = 2/3 by fraction addition. The Alternating Series Error Bound says the error is at most the first omitted term, which is 1/4! = 1/24. The estimate is 2/3 and the bound is 1/24, so estimate = 2/3; bound = 1/24."
+          - problem: "Take the first 3 terms of the alternating series sum from n=1 to infinity of (-1)^(n+1)/n^3 to approximate the sum, and bound the error. State the estimate and the bound as fractions."
+            answer: "estimate = 197/216; bound = 1/64"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "estimate"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The series is sum from n=1 to infinity of (-1)^(n+1)/n^3. The first 3 terms give 1 - 1/8 + 1/27 = 197/216 by a common denominator of 216. The Alternating Series Error Bound makes the error at most the first omitted term, 1/4^3 = 1/64. The estimate is 197/216 and the bound is 1/64, so estimate = 197/216; bound = 1/64."
+          - problem: "The alternating series sum from n=1 to infinity of (-1)^(n+1)/(n(n+1)) is estimated by its first 4 terms; bound the error. Compute the estimate and the bound as fractions."
+            answer: "estimate = 11/30; bound = 1/30"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "estimate"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The series is sum from n=1 to infinity of (-1)^(n+1)/(n(n+1)). The first 4 terms are 1/2 - 1/6 + 1/12 - 1/20 = 11/30 by a common denominator of 60. The Alternating Series Error Bound makes the error at most the first omitted term, 1/(5*6) = 1/30. The estimate is 11/30 and the bound is 1/30, so estimate = 11/30; bound = 1/30."
+          - problem: "For the alternating series sum from n=1 to infinity of (-1)^(n+1)/(2n-1), use its first 3 terms to estimate the sum, and bound the error. Determine the estimate and the bound as fractions."
+            answer: "estimate = 13/15; bound = 1/7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "estimate"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The series is sum from n=1 to infinity of (-1)^(n+1)/(2n-1). The first 3 terms are 1 - 1/3 + 1/5 = 13/15 by a common denominator of 15. The Alternating Series Error Bound makes the error at most the first omitted term, 1/(2*4-1) = 1/7. The estimate is 13/15 and the bound is 1/7, so estimate = 13/15; bound = 1/7."
+          - problem: "Estimate the alternating series sum from n=1 to infinity of (-1)^(n+1)/(n 2^n) using its first 3 terms, then bound the error. Find the estimate and the bound as fractions."
+            answer: "estimate = 5/12; bound = 1/64"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "estimate"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The series is sum from n=1 to infinity of (-1)^(n+1)/(n 2^n). The first 3 terms are 1/2 - 1/8 + 1/24 = 5/12 by a common denominator of 24. The Alternating Series Error Bound makes the error at most the first omitted term, 1/(4*2^4) = 1/64. The estimate is 5/12 and the bound is 1/64, so estimate = 5/12; bound = 1/64."
+          - problem: "Use the first 3 terms of the alternating series sum from n=1 to infinity of (-1)^(n+1)/(n+2)! to estimate the sum, and bound the error. Evaluate the estimate and the bound as fractions."
+            answer: "estimate = 2/15; bound = 1/720"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "estimate"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The series is sum from n=1 to infinity of (-1)^(n+1)/(n+2)!. The first 3 terms are 1/6 - 1/24 + 1/120 = 2/15 by a common denominator of 120. The Alternating Series Error Bound makes the error at most the first omitted term, 1/6! = 1/720. The estimate is 2/15 and the bound is 1/720, so estimate = 2/15; bound = 1/720."
         constraints: "partial sums evaluate to clean fractions; always pair the estimate with its bound"
     diagnostic_exemplar:
       problem: 'Approximate $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ by its first $4$ terms, giving the value as a fraction, and bound the error.'
@@ -1399,48 +1459,88 @@ topics:
         name: Reading the form to pick a test
         key_prerequisites: [ratio-root-tests, comparison-tests]
         exemplars:
-          - problem: 'Which test fits $\sum_{n=1}^{\infty} \frac{n^2}{n^4 + 1}$, and what is the verdict?'
-            answer: 'limit comparison with $\sum \frac{1}{n^2}$; converges ($L = 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Rational terms: compare with the dominant-power $p$-series.'
-          - problem: 'Which test fits $\sum_{n=1}^{\infty} \frac{n!}{100^n}$, and what is the verdict?'
-            answer: 'ratio test; diverges ($L = \lim \frac{n+1}{100} = \infty$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'A factorial signals the ratio test.'
-          - problem: 'Which test fits $\sum_{n=2}^{\infty} \frac{(-1)^n}{\ln n}$, and what is the verdict?'
-            answer: 'alternating series test; converges ($\frac{1}{\ln n}$ decreases to $0$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Alternating signs with slowly decaying terms: AST.'
+          - problem: "For the series sum_{n=1}^\\infty (2n^2 + 1)/(n^4 + 3), a limit comparison with a p-series settles convergence. Find the exponent p of that p-series."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is sum (2n^2+1)/(n^4+3). Step 1: use the limit comparison test. The dominant power in the numerator is 2n^2 and in the denominator is n^4. Step 2: the comparison p-series is sum 1/n^2, because (2n^2)/(n^4) = 2/n^2. Step 3: the exponent of this p-series is p = 2. The exponent is p = 2."
+          - problem: "For the series sum_{n=1}^\\infty 3^n/n!, a factorial and an exponential suggest a test. Find the limit L = lim_{n->\\infty} a_{n+1}/a_n."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is sum 3^n/n!. Step 1: use the ratio test because of the factorial and exponential. Write a_{n+1}/a_n = (3^{n+1}/(n+1)!)/(3^n/n!) = 3/(n+1). Step 2: take the limit as n goes to infinity, which is 0. Step 3: the ratio test limit is L = 0. The limit is L = 0."
+          - problem: "For the alternating series sum_{n=1}^\\infty (-1)^n/(n+1), Find the limit of the magnitudes of its terms as n goes to infinity."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is sum (-1)^n/(n+1). Step 1: use the alternating series test. The magnitude is b_n = 1/(n+1). Step 2: take the limit of b_n as n goes to infinity, which is 0. Step 3: the alternating series test requires this limit to be 0. The limit is L = 0."
+          - problem: "For the series sum_{n=1}^\\infty (5n+2)/(2n^3+7), compare with the p-series sum 1/n^2. Find the limit L = lim_{n->\\infty} a_n / (1/n^2) as a fraction."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is sum (5n+2)/(2n^3+7). Step 1: use the limit comparison test with b_n = 1/n^2. Step 2: compute a_n/b_n = n^2(5n+2)/(2n^3+7) = (5n^3+2n^2)/(2n^3+7). Step 3: take the limit as n goes to infinity, which is 5/2. The limit is L = 5/2."
+          - problem: "For the series sum_{n=1}^\\infty 4^n/n!, state whether it converges or diverges, and give the limit L = lim_{n->\\infty} a_{n+1}/a_n."
+            answer: "verdict = converges; L = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The full series is sum 4^n/n!. Step 1: use the ratio test because of the factorial and exponential. Write a_{n+1}/a_n = (4^{n+1}/(n+1)!)/(4^n/n!) = 4/(n+1). Step 2: take the limit L = lim 4/(n+1) = 0. Step 3: since L < 1, the ratio test gives convergence. The verdict is converges and L = 0, so verdict = converges; L = 0. Choosing diverges would ignore that L < 1."
+          - problem: "For the series sum_{n=1}^\\infty (-1)^n (n+1)/n, state whether it converges or diverges, and give the limit L = lim_{n->\\infty} b_n where b_n = (n+1)/n."
+            answer: "verdict = diverges; L = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The full series is sum (-1)^n (n+1)/n. Step 1: use the alternating series test. The magnitude is b_n = (n+1)/n = 1 + 1/n. Step 2: compute the limit L = lim (1 + 1/n) = 1. Step 3: since the limit is not 0, the terms do not go to 0, so the series diverges. The verdict is diverges and L = 1, so verdict = diverges; L = 1. Choosing converges would ignore that the terms do not go to 0."
         constraints: "one rational, one factorial/exponential, one alternating per set; verdicts name test and reason"
       - id: kp2
         name: Full verdicts on mixed forms
         key_prerequisites: [ratio-root-tests, integral-p-series-tests]
         exemplars:
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \left(\frac{n}{n+1}\right)^{n^2}$ converges.'
-            answer: 'converges (root test: $L = \lim \left(\frac{n}{n+1}\right)^n = \frac{1}{e} < 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The $n$th root is $\left(\frac{n}{n+1}\right)^n \to e^{-1}$.'
-          - problem: 'Decide whether $\sum_{n=2}^{\infty} \frac{1}{n (\ln n)^2}$ converges.'
-            answer: 'converges (integral test: $\int_2^{\infty} \frac{dx}{x(\ln x)^2} = \frac{1}{\ln 2}$, finite)'
-            answer_contract: {kind: none}
-            solution_sketch: '$u = \ln x$ gives $\int_{\ln 2}^{\infty} \frac{du}{u^2}$, which is finite.'
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{3^n + n}{2^n + n^2}$ converges.'
-            answer: 'diverges (the terms behave like $\left(\frac{3}{2}\right)^n \to \infty$; term test)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Dominant terms give $\frac{3^n}{2^n}$, which grows without bound, so $a_n \not\to 0$.'
+          - problem: "The series $\\sum_{n=1}^{\\infty} \\left(\\frac{n+1}{2n+3}\\right)^n$ has positive terms. State whether the series is convergent or divergent, and give the root-test limit L."
+            answer: "verdict = converges; L = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1: Identify the terms $a_n = \\left(\\frac{n+1}{2n+3}\\right)^n$. Step 2: Apply the root test by taking the nth root, which gives $\\frac{n+1}{2n+3}$. Step 3: Take the limit as n grows: $\\frac{n+1}{2n+3} \\to \\frac{1}{2}$. Since $L = 1/2 < 1$, the series converges. A wrong verdict of diverges would come from forgetting that a root-test limit below 1 means convergence. Final verdict: verdict = converges; L = 1/2."
+          - problem: "The series $\\sum_{n=1}^{\\infty} \\frac{1}{n^2+1}$ has positive decreasing terms. State whether the series is convergent or divergent, and give the value of the integral used in the integral test."
+            answer: "verdict = converges; I = pi/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "I"}]}
+            solution_sketch: "Step 1: The series is $\\sum_{n=1}^{\\infty} \\frac{1}{n^2+1}$. Step 2: Apply the integral test with $f(x) = \\frac{1}{x^2+1}$. Step 3: Evaluate the improper integral $\\int_1^{\\infty} \\frac{dx}{x^2+1} = \\left[\\operatorname{atan}(x)\\right]_1^{\\infty} = \\frac{\\pi}{2} - \\frac{\\pi}{4} = \\frac{\\pi}{4}$. The integral is finite, so the series converges. A wrong verdict of diverges would come from treating the integral as infinite. Final verdict: verdict = converges; I = pi/4."
+          - problem: "The series $\\sum_{n=1}^{\\infty} \\frac{2n+1}{3n+4}$ has positive terms. State whether the series is convergent or divergent, and give the limit of its terms."
+            answer: "verdict = diverges; L = 2/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1: The series is $\\sum_{n=1}^{\\infty} \\frac{2n+1}{3n+4}$. Step 2: Apply the term test by computing $\\lim_{n\\to\\infty} a_n$. Step 3: Divide numerator and denominator by n: $\\frac{2+1/n}{3+4/n} \\to \\frac{2}{3}$. Since the limit is not zero, the series diverges. A wrong verdict of converges would come from ignoring that the terms do not approach zero. Final verdict: verdict = diverges; L = 2/3."
+          - problem: "The alternating series $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n+3}$ has decreasing absolute terms. State whether the series is convergent or divergent, and give the limit of the absolute term $b_n$."
+            answer: "verdict = converges; L = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1: The series is $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n+3}$. Step 2: Apply the alternating series test with $b_n = \\frac{1}{n+3}$. Step 3: The terms $b_n$ are positive, decreasing, and $\\lim_{n\\to\\infty} b_n = 0$. The alternating series test then gives convergence. A wrong verdict of diverges would come from ignoring that the absolute terms decrease to 0. Final verdict: verdict = converges; L = 0."
+          - problem: "Use the ratio test on the series $\\sum_{n=1}^{\\infty} \\frac{n^2}{3^n}$ and find the value of the ratio-test limit L."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The series is $\\sum_{n=1}^{\\infty} \\frac{n^2}{3^n}$, so $a_n = \\frac{n^2}{3^n}$. Step 2: Apply the ratio test by forming $\\frac{a_{n+1}}{a_n} = \\frac{(n+1)^2}{3^{n+1}} \\cdot \\frac{3^n}{n^2}$. Step 3: Simplify to $\\frac{1}{3}\\left(\\frac{n+1}{n}\\right)^2$. Step 4: Take the limit as n grows: $\\frac{1}{3} \\cdot 1 = \\frac{1}{3}$. The ratio-test limit is 1/3."
+          - problem: "Use the limit comparison test on the series $\\sum_{n=1}^{\\infty} \\frac{1}{n^2+4n+5}$ with the p-series $\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$, and give the value of the comparison limit L."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The series is $\\sum_{n=1}^{\\infty} \\frac{1}{n^2+4n+5}$. Step 2: Apply the limit comparison test with the p-series $\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$. Step 3: Form $L = \\lim_{n\\to\\infty} \\frac{1/(n^2+4n+5)}{1/n^2} = \\lim_{n\\to\\infty} \\frac{n^2}{n^2+4n+5}$. Step 4: Divide by $n^2$: $\\frac{1}{1+4/n+5/n^2} \\to 1$. The comparison limit is 1."
         constraints: "each set mixes at least three different applicable tests; verdicts must be fully justified"
       - id: kp3
         name: Classification capstone
         key_prerequisites: [alternating-series, comparison-tests]
         exemplars:
-          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n \sqrt{n}}{n + 4}$ as absolutely convergent, conditionally convergent, or divergent.'
-            answer: 'conditionally convergent (AST applies for $n \ge 4$; the absolute series behaves like $\sum n^{-1/2}$, which diverges)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{\sqrt{n}}{n+4}$ decreases to $0$ for $n \ge 4$; limit comparison of the absolute series with $n^{-1/2}$ gives $L = 1$.'
-          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n}{n^{3/2}}$.'
-            answer: 'absolutely convergent ($p$-series with $p = \frac{3}{2} > 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The absolute series already converges; no AST needed.'
+          - problem: "Consider the series sum from n=1 to infinity of (-1)^n (n+1)/(n^3+2). Let L be the limit of the absolute value of the nth term divided by 1/n^2. Determine the classification and give L."
+            answer: "verdict = absolutely; L = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["absolutely"], ["conditionally"], ["divergent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The full series is sum (-1)^n (n+1)/(n^3+2). Step 1 (absolute series): take absolute values to get sum (n+1)/(n^3+2). Step 2 (limit comparison test): compare with 1/n^2 and compute L = limit n^2(n+1)/(n^3+2) = 1, so the absolute series converges because p = 2 > 1. The wrong option conditionally would require the absolute series to diverge, and the wrong option divergent would require both the absolute series to diverge and the alternating series test to fail. The answer is verdict = absolutely; L = 1."
+          - problem: "Consider the series sum from n=1 to infinity of (-1)^n (3n+1)/(2n^2+5). Let L be the limit of the absolute value of the nth term divided by 1/n. Determine the classification and give L."
+            answer: "verdict = conditionally; L = 3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["absolutely"], ["conditionally"], ["divergent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The full series is sum (-1)^n (3n+1)/(2n^2+5). Step 1 (absolute series): take absolute values to get sum (3n+1)/(2n^2+5). Step 2 (limit comparison test): compare with 1/n and compute L = limit n(3n+1)/(2n^2+5) = 3/2, so the absolute series diverges because p = 1. Step 3 (alternating series test): the positive terms decrease to 0, so the original series converges. The wrong option absolutely would need the absolute series to converge, and the wrong option divergent would need the alternating series test to fail. The answer is verdict = conditionally; L = 3/2."
+          - problem: "Consider the series sum from n=1 to infinity of (-1)^n (n+1)/(2n^2+3n+1). Let L be the limit of the absolute value of the nth term divided by 1/n. Determine the classification and give L."
+            answer: "verdict = conditionally; L = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["absolutely"], ["conditionally"], ["divergent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The full series is sum (-1)^n (n+1)/(2n^2+3n+1). Step 1 (simplify): factor the denominator as (2n+1)(n+1), so the absolute term equals 1/(2n+1). Step 2 (limit comparison test): compare with 1/n and compute L = limit n/(2n+1) = 1/2, so the absolute series diverges. Step 3 (alternating series test): the terms 1/(2n+1) decrease to 0, so the original series converges. The wrong option absolutely would need the absolute series to converge, and the wrong option divergent would need the alternating series test to fail. The answer is verdict = conditionally; L = 1/2."
+          - problem: "Consider the series sum from n=1 to infinity of (-1)^n (2n+3)/(n^3+1). Let L be the limit of the absolute value of the nth term divided by 1/n^2. Determine the classification and give L."
+            answer: "verdict = absolutely; L = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["absolutely"], ["conditionally"], ["divergent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The full series is sum (-1)^n (2n+3)/(n^3+1). Step 1 (absolute series): take absolute values to get sum (2n+3)/(n^3+1). Step 2 (limit comparison test): compare with 1/n^2 and compute L = limit n^2(2n+3)/(n^3+1) = 2, so the absolute series converges because p = 2 > 1. The wrong option conditionally would require the absolute series to diverge, and the wrong option divergent would require both the absolute series to diverge and the alternating series test to fail. The answer is verdict = absolutely; L = 2."
+          - problem: "Consider the series sum from n=1 to infinity of (-1)^n (3n+1)/(n+2). Determine the classification code: 1 for absolutely convergent, 2 for conditionally convergent, 3 for divergent."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is sum (-1)^n (3n+1)/(n+2). Step 1 (nth term test): the absolute term (3n+1)/(n+2) has limit 3, which is not 0. Step 2 (divergence): because the terms do not approach 0, the series diverges. The classification code is therefore 3. The answer is 3."
+          - problem: "Consider the series sum from n=1 to infinity of (-1)^n n^2/3^n. Determine the classification code: 1 for absolutely convergent, 2 for conditionally convergent, 3 for divergent."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full series is sum (-1)^n n^2/3^n. Step 1 (absolute series): take absolute values to get sum n^2/3^n. Step 2 (ratio test): compute L = limit [(n+1)^2/3^(n+1)] / [n^2/3^n] = limit (n+1)^2/(3n^2) = 1/3, and L < 1 means the absolute series converges. The classification code is therefore 1. The answer is 1."
         constraints: "require the three-way classification with the deciding test named at each step"
     diagnostic_exemplar:
       problem: 'Classify $\sum_{n=2}^{\infty} \frac{(-1)^n}{\sqrt{n} + 1}$ as absolutely convergent, conditionally convergent, or divergent, naming the tests you use.'
