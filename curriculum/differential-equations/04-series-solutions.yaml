@@ -88,18 +88,30 @@ topics:
         name: Deriving the recurrence for second-order equations
         key_prerequisites: [differentiating-integrating-power-series, ode-classification-verification]
         exemplars:
-          - problem: "Substitute $y = \\sum a_n x^n$ into $y'' + y = 0$ and derive the recurrence relation."
-            answer: '$a_{k+2} = -\dfrac{a_k}{(k+2)(k+1)}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Shift the $y''''$ series by 2 and match coefficients of $x^k$: $(k+2)(k+1)a_{k+2} + a_k = 0$.'
-          - problem: "Derive the recurrence for the Airy equation $y'' - xy = 0$."
-            answer: '$a_2 = 0$ and $a_{k+2} = \dfrac{a_{k-1}}{(k+2)(k+1)}$ for $k \ge 1$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The $xy$ term shifts powers up by one, so the constant term forces $2a_2 = 0$ and thereafter indices differ by 3.'
-          - problem: "Why does the recurrence for $y'' + y = 0$ determine every coefficient from $a_0$ and $a_1$ alone?"
-            answer: "The recurrence links $a_{k+2}$ to $a_k$, so the even coefficients all descend from $a_0$ and the odd ones from $a_1$ — matching the two arbitrary constants of a second-order equation."
-            answer_contract: {kind: none}
-            solution_sketch: "The recurrence links $a_{k+2}$ to $a_k$, so the even coefficients all descend from $a_0$ and the odd ones from $a_1$ — matching the two arbitrary constants of a second-order equation."
+          - problem: "Let y = sum a_n x^n for the equation y'' + 4y = 0. Derive the recurrence and find the constant c in a_{k+2} = c a_k / ((k+2)(k+1))."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k by differentiating twice. Substitute into y'' + 4y = 0: (k+2)(k+1)a_{k+2} + 4a_k = 0. Solve for a_{k+2}: a_{k+2} = -4 a_k / ((k+2)(k+1)). The constant is c = -4."
+          - problem: "Use the power series method on y'' - xy = 0. Derive the recurrence and find the constant c in a_{k+3} = c a_k / ((k+3)(k+2))."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. The term xy = sum a_k x^{k+1} = sum a_{k-1} x^k for k>=1. Substitute into y'' - xy = 0: for k=0, 2a_2 = 0; for k>=1, (k+2)(k+1)a_{k+2} - a_{k-1} = 0. Let k = m-1: a_{m+2} = a_{m-1} / ((m+2)(m+1)). The constant is c = 1."
+          - problem: "For y'' + 9y = 0 with y = sum a_n x^n, derive the recurrence. Find the constant c in a_{k+2} = c a_k / ((k+2)(k+1))."
+            answer: "-9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. Substitute into y'' + 9y = 0: (k+2)(k+1)a_{k+2} + 9a_k = 0. Solve for a_{k+2}: a_{k+2} = -9 a_k / ((k+2)(k+1)). The constant is c = -9."
+          - problem: "Let y = sum a_n x^n for y'' - 2y = 0. Derive the recurrence and find the constant c in a_{k+2} = c a_k / ((k+2)(k+1))."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. Substitute into y'' - 2y = 0: (k+2)(k+1)a_{k+2} - 2a_k = 0. Solve for a_{k+2}: a_{k+2} = 2 a_k / ((k+2)(k+1)). The constant is c = 2."
+          - problem: "Use the power series method on y'' + xy = 0. Derive the recurrence and find the constant c in a_{k+3} = c a_k / ((k+3)(k+2))."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. The term xy = sum a_k x^{k+1} = sum a_{k-1} x^k for k>=1. Substitute into y'' + xy = 0: for k=0, 2a_2 = 0; for k>=1, (k+2)(k+1)a_{k+2} + a_{k-1} = 0. Let k = m-1: a_{m+2} = -a_{m-1} / ((m+2)(m+1)). The constant is c = -1."
+          - problem: "For y'' - 3y = 0 with y = sum a_n x^n, derive the recurrence. Find the constant c in a_{k+2} = c a_k / ((k+2)(k+1))."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write y = sum a_n x^n. Then y'' = sum (k+2)(k+1) a_{k+2} x^k. Substitute into y'' - 3y = 0: (k+2)(k+1)a_{k+2} - 3a_k = 0. Solve for a_{k+2}: a_{k+2} = 3 a_k / ((k+2)(k+1)). The constant is c = 3."
         constraints: "coefficients constant or a single factor x; derive the recurrence only, do not iterate it out"
     diagnostic_exemplar:
       problem: "Substitute $y = \\sum_{n=0}^{\\infty} a_n x^n$ into $y'' + y = 0$ and derive the recurrence relation for the coefficients."
