@@ -260,18 +260,30 @@ topics:
         name: "Identifying the surface"
         key_prerequisites: [functions-several-variables, coordinates-surfaces-3d]
         exemplars:
-          - problem: 'Identify the level surface $f(x, y, z) = 2x + 3y + z = 6$.'
-            answer: 'A plane (normal vector $\langle 2, 3, 1 \rangle$).'
-            solution_sketch: 'The level surface $2x+3y+z=6$ is a plane with normal vector $\langle 2,3,1\rangle$.'
-            answer_contract: {kind: none}
-          - problem: 'Identify the level surface of $f(x, y, z) = x^2 + y^2 - z^2$ at level $k = 1$, and at $k = 0$.'
-            answer: '$k = 1$: a hyperboloid of one sheet; $k = 0$: a double cone.'
-            solution_sketch: 'For $k=1$, $x^2+y^2-z^2=1$ is a hyperboloid of one sheet; for $k=0$ it is the double cone $z^2=x^2+y^2$.'
-            answer_contract: {kind: none}
-          - problem: 'Identify the surface $x^2 + y^2 = 4$ regarded as a level surface in $\mathbb{R}^3$.'
-            answer: 'A circular cylinder of radius $2$ about the $z$-axis.'
-            solution_sketch: 'The equation $x^2+y^2=4$ has no $z$, so it is a circular cylinder of radius $2$ about the $z$-axis.'
-            answer_contract: {kind: none}
+          - problem: "The level surface 3x - y + 2z = 6 comes from the standard quadric catalog. Which type of quadric surface is this?"
+            answer: "plane"
+            answer_contract: {"kind": "label", "options": [["plane"], ["sphere"], ["cylinder"], ["cone"]]}
+            solution_sketch: "The equation 3x - y + 2z = 6 is linear in x, y, z, so its graph is a plane. The wrong options are sphere, which needs three squared terms; cylinder, which needs a missing variable or a repeated squared pair; and cone, which needs a constant term of zero. The surface is a plane."
+          - problem: "Consider the level surface x^2 - y^2 + z^2 = 4. Which type of quadric surface is this?"
+            answer: "hyperboloid"
+            answer_contract: {"kind": "label", "options": [["hyperboloid"], ["sphere"], ["cone"], ["paraboloid"]]}
+            solution_sketch: "The equation x^2 - y^2 + z^2 = 4 has two positive squares and one negative square with a nonzero constant, so it is a hyperboloid. The wrong options are sphere, which needs all squared terms with the same sign; cone, which needs the constant to be zero; and paraboloid, which needs one variable to appear linearly. The surface is a hyperboloid."
+          - problem: "For the level surface x^2 + y^2 = 36 in R^3, find the radius of the circular cross-section."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation x^2 + y^2 = 36 has no z, so it is a circular cylinder about the z-axis. The cross-section radius is sqrt(36). The radius is 6."
+          - problem: "For the level surface x^2 + y^2 + z^2 - 6x + 4y - 2z = 3, give the coordinates of its center as (x, y, z)."
+            answer: "(3, -2, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Group the terms: x^2 - 6x + y^2 + 4y + z^2 - 2z = 3. Complete the square: (x-3)^2 + (y+2)^2 + (z-1)^2 = 17, a sphere. The center is (3, -2, 1)."
+          - problem: "For the level surface z = x^2 + y^2, find the radius of the circular cross-section at z = 9."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The surface z = x^2 + y^2 is a circular paraboloid opening upward. Setting z = 9 gives x^2 + y^2 = 9, a circle of radius sqrt(9). The radius is 3."
+          - problem: "For the level surface z^2 = x^2 + y^2, find the radius of the circular cross-section at z = 5."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The surface z^2 = x^2 + y^2 is a double cone. Setting z = 5 gives x^2 + y^2 = 25, a circle of radius sqrt(25). The radius is 5."
         constraints: "surfaces come from the standard quadric catalog: spheres, planes, cylinders, cones, paraboloids, hyperboloids"
     diagnostic_exemplar:
       problem: 'Identify the level surface of $f(x, y, z) = x^2 + y^2 - z^2$ at $k = 4$, and at $k = 0$.'
@@ -305,27 +317,59 @@ topics:
         name: "Evaluating a limit along a given path"
         key_prerequisites: [functions-several-variables, limit-laws]
         exemplars:
-          - problem: 'Evaluate $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + y^2}$ along the line $y = x$, and along the line $y = 0$.'
-            answer: 'Along $y = x$: $\frac{x^2}{2x^2} = \frac{1}{2}$. Along $y = 0$: $0$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Substitute the path into the formula and take a one-variable limit.'
-          - problem: 'Evaluate $\lim_{(x,y) \to (0,0)} \dfrac{x^2 - y^2}{x^2 + y^2}$ along each coordinate axis.'
-            answer: 'Along the $x$-axis ($y = 0$): $1$. Along the $y$-axis ($x = 0$): $-1$.'
-            solution_sketch: 'On $y=0$ the quotient is $x^2/x^2=1$; on $x=0$ it is $-y^2/y^2=-1$. The two path limits differ.'
-            answer_contract: {kind: none}
+          - problem: "Evaluate the limit of xy/(x^2 + y^2) as (x, y) approaches (0, 0) along the line y = 2x. Give the exact value as a fraction."
+            answer: "2/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full expression xy/(x^2 + y^2). Substitute y = 2x to restrict to the line, giving (x*2x)/(x^2 + (2x)^2) = 2x^2/(5x^2). For x not 0 this simplifies to 2/5, so the limit along the path is 2/5."
+          - problem: "Evaluate the limit of (x^2 - y^2)/(x^2 + y^2) as (x, y) approaches (0, 0) along the line y = 2x. Give the exact value as a fraction."
+            answer: "-3/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full expression (x^2 - y^2)/(x^2 + y^2). Substitute y = 2x to get (x^2 - 4x^2)/(x^2 + 4x^2) = -3x^2/(5x^2). For x not 0 this simplifies to -3/5, so the limit along the path is -3/5."
+          - problem: "Evaluate the limit of xy/(x^2 + y^2) as (x, y) approaches (0, 0) along the parabola y = x^2. Give the exact value."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full expression xy/(x^2 + y^2). Substitute y = x^2 to get x*x^2/(x^2 + x^4) = x^3/(x^2(1 + x^2)). For x not 0 this simplifies to x/(1 + x^2), and as x approaches 0 it approaches 0. The limit along the path is 0."
+          - problem: "Evaluate the limit of (x^2 y)/(x^4 + y^2) as (x, y) approaches (0, 0) along the parabola y = x^2. Give the exact value as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full expression (x^2 y)/(x^4 + y^2). Substitute y = x^2 to get (x^2*x^2)/(x^4 + (x^2)^2) = x^4/(2x^4). For x not 0 this simplifies to 1/2, so the limit along the path is 1/2."
+          - problem: "Evaluate the limit of (x^2 - y^2)/(x^2 + y^2) as (x, y) approaches (0, 0) along the line y = 3x. Give the exact value as a fraction."
+            answer: "-4/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full expression (x^2 - y^2)/(x^2 + y^2). Substitute y = 3x to get (x^2 - 9x^2)/(x^2 + 9x^2) = -8x^2/(10x^2). For x not 0 this simplifies to -4/5, so the limit along the path is -4/5."
+          - problem: "Evaluate the limit of (x^2 - y^2)/(x^2 + y^2) as (x, y) approaches (0, 0) along the x-axis. Give the exact value."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full expression (x^2 - y^2)/(x^2 + y^2). On the x-axis y = 0, so the expression becomes (x^2 - 0)/(x^2 + 0) = 1 for x not 0. The limit along the x-axis is therefore 1."
         constraints: "paths are lines y = mx, axes, or parabolas; the restricted limit is a one-variable computation"
       - id: kp2
         name: "The two-path test"
         key_prerequisites: [functions-several-variables, limit-laws]
         exemplars:
-          - problem: 'Show that $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + y^2}$ does not exist.'
-            answer: 'Along $y = 0$ the function is $0$; along $y = x$ it is $\frac{x^2}{2x^2} = \frac{1}{2}$. Different path limits, so the limit does not exist.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Two straight-line paths give limits $0$ and $\frac{1}{2}$.'
-          - problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{2xy^2}{x^2 + y^4}$ exists.'
-            answer: 'No: along $y = 0$ the limit is $0$, but along the parabola $x = y^2$ it is $\frac{2y^4}{2y^4} = 1$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Straight lines all give $0$, but the parabolic path $x = y^2$ gives $1$ — so lines alone never prove existence.'
+          - problem: "Consider the limit of f(x,y) = xy/(x^2 + y^2) as (x,y) goes to (0,0). Use the paths y = 0 and y = x. Give the verdict and the limit L along y = 0."
+            answer: "verdict = DNE; L = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE"], ["exists"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "For f(x,y) = xy/(x^2 + y^2): Step 1 (path y = 0): f(x,0) = 0/(x^2) = 0, so the limit along y = 0 is 0. Step 2 (path y = x): f(x,x) = x^2/(2x^2) = 1/2. Step 3 (two-path test): the two path limits 0 and 1/2 differ, so the limit does not exist. The wrong option exists would mean the two path limits agree, but they do not. The answer is verdict = DNE; L = 0."
+          - problem: "Consider the limit of f(x,y) = 2xy^2/(x^2 + y^4) as (x,y) goes to (0,0). Use the paths y = 0 and x = y^2. Give the verdict and the limit L along x = y^2."
+            answer: "verdict = DNE; L = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE"], ["exists"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "For f(x,y) = 2xy^2/(x^2 + y^4): Step 1 (path y = 0): f(x,0) = 0/(x^2) = 0. Step 2 (path x = y^2): f(y^2,y) = 2 y^2 y^2/(y^4 + y^4) = 2y^4/(2y^4) = 1. Step 3 (two-path test): the two path limits 0 and 1 differ, so the limit does not exist. The wrong option exists would mean the two path limits agree, but they do not. The answer is verdict = DNE; L = 1."
+          - problem: "Consider the limit of f(x,y) = x^2/(x^2 + y^2) as (x,y) goes to (0,0). Use the paths y = 0 and y = x. Give the verdict and the limit L along y = x."
+            answer: "verdict = DNE; L = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE"], ["exists"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "For f(x,y) = x^2/(x^2 + y^2): Step 1 (path y = 0): f(x,0) = x^2/x^2 = 1. Step 2 (path y = x): f(x,x) = x^2/(2x^2) = 1/2. Step 3 (two-path test): the two path limits 1 and 1/2 differ, so the limit does not exist. The wrong option exists would mean the two path limits agree, but they do not. The answer is verdict = DNE; L = 1/2."
+          - problem: "Consider the limit of f(x,y) = xy/(x^2 + 2y^2) as (x,y) goes to (0,0). Use the paths y = 0 and y = x. Give the verdict and the limit L along y = x."
+            answer: "verdict = DNE; L = 1/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE"], ["exists"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "For f(x,y) = xy/(x^2 + 2y^2): Step 1 (path y = 0): f(x,0) = 0/(x^2) = 0. Step 2 (path y = x): f(x,x) = x^2/(x^2 + 2x^2) = x^2/(3x^2) = 1/3. Step 3 (two-path test): the two path limits 0 and 1/3 differ, so the limit does not exist. The wrong option exists would mean the two path limits agree, but they do not. The answer is verdict = DNE; L = 1/3."
+          - problem: "Consider the limit of f(x,y) = (2x^2 + y^2)/(x^2 + y^2) as (x,y) goes to (0,0). Use the paths y = 0 and y = x. Give a = limit along y = 0 and b = limit along y = x."
+            answer: "a = 2; b = 3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "For f(x,y) = (2x^2 + y^2)/(x^2 + y^2): Step 1 (path y = 0): f(x,0) = 2x^2/x^2 = 2. Step 2 (path y = x): f(x,x) = (2x^2 + x^2)/(x^2 + x^2) = 3x^2/(2x^2) = 3/2. Step 3 (two-path test): the two path limits 2 and 3/2 differ, so the limit does not exist. The answer is a = 2; b = 3/2."
+          - problem: "Consider the limit of f(x,y) = (3x^2 + y^2)/(x^2 + y^2) as (x,y) goes to (0,0). Use the paths y = 0 and y = x. Give a = limit along y = 0 and b = limit along y = x."
+            answer: "a = 3; b = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "For f(x,y) = (3x^2 + y^2)/(x^2 + y^2): Step 1 (path y = 0): f(x,0) = 3x^2/x^2 = 3. Step 2 (path y = x): f(x,x) = (3x^2 + x^2)/(x^2 + x^2) = 4x^2/(2x^2) = 2. Step 3 (two-path test): the two path limits 3 and 2 differ, so the limit does not exist. The answer is a = 3; b = 2."
         constraints: "rational functions homogeneous of degree 0 (or needing one parabolic path); always exhibit two explicit paths"
     diagnostic_exemplar:
       problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{x^2 - y^2}{x^2 + y^2}$ exists.'
