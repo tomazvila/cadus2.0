@@ -26,14 +26,30 @@ topics:
         key_prerequisites: [quadratic-graphs-vertex]
         constraints: "vertex at the origin; 4p a small even integer"
         exemplars:
-          - problem: 'Find the focus and directrix of $x^2 = 8y$.'
-            answer: "focus (0, 2); directrix y = -2"
-            answer_contract: {kind: none}
-            solution_sketch: '$4p = 8$, so $p = 2$; the parabola opens upward.'
-          - problem: 'Find the focus and directrix of $y^2 = 12x$.'
-            answer: "focus (3, 0); directrix x = -3"
-            answer_contract: {kind: none}
-            solution_sketch: '$4p = 12$, so $p = 3$; the parabola opens right: focus $(3, 0)$, directrix $x = -3$.'
+          - problem: "The parabola is x^2 = 8y. Give its focus as (x, y) and the y-coordinate of its directrix."
+            answer: "focus = (0, 2); directrix = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
+            solution_sketch: "For x^2 = 8y, the full result is focus = (0, 2); directrix = -2. The standard form rule is x^2 = 4py, and comparing coefficients gives p = 2. The focus rule gives (0, 2), and the directrix rule gives y = -2. Thus focus = (0, 2); directrix = -2."
+          - problem: "The parabola is y^2 = 12x. Give its focus as (x, y) and the x-coordinate of its directrix."
+            answer: "focus = (3, 0); directrix = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
+            solution_sketch: "For y^2 = 12x, the full result is focus = (3, 0); directrix = -3. The standard form rule is y^2 = 4px, and comparing coefficients gives p = 3. The focus rule gives (3, 0), and the directrix rule gives x = -3. Thus focus = (3, 0); directrix = -3."
+          - problem: "The parabola is x^2 = 4y. Find p."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For x^2 = 4y, the standard form rule is x^2 = 4py. Compare 4p with 4 to get p = 1. The value of p is 1."
+          - problem: "The parabola is y^2 = 16x. Give its focus as (x, y)."
+            answer: "(4, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "For y^2 = 16x, the standard form rule is y^2 = 4px. Compare 4p with 16 to get p = 4. The focus rule for a right-opening parabola gives (p, 0) = (4, 0). The focus is (4, 0)."
+          - problem: "The parabola is x^2 = -4y. Find the y-coordinate of its focus."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For x^2 = -4y, the standard form rule is x^2 = 4py. Compare 4p with -4 to get p = -1. The focus rule for a vertical parabola gives (0, p) = (0, -1). The y-coordinate is -1."
+          - problem: "The parabola is y^2 = -8x. Determine p."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For y^2 = -8x, the standard form rule is y^2 = 4px. Compare 4p with -8 to get p = -2. The value of p is -2."
       - id: kp2
         name: Write the equation from focus or directrix
         key_prerequisites: [distance-midpoint-formulas]
@@ -51,14 +67,30 @@ topics:
         key_prerequisites: [quadratic-graphs-vertex, completing-the-square]
         constraints: "equations given in shifted standard form (x - h)^2 = 4p(y - k) or (y - k)^2 = 4p(x - h); integer h, k, p; report vertex, focus, and directrix"
         exemplars:
-          - problem: 'For $(x - 1)^2 = 4(y + 2)$, find the vertex, focus, and directrix.'
-            answer: "vertex (1, -2); focus (1, -1); directrix y = -3"
-            answer_contract: {kind: none}
-            solution_sketch: '$4p = 4$ gives $p = 1$; move $p$ up from the vertex for the focus.'
+          - problem: "The parabola has equation (x - 1)^2 = 4(y + 2). Find the vertex, the focus, and the value c in the directrix y = c, and give the vertex and focus as (x, y)."
+            answer: "vertex = (1, -2); focus = (1, -1); directrix = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
+            solution_sketch: "Write the shifted standard form (x - 1)^2 = 4(y + 2) and compare with (x - h)^2 = 4p(y - k): h = 1, k = -2, and p = 1. The vertex is (h, k) = (1, -2). The focus is (h, k + p) = (1, -1) because the parabola opens up. The directrix is y = k - p = -3. The answer is vertex = (1, -2); focus = (1, -1); directrix = -3."
           - problem: 'Find the vertex and focus of $(y - 3)^2 = 8(x - 1)$.'
             answer: "vertex = (1, 3); focus = (3, 3)"
             answer_contract: {kind: multipart, parts: [{name: vertex, contract: {kind: coordinates, arity: 2}}, {name: focus, contract: {kind: coordinates, arity: 2}}]}
             solution_sketch: '$p = 2$, opening right.'
+          - problem: "The parabola has equation (x - 3)^2 = 12(y + 1). Find the vertex, the focus, and the value c in the directrix y = c, and give the vertex and focus as (x, y)."
+            answer: "vertex = (3, -1); focus = (3, 2); directrix = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
+            solution_sketch: "Compare (x - 3)^2 = 12(y + 1) with (x - h)^2 = 4p(y - k): h = 3, k = -1, and p = 3. The vertex is (h, k) = (3, -1). The focus is (h, k + p) = (3, 2) because the parabola opens up. The directrix is y = k - p = -4. The answer is vertex = (3, -1); focus = (3, 2); directrix = -4."
+          - problem: "The parabola has equation (y + 4)^2 = 16(x - 2). Find the vertex, the focus, and the value c in the directrix x = c, and give the vertex and focus as (x, y)."
+            answer: "vertex = (2, -4); focus = (6, -4); directrix = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
+            solution_sketch: "Compare (y + 4)^2 = 16(x - 2) with (y - k)^2 = 4p(x - h): h = 2, k = -4, and p = 4. The vertex is (h, k) = (2, -4). The focus is (h + p, k) = (6, -4) because the parabola opens right. The directrix is x = h - p = -2. The answer is vertex = (2, -4); focus = (6, -4); directrix = -2."
+          - problem: "The parabola has equation (x + 2)^2 = -8(y - 3). Find the vertex, the focus, and the value c in the directrix y = c, and give the vertex and focus as (x, y)."
+            answer: "vertex = (-2, 3); focus = (-2, 1); directrix = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
+            solution_sketch: "Compare (x + 2)^2 = -8(y - 3) with (x - h)^2 = 4p(y - k): h = -2, k = 3, and p = -2. The vertex is (h, k) = (-2, 3). The focus is (h, k + p) = (-2, 1) because p is negative and the parabola opens down. The directrix is y = k - p = 5. The answer is vertex = (-2, 3); focus = (-2, 1); directrix = 5."
+          - problem: "The parabola has equation (y - 5)^2 = -12(x + 1). Find the vertex, the focus, and the value c in the directrix x = c, and give the vertex and focus as (x, y)."
+            answer: "vertex = (-1, 5); focus = (-4, 5); directrix = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "vertex"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "focus"}, {"contract": {"kind": "exact"}, "name": "directrix"}]}
+            solution_sketch: "Compare (y - 5)^2 = -12(x + 1) with (y - k)^2 = 4p(x - h): h = -1, k = 5, and p = -3. The vertex is (h, k) = (-1, 5). The focus is (h + p, k) = (-4, 5) because p is negative and the parabola opens left. The directrix is x = h - p = 2. The answer is vertex = (-1, 5); focus = (-4, 5); directrix = 2."
     diagnostic_exemplar:
       problem: 'For $(x + 2)^2 = 8(y - 1)$, find the vertex, focus, and directrix.'
       answer: "vertex (-2, 1); focus (-2, 3); directrix y = -1"
@@ -96,14 +128,30 @@ topics:
         key_prerequisites: [distance-midpoint-formulas]
         constraints: "a² and b² perfect squares; center at the origin first"
         exemplars:
-          - problem: 'For $\frac{x^2}{25} + \frac{y^2}{9} = 1$, find the vertices and the endpoints of the minor axis.'
-            answer: "vertices (±5, 0); minor-axis endpoints (0, ±3)"
-            answer_contract: {kind: none}
-            solution_sketch: '$a^2 = 25$ (horizontal major axis): vertices $(\\pm 5, 0)$; $b^2 = 9$: minor-axis endpoints $(0, \\pm 3)$.'
-          - problem: 'Which axis is the major axis of $\frac{x^2}{9} + \frac{y^2}{25} = 1$?'
-            answer: "the y-axis"
-            answer_contract: {kind: label, options: [[the y-axis], [the x-axis]]}
-            solution_sketch: 'The larger denominator sits under $y^2$.'
+          - problem: "Consider the ellipse x^2/36 + y^2/9 = 1. Find the right vertex and the upper endpoint of the minor axis as (x1, y1, x2, y2)."
+            answer: "(6, 0, 0, 3)"
+            answer_contract: {"arity": 4, "kind": "coordinates"}
+            solution_sketch: "The standard form has a^2 = 36 under x^2, so the major axis is horizontal and a = 6. The right vertex is (6, 0). The smaller denominator is 9 under y^2, so b = 3 and the upper minor-axis endpoint is (0, 3). The answer is (6, 0, 0, 3)."
+          - problem: "Consider the ellipse x^2/9 + y^2/49 = 1. Select the direction of the major axis."
+            answer: "vertical"
+            answer_contract: {"kind": "label", "options": [["vertical"], ["horizontal"], ["diagonal"], ["circular"]]}
+            solution_sketch: "The larger denominator is 49, and it is under y^2, so the major axis is vertical. A student who picks horizontal reads the larger denominator under x^2; one who picks diagonal assumes the axes are tilted; one who picks circular assumes a = b. The major-axis direction is vertical."
+          - problem: "Consider the ellipse x^2/100 + y^2/36 = 1. Find the length of the major axis."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The larger denominator is 100 under x^2, so a^2 = 100 and a = 10. The major axis length is 2a = 20. The length of the major axis is 20."
+          - problem: "Consider the ellipse x^2/9 + y^2/81 = 1. Find the length of the minor axis."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The larger denominator is 81 under y^2, so the major axis is vertical and a^2 = 81. The smaller denominator is 9 under x^2, so b^2 = 9 and b = 3. The minor axis length is 2b = 6. The length of the minor axis is 6."
+          - problem: "Consider the ellipse x^2/36 + y^2/100 = 1. Find the vertex with positive y-coordinate as (x, y)."
+            answer: "(0, 10)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The larger denominator is 100 under y^2, so the major axis is vertical and a^2 = 100. Then a = 10 and the vertices are (0, 10) and (0, -10). The vertex with positive y-coordinate is (0, 10)."
+          - problem: "Consider the ellipse (x - 2)^2/9 + (y + 1)^2/64 = 1. Find the right endpoint of the minor axis as (x, y)."
+            answer: "(5, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The center is (2, -1). The larger denominator 64 is under (y + 1)^2, so the major axis is vertical and a^2 = 64. The smaller denominator 9 gives b^2 = 9 and b = 3. The minor axis is horizontal, so its endpoints are (2 plus/minus 3, -1). The right endpoint is (5, -1)."
       - id: kp2
         name: Find the foci with c² = a² - b²
         key_prerequisites: [distance-midpoint-formulas, simplifying-radicals]
@@ -129,6 +177,22 @@ topics:
           - problem: 'Write the equation of the ellipse centered at $(2, -1)$ with a horizontal semi-major axis $4$ and semi-minor axis $2$.'
             answer: "(x - 2)^2/16 + (y + 1)^2/4 = 1"
             answer_contract: {kind: polynomial_relation}
+          - problem: "An ellipse centered at the origin has vertices (0, ±7) and foci (0, ±5). Give a2 and b2 for its standard form equation."
+            answer: "a2 = 49; b2 = 24"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a2"}, {"contract": {"kind": "exact"}, "name": "b2"}]}
+            solution_sketch: "The full standard form is x^2/24 + y^2/49 = 1. The vertices (0, ±7) give a = 7, so a2 = 49. The foci (0, ±5) give c = 5, so c2 = 25. The ellipse relation b2 = a2 - c2 gives b2 = 49 - 25 = 24. Thus a2 = 49; b2 = 24."
+          - problem: "An ellipse centered at (3, -2) has a horizontal major axis with vertices at (7, -2) and (-1, -2) and foci at (5, -2) and (1, -2). Give a2 and b2 for its standard form equation."
+            answer: "a2 = 16; b2 = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a2"}, {"contract": {"kind": "exact"}, "name": "b2"}]}
+            solution_sketch: "The full standard form is (x - 3)^2/16 + (y + 2)^2/12 = 1. The vertices (7, -2) and (-1, -2) give a = 4, so a2 = 16. The foci (5, -2) and (1, -2) give c = 2, so c2 = 4. The relation b2 = a2 - c2 gives b2 = 16 - 4 = 12. Thus a2 = 16; b2 = 12."
+          - problem: "An ellipse has vertices (0, ±6) and foci (0, ±2). Which equation is its standard form?"
+            answer: "x^2/32 + y^2/36 = 1"
+            answer_contract: {"kind": "label", "options": [["x^2/32 + y^2/36 = 1"], ["x^2/36 + y^2/32 = 1"], ["x^2/4 + y^2/36 = 1"], ["x^2/36 + y^2/4 = 1"]]}
+            solution_sketch: "The full standard form is x^2/32 + y^2/36 = 1. The vertices (0, ±6) give a = 6, so a2 = 36. The foci (0, ±2) give c = 2, so c2 = 4. The relation b2 = a2 - c2 gives b2 = 36 - 4 = 32, and the major axis is vertical. The option x^2/36 + y^2/32 = 1 swaps the denominators; x^2/4 + y^2/36 = 1 uses c2 for b2; x^2/36 + y^2/4 = 1 uses a2 and c2 with the wrong orientation. The correct option is x^2/32 + y^2/36 = 1."
+          - problem: "An ellipse centered at (-1, 4) has a vertical major axis with vertices at (-1, 9) and (-1, -1) and foci at (-1, 7) and (-1, 1). Which equation is its standard form?"
+            answer: "(x + 1)^2/16 + (y - 4)^2/25 = 1"
+            answer_contract: {"kind": "label", "options": [["(x + 1)^2/16 + (y - 4)^2/25 = 1"], ["(x - 1)^2/16 + (y + 4)^2/25 = 1"], ["(x + 1)^2/25 + (y - 4)^2/16 = 1"], ["(x + 1)^2/9 + (y - 4)^2/25 = 1"]]}
+            solution_sketch: "The full standard form is (x + 1)^2/16 + (y - 4)^2/25 = 1. The center is (-1, 4). The vertices (-1, 9) and (-1, -1) give a = 5, so a2 = 25. The foci (-1, 7) and (-1, 1) give c = 3, so c2 = 9. The relation b2 = a2 - c2 gives b2 = 25 - 9 = 16, and the major axis is vertical. The option (x - 1)^2/16 + (y + 4)^2/25 = 1 uses the wrong center signs; (x + 1)^2/25 + (y - 4)^2/16 = 1 swaps the denominators; (x + 1)^2/9 + (y - 4)^2/25 = 1 uses c2 for b2. The correct option is (x + 1)^2/16 + (y - 4)^2/25 = 1."
     diagnostic_exemplar:
       problem: 'Write the equation of the ellipse with vertices $(0, \pm 5)$ and foci $(0, \pm 4)$.'
       answer: "x^2/9 + y^2/25 = 1"
@@ -162,14 +226,30 @@ topics:
         key_prerequisites: [ellipses]
         constraints: "c² = a² + b²; asymptotes y = ±(b/a)x"
         exemplars:
-          - problem: 'For $\frac{x^2}{9} - \frac{y^2}{16} = 1$, find the vertices and foci.'
-            answer: "vertices (±3, 0); foci (±5, 0)"
-            answer_contract: {kind: none}
-            solution_sketch: '$c^2 = 9 + 16 = 25$.'
-          - problem: 'Find the asymptotes of $\frac{x^2}{9} - \frac{y^2}{16} = 1$.'
-            answer: "y = ±(4/3)x"
-            answer_contract: {kind: none}
-            solution_sketch: 'Asymptote slopes $\\pm\\frac{b}{a} = \\pm\\frac{4}{3}$: $y = \\pm\\frac{4}{3}x$.'
+          - problem: "For x^2/25 - y^2/144 = 1, find the focus with positive x-coordinate. Give the answer as (x, y)."
+            answer: "(13, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The equation x^2/25 - y^2/144 = 1 has a^2 = 25 and b^2 = 144. Use the relation c^2 = a^2 + b^2, so c^2 = 25 + 144 = 169. The foci are at (13, 0) and (-13, 0), so the focus with positive x-coordinate is (13, 0)."
+          - problem: "For x^2/36 - y^2/49 = 1, find the positive slope of the asymptotes."
+            answer: "7/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation x^2/36 - y^2/49 = 1 has a^2 = 36 and b^2 = 49. Use the asymptote-slope rule b/a, so the positive slope is sqrt(49)/sqrt(36) = 7/6. The positive slope of the asymptotes is 7/6."
+          - problem: "For x^2/49 - y^2/576 = 1, find the right vertex. Give the answer as (x, y)."
+            answer: "(7, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The equation x^2/49 - y^2/576 = 1 has a^2 = 49, so a = 7. The vertex rule for a horizontal transverse axis gives vertices at (7, 0) and (-7, 0). The right vertex is (7, 0)."
+          - problem: "For x^2/64 - y^2/225 = 1, find the distance from the center to a focus."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation x^2/64 - y^2/225 = 1 has a^2 = 64 and b^2 = 225. Use c^2 = a^2 + b^2, so c^2 = 64 + 225 = 289. Thus c = 17, and the distance from the center to a focus is 17."
+          - problem: "For x^2/16 - y^2/9 = 1, find the asymptote with positive slope. Give it as a function of x."
+            answer: "3x/4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The equation x^2/16 - y^2/9 = 1 has a^2 = 16 and b^2 = 9. The asymptote slope rule gives b/a = 3/4. The positive-slope asymptote is y = (3/4)x, so as a function of x it is 3x/4."
+          - problem: "For x^2/81 - y^2/1600 = 1, find the distance between the two foci."
+            answer: "82"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation x^2/81 - y^2/1600 = 1 has a^2 = 81 and b^2 = 1600. Use c^2 = a^2 + b^2, so c^2 = 81 + 1600 = 1681. Thus c = 41, and the distance between the two foci is 2c = 82."
       - id: kp2
         name: Vertical transverse axis
         key_prerequisites: [ellipses, simplifying-radicals]
