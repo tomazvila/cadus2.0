@@ -1338,14 +1338,30 @@ topics:
         name: "Nested quantifiers and order"
         key_prerequisites: [universal-existential-statements]
         exemplars:
-          - problem: 'Is $\forall x \in \mathbb{R}\ \exists y \in \mathbb{R},\ y > x$ true? Does swapping to $\exists y\ \forall x,\ y > x$ change its truth?'
-            answer_contract: {kind: none}
-            answer: 'The first is true; the swapped statement is false.'
-            solution_sketch: 'For each $x$ take $y = x + 1$, so the first holds. But no single $y$ exceeds every $x$, so $\exists y\, \forall x$ is false. Quantifier order matters.'
-          - problem: 'Is $\forall x \in \mathbb{Z}\ \exists y \in \mathbb{Z},\ x + y = 0$ true?'
-            answer_contract: {kind: none}
-            answer: 'Yes; take $y = -x$.'
-            solution_sketch: 'For each integer $x$, choosing $y = -x$ gives $x + y = 0$, so the statement holds for every $x$.'
+          - problem: "Over the real numbers, let $A$ be the statement 'for every real $x$ there is a real $y$ with $y > x$', and let $B$ be the statement 'there is a real $y$ such that for every real $x$, $y > x$'. Find how many of $A$ and $B$ are true."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: read $A$, the for-all-then-exists order. Step 2: for any real $x$, the choice $y = x + 1$ gives $y > x$, so a witness exists for every $x$ and $A$ is true. Step 3: read $B$, the exists-then-for-all order. Step 4: a single real $y$ cannot be greater than every real $x$, so $B$ is false, and the swap of the quantifiers changes the truth value. Step 5: exactly one of the two orders is true, so the number of true statements is 1."
+          - problem: "Over the domain $D$ of the integers 1 through 6, the statement 'there is $y$ in $D$ such that for every $x$ in $D$, $y \\ge x$' is true. Find the value of $y$ in $D$ that makes the statement true."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: read the exists-then-for-all order: there is $y$ in $D$ such that for every $x$ in $D$, $y \\ge x$. Step 2: the inner condition must hold at the largest element of $D$, namely $x = 6$, so $y \\ge 6$. Step 3: the only element of $D$ that is at least 6 is 6 itself. Step 4: checking $y = 6$ gives $6 \\ge x$ for every $x$ in $D$, so this witness is valid and unique. The value of the witness $y$ is 6."
+          - problem: "Over the domain $D$ of the integers 1 through 6, consider the statement 'for every $x$ in $D$ there is $z$ in $D$ with $x + z = y$'. Find the only positive integer $y$ that makes this statement true."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: fix $y$ and read the for-all-then-exists statement: for every $x$ in $D$ there is $z$ in $D$ with $x + z = y$. Step 2: at $x = 1$ the condition forces $z = y - 1$ to lie in $D$, so $2 \\le y \\le 7$. Step 3: at $x = 6$ the condition forces $z = y - 6$ to lie in $D$, so $7 \\le y \\le 12$. Step 4: every $x$ in $D$ must work, so $y$ lies in both ranges and only the value 7 remains. The only positive integer $y$ that works is 7."
+          - problem: "Over the domain $D$ of the even integers 2 through 10, consider the statement 'for every $x$ in $D$ there is $y$ in $D$ with $x < y < x + 6$'. Find the largest $x$ in $D$ that has a witness $y$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: check the for-all-then-exists statement for each element of $D$. Step 2: for $x = 2$ take $y = 4$; for $x = 4$ take $y = 6$; for $x = 6$ take $y = 8$; for $x = 8$ take $y = 10$. Step 3: for $x = 10$ the condition $10 < y < 16$ has no element of $D$, so $x = 10$ has no witness. Step 4: the largest element of $D$ that has a witness is 8."
+          - problem: "Over the domain $D$ of the integers 1 through 4, consider the statement 'for every $x$ in $D$ there is $y$ in $D$ with $y > x$'. Decide whether the statement is valid for all elements of $D$, and give the number of $x$ in $D$ that have no witness $y$."
+            answer: "verdict = fails; count = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Step 1: read the for-all-then-exists statement over $D$. Step 2: $x = 1, 2, 3$ have the witnesses $y = 2, 3, 4$. Step 3: $x = 4$ has no element of $D$ greater than it, so the statement is not valid over all of $D$. Step 4: the option holds is wrong because it checks only the small values of $x$ and ignores $x = 4$. Step 5: exactly one element of $D$ has no witness. verdict = fails; count = 1."
+          - problem: "Over the domain $D$ of the integers 2 through 6, consider the statement 'for every $x$ in $D$ there is $y$ in $D$ with $x \\cdot y = 12$'. Find the number of $x$ in $D$ that have a witness $y$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: read the for-all-then-exists statement for each $x$ in $D$ with partner $y$ in $D$ and product 12. Step 2: $x = 2$ gives $y = 6$, $x = 3$ gives $y = 4$, $x = 4$ gives $y = 3$, and $x = 6$ gives $y = 2$, and all of these partners lie in $D$. Step 3: $x = 5$ has no witness because 12/5 is not an integer. Step 4: four elements of $D$ have a witness, so the number of such $x$ is 4."
         constraints: "two nested quantifiers; show that order changes meaning"
       - id: kp2
         name: "Translating mathematical statements"
