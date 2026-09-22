@@ -39,12 +39,23 @@ fn i5(view: &KpView) -> Vec<Finding> {
 }
 
 /// I6: the third exemplar of one skeleton, and each later one, is a finding.
+/// Only a new item can be a finding (lane 33h, FLOW/reports/wave-top-codes.md):
+/// the base exemplars of the packet are owner-authored, and the row must keep
+/// them (CK2), so I6 on a kept base exemplar can never pass. The base
+/// exemplars stay grandfathered, as I12 to I14 are (the hash baseline). The
+/// budget of one skeleton is 2 minus its kept base exemplars (at the minimum
+/// 0), so a new item that repeats the shape of the packet still fails.
 fn i6(view: &KpView) -> Vec<Finding> {
-    let mut seen: BTreeMap<String, usize> = BTreeMap::new();
+    let mut budget: BTreeMap<String, usize> = BTreeMap::new();
+    for item in view.items.iter().filter(|item| !item.is_new) {
+        let count = budget.entry(skeleton(&item.exemplar.problem)).or_insert(0);
+        *count = 2.min(*count + 1);
+    }
     view.items
         .iter()
+        .filter(|item| item.is_new)
         .filter_map(|item| {
-            let count = seen.entry(skeleton(&item.exemplar.problem)).or_insert(0);
+            let count = budget.entry(skeleton(&item.exemplar.problem)).or_insert(0);
             *count += 1;
             (*count > 2).then(|| {
                 let detail = format!("I6: exemplar {count} with one digit skeleton (limit 2)");
@@ -123,8 +134,12 @@ mod tests {
         assert!(found[1].detail.contains("teach page"));
     }
 
+    // Lane 33h: the row view holds the kept base exemplars of the packet. I6
+    // must not fire on them (the wave defect of FLOW/reports/wave-top-codes.md:
+    // 4 kept base exemplars of one skeleton made every re-author of the KP
+    // fail again). The finding of one skeleton goes to a new item only.
     #[test]
-    fn i6_permits_two_exemplars_of_one_skeleton() {
+    fn i6_spares_the_kept_base_exemplars_and_fires_on_a_new_item_of_one_skeleton() {
         let numbered = |n: usize| {
             let problem = format!("Find {n} + {n}.");
             item(
@@ -133,6 +148,35 @@ mod tests {
                 json!({"kind": "exact"}),
                 None,
             )
+        };
+        // The packet keeps 4 base exemplars of one digit skeleton; the row
+        // keeps them and adds new items of other skeletons. No finding.
+        let mut items: Vec<_> = (0..4).map(exact).collect();
+        items.extend((1..4).map(numbered));
+        assert_eq!(check(&view(items.clone())), []);
+        // A new item that repeats the skeleton of the kept base exemplars is
+        // the third exemplar of one skeleton: it is a finding.
+        let mut repeated = numbered(4);
+        repeated.is_new = true;
+        items.push(repeated);
+        let found = check(&view(items));
+        assert_eq!(invariants(&found), ["I6"]);
+        assert!(found[0].hash.is_some());
+    }
+
+    #[test]
+    fn i6_permits_two_exemplars_of_one_skeleton() {
+        let numbered = |n: usize| {
+            let problem = format!("Find {n} + {n}.");
+            let mut one = item(
+                &problem,
+                &(2 * n).to_string(),
+                json!({"kind": "exact"}),
+                None,
+            );
+            // The row items of the author: I6 reads them (lane 33h).
+            one.is_new = true;
+            one
         };
         let mut items: Vec<_> = (0..4).map(exact).collect();
         items.extend((1..3).map(numbered));

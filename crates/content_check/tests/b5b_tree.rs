@@ -8,7 +8,9 @@ mod support;
 use std::time::Instant;
 
 use serde_json::{Value, json};
-use support::{assert_findings, assert_keys, curriculum, error_text, pairs, repo, run, scratch};
+use support::{
+    assert_findings, assert_keys, curriculum, error_text, flow, pairs, repo, run, scratch,
+};
 
 const CHAIN_RULE: &str = "calculus-1/chain-rule/kp1";
 const BASE_REF: &str = "d2ca1421";
@@ -81,15 +83,27 @@ fn dump_kp_gives_the_chain_rule_example_of_the_brief() {
         doc["file"],
         "curriculum/calculus-1/02-differentiation-rules.yaml"
     );
-    assert_eq!((&doc["V"], &doc["U"]), (&json!(3), &json!(0)));
+    // The golden row of this KP is applied (receipt commit 1b4fb581, 3 -> 6
+    // exemplars), so the shipped tree holds the applied base (lane 33h).
+    assert_eq!((&doc["V"], &doc["U"]), (&json!(6), &json!(0)));
     assert_eq!(
         column(&doc, "exemplars", "hash"),
-        ["86d2057cb791", "5ad3b567ab04", "03d456790232"]
+        [
+            "86d2057cb791",
+            "5ad3b567ab04",
+            "66538bb05c43",
+            "03d456790232",
+            "e0be73df2eb6",
+            "54ac167dfe6a"
+        ]
     );
-    assert_eq!(column(&doc, "exemplars", "verdict"), [true, true, true]);
+    assert_eq!(
+        column(&doc, "exemplars", "verdict"),
+        [true, true, true, true, true, true]
+    );
     assert_eq!(
         column(&doc, "exemplars", "status"),
-        ["keep", "keep", "keep"]
+        ["keep", "keep", "keep", "keep", "keep", "keep"]
     );
     assert_eq!(doc["topic"]["answer_kind"], "expression");
 }
@@ -267,6 +281,27 @@ fn base_exemplars() -> Vec<Value> {
     dump(CHAIN_RULE)["exemplars"].as_array().unwrap().clone()
 }
 
+/// The base-commit exemplars of the chain-rule KP, from the freeze pack
+/// (lane 33h). The campaign applied the golden rows to the shipped tree
+/// (applied/calculus-1/chain-rule__kp1.json, commit 1b4fb581, 3 -> 6
+/// exemplars), so the live tree no longer equals the commit `BASE_REF` for
+/// this KP. The tests that need the base-commit state read this packet.
+fn base_commit_exemplars() -> Vec<Value> {
+    let packet = flow("spec/golden/calc-chain-rule.packet.json");
+    let doc = std::fs::read_to_string(&packet).unwrap();
+    let doc: Value = serde_json::from_str(&doc).unwrap();
+    doc["existing"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| {
+            json!({"problem": entry["problem"], "answer": entry["answer"],
+                "answer_contract": entry.get("answer_contract").unwrap_or(&Value::Null).clone(),
+                "solution_sketch": entry.get("solution_sketch").unwrap_or(&Value::Null).clone()})
+        })
+        .collect()
+}
+
 fn exemplar(problem: &str, answer: &str, contract: Value) -> Value {
     json!({"problem": problem, "answer": answer, "answer_contract": contract})
 }
@@ -299,7 +334,11 @@ const DIFF: [&str; 14] = [
 
 #[test]
 fn diff_of_an_unchanged_tree_has_equal_counts() {
-    let doc = diff(None, CHAIN_RULE);
+    // The unchanged tree holds the base-commit exemplars (the freeze pack);
+    // the shipped tree holds the applied base (lane 33h, receipt 1b4fb581).
+    let exemplars = base_commit_exemplars();
+    let tree = chain_rule_tree("b5b_diff_same", &exemplars);
+    let doc = diff(Some(&tree), CHAIN_RULE);
     assert_keys(&doc, &DIFF);
     assert_eq!(doc["schema"], "cadus.diff.v1");
     assert_eq!((&doc["V_before"], &doc["V_after"]), (&json!(3), &json!(3)));
@@ -319,7 +358,7 @@ fn diff_of_an_unchanged_tree_has_equal_counts() {
 
 #[test]
 fn diff_permits_new_verdict_exemplars() {
-    let mut exemplars = base_exemplars();
+    let mut exemplars = base_commit_exemplars();
     exemplars.push(exemplar(
         "Find the new value a.",
         "41",
@@ -437,7 +476,7 @@ fn diff_gives_exit_2_for_a_bad_ref_and_for_an_unknown_kp() {
 
 #[test]
 fn report_since_runs_i12_i13_i14_for_the_new_exemplars_only() {
-    let mut exemplars = base_exemplars();
+    let mut exemplars = base_commit_exemplars();
     exemplars.push(exemplar("Find the new value c.", "43", Value::Null));
     let tree = chain_rule_tree("b5b_since", &exemplars);
     let repo = repo();

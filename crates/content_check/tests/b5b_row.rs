@@ -66,10 +66,13 @@ fn golden_row_proof_induction_passes() {
     assert_golden_pass("proof-induction", 0, (2, 1));
 }
 
-/// The chain-rule row: three `function` items of pack v9.
+/// The chain-rule row: three `function` items of pack v9. The base of the
+/// freeze pack had 3 verdict exemplars; the campaign applied the row to the
+/// shipped tree (applied/calculus-1/chain-rule__kp1.json, commit 1b4fb581,
+/// V 3 -> 6), so the tree read of this test holds the applied base.
 #[test]
 fn golden_row_calc_chain_rule_passes() {
-    assert_golden_pass("calc-chain-rule", 3, (0, 0));
+    assert_golden_pass("calc-chain-rule", 6, (0, 0));
 }
 
 // ---- rows against the fixture tree ----
@@ -167,6 +170,37 @@ fn two_equal_problems_are_the_finding_duplicate() {
         (&finding["ck"], &finding["item"]),
         (&json!("CK7"), &json!("n3"))
     );
+}
+
+/// Lane 33h: the packet of `precalculus/fx/kp7` keeps 3 base exemplars of one
+/// digit skeleton (`Task iota: compute # plus # for the set seven.`). I6 does
+/// not fire on the kept base exemplars (the row must keep them, CK2); a new
+/// item that repeats their skeleton is the finding.
+#[test]
+fn i6_spares_the_kept_base_exemplars_of_the_packet() {
+    const SKELETON_KP: &str = "precalculus/fx/kp7";
+    let mut items = keeps(SKELETON_KP);
+    items.extend((0..3).map(|n| new_item(n, &format!("{}", 50 + n))));
+    let result = check_row("skeleton", SKELETON_KP, items.clone(), &[]);
+    assert_eq!(result.exit, 0, "{}", result.doc);
+    assert_eq!(result.doc["findings"], json!([]));
+    // A new item of the same digit skeleton as the 3 kept base exemplars:
+    // the third exemplar of one skeleton, and the finding is on the new item.
+    let mut repeated = new_item(0, "120");
+    repeated["id"] = json!("n4");
+    repeated["problem"] = json!("Task iota: compute 60 plus 60 for the set seven.");
+    repeated["solution_sketch"] = json!(
+        "Add 60 and 60 in the order of the list. The total of the parts is 120; thus the value is 120."
+    );
+    items.push(repeated);
+    let result = check_row("skeleton-repeat", SKELETON_KP, items, &[]);
+    assert_eq!(result.exit, 1, "{}", result.doc);
+    let finding = &result.doc["findings"][0];
+    assert_eq!(
+        (&finding["code"], &finding["invariant"]),
+        (&json!("duplicate"), &json!("I6"))
+    );
+    assert_eq!(finding["item"], "n4");
 }
 
 #[test]
