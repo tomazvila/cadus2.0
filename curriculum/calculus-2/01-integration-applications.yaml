@@ -790,13 +790,29 @@ topics:
         name: The arc length integral
         key_prerequisites: [definite-integrals-ftc, chain-rule]
         exemplars:
-          - problem: 'Set up (do not evaluate) the arc length integral for $y = x^2$ on $[0, 1]$.'
-            answer: '$\int_0^1 \sqrt{1 + 4x^2} \, dx$'
-            answer_contract: {kind: none}
-            solution_sketch: '$L = \int_a^b \sqrt{1 + (y'')^2}\,dx$ with $y'' = 2x$.'
           - problem: 'Find the length of $y = 3x + 1$ for $0 \le x \le 4$, and check against the distance formula.'
             answer: '$4\sqrt{10}$'
             solution_sketch: '$L = \int_0^4 \sqrt{1 + 9}\,dx = 4\sqrt{10}$; the segment from $(0,1)$ to $(4,13)$ has length $\sqrt{16 + 144} = 4\sqrt{10}$.'
+          - problem: "Consider y = x^2 on the interval [0, 1]. Give the integrand of its arc length integral as a function of x."
+            answer: "sqrt(1+4x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The arc length integral rule gives L = integral from 0 to 1 of sqrt(1 + (y')^2) dx. Differentiate y = x^2 with the power rule to get y' = 2x. Then 1 + (y')^2 = 1 + 4x^2, so the integrand is sqrt(1+4x^2)."
+          - problem: "Find the length of the line segment y = 5x - 2 for 0 <= x <= 3."
+            answer: "3sqrt(26)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The arc length integral rule gives L = integral from 0 to 3 of sqrt(1 + (y')^2) dx. Differentiate y = 5x - 2 to get y' = 5, so the integrand is sqrt(1 + 25) = sqrt(26). The integral of the constant sqrt(26) over a length of 3 is 3sqrt(26)."
+          - problem: "Find the length of the line segment y = -2x + 7 for 1 <= x <= 5."
+            answer: "4sqrt(5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The arc length integral rule gives L = integral from 1 to 5 of sqrt(1 + (y')^2) dx. Differentiate y = -2x + 7 to get y' = -2, so the integrand is sqrt(1 + 4) = sqrt(5). The integral of the constant sqrt(5) over a length of 4 is 4sqrt(5)."
+          - problem: "Find the arc length of the horizontal line y = 4 from x = 2 to x = 9."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The arc length integral rule gives L = integral from 2 to 9 of sqrt(1 + (y')^2) dx. Differentiate y = 4 to get y' = 0, so the integrand is sqrt(1) = 1. The integral of 1 from x = 2 to x = 9 is 7, so the length is 7."
+          - problem: "Consider y = e^x on the interval [0, 1]. Give the integrand of its arc length integral as a function of x."
+            answer: "sqrt(1+e^(2x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The arc length integral rule gives L = integral from 0 to 1 of sqrt(1 + (y')^2) dx. Differentiate y = e^x to get y' = e^x. Then 1 + (y')^2 = 1 + e^(2x), so the integrand is sqrt(1+e^(2x))."
         constraints: "curves where 1 + (y')^2 is constant, or setup-only problems"
       - id: kp2
         name: Power curves via substitution
