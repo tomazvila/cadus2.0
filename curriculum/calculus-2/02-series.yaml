@@ -1354,14 +1354,30 @@ topics:
         name: Absolute convergence
         key_prerequisites: [comparison-tests, integral-p-series-tests]
         exemplars:
-          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ as absolutely convergent, conditionally convergent, or divergent.'
-            answer: 'absolutely convergent ($\sum \frac{1}{n^2}$ converges)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The absolute series is a convergent $p$-series, $p = 2$.'
-          - problem: 'Does $\sum_{n=1}^{\infty} \frac{\cos n}{n^2}$ converge?'
-            answer: 'yes; it converges absolutely ($\left|\frac{\cos n}{n^2}\right| \le \frac{1}{n^2}$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Absolute convergence (by direct comparison) implies convergence, even with irregular signs.'
+          - problem: "Consider the alternating series $\\sum_{n=1}^\\infty (-1)^{n+1}/n^4$. Taking absolute values gives the p-series $\\sum 1/n^p$. State whether this p-series converges, and give its exponent $p$."
+            answer: "verdict = converges; p = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: take absolute values of the terms of sum (-1)^(n+1)/n^4, which gives the absolute series sum 1/n^4. Step 2: by the p-series test, sum 1/n^4 is a p-series with exponent p = 4, and since p = 4 > 1 it converges. The option diverges is the error of treating the exponent 4 as if it were at most 1. So verdict = converges and p = 4."
+          - problem: "Consider the series $\\sum_{n=1}^\\infty \\sin(n)/n^3$, whose terms follow no alternating sign pattern. Its absolute series satisfies $|\\sin(n)|/n^3 \\le 1/n^p$ for the comparison p-series $\\sum 1/n^p$. State whether the absolute series converges by this comparison, and give the exponent $p$."
+            answer: "verdict = converges; p = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: take absolute values, giving the series sum of |sin(n)|/n^3. Step 2: since |sin(n)| <= 1, direct comparison gives |sin(n)|/n^3 <= 1/n^3 for every n. Step 3: sum 1/n^3 is a p-series with p = 3 > 1, so it converges, and the absolute series converges by direct comparison. The option diverges is the error of thinking the irregular sign of sin(n) blocks the comparison. So verdict = converges and p = 3."
+          - problem: "Consider the alternating series $\\sum_{n=1}^\\infty (-1)^n/n^6$. Take absolute values of the terms to form the absolute series, which is a p-series. Find the exponent $p$ of the resulting p-series."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: take absolute values of (-1)^n/n^6, which removes the sign and gives the absolute series sum 1/n^6. Step 2: this absolute series is a p-series of the form sum 1/n^p, so reading off the power of n gives the exponent by the p-series form. The exponent p of the resulting p-series is 6."
+          - problem: "Consider the alternating series $\\sum_{n=1}^\\infty (-1)^{n+1}/(n^2+3n)$. Its absolute series satisfies $1/(n^2+3n) < 1/n^p$ for every $n \\ge 1$. Find the smallest integer $p$ such that the comparison series $\\sum 1/n^p$ converges."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: take absolute values to get the series sum 1/(n^2+3n). Step 2: since n^2+3n > n^2, direct comparison gives 1/(n^2+3n) < 1/n^2 for all n >= 1. Step 3: sum 1/n^2 is a convergent p-series with p = 2 > 1, so p = 2 works; p = 1 fails because sum 1/n diverges by the p-series test. The smallest integer p is 2."
+          - problem: "Consider the alternating series $\\sum_{n=1}^\\infty (-1)^{n+1}/(n+2)$. For $n \\ge 2$ its absolute terms satisfy $1/(n+2) > 1/(2n)$, and $\\sum 1/(2n)$ is a constant multiple of the p-series $\\sum 1/n^p$. State whether the absolute series converges by this comparison, and give the exponent $p$."
+            answer: "verdict = diverges; p = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: take absolute values to get the series sum 1/(n+2). Step 2: for n >= 2, direct comparison gives 1/(n+2) > 1/(2n), and sum 1/(2n) is one half times the p-series sum 1/n with p = 1, which diverges, so the absolute series diverges. The option converges is the error of comparing with the convergent p-series sum 1/n^2 instead of the harmonic p-series. So verdict = diverges and p = 1."
+          - problem: "The absolute series of the alternating series $\\sum_{n=1}^\\infty (-1)^n/\\sqrt{n^3}$ is the p-series $\\sum 1/n^p$. Give the exponent $p$ as a fraction."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: take absolute values of (-1)^n/sqrt(n^3), which gives the absolute series sum 1/sqrt(n^3). Step 2: rewrite sqrt(n^3) as n^(3/2), so the absolute series is sum 1/n^(3/2), a p-series by the p-series form. The exponent p is 3/2."
         constraints: "absolute series handled by a p-series or a direct comparison; use one non-alternating sign pattern"
       - id: kp2
         name: The three-way classification
