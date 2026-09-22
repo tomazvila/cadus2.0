@@ -24,30 +24,88 @@ topics:
         name: "Null and alternative hypotheses"
         key_prerequisites: [populations-samples]
         exemplars:
-          - problem: 'A machine should fill bags with $500$ g of flour on average, and an inspector suspects underfilling. State the null and alternative hypotheses.'
-            answer: '$H_0: \mu = 500$; $H_1: \mu < 500$ (one-sided, since only underfilling is suspected).'
-          - problem: 'A coin is suspected of being unfair, in either direction. State the hypotheses about $p = P(\text{heads})$.'
-            answer: '$H_0: p = \frac{1}{2}$; $H_1: p \ne \frac{1}{2}$ (two-sided).'
+          - problem: "A juice plant is set to fill bottles with a claimed mean of 330 mL, and an inspector suspects the plant is underfilling. Select the correct null and alternative hypotheses."
+            answer: "H0: mu = 330; H1: mu < 330"
+            answer_contract: {"kind": "label", "options": [["H0: mu = 330; H1: mu < 330"], ["H0: mu = 330; H1: mu > 330"], ["H0: mu < 330; H1: mu = 330"], ["H0: xbar = 330; H1: xbar < 330"]]}
+            solution_sketch: "The full result is H0: mu = 330; H1: mu < 330. Step 1 (null hypothesis rule): the null states the claimed parameter value, so H0: mu = 330. Step 2 (alternative hypothesis rule): underfilling is a one-sided suspicion in the low direction, so H1: mu < 330. The wrong option H0: mu = 330; H1: mu > 330 reverses the suspected direction. The wrong option H0: mu < 330; H1: mu = 330 swaps the claim into the alternative and puts the inequality in the null. The wrong option H0: xbar = 330; H1: xbar < 330 uses the sample mean xbar rather than the parameter mu. The answer is H0: mu = 330; H1: mu < 330."
+          - problem: "A quality engineer claims that exactly half of the chips on a line pass a quick screen, so the pass probability is p = 1/2, but a spot check suggests the rate is not exactly one half. State the null hypothesis value for p and the alternative hypothesis as an inequality in p."
+            answer: "H0 = 1/2; H1 = p < 1/2 or p > 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "H0"}, {"contract": {"kind": "inequality_union"}, "name": "H1"}]}
+            solution_sketch: "The full result is H0 = 1/2; H1 = p < 1/2 or p > 1/2. Step 1 (null hypothesis rule): the claimed pass probability is the null value, so H0: p = 1/2. Step 2 (alternative rule): a deviation possible in either direction gives the two-sided alternative, so H1: p < 1/2 or p > 1/2. The answer is H0 = 1/2; H1 = p < 1/2 or p > 1/2."
+          - problem: "A coach claims a player makes 7 of every 10 free throws, so the make probability is p = 7/10. After extra practice the analyst suspects the true make rate is now higher. State the null hypothesis value for p and the alternative hypothesis as an inequality in p."
+            answer: "H0 = 7/10; H1 = p > 7/10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "H0"}, {"contract": {"kind": "inequality_union"}, "name": "H1"}]}
+            solution_sketch: "The full result is H0 = 7/10; H1 = p > 7/10. Step 1 (null hypothesis rule): the claimed make probability is the null value, so H0: p = 7/10. Step 2 (alternative rule): suspecting a higher rate is a one-sided suspicion in the high direction, so H1: p > 7/10. The answer is H0 = 7/10; H1 = p > 7/10."
+          - problem: "A coffee machine is specified to dispense a mean of 240 mL per cup, and the quality team wants to know whether the true mean differs from 240 in either direction. Select the correct null and alternative hypotheses."
+            answer: "H0: mu = 240; H1: mu < 240 or mu > 240"
+            answer_contract: {"kind": "label", "options": [["H0: mu = 240; H1: mu < 240 or mu > 240"], ["H0: mu = 240; H1: mu < 240"], ["H0: mu = 240; H1: mu > 240"], ["H0: xbar = 240; H1: xbar < 240 or xbar > 240"]]}
+            solution_sketch: "The full result is H0: mu = 240; H1: mu < 240 or mu > 240. Step 1 (null hypothesis rule): the null states the specified parameter mean, so H0: mu = 240. Step 2 (alternative hypothesis rule): a difference possible in either direction makes the test two-sided, so H1: mu < 240 or mu > 240. The wrong option H0: mu = 240; H1: mu < 240 drops the upper side and is one-sided. The wrong option H0: mu = 240; H1: mu > 240 tests only the high direction. The wrong option H0: xbar = 240; H1: xbar < 240 or xbar > 240 states hypotheses about the sample mean xbar instead of the parameter mu. The answer is H0: mu = 240; H1: mu < 240 or mu > 240."
+          - problem: "A transit authority reports that 1/4 of its buses run late. A daily rider, who has seen few late buses recently, suspects the true late proportion is now lower. State the null hypothesis value for p and the alternative hypothesis as an inequality in p."
+            answer: "H0 = 1/4; H1 = p < 1/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "H0"}, {"contract": {"kind": "inequality_union"}, "name": "H1"}]}
+            solution_sketch: "The full result is H0 = 1/4; H1 = p < 1/4. Step 1 (null hypothesis rule): the reported late proportion is the null value, so H0: p = 1/4. Step 2 (alternative rule): suspecting a smaller proportion is a one-sided suspicion in the low direction, so H1: p < 1/4. The answer is H0 = 1/4; H1 = p < 1/4."
+          - problem: "An app team claims that 3 of every 25 users subscribe to the premium plan, so the subscription probability is p = 3/25. The growth lead suspects the true subscription proportion is now higher. State the null hypothesis value for p and the alternative hypothesis as an inequality in p."
+            answer: "H0 = 3/25; H1 = p > 3/25"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "H0"}, {"contract": {"kind": "inequality_union"}, "name": "H1"}]}
+            solution_sketch: "The full result is H0 = 3/25; H1 = p > 3/25. Step 1 (null hypothesis rule): the claimed subscription probability is the null value, so H0: p = 3/25. Step 2 (alternative rule): suspecting a higher proportion is a one-sided suspicion in the high direction, so H1: p > 3/25. The answer is H0 = 3/25; H1 = p > 3/25."
         constraints: "concrete scenarios naming a parameter; the answer states both hypotheses and whether the test is one- or two-sided; hypotheses are about parameters (mu, p), never about x-bar"
       - id: kp2
         name: "The p-value"
         key_prerequisites: [sampling-distributions, normal-distribution]
         exemplars:
-          - problem: 'Define the p-value of a test.'
-            answer: 'The probability, computed assuming $H_0$ is true, of getting data at least as extreme as what was observed.'
-          - problem: 'In a two-sided test, the sample mean lands $2$ SEs away from $\mu_0$. Using the empirical rule, approximate the p-value.'
-            answer: '$p \approx 0.05$ — under $H_0$, a sample mean at least $2$ SEs out happens about $5\%$ of the time.'
-          - problem: 'In a two-sided test, the sample mean lands $3$ SEs from $\mu_0$. Approximate the p-value, and say what a small p-value indicates.'
-            answer: '$p \approx 0.003$; such data would be very rare if $H_0$ were true, so they are strong evidence against $H_0$.'
+          - problem: "A significance test reports a small tail probability. Select the statement that correctly describes what this probability measures."
+            answer: "chance of data if H0 holds"
+            answer_contract: {"kind": "label", "options": [["chance of data if H0 holds"], ["chance that H0 holds"], ["chance of data if H1 holds"], ["chance that H1 holds true"]]}
+            solution_sketch: "Step 1 (definition of a p-value): the p-value is the chance of data at least as extreme as observed, computed assuming H0 is true. Step 2 (check options): the option 'chance that H0 holds' treats the p-value as the probability of H0; 'chance of data if H1 holds' and 'chance that H1 holds true' use the wrong hypothesis. The correct choice is chance of data if H0 holds."
+          - problem: "In a two-sided test, a sample mean lies 1 standard error from the null mean. Use the empirical rule to approximate the p-value. Give the answer to 2 decimals."
+            answer: "0.32"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1 (empirical rule): for a two-sided test, 1 standard error from the null mean leaves about 0.32 in the two tails combined. Step 2 (report p-value): the p-value is that tail probability. The p-value is 0.32."
+          - problem: "In a two-sided test, the p-value is about 0.003. How many standard errors from the null mean is the sample mean? Give the answer as a whole number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (empirical rule): a two-sided p-value of 0.003 matches about 3 standard errors from the null mean. Step 2 (reverse reading): read the empirical rule backward to recover the distance. The answer is 3."
+          - problem: "In a two-sided test, a sample mean lies 2 standard errors from the null mean. Use the empirical rule. Give the p-value to 2 decimals."
+            answer: "0.05"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1 (empirical rule): for a two-sided test, 2 standard errors from the null mean leaves about 0.05 in the two tails combined. Step 2 (p-value): the p-value is that combined tail area. The p-value is 0.05."
+          - problem: "In a two-sided test, the p-value is about 0.32. How many standard errors from the null mean is the sample mean? Give the answer as a whole number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (empirical rule): a two-sided p-value of 0.32 matches about 1 standard error from the null mean. Step 2 (reverse reading): read the empirical rule backward to recover the distance. The answer is 1."
+          - problem: "In a two-sided test, a sample mean lies 3 standard errors from the null mean. Use the empirical rule. Give the p-value to 3 decimals."
+            answer: "0.003"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Step 1 (empirical rule): for a two-sided test, 3 standard errors from the null mean leaves about 0.003 in the two tails combined. Step 2 (p-value): the p-value is that combined tail area. The p-value is 0.003."
         constraints: "p-values only at empirical-rule distances (1, 2, or 3 SEs, giving 0.32, 0.05, 0.003); interpretation items must include the assuming-H0 clause"
       - id: kp3
         name: "The decision rule"
         key_prerequisites: [sampling-distributions]
         exemplars:
-          - problem: 'A test gives $p = 0.012$ and the significance level is $\alpha = 0.05$. State the decision.'
-            answer: 'Reject $H_0$: $p = 0.012 \le 0.05$, so the data are too surprising to sit comfortably with $H_0$.'
-          - problem: 'A test gives $p = 0.20$ at $\alpha = 0.05$. State the decision. Does this prove $H_0$ is true?'
-            answer: 'Fail to reject $H_0$; and no — the data are merely consistent with $H_0$, which is not evidence that it is true.'
+          - problem: "A significance test runs at level alpha = 0.10 and returns p = 0.03. State the decision for H0, and give the ratio p/alpha as a fraction."
+            answer: "decision = reject; ratio = 3/10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["fail-to-reject"]]}, "name": "decision"}, {"contract": {"kind": "exact"}, "name": "ratio"}]}
+            solution_sketch: "Decision rule: reject H0 when p is at most alpha, and fail to reject otherwise. Compare: p = 0.03 and alpha = 0.10, and 0.03 is below 0.10, so the test rejects H0. Ratio step: p/alpha = 0.03/0.10 = 3/10, which is less than 1, agreeing with the rejection. The answer is decision = reject; ratio = 3/10."
+          - problem: "A coin-flip experiment tests H0 at level alpha = 0.01 and gets p = 0.07. State the decision for H0, and give the ratio p/alpha as a whole number."
+            answer: "decision = fail-to-reject; ratio = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["fail-to-reject"]]}, "name": "decision"}, {"contract": {"kind": "exact"}, "name": "ratio"}]}
+            solution_sketch: "Decision rule: reject H0 only when p is at most alpha. Compare: p = 0.07 and alpha = 0.01, and 0.07 is above 0.01, so the test fails to reject H0; this is consistency with H0, not proof of it. Ratio step: p/alpha = 0.07/0.01 = 7, which is greater than 1, agreeing with the failure to reject. The answer is decision = fail-to-reject; ratio = 7."
+          - problem: "A significance test at level alpha = 0.05 gives p = 0.31, so the analyst fails to reject H0. Which statement best describes what this outcome means for H0?"
+            answer: "The data fit H0 but do not prove it"
+            answer_contract: {"kind": "label", "options": [["The data fit H0 but do not prove it"], ["H0 is proven true by the observed data"], ["H0 has been accepted as the correct model"], ["H0 is certainly false given these data"]]}
+            solution_sketch: "Rule: a p-value of 0.31 lies far above alpha = 0.05, so the data are not surprising under H0 and the test fails to reject; failing to reject only means consistency with H0, never proof. The option 'H0 is proven true by the observed data' errs by treating a failure to reject as proof. The option 'H0 has been accepted as the correct model' errs by using the language of accepting H0, which a test never does. The option 'H0 is certainly false given these data' errs in the opposite direction, since a large p-value gives no evidence against H0. The answer is The data fit H0 but do not prove it."
+          - problem: "Five separate significance tests run at level alpha = 0.05. Their p-values are 0.011, 0.049, 0.062, 0.073 and 0.19. How many of the five tests reject H0?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Decision rule: a test rejects H0 exactly when its p-value is at most alpha = 0.05. Compare each p-value: 0.011 and 0.049 are at most 0.05, while 0.062, 0.073 and 0.19 all lie above 0.05. Count the rejections: 2 of the 5 tests reject H0. The answer is 2."
+          - problem: "A significance test at level alpha = 0.05 ended with the decision to fail to reject H0. What must be true about its p-value? Give the answer as an inequality in p."
+            answer: "p > 0.05"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Decision rule: a test rejects H0 when p is at most alpha, and it fails to reject only when p is greater than alpha. This test failed to reject at alpha = 0.05, so its p-value must lie strictly above 0.05. Writing the conclusion as an inequality in the variable p gives p > 0.05. The answer is p > 0.05."
+          - problem: "A battery-life study runs four tests of H0 at level alpha = 0.01. The p-values are 0.004, 0.012, 0.031 and 0.10. How many of the four tests fail to reject H0?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Decision rule: a test rejects H0 only when its p-value is at most alpha = 0.01. Compare each p-value: 0.004 is at most 0.01, but 0.012, 0.031 and 0.10 each lie above 0.01, so those three tests fail to reject H0. Count: 3 of the 4 tests fail to reject H0. The answer is 3."
         constraints: "explicit p and alpha; answers use reject / fail to reject, never accept H0; one item per set probes the fail-to-reject-is-not-proof distinction"
     diagnostic_exemplar:
       problem: 'Packets should average $\mu = 250$ g. A sample of $n = 36$ packets gives a mean $2.5$ SEs below $250$. For a two-sided test at $\alpha = 0.05$: state the hypotheses, approximate the p-value with the empirical rule, and give the decision.'
@@ -141,12 +199,30 @@ topics:
         name: "Power and the cost of each error"
         key_prerequisites: [hypothesis-tests-logic]
         exemplars:
-          - problem: 'The power of a test is $P(\text{reject } H_0 \text{ when } H_1 \text{ is true}) = 1 - \beta$. A test has $\beta = 0.2$; find its power.'
-            answer: '$0.8$.'
-          - problem: 'A trial tests $H_0$: "the new drug has no effect". Which error type approves a useless drug, and which discards a useful one?'
-            answer: 'Type I approves a useless drug; Type II discards a useful one.'
-          - problem: 'Name one change to a study that increases power without raising $\alpha$.'
-            answer: 'Increase the sample size — a larger $n$ shrinks the SE, so real effects stand out more clearly.'
+          - problem: "In a test of a new battery, the probability of a Type II error is 0.16. The power of the test is computed only as 1 minus beta. Give the power as a decimal."
+            answer: "0.84"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1: Identify beta, the Type II error probability, as 0.16. Step 2: Use the power rule power = 1 - beta. Step 3: Compute 1 - 0.16 = 0.84. The power is 0.84."
+          - problem: "A city tests H0: the water supply is safe, with alpha = 0.05. The test has beta = 0.20. A Type I error closes a safe supply; a Type II error lets unsafe water pass. State the more costly error as I or II, and give the power as a decimal."
+            answer: "error = II; power = 0.80"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["I"], ["II"]]}, "name": "error"}, {"contract": {"decimals": 2, "kind": "approx"}, "name": "power"}]}
+            solution_sketch: "Step 1: Under H0 the water is safe; a Type II error means failing to detect unsafe water, so it is more costly here. Step 2: The power rule is power = 1 - beta, with beta = 0.20. Step 3: Compute 1 - 0.20 = 0.80. Step 4: Choosing I would name the Type I error, closing a safe supply, which is less costly in this setting. The answer is error = II; power = 0.80."
+          - problem: "A researcher wants greater power but will not change the significance level. Select the change that best increases power."
+            answer: "use a larger sample"
+            answer_contract: {"kind": "label", "options": [["use a larger sample"], ["use a smaller sample"], ["raise the significance level"], ["reduce the effect size"]]}
+            solution_sketch: "Step 1: Power rises when the standard error falls or when alpha rises; alpha is fixed here. Step 2: A larger sample reduces the standard error and increases power. Step 3: The option use a smaller sample is wrong because a smaller sample lowers power. Step 4: The option raise the significance level is wrong because the researcher will not change alpha. Step 5: The option reduce the effect size is wrong because a smaller real effect is harder to detect. The correct choice is use a larger sample."
+          - problem: "The power of a test, computed only as 1 minus beta, is 0.93. Give beta as a decimal."
+            answer: "0.07"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1: Write the power rule power = 1 - beta. Step 2: Substitute 0.93 = 1 - beta. Step 3: Solve beta = 1 - 0.93 = 0.07. Beta is 0.07."
+          - problem: "A court tests H0: the defendant is innocent, with alpha = 0.05. The test has power 0.90. A Type I error convicts an innocent person; a Type II error frees a guilty person. State the more costly error as I or II, and give beta as a decimal."
+            answer: "error = I; beta = 0.10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["I"], ["II"]]}, "name": "error"}, {"contract": {"decimals": 2, "kind": "approx"}, "name": "beta"}]}
+            solution_sketch: "Step 1: Under H0 the defendant is innocent; a Type I error convicts an innocent person, which is the more serious cost here. Step 2: The power rule is power = 1 - beta, with power = 0.90. Step 3: Solve 0.90 = 1 - beta, so beta = 0.10. Step 4: Choosing II would name the Type II error, freeing a guilty person, which is less costly in this context. The answer is error = I; beta = 0.10."
+          - problem: "A test has probability of Type II error 0.25. Its power is computed only as 1 minus beta. Give the power as a fraction."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Identify beta, the Type II error probability, as 0.25. Step 2: Use the power rule power = 1 - beta. Step 3: Compute 1 - 0.25 = 0.75, which is 3/4. The power is 3/4."
         constraints: "power computed only via 1 - beta; context items weigh the real-world cost of each error"
     diagnostic_exemplar:
       problem: 'A factory tests each batch with $H_0$: "the batch meets the specification", at $\alpha = 0.01$, and the test has Type II error probability $\beta = 0.15$. Describe a Type I and a Type II error in context, give the probability of a Type I error when $H_0$ is true, and give the power of the test.'
@@ -290,19 +366,59 @@ topics:
         name: "Hypotheses about p and the normal-approximation conditions"
         key_prerequisites: [hypothesis-tests-logic, sample-proportions]
         exemplars:
-          - problem: 'A coin is suspected of being unfair in either direction and will be flipped $n = 100$ times. State the hypotheses about $p = P(\text{heads})$, and check the conditions $np_0 \ge 10$ and $n(1 - p_0) \ge 10$.'
-            answer: '$H_0: p = \frac{1}{2}$ vs $H_1: p \ne \frac{1}{2}$ (two-sided); $np_0 = 50 \ge 10$ and $n(1 - p_0) = 50 \ge 10$, so the normal approximation for $\hat{p}$ is justified.'
-          - problem: 'A supplier claims at most $10\%$ of parts are defective; an inspector suspects the rate is higher and will examine $n = 200$ parts. State the hypotheses and check the conditions.'
-            answer: '$H_0: p = 0.1$ vs $H_1: p > 0.1$ (one-sided); $np_0 = 20 \ge 10$ and $n(1 - p_0) = 180 \ge 10$ — conditions met.'
+          - problem: "A die is suspected of being biased in either direction. It will be rolled n = 120 times, and p is the probability that a roll is a six. The normal approximation for the sample proportion needs np0 and n(1 - p0) both at least 10. Find p0, np0, n(1 - p0), and the tail code, using code 1 for left-sided, 2 for right-sided, and 3 for two-sided."
+            answer: "p0 = 1/6; np0 = 20; nq0 = 100; tail = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p0"}, {"contract": {"kind": "exact"}, "name": "np0"}, {"contract": {"kind": "exact"}, "name": "nq0"}, {"contract": {"kind": "exact"}, "name": "tail"}]}
+            solution_sketch: "Step 1 (hypotheses): the hypotheses are about p, so H0: p = 1/6. The scenario says biased in either direction, so H1: p not equal 1/6 and the test is two-sided, tail code 3. Step 2 (conditions): compute np0 = 120 * (1/6) = 20 and n(1 - p0) = 120 * (5/6) = 100. Step 3 (comparison): both 20 and 100 are at least 10, so the normal approximation is justified. The answer is p0 = 1/6; np0 = 20; nq0 = 100; tail = 3."
+          - problem: "A supplier claims that at most 10% of parts are defective, but an inspector suspects the defect rate is higher and will inspect n = 250 parts. Let p be the true defect proportion. Check the normal-approximation conditions by computing np0 and n(1 - p0). Find p0, np0, n(1 - p0), and the tail code, where 1 is left-sided, 2 is right-sided, and 3 is two-sided."
+            answer: "p0 = 0.1; np0 = 25; nq0 = 225; tail = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p0"}, {"contract": {"kind": "exact"}, "name": "np0"}, {"contract": {"kind": "exact"}, "name": "nq0"}, {"contract": {"kind": "exact"}, "name": "tail"}]}
+            solution_sketch: "Step 1 (hypotheses): H0: p = 0.1. The inspector suspects the rate is higher, so H1: p > 0.1 and the test is right-sided, tail code 2. Step 2 (conditions): np0 = 250 * 0.1 = 25 and n(1 - p0) = 250 * 0.9 = 225. Step 3 (comparison): both 25 and 225 are at least 10, so the normal approximation is justified. The answer is p0 = 0.1; np0 = 25; nq0 = 225; tail = 2."
+          - problem: "A candidate claims that 40% of voters support her, but an opponent suspects the support is lower and plans a poll of n = 150 voters. Let p be the true support proportion. Check the normal-approximation conditions by computing np0 and n(1 - p0). Find p0, np0, n(1 - p0), and the tail code, where 1 is left-sided, 2 is right-sided, and 3 is two-sided."
+            answer: "p0 = 0.4; np0 = 60; nq0 = 90; tail = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p0"}, {"contract": {"kind": "exact"}, "name": "np0"}, {"contract": {"kind": "exact"}, "name": "nq0"}, {"contract": {"kind": "exact"}, "name": "tail"}]}
+            solution_sketch: "Step 1 (hypotheses): H0: p = 0.4. The opponent suspects support is lower, so H1: p < 0.4 and the test is left-sided, tail code 1. Step 2 (conditions): np0 = 150 * 0.4 = 60 and n(1 - p0) = 150 * 0.6 = 90. Step 3 (comparison): both 60 and 90 are at least 10, so the normal approximation is justified. The answer is p0 = 0.4; np0 = 60; nq0 = 90; tail = 1."
+          - problem: "A spinner is suspected of not landing on red with probability 1/4, in either direction. It will be spun n = 80 times, and p is the probability of red. Check the normal-approximation conditions by computing np0 and n(1 - p0). Find p0, np0, n(1 - p0), and the tail code, where 1 is left-sided, 2 is right-sided, and 3 is two-sided."
+            answer: "p0 = 1/4; np0 = 20; nq0 = 60; tail = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p0"}, {"contract": {"kind": "exact"}, "name": "np0"}, {"contract": {"kind": "exact"}, "name": "nq0"}, {"contract": {"kind": "exact"}, "name": "tail"}]}
+            solution_sketch: "Step 1 (hypotheses): H0: p = 1/4. The spinner is suspected of being off in either direction, so H1: p not equal 1/4 and the test is two-sided, tail code 3. Step 2 (conditions): np0 = 80 * (1/4) = 20 and n(1 - p0) = 80 * (3/4) = 60. Step 3 (comparison): both 20 and 60 are at least 10, so the normal approximation is justified. The answer is p0 = 1/4; np0 = 20; nq0 = 60; tail = 3."
+          - problem: "A package insert states that a mild side effect occurs with probability 0.02. A researcher suspects the true rate is higher and will observe n = 400 patients, testing H0: p = 0.02 against H1: p > 0.02. The normal approximation for the sample proportion requires np0 >= 10 and n(1 - p0) >= 10. Compute np0 and n(1 - p0), and decide whether both conditions hold. Give np0, n(1 - p0), and the code met, where met = 1 if both conditions hold and met = 0 if at least one condition fails."
+            answer: "np0 = 8; nq0 = 392; met = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "np0"}, {"contract": {"kind": "exact"}, "name": "nq0"}, {"contract": {"kind": "exact"}, "name": "met"}]}
+            solution_sketch: "Step 1 (hypotheses): the null value is p0 = 0.02, and the researcher suspects a higher rate, so the test is right-sided. Step 2 (conditions): compute np0 = 400 * 0.02 = 8 and n(1 - p0) = 400 * 0.98 = 392. Step 3 (comparison): np0 = 8 is below the bar of 10, so one condition fails even though 392 is at least 10; at least one condition fails, so met = 0 and the normal approximation is not justified. The answer is np0 = 8; nq0 = 392; met = 0."
+          - problem: "A restaurant claims that 75% of customers prefer a new menu, but a manager suspects the true proportion is lower and samples n = 40 customers. Let p be the true preference proportion. Check the normal-approximation conditions by computing np0 and n(1 - p0). Find p0, np0, n(1 - p0), and the tail code, where 1 is left-sided, 2 is right-sided, and 3 is two-sided."
+            answer: "p0 = 0.75; np0 = 30; nq0 = 10; tail = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p0"}, {"contract": {"kind": "exact"}, "name": "np0"}, {"contract": {"kind": "exact"}, "name": "nq0"}, {"contract": {"kind": "exact"}, "name": "tail"}]}
+            solution_sketch: "Step 1 (hypotheses): H0: p = 0.75. The manager suspects the true proportion is lower, so H1: p < 0.75 and the test is left-sided, tail code 1. Step 2 (conditions): np0 = 40 * 0.75 = 30 and n(1 - p0) = 40 * 0.25 = 10. Step 3 (comparison): both 30 and 10 are at least 10, so the normal approximation is justified. The answer is p0 = 0.75; np0 = 30; nq0 = 10; tail = 1."
         constraints: "hypotheses are about p, never about p-hat; both np0 and n(1 - p0) computed explicitly against the >= 10 bar; one- vs two-sided justified from the scenario"
       - id: kp2
         name: "The z statistic for a proportion"
         key_prerequisites: [sample-proportions, one-sample-z-test]
         exemplars:
-          - problem: 'Test $H_0: p = \frac{1}{5}$ for a defect rate. In $n = 100$ parts, $28$ are defective. Compute the test statistic $z$.'
-            answer: '$\operatorname{SE} = \sqrt{\frac{(1/5)(4/5)}{100}} = \frac{1}{25} = 0.04$; $\hat{p} = 0.28$; $z = \dfrac{0.28 - 0.20}{0.04} = 2$.'
-          - problem: 'Test $H_0: p = \frac{1}{2}$ for a coin. In $n = 25$ flips, $16$ are heads. Compute $z$.'
-            answer: '$\operatorname{SE} = \sqrt{\frac{1/4}{25}} = \frac{1}{10}$; $\hat{p} = 0.64$; $z = \dfrac{0.64 - 0.50}{0.1} = 1.4$.'
+          - problem: "A factory claims that one fifth of its parts are defective. In a sample of 25 parts, 12 are defective. Test H0: p = 1/5. Compute the test statistic z as a fraction."
+            answer: "7/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Under H0 the standard error uses p0 = 1/5, so SE = sqrt((1/5)(4/5)/25) = 2/25. The sample proportion is p-hat = 12/25. The z statistic formula gives z = (12/25 - 1/5)/(2/25) = (7/25)/(2/25) = 7/2. So the test statistic is z = 7/2."
+          - problem: "A coin is suspected of bias. In 16 flips, 13 are heads. Test H0: p = 1/2. Compute the test statistic z as a fraction."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Under H0 the standard error is SE = sqrt((1/2)(1/2)/16) = 1/8. The sample proportion is p-hat = 13/16. The z statistic formula gives z = (13/16 - 1/2)/(1/8) = (5/16)/(1/8) = 5/2. So the test statistic is z = 5/2."
+          - problem: "For H0: p = 1/3 with n = 18, the test statistic is z = 2. Find the number of successes in the sample."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Under H0 the standard error is SE = sqrt((1/3)(2/3)/18) = 1/9. The z statistic formula gives p-hat = p0 + z*SE = 1/3 + 2*(1/9) = 5/9. Then the number of successes is n*p-hat = 18*(5/9) = 10. So the number of successes is 10."
+          - problem: "A survey tests H0: p = 2/5 with n = 24. The sample proportion is 0.25. Compute the test statistic z as a fraction."
+            answer: "-3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Under H0 the standard error is SE = sqrt((2/5)(3/5)/24) = 1/10. The sample proportion is p-hat = 0.25 = 1/4. The z statistic formula gives z = (1/4 - 2/5)/(1/10) = (-3/20)/(1/10) = -3/2. So the test statistic is z = -3/2."
+          - problem: "A die is suspected of bias toward six. In 20 rolls, a six appears 10 times. Test H0: p = 1/6. Compute the test statistic z."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Under H0 the standard error is SE = sqrt((1/6)(5/6)/20) = 1/12. The sample proportion is p-hat = 10/20 = 1/2. The z statistic formula gives z = (1/2 - 1/6)/(1/12) = (1/3)/(1/12) = 4. So the test statistic is z = 4."
+          - problem: "A seed company claims that three quarters of its seeds germinate. In a sample of 12 seeds, 6 germinate. Test H0: p = 3/4. Compute the test statistic z."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Under H0 the standard error is SE = sqrt((3/4)(1/4)/12) = 1/8. The sample proportion is p-hat = 6/12 = 1/2. The z statistic formula gives z = (1/2 - 3/4)/(1/8) = (-1/4)/(1/8) = -2. So the test statistic is z = -2."
         constraints: "p0 a simple fraction with p0(1-p0)/n a perfect square of a fraction, so the SE is exact; the SE under H0 uses p0, never p-hat; z comes out to tenths, halves, or whole numbers"
       - id: kp3
         name: "The full test, and the z-interval for p"
@@ -356,6 +472,22 @@ topics:
           - problem: 'A one-sample t procedure uses a sample of $n = 15$. Give the degrees of freedom.'
             answer: "14"
             solution_sketch: '$\text{df} = n - 1 = 14$.'
+          - problem: "When the population standard deviation is unknown, the standard error of the sample mean is estimated by s/sqrt(n). A sample of n = 16 has s = 20. Compute the estimated standard error."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the estimated standard error rule SE = s/sqrt(n). Substitute s = 20 and n = 16, so sqrt(n) = 4. The computation is 20/4 = 5, so the estimated standard error is 5."
+          - problem: "A one-sample t procedure uses a sample of n = 31 observations. Give the degrees of freedom."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the degrees of freedom rule df = n - 1 for a one-sample t procedure. Substitute n = 31 into df = n - 1. The computation is 31 - 1 = 30, so the degrees of freedom are 30."
+          - problem: "A sample has sample standard deviation s = 18. Its estimated standard error is 3. Find the sample size n."
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the estimated standard error rule SE = s/sqrt(n). Substitute SE = 3 and s = 18, giving 3 = 18/sqrt(n). Then sqrt(n) = 18/3 = 6, so n = 6^2 = 36. The sample size is 36."
+          - problem: "A study runs a one-sample t procedure with 23 observations. State the degrees of freedom."
+            answer: "22"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the degrees of freedom rule df = n - 1 for a one-sample t procedure. Substitute n = 23 into df = n - 1. The computation is 23 - 1 = 22, so the degrees of freedom are 22."
         constraints: "n a perfect square when the SE is computed; df = n - 1 asked directly"
       - id: kp2
         name: "Heavier tails, approaching the normal"
@@ -367,6 +499,22 @@ topics:
           - problem: 'Using the same excerpt: how much larger is the df-$4$ critical value than the normal value $1.960$?'
             answer: "0.816"
             solution_sketch: '$2.776 - 1.960 = 0.816$ — small samples pay a premium for estimating $\sigma$.'
+          - problem: "Excerpt of two-sided 90% critical values: df 5 gives 2.015; the normal value is 1.645. How much larger is the df-5 critical value than the normal value? Give the difference to 3 decimals."
+            answer: "0.370"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Table step: the df-5 two-sided 90% critical value is 2.015, and the normal 90% value is 1.645. Difference step: subtract the normal value from the df-5 value, 2.015 - 1.645 = 0.370. The t-distribution has heavier tails at small df, so the difference is 0.370."
+          - problem: "Excerpt of two-sided 95% critical values: df 10 gives 2.228; df 50 gives 2.009. How much larger is the df-10 critical value than the df-50 critical value? Give the difference to 3 decimals."
+            answer: "0.219"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Table step: the df-10 two-sided 95% critical value is 2.228, and the df-50 value is 2.009. Difference step: 2.228 - 2.009 = 0.219. As df grows the t critical value moves toward the normal value, so the difference is 0.219."
+          - problem: "Excerpt of two-sided 99% critical values: df 6 gives 3.707; the normal value is 2.576. How much larger is the df-6 critical value than the normal value? Give the difference to 3 decimals."
+            answer: "1.131"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Table step: the df-6 two-sided 99% critical value is 3.707, and the normal 99% value is 2.576. Difference step: 3.707 - 2.576 = 1.131. At 99% confidence the small-sample t value is far above the normal value, so the difference is 1.131."
+          - problem: "Excerpt of two-sided 95% critical values: df 15 gives 2.131; df 25 gives 2.060. How much larger is the df-15 critical value than the df-25 critical value? Give the difference to 3 decimals."
+            answer: "0.071"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Table step: the df-15 two-sided 95% critical value is 2.131, and the df-25 value is 2.060. Difference step: 2.131 - 2.060 = 0.071. The smaller sample has the heavier tail, so the difference is 0.071."
         constraints: "table excerpts always printed in the problem; comparisons quantitative (differences), not verbal"
       - id: kp3
         name: "Reading critical values"
@@ -413,10 +561,30 @@ topics:
         name: "The t statistic"
         key_prerequisites: [one-sample-z-test, t-distribution]
         exemplars:
-          - problem: 'Test $H_0: \mu = 100$. A sample of $n = 16$ has $\bar{x} = 104$ and $s = 8$. Compute $t$ and the degrees of freedom.'
-            answer: '$\operatorname{SE} = 8/4 = 2$; $t = \dfrac{104 - 100}{2} = 2$; df $= 15$.'
-          - problem: 'Test $H_0: \mu = 60$ with $n = 9$, $\bar{x} = 57$, $s = 6$. Compute $t$ and the df.'
-            answer: '$\operatorname{SE} = 2$; $t = -1.5$; df $= 8$.'
+          - problem: "Test H0: mu = 50. A sample of n = 36 has xbar = 53 and s = 12. Compute the t statistic and the degrees of freedom, and give the answer as (t, df)."
+            answer: "(1.5, 35)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Compute the standard error with SE = s/sqrt(n): 12/sqrt(36) = 12/6 = 2. Compute the t statistic with t = (xbar - mu0)/SE: (53 - 50)/2 = 1.5. Compute the degrees of freedom with df = n - 1: 36 - 1 = 35. So the answer is (1.5, 35)."
+          - problem: "A test uses H0: mu = 200. The sample has n = 49, xbar = 193, and s = 14. Compute the t statistic and the degrees of freedom, and give the answer as (t, df)."
+            answer: "(-3.5, 48)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Compute the standard error with SE = s/sqrt(n): 14/sqrt(49) = 14/7 = 2. Compute the t statistic with t = (xbar - mu0)/SE: (193 - 200)/2 = -3.5. Compute the degrees of freedom with df = n - 1: 49 - 1 = 48. So the answer is (-3.5, 48)."
+          - problem: "A quality check tests H0: mu = 12. A sample of n = 25 items has xbar = 15 and s = 5. Compute the t statistic and the degrees of freedom, and give the answer as (t, df)."
+            answer: "(3, 24)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Use the standard error formula SE = s/sqrt(n): 5/sqrt(25) = 5/5 = 1. Use the t statistic formula t = (xbar - mu0)/SE: (15 - 12)/1 = 3. Use the degrees of freedom formula df = n - 1: 25 - 1 = 24. So the answer is (3, 24)."
+          - problem: "A study tests H0: mu = 80. The sample size is n = 64, the sample mean is xbar = 76, and the sample standard deviation is s = 16. Compute the t statistic and the degrees of freedom, and give the answer as (t, df)."
+            answer: "(-2, 63)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Find the standard error using SE = s/sqrt(n): 16/sqrt(64) = 16/8 = 2. Find the t statistic using t = (xbar - mu0)/SE: (76 - 80)/2 = -2. Find the degrees of freedom using df = n - 1: 64 - 1 = 63. So the answer is (-2, 63)."
+          - problem: "A lab tests H0: mu = 5. It records n = 9, xbar = 8, and s = 3. Compute the t statistic and the degrees of freedom, and give the answer as (t, df)."
+            answer: "(3, 8)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Compute the standard error via SE = s/sqrt(n): 3/sqrt(9) = 3/3 = 1. Compute the t statistic via t = (xbar - mu0)/SE: (8 - 5)/1 = 3. Compute the degrees of freedom via df = n - 1: 9 - 1 = 8. So the answer is (3, 8)."
+          - problem: "A survey tests H0: mu = 100. The sample has n = 100, xbar = 97, and s = 20. Compute the t statistic and the degrees of freedom, and give the answer as (t, df)."
+            answer: "(-1.5, 99)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Determine the standard error from SE = s/sqrt(n): 20/sqrt(100) = 20/10 = 2. Determine the t statistic from t = (xbar - mu0)/SE: (97 - 100)/2 = -1.5. Determine the degrees of freedom from df = n - 1: 100 - 1 = 99. So the answer is (-1.5, 99)."
         constraints: "sigma never given — only s; s and n give integer SEs; t comes out to halves or whole numbers"
       - id: kp2
         name: "Decision with a t critical value"
@@ -431,10 +599,30 @@ topics:
         name: "The full t-test in context"
         key_prerequisites: [one-sample-z-test, t-distribution]
         exemplars:
-          - problem: 'Espresso shots should average $30$ ml. A sample of $n = 16$ shots has $\bar{x} = 28.8$ ml and $s = 3.2$ ml. Test $H_0: \mu = 30$ against $H_1: \mu \ne 30$ at $\alpha = 0.05$ with $t^* = 2.131$ (df $15$). Conclude in context.'
-            answer: '$\operatorname{SE} = 0.8$; $t = -1.5$; $|-1.5| < 2.131$: fail to reject $H_0$ — no convincing evidence the dose is off.'
-          - problem: 'A battery brand claims a mean life of $20$ hours. A sample of $n = 9$ has $\bar{x} = 18.5$ h and $s = 1.8$ h. Test $H_0: \mu = 20$ against $H_1: \mu < 20$ at $\alpha = 0.05$ with one-sided $t^* = -1.860$ (df $8$, given). Conclude in context.'
-            answer: '$\operatorname{SE} = 0.6$; $t = -2.5 < -1.860$: reject $H_0$ — evidence the batteries fall short of the claimed $20$ hours.'
+          - problem: "A juice bottler aims for a mean fill of 500 ml. A sample of n = 16 bottles has xbar = 497 ml and s = 8 ml. Test H0: mu = 500 against H1: mu != 500 at alpha = 0.05, using t* = 2.131 (df = 15). State the decision and give the t statistic."
+            answer: "decision = retain; t = -3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["retain"], ["reject"]]}, "name": "decision"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Full object: n = 16, xbar = 497, s = 8, mu0 = 500, t* = 2.131. Step 1: use the standard error formula SE = s/sqrt(n) = 8/4 = 2. Step 2: use the t statistic formula t = (xbar - mu0)/SE = (497 - 500)/2 = -3/2. Step 3: compare |t| = 1.5 with t* = 2.131; since 1.5 < 2.131, retain H0. The answer is decision = retain; t = -3/2."
+          - problem: "A sleep aid claims a mean increase of 30 minutes in sleep time. A sample of n = 9 people has xbar = 27 minutes and s = 3.6 minutes. Test H0: mu = 30 against H1: mu < 30 at alpha = 0.05, using t* = -1.860 (df = 8). State the decision and give the t statistic."
+            answer: "decision = reject; t = -5/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "decision"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Full object: n = 9, xbar = 27, s = 3.6, mu0 = 30, t* = -1.860. Step 1: use the standard error formula SE = s/sqrt(n) = 3.6/3 = 1.2. Step 2: use the t statistic formula t = (xbar - mu0)/SE = (27 - 30)/1.2 = -5/2. Step 3: compare t = -2.5 with t* = -1.860; since -2.5 < -1.860, reject H0. The answer is decision = reject; t = -5/2."
+          - problem: "A fertilizer claims a mean yield increase of 50 kg. A sample of n = 25 plots has xbar = 53 kg and s = 10 kg. Test H0: mu = 50 against H1: mu > 50 at alpha = 0.05, using t* = 1.711 (df = 24). Which conclusion is correct?"
+            answer: "retain H0: no evidence mean yield exceeds 50 kg"
+            answer_contract: {"kind": "label", "options": [["retain H0: no evidence mean yield exceeds 50 kg"], ["reject H0: evidence mean yield exceeds 50 kg"], ["reject H0: evidence mean yield below 50 kg"], ["retain H0: no evidence mean yield differs from 50 kg"]]}
+            solution_sketch: "Full object: n = 25, xbar = 53, s = 10, mu0 = 50, t* = 1.711. Step 1: use the standard error formula SE = s/sqrt(n) = 10/5 = 2. Step 2: use the t statistic formula t = (xbar - mu0)/SE = (53 - 50)/2 = 3/2. Step 3: compare t = 1.5 with t* = 1.711; since 1.5 < 1.711, fail to reject H0. The correct conclusion is retain H0: no evidence mean yield exceeds 50 kg. The option reject H0: evidence mean yield exceeds 50 kg is wrong because it rejects when t is below the critical value. The option reject H0: evidence mean yield below 50 kg is wrong because it uses the opposite direction. The option retain H0: no evidence mean yield differs from 50 kg is wrong because it states a two-sided conclusion. The answer is retain H0: no evidence mean yield exceeds 50 kg."
+          - problem: "A machine cuts rods to a target length of 40 cm. A sample of n = 16 rods has xbar = 39.5 cm and s = 1.2 cm. Test H0: mu = 40 against H1: mu < 40. Find the t statistic."
+            answer: "-5/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: n = 16, xbar = 39.5, s = 1.2, mu0 = 40. Step 1: use the standard error formula SE = s/sqrt(n) = 1.2/4 = 0.3. Step 2: use the t statistic formula t = (xbar - mu0)/SE = (39.5 - 40)/0.3 = -5/3. The answer is -5/3."
+          - problem: "A light bulb brand claims a mean life of 1000 hours. A sample of n = 9 bulbs has xbar = 980 hours and s = 30 hours. Test H0: mu = 1000 against H1: mu < 1000. Find the t statistic."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: n = 9, xbar = 980, s = 30, mu0 = 1000. Step 1: use the standard error formula SE = s/sqrt(n) = 30/3 = 10. Step 2: use the t statistic formula t = (xbar - mu0)/SE = (980 - 1000)/10 = -2. The answer is -2."
+          - problem: "A coffee shop aims for a mean espresso volume of 250 ml. A sample of n = 25 shots has xbar = 249 ml and s = 5 ml. Test H0: mu = 250 against H1: mu != 250. Find the t statistic."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: n = 25, xbar = 249, s = 5, mu0 = 250. Step 1: use the standard error formula SE = s/sqrt(n) = 5/5 = 1. Step 2: use the t statistic formula t = (xbar - mu0)/SE = (249 - 250)/1 = -1. The answer is -1."
         constraints: "metric contexts; conclusions in the scenario's units; both one- and two-sided cases appear across a set"
     diagnostic_exemplar:
       problem: 'A bakery''s loaves should weigh $800$ g on average. A sample of $n = 16$ loaves has $\bar{x} = 806$ g and $s = 8$ g. Test $H_0: \mu = 800$ against $H_1: \mu \ne 800$ at $\alpha = 0.05$ ($t^* = 2.131$, df $15$). Give $t$, the decision, and a conclusion in context.'
@@ -488,10 +676,30 @@ topics:
         name: "Analyzing a treatment/control experiment end-to-end"
         key_prerequisites: [one-sample-t-test, experimental-design-basics]
         exemplars:
-          - problem: '$32$ tomato plants are randomly split: $16$ get a new fertiliser, $16$ get none. Yields: treated $\bar{x}_1 = 960$ g, $s_1 = 120$ g; control $\bar{x}_2 = 810$ g, $s_2 = 160$ g. Test $H_0: \mu_1 = \mu_2$ against $H_1: \mu_1 \ne \mu_2$ at $\alpha = 0.05$ with $t^* = 2.131$ (conservative df $15$, given). Conclude in context — may the conclusion be causal?'
-            answer: '$\operatorname{SE} = \sqrt{900 + 1600} = 50$; $t = \dfrac{150}{50} = 3 > 2.131$: reject $H_0$ — evidence the fertiliser raises yield, and because plants were randomly assigned, the difference can be attributed to the fertiliser itself.'
-          - problem: 'Two filling machines are compared: machine A gives $n_1 = 25$ bottles with $\bar{x}_1 = 502$ ml, $s_1 = 15$ ml; machine B gives $n_2 = 16$ bottles with $\bar{x}_2 = 498$ ml, $s_2 = 16$ ml. Two-sided test at $\alpha = 0.05$ with $t^* = 2.131$ (conservative df $15$). Conclude in context.'
-            answer: '$\operatorname{SE} = \sqrt{9 + 16} = 5$; $t = \dfrac{502 - 498}{5} = 0.8$, and $|0.8| < 2.131$: fail to reject $H_0$ — no convincing evidence the machines fill differently.'
+          - problem: "A randomised trial gives a new feed to 16 chickens and a standard feed to 16 others. Weight gain in grams: new-feed group has mean 420 g and standard deviation 12 g; standard-feed group has mean 400 g and standard deviation 16 g. Test H0: mu1 = mu2 against H1: mu1 not equal mu2 at alpha = 0.05 with t* = 2.131 (conservative df 15, given). Give the t statistic and the decision."
+            answer: "verdict = reject; t = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1 standard error: sqrt(12^2/16 + 16^2/16) = sqrt(9 + 16) = 5. Step 2 t statistic: (420 - 400) / 5 = 4. Step 3 decision: the given t* is 2.131, and 4 > 2.131, so the null hypothesis is rejected. Because the chickens were randomly assigned, the conclusion is causal: the new feed increases weight gain. Choosing retain would be the error of treating a t statistic larger than t* as non-significant. The answer is verdict = reject; t = 4."
+          - problem: "Two filling machines are compared. Machine A fills 36 bottles with mean 505 ml and standard deviation 18 ml; machine B fills 25 bottles with mean 500 ml and standard deviation 20 ml. Test H0: mu1 = mu2 against H1: mu1 not equal mu2 at alpha = 0.05 with t* = 2.064 (conservative df 24, given). Give the t statistic and the decision."
+            answer: "verdict = retain; t = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1 standard error: sqrt(18^2/36 + 20^2/25) = sqrt(9 + 16) = 5. Step 2 t statistic: (505 - 500) / 5 = 1. Step 3 decision: the given t* is 2.064, and |1| < 2.064, so the null hypothesis is retained. No random assignment is stated, so the conclusion is only that there is no convincing evidence the machines fill differently. Choosing reject would be the error of treating a small t statistic as significant. The answer is verdict = retain; t = 1."
+          - problem: "An observational study records daily step counts in hundreds for 49 coffee drinkers and 36 non-drinkers. Coffee group: mean 112 and standard deviation 21; non-coffee group: mean 100 and standard deviation 24. Test H0: mu1 = mu2 against H1: mu1 not equal mu2 at alpha = 0.05 with t* = 2.030 (conservative df 35, given). Give the t statistic and the decision."
+            answer: "verdict = reject; t = 12/5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1 standard error: sqrt(21^2/49 + 24^2/36) = sqrt(9 + 16) = 5. Step 2 t statistic: (112 - 100) / 5 = 12/5 = 2.4. Step 3 decision: the given t* is 2.030, and 2.4 > 2.030, so the null hypothesis is rejected. The study is observational, so the conclusion is an association between coffee drinking and step count, not a causal effect. Choosing retain would be the error of missing a t statistic beyond t*. The answer is verdict = reject; t = 12/5."
+          - problem: "A randomised experiment assigns 25 stores to a new layout and 25 stores to the standard layout. Weekly sales in hundreds of dollars: new layout has mean 510 and standard deviation 15; standard layout has mean 500 and standard deviation 20. Test H0: mu1 = mu2 against H1: mu1 greater than mu2 at alpha = 0.05 with t* = 1.711 (conservative df 24, given). Give the t statistic and the decision."
+            answer: "verdict = reject; t = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1 standard error: sqrt(15^2/25 + 20^2/25) = sqrt(9 + 16) = 5. Step 2 t statistic: (510 - 500) / 5 = 2. Step 3 decision: the given one-sided t* is 1.711, and 2 > 1.711, so the null hypothesis is rejected in favor of mu1 greater than mu2. Random assignment supports a causal conclusion: the new layout increases weekly sales. Choosing retain would be the error of missing a t statistic beyond the one-sided t*. The answer is verdict = reject; t = 2."
+          - problem: "A study compares two teaching methods. Method A: 25 students, mean score 80 points, standard deviation 12 points. Method B: 25 students, mean score 70 points, standard deviation 16 points. A two-sided test at alpha = 0.05 would use t* = 2.064 (conservative df 24, given). Find the standard error and the t statistic."
+            answer: "se = 4; t = 5/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "se"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1 standard error: sqrt(12^2/25 + 16^2/25) = sqrt(144/25 + 256/25) = sqrt(400/25) = sqrt(16) = 4. Step 2 t statistic: (80 - 70) / 4 = 10/4 = 5/2. The answer is se = 4; t = 5/2."
+          - problem: "A randomised trial compares a new supplement with a placebo. Supplement group: 25 subjects, mean 45 points, standard deviation 9 points. Placebo group: 25 subjects, mean 33 points, standard deviation 12 points. A two-sided test at alpha = 0.05 would use t* = 2.064 (conservative df 24, given). Find the standard error and the t statistic."
+            answer: "se = 3; t = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "se"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1 standard error: sqrt(9^2/25 + 12^2/25) = sqrt(81/25 + 144/25) = sqrt(225/25) = sqrt(9) = 3. Step 2 t statistic: (45 - 33) / 3 = 12/3 = 4. The answer is se = 3; t = 4."
         constraints: "metric contexts; t* always supplied with its (conservative) df; conclusions in the scenario's units; causal language only when the scenario states random assignment, never for observational comparisons"
     diagnostic_exemplar:
       problem: '$32$ students are randomly split: $16$ revise with a study app, $16$ without, and all sit the same exam marked out of $10$. App group: $\bar{x}_1 = 8.0$, $s_1 = 1.2$; control: $\bar{x}_2 = 6.5$, $s_2 = 1.6$. Test $H_0: \mu_1 = \mu_2$ against $H_1: \mu_1 \ne \mu_2$ at $\alpha = 0.05$ with $t^* = 2.131$ (conservative df $15$). Give $t$, the decision, and a conclusion in context.'
@@ -530,19 +738,59 @@ topics:
         name: "Expected counts under H0"
         key_prerequisites: [discrete-probability-distributions]
         exemplars:
-          - problem: 'A die is rolled $60$ times. Under $H_0$: "the die is fair", what is the expected count for each face?'
-            answer: '$60 \cdot \frac{1}{6} = 10$ per face.'
-          - problem: 'A shop claims its sales split $50\%$ red, $30\%$ blue, $20\%$ green. In $200$ sales, give the three expected counts.'
-            answer: '$100$, $60$, and $40$ — each is $n \cdot p_i$.'
+          - problem: "A fair six-sided die is rolled 90 times. Assume the die is fair. Give the expected count for each face as a comma-separated list."
+            answer: "15, 15, 15, 15, 15, 15"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Expected count rule: each expected count is n times its category probability. The die is fair, so each face has probability 1/6, and n = 90. Multiply: 90 times 1/6 = 15 for each of the six faces. The expected counts in face order are 15, 15, 15, 15, 15, 15."
+          - problem: "A website claims visitors choose page A 40%, page B 35%, and page C 25%. There are 300 visits. Give the expected counts in the order A, B, C as a comma-separated list."
+            answer: "120, 105, 75"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Expected count rule: for each category, expected count is n times p. With n = 300, the counts are 300(0.40) = 120, 300(0.35) = 105, and 300(0.25) = 75. In the order A, B, C the list is 120, 105, 75."
+          - problem: "A four-category model has probabilities 0.10, 0.20, 0.30, and 0.40. The expected count for the third category is 45. Find the total sample size n."
+            answer: "150"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expected count rule: the expected count for a category equals n times its probability. For the third category, 45 = n(0.30). Divide each side by 0.30: n = 150. The total sample size is 150."
+          - problem: "A sample of 200 observations is classified into four categories with expected counts 40, 60, 70, and x. Find x."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In a goodness-of-fit table, the expected counts must sum to the total sample size. The three given counts sum to 40 + 60 + 70 = 170. Subtract from 200: x = 200 - 170 = 30. The missing expected count is 30."
+          - problem: "In a sample of 500, the null hypothesis gives category A probability 0.18. Find the expected count for category A."
+            answer: "90"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expected count rule: the expected count is the sample size times the null probability. Multiply 500 by 0.18: 500(0.18) = 90. The expected count for category A is 90."
+          - problem: "A spinner has three regions with null probabilities 1/4, 1/2, and 1/4. It is spun 64 times. Give the expected counts in region order as a comma-separated list."
+            answer: "16, 32, 16"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Expected count rule: each expected count equals n times the null probability for its region. With n = 64, the counts are 64(1/4) = 16, 64(1/2) = 32, and 64(1/4) = 16. In region order the expected counts are 16, 32, 16."
         constraints: "n times p_i is always a whole number; at most 6 categories"
       - id: kp2
         name: "The chi-square statistic"
         key_prerequisites: [summation-notation, discrete-probability-distributions]
         exemplars:
-          - problem: 'Observed counts $(12, 8, 10)$ against expected counts $(10, 10, 10)$. Compute $\chi^2 = \sum \dfrac{(O - E)^2}{E}$.'
-            answer: '$\chi^2 = \dfrac{4 + 4 + 0}{10} = 0.8$.'
-          - problem: 'Observed $(25, 15)$ against expected $(20, 20)$. Compute $\chi^2$.'
-            answer: '$\chi^2 = \dfrac{25}{20} + \dfrac{25}{20} = 2.5$.'
+          - problem: "Observed counts (14, 6, 10) against expected counts (10, 10, 10). Compute the chi-square statistic and give the answer to 2 decimals."
+            answer: "3.20"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Apply the chi-square formula. Compute each term: (14-10)^2/10 = 16/10 = 1.6, (6-10)^2/10 = 16/10 = 1.6, and (10-10)^2/10 = 0. Sum the terms: 1.6 + 1.6 + 0 = 3.2. The chi-square statistic is 3.20."
+          - problem: "Observed counts (24, 16) against expected counts (20, 20). Compute the chi-square statistic and give the answer to 2 decimals."
+            answer: "1.60"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Apply the chi-square formula. Compute each term: (24-20)^2/20 = 16/20 = 0.8, and (16-20)^2/20 = 16/20 = 0.8. Sum the terms: 0.8 + 0.8 = 1.6. The chi-square statistic is 1.60."
+          - problem: "A survey has observed counts (40, 20, 15, 25) and expected counts (25, 25, 25, 25). Compute the chi-square statistic."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the chi-square formula. Find each squared difference: (40-25)^2 = 225, (20-25)^2 = 25, (15-25)^2 = 100, (25-25)^2 = 0. Divide each by its expected count: 225/25 = 9, 25/25 = 1, 100/25 = 4, 0/25 = 0. Sum the contributions: 9 + 1 + 4 + 0 = 14. The chi-square statistic is 14."
+          - problem: "Observed counts (12, 18, 20) against expected counts (10, 20, 20). Compute the chi-square statistic and give the answer to 2 decimals."
+            answer: "0.60"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Apply the chi-square formula. Compute each term: (12-10)^2/10 = 4/10 = 0.4, (18-20)^2/20 = 4/20 = 0.2, and (20-20)^2/20 = 0. Sum the terms: 0.4 + 0.2 + 0 = 0.6. The chi-square statistic is 0.60."
+          - problem: "A sample of 300 plants has expected ratios 1:1:2:2, so expected counts are (50, 50, 100, 100). The observed counts are (45, 55, 105, 95). Compute the chi-square statistic and give the answer to 2 decimals."
+            answer: "1.50"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Apply the chi-square formula. Compute each term: (45-50)^2/50 = 25/50 = 0.5, (55-50)^2/50 = 25/50 = 0.5, (105-100)^2/100 = 25/100 = 0.25, and (95-100)^2/100 = 25/100 = 0.25. Sum the terms: 0.5 + 0.5 + 0.25 + 0.25 = 1.5. The chi-square statistic is 1.50."
+          - problem: "A six-sided die is rolled 120 times. Expected counts are 20 for each face. Observed counts are (18, 22, 25, 15, 20, 20). Compute the chi-square statistic and give the answer to 2 decimals."
+            answer: "2.90"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Apply the chi-square formula. Compute each term: (18-20)^2/20 = 4/20 = 0.2, (22-20)^2/20 = 4/20 = 0.2, (25-20)^2/20 = 25/20 = 1.25, (15-20)^2/20 = 25/20 = 1.25, (20-20)^2/20 = 0, and (20-20)^2/20 = 0. Sum the terms: 0.2 + 0.2 + 1.25 + 1.25 + 0 + 0 = 2.9. The chi-square statistic is 2.90."
         constraints: "(O - E)^2 values divide cleanly by E; observed and expected totals match; chi-square to at most 2 decimals"
       - id: kp3
         name: "Decision and degrees of freedom"
@@ -590,10 +838,30 @@ topics:
         name: "The slope varies from sample to sample"
         key_prerequisites: [least-squares-line, one-sample-t-test]
         exemplars:
-          - problem: 'State the null and alternative hypotheses for "there is no linear relationship between $x$ and $y$" in terms of the population slope $\beta$.'
-            answer: '$H_0: \beta = 0$; $H_1: \beta \ne 0$ — under $H_0$ the fitted slope $b$ differs from $0$ only by sampling variation.'
-          - problem: 'A regression of crop yield on fertiliser amount gives $b = 1.4$ with $\operatorname{SE}_b = 0.7$. Why can we not conclude $\beta > 0$ from $b > 0$ alone?'
-            answer: 'Because $b$ varies from sample to sample; $1.4$ is only $2$ SEs from $0$, a distance chance alone could produce — hence a formal test is needed.'
+          - problem: "A regression line is fitted to a sample of points. To test whether the population slope is zero, four students write null and alternative pairs. Select the pair that states the hypotheses correctly."
+            answer: "H0: beta = 0; H1: beta != 0"
+            answer_contract: {"kind": "label", "options": [["H0: beta = 0; H1: beta != 0"], ["H0: beta = 0; H1: beta > 0"], ["H0: beta = 0; H1: beta = 0"], ["H0: beta != 0; H1: beta = 0"]]}
+            solution_sketch: "The null hypothesis says there is no linear relationship, so the population slope beta is 0. The alternative says there is a linear relationship, so beta is not 0. The wrong option H0: beta = 0; H1: beta > 0 uses a one-sided alternative. The wrong option H0: beta = 0; H1: beta = 0 repeats the null. The wrong option H0: beta != 0; H1: beta = 0 reverses the hypotheses. The correct pair is H0: beta = 0; H1: beta != 0."
+          - problem: "A regression gives fitted slope b = 2.1 and standard error SE_b = 0.7. Find the variance of the sampling distribution of b."
+            answer: "0.49"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sampling distribution of the fitted slope b has standard deviation equal to the standard error SE_b. With SE_b = 0.7, the variance is the square of the standard error. Compute 0.7 squared = 0.49. The variance of the sampling distribution is 0.49."
+          - problem: "For a regression, the fitted slope is b = -1.5 and the standard error is SE_b = 0.4. Compute the variance of the sampling distribution of b."
+            answer: "0.16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The standard error SE_b is the standard deviation of the sampling distribution of b. With SE_b = 0.4, the variance is SE_b squared. Compute 0.4 squared = 0.16. The variance is 0.16."
+          - problem: "A regression gives fitted slope b = 3.2 and standard error SE_b = 0.8. Under the null hypothesis that the population slope is zero, state the mean of the sampling distribution of b."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Under the null hypothesis that the population slope is zero, the sampling distribution of b is centered at the population slope. That center is zero. The mean of the sampling distribution of b is 0."
+          - problem: "A regression gives fitted slope b = 1.8 and standard error SE_b = 0.5. The population slope is beta = 0.5. Find the difference b minus beta."
+            answer: "1.3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The fitted slope b estimates the population slope beta. The difference is b minus beta. Substitute b = 1.8 and beta = 0.5: 1.8 - 0.5 = 1.3. The difference is 1.3."
+          - problem: "A regression gives fitted slope b = 2.4 and standard error SE_b = 0.6. The population slope is beta = 1.1. Find the difference beta minus b."
+            answer: "-1.3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The fitted slope b estimates the population slope beta. The requested difference is beta minus b. Substitute beta = 1.1 and b = 2.4: 1.1 - 2.4 = -1.3. The difference is -1.3."
         constraints: "hypotheses are about beta, never about b; SE_b is always supplied, never computed from raw data"
       - id: kp2
         name: "The t statistic for the slope"

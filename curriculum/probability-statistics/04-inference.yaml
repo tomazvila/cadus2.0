@@ -997,6 +997,22 @@ topics:
           - problem: 'A 95% confidence interval for $\mu$ is $(12, 18)$. Which changes from sample to sample: (a) $\mu$; (b) the interval?'
             answer: '(b)'
             solution_sketch: '$\mu$ is a fixed parameter; different samples produce different intervals.'
+          - problem: "A 90% confidence interval for mu is (20, 30). A researcher says, 'There is a 90% chance that mu is between 20 and 30.' Give the verdict and the long-run capture percentage."
+            answer: "verdict = invalid; percent = 90"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "percent"}]}
+            solution_sketch: "Step 1: The interval (20, 30) and the claim are given. Step 2: A confidence level is the long-run capture rate of the method, not a probability for the fixed mu. The claim is invalid because it treats mu as random. The wrong option 'valid' makes that error. The capture percentage equals the confidence level, 90. The answer is verdict = invalid; percent = 90."
+          - problem: "A 99% confidence interval for mu is (5, 15). A report says, '99% of the data lie between 5 and 15.' Give the verdict and the long-run capture percentage."
+            answer: "verdict = invalid; percent = 99"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "percent"}]}
+            solution_sketch: "Step 1: The interval (5, 15) and the claim are given. Step 2: A confidence level is the capture rate of the method, not the proportion of data values inside the interval. The claim is invalid because it misreads the level as a data proportion. The wrong option 'valid' makes that error. The capture percentage equals the confidence level, 99. The answer is verdict = invalid; percent = 99."
+          - problem: "A 95% confidence interval for mean height is (160, 170) cm. A statistician says, 'If we repeat the study many times, about 95% of the resulting intervals will contain the true mean.' Give the verdict and the long-run capture percentage."
+            answer: "verdict = valid; percent = 95"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "percent"}]}
+            solution_sketch: "Step 1: The interval (160, 170) and the claim are given. Step 2: The statement correctly describes the long-run capture rate of the confidence method. The wrong option 'invalid' would wrongly deny that the method captures the true mean in about 95% of samples. The capture percentage equals the confidence level, 95. The answer is verdict = valid; percent = 95."
+          - problem: "An 80% confidence interval for mu is (40, 50). A student says, 'The probability that mu is in (40, 50) is 0.80.' Give the verdict and the long-run capture percentage."
+            answer: "verdict = invalid; percent = 80"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "percent"}]}
+            solution_sketch: "Step 1: The interval (40, 50) and the claim are given. Step 2: A confidence level is the long-run capture rate of the method, not a probability for the fixed mu. The claim is invalid because it treats mu as random. The wrong option 'valid' makes that error. The capture percentage equals the confidence level, 80. The answer is verdict = invalid; percent = 80."
         constraints: "interpretation items; distractors misread the level as a data proportion or treat mu as random"
       - id: kp3
         name: "Choosing the sample size"
@@ -1087,18 +1103,6 @@ topics:
         name: "Interpreting the correlation coefficient"
         key_prerequisites: [plotting-points]
         exemplars:
-          - problem: 'Which indicates a stronger linear relationship: $r = 0.4$ or $r = -0.7$?'
-            answer: 'r = -0.7'
-            answer_contract: {kind: label, options: [[r = 0.4], [r = -0.7]]}
-            solution_sketch: 'Sign gives direction, magnitude gives strength: $0.7 > 0.4$.'
-          - problem: 'What are the possible values of the correlation coefficient $r$?'
-            answer: '$-1 \le r \le 1$'
-            answer_contract: {kind: none}
-            solution_sketch: '$r$ always lies between $-1$ and $1$ inclusive.'
-          - problem: 'Describe the relationship when $r = -0.9$.'
-            answer: 'A strong negative linear relationship.'
-            answer_contract: {kind: none}
-            solution_sketch: '$|r| = 0.9$ is close to $1$ and the sign is negative: strong, negative, and linear.'
           - problem: 'Which indicates a stronger linear relationship: $r = 0.3$ or $r = -0.8$? Give $|r|$ of the stronger one.'
             answer: "0.8"
             solution_sketch: 'Strength is $|r|$: $0.8 > 0.3$, so $r = -0.8$ (negative direction) is stronger.'
@@ -1108,10 +1112,22 @@ topics:
           - problem: 'Give the largest possible value of the correlation coefficient $r$ as a number.'
             answer: "1"
             solution_sketch: '$r$ always lies between $-1$ and $1$; the maximum $r = 1$ is a perfect positive line.'
-          - problem: 'Two variables have $r = -0.6$. As $x$ increases, does $y$ tend to increase or decrease?'
-            answer: 'decrease'
-            answer_contract: {kind: label, options: [[increase], [decrease]]}
-            solution_sketch: 'A negative $r$ means $y$ tends to fall as $x$ rises.'
+          - problem: "Two variables have correlation coefficients r = 0.4 and r = -0.7 in separate studies. Give the absolute value of the stronger correlation coefficient."
+            answer: "0.7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The two correlations are r = 0.4 and r = -0.7. Strength is measured by |r|, so compute |0.4| = 0.4 and |-0.7| = 0.7. Compare the magnitudes: 0.7 > 0.4, so r = -0.7 is stronger. The absolute value of the stronger coefficient is 0.7."
+          - problem: "For two variables, the correlation coefficient is r = -0.6. State the sign of the association, and give |r|."
+            answer: "sign = negative; absr = 0.6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["negative"], ["positive"]]}, "name": "sign"}, {"contract": {"kind": "exact"}, "name": "absr"}]}
+            solution_sketch: "The correlation is r = -0.6. The sign of r gives the direction, so the association is negative; the wrong sign option positive would ignore the minus sign. The strength is |r| = 0.6. The answer is sign = negative; absr = 0.6."
+          - problem: "The correlation coefficient r measures the strength and direction of a linear relationship. Give all possible values of r as an inequality."
+            answer: "-1.0 <= r <= 1.0"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The correlation coefficient r is bounded by -1.0 and 1.0. A perfect positive line gives r = 1.0, and a perfect negative line gives r = -1.0. Therefore the possible values are -1.0 <= r <= 1.0."
+          - problem: "In a study, the correlation coefficient between hours of practice and performance score is r = 0.8. Select the best description of the linear relationship."
+            answer: "strong positive"
+            answer_contract: {"kind": "label", "options": [["strong positive"], ["weak positive"], ["strong negative"], ["no linear pattern"]]}
+            solution_sketch: "The correlation is r = 0.8. The magnitude |r| = 0.8 is close to 1, so the linear relationship is strong. The sign is positive, so the direction is positive. The option weak positive mistakes 0.8 for a small magnitude, strong negative uses the wrong sign, and no linear pattern ignores that |r| is near 1. The answer is strong positive."
         constraints: "r values given to one decimal; comparisons hinge on |r| vs sign"
       - id: kp3
         name: "Facts and cautions about r"
@@ -1189,6 +1205,14 @@ topics:
           - problem: 'Given $r = -0.4$, $s_x = 5$, $s_y = 10$, find the least-squares slope.'
             answer: "-0.8"
             solution_sketch: '$b = -0.4 \cdot \frac{10}{5} = -0.8$.'
+          - problem: "A study reports r = 0.75, s_x = 2, and s_y = 8 for two variables. Find the least-squares slope b = r s_y / s_x."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the least-squares slope rule: b = r times s_y divided by s_x. Substitute r = 0.75, s_y = 8, and s_x = 2 to get b = 0.75 times 4. Multiply to find b = 3. The least-squares slope is 3."
+          - problem: "For a data set, r = -0.5, s_x = 6, and s_y = 24. Compute the least-squares slope b = r s_y / s_x."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the least-squares slope rule: b = r times s_y divided by s_x. Substitute r = -0.5, s_y = 24, and s_x = 6 to get b = -0.5 times 4. Multiply to find b = -2. The least-squares slope is -2."
         constraints: "r, s_x, s_y chosen so b is an integer or half-integer"
       - id: kp2
         name: "Intercept and the point (x-bar, y-bar)"
@@ -1319,14 +1343,22 @@ topics:
         name: "Extrapolation caution"
         key_prerequisites: [least-squares-line]
         exemplars:
-          - problem: 'A line was fit to data with $x$ between $2$ and $10$. Predicting at $x = 40$ is an example of what? Answer with one word.'
-            answer: 'Extrapolation'
-            answer_contract: {kind: label, options: [[Extrapolation], [Interpolation]]}
-            solution_sketch: '$x = 40$ lies far outside the observed range $[2, 10]$, so the prediction is unreliable.'
-          - problem: 'A line was fit to data with $x$ between $2$ and $10$. Predicting at $x = 6$ is an example of what? Answer with one word.'
-            answer: 'Interpolation'
-            answer_contract: {kind: label, options: [[Extrapolation], [Interpolation]]}
-            solution_sketch: '$x = 6$ lies inside the observed range $[2, 10]$, where the fitted pattern is supported by data.'
+          - problem: "A least-squares line $\\hat{y} = 20 + 2x$ was fitted to data whose $x$-values run from $3$ to $12$. A new case has $x = 45$. State the one-word classification of the prediction made at this $x$-value, and give the predicted $y$-value."
+            answer: "verdict = extrapolation; pred = 110"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["interpolation"], ["extrapolation"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "pred"}]}
+            solution_sketch: "Step 1 (range check): the observed $x$-values run from 3 to 12, and 45 lies beyond the upper end 12, so the prediction reaches outside the data; the wrong label interpolation would ignore the stated $x$-range. Step 2 (least-squares line evaluation): $\\hat{y} = 20 + 2 \\cdot 45 = 110$. The answer is verdict = extrapolation; pred = 110."
+          - problem: "Data with $x$-values between $2$ and $14$ gave the least-squares line $\\hat{y} = 5 + 4x$. For a new case with $x = 8$, state the one-word classification of this prediction and give the predicted $y$-value."
+            answer: "verdict = interpolation; pred = 37"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["interpolation"], ["extrapolation"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "pred"}]}
+            solution_sketch: "Step 1 (range check): the observed $x$-values cover 2 to 14, and 8 lies inside this interval, so the prediction stays within the data; the wrong label extrapolation would mean going past an end of the stated range. Step 2 (least-squares line evaluation): $\\hat{y} = 5 + 4 \\cdot 8 = 37$. The answer is verdict = interpolation; pred = 37."
+          - problem: "A plant study fits $\\hat{y} = 40 + 3x$, where $x$ is fertilizer in grams, to data with $x$ ranging from $6$ to $24$. A prediction is wanted at $x = 2$. State the one-word classification that applies to this prediction, and give the predicted height."
+            answer: "verdict = extrapolation; pred = 46"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["interpolation"], ["extrapolation"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "pred"}]}
+            solution_sketch: "Step 1 (range check): the fertilizer data cover $x$ from 6 to 24, and 2 falls below the lower end 6, so the prediction goes outside the observed range on the low side; the wrong label interpolation would overlook that 2 is not between the stated limits. Step 2 (least-squares line evaluation): $\\hat{y} = 40 + 3 \\cdot 2 = 46$. The answer is verdict = extrapolation; pred = 46."
+          - problem: "A model of car fuel use is $\\hat{y} = 90 - 2x$ liters per 100 km, where $x$ is the speed; the data cover speeds from $10$ to $40$. A prediction is made at $x = 25$. State the one-word classification of this prediction, and give the predicted fuel use."
+            answer: "verdict = interpolation; pred = 40"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["interpolation"], ["extrapolation"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "pred"}]}
+            solution_sketch: "Step 1 (range check): the speed data run from 10 to 40, and 25 lies between these limits, so the prediction is supported by observed values; the wrong label extrapolation would apply only to a speed past 10 or 40, and 25 is not past either. Step 2 (least-squares line evaluation with a negative slope): $\\hat{y} = 90 - 2 \\cdot 25 = 40$. The answer is verdict = interpolation; pred = 40."
         constraints: "x-ranges stated explicitly; ask for the one-word classification (interpolation or extrapolation)"
     diagnostic_exemplar:
       problem: 'The regression line is $\hat{y} = 5 + 3x$; at $x = 4$ the observed value is $y = 15$. Give (predicted value, residual) as an ordered pair.'

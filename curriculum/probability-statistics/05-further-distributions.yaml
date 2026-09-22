@@ -58,6 +58,22 @@ topics:
           - problem: 'A Poisson variable has variance $25$. Find its standard deviation.'
             answer: "5"
             solution_sketch: '$\operatorname{SD} = \sqrt{\operatorname{Var}} = \sqrt{25} = 5$ (and the mean is also $25$).'
+          - problem: "A Poisson random variable has mean 9. Find its variance."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a Poisson random variable, the mean and the variance both equal the parameter of the distribution. Here the mean is 9, so the parameter is 9. The variance therefore also equals 9. The answer is 9."
+          - problem: "A Poisson random variable has variance 16. Find its standard deviation."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a Poisson random variable, the mean and the variance both equal the parameter, so the parameter is 16 here. The standard deviation is the square root of the variance: sqrt(16) = 4. The answer is 4."
+          - problem: "A Poisson random variable has standard deviation 8. Find its mean."
+            answer: "64"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a Poisson random variable, the mean and the variance both equal the parameter of the distribution. The standard deviation is the square root of the parameter, so the parameter is the square of the standard deviation: 8 squared is 64. The mean equals the parameter, so the mean is 64. The answer is 64."
+          - problem: "The number of defects on a metal sheet is Poisson with mean 36. Find the standard deviation."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For a Poisson random variable, the mean and the variance both equal the parameter. Here the mean is 36, so the variance is also 36. The standard deviation is the square root of the variance: sqrt(36) = 6. The answer is 6."
         constraints: "lambda a perfect square whenever the standard deviation is asked for; answers integers"
       - id: kp3
         name: "Complements and changing the window"
@@ -69,6 +85,22 @@ topics:
           - problem: '$X$ is Poisson with mean $1$. Using $e^{-1} \approx 0.3679$, find $P(X \ge 1)$ to four decimal places.'
             answer: "0.6321"
             solution_sketch: '$P(X \ge 1) = 1 - P(X = 0) = 1 - e^{-1} \approx 1 - 0.3679 = 0.6321$.'
+          - problem: "Flaws in a fiber cable occur as a Poisson process with mean $1$ per kilometer. For a $4$-kilometer stretch, using $e^{-4} \\approx 0.0183$, find the probability of no flaws, to four decimal places."
+            answer: "0.0183"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The full object is a Poisson process with mean 1 flaw per kilometer over 4 kilometers. Step 1 uses window rescaling: lambda = 4 times 1 = 4. Step 2 uses the Poisson formula for zero events: P(X = 0) = e^{-4}. Step 3 uses the supplied table value: e^{-4} is approximately 0.0183. Thus the probability of no flaws is 0.0183."
+          - problem: "Buses arrive at a stop as a Poisson process with mean $0.5$ per hour. Over a $10$-hour service day, using $e^{-5} \\approx 0.0067$, find the probability of at least one bus, to four decimal places."
+            answer: "0.9933"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "The full object is a Poisson process with mean 0.5 buses per hour over 10 hours. Step 1 uses window rescaling: lambda = 10 times 0.5 = 5. Step 2 uses the complement rule for at least one event: P(X >= 1) = 1 - P(X = 0). Step 3 uses the Poisson formula: P(X = 0) = e^{-5}, and the supplied value is 0.0067. Step 4 subtracts: 1 - 0.0067 = 0.9933. Thus the probability of at least one bus is 0.9933."
+          - problem: "A server logs errors as a Poisson process with mean $2$ per hour. The probability of no errors in a $t$-hour interval is $e^{-6} \\approx 0.0025$. Find $t$, in hours."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a Poisson process with mean 2 errors per hour over t hours. Step 1 uses window rescaling: lambda = 2t. Step 2 uses the Poisson formula for zero events: P(X = 0) = e^{-2t}. Step 3 matches the given value: e^{-2t} = e^{-6}, so 2t = 6. Step 4 solves the equation: t = 3. Thus t = 3."
+          - problem: "A machine breaks down as a Poisson process with an unknown rate of $r$ breakdowns per year. Using $e^{-8} \\approx 0.0003$, the probability of at least one breakdown in a $2$-year period is $0.9997$. Find the rate $r$, in breakdowns per year."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a Poisson process with rate r breakdowns per year over 2 years. Step 1 uses window rescaling: lambda = 2r. Step 2 uses the complement rule: P(at least one) = 1 - e^{-2r} = 0.9997, so e^{-2r} = 0.0003. Step 3 matches the supplied value e^{-8} which is approximately 0.0003, so 2r = 8. Step 4 solves: r = 4. Thus r = 4."
         constraints: "window rescaling multiplies lambda by an integer factor; at-least-one questions go through the complement of P(X = 0); e^{-lambda} supplied"
     diagnostic_exemplar:
       problem: 'Typos in a manuscript occur as a Poisson process with mean $0.75$ per page. For a $4$-page chapter, using $e^{-3} \approx 0.0498$, find the probability of at least one typo, to four decimal places.'
@@ -226,6 +258,22 @@ topics:
           - problem: 'Same $X$. Find $P(X \le 2)$ to four decimal places.'
             answer: "0.6321"
             solution_sketch: '$F(2) = 1 - e^{-1} \approx 1 - 0.3679 = 0.6321$.'
+          - problem: "The lifetime X of a battery, in days, is exponential with rate lambda = 0.35 per day. The value e^(-2.1) is about 0.1225. Find P(X > 6). Give the answer to four decimal places."
+            answer: "0.1225"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Step 1: The survival function rule gives P(X > t) = e^(-lambda t). Step 2: For lambda = 0.35 and t = 6, the product lambda times t is 2.1. Step 3: The supplied value e^(-2.1) = 0.1225 is therefore P(X > 6). The answer is 0.1225."
+          - problem: "The waiting time X at a service desk, in hours, is exponential with rate lambda = 0.6 per hour. The value e^(-0.9) is about 0.4066. Find P(X <= 1.5). Give the answer to four decimal places."
+            answer: "0.5934"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Step 1: The cdf rule gives P(X <= t) = 1 - e^(-lambda t). Step 2: For lambda = 0.6 and t = 1.5, lambda times t is 0.9. Step 3: The supplied value e^(-0.9) = 0.4066, so 1 - 0.4066 = 0.5934. The answer is 0.5934."
+          - problem: "The lifetime X of a device, in years, is exponential with rate lambda = 0.4 per year. The values e^(-0.4) = 0.6703 and e^(-1.6) = 0.2019 are supplied. Find P(1 < X <= 4). Give the answer to four decimal places."
+            answer: "0.4684"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Step 1: The survival function rule gives P(a < X <= b) = e^(-lambda a) - e^(-lambda b). Step 2: For a = 1 and b = 4 with lambda = 0.4, lambda a is 0.4 and lambda b is 1.6. Step 3: The supplied values give 0.6703 - 0.2019 = 0.4684. The answer is 0.4684."
+          - problem: "The lifetime X of a lamp, in hours, is exponential with unknown rate lambda. The value e^(-1.5) is about 0.2231. Using t = 5 hours, find lambda so that P(X > 5) = 0.2231. Give the rate to four decimal places."
+            answer: "0.3000"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Step 1: The survival function rule gives P(X > t) = e^(-lambda t). Step 2: The problem states P(X > 5) = 0.2231, and the supplied value shows e^(-1.5) = 0.2231. Step 3: Therefore lambda times 5 is 1.5, so lambda = 1.5/5 = 0.3. The answer is 0.3000."
         constraints: "lambda t comes out to a value whose e^{-lambda t} is supplied in the problem; answers to 4 decimal places"
       - id: kp2
         name: "Mean and median"
@@ -433,6 +481,22 @@ topics:
           - problem: '$\operatorname{Var}(X) = 9$. Find $\operatorname{Cov}(X, X)$.'
             answer: "9"
             solution_sketch: '$\operatorname{Cov}(X, X) = E[X^2] - E[X]^2 = \operatorname{Var}(X) = 9$.'
+          - problem: "For two random variables X and Y, the moments are E[XY] = 10, E[X] = 3, and E[Y] = 2. Compute Cov(X, Y)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The covariance identity is Cov(X, Y) = E[XY] - E[X]E[Y]. Substitute the given moments: E[XY] = 10 and E[X]E[Y] = 3 * 2 = 6. The covariance is 10 - 6 = 4."
+          - problem: "Two random variables X and Y have Cov(X, Y) = 5, E[X] = 4, and E[Y] = 2. Determine E[XY]."
+            answer: "13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the identity Cov(X, Y) = E[XY] - E[X]E[Y]. Rearrange it as E[XY] = Cov(X, Y) + E[X]E[Y]. Insert the numbers: E[X]E[Y] = 4 * 2 = 8, so E[XY] = 5 + 8 = 13."
+          - problem: "The moments of X and Y are E[XY] = 12.5, E[X] = 2, and E[Y] = 5. Compute Cov(X, Y) to 1 decimal."
+            answer: "2.5"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Use the covariance identity Cov(X, Y) = E[XY] - E[X]E[Y]. The product is E[X]E[Y] = 2 * 5 = 10. Subtract: 12.5 - 10 = 2.5, so the covariance is 2.5 to one decimal place."
+          - problem: "For random variables X and Y, Cov(X, Y) = 7, E[X] = 2, and E[Y] = 5. Find E[XY]."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is Cov(X, Y) = E[XY] - E[X]E[Y]. Rearrange to E[XY] = Cov(X, Y) + E[X]E[Y]. Here E[X]E[Y] = 2 * 5 = 10, so E[XY] = 7 + 10 = 17."
         constraints: "moments given directly; integer or tenth answers; one Cov(X, X) = Var(X) item per set"
       - id: kp2
         name: "Covariance from a joint table"
@@ -444,6 +508,22 @@ topics:
           - problem: '$X$ and $Y$ are independent with $E[X] = 2$ and $E[Y] = 3$, so $E[XY] = 6$. Find $\operatorname{Cov}(X, Y)$.'
             answer: "0"
             solution_sketch: 'For independent variables $E[XY] = E[X]E[Y]$, so the covariance is $6 - 6 = 0$.'
+          - problem: "X and Y are 0/1 variables with P(X=0,Y=0)=0.1, P(X=0,Y=1)=0.2, P(X=1,Y=0)=0.3, and P(X=1,Y=1)=0.4. Give the covariance to 2 decimals."
+            answer: "-0.02"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1: The marginal probability rule gives E[X] = 0.7 and E[Y] = 0.6. Step 2: The product expectation rule uses only the pair (1,1), so E[XY] = 0.4. Step 3: The covariance formula gives Cov(X,Y) = E[XY] - E[X]E[Y] = 0.4 - 0.42. The covariance is -0.02."
+          - problem: "X takes values 0 and 1; Y takes values 0, 1, and 2. The joint probabilities are P(X=0,Y=0)=0.2, P(X=0,Y=1)=0.1, P(X=0,Y=2)=0.1, P(X=1,Y=0)=0.1, P(X=1,Y=1)=0.2, and P(X=1,Y=2)=0.3. Give the covariance to 2 decimals."
+            answer: "0.14"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1: The marginal probability rule gives E[X] = 0.6 and E[Y] = 0.3(1) + 0.4(2) = 1.1. Step 2: The product expectation rule gives E[XY] = 1(1)(0.2) + 1(2)(0.3) = 0.8. Step 3: The covariance formula gives Cov(X,Y) = 0.8 - (0.6)(1.1). The covariance is 0.14."
+          - problem: "X and Y are independent 0/1 variables, with P(X=1)=0.25 and P(Y=1)=0.8. Give the covariance to 2 decimals."
+            answer: "0.00"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1: The independence rule gives E[XY] = E[X]E[Y]. Step 2: The marginal probability rule gives E[X] = 0.25 and E[Y] = 0.8, so E[XY] = 0.20. Step 3: The covariance formula gives Cov(X,Y) = 0.20 - 0.20 = 0. The covariance is 0.00."
+          - problem: "X and Y are 0/1 variables with P(X=1)=0.50, P(Y=1)=0.50, and P(X=1,Y=1)=0.49. Give the covariance to 2 decimals."
+            answer: "0.24"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Step 1: The complement rule gives P(X=0,Y=1)=0.01, P(X=1,Y=0)=0.01, and P(X=0,Y=0)=0.49. Step 2: The expectation rule gives E[X]=0.50, E[Y]=0.50, and E[XY]=0.49. Step 3: The covariance formula gives Cov(X,Y)=0.49-(0.50)(0.50). The covariance is 0.24."
         constraints: "values 0/1 or 0..2 so E[XY] is a one- or two-term sum; covariances in hundredths; include one independent-hence-zero case"
       - id: kp3
         name: "Variance of a sum and correlation"
