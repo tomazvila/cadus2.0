@@ -1057,14 +1057,30 @@ topics:
         name: "Rewriting implications"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'Rewrite the negation of $P \to Q$ without a conditional.'
-            answer_contract: {kind: none}
-            answer: '$P \land \neg Q$'
-            solution_sketch: '$P \to Q \equiv \neg P \lor Q$; negating and applying De Morgan gives $\neg(\neg P \lor Q) \equiv P \land \neg Q$.'
-          - problem: 'Simplify $\neg(P \to Q) \lor Q$.'
-            answer_contract: {kind: none}
-            answer: '$P \lor Q$'
-            solution_sketch: '$\neg(P \to Q) \equiv P \land \neg Q$, so the expression is $(P \land \neg Q) \lor Q \equiv (P \lor Q) \land (\neg Q \lor Q) \equiv (P \lor Q) \land T \equiv P \lor Q$.'
+          - problem: "Rewrite the negation of $P \\to Q$ without a conditional. Then give the number of rows of its truth table that are true."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the implication equivalence: $P \\to Q \\equiv \\neg P \\lor Q$. Negating both sides gives $\\neg(P \\to Q) \\equiv \\neg(\\neg P \\lor Q)$. Apply De Morgan's law: $\\neg(\\neg P \\lor Q) \\equiv P \\land \\neg Q$. This conjunction is true only when $P$ is true and $Q$ is false. Therefore the number of true rows is 1."
+          - problem: "Rewrite $\\neg(P \\to Q)$ as a conjunction. How many rows of its truth table are false?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the implication equivalence: $P \\to Q \\equiv \\neg P \\lor Q$. Negating gives $\\neg(P \\to Q) \\equiv \\neg(\\neg P \\lor Q) \\equiv P \\land \\neg Q$. This conjunction is false in every row except when $P$ is true and $Q$ is false. Since there are 4 rows total, the number of false rows is 3."
+          - problem: "Which formula is logically equivalent to $\\neg(P \\to Q)$?"
+            answer: "P and not Q"
+            answer_contract: {"kind": "label", "options": [["P and not Q"], ["not P or Q"], ["not P and Q"], ["P or not Q"]]}
+            solution_sketch: "Use the implication equivalence: $P \\to Q \\equiv \\neg P \\lor Q$. Negating gives $\\neg(\\neg P \\lor Q) \\equiv P \\land \\neg Q$, which is P and not Q. The option 'not P or Q' is the original implication, not its negation. The option 'not P and Q' is true only when P is false and Q is true. The option 'P or not Q' is the negation of the converse. Therefore the correct option is P and not Q."
+          - problem: "Rewrite $P \\to Q$ as a disjunction. For the assignment $P = \\text{true}$ and $Q = \\text{false}$, give the truth value of the implication (1 for true, 0 for false)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The implication equivalence is $P \\to Q \\equiv \\neg P \\lor Q$. Substitute $P = \\text{true}$ and $Q = \\text{false}$: $\\neg \\text{true} \\lor \\text{false} = \\text{false} \\lor \\text{false} = \\text{false}$. The truth value is 0."
+          - problem: "After rewriting $\\neg(P \\to Q)$ without a conditional, evaluate the result for $P = \\text{true}$ and $Q = \\text{false}$. Give 1 for true and 0 for false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rewrite: $\\neg(P \\to Q) \\equiv P \\land \\neg Q$. Substitute $P = \\text{true}$ and $Q = \\text{false}$: $\\text{true} \\land \\neg \\text{false} = \\text{true} \\land \\text{true} = \\text{true}$. The value is 1."
+          - problem: "Which formula is logically equivalent to $P \\to Q$?"
+            answer: "not P or Q"
+            answer_contract: {"kind": "label", "options": [["not P or Q"], ["P and not Q"], ["not P and Q"], ["P or not Q"]]}
+            solution_sketch: "The standard implication equivalence is $P \\to Q \\equiv \\neg P \\lor Q$, which reads not P or Q. The option 'P and not Q' is the negation of the implication. The option 'not P and Q' is false whenever P is true. The option 'P or not Q' is the converse. Therefore the correct option is not P or Q."
         constraints: "use $P\\to Q \\equiv \\neg P \\lor Q$; negate implications"
       - id: kp3
         name: "Simplification chains with the laws"
@@ -1111,14 +1127,30 @@ topics:
         name: "Predicates and substitution"
         key_prerequisites: [propositional-logic]
         exemplars:
-          - problem: 'Let $P(x)$: "$x^2 \le 9$" over $\mathbb{Z}$. Find the truth values of $P(2)$ and $P(5)$.'
-            answer_contract: {kind: none}
-            answer: '$P(2)$ is true; $P(5)$ is false.'
-            solution_sketch: 'Substitute: $2^2 = 4 \le 9$ (true); $5^2 = 25 > 9$ (false). A predicate becomes a proposition once a domain element is plugged in.'
-          - problem: 'Let $Q(n)$: "$n$ is prime". Find the truth values of $Q(7)$ and $Q(9)$.'
-            answer_contract: {kind: none}
-            answer: '$Q(7)$ is true; $Q(9)$ is false ($9 = 3 \cdot 3$).'
-            solution_sketch: '$7$ has no nontrivial divisors; $9$ factors as $3^2$.'
+          - problem: "Over the integers let P(x) be the predicate x^2 <= 9. For x = 2 and x = 5, find the number of true propositions among P(2) and P(5)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is P(x): x^2 <= 9 over the integers. Substitution step: P(2) uses 2^2 = 4, and 4 <= 9, so P(2) is true. Substitution step: P(5) uses 5^2 = 25, and 25 <= 9 is false, so P(5) is false. Counting step: one of the two propositions is true. The answer is 1."
+          - problem: "Let Q(n) be the predicate n is prime. For n = 7, n = 9, and n = 11, find the number of true propositions among Q(7), Q(9), and Q(11)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is Q(n): n is prime. Substitution step: Q(7) checks divisibility of 7, and no nontrivial divisor exists, so Q(7) is true. Substitution step: Q(9) factors as 3 times 3, so Q(9) is false. Substitution step: Q(11) has no nontrivial divisor, so Q(11) is true. Counting step: two propositions are true. The answer is 2."
+          - problem: "Let S(x) be the predicate x is even. For x = 2, x = 3, x = 4, x = 5, and x = 6, find the number of true propositions among S(2), S(3), S(4), S(5), and S(6)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is S(x): x is even. Substitution step: S(2) is true because 2 is even. Substitution step: S(3) is false, S(4) is true, S(5) is false, and S(6) is true. Counting step: the true substitutions are S(2), S(4), S(6), so there are three. The answer is 3."
+          - problem: "Let T(x) be the predicate x^2 > 10. The domain is {1, 2, 3, 4}. Find the smallest element x in the domain for which T(x) is true."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is T(x): x^2 > 10 over {1, 2, 3, 4}. Substitution step: T(1) gives 1 > 10 false, T(2) gives 4 > 10 false, T(3) gives 9 > 10 false, and T(4) gives 16 > 10 true. Comparison step: the first true substitution is at x = 4. The answer is 4."
+          - problem: "Let U(x) be the predicate x^2 = 25. The domain is {1, 2, 3, 4}. Find the number of true propositions among U(1), U(2), U(3), and U(4)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is U(x): x^2 = 25 over {1, 2, 3, 4}. Substitution step: U(1) gives 1 = 25 false, U(2) gives 4 = 25 false, U(3) gives 9 = 25 false, and U(4) gives 16 = 25 false. Counting step: none of the four propositions is true. The answer is 0."
+          - problem: "Let V(x) be the predicate x + 1 > 5. The domain is {1, 2, 3, 4, 5}. Find the number of false propositions among V(1), V(2), V(3), V(4), and V(5)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is V(x): x + 1 > 5 over {1, 2, 3, 4, 5}. Substitution step: V(1) gives 2 > 5 false, V(2) gives 3 > 5 false, V(3) gives 4 > 5 false, V(4) gives 5 > 5 false, and V(5) gives 6 > 5 true. Counting step: the false propositions are V(1) through V(4), so there are four. The answer is 4."
         constraints: "one-variable predicates; substitute specific domain elements"
       - id: kp2
         name: "Truth sets"
@@ -1130,19 +1162,51 @@ topics:
           - problem: 'Find the truth set of $Q(n)$: "$n$ is odd and $n < 10$" over the positive integers.'
             answer: '$\{1, 3, 5, 7, 9\}$'
             solution_sketch: 'List the positive odd integers below $10$.'
+          - problem: "Let D = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} and let P(x) mean \"x is a prime number\" over D. Find the truth set of P over D. Give the answer as a set in braces, such as {1, 2}."
+            answer: "{2, 3, 5, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1: Write the full object: P(x) is \"x is a prime number\" over the stated domain D = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}. Step 2: By the definition of a truth set, test each element of D against P. Step 3: The primes in D are 2, 3, 5, and 7; 1 is not prime. The truth set of P is {2, 3, 5, 7}."
+          - problem: "Let D = {-3, -2, -1, 0, 1, 2, 3} and let R(x) mean \"x^2 = 4 or x = 0\" over D. Find the truth set of R over D. Give the answer as a set in braces, such as {1, 2}."
+            answer: "{-2, 0, 2}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1: Write the full object: R(x) is \"x^2 = 4 or x = 0\" over the stated domain D = {-3, -2, -1, 0, 1, 2, 3}. Step 2: By the definition of a truth set, solve each disjunct and test in D. Step 3: x^2 = 4 gives x = -2 and x = 2, and x = 0 gives x = 0. The truth set of R is {-2, 0, 2}."
+          - problem: "A class has 12 desks numbered 1 to 12. Let D = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12} and let S(n) mean \"n divides 12\" over D. Find the truth set of S over D. Give the answer as a set in braces, such as {1, 2}."
+            answer: "{1, 2, 3, 4, 6, 12}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1: Write the full object: S(n) is \"n divides 12\" over the stated domain D = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}. Step 2: By the definition of a truth set, test each n in D for divisibility of 12. Step 3: The divisors of 12 in D are 1, 2, 3, 4, 6, and 12. The truth set of S is {1, 2, 3, 4, 6, 12}."
+          - problem: "Tiles carry the labels 0 to 9. Let D = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} and let U(x) mean \"x is a perfect square less than 10\" over D. Find the truth set of U over D. Give the answer as a set in braces, such as {1, 2}."
+            answer: "{0, 1, 4, 9}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1: Write the full object: U(x) is \"x is a perfect square less than 10\" over the stated domain D = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}. Step 2: By the definition of a truth set, check each tile label x in D. Step 3: The squares below 10 in D are 0, 1, 4, and 9. The truth set of U is {0, 1, 4, 9}."
         constraints: "finite truth sets the learner can list; the domain must be stated"
       - id: kp3
         name: "Predicates with several variables"
         key_prerequisites: [propositional-logic]
         exemplars:
-          - problem: 'Let $R(x, y)$: "$x + y = 5$" over $\mathbb{Z}$. Find the truth values of $R(2, 3)$ and $R(4, 4)$.'
-            answer_contract: {kind: none}
-            answer: '$R(2, 3)$ is true; $R(4, 4)$ is false.'
-            solution_sketch: '$2 + 3 = 5$ but $4 + 4 = 8 \ne 5$. A two-place predicate needs both arguments filled to become a proposition.'
-          - problem: 'Let $S(m, n)$: "$m \mid n$". Find the truth values of $S(3, 12)$ and $S(5, 12)$.'
-            answer_contract: {kind: none}
-            answer: '$S(3, 12)$ is true; $S(5, 12)$ is false.'
-            solution_sketch: '$12 = 3 \cdot 4$, so $3 \mid 12$; but $12/5$ is not an integer.'
+          - problem: "Let R(x,y): \"x + y = 5\" over the integers. Consider the pairs (2,3), (4,4), (0,5), (1,3). How many of these pairs make R(x,y) true?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is R(x,y): x + y = 5. Step 1: substitute each pair into the equation. (2,3) gives 5 = 5, true; (4,4) gives 8 = 5, false; (0,5) gives 5 = 5, true; (1,3) gives 4 = 5, false. Step 2: count the true cases, which gives 2. The answer is 2."
+          - problem: "Let S(m,n): \"m divides n\" over the positive integers. Consider the pairs (3,12), (5,12), (4,12), (6,12). How many of these pairs make S(m,n) true?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is S(m,n): m divides n. Step 1: test each pair by division. (3,12) gives 12/3 = 4, true; (5,12) gives 12/5 not an integer, false; (4,12) gives 12/4 = 3, true; (6,12) gives 12/6 = 2, true. Step 2: count the true cases, which gives 3. The answer is 3."
+          - problem: "Let P(x,y): \"x^2 + y^2 = 25\" over the integers. Consider the pairs (3,4), (1,5), (2,2), (0,4). How many of these pairs make P(x,y) true?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is P(x,y): x^2 + y^2 = 25. Step 1: evaluate each pair. (3,4) gives 9 + 16 = 25, true; (1,5) gives 1 + 25 = 26, false; (2,2) gives 4 + 4 = 8, false; (0,4) gives 0 + 16 = 16, false. Step 2: count the true cases, which gives 1. The answer is 1."
+          - problem: "Let Q(x,y): \"x < y\" over the integers. Consider the pairs (5,5), (7,4), (0,-1), (-1,-2). How many of these pairs make Q(x,y) true?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is Q(x,y): x < y. Step 1: compare each pair. (5,5) gives 5 < 5, false; (7,4) gives 7 < 4, false; (0,-1) gives 0 < -1, false; (-1,-2) gives -1 < -2, false. Step 2: count the true cases, which gives 0. The answer is 0."
+          - problem: "Let T(x,y): \"x*y > 0\" over the integers. Consider the pairs (-2,-3), (0,5), (4,-1), (-2,3), (1,1), (-4,-5), (2,3). How many of these pairs make T(x,y) true?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is T(x,y): x*y > 0. Step 1: multiply each pair and check the sign. (-2,-3) gives 6 > 0, true; (0,5) gives 0 > 0, false; (4,-1) gives -4 > 0, false; (-2,3) gives -6 > 0, false; (1,1) gives 1 > 0, true; (-4,-5) gives 20 > 0, true; (2,3) gives 6 > 0, true. Step 2: count the true cases, which gives 4. The answer is 4."
+          - problem: "Let P(x,y): \"x + 2y = 10\" over the integers. Consider the pairs (0,5), (2,4), (4,3), (6,2), (8,1). How many of these pairs make P(x,y) true?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The predicate is P(x,y): x + 2y = 10. Step 1: substitute each pair. (0,5) gives 0 + 10 = 10, true; (2,4) gives 2 + 8 = 10, true; (4,3) gives 4 + 6 = 10, true; (6,2) gives 6 + 4 = 10, true; (8,1) gives 8 + 2 = 10, true. Step 2: count the true cases, which gives 5. The answer is 5."
         constraints: "two-variable predicates; evaluate at specific pairs"
     diagnostic_exemplar:
       problem: 'Let $P(x)$: "$x^2 - 5x + 6 = 0$" over $\mathbb{Z}$. Find the truth set of $P$.'
