@@ -638,14 +638,30 @@ topics:
         name: What the test cannot conclude
         key_prerequisites: [series-partial-sums]
         exemplars:
-          - problem: 'The terms of the harmonic series $\sum \frac{1}{n}$ tend to $0$. Does the test conclude convergence?'
-            answer: 'no; the test is silent when $a_n \to 0$ (and in fact the harmonic series diverges)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The divergence test only ever proves divergence.'
-          - problem: 'True or false: if $a_n \to 0$, then $\sum a_n$ converges.'
-            answer: 'false (counterexample: the harmonic series)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{1}{n} \to 0$, yet $\sum \frac{1}{n}$ diverges.'
+          - problem: "For the series with terms a_n = 1/n, determine L = lim a_n and state what the nth-term divergence test concludes."
+            answer: "verdict = inconclusive; L = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["inconclusive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is sum a_n with a_n = 1/n. Step 1: the term limit is L = lim 1/n = 0 by the limit of a reciprocal sequence. Step 2: the nth-term divergence test proves divergence only when L is not 0; here L = 0, so the test is silent. The verdict is inconclusive and L = 0."
+          - problem: "The statement 'if the terms of a series tend to 0, then the series converges' is false. Select the series that is a counterexample."
+            answer: "1/n"
+            answer_contract: {"kind": "label", "options": [["1/n"], ["1/n^2"], ["1/2^n"], ["1/n!"]]}
+            solution_sketch: "The series 1/n is the harmonic series; its terms tend to 0 but it diverges, so it is a counterexample. The series 1/n^2 converges, so it fails to refute the statement. The series 1/2^n converges, so it fails to refute the statement. The series 1/n! converges, so it fails to refute the statement. The correct option is 1/n."
+          - problem: "For the series with terms a_n = (2n + 5)/(3n + 1), determine L = lim a_n and state the nth-term test verdict."
+            answer: "verdict = diverges; L = 2/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["inconclusive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is sum a_n with a_n = (2n + 5)/(3n + 1). Step 1: divide numerator and denominator by n to get L = lim (2 + 5/n)/(3 + 1/n) = 2/3. Step 2: the nth-term divergence test proves divergence when L is not 0; here L = 2/3. The verdict is diverges and L = 2/3."
+          - problem: "For the series with terms a_n = (3n + 2)/(4n + 7), find L = lim a_n as a fraction."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is sum a_n with a_n = (3n + 2)/(4n + 7). Step 1: divide numerator and denominator by n to get (3 + 2/n)/(4 + 7/n). Step 2: let n grow; 2/n and 7/n tend to 0, so L = 3/4. The limit is 3/4."
+          - problem: "For the series with terms a_n = (n^2 + 3)/(2n^2 + n + 1), find L = lim a_n as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is sum a_n with a_n = (n^2 + 3)/(2n^2 + n + 1). Step 1: divide numerator and denominator by n^2 to get (1 + 3/n^2)/(2 + 1/n + 1/n^2). Step 2: as n grows, the small terms vanish, so L = 1/2. The limit is 1/2."
+          - problem: "The nth-term divergence test is silent when the terms have a particular limit L. For the series with terms a_n = 1/n^2, find that limit L."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is sum a_n with a_n = 1/n^2. Step 1: the term limit is L = lim 1/n^2 = 0. Step 2: the nth-term divergence test is silent exactly when this limit is 0, so the test cannot prove divergence here. The limit is 0."
         constraints: "conceptual questions distinguishing the test from its false converse"
     diagnostic_exemplar:
       problem: 'Does $\sum_{n=1}^{\infty} \frac{2n}{3n + 5}$ converge? And does the divergence test settle $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$?'
@@ -711,14 +727,30 @@ topics:
         name: Hypotheses and remainder estimates
         key_prerequisites: [improper-integrals, nth-term-divergence-test]
         exemplars:
-          - problem: 'Why can the integral test not be applied directly to $\sum_{n=1}^{\infty} \frac{(-1)^n}{n}$?'
-            answer: 'the terms are not positive (the test requires positive, continuous, decreasing terms)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The integral test hypotheses are: $f$ positive, continuous, decreasing on $[N, \infty)$ with $a_n = f(n)$. Alternating terms violate positivity.'
-          - problem: 'Using the remainder estimate $R_N \le \int_N^{\infty} f(x)\,dx$, bound the error when $\sum_{n=1}^{\infty} \frac{1}{n^2}$ is approximated by its first $10$ terms.'
-            answer: '$R_{10} \le \frac{1}{10}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\int_{10}^{\infty} \frac{dx}{x^2} = \frac{1}{10}$.'
+          - problem: "Which option lists all three conditions that the integral test requires for a series with terms a_n = f(n) on an interval starting at some N?"
+            answer: "positive, continuous, decreasing"
+            answer_contract: {"kind": "label", "options": [["positive, continuous, decreasing"], ["positive, bounded, decreasing"], ["continuous, decreasing, alternating"], ["positive, continuous, increasing"]]}
+            solution_sketch: "Step 1: Recall the integral test hypotheses for a series with terms a_n = f(n): f must be positive, continuous and decreasing on [N, infinity). Step 2: Compare the four options: the wrong option 'positive, bounded, decreasing' replaces continuity with boundedness; the wrong option 'continuous, decreasing, alternating' removes positivity; the wrong option 'positive, continuous, increasing' reverses decrease to increase. The option that lists all three required conditions is positive, continuous, decreasing."
+          - problem: "For the p-series with p = 2, use the remainder estimate R_N <= integral from N to infinity of 1/x^2 dx. Give the bound on the error after 10 terms as a fraction."
+            answer: "1/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the integral test remainder estimate R_N <= integral from N to infinity of f(x) dx for a positive, continuous, decreasing f. For f(x) = 1/x^2 and N = 10, the integral is [-1/x] from 10 to infinity = 1/10. The bound on the error after 10 terms is 1/10."
+          - problem: "Which option lists all three conditions that the integral test requires for a series with terms a_n = f(n) starting at n = 1?"
+            answer: "positive, continuous, decreasing on [1, infinity)"
+            answer_contract: {"kind": "label", "options": [["positive, continuous, decreasing on [1, infinity)"], ["positive, continuous, decreasing on (1, infinity)"], ["positive, bounded, decreasing on [1, infinity)"], ["positive, continuous, increasing on [1, infinity)"]]}
+            solution_sketch: "Step 1: Recall that the integral test requires f positive, continuous and decreasing on [N, infinity) when a_n = f(n). Step 2: The wrong option 'positive, continuous, decreasing on (1, infinity)' drops the first term; the wrong option 'positive, bounded, decreasing on [1, infinity)' swaps continuity for boundedness; the wrong option 'positive, continuous, increasing on [1, infinity)' reverses the decrease. The correct list is positive, continuous, decreasing on [1, infinity)."
+          - problem: "For the p-series with p = 3, use the remainder estimate R_N <= integral from N to infinity of 1/x^3 dx. Find the bound on the error after 4 terms as a fraction."
+            answer: "1/32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the p-series remainder estimate R_N <= integral from N to infinity of x^(-p) dx for p > 1. For p = 3 and N = 4, the integral is [-1/(2x^2)] from 4 to infinity = 1/(2*16) = 1/32. The bound on the error after 4 terms is 1/32."
+          - problem: "For the p-series with p = 3, the remainder estimate is R_N <= 1/(2N^2). Find the smallest whole number N that makes this bound at most 1/200."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the given remainder bound R_N <= 1/(2N^2) for the p = 3 series. Set 1/(2N^2) <= 1/200 and multiply both sides by 2N^2 to get 200 <= 2N^2, so N^2 >= 100. The smallest whole number N is 10."
+          - problem: "For the p-series with p = 2, the remainder estimate is R_N <= 1/N. Find the smallest whole number N that makes this bound at most 1/60."
+            answer: "60"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the remainder bound R_N <= 1/N for the p = 2 series. Set 1/N <= 1/60 and multiply by N to get N >= 60. The smallest whole number N is 60."
         constraints: "hypothesis questions list all three conditions; remainder bounds for p = 2 or p = 3 only"
     diagnostic_exemplar:
       problem: 'Use the integral test to decide whether $\sum_{n=1}^{\infty} \frac{n}{n^2 + 1}$ converges, stating the hypotheses you checked.'
@@ -753,44 +785,88 @@ topics:
         name: Bounding above by a convergent series
         key_prerequisites: [integral-p-series-tests, geometric-series-convergence]
         exemplars:
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{n^2 + 3}$ converges, with justification.'
-            answer: 'converges (direct comparison: $\frac{1}{n^2+3} < \frac{1}{n^2}$, a convergent $p$-series)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Terms are positive and bounded above by a convergent series, so the partial sums are bounded.'
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{2^n + 1}$ converges.'
-            answer: 'converges (direct comparison with the geometric series $\sum \frac{1}{2^n}$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{1}{2^n + 1} < \frac{1}{2^n}$ and $\sum 2^{-n}$ converges.'
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{\sin^2 n}{n^2}$ converges.'
-            answer: 'converges (direct comparison: $\frac{\sin^2 n}{n^2} \le \frac{1}{n^2}$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$0 \le \sin^2 n \le 1$ bounds the terms by a convergent $p$-series.'
+          - problem: "The series sum_{n=1}^\\infty 1/(n^2+5) has positive terms. Use the direct comparison test with the convergent p-series sum_{n=1}^\\infty 1/n^p. State whether the series converges or diverges, and give the exponent p of the p-series that bounds each term."
+            answer: "verdict = converges; p = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: The series is sum 1/(n^2+5). Its terms are positive. Step 2 (termwise bound): 1/(n^2+5) <= 1/n^2 for all n >= 1 because n^2 <= n^2+5. Step 3 (p-series test): the p-series with p=2 converges. Step 4 (direct comparison): the original series converges. So verdict = converges; p = 2."
+          - problem: "The series sum_{n=1}^\\infty 1/(n^3+2) has positive terms. Compare it with the convergent p-series sum_{n=1}^\\infty 1/n^p termwise. State the verdict and give the exponent p."
+            answer: "verdict = converges; p = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: The series is sum 1/(n^3+2). Its terms are positive. Step 2 (termwise bound): 1/(n^3+2) <= 1/n^3 for all n >= 1 because n^3 <= n^3+2. Step 3 (p-series test): the p-series with p=3 converges. Step 4 (direct comparison): the original series converges. So verdict = converges; p = 3."
+          - problem: "The series sum_{n=1}^\\infty sqrt(n)/(n^3+1) has positive terms. Use the direct comparison test with a convergent p-series. State the verdict and give the exponent p of the bounding p-series."
+            answer: "verdict = converges; p = 5/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: The series is sum sqrt(n)/(n^3+1). Its terms are positive. Step 2 (termwise bound): sqrt(n)/(n^3+1) <= 1/n^(5/2) for all n >= 1 because sqrt(n) * n^(5/2) = n^3 <= n^3+1. Step 3 (p-series test): the p-series with p=5/2 converges. Step 4 (direct comparison): the original series converges. So verdict = converges; p = 5/2."
+          - problem: "The series sum_{n=1}^\\infty 1/(n^(3/2)+4) is bounded termwise by the p-series sum_{n=1}^\\infty 1/n^p. Find the exponent p that makes the bound 1/(n^(3/2)+4) <= 1/n^p hold for all n >= 1."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The series is sum 1/(n^(3/2)+4). Its terms are positive. Step 2 (termwise bound): 1/(n^(3/2)+4) <= 1/n^(3/2) for all n >= 1 because n^(3/2) <= n^(3/2)+4. Step 3 (p-series test): the p-series with p=3/2 converges. So the exponent is p = 3/2."
+          - problem: "The series sum_{n=1}^\\infty 1/(2^n+3) is bounded termwise by a geometric series of the form sum_{n=1}^\\infty (1/k)^n. Find the smallest integer k > 1 for which the bound 1/(2^n+3) <= 1/k^n holds for all n >= 1."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The series is sum 1/(2^n+3). Its terms are positive. Step 2 (termwise bound): 1/(2^n+3) <= 1/2^n for all n >= 1 because 2^n <= 2^n+3. Step 3 (geometric series test): the geometric series with ratio 1/2 converges. Step 4: test k=3: at n=2, 1/(2^2+3)=1/7 > 1/3^2=1/9, so k=3 fails. So the smallest integer is k = 2."
+          - problem: "The series sum_{n=1}^\\infty 1/(n^(4/3)+2n) has positive terms. Use the direct comparison test with a convergent p-series. State the verdict and give the exponent p of the bounding p-series."
+            answer: "verdict = converges; p = 4/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: The series is sum 1/(n^(4/3)+2n). Its terms are positive. Step 2 (termwise bound): 1/(n^(4/3)+2n) <= 1/n^(4/3) for all n >= 1 because n^(4/3) <= n^(4/3)+2n. Step 3 (p-series test): the p-series with p=4/3 converges. Step 4 (direct comparison): the original series converges. So verdict = converges; p = 4/3."
         constraints: "comparator is a p-series or geometric series; the bound must hold termwise"
       - id: kp2
         name: Bounding below by a divergent series
         key_prerequisites: [integral-p-series-tests]
         exemplars:
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n + 1}{n^2}$ converges.'
-            answer: 'diverges (direct comparison: $\frac{n+1}{n^2} > \frac{1}{n}$, the harmonic series)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{n+1}{n^2} = \frac{1}{n} + \frac{1}{n^2} > \frac{1}{n}$.'
-          - problem: 'Decide whether $\sum_{n=3}^{\infty} \frac{\ln n}{n}$ converges.'
-            answer: 'diverges ($\frac{\ln n}{n} > \frac{1}{n}$ for $n \ge 3$, and the harmonic series diverges)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\ln n > 1$ once $n \ge 3$, so the terms dominate the harmonic terms.'
+          - problem: "Consider the series sum from n=1 to infinity of (n+1)/n^2. Use direct comparison with the harmonic series 1/n. State the conclusion of the direct comparison test, and give the smallest integer N such that (n+1)/n^2 >= 1/n for every n >= N."
+            answer: "verdict = diverges; threshold = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["converges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "threshold"}]}
+            solution_sketch: "The full object is the series sum (n+1)/n^2. Step 1: the direct comparison test for divergence says that if 0 <= b_n <= a_n for n >= N and sum b_n diverges, then sum a_n diverges. Step 2: for n >= 1, (n+1)/n^2 = 1/n + 1/n^2 >= 1/n. Step 3: the harmonic series sum 1/n diverges, so the given series diverges and the smallest such integer is N = 1. The wrong option 'converges' comes from treating the term as 1/n^2, whose series converges. Therefore verdict = diverges; threshold = 1."
+          - problem: "Consider the series sum from n=3 to infinity of ln(n)/n. Use direct comparison with the harmonic series 1/n. State the conclusion of the direct comparison test, and give the smallest integer N such that ln(n)/n >= 1/n for every n >= N."
+            answer: "verdict = diverges; threshold = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["converges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "threshold"}]}
+            solution_sketch: "The full object is the series sum ln(n)/n starting at n = 3. Step 1: the direct comparison test for divergence needs a lower bound by a divergent series. Step 2: since ln(n) >= 1 for n >= 3, we have ln(n)/n >= 1/n for n >= 3. Step 3: the harmonic series diverges, so the given series diverges and the smallest such integer is N = 3. The wrong option 'converges' comes from ignoring that ln(n) grows without bound. Therefore verdict = diverges; threshold = 3."
+          - problem: "Consider the series sum from n=1 to infinity of 2/(sqrt(n)+3). Use direct comparison with the p-series 1/sqrt(n). State the conclusion of the direct comparison test, and give the smallest integer N such that 2/(sqrt(n)+3) >= 1/sqrt(n) for every n >= N."
+            answer: "verdict = diverges; threshold = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["converges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "threshold"}]}
+            solution_sketch: "The full object is the series sum 2/(sqrt(n)+3). Step 1: the direct comparison test for divergence is used with the p-series 1/sqrt(n). Step 2: the inequality 2/(sqrt(n)+3) >= 1/sqrt(n) is equivalent to 2 sqrt(n) >= sqrt(n)+3, so sqrt(n) >= 3 and n >= 9. Step 3: the p-series 1/sqrt(n) diverges because its exponent 1/2 is at most 1, so the given series diverges and N = 9. The wrong option 'converges' comes from assuming the added constant 3 makes the terms small enough. Therefore verdict = diverges; threshold = 9."
+          - problem: "Consider the series sum from n=1 to infinity of 2/(sqrt(n)+4). Use direct comparison with the p-series 1/sqrt(n). State the conclusion of the direct comparison test, and give the smallest integer N such that 2/(sqrt(n)+4) >= 1/sqrt(n) for every n >= N."
+            answer: "verdict = diverges; threshold = 16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["diverges"], ["converges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "threshold"}]}
+            solution_sketch: "The full object is the series sum 2/(sqrt(n)+4). Step 1: the direct comparison test for divergence is used with the p-series 1/sqrt(n). Step 2: the inequality 2/(sqrt(n)+4) >= 1/sqrt(n) is equivalent to 2 sqrt(n) >= sqrt(n)+4, so sqrt(n) >= 4 and n >= 16. Step 3: the p-series 1/sqrt(n) diverges because its exponent 1/2 is at most 1, so the given series diverges and N = 16. The wrong option 'converges' comes from thinking the larger constant 4 makes the series converge. Therefore verdict = diverges; threshold = 16."
+          - problem: "Consider the series sum from n=1 to infinity of ln(n+1)/n. It diverges by direct comparison with the harmonic series 1/n. Find the smallest integer N such that ln(n+1)/n >= 1/n for every n >= N."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the series sum ln(n+1)/n. Step 1: the direct comparison test for divergence needs ln(n+1)/n >= 1/n. Step 2: this inequality is equivalent to ln(n+1) >= 1, so n+1 >= e and n >= e-1. Step 3: the smallest integer that satisfies this is n = 2, since e-1 is about 1.718. The answer is 2."
+          - problem: "Consider the series sum from n=4 to infinity of 1/(n-3). It diverges by direct comparison with the harmonic series 1/n. Find the smallest integer N such that 1/(n-3) >= 1/n for every n >= N."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the series sum 1/(n-3) starting at n = 4. Step 1: the direct comparison test for divergence needs 1/(n-3) >= 1/n. Step 2: cross multiplying gives n >= n-3, which is true for every n, but the series only starts at n = 4. Step 3: the smallest integer in the domain is N = 4. The answer is 4."
         constraints: "the inequality must go the useful direction; divergent comparator is the harmonic series or a p-series with p <= 1"
       - id: kp3
         name: Fixing a comparison that goes the wrong way
         key_prerequisites: [integral-p-series-tests, geometric-series-convergence]
         exemplars:
-          - problem: 'The naive bound $\frac{1}{n^2 - 1} > \frac{1}{n^2}$ points the wrong way. Decide whether $\sum_{n=2}^{\infty} \frac{1}{n^2 - 1}$ converges anyway.'
-            answer: 'converges ($\frac{1}{n^2-1} \le \frac{2}{n^2}$ for $n \ge 2$, and $\sum \frac{2}{n^2}$ converges)'
-            answer_contract: {kind: none}
-            solution_sketch: 'For $n \ge 2$, $n^2 - 1 \ge \frac{n^2}{2}$, so the terms are at most $\frac{2}{n^2}$.'
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{2^n - 1}$ converges, using a corrected comparison.'
-            answer: 'converges ($\frac{1}{2^n - 1} \le \frac{1}{2^{n-1}}$, a convergent geometric series)'
-            answer_contract: {kind: none}
-            solution_sketch: '$2^n - 1 \ge 2^{n-1}$ for $n \ge 1$ repairs the direction of the bound.'
+          - problem: "For the series with terms 1/(n^2 - 3) for n >= 2, the bound 1/(n^2 - 3) > 1/n^2 points the wrong way. State the behavior of the series, and find the smallest integer C such that 1/(n^2 - 3) <= C/n^2 for all n >= 2."
+            answer: "verdict = converges; C = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "C"}]}
+            solution_sketch: "Step 1: For n >= 2, n^2 - 3 >= n^2/4, so 1/(n^2 - 3) <= 4/n^2. At n = 2 the ratio is 4/(4 - 3) = 4, so C = 4 is the smallest integer. Step 2: The series sum 4/n^2 converges because it is 4 times a convergent p-series with p = 2. Step 3: The wrong option diverges fails because the repaired bound controls the terms by a convergent series. The answer is verdict = converges; C = 4."
+          - problem: "For the series with terms 1/(3^n - 2) for n >= 1, the bound 1/(3^n - 2) > 1/3^n points the wrong way. State the behavior of the series, and find the smallest integer C such that 1/(3^n - 2) <= C/3^n for all n >= 1."
+            answer: "verdict = converges; C = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "C"}]}
+            solution_sketch: "Step 1: For n >= 1, 3^n - 2 >= 3^n/3, so 1/(3^n - 2) <= 3/3^n. At n = 1 the ratio is 3/(3 - 2) = 3, so C = 3 is the smallest integer. Step 2: The geometric series sum 3/3^n = sum (1/3)^(n-1) converges because its ratio 1/3 is less than 1 in absolute value. Step 3: The wrong option diverges fails because the repaired bound gives a convergent geometric comparator. The answer is verdict = converges; C = 3."
+          - problem: "For the series with terms 1/(n^2 - 7) for n >= 3, the bound 1/(n^2 - 7) > 1/n^2 points the wrong way. Find the smallest integer C such that 1/(n^2 - 7) <= C/n^2 for all n >= 3."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: For n >= 3, n^2 - 7 >= n^2/5, so 1/(n^2 - 7) <= 5/n^2. At n = 3 the ratio n^2/(n^2 - 7) equals 9/2 = 4.5, so the smallest integer C is 5. Step 2: The p-series sum 5/n^2 converges by the p-series test with p = 2. Step 3: The answer is 5."
+          - problem: "For the series with terms 1/(7^n - 6) for n >= 1, the bound 1/(7^n - 6) > 1/7^n points the wrong way. Find the smallest integer C such that 1/(7^n - 6) <= C/7^n for all n >= 1."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: For n >= 1, 7^n - 6 >= 7^n/7, so 1/(7^n - 6) <= 7/7^n. At n = 1 the ratio 7^n/(7^n - 6) equals 7, so C is at least 7. Step 2: The geometric series sum 7/7^n = sum (1/7)^(n-1) converges because its ratio 1/7 is less than 1 in absolute value. Step 3: The answer is 7."
+          - problem: "For the series with terms 1/(n^2 - 2) for n >= 2, the bound 1/(n^2 - 2) > 1/n^2 points the wrong way. State the behavior of the series, and find the smallest integer C such that 1/(n^2 - 2) <= C/n^2 for all n >= 2."
+            answer: "verdict = converges; C = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "C"}]}
+            solution_sketch: "Step 1: For n >= 2, n^2 - 2 >= n^2/2, so 1/(n^2 - 2) <= 2/n^2. At n = 2 the ratio is 4/(4 - 2) = 2, so C = 2 is the smallest integer. Step 2: The series sum 2/n^2 converges by the p-series test with p = 2. Step 3: The wrong option diverges fails because the repaired bound compares to a convergent p-series. The answer is verdict = converges; C = 2."
+          - problem: "For the series with terms 1/(6^n - 5) for n >= 1, the bound 1/(6^n - 5) > 1/6^n points the wrong way. State the behavior of the series, and find the smallest integer C such that 1/(6^n - 5) <= C/6^n for all n >= 1."
+            answer: "verdict = converges; C = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "C"}]}
+            solution_sketch: "Step 1: For n >= 1, 6^n - 5 >= 6^n/6, so 1/(6^n - 5) <= 6/6^n. At n = 1 the ratio is 6/(6 - 5) = 6, so C = 6 is the smallest integer. Step 2: The geometric series sum 6/6^n = sum (1/6)^(n-1) converges because its ratio 1/6 is less than 1. Step 3: The wrong option diverges fails because the repaired bound gives a convergent geometric comparator. The answer is verdict = converges; C = 6."
         constraints: "denominators shrunk by a subtraction; repair with a constant multiple of the natural comparator"
     diagnostic_exemplar:
       problem: 'Decide whether $\sum_{n=2}^{\infty} \frac{1}{n^2 - n}$ converges. Note that the naive bound $\frac{1}{n^2 - n} > \frac{1}{n^2}$ points the wrong way.'
@@ -859,14 +935,30 @@ topics:
         name: Direct vs. limit comparison strategy
         key_prerequisites: [direct-comparison-test, sequences-convergence]
         exemplars:
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \left(1 - \cos\frac{1}{n}\right)$ converges.'
-            answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = \frac{1}{2}$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$1 - \cos t \approx \frac{t^2}{2}$ for small $t$, so the terms behave like $\frac{1}{2n^2}$.'
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{n \cdot 2^n}$ converges, choosing the simplest test.'
-            answer: 'converges (direct comparison: $\frac{1}{n \cdot 2^n} \le \frac{1}{2^n}$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The extra factor of $n$ only helps; a direct geometric bound is immediate.'
+          - problem: "Consider the series with terms 1/(sqrt(n)+sqrt(n+1)) for n from 1 to infinity. State its convergence behavior, and give the limit L in a limit comparison with the series with terms 1/sqrt(n)."
+            answer: "verdict = diverges; L = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is 1/(sqrt(n)+sqrt(n+1)) for n from 1 to infinity. For large n the denominator is about 2 sqrt(n), so a direct bound is awkward and limit comparison with the p-series 1/sqrt(n) is essential. The limit is L = limit of sqrt(n)/(sqrt(n)+sqrt(n+1)) = limit of 1/(1+sqrt(1+1/n)) = 1/2 by dividing numerator and denominator by sqrt(n). The p-series with p = 1/2 is less than 1, so the comparator diverges, and the given series diverges. A converges verdict would be the error of treating the sum of two radicals as a p-series with p = 3/2. Answer: verdict = diverges; L = 1/2."
+          - problem: "Consider the series with terms 1/(n*2^n) for n from 1 to infinity. State its convergence behavior, and give the sum of the geometric comparator with terms 1/2^n that bounds it term by term."
+            answer: "verdict = converges; bound = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "The series is 1/(n*2^n) for n from 1 to infinity. For every n at least 1, 1/(n*2^n) is at most 1/2^n, so a direct comparison with the geometric series 1/2^n works. The geometric series has first term 1/2 and ratio 1/2, so its sum is (1/2)/(1 - 1/2) = 1. A diverges verdict would be the error of ignoring the exponential decay in 1/2^n. Answer: verdict = converges; bound = 1."
+          - problem: "Consider the series with terms (n+2)/(n^2+3n) for n from 1 to infinity. State its convergence behavior, and give the limit L in a limit comparison with the series with terms 1/n."
+            answer: "verdict = diverges; L = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is (n+2)/(n^2+3n) for n from 1 to infinity. Use limit comparison with the harmonic series 1/n. The limit is L = limit of n(n+2)/(n^2+3n) = limit of (n^2+2n)/(n^2+3n) = 1. The harmonic series diverges, so the given series diverges. A converges verdict would be the error of treating the extra n in the denominator as a p-series with p = 2. Answer: verdict = diverges; L = 1."
+          - problem: "Consider the series with terms 1/(n^(3/2)+1) for n from 1 to infinity. State its convergence behavior, and give the limit L in a limit comparison with the series with terms 1/n^(3/2)."
+            answer: "verdict = converges; L = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is 1/(n^(3/2)+1) for n from 1 to infinity. Use limit comparison with the p-series 1/n^(3/2). The limit is L = limit of n^(3/2)/(n^(3/2)+1) = 1. Since p = 3/2 is greater than 1, the comparator series converges, so the given series converges. A diverges verdict would be the error of using p = 1/2 from the exponent in the denominator. Answer: verdict = converges; L = 1."
+          - problem: "Consider the series with terms (3n^2+1)/(n^4+5) for n from 1 to infinity. In a limit comparison with the series with terms 1/n^2, find the limit L."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is (3n^2+1)/(n^4+5) for n from 1 to infinity. The limit comparison ratio is ((3n^2+1)/(n^4+5)) / (1/n^2) = (3n^4+n^2)/(n^4+5). Divide numerator and denominator by n^4 to get L = 3. Answer: 3."
+          - problem: "Consider the series with terms 1/(n*3^n) for n from 1 to infinity. Find the sum of the geometric series with terms 1/3^n that bounds it term by term."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is 1/(n*3^n) for n from 1 to infinity. For every n at least 1, 1/(n*3^n) is at most 1/3^n, so the direct comparison bound is the geometric series 1/3^n. That geometric series has first term 1/3 and ratio 1/3, so its sum is (1/3)/(1 - 1/3) = 1/2. Answer: 1/2."
         constraints: "one problem where limit comparison is essential, one where a direct bound is quicker"
     diagnostic_exemplar:
       problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2n + 1}{n^3 + 4}$ converges. Name the test, comparator, and limit.'
@@ -934,14 +1026,30 @@ topics:
         name: Mixed products
         key_prerequisites: [geometric-series-convergence, sequences-convergence]
         exemplars:
-          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^2}{2^n}$.'
-            answer: 'converges ($L = \lim \frac{1}{2}\left(\frac{n+1}{n}\right)^2 = \frac{1}{2} < 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The polynomial factor contributes limit $1$; the geometric factor decides.'
-          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{(2n)!}{(n!)^2}$.'
-            answer: 'diverges ($L = \lim \frac{(2n+2)(2n+1)}{(n+1)^2} = 4 > 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{(2n+2)(2n+1)}{(n+1)^2} \to 4$.'
+          - problem: "Use the ratio test on the series with terms $a_n = n^2/2^n$. State the verdict and find the exact value L."
+            answer: "verdict = converges; L = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Write the ratio a_{n+1}/a_n for the series with terms n^2/2^n. Simplify: the polynomial factor gives ((n+1)/n)^2 and the exponential factor gives 1/2, so the quotient is (1/2)(1+1/n)^2. Take the limit as n goes to infinity to get L = 1/2. The option diverges is wrong because L is less than 1, so the ratio test gives verdict = converges; L = 1/2."
+          - problem: "Use the ratio test on the series with terms $a_n = (2n)!/(n!)^2$. State the verdict and find the exact value L."
+            answer: "verdict = diverges; L = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Write the ratio a_{n+1}/a_n for the series with terms (2n)!/(n!)^2. Simplify the factorials: (2n+2)(2n+1)/(n+1)^2. Take the limit as n goes to infinity to get L = 4. The option converges is wrong because L is greater than 1, so the ratio test gives verdict = diverges; L = 4."
+          - problem: "Use the ratio test on the series with terms $a_n = (2n)!/(3^n (n!)^2)$. State the verdict and find the exact value L."
+            answer: "verdict = diverges; L = 4/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Write the ratio a_{n+1}/a_n for the series with terms (2n)!/(3^n (n!)^2). Simplify: the factorial factors give (2n+2)(2n+1)/(n+1)^2 and the exponential factor gives 1/3, so the quotient is 2(2n+1)/(3(n+1)). Take the limit as n goes to infinity to get L = 4/3. The option converges is wrong because L is greater than 1, so the ratio test gives verdict = diverges; L = 4/3."
+          - problem: "Use the ratio test on the series with terms $a_n = (3n)!/(n!)^3$. State the verdict and find the exact value L."
+            answer: "verdict = diverges; L = 27"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Write the ratio a_{n+1}/a_n for the series with terms (3n)!/(n!)^3. Simplify the factorials: (3n+3)(3n+2)(3n+1)/(n+1)^3. Take the limit as n goes to infinity to get L = 27. The option converges is wrong because L is greater than 1, so the ratio test gives verdict = diverges; L = 27."
+          - problem: "Use the ratio test on the series with terms $a_n = 2^n/n!$. Find the exact value L."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the ratio a_{n+1}/a_n for the series with terms 2^n/n!. Simplify: 2/(n+1). Take the limit as n goes to infinity; the ratio test limit is L = 0. The exact value is 0."
+          - problem: "Use the ratio test on the series with terms $a_n = n^3/3^n$. Find the exact value L as a fraction."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the ratio a_{n+1}/a_n for the series with terms n^3/3^n. Simplify: the polynomial factor gives ((n+1)/n)^3 and the exponential factor gives 1/3, so the quotient is (1/3)(1+1/n)^3. Take the limit as n goes to infinity to get L = 1/3. The exact value L is 1/3."
         constraints: "products of polynomial, exponential, and factorial factors; state L exactly"
     diagnostic_exemplar:
       problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^2 3^n}{n!}$.'
@@ -974,44 +1082,88 @@ topics:
         name: Root test for nth-power terms
         key_prerequisites: [ratio-test]
         exemplars:
-          - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(\frac{n}{2n + 1}\right)^n$.'
-            answer: 'converges ($L = \lim \frac{n}{2n+1} = \frac{1}{2} < 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\sqrt[n]{a_n} = \frac{n}{2n+1} \to \frac{1}{2}$.'
-          - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(\frac{3n + 1}{2n + 5}\right)^n$.'
-            answer: 'diverges ($L = \frac{3}{2} > 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The $n$th root is $\frac{3n+1}{2n+5} \to \frac{3}{2}$.'
-          - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(1 + \frac{1}{n}\right)^{-n^2}$.'
-            answer: 'converges ($L = \lim \left(1 + \frac{1}{n}\right)^{-n} = \frac{1}{e} < 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\sqrt[n]{a_n} = \left(1 + \frac{1}{n}\right)^{-n} \to e^{-1}$.'
+          - problem: "Use the root test on the series $\\sum_{n=1}^{\\infty} \\left(\\frac{n}{2n+1}\\right)^n$. State whether the series converges or diverges and give the limit $L = \\lim_{n\\to\\infty} (a_n)^{1/n}$."
+            answer: "verdict = converges; L = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1: Write the full term $a_n = \\left(\\frac{n}{2n+1}\\right)^n$. Step 2: Apply the root test: the nth root removes the outer power, so $L = \\lim |a_n|^{1/n} = \\lim \\frac{n}{2n+1} = \\frac{1}{2}$ by dividing numerator and denominator by $n$. Step 3: Since $L = 1/2 < 1$, the root test gives convergence; the option diverges is wrong because it needs $L > 1$. The answer is verdict = converges; L = 1/2."
+          - problem: "Use the root test on the series $\\sum_{n=1}^{\\infty} \\left(\\frac{3n+1}{2n+5}\\right)^n$. State whether the series converges or diverges and give the limit $L = \\lim_{n\\to\\infty} (a_n)^{1/n}$."
+            answer: "verdict = diverges; L = 3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1: Write the full term $a_n = \\left(\\frac{3n+1}{2n+5}\\right)^n$. Step 2: Apply the root test: $L = \\lim |a_n|^{1/n} = \\lim \\frac{3n+1}{2n+5} = \\frac{3}{2}$ by dividing by $n$. Step 3: Since $L = 3/2 > 1$, the root test gives divergence; the option converges is wrong because it needs $L < 1$. The answer is verdict = diverges; L = 3/2."
+          - problem: "Use the root test on the series $\\sum_{n=1}^{\\infty} \\left(1+\\frac{1}{n}\\right)^{-n^2}$. State whether the series converges or diverges and give the limit $L = \\lim_{n\\to\\infty} (a_n)^{1/n}$."
+            answer: "verdict = converges; L = 1/e"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1: Write the full term $a_n = \\left(1+\\frac{1}{n}\\right)^{-n^2}$. Step 2: Apply the root test: $L = \\lim |a_n|^{1/n} = \\lim \\left(1+\\frac{1}{n}\\right)^{-n} = e^{-1} = \\frac{1}{e}$, using the standard limit $(1+1/n)^n \\to e$. Step 3: Since $1/e < 1$, the root test gives convergence; the option diverges is wrong because $L < 1$. The answer is verdict = converges; L = 1/e."
+          - problem: "Use the root test on the series $\\sum_{n=1}^{\\infty} \\left(\\frac{5n+2}{4n+3}\\right)^n$. Find the limit $L = \\lim_{n\\to\\infty} (a_n)^{1/n}$."
+            answer: "5/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the full term $a_n = \\left(\\frac{5n+2}{4n+3}\\right)^n$. Step 2: Apply the root test: the nth root removes the outer power, so $L = \\lim \\frac{5n+2}{4n+3} = \\frac{5}{4}$ by dividing numerator and denominator by $n$. The answer is 5/4."
+          - problem: "Use the root test on the series $\\sum_{n=1}^{\\infty} \\left(\\frac{n+1}{n}\\right)^{n^2}$. State whether the series converges or diverges and give the limit $L = \\lim_{n\\to\\infty} (a_n)^{1/n}$."
+            answer: "verdict = diverges; L = e"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Step 1: Write the full term $a_n = \\left(\\frac{n+1}{n}\\right)^{n^2}$. Step 2: Apply the root test: $L = \\lim |a_n|^{1/n} = \\lim \\left(\\frac{n+1}{n}\\right)^{n} = \\lim \\left(1+\\frac{1}{n}\\right)^{n} = e$, the standard limit that defines $e$. Step 3: Since $L = e > 1$, the root test gives divergence; the option converges is wrong because it needs $L < 1$. The answer is verdict = diverges; L = e."
+          - problem: "Use the root test on the series $\\sum_{n=1}^{\\infty} \\left(1+\\frac{2}{n}\\right)^{-n^2}$. Find the limit $L = \\lim_{n\\to\\infty} (a_n)^{1/n}$."
+            answer: "1/e^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Write the full term $a_n = \\left(1+\\frac{2}{n}\\right)^{-n^2}$. Step 2: Apply the root test: $L = \\lim |a_n|^{1/n} = \\lim \\left(1+\\frac{2}{n}\\right)^{-n} = e^{-2} = \\frac{1}{e^2}$, using the standard limit $(1+c/n)^n \\to e^c$ with $c = -2$. The answer is 1/e^2."
         constraints: "a_n is an explicit nth power; L may involve e"
       - id: kp2
         name: The inconclusive case L = 1
         key_prerequisites: [ratio-test, comparison-tests]
         exemplars:
-          - problem: 'Apply the ratio test to $\sum_{n=1}^{\infty} \frac{1}{n^2}$; what does it tell you, and does the series converge?'
-            answer: '$L = 1$, so the ratio test is inconclusive; the series converges anyway ($p$-series, $p = 2$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{n^2}{(n+1)^2} \to 1$. Fall back to the $p$-series fact.'
-          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^n}{n!}$.'
-            answer: 'diverges ($L = \lim \left(1 + \frac{1}{n}\right)^n = e > 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{(n+1)^{n+1} n!}{(n+1)!\, n^n} = \left(\frac{n+1}{n}\right)^n \to e$.'
+          - problem: "Consider the series sum from n=1 to infinity of 1/n^2. Apply the ratio test, then use a second test to decide the behavior of the series. Give the verdict and the value of p."
+            answer: "verdict = converges; p = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Ratio test: a_n = 1/n^2. Then a_{n+1}/a_n = n^2/(n+1)^2, which tends to 1. So L = 1, and the ratio test is inconclusive. The p-series test with p = 2 > 1 shows the series converges. The option diverges is wrong because the p-series converges. The answer is verdict = converges; p = 2."
+          - problem: "Consider the series sum from n=1 to infinity of n^n/n!. Apply the ratio test to find the limit L. Give the verdict and the value of L."
+            answer: "verdict = diverges; L = e"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "Ratio test: a_n = n^n/n!. The ratio a_{n+1}/a_n = ((n+1)^(n+1)/(n+1)!)/(n^n/n!) = ((n+1)/n)^n, which tends to e. So L = e > 1, and the ratio test shows the series diverges. The option converges is wrong because L > 1. The answer is verdict = diverges; L = e."
+          - problem: "Consider the series sum from n=1 to infinity of 1/n^3. Apply the ratio test, then use a second test to decide the behavior of the series. Give the verdict and the value of p."
+            answer: "verdict = converges; p = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Ratio test: a_n = 1/n^3. Then a_{n+1}/a_n = n^3/(n+1)^3, which tends to 1. So L = 1, and the ratio test is inconclusive. The p-series test with p = 3 > 1 shows the series converges. The option diverges is wrong because the p-series converges. The answer is verdict = converges; p = 3."
+          - problem: "Consider the series sum from n=1 to infinity of 1/sqrt(n). Apply the ratio test, then use a second test to decide the behavior of the series. Give the verdict and the value of p."
+            answer: "verdict = diverges; p = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Ratio test: a_n = 1/sqrt(n). Then a_{n+1}/a_n = sqrt(n)/sqrt(n+1), which tends to 1. So L = 1, and the ratio test is inconclusive. The p-series test with p = 1/2 <= 1 shows the series diverges. The option converges is wrong because p <= 1. The answer is verdict = diverges; p = 1/2."
+          - problem: "Consider the series sum from n=1 to infinity of 1/(n^2+1). Apply the ratio test. Then use the limit comparison test with the series sum 1/n^2. Give the limit C of the ratio of the terms."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Ratio test: a_n = 1/(n^2+1). The ratio a_{n+1}/a_n = (n^2+1)/((n+1)^2+1), which tends to 1. So L = 1, and the ratio test is inconclusive. Limit comparison with b_n = 1/n^2: the limit of a_n/b_n = n^2/(n^2+1) tends to 1. The answer is 1."
+          - problem: "Consider the series sum from n=1 to infinity of 1/(n+1). Apply the ratio test. Then use the limit comparison test with the harmonic series sum 1/n. Give the limit C of the ratio of the terms."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Ratio test: a_n = 1/(n+1). The ratio a_{n+1}/a_n = (n+1)/(n+2), which tends to 1. So L = 1, and the ratio test is inconclusive. Limit comparison with b_n = 1/n: the limit of a_n/b_n = n/(n+1) tends to 1. The answer is 1."
         constraints: "include at least one L = 1 case per set; resolution must invoke another test"
       - id: kp3
         name: Choosing between ratio and root
         key_prerequisites: [ratio-test, comparison-tests]
         exemplars:
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2^n}{n^n}$ converges, choosing the natural test.'
-            answer: 'converges (root test: $L = \lim \frac{2}{n} = 0 < 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The $n$th power in the denominator makes the root test immediate.'
-          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n! \, 3^n}{n^n}$ converges.'
-            answer: 'diverges (ratio test: $L = \lim 3\left(\frac{n}{n+1}\right)^n = \frac{3}{e} > 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{a_{n+1}}{a_n} = 3\left(\frac{n}{n+1}\right)^n \to \frac{3}{e} \approx 1.10$.'
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\frac{3^n}{n^n}$. Apply the natural test, and state the verdict together with the limit $L$. State the verdict and $L$."
+            answer: "verdict = converges; L = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} 3^n/n^n$. The root test is the natural rule because $a_n$ is an $n$th power. Compute $L = \\lim |a_n|^{1/n} = \\lim 3/n = 0$. Since $L = 0 < 1$, the root test gives convergence. The option diverges is wrong because $L = 0 < 1$ rules out divergence. So verdict = converges; L = 0."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\frac{n! 4^n}{n^n}$. Apply the natural test, and state the verdict together with the limit $L$. State the verdict and $L$."
+            answer: "verdict = diverges; L = 4/e"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} n! 4^n/n^n$. The ratio test is the natural rule because the factorial appears. Compute $a_{n+1}/a_n = 4(n/(n+1))^n$. The limit is $L = 4/e$. Since $4/e > 1$, the ratio test gives divergence. The option converges is wrong because $L = 4/e > 1$ rules out convergence. So verdict = diverges; L = 4/e."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\left(\\frac{3n}{2n+1}\\right)^n$. Apply the natural test, and state the verdict together with the limit $L$. State the verdict and $L$."
+            answer: "verdict = diverges; L = 3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} (3n/(2n+1))^n$. The root test is the natural rule because $a_n$ is an $n$th power. Compute $L = \\lim |a_n|^{1/n} = \\lim 3n/(2n+1) = 3/2$. Since $3/2 > 1$, the root test gives divergence. The option converges is wrong because $L = 3/2 > 1$ rules out convergence. So verdict = diverges; L = 3/2."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} \\frac{(n!)^2}{(2n)!}$. Apply the natural test, and state the verdict together with the limit $L$. State the verdict and $L$."
+            answer: "verdict = converges; L = 1/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "L"}]}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} (n!)^2/(2n)!$. The ratio test is the natural rule because factorials appear. Compute $a_{n+1}/a_n = (n+1)^2/((2n+2)(2n+1))$. The limit is $L = 1/4$. Since $1/4 < 1$, the ratio test gives convergence. The option diverges is wrong because $L = 1/4 < 1$ rules out divergence. So verdict = converges; L = 1/4."
+          - problem: "For the series $\\sum_{n=1}^{\\infty} \\left(\\frac{2n+1}{3n+4}\\right)^n$, decide whether the ratio test or the root test is natural, and find the limit $L$ that the natural test gives. Give $L$."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} ((2n+1)/(3n+4))^n$. The root test is the natural rule because $a_n$ is an $n$th power. Compute $L = \\lim ((2n+1)/(3n+4)) = 2/3$. The limit is 2/3."
+          - problem: "For the series $\\sum_{n=1}^{\\infty} \\frac{5^n}{n!}$, decide whether the ratio test or the root test is natural, and find the limit $L$ that the natural test gives. Give $L$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The series is $\\sum_{n=1}^{\\infty} 5^n/n!$. The ratio test is the natural rule because the factorial appears. Compute $L = \\lim 5/(n+1) = 0$. The limit is 0."
         constraints: "root test when a_n is an nth power; ratio test when factorials appear; verdicts state L"
     diagnostic_exemplar:
       problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n! \, 2^n}{n^n}$ converges, choosing the more natural test.'
