@@ -1142,34 +1142,100 @@ topics:
         key_prerequisites: [isomorphism-vs-equality]
         constraints: "Examples must be checked against the definition: exhibit a two-sided inverse for each morphism."
         exemplars:
-          - problem: "Define a groupoid and verify that $BG$ (a group $G$ as a one-object category), $\\mathrm{disc}(S)$, and $\\mathrm{indisc}(S)$ are all groupoids."
-            answer: "A category in which every morphism is an isomorphism; each of the three has two-sided inverses for all arrows."
-            solution_sketch: "A groupoid is a category in which every morphism has a two-sided inverse. In $BG$ the morphisms are the elements of $G$ and $g^{-1}$ is a two-sided inverse of $g$. In $\\mathrm{disc}(S)$ the only morphisms are identities, and $1_x$ is its own inverse. In $\\mathrm{indisc}(S)$, the unique arrows $u\\colon x\\to y$ and $v\\colon y\\to x$ satisfy $v\\circ u=1_x$ and $u\\circ v=1_y$ because those are the unique arrows $x\\to x$ and $y\\to y$. So all three are groupoids."
-          - problem: "Define the core of a category $\\mathcal{C}$ and prove it is a groupoid."
-            answer: "The subcategory with all objects of $\\mathcal{C}$ and only its isomorphisms; it is closed under composition and inverses."
-            solution_sketch: "Let $\\mathrm{core}(\\mathcal{C})$ have the objects of $\\mathcal{C}$ and, as morphisms, exactly the isomorphisms of $\\mathcal{C}$. Each $1_A$ is an isomorphism, and a composite of isomorphisms $g\\circ f$ is an isomorphism with inverse $f^{-1}\\circ g^{-1}$, so this is a subcategory. Every one of its morphisms is invertible, and the inverse is again an isomorphism of $\\mathcal{C}$, hence lies in the subcategory. So $\\mathrm{core}(\\mathcal{C})$ is a groupoid; for $\\mathcal{C}=\\mathbf{Set}$ it is the category of sets and bijections."
+          - problem: "Let G be the integers modulo 5 under addition, viewed as the one-object groupoid BG. The morphisms of BG are the elements of G and composition is addition. The morphism 2 from the single object to itself has a two-sided inverse. Give the inverse."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule R1: In BG the morphisms are the elements of G and composition is addition. The inverse of an element g is the element h with g plus h equal to 0. For g equal to 2 modulo 5, h is 3 because 2 plus 3 is 0 and 3 plus 2 is 0. The inverse is 3."
+          - problem: "A finite category C has exactly 7 isomorphisms. Its core is the subcategory with all objects of C and only the isomorphisms of C. How many morphisms does the core have?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule R1: The core keeps all objects of C and exactly the isomorphisms of C. It has no other morphisms, because the core is the subcategory of isomorphisms. Since C has exactly 7 isomorphisms, the core has 7 morphisms. The number of morphisms in the core is 7."
+          - problem: "Let S be a set with 6 elements and consider the discrete category on S. Every morphism is an identity and is its own two-sided inverse. How many morphisms does this category have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule R1: In the discrete category on S, the only morphism with source x is the identity at x. A set with 6 elements gives one identity for each element, so there are 6 morphisms. Each identity is its own two-sided inverse, so the category is a groupoid. The number of morphisms is 6."
+          - problem: "Let S be a set with 3 elements and consider the indiscrete category on S. There is exactly one morphism from x to y for each ordered pair of elements x and y. How many morphisms does this category have?"
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule R1: In the indiscrete category on S, there is exactly one morphism from x to y for each ordered pair (x,y). A set with 3 elements has 3 times 3 equal to 9 ordered pairs, so there are 9 morphisms. The unique morphism from x to y has as two-sided inverse the unique morphism from y to x. The number of morphisms is 9."
+          - problem: "Claim: the category with one object and two morphisms, 1 and e, with composition e composed with e equal to e, is a groupoid. Step 1: A groupoid is a category in which every morphism has a two-sided inverse. Step 2: The category has morphisms 1 and e, and e composed with e is e. Step 3: Since e composed with e is e, multiplying both sides by an inverse of e gives e equal to 1. Step 4: Therefore e equals 1, so every morphism has a two-sided inverse. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Rule R15: Step 1 is the correct definition of a groupoid. Step 2 correctly lists the two morphisms and the rule e composed with e equal to e. Step 3 is not valid: it uses an inverse of e before proving that e has an inverse, which is the point at issue. Step 4 is false: the conclusion e equal to 1 does not follow, and e is not invertible. The first invalid step is Step 3."
+          - problem: "A category has objects A and B and exactly three morphisms: the identity at A, the identity at B, and f from A to B. It is not a groupoid because f has no two-sided inverse. What is the smallest number of additional morphisms needed to make it a groupoid?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule R1: A groupoid must contain a two-sided inverse for every morphism. The morphism f from A to B currently has no morphism from B to A. Adding one morphism g from B to A gives g composed with f equal to the identity at A and f composed with g equal to the identity at B, because those are the only possible endomorphisms. No further morphism is needed, so the minimum is 1."
+          - problem: "Write the full proof: in any groupoid, every morphism has exactly one two-sided inverse. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Let C be a groupoid and let f be a morphism from A to B. By the definition of a groupoid, f has at least one two-sided inverse g from B to A, so g composed with f is the identity at A and f composed with g is the identity at B. Step 2: Suppose h from B to A is another two-sided inverse of f. Then h composed with f is the identity at A and f composed with h is the identity at B. Step 3: Compute h equal to h composed with the identity at B, which equals h composed with f composed with g, which equals h composed with f composed with g, which equals the identity at A composed with g, which equals g, using associativity and the identity laws. Step 4: Thus any two inverses of f are equal, so f has exactly one two-sided inverse. Since f was arbitrary, every morphism in the groupoid has exactly one two-sided inverse."
       - id: kp2
         name: Automorphism groups and hom-set sizes
         key_prerequisites: [poset-monoid-categories]
         constraints: "Work with a fixed object and a fixed chosen isomorphism; state the bijection explicitly."
         exemplars:
-          - problem: "For an object $x$ of a groupoid, prove $\\mathrm{Aut}(x)=\\mathrm{Hom}(x,x)$ is a group."
-            answer: "Composition is associative with unit $1_x$, and every element is invertible by the groupoid axiom."
-            solution_sketch: "All arrows $x\\to x$ are composable, so composition is a binary operation on $\\mathrm{Hom}(x,x)$; it is associative and has $1_x$ as a two-sided unit by the category axioms, making $\\mathrm{Hom}(x,x)$ a monoid. In a groupoid every morphism has a two-sided inverse, and the inverse of an arrow $x\\to x$ is again an arrow $x\\to x$. So every element is invertible and $\\mathrm{Aut}(x)$ is a group — the vertex (isotropy) group at $x$."
-          - problem: "Let $x,y$ be objects of a groupoid with $\\mathrm{Hom}(x,y)\\neq\\varnothing$. Prove $\\mathrm{Hom}(x,y)$ is in bijection with $\\mathrm{Aut}(x)$."
-            answer: "Fix $u\\colon x\\to y$; then $h\\mapsto u^{-1}\\circ h$ is a bijection $\\mathrm{Hom}(x,y)\\to\\mathrm{Aut}(x)$."
-            solution_sketch: "Choose an isomorphism $u\\colon x\\to y$ (possible since the hom-set is nonempty and we are in a groupoid). Define $\\Phi(h)=u^{-1}\\circ h$ for $h\\colon x\\to y$; then $\\Phi(h)\\colon x\\to x$. Its inverse is $\\Psi(a)=u\\circ a$ for $a\\colon x\\to x$, since $\\Psi(\\Phi(h))=u\\circ u^{-1}\\circ h=h$ and $\\Phi(\\Psi(a))=u^{-1}\\circ u\\circ a=a$. Hence $\\mathrm{Hom}(x,y)\\cong\\mathrm{Aut}(x)$ as sets: in a groupoid all nonempty hom-sets between isomorphic objects have the same size."
+          - problem: "In the groupoid with one object x, suppose Aut(x) is isomorphic to Z/4. How many elements does Aut(x) have?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Aut(x) is the group of isomorphisms x -> x. It is given to be isomorphic to Z/4, so it has the same size as Z/4. Z/4 = {0,1,2,3} has 4 elements. Therefore Aut(x) has 4 elements."
+          - problem: "Let x and y be objects of a groupoid with a chosen isomorphism u: x -> y. Suppose Aut(x) is isomorphic to Z/3. How many elements does Hom(x,y) have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In a groupoid, fix an isomorphism u: x -> y. The map h -> u^(-1) h is a bijection from Hom(x,y) to Aut(x). Therefore Hom(x,y) has the same size as Aut(x). Aut(x) is isomorphic to Z/3, so it has 3 elements. Thus Hom(x,y) has 3 elements."
+          - problem: "In a groupoid with one object x, let Aut(x) contain an element a such that a^6 = 1_x and no smaller positive power of a equals 1_x. What is the order of a?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In a groupoid with one object x, Aut(x) is the group of isomorphisms x -> x. If Aut(x) contains an element a with a^6 = 1_x and no smaller positive power equal to 1_x, then a has order 6. The set {1, a, a^2, a^3, a^4, a^5} already has six distinct elements. Therefore the order of a is 6."
+          - problem: "A groupoid has objects x, y, and z. Aut(x) is isomorphic to Z/2. Hom(x,y) and Hom(y,z) are nonempty. What is the size of Hom(x,z)?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In a groupoid, if Hom(x,y) is nonempty, then Hom(x,y) is in bijection with Aut(x), so they have the same size. Since Hom(x,y) is nonempty, x and y are isomorphic; likewise y and z are isomorphic. Thus x and z are isomorphic, so Hom(x,z) is nonempty. Therefore Hom(x,z) is in bijection with Aut(x). Aut(x) is isomorphic to Z/2, so it has 2 elements. Hence Hom(x,z) has 2 elements."
+          - problem: "Claim: In a groupoid, fix objects x,y and an isomorphism u: x -> y. The map h -> u^(-1) h is a bijection Hom(x,y) -> Aut(x). Step 1: Fix u: x -> y. Step 2: For h: x -> y, u^(-1) h is an arrow x -> x. Step 3: The map a -> u^(-1) a is its inverse. Step 4: Therefore Hom(x,y) and Aut(x) have the same size. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: it fixes the isomorphism u. Step 2 is valid: u^(-1) h is an arrow x -> x. Step 3 is not valid: the inverse map should be a -> u a, not a -> u^(-1) a, because u^(-1)(u^(-1) h) = u^(-2) h, which is not h in general. Step 4 is valid only if Step 3 were correct; since Step 3 is the first invalid step, the answer is Step 3."
+          - problem: "A groupoid has exactly two objects x and y. Both Aut(x) and Aut(y) are isomorphic to Z/4. Hom(x,y) is nonempty. How many morphisms does the groupoid have in total?"
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A groupoid with two objects x and y has morphisms partitioned into Aut(x), Aut(y), Hom(x,y), and Hom(y,x). Since Hom(x,y) is nonempty, the groupoid is connected, so Hom(x,y) is in bijection with Aut(x), and Hom(y,x) is in bijection with Aut(y). Thus the size of Hom(x,y) is 4 and the size of Hom(y,x) is 4. The total number of morphisms is 4 + 4 + 4 + 4 = 16."
+          - problem: "Write the full proof: In a groupoid, if u: x -> y is an isomorphism, then the map h -> u^(-1) h is a bijection from Hom(x,y) to Aut(x). Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Fix an isomorphism u: x -> y. Step 2: Define the map Phi(h) = u^(-1) h for h: x -> y. Since u^(-1): y -> x and h: x -> y, the composite is an arrow x -> x, so Phi(h) belongs to Aut(x). Step 3: Define the map Psi(a) = u a for a: x -> x. Then Psi(a): x -> y, so it is in Hom(x,y). Step 4: Check Psi(Phi(h)) = u (u^(-1) h) = (u u^(-1)) h = 1_y h = h by associativity and the inverse law. Step 5: Check Phi(Psi(a)) = u^(-1) (u a) = (u^(-1) u) a = 1_x a = a. Thus Phi and Psi are mutually inverse bijections. Therefore Hom(x,y) and Aut(x) are in bijection."
       - id: kp3
         name: Thin groupoids are equivalence relations
         key_prerequisites: [relations-equivalence]
         constraints: "Two shapes: (i) the dictionary proof relating each of reflexivity, symmetry, transitivity to a specific category axiom (identities, inverses, composition); (ii) partition arguments showing isomorphism classes (connected components) partition the objects of a groupoid."
         exemplars:
-          - problem: "Prove that a groupoid in which every hom-set has at most one element is the same thing as an equivalence relation on its objects."
-            answer: "Identities give reflexivity, inverses give symmetry, composition gives transitivity — and conversely."
-            solution_sketch: "Set $x\\sim y$ iff there is an arrow $x\\to y$. Reflexivity: $1_x$ exists. Transitivity: composition of $x\\to y$ and $y\\to z$. Symmetry: in a groupoid every arrow $x\\to y$ has an inverse $y\\to x$. So $\\sim$ is an equivalence relation. Conversely, from an equivalence relation build the thin category with one arrow $x\\to y$ exactly when $x\\sim y$; symmetry supplies the inverses, so it is a groupoid. The two constructions are mutually inverse — a thin groupoid is precisely an equivalence relation."
-          - problem: "Call a groupoid connected if any two objects are isomorphic. Show that the connected components of an arbitrary groupoid partition its objects."
-            answer: "'Isomorphic' is an equivalence relation on objects, so its classes partition them."
-            solution_sketch: "On the objects of a groupoid define $x\\approx y$ iff $\\mathrm{Hom}(x,y)\\neq\\varnothing$. This is reflexive ($1_x$), symmetric (invert the arrow — every arrow of a groupoid is invertible), and transitive (compose). Being an equivalence relation, its classes partition the objects; each class, with all arrows between its members, is a connected full subgroupoid. Hence every groupoid is a disjoint union of connected groupoids."
+          - problem: "In a thin groupoid, an arrow x -> y and an arrow y -> z compose to an arrow x -> z. Which property of the induced relation on objects does this composition give? Select one."
+            answer: "transitivity"
+            answer_contract: {"kind": "label", "options": [["reflexivity"], ["symmetry"], ["transitivity"], ["associativity"]]}
+            solution_sketch: "Step 1: in the induced relation, x ~ y holds when there is an arrow x -> y. Step 2: composition sends arrows x -> y and y -> z to an arrow x -> z, so x ~ y and y ~ z imply x ~ z; this is exactly transitivity. The option reflexivity is the error of confusing the source of the property: reflexivity of the relation comes from identity arrows, not from composition. The option symmetry is the error of forgetting that the reverse arrow comes from inverses, not from composing two arrows. The option associativity is the error of citing a category axiom that holds in every category but is not a property of the induced relation. The answer is transitivity."
+          - problem: "A groupoid has objects 0, 1, 2, 3, 4. The only non-identity isomorphisms are generated by arrows 0 -> 1 and 2 -> 3. How many connected components does the groupoid have? Give a number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: connected components are the isomorphism classes of objects, and isomorphism is an equivalence relation, so its classes partition the objects. Step 2: the arrow 0 -> 1 links 0 and 1, and its inverse links 1 and 0. Step 3: the arrow 2 -> 3 links 2 and 3, and its inverse links 3 and 2. Step 4: the object 4 is isomorphic only to itself, so it forms a class alone. The classes are {0,1}, {2,3}, {4}. The answer is 3."
+          - problem: "In a groupoid, every arrow f from x to y has a reverse arrow from y to x. Which category axiom guarantees that reverse arrow? Select one."
+            answer: "inverses"
+            answer_contract: {"kind": "label", "options": [["identities"], ["inverses"], ["composition"], ["associativity"]]}
+            solution_sketch: "Step 1: an arrow f: x -> y in a groupoid has, by the groupoid axiom, an inverse g: y -> x with gf = 1x and fg = 1y. Step 2: this inverse g is the reverse arrow, so symmetry of the induced relation corresponds to inverses. The option identities is the error of confusing reflexivity with symmetry: identities give arrows x -> x, not a reverse arrow x -> y. The option composition is the error of confusing transitivity with symmetry: composition gives an arrow x -> z from arrows x -> y and y -> z, not the reverse arrow y -> x. The option associativity is the error of citing an axiom that holds in every category and does not produce any arrow. The answer is inverses."
+          - problem: "A groupoid has objects 1, 2, 3, 4, 5. Suppose 1 is isomorphic to 2, and 2 is isomorphic to 4. No other isomorphisms hold except those forced. Give the largest object in the isomorphism class of 1."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: isomorphism of objects in a groupoid is an equivalence relation, so its classes partition the objects. Step 2: symmetry gives 2 ~ 1 and 4 ~ 2. Step 3: transitivity gives 1 ~ 4. Step 4: object 3 and object 5 are isomorphic only to themselves, so they lie outside the class of 1. The class of 1 is {1,2,4}, and its largest object is 4. The answer is 4."
+          - problem: "A thin category on objects 1, 2, 3 is missing exactly one identity arrow. It has identity arrows on 2 and 3. Which object lacks its identity arrow? Give the smallest such object."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: a thin groupoid corresponds to an equivalence relation, and reflexivity of that relation needs x ~ x for every object x. Step 2: x ~ x comes from the identity arrow 1x, so an identity arrow must exist on each object. Step 3: objects 2 and 3 have their identity arrows, so the missing identity arrow is on object 1. The answer is 1."
+          - problem: "In the dictionary proof, reflexivity of the relation corresponds to which category axiom? Select one."
+            answer: "identities"
+            answer_contract: {"kind": "label", "options": [["identities"], ["inverses"], ["composition"], ["associativity"]]}
+            solution_sketch: "Step 1: the relation is x ~ y when an arrow x -> y exists. Step 2: reflexivity needs x ~ x for every object, and the arrow x -> x is exactly the identity arrow 1x. Step 3: so reflexivity corresponds to identities. The option inverses is the error of matching symmetry to the wrong property: inverses give the reverse arrow y -> x, not the loop x -> x. The option composition is the error of matching transitivity to the wrong property: composition builds x -> z from x -> y and y -> z, not the loop x -> x. The option associativity is the error of citing an axiom of every category that produces no arrow at all. The answer is identities."
+          - problem: "Write the full proof: a groupoid in which every hom-set has at most one element is the same thing as an equivalence relation on its objects. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (definition): call a groupoid thin when each hom-set has at most one arrow. Step 2 (relation): define x ~ y iff there is an arrow x -> y. Step 3 (reflexivity): the identity arrow 1x gives x ~ x. Step 4 (symmetry): every arrow x -> y in a groupoid has an inverse y -> x, so x ~ y gives y ~ x. Step 5 (transitivity): arrows x -> y and y -> z compose to x -> z, so x ~ y and y ~ z give x ~ z. Thus ~ is an equivalence relation. Step 6 (converse): given an equivalence relation ~ on a set, form the thin category with one arrow x -> y exactly when x ~ y. Step 7: identities come from reflexivity, inverses from symmetry, and composition from transitivity; hence this category is a groupoid. The two constructions are mutually inverse, so a thin groupoid is exactly an equivalence relation on its objects."
     diagnostic_exemplar:
       problem: "Let $x$ be an object of a groupoid $\\mathcal G$. Prove that $\\mathrm{Aut}(x)=\\mathrm{Hom}(x,x)$ is a group under composition."
       answer: "Any two arrows $x\\to x$ are composable, so composition is a binary operation on $\\mathrm{Hom}(x,x)$; it is associative and has $1_x$ as a two-sided unit by the category axioms. By the groupoid axiom every $a\\colon x\\to x$ has a two-sided inverse $a^{-1}$, which is again an arrow $x\\to x$. Hence every element is invertible and $\\mathrm{Aut}(x)$ is a group."
@@ -1206,23 +1272,67 @@ topics:
         key_prerequisites: [mono-epi-iso]
         constraints: "State the defining equation ($r\\circ s=1$) before cancelling with it; $\\mathbf{Set}$ constructions may invoke choice for sections and a basepoint for retractions; concrete sets of size at most 4."
         exemplars:
-          - problem: "Define a section (right inverse) and a retraction (left inverse), and prove a map with a section is epi."
-            answer: "$s$ is a section of $r$ if $r\\circ s=1$; a map with a right inverse is a split epi, hence epi."
-            solution_sketch: "If $e\\circ s=1_B$ then for $f\\circ e=g\\circ e$ we get $f=f\\circ e\\circ s=g\\circ e\\circ s=g$, so $e$ is epi (a split epi). Dually, a map $m$ with $r\\circ m=1$ (a retraction $r$) is left-cancellable: $m\\circ f=m\\circ g\\Rightarrow f=r\\circ m\\circ f=r\\circ m\\circ g=g$, so a split mono is mono."
-          - problem: "Show that in $\\mathbf{Set}$ every surjection has a section, and every injection with nonempty domain has a retraction."
-            answer: "Choose a preimage for each point (surjection); send non-image points to a fixed element (injection)."
-            solution_sketch: "If $e\\colon A\\to B$ is surjective, choose for each $b\\in B$ some $s(b)\\in e^{-1}(b)$ (axiom of choice); then $e\\circ s=1_B$, so $e$ is a split epi. If $m\\colon A\\to B$ is injective and $a_0\\in A$, define $r(b)$ = the unique $a$ with $m(a)=b$ when $b\\in\\mathrm{im}(m)$, and $r(b)=a_0$ otherwise; then $r\\circ m=1_A$, so $m$ is a split mono. Thus in $\\mathbf{Set}$ (with choice) epis are split, unlike in most categories."
+          - problem: "Let f: {1,2,3} -> {a,b} be the map f(1)=a, f(2)=b, f(3)=a. A section s satisfies f o s = 1_{a,b}. Find s(b)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The defining equation is f o s = 1_{a,b}. Apply both sides to b: f(s(b)) = b. The only element sent to b is 2 because f(1)=a, f(2)=b, and f(3)=a. Thus s(b) = 2. The answer is 2."
+          - problem: "Let m: {1,2} -> {a,b,c} be the map m(1)=b, m(2)=c. A retraction r satisfies r o m = 1_{1,2}. With basepoint a sent to 1, find r(a)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The defining equation is r o m = 1_{1,2}. Apply both sides to 2: r(m(2)) = 2. Since m(2)=c, r(c)=2. The basepoint a is not in the image of m and is sent to 1, so r(a)=1. The answer is 1."
+          - problem: "Let f: {1,2,3,4} -> {a,b,c} be the map f(1)=a, f(2)=b, f(3)=c, f(4)=a. A section s satisfies f o s = 1_{a,b,c}. How many sections does f have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The defining equation is f o s = 1_{a,b,c}. For each output, a section must choose a preimage. The element a has preimages 1 and 4, b has preimage 2, and c has preimage 3. Thus there are 2 choices for s(a) and no choice for the others, so 2 sections. The answer is 2."
+          - problem: "In the category with objects A and B and only the morphisms 1_A, 1_B, and f: A -> B, a section s of f satisfies f o s = 1_B. How many sections does f have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The defining equation is f o s = 1_B. A section s would be a morphism from B to A. The given category has only 1_A, 1_B, and f: A -> B. There is no morphism from B to A, so no section exists. The answer is 0."
+          - problem: "Let m: {2,3} -> {x,y,z} be the map m(2)=y, m(3)=z. A retraction r satisfies r o m = 1_{2,3}. How many retractions does m have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (defining equation): a retraction r of m satisfies r o m = 1_{2,3}. Step 2 (apply the equation): applying both sides to 2 gives r(m(2)) = r(y) = 2, and applying both sides to 3 gives r(z) = 3. Step 3 (free choice): the element x is not in the image of m, so r(x) may be 2 or 3 independently, giving 2 retractions. The answer is 2."
+          - problem: "In the proof that a split epi is epi, suppose r o s = 1_B. The line f = ? is missing. Select the line that follows from f o 1_B = f."
+            answer: "f = f o (r o s)"
+            answer_contract: {"kind": "label", "options": [["f = f o (r o s)"], ["f = f o (s o r)"], ["f = (f o s) o r"], ["f = g o (r o s)"]]}
+            solution_sketch: "Start with f = f o 1_B by the identity law. Replace 1_B by r o s using the defining equation r o s = 1_B. Associativity gives f = f o (r o s). The wrong option f o (s o r) reverses the composition order. The wrong option (f o s) o r has the wrong type. The wrong option g o (r o s) uses g before the hypothesis f o r = g o r. The answer is f = f o (r o s)."
+          - problem: "Write the full proof: in a category, a morphism with a retraction is a monomorphism, and a morphism with a section is an epimorphism. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: let m: A -> B and let r: B -> A satisfy r o m = 1_A. Suppose m o f = m o g for parallel maps f,g: C -> A. Step 2: compose on the left with r. By associativity, (r o m) o f = (r o m) o g. Step 3: replace r o m by 1_A, so 1_A o f = 1_A o g. By the identity law, f = g. Thus m is monic. Step 4: let e: A -> B and let s: B -> A satisfy e o s = 1_B. Suppose f o e = g o e for parallel maps f,g: B -> C. Step 5: compose on the right with s. By associativity, f o (e o s) = g o (e o s). Step 6: replace e o s by 1_B, so f o 1_B = g o 1_B. By the identity law, f = g. Thus e is epic. The proof shows a split mono is monic and a split epi is epic."
       - id: kp2
         name: When splitting plus cancellation gives an isomorphism
         key_prerequisites: [isomorphism-vs-equality]
         constraints: "Purely equational proofs from $r\\circ m=1$ and/or $m\\circ s=1$ plus at most one mono/epi cancellation; each step cites the hypothesis or axiom used."
         exemplars:
-          - problem: "Prove that if $f$ is both a split mono and a split epi then $f$ is an isomorphism."
-            answer: "Its left and right inverses coincide, giving a two-sided inverse."
-            solution_sketch: "Say $r\\circ f=1$ and $f\\circ s=1$. Then $r=r\\circ 1=r\\circ(f\\circ s)=(r\\circ f)\\circ s=1\\circ s=s$. So $s=r$ is a two-sided inverse and $f$ is an isomorphism."
-          - problem: "Prove that a split monomorphism that is also an epimorphism is an isomorphism."
-            answer: "Right-cancel $m$ in $m\\circ r\\circ m=m$ to get $m\\circ r=1$; with $r\\circ m=1$, $m$ is iso."
-            solution_sketch: "Let $r\\circ m=1_A$ with $m\\colon A\\to B$ epi. Then $(m\\circ r)\\circ m=m\\circ(r\\circ m)=m\\circ 1_A=m=1_B\\circ m$. Since $m$ is epi (right-cancellable), $m\\circ r=1_B$. Together with $r\\circ m=1_A$, $r$ is a two-sided inverse, so $m$ is an isomorphism. Dually, a split epi that is mono is an isomorphism."
+          - problem: "In the category Set, let A={1,2} and B={1,2}. Let m: A->B be m(1)=2, m(2)=1. Suppose r: B->A satisfies r∘m=id_A and s: B->A satisfies m∘s=id_B. Compute r(1)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First, note that r∘m=1_A and m∘s=1_B. By associativity, r = r∘1_B = r∘(m∘s) = (r∘m)∘s = 1_A∘s = s. Thus the left inverse r and the right inverse s coincide. Since m(1)=2, we have m(2)=1, so the inverse sends 1 to 2. The answer is 2."
+          - problem: "In Set, let A={1,2,3} and B={1,2,3}. Let m: A->B be m(1)=3, m(2)=1, m(3)=2. Suppose r: B->A satisfies r∘m=id_A and m is an epimorphism. Compute r(2)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "We have r∘m=1_A. Then (m∘r)∘m = m∘(r∘m) = m∘1_A = m = 1_B∘m by associativity, identity, and the hypothesis. Since m is epi, right-cancel m to get m∘r=1_B. So r is a two-sided inverse. Since m(3)=2, the inverse sends 2 to 3. The answer is 3."
+          - problem: "Claim: if r∘m=1_A then m∘r=1_B. Step 1: (m∘r)∘m = m∘(r∘m) by associativity. Step 2: m∘(r∘m) = m∘1_A = m by the hypothesis. Step 3: so m∘r = 1_B by cancellation. Step 4: thus m is an isomorphism. Which step is the first invalid step?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid by associativity. Step 2 is valid by the hypothesis r∘m=1_A. Step 3 is invalid: from (m∘r)∘m = 1_B∘m one may cancel m only if m is an epimorphism. Step 4 relies on Step 3. The answer is Step 3."
+          - problem: "In the proof that a split mono m with r∘m=1_A and epi m is an isomorphism, the line after (m∘r)∘m = m∘(r∘m) = m∘1_A = m is missing. Select the line that completes the right-cancellation step."
+            answer: "m o r = 1_B"
+            answer_contract: {"kind": "label", "options": [["m o r = 1_B"], ["m o r = m"], ["r o m = 1_B"], ["m o r = 1_A"]]}
+            solution_sketch: "The line before shows (m∘r)∘m = 1_B∘m. Since m is epi, right-cancel m to get m o r = 1_B. Option m o r = m confuses the identity on B. Option r o m = 1_B swaps the order. Option m o r = 1_A uses the wrong object. The answer is m o r = 1_B."
+          - problem: "In the proof that a split mono plus epi is an isomorphism, the step (m∘r)∘m = m∘(r∘m) uses which axiom?"
+            answer: "associativity"
+            answer_contract: {"kind": "label", "options": [["associativity"], ["identity"], ["hypothesis"], ["epimorphism"]]}
+            solution_sketch: "The step (m∘r)∘m = m∘(r∘m) regroups a composition of three morphisms, so the axiom used is associativity. Option identity is the error of citing the law that removes m∘1_A, which is not a regrouping. Option hypothesis is the error of citing r∘m=1_A, which the rewrite does not use. Option epimorphism is the error of citing a cancellation property, which no rewrite of the two sides needs. The answer is associativity."
+          - problem: "In Set, let A={1,2,3,4} and B={1,2,3,4}. Let m: A->B be m(1)=2, m(2)=4, m(3)=1, m(4)=3. Suppose r: B->A satisfies r∘m=id_A and m is an epimorphism. Compute r(1)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "We have r∘m=1_A and m is epi. Then (m∘r)∘m = m∘(r∘m) = m = 1_B∘m. Right-cancel m to get m∘r=1_B, so r is a two-sided inverse. Since m(3)=1, the inverse sends 1 to 3. The answer is 3."
+          - problem: "Write the full proof: if m: A->B is a split epimorphism and a monomorphism, then m is an isomorphism. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (hypothesis): m is a split epi, so there is s: B->A with m∘s=1_B. Step 2 (hypothesis): m is a monomorphism, so m is left-cancellable. Step 3 (associativity and identity): compute m∘(s∘m) = (m∘s)∘m = 1_B∘m = m. Also m = m∘1_A. So m∘(s∘m) = m∘1_A. Step 4 (cancellation): since m is mono, cancel m on the left to get s∘m=1_A. Step 5 (conclusion): m∘s=1_B and s∘m=1_A, so s is a two-sided inverse and m is an isomorphism."
     diagnostic_exemplar:
       problem: "Let $m\\colon A\\to B$ be a split monomorphism (some $r\\colon B\\to A$ satisfies $r\\circ m=1_A$) which is also an epimorphism. Prove that $m$ is an isomorphism."
       answer: "$(m\\circ r)\\circ m=m\\circ(r\\circ m)=m\\circ 1_A=m=1_B\\circ m$. Since $m$ is an epimorphism, right-cancel it to get $m\\circ r=1_B$. Together with $r\\circ m=1_A$, $r$ is a two-sided inverse, so $m$ is an isomorphism."
@@ -1278,12 +1388,34 @@ topics:
         key_prerequisites: [diagram-chasing]
         constraints: "State which of 'epi' and 'mono' is used at each step; uniqueness must come from the mono."
         exemplars:
-          - problem: "Suppose $v\\circ e=m\\circ u$ with $e\\colon A\\to X$ epi and $m\\colon Y\\to B$ mono. Prove that a diagonal $d\\colon X\\to Y$ with $d\\circ e=u$ and $m\\circ d=v$ is unique if it exists."
-            answer: "Two candidates agree because $m$ is left-cancellable."
-            solution_sketch: "Let $d,d'$ both satisfy the two equations. From $m\\circ d=v=m\\circ d'$ and $m$ monic (left-cancellable) we get $d=d'$. (The epi $e$ is not needed for uniqueness; it is what makes existence plausible, since $d$ is forced on the image of $e$.) Unique diagonal fill-in is only one of the axioms: a pair $(\\mathcal{E},\\mathcal{M})$ of classes of morphisms is a factorization system when (i) every morphism factors as $m\\circ e$ with $e\\in\\mathcal{E}$ and $m\\in\\mathcal{M}$, (ii) each class contains all isomorphisms and is closed under composition with them, and (iii) every commuting square $v\\circ e=m\\circ u$ with $e\\in\\mathcal{E}$, $m\\in\\mathcal{M}$ has a unique diagonal fill-in. Axiom (iii) alone would be satisfied vacuously by empty classes."
-          - problem: "Prove that in $\\mathbf{Set}$ the diagonal fill-in always exists: given $v\\circ e=m\\circ u$ with $e$ surjective and $m$ injective, construct $d$."
-            answer: "$d(x)=u(a)$ for any $a$ with $e(a)=x$; this is well defined and satisfies both equations."
-            solution_sketch: "Given $x\\in X$, pick $a\\in A$ with $e(a)=x$ (possible as $e$ is surjective) and set $d(x)=u(a)$. Well defined: if $e(a)=e(a')=x$ then $m(u(a))=v(e(a))=v(x)=v(e(a'))=m(u(a'))$, and $m$ injective gives $u(a)=u(a')$. By construction $d\\circ e=u$, and $m(d(x))=m(u(a))=v(e(a))=v(x)$, so $m\\circ d=v$. Uniqueness was shown above, so $(\\text{surjections},\\text{injections})$ is a factorization system on $\\mathbf{Set}$."
+          - problem: "In Set, let e: A -> X be surjective and m: Y -> B be injective, and suppose v(e(a)) = m(u(a)) for all a. Take A = {1,2,3}, X = {1,2}, with e(1)=e(2)=1 and e(3)=2. Take Y = {10,20}, B = {10,20,30}, with m(10)=10 and m(20)=20. Take u(1)=u(2)=10 and u(3)=20, and v(1)=10, v(2)=20. A diagonal d satisfies d(e(a)) = u(a) and m(d(x)) = v(x). Give d(2)."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the epi property of e to pick a representative for x=2; e(3)=2, so d(2)=u(3)=20 from d(e(a))=u(a). Step 2: For uniqueness use the mono property of m; if another d' had d'(2)=y then m(y)=v(2)=20, and m injective gives y=20. The answer is 20."
+          - problem: "In Set, let e: A -> X be surjective and m: Y -> B be injective, with v(e(a)) = m(u(a)) for all a. Take A = {1,2,3,4}, X = {1,2,3}, where e(1)=1, e(2)=2, e(3)=2, e(4)=3. Take Y = {0,1,2}, B = {0,1,2,3,4}, with m(0)=0, m(1)=2, m(2)=4. Take u(1)=0, u(2)=1, u(3)=1, u(4)=2, and v(1)=0, v(2)=2, v(3)=4. A diagonal d satisfies d(e(a)) = u(a) and m(d(x)) = v(x). Give d(2)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use the epi property of e to choose a with e(a)=2; both a=2 and a=3 work. Step 2: Apply d(e(a))=u(a) to a=2: d(2)=u(2)=1. Step 3: For well-definedness use the mono property of m; if another choice gave y with m(y)=v(2)=2, then m injective gives y=1. The answer is 1."
+          - problem: "In Set, let m: Y -> B be injective with m(y)=2y. Suppose a diagonal d satisfies m(d(x)) = v(x) and v(2)=6. Find d(2)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Apply m(d(x))=v(x) at x=2: m(d(2))=6. Step 2: Use the mono property of m to cancel; solve m(y)=6. Since m(y)=2y, 2d(2)=6, so d(2)=3. The answer is 3."
+          - problem: "In Set, let e: A -> X be surjective with e(1)=e(2)=3. A diagonal d satisfies d(e(a)) = u(a) and d(3)=7. Find u(2)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Use d(e(a))=u(a) with a=2; e(2)=3, so d(3)=u(2). Step 2: The value d(3)=7 is given, so u(2)=7. The epi property of e guarantees that a representative exists, but the value is forced by a=2. The answer is 7."
+          - problem: "Claim: In Set, if e is surjective, m is injective, and v(e(a)) = m(u(a)) for all a, then d(x)=u(a) for any a with e(a)=x is well defined. Step 1: Given x in X, choose a in A with e(a)=x using that e is epi. Step 2: Set d(x)=u(a). Step 3: If e(a)=e(a')=x, then m(u(a))=v(e(a))=v(e(a'))=m(u(a')), so u(a)=u(a') because m is epi. Step 4: Therefore d is well defined. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: e epi gives a representative a with e(a)=x. Step 2 is valid as the definition of d(x). Step 4 would follow once Step 3 is corrected. Step 3 is invalid: it uses m as if m were epi, but the hypothesis is that m is mono. From m(u(a))=m(u(a')) and m mono, left-cancellation gives u(a)=u(a'). The answer is Step 3."
+          - problem: "In the well-definedness proof for d(x)=u(a), the line after m(u(a))=v(e(a))=v(e(a'))=m(u(a')) is missing. Select the line that completes the proof using the correct property of m."
+            answer: "u(a)=u(a')"
+            answer_contract: {"kind": "label", "options": [["u(a)=u(a')"], ["m(a)=m(a')"], ["v(a)=v(a')"], ["e(a)=e(a')"]]}
+            solution_sketch: "The missing line must apply the mono property of m. From m(u(a))=m(u(a')) and m monic, left-cancellation gives u(a)=u(a'). The option m(a)=m(a') misapplies m to the object a instead of its image u(a). The option v(a)=v(a') applies v to the wrong object. The option e(a)=e(a') is the chosen equality of x and does not use m. The answer is u(a)=u(a')."
+          - problem: "Write the full proof: in Set, let e: A -> X be surjective, let m: Y -> B be injective, and suppose v(e(a)) = m(u(a)) for all a. Prove that the rule d(x)=u(a) for any a with e(a)=x gives a well-defined function d: X -> Y. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof. Given x in X, the epi property of e (surjectivity) gives at least one a in A with e(a)=x, so the rule can choose a value. Define d(x)=u(a) for such an a. To show well defined, suppose e(a)=e(a')=x. Then v(e(a))=v(e(a')) by equal arguments, and the square identity gives m(u(a))=v(e(a))=v(e(a'))=m(u(a')). Since m is mono (injective), left-cancellation yields u(a)=u(a'). Thus the value d(x) does not depend on the chosen a. The rule defines a function d: X -> Y, and the independence step uses the mono property of m."
       - id: kp3
         name: Subobjects as isomorphism classes of monomorphisms
         key_prerequisites: [isomorphism-vs-equality]
@@ -1332,34 +1464,100 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Definitions plus identification in $\\mathbf{Set}$ or in a poset category; uniqueness of the connecting arrow must be argued, not assumed; poset instances may lack the extremum."
         exemplars:
-          - problem: "Define initial and terminal objects and identify them in $\\mathbf{Set}$."
-            answer: "Initial: unique arrow out to every object ($\\varnothing$); terminal: unique arrow in from every object (any singleton)."
-            solution_sketch: "An object $0$ is initial if for every $X$ there is exactly one morphism $0\\to X$; an object $1$ is terminal if for every $X$ there is exactly one morphism $X\\to 1$. In $\\mathbf{Set}$: $\\varnothing$ is initial (the empty function is the unique map $\\varnothing\\to X$), and every one-element set is terminal (a map $X\\to\\{*\\}$ is forced to be constant, hence unique)."
-          - problem: "Identify the initial and terminal objects of a poset $(P,\\le)$ viewed as a category."
-            answer: "Initial $=$ least element; terminal $=$ greatest element (if they exist)."
-            solution_sketch: "A unique arrow $x\\to y$ exists iff $x\\le y$. An initial object must satisfy $0\\le y$ for all $y$: a least element. A terminal object must satisfy $y\\le 1$ for all $y$: a greatest element. Either may fail to exist."
+          - problem: "Which condition defines an initial object in a category? Select the correct description."
+            answer: "unique arrow out to every object"
+            answer_contract: {"kind": "label", "options": [["unique arrow out to every object"], ["unique arrow in from every object"], ["an arrow out to every object"], ["no arrow out to any object"]]}
+            solution_sketch: "An initial object I has exactly one morphism from I to every object X. The option 'unique arrow in from every object' describes a terminal object instead. The option 'an arrow out to every object' forgets that the arrow must be unique. The option 'no arrow out to any object' fails because an initial object must have an arrow to every object. The answer is unique arrow out to every object."
+          - problem: "In the poset category on the numbers 2, 3, and 6 ordered by divisibility, how many initial objects are there?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In a poset category, a unique arrow x to y exists exactly when x <= y. An initial object would need x <= y for every y, so it must be a least element. In the divisibility poset on 2, 3, and 6, 2 does not divide 3 and 3 does not divide 2, and 6 does not divide 2 or 3. No least element exists. The answer is 0."
+          - problem: "In the category Set, which object is initial? Select the correct description."
+            answer: "empty set"
+            answer_contract: {"kind": "label", "options": [["empty set"], ["one-element set"], ["two-element set"], ["every set"]]}
+            solution_sketch: "An initial object I has exactly one morphism from I to every set X. The empty set has exactly one map to any set: the empty function. The option 'one-element set' fails because a one-element set has two maps to a two-element set. The option 'two-element set' fails because it has more than one map to a three-element set. The option 'every set' fails because not every set has a unique map to every other set. The answer is empty set."
+          - problem: "In the discrete category with three objects, how many terminal objects are there?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A terminal object T needs exactly one arrow X to T for every object X. In the discrete category on three objects, the only arrows are identities. No arrow goes from one object to a different object. Thus no object can receive an arrow from the other two objects, so no terminal object exists. The answer is 0."
+          - problem: "In the poset category on the numbers 1, 2, 4, and 8 ordered by divisibility, give the terminal object as a number."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In a poset category, a unique arrow x to y exists exactly when x <= y. A terminal object T must satisfy y <= T for every y, so T is a greatest element. Under divisibility on 1, 2, 4, and 8, every listed number divides 8, and the only arrow to 8 from each is unique. Thus 8 is the terminal object. The answer is 8."
+          - problem: "In the category with objects A and B and one arrow from A to B besides the identity arrows, how many initial objects are there?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The objects are A and B, with identity arrows and one arrow from A to B. An initial object must have exactly one arrow to every object. A has the identity A to A and the given arrow A to B, so A is initial. B has no arrow to A, so B is not initial. Exactly one object is initial. The answer is 1."
+          - problem: "Write the full proof: in Set the empty set is initial and any one-element set is terminal. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Recall that an object I is initial if for every object X there is exactly one morphism I to X. An object T is terminal if for every object X there is exactly one morphism X to T. Step 2: Show the empty set is initial. For any set X, the empty function from the empty set to X assigns no elements and so exists. Any two such functions have the same empty graph, so the function is unique. Step 3: Show a singleton is terminal. Let T = {t}. For any set X, the constant function f(x) = t is a map X to T. If g is any map X to T, then g(x) must be t because t is the only element of T, so g = f. Thus there is exactly one map. Step 4: Therefore the empty set is initial and every one-element set is terminal in Set."
       - id: kp2
         name: Uniqueness up to unique isomorphism
         key_prerequisites: [isomorphism-vs-equality]
         constraints: "The two-object cross-map argument; every arrow used must be justified as the unique one supplied by initiality/terminality, and the dual statement obtained by reversing arrows."
         exemplars:
-          - problem: "Prove any two initial objects are uniquely isomorphic."
-            answer: "The unique cross-maps compose to identities."
-            solution_sketch: "Let $I,I'$ be initial. Initiality of $I$ gives a unique $u\\colon I\\to I'$; initiality of $I'$ gives a unique $v\\colon I'\\to I$. Then $v\\circ u\\colon I\\to I$ and $1_I$ are both morphisms $I\\to I$; by initiality of $I$ (unique arrow out) they are equal, so $v\\circ u=1_I$. Symmetrically $u\\circ v=1_{I'}$. Thus $u$ is an isomorphism, and it is the unique one, since any iso $I\\to I'$ is the unique arrow $I\\to I'$."
-          - problem: "State the dual statement for terminal objects and how its proof differs."
-            answer: "Any two terminal objects are uniquely isomorphic; the proof is the same with arrows reversed."
-            solution_sketch: "Terminal is the dual of initial (arrows reversed). Replacing 'unique arrow out' by 'unique arrow in' throughout gives the same argument, so terminal objects are unique up to unique isomorphism."
+          - problem: "Let I and J be initial objects of a category. By initiality of I, how many morphisms are there from I to J?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (initiality of I): since I is initial, there is exactly one morphism from I to every object of the category. Step 2 (apply to J): J is an object, so the set of morphisms I to J has exactly one element. The answer is 1."
+          - problem: "Let T and T' be terminal objects of a category. By terminality of T', how many morphisms are there from T to T'?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (terminality of T'): since T' is terminal, there is exactly one morphism from every object to T'. Step 2 (apply to T): T is an object, so the set of morphisms T to T' has exactly one element. The answer is 1."
+          - problem: "Consider the category with objects I, J, K and non-identity morphisms u: I -> J, v: J -> I, f: I -> K, and g: J -> K, where v after u is 1_I, u after v is 1_J, g after u is f, and f after v is g. How many initial objects does this category have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (check I): from I there is the identity I -> I, u: I -> J, and f: I -> K, and these are the only morphisms out of I, so I is initial. Step 2 (check J): from J there is the identity J -> J, v: J -> I, and g: J -> K, and these are the only morphisms out of J, so J is initial. Step 3 (check K): there is no morphism K -> I, so K is not initial. Step 4 (count): both I and J are initial, so the number is 2. The answer is 2."
+          - problem: "Let I and J be initial objects, with unique u: I -> J and v: J -> I. The composite v after u is a morphism I -> I. Which morphism must it be?"
+            answer: "1_I"
+            answer_contract: {"kind": "label", "options": [["1_I"], ["1_J"], ["u"], ["v"]]}
+            solution_sketch: "Step 1 (initiality of I): the only morphism I -> I is the identity 1_I. Step 2 (composite): v after u is a morphism I -> I, so it must equal 1_I. Step 3 (wrong options): 1_J is the identity on J, u goes I -> J, and v goes J -> I, so none can be a morphism I -> I equal to the composite. The answer is 1_I."
+          - problem: "Let T and T' be terminal objects, with unique u: T -> T' and unique v: T' -> T. The composite u after v is a morphism T' -> T'. Which morphism must it be?"
+            answer: "id on T'"
+            answer_contract: {"kind": "label", "options": [["id on T'"], ["id on T"], ["the map u"], ["the map v"]]}
+            solution_sketch: "Step 1 (terminality of T'): the only morphism T' -> T' is the identity, called id on T'. Step 2 (composite): u after v is a morphism T' -> T', so it must equal id on T'. Step 3 (wrong options): id on T is the identity on the wrong object T, and the map u and the map v are the individual cross-maps, neither of which is a morphism T' -> T'. The answer is id on T'."
+          - problem: "In the discrete category with two objects A and B, the only morphisms are identities. How many initial objects does this category have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (list morphisms): the discrete category has only the identities 1_A: A -> A and 1_B: B -> B. Step 2 (test A): there is no morphism A -> B, so A is not initial. Step 3 (test B): there is no morphism B -> A, so B is not initial. Step 4 (count): no object is initial, so the number is 0. The answer is 0."
+          - problem: "Write the full proof: any two initial objects of a category are uniquely isomorphic. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): let I and J be initial objects of a category. Step 2 (cross-maps): by initiality of I there is a unique morphism u: I -> J, and by initiality of J there is a unique morphism v: J -> I. Step 3 (composite on I): the composite v after u: I -> I is a morphism from I to I; since I is initial, there is exactly one morphism I -> I, namely the identity 1_I, so v after u is 1_I. Step 4 (composite on J): similarly, u after v: J -> J is a morphism from J to J; since J is initial, there is exactly one morphism J -> J, namely 1_J, so u after v is 1_J. Step 5 (isomorphism): therefore u and v are mutually inverse, so u is an isomorphism I -> J. Step 6 (uniqueness): any isomorphism I -> J is a morphism I -> J, and by initiality of I there is only one such morphism, so u is the unique isomorphism from I to J. Thus any two initial objects are uniquely isomorphic."
       - id: kp3
         name: Zero objects
         key_prerequisites: [isomorphism-vs-equality]
         constraints: "Zero objects in $\\mathbf{Grp}$ (or note the failure in $\\mathbf{Set}$); zero-morphism computations use only uniqueness of arrows into/out of $0$."
         exemplars:
-          - problem: "Define a zero object and give one in $\\mathbf{Grp}$."
-            answer: "An object that is both initial and terminal; the trivial group $\\{e\\}$."
-            solution_sketch: "A zero object is simultaneously initial and terminal. In $\\mathbf{Grp}$ the trivial group $\\{e\\}$ is terminal (only the trivial map into it) and initial (the map sending everything to $e$ is the unique homomorphism out), hence a zero object. ($\\mathbf{Set}$ has no zero object since $\\varnothing\\ne\\{*\\}$.)"
-          - problem: "In a category with a zero object $0$, define the zero morphism $0_{A,B}\\colon A\\to B$ and prove that composing it with any $g\\colon B\\to C$ again gives a zero morphism."
-            answer: "$0_{A,B}$ is the composite $A\\to 0\\to B$; then $g\\circ 0_{A,B}=0_{A,C}$."
-            solution_sketch: "Since $0$ is terminal there is a unique arrow $A\\to 0$, and since $0$ is initial a unique arrow $0\\to B$; define $0_{A,B}\\colon A\\to B$ to be their composite $A\\to 0\\to B$. Given $g\\colon B\\to C$, the arrow $g\\circ(0\\to B)\\colon 0\\to C$ is a morphism out of the initial object $0$, hence equals the unique such arrow $0\\to C$. Therefore $g\\circ 0_{A,B}=(0\\to C)\\circ(A\\to 0)=0_{A,C}$."
+          - problem: "In the category of groups, which object is both initial and terminal?"
+            answer: "trivial group"
+            answer_contract: {"kind": "label", "options": [["trivial group"], ["group of integers"], ["cyclic group of order 2"], ["free group on one generator"]]}
+            solution_sketch: "A zero object is an object that is both initial and terminal. In Grp the trivial group is terminal: every group has exactly one homomorphism to it, the constant map. It is initial: from it to any group there is exactly one homomorphism, sending the identity to the identity. The option group of integers is the error of confusing a generator object with a zero object: there are many homomorphisms from the integers to a two-element group, so it is not initial. The option cyclic group of order 2 is not initial because there is no homomorphism from it to a group of order 3. The option free group on one generator is the group of integers, so it fails the same way. The correct object is trivial group."
+          - problem: "In a category with zero object 0, let z: A to B be the composite A to 0 to B, and let g: B to C. Decide whether g composed with z is always the zero morphism A to C. Give the verdict and the number of arrows from 0 to C that uniqueness forces."
+            answer: "verdict = holds; count = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Step 1: Recall the definition. The zero morphism z: A to B is the composite A to 0 to B. Step 2: Use terminality. Since 0 is terminal, there is exactly one arrow A to 0. Step 3: Use initiality. Since 0 is initial, there is exactly one arrow 0 to C. Step 4: Compose. The arrow g composed with the arrow 0 to B is an arrow 0 to C, so uniqueness forces it to equal the unique arrow 0 to C. Therefore g composed with z equals the zero morphism A to C. So verdict = holds; count = 1."
+          - problem: "In the category of sets, how many zero objects are there?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In Set the empty set is initial: there is exactly one function from it to any set. A singleton is terminal: there is exactly one function from any set to it. No set is both initial and terminal, since the empty set has no element and a singleton has one. Therefore the number of zero objects in Set is 0."
+          - problem: "In a category with a zero object 0, how many morphisms are there from 0 to 0?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let 0 be a zero object. Since 0 is initial, there is exactly one morphism from 0 to any object, so there is exactly one morphism from 0 to 0. The identity arrow 0 to 0 is one such morphism. Hence the number is exactly 1."
+          - problem: "In the category of sets, which statement about zero objects is correct?"
+            answer: "no zero object"
+            answer_contract: {"kind": "label", "options": [["no zero object"], ["empty set is zero"], ["singleton is zero"], ["every set is zero"]]}
+            solution_sketch: "Step 1: Recall the definition. A zero object is an object that is both initial and terminal at once. Step 2: Examine the option empty set is zero. The empty set is initial, but it is not terminal because there is no function from a nonempty set to it, so this option fails. Step 3: Examine the option singleton is zero. A singleton is terminal, but it is not initial because there is no function from a singleton to the empty set, so this option fails. Step 4: Examine the option every set is zero. A two-element set is neither initial nor terminal, so this option fails. Step 5: Conclude that Set has no zero object. The answer is no zero object."
+          - problem: "Let C be the category with objects 0 and A and morphisms: the two identities, one arrow u from 0 to A, one arrow v from A to 0, and the composite e from A to A obtained by following v and then u. Composition satisfies: v followed by u is the identity on 0, and e followed by e is e. How many morphisms are in C?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The category has objects 0 and A. The identity arrows give id0 and idA. The arrow u goes from 0 to A and v goes from A to 0. The composite e from A to A obtained by following v then u is a fifth morphism. The equation v followed by u equals id0 makes 0 both initial and terminal, so 0 is a zero object. Counting id0, idA, u, v, and e gives 5."
+          - problem: "Write the full proof: In the category of groups, the trivial group is a zero object. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Define the candidate. Let 1 denote the trivial group containing only the identity e. Step 2: Show terminal. For any group G, a homomorphism f: G to 1 must send every element to e, since 1 has only e; this constant map is a homomorphism, so there is exactly one homomorphism G to 1. Thus 1 is terminal. Step 3: Show initial. For any group G, a homomorphism h: 1 to G is determined by the image of e; the identity of G is the only choice that preserves the identity, so h(e) equals the identity of G is the unique homomorphism 1 to G. Thus 1 is initial. Step 4: Conclude. Since 1 is both initial and terminal, it is a zero object in Grp. Step 5: Contrast with Set. The empty set is initial and singletons are terminal, but no set is both, so Set has no zero object. Therefore the trivial group is a zero object in Grp."
     diagnostic_exemplar:
       problem: "Prove that any two terminal objects of a category are isomorphic by a unique isomorphism."
       answer: "Let $1,1'$ be terminal. Terminality of $1'$ gives a unique $u\\colon 1\\to 1'$, and terminality of $1$ a unique $v\\colon 1'\\to 1$. Both $v\\circ u$ and $1_1$ are arrows $1\\to 1$, and terminality of $1$ says there is only one, so $v\\circ u=1_1$; symmetrically $u\\circ v=1_{1'}$. Hence $u$ is an isomorphism, and it is the unique morphism $1\\to 1'$ at all, so the isomorphism is unique."
@@ -1401,12 +1599,34 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Define $\\mathcal{C}^{op}$ precisely (hom-sets, reversed composition, identities) and verify the axioms; concrete readings only in $\\mathbf{Set}$."
         exemplars:
-          - problem: "Given a category $\\mathcal{C}$, define $\\mathcal{C}^{op}$ and verify it is a category."
-            answer: "Same objects; $\\mathrm{Hom}_{\\mathcal{C}^{op}}(A,B)=\\mathrm{Hom}_{\\mathcal{C}}(B,A)$; composition reversed."
-            solution_sketch: "$\\mathcal{C}^{op}$ has the same objects, and a morphism $A\\to B$ in $\\mathcal{C}^{op}$ is a morphism $B\\to A$ in $\\mathcal{C}$. Define $g\\circ^{op} f := f\\circ g$. Identities are unchanged. Associativity in $\\mathcal{C}^{op}$ is associativity in $\\mathcal{C}$ read backwards, and the unit laws are preserved, so $\\mathcal{C}^{op}$ is a category, and $(\\mathcal{C}^{op})^{op}=\\mathcal{C}$."
-          - problem: "What is $\\mathbf{Set}^{op}$-morphism $A\\to B$ concretely?"
-            answer: "A function $B\\to A$ in $\\mathbf{Set}$."
-            solution_sketch: "By definition arrows reverse, so a morphism $A\\to B$ in $\\mathbf{Set}^{op}$ is exactly a function $B\\to A$."
+          - problem: "A proof that composition in Set^op is well defined fixes arrows f from A to B and g from B to C in Set^op and computes the composite g ∘^op f as a function from C to A, using (g ∘^op f)(x) = f(g(x)). Take A = {1, 2}, B = {3, 4} and C = {5, 6, 7}; f is the function from B to A with f(3) = 1 and f(4) = 2, and g is the function from C to B with g(5) = 3, g(6) = 4 and g(7) = 3. Find the value that this step produces at x = 6."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (reversed composition): by the definition of the opposite category, g ∘^op f is the Set function f ∘ g, so the value at x = 6 is f(g(6)). Step 2 (evaluate the functions): g(6) = 4 and f(4) = 2, so (g ∘^op f)(6) = 2. The answer is 2."
+          - problem: "A step of the proof that Set^op has hom-sets verifies that a morphism from A to B in Set^op is exactly a function from B to A in Set. Let A = {1, 2, 3, 4} and B = {5, 6}; the size of Hom_{Set^op}(A, B) is the number of functions from B to A. Compute the number of morphisms from A to B in Set^op that this step counts."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (hom-sets reverse): by the definition of the opposite category, a morphism from A to B in Set^op is a function from B to A in Set. Step 2 (count the functions): B has 2 elements and A has 4 elements, so there are 2^4 = 16 functions from B to A. The answer is 16."
+          - problem: "The one-object category C has as its morphisms all functions from {1, 2, 3} to itself with the usual composition, and in C^op composition is reversed, so f ∘^op f = f ∘ f. Let f be the function with f(1) = 2, f(2) = 3 and f(3) = 1; as part of checking that the identity of C is the identity of C^op, one examines the powers of f. Determine the order of f in C^op, that is, the smallest n with f composed with itself n times equal to the identity function."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (reversed composition): in C^op we have f ∘^op f = f ∘ f, so the powers of f in C^op are the usual powers of the function f. Step 2 (compute the powers): f sends 1 to 2, 2 to 3 and 3 to 1; f ∘ f sends 1 to 3, and f ∘ f ∘ f fixes every element, so no smaller positive power is the identity. The order of f in C^op is 3."
+          - problem: "A step of the proof that the identities of C survive in C^op checks the unit law f ∘^op 1_A = f for each arrow f. Work in Set^op with A = {1, 2} and B = {3, 4, 5}; the arrow f from A to B in Set^op is the function f from B to A with f(3) = 1, f(4) = 2 and f(5) = 1, and 1_A is the function from A to itself fixing both elements. Evaluate (f ∘^op 1_A)(5)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of composition in C^op): f ∘^op 1_A is the Set composite 1_A ∘ f. Step 2 (evaluate): f(5) = 1 and 1_A fixes 1, so (f ∘^op 1_A)(5) = 1, which equals f(5), as the unit law requires. The answer is 1."
+          - problem: "Consider this verification that (C^op)^op = C. Step 1: (C^op)^op has the same objects as C^op, and these are the objects of C. Step 2: a morphism from A to B in (C^op)^op is a morphism from A to B in C^op, and hence a morphism from B to A in C. Step 3: composition in (C^op)^op sends composable h after g to the composite h ∘ g of C. Step 4: the hom-sets and the composition agree with those of C, so (C^op)^op = C. Which step is the first that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: taking an opposite never changes the objects. Step 2 is the first invalid step: a morphism from A to B in X^op is a morphism from B to A in X, so with X = C^op it is a morphism from B to A in C^op, that is, a morphism from A to B in C; the step wrongly keeps the direction of C^op instead of reversing it a second time. Step 3 is a true statement, since composition in a double opposite coincides with the composition of C. Step 4 is the correct conclusion once Step 2 is repaired. The answer is Step 2."
+          - problem: "In Set^op take an arrow f from A to B and an arrow g from B to C; in Set these are functions f from B to A and g from C to B, so the composite g ∘^op f is a function from C to A. The proof that this composition is well defined is missing its final line, which must give the value of the composite at an element x of C. Select the line that is true and completes the step."
+            answer: "f(g(x))"
+            answer_contract: {"kind": "label", "options": [["f(g(x))"], ["g(f(x))"], ["f(f(x))"], ["g(g(x))"]]}
+            solution_sketch: "Step 1 (definition of composition in the opposite category): g ∘^op f is the Set function f ∘ g, so at an element x of C the value is f(g(x)). The option g(f(x)) applies the two functions in the unreversed order of C. The option f(f(x)) composes f with itself instead of following g by f. The option g(g(x)) composes g with itself. The answer is f(g(x))."
+          - problem: "Write the full proof: for every category C, the opposite category C^op, with the same objects, hom-sets Hom_{C^op}(A, B) = Hom_C(B, A) and composition g ∘^op f = f ∘ g, is a category, and (C^op)^op = C. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (objects and hom-sets): C^op has the same objects as C, and for objects A and B we set Hom_{C^op}(A, B) = Hom_C(B, A), so an arrow from A to B in C^op is an arrow from B to A in C. Step 2 (identities): the identity 1_A of C is an arrow from A to A in C, hence an arrow from A to A in C^op. Step 3 (composition): for f from A to B and g from B to C in C^op, the arrows f from B to A and g from C to B in C are composable, and we set g ∘^op f = f ∘ g, an arrow from C to A in C, hence an arrow from A to C in C^op. Step 4 (unit laws): f ∘^op 1_A = 1_A ∘ f = f and 1_B ∘^op f = f ∘ 1_B = f, by the two unit laws of C. Step 5 (associativity): (h ∘^op g) ∘^op f = f ∘ (g ∘ h) = (f ∘ g) ∘ h, which equals h ∘^op (g ∘^op f), so composition in C^op is associative by associativity in C. Step 6 (involution): reversing the arrows twice returns the original hom-sets and the original composition, so (C^op)^op = C. Every axiom is verified, so C^op is a category."
       - id: kp2
         name: The duality principle
         key_prerequisites: [category-definition]
