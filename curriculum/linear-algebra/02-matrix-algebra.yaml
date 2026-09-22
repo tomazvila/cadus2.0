@@ -401,14 +401,30 @@ topics:
         name: Products of triangular matrices
         key_prerequisites: [matrix-multiplication]
         exemplars:
-          - problem: 'Compute $\begin{pmatrix}1&2\\0&3\end{pmatrix}\begin{pmatrix}2&1\\0&4\end{pmatrix}$. Is the result upper triangular?'
-            answer: '$\begin{pmatrix}2&9\\0&12\end{pmatrix}$; yes'
-            answer_contract: {kind: none}
-            solution_sketch: 'Row 1: $2$, $1 + 8 = 9$; row 2: $0$, $12$. Products of upper triangular matrices stay upper triangular.'
-          - problem: 'For upper triangular $A$ and $B$, how do the diagonal entries of $AB$ relate to those of $A$ and $B$?'
-            answer: "They are the products of the corresponding diagonal entries"
-            answer_contract: {kind: none}
-            solution_sketch: 'The $(i,i)$ entry of $AB$ is row $i$ of $A$ dotted with column $i$ of $B$, which for triangular matrices equals $a_{ii} b_{ii}$.'
+          - problem: "Compute $\\begin{pmatrix}1&3\\\\0&2\\end{pmatrix}\\begin{pmatrix}2&-1\\\\0&4\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[2,11;0,8]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Apply the matrix multiplication rule row by column. Row 1 of A is (1, 3): against column 1 of B it gives 1*2 + 3*0 = 2, and against column 2 it gives 1*(-1) + 3*4 = 11. Row 2 of A is (0, 2): it gives 0 and 2*4 = 8, so the lower left entry stays 0 and the product stays upper triangular. The product is [2,11;0,8]."
+          - problem: "Compute $\\begin{pmatrix}3&2\\\\0&-1\\end{pmatrix}\\begin{pmatrix}2&3\\\\0&4\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[6,17;0,-4]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Use the matrix multiplication rule row by column on the full object. Row 1 of A = (3, 2): the (1,1) entry is 3*2 + 2*0 = 6 and the (1,2) entry is 3*3 + 2*4 = 17. Row 2 of A = (0, -1): the (2,1) entry is 0 and the (2,2) entry is -1*4 = -4. The product is [6,17;0,-4]."
+          - problem: "Let $A = \\begin{pmatrix}2&1\\\\0&-3\\end{pmatrix}$ and $B = \\begin{pmatrix}4&2\\\\0&5\\end{pmatrix}$ be upper triangular. Find the two diagonal entries of the product AB, as (p, q)."
+            answer: "(8, -15)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "For upper triangular factors, the (i,i) entry of the product AB pairs row i of A with column i of B, and only a_ii times b_ii survives below the off-diagonal term, so diagonal entries of AB are the products of the diagonal entries of A and B. The first diagonal entry is 2*4 = 8 and the second is (-3)*5 = -15. The diagonal of AB is (8, -15)."
+          - problem: "Let $D = \\begin{pmatrix}3&0\\\\0&-2\\end{pmatrix}$ be diagonal and $U = \\begin{pmatrix}1&2\\\\0&4\\end{pmatrix}$ be upper triangular. Compute the product DU. Give the matrix as [a,b;c,d]."
+            answer: "[3,6;0,-8]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Multiply the full object DU by the row-by-column rule. Row 1 of D is (3, 0), so row 1 of the product is 3 times row 1 of U: (3*1, 3*2) = (3, 6). Row 2 of D is (0, -2), so row 2 is (0*1 + (-2)*0, 0*2 + (-2)*4) = (0, -8). The product is [3,6;0,-8]."
+          - problem: "Let $A = \\begin{pmatrix}1&2\\\\0&3\\end{pmatrix}$ and $B = \\begin{pmatrix}4&-1\\\\0&2\\end{pmatrix}$ be upper triangular. Find the (1,2) entry of the product AB."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the matrix multiplication rule, the (1,2) entry of AB is row 1 of A dotted with column 2 of B. Row 1 of A is (1, 2) and column 2 of B is (-1, 4), giving 1*(-1) + 2*2 = 3. The (1,2) entry of AB is 3."
+          - problem: "Let $A = \\begin{pmatrix}3&1\\\\0&-3\\end{pmatrix}$ be upper triangular. Compute the square $A^2$. Give the matrix as [a,b;c,d]."
+            answer: "[9,0;0,9]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Square A by applying the matrix multiplication rule to A times itself. The (1,1) entry is 3*3 + 1*0 = 9; the (1,2) entry is 3*1 + 1*(-3) = 0; the (2,1) entry is 0; the (2,2) entry is 1*1 + (-3)*(-3) = 9. The square is [9,0;0,9], which is even diagonal."
         constraints: "2x2 upper triangular with entries in -4..4"
     diagnostic_exemplar:
       problem: 'Compute $\begin{pmatrix}2&5\\0&3\end{pmatrix}\begin{pmatrix}4&1\\0&2\end{pmatrix}$, and classify the result as diagonal, upper triangular, or lower triangular.'
@@ -473,27 +489,59 @@ topics:
         name: Non-commutativity
         key_prerequisites: [matrix-multiplication]
         exemplars:
-          - problem: 'For $A = \begin{pmatrix}0&1\\0&0\end{pmatrix}$ and $B = \begin{pmatrix}0&0\\1&0\end{pmatrix}$, compute $AB$ and $BA$.'
-            answer: '$AB = \begin{pmatrix}1&0\\0&0\end{pmatrix}$, $BA = \begin{pmatrix}0&0\\0&1\end{pmatrix}$; they differ'
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiply both ways; matrix multiplication is not commutative.'
-          - problem: 'Expand $(A + B)^2$ for matrices, being careful about order.'
-            answer: '$A^2 + AB + BA + B^2$'
-            answer_contract: {kind: none}
-            solution_sketch: '$AB \neq BA$ in general, so the middle terms do not merge into $2AB$.'
+          - problem: "Let $A = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ and $B = \\begin{pmatrix}1&0\\\\1&1\\end{pmatrix}$. Compute $AB - BA$ and give the answer as [a,b;c,d]."
+            answer: "[1,0;0,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: by the row-times-column rule for matrix multiplication, $AB = \\begin{pmatrix}2&1\\\\1&1\\end{pmatrix}$, since each entry is a row of $A$ times a column of $B$. Step 2: the same rule gives $BA = \\begin{pmatrix}1&1\\\\1&2\\end{pmatrix}$. Step 3: subtract entry by entry to get $\\begin{pmatrix}1&0\\\\0&-1\\end{pmatrix}$; the two products differ, so the pair is a counterexample to commutativity, and $AB - BA$ = [1,0;0,-1]."
+          - problem: "Let $A = \\begin{pmatrix}0&2\\\\0&0\\end{pmatrix}$ and $B = \\begin{pmatrix}0&0\\\\3&0\\end{pmatrix}$. Compute $(A + B)^2 - (A^2 + 2AB + B^2)$ and give the answer as [a,b;c,d]."
+            answer: "[-6,0;0,6]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: by matrix multiplication, $AB = \\begin{pmatrix}6&0\\\\0&0\\end{pmatrix}$ and $BA = \\begin{pmatrix}0&0\\\\0&6\\end{pmatrix}$, while $A^2$ and $B^2$ are both the zero matrix. Step 2: because $AB \\neq BA$, the order-careful expansion gives $(A+B)^2 = A^2 + AB + BA + B^2 = \\begin{pmatrix}6&0\\\\0&6\\end{pmatrix}$, whereas $A^2 + 2AB + B^2 = \\begin{pmatrix}12&0\\\\0&0\\end{pmatrix}$. Step 3: the gap is exactly $BA - AB$, so $(A + B)^2 - (A^2 + 2AB + B^2)$ = [-6,0;0,6]."
+          - problem: "Let $A = \\begin{pmatrix}3&0\\\\0&3\\end{pmatrix}$ and $B = \\begin{pmatrix}1&4\\\\2&5\\end{pmatrix}$. Find $AB - BA$ and give the answer as [a,b;c,d]."
+            answer: "[0,0;0,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: since $A = 3I$, the scalar-multiplication rule gives $AB = 3B = \\begin{pmatrix}3&12\\\\6&15\\end{pmatrix}$. Step 2: the same rule gives $BA = 3B$, which is the same matrix, so this pair commutes. Step 3: subtracting two equal matrices gives the zero matrix, so $AB - BA$ = [0,0;0,0]."
+          - problem: "Let $P = \\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$ and $M = \\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}$. One of the products $PM$ and $MP$ swaps the rows of $M$ and the other swaps its columns, so the two products are different. Compute $PM$ and give the answer as [a,b;c,d]."
+            answer: "[3,4;1,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: left multiplication by the swap matrix $P$ exchanges the rows of $M$, so $PM = \\begin{pmatrix}3&4\\\\1&2\\end{pmatrix}$. Step 2: right multiplication by $P$ exchanges the columns, giving $MP = \\begin{pmatrix}2&1\\\\4&3\\end{pmatrix}$; the two products differ, so $P$ and $M$ do not commute. Step 3: the requested product is $PM$ = [3,4;1,2]."
+          - problem: "Let $A = \\begin{pmatrix}1&1\\\\1&1\\end{pmatrix}$ and $B = \\begin{pmatrix}1&1\\\\-1&-1\\end{pmatrix}$, so neither factor is the zero matrix. Compute $BA$ and give the answer as [a,b;c,d]."
+            answer: "[2,2;-2,-2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: by the row-times-column rule, every entry of $AB$ equals $1 - 1 = 0$, so $AB$ is the zero matrix even though neither factor is zero. Step 2: the same rule gives $BA = \\begin{pmatrix}2&2\\\\-2&-2\\end{pmatrix}$, a nonzero matrix. Step 3: since $BA \\neq AB$, the pair is a concrete counterexample to commutativity, and $BA$ = [2,2;-2,-2]."
+          - problem: "Let $A$ and $B$ be square matrices with $AB \\neq BA$. Expanding $(A + B)^3 = (A + B)(A + B)(A + B)$ by choosing $A$ or $B$ from each of the three factors keeps every ordered product, such as $ABA$, separate. How many ordered products does the full expansion contain, and how many distinct terms remain in the expansion when $A$ and $B$ commute, so that $AB = BA$ merges products with the same factors? Give the two counts as full = a; merged = b."
+            answer: "full = 8; merged = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "full"}, {"contract": {"kind": "exact"}, "name": "merged"}]}
+            solution_sketch: "Step 1: choosing $A$ or $B$ from each of the three factors of $(A+B)(A+B)(A+B)$ gives $2 \\cdot 2 \\cdot 2$ = 8 ordered products (distribution with order kept), namely $A^3$, $AAB$, $ABA$, $ABB$, $BAA$, $BAB$, $BBA$, $BBB$. Step 2: if $AB = BA$, products with the same multiset of factors merge by the binomial pattern into $A^3$, $3A^2B$, $3AB^2$, $B^3$. Step 3: that leaves 4 distinct terms, so the counts are full = 8; merged = 4."
         constraints: "concrete 2x2 counterexamples plus symbolic expansion"
       - id: kp3
         name: Sizes and definedness in expressions
         key_prerequisites: [matrix-multiplication, matrix-addition-scalar-multiplication]
         exemplars:
-          - problem: 'If $A$ is $3 \times 2$ and $B$ is $2 \times 3$, what are the sizes of $AB$ and $BA$?'
-            answer: "AB is 3x3; BA is 2x2"
-            answer_contract: {kind: none}
-            solution_sketch: '$AB$ is $(3 \times 2)(2 \times 3) = 3 \times 3$; $BA$ is $(2 \times 3)(3 \times 2) = 2 \times 2$.'
-          - problem: 'If $A$ is $2 \times 3$ and $B$ is $2 \times 3$, is $AB$ defined? Is $A + B$ defined?'
-            answer: "AB is not defined; A + B is"
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiplication needs inner sizes to match ($3 \neq 2$); addition needs equal sizes.'
+          - problem: "Let $A$ be a $4 \\times 2$ matrix and $B$ a $2 \\times 4$ matrix. Find the size of $AB$ and the size of $BA$, giving each as its number of rows and columns."
+            answer: "ABrows = 4; ABcols = 4; BArows = 2; BAcols = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "ABrows"}, {"contract": {"kind": "exact"}, "name": "ABcols"}, {"contract": {"kind": "exact"}, "name": "BArows"}, {"contract": {"kind": "exact"}, "name": "BAcols"}]}
+            solution_sketch: "Write the sizes: A is 4x2 and B is 2x4. For AB the inner sizes 2 and 2 match, so the row-column rule gives AB the outer sizes 4 and 4. For BA the inner sizes 4 and 4 match, so BA has the outer sizes 2 and 2. The answer is ABrows = 4; ABcols = 4; BArows = 2; BAcols = 2."
+          - problem: "Let $A$ be a $3 \\times 2$ matrix and $B$ a $3 \\times 2$ matrix. Determine whether $AB$ is defined, and give the number of rows $B$ would need for $AB$ to be defined."
+            answer: "verdict = undefined; needed = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["defined"], ["undefined"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "needed"}]}
+            solution_sketch: "Apply the product rule: multiplication needs the inner sizes to match, and A has 2 columns while B has 3 rows, so AB is undefined. The option defined comes from the error of treating two matrices of equal size as multipliable. To make the product defined, B needs as many rows as A has columns, namely 2. The answer is verdict = undefined; needed = 2."
+          - problem: "Suppose $A$ is a $3 \\times 4$ matrix, the product $AB$ is defined, and $AB$ has size $3 \\times 5$. Find the number of rows and the number of columns of $B$."
+            answer: "Brows = 4; Bcols = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "Brows"}, {"contract": {"kind": "exact"}, "name": "Bcols"}]}
+            solution_sketch: "Read the given sizes: A is 3x4 and AB is 3x5. The product rule says the inner sizes match, so the rows of B equal the 4 columns of A. The columns of AB equal the columns of B, so B has 5 columns. The answer is Brows = 4; Bcols = 5."
+          - problem: "Let $A$ be a $2 \\times 3$ matrix, $B$ a $3 \\times 3$ matrix, and $C$ a $3 \\times 2$ matrix. Give the size of the product $ABC$ as its number of rows and columns."
+            answer: "rows = 2; cols = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "rows"}, {"contract": {"kind": "exact"}, "name": "cols"}]}
+            solution_sketch: "Work from the left with the row-column rule: AB is (2x3)(3x3), the inner sizes 3 and 3 match, so AB is 2x3. Then (AB)C is (2x3)(3x2), the inner sizes 3 and 3 match, so ABC is 2x2. The answer is rows = 2; cols = 2."
+          - problem: "Let $A$ be a $3 \\times 4$ matrix and let $I$ be the $4 \\times 4$ identity matrix. Give the size of $AI$ as its number of rows and columns."
+            answer: "rows = 3; cols = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "rows"}, {"contract": {"kind": "exact"}, "name": "cols"}]}
+            solution_sketch: "Check that the product is defined: A is 3x4 and I is 4x4, and the inner sizes 4 and 4 match. The product keeps the outer sizes, so AI has the 3 rows of A and the 4 columns of I. The answer is rows = 3; cols = 4."
+          - problem: "Let $A$ be $3 \\times 2$, $B$ be $2 \\times 3$, and $C$ be $3 \\times 3$. How many of the products $AB$, $BA$, $BC$, $CA$, $AC$ are defined?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test each product by its inner sizes with the product rule. AB is (3x2)(2x3), defined; BA is (2x3)(3x2), defined; BC is (2x3)(3x3), defined; CA is (3x3)(3x2), defined. AC is (3x2)(3x3), not defined because 2 does not equal 3. Four products are defined, so the answer is 4."
         constraints: "sizes up to 4x5"
     diagnostic_exemplar:
       problem: 'For $A = \begin{pmatrix}1&2\\0&1\end{pmatrix}$ and $B = \begin{pmatrix}2&0\\1&1\end{pmatrix}$, compute $AB - BA$.'
@@ -548,10 +596,26 @@ topics:
             answer: "[8,0;0,27]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: 'Raise each diagonal entry to the power.'
-          - problem: 'Give a formula for $D^n$ when $D = \begin{pmatrix}a&0\\0&b\end{pmatrix}$.'
-            answer: '$\begin{pmatrix}a^n&0\\0&b^n\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiplying diagonal matrices multiplies corresponding diagonal entries, so $D^n = \begin{pmatrix}a^n&0\\0&b^n\end{pmatrix}$.'
+          - problem: "Compute $D^4$ for $D = \\begin{pmatrix}3&0\\\\0&-2\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[81,0;0,16]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Rule: for a diagonal matrix, $D^k$ raises each diagonal entry to the power $k$ and keeps every off-diagonal entry zero. Full object: $D^4 = \\begin{pmatrix}3^4&0\\\\0&(-2)^4\\end{pmatrix}$. Compute $3^4 = 81$ and $(-2)^4 = 16$; the even exponent removes the sign. The answer is [81,0;0,16]."
+          - problem: "Let $D = \\begin{pmatrix}-1&0\\\\0&-3\\end{pmatrix}$. Find $D^3$ and give it as [a,b;c,d]."
+            answer: "[-1,0;0,-27]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Rule: powers of a diagonal matrix raise each diagonal entry to the exponent, with zeros elsewhere. Full object: $D^3 = \\begin{pmatrix}(-1)^3&0\\\\0&(-3)^3\\end{pmatrix}$. Compute $(-1)^3 = -1$ and $(-3)^3 = -27$; an odd exponent keeps each negative sign. The answer is [-1,0;0,-27]."
+          - problem: "For $D = \\begin{pmatrix}-2&0\\\\0&3\\end{pmatrix}$, let off be the entry in row 1, column 2 of $D^3$, and let diag be the entry in row 2, column 2 of $D^4$. What are off and diag?"
+            answer: "off = 0; diag = 81"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "off"}, {"contract": {"kind": "exact"}, "name": "diag"}]}
+            solution_sketch: "Full objects first: $D^3 = \\begin{pmatrix}-8&0\\\\0&27\\end{pmatrix}$ and $D^4 = \\begin{pmatrix}16&0\\\\0&81\\end{pmatrix}$, because a power of a diagonal matrix keeps the zeros off the diagonal and raises each diagonal entry to the exponent. The row 1, column 2 entry of $D^3$ is $0$. The row 2, column 2 entry of $D^4$ is $3^4 = 81$. The answer is off = 0; diag = 81."
+          - problem: "A transformation with matrix $D = \\begin{pmatrix}2&0\\\\0&-1\\end{pmatrix}$ is applied three times in a row to the point $(1,5)$. Give the resulting point as (x, y)."
+            answer: "(8,-5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Applying the transformation three times means computing $D^3$ and then acting on the point. Full object: $D^3 = \\begin{pmatrix}2^3&0\\\\0&(-1)^3\\end{pmatrix} = \\begin{pmatrix}8&0\\\\0&-1\\end{pmatrix}$. Then $D^3(1,5) = (8 \\cdot 1,\\; (-1) \\cdot 5)$. The final point is (8,-5)."
+          - problem: "Let $D = \\begin{pmatrix}-1&0\\\\0&1\\end{pmatrix}$. Determine $D^4$ and give the matrix as [a,b;c,d]."
+            answer: "[1,0;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Rule: $D^k$ for a diagonal matrix raises each diagonal entry to $k$ and leaves the off-diagonal zeros. Full object: $D^4 = \\begin{pmatrix}(-1)^4&0\\\\0&1^4\\end{pmatrix}$. Compute $(-1)^4 = 1$ and $1^4 = 1$, so $D^4$ is the identity matrix. The answer is [1,0;0,1]."
         constraints: "diagonal entries in -3..3; exponents up to 4 or symbolic n"
       - id: kp3
         name: Power patterns
