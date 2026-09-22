@@ -33,12 +33,34 @@ topics:
         key_prerequisites: [category-definition]
         constraints: "Always write the domain and codomain of $Ff$ before checking any law."
         exemplars:
-          - problem: "State the data required to specify a functor $F\\colon\\mathcal{C}\\to\\mathcal{D}$, including the types of the morphism part."
-            answer: "An object $FA$ for each object $A$, and a morphism $Ff\\colon FA\\to FB$ for each $f\\colon A\\to B$."
-            solution_sketch: "A functor consists of two assignments. On objects: each object $A$ of $\\mathcal{C}$ gets an object $FA$ of $\\mathcal{D}$. On morphisms: each $f\\colon A\\to B$ gets a morphism $Ff\\colon FA\\to FB$ — the domain and codomain must be the images of the domain and codomain of $f$. This typing rule is what makes $Fg\\circ Ff$ meaningful whenever $g\\circ f$ is, and it must be checked before either functor law."
-          - problem: "For a functor $F$ and morphisms $f\\colon A\\to B$, $g\\colon B\\to C$, explain why $Fg\\circ Ff$ is always defined and give its domain and codomain."
-            answer: "$Ff\\colon FA\\to FB$ and $Fg\\colon FB\\to FC$, so the composite is defined and runs $FA\\to FC$."
-            solution_sketch: "By the typing rule $Ff\\colon FA\\to FB$ and $Fg\\colon FB\\to FC$. Composition is defined when the codomain of the first equals the domain of the second, which holds here (both are $FB$), so $Fg\\circ Ff\\colon FA\\to FC$. This is also the type of $F(g\\circ f)$, so the composition law $F(g\\circ f)=Fg\\circ Ff$ is an equation between two morphisms of the same type."
+          - problem: "A functor F: C -> D between poset categories has objects 0, 1, 2 in C with 0 < 1 < 2, and F(0) = 2, F(1) = 4, F(2) = 5. For the morphism f: 0 -> 1, give the domain and codomain of Ff as (x, y)."
+            answer: "(2, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: identify the source and target of f: A = 0 and B = 1. Step 2: apply the object part, giving F0 = 2 and F1 = 4. Step 3: the morphism part must have type Ff: F0 -> F1, so the domain and codomain are 2 and 4. The answer is (2, 4)."
+          - problem: "A functor F: C -> D between poset categories has objects 0, 1, 2 in C with 0 < 1 < 2, and F(0) = 3, F(1) = 6, F(2) = 7. For f: 0 -> 1 and g: 1 -> 2, give the domain and codomain of F(g∘f) as (x, y)."
+            answer: "(3, 7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: the composite g∘f is a morphism 0 -> 2. Step 2: the object part gives F0 = 3 and F2 = 7. Step 3: the typing rule requires F(g∘f): F0 -> F2, and this also matches Fg∘Ff. The answer is (3, 7)."
+          - problem: "A functor F: C -> Set assigns F(0) a set with 3 elements and F(1) a set with 7 elements. For the morphism f: 0 -> 1, give the number of elements in the domain of Ff."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the morphism f: 0 -> 1 has domain object 0. Step 2: the object part gives F0 a set with 3 elements. Step 3: the typing rule says Ff: F0 -> F1, so the domain of Ff is F0. The answer is 3."
+          - problem: "An assignment F has F(0) = 1, F(1) = 2, and for f: 0 -> 1 it sets F(f) = 2 -> 1. Step 1: each object is assigned an object. Step 2: f: 0 -> 1 requires Ff: F0 -> F1. Step 3: F0 = 1 and F1 = 2, so F(f) = 2 -> 1 is allowed. Step 4: the object part is complete. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: the object part assigns objects. Step 2 is valid: the typing rule requires Ff: F0 -> F1. Step 3 is invalid because F0 = 1 and F1 = 2, so Ff must run 1 -> 2, not 2 -> 1; choosing Step 1 or Step 2 mistakes a valid line for a failure, and choosing Step 4 overlooks the earlier reversal. The answer is Step 3."
+          - problem: "A functor F: C -> D between poset categories satisfies F(0) = 4, F(1) = 6, F(2) = 9. The morphisms f: 0 -> 1 and g: 1 -> 2 have composite g∘f: 0 -> 2. State the codomain object of F(g∘f)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the composite g∘f has domain 0 and codomain 2. Step 2: the typing rule forces F(g∘f): F0 -> F2, and the object part gives F0 = 4 and F2 = 9. Step 3: the codomain of F(g∘f) is the image of the codomain object 2. The answer is 9."
+          - problem: "A proposed functor F on poset category C has F(0) = 1, F(1) = 3, F(2) = 4 and sends f: 0 -> 1 to 1 -> 3. Determine whether the typing of Ff is valid and give the codomain object of Ff."
+            answer: "verdict = correct; cod = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["correct"], ["incorrect"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "cod"}]}
+            solution_sketch: "Step 1: f: 0 -> 1 has F0 = 1 and F1 = 3. Step 2: the typing rule requires Ff: F0 -> F1, which is 1 -> 3. Step 3: the proposed F(f) = 1 -> 3 has that type, so the typing is correct. The answer is verdict = correct; cod = 3."
+          - problem: "Write the full proof: For a functor F and morphisms f: A -> B, g: B -> C, the morphism F(g∘f) has domain FA and codomain FC, and F(g∘f) and Fg∘Ff have the same type. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (typing of f): f: A -> B, so the morphism part of F gives Ff: FA -> FB. Step 2 (typing of g): g: B -> C, so Fg: FB -> FC. Step 3 (composite): the codomain of Ff is FB and the domain of Fg is FB, so Fg∘Ff is defined and Fg∘Ff: FA -> FC. Step 4 (functor on composite): g∘f: A -> C, so F(g∘f): FA -> FC. Step 5 (comparison): F(g∘f) and Fg∘Ff both have domain FA and codomain FC, so they are the same type. The answer is F(g∘f): FA -> FC, matching Fg∘Ff: FA -> FC."
       - id: kp2
         name: The two laws and how to verify them
         key_prerequisites: [composition-associativity-identity]
@@ -128,12 +150,34 @@ topics:
         key_prerequisites: [monoids]
         constraints: "Both directions of the dictionary: unpack the functor laws into homomorphism axioms and conversely; monoids or groups only, no concrete computations needed."
         exemplars:
-          - problem: "Show that a functor $BM\\to BN$ between one-object categories is exactly a monoid homomorphism $M\\to N$."
-            answer: "On the object it is forced; on morphisms it is a monoid homomorphism."
-            solution_sketch: "Both categories have a single object, so $F$ acts trivially on objects. On morphisms $F$ is a function $M\\to N$ with $F(1_*)=1_*$ (i.e. $F(e_M)=e_N$) and $F(mn)=F(m)F(n)$ (preservation of composition). These are precisely the monoid-homomorphism axioms, and conversely any homomorphism yields such a functor."
-          - problem: "For groups $G,H$ as one-object categories, what is a functor $BG\\to BH$?"
-            answer: "A group homomorphism $G\\to H$."
-            solution_sketch: "As with monoids, $F$ is a function $G\\to H$ preserving the unit and products; homomorphisms of groups automatically preserve inverses, so functors $BG\\to BH$ are exactly group homomorphisms."
+          - problem: "Let B(M) and B(N) be the one-object categories of the additive groups of integers modulo 6 and modulo 8. A functor B(M) -> B(N) corresponds to a function f on morphisms with f(a + b) = f(a) + f(b) and f(0) = 0. Since Z/6 is generated by 1, such an f is determined by x = f(1), and x must satisfy 6x = 0 in Z/8. How many functors B(M) -> B(N) are there?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Dictionary rule: a functor between one-object categories is exactly a monoid homomorphism on morphisms. The group Z/6 is generated by 1, so the morphism map f is determined by x = f(1), and the condition 6x = 0 in Z/8 comes from 6 · 1 = 0 in Z/6. Solving 6x = 0 modulo 8 gives 3x = 0 modulo 4, so x = 0 or x = 4 in Z/8. Each value satisfies the homomorphism axioms, so there are two functors. The answer is 2."
+          - problem: "Let B(M) and B(N) be the one-object categories of the additive groups of integers modulo 4 and modulo 12. Let F be the functor whose morphism map f satisfies f(1) = 3. The functor composition law unpacks to f(a + b) = f(a) + f(b) for all morphisms a and b. Compute f(3) in Z/12."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Functor law: the morphism map preserves composition, which unpacks to f(a + b) = f(a) + f(b) in the additive groups. Write 3 as 1 + 1 + 1 in Z/4. Then f(3) = f(1) + f(1) + f(1) = 3 + 3 + 3 = 9 in Z/12. The choice f(1) = 3 is legitimate because 4 · 3 = 12 = 0 in Z/12. The answer is 9."
+          - problem: "The morphisms of a one-object category form a monoid under composition. In the additive group of integers modulo 12, the order of an element a is the smallest positive k with ka = 0 modulo 12. What is the order of the element 5?"
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Composition rule: the morphisms of a one-object category compose as the monoid operation, here addition modulo 12. The order of 5 is the smallest positive k with 5k = 0 modulo 12, which equals 12 divided by gcd(5, 12). Since gcd(5, 12) = 1, the order is 12. The answer is 12."
+          - problem: "Let B(G) be the one-object category of the multiplicative group of the nonzero integers modulo 5. A functor B(G) -> B(G) is a group homomorphism f, and the homomorphism law f(xy) = f(x)f(y) determines the functor on every composite. Given f(2) = 3, compute f(4) modulo 5."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Homomorphism law: f(xy) = f(x)f(y) builds the functor value on every composite morphism; this is the converse direction of the dictionary. In the multiplicative group modulo 5 we have 4 = 2 · 2. So f(4) = f(2) f(2) = 3 · 3 = 9, which is 4 modulo 5. The datum f(2) = 3 is legitimate because 2 and 3 both have order 4 in the group. The answer is 4."
+          - problem: "Claim: every function f from a monoid M to a monoid N with f(1) = 1 gives a functor B(M) -> B(N). Step 1: send the single object of B(M) to the single object of B(N). Step 2: on morphisms, apply the function f. Step 3: F preserves composition, because f(mn) = f(m)f(n) holds for every such function f. Step 4: F preserves identities, because f(1) = 1, so F is a functor. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: a one-object category has a single object, so its image is forced. Step 2 is valid: a functor gives a function on morphisms. Step 3 is invalid: preservation of composition is exactly the law f(mn) = f(m)f(n), and an arbitrary function with f(1) = 1 need not satisfy it, so it cannot be asserted for every such f; choosing Step 1, Step 2 or Step 4 is the error of overlooking this unproven claim. Step 4 is a correct identity argument, but it rests on the failed Step 3. The answer is Step 3."
+          - problem: "Let B(M) and B(N) be the one-object categories of the additive group of integers modulo 3, and let f be the function with f(0) = 0, f(1) = 1 and f(2) = 0. The functor composition law unpacks to f(a + b) = f(a) + f(b) for all a and b. Does f give a functor B(M) -> B(N)? State the verdict and give the value of f(2) that the functor composition law requires."
+            answer: "verdict = no; value = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Functor law: composition preservation unpacks to f(a + b) = f(a) + f(b) for all a and b in Z/3. Taking a = b = 1, the law requires f(2) = f(1) + f(1) = 1 + 1 = 2. The given function has f(2) = 0, so the composition law fails and f yields no functor. The verdict yes is the error of ignoring the mismatch between the required value 2 and the given value 0. The answer is verdict = no; value = 2."
+          - problem: "Write the full proof: for groups G and H, a functor B(G) -> B(H) between the one-object categories is exactly a group homomorphism G -> H. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: the group G as a one-object category B(G) has a single object and one morphism for each element of G, with composition given by the product and the identity morphism given by the unit e. Step 2: a functor F: B(G) -> B(H) sends the single object of B(G) to the single object of B(H), so all of its data is the function f: G -> H on morphisms. Step 3: the functor identity law gives f(e) = e, and the functor composition law gives f(ab) = f(a)f(b) for all a and b in G; these are exactly the axioms of a group homomorphism. Step 4: conversely, a group homomorphism f: G -> H defines F on the object in the only possible way and on morphisms by f(a); the identity and composition laws hold by the homomorphism axioms, so F is a functor. Step 5: the two constructions undo each other, so functors B(G) -> B(H) are exactly group homomorphisms G -> H. See the solution."
       - id: kp2
         name: Functoriality of parametrized constructions
         key_prerequisites: [function-composition-inverse]
