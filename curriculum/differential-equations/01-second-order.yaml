@@ -64,6 +64,22 @@ topics:
           - problem: "Solve $y'' - 4y = 0$ with $y(0) = 1$, $y'(0) = 2$."
             answer: "$y = e^{2x}$"
             solution_sketch: "$c_1 + c_2 = 1$ and $2c_1 - 2c_2 = 2$ give $c_1 = 1$, $c_2 = 0$."
+          - problem: "Solve the initial value problem y'' - 5y' + 6y = 0 with y(0) = 2 and y'(0) = 1. Find the particular solution."
+            answer: "5e^(2x)-3e^(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Characteristic equation: r^2 - 5r + 6 = 0, which factors as (r - 2)(r - 3) = 0, so r = 2 and r = 3. General solution: y = c1 e^(2x) + c2 e^(3x). Initial conditions give c1 + c2 = 2 and 2c1 + 3c2 = 1. Solving gives c1 = 5 and c2 = -3. The particular solution is 5e^(2x)-3e^(3x)."
+          - problem: "Solve the initial value problem y'' + 3y' + 2y = 0 with y(0) = 1 and y'(0) = 4. Find the particular solution."
+            answer: "6e^(-x)-5e^(-2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Characteristic equation: r^2 + 3r + 2 = 0, which factors as (r + 1)(r + 2) = 0, so r = -1 and r = -2. General solution: y = c1 e^(-x) + c2 e^(-2x). Initial conditions give c1 + c2 = 1 and -c1 - 2c2 = 4. Solving gives c1 = 6 and c2 = -5. The particular solution is 6e^(-x)-5e^(-2x)."
+          - problem: "Solve the initial value problem y'' + 4y' + 3y = 0 with y(0) = 5 and y'(0) = -7. Find the particular solution."
+            answer: "4e^(-x)+e^(-3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Characteristic equation: r^2 + 4r + 3 = 0, which factors as (r + 1)(r + 3) = 0, so r = -1 and r = -3. General solution: y = c1 e^(-x) + c2 e^(-3x). Initial conditions give c1 + c2 = 5 and -c1 - 3c2 = -7. Solving gives c1 = 4 and c2 = 1. The particular solution is 4e^(-x)+e^(-3x)."
+          - problem: "Solve the initial value problem y'' + y' - 6y = 0 with y(0) = -1 and y'(0) = 8. Find the particular solution."
+            answer: "e^(2x)-2e^(-3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Characteristic equation: r^2 + r - 6 = 0, which factors as (r - 2)(r + 3) = 0, so r = 2 and r = -3. General solution: y = c1 e^(2x) + c2 e^(-3x). Initial conditions give c1 + c2 = -1 and 2c1 - 3c2 = 8. Solving gives c1 = 1 and c2 = -2. The particular solution is e^(2x)-2e^(-3x)."
         constraints: "two initial conditions produce a 2x2 linear system with small integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $y'''' + y'' - 2y = 0$ with $y(0) = 4$, $y''(0) = -2$.'
@@ -115,17 +131,29 @@ topics:
         name: Complex roots
         key_prerequisites: [characteristic-equation-real-roots, derivatives-trig, complex-numbers]
         exemplars:
-          - problem: 'Find the general solution of $y'''' + 4y = 0$.'
-            answer: '$y = c_1 \cos 2x + c_2 \sin 2x$'
-            answer_contract: {kind: none}
-            solution_sketch: '$r^2 + 4 = 0$ gives $r = \pm 2i$, so $\alpha = 0$, $\beta = 2$.'
-          - problem: 'Find the general solution of $y'''' + 2y'' + 5y = 0$.'
-            answer: '$y = e^{-x}(c_1 \cos 2x + c_2 \sin 2x)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$r = \frac{-2 \pm \sqrt{4 - 20}}{2} = -1 \pm 2i$: exponential envelope $e^{-x}$, oscillation frequency $2$.'
           - problem: 'Solve $y'''' + 9y = 0$ with $y(0) = 2$, $y''(0) = 3$.'
             answer: '$y = 2\cos 3x + \sin 3x$'
             solution_sketch: '$y = c_1 \cos 3x + c_2 \sin 3x$; $y(0) = c_1 = 2$ and $y''(0) = 3c_2 = 3$ give $c_2 = 1$.'
+          - problem: "Solve y'' + 4y = 0 with y(0) = 1 and y'(0) = 4."
+            answer: "cos(2x)+2sin(2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For y'' + 4y = 0, the characteristic equation r^2 + 4 = 0 gives r = 2i and r = -2i, so alpha = 0 and beta = 2. The general solution is y = c1 cos(2x) + c2 sin(2x). The initial conditions give c1 = 1 and 2c2 = 4, so c2 = 2. The solution is y = cos(2x)+2sin(2x)."
+          - problem: "Solve y'' + 2y' + 5y = 0 with y(0) = 1 and y'(0) = 3."
+            answer: "e^(-x)(cos(2x)+2sin(2x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For y'' + 2y' + 5y = 0, the characteristic equation r^2 + 2r + 5 = 0 gives r = -1 + 2i and r = -1 - 2i, so alpha = -1 and beta = 2. The general solution is y = e^(-x)(c1 cos(2x) + c2 sin(2x)). The initial conditions give c1 = 1 and -c1 + 2c2 = 3, so c2 = 2. The solution is y = e^(-x)(cos(2x)+2sin(2x))."
+          - problem: "Solve y'' - 2y' + 10y = 0 with y(0) = 1 and y'(0) = 4."
+            answer: "e^(x)(cos(3x)+sin(3x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For y'' - 2y' + 10y = 0, the characteristic equation r^2 - 2r + 10 = 0 gives r = 1 + 3i and r = 1 - 3i, so alpha = 1 and beta = 3. The general solution is y = e^(x)(c1 cos(3x) + c2 sin(3x)). The initial conditions give c1 = 1 and c1 + 3c2 = 4, so c2 = 1. The solution is y = e^(x)(cos(3x)+sin(3x))."
+          - problem: "Solve y'' + 6y' + 34y = 0 with y(0) = 1 and y'(0) = 2."
+            answer: "e^(-3x)(cos(5x)+sin(5x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For y'' + 6y' + 34y = 0, the characteristic equation r^2 + 6r + 34 = 0 gives r = -3 + 5i and r = -3 - 5i, so alpha = -3 and beta = 5. The general solution is y = e^(-3x)(c1 cos(5x) + c2 sin(5x)). The initial conditions give c1 = 1 and -3c1 + 5c2 = 2, so c2 = 1. The solution is y = e^(-3x)(cos(5x)+sin(5x))."
+          - problem: "Solve y'' - 4y' + 20y = 0 with y(0) = 2 and y'(0) = 4."
+            answer: "2e^(2x)cos(4x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For y'' - 4y' + 20y = 0, the characteristic equation r^2 - 4r + 20 = 0 gives r = 2 + 4i and r = 2 - 4i, so alpha = 2 and beta = 4. The general solution is y = e^(2x)(c1 cos(4x) + c2 sin(4x)). The initial conditions give c1 = 2 and 2c1 + 4c2 = 4, so c2 = 0. The solution is y = 2e^(2x)cos(4x)."
         constraints: "roots alpha +/- beta i with integer alpha, beta; answers as e^{alpha x}(c_1 cos beta x + c_2 sin beta x)"
       - id: kp3
         name: Choosing the case
@@ -183,6 +211,18 @@ topics:
           - problem: "Compute the Wronskian of $y_1 = e^{2x}$ and $y_2 = xe^{2x}$."
             answer: "$W = e^{4x}$"
             solution_sketch: "$e^{2x}(1 + 2x)e^{2x} - 2e^{2x} \\cdot xe^{2x} = e^{4x}(1 + 2x - 2x) = e^{4x}$."
+          - problem: "Consider $y_1 = e^{6x}$ and $y_2 = e^{-6x}$. Compute their Wronskian $W = y_1 y_2' - y_1' y_2$."
+            answer: "-12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $W = y_1 y_2' - y_1' y_2$. Use the Wronskian definition and differentiate the exponentials by the exponential rule: $y_1' = 6e^{6x}$ and $y_2' = -6e^{-6x}$. Substitute into the determinant: $W = e^{6x}(-6e^{-6x}) - 6e^{6x}e^{-6x} = -6 - 6$. Simplify the constant terms. The Wronskian is -12."
+          - problem: "Consider $y_1 = e^{4x}$ and $y_2 = e^{-x}$. Compute their Wronskian $W = y_1 y_2' - y_1' y_2$ as a function of $x$."
+            answer: "-5e^(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full object is $W = y_1 y_2' - y_1' y_2$. Use the Wronskian definition and differentiate with the exponential rule: $y_1' = 4e^{4x}$ and $y_2' = -e^{-x}$. Substitute: $W = e^{4x}(-e^{-x}) - 4e^{4x}e^{-x} = -e^{3x} - 4e^{3x}$. Combine like exponential terms. The Wronskian is -5e^(3x)."
+          - problem: "For $y_1 = e^{5x}$ and $y_2 = e^{kx}$, their Wronskian is $e^{11x}$. Find the constant $k$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $W = y_1 y_2' - y_1' y_2$. Use the Wronskian definition with $y_1' = 5e^{5x}$ and $y_2' = k e^{kx}$. Substitute: $W = e^{5x}(k e^{kx}) - 5e^{5x}e^{kx} = (k-5)e^{(k+5)x}$. Set this equal to $e^{11x}$ and compare exponents, giving $k+5=11$. Then $k=6$, and the coefficient $k-5=1$ matches $e^{11x}$. The constant is 6."
         constraints: "fundamental pairs from constant-coefficient equations; W simplifies to a constant or single exponential"
       - id: kp2
         name: Testing independence
@@ -205,14 +245,30 @@ topics:
         name: Superposition and general solutions
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: "If $y_1$ and $y_2$ solve $y'' + py' + qy = 0$ with $W(y_1, y_2) \\neq 0$, what is the general solution?"
-            answer: "$y = c_1 y_1 + c_2 y_2$"
-            answer_contract: {kind: none}
-            solution_sketch: "Superposition: any linear combination solves the homogeneous equation, and independence makes the family complete."
-          - problem: "If $y_1$ and $y_2$ both solve $y'' + y = x$, is $y_1 + y_2$ a solution of the same equation?"
-            answer: "No: it satisfies $y'' + y = 2x$."
-            answer_contract: {kind: none}
-            solution_sketch: "Superposition only holds for homogeneous equations; the difference $y_1 - y_2$ solves the homogeneous one."
+          - problem: "Let y1 = e^(3x) and y2 = e^(-2x). Both solve y'' - y' - 6y = 0. The function y = A e^(3x) + B e^(-2x) satisfies y(0) = 5 and y'(0) = 0. Give A and B."
+            answer: "A = 2; B = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
+            solution_sketch: "By superposition, y = A e^(3x) + B e^(-2x) solves y'' - y' - 6y = 0 because e^(3x) and e^(-2x) are solutions. Evaluate at x = 0 to get A + B = 5. Differentiate to get y' = 3A e^(3x) - 2B e^(-2x), so y'(0) = 3A - 2B = 0. Solve the two equations: A = 2 and B = 3. The answer is A = 2; B = 3."
+          - problem: "The functions y1 and y2 both solve y'' + y = 4x. Let y = y1 + y2. Find y'' + y as a function of x."
+            answer: "8x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Superposition fails for a nonhomogeneous equation: y1 and y2 each give y'' + y = 4x. For y = y1 + y2, linearity of the derivative gives y'' + y = (y1'' + y1) + (y2'' + y2). Substitute the two values: 4x + 4x = 8x. The answer is 8x."
+          - problem: "Both e^(3x) and e^(-x) solve y'' - 2y' - 3y = 0. Give the solution y = A e^(3x) + B e^(-x) with y(0) = 5 and y'(0) = 3."
+            answer: "2e^(3x) + 3e^(-x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "By superposition, the general solution is y = A e^(3x) + B e^(-x). The condition y(0) = 5 gives A + B = 5. Differentiate: y' = 3A e^(3x) - B e^(-x), so y'(0) = 3A - B = 3. Solve: A = 2 and B = 3. The answer is 2e^(3x) + 3e^(-x)."
+          - problem: "The functions y1 = e^(4x) and y2 = e^(-x) solve y'' - 3y' - 4y = 0. Let y = 5y1 - 2y2. Find y'' - 3y' - 4y."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By superposition, y = 5 y1 - 2 y2 is a linear combination of two solutions of the homogeneous equation. Therefore y also solves y'' - 3y' - 4y = 0. Substituting y into the left side gives 5 times 0 minus 2 times 0, which is 0. The answer is 0."
+          - problem: "Both cos(2x) and sin(2x) solve y'' + 4y = 0. The function y = A cos(2x) + B sin(2x) satisfies y(0) = 3 and y'(0) = 8. Give A and B."
+            answer: "A = 3; B = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
+            solution_sketch: "By superposition, y = A cos(2x) + B sin(2x) solves y'' + 4y = 0. The condition y(0) = 3 gives A = 3 because cos(0) = 1 and sin(0) = 0. Differentiate: y' = -2A sin(2x) + 2B cos(2x), so y'(0) = 2B = 8. Solve: B = 4. The answer is A = 3; B = 4."
+          - problem: "Both e^(-x) and x e^(-x) solve y'' + 2y' + y = 0. Give the solution with y(0) = 2 and y'(0) = 1."
+            answer: "2e^(-x) + 3x e^(-x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "By superposition, the general solution is y = A e^(-x) + B x e^(-x). The condition y(0) = 2 gives A = 2. Differentiate: y' = -A e^(-x) + B e^(-x) - B x e^(-x), so y'(0) = -A + B = 1. With A = 2, B = 3. The answer is 2e^(-x) + 3x e^(-x)."
         constraints: "conceptual: superposition holds exactly for homogeneous linear equations"
     diagnostic_exemplar:
       problem: 'Show that $y_1 = e^{2x}$ and $y_2 = e^{-3x}$ form a fundamental set of solutions of $y'''' + y'' - 6y = 0$, and write the general solution.'
@@ -262,27 +318,59 @@ topics:
         name: Variable-coefficient equations with a known solution
         key_prerequisites: [homogeneous-constant-coefficients, integration-substitution]
         exemplars:
-          - problem: "Given that $y_1 = x^2$ solves $x^2y'' - 3xy' + 4y = 0$ ($x > 0$), find a second independent solution."
-            answer: "$y_2 = x^2 \\ln x$"
-            answer_contract: {kind: none}
-            solution_sketch: "$y = vx^2$ leads to $xv'' + v' = 0$, i.e. $(xv')' = 0$, so $v' = 1/x$ and $v = \\ln x$."
-          - problem: "Given that $y_1 = x$ solves $x^2y'' + xy' - y = 0$ ($x > 0$), find a second independent solution."
-            answer: "$y_2 = \\dfrac{1}{x}$"
-            answer_contract: {kind: none}
-            solution_sketch: "$y = vx$ gives $xv'' + 3v' = 0$, so $v' = x^{-3}$ and $v = -\\tfrac{1}{2}x^{-2}$; any multiple works, so take $y_2 = 1/x$."
+          - problem: "Given that $y_1 = x^3$ solves $x^2 y'' - 5xy' + 9y = 0$ for $x > 0$. Find a second independent solution as a function of x."
+            answer: "x^3 ln(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Set y = v x^3 (reduction of order). Then y' = v' x^3 + 3v x^2 and y'' = v'' x^3 + 6v' x^2 + 6v x. Substitution gives x^5 v'' + x^4 v' = 0, so x v'' + v' = 0 after dividing by x^4. Integration gives v' = 1/x and v = ln(x). A second independent solution is x^3 ln(x)."
+          - problem: "The function $y_1 = x^2$ solves $x^2 y'' - 2y = 0$ for $x > 0$. Find a second independent solution as a function of x."
+            answer: "1/x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Set y = v x^2 (reduction of order). Then y' = v' x^2 + 2v x and y'' = v'' x^2 + 4v' x + 2v. Substitution gives x^4 v'' + 4x^3 v' = 0, so x v'' + 4v' = 0 after dividing by x^3. Let w = v'; then x w' + 4w = 0, and separation gives w = x^(-4). Integrating gives v = -x^(-3)/3, so a second independent solution is 1/x."
+          - problem: "For $x > 0$, the equation $x^2 y'' - 3xy' + 3y = 0$ has one solution $y_1 = x$. Find a second independent solution as a function of x."
+            answer: "x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Set y = v x (reduction of order). Then y' = v' x + v and y'' = v'' x + 2v'. Substitution gives x^3 v'' - x^2 v' = 0, so x v'' - v' = 0 after dividing by x^2. Let w = v'; then x w' - w = 0, and separation gives w = x. Integrating gives v = x^2/2, so a second independent solution is x^3."
+          - problem: "For $x > 0$, one solution of $x^2 y'' - 7xy' + 15y = 0$ is $y_1 = x^3$. Find a second independent solution as a function of x."
+            answer: "x^5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Set y = v x^3 (reduction of order). Then y' = v' x^3 + 3v x^2 and y'' = v'' x^3 + 6v' x^2 + 6v x. Substitution gives x^5 v'' - x^4 v' = 0, so x v'' - v' = 0 after dividing by x^4. Let w = v'; then x w' - w = 0, and separation gives w = x. Integrating gives v = x^2/2, so a second independent solution is x^5."
+          - problem: "The function $y_1 = 1/x$ solves $x^2 y'' + 3xy' + y = 0$ for $x > 0$. Find a second independent solution as a function of x."
+            answer: "ln(x)/x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Set y = v x^(-1) (reduction of order). Then y' = v' x^(-1) - v x^(-2) and y'' = v'' x^(-1) - 2v' x^(-2) + 2v x^(-3). Substitution gives x v'' + v' = 0, so (x v')' = 0. Therefore v' = C/x and v = ln(x). A second independent solution is ln(x)/x."
+          - problem: "For $x > 0$, the equation $x^2 y'' - 5xy' + 8y = 0$ has $y_1 = x^2$ as one solution. Find a second independent solution as a function of x."
+            answer: "x^4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Set y = v x^2 (reduction of order). Then y' = v' x^2 + 2v x and y'' = v'' x^2 + 4v' x + 2v. Substitution gives x^4 v'' - x^3 v' = 0, so x v'' - v' = 0 after dividing by x^3. Let w = v'; then x w' - w = 0, and separation gives w = x. Integrating gives v = x^2/2, so a second independent solution is x^4."
         constraints: "Cauchy-Euler-type equations with y_1 = x^m given; the v-equation is first order in v'"
       - id: kp3
         name: The reduction-of-order formula
         key_prerequisites: [homogeneous-constant-coefficients, integration-substitution]
         exemplars:
-          - problem: 'Use $y_2 = y_1 \int \dfrac{e^{-\int p\,dx}}{y_1^2}\,dx$ to find a second solution of $y'''' - 2y'' + y = 0$ from $y_1 = e^x$.'
-            answer: "$y_2 = xe^x$"
-            answer_contract: {kind: none}
-            solution_sketch: '$p = -2$, so $e^{-\int p} = e^{2x}$ and the integrand is $e^{2x}/e^{2x} = 1$; the integral is $x$.'
-          - problem: "Use the formula to find a second solution of $x^2y'' - 3xy' + 4y = 0$ from $y_1 = x^2$ ($x > 0$)."
-            answer: "$y_2 = x^2 \\ln x$"
-            answer_contract: {kind: none}
-            solution_sketch: "In standard form $p = -3/x$, so $e^{-\\int p} = x^3$; the integrand is $x^3/x^4 = 1/x$."
+          - problem: "For y'' - 2y' + y = 0, one solution is y1 = e^x. Use the reduction-of-order formula to find a second independent solution. Find y2 as a function of x."
+            answer: "x e^x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: y'' - 2y' + y = 0 with y1 = e^x. Standard form gives p = -2, so the exponential factor is e^(2x). The reduction-of-order formula gives y2 = e^x times the integral of e^(2x)/e^(2x) dx, which is e^x times the integral of 1 dx. That integral is x, so the second solution is x e^x."
+          - problem: "For x^2 y'' - 3x y' + 4y = 0 with x > 0, one solution is y1 = x^2. Use the reduction-of-order formula to find a second independent solution. Find y2 as a function of x."
+            answer: "x^2 ln(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: x^2 y'' - 3x y' + 4y = 0 with y1 = x^2. Divide to standard form y'' - (3/x)y' + (4/x^2)y = 0, so p = -3/x and e^(-int p dx) = x^3. The reduction-of-order formula gives y2 = x^2 times the integral of x^3/x^4 dx, which is x^2 times the integral of 1/x dx. The integral is ln(x), so the second solution is x^2 ln(x)."
+          - problem: "For y'' - 6y' + 9y = 0, one solution is y1 = e^(3x). Use the reduction-of-order formula to find a second independent solution. Find y2 as a function of x."
+            answer: "x e^(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: y'' - 6y' + 9y = 0 with y1 = e^(3x). Standard form gives p = -6, so the exponential factor is e^(6x). The reduction-of-order formula gives y2 = e^(3x) times the integral of e^(6x)/e^(6x) dx, which is e^(3x) times the integral of 1 dx. That integral is x, so the second solution is x e^(3x)."
+          - problem: "For y'' + 4y' + 4y = 0, one solution is y1 = e^(-2x). Use the reduction-of-order formula to find a second independent solution. Find y2 as a function of x."
+            answer: "x e^(-2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: y'' + 4y' + 4y = 0 with y1 = e^(-2x). Standard form gives p = 4, so the exponential factor is e^(-4x). The reduction-of-order formula gives y2 = e^(-2x) times the integral of e^(-4x)/e^(-4x) dx, which is e^(-2x) times the integral of 1 dx. That integral is x, so the second solution is x e^(-2x)."
+          - problem: "For x^2 y'' + 3x y' + y = 0 with x > 0, one solution is y1 = 1/x. Use the reduction-of-order formula to find a second independent solution. Find y2 as a function of x."
+            answer: "ln(x)/x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: x^2 y'' + 3x y' + y = 0 with y1 = 1/x. Divide to standard form y'' + (3/x)y' + (1/x^2)y = 0, so p = 3/x and e^(-int p dx) = x^(-3). The reduction-of-order formula gives y2 = x^(-1) times the integral of x^(-3)/x^(-2) dx, which is x^(-1) times the integral of x^(-1) dx. The integral is ln(x), so the second solution is ln(x)/x."
+          - problem: "For x^2 y'' - 2x y' + 2y = 0 with x > 0, one solution is y1 = x. Use the reduction-of-order formula to find a second independent solution. Find y2 as a function of x."
+            answer: "x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: x^2 y'' - 2x y' + 2y = 0 with y1 = x. Divide to standard form y'' - (2/x)y' + (2/x^2)y = 0, so p = -2/x and e^(-int p dx) = x^2. The reduction-of-order formula gives y2 = x times the integral of x^2/x^2 dx, which is x times the integral of 1 dx. That integral is x, so the second solution is x^2."
         constraints: "divide to standard form before reading p; integrals reduce to powers or ln"
     diagnostic_exemplar:
       problem: 'Given that $y_1 = x$ solves $x^2 y'''' - xy'' + y = 0$ ($x > 0$), find a second independent solution.'
