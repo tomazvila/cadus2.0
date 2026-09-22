@@ -563,18 +563,30 @@ topics:
         name: Classification from the matrix
         key_prerequisites: [equilibrium-classification-eigenvalues]
         exemplars:
-          - problem: 'Classify the origin of $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}\mathbf{X}$.'
-            answer: 'Stable node: $\lambda = -1, -2$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda^2 + 3\lambda + 2 = (\lambda + 1)(\lambda + 2)$: both roots negative.'
-          - problem: 'Classify the origin of $\mathbf{X}'' = \begin{pmatrix} 2 & 3 \\ 3 & 2 \end{pmatrix}\mathbf{X}$.'
-            answer: 'Saddle (unstable): $\lambda = 5$ and $\lambda = -1$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Trace $4$, determinant $4 - 9 = -5 < 0$: a negative determinant always means a saddle.'
-          - problem: 'Classify the origin of $\mathbf{X}'' = \begin{pmatrix} 0 & 2 \\ -2 & 0 \end{pmatrix}\mathbf{X}$.'
-            answer: 'Center: $\lambda = \pm 2i$, purely imaginary; stable but not asymptotically stable.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda^2 + 4 = 0$; trajectories are closed orbits around the origin.'
+          - problem: "For the system X' = [0,1;-2,-3]X, the origin is an equilibrium. Compute the eigenvalues from the trace and determinant, then state the type of the origin and the trace. Give the type of the origin and the trace."
+            answer: "verdict = node; trace = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["node"], ["saddle"], ["center"], ["spiral"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "trace"}]}
+            solution_sketch: "Step 1: For A = [0,1;-2,-3], trace = -3 and determinant = 2. Step 2: The characteristic equation is lambda^2 + 3lambda + 2 = 0, giving lambda = -1 and lambda = -2. Step 3: Both eigenvalues are negative, so the origin is a stable node. Saddle would need det < 0, center would need purely imaginary eigenvalues, and spiral would need complex eigenvalues with nonzero real part. The answer is verdict = node; trace = -3."
+          - problem: "For the system X' = [2,3;3,2]X, the origin is an equilibrium. Compute the eigenvalues from the trace and determinant, then state the type of the origin and the trace. State the type of the origin and the trace."
+            answer: "verdict = saddle; trace = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["node"], ["saddle"], ["center"], ["spiral"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "trace"}]}
+            solution_sketch: "Step 1: For A = [2,3;3,2], trace = 4 and determinant = -5. Step 2: Since det < 0, the eigenvalues have opposite signs, so the origin is a saddle. Step 3: The eigenvalues are 5 and -1. Node would need both eigenvalues with the same sign, center would need purely imaginary eigenvalues, and spiral would need complex eigenvalues with nonzero real part. The answer is verdict = saddle; trace = 4."
+          - problem: "Consider the linear system X' = [0,3;-3,0]X. Find the eigenvalues of the coefficient matrix, and use them to classify the equilibrium at the origin. Give the classification of the origin and the determinant of the coefficient matrix."
+            answer: "verdict = center; det = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["node"], ["saddle"], ["center"], ["spiral"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "det"}]}
+            solution_sketch: "Step 1: For A = [0,3;-3,0], the trace is 0 and the determinant is 9. Step 2: The characteristic equation is lambda^2 + 9 = 0, so the eigenvalues are 3i and -3i. Step 3: Purely imaginary eigenvalues give a center; a node would need real eigenvalues of the same sign, a saddle would need det < 0, and a spiral would need complex eigenvalues with a nonzero real part. The answer is verdict = center; det = 9."
+          - problem: "For the system X' = [-1,1;-1,-1]X, the origin is an equilibrium. Compute the eigenvalues from the trace and determinant, then state the type of the origin and the trace. State the type of the origin and the trace."
+            answer: "verdict = spiral; trace = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["node"], ["saddle"], ["center"], ["spiral"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "trace"}]}
+            solution_sketch: "Step 1: For A = [-1,1;-1,-1], trace = -2 and determinant = 2. Step 2: The characteristic equation is lambda^2 + 2lambda + 2 = 0, so lambda = -1 + i and lambda = -1 - i. Step 3: Complex eigenvalues with negative real part mean a stable spiral. Node would need real eigenvalues, saddle would need det < 0, and center would need purely imaginary eigenvalues. The answer is verdict = spiral; trace = -2."
+          - problem: "For the matrix A = [-1,0;0,-4], compute the characteristic polynomial. Find the eigenvalues as a list in increasing order."
+            answer: "-4, -1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: For A = [-1,0;0,-4], trace = -5 and determinant = 4. Step 2: The characteristic equation is lambda^2 + 5lambda + 4 = 0, so lambda = -1 and lambda = -4. Step 3: List the eigenvalues in increasing order. The answer is -4, -1."
+          - problem: "For the matrix A = [0,1;1,0], compute the characteristic polynomial. Find the eigenvalues as a list in increasing order."
+            answer: "-1, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: For A = [0,1;1,0], trace = 0 and determinant = -1. Step 2: The characteristic equation is lambda^2 - 1 = 0, so lambda = 1 and lambda = -1. Step 3: List the eigenvalues in increasing order. The answer is -1, 1."
         constraints: "2x2 integer matrices; eigenvalues computable from trace/determinant; det < 0 shortcut for saddles allowed"
       - id: kp2
         name: The trace-determinant shortcut
@@ -915,27 +927,59 @@ topics:
         name: Constant forcing
         key_prerequisites: [linear-systems-eigenvalues]
         exemplars:
-          - problem: 'Find a constant particular solution of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{0}{-3}$.'
-            answer: '$\mathbf{X}_p = \binom{2}{-1}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Set $\mathbf{X}_p'' = \mathbf{0}$: solve $A\mathbf{X}_p = -\mathbf{b}$, i.e. $x + 2y = 0$, $2x + y = 3$, giving $(2, -1)$.'
-          - problem: 'Write the general solution of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{0}{-3}$.'
-            answer: '$\mathbf{X} = c_1 e^{3t}\binom{1}{1} + c_2 e^{-t}\binom{1}{-1} + \binom{2}{-1}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Homogeneous general solution (eigenpairs $3, -1$) plus the equilibrium particular solution.'
+          - problem: "Find a constant particular solution of X' = [2,1;1,3] X + (-4,-7) as (x, y)."
+            answer: "(1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full system is X' = [2,1;1,3] X + (-4,-7). Set X_p' = 0, so the constant particular solution solves A X_p = -b. The equations are 2x + y = 4 and x + 3y = 7; solving gives x = 1 and y = 2. The particular solution is (1, 2)."
+          - problem: "Determine a constant particular solution of X' = [1,2;0,1] X + (-1,1) as (x, y)."
+            answer: "(3, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full system is X' = [1,2;0,1] X + (-1,1). Set X_p' = 0, so the constant particular solution solves A X_p = -b. The equations are x + 2y = 1 and y = -1; solving gives x = 3 and y = -1. The particular solution is (3, -1)."
+          - problem: "Give a constant particular solution of X' = [1,1;1,3] X + (-2,-6) as (x, y)."
+            answer: "(0, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full system is X' = [1,1;1,3] X + (-2,-6). Set the derivative of the constant vector to zero, so the particular solution solves A X_p = -b. The equations are x + y = 2 and x + 3y = 6; subtracting the first from the second gives 2y = 4, so y = 2 and x = 0. The particular solution is (0, 2)."
+          - problem: "Find the equilibrium solution of x' = 2x - y + 7, y' = -x + 2y - 8 as (x, y)."
+            answer: "(-2, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full system is x' = 2x - y + 7, y' = -x + 2y - 8. Set x' = y' = 0, so the equilibrium solves A X_p = -b. The equations are 2x - y = -7 and -x + 2y = 8; solving gives x = -2 and y = 3. The equilibrium is (-2, 3)."
+          - problem: "Determine a constant particular solution of X' = [4,1;1,4] X + (-1,11) as (x, y)."
+            answer: "(1, -3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full system is X' = [4,1;1,4] X + (-1,11). Set X_p' = 0, so the constant particular solution solves A X_p = -b. The equations are 4x + y = 1 and x + 4y = -11; solving gives x = 1 and y = -3. The particular solution is (1, -3)."
+          - problem: "Find a constant particular solution of x' = x + 3y - 5, y' = 2x + y as (x, y)."
+            answer: "(-1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full system is x' = x + 3y - 5, y' = 2x + y. Set x' = y' = 0, so the constant particular solution solves A X_p = -b. The equations are x + 3y = 5 and 2x + y = 0; solving gives x = -1 and y = 2. The particular solution is (-1, 2)."
         constraints: "det A nonzero so X_p = -A^{-1}b exists; integer particular solutions"
       - id: kp3
         name: Exponential forcing glimpse
         key_prerequisites: [linear-systems-eigenvalues, undetermined-coefficients]
         exemplars:
-          - problem: 'For $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{1}{0}e^{2t}$, find a particular solution of the form $\mathbf{X}_p = \mathbf{a}e^{2t}$.'
-            answer: '$\mathbf{X}_p = \binom{-1/3}{-2/3}e^{2t}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Substituting gives $(A - 2I)\mathbf{a} = -\binom{1}{0}$: $-a_1 + 2a_2 = -1$, $2a_1 - a_2 = 0$, so $\mathbf{a} = (-\frac{1}{3}, -\frac{2}{3})$.'
-          - problem: 'Why does the guess $\mathbf{X}_p = \mathbf{a}e^{3t}$ fail for $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \mathbf{v}e^{3t}$?'
-            answer: '$3$ is an eigenvalue of $A$, so $A - 3I$ is singular and $(A - 3I)\mathbf{a} = -\mathbf{v}$ generally has no solution; resonance requires $te^{3t}$ terms.'
-            answer_contract: {kind: none}
-            solution_sketch: '$3$ is an eigenvalue of $A$, so $A - 3I$ is singular and $(A - 3I)\mathbf{a} = -\mathbf{v}$ generally has no solution; resonance requires $te^{3t}$ terms.'
+          - problem: "Consider the system $x_1' = 3x_1 + 2e^{2t}$, $x_2' = 5x_2 + e^{2t}$. A particular solution is sought of the form $x_1 = a_1 e^{2t}$, $x_2 = a_2 e^{2t}$. Find $a_1$ and $a_2$; give the answer as (a1, a2)."
+            answer: "(-2, -1/3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The system is x1' = 3x1 + 2e^(2t), x2' = 5x2 + e^(2t), so A = [3,0;0,5] and v = (2,1). Step 1 (undetermined coefficients with exponential forcing): substituting xj = aj e^(2t) gives (A - 2I)a = -v, hence 2a1 = 3a1 + 2 and 2a2 = 5a2 + 1. Step 2 (solve the scalar equations): a1 = -2 and 3a2 = -1, so a2 = -1/3. The coefficient vector is (-2, -1/3)."
+          - problem: "Consider the system $x_1' = x_1 + 2x_2 + e^{3t}$, $x_2' = 2x_1 + x_2 + e^{3t}$, whose coefficient matrix is $A$. Someone plans to try the ansatz $x_1 = a_1 e^{3t}$, $x_2 = a_2 e^{3t}$. Determine whether this guess is usable, and give the determinant of $A - 3I$."
+            answer: "verdict = resonant; det = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["resonant"], ["nonresonant"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "det"}]}
+            solution_sketch: "The system is x1' = x1 + 2x2 + e^(3t), x2' = 2x1 + x2 + e^(3t), so A = [1,2;2,1]. Step 1 (eigenvalue test): A - 3I = [-2,2;2,-2] has determinant 4 - 4 = 0, so 3 is an eigenvalue of A. Step 2 (resonance rule): since the exponent 3 is an eigenvalue, A - 3I is singular and the plain exponential ansatz cannot be solved for a. The option nonresonant ignores this eigenvalue clash. The result is verdict = resonant; det = 0."
+          - problem: "For the system $x_1' = x_1 + 2x_2 + e^{t}$, $x_2' = 3x_1 + 2x_2 + e^{t}$, a particular solution of the form $x_1 = a_1 e^{t}$, $x_2 = a_2 e^{t}$ is wanted. Find $a_1$ and $a_2$; give the answer as (a1, a2)."
+            answer: "(-1/6, -1/2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The system is x1' = x1 + 2x2 + e^(t), x2' = 3x1 + 2x2 + e^(t), so A = [1,2;3,2] and v = (1,1). Step 1 (undetermined coefficients): the guess xj = aj e^(t) gives (A - I)a = -v, that is 2a2 = -1 and 3a1 + a2 = -1. Step 2 (solve the linear system): a2 = -1/2 and 3a1 = -1 + 1/2 = -1/2, so a1 = -1/6. The coefficient vector is (-1/6, -1/2)."
+          - problem: "The system $x_1' = 4x_1 + x_2 + e^{2t}$, $x_2' = x_1 + 4x_2 + e^{2t}$ has a particular solution of the form $x_1 = a_1 e^{2t}$, $x_2 = a_2 e^{2t}$. Find $a_1$ and $a_2$; give the answer as (a1, a2)."
+            answer: "(-1/3, -1/3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The system is x1' = 4x1 + x2 + e^(2t), x2' = x1 + 4x2 + e^(2t), so A = [4,1;1,4] and v = (1,1). Step 1 (undetermined coefficients): substituting xj = aj e^(2t) gives (A - 2I)a = -v, so 2a1 + a2 = -1 and a1 + 2a2 = -1. Step 2 (solve using symmetry): subtracting the equations gives a1 = a2, and then 3a1 = -1, so each entry is -1/3. The coefficient vector is (-1/3, -1/3)."
+          - problem: "For the system $x_1' = 2x_1 + x_2 + e^{4t}$, $x_2' = 3x_2 + 2e^{4t}$, look for a particular solution $x_1 = a_1 e^{4t}$, $x_2 = a_2 e^{4t}$. Find $a_1$ and $a_2$; give the answer as (a1, a2)."
+            answer: "(3/2, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The system is x1' = 2x1 + x2 + e^(4t), x2' = 3x2 + 2e^(4t), so A = [2,1;0,3] and v = (1,2). Step 1 (undetermined coefficients): the guess xj = aj e^(4t) gives (A - 4I)a = -v, that is -2a1 + a2 = -1 and -a2 = -2. Step 2 (back-substitution): a2 = 2 and then -2a1 = -3, so a1 = 3/2. The coefficient vector is (3/2, 2)."
+          - problem: "In the system $x_1' = 2x_1 + 3x_2 + v_1 e^{t}$, $x_2' = x_1 + 5x_2 + v_2 e^{t}$, the functions $x_1 = e^{t}$, $x_2 = 2e^{t}$ form a particular solution. Find the forcing pair $v_1$ and $v_2$; give the answer as (v1, v2)."
+            answer: "(-7, -9)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The system is x1' = 2x1 + 3x2 + v1 e^(t), x2' = x1 + 5x2 + v2 e^(t), with candidate particular solution x1 = e^(t), x2 = 2e^(t). Step 1 (substitute into the first equation): e^(t) = 2e^(t) + 6e^(t) + v1 e^(t), so v1 = -7. Step 2 (substitute into the second equation): 2e^(t) = e^(t) + 10e^(t) + v2 e^(t), so v2 = -9; this is the relation (A - I)a = -v read backwards. The forcing vector is (-7, -9)."
         constraints: "exponent alpha not an eigenvalue except in the resonance discussion; solve (A - alpha I)a = -v"
     diagnostic_exemplar:
       problem: 'For $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{1}{1}e^{2t}$, find a particular solution of the form $\mathbf{X}_p = \mathbf{a}e^{2t}$.'

@@ -210,18 +210,30 @@ topics:
         name: Polynomial coefficients and the guaranteed radius
         key_prerequisites: [power-series-method, radius-of-convergence]
         exemplars:
-          - problem: "Find the first three nonzero terms of the solution of the Airy equation $y'' = xy$ with $y(0) = 1$, $y'(0) = 0$."
-            answer: '$y = 1 + \dfrac{x^3}{6} + \dfrac{x^6}{180} + \cdots$'
-            answer_contract: {kind: none}
-            solution_sketch: '$a_2 = 0$, $a_{k+2} = a_{k-1}/((k+2)(k+1))$: $a_3 = \frac{1}{6}$, $a_6 = \frac{a_3}{30} = \frac{1}{180}$.'
-          - problem: "The equation $(1 + x^2)y'' + y = 0$ is solved by a power series about $x = 0$. What minimum radius of convergence is guaranteed, and why?"
-            answer: "Radius at least $1$: the guaranteed radius is the distance from $0$ to the nearest singular point, and $1 + x^2 = 0$ at $x = \\pm i$, at distance $1$."
-            answer_contract: {kind: none}
-            solution_sketch: "Radius at least $1$: the guaranteed radius is the distance from $0$ to the nearest singular point, and $1 + x^2 = 0$ at $x = \\pm i$, at distance $1$."
-          - problem: "Is $x = 0$ an ordinary point of $x^2y'' + y = 0$?"
-            answer: "No: dividing by $x^2$ makes the coefficient of $y$ blow up at $x = 0$, so $x = 0$ is a singular point and the method is not guaranteed there."
-            answer_contract: {kind: none}
-            solution_sketch: "No: dividing by $x^2$ makes the coefficient of $y$ blow up at $x = 0$, so $x = 0$ is a singular point and the method is not guaranteed there."
+          - problem: "For the Airy equation y'' = x y with y(0) = 1 and y'(0) = 0, the power-series solution about x = 0 has coefficients a_n in y = sum a_n x^n. Find the coefficient a_6."
+            answer: "1/180"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (power series method): write y = sum a_n x^n and substitute into y'' = x y. Step 2 (recurrence): match coefficients to get a_(k+2) = a_(k-1) / ((k+2)(k+1)). Step 3 (initial conditions): a_0 = 1 and a_1 = 0, so a_3 = 1/6, a_4 = 0 and a_5 = 0. Step 4 (target coefficient): a_6 = a_3 / (6*5) = 1/180. The coefficient is 1/180."
+          - problem: "The equation (1 + x^2) y'' + y = 0 is solved by a power series about x = 0. Find the guaranteed radius of convergence of that series."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (ordinary point): x = 0 is ordinary because 1 + x^2 is nonzero at 0. Step 2 (singular points): set 1 + x^2 = 0 to get x = i and x = -i. Step 3 (guaranteed radius): the nearest singular points are at distance 1 from 0, so the guaranteed radius is at least 1. The guaranteed radius is 1."
+          - problem: "For the equation x^2 y'' + y = 0, determine how many finite singular points the equation has."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (standard form): divide by x^2 to see the coefficient of y is 1/x^2. Step 2 (singular point): the coefficient blows up at x = 0, so x = 0 is the only finite singular point. The number of finite singular points is 1."
+          - problem: "For the equation (1 - x^2) y'' - 2 x y' + 2 y = 0 with y(0) = 1 and y'(0) = 0, the power-series solution about x = 0 has coefficients a_n. Find the coefficient a_4."
+            answer: "-1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (power series method): write y = sum a_n x^n and substitute into the equation. Step 2 (recurrence): coefficient matching gives a_(k+2) = ((k-1)/(k+1)) a_k. Step 3 (initial conditions): a_0 = 1 and a_1 = 0, so a_2 = -1. Step 4 (target coefficient): a_4 = (1/3) a_2 = -1/3. The coefficient is -1/3."
+          - problem: "For the equation y'' + x^2 y = 0 with y(0) = 0 and y'(0) = 1, the power-series solution about x = 0 has coefficients a_n. Find the coefficient a_5."
+            answer: "-1/20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (power series method): write y = sum a_n x^n and substitute into y'' + x^2 y = 0. Step 2 (recurrence): coefficient matching gives a_(k+2) = -a_(k-2) / ((k+2)(k+1)). Step 3 (initial conditions): a_0 = 0 and a_1 = 1. Step 4 (target coefficient): for k = 3, a_5 = -a_1 / (5*4) = -1/20. The coefficient is -1/20."
+          - problem: "The equation (x^2 + 4) y'' + y = 0 is solved by a power series about x = 0. Find the guaranteed radius of convergence of that series."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (ordinary point): x = 0 is ordinary because x^2 + 4 is nonzero at 0. Step 2 (singular points): set x^2 + 4 = 0 to get x = 2i and x = -2i. Step 3 (guaranteed radius): the nearest singular points are at distance 2 from 0, so the guaranteed radius is at least 2. The guaranteed radius is 2."
         constraints: "polynomial coefficients of degree at most 2; expansion about x = 0 only; radius questions use singular points at distance 1 or 2"
     diagnostic_exemplar:
       problem: 'Find the first three nonzero terms of the power-series solution of $y'''' = 2xy$ with $y(0) = 1$, $y''(0) = 0$.'
