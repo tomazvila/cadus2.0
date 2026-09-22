@@ -782,18 +782,30 @@ topics:
         name: Larger numerator degree gives an infinite limit
         key_prerequisites: [limit-laws, vertical-horizontal-asymptotes]
         exemplars:
-          - problem: 'Evaluate $\lim_{x \to \infty} \frac{x^3 + 1}{x + 2}$.'
-            answer: "∞"
-            answer_contract: {kind: none}
-            solution_sketch: 'The quotient behaves like $x^2$, which grows without bound.'
-          - problem: 'Evaluate $\lim_{x \to \infty} \frac{2x^2 + 3}{1 - x}$.'
-            answer: "-∞"
-            answer_contract: {kind: none}
-            solution_sketch: 'The quotient behaves like $\frac{2x^2}{-x} = -2x \to -\infty$.'
-          - problem: 'Evaluate $\lim_{x \to -\infty} \frac{x^2 + 1}{x + 5}$.'
-            answer: "-∞"
-            answer_contract: {kind: none}
-            solution_sketch: 'The quotient behaves like $x$, which tends to $-\infty$.'
+          - problem: "Evaluate the limit of (x^3 + 1)/(x + 2) as x goes to infinity. Give the limit and the degree difference k (numerator degree minus denominator degree)."
+            answer: "limit = infinity; k = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "limit"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "For (x^3 + 1)/(x + 2) as x goes to infinity. Step 1 (degree comparison): the numerator has degree 3 and the denominator degree 1, so k = 3 - 1 = 2. Step 2 (leading-term division): the quotient of the leading terms is x^3/x = x^2. Step 3 (limit law for powers): x^2 grows without bound with positive sign as x goes to infinity. The wrong choice DNE confuses unbounded growth with nonexistence, -infinity comes from a sign error, and 0 would need equal degrees. Therefore limit = infinity; k = 2."
+          - problem: "Evaluate the limit of (2x^2 + 3)/(1 - x) as x goes to infinity. Give the limit and the degree difference k."
+            answer: "limit = -infinity; k = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "limit"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "For (2x^2 + 3)/(1 - x) as x goes to infinity. Step 1 (degree comparison): numerator degree 2 and denominator degree 1 give k = 2 - 1 = 1. Step 2 (leading-term division): 2x^2/(-x) = -2x, and the sign comes from the leading terms. Step 3 (limit law): -2x tends to -infinity as x grows. The wrong choice DNE misreads unbounded growth, infinity ignores the negative leading coefficient of the denominator, and 0 would need equal degrees. Therefore limit = -infinity; k = 1."
+          - problem: "Evaluate the limit of (x^2 + 1)/(x + 5) as x goes to negative infinity. Give the limit and the degree difference k."
+            answer: "limit = -infinity; k = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "limit"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "For (x^2 + 1)/(x + 5) as x goes to negative infinity. Step 1 (degree comparison): k = 2 - 1 = 1. Step 2 (leading-term division): x^2/x = x. Step 3 (limit law): x tends to -infinity as x goes to negative infinity, since the leading coefficients are positive but the direction is negative. The wrong choice DNE misreads unbounded growth, infinity forgets the negative direction, and 0 would need equal degrees. Therefore limit = -infinity; k = 1."
+          - problem: "Evaluate the limit of (x^2 + 3)/(x - 1) as x goes to infinity. Give the limit and the degree difference k."
+            answer: "limit = infinity; k = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "limit"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "For (x^2 + 3)/(x - 1) as x goes to infinity. Step 1 (degree comparison): k = 2 - 1 = 1. Step 2 (leading-term division): x^2/x = x, with positive leading coefficients. Step 3 (limit law): x tends to infinity with positive sign. The wrong choice DNE misreads unbounded growth, -infinity comes from a sign error in the leading terms, and 0 would need equal degrees. Therefore limit = infinity; k = 1."
+          - problem: "For large x the expression (-x^3 + 4)/(x + 2) behaves like the quotient of its leading terms. Give that quotient of leading terms as a function of x."
+            answer: "-x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For (-x^3 + 4)/(x + 2). Step 1 (identify leading terms): the numerator has leading term -x^3 and the denominator has leading term x. Step 2 (leading-term division): -x^3/x = -x^2, and the degree difference 2 confirms unbounded behavior. Step 3 (end-behavior form): the expression behaves like this quotient for large x. The leading-term quotient is -x^2."
+          - problem: "For large x the expression (3x^4 - 2x)/(x^2 + 1) behaves like the quotient of its leading terms. Give that quotient of leading terms as a function of x."
+            answer: "3x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For (3x^4 - 2x)/(x^2 + 1). Step 1 (identify leading terms): the numerator has leading term 3x^4 and the denominator has leading term x^2. Step 2 (leading-term division): 3x^4/x^2 = 3x^2. Step 3 (degree comparison): the degree difference is 2, so the expression behaves like this quotient even as x goes to negative infinity, since the even power keeps the sign positive. The leading-term quotient is 3x^2."
         constraints: "numerator degree exceeds denominator degree by 1 or 2; determine the sign from the leading terms"
       - id: kp3
         name: Horizontal asymptotes of rational functions
@@ -857,18 +869,30 @@ topics:
         name: Infinite limits and one-sided sign analysis
         key_prerequisites: [one-sided-limits, limit-laws]
         exemplars:
-          - problem: 'Evaluate $\lim_{x \to 0^+} \frac{1}{x}$.'
-            answer: "∞"
-            answer_contract: {kind: none}
-            solution_sketch: "∞"
-          - problem: 'Evaluate $\lim_{x \to 2^-} \frac{1}{x - 2}$.'
-            answer: "-∞"
-            answer_contract: {kind: none}
-            solution_sketch: 'As $x \to 2^-$ the denominator is small and negative, so the fraction blows up to $-\infty$.'
-          - problem: 'Evaluate $\lim_{x \to 3^+} \frac{x + 1}{3 - x}$.'
-            answer: "-∞"
-            answer_contract: {kind: none}
-            solution_sketch: 'The numerator approaches $4 > 0$ while $3 - x$ is small and negative, so the quotient tends to $-\infty$.'
+          - problem: "Evaluate the one-sided limit lim_{x -> 0^+} 1/x. Give the limit as a label and give the sign of the quotient just to the right of 0, using 1 for positive and -1 for negative, in the form verdict = value; sign = value."
+            answer: "verdict = infinity; sign = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sign"}]}
+            solution_sketch: "Consider lim_{x -> 0^+} 1/x. Step 1 (locate the vanishing denominator): the denominator x equals 0 at x = 0. Step 2 (one-sided sign analysis): for x just to the right of 0, x is small and positive, so the quotient 1/x is positive. Step 3 (infinite limit): a positive numerator over a shrinking positive denominator grows without bound, so the limit is +infinity. The option DNE is wrong because the one-sided infinite limit is defined; -infinity has the wrong sign; 0 is wrong because the quotient grows instead of staying small. Answer: verdict = infinity; sign = 1."
+          - problem: "Evaluate the one-sided limit lim_{x -> 2^-} 1/(x - 2). Give the limit as a label and give the x-value where the denominator vanishes, in the form verdict = value; x = value."
+            answer: "verdict = -infinity; x = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "Consider lim_{x -> 2^-} 1/(x - 2). Step 1 (locate the vanishing denominator): x - 2 equals 0 at x = 2. Step 2 (one-sided sign analysis): for x just to the left of 2, x - 2 is small and negative, so the quotient is negative. Step 3 (infinite limit): the quotient decreases without bound, so the limit is -infinity. The option DNE is wrong because the one-sided infinite limit is defined; infinity has the wrong sign; 0 is wrong because the quotient grows in size. Solving x - 2 = 0 gives x = 2. Answer: verdict = -infinity; x = 2."
+          - problem: "Evaluate the one-sided limit lim_{x -> 3^+} (x + 1)/(3 - x). Give the limit as a label and give the sign of the quotient just to the right of 3, using 1 for positive and -1 for negative, in the form verdict = value; sign = value."
+            answer: "verdict = -infinity; sign = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["DNE", "does not exist"], ["infinity", "inf", "oo"], ["-infinity", "-inf", "-oo"], ["0"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sign"}]}
+            solution_sketch: "Consider lim_{x -> 3^+} (x + 1)/(3 - x). Step 1 (locate the vanishing denominator): 3 - x equals 0 at x = 3. Step 2 (numerator check by limit laws): the numerator approaches 3 + 1 = 4, which is nonzero. Step 3 (one-sided sign analysis): for x just to the right of 3, 3 - x is small and negative while the numerator stays positive, so the quotient is negative and grows without bound. The option DNE is wrong because the one-sided infinite limit is defined; infinity has the wrong sign; 0 is wrong because the quotient grows. Answer: verdict = -infinity; sign = -1."
+          - problem: "For the one-sided limit lim_{x -> -2^+} (x + 5)/(x + 2), determine the sign of the quotient as x approaches -2 from the right. Give the sign as a number: 1 for positive and -1 for negative."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Consider lim_{x -> -2^+} (x + 5)/(x + 2). Step 1 (locate the vanishing denominator): x + 2 equals 0 at x = -2. Step 2 (numerator check by limit laws): the numerator approaches -2 + 5 = 3, which is nonzero. Step 3 (one-sided sign analysis): for x just to the right of -2, x + 2 is small and positive, so a positive numerator over a small positive denominator is positive. Answer: 1."
+          - problem: "For the one-sided limit lim_{x -> 1^-} 1/(x - 1)^2, determine the sign of the quotient as x approaches 1 from the left. Give the sign as a number: 1 for positive and -1 for negative."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Consider lim_{x -> 1^-} 1/(x - 1)^2. Step 1 (locate the vanishing denominator): (x - 1)^2 equals 0 at x = 1. Step 2 (sign of the square): for x on either side of 1, the square (x - 1)^2 is positive. Step 3 (one-sided sign analysis): a positive numerator over a small positive denominator is positive, so the quotient is positive from the left. Answer: 1."
+          - problem: "To confirm the sign analysis for the one-sided limit lim_{x -> 5^-} 4/(5 - x), evaluate the quotient at a point on the chosen side, x = 4.99. Compute the value of the quotient at this point."
+            answer: "400"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Consider the quotient 4/(5 - x) near x = 5 from the left. Step 1 (substitution on the chosen side): at x = 4.99 the numerator is 4. Step 2 (denominator sign analysis): 5 - 4.99 = 0.01, which is positive and small. Step 3 (division): 4/0.01 = 400, confirming the positive unbounded growth of the left-hand limit. Answer: 400."
         constraints: "nonzero numerator over a vanishing denominator; determine the sign from the chosen side"
       - id: kp2
         name: Vertical asymptotes versus holes
