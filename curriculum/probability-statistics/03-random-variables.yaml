@@ -134,6 +134,18 @@ topics:
           - problem: 'A game pays €10 with probability $1/5$ and nothing otherwise. Find the expected payout, in euros.'
             answer: "2"
             solution_sketch: '$10 \cdot \frac{1}{5} + 0 \cdot \frac{4}{5} = 2$.'
+          - problem: "$X$ takes values $1, 2, 3, 4$ with probabilities $1/10, 2/10, 3/10, 4/10$. Find $E[X]$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The distribution lists 1 with probability 1/10, 2 with probability 2/10, 3 with probability 3/10, and 4 with probability 4/10. Use the expected-value rule E[X] = sum of x times P(x). Compute 1(1/10) + 2(2/10) + 3(3/10) + 4(4/10) = 30/10 = 3. So E[X] = 3."
+          - problem: "A fair four-sided die has faces numbered $1$ through $4$. Find the expected value of one roll as a fraction."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Each face has probability 1/4 because the die is fair. Use the expected-value rule E[X] = sum of x times P(x). The sum is (1 + 2 + 3 + 4)/4 = 10/4 = 5/2. So the expected value is 5/2."
+          - problem: "A game pays $5$ euros with probability $1/4$, $10$ euros with probability $1/4$, and nothing otherwise. Find the expected payout in euros as a fraction."
+            answer: "15/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The payout values are 5, 10, and 0 with probabilities 1/4, 1/4, and 1/2. Use the expected-value rule E[X] = sum of x times P(x). Compute 5(1/4) + 10(1/4) + 0(1/2) = 15/4. So the expected payout is 15/4."
         constraints: "3-6 values; E[X] a clean fraction or ends in .5; payouts in whole euros"
       - id: kp2
         name: "Expected value as a long-run average"
@@ -145,6 +157,22 @@ topics:
           - problem: 'A fair coin is flipped once; let $X = 1$ for heads and $X = 0$ for tails. Find $E[X]$ — a value $X$ itself never takes.'
             answer: "1/2"
             solution_sketch: '$1 \cdot \frac{1}{2} + 0 \cdot \frac{1}{2} = \frac{1}{2}$; the long-run average need not be an attainable value.'
+          - problem: "A fair six-sided die is rolled many times, and X is the number on the top face. Find the long-run average value of X as a fraction."
+            answer: "7/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The distribution puts probability 1/6 on each value 1, 2, 3, 4, 5, 6. Step 1, expected value rule: multiply each value by its probability, giving 1/6, 2/6, 3/6, 4/6, 5/6, 6/6. Step 2, add the products to get 21/6. Simplify 21/6 to 7/2, the long-run average. The answer is 7/2."
+          - problem: "A fair coin is flipped three times, and X counts the number of heads. Find the average number of heads over many such three-flip trials as a fraction."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The possible counts are 0, 1, 2, 3 heads with probabilities 1/8, 3/8, 3/8, 1/8. Step 1, expected value rule: multiply each count by its probability, giving 0, 3/8, 6/8, 3/8. Step 2, add the products to get 12/8. Simplify 12/8 to 3/2, the long-run average. The answer is 3/2."
+          - problem: "A carnival wheel pays 0 euros with probability 0.5, 5 euros with probability 0.3 and 20 euros with probability 0.2. Give the average payout over many spins in euros to 1 decimal."
+            answer: "5.5"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "The payout distribution is 0 with probability 0.5, 5 with probability 0.3 and 20 with probability 0.2. Step 1, expected value rule: multiply each payout by its probability, giving 0, 1.5 and 4. Step 2, add the products to get 5.5. The answer is 5.5."
+          - problem: "A raffle sells 200 tickets; one ticket wins a prize of 80 dollars and all other tickets win nothing. Find the average winnings per ticket over many raffles as a fraction."
+            answer: "2/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The prize is 80 dollars with probability 1/200 and 0 dollars with probability 199/200. Step 1, expected value rule: multiply each amount by its probability, giving 80/200 and 0. Step 2, add the products to get 80/200. Simplify 80/200 to 2/5, the long-run average. The answer is 2/5."
         constraints: "one computation phrased as a long-run average, one where E[X] is not an attainable value"
       - id: kp3
         name: "Linearity: E[aX + b]"
@@ -156,6 +184,22 @@ topics:
           - problem: 'A raffle ticket costs €2 and its prize $W$ (in euros) has $E[W] = 0.50$. Find the expected net gain from buying one ticket, in euros.'
             answer: "-1.50"
             solution_sketch: 'Net $= W - 2$, so $E[W - 2] = 0.5 - 2 = -1.5$ euros.'
+          - problem: "Given E[X] = 6, find E[4X - 5]."
+            answer: "19"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The linearity rule is E[aX + b] = a E[X] + b. Substitute a = 4, b = -5, and E[X] = 6: E[4X - 5] = 4(6) - 5 = 24 - 5 = 19. The answer is 19."
+          - problem: "A game costs 3 dollars to play. The winnings W, in dollars, have E[W] = 1.25. Find the expected net gain in dollars. Give the answer as a decimal to 2 decimal places."
+            answer: "-1.75"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Net gain is W - 3, so use E[aX + b] with a = 1 and b = -3. Then E[W - 3] = E[W] - 3 = 1.25 - 3 = -1.75. The expected net gain is -1.75 dollars."
+          - problem: "Suppose E[5X + 1] = 26. Find E[X]."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By linearity E[5X + 1] = 5 E[X] + 1. Set this equal to 26: 5 E[X] + 1 = 26, so 5 E[X] = 25 and E[X] = 5. The value of E[X] is 5."
+          - problem: "The number of customers X at a shop has E[X] = 2.1. The daily revenue in dollars is 10X + 7. Find the expected daily revenue in dollars. Give the answer as a decimal to 2 decimal places."
+            answer: "28.00"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "The revenue is a linear function of X, so use E[aX + b] = a E[X] + b. Substitute a = 10, b = 7, and E[X] = 2.1: E[10X + 7] = 10(2.1) + 7 = 21 + 7 = 28. The expected daily revenue is 28.00 dollars."
         constraints: "a, b small integers; money answers to the cent"
     diagnostic_exemplar:
       problem: '$X$ takes values $0, 1, 2$ with probabilities $1/6, 1/2, 1/3$. Find $E[3X + 2]$.'
@@ -191,6 +235,22 @@ topics:
           - problem: 'You roll a fair die and win that many euros. What entry price, in euros, makes the game fair?'
             answer: "3.50"
             solution_sketch: 'Fair price $= E[\text{payout}] = 3.5$.'
+          - problem: "A raffle ticket pays EUR 6 with probability 0.2 and EUR 3 with probability 0.4, and nothing with probability 0.4. Find the fair price of the ticket in euros, and give the answer to 2 decimals."
+            answer: "2.40"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "List the full payout table: EUR 6 at probability 0.2, EUR 3 at probability 0.4, and EUR 0 at probability 0.4. Apply the expected value rule and multiply each payout by its probability: 6 * 0.2 = 1.2 and 3 * 0.4 = 1.2. Add the products, since the fair price equals the expected payout: the fair price is 2.40."
+          - problem: "A game costs EUR 5 to play and pays EUR 20 with probability 1/2, and nothing otherwise. Find the expected net gain in euros."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the payout table: EUR 20 with probability 1/2 and EUR 0 with probability 1/2. The expected value rule gives the expected payout 20 * (1/2) = 10. Subtract the EUR 5 entry cost from the expected payout, so the expected net gain is 5."
+          - problem: "A game pays EUR y with probability 1/5 and EUR 6 with probability 1/2, and nothing otherwise. Its fair price is EUR 5. Find y in euros."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The fair price rule sets the price equal to the expected payout: 5 = y * (1/5) + 6 * (1/2). Compute the known term by the expected value rule: 6 * (1/2) = 3, so 5 = y/5 + 3. Solve the linear equation: y/5 = 2, and the unknown payout is 10."
+          - problem: "A lottery ticket pays EUR 15 with probability 1/6 and EUR 6 with probability 1/3, and nothing otherwise. Find the fair price of the ticket in euros, and give the answer to 2 decimals."
+            answer: "4.50"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "List the payout table: EUR 15 at probability 1/6, EUR 6 at probability 1/3, and EUR 0 at probability 1/2. Use the expected value rule and add the products: 15 * (1/6) = 2.5 and 6 * (1/3) = 2, giving an expected payout of 4.5. By the fair price rule the ticket price is the expected payout, so the fair price is 4.50."
         constraints: "payouts in whole euros; fair price is E[payout]; answers are bare euro amounts, to the cent"
       - id: kp2
         name: "Insurance and warranties"
@@ -213,6 +273,22 @@ topics:
           - problem: 'A raffle sells $200$ tickets at €1 each for one €150 prize. Find the expected net gain per ticket, in euros.'
             answer: "-0.25"
             solution_sketch: '$\frac{150}{200} - 1 = \frac{3}{4} - 1 = -\frac{1}{4}$ euros.'
+          - problem: "Option A pays a sure 7 euros. Option B pays 20 euros with probability 2/5, and pays nothing otherwise. Find the expected value of the better option, in euros."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the expected value of an option is the sum of each payout times its probability. Option A has EV = 7. Option B has EV = 20 * (2/5) = 8. Option B is better, so the expected value of the better option is 8."
+          - problem: "A raffle sells 500 tickets at 2 euros each for one 400 euro prize. Find the expected net gain per ticket, in euros. Give the answer to 1 decimal."
+            answer: "-1.2"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Rule: expected net gain per ticket = expected prize minus ticket cost. Expected prize = 400/500 = 0.8 euros. Net gain = 0.8 - 2 = -1.2 euros. The expected net gain per ticket is -1.2."
+          - problem: "A game costs 5 euros to play. You win X euros with probability 1/4, and win nothing otherwise. The expected net gain is 1 euro. Find the value of X."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: expected net gain = (X * 1/4) - 5. Set the net gain equal to 1: X/4 - 5 = 1. Add 5: X/4 = 6. Multiply by 4: X = 24. The value of X is 24."
+          - problem: "Option A pays 11 euros with probability 1/2, and pays 2 euros otherwise. Option B pays a sure 6 euros. Find the expected value of the better option, in euros. Give the answer to 1 decimal."
+            answer: "6.5"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Rule: expected value = sum of each payout times its probability. Option A EV = 11*(1/2) + 2*(1/2) = 5.5 + 1 = 6.5. Option B EV = 6. Option A is better, so the better expected value is 6.5."
         constraints: "two options or one net-gain computation; expected values differ or land on clean cents"
     diagnostic_exemplar:
       problem: 'A game costs €3 to play; you win €12 with probability $1/6$ and nothing otherwise. Find the expected net gain, in euros.'
@@ -251,6 +327,22 @@ topics:
           - problem: 'As the number of rolls of a fair die grows very large, what value does the average of the rolls approach?'
             answer: "3.5"
             solution_sketch: 'The sample mean approaches $E[X] = 3.5$.'
+          - problem: "A biased coin lands heads with probability 0.6. As the number of tosses grows very large, what value does the proportion of heads approach? Give the answer as a fraction."
+            answer: "3/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The law of large numbers says the long-run proportion of heads equals the probability of heads on one toss. Step 2: The given probability is 0.6, and 0.6 equals the fraction 3/5. Step 3: Therefore the limiting proportion is 3/5."
+          - problem: "A spinner has four equally likely outcomes: 1, 3, 5, 7. As the number of spins grows very large, what value does the average of the outcomes approach? Give the answer as an integer."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The law of large numbers says the long-run average of outcomes equals the expected value of one spin. Step 2: The expected value is (1 + 3 + 5 + 7)/4 = 16/4 = 4. Step 3: Therefore the limiting average is 4."
+          - problem: "An urn contains 3 red balls and 7 blue balls. Balls are drawn with replacement. As the number of draws grows very large, what value does the proportion of red draws approach? Give the answer as a fraction."
+            answer: "3/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The law of large numbers says the long-run proportion of red draws equals the probability of red on one draw. Step 2: The probability is 3 red balls out of 10 balls, so it is 3/10. Step 3: Therefore the limiting proportion is 3/10."
+          - problem: "A game pays 12 dollars with probability 1/4 and 0 dollars otherwise. As the number of plays grows very large, what value does the average payout per play approach? Give the answer as an integer."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The law of large numbers says the long-run average payout per play equals the expected payout of one play. Step 2: The expected payout is 12*(1/4) + 0*(3/4) = 3. Step 3: Therefore the limiting average payout is 3."
         constraints: "long-run limits equal the probability or the expected value; exact answers"
       - id: kp2
         name: "What the law does not say"
@@ -262,6 +354,22 @@ topics:
           - problem: 'A game is won with probability $1/3$ on each independent play. After four straight losses, find the probability of winning the next play.'
             answer: "1/3"
             solution_sketch: 'Independent trials have no memory; a win is never "due" — that is the gambler''s fallacy.'
+          - problem: "A fair six-sided die is rolled ten times and no 3 appears. Give the probability that the next roll is a 3 as a fraction."
+            answer: "1/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use independence: a fair die has six equally likely outcomes on every roll, and past rolls do not affect the next one. The streak of ten rolls without a 3 does not change the next roll. The probability is 1/6."
+          - problem: "A biased coin has probability 0.7 of landing heads. It lands tails six times in a row. Give the probability of heads on the next flip as a fraction."
+            answer: "7/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use independence: the coin has no memory, so six tails in a row do not change its chance of heads. The given probability 0.7 is the same on the next flip, and 0.7 equals 7/10. The answer is 7/10."
+          - problem: "A spinner has four equal sectors: red, blue, green, and yellow. It lands on red seven times in a row. Give the probability that the next spin lands on blue as a fraction."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use independence: each spin has the same four equal sectors, and a streak of red does not make blue more likely. One of the four equal sectors is blue, so the probability is 1/4. The answer is 1/4."
+          - problem: "A bag contains 5 red marbles and 3 blue marbles. A marble is drawn, its color is noted, and it is put back. Seven draws in a row are red. Give the probability that the next draw is blue as a fraction."
+            answer: "3/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use independence: the marble is put back after each draw, so the bag is unchanged and the draws do not affect each other. There are 3 blue marbles out of 5 + 3 = 8 marbles, so the probability is 3/8. The answer is 3/8."
         constraints: "streak setups; the correct answer ignores the streak"
       - id: kp3
         name: "Long-run predictions"
@@ -273,6 +381,22 @@ topics:
           - problem: 'A casino game has an expected player loss of €0.50 per play. About how much, in euros, does the casino expect to gain over $1000$ plays?'
             answer: "500"
             solution_sketch: '$1000 \cdot 0.50 = 500$ euros — reliable because of the law of large numbers.'
+          - problem: "A biased coin lands heads with probability 0.35 on each flip. About how many heads should be expected in 400 independent flips?"
+            answer: "140"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 400 flips with heads probability 0.35. The long-run prediction multiplies trials by probability: 400 * 0.35 = 140. By the law of large numbers, the expected number of heads is 140."
+          - problem: "A spinner lands on red with probability 0.375 on each spin. About how many red results should be expected in 240 independent spins?"
+            answer: "90"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 240 spins with red probability 3/8. Multiply the number of spins by the probability: 240 * 0.375 = 90. The law of large numbers gives the long-run expected count, so the answer is 90."
+          - problem: "A raffle ticket has an expected payout of 2.50 dollars per ticket. About how many dollars should 480 tickets pay out in total?"
+            answer: "1200"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 480 tickets with expected payout 2.50 dollars per ticket. The expected total is 480 * 2.50 = 1200 dollars. The law of large numbers supports this long-run prediction, so the answer is 1200."
+          - problem: "In 900 independent plays of a game, about 270 wins are expected. Find the probability of a win on one play as a fraction."
+            answer: "3/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is 900 plays with an expected total of 270 wins. The long-run prediction sets 900 * p = 270. Divide: p = 270/900 = 3/10, so the probability of a win on one play is 3/10."
         constraints: "n times the probability or expected value is a whole number of units"
     diagnostic_exemplar:
       problem: 'A game is won with probability $\frac{1}{3}$ on each independent play. After four straight losses, about how many wins should be expected in the next $600$ plays?'
@@ -322,6 +446,22 @@ topics:
           - problem: 'Find the variance of one roll of a fair six-sided die.'
             answer: "35/12"
             solution_sketch: '$E[X] = \frac{7}{2}$, $E[X^2] = \frac{1+4+9+16+25+36}{6} = \frac{91}{6}$; $\operatorname{Var} = \frac{91}{6} - \frac{49}{4} = \frac{182 - 147}{12} = \frac{35}{12}$.'
+          - problem: "$X$ takes the values $0$ and $4$, each with probability $1/2$. Compute $\\operatorname{Var}(X)$ using the shortcut $E[X^2] - (E[X])^2$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the mean by the expected-value formula: $E[X] = (0 + 4)/2 = 2$. Then compute the second moment: $E[X^2] = (0^2 + 4^2)/2 = 8$. The shortcut formula gives $\\operatorname{Var}(X) = 8 - 2^2 = 4$."
+          - problem: "$X$ is equally likely to take each of the values $1$, $2$, and $3$. Find $\\operatorname{Var}(X)$ by the shortcut $E[X^2] - (E[X])^2$."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the mean by the expected-value formula: $E[X] = (1 + 2 + 3)/3 = 2$. Then compute the second moment: $E[X^2] = (1 + 4 + 9)/3 = 14/3$. The shortcut formula gives $\\operatorname{Var}(X) = 14/3 - 4 = 2/3$."
+          - problem: "$X$ has distribution $P(X = 1) = 1/4$, $P(X = 2) = 1/2$, and $P(X = 4) = 1/4$. Find $\\operatorname{Var}(X)$ using the shortcut $E[X^2] - (E[X])^2$."
+            answer: "19/16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the mean by the expected-value formula: $E[X] = 1 \\cdot 1/4 + 2 \\cdot 1/2 + 4 \\cdot 1/4 = 9/4$. Compute the second moment: $E[X^2] = 1 \\cdot 1/4 + 4 \\cdot 1/2 + 16 \\cdot 1/4 = 25/4$. Then the shortcut formula gives $\\operatorname{Var}(X) = 25/4 - 81/16 = 19/16$."
+          - problem: "$X$ takes value $2$ with probability $1/2$, value $4$ with probability $1/3$, and value $6$ with probability $1/6$. Find $\\operatorname{Var}(X)$ using the shortcut $E[X^2] - (E[X])^2$."
+            answer: "20/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the mean by the expected-value formula: $E[X] = 2 \\cdot 1/2 + 4 \\cdot 1/3 + 6 \\cdot 1/6 = 10/3$. Then compute the second moment: $E[X^2] = 4 \\cdot 1/2 + 16 \\cdot 1/3 + 36 \\cdot 1/6 = 40/3$. The shortcut formula gives $\\operatorname{Var}(X) = 40/3 - 100/9 = 20/9$."
         constraints: "values <= 6; answers exact fractions; require the shortcut formula"
       - id: kp3
         name: "Standard deviation of a random variable"
@@ -367,6 +507,22 @@ topics:
             solution_sketch: 'A shift moves the mean by $b$ and leaves the spread unchanged.'
           - problem: 'Given $\operatorname{Var}(X) = 7$, find $\operatorname{Var}(X + 10)$.'
             answer: "7"
+          - problem: "A quiz score X has mean 12 and SD 2.5. Every score is increased by 4. Give the new mean and SD as (mean, SD)."
+            answer: "(16, 2.5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The transformation is X + 4. Rule: a shift adds 4 to the mean, so new mean = 12 + 4 = 16. Rule: a shift leaves the SD unchanged, so new SD = 2.5. The ordered pair is (16, 2.5)."
+          - problem: "A random variable X has variance 9. It is shifted down by 6. Find the new variance."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The transformation is X - 6. Rule: a shift leaves the variance unchanged. The old variance is 9, so the new variance is 9. The answer is 9."
+          - problem: "A shift of -5 is applied to X. The new mean is 10. If Var(X)=3, find the old mean and the new variance as (mean, variance)."
+            answer: "(15, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The transformation is X - 5. Rule: the new mean equals old mean minus 5, so old mean = 10 + 5 = 15. Rule: a shift leaves the variance unchanged, so new variance = 3. The ordered pair is (15, 3)."
+          - problem: "X has mean 20 and SD 4. After adding b, the mean becomes 13. Find b and the new SD as (b, SD)."
+            answer: "(-7, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The transformation is X + b. Rule: the new mean is old mean plus b, so 13 = 20 + b, giving b = -7. Rule: a shift leaves the SD unchanged, so new SD = 4. The ordered pair is (-7, 4)."
         constraints: "b in {-10..10}; emphasize that SD and variance are unchanged by shifts"
       - id: kp2
         name: "Scaling: multiplying by a constant"
@@ -378,6 +534,22 @@ topics:
           - problem: 'Given $\operatorname{Var}(X) = 3$, find $\operatorname{Var}(2X)$.'
             answer: "12"
             solution_sketch: 'Variance scales by $a^2$: $4 \cdot 3 = 12$.'
+          - problem: "Given SD(X) = 5, find SD(-2X)."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is SD(-2X). Standard deviation scales by the absolute value of the multiplier, so SD(-2X) = |-2| SD(X) = 2 * 5 = 10. The standard deviation is 10."
+          - problem: "Given Var(X) = 4, find Var(-3X)."
+            answer: "36"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is Var(-3X). Variance scales by the square of the multiplier, so Var(-3X) = (-3)^2 Var(X) = 9 * 4 = 36. The variance is 36."
+          - problem: "Given Var(X) = 16, find SD(-2X)."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is SD(-2X). First convert variance to standard deviation: SD(X) = sqrt(16) = 4. Then standard deviation scales by |-2| = 2, so SD(-2X) = 2 * 4 = 8. The standard deviation is 8."
+          - problem: "A random variable X has SD(X) = 5. Let Y = -3X. Find Var(Y)."
+            answer: "225"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is Var(Y) with Y = -3X. First convert standard deviation to variance: Var(X) = 5^2 = 25. Then variance scales by (-3)^2 = 9, so Var(Y) = 9 * 25 = 225. The variance is 225."
         constraints: "a in {-3..3}; distinguish SD scaling (|a|) from variance scaling (a^2)"
       - id: kp3
         name: "Combined transformations aX + b"
@@ -430,6 +602,22 @@ topics:
           - problem: 'Two fair dice are rolled. Find the expected value of their sum.'
             answer: "7"
             solution_sketch: '$E[X_1 + X_2] = 3.5 + 3.5 = 7$.'
+          - problem: "The random variables X, Y and Z have E[X] = 4, E[Y] = 9 and E[Z] = 2. Find E[X + Y + Z]."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the addition rule for expectations, E[X + Y + Z] = E[X] + E[Y] + E[Z]. Substitute the given values: 4 + 9 + 2 = 15. The answer is 15."
+          - problem: "A courier makes two deliveries. The first has expected travel time 2.5 hours, and the second has expected travel time 4 hours. Find the expected total travel time in hours as a fraction."
+            answer: "13/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let X be the first travel time and Y the second. The expected total is E[X + Y] = E[X] + E[Y]. Thus 2.5 + 4 = 6.5, which is 13/2. The expected total travel time is 13/2 hours."
+          - problem: "Three games give expected winnings 6, 7.5 and 3 points. Find the expected total winnings in points as a fraction."
+            answer: "33/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let the three winnings be A, B and C. Expectations add: E[A + B + C] = E[A] + E[B] + E[C]. So 6 + 7.5 + 3 = 16.5, which is 33/2. The expected total is 33/2 points."
+          - problem: "For random variables X and Y, E[X] = 4 and E[X + Y] = 11.5. Find E[Y] as a fraction."
+            answer: "15/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expectations add, so E[X + Y] = E[X] + E[Y]. Substitute: 11.5 = 4 + E[Y]. Solve: E[Y] = 7.5, which is 15/2. The answer is 15/2."
         constraints: "2-3 variables; means are integers or half-integers"
       - id: kp2
         name: "Variances add for independent variables"
@@ -441,6 +629,22 @@ topics:
           - problem: 'Two fair dice are rolled independently; each roll has variance $35/12$. Find the variance of the sum.'
             answer: "35/6"
             solution_sketch: '$\frac{35}{12} + \frac{35}{12} = \frac{35}{6}$.'
+          - problem: "$X$ and $Y$ are independent random variables with $\\operatorname{Var}(X) = 6$ and $\\operatorname{Var}(Y) = 10$. Give the answer as (Var(X + Y), SD(X + Y))."
+            answer: "(16, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Var(X + Y) = Var(X) + Var(Y) = 6 + 10 = 16 by the variance addition rule, since X and Y are independent. The standard deviation is the square root of the variance, so SD(X + Y) = 4. The answer is (16, 4)."
+          - problem: "$X$ and $Y$ are independent random variables with $\\operatorname{Var}(X) = 2$ and $\\operatorname{Var}(Y) = 3$. Find $\\operatorname{Var}(2X + 3Y)$."
+            answer: "35"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Var(2X + 3Y) = 2^2 Var(X) + 3^2 Var(Y) by the linear-combination variance rule plus independence. Numerically, 4(2) + 9(3) = 8 + 27 = 35. The answer is 35."
+          - problem: "$X$, $Y$ and $Z$ are independent random variables with $\\operatorname{Var}(X) = 3$, $\\operatorname{Var}(Y) = 8$ and $\\operatorname{Var}(Z) = 14$. Find $\\operatorname{SD}(X + Y + Z)$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Var(X + Y + Z) = 3 + 8 + 14 = 25 by the variance addition rule for independent variables. The standard deviation is the positive square root, so SD(X + Y + Z) = 5. The answer is 5."
+          - problem: "$X$ and $Y$ are independent random variables with $\\operatorname{Var}(X + Y) = 25$ and $\\operatorname{Var}(X) = 6$. Find $\\operatorname{Var}(Y)$."
+            answer: "19"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Var(X + Y) = Var(X) + Var(Y) by the variance addition rule, because X and Y are independent. Substitute the known values: 25 = 6 + Var(Y). Subtract 6 from both sides to get Var(Y) = 19. The answer is 19."
         constraints: "independence stated explicitly; variances sum to a perfect square when SD is requested"
       - id: kp3
         name: "Differences of independent variables"
@@ -452,6 +656,22 @@ topics:
           - problem: '$X$ and $Y$ are independent with $\operatorname{Var}(X) = 9$ and $\operatorname{Var}(Y) = 4$. Find $\operatorname{Var}(X - Y)$.'
             answer: "13"
             solution_sketch: '$\operatorname{Var}(-Y) = \operatorname{Var}(Y)$, so variances still add: $9 + 4 = 13$ — subtracting an independent variable adds just as much spread as adding it.'
+          - problem: "X is the time in minutes for the morning crew and Y is the time in minutes for the evening crew at a warehouse; X and Y are independent. The means are E[X] = 42 and E[Y] = 18. The variances are Var(X) = 25 and Var(Y) = 36. Give (E[X - Y], Var(X - Y)) as (mean, variance)."
+            answer: "(24, 61)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The ordered pair (E[X - Y], Var(X - Y)) needs two computations. First, the mean subtracts: E[X - Y] = 42 - 18 = 24. Second, the variance of a difference of independent variables adds: Var(X - Y) = 25 + 36 = 61. The ordered pair is (24, 61)."
+          - problem: "Let X be the error in a sensor reading and Y be the error in a second independent sensor. E[X] = 120, E[Y] = 45, Var(X) = 64, and Var(Y) = 100. Give (E[Y - X], Var(Y - X)) as (mean, variance)."
+            answer: "(-75, 164)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The ordered pair (E[Y - X], Var(Y - X)) needs two computations. First, the mean subtracts: E[Y - X] = 45 - 120 = -75. Second, the variance of a difference of independent variables adds: Var(Y - X) = 100 + 64 = 164. The ordered pair is (-75, 164)."
+          - problem: "X and Y are independent random variables with Var(X) = 49 and Var(Y) = 16. Find the standard deviation of X - Y."
+            answer: "sqrt(65)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The target is the standard deviation of X - Y, which needs two computations. First, the variance of the difference of independent variables adds: Var(X - Y) = 49 + 16 = 65. Second, the standard deviation is the square root of the variance, sqrt(65). The standard deviation is sqrt(65)."
+          - problem: "Let X and Y be independent with Var(X) = 12 and Var(Y) = 8. Find Var(3X - 2Y)."
+            answer: "140"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The target is Var(3X - 2Y), which uses two variance computations. Use Var(aX + bY) = a^2 Var(X) + b^2 Var(Y) for independent X and Y. For a = 3 and b = -2, Var(3X - 2Y) = 9*12 + 4*8 = 108 + 32 = 140. The value is 140."
         constraints: "two computations; variances add for both sums and differences"
     diagnostic_exemplar:
       problem: '$X$ and $Y$ are independent with $E[X] = 8$, $E[Y] = 5$, $\operatorname{Var}(X) = 6$, $\operatorname{Var}(Y) = 3$. Give $(E[X - Y], \operatorname{Var}(X - Y))$ as an ordered pair.'
@@ -507,6 +727,22 @@ topics:
           - problem: 'A fair coin is flipped $5$ times. Find $P(\text{exactly } 3 \text{ heads})$.'
             answer: "5/16"
             solution_sketch: '$\binom{5}{3} \left(\frac{1}{2}\right)^5 = \frac{10}{32} = \frac{5}{16}$.'
+          - problem: "A fair six-sided die is rolled 5 times. A success is a roll that shows an even number. Find the probability of exactly 1 success."
+            answer: "5/32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let X be the number of even rolls in 5 rolls. The binomial model with n = 5 and p = 1/2 gives P(X = 1) = C(5,1) (1/2)^5. The combinations rule gives C(5,1) = 5. Multiply by (1/2)^5 = 1/32 to get 5/32. The answer is 5/32."
+          - problem: "A student randomly guesses on 4 two-choice questions, each with one correct choice. Find the probability of exactly 1 correct guess."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let X be the number of correct guesses in 4 guesses. The binomial model with n = 4 and p = 1/2 gives P(X = 1) = C(4,1) (1/2)^4. The combinations rule gives C(4,1) = 4. Multiply by (1/2)^4 = 1/16 to get 4/16 = 1/4. The answer is 1/4."
+          - problem: "A bag contains equal numbers of red and blue marbles. A marble is drawn and replaced 6 times. Find the probability of exactly 1 red marble."
+            answer: "3/32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let X be the number of red marbles in 6 draws with replacement. The binomial model with n = 6 and p = 1/2 gives P(X = 1) = C(6,1) (1/2)^6. The combinations rule gives C(6,1) = 6. Multiply by (1/2)^6 = 1/64 to get 6/64 = 3/32. The answer is 3/32."
+          - problem: "A random number generator produces 0 or 1 with equal probability. It produces 6 numbers. Find the probability of exactly 2 ones."
+            answer: "15/64"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let X be the number of ones in 6 generated numbers. The binomial model with n = 6 and p = 1/2 gives P(X = 2) = C(6,2) (1/2)^6. The combinations rule gives C(6,2) = 15. Multiply by (1/2)^6 = 1/64 to get 15/64. The answer is 15/64."
         constraints: "n <= 6; p = 1/2; answers exact fractions"
       - id: kp3
         name: "P(X = k) with general p"
@@ -518,6 +754,22 @@ topics:
           - problem: 'A fair die is rolled $4$ times. Find $P(\text{exactly one } 6)$.'
             answer: "125/324"
             solution_sketch: '$\binom{4}{1} \cdot \frac{1}{6} \cdot \left(\frac{5}{6}\right)^3 = 4 \cdot \frac{125}{1296} = \frac{500}{1296} = \frac{125}{324}$.'
+          - problem: "A biased coin lands heads with probability $1/3$. The coin is tossed $5$ independent times. Find the probability of exactly $4$ heads."
+            answer: "10/243"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the binomial probability rule: P(X = 4) = C(5,4) * (1/3)^4 * (2/3)^1. The combination C(5,4) equals 5. Multiply the factors: 5 * (1/81) * (2/3) = 10/243. The probability is 10/243."
+          - problem: "A spinner lands on red with probability $1/4$. It is spun $4$ independent times. Find the probability of exactly $2$ red results."
+            answer: "27/128"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the binomial probability rule: P(X = 2) = C(4,2) * (1/4)^2 * (3/4)^2. The combination C(4,2) equals 6. Multiply: 6 * (1/16) * (9/16) = 54/256 = 27/128. The probability is 27/128."
+          - problem: "A standard die is rolled $6$ independent times. Find the probability that exactly two rolls show a six."
+            answer: "3125/15552"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the binomial probability rule: P(X = 2) = C(6,2) * (1/6)^2 * (5/6)^4. The combination C(6,2) equals 15. Multiply: 15 * (1/36) * (625/1296) = 9375/46656 = 3125/15552. The probability is 3125/15552."
+          - problem: "In a quality-control test, each item fails with probability $1/3$, and $6$ items are tested independently. Find the probability that exactly $2$ items fail."
+            answer: "80/243"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the binomial probability rule: P(X = 2) = C(6,2) * (1/3)^2 * (2/3)^4. The combination C(6,2) equals 15. Multiply: 15 * (1/9) * (16/81) = 240/729 = 80/243. The probability is 80/243."
         constraints: "n <= 6; p in {1/3, 1/4, 1/6}; answers exact fractions"
     diagnostic_exemplar:
       problem: 'Each trial succeeds with probability $1/4$; there are $3$ independent trials. Find $P(\text{exactly } 2 \text{ successes})$.'
@@ -550,12 +802,30 @@ topics:
         name: "At-least and at-most probabilities"
         key_prerequisites: [binomial-probability]
         exemplars:
-          - problem: 'A fair coin is flipped $3$ times. Find $P(\text{at least one head})$.'
-            answer: "7/8"
-            solution_sketch: '$1 - P(0 \text{ heads}) = 1 - \frac{1}{8} = \frac{7}{8}$.'
-          - problem: 'A fair die is rolled twice. Find $P(\text{at least one } 6)$ using the binomial with $n = 2$, $p = 1/6$.'
-            answer: "11/36"
-            solution_sketch: '$1 - \left(\frac{5}{6}\right)^2 = 1 - \frac{25}{36} = \frac{11}{36}$.'
+          - problem: "A biased coin lands heads with probability $1/3$. It is flipped $3$ times. Find $P(\\text{at least one head})$ as a fraction."
+            answer: "19/27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the complement rule for at least one head. The complement event has zero heads, with probability $(2/3)^3 = 8/27$. Subtract from $1$: $1 - 8/27 = 19/27$."
+          - problem: "A fair die is rolled $3$ times. Let $X$ be the number of sixes. Find $P(X \\le 1)$ as a fraction."
+            answer: "25/27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the binomial sum for at most one six. The term for zero sixes is $(5/6)^3 = 125/216$. The term for one six is $3 \\cdot (1/6) \\cdot (5/6)^2 = 75/216$. Sum the terms: $125/216 + 75/216 = 25/27$."
+          - problem: "A fair die is rolled $4$ times. Let $X$ be the number of sixes. Find $P(X \\ge 2)$ as a fraction."
+            answer: "19/144"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the complement rule for at least two sixes. The complement has zero or one six. Compute $P(0) = (5/6)^4 = 625/1296$ and $P(1) = 4 \\cdot (1/6) \\cdot (5/6)^3 = 500/1296$. Subtract: $1 - 625/1296 - 500/1296 = 171/1296 = 19/144$."
+          - problem: "A basketball player makes a free throw with probability $3/4$. She shoots $3$ times. Find $P(\\text{at most two makes})$ as a fraction."
+            answer: "37/64"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the complement rule for at most two makes. The complement event is three makes. Compute $P(3) = (3/4)^3 = 27/64$. Subtract: $1 - 27/64 = 37/64$."
+          - problem: "A spinner lands on red with probability $1/4$. It is spun $4$ times. Find $P(\\text{at least one red})$ as a fraction."
+            answer: "175/256"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the complement rule for at least one red. The complement is no red in four spins, $(3/4)^4 = 81/256$. Subtract: $1 - 81/256 = 175/256$."
+          - problem: "A spinner lands on red with probability $1/3$. It is spun $4$ times. Let $X$ be the number of reds. Find $P(X \\le 2)$ as a fraction."
+            answer: "8/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the binomial sum for at most two reds. The zero-red term is $(2/3)^4 = 16/81$. The one-red term is $4 \\cdot (1/3) \\cdot (2/3)^3 = 32/81$. The two-red term is $6 \\cdot (1/3)^2 \\cdot (2/3)^2 = 24/81$. Sum: $16/81 + 32/81 + 24/81 = 72/81 = 8/9$."
         constraints: "n <= 4; require the complement for at-least-one; at-most sums over <= 3 terms"
       - id: kp2
         name: "Mean and variance: np and np(1-p)"
