@@ -162,13 +162,29 @@ topics:
         name: "Set difference"
         key_prerequisites: [set-notation]
         exemplars:
-          - problem: 'With $A = \{1, 2, 3, 4, 5\}$ and $B = \{2, 4\}$, find $A \setminus B$ and $B \setminus A$.'
-            answer_contract: {kind: none}
-            answer: '$A \setminus B = \{1, 3, 5\}$ and $B \setminus A = \varnothing$.'
-            solution_sketch: 'Remove the elements of $B$ from $A$; since every element of $B$ lies in $A$, nothing is left for $B \setminus A$.'
           - problem: 'With $A = \{1, 2, 3\}$ and $B = \{4, 5\}$, find $A \setminus B$.'
             answer: '$\{1, 2, 3\}$'
             solution_sketch: 'The sets are disjoint, so removing the elements of $B$ leaves all of $A$.'
+          - problem: "Let $A = \\{2, 4, 6, 8\\}$ and $B = \\{4, 5, 7\\}$. Find both set differences, and give the answer as adiffb for $A \\setminus B$ and bdiffa for $B \\setminus A$, each as a set."
+            answer: "adiffb = {2, 6, 8}; bdiffa = {5, 7}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "adiffb"}, {"contract": {"kind": "set"}, "name": "bdiffa"}]}
+            solution_sketch: "By the definition of set difference, A \\ B keeps the elements of A = {2, 4, 6, 8} that do not lie in B = {4, 5, 7}; the shared element 4 is removed, leaving {2, 6, 8}. Likewise B \\ A removes the shared element 4 from B = {4, 5, 7}, leaving {5, 7}. So adiffb = {2, 6, 8}; bdiffa = {5, 7}."
+          - problem: "With $A = \\{1, 3, 5, 7, 9\\}$ and $B = \\{3, 9, 10\\}$, find $A \\setminus B$. Give the answer as a set in braces."
+            answer: "{1, 5, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Set difference keeps the elements of A = {1, 3, 5, 7, 9} that are not in B = {3, 9, 10}. The shared elements 3 and 9 are removed, and 10 plays no role because it is not in A. The remaining elements give {1, 5, 7}."
+          - problem: "Let $A$ be the set of whole numbers from 1 to 9, and let $B = \\{2, 4, 8\\}$. Compute how many elements the set $A \\setminus B$ contains."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List A = {1, 2, 3, 4, 5, 6, 7, 8, 9} and remove the elements of B = {2, 4, 8} by the definition of set difference. The remaining set is {1, 3, 5, 6, 7, 9}. Counting its elements gives 6, so the number of elements of A \\ B is 6."
+          - problem: "Let $A = \\{1, 2, 3, 4, 5, 6\\}$, $B = \\{3, 5\\}$, and $C = \\{1, 4\\}$. Compute $(A \\setminus B) \\setminus C$ and give the result as a set in braces."
+            answer: "{2, 6}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "First compute A \\ B: remove 3 and 5 from A = {1, 2, 3, 4, 5, 6}, which leaves {1, 2, 4, 6}. Then remove the elements of C = {1, 4} from that set, which removes 1 and 4. The chained difference (A \\ B) \\ C is therefore {2, 6}."
+          - problem: "Let $U = \\{1, 2, 3, 4, 5, 6, 7, 8\\}$ and $A = \\{2, 3, 5, 7\\}$. Find $U \\setminus A$ and give the result as a set in braces."
+            answer: "{1, 4, 6, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The difference U \\ A removes the elements 2, 3, 5, 7 of A from the universe U = {1, 2, 3, 4, 5, 6, 7, 8}. This is the complement of A inside U. The elements left are 1, 4, 6, 8, so U \\ A = {1, 4, 6, 8}."
         constraints: "one difference of small listed sets; include a disjoint or nested case"
       - id: kp3
         name: "Operations on described sets"
@@ -217,36 +233,84 @@ topics:
           - problem: 'With universe $U = \{1, 2, \dots, 10\}$ and $A = \{2, 4, 6, 8, 10\}$, find $A^{c}$.'
             answer: '$\{1, 3, 5, 7, 9\}$'
             solution_sketch: 'The complement collects the members of $U$ not in $A$: the odd numbers up to $9$.'
-          - problem: 'With $U = \{1, \dots, 6\}$ and $A = \{1, 2, 3\}$, find $A^{c}$ and $(A^{c})^{c}$.'
-            answer_contract: {kind: none}
-            answer: '$A^{c} = \{4, 5, 6\}$ and $(A^{c})^{c} = \{1, 2, 3\} = A$.'
-            solution_sketch: 'Complementing removes $A$ from $U$; complementing again restores $A$.'
+          - problem: "Let the universe be $U = \\{1, 2, \\dots, 7\\}$ and let $A = \\{2, 3, 5\\}$. Find $A^{c}$ and $(A^{c})^{c}$."
+            answer: "Ac = {1, 4, 6, 7}; Acc = {2, 3, 5}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "Ac"}, {"contract": {"kind": "set"}, "name": "Acc"}]}
+            solution_sketch: "The complement rule says $A^{c}$ holds every member of $U = \\{1, 2, \\dots, 7\\}$ that is not in $A$, so $A^{c} = \\{1, 4, 6, 7\\}$. Applying the complement rule again to $A^{c}$ removes $\\{1, 4, 6, 7\\}$ from $U$ and restores $A$, so $(A^{c})^{c} = \\{2, 3, 5\\}$. The key is Ac = {1, 4, 6, 7}; Acc = {2, 3, 5}."
+          - problem: "Take the universe $U = \\{1, 2, \\dots, 9\\}$ and the set $A = \\{1, 2, 4, 5, 7\\}$. Find $A^{c}$."
+            answer: "{3, 6, 8, 9}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (complement rule): $A^{c}$ collects the members of the universe $U = \\{1, 2, \\dots, 9\\}$ that $A$ does not contain. Step 2 (scan): checking each element of $U$ against $A$, the elements $3, 6, 8, 9$ are missing from $A$. Step 3 (conclusion): the complement is $\\{3, 6, 8, 9\\}$. The answer is {3, 6, 8, 9}."
+          - problem: "Work in the universe $U = \\{1, 2, \\dots, 7\\}$ with $A = \\{1, 2\\}$ and $B = \\{2, 4, 6\\}$. Find $(A \\cup B)^{c}$."
+            answer: "{3, 5, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (union rule): $A \\cup B = \\{1, 2, 4, 6\\}$, the listed elements of $A$ together with those of $B$. Step 2 (complement rule): remove $\\{1, 2, 4, 6\\}$ from the universe $U = \\{1, 2, \\dots, 7\\}$. Step 3 (conclusion): the elements left are $3, 5, 7$, so $(A \\cup B)^{c} = \\{3, 5, 7\\}$. The answer is {3, 5, 7}."
+          - problem: "In the universe $U = \\{1, 2, \\dots, 9\\}$ let $A = \\{2, 4, 6\\}$ and $B = \\{4, 5, 6, 8\\}$. Determine $(A \\cap B)^{c}$."
+            answer: "{1, 2, 3, 5, 7, 8, 9}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (intersection rule): $A \\cap B = \\{4, 6\\}$, the elements that appear in both listed sets. Step 2 (complement rule): delete $4$ and $6$ from the universe $U = \\{1, 2, \\dots, 9\\}$. Step 3 (conclusion): what remains is $(A \\cap B)^{c} = \\{1, 2, 3, 5, 7, 8, 9\\}$. The answer is {1, 2, 3, 5, 7, 8, 9}."
+          - problem: "Inside a universe of consecutive integers, a set $A = \\{2, 5, 7\\}$ has complement $A^{c} = \\{1, 3, 4, 6, 8\\}$. State the universe $U$ as a set."
+            answer: "{1, 2, 3, 4, 5, 6, 7, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (complement rule, read backwards): a set and its complement split the universe with no overlap and no gap, so $U = A \\cup A^{c}$. Step 2 (union rule): merge $\\{2, 5, 7\\}$ with $\\{1, 3, 4, 6, 8\\}$ and sort. Step 3 (conclusion): the universe is every integer from $1$ to $8$. The answer is {1, 2, 3, 4, 5, 6, 7, 8}."
         constraints: "complement of a listed set relative to a small stated universe"
       - id: kp2
         name: "The complement depends on the universe"
         key_prerequisites: [negating-statements]
         exemplars:
-          - problem: 'Find the complement of $A = \{1, 2\}$ relative to $U = \{1, 2, 3\}$, and relative to $U = \{1, 2, 3, 4, 5\}$.'
-            answer_contract: {kind: none}
-            answer: '$\{3\}$ and $\{3, 4, 5\}$ respectively.'
-            solution_sketch: 'The same set has different complements in different universes: everything in $U$ but not in $A$.'
-          - problem: 'With universe $\mathbb{Z}$, describe the complement of the set of even integers.'
-            answer_contract: {kind: none}
-            answer: 'The odd integers.'
-            solution_sketch: 'An integer fails to be even exactly when it is odd.'
+          - problem: "Let $A = \\{2, 5\\}$ and consider two universes, $U = \\{1, 2, 3, 4, 5\\}$ and $V = \\{1, 2, \\dots, 8\\}$. Give the number of elements in the complement of $A$ relative to $U$ as ucomp, and the number of elements in the complement of $A$ relative to $V$ as vcomp."
+            answer: "ucomp = 3; vcomp = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "ucomp"}, {"contract": {"kind": "exact"}, "name": "vcomp"}]}
+            solution_sketch: "The full result is ucomp = 3; vcomp = 6. Step 1, complement definition: relative to a universe, the complement holds exactly the universe elements that are not in A. Step 2, set difference: removing 2 and 5 from U = {1, 2, 3, 4, 5} leaves 1, 3 and 4, so ucomp = 3. Step 3, set difference: removing 2 and 5 from V = {1, ..., 8} leaves 1, 3, 4, 6, 7 and 8, so vcomp = 6. The same set A has different complements because the universes differ, and the answer is ucomp = 3; vcomp = 6."
+          - problem: "Work in the universe $\\mathbb{Z}$ of all integers, and let $A$ be the set of even integers. How many integers $x$ with $-5 \\le x \\le 5$ lie in the complement of $A$ relative to $\\mathbb{Z}$?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, negation of the description: relative to the universe Z, the complement of the set of even integers contains exactly the integers that fail to be even, that is, the odd integers. Step 2, listing in the window: the odd integers with -5 <= x <= 5 are -5, -3, -1, 1, 3 and 5. Step 3, counting: this list has 6 elements. The number of elements of the complement in the window is 6."
+          - problem: "Let $A = \\{4, 7, 9\\}$ and consider two universes, $U = \\{1, 2, \\dots, 6\\}$ and $V = \\{1, 2, \\dots, 10\\}$. Give the number of elements in the complement of $A$ relative to $U$ as inu, and the number of elements in the complement of $A$ relative to $V$ as inv."
+            answer: "inu = 5; inv = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "inu"}, {"contract": {"kind": "exact"}, "name": "inv"}]}
+            solution_sketch: "The full result is inu = 5; inv = 7. Step 1, complement definition: relative to a universe, the complement counts the universe elements missing from A. Step 2, set difference in U: from U = {1, ..., 6} only the element 4 lies in A, leaving 1, 2, 3, 5 and 6, so inu = 5. Step 3, set difference in V: from V = {1, ..., 10} the elements 4, 7 and 9 lie in A, leaving 1, 2, 3, 5, 6, 8 and 10, so inv = 7. The elements 7 and 9 lie outside U and therefore do not change inu, and the answer is inu = 5; inv = 7."
+          - problem: "Work in the universe $\\mathbb{Z}$ and let $A$ be the set of multiples of $3$. How many integers $n$ with $1 \\le n \\le 30$ lie in the complement of $A$ relative to $\\mathbb{Z}$?"
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, negation of the description: relative to Z, the complement of the multiples of 3 contains the integers that are not multiples of 3. Step 2, counting A in the window: the multiples of 3 from 1 to 30 are 3, 6, 9, ..., 30, which gives 30/3 = 10 elements. Step 3, counting the rest: 30 - 10 = 20 integers fail the description of A. The number of elements in the complement is 20."
+          - problem: "Work in the universe $\\mathbb{Z}$ and let $A = \\{x \\in \\mathbb{Z} : x > 0\\}$, the set of positive integers. How many integers $x$ with $-3 \\le x \\le 3$ lie in the complement of $A$ relative to $\\mathbb{Z}$?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, negation of the description: the set A collects the positive integers, so its complement relative to Z contains every integer that is not positive, that is, every x with x <= 0. Step 2, listing in the window: among -3, -2, ..., 3 the nonpositive integers are -3, -2, -1 and 0. Step 3, boundary check: the value 0 belongs to the complement because 0 is not positive. The number of elements in the complement is 4."
+          - problem: "Work in the universe $\\mathbb{Z}$ and let $A = \\{x \\in \\mathbb{Z} : |x| \\le 3\\}$. How many integers $x$ with $-7 \\le x \\le 7$ lie in the complement of $A$ relative to $\\mathbb{Z}$?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, negation of the description: the complement relative to Z of A = {x in Z : |x| <= 3} contains the integers with |x| >= 4. Step 2, listing in the window: among -7, ..., 7 these are -7, -6, -5, -4, 4, 5, 6 and 7. Step 3, counting: the list has 8 elements. The number of elements in the complement is 8."
         constraints: "same set, different universes, or a described set in $\\mathbb{Z}$"
       - id: kp3
         name: "Difference via complement"
         key_prerequisites: [union-intersection-difference]
         exemplars:
-          - problem: 'With $U = \{1, \dots, 8\}$, $A = \{1, 2, 3, 4\}$, $B = \{3, 4, 5\}$, compute $A \setminus B$ and $A \cap B^{c}$, and compare.'
-            answer_contract: {kind: none}
-            answer: 'Both equal $\{1, 2\}$.'
-            solution_sketch: '$A \setminus B = \{1, 2\}$; $B^{c} = \{1, 2, 6, 7, 8\}$, so $A \cap B^{c} = \{1, 2\}$ — the identity $A \setminus B = A \cap B^{c}$ in action.'
-          - problem: 'With $U = \{1, \dots, 5\}$ and $A = \{1, 3\}$, compute $A \cup A^{c}$ and $A \cap A^{c}$.'
-            answer_contract: {kind: none}
-            answer: '$A \cup A^{c} = U$ and $A \cap A^{c} = \varnothing$.'
-            solution_sketch: '$A^{c} = \{2, 4, 5\}$; together they cover $U$ and share nothing.'
+          - problem: "Let $U = \\{1, 2, \\ldots, 9\\}$, $A = \\{2, 4, 6, 8\\}$ and $B = \\{2, 5, 8\\}$. Compute $A \\setminus B$ and $A \\cap B^{c}$ and check that the identity $A \\setminus B = A \\cap B^{c}$ holds. Give diff and inter as sets."
+            answer: "diff = {4, 6}; inter = {4, 6}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "diff"}, {"contract": {"kind": "set"}, "name": "inter"}]}
+            solution_sketch: "Step 1, difference of sets: remove from $A = \\{2, 4, 6, 8\\}$ every element of $B = \\{2, 5, 8\\}$, which leaves $\\{4, 6\\}$. Step 2, complement rule: $B^{c} = \\{1, 3, 4, 6, 7, 9\\}$, and intersecting with $A$ keeps $\\{4, 6\\}$. The two results agree, verifying the identity. Thus diff = {4, 6} and inter = {4, 6}."
+          - problem: "With universe $U = \\{1, 2, \\ldots, 6\\}$ and $A = \\{2, 5\\}$, compute $A^{c}$ and then $A \\cup A^{c}$, and check that $A \\cap A^{c} = \\varnothing$. Give comp and un as sets."
+            answer: "comp = {1, 3, 4, 6}; un = {1, 2, 3, 4, 5, 6}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "comp"}, {"contract": {"kind": "set"}, "name": "un"}]}
+            solution_sketch: "Step 1, complement rule: $A^{c}$ collects every element of $U$ that is not in $A$, giving $\\{1, 3, 4, 6\\}$. Step 2, union: $\\{2, 5\\}$ together with $\\{1, 3, 4, 6\\}$ rebuilds all of $U$, and the two sets share no element, so the intersection is empty, verifying $A \\cup A^{c} = U$ and $A \\cap A^{c} = \\varnothing$. Hence comp = {1, 3, 4, 6} and un = {1, 2, 3, 4, 5, 6}."
+          - problem: "Let $U = \\{1, 2, \\ldots, 10\\}$, $A = \\{2, 4, 6, 8, 10\\}$ and $B = \\{1, 2, 3, 4\\}$. Compute $B^{c}$ first, then intersect it with $A$. Give $A \\cap B^{c}$ as a set."
+            answer: "{6, 8, 10}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1, complement rule: $B^{c}$ holds the elements of $U$ missing from $B$, namely $\\{5, 6, 7, 8, 9, 10\\}$. Step 2, intersection: keep the elements of $A = \\{2, 4, 6, 8, 10\\}$ that also lie in $B^{c}$, which gives $\\{6, 8, 10\\}$. This equals $A \\setminus B$, confirming the difference identity, so the answer is {6, 8, 10}."
+          - problem: "Inside $U = \\{1, 2, \\ldots, 9\\}$ the set $A = \\{2, 3, 5, 8\\}$ has one complement, but the universe is now changed to $V = \\{1, 2, 3, 4, 5\\}$. Take the complement of $A$ relative to $V$ instead of $U$. Give $A^{c}$ as a set."
+            answer: "{1, 4}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1, restrict to the new universe: only $A \\cap V = \\{2, 3, 5\\}$ can appear in the complement. Step 2, complement rule relative to $V$: remove $\\{2, 3, 5\\}$ from $V = \\{1, 2, 3, 4, 5\\}$, leaving $\\{1, 4\\}$. The complement therefore depends on the chosen universe and equals {1, 4}."
+          - problem: "A subset $B$ of a universe of whole numbers from $1$ to $7$ satisfies $B = \\{3, 6\\}$ and $B^{c} = \\{1, 2, 4, 5, 7\\}$. Use the complement law $B \\cup B^{c} = U$ to recover the universe $U$. Give $U$ as a set."
+            answer: "{1, 2, 3, 4, 5, 6, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1, complement law: $B \\cup B^{c} = U$ says the universe is the union of the set and its complement. Step 2, union of sets: merge $\\{3, 6\\}$ with $\\{1, 2, 4, 5, 7\\}$, listing every element once in increasing order. Therefore $U = \\{1, 2, 3, 4, 5, 6, 7\\}$."
+          - problem: "Let $U = \\{1, 2, \\ldots, 12\\}$, $A = \\{1, 4, 7, 10\\}$ and $B = \\{4, 7, 11\\}$. Verify the identity $A \\setminus B = A \\cap B^{c}$ by counting both sides. Give nd, the number of elements of $A \\setminus B$, and ni, the number of elements of $A \\cap B^{c}$."
+            answer: "nd = 2; ni = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "nd"}, {"contract": {"kind": "exact"}, "name": "ni"}]}
+            solution_sketch: "Step 1, difference of sets: remove the elements of $B$ from $A = \\{1, 4, 7, 10\\}$, giving $A \\setminus B = \\{1, 10\\}$, which has 2 elements. Step 2, complement rule: $B^{c} = \\{1, 2, 3, 5, 6, 8, 9, 10, 12\\}$, and $A \\cap B^{c} = \\{1, 10\\}$, again with 2 elements. The equal counts confirm the identity, so nd = 2; ni = 2."
         constraints: "verify $A \\setminus B = A \\cap B^{c}$ or the $A \\cup A^{c} = U$, $A \\cap A^{c} = \\varnothing$ pair on small sets"
     diagnostic_exemplar:
       problem: 'With universe $U = \{1, 2, \dots, 8\}$, $A = \{1,2,3,4\}$ and $B = \{3,4,5\}$: verify that $A \setminus B = A \cap B^{c}$, and say what $A^{c}$ becomes if the universe is changed to $V = \{1, \dots, 5\}$.'
@@ -288,14 +352,30 @@ topics:
         name: "Two equivalent forms"
         key_prerequisites: [union-intersection-difference]
         exemplars:
-          - problem: 'For $A = \{1, 2, 3\}$ and $B = \{2, 3, 4\}$, compute $(A \cup B) \setminus (A \cap B)$ and $(A \setminus B) \cup (B \setminus A)$, and compare.'
-            answer_contract: {kind: none}
-            answer: 'Both equal $\{1, 4\}$.'
-            solution_sketch: '$A \cup B = \{1,2,3,4\}$ minus $A \cap B = \{2,3\}$ gives $\{1,4\}$; also $A \setminus B = \{1\}$ and $B \setminus A = \{4\}$ union to $\{1,4\}$ — the two definitions agree.'
-          - problem: 'If $A \subseteq B$, what is $A \triangle B$? Check with $A = \{1, 2\}$, $B = \{1, 2, 3\}$.'
-            answer_contract: {kind: none}
-            answer: '$B \setminus A$; here $\{3\}$.'
-            solution_sketch: 'When $A \subseteq B$, $A \setminus B = \varnothing$, so only $B \setminus A$ contributes.'
+          - problem: "Let $A = \\{2, 4, 6\\}$ and $B = \\{4, 5, 6\\}$. Compute $(A \\cup B) \\setminus (A \\cap B)$ and $(A \\setminus B) \\cup (B \\setminus A)$. Give form1 for the union-minus-intersection value and form2 for the difference-union value."
+            answer: "form1 = {2, 5}; form2 = {2, 5}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "form1"}, {"contract": {"kind": "set"}, "name": "form2"}]}
+            solution_sketch: "Step 1: list both sets and form the union $A \\cup B = \\{2, 4, 5, 6\\}$ and the intersection $A \\cap B = \\{4, 6\\}$ by the union and intersection rules. Step 2: remove the shared elements from the union, so $(A \\cup B) \\setminus (A \\cap B) = \\{2, 4, 5, 6\\} \\setminus \\{4, 6\\} = \\{2, 5\\}$. Step 3: form the two differences $A \\setminus B = \\{2\\}$ and $B \\setminus A = \\{5\\}$; their union is also $\\{2, 5\\}$, so the two definitions agree on this pair of small sets. So form1 = {2, 5}; form2 = {2, 5}."
+          - problem: "Let $A = \\{2, 3\\}$ and $B = \\{2, 3, 4, 5\\}$, so $A \\subseteq B$. Compute $A \\triangle B$ and give the set."
+            answer: "{4, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Since $A \\subseteq B$, the difference $A \\setminus B$ is empty, so $(A \\setminus B) \\cup (B \\setminus A) = B \\setminus A$ by the difference rule. Here $B \\setminus A = \\{4, 5\\}$. Cross-check with the other form: $(A \\cup B) \\setminus (A \\cap B) = \\{2, 3, 4, 5\\} \\setminus \\{2, 3\\} = \\{4, 5\\}$, which confirms the shortcut. The answer is {4, 5}."
+          - problem: "For $A = \\{1, 2, 3, 4\\}$ and $B = \\{3, 4, 5\\}$, compute $(A \\setminus B) \\cup (B \\setminus A)$ and give the set."
+            answer: "{1, 2, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1: form the two differences by the difference rule: $A \\setminus B = \\{1, 2\\}$ and $B \\setminus A = \\{5\\}$. Step 2: their union is {1, 2, 5} by the union rule. Step 3: cross-check with the equivalent form: $A \\cup B = \\{1, 2, 3, 4, 5\\}$ and $A \\cap B = \\{3, 4\\}$, and $(A \\cup B) \\setminus (A \\cap B) = \\{1, 2, 5\\}$, so the forms agree. So the answer is {1, 2, 5}."
+          - problem: "Set $A$ has 7 elements, set $B$ has 5 elements, and $A \\cap B$ has 2 elements. How many elements are in $A \\triangle B$?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The symmetric difference is $(A \\setminus B) \\cup (B \\setminus A)$, and these two differences are disjoint. Count each: $|A \\setminus B| = 7 - 2 = 5$ and $|B \\setminus A| = 5 - 2 = 3$. Adding the two disjoint counts gives $5 + 3 = 8$ elements in exactly one of the two sets. So the number of elements in the symmetric difference is 8."
+          - problem: "For two sets, $A \\cup B = \\{1, 2, 3, 4, 5, 6\\}$ and $A \\cap B = \\{2, 4\\}$. Compute $A \\triangle B$ and give the set."
+            answer: "{1, 3, 5, 6}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Use the form $A \\triangle B = (A \\cup B) \\setminus (A \\cap B)$. The shared elements are 2 and 4, so remove them from the union $\\{1, 2, 3, 4, 5, 6\\}$ by the difference rule. What remains is {1, 3, 5, 6}, exactly the elements lying in one of the two sets but not both. The answer is {1, 3, 5, 6}."
+          - problem: "Let $A = \\{1, 2\\}$ and $B = \\{6, 7, 8\\}$, two sets with no common elements. Compute $A \\triangle B$ and give the set."
+            answer: "{1, 2, 6, 7, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "With no common elements, $A \\cap B = \\varnothing$ and $A \\cup B = \\{1, 2, 6, 7, 8\\}$. Then $(A \\cup B) \\setminus (A \\cap B)$ removes nothing, so the union-minus-intersection form gives the whole union. The difference-union form agrees: $A \\setminus B = \\{1, 2\\}$ and $B \\setminus A = \\{6, 7, 8\\}$, and their union is the same five-element set. So the symmetric difference is {1, 2, 6, 7, 8}."
         constraints: "verify $(A \\cup B) \\setminus (A \\cap B) = (A \\setminus B) \\cup (B \\setminus A)$ on small sets"
       - id: kp3
         name: "Basic properties"
