@@ -875,12 +875,34 @@ topics:
         name: "Contrapositive in one direction"
         key_prerequisites: [proof-by-contrapositive]
         exemplars:
-          - problem: 'Prove: an integer $n$ is odd if and only if $n^2 + 1$ is even.'
-            answer: '($\Rightarrow$) $n$ odd makes $n^2$ odd, so $n^2 + 1$ even. ($\Leftarrow$) contrapositive: $n$ even makes $n^2 + 1$ odd.'
-            solution_sketch: 'Forward: $n$ odd gives $n^2$ odd, so $n^2 + 1$ is even. Backward via contrapositive: $n = 2k$ gives $n^2 + 1 = 4k^2 + 1$, odd. $\square$'
-          - problem: 'Prove: an integer $n$ is even if and only if $n^3$ is even.'
-            answer: '($\Rightarrow$) $n = 2k$ gives $n^3 = 2(4k^3)$. ($\Leftarrow$) contrapositive: $n$ odd gives $n^3$ odd.'
-            solution_sketch: 'Forward: $n^3 = 8k^3 = 2(4k^3)$. Backward: if $n = 2k + 1$, then $n^3$ is a product of odd integers, hence odd (or expand: $n^3 = 2(4k^3 + 6k^2 + 3k) + 1$). $\square$'
+          - problem: "To prove the forward direction of the claim that an integer n is odd if and only if n^2 + 1 is even, write n = 2k + 1 and take k = 4. Give the quotient when n^2 + 1 is divided by 2."
+            answer: "41"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the direct method for the forward direction: substitute the odd form n = 2k + 1 with k = 4, giving n = 9. Expand the full object n^2 + 1 to get 81 + 1 = 82. Divide 82 by 2 to write it in the even form 2q, which gives q = 41. The answer is 41."
+          - problem: "A student claims that an integer n is odd if and only if n^2 + n + 1 is odd and checks only the case n = 1. Give the smallest positive integer n for which the claim is false."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test the claim that n is odd if and only if n^2 + n + 1 is odd, checking both directions of the biconditional. For n = 1 the value 1 + 1 + 1 = 3 is odd and n is odd, so the claim holds there. For n = 2 the value 4 + 2 + 1 = 7 is odd but n is even, so the backward implication of the biconditional fails. The answer is 2."
+          - problem: "To prove the backward direction of the claim that an integer n is odd if and only if n^2 + 3 is even, use the contrapositive: assume n is even and write n = 2k with k = 5. Give the value of n^2 + 3."
+            answer: "103"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the backward direction use the contrapositive of the implication n^2 + 3 even implies n odd, so assume n is even and write n = 2k. With k = 5 this gives n = 10. Evaluate the full object: n^2 + 3 = 100 + 3 = 103, which is odd, so the contrapositive step is confirmed. The answer is 103."
+          - problem: "In the forward direction of the claim that an integer n is odd if and only if n^2 + 5 is even, the proof writes n = 2m + 1 and obtains n^2 + 5 = 2q with q = 27. Give the value of m."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In the forward direction n is odd, so substitute n = 2m + 1 and expand the full object n^2 + 5 = 4m^2 + 4m + 6 = 2(2m^2 + 2m + 3). The step reports q = 27, so solve 2m^2 + 2m + 3 = 27, that is m^2 + m - 12 = 0, giving m = 3. Check: n = 7 and 49 + 5 = 54 = 2(27). The answer is 3."
+          - problem: "A student proves that an integer n is odd if and only if 5n + 3 is even. Step 1: assume n = 2k + 1; then 5n + 3 = 10k + 5 + 3 = 10k + 8 = 2(5k + 4), so 5n + 3 is even. Step 2: for the backward direction prove the contrapositive, so assume n is even and write n = 2k. Step 3: then 5n + 3 = 10k + 3, so 5n + 3 is even. Step 4: so 5n + 3 is odd when n is even, which proves the contrapositive and the backward direction. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: with n = 2k + 1 the expansion 10k + 8 = 2(5k + 4) is correct, so the forward direction holds. Step 2 is the correct setup of the contrapositive for the backward direction, so it is a valid move. Step 3 is the first invalid step: 10k + 3 has remainder 3 after division by 2, so it is odd, and the claim that it is even is the error. Step 4 states the correct parity for the contrapositive once Step 3 is repaired, so it is not the first invalid step. The answer is Step 3."
+          - problem: "In the backward direction of the claim that an integer n is odd if and only if n^3 + 1 is even, the proof uses the contrapositive and writes n = 2k. The line that shows n^3 + 1 is odd is missing. Select the line that is true and shows that n^3 + 1 is odd."
+            answer: "n^3 + 1 = 2(4k^3) + 1"
+            answer_contract: {"kind": "label", "options": [["n^3 + 1 = 2(4k^3) + 1"], ["n^3 + 1 = 2(4k^3) + 2"], ["n^3 + 1 = 2(4k^3 + 1)"], ["n^3 + 1 = 2(4k^3)"]]}
+            solution_sketch: "Substitute n = 2k in the full object n^3 + 1 to get 8k^3 + 1. Factor 2 from 8k^3: 8k^3 + 1 = 2(4k^3) + 1, which is odd, so the contrapositive line is complete. The option n^3 + 1 = 2(4k^3) + 2 misplaces the remainder and equals 8k^3 + 2; the option n^3 + 1 = 2(4k^3 + 1) hides the 1 inside the factor and is even; the option n^3 + 1 = 2(4k^3) drops the 1 and is even. The answer is n^3 + 1 = 2(4k^3) + 1."
+          - problem: "Write the full proof: an integer n is even if and only if 3n + 1 is odd. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Forward direction, chosen as a direct proof: assume n is even and write n = 2k. Then 3n + 1 = 6k + 1 = 2(3k) + 1, which is odd, so the substitution settles this direction. Backward direction, chosen as a proof by contrapositive: the implication 3n + 1 odd implies n even has the contrapositive n odd implies 3n + 1 even. Assume n = 2k + 1; then 3n + 1 = 6k + 3 + 1 = 6k + 4 = 2(3k + 2), which is even, so the contrapositive holds and the backward direction follows. The choice is justified: the forward direction needs only the even form of n, while the backward direction is cleanest by contrapositive, since assuming n odd gives a concrete form for 3n + 1. Both directions hold, so n is even if and only if 3n + 1 is odd."
         constraints: "choose direct or contrapositive per direction; justify the choice"
       - id: kp3
         name: "Equivalence chains"
