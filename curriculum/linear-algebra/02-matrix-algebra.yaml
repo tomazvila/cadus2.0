@@ -356,17 +356,30 @@ topics:
         name: Recognizing diagonal and triangular matrices
         key_prerequisites: [identity-zero-matrices]
         exemplars:
-          - problem: 'Classify $\begin{pmatrix}2&0&0\\0&-1&0\\0&0&5\end{pmatrix}$: diagonal, upper triangular, lower triangular?'
-            answer: "Diagonal (hence both upper and lower triangular)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Every off-diagonal entry is zero, so the matrix is diagonal; a diagonal matrix is simultaneously upper and lower triangular.'
-          - problem: 'Is $\begin{pmatrix}1&4\\0&3\end{pmatrix}$ upper or lower triangular?'
-            answer: "Upper triangular"
-            answer_contract: {kind: none}
-            solution_sketch: 'All entries below the main diagonal are zero.'
-          - problem: 'Is $I_3$ diagonal?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+          - problem: "Which description is most specific for the matrix [5,0,0;-2,3,0;4,0,-1]?"
+            answer: "lower"
+            answer_contract: {"kind": "label", "options": [["diagonal"], ["upper"], ["lower"], ["neither"]]}
+            solution_sketch: "In the matrix [5,0,0;-2,3,0;4,0,-1] the entries above the main diagonal, namely (1,2), (1,3) and (2,3), are all 0, so it is triangular. The entries (2,1)=-2 and (3,1)=4 below the diagonal are nonzero, so it is not diagonal and not upper triangular. The option diagonal is wrong because the off-diagonal entries -2 and 4 are nonzero. The option upper is wrong because there are nonzero entries below the main diagonal. The option neither is wrong because every entry above the main diagonal is zero. The answer is lower."
+          - problem: "Which description is most specific for the matrix [1,4;0,3]?"
+            answer: "upper"
+            answer_contract: {"kind": "label", "options": [["diagonal"], ["upper"], ["lower"], ["neither"]]}
+            solution_sketch: "The matrix has (2,1)=0 below the main diagonal, so it is upper triangular. The (1,2) entry is 4, so it is not diagonal. The option diagonal is wrong because a nonzero off-diagonal entry is present, the option lower is wrong because the (1,2) entry is not zero, and the option neither is wrong because it is upper triangular. The answer is upper."
+          - problem: "A 3x3 identity matrix is diagonal. How many of its nine entries are zero?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity matrix has ones on the main diagonal and zeros in every other position. A 3x3 matrix has nine entries total, and three of them are on the main diagonal. So the number of zero entries is 9 - 3 = 6. The answer is 6."
+          - problem: "A square matrix with three rows is upper triangular. How many entries below its main diagonal must be zero?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An upper triangular matrix has zero entries below the main diagonal. In a 3x3 matrix there are three positions below the main diagonal: (2,1), (3,1), and (3,2). Each of these must be zero. The answer is 3."
+          - problem: "A 2x2 diagonal matrix has (1,1)=3 and (2,2)=-4. Give its (1,2) entry."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A diagonal matrix has zeros in every off-diagonal position. The entry (1,2) is off the main diagonal, so it must be zero. The answer is 0."
+          - problem: "A 3x3 upper triangular matrix has diagonal entries 2, 5, 7. Find the sum of the three entries below the main diagonal."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "An upper triangular matrix has zeros in all positions below the main diagonal. The three below-diagonal entries are each zero, so their sum is 0 + 0 + 0. The answer is 0."
         constraints: "sizes 2x2 and 3x3; unambiguous classifications"
       - id: kp2
         name: Products of diagonal matrices
@@ -621,14 +634,30 @@ topics:
         name: Power patterns
         key_prerequisites: [matrix-multiplication, matrix-operations]
         exemplars:
-          - problem: 'Find a formula for $A^n$ when $A = \begin{pmatrix}1&1\\0&1\end{pmatrix}$.'
-            answer: '$\begin{pmatrix}1&n\\0&1\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Each multiplication adds $1$ to the top-right entry.'
           - problem: 'Compute $N^2$ for $N = \begin{pmatrix}0&1\\0&0\end{pmatrix}$.'
             answer: "[0,0;0,0]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$N$ is nilpotent: $N^2 = O$, so all higher powers vanish too.'
+          - problem: "Let $A = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$. Compute $A^2$ and $A^3$ to find the pattern in the powers of $A$. Give the top-left entry of $A^n$ as $u$ and the top-right entry of $A^n$ as $v$."
+            answer: "u = 1; v = n"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["n"]}, "name": "u"}, {"contract": {"kind": "function", "vars": ["n"]}, "name": "v"}]}
+            solution_sketch: "Compute $A^2 = \\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}$ and $A^3 = \\begin{pmatrix}1&3\\\\0&1\\end{pmatrix}$ by direct multiplication; each multiplication adds $1$ to the top-right entry. The diagonal entries stay $1$ and the lower entries stay $0$ for every power. Therefore the entries of $A^n$ are u = 1; v = n."
+          - problem: "Let $B = \\begin{pmatrix}0&1\\\\-1&0\\end{pmatrix}$. Compute $B^2$, then use the pattern you see to compute $B^4$. Give the matrix as [a,b;c,d]."
+            answer: "[1,0;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Compute $B^2$ by matrix multiplication: the diagonal entries are $0 \\cdot 0 + 1 \\cdot (-1) = -1$ and the off-diagonal entries are $0 \\cdot 1 + 1 \\cdot 0 = 0$ and $(-1) \\cdot 0 + 0 \\cdot (-1) = 0$, so $B^2 = [-1,0;0,-1] = -I$. Since $B^4 = (B^2)^2$ and the square of $-I$ is $I$, both diagonal entries of $B^4$ are $1$ and both off-diagonal entries are $0$. Therefore $B^4 = $ [1,0;0,1]."
+          - problem: "Let $P = \\begin{pmatrix}1&1\\\\0&0\\end{pmatrix}$. Compute $P^2$, and use the pattern you see to compute $P^5$. Give the matrix as [a,b;c,d]."
+            answer: "[1,1;0,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Compute $P^2$ by matrix multiplication: the products reproduce $P$, so $P^2 = \\begin{pmatrix}1&1\\\\0&0\\end{pmatrix} = P$. Since the square equals the matrix itself, multiplying by $P$ again changes nothing, so every higher power equals $P$ too. Therefore $P^5 = $ [1,1;0,0]."
+          - problem: "Let $D = \\begin{pmatrix}3&0\\\\0&2\\end{pmatrix}$. Compute $D^2$, then compute $D^3$. Give the matrix as [a,b;c,d]."
+            answer: "[27,0;0,8]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Compute $D^2$ by matrix multiplication: the off-diagonal products are $0$, and each diagonal entry is squared, so $D^2 = \\begin{pmatrix}9&0\\\\0&4\\end{pmatrix}$. For the third power each diagonal entry is cubed: $3^3 = 27$ and $2^3 = 8$, while the off-diagonal entries stay $0$. Therefore $D^3 = $ [27,0;0,8]."
+          - problem: "Let $M = \\begin{pmatrix}3&4\\\\4&-3\\end{pmatrix}$. Compute $M^2$. Give the matrix as [a,b;c,d]."
+            answer: "[25,0;0,25]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Compute $M^2$ by matrix multiplication: the $(1,1)$ entry is $3 \\cdot 3 + 4 \\cdot 4 = 25$ and the $(2,2)$ entry is $4 \\cdot 4 + (-3)(-3) = 25$. Each off-diagonal entry is $3 \\cdot 4 + 4 \\cdot (-3) = 12 - 12 = 0$, since the sign of $-3$ cancels the cross terms. Therefore $M^2 = $ [25,0;0,25]."
         constraints: "patterns verifiable by computing two or three powers"
     diagnostic_exemplar:
       problem: 'For $A = \begin{pmatrix}1&2\\0&1\end{pmatrix}$, compute $A^2$ and $A^3$, then give a formula for $A^n$.'
