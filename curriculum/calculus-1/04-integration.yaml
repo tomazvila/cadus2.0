@@ -140,6 +140,18 @@ topics:
           - problem: 'Find $\int \sec^2 x \, dx$.'
             answer: "tan x + C"
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
+          - problem: "Find $\\int \\sin x \\, dx$."
+            answer: "-cos(x) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Step 1: The full object is the antiderivative of sin x. Use the basic table: the derivative of -cos x is sin x. Step 2: Add the constant of integration. The antiderivative is -cos(x) + C."
+          - problem: "Find $\\int e^x \\, dx$."
+            answer: "e^x + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Step 1: The full object is the antiderivative of e^x. Use the exponential table entry: the derivative of e^x is e^x. Step 2: Add the arbitrary constant C. The antiderivative is e^x + C."
+          - problem: "Find $\\int \\frac{5}{x} \\, dx$ for $x \\neq 0$."
+            answer: "5ln(abs(x)) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Step 1: The full object is the antiderivative of 5/x for x not zero. Pull the constant 5 outside and use the reciprocal table entry: the derivative of ln(abs(x)) is 1/x. Step 2: Multiply by the constant 5 and add the arbitrary constant C. The antiderivative is 5ln(abs(x)) + C."
         constraints: "the basic table: sin, cos, sec^2, e^x, 1/x"
       - id: kp2
         name: Rewrite, then antidifferentiate
@@ -877,6 +889,22 @@ topics:
             solution_sketch: 'FTC 1 plus the chain rule: integrand at $x^2$ times $\frac{d}{dx}(x^2)$.'
           - problem: 'Find $\frac{d}{dx} \int_1^{x^3} \sqrt{1 + t} \, dt$.'
             answer: "3x^2 √(1 + x^3)"
+          - problem: "Find $\\frac{d}{dx} \\int_2^{x^4} e^t \\, dt$."
+            answer: "4x^3 e^(x^4)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let F(x) be the integral from 2 to x^4 of e^t dt. The lower limit 2 is constant, so FTC part 1 with the chain rule says F'(x) equals the integrand at the upper limit times the derivative of the upper limit. The integrand at x^4 is e^(x^4), and the power rule gives the derivative of x^4 as 4x^3. The derivative is 4x^3 e^(x^4)."
+          - problem: "Find $\\frac{d}{dx} \\int_0^{x^5} \\sin t \\, dt$."
+            answer: "5x^4 sin(x^5)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let F(x) be the integral from 0 to x^5 of sin t dt. FTC part 1 says F'(x) is the integrand evaluated at the upper limit times the derivative of that limit. The integrand at x^5 is sin(x^5), and the power rule gives the limit derivative 5x^4. The derivative is 5x^4 sin(x^5)."
+          - problem: "Find $\\frac{d}{dx} \\int_1^{x^2} \\sqrt{1 + t^4} \\, dt$."
+            answer: "2x sqrt(1+x^8)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let F(x) be the integral from 1 to x^2 of sqrt(1+t^4) dt. FTC part 1 with the chain rule gives F'(x) equal to the integrand at the upper limit times the derivative of x^2. The integrand at x^2 is sqrt(1+x^8), and the power rule gives the derivative of x^2 as 2x. The derivative is 2x sqrt(1+x^8)."
+          - problem: "Find $\\frac{d}{dx} \\int_2^{x^6} \\frac{1}{1 + t} \\, dt$."
+            answer: "6x^5/(1+x^6)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Let F(x) be the integral from 2 to x^6 of 1/(1+t) dt. FTC part 1 says F'(x) is the integrand at the upper limit times the derivative of the upper limit. Substituting t = x^6 gives 1/(1+x^6), and the power rule gives the limit derivative 6x^5. The derivative is 6x^5/(1+x^6)."
         constraints: "upper limit is a power of x; answer = integrand(limit) × limit'"
       - id: kp2
         name: Variable lower limit
@@ -888,6 +916,22 @@ topics:
           - problem: 'Find $\frac{d}{dx} \int_{x}^{2} \sin(t^2) \, dt$.'
             answer: "-sin(x^2)"
             answer_contract: {"kind": "function", "vars": ["x"]}
+          - problem: "Find $\\frac{d}{dx} \\int_x^7 \\cos(t) \\, dt$."
+            answer: "-cos(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with the full object $F(x) = \\int_x^7 \\cos(t) \\, dt$. The sign-flip rule reverses the limits: $F(x) = -\\int_7^x \\cos(t) \\, dt$. By the Fundamental Theorem of Calculus, $F'(x) = -\\cos(x)$. The derivative is -cos(x)."
+          - problem: "Find $\\frac{d}{dx} \\int_x^5 (t^2 + 2t) \\, dt$."
+            answer: "-(x^2+2x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with the full object $F(x) = \\int_x^5 (t^2 + 2t) \\, dt$. Apply the sign-flip rule to reverse the limits: $F(x) = -\\int_5^x (t^2 + 2t) \\, dt$. The Fundamental Theorem of Calculus then gives $F'(x) = -(x^2 + 2x)$. The derivative is -(x^2+2x)."
+          - problem: "Let $F(x) = \\int_x^{16} \\sqrt{t} \\, dt$. Find $F'(4)$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full object $F(x) = \\int_x^{16} \\sqrt{t} \\, dt$. The sign-flip rule gives $F(x) = -\\int_{16}^x \\sqrt{t} \\, dt$, and the Fundamental Theorem of Calculus gives $F'(x) = -\\sqrt{x}$. Evaluate at $x = 4$: $-\\sqrt{4} = -2$. The value is -2."
+          - problem: "Find $\\frac{d}{dx} \\int_x^6 \\frac{1}{t^2+4} \\, dt$."
+            answer: "-1/(x^2+4)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with the full object $F(x) = \\int_x^6 \\frac{1}{t^2+4} \\, dt$. The sign-flip rule rewrites it as $F(x) = -\\int_6^x \\frac{1}{t^2+4} \\, dt$. The Fundamental Theorem of Calculus gives $F'(x) = -\\frac{1}{x^2+4}$. The derivative is -1/(x^2+4)."
         constraints: "single variable lower limit; the sign flip is the point"
       - id: kp3
         name: Analyze an accumulation function
@@ -1336,6 +1380,18 @@ topics:
             answer: "(1/3)ln(3x + 2) + C"
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
             solution_sketch: '$u = 3x + 2 > 0$ on this domain: $\frac{1}{3}\ln u + C$.'
+          - problem: "Find the indefinite integral of sin(7x + 2) with respect to x."
+            answer: "-cos(7x+2)/7 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Use u-substitution with the linear inside function u = 7x + 2. Then du = 7 dx, so dx = du/7; divide by the inner slope 7. The integral becomes (1/7) times the integral of sin(u) du, which equals -(1/7) cos(u) + C by the basic antiderivative of sine. Replace u by 7x + 2: the antiderivative is -cos(7x+2)/7 + C."
+          - problem: "Find the indefinite integral of the square of sec(2x - 5) with respect to x."
+            answer: "tan(2x-5)/2 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Use u-substitution with the linear inside function u = 2x - 5. Then du = 2 dx, so dx = du/2; divide by the inner slope 2. The integral becomes (1/2) times the integral of sec(u)^2 du, which equals (1/2) tan(u) + C because tan(u) is the basic antiderivative of the square of sec(u). Replace u by 2x - 5: the antiderivative is tan(2x-5)/2 + C."
+          - problem: "Find the indefinite integral of (3x + 1)^4 with respect to x."
+            answer: "(3x+1)^5/15 + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Use u-substitution with the linear inside function u = 3x + 1. Then du = 3 dx, so dx = du/3; divide by the inner slope 3. The integral becomes (1/3) times the integral of u^4 du, which equals (1/3) times u^5/5 = u^5/15 by the power rule for antiderivatives. Replace u by 3x + 1: the antiderivative is (3x+1)^5/15 + C."
         constraints: "u = ax + b; divide by the inner slope a"
     diagnostic_exemplar:
       problem: 'Find $\int x \sin(x^2) \, dx$.'
@@ -1384,6 +1440,18 @@ topics:
             answer: "ln(1 + e^x) + C"
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
             solution_sketch: '$u = 1 + e^x$, $du = e^x\,dx$: $\ln|u| + C$ ($u > 0$).'
+          - problem: "Evaluate $\\int \\cos x\\, e^{\\sin x}\\, dx$ and give the antiderivative with the constant $C$."
+            answer: "e^(sin(x)) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The full integral is $\\int \\cos x\\, e^{\\sin x}\\, dx$. Choose $u = \\sin x$, so $du = \\cos x\\, dx$ by the derivative of sine; this is u-substitution, and the factor $du$ appears in the integrand. The integral becomes $\\int e^u\\, du$. The exponential rule gives $e^u + C$. Back-substitute $u = \\sin(x)$, giving e^(sin(x)) + C."
+          - problem: "Evaluate $\\int \\sin x\\, e^{\\cos x}\\, dx$ and give the antiderivative with the constant $C$."
+            answer: "-e^(cos(x)) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The full integral is $\\int \\sin x\\, e^{\\cos x}\\, dx$. Let $u = \\cos x$, so $du = -\\sin x\\, dx$ by the derivative of cosine; this is u-substitution. Then $\\sin x\\, dx = -du$, so the integral becomes $-\\int e^u\\, du$. The exponential rule gives $-e^u + C$. Back-substitute $u = \\cos(x)$, giving -e^(cos(x)) + C."
+          - problem: "Evaluate $\\int e^x \\sin(e^x)\\, dx$ and give the antiderivative with the constant $C$."
+            answer: "-cos(e^x) + C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "The full integral is $\\int e^x \\sin(e^x)\\, dx$. Choose $u = e^x$, so $du = e^x\\, dx$ by the derivative of the exponential; this is u-substitution, and the factor $du$ appears in the integrand. The integral becomes $\\int \\sin u\\, du$. The sine rule gives $-\\cos u + C$. Back-substitute $u = e^x$, giving -cos(e^x) + C."
         constraints: "u is a trig, log, or exponential expression; the du appears as a factor"
       - id: kp2
         name: Definite integrals with substitution

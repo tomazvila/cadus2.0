@@ -152,6 +152,18 @@ topics:
           - problem: 'Differentiate $f(x) = 3\cosh x + x^2$.'
             answer: "3sinh(x) + 2x"
             answer_contract: {"kind": "function", "vars": ["x"]}
+          - problem: "Find the derivative of $f(x) = 5\\sinh x - 2\\cosh x + 7x^3$."
+            answer: "5cosh(x)-2sinh(x)+21x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full object is f(x) = 5 sinh x - 2 cosh x + 7x^3. Use the sum rule to split the terms, then use sinh' = cosh and cosh' = sinh with constant multiples. The power rule gives the derivative of 7x^3 as 21x^2. So f'(x) = 5cosh(x)-2sinh(x)+21x^2."
+          - problem: "Find the derivative of $g(t) = 8\\cosh t + 3\\sinh t - 4t^2 + 9t$."
+            answer: "8sinh(t)+3cosh(t)-8t+9"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The full object is g(t) = 8 cosh t + 3 sinh t - 4t^2 + 9t. Apply the sum rule and constant multiple rule term by term. The rule cosh' = sinh gives 8 sinh t, and sinh' = cosh gives 3 cosh t. The power rule gives -8t + 9. Thus g'(t) = 8sinh(t)+3cosh(t)-8t+9."
+          - problem: "Find the derivative of $f(x) = 4\\sinh x + 6\\cosh x - x$ by using the definitions $\\sinh x = (e^x - e^{-x})/2$ and $\\cosh x = (e^x + e^{-x})/2$."
+            answer: "4cosh(x)+6sinh(x)-1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The full object is f(x) = 4 sinh x + 6 cosh x - x. Replace sinh and cosh by their e^x definitions: f(x) = 5e^x + e^(-x) - x. Differentiate term by term using the derivative of e^x and the derivative of e^(-x): f'(x) = 5e^x - e^(-x) - 1. Regroup as 4 cosh x + 6 sinh x - 1, so f'(x) = 4cosh(x)+6sinh(x)-1."
         constraints: "linear combinations of sinh x, cosh x, and power terms; integer coefficients; occasionally ask for the derivation from the e^x definitions"
       - id: kp2
         name: Chain rule with hyperbolic functions

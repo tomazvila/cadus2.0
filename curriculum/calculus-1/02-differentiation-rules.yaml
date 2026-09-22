@@ -389,6 +389,18 @@ topics:
             answer: "2 sin x cos x"
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'General power rule: $2\sin x \cdot \cos x$ (equivalently $\sin 2x$).'
+          - problem: "Find the derivative of f(x) = tan(5x)."
+            answer: "5 sec(5x)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = tan(5x). The chain rule uses the outer derivative of tan, which is sec(5x)^2. The inner derivative of 5x is 5. Multiply the outer and inner rates. The final derivative is 5 sec(5x)^2."
+          - problem: "Find the derivative of f(x) = sec(x^2)."
+            answer: "2x sec(x^2) tan(x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = sec(x^2). The chain rule uses the outer derivative of sec, which is sec(x^2) tan(x^2). The inner derivative of x^2 is 2x. Multiply the outer and inner rates. The final derivative is 2x sec(x^2) tan(x^2)."
+          - problem: "Find the derivative of f(x) = cos^2(3x)."
+            answer: "-6 cos(3x) sin(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = cos^2(3x), a square of a cosine. The general power rule gives the factor 2 cos(3x). The chain rule gives the inner cosine derivative -sin(3x) and the inner rate 3. Multiply these factors. The final derivative is -6 cos(3x) sin(3x)."
         constraints: "inner function bx or x^2, or an outer square of a trig function; integer multipliers"
       - id: kp3
         name: Products, quotients, and evaluation
@@ -404,6 +416,18 @@ topics:
             answer: "1/(1 + cos x)"
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Quotient rule: $\frac{\cos x(1 + \cos x) + \sin^2 x}{(1 + \cos x)^2} = \frac{\cos x + 1}{(1 + \cos x)^2}$.'
+          - problem: "Find the derivative of f(x) = x^2 cos(x)."
+            answer: "2x cos(x) - x^2 sin(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Apply the product rule: f'(x) = (x^2)' cos(x) + x^2 (cos(x))' = 2x cos(x) - x^2 sin(x). The derivative of cos(x) is -sin(x), so the simplified result is 2x cos(x) - x^2 sin(x)."
+          - problem: "For f(x) = x sin(x), find f'(pi/3) as an exact value."
+            answer: "sqrt(3)/2 + pi/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the product rule to f(x) = x sin(x): f'(x) = sin(x) + x cos(x). At x = pi/3, sin(pi/3) = sqrt(3)/2 and cos(pi/3) = 1/2. The value is sqrt(3)/2 + pi/6."
+          - problem: "Find the simplified derivative of f(x) = cos(x)/(1 + sin(x))."
+            answer: "-1/(1 + sin(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Apply the quotient rule: f'(x) = (-sin(x)(1 + sin(x)) - cos(x)cos(x))/(1 + sin(x))^2. Use sin^2(x) + cos^2(x) = 1 to get (-sin(x) - 1)/(1 + sin(x))^2 = -1/(1 + sin(x)). The simplified derivative is -1/(1 + sin(x))."
         constraints: "evaluation angles from the unit circle; simplification via sin² + cos² = 1"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x\sec(2x)$.'
@@ -607,6 +631,18 @@ topics:
             answer: "sin x"
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: '$\cos \to -\sin \to -\cos \to \sin$.'
+          - problem: "Find the second derivative f''(x) for f(x) = cos x."
+            answer: "-cos(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with f(x) = cos(x). Step 1 uses the cosine derivative rule: f'(x) = -sin(x). Step 2 uses the sine derivative rule: f''(x) = -cos(x). The second derivative is -cos(x)."
+          - problem: "Find the third derivative f'''(x) for f(x) = sin x + cos x."
+            answer: "sin(x) - cos(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with f(x) = sin(x) + cos(x). Step 1 uses the sum rule and the sine and cosine derivative rules: f'(x) = cos(x) - sin(x). Step 2 repeats the sine and cosine derivative rules: f''(x) = -sin(x) - cos(x). Step 3 repeats them once more: f'''(x) = -cos(x) + sin(x). The third derivative is sin(x) - cos(x)."
+          - problem: "Find the fourth derivative of f(x) = cos x - sin x."
+            answer: "cos(x) - sin(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with f(x) = cos(x) - sin(x). Step 1 uses the cosine and sine derivative rules: f'(x) = -sin(x) - cos(x). Step 2 repeats them: f''(x) = -cos(x) + sin(x). Step 3 repeats them: f'''(x) = sin(x) + cos(x). Step 4 repeats them: f''''(x) = cos(x) - sin(x). The fourth derivative is cos(x) - sin(x)."
         constraints: "sin and cos only; exploit the 4-cycle"
     diagnostic_exemplar:
       problem: 'Find $f''''''(x)$ (the third derivative) for $f(x) = x^4 + \sin x$.'
@@ -894,6 +930,18 @@ topics:
           - problem: 'Differentiate $f(x) = \log_3(x^2 + 1)$.'
             answer: "2x/((x^2 + 1) ln 3)"
             answer_contract: {"kind": "function", "vars": ["x"]}
+          - problem: "Differentiate f(x) = log_7(3x + 5). Find f'(x)."
+            answer: "3/((3x+5) ln(7))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Change of base: log_7(3x + 5) = ln(3x + 5)/ln(7). The chain rule gives the numerator derivative 3/(3x + 5), so f'(x) = (3/(3x + 5))/ln(7). Thus f'(x) = 3/((3x+5) ln(7))."
+          - problem: "Differentiate f(x) = log_6(x^2 + 9). Find f'(x)."
+            answer: "2x/((x^2+9) ln(6))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Change of base: log_6(x^2 + 9) = ln(x^2 + 9)/ln(6). The chain rule on the natural log gives (2x)/(x^2 + 9). Divide by ln(6), so f'(x) = 2x/((x^2+9) ln(6))."
+          - problem: "Differentiate f(x) = log_a(x), where a is a positive constant not equal to 1. Give the derivative in terms of x and a."
+            answer: "1/(x ln(a))"
+            answer_contract: {"kind": "function", "vars": ["x", "a"]}
+            solution_sketch: "Change of base: log_a(x) = ln(x)/ln(a). The natural log rule gives the derivative of ln(x) as 1/x, so f'(x) = (1/x)/ln(a). Thus f'(x) = 1/(x ln(a))."
         constraints: "convert to natural logs via change of base; inner functions linear or x^2 + c"
       - id: kp3
         name: Products and quotients of exponential and log factors
@@ -907,10 +955,22 @@ topics:
             answer: "e^x(x - 1)/x^2"
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Quotient rule: $\frac{e^x x - e^x}{x^2}$.'
-          - problem: 'Differentiate $f(x) = x \cdot 2^x$.'
-            answer: "2^x(1 + x ln 2)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Product rule: $2^x + x \cdot 2^x \ln 2$.'
+          - problem: "Differentiate $f(x) = x \\cdot 2^x$. Give the derivative as a function of $x$, writing $2^x$ as $e^{x \\ln(2)}$."
+            answer: "e^(x ln(2))(1 + x ln(2))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object $f(x) = x \\cdot 2^x$. Write $2^x = e^{x \\ln(2)}$ by the identity $a^x = e^{x \\ln(a)}$. Apply the product rule with $u = x$ and $v = e^{x \\ln(2)}$: the power rule gives $u' = 1$, and the rule for $e^{kx}$ gives $v' = \\ln(2) e^{x \\ln(2)}$. Then $f'(x) = e^{x \\ln(2)} + x \\ln(2) e^{x \\ln(2)}$, and factoring out $e^{x \\ln(2)}$ gives the derivative e^(x ln(2))(1 + x ln(2))."
+          - problem: "Differentiate $f(x) = e^x \\ln(x)$. Give the derivative as a function of $x$."
+            answer: "e^(x)(ln(x) + 1/x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object $f(x) = e^x \\ln(x)$. Apply the product rule with $u = e^x$ and $v = \\ln(x)$: the rule for the natural exponential gives $u' = e^x$, and the rule for the natural log gives $v' = 1/x$. Then $f'(x) = e^x \\ln(x) + e^x \\cdot (1/x)$. Factoring out $e^x$ gives the derivative e^(x)(ln(x) + 1/x)."
+          - problem: "Differentiate $f(x) = \\frac{\\ln(x)}{x^3}$. Give the derivative as a function of $x$."
+            answer: "(1 - 3 ln(x))/x^4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object $f(x) = \\ln(x)/x^3$. Apply the quotient rule $(N'D - ND')/D^2$ with $N = \\ln(x)$, $D = x^3$, $N' = 1/x$ by the rule for $\\ln$, and $D' = 3x^2$ by the power rule. Then $f'(x) = ((1/x)x^3 - \\ln(x) \\cdot 3x^2)/x^6 = (x^2 - 3x^2 \\ln(x))/x^6$. Cancel $x^2$ to get the derivative (1 - 3 ln(x))/x^4."
+          - problem: "Differentiate $f(x) = \\frac{\\ln(x)}{e^x}$. Give the derivative as a function of $x$."
+            answer: "(1 - x ln(x))/(x e^(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object $f(x) = \\ln(x)/e^x$. Apply the quotient rule $(N'D - ND')/D^2$ with $N = \\ln(x)$, $D = e^x$, $N' = 1/x$ by the rule for $\\ln$, and $D' = e^x$ by the rule for the natural exponential. Then $f'(x) = ((1/x)e^x - \\ln(x) e^x)/e^{2x} = (1/x - \\ln(x))/e^x$. Multiply numerator and denominator by $x$ to get the derivative (1 - x ln(x))/(x e^(x))."
         constraints: "one product and one quotient mixing power, exponential, and log factors"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x \cdot 3^x$.'
@@ -1226,6 +1286,22 @@ topics:
           - problem: 'For $y^2 = 4x$, find $\frac{d^2y}{dx^2}$ in terms of $y$.'
             answer: "-4/y^3"
             solution_sketch: '$y'' = \frac{2}{y}$; then $y'''' = -\frac{2}{y^2} y'' = -\frac{2}{y^2} \cdot \frac{2}{y} = -\frac{4}{y^3}$.'
+          - problem: "For $x^2 + y^2 = 49$, find $d^2y/dx^2$ in terms of $y$ (simplify using the original equation)."
+            answer: "-49/y^3"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "First differentiate x^2 + y^2 = 49 implicitly: 2x + 2y y' = 0, so y' = -x/y. Differentiate that quotient with the quotient rule: y'' = -(y - x y')/y^2. Substitute y' = -x/y to get y'' = -(y^2 + x^2)/y^3. The original equation gives x^2 + y^2 = 49, so the second derivative is -49/y^3."
+          - problem: "For $y^2 = 6x$, find $d^2y/dx^2$ in terms of $y$."
+            answer: "-9/y^3"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "First differentiate y^2 = 6x implicitly: 2y y' = 6, so y' = 3/y. Differentiate y' = 3/y with the power rule: y'' = -3/y^2 times y'. Substitute y' = 3/y to get y'' = -9/y^3. The second derivative is -9/y^3."
+          - problem: "For $xy = 6$, find $d^2y/dx^2$ in terms of $x$ (simplify using the original equation)."
+            answer: "12/x^3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Differentiate xy = 6 implicitly with the product rule: y + x y' = 0, so y' = -y/x. Differentiate y' = -y/x with the quotient rule: y'' = -(y' x - y)/x^2. Substitute y' = -y/x to get y'' = -(-y - y)/x^2 = 2y/x^2. The original equation gives y = 6/x, so y'' = 12/x^3. The second derivative is 12/x^3."
+          - problem: "For $x^3 + y^3 = 9$, find $d^2y/dx^2$ in terms of $x$ and $y$ (simplify using the original equation)."
+            answer: "-18x/y^5"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "First differentiate x^3 + y^3 = 9 implicitly: 3x^2 + 3y^2 y' = 0, so y' = -x^2/y^2. Differentiate y' = -x^2/y^2 with the quotient rule: y'' = -2x/y^2 - 2x^4/y^5. Combine over y^5 and use x^3 + y^3 = 9: y'' = -18x/y^5. The second derivative is -18x/y^5."
         constraints: "differentiate dy/dx again, substitute the first derivative, and simplify with the original equation"
     diagnostic_exemplar:
       problem: 'For $x^2 + y^2 = 16$, find $\frac{d^2y}{dx^2}$ in terms of $y$ (simplify using the original equation).'
@@ -1604,6 +1680,18 @@ topics:
             answer: "e^(-x)(2x - x^2)"
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Product rule with a chain factor: $2x e^{-x} - x^2 e^{-x}$.'
+          - problem: "Let f(x) = x^3 sin(x). Find f'(x) as a factored expression in x."
+            answer: "x^2(3 sin(x) + x cos(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For f(x) = x^3 sin(x), apply the product rule with u = x^3 and v = sin(x). The power rule gives u' = 3x^2, and the trigonometric derivative rule gives v' = cos(x). The product rule gives f'(x) = 3x^2 sin(x) + x^3 cos(x). Factor out x^2 to get x^2(3 sin(x) + x cos(x))."
+          - problem: "Let f(x) = sin(x)/e^(3x). Find f'(x) as a factored expression in x."
+            answer: "e^(-3x)(cos(x) - 3 sin(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For f(x) = sin(x)/e^(3x), apply the quotient rule with numerator sin(x) and denominator e^(3x). The chain rule gives the derivative of e^(3x) as 3e^(3x), and the trigonometric rule gives the derivative of sin(x) as cos(x). The quotient rule gives (cos(x)e^(3x) - 3 sin(x)e^(3x))/e^(6x). Divide numerator and denominator by e^(3x) to get e^(-3x)(cos(x) - 3 sin(x))."
+          - problem: "Let f(x) = tan(x) e^(4x). Find f'(x) as a factored expression in x."
+            answer: "e^(4x)(4 tan(x) + sec(x)^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "For f(x) = tan(x) e^(4x), apply the product rule with u = tan(x) and v = e^(4x). The trigonometric rule gives u' = sec(x)^2, and the chain rule gives v' = 4e^(4x). The product rule gives f'(x) = sec(x)^2 e^(4x) + 4 tan(x) e^(4x). Factor out e^(4x) to get e^(4x)(4 tan(x) + sec(x)^2)."
         constraints: "two factors mixing power, trig, exp, and log; factored answers preferred"
       - id: kp3
         name: Multi-layer problems requiring a strategy
@@ -1620,6 +1708,18 @@ topics:
             answer: "e^(x^2)(2x cos(3x) - 3 sin(3x))"
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Product rule; each factor needs its own chain rule.'
+          - problem: "Differentiate f(x) = sin(2x)/x. Give f'(x) as a function of x."
+            answer: "(2x cos(2x) - sin(2x))/x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Plan: the full object is f(x) = sin(2x)/x, so the quotient rule applies with u = sin(2x) and v = x. By the chain rule u' = 2 cos(2x), and by the power rule v' = 1. The quotient rule gives f'(x) = (u'v - uv')/v^2 = (2x cos(2x) - sin(2x))/x^2, so the answer is (2x cos(2x) - sin(2x))/x^2."
+          - problem: "Find the derivative of f(x) = x^2 e^(3x). Give f'(x) as a function of x."
+            answer: "2x e^(3x) + 3x^2 e^(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Plan: the full object is f(x) = x^2 e^(3x), a product of a power and an exponential. The power rule gives the derivative of x^2 as 2x, and the chain rule gives the derivative of e^(3x) as 3e^(3x). The product rule combines them: f'(x) = 2x e^(3x) + x^2 (3e^(3x)), so the answer is 2x e^(3x) + 3x^2 e^(3x)."
+          - problem: "Compute f'(x) for f(x) = x^3 ln(2x + 1). Give f'(x) as a function of x."
+            answer: "3x^2 ln(2x+1) + 2x^3/(2x+1)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Plan: the full object is f(x) = x^3 ln(2x+1), so the product rule applies to the factors x^3 and ln(2x+1). The power rule gives the derivative of x^3 as 3x^2, and the chain rule gives the derivative of ln(2x+1) as 2/(2x+1). The product rule gives f'(x) = 3x^2 ln(2x+1) + x^3 (2/(2x+1)), so the answer is 3x^2 ln(2x+1) + 2x^3/(2x+1)."
         constraints: "at least two rules per problem (chain + product/quotient/power); plan before differentiating"
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = e^{2x}\sin x$.'
