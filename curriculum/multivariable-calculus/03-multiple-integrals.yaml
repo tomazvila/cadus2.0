@@ -656,6 +656,22 @@ topics:
           - problem: 'Evaluate $\iiint_E z \, dV$ where $E$ is the tetrahedron bounded by the coordinate planes and $x + y + z = 1$.'
             answer: '$\frac{1}{24}$'
             solution_sketch: 'Inner: $\int_0^{1-x-y} z\, dz = \frac{(1-x-y)^2}{2}$; then $\int_0^{1-x} \frac{(1-x-y)^2}{2} dy = \frac{(1-x)^3}{6}$; finally $\int_0^1 \frac{(1-x)^3}{6} dx = \frac{1}{24}$.'
+          - problem: "Use a triple integral to find the volume of the tetrahedron cut from the first octant by the coordinate planes and the plane x + y + z = 2. Give the volume as a fraction."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The solid is 0 <= z <= 2 - x - y, with 0 <= y <= 2 - x and 0 <= x <= 2, so the volume is the triple integral of 1 over this region. The inner integral gives 2 - x - y, the middle integral gives (2 - x)^2/2, and the outer integral of a power gives 8/6. The volume is 4/3."
+          - problem: "Evaluate the triple integral of y over the tetrahedron E bounded by the coordinate planes and the plane x + 2y + z = 4. Give the value as a fraction."
+            answer: "8/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For fixed x and y, z runs from 0 to 4 - x - 2y, the y-range is 0 to (4 - x)/2, and x runs from 0 to 4, so the integral is the triple integral of y over E. Integrating y(4 - x - 2y) in y by the power rule gives (4 - x)^3/24, and integrating this power in x gives 64/24. The value is 8/3."
+          - problem: "Evaluate the triple integral of z over the tetrahedron E bounded by the coordinate planes and the plane 2x + y + z = 2. Give the value as a fraction."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For fixed x and y, z runs from 0 to 2 - 2x - y, the y-range is 0 to 2 - 2x, and x runs from 0 to 1, so the integral is the triple integral of z over E. The inner integral gives (2 - 2x - y)^2/2, the y-integral by the power rule gives (2 - 2x)^3/6, and the x-integral gives 1/3. The value is 1/3."
+          - problem: "Find the volume of the tetrahedron bounded by the coordinate planes and the plane x + 2y + 3z = 12."
+            answer: "48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The intercepts are x = 12, y = 6, and z = 4, so the volume is the triple integral of 1 over the tetrahedron. Using the order dz dy dx, z runs from 0 to (12 - x - 2y)/3, y from 0 to (12 - x)/2, and x from 0 to 12. The y-integral by the power rule gives (12 - x)^2/12, and the outer power integral gives 48. The volume is 48."
         constraints: "solids bounded by coordinate planes and one slanted plane; powers of (1-x) integrate exactly"
       - id: kp3
         name: "Solids bounded by curved surfaces"
@@ -706,6 +722,22 @@ topics:
           - problem: 'Find the mass of the unit cube $[0,1]^3$ with density $\rho(x,y,z) = x + y + z$.'
             answer: '$\frac{3}{2}$'
             solution_sketch: 'Each term contributes $\frac{1}{2}$: $m = 3 \cdot \frac{1}{2} = \frac{3}{2}$.'
+          - problem: "Find the mass of the box [0,2] x [0,1] x [0,3] whose density is 5x."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The mass is the triple integral of the density over the box: m = ∫0^3 ∫0^1 ∫0^2 5x dx dy dz. Integrate x first with the power rule: ∫0^2 5x dx = 10. The remaining y and z integrals give 1 and 3, so m = 10 * 1 * 3 = 30. The mass is 30."
+          - problem: "Find the mass of the box [0,1] x [0,4] x [0,2] whose density is 3y."
+            answer: "48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The mass is the triple integral of the density over the box: m = ∫0^2 ∫0^4 ∫0^1 3y dx dy dz. Integrate y first with the power rule: ∫0^4 3y dy = 24. The x and z lengths are 1 and 2, so m = 1 * 24 * 2 = 48. The mass is 48."
+          - problem: "Find the mass of the box [0,2] x [0,1] x [0,3] whose density is x + 2y."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The mass is the triple integral of the density over the box: m = ∫0^3 ∫0^1 ∫0^2 (x + 2y) dx dy dz. Integrate x first with the power rule: ∫0^2 (x + 2y) dx = 2 + 4y. Integrate y next with the power rule: ∫0^1 (2 + 4y) dy = 4. The z integral gives 3 * 4 = 12, so the mass is 12."
+          - problem: "Find the mass of the box [0,1] x [0,3] x [0,1] whose density is 2x + z."
+            answer: "9/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The mass is the triple integral of the density over the box: m = ∫0^1 ∫0^3 ∫0^1 (2x + z) dx dy dz. Integrate x first with the power rule: ∫0^1 (2x + z) dx = 1 + z. Multiply by the y-length 3 to get 3 + 3z, then integrate z with the power rule: ∫0^1 (3 + 3z) dz = 9/2. The mass is 9/2."
         constraints: "density linear in one or more variables; boxes only; masses exact rationals"
       - id: kp2
         name: "Center of mass and average value"
@@ -720,6 +752,18 @@ topics:
           - problem: 'Find $\bar{z}$ for the uniform tetrahedron bounded by the coordinate planes and $x + y + z = 1$.'
             answer: '$\frac{1}{4}$'
             solution_sketch: '$\iiint z\, dV = \frac{1}{24}$ and $V = \frac{1}{6}$, so $\bar{z} = \frac{1/24}{1/6} = \frac{1}{4}$.'
+          - problem: "The solid box $[0,1] \\times [0,1] \\times [0,1]$ has density $\\rho = x$. Find $\\bar{x}$, the $x$-coordinate of its center of mass."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: mass by the triple integral $m = \\iiint \\rho\\,dV = \\int_0^1\\int_0^1\\int_0^1 x\\,dz\\,dy\\,dx = \\frac12$. Step 2: moment $M_{yz} = \\iiint x\\rho\\,dV = \\int_0^1 x^2\\,dx = \\frac13$. Step 3: center of mass $\\bar{x} = M_{yz}/m = (1/3)/(1/2) = 2/3$. The answer is 2/3."
+          - problem: "Find the average value of $f(x,y,z) = xyz$ over the box $[0,1] \\times [0,2] \\times [0,3]$."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: compute the triple integral $I = \\iiint xyz\\,dV = (\\int_0^1 x\\,dx)(\\int_0^2 y\\,dy)(\\int_0^3 z\\,dz) = (1/2)(2)(9/2) = 9/2$. Step 2: volume of the box is $1\\cdot2\\cdot3 = 6$. Step 3: average value $I/V = (9/2)/6 = 3/4$. The answer is 3/4."
+          - problem: "The solid tetrahedron bounded by $x+y+z=1$ and the coordinate planes has density $\\rho = y$. Find $\\bar{y}$, the $y$-coordinate of its center of mass."
+            answer: "2/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: mass by the triple integral $m = \\iiint \\rho\\,dV = \\iiint y\\,dV = 1/24$ over the tetrahedron. Step 2: moment $M_{xz} = \\iiint y\\rho\\,dV = \\iiint y^2\\,dV = 1/60$. Step 3: $\\bar{y} = M_{xz}/m = (1/60)/(1/24) = 2/5$. The answer is 2/5."
         constraints: "reuse standard solids (boxes, unit tetrahedron); coordinates and averages are small rationals"
     diagnostic_exemplar:
       problem: 'The box $[0,2] \times [0,1] \times [0,3]$ has density $\rho(x, y, z) = z$. Find $\bar z$, the $z$-coordinate of its centre of mass.'
@@ -771,6 +815,22 @@ topics:
           - problem: 'Find the volume of the solid above the cone $z = \sqrt{x^2 + y^2}$ and below the plane $z = 2$.'
             answer: '$\frac{8\pi}{3}$'
             solution_sketch: 'For $0 \le r \le 2$, $z$ runs from $r$ to $2$: $\int_0^{2\pi}\int_0^2 (2 - r) r\, dr\, d\theta = 2\pi\left(4 - \frac{8}{3}\right) = \frac{8\pi}{3}$.'
+          - problem: "Use cylindrical coordinates to evaluate the triple integral of (x^2 + y^2) dV over the solid cylinder x^2 + y^2 <= 1 with 0 <= z <= 3."
+            answer: "3pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the cylindrical volume element dV = r dz dr dtheta to write the full integral as the integral from 0 to 2pi of the integral from 0 to 1 of the integral from 0 to 3 of r^2 * r dz dr dtheta. Evaluate the inner z-integral to get 3, the middle r-integral to get 1/4, and the outer theta-integral to get 2pi. Multiply 2pi by 3 and by 1/4 to get 3pi/2. The answer is 3pi/2."
+          - problem: "Use cylindrical coordinates to evaluate the triple integral of z^2 dV over the solid cylinder x^2 + y^2 <= 4 with 0 <= z <= 1."
+            answer: "4pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the cylindrical volume element dV = r dz dr dtheta to write the full integral as the integral from 0 to 2pi of the integral from 0 to 2 of the integral from 0 to 1 of z^2 * r dz dr dtheta. Evaluate the z-integral to get 1/3, the r-integral to get 2, and the theta-integral to get 2pi. Multiply 2pi by 1/3 and by 2 to get 4pi/3. The answer is 4pi/3."
+          - problem: "Use cylindrical coordinates to evaluate the triple integral of (x^2 + y^2) dV over the solid between the cone z = sqrt(x^2 + y^2) and the plane z = 1."
+            answer: "pi/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the cylindrical volume element dV = r dz dr dtheta. The solid has 0 <= r <= 1, r <= z <= 1, and 0 <= theta <= 2pi. The full integral is the integral from 0 to 2pi of the integral from 0 to 1 of the integral from r to 1 of r^2 * r dz dr dtheta. The z-integral gives 1 - r, so the r-integral is the integral from 0 to 1 of r^3(1 - r) dr = 1/4 - 1/5 = 1/20. Multiply 2pi by 1/20 to get pi/10. The answer is pi/10."
+          - problem: "Use cylindrical coordinates to evaluate the triple integral of z dV over the solid between the paraboloid z = x^2 + y^2 and the plane z = 4."
+            answer: "64pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the cylindrical volume element dV = r dz dr dtheta. The paraboloid z = x^2 + y^2 is z = r^2, so 0 <= r <= 2, r^2 <= z <= 4, and 0 <= theta <= 2pi. The full integral is the integral from 0 to 2pi of the integral from 0 to 2 of the integral from r^2 to 4 of z * r dz dr dtheta. The z-integral gives (16 - r^4)/2. After the theta-integral gives 2pi, the remaining factor is pi times the integral from 0 to 2 of (16r - r^5) dr. That integral is 32 - 64/6 = 64/3, so the value is 64pi/3. The answer is 64pi/3."
         constraints: "solids with rotational symmetry about the z-axis (cylinders, cones, paraboloids); dV = r dz dr dtheta"
       - id: kp3
         name: "Volumes of rotationally symmetric solids"
@@ -824,10 +884,26 @@ topics:
           - problem: 'Convert the spherical point $(\rho, \varphi, \theta) = \left(2, \frac{\pi}{3}, 0\right)$ to rectangular coordinates.'
             answer: '$(\sqrt{3}, 0, 1)$'
             solution_sketch: '$x = 2\sin\frac{\pi}{3}\cos 0 = \sqrt{3}$, $y = 2\sin\frac{\pi}{3}\sin 0 = 0$, $z = 2\cos\frac{\pi}{3} = 1$.'
-          - problem: 'Describe the upper half of the unit ball in spherical coordinates.'
-            answer: '$0 \le \rho \le 1$, $\;0 \le \varphi \le \frac{\pi}{2}$, $\;0 \le \theta \le 2\pi$'
-            solution_sketch: 'The upper half of the unit ball has $0\le\rho\le 1$, polar angle $0\le\varphi\le\pi/2$ from the positive $z$-axis, and $0\le\theta\le 2\pi$.'
-            answer_contract: {kind: none}
+          - problem: "Convert the spherical point (rho, phi, theta) = (4, pi/6, pi/2) to rectangular coordinates. Give the answer as (x, y, z)."
+            answer: "(0, 2, 2sqrt(3))"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Use the conversion rule x = rho sin(phi) cos(theta), y = rho sin(phi) sin(theta), and z = rho cos(phi). Substitute rho = 4, phi = pi/6, theta = pi/2 and use standard unit-circle values: x = 4*(1/2)*0 = 0, y = 4*(1/2)*1 = 2, z = 4*(sqrt(3)/2) = 2sqrt(3). The answer is (0, 2, 2sqrt(3))."
+          - problem: "Convert the rectangular point (x, y, z) = (0, 3, 3sqrt(3)) to spherical coordinates. Give the answer as (rho, phi, theta)."
+            answer: "(6, pi/6, pi/2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Use rho = sqrt(x^2 + y^2 + z^2), phi = acos(z/rho), and theta = pi/2 because x = 0 and y > 0. Substitute (0, 3, 3sqrt(3)): rho = sqrt(0 + 9 + 27) = 6 and phi = acos(3sqrt(3)/6) = acos(sqrt(3)/2) = pi/6. The answer is (6, pi/6, pi/2)."
+          - problem: "A point has rectangular coordinates (x, y, z) = (4, -4, 4sqrt(2)). Find its spherical radial coordinate rho."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the radial-coordinate rule rho = sqrt(x^2 + y^2 + z^2). Substitute x = 4, y = -4, z = 4sqrt(2): rho = sqrt(16 + 16 + 32) = sqrt(64). Since sqrt(64) = 8, the answer is 8."
+          - problem: "Set up a triple integral in spherical coordinates for the region inside the sphere rho <= 5 and with polar angle phi <= pi/4. The variables have lower limits theta = 0, phi = 0, and rho = 0. Give the upper limits in the form rhomax = value; phimax = value; thetamax = value."
+            answer: "rhomax = 5; phimax = pi/4; thetamax = 2pi"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "rhomax"}, {"contract": {"kind": "exact"}, "name": "phimax"}, {"contract": {"kind": "exact"}, "name": "thetamax"}]}
+            solution_sketch: "Use spherical set-up for a ball of radius 5 with a cone cut at phi = pi/4. The radial coordinate gives rho from 0 to 5, the cone gives phi from 0 to pi/4, and the full azimuth gives theta from 0 to 2pi. The answer is rhomax = 5; phimax = pi/4; thetamax = 2pi."
+          - problem: "Set up a triple integral in spherical coordinates for the upper half of the ball rho <= 3, where z >= 0. The variables have lower limits theta = 0, phi = 0, and rho = 0. Give the upper limits in the form rhomax = value; phimax = value; thetamax = value."
+            answer: "rhomax = 3; phimax = pi/2; thetamax = 2pi"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "rhomax"}, {"contract": {"kind": "exact"}, "name": "phimax"}, {"contract": {"kind": "exact"}, "name": "thetamax"}]}
+            solution_sketch: "Use spherical set-up for the upper half of a ball of radius 3. The condition z >= 0 means phi runs from 0 to pi/2, the full azimuth gives theta from 0 to 2pi, and the radial coordinate gives rho from 0 to 3. The answer is rhomax = 3; phimax = pi/2; thetamax = 2pi."
         constraints: "angles at standard unit-circle values; balls, half-balls, and cones as regions"
       - id: kp2
         name: "Evaluating spherical integrals"
@@ -839,9 +915,21 @@ topics:
           - problem: 'Evaluate $\iiint_E z \, dV$ where $E$ is the upper half of the unit ball.'
             answer: '$\frac{\pi}{4}$'
             solution_sketch: '$z = \rho\cos\varphi$: $\int_0^{2\pi}\int_0^{\pi/2}\int_0^1 \rho^3 \cos\varphi \sin\varphi\, d\rho\, d\varphi\, d\theta = 2\pi \cdot \frac{1}{4} \cdot \frac{1}{2} = \frac{\pi}{4}$.'
+          - problem: "Let E be the ball centered at the origin with radius 4. Use spherical coordinates to evaluate the triple integral of 1 over E. Give the exact value."
+            answer: "256pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (spherical volume element): dV = rho^2 sin(phi) d rho d phi d theta, so the integrand 1 becomes rho^2 sin(phi). Step 2 (separated limits for a ball): rho runs 0 to 4, phi runs 0 to pi, and theta runs 0 to 2pi. Step 3 (power and sine rules): the rho integral is 64/3, the phi integral is 2, and the theta integral is 2pi. Multiply to get 256pi/3. The exact value is 256pi/3."
           - problem: 'Evaluate $\iiint_B e^{(x^2+y^2+z^2)^{3/2}} dV$ over the unit ball.'
             answer: '$\frac{4\pi(e - 1)}{3}$'
             solution_sketch: 'The integrand is $e^{\rho^3}$; $\int_0^1 e^{\rho^3}\rho^2\, d\rho = \frac{e-1}{3}$ (substitute $u = \rho^3$), times $\int\sin\varphi = 2$ and $2\pi$.'
+          - problem: "Let E be the upper half of the ball centered at the origin with radius 2. Use spherical coordinates to evaluate the triple integral of z over E. Give the exact value."
+            answer: "4pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (spherical substitution): z = rho cos(phi) and dV = rho^2 sin(phi) d rho d phi d theta, so z dV becomes rho^3 cos(phi) sin(phi). Step 2 (upper half-ball limits): rho runs 0 to 2, phi runs 0 to pi/2, and theta runs 0 to 2pi. Step 3 (power and product-to-sum rules): the rho integral is 4, the phi integral is 1/2, and the theta integral is 2pi. Multiply to get 4pi. The exact value is 4pi."
+          - problem: "Let E be the ball centered at the origin with radius 2. Use spherical coordinates to evaluate the triple integral of rho over E. Give the exact value."
+            answer: "16pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (spherical volume element): dV = rho^2 sin(phi) d rho d phi d theta, so rho dV becomes rho^3 sin(phi). Step 2 (ball limits): rho runs 0 to 2, phi runs 0 to pi, and theta runs 0 to 2pi. Step 3 (power and sine rules): the rho integral is 4, the phi integral is 2, and the theta integral is 2pi. Multiply to get 16pi. The exact value is 16pi."
         constraints: "balls and half-balls centered at the origin; integrands are functions of rho alone or a single factor of cos(phi) (e.g. z = rho cos phi); dV = rho^2 sin(phi) d rho d phi d theta; the triple integral separates into a product of three one-variable integrals"
       - id: kp3
         name: "Jacobians and choosing a coordinate system"
@@ -898,6 +986,22 @@ topics:
           - problem: 'Compute the Jacobian for $x = u^2 - v^2$, $y = 2uv$.'
             answer: '$4u^2 + 4v^2$'
             solution_sketch: '$\det\begin{pmatrix} 2u & -2v \\ 2v & 2u \end{pmatrix} = 4u^2 + 4v^2$.'
+          - problem: "For $x = 3u + 2v$ and $y = u + 4v$, compute the Jacobian $\\frac{\\partial(x,y)}{\\partial(u,v)}$."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Jacobian is the determinant of the matrix of partial derivatives: $\\det\\begin{pmatrix} 3 & 2 \\\\ 1 & 4 \\end{pmatrix}$ (build the matrix step). Evaluate the 2x2 determinant: $3 \\cdot 4 - 2 \\cdot 1 = 12 - 2 = 10$ (determinant rule). The Jacobian is 10."
+          - problem: "For $x = u^2 + v^2$ and $y = uv$, compute the Jacobian."
+            answer: "2u^2-2v^2"
+            answer_contract: {"kind": "function", "vars": ["u", "v"]}
+            solution_sketch: "The Jacobian is the determinant of the matrix of partial derivatives: $\\det\\begin{pmatrix} 2u & 2v \\\\ v & u \\end{pmatrix}$ (partial derivatives step). Evaluate the 2x2 determinant: $2u \\cdot u - 2v \\cdot v = 2u^2 - 2v^2$ (determinant rule). The Jacobian is 2u^2-2v^2."
+          - problem: "For $x = u^2 - v$ and $y = u + v^2$, compute the Jacobian."
+            answer: "4uv+1"
+            answer_contract: {"kind": "function", "vars": ["u", "v"]}
+            solution_sketch: "The Jacobian is the determinant of the matrix of partial derivatives: $\\det\\begin{pmatrix} 2u & -1 \\\\ 1 & 2v \\end{pmatrix}$ (partial derivatives step). Evaluate the 2x2 determinant: $2u \\cdot 2v - (-1) \\cdot 1 = 4uv + 1$ (determinant rule). The Jacobian is 4uv+1."
+          - problem: "For $x = 5u - v$ and $y = 2u + 3v$, compute the Jacobian."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Jacobian is the determinant of the matrix of partial derivatives: $\\det\\begin{pmatrix} 5 & -1 \\\\ 2 & 3 \\end{pmatrix}$ (build the matrix step). Evaluate the 2x2 determinant: $5 \\cdot 3 - (-1) \\cdot 2 = 15 + 2 = 17$ (determinant rule). The Jacobian is 17."
         constraints: "linear or classic quadratic maps; Jacobians are integers or clean polynomials in u, v"
       - id: kp2
         name: "Transforming double integrals"
@@ -909,6 +1013,22 @@ topics:
           - problem: 'Evaluate $\iint_R e^{(x-y)/(x+y)}\, dA$ where $R$ is the triangle bounded by $x = 0$, $y = 0$, $x + y = 1$, using $u = x - y$, $v = x + y$.'
             answer: '$\frac{1}{4}\left(e - \frac{1}{e}\right)$'
             solution_sketch: '$x = \frac{u+v}{2}$, $y = \frac{v-u}{2}$ has Jacobian $\frac{1}{2}$; the region becomes $0 \le v \le 1$, $-v \le u \le v$: $\frac{1}{2}\int_0^1 \int_{-v}^{v} e^{u/v}\, du\, dv = \frac{1}{2}\int_0^1 v\left(e - e^{-1}\right) dv$.'
+          - problem: "Evaluate the double integral over R of (x + 2y) dA, where R is the parallelogram with vertices (0,0), (1,2), (3,5), (2,3), using x = u + 2v, y = 2u + 3v. Give the answer as a fraction."
+            answer: "13/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the change of variables formula with x = u + 2v and y = 2u + 3v. The Jacobian determinant is det [1, 2; 2, 3] = 3 - 4 = -1, so |J| = 1. The map sends the unit square in the uv-plane to the parallelogram R. The integrand becomes x + 2y = (u + 2v) + 2(2u + 3v) = 5u + 8v. Integrate over the unit square: integral from 0 to 1 of integral from 0 to 1 of (5u + 8v) du dv = integral from 0 to 1 of (5/2 + 8v) dv = 5/2 + 4. The value of the integral is 13/2."
+          - problem: "Evaluate the double integral over R of (x + y) dA, where R is the triangle with vertices (0,0), (1,0), (0,1), using u = x + y, v = x - y. Give the answer as a fraction."
+            answer: "1/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the change of variables u = x + y and v = x - y, so x = (u + v)/2 and y = (u - v)/2. The Jacobian determinant is det [1/2, 1/2; 1/2, -1/2] = -1/2, so |J| = 1/2. The triangle R maps to the uv-region 0 <= u <= 1, -u <= v <= u. The integrand becomes x + y = u. Integrate: integral from u = 0 to 1 of integral from v = -u to u of u*(1/2) dv du = integral from 0 to 1 of u^2 du. The value of the integral is 1/3."
+          - problem: "Evaluate the double integral over R of (x^2 - y^2) dA, where R is the diamond with vertices (0,0), (1,1), (2,0), (1,-1), using x = u + v, y = u - v. Give the answer as an integer."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the change of variables x = u + v and y = u - v. The Jacobian determinant is det [1, 1; 1, -1] = -2, so |J| = 2. The unit square in the uv-plane maps to the diamond R. The integrand becomes x^2 - y^2 = (u + v)^2 - (u - v)^2 = 4uv. Integrate: integral from 0 to 1 of integral from 0 to 1 of 4uv*2 du dv = 8*(1/2)*(1/2). The value of the integral is 2."
+          - problem: "Evaluate the double integral over R of (x + 2y) dA, where R is the rectangle with vertices (0,0), (2,0), (2,3), (0,3), using x = 2u, y = 3v. Give the answer as an integer."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the change of variables x = 2u and y = 3v. The Jacobian determinant is det [2, 0; 0, 3] = 6, so |J| = 6. The unit square in the uv-plane maps to the rectangle R. The integrand becomes x + 2y = 2u + 6v. Integrate: integral from 0 to 1 of integral from 0 to 1 of (2u + 6v)*6 du dv = 6*(1 + 3). The value of the integral is 24."
         constraints: "the substitution is given; regions map to squares/triangles in the uv-plane; remember |J| and the direction of the map"
       - id: kp3
         name: "Choosing a transformation"
@@ -917,10 +1037,26 @@ topics:
           - problem: 'Find the area of the region in the first quadrant bounded by $xy = 1$, $xy = 4$, $y = x$, and $y = 4x$, using $u = xy$, $v = y/x$.'
             answer: '$3\ln 2$'
             solution_sketch: '$x = \sqrt{u/v}$, $y = \sqrt{uv}$ has Jacobian $\frac{1}{2v}$; area $= \int_1^4 \int_1^4 \frac{1}{2v}\, dv\, du = 3 \cdot \frac{\ln 4}{2} = 3\ln 2$.'
-          - problem: 'Which substitution turns the region bounded by $y = x$, $y = x + 2$, $y = -x$, $y = -x + 4$ into a rectangle?'
-            answer: '$u = y - x$, $v = y + x$ (the region becomes $0 \le u \le 2$, $0 \le v \le 4$).'
-            solution_sketch: 'Set $u=y-x$ and $v=y+x$; the lines $y=x$ and $y=x+2$ give $u=0,2$, and $y=-x$, $y=-x+4$ give $v=0,4$, a rectangle.'
-            answer_contract: {kind: none}
+          - problem: "The region is bounded by y = x, y = x + 3, y = -x, and y = -x + 4. Choose new variables that turn the boundary lines into constant coordinate lines. Find the area of the region."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The boundary lines suggest u = y - x and v = y + x, because y = x and y = x + 3 give u = 0 and u = 3, while y = -x and y = -x + 4 give v = 0 and v = 4. Solve for x and y: x = (v - u)/2 and y = (v + u)/2, so the Jacobian is the absolute value of the determinant [[-1/2, 1/2],[1/2, 1/2]], which is 1/2. The area is the integral of 1/2 over 0 <= u <= 3 and 0 <= v <= 4, giving (1/2)(3)(4) = 6. The area is 6."
+          - problem: "Use u = x + y and v = x - y on the region bounded by x + y = 1, x + y = 4, x - y = 0, and x - y = 3. Find the area of the region as a fraction."
+            answer: "9/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set u = x + y and v = x - y, so the boundary lines become u = 1, u = 4, v = 0, and v = 3. Solve x = (u + v)/2 and y = (u - v)/2, so the Jacobian determinant has absolute value 1/2. The area is the double integral of 1/2 over 1 <= u <= 4 and 0 <= v <= 3, which equals (1/2)(3)(3) = 9/2. The area is 9/2."
+          - problem: "Use u = x + y and v = x - y on the region bounded by x + y = 0, x + y = 2, x - y = 0, and x - y = 4. Evaluate the double integral of (x + y)^2 over the region as a fraction."
+            answer: "16/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use u = x + y and v = x - y, so u runs from 0 to 2 and v runs from 0 to 4 on the region. The inverse is x = (u + v)/2 and y = (u - v)/2, whose Jacobian has absolute value 1/2. The integrand becomes u^2, so the integral is the double integral of (1/2)u^2 over 0 <= u <= 2 and 0 <= v <= 4. Integrating in v first gives 2u^2, then integrating u from 0 to 2 gives (2/3)(8) = 16/3. The value of the integral is 16/3."
+          - problem: "The region is bounded by y = 2x, y = 2x + 4, y = -x, and y = -x + 2. Choose new variables that turn the boundary lines into constant coordinate lines. Find the area of the region as a fraction."
+            answer: "8/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Choose u = y - 2x and v = y + x, because y = 2x and y = 2x + 4 give u = 0 and u = 4, while y = -x and y = -x + 2 give v = 0 and v = 2. Solve x = (v - u)/3 and y = (2v + u)/3, whose Jacobian determinant has absolute value 1/3. The area is the double integral of 1/3 over 0 <= u <= 4 and 0 <= v <= 2, which equals (1/3)(4)(2) = 8/3. The area is 8/3."
+          - problem: "Use polar coordinates x = r cos(theta) and y = r sin(theta) on the disk x^2 + y^2 <= 9. Evaluate the double integral of x^2 + y^2 over the disk."
+            answer: "81pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use polar coordinates x = r cos(theta) and y = r sin(theta), for which the Jacobian is r. The disk x^2 + y^2 <= 9 becomes 0 <= r <= 3 and 0 <= theta <= 2pi. The integrand x^2 + y^2 becomes r^2, so the integral is the double integral of r^3 over those limits. Integrating gives 2pi times (81/4), which equals 81pi/2. The value of the integral is 81pi/2."
         constraints: "boundary curves become u = const, v = const; final answers involve at most one logarithm"
     diagnostic_exemplar:
       problem: 'Evaluate $\iint_R (x + y)\,dA$, where $R$ is the parallelogram with vertices $(0,0)$, $(3,1)$, $(4,3)$, $(1,2)$, using the change of variables $x = 3u + v$, $y = u + 2v$.'

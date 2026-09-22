@@ -24,14 +24,30 @@ topics:
         name: "Evaluating and recognizing fields"
         key_prerequisites: [vectors-in-rn, functions-several-variables]
         exemplars:
-          - problem: 'Let $\mathbf{F}(x, y) = \langle -y, x \rangle$. Compute $\mathbf{F}(2, 1)$ and describe the field geometrically.'
-            answer: '$\mathbf{F}(2, 1) = \langle -1, 2 \rangle$; the field rotates counterclockwise about the origin (each vector is perpendicular to the position vector).'
-            solution_sketch: '$\mathbf{F}(2,1)=\langle -1,2\rangle$; since $\mathbf{F}\cdot\langle x,y\rangle=0$, each vector is perpendicular to the position vector and the field rotates counterclockwise.'
-            answer_contract: {kind: none}
-          - problem: 'Let $\mathbf{F}(x, y) = \langle x, y \rangle$. What is $|\mathbf{F}(x, y)|$, and in which direction does the field point?'
-            answer: '$|\mathbf{F}| = \sqrt{x^2 + y^2}$; the field points radially outward from the origin.'
-            solution_sketch: '$|\mathbf{F}|=\sqrt{x^2+y^2}$, and $\mathbf{F}$ points in the direction $\langle x,y\rangle$, radially outward from the origin.'
-            answer_contract: {kind: none}
+          - problem: "Let F(x,y) = (-y, x). Compute F(2, 1), and state whether the field turns about the origin or points away from it. Give the vector as (a, b) and the verdict."
+            answer: "verdict = rotational; v = (-1, 2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["radial"], ["rotational"]]}, "name": "verdict"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "v"}]}
+            solution_sketch: "Step 1: evaluate the field componentwise at (2, 1), giving F(2, 1) = (-1, 2). Step 2: test the direction by the dot product with the position vector (2, 1): (-1)(2) + (2)(1) = 0, so the vector is perpendicular to the position vector and the field turns about the origin. The option radial is wrong because a radial vector would be parallel to the position vector. The key is verdict = rotational; v = (-1, 2)."
+          - problem: "Let F(x,y) = (x, y). Find the magnitude of F(3, 4), and state whether the field points away from the origin or turns about it. Give the magnitude and the verdict."
+            answer: "verdict = radial; mag = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["radial"], ["rotational"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "mag"}]}
+            solution_sketch: "Step 1: evaluate F(3, 4) = (3, 4). Step 2: compute the magnitude by the distance formula: sqrt(3^2 + 4^2) = 5. The vector is a positive multiple of (3, 4), so it points along the position vector. The option rotational is wrong because a rotational vector would be perpendicular to the position vector. The key is verdict = radial; mag = 5."
+          - problem: "Let F(x,y) = (2x, 2y). Find F(1, -2). Give the answer as (a, b)."
+            answer: "(2, -4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: substitute x = 1 and y = -2 into F(x, y) = (2x, 2y). Step 2: compute each component: 2(1) = 2 and 2(-2) = -4. The answer is (2, -4)."
+          - problem: "Let F(x,y) = (-3y, 3x). Find F(1, 2). Give the answer as (a, b)."
+            answer: "(-6, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: substitute x = 1 and y = 2 into F(x, y) = (-3y, 3x). Step 2: compute each component: -3(2) = -6 and 3(1) = 3. The answer is (-6, 3)."
+          - problem: "Let F(x,y) = (x + y, x - y). Find F(2, 3). Give the answer as (a, b)."
+            answer: "(5, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: substitute x = 2 and y = 3 into F(x, y) = (x + y, x - y). Step 2: compute the first component 2 + 3 = 5 and the second component 2 - 3 = -1. The answer is (5, -1)."
+          - problem: "Let F(x,y) = (x^2 - y, x y). Find F(2, -1). Give the answer as (a, b)."
+            answer: "(5, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: substitute x = 2 and y = -1 into F(x, y) = (x^2 - y, x y). Step 2: compute the first component 2^2 - (-1) = 5 and the second component (2)(-1) = -2. The answer is (5, -2)."
         constraints: "fields built from x, y with integer coefficients; evaluation at small integer points; identify radial vs rotational"
       - id: kp2
         name: "Gradient fields"
@@ -87,6 +103,22 @@ topics:
           - problem: 'Evaluate $\int_C (x + y)\, ds$ where $C$ is the segment from $(0, 0)$ to $(3, 4)$.'
             answer: '$\frac{35}{2}$'
             solution_sketch: 'With $\mathbf{r}(t) = \langle 3t, 4t \rangle$, $ds = 5\,dt$: $\int_0^1 7t \cdot 5\, dt = \frac{35}{2}$.'
+          - problem: "Evaluate $\\int_C (x + 2y)\\, ds$, where $C$ is the straight segment from $(0, 0)$ to $(5, 12)$."
+            answer: "377/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize the segment $C$ as $\\mathbf{r}(t) = \\langle 5t, 12t \\rangle$ for $0 \\le t \\le 1$, so the speed is $|\\mathbf{r}'(t)| = \\sqrt{25 + 144} = 13$ and $ds = 13\\, dt$ by the arc-length rule. Substitute the parametrization into the integrand: $x + 2y = 5t + 24t = 29t$. The power rule gives $\\int_0^1 29t \\cdot 13\\, dt = 377 \\cdot \\frac{1}{2} = \\frac{377}{2}$. The value of the line integral is 377/2."
+          - problem: "Evaluate $\\int_C (3x - y)\\, ds$, where $C$ is the straight segment from $(2, 3)$ to $(5, 7)$."
+            answer: "55/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize $C$ as $\\mathbf{r}(t) = \\langle 2 + 3t, 3 + 4t \\rangle$ for $0 \\le t \\le 1$; the speed is $|\\mathbf{r}'(t)| = \\sqrt{9 + 16} = 5$, so $ds = 5\\, dt$ by the arc-length rule. Along $C$, substitution gives $3x - y = 3(2 + 3t) - (3 + 4t) = 3 + 5t$. The power rule then gives $\\int_0^1 (3 + 5t) \\cdot 5\\, dt = 15 + \\frac{25}{2} = \\frac{55}{2}$. The value of the line integral is 55/2."
+          - problem: "A curve $C$ runs straight from $(6, 8)$ to $(0, 0)$. Evaluate $\\int_C (3x + y)\\, ds$."
+            answer: "130"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize $C$ as $\\mathbf{r}(t) = \\langle 6 - 6t, 8 - 8t \\rangle$ for $0 \\le t \\le 1$; the speed is $|\\mathbf{r}'(t)| = \\sqrt{36 + 64} = 10$, so $ds = 10\\, dt$ by the arc-length rule. A scalar line integral does not change when the direction of travel is reversed. Along $C$, substitution gives $3x + y = 3(6 - 6t) + (8 - 8t) = 26 - 26t$. The power rule gives $\\int_0^1 (26 - 26t) \\cdot 10\\, dt = 260 - 130 = 130$. The value of the line integral is 130."
+          - problem: "Evaluate $\\int_C xy\\, ds$, where $C$ is the straight segment from $(0, 1)$ to $(6, 9)$."
+            answer: "190"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Parametrize $C$ as $\\mathbf{r}(t) = \\langle 6t, 1 + 8t \\rangle$ for $0 \\le t \\le 1$; the speed is $|\\mathbf{r}'(t)| = \\sqrt{36 + 64} = 10$, so $ds = 10\\, dt$ by the arc-length rule. Along $C$, distributive expansion gives $xy = 6t(1 + 8t) = 6t + 48t^2$. The power rule then gives $\\int_0^1 (6t + 48t^2) \\cdot 10\\, dt = 30 + 160 = 190$. The value of the line integral is 190."
         constraints: "segments with Pythagorean-triple directions so ds = |r'| dt is a constant integer"
       - id: kp2
         name: "Line integrals along circles and curves"
