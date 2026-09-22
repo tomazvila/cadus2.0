@@ -32,6 +32,22 @@ topics:
             answer: '-5 R3'
             answer_contract: {kind: quotient_remainder, divisor: 6}
             solution_sketch: 'The remainder must be nonnegative: $6 \cdot (-5) = -30 \le -27$, so $r = -27 - (-30) = 3$. Note $q = -4$ would give $r = -3 < 0$, which is not allowed.'
+          - problem: "Find the quotient $q$ and remainder $r$ with $0 \\le r < 5$ when $84$ is divided by $5$. Give the answer as (q, r)."
+            answer: "(16, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: By the division algorithm, write $84 = 5q + r$ with $0 \\le r < 5$. Step 2: By testing multiples, $5 \\cdot 16 = 80$, so $q = 16$ and $r = 84 - 80 = 4$. The quotient and remainder are (16, 4)."
+          - problem: "Find the quotient $q$ and remainder $r$ with $0 \\le r < 7$ so that $-100 = 7q + r$. Give the answer as (q, r)."
+            answer: "(-15, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: By the division algorithm for a negative dividend, $q = floor(-100/7) = -15$. Step 2: By the remainder formula, $r = -100 - 7(-15) = 5$, and $0 \\le 5 < 7$. The quotient and remainder are (-15, 5)."
+          - problem: "Use the division algorithm to divide $250$ by $14$. Give the quotient $q$ and remainder $r$ as (q, r), with $0 \\le r < 14$."
+            answer: "(17, 12)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: By the division algorithm, locate the largest multiple of $14$ not exceeding $250$. Step 2: Since $14 \\cdot 17 = 238$ and $14 \\cdot 18 = 252$, $q = 17$ and $r = 250 - 238 = 12$. The quotient and remainder are (17, 12)."
+          - problem: "Find $q$ and $r$ with $0 \\le r < 9$ so that $-47 = 9q + r$. Give the answer as (q, r)."
+            answer: "(-6, 7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: By the division algorithm for a negative dividend, $q = floor(-47/9) = -6$. Step 2: By the remainder formula, $r = -47 - 9(-6) = 7$, and $0 \\le 7 < 9$. The quotient and remainder are (-6, 7)."
         constraints: "divisors 2-15; include at least one negative dividend; remainder must satisfy 0 <= r < d"
       - id: kp2
         name: "Residue classes as a case tool"
@@ -45,6 +61,22 @@ topics:
             answer: '{0, 1}'
             answer_contract: {kind: set}
             solution_sketch: 'A perfect square is never $2$ or $3$ mod $4$. Even squares $(2k)^2 = 4k^2$ leave $0$; odd squares $(2k+1)^2 = 4(k^2+k)+1$ leave $1$.'
+          - problem: "Use the residue classes modulo 8. Find all possible remainders of n^3 on division by 8."
+            answer: "{0, 1, 3, 5, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The full residue class list modulo 8 is 0,1,2,3,4,5,6,7. Residue-class step: test each class. Substitution step: cubing gives 0,1,8,27,64,125,216,343. Reduction step: these are 0,1,0,3,0,5,0,7 modulo 8. Collect step: the distinct remainders are 0,1,3,5,7, so the answer is {0, 1, 3, 5, 7}."
+          - problem: "Use the residue classes modulo 4. Find all possible remainders of n^3 on division by 4."
+            answer: "{0, 1, 3}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The full residue class list modulo 4 is 0,1,2,3. Residue-class step: test each class. Substitution step: cubing gives 0,1,8,27. Reduction step: these are 0,1,0,3 modulo 4. Collect step: the distinct remainders are 0,1,3, so the answer is {0, 1, 3}."
+          - problem: "Use the residue classes modulo 8. Find all possible remainders of n(n+1) on division by 8."
+            answer: "{0, 2, 4, 6}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The full residue class list modulo 8 is 0,1,2,3,4,5,6,7. Residue-class step: test each class. Substitution step: n(n+1) gives 0,2,6,12,20,30,42,56. Reduction step: these are 0,2,6,4,4,6,2,0 modulo 8. Collect step: the distinct remainders are 0,2,4,6, so the answer is {0, 2, 4, 6}."
+          - problem: "Use the residue classes modulo 8. Find all possible remainders of n^2 + n + 1 on division by 8."
+            answer: "{1, 3, 5, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The full residue class list modulo 8 is 0,1,2,3,4,5,6,7. Residue-class step: test each class. Substitution step: n^2+n+1 gives 1,3,7,13,21,31,43,57. Reduction step: these are 1,3,7,5,5,7,3,1 modulo 8. Collect step: the distinct remainders are 1,3,5,7, so the answer is {1, 3, 5, 7}."
         constraints: "moduli 3, 4, or 8; verify claims by checking each residue class"
     diagnostic_exemplar:
       problem: 'Using the residue classes mod $8$, find all possible remainders of a perfect square on division by $8$.'
@@ -224,6 +256,22 @@ topics:
           - problem: 'Compute $(6 + 9) \bmod 11$.'
             answer: "4"
             solution_sketch: '$15 = 11 + 4$.'
+          - problem: "Compute (58 * 47) mod 13 by reducing each factor first. Give the residue in 0 to 12."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For (58 * 47) mod 13, reduce first using the division algorithm: 58 = 4*13 + 6, so 58 mod 13 = 6, and 47 = 3*13 + 8, so 47 mod 13 = 8. By the multiplication rule for residues, 6*8 = 48. Reduce the product modulo 13: 48 = 3*13 + 9. The answer is 9."
+          - problem: "Compute (17 + 29) mod 12 by reducing each summand first. Give the residue in 0 to 11."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For (17 + 29) mod 12, reduce first using the division algorithm: 17 = 1*12 + 5, so 17 mod 12 = 5, and 29 = 2*12 + 5, so 29 mod 12 = 5. By the addition rule for residues, 5 + 5 = 10. Since 10 is less than 12, the answer is 10."
+          - problem: "Compute (123 * 45) mod 26 by reducing each factor first. Give the residue in 0 to 25."
+            answer: "23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For (123 * 45) mod 26, reduce first using the division algorithm: 123 = 4*26 + 19, so 123 mod 26 = 19, and 45 = 1*26 + 19, so 45 mod 26 = 19. By the multiplication rule for residues, 19*19 = 361. Reduce modulo 26: 361 = 13*26 + 23. The answer is 23."
+          - problem: "Compute (87 * 64 + 25) mod 17 by reducing each number first. Give the residue in 0 to 16."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For (87 * 64 + 25) mod 17, reduce first using the division algorithm: 87 = 5*17 + 2, so 87 mod 17 = 2; 64 = 3*17 + 13, so 64 mod 17 = 13; and 25 = 1*17 + 8, so 25 mod 17 = 8. By the multiplication rule for residues, 2*13 = 26, and 26 mod 17 = 9. By the addition rule for residues, 9 + 8 = 17, and 17 mod 17 = 0. The answer is 0."
         constraints: "force reduce-first strategy: operands 2-3 digits, moduli <= 26"
       - id: kp3
         name: "Modular exponentiation by repeated squaring"
