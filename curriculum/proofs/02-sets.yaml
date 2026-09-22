@@ -77,14 +77,30 @@ topics:
         name: "Describing sets by a property"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Write "the set of even integers" in set-builder notation.'
-            answer_contract: {kind: none}
-            answer: '$\{n \in \mathbb{Z} : n = 2k \text{ for some } k \in \mathbb{Z}\}$, or $\{2k : k \in \mathbb{Z}\}$.'
-            solution_sketch: 'Capture evenness with an existential predicate, or use the image form $\{2k : k \in \mathbb{Z}\}$.'
-          - problem: 'Write "the set of perfect squares" in set-builder notation.'
-            answer_contract: {kind: none}
-            answer: '$\{n^2 : n \in \mathbb{Z}\}$ (equivalently $\{m \in \mathbb{N} : m = n^2 \text{ for some } n \in \mathbb{Z}\}$).'
-            solution_sketch: 'Use the image form with parameter $n$, or a predicate stating $m$ is a square.'
+          - problem: "Let E be the set of even integers. Which defining predicate describes E?"
+            answer: "n = 2k for some integer k"
+            answer_contract: {"kind": "label", "options": [["n = 2k for some integer k"], ["n = 2k + 1 for some integer k"], ["n = k^2 for some integer k"], ["n = k + 2 for some integer k"]]}
+            solution_sketch: "Step 1 (translate): even means n is twice an integer, so the defining predicate is the existential statement n = 2k for some integer k. Step 2 (check wrong options): the option n = 2k + 1 for some integer k describes the odd integers, an off-by-one error. The option n = k^2 for some integer k describes the perfect squares, confusing doubling with squaring. The option n = k + 2 for some integer k holds for every integer, since k runs over all of Z, so it describes all of Z. The answer is n = 2k for some integer k."
+          - problem: "Let Q be the set of perfect squares. Which defining predicate describes Q?"
+            answer: "n = k^2 for some integer k"
+            answer_contract: {"kind": "label", "options": [["n = k^2 for some integer k"], ["n = 2k for some integer k"], ["n = k^3 for some integer k"], ["n = k^2 + 1 for some integer k"]]}
+            solution_sketch: "Step 1 (translate): a perfect square is a number of the form k squared, so the defining predicate is n = k^2 for some integer k. Step 2 (check wrong options): the option n = 2k for some integer k describes the even integers, confusing squaring with doubling. The option n = k^3 for some integer k describes the perfect cubes, using the wrong exponent. The option n = k^2 + 1 for some integer k describes numbers one more than a square, an off-by-one shift. The answer is n = k^2 for some integer k."
+          - problem: "Let B be the set of integers strictly between -4 and 4. Give the elements of B as a set."
+            answer: "{-3, -2, -1, 0, 1, 2, 3}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (translate): the English phrase strictly between -4 and 4 becomes the defining predicate -4 < n < 4. Step 2 (enumerate): the integers satisfying -4 < n < 4 are -3, -2, -1, 0, 1, 2, 3. So B = {-3, -2, -1, 0, 1, 2, 3}. The answer is {-3, -2, -1, 0, 1, 2, 3}."
+          - problem: "Let D be the set of positive integers that divide 30 with no remainder. Determine how many elements D has, and give the sum of its elements."
+            answer: "count = 8; total = 72"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "count"}, {"contract": {"kind": "exact"}, "name": "total"}]}
+            solution_sketch: "Step 1 (translate): d belongs to D exactly when 30/d is an integer, so D is the set of positive divisors of 30. Step 2 (enumerate): testing d = 1, 2, 3, 5, 6, 10, 15, 30 gives D = {1, 2, 3, 5, 6, 10, 15, 30}, so D has 8 elements. Step 3 (sum): 1 + 2 + 3 + 5 + 6 + 10 + 15 + 30 = 72. The answer is count = 8; total = 72."
+          - problem: "Let S be the set of integers whose square is at least 9 and at most 25. State the elements of S as a set."
+            answer: "{-5, -4, -3, 3, 4, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (translate): the description becomes the defining predicate 9 <= n^2 <= 25, which is equivalent to 3 <= abs(n) <= 5. Step 2 (enumerate): the integers with abs(n) equal to 3, 4, or 5 are -5, -4, -3, 3, 4, 5. So S = {-5, -4, -3, 3, 4, 5}. The answer is {-5, -4, -3, 3, 4, 5}."
+          - problem: "Let P be the set of positive integers that are multiples of 4 and also multiples of 6. What is the smallest element of P greater than 20?"
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (translate): n belongs to P exactly when n = 4j and n = 6k for positive integers j and k, so P is the set of common multiples of 4 and 6. Step 2 (characterize): every common multiple of 4 and 6 is a multiple of 12, and 12 itself is a multiple of both, so P = {12, 24, 36, ...}. Step 3 (select): the smallest element of P greater than 20 is 24. The answer is 24."
         constraints: "translate an English description into a defining predicate"
     diagnostic_exemplar:
       problem: 'Write the set $\{1, 4, 9, 16, 25, \dots\}$ of squares of positive integers in set-builder notation, and decide whether it is a subset of $\mathbb{N}$, of $\mathbb{Z}$ and of $\mathbb{Q}$.'
@@ -117,14 +133,30 @@ topics:
         name: "Union and intersection"
         key_prerequisites: [set-notation]
         exemplars:
-          - problem: 'With $A = \{1, 3, 5, 7\}$ and $B = \{3, 4, 5\}$, find $A \cup B$ and $A \cap B$.'
-            answer_contract: {kind: none}
-            answer: '$A \cup B = \{1, 3, 4, 5, 7\}$ and $A \cap B = \{3, 5\}$.'
-            solution_sketch: 'The union collects everything in either set; the intersection keeps only the shared elements $3$ and $5$.'
-          - problem: 'With $A = \{a, b, c\}$ and $B = \{b, c, d, e\}$, find $A \cup B$ and $A \cap B$.'
-            answer_contract: {kind: none}
-            answer: '$A \cup B = \{a, b, c, d, e\}$ and $A \cap B = \{b, c\}$.'
-            solution_sketch: 'List each element once for the union; keep the common elements $b, c$ for the intersection.'
+          - problem: "With $A = \\{2, 4, 6, 9\\}$ and $B = \\{4, 5, 6\\}$, find the union $A \\cup B$."
+            answer: "{2, 4, 5, 6, 9}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The union of two sets collects every element that is in A or in B, each listed once (union rule). Set A gives 2, 4, 6, 9 and B contributes the new element 5, while the shared elements 4 and 6 are not repeated. The union is {2, 4, 5, 6, 9}."
+          - problem: "With $A = \\{1, 2, 5, 8\\}$ and $B = \\{2, 3, 5, 7\\}$, find the intersection $A \\cap B$."
+            answer: "{2, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The intersection keeps only the elements that both sets share (intersection rule). Comparing A = {1, 2, 5, 8} with B = {2, 3, 5, 7}, the common elements are 2 and 5, while 1 and 8 belong only to A and 3 and 7 only to B. The intersection is {2, 5}."
+          - problem: "Let $A = \\{1, 4\\}$, $B = \\{2, 4, 7\\}$ and $C = \\{4, 5\\}$. Find the union $A \\cup B \\cup C$."
+            answer: "{1, 2, 4, 5, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "A union of several sets collects all elements that appear in any one of them, each listed once (union rule). Set A gives 1 and 4, set B adds 2 and 7, and set C adds 5; the element 4 is shared by all three and is listed once. The union is {1, 2, 4, 5, 7}."
+          - problem: "With $A = \\{3, 6, 9, 12\\}$ and $B = \\{6, 9, 15\\}$, how many elements does the intersection $A \\cap B$ have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The intersection keeps the elements present in both sets (intersection rule). Checking A = {3, 6, 9, 12} against B = {6, 9, 15}, the shared elements are 6 and 9, so A ∩ B = {6, 9}. Counting the members of this set gives 2 elements."
+          - problem: "Let $A = \\{2, 3, 5, 7\\}$, $B = \\{3, 5, 7, 11\\}$ and $C = \\{5, 7, 9\\}$. Find the intersection $A \\cap B \\cap C$."
+            answer: "{5, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The intersection of three sets keeps only the elements present in all three (intersection rule). The elements 2 and 11 fail because C lacks 2 and A lacks 11; the element 3 drops out because C lacks 3, and 9 drops out because A lacks 9. Only 5 and 7 lie in all three sets, so the intersection is {5, 7}."
+          - problem: "With $A = \\{1, 2, 4\\}$ and $B = \\{2, 3, 4, 6\\}$, how many elements does the union $A \\cup B$ have?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The union collects every element of both sets, with no repeats (union rule). Combining A = {1, 2, 4} and B = {2, 3, 4, 6} gives A ∪ B = {1, 2, 3, 4, 6}; the elements 2 and 4 appear in both sets and are counted once. This set has 5 elements."
         constraints: "a single union or intersection of small listed sets"
       - id: kp2
         name: "Set difference"
