@@ -176,10 +176,22 @@ topics:
             answer: "2x sinh(x^2)"
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Chain rule: $\sinh(x^2) \cdot 2x$.'
+          - problem: "Find the derivative of f(x) = cosh(6x)."
+            answer: "6sinh(6x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = cosh(6x), an outer cosh with inner u = 6x. The chain rule gives f'(x) = sinh(u) times u', and u' = 6. Multiply the two rates to get 6sinh(6x). The derivative is 6sinh(6x)."
           - problem: 'Using the quotient rule on $\tanh x = \frac{\sinh x}{\cosh x}$ and the identity $\cosh^2 x - \sinh^2 x = 1$, differentiate $\tanh x$.'
             answer: "1/cosh(x)^2"
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: '$\frac{\cosh^2 x - \sinh^2 x}{\cosh^2 x} = \frac{1}{\cosh^2 x}$.'
+          - problem: "Find the derivative of f(x) = sinh(x^2)."
+            answer: "2x cosh(x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The function is f(x) = sinh(x^2), an outer sinh with inner u = x^2. The chain rule gives f'(x) = cosh(u) times u', and u' = 2x. Multiply the two rates to get 2x cosh(x^2). The derivative is 2x cosh(x^2)."
+          - problem: "Find the derivative of f(x) = tanh(4x)."
+            answer: "4/cosh(4x)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start with tanh(4x) = sinh(4x)/cosh(4x). The chain rule gives (sinh(4x))' = 4cosh(4x) and (cosh(4x))' = 4sinh(4x). The quotient rule gives f'(x) = (4cosh(4x)cosh(4x) - sinh(4x)4sinh(4x))/cosh(4x)^2. Use the identity cosh^2(4x) - sinh^2(4x) = 1 to reduce the numerator to 4. The derivative is 4/cosh(4x)^2."
         constraints: "inner function bx or x^2; the tanh derivative always routed through the quotient rule plus the identity"
       - id: kp3
         name: Products and the slope of the catenary
