@@ -996,14 +996,30 @@ topics:
         name: "Parametrizing standard surfaces"
         key_prerequisites: [vector-valued-functions]
         exemplars:
-          - problem: 'Parametrize the cylinder $x^2 + y^2 = 4$, $0 \le z \le 3$.'
-            answer: '$\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z \rangle$, $\;0 \le \theta \le 2\pi$, $\;0 \le z \le 3$'
-            solution_sketch: '$\mathbf{r}(\theta,z)=\langle 2\cos\theta,2\sin\theta,z\rangle$ with $0\le\theta\le 2\pi$, $0\le z\le 3$.'
-            answer_contract: {kind: none}
-          - problem: 'Parametrize the graph $z = x^2 + y^2$ over the unit disk.'
-            answer: '$\mathbf{r}(x, y) = \langle x, y, x^2 + y^2 \rangle$, $\;x^2 + y^2 \le 1$'
-            solution_sketch: 'Use $x,y$ as parameters: $\mathbf{r}(x,y)=\langle x,y,x^2+y^2\rangle$ over $x^2+y^2\le 1$.'
-            answer_contract: {kind: none}
+          - problem: "A cylinder has equation x^2 + y^2 = 9 and lies between z = 0 and z = 5. Parametrize it with parameters theta and z, where 0 <= theta <= 2pi and 0 <= z <= 5. Give the x and y components of the parametrization as functions of theta."
+            answer: "x = 3cos(theta); y = 3sin(theta)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["theta"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["theta"]}, "name": "y"}]}
+            solution_sketch: "Rule: for the cylinder x^2 + y^2 = R^2 the radius pair is x = R cos(theta) and y = R sin(theta), while z stays free. The full parametrization is r(theta, z) = <3cos(theta), 3sin(theta), z> with 0 <= theta <= 2pi and 0 <= z <= 5. Reading off the first two components gives x = 3cos(theta); y = 3sin(theta)."
+          - problem: "A surface is the graph of z = x^2 + 2y^2 over the disk x^2 + y^2 <= 4. Parametrize it with parameters u and v by setting x = u and y = v, where u^2 + v^2 <= 4. Give the z-component of the parametrization as a function of u and v."
+            answer: "u^2+2v^2"
+            answer_contract: {"kind": "function", "vars": ["u", "v"]}
+            solution_sketch: "Rule: a graph z = f(x, y) is parametrized by taking the two input variables as the parameters. Substituting x = u and y = v gives the full parametrization r(u, v) = <u, v, u^2 + 2v^2> over the disk u^2 + v^2 <= 4. The z-component is u^2+2v^2."
+          - problem: "A surface is the graph of z = 5 - 2x + 3y over the square 0 <= x <= 1, 0 <= y <= 1. Parametrize it with parameters s and t by setting x = s and y = t, where 0 <= s <= 1 and 0 <= t <= 1. Give the z-component of the parametrization as a function of s and t."
+            answer: "5-2s+3t"
+            answer_contract: {"kind": "function", "vars": ["s", "t"]}
+            solution_sketch: "Rule: a graph z = f(x, y) is parametrized by the two input variables themselves. Substituting x = s and y = t gives the full parametrization r(s, t) = <s, t, 5 - 2s + 3t> over 0 <= s <= 1 and 0 <= t <= 1. The z-component is 5-2s+3t."
+          - problem: "A sphere has equation x^2 + y^2 + z^2 = 9. Parametrize it with parameters u and v, where u is the polar angle with 0 <= u <= pi and v is the azimuthal angle with 0 <= v <= 2pi. Give the x, y and z components of the parametrization as functions of u and v."
+            answer: "x = 3sin(u)cos(v); y = 3sin(u)sin(v); z = 3cos(u)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["u", "v"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["u", "v"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["u", "v"]}, "name": "z"}]}
+            solution_sketch: "Rule: a sphere of radius R uses x = R sin(u) cos(v), y = R sin(u) sin(v) and z = R cos(u), with u the polar angle and v the azimuthal angle. The full parametrization is r(u, v) = <3sin(u)cos(v), 3sin(u)sin(v), 3cos(u)> for 0 <= u <= pi and 0 <= v <= 2pi. The components are x = 3sin(u)cos(v); y = 3sin(u)sin(v); z = 3cos(u)."
+          - problem: "A cylinder has equation y^2 + z^2 = 16 and lies between x = 0 and x = 3. Parametrize it with parameters theta and x, where 0 <= theta <= 2pi and 0 <= x <= 3. Give the y and z components of the parametrization as functions of theta."
+            answer: "y = 4cos(theta); z = 4sin(theta)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["theta"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["theta"]}, "name": "z"}]}
+            solution_sketch: "Rule: the circle y^2 + z^2 = R^2 in the yz-plane gives y = R cos(theta) and z = R sin(theta), while x stays free. Here R = 4, so the full parametrization is r(theta, x) = <x, 4cos(theta), 4sin(theta)> with 0 <= theta <= 2pi and 0 <= x <= 3. The y and z components are y = 4cos(theta); z = 4sin(theta)."
+          - problem: "The upper half of a sphere is given by x^2 + y^2 + z^2 = 4 with z >= 0. Parametrize it with parameters alpha and theta, where alpha is the polar angle with 0 <= alpha <= pi/2 and theta is the azimuthal angle with 0 <= theta <= 2pi. State the three component functions x, y and z as functions of alpha and theta."
+            answer: "x = 2sin(alpha)cos(theta); y = 2sin(alpha)sin(theta); z = 2cos(alpha)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["alpha", "theta"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["alpha", "theta"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["alpha", "theta"]}, "name": "z"}]}
+            solution_sketch: "Rule: on the upper half of a sphere the polar angle alpha runs only from 0 to pi/2, while the azimuthal angle theta runs over one full turn. With R = 2 the full parametrization is r(alpha, theta) = <2sin(alpha)cos(theta), 2sin(alpha)sin(theta), 2cos(alpha)> for 0 <= alpha <= pi/2 and 0 <= theta <= 2pi. The components are x = 2sin(alpha)cos(theta); y = 2sin(alpha)sin(theta); z = 2cos(alpha)."
         constraints: "cylinders, spheres, and graphs; always state the parameter domain"
       - id: kp2
         name: "Normal vectors r_u x r_v"
