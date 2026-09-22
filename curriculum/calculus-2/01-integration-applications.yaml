@@ -1288,14 +1288,30 @@ topics:
         name: Plates with varying width
         key_prerequisites: [average-value-work, area-triangles-quadrilaterals]
         exemplars:
-          - problem: 'A triangular plate has its base of $6$ m at the water surface and its apex $3$ m directly below the base''s midpoint. Find the fluid force on one side ($9800$ N/m$^3$).'
-            answer: '$88200$ N'
-            answer_contract: {kind: none}
-            solution_sketch: 'Width at depth $y$ is $6 - 2y$ (linear from $6$ to $0$): $F = 9800\int_0^3 y(6 - 2y)\,dy = 9800(27 - 18) = 88200$ N.'
-          - problem: 'A circular plate of radius $1$ m is submerged vertically with its center $3$ m deep. Use the centroid shortcut $F = \rho g \bar{h} A$ to find the force.'
-            answer: '$29400\pi$ N'
-            answer_contract: {kind: none}
-            solution_sketch: 'By symmetry the average depth over the plate is the center''s depth: $F = 9800 \cdot 3 \cdot \pi(1)^2 = 29400\pi$ N.'
+          - problem: "A triangular plate has its base of 6 m at the water surface and its apex 6 m directly below the base's midpoint. The width at depth y is w(y) = 6 - y m. Find the fluid force on one side (9800 N/m^3)."
+            answer: "352800"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up the hydrostatic force integral with depth y from the surface. The width is w(y) = 6 - y, so F = 9800 * integral from 0 to 6 of y(6 - y) dy. The antiderivative is 3y^2 - y^3/3; at y = 6 it is 108 - 72 = 36. Multiply by 9800 to get 352800."
+          - problem: "A circular plate of radius 2 m is submerged vertically with its center 5 m below the water surface; its width at depth y is w(y) = 2 sqrt(4 - (y - 5)^2) m. Use the centroid shortcut. Find the fluid force on one side (9800 N/m^3)."
+            answer: "196000pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The plate is symmetric about a vertical diameter, so the centroid depth equals the center depth 5 m. The area is pi * 2^2 = 4pi m^2. The centroid shortcut gives F = 9800 * 5 * 4pi = 196000pi. The force is 196000pi."
+          - problem: "A vertical plate is a trapezoid. Its top edge at the water surface is 4 m wide and its bottom edge at depth 3 m is 8 m wide. The width at depth y is w(y) = 4 + (4/3)y m. Find the fluid force on one side (9800 N/m^3)."
+            answer: "294000"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The width is linear, w(y) = 4 + (4/3)y, so F = 9800 * integral from 0 to 3 of y(4 + (4/3)y) dy. The antiderivative is 2y^2 + (4/9)y^3; at y = 3 it is 18 + 12 = 30. Multiply by 9800 to get 294000."
+          - problem: "A triangular plate has its apex at the water surface and its base of 6 m at depth 4 m, parallel to the surface. The width at depth y is w(y) = (3/2)y m. Find the fluid force on one side (9800 N/m^3)."
+            answer: "313600"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "With apex at the surface, w(y) = (3/2)y for y from 0 to 4. Then F = 9800 * (3/2) * integral from 0 to 4 of y^2 dy. Since integral y^2 dy = 64/3, the integral is (3/2)(64/3) = 32. Thus F = 9800 * 32 = 313600."
+          - problem: "A vertical plate extends from the water surface to depth 3 m. Its width at depth y is w(y) = 2 + 2y m. Find the fluid force on one side (9800 N/m^3)."
+            answer: "264600"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The width is linear, w(y) = 2 + 2y, so F = 9800 * integral from 0 to 3 of y(2 + 2y) dy. The antiderivative is y^2 + (2/3)y^3; at y = 3 it is 9 + 18 = 27. Multiply by 9800 to get 264600."
+          - problem: "A semicircular plate of radius 3 m is submerged vertically with its straight diameter at the water surface and its curved edge below; its width at depth y is w(y) = 2 sqrt(9 - y^2) m. Use the centroid shortcut. Find the fluid force on one side (9800 N/m^3)."
+            answer: "176400"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The plate is symmetric about a vertical diameter, so the centroid depth is 4r/(3pi) = 4/pi m. Its area is (1/2)pi(3^2) = 9pi/2 m^2. The centroid shortcut gives F = 9800 * (4/pi) * (9pi/2) = 9800 * 18 = 176400. The force is 176400."
         constraints: "width w(y) linear in depth, or the centroid shortcut for symmetric plates; state w(y) explicitly"
     diagnostic_exemplar:
       problem: 'A triangular plate has its base of $4$ m at the water surface and its apex $3$ m directly below the midpoint of the base. Find the fluid force on one side ($9800$ N/m$^3$).'
@@ -1331,14 +1347,30 @@ topics:
         name: Discrete point masses
         key_prerequisites: [weighted-averages]
         exemplars:
-          - problem: 'Masses of $2$, $3$, and $5$ kg sit at $x = 1$, $4$, and $6$. Find the center of mass.'
-            answer: '$\bar{x} = 22/5$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\bar{x} = \frac{2(1) + 3(4) + 5(6)}{2 + 3 + 5} = \frac{44}{10} = \frac{22}{5}$.'
-          - problem: 'Masses of $1$ and $3$ kg sit at $x = 0$ and $x = 4$. Where is the balance point?'
-            answer: '$\bar{x} = 3$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\bar{x} = \frac{0 + 12}{4} = 3$ — closer to the heavier mass.'
+          - problem: "Masses of 3 kg, 2 kg, and 5 kg sit at x = -2, 1, and 4 on a line. Find the center of mass coordinate."
+            answer: "8/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (weighted-average rule): the center of mass is the total moment divided by the total mass. The total mass is 3 + 2 + 5 = 10. The moment is 3(-2) + 2(1) + 5(4) = -6 + 2 + 20 = 16. Step 2 (division rule): divide the moment by the total mass to get 16/10 = 8/5. The center of mass coordinate is 8/5."
+          - problem: "Masses of 2 kg and 6 kg sit at x = -1 and x = 3. Find the center of mass coordinate."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (weighted-average rule): the center of mass is the total moment divided by the total mass. The total mass is 2 + 6 = 8. The moment is 2(-1) + 6(3) = -2 + 18 = 16. Step 2 (division rule): 16/8 = 2. The center of mass coordinate is 2."
+          - problem: "Masses of 2 kg and m kg sit at x = 1 and x = 4. The center of mass is at x = 3. Find the unknown mass m."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (weighted-average rule): set the center of mass equal to the moment over total mass, (2(1) + m(4))/(2 + m) = 3. Step 2 (solve rule): multiply out to get 2 + 4m = 6 + 3m, so m = 4. The unknown mass m is 4."
+          - problem: "Masses of 1 kg, 3 kg, and 2 kg sit at x = 0, 2, and c. The center of mass is at x = 3. Find c."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (weighted-average rule): write (1(0) + 3(2) + 2(c))/(1 + 3 + 2) = 3. Step 2 (simplify rule): the numerator is 6 + 2c and the denominator is 6, so (6 + 2c)/6 = 3. Step 3 (solve rule): 6 + 2c = 18, so 2c = 12. The value of c is 6."
+          - problem: "Masses of 1 kg, 2 kg, 3 kg, and 4 kg sit at x = -3, -1, 2, and 5. Find the center of mass coordinate."
+            answer: "21/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (weighted-average rule): the total mass is 1 + 2 + 3 + 4 = 10. The moment is 1(-3) + 2(-1) + 3(2) + 4(5) = -3 - 2 + 6 + 20 = 21. Step 2 (division rule): divide the moment by the total mass, so the center of mass is 21/10. The center of mass coordinate is 21/10."
+          - problem: "Masses of 5 kg, 1 kg, and 2 kg sit at x = -4, 3, and 7. Find the center of mass coordinate."
+            answer: "-3/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (weighted-average rule): the total mass is 5 + 1 + 2 = 8. The moment is 5(-4) + 1(3) + 2(7) = -20 + 3 + 14 = -3. Step 2 (division rule): divide the moment by the total mass, so the center of mass is -3/8. The center of mass coordinate is -3/8."
         constraints: "2-4 point masses with integer positions and masses; answer a fraction or integer"
       - id: kp2
         name: Centroid of a region under a curve
@@ -1347,10 +1379,26 @@ topics:
           - problem: 'Find the centroid of the region under $y = x^2$ for $0 \le x \le 1$.'
             answer: '$\left(\frac{3}{4}, \frac{3}{10}\right)$'
             solution_sketch: '$A = \frac{1}{3}$; $\bar{x} = 3\int_0^1 x\cdot x^2\,dx = \frac{3}{4}$; $\bar{y} = 3\int_0^1 \frac{(x^2)^2}{2}\,dx = \frac{3}{10}$.'
-          - problem: 'Find $\bar{y}$ for the semicircular region under $y = \sqrt{1 - x^2}$.'
-            answer: '$\bar{y} = \frac{4}{3\pi}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$A = \frac{\pi}{2}$; $\bar{y} = \frac{2}{\pi}\int_{-1}^{1} \frac{1 - x^2}{2}\,dx = \frac{2}{\pi}\cdot\frac{2}{3} = \frac{4}{3\pi}$ ($\bar{x} = 0$ by symmetry).'
+          - problem: "Find the centroid of the semicircular region under y = sqrt(1 - x^2) for -1 <= x <= 1. Give the answer as (x, y)."
+            answer: "(0, 4/(3pi))"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Symmetry about the y-axis gives x-bar = 0. Area formula: A = pi/2. Moment formula for y-bar: My = (1/2) integral from -1 to 1 of (1 - x^2) dx = 2/3. Centroid formula: y-bar = My/A = (2/3)/(pi/2) = 4/(3pi). The centroid is (0, 4/(3pi))."
+          - problem: "Find the centroid of the region under y = 4 - x^2 for -2 <= x <= 2. Give the answer as (x, y)."
+            answer: "(0, 8/5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Symmetry about the y-axis gives x-bar = 0. Area formula: A = integral from -2 to 2 of (4 - x^2) dx = 32/3. Moment formula for y-bar: My = (1/2) integral from -2 to 2 of (4 - x^2)^2 dx = 256/15. Centroid formula: y-bar = My/A = (256/15)/(32/3) = 8/5. The centroid is (0, 8/5)."
+          - problem: "Find the centroid of the region under y = x^3 for 0 <= x <= 1. Give the answer as (x, y)."
+            answer: "(4/5, 2/7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Area formula: A = integral from 0 to 1 of x^3 dx = 1/4. First moment for x-bar: M_y = integral from 0 to 1 of x*x^3 dx = 1/5, so x-bar = M_y/A = 4/5. First moment for y-bar: M_x = (1/2) integral from 0 to 1 of (x^3)^2 dx = 1/14, so y-bar = M_x/A = 2/7. The centroid is (4/5, 2/7)."
+          - problem: "Find the centroid of the quarter-disk region under y = sqrt(1 - x^2) for 0 <= x <= 1. Give the answer as (x, y)."
+            answer: "(4/(3pi), 4/(3pi))"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Symmetry across y = x gives x-bar = y-bar. Area formula: A = pi/4. Moment formula: M_y = integral from 0 to 1 of x*sqrt(1 - x^2) dx = 1/3, so x-bar = M_y/A = 4/(3pi). By the same symmetry, y-bar = 4/(3pi). The centroid is (4/(3pi), 4/(3pi))."
+          - problem: "Find the centroid of the region under y = x^2 + 1 for -1 <= x <= 1. Give the answer as (x, y)."
+            answer: "(0, 7/10)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Symmetry about the y-axis gives x-bar = 0. Area formula: A = integral from -1 to 1 of (x^2 + 1) dx = 8/3. Moment formula for y-bar: My = (1/2) integral from -1 to 1 of (x^2 + 1)^2 dx = 28/15. Centroid formula: y-bar = My/A = (28/15)/(8/3) = 7/10. The centroid is (0, 7/10)."
         constraints: "regions under a single polynomial or circular curve; use symmetry to kill one coordinate where possible"
       - id: kp3
         name: Centroid between two curves
@@ -1359,10 +1407,26 @@ topics:
           - problem: 'Find the centroid of the region between $y = x$ and $y = x^2$.'
             answer: '$\left(\frac{1}{2}, \frac{2}{5}\right)$'
             solution_sketch: '$A = \frac{1}{6}$; $\bar{x} = 6\int_0^1 x(x - x^2)\,dx = \frac{1}{2}$; $\bar{y} = 6\int_0^1 \frac{x^2 - x^4}{2}\,dx = \frac{2}{5}$.'
-          - problem: 'Verify by integration that the centroid of the triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$ has $\bar{x} = 1/3$.'
-            answer: '$\bar{x} = 1/3$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Region under $y = 1 - x$: $A = \frac{1}{2}$; $\bar{x} = 2\int_0^1 x(1 - x)\,dx = 2(\frac{1}{2} - \frac{1}{3}) = \frac{1}{3}$ — matching the vertex-average rule.'
+          - problem: "A uniform lamina covers the region bounded by y = x^2 and y = x^3. Find its centroid, and give the answer as (x, y)."
+            answer: "(3/5, 12/35)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The region between y = x^2 and y = x^3 is a uniform lamina on [0, 1]. Area by the area-between-curves rule: A = integral_0^1 (x^2 - x^3) dx = 1/12. Moment about the y-axis: M_y = integral_0^1 x(x^2 - x^3) dx = 1/20, so xbar = M_y/A = 3/5. Moment about the x-axis: M_x = (1/2) integral_0^1 (x^4 - x^6) dx = 1/35, so ybar = M_x/A = 12/35. The centroid is (3/5, 12/35)."
+          - problem: "Find the centroid of the region between the curves y = x and y = x^3 on [0, 1]. Give the centroid as (x, y)."
+            answer: "(8/15, 8/21)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Top curve y = x, bottom curve y = x^3 on [0, 1]. Area: A = integral_0^1 (x - x^3) dx = 1/4. Moment about the y-axis: M_y = integral_0^1 x(x - x^3) dx = 2/15, so xbar = (2/15)/(1/4) = 8/15. Moment about the x-axis: M_x = (1/2) integral_0^1 (x^2 - x^6) dx = 2/21, so ybar = (2/21)/(1/4) = 8/21. The centroid is (8/15, 8/21)."
+          - problem: "The region between y = x and y = x^4 has its centroid at (xbar, ybar). Determine xbar as a fraction."
+            answer: "5/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The region between y = x and y = x^4 has area A = integral_0^1 (x - x^4) dx = 3/10. Its moment about the y-axis is M_y = integral_0^1 x(x - x^4) dx = 1/6. The x-coordinate of the centroid is xbar = M_y/A = (1/6)/(3/10) = 5/9. The x-coordinate is 5/9."
+          - problem: "Find the centroid of the region bounded by the graphs of y = x^2 and y = x^4. Give the centroid as (x, y)."
+            answer: "(5/8, 1/3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The region bounded by y = x^2 and y = x^4 lies on [0, 1]. Area: A = integral_0^1 (x^2 - x^4) dx = 2/15. Moment about the y-axis: M_y = integral_0^1 x(x^2 - x^4) dx = 1/12, so xbar = (1/12)/(2/15) = 5/8. Moment about the x-axis: M_x = (1/2) integral_0^1 (x^4 - x^8) dx = 2/45, so ybar = (2/45)/(2/15) = 1/3. The centroid is (5/8, 1/3)."
+          - problem: "A lamina fills the region between y = x^3 and y = x^4. Find its center of mass, and give the answer as (x, y)."
+            answer: "(2/3, 20/63)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The region between y = x^3 and y = x^4 is a lamina on [0, 1]. Area: A = integral_0^1 (x^3 - x^4) dx = 1/20. Moment about the y-axis: M_y = integral_0^1 x(x^3 - x^4) dx = 1/30, so xbar = (1/30)/(1/20) = 2/3. Moment about the x-axis: M_x = (1/2) integral_0^1 (x^6 - x^8) dx = 1/63, so ybar = (1/63)/(1/20) = 20/63. The center of mass is (2/3, 20/63)."
         constraints: "curves intersect at x = 0 and x = 1; moments integrate as polynomials"
     diagnostic_exemplar:
       problem: 'Find the centroid of the region between $y = \sqrt{x}$ and $y = x^2$.'
