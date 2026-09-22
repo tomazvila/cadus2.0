@@ -185,14 +185,30 @@ topics:
         name: "Half-range cosine expansions on $[0, L]$"
         key_prerequisites: [fourier-series, integration-by-parts]
         exemplars:
-          - problem: 'Expand $f(x) = x$ on $(0, \pi)$ in a cosine series: compute $a_0$ and $a_n = \frac{2}{\pi}\int_0^{\pi} x\cos nx\,dx$.'
-            answer: '$a_0 = \pi$ and $a_n = \dfrac{2((-1)^n - 1)}{\pi n^2}$ (so $-\frac{4}{\pi n^2}$ for odd $n$, $0$ for even $n$).'
-            answer_contract: {kind: none}
-            solution_sketch: 'By parts the boundary term vanishes, leaving $\frac{2}{\pi}\cdot\frac{\cos n\pi - 1}{n^2}$.'
-          - problem: 'Why does a half-range cosine expansion of a continuous $f$ tend to converge faster than its sine expansion?'
-            answer: "The cosine (even) extension stays continuous at the endpoints, while the odd extension generally jumps there — and jumps slow convergence to $1/n$-sized coefficients."
-            answer_contract: {kind: none}
-            solution_sketch: "The cosine (even) extension stays continuous at the endpoints, while the odd extension generally jumps there — and jumps slow convergence to $1/n$-sized coefficients."
+          - problem: "A half-range cosine expansion of $f(x) = x$ on $(0,1)$ uses $a_0 = 2\\int_0^1 x\\,dx$ and $a_n = 2\\int_0^1 x\\cos(n\\pi x)\\,dx$ for $n \\geq 1$. Compute $a_0$ and $a_1$."
+            answer: "a0 = 1; a1 = -4/pi^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a0"}, {"contract": {"kind": "exact"}, "name": "a1"}]}
+            solution_sketch: "Step 1 (coefficient definition): for f(x)=x on (0,1) the half-range cosine coefficients are a0 = 2 times the integral from 0 to 1 of x dx, and a_n = 2 times the integral from 0 to 1 of x cos(n pi x) dx. Step 2 (power rule for a0): a0 = 2 times x^2/2 evaluated from 0 to 1, which is 1. Step 3 (integration by parts for a1): the integral from 0 to 1 of x cos(pi x) dx equals (cos(pi) - 1)/pi^2 = -2/pi^2, so a1 = 2 times (-2/pi^2) = -4/pi^2. The answer is a0 = 1; a1 = -4/pi^2."
+          - problem: "The half-range cosine expansion of $f(x) = x$ on $(0,1)$ treats $f$ as its even periodic extension. State whether that extension is unbroken at $x = 0$, and give the value of the extension at $x = -\\frac{1}{4}$."
+            answer: "verdict = continuous; value = 1/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["continuous"], ["jump"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1 (even extension): the cosine series uses the even periodic extension, which on (-1,1) equals f(abs(x)) = abs(x); abs(x) has no break at x = 0. Step 2 (evenness for the value): the extension is even, so its value at x = -1/4 equals f(1/4) = 1/4. Step 3 (label check): the option jump is the error of confusing the even extension with the odd extension, which breaks at the endpoints; the correct option is continuous. The answer is verdict = continuous; value = 1/4."
+          - problem: "Let $f(x) = 3$ on $(0,\\pi)$ be expanded in a half-range cosine series with $a_0 = \\frac{2}{\\pi}\\int_0^{\\pi} 3\\,dx$ and $a_n = \\frac{2}{\\pi}\\int_0^{\\pi} 3\\cos(nx)\\,dx$. Compute $a_0$ and $a_1$."
+            answer: "a0 = 6; a1 = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a0"}, {"contract": {"kind": "exact"}, "name": "a1"}]}
+            solution_sketch: "Step 1 (coefficient definition): for the constant f(x)=3 on (0,pi), a0 = (2/pi) times the integral from 0 to pi of 3 dx, and a_n = (2/pi) times the integral from 0 to pi of 3 cos(nx) dx. Step 2 (constant integral for a0): a0 = (2/pi) times 3 pi, which is 6. Step 3 (orthogonality for a1): the integral from 0 to pi of cos(x) dx equals sin(pi) - sin(0) = 0, so a1 = 0. The answer is a0 = 6; a1 = 0."
+          - problem: "For $f(x) = 1 - x$ on $(0,1)$, the half-range cosine coefficients are $a_n = 2\\int_0^1 (1-x)\\cos(n\\pi x)\\,dx$ for $n \\geq 1$. Compute $a_1$ and $a_3$."
+            answer: "a1 = 4/pi^2; a3 = 4/(9pi^2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a1"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
+            solution_sketch: "Step 1 (coefficient definition): for f(x)=1-x on (0,1), a_n = 2 times the integral from 0 to 1 of (1-x) cos(n pi x) dx. Step 2 (integration by parts, n=1): the integral of cos(pi x) vanishes by orthogonality and the integral of x cos(pi x) equals (cos(pi)-1)/pi^2 = -2/pi^2, so the integral of (1-x) cos(pi x) is 2/pi^2 and a1 = 4/pi^2. Step 3 (same method, n=3): the integral of x cos(3 pi x) equals (cos(3 pi)-1)/(9 pi^2) = -2/(9 pi^2), so the integral of (1-x) cos(3 pi x) is 2/(9 pi^2) and a3 = 4/(9 pi^2). The answer is a1 = 4/pi^2; a3 = 4/(9pi^2)."
+          - problem: "Let $f(x) = x + 2$ on $(0,\\pi)$ have first half-range cosine coefficient $a_1 = \\frac{2}{\\pi}\\int_0^{\\pi} (x+2)\\cos x\\,dx$. Evaluate $a_1$."
+            answer: "-4/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (coefficient definition): a1 = (2/pi) times the integral from 0 to pi of (x+2) cos(x) dx for f(x)=x+2 on (0,pi). Step 2 (linearity): split into the integral of x cos(x), which by parts equals cos(pi) - 1 = -2, and 2 times the integral of cos(x) over a half period, which is 0. Step 3 (combine): a1 = (2/pi) times (-2) = -4/pi. The answer is -4/pi."
+          - problem: "On $(0,1)$, a linear function $f(x) = mx$ has first half-range cosine coefficient $a_1 = 2\\int_0^1 mx\\cos(\\pi x)\\,dx$. Given that $a_1 = -\\frac{8}{\\pi^2}$, find $m$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (coefficient definition): for f(x)=mx on (0,1), a1 = 2m times the integral from 0 to 1 of x cos(pi x) dx. Step 2 (integration by parts): the integral of x cos(pi x) from 0 to 1 equals (cos(pi)-1)/pi^2 = -2/pi^2, so a1 = -4m/pi^2. Step 3 (solve for m): set -4m/pi^2 = -8/pi^2, which gives m = 2. The answer is 2."
         constraints: "L in {1, pi}; f constant or linear; coefficients must come out as clean multiples of 1/n^2 or (± signs handled via (-1)^n, never a bare plus-minus in an answer)"
     diagnostic_exemplar:
       problem: 'Expand $f(x) = x$ on $(0, \pi)$ in a half-range cosine series: give $a_0$ and $a_n$.'
@@ -292,14 +308,30 @@ topics:
         name: General initial data via sine series
         key_prerequisites: [fourier-sine-cosine-series]
         exemplars:
-          - problem: 'Write the general solution of $u_t = k\,u_{xx}$ on $(0, L)$ with $u(0,t) = u(L,t) = 0$ and $u(x,0) = f(x)$.'
-            answer: '$u(x,t) = \sum_{n=1}^{\infty} b_n e^{-k(n\pi/L)^2 t}\sin\dfrac{n\pi x}{L}$, where $b_n = \dfrac{2}{L}\int_0^L f(x)\sin\dfrac{n\pi x}{L}\,dx$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Superpose the product solutions; at $t = 0$ the series must be the sine series of $f$.'
-          - problem: 'A rod on $(0, \pi)$ with ends held at $0$ starts at constant temperature $u(x,0) = 100$. Solve $u_t = u_{xx}$.'
-            answer: '$u(x,t) = \sum_{n \text{ odd}} \dfrac{400}{n\pi} e^{-n^2 t}\sin nx$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The sine coefficients of the constant $100$ are $\frac{200(1 - (-1)^n)}{n\pi}$: $\frac{400}{n\pi}$ for odd $n$. Attach $e^{-n^2 t}$ to each mode.'
+          - problem: "A rod of length pi has its ends held at 0 and starts at u(x,0) = x. Its temperature solves u_t = u_xx, so u(x,t) = sum b_n e^(-n^2 t) sin(nx). Find b_1."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (separation of variables): write u(x,t) = sum b_n e^(-n^2 t) sin(nx). Step 2 (matching initial data): at t = 0, x = sum b_n sin(nx), so b_n is the sine coefficient (2/pi) times the integral from 0 to pi of x sin(nx) dx. Step 3 (evaluate): for n = 1 the integral is pi, so b_1 = 2. Thus b_1 = 2."
+          - problem: "A rod on (0, pi) has ends at 0 and initial temperature u(x,0) = 60. The solution is u(x,t) = sum b_n e^(-n^2 t) sin(nx). Find b_1."
+            answer: "240/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (separation of variables): write u(x,t) = sum b_n e^(-n^2 t) sin(nx). Step 2 (matching initial data): at t = 0, 60 = sum b_n sin(nx), so b_n = (2/pi) times the integral from 0 to pi of 60 sin(nx) dx. Step 3 (evaluate): for n = 1 the integral is 120, so b_1 = 240/pi. Thus b_1 = 240/pi."
+          - problem: "For the rod on (0, pi) with u_t = u_xx, ends at 0, and u(x,0) = x, the solution is u(x,t) = sum b_n e^(-n^2 t) sin(nx). Find b_3."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (separation of variables): write u(x,t) = sum b_n e^(-n^2 t) sin(nx). Step 2 (matching initial data): at t = 0, x = sum b_n sin(nx), so b_n = (2/pi) times the integral from 0 to pi of x sin(nx) dx. Step 3 (evaluate): this integral gives 2(-1)^(n+1)/n, so for n = 3 it is 2/3. Thus b_3 = 2/3."
+          - problem: "A rod on (0, pi) with u_t = u_xx and ends at 0 starts at u(x,0) = x. In the series solution u(x,t) = sum b_n e^(-n^2 t) sin(nx), find the coefficient b_2."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (separation of variables): write u(x,t) = sum b_n e^(-n^2 t) sin(nx). Step 2 (matching initial data): at t = 0, x = sum b_n sin(nx), so b_n = (2/pi) times the integral from 0 to pi of x sin(nx) dx. Step 3 (evaluate): the coefficient formula is 2(-1)^(n+1)/n, so b_2 = -1. Thus b_2 = -1."
+          - problem: "A rod on (0, 1) has ends at 0 and initial temperature u(x,0) = x. Its solution is u(x,t) = sum b_n e^(-n^2 pi^2 t) sin(n pi x). Find b_1."
+            answer: "2/pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (separation of variables): for length 1 write u(x,t) = sum b_n e^(-n^2 pi^2 t) sin(n pi x). Step 2 (matching initial data): at t = 0, x = sum b_n sin(n pi x), so b_n = 2 times the integral from 0 to 1 of x sin(n pi x) dx. Step 3 (evaluate): the integral is (-1)^(n+1)/(n pi), so b_1 = 2/pi. Thus b_1 = 2/pi."
+          - problem: "A rod on (0, 1) has ends at 0 and initial temperature u(x,0) = 80. The solution is u(x,t) = sum b_n e^(-n^2 pi^2 t) sin(n pi x). Find the ratio b_1/b_3."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (separation of variables): for length 1 write u(x,t) = sum b_n e^(-n^2 pi^2 t) sin(n pi x). Step 2 (matching initial data): at t = 0, 80 = sum b_n sin(n pi x), so b_n = 160 times the integral from 0 to 1 of sin(n pi x) dx. Step 3 (evaluate): for n = 1, b_1 = 320/pi; for n = 3, b_3 = 320/(3 pi). The ratio is 3. Thus the ratio b_1/b_3 = 3."
         constraints: "initial data constant or linear, whose sine coefficients were computed in fourier-sine-cosine-series; L in {1, pi}"
     diagnostic_exemplar:
       problem: 'Solve $u_t = u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$ and initial temperature $u(x,0) = 50$.'
