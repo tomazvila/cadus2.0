@@ -590,6 +590,18 @@ topics:
           - problem: "For $y' = x - y$ with $y(1) = 2$ and $h = 0.2$, estimate $y(1.2)$ with one Euler step."
             answer: "$1.8$"
             solution_sketch: "$y_1 = 2 + 0.2(1 - 2) = 2 - 0.2 = 1.8$."
+          - problem: "For $y' = x + 2y$ with $y(0) = 1$, take one Euler step of size $h = 0.1$ to estimate $y(0.1)$. Give the answer to 1 decimal."
+            answer: "1.2"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Identify x0 = 0, y0 = 1, and h = 0.1. Evaluate the slope x + 2y at (0, 1), which gives 2. Apply one Euler step y1 = y0 + h times the slope, so y1 = 1 + 0.1(2) = 1.2. The estimate is 1.2."
+          - problem: "For $y' = x^2 - y$ with $y(0) = 2$, take one Euler step of size $h = 0.25$ to estimate $y(0.25)$. Give the answer to 2 decimals."
+            answer: "1.50"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Identify x0 = 0, y0 = 2, and h = 0.25. Evaluate the slope x^2 - y at (0, 2), giving 0 - 2 = -2. Apply one Euler step y1 = y0 + h times the slope: 2 + 0.25(-2) = 1.50. The estimate is 1.50."
+          - problem: "For $y' = 2x + y$ with $y(0) = 1$, one Euler step of size $h$ gives the estimate $y(h) = 1.2$. Find $h$. Give the answer to 1 decimal."
+            answer: "0.2"
+            answer_contract: {"decimals": 1, "kind": "approx"}
+            solution_sketch: "Identify x0 = 0 and y0 = 1. Evaluate the slope 2x + y at (0, 1), which gives 1. Apply one Euler step: y1 = 1 + h(1). Set 1 + h = 1.2 and solve, so h = 0.2. The step size is 0.2."
         constraints: "h in {0.1, 0.2, 0.25, 0.5}; f polynomial; arithmetic exact in one or two decimal places"
       - id: kp2
         name: Iterating several steps
