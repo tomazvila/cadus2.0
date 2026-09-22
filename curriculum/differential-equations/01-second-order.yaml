@@ -1263,18 +1263,30 @@ topics:
         name: "Existence outcomes: unique, none, or infinitely many"
         key_prerequisites: [homogeneous-constant-coefficients, unit-circle]
         exemplars:
-          - problem: "Find all solutions of $y'' + y = 0$ with $y(0) = 0$, $y(\\pi) = 0$."
-            answer: "$y = c\\sin x$ for every constant $c$: infinitely many solutions."
-            answer_contract: {kind: none}
-            solution_sketch: "$c_1 = 0$ from the first condition; the second reads $c_2 \\sin\\pi = 0$, true for all $c_2$."
-          - problem: "Solve $y'' + y = 0$ with $y(0) = 0$, $y(\\pi) = 1$."
-            answer: "No solution."
-            answer_contract: {kind: none}
-            solution_sketch: "$c_1 = 0$ forces $y = c_2\\sin x$, but $y(\\pi) = 0 \\neq 1$."
-          - problem: "How does this differ from initial value problems for the same equation?"
-            answer: "An IVP (conditions at one point) always has exactly one solution; a BVP can have one, none, or infinitely many."
-            answer_contract: {kind: none}
-            solution_sketch: "An IVP (conditions at one point) always has exactly one solution; a BVP can have one, none, or infinitely many."
+          - problem: "Consider the boundary value problem y'' + y = 0 with y(0) = 0 and y(pi) = 0. Select the number of solutions."
+            answer: "infinitely many"
+            answer_contract: {"kind": "label", "options": [["exactly one"], ["no solution"], ["infinitely many"], ["exactly two"]]}
+            solution_sketch: "The general solution is y = c1 cos x + c2 sin x. The condition y(0) = 0 gives c1 = 0. The condition y(pi) = 0 is c2 sin(pi) = 0, which holds for every c2, so a whole family remains. The option exactly one is wrong because it ignores the free constant c2; the option no solution is wrong because sin(pi) = 0 makes the boundary data consistent; the option exactly two is wrong because a free constant in a linear homogeneous problem gives infinitely many, not two. The number of solutions is infinitely many."
+          - problem: "Consider the boundary value problem y'' + y = 0 with y(0) = 0 and y(pi) = 1. How many solutions does it have? Give the number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The general solution is y = c1 cos x + c2 sin x. The condition y(0) = 0 gives c1 = 0, so y = c2 sin x. The condition y(pi) = 1 requires c2 sin(pi) = 1, which is 0 = 1, impossible. The number of solutions is 0."
+          - problem: "Consider the boundary value problem y'' + y = 0 with y(0) = 0 and y(pi/2) = 5. Find the solution y as a function of x."
+            answer: "5sin(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Use the general solution of y'' + y = 0: y = c1 cos x + c2 sin x. The condition y(0) = 0 forces c1 = 0. The condition y(pi/2) = 5 gives c2 sin(pi/2) = c2 = 5. The solution is y = 5sin(x)."
+          - problem: "Consider the boundary value problem y'' + y = 0 with y(0) = 0 and y(pi/6) = 2. Find the coefficient of sin x in the solution."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The general solution is y = c1 cos x + c2 sin x. The condition y(0) = 0 gives c1 = 0. The condition y(pi/6) = 2 gives c2 sin(pi/6) = c2/2 = 2, so c2 = 4. The coefficient of sin x is 4."
+          - problem: "Consider the boundary value problem y'' + y = 0 with y(0) = 0 and y(pi/2) = -3. Find y(pi/6)."
+            answer: "-3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The general solution is y = c1 cos x + c2 sin x. The condition y(0) = 0 gives c1 = 0. The condition y(pi/2) = -3 gives c2 = -3, so y = -3 sin x. Then y(pi/6) = -3 sin(pi/6) = -3/2. The value is -3/2."
+          - problem: "Consider the boundary value problem y'' + y = 0 with y(0) = 0 and y(3pi/2) = 2. Find y(pi/6)."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The general solution is y = c1 cos x + c2 sin x. The condition y(0) = 0 gives c1 = 0. The condition y(3pi/2) = 2 gives c2 sin(3pi/2) = -c2 = 2, so c2 = -2. Then y(pi/6) = -2 sin(pi/6) = -1. The value is -1."
         constraints: "the boundary data hits or misses zeros of sin; all three outcomes must be represented across problems"
       - id: kp3
         name: Eigenvalue problems

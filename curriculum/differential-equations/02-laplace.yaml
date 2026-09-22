@@ -21,17 +21,29 @@ topics:
         name: The definition and convergence
         key_prerequisites: [improper-integrals]
         exemplars:
-          - problem: 'Compute $\mathcal{L}\{1\}$ directly from the definition $\int_0^{\infty} e^{-st}\,dt$.'
-            answer: '$\dfrac{1}{s}$ for $s > 0$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\int_0^{\infty} e^{-st}dt = \lim_{b\to\infty}\left[-\frac{e^{-st}}{s}\right]_0^b = \frac{1}{s}$ when $s > 0$.'
-          - problem: 'Compute $\mathcal{L}\{e^{at}\}$ from the definition.'
-            answer: '$\dfrac{1}{s - a}$ for $s > a$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\int_0^{\infty} e^{(a-s)t}dt$ converges to $\frac{1}{s-a}$ exactly when $s > a$.'
           - problem: 'For which values of $s$ does the integral $\int_0^{\infty} e^{-st} e^{3t}\,dt$ converge?'
             answer: '$s > 3$'
             solution_sketch: 'The integrand is $e^{(3-s)t}$; the improper integral converges exactly when the exponent $3 - s$ is negative.'
+          - problem: "Use the definition of the Laplace transform to compute L{1}. Give the transform as F(s) and the domain of convergence as an inequality in s."
+            answer: "F = 1/s; domain = s > 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["s"]}, "name": "F"}, {"contract": {"kind": "inequality_union"}, "name": "domain"}]}
+            solution_sketch: "The full result is F = 1/s; domain = s > 0. Step 1 (definition of the Laplace transform): F(s) is the improper integral from 0 to infinity of e^(-st) dt. Step 2 (antiderivative): an antiderivative of e^(-st) is -e^(-st)/s, and the boundary term at t = 0 contributes 1/s while the limit at infinity is 0 exactly when s > 0. So the improper integral converges to 1/s on that domain. F = 1/s; domain = s > 0."
+          - problem: "From the definition, the Laplace transform of a function f(t) is the integral from 0 to infinity of e^(-st) f(t) dt. Take f(t) = e^(2t). Give F(s) as a function of s."
+            answer: "1/(s-2)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Step 1 (definition of the Laplace transform): F(s) is the improper integral from 0 to infinity of e^(-st) e^(2t) dt, which combines to the integral of e^((2-s)t) dt. Step 2 (convergence of the improper integral): an antiderivative of e^((2-s)t) is e^((2-s)t)/(2-s), and the limit at infinity exists exactly when 2 - s < 0, so the domain of convergence is s > 2. Step 3 (evaluate the bounds): the limit term is 0 and the boundary term at t = 0 gives -1/(2-s) = 1/(s-2). The value of the integral is 1/(s-2)."
+          - problem: "For which values of s does the integral from 0 to infinity of e^(-st) e^(-2t) dt converge? Give the answer as an inequality in s."
+            answer: "s > -2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1: Combine the exponentials, so e^(-st) e^(-2t) = e^(-(s+2)t). Step 2 (convergence test for improper integrals of e^(ct)): the integral from 0 to infinity converges exactly when c < 0, so here -(s+2) < 0. The final result is s > -2."
+          - problem: "For which values of s does the integral from 0 to infinity of e^(-st) e^(6t) dt converge? Give the answer as an inequality in s."
+            answer: "s > 6"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1: Combine the exponentials, so e^(-st) e^(6t) = e^((6-s)t). Step 2 (convergence test for improper integrals of e^(ct)): the integral from 0 to infinity converges exactly when c < 0, so here 6 - s < 0. The final result is s > 6."
+          - problem: "A signal has value f(t) = e^(9t) for t at least 0. Its Laplace transform is F(s), the integral from 0 to infinity of e^(-st) e^(9t) dt. Compute F(s) from the definition. Give F(s) as a function of s."
+            answer: "1/(s-9)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Step 1 (definition of the Laplace transform): F(s) is the improper integral from 0 to infinity of e^(-st) e^(9t) dt, which combines to the integral of e^((9-s)t) dt. Step 2 (convergence of the improper integral): an antiderivative of e^((9-s)t) is e^((9-s)t)/(9-s), and the limit at infinity exists exactly when 9 - s < 0, so the domain of convergence is s > 9. Step 3 (evaluate the bounds): the limit term is 0 and the boundary term at t = 0 gives -1/(9-s) = 1/(s-9). The transform is F(s) = 1/(s-9)."
         constraints: "integrands 1 and e^{at} with integer a; always state the domain of convergence"
       - id: kp2
         name: Transforms needing integration by parts
@@ -861,35 +873,59 @@ topics:
         name: Impulse-forced initial value problems
         key_prerequisites: [laplace-ivp, unit-step-piecewise-forcing]
         exemplars:
-          - problem: "Solve $y' + 2y = \\delta(t - 1)$, $y(0) = 0$."
-            answer: '$y = u_1(t)\,e^{-2(t-1)}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$(s + 2)Y = e^{-s}$, so $Y = \frac{e^{-s}}{s+2}$; invert with the second shifting theorem.'
-          - problem: "Solve $y'' + y = \\delta(t - \\pi)$, $y(0) = y'(0) = 0$."
-            answer: '$y = u_{\pi}(t)\,\sin(t - \pi)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$Y = \frac{e^{-\pi s}}{s^2 + 1}$; the delayed inverse of $\frac{1}{s^2+1}$ is $u_{\pi}(t)\sin(t - \pi)$.'
-          - problem: "A resting system obeys $y'' + 4y = \\delta(t)$, $y(0) = y'(0) = 0$. Find the response."
-            answer: '$y = \dfrac{1}{2}\sin 2t$'
-            answer_contract: {kind: none}
-            solution_sketch: '$Y = \frac{1}{s^2 + 4}$ inverts straight from the table.'
+          - problem: "The system $y' + 2y = \\delta(t - 1)$ has $y(0) = 0$. Find $y(2)$."
+            answer: "e^(-2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Take the Laplace transform: (s + 2)Y = e^(-s), so Y = e^(-s)/(s + 2). The second shifting theorem gives y(t) = u_1(t) e^(-2(t - 1)) for t > 1. At t = 2, y(2) = e^(-2)."
+          - problem: "The system $y'' + y = \\delta(t - \\pi)$ has $y(0) = y'(0) = 0$. Find $y(3\\pi/2)$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Take the Laplace transform: (s^2 + 1)Y = e^(-pi s), so Y = e^(-pi s)/(s^2 + 1). The second shifting theorem gives y(t) = u_pi(t) sin(t - pi). At t = 3pi/2, sin(3pi/2 - pi) = sin(pi/2) = 1, so y(3pi/2) = 1."
+          - problem: "The system $y'' + 9y = \\delta(t)$ has $y(0) = y'(0) = 0$. Find $y(t)$ as a function of $t$."
+            answer: "sin(3t)/3"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Take the Laplace transform: (s^2 + 9)Y = 1, so Y = 1/(s^2 + 9). Invert the table line: y(t) = sin(3t)/3. The solution is y(t) = sin(3t)/3."
+          - problem: "The system $y'' + 5y' + 6y = \\delta(t)$ has $y(0) = y'(0) = 0$. Find $y(t)$ as a function of $t$."
+            answer: "e^(-2t)-e^(-3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Take the Laplace transform: (s^2 + 5s + 6)Y = 1, so Y = 1/((s + 2)(s + 3)). Partial fractions give Y = 1/(s + 2) - 1/(s + 3). Invert each term: y(t) = e^(-2t) - e^(-3t)."
+          - problem: "The system $y'' + 7y' + 10y = \\delta(t)$ has $y(0) = y'(0) = 0$. Find $y(t)$ as a function of $t$."
+            answer: "e^(-2t)/3 - e^(-5t)/3"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Take the Laplace transform: (s^2 + 7s + 10)Y = 1, so Y = 1/((s + 2)(s + 5)). Partial fractions give Y = (1/3)(1/(s + 2) - 1/(s + 5)). Invert: y(t) = e^(-2t)/3 - e^(-5t)/3."
+          - problem: "The system $y'' + 4y = \\delta(t - 2)$ has $y(0) = y'(0) = 0$. Find $y(2 + \\pi/4)$."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Take the Laplace transform: (s^2 + 4)Y = e^(-2s), so Y = e^(-2s)/(s^2 + 4). The second shifting theorem gives y(t) = u_2(t) sin(2(t - 2))/2. At t = 2 + pi/4, sin(pi/2)/2 = 1/2, so y(2 + pi/4) = 1/2."
         constraints: "a single impulse at t = 0, a positive integer, or pi; characteristic roots distinct integers or +-ni so inversion is one table line after the shift"
       - id: kp3
         name: Impulse response and the transfer function
         key_prerequisites: [laplace-ivp, laplace-convolution]
         exemplars:
-          - problem: "Find the impulse response $h(t)$ of $y'' + 3y' + 2y = f(t)$: solve with $f = \\delta(t)$ and rest initial conditions."
-            answer: '$h(t) = e^{-t} - e^{-2t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$H(s) = \frac{1}{s^2 + 3s + 2} = \frac{1}{s+1} - \frac{1}{s+2}$ by partial fractions.'
-          - problem: "State the transfer function $H(s)$ of $ay'' + by' + cy = f(t)$ and its relation to the impulse response."
-            answer: '$H(s) = \dfrac{1}{as^2 + bs + c}$; the impulse response is $h = \mathcal{L}^{-1}\{H\}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$H(s) = \dfrac{1}{as^2 + bs + c}$; the impulse response is $h = \mathcal{L}^{-1}\{H\}$.'
-          - problem: "Using the impulse response $h(t) = \\sin t$ of $y'' + y = f(t)$, write the rest solution for a general forcing $g(t)$."
-            answer: '$y = \int_0^t \sin(t - \tau)\,g(\tau)\,d\tau$'
-            answer_contract: {kind: none}
-            solution_sketch: '$Y = H(s)G(s)$, and a product of transforms inverts to the convolution $h * g$.'
+          - problem: "Find the impulse response h(t) of y'' + 5y' + 6y = f(t): take f = delta(t) and rest initial conditions. Give h(t) as a function of t."
+            answer: "e^(-2t) - e^(-3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The Laplace transform of delta(t) is 1, so rest initial conditions give (s^2 + 5s + 6)H(s) = 1. Factor the denominator and split by partial fractions: H(s) = 1/((s+2)(s+3)) = 1/(s+2) - 1/(s+3). Invert each term with the Laplace table to get h(t) = e^(-2t) - e^(-3t)."
+          - problem: "For y'' + 6y' + 8y = f(t), take the transfer function as the ratio of the Laplace transform of the output to that of the input with rest initial conditions. Give the transfer function H(s) as a function of s."
+            answer: "1/(s^2+6s+8)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Take the Laplace transform with rest initial conditions to get (s^2 + 6s + 8)Y(s) = F(s). The transfer function is the ratio H(s) = Y(s)/F(s), so H(s) = 1/(s^2 + 6s + 8). The impulse response would be the inverse transform of this H(s), namely h(t) = e^(-2t)/2 - e^(-4t)/2. The transfer function is H(s) = 1/(s^2 + 6s + 8)."
+          - problem: "For y'' + 3y' + 2y = f(t) the impulse response is h(t) = e^(-t) - e^(-2t). Use the convolution y = h * g to find the rest solution when g(t) = 1. Give y(t) as a function of t."
+            answer: "1/2 - e^(-t) + e^(-2t)/2"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "By the convolution theorem the rest solution is the integral from 0 to t of (e^(-(t-tau)) - e^(-2(t-tau))) dtau when g(t) = 1. Pull the t factors out and integrate: y(t) = e^(-t)(e^t - 1) - e^(-2t)(e^(2t) - 1)/2. Simplify the exponentials to get y(t) = 1/2 - e^(-t) + e^(-2t)/2."
+          - problem: "Find the impulse response h(t) of y'' + 9y = f(t) with rest initial conditions and f = delta(t). Give h(t) as a function of t."
+            answer: "sin(3t)/3"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "With f = delta(t) and rest initial conditions, the Laplace transform gives (s^2 + 9)H(s) = 1. Solve for H(s) = 1/(s^2 + 9). The inverse transform of 1/(s^2 + 9) is sin(3t)/3 by the Laplace table. Therefore h(t) = sin(3t)/3."
+          - problem: "For y'' + 10y' + 21y = f(t), the transfer function is H(s) = 1/(s^2 + 10s + 21). Find H(0)."
+            answer: "1/21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute s = 0 into the transfer function H(s). The denominator becomes 0^2 + 10*0 + 21 = 21. Divide 1 by 21 to get H(0) = 1/21."
+          - problem: "For y'' + 7y' + 10y = f(t) the impulse response is h(t) = e^(-2t)/3 - e^(-5t)/3. Use convolution to find the rest solution when g(t) = e^(3t). Give y(t) as a function of t."
+            answer: "e^(3t)/40 - e^(-2t)/15 + e^(-5t)/24"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Convolution gives y(t) as the integral from 0 to t of (e^(-2(t-tau))/3 - e^(-5(t-tau))/3) e^(3tau) dtau. Use the convolution theorem and integrate the two exponential terms separately: y(t) = (e^(3t)-e^(-2t))/15 - (e^(3t)-e^(-5t))/24. Simplify to y(t) = e^(3t)/40 - e^(-2t)/15 + e^(-5t)/24."
         constraints: "constant-coefficient second-order with distinct real integer roots or +-ni; the convolution form is stated, not evaluated, unless g is 1 or e^{at}"
     diagnostic_exemplar:
       problem: 'Find the impulse response $h(t)$ of $y'''' + 4y'' + 3y = f(t)$: solve with $f = \delta(t)$ and rest initial conditions.'

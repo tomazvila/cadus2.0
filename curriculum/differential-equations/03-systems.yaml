@@ -24,35 +24,59 @@ topics:
         name: Writing systems in matrix form
         key_prerequisites: [matrix-operations]
         exemplars:
-          - problem: 'Write the system $x'' = 3x + 4y$, $y'' = 2x + y$ in matrix form.'
-            answer: '$\mathbf{X}'' = \begin{pmatrix} 3 & 4 \\ 2 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X} = \binom{x}{y}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{X}'' = \begin{pmatrix} 3 & 4 \\ 2 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X} = \binom{x}{y}$'
-          - problem: 'Write the system $x'' = -y$, $y'' = x + 2y$ in matrix form.'
-            answer: '$\mathbf{X}'' = \begin{pmatrix} 0 & -1 \\ 1 & 2 \end{pmatrix}\mathbf{X}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{X}'' = \begin{pmatrix} 0 & -1 \\ 1 & 2 \end{pmatrix}\mathbf{X}$'
-          - problem: 'Write the system $x'' = x - 3y$, $y'' = 4y$ in matrix form.'
-            answer: '$\mathbf{X}'' = \begin{pmatrix} 1 & -3 \\ 0 & 4 \end{pmatrix}\mathbf{X}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'A missing variable in an equation means a zero entry in that row.'
+          - problem: "Write the system x' = 3x + 4y, y' = 2x + y in matrix form. Give the coefficient matrix as [a,b;c,d]."
+            answer: "[3,4;2,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (coefficient matching): read 3 and 4 from x' = 3x + 4y. Step 2 (coefficient matching): read 2 and 1 from y' = 2x + y. Step 3 (row assembly): put the rows in equation order to form the matrix. The coefficient matrix is [3,4;2,1]."
+          - problem: "For the system x' = -y, y' = x + 2y, give the coefficient matrix A in X' = AX. Give the answer as [a,b;c,d]."
+            answer: "[0,-1;1,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (coefficient matching): in x' = -y, x has coefficient 0 and y has -1. Step 2 (coefficient matching): in y' = x + 2y, x has 1 and y has 2. Step 3 (row assembly): form the rows in equation order. The coefficient matrix is [0,-1;1,2]."
+          - problem: "A system has equations x' = x - 3y and y' = 4y. Determine the matrix A so that X' = AX. Give A as [a,b;c,d]."
+            answer: "[1,-3;0,4]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (coefficient matching): x' = x - 3y gives 1 and -3. Step 2 (coefficient matching): y' = 4y has no x term, so its x coefficient is 0 and its y coefficient is 4. Step 3 (row assembly): write the rows in equation order. The matrix A is [1,-3;0,4]."
+          - problem: "The equations y' = 3x + 7y and x' = 5x - 2y describe a 2x2 homogeneous system. Write the coefficient matrix for the state vector (x,y). Give it as [a,b;c,d]."
+            answer: "[5,-2;3,7]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (order the equations): rewrite the system as x' = 5x - 2y and y' = 3x + 7y. Step 2 (coefficient matching): read the coefficients row by row. Step 3 (row assembly): form the matrix for the state vector (x,y). The coefficient matrix is [5,-2;3,7]."
+          - problem: "Two quantities change by x' = -4x + y and y' = 2x - 6y. State the coefficient matrix of this system. Give the answer as [a,b;c,d]."
+            answer: "[-4,1;2,-6]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (coefficient matching): x' = -4x + y gives -4 and 1. Step 2 (coefficient matching): y' = 2x - 6y gives 2 and -6. Step 3 (row assembly): form the two rows in order. The coefficient matrix is [-4,1;2,-6]."
+          - problem: "For the homogeneous system x' = 2x + 3y, y' = -5y, find the coefficient matrix. Give the answer as [a,b;c,d]."
+            answer: "[2,3;0,-5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (coefficient matching): x' = 2x + 3y gives 2 and 3. Step 2 (coefficient matching): y' = -5y has no x term, so its x coefficient is 0 and its y coefficient is -5. Step 3 (row assembly): place the rows in equation order. The coefficient matrix is [2,3;0,-5]."
         constraints: "2x2 homogeneous systems with integer coefficients; zero entries appear when a variable is absent"
       - id: kp2
         name: Verifying vector solutions
         key_prerequisites: [matrix-operations]
         exemplars:
-          - problem: 'Verify that $\mathbf{X} = e^{5t}\binom{2}{1}$ solves $\mathbf{X}'' = \begin{pmatrix} 3 & 4 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
-            answer: 'Yes: $A\binom{2}{1} = \binom{10}{5} = 5\binom{2}{1}$, so $A\mathbf{X} = 5\mathbf{X} = \mathbf{X}''$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{X}'' = 5e^{5t}\binom{2}{1}$, and multiplying out $A\binom{2}{1}$ gives $\binom{6+4}{4+1} = 5\binom{2}{1}$: $\binom{2}{1}$ is an eigenvector with eigenvalue $5$.'
-          - problem: 'Verify that $\mathbf{X} = e^{-t}\binom{1}{-1}$ solves $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
-            answer: 'Yes: $A\binom{1}{-1} = \binom{-1}{1} = -\binom{1}{-1}$, so $A\mathbf{X} = -\mathbf{X} = \mathbf{X}''$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Yes: $A\binom{1}{-1} = \binom{-1}{1} = -\binom{1}{-1}$, so $A\mathbf{X} = -\mathbf{X} = \mathbf{X}''$.'
-          - problem: 'Show that $\mathbf{X} = e^{2t}\binom{1}{1}$ does NOT solve $\mathbf{X}'' = \begin{pmatrix} 3 & 4 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
-            answer: '$A\binom{1}{1} = \binom{7}{3}$, which is not $2\binom{1}{1}$, so $A\mathbf{X} \neq \mathbf{X}''$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The candidate works only if $\binom{1}{1}$ is an eigenvector with eigenvalue $2$; it is not.'
+          - problem: "For A = [4,2;3,-1] and X = e^(kt)(2,1), the system is X' = A X. Determine whether some constant k makes X a solution, and give the eigenvalue lambda for the vector (2,1)."
+            answer: "verdict = valid; lambda = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "lambda"}]}
+            solution_sketch: "Step 1 uses matrix-vector multiplication: A v = [4,2;3,-1] times (2,1) = (4*2+2*1, 3*2+(-1)*1) = (10,5). Step 2 uses the eigenvector condition: (10,5) equals 5 times (2,1), so the eigenvalue is lambda = 5. Step 3 checks the candidate: with k = 5, X = e^(5t)(2,1) has X' = 5X and A X = 5X, so a valid k exists. The option invalid is wrong because the vector does match the exponent rate 5. Thus verdict = valid; lambda = 5."
+          - problem: "For A = [3,1;1,3] and v = (1,1), find the constant k such that X = e^(kt) v solves X' = A X."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 uses matrix-vector multiplication: A v = [3,1;1,3] times (1,1) = (3*1+1*1, 1*1+3*1) = (4,4). Step 2 uses the eigenvector condition: (4,4) equals 4 times (1,1), so lambda = 4. Step 3 notes that the candidate has exponent k, so X' = kX and A X = 4X; matching gives k = 4. The constant k is 4."
+          - problem: "For A = [2,1;1,2] and X = e^(2t)(1,1), determine whether X solves X' = A X, and give the eigenvalue lambda for the vector (1,1)."
+            answer: "verdict = invalid; lambda = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "lambda"}]}
+            solution_sketch: "Step 1 uses matrix-vector multiplication: A v = [2,1;1,2] times (1,1) = (2*1+1*1, 1*1+2*1) = (3,3). Step 2 uses the eigenvector condition: (3,3) equals 3 times (1,1), so lambda = 3. Step 3 compares the exponent k = 2 with lambda = 3: X' = 2X but A X = 3X, so the candidate does not solve the system. The option valid is wrong because the exponent rate 2 does not equal the eigenvalue 3. Thus verdict = invalid; lambda = 3."
+          - problem: "For A = [5,2;2,5] and v = (1,1), find the constant k such that X = e^(kt) v solves X' = A X."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 uses matrix-vector multiplication: A v = [5,2;2,5] times (1,1) = (5*1+2*1, 2*1+5*1) = (7,7). Step 2 uses the eigenvector condition: (7,7) equals 7 times (1,1), so lambda = 7. Step 3 matches the exponent rate: X' = kX and A X = 7X, so k = 7 makes the candidate solve the system. The constant k is 7."
+          - problem: "The candidate X = e^(5t)(2,1) solves X' = A X with A = [a,2;2,1]. Find the entry a."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 computes the product with the unknown entry: A v = [a,2;2,1] times (2,1) = (2a+2, 5). Step 2 applies the verification condition: X solves the system only when A v = 5v = (10,5). Step 3 matches the first row: 2a+2 = 10, so a = 4; the second row gives 5 = 5, which confirms the condition. The entry is a = 4."
+          - problem: "For the system X' = A X with A = [2,1;1,3] and candidate X = e^(kt)(1,2), verification begins with the product A v. Give Av as (x, y)."
+            answer: "(4,7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 uses matrix-vector multiplication: A v = [2,1;1,3] times (1,2) = (2*1+1*2, 1*1+3*2) = (4,7). Step 2 identifies this product as the computation needed for verification, because one compares A v with k v. Step 3 notes that (4,7) is not a single k times (1,2), so no matching k exists for this candidate. So Av is (4,7)."
         constraints: "2x2 integer matrices; verification reduces to one matrix-vector product"
     diagnostic_exemplar:
       problem: 'Write the system $x'' = 2x + y$, $y'' = 4x + 2y$ in matrix form, and verify that $\mathbf{X} = e^{4t}\binom{1}{2}$ is a solution.'
@@ -89,31 +113,59 @@ topics:
         name: Reducing to one second-order equation
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: 'Eliminate $y$ from $x'' = y$, $y'' = -2x - 3y$ to get a second-order equation for $x$.'
-            answer: '$x'''' + 3x'' + 2x = 0$'
-            answer_contract: {kind: none}
-            solution_sketch: '$y = x''$, so $x'''' = y'' = -2x - 3x''$.'
-          - problem: 'Eliminate $y$ from $x'' = 3x + 4y$, $y'' = 2x + y$ to get a second-order equation for $x$.'
-            answer: '$x'''' - 4x'' - 5x = 0$'
-            answer_contract: {kind: none}
-            solution_sketch: '$y = \frac{x'' - 3x}{4}$; then $\frac{x'''' - 3x''}{4} = 2x + \frac{x'' - 3x}{4}$, which clears to $x'''' - 4x'' - 5x = 0$.'
+          - problem: "The system x' = y and y' = -2x - 3y reduces to a second-order equation for x. Find the constants p and q in x'' + p x' + q x = 0."
+            answer: "p = 3; q = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "q"}]}
+            solution_sketch: "The system is x' = y and y' = -2x - 3y. Differentiate the first equation to get x'' = y'. Substitute y' = -2x - 3y and y = x' into that result: x'' = -2x - 3x'. Rearrange to x'' + 3x' + 2x = 0. The answer is p = 3; q = 2."
+          - problem: "The system x' = 3x + 4y and y' = 2x + y has a second-order reduction x'' + p x' + q x = 0. Determine p and q."
+            answer: "p = -4; q = -5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "q"}]}
+            solution_sketch: "The system is x' = 3x + 4y and y' = 2x + y. Solve the first equation for y: y = (x' - 3x)/4. Differentiate to get y' = (x'' - 3x')/4. Substitute y and y' into the second equation: (x'' - 3x')/4 = 2x + (x' - 3x)/4. Clear fractions to get x'' - 4x' - 5x = 0. The answer is p = -4; q = -5."
+          - problem: "A 2x2 system is x' = 2x + 3y and y' = x + 4y. Reduce it to one second-order equation for x. Give the constants p and q in x'' + p x' + q x = 0."
+            answer: "p = -6; q = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "q"}]}
+            solution_sketch: "The system is x' = 2x + 3y and y' = x + 4y. Solve the first equation for y: y = (x' - 2x)/3. Differentiate: y' = (x'' - 2x')/3. Substitute into the second: (x'' - 2x')/3 = x + 4(x' - 2x)/3. Multiply by 3: x'' - 2x' = 3x + 4x' - 8x = 4x' - 5x. Rearrange: x'' - 6x' + 5x = 0. The answer is p = -6; q = 5."
+          - problem: "For the system x' = -x + 2y and y' = 4x - 3y, eliminate y. Give the constants p and q in the reduced equation x'' + p x' + q x = 0."
+            answer: "p = 4; q = -5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "q"}]}
+            solution_sketch: "The system is x' = -x + 2y and y' = 4x - 3y. Solve the first equation for y: y = (x' + x)/2. Differentiate: y' = (x'' + x')/2. Substitute into the second: (x'' + x')/2 = 4x - 3(x' + x)/2. Multiply by 2: x'' + x' = 8x - 3x' - 3x = 5x - 3x'. Rearrange: x'' + 4x' - 5x = 0. The answer is p = 4; q = -5."
+          - problem: "The system x' = x + y and y' = 3x - y reduces to x'' + p x' + q x = 0. Compute p and q."
+            answer: "p = 0; q = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "q"}]}
+            solution_sketch: "The system is x' = x + y and y' = 3x - y. Solve the first equation for y: y = x' - x. Differentiate: y' = x'' - x'. Substitute into the second: x'' - x' = 3x - (x' - x) = 4x - x'. Rearrange: x'' - 4x = 0, which is x'' + 0 x' - 4x = 0. The answer is p = 0; q = -4."
+          - problem: "Two interacting populations x and y follow x' = -2x + 5y and y' = x - 6y. Eliminate y to get x'' + p x' + q x = 0. Determine p and q."
+            answer: "p = 8; q = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "q"}]}
+            solution_sketch: "The system is x' = -2x + 5y and y' = x - 6y. Solve the first equation for y: y = (x' + 2x)/5. Differentiate: y' = (x'' + 2x')/5. Substitute into the second: (x'' + 2x')/5 = x - 6(x' + 2x)/5. Multiply by 5: x'' + 2x' = 5x - 6x' - 12x = -7x - 6x'. Rearrange: x'' + 8x' + 7x = 0. The answer is p = 8; q = 7."
         constraints: "2x2 constant-coefficient systems; the reduced equation has integer characteristic roots"
       - id: kp2
         name: Completing the solution
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: 'Solve the system $x'' = y$, $y'' = 6x - y$ by elimination.'
-            answer: '$x = c_1 e^{2t} + c_2 e^{-3t}$, $y = 2c_1 e^{2t} - 3c_2 e^{-3t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$x'''' = y'' = 6x - x''$ gives $x'''' + x'' - 6x = 0$ with roots $2, -3$; then $y = x''$.'
-          - problem: 'Solve the system $x'' = x + y$, $y'' = 4x + y$ by elimination.'
-            answer: '$x = c_1 e^{3t} + c_2 e^{-t}$, $y = 2c_1 e^{3t} - 2c_2 e^{-t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$y = x'' - x$ leads to $x'''' - 2x'' - 3x = 0$ with roots $3, -1$; back-substitute into $y = x'' - x$.'
-          - problem: 'Solve $x'' = y$, $y'' = 4x$ with $x(0) = 1$, $y(0) = 0$ by elimination.'
-            answer: '$x = \dfrac{1}{2}e^{2t} + \dfrac{1}{2}e^{-2t}$, $y = e^{2t} - e^{-2t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$x'''' = 4x$ gives $x = c_1 e^{2t} + c_2 e^{-2t}$; $y = x''$, and the initial conditions force $c_1 = c_2 = \frac{1}{2}$.'
+          - problem: "Consider the system x' = y, y' = 4x - 3y with x(0) = 1 and y(0) = 6. Find x(t) and y(t) by elimination."
+            answer: "x = 2e^(t) - e^(-4t); y = 2e^(t) + 4e^(-4t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "Eliminate y by differentiating x' = y to get x'' = y'. Substitute y' = 4x - 3y = 4x - 3x', which gives x'' + 3x' - 4x = 0. The characteristic equation r^2 + 3r - 4 = (r - 1)(r + 4) has roots 1 and -4, so x = c1 e^(t) + c2 e^(-4t). Back-substitute y = x' = c1 e^(t) - 4c2 e^(-4t). Apply x(0) = 1 and y(0) = 6: c1 + c2 = 1 and c1 - 4c2 = 6, so c1 = 2 and c2 = -1. Thus x = 2e^(t) - e^(-4t); y = 2e^(t) + 4e^(-4t)."
+          - problem: "Consider the system x' = x + y, y' = 2x with x(0) = 0 and y(0) = 3. Find x(t) and y(t) by elimination."
+            answer: "x = e^(2t) - e^(-t); y = e^(2t) + 2e^(-t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "Eliminate y using x' = x + y, so y = x' - x. Differentiate to get y' = x'' - x', and substitute y' = 2x, giving x'' - x' - 2x = 0. The characteristic equation r^2 - r - 2 = (r - 2)(r + 1) has roots 2 and -1, so x = c1 e^(2t) + c2 e^(-t). Back-substitute y = x' - x = c1 e^(2t) - 2c2 e^(-t). Apply x(0) = 0 and y(0) = 3: c1 + c2 = 0 and c1 - 2c2 = 3, so c1 = 1 and c2 = -1. Thus x = e^(2t) - e^(-t); y = e^(2t) + 2e^(-t)."
+          - problem: "Consider the system x' = y, y' = 9x with x(0) = 3 and y(0) = -3. Find x(t) and y(t) by elimination."
+            answer: "x = e^(3t) + 2e^(-3t); y = 3e^(3t) - 6e^(-3t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "Eliminate y by differentiating x' = y, so x'' = y'. Substitute y' = 9x from the second equation, giving x'' - 9x = 0. The characteristic equation r^2 - 9 = (r - 3)(r + 3) has roots 3 and -3, so x = c1 e^(3t) + c2 e^(-3t). Back-substitute y = x' = 3c1 e^(3t) - 3c2 e^(-3t). Apply x(0) = 3 and y(0) = -3: c1 + c2 = 3 and c1 - c2 = -1, so c1 = 1 and c2 = 2. Thus x = e^(3t) + 2e^(-3t); y = 3e^(3t) - 6e^(-3t)."
+          - problem: "Consider the system x' = x + y, y' = 4x - 2y with x(0) = 0 and y(0) = 5. Find x(t) and y(t) by elimination."
+            answer: "x = e^(2t) - e^(-3t); y = e^(2t) + 4e^(-3t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "Eliminate y using x' = x + y, so y = x' - x. Differentiate to get y' = x'' - x', and substitute y' = 4x - 2y = 6x - 2x', giving x'' + x' - 6x = 0. The characteristic equation r^2 + r - 6 = (r - 2)(r + 3) has roots 2 and -3, so x = c1 e^(2t) + c2 e^(-3t). Back-substitute y = x' - x = c1 e^(2t) - 4c2 e^(-3t). Apply x(0) = 0 and y(0) = 5: c1 + c2 = 0 and c1 - 4c2 = 5, so c1 = 1 and c2 = -1. Thus x = e^(2t) - e^(-3t); y = e^(2t) + 4e^(-3t)."
+          - problem: "Consider the system x' = y, y' = 5x - 4y with x(0) = 3 and y(0) = -3. Find x(t) and y(t) by elimination."
+            answer: "x = 2e^(t) + e^(-5t); y = 2e^(t) - 5e^(-5t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "Eliminate y by differentiating x' = y, so x'' = y'. Substitute y' = 5x - 4y = 5x - 4x', giving x'' + 4x' - 5x = 0. The characteristic equation r^2 + 4r - 5 = (r - 1)(r + 5) has roots 1 and -5, so x = c1 e^(t) + c2 e^(-5t). Back-substitute y = x' = c1 e^(t) - 5c2 e^(-5t). Apply x(0) = 3 and y(0) = -3: c1 + c2 = 3 and c1 - 5c2 = -3, so c1 = 2 and c2 = 1. Thus x = 2e^(t) + e^(-5t); y = 2e^(t) - 5e^(-5t)."
+          - problem: "Consider the system x' = y, y' = x with x(0) = 5 and y(0) = -1. Find x(t) and y(t) by elimination."
+            answer: "x = 2e^(t) + 3e^(-t); y = 2e^(t) - 3e^(-t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "Eliminate y by differentiating x' = y, so x'' = y'. Substitute y' = x, giving x'' - x = 0. The characteristic equation r^2 - 1 = (r - 1)(r + 1) has roots 1 and -1, so x = c1 e^(t) + c2 e^(-t). Back-substitute y = x' = c1 e^(t) - c2 e^(-t). Apply x(0) = 5 and y(0) = -1: c1 + c2 = 5 and c1 - c2 = -1, so c1 = 2 and c2 = 3. Thus x = 2e^(t) + 3e^(-t); y = 2e^(t) - 3e^(-t)."
         constraints: "back-substitution recovers the second variable exactly; integer characteristic roots"
     diagnostic_exemplar:
       problem: 'Solve the system $x'' = y$, $y'' = 2x + y$ by elimination, giving both $x(t)$ and $y(t)$.'
@@ -150,31 +202,59 @@ topics:
         name: Superposition
         key_prerequisites: [systems-matrix-form]
         exemplars:
-          - problem: '$\mathbf{X}_1 = e^{3t}\binom{1}{1}$ and $\mathbf{X}_2 = e^{-t}\binom{1}{-1}$ solve $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$. Is $2\mathbf{X}_1 - \mathbf{X}_2$ also a solution?'
-            answer: 'Yes: any linear combination of solutions of $\mathbf{X}'' = A\mathbf{X}$ is a solution (superposition).'
-            answer_contract: {kind: none}
-            solution_sketch: '$(2\mathbf{X}_1 - \mathbf{X}_2)'' = 2A\mathbf{X}_1 - A\mathbf{X}_2 = A(2\mathbf{X}_1 - \mathbf{X}_2)$.'
-          - problem: 'Does superposition hold for the nonhomogeneous system $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$ with $\mathbf{b} \neq \mathbf{0}$?'
-            answer: 'No: if $\mathbf{X}_1, \mathbf{X}_2$ are solutions, $(\mathbf{X}_1 + \mathbf{X}_2)'' = A(\mathbf{X}_1 + \mathbf{X}_2) + 2\mathbf{b}$, not $+\,\mathbf{b}$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The forcing term doubles; only the homogeneous system has a vector space of solutions.'
+          - problem: "The 2x2 system X' = AX with A = [1,4;1,1] has solutions X1 = e^(3t)(2,1) and X2 = e^(-t)(-2,1). State whether 3X1 + 2X2 is also a solution, and give the second component of 3X1 + 2X2 at t = 0."
+            answer: "verdict = holds; y = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "y"}]}
+            solution_sketch: "Step 1 (superposition rule): for the homogeneous system X' = AX every combination c1X1 + c2X2 of solutions is again a solution, so (3X1 + 2X2)' = 3A X1 + 2A X2 = A(3X1 + 2X2) and the verdict is holds. Step 2 (evaluate the combination): at t = 0 it equals 3(2,1) + 2(-2,1) = (2,5), so the second component is 5. The answer is verdict = holds; y = 5."
+          - problem: "Let A = [1,0;0,1] and b = (1,1). The functions X1 = (e^t - 1, -1) and X2 = (-1, e^t - 1) both solve X' = AX + b. State whether X1 + X2 solves X' = AX + b, and give the second component at t = 0 of (X1 + X2)' - A(X1 + X2)."
+            answer: "verdict = fails; d = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Step 1 (superposition rule for a nonhomogeneous system): if X1 and X2 solve X' = AX + b with b not zero, then (X1 + X2)' = A(X1 + X2) + 2b, so the sum solves the system only when b is the zero vector. Step 2 (substitute the sum): X1 + X2 = (e^t - 2, e^t - 2), so (X1 + X2)' = (e^t, e^t) while A(X1 + X2) + b = (e^t - 1, e^t - 1), and the two sides differ, giving the verdict fails. Step 3 (residual): (X1 + X2)' - A(X1 + X2) = (2,2), whose second component at t = 0 is 2. The answer is verdict = fails; d = 2."
+          - problem: "The system X' = AX with A = [0,1;-2,-3] has solutions X1 = e^(-t)(1,-1) and X2 = e^(-2t)(1,-2). Find c1 and c2 so that c1X1 + c2X2 equals (4, -5) at t = 0, and give the answer as (c1, c2)."
+            answer: "(3, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (superposition rule): c1X1 + c2X2 solves the system for every choice of the constants, and at t = 0 it equals c1(1,-1) + c2(1,-2) = (c1 + c2, -c1 - 2c2). Step 2 (match the given vector): c1 + c2 = 4 and -c1 - 2c2 = -5, that is c1 + 2c2 = 5. Step 3 (solve the 2x2 system): subtracting gives c2 = 1, then c1 = 3. The answer is (3, 1)."
+          - problem: "The system X' = AX with A = [1,2;0,-1] has solutions X1 = e^t(1,0) and X2 = e^(-t)(-1,1). Find the solution with value (2, 3) at t = 0, and give its components x(t) and y(t)."
+            answer: "x = 5e^t - 3e^(-t); y = 3e^(-t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "Step 1 (superposition rule): the general solution is X = c1X1 + c2X2, and at t = 0 it equals c1(1,0) + c2(-1,1) = (c1 - c2, c2). Step 2 (match the initial value): c2 = 3 and c1 - c2 = 2, so c1 = 5. Step 3 (write the components): X = 5e^t(1,0) + 3e^(-t)(-1,1) gives x = 5e^t - 3e^(-t) and y = 3e^(-t). The answer is x = 5e^t - 3e^(-t); y = 3e^(-t)."
+          - problem: "The system X' = AX with A = [0,3;3,0] has solutions X1 = e^(3t)(1,1) and X2 = e^(-3t)(1,-1). Find the value of c such that cX1 + X2 has first component 6 at t = 0."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (superposition rule): cX1 + X2 solves the system for every value of c, and at t = 0 it equals c(1,1) + (1,-1) = (c + 1, c - 1). Step 2 (match the condition): the first component is c + 1, so c + 1 = 6. Step 3 (solve): c = 5. The answer is 5."
+          - problem: "Let A = [1,1;0,2], X1 = e^t(1,0) and X2 = e^(2t)(1,1). Which of the following is a solution of the system X' = AX?"
+            answer: "3X1 - 2X2"
+            answer_contract: {"kind": "label", "options": [["3X1 - 2X2"], ["X2 + (0,1)"], ["e^t X1"], ["X1 X2"]]}
+            solution_sketch: "Step 1 (substitution rule): a candidate solves X' = AX only when its derivative equals A times the candidate, and here A(x,y) = (x + y, 2y). Step 2 (check the candidates): X1 and X2 are solutions, so by superposition the combination 3X1 - 2X2 is a solution. Step 3 (name the errors): the option X2 + (0,1) fails because A adds the extra vector (1,2) that the derivative does not contain; the option e^t X1 fails because e^t is not a constant multiplier; the option X1 X2 fails because the componentwise product has derivative (3e^(3t), 0) while A times it is (e^(3t), 0). The answer is 3X1 - 2X2."
         constraints: "verification by substituting the combination into X' = AX; 2x2 systems"
       - id: kp2
         name: The Wronskian and fundamental sets
         key_prerequisites: [systems-matrix-form, determinants]
         exemplars:
-          - problem: 'Compute the Wronskian of $\mathbf{X}_1 = e^{3t}\binom{1}{1}$ and $\mathbf{X}_2 = e^{-t}\binom{1}{-1}$, and decide whether they form a fundamental set.'
-            answer: '$W = \det\begin{pmatrix} e^{3t} & e^{-t} \\ e^{3t} & -e^{-t} \end{pmatrix} = -2e^{2t} \neq 0$: yes, a fundamental set.'
-            answer_contract: {kind: none}
-            solution_sketch: '$W = -e^{2t} - e^{2t} = -2e^{2t}$, never zero.'
-          - problem: 'Are $\mathbf{X}_1 = e^{2t}\binom{1}{2}$ and $\mathbf{X}_2 = e^{2t}\binom{2}{4}$ a fundamental set for a 2x2 system?'
-            answer: 'No: $\mathbf{X}_2 = 2\mathbf{X}_1$, so $W = 0$ and they are linearly dependent.'
-            answer_contract: {kind: none}
-            solution_sketch: 'No: $\mathbf{X}_2 = 2\mathbf{X}_1$, so $W = 0$ and they are linearly dependent.'
-          - problem: 'Two solutions satisfy $\mathbf{X}_1(0) = \binom{1}{0}$ and $\mathbf{X}_2(0) = \binom{1}{1}$. Compute $W(0)$ and conclude.'
-            answer: '$W(0) = \det\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix} = 1 \neq 0$: they form a fundamental set.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The Wronskian of solutions is either identically zero or never zero, so one point decides.'
+          - problem: "Two solutions of a 2x2 system are X1 = e^(2t) (1, 2) and X2 = e^(-3t) (1, -1). Use verdict = A when the two solutions form a fundamental set and verdict = B when they do not. Find W(t) and the verdict, with W as a function of t."
+            answer: "verdict = A; W = -3e^(-t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "W"}]}
+            solution_sketch: "Step 1 (Wronskian definition): form the matrix with columns X1 and X2, det [[e^(2t), e^(-3t)], [2e^(2t), -e^(-3t)]]. Step 2 (determinant): e^(2t)(-e^(-3t)) - e^(-3t)(2e^(2t)) = -3e^(-t). Step 3 (fundamental-set test): W is never zero, so the pair is fundamental and verdict A. Step 4 (wrong option): B would mean W is zero, which contradicts -3e^(-t). The answer is verdict = A; W = -3e^(-t)."
+          - problem: "Two solutions of a 2x2 system are X1 = e^(4t) (1, 3) and X2 = e^(4t) (2, 6). Use verdict = A when the two solutions form a fundamental set and verdict = B when they do not. Find W(t) and the verdict."
+            answer: "verdict = B; W = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "W"}]}
+            solution_sketch: "Step 1 (Wronskian definition): form det [[e^(4t), 2e^(4t)], [3e^(4t), 6e^(4t)]]. Step 2 (determinant): 6e^(8t) - 6e^(8t) = 0. Step 3 (fundamental-set test): a zero Wronskian means the solutions are dependent, so verdict B. Step 4 (wrong option): A would require W nonzero, but W is zero. The answer is verdict = B; W = 0."
+          - problem: "Two solutions of a 2x2 system satisfy X1(0) = (2, 1) and X2(0) = (1, 3). Use verdict = A when the two solutions form a fundamental set and verdict = B when they do not. Find W(0) and the verdict."
+            answer: "verdict = A; W = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "W"}]}
+            solution_sketch: "Step 1 (initial vectors): at t = 0 the columns are (2,1) and (1,3), so the Wronskian matrix is [[2,1],[1,3]]. Step 2 (determinant): 2*3 - 1*1 = 5. Step 3 (fundamental-set test): W(0) is not zero, so the pair is fundamental and verdict A. Step 4 (wrong option): B would mean W(0) = 0, which is false. The answer is verdict = A; W = 5."
+          - problem: "Two solutions of a 2x2 system are X1 = e^(-t) (1, -2) and X2 = e^(5t) (3, 1). Use verdict = A when the two solutions form a fundamental set and verdict = B when they do not. Find W(t) and the verdict, with W as a function of t."
+            answer: "verdict = A; W = 7e^(4t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "W"}]}
+            solution_sketch: "Step 1 (Wronskian definition): det [[e^(-t), 3e^(5t)], [-2e^(-t), e^(5t)]]. Step 2 (determinant): e^(-t)e^(5t) - 3e^(5t)(-2e^(-t)) = 7e^(4t). Step 3 (fundamental-set test): W is never zero, so the pair is fundamental and verdict A. Step 4 (wrong option): B would mean W is zero, which is false. The answer is verdict = A; W = 7e^(4t)."
+          - problem: "Two solutions of a 2x2 system are X1 = e^(2t) (1, c) and X2 = e^(-3t) (1, 1), where c is a constant. Their Wronskian is W(t) = -2e^(-t). Find c."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Wronskian definition): form det [[e^(2t), e^(-3t)], [c e^(2t), e^(-3t)]]. Step 2 (determinant): e^(2t) e^(-3t) - c e^(2t) e^(-3t) = (1 - c) e^(-t). Step 3 (compare with the given Wronskian): (1 - c) e^(-t) = -2e^(-t), so 1 - c = -2. Step 4 (solve): c = 3. The answer is 3."
+          - problem: "Two solutions of a 2x2 system are X1 = e^(2t) (2, 1) and X2 = e^(-2t) (1, -1). Compute the Wronskian at t = 0."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Wronskian definition): det [[2e^(2t), e^(-2t)], [e^(2t), -e^(-2t)]]. Step 2 (determinant): 2e^(2t)(-e^(-2t)) - e^(-2t)(e^(2t)) = -3. Step 3 (evaluate at t = 0): the determinant is already constant, so W(0) = -3. The answer is -3."
         constraints: "Wronskian = determinant of the matrix whose columns are the solutions; 2x2 only"
     diagnostic_exemplar:
       problem: 'Compute the Wronskian of $\mathbf{X}_1 = e^{t}\binom{1}{0}$ and $\mathbf{X}_2 = e^{2t}\binom{1}{1}$. Fundamental set?'
@@ -211,31 +291,59 @@ topics:
         name: The companion construction
         key_prerequisites: [systems-matrix-form, homogeneous-constant-coefficients]
         exemplars:
-          - problem: 'Convert $y'''' + 3y'' + 2y = 0$ into a first-order system using $x_1 = y$, $x_2 = y''$.'
-            answer: '$x_1'' = x_2$, $x_2'' = -2x_1 - 3x_2$; in matrix form $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}\mathbf{X}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$x_1'' = x_2$, $x_2'' = -2x_1 - 3x_2$; in matrix form $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}\mathbf{X}$.'
-          - problem: 'Convert $y'''' - 5y = 0$ into a first-order system.'
-            answer: '$\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ 5 & 0 \end{pmatrix}\mathbf{X}$ with $x_1 = y$, $x_2 = y''$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$x_2'' = y'''' = 5y = 5x_1$.'
-          - problem: 'Convert $y'''''' + 2y'''' - y'' + 4y = 0$ into a first-order system using $x_1 = y$, $x_2 = y''$, $x_3 = y''''$.'
-            answer: '$\mathbf{X}'' = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ -4 & 1 & -2 \end{pmatrix}\mathbf{X}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$x_3'' = y'''''' = -4y + y'' - 2y'''' = -4x_1 + x_2 - 2x_3$.'
+          - problem: "Convert $y'' + 3y' + 2y = 0$ into a first-order system using $x_1 = y$ and $x_2 = y'$. Give the companion matrix as [a,b;c,d]."
+            answer: "[0,1;-2,-3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Set $x_1 = y$ and $x_2 = y'$, so $x_1' = x_2$. The equation gives $y'' = -2y - 3y'$, so $x_2' = -2x_1 - 3x_2$. The companion matrix is [0,1;-2,-3]."
+          - problem: "Convert $y'' - 5y = 0$ into a first-order system with $x_1 = y$ and $x_2 = y'$. Give the companion matrix as [a,b;c,d]."
+            answer: "[0,1;5,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "With $x_1 = y$ and $x_2 = y'$, $x_1' = x_2$. The equation gives $y'' = 5y$, so $x_2' = 5x_1$. The companion matrix is [0,1;5,0]."
+          - problem: "Convert $y''' + 2y'' - y' + 4y = 0$ into a first-order system with $x_1 = y$, $x_2 = y'$, $x_3 = y''$. Give the companion matrix in the form [a,b;c,d], extended with a third row and third column."
+            answer: "[0,1,0;0,0,1;-4,1,-2]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "Let $x_1 = y$, $x_2 = y'$, $x_3 = y''$, so $x_1' = x_2$ and $x_2' = x_3$. The equation gives $y''' = -2y'' + y' - 4y$, so $x_3' = -4x_1 + x_2 - 2x_3$. The companion matrix is [0,1,0;0,0,1;-4,1,-2]."
+          - problem: "A second-order equation $y'' + a y' + b y = 0$ has companion matrix [0,1;-7,-2]. Find the values of $a$ and $b$."
+            answer: "a = 2; b = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "For $y'' + a y' + b y = 0$, the companion matrix is [0,1;-b,-a]. Match the last row: $-b = -7$ and $-a = -2$. Therefore $b = 7$ and $a = 2$, so a = 2; b = 7."
+          - problem: "Convert $y''' + 3y'' - 2y' + 7y = 0$ into a first-order system with $x_1 = y$, $x_2 = y'$, $x_3 = y''$. Give the companion matrix in the form [a,b;c,d], extended with a third row and third column."
+            answer: "[0,1,0;0,0,1;-7,2,-3]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "Set $x_1 = y$, $x_2 = y'$, $x_3 = y''$, so $x_1' = x_2$ and $x_2' = x_3$. The equation gives $y''' = -3y'' + 2y' - 7y$, so $x_3' = -7x_1 + 2x_2 - 3x_3$. The companion matrix is [0,1,0;0,0,1;-7,2,-3]."
+          - problem: "A spring-mass equation is $y'' + 3y' + 8y = 0$. Put it into a first-order system with $x_1 = y$ and $x_2 = y'$. Give the companion matrix as [a,b;c,d]."
+            answer: "[0,1;-8,-3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "With $x_1 = y$ and $x_2 = y'$, $x_1' = x_2$. The equation gives $y'' = -8y - 3y'$, so $x_2' = -8x_1 - 3x_2$. The companion matrix is [0,1;-8,-3]."
         constraints: "constant-coefficient equations of order 2 or 3; companion matrix rows shift, last row holds negated coefficients"
       - id: kp2
         name: Eigenvalues are the characteristic roots
         key_prerequisites: [homogeneous-constant-coefficients, eigenvalues-eigenvectors]
         exemplars:
-          - problem: 'Find the eigenvalues of the companion matrix $\begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}$ and compare with the characteristic roots of $y'''' + 3y'' + 2y = 0$.'
-            answer: '$\lambda = -1, -2$: the same as the characteristic roots of the scalar equation.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\det(A - \lambda I) = \lambda^2 + 3\lambda + 2 = (\lambda+1)(\lambda+2)$, exactly the characteristic polynomial.'
-          - problem: 'Write the companion matrix of $y'''' - y'' - 6y = 0$ and find its eigenvalues.'
-            answer: '$\begin{pmatrix} 0 & 1 \\ 6 & 1 \end{pmatrix}$ with $\lambda = 3, -2$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\det(A - \lambda I) = \lambda^2 - \lambda - 6 = (\lambda - 3)(\lambda + 2)$.'
+          - problem: "The companion matrix of y'' + 5y' + 6y = 0 is A. Find the eigenvalues of A and compare them with the characteristic roots of the equation. Give the answer as a set of numbers."
+            answer: "{-2, -3}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1: The companion matrix of y'' + b y' + c y = 0 is [[0,1],[-c,-b]], so here A = [[0,1],[-6,-5]]. Step 2: det(A - lambda I) = lambda^2 + 5 lambda + 6 = (lambda + 2)(lambda + 3), which is exactly the characteristic polynomial of the scalar equation. Step 3: Hence the eigenvalues coincide with the characteristic roots -2 and -3. The answer as a set is {-2, -3}."
+          - problem: "Write the companion matrix of the equation y'' - 2y' - 8y = 0. Give the answer as [a,b;c,d]."
+            answer: "[0,1;8,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: Here b = -2 and c = -8, so the companion form [[0,1],[-c,-b]] applies. Step 2: Substituting gives A = [[0,1],[8,2]]. Step 3: As a check, det(A - lambda I) = lambda^2 - 2 lambda - 8 = (lambda - 4)(lambda + 2), so the eigenvalues 4 and -2 are the integer characteristic roots. The companion matrix is [0,1;8,2]."
+          - problem: "The companion matrix of y'' - y' - 12y = 0 is A. Compute det(A)."
+            answer: "-12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: With b = 1 and c = -12, the companion matrix is A = [[0,1],[12,1]]. Step 2: det(A) = 0 * 1 - 1 * 12 = -12, which also equals the product of the eigenvalues 4 and -3 of A. Step 3: This matches the constant term c of the characteristic polynomial lambda^2 - lambda - 12. The determinant is -12."
+          - problem: "The companion matrix of y'' + 6y' + 9y = 0 is A. This equation has a repeated characteristic root, so A has a single eigenvalue. Find the eigenvalue of A."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The companion matrix is A = [[0,1],[-9,-6]], and det(A - lambda I) = lambda^2 + 6 lambda + 9. Step 2: Factoring gives (lambda + 3)^2, a double characteristic root. Step 3: The eigenvalue of A coincides with this repeated root. The eigenvalue of A is -3."
+          - problem: "A companion matrix has eigenvalues 5 and -3, and it comes from an equation y'' + b y' + c y = 0. Find b."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Since the eigenvalues of the companion matrix equal the characteristic roots, the roots of lambda^2 + b lambda + c are lambda = 5 and lambda = -3. Step 2: The sum of the roots is 5 + (-3) = 2, and the sum of the roots of lambda^2 + b lambda + c is -b. Step 3: So -b = 2, which gives b = -2 (and the product gives c = -15). The coefficient is b = -2."
+          - problem: "A system x' = A x has A = [[0,1],[-5,-6]], the companion matrix of y'' + 6y' + 5y = 0. Find the larger eigenvalue of A."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: For A = [[0,1],[-5,-6]], the characteristic polynomial is det(A - lambda I) = lambda^2 + 6 lambda + 5, matching the characteristic polynomial of the scalar equation. Step 2: Factoring gives (lambda + 1)(lambda + 5), so the eigenvalues are -1 and -5, the same as the characteristic roots. Step 3: Comparing the two, the larger eigenvalue is -1. The larger eigenvalue of A is -1."
         constraints: "second-order constant-coefficient equations with integer roots; companion matrix always [[0,1],[-c,-b]]"
     diagnostic_exemplar:
       problem: 'Convert $y'''' + 4y'' - 5y = 0$ into a first-order system in matrix form, and find the eigenvalues of its companion matrix.'
@@ -301,14 +409,30 @@ topics:
         name: Initial value problems
         key_prerequisites: [eigenvalues-eigenvectors, systems-matrix-form]
         exemplars:
-          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{3}{1}$.'
-            answer: '$\mathbf{X} = 2e^{3t}\binom{1}{1} + e^{-t}\binom{1}{-1}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Solve $c_1 + c_2 = 3$, $c_1 - c_2 = 1$: $c_1 = 2$, $c_2 = 1$.'
-          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{1}{2}$.'
-            answer: '$\mathbf{X} = e^{5t}\binom{2}{1} - e^{2t}\binom{1}{-1}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Eigenpairs $(5, \binom{2}{1})$ and $(2, \binom{1}{-1})$; $2c_1 + c_2 = 1$, $c_1 - c_2 = 2$ give $c_1 = 1$, $c_2 = -1$.'
+          - problem: "Solve X' = [2,1;1,2] X with X(0) = (4, 2). Give the solution as x(t) and y(t)."
+            answer: "x = 3e^(3t)+e^(t); y = 3e^(3t)-e^(t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "Use the eigenvalue method with eigenpairs (3,(1,1)) and (1,(1,-1)) to write X = c1 e^(3t)(1,1) + c2 e^(t)(1,-1). Apply X(0) = (4,2), which gives c1 + c2 = 4 and c1 - c2 = 2. Solve the 2x2 linear system: c1 = 3 and c2 = 1. The solution is x = 3e^(3t)+e^(t); y = 3e^(3t)-e^(t)."
+          - problem: "Solve X' = [3,1;1,3] X with X(0) = (5, 1). State the solution as x(t) and y(t)."
+            answer: "x = 3e^(4t)+2e^(2t); y = 3e^(4t)-2e^(2t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "The eigenpairs are (4,(1,1)) and (2,(1,-1)), so X = c1 e^(4t)(1,1) + c2 e^(2t)(1,-1). Applying X(0) = (5,1) gives c1 + c2 = 5 and c1 - c2 = 1. Solve to get c1 = 3 and c2 = 2. The solution is x = 3e^(4t)+2e^(2t); y = 3e^(4t)-2e^(2t)."
+          - problem: "Find the solution of X' = [2,3;1,4] X with X(0) = (5, 1). Give it as x(t) and y(t)."
+            answer: "x = 2e^(5t)+3e^(t); y = 2e^(5t)-e^(t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "The eigenpairs are (5,(1,1)) and (1,(3,-1)), so X = c1 e^(5t)(1,1) + c2 e^(t)(3,-1). Applying X(0) = (5,1) gives c1 + 3c2 = 5 and c1 - c2 = 1. Solve the system: c1 = 2 and c2 = 1. The solution is x = 2e^(5t)+3e^(t); y = 2e^(5t)-e^(t)."
+          - problem: "The eigenpairs of the matrix [4,1;1,4] are (5,(1,1)) and (3,(1,-1)). For X' = [4,1;1,4] X with X(0) = (7, 1), find the constants c1 and c2 in the solution built from these eigenpairs."
+            answer: "c1 = 4; c2 = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Use the given eigenpairs to write X = c1 e^(5t)(1,1) + c2 e^(3t)(1,-1). Apply the initial condition X(0) = (7,1), which gives c1 + c2 = 7 and c1 - c2 = 1. Solve the 2x2 linear system: adding gives 2c1 = 8, so c1 = 4, and then c2 = 3. The constants are c1 = 4; c2 = 3."
+          - problem: "Solve the initial value problem X' = [1,4;2,3] X, X(0) = (6, 0). Give the solution as x(t) and y(t)."
+            answer: "x = 2e^(5t)+4e^(-t); y = 2e^(5t)-2e^(-t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "The eigenpairs are (5,(1,1)) and (-1,(2,-1)), so X = c1 e^(5t)(1,1) + c2 e^(-t)(2,-1). Applying X(0) = (6,0) gives c1 + 2c2 = 6 and c1 - c2 = 0. Solve: c1 = 2 and c2 = 2. The solution is x = 2e^(5t)+4e^(-t); y = 2e^(5t)-2e^(-t)."
+          - problem: "Compute the solution of X' = [1,2;2,-2] X with X(0) = (5, 0). State it as x(t) and y(t)."
+            answer: "x = 4e^(2t)+e^(-3t); y = 2e^(2t)-2e^(-3t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "The eigenpairs are (2,(2,1)) and (-3,(1,-2)), so X = c1 e^(2t)(2,1) + c2 e^(-3t)(1,-2). Applying X(0) = (5,0) gives 2c1 + c2 = 5 and c1 - 2c2 = 0. Solve the system: c1 = 2 and c2 = 1. The solution is x = 4e^(2t)+e^(-3t); y = 2e^(2t)-2e^(-3t)."
         constraints: "initial conditions solvable by a 2x2 linear system with integer solutions"
     diagnostic_exemplar:
       problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{4}{-1}$.'
@@ -342,14 +466,30 @@ topics:
         name: Equilibria of linear systems
         key_prerequisites: [linear-systems-eigenvalues]
         exemplars:
-          - problem: 'Why is $\mathbf{X}(t) \equiv \mathbf{0}$ always an equilibrium solution of $\mathbf{X}'' = A\mathbf{X}$?'
-            answer: 'Because $A\mathbf{0} = \mathbf{0}$: the constant zero function has zero derivative and satisfies the system.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Because $A\mathbf{0} = \mathbf{0}$: the constant zero function has zero derivative and satisfies the system.'
-          - problem: 'Show that the origin is the only equilibrium of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
-            answer: '$\det A = 1 - 4 = -3 \neq 0$, so $A\mathbf{X} = \mathbf{0}$ has only the solution $\mathbf{X} = \mathbf{0}$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Equilibria are the solutions of $A\mathbf{X} = \mathbf{0}$; an invertible $A$ admits only the origin.'
+          - problem: "Consider the linear system $\\mathbf{X}' = \\begin{pmatrix} 2 & 1 \\\\ 3 & 4 \\end{pmatrix} \\mathbf{X}$. Find its only equilibrium solution. Give the answer as (x, y)."
+            answer: "(0, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The equilibrium condition is $A\\mathbf{X} = \\mathbf{0}$. Solve $2x + y = 0$ and $3x + 4y = 0$. From the first equation $y = -2x$, and substitution gives $3x - 8x = -5x = 0$, so $x = 0$ and $y = 0$. The only equilibrium point is (0, 0)."
+          - problem: "A linear system is given by $x' = x + 2y$ and $y' = 2x + y$. Compute the determinant of the coefficient matrix to test whether the origin is the only equilibrium. Find det A."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equilibrium condition is $A\\mathbf{X} = \\mathbf{0}$. The coefficient matrix is $\\begin{pmatrix} 1 & 2 \\\\ 2 & 1 \\end{pmatrix}$. Its determinant is $1 \\cdot 1 - 2 \\cdot 2 = -3$. Since the determinant is nonzero, the only solution is the origin. The determinant is -3."
+          - problem: "For the system $\\mathbf{X}' = \\begin{pmatrix} 3 & 1 \\\\ 2 & 4 \\end{pmatrix} \\mathbf{X}$, compute the determinant of the coefficient matrix. Give det A."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equilibrium condition is $A\\mathbf{X} = \\mathbf{0}$. Compute the determinant of $A = \\begin{pmatrix} 3 & 1 \\\\ 2 & 4 \\end{pmatrix}$ as $3 \\cdot 4 - 1 \\cdot 2 = 10$. A nonzero determinant means the origin is the unique equilibrium. The determinant is 10."
+          - problem: "For the diagonal system $\\mathbf{X}' = \\begin{pmatrix} 4 & 0 \\\\ 0 & -2 \\end{pmatrix} \\mathbf{X}$, compute the determinant of the coefficient matrix. Give det A."
+            answer: "-8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equilibrium condition is $A\\mathbf{X} = \\mathbf{0}$. For the diagonal matrix $A = \\begin{pmatrix} 4 & 0 \\\\ 0 & -2 \\end{pmatrix}$, the determinant is $4 \\cdot (-2) = -8$. Since the determinant is nonzero, the origin is the only equilibrium. The determinant is -8."
+          - problem: "A linear system is given by $x' = 2x + 3y$ and $y' = x + 4y$. How many equilibria does the system have?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equilibrium condition is $A\\mathbf{X} = \\mathbf{0}$. The coefficient matrix is $\\begin{pmatrix} 2 & 3 \\\\ 1 & 4 \\end{pmatrix}$, with determinant $2 \\cdot 4 - 3 \\cdot 1 = 5$. A nonzero determinant means the only solution is the origin. The system has 1 equilibrium."
+          - problem: "For the system $\\mathbf{X}' = \\begin{pmatrix} 5 & 1 \\\\ 2 & 3 \\end{pmatrix} \\mathbf{X}$, find the only equilibrium point. Give the answer as (x, y)."
+            answer: "(0, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The equilibrium condition is $A\\mathbf{X} = \\mathbf{0}$. Solve $5x + y = 0$ and $2x + 3y = 0$. From the first equation $y = -5x$, and substitution gives $2x - 15x = -13x = 0$, so $x = 0$ and $y = 0$. The only equilibrium point is (0, 0)."
         constraints: "equilibria found by solving AX = 0; det A nonzero in all exemplars"
       - id: kp2
         name: Classification from eigenvalues
@@ -440,31 +580,59 @@ topics:
         name: The trace-determinant shortcut
         key_prerequisites: [equilibrium-classification-eigenvalues]
         exemplars:
-          - problem: 'A $2\times 2$ system has $\operatorname{tr} A = -4$ and $\det A = 5$. Classify the origin without finding the eigenvalues.'
-            answer: 'Stable spiral: $T^2 - 4D = 16 - 20 < 0$ gives complex eigenvalues, and $\operatorname{tr} A < 0$ makes their real part negative.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Eigenvalues satisfy $\lambda^2 - T\lambda + D = 0$; here $\lambda = -2 \pm i$.'
-          - problem: 'Classify the origin when $\operatorname{tr} A = 2$ and $\det A = -8$.'
-            answer: 'Saddle (unstable): $\det A < 0$ forces real eigenvalues of opposite sign, regardless of the trace.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Saddle (unstable): $\det A < 0$ forces real eigenvalues of opposite sign, regardless of the trace.'
-          - problem: 'Classify the origin when $\operatorname{tr} A = 5$ and $\det A = 6$.'
-            answer: 'Unstable node: $T^2 - 4D = 1 > 0$ with $D > 0$, $T > 0$ gives two positive real eigenvalues ($\lambda = 2, 3$).'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda^2 - 5\lambda + 6 = (\lambda - 2)(\lambda - 3)$.'
+          - problem: "A 2x2 system has tr A = -2 and det A = 10. State the stability of the origin, and give T^2 - 4D."
+            answer: "verdict = stable; disc = -36"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["stable"], ["unstable"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "disc"}]}
+            solution_sketch: "Read the trace and determinant: T = -2 and D = 10. Compute the discriminant T^2 - 4D = 4 - 40 = -36. Since T^2 - 4D < 0 the eigenvalues are complex, and since T < 0 their real part is negative, so the origin is stable. Choosing unstable instead would ignore the sign of T. The answer is verdict = stable; disc = -36."
+          - problem: "A 2x2 system has tr A = 3 and det A = -4. Compute T^2 - 4D."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "With T = 3 and D = -4, compute T^2 = 9 and 4D = -16. Then T^2 - 4D = 9 - (-16) = 25. The value is 25."
+          - problem: "A 2x2 system has tr A = 4 and det A = 3. State the stability of the origin, and give T^2 - 4D."
+            answer: "verdict = unstable; disc = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["stable"], ["unstable"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "disc"}]}
+            solution_sketch: "Read T = 4 and D = 3. Compute T^2 - 4D = 16 - 12 = 4. Since T^2 - 4D > 0 with D > 0 and T > 0, the eigenvalues are real, distinct, and positive, so the origin is unstable. Choosing stable instead would ignore the positive trace. The answer is verdict = unstable; disc = 4."
+          - problem: "For a planar system, the trace is -1 and the determinant is 2. Compute T^2 - 4D."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Here T = -1 and D = 2. Compute T^2 = 1 and 4D = 8. Then T^2 - 4D = 1 - 8 = -7. The value is -7."
+          - problem: "A 2x2 system has T = 7 and D = 10. Compute T^2 - 4D."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Here T = 7 and D = 10. Compute T^2 = 49 and 4D = 40. Then T^2 - 4D = 49 - 40 = 9. The value is 9."
+          - problem: "A 2x2 system has tr A = 1 and det A = 4. State the classification of the origin."
+            answer: "unstable spiral"
+            answer_contract: {"kind": "label", "options": [["stable node"], ["unstable node"], ["saddle"], ["stable spiral"], ["unstable spiral"], ["center"]]}
+            solution_sketch: "Read T = 1 and D = 4. Compute T^2 - 4D = 1 - 16 = -15, so the eigenvalues are complex because the discriminant is negative. Since T > 0, the real part is positive, so the origin is an unstable spiral. The answer is unstable spiral. Choosing stable node or unstable node ignores T^2 - 4D < 0; choosing saddle ignores D > 0; choosing stable spiral ignores T > 0; choosing center ignores T not zero."
         constraints: "give only trace and determinant; classification must cite T^2 - 4D and the signs of T, D"
       - id: kp3
         name: Trajectory behavior
         key_prerequisites: [equilibrium-classification-eigenvalues]
         exemplars:
-          - problem: 'A saddle has $\lambda_1 = 2$ with $\mathbf{v}_1 = \binom{1}{1}$ and $\lambda_2 = -3$ with $\mathbf{v}_2 = \binom{1}{-1}$. What does a generic trajectory do as $t \to \infty$?'
-            answer: 'The $\mathbf{v}_2$ component decays, so the trajectory becomes parallel to the line spanned by $\binom{1}{1}$ and runs off to infinity along it.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{X} = c_1 e^{2t}\mathbf{v}_1 + c_2 e^{-3t}\mathbf{v}_2$: for $c_1 \neq 0$ the growing term dominates.'
-          - problem: 'For $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}\mathbf{X}$, determine the direction of rotation of the closed orbits.'
-            answer: 'Clockwise: at $(1, 0)$ the velocity is $\binom{0}{-1}$, pointing straight down.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Evaluate $A\binom{1}{0} = \binom{0}{-1}$: from the positive $x$-axis the flow moves down, hence clockwise.'
+          - problem: "A saddle point has lambda_1 = 2 with v1 = (1, 3) and lambda_2 = -4 with v2 = (2, -1). A generic trajectory has a nonzero v1 component. Find the slope of the line it approaches as t -> infinity."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write X = c1 e^(2t) v1 + c2 e^(-4t) v2. Since 2 > -4, the e^(2t) term dominates as t -> infinity. The line is spanned by v1 = (1, 3), so its slope is 3/1 = 3. The answer is 3."
+          - problem: "For X' = [[0, -2], [2, 0]] X, the origin is a center. Determine the direction of rotation and the y-component of the velocity at the point (1, 0)."
+            answer: "dir = counterclockwise; vy = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["clockwise"], ["counterclockwise"]]}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "vy"}]}
+            solution_sketch: "The velocity is AX. At (1, 0), AX = (0, 2), so the y-component is 2. The flow points upward from (1, 0), so the rotation is counterclockwise. The clockwise option errs by reversing the sign of the y-component. The answer is dir = counterclockwise; vy = 2."
+          - problem: "A stable node has lambda_1 = -1 with v1 = (1, 1) and lambda_2 = -5 with v2 = (1, -3). Select the eigenvalue label whose term dominates as t -> infinity, and give its value."
+            answer: "which = lambda1; value = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["lambda1"], ["lambda2"]]}, "name": "which"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Write X = c1 e^(-t) v1 + c2 e^(-5t) v2. As t -> infinity, e^(-t) decays slower than e^(-5t), so the lambda1 term dominates. The dominant value is -1. The lambda2 option errs because e^(-5t) decays faster. The answer is which = lambda1; value = -1."
+          - problem: "An unstable node has lambda_1 = 4 with v1 = (1, 2) and lambda_2 = 1 with v2 = (3, -1). Find the slope of the line that a generic trajectory becomes parallel to as t -> infinity."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write X = c1 e^(4t) v1 + c2 e^(t) v2. Since 4 > 1, the e^(4t) term dominates as t -> infinity. The line is spanned by v1 = (1, 2), so its slope is 2/1 = 2. The answer is 2."
+          - problem: "For X' = [[0, 3], [-3, 0]] X, find the y-component of the velocity at (1, 0)."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The velocity is AX. At (1, 0), AX = (0, -3). The y-component is the second entry, which is -3. The answer is -3."
+          - problem: "For X' = [[0, 1], [-3, 0]] X, evaluate the velocity at (1, 0). State the rotation direction and the y-component of the velocity at (1, 0)."
+            answer: "dir = clockwise; vy = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["clockwise"], ["counterclockwise"]]}, "name": "dir"}, {"contract": {"kind": "exact"}, "name": "vy"}]}
+            solution_sketch: "The velocity is AX. At (1, 0), AX = (0, -3), so the y-component is -3. The flow points downward from (1, 0), so the rotation is clockwise. The counterclockwise option errs by reversing the sign of the y-component. The answer is dir = clockwise; vy = -3."
         constraints: "read dominance from the largest eigenvalue; rotation direction by evaluating AX at (1,0)"
     diagnostic_exemplar:
       problem: 'For $\mathbf{X}'' = \begin{pmatrix} -3 & 2 \\ -2 & -3 \end{pmatrix}\mathbf{X}$, use the trace and determinant to classify the origin, and say what a generic trajectory does as $t \to \infty$.'
@@ -498,27 +666,59 @@ topics:
         name: Complex eigenpairs
         key_prerequisites: [linear-systems-eigenvalues, complex-numbers]
         exemplars:
-          - problem: 'Find the eigenvalues of $\begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$ and an eigenvector for the eigenvalue with positive imaginary part.'
-            answer: '$\lambda = \pm i$; for $\lambda = i$ an eigenvector is $\binom{1}{i}$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda^2 + 1 = 0$; $(A - iI)\mathbf{v} = 0$ gives $-iv_1 + v_2 = 0$, so $\mathbf{v} = \binom{1}{i}$.'
-          - problem: 'Find the eigenvalues of $\begin{pmatrix} 1 & -2 \\ 2 & 1 \end{pmatrix}$.'
-            answer: '$\lambda = 1 \pm 2i$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\det(A - \lambda I) = (1 - \lambda)^2 + 4 = 0$.'
+          - problem: "For A = [0,1;-1,0], find the eigenvalue with positive imaginary part. Give the eigenvalue with positive imaginary part in the form a + bi."
+            answer: "0 + 1i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: characteristic equation. For A = [0,1;-1,0], det(A - lambda I) = lambda^2 + 1 = 0. Step 2: solve. The roots are lambda = i and lambda = -i. The eigenvalue with positive imaginary part is 0 + 1i."
+          - problem: "For A = [1,-2;2,1], find the ratio v2/v1 for an eigenvector belonging to the eigenvalue 1 + 2i. Give the ratio v2/v1 in the form a + bi."
+            answer: "0 - 1i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: eigenvector equation. For A = [1,-2;2,1] and lambda = 1 + 2i, solve (A - lambda I)v = 0. Step 2: first row. The equation -2i v1 - 2 v2 = 0 gives v2/v1 = -i. The ratio is 0 - 1i."
+          - problem: "For A = [2,1;-4,2], find the real part alpha and the imaginary part beta of the eigenvalues. Give the answer as alpha = a; beta = b."
+            answer: "alpha = 2; beta = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "alpha"}, {"contract": {"kind": "exact"}, "name": "beta"}]}
+            solution_sketch: "Step 1: characteristic equation. For A = [2,1;-4,2], det(A - lambda I) = (2 - lambda)^2 + 4 = 0. Step 2: solve and read parts. The eigenvalues are lambda = 2 + 2i and lambda = 2 - 2i, so alpha = 2 and beta = 2. The answer is alpha = 2; beta = 2."
+          - problem: "For A = [0,2;-18,0], find the ratio v2/v1 for an eigenvector belonging to the eigenvalue 0 + 6i. Give the ratio v2/v1 in the form a + bi."
+            answer: "0 + 3i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: eigenvector equation. For A = [0,2;-18,0] and lambda = 0 + 6i, solve (A - lambda I)v = 0. Step 2: first row. The equation -6i v1 + 2 v2 = 0 gives v2/v1 = 3i. The ratio is 0 + 3i."
+          - problem: "For A = [3,2;-2,3], find the eigenvalue with positive imaginary part. Give the eigenvalue with positive imaginary part in the form a + bi."
+            answer: "3 + 2i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: characteristic equation. For A = [3,2;-2,3], det(A - lambda I) = (3 - lambda)^2 + 4 = 0. Step 2: solve. The eigenvalues are lambda = 3 + 2i and lambda = 3 - 2i. The eigenvalue with positive imaginary part is 3 + 2i."
+          - problem: "For A = [2,4;-9,2], find the real part alpha and the imaginary part beta of the eigenvalues. Give the answer as alpha = a; beta = b."
+            answer: "alpha = 2; beta = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "alpha"}, {"contract": {"kind": "exact"}, "name": "beta"}]}
+            solution_sketch: "Step 1: characteristic equation. For A = [2,4;-9,2], det(A - lambda I) = (2 - lambda)^2 + 36 = 0. Step 2: solve and read parts. The eigenvalues are lambda = 2 + 6i and lambda = 2 - 6i, so alpha = 2 and beta = 6. The answer is alpha = 2; beta = 6."
         constraints: "2x2 integer matrices with eigenvalues alpha +/- beta i, alpha and beta integers"
       - id: kp2
         name: Real solutions via Euler's formula
         key_prerequisites: [linear-systems-eigenvalues, complex-numbers]
         exemplars:
-          - problem: 'Find the general (real) solution of $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}\mathbf{X}$.'
-            answer: '$\mathbf{X} = c_1\binom{\cos t}{-\sin t} + c_2\binom{\sin t}{\cos t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda = \pm i$ with eigenvector $\binom{1}{i}$ for $i$; the real and imaginary parts of $e^{it}\binom{1}{i}$ give two independent real solutions.'
-          - problem: 'Find the general (real) solution of $\mathbf{X}'' = \begin{pmatrix} 1 & -2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
-            answer: '$\mathbf{X} = c_1 e^{t}\binom{\cos 2t}{\sin 2t} + c_2 e^{t}\binom{\sin 2t}{-\cos 2t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda = 1 \pm 2i$ with eigenvector $\binom{1}{-i}$ for $1 + 2i$; split $e^{(1+2i)t}\binom{1}{-i}$ into real and imaginary parts.'
+          - problem: "The system X' = [0,1;-1,0] X has eigenvalue i with eigenvector (1, i). Use Euler's formula to split e^(i t)(1, i) into real and imaginary parts. Give the real part as (a, b) and the imaginary part as (c, d)."
+            answer: "a = cos(t); b = -sin(t); c = sin(t); d = cos(t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "a"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "b"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "c"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "d"}]}
+            solution_sketch: "Step 1: Euler's formula gives e^(i t) = cos(t) + i sin(t). Step 2: multiply by the eigenvector (1, i) to get (cos(t) + i sin(t), -sin(t) + i cos(t)). Step 3: take the real part and the imaginary part of that complex vector. The answer is a = cos(t); b = -sin(t); c = sin(t); d = cos(t)."
+          - problem: "The system X' = [1,-2;2,1] X has eigenvalue 1 + 2i with eigenvector (1, -i). Use Euler's formula to split e^((1+2i)t)(1, -i) into real and imaginary parts. Give the real part as (a, b) and the imaginary part as (c, d)."
+            answer: "a = e^(t) cos(2t); b = e^(t) sin(2t); c = e^(t) sin(2t); d = -e^(t) cos(2t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "a"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "b"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "c"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "d"}]}
+            solution_sketch: "Step 1: Euler's formula gives e^((1+2i)t) = e^(t)(cos(2t) + i sin(2t)). Step 2: multiply by the eigenvector (1, -i) and collect terms: e^(t)(cos(2t), sin(2t)) + i e^(t)(sin(2t), -cos(2t)). Step 3: read the real and imaginary parts as the two real solution vectors. The answer is a = e^(t) cos(2t); b = e^(t) sin(2t); c = e^(t) sin(2t); d = -e^(t) cos(2t)."
+          - problem: "The system X' = [2,-3;3,2] X has eigenvalue 2 + 3i with eigenvector (1, -i). Use Euler's formula to find the real-valued solution vector that comes from this eigenpair. Give it as (a, b)."
+            answer: "a = e^(2t) cos(3t); b = e^(2t) sin(3t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "a"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "b"}]}
+            solution_sketch: "Step 1: Euler's formula gives e^((2+3i)t) = e^(2t)(cos(3t) + i sin(3t)). Step 2: multiply by the eigenvector (1, -i) to get e^(2t)(cos(3t), sin(3t)) + i e^(2t)(sin(3t), -cos(3t)). Step 3: the real-valued solution vector is the real part of this complex solution. The answer is a = e^(2t) cos(3t); b = e^(2t) sin(3t)."
+          - problem: "The system X' = [0,3;-3,0] X has eigenvalue 3i with eigenvector (1, i). Use Euler's formula to find the imaginary part of e^(3i t)(1, i). Give it as (c, d)."
+            answer: "c = sin(3t); d = cos(3t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "c"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "d"}]}
+            solution_sketch: "Step 1: Euler's formula gives e^(3i t) = cos(3t) + i sin(3t). Step 2: multiply by the eigenvector (1, i) to get (cos(3t) + i sin(3t), -sin(3t) + i cos(3t)). Step 3: the imaginary part of this complex solution is the requested vector. The answer is c = sin(3t); d = cos(3t)."
+          - problem: "The system X' = [-1,1;-1,-1] X has eigenvalue -1 + i with eigenvector (1, i). Use Euler's formula to find the real part of e^((-1+i)t)(1, i). Give it as (a, b)."
+            answer: "a = e^(-t) cos(t); b = -e^(-t) sin(t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "a"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "b"}]}
+            solution_sketch: "Step 1: Euler's formula gives e^((-1+i)t) = e^(-t)(cos(t) + i sin(t)). Step 2: multiply by the eigenvector (1, i) and collect terms: e^(-t)(cos(t), -sin(t)) + i e^(-t)(sin(t), cos(t)). Step 3: the real part of this complex solution is the requested vector. The answer is a = e^(-t) cos(t); b = -e^(-t) sin(t)."
+          - problem: "The system X' = [3,-4;4,3] X has eigenvalue 3 + 4i with eigenvector (1, -i). Use Euler's formula to find the real part of e^((3+4i)t)(1, -i). Give it as (a, b)."
+            answer: "a = e^(3t) cos(4t); b = e^(3t) sin(4t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "a"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "b"}]}
+            solution_sketch: "Step 1: Euler's formula gives e^((3+4i)t) = e^(3t)(cos(4t) + i sin(4t)). Step 2: multiply by the eigenvector (1, -i) and collect terms: e^(3t)(cos(4t), sin(4t)) + i e^(3t)(sin(4t), -cos(4t)). Step 3: the real part of this complex solution is the requested vector. The answer is a = e^(3t) cos(4t); b = e^(3t) sin(4t)."
         constraints: "eigenvalues alpha +/- beta i with integer alpha, beta; answers written with real cos/sin vectors, no i remaining"
       - id: kp3
         name: IVPs and spiral behavior
