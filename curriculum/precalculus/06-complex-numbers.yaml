@@ -252,12 +252,25 @@ topics:
           - problem: 'A cubic with real coefficients has roots $2$ and $1 + i$. What is its third root?'
             answer: "1 - i"
             solution_sketch: 'Real coefficients force nonreal roots into conjugate pairs.'
-          - problem: 'Can a polynomial with real coefficients have $3i$ as a root but not $-3i$?'
-            answer: "no"
-            answer_contract: {kind: label, options: [[no], [yes]]}
+          - problem: "A cubic polynomial with real coefficients has $5i$ as a root. Give the other nonreal root in the form a + bi."
+            answer: "0 - 5i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Conjugate Root Theorem says that a polynomial with real coefficients has nonreal roots in conjugate pairs. The conjugate of $5i$ is $-5i$, which is written as $0 - 5i$ in the form a + bi. So the other forced root is 0 - 5i."
           - problem: 'A degree-$5$ polynomial with real coefficients has $2i$ and $1 - i$ among its roots. How many real roots must it have?'
             answer: "1"
             solution_sketch: 'The conjugates $-2i$ and $1 + i$ are also roots: four nonreal roots, leaving exactly one real root.'
+          - problem: "A degree-$4$ polynomial with real coefficients has $3$, $-5$, and $1 + i$ among its roots. How many real roots must it have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the Conjugate Root Theorem, $1 + i$ forces $1 - i$ to be a root. The given real roots are $3$ and $-5$, so there are two real roots. The degree is $4$, and $3$, $-5$, $1 + i$, $1 - i$ are four roots. Thus there are exactly 2 real roots."
+          - problem: "A cubic polynomial with real coefficients has $-1$ and $4 - 3i$ among its roots. Give its third root in the form a + bi."
+            answer: "4 + 3i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Conjugate Root Theorem forces the conjugate of $4 - 3i$ to also be a root. The conjugate is $4 + 3i$. A cubic has three roots, and $-1$ is the real root, so the third root is 4 + 3i."
+          - problem: "A degree-$4$ polynomial with real coefficients has $3i$ and $2 + i$ among its roots. How many real roots must it have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Conjugate Root Theorem forces the conjugates $-3i$ and $2 - i$ to also be roots. That gives four nonreal roots: $3i$, $-3i$, $2 + i$, $2 - i$. The polynomial has degree $4$, so these four roots fill it completely, leaving no room for a real root. Therefore the polynomial must have 0 real roots."
       - id: kp2
         name: Build a real polynomial from a complex root
         key_prerequisites: [complex-numbers, complex-plane-modulus-conjugate]
@@ -269,19 +282,51 @@ topics:
           - problem: 'Write a monic cubic with real coefficients whose roots include $1$ and $2 - i$. Expand it.'
             answer: "x^3 - 5x^2 + 9x - 5"
             solution_sketch: '$(x - 1)\left(x^2 - 4x + 5\right)$, since $2 \pm i$ give sum $4$ and product $5$.'
+          - problem: "Write a monic quadratic with real coefficients having -4 + i as a root. Give the expanded polynomial."
+            answer: "x^2 + 8x + 17"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Conjugate root theorem: real coefficients force the conjugate -4 - i as the second root. Vieta: sum = (-4 + i) + (-4 - i) = -8, product = 16 + 1 = 17. The monic quadratic is x^2 + 8x + 17."
+          - problem: "Write a monic cubic with real coefficients whose roots include 3 and 5 + i. Give the expanded polynomial."
+            answer: "x^3 - 13x^2 + 56x - 78"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Conjugate root theorem: 5 + i forces 5 - i. The complex pair gives x^2 - 10x + 26 because sum = 10 and product = 26. Multiply by (x - 3): x^3 - 13x^2 + 56x - 78."
+          - problem: "A monic quadratic with real coefficients has one root 3 - 4i and constant term 25. Find the coefficient of x."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Conjugate root theorem: the roots are 3 +/- 4i, so their sum is 6. For a monic quadratic the x coefficient is minus the sum, so it is -6. The constant term 9 + 16 = 25 agrees. The coefficient of x is -6."
+          - problem: "Write a monic quartic with real coefficients whose roots are 1, -2, and 2 + i. Give the expanded polynomial."
+            answer: "x^4 - 3x^3 - x^2 + 13x - 10"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Conjugate root theorem: 2 + i gives 2 - i, so the complex factor is x^2 - 4x + 5. The real factors are x - 1 and x + 2, whose product is x^2 + x - 2. Multiply: x^4 - 3x^3 - x^2 + 13x - 10."
       - id: kp3
         name: Find the remaining roots
         key_prerequisites: [fundamental-theorem-algebra-multiplicity, complex-numbers]
         constraints: "divide out the conjugate-pair quadratic; the remaining factor is linear or a factorable quadratic with integer roots"
         exemplars:
-          - problem: 'Given that $1 + 2i$ is a root of $p(x) = x^3 - 3x^2 + 7x - 5$, find the other roots.'
-            answer: "1 - 2i and 1"
-            answer_contract: {kind: none}
-            solution_sketch: 'The pair $1 \pm 2i$ gives the factor $x^2 - 2x + 5$; dividing leaves $x - 1$.'
-          - problem: 'Given that $2i$ is a root of $p(x) = x^4 + x^3 + 2x^2 + 4x - 8$, find all roots of $p$.'
-            answer: "2i, -2i, -2, and 1"
-            answer_contract: {kind: none}
-            solution_sketch: '$\pm 2i$ give the factor $x^2 + 4$; dividing leaves $x^2 + x - 2 = (x + 2)(x - 1)$.'
+          - problem: "Given that $2 + i$ is a root of $p(x) = x^3 - 5x^2 + 9x - 5$, find the other roots. Give the answer as a set."
+            answer: "{2 - i, 1}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The root 2 + i forces its conjugate 2 - i by the conjugate root theorem. The pair gives the factor x^2 - 4x + 5. Dividing p(x) by this factor leaves x - 1. Thus the other roots are {2 - i, 1}."
+          - problem: "Given that $3i$ is a root of $p(x) = x^4 + x^3 + 3x^2 + 9x - 54$, find all roots of $p$. Give the answer as a set."
+            answer: "{3i, -3i, 2, -3}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The conjugate root theorem says the root 3i forces -3i. The pair gives the factor x^2 + 9. Dividing p(x) by x^2 + 9 leaves x^2 + x - 6, which factors as (x - 2)(x + 3). Thus all roots are {3i, -3i, 2, -3}."
+          - problem: "Given that $1 - 2i$ is a root of $p(x) = x^3 - 6x^2 + 13x - 20$, find the other roots. Give the answer as a set."
+            answer: "{1 + 2i, 4}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The root 1 - 2i forces its conjugate 1 + 2i. The pair gives the factor x^2 - 2x + 5. Dividing p(x) by this factor leaves x - 4. Thus the other roots are {1 + 2i, 4}."
+          - problem: "Given that $2 + i$ is a root of $p(x) = x^4 - 6x^3 + 10x^2 + 2x - 15$, find all roots of $p$. Give the answer as a set."
+            answer: "{2 + i, 2 - i, 3, -1}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The conjugate root theorem gives 2 - i as another root. The pair gives the factor x^2 - 4x + 5. Dividing p(x) by this factor leaves x^2 - 2x - 3, which factors as (x - 3)(x + 1). Thus all roots are {2 + i, 2 - i, 3, -1}."
+          - problem: "Given that $-4i$ is a root of $p(x) = x^4 + 4x^3 + 11x^2 + 64x - 80$, find all roots of $p$. Give the answer as a set."
+            answer: "{4i, -4i, 1, -5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The root -4i forces its conjugate 4i by the conjugate root theorem. The pair gives the factor x^2 + 16. Dividing p(x) by x^2 + 16 leaves x^2 + 4x - 5, which factors as (x + 5)(x - 1). Thus all roots are {4i, -4i, 1, -5}."
+          - problem: "Given that $2 - 3i$ is a root of $p(x) = x^4 - 4x^3 + 9x^2 + 16x - 52$, find all roots of $p$. Give the answer as a set."
+            answer: "{2 + 3i, 2 - 3i, 2, -2}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The conjugate root theorem gives 2 + 3i as another root. The pair gives the factor x^2 - 4x + 13. Dividing p(x) by this factor leaves x^2 - 4, which factors as (x - 2)(x + 2). Thus all roots are {2 + 3i, 2 - 3i, 2, -2}."
     diagnostic_exemplar:
       problem: 'Given that $1 + 2i$ is a root of $p(x) = x^3 - 5x^2 + 11x - 15$, find the other roots.'
       answer: "1 - 2i and 3"
@@ -324,6 +369,22 @@ topics:
           - problem: 'Write $1 - \sqrt{3}\,i$ in polar form with $\theta \in [0, 2\pi)$.'
             answer: "2 (cos 5π/3 + i sin 5π/3)"
             solution_sketch: '$r = \sqrt{1 + 3} = 2$; the point lies in Quadrant IV with reference angle $\pi/3$.'
+          - problem: "Write $-1 + i$ in polar form. Give the answer as (r, theta), with theta in [0, 2pi)."
+            answer: "(sqrt(2), 3pi/4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Modulus rule: $r = \\sqrt{(-1)^2 + 1^2} = \\sqrt{2}$. The point $(-1, 1)$ is in Quadrant II, so the argument is $\\pi - \\pi/4 = 3\\pi/4$. The answer is (sqrt(2), 3pi/4)."
+          - problem: "Write $-\\sqrt{3} - i$ in polar form. Give the answer as (r, theta), with theta in [0, 2pi)."
+            answer: "(2, 7pi/6)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Modulus rule: $r = \\sqrt{3 + 1} = 2$. The point is in Quadrant III with reference angle $\\pi/6$, so the argument is $\\pi + \\pi/6 = 7\\pi/6$. The answer is (2, 7pi/6)."
+          - problem: "Write $2i$ in polar form. Give the answer as (r, theta), with theta in [0, 2pi)."
+            answer: "(2, pi/2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Modulus rule: $r = \\sqrt{0^2 + 2^2} = 2$. The point $(0, 2)$ lies on the positive imaginary axis, so the argument is $\\pi/2$. The answer is (2, pi/2)."
+          - problem: "Write $-3$ in polar form. Give the answer as (r, theta), with theta in [0, 2pi)."
+            answer: "(3, pi)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Modulus rule: $r = \\sqrt{(-3)^2 + 0^2} = 3$. The point $(-3, 0)$ lies on the negative real axis, so the argument is $\\pi$. The answer is (3, pi)."
       - id: kp2
         name: Polar to rectangular form
         key_prerequisites: [unit-circle]
