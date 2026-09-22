@@ -381,14 +381,30 @@ topics:
         name: "Basic properties"
         key_prerequisites: [union-intersection-difference]
         exemplars:
-          - problem: 'For any set $A$, compute $A \triangle A$ and $A \triangle \varnothing$.'
-            answer_contract: {kind: none}
-            answer: '$A \triangle A = \varnothing$ and $A \triangle \varnothing = A$.'
-            solution_sketch: '$A \setminus A = \varnothing$ gives the first; $A \setminus \varnothing = A$ and $\varnothing \setminus A = \varnothing$ give the second.'
-          - problem: 'With $A = \{1, 5\}$ and $B = \{2, 5\}$, verify $A \triangle B = B \triangle A$.'
-            answer_contract: {kind: none}
-            answer: 'Both equal $\{1, 2\}$.'
-            solution_sketch: 'The definition is symmetric in $A$ and $B$: elements in exactly one of the two sets.'
+          - problem: "Let $A = \\{2, 4, 7\\}$. The symmetric difference $X \\triangle Y$ of two sets is the set of elements that lie in exactly one of $X$ and $Y$. Give $A \\triangle \\varnothing$ as a set."
+            answer: "{2, 4, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (definition of symmetric difference): the elements of $A \\triangle \\varnothing$ are those lying in exactly one of $A = \\{2, 4, 7\\}$ and $\\varnothing$. Step 2 (empty-set property): $\\varnothing$ has no elements, so no element of $A$ is shared with it and all of 2, 4, 7 survive; this is the identity $A \\triangle \\varnothing = A$. The answer is {2, 4, 7}."
+          - problem: "Let $A = \\{1, 4, 9\\}$ and $B = \\{4, 6\\}$. Compute $A \\triangle B$ and $B \\triangle A$ to check commutativity on this pair. Give $A \\triangle B$ as ab and $B \\triangle A$ as ba."
+            answer: "ab = {1, 6, 9}; ba = {1, 6, 9}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "ab"}, {"contract": {"kind": "set"}, "name": "ba"}]}
+            solution_sketch: "Step 1 (definition): for $A \\triangle B$, the element 1 lies only in $A = \\{1, 4, 9\\}$, the element 6 lies only in $B = \\{4, 6\\}$, and 4 lies in both sets so it drops out, giving $A \\triangle B = \\{1, 6, 9\\}$. Step 2 (swap the roles): computing $B \\triangle A$ with the same definition keeps exactly the elements in one set only, which are again 1, 6, 9, so $B \\triangle A = \\{1, 6, 9\\}$ and the operation is commutative here. The key is ab = {1, 6, 9}; ba = {1, 6, 9}."
+          - problem: "Let $A = \\{3, 8, 11, 14\\}$. Form $A \\triangle A$ and then count the elements of the result. How many elements does $A \\triangle A$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition applied to identical sets): $A \\triangle A$ with $A = \\{3, 8, 11, 14\\}$ should contain the elements lying in exactly one copy of $A$. Step 2 (self-difference identity): every element of $A$ appears in both copies, so $(A \\setminus A) \\cup (A \\setminus A) = \\varnothing$ and $A \\triangle A$ is empty, matching $A \\triangle A = \\varnothing$. The answer is 0."
+          - problem: "Let $A = \\{1, 2, 5\\}$ and $B = \\{2, 3\\}$. Compute $A \\triangle B$ first, then take the symmetric difference of that result with $B$ again. Give $(A \\triangle B) \\triangle B$ as a set."
+            answer: "{1, 2, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (definition): $A \\triangle B$ keeps 1 and 5 (only in $A = \\{1, 2, 5\\}$) and 3 (only in $B = \\{2, 3\\}$), while 2 lies in both and drops, so $A \\triangle B = \\{1, 3, 5\\}$. Step 2 (self-inverse property): $\\{1, 3, 5\\} \\triangle \\{2, 3\\}$ keeps 1 and 5, keeps 2, and drops the element 3 that now appears in both, giving $\\{1, 2, 5\\} = A$; this checks the cancellation identity $(A \\triangle B) \\triangle B = A$. The answer is {1, 2, 5}."
+          - problem: "Let $A = \\{1, 2, 3, 5\\}$, $B = \\{2, 3, 6\\}$ and $C = \\{3, 5\\}$. Compute $A \\cap B$ and $A \\cap C$, then take the symmetric difference of the two intersections. Give $(A \\cap B) \\triangle (A \\cap C)$ as a set."
+            answer: "{2, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (intersection rule): $A \\cap B = \\{2, 3\\}$ and $A \\cap C = \\{3, 5\\}$, since these are exactly the elements shared with $A = \\{1, 2, 3, 5\\}$. Step 2 (symmetric difference of the intersections): $\\{2, 3\\} \\triangle \\{3, 5\\}$ keeps 2 and 5 and drops the shared element 3, giving $\\{2, 5\\}$; this matches the distributive identity $A \\cap (B \\triangle C) = (A \\cap B) \\triangle (A \\cap C)$. The answer is {2, 5}."
+          - problem: "Let $A = \\{2, 5, 9, 12\\}$ and $B = \\{5, 12, 20\\}$. Form $A \\triangle B$ and count the elements of the result. How many elements does $A \\triangle B$ have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition): for $A \\triangle B$ with $A = \\{2, 5, 9, 12\\}$ and $B = \\{5, 12, 20\\}$, the elements 5 and 12 lie in both sets and drop out, while 2 and 9 lie only in $A$ and 20 lies only in $B$. Step 2 (count the survivors): $A \\triangle B = \\{2, 9, 20\\}$, and this set has 3 elements. The answer is 3."
         constraints: "identity-style facts checked on small concrete sets"
     diagnostic_exemplar:
       problem: 'With $A = \{1, 3, 5\}$ and $B = \{1, 2, 3\}$: compute $(A \cup B) \setminus (A \cap B)$ and $(A \setminus B) \cup (B \setminus A)$, confirm they agree, and state $A \triangle A$.'
