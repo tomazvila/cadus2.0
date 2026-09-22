@@ -37,18 +37,30 @@ topics:
         name: Transforms needing integration by parts
         key_prerequisites: [improper-integrals, integration-by-parts]
         exemplars:
-          - problem: 'Compute $\mathcal{L}\{t\}$ from the definition.'
-            answer: '$\dfrac{1}{s^2}$ for $s > 0$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Integrate $\int_0^{\infty} te^{-st}dt$ by parts: the boundary terms vanish and $\frac{1}{s}\int_0^\infty e^{-st}dt = \frac{1}{s^2}$.'
-          - problem: 'Compute $\mathcal{L}\{te^{2t}\}$ from the definition.'
-            answer: '$\dfrac{1}{(s - 2)^2}$ for $s > 2$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\int_0^{\infty} te^{(2-s)t}dt$ by parts with $u = t$: for $s > 2$ the boundary terms vanish, leaving $\frac{1}{(s-2)^2}$.'
-          - problem: 'Compute $\mathcal{L}\{t^2\}$ from the definition.'
-            answer: '$\dfrac{2}{s^3}$ for $s > 0$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Two integrations by parts: $\int_0^\infty t^2 e^{-st}dt = \frac{2}{s}\int_0^\infty t e^{-st}dt = \frac{2}{s}\cdot\frac{1}{s^2}$.'
+          - problem: "Use the definition and integration by parts to compute the Laplace transform of t. Give the transform as a function of s and the domain of convergence as an inequality in s."
+            answer: "F = 1/s^2; domain = s > 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["s"]}, "name": "F"}, {"contract": {"kind": "inequality_union"}, "name": "domain"}]}
+            solution_sketch: "Start with the definition: F(s) = integral from 0 to infinity of t e^(-st) dt. Use integration by parts with u = t and dv = e^(-st) dt; the boundary term vanishes for s > 0, leaving (1/s) times the integral of e^(-st). The remaining integral is 1/s, so the transform is 1/s^2. The answer is F = 1/s^2; domain = s > 0."
+          - problem: "Use the definition and one integration by parts to compute the Laplace transform of t e^{2t}. Give the transform as a function of s and the domain of convergence as an inequality in s."
+            answer: "F = 1/(s-2)^2; domain = s > 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["s"]}, "name": "F"}, {"contract": {"kind": "inequality_union"}, "name": "domain"}]}
+            solution_sketch: "The definition gives F(s) = integral from 0 to infinity of t e^{(2-s)t} dt. Use integration by parts with u = t; the boundary term vanishes when s > 2, and the remaining integral of e^{(2-s)t} equals 1/(s-2). Therefore the transform is 1/(s-2)^2. The answer is F = 1/(s-2)^2; domain = s > 2."
+          - problem: "Use the definition and two integrations by parts to compute the Laplace transform of t^2. Give the transform as a function of s and the domain of convergence as an inequality in s."
+            answer: "F = 2/s^3; domain = s > 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["s"]}, "name": "F"}, {"contract": {"kind": "inequality_union"}, "name": "domain"}]}
+            solution_sketch: "The definition gives F(s) = integral from 0 to infinity of t^2 e^(-st) dt. First integration by parts reduces this to (2/s) times the integral of t e^(-st) dt, valid for s > 0. The second integration by parts gives (2/s) times 1/s^2. The answer is F = 2/s^3; domain = s > 0."
+          - problem: "Use the definition and two integrations by parts to compute the Laplace transform of t^2. Give its value at s = 1 and the domain of convergence as an inequality in s."
+            answer: "F1 = 2; domain = s > 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "F1"}, {"contract": {"kind": "inequality_union"}, "name": "domain"}]}
+            solution_sketch: "From the definition, F(s) = integral from 0 to infinity of t^2 e^(-st) dt. Two integrations by parts give F(s) = 2/s^3 for s > 0. Evaluating at s = 1 gives 2/1^3 = 2. The answer is F1 = 2; domain = s > 0."
+          - problem: "Use the definition and integration by parts to compute the Laplace transform of t. Give its value at s = 2 and the domain of convergence as an inequality in s."
+            answer: "F2 = 1/4; domain = s > 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "F2"}, {"contract": {"kind": "inequality_union"}, "name": "domain"}]}
+            solution_sketch: "The definition gives F(s) = integral from 0 to infinity of t e^(-st) dt. Integration by parts with u = t gives F(s) = 1/s^2 for s > 0. At s = 2 the value is 1/2^2 = 1/4. The answer is F2 = 1/4; domain = s > 0."
+          - problem: "Use the definition and one integration by parts to compute the Laplace transform of t e^{5t}. Give the transform as a function of s and the domain of convergence as an inequality in s."
+            answer: "F = 1/(s-5)^2; domain = s > 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["s"]}, "name": "F"}, {"contract": {"kind": "inequality_union"}, "name": "domain"}]}
+            solution_sketch: "The definition gives F(s) = integral from 0 to infinity of t e^{(5-s)t} dt. Integration by parts with u = t works when s > 5; the boundary term vanishes and the remaining integral is 1/(s-5). Thus the transform is 1/(s-5)^2. The answer is F = 1/(s-5)^2; domain = s > 5."
         constraints: "integrands t, t^2, t e^{at}; one or two integrations by parts; state the domain of convergence"
     diagnostic_exemplar:
       problem: 'Compute $\mathcal{L}\{te^{-2t}\}$ directly from the definition, stating where it converges.'
@@ -90,6 +102,18 @@ topics:
             solution_sketch: 'Table entry $\mathcal{L}\{\sin bt\} = \frac{b}{s^2+b^2}$ with $b = 5$.'
           - problem: 'Compute $\mathcal{L}\{\cos 2t\}$.'
             answer: '$s/(s^2 + 4)$'
+          - problem: "Find the Laplace transform of $e^{4t}$ and give the result as a function of $s$."
+            answer: "1/(s-4)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The full object is the transform $\\mathcal{L}\\{e^{4t}\\}$. Step 1 names the exponential table rule $\\mathcal{L}\\{e^{at}\\} = 1/(s-a)$ for $s$ larger than $a$. Step 2 substitutes the integer parameter $a = 4$ into that entry. The answer is 1/(s-4)."
+          - problem: "Compute $\\mathcal{L}\\{t^2\\}$ and give the result as a function of $s$."
+            answer: "2/s^3"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The full object is the transform $\\mathcal{L}\\{t^2\\}$. Step 1 selects the power table rule $\\mathcal{L}\\{t^n\\} = n!/s^{n+1}$. Step 2 inserts $n = 2$, so $n! = 2$ and the exponent on $s$ is $3$. The answer is 2/s^3."
+          - problem: "Determine $\\mathcal{L}\\{\\sin 3t\\}$ and give the result as a function of $s$."
+            answer: "3/(s^2+9)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The full object is the transform $\\mathcal{L}\\{\\sin 3t\\}$. Step 1 selects the sine table rule $\\mathcal{L}\\{\\sin bt\\} = b/(s^2+b^2)$. Step 2 inserts the integer parameter $b = 3$, so the numerator is $3$ and the denominator is $s^2 + 9$. The answer is 3/(s^2+9)."
         constraints: "single table entries: t^n (n <= 3), e^{at}, sin bt, cos bt with integer parameters"
       - id: kp2
         name: Linearity
@@ -100,6 +124,18 @@ topics:
             solution_sketch: '$\mathcal{L}\{t^2\} = \frac{2}{s^3}$ and $\mathcal{L}\{\sin 4t\} = \frac{4}{s^2+16}$; apply linearity.'
           - problem: 'Compute $\mathcal{L}\{\cos 3t + e^{-2t}\}$.'
             answer: '$s/(s^2 + 9) + 1/(s + 2)$'
+          - problem: "Compute $\\mathcal{L}\\{5t^3 + 2\\sin 2t\\}$."
+            answer: "30/s^4 + 4/(s^2 + 4)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Use the table entry L{t^3} = 6/s^4 and the table entry L{sin 2t} = 2/(s^2 + 4). By linearity, multiply by 5 and 2: 5*6/s^4 + 2*2/(s^2 + 4). The transform is 30/s^4 + 4/(s^2 + 4)."
+          - problem: "Compute $\\mathcal{L}\\{7e^{-4t} - 3\\cos 2t\\}$."
+            answer: "7/(s+4) - 3s/(s^2+4)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Use the table entry L{e^{-4t}} = 1/(s + 4) and the table entry L{cos 2t} = s/(s^2 + 4). By linearity, multiply by 7 and -3: 7/(s + 4) - 3s/(s^2 + 4). The transform is 7/(s+4) - 3s/(s^2+4)."
+          - problem: "Compute $\\mathcal{L}\\{2t - 6e^{5t} + \\sin 3t\\}$."
+            answer: "2/s^2 - 6/(s-5) + 3/(s^2+9)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Use the table entries L{t} = 1/s^2, L{e^{5t}} = 1/(s - 5), and L{sin 3t} = 3/(s^2 + 9). By linearity, multiply by 2, -6, and 1: 2/s^2 - 6/(s - 5) + 3/(s^2 + 9). The transform is 2/s^2 - 6/(s-5) + 3/(s^2+9)."
           - problem: 'Compute $\mathcal{L}\{4 - 5t + 2e^{3t}\}$.'
             answer: '$4/s - 5/s^2 + 2/(s - 3)$'
             solution_sketch: 'Transform each term from the table and combine by linearity.'
@@ -146,6 +182,18 @@ topics:
             solution_sketch: 'Shift $\mathcal{L}\{t^2\} = \frac{2}{s^3}$ by $s \mapsto s + 1$.'
           - problem: 'Compute $\mathcal{L}\{e^{3t}\cos t\}$.'
             answer: '$(s - 3)/((s-3)^2 + 1)$'
+          - problem: "Compute $\\mathcal{L}\\{e^{4t} t\\}$."
+            answer: "1/(s-4)^2"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "First object: L{e^(4t) t}. Rule: the basic table gives L{t} = 1/s^2. Rule: the first shifting theorem replaces s by s-4 everywhere. So L{e^(4t) t} = 1/(s-4)^2."
+          - problem: "Compute $\\mathcal{L}\\{e^{-3t}\\sin 2t\\}$."
+            answer: "2/((s+3)^2+4)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "First object: L{e^(-3t) sin(2t)}. Rule: the basic table gives L{sin(2t)} = 2/(s^2+4). Rule: the first shifting theorem replaces s by s+3 everywhere. So L{e^(-3t) sin(2t)} = 2/((s+3)^2+4)."
+          - problem: "Compute $\\mathcal{L}\\{e^{5t}\\cosh 2t\\}$."
+            answer: "(s-5)/((s-5)^2-4)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "First object: L{e^(5t) cosh(2t)}. Rule: the basic table gives L{cosh(2t)} = s/(s^2-4). Rule: the first shifting theorem replaces s by s-5 everywhere. So L{e^(5t) cosh(2t)} = (s-5)/((s-5)^2-4)."
         constraints: "products e^{at} f(t) with f from the basic table; the shift replaces s by s - a everywhere"
       - id: kp2
         name: Mixed transform fluency
@@ -160,6 +208,18 @@ topics:
           - problem: 'Compute $\mathcal{L}\{2t^3 e^{4t}\}$.'
             answer: '$12/(s-4)^4$'
             solution_sketch: '$\mathcal{L}\{2t^3\} = \frac{12}{s^4}$, shifted by $s \mapsto s - 4$.'
+          - problem: "Compute the Laplace transform of e^(-2t)(t^2 + 4 sin(t)), as a function of s."
+            answer: "2/(s+2)^3+4/((s+2)^2+1)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "First write the table transform of t^2 + 4 sin(t): L{t^2} = 2/s^3 and L{4 sin(t)} = 4/(s^2+1), so L{t^2 + 4 sin(t)} = 2/s^3 + 4/(s^2+1). Then apply the first shifting theorem with a = -2, replacing s by s+2 because of the factor e^(-2t). The final transform is 2/(s+2)^3+4/((s+2)^2+1)."
+          - problem: "Compute the Laplace transform of e^(3t)(4t - cos(5t)), as a function of s."
+            answer: "4/(s-3)^2-(s-3)/((s-3)^2+25)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Start with the table transform of 4t - cos(5t): L{4t} = 4/s^2 and L{cos(5t)} = s/(s^2+25), so L{4t - cos(5t)} = 4/s^2 - s/(s^2+25). The first shifting theorem for e^(3t) replaces s by s-3, because a = 3. Thus the transform is 4/(s-3)^2-(s-3)/((s-3)^2+25)."
+          - problem: "Compute the Laplace transform of e^(5t)(2t - 5 sin(3t)), as a function of s."
+            answer: "2/(s-5)^2-15/((s-5)^2+9)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "First use the table on 2t - 5 sin(3t): L{2t} = 2/s^2 and L{5 sin(3t)} = 15/(s^2+9), so the inner transform is 2/s^2 - 15/(s^2+9). Apply the first shifting theorem with a = 5 for the factor e^(5t), replacing s by s-5. This gives 2/(s-5)^2-15/((s-5)^2+9)."
         constraints: "linearity and the s-shift combined; integer parameters; at most three terms"
     diagnostic_exemplar:
       problem: 'Compute $\mathcal{L}\{e^{-t}(t^2 + \cos 3t)\}$.'
@@ -251,30 +311,54 @@ topics:
           - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s(s + 1)}\right\}$.'
             answer: '$1 - e^{-t}$'
             solution_sketch: '$\frac{1}{s(s+1)} = \frac{1}{s} - \frac{1}{s+1}$; invert term by term.'
-          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{s + 3}{(s - 1)(s + 2)}\right\}$.'
-            answer: '$\dfrac{4}{3}e^{t} - \dfrac{1}{3}e^{-2t}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Cover-up: $A = \frac{1+3}{1+2} = \frac{4}{3}$ at $s = 1$; $B = \frac{-2+3}{-2-1} = -\frac{1}{3}$ at $s = -2$.'
-          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{2}{s^2 - 4}\right\}$.'
-            answer: '$\dfrac{1}{2}e^{2t} - \dfrac{1}{2}e^{-2t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{2}{(s-2)(s+2)} = \frac{1/2}{s-2} - \frac{1/2}{s+2}$ by cover-up.'
+          - problem: "Compute the inverse Laplace transform of (s + 3)/((s - 1)(s + 2)) as a function of t."
+            answer: "4e^t/3 - e^(-2t)/3"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write F(s) = (s + 3)/((s - 1)(s + 2)). Split it as A/(s - 1) + B/(s + 2) by partial fractions. Cover-up at s = 1 gives A = 4/3; at s = -2 gives B = -1/3. Invert each term with the table rule for 1/(s - a). The inverse transform is 4e^t/3 - e^(-2t)/3."
+          - problem: "Compute the inverse Laplace transform of 2/((s - 2)(s + 2)) as a function of t."
+            answer: "e^(2t)/2 - e^(-2t)/2"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write F(s) = 2/((s - 2)(s + 2)). Split it as A/(s - 2) + B/(s + 2). Cover-up gives A = 1/2 at s = 2 and B = -1/2 at s = -2. Invert each term with the table rule for 1/(s - a). The inverse transform is e^(2t)/2 - e^(-2t)/2."
+          - problem: "Compute the inverse Laplace transform of (s + 5)/((s + 1)(s + 2)) as a function of t."
+            answer: "4e^(-t) - 3e^(-2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write F(s) = (s + 5)/((s + 1)(s + 2)). Split it as A/(s + 1) + B/(s + 2). Cover-up at s = -1 gives A = 4; at s = -2 gives B = -3. Invert each term with the table rule for 1/(s - a). The inverse transform is 4e^(-t) - 3e^(-2t)."
+          - problem: "Compute the inverse Laplace transform of 1/((s - 3)(s + 1)) as a function of t."
+            answer: "e^(3t)/4 - e^(-t)/4"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write F(s) = 1/((s - 3)(s + 1)). Split it as A/(s - 3) + B/(s + 1). Cover-up at s = 3 gives A = 1/4; at s = -1 gives B = -1/4. Invert each term with the table rule for 1/(s - a). The inverse transform is e^(3t)/4 - e^(-t)/4."
+          - problem: "Compute the inverse Laplace transform of (2s + 1)/((s - 2)(s + 2)) as a function of t."
+            answer: "5e^(2t)/4 + 3e^(-2t)/4"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Write F(s) = (2s + 1)/((s - 2)(s + 2)). Split it as A/(s - 2) + B/(s + 2). Cover-up at s = 2 gives A = 5/4; at s = -2 gives B = 3/4. Invert each term with the table rule for 1/(s - a). The inverse transform is 5e^(2t)/4 + 3e^(-2t)/4."
         constraints: "denominators factor over the integers into 2 distinct linear factors; coefficients clean fractions"
       - id: kp2
         name: Completing the square and repeated factors
         key_prerequisites: [laplace-transform-basics, partial-fractions-integration]
         exemplars:
-          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s^2 + 2s + 5}\right\}$.'
-            answer: '$\dfrac{1}{2}e^{-t}\sin 2t$'
-            answer_contract: {kind: none}
-            solution_sketch: '$s^2 + 2s + 5 = (s+1)^2 + 4$; write $\frac{1}{2}\cdot\frac{2}{(s+1)^2+4}$ and unshift.'
           - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{s + 1}{s^2 + 2s + 5}\right\}$.'
             answer: '$e^{-t}\cos 2t$'
             solution_sketch: 'The numerator is exactly the shifted $s$: $\frac{s+1}{(s+1)^2 + 4}$.'
-          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{1}{(s - 2)^2}\right\}$.'
-            answer: '$te^{2t}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Shift of $\mathcal{L}\{t\} = \frac{1}{s^2}$ by $s \mapsto s - 2$.'
+          - problem: "The transform is $\\mathcal{L}^{-1}\\left\\{\\dfrac{3}{s^2 + 2s + 10}\\right\\}$. Find the inverse transform as a function of t."
+            answer: "e^(-t) sin(3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Full object: 3/(s^2 + 2s + 10). First complete the square: s^2 + 2s + 10 = (s+1)^2 + 9. The numerator 3 matches the table entry 3/((s+1)^2 + 9), so the first shifting theorem gives e^(-t) sin(3t). The inverse transform is e^(-t) sin(3t)."
+          - problem: "The transform is $\\mathcal{L}^{-1}\\left\\{\\dfrac{1}{(s + 5)^2}\\right\\}$. Find the inverse transform as a function of t."
+            answer: "t e^(-5t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Full object: 1/(s+5)^2. The table entry 1/s^2 gives t, and the first shifting theorem with s -> s+5 gives a factor e^(-5t). Multiply to get t e^(-5t). The inverse transform is t e^(-5t)."
+          - problem: "The transform is $\\mathcal{L}^{-1}\\left\\{\\dfrac{s + 4}{s^2 + 8s + 20}\\right\\}$. Find the inverse transform as a function of t."
+            answer: "e^(-4t) cos(2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Full object: (s+4)/(s^2 + 8s + 20). Complete the square: s^2 + 8s + 20 = (s+4)^2 + 4. The numerator s+4 is the shifted s, so the table entry s/(s^2 + 4) together with the first shifting theorem gives e^(-4t) cos(2t). The inverse transform is e^(-4t) cos(2t)."
+          - problem: "The transform is $\\mathcal{L}^{-1}\\left\\{\\dfrac{2}{s^2 + 6s + 10}\\right\\}$. Find the inverse transform as a function of t."
+            answer: "2e^(-3t) sin(t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Full object: 2/(s^2 + 6s + 10). Complete the square: s^2 + 6s + 10 = (s+3)^2 + 1. Rewrite as 2 times 1/((s+3)^2 + 1); the table entry 1/(s^2+1) and the first shifting theorem give 2e^(-3t) sin(t). The inverse transform is 2e^(-3t) sin(t)."
+          - problem: "The transform is $\\mathcal{L}^{-1}\\left\\{\\dfrac{3s + 10}{(s + 2)^2}\\right\\}$. Find the inverse transform as a function of t."
+            answer: "3e^(-2t) + 4t e^(-2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Full object: (3s+10)/(s+2)^2. Partial fractions: (3s+10)/(s+2)^2 = 3/(s+2) + 4/(s+2)^2. The table entries 1/(s+2) and 1/(s+2)^2 give 3e^(-2t) and 4t e^(-2t). Add them. The inverse transform is 3e^(-2t) + 4t e^(-2t)."
         constraints: "irreducible quadratics complete to (s+a)^2 + b^2 with integer a, b; repeated linear factors to power 2 only"
     diagnostic_exemplar:
       problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{s + 5}{s^2 + 4s + 13}\right\}$.'
@@ -307,15 +391,27 @@ topics:
         name: The derivative formulas
         key_prerequisites: [laplace-transform-basics]
         exemplars:
-          - problem: 'Express $\mathcal{L}\{y''\}$ in terms of $Y(s) = \mathcal{L}\{y\}$ and $y(0)$.'
-            answer: '$sY(s) - y(0)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$sY(s) - y(0)$'
+          - problem: "Let $Y(s) = \\mathcal{L}\\{y\\}$, with $y(0)=4$ and $Y(s)=\\frac{1}{s+3}$. Find $\\mathcal{L}\\{y'\\}$ as a function of $s$."
+            answer: "s/(s+3)-4"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "By the first-derivative formula, $\\mathcal{L}\\{y'\\}=sY(s)-y(0)$. Substitute $Y(s)=1/(s+3)$ and $y(0)=4$: $s\\cdot 1/(s+3)-4$. The result is s/(s+3)-4."
           - problem: 'Express $\mathcal{L}\{y''''\}$ in terms of $Y(s) = \mathcal{L}\{y\}$, writing $y(0) = a$ and $y''(0) = b$.'
             answer: '$s^2 Y(s) - s a - b$'
           - problem: 'Given $y(0) = 2$ and $y''(0) = -1$, write $\mathcal{L}\{y''''\}$ in terms of $Y(s)$.'
             answer: '$s^2 Y(s) - 2s + 1$'
             solution_sketch: 'Substitute into $s^2Y - s\,y(0) - y''(0) = s^2Y - 2s - (-1)$.'
+          - problem: "Let $Y(s) = \\mathcal{L}\\{y\\}$, with $y(0)=2$, $y'(0)=-1$, and $Y(s)=\\frac{1}{s+1}$. Find $\\mathcal{L}\\{y''\\}$ as a function of $s$."
+            answer: "s^2/(s+1)-2s+1"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "By the second-derivative formula, $\\mathcal{L}\\{y''\\}=s^2Y(s)-s\\,y(0)-y'(0)$. Substitute $Y(s)=1/(s+1)$, $y(0)=2$, and $y'(0)=-1$: $s^2/(s+1)-2s-(-1)$. The result is s^2/(s+1)-2s+1."
+          - problem: "Let $Y(s) = \\mathcal{L}\\{y\\}$, with $y(0)=5$ and $Y(s)=\\frac{1}{s-2}$. Find $\\mathcal{L}\\{y'\\}$ as a function of $s$."
+            answer: "s/(s-2)-5"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "By the first-derivative formula, $\\mathcal{L}\\{y'\\}=sY(s)-y(0)$. Substitute $Y(s)=1/(s-2)$ and $y(0)=5$: $s/(s-2)-5$. The result is s/(s-2)-5."
+          - problem: "Let $Y(s) = \\mathcal{L}\\{y\\}$, with $y(0)=3$, $y'(0)=7$, and $Y(s)=\\frac{1}{s+4}$. Find $\\mathcal{L}\\{y''\\}$ as a function of $s$."
+            answer: "s^2/(s+4)-3s-7"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "By the second-derivative formula, $\\mathcal{L}\\{y''\\}=s^2Y(s)-s\\,y(0)-y'(0)$. Substitute $Y(s)=1/(s+4)$, $y(0)=3$, and $y'(0)=7$: $s^2/(s+4)-3s-7$. The result is s^2/(s+4)-3s-7."
         constraints: "first and second derivatives only; initial conditions given at t = 0"
       - id: kp2
         name: From ODE to algebra
@@ -330,6 +426,18 @@ topics:
           - problem: 'Transform $y'' - 5y = e^{2t}$, $y(0) = 0$, and solve for $Y(s)$.'
             answer: '$1/((s - 2)(s - 5))$'
             solution_sketch: '$(s - 5)Y = \frac{1}{s-2}$; divide. No inversion asked.'
+          - problem: "An initial value problem is $y' + 7y = 0$ with $y(0) = 4$. Solve for $Y(s)$ as a function of $s$."
+            answer: "4/(s+7)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Use the derivative transform rule $\\mathcal{L}\\{y'\\} = sY(s) - y(0)$. The transformed equation is $sY - 4 + 7Y = 0$. Combine like terms to get $(s+7)Y = 4$, so $Y(s) = 4/(s+7)$."
+          - problem: "An initial value problem is $y'' + 9y = 0$ with $y(0) = 2$ and $y'(0) = 3$. Solve for $Y(s)$ as a function of $s$."
+            answer: "(2s+3)/(s^2+9)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Apply the second-derivative rule $\\mathcal{L}\\{y''\\} = s^2Y(s) - s y(0) - y'(0)$. With $y(0)=2$ and $y'(0)=3$, the transformed equation is $s^2Y - 2s - 3 + 9Y = 0$. Factor $Y$ to get $(s^2+9)Y = 2s+3$, hence $Y(s) = (2s+3)/(s^2+9)$."
+          - problem: "An initial value problem is $y' - 4y = e^{3t}$ with $y(0) = 0$. Solve for $Y(s)$ as a function of $s$."
+            answer: "1/((s-3)(s-4))"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Use the derivative rule $\\mathcal{L}\\{y'\\} = sY(s) - y(0)$ and the table entry $\\mathcal{L}\\{e^{3t}\\} = 1/(s-3)$. Substitution gives $sY - 0 - 4Y = 1/(s-3)$, so $(s-4)Y = 1/(s-3)$. Divide to obtain $Y(s) = 1/((s-3)(s-4))$."
         constraints: "solve for Y(s) only, no inversion; forcing 0 or e^{at}; initial conditions integers"
     diagnostic_exemplar:
       problem: 'Transform the initial value problem $y'''' + 4y'' + 3y = 0$, $y(0) = 2$, $y''(0) = -1$, and solve for $Y(s)$.'
@@ -371,6 +479,22 @@ topics:
           - problem: 'Solve $y'' - 4y = 0$, $y(0) = -1$ using the Laplace transform.'
             answer: '$y = -e^{4t}$'
             solution_sketch: '$(s - 4)Y = -1$ gives $Y = \frac{-1}{s-4}$; invert.'
+          - problem: "Find y(t) by applying the Laplace transform to y' + 5y = 0 with y(0) = 3."
+            answer: "3e^(-5t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Use the Laplace transform of a derivative: sY minus 3 plus 5Y equals 0. Solve the algebra: (s + 5)Y = 3, so Y = 3/(s + 5). Invert with the inverse Laplace transform: the solution is y = 3e^(-5t)."
+          - problem: "Find y(t) by applying the Laplace transform to y' - 2y = 0 with y(0) = 5."
+            answer: "5e^(2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Use the Laplace transform of a derivative: sY minus 5 minus 2Y equals 0. Solve the algebra: (s - 2)Y = 5, so Y = 5/(s - 2). Invert with the inverse Laplace transform: the solution is y = 5e^(2t)."
+          - problem: "Find y(t) by applying the Laplace transform to y' + 7y = 0 with y(0) = -2."
+            answer: "-2e^(-7t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Use the Laplace transform of a derivative: sY plus 2 plus 7Y equals 0. Solve the algebra: (s + 7)Y = -2, so Y = -2/(s + 7). Invert with the inverse Laplace transform: the solution is y = -2e^(-7t)."
+          - problem: "Find y(t) by applying the Laplace transform to y' - 6y = 0 with y(0) = 2."
+            answer: "2e^(6t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Use the Laplace transform of a derivative: sY minus 2 minus 6Y equals 0. Solve the algebra: (s - 6)Y = 2, so Y = 2/(s - 6). Invert with the inverse Laplace transform: the solution is y = 2e^(6t)."
         constraints: "y' + ay = 0 with integer a; integer initial values"
       - id: kp2
         name: First-order IVPs with forcing
@@ -382,10 +506,22 @@ topics:
           - problem: 'Solve $y'' + 2y = 4$, $y(0) = 1$ using the Laplace transform.'
             answer: '$y = 2 - e^{-2t}$'
             solution_sketch: '$(s+2)Y = 1 + \frac{4}{s}$, so $Y = \frac{s+4}{s(s+2)} = \frac{2}{s} - \frac{1}{s+2}$; invert.'
-          - problem: 'Solve $y'' + y = e^{-t}$, $y(0) = 0$ using the Laplace transform.'
-            answer: '$y = te^{-t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$(s+1)Y = \frac{1}{s+1}$ gives $Y = \frac{1}{(s+1)^2}$; invert with the shift.'
+          - problem: "Consider the IVP y' + y = e^(-t), y(0) = 1 and use the Laplace transform. Find y(t)."
+            answer: "e^(-t) + t e^(-t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Take the Laplace transform: (s+1)Y - 1 = 1/(s+1). Solve for Y: Y = (s+2)/(s+1)^2 = 1/(s+1) + 1/(s+1)^2. Invert using the shift rule. The solution is y = e^(-t) + t e^(-t)."
+          - problem: "Consider the IVP y' + 3y = 6, y(0) = 0 and use the Laplace transform. Find y(t)."
+            answer: "2 - 2e^(-3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Take the Laplace transform: (s+3)Y = 6/s. Solve for Y: Y = 6/[s(s+3)] = 2/s - 2/(s+3). Invert using the table. The solution is y = 2 - 2e^(-3t)."
+          - problem: "Consider the IVP y' - 2y = e^(3t), y(0) = 2 and use the Laplace transform. Find y(t)."
+            answer: "e^(2t) + e^(3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Take the Laplace transform: (s-2)Y - 2 = 1/(s-3). Solve for Y: Y = (2s-5)/[(s-2)(s-3)] = 1/(s-2) + 1/(s-3). Invert using the table. The solution is y = e^(2t) + e^(3t)."
+          - problem: "Consider the IVP y' - 4y = 8, y(0) = 1 and use the Laplace transform. Find y(t)."
+            answer: "-2 + 3e^(4t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Take the Laplace transform: (s-4)Y - 1 = 8/s. Solve for Y: Y = (s+8)/[s(s-4)] = -2/s + 3/(s-4). Invert using the table. The solution is y = -2 + 3e^(4t)."
         constraints: "forcing constant or e^{at}; partial fractions with two distinct linear factors at most; a repeated factor only via the shift"
     diagnostic_exemplar:
       problem: 'Solve $y'' + 2y = 6$, $y(0) = 4$, using the Laplace transform.'
@@ -421,13 +557,29 @@ topics:
         name: Second-order IVPs with real roots
         key_prerequisites: [laplace-first-order-ivp, inverse-laplace-partial-fractions]
         exemplars:
-          - problem: 'Solve $y'''' - y'' - 2y = 0$, $y(0) = 1$, $y''(0) = 0$ using the Laplace transform.'
-            answer: '$y = \dfrac{1}{3}e^{2t} + \dfrac{2}{3}e^{-t}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$(s^2 - s - 2)Y = s - 1$, so $Y = \frac{s-1}{(s-2)(s+1)}$; cover-up gives $\frac{1/3}{s-2} + \frac{2/3}{s+1}$.'
+          - problem: "Use the Laplace transform to solve the homogeneous initial value problem y'' - y' - 2y = 0 with y(0) = 1 and y'(0) = 0. Find y as a function of t."
+            answer: "e^(2t)/3 + 2e^(-t)/3"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Laplace transform: L[y''] = s^2Y - s and L[y'] = sY - 1, so the equation gives (s^2 - s - 2)Y = s - 1. Partial fractions: Y = (1/3)/(s-2) + (2/3)/(s+1). Invert each term with the rule L[e^(at)] = 1/(s-a). The solution is y = e^(2t)/3 + 2e^(-t)/3, and it satisfies y(0) = 1 and y'(0) = 0."
           - problem: 'Solve $y'''' - 3y'' + 2y = 0$, $y(0) = 0$, $y''(0) = 1$ using the Laplace transform.'
             answer: '$y = e^{2t} - e^{t}$'
             solution_sketch: '$(s^2 - 3s + 2)Y = 1$, so $Y = \frac{1}{(s-1)(s-2)} = \frac{1}{s-2} - \frac{1}{s-1}$; invert.'
+          - problem: "Solve the initial value problem y'' - 5y' + 6y = 0 with y(0) = 1 and y'(0) = 0 by the Laplace transform. Find y as a function of t."
+            answer: "3e^(2t) - 2e^(3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Laplace transform: L[y''] = s^2Y - s and L[y'] = sY - 1, so (s^2 - 5s + 6)Y = s - 5. Partial fractions: Y = 3/(s-2) - 2/(s-3). Invert using L[e^(at)] = 1/(s-a). The solution is y = 3e^(2t) - 2e^(3t), and it satisfies y(0) = 1 and y'(0) = 0."
+          - problem: "Solve y'' + y' - 6y = 0 with y(0) = 0 and y'(0) = 5 using the Laplace transform. Find y as a function of t."
+            answer: "e^(2t) - e^(-3t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Laplace transform: L[y''] = s^2Y - 5 and L[y'] = sY, so (s^2 + s - 6)Y = 5. Partial fractions: Y = 1/(s-2) - 1/(s+3). Invert using L[e^(at)] = 1/(s-a). The solution is y = e^(2t) - e^(-3t), and it satisfies y(0) = 0 and y'(0) = 5."
+          - problem: "Solve y'' - 4y = 0 with y(0) = 2 and y'(0) = 4 using the Laplace transform. Find y as a function of t."
+            answer: "2e^(2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Laplace transform: L[y''] = s^2Y - 2s - 4, so (s^2 - 4)Y = 2s + 4. Partial fractions: Y = 2/(s-2) + 0/(s+2). Invert using L[e^(at)] = 1/(s-a). The solution is y = 2e^(2t), and it satisfies y(0) = 2 and y'(0) = 4."
+          - problem: "Solve y'' - 2y' - 3y = 0 with y(0) = 1 and y'(0) = 1 using the Laplace transform. Find y as a function of t."
+            answer: "e^(3t)/2 + e^(-t)/2"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Laplace transform: L[y''] = s^2Y - s - 1 and L[y'] = sY - 1, so (s^2 - 2s - 3)Y = s - 1. Partial fractions: Y = (1/2)/(s-3) + (1/2)/(s+1). Invert using L[e^(at)] = 1/(s-a). The solution is y = e^(3t)/2 + e^(-t)/2, and it satisfies y(0) = 1 and y'(0) = 1."
         constraints: "characteristic roots distinct integers; homogeneous; verify y(0), y'(0) at the end"
       - id: kp2
         name: Second-order IVPs with complex roots
@@ -450,6 +602,22 @@ topics:
           - problem: 'Solve $y'''' + 3y'' + 2y = 6$, $y(0) = 0$, $y''(0) = 0$ using the Laplace transform.'
             answer: '$y = 3 - 6e^{-t} + 3e^{-2t}$'
             solution_sketch: '$Y = \frac{6}{s(s+1)(s+2)}$; cover-up gives $\frac{3}{s} - \frac{6}{s+1} + \frac{3}{s+2}$.'
+          - problem: "Use the Laplace transform to solve y'' + 4y = 12 with y(0) = 0 and y'(0) = 0. Find y(t)."
+            answer: "3 - 3cos(2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1: Transform the equation. The Laplace transform gives (s^2 + 4)Y = 12/s. Step 2: Solve for Y and split the fraction. Y = 12/(s(s^2+4)) = 3/s - 3s/(s^2+4). Step 3: Invert each term. Thus y(t) = 3 - 3cos(2t)."
+          - problem: "Use the Laplace transform to solve y'' + 3y' + 2y = 12 with y(0) = 0 and y'(0) = 0. Find y(t)."
+            answer: "6 - 12e^(-t) + 6e^(-2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1: Transform the equation. The Laplace transform gives (s^2 + 3s + 2)Y = 12/s. Step 2: Factor and use partial fractions. Y = 12/(s(s+1)(s+2)) = 6/s - 12/(s+1) + 6/(s+2). Step 3: Invert each term. Thus y(t) = 6 - 12e^(-t) + 6e^(-2t)."
+          - problem: "Use the Laplace transform to solve y'' + 4y = 8 with y(0) = 1 and y'(0) = 0. Find y(t)."
+            answer: "2 - cos(2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1: Transform the equation. The initial value gives (s^2 + 4)Y - s = 8/s. Step 2: Solve for Y and simplify. Y = (8/s + s)/(s^2+4) = 2/s - s/(s^2+4). Step 3: Invert each term. Thus y(t) = 2 - cos(2t)."
+          - problem: "Use the Laplace transform to solve y'' + 3y' + 2y = 6 with y(0) = 0 and y'(0) = 1. Find y(t)."
+            answer: "3 - 5e^(-t) + 2e^(-2t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Step 1: Transform the equation. The initial slope gives (s^2 + 3s + 2)Y = 6/s + 1. Step 2: Factor and use partial fractions. Y = 6/(s(s+1)(s+2)) + 1/((s+1)(s+2)) = 3/s - 5/(s+1) + 2/(s+2). Step 3: Invert each term. Thus y(t) = 3 - 5e^(-t) + 2e^(-2t)."
         constraints: "forcing a constant; characteristic roots integer or +/- bi; three-term partial fractions at most"
     diagnostic_exemplar:
       problem: 'Solve $y'''' + 2y'' + 5y = 5$, $y(0) = 0$, $y''(0) = 0$, using the Laplace transform.'
@@ -483,35 +651,59 @@ topics:
         name: Rewriting piecewise functions with unit steps
         key_prerequisites: [laplace-transform-basics]
         exemplars:
-          - problem: 'Write $f(t) = 0$ for $t < 3$, $f(t) = 5$ for $t \ge 3$ using the unit step $u_c(t) = u(t - c)$.'
-            answer: '$f(t) = 5u_3(t)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f(t) = 5u_3(t)$'
-          - problem: 'Write $f(t) = 2$ for $0 \le t < 1$, $f(t) = 0$ for $t \ge 1$ using unit steps.'
-            answer: '$f(t) = 2 - 2u_1(t)$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Start at $2$ and switch off at $t = 1$ by subtracting $2u_1(t)$.'
-          - problem: 'Write $f(t) = 0$ for $t < 2$, $f(t) = t - 2$ for $t \ge 2$ using unit steps.'
-            answer: '$f(t) = (t - 2)u_2(t)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f(t) = (t - 2)u_2(t)$'
+          - problem: "A signal is 0 for t < 4 and is 6 for t >= 4. It has the form f(t) = A u(t - c). Give A and c."
+            answer: "A = 6; c = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "The full unit-step form is f(t) = 6u(t - 4). Step 1 uses the breakpoint rule: the switch from 0 to 6 occurs at t = 4, so c = 4. Step 2 uses the coefficient rule: the height after the switch is A = 6. The answer is A = 6; c = 4."
+          - problem: "A pulse is 7 for 0 <= t < 2 and is 0 for t >= 2. It has the form f(t) = A - A u(t - c). Give A and c."
+            answer: "A = 7; c = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "The full unit-step form is f(t) = 7 - 7u(t - 2). Step 1 uses the breakpoint rule: the pulse turns off at t = 2, so c = 2. Step 2 uses the coefficient rule: the starting height is A = 7. The answer is A = 7; c = 2."
+          - problem: "The function is 0 for t < 5 and is 3(t - 5) for t >= 5. It has the form f(t) = A(t - c)u(t - c). Find A and c."
+            answer: "A = 3; c = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "The full unit-step form is f(t) = 3(t - 5)u(t - 5). Step 1 uses the breakpoint rule: the ramp starts at t = 5, so c = 5. Step 2 uses the coefficient rule: the slope of the ramp is A = 3. The answer is A = 3; c = 5."
+          - problem: "A room stays at 18 degrees for t < 3 and stays at 25 degrees for t >= 3. It has the form f(t) = 18 + B u(t - c). Find B and c."
+            answer: "B = 7; c = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "The full unit-step form is f(t) = 18 + 7u(t - 3). Step 1 uses the breakpoint rule: the temperature changes at t = 3, so c = 3. Step 2 uses the jump rule: the jump from 18 to 25 is B = 25 - 18 = 7. The answer is B = 7; c = 3."
+          - problem: "A function is 12 for t < 3 and is 4t for t >= 3. It has the form f(t) = 12 + m(t - c)u(t - c). Find m and c."
+            answer: "m = 4; c = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "m"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "The full unit-step form is f(t) = 12 + 4(t - 3)u(t - 3). Step 1 uses the match rule: for t >= 3 the form 12 + m(t - 3) must produce 4t, so m = 4. Step 2 uses the breakpoint rule: the pieces meet at t = 3, so c = 3. The answer is m = 4; c = 3."
+          - problem: "A function is 5 for t < 2 and is 3 - 2t for t >= 2. It has the form f(t) = 5 + (a t + b)u(t - c). Find a and c."
+            answer: "a = -2; c = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "The full unit-step form is f(t) = 5 + (-2t - 2)u(t - 2). Step 1 uses the match rule: for t >= 2 the form 5 + a t + b must produce 3 - 2t, so a = -2. Step 2 uses the breakpoint rule: the pieces meet at t = 2, so c = 2. The answer is a = -2; c = 2."
         constraints: "at most two pieces with integer breakpoints; pieces constant or linear"
       - id: kp2
         name: The second shifting theorem
         key_prerequisites: [laplace-transform-basics]
         exemplars:
-          - problem: 'Compute $\mathcal{L}\{u_2(t)\}$.'
-            answer: '$\dfrac{e^{-2s}}{s}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathcal{L}\{u_c(t)f(t-c)\} = e^{-cs}F(s)$ with $f = 1$.'
-          - problem: 'Compute $\mathcal{L}\{(t - 3)u_3(t)\}$.'
-            answer: '$\dfrac{e^{-3s}}{s^2}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The function is $f(t-3)$ with $f(t) = t$, so the transform is $e^{-3s}\cdot\frac{1}{s^2}$.'
-          - problem: 'Compute $\mathcal{L}\{u_{\pi}(t)\sin(t - \pi)\}$.'
-            answer: '$\dfrac{e^{-\pi s}}{s^2 + 1}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\dfrac{e^{-\pi s}}{s^2 + 1}$'
+          - problem: "Compute the Laplace transform of the unit step $u_4(t)$. Give the result as a function of $s$."
+            answer: "e^(-4s)/s"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The object is $u_4(t)$, a unit step with $c=4$ and $f(t)=1$. The second shifting theorem gives $\\mathcal{L}\\{u_c(t) f(t-c)\\} = e^{-cs} F(s)$. Here $F(s) = 1/s$, so the transform is e^(-4s)/s."
+          - problem: "Compute $\\mathcal{L}\\{(t - 2)u_2(t)\\}$. Give the result as a function of $s$."
+            answer: "e^(-2s)/s^2"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The object is $(t-2)u_2(t)$, which is $f(t-2)u_2(t)$ with $f(t)=t$. The table gives $\\mathcal{L}\\{t\\} = 1/s^2$. The second shifting theorem multiplies it by $e^{-2s}$, so the transform is e^(-2s)/s^2."
+          - problem: "Compute $\\mathcal{L}\\{u_{\\pi}(t)(t - \\pi)\\}$. Give the result as a function of $s$."
+            answer: "e^(-pi s)/s^2"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The object is $u_{\\pi}(t)(t-\\pi)$, i.e. $f(t-\\pi)u_{\\pi}(t)$ with $f(t)=t$. Its table transform is $1/s^2$. The second shifting theorem gives $e^{-\\pi s}/s^2$, so the answer is e^(-pi s)/s^2."
+          - problem: "Compute $\\mathcal{L}\\{(t - 1)^2 u_1(t)\\}$. Give the result as a function of $s$."
+            answer: "2e^(-s)/s^3"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The object is $(t-1)^2 u_1(t)$, so $f(t-1)=(t-1)^2$ and $f(t)=t^2$. The table gives $\\mathcal{L}\\{t^2\\} = 2/s^3$. The second shifting theorem yields $2e^{-s}/s^3$, which is 2e^(-s)/s^3."
+          - problem: "Compute $\\mathcal{L}\\{u_5(t)e^{t-5}\\}$. Give the result as a function of $s$."
+            answer: "e^(-5s)/(s-1)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The object is $u_5(t)e^{t-5}$, so $f(t-5)=e^{t-5}$ and $f(t)=e^t$. The table gives $\\mathcal{L}\\{e^t\\} = 1/(s-1)$. Multiplying by $e^{-5s}$ gives e^(-5s)/(s-1)."
+          - problem: "Compute $\\mathcal{L}\\{(t - 3)^3 u_3(t)\\}$. Give the result as a function of $s$."
+            answer: "6e^(-3s)/s^4"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The object is $(t-3)^3 u_3(t)$, so $f(t)=t^3$. The table gives $\\mathcal{L}\\{t^3\\} = 6/s^4$. The second shifting theorem with $c=3$ multiplies by $e^{-3s}$, so the transform is 6e^(-3s)/s^4."
         constraints: "arguments already in the form f(t - c); c a positive integer or pi"
       - id: kp3
         name: Inverting exponentials
@@ -582,17 +774,29 @@ topics:
         name: The convolution theorem
         key_prerequisites: [inverse-laplace-partial-fractions]
         exemplars:
-          - problem: 'Use the convolution theorem to compute $\mathcal{L}\{1 * t\}$ without integrating.'
-            answer: '$\dfrac{1}{s^3}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathcal{L}\{f * g\} = F(s)G(s) = \frac{1}{s}\cdot\frac{1}{s^2}$, consistent with $\mathcal{L}\{t^2/2\}$.'
+          - problem: "Let L denote the Laplace transform. Use the convolution theorem to compute L of the convolution of 1 and t. Give the transform as a function of s."
+            answer: "1/s^3"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Convolution theorem rule: L of a convolution is the product of the two transforms. Table look-up gives L{1} = 1/s and L{t} = 1/s^2. Multiply them: (1/s)(1/s^2) = 1/s^3. The transform is 1/s^3."
           - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s^2(s + 1)}\right\}$ as the convolution $t * e^{-t}$.'
             answer: '$t - 1 + e^{-t}$'
             solution_sketch: '$\int_0^t (t - \tau)e^{-\tau}d\tau = t(1 - e^{-t}) - \left[1 - (t+1)e^{-t}\right] = t - 1 + e^{-t}$.'
-          - problem: 'Write the solution of $y'''' + y = g(t)$, $y(0) = y''(0) = 0$, as a convolution integral.'
-            answer: '$y = \int_0^t \sin(t - \tau)\,g(\tau)\,d\tau$'
-            answer_contract: {kind: none}
-            solution_sketch: '$Y = \frac{G(s)}{s^2+1}$; invert with the convolution theorem, since $\frac{1}{s^2+1}$ inverts to $\sin t$.'
+          - problem: "Solve y'' + y = t with y(0) = 0 and y'(0) = 0 by the convolution theorem. Give y(t)."
+            answer: "t - sin(t)"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Convolution theorem rule: Y(s) = (1/(s^2+1))(1/s^2). Table look-up inverts the factors as sin(t) and t. Their convolution is the integral of sin(t - tau) tau; evaluating it gives t - sin(t). The solution is t - sin(t)."
+          - problem: "Let L-inverse denote the inverse Laplace transform. Use the convolution theorem to compute L-inverse of 1/(s(s+3)). Give the result as a function of t."
+            answer: "(1 - e^(-3t))/3"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "Convolution theorem rule: the inverse of a product is the convolution of the inverses. Table look-up gives 1 and e^(-3t) as the two functions. Their convolution integral from 0 to t of e^(-3 tau) d tau equals (1 - e^(-3t))/3. The result is (1 - e^(-3t))/3."
+          - problem: "Use the convolution theorem to compute L of the convolution of t and e^(-5t). Give the transform as a function of s."
+            answer: "1/(s^2(s+5))"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "Convolution theorem rule: the transform of a convolution is the product of the two transforms. Table look-up gives L{t} = 1/s^2 and L{e^(-5t)} = 1/(s+5). Multiply them: 1/(s^2(s+5)). The transform is 1/(s^2(s+5))."
+          - problem: "Use the convolution theorem to find the inverse Laplace transform of 1/(s^2(s+1)) at t = 2. Give the answer to 3 decimals."
+            answer: "1.135"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Convolution theorem rule: the inverse transform of 1/(s^2(s+1)) is the convolution of t and e^(-t). Table look-up and the convolution integral give t - 1 + e^(-t). At t = 2 this is 2 - 1 + e^(-2) = 1.135335. To three decimals the answer is 1.135."
         constraints: "products of two table entries; convolution integrals stay elementary"
     diagnostic_exemplar:
       problem: 'Use the convolution theorem to compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s^2(s+2)}\right\}$.'
@@ -636,10 +840,22 @@ topics:
           - problem: 'Compute $\int_0^5 \delta(t - 3)(t^2 + 1)\,dt$.'
             answer: "10"
             solution_sketch: 'The impulse at $t = 3$ lies inside $(0, 5)$, so the integral is $3^2 + 1$.'
-          - problem: 'Compute $\mathcal{L}\{\delta(t - c)\}$ for $c \ge 0$, and specialize to $c = 0$.'
-            answer: '$\mathcal{L}\{\delta(t - c)\} = e^{-cs}$; in particular $\mathcal{L}\{\delta(t)\} = 1$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Sift the definition integral $\int_0^{\infty} e^{-st}\delta(t - c)\,dt = e^{-cs}$.'
+          - problem: "Use the sifting property to find the Laplace transform of $\\delta(t - 5)$. Give the transform as a function of $s$."
+            answer: "e^(-5s)"
+            answer_contract: {"kind": "function", "vars": ["s"]}
+            solution_sketch: "The Laplace transform is $F(s) = \\int_0^{\\infty} e^{-st} \\delta(t-5)\\,dt$. The sifting property replaces $t$ by $5$ in the exponential. Hence $F(s) = e^{-5s}$."
+          - problem: "Evaluate $\\int_0^5 \\delta(t - 3)\\sin(\\pi t/2)\\,dt$."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is $I = \\int_0^5 \\delta(t-3)\\sin(\\pi t/2)\\,dt$. The impulse at $t=3$ lies inside the interval, so sifting gives $\\sin(3\\pi/2)$. Since $\\sin(3\\pi/2) = -1$, the value is -1."
+          - problem: "Evaluate $\\int_0^6 \\delta(t - 4)(t^2 - 3t + 2)\\,dt$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is $I = \\int_0^6 \\delta(t-4)(t^2-3t+2)\\,dt$. The sifting property selects $t=4$ because $4$ lies inside the interval. Substitute $t=4$: $16-12+2 = 6$, so the value is 6."
+          - problem: "The impulse at time $c$ inside the interval $0 < t < 5$ satisfies $\\int_0^5 \\delta(t - c)(2t + 1)\\,dt = 9$. Find $c$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The integral is $I = \\int_0^5 \\delta(t-c)(2t+1)\\,dt$. By the sifting property, $I = 2c+1$ since $c$ is inside the interval. Set $2c+1 = 9$, which gives $2c = 8$; the impulse location is 4."
         constraints: "impulse located at integer times inside the integration interval; integrands from the Laplace table (polynomials, e^{at}, sin bt)"
       - id: kp2
         name: Impulse-forced initial value problems
