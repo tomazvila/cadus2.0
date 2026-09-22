@@ -1586,40 +1586,88 @@ topics:
         name: "Refuting universal statements"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Disprove: "every prime is odd".'
-            answer_contract: {kind: none}
-            answer: 'Counterexample: $2$ is prime and even.'
-            solution_sketch: 'A universal statement is refuted by a single counterexample; $2$ is prime but not odd.'
-          - problem: 'Disprove: "$\forall x \in \mathbb{R},\ x \le x^2$".'
-            answer_contract: {kind: none}
-            answer: 'Counterexample: $x = \tfrac{1}{2}$, since $\tfrac{1}{2} > \tfrac{1}{4}$.'
-            solution_sketch: 'Any $x$ strictly between $0$ and $1$ has $x^2 < x$; exhibiting one such value refutes the claim.'
+          - problem: "Disprove the claim that every prime number is odd. Give the smallest prime that refutes the claim."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (refuting a universal statement): a single failing instance disproves a claim of the form 'every prime is odd'. Step 2 (verification): test primes from the smallest: 2 is prime, and 2 is even, so it is not odd, which violates the claim. Step 3 (minimality): no smaller prime exists, since 2 is the smallest prime of all. The counterexample is 2."
+          - problem: "Disprove the claim that n^2 > 3n + 1 for every integer n greater than 1. Give the smallest integer that refutes the claim."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (refuting a universal statement): look for one integer n greater than 1 where n^2 <= 3n + 1. Step 2 (verification): at n = 2 we get n^2 = 4 and 3n + 1 = 7, and 4 > 7 is false, so the claim fails. Step 3 (minimality): 2 is the smallest integer greater than 1, so no earlier value can be tested. The counterexample is 2."
+          - problem: "A student claims that 2^n + 1 is prime for every positive integer n. Give the smallest positive integer that refutes the claim."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (refuting a universal statement): test n = 1, 2, 3 in order until the primality claim breaks. Step 2 (verification): 2^1 + 1 = 3 is prime and 2^2 + 1 = 5 is prime, but 2^3 + 1 = 9 = 3 * 3 is composite, so the claim fails. The smallest counterexample is 3."
+          - problem: "Disprove the conjecture that n^2 + n + 41 is prime for every positive integer n. Give the smallest positive integer counterexample."
+            answer: "40"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (refuting a universal statement): search for a positive integer n where n^2 + n + 41 is composite. Step 2 (verification): the values for n = 1 up to 39 are all prime, but at n = 40 the value is 1600 + 40 + 41 = 1681 = 41 * 41, which is composite. The smallest counterexample is 40."
+          - problem: "A conjecture states that n^2 + 3n + 1 is prime for all positive integers n. Give the smallest value of n that disproves it."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (refuting a universal statement): test n = 1, 2, 3, ... for compositeness of n^2 + 3n + 1. Step 2 (verification): the values 5, 11, 19, 29, 41 for n = 1 to 5 are all prime, but at n = 6 the value is 36 + 18 + 1 = 55 = 5 * 11, which is composite. The smallest counterexample is 6."
+          - problem: "Someone claims that n! + 1 is prime for every positive integer n. Give the smallest positive integer that refutes the claim."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (refuting a universal statement): test n = 1, 2, 3, ... for compositeness of n! + 1. Step 2 (verification): 1! + 1 = 2, 2! + 1 = 3 and 3! + 1 = 7 are all prime, but 4! + 1 = 24 + 1 = 25 = 5 * 5 is composite. The smallest counterexample is 4."
         constraints: "one explicit counterexample with verification that it violates the claim"
       - id: kp2
         name: "Testing conjectures"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Disprove: "$n^2 + n + 41$ is prime for every natural number $n$".'
-            answer_contract: {kind: none}
-            answer: 'Counterexample: $n = 40$ gives $40^2 + 40 + 41 = 1681 = 41^2$.'
-            solution_sketch: 'The polynomial is prime for $n = 0, \dots, 39$, but at $n = 40$ it equals $41^2$ — checking many cases is not a proof.'
-          - problem: 'Disprove: "$2^p - 1$ is prime for every prime $p$".'
-            answer_contract: {kind: none}
-            answer: 'Counterexample: $p = 11$ gives $2^{11} - 1 = 2047 = 23 \cdot 89$.'
-            solution_sketch: 'The claim survives $p = 2, 3, 5, 7$ but fails at $p = 11$; a promising pattern still needs proof.'
+          - problem: "Conjecture: $n^2 + n + 41$ is prime for every natural number $n$. Find the smallest natural number $n$ for which this conjecture fails."
+            answer: "40"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The conjecture is that $n^2 + n + 41$ is prime for every natural number $n$. Step 1, test small cases: $n=0$ gives 41 and the values remain prime through $n=39$. Step 2, compute and factor at $n=40$: $40^2 + 40 + 41 = 1681 = 41 \\cdot 41$. The smallest natural counterexample is n = 40."
+          - problem: "Conjecture: the number $2^p - 1$ is prime for every prime number $p$. Find the smallest prime $p$ for which this conjecture fails."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The conjecture is that $2^p - 1$ is prime for every prime $p$. Step 1, test small cases: $p=2,3,5,7$ give prime values. Step 2, compute and factor at $p=11$: $2^{11} - 1 = 2047 = 23 \\cdot 89$. The smallest prime counterexample is p = 11."
+          - problem: "Conjecture: $n^2 + n + 17$ is prime for every nonnegative integer $n$. Find the smallest nonnegative integer $n$ that disproves the conjecture."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The conjecture is that $n^2 + n + 17$ is prime for every nonnegative integer $n$. Step 1, test small cases: $n=0$ gives 17 and $n=1$ gives 19; the values stay prime through $n=15$. Step 2, compute and factor at $n=16$: $16^2 + 16 + 17 = 289 = 17 \\cdot 17$. The smallest nonnegative counterexample is n = 16."
+          - problem: "Conjecture: the number $2^n - 1$ is prime for every odd integer $n > 1$. Find the smallest odd integer $n > 1$ for which the conjecture fails."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The conjecture is that $2^n - 1$ is prime for every odd integer $n > 1$. Step 1, test small odd cases: $n=3$ gives 7 and $n=5$ gives 31, both prime. Step 2, compute and factor at $n=9$: $2^9 - 1 = 511 = 7 \\cdot 73$. The smallest odd counterexample is n = 9."
+          - problem: "Conjecture: $n^3 + n + 1$ is prime for every positive integer $n$. Find the smallest positive integer $n$ that disproves the conjecture."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The conjecture is that $n^3 + n + 1$ is prime for every positive integer $n$. Step 1, test small cases: $n=1$ gives 3, $n=2$ gives 11, and $n=3$ gives 31, all prime. Step 2, compute and factor at $n=4$: $4^3 + 4 + 1 = 69 = 3 \\cdot 23$. The smallest positive counterexample is n = 4."
+          - problem: "Conjecture: $n^2 - n + 41$ is prime for every positive integer $n$. Find the smallest positive integer $n$ for which this conjecture fails."
+            answer: "41"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The conjecture is that $n^2 - n + 41$ is prime for every positive integer $n$. Step 1, test small cases: $n=1$ gives 41 and the values remain prime through $n=40$. Step 2, compute and factor at $n=41$: $41^2 - 41 + 41 = 1681 = 41 \\cdot 41$. The smallest positive counterexample is n = 41."
         constraints: "conjectures that hold for small cases; the counterexample must be verified by factoring or computation"
       - id: kp3
         name: "What disproves what"
         key_prerequisites: [negating-statements]
         exemplars:
-          - problem: 'Disprove: "if $n$ is divisible by $3$ then $n$ is divisible by $6$".'
-            answer_contract: {kind: none}
-            answer: 'Counterexample: $n = 9$, divisible by $3$ but not by $6$.'
-            solution_sketch: 'To refute $P \to Q$, exhibit a case with $P$ true and $Q$ false: $3 \mid 9$ but $6 \nmid 9$.'
-          - problem: 'What would it take to disprove an existential statement like "$\exists n \in \mathbb{N},\ n^2 = 3$"?'
-            answer_contract: {kind: none}
-            answer: 'A proof that every $n$ fails, since the negation is the universal $\forall n,\ n^2 \ne 3$.'
-            solution_sketch: 'Negating $\exists$ gives $\forall$; a single failed example is not enough — disproving an existential requires a (short) universal proof.'
+          - problem: "Consider the statement: if a positive integer n is divisible by 3, then n is divisible by 6. Find the smallest positive integer n that disproves it."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement is an implication with a universal quantifier over positive integers. To disprove it, find one n with 3 divides n but 6 does not divide n. The value n = 3 satisfies 3 divides 3, but 6 does not divide 3. Smaller positive integers 1 and 2 do not satisfy the hypothesis. The smallest counterexample is 3."
+          - problem: "To disprove the claim that there exists a natural number n with n + 1 = 0, what must be shown?"
+            answer: "For every n, n + 1 is not 0"
+            answer_contract: {"kind": "label", "options": [["For every n, n + 1 is not 0"], ["There is an n with n + 1 not 0"], ["The value n = 1 fails"], ["The value n = 2 fails"]]}
+            solution_sketch: "Negate the existential statement: the negation of there exists n with n + 1 = 0 is for every n, n + 1 is not 0. The correct obligation is to prove every natural number n fails the equation. The option There is an n with n + 1 not 0 is wrong because it is still an existential statement and does not cover every n. The option The value n = 1 fails is wrong because one failed value cannot disprove a claim that some value works. The option The value n = 2 fails is wrong for the same one-value reason. The answer is For every n, n + 1 is not 0."
+          - problem: "Find the smallest positive integer n for which n^2 + 1 is not prime."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The claim being disproved is that n^2 + 1 is prime for every positive integer n. Check n = 1: 1^2 + 1 = 2, prime. Check n = 2: 2^2 + 1 = 5, prime. Check n = 3: 3^2 + 1 = 10, not prime. The smallest positive integer is 3."
+          - problem: "Find the smallest positive integer n that disproves the statement: if n is prime, then n is odd."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement has the form for all positive integers n, if n is prime then n is odd. A counterexample needs a prime that is not odd. The integer 2 is prime and is even, so it is not odd. No smaller positive prime exists. The smallest counterexample is 2."
+          - problem: "To disprove the statement that for every real number x, x squared is greater than x, what suffices?"
+            answer: "One x with x squared at most x"
+            answer_contract: {"kind": "label", "options": [["One x with x squared at most x"], ["For all x, x squared at most x"], ["One x with x squared above x"], ["No x has x squared at most x"]]}
+            solution_sketch: "To disprove a universal statement, it is enough to give one counterexample. The statement for every real x has x squared greater than x is false at x = 0, because 0 squared is at most 0. The correct obligation is to find one x with x squared at most x. The option For all x, x squared at most x is wrong because it proves a stronger universal claim than needed. The option One x with x squared above x is wrong because it confirms the original statement instead of refuting it. The option No x has x squared at most x is wrong because it is the opposite of the needed counterexample. The answer is One x with x squared at most x."
+          - problem: "Find the smallest positive integer n that disproves the statement: if n is a perfect square, then n is even."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The statement claims every perfect-square positive integer is even. A counterexample needs a perfect square that is odd. The integer 1 equals 1^2, so it is a perfect square, and 1 is odd. There is no smaller positive integer. The smallest counterexample is 1."
         constraints: "match the disproof obligation to the negated form of the statement"
     diagnostic_exemplar:
       problem: 'Disprove: "for every positive integer $n$, $n^2 + n + 1$ is prime." Then state what would be needed to disprove the existential claim "$\exists n \in \mathbb{N},\ n^2 = 2$".'
@@ -1728,40 +1776,88 @@ topics:
         name: "Universal instantiation and universal modus ponens"
         key_prerequisites: [rules-of-inference]
         exemplars:
-          - problem: 'Premises: "every multiple of $4$ is even" and "$12$ is a multiple of $4$". What follows?'
-            answer_contract: {kind: none}
-            answer: '$12$ is even (universal instantiation, then modus ponens).'
-            solution_sketch: 'Instantiate the universal at $n = 12$ to get "$12$ multiple of $4$ $\to$ $12$ even", then apply modus ponens.'
-          - problem: 'Premises: "all humans are mortal" and "Socrates is human". Conclusion?'
-            answer_contract: {kind: none}
-            answer: 'Socrates is mortal.'
-            solution_sketch: 'The classic universal-modus-ponens syllogism: instantiate the universal at Socrates, then detach.'
+          - problem: "For all integers n, if n is a multiple of 4 then n is even. 12 is a multiple of 4. What is the remainder when 12 is divided by 2?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The universal premise is 'for all integers n, if n is a multiple of 4 then n is even'. Universal instantiation at n = 12 gives 'if 12 is a multiple of 4 then 12 is even'. Since 12 is a multiple of 4, modus ponens gives '12 is even'. An even number has remainder 0 when divided by 2. The answer is 0."
+          - problem: "For all humans x, if x is human then x has 2 legs. Socrates is human and Plato is human. How many legs do Socrates and Plato have together?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The universal premise is 'for all humans x, if x is human then x has 2 legs'. Universal instantiation at x = Socrates gives 'if Socrates is human then Socrates has 2 legs'. Since Socrates is human, modus ponens gives 'Socrates has 2 legs'. Universal instantiation at x = Plato gives 'if Plato is human then Plato has 2 legs'. Since Plato is human, modus ponens gives 'Plato has 2 legs'. Together they have 2 + 2 = 4 legs. The answer is 4."
+          - problem: "For all real x, if x > 0 then f(x) = 3x + 1. 3 > 0. Find f(3)."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The universal premise is 'for all real x, if x > 0 then f(x) = 3x + 1'. Universal instantiation at x = 3 gives 'if 3 > 0 then f(3) = 3*3 + 1'. Since 3 > 0, modus ponens gives f(3) = 10. The answer is 10."
+          - problem: "For all integers n, if n is even then g(n) = n/2 + 3. 8 is even. Find g(8)."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The universal premise is 'for all integers n, if n is even then g(n) = n/2 + 3'. Universal instantiation at n = 8 gives 'if 8 is even then g(8) = 8/2 + 3'. Since 8 is even, modus ponens gives g(8) = 4 + 3 = 7. The answer is 7."
+          - problem: "For all real x, if x < 0 then h(x) = x^2. -3 < 0. Find h(-3)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The universal premise is 'for all real x, if x < 0 then h(x) = x^2'. Universal instantiation at x = -3 gives 'if -3 < 0 then h(-3) = (-3)^2'. Since -3 < 0, modus ponens gives h(-3) = 9. The answer is 9."
+          - problem: "For all integers n, if n is a multiple of 5 then r(n) = n + 2. 15 is a multiple of 5. Find r(15)."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The universal premise is 'for all integers n, if n is a multiple of 5 then r(n) = n + 2'. Universal instantiation at n = 15 gives 'if 15 is a multiple of 5 then r(15) = 15 + 2'. Since 15 is a multiple of 5, modus ponens gives r(15) = 17. The answer is 17."
         constraints: "instantiate a universal premise at a named element, then apply a propositional rule"
       - id: kp2
         name: "Generalization rules"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'From the fact "$10$ is even and $10$ is composite", what existential statement follows?'
-            answer_contract: {kind: none}
-            answer: '$\exists n\,(n \text{ even} \land n \text{ composite})$.'
-            solution_sketch: 'Existential generalization: a concrete witness justifies the $\exists$ claim.'
-          - problem: 'To prove $\forall x \in \mathbb{R},\ (x + 1)^2 = x^2 + 2x + 1$, why is it enough to expand $(x + 1)^2$ for an arbitrary real $x$?'
-            answer_contract: {kind: none}
-            answer: 'Universal generalization: a proof for an arbitrary, unspecified $x$ establishes the claim for all $x$.'
-            solution_sketch: 'Since the argument used no special property of $x$, the conclusion holds for every real number.'
+          - problem: "The statement ∃n (n is even and n is composite) is to be proved by existential generalization. Give the smallest witness n."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full statement is ∃n (n even and n composite). Step 1: Existential generalization needs a concrete witness. Step 2: The smallest even composite number is 4. The answer is 4."
+          - problem: "A proof of ∀x in R, (x+1)^2 = x^2+2x+1 has three steps: 1. Let x be an arbitrary real. 2. Expand (x+1)^2 to x^2+2x+1. 3. Conclude the identity holds for all real x. Give the number of the step that applies universal generalization."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The proof has steps 1, 2, and 3. Step 1: Universal generalization starts with an arbitrary element. Step 2: The algebra is checked for that element. Step 3: The conclusion from arbitrary x to all x is universal generalization. The answer is 3."
+          - problem: "The statement ∃n (n is prime and n > 10) is to be proved by existential generalization. Give the smallest witness n."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full statement is ∃n (n prime and n > 10). Step 1: Existential generalization needs a witness. Step 2: The smallest prime greater than 10 is 11. The answer is 11."
+          - problem: "A proof of ∀x in R, x^2 - 1 = (x-1)(x+1) has four steps: 1. Let x be an arbitrary real. 2. Write x^2 - 1. 3. Factor it as (x-1)(x+1). 4. Conclude the identity holds for all real x. Give the number of the step that applies universal generalization."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The proof has steps 1, 2, 3, and 4. Step 1: Universal generalization begins with an arbitrary x. Steps 2 and 3: The identity is shown for that x. Step 4: The conclusion for all x is universal generalization. The answer is 4."
+          - problem: "The statement ∃n (n^2 = n + 6) is to be proved by existential generalization. Give the positive witness n."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full statement is ∃n (n^2 = n + 6). Step 1: Existential generalization needs a witness. Step 2: The positive solution of n^2 = n + 6 is n = 3. The answer is 3."
+          - problem: "A proof of ∀x in R, x^2 + 1 > 0 has five steps: 1. Let x be an arbitrary real. 2. Note x^2 >= 0. 3. Add 1 to get x^2 + 1 >= 1. 4. Conclude x^2 + 1 > 0. 5. Conclude the inequality holds for all real x. Give the number of the step that applies universal generalization."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The proof has steps 1 through 5. Step 1: Universal generalization starts with an arbitrary x. Steps 2 to 4: The inequality is derived for that x. Step 5: The conclusion for all x is universal generalization. The answer is 5."
         constraints: "existential generalization from a witness; universal generalization from an arbitrary element"
       - id: kp3
         name: "Valid and invalid quantified arguments"
         key_prerequisites: [rules-of-inference]
         exemplars:
-          - problem: 'Premises: "every square is nonnegative" and "$5$ is nonnegative". Does it follow that $5$ is a perfect square?'
-            answer_contract: {kind: none}
-            answer: 'No; this is affirming the consequent applied to an instantiated universal.'
-            solution_sketch: 'Instantiating gives "$5$ square $\to$ $5 \ge 0$"; knowing the conclusion $5 \ge 0$ does not give the hypothesis.'
-          - problem: 'Premises: "every integer divisible by $6$ is divisible by $3$" and "$14$ is not divisible by $3$". What follows about $14$?'
-            answer_contract: {kind: none}
-            answer: '$14$ is not divisible by $6$ (universal modus tollens).'
-            solution_sketch: 'Instantiate at $14$, then modus tollens: the conclusion fails, so the hypothesis fails.'
+          - problem: "Premises: \"every square integer is nonnegative\" and \"5 is nonnegative\". The argument concludes \"5 is a square\". Which named error does this argument make? Select the rule."
+            answer: "affirming the consequent"
+            answer_contract: {"kind": "label", "options": [["affirming the consequent"], ["denying the antecedent"], ["universal modus ponens"], ["universal modus tollens"]]}
+            solution_sketch: "The full argument is: all squares are nonnegative; 5 is nonnegative; therefore 5 is a square. Step 1 instantiates the universal premise at 5 to get: if 5 is a square then 5 is nonnegative. Step 2 notes that the second premise affirms the consequent, not the hypothesis. This is the fallacy of affirming the consequent. The wrong options are: denying the antecedent, which would use not a square; universal modus ponens, which would need the premise that 5 is a square; and universal modus tollens, which would need the premise that 5 is not nonnegative. The answer is affirming the consequent."
+          - problem: "Premises: \"every integer divisible by 6 is divisible by 3\" and \"14 is not divisible by 3\". Which conclusion follows for 14? Select the conclusion."
+            answer: "14 is not divisible by 6"
+            answer_contract: {"kind": "label", "options": [["14 is not divisible by 6"], ["14 is divisible by 6"], ["14 is divisible by 3"], ["no conclusion follows"]]}
+            solution_sketch: "The full argument instantiates the universal premise at 14: if 14 is divisible by 6, then 14 is divisible by 3. Step 1 uses universal instantiation. Step 2 applies universal modus tollens: the conclusion of the instantiated conditional is false, so its hypothesis is false. Therefore 14 is not divisible by 6. The wrong options are: 14 is divisible by 6, which ignores the false conclusion; 14 is divisible by 3, which contradicts the second premise; and no conclusion follows, which denies the valid modus tollens. The answer is 14 is not divisible by 6."
+          - problem: "Consider four quantified arguments. (1) Every integer divisible by 6 is even; 18 is divisible by 6; therefore 18 is even. (2) Every square integer is nonnegative; 7 is nonnegative; therefore 7 is a square. (3) Every prime greater than 2 is odd; 9 is odd; therefore 9 is prime. (4) Every integer divisible by 10 is even; 14 is not divisible by 10; therefore 14 is not even. How many of these arguments are valid? Give the answer as a number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full list has four arguments. Step 1 checks (1): it is universal modus ponens, so it is valid. Step 2 checks (2): it affirms the consequent, so it is invalid. Step 3 checks (3): it also affirms the consequent, so it is invalid. Step 4 checks (4): it denies the antecedent, so it is invalid. Only argument (1) is valid, so the count is 1. The answer is 1."
+          - problem: "Consider four quantified arguments. (1) Every integer divisible by 4 is even; 12 is divisible by 4; therefore 12 is even. (2) Every integer divisible by 6 is divisible by 3; 15 is not divisible by 3; therefore 15 is not divisible by 6. (3) Every multiple of 5 ends in 0 or 5; 35 ends in 5; therefore 35 is a multiple of 5. (4) Every integer divisible by 2 is even; 9 is not divisible by 2; therefore 9 is not even. How many of these arguments are valid? Give the answer as a number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full list has four arguments. Step 1 checks (1): universal modus ponens, valid. Step 2 checks (2): universal modus tollens, valid. Step 3 checks (3): affirming the consequent, invalid. Step 4 checks (4): denying the antecedent, invalid. So exactly two arguments are valid. The answer is 2."
+          - problem: "Consider four quantified arguments. (1) Every integer divisible by 6 is even; 18 is divisible by 6; therefore 18 is even. (2) Every integer divisible by 6 is divisible by 3; 14 is not divisible by 3; therefore 14 is not divisible by 6. (3) Every multiple of 5 ends in 0 or 5; 40 is a multiple of 5; therefore 40 ends in 0 or 5. (4) Every square integer is nonnegative; 7 is nonnegative; therefore 7 is a square. How many of these arguments are valid? Give the answer as a number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full list has four arguments. Step 1 checks (1): universal modus ponens, valid. Step 2 checks (2): universal modus tollens, valid. Step 3 checks (3): universal modus ponens, valid. Step 4 checks (4): affirming the consequent, invalid. So exactly three arguments are valid. The answer is 3."
+          - problem: "Consider four quantified arguments. (1) Every integer divisible by 6 is even; 12 is divisible by 6; therefore 12 is even. (2) Every integer divisible by 6 is divisible by 3; 10 is not divisible by 3; therefore 10 is not divisible by 6. (3) Every square integer is nonnegative; 5 is nonnegative; therefore 5 is a square. (4) Every multiple of 5 ends in 0 or 5; 23 is not a multiple of 5; therefore 23 does not end in 0 or 5. How many of these arguments are valid? Give the answer as a number."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full list has four arguments. Step 1 checks (1): universal modus ponens, valid. Step 2 checks (2): universal modus tollens, valid. Step 3 checks (3): affirming the consequent, invalid. Step 4 checks (4): denying the antecedent, invalid. So exactly two arguments are valid. The answer is 2."
         constraints: "mix valid universal modus ponens/tollens with quantified versions of the classic fallacies"
     diagnostic_exemplar:
       problem: 'Premises: "every integer divisible by $6$ is even" and "$15$ is not even". What follows about $15$? And do the premises "every integer divisible by $6$ is even" and "$10$ is even" let you conclude that $10$ is divisible by $6$?'

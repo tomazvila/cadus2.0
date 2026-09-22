@@ -25,34 +25,100 @@ topics:
         name: "The direct-proof template on parity"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'Prove: for all integers $m, n$, if $m$ and $n$ are even then $m + n$ is even.'
-            answer: 'Direct: write $m = 2a$, $n = 2b$; then $m + n = 2(a + b)$, even.'
-            solution_sketch: 'Assume $m, n$ are even, so $m = 2a$ and $n = 2b$ for integers $a, b$. Then $m + n = 2a + 2b = 2(a + b)$, and $a + b \in \mathbb{Z}$, so $m + n$ is even. $\square$'
-          - problem: 'Prove: the product of two odd integers is odd.'
-            answer: 'Write $m = 2a+1$, $n = 2b+1$; then $mn = 2(2ab + a + b) + 1$, odd.'
-            solution_sketch: 'Let $m = 2a + 1$ and $n = 2b + 1$. Then $mn = 4ab + 2a + 2b + 1 = 2(2ab + a + b) + 1$, and $2ab + a + b \in \mathbb{Z}$, so $mn$ is odd. $\square$'
+          - problem: "Assume m and n are even integers, written as m = 2a and n = 2b. To prove m + n is even, write m + n = 2q. Find q."
+            answer: "a+b"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (hypothesis): assume m and n are even, so m = 2a and n = 2b for integers a and b. Step 2 (algebra): add the expressions, m + n = 2a + 2b, and factor out 2 to get 2(a + b). The quotient is a+b."
+          - problem: "Assume m and n are odd integers, written as m = 2a + 1 and n = 2b + 1. To prove mn is odd, write mn = 2q + 1. Find q."
+            answer: "2ab+a+b"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (hypothesis): assume m and n are odd, so m = 2a + 1 and n = 2b + 1. Step 2 (algebra): multiply, mn = (2a + 1)(2b + 1) = 4ab + 2a + 2b + 1 = 2(2ab + a + b) + 1. The quotient is 2ab+a+b."
+          - problem: "Assume n is an odd integer, written as n = 2k + 1. To prove n^2 is odd, write n^2 = 2q + 1. Find q."
+            answer: "2k^2+2k"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (hypothesis): assume n is odd, so n = 2k + 1. Step 2 (algebra): square, n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1. The quotient is 2k^2+2k."
+          - problem: "A student claims that n^2 + 3n + 2 is odd for every integer n >= 2. Give the smallest n >= 2 for which the claim is false."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (evaluation): put n = 2 in the expression n^2 + 3n + 2, which gives 4 + 6 + 2 = 12. Step 2 (parity): 12 = 2*6 is even, so the claim that it is odd fails at n = 2. Since n >= 2, no smaller value is possible. The smallest n is 2."
+          - problem: "Assume n is an odd integer, written as n = 2k + 1. To prove n^3 is odd, write n^3 = 2q + 1. Find q."
+            answer: "4k^3+6k^2+3k"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (hypothesis): assume n is odd, so n = 2k + 1 for an integer k. Step 2 (algebra): cube the expression, n^3 = (2k + 1)^3 = 8k^3 + 12k^2 + 6k + 1. Step 3 (form): factor out 2, n^3 = 2(4k^3 + 6k^2 + 3k) + 1. The quotient is 4k^3+6k^2+3k."
+          - problem: "In a direct proof that the sum of two odd integers is even, the line m + n = ? is missing. Select the line that is true and that shows the conclusion."
+            answer: "$2(a + b + 1)$"
+            answer_contract: {"kind": "label", "options": [["$2(a + b + 1)$"], ["$2(a + b)$"], ["$2(a + b) + 1$"], ["$2(a + b + 2)$"]]}
+            solution_sketch: "Write m = 2a + 1 and n = 2b + 1. Then m + n = 2a + 1 + 2b + 1 = 2a + 2b + 2 = 2(a + b + 1), which is even. Option 2(a + b) drops the two 1s and gives too little. Option 2(a + b) + 1 has the wrong parity. Option 2(a + b + 2) adds two extra units. The answer is $2(a + b + 1)$."
+          - problem: "Write the full proof: for all integers m and n, if m is even and n is odd then m + n is odd. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof. Step 1 (hypothesis): assume m is even and n is odd. Step 2 (definition): write m = 2a for some integer a and n = 2b + 1 for some integer b. Step 3 (algebra): add the expressions, m + n = 2a + (2b + 1) = 2a + 2b + 1 = 2(a + b) + 1. Step 4 (conclusion): since a + b is an integer, the last expression has the form 2q + 1 with q = a + b, so m + n is odd. Therefore the conditional statement holds for all integers m and n."
         constraints: "assume the hypothesis and derive the conclusion; use even = $2k$, odd = $2k+1$"
       - id: kp2
         name: "Direct proofs with algebra and inequalities"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: 'Prove: for every integer $n$, $n^2 + n$ is even.'
-            answer: '$n^2 + n = n(n+1)$ is a product of consecutive integers, one of which is even.'
-            solution_sketch: '$n^2 + n = n(n + 1)$. Of two consecutive integers $n$ and $n + 1$, one is even, so the product is even. $\square$'
-          - problem: 'Prove: for real numbers, if $a \le b$ and $c \ge 0$ then $ac \le bc$.'
-            answer: 'From $b - a \ge 0$ and $c \ge 0$, $(b - a)c \ge 0$, so $ac \le bc$.'
-            solution_sketch: 'Assume $a \le b$, so $b - a \ge 0$. With $c \ge 0$, the product $(b - a)c \ge 0$, i.e. $bc - ac \ge 0$, hence $ac \le bc$. $\square$'
+          - problem: "In a direct proof that $n^2 + n$ is even for every integer $n$, take the case $n = 2k$. Write $n^2 + n$ as 2 times an expression in $k$. Give the expression."
+            answer: "2k^2+k"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full object $n^2 + n$. Substitute $n = 2k$: $(2k)^2 + 2k = 4k^2 + 2k$. Factor 2 by the distributive rule: $2(2k^2 + k)$. The last sentence gives the answer 2k^2+k."
+          - problem: "In a direct proof that if $a \\le b$ and $c \\ge 0$ then $ac \\le bc$, the step from $b - a \\ge 0$ and $c \\ge 0$ to $ac \\le bc$ has one missing line. Select the missing line."
+            answer: "$(b - a)c >= 0$"
+            answer_contract: {"kind": "label", "options": [["$(b - a)c >= 0$"], ["$(b - a)c <= 0$"], ["$(a - b)c >= 0$"], ["$(b + a)c >= 0$"]]}
+            solution_sketch: "Start from $b - a \\ge 0$ and $c \\ge 0$. The product rule for inequalities gives $(b - a)c \\ge 0$. Expanding, $bc - ac \\ge 0$, so $ac \\le bc$. The option $(b - a)c <= 0$ has the wrong inequality sign. The option $(a - b)c >= 0$ uses $b - a$ in the wrong order. The option $(b + a)c >= 0$ adds $a$ and $b$ instead of subtracting. The answer is $(b - a)c >= 0$."
+          - problem: "A student claims that $2n + 1 > n^2$ for every integer $n \\ge 1$ and checks $n = 1$ and $n = 2$. Give the smallest integer $n \\ge 1$ for which the claim is false."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test the claim at the checked values first. For $n = 1$, $3 > 1$ is true; for $n = 2$, $5 > 4$ is true. For $n = 3$, $7 > 9$ is false. The smallest counterexample is $n = 3$, so the answer is 3."
+          - problem: "In a direct proof that $x^2 + 2x + 3 > 0$ for every real $x$, complete the square: $x^2 + 2x + 3 = (x + 1)^2 + c$. Give $c$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the full object $x^2 + 2x + 3$. Complete the square by adding and subtracting 1: $(x^2 + 2x + 1) + 2$. Use $(x + 1)^2 = x^2 + 2x + 1$ to write $(x + 1)^2 + 2$. Matching $(x + 1)^2 + c$ gives $c = 2$, so the answer is 2."
+          - problem: "For real numbers $a$ and $b$, a direct proof of $a^2 + b^2 \\ge 2ab$ moves all terms to one side. Give the square that equals $a^2 + b^2 - 2ab$."
+            answer: "(a-b)^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with $a^2 + b^2 - 2ab$. Recognize the square of a difference: $(a - b)^2 = a^2 - 2ab + b^2$. Therefore $a^2 + b^2 - 2ab = (a - b)^2$. A square is nonnegative, so $a^2 + b^2 \\ge 2ab$. The answer is (a-b)^2."
+          - problem: "Claim: for every real number $x$, $x^2 + 1 \\ge 2x$. Step 1: the claim is the same as $x^2 - 2x + 1 \\ge 0$. Step 2: $x^2 - 2x + 1 = (x - 1)^2$. Step 3: for every real number $x$, $x - 1 \\ge 0$, so $(x - 1)^2 \\ge 0$. Step 4: hence $x^2 + 1 \\ge 2x$ for every real $x$. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Start from the claim $x^2 + 1 \\ge 2x$ for every real number $x$. Step 1 subtracts $2x$ from both sides and is valid by the addition rule for inequalities. Step 2 uses the identity $x^2 - 2x + 1 = (x - 1)^2$ and is valid. Step 3 states $x - 1 \\ge 0$ for every real number $x$, which is false: at $x = 0$ the value $x - 1$ is $ -1$, and a square is still nonnegative only because of the square, not because of that sign claim. So Step 3 is the first invalid step. Step 4 rests on Step 3 and is not the first invalid step; Step 1 and Step 2 are both valid, so they are not the first invalid step either. The answer is Step 3."
+          - problem: "Write the full proof: for every positive real number $x$, $x + 1/x \\ge 2$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof. Step 1: start from $(x - 1)^2 \\ge 0$ for every real $x$, because a square is nonnegative. Step 2: expand the square: $x^2 - 2x + 1 \\ge 0$. Step 3: add $2x$ to both sides: $x^2 + 1 \\ge 2x$. Step 4: since $x > 0$, divide both sides by $x$; division by a positive number keeps the inequality direction, so $x + 1/x \\ge 2$. Step 5: the assumption $x > 0$ was used only at the division step, so the statement holds for every positive real $x$. This completes the direct proof."
         constraints: "algebraic manipulation; keep each step reversible-justified"
       - id: kp3
         name: "Direct proofs about divisibility"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Prove: for all integers $a, b, c$, if $a \mid b$ and $b \mid c$ then $a \mid c$.'
-            answer: '$b = ak$, $c = bm$ give $c = a(km)$, so $a \mid c$.'
-            solution_sketch: 'Assume $a \mid b$ and $b \mid c$, so $b = ak$ and $c = bm$ for integers $k, m$. Then $c = (ak)m = a(km)$ with $km \in \mathbb{Z}$, so $a \mid c$. $\square$'
-          - problem: 'Prove: for all integers $n$, if $5 \mid n$ then $5 \mid n^2$.'
-            answer: '$n = 5k$ gives $n^2 = 5(5k^2)$.'
-            solution_sketch: 'Assume $5 \mid n$, so $n = 5k$. Then $n^2 = 25k^2 = 5(5k^2)$ with $5k^2 \in \mathbb{Z}$, so $5 \mid n^2$. $\square$'
+          - problem: "Assume a | b and b | c for integers a, b, c, so b = ak and c = bm for integers k and m. A direct proof gives c = a q for some integer q. Give q."
+            answer: "km"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume a | b and b | c, so b = ak and c = bm with k, m integers. Substitute: c = bm = (ak)m = a(km). The definition a | c needs c = a q, so q = km. The answer is km."
+          - problem: "Assume 5 | n for an integer n, so n = 5k. A direct proof gives n^2 = 5 q for some integer q. Give q."
+            answer: "5k^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume 5 | n, so n = 5k for integer k. Square: n^2 = (5k)^2 = 25k^2 = 5(5k^2). The definition of divisibility needs n^2 = 5 q, so q = 5k^2. The answer is 5k^2."
+          - problem: "Assume a | b and a | c for integers a, b, c, so b = ak and c = am for integers k and m. A direct proof gives b + c = a q. Give q."
+            answer: "k+m"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume a | b and a | c, so b = ak and c = am. Add: b + c = ak + am = a(k + m). The definition of divisibility needs b + c = a q, so q = k + m. The answer is k+m."
+          - problem: "A student claims that 3 | (n^2 + 2) for all integers n >= 1 and checks n = 1 and n = 2. Give the smallest n >= 1 for which the claim is false."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test values: n = 1 gives 1 + 2 = 3, divisible by 3; n = 2 gives 4 + 2 = 6, divisible by 3; n = 3 gives 9 + 2 = 11, not divisible by 3. The first false case is n = 3, so the smallest counterexample is 3. The answer is 3."
+          - problem: "Claim: for all integers a and b, if a | b then a | (b + 1). Step 1: assume a | b, so b = ak for some integer k. Step 2: then b + 1 = ak + 1. Step 3: factor a to get ak + 1 = a(k + 1). Step 4: so a | (b + 1). Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly uses the definition of divisibility. Step 2 is algebra. Step 3 is false: a(k + 1) = ak + a, not ak + 1. Step 4 depends on Step 3. The answer is Step 3."
+          - problem: "Assume a | b and a | c for integers a, b, c, so b = ak and c = am for integers k and m. A direct proof gives b - c = a q. Give q."
+            answer: "k-m"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume a | b and a | c, so b = ak and c = am. Subtract: b - c = ak - am = a(k - m). The definition of divisibility needs b - c = a q, so q = k - m. The answer is k-m."
+          - problem: "Write the full proof: for all integers a, b, c, if a | b and b | c then a | c. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (hypothesis): assume a | b and b | c for integers a, b, c. Step 2 (definition): there are integers k and m with b = ak and c = bm. Step 3 (substitution): c = bm = (ak)m = a(km). Step 4 (closure): km is an integer. Step 5 (definition): c = a(km) means a | c. The proof uses only the definition of divisibility. This proves the statement for all integers a, b, c."
         constraints: "use the definition $a \\mid b$ means $b = ak$ for some integer $k$"
     diagnostic_exemplar:
       problem: 'Prove: for all integers $a, b$, if $a \mid b$ then $a \mid (3b^2 + b)$.'
@@ -95,12 +161,34 @@ topics:
         name: "Trivial proofs"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: for every real $x$, if $x > 3$ then $x^2 \ge 0$.'
-            answer: 'Trivially true: $x^2 \ge 0$ for every real $x$, regardless of the hypothesis.'
-            solution_sketch: 'The conclusion holds for all real $x$ (a square is nonnegative), so the conditional is true without using the hypothesis — a trivial proof. $\square$'
-          - problem: 'Prove: for every integer $n$, if $n$ is prime then $n \cdot 0 = 0$.'
-            answer: 'Trivially true: $n \cdot 0 = 0$ holds for every integer $n$.'
-            solution_sketch: 'The conclusion is a universal identity, so the conditional holds whatever the hypothesis says. $\square$'
+          - problem: "A trivial proof of: for every real x, if x > 3 then x squared is nonnegative, proves the conclusion for all real x. Give the smallest real number m such that x^2 >= m for every real x."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A square is never negative, so x^2 >= 0 for every real x. The value 0 is reached at x = 0, so no smaller number works. The answer is 0."
+          - problem: "A trivial proof of: for every integer n, if n is prime then n^2 - n^2 = n - n, proves the conclusion for every integer. Give the integer c such that c*n = n - n for every integer n."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The right side n - n is zero for every integer n. So c*n = 0 for all n, which forces c = 0. The conclusion holds for all n without the hypothesis. The answer is 0."
+          - problem: "A trivial proof of: for every real x, if x < 1 then the square of x-2 is nonnegative, proves the conclusion for all real x. Give the minimum value of the square of x-2 over all real x."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The expression is a square, so it is never negative. Its value is zero when x = 2, so the minimum is 0. The answer is 0."
+          - problem: "A trivial proof of: for every real x, if x > 5 then x^2+2x+2 is positive, completes the square. Write x^2+2x+2 = (x+1)^2 + C. Give C."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the square: (x+1)^2 = x^2 + 2x + 1. The constant C makes x^2 + 2x + 2 equal to (x+1)^2 + C, so C = 1. Since the square is nonnegative, the expression is positive. The answer is 1."
+          - problem: "Claim: for every real x, if x > 3 then x^2 is nonnegative. Step 1: assume x > 3. Step 2: x is a real number. Step 3: for every real number y, y^2 is positive. Step 4: therefore x^2 is nonnegative. Step 5: the claim holds for every real x. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is a valid assumption. Step 2 is true for any real number. Step 3 is false: at y = 0, y^2 = 0, not positive. Step 4 correctly uses the hypothesis x > 3 to get a nonnegative square. Step 5 is a true summary. The answer is Step 3."
+          - problem: "A trivial proof of: for every real x, if x > 4 then the square of x-1 is nonnegative, needs the line that proves the conclusion without the hypothesis. Select the missing line."
+            answer: "$(x-1)^2 >= 0$ for every real x"
+            answer_contract: {"kind": "label", "options": [["$(x-1)^2 >= 0$ for every real x"], ["$(x-1)^2 > 0$ for every real x"], ["$x > 4$ so $(x-1)^2 > 9$"], ["$x^2 - 1 >= 0$"]]}
+            solution_sketch: "The conclusion follows from the square: for every real x, (x-1)^2 >= 0. The option $(x-1)^2 > 0$ for every real x fails at x = 1, where the square is 0. The option $x > 4$ so $(x-1)^2 > 9$ uses the hypothesis and a strict inequality. The option $x^2 - 1 >= 0$ is a different expression. The answer is $(x-1)^2 >= 0$ for every real x."
+          - problem: "Write the full proof: for every real x, if x > 2 then x^2 - 4x + 5 > 0. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: the goal is to prove the conditional for every real x. Step 2: complete the square: x^2 - 4x + 5 = (x-2)^2 + 1. Step 3: a square is nonnegative, so (x-2)^2 >= 0 for every real x. Step 4: add 1 to get (x-2)^2 + 1 >= 1 > 0. Step 5: the conclusion holds for every real x without using the hypothesis x > 2, so this is a trivial proof. Step 6: therefore the statement is true for every real x."
         constraints: "prove the conclusion outright without touching the hypothesis"
       - id: kp3
         name: "Recognizing which template applies"
