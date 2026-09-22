@@ -594,36 +594,80 @@ topics:
           - problem: 'Compute $D$ for $f(x, y) = x^2 + xy + y^2$.'
             answer: '$D = 3$'
             solution_sketch: '$f_{xx} = 2$, $f_{yy} = 2$, $f_{xy} = 1$: $D = 4 - 1 = 3$.'
+          - problem: "Let $f(x, y) = 2x^3 + y^2$. Compute $D = f_{xx} f_{yy} - f_{xy}^2$. Give $D$ as a function of $x$."
+            answer: "24x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Write the second partials first: f_{xx} = 12x, f_{yy} = 2, and f_{xy} = 0 by the power rule. Substitute into the discriminant rule D = f_{xx} f_{yy} - f_{xy}^2, so D = (12x)(2) - 0^2 = 24x. The discriminant is 24x."
+          - problem: "Let $f(x, y) = x^2 + 3xy + y^2$. Compute $D = f_{xx} f_{yy} - f_{xy}^2$. Give $D$ as an integer."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the constant second partials: f_{xx} = 2, f_{yy} = 2, and f_{xy} = 3. Apply the discriminant rule D = f_{xx} f_{yy} - f_{xy}^2, which gives D = (2)(2) - 3^2 = 4 - 9 = -5. So D = -5."
+          - problem: "For a function $f$, the second partials are $f_{xx} = 2x$, $f_{yy} = 3$, and $f_{xy} = 0$. Compute $D = f_{xx} f_{yy} - f_{xy}^2$. Give $D$ as a function of $x$."
+            answer: "6x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The given second partials are f_{xx} = 2x, f_{yy} = 3, and f_{xy} = 0. Use the discriminant rule D = f_{xx} f_{yy} - f_{xy}^2 and substitute: D = (2x)(3) - 0^2 = 6x. Therefore D = 6x."
+          - problem: "Let $f(x, y) = x^2 + y^4$. Compute $D = f_{xx} f_{yy} - f_{xy}^2$. Give $D$ as a function of $y$."
+            answer: "24y^2"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Compute the second partials: f_{xx} = 2, f_{yy} = 12y^2, and f_{xy} = 0. Apply D = f_{xx} f_{yy} - f_{xy}^2, so D = (2)(12y^2) - 0^2 = 24y^2. Thus D = 24y^2."
         constraints: "second partials are constants or monomials; D is a constant or single monomial"
       - id: kp2
         name: "The second-derivative test"
         key_prerequisites: [multivariable-critical-points, partial-derivatives]
         exemplars:
-          - problem: 'Classify the critical points of $f(x, y) = x^3 - 3x + y^2$.'
-            answer: '$(1, 0)$ is a local minimum; $(-1, 0)$ is a saddle point.'
-            answer_contract: {kind: none}
-            solution_sketch: '$D = f_{xx} f_{yy} - f_{xy}^2 = (6x)(2) - 0 = 12x$. At $(1,0)$: $D = 12 > 0$, $f_{xx} = 6 > 0 \Rightarrow$ min. At $(-1,0)$: $D = -12 < 0 \Rightarrow$ saddle.'
-          - problem: 'Classify the critical point of $f(x, y) = x^2 + xy + y^2$ at the origin.'
-            answer: 'Local (indeed global) minimum.'
-            answer_contract: {kind: none}
-            solution_sketch: '$D = (2)(2) - 1^2 = 3 > 0$ and $f_{xx} = 2 > 0$.'
-          - problem: 'Classify the critical point of $f(x, y) = xy$ at the origin.'
-            answer: 'Saddle point.'
-            answer_contract: {kind: none}
-            solution_sketch: '$D = (0)(0) - 1^2 = -1 < 0$.'
+          - problem: "For f(x, y) = x^3 - 3x + y^2, the point (1, 0) is a critical point and D = f_xx f_yy - f_xy^2. Give the verdict and D."
+            answer: "verdict = minimum; D = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["minimum"], ["saddle"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "For f(x, y) = x^3 - 3x + y^2, the second partials are f_xx = 6x, f_yy = 2, and f_xy = 0. At (1, 0), f_xx = 6 and D = (6)(2) - 0^2 = 12 by the second-derivative test. Since D > 0 and f_xx > 0, the point is a local minimum. A wrong option 'saddle' comes from ignoring the sign of f_xx. The answer is verdict = minimum; D = 12."
+          - problem: "For f(x, y) = x^2 + xy + y^2, the origin is a critical point and D = f_xx f_yy - f_xy^2. Give D as an integer."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For f(x, y) = x^2 + xy + y^2, the second partials are f_xx = 2, f_yy = 2, and f_xy = 1. At the origin, D = (2)(2) - 1^2 = 3 using the second-derivative test. The answer is 3."
+          - problem: "For f(x, y) = xy, the origin is a critical point and D = f_xx f_yy - f_xy^2. Give D as an integer."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For f(x, y) = xy, the second partials are f_xx = 0, f_yy = 0, and f_xy = 1. At the origin, D = (0)(0) - 1^2 = -1 by the second-derivative test. The answer is -1."
+          - problem: "For f(x, y) = -x^2 - y^2, the origin is a critical point and D = f_xx f_yy - f_xy^2. Give D as an integer."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For f(x, y) = -x^2 - y^2, the second partials are f_xx = -2, f_yy = -2, and f_xy = 0. At the origin, D = (-2)(-2) - 0^2 = 4 using the second-derivative test. The answer is 4."
+          - problem: "For f(x, y) = -x^3 + 3x - y^2, the point (1, 0) is a critical point and D = f_xx f_yy - f_xy^2. Give the verdict and D."
+            answer: "verdict = maximum; D = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["maximum"], ["saddle"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "For f(x, y) = -x^3 + 3x - y^2, the second partials are f_xx = -6x, f_yy = -2, and f_xy = 0. At (1, 0), f_xx = -6 and D = (-6)(-2) - 0^2 = 12 by the second-derivative test. Since D > 0 and f_xx < 0, the point is a local maximum. A wrong option 'saddle' comes from ignoring the sign of f_xx. The answer is verdict = maximum; D = 12."
+          - problem: "For f(x, y) = x^3 + y^3 - 3xy, the origin is a critical point and D = f_xx f_yy - f_xy^2. Give the verdict and D."
+            answer: "verdict = saddle; D = -9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["saddle"], ["minimum"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "D"}]}
+            solution_sketch: "For f(x, y) = x^3 + y^3 - 3xy, the second partials are f_xx = 6x, f_yy = 6y, and f_xy = -3. At the origin, f_xx = 0 and f_yy = 0, so D = (0)(0) - (-3)^2 = -9 by the second-derivative test. Since D < 0, the origin is a saddle point. A wrong option 'minimum' comes from ignoring that D is negative. The answer is verdict = saddle; D = -9."
         constraints: "D = f_xx f_yy - f_xy^2 evaluates to a nonzero integer at each critical point (test never inconclusive)"
       - id: kp3
         name: "Complete find-and-classify problems"
         key_prerequisites: [multivariable-critical-points, partial-derivatives]
         exemplars:
-          - problem: 'Find and classify all critical points of $f(x, y) = x^3 + y^3 - 3xy$.'
-            answer: '$(0, 0)$ is a saddle point; $(1, 1)$ is a local minimum with $f(1, 1) = -1$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$y = x^2$ from $f_x = 0$, then $x^4 = x$ gives $(0,0)$ and $(1,1)$. $D = 36xy - 9$: at $(0,0)$, $D = -9 < 0$; at $(1,1)$, $D = 27 > 0$ with $f_{xx} = 6 > 0$.'
-          - problem: 'Find and classify all critical points of $f(x, y) = x^4 + y^4 - 4xy$.'
-            answer: '$(0, 0)$ is a saddle point; $(1, 1)$ and $(-1, -1)$ are local minima with $f = -2$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$y = x^3$ and $x = y^3$ force $x^9 = x$, so $x = 0, \pm 1$. $D = 144x^2y^2 - 16$: negative at the origin, $128 > 0$ with $f_{xx} = 12 > 0$ at $(\pm 1, \pm 1)$.'
+          - problem: "Find and classify all critical points of $f(x, y) = x^3 + y^3 - 3xy$. Give the function value at the local minimum."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Set $f_x = 3x^2 - 3y = 0$ and $f_y = 3y^2 - 3x = 0$. From $f_x$, $y = x^2$. Substitute into $f_y$: $3x^4 - 3x = 0$, so $x = 0$ or $x = 1$. The critical points are $(0,0)$ and $(1,1)$. Step 2: The second-derivative test uses $D = f_{xx} f_{yy} - (f_{xy})^2 = (6x)(6y) - (-3)^2 = 36xy - 9$. At $(0,0)$, $D = -9 < 0$, so $(0,0)$ is a saddle point. At $(1,1)$, $D = 27 > 0$ and $f_{xx} = 6 > 0$, so $(1,1)$ is a local minimum. Step 3: The function value at $(1,1)$ is $f(1,1) = 1 + 1 - 3 = -1$. The answer is -1."
+          - problem: "Find and classify all critical points of $f(x, y) = x^4 + y^4 - 4xy$. Give the function value at the local minima."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: $f_x = 4x^3 - 4y = 0$ gives $y = x^3$. $f_y = 4y^3 - 4x = 0$ gives $x = y^3$. Substitute to get $x = x^9$, so $x = 0, 1, -1$. Critical points are $(0,0)$, $(1,1)$, $(-1,-1)$. Step 2: $D = f_{xx} f_{yy} - (f_{xy})^2 = (12x^2)(12y^2) - (-4)^2 = 144x^2y^2 - 16$. At $(0,0)$, $D = -16 < 0$, so saddle. At $(1,1)$ and $(-1,-1)$, $D = 128 > 0$ and $f_{xx} = 12 > 0$, so both are local minima. Step 3: $f(1,1) = 1+1-4 = -2$, and $f(-1,-1) = -2$. The answer is -2."
+          - problem: "Find and classify all critical points of $f(x, y) = x^3 + y^3 + 3xy$. State the type of the critical point with the smaller x-coordinate."
+            answer: "local maximum"
+            answer_contract: {"kind": "label", "options": [["local minimum"], ["local maximum"], ["saddle point"], ["undetermined"]]}
+            solution_sketch: "Step 1: $f_x = 3x^2 + 3y = 0$ gives $y = -x^2$. $f_y = 3y^2 + 3x = 0$ gives $x = -y^2$. Substitute to get $x = -x^4$, so $x = 0$ or $x = -1$. Critical points are $(0,0)$ and $(-1,-1)$. Step 2: $D = (6x)(6y) - (3)^2 = 36xy - 9$. At $(0,0)$, $D = -9 < 0$, so saddle. At $(-1,-1)$, $D = 27 > 0$ and $f_{xx} = -6 < 0$, so local maximum. The point with smaller x is $(-1,-1)$, which is a local maximum. Step 3: The answer is local maximum. Wrong options: local minimum is the error of taking $f_{xx} > 0$; saddle point is the error of using $D < 0$; undetermined is the error of stopping before the second-derivative test."
+          - problem: "Find and classify all critical points of $f(x, y) = x^3 - 3x^2 + 3y^2 - 6y$. For the critical point with the larger x-coordinate, state its type and its function value."
+            answer: "type = minimum; value = -7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["saddle"], ["minimum"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1: $f_x = 3x^2 - 6x = 3x(x-2) = 0$ gives $x = 0$ or $x = 2$. $f_y = 6y - 6 = 0$ gives $y = 1$. Critical points are $(0,1)$ and $(2,1)$. Step 2: $D = f_{xx} f_{yy} - (f_{xy})^2 = (6x-6)(6) - 0 = 36(x-1)$. At $(0,1)$, $D = -36 < 0$, so saddle. At $(2,1)$, $D = 36 > 0$ and $f_{xx} = 6 > 0$, so local minimum. The larger x is 2, so the point is $(2,1)$, a local minimum. Step 3: $f(2,1) = 8 - 12 + 3 - 6 = -7$. The answer is type = minimum; value = -7. Wrong label option: saddle is the error of classifying the larger-x point as the saddle at $(0,1)$."
+          - problem: "Find and classify all critical points of $f(x, y) = x^3 + y^2 - 3x^2 - 6y$. Give the function value at the local minimum."
+            answer: "-13"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: $f_x = 3x^2 - 6x = 3x(x-2) = 0$ gives $x = 0$ or $x = 2$. $f_y = 2y - 6 = 0$ gives $y = 3$. Critical points are $(0,3)$ and $(2,3)$. Step 2: $D = f_{xx} f_{yy} - (f_{xy})^2 = (6x-6)(2) - 0 = 12(x-1)$. At $(0,3)$, $D = -12 < 0$, so saddle. At $(2,3)$, $D = 12 > 0$ and $f_{xx} = 6 > 0$, so local minimum. Step 3: $f(2,3) = 8 + 9 - 12 - 18 = -13$. The answer is -13."
+          - problem: "Find and classify all critical points of $f(x, y) = x^3 + y^3 - 6xy$. For the critical point with the smaller x-coordinate, state its type and its function value."
+            answer: "type = saddle; value = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["saddle"], ["minimum"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1: $f_x = 3x^2 - 6y = 0$ gives $y = x^2/2$. $f_y = 3y^2 - 6x = 0$ gives $x = y^2/2$. Substitute to get $x = (x^2/2)^2 / 2 = x^4/8$, so $x = 0$ or $x = 2$. Critical points are $(0,0)$ and $(2,2)$. Step 2: $D = (6x)(6y) - (-6)^2 = 36xy - 36$. At $(0,0)$, $D = -36 < 0$, so saddle. At $(2,2)$, $D = 108 > 0$ and $f_{xx} = 12 > 0$, so local minimum. The smaller x is 0, so the point is $(0,0)$, a saddle point. Step 3: $f(0,0) = 0$. The answer is type = saddle; value = 0. Wrong label option: minimum is the error of classifying the smaller-x point as the minimum at $(2,2)$."
         constraints: "2-3 critical points found by substitution; every classification decisive; report function values at extrema"
     diagnostic_exemplar:
       problem: 'Find and classify all critical points of $f(x, y) = x^3 - 6xy + 3y^2$.'
@@ -660,40 +704,88 @@ topics:
         name: "Linear objectives: extrema on the boundary"
         key_prerequisites: [multivariable-critical-points, closed-interval-method]
         exemplars:
-          - problem: 'Find the absolute extrema of $f(x, y) = 4 - x - y$ on the triangle with vertices $(0,0)$, $(2,0)$, $(0,2)$.'
-            answer: 'Maximum $4$ at $(0, 0)$; minimum $2$ at every point of the edge from $(2,0)$ to $(0,2)$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$f$ is linear (no interior critical points), so extremes occur on the boundary; on the hypotenuse $x + y = 2$, $f \equiv 2$.'
-          - problem: 'Find the absolute extrema of $f(x, y) = 2x + 3y$ on the square $[0,1] \times [0,1]$.'
-            answer: 'Maximum $5$ at $(1, 1)$; minimum $0$ at $(0, 0)$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A linear function on a polygon attains its extremes at vertices; compare $f$ at the four corners.'
+          - problem: "Find the absolute maximum and minimum values of f(x, y) = 6 - x - y on the triangle with vertices (0,0), (4,0) and (0,4)."
+            answer: "maximum = 6; minimum = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "maximum"}, {"contract": {"kind": "exact"}, "name": "minimum"}]}
+            solution_sketch: "The function f(x, y) = 6 - x - y is linear, so its absolute extrema on the triangle occur at the vertices or along an edge where the function is constant. Evaluate at the vertices: f(0,0) = 6, f(4,0) = 2, f(0,4) = 2. On the hypotenuse x + y = 4, f = 6 - x - (4 - x) = 2, so the minimum is 2 along that edge. The absolute maximum is 6 and the absolute minimum is 2, so the answer is maximum = 6; minimum = 2."
+          - problem: "Find the absolute maximum and minimum values of f(x, y) = 5x + 2y on the square with corners (0,0), (1,0), (0,1) and (1,1)."
+            answer: "maximum = 7; minimum = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "maximum"}, {"contract": {"kind": "exact"}, "name": "minimum"}]}
+            solution_sketch: "The function f(x, y) = 5x + 2y is linear, so its extrema on the square occur at the vertices. Evaluate at the four corners: f(0,0) = 0, f(1,0) = 5, f(0,1) = 2, f(1,1) = 7. The largest value is 7 and the smallest value is 0, so the answer is maximum = 7; minimum = 0."
+          - problem: "Find the absolute maximum value of f(x, y) = 3x - 2y on the triangle with vertices (0,0), (2,0) and (0,2)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f(x, y) = 3x - 2y is linear, so the maximum on the triangle occurs at a vertex or along an edge where f is constant. Evaluate at the vertices: f(0,0) = 0, f(2,0) = 6, f(0,2) = -4. On the hypotenuse x + y = 2, f = 3x - 2(2 - x) = 5x - 4, which is at most 6 at x = 2. The absolute maximum value is 6."
+          - problem: "Find the absolute minimum value of f(x, y) = 4x + 3y on the triangle with vertices (0,0), (3,0) and (0,3)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f(x, y) = 4x + 3y is linear, so the minimum on the triangle occurs at a vertex or along an edge where f is constant. Evaluate at the vertices: f(0,0) = 0, f(3,0) = 12, f(0,3) = 9. On the hypotenuse x + y = 3, f = 4x + 3(3 - x) = x + 9, which is at least 9 at x = 0. The absolute minimum value is 0."
+          - problem: "Find the point where the absolute maximum of f(x, y) = 2x + 5y on the square [0,1] x [0,1] occurs. Give the answer as (x, y)."
+            answer: "(1, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "For a linear function on a square, the maximum occurs at a vertex. Evaluate at the four corners: f(0,0) = 0, f(1,0) = 2, f(0,1) = 5, f(1,1) = 7. The largest value is 7, which occurs at the point (1, 1). The point is (1, 1)."
+          - problem: "Find the absolute maximum value of f(x, y) = 10 - 2x - 3y on the triangle with vertices (0,0), (2,0) and (0,2)."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function f(x, y) = 10 - 2x - 3y is linear, so the maximum on the triangle occurs at a vertex or along an edge where f is constant. Evaluate at the vertices: f(0,0) = 10, f(2,0) = 6, f(0,2) = 4. On the hypotenuse x + y = 2, f = 10 - 2x - 3(2 - x) = 4 + x, which is at most 6 at x = 2. The absolute maximum value is 10."
         constraints: "linear objectives on triangles or squares; extremes at vertices or constant along one edge"
       - id: kp2
         name: "Disks: parametrized boundaries"
         key_prerequisites: [multivariable-local-extrema, closed-interval-method]
         exemplars:
-          - problem: 'Find the absolute maximum and minimum of $f(x, y) = x^2 - 2x + y^2$ on the disk $x^2 + y^2 \le 4$.'
-            answer: 'Absolute minimum $-1$ at $(1, 0)$; absolute maximum $8$ at $(-2, 0)$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Interior: $\nabla f = 0$ at $(1, 0)$, $f = -1$. Boundary: on $x^2 + y^2 = 4$, $f = 4 - 2x$ with $x \in [-2, 2]$, so extremes $f = 0$ at $(2,0)$ and $f = 8$ at $(-2,0)$. Compare all candidates.'
-          - problem: 'Find the absolute extrema of $f(x, y) = x^2 + y^2$ on the disk $x^2 + y^2 \le 9$.'
-            answer: 'Minimum $0$ at the origin; maximum $9$ on the whole boundary circle.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The only interior critical point is $(0,0)$; on the boundary $f \equiv 9$.'
+          - problem: "Let f(x, y) = x^2 + y^2 + 4x. On the circle x^2 + y^2 = 9, find the absolute maximum value of f."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x,y)=x^2+y^2+4x on the circle x^2+y^2=9. Step 1: use the circle equation x^2+y^2=9 to reduce the boundary to the single variable expression f=9+4x. Step 2: on the circle x lies in [-3,3], so the linear expression 9+4x is largest at x=3. The absolute maximum value is 21."
+          - problem: "Let f(x, y) = x^2 + y^2 - 6y. On the circle x^2 + y^2 = 16, find the absolute minimum value of f."
+            answer: "-8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x,y)=x^2+y^2-6y on the circle x^2+y^2=16. Step 1: replace x^2+y^2 by 16 on the boundary to get f=16-6y. Step 2: y lies in [-4,4], so the decreasing linear expression 16-6y is smallest at y=4. The absolute minimum value is -8."
+          - problem: "Let f(x, y) = x^2 + y^2 + 8x. On the circle x^2 + y^2 = 25, find the absolute maximum value of f."
+            answer: "65"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x,y)=x^2+y^2+8x on the circle x^2+y^2=25. Step 1: substitute the boundary relation x^2+y^2=25, giving f=25+8x. Step 2: x ranges from -5 to 5, and the increasing linear expression reaches its maximum at x=5. The absolute maximum value is 65."
+          - problem: "Let f(x, y) = x^2 + y^2 - 4x. On the circle x^2 + y^2 = 36, find the absolute minimum value of f."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x,y)=x^2+y^2-4x on the circle x^2+y^2=36. Step 1: use x^2+y^2=36 to reduce the boundary to f=36-4x. Step 2: x lies in [-6,6], so the decreasing linear expression is smallest at x=6. The absolute minimum value is 12."
+          - problem: "Let f(x, y) = x^2 + y^2 + 10y. On the circle x^2 + y^2 = 4, find the absolute maximum value of f."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x,y)=x^2+y^2+10y on the circle x^2+y^2=4. Step 1: replace x^2+y^2 by 4 on the boundary to get f=4+10y. Step 2: y lies in [-2,2], so the increasing linear expression is largest at y=2. The absolute maximum value is 24."
+          - problem: "Let f(x, y) = x^2 + y^2 + 6x. On the circle x^2 + y^2 = 1, find the absolute minimum value of f."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is f(x,y)=x^2+y^2+6x on the circle x^2+y^2=1. Step 1: substitute x^2+y^2=1 on the boundary, giving f=1+6x. Step 2: x ranges from -1 to 1, so the increasing linear expression is smallest at x=-1. The absolute minimum value is -5."
         constraints: "on the boundary circle the objective reduces to one variable via x^2 + y^2 = r^2; candidates at integer points"
       - id: kp3
         name: "Interior critical points versus boundary candidates"
         key_prerequisites: [multivariable-local-extrema, closed-interval-method]
         exemplars:
-          - problem: 'Find the absolute extrema of $f(x, y) = x^2 + y^2 - 2x - 2y$ on the square $[0,2] \times [0,2]$.'
-            answer: 'Absolute minimum $-2$ at $(1, 1)$; absolute maximum $0$ at the four corners.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Interior critical point $(1,1)$ with $f = -2$. On each edge $f$ reduces to a one-variable quadratic; edge minima are $-1$, and all four corners give $f = 0$.'
-          - problem: 'Find the absolute extrema of $f(x, y) = xy - x - y + 3$ on the triangle with vertices $(0,0)$, $(2,0)$, $(0,4)$.'
-            answer: 'Absolute maximum $3$ at $(0, 0)$; absolute minimum $-1$ at $(0, 4)$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Interior critical point $(1,1)$ with $f = 2$. Edges: on $x = 0$, $f = 3 - y \in [-1, 3]$; on $y = 0$, $f = 3 - x \in [1, 3]$; on $y = 4 - 2x$, $f = -2x^2 + 5x - 1$ with max $\frac{17}{8}$ at $x = \frac{5}{4}$. Comparing all candidates: max $3$, min $-1$.'
+          - problem: "Find the absolute minimum and maximum values of f(x, y) = x^2 + y^2 - 2x - 2y on the square with 0 <= x <= 2 and 0 <= y <= 2, and give the two values as min and max."
+            answer: "min = -2; max = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"kind": "exact"}, "name": "max"}]}
+            solution_sketch: "The interior critical point solves fx = 2x - 2 = 0 and fy = 2y - 2 = 0, giving (1, 1) with f(1, 1) = -2. On the boundary the closed-interval method reduces each edge to a one-variable quadratic, with values from -1 up to 0 at the four corners. Comparing the interior candidate with all boundary candidates gives min = -2; max = 0."
+          - problem: "Find the absolute minimum and maximum values of f(x, y) = xy - x - y + 3 on the triangle with vertices (0, 0), (2, 0) and (0, 4), and give the two values as min and max."
+            answer: "min = -1; max = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"kind": "exact"}, "name": "max"}]}
+            solution_sketch: "The interior critical point solves fx = y - 1 = 0 and fy = x - 1 = 0, giving (1, 1) with f(1, 1) = 2. On the boundary x = 0 the function is 3 - y, on y = 0 it is 3 - x, and on the hypotenuse y = 4 - 2x it is -2x^2 + 5x - 1 with maximum 17/8 at x = 5/4, so the boundary values run from -1 at (0, 4) to 3 at (0, 0). Comparing the interior candidate with the boundary candidates gives min = -1; max = 3."
+          - problem: "Find the absolute minimum value of f(x, y) = x^2 + y^2 - 4x - 2y on the square with 0 <= x <= 3 and 0 <= y <= 3."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The interior critical point solves fx = 2x - 4 = 0 and fy = 2y - 2 = 0, giving (2, 1) with f(2, 1) = -5. On the boundary the closed-interval method gives values between -4 on the edge y = 0 and 3 at a corner. Since -5 is below every boundary candidate, the absolute minimum is -5."
+          - problem: "Find the absolute maximum value of f(x, y) = x^2 + y^2 - 6x - 4y + 5 on the triangle with vertices (0, 0), (8, 0) and (0, 4)."
+            answer: "21"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The interior critical point solves fx = 2x - 6 = 0 and fy = 2y - 4 = 0, giving (3, 2) with f(3, 2) = -8. On the boundary the closed-interval method gives x^2 - 6x + 5 on y = 0, y^2 - 4y + 5 on x = 0, and (5/4)x^2 - 8x + 5 on the hypotenuse, whose largest value is 21 at (8, 0). Comparing the interior candidate with the boundary candidates gives an absolute maximum of 21."
+          - problem: "Find the absolute minimum and maximum values of f(x, y) = x^2 + y^2 - 4x on the disk x^2 + y^2 <= 9, and give the two values as min and max."
+            answer: "min = -4; max = 21"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"kind": "exact"}, "name": "max"}]}
+            solution_sketch: "The interior critical point solves fx = 2x - 4 = 0 and fy = 2y = 0, giving (2, 0) with f(2, 0) = -4. On the boundary circle x^2 + y^2 = 9 the function becomes 9 - 4x for -3 <= x <= 3, and the closed-interval method gives values from -3 at x = 3 to 21 at x = -3. Comparing the interior value -4 with the boundary values gives min = -4; max = 21."
+          - problem: "Find the absolute maximum value of f(x, y) = 2x^2 + y^2 - 4x - 2y + 1 on the rectangle with 0 <= x <= 3 and 0 <= y <= 2."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The interior critical point solves fx = 4x - 4 = 0 and fy = 2y - 2 = 0, giving (1, 1) with f(1, 1) = -2. On the four boundary edges the closed-interval method gives values between -1 and 7, and the largest boundary value 7 occurs at (3, 0) and (3, 2). Comparing the interior candidate with the boundary candidates gives an absolute maximum of 7."
         constraints: "regions are disks, rectangles, or triangles; boundary restriction reduces to one variable with exact endpoints; require comparing interior and boundary candidates"
     diagnostic_exemplar:
       problem: 'Find the absolute extrema of $f(x, y) = x^2 + y^2 - 2y$ on the disk $x^2 + y^2 \le 4$.'
@@ -727,14 +819,30 @@ topics:
         name: "Distance problems"
         key_prerequisites: [multivariable-local-extrema]
         exemplars:
-          - problem: 'Find the point on the plane $x + y + z = 3$ closest to the origin, and the minimum distance.'
-            answer: '$(1, 1, 1)$; distance $\sqrt{3}$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Minimize $d^2 = x^2 + y^2 + (3 - x - y)^2$: setting both partials to zero gives $x = y = 3 - x - y$, so $x = y = z = 1$.'
-          - problem: 'Find the point on the plane $2x + y + z = 4$ closest to the origin, and the minimum distance.'
-            answer: '$\left(\frac{4}{3}, \frac{2}{3}, \frac{2}{3}\right)$; distance $\frac{2\sqrt{6}}{3}$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Minimize $x^2 + y^2 + (4 - 2x - y)^2$; the critical point gives $x = \frac{4}{3}$, $y = z = \frac{2}{3}$, and $d^2 = \frac{8}{3}$.'
+          - problem: "Find the point on the plane x + 2y + 3z = 14 closest to the origin. Give the answer as (x, y, z)."
+            answer: "(1, 2, 3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: write the squared distance f(x, y) = x^2 + y^2 + ((14 - x - 2y)/3)^2 after substituting the plane equation for z. Step 2: set the two partial derivatives of f to zero, which gives x = 1 and y = 2. Step 3: use the plane to get z = (14 - 1 - 4)/3 = 3. The closest point is (1, 2, 3)."
+          - problem: "Which point on the plane 2x + 2y + z = 9 is nearest the origin? Give the answer as (x, y, z)."
+            answer: "(2, 2, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: minimize the squared distance f(x, y) = x^2 + y^2 + (9 - 2x - 2y)^2 by writing z = 9 - 2x - 2y. Step 2: the partial derivatives vanish when x = 2z and y = 2z. Step 3: the plane equation then gives 9 = 9z, so z = 1, x = 2, y = 2. The nearest point is (2, 2, 1)."
+          - problem: "The plane x + y + 2z = 8: find the point on it with least distance from the origin. Give the answer as (x, y, z)."
+            answer: "(4/3, 4/3, 8/3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: write the squared distance f(x, y) = x^2 + y^2 + ((8 - x - y)/2)^2 by solving the plane for z. Step 2: set both partial derivatives to zero, giving z = 2x and z = 2y. Step 3: substitute into the plane to get 6x = 8, so x = 4/3, y = 4/3, z = 8/3. The closest point is (4/3, 4/3, 8/3)."
+          - problem: "Find the point on the plane x - 2y + 2z = 9 that minimizes the distance to the origin. Give the answer as (x, y, z)."
+            answer: "(1, -2, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: minimize the squared distance f(x, y) = x^2 + y^2 + ((9 - x + 2y)/2)^2 after substituting z from the plane. Step 2: the partial derivatives are zero when x = 1 and y = -2. Step 3: the plane then gives z = (9 - 1 - 4)/2 = 2. The closest point is (1, -2, 2)."
+          - problem: "Find the point on the plane x + y + z = 6 closest to the point (4, 0, 0). Give the answer as (x, y, z)."
+            answer: "(14/3, 2/3, 2/3)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: minimize the squared distance f(x, y) = (x - 4)^2 + y^2 + (6 - x - y)^2 by replacing z with 6 - x - y. Step 2: setting the partial derivatives to zero gives 2x + y = 10 and x + 2y = 6. Step 3: solve to get y = 2/3 and x = 14/3, then z = 6 - 14/3 - 2/3 = 2/3. The closest point is (14/3, 2/3, 2/3)."
+          - problem: "Find the point on the plane 3x + 4z = 12 closest to the origin. Give the answer as (x, y, z)."
+            answer: "(36/25, 0, 48/25)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: since the plane lacks y, set y = 0 and minimize f(x, z) = x^2 + z^2 subject to 3x + 4z = 12. Step 2: solve the plane for z and set the derivative to zero, giving z = 4x/3. Step 3: substitute back to get 25x/3 = 12, so x = 36/25 and z = 48/25. The closest point is (36/25, 0, 48/25)."
         constraints: "minimize SQUARED distance; substitute the plane equation to get two free variables; answers integers or simple fractions/radicals"
       - id: kp2
         name: "Product and box problems"
