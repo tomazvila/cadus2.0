@@ -285,14 +285,30 @@ topics:
         name: "Tangent lines to level curves"
         key_prerequisites: [computing-the-gradient]
         exemplars:
-          - problem: 'Find the tangent line to the circle $x^2 + y^2 = 25$ at $(3, 4)$ using the gradient.'
-            answer: '$3x + 4y = 25$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla f(3,4) = \langle 6, 8 \rangle$ is normal: $6(x-3) + 8(y-4) = 0$ simplifies to $3x + 4y = 25$.'
-          - problem: 'Find the tangent line to the level curve of $f(x, y) = x^2 - y$ through $(2, 4)$.'
-            answer: '$4x - y = 4$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla f(2,4) = \langle 4, -1 \rangle$; $4(x-2) - (y-4) = 0$. (This is the tangent to $y = x^2$ at $x = 2$.)'
+          - problem: "At the point (3, 4), the circle x^2 + y^2 = 25 has a tangent line. Put that line in the form A x + B y = C. Find A, B and C."
+            answer: "A = 3; B = 4; C = 25"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
+            solution_sketch: "The full tangent line is 3x + 4y = 25. Step 1: compute the gradient of f(x, y) = x^2 + y^2, which is (2x, 2y). Step 2: at (3, 4) the gradient is (6, 8), so a normal vector is (3, 4) after dividing by 2. Step 3: use the normal vector through (3, 4) to write 3(x - 3) + 4(y - 4) = 0 and simplify to 3x + 4y = 25. The answer is A = 3; B = 4; C = 25."
+          - problem: "The level curve of f(x, y) = x^2 - y through (2, 4) has a tangent line. Write that line as A x + B y = C. Determine A, B and C."
+            answer: "A = 4; B = -1; C = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
+            solution_sketch: "The full tangent line is 4x - y = 4. Step 1: compute the gradient of f(x, y) = x^2 - y, which is (2x, -1). Step 2: at (2, 4) the gradient is (4, -1), and this gradient is normal to the level curve. Step 3: a normal vector (4, -1) through (2, 4) gives 4(x - 2) - (y - 4) = 0, which simplifies to 4x - y = 4. The answer is A = 4; B = -1; C = 4."
+          - problem: "The ellipse x^2 + 4y^2 = 8 passes through (2, 1). Compute the slope of its tangent line at that point as a fraction."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The tangent line has slope -1/2. Step 1: the ellipse is a level curve of f(x, y) = x^2 + 4y^2, so its gradient is (2x, 8y). Step 2: at (2, 1) the gradient is (4, 8), which is normal to the curve. Step 3: the tangent slope is -fx/fy = -4/8, which reduces to -1/2. The answer is -1/2."
+          - problem: "For f(x, y) = xy, the level curve through (3, 2) has a tangent line. Find the y-intercept of that line."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The tangent line is 2x + 3y = 12. Step 1: compute the gradient of f(x, y) = xy, which is (y, x). Step 2: at (3, 2) the gradient is (2, 3), and this is normal to the level curve. Step 3: the line through (3, 2) with normal (2, 3) is 2(x - 3) + 3(y - 2) = 0, which simplifies to 2x + 3y = 12. Set x = 0 to get 3y = 12, so the y-intercept is 4. The answer is 4."
+          - problem: "The level curve of f(x, y) = x^3 - y^2 through (2, 1) has a tangent line. Express it as A x + B y = C. Solve for A, B and C."
+            answer: "A = 6; B = -1; C = 11"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
+            solution_sketch: "The full tangent line is 6x - y = 11. Step 1: compute the gradient of f(x, y) = x^3 - y^2, which is (3x^2, -2y). Step 2: at (2, 1) the gradient is (12, -2), so a normal vector is (6, -1) after dividing by 2. Step 3: use the normal vector (6, -1) through (2, 1) to write 6(x - 2) - (y - 1) = 0, which simplifies to 6x - y = 11. The answer is A = 6; B = -1; C = 11."
+          - problem: "For the level curve of f(x, y) = x^2 + y^3 through (1, 2), write the tangent line in the form A x + B y = C. State A, B and C."
+            answer: "A = 1; B = 6; C = 13"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
+            solution_sketch: "The full tangent line is x + 6y = 13. Step 1: compute the gradient of f(x, y) = x^2 + y^3, which is (2x, 3y^2). Step 2: at (1, 2) the gradient is (2, 12), so a normal vector is (1, 6) after dividing by 2. Step 3: use the normal vector (1, 6) through (1, 2) to write 1(x - 1) + 6(y - 2) = 0, which simplifies to x + 6y = 13. The answer is A = 1; B = 6; C = 13."
         constraints: "normal vectors have small integer components; tangent lines simplify to integer-coefficient equations"
       - id: kp3
         name: "Reading contour maps"
@@ -342,40 +358,88 @@ topics:
         name: "Normal vectors to surfaces via the gradient"
         key_prerequisites: [computing-the-gradient, gradients-and-level-curves]
         exemplars:
-          - problem: 'Find a normal vector to the surface $x^2 + y^2 + z^2 = 14$ at $(1, 2, 3)$.'
-            answer: '$\langle 2, 4, 6 \rangle$ (any nonzero multiple)'
-            answer_contract: {kind: none}
-            solution_sketch: 'For $F = x^2 + y^2 + z^2$, $\nabla F(1,2,3) = \langle 2, 4, 6 \rangle$ is normal to the level surface.'
-          - problem: 'Write the surface $z = x^2 + y^2$ as a level surface and find a normal vector at $(1, 1, 2)$.'
-            answer: '$F(x,y,z) = x^2 + y^2 - z = 0$; normal $\langle 2, 2, -1 \rangle$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla F = \langle 2x, 2y, -1 \rangle$, evaluated at $(1, 1, 2)$.'
+          - problem: "The surface x^2 + y^2 + z^2 = 21 contains the integer point (2, 1, 4). Use F(x, y, z) = x^2 + y^2 + z^2. Find the gradient vector of F at that point, which is normal to the surface, as (x, y, z)."
+            answer: "(4, 2, 8)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (level surface): write the surface as F(x, y, z) = x^2 + y^2 + z^2 - 21 = 0. Step 2 (gradient rule): grad F = (2x, 2y, 2z). Step 3 (evaluate): grad F(2, 1, 4) = (4, 2, 8). The normal vector is (4, 2, 8)."
+          - problem: "The graph z = x^2 + 2y^2 passes through (1, 2, 9). Rewrite it as F(x, y, z) = x^2 + 2y^2 - z = 0. Find the gradient vector of F at that point as (x, y, z)."
+            answer: "(2, 8, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (graph to level surface): set F(x, y, z) = x^2 + 2y^2 - z. Step 2 (gradient rule): grad F = (2x, 4y, -1). Step 3 (evaluate): at (1, 2, 9), grad F = (2, 8, -1). The normal vector is (2, 8, -1)."
+          - problem: "The ellipsoid x^2 + 4y^2 + z^2 = 21 contains (1, 2, 2). With F(x, y, z) = x^2 + 4y^2 + z^2 - 21, find the gradient vector at that point as (x, y, z)."
+            answer: "(2, 16, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (level surface): F(x, y, z) = x^2 + 4y^2 + z^2 - 21. Step 2 (gradient): grad F = (2x, 8y, 2z). Step 3 (evaluate at (1, 2, 2)): grad F = (2, 16, 4). The normal vector is (2, 16, 4)."
+          - problem: "The hyperboloid x^2 + y^2 - z^2 = 4 contains (3, 2, 3). Use F(x, y, z) = x^2 + y^2 - z^2 - 4. Find the gradient vector at that point as (x, y, z)."
+            answer: "(6, 4, -6)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (level surface): F(x, y, z) = x^2 + y^2 - z^2 - 4 = 0. Step 2 (gradient): grad F = (2x, 2y, -2z). Step 3 (evaluate): grad F(3, 2, 3) = (6, 4, -6). The normal vector is (6, 4, -6)."
+          - problem: "The graph z = 3x^2 + y^2 passes through (1, 1, 4). Rewrite it as F(x, y, z) = 3x^2 + y^2 - z = 0. Find the gradient vector of F at (1, 1, 4) as (x, y, z)."
+            answer: "(6, 2, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (graph to level surface): F(x, y, z) = 3x^2 + y^2 - z. Step 2 (gradient): grad F = (6x, 2y, -1). Step 3 (evaluate at (1, 1, 4)): grad F = (6, 2, -1). The normal vector is (6, 2, -1)."
+          - problem: "The graph z = x^2 - y^2 passes through (2, 1, 3). Write it as F(x, y, z) = x^2 - y^2 - z = 0. Find the gradient vector of F at that point as (x, y, z)."
+            answer: "(4, -2, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (graph to level surface): F(x, y, z) = x^2 - y^2 - z. Step 2 (gradient): grad F = (2x, -2y, -1). Step 3 (evaluate at (2, 1, 3)): grad F = (4, -2, -1). The normal vector is (4, -2, -1)."
         constraints: "quadric surfaces with integer points; graphs z = f(x,y) rewritten as F = f - z = 0"
       - id: kp2
         name: "Tangent planes to level surfaces"
         key_prerequisites: [computing-the-gradient, gradients-and-level-curves, lines-planes-space]
         exemplars:
-          - problem: 'Find the tangent plane to the level surface $x^2 + y^2 + z^2 = 14$ at $(1, 2, 3)$.'
-            answer: '$x + 2y + 3z = 14$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla F(1,2,3) = \langle 2, 4, 6 \rangle$ is normal to the surface; $2(x-1) + 4(y-2) + 6(z-3) = 0$ simplifies by dividing by 2.'
-          - problem: 'Find the tangent plane to the surface $x^2 - y^2 + z^2 = 4$ at $(2, 1, 1)$.'
-            answer: '$2x - y + z = 4$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\nabla F(2,1,1) = \langle 4, -2, 2 \rangle$; $4(x-2) - 2(y-1) + 2(z-1) = 0$ divided by 2 gives $2x - y + z = 4$.'
+          - problem: "Find the tangent plane to the sphere x^2 + y^2 + z^2 = 21 at the point (1, 2, 4). Give the normal vector as (a, b, c) with no common factor and the constant d, and write the answer as n = (a, b, c); d = k."
+            answer: "n = (1, 2, 4); d = 21"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Gradient step: for F = x^2 + y^2 + z^2, grad F = (2x, 2y, 2z). At (1, 2, 4), grad F = (2, 4, 8), so a primitive normal vector is (1, 2, 4) after dividing by 2. Plane step: the tangent plane is 1(x - 1) + 2(y - 2) + 4(z - 4) = 0. Simplification step: this becomes x + 2y + 4z = 21, so n = (1, 2, 4); d = 21."
+          - problem: "Find the tangent plane to the quadric x^2 - y^2 + z^2 = 12 at the point (3, 1, 2). Give the normal vector as (a, b, c) with no common factor and the constant d, and write the answer as n = (a, b, c); d = k."
+            answer: "n = (3, -1, 2); d = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Gradient step: for F = x^2 - y^2 + z^2, grad F = (2x, -2y, 2z). At (3, 1, 2), grad F = (6, -2, 4), so a primitive normal vector is (3, -1, 2) after dividing by 2. Plane step: the tangent plane is 3(x - 3) - 1(y - 1) + 2(z - 2) = 0. Simplification step: this becomes 3x - y + 2z = 12, so n = (3, -1, 2); d = 12."
+          - problem: "Find the tangent plane to the ellipsoid 2x^2 + 3y^2 + z^2 = 23 at the point (1, 2, 3). Give the normal vector as (a, b, c) with no common factor and the constant d, and write the answer as n = (a, b, c); d = k."
+            answer: "n = (2, 6, 3); d = 23"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Gradient step: for F = 2x^2 + 3y^2 + z^2, grad F = (4x, 6y, 2z). At (1, 2, 3), grad F = (4, 12, 6), so a primitive normal vector is (2, 6, 3) after dividing by 2. Plane step: the tangent plane is 2(x - 1) + 6(y - 2) + 3(z - 3) = 0. Simplification step: this becomes 2x + 6y + 3z = 23, so n = (2, 6, 3); d = 23."
+          - problem: "Find the tangent plane to the paraboloid z = x^2 + y^2 at the point (1, 2, 5). Give the normal vector as (a, b, c) with no common factor and the constant d, and write the answer as n = (a, b, c); d = k."
+            answer: "n = (2, 4, -1); d = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Gradient step: write F = x^2 + y^2 - z, so grad F = (2x, 2y, -1). At (1, 2, 5), grad F = (2, 4, -1), which is already primitive. Plane step: the tangent plane is 2(x - 1) + 4(y - 2) - 1(z - 5) = 0. Simplification step: this becomes 2x + 4y - z = 5, so n = (2, 4, -1); d = 5."
+          - problem: "The point (3, 4, z) lies on the sphere x^2 + y^2 + z^2 = 50 with z > 0. Find the tangent plane to the sphere at that point. Give the normal vector as (a, b, c) with no common factor and the constant d, and write the answer as n = (a, b, c); d = k."
+            answer: "n = (3, 4, 5); d = 50"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Point step: since (3, 4, z) is on the sphere, 9 + 16 + z^2 = 50, so z^2 = 25 and z = 5. Gradient step: for F = x^2 + y^2 + z^2, grad F = (2x, 2y, 2z); at (3, 4, 5) this is (6, 8, 10), so a primitive normal vector is (3, 4, 5). Plane step: the tangent plane is 3(x - 3) + 4(y - 4) + 5(z - 5) = 0, which simplifies to 3x + 4y + 5z = 50, so n = (3, 4, 5); d = 50."
+          - problem: "Find the tangent plane to the hyperboloid x^2 + y^2 - z^2 = 4 at the point (3, 2, 3). Give the normal vector as (a, b, c) with no common factor and the constant d, and write the answer as n = (a, b, c); d = k."
+            answer: "n = (3, 2, -3); d = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Gradient step: for F = x^2 + y^2 - z^2, grad F = (2x, 2y, -2z). At (3, 2, 3), grad F = (6, 4, -6), so a primitive normal vector is (3, 2, -3) after dividing by 2. Plane step: the tangent plane is 3(x - 3) + 2(y - 2) - 3(z - 3) = 0. Simplification step: this becomes 3x + 2y - 3z = 4, so n = (3, 2, -3); d = 4."
         constraints: "spheres and quadrics through integer points; plane equations simplify to integer coefficients"
       - id: kp3
         name: "Normal lines"
         key_prerequisites: [computing-the-gradient, lines-planes-space]
         exemplars:
-          - problem: 'Find parametric equations for the normal line to $x^2 + y^2 + z^2 = 14$ at $(1, 2, 3)$.'
-            answer: '$\mathbf{r}(t) = \langle 1 + 2t,\; 2 + 4t,\; 3 + 6t \rangle$ (direction $\langle 1, 2, 3 \rangle$ also acceptable)'
-            answer_contract: {kind: none}
-            solution_sketch: 'The line passes through the point with direction $\nabla F(1,2,3) = \langle 2, 4, 6 \rangle$.'
-          - problem: 'Where does the normal line to the sphere $x^2 + y^2 + z^2 = 9$ at $(0, 0, 3)$ meet the $xy$-plane?'
-            answer: 'At the origin $(0, 0, 0)$ — every normal line of a sphere passes through its center.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The line is $\langle 0, 0, 3 + 6t \rangle$; $z = 0$ at $t = -\frac{1}{2}$, giving $(0, 0, 0)$.'
+          - problem: "The surface x^2 + y^2 + z^2 = 6 has a normal line at (1, 1, 2). Give the direction vector of this normal line as (x, y, z)."
+            answer: "(2, 2, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (level surface): the level function is F = x^2 + y^2 + z^2. Step 2 (gradient rule): its gradient is (2x, 2y, 2z). Step 3 (evaluation rule): at (1, 1, 2), the gradient is (2, 2, 4). Step 4 (normal line rule): the normal line uses this gradient as direction. The direction vector is (2, 2, 4)."
+          - problem: "The normal line to x^2 + y^2 + z^2 = 25 at (0, 0, 5) is followed until it meets the xy-plane. Give that intersection point as (x, y, z)."
+            answer: "(0, 0, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (level surface): the level function is F = x^2 + y^2 + z^2. Step 2 (gradient rule): its gradient at (0, 0, 5) is (0, 0, 10). Step 3 (normal line rule): the normal line is (0, 0, 5) + t(0, 0, 10). Step 4 (plane intersection rule): set z = 0, so 5 + 10t = 0 and t = -1/2. Step 5 (evaluation rule): the point is (0, 0, 0). The intersection point is (0, 0, 0)."
+          - problem: "The level surface is x^2 + y^2 - z = 0. Give the direction vector of the normal line at (1, 2, 5) as (x, y, z)."
+            answer: "(2, 4, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (level surface): the level function is F = x^2 + y^2 - z. Step 2 (gradient rule): its gradient is (2x, 2y, -1). Step 3 (evaluation rule): at (1, 2, 5), the gradient is (2, 4, -1). Step 4 (normal line rule): the normal line direction is the gradient. The direction vector is (2, 4, -1)."
+          - problem: "For the surface x^2 + y^2 - z = 0, the normal line at (1, 3, 10) can be written (1, 3, 10) + t times its gradient there. Find the value of t where this line meets the plane z = 0."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (level surface): the level function is F = x^2 + y^2 - z. Step 2 (gradient rule): its gradient is (2x, 2y, -1). Step 3 (evaluation rule): at (1, 3, 10), the gradient is (2, 6, -1). Step 4 (normal line rule): the line is (1, 3, 10) + t(2, 6, -1). Step 5 (plane intersection rule): z = 10 - t, and z = 0 gives t = 10. The value is 10."
+          - problem: "The normal line to x^2 + 4y^2 + z^2 = 21 at (1, 2, 2) is followed until it meets the plane x = 0. Give that intersection point as (x, y, z)."
+            answer: "(0, -6, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (level surface): the level function is F = x^2 + 4y^2 + z^2. Step 2 (gradient rule): its gradient is (2x, 8y, 2z). Step 3 (evaluation rule): at (1, 2, 2), the gradient is (2, 16, 4). Step 4 (normal line rule): the line is (1, 2, 2) + t(2, 16, 4). Step 5 (plane intersection rule): x = 1 + 2t = 0 gives t = -1/2. Step 6 (evaluation rule): y = 2 + 16(-1/2) = -6 and z = 2 + 4(-1/2) = 0. The intersection point is (0, -6, 0)."
+          - problem: "The level surface is x^2 + y^2 - z^2 = 0. Give the direction vector of the normal line at (3, 4, 5) as (x, y, z)."
+            answer: "(6, 8, -10)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (level surface): the level function is F = x^2 + y^2 - z^2. Step 2 (gradient rule): its gradient is (2x, 2y, -2z). Step 3 (evaluation rule): at (3, 4, 5), the gradient is (6, 8, -10). Step 4 (normal line rule): the normal line direction is the gradient. The direction vector is (6, 8, -10)."
         constraints: "direction vectors are gradients with integer components; intersection questions solve linearly in t"
     diagnostic_exemplar:
       problem: 'Find parametric equations for the normal line to the surface $x^2 + y^2 + z^2 = 9$ at $(2, 2, 1)$.'
@@ -417,32 +481,80 @@ topics:
             solution_sketch: '$f_x = y - 1 = 0$ and $f_y = x = 0$.'
           - problem: 'Find the critical point of $f(x, y) = x^2 + y^2$.'
             answer: '$(0, 0)$'
+          - problem: "Find the critical point of $f(x, y) = 2x^2 + 3y^2 - 8x + 12y$. Give the critical point as (x, y)."
+            answer: "(2, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write $f_x = 4x - 8$ and $f_y = 6y + 12$. At a critical point both partial derivatives are zero, so solve $4x - 8 = 0$ and $6y + 12 = 0$. This gives $x = 2$ and $y = -2$. The critical point is (2, -2)."
+          - problem: "Find the critical point of $f(x, y) = xy - 3x + 4y$. Give the critical point as (x, y)."
+            answer: "(-4, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Compute $f_x = y - 3$ and $f_y = x + 4$. A critical point needs $f_x = 0$ and $f_y = 0$. Solve $y - 3 = 0$ and $x + 4 = 0$ to get $y = 3$ and $x = -4$. The critical point is (-4, 3)."
+          - problem: "A surface has height $f(x, y) = x^2 + 5y^2 - 10x + 20y + 7$. Give the critical point as (x, y)."
+            answer: "(5, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Find $f_x = 2x - 10$ and $f_y = 10y + 20$. Set each partial derivative to zero by the critical point definition. Solve $2x - 10 = 0$ and $10y + 20 = 0$, giving $x = 5$ and $y = -2$. The critical point is (5, -2)."
+          - problem: "For $f(x, y) = x^2 + y^2 - 6x + by$, the point $(3, -2)$ is the only critical point. Find $b$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the y-partial derivative $f_y = 2y + b$. At a critical point $f_y = 0$, so substitute $y = -2$. Then $-4 + b = 0$, which gives $b = 4$. The value is 4."
         constraints: "grad f = 0 solves immediately, one equation per variable; single critical point"
       - id: kp2
         name: "Critical points of quadratic functions"
         key_prerequisites: [computing-the-gradient, systems-substitution]
         exemplars:
-          - problem: 'Find the critical point of $f(x, y) = x^2 + y^2 - 2x - 6y + 14$ and the value of $f$ there.'
-            answer: 'Critical point $(1, 3)$; $f(1, 3) = 4$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$f_x = 2x - 2 = 0$ and $f_y = 2y - 6 = 0$ give $(1, 3)$; $f(1,3) = 1 + 9 - 2 - 18 + 14 = 4$.'
-          - problem: 'Find the critical point of $f(x, y) = x^2 + 2y^2 - 4x + 4y$ and the value of $f$ there.'
-            answer: 'Critical point $(2, -1)$; $f(2, -1) = -6$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$f_x = 2x - 4 = 0$, $f_y = 4y + 4 = 0$; $f(2,-1) = 4 + 2 - 8 - 4 = -6$.'
+          - problem: "Find the critical point of f(x, y) = x^2 + y^2 - 2x - 6y + 14. Give the answer as (x, y)."
+            answer: "(1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The function is f(x, y) = x^2 + y^2 - 2x - 6y + 14. Step 1, apply partial differentiation: f_x = 2x - 2 and f_y = 2y - 6. Step 2, solve the linear equations: 2x - 2 = 0 gives x = 1, and 2y - 6 = 0 gives y = 3. The critical point is (1, 3)."
+          - problem: "Find the critical point of f(x, y) = x^2 + 2y^2 - 4x + 4y. Give the answer as (x, y)."
+            answer: "(2, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The function is f(x, y) = x^2 + 2y^2 - 4x + 4y. Step 1, apply partial differentiation: f_x = 2x - 4 and f_y = 4y + 4. Step 2, solve f_x = 0 for x = 2 and solve f_y = 0 for y = -1. The critical point is (2, -1)."
+          - problem: "The function f(x, y) = 2x^2 + 3y^2 + 8x - 12y + 5 has one critical point. Find the value of f at that critical point."
+            answer: "-15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x, y) = 2x^2 + 3y^2 + 8x - 12y + 5. Step 1, set the partial derivatives to zero: f_x = 4x + 8 = 0 gives x = -2, and f_y = 6y - 12 = 0 gives y = 2. Step 2, evaluate f at (-2, 2): 2(4) + 3(4) + 8(-2) - 12(2) + 5 = 8 + 12 - 16 - 24 + 5 = -15. The value at the critical point is -15."
+          - problem: "The function f(x, y) = 3x^2 + y^2 - 18x + 4y + 20 has one critical point. Find the value of f at that critical point."
+            answer: "-11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x, y) = 3x^2 + y^2 - 18x + 4y + 20. Step 1, set the partial derivatives to zero: f_x = 6x - 18 = 0 gives x = 3, and f_y = 2y + 4 = 0 gives y = -2. Step 2, evaluate f at (3, -2): 3(9) + 4 - 54 + 4(-2) + 20 = 27 + 4 - 54 - 8 + 20 = -11. The value at the critical point is -11."
+          - problem: "Find the sum of the coordinates of the critical point of f(x, y) = 4x^2 + 5y^2 - 24x + 10y + 3."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function is f(x, y) = 4x^2 + 5y^2 - 24x + 10y + 3. Step 1, solve the partial derivative equations: f_x = 8x - 24 = 0 gives x = 3, and f_y = 10y + 10 = 0 gives y = -1. Step 2, add the coordinates: 3 + (-1) = 2. The sum of the coordinates is 2."
+          - problem: "Find the critical point of f(x, y) = x^2 + 4y^2 + 6x - 16y + 9. Give the answer as (x, y)."
+            answer: "(-3, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The function is f(x, y) = x^2 + 4y^2 + 6x - 16y + 9. Step 1, apply partial differentiation: f_x = 2x + 6 and f_y = 8y - 16. Step 2, solve f_x = 0 for x = -3 and solve f_y = 0 for y = 2. The critical point is (-3, 2)."
         constraints: "quadratics with linear terms; the two equations decouple and give integer solutions"
       - id: kp3
         name: "Systems requiring factoring or substitution"
         key_prerequisites: [computing-the-gradient, systems-substitution]
         exemplars:
-          - problem: 'Find all critical points of $f(x, y) = x^3 - 3x + y^2$.'
-            answer: '$(1, 0)$ and $(-1, 0)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f_x = 3x^2 - 3 = 0 \Rightarrow x = \pm 1$; $f_y = 2y = 0 \Rightarrow y = 0$.'
-          - problem: 'Find all critical points of $f(x, y) = x^3 + y^3 - 3xy$.'
-            answer: '$(0, 0)$ and $(1, 1)$'
-            answer_contract: {kind: none}
-            solution_sketch: '$f_x = 3x^2 - 3y = 0$ gives $y = x^2$; substituting into $f_y = 3y^2 - 3x = 0$ gives $x^4 = x$, so $x = 0$ or $x = 1$.'
+          - problem: "Find the critical point of f(x, y) = x^3 - 3x + y^2 with x > 0. Give the answer as (x, y)."
+            answer: "(1, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set the gradient to zero: f_x = 3x^2 - 3 and f_y = 2y. Solve f_x = 0 by factoring: 3(x - 1)(x + 1) = 0, so x = 1 or x = -1. Solve f_y = 0: 2y = 0, so y = 0. The critical points are (1, 0) and (-1, 0); the one with x > 0 is (1, 0)."
+          - problem: "Find the critical point of f(x, y) = x^3 + y^3 - 3xy with x > 0. Give the answer as (x, y)."
+            answer: "(1, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set the gradient to zero: f_x = 3x^2 - 3y and f_y = 3y^2 - 3x. From f_x = 0, y = x^2. Substitute into f_y = 0: 3(x^2)^2 - 3x = 0, so 3x(x^3 - 1) = 0. Thus x = 0 or x = 1. The corresponding critical points are (0, 0) and (1, 1); the one with x > 0 is (1, 1)."
+          - problem: "Find the critical point of f(x, y) = x^2 + y^3 - 3y^2 with y > 0. Give the answer as (x, y)."
+            answer: "(0, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set the gradient to zero: f_x = 2x and f_y = 3y^2 - 6y. Solve f_x = 0: 2x = 0, so x = 0. Factor f_y = 0: 3y(y - 2) = 0, so y = 0 or y = 2. The critical points are (0, 0) and (0, 2); the one with y > 0 is (0, 2)."
+          - problem: "Find the critical point of f(x, y) = x^3 + y^3 - 3x^2 with x > 0. Give the answer as (x, y)."
+            answer: "(2, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set the gradient to zero: f_x = 3x^2 - 6x and f_y = 3y^2. Factor f_x = 0: 3x(x - 2) = 0, so x = 0 or x = 2. Solve f_y = 0: 3y^2 = 0, so y = 0. The critical points are (0, 0) and (2, 0); the one with x > 0 is (2, 0)."
+          - problem: "Find the critical point of f(x, y) = x^2 y + y^2 - 4y with x < 0. Give the answer as (x, y)."
+            answer: "(-2, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set the gradient to zero: f_x = 2xy and f_y = x^2 + 2y - 4. Factor f_x = 0: 2xy = 0, so x = 0 or y = 0. If x = 0, f_y = 0 gives 2y - 4 = 0, so y = 2 and (0, 2) is critical. If y = 0, f_y = 0 gives x^2 - 4 = 0, so x = 2 or x = -2, giving (2, 0) and (-2, 0). The critical point with x < 0 is (-2, 0)."
+          - problem: "Find the critical point of f(x, y) = x^4 - 2x^2 + y^2 - 4y with x < 0. Give the answer as (x, y)."
+            answer: "(-1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set the gradient to zero: f_x = 4x^3 - 4x and f_y = 2y - 4. Factor f_x = 0: 4x(x^2 - 1) = 0, so x = 0, x = 1, or x = -1. Solve f_y = 0: 2y - 4 = 0, so y = 2. The critical points are (0, 2), (1, 2), and (-1, 2); the one with x < 0 is (-1, 2)."
         constraints: "the system grad f = 0 solves by substitution/factoring with integer solutions; at most 3 real critical points"
     diagnostic_exemplar:
       problem: 'Find all critical points of $f(x, y) = x^3 - 12x + y^2 - 4y$.'
