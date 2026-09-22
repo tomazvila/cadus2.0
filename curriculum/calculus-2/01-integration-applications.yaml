@@ -742,6 +742,22 @@ topics:
           - problem: 'The region between $y = x$ and $y = x^2$ is rotated about the line $x = -1$. Find the volume.'
             answer: '$\pi/2$'
             solution_sketch: 'Shell radius $x + 1$: $V = 2\pi\int_0^1 (x + 1)(x - x^2)\,dx = 2\pi\int_0^1 (x - x^3)\,dx = 2\pi\cdot\frac{1}{4} = \frac{\pi}{2}$.'
+          - problem: "The region under $y = x^2$ for $0 \\le x \\le 1$ is rotated about the line $x = 3$. Find the volume."
+            answer: "3pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use cylindrical shells about the vertical line x = 3. The shell radius is 3 - x and the shell height is x^2, so V = 2pi times the integral from 0 to 1 of (3 - x)x^2 dx. Evaluate the integral: 2pi(1 - 1/4) = 3pi/2. The volume is 3pi/2."
+          - problem: "The region under $y = \\sqrt{x}$ for $0 \\le x \\le 4$ is rotated about the line $x = 5$. Find the volume."
+            answer: "416pi/15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use cylindrical shells about the vertical line x = 5, which lies to the right of the region, so the radius is 5 - x and the height is sqrt(x). Then V = 2pi times the integral from 0 to 4 of (5 - x)sqrt(x) dx. By the power rule for integration, the integral is 5 times (2/3) times 8 minus (2/5) times 32, which is 80/3 - 64/5 = 208/15. Multiplying by 2pi gives the volume 416pi/15."
+          - problem: "The region between $y = x^2$ and $y = x^3$ is rotated about the line $x = -2$. Find the volume."
+            answer: "13pi/30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use cylindrical shells about the vertical line x = -2, which lies to the left of the region, so the radius is x + 2 and the shell height is x^2 - x^3. Then V = 2pi times the integral from 0 to 1 of (x + 2)(x^2 - x^3) dx. Expand the integrand and integrate: 2pi(2/3 - 1/4 - 1/5) = 2pi times 13/30 = 13pi/30. The volume is 13pi/30."
+          - problem: "The region under $y = x$ for $0 \\le x \\le 1$ is rotated about the line $x = c$ with $c > 1$, and the volume is $4\\pi/3$. Find the value of $c$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use cylindrical shells about the vertical line x = c. The shell radius is c - x and the shell height is x, so V = 2pi times the integral from 0 to 1 of (c - x)x dx = 2pi(c/2 - 1/3). Set this equal to 4pi/3 and solve: pi c - 2pi/3 = 4pi/3, so c = 2. The value is 2."
         constraints: "axis x = c with c outside the region; radius written as (c - x) or (x - c) to stay positive"
       - id: kp3
         name: Choosing shells versus washers
@@ -750,10 +766,26 @@ topics:
           - problem: 'The region under $y = \sin(x^2)$, $0 \le x \le \sqrt{\pi}$, is rotated about the $y$-axis. Give the exact volume.'
             answer: '2*pi'
             solution_sketch: 'Shells avoid inverting $\sin(x^2)$: $V = 2\pi\int_0^{\sqrt{\pi}} x\sin(x^2)\,dx$; with $u = x^2$ this is $\pi\int_0^{\pi} \sin u\,du = 2\pi$.'
-          - problem: 'The region between $y = x$ and $y = x^2$ is rotated about the $x$-axis. Which method uses the curves as given, without inverting them? Answer with one word: shells or washers.'
-            answer: 'washers'
-            answer_contract: {kind: none}
-            solution_sketch: 'The axis is horizontal and both curves give $y$ in terms of $x$; washers in $x$ avoid solving for $x(y)$, shells would require it.'
+          - problem: "The region between y = x and y = x^2 is rotated about the x-axis. Find the exact volume of the solid."
+            answer: "2*pi/15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curves meet where x = x^2, so the limits are x = 0 and x = 1. Use washers about the x-axis with outer radius x and inner radius x^2. The volume is pi times the integral from 0 to 1 of (x^2 - x^4) dx. Evaluate pi(1/3 - 1/5) = 2pi/15. The volume is 2*pi/15."
+          - problem: "The region under y = sqrt(x) for 0 <= x <= 4 is rotated about the y-axis. Find the exact volume of the solid."
+            answer: "128*pi/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the region under y = sqrt(x) on 0 <= x <= 4, rotated about the y-axis. Use shells with radius x and height sqrt(x). The volume is 2pi times the integral from 0 to 4 of x^(3/2) dx. Evaluate 2pi times (2/5)x^(5/2) from 0 to 4, which gives 2pi times 64/5. The volume is 128*pi/5."
+          - problem: "The region bounded by y = x^3, y = 0, and x = 2 is rotated about the y-axis. Find the exact volume of the solid."
+            answer: "64*pi/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the region bounded by y = x^3, y = 0, and x = 2, rotated about the y-axis. The boundary y = 0 meets y = x^3 at x = 0, so the region runs from x = 0 to x = 2. Shells about the y-axis keep the curve in the form y = x^3, while washers would need the inverse x = y^(1/3). The rule for shells gives V = 2pi times the integral from 0 to 2 of x times x^3 dx. Integrate x^4 to get x^5/5 and evaluate 2pi times 32/5, so the volume is 64*pi/5."
+          - problem: "The region between y = x^2 and y = 4 is rotated about the x-axis. Find the exact volume of the solid."
+            answer: "256*pi/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve y = x^2 meets y = 4 at x = -2 and x = 2. Use washers about the x-axis with outer radius 4 and inner radius x^2. The volume is pi times the integral from -2 to 2 of (16 - x^4) dx. Evaluate pi(256/5). The volume is 256*pi/5."
+          - problem: "The region under y = 1/(1+x^2), 0 <= x <= 1, is rotated about the y-axis. Select the method that avoids solving the curve for x."
+            answer: "shells"
+            answer_contract: {"kind": "label", "options": [["shells"], ["washers"], ["disks"], ["slices"]]}
+            solution_sketch: "The full object is the region under y = 1/(1+x^2) on 0 <= x <= 1 rotated about the y-axis. Shells use vertical slices with radius x and height 1/(1+x^2), so the curve stays in the form y = f(x). The option washers would need x = sqrt(1/y - 1), which is a harder inverse. The option disks also uses horizontal slices and that same inverse. The option slices does not select a specific volume method and still needs a horizontal representation. The correct choice is shells."
         constraints: "one computational and one purely strategic exemplar; the named method must genuinely be simpler"
     diagnostic_exemplar:
       problem: 'The region between $y = 2x$ and $y = x^2$ is rotated about the line $x = -1$. Find the volume.'
@@ -851,6 +883,22 @@ topics:
           - problem: 'Find the length of $y = \frac{e^x + e^{-x}}{2}$ for $0 \le x \le 1$.'
             answer: '$\frac{e - e^{-1}}{2}$'
             solution_sketch: '$1 + (y'')^2 = \left(\frac{e^x + e^{-x}}{2}\right)^2$, so $L = \int_0^1 \frac{e^x + e^{-x}}{2}\,dx = \frac{e - e^{-1}}{2}$.'
+          - problem: "Find the length of the curve y = x^3/12 + 1/x for 1 <= x <= 2."
+            answer: "13/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is y = x^3/12 + 1/x on [1, 2]. Differentiate with the power rule: y' = x^2/4 - 1/x^2. Then 1 + (y')^2 = (x^2/4 + 1/x^2)^2, so the arc length integrand is x^2/4 + 1/x^2. Integrate with the Fundamental Theorem: L = [x^3/12 - 1/x] from 1 to 2 = 13/12. The arc length is 13/12."
+          - problem: "Find the length of the curve y = (e^x + e^(-x))/2 for 0 <= x <= ln(2)."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is y = (e^x + e^(-x))/2 on [0, ln(2)]. Differentiate with the chain rule: y' = (e^x - e^(-x))/2. Then 1 + (y')^2 = ((e^x + e^(-x))/2)^2, so the integrand is (e^x + e^(-x))/2. Integrate with the Fundamental Theorem: L = [(e^x - e^(-x))/2] from 0 to ln(2) = 3/4. The length is 3/4."
+          - problem: "Find the length of the curve y = x^4/4 + 1/(8x^2) for 1 <= x <= 2."
+            answer: "123/32"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is y = x^4/4 + 1/(8x^2) on [1, 2]. Differentiate with the power rule: y' = x^3 - 1/(4x^3). Then 1 + (y')^2 = (x^3 + 1/(4x^3))^2, so the integrand is x^3 + 1/(4x^3). Integrate with the Fundamental Theorem: L = [x^4/4 - 1/(8x^2)] from 1 to 2 = 123/32. The arc length is 123/32."
+          - problem: "Find the length of the curve y = 2x^3/3 + 1/(8x) for 1 <= x <= 3."
+            answer: "209/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is y = 2x^3/3 + 1/(8x) on [1, 3]. Differentiate with the power rule: y' = 2x^2 - 1/(8x^2). Then 1 + (y')^2 = (2x^2 + 1/(8x^2))^2, so the integrand is 2x^2 + 1/(8x^2). Integrate with the Fundamental Theorem: L = [(2/3)x^3 - 1/(8x)] from 1 to 3 = 209/12. The arc length is 209/12."
         constraints: "engineered curves of the form ax^n + b x^{-n} or (e^x + e^{-x})/2 where 1 + (y')^2 is a perfect square"
     diagnostic_exemplar:
       problem: 'Find the length of $y = \frac{x^3}{6} + \frac{1}{2x}$ for $1 \le x \le 2$.'
@@ -1023,18 +1071,30 @@ topics:
         name: Hooke's law and spring work
         key_prerequisites: [definite-integrals-ftc, evaluating-formulas]
         exemplars:
-          - problem: 'A force of $10$ N stretches a spring $0.2$ m beyond its natural length. How much work is done stretching it from natural length to $0.4$ m beyond?'
-            answer: '$4$ J'
-            answer_contract: {kind: none}
-            solution_sketch: '$k = \frac{10}{0.2} = 50$ N/m; $W = \int_0^{0.4} 50x\,dx = 25(0.4)^2 = 4$ J.'
-          - problem: 'A spring has constant $k = 200$ N/m. Find the work to stretch it $0.3$ m from natural length.'
-            answer: '$9$ J'
-            answer_contract: {kind: none}
-            solution_sketch: '$W = \int_0^{0.3} 200x\,dx = 100(0.3)^2 = 9$ J.'
-          - problem: 'A spring with $k = 100$ N/m is already stretched $0.2$ m beyond natural length. Find the work to stretch it to $0.4$ m beyond.'
-            answer: '$6$ J'
-            answer_contract: {kind: none}
-            solution_sketch: '$W = \int_{0.2}^{0.4} 100x\,dx = 50(0.16 - 0.04) = 6$ J — the bounds are displacements from natural length.'
+          - problem: "A spring stretches 0.4 m when a force of 16 N is applied. Find the work in joules needed to stretch the spring from its natural length to a displacement of 0.5 m beyond its natural length."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a force of 16 N at displacement x = 0.4 m, with target displacement x = 0.5 m. Hooke's law gives the spring constant k = F/x = 16/0.4 = 40 N/m, so the force is F(x) = 40x. The work integral is the integral from 0 to 0.5 of 40x dx. The Fundamental Theorem of Calculus gives W = 20x^2 from 0 to 0.5 = 20(0.25) = 5. The work is 5."
+          - problem: "A spring has constant k = 160 N/m. Find the work in joules required to stretch it 0.5 m from its natural length."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is k = 160 N/m and displacement 0.5 m. Hooke's law gives force F(x) = 160x. The work is W = integral from 0 to 0.5 of 160x dx. The Fundamental Theorem of Calculus gives W = 80x^2 from 0 to 0.5 = 80(0.25) = 20. The work is 20."
+          - problem: "A spring with constant k = 250 N/m is already stretched 0.2 m beyond its natural length. Find the work in joules done in stretching it further to 0.4 m beyond its natural length."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is k = 250 N/m with bounds x = 0.2 m and x = 0.4 m. Hooke's law gives F(x) = 250x. The work is W = integral from 0.2 to 0.4 of 250x dx. The Fundamental Theorem of Calculus gives W = 125x^2 from 0.2 to 0.4 = 125(0.16 - 0.04) = 15. The work is 15."
+          - problem: "A spring stretches 0.2 m when a force of 40 N is applied. Find the work in joules needed to stretch it from a displacement of 0.1 m to a displacement of 0.3 m beyond its natural length."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a force of 40 N at displacement x = 0.2 m, with bounds x = 0.1 m and x = 0.3 m. Hooke's law gives k = F/x = 40/0.2 = 200 N/m, so F(x) = 200x. The work integral is the integral from 0.1 to 0.3 of 200x dx. The Fundamental Theorem of Calculus gives W = 100x^2 from 0.1 to 0.3 = 100(0.09 - 0.01) = 8. The work is 8."
+          - problem: "A spring has constant k = 80 N/m. Find the work in joules needed to stretch it from its natural length to 0.5 m beyond its natural length."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is k = 80 N/m and upper limit x = 0.5 m. Hooke's law gives F(x) = 80x. The work is W = integral from 0 to 0.5 of 80x dx. The Fundamental Theorem of Calculus gives W = 40x^2 from 0 to 0.5 = 40(0.25) = 10. The work is 10."
+          - problem: "A spring has constant k = 150 N/m. Find the work in joules done in stretching it from 0.1 m to 0.5 m beyond its natural length."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is k = 150 N/m with bounds x = 0.1 m and x = 0.5 m. Hooke's law gives F(x) = 150x. The work is W = integral from 0.1 to 0.5 of 150x dx. The Fundamental Theorem of Calculus gives W = 75x^2 from 0.1 to 0.5 = 75(0.25 - 0.01) = 18. The work is 18."
         constraints: "SI units; k determined from one force-displacement pair; displacements chosen so answers are clean"
     diagnostic_exemplar:
       problem: 'A force of $15$ N stretches a spring $0.3$ m beyond its natural length. How much work is done stretching it from $0.2$ m to $0.5$ m beyond natural length?'
