@@ -531,12 +531,34 @@ topics:
         name: "Cases modulo n"
         key_prerequisites: [divisibility-parity-proofs]
         exemplars:
-          - problem: 'Prove: for every integer $n$, $n^2 \equiv 0$ or $1 \pmod 4$.'
-            answer: 'Even $n$: $n^2 \equiv 0$; odd $n$: $n^2 \equiv 1 \pmod 4$.'
-            solution_sketch: 'If $n = 2k$, $n^2 = 4k^2 \equiv 0 \pmod 4$. If $n = 2k + 1$, $n^2 = 4k^2 + 4k + 1 = 4(k^2 + k) + 1 \equiv 1 \pmod 4$. So $n^2 \equiv 0$ or $1 \pmod 4$. $\square$'
-          - problem: 'Prove: for every integer $n$, $n^2 + n + 1$ is odd, by cases on parity.'
-            answer: 'Both parity cases give an odd value.'
-            solution_sketch: 'If $n = 2k$, $n^2 + n + 1 = 4k^2 + 2k + 1 = 2(2k^2 + k) + 1$, odd. If $n = 2k + 1$, $n^2 + n + 1 = 4k^2 + 6k + 3 = 2(2k^2 + 3k + 1) + 1$, odd. $\square$'
+          - problem: "In the case $n = 4q + 2$ of the proof that $4$ divides $n^2$, expand $n^2$ and write it as $4s$. Give $s$ as a polynomial in $q$."
+            answer: "4q^2+4q+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the case with the binomial expansion: $n = 4q + 2$ gives $n^2 = 16q^2 + 16q + 4$. Factor out $4$ by the distributive rule: $n^2 = 4(4q^2 + 4q + 1)$, a multiple of $4$, so $n^2 \\equiv 0 \\pmod 4$ in this case. The value of $s$ is 4q^2+4q+1."
+          - problem: "In the odd case $n = 2k + 1$ of the proof that $n^2 + n + 1$ is odd, write $n^2 + n + 1 = 2m + 1$. Give $m$ as a polynomial in $k$."
+            answer: "2k^2+3k+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute the odd case $n = 2k + 1$ into $n^2 + n + 1$ and collect terms: $4k^2 + 6k + 3$. Factor out $2$: $2(2k^2 + 3k + 1) + 1$, which is odd. Thus $m$ = 2k^2+3k+1."
+          - problem: "In the case $n = 3q + 1$ of the proof that $n^2$ leaves remainder $1$ upon division by $3$, write $n^2 = 3s + 1$. Give $s$ as a polynomial in $q$."
+            answer: "3q^2+2q"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the case with the binomial expansion: $n = 3q + 1$ gives $n^2 = 9q^2 + 6q + 1$. Split off the remainder by factoring $3$ from the first terms: $n^2 = 3(3q^2 + 2q) + 1$. The value of $s$ is 3q^2+2q."
+          - problem: "In the case $n = 5q + 4$ of the proof that $5$ divides $n^2 - 1$, write $n^2 - 1 = 5s$. Give $s$ as a polynomial in $q$."
+            answer: "5q^2+8q+3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand with the binomial expansion: $n = 5q + 4$ gives $n^2 = 25q^2 + 40q + 16$, so $n^2 - 1 = 25q^2 + 40q + 15$. Factor out $5$: $n^2 - 1 = 5(5q^2 + 8q + 3)$, so $5$ divides $n^2 - 1$ in this case. The value of $s$ is 5q^2+8q+3."
+          - problem: "Claim: for every integer $n$, $n^2 \\equiv 0$ or $1 \\pmod 4$. Step 1: every integer is even or odd. Step 2: if $n = 2k$, then $n^2 = 4k^2$, so $n^2 \\equiv 0 \\pmod 4$. Step 3: if $n = 2k + 1$, then $n^2 = 2k^2 + 2k + 1$, so $n^2 \\equiv 1 \\pmod 4$. Step 4: both cases give $0$ or $1$, so the claim holds. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly splits the integers into the even and odd cases. Step 2 is correct: even $n = 2k$ gives $n^2 = 4k^2$, a multiple of $4$. Step 3 is false: odd $n = 2k + 1$ gives $n^2 = 4k^2 + 4k + 1$, not $2k^2 + 2k + 1$; the error is dropping the cross term $4k$. Step 4 would follow from the corrected cases. The answer is Step 3."
+          - problem: "In the proof by cases for $n = 3q + 2$, the line $n^2 = \\;?$ is missing. Select the line that shows $n^2$ as a multiple of $3$ plus $1$."
+            answer: "3(3q^2+4q+1)+1"
+            answer_contract: {"kind": "label", "options": [["3(3q^2+4q+1)+1"], ["3(3q^2+4q)+4"], ["3(3q^2+2q+1)+1"], ["3(3q^2+4q+1)+2"]]}
+            solution_sketch: "Expand $n = 3q + 2$ with the binomial expansion: $n^2 = 9q^2 + 12q + 4$. Write this as $3(3q^2 + 4q + 1) + 1$, a multiple of $3$ plus $1$. The option $3(3q^2 + 4q) + 4$ is the error of not folding the $4$ into the multiple of $3$. The option $3(3q^2 + 2q + 1) + 1$ is the error of a wrong middle coefficient. The option $3(3q^2 + 4q + 1) + 2$ is the error of a wrong remainder. The missing line is 3(3q^2+4q+1)+1."
+          - problem: "Write the full proof: for every integer $n$, $n^2 \\equiv 0$ or $1 \\pmod 4$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof by cases on the remainder of $n$ modulo $4$. Case 1: $n = 4q$. Then $n^2 = 16q^2 = 4(4q^2)$, so $n^2 \\equiv 0 \\pmod 4$. Case 2: $n = 4q + 1$. Then $n^2 = 16q^2 + 8q + 1 = 4(4q^2 + 2q) + 1$, so $n^2 \\equiv 1 \\pmod 4$. Case 3: $n = 4q + 2$. Then $n^2 = 16q^2 + 16q + 4 = 4(4q^2 + 4q + 1)$, so $n^2 \\equiv 0 \\pmod 4$. Case 4: $n = 4q + 3$. Then $n^2 = 16q^2 + 24q + 9 = 4(4q^2 + 6q + 2) + 1$, so $n^2 \\equiv 1 \\pmod 4$. Every integer falls into exactly one of these four residue cases, and each case gives $n^2 \\equiv 0$ or $1 \\pmod 4$. Combining the cases, the claim holds for every integer $n$."
         constraints: "cases determined by residue; combine into the claim"
     diagnostic_exemplar:
       problem: 'Prove by cases on the remainder of $n$ modulo $3$: for every integer $n$, $n^2 \equiv 0$ or $1 \pmod 3$.'
@@ -576,23 +598,67 @@ topics:
         name: "Without loss of generality"
         key_prerequisites: [proof-by-cases]
         exemplars:
-          - problem: 'Prove: for all reals $x, y$, $\min(x, y) + \max(x, y) = x + y$. Use WLOG.'
-            answer: 'WLOG $x \le y$ (the claim is symmetric in $x, y$); then $\min = x$, $\max = y$, and the sum is $x + y$.'
-            solution_sketch: 'The statement is unchanged under swapping $x$ and $y$, so assume WLOG $x \le y$. Then $\min(x,y) = x$ and $\max(x,y) = y$, so their sum is $x + y$. $\square$'
-          - problem: 'Prove: if integers $m$ and $n$ have different parities, then $m + n$ is odd. Use WLOG.'
-            answer: 'WLOG $m$ is even and $n$ is odd; then $m + n = 2a + 2b + 1$ is odd.'
-            solution_sketch: 'The claim is symmetric in $m, n$, so WLOG $m = 2a$ and $n = 2b + 1$. Then $m + n = 2(a + b) + 1$, odd. $\square$'
+          - problem: "For real numbers x and y, the identity (larger of x and y) + (smaller of x and y) = x + y is unchanged when x and y are swapped. After assuming WLOG x <= y, give the value of (larger of x and y) - (smaller of x and y) as an expression in x and y."
+            answer: "y - x"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (symmetry): swapping x and y does not change the claim, because the larger and the smaller exchange roles and addition is commutative, so the assumption WLOG x <= y is licensed. Step 2 (case): under x <= y, the smaller of x and y is x and the larger of x and y is y. Step 3 (subtract): the difference of the larger and the smaller is y minus x. The answer is y - x."
+          - problem: "For integers m and n with different parities, the claim that m + n is odd is unchanged when m and n are swapped. After assuming WLOG m is even and n is odd, give m + n in terms of witnesses a and b with m = 2a and n = 2b + 1."
+            answer: "2a + 2b + 1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (symmetry): swapping m and n leaves the claim that the sum is odd unchanged, since addition is commutative, so the WLOG assumption that m is even and n is odd is legitimate. Step 2 (definitions): evenness and oddness give witnesses, m = 2a and n = 2b + 1 for integers a and b. Step 3 (add): m + n = 2a + 2b + 1. The answer is 2a + 2b + 1."
+          - problem: "For real numbers a and b, the identity abs(a - b) = abs(b - a) is unchanged when a and b are swapped. After assuming WLOG a >= b, give abs(a - b) as an expression in a and b."
+            answer: "a - b"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (symmetry): swapping a and b replaces a - b by b - a, and the absolute value makes the two sides agree, so the identity is unchanged and WLOG a >= b is licensed. Step 2 (sign): under a >= b, the difference a - b is nonnegative. Step 3 (simplify): the absolute value of a nonnegative number is the number itself, so abs(a - b) = a - b. The answer is a - b."
+          - problem: "For real numbers x and y, the expression (x + y + abs(x - y))/2 always gives the larger of x and y, and the claim is unchanged when x and y are swapped. Assume WLOG x <= y. Give the amount by which the larger of x and y exceeds the average (x + y)/2, as an expression in x and y."
+            answer: "(y - x)/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (symmetry): swapping x and y leaves the claim unchanged because the larger value and the absolute value term are unaffected in form, so WLOG x <= y is justified. Step 2 (case): under x <= y, abs(x - y) = y - x, so the expression becomes (x + y + y - x)/2, which is y. Step 3 (compare): the larger of x and y is y, and the average of x and y is (x + y)/2. Step 4 (subtract): y - (x + y)/2 = (2y - x - y)/2. The answer is (y - x)/2."
+          - problem: "In the proof that the larger of x and y plus the smaller of x and y equals x + y, one writes WLOG x <= y. Which symmetry of the statement licenses this WLOG assumption?"
+            answer: "Swap x and y"
+            answer_contract: {"kind": "label", "options": [["Swap x and y"], ["Negate x"], ["Square x"], ["Translate x"]]}
+            solution_sketch: "Step 1 (test the correct symmetry): the statement mentions the larger and the smaller of two numbers and their sum, so interchanging the two numbers exchanges the two roles and keeps the sum the same; the symmetry is Swap x and y. Step 2 (wrong option Negate x): negating one variable changes the two real numbers themselves, so the pair and its sum change and the statement is not preserved. Step 3 (wrong option Square x): squaring is not a reversible operation and does not act on the pair symmetrically, so it is not a symmetry of the statement. Step 4 (wrong option Translate x): shifting only one of the two numbers breaks the identity between the pair and the sum. The answer is Swap x and y."
+          - problem: "In a WLOG proof that if integers m and n have different parities then m - n is odd, one first justifies that the claim is unchanged when m and n are swapped, then assumes WLOG that m is even and n is odd, with m = 2a and n = 2b + 1 for integers a and b. The line that computes m - n is missing. Select the line that follows from the WLOG assumption."
+            answer: "2a - 2b - 1"
+            answer_contract: {"kind": "label", "options": [["2a - 2b - 1"], ["2a - 2b"], ["(2a + 1) - 2b"], ["2a + 2b"]]}
+            solution_sketch: "Step 1 (substitute the WLOG forms): with m = 2a and n = 2b + 1, the difference m - n is 2a - (2b + 1), which expands to 2a - 2b - 1, an odd integer. Step 2 (wrong option 2a - 2b): this drops the odd part, forgetting the extra 1 in n = 2b + 1, and gives an even value. Step 3 (wrong option (2a + 1) - 2b): this assigns the odd form to m instead of n, swapping the parities that the WLOG assumption fixed. Step 4 (wrong option 2a + 2b): this adds the two forms instead of subtracting, so it computes m + n rather than m - n. The answer is 2a - 2b - 1."
+          - problem: "Write the full proof: for all real numbers x and y, the larger of x and y plus the smaller of x and y equals x + y. Use WLOG and justify the symmetry. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (symmetry): the statement involves the larger of x and y, the smaller of x and y, and the sum x + y. Swapping x and y exchanges the roles of larger and smaller, and since addition is commutative the sum is unchanged, so the statement is invariant under the swap of x and y. Step 2 (WLOG): this symmetry licenses the assumption without loss of generality that x <= y, because any pair violating it is handled by the swapped pair. Step 3 (definitions): under x <= y, the smaller of x and y is x and the larger of x and y is y. Step 4 (substitution): the larger plus the smaller is y + x. Step 5 (commutativity): y + x = x + y, which is the claimed right side. Step 6 (conclusion): the case x <= y together with its symmetric image covers every ordered pair of real numbers, so the identity holds for all real x and y. This is the full solution."
         constraints: "justify the symmetry that licenses the WLOG assumption before using it"
       - id: kp3
         name: "When WLOG is legitimate"
         key_prerequisites: [proof-by-cases]
         exemplars:
-          - problem: 'In proving "for all reals $x, y$: $x^2 + y^2 \ge 2xy$", why is it legitimate to assume WLOG $x \ge y$?'
-            answer: 'Swapping $x$ and $y$ changes neither side, so any proof under $x \ge y$ covers the other case by relabeling.'
-            solution_sketch: 'Both $x^2 + y^2$ and $2xy$ are symmetric under the swap $x \leftrightarrow y$; the case $x < y$ follows by applying the proved case to $(y, x)$.'
-          - problem: 'Why can you NOT say "WLOG $m$ is even" when proving "if $m$ is even and $n$ is odd then $m + n$ is odd"?'
-            answer: 'The hypothesis already fixes the roles of $m$ and $n$ asymmetrically; there is no symmetry to exploit and nothing to relabel.'
-            solution_sketch: 'WLOG is only valid when the statement is invariant under the relabeling; here $m$ and $n$ play different roles, so "WLOG" would be assuming the hypothesis, not reducing cases.'
+          - problem: "For all reals x, y, the statement x^2 + y^2 >= 2xy is unchanged by swapping x and y. A proof uses WLOG x >= y. How many of the two possible order cases remain to be proved?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the WLOG criterion: the statement must be unchanged by swapping x and y. The expression x^2 + y^2 >= 2xy is symmetric, so the case x < y follows from the proved case x >= y by relabeling. Thus one order case remains. The answer is 1."
+          - problem: "A proof of 'if m is even and n is odd then m+n is odd' begins: Step 1: let m be even and n be odd. Step 2: WLOG m is even. Which statement explains why Step 2 is not a legitimate WLOG step?"
+            answer: "The hypothesis is not symmetric in m and n."
+            answer_contract: {"kind": "label", "options": [["The hypothesis is not symmetric in m and n."], ["The conclusion is not symmetric in m and n."], ["The integers m and n are not distinct."], ["The sum m + n is not symmetric."]]}
+            solution_sketch: "WLOG is legitimate only when the whole statement is invariant under the swap m<->n. Here the hypothesis 'm even and n odd' changes roles, while the conclusion 'm+n odd' is symmetric. Option B is wrong because the conclusion is symmetric; option C is wrong because distinctness is irrelevant; option D is wrong because m+n is symmetric. The answer is The hypothesis is not symmetric in m and n."
+          - problem: "For integers a, b with a+b odd, the swap a<->b leaves 'a+b is odd' unchanged, so WLOG assume a is odd. Under that assumption, what is the parity of b? Give 0 for even and 1 for odd."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The WLOG step is valid because a+b odd is symmetric under a<->b. Assume a is odd. Since an odd plus b is odd, b must be even. The parity of b is 0. The answer is 0."
+          - problem: "Consider all ordered pairs (x,y) with x and y in the set {1,2,3}. For x^2 + y^2 >= 2xy, the swap x<->y leaves both sides unchanged, so WLOG assume x <= y. How many pairs (x,y) must be checked under this WLOG assumption?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List pairs with x <= y: (1,1), (1,2), (1,3), (2,2), (2,3), (3,3). The expression is symmetric under x<->y, so WLOG x <= y covers all ordered pairs. There are six unordered pairs with repetition. The answer is 6."
+          - problem: "In a proof by exhaustion of 'if m and n have different parities then m times n is even', each assignment of parities to m and n that satisfies the hypothesis must be checked. How many such assignments are there?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Enumerate the case space of the exhaustion: the four assignments (even, even), (even, odd), (odd, even), (odd, odd). Filter by the hypothesis: different parities keeps (even, odd) and (odd, even). Both kept assignments are covered because the hypothesis and the conclusion are symmetric under swapping m and n, so a WLOG step m even is legitimate here. The answer is 2."
+          - problem: "In a proof of 'for all reals x, y: |x-y| = |y-x|', the line that justifies 'WLOG assume x >= y' is missing. Select the missing line."
+            answer: "Swapping x and y leaves |x-y| unchanged."
+            answer_contract: {"kind": "label", "options": [["Swapping x and y leaves |x-y| unchanged."], ["Replacing x by -x leaves |x-y| unchanged."], ["Replacing y by y+1 leaves |x-y| unchanged."], ["Replacing x by 2x leaves |x-y| unchanged."]]}
+            solution_sketch: "WLOG x >= y is legitimate only if the statement is invariant under the swap x<->y. The absolute difference satisfies |x-y| = |y-x| for all reals, so the swap changes nothing. Option B is wrong because replacing x by -x changes |x-y| in general; option C is wrong because y+1 changes the difference; option D is wrong because 2x changes the difference. The answer is Swapping x and y leaves |x-y| unchanged."
+          - problem: "Write the full proof: for all reals x and y, x^2 + y^2 >= 2xy, with a legitimate WLOG step. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: note the statement is symmetric under the swap x<->y, since x^2+y^2 and 2xy are unchanged. Step 2: therefore WLOG assume x >= y. Step 3: under this assumption, x-y >= 0. Step 4: compute x^2+y^2-2xy = (x-y)^2 >= 0. Step 5: hence x^2+y^2 >= 2xy. Step 6: by the symmetry in Step 1, the case x < y follows by swapping the names, so the WLOG step is legitimate and the claim holds for all reals. The answer is See the solution."
         constraints: "one valid and one invalid WLOG usage; the learner must articulate the symmetry criterion"
     diagnostic_exemplar:
       problem: 'Prove: for all integers $m, n$, if $m$ and $n$ have different parities then $mn$ is even. Use "without loss of generality", and justify in one sentence why the WLOG step is legitimate here.'
@@ -629,12 +695,34 @@ topics:
         name: "When the contrapositive is easier"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'Prove: for all integers $n$, if $n^2$ is even then $n$ is even.'
-            answer: 'Prove the contrapositive: $n$ odd implies $n^2$ odd.'
-            solution_sketch: 'The contrapositive is "$n$ odd $\to$ $n^2$ odd". If $n = 2k + 1$, then $n^2 = 2(2k^2 + 2k) + 1$ is odd. Since the contrapositive holds, so does the original. $\square$'
-          - problem: 'Prove: for all integers $n$, if $n^2$ is odd then $n$ is odd.'
-            answer: 'Contrapositive: $n$ even implies $n^2$ even.'
-            solution_sketch: 'Contrapositive: if $n = 2k$ then $n^2 = 2(2k^2)$ is even. So $n^2$ odd implies $n$ odd. $\square$'
+          - problem: "To prove by contrapositive that if n^2 is even then n is even, assume n is odd and write n = 2k + 1. Then n^2 = 2q + 1 for some integer q. Give q."
+            answer: "2k^2+2k"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The contrapositive of 'if n^2 is even then n is even' is 'if n is odd then n^2 is odd'. Assume n = 2k + 1. Expand: n^2 = (2k + 1)^2 = 4k^2 + 4k + 1. Factor the even part: 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1. Thus q = 2k^2 + 2k. The expression is 2k^2+2k."
+          - problem: "To prove by contrapositive that if n^2 is odd then n is odd, assume n is even and write n = 2k. Then n^2 = 2q for some integer q. Give q."
+            answer: "2k^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The contrapositive of 'if n^2 is odd then n is odd' is 'if n is even then n^2 is even'. Assume n = 2k. Square: n^2 = (2k)^2 = 4k^2. Write as 2(2k^2). Thus q = 2k^2. The expression is 2k^2."
+          - problem: "For the statement 'if n^2 is even then n is even', which statement is its contrapositive?"
+            answer: "if n is odd then n^2 is odd"
+            answer_contract: {"kind": "label", "options": [["if n is odd then n^2 is odd"], ["if n is even then n^2 is even"], ["if n^2 is odd then n is odd"], ["if n is even then n^2 is odd"]]}
+            solution_sketch: "The contrapositive of P -> Q is not Q -> not P. Here P is 'n^2 is even' and Q is 'n is even'. The negation of Q is 'n is odd'. The negation of P is 'n^2 is odd'. So the contrapositive is 'if n is odd then n^2 is odd'. Option 'if n is even then n^2 is even' is the converse. Option 'if n^2 is odd then n is odd' is the inverse. Option 'if n is even then n^2 is odd' swaps without negating correctly. The contrapositive is if n is odd then n^2 is odd."
+          - problem: "To prove by contrapositive that if 3n + 2 is odd then n is odd, assume n is even and write n = 2k. Then 3n + 2 = 2p for some integer p. Give p."
+            answer: "3k+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The contrapositive of 'if 3n + 2 is odd then n is odd' is 'if n is even then 3n + 2 is even'. Assume n = 2k. Substitute: 3n + 2 = 6k + 2. Factor 2: 6k + 2 = 2(3k + 1). Thus p = 3k + 1. The expression is 3k+1."
+          - problem: "Claim: if 3n + 2 is odd then n is odd. A proof by contrapositive has these steps. Step 1: The contrapositive is: if n is even then 3n + 2 is even. Step 2: Assume n is even and write n = 2k for an integer k. Step 3: Then 3n + 2 = 6k + 5. Step 4: So 3n + 2 = 2(3k + 2) + 1, which is odd. Step 5: So the contrapositive holds, and the claim follows. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 states the contrapositive correctly, so it is valid. Step 2 sets up the assumption of the contrapositive, so it is valid. Step 3 is false: with n = 2k we get 3n + 2 = 6k + 2, not 6k + 5. Step 4 is correct arithmetic only after the wrong Step 3. Step 5 draws the conclusion from the faulty line. The first invalid step is Step 3."
+          - problem: "In the contrapositive proof of 'if n^2 is even then n is even', after assuming n is odd and writing n = 2k + 1, the line n^2 = ? is missing. Select the line that shows n^2 is odd."
+            answer: "2(2k^2+2k)+1"
+            answer_contract: {"kind": "label", "options": [["2(2k^2+2k)+1"], ["2(2k^2+2k)"], ["2k^2+2k+1"], ["4k^2+1"]]}
+            solution_sketch: "Expand (2k + 1)^2 = 4k^2 + 4k + 1. Factor the even part as 2(2k^2 + 2k) and add 1, so n^2 is odd. Option 2(2k^2+2k) omits the +1. Option 2k^2+2k+1 is missing a factor 2. Option 4k^2+1 drops the middle term 4k. The correct line is 2(2k^2+2k)+1."
+          - problem: "Write the full proof: for all integers n, if n^2 is even then n is even. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "State the contrapositive. The contrapositive of 'if n^2 is even then n is even' is 'if n is odd then n^2 is odd'. Prove the contrapositive directly. Assume n is odd, so n = 2k + 1 for some integer k. Square n: n^2 = (2k + 1)^2 = 4k^2 + 4k + 1. Factor the even part: 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1. This has the form 2q + 1 with q = 2k^2 + 2k, so n^2 is odd. Therefore n^2 is not even. Since the contrapositive is true, the original implication is true: if n^2 is even then n is even."
         constraints: "state the contrapositive $\\neg Q \\to \\neg P$, then prove it directly"
       - id: kp2
         name: "Contrapositive proofs about integers"
@@ -688,12 +776,34 @@ topics:
         name: "The two-direction template"
         key_prerequisites: [conditional-statements]
         exemplars:
-          - problem: 'Prove: an integer $n$ is even if and only if $3n$ is even.'
-            answer: '($\Rightarrow$) $n = 2k$ gives $3n = 2(3k)$. ($\Leftarrow$) contrapositive: $n$ odd gives $3n = 2(3k + 1) + 1$, odd.'
-            solution_sketch: 'Forward: if $n = 2k$ then $3n = 6k = 2(3k)$, even. Backward (contrapositive): if $n = 2k + 1$ then $3n = 6k + 3 = 2(3k + 1) + 1$, odd, so $3n$ even forces $n$ even. Both directions proved. $\square$'
-          - problem: 'Prove: an integer $n$ is even if and only if $n + 1$ is odd.'
-            answer: '($\Rightarrow$) $n = 2k$ gives $n + 1 = 2k + 1$. ($\Leftarrow$) $n + 1 = 2m + 1$ gives $n = 2m$.'
-            solution_sketch: 'Forward: $n = 2k$ makes $n + 1 = 2k + 1$ odd. Backward: if $n + 1 = 2m + 1$ then $n = 2m$, even. $\square$'
+          - problem: "Consider the biconditional: an integer n is even if and only if 3n is even. In the forward direction (n even implies 3n even), assume n = 2k. Write 3n as 2 times an expression. Give that expression."
+            answer: "3k"
+            answer_contract: {"kind": "function", "vars": ["k"]}
+            solution_sketch: "Forward direction P to Q, by the two-direction template. Assume n is even, so n = 2k. Multiply by 3: 3n = 6k. Factor out 2: 6k = 2(3k). The expression multiplying 2 is 3k."
+          - problem: "Consider the biconditional: an integer n is even if and only if n + 1 is odd. In the backward direction (n + 1 odd implies n even), assume n + 1 = 2m + 1. Write n as 2 times an expression. Give that expression."
+            answer: "m"
+            answer_contract: {"kind": "function", "vars": ["m"]}
+            solution_sketch: "Backward direction Q to P, by the two-direction template. Assume n + 1 is odd, so n + 1 = 2m + 1. Subtract 1 from both sides: n = 2m. The expression multiplying 2 is m."
+          - problem: "Consider the biconditional: an integer n is even if and only if n + 3 is odd. In the forward direction (n even implies n + 3 odd), assume n = 2k. Write n + 3 in the form 2q + 1. Give q."
+            answer: "k+1"
+            answer_contract: {"kind": "function", "vars": ["k"]}
+            solution_sketch: "Forward direction P to Q, by the two-direction template. Assume n is even, so n = 2k. Add 3: n + 3 = 2k + 3. Rewrite as 2q + 1: 2k + 3 = 2(k + 1) + 1. Thus q = k+1."
+          - problem: "A student claims that for every integer n, n is even if and only if n + 2 is odd. Give the smallest n >= 0 for which the forward direction (n even implies n + 2 odd) fails."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test the forward direction P to Q. If n is even, then n + 2 should be odd. Test n = 0: n is even, but n + 2 = 2 is even, not odd, so the implication fails at n = 0. The smallest n is 0."
+          - problem: "Claim: an integer n is even if and only if 4n is even. Argument: Step 1: forward direction, assume n = 2k. Step 2: then 4n = 8k = 2(4k), so 4n is even. Step 3: backward direction, assume 4n is even, say 4n = 2m. Step 4: divide by 4 to get n = m/2, so n is even. Which is the first invalid step?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly sets up the forward direction with n = 2k. Step 2 correctly computes 4n = 8k = 2(4k), so 4n is even. Step 3 correctly starts the backward direction with 4n = 2m. Step 4 is the error of assuming m/2 is an integer: n = m/2 need not be even, so it does not prove n is even. The answer is Step 4."
+          - problem: "In the backward direction of the biconditional: an integer n is even if and only if n + 1 is odd, assume that n + 1 is odd, so n + 1 equals twice some integer plus one. The next line of the proof is n = ?. Select the line that proves n is even."
+            answer: "n = 2m"
+            answer_contract: {"kind": "label", "options": [["n = 2m"], ["n = 2m+1"], ["n = 2m+2"], ["n = m/2"]]}
+            solution_sketch: "In the backward direction, twice some integer plus one means n + 1 = 2m + 1. Subtract 1: n = 2m, which shows n is even. The option n = 2m+1 forgets to subtract 1. The option n = 2m+2 adds an extra 1. The option n = m/2 loses a factor of 2 and need not be an integer. The answer is n = 2m."
+          - problem: "Write the full proof: an integer n is even if and only if n + 3 is odd. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof. Forward direction (P implies Q): assume n is even, so n = 2k for some integer k. Then n + 3 = 2k + 3 = 2k + 2 + 1 = 2(k + 1) + 1, which is odd. Backward direction (Q implies P): assume n + 3 is odd, so n + 3 = 2m + 1 for some integer m. Subtract 3: n = 2m + 1 - 3 = 2m - 2 = 2(m - 1), which is even. Both directions are proved separately and labeled, so n is even if and only if n + 3 is odd."
         constraints: "prove $P \\to Q$ and $Q \\to P$ separately and say which is which"
       - id: kp2
         name: "Contrapositive in one direction"
@@ -748,23 +858,67 @@ topics:
         name: "Setting up the assumption"
         key_prerequisites: [negating-statements]
         exemplars:
-          - problem: 'To prove "there is no largest integer" by contradiction, what exactly do you assume?'
-            answer: 'The negation: there exists a largest integer $N$ (i.e. $\exists N\ \forall n,\ n \le N$).'
-            solution_sketch: 'A contradiction proof of $S$ starts from $\neg S$; negating "no largest integer exists" yields the existence of a largest one, which the proof must then demolish.'
-          - problem: 'To prove "for all integers $n$, if $n^2$ is even then $n$ is even" by contradiction, what do you assume?'
-            answer: 'That some integer $n$ has $n^2$ even and $n$ odd.'
-            solution_sketch: 'The negation of $\forall n\,(P \to Q)$ is $\exists n\,(P \land \neg Q)$: an $n$ with $n^2$ even yet $n$ odd.'
+          - problem: "To prove 'there is no largest integer' by contradiction, you assume some integer n is largest. Which inequality must every integer m satisfy? Select the correct assumption."
+            answer: "m <= n"
+            answer_contract: {"kind": "label", "options": [["m <= n"], ["m >= n"], ["m < n"], ["m > n"]]}
+            solution_sketch: "The assumption is the negation of 'no largest integer', so it says there exists an integer n with every integer m at most n. The correct inequality is m <= n. Option m >= n reverses the bound. Option m < n says no integer equals n, which is too strong. Option m > n makes n smallest, not largest. The answer is m <= n."
+          - problem: "To prove 'for all integers n, if n^2 is even then n is even' by contradiction, you assume some integer n has n^2 even but which parity? Select the assumed parity of n."
+            answer: "n odd"
+            answer_contract: {"kind": "label", "options": [["n odd"], ["n even"], ["n zero"], ["n prime"]]}
+            solution_sketch: "The negation of 'for all n, if P then Q' is 'there exists n with P and not Q'. Here P is 'n^2 is even' and not Q is 'n is odd'. Option n even repeats the conclusion instead of negating it. Option n zero is a special even case, not the negation. Option n prime is irrelevant to parity. The answer is n odd."
+          - problem: "To prove by contradiction that for all integers n, if n^2 is even then n is even, assume n is odd. Write n = 2k + 1 for an integer k. Give the expression for n^2 in terms of k."
+            answer: "4k^2+4k+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The contradiction assumption says n is odd. Write n = 2k + 1 with k an integer. Square: n^2 = (2k+1)^2 = 4k^2 + 4k + 1. This is odd, so it contradicts n^2 being even. The expression is 4k^2+4k+1."
+          - problem: "To prove by contradiction that for all integers n, if n^2 is odd then n is odd, assume n is even. Write n = 2k for an integer k. Give the expression for n^2 in terms of k."
+            answer: "4k^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The assumption says n is even. Write n = 2k with k an integer. Square: n^2 = (2k)^2 = 4k^2. This is even, contradicting n^2 being odd. The expression is 4k^2."
+          - problem: "To prove by contradiction that for all integers n, if 3 divides n^2 then 3 divides n, assume n is not divisible by 3. Write n = 3k + 1 for an integer k. Give the expression for n^2 - 1 in terms of k."
+            answer: "9k^2+6k"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The assumption says 3 does not divide n, so n has remainder 1 or 2 modulo 3. Take the remainder 1 case and write n = 3k + 1. Then n^2 - 1 = (9k^2 + 6k + 1) - 1 = 9k^2 + 6k. This is divisible by 3, so n^2 has remainder 1, contradicting that 3 divides n^2. The expression is 9k^2+6k."
+          - problem: "Claim: to prove 'for all integers n, if n^2 is even then n is even' by contradiction, a student writes: Step 1: assume n is odd. Step 2: then n = 2k + 1 for some integer k. Step 3: n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1. Step 4: this shows n^2 is even, contradicting that n^2 is even. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the correct negation: odd is the opposite of even. Step 2 is the definition of an odd integer. Step 3 is correct algebra. Step 4 is false: the expression 2(2k^2 + 2k) + 1 is odd, not even. The first invalid step is Step 4."
+          - problem: "Write the full proof: for all integers a and b, if a is even and b is odd then a + b is odd. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Assume for contradiction that there are integers a and b with a even, b odd, and a + b even. Step 2: Since a is even, write a = 2m for some integer m. Step 3: Since b is odd, write b = 2k + 1 for some integer k. Step 4: Then a + b = 2m + 2k + 1 = 2(m + k) + 1, which is odd because m + k is an integer. Step 5: This contradicts the assumption that a + b is even. Step 6: Therefore no such integers a and b exist, so for all integers a and b, if a is even and b is odd then a + b is odd."
         constraints: "produce the correctly negated assumption before any deduction"
       - id: kp2
         name: "No-largest and no-smallest arguments"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: there is no largest integer.'
-            answer: 'Assume a largest integer $N$; then $N + 1 > N$ contradicts maximality.'
-            solution_sketch: 'Suppose, for contradiction, there is a largest integer $N$. Then $N + 1$ is an integer with $N + 1 > N$, contradicting that $N$ is largest. So no largest integer exists. $\square$'
-          - problem: 'Prove: there is no smallest positive real number.'
-            answer: 'Assume a smallest $r > 0$; then $r/2$ is smaller and positive.'
-            solution_sketch: 'Suppose $r$ is the smallest positive real. Then $r/2$ satisfies $0 < r/2 < r$, a smaller positive real, contradicting minimality. So none exists. $\square$'
+          - problem: "Suppose, for contradiction, that n is the largest integer. Give an integer greater than n, written as an expression in n."
+            answer: "n+1"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Assume n is the largest integer. By closure under addition, n+1 is an integer. The comparison n+1 > n holds. This contradicts maximality. The witness is n+1."
+          - problem: "Suppose, for contradiction, that r is the smallest positive real number. Give a positive real number smaller than r, written as an expression in r."
+            answer: "r/2"
+            answer_contract: {"kind": "function", "vars": ["r"]}
+            solution_sketch: "Assume r is the smallest positive real. By closure under division by 2, r/2 is real. It is positive and r/2 < r. This contradicts minimality. The witness is r/2."
+          - problem: "A proof assumes that 40 is the largest multiple of 4. Give a multiple of 4 greater than 40."
+            answer: "44"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume 40 is the largest multiple of 4. Since 44 = 4*11, 44 is a multiple of 4. The inequality 44 > 40 holds. This beats the assumed maximum. The witness is 44."
+          - problem: "Claim: there is no largest integer. Step 1: Assume n is the largest integer. Step 2: n + 1 is an integer. Step 3: n + 1 > n. Step 4: n + 1 is not an integer, so n is not largest. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the valid assumption. Step 2 correctly states n+1 is an integer. Step 3 correctly states n+1 > n. Step 4 falsely claims n+1 is not an integer; the contradiction is that n+1 beats n. The answer is Step 4."
+          - problem: "In the proof that no smallest positive real number exists, one line is missing. Select the line that gives the contradiction."
+            answer: "r/2 is positive and smaller than r"
+            answer_contract: {"kind": "label", "options": [["r/2 is positive and smaller than r"], ["r/2 is larger than r"], ["r/2 equals 0"], ["r/2 is not a real number"]]}
+            solution_sketch: "Assume r is the smallest positive real. Option r/2 is larger than r has the inequality backwards. Option r/2 equals 0 is false for positive r. Option r/2 is not a real number is false because the reals are closed under division by 2. The missing line is r/2 is positive and smaller than r."
+          - problem: "A student claims every positive integer n has a positive integer m with m < n. Give the smallest positive integer n for which this claim is false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The claim fails when no positive integer is less than n. For n=1, there is no positive integer m with m < 1. For n=2, m=1 works. So the smallest counterexample is n=1. The answer is 1."
+          - problem: "Write the full proof: there is no largest integer. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: suppose, for contradiction, that N is the largest integer. Step 2: by closure under addition, N+1 is an integer. Step 3: the comparison N+1 > N holds. Step 4: N+1 is an integer greater than N, so N is not the largest integer. Step 5: this contradicts the assumption that N is largest, so no largest integer exists. The constructed witness N+1 beats the assumed maximum."
         constraints: "assume the negation and construct a witness that beats the assumed extremum"
       - id: kp3
         name: "Simple impossibility arguments"
@@ -825,12 +979,34 @@ topics:
         name: "Irrationality proofs"
         key_prerequisites: [rational-number-proofs]
         exemplars:
-          - problem: 'Prove: $\sqrt{2}$ is irrational.'
-            answer: 'Assume $\sqrt 2 = p/q$ in lowest terms; deduce $p$ and $q$ both even, a contradiction.'
-            solution_sketch: 'Suppose $\sqrt 2 = p/q$ with $\gcd(p, q) = 1$. Then $p^2 = 2q^2$, so $p^2$ is even and hence $p = 2k$ is even. Then $4k^2 = 2q^2$, so $q^2 = 2k^2$ is even and $q$ is even. But then $2 \mid \gcd(p, q)$, contradicting $\gcd(p, q) = 1$. $\square$'
-          - problem: 'Prove: $\sqrt{3}$ is irrational.'
-            answer: 'Assume $\sqrt 3 = p/q$ in lowest terms; deduce $3 \mid p$ and $3 \mid q$, a contradiction.'
-            solution_sketch: 'Suppose $\sqrt 3 = p/q$ with $\gcd(p, q) = 1$. Then $p^2 = 3q^2$, so $3 \mid p^2$ and (as $3$ is prime) $3 \mid p$; write $p = 3k$, giving $9k^2 = 3q^2$, so $q^2 = 3k^2$ and $3 \mid q$. Then $3 \mid \gcd(p, q)$, a contradiction. $\square$'
+          - problem: "Suppose sqrt(2) = p/q with p and q positive integers in lowest terms. Squaring gives p^2 = 2q^2. Then p is even, so p = 2k. Substitute to find q^2 = c k^2. Give the integer c."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume sqrt(2) = p/q in lowest terms. Squaring gives p^2 = 2q^2, so p^2 is even and p is even; write p = 2k. Substituting gives 4k^2 = 2q^2. Divide both sides by 2 to get q^2 = 2k^2. The answer is 2."
+          - problem: "Suppose sqrt(3) = p/q with p and q positive integers in lowest terms. Squaring gives p^2 = 3q^2. Since 3 is prime, 3 divides p, so p = 3k. Substitute to find q^2 = c k^2. Give the integer c."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume sqrt(3) = p/q in lowest terms. Squaring gives p^2 = 3q^2; because 3 is prime, 3 divides p, so p = 3k. Substituting gives 9k^2 = 3q^2. Divide both sides by 3 to get q^2 = 3k^2. The answer is 3."
+          - problem: "For the proof that sqrt(5) is irrational, assume sqrt(5)=p/q in lowest terms. From p^2=5q^2 and p=5k, the equation becomes q^2 = c k^2. Determine c."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume sqrt(5)=p/q in lowest terms. Squaring gives p^2=5q^2, and since 5 is prime p=5k. Substitution gives 25k^2=5q^2. Divide by 5 to get q^2=5k^2, so c is 5. The answer is 5."
+          - problem: "Claim: sqrt(2) is irrational. Step 1: assume sqrt(2)=p/q with integers p and q sharing no common factor greater than 1. Step 2: p^2=2q^2, so p^2 is even and p is even. Step 3: write p=2k; then 4k^2=2q^2, so q^2=2k^2. Step 4: since q^2=2k^2, q=2k and q is even. Step 5: p and q are both even, contradicting the claim's assumption. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is the lowest-terms assumption and is valid. Step 2 is valid because 2 divides p^2 and 2 is prime. Step 3 is valid algebra: dividing 4k^2=2q^2 by 2 gives q^2=2k^2. Step 4 is the first invalid step: q^2=2k^2 only forces q to be even, not q=2k with the same k. Step 5 would be valid only if Step 4 were corrected. The answer is Step 4."
+          - problem: "In the proof that sqrt(5) is irrational, assume sqrt(5)=p/q in lowest terms. From p^2=5q^2 and p=5k, the next line is q^2 = ? Select the missing line."
+            answer: "$5k^2$"
+            answer_contract: {"kind": "label", "options": [["$5k^2$"], ["$25k^2$"], ["$5k$"], ["$k^2$"]]}
+            solution_sketch: "Start with p^2=5q^2 and substitute p=5k, giving 25k^2=5q^2. Divide both sides by 5 to get q^2=5k^2. The option $25k^2$ is the error of not dividing by 5. The option $5k$ is the error of dropping the square on q. The option $k^2$ is the error of dividing by 25 instead of 5. The answer is $5k^2$."
+          - problem: "In a proof by contradiction that sqrt(6) is irrational, assume sqrt(6)=p/q with integers p and q that share no common factor greater than 1. The steps show that 2 divides both p and q. Which hypothesis is used to turn that fact into a contradiction?"
+            answer: "lowest terms"
+            answer_contract: {"kind": "label", "options": [["lowest terms"], ["p and q positive"], ["sqrt(6) rational"], ["6 not a square"]]}
+            solution_sketch: "The contradiction proof assumes sqrt(6)=p/q in lowest terms. The hypothesis is exactly that p and q are in lowest terms. If 2 divides both p and q, then p and q have common factor 2, contradicting lowest terms. The option p and q positive is true but does not contradict a common divisor. The option sqrt(6) rational is the assumption being disproved, not the tool. The option 6 not a square is true but does not force the contradiction. The answer is lowest terms."
+          - problem: "Write the full proof: sqrt(7) is irrational. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: assume for contradiction that sqrt(7) is rational. Write sqrt(7)=p/q with integers p and q that have no common factor greater than 1. Step 2: squaring gives p^2=7q^2. Since 7 is prime and 7 divides p^2, 7 divides p; write p=7k. Step 3: substituting gives 49k^2=7q^2, so q^2=7k^2. Then 7 divides q^2, and since 7 is prime, 7 divides q. Step 4: thus 7 divides both p and q, contradicting the assumption that p and q have no common factor greater than 1. This contradiction proves sqrt(7) is irrational."
         constraints: "use a lowest-terms assumption to force a contradiction"
       - id: kp3
         name: "Nonexistence and infinitude arguments"
