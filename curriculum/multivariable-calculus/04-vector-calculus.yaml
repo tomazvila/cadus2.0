@@ -672,6 +672,22 @@ topics:
           - problem: 'For $\mathbf{F} = \langle xy, yz, xz \rangle$, compute $\operatorname{div}(\operatorname{curl} \mathbf{F})$.'
             answer: "0"
             solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle -y, -z, -x \rangle$, whose divergence is $0 + 0 + 0 = 0$ — as the identity $\nabla \cdot (\nabla \times \mathbf{F}) = 0$ guarantees.'
+          - problem: "For the scalar field f = x^2 y z, the computation of curl(grad f) on this field illustrates the identity curl(grad f) = 0. First compute grad f. Give gx, gy, and gz."
+            answer: "gx = 2xyz; gy = x^2 z; gz = x^2 y"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "gx"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "gy"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "gz"}]}
+            solution_sketch: "Step 1: For f = x^2 y z, take partial derivatives: the gradient is grad f = <2xyz, x^2 z, x^2 y>. Step 2: The curl of this gradient pairs mixed partial derivatives that are equal, so every component cancels and curl(grad f) = 0, illustrating the identity curl(grad f) = 0. The components asked for are gx = 2xyz; gy = x^2 z; gz = x^2 y."
+          - problem: "For the vector field F = <x y^2, y z^2, x^2 z>, computing div(curl F) on this field illustrates the identity div(curl F) = 0. First compute curl F. Give the x-component of curl F as a function of x, y, and z."
+            answer: "-2yz"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "Step 1: For F = <x y^2, y z^2, x^2 z>, the curl formula gives curl F = <-2yz, -2xz, 0>. Step 2: The divergence of this curl is 0 + 0 + 0 by equality of mixed partials, illustrating div(curl F) = 0. The x-component of curl F is -2yz."
+          - problem: "For the vector field F = <x^2 y, y^2 z, z^2 x>, the computation of div(curl F) on this field illustrates the identity div(curl F) = 0. First compute curl F. Give px, py, and pz, the three components of curl F."
+            answer: "px = -y^2; py = -z^2; pz = -x^2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "px"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "py"}, {"contract": {"kind": "function", "vars": ["x", "y", "z"]}, "name": "pz"}]}
+            solution_sketch: "Step 1: For F = <x^2 y, y^2 z, z^2 x>, each curl component is a difference of mixed partials: curl F = <-y^2, -z^2, -x^2>. Step 2: The divergence of this curl is 0 by equality of mixed partials, illustrating the identity div(curl F) = 0. The components asked for are px = -y^2; py = -z^2; pz = -x^2."
+          - problem: "For the scalar field f = y^2 sin(x) + x z^3, the computation of curl(grad f) on this field illustrates the identity curl(grad f) = 0. First compute grad f. Give the y-component of grad f as a function of x, y, and z."
+            answer: "2y sin(x)"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "z"]}
+            solution_sketch: "Step 1: For f = y^2 sin(x) + x z^3, the gradient is grad f = <y^2 cos(x) + z^3, 2y sin(x), 3 x z^2>. Step 2: The curl of this gradient cancels by equality of mixed partial derivatives, so curl(grad f) = 0, illustrating the identity curl(grad f) = 0. The y-component of grad f is 2y sin(x)."
         constraints: "verifications on concrete low-degree fields; state which identity the computation illustrates"
     diagnostic_exemplar:
       problem: 'For $\mathbf{F} = \langle x^2, y^2, z^2 \rangle$, confirm that $\operatorname{curl} \mathbf{F} = \mathbf{0}$ and then state $\operatorname{div} \mathbf{F}$.'
@@ -1411,6 +1427,22 @@ topics:
           - problem: 'Use Stokes'' theorem to evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle xy, x^2, 0 \rangle$ around the boundary of the unit square $[0,1]^2$ in the $xy$-plane, counterclockwise seen from above.'
             answer: '$\frac{1}{2}$'
             solution_sketch: 'The $z$-component of the curl is $\partial_x(x^2) - \partial_y(xy) = 2x - x = x$; $\iint_{[0,1]^2} x\, dA = \frac{1}{2}$.'
+          - problem: "Let $\\mathbf{F} = \\langle -y^3/3, x^3/3, 0 \\rangle$ and let $C$ be the circle $x^2 + y^2 = 4$ in the $xy$-plane, oriented counterclockwise when viewed from the positive z-axis. Use Stokes' theorem to evaluate $\\oint_C \\mathbf{F} \\cdot d\\mathbf{r}$. Find the exact value in terms of $\\pi$."
+            answer: "8pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Stokes' theorem gives $\\oint_C \\mathbf{F} \\cdot d\\mathbf{r} = \\iint_D \\operatorname{curl}\\mathbf{F} \\cdot \\mathbf{k}\\, dA$. Compute $\\operatorname{curl}\\mathbf{F} = \\langle 0, 0, x^2 + y^2 \\rangle$. The disk $D$ has radius 2 and upward normal $\\mathbf{k}$, so the integral is $\\iint_D (x^2+y^2)\\, dA$. In polar coordinates, $\\int_0^{2\\pi}\\int_0^2 r^2 \\cdot r\\, dr\\, d\\theta = 2\\pi \\cdot 4 = 8\\pi$. The exact value is 8pi."
+          - problem: "Let $\\mathbf{F} = \\langle -y - y^2, 0, 0 \\rangle$ and let $C$ be the boundary of the square $[0,1] \\times [0,1]$ in the $xy$-plane, oriented counterclockwise when viewed from the positive z-axis. Use Stokes' theorem to evaluate $\\oint_C \\mathbf{F} \\cdot d\\mathbf{r}$. Find the exact value."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Stokes' theorem converts the circulation to $\\iint_S \\operatorname{curl}\\mathbf{F} \\cdot \\mathbf{n}\\, dS$. Here $\\operatorname{curl}\\mathbf{F} = \\langle 0, 0, 1 + 2y \\rangle$. The square has upward normal $\\mathbf{k}$, so the integral is $\\iint_{[0,1]^2} (1+2y)\\, dA$. Iterating, $\\int_0^1\\int_0^1 (1+2y)\\, dx\\, dy = \\int_0^1 (1+2y)\\, dy = 2$. The exact value is 2."
+          - problem: "Let $\\mathbf{F} = \\langle 0, x^3/3 + xy, 0 \\rangle$ and let $C$ be the boundary of the unit square $[0,1] \\times [0,1]$ in the $xy$-plane, oriented counterclockwise as seen along the positive z-axis. Use Stokes' theorem to evaluate $\\oint_C \\mathbf{F} \\cdot d\\mathbf{r}$. Give the exact value as a fraction."
+            answer: "5/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Stokes' theorem gives the circulation as the flux of $\\operatorname{curl}\\mathbf{F}$ through the unit square. Compute $\\operatorname{curl}\\mathbf{F} = \\langle 0, 0, x^2 + y \\rangle$. With upward normal $\\mathbf{k}$, the integral is $\\iint_{[0,1]^2} (x^2+y)\\, dA$. Iterating, $\\int_0^1\\int_0^1 (x^2+y)\\, dx\\, dy = \\int_0^1 (1/3 + y)\\, dy = 1/3 + 1/2 = 5/6$. The exact value as a fraction is 5/6."
+          - problem: "Let $\\mathbf{F} = \\langle -x^2 y, 0, 0 \\rangle$ and let $C$ be the circle $x^2 + y^2 = 4$ in the $xy$-plane, oriented counterclockwise as seen along the positive z-axis. Use Stokes' theorem to evaluate $\\oint_C \\mathbf{F} \\cdot d\\mathbf{r}$. Find the exact value in terms of $\\pi$."
+            answer: "4pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Stokes' theorem reduces the circulation to the flux of $\\operatorname{curl}\\mathbf{F}$ through the disk. Compute $\\operatorname{curl}\\mathbf{F} = \\langle 0, 0, x^2 \\rangle$. The disk of radius 2 has upward normal $\\mathbf{k}$, so the integral is $\\iint_D x^2\\, dA$. By symmetry $\\iint_D x^2\\, dA = \\tfrac{1}{2}\\iint_D (x^2+y^2)\\, dA$, and in polar coordinates this is $\\tfrac{1}{2}\\int_0^{2\\pi}\\int_0^2 r^3\\, dr\\, d\\theta = \\tfrac{1}{2} \\cdot 2\\pi \\cdot 4 = 4\\pi$. The exact value is 4pi."
         constraints: "curl F has a non-constant z-component (a polynomial like 3r^2, x, or 1 - 2y); C bounds a disk or square in the xy-plane; the double integral is a one-step polar or iterated computation"
       - id: kp2
         name: "Surface independence: choosing a convenient surface"
@@ -1419,10 +1451,26 @@ topics:
           - problem: 'Evaluate $\iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$ for $\mathbf{F} = \langle -y, x, xz \rangle$, where $S$ is the paraboloid $z = 4 - x^2 - y^2$, $z \ge 0$, with upward normal.'
             answer: '$8\pi$'
             solution_sketch: '$S$ shares its boundary (the circle $x^2 + y^2 = 4$ in $z = 0$) with the flat disk, so by Stokes'' theorem both surfaces give the same value. $\operatorname{curl}\mathbf{F} = \langle 0, -z, 2 \rangle$, which on the disk ($z = 0$) is $\langle 0, 0, 2 \rangle$: flux $= 2 \cdot 4\pi = 8\pi$.'
-          - problem: 'Explain why the flux of $\operatorname{curl}\mathbf{F}$ through the upper unit hemisphere (upward normal) equals its flux through the unit disk in the $xy$-plane (upward normal), and use this to evaluate it for $\mathbf{F} = \langle -y, x, z^2 \rangle$.'
-            answer: 'Both surfaces have the same positively oriented boundary (the unit circle), so Stokes'' theorem equates both fluxes to $\oint_C \mathbf{F} \cdot d\mathbf{r}$; the value is $2\pi$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle 0, 0, 2 \rangle$; through the disk the flux is $2\pi$, hence through the hemisphere too.'
+          - problem: "Let F = <0, x^3, 0>. Let S be the upper hemisphere x^2 + y^2 + z^2 = 4, z >= 0, with upward normal. Evaluate the flux of curl F through S by replacing S with the disk of radius 2 in the plane z = 0, which shares its boundary circle."
+            answer: "12pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: compute curl F = (0, 0, 3x^2) from the definition of the curl. Step 2: Stokes' theorem equates the hemisphere flux to the flux through the disk z = 0 of radius 2, since both surfaces share the circle x^2 + y^2 = 4. Step 3: on the disk the normal is k, so curl F dot n = 3x^2, and the integral of x^2 over a disk of radius 2 is pi*2^4/4 = 4pi. The flux is 3 * 4pi, which is 12pi."
+          - problem: "Let F = <-y, 2x, z^2>. Let S be the paraboloid z = 1 - x^2 - y^2, z >= 0, with upward normal. Compute the surface integral of curl F over S by using Stokes' theorem on the disk z = 0 that shares its boundary."
+            answer: "3pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: curl F = (0, 0, 3). Step 2: Stokes' theorem replaces the paraboloid with the disk z = 0 of radius 1, since they share the boundary. Step 3: on the disk curl F dot n = 3 and the area is pi. The flux is 3pi."
+          - problem: "Let F = <-y, 3x, xz>. Let S be the upper hemisphere x^2 + y^2 + z^2 = 4, z >= 0, with upward normal. Determine the value of the surface integral of curl F over S by replacing S with the disk of radius 2 in the plane z = 0."
+            answer: "16pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: curl F = (0, 0, 4). Step 2: by Stokes' theorem the hemisphere and the disk of radius 2 in z = 0 have the same flux because they share the circle x^2 + y^2 = 4. Step 3: on the disk curl F dot n = 4 and the area is 4pi. The flux is 16pi."
+          - problem: "Let F = <-2y, x, z>. Let S be the paraboloid z = 9 - x^2 - y^2, z >= 0, with upward normal. Find the flux of curl F through S by choosing the flat disk in z = 0 bounded by the same circle."
+            answer: "27pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: curl F = (0, 0, 3). Step 2: Stokes' theorem equates the paraboloid flux to the flat disk flux because both have the same boundary circle. Step 3: the disk has radius 3, so its area is 9pi, and curl F dot n = 3. The flux is 27pi."
+          - problem: "Let F = <-y, 4x, z^3>. Let S be the paraboloid z = 4 - x^2 - y^2, z >= 0, with upward normal. Evaluate the surface integral of curl F over S by using the disk z = 0 with the same boundary."
+            answer: "20pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: curl F = (0, 0, 5). Step 2: Stokes' theorem lets us use the disk z = 0 of radius 2 in place of the paraboloid, since the boundary is the same. Step 3: on the disk curl F dot n = 5 and the area is 4pi. The flux is 20pi."
         constraints: "the two surfaces share a circular boundary; the convenient replacement is a flat disk where the curl's z-component is a constant or single monomial; the inconvenient surface is a paraboloid or hemisphere"
       - id: kp3
         name: "Both sides of the theorem"
@@ -1479,6 +1527,22 @@ topics:
           - problem: 'Use the divergence theorem to find the outward flux of $\mathbf{F} = \langle x, y, z^2 \rangle$ through the closed cylinder $x^2 + y^2 \le 1$, $0 \le z \le 1$, and check it against the piece-by-piece surface computation, which gives $3\pi$.'
             answer: '$3\pi$'
             solution_sketch: '$\operatorname{div}\mathbf{F} = 2 + 2z$; slicing the cylinder, $\iiint (2 + 2z)\, dV = \pi \int_0^1 (2 + 2z)\, dz = \pi(2 + 1) = 3\pi$ — agreeing with the lateral-plus-caps computation.'
+          - problem: "Let F = <x^2, y, z>. Use the divergence theorem to find the outward flux of F through the boundary of the box [0,2] x [0,1] x [0,1]. Find the outward flux."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divergence theorem: the outward flux is the triple integral of div F over the box. Compute div F = 2x + 2. Integrate over 0 <= x <= 2, 0 <= y <= 1, 0 <= z <= 1: the x integral of (2x+2) from 0 to 2 is 8, and the y and z lengths are 1. The outward flux is 8."
+          - problem: "Let F = <x, y, z^3>. Use the divergence theorem to find the outward flux of F through the closed cylinder x^2 + y^2 <= 4, 0 <= z <= 2. Find the outward flux."
+            answer: "48pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divergence theorem: flux equals the triple integral of div F over the cylinder. Compute div F = 2 + 3z^2. In cylindrical coordinates, the integral is 2 times the volume plus 3 times the z^2 integral. Volume = pi*2^2*2 = 8pi, and the integral of 3z^2 dV is 4pi*8 = 32pi. Total flux = 16pi + 32pi = 48pi. The outward flux is 48pi."
+          - problem: "Let F = <2x, y^2, z^2>. Use the divergence theorem to find the outward flux of F through the boundary of the unit cube [0,1]^3. Find the outward flux."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divergence theorem: flux equals the triple integral of div F over the unit cube. Compute div F = 2 + 2y + 2z. On the unit cube the integral of 2 is 2, the integral of 2y is 1, and the integral of 2z is 1. Summing gives 4. The outward flux is 4."
+          - problem: "Let F = <x^2, y^2, z>. Use the divergence theorem to find the outward flux of F through the closed cylinder x^2 + y^2 <= 1, 0 <= z <= 2. Find the outward flux."
+            answer: "2pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Divergence theorem: flux equals the triple integral of div F over the cylinder. Compute div F = 2x + 2y + 1. The integrals of 2x and 2y cancel by symmetry over the disk, leaving only the integral of 1, which is the volume. The volume is pi*1^2*2 = 2pi. The outward flux is 2pi."
         constraints: "div F is a genuine polynomial (2x + 2y + 2z, 2 + 2z, 3z^2), never constant; solids are unit cubes, boxes, or cylinders integrated by slicing or in cylindrical coordinates"
       - id: kp2
         name: "Spherical solids"
@@ -1501,6 +1565,22 @@ topics:
           - problem: 'What is the outward flux of $\mathbf{F} = \langle y, z, x \rangle$ through the sphere of radius $3$? Justify without computing any surface integral.'
             answer: "0"
             solution_sketch: '$\operatorname{div}\mathbf{F} = 0 + 0 + 0 = 0$, so by the divergence theorem the flux through any closed surface is $\iiint 0\, dV = 0$.'
+          - problem: "Let $\\mathbf{F} = \\langle x, y, 2z \\rangle$. Close the paraboloid $z = 3 - x^{2} - y^{2}$, $z \\ge 0$, with the disk $x^{2} + y^{2} \\le 3$ in the plane $z = 0$ and apply the divergence theorem. Find the upward flux of $\\mathbf{F}$ through the paraboloid."
+            answer: "18pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (divergence): for $\\mathbf{F} = \\langle x, y, 2z \\rangle$, $\\operatorname{div}\\mathbf{F} = 1 + 1 + 2 = 4$. Step 2 (divergence theorem): the outward flux through the closed surface equals $\\iiint 4\\, dV = 4 \\int_0^{2\\pi}\\int_0^{\\sqrt{3}} (3 - r^{2})\\, r\\, dr\\, d\\theta = 4 \\cdot \\frac{9\\pi}{2} = 18\\pi$. Step 3 (disk check): on the disk $z = 0$ the outward normal is $\\langle 0, 0, -1 \\rangle$, so $\\mathbf{F} \\cdot \\mathbf{n} = -2z = 0$ and the disk contributes nothing. The upward flux through the paraboloid is 18pi."
+          - problem: "Let $\\mathbf{F} = \\langle y + z,\\ z - x,\\ x - y \\rangle$. Use the divergence theorem, citing it rather than computing any surface integral, and find the outward flux of $\\mathbf{F}$ through the sphere $x^{2} + y^{2} + z^{2} = 4$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (divergence): $\\operatorname{div}\\mathbf{F} = \\frac{\\partial}{\\partial x}(y+z) + \\frac{\\partial}{\\partial y}(z-x) + \\frac{\\partial}{\\partial z}(x-y) = 0 + 0 + 0 = 0$, so the field is divergence-free everywhere. Step 2 (divergence theorem): the outward flux through the closed sphere equals $\\iiint 0\\, dV = 0$; no surface integral is evaluated. The outward flux of F through the sphere is 0."
+          - problem: "Let $\\mathbf{F} = \\langle 0, 0, 2z + 3 \\rangle$. Close the upper hemisphere $x^{2} + y^{2} + z^{2} = 1$, $z \\ge 0$, with the disk $x^{2} + y^{2} \\le 1$ in the plane $z = 0$ and apply the divergence theorem. Find the upward flux of $\\mathbf{F}$ through the hemisphere."
+            answer: "13pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (divergence): $\\operatorname{div}\\mathbf{F} = 0 + 0 + 2 = 2$. Step 2 (divergence theorem): the closed outward flux equals $2 \\cdot \\frac{2\\pi}{3} = \\frac{4\\pi}{3}$, twice the volume of the unit hemisphere. Step 3 (disk check): on the disk $z = 0$ the outward normal is $\\langle 0, 0, -1 \\rangle$, so $\\mathbf{F} \\cdot \\mathbf{n} = -(2z+3) = -3$, a constant, and the disk flux is $-3\\pi$. Step 4 (subtract the disk): hemisphere flux $= \\frac{4\\pi}{3} - (-3\\pi) = \\frac{13\\pi}{3}$. The upward flux through the hemisphere is 13pi/3."
+          - problem: "The upward flux of $\\mathbf{F} = \\langle 0, 0, c z \\rangle$ through the hemisphere $x^{2} + y^{2} + z^{2} = 1$, $z \\ge 0$, computed by closing it with the disk $x^{2} + y^{2} \\le 1$ in the plane $z = 0$ and applying the divergence theorem, equals $\\frac{16\\pi}{3}$. Find the constant $c$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (divergence): $\\operatorname{div}\\mathbf{F} = c$, so by the divergence theorem the closed outward flux equals $c \\cdot \\frac{2\\pi}{3}$, the constant $c$ times the volume of the unit hemisphere. Step 2 (disk check): on the disk $z = 0$ the outward normal is $\\langle 0, 0, -1 \\rangle$, so $\\mathbf{F} \\cdot \\mathbf{n} = -cz = 0$ and the disk contributes nothing, leaving hemisphere flux $\\frac{2\\pi c}{3}$. Step 3 (solve): $\\frac{2\\pi c}{3} = \\frac{16\\pi}{3}$ gives $c = 8$. The constant c is 8."
         constraints: "closing exemplars use paraboloids or hemispheres capped by a flat disk on which F . n is 0 or constant; divergence-free exemplars require citing the theorem, not integrating; answers small rational multiples of pi or 0"
     diagnostic_exemplar:
       problem: 'Find the upward flux of $\mathbf{F} = \langle y,\; -x,\; z \rangle$ through the paraboloid $z = 4 - x^2 - y^2$, $z \ge 0$, by closing the surface with the disk $x^2 + y^2 \le 4$ in the plane $z = 0$ and applying the divergence theorem.'

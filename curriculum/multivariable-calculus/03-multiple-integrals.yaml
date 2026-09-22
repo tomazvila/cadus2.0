@@ -892,14 +892,30 @@ topics:
         name: "Setting up cylindrical integrals"
         key_prerequisites: [triple-integrals, double-integrals-polar]
         exemplars:
-          - problem: 'Describe the solid cylinder $x^2 + y^2 \le 4$, $0 \le z \le 3$ in cylindrical coordinates.'
-            answer: '$0 \le r \le 2$, $\;0 \le \theta \le 2\pi$, $\;0 \le z \le 3$'
-            solution_sketch: 'With $x^2+y^2\le 4$ meaning $0\le r\le 2$ and $z$ free from $0$ to $3$: $0\le r\le 2$, $0\le\theta\le 2\pi$, $0\le z\le 3$.'
-            answer_contract: {kind: none}
-          - problem: 'Rewrite $\iiint_E z \, dV$ over the cylinder $x^2 + y^2 \le 1$, $0 \le z \le 2$ as an iterated integral in cylindrical coordinates (do not evaluate).'
-            answer: '$\int_0^{2\pi} \int_0^1 \int_0^2 z\, r \, dz\, dr\, d\theta$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The region is a product in $(r, \theta, z)$; the volume element contributes the factor $r$.'
+          - problem: "Give the cylindrical integrand f, including the factor r, and the upper bound rmax for the triple integral of z over the solid cylinder x^2 + y^2 <= 9 with 0 <= z <= 4."
+            answer: "f = r*z; rmax = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["r", "z"]}, "name": "f"}, {"contract": {"kind": "exact"}, "name": "rmax"}]}
+            solution_sketch: "Step 1: Convert the integrand z to cylindrical coordinates; z stays z and the volume factor is r, so the integrand is r*z. Step 2: The cylinder x^2 + y^2 <= 9 has r <= 3, so rmax is 3. The full answer is f = r*z; rmax = 3."
+          - problem: "Give the cylindrical integrand f, including the factor r, and the upper bound rmax for the triple integral of x over the solid cylinder x^2 + y^2 <= 16 with 0 <= z <= 5."
+            answer: "f = r^2*cos(theta); rmax = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["r", "theta"]}, "name": "f"}, {"contract": {"kind": "exact"}, "name": "rmax"}]}
+            solution_sketch: "Step 1: In cylindrical coordinates x = r cos(theta), and x^2 + y^2 <= 16 gives r <= 4. Step 2: The integrand x becomes r cos(theta), and the volume factor r makes it r^2 cos(theta). The full answer is f = r^2*cos(theta); rmax = 4."
+          - problem: "Give the cylindrical integrand f, including the factor r, and the lower z bound zlow for the triple integral of 1 over the solid inside the cone z = sqrt(x^2 + y^2) and below z = 3."
+            answer: "f = r; zlow = r"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["r"]}, "name": "f"}, {"contract": {"kind": "function", "vars": ["r"]}, "name": "zlow"}]}
+            solution_sketch: "Step 1: The solid has 0 <= theta <= 2pi and r from 0 to 3, while z runs from the cone z = r up to 3. Step 2: The integrand 1 gains the volume factor r, so f = r, and the lower z bound is zlow = r. The full answer is f = r; zlow = r."
+          - problem: "Give the cylindrical integrand f, including the factor r, and the lower z bound zlow for the triple integral of y over the solid between the cone z = sqrt(x^2 + y^2) and the plane z = 2."
+            answer: "f = r^2*sin(theta); zlow = r"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["r", "theta"]}, "name": "f"}, {"contract": {"kind": "function", "vars": ["r"]}, "name": "zlow"}]}
+            solution_sketch: "Step 1: In cylindrical coordinates y = r sin(theta), and the cone z = sqrt(x^2 + y^2) becomes z = r, so z runs from r up to the plane z = 2. Step 2: The integrand y becomes r sin(theta), and the volume factor r gives r^2 sin(theta). The full answer is f = r^2*sin(theta); zlow = r."
+          - problem: "Give the cylindrical integrand f, including the factor r, and the upper bound rmax for the triple integral of x^2 + y^2 over the solid cylinder x^2 + y^2 <= 25 with 0 <= z <= 6."
+            answer: "f = r^3; rmax = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["r"]}, "name": "f"}, {"contract": {"kind": "exact"}, "name": "rmax"}]}
+            solution_sketch: "Step 1: The cylinder x^2 + y^2 <= 25 gives r <= 5. Step 2: The integrand x^2 + y^2 is r^2, and the volume factor r makes it r^3. The full answer is f = r^3; rmax = 5."
+          - problem: "Give the cylindrical integrand f, including the factor r, and the lower z bound zlow for the triple integral of z over the solid inside the cone z = sqrt(x^2 + y^2) and below z = 4."
+            answer: "f = r*z; zlow = r"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["r", "z"]}, "name": "f"}, {"contract": {"kind": "function", "vars": ["r"]}, "name": "zlow"}]}
+            solution_sketch: "Step 1: The cone z = sqrt(x^2 + y^2) becomes z = r, so z runs from r to 4. Step 2: The integrand z stays z, and the volume factor r makes the integrand r*z. The full answer is f = r*z; zlow = r."
         constraints: "solids are coordinate cylinders/cones; the answer is the description or set-up, always including the factor r"
       - id: kp2
         name: "Evaluating cylindrical integrals"
