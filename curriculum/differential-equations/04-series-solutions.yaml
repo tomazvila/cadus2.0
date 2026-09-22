@@ -152,27 +152,59 @@ topics:
         name: First terms from initial conditions
         key_prerequisites: [power-series-method]
         exemplars:
-          - problem: "Find the first three nonzero terms of the series solution of $y'' + y = 0$, $y(0) = 0$, $y'(0) = 1$."
-            answer: '$y = x - \dfrac{x^3}{6} + \dfrac{x^5}{120} - \cdots$'
-            answer_contract: {kind: none}
-            solution_sketch: '$a_0 = 0$, $a_1 = 1$; the recurrence $a_{k+2} = -a_k/((k+2)(k+1))$ gives $a_3 = -1/6$, $a_5 = 1/120$ — the sine series.'
-          - problem: "Find the first three nonzero terms of the series solution of $y'' - 4y = 0$, $y(0) = 1$, $y'(0) = 0$."
-            answer: '$y = 1 + 2x^2 + \dfrac{2x^4}{3} + \cdots$'
-            answer_contract: {kind: none}
-            solution_sketch: '$a_{k+2} = 4a_k/((k+2)(k+1))$: $a_2 = 2$, $a_4 = \frac{4 \cdot 2}{12} = \frac{2}{3}$.'
+          - problem: "The equation y'' + y = 0 has a power-series solution about x = 0 with y(0) = 0 and y'(0) = 1. Find the first three nonzero terms and give their coefficients, in order, as a comma-separated list."
+            answer: "1, -1/6, 1/120"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Write the full series y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + a5*x^5 + ... . The two initial conditions give a0 = 0 and a1 = 1, which kills the even chain. Substituting the series into y'' + y = 0 and matching powers gives the recurrence in which each coefficient is minus the one two places back divided by (k+1)(k+2). Then a3 = -1/6 and a5 = 1/120, so the three nonzero terms are x, -x^3/6 and x^5/120. The coefficients in order are 1, -1/6, 1/120."
+          - problem: "A solution of y'' - 4y = 0 satisfies y(0) = 1 and y'(0) = 0. Find the first three nonzero terms of its power series about x = 0 and list their coefficients, in order, as a comma-separated list."
+            answer: "1, 2, 2/3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Write the full series y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + ... . The initial conditions give a0 = 1 and a1 = 0, which kills the odd chain. Substituting into y'' - 4y = 0 with the power series method gives each coefficient equal to 4 times the one two places back divided by (k+1)(k+2). Then a2 = 4/2 = 2 and a4 = 4*2/12 = 2/3, so the three nonzero terms are 1, 2x^2 and 2x^4/3. The coefficients in order are 1, 2, 2/3."
+          - problem: "Take the initial-value problem y'' + y = 0 with y(0) = 1 and y'(0) = 1. Find the first three nonzero terms of the series solution and give their coefficients, in order, as a comma-separated list."
+            answer: "1, 1, -1/2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The full series is y = a0 + a1*x + a2*x^2 + ... . The initial conditions give a0 = 1 and a1 = 1, so both coefficient chains are active. Substituting into y'' + y = 0 gives the recurrence a(k+2) = -a(k) divided by (k+1)(k+2). Then a2 = -1/2, so the three nonzero terms are 1, x and -x^2/2. The coefficients in order are 1, 1, -1/2."
+          - problem: "An initial-value problem reads y'' + 9y = 0, y(0) = 0, y'(0) = 2. Find the first three nonzero terms of the power-series solution about x = 0 and list their coefficients, in order, as a comma-separated list."
+            answer: "2, -3, 27/20"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The full series is y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + a5*x^5 + ... . The initial conditions give a0 = 0 and a1 = 2, which kills the even chain. Substituting into y'' + 9y = 0 gives each coefficient as -9 times the one two places back divided by (k+1)(k+2). Then a3 = -18/6 = -3 and a5 = -9*(-3)/20 = 27/20, so the three nonzero terms are 2x, -3x^3 and 27x^5/20. The coefficients in order are 2, -3, 27/20."
+          - problem: "A mass on a spring obeys y'' + 16y = 0 with y(0) = 3 and y'(0) = 0. Find the first three nonzero terms of the series solution and give their coefficients, in order, as a comma-separated list."
+            answer: "3, -24, 32"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The full series is y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + ... . The initial conditions give a0 = 3 and a1 = 0, so the odd chain is killed. Substituting into y'' + 16y = 0 gives each coefficient as -16 times the one two places back divided by (k+1)(k+2). Then a2 = -48/2 = -24 and a4 = -16*(-24)/12 = 32, so the three nonzero terms are 3, -24x^2 and 32x^4. The coefficients in order are 3, -24, 32."
+          - problem: "Start from y'' + 2y = 0 with y(0) = 1 and y'(0) = 0. Find the first three nonzero terms of its power-series solution and list their coefficients, in order, as a comma-separated list."
+            answer: "1, -1, 1/6"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The full series is y = a0 + a1*x + a2*x^2 + a3*x^3 + a4*x^4 + ... . The initial conditions give a0 = 1 and a1 = 0, so only the even chain survives. Substituting into y'' + 2y = 0 gives each coefficient as -2 times the one two places back divided by (k+1)(k+2). Then a2 = -2/2 = -1 and a4 = -2*(-1)/12 = 1/6, so the three nonzero terms are 1, -x^2 and x^4/6. The coefficients in order are 1, -1, 1/6."
         constraints: "constant coefficients with small integer values; initial conditions kill one of the two coefficient chains or keep both chains short; ask for exactly the first three nonzero terms"
       - id: kp2
         name: The two basic solutions
         key_prerequisites: [power-series-method, homogeneous-constant-coefficients]
         exemplars:
-          - problem: "For $y'' - y = 0$, give the first three terms of the basic solutions $y_1$ (with $a_0 = 1$, $a_1 = 0$) and $y_2$ (with $a_0 = 0$, $a_1 = 1$)."
-            answer: '$y_1 = 1 + \dfrac{x^2}{2} + \dfrac{x^4}{24} + \cdots$, $\quad y_2 = x + \dfrac{x^3}{6} + \dfrac{x^5}{120} + \cdots$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The recurrence $a_{k+2} = a_k/((k+2)(k+1))$ runs the even chain from $a_0$ and the odd chain from $a_1$.'
-          - problem: "How do the series $y_1, y_2$ for $y'' - y = 0$ relate to the characteristic-equation solution $c_1 e^x + c_2 e^{-x}$?"
-            answer: '$y_1 = \dfrac{e^x + e^{-x}}{2}$ and $y_2 = \dfrac{e^x - e^{-x}}{2}$: the same solution space, in a different basis.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Adding and subtracting the Maclaurin series of $e^x$ and $e^{-x}$ reproduces the even and odd series.'
+          - problem: "For y'' - y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
+            answer: "y1 = 1 + x^2/2 + x^4/24; y2 = x + x^3/6 + x^5/120"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
+            solution_sketch: "The recurrence from y'' - y = 0 is a_{n+2} = a_n/((n+2)(n+1)). For y1, a0=1 gives a2=1/2 and a4=1/24, so y1 = 1 + x^2/2 + x^4/24. For y2, a1=1 gives a3=1/6 and a5=1/120, so y2 = x + x^3/6 + x^5/120. The first three nonzero terms are y1 = 1 + x^2/2 + x^4/24; y2 = x + x^3/6 + x^5/120."
+          - problem: "For y'' - y = 0, find the even basic solution y1 and the odd basic solution y2 as combinations of e^x and e^(-x)."
+            answer: "y1 = (e^(x) + e^(-x))/2; y2 = (e^(x) - e^(-x))/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
+            solution_sketch: "Use the Maclaurin series e^t = sum t^n/n!. Adding e^(x) and e^(-x) kills the odd powers, giving 2(1 + x^2/2 + x^4/24 + ...) = 2 cosh(x). Subtracting e^(-x) from e^(x) keeps the odd powers, giving 2(x + x^3/6 + x^5/120 + ...) = 2 sinh(x). Therefore y1 = (e^(x) + e^(-x))/2; y2 = (e^(x) - e^(-x))/2."
+          - problem: "For y'' + 2y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
+            answer: "y1 = 1 - x^2 + x^4/6; y2 = x - x^3/3 + x^5/30"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
+            solution_sketch: "The recurrence from y'' + 2y = 0 is a_{n+2} = -2 a_n/((n+2)(n+1)). For y1, a0=1 gives a2=-1 and a4=1/6, so y1 = 1 - x^2 + x^4/6. For y2, a1=1 gives a3=-1/3 and a5=1/30, so y2 = x - x^3/3 + x^5/30. The first three nonzero terms are y1 = 1 - x^2 + x^4/6; y2 = x - x^3/3 + x^5/30."
+          - problem: "For y'' - 4y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
+            answer: "y1 = 1 + 2x^2 + 2x^4/3; y2 = x + 2x^3/3 + 2x^5/15"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
+            solution_sketch: "The recurrence from y'' - 4y = 0 is a_{n+2} = 4 a_n/((n+2)(n+1)). For y1, a0=1 gives a2=2 and a4=2/3, so y1 = 1 + 2x^2 + 2x^4/3. For y2, a1=1 gives a3=2/3 and a5=2/15, so y2 = x + 2x^3/3 + 2x^5/15. The first three nonzero terms are y1 = 1 + 2x^2 + 2x^4/3; y2 = x + 2x^3/3 + 2x^5/15."
+          - problem: "For y'' + 5y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
+            answer: "y1 = 1 - 5x^2/2 + 25x^4/24; y2 = x - 5x^3/6 + 5x^5/24"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
+            solution_sketch: "The recurrence from y'' + 5y = 0 is a_{n+2} = -5 a_n/((n+2)(n+1)). For y1, a0=1 gives a2=-5/2 and a4=25/24, so y1 = 1 - 5x^2/2 + 25x^4/24. For y2, a1=1 gives a3=-5/6 and a5=5/24, so y2 = x - 5x^3/6 + 5x^5/24. The first three nonzero terms are y1 = 1 - 5x^2/2 + 25x^4/24; y2 = x - 5x^3/6 + 5x^5/24."
+          - problem: "For y'' - 9y = 0, find the first three nonzero terms of the even basic solution y1 and the odd basic solution y2."
+            answer: "y1 = 1 + 9x^2/2 + 27x^4/8; y2 = x + 3x^3/2 + 27x^5/40"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "y1"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "y2"}]}
+            solution_sketch: "The recurrence from y'' - 9y = 0 is a_{n+2} = 9 a_n/((n+2)(n+1)). For y1, a0=1 gives a2=9/2 and a4=27/8, so y1 = 1 + 9x^2/2 + 27x^4/8. For y2, a1=1 gives a3=3/2 and a5=27/40, so y2 = x + 3x^3/2 + 27x^5/40. The first three nonzero terms are y1 = 1 + 9x^2/2 + 27x^4/8; y2 = x + 3x^3/2 + 27x^5/40."
         constraints: "constant-coefficient equations whose closed forms the learner can check against characteristic-equation solutions"
       - id: kp3
         name: Polynomial coefficients and the guaranteed radius
