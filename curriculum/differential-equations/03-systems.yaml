@@ -495,35 +495,59 @@ topics:
         name: Classification from eigenvalues
         key_prerequisites: [linear-systems-eigenvalues]
         exemplars:
-          - problem: 'A $2\times 2$ linear system has eigenvalues $\lambda = -2$ and $\lambda = -5$. Classify the origin.'
-            answer: 'Stable node (sink): both eigenvalues real and negative; asymptotically stable.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Stable node (sink): both eigenvalues real and negative; asymptotically stable.'
-          - problem: 'Classify the origin when $\lambda = 3$ and $\lambda = -1$.'
-            answer: 'Saddle point: real eigenvalues of opposite sign; unstable.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Saddle point: real eigenvalues of opposite sign; unstable.'
-          - problem: 'Classify the origin when $\lambda = -1 \pm 3i$.'
-            answer: 'Stable spiral: complex eigenvalues with negative real part; trajectories spiral inward.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Stable spiral: complex eigenvalues with negative real part; trajectories spiral inward.'
+          - problem: "A linear system in the plane has eigenvalues -4 and -9. Select the classification of the equilibrium at the origin that names both its type and its stability."
+            answer: "stable node (sink)"
+            answer_contract: {"kind": "label", "options": [["stable node (sink)"], ["unstable node (source)"], ["stable spiral (sink)"], ["unstable spiral (source)"], ["saddle point (unstable)"]]}
+            solution_sketch: "The full object is the eigenvalue pair -4 and -9, both real and both negative. Rule for real eigenvalues of the same sign: the origin is a node, and two negative eigenvalues make it attracting, so the verdict is asymptotically stable. Each wrong option comes from one error: unstable node (source) would need both eigenvalues positive; stable spiral (sink) and unstable spiral (source) would need complex eigenvalues; saddle point (unstable) would need eigenvalues of opposite sign. The answer is stable node (sink)."
+          - problem: "The eigenvalues of a planar linear system are 8 and -3. Select the classification of the equilibrium at the origin that names both its type and its stability."
+            answer: "saddle point (unstable)"
+            answer_contract: {"kind": "label", "options": [["stable node (sink)"], ["unstable node (source)"], ["stable spiral (sink)"], ["unstable spiral (source)"], ["saddle point (unstable)"]]}
+            solution_sketch: "The full object is the eigenvalue pair 8 and -3, real with opposite signs. Rule for opposite signs: the origin is a saddle point, and since trajectories escape along one eigendirection, the verdict is unstable. Each wrong option comes from one error: stable node (sink) would need both eigenvalues negative; unstable node (source) would need both positive; stable spiral (sink) and unstable spiral (source) would need complex eigenvalues. The answer is saddle point (unstable)."
+          - problem: "Four planar linear systems are listed with the eigenvalues of each. System 1: -5 ± 2i. System 2: 3 ± 7i. System 3: -6 ± 5i. System 4: 4 and -8. Give the numbers of the systems whose equilibrium at the origin is a stable spiral, in increasing order."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Classify every system with the complex-eigenvalue rule: a nonzero imaginary part gives a spiral, and the spiral attracts exactly when the real part is negative. System 1, -5 ± 2i: spiral with negative real part, so its origin is a stable spiral. System 2, 3 ± 7i: spiral with positive real part, so it is not stable. System 3, -6 ± 5i: spiral with negative real part, a stable spiral. System 4, 4 and -8: real eigenvalues of opposite sign, a saddle, not a spiral. The answer is 1, 3."
+          - problem: "Three planar systems are described by their eigenvalues. System A: -10 and -3. System B: 7 ± 2i. System C: -4 ± 3i. How many of these systems have a stable spiral at the origin?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the spiral rule to each system: complex eigenvalues give spiraling motion, and the origin attracts only when the real part is negative. System A, -10 and -3: a real negative pair, an attracting node with no spiraling. System B, 7 ± 2i: positive real part, a spiral that unwinds outward, so it is not stable. System C, -4 ± 3i: negative real part, a spiral that winds inward, a stable spiral. Only system C qualifies. The answer is 1."
+          - problem: "A family of linear systems has eigenvalues a + 2 and a - 6, where a is real. Find all values of a for which the equilibrium at the origin is an unstable saddle point. Give the answer as an inequality in a."
+            answer: "-2 < a < 6"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Saddle rule: with real eigenvalues, the origin is a saddle exactly when the two eigenvalues have opposite signs, that is when their product is negative. The product is (a + 2)(a - 6), an upward-opening quadratic with roots -2 and 6, so it is negative strictly between the two roots. The answer is -2 < a < 6."
+          - problem: "A linear system has eigenvalues 3k - 9 and k + 4, where k is an integer. Find the largest integer k for which the equilibrium at the origin is a stable node."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Stable node rule: both eigenvalues must be real, negative, and nonzero. The two conditions are 3k - 9 < 0, which gives k < 3, and k + 4 < 0, which gives k < -4; together they require k < -4. The largest integer strictly below -4 is -5. The answer is -5."
         constraints: "cover node/saddle/spiral; always state both the type and the stability verdict"
       - id: kp3
         name: The remaining cases
         key_prerequisites: [linear-systems-eigenvalues]
         exemplars:
-          - problem: 'Classify the origin when $\lambda = 2$ and $\lambda = 5$.'
-            answer: 'Unstable node (source): both eigenvalues real and positive; all trajectories leave the origin.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Unstable node (source): both eigenvalues real and positive; all trajectories leave the origin.'
-          - problem: 'Classify the origin when $\lambda = \pm 4i$.'
-            answer: 'Center: purely imaginary eigenvalues; closed orbits, stable but not asymptotically stable.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Center: purely imaginary eigenvalues; closed orbits, stable but not asymptotically stable.'
-          - problem: 'Classify the origin when $\lambda = 2 \pm i$.'
-            answer: 'Unstable spiral: complex eigenvalues with positive real part; trajectories spiral outward.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Unstable spiral: complex eigenvalues with positive real part; trajectories spiral outward.'
+          - problem: "A linear system X' = AX has the two eigenvalues 3 and 8. State the type of the equilibrium at the origin and give count, that is, how many of the two eigenvalues have a positive real part; that count carries the stability verdict."
+            answer: "type = source; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["source"], ["sink"], ["saddle"], ["center"], ["spiral"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The two eigenvalues are 3 and 8. Sign rule for linear systems: the verdict is repelling when every eigenvalue has a positive real part. Both eigenvalues are real and positive, so the count of positive real parts is 2 and the stability verdict is unstable; two distinct positive real eigenvalues make the origin a source. Wrong options: sink needs both eigenvalues negative; saddle needs eigenvalues of opposite sign; center needs a purely imaginary pair; spiral needs a complex pair with nonzero real part. The answer is type = source; count = 2."
+          - problem: "A linear system X' = AX has the two eigenvalues 7i and -7i. State the type of the equilibrium at the origin and give realpart, the real part common to the two eigenvalues; that number settles the stability verdict."
+            answer: "type = center; realpart = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["source"], ["sink"], ["saddle"], ["center"], ["spiral"]]}, "name": "type"}, {"contract": {"kind": "exact"}, "name": "realpart"}]}
+            solution_sketch: "The two eigenvalues are 7i and -7i, a purely imaginary pair. Eigenvalue rule for centers: with real part 0 on both eigenvalues, no growth and no decay occurs, and the trajectories are closed orbits around the origin. The common real part is 0, so the stability verdict is stable but not asymptotically stable, because trajectories keep their distance instead of approaching the origin; the type is a center. Wrong options: source needs two positive real eigenvalues; sink needs two negative real eigenvalues; saddle needs real eigenvalues of opposite sign; spiral needs a nonzero real part. The answer is type = center; realpart = 0."
+          - problem: "A linear system X' = AX has the two eigenvalues 5+2i and 5-2i. State the type of the equilibrium at the origin together with its stability."
+            answer: "unstable spiral"
+            answer_contract: {"kind": "label", "options": [["unstable spiral"], ["stable spiral"], ["stable center"], ["unstable node"], ["stable node"], ["saddle point"]]}
+            solution_sketch: "The two eigenvalues are 5+2i and 5-2i, a complex conjugate pair. Classification rule: a complex pair makes trajectories rotate around the origin, and the sign of the real part decides the verdict; the real part 5 is positive, so the amplitude grows and every nonzero trajectory winds away from the origin. The verdict is unstable and the type is an unstable spiral. Wrong options: stable spiral needs a negative real part; stable center needs real part 0; unstable node and stable node need real eigenvalues, not a complex pair; saddle point needs real eigenvalues of opposite sign. The answer is unstable spiral."
+          - problem: "A linear system X' = AX has the coefficient matrix [a, -5; 5, a] with real parameter a, and its eigenvalues are a+5i and a-5i. Determine, as an inequality in a, the values of a for which every nonzero trajectory winds away from the origin along an outward spiral, the unstable verdict."
+            answer: "a > 0"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The eigenvalues of [a, -5; 5, a] are a+5i and a-5i, a complex conjugate pair for every real a. Spiral rule: a complex pair makes trajectories wind around the origin, and they wind outward exactly when the real part is positive, which is the unstable verdict. The real part equals a, so the outward winding holds precisely for a > 0; at a = 0 the orbits close into circles, and for a < 0 they wind inward. The answer is a > 0."
+          - problem: "The coefficient matrix of a linear system X' = AX is [a+3, -2; 2, a+3], with real parameter a, and its eigenvalues are (a+3)+2i and (a+3)-2i. Find the value of a for which the origin is a center, that is, an equilibrium with closed orbits and the stable-but-not-attracting verdict."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The eigenvalues are (a+3)+2i and (a+3)-2i. Center rule: the origin is a center exactly when the eigenvalues form a purely imaginary pair, so the common real part must be 0 while the imaginary part stays nonzero. Set a+3 = 0, which gives a = -3; then the eigenvalues are 2i and -2i, the orbits are closed, and the verdict is stable but not attracting. The answer is -3."
+          - problem: "Take the linear system X' = AX with coefficient matrix [k, 1; 4, k], where k is real; its eigenvalues are k-2 and k+2. Give, as an inequality in k, the values of k for which the origin is a source, that is, an unstable node with both eigenvalues positive."
+            answer: "k > 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "The eigenvalues are k-2 and k+2, two real and distinct eigenvalues. Source rule: the origin is a source exactly when both real eigenvalues are positive, which gives the unstable verdict because every trajectory then leaves the origin. Both are positive when k-2 > 0 and k+2 > 0, and the binding condition is k > 2; between -2 and 2 the signs oppose, and below -2 both eigenvalues are negative. The answer is k > 2."
         constraints: "cover source/center/unstable spiral; stability verdict required each time"
     diagnostic_exemplar:
       problem: 'A $2 \times 2$ linear system $\mathbf{X}'' = A\mathbf{X}$ has eigenvalues $\lambda = 2 \pm 3i$. Classify the origin, state its stability, and explain why it is the only equilibrium.'
