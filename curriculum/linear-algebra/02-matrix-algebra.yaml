@@ -204,6 +204,22 @@ topics:
             answer: "[2,3;1,4]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$AI = A$ for every matrix $A$ (and $IA = A$).'
+          - problem: "Let A = [[6,-2],[4,1]]. Compute I2 A. Give the result as [a,b;c,d]."
+            answer: "[6,-2;4,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The full object is I2 A with A = [[6,-2],[4,1]]. Step 1: the identity rule says I2 times a 2x2 matrix copies each row, so row 1 is 6,-2. Step 2: row 2 copies as 4,1. The result is [6,-2;4,1]."
+          - problem: "Compute A I2 for A = [[3,8],[-5,2]]. Give the result as [a,b;c,d]."
+            answer: "[3,8;-5,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The full object is A I2 with A = [[3,8],[-5,2]]. Step 1: the identity rule says multiplying on the right by I2 copies each column, so column 1 is 3,-5. Step 2: column 2 copies as 8,2. The result is [3,8;-5,2]."
+          - problem: "Compute I2 I2. Give the result as [a,b;c,d]."
+            answer: "[1,0;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The full object is I2 I2. Step 1: the identity rule says I2 times any 2x2 matrix leaves that matrix unchanged. Step 2: apply this rule to the matrix I2 itself. The result is [1,0;0,1]."
+          - problem: "For I2 = [[1,0],[0,1]], find x so that I2 [[x,2],[5,3]] = [[7,2],[5,3]]. Give x."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is I2 [[x,2],[5,3]] = [[7,2],[5,3]], with I2 the 2x2 identity. Step 1: the identity rule says I2 times a matrix leaves it unchanged, so [[x,2],[5,3]] = [[7,2],[5,3]]. Step 2: compare the top-left entries to get x = 7. The value is 7."
         constraints: "verify AI = IA = A numerically on 2x2 matrices"
       - id: kp2
         name: The zero matrix
