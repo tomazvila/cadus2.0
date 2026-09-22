@@ -1888,18 +1888,30 @@ topics:
         name: Long-run behavior and timing
         key_prerequisites: [linear-first-order-integrating-factor]
         exemplars:
-          - problem: "For $A(t) = 200(1 - e^{-t/20})$, how much salt does the tank hold in the long run?"
-            answer: "$200$ g"
-            answer_contract: {kind: none}
-            solution_sketch: "Set $A' = 0$ (or note the inflow concentration $2$ g/L times the $100$ L volume)."
-          - problem: "For $A(t) = 200(1 - e^{-t/20})$, when does the tank hold $100$ g?"
-            answer: "$t = 20\\ln 2$ minutes"
-            answer_contract: {kind: none}
-            solution_sketch: "$1 - e^{-t/20} = \\tfrac{1}{2}$ gives $e^{-t/20} = \\tfrac{1}{2}$."
-          - problem: "What is the long-run concentration in a constant-volume tank fed with brine at $2$ g/L?"
-            answer: "$2$ g/L — the inflow concentration."
-            answer_contract: {kind: none}
-            solution_sketch: "$2$ g/L — the inflow concentration."
+          - problem: "An 80 L tank is fed brine containing 5 g/L at 8 L/min, and the well-mixed solution leaves at 8 L/min. The salt amount satisfies dA/dt = 40 - A/10. Find the long-run amount of salt in the tank in grams."
+            answer: "400"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The model is dA/dt = 40 - A/10. Set dA/dt = 0 for the long-run state: 0 = 40 - A/10, so A/10 = 40 and A = 400. The long-run amount is 400 grams."
+          - problem: "A tank's salt amount follows A(t) = 150(1 - e^(-t/12)). The time to reach 3/4 of its long-run value is t = k(12 ln 2). Find k."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The model is A(t) = 150(1 - e^(-t/12)). The long-run value is 150, so 3/4 of it is 112.5. Set 150(1 - e^(-t/12)) = 112.5, so e^(-t/12) = 1/4. Then t/12 = ln 4 = 2 ln 2, so t = 2(12 ln 2) and k = 2."
+          - problem: "A constant-volume tank is fed with brine at 6 g/L. The tank is well mixed and drains at the same rate. Find the long-run salt concentration in the tank in grams per liter."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The model is a constant-volume tank fed with brine at 6 g/L. At equilibrium the outflow concentration equals the inflow concentration. The long-run concentration is therefore 6 g/L. The value is 6."
+          - problem: "A tank's salt amount follows A(t) = 250(1 - e^(-t/15)). Find the long-run amount of salt in grams."
+            answer: "250"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The model is A(t) = 250(1 - e^(-t/15)). As t grows, the exponential term e^(-t/15) goes to 0. Thus A(t) tends to 250(1 - 0) = 250. The long-run amount is 250 grams."
+          - problem: "A tank starts with 300 g of salt. Its long-run amount is 100 g. The amount is A(t) = 100 + 200e^(-t/8). Find the multiplier k such that A(t) = 125 g at t = k(8 ln 2)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The model is A(t) = 100 + 200e^(-t/8). At t = 0 the amount is 300 g, and the long-run amount is 100 g. Set A(t) = 125: 100 + 200e^(-t/8) = 125, so e^(-t/8) = 1/8. Then t/8 = ln 8 = 3 ln 2, so t = 3(8 ln 2) and k = 3."
+          - problem: "A 50 L tank is fed pure water at 5 L/min while brine drains at 5 L/min. Initially it holds 320 g of salt. The salt amount is A(t) = 320e^(-t/10). The time to fall to 20 g is t = k(10 ln 2). Find k."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The model is A(t) = 320e^(-t/10). Set A(t) = 20: 320e^(-t/10) = 20, so e^(-t/10) = 1/16. Then t/10 = ln 16 = 4 ln 2, so t = 4(10 ln 2) and k = 4."
         constraints: "long-run amount = inflow concentration x volume; timing answers are clean multiples of tau ln 2"
     diagnostic_exemplar:
       problem: 'A $40$ L tank starts with pure water. Brine containing $3$ g/L flows in at $4$ L/min and the well-mixed solution leaves at $4$ L/min. Find the amount of salt $A(t)$ in the tank, and the time at which it reaches $60$ g.'
