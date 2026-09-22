@@ -62,6 +62,7 @@ topics:
             solution_sketch: '$\sinh^2 x = \cosh^2 x - 1 = \frac{25}{16} - 1 = \frac{9}{16}$; $x > 0$ gives the positive root $\frac{3}{4}$.'
           - problem: 'Simplify $\cosh(-x)$: is it $\cosh(x)$ or $-\cosh(x)$?'
             answer: "cosh(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Swapping $x \to -x$ swaps $e^x$ and $e^{-x}$, which leaves their sum unchanged: $\cosh$ is even (and $\sinh$, built on the difference, is odd).'
         constraints: "identity values from the pairs (cosh, sinh) = (5/4, 3/4) or (13/12, 5/12); state x > 0 so the sign of sinh is determined; parity questions offer the two candidate answers"
       - id: kp3
@@ -130,12 +131,15 @@ topics:
         exemplars:
           - problem: 'Differentiate $\sinh x = \frac{e^x - e^{-x}}{2}$ term by term.'
             answer: "cosh(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: '$\frac{e^x - (-e^{-x})}{2} = \frac{e^x + e^{-x}}{2} = \cosh x$.'
           - problem: 'Differentiate $f(x) = \cosh x$.'
             answer: "sinh(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: '$\frac{e^x + (-e^{-x})}{2} = \sinh x$ — note there is NO minus sign, unlike $\frac{d}{dx}\cos x = -\sin x$.'
           - problem: 'Differentiate $f(x) = 3\cosh x + x^2$.'
             answer: "3sinh(x) + 2x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
         constraints: "linear combinations of sinh x, cosh x, and power terms; integer coefficients; occasionally ask for the derivation from the e^x definitions"
       - id: kp2
         name: Chain rule with hyperbolic functions
@@ -143,11 +147,14 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = \sinh(3x)$.'
             answer: "3cosh(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = \cosh(x^2)$.'
             answer: "2x sinh(x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Chain rule: $\sinh(x^2) \cdot 2x$.'
           - problem: 'Using the quotient rule on $\tanh x = \frac{\sinh x}{\cosh x}$ and the identity $\cosh^2 x - \sinh^2 x = 1$, differentiate $\tanh x$.'
             answer: "1/cosh(x)^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: '$\frac{\cosh^2 x - \sinh^2 x}{\cosh^2 x} = \frac{1}{\cosh^2 x}$.'
         constraints: "inner function bx or x^2; the tanh derivative always routed through the quotient rule plus the identity"
       - id: kp3
@@ -156,6 +163,7 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = x\sinh x$.'
             answer: "sinh(x) + x cosh(x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Product rule: $1 \cdot \sinh x + x \cdot \cosh x$.'
           - problem: 'A chain hangs as the catenary $y = \cosh x$. Find its slope at $x = \ln 2$.'
             answer: "3/4"

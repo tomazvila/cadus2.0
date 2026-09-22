@@ -243,10 +243,13 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = \sin x$.'
             answer: "cos x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = 3\sin x - 2\cos x$.'
             answer: "3cos x + 2sin x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = 4\cos x + x^2$.'
             answer: "-4sin x + 2x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
         constraints: "linear combinations of sin, cos, and power terms with integer coefficients"
       - id: kp2
         name: Evaluate trig derivatives at unit-circle angles
@@ -279,8 +282,10 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = x \sin x$.'
             answer: "sin x + x cos x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = x^2 \cos x$.'
             answer: "2x cos x - x^2 sin x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Product rule: $2x \cos x + x^2(-\sin x)$.'
         constraints: "one power factor times sin or cos; no chain rule yet"
     diagnostic_exemplar:
@@ -320,11 +325,14 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = \tan x$.'
             answer: "sec^2 x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Quotient rule on $\frac{\sin x}{\cos x}$: $\frac{\cos^2 x + \sin^2 x}{\cos^2 x} = \sec^2 x$.'
           - problem: 'Differentiate $f(x) = \sec x$.'
             answer: "sec x tan x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = \csc x$.'
             answer: "-csc x cot x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
         constraints: "tan, cot, sec, csc; derivations via quotient rule accepted, memorized forms required"
       - id: kp2
         name: Trig derivatives with the chain rule
@@ -332,11 +340,14 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = \sin(3x)$.'
             answer: "3cos(3x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = \cos(x^2)$.'
             answer: "-2x sin(x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Outer $-\sin(\cdot)$ at $x^2$, times inner derivative $2x$.'
           - problem: 'Differentiate $f(x) = \sin^2 x$.'
             answer: "2 sin x cos x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'General power rule: $2\sin x \cdot \cos x$ (equivalently $\sin 2x$).'
         constraints: "inner function bx or x^2, or an outer square of a trig function; integer multipliers"
       - id: kp3
@@ -345,11 +356,13 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = x \tan x$.'
             answer: "tan x + x sec^2 x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'For $f(x) = \sin(2x)$, find $f''(\pi/6)$.'
             answer: "1"
             solution_sketch: '$f''(x) = 2\cos(2x)$; $2\cos(\pi/3) = 2 \cdot \frac{1}{2} = 1$.'
           - problem: 'Differentiate $f(x) = \frac{\sin x}{1 + \cos x}$ and simplify.'
             answer: "1/(1 + cos x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Quotient rule: $\frac{\cos x(1 + \cos x) + \sin^2 x}{(1 + \cos x)^2} = \frac{\cos x + 1}{(1 + \cos x)^2}$.'
         constraints: "evaluation angles from the unit circle; simplification via sin² + cos² = 1"
     diagnostic_exemplar:
@@ -544,12 +557,15 @@ topics:
         exemplars:
           - problem: 'Find $f''''(x)$ for $f(x) = \sin x$.'
             answer: "-sin x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: '$\cos x \to -\sin x$.'
           - problem: 'Find the fourth derivative of $f(x) = \sin x$.'
             answer: "sin x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The cycle $\sin \to \cos \to -\sin \to -\cos \to \sin$ has period 4.'
           - problem: 'Find $f''''''(x)$ (the third derivative) for $f(x) = \cos x$.'
             answer: "sin x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: '$\cos \to -\sin \to -\cos \to \sin$.'
         constraints: "sin and cos only; exploit the 4-cycle"
     diagnostic_exemplar:
@@ -830,11 +846,14 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = \log_2 x$.'
             answer: "1/(x ln 2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: '$\log_2 x = \frac{\ln x}{\ln 2}$, so the derivative is $\frac{1}{x \ln 2}$.'
           - problem: 'Differentiate $f(x) = \log_{10} x$.'
             answer: "1/(x ln 10)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = \log_3(x^2 + 1)$.'
             answer: "2x/((x^2 + 1) ln 3)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
         constraints: "convert to natural logs via change of base; inner functions linear or x^2 + c"
       - id: kp3
         name: Products and quotients of exponential and log factors
@@ -842,9 +861,11 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = x^2 \ln x$.'
             answer: "2x ln x + x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Product rule: $2x \ln x + x^2 \cdot \frac{1}{x}$.'
           - problem: 'Differentiate $f(x) = \frac{e^x}{x}$.'
             answer: "e^x(x - 1)/x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Quotient rule: $\frac{e^x x - e^x}{x^2}$.'
           - problem: 'Differentiate $f(x) = x \cdot 2^x$.'
             answer: "2^x(1 + x ln 2)"
@@ -1520,10 +1541,13 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = e^{\sin x}$.'
             answer: "e^(sin x) cos x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = \sin(e^x)$.'
             answer: "e^x cos(e^x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = \ln(1 + e^x)$.'
             answer: "e^x/(1 + e^x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
         constraints: "one transcendental function inside another; single chain application"
       - id: kp2
         name: Products and quotients of transcendental factors
@@ -1531,11 +1555,14 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = e^x \sin x$.'
             answer: "e^x(sin x + cos x)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = \frac{\ln x}{x}$.'
             answer: "(1 - ln x)/x^2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Quotient rule: $\frac{\frac{1}{x} \cdot x - \ln x}{x^2}$.'
           - problem: 'Differentiate $f(x) = x^2 e^{-x}$.'
             answer: "e^(-x)(2x - x^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Product rule with a chain factor: $2x e^{-x} - x^2 e^{-x}$.'
         constraints: "two factors mixing power, trig, exp, and log; factored answers preferred"
       - id: kp3
@@ -1544,11 +1571,14 @@ topics:
         exemplars:
           - problem: 'Differentiate $f(x) = \sqrt{1 + \sin^2 x}$.'
             answer: "sin(x) cos(x)/sqrt(1 + sin(x)^2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: '$\frac{1}{2}(1 + \sin^2 x)^{-1/2} \cdot 2\sin x \cos x$.'
           - problem: 'Differentiate $f(x) = \tan(e^{2x})$.'
             answer: "2e^(2x) sec^2(e^(2x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
           - problem: 'Differentiate $f(x) = e^{x^2}\cos(3x)$.'
             answer: "e^(x^2)(2x cos(3x) - 3 sin(3x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Product rule; each factor needs its own chain rule.'
         constraints: "at least two rules per problem (chain + product/quotient/power); plan before differentiating"
     diagnostic_exemplar:
