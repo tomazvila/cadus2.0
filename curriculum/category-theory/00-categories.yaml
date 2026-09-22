@@ -168,12 +168,34 @@ topics:
         key_prerequisites: [composition-associativity-identity]
         constraints: "Stay in $\\mathbf{Set}$: state the four pieces of data and the two axioms, then instantiate each piece concretely; no verification beyond citing associativity and unit laws of function composition."
         exemplars:
-          - problem: "State the data required to specify a category, and identify each piece for $\\mathbf{Set}$."
-            answer: "Objects, hom-sets with identities, and a composition satisfying unit and associativity laws; in $\\mathbf{Set}$ objects are sets and morphisms are functions."
-            solution_sketch: "A category $\\mathcal{C}$ has: a collection of objects; for each pair $A,B$ a set $\\mathrm{Hom}(A,B)$ of morphisms; an identity $1_A\\in\\mathrm{Hom}(A,A)$; and composition $\\circ\\colon \\mathrm{Hom}(B,C)\\times\\mathrm{Hom}(A,B)\\to\\mathrm{Hom}(A,C)$, satisfying associativity $h\\circ(g\\circ f)=(h\\circ g)\\circ f$ and unit $1_B\\circ f=f=f\\circ 1_A$. In $\\mathbf{Set}$: objects are sets, $\\mathrm{Hom}(A,B)$ is the set of functions $A\\to B$, $1_A$ is the identity function, and $\\circ$ is function composition; all axioms hold."
-          - problem: "In $\\mathbf{Set}$, describe the identity morphism on a set $A$ and the composite of $f\\colon A\\to B$ and $g\\colon B\\to C$."
-            answer: "$1_A$ is the map $x\\mapsto x$; the composite is $g\\circ f\\colon A\\to C,\\ x\\mapsto g(f(x))$."
-            solution_sketch: "Function composition is associative and the identity function is a two-sided unit, so these choices satisfy the category axioms."
+          - problem: "In Set take objects A = {1, 2} and B = {3, 4, 5}. The hom-set Hom(A, B) is the set of all functions from A to B. How many morphisms are in Hom(A, B)?"
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In Set the objects are sets, so the hom-set Hom(A, B) is the set of all functions from A to B; this instantiates the hom-set piece of the category data. Each of the 2 elements of A has 3 possible images in B, so the count is 3^2 = 9 by the counting rule. The number of morphisms in Hom(A, B) is 9."
+          - problem: "In Set let f, g be morphisms of integers with f(x) = 2x + 1 and g(x) = x^2. The composite morphism is g after f, defined by (g after f)(x) = g(f(x)). Compute (g after f)(2)."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Composition in Set is ordinary function composition, the third piece of data. Apply the inner function first: f(2) = 2*2 + 1 = 5. Then apply g to that value: g(5) = 5^2 = 25. The value of (g after f)(2) is 25."
+          - problem: "In Set let f be the function on the integers given by f(x) = 4x - 3, and let 1_B be the identity function on the codomain, given by 1_B(y) = y. The left unit law says 1_B after f = f. Compute (1_B after f)(2)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity morphism 1_B is the function sending each input to itself, so the composite (1_B after f)(x) = 1_B(f(x)) = f(x); this instantiates the unit law of the category. Evaluate f(2) = 4*2 - 3 = 5. The value of (1_B after f)(2) is 5."
+          - problem: "In Set take functions on the integers f(x) = x^2, g(x) = x + 3, and h(x) = 2x. Associativity of composition gives h after (g after f) = (h after g) after f. Compute (h after (g after f))(2)."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the inner composite first: (g after f)(2) = g(2^2) = g(4) = 4 + 3 = 7. Then apply the outer function: h(7) = 2*7 = 14. By associativity of function composition this equals ((h after g) after f)(2). The value is 14."
+          - problem: "In Set take objects A = {1, 2, 3} and B = {4, 5}. The four pieces of data of the category give four hom-sets: Hom(A, A), Hom(A, B), Hom(B, A), Hom(B, B). How many morphisms do these four hom-sets contain in total?"
+            answer: "48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Count each hom-set by the function-counting rule: Hom(X, Y) has |Y|^|X| functions. Hom(A, A) has 3^3 = 27 functions, Hom(A, B) has 2^3 = 8, Hom(B, A) has 3^2 = 9, and Hom(B, B) has 2^2 = 4. Summing all four pieces of data gives 27 + 8 + 9 + 4 = 48. The total number of morphisms is 48."
+          - problem: "In Set let f(x) = x + 1, g(x) = 3x, and h(x) = x^2 be functions on the integers. The difference (h after (g after f))(2) - ((h after g) after f)(2) instantiates the associativity axiom for these three morphisms. What is the value of this difference?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Both brackets send 2 to h(g(f(2))). Compute inside out: f(2) = 2 + 1 = 3, then g(3) = 3*3 = 9, then h(9) = 9^2 = 81, so the first bracket gives 81. The other bracket also gives h(g(f(2))) = 81, since function composition is associative by the associativity law. The difference is 81 - 81 = 0."
+          - problem: "Write the full proof: Set, with objects all sets, hom-sets the function sets, identities the identity functions, and composition the function composition, satisfies the two axioms of a category. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (data): the objects are all sets; for sets A and B the hom-set Hom(A, B) is the set of all functions from A to B; the identity on A is the function 1_A with 1_A(x) = x; composition is function composition, (g after f)(x) = g(f(x)). Step 2 (associativity axiom): for composable f, g, h, both h after (g after f) and (h after g) after f send each x to h(g(f(x))); this holds by the associativity law of function composition, so the two composites are equal as functions. Step 3 (unit): for f from A to B, the unit law demands 1_B after f = f and f after 1_A = f; both sides send each x to f(x), since 1_B(y) = y and 1_A(x) = x, so both unit laws hold by the unit laws of function composition. Conclusion: all four pieces of data are specified and both axioms hold, so Set is a category. This completes the full proof."
       - id: kp2
         name: A monoid as a one-object category
         key_prerequisites: [monoids]
