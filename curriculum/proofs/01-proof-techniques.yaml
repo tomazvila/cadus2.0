@@ -308,12 +308,34 @@ topics:
         name: "Differences and quotients"
         key_prerequisites: [direct-proof]
         exemplars:
-          - problem: 'Prove: if $r$ and $r + s$ are rational, then $s$ is rational.'
-            answer: '$s = (r + s) - r$ is a difference of rationals, hence rational.'
-            solution_sketch: 'Write $r = a/b$ and $r + s = c/d$. Then $s = (r+s) - r = c/d - a/b = (cb - ad)/(db)$, a ratio of integers with $db \ne 0$. $\square$'
-          - problem: 'Prove: if $r$ is rational and $s$ is a nonzero rational, then $r/s$ is rational.'
-            answer: '$\frac{a/b}{c/d} = \frac{ad}{bc}$ with $bc \ne 0$.'
-            solution_sketch: 'With $r = a/b$, $s = c/d$ and $s \ne 0$ (so $c \ne 0$), $r/s = ad/(bc)$; $ad, bc$ are integers and $bc \ne 0$, so $r/s$ is rational. $\square$'
+          - problem: "In the proof that if r and r + s are rational then s is rational, let r = a/b and r + s = c/b with the same nonzero denominator b. Give s as a single fraction in a, b, c."
+            answer: "(c-a)/b"
+            answer_contract: {"kind": "function", "vars": ["a", "b", "c"]}
+            solution_sketch: "Step 1 (closure under subtraction): s = (r + s) - r. Step 2 (common denominator): write r = a/b and r + s = c/b with b nonzero. Step 3 (subtract fractions): s = c/b - a/b = (c-a)/b, a ratio of integers with nonzero denominator. The answer is (c-a)/b."
+          - problem: "In the proof that if r is rational and s is a nonzero rational then r/s is rational, consider the case r = a/b with b nonzero and s = c a nonzero integer. Give r/s as a single fraction in a, b, c."
+            answer: "a/(bc)"
+            answer_contract: {"kind": "function", "vars": ["a", "b", "c"]}
+            solution_sketch: "Step 1 (quotient): r/s = (a/b)/c. Step 2 (reciprocal): dividing by c multiplies the denominator, so r/s = a/(bc). Step 3 (nonzero tracking): bc is nonzero because b and c are nonzero, so the denominator is valid. The answer is a/(bc)."
+          - problem: "Let r = 2/3 and r + s = 5/4. Find s as a fraction."
+            answer: "7/12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 writes both numbers with denominator 12: 5/4 = 15/12 and 2/3 = 8/12. Step 2 uses closure under subtraction: s = 15/12 - 8/12 = 7/12. The answer is 7/12."
+          - problem: "Let r = 3/5 and s = 2/7. Find r/s as a fraction."
+            answer: "21/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 uses closure under division: r/s = (3/5)/(2/7). Step 2 multiplies by the reciprocal: 3/5 * 7/2. Step 3 multiplies fractions: 21/10. The answer is 21/10."
+          - problem: "Let r = 5/6 and r + s = 1/3. Find s as a fraction."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 writes both numbers with denominator 6: 1/3 = 2/6 and 5/6 = 5/6. Step 2 uses closure under subtraction: s = 2/6 - 5/6 = -3/6. Step 3 simplifies to -1/2. The answer is -1/2."
+          - problem: "Claim: if r and r + s are rational, then s is rational. Step 1: write r = a/b and r + s = c/d with nonzero denominators. Step 2: subtract the given numbers, s = c/d - a/b. Step 3: subtract numerators and denominators, s = (c - a)/(d - b). Step 4: c - a and d - b are integers, so s is rational. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: every rational number is a ratio of integers with a nonzero denominator. Step 2 is valid: s = (r + s) - r. Step 3 is not valid: fractions are subtracted over a common denominator, c/d - a/b = (cb - ad)/(db), never (c - a)/(d - b). Step 4 only inherits the error of Step 3 and also never checks that d - b is nonzero. The answer is Step 3."
+          - problem: "Write the full proof: if r is rational and s is a nonzero rational, then r/s is rational. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (hypothesis): assume r is rational and s is a nonzero rational. Write r = a/b and s = c/d with integers a, b, c, d and b, d nonzero. Step 2 (nonzero): since s is nonzero, c is nonzero. Step 3 (division): r/s = (a/b)/(c/d). Step 4 (reciprocal): multiply by d/c to get r/s = ad/(bc). Step 5 (closure): ad and bc are integers, and bc is nonzero because b, c, d are nonzero. Step 6 (conclusion): r/s is a ratio of integers with nonzero denominator, so r/s is rational. This proves the statement."
         constraints: "closure under subtraction and division by nonzero; track which quantities are nonzero"
       - id: kp3
         name: "Averages and density"
@@ -1849,12 +1871,34 @@ topics:
         name: "Bounding recursive sequences"
         key_prerequisites: [mathematical-induction]
         exemplars:
-          - problem: 'Let $f_1 = f_2 = 1$ and $f_n = f_{n-1} + f_{n-2}$. Prove $f_n < 2^n$ for all $n \ge 1$.'
-            answer: 'Base $n = 1, 2$; step: $f_n = f_{n-1} + f_{n-2} < 2^{n-1} + 2^{n-2} < 2^n$.'
-            solution_sketch: 'Base: $f_1 = 1 < 2$ and $f_2 = 1 < 4$. Step: for $n \ge 3$ assume $f_k < 2^k$ for all $k < n$. Then $f_n = f_{n-1} + f_{n-2} < 2^{n-1} + 2^{n-2} = 3 \cdot 2^{n-2} < 4 \cdot 2^{n-2} = 2^n$. $\square$'
-          - problem: 'A sequence has $b_1 = 3$, $b_2 = 5$, and $b_n = 3b_{n-1} - 2b_{n-2}$ for $n \ge 3$. Prove $b_n = 2^n + 1$ for all $n \ge 1$.'
-            answer: 'Two base cases; step uses the recurrence.'
-            solution_sketch: 'Base: $b_1 = 3 = 2^1 + 1$, $b_2 = 5 = 2^2 + 1$. Step: for $n \ge 3$ assume the formula for all $k < n$. Then $b_n = 3(2^{n-1} + 1) - 2(2^{n-2} + 1) = 3 \cdot 2^{n-1} - 2^{n-1} + 1 = 2^n + 1$. $\square$'
+          - problem: "Let f_1 = f_2 = 1 and f_n = f_{n-1} + f_{n-2} for n >= 3. In a strong induction proof that f_n < 2^n, the step writes f_n < 2^{n-1} + 2^{n-2} = C * 2^{n-2}. Give C."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the two powers with the common factor 2^{n-2}. Since 2^{n-1} = 2 * 2^{n-2}, the sum is 2 * 2^{n-2} + 1 * 2^{n-2}. Add the coefficients 2 + 1 to get C = 3."
+          - problem: "A sequence has b_1 = 3, b_2 = 5, and b_n = 3b_{n-1} - 2b_{n-2} for n >= 3. A proof that b_n = 2^n + 1 uses strong induction. Give b_3."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the recurrence with n = 3: b_3 = 3b_2 - 2b_1. Substitute the given values: 3 * 5 - 2 * 3 = 15 - 6 = 9. The value is 9."
+          - problem: "Let a_1 = 1, a_2 = 2, and a_n = 2a_{n-1} + a_{n-2} for n >= 3. In a strong induction proof that a_n < 3^n, the step writes a_n < 2 * 3^{n-1} + 3^{n-2} = C * 3^{n-2}. Give C."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write both terms with the common factor 3^{n-2}. Since 2 * 3^{n-1} = 6 * 3^{n-2}, the sum is 6 * 3^{n-2} + 1 * 3^{n-2}. Add the coefficients 6 + 1 to get C = 7."
+          - problem: "Claim: if f_1 = f_2 = 1 and f_n = f_{n-1} + f_{n-2}, then f_n < 2^n for all n >= 1. Step 1: for n = 1, f_1 = 1 < 2. Step 2: for n = 2, f_2 = 1 < 4. Step 3: assume f_{n-1} < 2^{n-1} and proceed. Step 4: f_n = f_{n-1} + f_{n-2} < 2^{n-1} + 2^{n-2} < 2^n. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct base case because 1 < 2. Step 2 is a correct base case because 1 < 4. Step 3 is the flaw: the recurrence uses both f_{n-1} and f_{n-2}, so the strong hypothesis must cover all smaller indices, not only f_{n-1}. Step 4 would be valid after that repair. The first invalid step is Step 3."
+          - problem: "In the strong induction proof that b_n = 2^n + 1 for b_1 = 3, b_2 = 5, and b_n = 3b_{n-1} - 2b_{n-2}, the step reaches 3(2^{n-1} + 1) - 2(2^{n-2} + 1) = 2^n + C. Give C."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the step: 3 * 2^{n-1} + 3 - 2 * 2^{n-2} - 2. Since 3 * 2^{n-1} - 2 * 2^{n-2} = 2^n, the variable part is 2^n. The constants give 3 - 2 = 1, so C = 1."
+          - problem: "Let a_1 = 1, a_2 = 2, and a_n = 2a_{n-1} + a_{n-2} for n >= 3. In a strong induction proof that a_n < 3^n, give the smallest n for which the inductive step is used."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The recurrence defines a_n from two earlier terms only for n >= 3. The base cases are n = 1 and n = 2. The inductive step therefore starts at n = 3. The smallest such n is 3."
+          - problem: "Write the full proof: for the sequence a_1 = 1, a_2 = 2, and a_n = 2a_{n-1} + a_{n-2} for n >= 3, prove a_n < 3^n for all n >= 1. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base cases: a_1 = 1 < 3^1 = 3 and a_2 = 2 < 3^2 = 9. Strong hypothesis: assume for some n >= 3 that a_k < 3^k for every k < n. Step: use the recurrence to write a_n = 2a_{n-1} + a_{n-2}. Apply the hypothesis to both terms: a_n < 2 * 3^{n-1} + 3^{n-2}. Factor 3^{n-2}: a_n < (6 + 1) * 3^{n-2} = 7 * 3^{n-2}. Since 7 < 9, this is less than 9 * 3^{n-2} = 3^n. Conclusion: the claim holds for n, so by strong induction a_n < 3^n for all n >= 1."
         constraints: "bound each recursive term using the strong hypothesis"
     diagnostic_exemplar:
       problem: 'Prove: every postage amount of $n \ge 12$ cents can be made using only $4$-cent and $5$-cent stamps.'
@@ -1924,12 +1968,34 @@ topics:
         name: "Existence via least elements"
         key_prerequisites: [proof-by-contradiction]
         exemplars:
-          - problem: 'Prove the existence part of the division algorithm: for integers $a$ and $b > 0$, there are $q, r$ with $a = bq + r$ and $0 \le r < b$.'
-            answer: 'The least nonnegative $r = a - bq$ satisfies $0 \le r < b$.'
-            solution_sketch: 'Let $S = \{a - bq : q \in \mathbb{Z},\ a - bq \ge 0\}$, a nonempty subset of $\mathbb{N}$. By well-ordering it has a least element $r = a - bq$. If $r \ge b$, then $r - b = a - b(q + 1) \ge 0$ lies in $S$ and is smaller, a contradiction. So $0 \le r < b$. $\square$'
-          - problem: 'Prove: every integer $n \ge 2$ is a product of primes, using the minimal-counterexample method.'
-            answer: 'A least non-factorable $m$ splits as $ab$ with $a, b < m$ both factorable.'
-            solution_sketch: 'Suppose some integer $\ge 2$ is not a product of primes; let $m$ be the least (well-ordering). $m$ is not prime (else it is its own product), so $m = ab$ with $2 \le a, b < m$; by minimality $a$ and $b$ are products of primes, so $m = ab$ is too — contradiction. $\square$'
+          - problem: "In the well-ordering proof of the division algorithm, take a = 38 and b = 7. Let S = {38 - 7q : q an integer and 38 - 7q >= 0}. The set S has a least element r. Give r."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the full set S = {38 - 7q : q an integer and 38 - 7q >= 0}. Step 1: S is nonempty because q = 0 gives 38. Step 2: by the well-ordering principle S has a least element r. Step 3: test the nonnegative values: q = 0 gives 38, q = 1 gives 31, q = 2 gives 24, q = 3 gives 17, q = 4 gives 10, q = 5 gives 3, and q = 6 gives -4. The least nonnegative value is 3, so r = 3. The answer is 3."
+          - problem: "In the minimal-counterexample proof that every integer at least 2 is a product of primes, the least counterexample m is composite, so m = ab with 2 <= a <= b < m. Give a for m = 91."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the full object m = 91. Step 1: 91 is not prime because 7 times 13 equals 91. Step 2: the minimal-counterexample proof says the least counterexample, if it existed, must be composite. Step 3: factor 91 as 7 times 13, so a = 7 and b = 13. The answer is 7."
+          - problem: "Consider the set S = {n in Z : n > 10 and n = 7k + 3 for some integer k}. The well-ordering principle gives S a least element. Give that least element."
+            answer: "17"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the full set S = {n in Z : n > 10 and n = 7k + 3 for some integer k}. Step 1: the values of 7k + 3 near 10 are 3, 10, and 17. Step 2: the condition n > 10 removes 3 and 10. Step 3: by the well-ordering principle the least element is 17. The answer is 17."
+          - problem: "Let S = {14, 19, 25}. Put T = {s - 10 : s in S}. The well-ordering principle gives T a least element. Give that least element."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First write the full set T = {4, 9, 15}. Step 1: subtract 10 from each element of S = {14, 19, 25}. Step 2: the well-ordering principle says T has a least element. Step 3: compare 4, 9, and 15; the least is 4. The answer is 4."
+          - problem: "Claim: every integer n at least 2 has a prime divisor. Proof attempt. Step 1: Let S = {m in N : m >= 2 and m has no prime divisor}. Step 2: If S is nonempty, by well-ordering it has a least element m. Step 3: Since m is not prime, m = ab with 2 <= a < b < m. Step 4: By minimality, a has a prime divisor p, and p divides m. Which step is the first invalid step?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "First write the full set S = {m in N : m >= 2 and m has no prime divisor}. Step 1: Step 1 correctly defines the set of possible least counterexamples. Step 2: Step 2 correctly applies the well-ordering principle. Step 3: Step 3 is invalid because a composite number can have equal factors, such as 4 = 2 times 2; the correct line is m = ab with 2 <= a <= b < m. Step 4: Step 4 would be valid after that correction. The answer is Step 3."
+          - problem: "In a proof that a nonempty set S of integers bounded below has a least element, let L be a lower bound. Put T = {s - L + 1 : s in S}. By well-ordering T has a least element t. Which expression gives the least element of S?"
+            answer: "t + L - 1"
+            answer_contract: {"kind": "label", "options": [["t + L - 1"], ["t - L + 1"], ["L - t + 1"], ["t + L + 1"]]}
+            solution_sketch: "First write the full set T = {s - L + 1 : s in S}. Step 1: T is nonempty and all its elements are positive. Step 2: by the well-ordering principle T has a least element t. Step 3: since t <= s - L + 1 for every s in S, we get t + L - 1 <= s. Step 4: also t = s0 - L + 1 for some s0 in S, so t + L - 1 = s0 is in S. Thus t + L - 1 is the least element of S. The wrong option t - L + 1 reverses the sign. The wrong option L - t + 1 uses the wrong order. The wrong option t + L + 1 adds one instead of subtracting one. The answer is t + L - 1."
+          - problem: "Write the full proof: for integers a and b > 0, there are q, r with a = bq + r and 0 <= r < b. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "First write the theorem: for integers a and b > 0, there are q, r with a = bq + r and 0 <= r < b. Step 1: let S = {a - bq : q an integer and a - bq >= 0}. Step 2: S is nonempty because q = 0 gives a when a >= 0, and a large negative q gives a nonnegative value when a < 0. Step 3: by the well-ordering principle S has a least element r = a - bq. Step 4: if r >= b, then r - b = a - b(q + 1) is in S and is smaller than r, a contradiction. Step 5: therefore 0 <= r < b, and a = bq + r. Step 6: this proves the existence of q and r."
         constraints: "choose the set so its least element gives the desired object"
       - id: kp3
         name: "Well-ordering and induction"

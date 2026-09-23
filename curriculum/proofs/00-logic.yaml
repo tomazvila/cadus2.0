@@ -1735,14 +1735,30 @@ topics:
         name: "Valid vs. invalid argument forms"
         key_prerequisites: [truth-tables]
         exemplars:
-          - problem: 'From $P \to Q$ and $Q$, can you conclude $P$?'
-            answer_contract: {kind: none}
-            answer: 'No; that is the fallacy of affirming the consequent.'
-            solution_sketch: '$P \to Q$ and $Q$ do not force $P$: the row $(F, T)$ has both premises true but $P$ false.'
-          - problem: 'From $P \to Q$ and $\neg P$, can you conclude $\neg Q$?'
-            answer_contract: {kind: none}
-            answer: 'No; that is the fallacy of denying the antecedent.'
-            solution_sketch: 'A false hypothesis says nothing about $Q$: the row $(F, T)$ has $P \to Q$ and $\neg P$ true but $Q$ true, so $\neg Q$ need not follow.'
+          - problem: "Consider the argument form: If P then Q. Q. Therefore P. Which named argument form is this?"
+            answer: "Affirming the consequent"
+            answer_contract: {"kind": "label", "options": [["Modus ponens"], ["Modus tollens"], ["Affirming the consequent"], ["Denying the antecedent"]]}
+            solution_sketch: "The full form is: If P then Q, Q, therefore P. Rule: match the second premise to each named form. Modus ponens would need P as the second premise, not Q, so it is wrong here. Modus tollens would need not Q as the second premise, so it is wrong here. Denying the antecedent would need not P as the second premise, so it is wrong here. The second premise affirms the consequent Q, so the answer is Affirming the consequent."
+          - problem: "Consider the argument form: If P then Q. Not P. Therefore not Q. Which named argument form is this?"
+            answer: "Denying the antecedent"
+            answer_contract: {"kind": "label", "options": [["Modus ponens"], ["Modus tollens"], ["Affirming the consequent"], ["Denying the antecedent"]]}
+            solution_sketch: "The full form is: If P then Q, not P, therefore not Q. Rule: match the second premise to each named form. Modus ponens would need P as the second premise, so it is wrong here. Modus tollens would need not Q as the second premise, so it is wrong here. Affirming the consequent would need Q as the second premise, so it is wrong here. The second premise denies the antecedent P, so the answer is Denying the antecedent."
+          - problem: "For the argument form: If P then Q. P. Therefore Q. How many of the four truth-table rows for P and Q make both premises true and the conclusion false?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full form is: If P then Q, P, therefore Q. Rule: a counterexample is a row with both premises true and the conclusion false. Build the four rows for P and Q. Row (T,T) makes both premises true and the conclusion true. Row (T,F) makes P true but If P then Q false. Row (F,T) makes P false. Row (F,F) makes P false. No row makes both premises true and the conclusion false, so the answer is 0."
+          - problem: "For the argument form: If P then Q. Q. Therefore P. How many of the four truth-table rows for P and Q make both premises true and the conclusion false?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full form is: If P then Q, Q, therefore P. Rule: a counterexample is a row with both premises true and the conclusion false. Build the four rows for P and Q. Row (T,T) makes both premises true and the conclusion true. Row (T,F) makes Q false. Row (F,T) makes If P then Q true and Q true but P false, so it is a counterexample. Row (F,F) makes Q false. One row is a counterexample, so the answer is 1."
+          - problem: "For the argument form: If P then Q. Not Q. Therefore not P. How many of the four truth-table rows for P and Q make both premises true? Find that number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full form is: If P then Q, not Q, therefore not P. Rule: build the four rows for P and Q and count the rows where both premises are true. Row (T,T) has not Q false. Row (T,F) has If P then Q false. Row (F,T) has not Q false. Row (F,F) has If P then Q true and not Q true, so exactly one row has both premises true; there the conclusion not P is true as well, so the form has no counterexample. The answer is 1."
+          - problem: "For the argument form: If P then Q. Not P. Therefore not Q. How many of the four truth-table rows for P and Q make both premises true and the conclusion false?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full form is: If P then Q, not P, therefore not Q. Rule: a counterexample is a row with both premises true and the conclusion false. Build the four rows for P and Q. Row (T,T) makes not P false. Row (T,F) makes not P false. Row (F,T) makes If P then Q true and not P true but not Q false, so it is a counterexample. Row (F,F) makes If P then Q true and not P true and not Q true. One row is a counterexample, so the answer is 1."
         constraints: "identify affirming-the-consequent and denying-the-antecedent fallacies"
       - id: kp3
         name: "Chaining inferences"

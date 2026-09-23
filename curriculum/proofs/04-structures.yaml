@@ -905,12 +905,34 @@ topics:
         name: "Homomorphisms preserve inverses and powers"
         key_prerequisites: [function-composition-inverse]
         exemplars:
-          - problem: 'Prove: for a group homomorphism $\varphi$, $\varphi(x^{-1}) = \varphi(x)^{-1}$.'
-            answer: '$\varphi(x)\varphi(x^{-1}) = \varphi(e_G) = e_H$.'
-            solution_sketch: '$\varphi(x)\varphi(x^{-1}) = \varphi(xx^{-1}) = \varphi(e_G) = e_H$, and likewise on the other side, so $\varphi(x^{-1})$ is the inverse of $\varphi(x)$. $\square$'
-          - problem: 'For a group homomorphism $\varphi$ and integer $n \ge 1$, prove $\varphi(x^{n}) = \varphi(x)^{n}$.'
-            answer: 'Induction using $\varphi(x^{n}) = \varphi(x^{n-1})\varphi(x)$.'
-            solution_sketch: 'Base $n = 1$: $\varphi(x) = \varphi(x)$. Step: $\varphi(x^{n+1}) = \varphi(x^{n} x) = \varphi(x^{n})\varphi(x) = \varphi(x)^{n}\varphi(x) = \varphi(x)^{n+1}$. $\square$'
+          - problem: "Let φ be a group homomorphism from (Z,+) to (Z,+) with φ(1) = 7. Use the rule that homomorphisms preserve inverses to find φ(-4)."
+            answer: "-28"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the inverse-preservation rule gives φ(-4) = -φ(4). Step 2: the homomorphism property gives φ(4) = 4 φ(1) = 4 * 7 = 28. Step 3: therefore φ(-4) = -28. The value is -28."
+          - problem: "Let φ be a group homomorphism from the positive reals under multiplication to itself. Suppose φ(3) = 9. Use the rule that homomorphisms preserve powers to find φ(27)."
+            answer: "729"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write 27 as 3^3. Step 2: the power-preservation rule gives φ(3^3) = φ(3)^3. Step 3: substitute φ(3) = 9, so φ(27) = 9^3 = 729. The value is 729."
+          - problem: "In the induction proof that a group homomorphism φ satisfies φ(x^n) = φ(x)^n for every n ≥ 1, the base case is n = 1. Give the value of n used in the base case."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the induction proof of φ(x^n) = φ(x)^n starts with the base case n = 1. Step 2: at n = 1 both sides are φ(x), so the base case holds. Step 3: the base case uses n = 1. The value is 1."
+          - problem: "Let φ be a group homomorphism from (Z,+) to (Z,+) with φ(1) = 4. Homomorphisms send the identity to the identity. Find φ(0)."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: a group homomorphism sends the identity to the identity, so φ(0) = 0 in the additive group (Z,+). Step 2: this follows because φ(0) = φ(0+0) = φ(0)+φ(0). Step 3: subtract φ(0) from both sides to get φ(0) = 0. The value is 0."
+          - problem: "Let φ be a group homomorphism from the nonzero reals under multiplication to itself with φ(2) = 5. Use inverse preservation to find φ(2^{-1})."
+            answer: "1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the inverse-preservation rule gives φ(2^{-1}) = φ(2)^{-1}. Step 2: substitute φ(2) = 5, so φ(2^{-1}) = 5^{-1} = 1/5. The value is 1/5."
+          - problem: "Let φ be a group homomorphism from the positive reals under multiplication to itself with φ(5) = 25. Use the rule that homomorphisms preserve powers to find φ(125)."
+            answer: "15625"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write 125 as 5^3. Step 2: the power-preservation rule gives φ(5^3) = φ(5)^3. Step 3: substitute φ(5) = 25, so φ(125) = 25^3 = 15625. The value is 15625."
+          - problem: "Write the full proof: for a group homomorphism φ and any element x, prove φ(x^{-1}) = φ(x)^{-1} and φ(x^n) = φ(x)^n for every integer n ≥ 1. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof of inverses. Step 1: use identity preservation. φ(x) φ(x^{-1}) = φ(x x^{-1}) = φ(e_G) = e_H. Step 2: also φ(x^{-1}) φ(x) = φ(x^{-1} x) = φ(e_G) = e_H. Step 3: both products equal the identity, so φ(x^{-1}) is the inverse of φ(x), that is φ(x^{-1}) = φ(x)^{-1}. Proof of powers. Step 4: base case n = 1 gives φ(x^1) = φ(x) = φ(x)^1. Step 5: assume φ(x^k) = φ(x)^k. Then φ(x^{k+1}) = φ(x^k x) = φ(x^k) φ(x) = φ(x)^k φ(x) = φ(x)^{k+1}. Step 6: by induction, φ(x^n) = φ(x)^n for every n ≥ 1. This completes both proofs."
         constraints: "reduce to identity-preservation; use induction for powers"
     diagnostic_exemplar:
       problem: 'Let $\varphi : (\mathbb{Z}, +) \to (\mathbb{Z}, +)$ be a homomorphism with $\varphi(1) = 3$. Prove $\varphi(n) = 3n$ for all $n \in \mathbb{Z}$.'
@@ -1086,12 +1108,34 @@ topics:
         name: "Countable sets"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Prove $\mathbb{Z}$ is countable.'
-            answer: 'The listing $0, -1, 1, -2, 2, \dots$ is a bijection $\mathbb{N} \to \mathbb{Z}$.'
-            solution_sketch: 'Define $f : \mathbb{N} \to \mathbb{Z}$ by $f(n) = n/2$ if $n$ is even and $f(n) = -(n + 1)/2$ if $n$ is odd. This enumerates $0, -1, 1, -2, 2, \dots$, hitting each integer exactly once, so $\mathbb{Z}$ is countable. $\square$'
-          - problem: 'Prove the set of odd positive integers is countable.'
-            answer: 'The bijection $n \mapsto 2n - 1$ from $\mathbb{Z}^{+}$.'
-            solution_sketch: 'Define $f : \mathbb{Z}^{+} \to \{\text{odd positives}\}$ by $f(n) = 2n - 1$. It is injective and hits every odd positive integer, so the set is countable. $\square$'
+          - problem: "The standard bijection from N to Z lists 0, -1, 1, -2, 2, ... . With index starting at 0, find the index paired with -5."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: list the standard enumeration: index 0 gives 0, index 1 gives -1, index 2 gives 1, index 3 gives -2, index 4 gives 2, index 5 gives -3, index 6 gives 3, index 7 gives -4, index 8 gives 4, index 9 gives -5. Step 2: read the index paired with -5 from the list. The index paired with -5 is 9."
+          - problem: "The odd positive integers can be listed 1, 3, 5, ... . With position starting at 1, find the value in position 12."
+            answer: "23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the bijection f(n)=2n-1 from Z+ to the odd positive integers. Step 2: substitute n=12 into f(n)=2n-1. Step 3: compute 2*12-1=23. The value in position 12 is 23."
+          - problem: "The even integers are countable. Give a bijection f from Z to the even integers as a formula in n."
+            answer: "2n"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Step 1: define the candidate f(n)=2n for n in Z. Step 2: check injective: if 2a=2b then a=b. Step 3: check surjective: every even integer has the form 2k for some integer k. The bijection is f(n)=2n."
+          - problem: "The integers congruent to 1 modulo 3 are countable. They can be listed 1, 4, 7, ... . With position starting at 0, find the value in position 10."
+            answer: "31"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the arithmetic progression as value = 1+3n for position n. Step 2: substitute n=10 into value = 1+3n. Step 3: compute 1+3*10=31. The value in position 10 is 31."
+          - problem: "Claim: Z is countable. Step 1: define f from N to Z by f(n)=n. Step 2: f is injective because n=m whenever f(n)=f(m). Step 3: f is surjective because every integer appears as some n. Step 4: therefore f is a bijection and Z is countable. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid because it defines a function from N to Z. Step 2 is valid because f(n)=n is injective. Step 3 is the first invalid step because f(n)=n only gives nonnegative integers, so it is not surjective. Step 4 would be valid only if Step 3 were valid. The answer is Step 3."
+          - problem: "In the proof that the odd positive integers are countable, the line defining the bijection from Z+ is missing. Select the missing line."
+            answer: "2n-1"
+            answer_contract: {"kind": "label", "options": [["2n-1"], ["2n+1"], ["n+1"], ["2n"]]}
+            solution_sketch: "Step 1: test f(n)=2n-1: f(1)=1, f(2)=3, f(3)=5, so it lists the odd positive integers. Step 2: check the other options. Option 2n+1 gives 3,5,... and misses 1. Option n+1 gives 2,3,... and is not always odd. Option 2n gives even numbers. The answer is 2n-1."
+          - problem: "Write the full proof: the set of integers divisible by 3 is countable. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Define f from Z to the integers divisible by 3 by f(n)=3n. Step 2: Show f is injective. If f(a)=f(b), then 3a=3b, so a=b. Step 3: Show f is surjective. Every integer divisible by 3 has the form 3k for some integer k, and f(k)=3k. Step 4: Therefore f is a bijection from Z to the set of integers divisible by 3. Step 5: Since Z is countable, this set is countable."
         constraints: "give an explicit enumeration or bijection with $\\mathbb{N}$"
       - id: kp3
         name: "Countability of products and rationals"
