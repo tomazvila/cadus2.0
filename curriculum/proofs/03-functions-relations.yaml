@@ -485,12 +485,34 @@ topics:
         name: "Classifying: one property without the other"
         key_prerequisites: [proving-injectivity, proving-surjectivity]
         exemplars:
-          - problem: 'Show $f : \mathbb{N} \to \mathbb{N}$, $f(n) = n + 1$, is injective but not surjective (here $0 \in \mathbb{N}$).'
-            answer: '$a + 1 = b + 1 \Rightarrow a = b$; but no $n \in \mathbb{N}$ has $f(n) = 0$.'
-            solution_sketch: 'Injective: cancel the $+1$. Not surjective: $f(n) = 0$ would need $n = -1 \notin \mathbb{N}$. $\square$'
-          - problem: 'Show $f : \mathbb{Z} \to \mathbb{N}$, $f(n) = |n|$, is surjective but not injective.'
-            answer: 'Every $m \in \mathbb{N}$ is $|m|$; but $f(3) = f(-3)$.'
-            solution_sketch: 'Surjective: for $m \in \mathbb{N}$, $f(m) = m$. Not injective: $f(3) = f(-3) = 3$ with $3 \ne -3$. $\square$'
+          - problem: "Let f map each natural number n to n + 1, with natural numbers 0, 1, 2, ... . Find the smallest natural number that is not in the image of f."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By direct computation, the image values are f(0) = 1, f(1) = 2, f(2) = 3, and so on. The value 0 is a natural number and no natural number n satisfies n + 1 = 0. Therefore the smallest missing value is 0."
+          - problem: "The map f from the integers to the natural numbers is f(n) = abs(n). Find an integer n less than 0 with f(n) = f(3)."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the value at 3: f(3) = abs(3) = 3. Then solve abs(n) = 3 with n less than 0, which gives n = -3. Thus the required integer is -3."
+          - problem: "Let f map each natural number n to n^2, with natural numbers 0, 1, 2, ... . Find the smallest natural number that is not in the image of f."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By direct computation, the first image values are f(0) = 0, f(1) = 1, f(2) = 4, and f(3) = 9. The natural number 2 is not a square of a natural number, while 0 and 1 are in the image. Therefore the smallest missing value is 2."
+          - problem: "Let f map each integer n to 3n + 1. Find the smallest positive integer that is not in the image of f."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Evaluate the map near zero: f(-1) = -2, f(0) = 1, and f(1) = 4. The positive integer 1 is in the image, while 2 is not congruent to 1 modulo 3. Therefore the smallest positive missing value is 2."
+          - problem: "Let f map each natural number n to 4n, with natural numbers 0, 1, 2, ... . Find the smallest natural number that is not in the image of f."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By direct computation, the image values are f(0) = 0, f(1) = 4, f(2) = 8, and so on. The natural number 1 is not a multiple of 4, while 0 is in the image. Therefore the smallest missing value is 1."
+          - problem: "Let f map each real number x to x^2, with codomain the nonnegative real numbers. Find a real number x less than 0 with f(x) = f(2)."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute the value at 2: f(2) = 2^2 = 4. Then solve x^2 = 4 with x less than 0, which gives x = -2. Thus the required real number is -2."
+          - problem: "Write the full proof: the map f from the natural numbers to the natural numbers with f(n) = n + 2 is injective but not surjective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base setup: let the natural numbers be 0, 1, 2, ... . Injective step: suppose f(a) = f(b). Then a + 2 = b + 2, so a = b; hence f is injective. Not surjective step: the natural number 0 would need a preimage n with n + 2 = 0, but then n = -2, which is not a natural number. Therefore no natural number maps to 0, so f is not surjective. The map is injective but not surjective."
         constraints: "prove one property and refute the other for the same map"
     diagnostic_exemplar:
       problem: 'Prove $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = 2n$, is injective but not surjective.'
@@ -872,6 +894,22 @@ topics:
           - problem: 'On $A = \{1, 2, 3\}$, list the pairs of $R = \{(a, b) : a + b \text{ is even}\}$.'
             answer: '$\{(1,1),(1,3),(3,1),(3,3),(2,2)\}$'
             solution_sketch: '$a + b$ is even iff $a, b$ have the same parity: pair the odds $1, 3$ with each other and $2$ with itself.'
+          - problem: "On A = {1, 2, 3, 4}, let R = {(a, b) : a*b is even}. How many pairs are in R?"
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation R is the set of pairs (a,b) in A x A for which a*b is even. Step 1: List all 16 ordered pairs from A x A. Step 2: The product a*b is odd exactly when both a and b are odd; there are 2 odd numbers in A, so 2*2 = 4 such pairs. Step 3: Subtract the 4 odd-product pairs from the 16 total pairs: 16 - 4 = 12. The number of pairs in R is 12."
+          - problem: "On A = {1, 2, 3}, let R = {(a, b) : a < b}. Give the pairs of R in increasing order of first coordinate, then second coordinate, as a flat list of numbers separated by commas."
+            answer: "1, 2, 1, 3, 2, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The relation R is the set of pairs (a,b) in {1,2,3} x {1,2,3} with a < b. Step 1: For first coordinate 1, the second coordinates are 2 and 3, giving (1,2) and (1,3). Step 2: For first coordinate 2, the second coordinate is 3, giving (2,3). Step 3: Flatten the pairs in order: 1, 2, 1, 3, 2, 3. The required list is 1, 2, 1, 3, 2, 3."
+          - problem: "On A = {1, 2, 3, 4}, let R = {(a, b) : |a - b| = 1}. How many pairs are in R?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation R is the set of pairs (a,b) in A x A with |a - b| = 1. Step 1: List the pairs whose coordinates differ by exactly 1: (1,2), (2,1), (2,3), (3,2), (3,4), and (4,3). Step 2: Count these pairs: there are 6 of them. The number of pairs in R is 6."
+          - problem: "On A = {1, 2, 3, 4}, let R = {(a, b) : a < b}. How many pairs of R have first coordinate 2?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The relation R is the set of pairs (a,b) in A x A with a < b. Step 1: Fix a = 2, so the condition is 2 < b. Step 2: The elements of A greater than 2 are 3 and 4, giving the pairs (2,3) and (2,4). Step 3: Counting these pairs gives 2. The number of pairs with first coordinate 2 is 2."
         constraints: "enumerate a rule-defined relation on a set of size at most 4"
       - id: kp2
         name: "Digraphs of relations"
@@ -1181,14 +1219,30 @@ topics:
         name: "Classes modulo n"
         key_prerequisites: [relations-equivalence]
         exemplars:
-          - problem: 'For congruence mod $4$ on $\mathbb{Z}$, describe $[2]$ and state how many distinct classes there are.'
-            answer_contract: {kind: none}
-            answer: '$[2] = \{\dots, -6, -2, 2, 6, 10, \dots\} = \{2 + 4k : k \in \mathbb{Z}\}$; four classes in all.'
-            solution_sketch: 'The class of $2$ collects everything congruent to $2$ mod $4$; the classes are $[0], [1], [2], [3]$, one per remainder.'
-          - problem: 'For congruence mod $5$, find the smallest nonnegative representative of $[-3]$, and decide whether $[7] = [2]$.'
-            answer_contract: {kind: none}
-            answer: '$2$; yes.'
-            solution_sketch: '$-3 + 5 = 2$, so $[-3] = [2]$. And $7 - 2 = 5$ is divisible by $5$, so $[7] = [2]$.'
+          - problem: "For congruence modulo 4 on the integers, find the smallest nonnegative representative of [-7]."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The class [-7] contains every integer congruent to -7 modulo 4. Divide -7 by 4: -7 = -2*4 + 1, so the remainder is 1. Therefore the smallest nonnegative representative is 1."
+          - problem: "For congruence modulo 5, which of the following integers is in the same class as -3? Select one."
+            answer: "2"
+            answer_contract: {"kind": "label", "options": [["2"], ["0"], ["4"], ["5"]]}
+            solution_sketch: "Compute -3 modulo 5: add 5 to get 2, so the class is [2]. Check option 2: 2 mod 5 is 2, so 2 is in the same class. Option 0 is wrong because 0 mod 5 is 0, not 2. Option 4 is wrong because 4 mod 5 is 4, not 2. Option 5 is wrong because 5 mod 5 is 0, not 2. The correct option is 2."
+          - problem: "For congruence modulo 6, find the smallest nonnegative representative of [29]."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reduce 29 modulo 6. Since 29 = 4*6 + 5, the remainder is 5. The smallest nonnegative representative of [29] is 5."
+          - problem: "For congruence modulo 8 on the integers, determine the number of distinct equivalence classes."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equivalence classes modulo 8 are determined by the remainders after division by 8. The possible remainders are 0 through 7. That gives 8 distinct classes. The number of distinct classes is 8."
+          - problem: "For congruence modulo 7, which of the following integers is in the same class as 3? Select one."
+            answer: "24"
+            answer_contract: {"kind": "label", "options": [["24"], ["22"], ["16"], ["11"]]}
+            solution_sketch: "Compute the class of 3 modulo 7: 3 mod 7 is 3, so look for a number congruent to 3. Check 24: 24 = 3*7 + 3, so 24 mod 7 is 3. Option 22 is wrong because 22 mod 7 is 1. Option 16 is wrong because 16 mod 7 is 2. Option 11 is wrong because 11 mod 7 is 4. The correct option is 24."
+          - problem: "For congruence modulo 9, find the smallest nonnegative representative of [-25]."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reduce -25 modulo 9 by adding multiples of 9. Since -25 + 27 = 2, and 27 is a multiple of 9, -25 is congruent to 2 mod 9. The remainder 2 is already between 0 and 8. The smallest nonnegative representative is 2."
         constraints: "residue classes mod $n \\le 10$; representatives and class equality"
       - id: kp2
         name: "Classes on finite sets"
