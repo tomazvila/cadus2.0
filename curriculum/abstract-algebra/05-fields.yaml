@@ -399,23 +399,67 @@ topics:
         name: "Constructible numbers form a field of degree-2^k elements"
         key_prerequisites: [field-extensions-degree]
         exemplars:
-          - problem: 'State the key criterion: if a length $\alpha$ is constructible by straightedge and compass, what does that force about $[\mathbb{Q}(\alpha) : \mathbb{Q}]$?'
-            answer: 'It must be a power of $2$.'
-            solution_sketch: 'Each construction step (line-line, line-circle, circle-circle intersection) solves at worst a quadratic, so constructible numbers sit atop a tower of degree-2 extensions; by the tower law the total degree is $2^k$.'
-          - problem: 'Is $\sqrt[4]{2}$ constructible?'
-            answer: 'Yes: $[\mathbb{Q}(\sqrt[4]2) : \mathbb{Q}] = 4 = 2^2$, and it is reachable by two successive square roots.'
-            solution_sketch: 'Two square-root constructions: $\sqrt2$, then $\sqrt{\sqrt2}$; the criterion is necessary, and explicit square-root towers are sufficient.'
+          - problem: "Starting from $\\mathbb{Q}$, a constructible length $\\alpha$ is reached by a tower of three extensions, each of degree $2$ over the previous field. Compute $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the tower $\\mathbb{Q} = F_0 \\subset F_1 \\subset F_2 \\subset F_3$ reaching $\\alpha$, with every step of degree $2$. Tower law: the degree multiplies along the tower, so $[\\mathbb{Q}(\\alpha):\\mathbb{Q}] = 2 \\cdot 2 \\cdot 2 = 8$. This multiplication along a degree-2 tower is exactly what forces constructible degrees to be powers of $2$. The answer is 8."
+          - problem: "A length $\\alpha > 0$ satisfies $\\alpha^4 = 3$, and it is obtained by adjoining $\\sqrt{3}$ to $\\mathbb{Q}$ and then a square root of that result. Compute $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $\\alpha = \\sqrt{\\sqrt{3}}$, the positive number with $\\alpha^4 = 3$. Step 1 (degree of a square root): $\\sqrt{3}$ has degree $2$ over $\\mathbb{Q}$. Step 2: $\\sqrt{\\sqrt{3}}$ has degree $2$ over $\\mathbb{Q}(\\sqrt{3})$, since $\\sqrt{3}$ is not a square in that field. Tower law: $2 \\cdot 2 = 4$. The answer is 4."
+          - problem: "The real number $\\alpha = \\sqrt[3]{3}$ has minimal polynomial $x^3 - 3$ over $\\mathbb{Q}$. Determine whether $\\alpha$ is constructible and give $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$. Give the verdict as yes or no and the degree as a number."
+            answer: "verdict = no; degree = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "degree"}]}
+            solution_sketch: "Full object: $\\alpha = \\sqrt[3]{3}$ with minimal polynomial $x^3 - 3$ over $\\mathbb{Q}$. Degree: the minimal polynomial has degree $3$, so $[\\mathbb{Q}(\\alpha):\\mathbb{Q}] = 3$. Criterion: a constructible length has degree a power of $2$ over $\\mathbb{Q}$, and $3$ is not a power of $2$, so $\\alpha$ is not constructible. The answer is verdict = no; degree = 3."
+          - problem: "A student claims that every constructible number has degree $1$, $2$, $4$, or $8$ over $\\mathbb{Q}$. Give the smallest degree of a constructible number that contradicts this claim."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the claim that constructible degrees are only $1, 2, 4, 8$. Constructible example: $\\alpha = \\sqrt{\\sqrt{\\sqrt{\\sqrt{2}}}}$ is built by four successive square-root steps, each of degree $2$, so by the tower law its degree is $2 \\cdot 2 \\cdot 2 \\cdot 2 = 16$. Every power of $2$ below $16$ is already on the student's list, so $16$ is the smallest contradicting degree. The answer is 16."
+          - problem: "A student argues that $\\sqrt[3]{2}$ is constructible. Step 1: $\\sqrt[3]{2}$ satisfies $x^3 - 2 = 0$. Step 2: $x^3 - 2$ has no rational root, so $[\\mathbb{Q}(\\sqrt[3]{2}):\\mathbb{Q}] = 3$. Step 3: $3 = 2 + 1$ is a sum of powers of $2$, hence a power of $2$. Step 4: by the criterion, $\\sqrt[3]{2}$ is constructible. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is true: cubing $\\sqrt[3]{2}$ gives $2$. Step 2 is true: $x^3 - 2$ has no rational root, so it is the minimal polynomial and the degree is $3$. Step 3 is the first false step: a sum of powers of $2$ need not be a power of $2$, and $3$ is not equal to $2^k$ for any $k$. Step 4 is also wrong, since the criterion is only one-directional, but the failure there comes later. The answer is Step 3."
+          - problem: "In the proof that a constructible length $\\alpha$ satisfies $[\\mathbb{Q}(\\alpha):\\mathbb{Q}] = 2^k$ for some $k$, one has a tower $\\mathbb{Q} = F_0 \\subset F_1 \\subset \\cdots \\subset F_n$ containing $\\alpha$, where each extension has degree $1$ or $2$. The final line, which computes $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$ from these extensions, is missing. Select the line that is true and completes the proof."
+            answer: "the product of the step degrees, which is 2^k"
+            answer_contract: {"kind": "label", "options": [["the product of the step degrees, which is 2^k"], ["the sum of the step degrees"], ["2 to the power n, with n the number of steps"], ["twice the degree of the largest step"]]}
+            solution_sketch: "Full object: a tower $\\mathbb{Q} = F_0 \\subset F_1 \\subset \\cdots \\subset F_n$ containing $\\alpha$, each extension of degree $1$ or $2$. Tower law: $[F_n:\\mathbb{Q}]$ is the product of the extension degrees, hence $2^k$ where $k$ counts the steps of degree $2$. The option 'the sum of the step degrees' confuses the tower law with addition; the option '2 to the power n, with n the number of steps' ignores the steps of degree $1$; the option 'twice the degree of the largest step' is not any valid rule. The answer is the product of the step degrees, which is 2^k."
+          - problem: "Write the full proof: if a length $\\alpha$ is constructible by straightedge and compass, then $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$ is a power of $2$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Field closure: sums, differences, products and quotients of constructible numbers are constructible, since each is obtained by the basic straightedge and compass constructions, so the constructible numbers form a field containing $\\mathbb{Q}$. Degree of one step: each construction step produces an intersection of two lines, of a line and a circle, or of two circles; solving for its coordinates uses at worst a quadratic equation over the field built so far, so adjoining it gives an extension of degree $1$ or $2$. Tower: after $n$ steps there is a chain $\\mathbb{Q} = F_0 \\subset F_1 \\subset \\cdots \\subset F_n$ with $\\alpha \\in F_n$ and each $[F_{i+1}:F_i]$ equal to $1$ or $2$. Tower law: $[F_n:\\mathbb{Q}]$ is the product of the step degrees, so $[F_n:\\mathbb{Q}] = 2^k$, where $k$ is the number of steps of degree $2$. Conclusion: $[\\mathbb{Q}(\\alpha):\\mathbb{Q}]$ divides $2^k$ by the tower law applied to $\\mathbb{Q} \\subset \\mathbb{Q}(\\alpha) \\subset F_n$, and a divisor of $2^k$ is itself a power of $2$. Hence every constructible length has degree $2^k$ over $\\mathbb{Q}$."
         constraints: "the criterion as a usable tool; degree-2 tower intuition, no analytic geometry details"
       - id: kp2
         name: "Doubling the cube and trisecting the angle"
         key_prerequisites: [field-extensions-degree]
         exemplars:
-          - problem: 'Prove that doubling the cube is impossible: no straightedge-compass construction produces $\sqrt[3]{2}$.'
-            answer: '$[\mathbb{Q}(\sqrt[3]2) : \mathbb{Q}] = 3$ (minimal polynomial $x^3 - 2$, Eisenstein at $2$), and $3$ is not a power of $2$.'
-            solution_sketch: 'Constructibility forces degree $2^k$; $3$ is not.'
-          - problem: 'Trisecting $60^\circ$ requires constructing $\cos 20^\circ$, a root of $8x^3 - 6x - 1$. Given that this cubic is irreducible over $\mathbb{Q}$, finish the impossibility proof.'
-            answer: '$[\mathbb{Q}(\cos 20^\circ) : \mathbb{Q}] = 3 \neq 2^k$, so $\cos 20^\circ$ is not constructible; hence the general angle cannot be trisected.'
-            solution_sketch: 'The triple-angle identity $\cos 3\theta = 4\cos^3\theta - 3\cos\theta$ at $\theta = 20^\circ$ yields the cubic; irreducibility gives degree $3$.'
+          - problem: "The doubling-the-cube proof uses the criterion that a real number constructible from Q has degree a power of 2 over Q. The cube root of 2 has minimal polynomial x^3 - 2 over Q, which is irreducible by Eisenstein's criterion at the prime 2. Find the degree of Q(cube root of 2) over Q."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the cube root of 2 with minimal polynomial x^3 - 2. Step 1 (Eisenstein's criterion): x^3 - 2 is irreducible at the prime 2, so the minimal polynomial has degree 3 and the field Q(cube root of 2) has degree 3 over Q. Step 2 (constructibility criterion): a constructible real number must have degree a power of 2 over Q, and 3 is not a power of 2. The degree is 3."
+          - problem: "In the trisection problem the number cos 20 degrees satisfies 8x^3 - 6x - 1 = 0, and this cubic is given as irreducible over Q. The constructibility criterion requires the degree of the field over Q to be a power of 2. State the degree of Q(cos 20 degrees) over Q."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is cos 20 degrees, a root of the cubic 8x^3 - 6x - 1. Step 1 (given irreducibility fact): this cubic is irreducible over Q, so it is the minimal polynomial and the field Q(cos 20 degrees) has degree 3 over Q. Step 2 (constructibility criterion): the required degree must be a power of 2, and 3 is not such a power. The degree is 3."
+          - problem: "With x = cos 20 degrees the triple-angle identity cos 3t = 4x^3 - 3x gives 4x^3 - 3x = 1/2, and the resulting cubic is irreducible over Q, while the constructibility criterion needs a degree that is a power of 2. Clearing the fraction and collecting all terms on one side writes this cubic as A x^3 - 6x - 1 = 0. Find A."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the equation 4x^3 - 3x = 1/2 for x = cos 20 degrees. Step 1 (clear the denominator): multiply both sides by 2, giving 8x^3 - 6x = 1. Step 2 (collect on one side): subtract 1 from both sides, giving 8x^3 - 6x - 1 = 0, so the coefficient A is 8. The value of A is 8."
+          - problem: "The length sqrt(5) is constructible, and the criterion says a constructible number has degree a power of 2 over Q. The minimal polynomial of sqrt(5) over Q is x^2 - 5, which is irreducible by Eisenstein's criterion at the prime 5. Find the degree of Q(sqrt(5)) over Q."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is sqrt(5) with minimal polynomial x^2 - 5. Step 1 (Eisenstein's criterion): x^2 - 5 is irreducible at the prime 5, so the minimal polynomial has degree 2 and the field Q(sqrt(5)) has degree 2 over Q. Step 2 (constructibility criterion): 2 is a power of 2, so this degree is consistent with a straightedge-compass construction. The degree is 2."
+          - problem: "Claim: the 60 degree angle can be trisected. Step 1: cos 20 degrees satisfies the cubic 8x^3 - 6x - 1 = 0, which is irreducible over Q. Step 2: so the degree of Q(cos 20 degrees) over Q is 3. Step 3: the constructibility criterion says a constructible number has degree a power of 2 over Q. Step 4: since 3 is not a power of 2, cos 20 degrees is constructible, and the angle can be trisected. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The object is the numbered argument about the 60 degree angle. Step 1 correctly gives the irreducible cubic for cos 20 degrees. Step 2 correctly reads off the degree 3 from that irreducible cubic. Step 3 correctly states the constructibility criterion. Step 4 is not valid: it reverses the criterion, because degree 3 is not a power of 2, so cos 20 degrees is not constructible. The answer is Step 4."
+          - problem: "The number 2^(1/4) is a constructible length, and the criterion requires its degree over Q to be a power of 2. Its minimal polynomial over Q is x^4 - 2, which is irreducible by Eisenstein's criterion at the prime 2. Find the degree of Q(2^(1/4)) over Q."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is 2^(1/4) with minimal polynomial x^4 - 2. Step 1 (Eisenstein's criterion): x^4 - 2 is irreducible at the prime 2, so the minimal polynomial has degree 4 and the field Q(2^(1/4)) has degree 4 over Q. Step 2 (constructibility criterion): 4 is a power of 2, so this degree allows a construction. The degree is 4."
+          - problem: "Write the full proof: no straightedge and compass construction trisects the 60 degree angle. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (triple-angle identity): with x = cos 20 degrees, the identity cos 3t = 4x^3 - 3x at t = 20 degrees, together with cos 60 degrees = 1/2, gives 4x^3 - 3x = 1/2, that is 8x^3 - 6x - 1 = 0. Step 2 (irreducibility fact): the cubic 8x^3 - 6x - 1 is irreducible over Q, so it is the minimal polynomial of x and the field Q(cos 20 degrees) has degree 3 over Q. Step 3 (constructibility criterion): every real number constructible from Q lies in a field extension whose degree over Q is a power of 2. Since 3 is not a power of 2, cos 20 degrees is not constructible. Conclusion: a 60 degree angle cannot be trisected by straightedge and compass."
         constraints: "cite the criterion plus one irreducibility fact; the cubic 8x^3 - 6x - 1 may be given as irreducible"
       - id: kp3
         name: "Squaring the circle; what remains constructible"
