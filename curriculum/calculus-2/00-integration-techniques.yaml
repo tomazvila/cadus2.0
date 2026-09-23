@@ -997,18 +997,30 @@ topics:
         name: Rational functions of sin and cos
         key_prerequisites: [partial-fractions-linear-factors, trigonometric-integrals]
         exemplars:
-          - problem: 'Evaluate $\int \frac{dx}{3 + 5\cos x}$.'
-            answer: '$\frac{1}{4}\ln\left|\frac{2 + \tan(x/2)}{2 - \tan(x/2)}\right| + C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$t = \tan(x/2)$: the integrand becomes $\frac{2}{8 - 2t^2} = \frac{1}{4 - t^2}$; partial fractions give $\frac{1}{4}\ln\left|\frac{2+t}{2-t}\right|$.'
-          - problem: 'Evaluate $\int \frac{dx}{5 + 4\cos x}$.'
-            answer: '$\frac{2}{3}\arctan\left(\frac{\tan(x/2)}{3}\right) + C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$t = \tan(x/2)$: $5 + 4\cos x = \frac{9 + t^2}{1 + t^2}$, so the integral is $\int \frac{2\,dt}{9 + t^2} = \frac{2}{3}\arctan\frac{t}{3}$.'
-          - problem: 'Evaluate $\int \csc x \, dx$ using $t = \tan(x/2)$.'
-            answer: '$\ln\left|\tan\frac{x}{2}\right| + C$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\csc x\,dx = \frac{1+t^2}{2t}\cdot\frac{2\,dt}{1+t^2} = \frac{dt}{t}$.'
+          - problem: "Evaluate $\\int_0^{\\pi/2} \\frac{dx}{4 + 5\\sin x}$. Give the answer to four decimals."
+            answer: "0.2310"
+            answer_contract: {"decimals": 4, "kind": "approx"}
+            solution_sketch: "Step 1: Apply the Weierstrass substitution t = tan(x/2), so dx = 2 dt/(1+t^2) and sin x = 2t/(1+t^2); the bounds x = 0 and x = pi/2 send t from 0 to 1. Step 2: Substitute to get 4 + 5 sin x = (4t^2 + 10t + 4)/(1+t^2), so the integral becomes the integral from 0 to 1 of 2 dt/(4t^2 + 10t + 4), which is the integral from 0 to 1 of dt/((2t+1)(t+2)). Step 3: The denominator splits over distinct linear factors, and partial fractions give 1/((2t+1)(t+2)) = (2/3)/(2t+1) - (1/3)/(t+2), with antiderivative (1/3) ln abs((2t+1)/(t+2)). Step 4: By the Fundamental Theorem of Calculus, evaluate from 0 to 1: (1/3) ln(1) - (1/3) ln(1/2) = (1/3) ln 2. Step 5: With ln 2 = 0.6931472, the value is 0.2310491, so the integral equals 0.2310."
+          - problem: "Evaluate $\\int \\frac{dx}{4 + 3\\cos x}$. Give the antiderivative as a function of $x$, including the constant $C$."
+            answer: "2/sqrt(7)atan(tan(x/2)/sqrt(7))+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Step 1: Apply the Weierstrass substitution t = tan(x/2), so dx = 2 dt/(1+t^2) and cos x = (1-t^2)/(1+t^2). Step 2: Substitute to get 4 + 3 cos x = (7 + t^2)/(1+t^2), so the integral becomes 2 dt/(7 + t^2). Step 3: Use the arctan pattern for the t-integral: 2 dt/(7 + t^2) gives (2/sqrt(7)) atan(t/sqrt(7)). Step 4: Back-substitute t = tan(x/2); the antiderivative is 2/sqrt(7)atan(tan(x/2)/sqrt(7))+C."
+          - problem: "Evaluate $\\int \\frac{dx}{2 + \\sin x + \\cos x}$. Give the antiderivative as a function of $x$, including the constant $C$."
+            answer: "sqrt(2)atan((tan(x/2)+1)/sqrt(2))+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Step 1: Apply the Weierstrass substitution t = tan(x/2), so dx = 2 dt/(1+t^2), sin x = 2t/(1+t^2), and cos x = (1-t^2)/(1+t^2). Step 2: Substitute to get 2 + sin x + cos x = (t^2 + 2t + 3)/(1+t^2), so the integral becomes 2 dt/(t^2 + 2t + 3). Step 3: Complete the square: t^2 + 2t + 3 = (t+1)^2 + 2, so the t-integral is sqrt(2) atan((t+1)/sqrt(2)). Step 4: Back-substitute t = tan(x/2); the antiderivative is sqrt(2)atan((tan(x/2)+1)/sqrt(2))+C."
+          - problem: "Evaluate $\\int \\frac{dx}{3 + \\cos x}$. Give the antiderivative as a function of $x$, including the constant $C$."
+            answer: "1/sqrt(2)atan(tan(x/2)/sqrt(2))+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Step 1: Apply the Weierstrass substitution t = tan(x/2), so dx = 2 dt/(1+t^2) and cos x = (1-t^2)/(1+t^2). Step 2: Substitute to get 3 + cos x = 2(2 + t^2)/(1+t^2), so the integral becomes dt/(2 + t^2). Step 3: Use the arctan pattern for the t-integral: dt/(2 + t^2) gives (1/sqrt(2)) atan(t/sqrt(2)). Step 4: Back-substitute t = tan(x/2); the antiderivative is 1/sqrt(2)atan(tan(x/2)/sqrt(2))+C."
+          - problem: "Evaluate $\\int \\frac{dx}{4 + \\sin x}$. Give the antiderivative as a function of $x$, including the constant $C$."
+            answer: "2/sqrt(15)atan((4tan(x/2)+1)/sqrt(15))+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Step 1: Apply the Weierstrass substitution t = tan(x/2), so dx = 2 dt/(1+t^2) and sin x = 2t/(1+t^2). Step 2: Substitute to get 4 + sin x = (4t^2 + 2t + 4)/(1+t^2), so the integral becomes 2 dt/(4t^2 + 2t + 4), which simplifies to dt/(2t^2 + t + 2). Step 3: Complete the square: 2t^2 + t + 2 = 2((t+1/4)^2 + 15/16), so the t-integral is (2/sqrt(15)) atan((4t+1)/sqrt(15)). Step 4: Back-substitute t = tan(x/2); the antiderivative is 2/sqrt(15)atan((4tan(x/2)+1)/sqrt(15))+C."
+          - problem: "Evaluate $\\int \\frac{dx}{3 + 2\\sin x + 2\\cos x}$. Give the antiderivative as a function of $x$, including the constant $C$."
+            answer: "2atan(tan(x/2)+2)+C"
+            answer_contract: {"kind": "function", "up_to_constant": true, "vars": ["x"]}
+            solution_sketch: "Step 1: Apply the Weierstrass substitution t = tan(x/2), so dx = 2 dt/(1+t^2), sin x = 2t/(1+t^2), and cos x = (1-t^2)/(1+t^2). Step 2: Substitute to get 3 + 2 sin x + 2 cos x = (t^2 + 4t + 5)/(1+t^2), so the integral becomes 2 dt/(t^2 + 4t + 5). Step 3: Complete the square: t^2 + 4t + 5 = (t+2)^2 + 1, so the t-integral is 2 atan(t+2). Step 4: Back-substitute t = tan(x/2); the antiderivative is 2atan(tan(x/2)+2)+C."
         constraints: "integrand rational in sin x and cos x with small integer coefficients; the t-integral is an arctan pattern or splits over distinct linear factors"
     diagnostic_exemplar:
       problem: 'Evaluate $\int \frac{dx}{2 + \cos x}$.'
