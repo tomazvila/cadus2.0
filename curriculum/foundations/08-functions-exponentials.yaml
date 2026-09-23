@@ -42,22 +42,22 @@ topics:
         key_prerequisites: [coordinate-plane]
         constraints: "graphs described in words or by an equation (line, parabola, circle, sideways parabola); the answer is yes or no"
         exemplars:
-          - problem: "A graph is a circle of radius $3$ centered at the origin. Is it the graph of a function?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "A vertical line such as $x = 0$ crosses it twice."
-          - problem: "Is the line $y = 2x + 1$ the graph of a function?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "A straight, non-vertical line meets any vertical line exactly once."
-          - problem: "The graph of $x = y^2$ is a sideways parabola. Is it the graph of a function?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "The vertical line $x = 4$ hits it at $y = 2$ and $y = -2$."
-          - problem: "A graph is the horizontal line $y = 5$. Is it the graph of a function?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Every vertical line $x = a$ crosses $y = 5$ exactly once, at $(a, 5)$."
+          - problem: "The graph of x^2 + y^2 = 4 is a circle of radius 2 centred at the origin. Determine whether this graph is the graph of a function, and give the number of intersection points of the vertical line x = 5 with this graph."
+            answer: "verdict = no; n = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
+            solution_sketch: "The full object is the circle x^2 + y^2 = 4 of radius 2 centred at the origin. A vertical line x = a meets the circle where y^2 = 4 - a^2. For a = 0 this gives y = 2 and y = -2, two points, so the graph fails the vertical line test. For x = 5 the right side is negative, so there are no intersection points, and n = 0. The wrong option yes comes from assuming a circle is a function because some vertical lines meet it once or not at all. Therefore verdict = no; n = 0."
+          - problem: "The graph of y = 5x - 1 is a straight line. Determine whether this graph is the graph of a function, and give the y-coordinate of the point where the vertical line x = 2 meets this graph."
+            answer: "verdict = yes; y = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "y"}]}
+            solution_sketch: "The full object is the line y = 5x - 1. The vertical line x = 2 meets it at y = 5 times 2 minus 1 = 9, so it meets the graph exactly once, at the point (2, 9). Every vertical line x = a gives exactly one value y = 5a - 1, so the graph passes the vertical line test. The wrong option no comes from thinking a sloped line cannot be a function. Therefore verdict = yes; y = 9."
+          - problem: "The graph of x = y^2 - 4 is a sideways parabola opening to the right. Determine whether this graph is the graph of a function, and give the number of intersection points of the vertical line x = 0 with this graph."
+            answer: "verdict = no; n = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
+            solution_sketch: "The full object is the sideways parabola x = y^2 - 4. The vertical line x = 0 meets it where y^2 = 4, so y = 2 and y = -2, two distinct points. One vertical line meets the graph twice, so the graph fails the vertical line test. The wrong option yes comes from looking only at the vertex or at a single y-value. Therefore verdict = no; n = 2."
+          - problem: "The graph of y = -3 is a horizontal line. Determine whether this graph is the graph of a function, and give the y-coordinate of the point where the vertical line x = 4 meets this graph."
+            answer: "verdict = yes; y = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "y"}]}
+            solution_sketch: "The full object is the horizontal line y = -3. The vertical line x = 4 meets it at the single point (4, -3), so the y-coordinate is -3. Every vertical line x = a meets this graph at (a, -3), exactly one point, so the graph passes the vertical line test. The wrong option no comes from thinking a constant graph is not a function because y does not change. Therefore verdict = yes; y = -3."
     diagnostic_exemplar:
       problem: 'The graph of $x^2 + y^2 = 25$ is a circle of radius $5$ centred at the origin. Is it the graph of a function?'
       answer_contract: {kind: label, options: [[yes], [no]]}
@@ -411,22 +411,22 @@ topics:
         key_prerequisites: [domain-range-of-relations, function-notation]
         constraints: "linear or quadratic rules with no denominator and no radical; the answer is always all real numbers"
         exemplars:
-          - problem: "State the domain of $f(x) = 2x + 5$."
+          - problem: "A quadratic function is given by f(x) = 2x^2 - 7x + 4. State its domain."
             answer: "all real numbers"
-            answer_contract: {"kind": "label", "options": [["all real numbers", "R"], ["nonnegative real numbers"]]}
-            solution_sketch: "The rule $2x+5$ uses multiplication and addition, each defined for every real $x$. Thus every real input belongs to its domain."
-          - problem: "State the domain of $f(x) = x^2 - 3x$."
-            answer: "all real numbers"
-            answer_contract: {"kind": "label", "options": [["all real numbers", "R"], ["nonnegative real numbers"]]}
-            solution_sketch: "Polynomials accept every real input."
-          - problem: "The straight-line graph $y=-3x+7$ extends indefinitely left and right. State its real domain."
-            answer: "all real numbers"
-            answer_contract: {"kind": "label", "options": [["all real numbers", "R"], ["nonnegative real numbers"]]}
-            solution_sketch: "Every real horizontal coordinate meets the line at height $-3x+7$, so all real inputs belong to the domain."
-          - problem: "The quadratic is written in factored form $f(x)=x(2x+5)-1$. State its real domain."
-            answer: "all real numbers"
-            answer_contract: {"kind": "label", "options": [["all real numbers", "R"], ["nonnegative real numbers"]]}
-            solution_sketch: "Both factors exist for any real $x$; multiplying them and subtracting $1$ impose no restriction."
+            answer_contract: {"kind": "label", "options": [["all real numbers"], ["nonnegative real numbers"], ["all real numbers except 0"], ["positive real numbers"]]}
+            solution_sketch: "The full rule is f(x) = 2x^2 - 7x + 4, a quadratic polynomial. Step 1: Inspect the rule; it uses only powers, multiplication and subtraction, with no denominator and no radical. Step 2: A polynomial accepts every real input, so the domain is all real numbers. The option nonnegative real numbers is wrong because negative inputs such as x = -1 are allowed for a polynomial. The option all real numbers except 0 is wrong because x = 0 gives f(0) = 4, a valid value. The option positive real numbers is wrong because negative inputs are allowed. The answer is all real numbers."
+          - problem: "A linear function is given by f(x) = 9 - 3x. State its domain."
+            answer: "every real number"
+            answer_contract: {"kind": "label", "options": [["every real number"], ["nonnegative real numbers"], ["whole numbers"], ["positive real numbers"]]}
+            solution_sketch: "The full rule is f(x) = 9 - 3x, a linear polynomial. Step 1: Inspect the rule; it uses only multiplication and subtraction, with no denominator and no radical, so no real x is excluded. Step 2: Hence the domain is every real number. The option nonnegative real numbers is wrong because a line accepts negative inputs such as x = -2. The option whole numbers is wrong because fractional inputs like x = 1/2 are also allowed. The option positive real numbers is wrong because negative inputs are allowed. The answer is every real number."
+          - problem: "The function f is given by f(x) = x^2 + 4x - 1. Consider the three inputs x = -6, x = 0, and x = 9. How many of these inputs belong to the domain of f?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full rule is f(x) = x^2 + 4x - 1, a quadratic polynomial. Step 1: Inspect the rule; it has no denominator and no radical, so the domain of f is all real numbers. Step 2: Since every real number is in the domain, each of the inputs x = -6, x = 0 and x = 9 belongs to the domain. Step 3: Count the qualifying inputs: -6, 0 and 9 give 3 inputs. The answer is 3."
+          - problem: "The function f is given by f(x) = 6 - 5x. Five inputs are proposed: x = -100, x = -7, x = 4, x = 40, and x = 250. How many of these five inputs are not in the domain of f?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full rule is f(x) = 6 - 5x, a linear polynomial. Step 1: Inspect the rule; it has no denominator and no radical, so the domain of f is all real numbers. Step 2: No real number is excluded, so none of the five proposed inputs fails to belong to the domain. Step 3: The number of proposed inputs that are not in the domain is therefore 0. The answer is 0."
       - id: kp2
         name: Domain restrictions from denominators and square roots
         key_prerequisites: [square-roots, linear-inequalities]

@@ -1975,22 +1975,22 @@ topics:
         name: "Pythagorean triples and acute/obtuse classification"
         key_prerequisites: [pythagorean-theorem]
         exemplars:
-          - problem: 'Scale the triple $(3, 4, 5)$ by $3$. Is the resulting triangle right?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The scaled sides are $(9, 12, 15)$: $81 + 144 = 225 = 15^2$; multiples of triples stay right.'
-          - problem: 'A triangle has sides $4$, $5$, $6$. Is it acute, right, or obtuse?'
-            answer: "acute"
-            answer_contract: {"kind":"label","options":[["acute"],["right"],["obtuse"]]}
-            solution_sketch: '$16 + 25 = 41 > 36$, so the largest angle is less than $90°$.'
-          - problem: 'After scaling the triple $(3, 4, 5)$ by $4$, is the triangle right?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The scaled sides are $(12, 16, 20)$: $144 + 256 = 400 = 20^2$; multiples of triples stay right.'
-          - problem: 'A triangle has sides $3$, $4$, $6$. Is it acute, right, or obtuse?'
-            answer: "obtuse"
-            answer_contract: {"kind":"label","options":[["acute"],["right"],["obtuse"]]}
-            solution_sketch: '$9 + 16 = 25 < 36$, so the largest angle exceeds $90°$.'
+          - problem: "A triangle has sides 4, 7, and 9. Give the correct type of its largest angle and the sum of the squares of its two shorter sides."
+            answer: "verdict = obtuse; S = 65"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["acute"], ["obtuse"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "S"}]}
+            solution_sketch: "Step 1: square the two shorter sides and add them, 4^2 + 7^2 = 16 + 49 = 65. Step 2: square the longest side, 9^2 = 81. Step 3: compare the two values; 65 is less than 81, so by the converse of the Pythagorean theorem the largest angle is obtuse. Choosing acute is the error of reading the comparison 65 < 81 backwards. Final answer: verdict = obtuse; S = 65."
+          - problem: "A triangle has sides 6, 7, and 8. Give the correct type of its largest angle and the square of its longest side."
+            answer: "verdict = acute; c2 = 64"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["acute"], ["obtuse"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Step 1: add the squares of the two shorter sides of the triangle with sides 6, 7, and 8, which gives 6^2 + 7^2 = 36 + 49 = 85. Step 2: square the longest side, which gives 8^2 = 64. Step 3: compare the two values, and since 85 is greater than 64, the converse of the Pythagorean theorem says the largest angle is acute. Choosing obtuse is the error of using the inequality in the wrong direction. Final answer: verdict = acute; c2 = 64."
+          - problem: "Scale the triple (5, 12, 13) by 2 to get the side lengths of a triangle. Find the square of the longest side of that triangle."
+            answer: "676"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: multiply every member of the triple by 2, which gives the sides 10, 24, and 26. Step 2: a scaled Pythagorean triple is still a right triangle, so the longest side is the scaled 13, namely 26. Step 3: square the longest side, 26^2 = 676. The square of the longest side is 676."
+          - problem: "Scale the triple (7, 24, 25) by 3 to get the side lengths of a triangle. Find the square of the longest side minus the sum of the squares of the two shorter sides."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: multiply every member of the triple by 3, which gives the sides 21, 72, and 75. Step 2: add the squares of the two shorter sides, 21^2 + 72^2 = 441 + 5184 = 5625. Step 3: square the longest side, 75^2 = 5625. Step 4: subtract the two results, 5625 - 5625 = 0, which is exactly the right-triangle relation. The value of the difference is 0."
         constraints: "a^2 + b^2 > c^2 means acute, < c^2 means obtuse"
     diagnostic_exemplar:
       problem: 'A triangle has sides $5$, $6$, $8$. Is it acute, right, or obtuse?'
