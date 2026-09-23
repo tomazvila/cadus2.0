@@ -2488,12 +2488,34 @@ topics:
         name: "Generalized pigeonhole"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Prove: among any $n + 1$ integers, two leave the same remainder on division by $n$.'
-            answer: '$n + 1$ integers, $n$ possible remainders.'
-            solution_sketch: 'Map each integer to its remainder mod $n$, landing in $\{0, 1, \dots, n - 1\}$ ($n$ values). With $n + 1$ integers and $n$ remainders, two share a remainder; their difference is then divisible by $n$. $\square$'
-          - problem: 'Prove: if $25$ balls are placed in $6$ boxes, some box has at least $5$ balls.'
-            answer: '$\lceil 25/6 \rceil = 5$.'
-            solution_sketch: 'If every box held at most $4$ balls, the total would be at most $6 \cdot 4 = 24 < 25$. So some box has at least $\lceil 25/6 \rceil = 5$ balls. $\square$'
+          - problem: "Each of 43 integers is divided by 8, and the remainder is recorded. Find the largest number k such that at least k of the integers must leave the same remainder."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Model: the 43 integers are the objects and the 8 possible remainders 0 through 7 are the holes. Rule: the generalized pigeonhole principle guarantees that some hole receives at least the ceiling of 43 over 8 objects. Compute: 43/8 = 5.375, so the ceiling is 6; with at most 5 per class the total would be at most 40, which is less than 43. The answer is 6."
+          - problem: "A total of 58 balls are placed in 12 boxes. Find the largest number m such that some box must contain at least m balls."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Setup: 58 balls are the objects and the 12 boxes are the holes. Rule: the generalized pigeonhole principle in ceiling form says some box holds at least the ceiling of 58 over 12 balls. Compute: 58/12 = 4.83, so the ceiling is 5; if every box held at most 4 balls the total would be at most 48, which is less than 58. The answer is 5."
+          - problem: "Integers are chosen one at a time, and each is divided by 9 to record its remainder. Find the maximum number of integers you can choose so that no two of them leave the same remainder."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Setup: division by 9 gives exactly 9 remainder classes, 0 through 8. Rule: by the pigeonhole principle, a tenth integer must repeat a remainder already used, since there are only 9 holes. Bound check: the integers 0, 1, 2, 3, 4, 5, 6, 7, 8 have nine distinct remainders, so 9 is achievable. The answer is 9."
+          - problem: "You want to be certain that at least 4 of your chosen integers leave the same remainder on division by 5. How many integers must you choose at minimum?"
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Setup: the holes are the 5 remainder classes mod 5, and the target is 4 integers in one class. Rule: the generalized pigeonhole principle needs more than 3 times 5 objects, since each class can otherwise hold 3. Compute: if every class held at most 3, the total would be at most 15, so 16 integers force a class with 4. Sharpness: 15 integers split as 3 in each class fail, so 15 is not enough. The answer is 16."
+          - problem: "Claim: if 20 balls are placed in 6 boxes, some box has at least 6 balls. Step 1: suppose every box contains at most 3 balls. Step 2: then the total is at most 6 times 3, that is 18. Step 3: since 20 is greater than 18, the supposition is false. Step 4: therefore some box contains at least 6 balls. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a legitimate supposition for a proof by contradiction. Step 2 correctly computes 6 times 3 as 18. Step 3 correctly derives the contradiction, since 20 exceeds 18. Step 4 is the first invalid step: refuting the supposition that every box holds at most 3 only proves that some box holds at least 4, not 6; the correct guaranteed bound is the ceiling of 20 over 6, which is 4. The answer is Step 4."
+          - problem: "Each of 34 students chooses exactly one of 7 project topics. Determine whether some topic must be chosen by at least 6 students, and give the largest m such that the most-chosen topic must have at least m students."
+            answer: "verdict = no; minimum = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "minimum"}]}
+            solution_sketch: "Setup: the 34 students are the objects and the 7 topics are the holes. Rule: the generalized pigeonhole principle gives a most-chosen topic with at least the ceiling of 34 over 7 students, and the ceiling of 34 over 7 is 5. Since 5 is less than 6, a topic with at least 6 students is not guaranteed, and a split like 5, 5, 5, 5, 5, 5, 4 shows that 5 is the best possible bound. The answer is verdict = no; minimum = 5."
+          - problem: "Write the full proof: among any 35 integers, at least 7 leave the same remainder on division by 5. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (the holes): map each of the 35 integers to its remainder on division by 5; the holes are the five remainder classes 0, 1, 2, 3, 4. Step 2 (hypothesis for contradiction): suppose every class contains at most 6 of the integers. Step 3 (count): then the total number of integers is at most 5 times 6, that is 30, which is smaller than 35, a contradiction. Step 4 (conclusion): therefore some remainder class contains at least the ceiling of 35 over 5, namely 7, so at least 7 of the integers leave the same remainder on division by 5, which completes the proof by the generalized pigeonhole principle."
         constraints: "use residues/boxes as the holes; generalized form $\\lceil n/k \\rceil$"
     diagnostic_exemplar:
       problem: 'Prove: if $5$ points are placed in a $2 \times 2$ square, two of them are within distance $\sqrt{2}$.'
