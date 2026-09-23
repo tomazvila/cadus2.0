@@ -21,22 +21,22 @@ topics:
         key_prerequisites: [coordinate-plane]
         constraints: "small finite relations (3-4 ordered pairs) with integer coordinates"
         exemplars:
-          - problem: "Is the relation $\\{(1,2), (2,3), (3,4)\\}$ a function?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Every input appears exactly once."
-          - problem: "Is the relation $\\{(1,2), (1,5), (3,4)\\}$ a function?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "The input $1$ has two different outputs."
-          - problem: "A sensor relation is $\\{(0,7),(2,7),(4,7)\\}$. Can different inputs sharing output $7$ still define a function?"
-            answer: "yes"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Inputs $0,2,4$ each have exactly one output, $7$. Sharing an output does not create a second output for any input."
-          - problem: "A device records input-output pairs $(2,5),(4,5),(4,9)$. Does the record assign exactly one output to every input?"
-            answer: "no"
-            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
-            solution_sketch: "Input $4$ is assigned both $5$ and $9$, so its output is not unique."
+          - problem: "A relation is the set of ordered pairs (1, 2), (2, 3), and (3, 4). Decide whether the relation assigns exactly one output to each input, and find the number of inputs that have exactly one output. Select the correct verdict and give the count."
+            answer: "verdict = function; count = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["function"], ["nonfunction"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The relation is {(1,2),(2,3),(3,4)}. Step 1 (one-output-per-input rule): list the inputs 1, 2, 3 and check each input's outputs. Each input has exactly one output, so the relation assigns one output per input. Step 2 (counting rule): count the inputs with exactly one output, which gives 3. The wrong option nonfunction would mean an input has two different outputs, but no input does. The verdict is function and the count is 3, so the answer is verdict = function; count = 3."
+          - problem: "A relation is the set of ordered pairs (1, 2), (1, 5), and (3, 4). Decide whether the relation assigns exactly one output to each input, and find the number of inputs that have exactly one output. Select the correct verdict and give the count."
+            answer: "verdict = nonfunction; count = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["function"], ["nonfunction"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The relation is {(1,2),(1,5),(3,4)}. Step 1 (one-output-per-input rule): list the inputs 1 and 3. Input 1 has outputs 2 and 5, so it has more than one output; input 3 has only output 4. Step 2 (counting rule): count the inputs with exactly one output, which gives 1. The wrong option function would mean every input has exactly one output, but input 1 has two outputs. The verdict is nonfunction and the count is 1, so the answer is verdict = nonfunction; count = 1."
+          - problem: "A relation is the set of ordered pairs (0, 7), (2, 7), (4, 7), and (5, 7). Decide whether the relation assigns exactly one output to each input, and find the number of inputs that have exactly one output. Select the correct verdict and give the count."
+            answer: "verdict = function; count = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["function"], ["nonfunction"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The relation is {(0,7),(2,7),(4,7),(5,7)}. Step 1 (one-output-per-input rule): list the inputs 0, 2, 4, 5 and check each input's outputs. Each input has exactly one output, 7, and sharing the same output does not break the one-output-per-input rule. Step 2 (counting rule): count the inputs with exactly one output, which gives 4. The wrong option nonfunction would mean an input has two different outputs, but no input does. The verdict is function and the count is 4, so the answer is verdict = function; count = 4."
+          - problem: "A relation is the set of ordered pairs (2, 5), (2, 9), (4, 5), and (4, 9). Decide whether the relation assigns exactly one output to each input, and find the number of inputs that have exactly one output. Select the correct verdict and give the count."
+            answer: "verdict = nonfunction; count = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["function"], ["nonfunction"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The relation is {(2,5),(2,9),(4,5),(4,9)}. Step 1 (one-output-per-input rule): list the inputs 2 and 4. Input 2 has outputs 5 and 9, and input 4 has outputs 5 and 9, so both inputs have more than one output. Step 2 (counting rule): count the inputs with exactly one output, which gives 0. The wrong option function would mean every input has exactly one output, but both inputs have two outputs. The verdict is nonfunction and the count is 0, so the answer is verdict = nonfunction; count = 0."
       - id: kp2
         name: The vertical line test
         key_prerequisites: [coordinate-plane]
@@ -1707,22 +1707,22 @@ topics:
         key_prerequisites: [evaluating-logarithms]
         constraints: "bases 2, 3, 5, 10 with integer logarithm values; the answer is the exponential equation, not a value"
         exemplars:
-          - problem: "Rewrite $\\log_5(25) = 2$ in exponential form."
-            answer: "5^2 = 25"
-            answer_contract: {"kind": "label", "options": [["5^2 = 25", "5^2=25", "$5^2 = 25$", "$5^2=25$"], ["2^5 = 25", "2^5=25", "$2^5 = 25$", "$2^5=25$"]]}
-            solution_sketch: "The base stays the base and the logarithm value becomes its exponent: $\\log_5(25) = 2 \\Leftrightarrow 5^2 = 25$."
-          - problem: "The point $(32,5)$ lies on $y=\\log_2 x$. State the exponential equation obtained by reversing the logarithmic relation."
-            answer: "2^5 = 32"
-            answer_contract: {"kind": "label", "options": [["2^5 = 32", "2^5=32", "$2^5 = 32$", "$2^5=32$"], ["5^2 = 32", "5^2=32", "$5^2 = 32$", "$5^2=32$"]]}
-            solution_sketch: "The logarithm value $5$ is the exponent on base $2$, and its argument $32$ is the power: $2^5=32$."
-          - problem: "A log table records base $3$, argument $9$, and value $2$. Write the equivalent power equation."
-            answer: "3^2 = 9"
-            answer_contract: {"kind": "label", "options": [["3^2 = 9", "3^2=9", "$3^2 = 9$", "$3^2=9$"], ["2^3 = 9", "2^3=9", "$2^3 = 9$", "$2^3=9$"]]}
-            solution_sketch: "The definition makes the value the exponent: base $3$ raised to $2$ gives argument $9$."
-          - problem: "Rewrite $\\log_{10}(0.001)=-3$ as an equation using a negative power."
-            answer: "10^(-3) = 0.001"
-            answer_contract: {"kind": "label", "options": [["10^(-3) = 0.001", "10^(-3)=0.001", "10^{-3} = 0.001", "10^{-3}=0.001", "$10^(-3) = 0.001$", "$10^(-3)=0.001$", "$10^{-3} = 0.001$", "$10^{-3}=0.001$"], ["10^3 = 0.001", "10^3=0.001", "$10^3 = 0.001$", "$10^3=0.001$"]]}
-            solution_sketch: "The argument is the result of raising the base to the logarithm value: $10^{-3}=1/1000=0.001$."
+          - problem: "Rewrite the statement $\\log_5(125) = 3$ in exponential form. Select the correct equation."
+            answer: "5^3 = 125"
+            answer_contract: {"kind": "label", "options": [["5^3 = 125"], ["3^5 = 125"], ["5^125 = 3"], ["125^3 = 5"]]}
+            solution_sketch: "By the definition of a logarithm, log base b of a equals c means b raised to the power c gives a. Apply the rule with base 5, value 3, and argument 125: the full equation is 5^3 = 125. The option 3^5 = 125 swaps the base and the value; the option 5^125 = 3 wrongly uses the argument as the exponent; the option 125^3 = 5 wrongly makes the argument the base. The answer is 5^3 = 125."
+          - problem: "The point (64, 6) lies on the graph of $y = \\log_2 x$. Give the left side and the right side of the exponential equation that this point produces, writing the left side as a power of the base."
+            answer: "left = 2^6; right = 64"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
+            solution_sketch: "A point (x, y) on the graph of y = log base 2 of x means log base 2 of x equals y; here that reads log base 2 of 64 equals 6. The conversion rule log base b of a equals c means b^c = a, so the full equation is 2^6 = 64. Its left side is the power 2^6 and its right side is 64. The answer is left = 2^6; right = 64."
+          - problem: "A logarithm table records one entry with base 3, argument 243, and value 5. Select the equation that is the power form of this entry."
+            answer: "3^5 = 243"
+            answer_contract: {"kind": "label", "options": [["3^5 = 243"], ["5^3 = 243"], ["3^243 = 5"], ["243^5 = 3"]]}
+            solution_sketch: "By the definition of a logarithm, a table entry with base b, argument a, and value c means b^c = a. With base 3, argument 243, and value 5 the full equation is 3^5 = 243. The option 5^3 = 243 swaps the base and the value; the option 3^243 = 5 wrongly uses the argument as the exponent; the option 243^5 = 3 wrongly makes the argument the base. The answer is 3^5 = 243."
+          - problem: "Rewrite $\\log_{10}(10000) = 4$ in exponential form. Give the left side and the right side of the resulting equation, writing the left side as a power of 10."
+            answer: "left = 10^4; right = 10000"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
+            solution_sketch: "The conversion rule states that log base b of a equals c means b^c = a. With base 10, argument 10000, and value 4 the full equation is 10^4 = 10000. The left side of that equation is the power 10^4 and the right side is the number 10000. The answer is left = 10^4; right = 10000."
       - id: kp3
         name: Fractional values and unknown bases
         key_prerequisites: [evaluating-logarithms, exponential-equations]
@@ -1889,14 +1889,14 @@ topics:
           - problem: "The graph of $y = \\ln x$ has a vertical asymptote at $x = c$. Find $c$."
             answer: "0"
             solution_sketch: "As $x \\to 0^+$, $\\ln x \\to -\\infty$: the graph hugs the $y$-axis."
-          - problem: "Is the graph of $y = \\log_2 x$ increasing or decreasing?"
-            answer: "increasing"
-            answer_contract: {"kind": "label", "options": [["increasing"], ["decreasing"]]}
-            solution_sketch: "Base $2 > 1$."
-          - problem: "Is the graph of $y = \\log_{1/2} x$ increasing or decreasing?"
-            answer: "decreasing"
-            answer_contract: {"kind": "label", "options": [["increasing"], ["decreasing"]]}
-            solution_sketch: "Base $\\frac{1}{2} < 1$, so the log is decreasing."
+          - problem: "The graph of $y = \\log_2 x$ is monotone. State whether it goes up or down and give the value of $y$ when $x = 8$."
+            answer: "verdict = up; y = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["up"], ["down"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "y"}]}
+            solution_sketch: "Full object: $y = \\log_2 x$. Step 1: the base is $2 > 1$, so the parent log graph is monotone increasing, which means it goes up. Step 2: evaluate at $x = 8$: $y = \\log_2 8 = 3$. The wrong option down comes from treating the base as less than 1. The final answer is verdict = up; y = 3."
+          - problem: "The graph of $y = \\log_{1/2} x$ is monotone. State whether it goes up or down and give the value of $y$ when $x = 4$."
+            answer: "verdict = down; y = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["up"], ["down"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "y"}]}
+            solution_sketch: "Full object: $y = \\log_{1/2} x$. Step 1: the base is $0 < 1/2 < 1$, so the parent log graph is monotone decreasing, which means it goes down. Step 2: evaluate at $x = 4$: $y = \\log_{1/2} 4 = -2$, since $(1/2)^{-2} = 4$. The wrong option up comes from using a base greater than 1. The final answer is verdict = down; y = -2."
       - id: kp3
         visuals: [{"kind":"curve","x_min":"-1","x_max":"9","y_min":"-3","y_max":"3","x_tick":"1","y_tick":"1","curve":{"family":"logarithm","a":"1","base":"2","h":"0","k":"0"},"key_points":[{"x":"1","y":"0"},{"x":"2","y":"1"},{"x":"4","y":"2"},{"x":"8","y":"3"},{"x":"1/2","y":"-1"}],"asymptotes":[{"axis":"vertical","at":"0"}],"caption":"Reference example: y = log base 2 of x, with vertical asymptote x = 0 and key points at the exact powers of 2."}]
         name: The inverse-pair reflection with the exponential
@@ -2495,10 +2495,10 @@ topics:
           - problem: "Find the $y$-intercept of $y = e^x$."
             answer: "(0, 1)"
             solution_sketch: "At $x = 0$, $e^0 = 1$."
-          - problem: "Is the graph of $y = e^x$ increasing or decreasing?"
-            answer: "increasing"
-            answer_contract: {"kind": "label", "options": [["increasing"], ["decreasing"]]}
-            solution_sketch: "The base $e \\approx 2.718$ exceeds $1$, so $e^x$ grows; its graph sits between $y = 2^x$ and $y = 3^x$."
+          - problem: "The graph of y = e^x either rises or falls as x increases. State whether it rises or falls, and give the value of ln(e^7)."
+            answer: "verdict = increasing; v = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "v"}]}
+            solution_sketch: "First identify the shape: for y = e^x the base e is greater than 1, so the graph rises over all real numbers; the option decreasing is wrong because it treats the base as less than 1. Then use the inverse pair: ln(e^7) = 7 because the natural logarithm undoes the natural exponential. The answer is verdict = increasing; v = 7."
           - problem: "The functions $e^x$ and $\\ln x$ undo each other. Evaluate $\\ln(e^5)$ and $e^{\\ln 3}$, and give the sum of the two values."
             answer: "8"
             solution_sketch: "$\\ln(e^5) = 5$ and $e^{\\ln 3} = 3$; the sum is $8$."
