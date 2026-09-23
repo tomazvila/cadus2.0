@@ -83,27 +83,59 @@ topics:
         name: "Evaluating floor and ceiling"
         key_prerequisites: [function-notation]
         exemplars:
-          - problem: 'Compute $\lfloor 3.7 \rfloor$, $\lceil 3.2 \rceil$, $\lfloor -1.5 \rfloor$, and $\lceil -2.3 \rceil$.'
-            answer_contract: {kind: none}
-            answer: '$3$, $4$, $-2$, $-2$.'
-            solution_sketch: 'Floor rounds down, ceiling rounds up: $\lfloor -1.5 \rfloor = -2$ since $-2 \le -1.5 < -1$, and $\lceil -2.3 \rceil = -2$ since $-3 < -2.3 \le -2$.'
-          - problem: 'Compute $\lfloor 5 \rfloor$, $\lceil 5 \rceil$, and $\lfloor -0.5 \rfloor$.'
-            answer_contract: {kind: none}
-            answer: '$5$, $5$, $-1$.'
-            solution_sketch: 'On integers, floor and ceiling both return the integer itself; $-1 \le -0.5 < 0$ gives floor $-1$.'
+          - problem: "Compute $\\lfloor 4.6 \\rfloor$, $\\lceil 2.1 \\rceil$, $\\lfloor -2.7 \\rfloor$, and $\\lceil -3.4 \\rceil$. Give each value."
+            answer: "f1 = 4; c1 = 3; f2 = -3; c2 = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "f1"}, {"contract": {"kind": "exact"}, "name": "c1"}, {"contract": {"kind": "exact"}, "name": "f2"}, {"contract": {"kind": "exact"}, "name": "c2"}]}
+            solution_sketch: "Floor rule: the floor is the greatest integer at most the input, so $\\lfloor 4.6 \\rfloor = 4$. Ceiling rule: the ceiling is the least integer at least the input, so $\\lceil 2.1 \\rceil = 3$. Negative inputs are the trap: $-3 \\le -2.7 < -2$, so $\\lfloor -2.7 \\rfloor = -3$, and $-4 < -3.4 \\le -3$, so $\\lceil -3.4 \\rceil = -3$. The values are f1 = 4; c1 = 3; f2 = -3; c2 = -3."
+          - problem: "Compute $\\lfloor 8 \\rfloor$, $\\lceil 8 \\rceil$, and $\\lceil -1/3 \\rceil$. Give each value."
+            answer: "a = 8; b = 8; c = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Integer rule: at an integer input the floor and the ceiling both return the integer itself, so $\\lfloor 8 \\rfloor = 8$ and $\\lceil 8 \\rceil = 8$. Small negative rule: $-1 \\le -1/3 < 0$, so the least integer at least $-1/3$ is $0$. The values are a = 8; b = 8; c = 0."
+          - problem: "Compute $\\lfloor -6.4 \\rfloor + \\lceil 2.3 \\rceil$."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Floor rule: $-7 \\le -6.4 < -6$, so $\\lfloor -6.4 \\rfloor = -7$; floor rounds toward negative infinity, not toward zero. Ceiling rule: $2 < 2.3 \\le 3$, so $\\lceil 2.3 \\rceil = 3$. The sum is $-7 + 3 = -4$. The answer is -4."
+          - problem: "Compute $\\lfloor 2.5 \\rfloor + \\lfloor 3.5 \\rfloor$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Floor rule: $\\lfloor 2.5 \\rfloor = 2$ since 2 is the greatest integer at most 2.5. Floor rule again: $\\lfloor 3.5 \\rfloor = 3$ since 3 is the greatest integer at most 3.5. Note the floor is taken before adding: $2 + 3 = 5$. The answer is 5."
+          - problem: "Compute $\\lfloor -7 \\rfloor + \\lceil -7 \\rceil$."
+            answer: "-14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Integer rule: at an integer input the floor and the ceiling coincide, so $\\lfloor -7 \\rfloor = -7$ and $\\lceil -7 \\rceil = -7$. No rounding happens at an integer, even a negative one. The sum is $-7 + (-7) = -14$. The answer is -14."
+          - problem: "Compute $\\lfloor \\sqrt{5} \\rfloor$ and $\\lceil \\sqrt{5} \\rceil$. Give both values."
+            answer: "a = 2; b = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "Locate the input: $2^2 = 4 < 5 < 9 = 3^2$, so $2 < \\sqrt{5} < 3$. Floor rule: the greatest integer at most $\\sqrt{5}$ is 2. Ceiling rule: the least integer at least $\\sqrt{5}$ is 3. The values are a = 2; b = 3."
         constraints: "evaluate at positives, negatives, and integers; negatives are the trap"
       - id: kp2
         name: "Basic identities"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'Verify $\lceil x \rceil = -\lfloor -x \rfloor$ at $x = 2.4$.'
-            answer_contract: {kind: none}
-            answer: 'Both sides equal $3$.'
-            solution_sketch: '$\lceil 2.4 \rceil = 3$; and $-\lfloor -2.4 \rfloor = -(-3) = 3$.'
-          - problem: 'Verify $\lfloor x + n \rfloor = \lfloor x \rfloor + n$ for $x = 1.5$, $n = 3$.'
-            answer_contract: {kind: none}
-            answer: 'Both sides equal $4$.'
-            solution_sketch: '$\lfloor 4.5 \rfloor = 4$ and $\lfloor 1.5 \rfloor + 3 = 1 + 3 = 4$; integer shifts pass through the floor.'
+          - problem: "Verify $\\lceil x \\rceil = -\\lfloor -x \\rfloor$ at $x = 3.7$ by evaluating the left side and the right side. Find the common value of the two sides."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is $\\lceil x \\rceil = -\\lfloor -x \\rfloor$. Step 1 (ceiling evaluation): $\\lceil 3.7 \\rceil = 4$. Step 2 (floor evaluation): $-\\lfloor -3.7 \\rfloor = -(-4) = 4$. The common value is 4."
+          - problem: "Verify $\\lfloor x + n \\rfloor = \\lfloor x \\rfloor + n$ at $x = 2.8$ and $n = 4$ by evaluating both sides. Find the common value of the two sides."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is $\\lfloor x + n \\rfloor = \\lfloor x \\rfloor + n$. Step 1 (integer-shift property): $\\lfloor 2.8 + 4 \\rfloor = \\lfloor 6.8 \\rfloor = 6$. Step 2 (floor evaluation): $\\lfloor 2.8 \\rfloor + 4 = 2 + 4 = 6$. The common value is 6."
+          - problem: "Verify $\\lceil x + n \\rceil = \\lceil x \\rceil + n$ at $x = -0.6$ and $n = 3$ by evaluating both sides. Find the common value of the two sides."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is $\\lceil x + n \\rceil = \\lceil x \\rceil + n$. Step 1 (ceiling-shift property): $\\lceil -0.6 + 3 \\rceil = \\lceil 2.4 \\rceil = 3$. Step 2 (ceiling evaluation): $\\lceil -0.6 \\rceil + 3 = 0 + 3 = 3$. The common value is 3."
+          - problem: "Verify $\\lfloor -x \\rfloor = -\\lceil x \\rceil$ at $x = 4.3$ by evaluating both sides. Find the common value of the two sides."
+            answer: "-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is $\\lfloor -x \\rfloor = -\\lceil x \\rceil$. Step 1 (floor of a negative): $\\lfloor -4.3 \\rfloor = -5$. Step 2 (ceiling evaluation): $-\\lceil 4.3 \\rceil = -5$. The common value is -5."
+          - problem: "Verify $\\lceil -x \\rceil = -\\lfloor x \\rfloor$ at $x = 1.6$ by evaluating both sides. Find the common value of the two sides."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is $\\lceil -x \\rceil = -\\lfloor x \\rfloor$. Step 1 (ceiling of a negative): $\\lceil -1.6 \\rceil = -1$. Step 2 (floor evaluation): $-\\lfloor 1.6 \\rfloor = -1$. The common value is -1."
+          - problem: "Verify $\\lceil x \\rceil = \\lfloor x \\rfloor + 1$ at $x = 7.1$ by evaluating both sides. Find the common value of the two sides."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity is $\\lceil x \\rceil = \\lfloor x \\rfloor + 1$ at non-integer $x$. Step 1 (ceiling evaluation): $\\lceil 7.1 \\rceil = 8$. Step 2 (floor evaluation): $\\lfloor 7.1 \\rfloor + 1 = 7 + 1 = 8$. The common value is 8."
         constraints: "verify a floor/ceiling identity at a concrete value"
       - id: kp3
         name: "Solving with floors and ceilings"
@@ -1178,12 +1210,34 @@ topics:
         name: "Definition and quick checks"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'Verify that equality $=$ on any set is an equivalence relation.'
-            answer: 'Reflexive, symmetric, and transitive all hold immediately.'
-            solution_sketch: '$a = a$ (reflexive); $a = b \Rightarrow b = a$ (symmetric); $a = b \land b = c \Rightarrow a = c$ (transitive). So $=$ is an equivalence relation. $\square$'
-          - problem: 'Is "$a \sim b \iff a \le b$" on $\mathbb{Z}$ an equivalence relation?'
-            answer: 'No; it is not symmetric.'
-            solution_sketch: '$\le$ is reflexive and transitive, but $1 \le 2$ while $2 \not\le 1$, so it is not symmetric; hence not an equivalence relation. $\square$'
+          - problem: "A relation on a set with 5 elements is reflexive only if it contains every pair (a, a). How many ordered pairs must such a relation contain at least?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of reflexive): a relation R on a set S is reflexive when (a, a) in R for every a in S. Step 2 (count): S has 5 elements, so the diagonal pairs (a, a) are one for each element. Step 3 (conclude): there are 5 such pairs, so a reflexive relation contains at least 5 ordered pairs. The answer is 5."
+          - problem: "On the set {1, 2, 3} consider the relation a ~ b exactly when a <= b. Count the ordered pairs (a, b) of this relation for which the reversed pair (b, a) does not appear. How many such pairs are there?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (list the relation): the pairs with a <= b in {1, 2, 3} are (1,1), (2,2), (3,3), (1,2), (1,3), (2,3). Step 2 (test symmetry): the reversed pairs of (1,2), (1,3), (2,3) are not in the list, while the diagonal pairs reverse to themselves. Step 3 (count): exactly 3 pairs fail symmetry, confirming that <= is not symmetric. The answer is 3."
+          - problem: "A relation R on {1, 2, 3} contains exactly the pairs (1,2) and (2,3). It is not transitive, since 1 relates to 2 and 2 relates to 3 but 1 does not relate to 3. How many ordered pairs must be added to R to make it transitive?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of transitive): whenever (a,b) and (b,c) are in R, the pair (a,c) must also be in R. Step 2 (apply): the only chain is 1 to 2 and 2 to 3, forcing (1,3). Step 3 (check): adding (1,3) creates no new chain, since 3 relates to nothing. So exactly 1 pair must be added. The answer is 1."
+          - problem: "A relation R on {1, 2, 3, 4} contains exactly the pairs (1,2), (2,3), (3,4), (1,3). It fails to be transitive. Give the first pair (a, b) with a < b that is forced by transitivity but is missing from R, as (a, b)."
+            answer: "(1,4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (scan chains): (1,2) and (2,3) already give (1,3), which is present. Step 2 (continue): (1,3) and (3,4) force (1,4), and (2,3) with (3,4) forces (2,4). Step 3 (find the first missing): among the forced pairs, (1,4) is the smallest with a < b and it is not in R. The answer is (1,4)."
+          - problem: "A student claims: every relation that is reflexive and transitive is also symmetric, and hence an equivalence relation. Step 1: let a ~ b. Step 2: by symmetry, b ~ a. Step 3: this holds for all a and b, so the relation is symmetric. Step 4: being also reflexive and transitive, it is an equivalence relation. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a legitimate assumption. Step 2 is invalid: it invokes symmetry, which is exactly what is being proved and is not among the hypotheses (only reflexivity and transitivity are given). Step 3 inherits the fault of Step 2, and Step 4 rests on the unproven symmetry claim. The answer is Step 2."
+          - problem: "On a set with 4 elements, an equivalence relation has two equivalence classes, each with 2 elements. Every two elements of one class relate to each other in both directions, and nothing else relates. How many ordered pairs does this relation contain?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (per class): a class of size 2 contributes all ordered pairs within it, that is 2 times 2 = 4 pairs. Step 2 (both classes): the second class of size 2 also contributes 4 pairs, and no pair joins the two classes. Step 3 (total): 4 + 4 = 8 ordered pairs. The answer is 8."
+          - problem: "Write the full proof: on the integers, define a ~ b exactly when the absolute values of a and b are equal. Prove that ~ is an equivalence relation. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: the relation a ~ b defined by |a| = |b| on the integers is an equivalence relation, so we must confirm all three defining properties. Reflexive: for every integer a we have |a| = |a|, so a ~ a. Symmetric: assume a ~ b, that is |a| = |b|; equality of numbers is symmetric, so |b| = |a|, hence b ~ a. Transitive: assume a ~ b and b ~ c, so |a| = |b| and |b| = |c|; by transitivity of equality, |a| = |c|, hence a ~ c. All three properties hold, therefore ~ is an equivalence relation. (Note the relation is not equality: 2 and -2 are related but are different integers.)"
         constraints: "confirm all three defining properties"
       - id: kp2
         name: "Proving a relation is an equivalence relation"

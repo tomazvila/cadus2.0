@@ -576,12 +576,34 @@ topics:
         name: "Group axioms and examples"
         key_prerequisites: [monoids]
         exemplars:
-          - problem: 'Show $(\mathbb{Z}, +)$ is a group but $(\mathbb{Z}, \cdot)$ is not.'
-            answer: 'Under $+$ every $n$ has inverse $-n$; under $\cdot$, $2$ has no integer inverse.'
-            solution_sketch: 'Under $+$: associative, identity $0$, and inverse $-n$ of $n$ — a group. Under $\cdot$: identity $1$, but $2$ has no integer $x$ with $2x = 1$, so inverses fail; not a group. $\square$'
-          - problem: 'Is $(\mathbb{Q} \setminus \{0\}, \cdot)$ a group? Justify.'
-            answer: 'Yes; every nonzero rational has a rational inverse.'
-            solution_sketch: 'Closed and associative under multiplication, identity $1$, and each $p/q \ne 0$ has inverse $q/p \in \mathbb{Q} \setminus \{0\}$. So it is a group (abelian). $\square$'
+          - problem: "In the group of integers under addition, find the additive inverse of 7. Give the number."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the additive group of integers, the inverse of an element is its opposite. The opposite of 7 is -7. The additive inverse is -7."
+          - problem: "In the nonzero rational numbers under multiplication, find the multiplicative inverse of 3/4. Give the answer as a fraction."
+            answer: "4/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In the nonzero rationals under multiplication, the inverse of a fraction is its reciprocal. The reciprocal of 3/4 is 4/3. The multiplicative inverse is 4/3."
+          - problem: "For the group Z_6 under addition modulo 6, compute 4 plus 5 modulo 6. Give the result as a number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Closure checks that the sum of two elements is again in the set. Compute 4 plus 5 to get 9, then reduce modulo 6. The result is 3."
+          - problem: "For the group Z_6 under addition modulo 6, use associativity to rewrite 2 plus (4 plus 5) as (2 plus 4) plus 5 modulo 6. Give the common value."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Associativity allows grouping changes. Compute the inner sum first: 4 plus 5 modulo 6 is 3, then 2 plus 3 modulo 6 is 5. The common value is 5."
+          - problem: "For the group Z_6 under addition modulo 6, find the identity element. Give the number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The identity element leaves every element unchanged under the operation. In addition modulo 6, adding 0 leaves every residue unchanged. The identity element is 0."
+          - problem: "Claim: (Z, ·) is a group. Step 1: multiplication is closed on Z. Step 2: multiplication is associative on Z. Step 3: the number 1 is an identity for multiplication on Z. Step 4: for every integer a there is an integer b with a·b = 1. Step 5: therefore (Z, ·) is a group. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is true because the product of integers is an integer. Step 2 is true by associativity of multiplication. Step 3 is true because 1 is a multiplicative identity. Step 4 is false: for a equal to 2 there is no integer b with 2b equal to 1. Step 5 is the conclusion and is false, but it is not the first invalid step. The first invalid step is Step 4."
+          - problem: "Write the full proof: the integers under addition form a group. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Full proof: the integers under addition form a group. Closure: for integers a and b, a plus b is an integer, so the operation is closed. Associativity: for integers a, b, c, (a plus b) plus c equals a plus (b plus c). Identity: the integer 0 satisfies 0 plus a equals a plus 0 equals a for every integer a. Inverses: for each integer a, the integer -a satisfies a plus (-a) equals 0 and (-a) plus a equals 0. Since all four group axioms hold, the integers under addition form a group."
         constraints: "check closure, associativity, identity, and inverses"
       - id: kp2
         name: "Uniqueness of inverses"
@@ -660,12 +682,34 @@ topics:
         name: "Reasoning inside abelian groups"
         key_prerequisites: [groups-intro]
         exemplars:
-          - problem: 'Prove: in an abelian group, $(ab)^{-1} = a^{-1} b^{-1}$.'
-            answer: 'In general $(ab)^{-1} = b^{-1} a^{-1}$; commutativity swaps the factors.'
-            solution_sketch: 'In any group $(ab)^{-1} = b^{-1} a^{-1}$. If the group is abelian, $b^{-1} a^{-1} = a^{-1} b^{-1}$. (Directly: $(ab)(a^{-1}b^{-1}) = a a^{-1} b b^{-1} = e$ after commuting $b$ past $a^{-1}$.) $\square$'
-          - problem: 'Prove: if every element of a group $G$ satisfies $a^{2} = e$, then $G$ is abelian.'
-            answer: '$ab = (ab)^{-1} = b^{-1} a^{-1} = ba$.'
-            solution_sketch: '$x^{2} = e$ says every element is its own inverse: $x = x^{-1}$. Apply this three times: $ab = (ab)^{-1} = b^{-1} a^{-1} = ba$, using the general reversal rule $(ab)^{-1} = b^{-1}a^{-1}$ in the middle. $\square$'
+          - problem: "In an abelian group, the reversal rule gives (ab)^(-1) = b^(-1)*a^(-1). Use the abelian hypothesis once to rewrite the right side. Give the resulting expression in a and b."
+            answer: "a^(-1)*b^(-1)"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "In an abelian group, start with the reversal rule (ab)^(-1) = b^(-1)*a^(-1). By the abelian hypothesis, the factors b^(-1) and a^(-1) commute, so b^(-1)*a^(-1) = a^(-1)*b^(-1). The resulting expression is a^(-1)*b^(-1)."
+          - problem: "Suppose every element x of a group satisfies x^2 = e, so x = x^(-1). Start from (ab)^(-1) = b^(-1)*a^(-1) and replace each inverse with its element. Give the resulting expression in a and b."
+            answer: "b*a"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "Assume every element x satisfies x^2 = e, so x = x^(-1). The reversal rule gives (ab)^(-1) = b^(-1)*a^(-1). Replace b^(-1) by b and a^(-1) by a to get b*a. The resulting expression is b*a."
+          - problem: "In the abelian group of integers modulo 12 under addition, the inverse of the element 7 is the element x with 7 + x congruent to 0. Find x."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group is integers modulo 12 under addition. The inverse of 7 is the solution of 7 + x = 0 modulo 12. Subtract 7: x = -7 modulo 12 = 5. The answer is 5."
+          - problem: "In the abelian group of integers modulo 8 under addition, determine the order of the element 6, that is the least positive integer k with 6k congruent to 0. Give the order."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The order is the least positive k with 6k = 0 modulo 8. Compute multiples: 6, 12 = 4, 18 = 2, 24 = 0 modulo 8. The first return to 0 is at k = 4. The order is 4."
+          - problem: "Claim: if every element x of a group satisfies x^2 = e, then the group is abelian. Step 1: Let a and b be elements; the hypothesis gives a^2 = e and b^2 = e. Step 2: From a^2 = e, a = a^(-1). Step 3: (ab)^(-1) = a^(-1)*b^(-1). Step 4: Therefore the group is abelian. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly instantiates the hypothesis. Step 2 correctly uses x^2 = e to get x = x^(-1). Step 3 is invalid: in any group the reversal rule gives b^(-1)*a^(-1), not a^(-1)*b^(-1). Step 4 depends on the invalid Step 3. The first invalid step is Step 3."
+          - problem: "In an abelian group, a proof of the square identity expands (ab)^2 = abab. Commutativity allows the middle factors to be swapped. Select the missing line after abab."
+            answer: "a*a*b*b"
+            answer_contract: {"kind": "label", "options": [["a*a*b*b"], ["a*b*a*b"], ["b*b*a*a"], ["a*b"]]}
+            solution_sketch: "The full expression starts as (ab)^2 = abab. Commutativity lets a cross the middle b to get aabb, written a*a*b*b. The option a*b*a*b keeps the original order and uses no commutativity. The option b*b*a*a reverses both pairs incorrectly. The option a*b drops one a and one b. The missing line is a*a*b*b."
+          - problem: "Write the full proof: in an abelian group, (ab)^2 = a^2 b^2 for all a and b. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let G be abelian and let a and b be elements of G. Step 1: By definition of the square, (ab)^2 = (ab)(ab). Step 2: By associativity, (ab)(ab) = a(ba)b. Step 3: By the abelian hypothesis, ba = ab, so a(ba)b = a(ab)b. Step 4: By associativity again, a(ab)b = (aa)(bb). Step 5: By definition of powers, (aa)(bb) = a^2 b^2. Thus (ab)^2 = a^2 b^2 for all a and b in G. This completes the proof."
         constraints: "short axiom-pushing proofs; each step cites a group axiom, the abelian hypothesis, or a previously proven fact"
     diagnostic_exemplar:
       problem: 'Prove that a group $G$ is abelian if and only if $(ab)^{-1} = a^{-1}b^{-1}$ for all $a, b \in G$.'
@@ -716,14 +760,30 @@ topics:
         name: "Refuting with a counterexample"
         key_prerequisites: [groups-intro]
         exemplars:
-          - problem: 'Is $\varphi : (\mathbb{Z}, +) \to (\mathbb{Z}, +)$, $\varphi(n) = n + 1$, a homomorphism?'
-            answer_contract: {kind: none}
-            answer: 'No.'
-            solution_sketch: '$\varphi(m + n) = m + n + 1$ but $\varphi(m) + \varphi(n) = m + n + 2$. (Quick tell: $\varphi(0) = 1 \ne 0$.)'
-          - problem: 'Is $\varphi : (\mathbb{Z}, +) \to (\mathbb{Z}, +)$, $\varphi(n) = n^2$, a homomorphism?'
-            answer_contract: {kind: none}
-            answer: 'No: $\varphi(1 + 1) = 4$ but $\varphi(1) + \varphi(1) = 2$.'
-            solution_sketch: '$(m+n)^2 = m^2 + 2mn + n^2$ differs from $m^2 + n^2$ whenever $mn \ne 0$; one concrete pair refutes it.'
+          - problem: "For the map φ on the integers with φ(n) = n + 4, state whether it is a homomorphism, and give φ(5 + 2) - (φ(5) + φ(2))."
+            answer: "verdict = invalid; diff = -4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The full object is the map φ(n) = n + 4 from (Z, +) to (Z, +). Step 1: evaluate the left side using the map, φ(5 + 2) = φ(7) = 11. Step 2: evaluate the right side, φ(5) + φ(2) = 9 + 6 = 15. Step 3: subtract to test the homomorphism condition, 11 - 15 = -4. The option valid would come from ignoring the constant +4; the nonzero difference refutes additivity. Thus verdict = invalid; diff = -4."
+          - problem: "For the map φ on the integers with φ(n) = 2n + 3, use the identity check to compute φ(0)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the map φ(n) = 2n + 3 from (Z, +) to (Z, +). Step 1: the identity of the domain is 0. Step 2: evaluate φ(0) = 2*0 + 3 = 3. Step 3: the identity of the codomain is also 0, and 3 is not 0, so the identity check refutes the homomorphism condition. The value is 3."
+          - problem: "For the map φ on the integers with φ(n) = n^3, compute φ(2 + 1) - (φ(2) + φ(1))."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the map φ(n) = n^3 from (Z, +) to (Z, +). Step 1: φ(2 + 1) = φ(3) = 27. Step 2: φ(2) + φ(1) = 8 + 1 = 9. Step 3: subtract, 27 - 9 = 18. The value 18 is nonzero, so additivity fails; the difference is 18."
+          - problem: "For the map φ on the reals with φ(x) = x^2, state whether it is a homomorphism, and give φ(2 + 3) - (φ(2) + φ(3))."
+            answer: "verdict = invalid; diff = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The full object is the map φ(x) = x^2 from (R, +) to (R, +). Step 1: φ(2 + 3) = φ(5) = 25. Step 2: φ(2) + φ(3) = 4 + 9 = 13. Step 3: subtract, 25 - 13 = 12. The option valid would come from treating (x + y)^2 as x^2 + y^2; the nonzero difference refutes additivity. Thus verdict = invalid; diff = 12."
+          - problem: "For the map φ on the nonzero reals with φ(x) = 2x, compute φ(2*3) - φ(2)φ(3)."
+            answer: "-12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the map φ(x) = 2x from (R*, *) to (R*, *). Step 1: φ(2*3) = φ(6) = 12. Step 2: φ(2)φ(3) = 4*6 = 24. Step 3: subtract, 12 - 24 = -12. The nonzero difference refutes multiplicative preservation; the difference is -12."
+          - problem: "For the map φ on the integers with φ(n) = n^2 + 1, compute φ(5 + 1) - (φ(5) + φ(1))."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the map φ(n) = n^2 + 1 from (Z, +) to (Z, +). Step 1: φ(5 + 1) = φ(6) = 37. Step 2: φ(5) + φ(1) = 26 + 2 = 28. Step 3: subtract, 37 - 28 = 9. The value 9 is nonzero, so additivity fails; the difference is 9."
         constraints: "one concrete pair where the two sides differ; the identity check is a fast filter"
       - id: kp3
         name: "Between different structures"
