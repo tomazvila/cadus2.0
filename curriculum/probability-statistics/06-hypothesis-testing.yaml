@@ -910,10 +910,30 @@ topics:
         name: "Decision and degrees of freedom"
         key_prerequisites: [hypothesis-tests-logic]
         exemplars:
-          - problem: 'A goodness-of-fit test over $k = 4$ categories gives $\chi^2 = 7.9$; the critical value at $\alpha = 0.05$ with df $= 3$ is $7.815$ (given). State the df rule and the decision.'
-            answer: 'df $= k - 1 = 3$; $7.9 > 7.815$: reject $H_0$ — the claimed distribution does not fit the data.'
-          - problem: '$\chi^2 = 2.5$ over $k = 2$ categories; critical value $3.841$ (df $1$, $\alpha = 0.05$). Decision — and why is the test right-tailed only?'
-            answer: 'Fail to reject: $2.5 < 3.841$. Only large $\chi^2$ signals disagreement between observed and expected; small values mean good fit, which is no evidence against $H_0$.'
+          - problem: "A goodness-of-fit test over k = 4 categories yields a chi-square statistic of 7.9. The critical value at alpha = 0.05 with 3 degrees of freedom is 7.815 (given). State the decision, and give the margin by which the statistic passes the critical value, to three decimals."
+            answer: "verdict = reject; margin = 0.085"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"decimals": 3, "kind": "approx"}, "name": "margin"}]}
+            solution_sketch: "Degrees of freedom rule: with k = 4 categories, df = k - 1 = 3, which matches the given critical value. Right-tail comparison: the statistic 7.9 exceeds the critical value 7.815, and rejection is right-tail only, so the null hypothesis is rejected. Margin: 7.9 - 7.815 = 0.085. The wrong verdict retain would ignore that the statistic already passes the critical value. The answer is verdict = reject; margin = 0.085."
+          - problem: "A goodness-of-fit test over k = 2 categories yields a chi-square statistic of 2.5. The critical value at alpha = 0.05 with 1 degree of freedom is 3.841 (given). State the decision, and give the shortfall of the statistic below the critical value, to three decimals."
+            answer: "verdict = retain; gap = 1.341"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"decimals": 3, "kind": "approx"}, "name": "gap"}]}
+            solution_sketch: "Right-tail rule: only large chi-square values signal a poor fit, and 2.5 lies below the critical value 3.841, so the null hypothesis is kept. Shortfall: 3.841 - 2.5 = 1.341. The wrong verdict reject would mistake a small statistic, which indicates a good fit, for evidence of a poor fit. The answer is verdict = retain; gap = 1.341."
+          - problem: "A genetics class tests Mendel's claim that seed shape and seed color fall in the ratio 9:3:3:1, which defines 4 categories for a goodness-of-fit test. How many degrees of freedom does this test have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Degrees of freedom rule: a goodness-of-fit test with k categories has df = k - 1. Category count: the Mendel ratio 9:3:3:1 lists 4 outcome categories, so k = 4. Apply the rule: df = 4 - 1 = 3. The answer is 3."
+          - problem: "A goodness-of-fit test over 5 categories runs at alpha = 0.05, and the critical value with 4 degrees of freedom is 9.488 (given). Because only large values of the statistic signal a poor fit, the null hypothesis is overturned on a right-tail basis only. Give as an inequality in x the values of the statistic x that overturn the null hypothesis."
+            answer: "x > 9.488"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Right-tail rule: a chi-square goodness-of-fit test overturns the null hypothesis only for large values of the statistic, never for small ones. Boundary: the given critical value with df 4 is 9.488 at alpha = 0.05. Region: every value strictly above 9.488 overturns the null hypothesis, and no value below it does. The answer is x > 9.488."
+          - problem: "A goodness-of-fit test is reported with 5 degrees of freedom. Use the df rule in reverse: how many categories does the test compare?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Degrees of freedom rule: df = k - 1, where k is the number of categories. Reverse the rule: k = df + 1. Apply it: with df = 5, the test compares k = 5 + 1 = 6 categories. The answer is 6."
+          - problem: "A goodness-of-fit test over 6 categories runs at alpha = 0.01, and the critical value with 5 degrees of freedom is 15.086 (given). The test overturns the null hypothesis only when the statistic is strictly larger than this boundary. Give as an inequality in x the values of the statistic x for which the null hypothesis is kept."
+            answer: "x <= 15.086"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Right-tail rule: at alpha = 0.01 with df 5 the boundary is the given critical value 15.086, and the test overturns the null hypothesis only for values strictly above it. Complement region: for every value at or below 15.086 the evidence does not signal a poor fit, so the null hypothesis is kept. The answer is x <= 15.086."
         constraints: "critical values always supplied with their df; df = k - 1; rejection is right-tail only"
     diagnostic_exemplar:
       problem: 'A four-sided die is rolled $100$ times: observed counts $(30, 30, 22, 18)$. Test $H_0$: "the die is fair" at $\alpha = 0.05$; the critical value with df $= 3$ is $7.815$ (given). Compute $\chi^2$ and decide.'
