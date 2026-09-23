@@ -239,12 +239,34 @@ topics:
         name: "Associativity and commutativity"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'On $\mathbb{Z}$ define $a * b = a + b - 1$. Prove $*$ is associative and commutative.'
-            answer: 'Both associativity sides equal $a + b + c - 2$; commutativity is symmetric.'
-            solution_sketch: 'Commutative: $a * b = a + b - 1 = b + a - 1 = b * a$. Associative: $(a * b) * c = (a + b - 1) + c - 1 = a + b + c - 2$ and $a * (b * c) = a + (b + c - 1) - 1 = a + b + c - 2$; equal. $\square$'
-          - problem: 'On $\mathbb{Z}$ define $a * b = a + 2b$. Is $*$ commutative? Associative?'
-            answer: 'Neither.'
-            solution_sketch: 'Commutativity: $a * b = a + 2b$ vs $b * a = b + 2a$; unequal, e.g. $1 * 2 = 5 \ne 4 = 2 * 1$. Associativity: $(a * b) * c = a + 2b + 2c$ vs $a * (b * c) = a + 2b + 4c$; unequal. So neither holds. $\square$'
+          - problem: "On Z define a*b = a + b - 1. Compute (a*b)*c. Give the simplified expression."
+            answer: "a+b+c-2"
+            answer_contract: {"kind": "function", "vars": ["a", "b", "c"]}
+            solution_sketch: "Use the definition a*b = a+b-1. First compute the inner operation: a*b = a+b-1. Then apply the operation again: (a*b)*c = (a+b-1)+c-1 = a+b+c-2. The simplified expression is a+b+c-2."
+          - problem: "On Z define a*b = a + 2b. Compute (a*b)*c and a*(b*c). Give left and right."
+            answer: "left = a+2b+2c; right = a+2b+4c"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["a", "b", "c"]}, "name": "left"}, {"contract": {"kind": "function", "vars": ["a", "b", "c"]}, "name": "right"}]}
+            solution_sketch: "Use a*b = a+2b. Left side: (a*b)*c = (a+2b)*c = a+2b+2c. Right side: a*(b*c) = a*(b+2c) = a+2b+4c. The two sides differ by 2c, so the operation is not associative. The key is left = a+2b+2c; right = a+2b+4c."
+          - problem: "On Z define a*b = 2a + 2b - 3. Compute (a*b)*c - a*(b*c). Give the simplified difference."
+            answer: "2a-2c"
+            answer_contract: {"kind": "function", "vars": ["a", "c"]}
+            solution_sketch: "Use the definition a*b = 2a+2b-3. First find the left grouping: (a*b)*c = (2a+2b-3)*c = 2(2a+2b-3)+2c-3 = 4a+4b+2c-9. Then find the right grouping: a*(b*c) = a*(2b+2c-3) = 2a+2(2b+2c-3)-3 = 2a+4b+4c-9. Subtract: (4a+4b+2c-9) minus (2a+4b+4c-9) = 2a-2c. The simplified difference is 2a-2c."
+          - problem: "On Z define a*b = a + b + 2. Compute (a*b)*c. Give the simplified expression."
+            answer: "a+b+c+4"
+            answer_contract: {"kind": "function", "vars": ["a", "b", "c"]}
+            solution_sketch: "Use a*b = a+b+2. Compute the inner operation: a*b = a+b+2. Then (a*b)*c = (a+b+2)+c+2 = a+b+c+4. The simplified expression is a+b+c+4."
+          - problem: "On Z define a*b = ab + 1, where ab is the usual product. A student claims that * is associative. Compute (1*2)*3 and 1*(2*3). Give left and right."
+            answer: "left = 10; right = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
+            solution_sketch: "Use the definition a*b = ab + 1. Left grouping: 1*2 = 2 + 1 = 3, then (1*2)*3 = 3*3 = 9 + 1 = 10. Right grouping: 2*3 = 6 + 1 = 7, then 1*(2*3) = 1*7 = 7 + 1 = 8. The two groupings differ, so the claim fails and the key is left = 10; right = 8."
+          - problem: "On Z define a*b = a + b + 2. Compute (a*b)*c - a*(b*c). Give the difference."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use a*b = a+b+2. Left side: (a*b)*c = (a+b+2)+c+2 = a+b+c+4. Right side: a*(b*c) = a+(b+c+2)+2 = a+b+c+4. Subtract the right side from the left side: (a+b+c+4)-(a+b+c+4)=0. The difference is 0."
+          - problem: "Write the full proof: on Z define a*b = a + b + 2. Prove * is associative and commutative. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Commutativity step: for any integers a and b, a*b = a+b+2 by definition. Since integer addition is commutative, a+b+2 = b+a+2 = b*a, so * is commutative. Associativity step: compute the left grouping as (a*b)*c = (a+b+2)*c = (a+b+2)+c+2 = a+b+c+4. Compute the right grouping as a*(b*c) = a*(b+c+2) = a+(b+c+2)+2 = a+b+c+4. The two groupings give the same integer a+b+c+4, so (a*b)*c = a*(b*c) for all integers a, b, and c. Therefore the operation * is associative and commutative."
         constraints: "verify or refute the identities symbolically"
       - id: kp2
         name: "Identity elements"
@@ -1167,12 +1189,34 @@ topics:
         name: "Bijections and matching sizes"
         key_prerequisites: [pigeonhole-principle]
         exemplars:
-          - problem: 'Prove: for finite sets, if there is a bijection $A \to B$ then $|A| = |B|$; and there is no bijection $\{1,2,3\} \to \{a, b\}$.'
-            answer: 'Compose bijections with the counting bijections; $3 > 2$ kills injectivity.'
-            solution_sketch: 'Composing $\{1, \dots, m\} \to A \to B \to \{1, \dots, n\}$ gives a bijection between counting sets, forcing $m = n$. And any map $\{1,2,3\} \to \{a,b\}$ repeats a value by pigeonhole, so no bijection exists. $\square$'
-          - problem: 'Prove: for finite sets, an injection $A \to B$ exists if and only if $|A| \le |B|$.'
-            answer: 'Pigeonhole rules out $|A| > |B|$; listing elements builds the injection otherwise.'
-            solution_sketch: 'If $f : A \to B$ is injective then $|A| = |f(A)| \le |B|$. Conversely if $|A| \le |B|$, send the $i$-th element of $A$ to the $i$-th element of $B$ — injective since the elements are distinct. $\square$'
+          - problem: "In the proof that a bijection between finite sets forces equal sizes, let A be a set with 8 elements and let f from A to B be a bijection. One step of the proof computes the number of elements of the image f(A). Give that number."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: recall the definition: a bijection is both injective and surjective. Step 2: injectivity sends the 8 elements of A to 8 distinct elements, so f(A) has 8 elements. Step 3: surjectivity gives f(A) = B, so B also has 8 elements. The answer is 8."
+          - problem: "Let A have 9 elements and B have 4 elements. A function f from A to B sends each element of A to one element of B. Decide whether f can be injective, and give the largest N such that the pigeonhole principle guarantees that some element of B is the image of at least N elements of A. Give the verdict and the bound."
+            answer: "verdict = No; bound = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["Yes"], ["No"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "bound"}]}
+            solution_sketch: "Step 1: apply the pigeonhole principle: 9 inputs distributed among 4 outputs force some output to receive at least ceiling(9/4) = 3 inputs. Step 2: an injective function would need 9 distinct images, but B has only 4 elements, so no injection exists; the option Yes is the error of ignoring this counting bound. Step 3: the largest N the principle guarantees is therefore 3. The answer is verdict = No; bound = 3."
+          - problem: "A student claims: for every whole number n with n at least 1, there is an injective function from a set with n elements to a set with 4 elements. The student checks only n = 1 and n = 2. Give the smallest n for which the claim is false."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: for n = 1, 2, 3, 4 an injection exists, for example sending each element to a distinct one of the 4 elements. Step 2: for n = 5, injectivity needs 5 distinct images in a 4-element set; by the pigeonhole principle two inputs must share an image. Step 3: so the first failing case is n = 5, and two true cases are not a proof. The answer is 5."
+          - problem: "In the proof that an injective function between finite sets of equal size is a bijection, one first counts the injective functions from a 3-element set A to a 3-element set B. How many injective functions from A to B exist?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: count the injections by choosing distinct images in order: 3 choices, then 2, then 1, giving 3 times 2 times 1 = 6. Step 2: every injective map from a 3-element set to a 3-element set uses all 3 elements of B, hence is surjective, hence a bijection. The answer is 6."
+          - problem: "Claim: if there is an injective function from A to B, then A has at least as many elements as B. Step 1: let A have 3 elements and B have 5 elements. Step 2: suppose f from A to B is injective, so f sends the 3 elements of A to 3 distinct elements of B. Step 3: the image of f has 3 elements and is contained in B, so B has at least as many elements as A. Step 4: since B has at least as many elements as A, this proves that A has at least as many elements as B. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a valid setup with concrete sizes, and an injection from a 3-element set to a 5-element set does exist. Step 2 is valid: injectivity sends the 3 distinct inputs to 3 distinct outputs. Step 3 is valid: the image has 3 elements, is contained in B, so B has at least as many elements as A. Step 4 is the first invalid step: it reverses the inequality from Step 3, claiming that A has at least as many elements as B, which is false here since 3 is less than 5. The answer is Step 4."
+          - problem: "In the pigeonhole argument that a function from a 10-element set A to a 3-element set B is not injective, one shows that some element of B is the image of at least N elements of A. Give the largest N that the pigeonhole principle guarantees."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: distribute 10 inputs among 3 outputs; the pigeonhole principle forces some output to receive at least ceiling(10/3) = 4 inputs. Step 2: the value 3 is not guaranteed, since 3 outputs could receive 3 inputs each and 3 times 3 = 9 is less than 10, so 4 is the largest guaranteed value. The answer is 4."
+          - problem: "Write the full proof: for finite sets A and B, an injective function from A to B exists if and only if A has at most as many elements as B. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): let A have m elements and B have n elements; by finiteness, both sets admit listings of their elements. Step 2 (forward direction): let f from A to B be injective; then the image f(A) has exactly m elements, since injectivity sends distinct inputs to distinct outputs, and f(A) is contained in B, so m is at most n. Step 3 (pigeonhole obstruction): if m is greater than n, the pigeonhole principle forces two distinct elements of A to share an image, so no injective function can exist; this shows the bound m at most n is necessary. Step 4 (reverse direction): if m is at most n, list A as a1 up to am and B as b1 up to bn, and define f(ai) = bi for each i; distinct inputs receive distinct outputs, so f is injective. Step 5 (conclusion): an injective function from A to B exists exactly when m is at most n, which is the claim."
         constraints: "connect bijections/injections to size comparisons via pigeonhole"
       - id: kp3
         name: "Cardinality arithmetic"
