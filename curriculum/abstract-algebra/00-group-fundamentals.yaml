@@ -835,10 +835,26 @@ topics:
           - problem: 'Find the inverse of $(1\,3\,5\,2)$ in $S_5$, in cycle notation.'
             answer: '$(1\,2\,5\,3)$'
             solution_sketch: 'Reverse the cycle: $(1\,3\,5\,2)^{-1} = (2\,5\,3\,1) = (1\,2\,5\,3)$.'
-          - problem: 'Write the permutation of $\{1,\dots,6\}$ given by $1\mapsto 4, 2\mapsto 5, 3\mapsto 3, 4\mapsto 6, 5\mapsto 2, 6\mapsto 1$ as a product of disjoint cycles.'
-            answer: '$(1\,4\,6)(2\,5)$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Follow orbits: $1 \to 4 \to 6 \to 1$ and $2 \to 5 \to 2$; $3$ is fixed.'
+          - problem: "In S_8, let p send 1 to 5, 2 to 7, 3 to 6, 4 to 4, 5 to 2, 6 to 8, 7 to 1, and 8 to 3. Find the lengths of the cycles in the disjoint cycle decomposition of p, omitting fixed points, from longest to shortest. Give the answer as a list of numbers separated by commas."
+            answer: "4, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1 (full mapping): the full object is the mapping 1 to 5, 2 to 7, 3 to 6, 4 to 4, 5 to 2, 6 to 8, 7 to 1, and 8 to 3. Step 2 (orbit tracing): the orbit rule chases images until the orbit closes: 1 to 5 to 2 to 7 to 1 gives the cycle (1 5 2 7), and 3 to 6 to 8 to 3 gives the cycle (3 6 8), while 4 is fixed and is omitted. Step 3 (cycle lengths): the disjoint cycles (1 5 2 7) and (3 6 8) have lengths 4 and 3, and listing them from longest to shortest gives 4 then 3. The answer is 4, 3."
+          - problem: "In S_8, let p = (1 6 3)(2 7)(4 5 8). Find the image of 5 under the inverse of p."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write p = (1 6 3)(2 7)(4 5 8) as the full mapping: 1 goes to 6, 6 goes to 3, 3 goes to 1, 2 goes to 7, 7 goes to 2, 4 goes to 5, 5 goes to 8, and 8 goes to 4. The inverse undoes each arrow, so the inverse sends 5 back to 4. The image is 4."
+          - problem: "In S_6, let p send 2 to 5, 5 to 4, 4 to 6, 6 to 2, 1 to 3, and 3 to 1. List the elements of the cycle of p that contains 2, in the order they appear starting at 2. Give the answer as a list of numbers separated by commas."
+            answer: "2, 5, 4, 6"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The mapping sends 2 to 5, 5 to 4, 4 to 6, and 6 back to 2, so the orbit that starts at 2 is 2, 5, 4, 6. The other orbit is (1 3), which does not contain 2. Reading the orbit from 2 gives the list 2, 5, 4, 6."
+          - problem: "In S_8, let p = (1 4)(2 6 3). Find the number of elements among 1, 2, 3, 4, 5, 6, 7, 8 that p leaves fixed."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The permutation p = (1 4)(2 6 3) moves 1, 4, 2, 6, and 3. Among 1 through 8 the elements 5, 7, and 8 are not moved, so the number of fixed elements is 3. The count is 3."
+          - problem: "In S_8, let p = (1 6 3)(2 5)(4 7). Find the number of cycles of length 2 in the disjoint cycle decomposition of the inverse of p."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The permutation p = (1 6 3)(2 5)(4 7) sends 1 to 6, 6 to 3, 3 to 1, 2 to 5, 5 to 2, 4 to 7, and 7 to 4. The inverse reverses each cycle, giving (1 3 6)(2 5)(4 7), whose cycles of length 2 are (2 5) and (4 7). The number of 2-cycles is 2."
         constraints: "n <= 8; disjoint cycle output, fixed points omitted"
       - id: kp3
         name: "Order of a permutation via lcm"
@@ -850,6 +866,22 @@ topics:
           - problem: 'What is the largest possible order of an element of $S_7$?'
             answer: "12"
             solution_sketch: 'Partition $7$ to maximize lcm: $3 + 4$ gives $\mathrm{lcm}(3,4) = 12$, better than $7$, $2+5$ ($10$), or $1+2+4$ ($4$).'
+          - problem: "In $S_6$, let $\\sigma = (1\\,2\\,3\\,4)(5\\,6)$. Find the order of $\\sigma$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The permutation $\\sigma = (1\\,2\\,3\\,4)(5\\,6)$ is a product of disjoint cycles with lengths 4 and 2. Step 2: The order of a product of disjoint cycles equals the least common multiple of the cycle lengths. Step 3: The least common multiple of 4 and 2 is 4. The order of $\\sigma$ is 4."
+          - problem: "In $S_{10}$, let $\\tau = (1\\,2)(3\\,4\\,5)(6\\,7\\,8\\,9\\,10)$. Find the order of $\\tau$."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The permutation $\\tau = (1\\,2)(3\\,4\\,5)(6\\,7\\,8\\,9\\,10)$ is a product of disjoint cycles with lengths 2, 3, and 5. Step 2: The order of a product of disjoint cycles equals the least common multiple of the cycle lengths. Step 3: The least common multiple of 2, 3, and 5 is 30. The order of $\\tau$ is 30."
+          - problem: "What is the largest possible order of an element of $S_9$?"
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: An element of $S_9$ has disjoint cycle lengths whose sum is at most 9. Step 2: The order of a product of disjoint cycles is the least common multiple of the cycle lengths, so we maximize this value over partitions of 9. Step 3: The partition 5 + 4 gives a least common multiple of 20, which beats 7 + 2 (14), 5 + 3 + 1 (15), 4 + 3 + 2 (12), and the single cycle of length 9. The largest possible order is 20."
+          - problem: "Among the groups $S_n$ with $n \\le 10$, some contain a permutation of order 12. What is the smallest such $n$?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The order of a permutation is the least common multiple of its disjoint cycle lengths, so we need cycle lengths with least common multiple 12 and the smallest possible total. Step 2: A single 12-cycle needs 12 points, lengths 6 and 4 need 10 points and give lcm(6, 4) = 12, while lengths 4 and 3 need only 7 points and give lcm(4, 3) = 12. Step 3: No partition with total below 7 gives a least common multiple of 12, so the smallest such $n$ is 7."
         constraints: "disjoint cycle types in S_n, n <= 10; lcm of cycle lengths"
     diagnostic_exemplar:
       problem: 'In $S_6$, let $\sigma = (1\,4\,6)(2\,5)$. Compute $\sigma^{-1}$ in cycle notation and the order of $\sigma$.'

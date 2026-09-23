@@ -385,12 +385,34 @@ topics:
         name: "Identifying quotients via a good homomorphism"
         key_prerequisites: [kernels-images, quotient-groups]
         exemplars:
-          - problem: 'Use the first isomorphism theorem to identify $\mathbb{Z}/6\mathbb{Z}$.'
-            answer: 'Reduction $\varphi:\mathbb{Z} \to \mathbb{Z}_6$ is onto with kernel $6\mathbb{Z}$, so $\mathbb{Z}/6\mathbb{Z} \cong \mathbb{Z}_6$.'
-            solution_sketch: 'Pick the surjection whose kernel is the subgroup you are quotienting by.'
-          - problem: 'Identify $S_4/A_4$ up to isomorphism using a homomorphism.'
-            answer: '$\mathrm{sgn}: S_4 \to \{\pm 1\}$ is onto with kernel $A_4$, so $S_4/A_4 \cong \mathbb{Z}_2$.'
-            solution_sketch: 'The sign map realizes the quotient as the two-element group.'
+          - problem: "Let f be the reduction map from Z to Z_9, given by f(x) = x mod 9. By the first isomorphism theorem, Z/ker f is isomorphic to Z_9. Give the smallest positive integer in ker f."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reduction mod 9 preserves addition, so it is a homomorphism (homomorphism check). Its kernel is 9Z, the multiples of 9 (kernel computation). The first isomorphism theorem then gives Z/9Z isomorphic to Z_9 (first isomorphism theorem). The smallest positive integer in ker f is 9."
+          - problem: "Let sgn be the sign homomorphism from S_4 to {1, -1}; it is onto, and its kernel is A_4. By the first isomorphism theorem, S_4/A_4 is isomorphic to Z_k for some k. Give k."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sign map is a homomorphism since sgn of a product is the product of the signs (homomorphism check). It is onto, because sgn of the identity is 1 and sgn of a transposition is -1 (surjectivity). Its kernel is A_4, so the first isomorphism theorem identifies S_4/A_4 with the two-element group {1, -1}, which is Z_2 (first isomorphism theorem). Hence k is 2."
+          - problem: "Let f: Z_12 → Z_12 be f(x) = 4x; this is a homomorphism with kernel {0, 3, 6, 9}. By the first isomorphism theorem, the quotient Z_12/{0, 3, 6, 9} is isomorphic to the image of f. Give the number of elements of this quotient group."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The power map f(x) = 4x sends x to 4x mod 12 and preserves addition, so it is a homomorphism (homomorphism check). The first isomorphism theorem identifies Z_12/{0, 3, 6, 9} with the image of f (first isomorphism theorem). The image is {0, 4, 8}, which has 3 elements (image computation). The quotient group has 3 elements."
+          - problem: "Let f: Z_10 → Z_10 be f(x) = 2x; this is a homomorphism with kernel {0, 5}. By the first isomorphism theorem, Z_10/{0, 5} is isomorphic to Z_m for some m. Give m."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The map f(x) = 2x preserves addition mod 10, so it is a homomorphism (homomorphism check). Its kernel is {0, 5} (kernel computation). By the first isomorphism theorem, Z_10/{0, 5} is isomorphic to the image of f, which is {0, 2, 4, 6, 8}, a cyclic group of order 5 (first isomorphism theorem). Thus m is 5."
+          - problem: "Claim: Z_6/{0, 3} is isomorphic to Z_3. Step 1: f(x) = 2x is a homomorphism of Z_6. Step 2: ker f = {0, 3}. Step 3: the image of f is {0, 2, 4, 6}. Step 4: the image is cyclic of order 3, so by the first isomorphism theorem Z_6/{0, 3} is isomorphic to Z_3. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: f(x) = 2x preserves addition mod 6 (homomorphism check). Step 2 is valid: 2x = 0 mod 6 forces x = 0 or 3, so ker f = {0, 3} (kernel computation). Step 3 is the first invalid step: the residues mod 6 are 0 to 5, and f takes only the values 0, 2, 4, so the image is {0, 2, 4}, not {0, 2, 4, 6}; the value 6 is not a residue mod 6 (image computation error). Step 4 is wrong only because it builds on Step 3. The answer is Step 3."
+          - problem: "We work in Z_6 with addition modulo 6. To identify the quotient Z_6/{0, 2, 4} by the first isomorphism theorem, we need a homomorphism f from Z_6 to itself whose kernel is {0, 2, 4}. Which choice of f works?"
+            answer: "f(x) = 3x"
+            answer_contract: {"kind": "label", "options": [["f(x) = 3x"], ["f(x) = 2x"], ["f(x) = 4x"], ["f(x) = 5x"]]}
+            solution_sketch: "Test each candidate by solving f(x) = 0 mod 6 (kernel computation). The map f(x) = 2x has kernel {0, 3}, the error of halving the modulus by the wrong factor. The map f(x) = 4x also has kernel {0, 3}, the error of using a multiplier that is not the subgroup generator. The map f(x) = 5x has kernel {0}, the error of using a unit invertible mod 6. For f(x) = 3x, the equation 3x = 0 mod 6 holds exactly when x is even, giving kernel {0, 2, 4}. The answer is f(x) = 3x."
+          - problem: "Write the full proof: the quotient of D_4 by its rotation subgroup is isomorphic to Z_2. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (choose the map): let ψ: D_4 → Z_2 send each rotation r^k to 0 and each reflection r^k s to 1. Step 2 (homomorphism check): a product of two rotations is a rotation, a product of a rotation and a reflection is a reflection, and a product of two reflections is a rotation; this matches addition mod 2, so ψ(gh) = ψ(g) + ψ(h) for all g, h. Step 3 (onto): ψ(r) = 0 and ψ(s) = 1, so the image is all of Z_2. Step 4 (kernel): the kernel is exactly the rotation subgroup {e, r, r^2, r^3}. Step 5 (first isomorphism theorem): D_4 with the rotation subgroup factored out is isomorphic to Z_2, so the quotient is cyclic of order 2."
         constraints: "quotients of Z, Z_n, S_n, D_n realized by reduction, sign, or power maps"
       - id: kp3
         name: "Existence and counting consequences"
