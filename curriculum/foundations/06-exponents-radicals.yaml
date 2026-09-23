@@ -1954,22 +1954,22 @@ topics:
         name: "Recognize non-right triangles"
         key_prerequisites: [pythagorean-theorem]
         exemplars:
-          - problem: 'Is a triangle with sides $4$, $5$, $6$ a right triangle?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$16 + 25 = 41 \ne 36$.'
-          - problem: "Squares on a triangle have areas $4$, $9$, and $16$. Is there a right angle?"
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: "The longest side has square $16$, while $4+9=13$. The unequal totals rule out a right angle."
-          - problem: "A frame has side lengths $5$, $6$, and $9$ cm. A builder claims the $5$ cm and $6$ cm sides are perpendicular. Is the claim correct?"
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: "Perpendicular sides would require $9^2=5^2+6^2$. But $81\\ne61$, so the claim fails."
-          - problem: "A student tests sides $3$, $4$, $6$ using $3^2+6^2=4^2$. Is this the correct Pythagorean test?"
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: "The longest side is $6$, so the required comparison is $3^2+4^2=25$ against $6^2=36$."
+          - problem: "A triangle has side lengths 7, 8, and 10. State whether the triangle has a 90-degree angle, and compute the square of the longest side minus the sum of the squares of the other two sides."
+            answer: "verdict = nonright; diff = -13"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["nonright"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The side lengths are 7, 8, and 10, so the longest side is 10. Step 1: Square the longest side: 10^2 = 100. Step 2: Square the other two sides and add: 7^2 + 8^2 = 49 + 64 = 113. Step 3: Apply the converse of the Pythagorean theorem: since 100 is not equal to 113, the triangle has no 90-degree angle. The option right is wrong because 100 would need to equal 113. The difference is 100 - 113 = -13. So the key is verdict = nonright; diff = -13."
+          - problem: "A frame has side lengths 6, 9, and 11 cm. State whether the frame has a 90-degree corner, and compute the square of the longest side minus the sum of the squares of the other two sides."
+            answer: "verdict = nonright; diff = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["nonright"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The side lengths are 6, 9, and 11 cm, so the longest side is 11. Step 1: Square the longest side: 11^2 = 121. Step 2: Square the other two sides and add: 6^2 + 9^2 = 36 + 81 = 117. Step 3: Apply the converse of the Pythagorean theorem: since 121 is not equal to 117, the frame has no 90-degree corner. The option right is wrong because 121 would need to equal 117. The difference is 121 - 117 = 4. So the key is verdict = nonright; diff = 4."
+          - problem: "A garden plot has side lengths 8, 10, and 13 m. State whether the plot has a 90-degree angle, and compute the square of the longest side minus the sum of the squares of the other two sides."
+            answer: "verdict = nonright; diff = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["nonright"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The side lengths are 8, 10, and 13 m, so the longest side is 13. Step 1: Square the longest side: 13^2 = 169. Step 2: Square the other two sides and add: 8^2 + 10^2 = 64 + 100 = 164. Step 3: Apply the converse of the Pythagorean theorem: since 169 is not equal to 164, the plot has no 90-degree angle. The option right is wrong because 169 would need to equal 164. The difference is 169 - 164 = 5. So the key is verdict = nonright; diff = 5."
+          - problem: "A brace has side lengths 9, 12, and 15 in. State whether the brace has a 90-degree angle, and compute the square of the longest side minus the sum of the squares of the other two sides."
+            answer: "verdict = right; diff = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["nonright"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "diff"}]}
+            solution_sketch: "The side lengths are 9, 12, and 15 in, so the longest side is 15. Step 1: Square the longest side: 15^2 = 225. Step 2: Square the other two sides and add: 9^2 + 12^2 = 81 + 144 = 225. Step 3: Apply the converse of the Pythagorean theorem: since 225 equals 225, the brace has a 90-degree angle. The option nonright is wrong because the equality does hold. The difference is 225 - 225 = 0. So the key is verdict = right; diff = 0."
         constraints: "always compare against the square of the longest side"
       - id: kp3
         name: "Pythagorean triples and acute/obtuse classification"

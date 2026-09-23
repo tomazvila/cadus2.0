@@ -43,22 +43,22 @@ topics:
         name: Classify by number of terms
         key_prerequisites: []
         exemplars:
-          - problem: 'Classify $3x^2 - 5x$ as a monomial, binomial, or trinomial.'
+          - problem: "Select the classification of 9x^2 - 4x by number of terms."
             answer: "binomial"
-            answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
-            solution_sketch: 'The nonzero terms are $3x^2$ and $-5x$. Two terms make a binomial.'
-          - problem: 'After combining like terms in $x^2+5x-3x+1$, classify the result as a monomial, binomial, or trinomial.'
+            answer_contract: {"kind": "label", "options": [["monomial"], ["binomial"], ["trinomial"], ["quadrinomial"]]}
+            solution_sketch: "The full polynomial is 9x^2 - 4x. Step 1 uses the definition of a term: the nonzero terms are 9x^2 and -4x. Step 2 uses the term-count naming rule: two terms make a binomial. The wrong option monomial comes from counting only the leading term; trinomial comes from treating the subtraction sign as a separate term; quadrinomial comes from counting the coefficient and the power as separate terms. The answer is binomial."
+          - problem: "After combining like terms in x^2 + 7x - 2x + 4, state the number of terms in the combined result."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full expression is x^2 + 7x - 2x + 4. Step 1 uses combining like terms: 7x - 2x = 5x, so the expression becomes x^2 + 5x + 4. Step 2 uses the term-count rule: the nonzero terms are x^2, 5x, and 4, so there are three terms. The number of terms is 3."
+          - problem: "An algebra-tile model contains six positive x^5 pieces and no other pieces. State the number of terms in its polynomial."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full polynomial is 6x^5. Step 1 uses like-term grouping: all six x^5 pieces form one term. Step 2 uses the term-count rule: a single nonzero term means the polynomial has one term. The number of terms is 1."
+          - problem: "A coefficient table has nonzero entries 4, -7, 2 at powers 3, 1, 0. Select the classification of the polynomial by number of terms."
             answer: "trinomial"
-            answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
-            solution_sketch: 'The linear terms combine to $2x$. The remaining terms $x^2$, $2x$, and $1$ give a trinomial.'
-          - problem: 'An algebra-tile model contains seven positive $x^4$ pieces and no other pieces. Classify its polynomial as a monomial, binomial, or trinomial.'
-            answer: "monomial"
-            answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
-            solution_sketch: 'All seven pieces represent one like-term group, $7x^4$, so the polynomial is a monomial.'
-          - problem: 'A coefficient table has nonzero entries $1,-5,6$ at powers $2,1,0$. Classify the polynomial as a monomial, binomial, or trinomial.'
-            answer: "trinomial"
-            answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
-            solution_sketch: 'Each nonzero coefficient contributes a term: $x^2$, $-5x$, and $6$. Three terms give a trinomial.'
+            answer_contract: {"kind": "label", "options": [["monomial"], ["binomial"], ["trinomial"], ["quadrinomial"]]}
+            solution_sketch: "The full polynomial is 4x^3 - 7x + 2. Step 1 uses the definition of a term: the nonzero terms are 4x^3, -7x, and 2. Step 2 uses the term-count naming rule: three terms make a trinomial. The wrong option monomial comes from counting only the leading term; binomial comes from missing the constant term; quadrinomial comes from counting coefficients as extra terms. The answer is trinomial."
         constraints: "one to three terms"
       - id: kp3
         name: Write polynomials in standard form
@@ -1450,17 +1450,17 @@ topics:
           - problem: 'The trinomial $x^2 + 6x + 9$ is a perfect square. Factor it.'
             answer: "(x + 3)^2"
             solution_sketch: '$9 = 3^2$ and $6x = 2 \cdot 3 \cdot x$, so it is $(x + 3)^2$.'
-          - problem: 'Is $x^2 + 5x + 25$ a perfect square trinomial?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The middle term would need to be $2 \cdot 5x = 10x$.'
+          - problem: "The trinomial $x^2 + 5x + 25$ is not a perfect square. Find the positive coefficient of $x$ that would make $x^2 + kx + 25$ a perfect square."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: a perfect square has the form a^2 + 2ab + b^2. Here the end terms are x^2 and 25, so a = x and b = 5. The required middle term is 2ab = 2*x*5 = 10x. The given 5x fails, so the positive coefficient is 10."
           - problem: 'An area model has one $x^2$ square, two strips of area $4x$, and a corner of area $16$. Write the total area as a squared binomial.'
             answer: '(x + 4)^2'
             solution_sketch: 'The strips total $8x=2(x)(4)$ and the corner is $4^2$, so the assembled square has side $x+4$.'
-          - problem: 'A student calls $x^2+4x+16$ a perfect-square trinomial because its end terms are squares. Is the claim valid? Answer yes or no.'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The end terms would require $a=x$ and $b=4$, so the middle term must be $2ab=8x$. The actual $4x$ fails that test.'
+          - problem: "The trinomial $x^2 - 14x + 49$ has square end terms. Find the negative value of $b$ that makes the middle term equal $2ab$ with $a = x$."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: a perfect square has the form a^2 - 2ab + b^2 when the middle term is negative. Here a = x and b^2 = 49, and the middle term is -14x = 2ab. Substitute a = x: 2*x*b = -14x, so b = -7. The negative value that fits is -7."
         constraints: "check the middle term against 2ab"
       - id: kp2
         name: Factor monic perfect squares
