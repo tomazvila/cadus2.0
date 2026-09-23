@@ -988,10 +988,26 @@ topics:
             answer: "[2,0;0,3]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$P^{-1} = \begin{pmatrix}1&-1\\0&1\end{pmatrix}$; $AP = \begin{pmatrix}2&3\\0&3\end{pmatrix}$, then $P^{-1}(AP) = \begin{pmatrix}2&0\\0&3\end{pmatrix}$. So $A$ is similar to a diagonal matrix.'
-          - problem: 'State what it means for $B$ to be similar to $A$.'
-            answer: "B = P^{-1}AP for some invertible P"
-            answer_contract: {kind: none}
-            solution_sketch: '$B$ is similar to $A$ when $B = P^{-1} A P$ for some invertible matrix $P$.'
+          - problem: "Let $P = \\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}$ and $A = \\begin{pmatrix}4&1\\\\0&2\\end{pmatrix}$. Compute $P^{-1}AP$. Give the matrix as [a,b;c,d]."
+            answer: "[4,5;0,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (inverse of a unit upper triangular matrix): with $P = \\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}$, $P^{-1} = \\begin{pmatrix}1&-2\\\\0&1\\end{pmatrix}$ since the determinant is 1. Step 2 (matrix multiplication): $AP = \\begin{pmatrix}4&1\\\\0&2\\end{pmatrix}\\begin{pmatrix}1&2\\\\0&1\\end{pmatrix} = \\begin{pmatrix}4&9\\\\0&2\\end{pmatrix}$. Step 3 (matrix multiplication): $P^{-1}(AP) = \\begin{pmatrix}1&-2\\\\0&1\\end{pmatrix}\\begin{pmatrix}4&9\\\\0&2\\end{pmatrix} = \\begin{pmatrix}4&5\\\\0&2\\end{pmatrix}$. The answer is [4,5;0,2]."
+          - problem: "Let $P = \\begin{pmatrix}1&0\\\\3&1\\end{pmatrix}$ and $A = \\begin{pmatrix}3&2\\\\0&4\\end{pmatrix}$. Compute $P^{-1}AP$. Give the matrix as [a,b;c,d]."
+            answer: "[9,2;-15,-2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (inverse of a unit lower triangular matrix): with $P = \\begin{pmatrix}1&0\\\\3&1\\end{pmatrix}$, $P^{-1} = \\begin{pmatrix}1&0\\\\-3&1\\end{pmatrix}$ since the determinant is 1. Step 2 (matrix multiplication): $AP = \\begin{pmatrix}3&2\\\\0&4\\end{pmatrix}\\begin{pmatrix}1&0\\\\3&1\\end{pmatrix} = \\begin{pmatrix}9&2\\\\12&4\\end{pmatrix}$. Step 3 (matrix multiplication): $P^{-1}(AP) = \\begin{pmatrix}1&0\\\\-3&1\\end{pmatrix}\\begin{pmatrix}9&2\\\\12&4\\end{pmatrix} = \\begin{pmatrix}9&2\\\\-15&-2\\end{pmatrix}$. The answer is [9,2;-15,-2]."
+          - problem: "Let $P = \\begin{pmatrix}1&-1\\\\0&1\\end{pmatrix}$ and $A = \\begin{pmatrix}2&3\\\\1&4\\end{pmatrix}$. Compute $P^{-1}AP$. Give the matrix as [a,b;c,d]."
+            answer: "[3,4;1,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (inverse of a unit upper triangular matrix): with $P = \\begin{pmatrix}1&-1\\\\0&1\\end{pmatrix}$, $P^{-1} = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ since the determinant is 1. Step 2 (matrix multiplication): $AP = \\begin{pmatrix}2&3\\\\1&4\\end{pmatrix}\\begin{pmatrix}1&-1\\\\0&1\\end{pmatrix} = \\begin{pmatrix}2&1\\\\1&3\\end{pmatrix}$. Step 3 (matrix multiplication): $P^{-1}(AP) = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}\\begin{pmatrix}2&1\\\\1&3\\end{pmatrix} = \\begin{pmatrix}3&4\\\\1&3\\end{pmatrix}$. Note the conjugate of a dense matrix stays dense. The answer is [3,4;1,3]."
+          - problem: "The matrix $B = \\begin{pmatrix}2&0\\\\0&7\\end{pmatrix}$ satisfies $B = P^{-1}AP$ with $P = \\begin{pmatrix}1&3\\\\0&1\\end{pmatrix}$. Find $A$. Give the matrix as [a,b;c,d]."
+            answer: "[2,15;0,7]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (rearrange the similarity relation): $B = P^{-1}AP$ gives $A = PBP^{-1}$; with $P = \\begin{pmatrix}1&3\\\\0&1\\end{pmatrix}$, $P^{-1} = \\begin{pmatrix}1&-3\\\\0&1\\end{pmatrix}$. Step 2 (matrix multiplication): $BP^{-1} = \\begin{pmatrix}2&0\\\\0&7\\end{pmatrix}\\begin{pmatrix}1&-3\\\\0&1\\end{pmatrix} = \\begin{pmatrix}2&-6\\\\0&7\\end{pmatrix}$. Step 3 (matrix multiplication): $A = P(BP^{-1}) = \\begin{pmatrix}1&3\\\\0&1\\end{pmatrix}\\begin{pmatrix}2&-6\\\\0&7\\end{pmatrix} = \\begin{pmatrix}2&15\\\\0&7\\end{pmatrix}$. The answer is [2,15;0,7]."
+          - problem: "Which condition on a matrix $P$ makes $B$ similar to $A$? Select the correct relation."
+            answer: "B = P^(-1)AP for some invertible P"
+            answer_contract: {"kind": "label", "options": [["B = P^(-1)AP for some invertible P"], ["B = AP^(-1) for some invertible P"], ["B = PAP for some invertible P"], ["B = PA for some invertible P"]]}
+            solution_sketch: "Step 1 (definition recall): $B$ is similar to $A$ exactly when $B = P^{-1}AP$ for some invertible matrix $P$, the defining relation of this KP. Step 2 (distractor check): the option B = AP^(-1) for some invertible P reverses the order of the three factors; the option B = PAP for some invertible P drops the inverse on the conjugating factor; the option B = PA for some invertible P multiplies on the left only and omits the right factor. The answer is B = P^(-1)AP for some invertible P."
         constraints: "2x2 with P triangular with determinant 1 so the inverse is immediate"
       - id: kp2
         name: Similarity invariants

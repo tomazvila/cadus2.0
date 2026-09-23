@@ -210,14 +210,30 @@ topics:
         name: Using the factorization A = QDQ^T
         key_prerequisites: [diagonalization, orthogonal-matrices]
         exemplars:
-          - problem: '$A = QDQ^T$ with $D = \begin{pmatrix}1&0\\0&9\end{pmatrix}$. Find $\det A$ and the eigenvalues of $A^2$.'
-            answer: "det A = 9; eigenvalues of A^2 are 1 and 81"
-            answer_contract: {kind: none}
-            solution_sketch: '$\det A = \det D$ since $\det Q \det Q^T = 1$; $A^2 = QD^2Q^T$ squares the eigenvalues.'
-          - problem: 'Express $A^3$ in terms of $Q$ and $D$ when $A = QDQ^T$ with $D = \begin{pmatrix}1&0\\0&2\end{pmatrix}$.'
-            answer: 'A^3 = Q D^3 Q^T with D^3 = diag(1, 8)'
-            answer_contract: {kind: none}
-            solution_sketch: '$A^3 = QDQ^TQDQ^TQDQ^T = QD^3Q^T$: the inner $Q^TQ$ factors cancel to $I$.'
+          - problem: "A = QDQ^T with D = diag(2, 5). Find det A and the eigenvalues of A^2 in increasing order."
+            answer: "det = 10; eigs = 4, 25"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "det"}, {"contract": {"kind": "list", "member": {"kind": "exact"}, "ordered": true}, "name": "eigs"}]}
+            solution_sketch: "Since Q is orthogonal, det A = det D = 2*5 = 10. Also A^2 = QD^2Q^T, so its eigenvalues are the squares of the diagonal entries of D: 2^2 = 4 and 5^2 = 25. Thus det = 10; eigs = 4, 25."
+          - problem: "A = QDQ^T with D = diag(2, 3). Use A^3 = QD^3Q^T to find D^3 as [a,b;c,d]."
+            answer: "[8,0;0,27]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "For a diagonal matrix, cube each diagonal entry: 2^3 = 8 and 3^3 = 27. The factorization gives A^3 = QD^3Q^T, so D^3 holds the cubed eigenvalues. The answer is [8,0;0,27]."
+          - problem: "A = QDQ^T with D = diag(1, 4). Find det(A^2)."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Since Q is orthogonal, det A = det D = 1*4 = 4. Then det(A^2) = (det A)^2 = 4^2 = 16. The answer is 16."
+          - problem: "A = QDQ^T with D = diag(3, 4). Find the eigenvalues of A^{-1} in increasing order."
+            answer: "1/4, 1/3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The inverse factorization is A^{-1} = QD^{-1}Q^T. The eigenvalues of A^{-1} are the reciprocals of the diagonal entries of D: 1/3 and 1/4. In increasing order they are 1/4 and 1/3. The answer is 1/4, 1/3."
+          - problem: "A = QDQ^T with D = diag(1, 5). Find trace(A^3)."
+            answer: "126"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The power factorization is A^3 = QD^3Q^T, so the trace is the sum of the cubed eigenvalues. The diagonal entries of D are 1 and 5, so trace(A^3) = 1^3 + 5^3 = 1 + 125 = 126. The answer is 126."
+          - problem: "A = QDQ^T with D = diag(2, 4). Find det(A^{-1})."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Since Q is orthogonal, det A = det D = 2*4 = 8. For an invertible matrix, det(A^{-1}) = 1/det A = 1/8. The answer is 1/8."
         constraints: "D diagonal with small integer entries; answers obtained without multiplying out Q"
     diagnostic_exemplar:
       problem: 'Orthogonally diagonalize $A = \begin{pmatrix}3&1\\1&3\end{pmatrix}$ as $A = QDQ^T$, then use the factorization to give $\det A$ and the eigenvalues of $A^2$.'

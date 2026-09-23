@@ -265,14 +265,30 @@ topics:
         name: Independence of two vectors
         key_prerequisites: [subspaces-span]
         exemplars:
-          - problem: 'Are $(2, 4)$ and $(3, 6)$ linearly independent?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$(3, 6) = \frac{3}{2}(2, 4)$; two vectors are dependent iff one is a multiple of the other.'
-          - problem: 'Are $(1, 2)$ and $(2, 1)$ linearly independent?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Neither is a scalar multiple of the other.'
+          - problem: "Let $u = (2, 6)$ and $v = (8, 24)$ be vectors in $\\mathbb{R}^2$. Determine whether the pair $\\{u, v\\}$ is linearly independent or linearly dependent; if dependent, find the scalar $c$ such that $v = cu$. Give the verdict and the value of $c$."
+            answer: "verdict = dependent; c = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["independent"], ["dependent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "Test whether one vector is a scalar multiple of the other (the multiple test for two vectors). Component check: $8 = 4 \\cdot 2$ and $24 = 4 \\cdot 6$, so $v = 4u$ and the relation $v - 4u = 0$ is nontrivial. The pair is dependent with $c = 4$, so the answer is verdict = dependent; c = 4."
+          - problem: "Let $u = (3, 5)$ and $v = (4, 7)$ be vectors in $\\mathbb{R}^2$. Compute the determinant $d$ of the matrix whose rows are $u$ and $v$, and state whether the pair is linearly independent or dependent. Give the verdict and the value of $d$."
+            answer: "verdict = independent; d = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["independent"], ["dependent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "Build the matrix with rows $u$ and $v$ and compute its determinant (the determinant test for two vectors in $\\mathbb{R}^2$). The determinant is $d = 3 \\cdot 7 - 5 \\cdot 4 = 1$. Since $d$ is not zero, the only solution of $c_1 u + c_2 v = 0$ is the trivial one. The pair is independent, so the answer is verdict = independent; d = 1."
+          - problem: "The vectors $(3, 6)$ and $(k, 10)$ in $\\mathbb{R}^2$ are linearly dependent. Find $k$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Two vectors are dependent exactly when one is a scalar multiple of the other (the multiple test). From the second components the ratio is $10/6 = 5/3$, so the first components must satisfy $k/3 = 5/3$. Solving gives $k = 5$, so the answer is k = 5."
+          - problem: "The vectors $(2, -1, 3)$ and $(-4, 2, k)$ in $\\mathbb{R}^3$ are linearly dependent. Find $k$."
+            answer: "-6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Two vectors in $\\mathbb{R}^3$ are dependent only if one is a scalar multiple of the other (the multiple test). Write $(-4, 2, k) = c(2, -1, 3)$; the first components give $c = -2$, and the second components agree since $2 = -2 \\cdot (-1)$. The third component then forces $k = -2 \\cdot 3$, so the answer is k = -6."
+          - problem: "In $\\mathbb{R}^3$, the vector $w = (6, k, -9)$ is a scalar multiple of $u = (2, -1, 3)$. Find the scalar $c$ and the value of $k$."
+            answer: "c = 3; k = -3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "Write the scalar multiple relation $w = cu$ componentwise (definition of a scalar multiple). The first components give $6 = 2c$, hence $c = 3$. The second component gives $k = 3 \\cdot (-1) = -3$, and the third confirms $-9 = 3 \\cdot 3$. The answer is c = 3; k = -3."
+          - problem: "Let $u = (1, 2, 1)$ and $v = (2, 4, t)$ in $\\mathbb{R}^3$. State whether the pair is linearly independent when $t = 6$, and find the value of $t$ that makes the pair linearly dependent. Give the verdict and the value of $t$."
+            answer: "verdict = independent; t = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["independent"], ["dependent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "The pair is dependent only if $v = cu$ for some scalar $c$ (the multiple test). The first components force $c = 2$, and the second components agree since $4 = 2 \\cdot 2$, so dependence requires the third component $t = 2 \\cdot 1 = 2$. With $t = 6$ the third components disagree, so the pair is independent, and the answer is verdict = independent; t = 2."
         constraints: "pairs in R^2 or R^3 with small integer entries"
       - id: kp2
         name: Independence via row reduction
@@ -766,13 +782,33 @@ topics:
         name: Rank and invertibility
         key_prerequisites: [null-column-space-rank]
         exemplars:
-          - problem: '$A$ is $3 \times 3$ with rank $3$. Is $A$ invertible, and what is $\mathrm{Nul}(A)$?'
-            answer: "Invertible; Nul(A) = {0}"
-            answer_contract: {kind: none}
-            solution_sketch: 'Full rank means a pivot in every row and column: invertible, nullity $0$.'
           - problem: '$A$ is $3 \times 3$ with rank $2$. What is $\det A$?'
             answer: "0"
             solution_sketch: 'Rank below $n$ means $A$ is singular, and singular matrices have determinant $0$.'
+          - problem: "$A$ is a $4 \\times 4$ matrix with rank $4$. Give a verdict, invertible or singular, and the nullity of $A$."
+            answer: "verdict = invertible; nullity = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invertible"], ["singular"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "nullity"}]}
+            solution_sketch: "Rank-nullity theorem: for the 4x4 matrix $A$, nullity = n - rank = 4 - 4 = 0. Invertible matrix theorem: rank $n$ in an $n \\times n$ matrix means a pivot in every row and column, so $A$ is invertible. Thus verdict = invertible; nullity = 0."
+          - problem: "$A$ is a $5 \\times 5$ matrix and $\\det A = 7$. Give the rank of $A$ and the nullity of $A$."
+            answer: "rank = 5; nullity = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "rank"}, {"contract": {"kind": "exact"}, "name": "nullity"}]}
+            solution_sketch: "Invertible matrix theorem: $\\det A = 7 \\neq 0$, so the 5x5 matrix $A$ is invertible and has rank $5$. Rank-nullity theorem: nullity = 5 - rank = 5 - 5 = 0. Thus rank = 5; nullity = 0."
+          - problem: "$A$ is a $3 \\times 3$ matrix with nullity $1$. Give a verdict, invertible or singular, and the rank of $A$."
+            answer: "verdict = singular; rank = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invertible"], ["singular"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "rank"}]}
+            solution_sketch: "Invertible matrix theorem: nullity $1$ means $\\mathrm{Nul}(A)$ is nontrivial, so the 3x3 matrix $A$ is singular. Rank-nullity theorem: rank = n - nullity = 3 - 1 = 2. Thus verdict = singular; rank = 2."
+          - problem: "Let $A = [2,4; 1,2]$. Give a verdict, invertible or singular, and $\\det A$."
+            answer: "verdict = singular; det = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invertible"], ["singular"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "det"}]}
+            solution_sketch: "Apply the 2x2 determinant formula to $A = [2,4; 1,2]$: $\\det A = 2 \\cdot 2 - 4 \\cdot 1 = 0$. Invertible matrix theorem: determinant $0$ means $A$ is singular. Thus verdict = singular; det = 0."
+          - problem: "Let $A = [1,0,2; 0,1,3; 1,1,5]$. Give $\\det A$ and the nullity of $A$."
+            answer: "det = 0; nullity = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "det"}, {"contract": {"kind": "exact"}, "name": "nullity"}]}
+            solution_sketch: "Expand $\\det A$ of $A = [1,0,2; 0,1,3; 1,1,5]$ along the first row: $1(5-3) - 0 + 2(0-1) = 2 - 2 = 0$. Determinant $0$ means rank below $3$; rows one and two are independent, so rank = 2. Rank-nullity theorem: nullity = 3 - 2 = 1. Thus det = 0; nullity = 1."
+          - problem: "$A$ is a $4 \\times 4$ matrix with rank $3$. Give a verdict, invertible or singular, and the nullity of $A$."
+            answer: "verdict = singular; nullity = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invertible"], ["singular"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "nullity"}]}
+            solution_sketch: "Invertible matrix theorem: rank $3 < n = 4$ for the 4x4 matrix $A$, so $A$ is singular and $\\det A = 0$. Rank-nullity theorem: nullity = 4 - 3 = 1. Thus verdict = singular; nullity = 1."
         constraints: "square matrices; connect rank n to invertible/det nonzero/trivial null space"
     diagnostic_exemplar:
       problem: '$A$ is $3 \times 3$ and its echelon form has $2$ pivots. Give the rank and nullity of $A$, say whether $A$ is invertible, and give $\det A$.'
@@ -895,14 +931,30 @@ topics:
         name: Computing kernels
         key_prerequisites: [linear-transformations, null-column-space-rank]
         exemplars:
-          - problem: 'Find the kernel of $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$.'
-            answer: "span{(-2, 1)}"
-            answer_contract: {kind: none}
-            solution_sketch: 'The kernel is $\mathrm{Nul}(A)$: solve $x + 2y = 0$. Check: $A(-2, 1) = (0, 0)$.'
-          - problem: 'Find the kernel of $T(x, y) = (x - y, 2x - 2y)$.'
-            answer: "span{(1, 1)}"
-            answer_contract: {kind: none}
-            solution_sketch: 'Both components vanish exactly when $x = y$.'
+          - problem: "Let $T(\\mathbf{x}) = A\\mathbf{x}$ with $A = \\begin{pmatrix}2&-4\\\\-1&2\\end{pmatrix}$. The kernel of $T$ is the solution set of $A\\mathbf{x} = \\mathbf{0}$. Find a nonzero vector that spans the kernel, and give it as (x, y) with x > 0."
+            answer: "(2, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write the system $A\\mathbf{x}=\\mathbf{0}$: the rows give $2x-4y=0$ and $-x+2y=0$, which are the same equation. Solving gives $x=2y$, so the null space is one-dimensional and spanned by $(2,1)$ (take $y=1$). Check: $A(2,1)=(0,0)$. The kernel generator is (2, 1)."
+          - problem: "A linear map $T: \\mathbb{R}^2 \\to \\mathbb{R}^2$ acts by $T(x, y) = (x + y,\\ 3x + 3y)$. The kernel consists of all inputs that $T$ sends to $(0, 0)$. Give a nonzero kernel generator as (x, y) with x > 0."
+            answer: "(1, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set $T(x,y)=(0,0)$: both components give the single equation $x+y=0$. The null space is the line $y=-x$, which is one-dimensional and spanned by $(1,-1)$ (take $x=1$). Check: $T(1,-1)=(0,0)$. The kernel generator is (1, -1)."
+          - problem: "For the map $T(x, y) = (2x - 3y,\\ -4x + 6y)$, the kernel is the line of inputs sent to $(0, 0)$. Find a nonzero vector spanning the kernel, and give it as (x, y) with x > 0."
+            answer: "(3, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Set up the kernel equations $2x-3y=0$ and $-4x+6y=0$; the second row is $-2$ times the first, so one equation remains. Solving $2x=3y$ gives the spanning vector $(3,2)$ (take $y=2$). Check: $T(3,2)=(0,0)$. The kernel generator is (3, 2)."
+          - problem: "A linear map $T$ satisfies $T(1, 0) = (-3, -6)$ and $T(0, 1) = (1, 2)$. Every input on the kernel line maps to $(0, 0)$. Give a nonzero kernel generator as (x, y) with x > 0."
+            answer: "(1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The standard matrix has columns $T(1,0)=(-3,-6)$ and $T(0,1)=(1,2)$, so the kernel solves $-3x+y=0$ and $-6x+2y=0$. Both rows reduce to $y=3x$, so $(1,3)$ spans the kernel (take $x=1$). Check: $1\\cdot(-3,-6)+3\\cdot(1,2)=(0,0)$. The kernel generator is (1, 3)."
+          - problem: "Let $T(\\mathbf{x}) = A\\mathbf{x}$ with $A = \\begin{pmatrix}2&5\\\\4&10\\end{pmatrix}$. Vectors in the kernel satisfy both rows of the equation $A\\mathbf{x} = \\mathbf{0}$. Determine a nonzero vector that spans the kernel, and give it as (x, y) with x > 0."
+            answer: "(5, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Row reduce $A\\mathbf{x}=\\mathbf{0}$: the second row $[4,10]$ is $2$ times $[2,5]$, so the rank is $1$ and the kernel is one-dimensional. The equation $2x+5y=0$ gives the spanning vector $(5,-2)$ (take $y=-2$). Check: $A(5,-2)=(0,0)$. The kernel generator is (5, -2)."
+          - problem: "The map $T(x, y) = (x + 2y,\\ 3x + 6y)$ sends a whole line of inputs to $(0, 0)$. Determine a nonzero vector spanning that kernel line, and give it as (x, y) with x > 0."
+            answer: "(2, -1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Setting $x+2y=0$ and $3x+6y=0$ leaves one independent equation, so the kernel is a line. Solving gives $x=-2y$, and the spanning vector with positive first entry is $(2,-1)$ (take $y=-1$). Check: $T(2,-1)=(2-2,6-6)=(0,0)$. The kernel generator is (2, -1)."
         constraints: "2x2 matrices with 1-dimensional kernels; integer kernel generators"
       - id: kp2
         name: Computing images
@@ -1075,13 +1127,29 @@ topics:
         name: Coordinates in an orthogonal basis
         key_prerequisites: [dot-product, basis-dimension]
         exemplars:
-          - problem: 'Write $\mathbf{x} = (4, 2)$ in the orthogonal basis $\{(1, 1), (1, -1)\}$ using dot products.'
-            answer: "x = 3(1, 1) + 1(1, -1)"
-            answer_contract: {kind: none}
-            solution_sketch: '$c_i = \frac{\mathbf{x} \cdot \mathbf{v}_i}{\mathbf{v}_i \cdot \mathbf{v}_i}$: $c_1 = \frac{6}{2} = 3$, $c_2 = \frac{2}{2} = 1$.'
           - problem: 'Find the coefficient of $(1, 0, 1)$ when $\mathbf{x} = (3, 5, 1)$ is expanded in an orthogonal basis containing it.'
             answer: "2"
             solution_sketch: '$c = \frac{(3,5,1)\cdot(1,0,1)}{(1,0,1)\cdot(1,0,1)} = \frac{4}{2} = 2$.'
+          - problem: "The vector $\\mathbf{x} = (6, 2)$ is written in the orthogonal basis $\\{(1, 1), (1, -1)\\}$. Compute both coefficients with dot products and give them as (c1, c2)."
+            answer: "(4, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "In an orthogonal basis each coefficient is $c_i = (\\mathbf{x} \\cdot \\mathbf{v}_i)/(\\mathbf{v}_i \\cdot \\mathbf{v}_i)$ by the dot-product formula. For $\\mathbf{v}_1 = (1,1)$: $(6,2)\\cdot(1,1) = 8$ and $(1,1)\\cdot(1,1) = 2$, so $c_1 = 8/2 = 4$. For $\\mathbf{v}_2 = (1,-1)$: $(6,2)\\cdot(1,-1) = 4$ and the norm squared is $2$, so $c_2 = 4/2 = 2$. The coefficients are (4, 2)."
+          - problem: "The vector $\\mathbf{x} = (5, 3, 6)$ is written in the orthogonal basis $\\{(1, 1, 0), (1, -1, 0), (0, 0, 1)\\}$. Find the three coefficients with dot products and give them as (c1, c2, c3)."
+            answer: "(4, 1, 6)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Use $c_i = (\\mathbf{x} \\cdot \\mathbf{v}_i)/(\\mathbf{v}_i \\cdot \\mathbf{v}_i)$ for each basis vector. $c_1 = \\frac{(5,3,6)\\cdot(1,1,0)}{(1,1,0)\\cdot(1,1,0)} = \\frac{8}{2} = 4$. $c_2 = \\frac{(5,3,6)\\cdot(1,-1,0)}{2} = \\frac{2}{2} = 1$. $c_3 = \\frac{(5,3,6)\\cdot(0,0,1)}{1} = 6$. The coefficients are (4, 1, 6)."
+          - problem: "The vector $\\mathbf{x} = (3, 10, 2)$ is expanded in an orthogonal basis that contains $(1, 2, 2)$. Compute the coefficient of $(1, 2, 2)$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The coefficient of one vector of an orthogonal basis is the ratio of two dot products: $c = \\frac{\\mathbf{x} \\cdot \\mathbf{v}}{\\mathbf{v} \\cdot \\mathbf{v}}$. Here $(3,10,2)\\cdot(1,2,2) = 3 + 20 + 4 = 27$ and $(1,2,2)\\cdot(1,2,2) = 1 + 4 + 4 = 9$. So $c = 27/9 = 3$. The coefficient is 3."
+          - problem: "The vector $\\mathbf{x} = (9, 7)$ is expanded in the orthogonal basis $\\{(2, 1), (-1, 2)\\}$, and the coefficient of $(2, 1)$ is $5$. Find the coefficient of $(-1, 2)$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The dot-product formula gives $c_2 = \\frac{(9,7)\\cdot(-1,2)}{(-1,2)\\cdot(-1,2)}$. The numerator is $-9 + 14 = 5$ and the denominator is $1 + 4 = 5$. As a check, $\\mathbf{x} - 5(2,1) = (9,7) - (10,5) = (-1,2)$, which is exactly $1$ times the second basis vector. The coefficient is 1."
+          - problem: "In the orthogonal basis $\\{(1, 0, 1), (0, 1, 0), (1, 0, -1)\\}$ the coordinates of $\\mathbf{x}$ are $(2, 3, 4)$. Find the vector $\\mathbf{x}$ and give it as (x1, x2, x3)."
+            answer: "(6, 3, -2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Reconstruct by multiplying each basis vector by its coordinate and adding: $\\mathbf{x} = 2(1,0,1) + 3(0,1,0) + 4(1,0,-1)$. The first components give $2 + 4 = 6$, the second gives $3$, and the third gives $2 - 4 = -2$. The vector is (6, 3, -2)."
         constraints: "orthogonal bases only; coefficients are integers"
     diagnostic_exemplar:
       problem: 'Verify that $B = \{(2, 1), (-1, 2)\}$ is an orthogonal basis of $\mathbb{R}^2$, then use dot products to write $\mathbf{x} = (3, 4)$ in that basis.'
@@ -1117,14 +1185,30 @@ topics:
         name: Complements of lines
         key_prerequisites: [orthogonal-orthonormal-sets]
         exemplars:
-          - problem: 'Find a basis for the orthogonal complement of $\mathrm{span}\{(1, 2)\}$ in $\mathbb{R}^2$.'
-            answer: "{(-2, 1)} (any nonzero multiple)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Need $(x, y) \cdot (1, 2) = x + 2y = 0$: the line spanned by $(-2, 1)$.'
-          - problem: 'Find a basis for $(\mathrm{span}\{(1, 0, 1)\})^\perp$ in $\mathbb{R}^3$.'
-            answer: "{(-1, 0, 1), (0, 1, 0)} (any valid basis)"
-            answer_contract: {kind: none}
-            solution_sketch: 'The condition $x + z = 0$ has free variables $y, z$: solutions $z(-1, 0, 1) + y(0, 1, 0)$.'
+          - problem: "A line in $\\mathbb{R}^2$ has direction $(3, 4)$. Its orthogonal complement is the line through the origin perpendicular to $(3, 4)$. Find the unit vector in this orthogonal complement whose second component is positive, giving exact values as (x, y)."
+            answer: "(-4/5, 3/5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The orthogonal complement of span{(3, 4)} is the set of vectors w with w dot (3, 4) = 0 (orthogonality condition). Solving 3x + 4y = 0 gives the direction (-4, 3) of the complement line, since 3(-4) + 4(3) = 0. Its length is sqrt(16 + 9) = 5 by the Pythagorean theorem. Dividing each component by 5 gives the unit vector with positive second component, which is (-4/5, 3/5)."
+          - problem: "A vector lies in the orthogonal complement of $\\mathrm{span}\\{(2, 1, 2)\\}$ in $\\mathbb{R}^3$ exactly when its dot product with $(2, 1, 2)$ is zero. Find the vector with first component 1 and third component 0 in this orthogonal complement, giving it as (x, y, z)."
+            answer: "(1, -2, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Membership uses the dot product rule: w dot (2, 1, 2) = 0 for the full object w = (1, y, 0). Compute 2(1) + 1(y) + 2(0) = 2 + y. Setting 2 + y = 0 gives y = -2. The required vector is (1, -2, 0)."
+          - problem: "In $\\mathbb{R}^3$, the orthogonal complement of a line through the origin is the plane $3x - y + 2z = 0$. Find a direction vector of that line whose entries have no common factor greater than 1 and whose first component is positive, as (x, y, z)."
+            answer: "(3, -1, 2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Two subspaces that are mutual orthogonal complements satisfy the double-complement relation, so the line is the orthogonal complement of the plane. The orthogonal complement of a plane through the origin is the line spanned by its normal vector (normal-vector rule). For the plane 3x - y + 2z = 0 the normal is (3, -1, 2); its entries have no common factor and the first component is positive. The direction vector of the line is (3, -1, 2)."
+          - problem: "Decide whether the vector $(1, 4, 1)$ lies in the orthogonal complement of $\\mathrm{span}\\{(3, -2, 5)\\}$ in $\\mathbb{R}^3$. Give the verdict and the dot product of $(3, -2, 5)$ with $(1, 4, 1)$."
+            answer: "verdict = yes; dot = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "dot"}]}
+            solution_sketch: "Compute the full dot product (3, -2, 5) dot (1, 4, 1) = 3 - 8 + 5 = 0 by the orthogonality test. Because the dot product is 0, the test vector is orthogonal to the spanning direction and lies in the complement. The option no would follow from an arithmetic slip such as dropping the minus sign and getting 3 + 8 + 5 = 16. Thus verdict = yes; dot = 0."
+          - problem: "A vector lies in the orthogonal complement of $\\mathrm{span}\\{(2, -3, 4)\\}$ in $\\mathbb{R}^3$ exactly when its dot product with $(2, -3, 4)$ is zero. Find the vector of the form (x, 2, 1) in this orthogonal complement, giving it as (x, y, z)."
+            answer: "(1, 2, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Membership uses the dot product rule: w dot (2, -3, 4) = 0 for the full object w = (x, 2, 1). The dot product is 2x - 6 + 4 = 2x - 2. Setting 2x - 2 = 0 gives x = 1. The vector is (1, 2, 1)."
+          - problem: "Find the value of $t$ for which the vector $(t, 1, -4)$ lies in the orthogonal complement of $\\mathrm{span}\\{(2, 3, 1)\\}$ in $\\mathbb{R}^3$, as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The vector (t, 1, -4) lies in the orthogonal complement exactly when its dot product with the spanning direction (2, 3, 1) is 0. Compute the full dot product: 2t + 3(1) + 1(-4) = 2t - 1. Setting 2t - 1 = 0 and solving gives t = 1/2."
         constraints: "lines with small integer directions; complements described by one homogeneous equation"
       - id: kp2
         name: Complements of planes and dimensions
@@ -1194,6 +1278,22 @@ topics:
           - problem: 'Project $\mathbf{x} = (3, 1, 2)$ onto $W = \mathrm{span}\{(1, 1, 0), (0, 0, 1)\}$.'
             answer: "(2, 2, 2)"
             solution_sketch: '$c_1 = \frac{4}{2} = 2$, $c_2 = \frac{2}{1} = 2$: $\hat{\mathbf{x}} = 2(1,1,0) + 2(0,0,1)$. Check: $\mathbf{x} - \hat{\mathbf{x}} = (1, -1, 0)$ is orthogonal to both basis vectors.'
+          - problem: "Let $W = \\mathrm{span}\\{(2, 0, 0), (0, 1, 1)\\}$ and $\\mathbf{x} = (6, 5, 3)$. Project $\\mathbf{x}$ onto $W$ and give the answer as (a, b, c)."
+            answer: "(6, 4, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The basis is orthogonal, so use $c_i = \\frac{\\mathbf{x}\\cdot\\mathbf{v}_i}{\\mathbf{v}_i\\cdot\\mathbf{v}_i}$. Here $c_1 = \\frac{12}{4} = 3$ and $c_2 = \\frac{8}{2} = 4$. The projection is $\\hat{\\mathbf{x}} = 3(2,0,0) + 4(0,1,1) = (6,4,4)$. Residual check: $(0,1,-1)$ dots to $0$ with both basis vectors. The projection is (6, 4, 4)."
+          - problem: "Let $\\mathbf{x} = (11, -2, 1)$ and $W = \\mathrm{span}\\{(1, 2, 2), (2, 1, -2)\\}$. Find the orthogonal projection of $\\mathbf{x}$ onto $W$; give the answer as (a, b, c)."
+            answer: "(5, 4, -2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Both basis vectors have norm squared $9$, and they are orthogonal since $(1,2,2)\\cdot(2,1,-2) = 0$. Coefficients: $c_1 = \\frac{9}{9} = 1$ and $c_2 = \\frac{18}{9} = 2$. So $\\hat{\\mathbf{x}} = 1(1,2,2) + 2(2,1,-2) = (5,4,-2)$. Check: the residual $(6,-6,3)$ dots to $0$ with both basis vectors. The projection is (5, 4, -2)."
+          - problem: "A plane through the origin is $W = \\mathrm{span}\\{(1, -1, 0), (1, 1, -2)\\}$. For $\\mathbf{x} = (6, 0, -3)$, compute the orthogonal projection of $\\mathbf{x}$ onto $W$ and give it as (a, b, c)."
+            answer: "(5, -1, -4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The plane vectors are orthogonal since $(1,-1,0)\\cdot(1,1,-2) = 0$, with norm squared $2$ and $6$. Dot products: $\\mathbf{x}\\cdot\\mathbf{v}_1 = 6$ and $\\mathbf{x}\\cdot\\mathbf{v}_2 = 12$, so $c_1 = 3$ and $c_2 = 2$. Then $\\hat{\\mathbf{x}} = 3(1,-1,0) + 2(1,1,-2) = (5,-1,-4)$. Residual check: $(1,1,1)$ dots to $0$ with both plane vectors. The projection is (5, -1, -4)."
+          - problem: "Let $W = \\mathrm{span}\\{(1, 0, 1), (1, 0, -1)\\}$ and $\\mathbf{x} = (4, 3, 8)$. First project $\\mathbf{x}$ onto $W$, then find the residual $\\mathbf{z} = \\mathbf{x} - \\hat{\\mathbf{x}}$; give $\\mathbf{z}$ as (a, b, c)."
+            answer: "(0, 3, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Both basis vectors have norm squared $2$ and are orthogonal. Coefficients: $c_1 = \\frac{12}{2} = 6$ and $c_2 = \\frac{-4}{2} = -2$, so $\\hat{\\mathbf{x}} = 6(1,0,1) - 2(1,0,-1) = (4,0,8)$. Subtracting gives $\\mathbf{z} = (4,3,8) - (4,0,8) = (0,3,0)$. Check: $(0,3,0)$ dots to $0$ with both basis vectors, so $\\mathbf{z}\\perp W$. The residual is (0, 3, 0)."
         constraints: "orthogonal bases with 2 vectors in R^3; projection coefficients are integers; always check the residual"
       - id: kp2
         name: The orthogonal decomposition
@@ -1218,6 +1318,22 @@ topics:
           - problem: 'Find the distance from $(1, 2, 2)$ to the plane $\mathrm{span}\{(1, 0, 0), (0, 1, 0)\}$.'
             answer: "2"
             solution_sketch: 'The projection is $(1, 2, 0)$; the residual $(0, 0, 2)$ has norm $2$.'
+          - problem: "Find the distance from the point $(1, 3, 2)$ to the subspace $\\mathrm{span}\\{(1, 1, 0)\\}$ of $\\mathbb{R}^3$."
+            answer: "sqrt(6)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (projection formula): the scalar coefficient of $(1, 3, 2)$ on $(1, 1, 0)$ is $\\frac{x \\cdot v}{v \\cdot v} = \\frac{4}{2} = 2$, so the projection is $(2, 2, 0)$. Step 2 (distance as residual norm): the residual is $(1, 3, 2) - (2, 2, 0) = (-1, 1, 2)$, which is orthogonal to the line, and its norm is $\\sqrt{1 + 1 + 4}$. The distance is sqrt(6)."
+          - problem: "The plane $W = \\mathrm{span}\\{(1, 2, 0), (2, -1, 0)\\}$ has an orthogonal basis. Find the distance from the point $(1, 1, 3)$ to $W$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (projection onto each basis vector): $(1, 1, 3) \\cdot (1, 2, 0) = 3$ and $\\|(1, 2, 0)\\|^2 = 5$, giving the component $(3/5)(1, 2, 0)$; likewise $(1, 1, 3) \\cdot (2, -1, 0) = 1$ gives $(1/5)(2, -1, 0)$. Step 2 (sum the components): the projection is $(0.6 + 0.4, 1.2 - 0.2, 0) = (1, 1, 0)$. Step 3 (residual norm): $(1, 1, 3) - (1, 1, 0) = (0, 0, 3)$, which is orthogonal to $W$, and its norm is $3$. The distance is 3."
+          - problem: "A line through the origin of $\\mathbb{R}^2$ has direction $(2, -1)$. Find the distance from the point $(5, 0)$ to this line."
+            answer: "sqrt(5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (projection formula): the coefficient of $(5, 0)$ on $(2, -1)$ is $\\frac{10}{5} = 2$, so the closest point on the line is $(4, -2)$. Step 2 (residual norm): the residual is $(5, 0) - (4, -2) = (1, 2)$, which is orthogonal to the direction $(2, -1)$, and its norm is $\\sqrt{1 + 4}$. The distance is sqrt(5)."
+          - problem: "For $c > 0$, the distance from the point $(2, 4, c)$ to the line $\\mathrm{span}\\{(1, 1, 0)\\}$ equals $\\sqrt{3}$. Find $c$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (projection formula): the coefficient of $(2, 4, c)$ on $(1, 1, 0)$ is $\\frac{2 + 4}{2} = 3$, so the projection is $(3, 3, 0)$. Step 2 (residual norm): the residual is $(-1, 1, c)$ with squared norm $1 + 1 + c^2 = 2 + c^2$. Step 3 (solve the distance equation): setting $\\sqrt{2 + c^2} = \\sqrt{3}$ gives $c^2 = 1$, and $c > 0$ selects the positive root. The coordinate is c = 1."
         constraints: "distances are integers or single square roots"
     diagnostic_exemplar:
       problem: 'Write $\mathbf{x} = (5, 1)$ as $\hat{\mathbf{x}} + \mathbf{z}$ with $\hat{\mathbf{x}}$ in $W = \mathrm{span}\{(1, 1)\}$ and $\mathbf{z} \perp W$, and give the distance from $\mathbf{x}$ to $W$.'
@@ -1288,6 +1404,22 @@ topics:
           - problem: 'Normalize the Gram-Schmidt output $\{(1, 1), (-1, 1)\}$.'
             answer: '$\{(1/\sqrt{2}, 1/\sqrt{2}), (-1/\sqrt{2}, 1/\sqrt{2})\}$'
             solution_sketch: 'Both vectors have norm $\sqrt{2}$.'
+          - problem: "Apply Gram-Schmidt to x1 = (4, 3) and x2 = (5, 0), then normalize. Give the orthonormal basis as q1 = (a, b); q2 = (c, d)."
+            answer: "q1 = (4/5, 3/5); q2 = (3/5, -4/5)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "q1"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "q2"}]}
+            solution_sketch: "Step 1 (Gram-Schmidt): v1 = (4, 3). Step 2 (projection): v2 = (5, 0) - (20/25)(4, 3) = (5, 0) - (4/5)(4, 3) = (9/5, -12/5), proportional to (3, -4). Step 3 (normalize): v1 has norm 5, so q1 = (4/5, 3/5); v2 has direction (3, -4) with norm 5, so q2 = (3/5, -4/5)."
+          - problem: "Apply Gram-Schmidt to x1 = (1, 1) and x2 = (4, 3), then normalize. Give the orthonormal basis as q1 = (a, b); q2 = (c, d)."
+            answer: "q1 = (1/sqrt(2), 1/sqrt(2)); q2 = (1/sqrt(2), -1/sqrt(2))"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "q1"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "q2"}]}
+            solution_sketch: "Step 1 (Gram-Schmidt): v1 = (1, 1). Step 2 (projection): v2 = (4, 3) - (7/2)(1, 1) = (1/2, -1/2), proportional to (1, -1). Step 3 (normalize): v1 has norm sqrt(2), so q1 = (1/sqrt(2), 1/sqrt(2)); v2 has direction (1, -1) with norm sqrt(2), so q2 = (1/sqrt(2), -1/sqrt(2))."
+          - problem: "Apply Gram-Schmidt to x1 = (4, 3) and x2 = (0, 5), then normalize. Give the second vector of the orthonormal basis as (a, b)."
+            answer: "(-3/5, 4/5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (Gram-Schmidt): v1 = (4, 3). Step 2 (projection): v2 = (0, 5) - (15/25)(4, 3) = (-12/5, 16/5), proportional to (-3, 4). Step 3 (normalize): the second unit vector is (-3/5, 4/5)."
+          - problem: "Apply Gram-Schmidt to x1 = (3, 4, 0), x2 = (0, 5, 0), and x3 = (0, 0, 5), then normalize. Give the orthonormal basis as q1 = (a, b, c); q2 = (d, e, f); q3 = (g, h, i)."
+            answer: "q1 = (3/5, 4/5, 0); q2 = (-4/5, 3/5, 0); q3 = (0, 0, 1)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "q1"}, {"contract": {"arity": 3, "kind": "coordinates"}, "name": "q2"}, {"contract": {"arity": 3, "kind": "coordinates"}, "name": "q3"}]}
+            solution_sketch: "Step 1 (Gram-Schmidt): v1 = (3, 4, 0). Step 2 (projection): v2 = (0, 5, 0) - (20/25)(3, 4, 0) = (-12/5, 9/5, 0), proportional to (-4, 3, 0). Step 3 (projection): v3 = (0, 0, 5) since it is orthogonal to v1 and v2. Step 4 (normalize): q1 = (3/5, 4/5, 0); q2 = (-4/5, 3/5, 0); q3 = (0, 0, 1)."
         constraints: "norms are 5 or sqrt(2); rescale fraction vectors to integer directions before normalizing"
     diagnostic_exemplar:
       problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (3, 4)$, $\mathbf{x}_2 = (1, 2)$, then normalize to an orthonormal basis of $\mathbb{R}^2$.'
