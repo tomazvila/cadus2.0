@@ -1891,12 +1891,34 @@ topics:
         name: "The minimal-counterexample method"
         key_prerequisites: [proof-by-contradiction]
         exemplars:
-          - problem: 'Using the well-ordering principle, prove every integer $n \ge 2$ has a prime divisor.'
-            answer: 'The least element of the set of divisors $\ge 2$ is prime.'
-            solution_sketch: 'Let $S = \{d \in \mathbb{Z} : d \ge 2 \text{ and } d \mid n\}$. It is nonempty ($n \in S$), so by well-ordering it has a least element $p$. If $p$ were composite, a divisor $d$ with $2 \le d < p$ would divide $n$, contradicting minimality. So $p$ is prime. $\square$'
-          - problem: 'Using well-ordering, prove that $1 + 2 + \cdots + n = \tfrac{n(n+1)}{2}$ for every $n \ge 1$ (minimal-counterexample form).'
-            answer: 'A least counterexample $m$ would force the formula to hold at $m$ too.'
-            solution_sketch: 'Suppose the formula fails somewhere; let $m$ be the least such $n$ (well-ordering). Since it holds at $n = 1$, $m \ge 2$, so it holds at $m - 1$: $1 + \cdots + (m-1) = \frac{(m-1)m}{2}$. Adding $m$ gives $\frac{(m-1)m}{2} + m = \frac{m(m+1)}{2}$, so it holds at $m$ — contradiction. $\square$'
+          - problem: "Let S be the nonempty set of divisors d >= 2 of 91. By the well-ordering principle S has a least element p. Find p."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: form S = {d : d >= 2 and d divides 91}; it is nonempty because 91 is in S. Step 2: by the well-ordering principle, S has a least element p. Step 3: test divisors: 7 divides 91 and no smaller divisor >= 2 does, so p = 7. The least element is 7."
+          - problem: "For the claim 1 + 2 + ... + n = n(n+1)/2, suppose it fails and let m be the least counterexample. Since it holds at n = 1, m >= 2. Add m to the formula at m - 1. Give the resulting expression in m as a single fraction."
+            answer: "(m^2+m)/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: by contradiction and the well-ordering principle, take the least counterexample m. Step 2: the claim holds at m - 1, so 1 + ... + (m - 1) = (m - 1)m/2. Step 3: add m: (m - 1)m/2 + m = (m^2 - m + 2m)/2 = (m^2 + m)/2. The resulting expression is (m^2+m)/2."
+          - problem: "Let S be the nonempty set of integers n >= 0 for which n^2 + n + 41 is not prime. By the well-ordering principle S has a least element. Find that least element."
+            answer: "40"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: form S as the set of n >= 0 where n^2 + n + 41 is composite. Step 2: by the well-ordering principle, S has a least element m. Step 3: check n = 40 gives 40^2 + 40 + 41 = 1681 = 41^2, and no smaller n gives a composite value. The least element is 40."
+          - problem: "Claim: 2^n > n^2 for every n >= 1. Step 1: suppose the claim is false and let m be the least counterexample. Step 2: since n = 1 is true, m >= 2. Step 3: by minimality, 2^(m-1) > (m-1)^2. Step 4: multiplying by 2 gives 2^m > 2(m-1)^2, and since 2(m-1)^2 >= m^2 for all m >= 2, we get 2^m > m^2. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: it sets up the minimal counterexample. Step 2 is valid because n = 1 gives 2 > 1. Step 3 is valid by minimality of m. Step 4 is invalid: the claim 2(m-1)^2 >= m^2 is false for m = 2, since 2 >= 4 is false. The answer is Step 4."
+          - problem: "Let S be the nonempty set of divisors d >= 2 of 121. By the well-ordering principle S has a least element p. Determine whether p has exactly two positive divisors and give p."
+            answer: "verdict = prime; p = 11"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Step 1: form S; it is nonempty because 121 is in S. Step 2: by the well-ordering principle, S has a least element p. Step 3: 11 divides 121 and no smaller divisor >= 2 does, so p = 11. Step 4: 11 has exactly two positive divisors, 1 and 11, so the verdict is prime. The answer is verdict = prime; p = 11."
+          - problem: "For the claim 1^2 + 2^2 + ... + n^2 = n(n+1)(2n+1)/6, suppose it fails and let m be the least counterexample. Since it holds at n = 1, m >= 2. Add m^2 to the formula at m - 1. Give the resulting expression in m as a single fraction."
+            answer: "(2m^3+3m^2+m)/6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: by contradiction and the well-ordering principle, take the least counterexample m. Step 2: the claim holds at m - 1, so 1^2 + ... + (m - 1)^2 = (m - 1)m(2m - 1)/6. Step 3: add m^2: (m - 1)m(2m - 1)/6 + m^2 = (2m^3 - 3m^2 + m + 6m^2)/6 = (2m^3 + 3m^2 + m)/6. The resulting expression is (2m^3+3m^2+m)/6."
+          - problem: "Write the full proof: every integer n >= 2 can be written as a product of primes, using the well-ordering principle. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Suppose, for contradiction, that some integer n >= 2 is not a product of primes. Let S be the nonempty set of such integers. By the well-ordering principle S has a least element m. Step 2: If m is prime, then m is a product of one prime, a contradiction, so m is composite. Step 3: Write m = ab with integers a and b satisfying 2 <= a < m and 2 <= b < m. Step 4: Since a and b are smaller than m, and m is the least counterexample, both a and b are products of primes. Step 5: Then m = ab is a product of primes, a contradiction. Therefore every integer n >= 2 is a product of primes."
         constraints: "form a nonempty set of naturals and use its least element"
       - id: kp2
         name: "Existence via least elements"
