@@ -471,14 +471,30 @@ topics:
         name: "Classifying classic algorithms"
         key_prerequisites: [growth-of-functions, logarithm-properties]
         exemplars:
-          - problem: 'Karatsuba multiplication satisfies $T(n) = 3T(n/2) + n$. Give the growth order of $T(n)$, leaving the exponent as a logarithm.'
-            answer: '$\Theta(n^{\log_2 3}) \approx \Theta(n^{1.585})$: the critical exponent $\log_2 3$ exceeds $1$, so the leaves dominate (case 1).'
-            answer_contract: {kind: none}
-            solution_sketch: '$n^{\log_2 3}$ with $\log_2 3 \approx 1.585 > 1 = \deg f$, so case 1 gives $T(n) = \Theta(n^{\log_2 3})$ — asymptotically faster than the schoolbook $\Theta(n^2)$.'
-          - problem: 'Binary search satisfies $T(n) = T(n/2) + 1$. Use the Master Theorem to find its growth order.'
-            answer: '$\log_2 1 = 0$, and $f(n) = 1$ matches $n^0$, so $T(n) = \Theta(\log n)$ (case 2).'
-            answer_contract: {kind: none}
-            solution_sketch: 'Critical exponent $\log_2 1 = 0$; $f(n) = 1 = \Theta(n^0)$, so case 2 applies with $n^0 \log n = \log n$: $T(n) = \Theta(\log n)$.'
+          - problem: "Karatsuba's algorithm for multiplying two n-digit numbers satisfies T(n) = 3T(n/2) + n. Use the Master Theorem to classify it. Which growth order does T(n) have?"
+            answer: "Theta(n^(log_2 3))"
+            answer_contract: {"kind": "label", "options": [["Theta(n^(log_2 3))"], ["Theta(n^2)"], ["Theta(n log n)"], ["Theta(n^(log_3 2))"]]}
+            solution_sketch: "Write the recurrence in full: T(n) = 3T(n/2) + n, so a = 3, b = 2, and f(n) = n. The critical exponent is log_b a = log_2 3, and since 3 > 2, we get log_2 3 > 1, the degree of the work term f(n) = n. By Master Theorem case 1 the leaves dominate, so T(n) = Theta(n^(log_2 3)). The wrong option Theta(n^2) assumes the schoolbook method with no saving; Theta(n log n) wrongly applies case 2; Theta(n^(log_3 2)) swaps the base and the argument of the logarithm. The growth order is Theta(n^(log_2 3))."
+          - problem: "Binary search on a sorted array of n keys satisfies T(n) = T(n/2) + 1. Use the Master Theorem to classify it. Which growth order does T(n) have?"
+            answer: "Theta(log n)"
+            answer_contract: {"kind": "label", "options": [["Theta(log n)"], ["Theta(n)"], ["Theta(n log n)"], ["Theta(1)"]]}
+            solution_sketch: "Write the recurrence in full: T(n) = T(n/2) + 1, so a = 1, b = 2, and f(n) = 1. The critical exponent is log_b a = log_2 1 = 0, and f(n) = 1 = n^0 has exactly that order, so Master Theorem case 2 applies with k = 0. Case 2 gives T(n) = Theta(n^0 log n) = Theta(log n). The wrong option Theta(n) treats each level as doing linear work; Theta(n log n) wrongly copies the merge sort answer; Theta(1) forgets the logarithmic number of levels. The growth order is Theta(log n)."
+          - problem: "Merge sort satisfies T(n) = 2T(n/2) + n. Use the Master Theorem to classify it. Give the critical exponent log_b a."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the recurrence in full: T(n) = 2T(n/2) + n, so a = 2, b = 2, and f(n) = n. The critical exponent is log_b a = log_2 2 = 1, since 2^1 = 2, by the definition of the logarithm. The work term n has degree 1, so the exponent equals the degree and Master Theorem case 2 applies, giving Theta(n log n). The critical exponent is 1."
+          - problem: "Strassen's algorithm for matrix multiplication satisfies T(n) = 7T(n/2) + n^2. Use the Master Theorem to classify it. Give the case number."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the recurrence in full: T(n) = 7T(n/2) + n^2, so a = 7, b = 2, and f(n) = n^2. The critical exponent is log_b a = log_2 7, and since 7 > 4 = 2^2, we get log_2 7 > 2, the degree of the work term. By Master Theorem case 1 the leaves dominate, so T(n) = Theta(n^(log_2 7)). The case number is 1."
+          - problem: "Naive matrix multiplication by block splitting satisfies T(n) = 8T(n/2) + n^2. Use the Master Theorem to classify it. Give the critical exponent log_b a."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the recurrence in full: T(n) = 8T(n/2) + n^2, so a = 8, b = 2, and f(n) = n^2. The critical exponent is log_b a = log_2 8 = 3, since 2^3 = 8. The work term n^2 has degree 2, and 3 > 2, so Master Theorem case 1 applies and the leaves dominate. The critical exponent is 3."
+          - problem: "Quickselect with a good pivot satisfies T(n) = T(n/2) + n. Use the Master Theorem to classify it. Give the case number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the recurrence in full: T(n) = T(n/2) + n, so a = 1, b = 2, and f(n) = n. The critical exponent is log_b a = log_2 1 = 0, while the work term n has degree 1. Since 0 < 1 and a f(n/b) = n/2 stays at most half of f(n), Master Theorem case 3 applies and the root dominates, so T(n) = Theta(n). The case number is 3."
         constraints: "named algorithms with their recurrences stated in the problem; irrational critical exponents stay as log_b a"
     diagnostic_exemplar:
       problem: 'Use the Master Theorem: what is the growth order of $T(n) = 4T(n/2) + n$?'
