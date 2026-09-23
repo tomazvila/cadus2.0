@@ -820,27 +820,59 @@ topics:
         name: Horizontal and vertical tangents
         key_prerequisites: [parametric-derivatives, derivatives-trig]
         exemplars:
-          - problem: 'Find the points where the circle $r = 2\cos\theta$ has a horizontal tangent.'
-            answer: '$(1, 1)$ and $(1, -1)$ (rectangular), at $\theta = \pm\frac{\pi}{4}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$y = 2\cos\theta\sin\theta = \sin 2\theta$; $\frac{dy}{d\theta} = 2\cos 2\theta = 0$ at $\theta = \pm\frac{\pi}{4}$.'
-          - problem: 'Find the points where the circle $r = 2\cos\theta$ has a vertical tangent.'
-            answer: '$(2, 0)$ and the pole $(0, 0)$, at $\theta = 0$ and $\theta = \frac{\pi}{2}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$x = 1 + \cos 2\theta$; $\frac{dx}{d\theta} = -2\sin 2\theta = 0$ at $\theta = 0, \frac{\pi}{2}$.'
+          - problem: "The curve $r = 6\\cos\\theta$ has horizontal tangents at two points. Give both points as (x1, y1, x2, y2), with the point of positive $y$ first."
+            answer: "(3, 3, 3, -3)"
+            answer_contract: {"arity": 4, "kind": "coordinates"}
+            solution_sketch: "Write $y = r\\sin\\theta = 6\\cos\\theta\\sin\\theta = 3\\sin 2\\theta$. Differentiate: $dy/d\\theta = 6\\cos 2\\theta$. Set it to zero: $\\cos 2\\theta = 0$, so $2\\theta = \\pi/2$ or $3\\pi/2$. At $\\theta = \\pi/4$, $r = 3\\sqrt{2}$ and $(x,y) = (3,3)$. At $\\theta = 3\\pi/4$, $(x,y) = (3,-3)$. The answer is (3, 3, 3, -3)."
+          - problem: "The curve $r = 6\\cos\\theta$ has a vertical tangent at the pole and at one other point. Find that other point. Give the answer as (x, y)."
+            answer: "(6, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write $x = r\\cos\\theta = 6\\cos^2\\theta = 3 + 3\\cos 2\\theta$. Differentiate: $dx/d\\theta = -6\\sin 2\\theta$. Set it to zero: $\\sin 2\\theta = 0$. At $\\theta = 0$, $r = 6$ and $(x,y) = (6,0)$. At $\\theta = \\pi/2$, the point is the pole. The other vertical tangent point is (6, 0)."
+          - problem: "The curve $r = 1 + 2\\sin\\theta$ has horizontal tangents at several points. Find the one with the largest $y$-coordinate. Give the answer as (x, y)."
+            answer: "(0, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write $y = (1 + 2\\sin\\theta)\\sin\\theta = \\sin\\theta + 2\\sin^2\\theta$. Differentiate: $dy/d\\theta = \\cos\\theta + 4\\sin\\theta\\cos\\theta = \\cos\\theta(1 + 4\\sin\\theta)$. Set it to zero: $\\cos\\theta = 0$ or $\\sin\\theta = -1/4$. At $\\theta = \\pi/2$, $r = 3$ and $(x,y) = (0,3)$. At $\\theta = 3\\pi/2$, $r = -1$ and $(x,y) = (0,1)$. The largest $y$ is $3$, so the answer is (0, 3)."
+          - problem: "The curve $r = 1 + 2\\cos\\theta$ has vertical tangents at several points. Find the one with the largest $x$-coordinate. Give the answer as (x, y)."
+            answer: "(3, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write $x = (1 + 2\\cos\\theta)\\cos\\theta = \\cos\\theta + 2\\cos^2\\theta$. Differentiate: $dx/d\\theta = -\\sin\\theta - 4\\cos\\theta\\sin\\theta = -\\sin\\theta(1 + 4\\cos\\theta)$. Set it to zero: $\\sin\\theta = 0$ or $\\cos\\theta = -1/4$. At $\\theta = 0$, $r = 3$ and $(x,y) = (3,0)$. At $\\theta = \\pi$, $r = -1$ and $(x,y) = (1,0)$. The largest $x$ is $3$, so the answer is (3, 0)."
+          - problem: "The curve $r = 1 + \\cos\\theta$ has vertical tangents at several points. Find the one with the largest $x$-coordinate. Give the answer as (x, y)."
+            answer: "(2, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write $x = (1 + \\cos\\theta)\\cos\\theta = \\cos\\theta + \\cos^2\\theta$. Differentiate: $dx/d\\theta = -\\sin\\theta - 2\\cos\\theta\\sin\\theta = -\\sin\\theta(1 + 2\\cos\\theta)$. Set it to zero: $\\sin\\theta = 0$ or $\\cos\\theta = -1/2$. At $\\theta = 0$, $r = 2$ and $(x,y) = (2,0)$. At $\\theta = \\pi$, the point is the pole. At $\\cos\\theta = -1/2$, $x = -1/4$. The largest $x$ is $2$, so the answer is (2, 0)."
+          - problem: "The curve $r = 2 + 3\\sin\\theta$ has horizontal tangents at several points. Find the one with the largest $y$-coordinate. Give the answer as (x, y)."
+            answer: "(0, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Write $y = (2 + 3\\sin\\theta)\\sin\\theta = 2\\sin\\theta + 3\\sin^2\\theta$. Differentiate: $dy/d\\theta = 2\\cos\\theta + 6\\sin\\theta\\cos\\theta = 2\\cos\\theta(1 + 3\\sin\\theta)$. Set it to zero: $\\cos\\theta = 0$ or $\\sin\\theta = -1/3$. At $\\theta = \\pi/2$, $r = 5$ and $(x,y) = (0,5)$. At $\\theta = 3\\pi/2$, $r = -1$ and $(x,y) = (0,1)$. The largest $y$ is $5$, so the answer is (0, 5)."
         constraints: "dy/d theta = 0 for horizontal, dx/d theta = 0 for vertical; report rectangular points"
       - id: kp3
         name: Tangent lines at the pole
         key_prerequisites: [polar-coordinates]
         exemplars:
-          - problem: 'Find the tangent lines to $r = \sin 2\theta$ at the pole (for $0 \le \theta < \pi$).'
-            answer: 'the lines $\theta = 0$ and $\theta = \frac{\pi}{2}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'At the pole, the tangent lines are the rays where $r = 0$: $\sin 2\theta = 0$.'
-          - problem: 'Find the tangent line to the cardioid $r = 1 + \cos\theta$ at the pole.'
-            answer: 'the line $\theta = \pi$ (the negative $x$-axis)'
-            answer_contract: {kind: none}
-            solution_sketch: '$r = 0$ only at $\theta = \pi$.'
+          - problem: "A polar curve is r = sin(2 theta) for 0 <= theta < pi. Find the number of distinct tangent lines to the curve at the pole."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is r = sin(2 theta) on 0 <= theta < pi. Step 1 (zeros of r): sin(2 theta) = 0 gives 2 theta = k pi, so theta = 0 and theta = pi/2 in the interval. Step 2 (tangent lines at the pole): at each zero r' = 2 cos(2 theta) is nonzero (2 at theta = 0, -2 at theta = pi/2), so the tangent lines are the lines theta = 0 and theta = pi/2, two different lines through the pole. The number of distinct tangent lines is 2."
+          - problem: "A polar curve is the cardioid r = 1 - sin(theta). Find the angle theta in [0, 2 pi) of the tangent line to the cardioid at the pole."
+            answer: "pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is the cardioid r = 1 - sin(theta). Step 1 (zeros of r): 1 - sin(theta) = 0 gives sin(theta) = 1, which holds only at theta = pi/2 in [0, 2 pi). Step 2 (tangent line at the pole): this single zero gives one tangent line, and near theta = pi/2 the curve approaches the pole along the vertical direction, so the tangent line is theta = pi/2. The angle of the tangent line at the pole is pi/2."
+          - problem: "A polar curve is r = cos(3 theta) for 0 <= theta < pi. Find the number of distinct tangent lines to the curve at the pole."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is r = cos(3 theta) on 0 <= theta < pi. Step 1 (zeros of r): cos(3 theta) = 0 gives 3 theta = pi/2 + k pi, so theta = pi/6, pi/2, 5 pi/6 in the interval. Step 2 (distinct lines): no two of these three angles differ by a multiple of pi, so they give three different lines through the pole. The number of distinct tangent lines is 3."
+          - problem: "A polar curve is r = cos(2 theta) for 0 <= theta < pi. Find the smallest angle theta in this interval of a tangent line to the curve at the pole."
+            answer: "pi/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is r = cos(2 theta) on 0 <= theta < pi. Step 1 (zeros of r): cos(2 theta) = 0 gives 2 theta = pi/2 + k pi, so theta = pi/4 and 3 pi/4 in the interval. Step 2 (smallest angle): each zero gives a tangent line at the pole (slopes 1 and -1, lines theta = pi/4 and theta = 3 pi/4), and the smaller angle is pi/4. The smallest angle of a tangent line at the pole is pi/4."
+          - problem: "A polar curve is r = sin(theta) + cos(theta) for 0 <= theta < pi. Determine the angle theta in this interval of the tangent line to the curve at the pole."
+            answer: "3pi/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is r = sin(theta) + cos(theta) on 0 <= theta < pi. Step 1 (zeros of r): sin(theta) + cos(theta) = 0 gives tan(theta) = -1; in [0, pi) the only solution is theta = 3 pi/4, since 7 pi/4 lies outside the interval. Step 2 (tangent line at the pole): there r' = cos(theta) - sin(theta) = -sqrt(2) is nonzero, so the tangent line is the line theta = 3 pi/4. The angle of the tangent line at the pole is 3pi/4."
+          - problem: "A polar curve is the limacon r = 1 + 2 cos(theta) for 0 <= theta < pi. State the angle theta in this interval of the tangent line to the curve at the pole."
+            answer: "2pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The curve is the limacon r = 1 + 2 cos(theta) on 0 <= theta < pi. Step 1 (zeros of r): 1 + 2 cos(theta) = 0 gives cos(theta) = -1/2, which in [0, pi) holds only at theta = 2 pi/3. Step 2 (tangent line at the pole): there r' = -2 sin(theta) = -sqrt(3) is nonzero, so the tangent line is the line theta = 2 pi/3. The angle of the tangent line at the pole is 2pi/3."
         constraints: "pole tangents read off from the zeros of r"
     diagnostic_exemplar:
       problem: 'Find the points where the circle $r = 2\sin\theta$ has a horizontal tangent, and give the tangent line to the curve at the pole.'
@@ -882,6 +914,22 @@ topics:
           - problem: 'Find the area of the sector of $r = 2$ with $0 \le \theta \le \frac{\pi}{3}$.'
             answer: '$\frac{2\pi}{3}$'
             solution_sketch: '$\frac{1}{2}\int_0^{\pi/3} 4\,d\theta = \frac{1}{2} \cdot 4 \cdot \frac{\pi}{3}$.'
+          - problem: "Use the polar area formula to find the area inside the circle r = 4."
+            answer: "16pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the polar area formula A = (1/2) times the integral of r^2 dtheta from 0 to 2pi. Step 2: substitute r = 4, so r^2 = 16 and the integral is (1/2)(16)(2pi). Step 3: evaluate the product to get 16pi. The area is 16pi."
+          - problem: "Use the polar area formula to find the area of the sector of r = 4 from theta = 0 to theta = pi/2."
+            answer: "4pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the polar area formula A = (1/2) times the integral of r^2 dtheta from 0 to pi/2. Step 2: substitute r = 4, so r^2 = 16, and use the angle width pi/2. Step 3: compute (1/2)(16)(pi/2) = 4pi. The area is 4pi."
+          - problem: "Use the polar area formula to find the area swept by r = 3 as theta runs from pi/6 to pi/2."
+            answer: "3pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the polar area formula A = (1/2) times the integral of r^2 dtheta from pi/6 to pi/2. Step 2: substitute r = 3, so r^2 = 9, and the angle width is pi/2 - pi/6 = pi/3. Step 3: compute (1/2)(9)(pi/3) = 3pi/2. The area is 3pi/2."
+          - problem: "A sector of the circle r = R from theta = 0 to theta = pi/2 has area 25pi. Use the polar area formula to find R."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: write the polar area formula A = (1/2) times the integral of r^2 dtheta from 0 to pi/2. Step 2: with r = R the area is (1/2)(R^2)(pi/2) = R^2 pi/4. Step 3: set R^2 pi/4 = 25pi, so R^2 = 100 and R = 10. The radius is 10."
         constraints: "constant r; results checkable against circle/sector formulas"
       - id: kp2
         name: Area inside cardioids and circles
@@ -904,6 +952,22 @@ topics:
           - problem: 'Find the area of one petal of $r = 3\cos 3\theta$.'
             answer: '$3\pi/4$'
             solution_sketch: 'One petal spans $-\frac{\pi}{6} \le \theta \le \frac{\pi}{6}$: $\frac{1}{2}\int_{-\pi/6}^{\pi/6} 9\cos^2 3\theta\,d\theta = \frac{9}{2} \cdot \frac{\pi}{6} = \frac{3\pi}{4}$.'
+          - problem: "Find the area of one petal of the rose r = 4 sin 3 theta."
+            answer: "4pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the polar area formula A = (1/2) * integral of r^2 dtheta for r = 4 sin 3 theta. The consecutive zeros theta = 0 and theta = pi/3 bound one petal. Then A = (1/2) * integral from 0 to pi/3 of 16 sin^2(3 theta) dtheta. The half-angle identity gives sin^2(3 theta) = (1 - cos(6 theta))/2. Integrate with the fundamental theorem: A = 8 * (pi/6) = 4pi/3."
+          - problem: "Compute the area enclosed by one petal of r = 5 cos 5 theta."
+            answer: "5pi/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the polar area formula A = (1/2) * integral of r^2 dtheta for r = 5 cos 5 theta. The consecutive zeros theta = -pi/10 and theta = pi/10 bound one petal. So A = (1/2) * integral from -pi/10 to pi/10 of 25 cos^2(5 theta) dtheta. Apply the half-angle identity cos^2(5 theta) = (1 + cos(10 theta))/2 and the fundamental theorem. The result is A = (25/2) * (pi/10) = 5pi/4."
+          - problem: "Determine the area of a single petal of r = 7 sin 4 theta."
+            answer: "49pi/16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the polar area formula A = (1/2) * integral of r^2 dtheta for r = 7 sin 4 theta. The consecutive zeros theta = 0 and theta = pi/4 bound one petal. Then A = (1/2) * integral from 0 to pi/4 of 49 sin^2(4 theta) dtheta. The half-angle identity gives sin^2(4 theta) = (1 - cos(8 theta))/2. The fundamental theorem gives A = (49/2) * (pi/8) = 49pi/16."
+          - problem: "Find the area of one petal for the curve r = 6 cos 6 theta."
+            answer: "3pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the polar area formula A = (1/2) * integral of r^2 dtheta for r = 6 cos 6 theta. The consecutive zeros theta = -pi/12 and theta = pi/12 bound one petal. Then A = (1/2) * integral from -pi/12 to pi/12 of 36 cos^2(6 theta) dtheta. The half-angle identity cos^2(6 theta) = (1 + cos(12 theta))/2 and the fundamental theorem yield A = 18 * (pi/12) = 3pi/2."
         constraints: "petal limits from consecutive zeros of r; half-angle identity does the integral"
     diagnostic_exemplar:
       problem: 'Find the area of one petal of $r = 2\cos 2\theta$.'
@@ -937,14 +1001,30 @@ topics:
         name: Intersections of polar curves
         key_prerequisites: [graphing-polar-curves, polar-area]
         exemplars:
-          - problem: 'Find the intersection points of $r = 1$ and $r = 2\cos\theta$ for $0 \le \theta < 2\pi$.'
-            answer: '$\left(1, \frac{\pi}{3}\right)$ and $\left(1, -\frac{\pi}{3}\right)$ (i.e. $\frac{5\pi}{3}$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$2\cos\theta = 1$ gives $\cos\theta = \frac{1}{2}$.'
-          - problem: 'Find all intersections of $r = \sin\theta$ and $r = \cos\theta$, including the pole.'
-            answer: '$\left(\frac{\sqrt{2}}{2}, \frac{\pi}{4}\right)$ and the pole'
-            answer_contract: {kind: none}
-            solution_sketch: '$\tan\theta = 1$ gives $\theta = \frac{\pi}{4}$; both circles also pass through the origin (at different $\theta$), so the pole is an intersection too.'
+          - problem: "The polar curves r = 3 and r = 6 cos(theta) are given for 0 <= theta < 2pi. Find the smallest positive angle theta at which they meet. Give the value of theta."
+            answer: "pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: equate radii, so 3 = 6 cos(theta) and cos(theta) = 1/2. Step 2: use the unit circle at special angles, giving theta = pi/3 or 5pi/3 in [0, 2pi). Step 3: check the pole, and r = 3 is never zero, so the pole adds no intersection. The smallest positive angle is pi/3."
+          - problem: "The polar curves r = 2 sin(theta) and r = 2 cos(theta) are given. Find the Cartesian coordinates of their intersection point that is not the pole and has positive x and y. Give the answer as (x, y)."
+            answer: "(1, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: equate radii, so 2 sin(theta) = 2 cos(theta) and tan(theta) = 1. Step 2: solve at the special angle theta = pi/4, which gives r = sqrt(2). Step 3: convert to Cartesian with x = r cos(theta) and y = r sin(theta), giving x = 1 and y = 1. The non-pole first-quadrant point is (1, 1)."
+          - problem: "The curves r = 2 and r = 4 sin(theta) are drawn for 0 <= theta < 2pi. Find how many distinct intersection points they have, counting the pole once if it is shared. Give the number of points."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: equate radii, so 2 = 4 sin(theta) and sin(theta) = 1/2. Step 2: solve at special angles, giving theta = pi/6 or 5pi/6, and both give r = 2. Step 3: check the pole, and r = 2 is never zero, so the pole is not shared. There are 2 distinct intersection points."
+          - problem: "The curves r = 2 and r = 4 cos(theta) meet at two points. Find the Cartesian coordinates of the point with positive y-coordinate. Give the answer as (x, y)."
+            answer: "(1, sqrt(3))"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: equate radii, so 2 = 4 cos(theta) and cos(theta) = 1/2. Step 2: solve at special angles; theta = pi/3 gives r = 2 with positive y, while theta = 5pi/3 gives negative y. Step 3: convert theta = pi/3 to Cartesian using x = 2 cos(pi/3) = 1 and y = 2 sin(pi/3) = sqrt(3). The point with positive y-coordinate is (1, sqrt(3))."
+          - problem: "The curves r = 2 cos(theta) and r = 2 are given. Find their intersection point. Give the answer as (x, y)."
+            answer: "(2, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: equate radii, so 2 cos(theta) = 2 and cos(theta) = 1. Step 2: solve at the special angle theta = 0, which gives r = 2. Step 3: check the pole, and r = 2 is never zero, so the pole is not shared. The intersection point is (2, 0)."
+          - problem: "The curves r = 1 and r = 2 cos(theta) are given for 0 <= theta < 2pi. Find the largest angle theta at which they meet. Give the value of theta."
+            answer: "5pi/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: equate radii, so 1 = 2 cos(theta) and cos(theta) = 1/2. Step 2: solve at special angles, giving theta = pi/3 or 5pi/3 in [0, 2pi). Step 3: check the pole, and r = 1 is never zero, so the pole adds no intersection. The largest angle is 5pi/3."
         constraints: "intersections at special angles; always check the pole separately"
       - id: kp2
         name: Area between polar curves
@@ -956,6 +1036,22 @@ topics:
           - problem: 'Find the area inside the circle $r = 2\cos\theta$ and outside the circle $r = 1$.'
             answer: '$\frac{\pi}{3} + \frac{\sqrt{3}}{2}$'
             solution_sketch: 'Curves meet at $\theta = \pm\frac{\pi}{3}$: $\frac{1}{2}\int_{-\pi/3}^{\pi/3}\left(4\cos^2\theta - 1\right)d\theta = \frac{1}{2}\left[\theta + \sin 2\theta\right]_{-\pi/3}^{\pi/3}$.'
+          - problem: "Find the area inside the cardioid r = 2 + 2sin(theta) and outside the circle r = 2."
+            answer: "8 + pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the polar area formula: set up the area difference (1/2) integral from 0 to pi of [(2+2sin(theta))^2 - 2^2] dtheta. Expand the integrand: (4+8sin(theta)+4sin^2(theta)-4)=8sin(theta)+4sin^2(theta). Integrate term by term: the integral of 8sin(theta) from 0 to pi is 16, and the integral of 4sin^2(theta) is 2pi. Half of the total (16+2pi) is 8+pi. The area is 8 + pi."
+          - problem: "Find the area inside the circle r = 2cos(theta) and outside the circle r = sqrt(2)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the polar area formula: set up the area difference (1/2) integral from -pi/4 to pi/4 of [(2cos(theta))^2 - (sqrt(2))^2] dtheta. Simplify the integrand: 4cos^2(theta)-2 = 2cos(2theta). Integrate: (1/2) integral of 2cos(2theta) dtheta = (1/2) sin(2theta) evaluated from -pi/4 to pi/4. This gives (1/2)(1 - (-1)) = 1. The area is 1."
+          - problem: "Find the area inside the cardioid r = 1 + cos(theta) and outside the cardioid r = 1 - cos(theta)."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the polar area formula: set up the area difference (1/2) integral from -pi/2 to pi/2 of [(1+cos(theta))^2 - (1-cos(theta))^2] dtheta. Expand the difference: (1+2cos+cos^2) - (1-2cos+cos^2) = 4cos(theta). So the area is (1/2) integral of 4cos(theta) dtheta = 2 sin(theta) from -pi/2 to pi/2. Evaluate: 2(1 - (-1)) = 4. The area is 4."
+          - problem: "Find the area inside the circle r = 3cos(theta) and outside the cardioid r = 1 + cos(theta)."
+            answer: "pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the polar area formula: set up the area difference (1/2) integral from -pi/3 to pi/3 of [(3cos(theta))^2 - (1+cos(theta))^2] dtheta. Expand: 9cos^2 - (1+2cos+cos^2) = 8cos^2 - 1 - 2cos = 3 + 4cos(2theta) - 2cos(theta). Integrate from -pi/3 to pi/3: the integral of 3 is 2pi, of 4cos(2theta) is 2sqrt(3), and of -2cos(theta) is -2sqrt(3). The total is 2pi, so half is pi. The area is pi."
         constraints: "area differences of the form (outer)^2 - (inner)^2 over a symmetric interval; intersections at special angles"
       - id: kp3
         name: Composite regions
