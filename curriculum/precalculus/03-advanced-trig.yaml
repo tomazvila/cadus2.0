@@ -526,18 +526,30 @@ topics:
         key_prerequisites: [unit-circle-special-angles, vertical-horizontal-asymptotes]
         constraints: "asymptotes written x = π/2 + πk with k an integer; zeros at integer multiples of π"
         exemplars:
-          - problem: 'State the period of $y = \tan x$ and the equations of its vertical asymptotes.'
-            answer: "period π; asymptotes x = π/2 + πk for integer k"
-            answer_contract: {kind: none}
-            solution_sketch: 'Tangent repeats every $\pi$ and blows up where $\cos x = 0$.'
-          - problem: 'On $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$, is $y = \tan x$ increasing or decreasing, and where does it cross the $x$-axis?'
-            answer: "increasing"
-            answer_contract: {kind: label, options: [[increasing], [decreasing]]}
-            solution_sketch: 'On $(-\pi/2, \pi/2)$ tangent rises from $-\infty$ to $+\infty$, crossing the $x$-axis at $x = 0$.'
-          - problem: 'State the domain of $y = \tan x$.'
-            answer: "all real x except x = π/2 + πk (k an integer)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Tangent is undefined exactly where $\\cos x = 0$, i.e. at $x = \pi/2 + \pi k$ for integers $k$.'
+          - problem: "Find the period of the graph of y = tan x."
+            answer: "pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph of y = tan x repeats because the identity tan(x + pi) = tan x holds for every x where tangent is defined. The period is the length of one full repeat of the graph. The period of y = tan x is pi."
+          - problem: "On the interval (-pi/2, pi/2), state the direction of the graph of y = tan x, and give the x-coordinate where it crosses the x-axis."
+            answer: "direction = increasing; x0 = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["increasing"], ["decreasing"]]}, "name": "direction"}, {"contract": {"kind": "exact"}, "name": "x0"}]}
+            solution_sketch: "The full branch of y = tan x on the interval (-pi/2, pi/2) runs from negative infinity at the left asymptote up to positive infinity at the right asymptote, so the graph is increasing on the branch. The graph crosses the x-axis where tan x = 0, which happens at x = 0. So direction = increasing; x0 = 0."
+          - problem: "Find the smallest positive x-value that is not in the domain of y = tan x."
+            answer: "pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The function y = tan x equals sin x divided by cos x, so it is undefined exactly where cos x = 0. The unit circle gives cos x = 0 at x = pi/2 + pi*k for integers k, and the smallest positive of these values is pi/2. The smallest positive x-value not in the domain is pi/2."
+          - problem: "Which equation gives every vertical asymptote of the graph of y = tan x?"
+            answer: "x = pi/2 + pi*k"
+            answer_contract: {"kind": "label", "options": [["x = pi/2 + pi*k"], ["x = pi*k"], ["x = pi/4 + pi*k"], ["x = 2*pi*k"]]}
+            solution_sketch: "The graph of y = tan x has vertical asymptotes exactly where cos x = 0, which is at x = pi/2 + pi*k for every integer k. The option x = pi*k lists the zeros of tangent, not the asymptotes. The option x = pi/4 + pi*k uses a special angle where cosine is not zero. The option x = 2*pi*k keeps only whole turns and misses most asymptotes. The correct equation is x = pi/2 + pi*k."
+          - problem: "The graph of y = tan x has a zero at x = 4pi. Find the x-coordinate of the vertical asymptote that lies immediately to the right of this zero."
+            answer: "9pi/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The zero of y = tan x at x = 4pi sits in the middle of a branch bounded by the asymptotes at 7pi/2 and 9pi/2. Each branch of the tangent graph runs between two consecutive asymptotes, with the zero at its middle, so the asymptote right of 4pi is at x = 9pi/2. The x-coordinate is 9pi/2."
+          - problem: "Find the x-coordinate of the zero of y = tan x that lies between the vertical asymptotes at x = 3pi/2 and x = 5pi/2."
+            answer: "2pi"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The zeros of y = tan x sit at every integer multiple of pi, one at the middle of each branch. The branch between the asymptotes at x = 3pi/2 and x = 5pi/2 is centered at x = 2pi. The x-coordinate of the zero is 2pi."
       - id: kp2
         name: Secant and cosecant from their reciprocals
         key_prerequisites: [reciprocal-trig-functions, sine-cosine-parent-graphs]
