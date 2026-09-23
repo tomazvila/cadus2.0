@@ -1395,12 +1395,34 @@ topics:
         name: "Membership proofs with families"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'For $n \ge 1$ let $B_n = \left(-\tfrac{1}{n}, \tfrac{1}{n}\right) \subseteq \mathbb{R}$. Prove $\bigcap_{n \ge 1} B_n = \{0\}$.'
-            answer: '$0$ lies in every $B_n$; any $x \ne 0$ is excluded for large $n$.'
-            solution_sketch: '$0 \in B_n$ for all $n$, so $\{0\} \subseteq \bigcap B_n$. Conversely if $x \ne 0$, choose $n > 1/|x|$; then $|x| > 1/n$, so $x \notin B_n$ and $x \notin \bigcap B_n$. Hence $\bigcap B_n = \{0\}$. $\square$'
-          - problem: 'For $n \ge 1$ let $D_n = \left[0,\, 1 - \tfrac{1}{n}\right]$. Prove $\bigcup_{n \ge 1} D_n = [0, 1)$.'
-            answer: 'Each $D_n \subseteq [0,1)$, and every point of $[0,1)$ lies in some $D_n$.'
-            solution_sketch: 'Each $D_n \subseteq [0, 1)$, so the union is $\subseteq [0, 1)$. Conversely if $0 \le x < 1$, choose $n > \tfrac{1}{1 - x}$; then $1 - \tfrac1n > x$, so $x \in D_n$. Hence the union is $[0, 1)$. $\square$'
+          - problem: "For $n \\ge 1$ let $B_n = \\left(-\\tfrac{1}{n}, \\tfrac{1}{n}\\right)$ as a family of subsets of $\\mathbb{R}$. Find the intersection of all the sets $B_n$. Give the answer as a set."
+            answer: "{0}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (universal translation): $x$ belongs to every $B_n$ exactly when $|x| < 1/n$ for all $n \\ge 1$; for $x \\ne 0$ we can pick $n$ with $1/n < |x|$, so $x$ is excluded. Step 2 (reverse inclusion): $0$ lies in every interval $(-1/n, 1/n)$, so $\\{0\\}$ is contained in the intersection. The intersection is $\\{0\\}$."
+          - problem: "For $n \\ge 1$ let $D_n = \\left[0,\\, 1 - \\tfrac{1}{n}\\right]$ as a family of subsets of $\\mathbb{R}$. Find the union of all the sets $D_n$. Give the answer as an inequality in $x$."
+            answer: "0 <= x < 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1 (first inclusion): each $D_n = [0, 1 - 1/n]$ lies inside $[0, 1)$ because $1 - 1/n < 1$, so the union is contained in $[0, 1)$. Step 2 (second inclusion): if $0 \\le x < 1$, pick an integer $n$ with $n > 1/(1 - x)$; then $1 - 1/n > x$, so $x$ belongs to $D_n$. Hence the union is $0 \\le x < 1$."
+          - problem: "For $n \\ge 1$ let $E_n = \\left(0, \\tfrac{1}{n}\\right)$, and fix the point $x = \\tfrac{2}{5}$. The point $x$ does not belong to every $E_n$. Give the least $n \\ge 1$ for which $x$ is not in $E_n$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (membership test): $x = 2/5$ lies in $E_n = (0, 1/n)$ exactly when $2/5 < 1/n$, that is, when $n < 5/2$. Step 2 (threshold): for $n \\ge 3$ we have $1/n \\le 2/5$, so $x$ is not in $E_n$. The least $n$ with $x$ not in $E_n$ is $3$."
+          - problem: "A student claims that the intersection of the sets $F_n = \\left(0, \\tfrac{1}{n}\\right)$, $n \\ge 1$, is the set $\\{0\\}$. Give the smallest $x \\ge 0$ that belongs to exactly one of the two sets: the intersection, or $\\{0\\}$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (evaluate the claim): a positive $x$ fails $x < 1/n$ for large $n$, and $0$ lies in no interval $(0, 1/n)$, so the intersection is empty and the claim is false. Step 2 (witness): the point $0$ lies in $\\{0\\}$ but in no $F_n$, while every other $x \\ge 0$ lies in neither set. The smallest such $x$ is $0$."
+          - problem: "To prove that the union of the sets $D_n = \\left[0,\\, 1 - \\tfrac{1}{n}\\right]$, $n \\ge 1$, equals $[0, 1)$, a student argues: Step 1: each $D_n$ is contained in $[0, 1)$, so the union is contained in $[0, 1)$. Step 2: let $x$ satisfy $0 \\le x < 1$. Step 3: take $n = \\tfrac{1}{1 - x}$. Step 4: then $1 - \\tfrac{1}{n} = x$, so $x$ lies in $D_n$, and $[0, 1)$ is contained in the union. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a valid containment of every $D_n$ in $[0, 1)$. Step 2 correctly fixes an arbitrary point of $[0, 1)$. Step 3 is the first invalid step: the index $n$ must be a natural number, and $1/(1 - x)$ need not be an integer; the correct choice is an integer $n$ larger than $1/(1 - x)$. Step 4 relies on the flawed choice. The first invalid step is Step 3."
+          - problem: "In the proof that a nonzero real number $x$ fails to belong to the intersection of the intervals $B_n = \\left(-\\tfrac{1}{n}, \\tfrac{1}{n}\\right)$, $n \\ge 1$, one line is missing: the line that picks the index $n$. Select the line that is true and that completes the argument."
+            answer: "choose n > 1/abs(x)"
+            answer_contract: {"kind": "label", "options": [["choose n > 1/abs(x)"], ["choose n = 1/abs(x)"], ["choose n < 1/abs(x)"], ["choose n > abs(x)"]]}
+            solution_sketch: "The missing line must produce $1/n < |x|$ with $n$ a natural number. The option with $n = 1/|x|$ fails twice: $n$ need not be an integer, and the inequality is not strict. The option $n < 1/|x|$ goes the wrong way and leaves $x$ inside the interval. The option $n > |x|$ compares the wrong quantities; for small $x$ it allows $n = 1$, where $x$ still lies in $B_1$. The line that works is choose n > 1/abs(x)."
+          - problem: "Write the full proof: for $n \\ge 1$ let $A_n$ be the set of real $x$ with $x^2 < \\tfrac{1}{n}$; prove that the intersection of all $A_n$ is $\\{0\\}$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: for $A_n = \\{x \\in \\mathbb{R} : x^2 < 1/n\\}$, $n \\ge 1$, the intersection of all $A_n$ is $\\{0\\}$. Step 1 (universal translation): $x$ belongs to the intersection exactly when $x^2 < 1/n$ holds for every $n \\ge 1$. Step 2 (first inclusion): $0^2 = 0 < 1/n$ for every $n$, so $\\{0\\}$ is contained in the intersection. Step 3 (second inclusion): let $x \\ne 0$; then $x^2 > 0$, and choosing a natural number $n > 1/x^2$ gives $1/n < x^2$, so $x$ fails membership in $A_n$ and is not in the intersection. Step 4 (conclusion): both inclusions give equality, so the intersection of all $A_n$ is $\\{0\\}$. $\\square$"
         constraints: "translate $x \\in \\bigcap A_i$ into a universal statement and argue both inclusions"
       - id: kp3
         name: "Distributing over an indexed family"

@@ -218,12 +218,34 @@ topics:
         name: "Identity elements"
         key_prerequisites: [operation-tables]
         exemplars:
-          - problem: 'For $a * b = a + b - 1$ on $\mathbb{Z}$, find the identity element.'
-            answer: '$e = 1$.'
-            solution_sketch: 'Need $a * e = a$: $a + e - 1 = a \Rightarrow e = 1$. Check $1 * a = 1 + a - 1 = a$, so $e = 1$ is a two-sided identity. $\square$'
-          - problem: 'Does the operation $a * b = a - b$ on $\mathbb{Z}$ have a two-sided identity?'
-            answer: 'No.'
-            solution_sketch: 'A right identity needs $a * e = a$: $a - e = a \Rightarrow e = 0$. But $e * a = 0 - a = -a \ne a$ in general, so $0$ is not a left identity. No two-sided identity exists. $\square$'
+          - problem: "On the integers define a * b = a + b - 5. Solve a * e = a for e. Give e."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: a right identity e must satisfy a * e = a. Substitute the operation: a + e - 5 = a. Subtract a from both sides to get e - 5 = 0, so e = 5. Check the left condition: 5 * a = 5 + a - 5 = a. Thus 5 is a two-sided identity. The answer is 5."
+          - problem: "On the integers define a * b = a - b. Solve a * e = a for e. Give e."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: solve a * e = a first. Substitute: a - e = a, so -e = 0 and e = 0. Check the left condition: e * a = 0 - a = -a, which equals a only when a = 0. Thus 0 is only a right identity candidate, not a two-sided identity. The answer is 0."
+          - problem: "The operation * on {0,1,2} is defined by this table: 0*0=1, 0*1=0, 0*2=2, 1*0=0, 1*1=1, 1*2=2, 2*0=2, 2*1=2, 2*2=0. Find the identity element e. Give e."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: e is the identity when row e and column e both repeat the input. Read row 1: 1*0=0, 1*1=1, 1*2=2. Read column 1: 0*1=0, 1*1=1, 2*1=2. Both conditions hold, so e = 1. The answer is 1."
+          - problem: "On the integers define a * b = a + b + 2. Solve e * a = a for e. Give e."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: a left identity e must satisfy e * a = a. Substitute: e + a + 2 = a. Subtract a: e + 2 = 0, so e = -2. Check the right condition: a * e = a - 2 + 2 = a. Thus -2 is a two-sided identity. The answer is -2."
+          - problem: "Claim: the operation a * b = a + 2b on the integers has identity 0. Step 1: a * e = a gives a + 2e = a, so e = 0. Step 2: the left condition needs e * a = a. Step 3: 0 * a = 0 + 2a = a for every integer a. Step 4: therefore 0 is a two-sided identity. Which step is the first invalid step? Select."
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: a + 2e = a gives e = 0. Step 2 is correct: a two-sided identity also needs e * a = a. Step 3 is false: 0 * a = 2a, and 2a = a only when a = 0. Step 4 uses the false Step 3. The answer is Step 3."
+          - problem: "For a * b = a + b - 3 on the integers, the proof that 3 is the identity needs the line for e * a with e = 3. Which line is correct and shows e * a = a? Select."
+            answer: "3 + a - 3 = a"
+            answer_contract: {"kind": "label", "options": [["3 + a - 3 = a"], ["3 + a + 3 = a"], ["3 - a - 3 = a"], ["a + 3 - 3 = 3"]]}
+            solution_sketch: "Substitute e = 3: e * a = 3 + a - 3. The +3 and -3 cancel, so the result is a. Option 3 + a + 3 = a changes the sign of the constant and gives a + 6. Option 3 - a - 3 = a subtracts a and gives -a. Option a + 3 - 3 = 3 sets the right side equal to 3. The answer is 3 + a - 3 = a."
+          - problem: "Write the full proof: on the integers define a * b = a + b - 4. Show that 4 is a two-sided identity for *. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: a right identity e must satisfy a * e = a for every integer a. Step 2: substitute the operation, a * e = a + e - 4 = a, so e - 4 = 0 and e = 4. Step 3: check the left condition, e * a = 4 + a - 4 = a for every integer a. Step 4: because a * 4 = a and 4 * a = a for every integer a, the element 4 is a two-sided identity. Conclusion: the operation has identity 4, as required."
         constraints: "solve $a * e = a$ and verify the two-sided condition"
       - id: kp3
         name: "Hunting for inverses"

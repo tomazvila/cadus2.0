@@ -552,12 +552,34 @@ topics:
         name: "Inverse of a composition"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'For bijections $f : A \to B$ and $g : B \to C$, prove $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.'
-            answer: 'Composition with $g \circ f$ gives the identities.'
-            solution_sketch: '$(f^{-1} \circ g^{-1}) \circ (g \circ f) = f^{-1} \circ (g^{-1} \circ g) \circ f = f^{-1} \circ f = \mathrm{id}_A$, and similarly the other order gives $\mathrm{id}_C$. By uniqueness of inverses, $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$. $\square$'
-          - problem: 'For bijections $f, g$ on a set, prove $(f \circ g) \circ (g^{-1} \circ f^{-1}) = \mathrm{id}$.'
-            answer: 'Cancel the inner inverses step by step.'
-            solution_sketch: '$(f \circ g) \circ (g^{-1} \circ f^{-1}) = f \circ (g \circ g^{-1}) \circ f^{-1} = f \circ \mathrm{id} \circ f^{-1} = f \circ f^{-1} = \mathrm{id}$. $\square$'
+          - problem: "Let f be the function on {1,2,3} with f(1)=5, f(2)=6, f(3)=4. Let g be the function on {4,5,6} with g(4)=8, g(5)=9, g(6)=7. Find (g o f)^-1(7)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: By the definition of composition, (g o f)(1) = g(5) = 9, (g o f)(2) = g(6) = 7, and (g o f)(3) = g(4) = 8. Step 2: The inverse asks for the input whose composed value is 7, which is 2. The answer is 2."
+          - problem: "Let f be the function on {1,2,3} with f(1)=4, f(2)=5, f(3)=6. Let g be the function on {4,5,6} with g(4)=9, g(5)=8, g(6)=7. Find f^-1(g^-1(7))."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Since g(6)=7, the inverse g^-1(7) is 6. Step 2: Since f(3)=6, the inverse f^-1(6) is 3. Step 3: Thus f^-1(g^-1(7)) = 3, which matches the value from composing both ways. The answer is 3."
+          - problem: "Let f be the function on {1,2,3,4} with f(1)=5, f(2)=6, f(3)=7, f(4)=8. Let g be the function on {5,6,7,8} with g(5)=12, g(6)=11, g(7)=10, g(8)=9. Find (g o f)^-1(12)."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Compute the composition: (g o f)(1)=g(5)=12, (g o f)(2)=g(6)=11, (g o f)(3)=g(7)=10, (g o f)(4)=g(8)=9. Step 2: The inverse of 12 is the input that gives 12, which is 1. The answer is 1."
+          - problem: "Claim: For bijections f and g, the inverse of g o f is f^-1 o g^-1. Step 1: Let x be in the codomain of g. Step 2: Since g is bijective, there is a unique b with g(b)=x. Step 3: Since f is bijective, there is a unique a with f(a)=b. Step 4: Then (g o f)(a) = f(g(a)) = f(b) = x, so a is the inverse of x. Step 5: Hence (f^-1 o g^-1)(x) = a = (g o f)^-1(x). Step 6: Since x was arbitrary, the functions are equal. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"], ["Step 6"]]}
+            solution_sketch: "Step 1 correctly introduces an arbitrary x. Step 2 correctly uses that g is bijective. Step 3 correctly uses that f is bijective. Step 4 is invalid because (g o f)(a) means g(f(a)), not f(g(a)); the function f is not applied to g(a). Step 5 would follow only after correcting Step 4. Step 6 is the conclusion. The answer is Step 4."
+          - problem: "In the proof that (g o f)^-1 = f^-1 o g^-1 for bijections f and g, one line is missing: For any x in the codomain of g, let b be the unique element with g(b)=x. Let a be the unique element with f(a)=b. Then (f^-1 o g^-1)(x) = f^-1(g^-1(x)) = a, where a is the unique element with ____. Which equation completes the line?"
+            answer: "f(a) = b"
+            answer_contract: {"kind": "label", "options": [["f(a) = b"], ["g(a) = b"], ["f(b) = a"], ["g(b) = a"]]}
+            solution_sketch: "The missing equation must state the defining property of a, which is f(a)=b. Option g(a)=b mixes up f and g. Option f(b)=a swaps the roles of a and b. Option g(b)=a makes both mistakes. The answer is f(a) = b."
+          - problem: "In the proof that (g o f)^-1 = f^-1 o g^-1, consider Step 4: Then (g o f)(a) = g(f(a)) = g(b) = x. Which hypothesis guarantees that g(b) equals x?"
+            answer: "b is the unique element with g(b) = x"
+            answer_contract: {"kind": "label", "options": [["b is the unique element with g(b) = x"], ["a is the unique element with f(a) = b"], ["f is injective"], ["g is injective"]]}
+            solution_sketch: "Step 4 uses the fact that b was chosen so that g(b)=x. The option about a describes the role of a, not b. The option that f is injective is true but does not give g(b)=x. The option that g is injective is true but does not give the value. The answer is b is the unique element with g(b) = x."
+          - problem: "Write the full proof: For bijections f : A -> B and g : B -> C, prove that the inverse of g o f is f^-1 o g^-1. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Let x be an arbitrary element of C. Step 2: Since g is bijective, there is a unique b in B with g(b)=x; call it g^-1(x). Step 3: Since f is bijective, there is a unique a in A with f(a)=b; call it f^-1(b). Step 4: Then (g o f)(a) = g(f(a)) = g(b) = x. Step 5: By definition of inverse, a = (g o f)^-1(x). Step 6: Also, (f^-1 o g^-1)(x) = f^-1(g^-1(x)) = f^-1(b) = a. Step 7: Thus (f^-1 o g^-1)(x) = (g o f)^-1(x) for every x in C. Step 8: Therefore the inverse of g o f equals f^-1 o g^-1."
         constraints: "verify a candidate inverse by composing both ways"
     diagnostic_exemplar:
       problem: 'For bijections $f : A \to B$ and $g : B \to C$, prove that $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.'
@@ -703,10 +725,26 @@ topics:
           - problem: 'For $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$, find the image $f([-1, 2])$.'
             answer: '$[0, 4]$'
             solution_sketch: 'On $[-1, 2]$ the square attains its minimum $0$ at $x = 0$ and maximum $4$ at $x = 2$; every value between is hit.'
-          - problem: 'For $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$, find the preimage $f^{-1}([1, 4])$.'
-            answer_contract: {kind: none}
-            answer: '$[-2, -1] \cup [1, 2]$'
-            solution_sketch: '$1 \le x^2 \le 4$ iff $1 \le |x| \le 2$, which splits into the two symmetric intervals.'
+          - problem: "For $f : \\mathbb{R} \\to \\mathbb{R}$, $f(x) = x^2$, find the preimage $f^{-1}([9, 16])$. Give the answer as an inequality in x."
+            answer: "-4 <= x <= -3 or 3 <= x <= 4"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Object: the set of x with 9 <= x^2 <= 16 for f(x) = x^2. Step 1 (double inequality rule): 9 <= x^2 <= 16 holds exactly when 3 <= abs(x) <= 4. Step 2 (absolute value rule): abs(x) <= 4 gives -4 <= x <= 4, while abs(x) >= 3 gives x <= -3 or x >= 3; intersecting the two conditions keeps the two outer branches. The preimage is -4 <= x <= -3 or 3 <= x <= 4."
+          - problem: "For $f : \\mathbb{R} \\to \\mathbb{R}$, $f(x) = x^2$, find the image $f([-3, 2])$. Give the answer as an inequality in x."
+            answer: "0 <= x <= 9"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Object: f(x) = x^2 on the interval [-3, 2]. Step 1 (vertex and endpoints rule): the square decreases on [-3, 0] and increases on [0, 2], so the minimum is 0^2 = 0 at x = 0 and the maximum is max((-3)^2, 2^2) = 9 at x = -3. Step 2 (intermediate value rule): the square is continuous, so every value between 0 and 9 is attained on the interval. The image is 0 <= x <= 9."
+          - problem: "Let $f(x) = 3x - 2$ with domain $\\mathbb{R}$. Find the image of the interval $[1, 4]$ under $f$. Give the answer as an inequality in x."
+            answer: "1 <= x <= 10"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Object: f(x) = 3x - 2 on [1, 4]. Step 1 (endpoint rule for increasing affine maps): f(1) = 3 - 2 = 1 and f(4) = 12 - 2 = 10. Step 2 (intermediate value rule): f is continuous and increasing, so every value between 1 and 10 is attained and none outside. The image is 1 <= x <= 10."
+          - problem: "Let $f(x) = -2x + 5$ with domain $\\mathbb{R}$. Determine $f^{-1}([-1, 7])$. Give the answer as an inequality in x."
+            answer: "-1 <= x <= 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Object: the set of x with -1 <= -2x + 5 <= 7 for f(x) = -2x + 5. Step 1 (double inequality rule): subtract 5 from all three parts to get -6 <= -2x <= 2. Step 2 (division by a negative rule): dividing by -2 flips both inequalities, giving 3 >= x >= -1. Since f is onto, every value of [-1, 7] is attained, so the preimage is -1 <= x <= 3."
+          - problem: "For $f(x) = x^2$ on $\\mathbb{R}$, compute $f^{-1}([-2, 1])$. Give the answer as an inequality in x."
+            answer: "-1 <= x <= 1"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Object: the set of x with -2 <= x^2 <= 1 for f(x) = x^2. Step 1 (nonnegativity rule): x^2 >= 0 for every real x, so the condition -2 <= x^2 holds automatically and only x^2 <= 1 restricts x. Step 2 (square root rule): x^2 <= 1 holds exactly when abs(x) <= 1, that is -1 <= x <= 1. The preimage is -1 <= x <= 1."
         constraints: "images/preimages of intervals under $x^2$ or affine maps; answers as intervals or unions"
     diagnostic_exemplar:
       problem: 'For $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$, find the image $f([-1, 3])$ and the preimage $f^{-1}([4, 9])$.'
@@ -747,12 +785,34 @@ topics:
         name: "Monotonicity of image and preimage"
         key_prerequisites: [computing-images-preimages]
         exemplars:
-          - problem: 'Prove: if $S \subseteq T$ (subsets of the domain), then $f(S) \subseteq f(T)$.'
-            answer: '$y = f(x)$ with $x \in S \subseteq T$ gives $y \in f(T)$.'
-            solution_sketch: 'Let $y \in f(S)$; then $y = f(x)$ for some $x \in S$. Since $S \subseteq T$, $x \in T$, so $y = f(x) \in f(T)$. $\square$'
-          - problem: 'Prove: if $C \subseteq D$ (subsets of the codomain), then $f^{-1}(C) \subseteq f^{-1}(D)$.'
-            answer: '$f(x) \in C \subseteq D$ gives $x \in f^{-1}(D)$.'
-            solution_sketch: 'Let $x \in f^{-1}(C)$; then $f(x) \in C \subseteq D$, so $f(x) \in D$, i.e. $x \in f^{-1}(D)$. $\square$'
+          - problem: "Let $f(x) = 2x + 1$, with $S = \\{0, 3, 5\\}$ and $T = \\{-1, 0, 2, 3, 5\\}$, so $S \\subseteq T$. To prove $f(S) \\subseteq f(T)$ straight from the definition of image, take $y = 7$ in $f(S)$; the first line of the proof chooses an $x$ in $S$ with $f(x) = 7$. Find that $x$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of image, $y \\in f(S)$ means $y = f(x)$ for some $x \\in S$. Solve $2x + 1 = 7$: $x = 3$, and $3 \\in S = \\{0, 3, 5\\}$. Since $S \\subseteq T$, the same $x$ lies in $T$, so $y = f(3) \\in f(T)$, which is the one-line inclusion. The witness is $x = 3$."
+          - problem: "Let $f(x) = x^2 - 3$, with $C = \\{1\\}$ and $D = \\{1, 6\\}$, so $C \\subseteq D$. The point $x = -2$ lies in $f^{-1}(C)$. Determine whether $x = -2$ is also a member of $f^{-1}(D)$, and give the value of $f(-2)$."
+            answer: "verdict = member; fx = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["member"], ["outsider"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "fx"}]}
+            solution_sketch: "By the definition of preimage, $x \\in f^{-1}(D)$ exactly when $f(x) \\in D$. Compute $f(-2) = (-2)^2 - 3 = 1$. Since $1 \\in D = \\{1, 6\\}$, the point $-2$ lies in $f^{-1}(D)$; this is the one-line inclusion forced by $C \\subseteq D$. The verdict is member and $f(-2) = 1$."
+          - problem: "Let $f(x) = x^2$, $S = \\{-2, -1, 0, 1\\}$ and $T = \\{-3, -2, -1, 0, 1, 2, 3\\}$, so $S \\subseteq T$ and monotonicity gives $f(S) \\subseteq f(T)$. Compute the two images and their set difference. How many elements does $f(T) \\setminus f(S)$ have?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of image, $f(S) = \\{f(s) : s \\in S\\}$: $f(-2) = 4$, $f(-1) = 1$, $f(0) = 0$, $f(1) = 1$, so $f(S) = \\{0, 1, 4\\}$. The extra points $\\pm 3$ in $T$ give $f(\\pm 3) = 9$, so $f(T) = \\{0, 1, 4, 9\\}$. The difference $f(T) \\setminus f(S) = \\{9\\}$ is nonempty, in agreement with the inclusion $f(S) \\subseteq f(T)$. The answer is 1."
+          - problem: "Let $f(x) = x^2$, $C = \\{1, 4\\}$ and $D = \\{0, 1, 4, 9\\}$, so $C \\subseteq D$ and monotonicity gives $f^{-1}(C) \\subseteq f^{-1}(D)$. Compute the two preimages and their difference. How many elements does $f^{-1}(D) \\setminus f^{-1}(C)$ have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the definition of preimage, $f^{-1}(C) = \\{x : f(x) \\in C\\}$. Solving $x^2 = 1$ and $x^2 = 4$ gives $f^{-1}(C) = \\{-2, -1, 1, 2\\}$. Solving $x^2 \\in \\{0, 1, 4, 9\\}$ gives $f^{-1}(D) = \\{-3, -2, -1, 0, 1, 2, 3\\}$. The difference $f^{-1}(D) \\setminus f^{-1}(C) = \\{-3, 0, 3\\}$ confirms the inclusion $f^{-1}(C) \\subseteq f^{-1}(D)$. The answer is 3."
+          - problem: "Claim: if $S \\subseteq T$ then $f(S) \\subseteq f(T)$. A student argues: Step 1: let $y \\in f(S)$. Step 2: then $y = f(x)$ for every $x \\in T$. Step 3: since $S \\subseteq T$, every $x \\in S$ lies in $T$. Step 4: therefore $y = f(x)$ for some $x \\in T$, so $y \\in f(T)$. Which step is the first that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a valid start: it just picks an element $y$ of $f(S)$. Step 2 is the first invalid step: the definition of image gives $y = f(x)$ for some $x \\in S$, not for every $x \\in T$. Step 3 states a true fact about the subset relation, and Step 4 would follow if Step 2 read 'for some $x \\in S$'. The answer is Step 2."
+          - problem: "To prove that $C \\subseteq D$ implies $f^{-1}(C) \\subseteq f^{-1}(D)$, a proof reads: Line 1: let $x \\in f^{-1}(C)$. Line 2: [missing]. Line 3: since $C \\subseteq D$, we get $f(x) \\in D$. Line 4: therefore $x \\in f^{-1}(D)$. Select the statement that fills Line 2 and makes the proof correct."
+            answer: "f(x) in C"
+            answer_contract: {"kind": "label", "options": [["f(x) in C"], ["x in C"], ["f(x) not in C"], ["x in f^-1(D)"]]}
+            solution_sketch: "Line 1 chooses $x \\in f^{-1}(C)$, so by the definition of preimage the missing line is exactly $f(x) \\in C$, written as the option f(x) in C. The option x in C confuses the preimage with the image of a point. The option f(x) not in C is a sign error and contradicts Line 3. The option x in f^-1(D) assumes the conclusion and is circular. The answer is f(x) in C."
+          - problem: "Write the full proof: if $S \\subseteq T$ (subsets of the domain of $f$), then $f(S) \\subseteq f(T)$, and if $C \\subseteq D$ (subsets of the codomain of $f$), then $f^{-1}(C) \\subseteq f^{-1}(D)$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (image inclusion): let $y \\in f(S)$. By the definition of image, $y = f(x)$ for some $x \\in S$. Step 2: since $S \\subseteq T$, this $x$ lies in $T$. Step 3: then $y = f(x)$ with $x \\in T$, so $y \\in f(T)$ by the definition of image. Hence $f(S) \\subseteq f(T)$. Step 4 (preimage inclusion): let $x \\in f^{-1}(C)$. By the definition of preimage, $f(x) \\in C$. Step 5: since $C \\subseteq D$, we get $f(x) \\in D$. Step 6: by the definition of preimage again, $x \\in f^{-1}(D)$. Hence $f^{-1}(C) \\subseteq f^{-1}(D)$. Both inclusions are one-line proofs straight from the definitions, with no injectivity needed."
         constraints: "one-line inclusion proofs straight from the definitions of image and preimage"
       - id: kp2
         name: "Images and unions"
@@ -846,13 +906,29 @@ topics:
         name: "Zero-one matrices and counting relations"
         key_prerequisites: [cartesian-products]
         exemplars:
-          - problem: 'Write the $3 \times 3$ zero-one matrix of $R = \{(1,1), (1,2), (2,3)\}$ on $\{1, 2, 3\}$ (rows = first coordinate).'
-            answer_contract: {kind: none}
-            answer: 'Rows: $(1, 1, 0)$, $(0, 0, 1)$, $(0, 0, 0)$.'
-            solution_sketch: 'Entry $(i, j)$ is $1$ iff $(i, j) \in R$: row $1$ has ones in columns $1, 2$; row $2$ in column $3$.'
           - problem: 'How many relations are there on a $2$-element set?'
             answer: '$16$'
             solution_sketch: 'A relation is any subset of $A \times A$, which has $2^2 = 4$ pairs; $2^4 = 16$ subsets.'
+          - problem: "On $A = \\{1,2,3\\}$ define $R = \\{(1,3), (2,1), (2,2), (3,3)\\}$. Give the $3 \\times 3$ zero-one matrix of $R$ as [a,b;c,d]."
+            answer: "[0,0,1;1,1,0;0,0,1]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "The relation is $R = \\{(1,3), (2,1), (2,2), (3,3)\\}$. Step 1 uses the definition of a zero-one matrix: entry $(i,j)$ is $1$ exactly when $(i,j)$ belongs to $R$. Step 2 fills row 1 with a 1 only in column 3, row 2 with ones in columns 1 and 2, and row 3 with a 1 only in column 3. The zero-one matrix is [0,0,1;1,1,0;0,0,1]."
+          - problem: "Let $A = \\{a\\}$. How many relations are there on $A$?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Cartesian product $A \\times A$ is $\\{(a,a)\\}$. Step 1 uses the definition of a relation: every subset of $A \\times A$ is a relation on $A$. Step 2 counts subsets of a one-element set: $2^1 = 2$. The number of relations is 2."
+          - problem: "On $A = \\{1,2\\}$ define $R = \\{(1,2), (2,1)\\}$. Give the $2 \\times 2$ zero-one matrix of $R$ as [a,b;c,d]."
+            answer: "[0,1;1,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The relation is $R = \\{(1,2), (2,1)\\}$. Step 1 uses the zero-one matrix encoding: entry $(i,j)$ is $1$ when $(i,j)$ belongs to $R$. Step 2 puts a 1 in row 1 column 2 and a 1 in row 2 column 1. The zero-one matrix is [0,1;1,0]."
+          - problem: "Let $B = \\{1,2,3\\}$. How many relations are there on $B$?"
+            answer: "512"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Cartesian product $B \\times B$ has $3 \\cdot 3 = 9$ ordered pairs. Step 1 uses the definition of a relation: every subset of $B \\times B$ is a relation on $B$. Step 2 counts subsets of a nine-element set: $2^9 = 512$. The number of relations is 512."
+          - problem: "On $A = \\{1,2,3\\}$ define $R = \\{(1,1), (1,2), (3,2)\\}$. Give the $3 \\times 3$ zero-one matrix of $R$ as [a,b;c,d]."
+            answer: "[1,1,0;0,0,0;0,1,0]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "The relation is $R = \\{(1,1), (1,2), (3,2)\\}$. Step 1 uses the zero-one matrix encoding: entry $(i,j)$ is $1$ exactly when $(i,j)$ belongs to $R$. Step 2 fills row 1 with ones in columns 1 and 2, row 2 with all zeros, and row 3 with a 1 only in column 2. The zero-one matrix is [1,1,0;0,0,0;0,1,0]."
         constraints: "matrix encoding on sets of size at most 3; count relations as $2^{n^2}$"
     diagnostic_exemplar:
       problem: 'On $A = \{1, 2, 3\}$ let $R = \{(a,b) : a \le b\}$. List the pairs of $R$, write its $3 \times 3$ zero-one matrix (rows indexed by the first coordinate), and say which vertices of its digraph carry loops.'
@@ -1285,13 +1361,29 @@ topics:
         name: "Powers of a relation"
         key_prerequisites: [relations-digraphs-matrices]
         exemplars:
-          - problem: 'For $R = \{(1,2), (2,3), (3,1)\}$ on $\{1, 2, 3\}$, compute $R^2 = R \circ R$ and $R^3$.'
-            answer_contract: {kind: none}
-            answer: '$R^2 = \{(1,3), (2,1), (3,2)\}$ and $R^3 = \{(1,1), (2,2), (3,3)\}$.'
-            solution_sketch: 'Follow the cycle two steps, then three: three steps around a $3$-cycle returns each element to itself.'
+          - problem: "On $\\{1, 2, 3\\}$ let $R = \\{(1,3), (3,2), (2,1)\\}$. Compute the composite $R^2 = R \\circ R$. Give the matrix of $R^2$ in the form [a,b;c,d], with three rows and three columns in the order 1, 2, 3."
+            answer: "[0,1,0;0,0,1;1,0,0]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "The relation R = {(1,3),(3,2),(2,1)} is the cycle 1→3→2→1 on {1,2,3}. The composition rule says (a,c) is in R^2 exactly when some b has both (a,b) and (b,c) in R; two steps along the cycle produce (1,2), (2,3), (3,1), so R^2 = {(1,2),(2,3),(3,1)}. The matrix representation puts a 1 at each of (1,2), (2,3), (3,1) and 0 elsewhere. The matrix of R^2 is [0,1,0;0,0,1;1,0,0]."
           - problem: 'For $R$ = "$a < b$" on $\{1, 2, 3\}$, compute $R^2$.'
             answer: '$\{(1, 3)\}$'
             solution_sketch: '$R = \{(1,2),(1,3),(2,3)\}$; the only two-step chain is $1 < 2 < 3$.'
+          - problem: "On $\\{1, 2, 3\\}$ let $R = \\{(1,2), (2,3), (3,1), (1,3)\\}$. Compute the powers $R^2$ and $R^3$. Give the number of ordered pairs in $R^2$ as c2, and the number of ordered pairs in $R^3$ as c3."
+            answer: "c2 = 5; c3 = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c2"}, {"contract": {"kind": "exact"}, "name": "c3"}]}
+            solution_sketch: "The full relation is R = {(1,2),(2,3),(3,1),(1,3)}. By the composition rule, (a,c) lies in R^2 exactly when some b gives (a,b) and (b,c) in R; the two-step chains yield R^2 = {(1,1),(1,3),(2,1),(3,2),(3,3)}, which has 5 pairs. Applying the composition rule once more to R^2 gives R^3 = {(1,1),(1,2),(1,3),(2,2),(2,3),(3,1),(3,3)}, which has 7 pairs. The answers are c2 = 5; c3 = 7."
+          - problem: "On $\\{1, 2, 3, 4\\}$ let $R = \\{(1,1), (1,2), (2,4), (4,1)\\}$. Compute the square $R^2$ of the relation. Find the number of ordered pairs in $R^2$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full relation is R = {(1,1),(1,2),(2,4),(4,1)} on {1,2,3,4}. The composition rule says (a,c) is in R^2 exactly when some b has both (a,b) and (b,c) in R. Chaining all two-step paths gives R^2 = {(1,1),(1,2),(1,4),(2,1),(4,1),(4,2)}. The number of ordered pairs in R^2 is 6."
+          - problem: "On $\\{1, 2, 3, 4\\}$ let $R = \\{(2,1), (1,4), (4,2)\\}$. Compute $R^3 = R \\circ R \\circ R$. Give the matrix of $R^3$ in the form [a,b;c,d], with four rows and four columns in the order 1, 2, 3, 4."
+            answer: "[1,0,0,0;0,1,0,0;0,0,0,0;0,0,0,1]"
+            answer_contract: {"cols": 4, "kind": "matrix", "rows": 4}
+            solution_sketch: "The relation R = {(2,1),(1,4),(4,2)} is the cycle 2→1→4→2 on {1,2,3,4}, and element 3 has no outgoing pairs. By the composition rule, two steps give R^2 = {(2,4),(1,2),(4,1)}, and a third step returns each of 1, 2, 4 to itself, giving R^3 = {(1,1),(2,2),(4,4)}. The matrix representation places a 1 at (1,1), (2,2), (4,4) and 0 elsewhere, with row 3 all zeros. The matrix of R^3 is [1,0,0,0;0,1,0,0;0,0,0,0;0,0,0,1]."
+          - problem: "On $\\{1, 2, 3\\}$ let $R = \\{(1,2), (2,1), (2,3)\\}$. Compute $R^2 = R \\circ R$ and decide whether $R^2 = R$ holds as a set. Give the outcome as verdict, and give shared, the number of ordered pairs in the intersection $R^2 \\cap R$."
+            answer: "verdict = unequal; shared = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["unequal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "shared"}]}
+            solution_sketch: "The full relation is R = {(1,2),(2,1),(2,3)}. The composition rule gives the two-step pairs (1,1) (from 1→2→1), (1,3) (from 1→2→3) and (2,2) (from 2→1→2), so R^2 = {(1,1),(1,3),(2,2)}. The option equal fails because (1,1) and (2,2) lie in R^2 but not in R, so the two relations are unequal; R^2 and R share no ordered pair, so shared = 0. The answer is verdict = unequal; shared = 0."
         constraints: "compute $R^2$ (and occasionally $R^3$) on a small relation"
       - id: kp3
         name: "Transitivity via composition"
@@ -1507,27 +1599,59 @@ topics:
         name: "Reading a Hasse diagram"
         key_prerequisites: [partial-orders]
         exemplars:
-          - problem: 'In the Hasse diagram of the divisors of $12$ under $\mid$, is $2 \preceq 12$? Is $4 \preceq 6$?'
-            answer_contract: {kind: none}
-            answer: 'Yes ($2 \mid 12$, via the path $2\!-\!4\!-\!12$ or $2\!-\!6\!-\!12$); no ($4 \nmid 6$).'
-            solution_sketch: '$a \preceq b$ iff there is an upward path from $a$ to $b$; there is none from $4$ to $6$.'
-          - problem: 'In the divisors-of-$12$ poset, which elements cover $1$?'
-            answer_contract: {kind: none}
-            answer: '$2$ and $3$.'
-            solution_sketch: '$b$ covers $1$ when $1 \mid b$ with nothing strictly between — exactly the prime divisors.'
+          - problem: "A poset has as its elements the divisors of 12, ordered by divisibility. Its Hasse diagram has the covering edges 1-2, 1-3, 2-4, 2-6, 3-6, 4-12, 6-12, and x <= y holds exactly when there is an upward path from x to y. How many elements x of this poset satisfy x <= 6?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Walk the upward-path rule downward from 6: the edges into 6 come from 2 and 3, and the edges into 2 and 3 come from 1. So x <= 6 holds exactly for x in {1, 2, 3, 6}, while 4 and 12 have no path to 6. The count of such elements is 4."
+          - problem: "In the poset of the divisors of 12 under divisibility, the Hasse diagram has covering edges 1-2, 1-3, 2-4, 2-6, 3-6, 4-12, 6-12; an element covers another exactly when a covering edge runs upward between them. Which elements cover 2? Give the answer as a set in curly braces."
+            answer: "{4, 6}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "An element covers 2 exactly when a covering edge leads upward from 2 in the diagram. The edges out of 2 go to 4 and to 6; 12 does not cover 2 since the path 2-4-12 has 4 strictly between. The elements covering 2 are {4, 6}."
+          - problem: "A poset has as its elements the 8 subsets of {1, 2, 3}, ordered by inclusion, so A <= B holds when A is a subset of B. Two elements are joined by a covering edge of the Hasse diagram exactly when one is obtained from the other by adding a single element. How many covering edges does the Hasse diagram of this poset have?"
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Count covering edges by size gap, since an edge joins subsets differing by one element. From size 0 to size 1 there are 3 edges; from size 1 to size 2 each of the 3 singletons gains 2 elements, giving 6 edges; from size 2 to size 3 there are 3 edges. The total number of covering edges is 12."
+          - problem: "A poset has as its elements the divisors of 18, ordered by divisibility. Its Hasse diagram has the covering edges 1-2, 1-3, 2-6, 3-6, 3-9, 6-18, 9-18, and x <= y holds exactly when there is an upward path from x to y. How many elements x of this poset satisfy 9 <= x?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Follow the upward paths that start at 9: the only edge out of 9 is 9-18, and 18 is a top element with no edge out. So 9 <= x holds for x = 9 and for x = 18, and no other element lies above 9. The number of such elements is 2."
+          - problem: "A poset has as its elements the divisors of 20, ordered by divisibility. Its Hasse diagram has the covering edges 1-2, 1-5, 2-4, 2-10, 4-20, 5-10, 10-20, and x <= y holds exactly when there is an upward path from x to y. Determine whether 2 <= 20, and give the number of upward paths from 2 to 20 along covering edges."
+            answer: "verdict = comparable; paths = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["comparable"], ["incomparable"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "paths"}]}
+            solution_sketch: "From 2 the covering edges go up to 4 and to 10, and both 4 and 10 have a covering edge to 20, so an upward path from 2 to 20 exists. The paths are 2-4-20 and 2-10-20, and there are no others since 4 and 10 have no further upward edges except to 20. The verdict incomparable is wrong because such a path does exist. The answer is verdict = comparable; paths = 2."
+          - problem: "A poset has as its elements the divisors of 30, ordered by divisibility. Its Hasse diagram has the covering edges 1-2, 1-3, 1-5, 2-6, 2-10, 3-6, 3-15, 5-10, 5-15, 6-30, 10-30, 15-30; an element is covered by another exactly when a covering edge runs upward from it. How many elements of this poset are covered by exactly two elements?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Count the downward covering edges at each element of the diagram. The elements 6, 10 and 15 each have exactly two incoming edges, from the pairs 2 and 3, 2 and 5, and 3 and 5 respectively; the atoms 2, 3, 5 have one, and 30 has three. The elements covered by exactly two elements are 6, 10 and 15, so the count of elements covered by exactly two elements is 3."
         constraints: "recover order relations and covers from upward paths"
       - id: kp3
         name: "Chains and comparability"
         key_prerequisites: [partial-orders]
         exemplars:
-          - problem: 'Find a longest chain in the divisors of $12$ under divisibility.'
-            answer_contract: {kind: none}
-            answer: '$1 \mid 2 \mid 4 \mid 12$ ($4$ elements; $1 \mid 2 \mid 6 \mid 12$ and $1 \mid 3 \mid 6 \mid 12$ also work).'
-            solution_sketch: 'A chain climbs one cover at a time; four elements is the maximum since each step multiplies in one more prime factor and $12 = 2^2 \cdot 3$ has three.'
-          - problem: 'List the incomparable pairs in $\mathcal{P}(\{a, b\})$ under $\subseteq$.'
-            answer_contract: {kind: none}
-            answer: 'Only $\{a\}$ and $\{b\}$.'
-            solution_sketch: 'Neither singleton contains the other; every other pair is nested.'
+          - problem: "The divisors of 20 are ordered by divisibility. Find the number of elements in a longest chain."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset is the divisors of 20: 1, 2, 4, 5, 10, 20. Rule: each cover multiplies by one prime, so a longest chain uses every prime factor with multiplicity. The factorization 20 = 2^2 * 5 has three prime factors counted with multiplicity, so a longest chain has 3 + 1 = 4 elements, for example 1, 2, 4, 20. The answer is 4."
+          - problem: "In the power set of {a, b, c} ordered by inclusion, how many unordered pairs of elements are incomparable?"
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset has 8 subsets. Rule: two subsets are comparable exactly when one is contained in the other. Count total unordered pairs: 8*7/2 = 28. Count comparable proper pairs: for each of the 3 letters it is in the smaller only, in both, or in the larger only, giving 3^3 = 27 ordered pairs A subset B; subtract the 8 diagonal pairs A = B to get 19 comparable unordered pairs. Then 28 - 19 = 9. The answer is 9."
+          - problem: "For the divisors of 24 under divisibility, find the number of elements in a longest chain."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The divisors of 24 are 1, 2, 3, 4, 6, 8, 12, 24. Rule: a chain can add at most one prime factor at each cover, and 24 = 2^3 * 3 has four prime factors with multiplicity. A longest chain uses all four factors, so it has 4 + 1 = 5 elements, for example 1, 2, 4, 8, 24. The answer is 5."
+          - problem: "The divisors of 12 are ordered by divisibility. How many unordered pairs of divisors are incomparable?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset is the divisors of 12: 1, 2, 3, 4, 6, 12. Rule: two divisors are incomparable when neither divides the other. Checking the unordered pairs gives (2,3), (3,4), and (4,6); no other pair is incomparable. The answer is 3."
+          - problem: "In the power set of {a, b, c, d} ordered by inclusion, how many unordered pairs of subsets are incomparable?"
+            answer: "55"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset is the Boolean lattice with 16 subsets. Rule: count all unordered pairs and subtract the comparable ones. Total unordered pairs: 16*15/2 = 120. For comparable proper pairs A subset B, each of the 4 letters is in A only, in both, or in B only, giving 3^4 = 81 ordered pairs A subset B including A = B; subtract the 16 diagonal pairs to get 65 comparable unordered pairs. Then 120 - 65 = 55. The answer is 55."
+          - problem: "Consider the poset on {a, b, c, d, e, f, g} with cover relations a<b, b<c, c<d, d<e, e<f, a<g, g<f. Find the number of elements in a longest chain."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The poset has the chain a<b<c<d<e<f, which uses six elements. Rule: a chain follows cover relations upward, and no chain can exceed the number of elements on a longest directed path. The path a<g<f uses only three elements, so the longest chain is a<b<c<d<e<f with six elements. The answer is 6."
         constraints: "identify chains and incomparable pairs in the drawn poset"
     diagnostic_exemplar:
       problem: 'For the divisors of $18$ ordered by divisibility, list the covering edges of the Hasse diagram, give a longest chain, and name an incomparable pair.'
