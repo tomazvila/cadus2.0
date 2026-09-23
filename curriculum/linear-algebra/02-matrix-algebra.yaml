@@ -697,6 +697,22 @@ topics:
           - problem: 'Compute $A^T$ for $A = \begin{pmatrix}2&-1\\0&3\end{pmatrix}$.'
             answer: "[2,0;-1,3]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
+          - problem: "Compute $A^T$ for $A = \\begin{pmatrix}3&-2&5\\\\1&0&-4\\\\6&2&-1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[3,1,6;-2,0,2;5,-4,-1]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "Read the rows of $A$: $(3,-2,5)$, $(1,0,-4)$, $(6,2,-1)$. The transpose rule turns each row into a column, so row 1 becomes column 1, row 2 column 2, row 3 column 3. The $3 \\times 3$ matrix stays $3 \\times 3$. The result is [3,1,6;-2,0,2;5,-4,-1]."
+          - problem: "Compute $A^T$ for $A = \\begin{pmatrix}6&-3\\\\0&5\\\\-2&1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[6,0,-2;-3,5,1]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 2}
+            solution_sketch: "The rows of $A$ are $(6,-3)$, $(0,5)$, $(-2,1)$. Each row becomes a column, so column 1 of $A^T$ is $(6,0,-2)$ and column 2 is $(-3,5,1)$. A $3 \\times 2$ matrix transposes to a $2 \\times 3$ matrix. The answer is [6,0,-2;-3,5,1]."
+          - problem: "The transpose of a matrix $A$ is $A^T = \\begin{pmatrix}4&-5\\\\-1&6\\end{pmatrix}$. Find $A$. Give the matrix as [a,b;c,d]."
+            answer: "[4,-1;-5,6]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Since $A^T$ has the rows of $A$ as its columns, the columns of $A^T$ are the rows of $A$. Column 1 of $A^T$ is $(4,-1)$, so row 1 of $A$ is $(4,-1)$; column 2 is $(-5,6)$, so row 2 is $(-5,6)$. Transposing twice returns the original matrix. Therefore $A$ = [4,-1;-5,6]."
+          - problem: "Compute $A^T$ for the row matrix $A = \\begin{pmatrix}5&-3&2\\end{pmatrix}$. Give the answer in the [a,b;c,d] entry style, as [a;b;c]."
+            answer: "[5;-3;2]"
+            answer_contract: {"cols": 1, "kind": "matrix", "rows": 3}
+            solution_sketch: "The single row $(5,-3,2)$ becomes a single column under the transpose rule. So the entry 5 goes to position 1, the entry -3 to position 2, and the entry 2 to position 3. A $1 \\times 3$ row matrix transposes to a $3 \\times 1$ column matrix. The answer is [5;-3;2]."
         constraints: "sizes up to 3x3; integer entries in -6..6"
       - id: kp2
         name: Transpose sizes and the double transpose
