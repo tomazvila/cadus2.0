@@ -1551,18 +1551,30 @@ topics:
         name: Variable base to a variable power
         key_prerequisites: [derivatives-natural-log, implicit-differentiation-basic]
         exemplars:
-          - problem: 'Differentiate $y = x^x$ for $x > 0$.'
-            answer: "x^x (ln x + 1)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\ln y = x \ln x$; differentiate: $\frac{y''}{y} = \ln x + 1$; multiply by $y$.'
-          - problem: 'Differentiate $y = x^{2x}$ for $x > 0$.'
-            answer: "2x^(2x) (ln x + 1)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\ln y = 2x \ln x$ gives $\frac{y''}{y} = 2\ln x + 2$.'
-          - problem: 'Differentiate $y = x^{\sin x}$ for $x > 0$.'
-            answer: "x^(sin x) (cos(x) ln(x) + sin(x)/x)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\ln y = \sin x \ln x$; differentiate: $\frac{y''}{y} = \cos x \ln x + \frac{\sin x}{x}$; multiply by $y$.'
+          - problem: "Let y = x^(4x) for x > 0. Find dy/dx, giving the answer with exp instead of the power x^(4x)."
+            answer: "exp(4*x*ln(x))*(4*ln(x)+4)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object y = x^(4x) and take ln of both sides: ln(y) = 4x ln(x) by the logarithm law for powers. Differentiate implicitly, using the product rule on 4x ln(x): y'/y = 4 ln(x) + 4. Multiply back by y and rewrite y = x^(4x) as exp(4*x*ln(x)). The derivative is exp(4*x*ln(x))*(4*ln(x)+4)."
+          - problem: "Let y = (5x)^x for x > 0. Compute dy/dx, giving the answer with exp instead of the power (5x)^x."
+            answer: "exp(x*ln(5*x))*(ln(5*x)+1)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object y = (5x)^x and take ln of both sides: ln(y) = x ln(5x) by the logarithm law for powers. Differentiate implicitly with the product rule and the chain rule on ln(5x): y'/y = ln(5x) + x*(5/(5x)) = ln(5x) + 1. Multiply back by y and rewrite y = (5x)^x as exp(x*ln(5*x)). The derivative is exp(x*ln(5*x))*(ln(5*x)+1)."
+          - problem: "Let y = x^(x/2) for x > 0. Determine dy/dx, giving the answer with exp instead of the power x^(x/2)."
+            answer: "exp(x*ln(x)/2)*(ln(x)+1)/2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object y = x^(x/2) and take ln of both sides: ln(y) = (x/2) ln(x) by the logarithm law for powers. Differentiate implicitly with the product rule: y'/y = ln(x)/2 + (x/2)*(1/x) = ln(x)/2 + 1/2, which is (ln(x) + 1)/2. Multiply back by y and rewrite y = x^(x/2) as exp(x*ln(x)/2). The derivative is exp(x*ln(x)/2)*(ln(x)+1)/2."
+          - problem: "Let y = x^(sqrt(x)) for x > 0. Find dy/dx, giving the answer with exp instead of the power x^(sqrt(x))."
+            answer: "exp(sqrt(x)*ln(x))*(ln(x)+2)/(2*sqrt(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object y = x^(sqrt(x)) and take ln of both sides: ln(y) = sqrt(x) ln(x). Differentiate implicitly with the product rule and the power rule on sqrt(x): y'/y = ln(x)/(2 sqrt(x)) + 1/sqrt(x), which is (ln(x) + 2)/(2 sqrt(x)). Multiply back by y and rewrite y = x^(sqrt(x)) as exp(sqrt(x)*ln(x)). The derivative is exp(sqrt(x)*ln(x))*(ln(x)+2)/(2*sqrt(x))."
+          - problem: "Let y = (x+2)^x for x > -2. Find dy/dx, giving the answer with exp instead of the power (x+2)^x."
+            answer: "exp(x*ln(x+2))*(ln(x+2)+x/(x+2))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object y = (x+2)^x and take ln of both sides: ln(y) = x ln(x+2) by the logarithm law for powers. Differentiate implicitly with the product rule and the chain rule on ln(x+2): y'/y = ln(x+2) + x/(x+2). Multiply back by y and rewrite y = (x+2)^x as exp(x*ln(x+2)). The derivative is exp(x*ln(x+2))*(ln(x+2)+x/(x+2))."
+          - problem: "Let y = (ln(x))^x for x > 1. Determine dy/dx, giving the answer with exp instead of the power (ln(x))^x."
+            answer: "exp(x*ln(ln(x)))*(ln(ln(x))+1/ln(x))"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Start from the full object y = (ln(x))^x and take ln of both sides: ln(y) = x ln(ln(x)) by the logarithm law for powers. Differentiate implicitly with the product rule and the chain rule on ln(ln(x)): y'/y = ln(ln(x)) + x*(1/(x ln(x))) = ln(ln(x)) + 1/ln(x). Multiply back by y and rewrite y = (ln(x))^x as exp(x*ln(ln(x))). The derivative is exp(x*ln(ln(x)))*(ln(ln(x))+1/ln(x))."
         constraints: "x^(u(x)) forms; take ln of both sides, differentiate implicitly, multiply back by y"
       - id: kp2
         name: Big products and quotients
