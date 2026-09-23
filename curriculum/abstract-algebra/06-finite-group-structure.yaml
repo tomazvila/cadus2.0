@@ -203,14 +203,30 @@ topics:
         name: "The counting proof (McKay's argument)"
         key_prerequisites: [class-equation, group-actions]
         exemplars:
-          - problem: 'McKay''s proof considers $X = \{(x_1, \dots, x_p) : x_i \in G,\ x_1 x_2 \cdots x_p = e\}$. Show that $|X| = |G|^{p-1}$.'
-            answer: 'Choose $x_1, \dots, x_{p-1}$ freely ($|G|^{p-1}$ ways); then $x_p = (x_1 \cdots x_{p-1})^{-1}$ is uniquely determined.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The product condition fixes the last coordinate; the rest are free.'
-          - problem: '$\mathbb{Z}_p$ acts on $X$ by cyclic rotation, and the fixed tuples are the constant ones $(x, \dots, x)$ with $x^p = e$. Finish the proof of Cauchy''s theorem.'
-            answer: 'Orbits have size $1$ or $p$, so $|X| \equiv \#\{\text{fixed tuples}\} \pmod p$. Since $p \mid |G|$, $p$ divides $|X| = |G|^{p-1}$, so $p$ divides the number of solutions of $x^p = e$. One solution is $x = e$, so there are at least $p$ solutions; any solution $x \neq e$ has order exactly $p$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Orbit sizes divide $|\mathbb{Z}_p| = p$; count mod $p$ and use that $p$ is prime to pin the order of a non-identity solution.'
+          - problem: "Let G be a finite group of order 21 and let p = 3. In McKay's proof, X is the set of triples (x1, x2, x3) with entries in G whose product x1 x2 x3 = e. The first two entries may be chosen freely and the last one is then forced. Find the size of X."
+            answer: "441"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is X = {(x1, x2, x3) in G^3 : x1 x2 x3 = e}. Step 1 (product rule): choose x1 and x2 freely, with 21 choices for each, giving 21 x 21 = 441 pairs. Step 2 (uniqueness of inverses): the condition x1 x2 x3 = e forces x3 = (x1 x2)^(-1), so there is exactly one choice for the last entry. Therefore the size of X is 441."
+          - problem: "Let G be the cyclic group Z_7 and let p = 7. The group Z_7 acts on McKay's set X by cyclic rotation of the entries, and a tuple is fixed by this action exactly when it is constant, of the form (x, x, x, x, x, x, x) with x^7 = e. Find the number of fixed tuples."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By Lagrange's theorem, the order of each element x of Z_7 divides 7, so every one of the 7 elements satisfies x^7 = e. Each such element gives one constant tuple fixed by the rotation, and no other tuple is fixed. Therefore the number of fixed tuples is 7."
+          - problem: "In McKay's proof with p = 11, the cyclic group of order 11 acts on the set X by rotating the entries of each tuple. A tuple whose entries are not all equal is genuinely moved by a nonzero rotation. Find the size of the orbit of such a nonconstant tuple."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (orbit-stabilizer theorem): the size of an orbit divides the order of the acting group, which is 11. Step 2 (primality): since 11 is prime, the orbit size is 1 or 11. A nonconstant tuple is moved by the rotation, so its orbit is not a singleton. Therefore the orbit size is 11."
+          - problem: "Let p = 3 and let G be a finite group. McKay's set X of triples (x1, x2, x3) with entries in G and x1 x2 x3 = e has 36 elements. Find the order of G."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (McKay's count): the first p - 1 = 2 entries are free and the last is forced, so |X| = |G|^2. Step 2 (set up the equation): |G|^2 = 36. Step 3 (solve): |G| = 6, since a group order is positive. Therefore the order of G is 6."
+          - problem: "Let G be the cyclic group Z_6, written additively, and let p = 3. McKay's set X consists of the triples (x1, x2, x3) from Z_6 with x1 + x2 + x3 = 0, so X has 36 elements. The fixed tuples under cyclic rotation are the constant ones (x, x, x) with 3x = 0, and there are 3 such elements x. Find the number of tuples in X that are not fixed."
+            answer: "33"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is X = {(x1, x2, x3) in Z_6^3 : x1 + x2 + x3 = 0}, with |X| = 6^2 = 36 by McKay's count. Step 2 (fixed tuples): the constant tuples (x, x, x) with 3x = 0 in Z_6 are those with x = 0, 2, or 4, so there are 3 fixed tuples. Step 3 (subtract): 36 - 3 = 33. Therefore the number of nonfixed tuples is 33."
+          - problem: "Let G be a finite group whose order is divisible by 5. McKay's argument shows that the number of solutions of x^5 = e in G is divisible by 5, and the identity element is one such solution. Find the least number of solutions of x^5 = e that G can have."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (McKay's congruence): the number of solutions of x^5 = e is congruent to |X| = |G|^4 modulo 5, and since 5 divides |G|, this count is divisible by 5. Step 2 (lower bound): the identity is a solution, so the count is at least 1, and the smallest multiple of 5 that is at least 1 is 5. Step 3 (achievability): the cyclic group of order 5 has exactly 5 such solutions. Therefore the least possible number of solutions is 5."
         constraints: "the tuple-counting argument in guided steps; rotation-invariance of the product-e condition may be quoted"
     diagnostic_exemplar:
       problem: 'Let $G$ be an abelian group with $|G| = 21$. Use Cauchy''s theorem to prove that $G$ is cyclic.'
