@@ -1176,25 +1176,57 @@ topics:
         name: Solving AX = B with an inverse
         key_prerequisites: [matrix-inverses]
         exemplars:
-          - problem: 'Using $A = \begin{pmatrix}2&1\\5&3\end{pmatrix}$ with $A^{-1} = \begin{pmatrix}3&-1\\-5&2\end{pmatrix}$, solve $AX = \begin{pmatrix}1&0\\1&1\end{pmatrix}$.'
-            answer: '$X = \begin{pmatrix}2&-1\\-3&2\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$X = A^{-1}B$: row 1 is $(3 - 1, 0 - 1)$, row 2 is $(-5 + 2, 0 + 2)$. Verify $AX = B$.'
           - problem: 'Solve $AX = B$ symbolically for invertible $A$.'
             answer: '$X = A^{-1}B$'
             solution_sketch: 'Left-multiply both sides by $A^{-1}$.'
+          - problem: "Let $A = \\begin{pmatrix}2&1\\\\3&2\\end{pmatrix}$ with $A^{-1} = \\begin{pmatrix}2&-1\\\\-3&2\\end{pmatrix}$. Solve $AX = \\begin{pmatrix}4&1\\\\2&0\\end{pmatrix}$ for $X$. Find $X$ and give the matrix as [a,b;c,d]."
+            answer: "[6,2;-8,-3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (solve the matrix equation): left-multiply both sides of $AX = B$ by $A^{-1}$, so $X = A^{-1}B$. Step 2 (matrix multiplication): $A^{-1}B = \\begin{pmatrix}2&-1\\\\-3&2\\end{pmatrix}\\begin{pmatrix}4&1\\\\2&0\\end{pmatrix}$; row 1 is $(2\\cdot4-1\\cdot2,\\ 2\\cdot1-1\\cdot0) = (6,2)$ and row 2 is $(-3\\cdot4+2\\cdot2, -3\\cdot1+2\\cdot0) = (-8,-3)$. Step 3 (check): $A X = B$ holds. The answer is X = [6,2;-8,-3]."
+          - problem: "Suppose $A = \\begin{pmatrix}3&1\\\\5&2\\end{pmatrix}$ and its inverse is $A^{-1} = \\begin{pmatrix}2&-1\\\\-5&3\\end{pmatrix}$. If $AX = \\begin{pmatrix}1&1\\\\2&0\\end{pmatrix}$, what is $X$? Give the matrix as [a,b;c,d]."
+            answer: "[0,2;1,-5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (isolate the unknown): left-multiply by $A^{-1}$ to get $X = A^{-1}B$. Step 2 (matrix multiplication): $\\begin{pmatrix}2&-1\\\\-5&3\\end{pmatrix}\\begin{pmatrix}1&1\\\\2&0\\end{pmatrix}$ has row 1 $(2\\cdot1-1\\cdot2,\\ 2\\cdot1-1\\cdot0) = (0,2)$ and row 2 $(-5\\cdot1+3\\cdot2,\\ -5\\cdot1+3\\cdot0) = (1,-5)$. Step 3 (verification): $AX$ returns $B$. The key is X = [0,2;1,-5]."
+          - problem: "Let $A = \\begin{pmatrix}1&1\\\\3&4\\end{pmatrix}$ with $A^{-1} = \\begin{pmatrix}4&-1\\\\-3&1\\end{pmatrix}$. Solve $AX = \\begin{pmatrix}3\\\\7\\end{pmatrix}$ for the column vector $X$. Give the answer as (x, y)."
+            answer: "(5,-2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (matrix equation rule): $X = A^{-1}B$. Step 2 (matrix-vector product): $\\begin{pmatrix}4&-1\\\\-3&1\\end{pmatrix}\\begin{pmatrix}3\\\\7\\end{pmatrix} = \\begin{pmatrix}12-7\\\\-9+7\\end{pmatrix} = \\begin{pmatrix}5\\\\-2\\end{pmatrix}$. Step 3 (check): $A(5,-2)^T = (5-2, 15-8)^T = (3,7)^T$. The answer is X = (5,-2)."
+          - problem: "Let $A = \\begin{pmatrix}1&0&0\\\\-2&1&0\\\\0&-3&1\\end{pmatrix}$ with $A^{-1} = \\begin{pmatrix}1&0&0\\\\2&1&0\\\\6&3&1\\end{pmatrix}$. Solve $AX = \\begin{pmatrix}2\\\\-1\\\\-8\\end{pmatrix}$ for the column vector $X$. Give the answer as (x, y, z)."
+            answer: "(2,3,1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (matrix equation rule): left-multiply by $A^{-1}$, so $X = A^{-1}B$. Step 2 (matrix-vector product): the entries are $1\\cdot2 = 2$, then $2\\cdot2 + 1\\cdot(-1) = 3$, then $6\\cdot2 + 3\\cdot(-1) + 1\\cdot(-8) = 12-3-8 = 1$? Recompute the last row: it is $6\\cdot2 + 3\\cdot(-1) + 1\\cdot(-8)$, which gives $1$ only if the product were different; in fact $A(2,3,1)^T = (2, -4+3, -9+1)^T = (2,-1,-8)^T = B$, confirming $X = (2,3,1)$. The answer is X = (2,3,1)."
+          - problem: "Let $A = \\begin{pmatrix}1&1\\\\2&3\\end{pmatrix}$ with $A^{-1} = \\begin{pmatrix}3&-1\\\\-2&1\\end{pmatrix}$. Consider $AX + \\begin{pmatrix}2&0\\\\0&1\\end{pmatrix} = \\begin{pmatrix}5&2\\\\4&3\\end{pmatrix}$. Find $X$ and give the matrix as [a,b;c,d]."
+            answer: "[5,4;-2,-2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1 (matrix operations): subtract the constant matrix from both sides: $AX = \\begin{pmatrix}5&2\\\\4&3\\end{pmatrix} - \\begin{pmatrix}2&0\\\\0&1\\end{pmatrix} = \\begin{pmatrix}3&2\\\\4&2\\end{pmatrix}$. Step 2 (matrix equation rule): $X = A^{-1}(B - C) = \\begin{pmatrix}3&-1\\\\-2&1\\end{pmatrix}\\begin{pmatrix}3&2\\\\4&2\\end{pmatrix}$. Step 3 (matrix multiplication): row 1 is $(9-4, 6-2) = (5,4)$ and row 2 is $(-6+4, -4+2) = (-2,-2)$. Step 4 (check): $AX + C = B$ holds. The answer is X = [5,4;-2,-2]."
         constraints: "provide the inverse; integer entries throughout"
       - id: kp3
         name: Order matters when isolating X
         key_prerequisites: [matrix-inverses, matrix-operations]
         exemplars:
-          - problem: 'Solve $XA = B$ for $A = \begin{pmatrix}1&1\\0&1\end{pmatrix}$ (so $A^{-1} = \begin{pmatrix}1&-1\\0&1\end{pmatrix}$) and $B = \begin{pmatrix}2&3\\1&1\end{pmatrix}$.'
-            answer: '$X = \begin{pmatrix}2&1\\1&0\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$X = BA^{-1}$: row 1 is $(2, -2 + 3)$, row 2 is $(1, -1 + 1)$. Check $XA = B$.'
           - problem: 'Solve $ABX = C$ symbolically for invertible $A, B$.'
             answer: '$X = B^{-1}A^{-1}C$'
             solution_sketch: 'Peel off from the left: first $A^{-1}$, then $B^{-1}$.'
+          - problem: "Solve $XA = B$ for $A = \\begin{pmatrix}1&3\\\\0&1\\end{pmatrix}$, $A^{-1} = \\begin{pmatrix}1&-3\\\\0&1\\end{pmatrix}$ and $B = \\begin{pmatrix}2&5\\\\1&2\\end{pmatrix}$. The unknown stands to the left of $A$, so $A^{-1}$ multiplies on the right of $B$. Give $X$ as [a,b;c,d]."
+            answer: "[2,-1;1,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The unknown $X$ stands to the left of $A$, so by the inverse-side rule $X = BA^{-1}$ (the inverse acts on the right). Matrix multiplication: $\\begin{pmatrix}2&5\\\\1&2\\end{pmatrix}\\begin{pmatrix}1&-3\\\\0&1\\end{pmatrix}$ has row 1 $(2, -6+5) = (2,-1)$ and row 2 $(1, -3+2) = (1,-1)$. Check: $XA = B$ holds. The solution is $X = [2,-1;1,-1]$."
+          - problem: "Solve $AX = B$ for $A = \\begin{pmatrix}1&0\\\\2&1\\end{pmatrix}$, $A^{-1} = \\begin{pmatrix}1&0\\\\-2&1\\end{pmatrix}$ and $B = \\begin{pmatrix}4&3\\\\6&5\\end{pmatrix}$. The unknown stands to the right of $A$, so $A^{-1}$ multiplies on the left of $B$. Give $X$ as [a,b;c,d]."
+            answer: "[4,3;-2,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "In $AX = B$ the unknown sits to the right of $A$, so the inverse acts on the left: $X = A^{-1}B$. Multiply: $\\begin{pmatrix}1&0\\\\-2&1\\end{pmatrix}\\begin{pmatrix}4&3\\\\6&5\\end{pmatrix}$ has row 1 $(4,3)$ and row 2 $(-8+6, -6+5) = (-2,-1)$. Check: $AX = B$ holds. The solution is $X = [4,3;-2,-1]$."
+          - problem: "Solve $AXB = C$ for $A = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$, $A^{-1} = \\begin{pmatrix}1&-1\\\\0&1\\end{pmatrix}$, $B = \\begin{pmatrix}2&0\\\\0&3\\end{pmatrix}$ with $B^{-1} = \\begin{pmatrix}1/2&0\\\\0&1/3\\end{pmatrix}$, and $C = \\begin{pmatrix}8&9\\\\6&3\\end{pmatrix}$. Here $A^{-1}$ multiplies on the left and $B^{-1}$ on the right. Give $X$ as [a,b;c,d]."
+            answer: "[1,2;3,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Peel off one factor at a time, each inverse on its own side: $X = A^{-1}CB^{-1}$. First $A^{-1}C = \\begin{pmatrix}1&-1\\\\0&1\\end{pmatrix}\\begin{pmatrix}8&9\\\\6&3\\end{pmatrix} = \\begin{pmatrix}2&6\\\\6&3\\end{pmatrix}$. Then $\\begin{pmatrix}2&6\\\\6&3\\end{pmatrix}\\begin{pmatrix}1/2&0\\\\0&1/3\\end{pmatrix} = \\begin{pmatrix}1&2\\\\3&1\\end{pmatrix}$. Check: $AXB = C$ holds. The solution is $X = [1,2;3,1]$."
+          - problem: "Solve $AX = B$ for $A = \\begin{pmatrix}2&1\\\\1&1\\end{pmatrix}$ and $B = \\begin{pmatrix}1&4\\\\2&5\\end{pmatrix}$. No inverse is given: find $A^{-1}$ yourself, decide on which side it must multiply, then solve. Give $X$ as [a,b;c;d] in the form [a,b;c,d]."
+            answer: "[-1,-1;3,6]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Inverse formula: $\\det A = 2\\cdot1 - 1\\cdot1 = 1$, so $A^{-1} = \\begin{pmatrix}1&-1\\\\-1&2\\end{pmatrix}$. Since $X$ stands to the right of $A$, the inverse multiplies on the left: $X = A^{-1}B$. Multiply: $\\begin{pmatrix}1&-1\\\\-1&2\\end{pmatrix}\\begin{pmatrix}1&4\\\\2&5\\end{pmatrix} = \\begin{pmatrix}-1&-1\\\\3&6\\end{pmatrix}$. Check: $AX = B$ holds. The solution is $X = [-1,-1;3,6]$."
+          - problem: "Solve $XA = B$ for the right factor $A$, given $X = \\begin{pmatrix}1&-1\\\\0&1\\end{pmatrix}$, $X^{-1} = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ and $B = \\begin{pmatrix}-1&0\\\\3&1\\end{pmatrix}$. The unknown is on the right of $X$, so $X^{-1}$ multiplies on the left of $B$. Give $A$ as [a,b;c,d]."
+            answer: "[2,1;3,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The unknown $A$ sits to the right of $X$, so peel it off by multiplying $X^{-1}$ on the left: $A = X^{-1}B$. Multiply: $\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}\\begin{pmatrix}-1&0\\\\3&1\\end{pmatrix}$ has row 1 $(-1+3, 0+1) = (2,1)$ and row 2 $(3,1)$. Check: $XA = B$ holds. The solution is $A = [2,1;3,1]$."
         constraints: "always state which side the inverse multiplies on"
     diagnostic_exemplar:
       problem: 'Given $A^{-1} = \begin{pmatrix}1&-2\\0&1\end{pmatrix}$, solve $XA = \begin{pmatrix}2&4\\1&3\end{pmatrix}$.'
@@ -1240,17 +1272,29 @@ topics:
         name: Invertibility criteria
         key_prerequisites: [matrix-inverses, row-reduction-echelon-forms]
         exemplars:
-          - problem: 'Is $\begin{pmatrix}1&2\\2&4\end{pmatrix}$ invertible? Answer using row reduction.'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$R_2 - 2R_1$ zeroes out row 2, so the RREF is not $I$; only one pivot.'
           - problem: 'For which $h$ does $\begin{pmatrix}1&3\\2&h\end{pmatrix}$ fail to be invertible?'
             answer: "h = 6"
             solution_sketch: '$R_2 - 2R_1$ leaves $(0,\ h - 6)$; no second pivot exactly when $h = 6$.'
-          - problem: 'If $A$ is $n \times n$ and $A\mathbf{x} = \mathbf{0}$ has a nonzero solution, is $A$ invertible?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Invertibility forces the unique solution $\mathbf{x} = A^{-1}\mathbf{0} = \mathbf{0}$.'
+          - problem: "Reduce $A = \\begin{pmatrix}2&5\\\\4&10\\end{pmatrix}$ to its RREF using row operations. State whether $A$ is invertible, and give the number of pivots in its RREF."
+            answer: "verdict = no; pivots = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "pivots"}]}
+            solution_sketch: "Apply the row operation R2 -> R2 - 2R1 to the full matrix [[2,5],[4,10]]: the second row becomes (0,0). The RREF is [[1,5/2],[0,0]], which is not the identity, so there is only one pivot and A is singular. The answer is verdict = no; pivots = 1."
+          - problem: "Let $A$ be a $3 \\times 3$ matrix for which $A\\mathbf{x} = \\mathbf{0}$ has a nonzero solution. State whether $A$ is invertible, and give the largest possible number of pivots in the RREF of $A$."
+            answer: "verdict = no; pivots = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "pivots"}]}
+            solution_sketch: "By the invertibility criterion, an invertible matrix has only the trivial solution of Ax = 0. A nonzero solution means the null space is nontrivial, so A is not invertible. In a 3x3 matrix each pivot removes one free variable, so with nullity at least 1 the RREF has at most 2 pivots. The answer is verdict = no; pivots = 2."
+          - problem: "Let $A = \\begin{pmatrix}1&4\\\\2&h\\end{pmatrix}$. Determine the value of $h$ for which $A$ has no second pivot and is not invertible."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduce [[1,4],[2,h]]: the operation R2 -> R2 - 2R1 makes the second row (0, h - 8). A second pivot exists exactly when h - 8 is nonzero, so the matrix fails to be invertible precisely when h - 8 = 0. Solving gives h = 8."
+          - problem: "Reduce $A = \\begin{pmatrix}1&2&0\\\\2&5&1\\\\0&1&2\\end{pmatrix}$ to its RREF using row operations. State whether $A$ is invertible, and give the number of pivots in its RREF."
+            answer: "verdict = yes; pivots = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "pivots"}]}
+            solution_sketch: "Row reduce the full matrix [[1,2,0],[2,5,1],[0,1,2]]: R2 -> R2 - 2R1 gives (0,1,1), and R3 stays (0,1,2); then R3 -> R3 - R2 gives (0,0,1). Three pivots appear in the three diagonal positions, so the RREF is the identity and A is invertible. The answer is verdict = yes; pivots = 3."
+          - problem: "Consider $A = \\begin{pmatrix}1&2&1\\\\2&4&h\\\\0&1&3\\end{pmatrix}$. Find the value of $h$ for which $A\\mathbf{x} = \\mathbf{0}$ has a nonzero solution."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduce the full matrix [[1,2,1],[2,4,h],[0,1,3]]: R2 -> R2 - 2R1 gives (0,0,h-2), while row 3 (0,1,3) is independent of row 1. A nontrivial null vector exists exactly when the second row vanishes, that is when h - 2 = 0. Therefore h = 2."
         constraints: "criteria: RREF = I, n pivots, only trivial null vector; keep matrices 2x2 or 3x3"
       - id: kp3
         name: Inverses of products and of elementary matrices
