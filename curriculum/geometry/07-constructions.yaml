@@ -69,17 +69,17 @@ topics:
             answer: 'SSS'
             answer_contract: {kind: label, options: [[SSS], [SAS], [ASA], [AAS]]}
             solution_sketch: 'Three pairs of congruent sides (two from equal-radius arcs, one shared) give SSS, and CPCTC delivers the congruent angle halves.'
-          - problem: 'A student "bisects" $\angle A$ by measuring with a marked ruler and judging by eye. Is that a valid straightedge-and-compass construction? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'A straightedge has no markings and lengths may only be transferred with the compass; measuring violates the construction rules.'
+          - problem: "A student bisects a 96 degree angle by reading the angle's size from the markings of a ruler and drawing the middle ray by eye. The allowed straightedge-and-compass fix instead draws an arc centered at the vertex meeting the sides at B and C, then two arcs of equal radius centered at B and C meeting at D, then the ray from the vertex through D. State the verdict on the student's method, and give the degree measure of each half angle in the fix."
+            answer: "verdict = invalid; angle = 48"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "angle"}]}
+            solution_sketch: "Step 1 (allowed moves): the only straightedge-and-compass moves are drawing a line through two located points, drawing a circle centered at a located point through another, and marking intersections; a marked ruler and judging by eye use none of these, so the verdict on the method is invalid. Step 2 (fix by angle bisector): the arc centered at the vertex meets the sides at B and C with AB = AC, the two equal-radius arcs centered at B and C meet at D, and triangles ABD and ACD are congruent by SSS, so the ray AD bisects the 96 degree angle. Step 3 (halves): each half angle is 96/2, so the full result is verdict = invalid; angle = 48."
           - problem: 'The angle bisector of a $84^\circ$ angle splits it into two congruent angles. Find the measure of each, in degrees.'
             answer: "42"
             solution_sketch: '$84/2 = 42$.'
-          - problem: 'In the angle-bisector construction, the first arc is drawn with which center: the vertex $A$, a point $B$ on one side, or an interior point $D$?'
-            answer: 'the vertex A'
-            answer_contract: {kind: label, options: [['the vertex A'], ['a point B on one side'], ['an interior point D']]}
-            solution_sketch: 'The arc centered at the vertex crosses both sides at equal distances, which is what makes $AB = AC$.'
+          - problem: "In the straightedge-and-compass construction that bisects an angle, the first arc is drawn with the compass point at the vertex A of angle BAC, and this one arc crosses side AB at P and side AC at Q. If AP = 11 centimeters, find the sum AP + AQ in centimeters, and give the number only."
+            answer: "22"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (construction): the first arc of the angle-bisector construction is one arc of a single circle drawn with the compass point at the vertex A, and it meets side AB at P and side AC at Q. Step 2 (radii of one circle): P and Q both lie on this same circle centered at A, so AP and AQ are two radii of that circle and AP = AQ. Step 3 (sum): with AP = 11, we also have AQ = 11, so the sum AP + AQ = 22."
         constraints: "invalid-construction items involve measuring with a marked ruler or judging by eye; the fix must restate the allowed straightedge and compass moves"
     diagnostic_exemplar:
       problem: 'Describe the straightedge-and-compass steps that bisect a given angle $\angle A$, and name the congruence criterion that proves the two resulting angles are congruent.'
