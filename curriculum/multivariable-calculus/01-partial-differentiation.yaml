@@ -190,14 +190,30 @@ topics:
         name: "Graphs of two-variable functions"
         key_prerequisites: [coordinates-surfaces-3d]
         exemplars:
-          - problem: 'Identify the graph of $f(x, y) = \sqrt{9 - x^2 - y^2}$.'
-            answer: 'The upper hemisphere of the sphere $x^2 + y^2 + z^2 = 9$ (radius $3$).'
-            answer_contract: {kind: none}
-            solution_sketch: '$z = \sqrt{9 - x^2 - y^2}$ squares to the sphere equation with $z \ge 0$.'
-          - problem: 'Identify the graph of $f(x, y) = 6 - 2x - 3y$.'
-            answer: 'The plane $2x + 3y + z = 6$.'
-            solution_sketch: 'The graph satisfies $z=6-2x-3y$, i.e. $2x+3y+z=6$, a plane.'
-            answer_contract: {kind: none}
+          - problem: "A two-variable function has graph z = f(x, y) = sqrt(36 - x^2 - y^2). Squaring both sides of z = sqrt(36 - x^2 - y^2) and using the quadric catalog, select the surface that is the graph."
+            answer: "upper hemisphere"
+            answer_contract: {"kind": "label", "options": [["upper hemisphere"], ["lower hemisphere"], ["elliptic paraboloid"], ["tilted plane"]]}
+            solution_sketch: "Start with the full object z = sqrt(36 - x^2 - y^2). Squaring gives x^2 + y^2 + z^2 = 36 with z >= 0, which by the sphere entry of the quadric catalog is the upper half of a sphere. A lower hemisphere would need z <= 0, which a square root cannot give; an elliptic paraboloid would have z to the first power with squared x and y terms; a tilted plane would be linear in x and y. The answer is upper hemisphere."
+          - problem: "A two-variable function has graph z = f(x, y) = 10 - x - 2y. Moving all variables of z = 10 - x - 2y to one side and using the quadric catalog, select the surface that is the graph."
+            answer: "tilted plane"
+            answer_contract: {"kind": "label", "options": [["upper hemisphere"], ["lower hemisphere"], ["elliptic paraboloid"], ["tilted plane"]]}
+            solution_sketch: "Start with the full object z = 10 - x - 2y. Rearranging gives x + 2y + z = 10, a linear equation, so by the plane entry of the quadric catalog the graph is a tilted plane. An upper hemisphere or a lower hemisphere would come from a square root of a difference of squares; an elliptic paraboloid would have quadratic terms in x or y. The answer is tilted plane."
+          - problem: "The graph of f(x, y) = x^2 + y^2 + 1 is an elliptic paraboloid that opens upward. Find its vertex. Give the answer as (x, y, z)."
+            answer: "(0, 0, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "The graph satisfies z = x^2 + y^2 + 1, so rewrite it as z - 1 = x^2 + y^2. By the shifted-paraboloid form of the quadric catalog, the vertex lies where the squared terms vanish: x = 0 and y = 0. Substituting gives z = 1, so the vertex is the point (0, 0, 1)."
+          - problem: "The graph of f(x, y) = sqrt(25 - x^2 - y^2) is an upper hemisphere of a sphere. Find the radius of that sphere."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write z = sqrt(25 - x^2 - y^2). Squaring gives the sphere equation x^2 + y^2 + z^2 = 25 with z >= 0. The radius is the square root of the constant term, sqrt(25) = 5."
+          - problem: "The graph of f(x, y) = 9 - x^2 - y^2 is an elliptic paraboloid that opens downward. Find the z-coordinate of its vertex."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The graph satisfies z = 9 - x^2 - y^2. Rewrite it as z - 9 = -(x^2 + y^2), so the vertex sits above x = 0, y = 0. Substituting gives z = 9, so the z-coordinate is 9."
+          - problem: "The graph of f(x, y) = x^2 + y^2 is an elliptic paraboloid. Its level curve at height z = 4 is a circle centered at the origin. Find the radius of this level curve."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "On the level curve at height 4, set f(x, y) = 4. This gives x^2 + y^2 = 4, a circle of the paraboloid's horizontal cross-section. The radius is sqrt(4) = 2."
         constraints: "graphs are planes, paraboloids, or hemispheres recognizable from the quadric catalog"
     diagnostic_exemplar:
       problem: 'Identify the graph of $f(x, y) = \sqrt{16 - x^2 - y^2}$ and describe its level curves.'
@@ -609,9 +625,25 @@ topics:
           - problem: 'Let $f(x, y) = x^3 y^2 + 2x - y$. Find $f_x$ and $f_y$; state the pair $(f_x, f_y)$.'
             answer: '$(3x^2 y^2 + 2,\ 2x^3 y - 1)$'
             solution_sketch: 'For $f_x$ treat $y$ as a constant; for $f_y$ treat $x$ as a constant.'
+          - problem: "Let f(x, y) = 5x^2 y + 2x y^3 - 7y. Find both first-order partial derivatives. Give fx and fy."
+            answer: "fx = 10xy + 2y^3; fy = 5x^2 + 6xy^2 - 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fx"}, {"contract": {"kind": "function", "vars": ["x", "y"]}, "name": "fy"}]}
+            solution_sketch: "For fx hold y constant and apply the power rule in x: the derivatives of 5x^2 y, 2x y^3, and -7y are 10xy, 2y^3, and 0. For fy hold x constant: the derivatives are 5x^2, 6xy^2, and -7. The pair is fx = 10xy + 2y^3; fy = 5x^2 + 6xy^2 - 7."
           - problem: 'Let $f(x, y) = x^2 y^3$. Compute $f_y(1, 2)$.'
             answer: "12"
             solution_sketch: '$f_y = 3x^2 y^2$; at $(1, 2)$: $3 \cdot 1 \cdot 4 = 12$.'
+          - problem: "Let f(x, y) = x^5 - 3x^2 y^2 + y. Find fx as a function of x and y."
+            answer: "5x^4 - 6xy^2"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "For fx treat y as a constant and differentiate each term in x with the power rule. The derivative of x^5 is 5x^4, the derivative of -3x^2 y^2 is -6xy^2, and the derivative of y is 0. The partial derivative is fx = 5x^4 - 6xy^2."
+          - problem: "Let f(x, y) = 2x y^4 - x^3 + 5. Compute fy(2, 1)."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First find fy by holding x constant: the derivative of 2x y^4 is 8xy^3, while -x^3 + 5 gives 0. Substitute x = 2 and y = 1: 8 times 2 times 1 is 16. The value is 16."
+          - problem: "A factory's daily output is Q(x, y) = 3x^2 y - x y + 10, where x is liters of a chemical used and y is hours of labor. Find Qy as a formula in x and y."
+            answer: "3x^2 - x"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "For Qy hold x constant and differentiate each term in y with the power rule. The derivative of 3x^2 y is 3x^2, the derivative of -x y is -x, and the derivative of 10 is 0. The partial derivative is Qy = 3x^2 - x."
         constraints: "polynomial in x, y with integer coefficients, total degree at most 5"
       - id: kp2
         name: "The limit definition and notation"
