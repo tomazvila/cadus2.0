@@ -1027,12 +1027,34 @@ topics:
         name: "Nonabelian groups"
         key_prerequisites: [function-composition-inverse]
         exemplars:
-          - problem: 'Let $f, g : \mathbb{R} \to \mathbb{R}$ be the bijections $f(x) = x + 1$ and $g(x) = 2x$. Show that the group of bijections $\mathbb{R} \to \mathbb{R}$ under composition is not abelian.'
-            answer: '$(f \circ g)(x) = 2x + 1$ but $(g \circ f)(x) = 2x + 2$.'
-            solution_sketch: '$(f \circ g)(x) = f(2x) = 2x + 1$ and $(g \circ f)(x) = g(x + 1) = 2x + 2$; these differ (e.g. at $x = 0$), so composition does not commute. One non-commuting pair refutes abelianness. $\square$'
-          - problem: 'Let $f$ swap $1 \leftrightarrow 2$ and fix $3$, and let $g$ swap $2 \leftrightarrow 3$ and fix $1$, as bijections of $\{1, 2, 3\}$. Show $f \circ g \ne g \circ f$.'
-            answer: '$(f \circ g)(1) = 2$ but $(g \circ f)(1) = 3$.'
-            solution_sketch: 'Evaluate pointwise at $1$: $(f \circ g)(1) = f(g(1)) = f(1) = 2$, while $(g \circ f)(1) = g(f(1)) = g(2) = 3$. They disagree at one input, so the functions differ. $\square$'
+          - problem: "Let f(x) = x + 3 and g(x) = 2x be bijections of the real numbers. Find f(g(4)) and g(f(4))."
+            answer: "fg = 11; gf = 14"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fg"}, {"contract": {"kind": "exact"}, "name": "gf"}]}
+            solution_sketch: "Composition rule: f(g(x)) means apply g first, then f. One order: g(4) = 8, so f(g(4)) = f(8) = 11. Other order: f(4) = 7, so g(f(4)) = g(7) = 14. The two orders disagree at the point 4, so this pair does not commute. The answer is fg = 11; gf = 14."
+          - problem: "On the set {1, 2, 3, 4}, let f be the bijection that swaps 2 with 4 and fixes 1 and 3, and let g be the bijection that swaps 3 with 4 and fixes 1 and 2. Find f(g(2)) and g(f(2))."
+            answer: "fg = 4; gf = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fg"}, {"contract": {"kind": "exact"}, "name": "gf"}]}
+            solution_sketch: "Composition rule: f(g(2)) means apply g first, then f. Since g fixes 2, the inner value is g(2) = 2, and f swaps 2 with 4, so f(g(2)) = 4. Other order: f(2) = 4, and then g(4) = 3. The two orders disagree at the point 2, so the pair does not commute. The answer is fg = 4; gf = 3."
+          - problem: "On the positive real numbers, let f(x) = x^2 and g(x) = 2x; each of these is a bijection of that set. Find f(g(3)) and g(f(3))."
+            answer: "fg = 36; gf = 18"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fg"}, {"contract": {"kind": "exact"}, "name": "gf"}]}
+            solution_sketch: "Composition rule: f(g(3)) means apply g first, then f. One order: g(3) = 6, so f(g(3)) = f(6) = 36. Other order: f(3) = 9, so g(f(3)) = g(9) = 18. The two orders disagree at the point 3, so this pair does not commute. The answer is fg = 36; gf = 18."
+          - problem: "For each positive integer n, the bijections of the set {1, 2, ..., n} form a group under composition. A student claims that this group is abelian for every n. Give the smallest n for which the claim is false."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition: a group is abelian when every pair of its elements commutes. For n = 1 the group has only the identity, and for n = 2 its two bijections commute, so the claim holds there. For n = 3, the swap of 1 with 2 and the swap of 2 with 3 send 1 to 2 in one order and to 3 in the other order, so they do not commute. The answer is 3."
+          - problem: "In the group of all bijections of {1, 2, 3, 4} under composition, let h be the bijection that sends 1 to 2, 2 to 3, 3 to 4, and 4 to 1. Give the order of h, that is, the smallest positive k for which applying h k times gives the identity."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition: the order of an element is the smallest positive k for which the k-fold composition of h equals the identity. Track the point 1 through repeated copies of h: 1 goes to 2, then to 3, then to 4, and the fourth copy returns it to 1. After 1, 2 or 3 copies the point 1 is not back home, so no smaller k works. The answer is 4."
+          - problem: "Claim: the bijections f(x) = 2x and g(x) = x + 4 of the real numbers commute. Step 1: f(g(x)) = f(x + 4) = 2x + 8. Step 2: g(f(x)) = g(2x) = 2x + 8. Step 3: the two formulas agree for every x, so the two compositions are equal. Step 4: therefore composition of bijections of the real numbers is commutative. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid, since substituting x + 4 into f gives f(x + 4) = 2(x + 4) = 2x + 8. Step 2 is the first invalid step: g adds 4 to its input, so g(2x) = 2x + 4, not 2x + 8; the error replaces g by the doubling map. Step 3 inherits the mistake by declaring the two formulas equal, and Step 4 draws a false conclusion from it. The answer is Step 2."
+          - problem: "Write the full proof: the group of all bijections of the real numbers under composition is not abelian. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof. Step 1: the bijections of the real numbers form a group under composition, since the identity map is a bijection, a composition of two bijections is a bijection, and every bijection has an inverse. Step 2: take the explicit pair f(x) = x + 5 and g(x) = 3x; both are bijections of the real numbers. Step 3: evaluate one order pointwise, at x = 0: f(g(0)) = f(0) = 5. Step 4: evaluate the other order at the same point: g(f(0)) = g(5) = 15. Step 5: the values 5 and 15 differ, so f after g and g after f are different functions, and the pair does not commute. Step 6: one explicit non-commuting pair lives in the group, therefore the group is not abelian, which completes the proof."
         constraints: "one explicit non-commuting pair, both orders evaluated pointwise; composition examples only"
       - id: kp3
         name: "Reasoning inside abelian groups"

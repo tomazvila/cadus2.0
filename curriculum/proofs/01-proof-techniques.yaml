@@ -1970,12 +1970,34 @@ topics:
         name: "Polynomial vs. exponential and factorial"
         key_prerequisites: [induction-template]
         exemplars:
-          - problem: 'Prove: for all $n \ge 5$, $2^n > n^2$.'
-            answer: 'Base $n = 5$: $32 > 25$. Step: $2^{n+1} = 2 \cdot 2^n > 2n^2 \ge (n+1)^2$ for $n \ge 5$.'
-            solution_sketch: 'Base: $n = 5$, $32 > 25$. Step: assume $2^n > n^2$ for some $n \ge 5$. Then $2^{n+1} = 2 \cdot 2^n > 2n^2$. Since $n \ge 5$, $n^2 - 2n - 1 \ge 0$, so $2n^2 \ge n^2 + 2n + 1 = (n+1)^2$. Hence $2^{n+1} > (n+1)^2$. $\square$'
-          - problem: 'Prove: for all $n \ge 1$, $n! \ge 2^{n-1}$.'
-            answer: 'Base $n = 1$: $1 \ge 1$. Step: $(n+1)! = (n+1) \cdot n! \ge 2 \cdot 2^{n-1} = 2^n$ since $n + 1 \ge 2$.'
-            solution_sketch: 'Base: $1! = 1 = 2^0$. Step: assume $n! \ge 2^{n-1}$; multiply by $n + 1 \ge 2$ to get $(n+1)! \ge 2 \cdot 2^{n-1} = 2^n$. $\square$'
+          - problem: "To prove 2^n > n^2 by induction, the base must be large enough for the step inequality 2n^2 >= (n+1)^2 to hold for every later n. Find the smallest integer N >= 1 such that 2^N > N^2 and 2n^2 >= (n+1)^2 holds for every n >= N."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full statement: 2^n > n^2 for every n >= 5. Step 1, base check by substitution: N = 4 gives 2^4 = 16 and 4^2 = 16, so the strict inequality fails, while N = 5 gives 32 > 25. Step 2, step bound by algebra: 2n^2 - (n+1)^2 = n^2 - 2n - 1, which is nonnegative for every n >= 3 and so for every n >= 5. The answer is 5."
+          - problem: "For the induction that proves the factorial of n is at least 2^(n-1) for every n >= 1, the base value n = 1 gives two equal sides. Find the smallest integer n >= 1 for which the factorial of n is strictly larger than 2^(n-1)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full claim: the factorial of n is at least 2^(n-1) for every n >= 1. Step 1, base values by substitution: n = 1 gives 1 and 1, so the sides are equal and the strict inequality fails, and n = 2 gives 2 and 2, equal again. Step 2, next base value: n = 3 gives 6 and 4, so the strict inequality holds from there. The answer is 3."
+          - problem: "In the step of the induction that proves 3^n > n^3 one needs 3n^3 >= (n+1)^3. Expand the difference 3n^3 - (n+1)^3. Give the resulting polynomial in n."
+            answer: "2n^3-3n^2-3n-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the difference 3n^3 - (n+1)^3, the quantity that decides the step for 3^n > n^3. Step 1, expand the cube by the binomial rule: (n+1)^3 = n^3 + 3n^2 + 3n + 1. Step 2, subtract this from 3n^3 and collect like terms: 3n^3 - (n+1)^3 = 2n^3 - 3n^2 - 3n - 1. The answer is 2n^3-3n^2-3n-1."
+          - problem: "A student claims that 2^n > n^3 for every n >= 1 and checks only the first value. Find the smallest n >= 1 for which the claim is false."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full claim: 2^n > n^3 for every n >= 1. Step 1, test the base value by substitution: n = 1 gives 2^1 = 2 and 1^3 = 1, so the claim holds there. Step 2, test the next value: n = 2 gives 2^2 = 4 and 2^3 = 8, so the claim fails from here. The answer is 2."
+          - problem: "The claim is that 4^n > n^3 for every n >= 1. Step 1: for n = 1, 4 > 1. Step 2: suppose 4^k > k^3 for some k >= 1. Step 3: 4^(k+1) = 4 times 4^k > 4k^3 >= (k+1)^3. Step 4: hence 4^(k+1) > (k+1)^3. Which step is the first step that fails?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct base check by substitution: at n = 1 the claim reads 4 > 1. Step 2 is the induction hypothesis, stated correctly. Step 3 is the first invalid step: the bound 4k^3 >= (k+1)^3 fails at k = 1, because 4 >= 8 is false, and the step must hold for every k >= 1. Step 4 would follow only from a corrected Step 3 with a larger base. The answer is Step 3."
+          - problem: "The claim is that the factorial of n is greater than 2^n for every n >= N. Find the smallest integer N >= 1 such that the factorial of n is greater than 2^n for every n >= N."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full claim: the factorial of n is greater than 2^n for every n >= N. Step 1, base values by substitution: n = 3 gives 6 and 8, so the claim fails, while n = 4 gives 24 and 16, so it holds. Step 2, step bound by comparison: (n+1) times 2^n >= 2 times 2^n = 2^(n+1) for every n >= 1, because n + 1 >= 2. The answer is 4."
+          - problem: "Write the full proof: for all n >= 6, the factorial of n is greater than n times 2^n. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: at n = 6 the factorial of 6 is 720 and 6 times 2^6 is 384, so 720 > 384 and the base case holds. Induction hypothesis: assume the factorial of k is greater than k times 2^k for one integer k >= 6. Step: the factorial of k + 1 equals (k + 1) times the factorial of k, and by the hypothesis this is greater than (k + 1) times k times 2^k. Since k >= 6, the factor k is at least 2, so (k + 1) times k times 2^k is at least (k + 1) times 2 times 2^k, which equals (k + 1) times 2^(k+1). Combining the two bounds shows that the factorial of k + 1 is greater than (k + 1) times 2^(k+1). Conclusion: the base case holds and the step is valid, so by induction the factorial of n is greater than n times 2^n for every n >= 6."
         constraints: "verify the base is large enough; bound the step algebraically"
       - id: kp3
         name: "Bernoulli and harmonic bounds"
