@@ -600,21 +600,21 @@ topics:
         name: SAS and SSS similarity proofs
         key_prerequisites: [triangle-similarity-criteria, similar-triangles]
         exemplars:
-          - problem: '$D$ lies on $\overline{AB}$ and $E$ on $\overline{AC}$ with $AD = 3$, $AB = 9$, $AE = 4$, $AC = 12$. Which criterion shows $\triangle ADE \sim \triangle ABC$: AA, SAS similarity, or SSS similarity?'
-            answer: 'SAS similarity'
-            answer_contract: {kind: label, options: [[AA], ['SAS similarity'], ['SSS similarity']]}
-            solution_sketch: '$\frac{AD}{AB} = \frac{3}{9} = \frac{1}{3}$ and $\frac{AE}{AC} = \frac{4}{12} = \frac{1}{3}$, with $\angle A$ shared and included: SAS similarity.'
-          - problem: 'Triangle 1 has sides $6$, $8$, $10$; Triangle 2 has sides $9$, $12$, $15$. Which criterion shows the triangles similar: AA, SAS similarity, or SSS similarity?'
-            answer: 'SSS similarity'
-            answer_contract: {kind: label, options: [[AA], ['SAS similarity'], ['SSS similarity']]}
-            solution_sketch: '$\frac{9}{6} = \frac{12}{8} = \frac{15}{10} = \frac{3}{2}$: all three ratios equal, so SSS similarity.'
           - problem: 'In the configuration with $D$ on $\overline{AB}$ and $E$ on $\overline{AC}$, $AD = 2$, $AB = 8$, $AE = 3$, $AC = 12$. What is the common value of $\frac{AD}{AB}$ and $\frac{AE}{AC}$ as a fraction?'
             answer: '1/4'
             solution_sketch: '$\frac{2}{8} = \frac{1}{4}$ and $\frac{3}{12} = \frac{1}{4}$, so the triangles are similar by SAS similarity (shared $\angle A$).'
-          - problem: 'Triangle 1 has sides $5$, $7$, $9$; Triangle 2 has sides $10$, $14$, $18$. Are the triangles similar? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Each ratio is $\frac{10}{5} = \frac{14}{7} = \frac{18}{9} = 2$: all three side ratios agree, so SSS similarity.'
+          - problem: "In triangle ABC, point D lies on side AB and point E lies on side AC. You are given AD = 3, AB = 9, AE = x, and AC = 12. Angle A is the included angle between AD and AE in triangle ADE, and it is also the included angle between AB and AC in triangle ABC. Find x so that triangle ADE is similar to triangle ABC by SAS similarity."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: compute the side ratios. AD/AB = 3/9 = 1/3 and AE/AC = x/12. Step 2: apply the SAS similarity criterion, which uses the included angle A. Angle A is included between AD and AE in triangle ADE and between AB and AC in triangle ABC. Set the ratios equal: 1/3 = x/12. Step 3: solve for x: x = 4. The value of x is 4."
+          - problem: "Triangle 1 has side lengths 6, 8, and 10. Triangle 2 has side lengths 9, 12, and 15. The sides correspond in the order given. Determine the scale factor from Triangle 1 to Triangle 2."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: compute each corresponding side ratio. 9/6 = 3/2, 12/8 = 3/2, and 15/10 = 3/2. Step 2: apply the SSS similarity criterion: because all three ratios are equal, the triangles are similar. Step 3: read the common scale factor from the ratios. The scale factor from Triangle 1 to Triangle 2 is 3/2."
+          - problem: "Triangle RST has side lengths 5, 7, and 9. Triangle UVW is similar to triangle RST. The two shortest sides of triangle UVW are 10 and 14, corresponding to the two shortest sides of triangle RST. Find the length of the longest side of triangle UVW."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: compute the ratios of the given corresponding sides. 10/5 = 2 and 14/7 = 2. Step 2: apply the SSS similarity criterion: the equal ratios confirm the triangles are similar. Step 3: multiply the longest side of triangle RST by the scale factor. 9 * 2 = 18. The length of the longest side of triangle UVW is 18."
         constraints: "compute every ratio explicitly; the included angle must be identified for SAS"
     diagnostic_exemplar:
       problem: 'In $\triangle ABC$, $D$ lies on $\overline{AB}$ and $E$ on $\overline{AC}$ with $AD = 4$, $AB = 10$, $AE = 6$, and $AC = 15$. Which criterion shows $\triangle ADE \sim \triangle ABC$: AA, SAS similarity, or SSS similarity?'
@@ -760,14 +760,14 @@ topics:
         name: The converse and parallel-line transversal splits
         key_prerequisites: [similar-triangles]
         exemplars:
-          - problem: 'In $\triangle ABC$, $D$ on $\overline{AB}$ and $E$ on $\overline{AC}$ with $AD = 6$, $DB = 9$, $AE = 8$, $EC = 12$. Is $\overline{DE} \parallel \overline{BC}$? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$\frac{6}{9} = \frac{8}{12} = \frac{2}{3}$: equal ratios on both sides force the parallel, by the converse of the side-splitter theorem.'
-          - problem: 'In $\triangle RST$, $P$ on $\overline{RS}$ and $Q$ on $\overline{RT}$ with $RP = 5$, $PS = 10$, $RQ = 4$, and $QT = 6$. Is $\overline{PQ} \parallel \overline{ST}$? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: '$\frac{RP}{PS} = \frac{5}{10} = \frac{1}{2}$ but $\frac{RQ}{QT} = \frac{4}{6} = \frac{2}{3}$: the ratios differ, so the converse does not force the parallel.'
+          - problem: "In triangle ABC, D is on AB and E is on AC with AD = 6, DB = 9, AE = 8, and EC = 12. State whether DE is parallel to BC, and give the common value of AD/DB and AE/EC as a fraction."
+            answer: "verdict = yes; ratio = 2/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "ratio"}]}
+            solution_sketch: "The converse of the triangle proportionality theorem compares the two side ratios. Compute AD/DB = 6/9 = 2/3 and AE/EC = 8/12 = 2/3. The ratios are equal, so DE is parallel to BC. The answer is verdict = yes; ratio = 2/3."
+          - problem: "In triangle RST, P is on RS and Q is on RT with RP = 5, PS = 10, RQ = 4, and QT = 6. State whether PQ is parallel to ST, and give the value of RP/PS as a fraction."
+            answer: "verdict = no; ratio = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "ratio"}]}
+            solution_sketch: "The converse of the triangle proportionality theorem compares the two side ratios. Compute RP/PS = 5/10 = 1/2 and RQ/QT = 4/6 = 2/3. The ratios are not equal, so PQ is not parallel to ST. The answer is verdict = no; ratio = 1/2."
           - problem: 'Three parallel lines cut one transversal into segments of $5$ and $10$, and cut a second transversal with corresponding first segment $7$. Find the second segment.'
             answer: "14"
             solution_sketch: 'Parallel lines split transversals proportionally: $\frac{5}{10} = \frac{7}{x} \Rightarrow x = 14$.'

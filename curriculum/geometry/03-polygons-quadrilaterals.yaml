@@ -448,22 +448,22 @@ topics:
         name: Recognizing parallelograms
         key_prerequisites: [parallelogram-diagonals]
         exemplars:
-          - problem: 'The diagonals of a quadrilateral bisect each other. Must it be a parallelogram? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Diagonal bisection is a sufficient test for a parallelogram.'
-          - problem: 'A quadrilateral has one pair of congruent opposite sides and the other pair of opposite sides parallel. Must it be a parallelogram? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'An isosceles trapezoid satisfies this without being a parallelogram; the pair must be both parallel and congruent.'
-          - problem: 'A quadrilateral has both pairs of opposite sides congruent. Must it be a parallelogram? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Congruent opposite sides force both pairs to be parallel (a diagonal splits it into congruent triangles), so it is a parallelogram.'
-          - problem: 'A quadrilateral has exactly one pair of parallel sides. Must it be a parallelogram? Answer yes or no.'
-            answer: 'no'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'Exactly one parallel pair makes it a trapezoid, not a parallelogram.'
+          - problem: "In quadrilateral ABCD, diagonals AC and BD bisect each other at E. Given AE = 3x - 1 and CE = x + 5, state whether ABCD must be a parallelogram and find x."
+            answer: "verdict = yes; x = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "The quadrilateral ABCD has diagonals AC and BD bisecting each other at E. Step 1: apply the diagonal-bisection test, so ABCD must be a parallelogram and the verdict is yes. Step 2: since the diagonals bisect each other, AE = CE gives 3x - 1 = x + 5. Step 3: solve 2x = 6 to get x = 3. The wrong option no would deny the sufficient diagonal-bisection test. The answer is verdict = yes; x = 3."
+          - problem: "In quadrilateral ABCD, side AB is parallel to side CD and AB = CD = 7. Side AD = 5. State whether ABCD must be a parallelogram and give the length of BC."
+            answer: "verdict = yes; BC = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "BC"}]}
+            solution_sketch: "The quadrilateral ABCD has AB parallel to CD and both AB and CD equal to 7, with AD = 5. Step 1: use the one-pair-both-parallel-and-congruent test, so ABCD must be a parallelogram and the verdict is yes. Step 2: in a parallelogram opposite sides are congruent, so BC = AD = 5. The wrong option no would ignore that the given pair is both parallel and congruent. The answer is verdict = yes; BC = 5."
+          - problem: "In quadrilateral ABCD, AB = CD = 8 and AD = BC = 6. State whether ABCD must be a parallelogram and give the perimeter of ABCD."
+            answer: "verdict = yes; P = 28"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "P"}]}
+            solution_sketch: "The quadrilateral ABCD has AB = CD = 8 and AD = BC = 6. Step 1: apply the both-pairs-opposite-sides-congruent test, so ABCD must be a parallelogram and the verdict is yes. Step 2: the perimeter is 8 + 6 + 8 + 6 = 28. The wrong option no would miss that congruent opposite side pairs force a parallelogram. The answer is verdict = yes; P = 28."
+          - problem: "In quadrilateral ABCD, AB is parallel to CD and AD is parallel to BC. Angle B measures 70 degrees. State whether ABCD must be a parallelogram and find angle A."
+            answer: "verdict = yes; A = 110"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "A"}]}
+            solution_sketch: "The quadrilateral ABCD has AB parallel to CD and AD parallel to BC, with angle B = 70 degrees. Step 1: both pairs of opposite sides parallel is a defining test, so ABCD must be a parallelogram and the verdict is yes. Step 2: in a parallelogram consecutive angles are supplementary, so angle A = 180 - 70 = 110 degrees. The wrong option no would ignore the both-pairs-parallel test. The answer is verdict = yes; A = 110."
         constraints: "tests: both pairs of opposite sides parallel or congruent, one pair both parallel and congruent, diagonals bisecting each other"
     diagnostic_exemplar:
       problem: 'In parallelogram $ABCD$, $m\angle A = (2x + 30)^\circ$ and $m\angle C = (3x + 10)^\circ$, with $AB = x + 15$ and $BC = x - 5$. Find the perimeter of $ABCD$.'
