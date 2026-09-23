@@ -25,18 +25,30 @@ topics:
         name: Scalar fields and the axiom list
         key_prerequisites: [vectors-in-rn]
         exemplars:
-          - problem: 'The scalars of a vector space must form a field. What operations must always work in a field, and name three fields commonly used as scalars.'
-            answer: "Addition, subtraction, multiplication, and division by nonzero elements; examples Q, R, C"
-            answer_contract: {kind: none}
-            solution_sketch: 'A field is a number system closed under $+, -, \times$ and division by nonzero elements: $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{C}$ all qualify.'
-          - problem: 'Is the set of integers $\mathbb{Z}$ a field?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$2$ has no multiplicative inverse in $\mathbb{Z}$: $\frac{1}{2} \notin \mathbb{Z}$, so division fails.'
-          - problem: 'Verify the axiom $c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}$ in $\mathbb{R}^2$ for $c = 2$, $\mathbf{u} = (1, 3)$, $\mathbf{v} = (2, -1)$.'
-            answer: "Both sides equal (6, 4)"
-            answer_contract: {kind: none}
-            solution_sketch: 'Left: $2(3, 2) = (6, 4)$. Right: $(2, 6) + (4, -2) = (6, 4)$.'
+          - problem: "The scalars of a vector space must form a field, meaning addition, subtraction, multiplication, and division by nonzero elements all stay inside the set. Take the sets of integers, rationals, reals, and complex numbers with their usual operations. How many of these four sets are fields?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A field must be closed under addition, subtraction, multiplication, and division by nonzero elements (field requirements). The integers fail because 2 has no multiplicative inverse in the integers. The rationals, reals, and complex numbers each pass all four requirements, so the count is 3."
+          - problem: "The set of integers with its usual addition and multiplication is proposed as the scalar set of a vector space. Field membership is decided by one failing operation. State whether the integers form a field, and give the smallest positive integer that has no multiplicative inverse in the integers."
+            answer: "verdict = not; n = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["field"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
+            solution_sketch: "Check each field operation for the integers: sums, differences, and products of integers stay in the set, so those pass. Multiplicative inverses fail, since 1/2 is not an integer, and 2 is the smallest positive integer without an inverse in the set. Therefore the verdict is not, and the smallest such integer is 2."
+          - problem: "In R^2, the axiom c(u + v) = cu + cv is checked with c = 2, u = (1, -2), v = (0, 1), all entries integers. Compute the left-hand side c(u + v) and give the answer as (x, y)."
+            answer: "(2, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "First add the vectors by componentwise addition: u + v = (1, -2) + (0, 1) = (1, -1). Then scale by the scalar: c(u + v) = 2 * (1, -1) = (2, -2). The left-hand side of the distributivity axiom equals (2, -2)."
+          - problem: "In R^2, the axiom c(du) = (cd)u is checked with c = -1, d = 2, u = (-1, 0), all entries integers. Compute the left-hand side c(du) and give the answer as (x, y)."
+            answer: "(2, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "First scale the vector by the inner scalar: du = 2 * (-1, 0) = (-2, 0). Then apply the outer scalar: c(du) = -1 * (-2, 0) = (2, 0). The scalar associativity check gives (2, 0)."
+          - problem: "The nonnegative rational numbers with the usual addition and multiplication are proposed as the scalars of a vector space. Field membership is decided by one failing operation. Which field requirement fails for this set?"
+            answer: "additive inverses"
+            answer_contract: {"kind": "label", "options": [["closure under addition"], ["additive inverses"], ["multiplicative inverses"], ["commutativity of multiplication"]]}
+            solution_sketch: "Check each requirement. Sums of nonnegative rationals stay nonnegative, so closure under addition holds; each positive rational q has inverse 1/q, also nonnegative, so multiplicative inverses hold; products commute. The failing operation is additive inverses: for 1 there is no nonnegative w with 1 + w = 0. The wrong options fail as follows: closure under addition actually holds, multiplicative inverses actually hold, and commutativity of multiplication holds for all rationals. The correct answer is additive inverses."
+          - problem: "In R^2, the additive inverse axiom states that for each u there is a vector w with u + w = (0, 0). For u = (3, -1), find w and give the answer as (x, y)."
+            answer: "(-3, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The additive inverse axiom requires a vector w with u + w = (0, 0). Solve componentwise: 3 + x = 0 gives x = -3, and -1 + y = 0 gives y = 1. The required vector is (-3, 1)."
         constraints: "field membership decided by one failing operation; axiom checks in R^2 with integer entries in -3..3"
       - id: kp2
         name: Verifying and refuting the axioms in unfamiliar sets
@@ -58,14 +70,30 @@ topics:
         name: First consequences of the axioms
         key_prerequisites: [subspace-test]
         exemplars:
-          - problem: 'Using only the axioms, show that $0\mathbf{v} = \mathbf{0}$ in any vector space.'
-            answer: "0v = (0 + 0)v = 0v + 0v; adding the inverse of 0v to both sides gives 0 = 0v"
-            answer_contract: {kind: none}
-            solution_sketch: 'Write $0 = 0 + 0$, distribute, then cancel one copy of $0\mathbf{v}$ using its additive inverse.'
-          - problem: 'Using only the axioms (and $0\mathbf{v} = \mathbf{0}$), show that $(-1)\mathbf{v}$ is the additive inverse of $\mathbf{v}$.'
-            answer: "v + (-1)v = (1 + (-1))v = 0v = 0, so (-1)v is the inverse of v"
-            answer_contract: {kind: none}
-            solution_sketch: 'Combine the identity axiom $1\mathbf{v} = \mathbf{v}$ with distributivity over scalar addition.'
+          - problem: "Let V be R with the operations x ⊕ y = x + y - 1 and c ⊙ x = cx - c + 1. Find the zero vector of V."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let z be the zero vector of V. The identity axiom requires x ⊕ z = x for every real x, and the definition of ⊕ turns this into x + z - 1 = x, so z = 1. The scalar-zero axiom agrees, since 0 ⊙ x = 0·x - 0 + 1 = 1 for every x. Hence the zero vector of V is 1."
+          - problem: "Let V be R with the operations x ⊕ y = x + y + 3 and c ⊙ x = cx + 3c - 3. Find the additive inverse of 5 in V."
+            answer: "-11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let z be the zero vector of V. By the identity axiom x ⊕ z = x, so x + z + 3 = x and z = -3. The additive-inverse axiom says the inverse w of 5 satisfies 5 ⊕ w = z, that is 5 + w + 3 = -3. Solving gives w = -11, so the additive inverse of 5 in V is -11."
+          - problem: "In the complex numbers viewed as a real vector space, the axiom (-1)z = -z holds for every z. Let z = 4 - 7i. Compute (-1)z. Give the answer in the form a + bi."
+            answer: "-4+7i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The axiom (-1)z = -z says that multiplying a vector by the scalar -1 gives its additive inverse. For z = 4 - 7i the additive inverse is found by negating the real part and the imaginary part, using the inverse axiom in the plane. Therefore (-1)z = -4+7i."
+          - problem: "Let V be R^2 with (a, b) ⊕ (c, d) = (a + c, b + d + 1) and t ⊙ (a, b) = (ta, tb + t - 1). Find the zero vector of V. Give the answer as (x, y)."
+            answer: "(0,-1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let z = (p, q) be the zero vector of V. The identity axiom requires (a, b) ⊕ (p, q) = (a, b), and the definition of ⊕ gives (a + p, b + q + 1) = (a, b), so p = 0 and q = -1. The scalar-zero axiom agrees, since 0 ⊙ (a, b) = (0·a, 0·b + 0 - 1) = (0, -1). Hence the zero vector of V is (0,-1)."
+          - problem: "Let V be R^2 with (a, b) ⊕ (c, d) = (a + c, b + d + 1) and t ⊙ (a, b) = (ta, tb + t - 1). Find the additive inverse of (3, 4) in V. Give the answer as (x, y)."
+            answer: "(-3,-6)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Let z = (p, q) be the zero vector of V. The identity axiom (a, b) ⊕ (p, q) = (a, b) gives (a + p, b + q + 1) = (a, b), so z = (0, -1). The additive-inverse axiom requires (3, 4) ⊕ (u, v) = (0, -1), which gives 3 + u = 0 and 4 + v + 1 = -1. Hence (u, v) = (-3,-6), the additive inverse of (3, 4)."
+          - problem: "In a vector space V, vectors u and v satisfy x + 2u = 3v. Solve for x in terms of u and v."
+            answer: "3v - 2u"
+            answer_contract: {"kind": "function", "vars": ["u", "v"]}
+            solution_sketch: "Start from the equation x + 2u = 3v. The additive-inverse axiom lets us add the inverse of 2u to both sides, giving x + 2u + (-2u) = 3v + (-2u). Associativity and the inverse axiom reduce the left side to x, and the right side is 3v - 2u. Hence x = 3v - 2u."
         constraints: "two- or three-line axiom manipulations; each step must cite the axiom used"
     diagnostic_exemplar:
       problem: 'Let $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$. Identify the zero vector and the additive inverse of $x$, then verify the axiom $(c + d) \odot x = (c \odot x) \oplus (d \odot x)$.'
@@ -114,10 +142,22 @@ topics:
             answer: "[2,-1;3,2]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: 'Entrywise: $(2 - 0, 0 - 1; 4 - 1, 2 - 0)$.'
-          - problem: 'What is the zero vector of $P_3$? Of $M_{2 \times 2}$?'
-            answer: "The zero polynomial 0; the 2x2 zero matrix"
-            answer_contract: {kind: none}
-            solution_sketch: 'Adding either changes nothing, which is exactly the defining property of the zero vector.'
+          - problem: "In the polynomial space $P_3$, compute $3(x^3 - x + 2) - 2(x^3 - 2x + 1)$. Give the result as a polynomial in $x$."
+            answer: "x^3 + x + 4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Distribute each scalar over its polynomial: $3(x^3 - x + 2) = 3x^3 - 3x + 6$ and $-2(x^3 - 2x + 1) = -2x^3 + 4x - 2$. Polynomials in $P_3$ add coefficient-wise, so combine like powers of $x$: $3x^3 - 2x^3 = x^3$, $-3x + 4x = x$, and $6 - 2 = 4$. The result is x^3 + x + 4."
+          - problem: "In the matrix space $M_{2 \\times 2}$, let $A = \\begin{pmatrix}1&3\\\\1&0\\end{pmatrix}$, $B = \\begin{pmatrix}0&-1\\\\1&2\\end{pmatrix}$, $C = \\begin{pmatrix}2&1\\\\-1&0\\end{pmatrix}$. Compute $A + 2B - C$. Give the matrix as [a,b;c,d]."
+            answer: "[-1,0;4,4]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The space $M_{2 \\times 2}$ adds entrywise, so first scale: $2B = \\begin{pmatrix}0&-2\\\\2&4\\end{pmatrix}$. Then add entrywise: $A + 2B = \\begin{pmatrix}1&1\\\\3&4\\end{pmatrix}$. Subtract $C$ entrywise: $(1-2,\\,1-1;\\,3-(-1),\\,4-0) = \\begin{pmatrix}-1&0\\\\4&4\\end{pmatrix}$. The answer is [-1,0;4,4]."
+          - problem: "Let $V$ be the space of all real-valued functions with pointwise addition and scalar multiplication. For $f(x) = x^2 + x$ and $g(x) = x - 3$, compute $2f - g$ as a function of $x$. Give the answer as a polynomial in $x$."
+            answer: "2x^2 + x + 3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Scalar multiplication in a function space is pointwise: $2f(x) = 2x^2 + 2x$. Subtraction is also pointwise: $2f(x) - g(x) = 2x^2 + 2x - (x - 3)$. Collect terms: $2x^2 + (2x - x) + 3 = 2x^2 + x + 3$. The answer is 2x^2 + x + 3."
+          - problem: "In the polynomial space $P_3$, consider the combination $k(x^2 - 2x + 1) + (2x^2 - 4x + 2)$ with scalar $k$. Find the value of $k$ for which the result is the zero polynomial of $P_3$."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The zero polynomial of $P_3$ has every coefficient equal to $0$. Work coefficient-wise on $k(x^2 - 2x + 1) + (2x^2 - 4x + 2)$: the $x^2$ coefficient gives $k + 2 = 0$, the $x$ coefficient gives $-2k - 4 = 0$, and the constant gives $k + 2 = 0$; all three agree. The scalar is $k = -2$. The answer is -2."
         constraints: "P_n with n <= 3 and 2x2 matrices; integer coefficients in -4..4"
       - id: kp2
         name: The subspace test in abstract spaces
@@ -196,16 +236,28 @@ topics:
         name: Standard bases of polynomial and matrix spaces
         key_prerequisites: [polynomial-matrix-function-spaces, basis-dimension]
         exemplars:
-          - problem: 'Give the standard basis of $P_3$ and its dimension.'
-            answer: "{1, x, x^2, x^3}; dimension 4"
-            answer_contract: {kind: none}
-            solution_sketch: 'The monomials span (coefficients are the coordinates) and are independent (a zero polynomial has all coefficients $0$).'
           - problem: 'Find the coordinates of $2x^2 - x + 5$ relative to the basis $\{1, x, x^2\}$ of $P_2$.'
             answer: "(5, -1, 2)"
             solution_sketch: 'Read off the coefficients in basis order: constant $5$, then $-1$, then $2$.'
           - problem: 'What is the dimension of $M_{2 \times 3}$?'
             answer: "6"
             solution_sketch: 'The six matrices with a single entry $1$ form a basis; dimension $= 2 \cdot 3$.'
+          - problem: "The standard basis of $P_3$ is $\\{1, x, x^2, x^3\\}$. Consider the polynomial $4x^3 - x + 2$. Find its coordinates relative to this basis, in the order $1, x, x^2, x^3$, as (a, b, c, d)."
+            answer: "(2, -1, 0, 4)"
+            answer_contract: {"arity": 4, "kind": "coordinates"}
+            solution_sketch: "Step 1 (coordinate definition): coordinates relative to the standard basis are the coefficients in basis order. Step 2 (read off coefficients): the constant term is 2, the coefficient of x is -1, the coefficient of x^2 is 0, and the coefficient of x^3 is 4. The coordinates of 4x^3 - x + 2 are (2, -1, 0, 4)."
+          - problem: "The standard basis of $M_{2 \\times 2}$ consists of the four matrices $E_{11}, E_{12}, E_{21}, E_{22}$, each with a single entry $1$. Consider the matrix $\\begin{bmatrix} 1 & 3 \\\\ 0 & -2 \\end{bmatrix}$. Give its coordinates relative to this basis, in the order $E_{11}, E_{12}, E_{21}, E_{22}$, as (a, b, c, d)."
+            answer: "(1, 3, 0, -2)"
+            answer_contract: {"arity": 4, "kind": "coordinates"}
+            solution_sketch: "Step 1 (coordinate definition): a matrix expands as a sum of scalar multiples of the basis matrices, and the scalars are the coordinates. Step 2 (match entries to basis matrices): the (1,1) entry gives coefficient 1, the (1,2) entry gives 3, the (2,1) entry gives 0, and the (2,2) entry gives -2. The coordinates are (1, 3, 0, -2)."
+          - problem: "The coordinates of a polynomial in $P_2$ relative to the standard basis $\\{1, x, x^2\\}$ are $(3, 0, -4)$. Find the polynomial, writing it in the form $a + bx + cx^2$."
+            answer: "3 - 4x^2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (coordinate definition): coordinates $(c_1, c_2, c_3)$ relative to $\\{1, x, x^2\\}$ mean the polynomial is $c_1 + c_2 x + c_3 x^2$. Step 2 (substitute the coordinates): $3 + 0 \\cdot x + (-4) x^2 = 3 - 4x^2$. The polynomial is 3 - 4x^2."
+          - problem: "The standard basis of the polynomial space $P_n$ consists of the monomials $1, x, x^2, \\dots, x^n$. A certain space $P_n$ has a standard basis with 4 vectors. Find $n$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (standard basis of P_n): the standard basis is $\\{1, x, \\dots, x^n\\}$, which contains $n + 1$ monomials, so the dimension of $P_n$ is $n + 1$. Step 2 (solve): $n + 1 = 4$ gives $n = 3$. The answer is 3."
         constraints: "P_n with n <= 3, matrix spaces up to 2x3; coordinates are the coefficients, integers in -5..5"
       - id: kp2
         name: Nonstandard bases and independence in P_n
@@ -227,17 +279,33 @@ topics:
         name: The base field matters
         key_prerequisites: [basis-dimension, simplifying-radicals]
         exemplars:
-          - problem: 'Show that $\mathbb{Q}(\sqrt{2}) = \{a + b\sqrt{2} : a, b \in \mathbb{Q}\}$ is spanned by $\{1, \sqrt{2}\}$ as a vector space over $\mathbb{Q}$, and find its dimension.'
-            answer: "Every element is a(1) + b(sqrt(2)) with rational a, b, and 1, sqrt(2) are independent over Q since sqrt(2) is irrational; dimension 2"
-            answer_contract: {kind: none}
-            solution_sketch: 'Spanning is the definition of the set; if $a + b\sqrt{2} = 0$ with $b \neq 0$ then $\sqrt{2} = -a/b$ would be rational.'
           - problem: 'Find the coordinates of $4 - 3\sqrt{2}$ in the basis $\{1, \sqrt{2}\}$ of $\mathbb{Q}(\sqrt{2})$ over $\mathbb{Q}$.'
             answer: "(4, -3)"
             solution_sketch: '$4 - 3\sqrt{2} = 4 \cdot 1 + (-3)\sqrt{2}$: read off the rational coefficients.'
-          - problem: 'What is the dimension of $\mathbb{C}$ as a vector space over $\mathbb{R}$? And as a vector space over $\mathbb{C}$?'
-            answer: "2 over R (basis {1, i}); 1 over C (basis {1})"
-            answer_contract: {kind: none}
-            solution_sketch: 'Over $\mathbb{R}$, every $a + bi$ needs the two basis vectors $1, i$; over $\mathbb{C}$, every number is a $\mathbb{C}$-multiple of $1$.'
+          - problem: "Consider the field $Q(\\sqrt{5}) = \\{a + b\\sqrt{5} : a, b \\text{ rational}\\}$ as a vector space over $Q$, with basis $\\{1, \\sqrt{5}\\}$. Express $5 - 2\\sqrt{5}$ in this basis and give the answer as (a, b)."
+            answer: "(5, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (definition of coordinates): write the full element as $5 - 2\\sqrt{5} = a \\cdot 1 + b \\cdot \\sqrt{5}$ with rational $a, b$. Step 2 (read off coefficients): since $1$ and $\\sqrt{5}$ are independent over $Q$ because $\\sqrt{5}$ is irrational, the coefficients are unique, so $a = 5$ and $b = -2$. The coordinates are (5, -2)."
+          - problem: "Regard $C$ as a vector space over $R$ with basis $\\{1, i\\}$. Express $4 + 7i$ in this basis and give the answer as (a, b)."
+            answer: "(4, 7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (definition of coordinates): write the full element as $4 + 7i = a \\cdot 1 + b \\cdot i$ with real $a, b$. Step 2 (read off coefficients): $1$ and $i$ are independent over $R$ because $i$ is not a real number, so the coefficients are unique with $a = 4$ and $b = 7$. The coordinates are (4, 7)."
+          - problem: "Let $F = \\{a + b\\sqrt{2} : a, b \\text{ rational}\\}$, viewed as a vector space over the field of rational numbers. Find the dimension of $F$ over $Q$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (spanning): by its definition every element of $F$ is $a \\cdot 1 + b \\cdot \\sqrt{2}$, so the full set $F$ is spanned by $\\{1, \\sqrt{2}\\}$. Step 2 (independence): if $a + b\\sqrt{2} = 0$ with $b \\neq 0$, then $\\sqrt{2} = -a/b$ would be rational, a contradiction; and $1 \\neq 0$, so the set is independent. Step 3 (dimension): $\\{1, \\sqrt{2}\\}$ is a basis, so the dimension of $Q(\\sqrt{2})$ over $Q$ is 2."
+          - problem: "Consider the set of complex numbers as a vector space in two ways: first over the field of real numbers, then over the field of complex numbers. Determine both dimensions, giving the dimension over the reals first and then the dimension over the complexes."
+            answer: "overR = 2; overC = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "overR"}, {"contract": {"kind": "exact"}, "name": "overC"}]}
+            solution_sketch: "Step 1 (spanning over R): every complex number $a + bi$ is a real linear combination $a \\cdot 1 + b \\cdot i$, so $\\{1, i\\}$ spans $C$ over $R$. Step 2 (independence over R): if $a + bi = 0$ with $a, b$ real, then $bi = -a$ forces $b = 0$ since $i$ is not real, and then $a = 0$; so the dimension of $C$ over $R$ is 2. Step 3 (over C): every complex number $z$ is $z \\cdot 1$, a single complex multiple of $1$, so $\\{1\\}$ is a basis and the dimension of $C$ over $C$ is 1. The full comparison is overR = 2; overC = 1."
+          - problem: "In the vector space $Q(\\sqrt{3})$ over $Q$ with basis $\\{1, \\sqrt{3}\\}$, a vector has coordinate pair $(2, -1)$. Find the vector, writing it in the form $a + b\\sqrt{3}$ with rational $a, b$."
+            answer: "2 - sqrt(3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (meaning of coordinates): the pair $(2, -1)$ in the basis $\\{1, \\sqrt{3}\\}$ means the full element $2 \\cdot 1 + (-1) \\cdot \\sqrt{3}$. Step 2 (simplify): $2 \\cdot 1 - 1 \\cdot \\sqrt{3}$ combines to a single field element. The vector is 2 - sqrt(3)."
+          - problem: "Work in the vector space $Q(\\sqrt{2})$ over $Q$ with basis $\\{1, \\sqrt{2}\\}$. Compute the product $(3 + \\sqrt{2})(1 - \\sqrt{2})$ inside the field and give its coordinates in the basis $\\{1, \\sqrt{2}\\}$ as (a, b)."
+            answer: "(1, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (multiply in the field): expand the full product $(3 + \\sqrt{2})(1 - \\sqrt{2}) = 3 - 3\\sqrt{2} + \\sqrt{2} - 2$ using $\\sqrt{2} \\cdot \\sqrt{2} = 2$. Step 2 (collect terms): the rational part is $3 - 2 = 1$ and the $\\sqrt{2}$ part is $-3\\sqrt{2} + \\sqrt{2} = -2\\sqrt{2}$, giving $1 - 2\\sqrt{2}$. Step 3 (read off coordinates): in the basis $\\{1, \\sqrt{2}\\}$ the coefficients are unique because $\\sqrt{2}$ is irrational. The coordinates are (1, -2)."
         constraints: "fields limited to Q, Q(sqrt(d)) for d in {2, 3, 5}, R, C; independence arguments reduce to irrationality of sqrt(d) or to i not being real"
     diagnostic_exemplar:
       problem: 'Show that $\{1 + \sqrt{2},\ 1 - \sqrt{2}\}$ is a basis of $\mathbb{Q}(\sqrt{2})$ as a vector space over $\mathbb{Q}$, and find the coordinates of $4 - 3\sqrt{2}$ relative to it.'
@@ -280,18 +348,30 @@ topics:
         name: Linear functionals
         key_prerequisites: [linear-transformations]
         exemplars:
-          - problem: 'Is $f(x, y) = 2x - 3y$ a linear functional on $\mathbb{R}^2$? Compute $f(4, 1)$.'
-            answer: "Yes; f(4, 1) = 5"
-            answer_contract: {kind: none}
-            solution_sketch: 'It is a linear map into the scalars: $f$ respects sums and scalar multiples. $f(4, 1) = 8 - 3 = 5$.'
-          - problem: 'Is $g(x, y) = xy$ a linear functional on $\mathbb{R}^2$?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$g(2(1, 1)) = g(2, 2) = 4$ but $2g(1, 1) = 2$: scaling fails.'
-          - problem: 'On $P_2$, define the evaluation map $E_2(p) = p(2)$. Is $E_2$ a linear functional? Compute $E_2(x^2 + 1)$.'
-            answer: "Yes; E_2(x^2 + 1) = 5"
-            answer_contract: {kind: none}
-            solution_sketch: '$(p + q)(2) = p(2) + q(2)$ and $(cp)(2) = c\,p(2)$, so evaluation is linear; $2^2 + 1 = 5$.'
+          - problem: "State whether f(x, y) = 3x - 4y is a linear functional on R^2 and compute f(5, 2)."
+            answer: "verdict = valid; value = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The map f(x, y) = 3x - 4y is the object to test. Additivity holds because f((x,y)+(u,v)) = 3(x+u) - 4(y+v) = (3x-4y) + (3u-4v). Homogeneity holds because f(c(x,y)) = 3cx - 4cy = c(3x-4y). The option invalid is wrong because both linearity tests pass. Evaluate at the point: f(5,2) = 15 - 8 = 7. The result is verdict = valid; value = 7."
+          - problem: "State whether g(x, y) = xy is a linear functional on R^2 and compute g(2, 2)."
+            answer: "verdict = invalid; value = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The map g(x, y) = xy is the object to test. Test scaling with c = 2 at (1,1): g(2,2) = 4, while 2 g(1,1) = 2, so homogeneity fails. The option valid is wrong because the scaling test does not pass. The required point value is g(2,2) = 2*2 = 4. The result is verdict = invalid; value = 4."
+          - problem: "State whether E_3 is a linear functional on P_2 and compute E_3(x^2 - 2x)."
+            answer: "verdict = holds; value = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "The functional is E_3(p) = p(3). Evaluation is additive because (p+q)(3) = p(3)+q(3). It is homogeneous because (cp)(3) = c p(3). The option fails is wrong because both linearity tests hold. For p(x) = x^2 - 2x, E_3(p) = 9 - 6 = 3. The result is verdict = holds; value = 3."
+          - problem: "On R^3 define f(x, y, z) = 2x - y + 4z. Compute f(1, 2, 3)."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The functional is f(x, y, z) = 2x - y + 4z. Substitute the point (1, 2, 3) into the formula: f(1,2,3) = 2*1 - 2 + 4*3. Compute 2 - 2 + 12 = 12. The answer is 12."
+          - problem: "For h(x, y, z) = xyz, compute h(2, 2, 2) - 2h(1, 1, 1)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The expression is the scaling defect for h(x, y, z) = xyz. First evaluate h(2,2,2) = 2*2*2 = 8. Next evaluate h(1,1,1) = 1, so 2h(1,1,1) = 2. Subtract: 8 - 2 = 6. The value is 6."
+          - problem: "On P_2 define C(p) as the coefficient of x^2 in p. Compute C(6x^2 + x - 2)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The functional is C(p) = coefficient of x^2 in p. For p(x) = 6x^2 + x - 2, read the coefficient of x^2 directly. The coefficient is 6. The answer is 6."
         constraints: "functionals on R^2, R^3, or P_2; nonlinear counterexamples fail on one concrete scaling or sum"
       - id: kp2
         name: The dual basis
@@ -360,31 +440,59 @@ topics:
         name: Computing the B-matrix of a map
         key_prerequisites: [linear-transformations, coordinates-relative-basis]
         exemplars:
-          - problem: 'Let $T(x, y) = (y, x)$ and $B = \{(1, 1), (1, -1)\}$. Find $[T]_B$, the matrix of $T$ relative to $B$.'
-            answer: '$[T]_B = \begin{pmatrix}1&0\\0&-1\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Column $j$ is $[T(\mathbf{b}_j)]_B$: $T(1, 1) = (1, 1) = 1\mathbf{b}_1$ gives column $(1, 0)$; $T(1, -1) = (-1, 1) = -\mathbf{b}_2$ gives column $(0, -1)$.'
-          - problem: '$T$ has standard matrix $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$. Find $[T]_B$ for $B = \{(1, 1), (1, -1)\}$.'
-            answer: '$[T]_B = \begin{pmatrix}3&0\\0&1\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$T(1, 1) = (3, 3) = 3\mathbf{b}_1 \Rightarrow$ column $(3, 0)$; $T(1, -1) = (1, -1) = 1\mathbf{b}_2 \Rightarrow$ column $(0, 1)$. In the right basis this map is diagonal.'
-          - problem: 'In general, what is column $j$ of $[T]_B$?'
-            answer: "The B-coordinate vector of T(b_j), the image of the j-th basis vector"
-            answer_contract: {kind: none}
-            solution_sketch: 'Exactly as the standard matrix uses $T(\mathbf{e}_j)$ — but images are re-expressed in $B$-coordinates.'
+          - problem: "Let T(x, y) = (x, -y) and B = {(1, 1), (1, -1)}. Give [T]_B as [a,b;c,d]."
+            answer: "[0,1;1,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 1) = (1, -1) = 0(1, 1) + 1(1, -1), so column 1 is (0, 1). Step 2: T(1, -1) = (1, 1) = 1(1, 1) + 0(1, -1), so column 2 is (1, 0). The matrix is [0,1;1,0]."
+          - problem: "A map T sends (1, 0) to (3, 1) and (0, 1) to (1, 3). With B = {(1, 1), (1, -1)}, give [T]_B as [a,b;c,d]."
+            answer: "[4,0;0,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 1) = T(1, 0) + T(0, 1) = (4, 4) = 4(1, 1) + 0(1, -1), so column 1 is (4, 0). Step 2: T(1, -1) = T(1, 0) - T(0, 1) = (2, -2) = 0(1, 1) + 2(1, -1), so column 2 is (0, 2). The matrix is [4,0;0,2]."
+          - problem: "Let T(x, y) = (x + y, x - y). With B = {(1, 1), (1, -1)}, give [T]_B as [a,b;c,d]."
+            answer: "[1,1;1,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 1) = (2, 0) = 1(1, 1) + 1(1, -1), so column 1 is (1, 1). Step 2: T(1, -1) = (0, 2) = 1(1, 1) - 1(1, -1), so column 2 is (1, -1). The matrix is [1,1;1,-1]."
+          - problem: "Let T(x, y) = (2x + y, x + 2y). With B = {(1, 0), (1, 1)}, give [T]_B as [a,b;c,d]."
+            answer: "[1,0;1,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 0) = (2, 1) = 1(1, 0) + 1(1, 1), so column 1 is (1, 1). Step 2: T(1, 1) = (3, 3) = 0(1, 0) + 3(1, 1), so column 2 is (0, 3). The matrix is [1,0;1,3]."
+          - problem: "Let T(x, y) = (x - y, y). With B = {(1, 0), (1, 1)}, give [T]_B as [a,b;c,d]."
+            answer: "[1,-1;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 0) = (1, 0) = 1(1, 0) + 0(1, 1), so column 1 is (1, 0). Step 2: T(1, 1) = (0, 1) = -1(1, 0) + 1(1, 1), so column 2 is (-1, 1). The matrix is [1,-1;0,1]."
+          - problem: "Let T(x, y) = (x + 2y, 2x + y). With B = {(1, 1), (1, -1)}, give [T]_B as [a,b;c,d]."
+            answer: "[3,0;0,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Use the column rule: column j is the B-coordinate vector of T of the j-th basis vector. Step 1: T(1, 1) = (3, 3) = 3(1, 1) + 0(1, -1), so column 1 is (3, 0). Step 2: T(1, -1) = (-1, 1) = 0(1, 1) - 1(1, -1), so column 2 is (0, -1). The matrix is [3,0;0,-1]."
         constraints: "maps on R^2; bases {(1,1),(1,-1)} or with 0/1 entries; each T(b_j) has integer B-coordinates found by inspection or a 2x2 solve"
       - id: kp2
         name: Two bases give similar matrices
         key_prerequisites: [change-of-basis, linear-transformations]
         exemplars:
-          - problem: '$T$ has standard matrix $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$ and $B = \{(1, 1), (1, -1)\}$. Compute $[T]_B = P_B^{-1}AP_B$ and confirm it matches the column-by-column computation.'
-            answer: '$[T]_B = \begin{pmatrix}3&0\\0&1\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$P_B = \begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $P_B^{-1} = \begin{pmatrix}1/2&1/2\\1/2&-1/2\end{pmatrix}$; $AP_B = \begin{pmatrix}3&1\\3&-1\end{pmatrix}$, then $P_B^{-1}(AP_B) = \begin{pmatrix}3&0\\0&1\end{pmatrix}$.'
-          - problem: 'The same map $T$ is represented by $M$ in basis $B$ and by $M''$ in basis $C$. How are $M$ and $M''$ related?'
-            answer: "M' = P^{-1} M P where P = P_B^{-1} P_C converts C-coordinates to B-coordinates: the two matrices are similar"
-            answer_contract: {kind: none}
-            solution_sketch: 'Route through standard coordinates: $[T]_C = P_C^{-1}AP_C = (P_B^{-1}P_C)^{-1}(P_B^{-1}AP_B)(P_B^{-1}P_C)$. Similar matrices are the same map seen in different bases.'
+          - problem: "Let T be the linear map with standard matrix A = [2,3;1,4] and let B = {(1,1),(1,-1)}. Give the matrix [T]_B as [a,b;c,d]."
+            answer: "[5,-2;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Change-of-basis matrix P_B = [1,1;1,-1] has inverse [1/2,1/2;1/2,-1/2]. First product A P_B = [2,3;1,4] [1,1;1,-1] = [5,-1;5,-3]. Second product P_B inverse times that gives [5,-2;0,1]. The matrix is [5,-2;0,1]."
+          - problem: "Let T have matrix M = [4,1;2,3] in the standard basis B = {(1,0),(0,1)}, and let C = {(1,0),(1,2)}. Give the matrix [T]_C as [a,b;c,d]."
+            answer: "[3,2;1,4]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Change-of-basis matrix from C-coordinates to B-coordinates is P = [1,1;0,2], with inverse [1,-1/2;0,1/2]. First product M P = [4,1;2,3] [1,1;0,2] = [4,6;2,8]. Second product P inverse times that gives [3,2;1,4]. The matrix is [3,2;1,4]."
+          - problem: "Let T have standard matrix A = [1,3;2,1] and let B = {(1,1),(1,-1)}. Find the entry in the first row and second column of [T]_B as a fraction."
+            answer: "-1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Change-of-basis matrix P_B = [1,1;1,-1] has inverse [1/2,1/2;1/2,-1/2]. Product A P_B = [1,3;2,1] [1,1;1,-1] = [4,-2;3,1]. Then P_B inverse times that product is [7/2,-1/2;1/2,-3/2]. The first row and second column entry is -1/2."
+          - problem: "Let T have matrix M = [3,1;2,4] in the standard basis B = {(1,0),(0,1)}, and let C = {(1,1),(1,-1)}. Give the matrix [T]_C as [a,b;c,d]."
+            answer: "[5,0;-1,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Change-of-basis matrix from C-coordinates to B-coordinates is P_C = [1,1;1,-1], with inverse [1/2,1/2;1/2,-1/2]. First product M P_C = [3,1;2,4] [1,1;1,-1] = [4,2;6,-2]. Second product P_C inverse times that gives [5,0;-1,2]. The matrix is [5,0;-1,2]."
+          - problem: "Let T be the linear map with standard matrix A = [1,2;0,3] and let B = {(1,2),(1,0)}. Give the matrix [T]_B as [a,b;c,d]."
+            answer: "[3,0;2,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Change-of-basis matrix P_B = [1,1;2,0], and its inverse is [0,1/2;1,-1/2]. First product A P_B = [1,2;0,3] [1,1;2,0] = [5,1;6,0]. Second product P_B inverse times that gives [3,0;2,1]. The matrix is [3,0;2,1]."
+          - problem: "The map T has standard matrix A = [2,0;1,3] and basis B = {(1,1),(0,1)}. Determine its matrix in basis B as [a,b;c,d]."
+            answer: "[2,0;2,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Change-of-basis matrix P_B = [1,0;1,1], with inverse [1,0;-1,1]. First product A P_B = [2,0;1,3] [1,0;1,1] = [2,0;4,3]. Second product P_B inverse times that gives [2,0;2,3]. The matrix is [2,0;2,3]."
         constraints: "2x2 with basis vectors from {(1,1),(1,-1),(1,0),(0,1),(1,2)}; P_B inverse has half-integer entries at worst; conjugation done as two matrix products"
       - id: kp3
         name: Matrices of maps on polynomial spaces

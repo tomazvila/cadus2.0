@@ -1106,10 +1106,26 @@ topics:
             answer: "[1,7;0,8]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$A^3 = PD^3P^{-1}$ with $D^3 = \mathrm{diag}(1, 8)$ and $P^{-1} = \begin{pmatrix}1&-1\\0&1\end{pmatrix}$; multiply out.'
-          - problem: 'If $A = PDP^{-1}$ with $D = \mathrm{diag}(2, 3)$, what is $D^4$?'
-            answer: '$\mathrm{diag}(16, 81)$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Powers of a diagonal matrix are entrywise powers.'
+          - problem: "If $A = PDP^{-1}$ with $D = \\begin{pmatrix}2&0\\\\0&3\\end{pmatrix}$, what is $D^4$? Give the matrix as [a,b;c,d]."
+            answer: "[16,0;0,81]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Full object: $D = \\begin{pmatrix}2&0\\\\0&3\\end{pmatrix}$. Step 1 (power of a diagonal matrix): raise each diagonal entry to the 4th power, $2^4 = 16$ and $3^4 = 81$; the off-diagonal zeros stay zero. Step 2: collect the entries, $D^4 = \\begin{pmatrix}16&0\\\\0&81\\end{pmatrix}$. The key is [16,0;0,81]."
+          - problem: "Using $A = PDP^{-1}$ with $P = \\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}$, $D = \\begin{pmatrix}2&0\\\\0&-1\\end{pmatrix}$, compute $A^3$. Give the matrix as [a,b;c,d]."
+            answer: "[8,-18;0,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Full factorization: $A^3 = PD^3P^{-1}$ with $P = \\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}$ and $D = \\begin{pmatrix}2&0\\\\0&-1\\end{pmatrix}$. Step 1 (power of a diagonal matrix): $D^3 = \\begin{pmatrix}8&0\\\\0&-1\\end{pmatrix}$. Step 2 (2x2 inverse formula): $P^{-1} = \\begin{pmatrix}1&-2\\\\0&1\\end{pmatrix}$. Step 3 (matrix multiplication): $PD^3 = \\begin{pmatrix}8&-2\\\\0&-1\\end{pmatrix}$, then $\\begin{pmatrix}8&-2\\\\0&-1\\end{pmatrix}\\begin{pmatrix}1&-2\\\\0&1\\end{pmatrix} = \\begin{pmatrix}8&-18\\\\0&-1\\end{pmatrix}$. The key is [8,-18;0,-1]."
+          - problem: "Using $A = PDP^{-1}$ with $P = \\begin{pmatrix}1&0\\\\3&1\\end{pmatrix}$, $D = \\begin{pmatrix}3&0\\\\0&2\\end{pmatrix}$, compute $A^4$. Give the matrix as [a,b;c,d]."
+            answer: "[81,0;195,16]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Full factorization: $A^4 = PD^4P^{-1}$ with $P = \\begin{pmatrix}1&0\\\\3&1\\end{pmatrix}$, $D = \\begin{pmatrix}3&0\\\\0&2\\end{pmatrix}$. Step 1 (power of a diagonal matrix): $D^4 = \\mathrm{diag}(81,16)$. Step 2 (2x2 inverse formula): $P^{-1} = \\begin{pmatrix}1&0\\\\-3&1\\end{pmatrix}$. Step 3 (matrix multiplication): $PD^4 = \\begin{pmatrix}81&0\\\\243&16\\end{pmatrix}$, so $PD^4P^{-1} = \\begin{pmatrix}81&0\\\\243-48&16\\end{pmatrix} = \\begin{pmatrix}81&0\\\\195&16\\end{pmatrix}$. The key is [81,0;195,16]."
+          - problem: "The matrix $A = \\begin{pmatrix}3&1\\\\-2&0\\end{pmatrix}$ has eigenvector $(1,-1)$ for eigenvalue $2$ and eigenvector $(1,-2)$ for eigenvalue $1$. Use the diagonalization $A = PDP^{-1}$ to compute $A^3$. Give the matrix as [a,b;c,d]."
+            answer: "[15,7;-14,-6]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Full object: $A = \\begin{pmatrix}3&1\\\\-2&0\\end{pmatrix}$ with eigenvalues $2, 1$ and eigenvectors $(1,-1), (1,-2)$. Step 1 (diagonalization): $P = \\begin{pmatrix}1&1\\\\-1&-2\\end{pmatrix}$, $D = \\mathrm{diag}(2,1)$, and since $\\det P = -1$, $P^{-1} = \\begin{pmatrix}2&1\\\\-1&-1\\end{pmatrix}$. Step 2 (power of a diagonal matrix): $D^3 = \\mathrm{diag}(8,1)$. Step 3 (matrix multiplication): $PD^3 = \\begin{pmatrix}8&1\\\\-8&-2\\end{pmatrix}$, so $PD^3P^{-1} = \\begin{pmatrix}16-1&8-1\\\\-16+2&-8+2\\end{pmatrix} = \\begin{pmatrix}15&7\\\\-14&-6\\end{pmatrix}$. The key is [15,7;-14,-6]."
+          - problem: "Using $A = PDP^{-1}$ with $P = \\begin{pmatrix}1&0\\\\2&1\\end{pmatrix}$ and $D = \\begin{pmatrix}-1&0\\\\0&2\\end{pmatrix}$, find the entry in row 2, column 1 of $A^4$."
+            answer: "-30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full factorization: $A^4 = PD^4P^{-1}$ with $P = \\begin{pmatrix}1&0\\\\2&1\\end{pmatrix}$, $D = \\begin{pmatrix}-1&0\\\\0&2\\end{pmatrix}$. Step 1 (power of a diagonal matrix): $D^4 = \\mathrm{diag}(1,16)$. Step 2 (2x2 inverse formula): $P^{-1} = \\begin{pmatrix}1&0\\\\-2&1\\end{pmatrix}$. Step 3 (matrix multiplication): $PD^4 = \\begin{pmatrix}1&0\\\\2&16\\end{pmatrix}$, so $PD^4P^{-1} = \\begin{pmatrix}1&0\\\\2-32&16\\end{pmatrix} = \\begin{pmatrix}1&0\\\\-30&16\\end{pmatrix}$. The row 2, column 1 entry is $-30$, so the key is -30."
         constraints: "exponents 3-5; diagonal entries in -2..3 so powers stay small"
     diagnostic_exemplar:
       problem: 'Diagonalize $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$ as $A = PDP^{-1}$, then use the factorization to compute $A^3$.'

@@ -129,14 +129,30 @@ topics:
         name: Orthogonal diagonalization of a 2x2 symmetric matrix
         key_prerequisites: [diagonalization, orthogonal-matrices]
         exemplars:
-          - problem: 'Orthogonally diagonalize $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$: find an orthogonal $Q$ and diagonal $D$ with $A = QDQ^T$.'
-            answer: '$Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$, $D = \begin{pmatrix}1&0\\0&3\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Eigenpairs $\lambda = 1, \mathbf{v} = (1, -1)$ and $\lambda = 3, \mathbf{v} = (1, 1)$; normalize each eigenvector by $\sqrt{2}$ and place them as the columns of $Q$ in the order of $D$.'
-          - problem: 'Orthogonally diagonalize $A = \begin{pmatrix}5&3\\3&5\end{pmatrix}$.'
-            answer: '$Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$, $D = \begin{pmatrix}2&0\\0&8\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\lambda = 2$ with $(1, -1)$ and $\lambda = 8$ with $(1, 1)$; the normalized eigenvectors are orthonormal because $A$ is symmetric.'
+          - problem: "Orthogonally diagonalize A = [[4,3],[3,4]]. Let Q have unit eigenvectors as columns, the first column for the smaller eigenvalue with positive top-left entry, and let D have the smaller eigenvalue first. Give the six entries as a, b, c, d, e, f, where Q = [[a,b],[c,d]] and D = [[e,0],[0,f]]."
+            answer: "a = sqrt(2)/2; b = sqrt(2)/2; c = -sqrt(2)/2; d = sqrt(2)/2; e = 1; f = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}, {"contract": {"kind": "exact"}, "name": "d"}, {"contract": {"kind": "exact"}, "name": "e"}, {"contract": {"kind": "exact"}, "name": "f"}]}
+            solution_sketch: "The matrix A = [[4,3],[3,4]] is symmetric, so the spectral theorem gives an orthogonal diagonalization. The eigenvalues are a-b = 1 and a+b = 7, so D = [[1,0],[0,7]]. The eigenvectors are (1,-1) for 1 and (1,1) for 7; normalizing by sqrt(2) gives Q = [[sqrt(2)/2, sqrt(2)/2],[-sqrt(2)/2, sqrt(2)/2]]. The answer is a = sqrt(2)/2; b = sqrt(2)/2; c = -sqrt(2)/2; d = sqrt(2)/2; e = 1; f = 7."
+          - problem: "Orthogonally diagonalize A = [[6,2],[2,6]]. Let Q have unit eigenvectors as columns, the first column for the smaller eigenvalue with positive top-left entry, and let D have the smaller eigenvalue first. Give the six entries as a, b, c, d, e, f, where Q = [[a,b],[c,d]] and D = [[e,0],[0,f]]."
+            answer: "a = sqrt(2)/2; b = sqrt(2)/2; c = -sqrt(2)/2; d = sqrt(2)/2; e = 4; f = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "c"}, {"contract": {"kind": "exact"}, "name": "d"}, {"contract": {"kind": "exact"}, "name": "e"}, {"contract": {"kind": "exact"}, "name": "f"}]}
+            solution_sketch: "The matrix A = [[6,2],[2,6]] is symmetric, so the spectral theorem gives an orthogonal diagonalization. The eigenvalues are a-b = 4 and a+b = 8, so D = [[4,0],[0,8]]. The eigenvectors are (1,-1) for 4 and (1,1) for 8; normalizing by sqrt(2) gives Q = [[sqrt(2)/2, sqrt(2)/2],[-sqrt(2)/2, sqrt(2)/2]]. The answer is a = sqrt(2)/2; b = sqrt(2)/2; c = -sqrt(2)/2; d = sqrt(2)/2; e = 4; f = 8."
+          - problem: "Orthogonally diagonalize A = [[7,2],[2,7]]. Give the diagonal matrix D in A = Q D Q^T with the smaller eigenvalue first, as [a,b;c,d]."
+            answer: "[5,0;0,9]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The symmetric matrix A = [[7,2],[2,7]] has eigenvalues 7-2=5 and 7+2=9. The spectral theorem gives an orthogonal diagonalization with D containing the eigenvalues on its diagonal. Ordering the smaller eigenvalue first gives D = [[5,0],[0,9]]. The answer is [5,0;0,9]."
+          - problem: "Orthogonally diagonalize A = [[8,5],[5,8]]. Give the two eigenvalues of A in increasing order as a list."
+            answer: "3, 13"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The matrix A = [[8,5],[5,8]] is symmetric. For a matrix [[a,b],[b,a]], the eigenvalues are a-b and a+b, so here they are 8-5=3 and 8+5=13. These eigenvalues form the diagonal of D in the orthogonal diagonalization. The answer is 3, 13."
+          - problem: "Orthogonally diagonalize A = [[9,4],[4,9]]. Give the four entries of the orthogonal matrix Q whose first column is the unit eigenvector for the smaller eigenvalue, with positive first entry, as q11, q12, q21, q22, where Q = [[q11,q12],[q21,q22]]."
+            answer: "q11 = sqrt(2)/2; q12 = sqrt(2)/2; q21 = -sqrt(2)/2; q22 = sqrt(2)/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "q11"}, {"contract": {"kind": "exact"}, "name": "q12"}, {"contract": {"kind": "exact"}, "name": "q21"}, {"contract": {"kind": "exact"}, "name": "q22"}]}
+            solution_sketch: "The symmetric matrix A = [[9,4],[4,9]] has eigenvalues 9-4=5 and 9+4=13. The unit eigenvector for the smaller eigenvalue 5 is (1,-1)/sqrt(2) = (sqrt(2)/2, -sqrt(2)/2), and for 13 it is (1,1)/sqrt(2) = (sqrt(2)/2, sqrt(2)/2). Thus Q = [[sqrt(2)/2, sqrt(2)/2],[-sqrt(2)/2, sqrt(2)/2]]. The answer is q11 = sqrt(2)/2; q12 = sqrt(2)/2; q21 = -sqrt(2)/2; q22 = sqrt(2)/2."
+          - problem: "For the symmetric matrix A = [[10,3],[3,10]], find the larger eigenvalue and its unit eigenvector with positive first entry. Give the eigenvalue and the vector as (x, y), using lam for the eigenvalue and v for the vector."
+            answer: "lam = 13; v = (sqrt(2)/2, sqrt(2)/2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lam"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "v"}]}
+            solution_sketch: "The symmetric matrix A = [[10,3],[3,10]] has eigenvalues 10-3=7 and 10+3=13. The larger eigenvalue is 13, and its eigenvector is (1,1). Normalizing gives (1,1)/sqrt(2) = (sqrt(2)/2, sqrt(2)/2). The answer is lam = 13; v = (sqrt(2)/2, sqrt(2)/2)."
         constraints: "2x2 symmetric matrices of the form [[a, b], [b, a]] so eigenvectors are (1, 1) and (1, -1); eigenvalues integers"
       - id: kp3
         name: Using the factorization A = QDQ^T
@@ -311,14 +327,26 @@ topics:
           - problem: 'A $3 \times 3$ matrix has singular values $3, 1, 0$. What is its rank?'
             answer: "2"
             solution_sketch: 'The rank equals the number of nonzero singular values.'
-          - problem: '$A = \begin{pmatrix}0&3\\1&0\end{pmatrix}$ has the SVD $U = I$, $\Sigma = \mathrm{diag}(3, 1)$, $V^T = \begin{pmatrix}0&1\\1&0\end{pmatrix}$. Find the best rank-1 approximation $A_1 = \sigma_1\mathbf{u}_1\mathbf{v}_1^T$.'
-            answer: '$A_1 = \begin{pmatrix}0&3\\0&0\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{u}_1 = (1, 0)$, $\mathbf{v}_1 = (0, 1)$: $A_1 = 3\begin{pmatrix}1\\0\end{pmatrix}(0\ \ 1) = \begin{pmatrix}0&3\\0&0\end{pmatrix}$. The discarded part $A - A_1$ has size $\sigma_2 = 1$: keeping the top singular pieces is the best low-rank compression.'
-          - problem: '$A = \begin{pmatrix}1&1\\1&1\end{pmatrix}$ has $\sigma_1 = 2$ with $\mathbf{u}_1 = \mathbf{v}_1 = \frac{1}{\sqrt{2}}(1, 1)$, and $\sigma_2 = 0$. Verify that $\sigma_1\mathbf{u}_1\mathbf{v}_1^T$ reproduces $A$ exactly.'
-            answer: "sigma_1 u_1 v_1^T = 2 * (1/2) [[1,1],[1,1]] = A: a rank-1 matrix equals its own rank-1 approximation"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{u}_1\mathbf{v}_1^T = \frac{1}{2}\begin{pmatrix}1&1\\1&1\end{pmatrix}$; multiplying by $\sigma_1 = 2$ gives $A$. With $\sigma_2 = 0$ there is nothing left to discard.'
+          - problem: "A 2 x 2 matrix has first singular triple sigma1 = 2, u1 = (1, -1)/sqrt(2), v1 = (1, 1)/sqrt(2). Find its best rank-1 approximation sigma1 u1 v1^T. Give the matrix as [a,b;c,d]."
+            answer: "[1,1;-1,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1, outer product rule: u1 v1^T = [[1/2, 1/2],[-1/2, -1/2]]. Step 2, multiply by sigma1 = 2 to get A1 = [[1, 1],[-1, -1]]. So the best rank-1 approximation is [1,1;-1,-1]."
+          - problem: "A 2 x 2 matrix has sigma1 = 2 and sigma2 = 0, with u1 = (1, 1)/sqrt(2) and v1 = (1, 1)/sqrt(2). Compute its best rank-1 approximation sigma1 u1 v1^T. Give the matrix as [a,b;c,d]."
+            answer: "[1,1;1,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1, outer product rule: u1 v1^T = [[1/2, 1/2],[1/2, 1/2]]. Step 2, multiply by sigma1 = 2 to get A1 = [[1, 1],[1, 1]]. Because sigma2 = 0 this approximation is exact, so the best rank-1 approximation is [1,1;1,1]."
+          - problem: "A 4 x 4 matrix has singular values 5, 3, 0, 0 in decreasing order. Determine the rank of the matrix."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, rank rule: the rank equals the number of singular values that are not zero. Step 2, inspect the list 5, 3, 0, 0 and count the nonzero values 5 and 3. So the rank is 2."
+          - problem: "A 5 x 5 data matrix has singular values 6, 5, 2, 0, 0. The number of nonzero singular values equals the rank. Compute the rank of the matrix."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, rank rule: for an SVD the rank is the number of nonzero singular values. Step 2, count the nonzero values in 6, 5, 2, 0, 0, which are 6, 5 and 2. So the rank is 3."
+          - problem: "A 2 x 2 matrix has sigma1 = 3 with u1 = (0, 1) and v1 = (1, 0). Find its best rank-1 approximation sigma1 u1 v1^T. Give the matrix as [a,b;c,d]."
+            answer: "[0,0;3,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1, outer product rule: u1 v1^T = [[0, 0],[1, 0]]. Step 2, multiply by sigma1 = 3 to get the best rank-1 approximation [[0, 0],[3, 0]]. So the best rank-1 approximation is [0,0;3,0]."
         constraints: "SVD data given or carried over from kp2-scale computations; rank read off the sigma list; rank-1 term computed as an explicit outer product with entries in -3..3"
     diagnostic_exemplar:
       problem: 'For $A = \begin{pmatrix}0&4\\2&0\end{pmatrix}$, find the singular values, an SVD $A = U\Sigma V^T$, and the rank of $A$.'

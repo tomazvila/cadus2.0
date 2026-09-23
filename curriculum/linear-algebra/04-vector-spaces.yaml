@@ -1140,6 +1140,22 @@ topics:
           - problem: 'Find the least-squares line $y = a + bx$ through $(-1, 2)$, $(0, 0)$, $(1, 4)$.'
             answer: "y = 2 + x"
             solution_sketch: '$a = \frac{2 + 0 + 4}{3} = 2$; $b = \frac{-2 + 0 + 4}{2} = 1$. Residuals $(1, -2, 1)$ are orthogonal to both columns of $A$.'
+          - problem: "Find the least-squares line $y = a + bx$ through $(-1, 3)$, $(0, 1)$ and $(1, 5)$. Give the line in the form $a + bx$ as a function of $x$."
+            answer: "x + 3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The design matrix has columns (1, 1, 1) and (-1, 0, 1); since the x-values are symmetric about 0, the columns are orthogonal and the normal equations decouple with A^T A = diag(3, 2). Intercept step: a = (3 + 1 + 5)/3 = 3. Slope step: b = ((-1)(3) + (0)(1) + (1)(5))/2 = 1. The least-squares line is y = 3 + x, written as a function of x: x + 3."
+          - problem: "A tank holds 3, 0 and 6 liters at times $t = -1$, $0$ and $1$. Fit a least-squares line $h = a + bt$ to these three measurements. Give the line in the form $a + bt$ as a function of $t$."
+            answer: "3 + 3t/2"
+            answer_contract: {"kind": "function", "vars": ["t"]}
+            solution_sketch: "The times -1, 0, 1 are symmetric about 0, so the normal equations decouple and A^T A = diag(3, 2). Intercept step: a = (3 + 0 + 6)/3 = 3. Slope step: b = ((-1)(3) + (0)(0) + (1)(6))/2 = 3/2. The fitted line is h = 3 + (3/2)t, that is, 3 + 3t/2."
+          - problem: "The least-squares line through the points $(-1, 2)$, $(0, 2)$ and $(1, c)$ has slope $b = 3$. Find the value of $c$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "With x-values -1, 0, 1 the columns of the design matrix are orthogonal, so the slope equation decouples: b = ((-1)(2) + (0)(2) + (1)c)/2 = (c - 2)/2. Set (c - 2)/2 = 3 and solve: c = 8. Check the intercept: a = (2 + 2 + 8)/3 = 4, an integer as required. The missing value is c = 8."
+          - problem: "Find the slope $b$ of the least-squares line through $(-1, 0)$, $(0, 1)$ and $(1, 5)$. Give the answer as a fraction."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The columns of the design matrix are (1, 1, 1) and (-1, 0, 1); they are orthogonal because the x-values are -1, 0, 1, so the slope equation decouples: b = ((-1)(0) + (0)(1) + (1)(5))/2. Compute b = 5/2. The intercept a = (0 + 1 + 5)/3 = 2 is not asked for. The slope of the least-squares line is 5/2."
         constraints: "3 points with x-values -1, 0, 1 so the normal equations decouple; a and b integers or halves"
       - id: kp3
         name: The residual and its size
