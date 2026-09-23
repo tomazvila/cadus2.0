@@ -1780,14 +1780,30 @@ topics:
         name: "Chaining inferences"
         key_prerequisites: [logical-equivalence]
         exemplars:
-          - problem: 'Given $P \to Q$, $Q \to R$, and $P$, derive $R$.'
-            answer_contract: {kind: none}
-            answer: '$R$.'
-            solution_sketch: 'Hypothetical syllogism gives $P \to R$; modus ponens with $P$ yields $R$.'
-          - problem: 'Given $P \lor Q$ and $\neg P$, derive $Q$.'
-            answer_contract: {kind: none}
-            answer: '$Q$ (disjunctive syllogism).'
-            solution_sketch: 'Disjunctive syllogism: from $P \lor Q$ and $\neg P$, the remaining disjunct $Q$ must hold.'
+          - problem: "Given the premises S -> T, T -> U, and not U, exactly one of the statements offered can be derived by chaining the rules of inference. Select the statement that follows from the premises."
+            answer: "not S"
+            answer_contract: {"kind": "label", "options": [["not S"], ["S or T"], ["T or U"], ["S and T"]]}
+            solution_sketch: "The premises are S -> T, T -> U, and not U. First, hypothetical syllogism on S -> T and T -> U gives S -> U. Second, modus tollens on S -> U with not U gives not S; two applications of modus tollens also reach not S. The wrong options are S or T, T or U, and S and T: S or T reads the conditional S -> T as a disjunction, T or U reads T -> U as a disjunction, and S and T treats a conditional as asserting both of its parts. The statement that follows is not S."
+          - problem: "Given the premises P or Q, not P, and Q -> R, derive R. Use these rule codes: 1 = modus ponens, 2 = modus tollens, 3 = hypothetical syllogism, 4 = disjunctive syllogism. Give the codes of the rules you apply, in order, as a list."
+            answer: "4, 1"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The premises are P or Q, not P, and Q -> R. Disjunctive syllogism on P or Q with not P gives Q, and modus ponens on Q -> R with Q gives R. Modus tollens never applies because not R is not available, and hypothetical syllogism needs two conditionals, so no other order works. The codes applied, in order, are 4, 1."
+          - problem: "Given the premises M or not N, not M, and K -> N, derive not K. Number the rules as follows: 1 = modus ponens, 2 = modus tollens, 3 = hypothetical syllogism, 4 = disjunctive syllogism. Give the codes of the rules you apply, in order, as a list."
+            answer: "4, 2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The premises are M or not N, not M, and K -> N. Disjunctive syllogism on M or not N with not M gives not N, and modus tollens on K -> N with not N gives not K. Modus ponens does not apply because no antecedent M or K is given, and modus tollens on K -> N is impossible until not N is derived. The codes applied, in order, are 4, 2."
+          - problem: "Given the premises A or B, C -> not A, and C, derive B. Use the numbering 1 = modus ponens, 2 = modus tollens, 3 = hypothetical syllogism, 4 = disjunctive syllogism. Give the codes of the rules you apply, in order, as a list."
+            answer: "1, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The premises are A or B, C -> not A, and C. Modus ponens on C -> not A with C gives not A, and disjunctive syllogism on A or B with not A gives B. Disjunctive syllogism cannot come first because not A is not yet available, and modus tollens on C -> not A would need the premise A. The codes applied, in order, are 1, 4."
+          - problem: "Given the premises P or Q, not P, Q -> not R, S -> R, and S, derive not S. The rules are coded 1 = modus ponens, 2 = modus tollens, 3 = hypothetical syllogism, 4 = disjunctive syllogism. Give the codes of the rules you apply, in order, as a list."
+            answer: "4, 1, 2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The premises are P or Q, not P, Q -> not R, S -> R, and S. Disjunctive syllogism on P or Q with not P gives Q; modus ponens on Q -> not R with Q gives not R; modus tollens on S -> R with not R gives not S. Each later step needs the output of the previous one, so no reordering is possible, and hypothetical syllogism never applies because no conditional pair shares a matching endpoint. The codes applied, in order, are 4, 1, 2."
+          - problem: "Given the premises A -> B, B -> C, C -> D, and A, a derivation of D exists. Code the rules as mp = modus ponens, mt = modus tollens, hs = hypothetical syllogism, ds = disjunctive syllogism. Determine the code of the last rule applied in a shortest derivation of D, and give the number of rule applications in that derivation as lastrule and steps."
+            answer: "lastrule = mp; steps = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["mp"], ["mt"], ["hs"], ["ds"]]}, "name": "lastrule"}, {"contract": {"kind": "exact"}, "name": "steps"}]}
+            solution_sketch: "The premises are A -> B, B -> C, C -> D, and A. One shortest derivation applies modus ponens three times: A gives B, B gives C, C gives D; another applies hypothetical syllogism twice to get A -> D and then modus ponens once. Every derivation of the atomic statement D must end with modus ponens, since hypothetical syllogism only produces conditionals, and reaching D from A needs exactly 3 applications. The answer is lastrule = mp; steps = 3."
         constraints: "combine hypothetical/disjunctive syllogism with modus ponens/tollens"
     diagnostic_exemplar:
       problem: 'From $A \to B$, $B \to C$ and $\neg C$, what can you conclude about $A$? And from $A \to B$ together with $B$, may you conclude $A$?'

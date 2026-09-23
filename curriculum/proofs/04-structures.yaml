@@ -147,14 +147,30 @@ topics:
         name: "Reading properties from a table"
         key_prerequisites: [checking-closure]
         exemplars:
-          - problem: 'How do you see from an operation table that the operation is commutative? Is addition mod $4$ commutative?'
-            answer_contract: {kind: none}
-            answer: 'The table is symmetric across its main diagonal; yes.'
-            solution_sketch: 'Symmetry means the $(a, b)$ entry equals the $(b, a)$ entry — exactly commutativity. Mod-$n$ addition inherits commutativity from $\mathbb{Z}$.'
-          - problem: 'Find the identity element in the addition-mod-$4$ table, and in the multiplication-mod-$5$ table on $\{1, 2, 3, 4\}$.'
-            answer_contract: {kind: none}
-            answer: '$0$; $1$.'
-            solution_sketch: 'The identity''s row and column repeat the headers unchanged: row $0$ reads $0, 1, 2, 3$; row $1$ of the multiplication table reads $1, 2, 3, 4$.'
+          - problem: "An operation table on {0, 1, 2, 3} has three unordered pairs of off-diagonal mirror entries, and exactly one of those pairs has entries that differ across the main diagonal. State whether the operation is commutative, and give the number of pairs where the mirror entries differ."
+            answer: "verdict = no; pairs = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "pairs"}]}
+            solution_sketch: "Use diagonal symmetry: commutativity holds only when every entry equals its mirror across the main diagonal. One differing mirror pair breaks the symmetry, so the operation is not commutative. The number of differing pairs is 1, so verdict = no; pairs = 1."
+          - problem: "An operation table on {0, 1, 2, 3} has row 0 equal to 0, 1, 2, 3; row 1 equal to 1, 2, 3, 0; row 2 equal to 2, 3, 0, 1; row 3 equal to 3, 0, 1, 2. Find the identity element."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the header-copy rule: the identity row repeats the header list unchanged. Row 0 reads 0, 1, 2, 3, which matches the header order exactly, so the identity element is 0. The identity element is 0."
+          - problem: "In the addition-mod-6 table on {0, 1, 2, 3, 4, 5}, give the entry in row 4, column 5."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the addition-mod-6 table: the entry in row a and column b is a plus b modulo 6. For row 4 and column 5, 4 plus 5 is 9 and 9 modulo 6 is 3. The entry is 3."
+          - problem: "A table on {0, 1, 2, 3} is asymmetric at the pairs (0, 2) and (1, 3), and symmetric at every other off-diagonal pair. Find the number of unordered off-diagonal pairs where the two entries differ."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use diagonal symmetry: an asymmetric pair has entries that differ across the main diagonal. The listed asymmetric pairs are (0,2) and (1,3), and all other off-diagonal pairs are symmetric, so there are 2 such unordered pairs. The number is 2."
+          - problem: "In the multiplication-mod-5 table on {1, 2, 3, 4}, which element is the identity?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the header-copy rule: the identity row repeats the header list unchanged. In the multiplication-mod-5 table on {1,2,3,4}, row 1 reads 1,2,3,4, which is the header order, so the identity is 1. The identity element is 1."
+          - problem: "An operation table on {0, 1, 2, 3} has header order 2, 3, 0, 1. Row 2 reads 2, 3, 0, 1, and the table is symmetric across its main diagonal. State whether the operation is commutative, and give the identity element."
+            answer: "verdict = yes; elem = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "elem"}]}
+            solution_sketch: "Use diagonal symmetry for commutativity: the table is symmetric, so the operation is commutative and the verdict is yes. Use header-copy for identity: row 2 reads 2, 3, 0, 1, which matches the header order 2, 3, 0, 1, so the identity element is 2. The answer is verdict = yes; elem = 2."
         constraints: "diagonal symmetry for commutativity; header-copy rows for identity"
       - id: kp3
         name: "Inverses from a table"
@@ -790,12 +806,34 @@ topics:
         name: "Cancellation"
         key_prerequisites: [binary-operations]
         exemplars:
-          - problem: 'Prove the left cancellation law: in a group, $ab = ac \Rightarrow b = c$.'
-            answer: 'Multiply on the left by $a^{-1}$.'
-            solution_sketch: 'From $ab = ac$, multiply on the left by $a^{-1}$: $a^{-1}(ab) = a^{-1}(ac)$, so $(a^{-1}a)b = (a^{-1}a)c$, i.e. $eb = ec$, giving $b = c$. $\square$'
-          - problem: 'Prove the right cancellation law: in a group, $ba = ca \Rightarrow b = c$.'
-            answer: 'Multiply on the right by $a^{-1}$.'
-            solution_sketch: 'From $ba = ca$, multiply on the right by $a^{-1}$: $(ba)a^{-1} = (ca)a^{-1}$, so $b(aa^{-1}) = c(aa^{-1})$, i.e. $be = ce$, giving $b = c$. $\square$'
+          - problem: "In the multiplicative group of nonzero rational numbers, solve the equation 3x = 5. Give x."
+            answer: "5/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group is the nonzero rationals under multiplication. The inverse of 3 is 1/3. Multiply both sides of 3x = 5 by 1/3: (1/3)(3x) = (1/3)5. Associativity gives ((1/3)3)x = 5/3, so 1x = 5/3, hence x = 5/3. The answer is 5/3."
+          - problem: "In the multiplicative group of nonzero rational numbers, solve the equation x*7 = 2. Give x."
+            answer: "2/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inverse of 7 is 1/7. Multiply both sides of x*7 = 2 on the right by 1/7: (x*7)*(1/7) = 2*(1/7). Associativity gives x*(7*1/7) = 2/7, so x*1 = 2/7. The answer is 2/7."
+          - problem: "In the multiplicative group of nonzero rational numbers, solve the equation (-2)x = 6. Give x."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The inverse of -2 is -1/2. Multiply both sides of (-2)x = 6 by -1/2: (-1/2)(-2)x = (-1/2)6. The left side becomes 1x, and the right side is -3. The answer is -3."
+          - problem: "Claim: in a group, if ab = ac then b = c. Step 1: assume ab = ac. Step 2: multiply both sides on the right by a^{-1}. Step 3: by associativity, a(ba^{-1}) = a(ca^{-1}). Step 4: cancel a on the left to get b = c. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the valid hypothesis. Step 2 is valid: multiplying both sides by a^{-1} on the right is allowed in a group. Step 3 is valid by associativity. Step 4 is invalid: left cancellation of a gives b a^{-1} = c a^{-1}, not b = c; a further right cancellation is needed. The answer is Step 4."
+          - problem: "In a proof of right cancellation, from ba = ca multiply both sides on the right by a^{-1}. The line after multiplication is (ba)a^{-1} = (ca)a^{-1}. Select the next line that uses associativity and shows the inverse."
+            answer: "b(a a^(-1)) = c(a a^(-1))"
+            answer_contract: {"kind": "label", "options": [["b(a a^(-1)) = c(a a^(-1))"], ["b(a^(-1) a) = c(a^(-1) a)"], ["(b a^(-1)) a = (c a^(-1)) a"], ["b a = c a"]]}
+            solution_sketch: "Start from the line (ba)a^(-1) = (ca)a^(-1) obtained by multiplying ba = ca on the right by a^(-1). Associativity regroups each side as b(a a^(-1)) = c(a a^(-1)), and then a a^(-1) = e gives b = c. Wrong option b(a^(-1) a) = c(a^(-1) a): it regroups with the inverse on the left of a, but the multiplication was done on the right, so the inverse pair a a^(-1) is never formed. Wrong option (b a^(-1)) a = (c a^(-1)) a: it moves a^(-1) next to b and c, an invalid regrouping that creates no inverse pair. Wrong option b a = c a: it deletes the factor a^(-1) and merely restates the hypothesis. The answer is b(a a^(-1)) = c(a a^(-1))."
+          - problem: "In the proof of left cancellation, after a^{-1}(ab) = a^{-1}(ac), the left side is rewritten as (a^{-1}a)b. Which group property justifies that rewrite?"
+            answer: "Associativity"
+            answer_contract: {"kind": "label", "options": [["Associativity"], ["Inverse"], ["Identity"], ["Closure"]]}
+            solution_sketch: "The rewrite is (a^{-1}a)b. The property Inverse would replace a^{-1}a by e, but that is the next step, not this grouping change. The property Identity would remove e, which is also later. The property Closure says the product of two elements is in the group, which does not justify changing parentheses. The grouping change is exactly the associative law. The answer is Associativity."
+          - problem: "Write the full proof: in a group, if ab = ac then b = c. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Assume ab = ac. Step 1: multiply both sides on the left by a^{-1}: a^{-1}(ab) = a^{-1}(ac). Step 2: by associativity, (a^{-1}a)b = (a^{-1}a)c. Step 3: by the inverse axiom, a^{-1}a = e, so eb = ec. Step 4: by the identity axiom, b = c. Every step uses a group axiom: the operation is associative, a^{-1} exists, and e is the identity. This proves left cancellation. See the solution."
         constraints: "apply an inverse to both sides"
     diagnostic_exemplar:
       problem: 'Prove that in any group, $(ab)^{-1} = b^{-1}a^{-1}$.'
@@ -1311,12 +1349,34 @@ topics:
         name: "Equinumerosity via bijection"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Prove $|\mathbb{N}| = |E|$, where $E$ is the set of even natural numbers.'
-            answer: 'The map $n \mapsto 2n$ is a bijection.'
-            solution_sketch: 'Define $f : \mathbb{N} \to E$ by $f(n) = 2n$. It is injective ($2a = 2b \Rightarrow a = b$) and surjective (every even natural is $2n$). A bijection exists, so $|\mathbb{N}| = |E|$. $\square$'
-          - problem: 'Prove $|\mathbb{N}| = |\mathbb{N} \cup \{-1\}|$.'
-            answer: 'The shift map $n \mapsto n - 1$ is a bijection.'
-            solution_sketch: 'Define $f : \mathbb{N} \to \mathbb{N} \cup \{-1\}$ by $f(n) = n - 1$. It is injective and surjective onto $\{-1, 0, 1, 2, \dots\}$, so the two sets have the same cardinality. Adding one element to an infinite set does not change its cardinality. $\square$'
+          - problem: "The even natural numbers are E = {0, 2, 4, ...}. Give the bijection f from N to E of the form f(n) = an that shows they have the same cardinality. Give f(n)."
+            answer: "2n"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Define f from N to E by f(n) = 2n. Injectivity: if 2a = 2b, then a = b by division. Surjectivity: every even m is 2k for k = m/2 in N, so m = f(k). The answer is 2n."
+          - problem: "Let S = {-1, 0, 1, 2, ...}. Give the bijection f from N to S of the form f(n) = n + c that shows they have the same cardinality. State f(n)."
+            answer: "n-1"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Define f from N to S by f(n) = n - 1. Injectivity: if a - 1 = b - 1, then a = b by adding 1. Surjectivity: every m in S has m = f(m + 1) with m + 1 in N. The answer is n - 1."
+          - problem: "Let f be the bijection from N to the even natural numbers with f(n) = 2n. Find n as a formula in m when m = f(n)."
+            answer: "m/2"
+            answer_contract: {"kind": "function", "vars": ["m"]}
+            solution_sketch: "The forward map is f(n) = 2n. Set m = 2n. Solve by dividing both sides by 2 to get n = m/2. The answer is m/2."
+          - problem: "Let f be the bijection from N to S = {-1, 0, 1, 2, ...} with f(n) = n - 1. Give n as a formula in m when m = f(n)."
+            answer: "m+1"
+            answer_contract: {"kind": "function", "vars": ["m"]}
+            solution_sketch: "The forward map is f(n) = n - 1. Set m = n - 1. Solve by adding 1 to both sides to get n = m + 1. The answer is m + 1."
+          - problem: "Let f(n) = 3n + 2. Give the natural number n with f(n) = 17."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set the formula equal to 17: 3n + 2 = 17. Subtract 2 from both sides to get 3n = 15. Divide by 3 to get n = 5. Check f(5) = 17. The answer is 5."
+          - problem: "Claim: the map f from Z to Z with f(n) = 3n - 2 is a bijection. Step 1: if f(a) = f(b), then 3a - 2 = 3b - 2, so a = b, and f is injective. Step 2: every value 3n - 2 is an integer, so f maps Z into Z. Step 3: for surjectivity, solve 3n - 2 = m: adding 2 and dividing by 3 gives n = (m + 2)/3, which is an integer for every integer m. Step 4: so f is surjective. Step 5: hence f is a bijection. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is a correct injectivity check: 3a - 2 = 3b - 2 forces a = b. Step 2 is a correct closure check. Step 3 is false: (m + 2)/3 is not an integer for every integer m; for m = 0 it equals 2/3, and indeed 3n - 2 = 0 has no integer solution, so 0 is not in the image. Step 4 and Step 5 are consequences that fail after the correction in Step 3. Choosing Step 1 is the error of rejecting a valid injectivity argument, choosing Step 2 is the error of rejecting a valid closure statement, and choosing Step 4 or Step 5 misses that the first defect already occurs in Step 3. The answer is Step 3."
+          - problem: "Write the full proof: the even natural numbers have the same cardinality as the natural numbers. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: define the map f from N to E by f(n) = 2n. Step 2: check injectivity; if f(a) = f(b), then 2a = 2b, so a = b. Step 3: check surjectivity; if m is in E, then m = 2k for some natural k, so m = f(k). Step 4: both directions hold, so f is a bijection from N to E. Step 5: a bijection exists, so the even natural numbers have the same cardinality as the natural numbers."
         constraints: "exhibit an explicit bijection and verify both directions"
       - id: kp2
         name: "Countable sets"

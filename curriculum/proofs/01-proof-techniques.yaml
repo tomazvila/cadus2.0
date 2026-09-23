@@ -1435,12 +1435,34 @@ topics:
         name: "Uniqueness in the division algorithm"
         key_prerequisites: [existence-proofs]
         exemplars:
-          - problem: 'Prove the uniqueness part of the division algorithm: if $a = bq + r = bq'' + r''$ with $0 \le r, r'' < b$, then $q = q''$ and $r = r''$.'
-            answer: '$r - r'' = b(q'' - q)$ is a multiple of $b$ with $|r - r''| < b$, so it is $0$.'
-            solution_sketch: 'Subtracting gives $r - r'' = b(q'' - q)$, a multiple of $b$. But $0 \le r, r'' < b$ forces $|r - r''| < b$, and the only multiple of $b$ with absolute value below $b$ is $0$. Hence $r = r''$ and then $q = q''$ (as $b \ne 0$). $\square$'
-          - problem: 'Prove: every integer $n$ has a unique parity (it cannot be both even and odd).'
-            answer: 'If $n = 2a = 2b + 1$ then $2(a - b) = 1$, so $2 \mid 1$ — contradiction.'
-            solution_sketch: 'Suppose $n$ were both even and odd: $n = 2a$ and $n = 2b + 1$. Subtracting, $2(a - b) = 1$, making $1$ even — a contradiction. $\square$'
+          - problem: "In the uniqueness proof for the division algorithm, the two remainders satisfy 0 <= r, r' < b. Give the largest possible value of |r - r'| as an expression in b."
+            answer: "b-1"
+            answer_contract: {"kind": "function", "vars": ["b"]}
+            solution_sketch: "Step 1: The two remainders satisfy 0 <= r < b and 0 <= r' < b, so the distance between them is at most the larger bound minus the smaller. Step 2: The largest possible difference occurs at r = b-1 and r' = 0, or at r = 0 and r' = b-1. Step 3: The bound is b-1. The answer is b-1."
+          - problem: "In a uniqueness proof, two representations a = bq + r and a = bq' + r' give r - r' = b(q' - q). Let the remainders be x and y and the divisor be b. Give q' - q as an expression in x, y, and b."
+            answer: "(x-y)/b"
+            answer_contract: {"kind": "function", "vars": ["x", "y", "b"]}
+            solution_sketch: "Step 1: Subtract the two representations a = bq + r and a = bq' + r' to get r - r' = bq' - bq. Step 2: Factor b on the right side to get r - r' = b(q' - q). Step 3: Divide by b to isolate q' - q = (r - r')/b, which is (x - y)/b with x = r and y = r'. The answer is (x-y)/b."
+          - problem: "For b = 6, r = 5 and r' = 1, the uniqueness proof forms r - r' = b(q' - q). Compute r - r'."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The uniqueness proof starts from r - r' = b(q' - q). Step 2: Substitute b = 6, r = 5 and r' = 1 to get r - r' = 5 - 1 = 4. Step 3: The value 4 is not a multiple of 6, so no integer q' - q satisfies the equation, a contradiction. The answer is 4."
+          - problem: "If b = 9 and q' - q = 1, give the value of r - r' from r - r' = b(q' - q)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The equation r - r' = b(q' - q) follows from subtracting the two representations. Step 2: Substitute b = 9 and q' - q = 1. Step 3: Multiply to get r - r' = 9(1) = 9. Since 0 <= r, r' < 9, this difference is too large, a contradiction. The answer is 9."
+          - problem: "Claim: if a = bq + u = bp + v with 0 <= u, v < b, then p = q and u = v. Step 1: Suppose a = bq + u = bp + v with 0 <= u, v < b. Step 2: Subtract the two representations to get u - v = b(q - p). Step 3: Since 0 <= u, v < b, the absolute value of u - v is less than b. Step 4: The only multiple of b with absolute value less than b is 0, so u = v, and then p = q. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the correct setup with both representations and the bounds 0 <= u, v < b. Step 2 is invalid: subtracting a = bp + v from a = bq + u gives u - v = b(p - q), not b(q - p), because the sign is reversed. Step 3 correctly bounds the difference by b. Step 4 correctly uses the fact that the only multiple of b with absolute value less than b is 0. The answer is Step 2."
+          - problem: "In the uniqueness proof, after r - r' = b(q' - q), the next line uses the bound 0 <= r, r' < b. Select the line that correctly completes the argument."
+            answer: "|r - r'| < b, so r - r' = 0"
+            answer_contract: {"kind": "label", "options": [["|r - r'| < b, so r - r' = 0"], ["|r - r'| > b, so r - r' = 0"], ["|r - r'| < b, so r - r' = b"], ["|r - r'| = b, so r - r' = 0"]]}
+            solution_sketch: "The correct line must use the bound |r - r'| < b and the fact that r - r' is a multiple of b. The option with |r - r'| > b is wrong because the bound is strict less than b. The option with r - r' = b is wrong because a nonzero multiple of b has absolute value at least b. The option with |r - r'| = b is wrong because the remainders are strictly less than b. The answer is |r - r'| < b, so r - r' = 0."
+          - problem: "Write the full proof: if a = bq + r = bq' + r' with 0 <= r, r' < b, then q = q' and r = r'. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Suppose a = bq + r = bq' + r' with 0 <= r, r' < b. Step 2: Subtract the two representations to get r - r' = b(q' - q). Step 3: Since 0 <= r < b and 0 <= r' < b, we have -b < r - r' < b, so |r - r'| < b. Step 4: The number r - r' is a multiple of b. The only multiple of b with absolute value less than b is 0, so r - r' = 0 and r = r'. Step 5: Then bq = bq', and since b != 0, q = q'. Therefore the quotient and remainder are unique. This completes the proof."
         constraints: "bound a difference to force it to zero, or derive a contradiction from two representations"
       - id: kp3
         name: "Existence and uniqueness together"
@@ -1957,12 +1979,34 @@ topics:
         name: "Products and factorials"
         key_prerequisites: [induction-summation-proofs]
         exemplars:
-          - problem: 'Prove: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} i \cdot i! = (n+1)! - 1$.'
-            answer: 'Base $n = 1$: $1 = 2! - 1$. Step: $(n+1)! - 1 + (n+1)(n+1)! = (n+2)! - 1$.'
-            solution_sketch: 'Base: $1 \cdot 1! = 1 = 2 - 1$. Step: add $(n+1)(n+1)!$ to the hypothesis: $(n+1)! - 1 + (n+1)(n+1)! = (n+1)!(1 + n + 1) - 1 = (n+2)! - 1$. $\square$'
-          - problem: 'Prove: for all $n \ge 2$, $\displaystyle\prod_{k=2}^{n} \left(1 - \frac{1}{k}\right) = \frac{1}{n}$.'
-            answer: 'Base $n = 2$: $\tfrac{1}{2}$. Step: $\frac{1}{n} \cdot \left(1 - \frac{1}{n+1}\right) = \frac{1}{n} \cdot \frac{n}{n+1} = \frac{1}{n+1}$.'
-            solution_sketch: 'Base: $1 - \frac{1}{2} = \frac{1}{2}$. Step: multiply the hypothesis by the next factor $\frac{n}{n+1}$ and cancel. $\square$'
+          - problem: "For the identity sum from i=1 to n of i times i factorial = (n+1) factorial minus 1, assume it holds for n. In the induction step, add the next term (n+1)(n+1) factorial and factor (n+1) factorial out of the first two pieces. Give the factor that multiplies (n+1) factorial before the minus 1."
+            answer: "n+2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with the hypothesis sum from i=1 to n of i times i factorial = (n+1) factorial minus 1. Add the next term: (n+1) factorial minus 1 plus (n+1)(n+1) factorial. Factor the common piece (n+1) factorial: (n+1) factorial times the bracket, then minus 1. The bracket is 1 plus (n+1), which simplifies to n+2. The factor is n+2."
+          - problem: "For the product identity from k=2 to n of (1 - 1/k) = 1/n, assume it holds for n. Multiply the hypothesis by the next factor (1 - 1/(n+1)) and simplify. Give the resulting right side as a function of n."
+            answer: "1/(n+1)"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Start with the hypothesis product from k=2 to n of (1 - 1/k) = 1/n. The next factor is 1 - 1/(n+1) = n/(n+1). Multiply: (1/n) times n/(n+1). Cancel n to get 1/(n+1). The resulting right side is 1/(n+1)."
+          - problem: "Use the identity that for every n at least 2, the product from k=2 to n of (1 - 1/k^2) equals (n+1)/(2n). Evaluate the base case n=2. Give the value as a fraction."
+            answer: "3/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "At n=2 the product has one factor: 1 - 1/2^2. Compute 1/4 and subtract from 1. The result is 3/4. The base value is 3/4."
+          - problem: "For the identity that the product from k=2 to n of (1 - 1/k^2) equals (n+1)/(2n), assume it holds for n. Multiply by the next factor (1 - 1/(n+1)^2) and simplify. Give the simplified right side as a function of n."
+            answer: "(n+2)/(2n+2)"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Start with the hypothesis (n+1)/(2n). The next factor is 1 - 1/(n+1)^2 = (n(n+2))/(n+1)^2. Multiply: (n+1)/(2n) times n(n+2)/(n+1)^2. Cancel n+1 and n to get (n+2)/(2(n+1)), which is (n+2)/(2n+2). The simplified right side is (n+2)/(2n+2)."
+          - problem: "Claim: for all n at least 1, the product from k=1 to n of (1 + 1/k) equals n+1. Step 1: for n=1, the product is 2. Step 2: assume the claim for n=m. Step 3: the product up to m+1 equals (m+1) plus (1 + 1/(m+1)). Step 4: the right side simplifies to m+2, so the claim holds for m+1. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct base case because 1 + 1/1 = 2. Step 2 is the legal hypothesis. Step 3 is invalid because the next product is obtained by multiplying by 1 + 1/(m+1), not by adding that factor. Step 4 uses the invalid Step 3, so it cannot repair the proof. The answer is Step 3."
+          - problem: "In the proof that the product from k=1 to n of k/(k+1) equals 1/(n+1), the inductive-step line for n=k+1 is missing after applying the hypothesis and multiplying by the next factor. Select the missing right side."
+            answer: "1/(k+2)"
+            answer_contract: {"kind": "label", "options": [["1/(k+2)"], ["1/(k+1)"], ["(k+1)/(k+2)"], ["1/(k(k+2))"]]}
+            solution_sketch: "The hypothesis gives the product up to k as 1/(k+1). The next factor is 1 - 1/(k+2) = (k+1)/(k+2). Multiply 1/(k+1) by (k+1)/(k+2), and cancel k+1. The missing right side is 1/(k+2). Option 1/(k+1) forgets the next factor. Option (k+1)/(k+2) is only the factor, not the product. Option 1/(k(k+2)) has an extra k in the denominator. The answer is 1/(k+2)."
+          - problem: "Write the full proof: for all n at least 1, the product from k=1 to n of (k+2)/k equals (n+1)(n+2)/2. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: for n=1 the left side is (1+2)/1 = 3, and the right side is (2 times 3)/2 = 3, so the identity holds. Hypothesis: assume for one n=m that the product from k=1 to m of (k+2)/k equals (m+1)(m+2)/2. Inductive step: multiply both sides by the next factor, (m+3)/(m+1). The right side becomes (m+1)(m+2)/2 times (m+3)/(m+1). Cancel m+1 to get (m+2)(m+3)/2. This is exactly the formula for n=m+1, since it equals ((m+1)+1)((m+1)+2)/2. Conclusion: by induction the product identity holds for all n at least 1."
         constraints: "factorial and telescoping-product identities; factor the common piece in the step"
       - id: kp2
         name: "Induction on counting and geometry"

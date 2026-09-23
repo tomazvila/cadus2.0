@@ -2249,14 +2249,30 @@ topics:
         name: "Uniqueness of extremes"
         key_prerequisites: [partial-orders]
         exemplars:
-          - problem: 'Prove: a poset has at most one maximum element.'
-            answer_contract: {kind: none}
-            answer: 'Two maxima $m, m''$ satisfy $m \preceq m''$ and $m'' \preceq m$, so $m = m''$ by antisymmetry.'
-            solution_sketch: 'If $m$ and $m''$ are both maxima, each is $\succeq$ everything, so $m \preceq m''$ and $m'' \preceq m$; antisymmetry gives $m = m''$. $\square$'
-          - problem: 'Prove: in a finite poset, every element lies below some maximal element.'
-            answer_contract: {kind: none}
-            answer: 'Climb strictly upward; finiteness forces the climb to stop at a maximal element.'
-            solution_sketch: 'Start at $a$. If the current element is not maximal, move strictly up. Antisymmetry means no element repeats, so in a finite poset the climb halts — at an element with nothing above it, i.e. a maximal element above $a$. $\square$'
+          - problem: "Consider the set {1, 2, 4, 8, 16} ordered by divisibility, where x <= y means x divides y. An element m is a maximum when x <= m holds for every element x. Find how many maximum elements this poset has."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full poset is the chain 1 divides 2 divides 4 divides 8 divides 16, so every element divides 16 and 16 is a maximum. Uniqueness rule: if m and m' were both maxima, then m divides m' and m' divides m, and antisymmetry of the order forces m = m'. So at most one maximum can exist, and the chain has exactly 1 maximum element."
+          - problem: "Consider the set {1, 2, 3, 6, 12, 24} ordered by divisibility, where x <= y means x divides y. Starting at the element 3, repeatedly move strictly upward as long as the current element is not maximal, and halt when no strict upward move exists. Find the maximal element where the climb halts."
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full poset is {1, 2, 3, 6, 12, 24} with x <= y when x divides y, and from 3 the strict upward moves are 3 to 6, 6 to 12, and 12 to 24. Finiteness rule: antisymmetry forbids a strict climb from revisiting an element, and a finite set forces every strictly upward climb to halt at a maximal element. No element of the set is a strict multiple of 24, so the climb stops at 24."
+          - problem: "Consider the set {4, 6, 12, 15} ordered by divisibility, where x <= y means x divides y. An element m is a maximum when every element of the set divides m. Find the number of maximum elements in this poset."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full poset is {4, 6, 12, 15}: 4 divides 12, 6 divides 12, and 15 is incomparable with 12 since neither divides the other. Maximum test on each element: 12 fails because 15 does not divide 12, 15 fails because 4 does not divide 15, and 4 and 6 each fail because 15 divides neither. Uniqueness rule from antisymmetry says there is at most one maximum, and here no element passes the test, so the poset has 0 maximum elements."
+          - problem: "Consider the set {1, 2, 3, 5, 6, 10, 15} ordered by divisibility, where x <= y means x divides y. Starting at 1, a strictly upward climb halts at a maximal element, and different paths can halt at different elements. Find every maximal element that such a climb can reach, listed in increasing order."
+            answer: "6, 10, 15"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The full poset is {1, 2, 3, 5, 6, 10, 15}: 1 divides 2, 3 and 5; 2 and 3 divide 6; 2 and 5 divide 10; 3 and 5 divide 15. Finiteness rule: a strictly upward climb from 1, such as 1, 2, 6 or 1, 5, 15, can never repeat an element by antisymmetry, so each climb halts at a maximal element because the set is finite. The maximal elements 6, 10 and 15 are exactly where the climbs halt, so the increasing list is 6, 10, 15."
+          - problem: "Consider the set {1, 2, 3, 6, 30} ordered by divisibility, where x <= y means x divides y. The element 30 is a maximum, since every element of the set divides 30. Find how many maximal elements this poset has."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full poset is {1, 2, 3, 6, 30}: 1 divides 2 and 3, 2 and 3 divide 6, and 6 divides 30, so 30 is a maximum. Uniqueness rule: let y be any maximal element; then y divides 30, and if y were not 30, then y would lie strictly under 30 and could not be maximal. Hence 30 is the only maximal element, and the poset has exactly 1 maximal element."
+          - problem: "Consider the set {2, 3, 4, 6, 9} ordered by divisibility, where x <= y means x divides y. No element of this poset is divisible by every other element, so the poset has no maximum. How many maximal elements does this poset have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full poset is {2, 3, 4, 6, 9}: 2 divides 4 and 6, 3 divides 6 and 9, and no element is divisible by all the others, so no maximum exists. Maximal test: 4, 6 and 9 have no strict multiples inside the set, while 2 and 3 fail since 2 divides 4 and 3 divides 6. With no maximum the uniqueness argument no longer applies, and the poset has 3 maximal elements."
         constraints: "short proofs from antisymmetry and finiteness"
     diagnostic_exemplar:
       problem: 'In the poset $\{2, 3, 4, 6, 12\}$ under divisibility: find all minimal and all maximal elements, say whether a minimum exists, and find all lower bounds of $\{4, 6\}$ together with their greatest lower bound.'
