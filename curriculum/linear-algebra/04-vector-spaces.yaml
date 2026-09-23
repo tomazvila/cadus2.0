@@ -354,10 +354,26 @@ topics:
           - problem: 'For which $h$ is $\{(1, 2), (h, 4)\}$ linearly dependent?'
             answer: "h = 2"
             solution_sketch: 'Dependent iff $(h, 4)$ is a multiple of $(1, 2)$: the multiplier must be $2$, so $h = 2$.'
-          - problem: 'Find a nontrivial dependence relation for $\{(1, 2, 3), (2, 1, 0), (3, 3, 3)\}$.'
-            answer: "v1 + v2 - v3 = 0"
-            answer_contract: {kind: none}
-            solution_sketch: 'From $(1,2,3) + (2,1,0) = (3,3,3)$.'
+          - problem: "Let $v_1 = (1, 0, 2)$, $v_2 = (1, 3, 0)$ and $v_3 = (1, -3, 4)$. The relation $c\\,v_1 + d\\,v_2 - v_3 = 0$ holds. Find $c$ and $d$, and give the answer as c = ...; d = ..."
+            answer: "c = 2; d = -1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c"}, {"contract": {"kind": "exact"}, "name": "d"}]}
+            solution_sketch: "The full relation is c*(1, 0, 2) + d*(1, 3, 0) - (1, -3, 4) = (0, 0, 0), that is c*v1 + d*v2 = v3. Equating coordinates gives c + d = 1, 3d = -3 and 2c = 4 (dependence relation with the coefficient of v3 fixed; solution sets and free variables). Hence d = -1 and c = 2, both within -2..2, and the relation 2v1 - v2 - v3 = 0 holds. The answer is c = 2; d = -1."
+          - problem: "For which $h$ is $\\{(3, 4), (h, 8)\\}$ linearly dependent?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Two vectors are linearly dependent exactly when one is a scalar multiple of the other (dependence condition for two vectors). From the second coordinates, $(h, 8) = k(3, 4)$ with $k = 8/4 = 2$. Matching the first coordinates gives $h = 2 \\cdot 3 = 6$. The answer is 6."
+          - problem: "A dependence relation among $u = (1, 1)$, $v = (2, 3)$ and $w = (5, 7)$ has the form $a\\,u + b\\,v - w = 0$. Find $a$ and $b$, and give the answer as (a, b)."
+            answer: "(1, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The relation reads a*(1, 1) + b*(2, 3) = (5, 7), giving the coordinate equations a + 2b = 5 and a + 3b = 7 (dependence relation with the coefficient of w fixed; solution sets and free variables). Row reduction by subtracting the equations gives b = 2, and then a = 5 - 2*2 = 1; both coefficients lie in -2..2. The answer is (1, 2)."
+          - problem: "For which $h$ are the vectors $(1, 2, 1)$, $(2, 3, 1)$ and $(1, 1, h)$ linearly dependent?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set c1*(1, 2, 1) + c2*(2, 3, 1) + c3*(1, 1, h) = (0, 0, 0) and row-reduce the coordinate equations (echelon form). The second equation minus the first gives c1 + c2 = 0, so c1 = -c2; the first equation minus the third gives c2 + (1 - h)c3 = 0. Substituting c1 = -c2 into the first equation gives c2 = -c3, and then -h*c3 = 0, so a nontrivial solution exists only when h = 0. For h = 0 the relation -v1 + v2 - v3 = 0 holds, so the answer is 0."
+          - problem: "Let $v_1 = (1, 2)$, $v_2 = (2, 4)$ and $v_3 = (1, 1)$ in $\\mathbb{R}^2$. What is the largest number of linearly independent vectors in this set?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First find the dependence relation: $v_2 = 2v_1$, so the three vectors are dependent (dependence relation with coefficients in -2..2). In $\\mathbb{R}^2$ at most 2 vectors can be linearly independent. The pair $v_1, v_3$ is independent since neither is a scalar multiple of the other, so the largest independent subset has 2 vectors. The answer is 2."
         constraints: "solve-for-h with integer h; relations with coefficients in -2..2"
     diagnostic_exemplar:
       problem: 'Is $\{(1, 1, 2), (2, 0, 1), (3, 1, 3)\}$ linearly independent? If not, give a nontrivial dependence relation.'
@@ -1149,27 +1165,59 @@ topics:
         name: One-to-one means trivial kernel
         key_prerequisites: [kernel-image-linear-maps]
         exemplars:
-          - problem: 'Is $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$ one-to-one?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The kernel contains $(-2, 1) \neq \mathbf{0}$, so two different inputs share an output.'
-          - problem: '$A = \begin{pmatrix}1&0\\0&2\\3&1\end{pmatrix}$ defines $T: \mathbb{R}^2 \to \mathbb{R}^3$. Is $T$ one-to-one?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The columns are independent (a pivot in every column), so the kernel is trivial.'
+          - problem: "The matrix A = [1, 3; 2, 6] defines the map T(x) = Ax from R^2 to R^2. Row-reduce A and use the pivot-in-every-column test. Is T one-to-one? Give the verdict and the dimension of the kernel."
+            answer: "verdict = no; dimker = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "dimker"}]}
+            solution_sketch: "Row reduction to echelon form: R2 - 2R1 turns [1, 3; 2, 6] into [1, 3; 0, 0], so there is one pivot, in column 1. Pivot-in-every-column test: column 2 has no pivot, so x2 is a free variable and the kernel is nontrivial, so T is not one-to-one; a verdict of yes would ignore that free variable. Rank-nullity: dimker = 2 - 1 = 1. The answer is verdict = no; dimker = 1."
+          - problem: "The matrix A = [2, 0; 1, 1; 0, 3] defines the map T(x) = Ax from R^2 to R^3. Row-reduce A and apply the pivot-in-every-column test. Is T one-to-one? Give the verdict and the dimension of the kernel."
+            answer: "verdict = yes; dimker = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "dimker"}]}
+            solution_sketch: "Row reduction: R2 - (1/2)R1 gives [2, 0; 0, 1; 0, 3], then R3 - 3R2 gives [2, 0; 0, 1; 0, 0], an echelon form. Pivot-in-every-column test: pivots sit in columns 1 and 2, so no variable is free and the kernel is trivial, so T is one-to-one; a verdict of no would overlook the two pivots. Rank-nullity: dimker = 2 - 2 = 0. The answer is verdict = yes; dimker = 0."
+          - problem: "The matrix A = [1, 2, 3; 2, 4, 6; 1, 3, 5] defines the map T(x) = Ax from R^3 to R^3. Row-reduce A to echelon form and count the pivots to decide whether the kernel is trivial. Find the dimension of the kernel."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduction to echelon form: R2 - 2R1 gives a zero row and R3 - R1 gives (0, 1, 2), so the echelon form [1, 2, 3; 0, 1, 2; 0, 0, 0] has two pivots. Pivot rule: column 3 has no pivot, so x3 is a free variable, the kernel is nontrivial, and T is not one-to-one. Rank-nullity: dimker = 3 - 2 = 1. The answer is 1."
+          - problem: "The matrix A = [1, 4; 2, 8] defines the map T(x) = Ax from R^2 to R^2. Solve Ax = 0 and write the nonzero vector of the kernel whose second entry equals 1. Give the answer as (x, y)."
+            answer: "(-4, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Row reduction: the second row is twice the first, since R2 - 2R1 is the zero row, so the system reduces to the single kernel equation x + 4y = 0. Solve the equation: x = -4y, and choosing y = 1 gives x = -4, so the kernel contains the nonzero vector (-4, 1); a nontrivial kernel means T is not one-to-one. The answer is (-4, 1)."
+          - problem: "The matrix A = [2, 1, 0; 1, 3, 1; 0, 1, 2] defines the map T(x) = Ax from R^3 to R^3. Row-reduce A and use the pivot-in-every-column test to decide whether the kernel is trivial. Find the dimension of the kernel."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduction: swap the first two rows to get [1, 3, 1; 2, 1, 0; 0, 1, 2], then R2 - 2R1 gives [0, -5, -2] and R3 + (1/5)R2 gives [0, 0, 8/5], so each of the three columns holds a pivot. Pivot-in-every-column test: no free variable exists, the kernel is trivial, and T is one-to-one. Rank-nullity: dimker = 3 - 3 = 0. The answer is 0."
+          - problem: "The matrix A = [1, 3, 2; 2, 6, 4; 4, 12, 8] defines the map T(x) = Ax from R^3 to R^3. Row-reduce A to echelon form and use the pivots to decide whether T is one-to-one. How many free variables does the kernel have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduction to echelon form: R2 - 2R1 and R3 - 4R1 both produce zero rows, so the echelon form [1, 3, 2; 0, 0, 0; 0, 0, 0] has a single pivot, in column 1. Pivot rule: columns 2 and 3 have no pivots, so x2 and x3 are free variables; the kernel is nontrivial and T is not one-to-one. Rank-nullity: the number of free variables is dimker = 3 - 1 = 2. The answer is 2."
         constraints: "decide via kernel or pivot-in-every-column; sizes up to 3x3"
       - id: kp2
         name: Onto means full column space
         key_prerequisites: [kernel-image-linear-maps, row-reduction-echelon-forms]
         exemplars:
-          - problem: '$A = \begin{pmatrix}1&2&0\\0&0&3\end{pmatrix}$ defines $T: \mathbb{R}^3 \to \mathbb{R}^2$. Is $T$ onto? Is it one-to-one?'
-            answer: "Onto yes; one-to-one no"
-            answer_contract: {kind: none}
-            solution_sketch: 'Rank $2$ equals the number of rows, so a pivot in every row: onto. But $3$ columns with rank $2$ leaves a free variable: not one-to-one.'
-          - problem: 'Can a linear map $T: \mathbb{R}^2 \to \mathbb{R}^3$ be onto?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The image has dimension at most $2 < 3$.'
+          - problem: "The matrix A = [1,2,1; 2,4,5] defines the linear map T: R^3 -> R^2. The map T is onto exactly when every row of A contains a pivot after row reduction. Find the number of rows of A that lack a pivot."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduce A = [1,2,1; 2,4,5]: replace row 2 by row 2 minus 2 times row 1 to get [1,2,1; 0,0,3]. By the onto criterion, T is onto exactly when every row holds a pivot. Row 1 has a pivot in column 1 and row 2 has a pivot in column 3, so T is onto and no row lacks a pivot. The number of rows lacking a pivot is 0."
+          - problem: "A linear map T: R^2 -> R^3 always has a matrix with 3 rows and 2 columns, and each pivot occupies its own column. Find the largest possible number of pivot rows over all matrices for T."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A matrix for T is 3 by 2, and row reduction keeps at most one pivot per column, so there can be at most 2 pivot rows. By the onto criterion, T is onto only if all 3 rows hold pivots, which is impossible, so no linear map from R^2 to R^3 is onto. The largest possible number of pivot rows is 2."
+          - problem: "The matrix A = [1,2,3,4; 0,1,2,3; 0,0,1,2] defines T: R^4 -> R^3. For T to be onto, every row of A needs a pivot. Find the number of pivot rows of A."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduce A = [1,2,3,4; 0,1,2,3; 0,0,1,2]: it is already in echelon form, with pivots in columns 1, 2, and 3. By the onto criterion, T is onto when every row contains a pivot. All 3 rows contain a pivot, so T is onto. The number of pivot rows is 3."
+          - problem: "The matrix A = [1,0,2; 0,1,3; 0,0,0; 0,0,0] defines T: R^3 -> R^4. Find the number of rows of A that do not contain a pivot."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduce A = [1,0,2; 0,1,3; 0,0,0; 0,0,0]: rows 1 and 2 have pivots in columns 1 and 2. By the onto criterion, T is onto only if every row contains a pivot. The third and fourth rows are zero and hold no pivot, so T is not onto. The number of rows that do not contain a pivot is 2."
+          - problem: "The matrix A = [2,1; 0,0; 0,0] defines T: R^2 -> R^3. For T to be onto, every row needs a pivot. Find the number of pivot rows of A."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduce A = [2,1; 0,0; 0,0]: only row 1 has a pivot, in column 1. By the onto criterion, T is onto only if every row contains a pivot. Rows 2 and 3 are zero, so T is not onto. The number of pivot rows is 1."
+          - problem: "The matrix A = [1,0,0; 0,1,0; 0,0,1; 0,0,0] defines T: R^3 -> R^4. Find the number of rows of A that do not contain a pivot."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row reduce A = [1,0,0; 0,1,0; 0,0,1; 0,0,0]: rows 1, 2, and 3 hold pivots in columns 1, 2, and 3. By the onto criterion, T is onto only if every row contains a pivot. The fourth row is zero, so T is not onto. The number of rows that do not contain a pivot is 1."
         constraints: "wide vs tall matrices; onto iff pivot in every row"
       - id: kp3
         name: The square case
