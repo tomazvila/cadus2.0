@@ -244,22 +244,22 @@ topics:
         name: "Compare steepness"
         key_prerequisites: [coordinate-plane]
         exemplars:
-          - problem: 'Runner A and runner B start together, and A has the steeper distance-time line. Is runner A faster, runner B faster, or is their speed equal?'
-            answer: "runner A"
-            answer_contract: {"kind":"label","options":[["runner A"],["runner B"],["equal speed"]]}
-            solution_sketch: 'A steeper line covers more distance in the same time, so runner A is faster.'
-          - problem: 'A graph rises steeply at first and then gently. Was growth faster at the start, in the middle, or at the end?'
-            answer: "at the start (the steep part)"
-            answer_contract: {"kind":"label","options":[["at the start","at the start (the steep part)"],["in the middle"],["at the end"]]}
-            solution_sketch: 'The steep part rises more per unit of time, so growth was faster at the start.'
-          - problem: 'Account X and account Y start at €0, and X has the steeper line. Which has faster growth: account X, account Y, or equal growth?'
-            answer: "account X"
-            answer_contract: {"kind":"label","options":[["account X"],["account Y"],["equal growth"]]}
-            solution_sketch: 'The steeper line has the greater rate.'
-          - problem: 'A hiking graph is gentle in the first hour and steeper in the second. Was the hiker faster in the first hour, second hour, or both equally?'
-            answer: "the second hour (the steep part)"
-            answer_contract: {"kind":"label","options":[["the first hour","first hour"],["the second hour","the second hour (the steep part)"],["both hours equally"]]}
-            solution_sketch: 'The steeper segment has the greater distance per hour.'
+          - problem: "Four lines A, B, C, D appear on a distance-time graph. Line A is steeper than line B, line B is steeper than line C, and line C is steeper than line D. State which line is steepest and how many lines are less steep than line C. Give the answer as steepest = ...; count = ..."
+            answer: "steepest = A; count = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["A"], ["B"], ["C"], ["D"]]}, "name": "steepest"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Steepness rule: a steeper line means a faster change, so the order A > B > C > D makes A the steepest. Count rule: line C is steeper than line D, so only line D is less steep than line C. The answer is steepest = A; count = 1."
+          - problem: "Four segments P, Q, R, S appear on a distance-time graph. Segment P is steeper than segment Q, segment Q is steeper than segment R, and segment R is steeper than segment S. State which segment shows the fastest movement and how many segments are steeper than segment R. Give the answer as fastest = ...; count = ..."
+            answer: "fastest = P; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["P"], ["Q"], ["R"], ["S"]]}, "name": "fastest"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Steepness rule: a steeper line means a faster change, so the order P > Q > R > S makes P the fastest. Count rule: segments P and Q are above R in the steepness order, so two segments are steeper than R. The answer is fastest = P; count = 2."
+          - problem: "Four accounts W, X, Y, Z start at zero. Account W is steeper than account X, account X is steeper than account Y, and account Y is steeper than account Z. State which account grows fastest and how many accounts are less steep than account W. Give the answer as fastest = ...; count = ..."
+            answer: "fastest = W; count = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["W"], ["X"], ["Y"], ["Z"]]}, "name": "fastest"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Steepness rule: a steeper line means a faster change, so the order W > X > Y > Z makes W the fastest. Count rule: accounts X, Y, and Z are all below W, so three accounts are less steep than W. The answer is fastest = W; count = 3."
+          - problem: "Four hiking segments M, N, O, P appear on a distance-time graph. Segment M is steeper than segment N, segment N is steeper than segment O, and segment O is steeper than segment P. State which segment is second steepest and how many segments are steeper than segment N. Give the answer as second = ...; count = ..."
+            answer: "second = N; count = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["M"], ["N"], ["O"], ["P"]]}, "name": "second"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Steepness rule: a steeper line means a faster change, so the order M > N > O > P makes N the second steepest. Count rule: only M is above N in the steepness order, so one segment is steeper than N. The answer is second = N; count = 1."
         constraints: "steeper means faster change; no slope computation required"
     diagnostic_exemplar:
       problem: 'A distance-time graph rises steeply, then rises gently, then is flat. Rank the three parts from fastest to slowest movement.'
@@ -616,10 +616,10 @@ topics:
             answer: "1/2"
             answer_contract: {"kind": "exact"}
             solution_sketch: "The segment actually goes $4$ squares right and $2$ up, so slope is $2/4=1/2$."
-          - problem: "A lattice line passes through $(2,3)$ and $(2,0)$. Is its slope zero or undefined?"
+          - problem: "A line on a grid passes through the lattice points (5,2) and (5,-2). Count the grid squares from (5,2) to (5,-2). What is the slope of this line?"
             answer: "undefined"
-            answer_contract: {"kind": "label", "options": [["zero"], ["undefined"]]}
-            solution_sketch: "Counting from one point to the other gives no horizontal movement and a nonzero vertical movement; division by zero is undefined."
+            answer_contract: {"kind": "label", "options": [["undefined"], ["zero"], ["positive"], ["negative"]]}
+            solution_sketch: "Counting rule: from (5,2) to (5,-2) the horizontal run is 0 and the vertical change is 4 down. A run of 0 means division by 0, so the slope is undefined. The option zero would need a rise of 0; positive would need the line to rise left to right; negative would need it to fall left to right. The slope is undefined."
         constraints: "lattice points close together; counting, not the formula"
     diagnostic_exemplar:
       problem: 'A graphed line passes through $(0, 4)$ and $(3, -2)$. What is the slope?'

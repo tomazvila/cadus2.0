@@ -1866,21 +1866,21 @@ topics:
         name: Edge cases
         key_prerequisites: [factors-and-multiples]
         exemplars:
-          - problem: 'Is $1$ prime? (yes/no)'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$1$ is neither prime nor composite.'
+          - problem: "The number 1 is a special case in the prime and composite system. How many positive factors does the number 1 have?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, definition of a factor: test each positive whole number to see which divide 1 with no remainder. Step 2, count: only 1 divides 1, so the list of positive factors of 1 is just 1 itself. A prime needs exactly two positive factors and a composite needs more than two, so 1 fits neither class. The number of positive factors of the number 1 is 1."
           - problem: 'What is the only even prime number?'
             answer: "2"
             solution_sketch: 'Every other even number is divisible by $2$ itself, so it is composite; $2$ alone is prime.'
-          - problem: 'Is $0$ prime, composite, or neither?'
-            answer: "neither"
-            answer_contract: {"kind":"label","options":[["prime"],["composite"],["neither"]]}
-            solution_sketch: '$0$ has no defined factorization into primes, so it is neither.'
-          - problem: 'Is $2$ prime or composite?'
-            answer: "prime"
-            answer_contract: {"kind":"label","options":[["prime"],["composite"]]}
-            solution_sketch: '$2$ has no factors besides $1$ and itself.'
+          - problem: "Zero and one are the two smallest whole numbers. What is the smallest whole number that is neither prime nor composite?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, definitions: a prime has exactly two positive factors and a composite has more than two, and both definitions apply to counting numbers greater than 1. Step 2, apply them to 0: 0 is not prime and not composite, since the two definitions do not cover it. Step 3, compare: the whole numbers begin at 0, and 0 is neither prime nor composite, so no smaller whole number qualifies. The smallest whole number that is neither prime nor composite is 0."
+          - problem: "The number 2 is the smallest even case that people classify. Give the classification of the number 2 and its number of positive factors."
+            answer: "class = prime; factors = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["composite"]]}, "name": "class"}, {"contract": {"kind": "exact"}, "name": "factors"}]}
+            solution_sketch: "Step 1, definition: a prime has exactly two positive factors and a composite has more than two. Step 2, test the divisors of 2: only 1 and 2 divide 2 with no remainder, so the count of positive factors is 2. Step 3, classify: exactly two positive factors means the class is prime; the wrong option composite comes from the mistaken rule that every even number is composite. The full answer is class = prime; factors = 2."
         constraints: "the numbers 0, 1, 2 and even numbers"
     diagnostic_exemplar:
       problem: 'List all the primes less than $10$.'

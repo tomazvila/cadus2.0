@@ -218,22 +218,30 @@ topics:
         name: Judge and write inequality statements
         key_prerequisites: [number-line-integers]
         exemplars:
-          - problem: 'True or false: $-7 < -9$.'
-            answer: "false"
-            answer_contract: {"kind":"label","options":[["true"],["false"]]}
-            solution_sketch: '$-7$ is right of $-9$, so $-7 > -9$.'
+          - problem: "Decide whether the statement $-7 < -9$ is valid. Also give the positive difference between $-7$ and $-9$ (larger minus smaller). Give the verdict and the gap."
+            answer: "verdict = incorrect; gap = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["correct"], ["incorrect"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "gap"}]}
+            solution_sketch: "Step 1: Use the number line order rule. Plot -7 and -9; -7 is to the right of -9, so -7 > -9 and the statement -7 < -9 is incorrect. Step 2: Use the difference rule. The gap is the larger minus smaller: -7 - (-9) = 2. A learner who compares absolute values might wrongly choose the option correct; that is the error for the option correct. The answer is verdict = incorrect; gap = 2."
           - problem: 'Write $3$, $-1$, $-4$ as a chain from least to greatest using $<$.'
             answer: "-4 < -1 < 3"
             answer_contract: {kind: ascending_chain}
             solution_sketch: 'On the number line the order least to greatest is $-4 < -1 < 3$.'
-          - problem: 'True or false: $-3 < 2$.'
-            answer: "true"
-            answer_contract: {"kind":"label","options":[["true"],["false"]]}
-            solution_sketch: '$-3$ compares to $2$ with $<$, so the statement is true.'
+          - problem: "Decide whether the statement $-6 < 3$ is valid. Also give the distance between $-6$ and $3$ on the number line. Give the verdict and the distance."
+            answer: "verdict = correct; distance = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["correct"], ["incorrect"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "distance"}]}
+            solution_sketch: "Step 1: Apply the number line order rule to the full object, the pair -6 and 3: -6 is left of 3, so -6 < 3 is a valid statement and the verdict is correct. Step 2: Apply the distance rule: the distance between two integers is the larger minus the smaller, so 3 - (-6) = 9. A learner who compares only the sizes 6 and 3 without the signs might wrongly pick the option incorrect; that is the error for the option incorrect. The answer is verdict = correct; distance = 9."
           - problem: 'Arrange $-2$, $-8$, $-5$ in increasing order using $<$.'
             answer: "-8 < -5 < -2"
             answer_contract: {kind: ascending_chain}
             solution_sketch: 'On the number line the increasing order is -8 < -5 < -2.'
+          - problem: "Consider the statements $-2 < 1$, $0 > -3$, and $-5 < -6$. How many of these three statements are valid?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Check -2 < 1 by the number line order rule; -2 is left of 1, so it is valid. Step 2: Check 0 > -3; 0 is right of -3, so it is valid. Step 3: Check -5 < -6; -5 is right of -6, so it is invalid. Two of the three statements are valid. The answer is 2."
+          - problem: "Arrange $4$, $-2$, $-7$ from greatest to least. Give the three integers in order, separated by commas."
+            answer: "4, -2, -7"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: Use the number line order rule. Place 4, -2, and -7 on the number line. Step 2: Read from rightmost to leftmost: 4, then -2, then -7. The answer is 4, -2, -7."
         constraints: "true/false judgments and chains of up to three integers"
     diagnostic_exemplar:
       problem: 'Write $5$, $-2$, $-9$ as a chain from least to greatest using $<$.'
@@ -689,10 +697,6 @@ topics:
         name: Sign from the count of negative factors
         key_prerequisites: [multiplying-integers]
         exemplars:
-          - problem: 'Is the product of five negative numbers positive or negative?'
-            answer: "negative"
-            answer_contract: {"kind":"label","options":[["positive"],["negative"]]}
-            solution_sketch: 'An odd count of negative factors gives a negative product.'
           - problem: 'Compute $(-2)(-2)(-2)(-2)$.'
             answer: "16"
             solution_sketch: 'Four negative factors: positive; $2^4 = 16$.'
@@ -702,6 +706,10 @@ topics:
           - problem: 'Compute $-3 \times (-1) \times 4 \times (-2) \times (-1)$.'
             answer: "24"
             solution_sketch: '4 negative factors (even): the product is positive; $3 \times 1 \times 4 \times 2 \times 1 = 24$.'
+          - problem: "Compute $(-2) \\times 5 \\times (-1) \\times (-3) \\times (-4)$. State whether the product is positive or negative, and give the product."
+            answer: "verdict = positive; product = 120"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["positive"], ["negative"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "product"}]}
+            solution_sketch: "Step 1 (sign from parity of negatives): the negative factors are -2, -1, -3 and -4, so there are four negative factors among the five factors. Step 2 (parity rule): an even count of negative factors gives a positive product, so verdict = positive. Step 3 (multiply absolute values): 2 × 5 × 1 × 3 × 4 = 120, and the positive sign keeps it as 120. The key is verdict = positive; product = 120."
         constraints: "three to five factors; reason from parity of negatives"
     diagnostic_exemplar:
       problem: 'Compute $(-2)(-3)(-4) \div 6$.'
