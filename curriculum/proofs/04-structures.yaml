@@ -321,12 +321,34 @@ topics:
         name: "Hunting for inverses"
         key_prerequisites: [operation-tables]
         exemplars:
-          - problem: 'For $a * b = a + b - 1$ on $\mathbb{Z}$ (identity $e = 1$), find the inverse of each element $a$.'
-            answer: '$2 - a$.'
-            solution_sketch: 'Solve $a * x = 1$: $a + x - 1 = 1 \Rightarrow x = 2 - a$; check $(2-a) * a = 2 - a + a - 1 = 1$. Every integer is invertible. $\square$'
-          - problem: 'For $a * b = a + b + ab$ on $\mathbb{R}$ (identity $e = 0$), which elements have inverses?'
-            answer: 'All $a \ne -1$, with inverse $-a/(1+a)$.'
-            solution_sketch: 'Solve $a + x + ax = 0$: $x(1 + a) = -a$, so $x = -a/(1+a)$ when $a \ne -1$. For $a = -1$: $-1 + x - x = -1 \ne 0$ for every $x$, so $-1$ has no inverse. $\square$'
+          - problem: "For the operation a * b = a + b - 1 on the integers, the identity element is 1. Find the inverse of an element a as a formula in a."
+            answer: "2-a"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of inverse: x must satisfy a * x = 1, since 1 is the identity. Substitute the operation: a + x - 1 = 1. Solve the linear equation by algebra: x = 2 - a. Check a * (2 - a) = a + 2 - a - 1 = 1. The inverse of a is 2-a."
+          - problem: "For the operation a * b = a + b + ab on the real numbers, the identity element is 0. Find the unique real number that has no inverse."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of inverse: x must satisfy a * x = 0, since the identity is 0. Substitute: a + x + ax = 0. Factor by algebra: x(1 + a) = -a. If a is not -1, then x = -a/(1+a) exists, so a has an inverse. If a = -1, the equation reads -1 = 0, which no x satisfies. The unique non-invertible number is -1."
+          - problem: "For the operation a * b = a + b - ab on the real numbers, the identity element is 0. Find the inverse of 3 as a fraction."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of inverse: x must satisfy 3 * x = 0, since the identity is 0. Substitute the operation: 3 + x - 3x = 0. Combine like terms: 3 - 2x = 0. Solve by algebra: x = 3/2. Check 3 * (3/2) = 3 + 3/2 - 9/2 = 0. The inverse of 3 is 3/2."
+          - problem: "For the operation a * b = a + b - 3 on the integers, the identity element is 3. Find the inverse of 10."
+            answer: "-4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of inverse: x must satisfy 10 * x = 3, since the identity is 3. Substitute the operation: 10 + x - 3 = 3. Simplify: x + 7 = 3. Solve the linear equation: x = -4. Check 10 * (-4) = 10 - 4 - 3 = 3. The inverse of 10 is -4."
+          - problem: "For the operation a * b = ab/2 on the real numbers, the identity element is 2. Find the inverse of 5 as a fraction."
+            answer: "4/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of inverse: x must satisfy 5 * x = 2, since the identity is 2. Substitute the operation: 5x/2 = 2. Multiply both sides by 2: 5x = 4. Divide by 5: x = 4/5. Check 5 * (4/5) = (5 times 4/5)/2 = 4/2 = 2. The inverse of 5 is 4/5."
+          - problem: "For the operation a * b = a + b + 4 on the integers, the identity element is -4. Find the inverse of 7."
+            answer: "-15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of inverse: x must satisfy 7 * x = -4, since the identity is -4. Substitute the operation: 7 + x + 4 = -4. Simplify: x + 11 = -4. Solve the linear equation: x = -15. Check 7 * (-15) = 7 - 15 + 4 = -4. The inverse of 7 is -15."
+          - problem: "Write the full proof: On the integers define a * b = a + b - 5. Prove that 5 is the identity element and determine the inverse of each element. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Identity step: for any integer a, a * e = a + e - 5; setting this equal to a gives e = 5, and indeed a * 5 = a + 5 - 5 = a and 5 * a = 5 + a - 5 = a, so 5 is the identity. Inverse step: fix an integer a and solve a * x = 5. The equation is a + x - 5 = 5, so x = 10 - a. Check: a * (10 - a) = a + 10 - a - 5 = 5 and (10 - a) * a = 10 - a + a - 5 = 5, both equal to the identity. Conclusion: every integer a has inverse 10 - a, so no element is non-invertible under this operation."
         constraints: "solve $a * x = e$ for $x$; identify any non-invertible elements"
     diagnostic_exemplar:
       problem: 'On $\mathbb{R}$ define $a * b = a + b + ab$. Show that $*$ is commutative, find its identity element, and determine exactly which elements have inverses.'
@@ -768,12 +790,34 @@ topics:
         name: "Invertibility in the function monoid"
         key_prerequisites: [function-composition-inverse]
         exemplars:
-          - problem: 'In the monoid of functions $\mathbb{R} \to \mathbb{R}$ under composition, is $f(x) = x^3$ invertible? Is $g(x) = x^2$?'
-            answer: '$f$ yes (inverse $\sqrt[3]{x}$); $g$ no.'
-            solution_sketch: 'An element of this monoid is invertible iff it is a bijection. $x^3$ is bijective with inverse $x^{1/3}$; $x^2$ is not injective ($g(1) = g(-1)$), so no two-sided inverse exists. $\square$'
-          - problem: 'In the same monoid, find the inverse of $h(x) = 2x + 3$ and verify one composition.'
-            answer: '$h^{-1}(x) = (x - 3)/2$; $h(h^{-1}(x)) = x$.'
-            solution_sketch: 'Solve $y = 2x + 3$: $x = (y-3)/2$. Then $h((x-3)/2) = 2 \cdot \tfrac{x-3}{2} + 3 = x$. $\square$'
+          - problem: "In the monoid of functions R -> R under composition, take the element f(x) = x^3 + 1. This element is invertible because f is a bijection. Find f^{-1}(9)."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element is f(x) = x^3 + 1 in the function monoid. Step 1 (meaning of the inverse value): f^{-1}(9) is the input that f sends to 9. Step 2 (solve): x^3 + 1 = 9 gives x^3 = 8, so x = 2. Step 3 (verify by composing): f(2) = 8 + 1 = 9, which confirms the value. The answer is 2."
+          - problem: "In the same monoid of functions R -> R under composition, let h(x) = 3x + 5, which is a bijection from R to R. Find h^{-1}(x) as a function of x."
+            answer: "x/3 - 5/3"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The element is h(x) = 3x + 5. Step 1 (solve for the input): set y = 3x + 5, so x = (y - 5)/3. Step 2 (write the inverse): h^{-1}(x) = (x - 5)/3 = x/3 - 5/3. Step 3 (verify by composing): h(x/3 - 5/3) = 3(x/3 - 5/3) + 5 = x, the identity element of the monoid. The answer is x/3 - 5/3."
+          - problem: "In the monoid of functions R -> R under composition, the element g(x) = x^2 is not invertible because it is not injective. Consider the set S = {-3, -2, -1, 0, 1, 2, 3}. How many unordered pairs of distinct elements a and b of S satisfy g(a) = g(b)?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element is g(x) = x^2, checked on S = {-3, -2, -1, 0, 1, 2, 3}. Step 1 (criterion): an element is invertible only if it is injective. Step 2 (find collisions): g(3) = g(-3) = 9, g(2) = g(-2) = 4, and g(1) = g(-1) = 1. Step 3 (count): the unordered pairs are (-3, 3), (-2, 2), and (-1, 1). The answer is 3."
+          - problem: "In the monoid of functions from the set of nonzero real numbers to itself under composition, take the element r(x) = 1 + 2/x. This element is a bijection on its domain. Find r^{-1}(x) as a function of x."
+            answer: "2/(x-1)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The element is r(x) = 1 + 2/x on the nonzero reals. Step 1 (solve for the input): y = 1 + 2/x gives y - 1 = 2/x, so x = 2/(y - 1). Step 2 (write the inverse): r^{-1}(x) = 2/(x - 1). Step 3 (verify by composing): r(2/(x - 1)) = 1 + 2 divided by 2/(x - 1), which equals 1 + (x - 1) = x. The answer is 2/(x - 1)."
+          - problem: "Claim: g(x) = x^2 is invertible in the monoid of functions R -> R under composition. Step 1: g(2) = 4 and g(-2) = 4, by computing squares. Step 2: every real number is the square of some real number, so g is surjective. Step 3: a surjective element of a function monoid is invertible. Step 4: therefore g is invertible. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The claim is that g(x) = x^2 is invertible in the monoid of functions R -> R under composition. Step 1 is valid: squaring 2 and -2 both give 4. Step 2 is the first invalid step: -1 is not the square of any real number, so g is not surjective. Step 3 is also invalid but comes later: surjectivity alone does not give a two-sided inverse, because injectivity is also required. Step 4 only repeats the conclusion of Step 3 and so is not the first failure. The answer is Step 2."
+          - problem: "In the monoid of functions R -> R under composition, take the element w(x) = 5 - 2x. Determine whether w is invertible, and give w^{-1}(x) as a function of x."
+            answer: "verdict = yes; inverse = 5/2 - x/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "inverse"}]}
+            solution_sketch: "The element is w(x) = 5 - 2x. Step 1 (bijection criterion): w is affine with nonzero slope, so it is injective and surjective on R, hence invertible in this monoid. Step 2 (solve for the input): y = 5 - 2x gives x = (5 - y)/2. Step 3 (verify by composing): w(5/2 - x/2) = 5 - 2(5/2 - x/2) = x, the identity. The answer is verdict = yes; inverse = 5/2 - x/2."
+          - problem: "Write the full proof: in the monoid of functions R -> R under composition, the element f(x) = 4x - 1 is invertible and the element g(x) = x^2 + 1 is not invertible. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Statement: in the monoid of functions R -> R under composition with identity id(x) = x, f(x) = 4x - 1 is invertible and g(x) = x^2 + 1 is not. Step 1 (candidate): solve y = 4x - 1 for x, giving x = (y + 1)/4, so the candidate inverse is h(x) = (x + 1)/4. Step 2 (verify by composing): f(h(x)) = 4(x + 1)/4 - 1 = x and h(f(x)) = (4x - 1 + 1)/4 = x, so h is a two-sided inverse of f. Step 3 (criterion): an element of a function monoid is invertible if and only if it is a bijection. Step 4 (failure for g): g(2) = 5 and g(-2) = 5 with 2 different from -2, so g is not injective. Step 5 (conclusion): a function that is not injective has no two-sided inverse under composition. Therefore f is invertible and g is not invertible."
         constraints: "invertible iff bijective; verify by composing"
       - id: kp3
         name: "Solving equations with inverses"
@@ -950,12 +994,34 @@ topics:
         name: "The definition, and verifying abelian groups"
         key_prerequisites: [groups-intro, binary-operations]
         exemplars:
-          - problem: 'Define what it means for a group to be abelian, and show that $(\mathbb{Z}, +)$ and $(\mathbb{Q} \setminus \{0\}, \cdot)$ are abelian groups.'
-            answer: 'A group is abelian when $ab = ba$ for all elements; both operations inherit commutativity from arithmetic.'
-            solution_sketch: 'A group $G$ is abelian (commutative) when $a * b = b * a$ for all $a, b \in G$. Both are groups (shown previously), and $m + n = n + m$, $\tfrac{p}{q} \cdot \tfrac{r}{s} = \tfrac{r}{s} \cdot \tfrac{p}{q}$ hold for all numbers, so both groups are abelian. $\square$'
-          - problem: 'The set $\mathbb{Z}$ with $a * b = a + b - 1$ is a group with identity $1$. Prove it is abelian.'
-            answer: '$a * b = a + b - 1 = b + a - 1 = b * a$.'
-            solution_sketch: 'For all $a, b \in \mathbb{Z}$: $a * b = a + b - 1 = b + a - 1 = b * a$, by commutativity of ordinary addition. So the group is abelian. $\square$'
+          - problem: "A set G with a binary operation is known to satisfy the group axioms. What must be verified, beyond the group axioms, to conclude that G is abelian?"
+            answer: "a * b = b * a for all elements a and b"
+            answer_contract: {"kind": "label", "options": [["a * b = b * a for all elements a and b"], ["a * b = b * a for at least one pair a and b"], ["a * a = e for every element a"], ["a * e = a for every element a"]]}
+            solution_sketch: "The definition to state: a group is abelian when its operation satisfies a * b = b * a for all elements a and b. The option with at least one pair is too weak; a single commuting pair does not make the group abelian. The option a * a = e for every element a describes a different property, namely that each element is its own inverse. The option a * e = a is the identity axiom, which already holds in every group. The answer is a * b = b * a for all elements a and b."
+          - problem: "The integers form a group under the operation a * b = a + b - 1. Compute 6 * (-4) and then (-4) * 6. Give the common value as an integer."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule to verify: a * b = b * a under the operation a * b = a + b - 1. First product: 6 * (-4) = 6 + (-4) - 1 = 1. Second product: (-4) * 6 = (-4) + 6 - 1 = 1. The two products agree because ordinary addition commutes, so the common value is 1."
+          - problem: "The nonzero residues 1 through 6 form a group under multiplication taken modulo 7. Compute 5 * 4 and then 4 * 5, where * is multiplication modulo 7. Give the common residue."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule to verify: a * b = b * a for multiplication modulo 7. First product: 5 * 4 = 20, and 20 reduced modulo 7 is 6. Second product: 4 * 5 = 20, and 20 reduced modulo 7 is 6. The products agree since ordinary multiplication commutes, so the common residue is 6."
+          - problem: "The positive rational numbers form a group under the operation a * b = ab/3. Compute (1/2) * (3/4) and then (3/4) * (1/2). Give the common value as a fraction."
+            answer: "1/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule to verify: a * b = b * a under the operation a * b = ab/3. First product: (1/2) * (3/4) = (1/2)(3/4)/3 = (3/8)/3 = 1/8. Second product: (3/4) * (1/2) = (3/4)(1/2)/3 = 1/8. The products agree since ordinary multiplication commutes, so the common value is 1/8."
+          - problem: "Claim: the real numbers form an abelian group under a * b = a + b - 1, given they form a group. Step 1: let a and b be arbitrary real numbers. Step 2: a * b = a + b - 1. Step 3: b * a = b - a - 1. Step 4: since a + b - 1 = b + a - 1, we get a * b = b * a. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: taking arbitrary a and b is exactly what the definition requires. Step 2 is valid: it applies the definition of the operation to a * b. Step 3 is not valid: b * a = b + a - 1 by the definition, not b - a - 1; the middle sign is wrong. Step 4 is valid once Step 3 is corrected, since a + b - 1 = b + a - 1 by commutativity of ordinary addition. The first invalid step is Step 3."
+          - problem: "The real numbers other than -1 form a group under the operation a * b = a + b + ab, with identity 0. To verify the abelian condition symbolically, form the difference (a * b) - (b * a) for arbitrary a and b and simplify it completely. Give the simplified result."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule to verify: a * b = b * a for all a and b. Full difference first: (a + b + ab) - (b + a + ba). Expand and collect: a - a + b - b + ab - ba = 0, because ordinary addition and multiplication commute, so ab = ba and every term cancels. The difference is 0, so a * b = b * a always, and the answer is 0."
+          - problem: "Write the full proof: the integers form an abelian group under the operation a * b = a + b + 2, given that they already form a group under this operation. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Definition: a group is abelian when a * b = b * a for all elements a and b; here the group structure is given, so only commutativity needs proof. Step 1: let a and b be arbitrary integers. Step 2: compute a * b = a + b + 2 by the definition of the operation. Step 3: compute b * a = b + a + 2 by the same definition. Step 4: ordinary addition is commutative, so a + b = b + a, hence a + b + 2 = b + a + 2 and therefore a * b = b * a. Conclusion: the equality a * b = b * a holds for every pair of integers, so the group of integers under a * b = a + b + 2 is abelian."
         constraints: "verify $a * b = b * a$ symbolically for a group already known to be a group; state the definition when asked"
       - id: kp2
         name: "Nonabelian groups"
