@@ -1708,12 +1708,34 @@ topics:
         name: "Linear sums"
         key_prerequisites: [induction-template]
         exemplars:
-          - problem: 'Prove: for all $n \ge 1$, $1 + 2 + \cdots + n = \dfrac{n(n+1)}{2}$.'
-            answer: 'Base $n = 1$: $1 = 1$. Step: add $(n + 1)$ to both sides.'
-            solution_sketch: 'Base: $n = 1$ gives $1 = \frac{1 \cdot 2}{2}$. Step: assume $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$. Then $\sum_{i=1}^{n+1} i = \frac{n(n+1)}{2} + (n + 1) = \frac{(n+1)(n+2)}{2}$, the formula at $n + 1$. $\square$'
-          - problem: 'Prove: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} (3i - 2) = \frac{n(3n - 1)}{2}$.'
-            answer: 'Base $n = 1$: $1 = 1$. Step: $\frac{n(3n-1)}{2} + (3n + 1) = \frac{3n^2 + 5n + 2}{2} = \frac{(n+1)(3n+2)}{2}$.'
-            solution_sketch: 'Base: $n = 1$ gives $1 = \frac{1 \cdot 2}{2}$. Step: add the next term $3(n+1) - 2 = 3n + 1$ to the hypothesis and factor: $\frac{3n^2 - n + 6n + 2}{2} = \frac{(n+1)(3(n+1) - 1)}{2}$. $\square$'
+          - problem: "To prove by induction that for all n >= 1, 1 + 2 + ... + n = n(n+1)/2, write the sum to n+1 as the sum to n plus one new term T. Give T."
+            answer: "n+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sum to n+1 is 1 + 2 + ... + n + (n+1). Split off the last term by the definition of the summation. The part before the last term is the sum to n, so the new term is n+1."
+          - problem: "To prove by induction that for all n >= 1, the sum of 3i - 2 from i = 1 to n equals n(3n - 1)/2, the inductive step adds the term with index n + 1 and computes n(3n - 1)/2 + (3n + 1). Written as one fraction with denominator 2, the numerator factors as (n + 1) times Q(n). Give Q(n)."
+            answer: "3n+2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The term with index n + 1 is 3(n + 1) - 2 = 3n + 1, and the inductive step adds it to the closed form n(3n - 1)/2. Combine over the common denominator 2: the numerator is n(3n - 1) + 2(3n + 1) = 3n^2 + 5n + 2. Factor the numerator: 3n^2 + 5n + 2 = (n + 1)(3n + 2), which is exactly the formula at n + 1 divided by 2. The answer is Q(n) = 3n+2."
+          - problem: "For the claim that for all n >= 1, the sum of 4i - 1 from i = 1 to n equals n(2n + 1), state the single term that the sum to n + 1 adds to the sum to n."
+            answer: "4n+3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The sum to n+1 adds the term with index i = n+1. That term is 4(n+1) - 1 = 4n + 3 by substitution into the general term. Hence the sum to n+1 equals the sum to n plus 4n+3."
+          - problem: "For the claim that for all n >= 1, the sum of 6i - 5 from i = 1 to n equals n(3n - 2), after adding the next term to the right side the result factors as (n+1)Q(n). Give Q(n)."
+            answer: "3n+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The next term is 6(n+1) - 5 = 6n + 1. Add it to the hypothesis: n(3n - 2) + (6n + 1) = 3n^2 - 2n + 6n + 1 = 3n^2 + 4n + 1. Factor: 3n^2 + 4n + 1 = (n + 1)(3n + 1). The quotient is 3n+1."
+          - problem: "A student claims that for all n >= 1, 1 + 2 + ... + n = n(n+1)/2 + (n-1)(n-2)(n-3). The claim holds for the first few n. Give the smallest n >= 1 for which the claim is false."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test the claim in order. For n = 1 both sides give 1; for n = 2 both sides give 3; for n = 3 both sides give 6. At n = 4 the left side is 10 while the right side is 10 + 6 = 16, which is not equal. Checking a few cases is not a proof, and the induction breaks at this point. The claim first fails at n = 4."
+          - problem: "Claim: for all n >= 1, the sum of 4i - 2 from i = 1 to n equals 2n^2. Step 1: for n = 1, the left side is 2 and the right side is 2. Step 2: assume the claim for n. Step 3: the sum to n + 1 equals 2n^2 + 4n + 4. Step 4: therefore the sum to n + 1 equals 2(n + 1)^2, which is the claim at n + 1. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: for n = 1 the left side is 4 - 2 = 2 and the right side is 2 times 1 squared, also 2. Step 2 is the induction hypothesis, which is a valid assumption. Step 3 is the first invalid step: the new term is 4(n + 1) - 2 = 4n + 2, so the sum to n + 1 is 2n^2 + 4n + 2, not 2n^2 + 4n + 4; the student added 4(n + 1) instead of the correct term. Step 4 states a true identity, since 2(n + 1)^2 = 2n^2 + 4n + 2 is the claim at n + 1. The first step that is not valid is Step 3."
+          - problem: "Write the full proof: for all n >= 1, the sum of 7i - 4 from i = 1 to n equals n(7n - 1)/2. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: for n = 1, the left side is 7*1 - 4 = 3 and the right side is 1*(7*1 - 1)/2 = 3, so the claim holds. Induction hypothesis: assume for some n >= 1 that the sum of 7i - 4 from i = 1 to n equals n(7n - 1)/2. Inductive step: add the next term 7(n+1)-4 = 7n+3. The left side becomes the sum to n+1. The right side becomes n(7n - 1)/2 + (7n+3) = (7n^2 - n + 14n + 6)/2 = (7n^2 + 13n + 6)/2 = (n+1)(7n+6)/2 = (n+1)(7(n+1)-1)/2, which is the formula at n+1. Conclusion: by induction the formula holds for all n >= 1."
         constraints: "arithmetic-progression sums; the step adds one term and refactors"
       - id: kp2
         name: "Square and cube sums"

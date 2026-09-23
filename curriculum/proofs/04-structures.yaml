@@ -78,14 +78,30 @@ topics:
         name: "Closure of described sets"
         key_prerequisites: [set-notation]
         exemplars:
-          - problem: 'Are the odd integers closed under multiplication? Under addition?'
-            answer_contract: {kind: none}
-            answer: 'Yes under multiplication; no under addition ($1 + 1 = 2$).'
-            solution_sketch: '$(2j+1)(2k+1) = 2(2jk + j + k) + 1$ is odd; but the sum of two odds is even.'
-          - problem: 'Is the set $\{2^k : k \in \mathbb{N}\}$ of powers of $2$ closed under multiplication?'
-            answer_contract: {kind: none}
-            answer: 'Yes: $2^a \cdot 2^b = 2^{a+b}$.'
-            solution_sketch: 'The exponents add, and a sum of naturals is natural.'
+          - problem: "Let S = {2k + 1 : k in Z} be the odd integers, and let a = 2j + 1 with j = 3 and b = 2k + 1 with k = 5. State whether the product ab is odd, and give the integer m with ab = 2m + 1."
+            answer: "verdict = closed; m = 38"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["closed"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Write both factors in the odd parametric form 2k + 1 from the object S = {2k + 1 : k in Z}: a = 2(3) + 1 = 7 and b = 2(5) + 1 = 11. Multiply and collect by the distributive law: ab = 77, and 77 = 2(38) + 1 fits the odd form with m = 38. The option fails would be an error because a product of two numbers of the form 2k + 1 is again of that form. The result is verdict = closed; m = 38."
+          - problem: "Let T = {2^k : k in N} be the powers of 2, and let a and b be natural numbers with 2^a and 2^b in T. State whether their product is again in T, and give the exponent e with 2^a times 2^b = 2^e as an expression in a and b."
+            answer: "verdict = closed; e = a + b"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["closed"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["a", "b"]}, "name": "e"}]}
+            solution_sketch: "Write both members of the object T = {2^k : k in N} in the parametric form 2^a and 2^b. Apply the product law for powers with one base: 2^a times 2^b = 2^(a + b), and a + b is again a natural number, so the product has the form 2^e with e = a + b. The wrong option fails would be an error because the exponents add and stay natural inside the same base. The result is verdict = closed; e = a + b."
+          - problem: "Let T = {2^k : k in N} with N = {0, 1, 2, ...} be the powers of 2. Take a = 2^4 and b = 2^6 in T. Their sum a + b is not a member of T, and it lies strictly between the consecutive members 2^m and 2^(m+1) of T. Find m."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is T = {2^k : k in N}, the powers of 2, with a = 2^4 = 16 and b = 2^6 = 64. Closure check under addition: a + b = 16 + 64 = 80, and no exponent k gives 2^k = 80, so the sum is not in T. Compare with consecutive powers by the doubling rule: 2^6 = 64 is less than 80 and 2^7 = 128 is greater, so the sum lies strictly between 2^m and 2^(m+1) with m = 6. The answer is 6."
+          - problem: "Let S = {2k + 1 : k in Z} be the odd integers, with a = 2j + 1 and b = 2k + 1 in S. State whether a + b is odd, and give the integer m with a + b = 2m as an expression in j and k."
+            answer: "verdict = fails; m = j + k + 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["closed"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "function", "vars": ["j", "k"]}, "name": "m"}]}
+            solution_sketch: "Write both summands in parametric form: a = 2j + 1 and b = 2k + 1 from the object S = {2k + 1 : k in Z}. Add and collect like terms by the distributive law: a + b = 2j + 2k + 2 = 2(j + k + 1), which has the even form 2m with m = j + k + 1. The wrong option closed would be an error because a sum of two numbers of the form 2k + 1 is even and never has the odd form 2m + 1. The result is verdict = fails; m = j + k + 1."
+          - problem: "Let M = {5k : k in Z} be the multiples of 5, and let a = 5j with j = 3 and b = 5k with k = 4. State whether the product ab is in M, and give the integer m with ab = 5m."
+            answer: "verdict = closed; m = 60"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["closed"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Write both factors in the parametric form 5k from the object M = {5k : k in Z}: a = 5(3) = 15 and b = 5(4) = 20. Multiply and pull out the factor 5 by the associative law: ab = 300, and 300 = 5(60) is a multiple of 5 with m = 60. The option fails would be an error because the factor 5 survives the multiplication and can be pulled out. The result is verdict = closed; m = 60."
+          - problem: "Let M = {5k : k in Z} be the multiples of 5, with a = 5j and b = 5k in M. Give the integer m with a - b = 5m as an expression in j and k."
+            answer: "j - k"
+            answer_contract: {"kind": "function", "vars": ["j", "k"]}
+            solution_sketch: "The object is M = {5k : k in Z}, the multiples of 5, with both members in parametric form a = 5j and b = 5k. Check closure under subtraction with the distributive law: a - b = 5j - 5k = 5(j - k), which again has the form 5m of a multiple of 5. The integer in that form is m = j - k, so the answer is j - k."
         constraints: "closure arguments via a parametric form ($2k$, $2k+1$, $2^k$, $5k$)"
     diagnostic_exemplar:
       problem: 'Is the set $\{3k : k \in \mathbb{Z}\}$ of multiples of $3$ closed under addition? Under multiplication? And is $\mathbb{N} = \{0, 1, 2, \dots\}$ closed under subtraction?'
@@ -1135,12 +1151,34 @@ topics:
         name: "The homomorphism condition"
         key_prerequisites: [groups-intro]
         exemplars:
-          - problem: 'Prove $\exp : (\mathbb{R}, +) \to (\mathbb{R}^{>0}, \cdot)$, $x \mapsto e^{x}$, is a homomorphism.'
-            answer: '$e^{x + y} = e^{x} e^{y}$.'
-            solution_sketch: 'For all $x, y$, $\exp(x + y) = e^{x+y} = e^{x} e^{y} = \exp(x)\exp(y)$ — the exponent product rule $a^{m}a^{n} = a^{m+n}$, applied to the exponential function with base $e$. So $\exp$ preserves the operation and is a group homomorphism. $\square$'
-          - problem: 'Prove $\ln : (\mathbb{R}^{>0}, \cdot) \to (\mathbb{R}, +)$ is a homomorphism.'
-            answer: '$\ln(xy) = \ln x + \ln y$.'
-            solution_sketch: 'For all $x, y > 0$, $\ln(xy) = \ln x + \ln y$ (the logarithm law), so $\ln$ carries the product to the sum — a group homomorphism (indeed the inverse of $\exp$). $\square$'
+          - problem: "To prove that the exponential map exp from (R, +) to (R>0, *) satisfies the homomorphism condition, one rewrites exp(x + y) as a product. Give that product form, using the exponent product law."
+            answer: "e^(x)*e^(y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full object: exp(x + y) = e^(x + y). Step 1: apply the exponent product law a^(m+n) = a^m a^n with base e to rewrite e^(x + y) as a product. Step 2: read off the factors e^(x) and e^(y). The answer is e^(x)*e^(y)."
+          - problem: "To prove that the natural logarithm map ln from (R>0, *) to (R, +) satisfies the homomorphism condition, one rewrites ln(xy) as a sum. Give that sum form, using the logarithm product law."
+            answer: "ln(x)+ln(y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full object: ln(xy). Step 1: apply the logarithm product law ln(ab) = ln(a) + ln(b) with a = x and b = y. Step 2: this expresses the product as a sum, which is the homomorphism condition for this map. The answer is ln(x)+ln(y)."
+          - problem: "Let phi(x) = e^(3x), a map from (R, +) to (R>0, *). To check the homomorphism condition phi(x + y) = phi(x) phi(y), rewrite phi(x + y) as a product of two exponential terms. Give the product."
+            answer: "e^(3x)*e^(3y)"
+            answer_contract: {"kind": "function", "vars": ["x", "y"]}
+            solution_sketch: "Full object: phi(x + y) = e^(3(x + y)). Step 1: expand the exponent by the distributive law to get e^(3x + 3y). Step 2: apply the exponent product law to write e^(3x + 3y) as a product. The answer is e^(3x)*e^(3y)."
+          - problem: "A student claims that phi(x) = x^2 is a homomorphism from (R, +) to (R, +), meaning phi(x + y) = phi(x) phi(y). Test the condition at x = 1 and y = 1, and give the value of phi(2) minus phi(1) phi(1)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the condition phi(x + y) = phi(x) phi(y) at x = y = 1. Step 1: compute phi(2) = 2^2 = 4. Step 2: compute phi(1) phi(1) = 1 times 1 = 1. Step 3: the difference is 4 minus 1. The answer is 3."
+          - problem: "Claim: phi(x) = x^2 is a homomorphism from (R, +) to (R, +), so phi(x + y) = phi(x) phi(y). Step 1: phi(x + y) = (x + y)^2. Step 2: (x + y)^2 = x^2 + y^2. Step 3: so phi(x + y) = phi(x) phi(y). Step 4: therefore phi is a homomorphism. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Full object: the four-step argument for phi(x) = x^2. Step 1 is a correct substitution. Step 2 is false: the square of a sum is x^2 + 2xy + y^2, not x^2 + y^2; the error is dropping the cross term. Step 3 and Step 4 merely build on the false identity. The answer is Step 2."
+          - problem: "In the proof that phi(x) = e^(3x) from (R, +) to (R>0, *) satisfies phi(x + y) = phi(x) phi(y), the line e^(3x + 3y) = ? is missing. Select the line that is true and that completes the proof."
+            answer: "e^(3x)*e^(3y)"
+            answer_contract: {"kind": "label", "options": [["e^(3x)*e^(3y)"], ["e^(3x)+e^(3y)"], ["3*e^(x)*e^(y)"], ["e^(x)*e^(y)"]]}
+            solution_sketch: "Full object: the missing line for e^(3x + 3y). Step 1: the exponent product law gives e^(3x + 3y) = e^(3x) e^(3y). The option e^(3x)+e^(3y) is the error of turning the operation into a sum. The option 3*e^(x)*e^(y) wrongly pulls the 3 out of the exponent. The option e^(x)*e^(y) drops the factor 3. The answer is e^(3x)*e^(3y)."
+          - problem: "Write the full proof: the map phi from (R, +) to (R>0, *) given by phi(x) = e^(2x) satisfies phi(x + y) = phi(x) phi(y) for all real x and y. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: for all real x, y, phi(x + y) = phi(x) phi(y), where phi(x) = e^(2x). Step 1 (definition): compute phi(x + y) = e^(2(x + y)) = e^(2x + 2y). Step 2 (exponent product law): rewrite e^(2x + 2y) = e^(2x) e^(2y). Step 3 (recognize the map): e^(2x) = phi(x) and e^(2y) = phi(y), so phi(x + y) = phi(x) phi(y). Step 4 (conclusion): the operation in the domain is addition and in the codomain is multiplication, so this equality is exactly the homomorphism condition phi(x * y) = phi(x) . phi(y) with * the addition and the dot the multiplication. Hence phi is a homomorphism from (R, +) to (R>0, *), which completes the proof."
         constraints: "prove $\\varphi(x * y) = \\varphi(x) \\cdot \\varphi(y)$ for a map between different operations"
       - id: kp2
         name: "Homomorphisms preserve identity"
@@ -1620,23 +1658,67 @@ topics:
         name: "Reaching unbounded intervals"
         key_prerequisites: [function-composition-inverse]
         exemplars:
-          - problem: 'Show $f(x) = 1/x$ is a bijection $(0, 1) \to (1, \infty)$.'
-            answer: 'Strictly decreasing there, with inverse $y \mapsto 1/y$.'
-            solution_sketch: 'For $0 < x < 1$, $1/x > 1$; injective since $1/a = 1/b \Rightarrow a = b$; and every $y > 1$ is $f(1/y)$ with $0 < 1/y < 1$. $\square$'
-          - problem: 'Show $x \mapsto e^{x}$ is a bijection $\mathbb{R} \to (0, \infty)$.'
-            answer: 'Strictly increasing with inverse $\ln$.'
-            solution_sketch: '$e^x$ is injective (strictly increasing) and every $y > 0$ equals $e^{\ln y}$; the two compositions with $\ln$ are identities. $\square$'
+          - problem: "To prove that $f(x) = 1/x$ is a bijection from $(0, 1)$ onto $(1, \\infty)$, one identifies the inverse map explicitly. For a point $y$ with $y > 1$, give the unique $x$ in $(0, 1)$ satisfying $f(x) = y$, as a function of $y$."
+            answer: "1/y"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Full object: the map $f: (0, 1) \\to (1, \\infty)$ with $f(x) = 1/x$. Step 1 (image rule): for $0 < x < 1$ the quotient $1/x$ is larger than $1$, so every value lies in the target. Step 2 (injectivity rule): $1/a = 1/b$ forces $a = b$. Step 3 (surjectivity rule): given $y > 1$, the number $1/y$ lies in $(0, 1)$ and $f(1/y) = y$, so the inverse sends $y$ to $1/y$. The answer is 1/y."
+          - problem: "To prove that $g(x) = e^x$ is a bijection from the reals onto $(0, \\infty)$, one exhibits the inverse map explicitly. For a point $y$ with $y > 0$, give the unique real number $x$ satisfying $g(x) = y$, as a function of $y$."
+            answer: "ln(y)"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Full object: the map $g$ from the reals onto $(0, \\infty)$ with $g(x) = e^x$. Step 1 (monotonicity rule): $e^x$ is strictly increasing, so $e^a = e^b$ forces $a = b$. Step 2 (surjectivity rule): for $y > 0$ the number $\\ln(y)$ is real and $e^{\\ln(y)} = y$. Step 3 (inverse check): $g(\\ln(y)) = y$ and $\\ln(g(x)) = x$, so the inverse sends $y$ to $\\ln(y)$. The answer is ln(y)."
+          - problem: "The map $h(x) = 2/x$ is a strictly decreasing bijection from $(0, 1)$ onto $(2, \\infty)$, so each point of $(2, \\infty)$ has exactly one preimage in $(0, 1)$. For the point $y = 10$, give the unique $x$ in $(0, 1)$ with $h(x) = 10$, as a fraction."
+            answer: "1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the map $h: (0, 1) \\to (2, \\infty)$ with $h(x) = 2/x$. Step 1 (inverse rule): solving $2/x = y$ gives $x = 2/y$, the explicit inverse. Step 2 (evaluate): at $y = 10$ this gives $x = 2/10 = 1/5$. Step 3 (check rule): $0 < 1/5 < 1$ and $h(1/5) = 2/(1/5) = 10$. The answer is 1/5."
+          - problem: "The map $p(x) = 2^x$ is a strictly increasing exponential with base two, and it is a bijection from the reals onto the positive reals. Identify its inverse explicitly. For a positive number $y$, give the unique real $x$ with $p(x) = y$, as a function of $y$."
+            answer: "ln(y)/ln(2)"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Full object: the map $p$ from the reals to $(0, \\infty)$ with $p(x) = 2^x$. Step 1 (monotonicity rule): $2^x$ is strictly increasing, hence injective. Step 2 (solve rule): from $2^x = y$ take the natural logarithm to get $x \\ln(2) = \\ln(y)$, so $x = \\ln(y)/\\ln(2)$. Step 3 (check rule): $2^x = e^{x \\ln(2)} = e^{\\ln(y)} = y$ for every $y > 0$. The answer is ln(y)/ln(2)."
+          - problem: "Claim: the map $f(x) = 1/x$ is a bijection from $(0, 1)$ onto $(0, \\infty)$. Step 1: if $f(a) = f(b)$ for inputs $a, b$ in $(0, 1)$, then $a = b$. Step 2: for $0 < x < 1$ the value $1/x$ is positive, so every value lies in $(0, \\infty)$. Step 3: every $y$ in $(0, \\infty)$ has the preimage $1/y$, which lies in $(0, 1)$. Step 4: therefore $f$ is onto $(0, \\infty)$ and is a bijection. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Full object: the claim that $f(x) = 1/x$ maps $(0, 1)$ onto $(0, \\infty)$, checked step by step. Step 1 is valid: equal quotients give equal inputs. Step 2 is valid: on $(0, 1)$ the reciprocal exceeds $1$, so it is positive. Step 3 is the first invalid step: for $y = 1/2$ the candidate preimage is $1/y = 2$, which is not in $(0, 1)$; the image of $(0, 1)$ is only $(1, \\infty)$. Step 4 cannot stand, because surjectivity was never established. The answer is Step 3."
+          - problem: "A proof that the map $s(x) = e^{-x}$ is a bijection from the reals onto $(0, \\infty)$ reads: Step 1: the map is strictly decreasing, hence injective. Step 2: all of its values are positive. Step 3: given a positive point $y$, take $x$ equal to the missing expression; then $s(x) = y$. Step 4: therefore the map is onto and bijective. Select the expression that fills the gap."
+            answer: "-ln(y)"
+            answer_contract: {"kind": "label", "options": [["-ln(y)"], ["ln(y)"], ["1/y"], ["e^y"]]}
+            solution_sketch: "Full object: the map $s$ from the reals to $(0, \\infty)$ with $s(x) = e^{-x}$. Step 1 (solve rule): from $e^{-x} = y$ take the natural logarithm to get $-x = \\ln(y)$, hence $x = -\\ln(y)$. Step 2 (check rule): $s(-\\ln(y)) = e^{\\ln(y)} = y$ for every $y > 0$. The option ln(y) forgets the minus sign, since $s(\\ln(y)) = 1/y$, not $y$. The option 1/y gives a value of the map instead of a preimage. The option e^y applies the increasing exponential to $y$ instead of inverting the map. The answer is -ln(y)."
+          - problem: "Write the full proof: the map $f(x) = 1/x$ is a bijection from $(0, 1/2)$ onto $(2, \\infty)$, and state its inverse. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Full object: the map $f: (0, 1/2) \\to (2, \\infty)$ with $f(x) = 1/x$. Step 1 (image rule): if $0 < x < 1/2$ then $1/x > 2$, so $f(x)$ lies in $(2, \\infty)$. Step 2 (injectivity rule): $f$ is strictly decreasing on $(0, 1/2)$, and $1/a = 1/b$ forces $a = b$. Step 3 (surjectivity rule): given $y > 2$, set $x = 1/y$; then $0 < 1/y < 1/2$ because $y > 2$, and $f(1/y) = y$. Step 4 (inverse rule): the map sending $y$ to $1/y$ from $(2, \\infty)$ back to $(0, 1/2)$ satisfies both composition identities, so it is the explicit inverse. Conclusion: $f$ is a bijection from $(0, 1/2)$ onto $(2, \\infty)$ with inverse $y \\mapsto 1/y$."
         constraints: "one reciprocal or exponential map; identify the inverse explicitly"
       - id: kp3
         name: "Composing bijections to reach R"
         key_prerequisites: [cardinality-countability]
         exemplars:
-          - problem: 'Show $x \mapsto \tan\left(\pi\left(x - \tfrac{1}{2}\right)\right)$ is a bijection $(0, 1) \to \mathbb{R}$.'
-            answer: 'The inner map hits $(-\tfrac{\pi}{2}, \tfrac{\pi}{2})$, where $\tan$ is a bijection onto $\mathbb{R}$.'
-            solution_sketch: '$x \mapsto \pi(x - \tfrac12)$ bijects $(0,1)$ onto $(-\tfrac{\pi}{2}, \tfrac{\pi}{2})$, and $\tan$ is strictly increasing there with range $\mathbb{R}$; a composition of bijections is a bijection. $\square$'
-          - problem: 'Prove $|(a, b)| = |\mathbb{R}|$ for any $a < b$.'
-            answer: 'Compose an affine bijection $(a, b) \to (0, 1)$ with the tangent bijection $(0, 1) \to \mathbb{R}$.'
-            solution_sketch: '$x \mapsto (x - a)/(b - a)$ bijects $(a,b)$ onto $(0,1)$; follow with $x \mapsto \tan(\pi(x - \tfrac12))$. Compositions of bijections are bijections, so the cardinalities agree. $\square$'
+          - problem: "The map $h(x) = \\tan\\left(\\pi\\left(x - \\frac{1}{2}\\right)\\right)$ is a bijection from $(0, 1)$ onto $\\mathbb{R}$. Give $h\\left(\\frac{3}{4}\\right)$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (substitute): $h(3/4) = \\tan(\\pi(3/4 - 1/2))$. Step 2 (inner arithmetic): $3/4 - 1/2 = 1/4$, so the argument is $\\pi/4$. Step 3 (evaluate the outer map): $\\tan(\\pi/4) = 1$. The answer is 1."
+          - problem: "For $a < b$, the map $h(x) = \\tan\\left(\\pi\\left(\\frac{x - a}{b - a} - \\frac{1}{2}\\right)\\right)$ is a bijection $(a, b) \\to \\mathbb{R}$. Give $h\\left(\\frac{a+b}{2}\\right)$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (inner affine map): the midpoint $x = (a+b)/2$ maps to $t = ((a+b)/2 - a)/(b - a) = 1/2$. Step 2 (outer map): $h((a+b)/2) = \\tan(\\pi(1/2 - 1/2)) = \\tan(0) = 0$. The answer is 0."
+          - problem: "The map $h(x) = \\tan\\left(\\pi\\left(x - \\frac{1}{2}\\right)\\right)$ is a bijection $(0, 1) \\to \\mathbb{R}$. Give the formula for $h^{-1}(y)$ as a function of $y$."
+            answer: "atan(y)/pi + 1/2"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Step 1 (set up): write $y = \\tan(\\pi(x - 1/2))$ and solve for $x$. Step 2 (apply atan): since atan inverts tan on $(-\\pi/2, \\pi/2)$, we get $\\pi(x - 1/2) = \\atan(y)$. Step 3 (isolate $x$): $x = \\atan(y)/\\pi + 1/2$. The inverse is atan(y)/pi + 1/2."
+          - problem: "Let $f(x) = \\frac{x}{1-x}$, a bijection $(0, 1) \\to (0, \\infty)$, and $g(t) = \\ln(t)$, a bijection $(0, \\infty) \\to \\mathbb{R}$, so $h(x) = \\ln\\left(\\frac{x}{1-x}\\right)$ is a bijection $(0, 1) \\to \\mathbb{R}$. Give the formula for $h^{-1}(y)$ as a function of $y$."
+            answer: "e^(y)/(1+e^(y))"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Step 1 (compose): $h(x) = \\ln(x/(1-x))$. Step 2 (invert the outer map): $y = \\ln(x/(1-x))$ gives $e^{y} = x/(1-x)$. Step 3 (solve for x): $x(1 + e^{y}) = e^{y}$, so $x = e^{y}/(1 + e^{y})$. The inverse is e^(y)/(1+e^(y))."
+          - problem: "Claim: for $a < b$, the map $x \\mapsto \\tan\\left(\\pi\\left(\\frac{x-a}{b-a} - \\frac{1}{2}\\right)\\right)$ is a bijection $(a, b) \\to \\mathbb{R}$. Step 1: $x \\mapsto \\frac{x-a}{b-a}$ is a bijection $(a, b) \\to (0, 1)$. Step 2: $y \\mapsto \\tan\\left(\\pi\\left(y - \\frac{1}{2}\\right)\\right)$ is a bijection $(0, 1) \\to \\mathbb{R}$. Step 3: the composition sends $(a, b)$ onto $(0, 1)$, not onto $\\mathbb{R}$. Step 4: compositions of bijections are bijections, so the map is a bijection $(a, b) \\to \\mathbb{R}$. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 (check Step 1): the affine map is strictly increasing from $a$ to $b$, hence a bijection onto $(0, 1)$, so it is valid. Step 2 (check Step 2): the hypothesis is assumed for some $k$, and tan is strictly increasing on $(-\\pi/2, \\pi/2)$ with range $\\mathbb{R}$, so it is valid. Step 3 (find the error): Step 3 is false, because composing a map onto $(0, 1)$ with a map onto $\\mathbb{R}$ has range $\\mathbb{R}$, not $(0, 1)$. Step 4 (check the citation): Step 4 cites the composition rule correctly and follows once Step 3 is dropped, so it is not the first invalid step. The answer is Step 3."
+          - problem: "A proof that $|(a, b)| = |\\mathbb{R}|$ for $a < b$ shows that $h(x) = \\tan\\left(\\pi\\left(\\frac{x - a}{b - a} - \\frac{1}{2}\\right)\\right)$ is a bijection $(a, b) \\to \\mathbb{R}$. To prove that $h$ is onto $\\mathbb{R}$, one line is missing: given $y \\in \\mathbb{R}$, choose $t \\in (0, 1)$ with $\\tan\\left(\\pi\\left(t - \\frac{1}{2}\\right)\\right) = y$, and then choose $x = \\;?$. Select the line that completes the proof."
+            answer: "$a + (b - a)*(atan(y)/pi + 1/2)$"
+            answer_contract: {"kind": "label", "options": [["$a + (b - a)*(atan(y)/pi + 1/2)$"], ["$atan(y)/pi + 1/2$"], ["$a + (b - a)*(atan(y)/pi - 1/2)$"], ["$a + (b - a)*atan(y)/pi$"]]}
+            solution_sketch: "Step 1 (target): to hit $y$ we need $t$ with $\\tan(\\pi(t - 1/2)) = y$ and then $x = a + (b - a)t$. Step 2 (solve for t): $t = \\atan(y)/\\pi + 1/2$, so the missing line is $a + (b - a)*(atan(y)/pi + 1/2)$. Step 3 (wrong options): the wrong option $atan(y)/pi + 1/2$ forgets to undo the affine map and stays in $(0, 1)$; the wrong option $a + (b - a)*(atan(y)/pi - 1/2)$ has a sign error in the half-shift; the wrong option $a + (b - a)*atan(y)/pi$ omits the $1/2$ shift and in general lands outside $(0, 1)$. The answer is $a + (b - a)*(atan(y)/pi + 1/2)$."
+          - problem: "Write the full proof: for any $a < b$, the intervals $(a, b)$ and $\\mathbb{R}$ satisfy $|(a, b)| = |\\mathbb{R}|$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (affine bijection): for $a < b$, the map $f(x) = (x - a)/(b - a)$ sends $(a, b)$ strictly increasing onto $(0, 1)$, and its inverse is $x = a + (b - a)t$; hence $f$ is a bijection $(a, b) \\to (0, 1)$. Step 2 (tangent bijection): the map $g(t) = \\tan(\\pi(t - 1/2))$ is strictly increasing on $(0, 1)$ because its derivative is positive, and its limits at the endpoints are $-\\infty$ and $+\\infty$, so its range is $\\mathbb{R}$; hence $g$ is a bijection $(0, 1) \\to \\mathbb{R}$. Step 3 (composition rule): the composition $h = g \\circ f$ sends $x$ to $\\tan(\\pi((x - a)/(b - a) - 1/2))$; a composition of bijections is a bijection, because the composition of injective maps is injective and the composition of surjective maps is surjective. Step 4 (conclusion): $h$ is a bijection $(a, b) \\to \\mathbb{R}$, so $|(a, b)| = |\\mathbb{R}|$."
         constraints: "chain two verified bijections; cite that compositions of bijections are bijections"
     diagnostic_exemplar:
       problem: 'Give a bijection $(0, 1) \to (3, \infty)$, prove that it is one, and state its inverse.'
@@ -1738,12 +1820,34 @@ topics:
         name: "Cantor''s theorem in general"
         key_prerequisites: [negating-statements]
         exemplars:
-          - problem: 'Prove Cantor''s theorem: for any set $A$, there is no surjection $A \to \mathcal{P}(A)$.'
-            answer: 'The diagonal set $D = \{a : a \notin f(a)\}$ is not in the image.'
-            solution_sketch: 'Given $f : A \to \mathcal{P}(A)$, let $D = \{a \in A : a \notin f(a)\}$. If $D = f(x)$ for some $x$, then $x \in D \iff x \notin f(x) = D$, impossible. So $D$ is not in the image; $f$ is not surjective, hence $|A| < |\mathcal{P}(A)|$. $\square$'
-          - problem: 'Prove: for any set $A$, $|A| \ne |\mathcal{P}(A)|$.'
-            answer: 'No bijection exists since no surjection does (Cantor).'
-            solution_sketch: 'A bijection would in particular be a surjection $A \to \mathcal{P}(A)$; but the diagonal set $D = \{a : a \notin f(a)\}$ is never in the image of any $f : A \to \mathcal{P}(A)$, so no surjection — hence no bijection — exists. Thus $|A| \ne |\mathcal{P}(A)|$. $\square$'
+          - problem: "Let $A$ be the set $\\{1, 2, 3, 4\\}$ and define $f$ by $f(1) = \\{2, 4\\}$, $f(2) = \\{1, 2\\}$, $f(3) = \\{1, 4\\}$, $f(4) = \\{4\\}$. The diagonal set $D$ collects every $a$ in $A$ with $a$ not in $f(a)$, and it witnesses that $f$ is not surjective onto the set of all subsets of $A$. Give the elements of $D$ in increasing order, separated by commas."
+            answer: "1, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "By the diagonal definition, $D = \\{a \\in A : a \\notin f(a)\\}$. Test each element: $1$ is not in $f(1) = \\{2, 4\\}$, so $1$ lies in $D$; $2$ is in $f(2) = \\{1, 2\\}$, so $2$ does not; $3$ is not in $f(3) = \\{1, 4\\}$, so $3$ lies in $D$; $4$ is in $f(4) = \\{4\\}$, so $4$ does not. Thus $D = \\{1, 3\\}$. In increasing order, the answer is 1, 3."
+          - problem: "Let $A$ be the set $\\{0, 1, 2, 3, 4\\}$ and define $f$ by $f(0) = \\{0, 1\\}$, $f(1) = \\{1, 2\\}$, $f(2) = \\{0, 2\\}$, $f(3) = \\{0, 1, 2\\}$, $f(4) = \\{3\\}$. The diagonal set $D$ collects every $a$ in $A$ with $a$ not in $f(a)$; it is a subset that no value of $f$ can equal. Find the smallest element of $D$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the diagonal definition, $D = \\{a \\in A : a \\notin f(a)\\}$. Test from the bottom up: $0$ is in $f(0)$, $1$ is in $f(1)$, and $2$ is in $f(2)$, so none of them lies in $D$. Next, $3$ is not in $f(3) = \\{0, 1, 2\\}$, so $3$ lies in $D$. No smaller element qualifies, so the smallest element of $D$ is 3."
+          - problem: "Let $A$ be the set $\\{1, 2, 3, 4, 5\\}$ and define $f$ by $f(1) = \\{2, 5\\}$, $f(2) = \\{2, 4\\}$, $f(3) = \\{3, 5\\}$, $f(4) = \\{1, 2, 3\\}$, $f(5) = \\{1, 4, 5\\}$. Let $D$ be the diagonal set, the set of every $a$ in $A$ with $a$ not in $f(a)$. Determine whether the element $4$ lies in $D$, and give the number of elements of $D$."
+            answer: "verdict = yes; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "By the diagonal definition, $D = \\{a \\in A : a \\notin f(a)\\}$. Test the element $4$: $4$ is not in $f(4) = \\{1, 2, 3\\}$, so $4$ lies in $D$. Test the rest: $1$ is not in $f(1) = \\{2, 5\\}$, so $1$ lies in $D$, while $2$ is in $f(2)$, $3$ is in $f(3)$, and $5$ is in $f(5)$, so none of them lies in $D$. Hence $D = \\{1, 4\\}$. The answer is verdict = yes; count = 2."
+          - problem: "A student tries to defend the claim that some function from $A$ to the set of all subsets of $A$ can be surjective. Step 1: Let $f$ be a function from $A$ to the set of all subsets of $A$, and define $D$ as the set of every $a$ in $A$ with $a$ not in $f(a)$. Step 2: Suppose, for contradiction, that $D$ equals $f(x)$ for some $x$ in $A$. Step 3: By the definition of $D$, the element $x$ lies in $D$ exactly when $x$ lies in $f(x)$. Step 4: Since $D$ equals $f(x)$, the previous line says that $x$ lies in $D$ exactly when $x$ lies in $D$, which is no contradiction. Step 5: The supposition stands, so $D$ is in the image of $f$. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 states the correct diagonal definition. Step 2 is the legitimate supposition that the argument must refute. Step 3 misquotes the definition by dropping the negation: it should read that $x$ lies in $D$ exactly when $x$ does not lie in $f(x)$. Step 4 correctly unfolds the misquoted line into a tautology, and Step 5 draws the student's conclusion from it, but the defect enters at Step 3: with the correct line, Step 4 would read that $x$ lies in $D$ exactly when $x$ does not, the contradiction Cantor needs. The first invalid step is Step 3."
+          - problem: "Let $A$ be the set $\\{0, 1, 2, 3\\}$ and define $f$ by $f(0) = \\emptyset$, $f(1) = \\{0, 1\\}$, $f(2) = \\{0, 2, 3\\}$, $f(3) = \\{1, 3\\}$. In the diagonal argument the set $D$ collects the elements $a$ with $a$ not in $f(a)$; its complement in $A$ collects the elements $a$ with $a$ in $f(a)$. Give, from smallest to largest and separated by commas, every $a$ in $A$ with $a$ in $f(a)$."
+            answer: "1, 2, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The complement collects the elements $a$ with $a$ in $f(a)$, the condition opposite to the diagonal one. Test each element: $0$ is not in $f(0) = \\emptyset$; $1$ is in $f(1) = \\{0, 1\\}$; $2$ is in $f(2) = \\{0, 2, 3\\}$; $3$ is in $f(3) = \\{1, 3\\}$. So the complement is $\\{1, 2, 3\\}$. From smallest to largest, the answer is 1, 2, 3."
+          - problem: "In the proof of Cantor's theorem, let $A$ be a set, let $f$ be a function from $A$ to the set of all subsets of $A$, and let $D$ be the diagonal set of all $a$ in $A$ with $a$ not in $f(a)$. Suppose, for contradiction, that $f$ is surjective, so $D$ equals the value of $f$ at some element $x$ of $A$. One line of the argument is missing: the equivalence that the definition of $D$ yields at the element $x$. Select that line."
+            answer: "x in D iff x not in f(x)"
+            answer_contract: {"kind": "label", "options": [["x in D iff x not in f(x)"], ["x in D iff x in f(x)"], ["x in D and x not in f(x)"], ["x not in f(x) or x in D"]]}
+            solution_sketch: "The definition of $D$ says that $a$ is in $D$ exactly when $a$ is not in $f(a)$; applied at $a = x$ it yields the missing line. The option 'x in D iff x in f(x)' drops the negation and reverses the meaning of the definition. The option 'x in D and x not in f(x)' asserts membership outright instead of stating the equivalence. The option 'x not in f(x) or x in D' keeps only one direction of the equivalence. The answer is x in D iff x not in f(x)."
+          - problem: "Write the full proof: for every set $A$, no function from $A$ to the set of all subsets of $A$ is surjective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Setup: let $A$ be any set and let $f$ be any function from $A$ to the power set of $A$. Diagonal step: define $D = \\{a \\in A : a \\notin f(a)\\}$; this is a subset of $A$, hence a possible value of $f$. Contradiction step: suppose $f$ were surjective; then $D = f(x)$ for some $x$ in $A$. By the definition of $D$, $x$ is in $D$ exactly when $x$ is not in $f(x)$; since $f(x) = D$, this says that $x$ is in $D$ exactly when $x$ is not in $D$, which is impossible. Conclusion: no such $x$ exists, so $f$ is not surjective; since $f$ was arbitrary, no function from $A$ to its power set is surjective, which is Cantor's theorem."
         constraints: "generalize the diagonal argument to an arbitrary set"
     diagnostic_exemplar:
       problem: 'Prove by a diagonal argument that the set $\{0,1\}^{\mathbb{N}}$ of infinite binary sequences is uncountable.'
@@ -1817,12 +1921,34 @@ topics:
         name: "Interval sandwiches"
         key_prerequisites: [interval-bijections]
         exemplars:
-          - problem: 'Prove $|[0, 1]| = |(0, 1)|$ using the Schröder–Bernstein theorem.'
-            answer: 'Inclusion $(0,1) \to [0,1]$ one way; $x \mapsto \tfrac{x}{2} + \tfrac{1}{4}$ the other; the theorem yields a bijection.'
-            solution_sketch: 'The inclusion $(0, 1) \to [0, 1]$ is injective. The affine map $x \mapsto \tfrac{x}{2} + \tfrac{1}{4}$ is injective and sends $[0, 1]$ into $[\tfrac14, \tfrac34] \subseteq (0, 1)$. Two injections, so Schröder–Bernstein gives a bijection — no explicit bijection dodging the endpoints is ever constructed. $\square$'
-          - problem: 'Prove $|[0, 1)| = |\mathbb{R}|$.'
-            answer: 'Inclusion into $\mathbb{R}$ one way; the inverse of a known bijection $(0, 1) \to \mathbb{R}$ the other.'
-            solution_sketch: 'The inclusion $[0, 1) \to \mathbb{R}$ is injective. For the reverse, the bijection $g : (0, 1) \to \mathbb{R}$, $g(x) = \tan(\pi(x - \tfrac12))$, has an injective inverse $g^{-1} : \mathbb{R} \to (0, 1) \subseteq [0, 1)$. Schröder–Bernstein concludes $|[0, 1)| = |\mathbb{R}|$. $\square$'
+          - problem: "To prove that the intervals [0,2] and (0,2) have the same cardinality with the Schroder-Bernstein theorem, one injection is the inclusion of (0,2) into [0,2]. The other is an affine map of the form g(x) = x/2 + c that must send [0,2] onto the closed interval [1/2, 3/2]. Find g(x)."
+            answer: "x/2+1/2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: g(x) = x/2 + c must carry [0,2] onto [1/2, 3/2]. By the affine image rule, x/2 sends [0,2] onto [0,1], so matching left endpoints gives c = 1/2. Check with the same rule: g(2) = 1 + 1/2 = 3/2, the required right endpoint, and [1/2, 3/2] lies inside (0,2), so the sandwich is valid. The answer is x/2+1/2."
+          - problem: "To prove that the half-open interval [0,3) and the real line have the same cardinality with the Schroder-Bernstein theorem, one injection is the inclusion of [0,3) into the real line. The other uses the bijection g from (0,1) onto the real line with g(t) = tan(pi(t - 1/2)), cited from the interval-bijections result: its inverse lands in (0,1), and (0,1) is contained in [0,3). Give the resulting injection from the real line into [0,3) as a formula h(x)."
+            answer: "atan(x)/pi+1/2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: the cited bijection is g(t) = tan(pi(t - 1/2)) from (0,1) onto the real line. Inversion rule for a bijection: set x = tan(pi(t - 1/2)) and solve on the branch between -pi/2 and pi/2, which gives t = atan(x)/pi + 1/2. The inverse maps the real line into (0,1), and the inclusion of (0,1) into [0,3) keeps it injective, so Schroder-Bernstein applies to the two injections. The answer is atan(x)/pi+1/2."
+          - problem: "A student tries to prove that [0,1] and (0,1) have the same cardinality with the Schroder-Bernstein theorem. The inclusion of (0,1) into [0,1] is one injection. For the other, the student proposes the affine map g(x) = 3x/4 + 1/2 from [0,1] toward (0,1). Determine whether the image of g stays within (0,1), and give the value g(1)."
+            answer: "verdict = outside; value = 5/4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["inside"], ["outside"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Full object: the proposed map is g(x) = 3x/4 + 1/2 on [0,1]. Affine image rule: the image is the interval from g(0) = 1/2 to g(1) = 3/4 + 1/2 = 5/4. Since 5/4 is greater than 1, the image [1/2, 5/4] is not contained in (0,1), so this g is not a valid second injection for the Schroder-Bernstein argument. The answer is verdict = outside; value = 5/4."
+          - problem: "To show that the intervals [1,3] and (1,3) have the same size, the Schroder-Bernstein theorem asks for two injections. The inclusion of (1,3) into [1,3] is one. The other is an affine map with slope 1/4 that sends [1,3] onto the closed interval [7/4, 9/4]. Give g(x)."
+            answer: "x/4+3/2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Full object: g(x) = x/4 + c must carry [1,3] onto [7/4, 9/4]. Affine image rule: x/4 sends [1,3] onto [1/4, 3/4], so matching left endpoints gives c = 7/4 - 1/4 = 3/2. Check: g(3) = 3/4 + 3/2 = 9/4, and [7/4, 9/4] lies inside (1,3), so the sandwich is valid. The answer is x/4+3/2."
+          - problem: "Claim: the closed interval [0,1] and the open interval (0,1) have the same cardinality. Step 1: the inclusion of (0,1) into [0,1] is injective. Step 2: the affine map g(x) = 2x - 1 is injective. Step 3: g sends [0,1] into (0,1), since g(0) = -1 and g(1) = 1. Step 4: by the Schroder-Bernstein theorem, two injections in opposite directions give a bijection. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: an inclusion map is injective. Step 2 is valid: an affine map is injective. Step 3 is the first invalid step: it claims that g sends [0,1] into (0,1), but g(0) = -1 and g(1) = 1, and neither value lies in (0,1); the image is [-1, 1]. Step 4 only follows from Schroder-Bernstein once Step 3 is repaired, for instance with g(x) = x/3 + 1/3, whose image [1/3, 2/3] lies in (0,1). The answer is Step 3."
+          - problem: "A proof that the intervals [0,3] and (0,3) are equinumerous uses the Schroder-Bernstein theorem with two injections: the inclusion of (0,3) into [0,3], and the affine map g(x) = x/3 + 1, whose image is a closed subinterval of (0,3). Find the largest value in the image of g."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the affine map g(x) = x/3 + 1 acts on the closed interval [0,3]. Affine image rule: the image of an affine map on a closed interval is the closed interval running from g(0) to g(3), here from 1 to 2. Sandwich check: the image [1,2] lies inside (0,3), so g is a valid second injection next to the inclusion. The largest value in the image of g is 2."
+          - problem: "Write the full proof: the interval [-2,2] and the real line have the same cardinality. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (first injection): the inclusion map of [-2,2] into the real line is injective, since it is the identity on its domain. Step 2 (cited bijection): the map g from (0,1) onto the real line with g(t) = tan(pi(t - 1/2)) is a bijection, proven in the interval-bijections topic, and is cited here explicitly. Step 3 (second injection): the inverse of g maps the real line injectively onto (0,1), and (0,1) is contained in [-2,2], so the inclusion after that inverse is an injective map from the real line into [-2,2]. Step 4 (conclusion): with an injection in each direction, the Schroder-Bernstein theorem yields a bijection between [-2,2] and the real line, so the two sets have the same cardinality."
         constraints: "one direction an inclusion; the other affine or the inverse of a previously proven bijection, cited explicitly"
       - id: kp3
         name: "Binary sequences, power sets, and the reals"

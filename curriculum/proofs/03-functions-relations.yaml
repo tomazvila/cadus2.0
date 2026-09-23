@@ -1240,12 +1240,34 @@ topics:
         name: "Relations and the four properties"
         key_prerequisites: [cartesian-products]
         exemplars:
-          - problem: 'On $\{1, 2, 3\}$, is $R = \{(1,1),(2,2),(3,3),(1,2),(2,1)\}$ reflexive? symmetric? transitive?'
-            answer: 'Reflexive: yes. Symmetric: yes. Transitive: yes.'
-            solution_sketch: 'All pairs $(i,i)$ are present (reflexive); $(1,2)$ and $(2,1)$ both appear (symmetric); every chain stays inside, e.g. $(1,2),(2,1) \Rightarrow (1,1) \in R$ (transitive).'
-          - problem: 'On $\{1, 2, 3\}$, is $R = \{(1, 2), (2, 3)\}$ transitive?'
-            answer: 'No; $(1,2), (2,3) \in R$ but $(1,3) \notin R$.'
-            solution_sketch: 'Transitivity requires $(1,2), (2,3) \in R \Rightarrow (1,3) \in R$, but $(1,3) \notin R$, so $R$ is not transitive. $\square$'
+          - problem: "On the set {1, 2, 3}, let R = {(1,1), (2,2), (3,3), (1,2), (2,1)}. A relation on a set can be reflexive, symmetric, or transitive. How many of these three properties does R have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full object: on {1, 2, 3}, R = {(1,1), (2,2), (3,3), (1,2), (2,1)}. Reflexivity rule: the pair (a,a) must be in R for every element a, and (1,1), (2,2), (3,3) are all in R. Symmetry rule: every pair in R must have its reverse in R, and (1,2) pairs with (2,1). Transitivity rule: every chain of two pairs must close, and (1,2) with (2,1) forces (1,1) while (2,1) with (1,2) forces (2,2), both present. All three rules hold for R, so the count of properties is three. The answer is 3."
+          - problem: "On the set {1, 2, 3}, let R = {(1,2), (2,3)}. The relation R is not transitive, because a chain of two pairs of R forces a pair that is missing. Give the one ordered pair that must be added to R to make R transitive, as (a, b)."
+            answer: "(1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Start from the full object: on {1, 2, 3}, R = {(1,2), (2,3)}. Transitivity rule: whenever (a,b) and (b,c) are in R, the pair (a,c) must also be in R. Apply the rule: the chain (1,2) with (2,3) forces (1,3), and (1,3) is not in R. This is the only chain of two pairs in R, so one added pair closes it. The answer is (1, 3)."
+          - problem: "On the set {1, 2, 3, 4}, let R = {(1,1), (2,2), (1,3), (3,1), (3,4)}. A relation is symmetric when whenever (a,b) is in R, the reverse (b,a) is also in R. How many ordered pairs must be added to R so that R becomes symmetric?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full object: on {1, 2, 3, 4}, R = {(1,1), (2,2), (1,3), (3,1), (3,4)}. Symmetry rule: each pair (a,b) in R needs its reverse (b,a) in R. Check the pairs: (1,3) has reverse (3,1) in R, (3,1) has reverse (1,3) in R, and the diagonal pairs are their own reverses. The pair (3,4) has no reverse (4,3) in R, so adding (4,3) is the only addition needed. The answer is 1."
+          - problem: "On the set {1, 2, 3, 4}, let R = {(1,1), (3,3), (1,2), (2,1)}. A relation is reflexive when the pair (a,a) is in R for every element a of the set. How many of the four diagonal pairs (1,1), (2,2), (3,3), (4,4) are not in R?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full object: on {1, 2, 3, 4}, R = {(1,1), (3,3), (1,2), (2,1)}. Reflexivity rule: the diagonal pair (a,a) must be in R for every element a of {1, 2, 3, 4}. Check the four diagonals: (1,1) is in R and (3,3) is in R, but (2,2) is not in R and (4,4) is not in R. Exactly two diagonal pairs are missing. The answer is 2."
+          - problem: "On the set {1, 2, 3, 4}, let R = {(1,2), (2,3), (3,4)}. A relation is transitive when whenever (a,b) and (b,c) are in R, the pair (a,c) is also in R. How many ordered pairs must be added to R to make R transitive?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full object: on {1, 2, 3, 4}, R = {(1,2), (2,3), (3,4)}. Transitivity rule: whenever (a,b) and (b,c) are in R, the pair (a,c) must be in R. First chain: (1,2) with (2,3) forces (1,3). Second chain: (2,3) with (3,4) forces (2,4). Third chain: (1,3) with (3,4) then forces (1,4). The forced pairs (1,3), (2,4) and (1,4) are missing, and adding them closes every chain. The answer is 3."
+          - problem: "On the set {1, 2, 3, 4}, let R = {(2,2), (4,4), (1,3), (3,1), (4,2)}. A relation is reflexive when the pair (a,a) is in R for every element a of the set. How many elements a of the set have their diagonal pair (a,a) in R?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full object: on {1, 2, 3, 4}, R = {(2,2), (4,4), (1,3), (3,1), (4,2)}. Reflexivity rule: the pair (a,a) must be in R for every element a of {1, 2, 3, 4}. Check each element: (2,2) is in R and (4,4) is in R, but (1,1) is not in R and (3,3) is not in R. Exactly two elements have their diagonal pair present, so R is not reflexive. The answer is 2."
+          - problem: "Write the full proof: on the set {1, 2, 3}, the relation R = {(1,1), (2,2), (3,3), (1,2), (2,1), (2,3), (3,2)} is reflexive and symmetric but not transitive. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (reflexive): the set is {1, 2, 3}, and the diagonal pairs (1,1), (2,2), (3,3) are all in R, so a R a holds for every element a. Step 2 (symmetric): every pair of distinct elements has its reverse in R, since (1,2) pairs with (2,1) and (2,3) pairs with (3,2), so a R b implies b R a for all elements a and b. Step 3 (not transitive): the chain (1,2) with (2,3) lies in R, so the transitivity rule forces (1,3) to be in R, but (1,3) is not in R; the chain (3,2) with (2,1) gives a second failure, since it forces (3,1), which is also missing. Conclusion: R is reflexive and symmetric but not transitive, which completes the proof."
         constraints: "check reflexive/symmetric/transitive on a listed relation over a small set"
       - id: kp2
         name: "Antisymmetry"
@@ -2033,12 +2055,34 @@ topics:
         name: "The partial-order axioms"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'Show that $\subseteq$ on $\mathcal{P}(X)$ is a partial order.'
-            answer: 'Reflexive, antisymmetric (double inclusion), transitive.'
-            solution_sketch: '$A \subseteq A$ (reflexive); $A \subseteq B \land B \subseteq A \Rightarrow A = B$ (antisymmetric); $A \subseteq B \land B \subseteq C \Rightarrow A \subseteq C$ (transitive). So $(\mathcal{P}(X), \subseteq)$ is a poset. $\square$'
-          - problem: 'Show that $\le$ on $\mathbb{N}$ is a partial order.'
-            answer: 'Reflexive, antisymmetric, transitive.'
-            solution_sketch: '$n \le n$; $m \le n \land n \le m \Rightarrow m = n$; $m \le n \land n \le p \Rightarrow m \le p$. So $(\mathbb{N}, \le)$ is a partial order (in fact total). $\square$'
+          - problem: "Let $X = \\{1, 2, 3\\}$. To verify reflexivity of the subset relation on the power set of $X$, one checks the pair $(A, A)$ for every subset $A$ of $X$. How many such pairs $(A, A)$ must be checked?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the ground set $\\mathcal{P}(X)$ of the relation. By the set-notation count, a three-element set has $2^3 = 8$ subsets. The reflexivity axiom demands the pair $(A, A)$ for every element of the ground set, so one diagonal pair per subset. Counting the subsets of $\\{1,2,3\\}$ gives 8 pairs. The answer is 8."
+          - problem: "On the set $\\{0, 1, 2, 3\\}$ take the relation $m \\, R \\, n$ when $m \\le n$. A pair $(m, n)$ with $m \\ne n$ violates antisymmetry when both $m \\le n$ and $n \\le m$ hold. How many violating pairs does $R$ have?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the relation $\\le$ restricted to $\\{0,1,2,3\\}$. For distinct $m$ and $n$ with $m \\le n$ and $n \\le m$, the antisymmetry axiom forces $m = n$, a contradiction, so no such pair exists. Scanning all ordered pairs of distinct elements of $\\{0,1,2,3\\}$ confirms zero violations of antisymmetry. The answer is 0."
+          - problem: "A relation $R$ on $\\{1, 2, 3, 4, 5\\}$ contains the pairs $(1, 1)$, $(3, 3)$, $(5, 5)$, $(2, 4)$, $(4, 1)$. To test reflexivity, look for elements $x$ with $(x, x)$ not in $R$. Give the smallest such $x$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $R$ on the five-element set. The diagonal pairs present are $(1,1)$, $(3,3)$, $(5,5)$; the reflexivity axiom needs a diagonal pair for every one of the five elements. Elements 2 and 4 have no diagonal pair, so the reflexivity axiom fails at them. The smallest failing element is 2. The answer is 2."
+          - problem: "A relation $R$ on $\\{1, 2, 3, 4\\}$ contains the pairs $(1, 1)$, $(2, 2)$, $(3, 3)$, $(4, 4)$, $(1, 3)$, $(3, 1)$, $(2, 4)$. To make $R$ antisymmetric, one removes as few pairs as possible. How many pairs must be removed?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $R$ with its seven pairs. Antisymmetry fails exactly when $(a, b)$ and $(b, a)$ are both in $R$ with $a \\ne b$; here the only such pair of distinct elements is 1 and 3, via $(1,3)$ and $(3,1)$. Removing either one of these two pairs destroys the violation, and no other reciprocal off-diagonal pair exists. So the antisymmetry axiom needs one removal. The answer is 1."
+          - problem: "A relation $R$ on $\\{1, 2, 3, 4\\}$ contains the pairs $(1, 2)$, $(2, 3)$, $(1, 3)$, $(2, 4)$. For transitivity, whenever $(a, b)$ and $(b, c)$ are in $R$, the pair $(a, c)$ must also be in $R$. Exactly one required pair is missing. Give the missing pair as (a, b)."
+            answer: "(1, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full object is $R$ with the four listed pairs. Chain $(1,2)$ with $(2,3)$: transitivity demands $(1,3)$, which is present. Chain $(1,2)$ with $(2,4)$: transitivity demands $(1,4)$, which is not listed. No pair starts with 3 or 4, so no other chain imposes a demand. The answer is (1, 4)."
+          - problem: "On the set $\\{1, 2, 3, 4\\}$ take the relation $R = \\{(1, 2), (2, 3), (3, 4), (1, 3)\\}$. For transitivity, whenever $(a, b)$ and $(b, c)$ are in $R$, the pair $(a, c)$ must also be in $R$. How many pairs must be added to $R$ so that transitivity holds?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is $R = \\{(1, 2), (2, 3), (3, 4), (1, 3)\\}$. Chain $(1,2)$ with $(2,3)$ demands $(1,3)$, which is present. Chain $(2,3)$ with $(3,4)$ demands $(2,4)$, which is missing. Chain $(1,3)$ with $(3,4)$ demands $(1,4)$, which is missing. Adding $(2,4)$ and $(1,4)$ creates no further demands because 4 has no outgoing pair. The answer is 2."
+          - problem: "Write the full proof: the divisibility relation on $\\{1, 2, 3, 6\\}$ is a partial order. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Reflexivity: for every $x$ in $\\{1, 2, 3, 6\\}$ we have $x = x \\cdot 1$, so $x$ divides $x$; the reflexive axiom holds. Antisymmetry: suppose $x$ divides $y$ and $y$ divides $x$, so $y = xm$ and $x = yn$ with positive integers $m, n$; then $x = xmn$, hence $mn = 1$, so $m = n = 1$ and $x = y$; the antisymmetric axiom holds. Transitivity: if $x$ divides $y$ and $y$ divides $z$, write $y = xm$ and $z = yn$; then $z = x(mn)$ with $mn$ a positive integer, so $x$ divides $z$; the transitive axiom holds. All three axioms are verified, so the divisibility relation is a partial order on $\\{1, 2, 3, 6\\}$. $\\square$"
         constraints: "verify reflexivity, antisymmetry, transitivity"
       - id: kp2
         name: "Proving a relation is a partial order"
@@ -2229,14 +2273,30 @@ topics:
         name: "Minimal/maximal vs minimum/maximum"
         key_prerequisites: [hasse-diagrams]
         exemplars:
-          - problem: 'In the divisors of $12$ under divisibility, find the minimum and maximum elements.'
-            answer_contract: {kind: none}
-            answer: 'Minimum $1$, maximum $12$.'
-            solution_sketch: '$1$ divides every divisor and every divisor divides $12$, so both extremes are comparable to everything.'
-          - problem: 'In the poset $\{2, 3, 6, 12\}$ under divisibility, find all minimal elements. Is there a minimum?'
-            answer_contract: {kind: none}
-            answer: 'Minimal: $2$ and $3$; no minimum.'
-            solution_sketch: 'Nothing in the set divides $2$ or $3$ (other than themselves), so both are minimal; a minimum would have to divide both, and no single element does.'
+          - problem: "In the poset of positive divisors of 18 under divisibility, find the minimum element and the maximum element."
+            answer: "min = 1; max = 18"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "min"}, {"contract": {"kind": "exact"}, "name": "max"}]}
+            solution_sketch: "List the positive divisors of 18: 1, 2, 3, 6, 9, 18. Step 1 (definition of minimum): 1 divides every element of the poset, so 1 is below everything and is the minimum. Step 2 (definition of maximum): every element divides 18, so 18 is above everything and is the maximum. The answer is min = 1; max = 18."
+          - problem: "In the poset {2, 3, 6, 12} under divisibility, find the two minimal elements; give the smaller one first and the larger one second."
+            answer: "small = 2; large = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "small"}, {"contract": {"kind": "exact"}, "name": "large"}]}
+            solution_sketch: "The elements are 2, 3, 6, 12. Step 1: nothing in the set divides 2 except 2, so 2 is minimal. Step 2: nothing in the set divides 3 except 3, so 3 is minimal. Step 3: 6 and 12 are above 2 or 3, so they are not minimal. The answer is small = 2; large = 3."
+          - problem: "In the poset {2, 5, 10, 20} under divisibility, how many elements are maximal?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The elements are 2, 5, 10, 20. Step 1: 2 divides 10 and 20, so 2 is not maximal. Step 2: 5 divides 10 and 20, so 5 is not maximal. Step 3: 10 divides 20, so 10 is not maximal. Step 4: 20 has no element above it, so 20 is the only maximal element. The answer is 1."
+          - problem: "In the poset {2, 3, 6, 12} under divisibility, state whether a minimum element exists and give the number of minimal elements."
+            answer: "minimum = absent; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["present"], ["absent"]]}, "name": "minimum"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The elements are 2, 3, 6, 12. Step 1: 2 and 3 are minimal because nothing below them is in the set. Step 2: no element divides both 2 and 3, so no minimum exists. The option present is wrong because it assumes a common lower bound. Step 3: the minimal elements are 2 and 3, so their number is 2. The answer is minimum = absent; count = 2."
+          - problem: "In the poset {2, 3, 4, 8, 24} under divisibility, find the maximum element and the number of minimal elements."
+            answer: "max = 24; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "max"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "The elements are 2, 3, 4, 8, 24. Step 1: 2 and 3 are minimal because nothing below them is in the set. Step 2: 4 and 8 are above 2, so they are not minimal; thus the minimal count is 2. Step 3: every element divides 24, so 24 is the maximum. The answer is max = 24; count = 2."
+          - problem: "In the poset {2, 3, 5, 10, 30} under divisibility, determine which extremal elements exist. Select the correct description."
+            answer: "maximum-only"
+            answer_contract: {"kind": "label", "options": [["both-extremes"], ["minimum-only"], ["maximum-only"], ["neither-extreme"]]}
+            solution_sketch: "The elements are 2, 3, 5, 10, 30. Step 1: 2, 3, and 5 have nothing below them, so there is no minimum because no element divides all three. Step 2: every element divides 30, so 30 is a maximum. Step 3: the option both-extremes is wrong because no minimum exists. Step 4: the option minimum-only is wrong because a maximum does exist. Step 5: the option neither-extreme is wrong because a maximum does exist. The answer is maximum-only."
         constraints: "small divisibility posets; distinguish minimal (nothing below) from minimum (below everything)"
       - id: kp2
         name: "Upper and lower bounds"
