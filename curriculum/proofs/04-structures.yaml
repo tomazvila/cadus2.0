@@ -373,12 +373,34 @@ topics:
         name: "Refuting associativity"
         key_prerequisites: [binary-operations]
         exemplars:
-          - problem: 'Show that division on $\mathbb{R}^{>0}$ is not associative.'
-            answer: '$(8 / 4) / 2 = 1$ but $8 / (4 / 2) = 4$.'
-            solution_sketch: 'One concrete triple with unequal groupings refutes associativity.'
-          - problem: 'Show that the averaging operation $a * b = \tfrac{a + b}{2}$ on $\mathbb{Q}$ is not associative.'
-            answer: '$(0 * 0) * 1 = \tfrac{1}{2}$ but $0 * (0 * 1) = \tfrac{1}{4}$.'
-            solution_sketch: '$(0*0)*1 = 0*1 = \tfrac12$, while $0*(0*1) = 0*\tfrac12 = \tfrac14$. $\square$'
+          - problem: "To show that the operation $a * b = a/b$ on the positive real numbers is not associative, take the triple $18, 6, 3$. The proof evaluates the left grouping first and finds $(a * b) * c = 1$. Compute the value of the right grouping $a * (b * c)$."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: evaluate the inner grouping of the right side first. Since $b * c = 6/3 = 2$, the right grouping is $a * 2 = 18/2 = 9$. Rule: compare the groupings. The left grouping gave $1$ and the right grouping gives $9$, so the two groupings differ and the triple refutes associativity. The answer is 9."
+          - problem: "The averaging operation $a * b = (a + b)/2$ on the rational numbers is not associative. For the triple $2, 4, 8$, a proof finds the right grouping $a * (b * c) = 4$. Compute the value of the left grouping $(a * b) * c$ as a fraction."
+            answer: "11/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: evaluate the inner grouping of the left side first. $a * b = (2 + 4)/2 = 3$, so the left grouping is $3 * 8 = (3 + 8)/2 = 11/2$. Rule: compare with the right grouping, which the proof found as $4$. Since $11/2$ is not $4$, the triple refutes associativity. The answer is 11/2."
+          - problem: "On the integers greater than $1$, define $a * b$ to mean $a$ raised to the power $b$. A student claims the operation is associative. For $a = 2$ and $b = 2$, determine the smallest integer $c$ greater than $1$ for which the two groupings $(a * b) * c$ and $a * (b * c)$ differ."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: test $c = 2$ first. $(2 * 2) * 2 = 4^2 = 16$ and $2 * (2 * 2) = 2^4 = 16$, so the groupings agree. Rule: test $c = 3$ next. $(2 * 2) * 3 = 4^3 = 64$ while $2 * (2 * 3) = 2^8 = 256$, so the groupings differ. The smallest such $c$ is $3$. The answer is 3."
+          - problem: "On the integers define $a * b = a - 2b$. To prove the operation is not associative, a proof evaluates the two groupings of the triple $5, 2, 1$. Compute the value of the left grouping $(a * b) * c$."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: evaluate the inner grouping first. Since $a * b = a - 2b$, we get $5 * 2 = 5 - 2 \\cdot 2 = 1$. Rule: apply the operation again. Then $1 * 1 = 1 - 2 \\cdot 1 = -1$. Rule: compare with the right grouping to confirm a counterexample. The right grouping is $5 * (2 * 1) = 5 * (2 - 2 \\cdot 1) = 5 * 0 = 5$, which differs from $-1$. The answer is -1."
+          - problem: "To refute associativity of the operation $a * b = a + 2b$ on the integers, a proof needs the line that evaluates the right grouping $a * (b * c)$ for arbitrary integers $a, b, c$. Select the line that is correct."
+            answer: "a + 2b + 4c"
+            answer_contract: {"kind": "label", "options": [["a + 2b + 4c"], ["a + 2b + 2c"], ["a + 4b + 2c"], ["2a + 2b + 4c"]]}
+            solution_sketch: "Rule: apply the definition $a * x = a + 2x$ with $x = b * c$. Since $b * c = b + 2c$, the right grouping is $a + 2(b + 2c) = a + 2b + 4c$. The option $a + 2b + 2c$ is the error of copying the left grouping. The option $a + 4b + 2c$ is the error of doubling $b$ instead of the inner value. The option $2a + 2b + 4c$ is the error of doubling $a$ as well. The answer is a + 2b + 4c."
+          - problem: "On the integers define $a * b = a^2 + b$. To show that this operation is not associative, both groupings of the triple $2, 1, 3$ are evaluated. Give the value of $(a * b) * c$ and of $a * (b * c)$."
+            answer: "left = 28; right = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "left"}, {"contract": {"kind": "exact"}, "name": "right"}]}
+            solution_sketch: "Rule: evaluate the left grouping from the inside. $a * b = 2^2 + 1 = 5$, then $5 * 3 = 5^2 + 3 = 28$. Rule: evaluate the right grouping next. $b * c = 1^2 + 3 = 4$, then $2 * 4 = 2^2 + 4 = 8$. Since $28$ differs from $8$, the triple is an explicit counterexample. The answer is left = 28; right = 8."
+          - problem: "Write the full proof: the operation $a * b = a - b + 1$ on the integers is not associative. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Labeled proof. Step 1: pick an explicit counterexample triple, $a = 5$, $b = 3$, $c = 2$. Step 2: evaluate the left grouping: $5 * 3 = 5 - 3 + 1 = 3$, and then $3 * 2 = 3 - 2 + 1 = 2$. Step 3: evaluate the right grouping: $3 * 2 = 3 - 2 + 1 = 2$, and then $5 * 2 = 5 - 2 + 1 = 4$. Step 4: compare the two results: the left grouping gives $2$ and the right grouping gives $4$. Step 5: conclude. Since one explicit triple gives different values for the two groupings, the operation is not associative on the integers."
         constraints: "one explicit counterexample triple, both groupings evaluated"
       - id: kp3
         name: "Semigroups without an identity"
@@ -1178,12 +1200,34 @@ topics:
         name: "Size as a bijection with {1, ..., n}"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Prove that $\{2, 4, 6, \dots, 2n\}$ has exactly $n$ elements by exhibiting a bijection with $\{1, 2, \dots, n\}$.'
-            answer: '$k \mapsto 2k$ is a bijection.'
-            solution_sketch: 'The map $k \mapsto 2k$ is injective ($2a = 2b \Rightarrow a = b$) and surjective (every listed even number is $2k$ for some $1 \le k \le n$). $\square$'
-          - problem: 'Prove that $\{5, 6, 7, \dots, 17\}$ has $13$ elements.'
-            answer: '$k \mapsto k + 4$ bijects $\{1, \dots, 13\}$ onto it.'
-            solution_sketch: 'The shift $k \mapsto k + 4$ is injective, and its outputs for $k = 1, \dots, 13$ are exactly $5, \dots, 17$. $\square$'
+          - problem: "For the set {2, 4, 6, ..., 2n}, a bijection from {1, 2, ..., n} has the form f(k) = c k. Give f(k)."
+            answer: "2k"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Try the map f(k) = c k on {1, 2, ..., n}. The first target value is 2 = c*1, so c = 2 and f(k) = 2k. Check injectivity: 2a = 2b gives a = b. Check surjectivity: every value 2k in the list is hit by k. The answer is 2k."
+          - problem: "For the set {5, 6, 7, ..., 17}, a bijection from {1, 2, ..., 13} has the form f(k) = k + c. Give f(k)."
+            answer: "k+4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Try f(k) = k + c on {1, 2, ..., 13}. The first target value is 5, and f(1) = 1 + c = 5, so c = 4. By the injectivity check, a + 4 = b + 4 gives a = b. By the surjectivity check, each target value k + 4 is hit by k. The answer is k+4."
+          - problem: "The map f(k) = k + 7 bijects {1, 2, ..., n} onto {8, 9, ..., 42}. Find n."
+            answer: "35"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By surjectivity, the largest target 42 must equal n + 7. Solve n + 7 = 42, so n = 35. The injectivity check holds for the same map, so the bijection condition is satisfied. The answer is 35."
+          - problem: "The map f(k) = k + 5 bijects {1, 2, ..., n} onto {6, 7, ..., n+5}. Give the inverse f^(-1)(y)."
+            answer: "y-5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with y = f(k) = k + 5. Solve for k by subtracting 5 from both sides: k = y - 5. This inverse formula undoes the shift and confirms the bijection. The answer is y-5."
+          - problem: "Claim: the rule f(k) = 2k is a bijection from {1, 2, 3} onto the set {2, 4, 7}. Step 1: take f(k) = 2k when k is 1, 2 or 3. Step 2: if f(a) = f(b), then 2a = 2b, hence a = b, so f is injective. Step 3: the values f(1), f(2), f(3) are 2, 4 and 6, so every member of {2, 4, 7} is among them, so f is surjective. Step 4: f is therefore a bijection, and the two sets have the same size. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a sound rule for the three inputs of the domain. Step 2 is a sound injectivity argument, since doubling keeps unequal inputs unequal. Step 3 is false: the values are 2, 4 and 6, and the member 7 has no preimage in {1, 2, 3}. Step 4 leans on the false Step 3. Picking Step 1 is the error of rejecting a correct rule, picking Step 2 is the error of rejecting a correct injectivity argument, and picking Step 4 misses that the flaw lies earlier. The answer is Step 3."
+          - problem: "Claim: f(k) = k + 2 is a bijection from {1, 2, 3} onto {3, 4, 6}. Give the element of the claimed codomain that has no preimage."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute the outputs of f(k) = k + 2 on {1, 2, 3}: f(1)=3, f(2)=4, f(3)=5. The claimed codomain {3, 4, 6} contains 6, but no input gives 6, so the surjectivity condition fails. The answer is 6."
+          - problem: "Write the full proof: the set {4, 8, 12, ..., 4n} has exactly n elements. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: Define f from {1, 2, ..., n} to {4, 8, 12, ..., 4n} by f(k) = 4k. Step 2: For injectivity, if f(a) = f(b), then 4a = 4b, so a = b. Step 3: For surjectivity, every element of the target set has the form 4k for an integer k with 1 <= k <= n, and f(k) = 4k. Step 4: Since f is injective and surjective, it is a bijection. A bijection with {1, 2, ..., n} proves that the target set has exactly n elements. The answer is See the solution."
         constraints: "exhibit an explicit bijection from $\\{1, \\dots, n\\}$ and verify both properties"
       - id: kp2
         name: "Bijections and matching sizes"
@@ -1459,12 +1503,34 @@ topics:
         name: "Countability of products and rationals"
         key_prerequisites: [function-composition-inverse]
         exemplars:
-          - problem: 'Prove $\mathbb{Q}$ is countable.'
-            answer: 'A diagonal enumeration of $p/q$, skipping repeats, surjects from $\mathbb{N}$.'
-            solution_sketch: 'Each rational is $p/q$ with $q \ge 1$. Arrange fractions in a grid indexed by numerator and denominator and traverse it diagonally, skipping non-reduced or repeated entries; this gives a surjection from $\mathbb{N}$ onto the infinite set $\mathbb{Q}$, so $\mathbb{Q}$ is countable. $\square$'
-          - problem: 'Prove that a countable union of countable sets is countable.'
-            answer: 'Arrange the sets in rows and enumerate along diagonals.'
-            solution_sketch: 'Let $A_1, A_2, \dots$ be countable, with $A_i = \{a_{i1}, a_{i2}, \dots\}$. Place $a_{ij}$ in row $i$, column $j$, and enumerate along finite diagonals ($i + j$ constant), skipping repeats. This lists $\bigcup_i A_i$ as a sequence, so it is countable. $\square$'
+          - problem: "In the diagonal enumeration of positive rationals, write each rational as p/q with p, q >= 1. List fractions by increasing p+q, and within one diagonal by increasing p. Skip any fraction that is not in lowest terms and count only the first appearance of each rational. Give the fifth distinct rational in this list."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Diagonal p+q=2 gives 1/1, which is the first distinct rational. Diagonal p+q=3 gives 1/2 and 2/1, the second and third. Diagonal p+q=4 gives 1/3, skips 2/2 because it repeats 1, and gives 3/1, the fourth and fifth. The fifth distinct rational is 3."
+          - problem: "In the diagonal enumeration of a countable union, put the element a(i,j) in row i >= 1 and column j >= 1. List elements by increasing i+j, and within one diagonal by increasing i. Skip no elements. Give the column index of the element in position 7."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Positions with i+j=2 give (1,1) at position 1. Positions with i+j=3 give (1,2) at position 2 and (2,1) at position 3. Positions with i+j=4 give (1,3) at 4, (2,2) at 5, (3,1) at 6. The next position, 7, is (1,4), so its column index is 4."
+          - problem: "For the diagonal enumeration of N x N, use the pairing f(i,j) = (i+j)(i+j+1)/2 + i, where N includes 0. Find f(3,2)."
+            answer: "18"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute i=3 and j=2 into the pairing. The sum i+j is 5. The triangular part is 5*6/2 = 15. Add i: 15 + 3 = 18. The value is 18."
+          - problem: "For the diagonal pairing f(i,j) = (i+j)(i+j+1)/2 + i on N x N, find f(2,4)."
+            answer: "23"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute i=2 and j=4. The sum i+j is 6. The triangular part is 6*7/2 = 21. Add i: 21 + 2 = 23. The value is 23."
+          - problem: "Claim: the set of pairs (i, j) of positive integers is countable. Step 1: for each n >= 2, the set D_n of pairs with i + j = n has exactly n - 1 pairs, so D_n is finite. Step 2: a union of finite sets is finite, so the union of all the sets D_n is finite. Step 3: the union of all the sets D_n is the set of all pairs (i, j) of positive integers. Step 4: therefore the set of pairs is finite. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: each diagonal is finite with a computed size. Step 2 is the first invalid step: a finite union of finite sets is finite, but an infinite union of finite sets need not be finite, and here the union is infinite. Step 3 is correct, since every pair lies on exactly one diagonal. Step 4 is false only because it inherits the error of Step 2. The answer is Step 2."
+          - problem: "To prove Q is countable, enumerate N x N by diagonals and send pairs (p,q) with q >= 1 to p/q, skipping pairs with q = 0. Let f be the resulting map from N to Q. Select the line that completes the proof."
+            answer: "$f$ is a surjection from N onto Q, so Q is countable."
+            answer_contract: {"kind": "label", "options": [["$f$ is a surjection from N onto Q, so Q is countable."], ["$f$ is an injection from N onto Q, so Q is countable."], ["$f$ is a bijection from Q onto N, so Q is countable."], ["$f$ is a surjection from Q onto N, so Q is countable."]]}
+            solution_sketch: "Wrong option: $f$ is an injection from N onto Q, so Q is countable; its error is that f is not injective, since (1,2) and (2,4) both give 1/2. Wrong option: $f$ is a bijection from Q onto N, so Q is countable; its error is the reversed domain and codomain, since f maps N to Q. Wrong option: $f$ is a surjection from Q onto N, so Q is countable; its error is again the wrong domain and codomain. The correct option is $f$ is a surjection from N onto Q, so Q is countable. The answer is $f$ is a surjection from N onto Q, so Q is countable."
+          - problem: "Write the full proof: the set of positive rational numbers is countable. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: write each positive rational as a fraction p/q with positive integers p and q. Step 2: place p/q in row p and column q of an infinite grid. Step 3: traverse the grid along diagonals where p+q is constant, and within each diagonal by increasing p; skip a fraction if it is not in lowest terms or if it has already appeared. Step 4: every positive rational has a reduced form p/q, so it lies in the grid and is reached at some finite diagonal. Step 5: the traversal gives a surjection from N onto the positive rationals; an infinite set with a surjection from N is countable. The proof is complete."
         constraints: "use a grid / diagonal enumeration for a product-like set"
     diagnostic_exemplar:
       problem: 'Prove $\mathbb{N} \times \mathbb{N}$ is countable.'
@@ -1617,12 +1683,34 @@ topics:
         name: "Power sets and Cantor''s theorem"
         key_prerequisites: [cardinality-countability]
         exemplars:
-          - problem: 'Prove $\mathcal{P}(\mathbb{N})$ is uncountable.'
-            answer: 'No surjection $\mathbb{N} \to \mathcal{P}(\mathbb{N})$, via the diagonal set.'
-            solution_sketch: 'Suppose $f : \mathbb{N} \to \mathcal{P}(\mathbb{N})$ is a surjection. Let $D = \{n \in \mathbb{N} : n \notin f(n)\}$. If $D = f(m)$, then $m \in D \iff m \notin f(m) = D$, a contradiction. So no surjection exists and $\mathcal{P}(\mathbb{N})$ is uncountable. $\square$'
-          - problem: 'Prove there is no surjection $\mathbb{N} \to \{0, 1\}^{\mathbb{N}}$ (infinite binary sequences).'
-            answer: 'A diagonal sequence differs from every image.'
-            solution_sketch: 'Given $f : \mathbb{N} \to \{0,1\}^{\mathbb{N}}$, define $t$ by $t_n = 1 - f(n)_n$. Then $t \ne f(n)$ for every $n$ (they differ at position $n$), so $t$ is not in the image; $f$ is not surjective. $\square$'
+          - problem: "A function f sends each of 0, 1, 2, 3 to a subset of {0, 1, 2, 3}: f(0) = {0, 2}, f(1) = {2}, f(2) = {0, 1}, f(3) = {1, 3}. Build the diagonal set D = {n : n is not in f(n)}. Give the smallest element of D."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The diagonal set is D = {n : n is not in f(n)}, taken over {0, 1, 2, 3}. Test 0: 0 is in f(0) = {0, 2}, so 0 is not in D. Test 1: 1 is not in f(1) = {2}, so 1 is in D. Test 2: 2 is not in f(2) = {0, 1}, so 2 is in D. Test 3: 3 is in f(3) = {1, 3}, so 3 is not in D. Hence D = {1, 2}, and its smallest element is 1."
+          - problem: "Each of 0, 1 and 2 labels an infinite binary sequence: the sequence for 0 starts 0, 1, 1; the sequence for 1 starts 1, 1, 0; the sequence for 2 starts 0, 0, 1. Build the diagonal sequence t by flipping the n-th digit of the sequence labelled n. Give the first three digits of t, in order."
+            answer: "1, 0, 0"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The rule is t_n = 1 - f(n)_n, where f(n)_n is the n-th digit of the sequence labelled n. At n = 0 the digit is 0, so t_0 = 1 - 0 = 1. At n = 1 the second digit of the sequence for 1 is 1, so t_1 = 1 - 1 = 0. At n = 2 the third digit of the sequence for 2 is 1, so t_2 = 1 - 1 = 0. The first three digits of t are 1, 0, 0."
+          - problem: "On the set {0, 1, 2, 3, 4} a map f sends each number to a subset of that set. Here f(0) = {1}, f(1) = {0, 2}, f(2) = {2, 3}, f(3) = {0, 1, 2, 3} and f(4) = {4}. Form the set D of all numbers n for which n is not an element of f(n). How many elements does D have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The diagonal set is D = {n : n is not an element of f(n)}. Check 0: 0 is not in f(0) = {1}, so 0 lies in D. Check 1: 1 is not in f(1) = {0, 2}, so 1 lies in D. Check 2: 2 is in f(2) = {2, 3}, so 2 is not in D. Check 3: 3 is in f(3), so 3 is not in D. Check 4: 4 is in f(4) = {4}, so 4 is not in D. Thus D = {0, 1}, which has 2 elements."
+          - problem: "Let f send each natural number n to the subset {n + 1, n + 2} of the natural numbers. Build the diagonal set D = {n : n is not an element of f(n)}. State the least member of D."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "With f(n) = {n + 1, n + 2}, the diagonal set is D = {n : n is not an element of f(n)}. For any natural number n, n is different from n + 1 and from n + 2, so n is never an element of f(n). Therefore every natural number lies in D, and the least member of D is 0."
+          - problem: "Claim: no function f from the natural numbers to the set of infinite binary sequences is onto. Step 1: suppose f is onto. Step 2: define a sequence t by flipping the n-th digit of the sequence f(n). Step 3: for every n, the sequences t and f(n) agree at position n. Step 4: hence t is not a value of f, so f is not onto. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a legal supposition for a proof by contradiction, and Step 2 legally defines the diagonal sequence by flipping digits. Step 3 is false: since t is built by flipping the n-th digit, t and f(n) differ at position n, they do not agree. Step 4 draws the right conclusion once Step 3 is corrected. The answer is Step 3."
+          - problem: "In the proof that no function f from the natural numbers to the set of all subsets of the natural numbers is onto, one builds D as the set of numbers that are not members of their own image. Under the supposition D = f(m), the line that finishes the contradiction is missing. Select the missing line."
+            answer: "m is in D exactly when m is not in D"
+            answer_contract: {"kind": "label", "options": [["m is in D exactly when m is not in D"], ["m is in D exactly when m is in D"], ["D is empty, so m is not in D"], ["D is infinite, so m is in D"]]}
+            solution_sketch: "The wrong option 'm is in D exactly when m is in D' drops the negation in the definition of D. The wrong option 'D is empty, so m is not in D' adds a claim about emptiness that the argument never establishes. The wrong option 'D is infinite, so m is in D' adds an unsupported claim about size. By the definition of D, m is in D exactly when m is not in f(m); with D = f(m) this becomes: m is in D exactly when m is not in D, a contradiction. The answer is m is in D exactly when m is not in D."
+          - problem: "Write the full proof: every function from the natural numbers to the set of all subsets of the natural numbers fails to be onto. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Suppose, for contradiction, that f from the natural numbers to the set of all subsets of the natural numbers is onto. Define the diagonal set D = {n : n is not an element of f(n)}, which is a subset of the natural numbers. Because f is onto, some m satisfies f(m) = D. Now m is in D exactly when m is not in f(m), by the definition of D. Substituting f(m) = D turns this into m is in D exactly when m is not in D, a contradiction. Hence no such onto f exists, so the power set of the natural numbers is uncountable."
         constraints: "build the diagonal set $D = \\{a : a \\notin f(a)\\}$"
       - id: kp3
         name: "Cantor''s theorem in general"

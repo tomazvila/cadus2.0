@@ -1562,12 +1562,34 @@ topics:
         name: "Distributing over an indexed family"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Prove: $B \cap \bigcup_{i \in I} A_i = \bigcup_{i \in I} (B \cap A_i)$.'
-            answer: 'Element chase using the meaning of indexed union.'
-            solution_sketch: '$x \in B \cap \bigcup_i A_i$ iff $x \in B$ and $x \in A_j$ for some $j$, iff $x \in B \cap A_j$ for some $j$, iff $x \in \bigcup_i (B \cap A_i)$. $\square$'
-          - problem: 'Prove: $B \cup \bigcap_{i \in I} A_i = \bigcap_{i \in I} (B \cup A_i)$.'
-            answer: 'Element chase using the meaning of indexed intersection.'
-            solution_sketch: '$x \in B \cup \bigcap_i A_i$ iff $x \in B$ or ($x \in A_i$ for all $i$) iff for all $i$, ($x \in B$ or $x \in A_i$) iff $x \in \bigcap_i (B \cup A_i)$. (The step uses that "$x \in B$" does not depend on $i$.) $\square$'
+          - problem: "Let $B = \\{1, 3, 5, 7\\}$, $A_1 = \\{3, 7\\}$, and $A_2 = \\{5, 8\\}$. Use the distribution identity $B \\cap (A_1 \\cup A_2) = (B \\cap A_1) \\cup (B \\cap A_2)$ to rewrite the left side as a union of intersections. Compute the elements of the rewritten union in increasing order, separated by commas."
+            answer: "3, 5, 7"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Start with the left side $B \\cap (A_1 \\cup A_2)$. Compute the inner union: $A_1 \\cup A_2 = \\{3, 5, 7, 8\\}$. Intersect with $B = \\{1, 3, 5, 7\\}$: the common elements are $3, 5, 7$. The answer is 3, 5, 7."
+          - problem: "Let $B = \\{1, 2, 6\\}$, $A_1 = \\{2, 4\\}$, and $A_2 = \\{2, 5\\}$. Use the distribution identity $B \\cup (A_1 \\cap A_2) = (B \\cup A_1) \\cap (B \\cup A_2)$ to rewrite the left side as an intersection of unions. Compute the elements of the rewritten intersection in increasing order, separated by commas."
+            answer: "1, 2, 6"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Start with $B \\cup (A_1 \\cap A_2)$. The inner intersection $A_1 \\cap A_2$ is $\\{2\\}$. The union with $B = \\{1, 2, 6\\}$ gives $1, 2, 6$. The answer is 1, 2, 6."
+          - problem: "Let $B = \\{1, 2, 3, 4\\}$, $A_1 = \\{2, 5\\}$, $A_2 = \\{3, 4\\}$, and $A_3 = \\{4, 6\\}$. For the indexed family $A_1, A_2, A_3$, use $B \\cap \\bigcup_{i=1}^{3} A_i = \\bigcup_{i=1}^{3} (B \\cap A_i)$ to rewrite the left side as an indexed union. Compute the elements of that indexed union in increasing order, separated by commas."
+            answer: "2, 3, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "This is the distributed union $\\bigcup_{i=1}^{3} (B \\cap A_i)$. Compute each intersection: $B \\cap A_1 = \\{2\\}$, $B \\cap A_2 = \\{3, 4\\}$, $B \\cap A_3 = \\{4\\}$. Their union is $\\{2, 3, 4\\}$. The answer is 2, 3, 4."
+          - problem: "Let $B = \\{1, 2\\}$, $A_1 = \\{2, 3\\}$, $A_2 = \\{1, 4\\}$, and $A_3 = \\{2, 5\\}$. For the indexed family $A_1, A_2, A_3$, use $B \\cup \\bigcap_{i=1}^{3} A_i = \\bigcap_{i=1}^{3} (B \\cup A_i)$ to rewrite the left side as an indexed intersection. Compute the elements of that indexed intersection in increasing order, separated by commas."
+            answer: "1, 2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "This is the distributed intersection $\\bigcap_{i=1}^{3} (B \\cup A_i)$. Compute each union: $B \\cup A_1 = \\{1, 2, 3\\}$, $B \\cup A_2 = \\{1, 2, 4\\}$, $B \\cup A_3 = \\{1, 2, 5\\}$. The common elements are $1, 2$. The answer is 1, 2."
+          - problem: "Claim: $B \\cap \\bigcup_{i \\in I} A_i = \\bigcup_{i \\in I} (B \\cap A_i)$. Step 1: Let $x \\in B \\cap \\bigcup_{i \\in I} A_i$. Then $x \\in B$ and $x \\in A_i$ for all $i$. Step 2: So $x \\in B \\cap A_i$ for all $i$. Step 3: Hence $x \\in \\bigcup_{i \\in I} (B \\cap A_i)$. Step 4: Conversely, let $x \\in \\bigcup_{i \\in I} (B \\cap A_i)$. Then $x \\in B \\cap A_j$ for some $j$, so $x \\in B$ and $x \\in A_j$, hence $x \\in B \\cap \\bigcup_{i \\in I} A_i$. Which step is the first step that is not valid?"
+            answer: "Step 1"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The claim is the intersection-over-union distribution. Step 1 says $x$ is in $A_i$ for all $i$, but membership in the union only gives some $i$; that is the first error. Step 2 repeats the universal claim and is not valid from the union. Step 3 would follow from Step 2, but Step 2 is wrong. Step 4 is a valid converse and not the first error. The answer is Step 1."
+          - problem: "To prove the identity $B \\cup \\bigcap_{i \\in I} A_i = \\bigcap_{i \\in I} (B \\cup A_i)$ by element chasing, assume that $x \\in B \\cup \\bigcap_{i \\in I} A_i$ and that $x \\notin B$. Select the line that follows from these two assumptions."
+            answer: "x lies in A_i for every index i"
+            answer_contract: {"kind": "label", "options": [["x lies in A_i for every index i"], ["x lies in A_i for at least one index i"], ["x lies outside A_i for every index i"], ["x lies in B and in A_i for every index i"]]}
+            solution_sketch: "Unfold the assumption: for each index i, the element x is in B or in A_i. Since x is not in B, each index forces x into A_i, so x lies in A_i for every index i, placing x in the indexed intersection and completing the chase to the left side. The option with at least one index is the error of reading the indexed intersection as a union. The option with outside every A_i is a negation error. The option with B and every A_i contradicts the fact that x is not in B. The answer is x lies in A_i for every index i."
+          - problem: "Write the full proof: $B \\cap \\bigcup_{i \\in I} A_i = \\bigcup_{i \\in I} (B \\cap A_i)$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (left to right). Assume $x \\in B \\cap \\bigcup_{i \\in I} A_i$. By the definition of intersection, $x \\in B$ and $x \\in \\bigcup_{i \\in I} A_i$. By the definition of indexed union, there is some $j \\in I$ with $x \\in A_j$. Step 2 (witness). For that same $j$, $x \\in B$ and $x \\in A_j$, so $x \\in B \\cap A_j$. Step 3 (indexed union). Therefore $x \\in \\bigcup_{i \\in I} (B \\cap A_i)$. Step 4 (right to left). Conversely, assume $x \\in \\bigcup_{i \\in I} (B \\cap A_i)$. Then there is some $j \\in I$ with $x \\in B \\cap A_j$. Hence $x \\in B$ and $x \\in A_j$. Since $x \\in A_j$ for some $j$, $x \\in \\bigcup_{i \\in I} A_i$. Together with $x \\in B$, this gives $x \\in B \\cap \\bigcup_{i \\in I} A_i$. Both inclusions hold, so the sets are equal."
         constraints: "prove an identity involving an indexed family by element chasing"
     diagnostic_exemplar:
       problem: 'Prove the generalized De Morgan law $\left(\bigcup_{i \in I} A_i\right)^{c} = \bigcap_{i \in I} A_i^{\,c}$.'

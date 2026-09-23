@@ -1719,12 +1719,34 @@ topics:
         name: "Square and cube sums"
         key_prerequisites: [induction-template]
         exemplars:
-          - problem: 'Prove: for all $n \ge 1$, $1^2 + 2^2 + \cdots + n^2 = \dfrac{n(n+1)(2n+1)}{6}$.'
-            answer: 'Base $n = 1$: $1 = 1$. Step: add $(n+1)^2$ and factor.'
-            solution_sketch: 'Base: $n = 1$ gives $1 = \frac{1 \cdot 2 \cdot 3}{6}$. Step: assume the formula at $n$; adding $(n+1)^2$ yields $\frac{n(n+1)(2n+1)}{6} + (n+1)^2 = \frac{(n+1)(n+2)(2n+3)}{6}$, the formula at $n + 1$. $\square$'
-          - problem: 'Prove: for all $n \ge 1$, $1^3 + 2^3 + \cdots + n^3 = \left(\dfrac{n(n+1)}{2}\right)^2$.'
-            answer: 'Base $n = 1$: $1 = 1$. Step: $\left(\frac{n(n+1)}{2}\right)^2 + (n+1)^3 = \left(\frac{(n+1)(n+2)}{2}\right)^2$.'
-            solution_sketch: 'Step: factor $(n+1)^2$ from $\frac{n^2(n+1)^2}{4} + (n+1)^3 = (n+1)^2\left(\frac{n^2}{4} + n + 1\right) = (n+1)^2 \cdot \frac{(n+2)^2}{4}$. $\square$'
+          - problem: "To prove $1^2 + 2^2 + \\cdots + n^2 = \\dfrac{n(n+1)(2n+1)}{6}$ by induction, write the sum to $n+1$ as $\\dfrac{n(n+1)(2n+1)}{6} + (n+1)^2$ and then as $\\dfrac{n+1}{6}\\,q(n)$. Give $q(n)$ expanded."
+            answer: "2n^2+7n+6"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Step 1 (summation notation): the sum to $n+1$ is the sum to $n$ plus the new term $(n+1)^2$, that is $\\dfrac{n(n+1)(2n+1)}{6} + (n+1)^2$. Step 2 (factoring): pull out the factor $\\dfrac{n+1}{6}$; the bracket is $\\dfrac{n(2n+1)}{6} + (n+1) = \\dfrac{2n^2 + n + 6n + 6}{6} = \\dfrac{2n^2+7n+6}{6}$. Step 3 (induction template): this is exactly the formula at $n+1$, since $\\dfrac{(n+1)(2n^2+7n+6)}{6} = \\dfrac{(n+1)(n+2)(2n+3)}{6}$. The answer is 2n^2+7n+6."
+          - problem: "In the induction proof of $1^3 + 2^3 + \\cdots + n^3 = \\left(\\dfrac{n(n+1)}{2}\\right)^2$, the step must establish the formula at $n = k+1$, namely $\\left(\\dfrac{(k+1)(k+2)}{2}\\right)^2$. Written as $(k+1)^2\\,q(k)$, give $q(k)$."
+            answer: "(k+2)^2/4"
+            answer_contract: {"kind": "function", "vars": ["k"]}
+            solution_sketch: "Step 1 (induction template): the target object is $\\left(\\dfrac{(k+1)(k+2)}{2}\\right)^2 = \\dfrac{(k+1)^2(k+2)^2}{4}$. Step 2 (factoring): take out the common factor $(k+1)^2$, leaving $\\dfrac{(k+2)^2}{4}$. Step 3 (check): $(k+1)^2 \\cdot \\dfrac{(k+2)^2}{4} = \\left(\\dfrac{(k+1)(k+2)}{2}\\right)^2$, the formula at $k+1$. The answer is (k+2)^2/4."
+          - problem: "A student claims that $1^3 + 2^3 + \\cdots + n^3 = \\left(\\dfrac{n(n+1)}{2}\\right)^2 + \\dfrac{(n-1)(n-2)}{2}$ for all $n \\ge 1$, and checks only $n = 1$ and $n = 2$. Give the smallest $n \\ge 1$ for which the claim is false."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (base-case check): at $n = 1$ the right side is $1 + 0 = 1$, equal to the left side. Step 2 (base-case check): at $n = 2$ the right side is $9 + 0 = 9$, equal to the left side $1 + 8 = 9$. Step 3 (counterexample search): at $n = 3$ the right side is $36 + 1 = 37$, but the left side is $1 + 8 + 27 = 36$. Two passing checks are not a proof; the claim fails first at $n = 3$. The answer is 3."
+          - problem: "Let $F(k) = \\left(\\dfrac{k(k+1)}{2}\\right)^2$, the cube-sum formula at $k$. In the induction step one studies the difference $F(k+1) - F(k)$, which factors as $(k+1)^2\\,q(k)$. Give $q(k)$."
+            answer: "k+1"
+            answer_contract: {"kind": "function", "vars": ["k"]}
+            solution_sketch: "Step 1 (definition): $F(k+1) - F(k) = \\left(\\dfrac{(k+1)(k+2)}{2}\\right)^2 - \\left(\\dfrac{k(k+1)}{2}\\right)^2$. Step 2 (factoring): take out $\\dfrac{(k+1)^2}{4}$ from both terms; the bracket is $(k+2)^2 - k^2 = 4k + 4$ by difference of squares. Step 3 (simplification): the difference is $\\dfrac{(k+1)^2 (4k+4)}{4} = (k+1)^2 (k+1) = (k+1)^3$, which is exactly the new term added to the sum. The answer is k+1."
+          - problem: "A study group claims that $1^2 + 2^2 + \\cdots + n^2 = \\dfrac{n(n+1)(2n+1)}{6} + (n-1)$ for all $n \\ge 1$, and checks only $n = 1$. Give the smallest $n \\ge 1$ for which the claim is false."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (summation notation): the claim adds the extra term $n - 1$ to the true square-sum formula $\\dfrac{n(n+1)(2n+1)}{6}$, so the two sides agree only where that term is 0. Step 2 (check at $n = 1$): the left side is $1$ and the right side is $\\dfrac{1 \\cdot 2 \\cdot 3}{6} + 0 = 1$, so the single check passes. Step 3 (check at $n = 2$): the left side is $1 + 4 = 5$, but the right side is $\\dfrac{2 \\cdot 3 \\cdot 5}{6} + 1 = 6$. One passing check is not a proof; the claim fails first at $n = 2$. The answer is 2."
+          - problem: "To prove $1^2 + 2^2 + \\cdots + n^2 = \\dfrac{n(n+1)(2n+1)}{6}$ by induction, assume the formula at $n = k$. The next line of the proof must express the sum to $k+1$ using the hypothesis. Select the line that is correct."
+            answer: "k(k+1)(2k+1)/6 + (k+1)^2"
+            answer_contract: {"kind": "label", "options": [["k(k+1)(2k+1)/6 + (k+1)^2"], ["k(k+1)(2k+1)/6 + (k+1)^3"], ["(k+1)(k+2)(2k+3)/6 + (k+1)^2"], ["k(k+1)(2k+1)/6 + (k+1)/2"]]}
+            solution_sketch: "Step 1 (summation notation): the sum to $k+1$ is the sum to $k$ plus the new term $(k+1)^2$. Step 2 (hypothesis): substitute the formula for the sum to $k$, giving $\\dfrac{k(k+1)(2k+1)}{6} + (k+1)^2$. The option with $(k+1)^3$ uses the cube term, the error of mixing the two power sums. The option that adds the finished formula $\\dfrac{(k+1)(k+2)(2k+3)}{6}$ assumes the target, a circular step. The option with $\\dfrac{k+1}{2}$ halves the new term. The answer is k(k+1)(2k+1)/6 + (k+1)^2."
+          - problem: "Write the full proof: for all $n \\ge 1$, $1^3 + 2^3 + \\cdots + n^3 = \\left(\\dfrac{n(n+1)}{2}\\right)^2$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: for $n = 1$ the left side is $1$ and the right side is $\\left(\\dfrac{1 \\cdot 2}{2}\\right)^2 = 1$, so the formula holds. Hypothesis: assume for some $k \\ge 1$ that $1^3 + 2^3 + \\cdots + k^3 = \\left(\\dfrac{k(k+1)}{2}\\right)^2$. Step: by summation notation the sum to $k+1$ equals $\\left(\\dfrac{k(k+1)}{2}\\right)^2 + (k+1)^3$; factoring out $(k+1)^2$ gives $(k+1)^2\\left(\\dfrac{k^2}{4} + k + 1\\right)$. Completing the square in the bracket: $\\dfrac{k^2}{4} + k + 1 = \\dfrac{(k+2)^2}{4}$. Hence the sum to $k+1$ is $(k+1)^2 \\dfrac{(k+2)^2}{4} = \\left(\\dfrac{(k+1)(k+2)}{2}\\right)^2$, which is the formula at $k+1$. Conclusion: the base case and the step prove the formula for all $n \\ge 1$ by induction."
         constraints: "power sums; the algebraic factoring in the step is the heart of the proof"
       - id: kp3
         name: "Geometric-type sums"

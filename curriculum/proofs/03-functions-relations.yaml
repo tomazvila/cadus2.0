@@ -1729,12 +1729,34 @@ topics:
         name: "a ~ b iff [a] = [b]"
         key_prerequisites: [relations-equivalence]
         exemplars:
-          - problem: 'Prove: for an equivalence relation, $a \sim b$ if and only if $[a] = [b]$.'
-            answer: 'Both directions using reflexivity, symmetry, transitivity.'
-            solution_sketch: 'If $a \sim b$: for $x \in [a]$, $x \sim a \sim b$ so $x \in [b]$, giving $[a] \subseteq [b]$; symmetrically $[b] \subseteq [a]$, so $[a] = [b]$. Conversely if $[a] = [b]$, then $a \in [a] = [b]$ means $a \sim b$. $\square$'
-          - problem: 'Prove: for an equivalence relation, if $a \not\sim b$ then $[a] \cap [b] = \varnothing$.'
-            answer: 'A common element would force $a \sim b$.'
-            solution_sketch: 'Suppose $x \in [a] \cap [b]$. Then $a \sim x$ and $b \sim x$, so $a \sim x \sim b$ gives $a \sim b$, contradicting $a \not\sim b$. Hence $[a] \cap [b] = \varnothing$. $\square$'
+          - problem: "On the set of integers, define x ~ y when x and y are congruent modulo 7. To apply the theorem a ~ b if and only if [a] = [b] with a = 10 and b = 3, first check whether a ~ b holds. Give the verdict and the smallest nonnegative integer m in the class of 10."
+            answer: "verdict = equal; m = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["unequal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Check the hypothesis: a - b = 10 - 3 = 7 is a multiple of 7, so 10 ~ 3, and the biconditional turns this congruence into the class identity [10] = [3]. The class of 10 is the set of all integers of the form 7k + 3; listing from 0 upward gives 3, 10, 17. The rule used is the theorem a ~ b if and only if [a] = [b], then the definition of a class as an arithmetic progression. The answer is verdict = equal; m = 3."
+          - problem: "On the integers define x ~ y when x - y is even. A student applies the theorem a ~ b if and only if [a] = [b] to a = 5 and b = 8, and also inspects the two classes directly. Give the verdict and the number n of elements in the intersection of [5] and [8]."
+            answer: "verdict = unequal; n = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["unequal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "n"}]}
+            solution_sketch: "Here a - b = -3 is odd, so 5 and 8 are not related, and the theorem forbids the two classes from coinciding. For the intersection, argue by contradiction: if x lay in both classes, then 5 ~ x and 8 ~ x, so symmetry gives x ~ 8 and transitivity gives 5 ~ 8, contradicting that 5 - 8 is odd; this named contradiction argument shows the intersection is empty. The answer is verdict = unequal; n = 0."
+          - problem: "Claim: for an equivalence relation, a ~ b implies [a] = [b]. Proposed proof. Step 1: let x be any element with x in [a]. Step 2: by definition of the class, x ~ a. Step 3: from x ~ a and a ~ b, cancel a on both sides to obtain x ~ b. Step 4: hence [a] is contained in [b], and by symmetry [b] is contained in [a]. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 merely picks a typical element, and Step 2 only restates the definition of the class. Step 3 is the first invalid step: an equivalence relation has no cancellation law, and the correct route is transitivity, since x ~ a together with a ~ b gives x ~ b. Step 4 is a valid conclusion once Step 3 is repaired. The error behind the wrong choice at Step 3 is treating ~ like the equals sign. The answer is Step 3."
+          - problem: "Claim: if the classes [a] and [b] share an element, then [a] = [b]. Proof attempt. Let x lie in both classes, so a ~ x and b ~ x. One line of the argument is missing, after which a ~ b follows and the theorem finishes the proof. Select the line that is true and completes the argument."
+            answer: "By symmetry x ~ b, and transitivity gives a ~ x ~ b, so a ~ b"
+            answer_contract: {"kind": "label", "options": [["By symmetry x ~ b, and transitivity gives a ~ x ~ b, so a ~ b"], ["By transitivity, a ~ x and b ~ x give a ~ b directly"], ["By reflexivity, a ~ a and b ~ b, so a ~ b"], ["Since x ~ a and x ~ b, we get x = a = b"]]}
+            solution_sketch: "The given facts are a ~ x and b ~ x, and the goal a ~ b needs the second link x ~ b, which symmetry supplies. The correct line is: by symmetry x ~ b, and transitivity gives a ~ x ~ b, so a ~ b. The option By transitivity, a ~ x and b ~ x give a ~ b directly misapplies transitivity, because the second link must be x ~ b, not b ~ x. The option By reflexivity, a ~ a and b ~ b, so a ~ b uses reflexivity but never connects a to b. The option Since x ~ a and x ~ b, we get x = a = b confuses the relation with equality. The answer is By symmetry x ~ b, and transitivity gives a ~ x ~ b, so a ~ b."
+          - problem: "On the set A with elements 0 through 9, define x ~ y when x and y leave the same remainder on division by 4. This is an equivalence relation, and the theorem a ~ b if and only if [a] = [b] means that distinct classes share no element. Determine how many distinct classes k the relation splits A into, and the size m of the largest class."
+            answer: "k = 4; m = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "k"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Compute each class by listing the elements of A with the same remainder modulo 4: remainder 0 gives 0, 4, 8; remainder 1 gives 1, 5, 9; remainder 2 gives 2, 6; remainder 3 gives 3, 7. Because distinct classes share no element, every element of A is counted exactly once. The class computation rule gives four classes, and the largest of them holds three elements. The answer is k = 4; m = 3."
+          - problem: "On the set A of integers from 0 to 14, define x ~ y when x and y leave the same remainder on division by 3. Since distinct classes share no element, the number of elements of A lying in [1] or in [5] is the sum of the two class sizes. Find that number."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute each class by the listing rule: the elements of A congruent to 1 modulo 3 are 1, 4, 7, 10, 13, and those congruent to 2 modulo 3 are 2, 5, 8, 11, 14. Since 1 and 5 leave different remainders, the theorem a ~ b if and only if [a] = [b] shows [1] and [5] are distinct classes, and the disjointness of distinct classes means the two lists share no element. The disjointness step adds the sizes 5 and 5. The answer is 10."
+          - problem: "Write the full proof: for an equivalence relation on a set, a ~ b if and only if [a] = [b]. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Forward direction. Assume a ~ b. Step 1: take any x in [a]; then x ~ a by definition of the class, and transitivity with a ~ b gives x ~ b, so [a] is contained in [b]. Step 2: symmetry gives b ~ a, so the same transitivity argument with the roles of a and b swapped shows [b] is contained in [a]. Step 3: the two inclusions give [a] = [b]. Backward direction. Assume [a] = [b]. Step 4: reflexivity gives a ~ a, so a lies in [a]. Step 5: since [a] = [b], the element a lies in [b], and by definition of the class this means a ~ b. Both directions are proved, which establishes the biconditional."
         constraints: "relate equivalence to equality (or disjointness) of classes"
       - id: kp3
         name: "Classes partition the set"
