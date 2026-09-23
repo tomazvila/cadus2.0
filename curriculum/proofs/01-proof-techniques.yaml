@@ -2078,12 +2078,34 @@ topics:
         name: "Induction on counting and geometry"
         key_prerequisites: [induction-summation-proofs]
         exemplars:
-          - problem: 'Prove: a set with $n$ elements has exactly $2^n$ subsets.'
-            answer: 'Base $n = 0$: $\varnothing$ has one subset. Step: adding a new element pairs each old subset with itself-plus-the-new-element, doubling the count.'
-            solution_sketch: 'Base: the empty set has exactly one subset. Step: let $|S| = n + 1$ and fix $x \in S$. Subsets of $S$ split into those avoiding $x$ (subsets of $S \setminus \{x\}$: $2^n$ of them) and those containing $x$ (each is one of the former plus $x$: another $2^n$). Total $2 \cdot 2^n = 2^{n+1}$. $\square$'
-          - problem: 'Prove: $n$ lines in the plane in general position (no two parallel, no three concurrent) divide it into $\dfrac{n^2 + n + 2}{2}$ regions.'
-            answer: 'Base $n = 0$: $1$ region. Step: the $(n+1)$-st line meets $n$ lines in $n$ points, crossing $n + 1$ regions and adding $n + 1$.'
-            solution_sketch: 'Base: no lines, one region, and $\frac{0 + 0 + 2}{2} = 1$. Step: a new line meets the $n$ existing lines in $n$ distinct points, splitting the new line into $n + 1$ pieces, each cutting one region in two. So $R(n+1) = \frac{n^2 + n + 2}{2} + (n + 1) = \frac{(n+1)^2 + (n+1) + 2}{2}$. $\square$'
+          - problem: "An induction proof shows that a set with n elements has exactly 2^n subsets. In the inductive step, one new element x is added to a set with 7 elements, and every old subset is paired with a copy that contains x. How many subsets does the resulting set have?"
+            answer: "256"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: before the step, a set of 7 elements has 2^7 = 128 subsets by the hypothesis. Rule of the step: each old subset is paired with the same subset plus the new element x, a combinatorial doubling. Compute: 2 times 128 = 256. The answer is 256."
+          - problem: "An induction proof shows that n lines in general position, with no two parallel and no three through one point, divide the plane into (n^2 + n + 2)/2 regions. How many regions do 8 such lines create?"
+            answer: "37"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the region count is (n^2 + n + 2)/2 regions. Rule of the step: the 8th line meets the 7 earlier lines in 7 distinct points, is cut into 8 pieces, and each piece splits one region in two, so 8 regions are added. Compute: (49 + 7 + 2)/2 + 8 = 29 + 8 = 37. The answer is 37."
+          - problem: "An induction proof counts handshakes: when each pair among n people shakes hands once, the k-th person to arrive adds one handshake with every person already there. At a gathering of 10 people, how many handshakes does the 10th arrival add?"
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the total for 10 people is the sum 1 + 2 + ... + 9, built one arrival at a time. Rule of the step: the 10th person to arrive shakes hands once with each person already present, which adds one handshake per person already there. Count: 9 people are already present, so the arrival adds 9. The answer is 9."
+          - problem: "An induction proof shows that a convex polygon with n sides can be divided into n - 2 triangles by diagonals from one fixed vertex. The step cuts off one triangle and leaves a polygon with one side fewer, starting from a single triangle. How many triangles does a convex 12-gon give?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: T(n) = n - 2 triangles, with base case T(3) = 1 for a triangle. Rule of the step: one diagonal from the fixed vertex of the 12-gon cuts off one triangle and leaves an 11-gon, so each new side adds exactly one triangle, a geometric splitting argument. Compute: T(12) = 12 - 2 = 10. The answer is 10."
+          - problem: "Claim: a set with n elements has 2^n subsets. Step 1: the empty set has exactly one subset, itself. Step 2: assume a set with n elements has 2^n subsets. Step 3: for a set S with n + 1 elements, fix x in S; the subsets avoiding x are exactly the subsets of S without x, so there are 2^n of them. Step 4: each subset avoiding x gives one subset containing x, so S has 2^n subsets in total. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Read the full argument first: the claim is that a set with n elements has 2^n subsets. Step 1 is a valid base case. Step 2 is the standard induction hypothesis, valid. Step 3 is correct: the subsets avoiding x are exactly the subsets of S without x, and there are 2^n of them by the hypothesis. Step 4 is not valid: the subsets containing x add another 2^n, so the total is 2^n + 2^n = 2^(n+1), not 2^n. The answer is Step 4."
+          - problem: "An induction proof counts all the subsets of a finite set. It fixes one element x and sorts them into two classes of the same size. Which sorting does the proof use?"
+            answer: "those omitting x and those containing x"
+            answer_contract: {"kind": "label", "options": [["those omitting x and those containing x"], ["the singletons and all the rest"], ["the empty one and the full one"], ["the even ones and the odd ones"]]}
+            solution_sketch: "Full object: the subsets of a set of size n + 1, sorted by the element x. Rule of the step: pairing each subset without x against the same subset with x gives two classes of equal size 2^n, which is exactly the combinatorial doubling. The option 'the singletons and all the rest' is an error: it counts by size, and the two classes are not equal. The option 'the empty one and the full one' is an error: it names only two subsets, not a sorting of all of them. The option 'the even ones and the odd ones' is an error: parity of size is not the membership pairing that the doubling uses. The answer is those omitting x and those containing x."
+          - problem: "Write the full proof: n lines in the plane in general position divide it into (n^2 + n + 2)/2 regions. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case: with n = 0 lines the plane is one region, and (0 + 0 + 2)/2 = 1, so the claim holds. Hypothesis: assume k lines in general position divide the plane into (k^2 + k + 2)/2 regions. Step: add the (k+1)-st line. It meets the k old lines in k distinct points, and these points cut the new line into k + 1 pieces; each piece lies inside one region and splits it into two, so exactly k + 1 new regions appear. This is the geometric counting core of the argument. Compute: (k^2 + k + 2)/2 + (k + 1) = (k^2 + 3k + 4)/2 = ((k+1)^2 + (k+1) + 2)/2. Conclusion: the claim holds for k + 1, so by induction it holds for all n >= 0."
         constraints: "the step must argue combinatorially or geometrically, not just algebraically"
       - id: kp3
         name: "Pitfalls and thresholds"

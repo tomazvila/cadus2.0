@@ -802,14 +802,30 @@ topics:
         name: "Biconditionals as two conditionals"
         key_prerequisites: [propositional-logic]
         exemplars:
-          - problem: 'Write $P \leftrightarrow Q$ as a conjunction of two conditionals.'
-            answer_contract: {kind: none}
-            answer: '$(P \to Q) \land (Q \to P)$'
-            solution_sketch: 'A biconditional asserts both the conditional and its converse.'
-          - problem: 'Is the biconditional "$x = 1 \leftrightarrow x^2 = 1$" true for all real $x$?'
-            answer_contract: {kind: none}
-            answer: 'No; at $x = -1$ the direction $x^2 = 1 \to x = 1$ fails.'
-            solution_sketch: 'The forward direction $x = 1 \to x^2 = 1$ always holds, but $x = -1$ satisfies $x^2 = 1$ with $x \ne 1$, so the converse direction fails and the biconditional is false there.'
+          - problem: "A biconditional with parts P and Q can be split into a conditional and its converse. Which option gives the full equivalent form?"
+            answer: "P implies Q, and Q implies P"
+            answer_contract: {"kind": "label", "options": [["P implies Q, and Q implies P"], ["P implies Q, or Q implies P"], ["P implies Q, but never Q implies P"], ["P negated, and Q negated as well"]]}
+            solution_sketch: "Split rule: the biconditional with parts P and Q equals the conditional P implies Q joined with its converse Q implies P by the word and. The wrong option P implies Q, or Q implies P fails because or asks for only one true direction. The wrong option P implies Q, but never Q implies P fails because it drops the converse direction. The wrong option P negated, and Q negated as well fails because it uses negations instead of the two implications. The answer is P implies Q, and Q implies P."
+          - problem: "For real numbers x, split the biconditional x = 5 iff x^2 = 25 into a conditional and its converse, then test both directions over the reals. Give the verdict, and give a counterexample value of x if some direction fails, otherwise give 0."
+            answer: "verdict = fails; x = -5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["holds"], ["fails"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "Split rule: the biconditional becomes the conditional x = 5 implies x^2 = 25 and its converse x^2 = 25 implies x = 5. Forward test: whenever x = 5, squaring gives 25, so the forward direction holds. Converse test: x = -5 gives x^2 = 25 while x is not 5, so the converse fails at x = -5. Therefore verdict = fails; x = -5."
+          - problem: "For real numbers x, the biconditional 5x = 15 iff x = 3 splits into a conditional and its converse. Test both directions and determine how many of them hold for every real x."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Split rule: the biconditional becomes the conditional 5x = 15 implies x = 3 and its converse x = 3 implies 5x = 15. Forward test: dividing both sides by 5 shows that 5x = 15 forces x = 3, so the forward direction holds for every real x. Converse test: substituting x = 3 gives 5 times 3 equals 15, so the converse holds too. Both directions hold, so the answer is 2."
+          - problem: "For real numbers x, the biconditional x < 3 iff x < 5 splits into a conditional and its converse. Test both directions and find how many of them hold for every real x."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Split rule: the biconditional becomes the conditional x < 3 implies x < 5 and its converse x < 5 implies x < 3. Forward test: every real number below 3 is also below 5, so the forward direction holds. Converse test: x = 4 lies below 5 but not below 3, so the converse fails at x = 4. Exactly one direction holds for every real x, so the answer is 1."
+          - problem: "For real numbers x, the biconditional abs(x) = 2 iff x = 2 splits into a conditional and its converse. Test both directions over the reals. Give the verdict, and if a direction fails, give a counterexample value of x, otherwise give 0."
+            answer: "verdict = invalid; x = -2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["valid"], ["invalid"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "x"}]}
+            solution_sketch: "Split rule: the biconditional becomes the conditional abs(x) = 2 implies x = 2 and its converse x = 2 implies abs(x) = 2. Forward test: at x = -2 the absolute value equals 2 while x is not 2, so the forward direction fails at x = -2. Converse test: at x = 2 the absolute value equals 2, so the converse holds. Therefore verdict = invalid; x = -2."
+          - problem: "For real numbers x, the biconditional x^2 > 4 iff x > 2 splits into a conditional and its converse. Check each direction with test values, then give the number of directions that fail for some real x."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Split rule: the biconditional becomes the conditional x^2 > 4 implies x > 2 and its converse x > 2 implies x^2 > 4. Forward test: x = -3 has square 9, which exceeds 4, while -3 does not exceed 2, so the forward direction fails at x = -3. Converse test: every real number greater than 2 has square greater than 4, so the converse holds. Exactly one direction fails for some real x, so the answer is 1."
         constraints: "split $\\leftrightarrow$ into a conditional and its converse; test both directions"
     diagnostic_exemplar:
       problem: 'For "if $x = 3$ then $x^2 = 9$" (real $x$): state the converse and the contrapositive, say which of the two is equivalent to the original, and decide whether the biconditional "$x = 3 \leftrightarrow x^2 = 9$" holds for every real $x$.'
