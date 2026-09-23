@@ -160,12 +160,34 @@ topics:
         key_prerequisites: [hom-functors]
         constraints: "Either instantiate the lemma at a second representable and read off the resulting hom-set, or count with finite sets of size at most 4; in a counting problem name the set $FA$ being counted and give its cardinality as an explicit number."
         exemplars:
-          - problem: "Instantiate the covariant Yoneda lemma at $F=\\mathrm{Hom}(B,-)$ and read off the resulting set and map."
-            answer: "$\\mathrm{Nat}(\\mathrm{Hom}(A,-),\\mathrm{Hom}(B,-))\\cong\\mathrm{Hom}(B,A)$, via $\\alpha\\mapsto\\alpha_A(1_A)$."
-            solution_sketch: "The lemma gives $\\mathrm{Nat}(\\mathrm{Hom}(A,-),F)\\cong FA$. Putting $F=\\mathrm{Hom}(B,-)$ makes $FA=\\mathrm{Hom}(B,A)$, so $\\mathrm{Nat}(\\mathrm{Hom}(A,-),\\mathrm{Hom}(B,-))\\cong\\mathrm{Hom}(B,A)$, with $\\alpha\\mapsto\\alpha_A(1_A)$ landing in $\\mathrm{Hom}(B,A)$. The direction reverses in $A$: the covariant hom-embedding $A\\mapsto\\mathrm{Hom}(A,-)$ is contravariant on objects."
-          - problem: "In $\\mathbf{Set}$, count the natural transformations $\\mathrm{Hom}(\\{1,2\\},-)\\Rightarrow\\mathrm{Hom}(\\{1,2,3\\},-)$, and count the natural transformations $\\mathrm{Hom}(\\{*\\},-)\\Rightarrow P$ where $P$ is the covariant power-set functor."
-            answer: "$8$ and $2$."
-            solution_sketch: "By Yoneda, $\\mathrm{Nat}(\\mathrm{Hom}(A,-),F)\\cong FA$, so the count is just $|FA|$. First case: $A=\\{1,2\\}$ and $F=\\mathrm{Hom}(\\{1,2,3\\},-)$, so $FA=\\mathrm{Hom}(\\{1,2,3\\},\\{1,2\\})$, the functions from a $3$-element set to a $2$-element set: $2^3=8$. Second case: $A=\\{*\\}$ and $F=P$, so $FA=\\mathcal{P}(\\{*\\})=\\{\\varnothing,\\{*\\}\\}$, giving $2$. Each transformation is recovered from its value $u=\\alpha_A(1_A)$ by $h\\mapsto(Fh)(u)$."
+          - problem: "In the category of sets, take A = {1,2,3,4} and F = Hom(B, -) with B = {1,2}. The Yoneda lemma counts the set F(A) = Hom(B, A), the set of functions from {1,2} to {1,2,3,4}. Find the number of natural transformations from Hom(A,-) to F."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Yoneda lemma rule: Nat(Hom(A,-), F) is in bijection with F(A), via alpha maps to alpha_A(1_A). Here the full set being counted is F(A) = Hom({1,2}, {1,2,3,4}), the functions from {1,2} to {1,2,3,4}. Counting rule: each of the 2 inputs independently picks one of 4 outputs, so there are 4^2 = 16 functions. The answer is 16."
+          - problem: "In the category of sets, take A = {1,2} and let P be the covariant power-set functor, so the Yoneda lemma counts the set P(A), the set of all subsets of {1,2}. Find the number of natural transformations from Hom(A,-) to P."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Yoneda lemma rule: Nat(Hom(A,-), P) is in bijection with P(A). The full set being counted is P(A), the collection of all subsets of {1,2}, namely the empty set, {1}, {2}, and {1,2}. Counting rule: a 2-element set has 2^2 = 4 subsets. The answer is 4."
+          - problem: "Let A = {1,2}. Let F be the functor on sets where F(X) is the set of pairs (x, i) with x in X and i in {0,1}, and F(h) sends (x, i) to (h(x), i). A natural transformation from Hom(A,-) to F is fixed by u = alpha_A(1_A), and here u = (2,1). Take the map h from A to {5,6,7} with h(1) = 5 and h(2) = 7. Compute the value F(h)(u), and give the answer as (x, i)."
+            answer: "(7,1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Yoneda lemma rule: the transformation alpha is fixed by u = alpha_A(1_A), and its component at X sends h to F(h)(u). Compute F(h) on u = (2,1): by definition F(h) sends (x, i) to (h(x), i), so F(h)(u) = (h(2), 1). With h(2) = 7, the full value is the pair (7,1). The answer is (7,1)."
+          - problem: "Let C be the category from the chain 1 <= 2 <= 3: an arrow from x to y exists exactly when x <= y, and hom-sets are empty otherwise. Take the representable Hom(2, -) and F = Hom(3, -), so the Yoneda lemma counts the set F(2) = Hom(3,2), the set of arrows from 3 to 2. Find the number of natural transformations from Hom(2,-) to F."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Yoneda lemma rule: Nat(Hom(2,-), Hom(3,-)) is in bijection with Hom(3,2), the value of F = Hom(3,-) at the object 2. The full set Hom(3,2) is the set of arrows from 3 to 2 in the chain 1 <= 2 <= 3; such an arrow exists only when 3 <= 2, which is false, so this set is empty. Counting rule: an empty set has 0 elements, so there are no such transformations. The answer is 0."
+          - problem: "In the category of sets, take A = {a,b,c} and F = Hom({a,b}, -). A student counts the natural transformations from Hom(A,-) to F. Step 1: by the Yoneda lemma they are in bijection with F(A). Step 2: F(A) = Hom({a,b}, {a,b,c}), the set of functions from {a,b} to {a,b,c}. Step 3: there are 2^3 = 8 such functions. Step 4: so there are 8 natural transformations. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly applies the Yoneda lemma, Nat(Hom(A,-), F) is in bijection with F(A). Step 2 correctly identifies F(A) as the set of functions from {a,b} to {a,b,c}. Step 3 counts in the wrong direction: a function from a 2-element set to a 3-element set makes 2 choices with 3 options each, giving 3^2 = 9, not 2^3 = 8. Step 4 only repeats the count inherited from Step 3, so it is wrong but not first. The answer is Step 3."
+          - problem: "Let F be the functor on sets where F(X) is the set of pairs (x, y) with both entries in X, and F(h) sends (x, y) to (h(x), h(y)). Take A = {1,2,3}, so the Yoneda lemma counts the set F(A), the set of pairs with both entries in {1,2,3}. Find the number of natural transformations from Hom(A,-) to F."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Yoneda lemma rule: Nat(Hom(A,-), F) is in bijection with F(A), via alpha maps to alpha_A(1_A). The full set being counted is F(A), the set of pairs (x, y) with both entries in {1,2,3}. Counting rule: 3 choices for x and independently 3 choices for y give 3 times 3 = 9 pairs. The answer is 9."
+          - problem: "Write the full proof: in the category of sets, for every set A and every functor F from sets to sets, the map sending a natural transformation alpha from Hom(A,-) to F to the element alpha_A(1_A) is a bijection onto F(A). Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (key identity): for any set X and any map h from A to X, h equals Hom(A,h) applied to 1_A, so naturality of alpha at h gives alpha_X(h) = F(h)(alpha_A(1_A)). Step 2 (injectivity): if alpha_A(1_A) = beta_A(1_A) = u, then alpha_X(h) = F(h)(u) = beta_X(h) for every h, so alpha = beta. Step 3 (surjectivity): given u in F(A), define alpha_X(h) = F(h)(u); naturality at f from X to Y holds because F(f)(alpha_X(h)) = F(f)(F(h)(u)) = F(f h)(u) = alpha_Y(f h). Step 4 (conclusion): the two constructions are inverse, so alpha maps to alpha_A(1_A) is a bijection from Nat(Hom(A,-), F) to F(A)."
       - id: kp3
         name: The one-object case — monoid and group actions
         key_prerequisites: [functor-categories]
@@ -299,12 +321,34 @@ topics:
         key_prerequisites: [full-faithful-functors]
         constraints: "Two routes only: quote the contravariant Yoneda lemma at a second representable, or argue directly by evaluating at identities ($f_*(1_A)=f$ for faithfulness, $\\theta=\\big(\\theta_A(1_A)\\big)_*$ for fullness); name which of full and faithful each step establishes."
         exemplars:
-          - problem: "Prove the Yoneda embedding is fully faithful."
-            answer: "The contravariant Yoneda lemma gives $\\mathrm{Nat}(\\mathbf{y}A,\\mathbf{y}B)\\cong\\mathrm{Hom}(A,B)$, and the bijection is $f\\mapsto f_*$."
-            solution_sketch: "By the contravariant Yoneda lemma, $\\mathrm{Nat}(\\mathrm{Hom}(-,A),\\mathrm{Hom}(-,B))\\cong\\mathrm{Hom}(A,B)$, and unwinding the bijection shows the transformation corresponding to $f$ is exactly $f_*=\\mathbf{y}(f)$. Hence $\\mathbf{y}_{A,B}\\colon\\mathrm{Hom}(A,B)\\to\\mathrm{Nat}(\\mathbf{y}A,\\mathbf{y}B)$ is a bijection, so $\\mathbf{y}$ is fully faithful."
-          - problem: "Give a direct proof, evaluating at identities, that $\\mathbf{y}$ is both faithful and full."
-            answer: "Faithful: $f_*(1_A)=f$; full: any $\\theta$ equals $f_*$ for $f=\\theta_A(1_A)$."
-            solution_sketch: "Faithful: if $f_*=g_*\\colon\\mathrm{Hom}(-,A)\\Rightarrow\\mathrm{Hom}(-,B)$, evaluate components at $1_A\\in\\mathrm{Hom}(A,A)$ to get $f=f_*(1_A)=g_*(1_A)=g$. Full: given natural $\\theta\\colon\\mathrm{Hom}(-,A)\\Rightarrow\\mathrm{Hom}(-,B)$, set $f=\\theta_A(1_A)$; naturality of $\\theta$ at any $h\\colon X\\to A$ applied to $1_A$ gives $\\theta_X(h)=\\theta_X(1_A\\circ h)=f\\circ h=f_*(h)$, so $\\theta=f_*=\\mathbf{y}(f)$. Hence $\\mathbf{y}$ is fully faithful."
+          - problem: "Let C be the category with two objects A and B, their identity morphisms, and exactly two parallel morphisms f and g from A to B. Let y be the Yoneda embedding, so y(A) is the functor Hom(-, A) and y(B) is Hom(-, B). The contravariant Yoneda lemma at the representable y(B) gives a bijection between the natural transformations from y(A) to y(B) and the hom set Hom(A, B). How many natural transformations from y(A) to y(B) are there?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the natural transformations from y(A) = Hom(-, A) to y(B) = Hom(-, B). Rule: the contravariant Yoneda lemma quoted at the second representable y(B) gives a bijection with y(B)(A) = Hom(A, B), and this bijection is the fullness half of full faithfulness. Count the object: Hom(A, B) = {f, g} has 2 elements. The answer is 2."
+          - problem: "In the category with objects A and B, their identity morphisms, and an isomorphism f from A to B with inverse g, the Yoneda embedding sends f to the natural transformation y(f) whose component at an object X maps each morphism h from X to A to f after h. To establish that y is faithful, a student evaluates the component at A on the identity morphism 1_A. Which morphism does this evaluation give?"
+            answer: "f"
+            answer_contract: {"kind": "label", "options": [["f"], ["g"], ["1_A"], ["1_B"]]}
+            solution_sketch: "Full object: y(f) is the natural transformation with components y(f)_X(h) = f after h. Rule: the faithfulness route evaluates the component at A on the identity, giving y(f)_A(1_A) = f after 1_A = f, which recovers f and establishes the faithful half. Option g confuses f with its inverse; option 1_A forgets to compose with f; option 1_B evaluates at the wrong object B. The answer is f."
+          - problem: "Regard the poset with elements 1, 2, 3, 4 ordered by 1 <= 2 <= 3 and 1 <= 4 as a category: there is one morphism from x to y exactly when x <= y. The Yoneda embedding sends an element a to its downset y(a), the set of elements z with z <= a. Since the embedding is faithful, the downset determines the element. Which element a satisfies y(a) = {1, 2, 3}?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full objects: list all downsets, y(1) = {1}, y(2) = {1, 2}, y(3) = {1, 2, 3}, y(4) = {1, 4}. Rule: by the Yoneda lemma route the embedding is faithful, so equal downsets must come from the same element. Match the given downset {1, 2, 3} with y(3). The answer is 3."
+          - problem: "View the cyclic group with elements 0, 1, 2, 3 under addition modulo 4 as a one-object category: one object, and morphisms 0, 1, 2, 3 composed by addition modulo 4. The Yoneda embedding sends a morphism k to the natural transformation y(k) whose single component maps each morphism h to k + h modulo 4. Give the value of the component of y(3) on the morphism 2."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: y(3) is the natural transformation whose single component maps each h to 3 + h modulo 4. Rule: apply the component formula of the identity-evaluation route; the same evaluation at the identity morphism 0 recovers k, which establishes faithfulness. Compute 3 + 2 = 5, and 5 = 1 modulo 4. The answer is 1."
+          - problem: "A student argues that the Yoneda embedding y is full, writing: Step 1: let theta be a natural transformation from y(A) to y(B). Step 2: to show fullness, find a morphism f from A to B with y(f) = theta. Step 3: set f = theta_B(1_B), a morphism from A to B. Step 4: naturality gives theta = y(f), so y is full. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 correctly fixes the data of an arbitrary natural transformation theta. Step 2 correctly states the fullness goal. Step 3 is the first invalid step: theta_B(1_B) lies in Hom(B, B), an endomorphism of B, not a morphism from A to B; the identity-evaluation route must use theta_A(1_A) instead. Step 4 would follow only after that correction. The answer is Step 3."
+          - problem: "Regard the poset with elements 1, 2, 3, 4 ordered by 1 <= 2 <= 3 and 1 <= 4 as a category: one morphism from x to y exactly when x <= y. The contravariant Yoneda lemma at the representable y(2) gives a bijection between the natural transformations from y(3) to y(2) and the hom set of morphisms from 3 to 2. How many natural transformations from y(3) to y(2) are there?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: the hom set of morphisms from 3 to 2 in the poset category. Rule: the contravariant Yoneda lemma quoted at the representable y(2) makes the natural transformations from y(3) to y(2) bijective with that hom set, which is the fullness half. Since 3 <= 2 is false, the hom set is empty. The answer is 0."
+          - problem: "Write the full proof: the Yoneda embedding from C to the functor category from C-opposite to Set is fully faithful. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Route: argue directly by evaluating at identities, naming which half each step establishes. Step 1, faithful: if y(f) = y(g) for morphisms f and g from A to B, evaluate the component at A on 1_A to get f = y(f)_A(1_A) = y(g)_A(1_A) = g, so the map on each hom set is injective. Step 2, full: given a natural transformation theta from y(A) to y(B), set f = theta_A(1_A), which lies in Hom(A, B). Step 3, naturality: for any morphism h from X to A, naturality of theta at h applied to 1_A gives theta_X(h) = theta_X(1_A after h) = f after h = y(f)_X(h). Step 4, conclusion: theta = y(f), so the map on hom sets is also surjective, and the Yoneda embedding is fully faithful."
       - id: kp3
         name: Objects are determined by their points
         key_prerequisites: [full-faithful-functors]
