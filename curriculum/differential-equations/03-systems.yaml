@@ -383,14 +383,30 @@ topics:
         name: Eigenpairs give solutions
         key_prerequisites: [eigenvalues-eigenvectors, systems-matrix-form]
         exemplars:
-          - problem: 'Given that $\lambda = 5$ with eigenvector $\binom{2}{1}$ is an eigenpair of $A = \begin{pmatrix} 3 & 4 \\ 2 & 1 \end{pmatrix}$, write one solution of $\mathbf{X}'' = A\mathbf{X}$.'
-            answer: '$\mathbf{X} = e^{5t}\binom{2}{1}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'For any eigenpair $(\lambda, \mathbf{v})$, $\mathbf{X} = e^{\lambda t}\mathbf{v}$ satisfies $\mathbf{X}'' = \lambda\mathbf{X} = A\mathbf{X}$.'
-          - problem: 'Find the eigenvalues and eigenvectors of $\begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}$.'
-            answer: '$\lambda = 3$ with $\binom{1}{1}$; $\lambda = -1$ with $\binom{1}{-1}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$\det(A - \lambda I) = \lambda^2 - 2\lambda - 3 = (\lambda - 3)(\lambda + 1)$; solve $(A - \lambda I)\mathbf{v} = 0$ for each root.'
+          - problem: "For the system X' = [[2,1],[0,4]]X, the pair λ = 4 with v = (1,2) is an eigenpair. Give one solution of the system as a pair of functions x(t) and y(t)."
+            answer: "x = e^(4t); y = 2e^(4t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "For the system X' = [[2,1],[0,4]]X, first verify the eigenpair with the eigenpair condition Av = λv: A(1,2) = (4,8) = 4(1,2). Step 2: apply the eigenpair solution rule X = e^(λt)v with λ = 4 and v = (1,2), which gives X = e^(4t)(1,2). Step 3: read off the two component functions. The solution is x = e^(4t); y = 2e^(4t)."
+          - problem: "The system is X' = [[3,2],[1,2]]X. Compute both eigenvalues, listing them in increasing order as lam1 and lam2, and give one solution of the system for the larger eigenvalue as functions x(t) and y(t), taking its eigenvector with first entry 2."
+            answer: "lam1 = 1; lam2 = 4; x = 2e^(4t); y = e^(4t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lam1"}, {"contract": {"kind": "exact"}, "name": "lam2"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "For A = [[3,2],[1,2]], the characteristic equation (3-λ)(2-λ) - 4 = 0 simplifies to λ^2 - 5λ + 4 = (λ-1)(λ-4) = 0, so the characteristic polynomial rule gives the eigenvalues 1 and 4. Step 2: for the larger eigenvalue λ = 4, solve (A - 4I)v = 0, which gives [[-1,2],[1,-2]]v = 0 and the eigenvector v = (2,1) with first entry 2. Step 3: the eigenpair solution rule X = e^(λt)v turns the eigenpair into one solution X = e^(4t)(2,1). Thus lam1 = 1; lam2 = 4; x = 2e^(4t); y = e^(4t)."
+          - problem: "One solution of the system X' = [[0,-6],[1,-5]]X has the form x(t) = 2e^(λt), y(t) = e^(λt) for some constant λ. Find the value of λ."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the system X' = [[0,-6],[1,-5]]X, write the given solution as X = e^(λt)(2,1). Step 1: differentiate the solution with the exponential derivative rule: X' = λe^(λt)(2,1). Step 2: compute the matrix product A(2,1) = (-6,-3) = -3(2,1). Step 3: the eigenpair condition Av = λv forces λ = -3. The value of λ is -3."
+          - problem: "The matrix A = [[4,b],[2,1]] of the system X' = AX has the eigenpair λ = 2 with eigenvector v = (1,2). Find the value of b."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For A = [[4,b],[2,1]] with the eigenpair λ = 2 and v = (1,2), use the eigenpair condition Av = λv. Step 1: compute Av = (4 + 2b, 2 + 2) = (4 + 2b, 4). Step 2: compute λv = 2(1,2) = (2,4). Step 3: equate the first components, 4 + 2b = 2, so b = -1. The value of b is -1."
+          - problem: "One solution of the system X' = [[1,1],[10,4]]X has the form x(t) = e^(6t), y(t) = k e^(6t) with integer k. Find the value of k."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For A = [[1,1],[10,4]], write the given solution as X = e^(6t)(1,k). Step 1: compute the matrix product Av = (1 + k, 10 + 4k). Step 2: the eigenpair relation Av = 6v gives the two equations 1 + k = 6 and 10 + 4k = 6k. Step 3: both equations give k = 5. The value of k is 5."
+          - problem: "For the system X' = [[1,4],[2,3]]X, an eigenvector has the form (2,q) with integer q, and its eigenvalue is negative. Find q, and give the corresponding solution as functions x(t) and y(t)."
+            answer: "q = -1; x = 2e^(-t); y = -e^(-t)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "q"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["t"]}, "name": "y"}]}
+            solution_sketch: "For the system X' = [[1,4],[2,3]]X with eigenvector form (2,q), use the eigenpair condition A(2,q) = λ(2,q). Step 1: compute A(2,q) = (2 + 4q, 4 + 3q). Step 2: the first component gives λ = 1 + 2q; substituting into the second component gives 4 + 3q = q + 2q^2, so q^2 - q - 2 = 0 and q = 2 or q = -1. Step 3: q = 2 gives the positive eigenvalue 5, so the negative eigenvalue forces q = -1. Step 4: the eigenpair solution rule X = e^(λt)v with λ = -1 gives X = e^(-t)(2,-1). Thus q = -1; x = 2e^(-t); y = -e^(-t)."
         constraints: "2x2 matrices with integer eigenvalues and integer eigenvectors"
       - id: kp2
         name: General solutions with distinct real eigenvalues
