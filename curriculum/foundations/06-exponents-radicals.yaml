@@ -1932,22 +1932,22 @@ topics:
         name: "Verify a right triangle"
         key_prerequisites: [pythagorean-theorem]
         exemplars:
-          - problem: 'Is a triangle with sides $5$, $12$, $13$ a right triangle?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$25 + 144 = 169 = 13^2$.'
-          - problem: "Squares built on the three sides of a triangle have areas $64$, $225$, and $289$. Is the triangle right?"
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: "The largest side has square area $289$. Since $64+225=289$, the converse proves a right angle."
-          - problem: "A builder measures two sides of a triangular brace as $7$ and $24$ cm and the opposite side as $25$ cm. Are the first two sides perpendicular?"
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: "$7^2+24^2=49+576=625=25^2$. The angle opposite the longest side is right."
-          - problem: "The triple $(3,4,5)$ is scaled by $8$. Does the scaled triangle remain right?"
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: "The sides are $(24,32,40)$. Scaling squares multiplies both sides by $8^2$: $576+1024=1600$."
+          - problem: "A triangular garden plot has side lengths 8 m, 15 m, and 17 m. State whether the angle opposite the longest side is 90 degrees, and give the sum of the squares of the two shorter sides."
+            answer: "verdict = right; sum = 289"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sum"}]}
+            solution_sketch: "The side lengths are 8, 15, and 17, so the longest side is 17. Compute the sum of the squares of the two shorter sides: 8^2 + 15^2 = 64 + 225 = 289. Compute the square of the longest side: 17^2 = 289. Because the values are equal, the converse of the Pythagorean theorem says the angle opposite the longest side is right. The option 'not' would be the result of comparing the wrong pair or misreading the longest side. The answer is verdict = right; sum = 289."
+          - problem: "Three rods of lengths 9 in, 12 in, and 15 in form a triangle. State whether the angle opposite the longest rod is 90 degrees, and give the sum of the squares of the two shorter rods."
+            answer: "verdict = right; sum = 225"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sum"}]}
+            solution_sketch: "The side lengths are 9, 12, and 15, so the longest side is 15. Compute the sum of the squares of the two shorter sides: 9^2 + 12^2 = 81 + 144 = 225. Compute the square of the longest side: 15^2 = 225. Since the values match, the converse of the Pythagorean theorem gives a right angle. The option 'not' would be the result of using the longest side as a shorter side or adding incorrectly. The answer is verdict = right; sum = 225."
+          - problem: "A triangle is made by scaling the triangle with legs 12 and 35 and hypotenuse 37 by a factor of 2. State whether the angle opposite the longest side of the scaled triangle is 90 degrees, and give the sum of the squares of its two shorter sides."
+            answer: "verdict = right; sum = 5476"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sum"}]}
+            solution_sketch: "The scaled side lengths are 24, 70, and 74, so the longest side is 74. Compute the sum of the squares of the two shorter sides: 24^2 + 70^2 = 576 + 4900 = 5476. Compute the square of the longest side: 74^2 = 5476. Because the values are equal, the converse of the Pythagorean theorem says the scaled triangle has a right angle. The option 'not' would be the result of forgetting to square the scale factor or using the original sides. The answer is verdict = right; sum = 5476."
+          - problem: "A brace is built with two shorter sides of length 18 cm and 24 cm and a longest side of 30 cm. State whether the angle opposite the longest side is 90 degrees, and give the sum of the squares of the two shorter sides."
+            answer: "verdict = right; sum = 900"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["right"], ["not"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sum"}]}
+            solution_sketch: "The side lengths are 18 cm, 24 cm, and 30 cm, so the longest side is 30 cm. Compute the sum of the squares of the two shorter sides: 18^2 + 24^2 = 324 + 576 = 900. Compute the square of the longest side: 30^2 = 900. Since the values match, the converse of the Pythagorean theorem says the angle opposite the longest side is right. The option 'not' would be the result of comparing the wrong pair or misreading the longest side. The answer is verdict = right; sum = 900."
         constraints: "test a^2 + b^2 against c^2 with c the longest side"
       - id: kp2
         visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":"A"},{"x":"4","y":"0","label":"B"},{"x":"1","y":"2","label":"C"}],"right_angles":[]},"caption":"Reference example: This reference triangle has squared side lengths 16, 13 and 5. No two sum to the third, so it is not right-angled."}]
