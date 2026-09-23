@@ -1188,12 +1188,34 @@ topics:
         name: "Nonexistence and infinitude arguments"
         key_prerequisites: [negating-statements]
         exemplars:
-          - problem: 'Prove: there are infinitely many primes.'
-            answer: 'Assume finitely many; $N = p_1 \cdots p_k + 1$ has a prime factor outside the list.'
-            solution_sketch: 'Suppose the primes are exactly $p_1, \dots, p_k$. Let $N = p_1 p_2 \cdots p_k + 1 > 1$, which has some prime divisor $p$. Each $p_i$ divides $N - 1$, so $p_i \nmid N$; thus $p \ne p_i$ for all $i$ — a new prime, contradiction. $\square$'
-          - problem: 'Prove: $\log_2 3$ is irrational.'
-            answer: 'Assume $\log_2 3 = p/q$; then $2^p = 3^q$, impossible by parity.'
-            solution_sketch: 'Suppose $\log_2 3 = p/q$ with positive integers $p, q$. Then $2^p = 3^q$. The left side is even and the right side (a power of $3$) is odd, so they cannot be equal — a contradiction. Hence $\log_2 3$ is irrational. $\square$'
+          - problem: "Suppose the only primes were 2, 3, 5, 7, 11. Let N be their product plus one. The proof uses a prime factor of N that is not in the list. Give that prime factor."
+            answer: "2311"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply the assumed primes: 2 times 3 times 5 times 7 times 11 = 2310. Add one to construct N = 2311. Check the primes up to sqrt(2311): no prime 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47 divides 2311. Therefore 2311 is prime. It is not in the assumed list, so it is the required prime factor. The answer is 2311."
+          - problem: "In the contradiction proof that log base 2 of 3 is irrational, suppose log base 2 of 3 = p/q with p = 7 and q = 5. Then 2 to the power p would equal 3 to the power q. Give the value of 3 to the power q minus 2 to the power p."
+            answer: "115"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume log base 2 of 3 = p/q with p = 7 and q = 5. By the definition of the logarithm, this forces 2^p = 3^q, that is 2^7 = 3^5. Compute each side: 2^7 = 128 and 3^5 = 243. The difference is 243 - 128 = 115, a nonzero gap, so the two sides cannot be equal. The answer is 115."
+          - problem: "Suppose there is a smallest positive rational number r. The contradiction proof constructs r/2. If the assumed smallest positive rational is 3/4, give the constructed smaller positive rational as a fraction."
+            answer: "3/8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume the smallest positive rational is r = 3/4. The construction step halves it: r/2 = (3/4)/2. Compute the fraction: 3/8. Since 3/8 is positive and smaller than 3/4, it contradicts the assumption that 3/4 is smallest. The answer is 3/8."
+          - problem: "Suppose there is a largest prime p. The contradiction proof constructs p factorial plus one. If the assumed largest prime is 5, give a prime factor of the constructed number that is larger than 5."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume the largest prime is p = 5. The construction step forms 5 factorial plus one: 120 + 1 = 121. Factor 121 = 11 times 11. The prime 11 is larger than 5, contradicting the assumption. The answer is 11."
+          - problem: "Claim: sqrt(4) is irrational. Step 1: suppose sqrt(4) = a/b with integers a and b and gcd(a,b) = 1. Step 2: squaring gives 4 b^2 = a^2, so 4 divides a^2. Step 3: since 4 divides a^2, 4 divides a; write a = 4c. Step 4: then 4 b^2 = 16 c^2, so b^2 = 4 c^2, so 4 divides b, contradicting gcd(a,b) = 1. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 sets up the contradiction assumption. Step 2 squares correctly. Step 3 is false: 4 divides a^2 does not imply 4 divides a; for example a = 2 gives a^2 = 4. Step 4 uses the false Step 3. The answer is Step 3."
+          - problem: "In the contradiction proof that sqrt(19) is irrational, suppose sqrt(19) = a/b with integers a and b and gcd(a,b) = 1. Squaring gives 19 b^2 = a^2. Give the smallest prime that must divide a."
+            answer: "19"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Assume sqrt(19) = a/b in lowest terms. Square: 19 b^2 = a^2, so 19 divides a^2. Since 19 is prime, 19 divides a. The smallest prime divisor of a is therefore 19. The answer is 19."
+          - problem: "Write the full proof: sqrt(17) is irrational. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: suppose for contradiction that sqrt(17) is rational. Step 2: write sqrt(17) = a/b with integers a and b, b not zero, and gcd(a,b) = 1. Step 3: square both sides to get 17 b^2 = a^2. Step 4: since 17 divides a^2 and 17 is prime, 17 divides a; write a = 17c. Step 5: substitute to get 17 b^2 = 289 c^2, so b^2 = 17 c^2. Step 6: then 17 divides b^2, and because 17 is prime, 17 divides b. Step 7: now 17 divides both a and b, contradicting gcd(a,b) = 1. Step 8: the contradiction shows sqrt(17) is irrational."
         constraints: "construct an object that contradicts the finiteness/nonexistence assumption"
     diagnostic_exemplar:
       problem: 'Prove by contradiction that $\sqrt{6}$ is irrational.'

@@ -1181,12 +1181,34 @@ topics:
         name: "Linear bijections between bounded intervals"
         key_prerequisites: [function-composition-inverse]
         exemplars:
-          - problem: 'Exhibit a bijection $(0, 1) \to (2, 5)$ and verify it.'
-            answer: '$f(x) = 2 + 3x$, with inverse $f^{-1}(y) = (y - 2)/3$.'
-            solution_sketch: '$f$ is strictly increasing (hence injective), $f(0^+) = 2$ and $f(1^-) = 5$ so the image is $(2, 5)$, and the explicit inverse confirms bijectivity. $\square$'
-          - problem: 'For $a < b$, give a bijection $[0, 1] \to [a, b]$.'
-            answer: '$f(x) = a + (b - a)x$.'
-            solution_sketch: 'Strictly increasing with $f(0) = a$, $f(1) = b$; inverse $f^{-1}(y) = (y - a)/(b - a)$. So any two closed bounded intervals have the same cardinality. $\square$'
+          - problem: "For the affine bijection f(x) = 2 + 3x from (0, 1) to (2, 5), find the inverse as a function of y."
+            answer: "(y-2)/3"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "The affine bijection is f(x) = 2 + 3x. Step 1: solve y = 2 + 3x for x, which gives x = (y - 2)/3. Step 2: the inverse is x = (y - 2)/3, and it is defined for every y in (2, 5). The answer is (y-2)/3."
+          - problem: "Find an affine bijection from [0, 1] to [3, 11] as a function of x."
+            answer: "3+8x"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The affine bijection is f(x) = 3 + 8x. Step 1: check the endpoints, f(0) = 3 and f(1) = 11, so the image is [3, 11]. Step 2: the slope 8 is positive, so the map is injective, and its inverse is x = (y - 3)/8. The answer is 3+8x."
+          - problem: "A linear bijection from (1, 4) to (2, 7) has the form f(x) = m x + c. Find m."
+            answer: "5/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The affine map has the form f(x) = m x + c. Step 1: the target interval has length 5 and the source interval has length 3, so the slope is m = 5/3. Step 2: the value c is fixed by the requirement f(1) = 2. The answer is 5/3."
+          - problem: "For the affine bijection f(x) = 5 + 2x from (0, 3) to (5, 11), find the value of the inverse at 8."
+            answer: "3/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The affine bijection is f(x) = 5 + 2x. Step 1: solve y = 5 + 2x for x, giving x = (y - 5)/2. Step 2: substitute y = 8 to get x = (8 - 5)/2 = 3/2. The answer is 3/2."
+          - problem: "Claim: f(x) = 4 + 2x is a bijection from (0, 1) to (4, 6). Step 1: f is strictly increasing because the slope 2 is positive, so f is injective. Step 2: f(0) = 4 and f(1) = 6, so the image is [4, 6]. Step 3: the inverse is x = (y - 4)/2. Step 4: therefore f is a bijection from (0, 1) to (4, 6). Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "The claim is f(x) = 4 + 2x from (0, 1) to (4, 6). Step 1 is valid: the positive slope makes f injective. Step 2 is the first invalid step: the image of an open interval is open, so it is (4, 6), not [4, 6]. Step 3 is valid: solving y = 4 + 2x gives x = (y - 4)/2. Step 4 is valid as a conclusion. The answer is Step 2."
+          - problem: "For the affine bijection f(x) = 1 + 2x from (1, 4) to (3, 9), find the value of the inverse at 8."
+            answer: "7/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The affine bijection is f(x) = 1 + 2x. Step 1: solve y = 1 + 2x for x, giving x = (y - 1)/2. Step 2: substitute y = 8 to get x = (8 - 1)/2 = 7/2. The answer is 7/2."
+          - problem: "Write the full proof: the intervals (0, 1) and (4, 9) have the same cardinality. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "The claim is proved by an explicit affine bijection. Step 1: define f(x) = 4 + 5x for x in (0, 1). Step 2: f is strictly increasing because its slope 5 is positive, so f is injective. Step 3: if x is in (0, 1), then 4 + 5x lies between 4 and 9, and as x approaches 0 or 1 the value approaches 4 or 9, so the image is (4, 9). Step 4: solve y = 4 + 5x to get x = (y - 4)/5; this inverse is defined for every y in (4, 9), so f is surjective. Step 5: an injective and surjective map is a bijection, so the two intervals have the same cardinality."
         constraints: "affine maps between stated intervals; verify with the explicit inverse"
       - id: kp2
         name: "Reaching unbounded intervals"
@@ -1312,12 +1334,34 @@ topics:
         name: "Comparing cardinalities with injections"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Define $|A| \le |B|$, state the Schröder–Bernstein theorem, and use it to prove $|\mathbb{N} \times \mathbb{N}| = |\mathbb{N}|$.'
-            answer: 'Injections both ways: $n \mapsto (n, 0)$ and $(m, n) \mapsto 2^{m} 3^{n}$; Schröder–Bernstein upgrades them to a bijection.'
-            solution_sketch: '$|A| \le |B|$ means an injection $A \to B$ exists. Schröder–Bernstein: if $|A| \le |B|$ and $|B| \le |A|$, then $|A| = |B|$ (a bijection exists). Here $n \mapsto (n, 0)$ is injective, and $(m, n) \mapsto 2^{m}3^{n}$ is injective by unique factorization, so the theorem gives $|\mathbb{N} \times \mathbb{N}| = |\mathbb{N}|$ — no explicit pairing function needed. $\square$'
-          - problem: 'Prove: if $A \subseteq B$, then $|A| \le |B|$. Conclude that if also some injection $B \to A$ exists, then $|A| = |B|$.'
-            answer: 'The inclusion map $a \mapsto a$ is injective; Schröder–Bernstein finishes.'
-            solution_sketch: 'The inclusion $\iota : A \to B$, $\iota(a) = a$, is injective, so $|A| \le |B|$. With an injection $B \to A$ we also have $|B| \le |A|$, and Schröder–Bernstein gives $|A| = |B|$. $\square$'
+          - problem: "In the injection f(m,n)=2^m 3^n used to show |N x N| <= |N|, find f(2,1)."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: substitute m=2 and n=1 into the injection, giving f(2,1)=2^2 * 3^1. Step 2: compute the powers to get 4 * 3 = 12. Injectivity is justified by unique factorization. The answer is 12."
+          - problem: "Let A = {1, 2, 3} and B = {1, 2, 3, 4}. The inclusion map i: A -> B sends each element to itself. If i(a) = i(2), give a."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the inclusion map has i(2)=2. Step 2: if i(a)=i(2), then a=2 because the inclusion map sends each element to itself and is injective. The answer is 2."
+          - problem: "For the injection f: N -> N x N with f(n) = (n, 0), give f(5) as (x, y)."
+            answer: "(5, 0)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: evaluate the map at 5, giving f(5)=(5, 0). Step 2: note the map is injective because (m,0)=(n,0) forces m=n. The answer is (5, 0)."
+          - problem: "Give an injection from N to the set of even natural numbers as a function of n."
+            answer: "2n"
+            answer_contract: {"kind": "function", "vars": ["n"]}
+            solution_sketch: "Step 1: exhibit the map f(n)=2n. Step 2: if 2m=2n, then m=n, so f is injective. Its image is the even natural numbers. The answer is 2n."
+          - problem: "Claim: if f: A -> B is injective, then f is bijective. Step 1: f is injective by hypothesis. Step 2: every injective function is surjective. Step 3: hence f is bijective. Step 4: so |A| = |B|. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is true because it restates the hypothesis. Step 2 is false: an injective function need not be surjective, for example x -> e^x from R to R. Step 3 depends on Step 2, and Step 4 would not follow without a bijection. The answer is Step 2."
+          - problem: "In the proof that |N x N| <= |N| using the injection f(m,n) = 2^m 3^n, the injectivity step needs: if 2^m 3^n = 2^p 3^q, then which conclusion follows? Select the correct line."
+            answer: "m = p and n = q"
+            answer_contract: {"kind": "label", "options": [["m = p and n = q"], ["m = q and n = p"], ["m + n = p + q"], ["2m + 3n = 2p + 3q"]]}
+            solution_sketch: "The equation 2^m 3^n = 2^p 3^q has equal prime factorizations. Unique factorization gives m = p and n = q. The option m = q and n = p swaps the exponents. The option m + n = p + q ignores the bases. The option 2m + 3n = 2p + 3q confuses exponents with coefficients. The answer is m = p and n = q."
+          - problem: "Write the full proof: if there are injections f: A -> B and g: B -> A, then there is a bijection from A to B. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): Let f: A -> B and g: B -> A be injections. For each a in A, form a chain by going backward: if a is in the image of g, take the unique b with g(b)=a; if that b is in the image of f, take the unique a' with f(a')=b, and continue. Step 2 (partition): Each chain is finite ending in A, finite ending in B, or infinite. Let A_A be the a whose chain ends in A, A_B those ending in B, and A_inf those infinite. Step 3 (map): Define h: A -> B by h(a)=f(a) for a in A_A or A_inf, and by h(a)=g^{-1}(a) for a in A_B. Step 4 (injectivity): If two elements of A map to the same b, tracing their chains backward shows they are the same position in the same chain, so they are equal. Step 5 (surjectivity): For b in B, if its chain ends in A or is infinite, the preceding element a in A has f(a)=b; if its chain ends in B, then a=g(b) is in A_B and h(a)=b. Therefore h is a bijection. The answer is See the solution."
         constraints: "state the theorem precisely; injections must be exhibited and their injectivity justified"
       - id: kp2
         name: "Interval sandwiches"
