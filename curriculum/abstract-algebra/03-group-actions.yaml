@@ -550,12 +550,34 @@ topics:
         name: "Computing regular representations"
         key_prerequisites: [group-actions]
         exemplars:
-          - problem: 'Write the image of $1 \in \mathbb{Z}_3$ under the left-regular representation as a permutation of $\{0, 1, 2\}$ in cycle notation.'
-            answer: '$(0\,1\,2)$'
-            solution_sketch: 'Adding $1$ sends $0\to1\to2\to0$.'
-          - problem: 'In the left-regular representation of $\mathbb{Z}_4$, what is the cycle structure of the image of $2$?'
-            answer: 'Two 2-cycles: $(0\,2)(1\,3)$.'
-            solution_sketch: 'Adding $2$ swaps $0\leftrightarrow2$ and $1\leftrightarrow3$.'
+          - problem: "In the left-regular representation of the cyclic group $\\mathbb{Z}_3$, the element $1$ acts on the residues $\\{0, 1, 2\\}$ by adding $1$ modulo $3$. Give the image of $1$ as a permutation in one-line notation, that is, as (f(0), f(1), f(2))."
+            answer: "(1,2,0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1 (left-regular representation): the image of $1$ adds $1$ modulo $3$, so it sends $0 \\mapsto 1$, $1 \\mapsto 2$, and $2 \\mapsto 0$; in cycle notation this is a single three-cycle. Step 2 (one-line notation): listing the images of $0$, $1$, and $2$ in order gives the tuple of values. The answer is (1,2,0)."
+          - problem: "In the left-regular representation of $\\mathbb{Z}_4$, the element $2$ acts on the residues $\\{0, 1, 2, 3\\}$ by adding $2$ modulo $4$. Give $k$, the number of disjoint cycles in the image of $2$, and $m$, the length of each of those cycles."
+            answer: "k = 2; m = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "k"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Step 1 (left-regular representation): adding $2$ modulo $4$ sends $0 \\mapsto 2$, $2 \\mapsto 0$, $1 \\mapsto 3$, and $3 \\mapsto 1$, so the image is the product of the disjoint transpositions $(0\\,2)(1\\,3)$. Step 2 (cycle structure): the image splits into $k = 2$ disjoint cycles, and each cycle has length $m = 2$. The answer is k = 2; m = 2."
+          - problem: "In the left-regular representation of $\\mathbb{Z}_6$, the element $2$ acts on the residues $\\{0, 1, 2, 3, 4, 5\\}$ by adding $2$ modulo $6$. Find the order of the image of $2$ in the symmetric group on these six points."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (orbits of the action): adding $2$ modulo $6$ sends $0 \\to 2 \\to 4 \\to 0$ and $1 \\to 3 \\to 5 \\to 1$, so the image is the permutation $(0,2,4)(1,3,5)$. Step 2 (order of a product of disjoint cycles): the order is the least common multiple of the cycle lengths, which is $3$. The order of the image of $2$ is 3."
+          - problem: "A student asserts that for every $n$ with $2 \\le n \\le 6$, the image of each element of $\\mathbb{Z}_n$ other than $0$ under the left-regular representation has order $n$. Find the smallest $n$ for which the assertion is false."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (check the smallest groups): in $\\mathbb{Z}_2$ and $\\mathbb{Z}_3$ every nonzero element generates the whole group, so its image is an $n$-cycle of order $n$; the assertion holds for $n = 2$ and $n = 3$. Step 2 (test $\\mathbb{Z}_4$): the image of $2$ adds $2$ modulo $4$ and is the permutation $(0,2)(1,3)$, which has order $2$, not $4$. Step 3 (smallest counterexample): the smallest $n$ for which the assertion fails is $4$. The answer is 4."
+          - problem: "In the left-regular representation of $\\mathbb{Z}_5$, the element $3$ acts on the residues $\\{0, 1, 2, 3, 4\\}$ by adding $3$ modulo $5$. Find the order of the image of $3$ in the symmetric group on these five points."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (orbits of the action): adding $3$ modulo $5$ sends $0 \\to 3 \\to 1 \\to 4 \\to 2 \\to 0$, so the image is the five-cycle $(0,3,1,4,2)$. Step 2 (order of a cycle): a cycle of length $5$ has order $5$, and no smaller positive power returns every point to itself. The order of the image of $3$ is 5."
+          - problem: "Take the Klein four-group $V = \\{e, a, b, c\\}$, in which the elements $a$, $b$, $c$ are self-inverse and $ab = c$, $ac = b$, $bc = a$. In the left-regular representation the element $b$ acts by $x \\mapsto bx$. How many elements of $V$ does the image of $b$ fix?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (left multiplication by $b$): the element $b$ sends $e \\mapsto b$, $a \\mapsto ba = c$, $b \\mapsto e$, and $c \\mapsto bc = a$. Step 2 (fixed points and cycle notation): a fixed element would satisfy $bx = x$, which forces $b = e$ after cancelling, so no element is fixed; the image $(e,b)(a,c)$ moves all four elements. The answer is 0."
+          - problem: "Write the full proof: the left-regular representation of a group $G$ is an injective homomorphism from $G$ into the symmetric group on the set $G$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (the images are permutations): for each element $a$ of $G$, let $\\lambda_a$ be the map $x \\mapsto ax$ on the set $G$. The map $x \\mapsto a^{-1}x$ undoes it on both sides, so $\\lambda_a$ is a bijection of $G$ and belongs to the symmetric group on $G$. Step 2 (homomorphism): for elements $a$ and $b$ and any $x$ in $G$, the map $\\lambda_{ab}$ sends $x$ to $(ab)x = a(bx)$, which is $\\lambda_a$ applied to $\\lambda_b(x)$; hence $\\lambda_{ab} = \\lambda_a \\lambda_b$, so the assignment respects products and is a group homomorphism. Step 3 (injectivity): if $\\lambda_a$ is the identity permutation, then evaluating at the identity element $e$ gives $a = ae = \\lambda_a(e) = e$, so the kernel is trivial, and a homomorphism with trivial kernel is injective. Step 4 (conclusion): $G$ embeds as a subgroup of the symmetric group on the set $G$, and for a finite group of order $n$ this is an embedding into the symmetric group on $n$ points, which is Cayley's theorem."
         constraints: "regular representations of Z_n (n <= 6) and the Klein group; cycle-notation answers"
     diagnostic_exemplar:
       problem: 'Cayley''s theorem embeds $(\mathbb{Z}_6, +)$ into a symmetric group $S_n$. Give $n$, write the permutation representing the element $3$ in cycle notation, and explain why the embedding is injective.'
