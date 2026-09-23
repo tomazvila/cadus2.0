@@ -1255,14 +1255,30 @@ topics:
         name: The square case
         key_prerequisites: [kernel-image-linear-maps, determinants-2x2]
         exemplars:
-          - problem: '$A = \begin{pmatrix}2&1\\1&1\end{pmatrix}$. Is $T(\mathbf{x}) = A\mathbf{x}$ one-to-one? Onto?'
-            answer: "Both"
-            answer_contract: {kind: none}
-            solution_sketch: '$\det A = 1 \neq 0$: for square matrices, invertible $\iff$ one-to-one $\iff$ onto.'
-          - problem: '$A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$. Is $T$ one-to-one or onto?'
-            answer: "Neither"
-            answer_contract: {kind: none}
-            solution_sketch: '$\det A = 0$: singular square matrices fail both at once.'
+          - problem: "Let T: R^2 -> R^2 be the map T(x) = A x with A = [[2,5],[1,3]]. For this square map, decide whether T is one-to-one and onto, and give the value of det(A)."
+            answer: "verdict = bijective; det = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["bijective"], ["non-invertible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "det"}]}
+            solution_sketch: "The matrix is A = [[2,5],[1,3]]. Compute the determinant by the 2x2 rule: det(A) = 2*3 - 5*1 = 1. Apply the square-case rule: a map on R^2 given by a 2x2 matrix is one-to-one and onto exactly when det(A) is nonzero, and the two properties hold together or fail together. Since 1 is nonzero, T has both properties, so the verdict is bijective; the wrong option non-invertible comes from miscomputing the determinant as zero. The answer is verdict = bijective; det = 1."
+          - problem: "The map T: R^2 -> R^2 sends x to A x, where A = [[3,6],[1,2]]. Determine whether T is one-to-one and onto, and give the value of det(A)."
+            answer: "verdict = neither; det = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["neither"], ["bijective"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "det"}]}
+            solution_sketch: "The matrix is A = [[3,6],[1,2]]. Compute the determinant by the 2x2 rule: det(A) = 3*2 - 6*1 = 0. Apply the square-case rule: the map is one-to-one and onto exactly when det(A) is nonzero, so a zero determinant makes it fail both properties at once. Since 0 is zero, T has neither property, and the wrong option bijective comes from treating the zero determinant as nonzero. The answer is verdict = neither; det = 0."
+          - problem: "Let T: R^2 -> R^2 be T(x) = A x with A = [[1,2],[3,k]], where k is a real number. Find the value of k for which T is not one-to-one."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is A = [[1,2],[3,k]]. Compute the determinant by the 2x2 rule: det(A) = 1*k - 2*3 = k - 6. Apply the square-case rule: T is one-to-one exactly when det(A) is nonzero, so T fails to be one-to-one exactly when k - 6 = 0. Solve k - 6 = 0 to get k = 6. The answer is 6."
+          - problem: "The map T: R^2 -> R^2 is given by T(x, y) = (4x + k y, x + y), where k is a real number. Find the value of k for which T fails to be onto."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The standard matrix of T is A = [[4,k],[1,1]], because the two output entries are 4x + ky and x + y. Compute the determinant by the 2x2 rule: det(A) = 4*1 - k*1 = 4 - k. Apply the square-case rule: T is onto exactly when det(A) is nonzero, so T fails to be onto exactly when 4 - k = 0. Solve 4 - k = 0 to get k = 4. The answer is 4."
+          - problem: "Let T: R^2 -> R^2 be T(x) = A x with A = [[a,3],[2,a]], where a is a positive real number. Given that T is not one-to-one, find the value of a."
+            answer: "sqrt(6)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The matrix is A = [[a,3],[2,a]]. Compute the determinant by the 2x2 rule: det(A) = a*a - 3*2 = a^2 - 6. Apply the square-case rule: T is one-to-one exactly when det(A) is nonzero, so not one-to-one forces a^2 - 6 = 0. Then a^2 = 6, and the positive root is a = sqrt(6). The answer is sqrt(6)."
+          - problem: "Consider the matrices A1 = [[1,0],[0,1]], A2 = [[2,1],[4,2]], A3 = [[0,5],[5,0]] and A4 = [[3,1],[6,2]], each defining a map T: R^2 -> R^2 by T(x) = A x. For how many of these four maps is T both one-to-one and onto?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The four matrices are [[1,0],[0,1]], [[2,1],[4,2]], [[0,5],[5,0]] and [[3,1],[6,2]]. Compute each determinant by the 2x2 rule: 1*1 - 0*0 = 1, 2*2 - 1*4 = 0, 0*0 - 5*5 = -25, and 3*2 - 1*6 = 0. Apply the square-case rule: a matrix gives a map that is both one-to-one and onto exactly when its determinant is nonzero. Only the first and third matrices qualify, so the count is 2. The answer is 2."
         constraints: "square 2x2 decided by the determinant; emphasize both-or-neither"
     diagnostic_exemplar:
       problem: '$A = \begin{pmatrix}2&4&1\\0&0&3\end{pmatrix}$ defines $T : \mathbb{R}^3 \to \mathbb{R}^2$. Is $T$ one-to-one? Is it onto? Justify from the pivots.'
