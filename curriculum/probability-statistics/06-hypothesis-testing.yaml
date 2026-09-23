@@ -424,10 +424,30 @@ topics:
         name: "The full test, and the z-interval for p"
         key_prerequisites: [one-sample-z-test, confidence-intervals]
         exemplars:
-          - problem: 'A coin suspected of unfairness is flipped $n = 400$ times and lands heads $230$ times. Test $H_0: p = \frac{1}{2}$ against $H_1: p \ne \frac{1}{2}$ at $\alpha = 0.05$ with $z^* = 2$. Conclude in context.'
-            answer: '$\operatorname{SE} = \sqrt{\frac{1/4}{400}} = \frac{1}{40} = 0.025$; $\hat{p} = 0.575$; $z = \dfrac{0.575 - 0.5}{0.025} = 3 > 2$: reject $H_0$ — strong evidence the coin is unfair ($p \approx 0.003$).'
-          - problem: 'In a survey of $n = 100$ customers, $80$ are satisfied. Give the $95\%$ confidence interval $\hat{p} \pm z^* \sqrt{\hat{p}(1-\hat{p})/n}$ with $z^* = 2$, and interpret it.'
-            answer: '$\operatorname{SE} = \sqrt{\frac{(4/5)(1/5)}{100}} = \frac{1}{25} = 0.04$; interval $0.8 \pm 0.08$, i.e. $(0.72, 0.88)$ — a range of plausible values for the true satisfaction proportion $p$.'
+          - problem: "A coin is checked for bias. In n = 400 flips it lands heads 230 times. Test H0: p = 1/2 against H1: p != 1/2 at alpha = 0.05 using z* = 2. State the conclusion about the coin and give the z statistic."
+            answer: "conclusion = unfair; z = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["unfair"], ["insufficient"]]}, "name": "conclusion"}, {"contract": {"kind": "exact"}, "name": "z"}]}
+            solution_sketch: "Step 1: the sample proportion is p-hat = 230/400 = 0.575. Step 2: under H0 the standard error is sqrt(0.5*0.5/400) = 0.025. Step 3: z = (0.575 - 0.5)/0.025 = 3. Since 3 > 2, reject H0 and conclude the coin is unfair. The option insufficient is the error of failing to reject when |z| exceeds the critical value. Final result: conclusion = unfair; z = 3."
+          - problem: "In a survey of n = 100 customers, 80 say they are satisfied. Use z* = 2. Give the 95% confidence interval for the true satisfaction proportion p, as (low, high)."
+            answer: "(0.72, 0.88)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: the sample proportion is p-hat = 80/100 = 0.8. Step 2: the interval's standard error uses p-hat: sqrt(0.8*0.2/100) = 0.04. Step 3: the margin is z* times the standard error, 2*0.04 = 0.08. Step 4: the interval is 0.8 plus or minus 0.08, which is (0.72, 0.88). The final answer is (0.72, 0.88)."
+          - problem: "A seed company claims that 80% of its seeds germinate. In a test of n = 200 seeds, 150 germinate. Test H0: p = 0.8 against H1: p < 0.8 at alpha = 0.05, with z* = -1.645 supplied. State the decision and give z to 2 decimals."
+            answer: "decision = reject; z = -1.77"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "decision"}, {"contract": {"decimals": 2, "kind": "approx"}, "name": "z"}]}
+            solution_sketch: "Step 1: the sample proportion is p-hat = 150/200 = 0.75. Step 2: under H0 the standard error is sqrt(0.8*0.2/200) = 0.028284. Step 3: z = (0.75 - 0.8)/0.028284 = -1.77 to 2 decimals. Since -1.77 < -1.645, reject H0. The option retain is the error of not rejecting when z lies in the critical region. Final result: decision = reject; z = -1.77."
+          - problem: "A website counts clicks on an ad. Of n = 400 visitors, 80 click it. Use z* = 2. Give the 95% confidence interval for the true click proportion p as (low, high)."
+            answer: "(0.16, 0.24)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: the sample proportion is p-hat = 80/400 = 0.2. Step 2: the interval's standard error uses p-hat: sqrt(0.2 times 0.8 divided by 400) equals 0.02. Step 3: the margin is z* times the standard error, 2 times 0.02 = 0.04. Step 4: the interval is 0.2 plus or minus 0.04, which is (0.16, 0.24). The final answer is (0.16, 0.24)."
+          - problem: "A poll tests H0: p = 0.4 against H1: p != 0.4. In n = 400 responses, 184 are yes. Use z* = 2. State the conclusion about p and give z to 2 decimals."
+            answer: "conclusion = differs; z = 2.45"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["differs"], ["consistent"]]}, "name": "conclusion"}, {"contract": {"decimals": 2, "kind": "approx"}, "name": "z"}]}
+            solution_sketch: "Step 1: the sample proportion is p-hat = 184/400 = 0.46. Step 2: under H0 the standard error is sqrt(0.4*0.6/400) = 0.024495. Step 3: z = (0.46 - 0.4)/0.024495 = 2.45 to 2 decimals. Since 2.45 > 2, reject H0 and conclude the proportion differs from 0.4. The option consistent is the error of not rejecting when z exceeds the critical value. Final result: conclusion = differs; z = 2.45."
+          - problem: "A spinner is tested for a 1/2 red proportion. In n = 100 spins, 58 land red. Test H0: p = 1/2 against H1: p != 1/2 with z* = 2. State the decision and give the z statistic."
+            answer: "decision = retain; z = 1.6"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "decision"}, {"contract": {"kind": "exact"}, "name": "z"}]}
+            solution_sketch: "Step 1: the sample proportion is p-hat = 58/100 = 0.58. Step 2: under H0 the standard error is sqrt(0.5*0.5/100) = 0.05. Step 3: z = (0.58 - 0.5)/0.05 = 1.6. Since 1.6 is not greater than 2, retain H0. The option reject is the error of rejecting when |z| does not exceed the critical value. Final result: decision = retain; z = 1.6."
         constraints: "two-sided tests use z* = 2 (empirical-rule value); any one-sided or exact critical value is supplied in the problem; the interval's SE uses p-hat (contrast with the test's p0 stated when both appear); conclusions restate the decision in the scenario's terms"
     diagnostic_exemplar:
       problem: 'A coin is suspected of being unfair. In $n = 100$ flips it lands heads $65$ times. Test $H_0: p = \frac{1}{2}$ against $H_1: p \ne \frac{1}{2}$ at $\alpha = 0.05$ ($z^* = 2$). Give the conditions check, $z$, and the decision in context.'
@@ -526,6 +546,22 @@ topics:
           - problem: 'Same row. At the $99\%$ level, give $t^*$.'
             answer: "3.250"
             solution_sketch: 'Higher confidence demands a wider reach: $3.250 > 2.262$.'
+          - problem: "A table row for df 15 gives t* = 2.131 (95%) and t* = 2.947 (99%). For a procedure with n = 16 at the 99% level, give t* to 3 decimals."
+            answer: "2.947"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "The sample size is n = 16, so the degrees of freedom are df = 16 - 1 = 15. The 99% confidence level selects the 99% column of the supplied row. That row gives t* = 2.947. The answer is 2.947."
+          - problem: "Table rows: df 19 gives t* = 2.093 (95%) and t* = 2.861 (99%); df 20 gives t* = 2.086 (95%) and t* = 2.845 (99%). A sample has n = 21 and uses the 95% level. Give t* to 3 decimals."
+            answer: "2.086"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "First find the degrees of freedom: df = n - 1 = 21 - 1 = 20. Select the row for df 20, not the row for df 19. At the 95% level that row gives t* = 2.086. The answer is 2.086."
+          - problem: "A table row for df 24 gives t* = 2.064 (95%) and t* = 2.797 (99%). A sample uses the 99% level and has t* = 2.797. Find the sample size n."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The table shows that t* = 2.797 matches the 99% column for df 24. Since df = n - 1, we solve n - 1 = 24. Thus n = 25. The answer is 25."
+          - problem: "For a sample of n = 10, a table row for df 9 gives t* = 2.262 (95%) and t* = 3.250 (99%). Find how much larger the 99% critical value is than the 95% critical value. Give the answer to 3 decimals."
+            answer: "0.988"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "The sample size n = 10 gives df = 10 - 1 = 9. The 99% critical value is 3.250 and the 95% critical value is 2.262. Subtract: 3.250 - 2.262 = 0.988. The answer is 0.988."
         constraints: "the needed t-table row is supplied in the problem; the learner selects df = n - 1 and the confidence level"
     diagnostic_exemplar:
       problem: 'A sample of $n = 9$ has $s = 6$. The table row for df $8$ gives $t^* = 2.306$ ($95\%$) and $t^* = 3.355$ ($99\%$). Give (the estimated standard error of $\bar{x}$, the $95\%$ two-sided critical value for this sample) as an ordered pair.'
@@ -658,19 +694,59 @@ topics:
         name: "Hypotheses and the standard error of a difference"
         key_prerequisites: [sums-of-random-variables, one-sample-t-test]
         exemplars:
-          - problem: 'An experiment compares a treatment group (population mean $\mu_1$) with a control group (population mean $\mu_2$), and the researchers suspect a difference in either direction. State the hypotheses in terms of $\mu_1 - \mu_2$.'
-            answer: '$H_0: \mu_1 - \mu_2 = 0$ (equivalently $\mu_1 = \mu_2$); $H_1: \mu_1 - \mu_2 \ne 0$ (two-sided).'
-          - problem: 'Independent samples have $s_1 = 12$, $n_1 = 16$ and $s_2 = 16$, $n_2 = 16$. Compute $\operatorname{SE} = \sqrt{s_1^2/n_1 + s_2^2/n_2}$, and say why the variances add even though the means are subtracted.'
-            answer: '$\operatorname{SE} = \sqrt{\frac{144}{16} + \frac{256}{16}} = \sqrt{9 + 16} = 5$; for independent samples $\operatorname{Var}(\bar{X}_1 - \bar{X}_2) = \operatorname{Var}(\bar{X}_1) + \operatorname{Var}(\bar{X}_2)$ — subtracting an independent quantity adds just as much spread as adding it.'
+          - problem: "A company runs two assembly lines whose population mean outputs per shift are mu1 and mu2. The quality team wants to detect any change in the difference between the lines, in either direction. Which alternative hypothesis fits this goal?"
+            answer: "H1: mu1 - mu2 != 0"
+            answer_contract: {"kind": "label", "options": [["H1: mu1 - mu2 != 0"], ["H0: mu1 - mu2 = 0"], ["H1: xbar1 - xbar2 != 0"], ["H1: mu1 - mu2 > 0"]]}
+            solution_sketch: "Step 1 (hypothesis framing): hypotheses concern population means, here the difference mu1 - mu2, and a difference in either direction is two-sided. Step 2 (error check): the option H0: mu1 - mu2 = 0 wrongly restates the null hypothesis as the alternative; the option H1: xbar1 - xbar2 != 0 wrongly uses the sample means, which are already known; the option H1: mu1 - mu2 > 0 wrongly assumes the difference has one direction. The correct choice is H1: mu1 - mu2 != 0."
+          - problem: "Independent samples from two populations give $s_1 = 4$ with $n_1 = 8$, and $s_2 = 14$ with $n_2 = 28$. Compute $\\operatorname{SE} = \\sqrt{s_1^2/n_1 + s_2^2/n_2}$ for the difference of the sample means. Find the standard error of the difference."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (variance of a sample mean): $s_1^2/n_1 = 16/8 = 2$ and $s_2^2/n_2 = 196/28 = 7$. Step 2 (independence, sums of random variables): for independent samples the variances add even though the means are subtracted, so $\\operatorname{Var}(\\bar{X}_1 - \\bar{X}_2) = 2 + 7 = 9$. Step 3 (square root): $\\operatorname{SE} = \\sqrt{9} = 3$. The standard error of the difference is 3."
+          - problem: "A drug is tried at two clinic sites. Site A has $s_1 = 2.4$, $n_1 = 4$; site B has $s_2 = 3.2$, $n_2 = 4$, and the sites are independent. Find the standard error of the difference of the two sample means."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (variance of a sample mean): $s_1^2/n_1 = 5.76/4 = 1.44$ and $s_2^2/n_2 = 10.24/4 = 2.56$. Step 2 (independence): the variances add, $1.44 + 2.56 = 4$. Step 3 (square root): $\\operatorname{SE} = \\sqrt{4} = 2$. The standard error of the difference is 2."
+          - problem: "Two battery brands are tested independently. Brand A has $s_1 = 8$ hours with $n_1 = 16$; brand B has $n_2 = 8$. The standard error of the difference in mean lifetimes is $6$ hours. Find the sample standard deviation $s_2$ of brand B."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (known term): $s_1^2/n_1 = 64/16 = 4$. Step 2 (square the SE): $\\operatorname{SE}^2 = 36$, so the brand-B term is $36 - 4 = 32$. Step 3 (solve for the standard deviation): $s_2^2 = 32 \\cdot 8 = 256$, so $s_2 = \\sqrt{256} = 16$. The sample standard deviation of brand B is 16."
+          - problem: "Two independent filling machines are sampled: machine 1 has $s_1 = 8$ with $n_1 = 8$, and machine 2 has $s_2 = 17$ with $n_2 = 17$. Give the variance of $\\bar{X}_1 - \\bar{X}_2$ and its standard error."
+            answer: "var = 25; se = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "var"}, {"contract": {"kind": "exact"}, "name": "se"}]}
+            solution_sketch: "Step 1 (variance of a sample mean): $s_1^2/n_1 = 64/8 = 8$ and $s_2^2/n_2 = 289/17 = 17$. Step 2 (independence, sums of random variables): $\\operatorname{Var}(\\bar{X}_1 - \\bar{X}_2) = 8 + 17 = 25$. Step 3 (square root): the standard error is $\\sqrt{25} = 5$. Thus var = 25 and se = 5."
+          - problem: "A planner will draw two independent samples of the same size $n$ from populations with $s_1 = 6$ and $s_2 = 8$, and wants the standard error of $\\bar{X}_1 - \\bar{X}_2$ to be at most $1$. Find the smallest sample size $n$ that each group needs."
+            answer: "100"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (square the target): $\\operatorname{SE}^2 = s_1^2/n + s_2^2/n = (36 + 64)/n = 100/n$. Step 2 (inequality): requiring $\\operatorname{SE} \\le 1$ gives $100/n \\le 1$, so $n \\ge 100$. Step 3 (conclusion): the smallest integer meeting this is $n = 100$. Each group needs a sample size of 100."
         constraints: "hypotheses about mu1 - mu2 (or mu1 = mu2), never about x-bars; s_i^2/n_i come out to integers or exact decimals whose sum is a perfect square, so the SE is exact"
       - id: kp2
         name: "The two-sample t statistic and conservative df"
         key_prerequisites: [one-sample-t-test, sums-of-random-variables]
         exemplars:
-          - problem: 'Independent samples give $\bar{x}_1 = 84$, $s_1 = 4$, $n_1 = 8$ and $\bar{x}_2 = 78$, $s_2 = 4$, $n_2 = 8$. Compute $t = \dfrac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_1^2/n_1 + s_2^2/n_2}}$ and the conservative degrees of freedom $\min(n_1, n_2) - 1$.'
-            answer: '$\operatorname{SE} = \sqrt{2 + 2} = 2$; $t = \dfrac{84 - 78}{2} = 3$; conservative df $= 8 - 1 = 7$.'
-          - problem: 'Independent samples give $\bar{x}_1 = 498$, $s_1 = 15$, $n_1 = 25$ and $\bar{x}_2 = 508$, $s_2 = 16$, $n_2 = 16$. Compute $t$ and the conservative df.'
-            answer: '$\operatorname{SE} = \sqrt{9 + 16} = 5$; $t = \dfrac{498 - 508}{5} = -2$; conservative df $= \min(25, 16) - 1 = 15$.'
+          - problem: "Independent samples give $\\bar{x}_1 = 30$, $s_1 = 4$, $n_1 = 4$ and $\\bar{x}_2 = 25$, $s_2 = 3$, $n_2 = 4$. The two-sample statistic is $t = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{s_1^2/n_1 + s_2^2/n_2}}$, and the conservative degrees of freedom are $\\min(n_1, n_2) - 1$. Compute $t$ and the conservative degrees of freedom."
+            answer: "t = 2; df = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1 (pooled-free standard error): $\\operatorname{SE} = \\sqrt{s_1^2/n_1 + s_2^2/n_2} = \\sqrt{16/4 + 9/4} = \\sqrt{6.25} = 2.5$. Step 2 (two-sample t statistic): $t = (\\bar{x}_1 - \\bar{x}_2)/\\operatorname{SE} = (30 - 25)/2.5 = 2$. Step 3 (conservative df): $\\min(n_1, n_2) - 1 = \\min(4, 4) - 1 = 3$. The answer is t = 2; df = 3."
+          - problem: "Two independent samples have sizes $n_1 = 12$ and $n_2 = 16$, with $\\bar{x}_1 = 60$, $s_1 = 12$ and $\\bar{x}_2 = 48$, $s_2 = 8$. Use $t = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{s_1^2/n_1 + s_2^2/n_2}}$ and the conservative degrees of freedom $\\min(n_1, n_2) - 1$. Find $t$ and the conservative degrees of freedom."
+            answer: "t = 3; df = 11"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1 (standard error): $s_1^2/n_1 = 144/12 = 12$ and $s_2^2/n_2 = 64/16 = 4$, so $\\operatorname{SE} = \\sqrt{12 + 4} = 4$. Step 2 (t statistic): $t = (60 - 48)/4 = 3$. Step 3 (conservative df): $\\min(12, 16) - 1 = 11$. The answer is t = 3; df = 11."
+          - problem: "In a teaching study, class A ($n_1 = 25$ students) scores a mean of $72$ with standard deviation $10$; class B ($n_2 = 12$ students) scores a mean of $78$ with standard deviation $12$. With $t = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{s_1^2/n_1 + s_2^2/n_2}}$ and conservative degrees of freedom $\\min(n_1, n_2) - 1$, give $t$ and the conservative degrees of freedom."
+            answer: "t = -1.5; df = 11"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1 (standard error): $100/25 = 4$ and $144/12 = 12$, so $\\operatorname{SE} = \\sqrt{4 + 12} = 4$. Step 2 (t statistic): $t = (72 - 78)/4 = -1.5$; the negative sign shows class B scored higher. Step 3 (conservative df): $\\min(25, 12) - 1 = 11$. The answer is t = -1.5; df = 11."
+          - problem: "Battery life is compared for two brands: brand A has $n_1 = 8$ batteries with mean $50$ hours and $s_1 = 4$; brand B has $n_2 = 18$ batteries with mean $45$ hours and $s_2 = 6$. The conservative degrees of freedom are $\\min(n_1, n_2) - 1$, and $t = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{s_1^2/n_1 + s_2^2/n_2}}$. Compute $t$ and the conservative degrees of freedom."
+            answer: "t = 2.5; df = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1 (standard error): $16/8 = 2$ and $36/18 = 2$, so $\\operatorname{SE} = \\sqrt{2 + 2} = 2$. Step 2 (t statistic): $t = (50 - 45)/2 = 2.5$. Step 3 (conservative df): the smaller sample has $n_1 = 8$, so $\\min(8, 18) - 1 = 7$. The answer is t = 2.5; df = 7."
+          - problem: "Group 1 has $n_1 = 9$ people with mean score $85$ and $s_1 = 9$; group 2 has $n_2 = 16$ people with mean score $100$ and $s_2 = 16$. Use $t = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{s_1^2/n_1 + s_2^2/n_2}}$ and the conservative degrees of freedom $\\min(n_1, n_2) - 1$. Determine $t$ and the conservative degrees of freedom."
+            answer: "t = -3; df = 8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1 (standard error): $81/9 = 9$ and $256/16 = 16$, so $\\operatorname{SE} = \\sqrt{9 + 16} = 5$. Step 2 (t statistic): $t = (85 - 100)/5 = -3$; the negative value reflects the higher mean of group 2. Step 3 (conservative df): $\\min(9, 16) - 1 = 8$. The answer is t = -3; df = 8."
+          - problem: "Wait times at two cashiers are compared: cashier 1 serves $n_1 = 8$ sampled customers with mean wait $64$ s and $s_1 = 8$; cashier 2 serves $n_2 = 25$ sampled customers with mean wait $55$ s and $s_2 = 5$. With $\\operatorname{SE} = \\sqrt{s_1^2/n_1 + s_2^2/n_2}$, $t = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\operatorname{SE}}$ and conservative degrees of freedom $\\min(n_1, n_2) - 1$, state the standard error, $t$, and the conservative degrees of freedom."
+            answer: "se = 3; t = 3; df = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "se"}, {"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1 (standard error): $64/8 = 8$ and $25/25 = 1$, so $\\operatorname{SE} = \\sqrt{8 + 1} = 3$. Step 2 (t statistic): $t = (64 - 55)/3 = 3$. Step 3 (conservative df): the smaller group has $n_1 = 8$, so $\\min(8, 25) - 1 = 7$. The answer is se = 3; t = 3; df = 7."
         constraints: "SE comes out whole or half; t to halves or whole numbers; the conservative df = min(n1, n2) - 1 convention is stated in the problem and asked explicitly"
       - id: kp3
         name: "Analyzing a treatment/control experiment end-to-end"
@@ -867,19 +943,59 @@ topics:
         name: "The t statistic for the slope"
         key_prerequisites: [one-sample-t-test, least-squares-line]
         exemplars:
-          - problem: 'A regression on $n = 22$ points gives $b = 1.5$ with $\operatorname{SE}_b = 0.5$. Compute $t$ and the degrees of freedom.'
-            answer: '$t = \dfrac{1.5}{0.5} = 3$; df $= n - 2 = 20$.'
-          - problem: 'A regression on $n = 12$ points gives $b = -0.8$ with $\operatorname{SE}_b = 0.4$. Compute $t$ and the df.'
-            answer: '$t = -2$; df $= 10$.'
+          - problem: "A regression on $n = 18$ points gives $b = 2.4$ with $\\operatorname{SE}_b = 0.6$. Compute the $t$ statistic and the degrees of freedom."
+            answer: "t = 4; df = 16"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1: Use the slope $t$ statistic $t = b / \\operatorname{SE}_b$. Step 2: Substitute $b = 2.4$ and $\\operatorname{SE}_b = 0.6$: $t = 2.4 / 0.6 = 4$. Step 3: Use $df = n - 2$; with $n = 18$, $df = 16$. Thus t = 4; df = 16."
+          - problem: "A regression on $n = 15$ points gives $b = -1.2$ with $\\operatorname{SE}_b = 0.8$. Compute the $t$ statistic and the degrees of freedom."
+            answer: "t = -3/2; df = 13"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1: Use the slope $t$ statistic $t = b / \\operatorname{SE}_b$. Step 2: Substitute $b = -1.2$ and $\\operatorname{SE}_b = 0.8$: $t = -1.2 / 0.8 = -1.5 = -3/2$. Step 3: Use $df = n - 2$; with $n = 15$, $df = 13$. Thus t = -3/2; df = 13."
+          - problem: "A study of plant growth regresses height in cm on daily sunlight hours for $n = 26$ plants. The estimated slope is $b = 0.75$ with $\\operatorname{SE}_b = 0.25$. Compute the $t$ statistic for the slope and the degrees of freedom."
+            answer: "t = 3; df = 24"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1: Use the slope $t$ statistic $t = b / \\operatorname{SE}_b$. Step 2: Substitute $b = 0.75$ and $\\operatorname{SE}_b = 0.25$: $t = 0.75 / 0.25 = 3$. Step 3: The degrees of freedom are $df = n - 2 = 26 - 2 = 24$. Thus t = 3; df = 24."
+          - problem: "A regression on $n = 14$ points has $t = 2.5$ for the slope and $\\operatorname{SE}_b = 0.6$. Find the estimated slope $b$ as a fraction and the degrees of freedom."
+            answer: "b = 3/2; df = 12"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1: Rearrange the slope $t$ statistic to $b = t \\cdot \\operatorname{SE}_b$. Step 2: Substitute $t = 2.5$ and $\\operatorname{SE}_b = 0.6$: $b = 2.5 \\cdot 0.6 = 1.5 = 3/2$. Step 3: The degrees of freedom are $df = n - 2 = 14 - 2 = 12$. Thus b = 3/2; df = 12."
+          - problem: "A regression on $n = 20$ points gives $b = 2$ and $t = 4$ for the slope. Find the standard error of the slope as a fraction and the degrees of freedom."
+            answer: "seb = 1/2; df = 18"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "seb"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1: Rearrange the slope $t$ statistic to $\\operatorname{SE}_b = b / t$. Step 2: Substitute $b = 2$ and $t = 4$: $\\operatorname{SE}_b = 2 / 4 = 1/2$. Step 3: The degrees of freedom are $df = n - 2 = 20 - 2 = 18$. Thus seb = 1/2; df = 18."
+          - problem: "An experiment with $n = 11$ data points estimates a slope $b = -0.6$ with standard error $\\operatorname{SE}_b = 1.2$. Compute the $t$ statistic for the slope and the degrees of freedom."
+            answer: "t = -1/2; df = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "t"}, {"contract": {"kind": "exact"}, "name": "df"}]}
+            solution_sketch: "Step 1: Use the slope $t$ statistic $t = b / \\operatorname{SE}_b$. Step 2: Substitute $b = -0.6$ and $\\operatorname{SE}_b = 1.2$: $t = -0.6 / 1.2 = -0.5 = -1/2$. Step 3: The degrees of freedom are $df = n - 2 = 11 - 2 = 9$. Thus t = -1/2; df = 9."
         constraints: "b / SE_b comes out to halves or whole numbers; df = n - 2 asked explicitly"
       - id: kp3
         name: "Test and confidence interval for the slope"
         key_prerequisites: [one-sample-t-test, least-squares-line]
         exemplars:
-          - problem: 'Hours studied ($x$) against mark out of $10$ ($y$), $n = 22$: $b = 1.5$, $\operatorname{SE}_b = 0.5$, $t^* = 2.086$ (df $20$, $\alpha = 0.05$, two-sided). Test $H_0: \beta = 0$ and conclude in context.'
-            answer: '$t = 3 > 2.086$: reject $H_0$ — evidence that each extra hour of study is associated with a higher mark.'
-          - problem: 'Same regression. Give the $95\%$ confidence interval $b \pm t^* \operatorname{SE}_b$ and relate it to the test.'
-            answer: '$1.5 \pm 2.086 \cdot 0.5 = 1.5 \pm 1.043$, i.e. $(0.457, 2.543)$; $0$ is not in the interval, agreeing with the rejection of $H_0$.'
+          - problem: "A study of weekly exercise hours (x) and resting heart rate (y) uses n = 17 observations. The fitted slope is b = 2.4 with SE_b = 0.8; t* = 2.131 for df = 15 at alpha = 0.05. Test H0: beta = 0 and state the verdict and the t statistic."
+            answer: "verdict = reject; t = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1: compute the slope t statistic with t = b / SE_b = 2.4 / 0.8 = 3. Step 2: compare with the supplied critical value t* = 2.131; since 3 > 2.131, reject H0. The option retain is wrong because it fails to reject despite |t| exceeding t*. So verdict = reject; t = 3."
+          - problem: "For a regression of plant growth (y) on light exposure (x), n = 17, b = 2.4, SE_b = 0.8, and t* = 2.131 for df = 15. Give the 95% confidence interval for the slope as (low, high), with endpoints to 3 decimals."
+            answer: "(0.695, 4.105)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: margin of error = t* SE_b = 2.131 * 0.8 = 1.7048. Step 2: interval = b plus or minus margin = 2.4 plus or minus 1.7048, giving lower 0.6952 and upper 4.1048. Step 3: round each endpoint to 3 decimals, so the interval is (0.695, 4.105)."
+          - problem: "A regression of daily temperature (y) on altitude (x) uses n = 12 observations. The slope is b = -1.8 with SE_b = 0.6; t* = 2.228 for df = 10. Test H0: beta = 0. Find the t statistic."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the slope t statistic t = b / SE_b. Step 2: substitute b = -1.8 and SE_b = 0.6, so t = -1.8 / 0.6 = -3. The t statistic is -3."
+          - problem: "In a regression with n = 27, the slope estimate is b = 0.75 and SE_b = 0.2; t* = 2.060 for df = 25. Give the 95% confidence interval for the slope as (low, high), with endpoints to 3 decimals."
+            answer: "(0.338, 1.162)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: margin = t* SE_b = 2.060 * 0.2 = 0.412. Step 2: interval = 0.75 plus or minus 0.412 = (0.338, 1.162). Step 3: the endpoints already show 3 decimals, so the interval is (0.338, 1.162)."
+          - problem: "A regression of sales (y) on price (x) over n = 10 stores gives b = -1.4 and SE_b = 0.5; t* = 2.306 for df = 8 at alpha = 0.05. Test H0: beta = 0. State the verdict and the t statistic."
+            answer: "verdict = reject; t = -2.8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1: t = b / SE_b = -1.4 / 0.5 = -2.8. Step 2: compare |t| = 2.8 with t* = 2.306; since 2.8 > 2.306, reject H0. The option retain is wrong because it would ignore that the absolute t statistic exceeds the critical value. So verdict = reject; t = -2.8."
+          - problem: "A regression of test score (y) on study time (x) has n = 14 observations, SE_b = 0.25, and t* = 2.2 for df = 12. Find the margin of error t* SE_b."
+            answer: "0.55"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the margin of error for the slope interval is t* SE_b. Step 2: multiply 2.2 by 0.25 to get 0.55. The margin of error is 0.55."
         constraints: "t* supplied with df = n - 2; CI endpoints to 3 decimals; when both test and CI appear, their agreement is stated"
     diagnostic_exemplar:
       problem: 'A regression of daily heating cost in EUR ($y$) on outdoor temperature in °C ($x$) over $n = 22$ days gives $b = -2.5$ with $\operatorname{SE}_b = 1.0$; $t^* = 2.086$ (df $20$, $\alpha = 0.05$). Test $H_0: \beta = 0$ and conclude in context.'
