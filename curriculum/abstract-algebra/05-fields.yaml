@@ -175,23 +175,55 @@ topics:
           - problem: 'Solve $3x + 5 = 1$ in $\mathbb{Z}_7$.'
             answer: '$x = 1$'
             solution_sketch: '$3x = -4 = 3$, and multiplying by $3^{-1} = 5$ gives $x = 15 = 1$. Check: $3 + 5 = 8 \equiv 1$.'
-          - problem: 'Find all solutions of $x^2 = 2$ in $\mathbb{Z}_7$.'
-            answer: '$x = 3$ and $x = 4$'
-            answer_contract: {kind: none}
-            solution_sketch: '$3^2 = 9 \equiv 2$ and $4^2 = 16 \equiv 2$; a quadratic over a field has at most two roots.'
+          - problem: "Find the larger solution of x^2 = 2 in Z_7."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: solve a quadratic in Z_7 by testing each residue. Step 1: compute squares modulo 7: 1^2=1, 2^2=4, 3^2=2, 4^2=2, 5^2=4, 6^2=1. Step 2: the roots are 3 and 4, so the larger root is 4. The larger solution is 4."
+          - problem: "Find the inverse of 8 in Z_13."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element is 8 in Z_13. Rule: an inverse x satisfies 8x = 1 modulo 13. Step 1: test x = 5: 8*5 = 40 = 3*13 + 1, so 8*5 = 1 in Z_13. Step 2: because x = 5 gives 1, it is the inverse. The inverse is 5."
+          - problem: "Solve 5x + 2 = 9 in Z_11. Give the integer representative x between 0 and 10."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation is 5x + 2 = 9 in Z_11. Rule: isolate x by field arithmetic. Step 1: subtract 2 from both sides: 5x = 7 in Z_11. Step 2: the inverse of 5 modulo 11 is 9, because 5*9 = 45 = 1 in Z_11. Step 3: multiply by 9: x = 7*9 = 63 = 8 in Z_11. The solution is 8."
+          - problem: "Solve x^2 + 3x + 2 = 0 in Z_7. Give the larger solution."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation is x^2 + 3x + 2 = 0 in Z_7. Rule: factor the quadratic over Z_7. Step 1: x^2 + 3x + 2 = (x+1)(x+2) = (x+6)(x+5). Step 2: set each factor to zero: x = 6 and x = 5. Step 3: the larger integer representative is 6. The larger solution is 6."
+          - problem: "Find the inverse of 6 in Z_13."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element is 6 in Z_13. Rule: an inverse x satisfies 6x = 1 modulo 13. Step 1: test x = 11: 6*11 = 66 = 5*13 + 1, so 6*11 = 1 in Z_13. Step 2: because x = 11 gives 1, it is the inverse. The inverse is 11."
         constraints: "p <= 13; linear and quadratic equations solved by field arithmetic"
       - id: kp2
         name: "Why Z_p is a field; Fermat inverses"
         key_prerequisites: [fields-characteristic, euclidean-algorithm]
         exemplars:
-          - problem: 'Prove that $\mathbb{Z}_p$ ($p$ prime) is a field.'
-            answer: 'For $a \neq 0$, $\gcd(a, p) = 1$, so Bezout gives $ax + py = 1$, i.e. $ax \equiv 1$: every nonzero element is invertible.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Primality makes every nonzero residue coprime to $p$; extended Euclid produces the inverse.'
-          - problem: 'Use Fermat''s little theorem to express $a^{-1}$ in $\mathbb{Z}_p$, and compute $4^{-1}$ in $\mathbb{Z}_7$ this way.'
-            answer: '$a^{-1} = a^{p-2}$; $4^5 = 1024 = 146\cdot7 + 2$, so $4^{-1} = 2$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$a \cdot a^{p-2} = a^{p-1} = 1$. And indeed $4 \cdot 2 = 8 \equiv 1 \pmod 7$.'
+          - problem: "In Z_7, the integers 3 and 7 are coprime. Use the extended Euclidean algorithm to find the least positive integer x with 3x = 1 (mod 7)."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The congruence is 3x = 1 (mod 7). Step 1: the Euclidean algorithm gives 7 = 2*3 + 1, so 1 = 7 - 2*3. Step 2: Bezout's identity gives 3*(-2) + 7*1 = 1. Step 3: reduce -2 modulo 7 to get 5, and 3*5 = 15 = 1 (mod 7). The inverse is 5."
+          - problem: "Use Fermat's little theorem to compute the inverse of 5 in Z_11. Give the residue as an integer from 0 to 10."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Fermat's little theorem gives 5^10 = 1 (mod 11), so the inverse of 5 is 5^9. Compute 5^2 = 3, 5^4 = 9, 5^8 = 4 mod 11, so 5^9 = 5^8*5 = 4*5 = 20 = 9 (mod 11). The inverse is 9."
+          - problem: "Use Fermat's little theorem to find 2^{-1} in Z_5. Give the answer as a residue from 0 to 4."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Since 5 is prime, Fermat's little theorem gives 2^4 = 1 (mod 5), so 2^{-1} = 2^3. Compute 2^3 = 8 = 3 (mod 5). Check 2*3 = 6 = 1 (mod 5). The inverse is 3."
+          - problem: "Solve 7x = 1 (mod 11) for the residue x using Fermat's little theorem. Give x from 0 to 10."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The congruence 7x = 1 (mod 11) has a solution because 11 is prime. Fermat's little theorem gives 7^10 = 1, so 7^{-1} = 7^9. Compute 7^2 = 5, 7^4 = 3, 7^8 = 9 mod 11, so 7^9 = 9*7 = 63 = 8 (mod 11). The residue is x = 8."
+          - problem: "In Z_7, decide whether 2 is invertible. If it is, use Fermat's little theorem to find its inverse. State the verdict and the inverse residue."
+            answer: "verdict = invertible; inv = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invertible"], ["noninvertible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "inv"}]}
+            solution_sketch: "Fermat's little theorem applies because 7 is prime, so 2^6 = 1 (mod 7) and 2^{-1} = 2^5 = 32 = 4 (mod 7). Check 2*4 = 8 = 1 (mod 7). The option noninvertible is wrong because a nonzero residue modulo a prime always has an inverse. The result is verdict = invertible; inv = 4."
+          - problem: "What is the multiplicative inverse of 10 modulo 11? Use Fermat's little theorem to find it and give the answer as a residue from 0 to 10."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The residue 10 is -1 modulo 11, and 11 is prime, so Fermat's little theorem gives 10^10 = 1. Thus 10^{-1} = 10^9 = (-1)^9 = -1 = 10 (mod 11). Check 10*10 = 100 = 1 (mod 11). The inverse is 10."
         constraints: "the Bezout proof; Fermat-inverse computations with p <= 11"
       - id: kp3
         name: "Finite fields beyond Z_p: order p^n"
@@ -266,6 +298,22 @@ topics:
           - problem: 'Find the minimal polynomial of $1 + \sqrt{2}$ over $\mathbb{Q}$.'
             answer: '$x^2 - 2x - 1$'
             solution_sketch: '$(x - 1)^2 = 2$ gives the quadratic; it is irreducible since its roots $1 \pm \sqrt2$ are irrational.'
+          - problem: "Find the minimal polynomial over Q of 3 + sqrt(2)."
+            answer: "x^2 - 6x + 7"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The candidate polynomial is x^2 - 6x + 7. Step 1: let alpha = 3 + sqrt(2), so alpha - 3 = sqrt(2); squaring gives (x - 3)^2 = 2, which expands to x^2 - 6x + 7 = 0. Step 2: the rational root test allows only 1, -1, 7, and -7, and none is a root, so the quadratic is irreducible over Q. Step 3: a minimal polynomial is the monic irreducible annihilator, so the minimal polynomial is x^2 - 6x + 7."
+          - problem: "Find the minimal polynomial over Q of sqrt(5) - 2."
+            answer: "x^2 + 4x - 1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The candidate polynomial is x^2 + 4x - 1. Step 1: set alpha = sqrt(5) - 2, so alpha + 2 = sqrt(5); squaring gives (x + 2)^2 = 5 and x^2 + 4x - 1 = 0. Step 2: its roots are -2 plus or minus sqrt(5), which are irrational, so it has no rational root and is irreducible over Q. Step 3: the monic irreducible annihilator is the minimal polynomial, so the answer is x^2 + 4x - 1."
+          - problem: "Find the minimal polynomial over Q of the real cube root of 5."
+            answer: "x^3 - 5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The candidate polynomial is x^3 - 5. Step 1: let alpha be the real cube root of 5, so alpha^3 = 5 and x^3 - 5 annihilates it. Step 2: Eisenstein at p = 5 applies because 5 divides -5, 25 does not divide -5, and 5 does not divide the leading coefficient 1, so x^3 - 5 is irreducible over Q. Step 3: hence the minimal polynomial is x^3 - 5."
+          - problem: "Find the minimal polynomial over Q of 2 plus the real cube root of 3."
+            answer: "x^3 - 6x^2 + 12x - 11"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The candidate polynomial is x^3 - 6x^2 + 12x - 11. Step 1: let alpha = 2 plus the real cube root of 3, so alpha - 2 has cube 3; cubing x - 2 gives (x - 2)^3 = 3, which expands to x^3 - 6x^2 + 12x - 11. Step 2: substitute x = y + 2; the polynomial becomes y^3 - 3, and Eisenstein at p = 3 shows y^3 - 3 is irreducible, so the original cubic is irreducible over Q. Step 3: therefore the minimal polynomial is x^3 - 6x^2 + 12x - 11."
         constraints: "elements of the form a + b sqrt(d), cube roots; verify irreducibility explicitly"
       - id: kp3
         name: "Degree of an algebraic element"
@@ -277,6 +325,22 @@ topics:
           - problem: 'Find the degree of $\sqrt[3]{7}$ over $\mathbb{Q}$.'
             answer: "3"
             solution_sketch: '$x^3 - 7$ is irreducible by Eisenstein at $7$.'
+          - problem: "Let $\\alpha = \\sqrt[4]{2}$. Find the degree of $\\alpha$ over $\\mathbb{Q}$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let alpha = $\\sqrt[4]{2}$. First, alpha satisfies $x^4 - 2 = 0$, so $x^4 - 2$ is a candidate minimal polynomial. Second, Eisenstein at 2 shows $x^4 - 2$ is irreducible over $\\mathbb{Q}$. The minimal polynomial has degree 4, so the degree is 4."
+          - problem: "Let $\\alpha = \\sqrt{2}$ and let the base field be $\\mathbb{Q}(\\sqrt{2})$. Find the degree of $\\alpha$ over this base field."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let alpha = $\\sqrt{2}$. The base field is $\\mathbb{Q}(\\sqrt{2})$, and alpha already lies in this field. Its minimal polynomial over the base field is $x - \\sqrt{2}$, which has degree 1. Therefore the degree is 1."
+          - problem: "Let $\\alpha = \\sqrt{3} + \\sqrt{2}$. Find the degree of $\\alpha$ over $\\mathbb{Q}$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let alpha = $\\sqrt{3} + \\sqrt{2}$. Squaring gives $alpha^2 = 5 + 2\\sqrt{6}$, so $(alpha^2 - 5)^2 = 24$. This gives the polynomial $x^4 - 10x^2 + 1 = 0$. The rational root test and a check of quadratic factorizations show it is irreducible over $\\mathbb{Q}$. Hence the minimal polynomial has degree 4, so the degree is 4."
+          - problem: "Let $\\alpha = 1 + \\sqrt[3]{2}$. Find the degree of $\\alpha$ over $\\mathbb{Q}$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let alpha = $1 + \\sqrt[3]{2}$. Then $alpha - 1 = \\sqrt[3]{2}$, so $(alpha - 1)^3 = 2$. Expanding gives $alpha^3 - 3alpha^2 + 3alpha - 3 = 0$. The polynomial $x^3 - 3x^2 + 3x - 3$ is irreducible by Eisenstein at 3. Hence the minimal polynomial has degree 3, so the degree is 3."
         constraints: "degrees 1-4; base field always stated"
     diagnostic_exemplar:
       problem: 'Find the minimal polynomial of $\sqrt{3} - 1$ over $\mathbb{Q}$.'
@@ -331,31 +395,79 @@ topics:
           - problem: 'In $\mathbb{Q}(\sqrt[3]{2})$, which powers of $\alpha = \sqrt[3]{2}$ form the standard basis over $\mathbb{Q}$?'
             answer: '$1, \alpha, \alpha^2$'
             solution_sketch: 'The degree is $3$, so $\{1, \alpha, \alpha^2\}$ spans; higher powers reduce via $\alpha^3 = 2$.'
+          - problem: "In $\\mathbb{Q}(\\sqrt2)$, every element can be written as $a + b\\sqrt2$ with rational $a$ and $b$. Express $\\frac{1}{3 + 2\\sqrt2}$ in this form. Find the expression in the form a + b sqrt2."
+            answer: "3 - 2sqrt(2)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element is $\\frac{1}{3 + 2\\sqrt2}$. Step 1: rationalize with the conjugate $3 - 2\\sqrt2$: multiply numerator and denominator to get $\\frac{3 - 2\\sqrt2}{(3)^2 - (2\\sqrt2)^2}$. Step 2: simplify the denominator to $9 - 8 = 1$. The answer is 3 - 2sqrt(2)."
+          - problem: "Let $\\alpha = \\sqrt[3]{2}$. Every element of $\\mathbb{Q}(\\alpha)$ can be written as $a + b\\alpha + c\\alpha^2$. Express $\\alpha^4 - \\alpha^2$ in this basis. Give the answer as a function of $\\alpha$."
+            answer: "2alpha - alpha^2"
+            answer_contract: {"kind": "function", "vars": ["alpha"]}
+            solution_sketch: "The element is $\\alpha^4 - \\alpha^2$ with $\\alpha = \\sqrt[3]{2}$. Step 1: reduce the fourth power using $\\alpha^3 = 2$, so $\\alpha^4 = \\alpha \\cdot \\alpha^3 = 2\\alpha$. Step 2: subtract $\\alpha^2$ from $2\\alpha$. The answer is 2alpha - alpha^2."
+          - problem: "In $\\mathbb{Q}(\\sqrt5)$, reduce $(\\sqrt5)^3 - 2\\sqrt5 + 4$ to the form $a + b\\sqrt5$. Find the expression in the form a + b sqrt5."
+            answer: "4 + 3sqrt(5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element is $(\\sqrt5)^3 - 2\\sqrt5 + 4$. Step 1: reduce the cube using $(\\sqrt5)^2 = 5$, so $(\\sqrt5)^3 = 5\\sqrt5$. Step 2: combine like radicals: $5\\sqrt5 - 2\\sqrt5 = 3\\sqrt5$, and keep the constant 4. The answer is 4 + 3sqrt(5)."
+          - problem: "In $\\mathbb{Q}(i)$, express $\\frac{3 + i}{1 - i}$ in the form $a + bi$. Give the answer in the form a + bi."
+            answer: "1 + 2i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element is $\\frac{3 + i}{1 - i}$. Step 1: rationalize by multiplying numerator and denominator by $1 + i$. Step 2: compute $\\frac{(3 + i)(1 + i)}{(1 - i)(1 + i)} = \\frac{2 + 4i}{2}$. Step 3: divide each term by 2. The answer is 1 + 2i."
         constraints: "quadratic and cubic extensions of Q; rationalize denominators, reduce powers"
       - id: kp2
         name: "Degree of an extension; [F(alpha):F] = deg of min poly"
         key_prerequisites: [minimal-polynomials]
         exemplars:
-          - problem: 'Compute $[\mathbb{Q}(\sqrt{2}) : \mathbb{Q}]$ and $[\mathbb{Q}(\sqrt[3]{2}) : \mathbb{Q}]$.'
-            answer: '$2$ and $3$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The degree of a simple algebraic extension equals the degree of the generator''s minimal polynomial ($x^2 - 2$ and $x^3 - 2$).'
           - problem: 'What is $[\mathbb{C} : \mathbb{R}]$?'
             answer: "2"
             solution_sketch: '$\mathbb{C} = \mathbb{R}(i)$ and the minimal polynomial of $i$ over $\mathbb{R}$ is $x^2 + 1$.'
+          - problem: "Find [Q(sqrt2):Q] and [Q(cbrt2):Q], and give the answer as (d1, d2)."
+            answer: "(2, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The extension Q(sqrt2) is generated by sqrt2, whose minimal polynomial over Q is x^2 - 2, of degree 2. The extension Q(cbrt2) is generated by cbrt2, whose minimal polynomial is x^3 - 2, irreducible by Eisenstein, of degree 3. By the degree formula [F(alpha):F] = deg(min poly), the degrees are 2 and 3, so the answer is (2, 3)."
+          - problem: "Find [Q(sqrt3):Q]."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The extension Q(sqrt3) is generated by sqrt3, whose minimal polynomial over Q is x^2 - 3. This polynomial has degree 2, so by the degree formula [F(alpha):F] = deg(min poly) the degree is 2."
+          - problem: "Find [Q(sqrt[4]{2}):Q]."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The extension Q(sqrt[4]{2}) is generated by sqrt[4]{2}, whose minimal polynomial over Q is x^4 - 2. This polynomial is irreducible by Eisenstein at 2 and has degree 4, so by the degree formula the degree is 4."
+          - problem: "Find [Q(sqrt3+sqrt7):Q]."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let alpha = sqrt3 + sqrt7. Then alpha^2 = 10 + 2sqrt21, so (alpha^2 - 10)^2 = 84, giving alpha^4 - 20 alpha^2 + 16 = 0. The polynomial x^4 - 20x^2 + 16 has no rational roots and does not factor into quadratics over Q, so it is the minimal polynomial of alpha. Its degree is 4, so by the degree formula [Q(alpha):Q] = 4."
+          - problem: "Find [Q(cbrt11):Q]."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The extension Q(cbrt11) is generated by cbrt11, whose minimal polynomial over Q is x^3 - 11. This polynomial is irreducible by Eisenstein at 11 and has degree 3, so by the degree formula the degree is 3."
         constraints: "simple extensions; degrees 2-4"
       - id: kp3
         name: "The tower law"
         key_prerequisites: [minimal-polynomials]
         exemplars:
-          - problem: 'State the tower law and use it: given $[\mathbb{Q}(\sqrt2, \sqrt3) : \mathbb{Q}(\sqrt2)] = 2$, compute $[\mathbb{Q}(\sqrt2, \sqrt3) : \mathbb{Q}]$.'
-            answer: '$[K : F] = [K : E][E : F]$ for $F \subseteq E \subseteq K$; here $2 \cdot 2 = 4$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiply the degrees down the tower through $E = \mathbb{Q}(\sqrt2)$.'
-          - problem: 'Can $\mathbb{Q}(\sqrt[3]{2})$ contain $\sqrt{2}$?'
-            answer: 'No: that would put $\mathbb{Q}(\sqrt2)$, of degree $2$, inside a degree-$3$ extension, but $2 \nmid 3$ (tower law).'
-            answer_contract: {kind: none}
-            solution_sketch: 'Degrees of intermediate fields divide the total degree.'
+          - problem: "Let K = Q(sqrt2, sqrt3) and E = Q(sqrt2). Given [K:E] = 2, find [K:Q]."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the minimal polynomial x^2 - 2 gives [E:Q] = 2. Step 2: the tower law gives [K:Q] = [K:E][E:Q] = 2 times 2. Thus [K:Q] = 4."
+          - problem: "Let K = Q(cuberoot2). Can K contain sqrt2? State whether it can and give [K:Q]."
+            answer: "verdict = no; degree = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "degree"}]}
+            solution_sketch: "Step 1: x^3 - 2 is irreducible over Q, so [K:Q] = 3. Step 2: if K contained sqrt2, then Q(sqrt2) would be an intermediate field of degree 2 over Q. Step 3: the tower law would force 2 to divide 3, which is false. Thus verdict = no; degree = 3."
+          - problem: "Let F contained in E contained in K be a tower of fields with [E:F] = 4 and [K:E] = 5. Find [K:F]."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the tower law states [K:F] = [K:E][E:F]. Step 2: substitute the given degrees to get [K:F] = 5 times 4. Thus [K:F] = 20."
+          - problem: "Let F contained in E contained in K with [K:F] = 24 and [E:F] = 4. Determine [K:E]."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the tower law gives [K:F] = [K:E][E:F]. Step 2: substitute 24 = [K:E] times 4 and solve. Thus [K:E] = 6."
+          - problem: "Let F contained in E contained in K with [K:F] = 45 and [K:E] = 5. Find [E:F]."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: by the tower law, [K:F] = [K:E][E:F]. Step 2: divide 45 by 5 to get [E:F]. Thus [E:F] = 9."
+          - problem: "Let F contained in E contained in K. Suppose [K:F] = 30 and [E:F] = 6. Can [K:E] be 4? State whether it can and give [K:E]."
+            answer: "verdict = no; index = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "index"}]}
+            solution_sketch: "Step 1: the tower law gives [K:F] = [K:E][E:F]. Step 2: substitute 30 = [K:E] times 6, so [K:E] = 5. Step 3: since 5 is not 4, the proposed value is impossible. Thus verdict = no; index = 5."
         constraints: "towers of height 2; divisibility arguments from the tower law"
     diagnostic_exemplar:
       problem: 'Compute $[\mathbb{Q}(\sqrt[3]{2}, \sqrt{5}) : \mathbb{Q}]$, given that $\sqrt5 \notin \mathbb{Q}(\sqrt[3]2)$.'

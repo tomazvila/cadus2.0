@@ -201,14 +201,30 @@ topics:
         name: "Fixed points and transitive actions"
         key_prerequisites: [group-actions]
         exemplars:
-          - problem: 'An action is transitive when there is exactly one orbit. Is the action of $D_4$ on the $4$ vertices of the square transitive?'
-            answer: 'Yes: rotations alone carry any vertex to any other.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The rotation subgroup already acts transitively on vertices.'
-          - problem: 'For the conjugation action of $S_3$ on itself, what are the fixed points ($x$ with $g x g^{-1} = x$ for all $g$)?'
-            answer: 'Only $e$ — the center of $S_3$ is trivial.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A global fixed point of conjugation is exactly a central element.'
+          - problem: "The dihedral group $D_4$ acts on the 4 vertices of a square by its natural symmetry action. Determine whether the action has a single orbit, and give the verdict and the number of orbits."
+            answer: "verdict = transitive; orbits = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["intransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "orbits"}]}
+            solution_sketch: "Use the orbit rule: compute the orbit of one point. A quarter-turn rotation sends vertex 1 to 2 to 3 to 4, so the orbit of any vertex is all 4 vertices. There is exactly one orbit, so the action is transitive and the number of orbits is 1. The answer is verdict = transitive; orbits = 1."
+          - problem: "For the conjugation action of $S_3$ on itself, count the fixed points, that is, the elements $x$ with $g x g^{-1} = x$ for every $g$ in $S_3$. Give the number of fixed points."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the fixed-point rule: a fixed point of conjugation is exactly a central element. Check each type in $S_3$: $e$ commutes with all; the transposition $(12)$ conjugated by $(23)$ gives $(13)$, so it moves; conjugating $(123)$ by $(12)$ gives its inverse $(132)$, so it moves. Only $e$ is central, so the number of fixed points is 1."
+          - problem: "Consider the conjugation action of $D_4$ on itself, where $D_4 = \\{e, r, r^2, r^3, s, rs, r^2s, r^3s\\}$. Count the elements $x$ with $g x g^{-1} = x$ for every $g$ in $D_4$. Give the number of fixed points."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the fixed-point rule: the fixed points of conjugation form the center of the group. In $D_4$, the half-turn $r^2$ commutes with every rotation and with every reflection since $s r^2 s = r^{-2} = r^2$, while $r$ does not commute with $s$. The center is $\\{e, r^2\\}$, so the number of fixed points is 2."
+          - problem: "The group $S_3$ acts on itself by conjugation. Decide whether this action has a single orbit, and give the verdict and the number of orbits."
+            answer: "verdict = intransitive; orbits = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["intransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "orbits"}]}
+            solution_sketch: "Use the orbit rule: the orbits of the conjugation action are the conjugacy classes. The classes in $S_3$ are $\\{e\\}$, the three transpositions, and the two 3-cycles, so there are 3 orbits. Since more than one orbit exists, the verdict is intransitive; the answer is verdict = intransitive; orbits = 3."
+          - problem: "Let $H = \\{e, (123), (132)\\}$, a cyclic subgroup of $S_3$, act on the set $\\{1, 2, 3\\}$. State whether the action has a single orbit, and give the verdict and the number of orbits."
+            answer: "verdict = transitive; orbits = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["transitive"], ["intransitive"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "orbits"}]}
+            solution_sketch: "Use the orbit rule: compute the orbit of a point. The element $(123)$ sends 1 to 2 and $(132)$ sends 1 to 3, so the orbit of 1 is $\\{1, 2, 3\\}$, the whole set. A single orbit means the action is transitive; the answer is verdict = transitive; orbits = 1."
+          - problem: "$D_4$ acts on the 4 vertices of a square. Count the fixed points of the action, that is, the vertices $v$ with $g v = v$ for every $g$ in $D_4$. Give the number of fixed points."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Use the fixed-point rule: a fixed point of the action must be fixed by every group element, in particular by the quarter-turn $r$. The rotation $r$ sends vertex 1 to vertex 2, so no vertex is fixed by $r$. Hence no vertex is fixed by all of $D_4$; the number of fixed points is 0."
         constraints: "transitivity verdicts; fixed points of conjugation = center"
     diagnostic_exemplar:
       problem: '$D_4$ acts on the four vertices $1, 2, 3, 4$ of a square (labelled counterclockwise). Find the orbit and the stabilizer of vertex $1$, and say whether the action is transitive.'
@@ -245,14 +261,30 @@ topics:
         name: "Statement and the coset bijection"
         key_prerequisites: [orbits-stabilizers, lagranges-theorem]
         exemplars:
-          - problem: 'State the orbit-stabilizer theorem for a finite group $G$ acting on $X$.'
-            answer: '$|G| = |\mathrm{Orb}(x)| \cdot |\mathrm{Stab}(x)|$ for every $x \in X$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Cosets $g\,\mathrm{Stab}(x)$ biject with orbit points $g \cdot x$: same coset iff same image point.'
-          - problem: 'In the bijection between $G/\mathrm{Stab}(x)$ and $\mathrm{Orb}(x)$, why do $g$ and $gh$ ($h \in \mathrm{Stab}(x)$) hit the same point?'
-            answer: '$(gh)\cdot x = g \cdot (h \cdot x) = g \cdot x$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Stabilizer elements act trivially on $x$ before $g$ is applied.'
+          - problem: "For a finite group G acting on a set X, which equation is the orbit-stabilizer theorem? Select the correct equation."
+            answer: "|G| = |Orb(x)| * |Stab(x)|"
+            answer_contract: {"kind": "label", "options": [["|G| = |Orb(x)| * |Stab(x)|"], ["|Orb(x)| = |G| * |Stab(x)|"], ["|Stab(x)| = |G| * |Orb(x)|"], ["|G| = |Orb(x)| + |Stab(x)|"]]}
+            solution_sketch: "The full theorem says that for every x in X, the group order factors as |G| = |Orb(x)| * |Stab(x)|. The option |Orb(x)| = |G| * |Stab(x)| is wrong because it multiplies instead of dividing by |Stab(x)|; the option |Stab(x)| = |G| * |Orb(x)| is wrong because it multiplies instead of dividing by |Orb(x)|; the option |G| = |Orb(x)| + |Stab(x)| is wrong because the theorem uses a product, not a sum. Therefore the correct equation is |G| = |Orb(x)| * |Stab(x)|."
+          - problem: "Let G act on a set X, let x be in X, and let h be in Stab(x). Which equality shows that the cosets g Stab(x) and gh Stab(x) map to the same orbit point? Select the correct equality."
+            answer: "(gh).x = g.x"
+            answer_contract: {"kind": "label", "options": [["(gh).x = g.x"], ["g.x = h.x"], ["(gh).x = h.x"], ["g.x = x"]]}
+            solution_sketch: "The full computation uses the action axiom: (gh).x = g.(h.x). Because h lies in Stab(x), h.x = x, so g.(h.x) = g.x; the option g.x = h.x is wrong because h fixes x and does not generally equal g; the option (gh).x = h.x is wrong because g still acts after h; the option g.x = x is wrong because g need not fix x. Thus the equality is (gh).x = g.x."
+          - problem: "A finite group G of order 24 acts on a set X. For a point x, the stabilizer has order 6. Find the size of the orbit of x."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a finite group G of order 24 acting on X with |Stab(x)| = 6. By the orbit-stabilizer theorem, |G| = |Orb(x)| * |Stab(x)|. Substitute: 24 = |Orb(x)| * 6. Divide both sides by 6, so |Orb(x)| = 4."
+          - problem: "A finite group G of order 30 acts on a set X. The orbit of a point x has size 5. Find the order of the stabilizer of x."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a finite group G of order 30 acting on X with |Orb(x)| = 5. By the orbit-stabilizer theorem, |G| = |Orb(x)| * |Stab(x)|. Substitute: 30 = 5 * |Stab(x)|. Divide both sides by 5, so |Stab(x)| = 6."
+          - problem: "A finite group G of order 45 acts on a set X. The stabilizer of a point x has order 5. Find the number of cosets of the stabilizer of x."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is the coset space G/Stab(x) for a group of order 45 with |Stab(x)| = 5. The coset bijection identifies G/Stab(x) with Orb(x), so the number of cosets is |G|/|Stab(x)|. Substitute: 45/5 = 9. Thus the number of cosets is 9."
+          - problem: "A finite group G of order 40 acts on a set X. The stabilizer of a point x has order 5. Determine how many elements lie in the orbit of x."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full object is a finite group G of order 40 acting on X with |Stab(x)| = 5. The orbit-stabilizer theorem states |G| = |Orb(x)| * |Stab(x)|. Substitute: 40 = |Orb(x)| * 5. Divide both sides by 5, so |Orb(x)| = 8."
         constraints: "statement plus one step of the bijection proof"
       - id: kp2
         name: "Numerical applications"
@@ -264,6 +296,22 @@ topics:
           - problem: 'The rotation group of the cube acts transitively on its $6$ faces, and the stabilizer of a face has order $4$. Find the order of the rotation group.'
             answer: "24"
             solution_sketch: '$|G| = 6 \cdot 4 = 24$.'
+          - problem: "The full symmetry group of a regular pentagon has order $10$ and acts on its $5$ vertices. What is the order of the stabilizer of a vertex?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The action is transitive, so the orbit of a vertex is all $5$ vertices. Orbit-stabilizer gives $|\\mathrm{Stab}| = |G|/|\\mathrm{Orb}| = 10/5$. The stabilizer consists of the identity and the reflection through that vertex, so the order is 2."
+          - problem: "The full symmetry group of the cube, including reflections, acts transitively on the $6$ faces, and the stabilizer of a face has order $8$. Find the order of the full symmetry group."
+            answer: "48"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Orbit-stabilizer states $|G| = |\\mathrm{Orb}| \\cdot |\\mathrm{Stab}|$ for any point of the action. Here the orbit of a face has $6$ points and the stabilizer has order $8$. Multiplying gives $6 \\cdot 8 = 48$, so the order of the group is 48."
+          - problem: "The rotation group of the cube has order $24$ and acts on the $8$ vertices, and the stabilizer of a vertex has order $3$. Find the size of the orbit of a vertex."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Orbit-stabilizer gives $|\\mathrm{Orb}| = |G|/|\\mathrm{Stab}|$. With $|G| = 24$ and stabilizer order $3$, the orbit size is $24/3$. Each rotation sending a vertex to a target vertex is counted, so the orbit has 8 vertices."
+          - problem: "The full symmetry group of a regular polygon has order $20$ and acts on its vertices, and the stabilizer of a vertex has order $2$. How many vertices does the polygon have?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The action on vertices of a regular polygon is transitive, so the orbit is the full vertex set. Orbit-stabilizer gives the number of vertices as $|\\mathrm{Orb}| = |G|/|\\mathrm{Stab}| = 20/2$. Hence the polygon has 10 vertices."
         constraints: "solve for the missing one of |G|, orbit size, stabilizer size; geometric actions (polygons, cube)"
       - id: kp3
         name: "Conjugacy classes and centralizers"
@@ -372,12 +420,34 @@ topics:
         name: "Left multiplication is a permutation"
         key_prerequisites: [group-actions]
         exemplars:
-          - problem: 'For fixed $g \in G$, prove that $\lambda_g : G \to G$, $\lambda_g(x) = gx$, is a bijection.'
-            answer: '$\lambda_{g^{-1}}$ is a two-sided inverse: $\lambda_{g^{-1}}(\lambda_g(x)) = g^{-1}gx = x$.'
-            solution_sketch: 'Left multiplication by $g^{-1}$ undoes left multiplication by $g$.'
-          - problem: 'For $g \neq e$, show $\lambda_g$ has no fixed points.'
-            answer: '$gx = x$ would give $g = e$ by cancellation.'
-            solution_sketch: 'Cancel $x$ on the right.'
+          - problem: "In the additive group $G = \\mathbb{Z}_6$, let $\\lambda_2(x) = 2 + x$. The inverse map of $\\lambda_2$ is $\\lambda_h$ for exactly one element $h$ of $G$. Find $h$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full map is $\\lambda_2: x \\mapsto 2 + x$ on $\\mathbb{Z}_6$. To invert it, compose with $\\lambda_h$ by the inverse-map rule: $\\lambda_h(\\lambda_2(x)) = h + (2 + x) = (h + 2) + x$, which equals $x$ for all $x$ exactly when $h + 2 \\equiv 0$ mod $6$, so $h = 4$. Indeed $\\lambda_4(\\lambda_2(x)) = 4 + 2 + x = 6 + x = x$. The answer is 4."
+          - problem: "In $G = \\mathbb{Z}_5$, let $\\lambda_3(x) = 3 + x$. Determine how many elements $x$ of $G$ satisfy $\\lambda_3(x) = x$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full equation is $3 + x = x$ in $\\mathbb{Z}_5$. By the cancellation rule, subtracting $x$ from both sides gives $3 = 0$ in $\\mathbb{Z}_5$, which is false since $3$ and $0$ are distinct residues. So no element satisfies the equation and $\\lambda_3$ fixes nothing. The answer is 0."
+          - problem: "In $G = \\mathbb{Z}_7$, let $\\lambda_3(x) = 3 + x$, and the maps satisfy $\\lambda_a \\circ \\lambda_b = \\lambda_{a+b}$. Determine the order of the permutation $\\lambda_3$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full map is $\\lambda_3: x \\mapsto 3 + x$ on $\\mathbb{Z}_7$. By the composition rule $\\lambda_a \\circ \\lambda_b = \\lambda_{a+b}$, the $k$-fold composition $\\lambda_3^k$ equals $\\lambda_{3k}$. The identity map is $\\lambda_0$, so we need the smallest $k \\ge 1$ with $3k \\equiv 0$ mod $7$; since $7$ is prime and $3 \\cdot 7 = 21$, this is $k = 7$. The answer is 7."
+          - problem: "Let $g, x, y$ be elements of a group $G$ with $gx = gy$. To prove that the map $\\lambda_g$ is injective one must derive $x = y$. Select the valid next step."
+            answer: "cancel g on the left"
+            answer_contract: {"kind": "label", "options": [["cancel g on the left"], ["cancel x on the right"], ["multiply by g on the right"], ["conclude g = e"]]}
+            solution_sketch: "From the full equation $gx = gy$ one multiplies both sides on the left by $g^{-1}$, which cancels $g$ and gives $x = y$. The option 'cancel x on the right' cancels the wrong element and quietly assumes the goal. The option 'multiply by g on the right' produces $gxg = gyg$, which proves nothing. The option 'conclude g = e' confuses injectivity of $\\lambda_g$ with the fixed-point argument. The answer is cancel g on the left."
+          - problem: "Claim: for $g \\neq e$ in $G$, the map $\\lambda_g$ has no fixed point. Step 1: suppose $gx = x$ for some $x \\in G$. Step 2: multiply both sides of $gx = x$ on the right by $x^{-1}$. Step 3: this gives $g = x^{-1}$. Step 4: hence $g = e$, contradicting $g \\neq e$. Step 5: therefore $\\lambda_g$ has no fixed point. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is a valid supposition for a contradiction argument. Step 2 is a legal move, multiplying on the right by $x^{-1}$. Step 3 is false: from $gx = x$, right multiplication by $x^{-1}$ gives $gxx^{-1} = xx^{-1}$, hence $g = e$ directly, not $g = x^{-1}$. Step 4 would follow only after Step 3 is corrected. Step 5 is the final claim of the argument. The answer is Step 3."
+          - problem: "In $G = \\mathbb{Z}_9$, let $\\lambda_5(x) = 5 + x$. The map $\\lambda_5$ is a bijection, so the equation $\\lambda_5(x) = 2$ has exactly one solution. Solve $\\lambda_5(x) = 2$ in $\\mathbb{Z}_9$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full equation is $5 + x = 2$ in $\\mathbb{Z}_9$. By the cancellation rule, subtract $5$ from both sides: $x \\equiv 2 - 5 \\equiv -3$ mod $9$. Since $-3 + 9 = 6$, the unique solution is $x = 6$, confirming that $\\lambda_5$ is onto. The answer is 6."
+          - problem: "Write the full proof: for a fixed element $g$ of a group $G$, the map $\\lambda_g : G \\to G$ with $\\lambda_g(x) = gx$ is a bijection. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Setup: fix $g \\in G$ and consider $\\lambda_g: G \\to G$, $\\lambda_g(x) = gx$. Step 1, injectivity: suppose $\\lambda_g(x) = \\lambda_g(y)$, that is $gx = gy$. Multiply on the left by $g^{-1}$: $g^{-1}(gx) = g^{-1}(gy)$, so by associativity $(g^{-1}g)x = (g^{-1}g)y$, hence $ey = ey$ gives $x = y$. So $\\lambda_g$ is injective. Step 2, surjectivity: take any $y \\in G$ and set $x = g^{-1}y$. Then $\\lambda_g(x) = g(g^{-1}y) = (gg^{-1})y = ey = y$, so every $y$ has a preimage and $\\lambda_g$ is surjective. Step 3, conclusion: $\\lambda_g$ is both injective and surjective, hence a bijection; equivalently, $\\lambda_{g^{-1}}$ is a two-sided inverse since $\\lambda_{g^{-1}} \\circ \\lambda_g = \\lambda_{g^{-1}g} = \\lambda_e$ is the identity map. This bijection property is exactly what Cayley's theorem uses to view each element $g$ as a permutation of the set $G$."
         constraints: "properties of the left-regular maps lambda_g"
       - id: kp2
         name: "The theorem and its proof"
