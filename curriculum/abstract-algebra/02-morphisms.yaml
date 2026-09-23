@@ -541,12 +541,34 @@ topics:
         name: "The third isomorphism theorem and the correspondence theorem"
         key_prerequisites: [quotient-groups, first-isomorphism-theorem]
         exemplars:
-          - problem: 'State the third isomorphism theorem, and use it to identify $(\mathbb{Z}/12\mathbb{Z})\,/\,(4\mathbb{Z}/12\mathbb{Z})$.'
-            answer: 'For $N \le K$ both normal in $G$: $(G/N)/(K/N) \cong G/K$ — the common $N$ cancels. Here $G = \mathbb{Z}$, $N = 12\mathbb{Z}$, $K = 4\mathbb{Z}$: the quotient is $\mathbb{Z}/4\mathbb{Z} \cong \mathbb{Z}_4$.'
-            solution_sketch: 'Apply the cancellation statement directly; no element computation needed.'
-          - problem: 'State the correspondence theorem for $G/N$, and use it to count the subgroups of $\mathbb{Z}_{12} = \mathbb{Z}/12\mathbb{Z}$.'
-            answer: 'Subgroups of $G/N$ correspond bijectively to subgroups of $G$ containing $N$ (via $H \mapsto H/N$), and the correspondence preserves normality, indices, and containment. Subgroups of $\mathbb{Z}$ containing $12\mathbb{Z}$ are the $d\mathbb{Z}$ with $d \mid 12$: $d \in \{1, 2, 3, 4, 6, 12\}$, so $\mathbb{Z}_{12}$ has $6$ subgroups.'
-            solution_sketch: 'Every subgroup of $\mathbb{Z}$ is $d\mathbb{Z}$; containing $12\mathbb{Z}$ means $d \mid 12$; count divisors.'
+          - problem: "The third isomorphism theorem states that for normal subgroups N and K of G with N contained in K, the quotient (G/N)/(K/N) is isomorphic to G/K. Take G = Z with N = 16Z and K = 4Z, so K/N is the subgroup 4Z/16Z of Z/16Z. The quotient (Z/16Z)/(4Z/16Z) is isomorphic to Z_m for one integer m. Find m."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: third isomorphism theorem identification. The full object is (Z/16Z)/(4Z/16Z). Step 1: state the theorem: for N contained in K both normal in G, (G/N)/(K/N) is isomorphic to G/K. Step 2: match G = Z, N = 16Z, K = 4Z; note 16Z is contained in 4Z and both are normal since Z is abelian. Step 3: cancel the common N: the quotient is G/K = Z/4Z, so m is 4. The answer is 4."
+          - problem: "The correspondence theorem says that the subgroups of G/N are exactly the images H/N of the subgroups H of G that contain N, and that the correspondence preserves containment. Every subgroup of Z is dZ for one positive integer d. Give all integers d for which dZ contains 18Z, in increasing order."
+            answer: "1, 2, 3, 6, 9, 18"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Rule: correspondence theorem plus the classification of subgroups of Z. The full object is Z_18 = Z/18Z. Step 1: state the correspondence: subgroups of Z/18Z correspond bijectively to subgroups dZ of Z that contain 18Z. Step 2: dZ contains 18Z exactly when d divides 18. Step 3: write the divisors of 18 in increasing order: 1, 2, 3, 6, 9, 18. The answer is 1, 2, 3, 6, 9, 18."
+          - problem: "For normal subgroups N contained in K of a group G, the third isomorphism theorem cancels the common factor N: (G/N)/(K/N) is isomorphic to G/K. Apply this with G = Z, N = 9Z and K = 3Z, so the quotient (Z/9Z)/(3Z/9Z) is isomorphic to Z_m for one integer m. Determine m."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: third isomorphism theorem identification. The full object is (Z/9Z)/(3Z/9Z). Step 1: the theorem cancels the common normal subgroup: (G/N)/(K/N) is isomorphic to G/K when N is contained in K. Step 2: match G = Z, N = 9Z, K = 3Z; here 9Z is contained in 3Z. Step 3: the quotient is G/K = Z/3Z, so m is 3. The answer is 3."
+          - problem: "The correspondence theorem says that the subgroups of Z_n = Z/nZ correspond bijectively to the subgroups dZ of Z that contain nZ, which happens exactly when d divides n. How many subgroups does Z_20 have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: correspondence theorem with divisor counting. The full object is Z_20 = Z/20Z. Step 1: subgroups of Z_20 correspond bijectively to subgroups dZ of Z that contain 20Z. Step 2: dZ contains 20Z exactly when d divides 20. Step 3: the divisors of 20 are 1, 2, 4, 5, 10, 20, which gives six subgroups. The answer is 6."
+          - problem: "A learner must state the third isomorphism theorem verbatim before applying it to a nested quotient. Four candidate statements are given below, and exactly one of them is the third isomorphism theorem. Select the correct statement of the third isomorphism theorem."
+            answer: "For N and K normal in G with N in K, (G/N)/(K/N) is isomorphic to G/K."
+            answer_contract: {"kind": "label", "options": [["For N and K normal in G with N in K, (G/N)/(K/N) is isomorphic to G/K."], ["For N and K normal in G with N in K, (G/N)/(K/N) is isomorphic to K/N."], ["For N and K normal in G with N in K, G/N is isomorphic to G/K."], ["For N and K normal in G with K in N, (G/N)/(K/N) is isomorphic to G/K."]]}
+            solution_sketch: "Rule: verbatim statement of the third isomorphism theorem. Step 1: recall the cancellation content: with N contained in K both normal in G, the inner factor N cancels and G/K remains. Step 2: compare the candidates. The option ending in isomorphic to K/N names the factored-out subgroup as the image, which is wrong. The option claiming G/N is isomorphic to G/K drops the inner quotient and identifies the wrong pair of groups. The option with K in N reverses the containment, and then K/N is not a subgroup of G/N, so the statement is void. The correct statement is: For N and K normal in G with N in K, (G/N)/(K/N) is isomorphic to G/K."
+          - problem: "In Z_24 = Z/24Z, the subgroup 8Z/24Z consists of the elements 0, 8 and 16. The correspondence theorem says that the subgroups of Z_24 that contain 8Z/24Z correspond to the subgroups dZ of Z that contain 8Z, that is, d divides 8. How many subgroups of Z_24 contain 8Z/24Z?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: correspondence theorem with a containment condition. The full object is Z_24 = Z/24Z with subgroup 8Z/24Z of elements 0, 8, 16. Step 1: the subgroups of Z_24 containing 8Z/24Z correspond to the subgroups of Z containing the preimage 8Z. Step 2: subgroups of Z are dZ, and dZ contains 8Z exactly when d divides 8. Step 3: the divisors of 8 are 1, 2, 4, 8, so four subgroups qualify. The answer is 4."
+          - problem: "Write the full proof: for normal subgroups N and K of the group G with N contained in K, the quotient (G/N)/(K/N) is isomorphic to G/K. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1: state the theorem verbatim, then define the map phi from (G/N)/(K/N) to G/K by phi((gN)(K/N)) = gK for each coset gN of N in G. Step 2: check well defined: if (gN)(K/N) = (hN)(K/N), then h^(-1)g lies in N, and N contained in K gives h^(-1)g in K, so gK = hK. Step 3: check the homomorphism property: phi((ghN)(K/N)) = ghK = (gK)(hK), so phi respects the group operation. Step 4: check surjectivity: every coset gK of K in G equals phi((gN)(K/N)). Step 5: compute the kernel: phi((gN)(K/N)) = K exactly when g lies in K, so the kernel is K/N. Step 6: apply the first isomorphism theorem to conclude that (G/N)/(K/N) is isomorphic to G/K."
         constraints: "third-theorem identifications in Z and Z_n (n <= 24); correspondence used to count or list subgroups of Z_n via divisors; statements expected verbatim before use"
       - id: kp3
         name: "The first isomorphism theorem for rings"

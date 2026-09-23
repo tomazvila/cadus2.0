@@ -450,14 +450,30 @@ topics:
         name: "Structural conclusions from Sylow counting"
         key_prerequisites: [cauchys-theorem, normal-subgroups]
         exemplars:
-          - problem: 'Prove that every group of order $35$ is cyclic.'
-            answer: '$n_5 \mid 7$, $n_5 \equiv 1 \pmod 5$ forces $n_5 = 1$; $n_7 \mid 5$, $n_7 \equiv 1 \pmod 7$ forces $n_7 = 1$. The unique Sylow subgroups $P, Q$ are normal, intersect trivially ($\gcd(5,7)=1$), and $|PQ| = 35$, so $G \cong P \times Q \cong \mathbb{Z}_5 \times \mathbb{Z}_7 \cong \mathbb{Z}_{35}$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Both Sylow counts collapse to $1$; the internal-direct-product recognition and $\mathbb{Z}_5 \times \mathbb{Z}_7 \cong \mathbb{Z}_{35}$ (coprime orders) finish it.'
-          - problem: 'Show that no group of order $20$ is simple.'
-            answer: '$n_5 \mid 4$ and $n_5 \equiv 1 \pmod 5$ force $n_5 = 1$, so the Sylow $5$-subgroup is a normal subgroup with $1 < 5 < 20$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A forced unique Sylow subgroup is a proper nontrivial normal subgroup.'
+          - problem: "Let G be a group of order 15. Sylow counting shows that each Sylow subgroup of G is unique, hence normal. Give the orders of the normal Sylow subgroups of G as a list in increasing order."
+            answer: "3, 5"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Let |G| = 15 = 3 times 5. Sylow counting for p = 3: n_3 divides 5 and n_3 is congruent to 1 modulo 3, so n_3 = 1. Sylow counting for p = 5: n_5 divides 3 and n_5 is congruent to 1 modulo 5, so n_5 = 1. A Sylow subgroup with a unique count is normal, so the normal Sylow subgroups have orders 3 and 5. In increasing order the list is 3, 5."
+          - problem: "Let G be a group of order 33. Use Sylow counting to decide which Sylow subgroups of G are forced to be normal. Give the orders of the normal Sylow subgroups as a list in increasing order."
+            answer: "3, 11"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Let |G| = 33 = 3 times 11. Sylow counting for p = 11: n_11 divides 3 and n_11 is congruent to 1 modulo 11, so n_11 = 1. Sylow counting for p = 3: n_3 divides 11 and n_3 is congruent to 1 modulo 3; the divisor 11 is 2 modulo 3, so n_3 = 1. Both Sylow subgroups are unique and hence normal. The orders in increasing order are 3, 11."
+          - problem: "Let G be a group of order 20. Use Sylow counting for the prime 5 to conclude that G is not simple. Compute n_5, and give the order of the proper nontrivial normal subgroup you obtain, writing the answer as n5 = a; order = b."
+            answer: "n5 = 1; order = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "n5"}, {"contract": {"kind": "exact"}, "name": "order"}]}
+            solution_sketch: "Write |G| = 20 = 2^2 times 5. Sylow counting for p = 5: n_5 divides 4 and n_5 is congruent to 1 modulo 5; among the divisors 1, 2, 4 only 1 is congruent to 1 modulo 5, so n_5 = 1. A Sylow subgroup that occurs once is normal, and it is proper and nontrivial, so G is not simple. The answer is n5 = 1; order = 5."
+          - problem: "Let G be a group of order 45, whose Sylow 3-subgroups have order 9. Apply Sylow counting to the primes 3 and 5. Find every Sylow subgroup that must be normal, and give the orders as a list in increasing order."
+            answer: "5, 9"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Let |G| = 45 = 3^2 times 5. Sylow counting for p = 3: n_3 divides 5 and n_3 is congruent to 1 modulo 3; the divisor 5 is 2 modulo 3, so n_3 = 1 and the Sylow 3-subgroup has order 9. Sylow counting for p = 5: n_5 divides 9 and n_5 is congruent to 1 modulo 5; the divisors 3 and 9 are 3 and 4 modulo 5, so n_5 = 1. Both Sylow subgroups are unique, hence normal. In increasing order their orders are 5, 9."
+          - problem: "Let G be a group of order 75, so the Sylow 5-subgroups of G have order 25. Sylow counting for the prime 5 forces a single value of n_5. Compute n_5 and give the order of the resulting normal subgroup, writing the answer as n5 = a; order = b."
+            answer: "n5 = 1; order = 25"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "n5"}, {"contract": {"kind": "exact"}, "name": "order"}]}
+            solution_sketch: "Write |G| = 75 = 3 times 5^2. Sylow counting for p = 5: n_5 divides 3 and n_5 is congruent to 1 modulo 5; the divisors 1 and 3 are 1 and 3 modulo 5, so n_5 = 1. The unique Sylow 5-subgroup of order 25 is therefore normal. The answer is n5 = 1; order = 25."
+          - problem: "Let G be a group of order 28. Apply Sylow counting to the prime 7 to determine n_7. Find n_7 and give the order of the normal subgroup that this unique count produces, writing the answer as n7 = a; order = b."
+            answer: "n7 = 1; order = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "n7"}, {"contract": {"kind": "exact"}, "name": "order"}]}
+            solution_sketch: "Write |G| = 28 = 2^2 times 7. Sylow counting for p = 7: n_7 divides 4 and n_7 is congruent to 1 modulo 7; among the divisors 1, 2, 4 only 1 is congruent to 1 modulo 7, so n_7 = 1. The unique Sylow 7-subgroup of order 7 is a proper nontrivial normal subgroup, so G is not simple. The answer is n7 = 1; order = 7."
         constraints: "orders pq or p^2 q with p, q <= 11; the internal-direct-product recognition step may be quoted after one worked instance"
     diagnostic_exemplar:
       problem: 'Let $|G| = 20$. Give the order of a Sylow $5$-subgroup, determine $n_5$, and deduce that $G$ has a normal subgroup of order $5$.'
