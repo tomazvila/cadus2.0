@@ -955,18 +955,50 @@ topics:
             answer: "[1/2,0;0,1/5]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: 'Invert each diagonal entry; verify the product is $I$.'
+          - problem: "Find $A^{-1}$ for $A = \\begin{pmatrix}2&3\\\\4&5\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[-5/2,3/2;2,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Determinant rule: $ad - bc = 2 \\cdot 5 - 3 \\cdot 4 = 10 - 12 = -2$. Adjugate rule: swap $2$ and $5$, negate $3$ and $4$, giving $\\begin{pmatrix}5&-3\\\\-4&2\\end{pmatrix}$. Division rule: divide every entry by $-2$. The inverse is [-5/2,3/2;2,-1]."
+          - problem: "Find $A^{-1}$ for $A = \\begin{pmatrix}4&3\\\\6&5\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[5/2,-3/2;-3,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Determinant rule: $ad - bc = 4 \\cdot 5 - 3 \\cdot 6 = 20 - 18 = 2$. Adjugate rule: swap $4$ and $5$, negate $3$ and $6$, giving $\\begin{pmatrix}5&-3\\\\-6&4\\end{pmatrix}$. Division rule: divide each entry by $2$. The inverse is [5/2,-3/2;-3,2]."
+          - problem: "Find $D^{-1}$ for the diagonal matrix $D = \\begin{pmatrix}3&0\\\\0&4\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[1/3,0;0,1/4]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Diagonal-inverse rule: both diagonal entries are nonzero, so invert each one and keep the off-diagonal zeros. Replace $3$ by $1/3$ and $4$ by $1/4$. Check with matrix multiplication: $D D^{-1}$ gives the identity matrix. The inverse is [1/3,0;0,1/4]."
+          - problem: "Find $A^{-1}$ for the upper triangular matrix $A = \\begin{pmatrix}2&1\\\\0&1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[1/2,-1/2;0,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Determinant rule: $ad - bc = 2 \\cdot 1 - 1 \\cdot 0 = 2$. Adjugate rule: swap $2$ and $1$, negate $1$ and $0$, giving $\\begin{pmatrix}1&-1\\\\0&2\\end{pmatrix}$. Division rule: divide each entry by $2$. The inverse is [1/2,-1/2;0,1]."
         constraints: "ad - bc in {-2, 2} for fraction practice; nonzero diagonal entries"
       - id: kp3
         name: Singularity via the determinant condition
         key_prerequisites: [matrix-multiplication]
         exemplars:
-          - problem: 'Is $\begin{pmatrix}2&4\\1&2\end{pmatrix}$ invertible?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$ad - bc = 4 - 4 = 0$ (the rows are proportional), so no inverse exists.'
           - problem: 'For which $k$ is $\begin{pmatrix}1&k\\2&6\end{pmatrix}$ NOT invertible?'
             answer: "k = 3"
             solution_sketch: '$6 - 2k = 0$.'
+          - problem: "Let A be the matrix [3,6;2,4]. Determine whether A has an inverse, and give the value of its determinant ad - bc."
+            answer: "verdict = singular; det = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invertible"], ["singular"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "det"}]}
+            solution_sketch: "Use the determinant test: a 2x2 matrix [a,b;c,d] is singular exactly when ad - bc = 0. For A = [3,6;2,4], the determinant is 3*4 - 6*2 = 12 - 12 = 0. A zero determinant means the rows (3,6) and (2,4) are proportional, so no inverse exists. The option invertible is the error of adding the cross products, 3*4 + 6*2 = 24, instead of subtracting them. So det = 0 and verdict = singular."
+          - problem: "Find the value of k for which the matrix [k,3;4,2] has no inverse."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Write the determinant of the matrix [k,3;4,2]: det = k*2 - 3*4 = 2k - 12. A matrix has no inverse exactly when its determinant is zero, so set 2k - 12 = 0. Solving gives 2k = 12 and k = 6. Thus k = 6."
+          - problem: "The rows of the matrix [k,6;2,3] are proportional. Find the value of k that makes the matrix singular."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Proportional rows give a zero determinant, since ad - bc = 0 encodes proportionality. For [k,6;2,3] the determinant is 3k - 12, so set 3k - 12 = 0. Solving gives 3k = 12 and k = 4. Check: (4,6) = 2*(2,3), so the rows are indeed proportional. Thus k = 4."
+          - problem: "The matrix [5,b;2,-4] is singular. Find the value of b."
+            answer: "-10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the matrix [5,b;2,-4] the determinant is 5*(-4) - b*2 = -20 - 2b. A singular matrix has determinant zero, so solve -20 - 2b = 0. This gives 2b = -20 and b = -10. Thus b = -10."
+          - problem: "Find every value of k for which the matrix [k,4;4,k] has no inverse. Give the answer as a set."
+            answer: "{-4, 4}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Compute the determinant of the matrix [k,4;4,k]: det = k*k - 4*4 = k^2 - 16. The matrix has no inverse when k^2 - 16 = 0, which factors as (k - 4)(k + 4) = 0. Both roots are integers, k = 4 and k = -4. So the answer is the set {-4, 4}."
         constraints: "singularity via proportional rows or ad - bc = 0; integer k answers"
     diagnostic_exemplar:
       problem: 'Find $A^{-1}$ for $A = \begin{pmatrix}4&2\\3&4\end{pmatrix}$, and state the value of $k$ for which $\begin{pmatrix}4&2\\3&k\end{pmatrix}$ would have no inverse.'
@@ -1014,6 +1046,18 @@ topics:
             answer: "[1,0,-1;0,1,0;0,0,1]"
             answer_contract: {"cols":3,"kind":"matrix","rows":3}
             solution_sketch: '$R_1 - R_3$ finishes the reduction; verify $AA^{-1} = I_3$.'
+          - problem: "Use the $[A \\mid I]$ method to find $A^{-1}$ for $A = \\begin{pmatrix}2&3\\\\1&2\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[2,-3;-1,2]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Adjoin the identity: $[\\,2\\ 3 \\mid 1\\ 0;\\ 1\\ 2 \\mid 0\\ 1\\,]$. Step 1: $R_1 - 2R_2$ gives row 1 $[\\,0\\ -1 \\mid 1\\ -2\\,]$; scale by $-1$ and swap so row 1 is the pivot row. Step 2: $R_1 - 2R_2$ clears the $(1,2)$ entry, leaving $[\\,1\\ 0 \\mid 2\\ -3;\\ 0\\ 1 \\mid -1\\ 2\\,]$. The inverse is [2,-3;-1,2]."
+          - problem: "Find the inverse of $A = \\begin{pmatrix}1&0&0\\\\2&1&0\\\\0&3&1\\end{pmatrix}$ by row reducing $[A \\mid I]$. Give the matrix as [a,b;c,d]."
+            answer: "[1,0,0;-2,1,0;6,-3,1]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "Adjoin $I_3$: $[\\,1\\ 0\\ 0 \\mid 1\\ 0\\ 0;\\ 2\\ 1\\ 0 \\mid 0\\ 1\\ 0;\\ 0\\ 3\\ 1 \\mid 0\\ 0\\ 1\\,]$. Step 1: $R_2 - 2R_1$ clears the $(2,1)$ entry, giving $[\\,0\\ 1\\ 0 \\mid -2\\ 1\\ 0\\,]$. Step 2: $R_3 - 3R_2$ with the new row 2 clears the $(3,2)$ entry and fills position $(3,1)$ with $6$, giving $[\\,0\\ 0\\ 1 \\mid 6\\ -3\\ 1\\,]$. The inverse is [1,0,0;-2,1,0;6,-3,1]."
+          - problem: "Use row reduction of $[A \\mid I]$ to compute $A^{-1}$ for $A = \\begin{pmatrix}1&2&0\\\\0&1&3\\\\0&0&1\\end{pmatrix}$. Give the matrix as [a,b;c,d]."
+            answer: "[1,-2,6;0,1,-3;0,0,1]"
+            answer_contract: {"cols": 3, "kind": "matrix", "rows": 3}
+            solution_sketch: "Adjoin $I_3$: $[\\,1\\ 2\\ 0 \\mid 1\\ 0\\ 0;\\ 0\\ 1\\ 3 \\mid 0\\ 1\\ 0;\\ 0\\ 0\\ 1 \\mid 0\\ 0\\ 1\\,]$. Step 1: $R_2 - 3R_3$ clears the $(2,3)$ entry, giving $[\\,0\\ 1\\ 0 \\mid 0\\ 1\\ -3\\,]$. Step 2: $R_1 - 2R_2$ clears the $(1,2)$ entry and produces the fill-in value $6$ in position $(1,3)$ of the right block. The inverse is [1,-2,6;0,1,-3;0,0,1]."
         constraints: "matrices with determinant +-1 so the inverse is integer; 3x3 only when nearly triangular"
       - id: kp2
         name: Solving Ax = b with an inverse
@@ -1025,19 +1069,51 @@ topics:
           - problem: 'Using $A^{-1} = \begin{pmatrix}1&-1\\-2&3\end{pmatrix}$, solve $A\mathbf{x} = (3, 7)$.'
             answer: "x = (-4, 15)"
             solution_sketch: '$\mathbf{x} = A^{-1}\mathbf{b} = (3 - 7, -6 + 21)$.'
+          - problem: "Let $A = \\begin{pmatrix}1&2\\\\3&5\\end{pmatrix}$ with inverse $A^{-1} = \\begin{pmatrix}-5&2\\\\3&-1\\end{pmatrix}$. Solve $A\\mathbf{x} = (4, 7)$ and give the answer as (x, y)."
+            answer: "(-6, 5)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1, inverse multiplication: the solution of $A\\mathbf{x} = \\mathbf{b}$ is $\\mathbf{x} = A^{-1}\\mathbf{b}$. Step 2, compute: $\\begin{pmatrix}-5&2\\\\3&-1\\end{pmatrix}\\begin{pmatrix}4\\\\7\\end{pmatrix} = (-5\\cdot 4 + 2\\cdot 7,\\; 3\\cdot 4 - 1\\cdot 7) = (-6, 5)$. Step 3, check: $A(-6,5) = (-6+10, -18+25) = (4,7)$. The solution is (-6, 5)."
+          - problem: "A shop sells two items: 2 of the first and 1 of the second cost 5 dollars, while 7 of the first and 4 of the second cost 19 dollars. The system is $A\\mathbf{x} = (5, 19)$ with $A = \\begin{pmatrix}2&1\\\\7&4\\end{pmatrix}$ and $A^{-1} = \\begin{pmatrix}4&-1\\\\-7&2\\end{pmatrix}$. Find how many of each item were bought, and give the answer as (first, second)."
+            answer: "(1, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1, form: the unknown vector holds the counts, so $\\mathbf{x} = A^{-1}\\mathbf{b}$ with $\\mathbf{b} = (5, 19)$. Step 2, inverse multiplication: $\\begin{pmatrix}4&-1\\\\-7&2\\end{pmatrix}\\begin{pmatrix}5\\\\19\\end{pmatrix} = (4\\cdot 5 - 19,\\; -7\\cdot 5 + 2\\cdot 19) = (1, 3)$. Step 3, check: $2\\cdot 1 + 1\\cdot 3 = 5$ and $7\\cdot 1 + 4\\cdot 3 = 19$. The counts are (1, 3)."
+          - problem: "For $A = \\begin{pmatrix}3&4\\\\5&7\\end{pmatrix}$, first use the 2x2 inverse formula to build $A^{-1}$, then solve $A\\mathbf{x} = (10, 17)$. Give the solution as (x, y)."
+            answer: "(2, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1, 2x2 inverse formula: $\\det A = 3\\cdot 7 - 4\\cdot 5 = 1$, so $A^{-1} = \\begin{pmatrix}7&-4\\\\-5&3\\end{pmatrix}$. Step 2, inverse multiplication: $\\mathbf{x} = A^{-1}\\mathbf{b} = (7\\cdot 10 - 4\\cdot 17,\\; -5\\cdot 10 + 3\\cdot 17) = (2, 1)$. Step 3, check: $3\\cdot 2 + 4\\cdot 1 = 10$ and $5\\cdot 2 + 7\\cdot 1 = 17$. The solution is (2, 1)."
+          - problem: "Let $A = \\begin{pmatrix}1&1\\\\3&4\\end{pmatrix}$ with $A^{-1} = \\begin{pmatrix}4&-1\\\\-3&1\\end{pmatrix}$. Solve both $A\\mathbf{x} = (5, 16)$ and $A\\mathbf{x} = (9, 28)$ with this one inverse. Give x1 for the first system and x2 for the second, each as (x, y)."
+            answer: "x1 = (4, 1); x2 = (8, 1)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "x1"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "x2"}]}
+            solution_sketch: "Step 1, one inverse serves both systems since $A$ is fixed. Step 2, first system by inverse multiplication: $\\mathbf{x_1} = \\begin{pmatrix}4&-1\\\\-3&1\\end{pmatrix}\\begin{pmatrix}5\\\\16\\end{pmatrix} = (20 - 16,\\; -15 + 16) = (4, 1)$. Step 3, second system: $\\mathbf{x_2} = \\begin{pmatrix}4&-1\\\\-3&1\\end{pmatrix}\\begin{pmatrix}9\\\\28\\end{pmatrix} = (36 - 28,\\; -27 + 28) = (8, 1)$. Step 4, check: $A(4,1) = (5,16)$ and $A(8,1) = (9,28)$. So x1 = (4, 1) and x2 = (8, 1)."
         constraints: "give the inverse or make it integer; solutions with integer coordinates"
       - id: kp3
         name: Non-invertibility and recovering A from its inverse
         key_prerequisites: [matrix-inverse-2x2-formula, row-reduction-echelon-forms]
         exemplars:
-          - problem: 'Row reduce $[A \mid I]$ for $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$. What happens, and what does it mean?'
-            answer: "R2 - 2R1 zeroes out the left half of row 2, so A is not invertible"
-            answer_contract: {kind: none}
-            solution_sketch: 'A zero row appears in the $A$-block, so the left block can never become $I$.'
           - problem: 'If $A^{-1} = \begin{pmatrix}2&1\\1&1\end{pmatrix}$, find $A$.'
             answer: "[1,-1;-1,2]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$A = (A^{-1})^{-1}$; determinant $2 - 1 = 1$, so apply the formula to $A^{-1}$.'
+          - problem: "Row reduce $[A \\mid I]$ for $A = \\begin{pmatrix}2&6\\\\1&3\\end{pmatrix}$. State whether $A$ is invertible or singular, and give the value of $ad - bc$."
+            answer: "verdict = singular; det = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invertible"], ["singular"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "det"}]}
+            solution_sketch: "Form the augmented matrix $[A \\mid I]$ with $A = \\begin{pmatrix}2&6\\\\1&3\\end{pmatrix}$. The rows $(2,6)$ and $(1,3)$ are visibly proportional (row 2 is half of row 1), so the row operation $R2 - \\frac{1}{2}R1$ zeroes out the whole left half of row 2. A zero row in the $A$-block can never become a row of $I$, so the reduction fails and $ad - bc = 6 - 6 = 0$. The answer is verdict = singular; det = 0."
+          - problem: "Row reduce the augmented matrix $[A \\mid I]$ for $A = \\begin{pmatrix}3&5\\\\2&4\\end{pmatrix}$. Determine whether $A$ is invertible or singular, and give the value of $ad - bc$."
+            answer: "verdict = invertible; det = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["invertible"], ["singular"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "det"}]}
+            solution_sketch: "Start from $[A \\mid I]$ with $A = \\begin{pmatrix}3&5\\\\2&4\\end{pmatrix}$. The rows $(3,5)$ and $(2,4)$ are not proportional, so the pivot in the $(2,1)$ position survives: $R2 - \\frac{2}{3}R1$ clears the left block to $I$ without producing a zero row. The left half reduces to the identity, so $A$ is invertible and $ad - bc = 12 - 10 = 2$. The answer is verdict = invertible; det = 2."
+          - problem: "Find the value of $k$ for which $A = \\begin{pmatrix}3&k\\\\6&4\\end{pmatrix}$ has no inverse."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A has no inverse exactly when its rows are proportional, i.e. when $ad - bc = 0$. Compute $ad - bc = 3 \\cdot 4 - 6k = 12 - 6k$. Setting $12 - 6k = 0$ gives $k = 2$; then the rows $(3,2)$ and $(6,4)$ are visibly proportional (row 2 is twice row 1), so $[A \\mid I]$ yields a zero row. The value is $k = 2$."
+          - problem: "The inverse of a matrix $A$ is $A^{-1} = \\begin{pmatrix}2&4\\\\1&3\\end{pmatrix}$. Find $A$. Give the matrix as [a,b;c,d]."
+            answer: "[3/2,-2;-1/2,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Recover $A$ by applying the 2 by 2 inverse formula to $A^{-1} = \\begin{pmatrix}2&4\\\\1&3\\end{pmatrix}$, since $A = (A^{-1})^{-1}$. Determinant: $2 \\cdot 3 - 4 \\cdot 1 = 2$. Swap the diagonal entries $2$ and $3$, change the sign of $4$ and $1$ to get $\\begin{pmatrix}3&-4\\\\-1&2\\end{pmatrix}$, then divide each entry by $2$: $\\begin{pmatrix}3/2&-2\\\\-1/2&1\\end{pmatrix}$. Check: $A A^{-1} = I$. The answer is [3/2,-2;-1/2,1]."
+          - problem: "A matrix $A$ has $A^{-1} = \\begin{pmatrix}1&3\\\\2&5\\end{pmatrix}$. Find $A$, giving the matrix as [a,b;c,d]."
+            answer: "[-5,3;2,-1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Apply the 2 by 2 inverse formula to $A^{-1} = \\begin{pmatrix}1&3\\\\2&5\\end{pmatrix}$ to recover $A = (A^{-1})^{-1}$. Determinant: $1 \\cdot 5 - 3 \\cdot 2 = -1$. Swap the diagonal entries $1$ and $5$, change the sign of $3$ and $2$: $\\begin{pmatrix}5&-3\\\\-2&1\\end{pmatrix}$. Divide each entry by $-1$ to flip every sign: $\\begin{pmatrix}-5&3\\\\2&-1\\end{pmatrix}$. Check: $A A^{-1} = I$. The answer is [-5,3;2,-1]."
         constraints: "singular examples have visibly proportional rows"
     diagnostic_exemplar:
       problem: 'Use the $[A \mid I]$ method to find $A^{-1}$ for $A = \begin{pmatrix}1&3\\2&7\end{pmatrix}$, then use it to solve $A\mathbf{x} = (4, 9)$.'
@@ -1071,14 +1147,30 @@ topics:
         name: Linear matrix equations with addition and scalars
         key_prerequisites: [matrix-operations]
         exemplars:
-          - problem: 'Solve $X + 2A = B$ for $X$, given $A = \begin{pmatrix}1&0\\2&1\end{pmatrix}$ and $B = \begin{pmatrix}3&4\\5&6\end{pmatrix}$.'
-            answer: '$X = \begin{pmatrix}1&4\\1&4\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$X = B - 2A = \begin{pmatrix}3-2&4-0\\5-4&6-2\end{pmatrix}$.'
-          - problem: 'Solve $2X = \begin{pmatrix}4&6\\0&2\end{pmatrix}$.'
-            answer: '$X = \begin{pmatrix}2&3\\0&1\end{pmatrix}$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiply both sides by $\frac{1}{2}$ entrywise: $X = \begin{pmatrix}2&3\\0&1\end{pmatrix}$.'
+          - problem: "Solve X + 2A = B for X, given A = [2,1;0,3] and B = [7,5;4,9]. Give X as [a,b;c,d]."
+            answer: "[3,3;4,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: Isolate X by subtracting 2A from both sides, using the matrix addition property. Step 2: Compute the scalar multiple 2A = [4,2;0,6] entrywise. Step 3: Subtract entrywise: [7-4,5-2;4-0,9-6] = [3,3;4,3]. Therefore X = [3,3;4,3]."
+          - problem: "Solve 2X = [8,6;4,10] for X. Give X as [a,b;c,d]."
+            answer: "[4,3;2,5]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: Divide both sides by the scalar 2, which acts entrywise. Step 2: Halve each entry of [8,6;4,10] to get [4,3;2,5]. Therefore X = [4,3;2,5]."
+          - problem: "Solve 3X + A = B for X, given A = [1,1;2,0] and B = [7,4;5,3]. Give X as [a,b;c,d]."
+            answer: "[2,1;1,1]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: Isolate 3X by subtracting A from both sides: 3X = B - A. Step 2: Compute B - A entrywise: [7-1,4-1;5-2,3-0] = [6,3;3,3]. Step 3: Divide each entry by 3: [2,1;1,1]. Therefore X = [2,1;1,1]."
+          - problem: "Solve 2X + A = B for X, given A = [1,3;5,7] and B = [9,7;11,13]. Give X as [a,b;c,d]."
+            answer: "[4,2;3,3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: Subtract A from both sides: 2X = B - A. Step 2: Compute B - A entrywise: [9-1,7-3;11-5,13-7] = [8,4;6,6]. Step 3: Halve each even entry: [4,2;3,3]. Therefore X = [4,2;3,3]."
+          - problem: "The equation X + cA = B holds with X = [2,1;0,4], A = [1,2;3,1] and B = [5,7;9,7]. Find the scalar c."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Subtract X from both sides: cA = B - X. Step 2: Compute B - X entrywise: [5-2,7-1;9-0,7-4] = [3,6;9,3]. Step 3: Compare with A = [1,2;3,1]; each entry is multiplied by 3, so c = 3. Therefore the scalar is 3."
+          - problem: "Solve A + X = 2B for X, given A = [3,1;0,2] and B = [4,5;1,3]. Give X as [a,b;c,d]."
+            answer: "[5,9;2,4]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Step 1: Compute the scalar multiple 2B entrywise: [8,10;2,6]. Step 2: Subtract A from both sides: X = 2B - A. Step 3: Entrywise subtraction: [8-3,10-1;2-0,6-2] = [5,9;2,4]. Therefore X = [5,9;2,4]."
         constraints: "entrywise algebra only; even entries where halving occurs"
       - id: kp2
         name: Solving AX = B with an inverse
