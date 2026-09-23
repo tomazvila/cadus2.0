@@ -70,14 +70,30 @@ topics:
         name: "Basic consequences: 0-multiplication, negatives"
         key_prerequisites: [elementary-group-properties, distributive-property]
         exemplars:
-          - problem: 'Prove that $a \cdot 0 = 0$ in any ring.'
-            answer: '$a\cdot 0 = a(0+0) = a\cdot 0 + a\cdot 0$; subtract $a \cdot 0$ from both sides.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Distribute over $0 = 0 + 0$ and cancel in the additive group.'
-          - problem: 'Prove that $(-a)b = -(ab)$.'
-            answer: '$ab + (-a)b = (a + (-a))b = 0\cdot b = 0$, so $(-a)b$ is the additive inverse of $ab$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Distribute $(a + (-a))b$ and use uniqueness of additive inverses.'
+          - problem: "In the ring $\\mathbb{Z}_{12}$, use the identity $(-a)\\cdot b = -(a\\cdot b)$ to compute $(-5)\\cdot 8$ as the least nonnegative residue. What is $(-5)\\cdot 8$ in $\\mathbb{Z}_{12}$?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "First compute $5\\cdot 8 = 40$ and reduce: $40 \\equiv 4$ in $\\mathbb{Z}_{12}$. The negative rule $(-a)b = -(ab)$ gives $(-5)\\cdot 8 = -(40) \\equiv -4$. Adding the modulus, $-4 + 12 = 8$. The answer is 8."
+          - problem: "In the ring $\\mathbb{Z}_{9}$, use $a\\cdot 0 = 0$ and the distributive property to simplify $6\\cdot 0 + 6\\cdot 4$ to its least nonnegative residue. What is $6\\cdot 0 + 6\\cdot 4$ in $\\mathbb{Z}_{9}$?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The zero product rule $a\\cdot 0 = 0$ gives $6\\cdot 0 = 0$. The distributive property then combines the terms: $6\\cdot 0 + 6\\cdot 4 = 6(0 + 4) = 24$, and $24 \\equiv 6$ in $\\mathbb{Z}_{9}$. The answer is 6."
+          - problem: "In $\\mathbb{Z}_{11}$ suppose $a\\cdot b = 4$. Use the identity $(-a)\\cdot b = -(a\\cdot b)$ to find $(-a)\\cdot b$ as the least nonnegative residue. Find $(-a)\\cdot b$ in $\\mathbb{Z}_{11}$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The negative rule gives $(-a)\\cdot b = -(a\\cdot b) = -4$. The least nonnegative residue of $-4$ in $\\mathbb{Z}_{11}$ is $-4 + 11 = 7$. The answer is 7."
+          - problem: "In $\\mathbb{Z}_{7}$, use the two-line consequence $(-a)(-b) = -(a(-b)) = a\\cdot b$ to compute $(-3)(-4)$ as the least nonnegative residue. What is $(-3)(-4)$ in $\\mathbb{Z}_{7}$?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the negative rule twice: $(-3)(-4) = -(3\\cdot(-4)) = -(-(3\\cdot 4))$, so the value equals $3\\cdot 4$. Then $3\\cdot 4 = 12 \\equiv 5$ in $\\mathbb{Z}_{7}$. The answer is 5."
+          - problem: "In $\\mathbb{Z}_{10}$ with $a = 4$ and $b = 7$, check the identity $a\\cdot(-b) = -(a\\cdot b)$ by computing each side as its least nonnegative residue. Give both residues as (left side, right side)."
+            answer: "(2, 2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Left side: $4\\cdot(-7) = -(4\\cdot 7) = -(28)$ by $a(-b) = -(ab)$; since $28 \\equiv 8$ in $\\mathbb{Z}_{10}$, this is $-8 \\equiv 2$. Right side: $4\\cdot 7 = 28 \\equiv 8$, so $-(4\\cdot 7) \\equiv 2$. Both sides agree, giving the pair (2, 2). The answer is (2, 2)."
+          - problem: "The proof that $(-a)\\cdot b = -(a\\cdot b)$ contains the line $a\\cdot b + (-a)\\cdot b = (a + (-a))\\cdot b$. Which axiom of a ring justifies this line?"
+            answer: "distributive property"
+            answer_contract: {"kind": "label", "options": [["distributive property"], ["associativity of multiplication"], ["commutativity of addition"], ["existence of additive inverses"]]}
+            solution_sketch: "Factoring $b$ out of $a\\cdot b + (-a)\\cdot b$ is the distributive property read right to left. The option 'associativity of multiplication' is wrong because no factors are regrouped in this step. The option 'commutativity of addition' is wrong because the two terms are not swapped here. The option 'existence of additive inverses' is wrong because inverses are used only in the next step, where $a + (-a) = 0$. The axiom is the distributive property."
         constraints: "two-line consequences of distributivity; cite each axiom used"
     diagnostic_exemplar:
       problem: 'Prove that $(-a)b = -(ab)$ in any ring $R$, naming the axioms you use, and illustrate the identity in $\mathbb{Z}_{10}$ with $a = 3$, $b = 7$.'
@@ -120,6 +136,22 @@ topics:
           - problem: 'List the units of $\mathbb{Z}_6$.'
             answer: '$1, 5$'
             solution_sketch: 'Units are the residues coprime to $6$; every nonzero element of $\mathbb{Z}_n$ is a unit or a zero divisor.'
+          - problem: "In $\\mathbb{Z}_{10}$, a nonzero element $a$ is a zero divisor exactly when $\\gcd(a,10) > 1$. Find all zero divisors of $\\mathbb{Z}_{10}$ and give the answer as a set."
+            answer: "{2, 4, 5, 6, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (zero-divisor criterion): a nonzero residue a in Z_10 is a zero divisor exactly when gcd(a,10) > 1. Step 2 (test residues): checking a = 1 to 9, the numbers sharing a factor with 10 are 2, 4, 5, 6, 8. For example, 2*5 = 10 = 0 and 4*5 = 20 = 0 in Z_10. Step 3 (collect): the zero divisors of Z_10 are {2, 4, 5, 6, 8}."
+          - problem: "In $\\mathbb{Z}_9$, an element $a$ is a unit exactly when $\\gcd(a, 9) = 1$, so every nonzero element is a unit or a zero divisor. Find all units of $\\mathbb{Z}_9$ and give the answer as a set."
+            answer: "{1, 2, 4, 5, 7, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (unit criterion): a residue $a$ of $\\mathbb{Z}_9$ is a unit exactly when $\\gcd(a, 9) = 1$. Step 2 (test residues): checking $a = 1$ to $8$, the values coprime to 9 are 1, 2, 4, 5, 7, 8; for instance $2 \\cdot 5 = 10 = 1$ in $\\mathbb{Z}_9$, confirming 2 and 5 are units. Step 3 (collect): the excluded residues 3 and 6 have $\\gcd > 1$ with 9. The units of $\\mathbb{Z}_9$ are {1, 2, 4, 5, 7, 8}."
+          - problem: "In $\\mathbb{Z}_{18}$, a nonzero element $a$ is a zero divisor exactly when $\\gcd(a, 18) > 1$, and every nonzero element is a unit or a zero divisor. How many zero divisors does $\\mathbb{Z}_{18}$ have?"
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (criterion): count the nonzero residues of $\\mathbb{Z}_{18}$ that share a factor with 18, since a nonzero $a$ is a zero divisor iff $\\gcd(a, 18) > 1$. Step 2 (list): these are 2, 3, 4, 6, 8, 9, 10, 12, 14, 15, 16, and each pair such as $2 \\cdot 9 = 18 = 0$ confirms the criterion. Step 3 (count): the list has 11 elements. $\\mathbb{Z}_{18}$ has 11 zero divisors."
+          - problem: "Work in $\\mathbb{Z}_{20}$, where a nonzero element $b$ is a zero divisor exactly when $\\gcd(b, 20) > 1$. How many nonzero elements $b$ of $\\mathbb{Z}_{20}$ satisfy $5 \\cdot b = 0$ in $\\mathbb{Z}_{20}$?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (translate the equation): $5 \\cdot b = 0$ in $\\mathbb{Z}_{20}$ means 20 divides $5b$, which holds exactly when 4 divides $b$. Step 2 (list the residues): the nonzero such residues are 4, 8, 12, 16, and each indeed has $\\gcd(b, 20) > 1$, matching the zero-divisor criterion. Step 3 (count): there are 4 elements. The equation $5 \\cdot b = 0$ has 4 nonzero solutions in $\\mathbb{Z}_{20}$."
         constraints: "Z_n for n <= 20; zero divisor iff gcd(a, n) > 1 (a nonzero)"
       - id: kp2
         name: "Integral domains and cancellation"
@@ -316,23 +348,67 @@ topics:
         name: "Ring homomorphisms and their kernels"
         key_prerequisites: [ring-axioms-examples, kernels-images]
         exemplars:
-          - problem: 'Verify that reduction mod $n$, $\varphi : \mathbb{Z} \to \mathbb{Z}_n$, is a ring homomorphism, and find its kernel.'
-            answer: 'It preserves $+$ and $\cdot$ by the rules of modular arithmetic; $\ker \varphi = n\mathbb{Z}$.'
-            solution_sketch: '$(a + b) \bmod n = (a \bmod n + b \bmod n) \bmod n$ and similarly for products; the kernel is the multiples of $n$.'
-          - problem: 'Is $\varphi : \mathbb{Z} \to \mathbb{Z}$, $\varphi(x) = 2x$, a ring homomorphism?'
-            answer: 'No: $\varphi(1 \cdot 1) = 2$ but $\varphi(1)\varphi(1) = 4$.'
-            solution_sketch: 'Additivity holds but multiplicativity fails.'
+          - problem: "Let $\\varphi : \\mathbb{Z} \\to \\mathbb{Z}_5$ send each integer to its remainder mod 5. Compute $\\varphi(14) + \\varphi(3)$ as an element of $\\mathbb{Z}_5$, giving the least nonnegative residue."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule of modular arithmetic: residues add mod 5, so the map preserves addition. Compute $\\varphi(14) = 4$ and $\\varphi(3) = 3$. Then $4 + 3 = 7$, and $7 \\bmod 5 = 2$; this equals $\\varphi(17)$, confirming additivity. The value is 2."
+          - problem: "Let $\\varphi : \\mathbb{Z}_6 \\to \\mathbb{Z}_6$ be given by $\\varphi(x) = 2x$, with both operations read mod 6. Additivity holds, but the map may fail to preserve multiplication. Compute $\\varphi(1) \\cdot \\varphi(1)$ as an element of $\\mathbb{Z}_6$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: read every value mod 6. The full object is $\\varphi(x) = 2x$ on $\\mathbb{Z}_6$. Then $\\varphi(1) = 2$, so $\\varphi(1) \\cdot \\varphi(1) = 2 \\cdot 2 = 4$ in $\\mathbb{Z}_6$. But $\\varphi(1 \\cdot 1) = \\varphi(1) = 2$, and $2 \\neq 4$, so multiplication is not preserved. The computed value is 4."
+          - problem: "Let $\\varphi : \\mathbb{Z}[x] \\to \\mathbb{Z}$ send a polynomial $p$ to $p(2)$; evaluation maps preserve both ring operations. Compute $\\varphi(3x^2 - x + 1)$."
+            answer: "11"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: substitute the point into the polynomial (evaluation homomorphism). The full object is $p(x) = 3x^2 - x + 1$. Then $p(2) = 3 \\cdot 4 - 2 + 1 = 12 - 2 + 1 = 11$. The answer is 11."
+          - problem: "Let $\\varphi : \\mathbb{Z} \\to \\mathbb{Z}_{12}$ be reduction mod 12, so $\\ker \\varphi$ is the set of all multiples of 12. Give the smallest positive integer that lies in $\\ker \\varphi$."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: $\\varphi(a) = 0$ exactly when 12 divides $a$, so the kernel is $12\\mathbb{Z}$. The positive multiples of 12 are 12, 24, 36, and so on. The smallest of these is 12. The answer is 12."
+          - problem: "Claim: $\\varphi : \\mathbb{Z} \\to \\mathbb{Z}$ with $\\varphi(x) = 2x$ is a ring homomorphism. Step 1: $\\varphi(a+b) = 2(a+b) = 2a + 2b$. Step 2: $\\varphi(a) + \\varphi(b) = 2a + 2b$. Step 3: therefore $\\varphi(a+b) = \\varphi(a) + \\varphi(b)$, so additivity holds. Step 4: $\\varphi(ab) = 2ab = \\varphi(a)\\varphi(b)$, so multiplicativity holds. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct expansion of $2(a+b)$. Step 2 computes $\\varphi(a) + \\varphi(b)$ correctly. Step 3 is a valid conclusion from Steps 1 and 2. Step 4 is the first invalid step: $\\varphi(a)\\varphi(b) = 2a \\cdot 2b = 4ab$, which differs from $2ab$ in general, for example $a = b = 1$ gives 4 versus 2. The options Step 1, Step 2 and Step 3 are each true statements, so choosing them skips the failure. The answer is Step 4."
+          - problem: "Let $\\varphi : \\mathbb{Z}[x] \\to \\mathbb{Z}_5$ send a polynomial $p$ to $p(0) \\bmod 5$. Select the description that equals $\\ker \\varphi$."
+            answer: "all polynomials whose constant term is a multiple of 5"
+            answer_contract: {"kind": "label", "options": [["all polynomials whose constant term is a multiple of 5"], ["all constant polynomials"], ["all polynomials with p(5) = 0"], ["all polynomials of even degree"]]}
+            solution_sketch: "Rule: $p \\in \\ker \\varphi$ exactly when $p(0) \\bmod 5 = 0$, that is, the constant term is divisible by 5. Wrong options: 'all constant polynomials' forgets nonconstant polynomials with constant term 0, such as $x$; 'all polynomials with p(5) = 0' confuses evaluation at 5 with reduction mod 5; 'all polynomials of even degree' imposes a condition unrelated to the map. The answer is all polynomials whose constant term is a multiple of 5."
+          - problem: "Write the full proof: the map $\\varphi : \\mathbb{Z} \\to \\mathbb{Z}_7$ given by reduction mod 7 is a ring homomorphism with $\\ker \\varphi = 7\\mathbb{Z}$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (well-defined): each integer $a$ has a unique remainder $a \\bmod 7$ in $\\{0,1,\\dots,6\\}$, so $\\varphi(a)$ is a single element of $\\mathbb{Z}_7$. Step 2 (addition): write $a = 7q + r$ and $b = 7s + t$ with $0 \\le r, t < 7$; then $a + b = 7(q+s) + (r+t)$, and since only $r + t$ can reach 7, $(a+b) \\bmod 7 = (r + t) \\bmod 7 = (a \\bmod 7 + b \\bmod 7) \\bmod 7$, hence $\\varphi(a+b) = \\varphi(a) + \\varphi(b)$. Step 3 (multiplication): $(7q+r)(7s+t) = 7(7qs + qt + rs) + rt$, so $(ab) \\bmod 7 = rt \\bmod 7 = ((a \\bmod 7)(b \\bmod 7)) \\bmod 7$, hence $\\varphi(ab) = \\varphi(a)\\varphi(b)$. Both operations are preserved, so $\\varphi$ is a ring homomorphism. Step 4 (kernel): $\\varphi(a) = 0$ in $\\mathbb{Z}_7$ exactly when 7 divides $a$, so $\\ker \\varphi = \\{a \\in \\mathbb{Z} : 7 \\mid a\\} = 7\\mathbb{Z}$, which is an ideal of $\\mathbb{Z}$."
         constraints: "verify both operations; evaluation and reduction maps; one failing example per set"
       - id: kp2
         name: "Ideals and the absorption property"
         key_prerequisites: [ring-axioms-examples]
         exemplars:
-          - problem: 'Prove that $n\mathbb{Z}$ is an ideal of $\mathbb{Z}$.'
-            answer: 'It is an additive subgroup, and $r \cdot nk = n(rk) \in n\mathbb{Z}$ for any $r \in \mathbb{Z}$ — absorption holds.'
-            solution_sketch: 'Subgroup test plus the absorption check $rI \subseteq I$.'
-          - problem: 'Is $\mathbb{Z}$ an ideal of $\mathbb{Q}$?'
-            answer: 'No: $\tfrac12 \cdot 1 = \tfrac12 \notin \mathbb{Z}$, so absorption fails (it is only a subring).'
-            solution_sketch: 'Ideals must absorb multiplication by every ring element, including fractions.'
+          - problem: "Let I = 6Z in Z. For r = 4 and x = 18, compute the product r x that the absorption test checks. Give the product as an integer."
+            answer: "72"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The absorption test for an ideal requires r x in I for every r in Z and x in I. Step 2: Here x = 18 = 6 times 3, so x is in 6Z. Step 3: Multiply r = 4 and x = 18 to get 72. The answer is 72."
+          - problem: "In Q, take I = Z, r = 1/2, and z = 1. Compute the product r z that tests absorption. Give the value as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: Z is a subring of Q, but absorption needs r z in Z for every r in Q and z in Z. Step 2: Take r = 1/2 and z = 1. The product is 1/2. Step 3: Since 1/2 is not an integer, it is not in Z, so absorption fails. The answer is 1/2."
+          - problem: "In Z, let I = 12Z, and take r = 5 with x = 36, so x lies in I. The absorption check rewrites the product r x as 12 times an integer q. Give the integer q."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: An element of 12Z has the form 12k, so x = 36 = 12 times 3 is in I. Step 2: The absorption product is r x = 5 times 36, which equals 180. Step 3: Write 180 as 12 times q: q = 180/12 = 15, an integer, so absorption holds here. The answer is 15."
+          - problem: "In Z[x], let I be the set of polynomials whose constant term is even. For f(x) = x^2 + 3x + 4 and g(x) = x + 1, compute the constant term of f(x) g(x). Give the constant term as an integer."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The constant term of a product is the product of the constant terms. Step 2: f has constant term 4 and g has constant term 1. Step 3: Their product is 4 times 1, which equals 4. The answer is 4."
+          - problem: "In Q, let I = Z, r = 1/3, and z = 1. Determine whether I absorbs r z, and give the product r z."
+            answer: "verdict = absent; value = 1/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["present"], ["absent"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1: Absorption for I = Z in Q requires r z in Z for every r in Q and z in Z. Step 2: Here r z = 1/3 times 1 = 1/3. Step 3: Since 1/3 is not an integer, it is not in Z, so absorption fails. The option present is wrong because it would require 1/3 to be in Z. The answer is verdict = absent; value = 1/3."
+          - problem: "Claim: Z is an ideal of Q. Step 1: Z is a subring of Q. Step 2: Z is closed under multiplication of its own elements. Step 3: For every r in Q and z in Z, the product r z is in Z, so Z absorbs multiplication. Step 4: Therefore Z is an ideal of Q. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is true because Z is a subring of Q. Step 2 is true but only concerns products inside Z. Step 3 is false: with r = 1/2 and z = 1, the product r z = 1/2 is not in Z. Step 4 would follow only if Step 3 were true. The answer is Step 3."
+          - problem: "Write the full proof: the set of polynomials in Z[x] with even constant term is an ideal of Z[x]. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Claim: I = the set of polynomials in Z[x] with even constant term is an ideal of Z[x]. Step 1: I is nonempty because 0 has even constant term. Step 2: If f and g are in I, their constant terms are even, so the constant term of f - g is even; hence f - g is in I. Step 3: If f is in I and r is in Z[x], let c be the constant term of f and d the constant term of r. The constant term of r f is c d. Since c is even, c d is even, so r f is in I. Step 4: By Steps 1 to 3, I is an additive subgroup and absorbs multiplication by every ring element, so I is an ideal of Z[x]."
         constraints: "subring vs ideal distinctions; absorption checks in Z, Q, Z[x]"
       - id: kp3
         name: "Principal and generated ideals"
