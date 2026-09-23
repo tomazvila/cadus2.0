@@ -1617,44 +1617,44 @@ topics:
           - problem: 'Quadrilateral $A(0,0)$, $B(4,1)$, $C(6,5)$, $D(2,4)$: the slope of $\overline{AB}$ is $\frac{1}{4}$. What is the slope of $\overline{DC}$ for $D(2,4)$, $C(6,5)$, as a fraction?'
             answer: '1/4'
             solution_sketch: '$m_{DC} = \frac{5-4}{6-2} = \frac{1}{4}$. Equal slopes make $\overline{AB} \parallel \overline{DC}$; together with $\overline{BC} \parallel \overline{AD}$ this proves a parallelogram.'
-          - problem: 'Are the segments through $(0,0),(3,2)$ and through $(1,5),(-3,11)$ perpendicular? The first has slope $\frac{2}{3}$; the second has slope $-\frac{3}{2}$. Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'The slopes multiply to $\frac{2}{3} \cdot (-\frac{3}{2}) = -1$, so the segments are perpendicular.'
           - problem: 'Line $p$ has slope $3$. A line perpendicular to $p$ must have what slope?'
             answer: '-1/3'
             solution_sketch: 'Perpendicular slopes are negative reciprocals: $-\frac{1}{3}$, since $3 \cdot (-\frac{1}{3}) = -1$.'
-          - problem: 'Quadrilateral $P(0,0)$, $Q(2,0)$, $R(2,3)$, $S(0,3)$: the slopes of $\overline{PQ}$ and $\overline{RS}$ are both $0$ and the slopes of $\overline{QR}$ and $\overline{PS}$ are both undefined. What kind of quadrilateral is it: parallelogram, trapezoid with one parallel pair, or kite?'
-            answer: 'parallelogram'
-            answer_contract: {kind: label, options: [[parallelogram], ['trapezoid with one parallel pair'], [kite]]}
-            solution_sketch: 'Both pairs of opposite sides are parallel (equal slopes), so $PQRS$ is a parallelogram (in fact a rectangle).'
-          - problem: 'Line $m$ has slope $2$ and line $n$ has slope $-\frac{1}{2}$. How are the lines related: parallel, perpendicular, or neither?'
-            answer: 'perpendicular'
-            answer_contract: {kind: label, options: [[parallel], [perpendicular], [neither]]}
-            solution_sketch: '$2 \cdot \left(-\frac{1}{2}\right) = -1$: the slopes are negative reciprocals, so the lines are perpendicular.'
+          - problem: "Line $r$ has slope $4$ and line $s$ has slope $\\frac{1}{4}$. Compute the product of the slopes and determine how the lines are related: parallel, perpendicular, or neither. Give the product as a fraction and the verdict as one word."
+            answer: "verdict = neither; product = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["parallel"], ["perpendicular"], ["neither"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "product"}]}
+            solution_sketch: "Full object: two lines with slopes 4 and 1/4. Step 1 (slope test rule): parallel means equal slopes; perpendicular means the slopes are negative reciprocals, so their product is -1. Step 2 (compute the product): 4 · (1/4) = 1. The product is not -1 and the slopes are not equal, so neither relation holds; choosing perpendicular forgets the sign, and choosing parallel ignores that 4 and 1/4 differ. Answer: verdict = neither; product = 1."
+          - problem: "Segment one joins $(1,1)$ and $(4,3)$; segment two joins $(2,5)$ and $(0,8)$. Determine whether the segments are parallel, perpendicular, or neither, and give the slope of segment two as a fraction."
+            answer: "verdict = perpendicular; m2 = -3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["parallel"], ["perpendicular"], ["neither"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m2"}]}
+            solution_sketch: "Full object: segment one through (1,1) and (4,3), segment two through (2,5) and (0,8). Step 1 (slope formula): m1 = (3-1)/(4-1) = 2/3. Step 2 (slope formula): m2 = (8-5)/(0-2) = -3/2. Step 3 (perpendicular test): the product (2/3)·(-3/2) = -1, so the slopes are negative reciprocals and the segments are perpendicular; parallel would need equal slopes and neither would need a product other than -1. Answer: verdict = perpendicular; m2 = -3/2."
+          - problem: "Quadrilateral $A(0,0)$, $B(6,3)$, $C(4,7)$, $D(-2,4)$ has integer coordinates. Compute the slopes of the four sides, then select which class the quadrilateral belongs to."
+            answer: "rectangle"
+            answer_contract: {"kind": "label", "options": [["parallelogram"], ["rectangle"], ["trapezoid"], ["rhombus"]]}
+            solution_sketch: "Full object: quadrilateral A(0,0), B(6,3), C(4,7), D(-2,4). Step 1 (slope formula): m(AB) = 3/6 = 1/2 and m(DC) = (7-4)/(4-(-2)) = 3/6 = 1/2, so one opposite pair is parallel. Step 2 (slope formula): m(BC) = (7-3)/(4-6) = -2 and m(AD) = 4/(-2) = -2, so the other opposite pair is parallel. Step 3 (perpendicular test): (1/2)·(-2) = -1, so adjacent sides are perpendicular. Wrong options: parallelogram stops at the two parallel pairs and misses the perpendicular adjacent sides; trapezoid claims only one parallel pair, but both pairs are parallel; rhombus would need equal side lengths, yet AB = sqrt(45) and BC = sqrt(20) differ. Both pairs of opposite sides are parallel and adjacent sides are perpendicular, so the quadrilateral is a rectangle."
         constraints: "integer coordinates; slopes must be stated as the justification"
       - id: kp2
         name: Classify triangles with the distance formula
         key_prerequisites: [distance-midpoint-formulas]
         exemplars:
-          - problem: 'The triangle $P(1,1)$, $Q(4,5)$, $R(-3,4)$ has $PQ = 5$ and $PR = 5$. What is its classification by sides: equilateral, isosceles, or scalene?'
-            answer: 'isosceles'
-            answer_contract: {kind: label, options: [[equilateral], [isosceles], [scalene]]}
-            solution_sketch: '$PQ = \sqrt{3^2+4^2} = 5$ and $PR = \sqrt{(-4)^2+3^2} = 5$: two congruent sides, so isosceles.'
-          - problem: 'Triangle $A(0,0)$, $B(6,0)$, $C(3,3)$ has $AC = BC = 3\sqrt{2}$ and $AB = 6$. What kind of triangle is it: equilateral, isosceles, or scalene?'
-            answer: 'isosceles'
-            answer_contract: {kind: label, options: [[equilateral], [isosceles], [scalene]]}
-            solution_sketch: 'Two sides are congruent ($3\sqrt{2}$ each) but the third is different, so it is isosceles.'
           - problem: 'What is the length of the segment from $(0,0)$ to $(6,8)$?'
             answer: "10"
             solution_sketch: '$\sqrt{6^2 + 8^2} = 10$ — the distance formula is the Pythagorean theorem in the plane.'
-          - problem: 'Triangle with vertices $(0,0)$, $(4,0)$, $(0,3)$: two of its sides are legs of lengths $4$ and $3$. Classify it by its angles: acute, right, or obtuse?'
-            answer: 'right'
-            answer_contract: {kind: label, options: [[acute], [right], [obtuse]]}
-            solution_sketch: 'The legs meet at the origin at a right angle (the axes are perpendicular), so the triangle is right; $3^2 + 4^2 = 5^2$ confirms it.'
           - problem: 'Use the distance formula: what is the distance between $(1,2)$ and $(4,6)$?'
             answer: '5'
             solution_sketch: '$\sqrt{(4-1)^2 + (6-2)^2} = \sqrt{9+16} = \sqrt{25} = 5$ — the distance formula is the Pythagorean theorem.'
+          - problem: "Triangle P(-2,1), Q(1,5), and R(-6,-2): use the distance formula on all three sides, then state the classification of the triangle by its sides."
+            answer: "isosceles"
+            answer_contract: {"kind": "label", "options": [["equilateral"], ["isosceles"], ["scalene"], ["right"]]}
+            solution_sketch: "Distance formula on each side of triangle P(-2,1), Q(1,5), R(-6,-2): PQ = sqrt(3^2+4^2) = 5, PR = sqrt((-4)^2+(-3)^2) = 5, QR = sqrt((-7)^2+(-7)^2) = 7sqrt(2). Comparing the computed lengths: exactly two sides are congruent. Each wrong option comes from one named error: equilateral would need all three computed lengths equal, scalene would need all three different, and right names an angle class rather than a side class. The classification of the triangle by its sides is isosceles."
+          - problem: "Triangle A(0,0), B(8,6), and C(-3,4): find the three side lengths, then determine its classification by angles and give the length h of its longest side."
+            answer: "verdict = right; h = 5sqrt(5)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["acute"], ["right"], ["obtuse"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "h"}]}
+            solution_sketch: "Distance formula on each side of triangle A(0,0), B(8,6), C(-3,4): AB = sqrt(8^2+6^2) = 10, AC = sqrt((-3)^2+4^2) = 5, BC = sqrt((-11)^2+(-2)^2) = sqrt(125) = 5sqrt(5). Converse Pythagorean theorem applied to the computed lengths: 10^2 + 5^2 = 125 equals (5sqrt(5))^2, so the triangle is right; the option acute would need the squared longest length smaller than the sum of the other two squares, and obtuse would need it larger. The longest of the three computed lengths is BC = 5sqrt(5). In full: verdict = right; h = 5sqrt(5)."
+          - problem: "Triangle A(0,0), B(14,0), and C(5,12): compute the three side lengths, then state its classification by sides and give the perimeter p of the triangle."
+            answer: "verdict = scalene; p = 42"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["isosceles"], ["scalene"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "p"}]}
+            solution_sketch: "Distance formula on each side of triangle A(0,0), B(14,0), C(5,12): AB = 14, AC = sqrt(5^2+12^2) = 13, BC = sqrt(9^2+12^2) = 15. Comparing the computed lengths: 13, 14 and 15 are all different, so the side classification is scalene; the label isosceles is wrong because it requires two equal computed lengths. Adding the three side lengths gives the perimeter: 13 + 14 + 15 = 42. In full: verdict = scalene; p = 42."
         constraints: "distances land on Pythagorean triples or clean radicals; classification must cite the computed lengths"
       - id: kp3
         name: Quadrilateral proofs via midpoints and diagonals
