@@ -1459,12 +1459,34 @@ topics:
         name: "De Morgan laws for sets"
         key_prerequisites: [logical-equivalence]
         exemplars:
-          - problem: 'Prove: $(A \cup B)^{c} = A^{c} \cap B^{c}$.'
-            answer: 'Element chase using De Morgan for logic.'
-            solution_sketch: '$x \in (A \cup B)^{c}$ iff $\neg(x \in A \lor x \in B)$ iff $x \notin A \land x \notin B$ (De Morgan) iff $x \in A^{c} \cap B^{c}$. $\square$'
-          - problem: 'Prove: $(A \cap B)^{c} = A^{c} \cup B^{c}$.'
-            answer: 'Element chase using De Morgan for logic.'
-            solution_sketch: '$x \in (A \cap B)^{c}$ iff $\neg(x \in A \land x \in B)$ iff $x \notin A \lor x \notin B$ (De Morgan) iff $x \in A^{c} \cup B^{c}$. $\square$'
+          - problem: "Let the universe be $U = \\{1, 2, 3, 4, 5, 6\\}$ with sets $A = \\{1, 2, 3\\}$ and $B = \\{3, 4\\}$. The De Morgan law for unions claims that the complement of $A \\cup B$ equals the intersection of the two complements. Compute $(A \\cup B)^c$ and give its elements."
+            answer: "{5, 6}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (definition of union): $A \\cup B = \\{1, 2, 3, 4\\}$. Step 2 (definition of complement): take the elements of $U = \\{1, 2, 3, 4, 5, 6\\}$ that are not in the union, namely 5 and 6. Step 3 (De Morgan check): $A^c \\cap B^c = \\{4, 5, 6\\} \\cap \\{1, 2, 5, 6\\} = \\{5, 6\\}$, the same set, so the law is confirmed. The answer is {5, 6}."
+          - problem: "Let the universe be $U = \\{1, 2, 3, 4, 5, 6, 7, 8\\}$ with sets $A = \\{1, 2, 3, 4\\}$ and $B = \\{3, 4, 5\\}$. The De Morgan law for intersections claims that the complement of $A \\cap B$ equals the union of the two complements. Give $(A \\cap B)^c$ as a set of elements."
+            answer: "{1, 2, 5, 6, 7, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (definition of intersection): $A \\cap B = \\{3, 4\\}$. Step 2 (definition of complement): collect the elements of $U = \\{1, 2, 3, 4, 5, 6, 7, 8\\}$ that are not in the intersection. Step 3 (De Morgan check): $A^c \\cup B^c = \\{5, 6, 7, 8\\} \\cup \\{1, 2, 6, 7, 8\\} = \\{1, 2, 5, 6, 7, 8\\}$, the same set, so the two sides agree. The answer is {1, 2, 5, 6, 7, 8}."
+          - problem: "The proof of $(A \\cup B)^c = A^c \\cap B^c$ reduces the set statement to the logical law that turns a negated 'or' into a negated 'and'. Take statements $p$ and $q$ and the claim: not ($p$ or $q$) has the same truth value as (not $p$) and (not $q$). For how many of the four truth assignments of $p$ and $q$ do the two sides agree?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (truth table): list the four assignments of $p$ and $q$: both true, only $p$ true, only $q$ true, both false. Step 2 (evaluate the left side): not ($p$ or $q$) is true only in the last row. Step 3 (evaluate the right side): (not $p$) and (not $q$) is true in exactly the same row, so the two columns match on all four rows and the logical law is an equivalence. The answer is 4."
+          - problem: "Let the universe be $U = \\{1, 2, 3, 4, 5, 6, 7, 8\\}$ with sets $A = \\{1, 2, 3\\}$, $B = \\{2, 3, 4\\}$ and $C = \\{3, 5, 6\\}$. The three-set De Morgan law says the complement of a triple union is the intersection of the three complements. Give $(A \\cup B \\cup C)^c$ as a set of elements."
+            answer: "{7, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (definition of union, twice): $A \\cup B = \\{1, 2, 3, 4\\}$, then $(A \\cup B) \\cup C = \\{1, 2, 3, 4, 5, 6\\}$. Step 2 (definition of complement): remove these elements from $U = \\{1, 2, 3, 4, 5, 6, 7, 8\\}$. Step 3 (De Morgan check): $A^c \\cap B^c \\cap C^c = \\{4, 5, 6, 7, 8\\} \\cap \\{1, 5, 6, 7, 8\\} \\cap \\{1, 2, 4, 7, 8\\} = \\{7, 8\\}$, the same set. The answer is {7, 8}."
+          - problem: "A student attempts to prove $(A \\cup B)^c = A^c \\cap B^c$ as follows. Step 1: let $x$ be an arbitrary element of $(A \\cup B)^c$. Step 2: then $x$ is not in $A \\cup B$, so $x$ is not in $A$ and $x$ is not in $B$. Step 3: therefore $x$ lies in $A^c \\cup B^c$. Step 4: since $x$ was arbitrary, $(A \\cup B)^c \\subseteq A^c \\cup B^c$, and the reverse inclusion is similar. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1: Step 1 of the argument is a valid setup that fixes an arbitrary element of the complement. Step 2: Step 2 applies the definitions of complement and union correctly. Step 3: Step 3 is the first invalid step, because 'x is not in A and x is not in B' places x in the intersection $A^c \\cap B^c$, not in the union $A^c \\cup B^c$; the error swaps intersection for union. Step 4: Step 4 would follow from a corrected Step 3 but inherits the same error. The answer is Step 3."
+          - problem: "An element chase proves $(A \\cap B)^c = A^c \\cup B^c$. It reaches the line: an element lies in $A^c \\cup B^c$ exactly when ___. Select the line that is true and that applies the logical De Morgan law."
+            answer: "not in A or not in B"
+            answer_contract: {"kind": "label", "options": [["not in A or not in B"], ["not in A and not in B"], ["in A and in B"], ["not in A and in B"]]}
+            solution_sketch: "Step 1: by the definition of union, $x \\in A^c \\cup B^c$ holds exactly when $x$ fails to be in $A$ or fails to be in $B$. Step 2: the correct missing line is therefore 'not in A or not in B', which is the logical De Morgan law turning the negated 'and' of the intersection into an 'or'. Step 3: the option 'not in A and not in B' keeps the 'and', the direction error that proves the wrong identity. Step 4: the option 'in A and in B' drops both negations, and 'not in A and in B' drops one negation. The answer is not in A or not in B."
+          - problem: "Write the full proof: for all sets $A$ and $B$, $(A \\cup B)^c = A^c \\cap B^c$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (arbitrary element): let $x$ be an arbitrary element of the universe. Step 2 (definition of complement): $x \\in (A \\cup B)^c$ iff $x \\notin A \\cup B$. Step 3 (definition of union): this holds iff it is not the case that $x \\in A$ or $x \\in B$. Step 4 (logical De Morgan): this is equivalent to $x \\notin A$ and $x \\notin B$. Step 5 (definition of complement): this says $x \\in A^c$ and $x \\in B^c$. Step 6 (definition of intersection): hence $x \\in A^c \\cap B^c$. Since $x$ was arbitrary, $(A \\cup B)^c \\subseteq A^c \\cap B^c$; every step is an equivalence, so the reverse inclusion holds as well and the sets are equal. The answer is See the solution."
         constraints: "reduce a set De Morgan law to the logical one"
       - id: kp3
         name: "Identities with set difference"

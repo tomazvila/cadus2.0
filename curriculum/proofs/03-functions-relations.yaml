@@ -914,12 +914,34 @@ topics:
         name: "Proving a property holds"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Prove that $a \sim b \iff a - b \in \mathbb{Z}$ on $\mathbb{R}$ is transitive.'
-            answer: '$a - b, b - c \in \mathbb{Z} \Rightarrow a - c \in \mathbb{Z}$.'
-            solution_sketch: 'Assume $a \sim b$ and $b \sim c$: $a - b \in \mathbb{Z}$ and $b - c \in \mathbb{Z}$. Then $a - c = (a - b) + (b - c) \in \mathbb{Z}$, so $a \sim c$. $\square$'
-          - problem: 'Prove that $a \sim b \iff a + b$ is even, on $\mathbb{Z}$, is symmetric.'
-            answer: '$a + b$ even iff $b + a$ even.'
-            solution_sketch: 'Assume $a \sim b$, so $a + b$ is even. Since $b + a = a + b$, $b + a$ is even, so $b \sim a$. Hence $\sim$ is symmetric. $\square$'
+          - problem: "To prove that the relation ~ on R, defined by a ~ b exactly when a - b is an integer, is transitive, assume a ~ b and b ~ c with a - b = 2 and b - c = -5. The proof writes a - c = (a - b) + (b - c). Compute a - c."
+            answer: "-3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of transitivity): assume a ~ b and b ~ c. Step 2 (hypothesis): a - b = 2 and b - c = -5, both integers. Step 3 (rearrangement): a - c = (a - b) + (b - c) = 2 + (-5) = -3. Since -3 is an integer, a ~ c, which completes the transitivity argument. The answer is -3."
+          - problem: "To prove that the relation ~ on Z, defined by a ~ b exactly when a + b is even, is symmetric, assume a ~ b with a = 7 and b = 3, so a + b is even. The proof writes b + a and then concludes b ~ a. Give b + a."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of symmetry): assume a ~ b, so a + b is even. Step 2 (commutative law of addition): b + a = a + b = 7 + 3 = 10. Step 3 (definition of ~ again): b + a = 10 is even, so b ~ a, which proves symmetry. The answer is 10."
+          - problem: "A student claims that the relation ~ on Z, defined by a ~ b exactly when a·b is at least 0, is transitive. Take the triple a = 1, b = 0, c = -1, for which a ~ b and b ~ c both hold. Give a·c."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (check a ~ b): a·b = 1·0 = 0, which is at least 0, so a ~ b. Step 2 (check b ~ c): b·c = 0·(-1) = 0, which is at least 0, so b ~ c. Step 3 (what transitivity would need): a·c = 1·(-1) = -1, which is not at least 0, so a is not related to c and transitivity fails. The answer is -1."
+          - problem: "To prove that the relation ~ on Z, defined by a ~ b exactly when a - b is even, is symmetric, assume a ~ b with a - b = -6. The key step rewrites the hypothesis as b - a = -(a - b). Compute b - a."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of symmetry): assume a ~ b, so a - b = -6 is even. Step 2 (negation of an even integer): b - a = -(a - b) = -(-6) = 6, which is even. Step 3 (definition of ~ again): since b - a is even, b ~ a, so ~ is symmetric. The answer is 6."
+          - problem: "Claim: the relation ~ on R, defined by a ~ b exactly when a - b is an integer, is symmetric. Step 1: assume a ~ b, so a - b is an integer. Step 2: b - a = a - b. Step 3: b - a is an integer. Step 4: b ~ a, so ~ is symmetric. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the hypothesis and is correct. Step 2 is false: b - a = -(a - b), and the two sides agree only when a = b; the error is a dropped sign flip. Step 3 would follow from the correct identity b - a = -(a - b), since the integers are closed under negation. Step 4 is valid once Step 3 holds. The answer is Step 2."
+          - problem: "In the proof that the relation ~ on Z, defined by a ~ b exactly when a + b is even, is transitive, assume a ~ b and b ~ c, so a + b and b + c are even. The line a + c = ? is missing. Select the line that is true and that uses the hypothesis."
+            answer: "(a+b)+(b+c)-2b"
+            answer_contract: {"kind": "label", "options": [["(a+b)+(b+c)-2b"], ["(a+b)+(b+c)"], ["(a+b)-(b+c)"], ["(a+b)+(b+c)+2b"]]}
+            solution_sketch: "From the hypotheses, a + b and b + c are even. The identity a + c = (a + b) + (b + c) - 2b holds because the middle terms 2b cancel, and it exhibits a + c as a sum of even quantities. Option (a+b)+(b+c) forgets to subtract 2b, a missing cancellation. Option (a+b)-(b+c) gives a - c, a sign error. Option (a+b)+(b+c)+2b adds 2b twice instead of canceling it. The answer is (a+b)+(b+c)-2b."
+          - problem: "Write the full proof: the relation ~ on R, defined by a ~ b exactly when a - b is an integer, is transitive. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Setup: let a, b, c be arbitrary real numbers with a ~ b and b ~ c. Step 1 (hypothesis, definition of ~): a - b is an integer and b - c is an integer. Step 2 (closure of the integers under addition): write a - c = (a - b) + (b - c); a sum of two integers is an integer, so a - c is an integer. Step 3 (definition of ~ again): since a - c is an integer, a ~ c. Step 4 (universal generalization): a, b, c were arbitrary, so ~ is transitive. QED."
         constraints: "prove a named property from its definition"
     diagnostic_exemplar:
       problem: 'Show that the relation "$a \mid b$" on $\mathbb{Z}^{+}$ is reflexive, antisymmetric and transitive, but not symmetric.'
@@ -1125,14 +1147,30 @@ topics:
         name: "Classes for rule-defined relations"
         key_prerequisites: [relations-equivalence]
         exemplars:
-          - problem: 'On $\mathbb{Z}$ with $a \sim b \iff |a| = |b|$, describe $[5]$ and $[0]$.'
-            answer_contract: {kind: none}
-            answer: '$[5] = \{5, -5\}$ and $[0] = \{0\}$.'
-            solution_sketch: '$|n| = 5$ has two solutions; $|n| = 0$ only one.'
-          - problem: 'On $\mathbb{R}$ with $x \sim y \iff x - y \in \mathbb{Z}$, describe the class $\left[\tfrac{1}{2}\right]$.'
-            answer_contract: {kind: none}
-            answer: '$\left\{\tfrac{1}{2} + k : k \in \mathbb{Z}\right\}$'
-            solution_sketch: 'Everything differing from $\tfrac12$ by an integer: $\dots, -\tfrac12, \tfrac12, \tfrac32, \dots$'
+          - problem: "On $\\mathbb{Z}$ with $a \\sim b \\iff |a| = |b|$, the class of $6$ is $[6] = \\{x : x \\sim 6\\}$. Give the elements of $[6]$ in increasing order, separated by commas."
+            answer: "-6, 6"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Definition of the class: $[6] = \\{x : x \\sim 6\\} = \\{x : |x| = 6\\}$. Solving the defining equation $|x| = 6$ gives $x = 6$ and $x = -6$, so the class has two elements. Listed in increasing order, the answer is -6, 6."
+          - problem: "On $\\mathbb{R}$ with $x \\sim y \\iff x - y \\in \\mathbb{Z}$, the class of $a$ is $[a] = \\{x : x \\sim a\\}$. Give the unique element of $\\left[\\tfrac{9}{4}\\right]$ that lies in the interval $[0, 1)$, as a fraction."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of the class: $x \\sim 9/4$ iff $x - 9/4$ is an integer, so $[9/4] = \\{9/4 + k : k \\in \\mathbb{Z}\\}$. Its elements are $\\dots, -3/4, 1/4, 5/4, 9/4, \\dots$ and exactly one of them, $1/4$, lies in $[0, 1)$. The unique element of the class in $[0, 1)$ is 1/4."
+          - problem: "On $\\mathbb{Z}$, define $a \\sim b \\iff a - b$ is a multiple of $5$, so $[a] = \\{x : x \\sim a\\}$. Determine the smallest nonnegative integer that belongs to $[11]$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of the class: $[11] = \\{x : 5 \\text{ divides } x - 11\\}$, which is the set of integers congruent to $11$ modulo $5$. Since $11 = 2 \\cdot 5 + 1$, the class is $\\{\\dots, -9, -4, 1, 6, 11, \\dots\\}$. The smallest nonnegative element of $[11]$ is 1."
+          - problem: "On the set $\\{1, 2, \\dots, 12\\}$, define $a \\sim b \\iff a$ and $b$ leave the same remainder on division by $4$, so $[a] = \\{x \\text{ in the set} : x \\sim a\\}$. Give the elements of $[9]$ in increasing order, separated by commas."
+            answer: "1, 5, 9"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Definition of the class: $[9]$ collects the elements of $\\{1, \\dots, 12\\}$ with the same remainder as $9$ on division by $4$. Since $9 = 2 \\cdot 4 + 1$, the remainder is $1$, and the elements with remainder $1$ are $1, 5, 9$ ($13$ lies outside the ground set). In increasing order, the class is 1, 5, 9."
+          - problem: "On $\\mathbb{Z}$, define $a \\sim b \\iff a - b$ is a multiple of $6$, so $[a] = \\{x : x \\sim a\\}$. How many integers of $[20]$ lie between $0$ and $30$ inclusive?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of the class: $[20] = \\{x : 6 \\text{ divides } x - 20\\}$, the integers congruent to $20$ modulo $6$. Since $20 = 3 \\cdot 6 + 2$, the elements between $0$ and $30$ are $2, 8, 14, 20, 26$ (the next one, $32$, is too large). Counting them gives 5."
+          - problem: "On $\\mathbb{Z}$, define $a \\sim b \\iff a + b$ is even, so $[a] = \\{x : x \\sim a\\}$. How many distinct equivalence classes does this relation have on $\\mathbb{Z}$?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Definition of the class: for even $a$, the condition $x + a$ even holds exactly for even $x$, so $[a]$ is the set of all even integers. For odd $a$, the condition holds exactly for odd $x$, so $[a]$ is the set of all odd integers. Hence every class is the evens or the odds, and the relation has 2 distinct equivalence classes."
         constraints: "describe $[a] = \\{x : x \\sim a\\}$ for a rule-defined relation"
     diagnostic_exemplar:
       problem: 'On $\mathbb{Z}$ with $a \sim b \iff a - b$ even, describe $[7]$.'
@@ -1347,6 +1385,22 @@ topics:
           - problem: 'Find the transitive closure of $R = \{(1,2), (2,1)\}$ on $\{1, 2\}$.'
             answer: '$\{(1,2), (2,1), (1,1), (2,2)\}$'
             solution_sketch: 'Chains $1 \to 2 \to 1$ and $2 \to 1 \to 2$ force both loops; the result is now transitive.'
+          - problem: "Let $R = \\{(1,2), (2,3), (3,4)\\}$ be a relation on $\\{1, 2, 3, 4\\}$. Build the transitive closure of $R$ by adding pairs until no chain escapes. How many pairs does the transitive closure contain?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full relation: (1,2), (2,3), (3,4). Chaining step: 1 to 2 to 3 forces (1,3); 2 to 3 to 4 forces (2,4); the chain 1 to 2 to 3 to 4 forces (1,4). Vertex 4 has no outgoing pair, so no longer chain produces anything new. Counting the 3 original pairs and the 3 added pairs, the transitive closure contains 6 pairs."
+          - problem: "On $\\{1, 2, 3\\}$ let $R = \\{(1,2), (2,1), (2,3)\\}$. Close $R$ under chaining to obtain its transitive closure. How many new pairs must be added?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the chains of length 2: 1 to 2 to 1 forces the loop (1,1); 2 to 1 to 2 forces the loop (2,2); 1 to 2 to 3 forces (1,3). Re-chaining with the new pairs gives nothing new, since 3 has no outgoing pair and every other chain is already present. Counting the forced pairs, the closure adds 3 new pairs."
+          - problem: "On $\\{1, 2, 3, 4, 5\\}$ let $R = \\{(1,2), (2,3), (3,5), (4,5)\\}$. Form the transitive closure of $R$. Give the set of all $y$ such that $(1, y)$ is in the transitive closure, in braces."
+            answer: "{2, 3, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Take the full closure first: the chain 1 to 2 to 3 to 5 forces (1,3), (1,5), (2,5), and the chain 4 to 5 stays within the given pairs, so the closure is R together with (1,3), (1,5), (2,5). Reading off the pairs that start at 1 gives 2, 3 and 5. Vertex 4 is never reached from 1, and 5 has no outgoing pair. The set of all y with (1, y) in the transitive closure is {2, 3, 5}."
+          - problem: "On $\\{1, 2, 3\\}$ let $R = \\{(1,2), (2,3), (3,1), (1,3)\\}$. Decide whether $R$ is already transitive or must be extended, and build the transitive closure of $R$ by closing every chain. State the verdict and the number of pairs added."
+            answer: "verdict = extend; added = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["extend"], ["already"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "added"}]}
+            solution_sketch: "Check transitivity: the chain 2 to 3 to 1 has no pair (2,1) in R, so the verdict 'already' is wrong; R must be extended. Chaining step: 1 to 3 to 1 forces (1,1); 2 to 3 to 1 forces (2,1) and then 2 to 1 to 2 forces (2,2); 3 to 1 to 2 forces (3,2) and 3 to 1 to 3 forces (3,3). Re-chaining the closed relation gives no further pairs, and the closure has 9 pairs against 4 given. The answer is verdict = extend; added = 5."
         constraints: "close small relations under chaining; add pairs until no chain escapes"
     diagnostic_exemplar:
       problem: 'On $\{a, b, c\}$ let $R = \{(a,b), (b,c)\}$. Give the pairs added by the reflexive closure, by the symmetric closure, and by the transitive closure.'

@@ -33,14 +33,30 @@ topics:
         name: "Closure of finite sets"
         key_prerequisites: [set-notation]
         exemplars:
-          - problem: 'Is $\{-1, 0, 1\}$ closed under multiplication? Under addition?'
-            answer_contract: {kind: none}
-            answer: 'Yes under multiplication; no under addition ($1 + 1 = 2$).'
-            solution_sketch: 'All nine products land in $\{-1, 0, 1\}$; but one sum escapes, which is enough to refute closure.'
-          - problem: 'Is $\{0, 1\}$ closed under multiplication?'
-            answer_contract: {kind: none}
-            answer: 'Yes.'
-            solution_sketch: '$0 \cdot 0 = 0$, $0 \cdot 1 = 0$, $1 \cdot 1 = 1$ — every product stays in the set.'
+          - problem: "Let S = {-1, 0, 1}. Consider addition on S. Find the number of ordered pairs (a, b) in S x S for which a + b is not in S."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is S = {-1, 0, 1} with the operation addition. Step 1: check all nine ordered pairs by exhaustive check. The pairs (-1, -1) and (1, 1) give -2 and 2, which are not in S, while the other seven sums stay in S. Step 2: count the escaping pairs. The number of escaping ordered pairs is 2."
+          - problem: "Let S = {0, 1}. Consider multiplication on S. Find the number of ordered pairs (a, b) in S x S for which a * b is not in S."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is S = {0, 1} with the operation multiplication. Step 1: check all four ordered pairs by exhaustive check: 0*0=0, 0*1=0, 1*0=0, and 1*1=1. Step 2: every product is in S, so no pair escapes. The number of escaping ordered pairs is 0."
+          - problem: "Let S = {0, 1, 2}. Consider multiplication on S. Find the number of ordered pairs (a, b) in S x S for which a * b is not in S."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is S = {0, 1, 2} with the operation multiplication. Step 1: check all nine ordered pairs by exhaustive check. The products 0*0=0, 0*1=0, 0*2=0, 1*0=0, 1*1=1, 1*2=2, 2*0=0, and 2*1=2 stay in S, while 2*2=4 escapes. Step 2: count the escaping pairs. The number of escaping ordered pairs is 1."
+          - problem: "Let S = {0, 2, 4}. Consider addition on S. Find the lexicographically smallest ordered pair (a, b) in S x S with a + b not in S, as (a, b)."
+            answer: "(2, 4)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full set is S = {0, 2, 4} with the operation addition. Step 1: check ordered pairs in lexicographic order by exhaustive check. (0,0) gives 0, (0,2) gives 2, (0,4) gives 4, (2,0) gives 2, (2,2) gives 4, and (2,4) gives 6, which is not in S. Step 2: the first escaping pair is (2, 4)."
+          - problem: "Let S = {-2, 0, 2}. Consider multiplication on S. Find the number of ordered pairs (a, b) in S x S for which a * b is not in S."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is S = {-2, 0, 2} with the operation multiplication. Step 1: check all nine ordered pairs by exhaustive check. The escaping products are (-2)*(-2)=4, (-2)*2=-4, 2*(-2)=-4, and 2*2=4. Step 2: the other five products stay in S, so four ordered pairs escape. The number of escaping ordered pairs is 4."
+          - problem: "Let S = {1, 2, 3}. Consider addition on S. Find the number of ordered pairs (a, b) in S x S for which a + b is not in S."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full set is S = {1, 2, 3} with the operation addition. Step 1: check all nine ordered pairs by exhaustive check. The sums 1+1=2, 1+2=3, and 2+1=3 stay in S; the other six sums are 4, 4, 4, 5, 5, and 6, which escape. Step 2: count the escaping pairs. The number of escaping ordered pairs is 6."
         constraints: "exhaustively check a set of size at most 3, or exhibit one escaping pair"
       - id: kp3
         name: "Closure of described sets"
@@ -86,14 +102,30 @@ topics:
         name: "Filling in a table"
         key_prerequisites: [checking-closure]
         exemplars:
-          - problem: 'In the addition-mod-$4$ table on $\{0, 1, 2, 3\}$, what are the entries for $2 + 3$ and $3 + 3$?'
-            answer_contract: {kind: none}
-            answer: '$1$ and $2$.'
-            solution_sketch: '$2 + 3 = 5 \equiv 1$ and $3 + 3 = 6 \equiv 2 \pmod 4$.'
-          - problem: 'In the multiplication-mod-$5$ table on $\{1, 2, 3, 4\}$, what are the entries for $2 \cdot 4$ and $3 \cdot 3$?'
-            answer_contract: {kind: none}
-            answer: '$3$ and $4$.'
-            solution_sketch: '$8 \equiv 3$ and $9 \equiv 4 \pmod 5$.'
+          - problem: "In the addition-mod-4 table on the set {0, 1, 2, 3}, find the two entries for 2 + 3 and 3 + 3, in that order."
+            answer: "1, 2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: use the row and column labels of the addition-mod-4 table. Step 2: use modular addition, so 2 + 3 = 5 and 5 mod 4 = 1. Step 3: use modular addition again, so 3 + 3 = 6 and 6 mod 4 = 2. The two entries, in order, are 1, 2."
+          - problem: "In the multiplication-mod-5 table on the set {1, 2, 3, 4}, find the two entries for 2 * 4 and 3 * 3, in that order."
+            answer: "3, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1: use the row and column labels of the multiplication-mod-5 table. Step 2: use modular multiplication, so 2 * 4 = 8 and 8 mod 5 = 3. Step 3: use modular multiplication again, so 3 * 3 = 9 and 9 mod 5 = 4. The two entries, in order, are 3, 4."
+          - problem: "In the addition-mod-6 table on the set {0, 1, 2, 3, 4, 5}, find the entry for 2 + 5."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the row and column labels of the addition-mod-6 table. Step 2: use modular addition, so 2 + 5 = 7 and 7 mod 6 = 1. The entry is 1."
+          - problem: "In the multiplication-mod-6 table on the set {0, 1, 2, 3, 4, 5}, find the entry for 4 * 5."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the row and column labels of the multiplication-mod-6 table. Step 2: use modular multiplication, so 4 * 5 = 20 and 20 mod 6 = 2. The entry is 2."
+          - problem: "In the addition-mod-7 table on the set {0, 1, 2, 3, 4, 5, 6}, find the entry for 5 + 6."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the row and column labels of the addition-mod-7 table. Step 2: use modular addition, so 5 + 6 = 11 and 11 mod 7 = 4. The entry is 4."
+          - problem: "In the multiplication-mod-7 table on the set {0, 1, 2, 3, 4, 5, 6}, find the entry for 5 * 6."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: use the row and column labels of the multiplication-mod-7 table. Step 2: use modular multiplication, so 5 * 6 = 30 and 30 mod 7 = 2. The entry is 2."
         constraints: "entries of mod-$n$ addition or multiplication tables, $n \\le 7$"
       - id: kp2
         name: "Reading properties from a table"
@@ -115,10 +147,26 @@ topics:
           - problem: 'In addition mod $4$, find the inverse of $3$.'
             answer: '$1$'
             solution_sketch: 'Scan row $3$ for the identity $0$: $3 + 1 = 4 \equiv 0$, so $1$ is the inverse.'
-          - problem: 'In multiplication mod $5$ on $\{1, 2, 3, 4\}$, find the inverses of $2$ and $4$.'
-            answer_contract: {kind: none}
-            answer: '$3$ and $4$.'
-            solution_sketch: '$2 \cdot 3 = 6 \equiv 1$ and $4 \cdot 4 = 16 \equiv 1 \pmod 5$; $4$ is its own inverse.'
+          - problem: "In multiplication mod 5 on {1, 2, 3, 4}, locate the identity 1 in each row. Find the inverses of 2 and 4, and give them as inv2 and inv4."
+            answer: "inv2 = 3; inv4 = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "inv2"}, {"contract": {"kind": "exact"}, "name": "inv4"}]}
+            solution_sketch: "Rule: the inverse of an element is the element that pairs with the identity in its row. The identity is 1 because multiplying any element by 1 leaves it unchanged. In the row for 2, the entry 1 occurs at 2 times 3, so inv2 = 3. In the row for 4, the entry 1 occurs at 4 times 4, so inv4 = 4. Therefore inv2 = 3; inv4 = 4."
+          - problem: "In addition mod 7 on {0, 1, 2, 3, 4, 5, 6}, locate the identity 0 in each row. Find the inverse of 5."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the inverse of an element is the element that pairs with the identity in its row. The identity is 0 because adding 0 leaves each element unchanged. In the row for 5, the entry 0 occurs at 5 + 2 = 7, and 7 is congruent to 0 mod 7. The inverse is 2."
+          - problem: "In multiplication mod 7 on {1, 2, 3, 4, 5, 6}, locate the identity 1 in each row. Find the inverse of 3."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the inverse of an element is the element that pairs with the identity in its row. The identity is 1 because multiplying by 1 leaves each element unchanged. In the row for 3, the entry 1 occurs at 3 times 5 = 15, and 15 is congruent to 1 mod 7. The inverse is 5."
+          - problem: "In multiplication mod 8 on {1, 2, 3, 4, 5, 6, 7}, locate the identity 1 in each row. Find the inverse of 3."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the inverse of an element is the element that pairs with the identity in its row. The identity is 1 because multiplying by 1 leaves each element unchanged. In the row for 3, the entry 1 occurs at 3 times 3 = 9, and 9 is congruent to 1 mod 8. The inverse is 3."
+          - problem: "In addition mod 9 on {0, 1, 2, 3, 4, 5, 6, 7, 8}, locate the identity 0 in each row. Find the inverse of 4."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rule: the inverse of an element is the element that pairs with the identity in its row. The identity is 0 because adding 0 leaves each element unchanged. In the row for 4, the entry 0 occurs at 4 + 5 = 9, and 9 is congruent to 0 mod 9. The inverse is 5."
         constraints: "locate the identity in each row; mod-$n$ tables only"
     diagnostic_exemplar:
       problem: 'In the addition-mod-$6$ table on $\{0, 1, \dots, 5\}$: give the entry for $4 + 5$, the identity element and the inverse of $2$, and say how the table shows the operation is commutative.'
