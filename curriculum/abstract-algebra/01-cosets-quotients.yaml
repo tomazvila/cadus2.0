@@ -82,14 +82,30 @@ topics:
         name: "Coset equality and the partition property"
         key_prerequisites: [equivalence-classes-partitions]
         exemplars:
-          - problem: 'Prove: $aH = bH$ if and only if $a^{-1}b \in H$.'
-            answer: 'If $aH = bH$ then $b = ah$ for some $h$, so $a^{-1}b = h \in H$; conversely $a^{-1}b = h$ gives $bH = ahH = aH$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Both directions unwind the definition; the relation $a \sim b \iff a^{-1}b \in H$ is an equivalence relation whose classes are the left cosets.'
-          - problem: 'Two cosets $aH$ and $bH$ share an element. What can you conclude?'
-            answer: '$aH = bH$ — distinct cosets are disjoint.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Cosets are equivalence classes, so they are equal or disjoint.'
+          - problem: "In Z_12, let H = {0, 4, 8}. Let a = 2 and b = 6. Determine whether a + H = b + H, and give the number of elements in their intersection. Give the answer in the form relation = R; overlap = N."
+            answer: "relation = equal; overlap = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["disjoint"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "overlap"}]}
+            solution_sketch: "First compute b - a = 6 - 2 = 4. Since 4 is in H = {0, 4, 8}, the equivalence-class characterization gives a + H = b + H. The option disjoint is wrong: two cosets that share one element coincide, and these do share. Their intersection is the whole coset, which has |H| = 3 elements. The answer is relation = equal; overlap = 3."
+          - problem: "In Z_10, let H = {0, 5}. Let a = 1 and b = 3. Determine whether a + H = b + H, and give the number of elements in their intersection. Give the answer in the form relation = R; overlap = N."
+            answer: "relation = disjoint; overlap = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["disjoint"], ["equal"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "overlap"}]}
+            solution_sketch: "Compute b - a = 3 - 1 = 2. Since 2 is not in H = {0, 5}, the equivalence-class characterization says a + H and b + H are distinct cosets. The option equal is wrong: b - a fails the membership test, so the cosets cannot coincide. Distinct cosets are disjoint, so the intersection is empty and overlap = 0. The answer is relation = disjoint; overlap = 0."
+          - problem: "In Z_12, let H = {0, 3, 6, 9}. Find the number of distinct left cosets of H in Z_12."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group Z_12 has 12 elements, and each left coset of H has |H| = 4 elements. By the partition property, the distinct cosets are disjoint classes of equal size that cover the whole group, so the count is 12/4 = 3. The answer is 3."
+          - problem: "In Z_18, let H = {0, 6, 12}. Find the number of distinct left cosets of H in Z_18."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group Z_18 has 18 elements and each coset of H has |H| = 3 elements. The partition property makes every coset the same size, and the cosets cover Z_18 without overlap. So the number of cosets is 18/3 = 6. The answer is 6."
+          - problem: "In Z_8, let H = {0, 2, 4, 6}. Let a = 1 and b = 5. Determine whether a + H = b + H, and give the number of elements in their intersection. Give the answer in the form relation = R; overlap = N."
+            answer: "relation = same; overlap = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["same"], ["apart"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "overlap"}]}
+            solution_sketch: "Compute b - a = 5 - 1 = 4. Since 4 is in H = {0, 2, 4, 6}, the equivalence-class characterization gives a + H = b + H; here H itself is a subgroup, so both cosets equal H. The option apart is wrong because the difference b - a passes the membership test. The common coset has |H| = 4 elements, so the intersection has 4 elements. The answer is relation = same; overlap = 4."
+          - problem: "In Z_10, let H = {0, 5}. Let a = 1 and b = 6. Determine whether a + H = b + H, and give the number of elements in their intersection. Give the answer in the form relation = R; overlap = N."
+            answer: "relation = identical; overlap = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["identical"], ["separate"]]}, "name": "relation"}, {"contract": {"kind": "exact"}, "name": "overlap"}]}
+            solution_sketch: "Compute b - a = 6 - 1 = 5. Since 5 is in H = {0, 5}, the equivalence-class characterization gives a + H = b + H; indeed 1 + H = {1, 6} and 6 + H = {6, 1} are the same set. The option separate is wrong because the membership test succeeds. Both names denote one coset with |H| = 2 elements, so the intersection has 2 elements. The answer is relation = identical; overlap = 2."
         constraints: "short proofs using the equivalence-class characterization"
     diagnostic_exemplar:
       problem: 'In $S_3$ (composing right to left) let $H = \{e, (2\,3)\}$. List all left cosets of $H$, and decide whether $(1\,2)H = H(1\,2)$.'
