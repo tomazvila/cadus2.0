@@ -293,12 +293,30 @@ topics:
         name: "Decision by critical value"
         key_prerequisites: [hypothesis-tests-logic, normal-distribution]
         exemplars:
-          - problem: 'A two-sided z-test at $\alpha = 0.05$ uses $z^* = 2$ (empirical-rule value). The data give $z = 2.5$. State the decision.'
-            answer: 'Reject $H_0$: $|2.5| > 2$, so the sample mean is too far from $\mu_0$ to be ordinary chance at the $5\%$ level.'
-          - problem: 'Same test, but the data give $z = -1.5$. State the decision.'
-            answer: 'Fail to reject $H_0$: $|-1.5| < 2$ — within ordinary sampling variability.'
-          - problem: 'A one-sided test of $H_1: \mu > \mu_0$ at $\alpha = 0.05$ uses $z^* = 1.645$ (given). The data give $z = 1.8$. State the decision.'
-            answer: 'Reject $H_0$: $1.8 > 1.645$, in the direction $H_1$ predicts.'
+          - problem: "A two-sided z-test of $H_0: \\mu = 45$ against $H_1: \\mu \\ne 45$ runs at $\\alpha = 0.05$, and it uses the critical value $z^* = 2$. A sample of $n = 36$ batteries has mean lifetime $\\bar{x} = 46.5$ hours; the population standard deviation is $\\sigma = 3$ hours. Find the test statistic $z$ and give the decision."
+            answer: "z = 3; verdict = reject"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "z"}, {"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}]}
+            solution_sketch: "Standard error rule: SE = sigma/sqrt(n) = 3/6 = 0.5. Test statistic rule: z = (46.5 - 45)/0.5 = 3. Decision rule: a two-sided test with critical value 2 rejects H0 when the absolute value of z exceeds 2, and 3 > 2, so the data are significant. The wrong option retain would ignore that the statistic lies beyond the cutoff. The answer is z = 3; verdict = reject."
+          - problem: "A two-sided z-test of $H_0: \\mu = 405$ grams against $H_1: \\mu \\ne 405$ runs at $\\alpha = 0.05$, and it uses the critical value $z^* = 2$. A random sample of $n = 25$ cereal boxes has mean mass $\\bar{x} = 404$ grams; the population standard deviation is $\\sigma = 5$ grams. Find the test statistic $z$ and give the decision."
+            answer: "z = -1; verdict = retain"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "z"}, {"contract": {"kind": "label", "options": [["reject"], ["retain"]]}, "name": "verdict"}]}
+            solution_sketch: "Standard error rule: SE = 5/sqrt(25) = 1. Test statistic rule: z = (404 - 405)/1 = -1. Decision rule: a two-sided test with critical value 2 keeps H0 when the absolute value of z stays below 2, and |-1| = 1 < 2, so the result is ordinary sampling variability. The wrong option reject would treat a one-standard-error gap as beyond the cutoff. The answer is z = -1; verdict = retain."
+          - problem: "An upper-tailed z-test of $H_0: \\mu = 12$ against $H_1: \\mu > 12$ runs at $\\alpha = 0.10$, and the critical value $z^* = 1.28$ is supplied. Find the values of the test statistic $z$ for which the data are significant at this level. Give the answer as an inequality in $z$."
+            answer: "z > 1.28"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Decision rule for an upper-tailed z-test: the data are significant when the test statistic falls beyond the supplied critical value, so z must be larger than 1.28. Boundary check: z = 1.28 sits exactly on the cutoff, which is not beyond it, so the strict inequality holds. The answer is z > 1.28."
+          - problem: "A two-sided z-test of $H_0: \\mu = 100$ runs at $\\alpha = 0.05$, and it uses the critical value $z^* = 2$. The sample size is $n = 36$ and the population standard deviation is $\\sigma = 12$. Find the values of the sample mean $x$ for which the data are significant at this level. Give the answer as an inequality in $x$."
+            answer: "x < 96 or x > 104"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Standard error rule: SE = 12/sqrt(36) = 2. Decision rule: a two-sided test with critical value 2 is significant when the absolute value of z exceeds 2, and here z = (x - 100)/2. Solve both sides of the rule: (x - 100)/2 < -2 gives x < 96, and (x - 100)/2 > 2 gives x > 104. The answer is x < 96 or x > 104."
+          - problem: "An upper-tailed z-test of $H_0: \\mu = 40$ against $H_1: \\mu > 40$ runs at $\\alpha = 0.01$, and the critical value $z^* = 2.33$ is supplied. The sample size is $n = 64$ and the population standard deviation is $\\sigma = 8$. Find the sample mean for which the test statistic exactly equals the critical value. Give the answer to two decimals."
+            answer: "42.33"
+            answer_contract: {"decimals": 2, "kind": "approx"}
+            solution_sketch: "Standard error rule: SE = 8/sqrt(64) = 1. Decision rule: the significance boundary sits where the test statistic equals the supplied critical value, so (x - 40)/1 = 2.33. Solve the equation: x = 40 + 2.33 = 42.33, the cutoff mean separating significant from non-significant data. The answer is 42.33."
+          - problem: "A lower-tailed z-test of $H_0: \\mu = -5$ against $H_1: \\mu < -5$ runs at $\\alpha = 0.05$, and the critical value $z^* = -1.645$ is supplied. The sample size is $n = 100$ and the population standard deviation is $\\sigma = 10$. Find the sample mean for which the test statistic exactly equals the critical value. Give the answer to three decimals."
+            answer: "-6.645"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "Standard error rule: SE = 10/sqrt(100) = 1. Decision rule: the significance boundary sits where the test statistic equals the supplied critical value, so (x + 5)/1 = -1.645. Solve the equation: x = -5 - 1.645 = -6.645, the mean below which data become significant in the direction of H1. The answer is -6.645."
         constraints: "two-sided tests use z* = 2 (empirical-rule value); any one-sided or exact critical value is supplied in the problem"
       - id: kp3
         name: "The full test with conclusion in context"
