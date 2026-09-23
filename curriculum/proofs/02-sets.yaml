@@ -522,6 +522,22 @@ topics:
           - problem: 'With $A = \{1,2,3\}$, $B = \{2,3,4\}$, $C = \{3,4,5\}$, find $(A \triangle B) \cup (B \cap C)$.'
             answer: '$\{1, 3, 4\}$'
             solution_sketch: '$A \triangle B = \{1, 4\}$ and $B \cap C = \{3, 4\}$; the union is $\{1, 3, 4\}$.'
+          - problem: "With $A = \\{1,2,3,4\\}$, $B = \\{3,4,5\\}$ and $C = \\{2,4,6\\}$, find $(A \\triangle B) \\cap C$."
+            answer: "{2}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "First compute the symmetric difference: $A \\triangle B = \\{1,2,5\\}$, the elements in exactly one of $A$ and $B$. Then intersect with $C = \\{2,4,6\\}$: the only common element is 2. The answer is {2}."
+          - problem: "With $A = \\{1,2,3,4,5,6\\}$, $B = \\{2,3,4\\}$ and $C = \\{3,4,5\\}$, find $A \\setminus (B \\triangle C)$."
+            answer: "{1,3,4,6}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "First compute the inner symmetric difference: $B \\triangle C = \\{2,5\\}$, since 3 and 4 lie in both. Then take the difference from $A = \\{1,2,3,4,5,6\\}$ by removing 2 and 5. The answer is {1,3,4,6}."
+          - problem: "With $A = \\{2,3,5,7\\}$, $B = \\{1,3,5,6\\}$ and $C = \\{2,5,8\\}$, find $(A \\triangle B) \\setminus C$."
+            answer: "{1,6,7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "First compute the symmetric difference: $A \\triangle B = \\{1,2,6,7\\}$, the elements in exactly one of $A$ and $B$. Then remove the elements of $C = \\{2,5,8\\}$: 2 is deleted, while 6 and 7 survive. The answer is {1,6,7}."
+          - problem: "With $A = \\{1,2,3,4,5,6\\}$, $B = \\{2,4,6\\}$ and $C = \\{3,4,5\\}$, find $(A \\setminus B) \\triangle (B \\setminus C)$."
+            answer: "{1,2,3,5,6}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Compute both differences first: $A \\setminus B = \\{1,3,5\\}$ and $B \\setminus C = \\{2,6\\}$. The symmetric difference keeps the elements appearing in exactly one of these two sets, and the two sets are disjoint, so their union is kept. The answer is {1,2,3,5,6}."
         constraints: "chains of two or three operations, mixing difference, symmetric difference, and intersection"
     diagnostic_exemplar:
       problem: 'With universe $U = \{1, \dots, 8\}$, $A = \{1,2,3,4\}$, $B = \{2,4,6\}$ and $C = \{1,4,7\}$, compute $(A \setminus B) \cap C^{c}$.'
