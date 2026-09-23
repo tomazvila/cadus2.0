@@ -138,13 +138,29 @@ topics:
         name: "Solving equations in the presence of zero divisors"
         key_prerequisites: [ring-axioms-examples]
         exemplars:
-          - problem: 'Find all solutions of $2x = 0$ in $\mathbb{Z}_6$.'
-            answer: '$x = 0$ and $x = 3$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Zero divisors break the "only trivial solution" rule: $2 \cdot 3 = 6 = 0$.'
+          - problem: "In Z_6, solve the equation 2x = 0. Give the answer as a list of residues in increasing order."
+            answer: "0, 3"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "By the modular multiplication rule in Z_6, 2x = 0 means 6 divides 2x. This happens exactly when x is a multiple of 3, so the residues 0 and 3 work. The solution list is 0, 3."
           - problem: 'Find all idempotents of $\mathbb{Z}_6$ (elements with $x^2 = x$).'
             answer: '$0, 1, 3, 4$'
             solution_sketch: 'Test all six: $3^2 = 9 = 3$, $4^2 = 16 = 4$; the others fail.'
+          - problem: "In Z_10, solve x^2 = x. Give the answer as a list of residues in increasing order."
+            answer: "0, 1, 5, 6"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "By the zero-divisor test in Z_10, rewrite x^2 = x as x(x - 1) = 0 mod 10. Checking residues shows 0 and 1 are trivial, while 5^2 = 25 = 5 and 6^2 = 36 = 6 also satisfy the equation. The solution list is 0, 1, 5, 6."
+          - problem: "In Z_8, solve x^2 = 1. Give the answer as a list of residues in increasing order."
+            answer: "1, 3, 5, 7"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "By the modular square rule in Z_8, compute x^2 for each residue. The odd residues give 1^2 = 1, 3^2 = 9 = 1, 5^2 = 25 = 1, and 7^2 = 49 = 1; every even residue fails. The solution list is 1, 3, 5, 7."
+          - problem: "In Z_12, solve 4x = 0. Give the answer as a list of residues in increasing order."
+            answer: "0, 3, 6, 9"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "By the modular multiplication rule in Z_12, 4x = 0 means 12 divides 4x. Dividing the common factor 4 gives 3 divides x, so the residues 0, 3, 6, and 9 are exactly the solutions. The solution list is 0, 3, 6, 9."
+          - problem: "In Z_12, solve x^2 = 1. Give the answer as a list of residues in increasing order."
+            answer: "1, 5, 7, 11"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "By the modular square rule in Z_12, compute x^2 for each residue. The residues 1, 5, 7, and 11 give 1^2 = 1, 5^2 = 25 = 1, 7^2 = 49 = 1, and 11^2 = 121 = 1; every other residue fails. The solution list is 1, 5, 7, 11."
         constraints: "equations x^2 = x, ax = 0, x^2 = 1 in Z_n, n <= 12; expect multiple roots"
     diagnostic_exemplar:
       problem: 'Find all solutions of $x^2 = x$ in $\mathbb{Z}_{12}$, and use one of them to decide whether $\mathbb{Z}_{12}$ is an integral domain.'
@@ -547,10 +563,26 @@ topics:
           - problem: 'Using the rational root theorem, factor $2x^3 + x^2 - 7x - 6$ over $\mathbb{Q}$ completely.'
             answer: '$(x - 2)(x + 1)(2x + 3)$'
             solution_sketch: 'Candidates $\pm1, \pm2, \pm3, \pm6, \pm\tfrac12, \pm\tfrac32$; $x = 2$ works, divide to get $2x^2 + 5x + 3 = (x+1)(2x+3)$.'
-          - problem: 'Show $x^3 - x + 1$ is irreducible over $\mathbb{Q}$.'
-            answer: 'Possible rational roots $\pm 1$ give $1$ and $1$; no roots and degree 3 means irreducible.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Rational roots must be $\pm 1$ (divisors of constant over divisors of leading); both fail.'
+          - problem: "State the factor type of x^3 - x + 1 over Q and give its number of rational roots."
+            answer: "verdict = irreducible; roots = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["irreducible"], ["reducible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "roots"}]}
+            solution_sketch: "Rational root theorem: any rational root of x^3 - x + 1 must be a divisor of 1 divided by a divisor of 1, so the candidates are 1 and -1. Evaluate at 1: 1 - 1 + 1 = 1, not zero. Evaluate at -1: -1 + 1 + 1 = 1, not zero. No candidate is a root, so the cubic has no rational roots. A cubic over Q with no rational root is irreducible, so the factor type is irreducible and the number of rational roots is 0. The option reducible is wrong because a reducible cubic over Q would have a rational root. The answer is verdict = irreducible; roots = 0."
+          - problem: "Using the rational root theorem, factor x^3 - 2x^2 - 5x + 6 over Q completely. Give the factorization."
+            answer: "(x-1)(x-3)(x+2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Rational root theorem: candidates for x^3 - 2x^2 - 5x + 6 are the divisors of 6 over the divisors of 1, so 1, -1, 2, -2, 3, -3, 6, -6. Test x = 1: 1 - 2 - 5 + 6 = 0, so x - 1 is a factor. Divide x^3 - 2x^2 - 5x + 6 by x - 1 to get x^2 - x - 6. Factor the quadratic by inspection: x^2 - x - 6 = (x - 3)(x + 2). The complete factorization is (x-1)(x-3)(x+2)."
+          - problem: "Using the rational root theorem, factor 2x^3 - 3x^2 - 8x + 12 over Q completely. Give the factorization."
+            answer: "(x-2)(2x-3)(x+2)"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Rational root theorem: candidates for 2x^3 - 3x^2 - 8x + 12 are divisors of 12 over divisors of 2, including 1, -1, 2, -2, 3, -3, 4, -4, 6, -6, 12, -12, 1/2, -1/2, 3/2, -3/2. Test x = 2: 16 - 12 - 16 + 12 = 0, so x - 2 is a factor. Divide 2x^3 - 3x^2 - 8x + 12 by x - 2 to get 2x^2 + x - 6. Factor the quadratic: 2x^2 + x - 6 = (2x - 3)(x + 2). The complete factorization is (x-2)(2x-3)(x+2)."
+          - problem: "Using the rational root theorem, find the smallest rational root of x^3 - 4x^2 + x + 6."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rational root theorem: candidates for x^3 - 4x^2 + x + 6 are divisors of 6, so 1, -1, 2, -2, 3, -3, 6, -6. Test x = -1: -1 - 4 - 1 + 6 = 0, so -1 is a root. Divide to get x^2 - 5x + 6 = (x - 2)(x - 3), so the rational roots are -1, 2, and 3. The smallest rational root is -1."
+          - problem: "Find how many rational roots the cubic x^3 + 2x + 1 has."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Rational root theorem: candidates for x^3 + 2x + 1 are divisors of 1, so 1 and -1. Test x = 1: 1 + 2 + 1 = 4, not zero. Test x = -1: -1 - 2 + 1 = -2, not zero. No rational root exists, so the number of rational roots is 0."
         constraints: "cubics with integer coefficients, |coefficients| <= 10; complete factorizations verified by expansion"
       - id: kp3
         name: "Eisenstein's criterion and mod-p reduction"
@@ -622,12 +654,34 @@ topics:
         name: "Prime but not maximal; polynomial examples"
         key_prerequisites: [quotient-rings]
         exemplars:
-          - problem: 'Show that $\langle x \rangle$ is prime but not maximal in $\mathbb{Z}[x]$.'
-            answer: '$\mathbb{Z}[x]/\langle x \rangle \cong \mathbb{Z}$: an integral domain but not a field.'
-            solution_sketch: 'Evaluation at 0 identifies the quotient with $\mathbb{Z}$; conclude via the characterizations.'
-          - problem: 'Is $\langle x^2 + x + 1 \rangle$ maximal in $\mathbb{Z}_2[x]$?'
-            answer: 'Yes: the quotient is a field with $4$ elements (the polynomial is irreducible over $\mathbb{Z}_2$).'
-            solution_sketch: 'For $F[x]$ with $F$ a field, $\langle f \rangle$ is maximal iff $f$ is irreducible.'
+          - problem: "In Z[x]/<x>, the class of x^2+3x+7 corresponds to an integer under evaluation at 0. Give that integer."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Evaluate at 0. The quotient map sends the class of x to 0. The class of x^2+3x+7 maps to 0^2+3*0+7 = 7. The answer is 7."
+          - problem: "The polynomial x^2+x+1 is irreducible over F_2. Give the number of elements of F_2[x]/<x^2+x+1>."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Since x^2+x+1 is irreducible over F_2, the quotient ring is a field. A basis over F_2 is {1, x}, so each element has the form a + bx with a and b in F_2. There are 2 times 2 = 4 choices, so the field has 4 elements. The answer is 4."
+          - problem: "How many roots does x^2+1 have in F_3?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test each element of F_3. For 0, 0^2+1=1; for 1, 1^2+1=2; for 2, 2^2+1=5=2. None gives 0, so the number of roots is 0. The answer is 0."
+          - problem: "In F_5[x], the polynomial x^2+2 is irreducible. Give the number of elements of the quotient field F_5[x]/<x^2+2>."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Check roots in F_5. Values 0 through 4 give 2, 3, 1, 1, 3, none zero. So x^2+2 is irreducible over F_5. The quotient field has 5^2=25 elements. The answer is 25."
+          - problem: "Claim: <x> is maximal in Z[x]. Step 1: Z[x]/<x> is isomorphic to Z. Step 2: Z is an integral domain, so <x> is prime. Step 3: Z is a field, so <x> is maximal. Step 4: hence <x> is maximal. Which step is the first invalid step?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid because evaluation at 0 gives Z[x]/<x> isomorphic to Z. Step 2 is valid because Z is an integral domain, so <x> is prime. Step 3 is invalid because Z is not a field, so <x> is not maximal. Option Step 1 is wrong because it is a valid step; option Step 2 is wrong because it is a valid step; option Step 4 is wrong because it depends on the invalid Step 3. The answer is Step 3."
+          - problem: "In F_2[x]/<x^2+x+1>, give the inverse of the class of x as a polynomial of degree at most 1."
+            answer: "x+1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Work in F_2[x]/<x^2+x+1>. The class of x satisfies x^2+x+1=0, so x^2+x=1. Multiply x by x+1: x(x+1)=x^2+x=1. Thus x+1 is the inverse of the class of x. The answer is x+1."
+          - problem: "Write the full proof: for a field F, a nonconstant polynomial f in F[x] gives a maximal ideal <f> if and only if f is irreducible; and <x> is prime but not maximal in Z[x]. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let F be a field and f a nonconstant polynomial. First, if <f> is maximal, then F[x]/<f> is a field, hence an integral domain, so <f> is prime. In F[x], a prime ideal is generated by an irreducible polynomial, so f is irreducible. Conversely, if f is irreducible, then F[x]/<f> is an integral domain. Since F[x] is a principal ideal domain, a nonzero prime ideal is maximal, or directly any ideal properly containing <f> is generated by a proper divisor of f, which must be a unit. Thus <f> is maximal. For Z[x], evaluate at 0 to get Z[x]/<x> isomorphic to Z. This quotient is an integral domain but not a field, so <x> is prime but not maximal."
         constraints: "quotient identifications in Z[x] and F[x]; irreducible <-> maximal in F[x]"
     diagnostic_exemplar:
       problem: 'Decide whether $\langle 5 \rangle$ is a prime ideal of $\mathbb{Z}[x]$, and whether it is maximal. Justify both answers by identifying the quotient.'
@@ -684,13 +738,29 @@ topics:
         name: "Every Euclidean domain is a PID"
         key_prerequisites: [ring-homomorphisms-ideals, euclidean-algorithm]
         exemplars:
-          - problem: 'Prove that every Euclidean domain is a principal ideal domain.'
-            answer: 'In a nonzero ideal $I$, pick $d \neq 0$ of minimal norm. For any $a \in I$, write $a = qd + r$ with $r = 0$ or $N(r) < N(d)$; since $r = a - qd \in I$, minimality forces $r = 0$. So $I = \langle d \rangle$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Well-ordering supplies a minimal-norm element; division with remainder shows it generates — the same argument that made every ideal of $\mathbb{Z}$ principal.'
           - problem: 'Find a single generator of the ideal $\langle x^2 - 1,\ x^2 - 3x + 2 \rangle$ in $\mathbb{Q}[x]$.'
             answer: '$x - 1$'
             solution_sketch: '$x^2 - 1 = (x-1)(x+1)$ and $x^2 - 3x + 2 = (x-1)(x-2)$; the ideal is generated by their gcd $x - 1$ (obtained by the Euclidean algorithm in $\mathbb{Q}[x]$).'
+          - problem: "Find a single generator of the ideal generated by x^2 - x - 2 and x^2 + x - 6 in Q[x]."
+            answer: "x - 2"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The ideal is generated by x^2 - x - 2 and x^2 + x - 6 in Q[x]. Step 1: factor both, giving (x - 2)(x + 1) and (x - 2)(x + 3). Step 2: the common factor is x - 2, so the polynomial gcd is x - 2. Therefore a single generator is x - 2."
+          - problem: "Find a single generator of the ideal generated by x^2 + 3x - 4 and x^2 + 6x + 8 in Q[x]."
+            answer: "x + 4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The ideal is generated by x^2 + 3x - 4 and x^2 + 6x + 8 in Q[x]. Step 1: factor both, giving (x + 4)(x - 1) and (x + 4)(x + 2). Step 2: the common factor is x + 4, so the polynomial gcd is x + 4. Therefore a single generator is x + 4."
+          - problem: "Find a single generator of the ideal generated by x^3 + x^2 + x + 1 and x^3 - 2x^2 + x - 2 in Q[x]."
+            answer: "x^2 + 1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The ideal is generated by x^3 + x^2 + x + 1 and x^3 - 2x^2 + x - 2 in Q[x]. Step 1: factor the first as (x + 1)(x^2 + 1) and the second as (x - 2)(x^2 + 1). Step 2: the common factor is x^2 + 1, so the polynomial gcd is x^2 + 1. Therefore a single generator is x^2 + 1."
+          - problem: "Find a single generator of the ideal generated by x^2 - 25 and x^2 - 3x - 10 in Q[x]."
+            answer: "x - 5"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "The ideal is generated by x^2 - 25 and x^2 - 3x - 10 in Q[x]. Step 1: factor both, giving (x - 5)(x + 5) and (x - 5)(x + 2). Step 2: the common factor is x - 5, so the polynomial gcd is x - 5. Therefore a single generator is x - 5."
+          - problem: "In the proof that a Euclidean domain is a PID, an ideal I has a nonzero element d of minimal norm. For the ideal generated by x^3 - x and x^2 - 1 in Q[x], with norm equal to degree, what is the degree of such a d?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The ideal is generated by x^3 - x and x^2 - 1 in Q[x]. Step 1: factor x^3 - x as x(x - 1)(x + 1) and x^2 - 1 as (x - 1)(x + 1). Step 2: the polynomial gcd is x^2 - 1, so a generator of minimal degree is x^2 - 1. Step 3: the degree of that generator is 2. The degree is 2."
         constraints: "the minimal-norm proof; generators of two-element ideals in Q[x] via polynomial gcd, degrees <= 3"
       - id: kp3
         name: "PIDs vs non-PIDs: the ideal <2, x>"
@@ -769,14 +839,30 @@ topics:
         name: "Failure of unique factorization: Z[sqrt(-5)]"
         key_prerequisites: [irreducibility-factorization, euclidean-domains-pids]
         exemplars:
-          - problem: 'Show that $6 = 2 \cdot 3 = (1 + \sqrt{-5})(1 - \sqrt{-5})$ gives two essentially different factorizations into irreducibles in $\mathbb{Z}[\sqrt{-5}]$.'
-            answer: 'Norms: $N(2) = 4$, $N(3) = 9$, $N(1 \pm \sqrt{-5}) = 6$. Each factor is irreducible: a proper splitting would need a factor of norm $2$ or $3$, and $a^2 + 5b^2$ never equals $2$ or $3$. The units are $\pm 1$ (norm $1$), and no factor of one factorization is a unit multiple of a factor of the other (their norms differ). So factorization is not unique.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Certify all four factors irreducible by ruling out norms 2 and 3; compare norms to rule out associates.'
-          - problem: 'Deduce that $2$ is not prime in $\mathbb{Z}[\sqrt{-5}]$, and explain why this proves $\mathbb{Z}[\sqrt{-5}]$ is not a UFD.'
-            answer: '$2 \mid (1+\sqrt{-5})(1-\sqrt{-5}) = 6$, but $2$ divides neither factor ($N(2) = 4 \nmid 6$). So $2$ is irreducible but not prime — impossible in a UFD, where irreducible and prime coincide.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Use the norm to refute both divisibilities; in a UFD every irreducible is prime.'
+          - problem: "In Z[sqrt(-5)], use the norm N(a + b sqrt(-5)) = a^2 + 5b^2. Decide whether the element 2 can be written as a product of two nonunits, and give its norm. Give the answer as verdict and N, with the verdict first."
+            answer: "verdict = irreducible; N = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["irreducible"], ["reducible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "N"}]}
+            solution_sketch: "Step 1 (norm formula): In Z[sqrt(-5)], take the element 2, whose norm is N(2) = 2^2 + 5*0^2 = 4. Step 2 (norm multiplicativity): If 2 = xy with x and y nonunits, then N(x)N(y) = N(2) = 4. Step 3 (rule out norm 2 factors): Nonunits have norm greater than 1, so both factors would need norm 2, but a^2 + 5b^2 = 2 has no integer solution. Step 4 (conclusion): Therefore 2 has no proper factorization into nonunits, so the verdict is irreducible and N = 4. The wrong option reducible would require a norm 2 factor, which is impossible. The answer is verdict = irreducible; N = 4."
+          - problem: "In Z[sqrt(-5)], use the norm N(a + b sqrt(-5)) = a^2 + 5b^2. The element 2 divides (1 + sqrt(-5))(1 - sqrt(-5)) but divides neither factor. Decide what this says about 2 as a divisor, and give the norm of 2. Give the answer as verdict and N, with the verdict first."
+            answer: "verdict = nonprime; N = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["prime"], ["nonprime"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "N"}]}
+            solution_sketch: "Step 1 (norm formula): N(2) = 4 and N(1 + sqrt(-5)) = N(1 - sqrt(-5)) = 6. Step 2 (divisibility test): If 2 divided 1 + sqrt(-5), then 4 would divide 6 by norm multiplicativity, which is false; the same holds for 1 - sqrt(-5). Step 3 (product divisibility): Yet 2*3 = 6 = (1 + sqrt(-5))(1 - sqrt(-5)), so 2 divides the product without dividing either factor. Step 4 (conclusion): This is exactly the failure of the prime property, so the verdict is nonprime and N = 4. The wrong option prime would require 2 to divide one of the factors. The answer is verdict = nonprime; N = 4."
+          - problem: "In Z[sqrt(-5)], use the norm N(a + b sqrt(-5)) = a^2 + 5b^2. What is the norm of 3 + 2 sqrt(-5)?"
+            answer: "29"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (norm formula): For an element a + b sqrt(-5), the norm is N(a + b sqrt(-5)) = a^2 + 5b^2. Step 2 (substitution): Here a = 3 and b = 2, so N(3 + 2 sqrt(-5)) = 3^2 + 5*2^2. Step 3 (arithmetic): This equals 9 + 20 = 29. The answer is 29."
+          - problem: "In Z[sqrt(-5)], use the norm N(a + b sqrt(-5)) = a^2 + 5b^2. Compute the norms of 2, 3, 1 + sqrt(-5), and 1 - sqrt(-5). Give the answer as a comma-separated list in that order."
+            answer: "4, 9, 6, 6"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Step 1 (norm formula): Compute each norm using N(a + b sqrt(-5)) = a^2 + 5b^2. Step 2 (individual norms): N(2) = 4, N(3) = 9, N(1 + sqrt(-5)) = 1^2 + 5*1^2 = 6, and N(1 - sqrt(-5)) = 6. Step 3 (order): In the order 2, 3, 1 + sqrt(-5), 1 - sqrt(-5), the list is 4, 9, 6, 6. The answer is 4, 9, 6, 6."
+          - problem: "In Z[sqrt(-5)], use the norm N(a + b sqrt(-5)) = a^2 + 5b^2. How many elements of the form a + b sqrt(-5) have norm 6?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (norm equation): Elements of norm 6 satisfy a^2 + 5b^2 = 6 with a and b integers. Step 2 (cases): If b = 0, then a^2 = 6, impossible; if b = 1 or b = -1, then a^2 = 1, so a = 1 or a = -1. Step 3 (count): This gives four elements: 1 + sqrt(-5), 1 - sqrt(-5), -1 + sqrt(-5), and -1 - sqrt(-5). The answer is 4."
+          - problem: "In Z[sqrt(-5)], the element 6 has the two factorizations 2*3 and (1 + sqrt(-5))(1 - sqrt(-5)). Decide whether these two factorizations make 6 have a unique factorization, and give the norm of 2. Give the answer as verdict and N, with the verdict first."
+            answer: "verdict = non-UFD; N = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["UFD"], ["non-UFD"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "N"}]}
+            solution_sketch: "Step 1 (norms of the factors): N(2) = 4, N(3) = 9, and N(1 + sqrt(-5)) = N(1 - sqrt(-5)) = 6. Step 2 (irreducibility): A proper factor would need norm 2 or 3, but a^2 + 5b^2 never equals 2 or 3, so all four factors are irreducible. Step 3 (non-associates): Units are ±1; associates have equal norm, and the norms 4, 9, 6, 6 rule out unit multiples across the two factorizations. Step 4 (conclusion): Thus 6 has two essentially different irreducible factorizations, so the verdict is non-UFD and N = 4. The wrong option UFD would require these factorizations to match up to units, which the norms forbid. The answer is verdict = non-UFD; N = 4."
         constraints: "the classic Z[sqrt(-5)] computation; every irreducibility claim justified by a norm argument"
     diagnostic_exemplar:
       problem: 'In $\mathbb{Z}[\sqrt{-5}]$ with norm $N(a + b\sqrt{-5}) = a^2 + 5b^2$, show that $3$ is irreducible but not prime, and state what this proves about $\mathbb{Z}[\sqrt{-5}]$.'

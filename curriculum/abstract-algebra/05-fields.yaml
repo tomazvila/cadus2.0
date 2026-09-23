@@ -24,14 +24,30 @@ topics:
         name: "Field axioms; fields vs domains"
         key_prerequisites: [integral-domains-zero-divisors, units-in-modular-rings]
         exemplars:
-          - problem: 'What must be added to the axioms of a commutative ring with unity ($1 \neq 0$) to get a field?'
-            answer: 'Every nonzero element has a multiplicative inverse.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Fields are commutative division rings; units are everything nonzero.'
-          - problem: 'Every field is an integral domain. Prove it.'
-            answer: 'If $ab = 0$ and $a \neq 0$, multiply by $a^{-1}$: $b = a^{-1}ab = a^{-1}0 = 0$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Invertibility kills zero divisors.'
+          - problem: "A commutative ring with unity (1 not 0) becomes a field when one more axiom is added. Which property is that? Select the property that holds for every nonzero rational number."
+            answer: "every nonzero element has an inverse"
+            answer_contract: {"kind": "label", "options": [["every nonzero element has an inverse"], ["every element has an inverse"], ["there are no zero divisors"], ["the ring has finitely many elements"]]}
+            solution_sketch: "The field axiom adds inverses for every nonzero element; that is exactly what makes division by any nonzero element possible. Option 'every element has an inverse' fails because 0 has no inverse; option 'there are no zero divisors' is a consequence, not the added axiom; option 'the ring has finitely many elements' is unrelated. The required property is every nonzero element has an inverse."
+          - problem: "In the field of real numbers, suppose a*b = 0 and a is not 0. What value must b have? Give the number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start with a*b = 0 in a field. Since a is nonzero, multiply both sides by the multiplicative inverse a^(-1). This gives b = a^(-1)*0 = 0, so b must be 0."
+          - problem: "In the ring of integers Z, how many multiplicative inverses does the element 2 have? Give the number."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "We need an integer k with 2k = 1. No integer k satisfies this equation. Therefore 2 has no multiplicative inverse in Z, so the number of inverses is 0."
+          - problem: "In Z_6, how many of the five nonzero elements do not have a multiplicative inverse? Give the number."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "List the nonzero elements of Z_6: 1, 2, 3, 4, 5. The units are 1 and 5 because gcd(1,6)=1 and gcd(5,6)=1. The remaining elements 2, 3, 4 have no inverse, so there are 3."
+          - problem: "Consider the polynomial ring Z[x] with usual addition and multiplication. Which term best describes it? Select one."
+            answer: "domain"
+            answer_contract: {"kind": "label", "options": [["field"], ["domain"], ["neither"], ["both"]]}
+            solution_sketch: "Z[x] is an integral domain because Z is an integral domain and polynomial rings over an integral domain have no zero divisors. It is not a field because x has no inverse in Z[x]. Option 'field' is wrong since x lacks an inverse; option 'neither' is wrong since it is an integral domain; option 'both' is wrong because it is not a field. The best term is domain."
+          - problem: "Find the smallest integer n greater than 1 such that Z_n is a field."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A ring Z_n is a field exactly when n is prime. The smallest integer greater than 1 that is prime is 2. Thus the smallest such n is 2."
         constraints: "axiom-level questions; classify Q, R, Z, Z_n, Z[x] as field / domain / neither"
       - id: kp2
         name: "Characteristic of a ring"
@@ -53,10 +69,26 @@ topics:
           - problem: 'In a commutative ring of characteristic $3$, expand $(a + b)^3$.'
             answer: '$a^3 + b^3$'
             solution_sketch: 'Binomial coefficients $\binom{3}{1} = \binom{3}{2} = 3 \equiv 0$; only the end terms survive.'
-          - problem: 'In $\mathbb{Z}_5$, compute $(2 + 3)^5$ and $2^5 + 3^5$, and compare.'
-            answer: 'Both are $0$: $(5)^5 \equiv 0$ and $32 + 243 = 275 \equiv 0 \pmod 5$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The Frobenius identity $(a+b)^p = a^p + b^p$ holds in characteristic $p$.'
+          - problem: "In the field $\\mathbb{Z}_5$, compute $(2 + 4)^5$ and give the result as an element of $\\mathbb{Z}_5$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In $\\mathbb{Z}_5$, compute the base first: $2 + 4 = 6$, which is $1$ modulo $5$. Then $(2 + 4)^5 = 1^5 = 1$. The Frobenius identity agrees: $2^5 + 4^5 = 32 + 1024 = 1056$, and $1056$ modulo $5$ is $1$. The result is 1."
+          - problem: "In the field $\\mathbb{Z}_3$, compute $(1 + 2)^3$ and give the result as an element of $\\mathbb{Z}_3$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In $\\mathbb{Z}_3$, compute the base first: $1 + 2 = 3$, which is $0$ modulo $3$. Then $(1 + 2)^3 = 0^3 = 0$. The Frobenius identity agrees: $1^3 + 2^3 = 1 + 8 = 9$, and $9$ modulo $3$ is $0$. The value is 0."
+          - problem: "In a commutative ring of characteristic $5$, find the coefficient of $a^2 b^3$ in the expansion of $(a + b)^5$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "In characteristic $5$, expand $(a + b)^5$ and read the coefficient of $a^2 b^3$. The binomial theorem gives that coefficient as the binomial coefficient five choose two, which is $10$. Reduce modulo $5$: $10 = 2 \\cdot 5$, so it is $0$. The coefficient is 0."
+          - problem: "In a commutative ring of characteristic $2$, give the expansion of $(a + b)^2$ in simplest form."
+            answer: "a^2+b^2"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "In characteristic $2$, expand $(a + b)^2 = a^2 + 2ab + b^2$. The middle coefficient is $2$, and $2$ modulo $2$ is $0$, so the middle term vanishes. The remaining terms are $a^2$ and $b^2$. The expansion is a^2+b^2."
+          - problem: "In a commutative ring of characteristic $5$, state the simplified form of $(a + b)^5$."
+            answer: "a^5+b^5"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "In characteristic $5$, expand $(a + b)^5 = a^5 + 5a^4b + 10a^3b^2 + 10a^2b^3 + 5ab^4 + b^5$. Every middle coefficient is $5$ or $10$, and each is $0$ modulo $5$. Only the first and last terms survive. The simplified form is a^5+b^5."
         constraints: "p in {2, 3, 5}; expansions verified with small numbers"
     diagnostic_exemplar:
       problem: 'In a commutative ring of characteristic $5$, expand $(a + b)^5$ in simplest form and justify which terms vanish. Then give the characteristic of a field with $25$ elements.'
@@ -99,14 +131,30 @@ topics:
         name: "The construction: fractions as equivalence classes"
         key_prerequisites: [integral-domains-zero-divisors, equivalence-classes-partitions]
         exemplars:
-          - problem: 'Let $D$ be an integral domain. On $D \times (D \setminus \{0\})$ define $(a, b) \sim (c, d) \iff ad = bc$. Prove that $\sim$ is transitive, and point out where you use that $D$ is a domain.'
-            answer: 'Suppose $(a,b) \sim (c,d)$ and $(c,d) \sim (e,f)$: $ad = bc$ and $cf = de$. Then $adf = bcf = bde$, so $d(af - be) = 0$. Since $d \neq 0$ and $D$ has no zero divisors, $af = be$, i.e. $(a,b) \sim (e,f)$. The cancellation of $d$ is exactly where the domain property is used.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Multiply the two defining equations to a common expression and cancel $d$ — legal only without zero divisors.'
-          - problem: 'Fractions are added by $\frac{a}{b} + \frac{c}{d} = \frac{ad + bc}{bd}$. Why does the denominator $bd$ stay legal, and where does that fail in a ring with zero divisors?'
-            answer: 'Denominators must be nonzero: $b, d \neq 0$ gives $bd \neq 0$ precisely because a domain has no zero divisors. In $\mathbb{Z}_6$, $b = 2$ and $d = 3$ are nonzero yet $bd = 0$, so the sum would have a zero denominator — the construction breaks.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Closure of $D \setminus \{0\}$ under multiplication is equivalent to having no zero divisors.'
+          - problem: "On $\\mathbb{Z} \\times (\\mathbb{Z} \\setminus \\{0\\})$ define $(a, b) \\sim (c, d)$ iff $ad = bc$. Take $(a, b) = (4, 6)$, $(c, d) = (2, 3)$ and $(e, f) = (10, 15)$, so $ad = bc$ and $cf = de$ hold. The transitivity proof reaches $d(af - be) = 0$ and cancels $d$, which is legal because $\\mathbb{Z}$ has no zero divisors. State the verdict for whether $(4, 6)$ and $(10, 15)$ lie in one equivalence class, and give the value of $af - be$."
+            answer: "verdict = equal; value = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equal"], ["distinct"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "value"}]}
+            solution_sketch: "Step 1 (definition of the relation): $ad = 4 \\cdot 3 = 12 = 6 \\cdot 2 = bc$, and $cf = 2 \\cdot 15 = 30 = 3 \\cdot 10 = de$. Step 2 (transitivity computation): combining the two equations gives $d(af - be) = 6(60 - 60) = 0$. Step 3 (domain cancellation): since $d = 6 \\neq 0$ and $\\mathbb{Z}$ has no zero divisors, $af - be = 0$, so the pairs share one class; the option distinct would require $af - be \\neq 0$, which the cancellation forbids. Therefore verdict = equal; value = 0."
+          - problem: "Adding fractions by $(a, b) + (c, d) = (ad + bc, bd)$ needs the denominator $bd$ to be nonzero; a domain guarantees this, a ring with zero divisors does not. In $\\mathbb{Z}_6$ the element $3$ is nonzero but has zero-divisor partners. Find all nonzero elements $d$ of $\\mathbb{Z}_6$ with $3d = 0$, and give the answer as a set."
+            answer: "{2, 4}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Step 1 (zero divisors): in $\\mathbb{Z}_6$, $3 \\cdot 2 = 6 \\equiv 0$ and $3 \\cdot 4 = 12 \\equiv 0$, while $3 \\cdot 1, 3 \\cdot 3, 3 \\cdot 5$ stay nonzero. Step 2 (denominator closure): the set found is exactly the list of $d$ for which the sum formula would produce the zero denominator $bd = 0$, the failure that cannot occur in an integral domain. The answer is the set {2, 4}."
+          - problem: "In the fraction construction on $\\mathbb{Z}$, the pairs $(1, 2)$ and $(2, 4)$ are equivalent, and the sum is defined by $(a, b) + (c, d) = (ad + bc, bd)$. Compute the sum of $(1, 2)$ and $(1, 3)$, and then the sum of $(2, 4)$ and $(1, 3)$. Give both resulting pairs as (p, q), then (r, s)."
+            answer: "first = (5, 6); second = (10, 12)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "first"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "second"}]}
+            solution_sketch: "Step 1 (sum formula, first representatives): $(1, 2) + (1, 3) = (1 \\cdot 3 + 2 \\cdot 1,\\ 2 \\cdot 3) = (5, 6)$. Step 2 (representative change): $(2, 4) + (1, 3) = (2 \\cdot 3 + 4 \\cdot 1,\\ 4 \\cdot 3) = (10, 12)$. Step 3 (well-definedness check): $5 \\cdot 12 = 60 = 6 \\cdot 10$, so the two results are equivalent and the sum does not depend on the representative. So first = (5, 6); second = (10, 12)."
+          - problem: "In the field $\\mathbb{Z}_5$, the product of fractions is defined by $(a, b) \\cdot (c, d) = (ac, bd)$. Compute the product of $(2, 3)$ and $(4, 2)$ in this construction. Give the answer as (numerator, denominator)."
+            answer: "(3, 1)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (product formula): $(2, 3) \\cdot (4, 2) = (2 \\cdot 4,\\ 3 \\cdot 2) = (8, 6)$ before reduction. Step 2 (reduce in $\\mathbb{Z}_5$): $8 \\equiv 3$ and $6 \\equiv 1$, and both entries are nonzero, so the pair is a legal fraction. The product as (numerator, denominator) is (3, 1)."
+          - problem: "On $\\mathbb{Z}_7 \\times (\\mathbb{Z}_7 \\setminus \\{0\\})$ define $(a, b) \\sim (c, d)$ iff $ad = bc$. The pair $(3, 4)$ is equivalent to $(c, 6)$ for exactly one $c$ in $\\mathbb{Z}_7$. Find $c$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (equivalence condition): $(3, 4) \\sim (c, 6)$ means $3 \\cdot 6 = 4c$ in $\\mathbb{Z}_7$. Step 2 (solve in the field $\\mathbb{Z}_7$): $18 \\equiv 4$, so $4c = 4$; since $4 \\cdot 2 = 8 \\equiv 1$, the inverse of $4$ is $2$, giving $c = 8 \\equiv 1$. Therefore $c = 1$."
+          - problem: "On $\\mathbb{Z} \\times (\\mathbb{Z} \\setminus \\{0\\})$, two pairs lie in one equivalence class iff $ad = bc$; these classes are the elements of the field of fractions. Select the pair that lies in the equivalence class of $(6, 8)$."
+            answer: "(12, 16)"
+            answer_contract: {"kind": "label", "options": [["(12, 16)"], ["(8, 6)"], ["(12, 18)"], ["(3, 5)"]]}
+            solution_sketch: "Step 1 (class membership test): a pair $(x, y)$ lies in the class of $(6, 8)$ iff $6y = 8x$. Step 2 (check the correct option): $(12, 16)$ gives $6 \\cdot 16 = 96 = 8 \\cdot 12$, so it qualifies. Step 3 (named errors): the option (8, 6) inverts the pair, giving $36 \\neq 64$; the option (12, 18) scales the two entries by different factors, giving $108 \\neq 96$; the option (3, 5) subtracts 3 from each entry instead of dividing, giving $30 \\neq 24$. The correct option is (12, 16)."
         constraints: "the transitivity and denominator-closure arguments, each localizing exactly where the domain hypothesis is used; well-definedness of + or x checked on one representative change"
       - id: kp2
         name: "Recognizing fields of fractions: Q, F(x), Q(√2)"
@@ -229,14 +277,30 @@ topics:
         name: "Finite fields beyond Z_p: order p^n"
         key_prerequisites: [fields-characteristic]
         exemplars:
-          - problem: 'Is there a field with exactly $6$ elements?'
-            answer: 'No: every finite field has prime-power order, and $6 = 2 \cdot 3$ is not a prime power.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A finite field is a vector space over its prime subfield $\mathbb{Z}_p$, so its size is $p^n$.'
-          - problem: 'Describe a field with $4$ elements.'
-            answer: '$\mathbb{Z}_2[x]/\langle x^2 + x + 1 \rangle = \{0, 1, \alpha, \alpha + 1\}$ with $\alpha^2 = \alpha + 1$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Quotient by an irreducible quadratic over $\mathbb{Z}_2$; the four remainders form a field.'
+          - problem: "Every finite field has order p^n for a prime p and a whole number n at least 1. Find the smallest integer greater than 1 that is not the order of any finite field."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the list of possible orders of finite fields, namely the prime powers. Rule: a finite field has order p^n for a prime p. Step 1: 2, 3, 4 = 2^2 and 5 are all prime powers, so each is a possible order. Step 2: 6 = 2 * 3 has two distinct prime factors, so it is not a prime power. The answer is 6."
+          - problem: "The polynomial x^2 + x + 1 is irreducible over Z_2, so the quotient Z_2[x]/(x^2 + x + 1) is a field. How many nonzero elements does this field have?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the field Z_2[x]/(x^2 + x + 1). Rule: a quotient by an irreducible polynomial of degree n over Z_p is a field with p^n elements. Step 1: p = 2 and n = 2, so the field has 2^2 = 4 elements. Step 2: the number of nonzero elements is 4 - 1 = 3. The answer is 3."
+          - problem: "A finite field F has exactly 16 elements. Find the number of elements of its prime subfield."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is a finite field F of order 16. Rule: a finite field of order p^n has prime subfield Z_p and characteristic p. Step 1: write 16 = 2^4, so the prime is p = 2. Step 2: the prime subfield is Z_2, which has 2 elements. The answer is 2."
+          - problem: "Over Z_3 the polynomial x^2 + 1 has no root, so the quotient Z_3[x]/(x^2 + 1) is a field. Find the number of elements of this field."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the quotient Z_3[x]/(x^2 + 1) built from an irreducible quadratic. Rule: a quotient by an irreducible polynomial of degree n over Z_p gives a field with p^n elements. Step 1: p = 3 and n = 2. Step 2: 3^2 = 9. The answer is 9."
+          - problem: "A field F has a multiplicative group of order 26. Find the number of elements of F."
+            answer: "27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is a field F whose multiplicative group has order 26. Rule: the nonzero elements of a field with q elements form a group of order q - 1. Step 1: q - 1 = 26, so q = 27. Step 2: 27 = 3^3 is a prime power, so a field of that order exists. The answer is 27."
+          - problem: "The polynomial x^3 + x + 1 is irreducible over Z_2, so the quotient Z_2[x]/(x^3 + x + 1) is a field. Find how many elements this field has."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The object is the quotient Z_2[x]/(x^3 + x + 1), built from an irreducible cubic. Rule: a quotient by an irreducible polynomial of degree n over Z_p is a field with p^n elements. Step 1: p = 2 and n = 3. Step 2: 2^3 = 8. The answer is 8."
         constraints: "existence/size questions for orders <= 27; construction via irreducible polynomials may be quoted"
     diagnostic_exemplar:
       problem: 'Describe a field with exactly $9$ elements, justifying that it is a field, and compute the inverse of $\alpha$, the root of the polynomial you adjoin.'
