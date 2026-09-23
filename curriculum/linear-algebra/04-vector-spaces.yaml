@@ -895,6 +895,22 @@ topics:
             answer: "[-1,0;0,-1]"
             answer_contract: {"cols":2,"kind":"matrix","rows":2}
             solution_sketch: '$\begin{pmatrix}0&-1\\1&0\end{pmatrix}^2 = -I$: rotation by $180^\circ$.'
+          - problem: "$S$ has matrix $\\begin{pmatrix}-1&0\\\\0&1\\end{pmatrix}$ (reflect across the $y$-axis) and $T$ has matrix $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$ (rotate $90^\\circ$). Find the matrix of $S \\circ T$. Give the matrix as [a,b;c,d]."
+            answer: "[0,1;1,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix of $S \\circ T$ is (matrix of $S$)(matrix of $T$). Multiply $\\begin{pmatrix}-1&0\\\\0&1\\end{pmatrix}\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$: row 1 is $(-1)(0)+0(1)=0$ and $(-1)(-1)+0(0)=1$; row 2 is $0(0)+1(1)=1$ and $0(-1)+1(0)=0$. The matrix of $S \\circ T$ is [0,1;1,0]."
+          - problem: "$S$ has matrix $\\begin{pmatrix}2&0\\\\0&3\\end{pmatrix}$ (scale the $x$-axis by $2$ and the $y$-axis by $3$) and $T$ has matrix $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$ (rotate $90^\\circ$). Find the matrix of $S \\circ T$. Give the matrix as [a,b;c,d]."
+            answer: "[0,-2;3,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix of $S \\circ T$ is (matrix of $S$)(matrix of $T$). Multiply $\\begin{pmatrix}2&0\\\\0&3\\end{pmatrix}\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$: row 1 is $2(0)+0(1)=0$ and $2(-1)+0(0)=-2$; row 2 is $0(0)+3(1)=3$ and $0(-1)+3(0)=0$. The matrix of $S \\circ T$ is [0,-2;3,0]."
+          - problem: "$S$ has matrix $\\begin{pmatrix}2&0\\\\0&3\\end{pmatrix}$ (scale the $x$-axis by $2$ and the $y$-axis by $3$) and $R$ has matrix $\\begin{pmatrix}1&0\\\\0&-1\\end{pmatrix}$ (reflect across the $x$-axis). Find the matrix of $R \\circ S$. Give the matrix as [a,b;c,d]."
+            answer: "[2,0;0,-3]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "The matrix of $R \\circ S$ is (matrix of $R$)(matrix of $S$). Multiply $\\begin{pmatrix}1&0\\\\0&-1\\end{pmatrix}\\begin{pmatrix}2&0\\\\0&3\\end{pmatrix}$: row 1 is $1(2)+0(0)=2$ and $1(0)+0(3)=0$; row 2 is $0(2)+(-1)(0)=0$ and $0(0)+(-1)(3)=-3$. The matrix of $R \\circ S$ is [2,0;0,-3]."
+          - problem: "$T$ rotates the plane by $90^\\circ$ counterclockwise and has matrix $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$. What single matrix performs this rotation three times in a row? Give the matrix as [a,b;c,d]."
+            answer: "[0,1;-1,0]"
+            answer_contract: {"cols": 2, "kind": "matrix", "rows": 2}
+            solution_sketch: "Three rotations give $T^3 = T \\cdot T \\cdot T$. First $T^2 = \\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix} = \\begin{pmatrix}-1&0\\\\0&-1\\end{pmatrix}$. Then $T^3 = T^2 T = \\begin{pmatrix}-1&0\\\\0&-1\\end{pmatrix}\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$, which has row 1 $(-1)(0)+0(1)=0$, $(-1)(-1)+0(0)=1$ and row 2 $0(0)+(-1)(1)=-1$, $0(-1)+(-1)(0)=0$. The single matrix is [0,1;-1,0]."
         constraints: "compose two of: 90-degree rotations, axis reflections, integer scalings"
     diagnostic_exemplar:
       problem: '$S$ reflects $\mathbb{R}^2$ across the $x$-axis and $T$ rotates it by $90^\circ$ counterclockwise. Find the standard matrix of $S \circ T$ and compute $(S \circ T)(1, 2)$.'
@@ -1299,14 +1315,30 @@ topics:
         name: The orthogonal decomposition
         key_prerequisites: [orthogonal-orthonormal-sets, vector-projections, orthogonal-complements]
         exemplars:
-          - problem: 'Write $\mathbf{x} = (4, 7)$ as $\hat{\mathbf{x}} + \mathbf{z}$ with $\hat{\mathbf{x}} \in W = \mathrm{span}\{(2, 1)\}$ and $\mathbf{z} \perp W$.'
-            answer: "x-hat = (6, 3), z = (-2, 4)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\hat{\mathbf{x}} = \frac{15}{5}(2, 1) = (6, 3)$; $\mathbf{z} = \mathbf{x} - \hat{\mathbf{x}} = (-2, 4)$ and $(-2, 4) \cdot (2, 1) = -4 + 4 = 0$.'
-          - problem: 'Decompose $\mathbf{x} = (6, 0, 0)$ relative to $W = \mathrm{span}\{(1, 1, 1)\}$.'
-            answer: "x-hat = (2, 2, 2), z = (4, -2, -2)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\hat{\mathbf{x}} = \frac{6}{3}(1,1,1)$; check $\mathbf{z} \cdot (1,1,1) = 4 - 2 - 2 = 0$.'
+          - problem: "Write $\\mathbf{x} = (15, 3)$ as $\\hat{\\mathbf{x}} + \\mathbf{z}$ with $\\hat{\\mathbf{x}} \\in W = \\mathrm{span}\\{(2, 3)\\}$ and $\\mathbf{z} \\perp W$. Give $\\hat{\\mathbf{x}}$ and $\\mathbf{z}$ as (a, b) pairs."
+            answer: "xhat = (6, 9); z = (9, -6)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "xhat"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "z"}]}
+            solution_sketch: "Decompose $\\mathbf{x} = (15, 3)$ relative to $W = \\mathrm{span}\\{(2, 3)\\}$: $\\mathbf{x} = \\hat{\\mathbf{x}} + \\mathbf{z}$. Step 1 (vector-projection rule): $(15,3)\\cdot(2,3) = 39$ and $(2,3)\\cdot(2,3) = 13$, so $\\hat{\\mathbf{x}} = 3(2,3) = (6, 9)$. Step 2 (orthogonal decomposition): $\\mathbf{z} = (15,3) - (6,9) = (9, -6)$. Step 3 (dot-product check): $(9,-6)\\cdot(2,3) = 18 - 18 = 0$, so $\\mathbf{z} \\perp W$. The answer is xhat = (6, 9); z = (9, -6)."
+          - problem: "Express $\\mathbf{x} = (13, 1, 4)$ as $\\hat{\\mathbf{x}} + \\mathbf{z}$ where $\\hat{\\mathbf{x}}$ lies in $W = \\mathrm{span}\\{(1, 1, 1)\\}$ and $\\mathbf{z}$ is orthogonal to $W$. Give $\\hat{\\mathbf{x}}$ and $\\mathbf{z}$ as (a, b, c) triples."
+            answer: "xhat = (6, 6, 6); z = (7, -5, -2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "xhat"}, {"contract": {"arity": 3, "kind": "coordinates"}, "name": "z"}]}
+            solution_sketch: "Decompose $\\mathbf{x} = (13, 1, 4)$ relative to $W = \\mathrm{span}\\{(1,1,1)\\}$: $\\mathbf{x} = \\hat{\\mathbf{x}} + \\mathbf{z}$. Step 1 (vector-projection rule): $(13,1,4)\\cdot(1,1,1) = 18$ and $(1,1,1)\\cdot(1,1,1) = 3$, so $\\hat{\\mathbf{x}} = 6(1,1,1) = (6, 6, 6)$. Step 2 (orthogonal decomposition): $\\mathbf{z} = (13,1,4) - (6,6,6) = (7, -5, -2)$. Step 3 (dot-product check): $(7,-5,-2)\\cdot(1,1,1) = 7 - 5 - 2 = 0$, so $\\mathbf{z} \\perp W$. The answer is xhat = (6, 6, 6); z = (7, -5, -2)."
+          - problem: "Decompose the vector $\\mathbf{x} = (7, -9)$ into $\\hat{\\mathbf{x}} + \\mathbf{z}$, where $\\hat{\\mathbf{x}}$ is in $W = \\mathrm{span}\\{(3, -1)\\}$ and $\\mathbf{z} \\perp W$. Give $\\hat{\\mathbf{x}}$ and $\\mathbf{z}$ as (a, b) pairs."
+            answer: "xhat = (9, -3); z = (-2, -6)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "xhat"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "z"}]}
+            solution_sketch: "Decompose $\\mathbf{x} = (7, -9)$ relative to $W = \\mathrm{span}\\{(3,-1)\\}$: $\\mathbf{x} = \\hat{\\mathbf{x}} + \\mathbf{z}$. Step 1 (vector-projection rule): $(7,-9)\\cdot(3,-1) = 30$ and $(3,-1)\\cdot(3,-1) = 10$, so $\\hat{\\mathbf{x}} = 3(3,-1) = (9, -3)$. Step 2 (orthogonal decomposition): $\\mathbf{z} = (7,-9) - (9,-3) = (-2, -6)$. Step 3 (dot-product check): $(-2,-6)\\cdot(3,-1) = -6 + 6 = 0$, so $\\mathbf{z} \\perp W$. The answer is xhat = (9, -3); z = (-2, -6)."
+          - problem: "Let $W = \\mathrm{span}\\{(1, 2)\\}$ and $\\mathbf{x} = (8, 6)$. Compute the part $\\mathbf{z}$ of the orthogonal decomposition of $\\mathbf{x}$ relative to $W$, so that $\\mathbf{x} = \\hat{\\mathbf{x}} + \\mathbf{z}$ with $\\hat{\\mathbf{x}} \\in W$ and $\\mathbf{z} \\perp W$. Give $\\mathbf{z}$ as (a, b)."
+            answer: "(4, -2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Find the complement part $\\mathbf{z}$ of $\\mathbf{x} = (8, 6)$ relative to $W = \\mathrm{span}\\{(1,2)\\}$. Step 1 (vector-projection rule): $(8,6)\\cdot(1,2) = 20$ and $(1,2)\\cdot(1,2) = 5$, so $\\hat{\\mathbf{x}} = 4(1,2) = (4, 8)$. Step 2 (orthogonal decomposition): $\\mathbf{z} = \\mathbf{x} - \\hat{\\mathbf{x}} = (4, -2)$. Step 3 (dot-product check): $(4,-2)\\cdot(1,2) = 4 - 4 = 0$, so $\\mathbf{z} \\perp W$. The answer is (4, -2)."
+          - problem: "Let $W$ be the line spanned by $(2, 2, 1)$ and let $\\mathbf{x} = (7, 9, 4)$. Find the orthogonal projection $\\hat{\\mathbf{x}}$ of $\\mathbf{x}$ onto $W$. Give $\\hat{\\mathbf{x}}$ as (a, b, c)."
+            answer: "(8, 8, 4)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Project $\\mathbf{x} = (7, 9, 4)$ onto $W = \\mathrm{span}\\{(2,2,1)\\}$. Step 1 (vector-projection rule): $(7,9,4)\\cdot(2,2,1) = 36$ and $(2,2,1)\\cdot(2,2,1) = 9$, so the scalar is $4$. Step 2 (vector-projection rule): $\\hat{\\mathbf{x}} = 4(2,2,1) = (8, 8, 4)$. Step 3 (orthogonal decomposition): $\\mathbf{z} = (-1, 1, 0)$ and $(-1,1,0)\\cdot(2,2,1) = 0$, confirming $\\mathbf{z} \\perp W$. The answer is (8, 8, 4)."
+          - problem: "The line $W$ is spanned by $(2, -1, 2)$. Write the vector $\\mathbf{x} = (6, 12, 9)$ in the form $\\hat{\\mathbf{x}} + \\mathbf{z}$ with $\\hat{\\mathbf{x}} \\in W$ and $\\mathbf{z}$ orthogonal to every vector of $W$. State $\\hat{\\mathbf{x}}$ and $\\mathbf{z}$ as (a, b, c) triples."
+            answer: "xhat = (4, -2, 4); z = (2, 14, 5)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "xhat"}, {"contract": {"arity": 3, "kind": "coordinates"}, "name": "z"}]}
+            solution_sketch: "Decompose $\\mathbf{x} = (6, 12, 9)$ relative to $W = \\mathrm{span}\\{(2,-1,2)\\}$: $\\mathbf{x} = \\hat{\\mathbf{x}} + \\mathbf{z}$. Step 1 (vector-projection rule): $(6,12,9)\\cdot(2,-1,2) = 18$ and $(2,-1,2)\\cdot(2,-1,2) = 9$, so $\\hat{\\mathbf{x}} = 2(2,-1,2) = (4, -2, 4)$. Step 2 (orthogonal decomposition): $\\mathbf{z} = (6,12,9) - (4,-2,4) = (2, 14, 5)$. Step 3 (dot-product check): $(2,14,5)\\cdot(2,-1,2) = 4 - 14 + 10 = 0$, so $\\mathbf{z} \\perp W$. The answer is xhat = (4, -2, 4); z = (2, 14, 5)."
         constraints: "W is a line with an integer direction; both parts have integer entries; verify z is orthogonal"
       - id: kp3
         name: Distance to a subspace
