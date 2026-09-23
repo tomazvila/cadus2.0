@@ -987,12 +987,34 @@ topics:
         name: "Proving a subset relation"
         key_prerequisites: [set-notation]
         exemplars:
-          - problem: 'Prove: for all sets $A, B$, $A \cap B \subseteq A$.'
-            answer: 'Take $x \in A \cap B$; then $x \in A$.'
-            solution_sketch: 'Let $x \in A \cap B$. By definition $x \in A$ and $x \in B$, so in particular $x \in A$. As $x$ was arbitrary, $A \cap B \subseteq A$. $\square$'
-          - problem: 'Prove: for all sets $A, B$, $A \subseteq A \cup B$.'
-            answer: 'Take $x \in A$; then $x \in A \cup B$.'
-            solution_sketch: 'Let $x \in A$. Then $x \in A$ or $x \in B$, so $x \in A \cup B$. As $x$ was arbitrary, $A \subseteq A \cup B$. $\square$'
+          - problem: "Let U = {1,2,3,4,5,6,7}, A = {1,3,4,6} and B = {2,3,5,6}. To prove A ∩ B ⊆ A by the element method, take an arbitrary element x of A ∩ B. How many possible values can x take?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: A = {1,3,4,6} and B = {2,3,5,6}, so A ∩ B = {3,6}. By the definition of intersection, an arbitrary x in A ∩ B can be 3 or 6. Both values lie in A, which is the membership the subset proof must show. The number of possible values is 2."
+          - problem: "Let U = {1,2,3,4,5,6}, A = {2,4,5} and B = {1,4,5,6}. To prove A ⊆ A ∪ B by the element method, take an arbitrary element x of A. How many possible values can x take?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: A = {2,4,5} and B = {1,4,5,6}. An arbitrary x taken from A can be 2, 4 or 5. Each of these values lies in A ∪ B = {1,2,4,5,6}, so the required membership holds. The number of possible values is 3."
+          - problem: "A student claims that A ∪ B ⊆ A for all sets A and B. Take U = {1,2,3,4}, A = {1,3} and B = {2,3}. Give the smallest element of U for which the claim fails."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: A = {1,3} and B = {2,3}, so A ∪ B = {1,2,3}. Check the elements of U in order: 1 is in A, 2 is not in A, and 3 is in A. The claim fails first at element 2. The smallest counterexample is 2."
+          - problem: "Let A = {2,5,7} and B = {5,6,7,8}. To prove A ∩ B ⊆ B by the element method, take an arbitrary element x of A ∩ B. Give the sum of all possible values of x."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: A = {2,5,7} and B = {5,6,7,8}, so A ∩ B = {5,7}. An arbitrary x in A ∩ B can be 5 or 7, and both values lie in B. The sum of the possible values is 5 + 7 = 12."
+          - problem: "A student tries to prove that A ∪ B ⊆ A ∩ B for all sets A and B. Step 1: take an arbitrary x in A ∪ B. Step 2: then x is in A or x is in B. Step 3: hence x is in A and x is in B. Step 4: so x is in A ∩ B, and therefore A ∪ B ⊆ A ∩ B. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Full object: the claim A ∪ B ⊆ A ∩ B and the four numbered steps. Step 1 is valid: taking an arbitrary element of A ∪ B is the correct start of the element method. Step 2 is valid: membership in a union means x is in A or x is in B. Step 3 is the first invalid step: it changes the disjunction into a conjunction. Step 4 is not the first invalid step; it only inherits the error of Step 3, and the claim itself is false. The answer is Step 3."
+          - problem: "To prove A ∩ B ⊆ A by the element method, take an arbitrary x in A ∩ B. Select the line that follows directly from this membership."
+            answer: "x is in A and x is in B"
+            answer_contract: {"kind": "label", "options": [["x is in A and x is in B"], ["x is in A or x is in B"], ["x is not in A and x is not in B"], ["x is in A or not in B"]]}
+            solution_sketch: "Full object: an arbitrary x in A ∩ B. By the definition of intersection, x in A ∩ B means x is in A and x is in B. The line 'x is in A or x is in B' replaces the conjunction with a disjunction. The line 'x is not in A and x is not in B' negates both memberships. The line 'x is in A or not in B' mixes a disjunction with a negation. The correct line is x is in A and x is in B."
+          - problem: "Write the full proof: for all sets A, B and C, if A ⊆ B and B ⊆ C, then A ⊆ C. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Full object: sets A, B, C with A ⊆ B and B ⊆ C, and the goal A ⊆ C. Step 1: assume A ⊆ B and B ⊆ C. Step 2: let x be an arbitrary element of A, as the element method requires. Step 3: since A ⊆ B and x ∈ A, we get x ∈ B. Step 4: since B ⊆ C and x ∈ B, we get x ∈ C. Step 5: because x was arbitrary, every element of A is an element of C, so A ⊆ C. This proves transitivity of the subset relation by taking an arbitrary element of the smaller set and showing membership in the larger set. The proof uses the definition of subset twice and the arbitrary-element principle once."
         constraints: "take an arbitrary element of the smaller set and show membership in the larger"
       - id: kp2
         name: "Set equality by double inclusion"
