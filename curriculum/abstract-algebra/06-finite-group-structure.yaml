@@ -35,14 +35,30 @@ topics:
         name: "Writing and verifying the class equation"
         key_prerequisites: [orbit-stabilizer-theorem, lagranges-theorem]
         exemplars:
-          - problem: 'The conjugacy classes of $D_4$ are $\{e\}$, $\{r^2\}$, $\{r, r^3\}$, $\{s, r^2s\}$, $\{rs, r^3s\}$. Write the class equation of $D_4$ and read off $|Z(D_4)|$.'
-            answer: '$8 = 1 + 1 + 2 + 2 + 2$; $|Z(D_4)| = 2$ (the size-1 classes are $e$ and $r^2$).'
-            answer_contract: {kind: none}
-            solution_sketch: 'The center consists exactly of the elements whose conjugacy class is a singleton; two singleton classes give $|Z| = 2$.'
-          - problem: 'List the conjugacy class sizes of $S_4$ by cycle type and verify the class equation.'
-            answer: '$24 = 1 + 6 + 3 + 8 + 6$: identity, transpositions, double transpositions, 3-cycles, 4-cycles.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Count each cycle type: $1$, $\binom{4}{2} = 6$, $3$, $8$, $3! = 6$; they sum to $|S_4| = 24$.'
+          - problem: "The nontrivial conjugacy classes of D4 have sizes 2, 2, and 2. Its center has two elements. Use the class equation to find |D4|."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The class equation is |G| = |Z(G)| + sum of the nontrivial conjugacy class sizes. For D4, |Z(D4)| = 2 and the nontrivial sizes sum to 2 + 2 + 2 = 6. Therefore |D4| = 2 + 6 = 8, so the answer is 8."
+          - problem: "For S4 the nontrivial conjugacy class sizes are 6, 3, 8, and 6. Use the class equation and |S4| = 24 to find |Z(S4)|."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The class equation for S4 is 24 = |Z(S4)| + 6 + 3 + 8 + 6. The nontrivial sizes add to 6 + 3 + 8 + 6 = 23. Thus |Z(S4)| = 24 - 23 = 1, so the answer is 1."
+          - problem: "The nontrivial conjugacy class sizes of A4 are 3, 4, and 4. Use the class equation and |A4| = 12 to find |Z(A4)|."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The class equation for A4 is 12 = |Z(A4)| + 3 + 4 + 4. The nontrivial sizes add to 3 + 4 + 4 = 11. Then |Z(A4)| = 12 - 11 = 1, so the answer is 1."
+          - problem: "The conjugacy classes of the dihedral group D6 of order 12 have sizes 1, 1, 2, 2, 3, and x. Use the class equation and |D6| = 12 to find x."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The class equation for D6 is 12 = 1 + 1 + 2 + 2 + 3 + x. The known sizes add to 1 + 1 + 2 + 2 + 3 = 9. Then 9 + x = 12, so x = 3. The answer is 3."
+          - problem: "The conjugacy classes of the dihedral group D8 of order 16 have sizes 1, 1, 2, 2, 2, 4, and x. Use the class equation and |D8| = 16 to find x."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The class equation for D8 is 16 = 1 + 1 + 2 + 2 + 2 + 4 + x. The known sizes add to 1 + 1 + 2 + 2 + 2 + 4 = 12. Then 12 + x = 16, so x = 4. The answer is 4."
+          - problem: "The conjugacy classes of the dihedral group D12 of order 24 have sizes 1, 1, 2, 2, 2, 2, 2, 6, and x. Use the class equation and |D12| = 24 to find x."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The class equation for D12 is 24 = 1 + 1 + 2 + 2 + 2 + 2 + 2 + 6 + x. The known sizes add to 1 + 1 + 2 + 2 + 2 + 2 + 2 + 6 = 18. Then 18 + x = 24, so x = 6. The answer is 6."
         constraints: "verify |G| = |Z(G)| + sum of nontrivial class sizes for groups of order <= 24; one problem per set solves for a missing class size"
       - id: kp3
         name: "p-groups have nontrivial center"
@@ -98,13 +114,29 @@ topics:
         name: "Statement and scope"
         key_prerequisites: [order-of-an-element, lagranges-theorem]
         exemplars:
-          - problem: 'State Cauchy''s theorem, and explain what it adds to Lagrange''s theorem.'
-            answer: 'If a prime $p$ divides $|G|$, then $G$ has an element of order $p$. Lagrange gives necessity (element orders divide $|G|$); Cauchy is the partial converse: every prime divisor is realized as an element order.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Contrast directions: Lagrange restricts possible orders; Cauchy guarantees them — for primes only.'
+          - problem: "A group G has order 42. Give the prime element orders whose existence Cauchy's theorem guarantees, in increasing order."
+            answer: "2, 3, 7"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The group order is 42. Factor 42 = 2 * 3 * 7, so the distinct prime divisors are 2, 3, and 7. By the statement of Cauchy's theorem, each prime divisor of the group order is realized as an element order. In increasing order the guaranteed prime element orders are 2, 3, 7."
           - problem: 'A group has order $30$. Which element orders does Cauchy''s theorem guarantee?'
             answer: '$2, 3, 5$'
             solution_sketch: '$30 = 2 \cdot 3 \cdot 5$; Cauchy applies to each prime divisor. (Order $30$ itself is not guaranteed — the theorem covers primes only.)'
+          - problem: "A group G has order 60. Find the number of distinct prime element orders that Cauchy's theorem guarantees."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group order is 60. Factor 60 = 2^2 * 3 * 5, so its distinct prime divisors are 2, 3, and 5. Cauchy's theorem guarantees an element of order p for each prime divisor p. Thus the number of distinct guaranteed prime element orders is 3."
+          - problem: "A group G has order 84. Determine the largest element order that Cauchy's theorem guarantees."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group order is 84. Factor 84 = 2^2 * 3 * 7, so the distinct prime divisors are 2, 3, and 7. Cauchy's theorem guarantees an element of order p for each prime divisor p, and the largest such prime is 7. Therefore the largest guaranteed element order is 7."
+          - problem: "The Klein four group has order 4 and no element of order 4. Determine how many element orders Cauchy's theorem guarantees for this group."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The Klein four group has order 4, and 4 is not prime. Factor 4 = 2^2, so the only prime divisor is 2. Cauchy's theorem guarantees an element of order 2, but it does not guarantee an element of order 4. Thus the number of guaranteed element orders is 1."
+          - problem: "A group G has order 66. Find the sum of the distinct prime element orders that Cauchy's theorem guarantees."
+            answer: "16"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group order is 66. Factor 66 = 2 * 3 * 11, so the distinct prime divisors are 2, 3, and 11. Cauchy's theorem guarantees elements of these prime orders. Their sum is 2 + 3 + 11 = 16, so the required sum is 16."
         constraints: "statement and guaranteed-order questions, |G| <= 100; contrast with the failure of the full Lagrange converse (Klein group and order 4)"
       - id: kp2
         name: "First applications"
