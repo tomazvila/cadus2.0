@@ -837,10 +837,26 @@ topics:
           - problem: 'A Euclidean domain carries a norm allowing division with smaller remainder. In the Gaussian integers $\mathbb{Z}[i]$ with $N(a + bi) = a^2 + b^2$, compute $N(3 + 2i)$.'
             answer: "13"
             solution_sketch: '$N(3 + 2i) = 3^2 + 2^2 = 13$. ($N$ is multiplicative: $N(zw) = N(z)N(w)$.)'
-          - problem: 'Divide $7 + 2i$ by $2 - i$ in $\mathbb{Z}[i]$: find $q, r$ with $7 + 2i = (2 - i)q + r$ and $N(r) < N(2 - i)$.'
-            answer: '$q = 2 + 2i$, $r = 1$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Exact quotient: $\frac{7+2i}{2-i} = \frac{(7+2i)(2+i)}{5} = \frac{12 + 11i}{5} = 2.4 + 2.2i$; round to the nearest Gaussian integer $q = 2 + 2i$. Then $r = 7 + 2i - (2-i)(2+2i) = 7 + 2i - (6 + 2i) = 1$, and $N(1) = 1 < 5 = N(2 - i)$.'
+          - problem: "In the Gaussian integers Z[i] with norm N(a+bi)=a^2+b^2, let z = (5+2i)(1+4i). Compute N(z)."
+            answer: "493"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (norm multiplicativity): N(zw) = N(z)N(w), so N(z) = N(5+2i)N(1+4i). Step 2 (compute each norm): N(5+2i) = 25+4 = 29 and N(1+4i) = 1+16 = 17. Step 3 (multiply): 29*17 = 493. The answer is 493."
+          - problem: "In the Gaussian integers Z[i] with norm N(a+bi)=a^2+b^2, write 8+7i = (3+i)q + r with N(r) < N(3+i). Find q and r."
+            answer: "q = 3+i; r = i"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "q"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1 (exact quotient): (8+7i)/(3+i) = (8+7i)(3-i)/10 = (31+13i)/10 = 3.1+1.3i. Step 2 (round to the nearest Gaussian integer): q = 3+i. Step 3 (remainder): r = 8+7i - (3+i)(3+i) = 8+7i - (8+6i) = i, and N(i) = 1 < 10 = N(3+i). The answer is q = 3+i; r = i."
+          - problem: "In Q[x] with the degree norm, divide x^3+3x^2+5 by x+2. Find the remainder r(x)."
+            answer: "9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (remainder theorem): the remainder of f(x) upon division by x+2 is f(-2). Step 2 (evaluate): f(-2) = (-2)^3 + 3(-2)^2 + 5 = -8 + 12 + 5 = 9. Step 3 (check the norm): deg(9) = 0 < 1 = deg(x+2), so the division is valid. The answer is 9."
+          - problem: "In Z with the norm N(a) = abs(a), write -13 = 4q + r with abs(r) < 4. Find q and r."
+            answer: "q = -4; r = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "q"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1 (choose the quotient): we need -13 = 4q + r with abs(r) < 4, so pick the nearest multiple of 4: q = -4. Step 2 (compute the remainder): r = -13 - 4(-4) = -13 + 16 = 3. Step 3 (check the norm condition): abs(3) = 3 < 4 = abs(4). The answer is q = -4; r = 3."
+          - problem: "In the Gaussian integers Z[i] with norm N(a+bi)=a^2+b^2, write 6+5i = (2+3i)q + r with N(r) < N(2+3i). Find q and r."
+            answer: "q = 2-i; r = -1+i"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "q"}, {"contract": {"kind": "exact"}, "name": "r"}]}
+            solution_sketch: "Step 1 (exact quotient): (6+5i)/(2+3i) = (6+5i)(2-3i)/13 = (27-8i)/13, which is about 2.08 - 0.62i. Step 2 (round each coordinate): q = 2 - i. Step 3 (remainder): r = 6+5i - (2+3i)(2-i) = 6+5i - (7+4i) = -1+i, and N(-1+i) = 2 < 13 = N(2+3i). The answer is q = 2-i; r = -1+i."
         constraints: "norms and one-step divisions in Z[i] with parts |a|, |b| <= 8; the degree norm on F[x] cited from polynomial-rings; Z with absolute value as the base example"
       - id: kp2
         name: "Every Euclidean domain is a PID"
@@ -874,14 +890,30 @@ topics:
         name: "PIDs vs non-PIDs: the ideal <2, x>"
         key_prerequisites: [ring-homomorphisms-ideals, polynomial-rings]
         exemplars:
-          - problem: 'Show that $\langle 2, x \rangle$ is not principal in $\mathbb{Z}[x]$, so $\mathbb{Z}[x]$ is not a PID.'
-            answer: 'A generator $f$ would divide $2$, so $f = \pm 1$ or $\pm 2$. But $\pm 2 \nmid x$ in $\mathbb{Z}[x]$, and $f = \pm 1$ would make the ideal all of $\mathbb{Z}[x]$ — yet $\langle 2, x \rangle$ is exactly the polynomials with even constant term, a proper ideal. Contradiction.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Constrain the candidate generator through divisibility of $2$, then rule each candidate out.'
-          - problem: 'Which of these rings are PIDs: $\mathbb{Z}$, $\ \mathbb{Q}[x]$, $\ \mathbb{Z}[x]$?'
-            answer: '$\mathbb{Z}$ and $\mathbb{Q}[x]$ are PIDs (both Euclidean); $\mathbb{Z}[x]$ is not (witness $\langle 2, x \rangle$).'
-            answer_contract: {kind: none}
-            solution_sketch: 'Euclidean $\implies$ PID covers the first two; the previous exemplar refutes the third.'
+          - problem: "In Z[x], suppose the ideal <2,x> is principal with generator f. Then f must divide both 2 and x. How many common divisors of 2 and x are there in Z[x]?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (generator property): a generator f of <2,x> must divide 2 and x. Step 2 (divisibility in Z[x]): a common divisor of the constant 2 must be one of the constants 1, -1, 2, -2. Step 3 (test x): the constants 2 and -2 do not divide x, since 2g = x would force g = x/2, which is not in Z[x]. Only 1 and -1 remain. The answer is 2."
+          - problem: "Consider the four rings listed in the options. Which of them fails to be a principal ideal domain?"
+            answer: "Z[x]"
+            answer_contract: {"kind": "label", "options": [["Z[x]"], ["Q[x]"], ["R[x]"], ["C[x]"]]}
+            solution_sketch: "Step 1 (Euclidean implies PID): Q[x], R[x] and C[x] are polynomial rings over fields, Euclidean with the degree as size, so each is a PID. Step 2 (classify Z[x]): in Z[x] the ideal <2,x> of polynomials with even constant term has no single generator, so it is not principal. Wrong options: choosing Q[x], R[x] or C[x] overlooks that a field coefficient ring makes the polynomial ring Euclidean, while only the integer coefficient ring breaks this. The answer is Z[x]."
+          - problem: "In Z[x], suppose a polynomial f generates the ideal <2,x>. Since f must divide 2, f can only be a divisor of the constant polynomial 2. How many divisors of 2 are there in Z[x]?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (generator property): a generator of <2,x> must divide the constant 2. Step 2 (divisor bound): any divisor of 2 has degree at most 0, so it is a constant; the constant divisors in Z[x] are 1, -1, 2, -2. Step 3 (count): this gives four divisors total. The answer is 4."
+          - problem: "In the quotient ring Z[x]/<2,x>, imposing the relations 2 = 0 and x = 0 leaves only the constant term, taken mod 2. Which of the constants 0 and 1 is the class of 9 + 4x + 6x^2 equal to?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (ideal structure): <2,x> is exactly the ideal of polynomials with even constant term, so the quotient identifies a polynomial with its constant term mod 2. Step 2 (reduce): the constant term of 9 + 4x + 6x^2 is 9, and 9 mod 2 = 1. The answer is 1."
+          - problem: "Work in Z[x] with the ideal <3,x>. State whether <3,x> is principal, and give the number of elements of the quotient ring Z[x]/<3,x>."
+            answer: "verdict = nonprincipal; size = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["principal"], ["nonprincipal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "size"}]}
+            solution_sketch: "Step 1 (candidate generator): if <3,x> were principal with generator f, then f would divide both 3 and x, so f would be one of 1, -1 (the constants 3 and -3 fail to divide x). Step 2 (contradiction): a unit generator makes the ideal the whole ring, but <3,x> is proper since every element has constant term divisible by 3; hence the ideal is nonprincipal. Step 3 (quotient): the evaluation map Z[x] to Z/3Z sending x to 0 has kernel exactly <3,x>, so the quotient has 3 elements. The answer is verdict = nonprincipal; size = 3."
+          - problem: "In Z[x], consider the ideal <2,x>. Find the smallest number of elements needed to generate <2,x> as an ideal."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (upper bound): the two elements 2 and x generate <2,x> by definition, so two generators suffice. Step 2 (no single generator): a generator f would divide 2, forcing f in {1, -1, 2, -2}; the constants 2 and -2 do not divide x, and the units 1 and -1 would generate the whole ring, while <2,x> is proper since all its elements have even constant term. Step 3 (conclusion): no one-element generating set exists, so the minimum is 2. The answer is 2."
         constraints: "classify Z, F[x], Z[x], fields; the <2, x> argument reproduced, not just quoted"
     diagnostic_exemplar:
       problem: 'Show that the ideal $\langle 3, x \rangle$ of $\mathbb{Z}[x]$ is not principal, and explain why no ideal of $\mathbb{Q}[x]$ can fail in this way.'

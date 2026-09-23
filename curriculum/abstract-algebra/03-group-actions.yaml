@@ -320,10 +320,26 @@ topics:
           - problem: 'Under conjugation, the orbit of $x$ is its conjugacy class and the stabilizer is the centralizer $C(x)$. In $S_3$, the conjugacy class of $(1\,2)$ has size $3$. Find $|C((1\,2))|$.'
             answer: "2"
             solution_sketch: '$|S_3| = 6 = 3 \cdot |C((1\,2))|$, so the centralizer is $\{e, (1\,2)\}$.'
-          - problem: 'Verify the class equation for $S_3$: list the conjugacy class sizes and check they sum to $6$.'
-            answer: '$1 + 3 + 2 = 6$: $\{e\}$, the three transpositions, the two 3-cycles.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Conjugacy in $S_n$ preserves cycle type; sizes are $1, 3, 2$.'
+          - problem: "In $S_3$, which has order 6, the centralizer of the 3-cycle $(1\\,2\\,3)$ has order 3. For the conjugation action of $S_3$ on itself, find the number of elements in the conjugacy class of $(1\\,2\\,3)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the conjugation action of $S_3$ on itself, the orbit of an element is its conjugacy class and the stabilizer is its centralizer, so the orbit-stabilizer theorem gives class size $= |S_3| / |C((1\\,2\\,3))|$. Substituting, class size $= 6/3$. The conjugacy class of $(1\\,2\\,3)$ has 2 elements."
+          - problem: "In the dihedral group $D_4$ of order 8, the conjugacy class of the half-turn rotation $r^2$ is the singleton $\\{r^2\\}$. Find the order of the centralizer $C(r^2)$."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Under the conjugation action of $D_4$ on itself, the orbit of $r^2$ is its conjugacy class $\\{r^2\\}$, of size 1, and the stabilizer is the centralizer $C(r^2)$. By the orbit-stabilizer theorem, $|\\text{class}| \\cdot |C(r^2)| = |D_4| = 8$. Hence $|C(r^2)| = 8/1 = 8$."
+          - problem: "In the dihedral group $D_4$ of order 8, the conjugacy class of the quarter-turn rotation $r$ is $\\{r, r^3\\}$. Find the order $|C(r)|$ of the centralizer of $r$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Under the conjugation action of $D_4$ on itself, the orbit of $r$ is the class $\\{r, r^3\\}$, which has size 2. By the orbit-stabilizer theorem, $|\\text{class}| \\cdot |C(r)| = |D_4| = 8$. Hence $|C(r)| = 8/2 = 4$."
+          - problem: "The group $S_4$ has order 24. Under conjugation, the conjugacy class of the double transposition $(1\\,2)(3\\,4)$ contains 3 elements. Find $|C((1\\,2)(3\\,4))|$, the order of its centralizer."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the conjugation action of $S_4$ on itself, the orbit of $x$ is its conjugacy class and the stabilizer is its centralizer $C(x)$. By the orbit-stabilizer theorem, $|\\text{class}| \\cdot |C(x)| = |S_4| = 24$. The class of $(1\\,2)(3\\,4)$ has 3 elements, so $|C((1\\,2)(3\\,4))| = 24/3 = 8$."
+          - problem: "In $S_4$, the centralizer of the 3-cycle $(1\\,2\\,3)$ has order 4. Use the orbit-stabilizer theorem for the conjugation action of $S_4$ on itself to find the size of the conjugacy class of $(1\\,2\\,3)$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For the conjugation action, the stabilizer of $(1\\,2\\,3)$ is its centralizer, so the orbit-stabilizer theorem gives class size $= |S_4| / |C((1\\,2\\,3))|$. With $|S_4| = 24$ and $|C((1\\,2\\,3))| = 4$, the class size is $24/4 = 6$. The conjugacy class of $(1\\,2\\,3)$ has 6 elements."
         constraints: "class sizes and centralizer orders in S_3, S_4, D_4"
     diagnostic_exemplar:
       problem: 'In $S_4$ the conjugacy class of $(1\,2)$ has $6$ elements. Using the orbit-stabilizer theorem for the conjugation action of $S_4$ on itself, find $|C((1\,2))|$ and list the elements of that centralizer.'
@@ -393,6 +409,22 @@ topics:
           - problem: 'Count necklaces of $3$ beads in $3$ colors, up to rotation.'
             answer: "11"
             solution_sketch: '$(3^3 + 3 + 3)/3 = 33/3 = 11$.'
+          - problem: "A bracelet has 5 beads in a circle, and each bead is one of 2 colors. Two colorings are the same when a rotation turns one into the other. Find the number of distinct colorings."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (cycle structure): the identity rotation has 5 cycles, so it fixes 2^5 = 32 colorings; each of the four nontrivial rotations has gcd(r, 5) = 1 cycle, so each fixes 2^1 = 2 colorings. Step 2 (Burnside's lemma): average the fixed counts, (32 + 2 + 2 + 2 + 2)/5 = 40/5 = 8. The number of distinct colorings is 8."
+          - problem: "Six beads are placed evenly on a ring and each is colored with one of 2 colors. Two colorings are considered the same if a rotation carries one to the other. Determine the number of distinct colorings."
+            answer: "14"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (cycle structure): the rotations by 0 through 5 positions have gcd(r, 6) = 6, 1, 2, 3, 2, 1 cycles, so the fixed counts are 2^6, 2, 2^2, 2^3, 2^2, 2. Step 2 (Burnside's lemma): the average is (64 + 2 + 4 + 8 + 4 + 2)/6 = 84/6 = 14. The number of distinct colorings is 14."
+          - problem: "A necklace has 6 beads and 3 colors are available. The rotation by 180 degrees sends each bead to the bead 3 positions away, so the 6 bead positions form 3 cycles of length 2. How many colorings are fixed by this rotation?"
+            answer: "27"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (cycle structure): the rotation by 3 positions has gcd(3, 6) = 3 cycles, each of length 2. Step 2 (fixed colorings): a coloring is fixed exactly when each cycle is monochrome, so there are 3^3 = 27 choices. The number of fixed colorings is 27."
+          - problem: "A ring has 5 beads and each bead is colored with one of 3 colors. Rotations of the ring are allowed. Using Burnside's lemma, find the number of distinct colorings."
+            answer: "51"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (cycle structure): the identity has 5 cycles and fixes 3^5 = 243 colorings; each of the four nontrivial rotations has gcd(r, 5) = 1 cycle and fixes 3^1 = 3 colorings. Step 2 (Burnside's lemma): the average is (243 + 3 + 3 + 3 + 3)/5 = 255/5 = 51. The number of distinct colorings is 51."
         constraints: "n beads (n <= 6), k colors (k <= 3), cyclic group only; fixed colorings = k^{gcd(r, n)}"
       - id: kp3
         name: "Adding reflections: dihedral symmetry"

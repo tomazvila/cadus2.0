@@ -53,14 +53,30 @@ topics:
         name: "Characteristic of a ring"
         key_prerequisites: [units-in-modular-rings]
         exemplars:
-          - problem: 'Find the characteristic of $\mathbb{Z}_{12}$, of $\mathbb{Q}$, and of $\mathbb{Z}_7$.'
-            answer: '$12$; $0$; $7$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The characteristic is the additive order of $1$ (or $0$ if infinite).'
-          - problem: 'Prove that the characteristic of a field is $0$ or prime.'
-            answer: 'If $\mathrm{char} = mn$ with $1 < m, n < mn$, then $(m\cdot 1)(n \cdot 1) = mn \cdot 1 = 0$ gives zero divisors — impossible in a field.'
-            answer_contract: {kind: none}
-            solution_sketch: 'A composite characteristic factors into two nonzero elements multiplying to zero.'
+          - problem: "Find the characteristic of the ring $\\mathbb{Z}_{12}$ and of the ring $\\mathbb{Z}_7$. Give the characteristic of $\\mathbb{Z}_{12}$ as c12 and the characteristic of $\\mathbb{Z}_7$ as c7."
+            answer: "c12 = 12; c7 = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c12"}, {"contract": {"kind": "exact"}, "name": "c7"}]}
+            solution_sketch: "Step 1 (definition of characteristic): the characteristic is the least positive integer k with k times the identity equal to 0. Step 2 (additive order of the identity): in Z_n the identity 1 has additive order exactly n, since n times 1 is 0 and no smaller positive multiple of 1 is 0. So the characteristic of Z_12 is 12 and the characteristic of Z_7 is 7. Therefore c12 = 12; c7 = 7."
+          - problem: "A ring R has characteristic 6, so 6 times the identity is 0 in R, and k times the identity is nonzero for every 1 <= k <= 5. Determine whether a field with characteristic 6 is possible, and give the smallest integer m > 1 such that $m \\cdot 1$ is a zero divisor in R."
+            answer: "verdict = impossible; m = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["possible"], ["impossible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "m"}]}
+            solution_sketch: "Step 1 (zero divisors from a composite characteristic): in characteristic 6 the elements 2 times 1 and 3 times 1 are both nonzero, but their product is 6 times 1 = 0, so by the zero-product definition both are zero divisors; the smallest such m is 2. Step 2 (field axiom: no zero divisors): a field has no zero divisors, so a field can never have a composite characteristic. The option possible is the error of ignoring that a composite characteristic forces zero divisors. Therefore verdict = impossible; m = 2."
+          - problem: "Find the characteristic of the field $\\mathbb{Q}$ of rational numbers."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of characteristic): the characteristic is the least positive integer k with k times 1 equal to 0, and it is 0 when no such k exists. Step 2 (apply to Q): for every positive integer n, n times 1 equals n, which is nonzero in Q, so no positive multiple of the identity vanishes. Therefore the characteristic is 0."
+          - problem: "Find the characteristic of the product ring $\\mathbb{Z}_4 \\times \\mathbb{Z}_6$."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (characteristic of each factor): the additive order of the identity (1, 1) is the least k with k in both Z_4 and Z_6 killing each component, so char of Z_4 is 4 and char of Z_6 is 6. Step 2 (lcm rule for products): the characteristic of R x S is the least common multiple of the factor characteristics, so the answer is lcm(4, 6) = 12. Therefore 12."
+          - problem: "A field F has characteristic 5. Find the characteristic of the product ring $F \\times \\mathbb{Z}_6$."
+            answer: "30"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (characteristic of each factor): the identity of F has additive order 5, and the identity of Z_6 has additive order 6, so the factor characteristics are 5 and 6. Step 2 (lcm rule for products): in the product ring, k times the identity is zero exactly when k kills both components, which is the least common multiple. So the characteristic is lcm(5, 6) = 30. Therefore 30."
+          - problem: "Compute the characteristic of the product ring $\\mathbb{Z}_3 \\times \\mathbb{Z}_5$."
+            answer: "15"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (characteristic of each factor): in Z_3 the identity has additive order 3, and in Z_5 the identity has additive order 5. Step 2 (lcm rule for products): the characteristic of the product is the least common multiple of the factor characteristics, and since 3 and 5 are coprime, lcm(3, 5) = 15. Therefore 15."
         constraints: "characteristics of Z_n, Q, products; the primality proof"
       - id: kp3
         name: "The Frobenius endomorphism in characteristic p"
@@ -173,14 +189,30 @@ topics:
         name: "The embedding: every domain sits inside its smallest field"
         key_prerequisites: [integral-domains-zero-divisors, fields-characteristic]
         exemplars:
-          - problem: 'Prove that $\iota : D \to \mathrm{Frac}(D)$, $\iota(a) = \frac{a}{1}$, is an injective ring homomorphism.'
-            answer: '$\iota(a + b) = \frac{a+b}{1} = \frac{a}{1} + \frac{b}{1}$ and $\iota(ab) = \frac{ab}{1} = \frac{a}{1} \cdot \frac{b}{1}$ by the fraction operations with denominator $1$. Injective: $\frac{a}{1} = \frac{b}{1}$ means $a \cdot 1 = 1 \cdot b$, i.e. $a = b$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Denominator-1 fractions add and multiply like $D$ itself; equality of such fractions unwinds to equality in $D$.'
-          - problem: 'Show that any field $K$ containing an integral domain $D$ (as a subring) contains a subfield isomorphic to $\mathrm{Frac}(D)$. What does this say about $\mathbb{Q}$ and $\mathbb{Z}$?'
-            answer: 'Map $\frac{a}{b} \mapsto ab^{-1} \in K$ (defined since $b \neq 0$ is invertible in $K$); it is well defined ($ad = bc \implies ab^{-1} = cd^{-1}$), a ring homomorphism, and injective since a nonzero fraction maps to a nonzero element — its image is a subfield isomorphic to $\mathrm{Frac}(D)$. Hence $\mathbb{Q}$ is (up to isomorphism) the smallest field containing $\mathbb{Z}$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The universal property, lite: fractions have nowhere to go but $ab^{-1}$, so $\mathrm{Frac}(D)$ embeds in every field around $D$.'
+          - problem: "For D = Z, define iota(a) = a/1 in Frac(Z). Let a = 4 and b = 9. State whether iota(a)+iota(b) equals iota(a+b), and give the common value."
+            answer: "verdict = equals; sum = 13"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["equals"], ["differs"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "sum"}]}
+            solution_sketch: "Step 1: The embedding is iota(a) = a/1, so iota(4) = 4 and iota(9) = 9. Step 2: In Frac(Z), iota(4) + iota(9) = 4 + 9 = 13. Step 3: Also iota(4+9) = iota(13) = 13, so the two sides match. The option differs would come from forgetting that iota preserves addition. verdict = equals; sum = 13."
+          - problem: "For D = Z, define iota(a) = a/1 in Frac(D). If iota(m) = iota(8), find m."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The embedding sends m to m/1. Step 2: Equality iota(m) = iota(8) means m/1 = 8/1. Step 3: Cross multiplication gives m * 1 = 1 * 8, so m = 8. The value is 8."
+          - problem: "For D = Z, define iota(a) = a/1 in Frac(D). Compute iota(3) * iota(4) in Frac(D)."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The embedding is multiplicative, so iota(3) * iota(4) = (3/1) * (4/1). Step 2: Multiply fractions: (3*4)/(1*1) = 12/1. Step 3: In Frac(Z), 12/1 equals 12. The product is 12."
+          - problem: "For D = Z, the minimality proof says every field containing D contains iota(a) iota(b)^(-1). Find the element of Q equal to iota(1) * iota(2)^(-1). Give the answer as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The minimality step uses iota(a) * iota(b)^(-1). Step 2: Here iota(1) = 1 and iota(2) = 2, so iota(2)^(-1) = 1/2 in Q. Step 3: The product is 1 * 1/2 = 1/2. Together the embedding and minimality steps conclude that every integral domain embeds in a field. The value is 1/2."
+          - problem: "Let D be the Gaussian integers. The field of fractions Frac(D) is the smallest field containing D. Select the field isomorphic to Frac(D)."
+            answer: "Q(i)"
+            answer_contract: {"kind": "label", "options": [["Q(i)"], ["Q(2)"], ["Q(-1)"], ["Z(i)"]]}
+            solution_sketch: "Step 1: The Gaussian integers form an integral domain. Step 2: Its field of fractions must contain the images of a and i, so it contains Q(i). Step 3: Any field containing the Gaussian integers already contains Q(i), so Q(i) is smallest. The option Q(2) is wrong because it belongs to the sqrt(2) example, not to i; the option Q(-1) is wrong because replacing i by its square -1 collapses the field to Q; the option Z(i) is wrong because it is not a field. The selected field is Q(i)."
+          - problem: "Let D = Z/5Z, an integral domain. The embedding iota(a) = a/1 maps D into Frac(D). Compute iota(4) + iota(4) in Frac(D)."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The embedding gives iota(4) = 4/1 in Frac(D). Step 2: Add: 4/1 + 4/1 = 8/1. Step 3: In Z/5Z, 8 is congruent to 3, so 8/1 equals 3/1. The value is 3."
         constraints: "the embedding and minimality proofs in guided steps; conclude 'every integral domain embeds in a field' explicitly once per set"
     diagnostic_exemplar:
       problem: 'Identify the field of fractions of the integral domain $\mathbb{Z}[\sqrt{2}] = \{a + b\sqrt{2} : a, b \in \mathbb{Z}\}$ as an explicit subfield of $\mathbb{R}$, and justify your answer.'
