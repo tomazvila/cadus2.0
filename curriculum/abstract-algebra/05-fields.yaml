@@ -176,14 +176,30 @@ topics:
         name: "Recognizing fields of fractions: Q, F(x), Q(√2)"
         key_prerequisites: [integral-domains-zero-divisors, polynomial-rings, fields-characteristic]
         exemplars:
-          - problem: 'Identify the field of fractions of $\mathbb{Z}$ and of $\mathbb{Q}[x]$.'
-            answer: '$\mathrm{Frac}(\mathbb{Z}) = \mathbb{Q}$; $\mathrm{Frac}(\mathbb{Q}[x]) = \mathbb{Q}(x)$, the field of rational functions $p/q$ with $p, q \in \mathbb{Q}[x]$, $q \neq 0$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'The construction applied to $\mathbb{Z}$ produces exactly the rationals; applied to a polynomial ring over a field it produces the rational-function field.'
-          - problem: 'What is the field of fractions of a field $F$? Justify.'
-            answer: '$F$ itself (up to isomorphism): every fraction $a/b$ equals $ab^{-1}/1$, since $b$ is already invertible in $F$, so the embedding $a \mapsto a/1$ is onto.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Invertible denominators collapse every fraction to an element of $F$.'
+          - problem: "The ring Z is an integral domain. Its field of fractions is the least field that contains a copy of Z, formed by inverting every nonzero member. Which field results from this construction?"
+            answer: "Q: elements are ratios a/b"
+            answer_contract: {"kind": "label", "options": [["Q: elements are ratios a/b"], ["Z: elements are integers"], ["Z[x]: elements are polynomials"], ["Q[x]: elements are polynomials"]]}
+            solution_sketch: "Step 1 (construction): the field of fractions of Z is built from equivalence classes of pairs a/b with a and b in Z and b nonzero. Step 2 (identification): each such class is an ordinary rational number, and each rational number occurs as one of these classes. Step 3 (wrong options): 'Z: elements are integers' errs because Z is not closed under division, so inverting nonzero members must enlarge it; 'Z[x]: elements are polynomials' errs because it is a polynomial ring, not the fraction field of Z; 'Q[x]: elements are polynomials' errs because it is a polynomial ring over Q, not a field of ratios of integers. Step 4 (answer): the resulting field is Q: elements are ratios a/b."
+          - problem: "Let F be a field. Its field of fractions is built by inverting every nonzero member. Which field results from this construction?"
+            answer: "F: elements are elements of F"
+            answer_contract: {"kind": "label", "options": [["F: elements are elements of F"], ["Z: elements are integers"], ["F[x]: elements are polynomials"], ["F(x): elements are ratios p/q"]]}
+            solution_sketch: "Step 1 (construction): the field of fractions of F is built from equivalence classes of pairs a/b with a and b in F and b nonzero. Step 2 (collapse): since b is invertible in a field, the class of a/b equals the class of ab^(-1)/1, which is a member of F, and every member of F appears as a/1. Step 3 (wrong options): 'Z: elements are integers' errs because F was not assumed to be Z and a general field need not contain the integers; 'F[x]: elements are polynomials' errs because adjoining an indeterminate gives a larger polynomial ring, not the fraction field; 'F(x): elements are ratios p/q' errs because ratios of polynomials appear only when the base ring is F[x], not when it is already the field F. Step 4 (answer): the resulting field is F: elements are elements of F."
+          - problem: "The polynomial ring Q[x] is an integral domain. Its field of fractions is written Q(x). Give the general form of one element of Q(x) using two polynomials p and q."
+            answer: "p/q"
+            answer_contract: {"kind": "function", "vars": ["p", "q"]}
+            solution_sketch: "Step 1 (construction): the field of fractions of Q[x] is built from equivalence classes of pairs (p, q) with p and q in Q[x] and q nonzero. Step 2 (notation): each class is recorded as the quotient p/q. Step 3 (answer): the general form of one element of Q(x) is p/q."
+          - problem: "The polynomial ring Z_5[x] over the field Z_5 is an integral domain. Its field of fractions is written Z_5(x). Give the general form of one element of Z_5(x) using two polynomials f and g."
+            answer: "f/g"
+            answer_contract: {"kind": "function", "vars": ["f", "g"]}
+            solution_sketch: "Step 1 (construction): the field of fractions of Z_5[x] is built from equivalence classes of pairs (f, g) with f and g in Z_5[x] and g nonzero. Step 2 (notation): each class is recorded as the quotient f/g. Step 3 (answer): the general form of one element of Z_5(x) is f/g."
+          - problem: "The ring Z[sqrt(2)] consists of the values m + n sqrt(2) with m and n whole numbers. Its field of fractions is the subfield Q(sqrt(2)) of the real numbers. Give the general form of one element of Q(sqrt(2)) using two rational numbers a and b."
+            answer: "a + b sqrt(2)"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "Step 1 (elements): Z[sqrt(2)] is the set of values m + n sqrt(2) with m and n whole numbers. Step 2 (field of fractions): inverting every nonzero member gives the field Q(sqrt(2)). Step 3 (answer): the general form of one element of Q(sqrt(2)) is a + b sqrt(2), with a and b rational."
+          - problem: "In the field of fractions of Z[sqrt(2)] every element is a ratio of two members of the ring. Write the value 5/(3 - sqrt(2)) in the form a + b sqrt(2) with rational a and b. Find b."
+            answer: "5/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (rationalize): multiply the numerator and the denominator by 3 + sqrt(2), the conjugate of 3 - sqrt(2). Step 2 (simplify): the denominator becomes 9 - 2 = 7 and the numerator becomes 15 + 5 sqrt(2). Step 3 (read off): the element is 15/7 + (5/7) sqrt(2), so b = 5/7."
         constraints: "identifications for Z, F[x] (F in {Q, Z_p}), Z[sqrt(2)] (giving Q(sqrt(2)) = {a + b sqrt(2), a, b rational}), and fields; each identification says what the elements look like"
       - id: kp3
         name: "The embedding: every domain sits inside its smallest field"

@@ -858,12 +858,34 @@ topics:
         name: "Definitions and the quotient characterizations"
         key_prerequisites: [quotient-rings, integral-domains-zero-divisors]
         exemplars:
-          - problem: 'State the quotient characterizations of prime and maximal ideals in a commutative ring with unity.'
-            answer: '$P$ prime $\iff R/P$ is an integral domain; $M$ maximal $\iff R/M$ is a field.'
-            solution_sketch: '$ab \in P \Rightarrow a \in P$ or $b \in P$ translates to no zero divisors in $R/P$; maximality translates to no proper nonzero ideals in $R/M$, i.e. every nonzero coset invertible.'
-          - problem: 'Every maximal ideal is prime. Why?'
-            answer: 'Fields are integral domains, so $R/M$ a field forces $R/M$ a domain.'
-            solution_sketch: 'Chain the two characterizations.'
+          - problem: "Let M be a maximal ideal of a commutative ring R with unity, and suppose the quotient ring R/M has exactly 7 elements. How many units does R/M have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The quotient R/M has exactly 7 elements, and M is maximal. Rule: the maximal quotient characterization says M is maximal exactly when R/M is a field. A field with 7 elements has all 6 of its nonzero elements as units and no others. The number of units is 6."
+          - problem: "Let P be a prime ideal of a commutative ring R with unity, and suppose the quotient ring R/P has exactly 5 elements. How many units does R/P have?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The quotient R/P has exactly 5 elements, and P is prime. Rule: the prime quotient characterization says P is prime exactly when R/P is an integral domain. A finite integral domain is a field, so all 4 nonzero elements of R/P are units. The number of units is 4."
+          - problem: "Let I be a proper ideal of a commutative ring R with unity, and suppose R/I is an integral domain with exactly 3 elements. Determine whether R/I is a field, and give the number of units of R/I. Give the answer as verdict and units."
+            answer: "verdict = yes; units = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "units"}]}
+            solution_sketch: "The ring R/I has 3 elements and is an integral domain. Rule: a finite integral domain is a field, since each nonzero element has finite order under multiplication and generates the whole ring. So R/I is a field, and its 2 nonzero elements are both units. The answer is verdict = yes; units = 2."
+          - problem: "Claim: every prime ideal of a commutative ring with unity is maximal. Step 1: let P be a prime ideal of R. Step 2: R/P is an integral domain. Step 3: every integral domain is a field. Step 4: R/P is a field, so P is maximal. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: it sets up a proper prime ideal P. Step 2 is valid by the prime quotient characterization. Step 3 is false: for example the ring of integers is an integral domain but not a field, so primality alone never gives maximality. Step 4 would follow if Step 3 held, since the maximal quotient characterization needs a field. The answer is Step 3."
+          - problem: "To prove that P prime forces R/P to be an integral domain, take cosets a+P and b+P of R/P with (a+P)(b+P) = P. Step 1: the product ab belongs to P. Step 2: [missing line]. Step 3: a+P = P or b+P = P. Step 4: R/P has no zero divisors, so it is an integral domain. Which option gives the missing Step 2?"
+            answer: "a in P or b in P"
+            answer_contract: {"kind": "label", "options": [["a in P or b in P"], ["a in P and b in P"], ["a+b in P"], ["ab = 0"]]}
+            solution_sketch: "Step 1 uses coset arithmetic: (a+P)(b+P) = P means ab in P. Step 2 must apply the definition of a prime ideal to ab in P, giving a in P or b in P. Option a in P and b in P is the error of strengthening or to and; primality gives only one factor. Option a+b in P is the error of replacing the product by the sum. Option ab = 0 is the error of confusing membership in P with the zero coset. The answer is a in P or b in P."
+          - problem: "Let M be a maximal ideal of a commutative ring R with unity, and suppose R/M has exactly 4 elements. How many solutions does the equation x^2 = 0+M have in R/M?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The quotient R/M has 4 elements, and M is maximal. Rule: the maximal quotient characterization makes R/M a field, and this is the chain behind every maximal ideal being prime. A field has no nonzero zero divisors, so x^2 = 0+M forces x = 0+M, the single coset of M. The number of solutions is 1."
+          - problem: "Write the full proof: in a commutative ring R with unity, a proper ideal I is prime if and only if the quotient ring R/I is an integral domain. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (forward): assume I is prime and take cosets a+I and b+I of R/I with (a+I)(b+I) = I. Step 2: coset multiplication gives ab in I. Step 3: since I is prime, a in I or b in I, so a+I = I or b+I = I; hence R/I has no zero divisors. Step 4: R is commutative with unity, so R/I is commutative with unity, and therefore R/I is an integral domain. Step 5 (converse): assume R/I is an integral domain and let ab in I for a, b of R. Step 6: then (a+I)(b+I) = I in R/I, so a+I = I or b+I = I because R/I has no zero divisors. Step 7: this means a in I or b in I, so I is prime, and the two directions together give the equivalence."
         constraints: "statements and one-line derivations; commutative rings with unity"
       - id: kp2
         name: "Classifying prime/maximal ideals of Z and Z_n"
@@ -1071,14 +1093,30 @@ topics:
         name: "Irreducible vs prime elements"
         key_prerequisites: [irreducibility-factorization, euclidean-domains-pids]
         exemplars:
-          - problem: 'Define irreducible and prime elements of an integral domain, and prove that every prime element is irreducible.'
-            answer: '$p$ (nonzero, non-unit) is prime if $p \mid ab \implies p \mid a$ or $p \mid b$; irreducible if $p = ab \implies a$ or $b$ is a unit. If $p = ab$, then $p \mid ab$, say $p \mid a$: $a = pc$ gives $p = pcb$, so $cb = 1$ (cancellation) and $b$ is a unit.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Apply the prime property to the factorization itself, then cancel $p$ in the domain.'
-          - problem: 'In $\mathbb{Z}[\sqrt{-5}]$ with $N(a + b\sqrt{-5}) = a^2 + 5b^2$, show that $2$ is irreducible.'
-            answer: 'If $2 = xy$ with $x, y$ non-units, then $N(x)N(y) = N(2) = 4$ with $N(x) = N(y) = 2$; but $a^2 + 5b^2 = 2$ has no integer solutions. So no such factorization exists.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Norms are multiplicative and units have norm $1$; rule out the middle norm value.'
+          - problem: "Let p be a prime element of an integral domain and suppose p = ab with p dividing a, so a = pc. After substituting into p = ab and cancelling p, an equation cb = q results. Find q."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation is p = ab with p dividing a, so write a = pc. Substituting gives p = pcb. Cancel p to obtain cb = 1. The value is 1."
+          - problem: "In Z[sqrt(-5)] with norm N(a + b sqrt(-5)) = a^2 + 5b^2, which of the following describes the element 2?"
+            answer: "irreducible but not prime"
+            answer_contract: {"kind": "label", "options": [["irreducible and prime"], ["irreducible but not prime"], ["reducible and not prime"], ["a unit of this ring"]]}
+            solution_sketch: "The element is 2 with norm 4. If 2 = xy with nonunits, then N(x)N(y)=4, so N(x)=2. But a^2+5b^2=2 has no integer solutions, so 2 is irreducible. Also 2 divides 6 = (1+sqrt(-5))(1-sqrt(-5)) but divides neither factor, so 2 is not prime. The option irreducible and prime is wrong because 2 is not prime. The option reducible and not prime is wrong because 2 is irreducible. The option a unit of this ring is wrong because N(2)=4, not 1. The correct option is irreducible but not prime."
+          - problem: "In Z[sqrt(-5)] with norm N(a + b sqrt(-5)) = a^2 + 5b^2, which of the following describes the element 5?"
+            answer: "reducible and not prime"
+            answer_contract: {"kind": "label", "options": [["irreducible and prime"], ["irreducible but not prime"], ["reducible and not prime"], ["a unit of this ring"]]}
+            solution_sketch: "The element is 5 with norm 25. It factors as (sqrt(-5))(-sqrt(-5)) = 5, and both factors have norm 5, so they are nonunits; hence 5 is reducible. A reducible element is not prime, so 5 is not prime. The option irreducible and prime is wrong because 5 is reducible. The option irreducible but not prime is wrong because 5 is reducible. The option a unit of this ring is wrong because N(5)=25, not 1. The correct option is reducible and not prime."
+          - problem: "In Z[i] with norm N(a + bi) = a^2 + b^2, give the prime element of norm 5 whose real part is 2, in the form a + bi."
+            answer: "2+i"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A Gaussian integer a + bi has norm a^2 + b^2. With real part 2 and norm 5, we need 4 + b^2 = 5, so b = 1 or b = -1. The element 2+i has norm 5. Since 5 is a rational prime, 2+i is irreducible in Z[i]. Because Z[i] is a Euclidean domain, every irreducible is prime. The element is 2+i."
+          - problem: "In Z[i] with norm N(a + bi) = a^2 + b^2, the norm argument for deciding whether 3 is irreducible starts from a factorization 3 = xy with x and y both nonunits. Multiplicativity gives N(x)N(y) = 9, and since a unit has norm 1 and a nonunit has norm greater than 1, the equation forces N(x) = N(y) = m. Find m."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element is 3 with norm N(3) = 9. By the multiplicative norm rule, N(x)N(y) = 9. A unit has norm 1 and a nonunit has norm greater than 1, so the only factorization of 9 into two integers greater than 1 is 3 times 3; the alternative 9 = 9 times 1 makes y a unit. Hence N(x) = N(y) = 3. The forced norm value is 3."
+          - problem: "In Z[sqrt(-5)] with norm N(a + b sqrt(-5)) = a^2 + 5b^2, give the nonunit factor of 5 with positive imaginary part."
+            answer: "sqrt(-5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The element 5 has norm 25. It factors as (sqrt(-5))(-sqrt(-5)) = 5. The factor sqrt(-5) has norm 5, so it is a nonunit, and it has positive imaginary part. The factor is sqrt(-5)."
         constraints: "norm arguments in Z[sqrt(-5)] and Z[i], norms <= 30; the prime => irreducible proof with cancellation cited"
       - id: kp2
         name: "UFDs and factoring in Z[i]"
