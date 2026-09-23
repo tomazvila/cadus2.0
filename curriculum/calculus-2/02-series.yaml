@@ -284,18 +284,30 @@ topics:
         name: Divergence seen through partial sums
         key_prerequisites: [sequences-convergence]
         exemplars:
-          - problem: 'Does $\sum_{n=1}^{\infty} 1$ converge? Justify with partial sums.'
-            answer: 'no; $S_N = N \to \infty$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The partial sums grow without bound.'
-          - problem: 'Does $\sum_{n=1}^{\infty} (-1)^n$ converge? Justify with partial sums.'
-            answer: 'no; the partial sums oscillate between $-1$ and $0$'
-            answer_contract: {kind: none}
-            solution_sketch: '$S_1 = -1, S_2 = 0, S_3 = -1, \ldots$: no single limit.'
-          - problem: 'Does $\sum_{n=1}^{\infty} n$ converge? Justify with partial sums.'
-            answer: 'no; $S_N = \frac{N(N+1)}{2} \to \infty$'
-            answer_contract: {kind: none}
-            solution_sketch: 'The arithmetic partial-sum formula grows without bound.'
+          - problem: "A series has partial sums $S_N = 4N - 1$. Determine whether the series converges or diverges by examining its partial sums, and give $S_4$."
+            answer: "verdict = diverges; s4 = 15"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "s4"}]}
+            solution_sketch: "Step 1: Write the partial-sum sequence from the closed form $S_N = 4N - 1$: it is $3, 7, 11, 15, \\ldots$. Step 2: By the partial-sum criterion, a series converges only when $S_N$ approaches one finite limit; this sequence grows without bound, so the series diverges. The option 'converges' is wrong because the partial sums never settle to a fixed finite value. Step 3: Evaluate $S_4 = 4 \\cdot 4 - 1 = 15$. The answer is verdict = diverges; s4 = 15."
+          - problem: "Consider the series whose terms are $a_n = (-1)^{n+1}$ for $n = 1, 2, 3, \\ldots$, that is $1 - 1 + 1 - 1 + \\ldots$. State whether the series settles to one finite value by examining its partial sums, and give $S_5$."
+            answer: "verdict = diverges; s5 = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "s5"}]}
+            solution_sketch: "Step 1: Write out the full partial-sum sequence: $S_1 = 1$, $S_2 = 0$, $S_3 = 1$, $S_4 = 0$, so $S_N$ is $1, 0, 1, 0, \\ldots$. Step 2: By the partial-sum criterion, a series settles to a finite value only when $S_N$ approaches a single limit; this sequence oscillates between $1$ and $0$ with no single limit, so the series diverges. The option 'converges' is wrong because the partial sums never approach one fixed number. Step 3: Since $5$ is odd, $S_5 = 1$. The answer is verdict = diverges; s5 = 1."
+          - problem: "A series has partial sums $S_N = \\frac{N(N+3)}{2}$. Determine whether the series converges or diverges by examining its partial sums, and give $S_4$."
+            answer: "verdict = diverges; s4 = 14"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["converges"], ["diverges"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "s4"}]}
+            solution_sketch: "Step 1: The closed form is $S_N = \\frac{N(N+3)}{2}$, so the partial-sum sequence is $2, 5, 9, 14, \\ldots$. Step 2: This quadratic expression grows without bound as $N$ increases, so by the partial-sum criterion the series diverges. The option 'converges' is wrong because the partial sums do not approach a finite limit. Step 3: Evaluate $S_4 = \\frac{4 \\cdot 7}{2} = 14$. The answer is verdict = diverges; s4 = 14."
+          - problem: "Consider the series $\\sum_{n=1}^{\\infty} 2^n$. Find the fourth and fifth partial sums $S_4$ and $S_5$."
+            answer: "s4 = 30; s5 = 62"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "s4"}, {"contract": {"kind": "exact"}, "name": "s5"}]}
+            solution_sketch: "Step 1: The partial sums of this geometric series are $S_N = 2 + 4 + \\cdots + 2^N = 2^{N+1} - 2$ by the finite geometric sum formula. Step 2: Evaluate $S_4 = 2^5 - 2 = 30$. Step 3: Evaluate $S_5 = 2^6 - 2 = 62$. Step 4: Since $S_N = 2^{N+1} - 2$ grows without bound, this pair of partial sums exhibits divergence. The answer is s4 = 30; s5 = 62."
+          - problem: "The partial sums of a series are $S_N = 5N - 2$. Find the smallest whole number $N$ for which $S_N > 120$."
+            answer: "25"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The closed form is $S_N = 5N - 2$, so set up $5N - 2 > 120$. Step 2: Add 2 to get $5N > 122$. Step 3: Divide by 5 to get $N > 24.4$, so the smallest whole number is 25; the partial sums pass any bound, confirming divergence. The answer is 25."
+          - problem: "The partial sums of a series are $S_N = N^2 + 3N$. Find the smallest whole number $N$ for which $S_N > 50$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: The closed form is $S_N = N^2 + 3N$, so solve $N^2 + 3N > 50$. Step 2: Test $N = 5$: $25 + 15 = 40$, which fails. Step 3: Test $N = 6$: $36 + 18 = 54$, which succeeds, so the smallest whole number is 6; the unbounded growth of $S_N$ shows the series diverges. The answer is 6."
         constraints: "divergence exhibited directly from a closed-form or oscillating partial-sum sequence"
     diagnostic_exemplar:
       problem: 'A series has partial sums $S_N = \frac{N}{N+1}$. Does it converge, and to what?'
