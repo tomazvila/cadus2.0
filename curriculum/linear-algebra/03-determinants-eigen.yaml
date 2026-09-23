@@ -885,27 +885,59 @@ topics:
         name: Algebraic vs geometric multiplicity
         key_prerequisites: [eigenvalues-eigenvectors]
         exemplars:
-          - problem: 'For $A = \begin{pmatrix}2&1\\0&2\end{pmatrix}$, find the algebraic and geometric multiplicity of $\lambda = 2$.'
-            answer: "Algebraic 2, geometric 1"
-            answer_contract: {kind: none}
-            solution_sketch: 'Characteristic polynomial $(\lambda - 2)^2$: algebraic multiplicity $2$. But $A - 2I = \begin{pmatrix}0&1\\0&0\end{pmatrix}$ has a $1$-dimensional null space, spanned by $(1, 0)$.'
-          - problem: 'For $A = \begin{pmatrix}5&0\\0&5\end{pmatrix}$, find both multiplicities of $\lambda = 5$.'
-            answer: "Algebraic 2, geometric 2"
-            answer_contract: {kind: none}
-            solution_sketch: '$(\lambda - 5)^2$ gives algebraic $2$; $A - 5I = 0$ gives a $2$-dimensional eigenspace.'
+          - problem: "For A = [[2,1],[0,2]], the only eigenvalue is repeated. Find the eigenvalue lambda and its algebraic multiplicity alg and geometric multiplicity geo."
+            answer: "lambda = 2; alg = 2; geo = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lambda"}, {"contract": {"kind": "exact"}, "name": "alg"}, {"contract": {"kind": "exact"}, "name": "geo"}]}
+            solution_sketch: "Step 1 (triangular-matrix property): A = [[2,1],[0,2]] is upper triangular, so its diagonal entries give the only eigenvalue, lambda = 2. Step 2 (characteristic polynomial): (lambda - 2)^2 has degree 2, so the algebraic multiplicity is alg = 2. Step 3 (rank-nullity): A - 2I = [[0,1],[0,0]] has rank 1, so its null space has dimension 2 - 1 = 1, which is the geometric multiplicity. The multiplicities are lambda = 2; alg = 2; geo = 1."
+          - problem: "For A = [[5,0],[0,5]], find the eigenvalue lambda and its algebraic multiplicity alg and geometric multiplicity geo."
+            answer: "lambda = 5; alg = 2; geo = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lambda"}, {"contract": {"kind": "exact"}, "name": "alg"}, {"contract": {"kind": "exact"}, "name": "geo"}]}
+            solution_sketch: "Step 1 (diagonal-matrix property): A = [[5,0],[0,5]] is diagonal, so lambda = 5 is the only eigenvalue, read from the diagonal. Step 2 (characteristic polynomial): (lambda - 5)^2 has degree 2, so the algebraic multiplicity is alg = 2. Step 3 (rank-nullity): A - 5I = [[0,0],[0,0]] has rank 0, so the eigenspace has dimension 2, giving geo = 2. The multiplicities are lambda = 5; alg = 2; geo = 2."
+          - problem: "For A = [[4,1],[-1,2]], find the eigenvalue lambda of A and its algebraic multiplicity alg and geometric multiplicity geo."
+            answer: "lambda = 3; alg = 2; geo = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "lambda"}, {"contract": {"kind": "exact"}, "name": "alg"}, {"contract": {"kind": "exact"}, "name": "geo"}]}
+            solution_sketch: "Step 1 (characteristic polynomial): for A = [[4,1],[-1,2]] the trace is 6 and the determinant is 9, so char A = lambda^2 - 6 lambda + 9 = (lambda - 3)^2; the only eigenvalue is lambda = 3 with algebraic multiplicity alg = 2. Step 2 (rank-nullity): A - 3I = [[1,1],[-1,-1]] has rank 1, so its null space has dimension 2 - 1 = 1. The multiplicities are lambda = 3; alg = 2; geo = 1."
+          - problem: "For A = [[6,0],[5,6]], the eigenvalue lambda = 6 is repeated. Find geo, the geometric multiplicity of lambda = 6, and give one eigenvector v as (a, b) with b = 1."
+            answer: "geo = 1; v = (0, 1)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "geo"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "v"}]}
+            solution_sketch: "Step 1 (triangular-matrix property): A = [[6,0],[5,6]] is lower triangular, so lambda = 6 is the only eigenvalue, with algebraic multiplicity 2. Step 2 (rank-nullity): A - 6I = [[0,0],[5,0]] has rank 1, so the eigenspace has dimension 2 - 1 = 1, giving geo = 1. Step 3 (null-space computation): (A - 6I)v = 0 gives the equation 5v1 = 0, so v1 = 0, and with b = 1 the eigenvector is (0, 1). The answer is geo = 1; v = (0, 1)."
+          - problem: "A 2x2 matrix A has characteristic polynomial (lambda - 4)^2, and the eigenspace for lambda = 4 has dimension 1. Determine geo, the geometric multiplicity of lambda = 4, and select the word that best describes A."
+            answer: "verdict = defective; geo = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["defective"], ["scalar"], ["diagonalizable"], ["orthogonal"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "geo"}]}
+            solution_sketch: "Step 1 (characteristic polynomial): (lambda - 4)^2 shows the only eigenvalue is lambda = 4 with algebraic multiplicity 2. Step 2 (geometric multiplicity): the eigenspace has dimension 1, so geo = 1 < alg = 2. Step 3 (classification): geo < alg means A is not diagonalizable, which is exactly the word defective; scalar would require A = 4I and an eigenspace of dimension 2, diagonalizable contradicts geo < alg, and orthogonal is a metric property that this data does not determine. The answer is verdict = defective; geo = 1."
+          - problem: "The matrix A = [[a,1],[0,3]] has a repeated eigenvalue. Find the value of a, and the algebraic multiplicity alg and geometric multiplicity geo of that eigenvalue."
+            answer: "a = 3; alg = 2; geo = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "alg"}, {"contract": {"kind": "exact"}, "name": "geo"}]}
+            solution_sketch: "Step 1 (characteristic polynomial): A = [[a,1],[0,3]] is upper triangular with eigenvalues a and 3; the eigenvalue is repeated only when a = 3. Step 2 (algebraic multiplicity): with a = 3 the characteristic polynomial is (lambda - 3)^2, so alg = 2. Step 3 (rank-nullity): A - 3I = [[0,1],[0,0]] has rank 1, so the eigenspace has dimension 2 - 1 = 1, giving geo = 1. The values are a = 3; alg = 2; geo = 1."
         constraints: "repeated-eigenvalue 2x2 examples: shear-type (geo < alg) vs scalar matrices (geo = alg)"
       - id: kp3
         name: Multiplicities in 3x3 matrices
         key_prerequisites: [eigenvalues-eigenvectors, basis-dimension, null-column-space-rank]
         exemplars:
-          - problem: '$A = \begin{pmatrix}2&0&0\\0&2&1\\0&0&3\end{pmatrix}$. Find the eigenvalues with their algebraic multiplicities, and the geometric multiplicity of $\lambda = 2$.'
-            answer: "lambda = 2 (algebraic 2), lambda = 3 (algebraic 1); geometric multiplicity of 2 is 2"
-            answer_contract: {kind: none}
-            solution_sketch: 'Triangular: diagonal $2, 2, 3$. $A - 2I$ has one pivot (its only nonzero rows force $z = 0$), so its null space $\{(x, y, 0)\}$ is $2$-dimensional.'
-          - problem: 'For the same $A$, find an eigenvector for $\lambda = 3$.'
-            answer: "(0, 1, 1) (any nonzero multiple)"
-            answer_contract: {kind: none}
-            solution_sketch: '$A - 3I$ forces $x = 0$ and $y = z$; check $A(0,1,1) = (0, 3, 3)$.'
+          - problem: "Let A = [4,0,0;0,4,2;0,0,6]. Find the algebraic multiplicity of each eigenvalue and the geometric multiplicity of the repeated eigenvalue 4. Give alg4, alg6 and geo4."
+            answer: "alg4 = 2; alg6 = 1; geo4 = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "alg4"}, {"contract": {"kind": "exact"}, "name": "alg6"}, {"contract": {"kind": "exact"}, "name": "geo4"}]}
+            solution_sketch: "Step 1: A is triangular, so its eigenvalues are the diagonal entries 4, 4 and 6; the algebraic multiplicity of 4 is 2 and of 6 is 1. Step 2: form A - 4I = [0,0,0;0,0,2;0,0,2] and row reduce; the two nonzero rows are proportional, so the rank is 1. Step 3: by the rank-nullity theorem the nullity is 3 - 1 = 2, which is the geometric multiplicity. The answer is alg4 = 2; alg6 = 1; geo4 = 2."
+          - problem: "Let A = [5,0,0;0,5,3;0,0,2]. Find an eigenvector of A for the eigenvalue 2 and give it as (x, y, z) with y = 1."
+            answer: "(0,1,-1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Step 1: form A - 2I = [3,0,0;0,3,3;0,0,0]. Step 2: row reduction forces x = 0 from the first row and y + z = 0 from the second row. Step 3: choose y = 1, so z = -1, and check A(0,1,-1) = (0,2,-2) = 2(0,1,-1). The eigenvector is (0,1,-1)."
+          - problem: "Let A = [6,0,0;0,6,2;0,0,9]. Find the rank of A - 6I and the geometric multiplicity of the eigenvalue 6. Give rank and geo."
+            answer: "rank = 1; geo = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "rank"}, {"contract": {"kind": "exact"}, "name": "geo"}]}
+            solution_sketch: "Step 1: form the full object A - 6I = [0,0,0;0,0,2;0,0,3]. Step 2: the nonzero rows (0,0,2) and (0,0,3) are proportional, so row reduction leaves one independent row and the rank is 1. Step 3: by rank-nullity the nullity is 3 - 1 = 2, which is the geometric multiplicity of the eigenvalue 6. The answer is rank = 1; geo = 2."
+          - problem: "Let A = [9,0,0;0,9,3;0,0,4]. Find the geometric multiplicity of the eigenvalue 9."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the diagonal shows the eigenvalue 9 twice, so its algebraic multiplicity is 2. Step 2: form A - 9I = [0,0,0;0,0,3;0,0,-5]; the two nonzero rows are proportional, so the rank is 1. Step 3: rank-nullity gives nullity 3 - 1 = 2. The geometric multiplicity of the eigenvalue 9 is 2."
+          - problem: "Let A = [2,1,0;0,2,0;0,0,5]. Determine the geometric multiplicity of the repeated eigenvalue 2."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the diagonal gives the eigenvalue 2 twice, so its algebraic multiplicity is 2. Step 2: form A - 2I = [0,1,0;0,0,0;0,0,3]; the rows (0,1,0) and (0,0,3) are independent, so the rank is 2. Step 3: rank-nullity gives nullity 3 - 2 = 1. The geometric multiplicity of the repeated eigenvalue 2 is 1."
+          - problem: "Let A = [1,c,0;0,1,0;0,0,4], where c is a real number. Find the value of c for which the geometric multiplicity of the eigenvalue 1 equals 2."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: form A - 1I = [0,c,0;0,0,0;0,0,3]. Step 2: the third row is nonzero, so the rank is at least 1; if c is nonzero the first row is independent of it and the rank is 2, so rank 1 happens only for c = 0. Step 3: rank 1 gives nullity 3 - 1 = 2 by rank-nullity, the required geometric multiplicity. The required value is c = 0."
         constraints: "3x3 triangular with one repeated diagonal entry; geometric multiplicity computed by rank"
     diagnostic_exemplar:
       problem: 'For $A = \begin{pmatrix}3&0&0\\0&3&1\\0&0&5\end{pmatrix}$, find the eigenvalues with their algebraic multiplicities, and a basis for the eigenspace of $\lambda = 3$.'

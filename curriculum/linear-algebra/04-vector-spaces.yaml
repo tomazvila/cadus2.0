@@ -204,14 +204,30 @@ topics:
         name: Spans are subspaces
         key_prerequisites: [span-linear-combinations, subspace-test]
         exemplars:
-          - problem: 'Explain why $\mathrm{span}\{(1, 2), (0, 1)\}$ is a subspace of $\mathbb{R}^2$.'
-            answer: "It contains 0 (the zero combination), and sums and scalar multiples of combinations are again combinations"
-            answer_contract: {kind: none}
-            solution_sketch: '$0\mathbf{v}_1 + 0\mathbf{v}_2 = \mathbf{0}$; adding two combinations adds coefficients; scaling scales them.'
-          - problem: 'Is the set of all scalar multiples of $(3, -1)$ a subspace of $\mathbb{R}^2$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'It is $\mathrm{span}\{(3, -1)\}$, and every span is a subspace.'
+          - problem: "Let $W = \\mathrm{span}\\{(1, 2), (0, 1)\\}$. By the span-is-a-subspace theorem, $W$ is a subspace of $\\mathbb{R}^2$, so a sum of two elements of $W$ stays in $W$. Take $u = 2(1, 2) + 3(0, 1)$ and $v = 1(1, 2) + 2(0, 1)$. Determine whether $W$ passes the subspace test, and give the coefficients $(a, b)$ with $u + v = a(1, 2) + b(0, 1)$, as (a, b)."
+            answer: "verdict = subspace; coeffs = (3,5)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["subspace"], ["notasubspace"]]}, "name": "verdict"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "coeffs"}]}
+            solution_sketch: "Step 1 (span-is-a-subspace theorem): $W = \\mathrm{span}\\{(1,2),(0,1)\\}$ contains the zero combination $0(1,2)+0(0,1) = (0,0)$, and sums and scalar multiples of combinations are again combinations, so $W$ passes the subspace test. Step 2: $u = 2(1,2)+3(0,1) = (2,5)$ and $v = 1(1,2)+2(0,1) = (1,3)$. Step 3 (closure under addition): $u + v = (3,8) = 3(1,2) + 5(0,1)$. The key is verdict = subspace; coeffs = (3,5)."
+          - problem: "The set of all scalar multiples of $(2, 5)$ is $W = \\mathrm{span}\\{(2, 5)\\}$. By the span-is-a-subspace theorem, $W$ is a subspace of $\\mathbb{R}^2$, so a sum of two elements of $W$ stays in $W$. Take $u = 7(2, 5)$ and $v = -3(2, 5)$. Determine whether $W$ is a subspace of $\\mathbb{R}^2$, and give the number $t$ with $u + v = t(2, 5)$."
+            answer: "verdict = subspace; t = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["subspace"], ["notasubspace"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "t"}]}
+            solution_sketch: "Step 1 (span-is-a-subspace theorem): $W = \\mathrm{span}\\{(2,5)\\}$ contains $(0,0)$ and is closed under addition and scalar multiplication, so $W$ is a subspace of $\\mathbb{R}^2$ and the verdict is subspace. Step 2 (closure under addition): $u = 7(2,5) = (14,35)$ and $v = -3(2,5) = (-6,-15)$, so $u + v = (8,20)$. Step 3 (solve the vector equation): $t(2,5) = (8,20)$ gives $2t = 8$, so $t = 4$. The key is verdict = subspace; t = 4."
+          - problem: "In $\\mathbb{R}^3$, let $W = \\mathrm{span}\\{(2, 0, 1), (0, 3, 1)\\}$; by the span-is-a-subspace theorem, $W$ is a subspace, so $u + v$ stays in $W$ for any $u, v$ in $W$. Take $u = 1(2, 0, 1) + 2(0, 3, 1)$ and $v = 3(2, 0, 1) + 1(0, 3, 1)$. Give the coefficients $(a, b)$ with $u + v = a(2, 0, 1) + b(0, 3, 1)$, as (a, b)."
+            answer: "(4,3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (span-is-a-subspace theorem): $W = \\mathrm{span}\\{(2,0,1),(0,3,1)\\}$ is a subspace of $\\mathbb{R}^3$, so the sum $u+v$ is again a combination of the two spanning vectors. Step 2: $u = (2,6,3)$ and $v = (6,3,4)$, so $u + v = (8,9,7)$. Step 3 (solve the vector equation): $a(2,0,1) + b(0,3,1) = (8,9,7)$ gives $2a = 8$ and $3b = 9$, and the third coordinate checks since $4 + 3 = 7$. The key is (4,3)."
+          - problem: "In $\\mathbb{R}^2$, let $W = \\{(x, y) : y = 5x + c\\}$ for a constant $c$. Every span contains the zero vector, which is the first condition of the subspace test, and a line through the origin is the span of one vector. Find the value of $c$ for which $W$ is a subspace of $\\mathbb{R}^2$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (subspace test, zero-vector condition): $(0,0)$ is in $W$ only if $0 = 5 \\cdot 0 + c$, so $c = 0$; for any other $c$ the line misses $(0,0)$ and fails the test. Step 2 (span-is-a-subspace theorem): with $c = 0$, $W = \\{(x,y) : y = 5x\\} = \\mathrm{span}\\{(1,5)\\}$, which is a subspace of $\\mathbb{R}^2$. The key is 0."
+          - problem: "Let $W = \\mathrm{span}\\{(4, 1), (1, 2)\\}$. By the span-is-a-subspace theorem, $W$ is a subspace of $\\mathbb{R}^2$, so every scalar multiple of an element of $W$ is again in $W$. Take $u = 2(4, 1) - 1(1, 2)$, which lies in $W$. Give the coefficients $(a, b)$ with $2u = a(4, 1) + b(1, 2)$, as (a, b)."
+            answer: "(4,-2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1 (span-is-a-subspace theorem): $W = \\mathrm{span}\\{(4,1),(1,2)\\}$ is a subspace, so the scalar multiple $2u$ stays in $W$. Step 2: $u = 2(4,1) - 1(1,2) = (7,0)$, so $2u = (14,0)$. Step 3 (solve the vector equation): $a(4,1) + b(1,2) = (14,0)$ gives $4a + b = 14$ and $a + 2b = 0$, so $b = -a/2$ and $4a - a/2 = 14$, which gives $a = 4$ and $b = -2$. The key is (4,-2)."
+          - problem: "In $\\mathbb{R}^3$, let $W = \\{(x, y, z) : z = 3x + 2y\\}$. This set is the span of two vectors, so by the span-is-a-subspace theorem it is a subspace of $\\mathbb{R}^3$. Write $W = \\mathrm{span}\\{v_1, v_2\\}$, where $v_1$ has second coordinate $0$ and $v_2$ has first coordinate $0$. Give $v_1$ and $v_2$, each as (a, b, c)."
+            answer: "v1 = (1,0,3); v2 = (0,1,2)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "v1"}, {"contract": {"arity": 3, "kind": "coordinates"}, "name": "v2"}]}
+            solution_sketch: "Step 1 (span-is-a-subspace theorem): $W$ is a span of two vectors, hence a subspace of $\\mathbb{R}^3$. Step 2 (free variables): a generic element of $W$ is $(x, y, 3x + 2y)$, which splits as $x(1, 0, 3) + y(0, 1, 2)$. Step 3: setting $y = 0$ gives $v_1 = (1, 0, 3)$ and setting $x = 0$ gives $v_2 = (0, 1, 2)$. The key is v1 = (1,0,3); v2 = (0,1,2)."
         constraints: "1-2 spanning vectors; justify via the subspace test or the span-is-a-subspace theorem"
       - id: kp2
         name: Membership in a span
@@ -1096,14 +1112,30 @@ topics:
         name: Computing images
         key_prerequisites: [linear-transformations, null-column-space-rank]
         exemplars:
-          - problem: 'Describe the image of $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$.'
-            answer: "The line span{(1, 2)}"
-            answer_contract: {kind: none}
-            solution_sketch: 'The image is $\mathrm{Col}(A)$; both columns are multiples of $(1, 2)$.'
-          - problem: 'Is $(3, 6)$ in the image of the same $T$?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$(3, 6) = 3(1, 2)$, e.g. $T(3, 0) = (3, 6)$.'
+          - problem: "Let $T(\\mathbf{x}) = A\\mathbf{x}$ with $A = \\begin{pmatrix}2&5\\\\4&10\\end{pmatrix}$. The image of $T$ is a line through the origin, $y = mx$. Find $m$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the image of $T(\\mathbf{x}) = A\\mathbf{x}$ is the column space of $A$, with columns $(2,4)$ and $(5,10)$. Step 2: the columns are proportional since $(5,10) = \\frac{5}{2}(2,4)$, so the image is a line. Step 3: the line through the origin and $(2,4)$ has slope $4/2 = 2$. The slope of the image line is $m = 2$."
+          - problem: "Let $T(\\mathbf{x}) = A\\mathbf{x}$ with $A = \\begin{pmatrix}3&9\\\\4&12\\end{pmatrix}$. The image of $T$ is a line through the origin. The vector $(c, 8)$ lies in the image of $T$. Find $c$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the image of $T(\\mathbf{x}) = A\\mathbf{x}$ is the column space of $A$, with columns $(3,4)$ and $(9,12)$. Step 2: since $(9,12) = 3(3,4)$, the columns are proportional, so the image is the line through the origin and $(3,4)$. Step 3: test membership by proportionality: a vector in the image has the form $t(3,4)$, and $(c,8)$ gives $4t = 8$, so $t = 2$. Step 4: the first coordinate is $c = 3t = 6$. The value of $c$ is 6."
+          - problem: "Let $T(\\mathbf{x}) = A\\mathbf{x}$ with $A = \\begin{pmatrix}2&1\\\\1&3\\end{pmatrix}$. Compute the dimension of the image of $T$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the image of $T(\\mathbf{x}) = A\\mathbf{x}$ is the column space of $A$, spanned by the columns $(2,1)$ and $(1,3)$. Step 2: the columns are not proportional, since no scalar $t$ satisfies $(1,3) = t(2,1)$. Step 3: two independent columns span all of $\\mathbb{R}^2$, so the image is all of $\\mathbb{R}^2$. The dimension of the image of $T$ is 2."
+          - problem: "Let $T(\\mathbf{x}) = A\\mathbf{x}$ with $A = \\begin{pmatrix}2&6\\\\5&15\\end{pmatrix}$. The image of $T$ is a line through the origin. A vector in the image has first coordinate $8$. Find its second coordinate $d$."
+            answer: "20"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the image of $T(\\mathbf{x}) = A\\mathbf{x}$ is the column space of $A$, with columns $(2,5)$ and $(6,15)$. Step 2: since $(6,15) = 3(2,5)$, the columns are proportional, so the image is the line through the origin and $(2,5)$. Step 3: every vector in the image has the form $t(2,5)$; the first coordinate gives $2t = 8$, so $t = 4$. Step 4: the second coordinate is $d = 5t = 20$. The second coordinate is $d = 20$."
+          - problem: "Let $T(x, y) = (x + y,\\ 2x + 2y)$ for $(x, y)$ in $\\mathbb{R}^2$. Give the spanning vector of the image of $T$ as (a, b), with $a = 1$."
+            answer: "(1,2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Step 1: $T(x,y) = (x+y)(1,2)$, so every output is a multiple of the vector $(1,2)$ and the image is a line. Step 2: the image is therefore the line spanned by $(1,2)$. Step 3: the spanning vector with first coordinate $a = 1$ is unique. The spanning vector of the image is (1,2)."
+          - problem: "Let $T(\\mathbf{x}) = A\\mathbf{x}$ with $A = \\begin{pmatrix}k&1\\\\2&3\\end{pmatrix}$, where $k$ is a real number. Find the value of $k$ for which the image of $T$ is a line."
+            answer: "2/3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1: the image of $T(\\mathbf{x}) = A\\mathbf{x}$ is the column space of $A$, spanned by $(k,2)$ and $(1,3)$. Step 2: the image is a line exactly when the two columns are proportional, so $(k,2) = t(1,3)$. Step 3: comparing second coordinates gives $3t = 2$, so $t = 2/3$, and the first coordinate gives $k = t = 2/3$. The required value is k = 2/3."
         constraints: "images are lines or all of R^2; membership by proportionality"
       - id: kp3
         name: Rank-nullity for maps
@@ -1645,14 +1677,30 @@ topics:
         name: Gram-Schmidt with three vectors
         key_prerequisites: [vector-projections, orthogonal-orthonormal-sets, basis-dimension]
         exemplars:
-          - problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (1, 0, 0)$, $\mathbf{x}_2 = (1, 1, 0)$, $\mathbf{x}_3 = (1, 1, 1)$.'
-            answer: "v1 = (1, 0, 0), v2 = (0, 1, 0), v3 = (0, 0, 1)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{v}_2 = \mathbf{x}_2 - 1\cdot\mathbf{v}_1$; $\mathbf{v}_3 = \mathbf{x}_3 - 1\cdot\mathbf{v}_1 - 1\cdot\mathbf{v}_2$. Each subtraction strips the components already covered.'
-          - problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (1, 1, 0)$, $\mathbf{x}_2 = (1, 0, 1)$, $\mathbf{x}_3 = (0, 1, 1)$.'
-            answer: "v1 = (1, 1, 0), v2 = (1/2, -1/2, 1), v3 = (-2/3, 2/3, 2/3)"
-            answer_contract: {kind: none}
-            solution_sketch: '$\mathbf{v}_2 = \mathbf{x}_2 - \frac{1}{2}\mathbf{v}_1$; then $\mathbf{x}_3 \cdot \mathbf{v}_1 = 1$, $\mathbf{x}_3 \cdot \mathbf{v}_2 = \frac{1}{2}$, $\mathbf{v}_2 \cdot \mathbf{v}_2 = \frac{3}{2}$, so $\mathbf{v}_3 = \mathbf{x}_3 - \frac{1}{2}\mathbf{v}_1 - \frac{1}{3}\mathbf{v}_2 = (-\frac{2}{3}, \frac{2}{3}, \frac{2}{3})$. Check: $\mathbf{v}_3 \cdot \mathbf{v}_1 = \mathbf{v}_3 \cdot \mathbf{v}_2 = 0$.'
+          - problem: "Apply Gram-Schmidt to $\\mathbf{x}_1 = (0, 1, 0)$, $\\mathbf{x}_2 = (1, 1, 0)$, $\\mathbf{x}_3 = (1, 1, 1)$, with $\\mathbf{v}_1 = \\mathbf{x}_1$. Find $\\mathbf{v}_3$ as (a, b, c)."
+            answer: "(0, 0, 1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full object sought: the third Gram-Schmidt vector. Start: v1 = x1 = (0, 1, 0). Projection rule: x2 · v1 = 1 and v1 · v1 = 1, so v2 = x2 - v1 = (1, 0, 0). Projection rule again: x3 · v1 = 1 and x3 · v2 = 1, and both denominators are 1, so v3 = x3 - v1 - v2 = (0, 0, 1). Verify all pairwise dot products: v1 · v2 = 0, v1 · v3 = 0, v2 · v3 = 0. The answer is (0, 0, 1)."
+          - problem: "Apply Gram-Schmidt to $\\mathbf{x}_1 = (1, 1, 1)$, $\\mathbf{x}_2 = (1, 1, 0)$, $\\mathbf{x}_3 = (1, 0, 0)$, with $\\mathbf{v}_1 = \\mathbf{x}_1$. Find $\\mathbf{v}_3$ as (a, b, c)."
+            answer: "(1/2, -1/2, 0)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full object sought: the third Gram-Schmidt vector. Start: v1 = x1 = (1, 1, 1). Projection rule: x2 · v1 = 2 and v1 · v1 = 3, so v2 = x2 - (2/3)v1 = (1/3, 1/3, -2/3). Projection rule again: x3 · v1 = 1 gives 1/3, and x3 · v2 = 1/3 with v2 · v2 = 2/3 gives 1/2, so v3 = x3 - (1/3)v1 - (1/2)v2 = (1/2, -1/2, 0). Verify all pairwise dot products: v1 · v2 = 0, v1 · v3 = 0, v2 · v3 = 0. The answer is (1/2, -1/2, 0)."
+          - problem: "Apply Gram-Schmidt to $\\mathbf{x}_1 = (1, 1, 0)$, $\\mathbf{x}_2 = (0, 1, 1)$, $\\mathbf{x}_3 = (1, 0, 1)$. Give $\\mathbf{v}_2$ and $\\mathbf{v}_3$, each as (a, b, c)."
+            answer: "v2 = (-1/2, 1/2, 1); v3 = (2/3, -2/3, 2/3)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "v2"}, {"contract": {"arity": 3, "kind": "coordinates"}, "name": "v3"}]}
+            solution_sketch: "Full object sought: the second and third Gram-Schmidt vectors. Start: v1 = x1 = (1, 1, 0). Projection rule: x2 · v1 = 1 and v1 · v1 = 2, so v2 = x2 - (1/2)v1 = (-1/2, 1/2, 1). Projection rule again: x3 · v1 = 1 gives 1/2, and x3 · v2 = 1/2 with v2 · v2 = 3/2 gives 1/3, so v3 = x3 - (1/2)v1 - (1/3)v2 = (2/3, -2/3, 2/3). Verify all pairwise dot products: v1 · v2 = 0, v1 · v3 = 0, v2 · v3 = 0. The answer is v2 = (-1/2, 1/2, 1); v3 = (2/3, -2/3, 2/3)."
+          - problem: "Apply Gram-Schmidt to $\\mathbf{x}_1 = (1, 0, 1)$, $\\mathbf{x}_2 = (1, 1, 0)$, $\\mathbf{x}_3 = (0, 1, 1)$, and write the last step as $\\mathbf{v}_3 = \\mathbf{x}_3 - a\\,\\mathbf{v}_1 - b\\,\\mathbf{v}_2$. Find $a$ and $b$."
+            answer: "a = 1/2; b = 1/3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
+            solution_sketch: "Full object sought: the two projection coefficients used in the third Gram-Schmidt step. Start: v1 = x1 = (1, 0, 1). Projection rule: x2 · v1 = 1 and v1 · v1 = 2, so v2 = x2 - (1/2)v1 = (1/2, 1, -1/2). Projection rule again: a = (x3 · v1)/(v1 · v1) = 1/2, and b = (x3 · v2)/(v2 · v2) = (1/2)/(3/2) = 1/3. Verify all pairwise dot products: v1 · v2 = 0, v1 · v3 = 0, v2 · v3 = 0. The answer is a = 1/2; b = 1/3."
+          - problem: "Apply Gram-Schmidt to $\\mathbf{x}_1 = (1, 0, 0)$, $\\mathbf{x}_2 = (0, 1, 1)$, $\\mathbf{x}_3 = (1, 1, 0)$. Find $\\mathbf{v}_3$ as (a, b, c)."
+            answer: "(0, 1/2, -1/2)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full object sought: the third Gram-Schmidt vector when one subtraction drops out. Start: v1 = x1 = (1, 0, 0). Projection rule: x2 · v1 = 0, so the coefficient of v1 is 0 and v2 = x2 = (0, 1, 1). Projection rule again: x3 · v1 = 1 and x3 · v2 = 1, so v3 = x3 - v1 - (1/2)v2 = (0, 1/2, -1/2). Verify all pairwise dot products: v1 · v2 = 0, v1 · v3 = 0, v2 · v3 = 0. The answer is (0, 1/2, -1/2)."
+          - problem: "Apply Gram-Schmidt to $\\mathbf{x}_1 = (1, 1, 1)$, $\\mathbf{x}_2 = (1, 1, 0)$, $\\mathbf{x}_3 = (1, 0, 1)$. Find the squared length $\\mathbf{v}_3 \\cdot \\mathbf{v}_3$ of the third Gram-Schmidt vector, as a fraction."
+            answer: "1/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object sought: the squared norm of the final Gram-Schmidt vector. Start: v1 = x1 = (1, 1, 1). Projection rule: x2 · v1 = 2 and v1 · v1 = 3, so v2 = x2 - (2/3)v1 = (1/3, 1/3, -2/3). Projection rule again: x3 · v1 = 2 gives 2/3, and x3 · v2 = -1/3 with v2 · v2 = 2/3 gives -1/2, so v3 = x3 - (2/3)v1 + (1/2)v2 = (1/2, -1/2, 0). Verify all pairwise dot products: v1 · v2 = 0, v1 · v3 = 0, v2 · v3 = 0. The squared length is 1/4 + 1/4 = 1/2, so the answer is 1/2."
         constraints: "three vectors in R^3 with 0/1 entries; fractions limited to halves and thirds; verify all pairwise dot products"
       - id: kp3
         name: Producing an orthonormal basis
@@ -1773,14 +1821,30 @@ topics:
         name: The residual and its size
         key_prerequisites: [orthogonal-projection-subspace, matrix-inverses]
         exemplars:
-          - problem: 'For $A = \begin{pmatrix}1&0\\0&1\\1&1\end{pmatrix}$, $\mathbf{b} = (0, 0, 3)$, $\hat{\mathbf{x}} = (1, 1)$: find the residual $\mathbf{b} - A\hat{\mathbf{x}}$ and the least-squares error.'
-            answer: 'Residual $(-1, -1, 1)$; error $\sqrt{3}$'
-            answer_contract: {kind: none}
-            solution_sketch: '$A\hat{\mathbf{x}} = (1, 1, 2)$; the residual has norm $\sqrt{1 + 1 + 1}$. Check: $A^T$ times the residual is $\mathbf{0}$.'
-          - problem: 'Geometrically, the least-squares error $\|\mathbf{b} - A\hat{\mathbf{x}}\|$ equals the distance from $\mathbf{b}$ to...'
-            answer: "Col(A), the column space of A"
-            answer_contract: {kind: none}
-            solution_sketch: 'The residual $\mathbf{b} - A\hat{\mathbf{x}}$ is orthogonal to the column space, so its length is the distance from $\mathbf{b}$ to $\mathrm{Col}(A)$.'
+          - problem: "For $A = \\begin{pmatrix}1&2\\\\1&0\\\\2&1\\end{pmatrix}$, $\\mathbf{b} = (6, 8, 1)$ and the least-squares solution $\\hat{\\mathbf{x}} = (2, 1)$: find the residual $\\mathbf{b} - A\\hat{\\mathbf{x}}$ as (r1, r2, r3), and give the least-squares error $\\|\\mathbf{b} - A\\hat{\\mathbf{x}}\\|$ as a single square root."
+            answer: "r = (2, 6, -4); err = sqrt(56)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "r"}, {"contract": {"kind": "exact"}, "name": "err"}]}
+            solution_sketch: "Row-column rule: $A\\hat{\\mathbf{x}} = (1\\cdot2+2\\cdot1,\\ 1\\cdot2+0\\cdot1,\\ 2\\cdot2+1\\cdot1) = (4, 2, 5)$. Residual rule (subtract componentwise): $(6, 8, 1) - (4, 2, 5) = (2, 6, -4)$. Norm by Pythagoras: $\\sqrt{4 + 36 + 16} = \\sqrt{56}$; the check $A^T\\mathbf{r} = \\mathbf{0}$ confirms orthogonality to both columns. Answer: r = (2, 6, -4); err = sqrt(56)."
+          - problem: "For $A = \\begin{pmatrix}1&0\\\\1&1\\\\0&1\\end{pmatrix}$, $\\mathbf{b} = (3, 3, 3)$, $\\hat{\\mathbf{x}} = (2, 2)$: the least-squares error $\\|\\mathbf{b} - A\\hat{\\mathbf{x}}\\|$ is the distance from $\\mathbf{b}$ to the column space of $A$. Find the residual $\\mathbf{b} - A\\hat{\\mathbf{x}}$ as (r1, r2, r3), and give the least-squares error as a single square root."
+            answer: "r = (1, -1, 1); err = sqrt(3)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 3, "kind": "coordinates"}, "name": "r"}, {"contract": {"kind": "exact"}, "name": "err"}]}
+            solution_sketch: "Row-column rule: $A\\hat{\\mathbf{x}} = (2, 4, 2)$. Residual rule: $(3, 3, 3) - (2, 4, 2) = (1, -1, 1)$. The check $A^T\\mathbf{r} = \\mathbf{0}$ shows the residual is orthogonal to the column space, so this norm is the distance from $\\mathbf{b}$ to $\\mathrm{Col}(A)$. Norm: $\\sqrt{1 + 1 + 1}$. Answer: r = (1, -1, 1); err = sqrt(3)."
+          - problem: "For $A = \\begin{pmatrix}1&0\\\\1&1\\\\2&1\\end{pmatrix}$, $\\mathbf{b} = (3, 6, 6)$ and $\\hat{\\mathbf{x}} = (2, 3)$: give the residual $\\mathbf{b} - A\\hat{\\mathbf{x}}$ as (r1, r2, r3)."
+            answer: "(1, 1, -1)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Row-column rule: $A\\hat{\\mathbf{x}} = (2, 5, 7)$. Residual rule: subtract componentwise, $(3, 6, 6) - (2, 5, 7) = (1, 1, -1)$. Orthogonality check: $A^T\\mathbf{r} = (1 + 1 - 2,\\ 1 - 1) = \\mathbf{0}$, so the residual is orthogonal to both columns. Answer: (1, 1, -1)."
+          - problem: "For $A = \\begin{pmatrix}1&1\\\\2&1\\\\1&3\\end{pmatrix}$, $\\mathbf{b} = (7, 1, 3)$ and $\\hat{\\mathbf{x}} = (1, 1)$: find the least-squares error $\\|\\mathbf{b} - A\\hat{\\mathbf{x}}\\|$ as a single square root."
+            answer: "sqrt(30)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Row-column rule: $A\\hat{\\mathbf{x}} = (2, 3, 4)$. Residual rule: $(7, 1, 3) - (2, 3, 4) = (5, -2, -1)$. Norm by Pythagoras: $\\sqrt{25 + 4 + 1} = \\sqrt{30}$; the check $A^T\\mathbf{r} = \\mathbf{0}$ confirms this is the least-squares error. Answer: sqrt(30)."
+          - problem: "The points $(0, 2)$, $(1, 0)$, $(2, 4)$ are fit by the least-squares line $y = a + bx$, with design matrix $A$ having rows $(1, 0)$, $(1, 1)$, $(1, 2)$. Find $\\hat{\\mathbf{x}} = (a, b)$ from the normal equations, then give the least-squares error $\\|\\mathbf{b} - A\\hat{\\mathbf{x}}\\|$ as a single square root."
+            answer: "sqrt(6)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Set up $\\mathbf{b} = (2, 0, 4)$; the normal equations $A^TA\\hat{\\mathbf{x}} = A^T\\mathbf{b}$ read $\\begin{pmatrix}3&3\\\\3&5\\end{pmatrix}\\hat{\\mathbf{x}} = (6, 8)$. Solve by elimination: $\\hat{\\mathbf{x}} = (1, 1)$. Fitted values are $(1, 2, 3)$, so the residual is $(2, 0, 4) - (1, 2, 3) = (1, -2, 1)$. Norm: $\\sqrt{1 + 4 + 1}$. Answer: sqrt(6)."
+          - problem: "For $A = \\begin{pmatrix}1&1\\\\0&1\\\\1&0\\end{pmatrix}$ and $\\mathbf{b} = (4, 0, 1)$, form the residual $\\mathbf{b} - A\\mathbf{x}$ for the two candidates $\\mathbf{x}_1 = (1, 1)$ and $\\mathbf{x}_2 = (0, 2)$. State which candidate gives the smaller residual norm, and give that norm as a single square root."
+            answer: "best = x1; err = sqrt(5)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["x1"], ["x2"]]}, "name": "best"}, {"contract": {"kind": "exact"}, "name": "err"}]}
+            solution_sketch: "For $\\mathbf{x}_1$: $A\\mathbf{x}_1 = (2, 1, 1)$, residual $(2, -1, 0)$, norm $\\sqrt{4 + 1} = \\sqrt{5}$. For $\\mathbf{x}_2$: $A\\mathbf{x}_2 = (2, 2, 0)$, residual $(2, -2, 1)$, norm $\\sqrt{4 + 4 + 1} = 3$; choosing x2 confuses the larger norm with the smaller one. Since $\\sqrt{5} < 3$, candidate x1 gives the smaller residual norm. Answer: best = x1; err = sqrt(5)."
         constraints: "residual entries small integers; error a single square root"
     diagnostic_exemplar:
       problem: 'Find the least-squares line $y = a + bx$ through $(-1, 0)$, $(0, 2)$, $(1, 1)$, and the least-squares error $\|\mathbf{b} - A\hat{\mathbf{x}}\|$.'
