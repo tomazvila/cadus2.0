@@ -316,14 +316,30 @@ topics:
         name: "Constant forcing terms"
         key_prerequisites: [linear-homogeneous-recurrences]
         exemplars:
-          - problem: 'Solve $a_n = 2a_{n-1} + 1$ with $a_0 = 0$ (the Tower of Hanoi recurrence).'
-            answer: '2^n - 1'
-            answer_contract: {kind: none}
-            solution_sketch: 'Particular constant solution: $p = 2p + 1$ gives $p = -1$. General: $A \cdot 2^n - 1$; $a_0 = 0$ forces $A = 1$. Check: $1, 3, 7, 15$.'
-          - problem: 'Solve $a_n = 2a_{n-1} + 3$ with $a_0 = 2$.'
-            answer: '5 * 2^n - 3'
-            answer_contract: {kind: none}
-            solution_sketch: '$p = 2p + 3$ gives $p = -3$; $A - 3 = 2$ so $A = 5$. Check $a_1 = 7 = 10 - 3$, $a_2 = 17 = 20 - 3$.'
+          - problem: "Solve the recurrence a_n = 2a_{n-1} + 5 with a_0 = 4. Its general solution is a constant particular value p plus a homogeneous part A times 2^n. Give p and A in the form p = value and A = value."
+            answer: "p = -5; A = 9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "A"}]}
+            solution_sketch: "The full recurrence is a_n = 2a_{n-1} + 5 with a_0 = 4. Particular-solution rule: a constant p must satisfy p = 2p + 5, so p = -5. Homogeneous-solution rule: the general solution is a_n = A times 2^n - 5. Initial-condition rule: a_0 = A - 5 = 4, so A = 9. Check: a_1 = 2(4) + 5 = 13 and 9(2) - 5 = 13, which agree. The values are p = -5; A = 9."
+          - problem: "A sequence follows the rule a_n = 4a_{n-1} - 6 and starts with a_0 = 5. Its closed form is a constant particular value p plus a homogeneous part A times 4^n. Find p and A in the form p = value and A = value."
+            answer: "p = 2; A = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "A"}]}
+            solution_sketch: "The full recurrence is a_n = 4a_{n-1} - 6 with a_0 = 5. Particular-solution rule: a constant p must satisfy p = 4p - 6, so 3p = 6 and p = 2. Homogeneous-solution rule: the general solution is a_n = A times 4^n + 2. Initial-condition rule: a_0 = A + 2 = 5, so A = 3. Check: a_1 = 4(5) - 6 = 14 and 3(4) + 2 = 14, which agree. The values are p = 2; A = 3."
+          - problem: "A bank account opens with a_0 = 300 dollars. Each month the balance is multiplied by 3 and then a fee of 200 dollars is charged, so a_n = 3a_{n-1} - 200. The closed form of the balance is a constant particular value p plus a homogeneous part A times 3^n. Give p and A in the form p = value and A = value."
+            answer: "p = 100; A = 200"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "A"}]}
+            solution_sketch: "The full model is a_n = 3a_{n-1} - 200 with a_0 = 300. Particular-solution rule: a constant balance p must satisfy p = 3p - 200, so 2p = 200 and p = 100. Homogeneous-solution rule: the general solution is a_n = A times 3^n + 100. Initial-condition rule: a_0 = A + 100 = 300, so A = 200. Check: a_1 = 3(300) - 200 = 700 and 200(3) + 100 = 700, which agree. The values are p = 100; A = 200."
+          - problem: "Solve the recurrence a_n = 5a_{n-1} - 12 with a_0 = 5 by using a constant particular value p, and then compute a3. State p and a3 in the form p = value and a3 = value."
+            answer: "p = 3; a3 = 253"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a3"}]}
+            solution_sketch: "The full recurrence is a_n = 5a_{n-1} - 12 with a_0 = 5. Particular-solution rule: a constant p must satisfy p = 5p - 12, so 4p = 12 and p = 3. Homogeneous-solution rule: the general solution is a_n = A times 5^n + 3. Initial-condition rule: a_0 = A + 3 = 5, so A = 2. Evaluation rule: a3 = 2 times 5^3 + 3 = 250 + 3 = 253. The values are p = 3; a3 = 253."
+          - problem: "A sequence obeys a_n = -2a_{n-1} + 12 and starts at a_0 = 9. Solve it with a constant particular value p, and then compute a4. Give p and a4 in the form p = value and a4 = value."
+            answer: "p = 4; a4 = 84"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "p"}, {"contract": {"kind": "exact"}, "name": "a4"}]}
+            solution_sketch: "The full recurrence is a_n = -2a_{n-1} + 12 with a_0 = 9. Particular-solution rule: a constant p must satisfy p = -2p + 12, so 3p = 12 and p = 4. Homogeneous-solution rule: the general solution is a_n = A times (-2)^n + 4. Initial-condition rule: a_0 = A + 4 = 9, so A = 5. Evaluation rule: a4 = 5 times (-2)^4 + 4 = 80 + 4 = 84. The values are p = 4; a4 = 84."
+          - problem: "The recurrence a_n = 3a_{n-1} + c has an unknown constant forcing term c and starts at a_0 = 8. Its closed form is known to be a_n = A times 3^n + 5. Find A and c in the form A = value and c = value."
+            answer: "A = 3; c = -10"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "c"}]}
+            solution_sketch: "The full setup is a_n = 3a_{n-1} + c with a_0 = 8 and closed form a_n = A times 3^n + 5. Particular-solution rule: the constant 5 is the particular value, so it must satisfy 5 = 3(5) + c, which gives c = -10. General-form rule: the full solution is a_n = A times 3^n + 5. Initial-condition rule: a_0 = A + 5 = 8, so A = 3. Check: a_1 = 3(8) - 10 = 14 and 3(3) + 5 = 14, which agree. The values are A = 3; c = -10."
         constraints: "a_n = r a_{n-1} + c with r != 1; particular solution c/(1-r) must be an integer"
       - id: kp2
         name: "Linear forcing terms"
