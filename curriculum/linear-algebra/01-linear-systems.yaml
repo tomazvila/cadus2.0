@@ -320,18 +320,30 @@ topics:
         name: REF versus RREF
         key_prerequisites: [elementary-row-operations]
         exemplars:
-          - problem: 'Is $\begin{pmatrix}1&0&2\\0&1&3\end{pmatrix}$ in reduced row echelon form?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Pivots are $1$ and are the only nonzero entries in their columns.'
-          - problem: 'Is $\begin{pmatrix}1&2&3\\0&1&4\end{pmatrix}$ in RREF? If not, why not?'
-            answer: "No: the entry above the second pivot is 2, not 0"
-            answer_contract: {kind: none}
-            solution_sketch: 'RREF needs a zero above every pivot; here the 2 sits above the second pivot, so it is not in RREF.'
-          - problem: 'Is $\begin{pmatrix}2&0\\0&1\end{pmatrix}$ in RREF? If not, why not?'
-            answer: "No: the first pivot is 2, not 1"
-            answer_contract: {kind: none}
-            solution_sketch: 'RREF requires every pivot to be 1, but the first pivot is 2.'
+          - problem: "The matrix [1,0,2;0,1,3] is in row echelon form. Select the single condition that decides whether it is also in reduced row echelon form."
+            answer: "in rref"
+            answer_contract: {"kind": "label", "options": [["in rref"], ["pivot not 1"], ["extra pivot"], ["zero row last"]]}
+            solution_sketch: "The full matrix is [1,0,2;0,1,3]. Step 1, check leading entries: they are 1, so pivot not 1 is not the issue. Step 2, check pivot columns: each pivot column has only its pivot, so extra pivot is not the issue. Step 3, check zero rows: there are none, so zero row last is not the issue. Every RREF condition holds, so the matrix is in RREF. The answer is in rref."
+          - problem: "The matrix [1,2,3;0,1,4] is in row echelon form. Select the reduced row echelon form condition that this matrix fails."
+            answer: "nonzero above pivot"
+            answer_contract: {"kind": "label", "options": [["in rref"], ["pivot not 1"], ["nonzero above pivot"], ["zero row not last"]]}
+            solution_sketch: "The full matrix is [1,2,3;0,1,4]. Step 1, check the pivot values: the leading entries are 1 at (1,1) and 1 at (2,2), so pivot not 1 is wrong. Step 2, check the pivot columns: column 2 holds the pivot 1 in row 2 and also a 2 in row 1, so the RREF column condition fails and the matrix is not in RREF, which makes in rref wrong. Step 3, check the zero rows: the matrix has no zero rows, so zero row not last is wrong. The single failed condition is nonzero above pivot. The answer is nonzero above pivot."
+          - problem: "The matrix [2,0;0,1] is in row echelon form. Give the value of the leading entry that prevents it from being in reduced row echelon form."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full matrix is [2,0;0,1]. Step 1, check leading entries: the leading entries are 2 at (1,1) and 1 at (2,2). Step 2, apply the RREF pivot condition: every leading entry must be 1, so the 2 fails. Step 3, the value of the failing leading entry is 2. The answer is 2."
+          - problem: "The matrix [1,5,0;0,1,0;0,0,0] is in row echelon form. Give the position as (row, column) of the first entry that prevents it from being in reduced row echelon form."
+            answer: "(1,2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full matrix is [1,5,0;0,1,0;0,0,0]. Step 1, check leading entries: they are 1 at (1,1) and (2,2), and a zero row is last, so the REF conditions hold. Step 2, check pivot columns: column 2 has pivot 1 at row 2 but also entry 5 at row 1, so the RREF column condition fails. Step 3, the first such entry is at row 1, column 2. The answer is (1,2)."
+          - problem: "The matrix [1,0,0;0,3,0;0,0,1] is in row echelon form. Give the position as (row, column) of the leading entry that prevents it from being in reduced row echelon form."
+            answer: "(2,2)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "The full matrix is [1,0,0;0,3,0;0,0,1]. Step 1, check leading entries: they are at (1,1), (2,2), and (3,3), so the leading positions move right. Step 2, apply the RREF pivot condition: every leading entry must be 1, but the entry at (2,2) is 3. Step 3, the position of that entry is row 2, column 2. The answer is (2,2)."
+          - problem: "The matrix [1,0,2;0,1,0;0,0,0] is in row echelon form. How many of the reduced row echelon form conditions fail?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full matrix is [1,0,2;0,1,0;0,0,0]. Step 1, check leading entries: they are 1 at (1,1) and (2,2). Step 2, check pivot columns: column 1 has only the 1 in row 1, and column 2 has only the 1 in row 2. Step 3, check zero rows: the zero row is last. All three RREF conditions hold, so the number of failures is 0. The answer is 0."
         constraints: "matrices in REF; the RREF failure must be a single named condition"
       - id: kp3
         name: Pivot positions and finishing the reduction
@@ -688,6 +700,22 @@ topics:
           - problem: 'Compute $A\mathbf{x}$ for $A = \begin{pmatrix}1&0\\2&1\\0&3\end{pmatrix}$, $\mathbf{x} = (2, 5)$.'
             answer: "(2, 9, 15)"
             solution_sketch: 'Rows: $2$; $4 + 5 = 9$; $15$.'
+          - problem: "Compute $A\\mathbf{x}$ for $A = \\begin{pmatrix}3&0&2\\\\1&4&-1\\end{pmatrix}$ and $\\mathbf{x} = (2, 1, 3)$, and give the answer as (x, y)."
+            answer: "(12, 3)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: A = [[3,0,2],[1,4,-1]] and x = (2,1,3). Step 1: use the row-by-vector product rule on row 1: 3*2 + 0*1 + 2*3 = 12. Step 2: use the row-by-vector product rule on row 2: 1*2 + 4*1 + (-1)*3 = 3. The answer is (12, 3)."
+          - problem: "Compute $A\\mathbf{x}$ for $A = \\begin{pmatrix}1&2\\\\0&3\\\\4&-1\\end{pmatrix}$ and $\\mathbf{x} = (5, 2)$, and give the answer as (x, y, z)."
+            answer: "(9, 6, 18)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full object: A = [[1,2],[0,3],[4,-1]] and x = (5,2). Step 1: use the row-by-vector product rule on row 1: 1*5 + 2*2 = 9. Step 2: use the row-by-vector product rule on row 2: 0*5 + 3*2 = 6. Step 3: use the row-by-vector product rule on row 3: 4*5 + (-1)*2 = 18. The answer is (9, 6, 18)."
+          - problem: "Find $A\\mathbf{x}$ for $A = \\begin{pmatrix}1&-2&0\\\\3&1&4\\end{pmatrix}$ and $\\mathbf{x} = (-1, 2, -3)$, and give the answer as (x, y)."
+            answer: "(-5, -13)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "Full object: A = [[1,-2,0],[3,1,4]] and x = (-1,2,-3). Step 1: use the row-by-vector product rule on row 1: 1*(-1) + (-2)*2 + 0*(-3) = -5. Step 2: use the row-by-vector product rule on row 2: 3*(-1) + 1*2 + 4*(-3) = -13. The answer is (-5, -13)."
+          - problem: "Evaluate $A\\mathbf{x}$ for $A = \\begin{pmatrix}2&-1\\\\1&3\\\\-2&0\\end{pmatrix}$ and $\\mathbf{x} = (3, -4)$, and give the answer as (x, y, z)."
+            answer: "(10, -9, -6)"
+            answer_contract: {"arity": 3, "kind": "coordinates"}
+            solution_sketch: "Full object: A = [[2,-1],[1,3],[-2,0]] and x = (3,-4). Step 1: use the row-by-vector product rule on row 1: 2*3 + (-1)*(-4) = 10. Step 2: use the row-by-vector product rule on row 2: 1*3 + 3*(-4) = -9. Step 3: use the row-by-vector product rule on row 3: (-2)*3 + 0*(-4) = -6. The answer is (10, -9, -6)."
         constraints: "the vector length must match the number of columns; sizes 2x3 and 3x2"
       - id: kp3
         name: Ax as a combination of columns
