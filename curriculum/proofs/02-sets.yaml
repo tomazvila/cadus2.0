@@ -610,10 +610,26 @@ topics:
           - problem: 'Compute $[0, 3] \cap (1, 5)$.'
             answer: '$(1, 3]$'
             solution_sketch: 'A real lies in both iff $0 \le x \le 3$ and $1 < x < 5$, i.e. $1 < x \le 3$.'
-          - problem: 'Compute $(-\infty, 2) \cup [1, 4]$.'
-            answer_contract: {kind: none}
-            answer: '$(-\infty, 4]$'
-            solution_sketch: 'The pieces overlap on $[1, 2)$, so the union is everything up to and including $4$.'
+          - problem: "Compute $[2, 5] \\cup [4, 8]$ and give the answer as an inequality in x."
+            answer: "2 <= x <= 8"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1, overlap check: the intervals $[2, 5]$ and $[4, 8]$ share $[4, 5]$, so their union is a single interval. Step 2, outer endpoints: the left endpoint of the union is the smaller left endpoint 2, which belongs to $[2, 5]$, and the right endpoint is the larger right endpoint 8, which belongs to $[4, 8]$. So the union is 2 <= x <= 8."
+          - problem: "Determine $[-1, 3] \\cap [1, 6]$ and state the result as an inequality in x."
+            answer: "1 <= x <= 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1, shared points: a real belongs to the intersection when it lies in $[-1, 3]$ and also in $[1, 6]$. Step 2, tighter endpoints: the larger left endpoint is 1, which belongs to both intervals, and the smaller right endpoint is 3, which also belongs to both intervals. The intersection is 1 <= x <= 3."
+          - problem: "Find the union $[-4, 0] \\cup [-2, 5]$ and write it as an inequality in x."
+            answer: "-4 <= x <= 5"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Step 1, overlap check: the intervals $[-4, 0]$ and $[-2, 5]$ share $[-2, 0]$, so the two pieces form one interval. Step 2, outer endpoints: the left endpoint of the union is the smaller left endpoint -4, which belongs to $[-4, 0]$, and its right endpoint is the larger right endpoint 5, which belongs to $[-2, 5]$. The union is -4 <= x <= 5."
+          - problem: "The intersection of the intervals $[3, 11]$ and $[6, 14]$ is an interval. Find the width of this intersection."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, intersection: a real lies in both intervals exactly when it lies in $[6, 11]$, since 6 is the larger left endpoint and 11 is the smaller right endpoint. Step 2, width: the width of $[6, 11]$ is the difference of its endpoints, $11 - 6 = 5$. The width of the intersection is 5."
+          - problem: "The intersection of the intervals $[1, k]$ and $[4, 10]$ has width 3, and the number $k$ is larger than 4. Find the value of $k$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, form the intersection: for $k$ at least 4 the shared points of $[1, k]$ and $[4, 10]$ are $[4, m]$ with $m$ the smaller of $k$ and 10. Step 2, use the width: the width of $[4, m]$ is $m - 4$, and this must equal 3, so $m = 7$. Step 3, recover k: since $m$ is the smaller of $k$ and 10, we get $k = 7$. The value of $k$ is 7."
         constraints: "one union or intersection of two overlapping intervals"
       - id: kp3
         name: "Complements and differences of intervals"
@@ -1347,14 +1363,30 @@ topics:
         name: "Finitely indexed families"
         key_prerequisites: [union-intersection-difference]
         exemplars:
-          - problem: 'For $i = 1, 2, 3$ let $A_i = \{i, i+1, i+2\}$. Compute $\bigcup_{i=1}^{3} A_i$ and $\bigcap_{i=1}^{3} A_i$.'
-            answer_contract: {kind: none}
-            answer: '$\bigcup A_i = \{1, 2, 3, 4, 5\}$ and $\bigcap A_i = \{3\}$.'
-            solution_sketch: '$A_1 = \{1,2,3\}$, $A_2 = \{2,3,4\}$, $A_3 = \{3,4,5\}$; only $3$ lies in all three.'
-          - problem: 'For $i = 1, 2, 3$ let $B_i = \{i, 2i\}$. Compute $\bigcup_{i=1}^{3} B_i$ and $\bigcap_{i=1}^{3} B_i$.'
-            answer_contract: {kind: none}
-            answer: '$\bigcup B_i = \{1, 2, 3, 4, 6\}$ and $\bigcap B_i = \varnothing$.'
-            solution_sketch: '$B_1 = \{1,2\}$, $B_2 = \{2,4\}$, $B_3 = \{3,6\}$; $B_1 \cap B_2 = \{2\}$ but $2 \notin B_3$, so the intersection is empty.'
+          - problem: "For $i = 0, 1, 2$ let $A_i = \\{i, i+1, i+2\\}$. Compute the union and the intersection of the family $A_0, A_1, A_2$."
+            answer: "union = {0, 1, 2, 3, 4}; inter = {2}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "union"}, {"contract": {"kind": "set"}, "name": "inter"}]}
+            solution_sketch: "List the full family: A_0 = {0, 1, 2}, A_1 = {1, 2, 3}, A_2 = {2, 3, 4}. Union rule: keep every element that lies in at least one of the three sets, which collects 0 through 4. Intersection rule: keep only elements that lie in all three sets; 2 is the only such element. Answer: union = {0, 1, 2, 3, 4}; inter = {2}."
+          - problem: "For $i = 1, 2, 3$ let $A_i = \\{2i,\\ 2i+1,\\ 8\\}$. Compute the union and the intersection of the family $A_1, A_2, A_3$."
+            answer: "union = {2, 3, 4, 5, 6, 7, 8}; inter = {8}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "union"}, {"contract": {"kind": "set"}, "name": "inter"}]}
+            solution_sketch: "Write each set of the family: A_1 = {2, 3, 8}, A_2 = {4, 5, 8}, A_3 = {6, 7, 8}. Union rule: an element enters the union when it lies in at least one set, so the six small entries together with 8 give the whole block 2 through 8. Intersection rule: 2, 3, 4, 5, 6 and 7 each appear in exactly one set, while 8 appears in every set, so only 8 is common to all three. Answer: union = {2, 3, 4, 5, 6, 7, 8}; inter = {8}."
+          - problem: "For $i = 2, 3, 4, 5$ let $A_i = \\{i, i+1, i+2, i+3\\}$. Find $\\bigcup_{i=2}^{5} A_i$ and $\\bigcap_{i=2}^{5} A_i$."
+            answer: "union = {2, 3, 4, 5, 6, 7, 8}; inter = {5}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "union"}, {"contract": {"kind": "set"}, "name": "inter"}]}
+            solution_sketch: "Expand the four sets: A_2 = {2, 3, 4, 5}, A_3 = {3, 4, 5, 6}, A_4 = {4, 5, 6, 7}, A_5 = {5, 6, 7, 8}. Union rule: every element of any set appears, so the union runs from 2 to 8. Intersection rule: a common element x needs x at least 5 because of A_5 and x at most 5 because of A_2, forcing x = 5. Answer: union = {2, 3, 4, 5, 6, 7, 8}; inter = {5}."
+          - problem: "Let $A_2 = \\{2, 7\\}$, $A_3 = \\{3, 7\\}$ and $A_4 = \\{4, 7\\}$. Compute the union and the intersection of $A_2, A_3, A_4$."
+            answer: "union = {2, 3, 4, 7}; inter = {7}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "union"}, {"contract": {"kind": "set"}, "name": "inter"}]}
+            solution_sketch: "The full family is A_2 = {2, 7}, A_3 = {3, 7}, A_4 = {4, 7}. Union rule: merge all elements of the three sets into one set of distinct values. Intersection rule: test each candidate; 2 lies only in A_2, 3 only in A_3 and 4 only in A_4, while 7 lies in all three. Answer: union = {2, 3, 4, 7}; inter = {7}."
+          - problem: "For $i = 1, 2, 3, 4$ let $A_i = \\{i,\\ 2i,\\ 10\\}$. Compute $\\bigcup_{i=1}^{4} A_i$ and $\\bigcap_{i=1}^{4} A_i$."
+            answer: "union = {1, 2, 3, 4, 6, 8, 10}; inter = {10}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "union"}, {"contract": {"kind": "set"}, "name": "inter"}]}
+            solution_sketch: "List the sets: A_1 = {1, 2, 10}, A_2 = {2, 4, 10}, A_3 = {3, 6, 10}, A_4 = {4, 8, 10}. Union rule: collect all distinct elements, which are 1, 2, 3, 4, 6, 8, 10. Intersection rule: 2 fails A_3, 4 fails A_1 and A_3, and each of 1, 3, 6, 8 appears in only one set, so only 10 belongs to all four. Answer: union = {1, 2, 3, 4, 6, 8, 10}; inter = {10}."
+          - problem: "Let $A_1 = \\{2, 4, 6\\}$, $A_2 = \\{4, 6, 8\\}$, $A_3 = \\{6, 8, 10\\}$ and $A_4 = \\{6, 10, 12\\}$. Give $\\bigcup_{i=1}^{4} A_i$ and $\\bigcap_{i=1}^{4} A_i$."
+            answer: "union = {2, 4, 6, 8, 10, 12}; inter = {6}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "union"}, {"contract": {"kind": "set"}, "name": "inter"}]}
+            solution_sketch: "Write the full family: A_1 = {2, 4, 6}, A_2 = {4, 6, 8}, A_3 = {6, 8, 10}, A_4 = {6, 10, 12}. Union rule: every distinct element across the four sets is kept, giving the even numbers 2 through 12. Intersection rule: 4 appears only in A_1 and A_2, 10 only in A_3 and A_4, and 2, 8, 12 each appear in a single set, while 6 lies in all four. Answer: union = {2, 4, 6, 8, 10, 12}; inter = {6}."
         constraints: "3-4 explicitly listable indexed sets; compute both the union and the intersection"
       - id: kp2
         name: "Interval families"
@@ -1371,14 +1403,30 @@ topics:
         name: "Membership via quantifiers"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'For $n \ge 1$ let $C_n = \left(-\tfrac{1}{n}, \tfrac{1}{n}\right)$. Is $0 \in \bigcap_{n \ge 1} C_n$? Is $0.1$?'
-            answer_contract: {kind: none}
-            answer: '$0$: yes. $0.1$: no.'
-            solution_sketch: '$x \in \bigcap C_n$ means $x \in C_n$ for every $n$. $0$ is in every interval; $0.1 \notin C_{11}$ since $0.1 > \tfrac{1}{11}$.'
-          - problem: 'For $n \ge 1$ let $A_n = [n, \infty)$. Compute $\bigcup_{n \ge 1} A_n$ and $\bigcap_{n \ge 1} A_n$.'
-            answer_contract: {kind: none}
-            answer: '$\bigcup A_n = [1, \infty)$ and $\bigcap A_n = \varnothing$.'
-            solution_sketch: 'The union is the largest set, $A_1$. For the intersection, any real $x$ fails $x \ge n$ once $n > x$, so no real is in every $A_n$.'
+          - problem: "For $n \\ge 1$ let $C_n = \\left(-\\tfrac{1}{n}, \\tfrac{1}{n}\\right)$. Recall: $x \\in \\bigcap_{n \\ge 1} C_n$ means that $x \\in C_n$ for every $n$. Determine whether $0.2$ belongs to $\\bigcap_{n \\ge 1} C_n$, and give how many of the sets $C_n$ contain $0.2$."
+            answer: "verdict = out; count = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Step 1 (quantifier translation): $0.2 \\in \\bigcap C_n$ means $0.2 \\in C_n$ for every $n$, that is $0.2 < 1/n$ for every $n$. Step 2 (solve the condition): $0.2 < 1/n$ is equivalent to $n < 5$, so only $n=1,2,3,4$ work. Step 3 (decide): $C_5 = (-1/5,1/5)$ does not contain $0.2$ because the interval is open, so the forall statement fails. The wrong option in comes from confusing one true instance with all instances. The answer is verdict = out; count = 4."
+          - problem: "For $n \\ge 1$ let $A_n = [n, \\infty)$. Recall: $x \\in \\bigcap_{n \\ge 1} A_n$ means that $x \\in A_n$ for every $n$. Determine whether $5.5$ belongs to $\\bigcap_{n \\ge 1} A_n$, and give the largest $n$ with $5.5 \\in A_n$."
+            answer: "verdict = out; largest = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "largest"}]}
+            solution_sketch: "Step 1 (quantifier translation): $5.5 \\in \\bigcap A_n$ means $5.5 \\in A_n$ for every $n$, that is $n \\le 5.5$ for every $n$. Step 2 (solve the condition): $5.5 \\in A_n$ means $n \\le 5.5$, so the integer indices are $n=1,2,3,4,5$; the largest is $5$. Step 3 (decide): $A_6 = [6, \\infty)$ does not contain $5.5$, so the forall statement fails. The wrong option in comes from treating one large enough index as if it worked for all indices. The answer is verdict = out; largest = 5."
+          - problem: "For $n \\ge 1$ let $D_n = [0, 2 - 1/n]$. Recall: $x \\in \\bigcap_{n \\ge 1} D_n$ means that $x \\in D_n$ for every $n$. Determine whether $3/2$ belongs to $\\bigcap_{n \\ge 1} D_n$, and give the smallest $n$ with $3/2 \\in D_n$."
+            answer: "verdict = out; smallest = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "smallest"}]}
+            solution_sketch: "Step 1 (quantifier translation): $3/2 \\in \\bigcap D_n$ means $3/2 \\in D_n$ for every $n$, that is $3/2 \\le 2 - 1/n$ for every $n$. Step 2 (solve the condition): $3/2 \\le 2 - 1/n$ is equivalent to $1/n \\le 1/2$, so $n \\ge 2$. Step 3 (decide): $D_1 = [0,1]$ does not contain $3/2$, so the forall statement fails; the smallest index that contains it is $2$. The wrong option in comes from ignoring the failing index $n=1$. The answer is verdict = out; smallest = 2."
+          - problem: "For each integer $n \\ge 1$ let $W_n = \\{n, n+1, \\dots, 2n\\}$. Recall: $x \\in \\bigcap_{n \\ge 1} W_n$ means that $x \\in W_n$ for every $n$. Determine whether $8$ belongs to $\\bigcap_{n \\ge 1} W_n$, and give how many of the sets $W_n$ contain $8$."
+            answer: "verdict = out; count = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["in"], ["out"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Step 1 (quantifier translation): $8 \\in \\bigcap W_n$ means $8 \\in W_n$ for every $n$, that is $n \\le 8$ and $8 \\le 2n$. Step 2 (solve the condition): those inequalities give $4 \\le n \\le 8$, so the sets $W_4, W_5, W_6, W_7, W_8$ contain $8$, five sets. Step 3 (decide): $W_1 = \\{1,2\\}$ does not contain $8$, so the forall statement fails. The wrong option in comes from treating some containing sets as all containing sets. The answer is verdict = out; count = 5."
+          - problem: "For $n \\ge 1$ let $A_n = [n, \\infty)$. Find the largest $n$ such that $7.5$ belongs to $A_n$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (membership condition): $7.5 \\in A_n$ means $7.5 \\ge n$, since $A_n = [n, \\infty)$. Step 2 (solve over integers): $n \\le 7.5$, so the largest integer $n$ is $7$. The answer is 7."
+          - problem: "Let $E_1 = \\{1,2,3\\}$, $E_2 = \\{2,3,4\\}$, and $E_3 = \\{3,4,5\\}$. Find the element that belongs to all three sets."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (forall translation): an element belongs to all three sets exactly when it is in $E_1$ and in $E_2$ and in $E_3$. Step 2 (check candidates): $1$ fails in $E_2$, $2$ fails in $E_3$, $4$ fails in $E_1$, and $5$ fails in $E_1$. Step 3 (decide): $3$ is in $E_1$, $E_2$, and $E_3$. The answer is 3."
         constraints: "translate $\\bigcup$/$\\bigcap$ membership into $\\exists$/$\\forall$ statements and decide them"
     diagnostic_exemplar:
       problem: 'For $n \ge 1$ let $A_n = \left(0,\ 1 + \tfrac{1}{n}\right)$. Compute $\bigcup_{n \ge 1} A_n$ and $\bigcap_{n \ge 1} A_n$.'

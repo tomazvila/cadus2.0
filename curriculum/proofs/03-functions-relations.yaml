@@ -24,12 +24,34 @@ topics:
         name: "Function as a special relation"
         key_prerequisites: [cartesian-products]
         exemplars:
-          - problem: 'Explain why $R = \{(1, a), (2, b), (1, c)\}$ is not a function from $\{1, 2\}$ to $\{a, b, c\}$.'
-            answer: 'The input $1$ is paired with both $a$ and $c$, violating uniqueness.'
-            solution_sketch: 'A function assigns each domain element exactly one output. Here $(1, a)$ and $(1, c)$ give $1$ two images, so the uniqueness requirement fails. $\square$'
-          - problem: 'Is $R = \{(1, a), (2, a), (3, b)\}$ a function from $\{1, 2, 3\}$ to $\{a, b\}$?'
-            answer: 'Yes; each input has exactly one output (outputs may repeat).'
-            solution_sketch: 'Each of $1, 2, 3$ appears as a first coordinate exactly once, so existence and uniqueness hold. Distinct inputs sharing an output ($1, 2 \mapsto a$) is allowed. $\square$'
+          - problem: "Let $R = \\{(1,b), (3,a), (1,c)\\}$ be a relation with domain $\\{1,2,3\\}$ and codomain $\\{a,b,c,d\\}$. Check each element of the domain for existence of an image and uniqueness of the image. Give the verdict on whether R is a function and the number of domain elements without exactly one image."
+            answer: "verdict = no; bad = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "bad"}]}
+            solution_sketch: "Object: $R = \\{(1,b), (3,a), (1,c)\\}$ with domain $\\{1,2,3\\}$ and codomain $\\{a,b,c,d\\}$. Existence step (quantifiers): input 1 has images b and c, input 2 has no image, input 3 has image a. Uniqueness step (function definition): input 1 appears in two pairs, so it fails uniqueness as well. The failing domain elements are 1 and 2, and the verdict is negative. The answer is verdict = no; bad = 2."
+          - problem: "Let $R = \\{(1,c), (2,a), (3,c)\\}$ be a relation from $\\{1,2,3\\}$ to $\\{a,b,c\\}$. Check the existence-and-uniqueness condition for each first coordinate. Give the verdict on whether R is a function and the number of domain elements without exactly one image."
+            answer: "verdict = yes; bad = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "bad"}]}
+            solution_sketch: "Object: $R = \\{(1,c), (2,a), (3,c)\\}$ with domain $\\{1,2,3\\}$ and codomain $\\{a,b,c\\}$. Existence step: each of 1, 2, 3 occurs as a first coordinate, so each input has an image. Uniqueness step: each first coordinate occurs in exactly one pair; the shared output c for inputs 1 and 3 is allowed because uniqueness constrains inputs, not outputs. No domain element fails. The answer is verdict = yes; bad = 0."
+          - problem: "A student claims that $R = \\{(2,a), (4,b), (2,c), (3,a)\\}$ is a function from $\\{1,2,3,4\\}$ to $\\{a,b,c\\}$ and checks only that every second coordinate lies in the codomain. Give the smallest element of the domain that is not assigned exactly one output."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Object: $R = \\{(2,a), (4,b), (2,c), (3,a)\\}$ with domain $\\{1,2,3,4\\}$. Existence step: input 1 occurs in no pair, so it fails existence. Uniqueness step: input 2 occurs in $(2,a)$ and $(2,c)$, so it fails uniqueness. Scanning the domain in order 1, 2, 3, 4, the first failure is at 1. The smallest element of the domain that is not assigned exactly one output is 1."
+          - problem: "Let $R = \\{(1,a), (2,b), (1,c), (3,a), (3,d), (4,b)\\}$ be a relation with domain $\\{1,2,3,4\\}$ and codomain $\\{a,b,c,d\\}$. Determine how many pairs must be removed so that every domain element is the first coordinate of exactly one remaining pair."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Object: $R = \\{(1,a), (2,b), (1,c), (3,a), (3,d), (4,b)\\}$ with domain $\\{1,2,3,4\\}$. Count step: first coordinates 1 and 3 each occur in two pairs, while 2 and 4 occur once. Deletion step: remove one pair for 1 (keep $(1,a)$) and one for 3 (keep $(3,a)$); then every element of the domain appears exactly once, and one deletion cannot fix two distinct doubled inputs. The number of pairs to remove is 2."
+          - problem: "Let $R = \\{(1,a), (2,b), (2,a)\\}$ be a relation with domain $\\{1,2\\}$ and codomain $\\{a,b,c\\}$. Apply the existence-and-uniqueness test to each element of the domain. Select the option that describes R."
+            answer: "an input has two images"
+            answer_contract: {"kind": "label", "options": [["a function from the domain"], ["an input has two images"], ["an output has two inputs"], ["a codomain element unused"]]}
+            solution_sketch: "Object: $R = \\{(1,a), (2,b), (2,a)\\}$ with domain $\\{1,2\\}$ and codomain $\\{a,b,c\\}$. Existence step (quantifiers): 1 and 2 each occur as a first coordinate, so each input has an image. Uniqueness step (function definition): input 2 occurs in $(2,b)$ and $(2,a)$, so it has two images and uniqueness fails. The option a function from the domain ignores that failure; the option an output has two inputs reverses the condition, which only constrains inputs; the option a codomain element unused wrongly requires every codomain element to appear. The answer is an input has two images."
+          - problem: "Using the definition of a function as a relation that assigns exactly one output to each input, work with domain $\\{1,2\\}$ and codomain $\\{a,b\\}$. Compute how many functions from $\\{1,2\\}$ to $\\{a,b\\}$ exist."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Object: all relations from $\\{1,2\\}$ to $\\{a,b\\}$ in which each first coordinate occurs exactly once. Enumeration step: input 1 can be paired with a or b, and independently input 2 with a or b, giving $(1,a),(2,a)$; $(1,a),(2,b)$; $(1,b),(2,a)$; $(1,b),(2,b)$. Check step: each listing has every domain element as a first coordinate exactly once, so each is a function. The number of such functions is 4."
+          - problem: "Write the full proof: $R = \\{(x, y) : y = x + 1 \\text{ and } x \\in \\{1, 2, 3\\}\\}$ is a function from $\\{1, 2, 3\\}$ to $\\{2, 3, 4\\}$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (relation check): every pair $(x,y)$ in $R$ has $x \\in \\{1,2,3\\}$ and $y = x+1 \\in \\{2,3,4\\}$, so $R$ is a relation from $\\{1,2,3\\}$ to $\\{2,3,4\\}$. Step 2 (existence): let $x$ be an arbitrary element of $\\{1,2,3\\}$; the pair $(x, x+1)$ satisfies the defining condition, so $(x, x+1) \\in R$ and $x$ has an image. Step 3 (uniqueness): suppose $(x,y)$ and $(x,y')$ both lie in $R$; by the defining condition $y = x+1$ and $y' = x+1$, hence $y = y'$, so each input has exactly one image. Step 4 (conclusion): existence and uniqueness hold for every element of the domain, therefore $R$ is a function from $\\{1,2,3\\}$ to $\\{2,3,4\\}$."
         constraints: "check the existence-and-uniqueness condition on a listed relation"
       - id: kp2
         name: "Well-defined functions"
@@ -197,14 +219,30 @@ topics:
         name: "Composing formulas"
         key_prerequisites: [function-composition]
         exemplars:
-          - problem: 'For $f(x) = x^2 + 1$ and $g(x) = 3x$ on $\mathbb{R}$, find $(f \circ g)(x)$ and $(g \circ f)(x)$.'
-            answer_contract: {kind: none}
-            answer: '$(f \circ g)(x) = 9x^2 + 1$ and $(g \circ f)(x) = 3x^2 + 3$.'
-            solution_sketch: '$f(g(x)) = (3x)^2 + 1 = 9x^2 + 1$; $g(f(x)) = 3(x^2 + 1) = 3x^2 + 3$.'
-          - problem: 'For $f(x) = 2x - 1$ and $g(x) = x + 4$, compute $(f \circ g)(2)$ and $(g \circ f)(2)$.'
-            answer_contract: {kind: none}
-            answer: '$11$ and $7$.'
-            solution_sketch: '$f(g(2)) = f(6) = 11$; $g(f(2)) = g(3) = 7$.'
+          - problem: "Let $f(x) = x^2 + 2$ and $g(x) = 4x$ on the real numbers. Find $(f \\circ g)(x)$ and $(g \\circ f)(x)$ as functions of $x$. Give the answers as fog and gof."
+            answer: "fog = 16x^2+2; gof = 4x^2+8"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "fog"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "gof"}]}
+            solution_sketch: "Write the full objects first: $(f \\circ g)(x) = f(g(x))$ and $(g \\circ f)(x) = g(f(x))$, this is the definition of composition. Substitute the inner formula into the outer one: $(f \\circ g)(x) = (4x)^2 + 2 = 16x^2 + 2$. For the other order, substitute $f(x) = x^2 + 2$ into $g$: $(g \\circ f)(x) = 4(x^2 + 2) = 4x^2 + 8$. So fog = 16x^2+2; gof = 4x^2+8."
+          - problem: "Let $f(x) = 3x - 2$ and $g(x) = x^2 + 1$. Compute $(f \\circ g)(2)$ and $(g \\circ f)(2)$. Give the answers as fog and gof."
+            answer: "fog = 13; gof = 17"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fog"}, {"contract": {"kind": "exact"}, "name": "gof"}]}
+            solution_sketch: "Work from the inside out, this is the definition of composition applied at a point. The inner value is $g(2) = 4 + 1 = 5$, so $(f \\circ g)(2) = f(5) = 15 - 2 = 13$. In the other order $f(2) = 6 - 2 = 4$, so $(g \\circ f)(2) = g(4) = 16 + 1 = 17$. The values are fog = 13; gof = 17."
+          - problem: "Let $f(x) = 1/x$ and $g(x) = x + 5$ (with the usual domains). Find $(f \\circ g)(x)$ and $(g \\circ f)(x)$ as functions of $x$. Give the answers as fog and gof."
+            answer: "fog = 1/(x+5); gof = 1/x+5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "fog"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "gof"}]}
+            solution_sketch: "State the two full objects: $(f \\circ g)(x) = f(g(x))$ and $(g \\circ f)(x) = g(f(x))$. Substituting $g(x) = x + 5$ into the reciprocal gives $(f \\circ g)(x) = 1/(x + 5)$. Substituting $f(x) = 1/x$ into $g$ gives $(g \\circ f)(x) = 1/x + 5$. Hence fog = 1/(x+5); gof = 1/x+5."
+          - problem: "Let $f(x) = 5/x$ and $g(x) = x - 1$. Compute $(f \\circ g)(2)$ and $(g \\circ f)(2)$ as fractions or integers. Give the answers as fog and gof."
+            answer: "fog = 5; gof = 3/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fog"}, {"contract": {"kind": "exact"}, "name": "gof"}]}
+            solution_sketch: "Evaluate the inner function first, using the definition of composition. Since $g(2) = 1$, we get $(f \\circ g)(2) = f(1) = 5/1 = 5$. For the other order, $f(2) = 5/2$, so $(g \\circ f)(2) = g(5/2) = 5/2 - 1 = 3/2$. The values are fog = 5; gof = 3/2."
+          - problem: "Let $f(x) = \\sqrt{x}$ and $g(x) = x^2 + 9$. Find $(f \\circ g)(x)$ and $(g \\circ f)(x)$ as functions of $x$. Give the answers as fog and gof."
+            answer: "fog = sqrt(x^2+9); gof = x+9"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["x"]}, "name": "fog"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "gof"}]}
+            solution_sketch: "Set up the two full objects from the definition of composition: $(f \\circ g)(x) = f(g(x))$ and $(g \\circ f)(x) = g(f(x))$. Place $g(x) = x^2 + 9$ under the square root to get $(f \\circ g)(x) = \\sqrt{x^2 + 9}$. Then apply $g$ to $f(x) = \\sqrt{x}$: $(\\sqrt{x})^2 + 9 = x + 9$. Thus fog = sqrt(x^2+9); gof = x+9."
+          - problem: "Let $f(x) = 3x + 2$, and suppose that $(f \\circ g)(x) = 6x^2 - 1$ for all real $x$. Find $g(x)$ as a function of $x$."
+            answer: "2x^2-1"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "By the definition of composition, $(f \\circ g)(x) = f(g(x)) = 3g(x) + 2$. Set this full object equal to the given formula: $3g(x) + 2 = 6x^2 - 1$. Solving gives $3g(x) = 6x^2 - 3$, so $g(x) = 2x^2 - 1$. The answer is 2x^2-1."
         constraints: "compose two given formulas in both orders; symbolic or at a point"
       - id: kp2
         name: "Composing on finite sets"
@@ -1003,12 +1041,34 @@ topics:
         name: "Preimages preserve unions and intersections"
         key_prerequisites: [set-identities-proofs]
         exemplars:
-          - problem: 'Prove: $f^{-1}(C \cap D) = f^{-1}(C) \cap f^{-1}(D)$.'
-            answer: 'Element chase using $x \in f^{-1}(C)$ iff $f(x) \in C$.'
-            solution_sketch: '$x \in f^{-1}(C \cap D)$ iff $f(x) \in C \cap D$ iff $f(x) \in C$ and $f(x) \in D$ iff $x \in f^{-1}(C)$ and $x \in f^{-1}(D)$ iff $x \in f^{-1}(C) \cap f^{-1}(D)$. $\square$'
-          - problem: 'Prove: $f^{-1}(C \cup D) = f^{-1}(C) \cup f^{-1}(D)$.'
-            answer: 'Element chase using $x \in f^{-1}(C)$ iff $f(x) \in C$.'
-            solution_sketch: '$x \in f^{-1}(C \cup D)$ iff $f(x) \in C \cup D$ iff $f(x) \in C$ or $f(x) \in D$ iff $x \in f^{-1}(C)$ or $x \in f^{-1}(D)$ iff $x \in f^{-1}(C) \cup f^{-1}(D)$. $\square$'
+          - problem: "Let $f: \\{1,2,3,4,5\\} \\to \\{1,2,3,4\\}$ with $f(1)=1$, $f(2)=2$, $f(3)=2$, $f(4)=3$, $f(5)=4$, and let $C = \\{2,3,4\\}$ and $D = \\{1,2,3\\}$. Using $x \\in f^{-1}(C \\cap D)$ iff $f(x) \\in C \\cap D$, give $|f^{-1}(C \\cap D)|$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full sets: $C \\cap D = \\{2,3\\}$, the common elements of $C$ and $D$. Step 1 (definition of preimage): $x \\in f^{-1}(C \\cap D)$ iff the condition $f(x) \\in C \\cap D$ holds. Step 2: $f(2)=2$, $f(3)=2$ and $f(4)=3$ land in $\\{2,3\\}$, while $f(1)=1$ and $f(5)=4$ do not, so $f^{-1}(C \\cap D) = \\{2,3,4\\}$. Counting gives three elements. The answer is 3."
+          - problem: "Let $f: \\{1,2,3,4,5,6\\} \\to \\{a,b,c\\}$ with $f(1)=a$, $f(2)=b$, $f(3)=b$, $f(4)=c$, $f(5)=a$, $f(6)=c$, and let $C = \\{a\\}$ and $D = \\{c\\}$. Using $x \\in f^{-1}(C \\cup D)$ iff $f(x) \\in C \\cup D$, give $|f^{-1}(C \\cup D)|$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full sets: $C \\cup D = \\{a,c\\}$. Step 1 (definition of preimage): $x \\in f^{-1}(C \\cup D)$ iff the condition $f(x) \\in C \\cup D$ holds. Step 2: $f(1)=a$, $f(4)=c$, $f(5)=a$ and $f(6)=c$ land in $\\{a,c\\}$, while $f(2)=f(3)=b$ do not, so $f^{-1}(C \\cup D) = \\{1,4,5,6\\}$. This matches $f^{-1}(C) \\cup f^{-1}(D) = \\{1,5\\} \\cup \\{4,6\\}$. The answer is 4."
+          - problem: "Let $f: \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = x^2$, and let $C = \\{y : y \\ge 1\\}$ and $D = \\{y : y \\le 9\\}$. Using $x \\in f^{-1}(C \\cap D)$ iff $f(x) \\in C \\cap D$, give the number of integers in $f^{-1}(C \\cap D)$."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full sets: $C \\cap D = \\{y : 1 \\le y \\le 9\\}$. Step 1 (definition of preimage): $x \\in f^{-1}(C \\cap D)$ iff $x^2 \\in C \\cap D$, that is $1 \\le x^2 \\le 9$. Step 2: solving gives $1 \\le |x| \\le 3$, so the integers are $-3,-2,-1,1,2,3$. Counting gives six integers. The answer is 6."
+          - problem: "Let $C$ and $D$ be subsets of the codomain of a function $f$. In the element chase for $f^{-1}(C \\cap D) = f^{-1}(C) \\cap f^{-1}(D)$, the line $x \\in f^{-1}(C \\cap D)$ iff ? is written with its right side missing. Select the right side that follows from the definition of preimage."
+            answer: "$f(x) \\in C \\cap D$"
+            answer_contract: {"kind": "label", "options": [["$f(x) \\in C \\cap D$"], ["$f(x) \\in C \\cup D$"], ["$x \\in f^{-1}(C) \\cap f^{-1}(D)$"], ["$x \\in f^{-1}(C) \\cup f^{-1}(D)$"]]}
+            solution_sketch: "The full line starts from the membership $x \\in f^{-1}(C \\cap D)$. By the definition of preimage, this membership is the condition on the value $f(x)$, so the right side is $f(x) \\in C \\cap D$. The option $f(x) \\in C \\cup D$ swaps the intersection for a union. The option $x \\in f^{-1}(C) \\cup f^{-1}(D)$ also brings in the union and jumps to the preimages of the parts. The option $x \\in f^{-1}(C) \\cap f^{-1}(D)$ states the goal of the whole chase instead of the first line. The answer is $f(x) \\in C \\cap D$."
+          - problem: "Let $A$ and $B$ be subsets of the codomain of a function $f$. In the element chase that proves $f^{-1}(A \\cup B) = f^{-1}(A) \\cup f^{-1}(B)$, the line $x \\in f^{-1}(A \\cup B)$ iff $\\;?$ is missing its right side. Select the line that is true and that continues the chase with the definition of preimage."
+            answer: "$f(x) \\in A$ or $f(x) \\in B$"
+            answer_contract: {"kind": "label", "options": [["$f(x) \\in A$ or $f(x) \\in B$"], ["$f(x) \\in A$ and $f(x) \\in B$"], ["$x \\in f^{-1}(A)$ or $x \\in f^{-1}(B)$"], ["$x \\in f^{-1}(A)$ and $x \\in f^{-1}(B)$"]]}
+            solution_sketch: "The full chase starts at $x \\in f^{-1}(A \\cup B)$. By the definition of preimage, membership is the condition on $f(x)$, so the next line is $f(x) \\in A \\cup B$, which splits into $f(x) \\in A$ or $f(x) \\in B$. The option with and treats the union as an intersection. The option jumping to $x \\in f^{-1}(A)$ or $x \\in f^{-1}(B)$ restates the goal instead of applying the definition of preimage to $A \\cup B$. The remaining option is the intersection identity, not the union one. The answer is $f(x) \\in A$ or $f(x) \\in B$."
+          - problem: "Let $f: \\{1,2,3,4,5,6\\} \\to \\{a,b,c,d\\}$ with $f(1)=a$, $f(2)=b$, $f(3)=a$, $f(4)=c$, $f(5)=b$, $f(6)=d$, and let $C = \\{a,b\\}$ and $Y = \\{a,b,c,d\\}$. Using $x \\in f^{-1}(Y \\setminus C)$ iff $f(x) \\notin C$, give $|f^{-1}(Y \\setminus C)|$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full sets: $Y = \\{a,b,c,d\\}$ and $C = \\{a,b\\}$, so $Y \\setminus C = \\{c,d\\}$. Step 1 (definition of preimage): $x \\in f^{-1}(Y \\setminus C)$ iff the condition $f(x) \\notin C$ holds. Step 2: $f(4)=c$ and $f(6)=d$ are the only values outside $C$, so $f^{-1}(Y \\setminus C) = \\{4,6\\}$, matching $X \\setminus f^{-1}(C)$. The answer is 2."
+          - problem: "Write the full proof: for every function $f$ and all subsets $P, Q$ of its codomain, $f^{-1}(P \\cup Q) = f^{-1}(P) \\cup f^{-1}(Q)$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Proof. Step 1 (definition of preimage): take any $x$ in the domain; $x \\in f^{-1}(P \\cup Q)$ iff $f(x) \\in P \\cup Q$, since preimage membership is defined by the condition on $f(x)$. Step 2 (definition of union of codomain sets): $f(x) \\in P \\cup Q$ iff $f(x) \\in P$ or $f(x) \\in Q$. Step 3 (definition of preimage, applied twice): $f(x) \\in P$ iff $x \\in f^{-1}(P)$, and $f(x) \\in Q$ iff $x \\in f^{-1}(Q)$. Step 4 (definition of union of domain sets): $x \\in f^{-1}(P)$ or $x \\in f^{-1}(Q)$ iff $x \\in f^{-1}(P) \\cup f^{-1}(Q)$. Chaining the four if-and-only-if steps gives $x \\in f^{-1}(P \\cup Q)$ iff $x \\in f^{-1}(P) \\cup f^{-1}(Q)$. Since $x$ was arbitrary, the two sets have exactly the same elements, so $f^{-1}(P \\cup Q) = f^{-1}(P) \\cup f^{-1}(Q)$. The same chase with and in place of or proves the intersection version. This proves the claim, so the answer is See the solution."
         constraints: "use that preimage membership is defined by a condition on $f(x)$"
     diagnostic_exemplar:
       problem: 'Prove that $f(S \cap T) \subseteq f(S) \cap f(T)$ for any function $f$ and subsets $S, T$ of its domain, give an example where the inclusion is strict, and decide whether $f^{-1}(C \cap D) = f^{-1}(C) \cap f^{-1}(D)$ holds in general.'
@@ -1169,12 +1229,34 @@ topics:
         name: "Antisymmetry"
         key_prerequisites: [set-notation]
         exemplars:
-          - problem: 'Is $\le$ on $\mathbb{Z}$ antisymmetric? Is it symmetric?'
-            answer: 'Antisymmetric: yes. Symmetric: no.'
-            solution_sketch: 'If $a \le b$ and $b \le a$ then $a = b$ (antisymmetric). But $1 \le 2$ while $2 \not\le 1$, so it is not symmetric.'
-          - problem: 'Is the relation $=$ on $\mathbb{Z}$ antisymmetric?'
-            answer: 'Yes (trivially).'
-            solution_sketch: 'If $a = b$ and $b = a$ then $a = b$, so the antisymmetry condition holds. (Equality is also symmetric — both can hold at once.) $\square$'
+          - problem: "Let $R = \\{(1,1),(1,2),(1,3),(2,2),(3,3)\\}$ on $A = \\{1,2,3\\}$. Decide whether $R$ is antisymmetric, and count the ordered pairs $(x,y)$ with $x \\ne y$ such that $(x,y)$ and $(y,x)$ are both in $R$. Give verdict and violations."
+            answer: "verdict = yes; violations = 0"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "violations"}]}
+            solution_sketch: "Full object: $R = \\{(1,1),(1,2),(1,3),(2,2),(3,3)\\}$ on $A = \\{1,2,3\\}$. Antisymmetry rule: a violation needs $(x,y)$ and $(y,x)$ both in $R$ with $x \\ne y$. Check the off-diagonal pairs: $(1,2)$ would need $(2,1)$, and $(1,3)$ would need $(3,1)$; neither reverse is in $R$. So $R$ is antisymmetric and no pair violates it. Note that $R$ is not symmetric, since $(1,2)$ is in $R$ but $(2,1)$ is not: the two properties are different. The answer is verdict = yes; violations = 0."
+          - problem: "Let $R = \\{(a,b),(b,a),(b,b),(c,c)\\}$ on $A = \\{a,b,c\\}$. Determine whether $R$ is antisymmetric, and count the ordered pairs $(x,y)$ with $x \\ne y$ whose reverse $(y,x)$ is also in $R$. Give verdict and counter."
+            answer: "verdict = no; counter = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "counter"}]}
+            solution_sketch: "Full object: $R = \\{(a,b),(b,a),(b,b),(c,c)\\}$ on $A = \\{a,b,c\\}$. Antisymmetry rule: a pair and its reverse in $R$ with different entries is a violation. The pair $(a,b)$ and its reverse $(b,a)$ are both in $R$ and $a \\ne b$, so $R$ is not antisymmetric. The violating ordered pairs are $(a,b)$ and $(b,a)$, so the count is $2$. The diagonal pairs $(b,b)$ and $(c,c)$ never matter, which is why a relation like equality can be antisymmetric trivially. The answer is verdict = no; counter = 2."
+          - problem: "A relation $R$ on the set $\\{1,2\\}$ is both symmetric and antisymmetric. Find the largest possible number of ordered pairs in $R$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: a relation $R$ on $\\{1,2\\}$ with both properties. Symmetry forces the reverse of every pair into $R$; antisymmetry forbids a pair and its reverse with unequal entries. Any off-diagonal pair $(x,y)$ with $x \\ne y$ would have its reverse forced by symmetry and forbidden by antisymmetry at once, so only diagonal pairs survive. The largest such $R$ is $\\{(1,1),(2,2)\\}$, which has $2$ ordered pairs. The answer is 2."
+          - problem: "A student claims that $R = \\{(2,3),(3,2),(1,1),(1,4),(4,4)\\}$ on $\\{1,2,3,4\\}$ is antisymmetric and checks only the pairs $(1,1)$ and $(4,4)$. Give the smallest $x$ such that some $y$ with $x \\ne y$ has both $(x,y)$ and $(y,x)$ in $R$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $R = \\{(2,3),(3,2),(1,1),(1,4),(4,4)\\}$ on $\\{1,2,3,4\\}$. A violation of antisymmetry is an ordered pair $(x,y)$ with $x \\ne y$ whose reverse $(y,x)$ is also in $R$. The diagonal pairs $(1,1)$ and $(4,4)$ that the student checked never matter for antisymmetry. For $x = 1$ the pairs are $(1,1)$ and $(1,4)$, and $(4,1)$ is not in $R$. The pair $(2,3)$ has its reverse $(3,2)$ in $R$, so the smallest such $x$ is $2$. The answer is 2."
+          - problem: "Let $R = \\{(1,2),(2,1),(1,3),(3,1),(2,3),(3,2)\\}$ be a relation on $A = \\{1,2,3\\}$. Find the smallest number of ordered pairs that must be removed from $R$ so that the remaining relation is antisymmetric."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Full object: $R = \\{(1,2),(2,1),(1,3),(3,1),(2,3),(3,2)\\}$ on $A = \\{1,2,3\\}$. Step 1, the definition of antisymmetry: a violation is a pair $(x,y)$ with $x \\ne y$ whose reverse $(y,x)$ is also in $R$. Step 2, count the conflicts: the unordered pairs $\\{1,2\\}$, $\\{1,3\\}$ and $\\{2,3\\}$ each bring two opposite ordered pairs into $R$, so there are three conflicts. Step 3, minimum removals: one removed ordered pair repairs only one conflict, so at least three removals are needed, and deleting $(2,1)$, $(3,1)$ and $(3,2)$ leaves $\\{(1,2),(1,3),(2,3)\\}$, which is antisymmetric. The answer is 3."
+          - problem: "A relation $R$ on a set $A$ is both antisymmetric and symmetric. To prove that $R$ is contained in the diagonal relation $\\{(a,a) : a \\in A\\}$, the argument takes $(a,b) \\in R$, derives $(b,a) \\in R$ by symmetry in line 1, applies one property in line 2, and concludes $(a,b) = (a,a)$ in line 3. Select the line that completes the argument."
+            answer: "by antisymmetry, a = b"
+            answer_contract: {"kind": "label", "options": [["by antisymmetry, a = b"], ["by antisymmetry, (a,b) = (b,a)"], ["by symmetry, a = b"], ["by antisymmetry, a != b"]]}
+            solution_sketch: "Given $(a,b) \\in R$, line 1 uses symmetry to get $(b,a) \\in R$. Line 2 must apply antisymmetry to the two pairs $(a,b)$ and $(b,a)$: the definition then forces $a = b$, and line 3 turns this into $(a,b) = (a,a)$, so $R$ lies in the diagonal. The option 'by antisymmetry, (a,b) = (b,a)' confuses the condition $a = b$ with equality of ordered pairs. The option 'by symmetry, a = b' cites the wrong property, since symmetry gives no equality. The option 'by antisymmetry, a != b' flips the condition. The missing line is: by antisymmetry, a = b."
+          - problem: "Write the full proof: a relation on a set that is both antisymmetric and symmetric is contained in the diagonal relation. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let $R$ be antisymmetric and symmetric on a set $A$, and take any $(a,b) \\in R$. Step 1 (symmetry): because $R$ is symmetric, the reverse $(b,a)$ is also in $R$. Step 2 (antisymmetry): the pair $(a,b)$ and its reverse $(b,a)$ are both in $R$, so the definition of antisymmetry forces $a = b$. Step 3 (conclusion): $(a,b) = (a,a)$, so every element of $R$ has equal entries and $R \\subseteq \\{(a,a) : a \\in A\\}$. Note where each property is used: symmetry supplies the reverse pair, and antisymmetry turns the two-way membership into equality; neither property alone suffices, which is exactly how antisymmetry differs from symmetry."
         constraints: "distinguish antisymmetry from symmetry"
       - id: kp3
         name: "Proving a property holds"
@@ -1374,12 +1456,34 @@ topics:
         name: "Congruence modulo n"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'Prove congruence mod $5$ ($a \equiv b \iff 5 \mid (a - b)$) is an equivalence relation on $\mathbb{Z}$.'
-            answer: 'Reflexive, symmetric, transitive via divisibility of differences.'
-            solution_sketch: 'Reflexive: $5 \mid 0 = a - a$. Symmetric: $5 \mid (a - b) \Rightarrow 5 \mid (b - a)$. Transitive: $5 \mid (a - b)$ and $5 \mid (b - c)$ give $5 \mid [(a - b) + (b - c)] = a - c$. $\square$'
-          - problem: 'Prove "$f \sim g \iff f(0) = g(0)$" on functions $\mathbb{R} \to \mathbb{R}$ is an equivalence relation.'
-            answer: 'Reflexive, symmetric, transitive from equality of $f(0)$.'
-            solution_sketch: 'Reflexive: $f(0) = f(0)$. Symmetric: $f(0) = g(0) \Rightarrow g(0) = f(0)$. Transitive: $f(0) = g(0)$ and $g(0) = h(0) \Rightarrow f(0) = h(0)$. $\square$'
+          - problem: "To prove that congruence modulo 5 is transitive, assume 5 divides a - b and 5 divides b - c. Write the derived quantity a - c as (a - b) + q, where q is an expression in b and c. Give q."
+            answer: "b-c"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Add the two hypothesis quantities: (a - b) + (b - c). The middle terms b and -b cancel, so the sum telescopes to a - c. Both summands are multiples of 5, so 5 divides a - c. The answer is b-c."
+          - problem: "On the set of functions from R to R, define f ~ g exactly when f(1) = g(1). Let f(x) = 2x + 3 and g(x) = x^2 - 4. Compute the value of the derived quantity f(1) - g(1)."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Substitute into each function: f(1) = 2 + 3 = 5 and g(1) = 1 - 4 = -3 by arithmetic. The difference is 5 - (-3) = 8. Since the difference is not 0, the equality fact fails and f, g are not related. The answer is 8."
+          - problem: "In the proof that congruence modulo 7 is symmetric, one assumes a - b = 7t and must show 7 divides b - a. Write b - a as an integer multiple of a - b and give that multiple."
+            answer: "-1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Symmetry needs 7 | (b - a) from the hypothesis 7 | (a - b). Factor: b - a = -(a - b) = -(7t) = 7(-t), so b - a is again a multiple of 7. The integer multiple of a - b is -1."
+          - problem: "A student claims that the relation a ~ b on the positive integers, defined by a ~ b exactly when 3 divides a + b, is an equivalence relation, and checks reflexivity only at a = 3. Give the smallest positive integer a for which a ~ a is false."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Reflexivity demands 3 | (a + a) = 2a. Test a = 1: the value 2 is not a multiple of 3, so a ~ a already fails there. The check at a = 3 covers only a multiple of 3 and proves nothing in general. The smallest such a is 1."
+          - problem: "Claim: a ~ b iff 4 | (a - b) is an equivalence relation on Z. Step 1: a - a = 0 and 4 divides 0, so a ~ a. Step 2: if a - b = 4t, then b - a = 4(-t), so a ~ b gives b ~ a. Step 3: if 4 | (a - b) and 4 | (b - c), then 4 | [(a - b) - (b - c)], hence 4 | (a - c) and a ~ c. Step 4: therefore the relation is an equivalence relation. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct reflexivity argument since 0 is a multiple of 4. Step 2 is valid: negating a multiple of 4 keeps a multiple of 4. Step 3 is the first invalid step: (a - b) - (b - c) equals a - 2b + c, not a - c, so divisibility of that quantity does not give 4 | (a - c); the sum, not the difference, must be used. Step 4 merely states the conclusion and collapses with Step 3. The answer is Step 3."
+          - problem: "In the proof that a ~ b iff 6 | (a - b) is transitive, the line that rewrites the derived quantity a - c using the two hypotheses is missing. Select the correct missing line."
+            answer: "(a-b)+(b-c)"
+            answer_contract: {"kind": "label", "options": [["(a-b)+(b-c)"], ["(a-b)-(b-c)"], ["(a+b)+(b+c)"], ["(a-c)+(b-c)"]]}
+            solution_sketch: "The correct line is (a-b)+(b-c): it is the sum of the two hypothesis quantities, telescopes to a - c, and is a multiple of 6. The option (a-b)-(b-c) makes a sign error and gives a - 2b + c. The option (a+b)+(b+c) uses sums in place of differences and gives a + 2b + c. The option (a-c)+(b-c) mixes the endpoint with the middle term and gives a + b - 2c, so it does not combine the hypotheses. The answer is (a-b)+(b-c)."
+          - problem: "Write the full proof: the relation a ~ b on Z, defined by a ~ b exactly when 7 | (a - b), is an equivalence relation. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (reflexive): for every a, the derived quantity a - a = 0, and 7 divides 0, so a ~ a. Step 2 (symmetric): assume a ~ b, so a - b = 7t for some integer t. Then b - a = -(a - b) = -7t = 7(-t), so 7 | (b - a) and b ~ a. Step 3 (transitive): assume a ~ b and b ~ c, so a - b = 7s and b - c = 7t. Add the two divisibility facts: a - c = (a - b) + (b - c) = 7(s + t), so 7 | (a - c) and a ~ c. Conclusion: the relation is reflexive, symmetric and transitive, hence congruence modulo 7 is an equivalence relation on Z."
         constraints: "use an equality or divisibility fact about a derived quantity"
     diagnostic_exemplar:
       problem: 'On $\mathbb{Z}$, define $a \sim b \iff a^2 = b^2$. Prove $\sim$ is an equivalence relation.'
@@ -1600,6 +1704,22 @@ topics:
           - problem: 'On $\{1, 2, 3\}$ let $R = \{(1,1), (1,2), (2,3)\}$ and $S = \{(1,3), (2,2), (3,1)\}$. Compute $S \circ R$.'
             answer: '$\{(1,3), (1,2), (2,1)\}$'
             solution_sketch: '$(1,1)$ chains with $(1,3)$; $(1,2)$ with $(2,2)$; $(2,3)$ with $(3,1)$.'
+          - problem: "On {1, 2, 3} let R = {(1,2), (2,1), (3,2)} and S = {(1,3), (2,2), (3,1)}, where S o R = {(a,c) : there is b with (a,b) in R and (b,c) in S}. How many ordered pairs are in S o R?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply the composition rule: (a,c) is in S o R exactly when some middle element b has (a,b) in R and (b,c) in S. Chain every pair of R: (1,2) with (2,2) in S gives (1,2); (2,1) with (1,3) in S gives (2,3); (3,2) with (2,2) in S gives (3,2). No other pair of S starts at a second component of R, so S o R = {(1,2), (2,3), (3,2)}. The number of ordered pairs in S o R is 3."
+          - problem: "On {1, 2, 3} let R = {(1,2), (1,3), (2,3)} and S = {(2,1), (3,2), (1,1)}, where S o R = {(a,c) : there is b with (a,b) in R and (b,c) in S}. Give the second components of the pairs of S o R in increasing order, repeats included, as a comma-separated list."
+            answer: "1, 2, 2"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "Use the composition rule: (a,c) is in S o R when (a,b) in R and (b,c) in S for a middle element b. Chain all pairs of R: (1,2) with (2,1) gives (1,1); (1,3) with (3,2) gives (1,2); (2,3) with (3,2) gives (2,2); element 3 has no outgoing pair in R. The full composition is S o R = {(1,1), (1,2), (2,2)}. Reading the second components in increasing order, repeats included, gives 1, 2, 2."
+          - problem: "On {1, 2, 3} let R = {(1,3), (2,2)} and S = {(2,2), (3,1)}, where S o R = {(a,c) : there is b with (a,b) in R and (b,c) in S}. Which of the four option sets equals S o R?"
+            answer: "(1,1), (2,2)"
+            answer_contract: {"kind": "label", "options": [["(1,1), (2,2)"], ["(2,2), (3,3)"], ["(1,1), (3,3)"], ["(1,1), (2,2), (3,3)"]]}
+            solution_sketch: "Chain each pair of R through a middle element into S: (1,3) in R with (3,1) in S gives (1,1), and (2,2) in R with (2,2) in S gives (2,2). The full object is S o R = {(1,1), (2,2)}. The wrong option (2,2), (3,3) comes from composing in the wrong direction; the wrong option (1,1), (3,3) drops the chain through the middle element 2 and adds (3,3); the wrong option (1,1), (2,2), (3,3) adds (3,3), which has no chain because no pair of R starts at 3. The correct option is (1,1), (2,2)."
+          - problem: "On {1, 2, 3} let R = {(1,1), (2,3), (3,2)} and S = {(1,3), (3,1)}, where R o S = {(a,c) : there is b with (a,b) in S and (b,c) in R}. How many ordered pairs are in R o S?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "For R o S, chain the pairs of S through R because (a,c) is in R o S when (a,b) in S and (b,c) in R. The pair (1,3) in S chains with (3,2) in R to give (1,2), and (3,1) in S chains with (1,1) in R to give (3,1); element 2 has no outgoing pair in S. The full object is R o S = {(1,2), (3,1)}. The number of ordered pairs in R o S is 2."
         constraints: "chain pairs through a middle element on a 3-element set"
       - id: kp2
         name: "Powers of a relation"
