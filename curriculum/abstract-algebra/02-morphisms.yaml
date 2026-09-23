@@ -374,12 +374,34 @@ topics:
         name: "Statement and the induced map"
         key_prerequisites: [kernels-images, quotient-groups]
         exemplars:
-          - problem: 'State the first isomorphism theorem and define the induced map.'
-            answer: 'For a homomorphism $\varphi : G \to H$, the map $\bar\varphi : G/\ker\varphi \to \mathrm{im}\,\varphi$, $\bar\varphi(g\ker\varphi) = \varphi(g)$, is a well-defined isomorphism.'
-            solution_sketch: 'Well defined because representatives differing by a kernel element have equal images; injective because the kernel collapses to the identity coset; surjective onto the image by construction.'
-          - problem: 'In the proof, why is $\bar\varphi$ well defined?'
-            answer: 'If $aK = bK$ ($K = \ker\varphi$) then $b^{-1}a \in K$, so $\varphi(a) = \varphi(b)\varphi(b^{-1}a) = \varphi(b)$.'
-            solution_sketch: 'Coset equality means the representatives differ by a kernel element, which $\varphi$ kills.'
+          - problem: "Let phi from Z_18 to Z_18 be given by phi(x) = 6x. The first isomorphism theorem identifies the quotient of Z_18 by ker phi with im phi via the induced map. Compute the number of elements of ker phi."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (kernel definition): ker phi is the set of x in Z_18 with 6x = 0 in Z_18, that is, 18 divides 6x. Step 2 (solve the congruence): this holds exactly when 3 divides x, so ker phi is the set 0, 3, 6, 9, 12, 15, of order gcd(6, 18) = 6. The answer is 6."
+          - problem: "Let phi from Z_15 to Z_15 be given by phi(x) = 5x, so ker phi is the set 0, 3, 6, 9, 12. The induced map on cosets must give the same value for any two representatives of one coset. Take a and b = a + 3, which lie in the same coset of ker phi. Compute phi(b) minus phi(a) in Z_15."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (coset representatives): a and b = a + 3 lie in the same coset of ker phi, since 3 lies in ker phi. Step 2 (difference of values): phi(b) - phi(a) = 5(a + 3) - 5a = 15, which is 0 in Z_15. Representatives of one coset give equal values, which is exactly the well-definedness of the induced map. The answer is 0."
+          - problem: "Let phi from Z_10 to Z_10 be given by phi(x) = 2x. The kernel of phi is the set of elements sent to 0. A homomorphism is one-to-one exactly when its kernel holds only the identity. Give the verdict on whether phi is one-to-one and the number of elements of ker phi."
+            answer: "verdict = noninjective; order = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["injective"], ["noninjective"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "order"}]}
+            solution_sketch: "Step 1 (kernel computation): ker phi is the set of x in Z_10 with 2x = 0 in Z_10, that is the set 0 and 5, so its order is 2. Step 2 (one-to-one criterion): a homomorphism is one-to-one exactly when its kernel holds only the identity, and 5 is a nonidentity kernel element, so phi is not one-to-one. The option injective is the error of ignoring the kernel element 5. The answer is verdict = noninjective; order = 2."
+          - problem: "Let phi from Z_9 to Z_9 be given by phi(x) = 3x, so ker phi is the set 0, 3, 6. Surjectivity of the induced map onto im phi means every element of im phi is the image of a whole coset. The element 6 lies in im phi. Give the smallest x in Z_9 such that the coset x plus ker phi maps to 6 under the induced map."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (definition of the induced map): the coset x plus ker phi is sent to phi(x) = 3x in Z_9. Step 2 (solve): 3x = 6 in Z_9 gives x = 2, 5 or 8, which form the single coset 2 plus ker phi. Step 3 (surjectivity): the image of this coset is 6, and every element of im phi, namely the set 0, 3, 6, arises in this way. The answer is 2."
+          - problem: "Claim: the map phi bar from G over K to im phi, given by phi bar of gK = phi(g), where K = ker phi, is well defined. Step 1: suppose gK = hK. Step 2: then g = h. Step 3: hence phi(g) = phi(h), so the value does not depend on the chosen representative. Step 4: the map phi bar is well defined. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a valid setup: two representatives of one coset are taken. Step 2 is the first error: from gK = hK one gets h inverse g in K, and g = h follows only when the kernel is trivial, which is not assumed. Step 3 would be correct if the missing line placed the difference in the kernel. Step 4 merely restates the claim. The answer is Step 2."
+          - problem: "To prove that phi bar is well defined, one assumes gK = hK for two representatives g and h of one coset. The next line of the proof is missing, and from it one derives phi(g) = phi(h), so the value is independent of the representative. Select the missing line."
+            answer: "h inverse g lies in K"
+            answer_contract: {"kind": "label", "options": [["h inverse g lies in K"], ["g and h are equal"], ["K is a normal subgroup"], ["phi is injective"]]}
+            solution_sketch: "Step 1 (coset equality): gK = hK means exactly that the quotient h inverse g of the representatives lies in the kernel K. Step 2 (apply phi): then phi(h) inverse phi(g) = phi of h inverse g is the identity, so phi(g) = phi(h), which is the needed independence of the representative. The wrong option g and h are equal confuses coset equality with equality of representatives, true only for a trivial kernel. The wrong option K is a normal subgroup is true but is not the computational line used here. The wrong option phi is injective is a property of a different map and is not assumed. The answer is h inverse g lies in K."
+          - problem: "Write the full proof: for a group homomorphism phi from G to H with kernel K, the induced map phi bar from G/K to im phi, given by phi bar of gK = phi(g), is a well-defined isomorphism. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (well defined): if gK = hK, then h inverse g lies in K, so phi(h) inverse phi(g) = phi(h inverse g) = e, hence phi(g) = phi(h); the value does not depend on the representative. Step 2 (homomorphism): phi bar of (gK)(hK) = phi bar of ghK = phi(gh) = phi(g)phi(h), since phi is a homomorphism and the product of cosets is the coset of the product. Step 3 (injective): if phi bar of gK = phi bar of hK, then phi(g) = phi(h), so phi(h inverse g) = e, so h inverse g lies in K, so gK = hK. Step 4 (surjective onto im phi): every element of im phi has the form phi(g) for some g in G, and it equals phi bar of gK. Step 5 (conclusion): phi bar is a bijective homomorphism, hence an isomorphism from G/K onto im phi, which is the first isomorphism theorem."
         constraints: "statement, well-definedness, injectivity, surjectivity — one step at a time"
       - id: kp2
         name: "Identifying quotients via a good homomorphism"
@@ -418,12 +440,34 @@ topics:
         name: "Existence and counting consequences"
         key_prerequisites: [kernels-images, quotient-groups]
         exemplars:
-          - problem: 'Prove that every homomorphic image of $G$ has order dividing $|G|$ (finite $G$).'
-            answer: '$\mathrm{im}\,\varphi \cong G/\ker\varphi$, whose order $|G|/|\ker\varphi|$ divides $|G|$.'
-            solution_sketch: 'First isomorphism theorem plus Lagrange.'
-          - problem: 'Show there is no surjective homomorphism $\mathbb{Z}_8 \to \mathbb{Z}_3$.'
-            answer: 'The image would have order $3$, but $3 \nmid 8$.'
-            solution_sketch: 'Image order divides domain order; $3$ does not divide $8$.'
+          - problem: "Let $\\varphi: G \\to H$ be a surjective homomorphism, where $G$ is a finite group of order $24$ and $\\ker\\varphi$ has order $6$. By the first isomorphism theorem, what is the order of $H$?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (first isomorphism theorem): since $\\varphi$ is surjective, $H \\cong G/\\ker\\varphi$, so $|H| = |G|/|\\ker\\varphi|$. Step 2 (substitution): $|H| = 24/6$. The order of $H$ is 4."
+          - problem: "Is there a surjective homomorphism from $\\mathbb{Z}_9$ to $\\mathbb{Z}_4$? Decide, and give the order that the image of such a homomorphism would have."
+            answer: "verdict = impossible; order = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["possible"], ["impossible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "order"}]}
+            solution_sketch: "Step 1 (image order): a surjection $\\mathbb{Z}_9 \\to \\mathbb{Z}_4$ would have image of order $|\\mathbb{Z}_4| = 4$. Step 2 (counting consequence): by the first isomorphism theorem the image is isomorphic to a quotient of $\\mathbb{Z}_9$, so its order divides $9$. Step 3 (divisibility check): $4$ does not divide $9$, so no such surjection exists. So verdict = impossible; order = 4."
+          - problem: "Let $\\varphi: \\mathbb{Z}_{30} \\to \\mathbb{Z}_5$ be a surjective homomorphism. By the first isomorphism theorem, how many elements does $\\ker\\varphi$ have?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (first isomorphism theorem): $\\mathbb{Z}_5 \\cong \\mathbb{Z}_{30}/\\ker\\varphi$, so $|\\ker\\varphi| = |\\mathbb{Z}_{30}|/|\\mathbb{Z}_5| = 30/5$. Step 2 (division): $|\\ker\\varphi| = 6$. The kernel has 6 elements."
+          - problem: "Does a surjective homomorphism from $\\mathbb{Z}_{12}$ onto $\\mathbb{Z}_6$ exist? Decide, and give the order of the kernel of such a homomorphism."
+            answer: "verdict = possible; kernel = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["possible"], ["impossible"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "kernel"}]}
+            solution_sketch: "Step 1 (necessary order): a surjection $\\mathbb{Z}_{12} \\to \\mathbb{Z}_6$ would need $|\\ker\\varphi| = 12/6 = 2$. Step 2 (construction): the subgroup $\\{0, 6\\}$ of $\\mathbb{Z}_{12}$ has order $2$, and the quotient $\\mathbb{Z}_{12}/\\{0,6\\}$ is cyclic of order $6$, so the natural projection is a surjection with that kernel. So verdict = possible; kernel = 2."
+          - problem: "An attempted proof claims that a surjective homomorphism $\\mathbb{Z}_{10} \\to \\mathbb{Z}_4$ exists. Step 1: by the first isomorphism theorem the image is isomorphic to a quotient of $\\mathbb{Z}_{10}$, and the image would have order $4$. Step 2: the kernel would then have order $10/4$. Step 3: an order need not be a whole number, so this is no obstruction. Step 4: therefore the surjection exists. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 restates the first isomorphism theorem and is valid. Step 2 performs the division $10/4$ correctly and is valid arithmetic. Step 3 is the first invalid step: the order of a kernel is always a whole number, so a kernel of order $10/4$ is impossible, and the right conclusion is that no surjection exists. Step 4 is only a conclusion drawn from the false claim of Step 3. The answer is Step 3."
+          - problem: "A proof that no surjective homomorphism $\\mathbb{Z}_{12} \\to \\mathbb{Z}_5$ exists is nearly complete. The image of a surjection onto $\\mathbb{Z}_5$ has order $5$, and by the first isomorphism theorem this order divides the order of $\\mathbb{Z}_{12}$. One line is still missing to reach the contradiction. Select the line that completes the proof."
+            answer: "5 does not divide 12"
+            answer_contract: {"kind": "label", "options": [["5 does not divide 12"], ["12 does not divide 5"], ["5 divides 12"], ["the kernel has order 12"]]}
+            solution_sketch: "The image has order $5$ and divides $|\\mathbb{Z}_{12}| = 12$; the missing line is the contradiction: 5 does not divide 12. Option '12 does not divide 5' reverses which order divides which. Option '5 divides 12' asserts the false divisibility instead of refuting it. Option 'the kernel has order 12' misidentifies the kernel, whose order would be $12/5$, not $12$. The answer is: 5 does not divide 12."
+          - problem: "Write the full proof: if $m$ and $n$ are positive integers such that $n$ does not divide $m$, then there is no surjective homomorphism from $\\mathbb{Z}_m$ to $\\mathbb{Z}_n$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): suppose, for contradiction, that $\\varphi: \\mathbb{Z}_m \\to \\mathbb{Z}_n$ is a surjective homomorphism. Step 2 (first isomorphism theorem): $\\mathbb{Z}_n \\cong \\mathbb{Z}_m/\\ker\\varphi$, so $n = |\\mathbb{Z}_n| = |\\mathbb{Z}_m|/|\\ker\\varphi| = m/|\\ker\\varphi|$. Step 3 (kernel is a subgroup): $\\ker\\varphi$ is a subgroup of $\\mathbb{Z}_m$ of order $m/n$. Step 4 (Lagrange): the order of a subgroup divides the order of the group, so $|\\ker\\varphi| = m/n$ divides $m$, which forces $n$ to divide $m$. Step 5 (conclusion): this contradicts the hypothesis that $n$ does not divide $m$; hence no surjective homomorphism from $\\mathbb{Z}_m$ to $\\mathbb{Z}_n$ exists."
         constraints: "existence/non-existence of surjections between groups of order <= 30"
     diagnostic_exemplar:
       problem: 'Let $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_{12}$, $\varphi(x) = 3x$. Apply the first isomorphism theorem: what is $\mathbb{Z}_{12}/\{0,4,8\}$ isomorphic to?'
@@ -641,27 +685,59 @@ topics:
         name: "Orders 1-5: only cyclic and Klein"
         key_prerequisites: [consequences-of-lagrange, isomorphism-invariants]
         exemplars:
-          - problem: 'Classify all groups of order $4$ up to isomorphism.'
-            answer: '$\mathbb{Z}_4$ and the Klein group $\mathbb{Z}_2 \times \mathbb{Z}_2$.'
-            answer_contract: {kind: none}
-            solution_sketch: 'If some element has order $4$, cyclic. Otherwise all non-identity elements have order $2$, forcing the Klein table.'
-          - problem: 'Prove every group of order at most $5$ is abelian.'
-            answer: 'Orders $1,2,3,5$ are $1$ or prime, hence cyclic; order $4$ gives $\mathbb{Z}_4$ or Klein, both abelian.'
-            answer_contract: {kind: none}
-            solution_sketch: 'Prime orders are cyclic by Lagrange; order 4 splits into the two known cases.'
+          - problem: "Groups of order 4 can have elements of order 1, 2, or 4. By case analysis on these element orders, determine how many groups of order 4 exist up to isomorphism."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Lagrange): every element order divides 4, so orders are 1, 2, or 4. Step 2 (case analysis): if some element has order 4, the group is cyclic of order 4; otherwise every nonidentity element has order 2, which forces the Klein group Z2 x Z2. No other pattern occurs, so there are exactly 2 groups of order 4 up to isomorphism."
+          - problem: "A group G has order 4 and contains an element a of order 4. Determine which of the two groups of order 4 G is, and give the number of elements of order 4 in G."
+            answer: "verdict = cyclic; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cyclic"], ["klein"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Step 1 (case analysis on element orders): a has order 4, so the subgroup generated by a already has 4 elements and equals G, making G the cyclic group of order 4. Step 2 (count): the powers a, a^2, a^3, e have orders 4, 2, 4, 1, so exactly 2 elements have order 4. The case analysis gives verdict = cyclic; count = 2."
+          - problem: "A group G has order 4 and satisfies x^2 = e for every element x, where e is the identity. Determine which of the two groups of order 4 G is, and give the number of elements of order 2 in G."
+            answer: "verdict = klein; count = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cyclic"], ["klein"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "Step 1 (case analysis): x^2 = e for all x means every nonidentity element has order 2, so G has no element of order 4 and is not cyclic. Step 2 (count): the unique group of order 4 with this property is the Klein group, whose 3 nonidentity elements all have order 2. The case analysis gives verdict = klein; count = 3."
+          - problem: "Let G be a group of order 5. Using Lagrange's theorem and case analysis on the possible element orders, determine how many groups of order 5 exist up to isomorphism."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Lagrange): an element order divides 5, so every nonidentity element has order 5. Step 2 (cyclicity): such an element generates the whole group, so every group of order 5 is cyclic. Step 3: all cyclic groups of a fixed order are isomorphic, so there is exactly 1 group of order 5 up to isomorphism."
+          - problem: "A group G has order 4 and exactly one element of order 2. Find the number of elements of order 4 in G."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Lagrange): element orders divide 4, so nonidentity elements have order 2 or 4. Step 2 (case analysis): since G has exactly one element of order 2, the other two nonidentity elements cannot have order 1 or 2, so each has order 4. Hence G has 2 elements of order 4, and it is the cyclic group of order 4."
+          - problem: "Run the case analysis on element orders for every group of order 1, 2, 3, 4, or 5. All the resulting groups turn out to be abelian. Determine how many nonabelian groups of order at most 5 exist up to isomorphism."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (Lagrange and prime orders): a group of order 1 is trivial, and each prime order 2, 3, 5 forces a cyclic group, all abelian. Step 2 (order 4 case analysis): the two groups of order 4 are the cyclic group Z4 and the Klein group Z2 x Z2, and both are abelian. Step 3: since every group of order at most 5 is abelian, the count of nonabelian groups of order at most 5 up to isomorphism is 0."
         constraints: "orders <= 5; case analysis on element orders"
       - id: kp2
         name: "Order 6 and order 2p"
         key_prerequisites: [consequences-of-lagrange, isomorphism-invariants]
         exemplars:
-          - problem: 'Name the two groups of order $6$ up to isomorphism and one invariant separating them.'
-            answer: '$\mathbb{Z}_6$ and $S_3 \cong D_3$; abelian-ness (or: existence of an element of order $6$).'
-            answer_contract: {kind: none}
-            solution_sketch: 'The abelian one is cyclic; the non-abelian one is the symmetric group on $3$ letters.'
-          - problem: 'A group of order $10$ is non-abelian. Identify it up to isomorphism.'
-            answer: '$D_5$'
-            answer_contract: {kind: none}
-            solution_sketch: 'For prime $p$, the groups of order $2p$ are $\mathbb{Z}_{2p}$ and $D_p$; non-abelian forces $D_5$.'
+          - problem: "A group G of order 6 is abelian. State its isomorphism type and give the number of elements of order 2 in G."
+            answer: "verdict = cyclic; k = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cyclic"], ["dihedral"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "By the order 6 dichotomy, an abelian group of order 6 is cyclic, so G is isomorphic to Z6. In Z6 the element 3 has order 2 and no other element does, so k = 1. The option dihedral would be wrong because it would make G non-abelian. The key is verdict = cyclic; k = 1."
+          - problem: "A group G of order 10 is non-abelian. State its isomorphism type and give the number of elements of order 2 in G."
+            answer: "verdict = dihedral; k = 5"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cyclic"], ["dihedral"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "By the order 2p dichotomy with p = 5, a non-abelian group of order 10 is dihedral, so G is isomorphic to D5. In D5 the five reflections each have order 2, so k = 5. The option cyclic would be wrong because it would make G abelian. The key is verdict = dihedral; k = 5."
+          - problem: "A group G of order 6 is not abelian. State its isomorphism type and give the number of elements of order 2 in G."
+            answer: "verdict = dihedral; k = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cyclic"], ["dihedral"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "By the order 6 dichotomy, a non-abelian group of order 6 is dihedral, so G is isomorphic to S3 or D3. In D3 the three reflections have order 2, so k = 3. The option cyclic would be wrong because it would make G abelian. The key is verdict = dihedral; k = 3."
+          - problem: "A group G of order 14 is non-abelian. State its isomorphism type and give the number of elements of order 2 in G."
+            answer: "verdict = dihedral; k = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["cyclic"], ["dihedral"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "k"}]}
+            solution_sketch: "By the order 2p dichotomy with p = 7, a non-abelian group of order 14 is dihedral, so G is isomorphic to D7. The seven reflections of D7 have order 2, so k = 7. The option cyclic would be wrong because it would make G abelian. The key is verdict = dihedral; k = 7."
+          - problem: "A group G of order 10 has more than one element of order 2. Find the number of elements of order 2 in G."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the order 2p dichotomy with p = 5, a group of order 10 with more than one element of order 2 cannot be cyclic, so it is D5. In D5 the five reflections each have order 2, so the count is 5. The number is 5."
+          - problem: "A group G of order 14 has no element of order 14. Find the number of elements of order 2 in G."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the order 2p dichotomy with p = 7, a group of order 14 with no element of order 14 is not cyclic, so it is D7. The seven reflections in D7 have order 2, so the count is 7. The number is 7."
         constraints: "orders 6, 10, 14: cyclic vs dihedral dichotomy (may be quoted)"
       - id: kp3
         name: "Recognizing a given group in the catalog"
