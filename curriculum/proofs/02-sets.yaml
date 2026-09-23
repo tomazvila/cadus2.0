@@ -1126,19 +1126,51 @@ topics:
           - problem: 'With $A = \{a, b, c\}$ and $B = \{1\}$, list $A \times B$.'
             answer: '$\{(a, 1), (b, 1), (c, 1)\}$'
             solution_sketch: 'Pair every element of $A$ with the single element $1$ of $B$.'
+          - problem: "Let A = {2, 3, 5} and B = {4, 6}. List A × B in the standard order: the first coordinate runs through A in increasing order, and for each fixed first coordinate the second coordinate runs through B in increasing order. Give the first pair and the last pair of this listing, each as (a, b)."
+            answer: "first = (2,4); last = (5,6)"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"arity": 2, "kind": "coordinates"}, "name": "first"}, {"contract": {"arity": 2, "kind": "coordinates"}, "name": "last"}]}
+            solution_sketch: "The product A × B holds every ordered pair whose first entry lies in A and whose second entry lies in B. Run the first coordinate through 2, 3, 5 and the second through 4, 6, which gives (2,4), (2,6), (3,4), (3,6), (5,4), (5,6). The listing opens with (2,4) and closes with (5,6). The key is first = (2,4); last = (5,6)."
+          - problem: "For number sets A and B, the product is A × B = {(2, 3), (2, 7), (5, 3), (5, 7), (8, 3), (8, 7)}. Determine the sets A and B. Give the answer in the form A = ...; B = ...."
+            answer: "A = {2,5,8}; B = {3,7}"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "set"}, "name": "A"}, {"contract": {"kind": "set"}, "name": "B"}]}
+            solution_sketch: "In a Cartesian product every first coordinate comes from A and every second coordinate comes from B. Collect the first entries of the six pairs: 2, 5, 8, so A = {2, 5, 8}. Collect the second entries: 3, 7, so B = {3, 7}. Each listed pair uses only these entries, which confirms both sets. The key is A = {2,5,8}; B = {3,7}."
+          - problem: "Let A = {1, 2} and B = {3, 4}, and let S = {(3, 1), (4, 1), (3, 2), (4, 2)}. State which description fits S."
+            answer: "it lists the pairs in reverse order"
+            answer_contract: {"kind": "label", "options": [["it is A times B"], ["one pair is missing"], ["it lists the pairs in reverse order"], ["it has an extra pair"]]}
+            solution_sketch: "The full product is A × B = {(1,3), (1,4), (2,3), (2,4)}. The option it is A times B fails because S contains pairs such as (3,1) that are not in A × B. The option one pair is missing fails because S has four pairs, exactly as many as A × B. The option it has an extra pair fails because every pair of S has its first entry in B and its second entry in A, so S is exactly B × A with the coordinates swapped. The correct option is it lists the pairs in reverse order."
+          - problem: "Let A = {4, 9, 11} and B = {3, 7}. Find the ordered pair (a, b) in A × B whose product a times b is 63. Give the answer as (a, b)."
+            answer: "(9,7)"
+            answer_contract: {"arity": 2, "kind": "coordinates"}
+            solution_sketch: "A pair of A × B needs a in {4, 9, 11} and b in {3, 7}. Test the six products: 4 times 3 is 12, 4 times 7 is 28, 9 times 3 is 27, 9 times 7 is 63, 11 times 3 is 33, 11 times 7 is 77. Only 9 times 7 equals 63, so the pair uses a = 9 and b = 7. The answer is (9,7)."
         constraints: "enumerate a product of small sets; order of coordinates matters"
       - id: kp2
         name: "Counting a product"
         key_prerequisites: [set-notation]
         exemplars:
-          - problem: 'If $|A| = 3$ and $|B| = 4$, how many elements are in $A \times B$? In $A \times A$?'
-            answer_contract: {kind: none}
-            answer: '$12$ and $9$.'
-            solution_sketch: '$|A \times B| = |A|\,|B| = 12$ and $|A \times A| = 3^2 = 9$.'
-          - problem: 'If $|A| = 5$ and $|B| = 0$, how many elements are in $A \times B$?'
-            answer_contract: {kind: none}
-            answer: '$0$.'
-            solution_sketch: '$|A \times B| = |A|\,|B| = 5 \cdot 0 = 0$; pairing with the empty set gives no pairs.'
+          - problem: "Let A be a set with 4 elements and B a set with 6 elements. How many elements are in A x B?"
+            answer: "24"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "By the counting rule for a Cartesian product, |A x B| = |A| |B|. Substitute the sizes: 4 times 6 = 24."
+          - problem: "Let A be a set with 7 elements and let B be the empty set. How many elements are in A x B?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The counting rule gives |A x B| = |A| |B|. Substitute: 7 times 0 = 0."
+          - problem: "A set A has 6 elements. The Cartesian product A x B has 42 elements. How many elements does B have?"
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The counting rule gives |A x B| = |A| |B|. Substitute the known values: 42 = 6 |B|, so |B| = 7."
+          - problem: "Let A = {1, 2, 3, 4} and B = {5, 6}. How many elements are in A x B?"
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The counting rule gives |A x B| = |A| |B|. Substitute the sizes: 4 times 2 = 8."
+          - problem: "A set A has 9 elements. How many elements are in A x A?"
+            answer: "81"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The counting rule gives |A x A| = |A| |A|. Substitute the size: 9 times 9 = 81."
+          - problem: "Let A and B be disjoint sets with |A| = 5 and |B| = 7. How many elements are in (A x B) union (B x A)?"
+            answer: "70"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The two products have sizes |A x B| = 5 times 7 = 35 and |B x A| = 7 times 5 = 35. Because A and B are disjoint, the two products share no element, so the union has 35 + 35 = 70."
         constraints: "use $|A \\times B| = |A|\\,|B|$"
       - id: kp3
         name: "Subsets of a product"
@@ -1340,12 +1372,34 @@ topics:
         name: "Identities with set difference"
         key_prerequisites: [set-operations]
         exemplars:
-          - problem: 'Prove: $A \setminus (B \cap C) = (A \setminus B) \cup (A \setminus C)$.'
-            answer: 'Rewrite $\setminus$, apply De Morgan and distributivity.'
-            solution_sketch: '$x \in A \setminus (B \cap C)$ iff $x \in A \land \neg(x \in B \land x \in C)$ iff $x \in A \land (x \notin B \lor x \notin C)$ iff $(x \in A \land x \notin B) \lor (x \in A \land x \notin C)$ iff $x \in (A \setminus B) \cup (A \setminus C)$. $\square$'
-          - problem: 'Prove: $A \setminus (B \cup C) = (A \setminus B) \cap (A \setminus C)$.'
-            answer: 'Rewrite $\setminus$, apply De Morgan.'
-            solution_sketch: '$x \in A \setminus (B \cup C)$ iff $x \in A \land \neg(x \in B \lor x \in C)$ iff $x \in A \land x \notin B \land x \notin C$ iff $(x \in A \land x \notin B) \land (x \in A \land x \notin C)$ iff $x \in (A \setminus B) \cap (A \setminus C)$. $\square$'
+          - problem: "Let U = {1, 2, 3, 4, 5, 6, 7}, A = {1, 2, 3, 4}, B = {2, 3, 5, 6}, C = {3, 4, 6, 7}. To chase the identity A \\ (B ∩ C) = (A \\ B) ∪ (A \\ C) element by element, keep exactly the elements of A that are not in both B and C. Compute A \\ (B ∩ C)."
+            answer: "{1, 2, 4}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Membership rewrite: x belongs to A \\ (B ∩ C) exactly when x ∈ A and x is not in both B and C. Element chase: B ∩ C = {3, 6}, and among A = {1, 2, 3, 4} only 3 lies in B ∩ C, so the chase leaves {1, 2, 4}. Cross-check with the right side of the identity: (A \\ B) ∪ (A \\ C) = {1, 4} ∪ {1, 2} = {1, 2, 4}. The answer is {1, 2, 4}."
+          - problem: "A student claims that A \\ (B ∪ C) = (A \\ B) ∪ (A \\ C) for all sets A, B and C. Take U = {1, 2, 3, 4, 5, 6, 7, 8}, A = {1, 2, 3, 5}, B = {2, 3, 4}, C = {3, 5, 7}; the two sides are unequal here. Give the smallest element of U at which the two sides differ."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Membership chase on both sides: B ∪ C = {2, 3, 4, 5, 7}, so A \\ (B ∪ C) = {1}. The claimed right side: A \\ B = {1, 5} and A \\ C = {1, 2}, so (A \\ B) ∪ (A \\ C) = {1, 2, 5}. The sides differ at 2 and 5, and the smaller counterexample is 2. The answer is 2."
+          - problem: "Let A = {1, 2, 4, 7}, B = {2, 3, 4, 8}, C = {3, 4, 5} inside the universe U = {1, 2, 3, 4, 5, 6, 7, 8, 9}. The identity (A ∪ B) \\ C = (A \\ C) ∪ (B \\ C) is chased element by element: keep the elements of A ∪ B that are not in C. Compute (A ∪ B) \\ C."
+            answer: "{1, 2, 7, 8}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Membership rewrite: x belongs to (A ∪ B) \\ C exactly when x is in A or in B, and x is not in C. Element chase: A ∪ B = {1, 2, 3, 4, 7, 8}; removing the elements of C = {3, 4, 5} leaves {1, 2, 7, 8}. Cross-check with the right side: (A \\ C) ∪ (B \\ C) = {1, 2, 7} ∪ {1, 2, 7, 8} = {1, 2, 7, 8}. The answer is {1, 2, 7, 8}."
+          - problem: "Let U = {1, 2, 3, 4, 5, 6}, A = {1, 2, 3, 4, 5}, B = {3, 6} and C = {4, 6}. The membership form of A \\ (B ∪ C) is: x is in A, x is not in B, and x is not in C. How many elements of U satisfy this condition?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Membership rewrite: the condition x ∈ A, x ∉ B, x ∉ C is the membership form of A \\ (B ∪ C). Element chase over U = {1, 2, 3, 4, 5, 6}: element 1 qualifies, 2 qualifies, 3 fails since 3 ∈ B, 4 fails since 4 ∈ C, 5 qualifies, 6 fails since 6 ∈ B and 6 ∈ C. The qualifying elements are 1, 2, 5, so the count is 3. The answer is 3."
+          - problem: "To prove (A ∪ B) \\ C = (A \\ C) ∪ (B \\ C), a proof has: Line 1: x ∈ (A ∪ B) \\ C means x ∈ A ∪ B and x ∉ C. Line 2: this means (x ∈ A or x ∈ B) and x ∉ C. Line 3: the line is missing. Line 4: the condition reached is exactly the membership condition of (A \\ C) ∪ (B \\ C). Select the line that fills the gap as Line 3."
+            answer: "x is in A and not in C, or x is in B and not in C"
+            answer_contract: {"kind": "label", "options": [["x is in A and not in C, or x is in B and not in C"], ["x is in A and in C, or x is in B and in C"], ["x is in A or not in C, and x is in B or not in C"], ["x is in A and not in C, or x is in B"]]}
+            solution_sketch: "Distributivity step: from (x ∈ A or x ∈ B) and x ∉ C, distribute the shared condition x ∉ C over the or, giving x is in A and not in C, or x is in B and not in C. Option 'x is in A and in C, or x is in B and in C' flips each difference into a membership in C, a sign error on C. Option 'x is in A or not in C, and x is in B or not in C' distributes wrongly and swaps the roles of and and or. Option 'x is in A and not in C, or x is in B' drops the condition x ∉ B from the second half. The answer is x is in A and not in C, or x is in B and not in C."
+          - problem: "Claim: A \\ (B ∩ C) = (A \\ B) ∩ (A \\ C). Step 1: x ∈ A \\ (B ∩ C) means x ∈ A and x ∉ (B ∩ C). Step 2: x ∉ (B ∩ C) means x ∉ B and x ∉ C. Step 3: so x ∈ A, x ∉ B and x ∉ C, that is, x ∈ (A \\ B) ∩ (A \\ C). Step 4: therefore the identity holds. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct rewrite of the difference as membership plus non-membership. Step 2 is the first invalid step: by De Morgan, the negation of x ∈ B and x ∈ C is x ∉ B or x ∉ C, not x ∉ B and x ∉ C. Step 3 merely repeats the wrong Step 2, and Step 4 concludes from it, so neither can be the first error. The answer is Step 2."
+          - problem: "Write the full proof: for all sets A, B and C, (A \\ B) \\ C = A \\ (B ∪ C). Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (rewrite the difference): let x be an arbitrary element; x ∈ (A \\ B) \\ C means x ∈ A \\ B and x ∉ C, which unfolds to x ∈ A, x ∉ B and x ∉ C. Step 2 (regroup with De Morgan): the two conditions x ∉ B and x ∉ C hold together exactly when x ∉ (B ∪ C), by the membership rule for union. Step 3 (recombine): so x ∈ A and x ∉ (B ∪ C), which is precisely the membership condition of A \\ (B ∪ C). Step 4 (conclude): since x was arbitrary and the membership conditions are logically equivalent, the two sets have exactly the same elements, hence (A \\ B) \\ C = A \\ (B ∪ C)."
         constraints: "express difference as membership plus non-membership; then chase"
     diagnostic_exemplar:
       problem: 'Prove: $A \setminus (B \setminus C) = (A \setminus B) \cup (A \cap C)$.'

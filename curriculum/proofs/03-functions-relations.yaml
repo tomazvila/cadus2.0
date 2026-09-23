@@ -162,27 +162,59 @@ topics:
         name: "Composing on finite sets"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'On $A = \{1, 2, 3\}$ let $f : 1 \mapsto 2, 2 \mapsto 3, 3 \mapsto 1$ and $g : 1 \mapsto 1, 2 \mapsto 3, 3 \mapsto 2$. Tabulate $g \circ f$.'
-            answer_contract: {kind: none}
-            answer: '$1 \mapsto 3$, $2 \mapsto 2$, $3 \mapsto 1$.'
-            solution_sketch: 'Apply $f$ first: $(g \circ f)(1) = g(2) = 3$, $(g \circ f)(2) = g(3) = 2$, $(g \circ f)(3) = g(1) = 1$.'
-          - problem: 'With $f$ as above ($1 \mapsto 2, 2 \mapsto 3, 3 \mapsto 1$), tabulate $f \circ f$.'
-            answer_contract: {kind: none}
-            answer: '$1 \mapsto 3$, $2 \mapsto 1$, $3 \mapsto 2$.'
-            solution_sketch: 'Follow each element two steps around the cycle.'
+          - problem: "On $A = \\{1, 2, 3\\}$ the function $f$ sends $1$ to $2$, $2$ to $3$ and $3$ to $2$, and $g$ sends $1$ to $3$, $2$ to $2$ and $3$ to $3$. Find the three values of the composition $g \\circ f$ and give them as $v_1 = (g \\circ f)(1)$, $v_2 = (g \\circ f)(2)$, $v_3 = (g \\circ f)(3)$."
+            answer: "v1 = 2; v2 = 3; v3 = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "v1"}, {"contract": {"kind": "exact"}, "name": "v2"}, {"contract": {"kind": "exact"}, "name": "v3"}]}
+            solution_sketch: "The full table of $g \\circ f$ is $1 \\mapsto 2$, $2 \\mapsto 3$, $3 \\mapsto 2$. Step 1 (apply the inner function): $f$ sends $1$ to $2$, $2$ to $3$ and $3$ to $2$. Step 2 (apply the outer function): $g(2) = 2$, $g(3) = 3$, $g(2) = 2$ for the inputs $1, 2, 3$ in order. This gives v1 = 2; v2 = 3; v3 = 2."
+          - problem: "On $A = \\{1, 2, 3, 4\\}$ let $f$ send $1$ to $3$, $2$ to $4$, $3$ to $2$ and $4$ to $4$. Compute $(f \\circ f)(2)$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compose $f$ with itself: the inner step gives $f(2) = 4$, and the outer step gives $f(4) = 4$. Hence $(f \\circ f)(2) = f(f(2)) = f(4) = 4$."
+          - problem: "On $A = \\{1, 2, 3, 4\\}$ let $f$ send $1$ to $3$, $2$ to $3$, $3$ to $3$ and $4$ to $4$, and let $g$ send $1$ to $4$, $2$ to $4$, $3$ to $2$ and $4$ to $1$. How many elements $x$ of $A$ satisfy $(g \\circ f)(x) = 2$?"
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply $f$ and then $g$ to every element of the full set: $(g \\circ f)(1) = g(3) = 2$, $(g \\circ f)(2) = g(3) = 2$, $(g \\circ f)(3) = g(3) = 2$, $(g \\circ f)(4) = g(4) = 1$. The elements $1, 2, 3$ give the value $2$, so the count is 3."
+          - problem: "On $A = \\{1, 2, 3\\}$ the composition $h = g \\circ f$ has table $1 \\mapsto 2$, $2 \\mapsto 3$, $3 \\mapsto 3$, and $f$ sends $1$ to $2$, $2$ to $1$ and $3$ to $3$. Find $g(2)$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1 (find the inner value): the element that $f$ sends to $2$ is $1$, since $f(1) = 2$. Step 2 (read the composition table): $g(2) = g(f(1)) = h(1) = 2$. Therefore g(2) = 2."
+          - problem: "On $A = \\{1, 2, 3\\}$ let $f$ send $1$ to $3$, $2$ to $1$ and $3$ to $1$. Compute $(f \\circ f \\circ f)(2)$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Apply $f$ three times starting at $2$: the first application gives $f(2) = 1$, the second gives $f(1) = 3$, and the third gives $f(3) = 1$. So $(f \\circ f \\circ f)(2) = f(f(f(2))) = 1$."
+          - problem: "On $A = \\{1, 2, 3, 4\\}$ the function $f$ sends $1$ to $3$, $2$ to $4$, $3$ to $3$ and $4$ to $2$, and $g$ sends $1$ to $4$, $2$ to $3$, $3$ to $2$ and $4$ to $4$. Find the four values of $f \\circ g$ and give them as $v_1 = (f \\circ g)(1)$, $v_2 = (f \\circ g)(2)$, $v_3 = (f \\circ g)(3)$, $v_4 = (f \\circ g)(4)$."
+            answer: "v1 = 2; v2 = 3; v3 = 4; v4 = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "v1"}, {"contract": {"kind": "exact"}, "name": "v2"}, {"contract": {"kind": "exact"}, "name": "v3"}, {"contract": {"kind": "exact"}, "name": "v4"}]}
+            solution_sketch: "The full table of $f \\circ g$ is $1 \\mapsto 2$, $2 \\mapsto 3$, $3 \\mapsto 4$, $4 \\mapsto 2$. Step 1 (apply the inner function): $g(1) = 4$, $g(2) = 3$, $g(3) = 2$, $g(4) = 4$. Step 2 (apply the outer function to each image): $f(4) = 2$, $f(3) = 3$, $f(2) = 4$, $f(4) = 2$. This gives v1 = 2; v2 = 3; v3 = 4; v4 = 2."
         constraints: "functions given by tables or arrow diagrams on a 3-4 element set"
       - id: kp3
         name: "Domains and order of composition"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'For $f(x) = \sqrt{x}$ (domain $[0, \infty)$) and $g(x) = x - 2$ on $\mathbb{R}$, what is the natural domain of $f \circ g$?'
-            answer_contract: {kind: none}
-            answer: '$[2, \infty)$'
-            solution_sketch: '$f(g(x)) = \sqrt{x - 2}$ needs $g(x) = x - 2 \ge 0$, i.e. $x \ge 2$.'
-          - problem: 'Show by evaluation that $f \circ g \ne g \circ f$ for $f(x) = x^2$ and $g(x) = x + 1$.'
-            answer_contract: {kind: none}
-            answer: '$(f \circ g)(1) = 4$ but $(g \circ f)(1) = 2$.'
-            solution_sketch: '$f(g(1)) = f(2) = 4$ while $g(f(1)) = g(1) = 2$; one differing input suffices.'
+          - problem: "Let $f(x) = \\sqrt{x}$, with domain $[0, \\infty)$, and $g(x) = x - 5$ on $\\mathbb{R}$. Then $(f \\circ g)(x) = \\sqrt{x - 5}$. Give the natural domain of $f \\circ g$ as an inequality in x."
+            answer: "x >= 5"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Write the composite first: $(f \\circ g)(x) = \\sqrt{x - 5}$. The outer square root rule requires its input to be nonnegative, so $x - 5 \\ge 0$. Solve the inequality to get $x \\ge 5$. The natural domain of $f \\circ g$ is x >= 5."
+          - problem: "For $f(x) = x^2$ and $g(x) = x + 3$, the two composites $f \\circ g$ and $g \\circ f$ need not agree. Compute $(f \\circ g)(2)$ and $(g \\circ f)(2)$, and give the values fg and gf."
+            answer: "fg = 25; gf = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fg"}, {"contract": {"kind": "exact"}, "name": "gf"}]}
+            solution_sketch: "Apply the inner function first: $g(2) = 5$, so $f(g(2)) = f(5) = 25$. In the other order, $f(2) = 4$, so $g(f(2)) = g(4) = 7$. The two values differ, so one evaluation shows the composites are not equal. The values are fg = 25; gf = 7."
+          - problem: "Let $f(x) = \\sqrt{x}$ with domain $[0, \\infty)$ and $g(x) = 1/(x - 3)$, defined for $x \\ne 3$. The composite is $(f \\circ g)(x) = \\sqrt{1/(x - 3)}$. Give the natural domain of $f \\circ g$ as an inequality in x."
+            answer: "x > 3"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Start from the composite object: $(f \\circ g)(x) = \\sqrt{1/(x - 3)}$. The square root needs $1/(x - 3) \\ge 0$, and the fraction is nonnegative exactly when the denominator $x - 3$ is positive. Solve: $x > 3$. The natural domain of $f \\circ g$ is x > 3."
+          - problem: "Let $f(x) = \\sqrt{x}$ with domain $[0, \\infty)$ and $g(x) = 4 - x^2$ on $\\mathbb{R}$. Then $(f \\circ g)(x) = \\sqrt{4 - x^2}$. Give the natural domain of $f \\circ g$ as an inequality in x."
+            answer: "-2 <= x <= 2"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Form the composite: $(f \\circ g)(x) = \\sqrt{4 - x^2}$. The square root rule requires $4 - x^2 \\ge 0$, that is, $x^2 \\le 4$. Solving this quadratic inequality gives the bounded interval. The natural domain of $f \\circ g$ is -2 <= x <= 2."
+          - problem: "Let $f(x) = 1/x$, defined for $x \\ne 0$, and $g(x) = \\sqrt{x}$ with domain $[0, \\infty)$. Here the outer function is $g$, so $(g \\circ f)(x) = \\sqrt{1/x}$. Give the natural domain of $g \\circ f$ as an inequality in x."
+            answer: "x > 0"
+            answer_contract: {"kind": "inequality_union"}
+            solution_sketch: "Write the composite object first: $(g \\circ f)(x) = \\sqrt{1/x}$. The square root needs $1/x \\ge 0$, and $x \\ne 0$ because $f$ is undefined there. The fraction is nonnegative only when $x$ is positive. The natural domain of $g \\circ f$ is x > 0."
+          - problem: "Take $f(x) = 2x + 1$ and $g(x) = x^2$. Order matters for composition. Compute $(f \\circ g)(3)$ and $(g \\circ f)(3)$, and give the values fg and gf."
+            answer: "fg = 19; gf = 49"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "fg"}, {"contract": {"kind": "exact"}, "name": "gf"}]}
+            solution_sketch: "Evaluate the inner function first: $g(3) = 9$, so $f(g(3)) = 2 \\cdot 9 + 1 = 19$. In the reverse order, $f(3) = 7$, so $g(f(3)) = 7^2 = 49$. The two results differ, which confirms $f \\circ g \\ne g \\circ f$ by one evaluation. The values are fg = 19; gf = 49."
         constraints: "track the domain of the composite; show noncommutativity by one evaluation"
     diagnostic_exemplar:
       problem: 'For $f(x) = x + 3$ and $g(x) = x^2$, compute $(g \circ f)(1)$ and $(f \circ g)(1)$.'
@@ -215,12 +247,34 @@ topics:
         name: "The injectivity template"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 5x - 7$, is injective.'
-            answer: 'Assume $f(a) = f(b)$; solve to get $a = b$.'
-            solution_sketch: 'Suppose $f(a) = f(b)$: $5a - 7 = 5b - 7$, so $5a = 5b$ and $a = b$. Hence $f$ is injective. $\square$'
-          - problem: 'Prove $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = n + 3$, is injective.'
-            answer: '$a + 3 = b + 3 \Rightarrow a = b$.'
-            solution_sketch: 'Suppose $f(a) = f(b)$: $a + 3 = b + 3$; subtracting $3$ gives $a = b$. $\square$'
+          - problem: "To prove that $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = 4x - 9$ is injective, assume $f(a) = f(b)$, so $4a - 9 = 4b - 9$. The next step of the template subtracts $9$ from both sides. Give the coefficient of $a$ in the resulting equation."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Start from the full assumed equation $4a - 9 = 4b - 9$. Rule: isolate the affine part by adding $9$ to both sides, giving $4a = 4b$. The coefficient standing on $a$ in this equation is the slope of $f$. The coefficient of $a$ is 4."
+          - problem: "Let $f(x) = 6x + 5$ on $\\mathbb{R}$. Assume $f(a) = f(b) = 23$. The injectivity template concludes $a = b$. Give the common value of $a$ and $b$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full hypothesis is $6a + 5 = 23$ and $6b + 5 = 23$. Rule: subtract $5$ from both sides to get $6a = 18$ and $6b = 18$. Rule: divide by the nonzero coefficient $6$. Both equations give the same value, so $a = b$, and the common value of $a$ and $b$ is 3."
+          - problem: "To prove that $f(x) = -2x + 8$ is injective, assume $f(a) = f(b)$: $-2a + 8 = -2b + 8$, so $-2a = -2b$. The next step of the template divides both sides by a nonzero constant. Give that constant."
+            answer: "-2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full reduced equation is $-2a = -2b$. Rule: solve for $a$ by dividing both sides by the coefficient of $a$. Here the coefficient is negative, and division is valid because the coefficient is not zero. The template divides by the constant -2."
+          - problem: "Consider $f(x) = mx + 4$ from $\\mathbb{R}$ to $\\mathbb{R}$. The standard template reaches $ma = mb$ and divides by $m$. For which value of $m$ does this division fail, so that the proof breaks and $f$ is not injective? Give that value of $m$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The full reduced equation is $ma = mb$. Rule: the division step requires the divisor to be nonzero. If $m = 0$, then $f(x) = 4$ is constant, so $f(1) = f(2)$ with $1 \\neq 2$, and no division can recover $a = b$. The proof breaks exactly when the value of $m$ is 0."
+          - problem: "Claim: $f(x) = 2x - 5$ is injective on $\\mathbb{R}$. A student writes: Step 1: assume $f(a) = f(b)$, so $2a - 5 = 2b - 5$. Step 2: add $5$ to the left side, giving $2a = 2b - 5$. Step 3: divide by $2$, giving $a = b - 5/2$. Step 4: since $a = b - 5/2$ differs from $b$ in general, $f$ is not injective and the claim is false. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is the correct hypothesis $2a - 5 = 2b - 5$. Step 2 is the first error: adding $5$ only to the left side gives $2a = 2b - 5$ instead of $2a = 2b$. Step 3 divides the wrong equation of Step 2 correctly, and Step 4 only reads off the wrong conclusion of Step 2. The answer is Step 2."
+          - problem: "In a proof that $f(x) = 5x + 1$ is injective, the line after $5a + 1 = 5b + 1$ is missing. Select the missing line."
+            answer: "$5a = 5b$"
+            answer_contract: {"kind": "label", "options": [["$5a = 5b$"], ["$a = 5b$"], ["$5a = b$"], ["$5a = 5b + 1$"]]}
+            solution_sketch: "The full given line is $5a + 1 = 5b + 1$. Rule: subtract $1$ from both sides, which gives $5a = 5b$. The option $a = 5b$ divides only the left side by $5$; the option $5a = b$ drops the coefficient on the right; the option $5a = 5b + 1$ subtracts $1$ from the left side only. The answer is $5a = 5b$."
+          - problem: "Write the full proof: $f : \\mathbb{R} \\to \\mathbb{R}$, $f(x) = 7x - 3$, is injective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): let $a, b \\in \\mathbb{R}$ and assume $f(a) = f(b)$. Step 2 (unfold the definition of $f$): the assumption reads $7a - 3 = 7b - 3$. Step 3 (algebra): add $3$ to both sides to obtain $7a = 7b$. Step 4 (use the nonzero coefficient): divide both sides by $7$, which is allowed because $7 \\neq 0$, and get $a = b$. Step 5 (conclusion): for all $a, b \\in \\mathbb{R}$, $f(a) = f(b)$ implies $a = b$, so $f$ is injective. $\\square$"
         constraints: "affine maps; the standard assume-$f(a)=f(b)$-derive-$a=b$ template"
       - id: kp2
         name: "Nonlinear examples"
@@ -274,12 +328,34 @@ topics:
         name: "The preimage-finding template"
         key_prerequisites: [functions-formal-definition]
         exemplars:
-          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 5x - 7$, is surjective.'
-            answer: 'Given $y$, take $x = (y + 7)/5$; then $f(x) = y$.'
-            solution_sketch: 'Let $y \in \mathbb{R}$ and set $x = (y+7)/5 \in \mathbb{R}$. Then $f(x) = 5 \cdot \tfrac{y+7}{5} - 7 = y$. $\square$'
-          - problem: 'Prove $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = n + 3$, is surjective.'
-            answer: 'Given $m$, take $n = m - 3$.'
-            solution_sketch: 'Let $m \in \mathbb{Z}$; then $n = m - 3 \in \mathbb{Z}$ and $f(n) = (m - 3) + 3 = m$. $\square$'
+          - problem: "To prove that $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = 5x - 7$ is surjective, the preimage template solves $f(x) = y$ for $x$, where $y$ is an arbitrary real. Give the solution $x$ as a formula in $y$."
+            answer: "(y+7)/5"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Solve the equation $5x - 7 = y$ for $x$: adding $7$ to both sides gives $5x = y + 7$ (isolation step of the template). Dividing by $5$ and verifying gives $f((y+7)/5) = 5 \\cdot (y+7)/5 - 7 = y$, which confirms the choice (verification step). The preimage of $y$ is $(y+7)/5$."
+          - problem: "To prove that $f : \\mathbb{Z} \\to \\mathbb{Z}$ with $f(n) = n + 3$ is surjective, one solves $f(n) = m$ for $n$, where $m$ is an arbitrary integer. Give $n$ as a formula in $m$."
+            answer: "m-3"
+            answer_contract: {"kind": "function", "vars": ["m"]}
+            solution_sketch: "Solve $n + 3 = m$ for $n$: subtracting $3$ from both sides gives $n = m - 3$, an integer whenever $m$ is an integer (isolation step). Verification: $f(m - 3) = (m - 3) + 3 = m$ (verification step of the template). The preimage of $m$ is $m - 3$."
+          - problem: "In the surjectivity proof for $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = 4x + 9$, the key step is solving $4x + 9 = y$ for $x$. Give $x$ as a formula in $y$."
+            answer: "(y-9)/4"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Isolate $x$ in $4x + 9 = y$: subtracting $9$ gives $4x = y - 9$, and dividing by $4$ gives $x = (y-9)/4$ (isolation step of the template). Check the candidate: $f((y-9)/4) = 4 \\cdot (y-9)/4 + 9 = y$ (verification step). The preimage of $y$ is $(y-9)/4$."
+          - problem: "A student claims that $f : \\mathbb{Z} \\to \\mathbb{Z}$ with $f(n) = 2n + 1$ is surjective and checks $y = 1$ and $y = 3$. Give the smallest nonnegative integer $y$ for which no integer $n$ satisfies $f(n) = y$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The template solves $2n + 1 = y$ for $n$, giving $n = (y - 1)/2$, which must be an integer for a preimage to exist (isolation step). For $y = 1$ and $y = 3$ the candidate is an integer, but for $y = 0$ it is $-1/2$, so no integer $n$ maps to $0$ (verification step exposing the counterexample). The smallest such nonnegative $y$ is $0$."
+          - problem: "Claim: $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = 3x - 6$ is surjective. Step 1: Let $y \\in \\mathbb{R}$ be given. Step 2: Solving $3x - 6 = y$ gives $3x = y + 6$. Step 3: So $x = y/3 + 6$. Step 4: Then $f(x) = 3(y/3 + 6) - 6 = y + 12 = y$, so $f$ is surjective. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is valid: $y$ is introduced as an arbitrary real (setup of the template). Step 2 is valid: $3x - 6 = y$ rearranges to $3x = y + 6$ (isolation step). Step 3 is the first invalid step: dividing $3x = y + 6$ by $3$ gives $x = y/3 + 2$, not $y/3 + 6$ (division slip). Step 4 also fails, since it substitutes the wrong candidate $x = y/3 + 6$. The answer is Step 3."
+          - problem: "A proof that $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = 2x + 5$ is surjective begins: let $y \\in \\mathbb{R}$ be arbitrary, and the next line 'take $x = ?$' is missing. Select the line that completes the proof."
+            answer: "(y-5)/2"
+            answer_contract: {"kind": "label", "options": [["(y-5)/2"], ["(y+5)/2"], ["(5-y)/2"], ["2y-5"]]}
+            solution_sketch: "Solve $2x + 5 = y$ for $x$: subtract $5$ and divide by $2$ to get $x = (y-5)/2$, and verify $f((y-5)/2) = y$ (isolation and verification steps of the template). The option $(y+5)/2$ makes a sign error when moving the $5$ across. The option $(5-y)/2$ flips the sign of $y$ as well. The option $2y-5$ moves the $5$ but forgets to divide by $2$. The answer is $(y-5)/2$."
+          - problem: "Write the full proof: $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = 7x - 4$ is surjective. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (setup): Let $y$ be an arbitrary real number; we must find a real $x$ with $f(x) = y$. Step 2 (solve): The equation $7x - 4 = y$ rearranges to $7x = y + 4$, so $x = (y + 4)/7$. Step 3 (domain check): This $x$ is a real number, because the reals are closed under addition and division by the nonzero real $7$. Step 4 (verify): Substituting gives $f(x) = 7 \\cdot (y + 4)/7 - 4 = y + 4 - 4 = y$, exactly the chosen $y$. Step 5 (conclude): Since $y$ was arbitrary and every real $y$ has a preimage $x = (y + 4)/7$ in $\\mathbb{R}$, the function $f(x) = 7x - 4$ is surjective, which completes the preimage-finding template."
         constraints: "affine maps; solve $f(x) = y$ for $x$ and verify"
       - id: kp2
         name: "Nonlinear examples"
@@ -343,12 +419,34 @@ topics:
         name: "Proving bijectivity"
         key_prerequisites: [proving-injectivity, proving-surjectivity]
         exemplars:
-          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 3x - 5$, is a bijection.'
-            answer: 'Injective: $3a - 5 = 3b - 5 \Rightarrow a = b$. Surjective: $x = (y+5)/3$ works.'
-            solution_sketch: 'Injective: $f(a) = f(b)$ gives $3a = 3b$, so $a = b$. Surjective: for $y \in \mathbb{R}$, $x = (y+5)/3$ satisfies $f(x) = y$. Both hold, so $f$ is bijective. $\square$'
-          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^3$, is a bijection.'
-            answer: 'Injective since cube roots are unique; surjective via $x = \sqrt[3]{y}$.'
-            solution_sketch: 'Injective: $a^3 = b^3 \Rightarrow a = b$ (real cube roots are unique). Surjective: for $y \in \mathbb{R}$, $x = \sqrt[3]{y}$ gives $f(x) = y$. $\square$'
+          - problem: "To prove that $f(x) = 5x - 2$ is a bijection from $\\mathbb{R}$ to $\\mathbb{R}$, the surjectivity half must find, for $y = 18$, a real $x$ with $f(x) = 18$. Find that $x$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Surjectivity template: solve $f(x) = y$ for $x$. For the full function $f(x) = 5x - 2$ and $y = 18$: $5x - 2 = 18$, so $5x = 20$ and $x = 4$. Check: $f(4) = 20 - 2 = 18$. The required preimage is $4$."
+          - problem: "To prove that $f(x) = x^3$ is a bijection from $\\mathbb{R}$ to $\\mathbb{R}$, the surjectivity half must find, for $y = 125$, a real $x$ with $f(x) = 125$. Give that $x$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Surjectivity template: for the full function $f(x) = x^3$ and $y = 125$, solve $x^3 = 125$ for $x$. Real cube roots are unique, so $x = 5$. Check: $5^3 = 125$. The required preimage is $5$."
+          - problem: "To prove that $f(x) = x^3$ is a bijection, the injectivity half starts from $f(a) = f(b)$, that is $a^3 = b^3$, and factors $a^3 - b^3 = (a - b)\\,q(a, b)$. Give the factor $q(a, b)$."
+            answer: "a^2+ab+b^2"
+            answer_contract: {"kind": "function", "vars": ["a", "b"]}
+            solution_sketch: "Injectivity template: from $f(a) = f(b)$ for the full function $f(x) = x^3$ we get $a^3 = b^3$. Apply the difference-of-cubes factorization: $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$, so $q(a, b) = a^2 + ab + b^2$. This factor vanishes only at $a = b = 0$, where also $a = b$, so $a - b = 0$ and $f$ is injective. The answer is a^2+ab+b^2."
+          - problem: "To prove that $f(x) = 6x + 7$ is a bijection from $\\mathbb{R}$ to $\\mathbb{R}$, the surjectivity half solves $f(x) = y$ for $x$ for an arbitrary real $y$. Give $x$ as a function of $y$."
+            answer: "(y-7)/6"
+            answer_contract: {"kind": "function", "vars": ["y"]}
+            solution_sketch: "Surjectivity template: for the full function $f(x) = 6x + 7$ and arbitrary real $y$, solve $6x + 7 = y$. Subtract $7$: $6x = y - 7$. Divide by $6$: $x = (y-7)/6$, which is real for every $y$, and $f(x) = y$. The answer is (y-7)/6."
+          - problem: "In the proof that $f(x) = 3x + 1$ is a bijection from $\\mathbb{R}$ to $\\mathbb{R}$, the surjectivity half must, for each real $y$, name a real $x$ with $f(x) = y$. That line is missing. Select the line that completes the proof."
+            answer: "(y-1)/3"
+            answer_contract: {"kind": "label", "options": [["(y-1)/3"], ["(y+1)/3"], ["3y+1"], ["(y-3)/3"]]}
+            solution_sketch: "Surjectivity template: solve $3x + 1 = y$, so $3x = y - 1$ and $x = (y-1)/3$. The option $(y+1)/3$ is the sign error of adding $1$ instead of subtracting it. The option $3y+1$ applies $f$ instead of inverting it. The option $(y-3)/3$ subtracts $3$ instead of $1$. The correct line is (y-1)/3."
+          - problem: "A student claims that $f(x) = 4x - 9$ is a bijection from $\\mathbb{R}$ to $\\mathbb{R}$. Step 1: if $4a - 9 = 4b - 9$, then $4a = 4b$, so $a = b$. Step 2: for surjectivity, given $y$, set $x = (y - 9)/4$; then $f(x) = y$. Step 3: so every real $y$ has a preimage. Step 4: both properties hold, so $f$ is a bijection. Which step is the first step that is not valid?"
+            answer: "Step 2"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a correct injectivity argument. Step 2 is invalid: $f((y-9)/4) = 4(y-9)/4 - 9 = y - 18$, which is not $y$; the correct preimage is $(y+9)/4$. Step 3 and Step 4 rely on the false claim of Step 2. The answer is Step 2."
+          - problem: "Write the full proof: the function $f : \\mathbb{R} \\to \\mathbb{R}$ with $f(x) = 7x + 4$ is a bijection. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Injectivity template: let $a, b$ be real numbers with $f(a) = f(b)$. Then $7a + 4 = 7b + 4$, so $7a = 7b$, and dividing by $7$ gives $a = b$. Hence $f$ is injective. Surjectivity template: let $y$ be an arbitrary real number and set $x = (y - 4)/7$, which is a real number. Then $f(x) = 7((y - 4)/7) + 4 = y - 4 + 4 = y$, so every $y$ in the codomain has a preimage. Hence $f$ is surjective. Conclusion: $f$ is both injective and surjective, therefore $f$ is a bijection."
         constraints: "run both templates in one proof; affine or odd-power maps"
       - id: kp2
         name: "Disproving with counterexamples"
