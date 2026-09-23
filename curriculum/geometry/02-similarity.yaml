@@ -181,28 +181,28 @@ topics:
         name: Similarity via dilation plus rigid motion
         key_prerequisites: [dilations-scale-factors, rigid-motions-congruence]
         exemplars:
-          - problem: 'A dilation followed by a rotation maps figure $A$ exactly onto figure $B$. Are $A$ and $B$ similar?'
-            answer: 'Yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'A composition of a dilation and rigid motions is a similarity transformation, so yes.'
-          - problem: 'In a composition of a dilation and a translation, which transformation changes the size of the figure?'
-            answer: 'the dilation'
-            answer_contract: {kind: label, options: [['the dilation'], ['the translation']]}
-            solution_sketch: 'Translations are rigid; only the dilation rescales.'
-          - problem: 'A dilation followed by a translation maps figure $A$ exactly onto figure $B$. Are $A$ and $B$ similar? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'A composition of a dilation and rigid motions is a similarity transformation, so yes.'
           - problem: 'A dilation with scale factor $3$ followed by a rotation maps segment $AB$ of length $5$ onto $A''B''$. Find $A''B''$.'
             answer: "15"
             solution_sketch: 'Only the dilation changes lengths: $5 \cdot 3 = 15$.'
           - problem: 'A dilation with scale factor $\frac{1}{2}$ followed by a reflection maps a segment of length $8$ onto its image. Find the image length.'
             answer: "4"
             solution_sketch: 'Rigid motions preserve length; the dilation scales it: $8 \cdot \frac{1}{2} = 4$.'
-          - problem: 'A dilation followed by a rotation maps figure $A$ onto figure $B$, and the same kind of composition maps $B$ onto figure $C$. Are $A$ and $C$ similar? Answer yes or no.'
-            answer: 'yes'
-            answer_contract: {kind: label, options: [[yes], [no]]}
-            solution_sketch: 'A composition of similarity transformations is again a similarity transformation, so yes.'
+          - problem: "A dilation with scale factor 4 followed by a rotation maps figure A exactly onto figure B. State the relation between A and B, and give the scale factor."
+            answer: "verdict = similar; scale = 4"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["similar"], ["different"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "scale"}]}
+            solution_sketch: "Step 1: A dilation with scale factor 4 changes lengths by 4, and a rotation is rigid, so the composition is a similarity transformation. Step 2: The relation is similar because shape is preserved. The wrong option different comes from ignoring that rigid motions keep shape. Step 3: The scale factor is the dilation factor, 4. The answer is verdict = similar; scale = 4."
+          - problem: "A composition uses one dilation with scale factor 6 and one translation. State what the translation does to lengths, and give the image length of a segment of length 5."
+            answer: "effect = preserves; length = 30"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["preserves"], ["changes"]]}, "name": "effect"}, {"contract": {"kind": "exact"}, "name": "length"}]}
+            solution_sketch: "Step 1: A translation is a rigid motion, so it preserves all lengths. The wrong option changes comes from thinking a translation alters lengths. Step 2: The dilation with scale factor 6 multiplies the segment length 5 by 6. Step 3: The image length is 5*6 = 30. The answer is effect = preserves; length = 30."
+          - problem: "A dilation with scale factor 1/2 followed by a translation maps figure A exactly onto figure B. State the relation between A and B, and give the scale factor."
+            answer: "verdict = similar; scale = 1/2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["similar"], ["different"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "scale"}]}
+            solution_sketch: "Step 1: A dilation with scale factor 1/2 changes lengths by 1/2, and a translation is rigid, so the composition is a similarity transformation. The wrong option different comes from ignoring that rigid motions keep shape. Step 2: Shape is preserved, so the relation is similar. Step 3: The scale factor is the dilation factor, 1/2. The answer is verdict = similar; scale = 1/2."
+          - problem: "A dilation with scale factor 5 followed by a rotation maps figure A onto figure B. A dilation with scale factor 4 followed by a reflection maps figure B onto figure C. State the relation between A and C, and give the scale factor from A to C."
+            answer: "verdict = similar; scale = 20"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["similar"], ["different"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "scale"}]}
+            solution_sketch: "Step 1: Each composition is a dilation with a rigid motion, so each is a similarity transformation. The wrong option different comes from ignoring that similarity is transitive. Step 2: Similarity is transitive, so A and C are similar. Step 3: The scale factors multiply: 5*4 = 20. The answer is verdict = similar; scale = 20."
         constraints: "compositions of one dilation with one rigid motion; conceptual identification"
       - id: kp2
         name: Apply compositions to coordinates
