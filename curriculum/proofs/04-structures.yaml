@@ -452,12 +452,34 @@ topics:
         name: "The law $(a^{m})^{n} = a^{mn}$"
         key_prerequisites: [mathematical-induction]
         exemplars:
-          - problem: 'In any monoid, prove $(a^{m})^{n} = a^{mn}$ for all $m, n \ge 0$ by induction on $n$.'
-            answer: 'Base $n = 0$: both sides are $e$; the step uses $a^{mn} a^{m} = a^{mn + m}$.'
-            solution_sketch: 'For $n = 0$: $(a^m)^0 = e = a^0$. Assuming $(a^m)^n = a^{mn}$: $(a^m)^{n+1} = (a^m)^n a^m = a^{mn} a^m = a^{mn+m} = a^{m(n+1)}$, using the addition law. $\square$'
-          - problem: 'In a monoid where $a b = b a$, prove $(ab)^{n} = a^{n} b^{n}$ for all $n \ge 0$ by induction.'
-            answer: 'The step commutes $b^{n}$ past $a$.'
-            solution_sketch: 'Base: $(ab)^0 = e = e e$. Step: $(ab)^{n+1} = (ab)^n (ab) = a^n b^n a b = a^n a b^n b = a^{n+1} b^{n+1}$, using $b^n a = a b^n$ (which follows from $ab = ba$ by an inner induction or repeated swaps). $\square$'
+          - problem: "In a monoid the induction step for the law $(a^{m})^{n} = a^{mn}$ starts from $(a^{m})^{n+1} = (a^{m})^{n} a^{m}$. Replace the first factor by $a^{mn}$ with the hypothesis, and use the addition law $a^{p} a^{q} = a^{p+q}$ to write the whole product as one power $a^{r}$. Give the exponent $r$."
+            answer: "mn+m"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The definition of powers gives $(a^{m})^{n+1} = (a^{m})^{n} a^{m}$. The induction hypothesis rewrites the first factor as $a^{mn}$, so the product is $a^{mn} a^{m}$. The addition law $a^{p} a^{q} = a^{p+q}$ merges the two factors into the single power $a^{mn+m}$. Therefore $r = mn+m$."
+          - problem: "In the monoid of words over the two letters x and y under concatenation, a student claims that $(uv)^{n} = u^{n} v^{n}$ for all words $u$ and $v$ and all $n \\ge 1$. Give the smallest $n$ for which this claim fails when $u = x$ and $v = y$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Test $n = 1$: $(xy)^{1} = xy$ and $x^{1} y^{1} = xy$, so the claim holds there. Test $n = 2$: $(xy)^{2} = xyxy$, while $x^{2} y^{2} = xxyy$, and concatenation never reorders letters, so the two words differ. The law fails because this monoid is not commutative, which is exactly the hypothesis the general proof needs. The smallest $n$ is 2."
+          - problem: "In a monoid, the law $(a^{m})^{n} = a^{mn}$ gives $(a^{2})^{n} = a^{2n}$. Use the addition law $a^{p} a^{q} = a^{p+q}$ to write the product $(a^{2})^{n} (a^{2})^{n}$ as a single power $a^{r}$. Give the exponent $r$."
+            answer: "4n"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The law $(a^{m})^{n} = a^{mn}$ with $m = 2$ turns each factor into $a^{2n}$, so the product is $a^{2n} a^{2n}$. The addition law $a^{p} a^{q} = a^{p+q}$ adds the two exponents: $2n + 2n = 4n$. Hence the product is the single power $a^{4n}$, so $r = 4n$."
+          - problem: "In the multiplicative monoid of the nonzero residues modulo 7, powers repeat multiplication. Give the smallest $n \\ge 1$ for which $(2^{2})^{n}$ is the identity element."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Compute in the residues modulo 7: $2^{2} = 4$, so $(2^{2})^{n} = 4^{n}$. The powers of 4 are $4^{1} = 4$, $4^{2} = 16 = 2$ and $4^{3} = 8 = 1$ modulo 7. The first return to the identity is at $n = 3$, and indeed $2^{3} = 8 = 1$ as well, consistent with $(2^{2})^{3} = 2^{6}$. The smallest $n$ is 3."
+          - problem: "Claim: in every monoid $(a^{m})^{n} = a^{mn}$ for all $m, n \\ge 0$. Step 1: for $n = 0$, $(a^{m})^{0} = e$ and $a^{m \\cdot 0} = a^{0} = e$. Step 2: assume $(a^{m})^{k} = a^{mk}$ for some $k \\ge 0$. Step 3: then $(a^{m})^{k+1} = (a^{m})^{k} a^{m}$. Step 4: the hypothesis gives $(a^{m})^{k} a^{m} = a^{mk} a^{m} = a^{mk \\cdot m}$. Step 5: since $mk \\cdot m = m(k+1)$, the claim holds for $k+1$. Which step is the first step that is not valid?"
+            answer: "Step 4"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"], ["Step 5"]]}
+            solution_sketch: "Step 1 is a correct base case: $(a^{m})^{0} = e$ and $a^{0} = e$. Step 2 is the induction hypothesis and is a legitimate assumption. Step 3 is valid, since the definition of powers splits off one factor $a^{m}$. Step 4 is the first invalid step: the addition law gives $a^{mk} a^{m} = a^{mk+m}$, not $a^{mk \\cdot m}$, so multiplying the exponents is the error. Step 5 inherits that error, so the first invalid step is Step 4."
+          - problem: "In the induction step for $(a^{m})^{n+1} = a^{m(n+1)}$ in a monoid, the line $(a^{m})^{n} a^{m} = \\;?$ is missing. Select the line that replaces $(a^{m})^{n}$ by the hypothesis $(a^{m})^{n} = a^{mn}$ and leaves the second factor unchanged."
+            answer: "a^(mn) a^m"
+            answer_contract: {"kind": "label", "options": [["a^(mn) a^m"], ["a^(mn) a^(mn)"], ["a^(mn*m)"], ["a^(m+m)"]]}
+            solution_sketch: "The hypothesis replaces the first factor $(a^{m})^{n}$ by $a^{mn}$, while the second factor $a^{m}$ is unchanged, so the missing line is $a^{mn} a^{m}$; the addition law then turns it into $a^{mn+m}$. The option $a^{mn} a^{mn}$ copies the hypothesis into both factors and so changes the second factor. The option $a^{mn*m}$ multiplies the exponents of the two factors instead of keeping them separate. The option $a^{m+m}$ drops $n$ and adds $m$ to itself. The missing line is a^(mn) a^m."
+          - problem: "Write the full proof: in every monoid $(a^{m})^{n} = a^{mn}$ for all integers $m, n \\ge 0$; also prove $(ab)^{n} = a^{n} b^{n}$ for all $n \\ge 0$ in a commutative monoid and point out where commutativity is used. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Base case for the first law, $n = 0$: by definition $(a^{m})^{0} = e$ and $a^{m \\cdot 0} = a^{0} = e$, so the two sides agree. Inductive hypothesis: fix $n \\ge 0$ and assume $(a^{m})^{n} = a^{mn}$ for all $m \\ge 0$. Inductive step: the definition of powers gives $(a^{m})^{n+1} = (a^{m})^{n} a^{m}$; the hypothesis rewrites the first factor as $a^{mn}$; the earlier addition law $a^{p} a^{q} = a^{p+q}$, itself proved by induction, merges them into $a^{mn+m} = a^{m(n+1)}$. Conclusion: the law holds for $n+1$, so by induction it holds for all $n \\ge 0$. Base case for the second law: $(ab)^{0} = e = e e = a^{0} b^{0}$. Inductive step: $(ab)^{n+1} = (ab)^{n} a b = a^{n} b^{n} a b$, and moving $b^{n}$ past $a$ needs $b^{n} a = a b^{n}$, a stacked induction that uses only the commutativity hypothesis $ab = ba$; then $a^{n} a b^{n} b = a^{n+1} b^{n+1}$. Without commutativity the second law fails: in the free monoid on $x$ and $y$, $(xy)^{2} = xyxy$ differs from $x^{2} y^{2} = xxyy$."
         constraints: "induction proofs stacked on the previous law; note where commutativity is needed"
     diagnostic_exemplar:
       problem: 'In an arbitrary monoid, prove by induction on $n$ that $a^{m}a^{n} = a^{m+n}$ for all integers $m, n \ge 0$, and use it to show $(a^{2})^{3} = a^{6}$.'
@@ -992,12 +1014,34 @@ topics:
         name: "Cardinality arithmetic"
         key_prerequisites: [functions-injective-surjective]
         exemplars:
-          - problem: 'Prove: if $A$ and $B$ are finite and disjoint, then $|A \cup B| = |A| + |B|$.'
-            answer: 'Concatenate the two counting bijections.'
-            solution_sketch: 'Given bijections $\{1, \dots, m\} \to A$ and $\{1, \dots, n\} \to B$, map $i \le m$ into $A$ and $m + j$ (for $1 \le j \le n$) into $B$. Disjointness makes this well-defined and bijective onto $A \cup B$. $\square$'
-          - problem: 'Prove: if $A$ is finite and $a \notin A$, then $|A \cup \{a\}| = |A| + 1$.'
-            answer: 'Extend a counting bijection by sending $n + 1 \mapsto a$.'
-            solution_sketch: 'Take a bijection $f : \{1, \dots, n\} \to A$ and define $g = f$ on $\{1, \dots, n\}$ with $g(n+1) = a$. Since $a \notin A$, $g$ is injective, and it is onto $A \cup \{a\}$. $\square$'
+          - problem: "Let A = {p, q, r} and B = {u, v}. Use counting bijections f(1) = p, f(2) = q, f(3) = r and g(1) = u, g(2) = v. Define h on {1, 2, 3, 4, 5} by h(i) = f(i) for i <= 3 and h(i) = g(i - 3) for i > 3. Give the index i with h(i) = u."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Construction: the disjoint-union rule puts f on 1 through 3 and g shifted by 3 afterward. The full h is h(1)=p, h(2)=q, h(3)=r, h(4)=u, h(5)=v. The index with h(i)=u is i=4."
+          - problem: "Let A be a finite set with counting bijection f from {1, 2, 3, 4} to A. Let a be an element with a not in A. Extend f to g on {1, 2, 3, 4, 5} by g(i) = f(i) for i = 1, 2, 3, 4 and g(5) = a. Give the cardinality of A union {a}."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Extension rule: keep the old bijection f on 1 through 4 and use the new index 5 for a. The full domain has indices 1, 2, 3, 4, 5. The cardinality of A union {a} is 5."
+          - problem: "Let A = {a1, a2, a3, a4} and B = {b1, b2, b3} with counting bijections f(1) = a1, f(2) = a2, f(3) = a3, f(4) = a4 and g(1) = b1, g(2) = b2, g(3) = b3. Define h on {1, ..., 12} by h((i - 1)3 + j) = (f(i), g(j)) for 1 <= i <= 4 and 1 <= j <= 3. Give the index k with h(k) = (a3, b2)."
+            answer: "8"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Product bijection rule: index i,j by (i - 1)3 + j. The full h starts h(1)=(a1,b1), h(2)=(a1,b2), h(3)=(a1,b3), h(4)=(a2,b1), and continues. For (a3,b2), i=3 and j=2 give k=(3-1)3+2=8."
+          - problem: "Let A = {2, 4, 6, 8, 10} and B = {4, 8}. Define a bijection h from {1, 2, 3} to A minus B by listing the elements of A minus B in increasing order. Give h(2)."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Difference listing rule: remove B from A and list the remaining elements in increasing order. The remaining set is {2, 6, 10}, so h(1)=2, h(2)=6, h(3)=10. The value h(2) is 6."
+          - problem: "Claim: if A and B are finite and disjoint, then a bijection h from {1, ..., |A| + |B|} to A union B is built by h(i) = f(i) for i <= |A| and h(i) = g(i - |A|) for i > |A|. Step 1: f and g are counting bijections. Step 2: h is defined on all i from 1 to |A| + |B|. Step 3: h(i) = g(i - |A|) for i <= |A|. Step 4: disjointness makes h injective. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is correct: f and g count A and B. Step 2 is correct: the two ranges cover all indices. Step 3 is false: for i <= |A| the rule must use f(i), not g. Step 4 is correct: disjointness separates the two image parts. The answer is Step 3."
+          - problem: "Let A = {2, 4, 6, 8, 10, 12} and B = {6, 8, 10, 14, 16}. Define a bijection h from {1, ..., 8} to A union B by listing A minus B in increasing order first and then B in increasing order. Give the index i with h(i) = 14."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Difference-then-copy rule: list A minus B first, then all of B. The full h is h(1)=2, h(2)=4, h(3)=12, h(4)=6, h(5)=8, h(6)=10, h(7)=14, h(8)=16. The index with h(i)=14 is i=7."
+          - problem: "Write the full proof: if A and B are finite, then |A × B| = |A| · |B|, by building an explicit bijection from {1, ..., |A||B|} to A × B. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Let m = |A| and n = |B|. Choose counting bijections f from {1, ..., m} to A and g from {1, ..., n} to B. Define h from {1, ..., mn} to A × B by h((i - 1)n + j) = (f(i), g(j)) for 1 <= i <= m and 1 <= j <= n. This is well-defined because every k in {1, ..., mn} has unique i = ceil(k/n) and j = k - (i - 1)n. Injectivity: if h(i, j) = h(i', j'), then f(i) = f(i') and g(j) = g(j'), so i = i' and j = j' because f and g are injective. Surjectivity: any (a, b) in A × B has a = f(i) and b = g(j) for unique i, j, so h((i - 1)n + j) = (a, b). Therefore h is a bijection, and |A × B| = m n = |A| times |B|."
         constraints: "build the new bijection explicitly from the given ones"
     diagnostic_exemplar:
       problem: 'Let $A = \{10, 11, \dots, 99\}$ and $B = \{200, 201, \dots, 209\}$. Prove that $|A| = 90$ and that $|A \cup B| = 100$.'
@@ -1266,12 +1310,34 @@ topics:
         name: "The reals are uncountable"
         key_prerequisites: [cardinality-countability]
         exemplars:
-          - problem: 'Prove the interval $(0, 1)$ is uncountable using Cantor''s diagonal argument.'
-            answer: 'Any list of reals misses a number built to differ on the diagonal.'
-            solution_sketch: 'Suppose $(0, 1)$ were countable, listed as $x_1, x_2, \dots$ with decimals $x_i = 0.d_{i1}d_{i2}\dots$. Define $y = 0.e_1e_2\dots$ with $e_n = 5$ if $d_{nn} \ne 5$ and $e_n = 4$ otherwise. Then $y \in (0, 1)$ differs from every $x_n$ at digit $n$, so it is not in the list — a contradiction. Hence $(0, 1)$ is uncountable. $\square$'
-          - problem: 'Prove the set of infinite binary sequences is uncountable.'
-            answer: 'Diagonalize: flip the $n$th bit of the $n$th sequence.'
-            solution_sketch: 'Suppose the sequences were listed as $s_1, s_2, \dots$ with $s_i = (s_{i1}, s_{i2}, \dots)$. Define $t$ by $t_n = 1 - s_{nn}$. Then $t$ differs from every $s_n$ at position $n$, so it is not in the list — a contradiction. The set is uncountable. $\square$'
+          - problem: "A listing of decimals in the interval (0, 1) begins x1 = 0.4172..., x2 = 0.6531..., x3 = 0.2894..., x4 = 0.7315... . In the diagonal construction, define y = 0.e1e2e3e4... by e_n = 5 when d_nn is not 5 and e_n = 4 when d_nn is 5. Give the first four digits e1 e2 e3 e4 as a comma-separated list."
+            answer: "5, 4, 5, 4"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The listed diagonal digits are d11 = 4, d22 = 5, d33 = 9, d44 = 5 from x1 through x4. Rule: e_n = 5 if d_nn is not 5, and e_n = 4 if d_nn is 5. Apply this to each diagonal digit: e1 = 5, e2 = 4, e3 = 5, e4 = 4. The answer is 5, 4, 5, 4."
+          - problem: "A listing of infinite binary sequences begins s1 = 0, 1, 1, 0, ... ; s2 = 1, 0, 1, 1, ... ; s3 = 0, 0, 1, 0, ... . In the diagonal construction the new sequence t is defined by t_n = 1 - s_nn. Give the third bit t3."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The diagonal entry in row 3 is s33 = 1. Rule: the new bit is t_n = 1 - s_nn, which flips the diagonal bit. For n = 3, t3 = 1 - 1 = 0. The answer is 0."
+          - problem: "A finite list of four binary sequences is s1 = 1, 0, 0, 1; s2 = 0, 0, 1, 1; s3 = 1, 1, 0, 0; s4 = 0, 1, 0, 1. Build the diagonal sequence t by t_n = 1 - s_nn. Give t1 t2 t3 t4 as a comma-separated list."
+            answer: "0, 1, 1, 0"
+            answer_contract: {"kind": "list", "member": {"kind": "exact"}, "ordered": true}
+            solution_sketch: "The diagonal entries are s11 = 1, s22 = 0, s33 = 0, s44 = 1. Rule: flip each diagonal entry, t_n = 1 - s_nn. Apply: t1 = 0, t2 = 1, t3 = 1, t4 = 0. The answer is 0, 1, 1, 0."
+          - problem: "A listing of three decimals begins 0.123..., 0.456..., 0.789... . Build y = 0.e1e2e3... by e_n = 5 when d_nn is not 5 and e_n = 4 when d_nn is 5. Give y as a decimal with three digits after the point."
+            answer: "0.545"
+            answer_contract: {"decimals": 3, "kind": "approx"}
+            solution_sketch: "The diagonal digits are d11 = 1, d22 = 5, d33 = 9. Rule: e_n = 5 if d_nn is not 5, and e_n = 4 if d_nn is 5. Apply: e1 = 5, e2 = 4, e3 = 5, so y = 0.545. The answer is 0.545."
+          - problem: "Claim: the interval (0, 1) is uncountable. Step 1: suppose all reals in (0, 1) are listed as x1, x2, ... . Step 2: write x_n = 0.d_{n1}d_{n2}... . Step 3: define y = 0.e1e2... by e_n = d_nn. Step 4: then y differs from every x_n, so y is not in the list. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 is a valid supposition for a proof by contradiction. Step 2 is valid notation for each listed decimal. Step 3 is invalid because setting e_n = d_nn copies the diagonal entry and does not make y different. Step 4 would be valid only after the rule flips the diagonal entry. The answer is Step 3."
+          - problem: "In the binary diagonal construction, the definition of the new sequence t is missing. Select the missing rule for each position."
+            answer: "flip the diagonal bit"
+            answer_contract: {"kind": "label", "options": [["flip the diagonal bit"], ["copy the diagonal bit"], ["add one to the bit"], ["subtract one from the bit"]]}
+            solution_sketch: "The construction must make t differ from every listed sequence at its diagonal position. The option copy the diagonal bit fails because it repeats the entry. The option add one to the bit may leave the binary alphabet and does not always differ. The option subtract one from the bit has the same alphabet problem. The option flip the diagonal bit gives t_n = 1 - s_nn. The answer is flip the diagonal bit."
+          - problem: "Write the full proof: every listing of infinite binary sequences misses at least one infinite binary sequence, so the set of infinite binary sequences is uncountable. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Suppose for contradiction that all infinite binary sequences are listed as s1, s2, s3, ... . Write the nth sequence as s_n = (s_{n1}, s_{n2}, s_{n3}, ...). Construct a new sequence t by defining t_n = 1 - s_{nn} for each n. At position n, t has the bit opposite to the nth bit of s_n, so t differs from s_n. Therefore t is different from every sequence in the list, yet t is an infinite binary sequence. This contradicts the supposition that the list contains all such sequences. Hence no complete listing exists, so the set of infinite binary sequences is uncountable."
         constraints: "construct the diagonal object differing from each listed entry"
       - id: kp2
         name: "Power sets and Cantor''s theorem"

@@ -1658,12 +1658,34 @@ topics:
         name: "Classes partition the set"
         key_prerequisites: [set-operations]
         exemplars:
-          - problem: 'Prove: distinct equivalence classes are disjoint, so the classes partition the set.'
-            answer: 'If two classes meet, they are equal.'
-            solution_sketch: 'Each $a$ lies in $[a]$ (reflexivity), so classes cover the set. If $x \in [a] \cap [b]$, then $a \sim x \sim b$, so $a \sim b$ and $[a] = [b]$. Hence two classes are equal or disjoint: a partition. $\square$'
-          - problem: 'Prove: a partition $\mathcal{Q}$ of $A$ induces an equivalence relation whose classes are the blocks of $\mathcal{Q}$.'
-            answer: 'Define $a \sim b$ iff same block; check the three properties.'
-            solution_sketch: 'Define $a \sim b$ iff $a, b$ lie in the same block. Every $a$ is in some block (reflexive); same-block is symmetric; if $a, b$ share a block and $b, c$ share a block, that block is common (blocks are disjoint), so $a, c$ share it (transitive). The class of $a$ is its block. $\square$'
+          - problem: "On the set A = {0, 1, 2, 3, 4, 5, 6, 7} define x ~ y when x and y leave the same remainder on division by 3. The classes of ~ partition A. Give the class [2] as a set of numbers."
+            answer: "{2, 5}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "Scan A: an element lies in [2] exactly when it differs from 2 by a multiple of 3. Candidates: 2 and 2 + 3 = 5; 2 + 6 = 8 is outside A. So the class is {2, 5}, one block of the partition."
+          - problem: "On A = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11} let x ~ y mean 5 divides x - y. The classes of ~ form a partition of A. How many classes does this partition have?"
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Two elements share a class exactly when they have the same remainder mod 5. The remainders 0, 1, 2, 3, 4 all occur in A (for example 0, 1, 2, 3, 4), so there is one class per remainder. The answer is 5."
+          - problem: "On A = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} let x ~ y mean 3 divides x - y. Two classes of this relation are [1] and [5]. Since 5 - 1 = 4 is not a multiple of 3, the classes are disjoint. How many elements does the intersection [1] intersect [5] contain?"
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The class of 1 is {1, 4, 7, 10} and the class of 5 is {2, 5, 8}. They share no element, which illustrates the theorem: classes with no related representatives are disjoint blocks. The intersection has 0 elements."
+          - problem: "An equivalence relation on the set {a, b, c, d} has classes {a, c}, {b} and {d}. The classes partition the set. Counting x ~ y for x equal to y as well, how many ordered pairs (x, y) satisfy x ~ y?"
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A class of size s contributes s squared ordered pairs. The classes have sizes 2, 1, 1, giving 4 + 1 + 1 = 6 pairs. The answer is 6."
+          - problem: "Claim: distinct equivalence classes of a relation ~ on A are disjoint. Step 1: every a in A lies in [a], since a ~ a. Step 2: suppose x lies in the intersection of [a] and [b]. Step 3: then a ~ x and b ~ x, so a ~ b by transitivity. Step 4: hence [a] = [b], so two classes that meet are equal. Which step is the first step that is not valid?"
+            answer: "Step 3"
+            answer_contract: {"kind": "label", "options": [["Step 1"], ["Step 2"], ["Step 3"], ["Step 4"]]}
+            solution_sketch: "Step 1 holds by reflexivity. Step 2 is the right setup toward a contradiction-style conclusion. Step 3 is the first invalid step: a ~ x and b ~ x give a ~ b only after using symmetry to get x ~ b first; transitivity alone needs a ~ x and x ~ b. Step 4 is valid once Step 3 is repaired. The answer is Step 3."
+          - problem: "In the proof that [a] = [b] whenever the classes share an element x, one line is missing: from y in [a] one must derive y in [b]. Select the line that is true and that completes this derivation."
+            answer: "y ~ a, a ~ x and x ~ b give y ~ b"
+            answer_contract: {"kind": "label", "options": [["y ~ a, a ~ x and x ~ b give y ~ b"], ["y ~ x and x ~ a give y ~ a"], ["y ~ a and b ~ x give y ~ b"], ["y in [a] implies y = a, so y ~ b"]]}
+            solution_sketch: "From y in [a] we get y ~ a; since x is in [b], b ~ x, so by symmetry x ~ b; transitivity chains y ~ a ~ x ~ b, giving y ~ b. The option y ~ x and x ~ a give y ~ a reverses the chain and never reaches b. The option y ~ a and b ~ x give y ~ b uses b ~ x instead of x ~ b, so transitivity cannot be applied as written. The option y in [a] implies y = a, so y ~ b wrongly claims an element of [a] equals a. The correct line is y ~ a, a ~ x and x ~ b give y ~ b. The answer is y ~ a, a ~ x and x ~ b give y ~ b."
+          - problem: "Write the full proof: a partition Q of a set A induces an equivalence relation whose classes are exactly the blocks of Q, and the blocks cover A and are pairwise disjoint. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Define a relation: a relates to b exactly when a and b lie in the same block of the partition Q. Reflexive: every element of A lies in some block, because the blocks cover A, so a relates to a. Symmetric: if a and b lie in a common block, then so do b and a. Transitive: if a and b share a block and b and c share a block, the two blocks both contain b; since distinct blocks are disjoint, the blocks are equal, so a and c share that block. This gives an equivalence relation. Its class: the class of a consists of all b in the same block as a, which is exactly that block, so the classes are the blocks of Q. Covering and pairwise disjointness of the classes follow because they are the blocks of a partition."
         constraints: "show covering plus pairwise disjointness; and the converse direction"
     diagnostic_exemplar:
       problem: 'Let $\sim$ be an equivalence relation on a set $A$. Prove that $[a] = [b]$ if and only if $a \sim b$, and deduce that two distinct equivalence classes are disjoint.'
@@ -1950,14 +1972,30 @@ topics:
         name: "Drawing Hasse diagrams"
         key_prerequisites: [partial-orders]
         exemplars:
-          - problem: 'For the divisors of $12$, $\{1, 2, 3, 4, 6, 12\}$, ordered by divisibility, list the covering edges of the Hasse diagram.'
-            answer_contract: {kind: none}
-            answer: '$1\!-\!2$, $1\!-\!3$, $2\!-\!4$, $2\!-\!6$, $3\!-\!6$, $4\!-\!12$, $6\!-\!12$.'
-            solution_sketch: 'Draw $a$ below $b$ when $a \mid b$ with no divisor strictly between: e.g. $1\!-\!4$ is omitted because $1 \mid 2 \mid 4$.'
-          - problem: 'Describe the Hasse diagram of $\mathcal{P}(\{a, b\})$ under $\subseteq$.'
-            answer_contract: {kind: none}
-            answer: 'A diamond: $\varnothing$ at the bottom, $\{a\}$ and $\{b\}$ in the middle, $\{a, b\}$ on top.'
-            solution_sketch: 'Each covering step adds one element; $\{a\}$ and $\{b\}$ are incomparable, side by side.'
+          - problem: "For the divisors of 20 ordered by divisibility, find the number of covering edges in its Hasse diagram."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The divisors of 20 are 1, 2, 4, 5, 10, 20. By the covering rule an edge joins a to b when a divides b and no divisor of 20 lies strictly between them, which gives 1-2, 1-5, 2-4, 2-10, 4-20, 5-10 and 10-20. Counting these edges gives 7."
+          - problem: "For the power set of {a, b, c} ordered by subset inclusion, find the number of covering edges in its Hasse diagram."
+            answer: "12"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The power set has the eight sets empty, {a}, {b}, {c}, {a,b}, {a,c}, {b,c}, {a,b,c}. By the covering rule an edge joins two sets when one is contained in the other and adds exactly one element, so 3 edges leave the empty set, 6 edges leave the singletons and 3 edges leave the pairs. The total 3 + 6 + 3 is 12."
+          - problem: "For the divisors of 28 ordered by divisibility, find the set of elements that cover the element 1."
+            answer: "{2, 7}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The divisors of 28 are 1, 2, 4, 7, 14, 28. By the covering rule an element b covers 1 when 1 divides b and no divisor of 28 lies strictly between 1 and b, and only 2 and 7 divide 28 with no divisor of 28 between them and 1. The covering set is {2, 7}."
+          - problem: "In the divisibility poset on the divisors of 30, determine how many elements cover 1."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The divisors of 30 are 1, 2, 3, 5, 6, 10, 15, 30. By the covering rule an element covers 1 when 1 divides it and no divisor of 30 lies strictly between 1 and it, and the divisors with that property are exactly the primes 2, 3 and 5. So the number of such elements is 3."
+          - problem: "For the divisors of 16 ordered by divisibility, find the number of covering edges in its Hasse diagram."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The divisors of 16 are 1, 2, 4, 8, 16, and every earlier element divides the next one, so the diagram is a single vertical chain. By the covering rule the edges join consecutive elements, namely 1-2, 2-4, 4-8 and 8-16, because nothing lies between consecutive ones. The number of covering edges is 4."
+          - problem: "In the divisibility poset on the divisors of 24, find the set of elements that cover 4."
+            answer: "{8, 12}"
+            answer_contract: {"kind": "set"}
+            solution_sketch: "The divisors of 24 are 1, 2, 3, 4, 6, 8, 12, 24. By the covering rule an element covers 4 when 4 divides it and no divisor of 24 lies strictly between 4 and it, and among the multiples of 4 above 4 only 8 and 12 have that property, since 4 divides 12 and 12 divides 24. The covering set is {8, 12}."
         constraints: "posets with at most 8 elements: divisor lattices or small power sets"
       - id: kp2
         name: "Reading a Hasse diagram"
