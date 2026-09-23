@@ -372,14 +372,30 @@ topics:
         name: Term-by-term integration
         key_prerequisites: [power-series, geometric-power-series, definite-integrals-ftc]
         exemplars:
-          - problem: 'Integrate the geometric series for $\frac{1}{1 + x}$ to derive the Maclaurin series of $\ln(1 + x)$.'
-            answer: '$\sum_{n=1}^{\infty} \frac{(-1)^{n+1} x^n}{n}$ (for $-1 < x \le 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: '$\frac{1}{1+x} = \sum (-1)^n x^n$; integrate term by term, constant $0$ from $\ln 1 = 0$.'
-          - problem: 'Derive the Maclaurin series of $\arctan x$.'
-            answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{2n+1}$ (for $|x| \le 1$)'
-            answer_contract: {kind: none}
-            solution_sketch: 'Integrate $\frac{1}{1+x^2} = \sum (-1)^n x^{2n}$ term by term.'
+          - problem: "The function $1/(1 + x)$ has the geometric series $\\sum_{n=0}^{\\infty} (-1)^n x^n$ for $|x| < 1$. Integrate this series term by term from $0$ to $x$, choosing the constant so the result is $0$ at $x = 0$. Find the coefficient of $x^4$ in the resulting Maclaurin series."
+            answer: "-1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, geometric series: $1/(1+x)=\\sum_{n=0}^{\\infty}(-1)^n x^n$. Step 2, term-by-term integration: integrate to get $\\sum_{n=0}^{\\infty}(-1)^n x^{n+1}/(n+1)$. Step 3, constant from the value at $0$: the constant is $0$, so the series represents $\\ln(1+x)$. Step 4, coefficient matching: the $x^4$ term needs $n+1=4$, so $n=3$, giving coefficient $(-1)^3/4$. The coefficient is -1/4."
+          - problem: "The function $1/(1 + x^2)$ has the geometric series $\\sum_{n=0}^{\\infty} (-1)^n x^{2n}$ for $|x| < 1$. Integrate this series term by term from $0$ to $x$, with the constant fixed by the value $0$ at $x = 0$. Find the coefficient of $x^5$ in the resulting Maclaurin series."
+            answer: "1/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, geometric series: $1/(1+x^2)=\\sum_{n=0}^{\\infty}(-1)^n x^{2n}$. Step 2, term-by-term integration: integrate to get $\\sum_{n=0}^{\\infty}(-1)^n x^{2n+1}/(2n+1)$. Step 3, constant from the value at $0$: the constant is $0$, so the series represents $\\arctan x$. Step 4, coefficient matching: the $x^5$ term needs $2n+1=5$, so $n=2$, giving coefficient $(-1)^2/5$. The coefficient is 1/5."
+          - problem: "The geometric series $\\sum_{n=0}^{\\infty} x^n$ represents $1/(1 - x)$ for $|x| < 1$. Integrate it term by term from $0$ to $x$ and choose the constant so the value at $x = 0$ is $0$. Find the coefficient of $x^7$ in the resulting Maclaurin series."
+            answer: "1/7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, geometric series: $1/(1-x)=\\sum_{n=0}^{\\infty}x^n$. Step 2, term-by-term integration: integrate to get $\\sum_{n=0}^{\\infty}x^{n+1}/(n+1)$. Step 3, constant from the value at $0$: the constant is $0$, so the series represents $-\\ln(1-x)$. Step 4, coefficient matching: the $x^7$ term needs $n+1=7$, so $n=6$, giving coefficient $1/7$. The coefficient is 1/7."
+          - problem: "Start with the geometric series $\\sum_{n=0}^{\\infty} (-1)^n 4^n x^{2n}$ for $1/(1 + 4x^2)$. Integrate the series term by term from $0$ to $x$ and fix the constant so the value at $x = 0$ is $0$. Find the coefficient of $x^5$ in the resulting series."
+            answer: "16/5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, geometric series: $1/(1+4x^2)=\\sum_{n=0}^{\\infty}(-1)^n 4^n x^{2n}$. Step 2, term-by-term integration: integrate to get $\\sum_{n=0}^{\\infty}(-1)^n 4^n x^{2n+1}/(2n+1)$. Step 3, constant from the value at $0$: the constant is $0$. Step 4, coefficient matching: the $x^5$ term needs $2n+1=5$, so $n=2$, giving coefficient $(-1)^2 4^2/5$. The coefficient is 16/5."
+          - problem: "The geometric series $\\sum_{n=0}^{\\infty} (-1)^n x^{3n}$ represents $1/(1 + x^3)$ for $|x| < 1$. Integrate this series term by term from $0$ to $x$, with the constant fixed by the value $0$ at $x = 0$. Find the coefficient of $x^{10}$ in the resulting series."
+            answer: "-1/10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, geometric series: $1/(1+x^3)=\\sum_{n=0}^{\\infty}(-1)^n x^{3n}$. Step 2, term-by-term integration: integrate to get $\\sum_{n=0}^{\\infty}(-1)^n x^{3n+1}/(3n+1)$. Step 3, constant from the value at $0$: the constant is $0$. Step 4, coefficient matching: the $x^{10}$ term needs $3n+1=10$, so $n=3$, giving coefficient $(-1)^3/10$. The coefficient is -1/10."
+          - problem: "The geometric series $\\sum_{n=0}^{\\infty} x^{2n}$ represents $1/(1 - x^2)$ for $|x| < 1$. Integrate this series term by term from $0$ to $x$, fixing the constant so the value at $x = 0$ is $0$. Find the coefficient of $x^9$ in the resulting series."
+            answer: "1/9"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Step 1, geometric series: $1/(1-x^2)=\\sum_{n=0}^{\\infty}x^{2n}$. Step 2, term-by-term integration: integrate to get $\\sum_{n=0}^{\\infty}x^{2n+1}/(2n+1)$. Step 3, constant from the value at $0$: the constant is $0$. Step 4, coefficient matching: the $x^9$ term needs $2n+1=9$, so $n=4$, giving coefficient $1/9$. The coefficient is 1/9."
         constraints: "integrate geometric-type series; fix the constant of integration by evaluating at 0"
       - id: kp3
         name: What happens to the interval
