@@ -1252,14 +1252,30 @@ topics:
         name: Counting eigenvectors in 3x3 matrices
         key_prerequisites: [eigenspaces-multiplicities]
         exemplars:
-          - problem: 'Is $A = \begin{pmatrix}2&0&0\\0&2&1\\0&0&3\end{pmatrix}$ diagonalizable?'
-            answer: "Yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$\lambda = 2$ has geometric multiplicity $2$ (null space of $A - 2I$ is $\{(x, y, 0)\}$) and $\lambda = 3$ contributes one more: $2 + 1 = 3$ independent eigenvectors.'
-          - problem: 'Is $A = \begin{pmatrix}2&1&0\\0&2&0\\0&0&3\end{pmatrix}$ diagonalizable?'
-            answer: "No"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$\lambda = 2$ has algebraic multiplicity $2$ but $A - 2I$ has rank $2$, so its eigenspace is $1$-dimensional: only $1 + 1 = 2$ independent eigenvectors in $\mathbb{R}^3$.'
+          - problem: "Let $A = \\begin{pmatrix}5&0&0\\\\0&5&2\\\\0&0&6\\end{pmatrix}$, an upper triangular matrix. Determine whether $A$ is diagonalizable, and give the total number of linearly independent eigenvectors of $A$ as verdict and count."
+            answer: "verdict = yes; count = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "For $A$ with rows (5,0,0), (0,5,2), (0,0,6), read the eigenvalues off the diagonal of the triangular matrix: 5, 5, 6. For the repeated eigenvalue 5, solve $(A - 5I)v = 0$: the rows force $z = 0$ while $x$ and $y$ stay free, so that eigenspace has dimension 2, equal to its algebraic multiplicity. The eigenvalue 6 adds one further eigenvector, so $A$ has 3 independent eigenvectors and is diagonalizable; answering 'no' would wrongly treat the repeated eigenvalue as defective. The answer is verdict = yes; count = 3."
+          - problem: "Let $A = \\begin{pmatrix}7&4&0\\\\0&7&0\\\\0&0&9\\end{pmatrix}$, an upper triangular matrix. Determine whether $A$ is diagonalizable, and give the total number of linearly independent eigenvectors of $A$ as verdict and count."
+            answer: "verdict = no; count = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "label", "options": [["yes"], ["no"]]}, "name": "verdict"}, {"contract": {"kind": "exact"}, "name": "count"}]}
+            solution_sketch: "For $A$ with rows (7,4,0), (0,7,0), (0,0,9), the diagonal gives the eigenvalues 7, 7, 9. For the repeated eigenvalue 7, row reduce $A - 7I$: the equations $4y = 0$ and $2z = 0$ leave only $x$ free, so that eigenspace has dimension 1, less than its algebraic multiplicity 2. The eigenvalue 9 adds one eigenvector, for a total of 2 independent eigenvectors in a space of dimension 3; answering 'yes' would ignore the gap between the two multiplicities. The answer is verdict = no; count = 2."
+          - problem: "Let $A = \\begin{pmatrix}1&0&5\\\\0&1&0\\\\0&0&4\\end{pmatrix}$, an upper triangular matrix. Find the dimension of the eigenspace for the repeated eigenvalue of $A$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The diagonal of the triangular matrix gives the eigenvalues 1, 1, 4, so the repeated eigenvalue is 1 with algebraic multiplicity 2. Solve $(A - I)v = 0$: the only equation is $5z = 0$, so $z = 0$ while $x$ and $y$ stay free. The eigenspace is the plane $z = 0$, which has dimension 2, matching the algebraic multiplicity. The answer is 2."
+          - problem: "Let $A = \\begin{pmatrix}3&0&0\\\\0&6&5\\\\0&0&6\\end{pmatrix}$, an upper triangular matrix. How many linearly independent eigenvectors does $A$ have?"
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The diagonal gives the eigenvalues 3, 6, 6, so 6 is repeated with algebraic multiplicity 2. Solve $(A - 6I)v = 0$: the equations $-3x = 0$ and $5z = 0$ leave only $y$ free, so the eigenspace for 6 has dimension 1, a defect of one eigenvector. The simple eigenvalue 3 contributes one more eigenvector, so the total is 1 + 1 = 2 independent eigenvectors. The answer is 2."
+          - problem: "Let $A = \\begin{pmatrix}6&0&0\\\\0&6&4\\\\0&0&8\\end{pmatrix}$, an upper triangular matrix. Find the total number of linearly independent eigenvectors of $A$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The diagonal gives the eigenvalues 6, 6, 8, so 6 is repeated with algebraic multiplicity 2. Solve $(A - 6I)v = 0$: the equations $4z = 0$ and $2z = 0$ force $z = 0$ while $x$ and $y$ stay free, so the eigenspace for 6 has dimension 2, matching its algebraic multiplicity. The simple eigenvalue 8 adds one eigenvector, so the total is 2 + 1 = 3 independent eigenvectors. The answer is 3."
+          - problem: "Let $A = \\begin{pmatrix}8&0&0\\\\3&8&0\\\\0&0&2\\end{pmatrix}$, a lower triangular matrix. Find the geometric multiplicity of the eigenvalue $8$."
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The diagonal of the lower triangular matrix gives the eigenvalues 8, 8, 2, so 8 is repeated with algebraic multiplicity 2. Solve $(A - 8I)v = 0$: the equations $3x = 0$ and $-6z = 0$ leave only $y$ free, so the eigenspace is the line spanned by the second coordinate vector. The geometric multiplicity 1 is smaller than the algebraic multiplicity 2. The answer is 1."
         constraints: "3x3 triangular with one repeated eigenvalue; the answer hinges on one geometric multiplicity"
     diagnostic_exemplar:
       problem: 'Is $A = \begin{pmatrix}4&1&0\\0&4&0\\0&0&7\end{pmatrix}$ diagonalizable? Justify by counting independent eigenvectors.'
