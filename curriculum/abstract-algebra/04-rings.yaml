@@ -563,14 +563,30 @@ topics:
         name: "Degrees and coefficient arithmetic over Z_n"
         key_prerequisites: [ring-axioms-examples, integral-domains-zero-divisors]
         exemplars:
-          - problem: 'In $\mathbb{Z}_6[x]$, compute $(2x + 1)(3x + 4)$ and note the degree.'
-            answer: '$6x^2 + 11x + 4 = 5x + 4$ — degree $1$, not $2$.'
-            answer_contract: {kind: none}
-            solution_sketch: '$6 \equiv 0$ and $11 \equiv 5$ mod $6$: zero divisors in the coefficients can kill the leading term.'
-          - problem: 'If $D$ is an integral domain and $f, g \neq 0$ in $D[x]$, what is $\deg(fg)$?'
-            answer: '$\deg f + \deg g$'
-            answer_contract: {kind: none}
-            solution_sketch: 'Leading coefficients multiply to something nonzero in a domain.'
+          - problem: "In Z_6[x], multiply (2x + 1)(3x + 4) and reduce every coefficient modulo 6. Give the product as a polynomial in x."
+            answer: "5x + 4"
+            answer_contract: {"kind": "function", "vars": ["x"]}
+            solution_sketch: "Expand over the integers: (2x + 1)(3x + 4) = 6x^2 + 11x + 4. Reduce each coefficient modulo 6: 6 becomes 0 and 11 becomes 5, so the x^2 term vanishes because 2 and 3 are zero divisors in Z_6. The surviving terms give 5x + 4. The product is 5x + 4."
+          - problem: "In Z_7[x], let f = 2x^2 + 1 and g = 4x + 2. Find the degree of the product fg."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The leading coefficient of f is 2 and the leading coefficient of g is 4. In Z_7, 2 times 4 is 8, which is 1 mod 7, nonzero. The degree formula for an integral domain gives deg(fg) = deg f + deg g = 2 + 1 = 3. The degree is 3."
+          - problem: "In Z_5[x], multiply (3x + 1)(4x + 1). Give the coefficient of x^2 in the product."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Multiply the leading terms: 3x times 4x gives 12x^2. Reduce the coefficient modulo 5: 12 is 2. The x^2 coefficient is therefore 2. The coefficient of x^2 is 2."
+          - problem: "In Z_6[x], let f = 3x^2 + 3 and g = 4x^2 + 1. Find the degree of the product fg."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The leading terms multiply as 3x^2 times 4x^2 = 12x^4. In Z_6, 12 is 0, so the x^4 term vanishes. The remaining highest term is (3x^2)(1) + (3)(4x^2) = 3x^2 + 12x^2 = 15x^2, and 15 is 3 mod 6, which is nonzero. Thus the product has degree 2. The degree is 2."
+          - problem: "In Z_8[x], multiply (4x + 1)(2x + 5). Give the coefficient of x in the product."
+            answer: "6"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Expand the product: (4x + 1)(2x + 5) = 8x^2 + 20x + 2x + 5 = 8x^2 + 22x + 5. Reduce modulo 8: 8 is 0 and 22 is 6. The x coefficient is 6. The coefficient of x is 6."
+          - problem: "In Z_4[x], multiply (2x + 1)(2x + 3). Give the coefficient of x^2 in the product."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The x^2 term comes from 2x times 2x, which is 4x^2. Reduce the coefficient modulo 4: 4 is 0. Therefore the x^2 coefficient is 0. The coefficient of x^2 is 0."
         constraints: "products in Z_n[x] (n <= 8, degrees <= 2); the degree formula and when it fails"
       - id: kp2
         name: "The division algorithm for polynomials"

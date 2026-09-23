@@ -404,6 +404,22 @@ topics:
           - problem: 'Count $2$-colorings of the square''s corners up to $D_4$.'
             answer: "6"
             solution_sketch: '$(16 + 2 + 4 + 2 + 8 + 8 + 4 + 4)/8 = 48/8 = 6$.'
+          - problem: "An equilateral triangle has one of three colours at each vertex. Two colourings are identified when a symmetry of the triangle maps one to the other. How many distinct colourings are there?"
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group D3 has six symmetries: the identity, two rotations by 120 and 240 degrees, and three reflections. The identity fixes all 3^3 = 27 colourings. Each nontrivial rotation is a 3-cycle, so it fixes 3 colourings. Each reflection fixes one vertex and swaps two, so it fixes 3^2 = 9 colourings. Burnside's lemma gives (27 + 3 + 3 + 9 + 9 + 9)/6 = 60/6 = 10. The number of distinct colourings is 10."
+          - problem: "A square has four colours available for its four corners, one colour per corner. Two corner colourings are the same when a rotation or reflection of the square sends one to the other. How many distinct corner colourings are there?"
+            answer: "55"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The group D4 has eight symmetries: the identity, rotations by 90, 180 and 270 degrees, two diagonal reflections, and two edge reflections. The identity fixes 4^4 = 256 colourings. Each 90 or 270 degree rotation is a 4-cycle and fixes 4 colourings, giving 8 total. The 180 degree rotation is two 2-cycles and fixes 4^2 = 16. Each diagonal reflection fixes two corners and swaps two, fixing 4^3 = 64, giving 128. Each edge reflection is two 2-cycles and fixes 4^2 = 16, giving 32. Burnside's lemma gives (256 + 8 + 16 + 128 + 32)/8 = 440/8 = 55. The number of distinct colourings is 55."
+          - problem: "For an equilateral triangle, the number of colourings of its three vertices up to the six symmetries of D3 is 20. How many colours were available?"
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Let m be the number of available colours. For D3, Burnside's lemma gives (m^3 + 3m^2 + 2m)/6: identity contributes m^3, two rotations contribute m each, and three reflections contribute m^2 each. Setting this equal to 20 gives m^3 + 3m^2 + 2m = 120, or m^3 + 3m^2 + 2m - 120 = 0. Testing m = 4 gives 64 + 48 + 8 = 120, and the remaining quadratic factor has no positive integer root. The number of colours is 4."
+          - problem: "Each corner of a square is painted one of six colours. Colourings that a rotation or a reflection of the square sends to each other count as one. How many different colourings of the corners are there?"
+            answer: "231"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Enumerate the cycle structure of each of the eight symmetries in D4. The identity is four 1-cycles and fixes 6^4 = 1296 colourings. Each 90 and 270 degree rotation is one 4-cycle and fixes 6 colourings, giving 12. The 180 degree rotation is two 2-cycles and fixes 6^2 = 36. Each diagonal reflection fixes two corners and swaps two, fixing 6^3 = 216, so the two give 432. Each edge reflection is two 2-cycles and fixes 36, so the two give 72. Burnside's lemma gives (1296 + 12 + 36 + 432 + 72)/8 = 1848/8 = 231. The number of different colourings is 231."
         constraints: "square or triangle only; enumerate cycle structures of all group elements"
     diagnostic_exemplar:
       problem: 'How many distinct necklaces of $5$ beads in $2$ colours are there, counting two as the same when one is a rotation or a reflection of the other?'
@@ -469,12 +485,34 @@ topics:
         name: "The theorem and its proof"
         key_prerequisites: [group-actions, group-isomorphisms]
         exemplars:
-          - problem: 'State and prove Cayley''s theorem.'
-            answer: 'Every group $G$ embeds in a symmetric group: $g \mapsto \lambda_g$ is a homomorphism $G \to S_G$ ($\lambda_g\lambda_h = \lambda_{gh}$), injective since $\lambda_g = \mathrm{id} \implies g = ge = e$.'
-            solution_sketch: 'The left-regular action gives a homomorphism into $S_G$; its kernel is trivial, so $G \cong$ its image.'
-          - problem: 'What does Cayley''s theorem say about a group of order $n$?'
-            answer: 'It is isomorphic to a subgroup of $S_n$.'
-            solution_sketch: 'Identify $G$ with $\{1, \dots, n\}$ as the set acted on.'
+          - problem: "Cayley's proof uses the left-regular action of $G = \\mathbb{Z}_8$ on itself, given by $\\lambda_g(x) = g + x$, with identity element $0$. To test whether $g$ lies in the kernel of the map $g \\mapsto \\lambda_g$, one evaluates $\\lambda_g$ at the identity. Give $\\lambda_5(0)$."
+            answer: "5"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The kernel test evaluates the permutation at the identity element of the group. In the left-regular action of $\\mathbb{Z}_8$, the rule is $\\lambda_g(x) = g + x$, so $\\lambda_5(0) = 5 + 0 = 5$. If $\\lambda_g$ were the identity permutation, then $\\lambda_g(0) = 0$ would force $g = 0$, so $g = 5$ is not in the kernel. The value is 5."
+          - problem: "Cayley's theorem states that every group of order $n$ is isomorphic to a subgroup of the symmetric group $S_n$. Apply the theorem to a group of order $7$. Give the degree $n$ of the symmetric group and the order $s$ of $S_n$."
+            answer: "n = 7; s = 5040"
+            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "n"}, {"contract": {"kind": "exact"}, "name": "s"}]}
+            solution_sketch: "By Cayley's theorem, the regular action embeds a group of order $n$ into the symmetric group on its own underlying set, so the degree equals the group order. For a group of order $7$ the target is $S_7$. The symmetric group $S_7$ has $7! = 5040$ elements. The answer is n = 7; s = 5040."
+          - problem: "In the proof of Cayley's theorem, the map $\\varphi: G \\to S_G$ sends each $g$ to the permutation $\\lambda_g$ defined by $\\lambda_g(x) = gx$. The kernel consists of those $g$ for which $\\lambda_g$ is the identity permutation. Evaluating $\\lambda_g$ at the identity element gives $\\lambda_g(e) = ge = g$. For $G = \\mathbb{Z}_5$, how many elements are in the kernel of $\\varphi$?"
+            answer: "1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The kernel consists of the elements $g$ with $\\lambda_g$ equal to the identity permutation. Evaluating $\\lambda_g$ at $e$ gives $\\lambda_g(e) = ge = g$, so $\\lambda_g = \\mathrm{id}$ forces $g = e$. Hence only the identity element lies in the kernel. The kernel of the map has exactly 1 element."
+          - problem: "The homomorphism property used in Cayley's proof says $\\lambda_g \\circ \\lambda_h = \\lambda_{g+h}$ for the left-regular action of $\\mathbb{Z}_{12}$, where $\\lambda_g(x) = g + x$. Compute $(\\lambda_7 \\circ \\lambda_5)(0)$."
+            answer: "0"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The homomorphism property is verified by evaluating both sides at the identity element $0$. By definition of composition, $(\\lambda_7 \\circ \\lambda_5)(0) = \\lambda_7(\\lambda_5(0)) = 7 + (5 + 0) = 12$, and $12 \\equiv 0$ in $\\mathbb{Z}_{12}$. This matches $\\lambda_{12}(0) = \\lambda_0(0) = 0$. The value is 0."
+          - problem: "In the left-regular action of $\\mathbb{Z}_9$, the permutation $\\lambda_3$ satisfies $\\lambda_3^k(x) = 3k + x$, so $\\lambda_3^k$ is the identity permutation exactly when $3k$ is a multiple of $9$. Give the order of the permutation $\\lambda_3$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The powers of the permutation satisfy $\\lambda_3^k(x) = 3k + x$ by the homomorphism property of the action. So $\\lambda_3^k$ is the identity exactly when $3k \\equiv 0$ modulo $9$. The smallest positive such $k$ is $3$, since $3 \\cdot 3 = 9$. The order of $\\lambda_3$ is 3."
+          - problem: "In the proof that the map sending each group element to its left translation is a homomorphism, one checks $\\lambda_g \\lambda_h = \\lambda_{gh}$ for the left-regular action $\\lambda_g(x) = gx$. Take $G = \\mathbb{Z}_{20}$ with $g = 13$ and $h = 17$, so that the composite $\\lambda_{13} \\lambda_{17}$ equals $\\lambda_c$. Give $c$."
+            answer: "10"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The homomorphism property is checked by evaluating the composite at an arbitrary element $x$ and comparing it with the right-hand side. Since $\\lambda_{13}\\lambda_{17}(x) = 13 + (17 + x) = 30 + x$, associativity of addition in $\\mathbb{Z}_{20}$ shows this equals $(13 + 17) + x$. Reducing the index modulo $20$ gives $30 + x = 10 + x = \\lambda_{10}(x)$, so the composite is $\\lambda_{10}$ and the index is $c = 10$. The answer is 10."
+          - problem: "Write the full proof: every group $G$ is isomorphic to a subgroup of the symmetric group $S_G$. Then compare with the solution."
+            answer: "See the solution."
+            answer_contract: {"kind": "none"}
+            solution_sketch: "Step 1 (the action): let $G$ act on its underlying set by left multiplication, $\\lambda_g(x) = gx$. Each $\\lambda_g$ is a bijection of $G$ because it has inverse $\\lambda_{g^{-1}}$, so $\\lambda_g$ belongs to $S_G$. Step 2 (homomorphism): for all $x$, $\\lambda_g \\lambda_h(x) = g(hx) = (gh)x = \\lambda_{gh}(x)$, so the map $\\varphi: g \\mapsto \\lambda_g$ is a homomorphism from $G$ into $S_G$. Step 3 (kernel triviality): suppose $\\lambda_g = \\mathrm{id}$; then $\\lambda_g(e) = e$, but $\\lambda_g(e) = ge = g$, hence $g = e$, so the kernel of $\\varphi$ is $\\{e\\}$. Step 4 (isomorphism): the image $\\varphi(G)$ is a subgroup of $S_G$, and since the kernel is trivial the map is injective, so $G \\cong \\varphi(G) \\le S_G$. Conclusion: every group is isomorphic to a subgroup of a symmetric group, and a group of order $n$ embeds as a subgroup of $S_n$."
         constraints: "full proof or key steps; the kernel-triviality argument is required"
       - id: kp3
         name: "Computing regular representations"
